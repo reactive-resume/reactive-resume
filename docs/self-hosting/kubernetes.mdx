@@ -1,0 +1,494 @@
+---
+title: "Self-hosting with Kubernetes"
+description: "How to self-host Reactive Resume on Kubernetes with plain manifests: PostgreSQL, persistent uploads, Secrets, ingress and verification steps."
+---
+
+<Info>
+  **From v5.1.0 onwards** — PDF generation now runs entirely client-side via `@react-pdf/renderer`. New deployments no
+  longer require Browserless, Chromium, or any external print service as a dependency. The `PRINTER_*` and
+  `BROWSERLESS_*` environment variables are no longer read and can be removed from your configuration.
+</Info>
+
+## Overview
+
+Reactive Resume runs on Kubernetes as a single Deployment that serves both the web app and the API on port `3000`, the
+same way the official Docker image does. The rest of the stack matches the [Self-hosting with Docker](/self-hosting/docker)
+guide:
+
+- **PostgreSQL** must run as a separate service. The app connects to it through `DATABASE_URL`; no all-in-one image with
+  an embedded database is planned.
+- **Persistent storage** for uploads. Without S3, uploads live under `/app/data`, so a PersistentVolumeClaim must be
+  mounted there.
+- **Secrets** for `APP_URL`, `DATABASE_URL`, and `AUTH_SECRET`. Optional features (SMTP, S3, OAuth, AI) use the same
+  environment variables as the Docker guide's [environment variable reference](/self-hosting/docker#environment-variables).
+
+Everything below uses plain Kubernetes manifests, so it works on any cluster without a chart. A community Helm chart is
+linked at the end of the page; it is maintained outside this repository.
+
+<CardGroup cols={2}>
+  <Card title="Image">
+    Use <code>ghcr.io/reactive-resume/reactive-resume:latest</code> or <code>amruthpillai/reactive-resume:latest</code>.
+  </Card>
+  <Card title="PostgreSQL">Stores accounts, resumes, and application data. Runs separately, never embedded in the app image.</Card>
+</CardGroup>
+
+## Minimum requirements
+
+<CardGroup cols={1}>
+  <Card title="Kubernetes cluster">
+    A running cluster with <code>kubectl</code> access and a default StorageClass for PersistentVolumeClaims.
+  </Card>
+  <Card title="Ingress + TLS">
+    An Ingress controller (nginx, Traefik, …) and a way to issue TLS certificates, for example cert-manager.
+  </Card>
+  <Card title="Compute">1 vCPU / 1 GB RAM minimum for the app Pod (2 GB recommended when PostgreSQL runs in the same cluster).</Card>
+</CardGroup>
+
+## Required Secrets
+
+Configuration is passed to the Pod as environment variables. Store the values in a Secret and reference it from the
+Deployment with `envFrom`:
+
+```yaml secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: reactive-resume
+  namespace: reactive-resume
+type: Opaque
+stringData:
+  # Canonical public URL of your instance. Must match the HTTPS URL users actually visit.
+  APP_URL: "https://resume.example.com"
+  # "postgres" is the Service name from the PostgreSQL section below.
+  DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/postgres"
+  # Generate with: openssl rand -hex 32
+  AUTH_SECRET: "REPLACE_WITH_A_RANDOM_64_CHAR_HEX_STRING"
+
+  # --- Optional (see the Docker guide's environment variable reference) ---
+  # SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, SMTP_SECURE
+  # S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_REGION, S3_ENDPOINT, S3_BUCKET, S3_FORCE_PATH_STYLE
+  # ENCRYPTION_SECRET, REDIS_URL (AI features)
+  # FLAG_DISABLE_SIGNUPS, FLAG_DISABLE_EMAIL_AUTH (feature flags)
+```
+
+<Steps>
+  <Step title="Generate AUTH_SECRET">
+    Generate a strong secret and paste it into `AUTH_SECRET`.
+
+    ```bash
+    openssl rand -hex 32
+    ```
+
+  </Step>
+
+  <Step title="Set APP_URL">
+    Set `APP_URL` to the public HTTPS URL you will reach through the Ingress. If it does not match the URL you actually
+    use, sign-in redirects and cookies will misbehave.
+  </Step>
+
+  <Step title="Set DATABASE_URL">
+    Point `DATABASE_URL` at your PostgreSQL instance. Inside the cluster the host is the Service DNS name (for example
+    `postgres` in the same namespace) — never `localhost`, which resolves to the app Pod itself.
+  </Step>
+</Steps>
+
+<Tip>
+  `stringData` keeps the example readable. For GitOps, switch to `data` with base64 values, a sealed Secret, or an
+  External Secrets mapping, and keep `AUTH_SECRET` out of plain-text files.
+</Tip>
+
+## PostgreSQL dependency
+
+PostgreSQL is the only required service next to the app. You can use a managed database outside the cluster, an operator
+such as CloudNativePG, or a chart such as the HelmForge or Bitnami PostgreSQL charts. The minimal example below is
+enough for a small single-node cluster:
+
+```yaml postgres.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data
+  namespace: reactive-resume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: reactive-resume
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgres
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: postgres
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres", "-d", "postgres"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: postgres-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: reactive-resume
+spec:
+  selector:
+    app.kubernetes.io/name: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+```
+
+- Keep the PostgreSQL Service a ClusterIP. Do not expose PostgreSQL to the public internet.
+- Move the password into a Secret before anything resembling production use, and pick a major-pinned image.
+- The app runs database migrations automatically on every start, and needs to reach PostgreSQL before it becomes ready.
+
+## Deploy the application
+
+One file covers everything the app needs: a Namespace, the uploads PersistentVolumeClaim, the Deployment, the Service,
+and the Ingress.
+
+```yaml reactive-resume.yaml
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: reactive-resume
+---
+# Persistent storage for uploads, used when S3 is not configured
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: reactive-resume-data
+  namespace: reactive-resume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reactive-resume
+  namespace: reactive-resume
+spec:
+  replicas: 1
+  # One replica at a time: migrations run on startup and the PVC is ReadWriteOnce.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: reactive-resume
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: reactive-resume
+    spec:
+      # The official image runs as the non-root `node` user (UID/GID 1000).
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 1000
+      containers:
+        - name: reactive-resume
+          image: ghcr.io/reactive-resume/reactive-resume:latest
+          # Docker Hub alternative: amruthpillai/reactive-resume:latest
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: reactive-resume
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            failureThreshold: 6
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              memory: 1Gi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: reactive-resume-data
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: reactive-resume
+  namespace: reactive-resume
+spec:
+  selector:
+    app.kubernetes.io/name: reactive-resume
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
+---
+# Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: reactive-resume
+  namespace: reactive-resume
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: resume.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: reactive-resume
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - resume.example.com
+      secretName: reactive-resume-tls
+```
+
+<Note>
+  Replace `resume.example.com` and the `cluster-issuer` name with your own host and issuer. The app listens on `PORT`
+  and serves both the API and the built web app; the default image uses `PORT=3000`, so the example targets container
+  port `3000`. If you change `PORT`, update the container port and both probes to match.
+</Note>
+
+Apply the three files and watch the rollout:
+
+<CodeGroup>
+
+```bash
+kubectl apply -f postgres.yaml
+```
+
+```bash
+kubectl apply -f secret.yaml
+```
+
+```bash
+kubectl apply -f reactive-resume.yaml
+```
+
+```bash
+kubectl -n reactive-resume get pods -w
+```
+
+</CodeGroup>
+
+The app Pod becomes `Ready` only after automatic migrations succeed and the `/api/health` endpoint reports the database
+and storage healthy. If the Pod exits or stays in `CrashLoopBackOff`, check the logs:
+
+```bash
+kubectl -n reactive-resume logs -f deployment/reactive-resume
+```
+
+## Storage: uploads and persistence
+
+Uploads are stored in one of two ways, exactly as in the Docker guide:
+
+- **Local storage (default)**. When all `S3_*` values are empty, the app writes uploads under `/app/data`. The
+  `reactive-resume-data` PVC is mounted there, and `fsGroup: 1000` keeps it writable by the image's `node` user. Without
+  that mount, uploads are lost when the Pod is replaced.
+- **S3-compatible storage**. Set `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_REGION`, `S3_ENDPOINT`, and `S3_BUCKET`
+  in the Secret. Set `S3_FORCE_PATH_STYLE="true"` for path-style services such as MinIO or SeaweedFS.
+
+<Warning>
+  Switching between local storage and S3 does not move existing uploads. Export or back them up before changing the
+  storage driver.
+</Warning>
+
+Back up the PostgreSQL database and the upload storage (the `reactive-resume-data` PVC or the S3 bucket) together, on a
+regular schedule. Recreating the Deployment must preserve both.
+
+## Ingress and the public URL
+
+The Ingress above routes `resume.example.com` to the Service and terminates TLS with cert-manager. Two rules apply:
+
+- `APP_URL` must equal the public HTTPS URL users visit. A mismatch (or serving HTTPS while `APP_URL` says `http://…`)
+  causes sign-in redirects and cookies that do not stick.
+- The app serves the web app, the API, uploads, and assets from one origin. Proxy the whole application; do not rewrite
+  or filter paths such as `/api/`.
+
+<Tip>
+  HTTPS is strongly recommended. Authentication cookies and the first-user signup flow depend on a correct public
+  origin.
+</Tip>
+
+## Health checks and startup
+
+Reactive Resume exposes a health endpoint at `/api/health` that verifies the **database** and **storage**; if either is
+unhealthy it returns HTTP `503`, and `200` when both are healthy.
+
+The Deployment uses the endpoint for both probes:
+
+- The **readiness** probe keeps the Pod out of Service rotation until the app is up.
+- The **liveness** probe has a longer `failureThreshold`, so a temporary database outage does not immediately restart the
+  Pod.
+
+To check the endpoint manually:
+
+```bash
+kubectl -n reactive-resume port-forward service/reactive-resume 3000:80
+```
+
+```bash
+curl -f http://localhost:3000/api/health
+```
+
+<Info>
+  On every start the server **automatically runs database migrations** before serving traffic. If migrations fail
+  (usually a database connection issue), the container exits with an error — check `kubectl logs`.
+</Info>
+
+## Verify the installation
+
+<Steps>
+  <Step title="Create the first account">
+    Open `APP_URL` and sign up for the first account. Without SMTP configured, verification emails are logged to the
+    server console instead of being sent: `kubectl -n reactive-resume logs -f deployment/reactive-resume`.
+  </Step>
+
+  <Step title="Create a resume">
+    Create a resume from the dashboard and add a few sections. A successful save proves the database connection and the
+    write path end to end.
+  </Step>
+
+  <Step title="Export a PDF">
+    Use **Download PDF** in the builder header. PDF rendering happens in the browser via `@react-pdf/renderer`; a
+    non-empty PDF proves the app, the assets, and your content all work.
+  </Step>
+
+  <Step title="Check persistence">
+    Replace the Pod and verify nothing is lost:
+
+    ```bash
+    kubectl -n reactive-resume rollout restart deployment/reactive-resume
+    ```
+
+    After the new Pod is `Ready`, sign in again and confirm the resume and any uploaded picture are still there.
+  </Step>
+
+  <Step title="Close signups (optional)">
+    For a private single-user instance, add `FLAG_DISABLE_SIGNUPS="true"` to the Secret and restart the Deployment
+    **after** your account exists.
+  </Step>
+</Steps>
+
+## Community Helm chart (HelmForge)
+
+A community-maintained Helm chart for Reactive Resume is available in the HelmForge charts repository:
+
+- Chart source: [helmforgedev/charts — charts/reactive-resume](https://github.com/helmforgedev/charts/tree/main/charts/reactive-resume)
+- Chart documentation: [helmforge.dev — Reactive Resume](https://helmforge.dev/docs/charts/reactive-resume)
+
+<Warning>
+  This chart is **community-maintained and lives outside this repository**. It is not part of the Reactive Resume
+  project, and chart support is handled in the HelmForge repository, not here. The manifests above work without it.
+</Warning>
+
+## Updating
+
+1. **Back up the database and uploads first.** Do this before every update.
+2. **Update the image tag** in the Deployment:
+
+   ```bash
+   kubectl -n reactive-resume set image deployment/reactive-resume reactive-resume=ghcr.io/reactive-resume/reactive-resume:latest
+   ```
+
+3. **Wait for the rollout**, then check the startup logs while migrations run:
+
+   ```bash
+   kubectl -n reactive-resume rollout status deployment/reactive-resume
+   kubectl -n reactive-resume logs -f deployment/reactive-resume
+   ```
+
+<Tip>
+  For reproducible deployments, pin a specific version tag or digest instead of `latest`, and update PostgreSQL
+  separately from the app, following your operator's or provider's upgrade procedure.
+</Tip>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The app Pod is in CrashLoopBackOff">
+    - **Common cause**: database migrations failed (often a bad `DATABASE_URL`).
+    - **What to do**: check logs with `kubectl -n reactive-resume logs -f deployment/reactive-resume` and confirm the
+      PostgreSQL Pod is running and the Service is reachable. URL-encode special characters in the password.
+  </Accordion>
+
+  <Accordion title="Can't sign in / redirect loop / cookies don't stick">
+    - **Common cause**: `APP_URL` does not match the URL you actually use, or you serve HTTPS while `APP_URL` says
+      `http://…`.
+    - **Fix**: set `APP_URL` to the canonical public HTTPS URL in the Secret, then restart the Deployment.
+  </Accordion>
+
+  <Accordion title="/api/health returns 503 even though Postgres is up">
+    - **Common cause**: storage health failed (not only the database).
+    - **Fix**: inspect the endpoint response payload and check the `storage` field; confirm the PVC is mounted and not
+      full, and that the S3 settings (if used) are valid.
+  </Accordion>
+
+  <Accordion title="Uploads disappear after a restart">
+    - **Cause**: local upload storage was not mounted to a persistent volume.
+    - **Fix**: add the `reactive-resume-data` PVC mount at `/app/data` (with `fsGroup: 1000`) and redeploy.
+  </Accordion>
+
+  <Accordion title="PDF export fails or downloads an empty file">
+    - **Common cause**: PDFs are rendered in the browser via `@react-pdf/renderer`, so failures usually come from a
+      blocked download, an extreme browser memory limit, or a custom CSP that strips inline workers.
+    - **Checks**: confirm the browser is up to date, the page is not opened in a restricted iframe, and no extension is
+      intercepting the download. There is no server-side printer to inspect.
+  </Accordion>
+</AccordionGroup>
