@@ -21,6 +21,10 @@ the catalog already uses one consistently):
 Reactive Resume, GitHub, Crowdin, Docker, PostgreSQL, Better Auth, TanStack, Microsoft Word,
 PDF, DOCX, JSON, CSV, API, MCP, oRPC, SSO, CSS, URL, JSON Resume.
 
+AI provider names are brand names and stay in English: OpenAI, Anthropic Claude, Google
+Gemini, Vercel AI Gateway, OpenRouter, Mistral AI, Cohere, xAI Grok, Groq, DeepSeek, Together.ai,
+Fireworks, Cerebras, Perplexity, Ollama Cloud.
+
 Template names are proper nouns and are never translated: Azurill, Bronzor, Chikorita, Ditgar,
 Ditto, Gengar, Glalie, Kakuna, Lapras, Leafish, Meowth, Onyx, Pikachu, Rhyhorn, Scizor.
 
