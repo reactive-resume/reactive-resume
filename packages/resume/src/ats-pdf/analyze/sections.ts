@@ -1,6 +1,7 @@
 import type { CustomSectionType } from "@reactive-resume/schema/resume/data";
 import type { DetectedHeading, ExtractedDocument, TextLine } from "../types";
 import { PDF_SECTION_HEADING_LOOKUP } from "../../ats/section-aliases";
+import { columnSegments } from "../extract";
 
 /** Headings are short. Past this many words a line is a sentence, not a section title. */
 const MAX_HEADING_WORDS = 6;
@@ -79,18 +80,22 @@ export function detectHeadings(document: ExtractedDocument): DetectedHeading[] {
 	const headings: DetectedHeading[] = [];
 
 	document.lines.forEach((line, lineIndex) => {
-		const normalized = normalizeHeading(line.text);
-		if (!looksLikeHeading(line, normalized, document)) return;
+		// A heading set in its own narrow column shares a baseline with the first line of the
+		// section's content, so the line it lands on has to be read in column-separated pieces.
+		for (const segment of columnSegments(line)) {
+			const normalized = normalizeHeading(segment.text);
+			if (!looksLikeHeading(segment, normalized, document)) continue;
 
-		headings.push({
-			text: line.text.trim(),
-			normalized,
-			sectionType: NORMALIZED_HEADINGS.get(normalized) ?? null,
-			page: line.page,
-			lineIndex,
-			fontSize: line.fontSize,
-			distinguished: isDistinguished(line, document),
-		});
+			headings.push({
+				text: segment.text.trim(),
+				normalized,
+				sectionType: NORMALIZED_HEADINGS.get(normalized) ?? null,
+				page: segment.page,
+				lineIndex,
+				fontSize: segment.fontSize,
+				distinguished: isDistinguished(segment, document),
+			});
+		}
 	});
 
 	return headings;

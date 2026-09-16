@@ -15,6 +15,10 @@ const MIN_LINE_TOLERANCE_PT = 2;
 /** Horizontal gap, as a share of font size, above which two spans need a space between them. */
 const SPACE_GAP_RATIO = 0.25;
 
+/** Horizontal gap, as a share of font size, above which two spans sit in different columns. */
+const COLUMN_GAP_RATIO = 2.5;
+const MIN_COLUMN_GAP_PT = 20;
+
 const HISTOGRAM_BIN_PT = 2;
 const ROW_BIN_PT = 6;
 const MIN_GUTTER_WIDTH_PT = 14;
@@ -283,6 +287,34 @@ function findGutter(spans: readonly TextSpan[], page: RawPage): ColumnGutter | n
 	const splitRatio = sided === 0 ? 0 : Math.min(leftSpans, rightSpans) / sided;
 
 	return { x, width, coverage, splitRatio };
+}
+
+/**
+ * Splits a clustered line at column-sized gaps between its spans.
+ *
+ * Baseline clustering joins every span that shares a baseline however far apart the spans sit,
+ * which is what a heading set in its own narrow column looks like beside the section's first
+ * content line ("Profiles GitHub"). The pieces are still analysed as one line everywhere else;
+ * this view exists for consumers that need the column-separated parts.
+ */
+export function columnSegments(line: TextLine): TextLine[] {
+	const [first, ...rest] = line.spans;
+	if (!first || rest.length === 0) return [line];
+
+	const groups: TextSpan[][] = [[first]];
+	let previous = first;
+	for (const span of rest) {
+		const gap = span.x - (previous.x + previous.width);
+		const threshold = Math.max(MIN_COLUMN_GAP_PT, COLUMN_GAP_RATIO * Math.max(previous.fontSize, span.fontSize, 1));
+
+		if (gap > threshold) groups.push([span]);
+		else groups[groups.length - 1]?.push(span);
+		previous = span;
+	}
+
+	if (groups.length === 1) return [line];
+
+	return groups.map((group) => toLine(group, line.page));
 }
 
 /**
