@@ -7,6 +7,7 @@ import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { Pool } from "pg";
 import { env } from "@reactive-resume/env/server";
 import { getLocalDataDirectory } from "@reactive-resume/utils/monorepo.node";
+import { verifyMigratedSchema } from "./schema-check";
 
 function resolveFromCurrentModule(relativePath: string) {
 	return fileURLToPath(new URL(relativePath, import.meta.url));
@@ -33,6 +34,7 @@ async function runDatabaseMigrations() {
 	try {
 		await migrate(db, { migrationsFolder: resolveWorkspaceFolder("migrations") });
 		console.info("Database migrations completed");
+		await verifyMigratedSchema(pool);
 	} catch (error) {
 		console.error("Database migrations failed", { error });
 		throw error;
