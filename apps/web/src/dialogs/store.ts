@@ -40,8 +40,11 @@ export const useDialogStore = create<DialogStore>((set) => ({
 			onBeforeClose: null,
 		}),
 	closeDialog: () => {
+		const closingDialog = useDialogStore.getState().activeDialog;
 		set({ open: false });
 		setTimeout(() => {
+			const state = useDialogStore.getState();
+			if (state.open || state.activeDialog !== closingDialog) return;
 			set({ activeDialog: null, onBeforeClose: null });
 		}, 300);
 	},

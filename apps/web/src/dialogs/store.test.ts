@@ -63,6 +63,29 @@ describe("useDialogStore", () => {
 			vi.advanceTimersByTime(300);
 			expect(useDialogStore.getState().activeDialog).toBeNull();
 		});
+
+		it.each([false, true])("preserves a replacement dialog and its own closing delay (closing=%s)", (closing) => {
+			useDialogStore.getState().openDialog("api-key.create", undefined);
+			useDialogStore.getState().closeDialog();
+			vi.advanceTimersByTime(100);
+
+			useDialogStore.getState().openDialog("resume.create", undefined);
+			const onBeforeClose = () => false;
+			useDialogStore.getState().setOnBeforeClose(onBeforeClose);
+			if (closing) useDialogStore.getState().closeDialog();
+			vi.advanceTimersByTime(200);
+
+			expect(useDialogStore.getState()).toMatchObject({
+				open: !closing,
+				activeDialog: { type: "resume.create" },
+				onBeforeClose,
+			});
+
+			if (!closing) useDialogStore.getState().closeDialog();
+			vi.advanceTimersByTime(300);
+			expect(useDialogStore.getState().activeDialog).toBeNull();
+			expect(useDialogStore.getState().onBeforeClose).toBeNull();
+		});
 	});
 
 	describe("onOpenChange", () => {
