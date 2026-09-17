@@ -4,6 +4,40 @@ description: "Release notes for Reactive Resume covering new features, resume bu
 rss: true
 ---
 
+<Update label="v5.3.1" description="17th September 2026">
+## Highlights
+
+- **A smoother dashboard.** Searching resumes and applications no longer triggers repeated navigation and session requests as you type. Resume thumbnails are cached so returning to the dashboard avoids rendering unchanged previews again. Thanks to [@emanuelet](https://github.com/emanuelet). [2a2d08a8d](https://github.com/reactive-resume/reactive-resume/commit/2a2d08a8d), [b42eb6ec0](https://github.com/reactive-resume/reactive-resume/commit/b42eb6ec0), [232f48578](https://github.com/reactive-resume/reactive-resume/commit/232f48578)
+- **Manage your cover-letter library through MCP.** Connected assistants can now create, read, update, duplicate, delete, import, and export independent cover letters, refresh their styling from a resume, or copy an embedded letter into the library. Revision checks protect newer edits from being overwritten. Thanks to [@emanuelet](https://github.com/emanuelet). [e6a6bf0e6](https://github.com/reactive-resume/reactive-resume/commit/e6a6bf0e6)
+- **Explore the redesigned homepage.** Try interactive resume, export, and ATS previews, browse templates, and discover supported languages before opening the builder. [6416da28a](https://github.com/reactive-resume/reactive-resume/commit/6416da28a)
+
+## PDF Export & Templates
+
+- Fixed list indentation when an item continues onto another page, including nested lists and numbered lists with wider markers. Thanks to [@santhiprakash](https://github.com/santhiprakash). [51ac77295](https://github.com/reactive-resume/reactive-resume/commit/51ac77295)
+- Fixed Lapras section headings overlapping the section above them when using the default styles. Thanks to [@diego-vega-centeno](https://github.com/diego-vega-centeno). [c0c658c00](https://github.com/reactive-resume/reactive-resume/commit/c0c658c00)
+
+## Integrations & Authentication
+
+- **Changed cover-letter REST endpoints.** REST clients must migrate from `/api/openapi/coverLetters/*` to `/api/openapi/cover-letters` resource paths and the documented HTTP methods; the old URLs now return `404`. Follow the [endpoint migration guide](https://docs.rxresu.me/guides/using-the-api#cover-letter-rest-endpoint-migration) and regenerate SDKs from your instance's OpenAPI spec. Existing `/api/rpc` clients are unaffected. Thanks to [@emanuelet](https://github.com/emanuelet). [fbf1f8fba](https://github.com/reactive-resume/reactive-resume/commit/fbf1f8fba)
+- Fixed OAuth registration for MCP clients that request client-secret authentication, allowing integrations such as Composio to complete their token exchange. [3fc0896a3](https://github.com/reactive-resume/reactive-resume/commit/3fc0896a3)
+- Improved MCP tool descriptions and action hints so connected clients can identify operations that replace content, change public access, or send data to a configured provider. [81341a107](https://github.com/reactive-resume/reactive-resume/commit/81341a107)
+
+## Languages & Sharing
+
+- Kept AI provider brand names recognizable across all interface languages instead of translating them as ordinary words. Thanks to [@LystranG](https://github.com/LystranG). [3e129c9d9](https://github.com/reactive-resume/reactive-resume/commit/3e129c9d9)
+- Updated translations and filled untranslated homepage text across 16 locales. [15d6443b4](https://github.com/reactive-resume/reactive-resume/commit/15d6443b4), [6416da28a](https://github.com/reactive-resume/reactive-resume/commit/6416da28a)
+- Fixed missing URL metadata in social previews and added consistent title and description metadata for the ATS checker. [de9a6dcfa](https://github.com/reactive-resume/reactive-resume/commit/de9a6dcfa)
+
+## Self-Hosting & Maintenance
+
+- **Moved the repository and GHCR images.** Source code now lives at [reactive-resume/reactive-resume](https://github.com/reactive-resume/reactive-resume). If you pull from GHCR, update your image reference to `ghcr.io/reactive-resume/reactive-resume:latest`; Docker Hub remains `amruthpillai/reactive-resume:latest`. [f89acb436](https://github.com/reactive-resume/reactive-resume/commit/f89acb436), [e3717251c](https://github.com/reactive-resume/reactive-resume/commit/e3717251c)
+- Added a [Kubernetes self-hosting guide](https://docs.rxresu.me/self-hosting/kubernetes) covering PostgreSQL, persistent uploads, secrets, ingress, health checks, and upgrade verification. Thanks to [@PerryLink](https://github.com/PerryLink). [3c5908819](https://github.com/reactive-resume/reactive-resume/commit/3c5908819)
+- Published nightly container images for both AMD64 and ARM64 and added anonymous-pull checks for both registries before production deployment. [9699dbf2d](https://github.com/reactive-resume/reactive-resume/commit/9699dbf2d), [30b21fa1e](https://github.com/reactive-resume/reactive-resume/commit/30b21fa1e)
+- Updated dependencies across the application, integrations, and build tooling. [607eafd3e](https://github.com/reactive-resume/reactive-resume/commit/607eafd3e), [dc8f9787a](https://github.com/reactive-resume/reactive-resume/commit/dc8f9787a), [96c7142fb](https://github.com/reactive-resume/reactive-resume/commit/96c7142fb)
+
+**Full Changelog**: [v5.3.0...v5.3.1](https://github.com/reactive-resume/reactive-resume/compare/v5.3.0...v5.3.1)
+</Update>
+
 <Update label="v5.3.0" description="6th September 2026">
 ## Highlights
 
