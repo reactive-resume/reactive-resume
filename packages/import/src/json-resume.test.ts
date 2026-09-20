@@ -13,6 +13,21 @@ describe("parseJSONResume", () => {
 		expect(() => parseJSONResume(invalid)).toThrow();
 	});
 
+	it.each(["2024-00", "2024-13", "2024-19", "2024-01-00", "2024-01-32", "2024-1", "2024-1-5"])(
+		"rejects the out-of-range date %s instead of importing it as an 'undefined' month",
+		(startDate) => {
+			const json = JSON.stringify({ work: [{ name: "Acme", position: "Engineer", startDate }] });
+			expect(() => parseJSONResume(json)).toThrow(/Must be a valid ISO 8601 date/);
+		},
+	);
+
+	it.each(["2024", "2024-01", "2024-12", "2024-02-29", "1999-12-31"])(
+		"still accepts the valid date %s",
+		(startDate) => {
+			const json = JSON.stringify({ work: [{ name: "Acme", position: "Engineer", startDate }] });
+			expect(() => parseJSONResume(json)).not.toThrow();
+		},
+	);
 	it("imports an empty JSON Resume into a baseline ResumeData", () => {
 		const result = parseJSONResume("{}");
 		// Defaults preserve a name field even when unset by input.
