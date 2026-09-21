@@ -334,12 +334,18 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 							<FormLabel>
 								<Trans>File</Trans>
 							</FormLabel>
-							<FormControl>
-								<Input type="file" className="hidden" ref={inputRef} onChange={onUploadFile} />
+							<FormControl className="group/upload relative">
+								<Input
+									type="file"
+									className="absolute inset-0 z-1 h-full w-full cursor-pointer opacity-0"
+									tabIndex={-1}
+									ref={inputRef}
+									onChange={onUploadFile}
+								/>
 
 								<Button
 									variant="outline"
-									className="h-auto w-full flex-col border-dashed py-8 font-normal"
+									className="h-auto w-full flex-col border-dashed py-8 font-normal group-hover/upload:bg-muted group-hover/upload:text-foreground"
 									onClick={onSelectFile}
 								>
 									{field.state.value ? (
