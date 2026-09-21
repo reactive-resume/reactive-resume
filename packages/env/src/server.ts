@@ -28,6 +28,7 @@ export const env = createEnv({
 
 		// Database
 		DATABASE_URL: z.url({ protocol: /postgres(ql)?/ }),
+		STRICT_SCHEMA_CHECK: z.stringbool().default(false),
 
 		// Authentication
 		AUTH_SECRET: z.string().min(1),

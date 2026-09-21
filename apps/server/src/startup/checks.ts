@@ -7,6 +7,7 @@ import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { Pool } from "pg";
 import { env } from "@reactive-resume/env/server";
 import { getLocalDataDirectory } from "@reactive-resume/utils/monorepo.node";
+import { verifyMigratedSchema } from "./schema-check";
 
 function resolveFromCurrentModule(relativePath: string) {
 	return fileURLToPath(new URL(relativePath, import.meta.url));
@@ -31,11 +32,26 @@ async function runDatabaseMigrations() {
 	const db = drizzle({ client: pool });
 
 	try {
-		await migrate(db, { migrationsFolder: resolveWorkspaceFolder("migrations") });
-		console.info("Database migrations completed");
-	} catch (error) {
-		console.error("Database migrations failed", { error });
-		throw error;
+		try {
+			await migrate(db, { migrationsFolder: resolveWorkspaceFolder("migrations") });
+			console.info("Database migrations completed");
+		} catch (error) {
+			console.error("Database migrations failed", { error });
+			throw error;
+		}
+
+		// Post-migration verification is not a migration failure, so it gets its own log
+		// message. A drifted schema still lets the server boot; STRICT_SCHEMA_CHECK=true
+		// makes the drift fatal instead.
+		try {
+			await verifyMigratedSchema(pool);
+		} catch (error) {
+			console.error("Database schema verification failed", { error });
+			if (env.STRICT_SCHEMA_CHECK) throw error;
+			console.error(
+				"Continuing with a drifted database schema; set STRICT_SCHEMA_CHECK=true to refuse startup instead.",
+			);
+		}
 	} finally {
 		await pool.end();
 	}

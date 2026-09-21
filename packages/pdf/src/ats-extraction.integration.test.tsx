@@ -130,6 +130,24 @@ describe("a resume rendered by this app", () => {
 		expect(failed).not.toContain("HEADINGS_NOT_DISTINGUISHED");
 	});
 
+	/**
+	 * Regression guard for #3519: bronzor sets each section title in a narrow column beside
+	 * the section's content, and baseline clustering merges it into the first content line.
+	 * The heading is a separate run in its own column, so the check has to find it there
+	 * rather than report the whole resume as unsegmented.
+	 */
+	it("finds the conventional sections in a bronzor export", { timeout: 60_000 }, async () => {
+		const { report } = await analyze(await renderResume(sampleResumeData, "bronzor"));
+		const failed = failedCodes(report);
+
+		expect(failed).not.toContain("NO_RECOGNIZED_HEADINGS");
+		expect(failed).not.toContain("FEW_SECTION_HEADINGS");
+		expect(failed).not.toContain("NO_EXPERIENCE_SECTION");
+		expect(failed).not.toContain("NO_EDUCATION_SECTION");
+		expect(failed).not.toContain("NO_SKILLS_SECTION");
+		expect(failed).not.toContain("NO_SUMMARY_SECTION");
+	});
+
 	it("warns about a two-column template's gutter without capping its score", { timeout: 60_000 }, async () => {
 		const { report } = await analyze(await renderResume(sampleResumeData, "gengar"));
 

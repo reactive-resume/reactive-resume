@@ -271,6 +271,42 @@ describe("section checks", () => {
 
 		expect(codesOf(thin)).toContain("VERY_SHORT_DOCUMENT");
 	});
+
+	/**
+	 * The bronzor template sets each section title in a narrow column beside the section's
+	 * content, so baseline clustering merges the heading into the first content line
+	 * ("Profiles GitHub"). The heading is still a separate run in its own column and the
+	 * check has to find it there.
+	 */
+	it("finds headings set in a side column beside the first line of content", () => {
+		const bronzorLike = makeRawExtraction({
+			lines: [
+				{ text: "Ada Lovelace", size: 18 },
+				"ada@example.com · +44 20 7946 0100 · London, UK",
+				{ text: "Profiles", x: 33, y: 200, size: 9, fontRef: "g_d0_f2" },
+				{ text: "github.com/adalovelace", x: 201, y: 200 },
+				{ text: "Experience", x: 33, y: 250, size: 9, fontRef: "g_d0_f2" },
+				{ text: "Principal Engineer | Analytical Engines, London", x: 201, y: 250 },
+				{ text: "Jan 2020 - Present", x: 201, y: 265 },
+				{ text: "• Delivered a note-taking programme that cut calculation time by 40%.", x: 201, y: 280 },
+				{ text: "Education", x: 33, y: 320, size: 9, fontRef: "g_d0_f2" },
+				{ text: "University of London | Mathematics", x: 201, y: 320 },
+				{ text: "Sep 2011 - Jun 2015", x: 201, y: 335 },
+				{ text: "Skills", x: 33, y: 370, size: 9, fontRef: "g_d0_f2" },
+				{ text: "Algorithms, numerical analysis, technical writing", x: 201, y: 370 },
+				{ text: "Summary", x: 33, y: 400, size: 9, fontRef: "g_d0_f2" },
+				{ text: "Analytical engineer who builds calculation systems.", x: 201, y: 400 },
+			],
+		});
+
+		const result = report(bronzorLike);
+
+		expect(statusOf(result, "NO_RECOGNIZED_HEADINGS")).toBe("pass");
+		expect(statusOf(result, "NO_EXPERIENCE_SECTION")).toBe("pass");
+		expect(statusOf(result, "NO_EDUCATION_SECTION")).toBe("pass");
+		expect(statusOf(result, "NO_SKILLS_SECTION")).toBe("pass");
+		expect(statusOf(result, "NO_SUMMARY_SECTION")).toBe("pass");
+	});
 });
 
 describe("contact checks", () => {
