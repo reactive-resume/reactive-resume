@@ -24,7 +24,7 @@ env:
 
 jobs:
   mode:
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.CI_RUNNER_X64 || 'ubuntu-latest' }}
 
     outputs:
       nightly: ${{ steps.mode.outputs.nightly }}
@@ -61,10 +61,10 @@ jobs:
       matrix:
         include:
           - platform: linux/amd64
-            runner: ubuntu-latest
+            runner: ${{ vars.CI_RUNNER_X64 || 'ubuntu-latest' }}
             arch: amd64
           - platform: linux/arm64
-            runner: ubuntu-24.04-arm
+            runner: ${{ vars.CI_RUNNER_ARM64 || 'ubuntu-24.04-arm' }}
             arch: arm64
 
     runs-on: ${{ matrix.runner }}
@@ -171,7 +171,7 @@ jobs:
       - mode
       - build
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.CI_RUNNER_X64 || 'ubuntu-latest' }}
 
     permissions:
       contents: read

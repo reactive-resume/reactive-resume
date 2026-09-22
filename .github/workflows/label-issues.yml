@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   label:
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.CI_RUNNER_X64 || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout Repository
