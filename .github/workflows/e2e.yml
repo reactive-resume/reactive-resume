@@ -20,7 +20,7 @@ env:
 
 jobs:
   e2e:
-    runs-on: blacksmith-32vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     timeout-minutes: 30
 
     services:
@@ -58,12 +58,7 @@ jobs:
 
       - name: Install Playwright Browser
         timeout-minutes: 10
-        run: |
-          # The runner's Ubuntu archive/security mirrors time out during dependency installation.
-          printf '%s\n' 'https://mirrors.edge.kernel.org/ubuntu/' | sudo tee /etc/apt/blacksmith-ubuntu-mirrors.txt > /dev/null
-          sudo find /etc/apt -type f \( -name '*.list' -o -name '*.sources' \) \
-            -exec sed -i -E 's#https?://(archive|us\.archive|security)\.ubuntu\.com/ubuntu#https://mirrors.edge.kernel.org/ubuntu#g' {} +
-          pnpm exec playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Generate Test Secrets
         run: |
