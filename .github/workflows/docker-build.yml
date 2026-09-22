@@ -83,7 +83,8 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v4
 
-      - name: Determine registries
+      - &registries
+        name: Determine registries
         id: registries
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -173,6 +174,10 @@ jobs:
     timeout-minutes: 30
     runs-on: ${{ vars.CI_RUNNER_X64 || 'ubuntu-latest' }}
 
+    env:
+      DEPLOY: ${{ secrets.SSH_KEY != '' && secrets.SSH_HOST != '' && secrets.SSH_USER != '' }}
+      PURGE_CLOUDFLARE: ${{ secrets.CLOUDFLARE_ZONE_ID != '' && secrets.CLOUDFLARE_API_TOKEN != '' }}
+
     permissions:
       contents: read
       packages: write
@@ -200,31 +205,7 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v4
 
-      - name: Determine registries
-        id: registries
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          set -euo pipefail
-
-          dockerhub=false
-          ghcr_image="${GHCR_IMAGE,,}"
-          docker_image="${DOCKER_IMAGE,,}"
-          images="$ghcr_image"
-          if [[ -n "$DOCKER_USERNAME" && -n "$DOCKER_PASSWORD" ]]; then
-            dockerhub=true
-            images="${images}"$'\n'"$docker_image"
-          fi
-
-          {
-            echo "ghcr_image=$ghcr_image"
-            echo "docker_image=$docker_image"
-            echo "images<<EOF"
-            echo "$images"
-            echo "EOF"
-            echo "dockerhub=$dockerhub"
-          } >> "$GITHUB_OUTPUT"
+      - *registries
 
       - name: Login to Docker Hub
         if: ${{ steps.registries.outputs.dockerhub == 'true' }}
@@ -339,32 +320,8 @@ jobs:
             done
           done
 
-      - name: Determine release integrations
-        id: release-integrations
-        env:
-          SSH_KEY: ${{ secrets.SSH_KEY }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: |
-          set -euo pipefail
-
-          deploy=false
-          if [[ -n "$SSH_KEY" && -n "$SSH_HOST" && -n "$SSH_USER" ]]; then
-            deploy=true
-          fi
-
-          purge_cloudflare=false
-          if [[ -n "$CLOUDFLARE_ZONE_ID" && -n "$CLOUDFLARE_API_TOKEN" ]]; then
-            purge_cloudflare=true
-          fi
-
-          echo "deploy=$deploy" >> "$GITHUB_OUTPUT"
-          echo "purge_cloudflare=$purge_cloudflare" >> "$GITHUB_OUTPUT"
-
       - name: Redeploy Stack
-        if: ${{ needs.mode.outputs.release == 'true' && steps.release-integrations.outputs.deploy == 'true' }}
+        if: ${{ needs.mode.outputs.release == 'true' && env.DEPLOY == 'true' }}
         uses: appleboy/ssh-action@v1
         with:
           key: ${{ secrets.SSH_KEY }}
@@ -375,7 +332,7 @@ jobs:
             ./manage_stack.sh up reactive_resume
 
       - name: Purge Cloudflare cache
-        if: ${{ needs.mode.outputs.release == 'true' && steps.release-integrations.outputs.purge_cloudflare == 'true' }}
+        if: ${{ needs.mode.outputs.release == 'true' && env.PURGE_CLOUDFLARE == 'true' }}
         env:
           CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

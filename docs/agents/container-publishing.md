@@ -6,31 +6,38 @@ The repository is `reactive-resume/reactive-resume`. Docker Hub remains
 
 ## Builds and release safety
 
-`.github/workflows/docker-build.yml` builds AMD64 and ARM64 on matching native Blacksmith
-32-vCPU runners. Blacksmith's persistent Docker builder caches layers and cache mounts;
-the architecture-specific cache keys keep the two builders separate.
+`.github/workflows/docker-build.yml` builds AMD64 and ARM64 on matching native runners.
+Repository variables `CI_RUNNER_X64` and `CI_RUNNER_ARM64` select the runner labels;
+they default to `ubuntu-latest` and `ubuntu-24.04-arm`, respectively. Other CI workflows
+also use `CI_RUNNER_X64`. Docker Buildx shares its local cache between steps within a job;
+no cache is persisted between workflow runs.
 
 | Trigger | Published aliases | Production deployment |
 | --- | --- | --- |
 | Push to `main` | `sha-*`, `nightly`, timestamped nightly | No |
 | Manual dispatch, default `release=false` | `sha-*`, `canary-<run-id>-<attempt>` | No |
-| Push of a `v*` tag or explicit `release=true` | `sha-*`, `latest`, version/major/minor | Yes: SSH redeploy and Cloudflare purge |
+| Push of a `v*` tag or explicit `release=true` | `sha-*`, `latest`, version/major/minor | When configured: SSH redeploy and Cloudflare purge |
 
-Manual `release=true` republishes the version already in `package.json` and redeploys
-production. It does not create a Git tag, GitHub release, or version bump. Use this for
-an approved current-version rebuild; it replaces the existing stable image aliases.
+Manual `release=true` republishes the version already in `package.json` and runs configured
+production integrations. SSH redeployment requires `SSH_KEY`, `SSH_HOST`, and `SSH_USER`;
+Cloudflare purging requires `CLOUDFLARE_ZONE_ID` and `CLOUDFLARE_API_TOKEN`. Each integration
+is skipped if any of its required secrets is missing. Dispatch does not create a Git tag,
+GitHub release, or version bump. Use this for an approved current-version rebuild;
+it replaces the existing stable image aliases.
 
 Manual canaries first run a cache-only build on each architecture, then publish, merge,
-and sign both registry images. Run one with:
+and sign images in the enabled registries. Run one with:
 
 ```bash
 gh workflow run docker-build.yml --repo reactive-resume/reactive-resume --ref main -f release=false
 ```
 
-Both registries retain SBOMs, maximum provenance, and Cosign signatures. Publishing uses
-`DOCKER_USERNAME` / `DOCKER_PASSWORD` for Docker Hub and the destination repository's
-`GITHUB_TOKEN` with `packages: write` for GHCR. New GHCR packages need public visibility,
-repository linkage, and Actions access before consumers can pull anonymously.
+Published images retain SBOMs, maximum provenance, and Cosign signatures. GHCR always uses
+the destination repository's `GITHUB_TOKEN` with `packages: write`. Docker Hub publishing
+is enabled only when both `DOCKER_USERNAME` and `DOCKER_PASSWORD` secrets are present;
+otherwise login, publishing, signing, and verification target GHCR only. Image references
+are normalized to lowercase. New GHCR packages need public visibility, repository linkage,
+and Actions access before consumers can pull anonymously.
 
 ## Verification and historical images
 
@@ -62,7 +69,7 @@ rm -r "$registry_config"
 
 On September 11, 2026, `latest`, `v5`, `v5.3`, and `v5.3.0` were copied to the then-current
 public GHCR package, `ghcr.io/reactive-resume/app`. Both architectures were pulled anonymously; the original Cosign signature,
-SBOMs, provenance, and image digest were verified. The signed Blacksmith canary
+SBOMs, provenance, and image digest were verified. The signed canary
 [`canary-34582818410-1`](https://github.com/reactive-resume/reactive-resume/actions/runs/34582818410)
 also passed on both registries without deploying production.
 
@@ -108,6 +115,5 @@ OIDC trust policies; the repository URL alone does not describe the subject.
 Track availability and supported copied tags in [migration issue #3503](https://github.com/reactive-resume/reactive-resume/issues/3503).
 No database reset, volume deletion, or resume-data migration is required.
 
-References: [Blacksmith Docker caching](https://docs.blacksmith.sh/blacksmith-caching/docker-builds),
-[GitHub package permissions](https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages),
+References: [GitHub package permissions](https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages),
 [Cosign verification](https://docs.sigstore.dev/cosign/verifying/verify/).
