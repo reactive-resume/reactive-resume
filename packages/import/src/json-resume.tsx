@@ -169,9 +169,10 @@ type JSONResume = z.infer<typeof jsonResumeSchema>;
 
 // ponytail: stateless two-method class → two plain functions
 function convertJSONResume(jsonResume: JSONResume): ResumeData {
-	const result: ResumeData = {
-		...defaultResumeData,
-	};
+	// A shallow spread would leave `sections`/`picture`/etc. as the same object as
+	// defaultResumeData; every `result.sections.x = ...` below would then mutate that shared
+	// singleton and leak into the next unrelated import call. Clone it instead.
+	const result: ResumeData = structuredClone(defaultResumeData);
 
 	// Map basics
 	if (jsonResume.basics) {
