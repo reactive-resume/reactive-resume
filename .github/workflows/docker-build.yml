@@ -92,13 +92,17 @@ jobs:
           set -euo pipefail
 
           dockerhub=false
-          images="$GHCR_IMAGE"
+          ghcr_image="${GHCR_IMAGE,,}"
+          docker_image="${DOCKER_IMAGE,,}"
+          images="$ghcr_image"
           if [[ -n "$DOCKER_USERNAME" && -n "$DOCKER_PASSWORD" ]]; then
             dockerhub=true
-            images="${images}"$'\n'"$DOCKER_IMAGE"
+            images="${images}"$'\n'"$docker_image"
           fi
 
           {
+            echo "ghcr_image=$ghcr_image"
+            echo "docker_image=$docker_image"
             echo "images<<EOF"
             echo "$images"
             echo "EOF"
@@ -205,13 +209,17 @@ jobs:
           set -euo pipefail
 
           dockerhub=false
-          images="$GHCR_IMAGE"
+          ghcr_image="${GHCR_IMAGE,,}"
+          docker_image="${DOCKER_IMAGE,,}"
+          images="$ghcr_image"
           if [[ -n "$DOCKER_USERNAME" && -n "$DOCKER_PASSWORD" ]]; then
             dockerhub=true
-            images="${images}"$'\n'"$DOCKER_IMAGE"
+            images="${images}"$'\n'"$docker_image"
           fi
 
           {
+            echo "ghcr_image=$ghcr_image"
+            echo "docker_image=$docker_image"
             echo "images<<EOF"
             echo "$images"
             echo "EOF"
@@ -281,15 +289,15 @@ jobs:
             --annotation "index:org.opencontainers.image.documentation=https://docs.rxresu.me" \
             --annotation "index:org.opencontainers.image.source=https://github.com/${{ github.repository }}" \
             --annotation "index:org.opencontainers.image.version=${{ steps.version.outputs.version }}" \
-            $(printf '${{ env.GHCR_IMAGE }}@sha256:%s ' *)
+            $(printf '${{ steps.registries.outputs.ghcr_image }}@sha256:%s ' *)
 
           # Get the digest of the multi-arch manifest
-          GHCR_DIGEST=$(docker buildx imagetools inspect ${{ env.GHCR_IMAGE }}:${FINAL_TAG} --format '{{json .Manifest.Digest}}' | tr -d '"')
+          GHCR_DIGEST=$(docker buildx imagetools inspect ${{ steps.registries.outputs.ghcr_image }}:${FINAL_TAG} --format '{{json .Manifest.Digest}}' | tr -d '"')
           echo "final_tag=$FINAL_TAG" >> "$GITHUB_OUTPUT"
           echo "ghcr_digest=$GHCR_DIGEST" >> "$GITHUB_OUTPUT"
 
           if [[ "${{ steps.registries.outputs.dockerhub }}" == "true" ]]; then
-            DOCKER_DIGEST=$(docker buildx imagetools inspect ${{ env.DOCKER_IMAGE }}:${FINAL_TAG} --format '{{json .Manifest.Digest}}' | tr -d '"')
+            DOCKER_DIGEST=$(docker buildx imagetools inspect ${{ steps.registries.outputs.docker_image }}:${FINAL_TAG} --format '{{json .Manifest.Digest}}' | tr -d '"')
             echo "docker_digest=$DOCKER_DIGEST" >> "$GITHUB_OUTPUT"
           fi
 
@@ -299,18 +307,18 @@ jobs:
       - name: Sign images with Cosign
         run: |
           # Sign GHCR image
-          cosign sign --yes ${{ env.GHCR_IMAGE }}@${{ steps.manifest.outputs.ghcr_digest }}
+          cosign sign --yes ${{ steps.registries.outputs.ghcr_image }}@${{ steps.manifest.outputs.ghcr_digest }}
 
           if [[ "${{ steps.registries.outputs.dockerhub }}" == "true" ]]; then
             # Sign Docker Hub image
-            cosign sign --yes ${{ env.DOCKER_IMAGE }}@${{ steps.manifest.outputs.docker_digest }}
+            cosign sign --yes ${{ steps.registries.outputs.docker_image }}@${{ steps.manifest.outputs.docker_digest }}
           fi
 
       - name: Inspect image
         run: |
-          docker buildx imagetools inspect ${{ env.GHCR_IMAGE }}:${{ steps.manifest.outputs.final_tag }}
+          docker buildx imagetools inspect ${{ steps.registries.outputs.ghcr_image }}:${{ steps.manifest.outputs.final_tag }}
           if [[ "${{ steps.registries.outputs.dockerhub }}" == "true" ]]; then
-            docker buildx imagetools inspect ${{ env.DOCKER_IMAGE }}:${{ steps.manifest.outputs.final_tag }}
+            docker buildx imagetools inspect ${{ steps.registries.outputs.docker_image }}:${{ steps.manifest.outputs.final_tag }}
           fi
 
       - name: Verify anonymous pulls on both architectures
@@ -320,9 +328,9 @@ jobs:
           trap 'rm -rf "$registry_config"' EXIT
           # Prevent Docker from discovering a system credential helper.
           printf '%s\n' '{"auths":{"ghcr.io":{},"https://index.docker.io/v1/":{}}}' > "$registry_config/config.json"
-          images=("$GHCR_IMAGE")
+          images=("${{ steps.registries.outputs.ghcr_image }}")
           if [[ "${{ steps.registries.outputs.dockerhub }}" == "true" ]]; then
-            images+=("$DOCKER_IMAGE")
+            images+=("${{ steps.registries.outputs.docker_image }}")
           fi
           for image in "${images[@]}"; do
             for platform in linux/amd64 linux/arm64; do
