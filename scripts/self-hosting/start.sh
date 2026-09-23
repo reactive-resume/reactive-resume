@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
 
 APP_URL="${APP_URL:-http://localhost:3000}"
-TIMEOUT_SECONDS=60
+TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-180}"
 
 cd "$PROJECT_ROOT"
 
@@ -26,41 +26,8 @@ fi
 echo "✔ Docker and Docker Compose are available."
 echo
 
-docker compose up -d
+docker compose up -d --wait --wait-timeout "$TIMEOUT_SECONDS"
 
-echo
-echo "⏳ Waiting for Reactive Resume to become ready..."
-
-start_time="$SECONDS"
-
-while true; do
-	container_id="$(docker compose ps -q reactive_resume)"
-
-	if [ -n "$container_id" ]; then
-		health_status="$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "$container_id")"
-
-		if [ "$health_status" = "healthy" ]; then
-			break
-		fi
-	fi
-
-	if (( SECONDS - start_time >= TIMEOUT_SECONDS )); then
-		echo
-		echo "❌ Reactive Resume did not become ready within ${TIMEOUT_SECONDS} seconds."
-		echo
-		echo "Docker Compose status:"
-		docker compose ps
-		echo
-		echo "Reactive Resume logs:"
-		docker compose logs --tail=50 reactive_resume
-		exit 1
-	fi
-
-	printf "."
-	sleep 2
-done
-
-echo
 echo
 echo "✔ Reactive Resume is ready!"
 echo
