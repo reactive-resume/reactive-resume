@@ -66,6 +66,9 @@ jobs:
           const config = JSON.parse(readFileSync('.vercel/output/functions/api/index.func/.vc-config.json'));
           assert.equal(config.runtime, 'nodejs24.x');
           assert.equal(config.maxDuration, 300);
+          const tracedFiles = Object.keys(config.filePathMap ?? {});
+          assert.ok(tracedFiles.some((path) => path.endsWith('/pdfkit/js/standard-fonts/Helvetica.cjs')));
+          assert.ok(tracedFiles.some((path) => path.endsWith('/pdfkit/js/data/Helvetica.afm')));
           for (const name of readdirSync('apps/server/dist')) {
             if (name.endsWith('.mjs') && !['index.mjs', 'prepare-deployment.mjs'].includes(name)) {
               await import(`./apps/server/dist/${name}`);

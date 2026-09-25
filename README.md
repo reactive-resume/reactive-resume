@@ -165,7 +165,7 @@ For detailed setup instructions, environment configuration, and self-hosting gui
 
 | Category         | Technology                      |
 | ---------------- | ------------------------------- |
-| Framework        | TanStack Start (React 19, Vite) |
+| Framework        | TanStack Router (React 19, Vite) |
 | Runtime          | Node.js                         |
 | Language         | TypeScript                      |
 | Database         | PostgreSQL with Drizzle ORM     |
@@ -189,7 +189,13 @@ The full documentation lives at [docs.rxresu.me](https://docs.rxresu.me):
 
 ## Self-Hosting
 
-Reactive Resume can be self-hosted using Docker. The stack includes:
+Reactive Resume supports Docker and Vercel Hobby.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Freactive-resume%2Freactive-resume%2Ftree%2Fvercel-docker-deployment&project-name=reactive-resume&repository-name=reactive-resume&env=AUTH_SECRET%2CENCRYPTION_SECRET%2CCRON_SECRET&envDescription=Generate+three+independent+secrets+with+openssl+rand+-hex+32.+Keep+these+values+across+deployments.&envLink=https%3A%2F%2Fgithub.com%2Freactive-resume%2Freactive-resume%2Fblob%2Fvercel-docker-deployment%2Fdocs%2Fself-hosting%2Fvercel.mdx&stores=%5B%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22integrationSlug%22%3A%22neon%22%2C%22productSlug%22%3A%22neon%22%7D%2C%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22integrationSlug%22%3A%22upstash%22%2C%22productSlug%22%3A%22upstash-kv%22%7D%2C%7B%22type%22%3A%22blob%22%2C%22access%22%3A%22private%22%7D%5D)
+
+Vercel provisions Neon PostgreSQL, private Blob storage, and Upstash Redis through its deployment wizard. Supply three persistent secrets, then deploy. See the [Vercel guide](docs/self-hosting/vercel.mdx) for setup, limits, and optional SMTP/OAuth configuration.
+
+For Docker, the stack includes:
 
 - **PostgreSQL** — Database for storing user data and resumes
 - **SeaweedFS** (optional) — S3-compatible storage for file uploads

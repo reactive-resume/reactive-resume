@@ -478,7 +478,7 @@ If you're using S3-compatible storage, consider enabling versioning on your buck
 
 ## Health checks
 
-Reactive Resume exposes a health check endpoint at `/api/health` that verifies the application and its dependencies. It checks **database** and **storage**; if either is unhealthy, the endpoint returns HTTP `503`.
+Reactive Resume exposes a health check endpoint at `/api/health` that verifies the application and its dependencies. It checks **database**, **storage**, and **Redis** when configured; if a configured dependency is unhealthy, the endpoint returns HTTP `503`.
 
 ### How it works
 
@@ -590,3 +590,9 @@ Restart the application after setting or changing `ROOT_RESUME_ID`. With Docker 
 Keep `APP_URL` set to the public origin and proxy the whole application normally, including API, uploads, fonts, and assets. Root mode uses that configured origin for its canonical URL; it does not infer a domain from request headers. A successful password challenge returns visitors to `/`.
 
 This is a single-resume setting for one self-hosted instance. It does not register custom domains, manage DNS or TLS, or hide the rest of the application. Login and the dashboard remain available at their usual paths.
+
+## AI agent run duration
+
+Each individual agent run has a four-minute execution timeout, reserving up to one minute for saving and cleanup within the shared five-minute budget. This is the same on Docker and Vercel Hobby. Normal answers return as soon as they finish; the limit never applies to an entire conversation. Follow-up questions get a fresh timer. On timeout, completed edits and saved history remain available, and you can ask the agent to continue.
+
+Multiple application instances should share `REDIS_URL` and `DEPLOYMENT_NAMESPACE` for rate limits, resumable streams, cancellation, resume notifications, and view deduplication. Docker without Redis retains its existing core resume features. Private agent attachments still need S3-compatible storage or private Blob; local disk supports ordinary public uploads.

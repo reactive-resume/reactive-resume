@@ -3,7 +3,7 @@ title: "Project architecture"
 description: "How the Reactive Resume monorepo is laid out, the runtime boundaries between the web and server apps, and the package ownership model."
 ---
 
-Reactive Resume is a pnpm/Turborepo monorepo. The product runs as one deployed Node.js process, while the source is split into a full-stack web app, a server adapter, and focused internal packages.
+Reactive Resume is a pnpm/Turborepo monorepo. Docker runs one Node.js process. Vercel serves static assets through its CDN and uses a Node.js Function for the same Hono application. Both targets share the web app, API, authentication, renderers, and database schema.
 
 Internal packages are source-consumed through their `package.json` export maps. Import package subpaths, not another workspace's private `src` files.
 
@@ -31,11 +31,11 @@ flowchart TD
   Server --> MCP
   API --> PDFServer
   API --> DB["packages/db"]
-  API --> Storage["File system or S3-compatible storage"]
+  API --> Storage["Local disk, S3, or private Vercel Blob"]
   DB --> Postgres["PostgreSQL"]
 ```
 
-`apps/web` owns the TanStack Start experience. `apps/server` owns the production Hono process and mounts RPC, auth, OpenAPI, MCP, static uploads, schema JSON, and the built web app.
+`apps/web` owns the React SPA with TanStack Router and Vite. `apps/server` owns the Hono application and mounts RPC, auth, OpenAPI, MCP, static uploads, schema JSON, and the built web app.
 
 ---
 
@@ -43,7 +43,7 @@ flowchart TD
 
 | Workspace | Ownership |
 | --- | --- |
-| `apps/web` | TanStack Start routes, web features, browser PDF.js preview/viewer code, PWA setup, oRPC browser client |
+| `apps/web` | TanStack Router routes, web features, browser PDF.js preview/viewer code, PWA setup, oRPC browser client |
 | `apps/server` | Hono route composition, production HTTP adapters, MCP transport, OpenAPI/well-known handlers, static file serving, startup checks |
 | `packages/api` | oRPC procedures and feature-owned business behavior under `src/features/*` |
 | `packages/auth` | Better Auth config, auth helpers, and exported auth types |
