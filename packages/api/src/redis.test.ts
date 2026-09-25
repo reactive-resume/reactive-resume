@@ -20,7 +20,7 @@ describe("createRateLimiter", () => {
 		await expect(limiter.limit("visitor")).resolves.toMatchObject({ success: false });
 	});
 
-	it("namespaces the Redis limiter", async () => {
+	it("namespaces the Redis limiter and falls back to memory when Redis fails", async () => {
 		mocks.redis = { eval: mocks.evalScript };
 		const { createRateLimiter } = await import("./redis");
 		mocks.evalScript.mockResolvedValue([1, 5, 4, 1000]);
@@ -34,7 +34,10 @@ describe("createRateLimiter", () => {
 			"60000",
 			"5",
 		);
-		mocks.evalScript.mockRejectedValueOnce(new Error("Redis unavailable"));
-		await expect(limiter.limit("user-1")).rejects.toThrow("Redis unavailable");
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		mocks.evalScript.mockRejectedValue(new Error("Redis unavailable"));
+		const fallback = createRateLimiter("fallback", { maxRequests: 1, window: 60_000 });
+		await expect(fallback.limit("user-1")).resolves.toMatchObject({ success: true });
+		await expect(fallback.limit("user-1")).resolves.toMatchObject({ success: false });
 	});
 });

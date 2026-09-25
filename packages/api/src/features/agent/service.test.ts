@@ -12,7 +12,11 @@ const dbMock = {
 
 const clearActiveAgentRunIfCurrentMock = vi.fn();
 const claimActiveAgentRunMock = vi.fn();
-const cancellationRedisMock = { get: vi.fn(async () => null), set: vi.fn(async () => "OK") };
+const cancellationRedisMock = {
+	get: vi.fn(async () => null),
+	set: vi.fn(async () => "OK"),
+	exists: vi.fn(async () => 1),
+};
 const messagesPersistenceMock = {
 	applyStepToUiMessage: vi.fn((message: unknown) => message),
 	insertDraftAssistantMessage: vi.fn(),
@@ -167,6 +171,7 @@ vi.mock("@orpc/server", () => ({ streamToEventIterator: vi.fn() }));
 beforeEach(() => {
 	cancellationRedisMock.get.mockReset().mockResolvedValue(null);
 	cancellationRedisMock.set.mockReset().mockResolvedValue("OK");
+	cancellationRedisMock.exists.mockReset().mockResolvedValue(1);
 	for (const mock of Object.values(dbMock)) mock.mockReset();
 	dbMock.transaction.mockImplementation(async <T>(callback: (tx: typeof dbMock) => Promise<T>) => callback(dbMock));
 	clearActiveAgentRunIfCurrentMock.mockReset();
@@ -1587,6 +1592,7 @@ describe("agentService.messages.stop", () => {
 
 	it("signals a remote run without releasing its database claim", async () => {
 		dbMock.select.mockImplementation(() => selectLimitResult([buildActiveThread({ activeRunId: "remote-run" })]));
+		vi.mocked((await import("./runs")).reapStaleAgentRun).mockClear();
 		const { agentService } = await import("./service");
 		await agentService.messages.stop({ userId: "user-1", threadId: "thread-1" });
 		expect(cancellationRedisMock.set).toHaveBeenCalledWith(
@@ -1596,6 +1602,26 @@ describe("agentService.messages.stop", () => {
 			900_000,
 		);
 		expect(clearActiveAgentRunIfCurrentMock).not.toHaveBeenCalled();
+		expect(vi.mocked((await import("./runs")).reapStaleAgentRun)).not.toHaveBeenCalled();
+	});
+
+	it("reaps a run whose owner stopped heartbeating", async () => {
+		const activeRunStartedAt = new Date(Date.now() - 60_000);
+		dbMock.select.mockImplementation(() =>
+			selectLimitResult([
+				buildActiveThread({ activeRunId: "dead-run", activeStreamId: "stream-1", activeRunStartedAt }),
+			]),
+		);
+		cancellationRedisMock.exists.mockResolvedValue(0);
+		vi.mocked((await import("./runs")).reapStaleAgentRun).mockClear();
+		const { agentService } = await import("./service");
+		await agentService.messages.stop({ userId: "user-1", threadId: "thread-1" });
+		expect(vi.mocked((await import("./runs")).reapStaleAgentRun)).toHaveBeenCalledExactlyOnceWith({
+			threadId: "thread-1",
+			userId: "user-1",
+			runId: "dead-run",
+			streamId: "stream-1",
+		});
 	});
 });
 

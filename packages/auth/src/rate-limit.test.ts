@@ -39,14 +39,15 @@ describe("authRateLimitStorage", () => {
 		);
 	});
 
-	it("fails closed when Redis fails or returns malformed data", async () => {
+	it("falls back to per-instance limits when Redis fails or returns malformed data", async () => {
+		vi.spyOn(console, "error").mockImplementation(() => {});
 		const { authRateLimitStorage } = await import("./rate-limit");
-		mocks.eval.mockRejectedValueOnce(new Error("connection unavailable")).mockResolvedValueOnce(null);
-		for (let attempt = 0; attempt < 2; attempt++) {
-			expect(await authRateLimitStorage?.consume("sign-in:ip", { window: 10, max: 3 })).toEqual({
-				allowed: false,
-				retryAfter: 10,
-			});
-		}
+		mocks.eval.mockRejectedValue(new Error("connection unavailable"));
+		const rule = { window: 10, max: 2 };
+		expect(await authRateLimitStorage?.consume("sign-in:ip", rule)).toEqual({ allowed: true, retryAfter: null });
+		mocks.eval.mockResolvedValue(null);
+		expect(await authRateLimitStorage?.consume("sign-in:ip", rule)).toEqual({ allowed: true, retryAfter: null });
+		expect(await authRateLimitStorage?.consume("sign-in:ip", rule)).toEqual({ allowed: false, retryAfter: 10 });
+		expect(await authRateLimitStorage?.consume("other:ip", rule)).toEqual({ allowed: true, retryAfter: null });
 	});
 });

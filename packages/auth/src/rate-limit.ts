@@ -14,6 +14,22 @@ return {1, 0}
 
 const redis = getRedis();
 
+// Per-instance fallback while Redis is unreachable: login stays available and still rate limited.
+const localCounts = new Map<string, { count: number; expiresAt: number }>();
+
+function consumeLocally(key: string, rule: { window: number; max: number }) {
+	const now = Date.now();
+	const entry = localCounts.get(key);
+	const active = entry && entry.expiresAt > now ? entry : undefined;
+	if (active && active.count >= rule.max) {
+		return { allowed: false, retryAfter: Math.max(1, Math.ceil((active.expiresAt - now) / 1000)) };
+	}
+	// ponytail: clear-all bound on outage memory; an LRU is unnecessary for a temporary fallback.
+	if (localCounts.size >= 10_000) localCounts.clear();
+	localCounts.set(key, { count: (active?.count ?? 0) + 1, expiresAt: now + rule.window * 1_000 });
+	return { allowed: true, retryAfter: null };
+}
+
 export const authRateLimitStorage: NonNullable<BetterAuthOptions["rateLimit"]>["customStorage"] = redis
 	? {
 			async consume(key, rule) {
@@ -21,8 +37,9 @@ export const authRateLimitStorage: NonNullable<BetterAuthOptions["rateLimit"]>["
 					const result = await redis.eval(consumeScript, 1, redisKey("auth", key), rule.window * 1_000, rule.max);
 					if (!Array.isArray(result) || result.length !== 2) throw new Error("Invalid rate limit result");
 					return { allowed: result[0] === 1, retryAfter: result[0] === 1 ? null : Number(result[1]) };
-				} catch {
-					return { allowed: false, retryAfter: rule.window };
+				} catch (error) {
+					console.error("[auth] Redis rate limit unavailable; using per-instance limits", error);
+					return consumeLocally(key, rule);
 				}
 			},
 		}

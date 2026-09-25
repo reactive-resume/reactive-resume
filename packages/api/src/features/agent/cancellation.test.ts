@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => {
 			values.set(key, value);
 			return Promise.resolve("OK");
 		}),
+		exists: vi.fn(async (key: string) => (values.has(key) ? 1 : 0)),
 	};
 	return { values, redis, getRedis: vi.fn((): typeof redis | null => redis) };
 });
@@ -35,8 +36,8 @@ describe("agent cancellation", () => {
 		const controller = new AbortController();
 		const cleanup = await monitorRunCancellation("run-1", controller);
 		expect(controller.signal.reason).toMatchObject({ name: "AbortError", message: "USER_STOPPED" });
-		expect(vi.getTimerCount()).toBe(0);
 		cleanup();
+		expect(vi.getTimerCount()).toBe(0);
 	});
 
 	it("aborts the owner when another instance requests cancellation", async () => {
@@ -49,8 +50,8 @@ describe("agent cancellation", () => {
 		expect(controller.signal.aborted).toBe(false);
 		await vi.advanceTimersByTimeAsync(1_000);
 		expect(controller.signal.reason).toMatchObject({ name: "AbortError", message: "USER_ARCHIVED" });
-		expect(vi.getTimerCount()).toBe(0);
 		cleanup();
+		expect(vi.getTimerCount()).toBe(0);
 	});
 
 	it("cleanup stops polling and unregisters the local controller", async () => {
@@ -70,8 +71,8 @@ describe("agent cancellation", () => {
 		mocks.redis.get.mockRejectedValueOnce(new Error("Disconnected"));
 		const cleanup = await monitorRunCancellation("run-4", controller);
 		expect(controller.signal.reason).toMatchObject({ name: "AbortError", message: "CANCELLATION_UNAVAILABLE" });
-		expect(vi.getTimerCount()).toBe(0);
 		cleanup();
+		expect(vi.getTimerCount()).toBe(0);
 	});
 
 	it("does not overlap polls or reschedule an in-flight check after cleanup", async () => {
@@ -97,5 +98,31 @@ describe("agent cancellation", () => {
 		expect(mocks.redis.get).not.toHaveBeenCalled();
 		expect(mocks.redis.set).not.toHaveBeenCalled();
 		cleanup();
+	});
+
+	it("keeps heartbeating after abort until the owner releases the run", async () => {
+		const { monitorRunCancellation } = await import("./cancellation");
+		const controller = new AbortController();
+		const cleanup = await monitorRunCancellation("run-6", controller);
+		controller.abort();
+		mocks.redis.set.mockClear();
+		await vi.advanceTimersByTimeAsync(2_000);
+		expect(mocks.redis.set).toHaveBeenCalledWith("test:agent-run-alive:run-6", "1", "PX", 10_000);
+		cleanup();
+		mocks.redis.set.mockClear();
+		await vi.advanceTimersByTimeAsync(2_000);
+		expect(mocks.redis.set).not.toHaveBeenCalled();
+	});
+
+	it("reports a run dead only after its heartbeat is gone and the start grace has passed", async () => {
+		const { isRunAlive } = await import("./cancellation");
+		const old = new Date(Date.now() - 60_000);
+		expect(await isRunAlive("run-7", old)).toBe(false);
+		expect(await isRunAlive("run-7", new Date())).toBe(true);
+		mocks.values.set("test:agent-run-alive:run-7", "1");
+		expect(await isRunAlive("run-7", old)).toBe(true);
+		mocks.getRedis.mockReturnValue(null);
+		mocks.values.clear();
+		expect(await isRunAlive("run-7", old)).toBe(true);
 	});
 });

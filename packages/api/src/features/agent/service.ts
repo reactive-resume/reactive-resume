@@ -24,7 +24,7 @@ import { getAgentModel } from "../ai/service";
 import { aiProvidersService } from "../ai-providers/service";
 import { resumeService } from "../resume/service";
 import { getStorageService, inferContentType } from "../storage/service";
-import { monitorRunCancellation, requestRunCancellation } from "./cancellation";
+import { isRunAlive, monitorRunCancellation, requestRunCancellation } from "./cancellation";
 import { pruneAgentModelContext } from "./context";
 import { mergeClientToolResponses } from "./messages-merge";
 import {
@@ -1409,8 +1409,17 @@ export const agentService = {
 			const thread = await getThread({ id: input.threadId, userId: input.userId });
 			const activeRunId = thread.activeRunId;
 			if (!activeRunId) return;
-			// Only the owner releases the claim after persisting the terminal transcript.
+			// A live owner releases the claim after persisting the terminal transcript.
 			await requestRunCancellation(activeRunId, "USER_STOPPED");
+			// A dead owner never will, so heal the thread now instead of waiting for the TTL reaper.
+			if (!(await isRunAlive(activeRunId, thread.activeRunStartedAt))) {
+				await reapStaleAgentRun({
+					threadId: input.threadId,
+					userId: input.userId,
+					runId: activeRunId,
+					streamId: thread.activeStreamId,
+				});
+			}
 		},
 		resume: async (input: { userId: string; threadId: string }) => {
 			assertAgentEnvironment();
