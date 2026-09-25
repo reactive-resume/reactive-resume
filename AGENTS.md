@@ -30,11 +30,10 @@ Boundaries: code/commits/PRs written normal.
 ## Agent skills
 
 - Issues and specs: GitHub Issues for `reactive-resume/reactive-resume`. See `docs/agents/issue-tracker.md`.
-- Domain docs use a multi-context layout. See `docs/agents/domain.md`.
 
 ## Overview
 
-Reactive Resume is a pnpm monorepo (Turborepo) with two deployable apps: `apps/web` (TanStack Start / React 19 / Vite) and `apps/server` (Hono / Node.js). The production Docker image runs a single Node.js process on port 3000; `apps/server` mounts the API/auth/MCP/static routes and serves the built web app.
+Reactive Resume is a pnpm monorepo (Turborepo) with two deployable apps: `apps/web` (React 19 SPA with TanStack Router and Vite) and `apps/server` (Hono / Node.js). The production Docker image runs a single Node.js process on port 3000; `apps/server` mounts the API/auth/MCP/static routes and serves the built web app.
 
 Internal packages are source-consumed through `package.json` export maps pointing at `src` files. Do not assume package-local `dist` output exists unless a package explicitly adds it.
 
@@ -67,9 +66,10 @@ Narrow cross-cutting helpers go in `packages/utils` only after checking no domai
 ## Web app conventions
 
 - `apps/web/src/router.tsx` initializes router context with `queryClient`, `orpc`, `theme`, `locale`, `session`, and `flags`. Reuse route context instead of refetching these ad hoc.
-- Builder shell: `apps/web/src/routes/builder/$resumeId`. Its nested preview route is client-only (`ssr: false`); the public resume route `apps/web/src/routes/$username/$slug.tsx` uses `ssr: "data-only"`.
-- Browser-only preview code: `apps/web/src/features/resume/preview`. Public PDF viewer: `apps/web/src/features/resume/public`. Keep PDF.js/canvas/browser APIs out of SSR paths.
-- Isomorphic oRPC client: `apps/web/src/libs/orpc/client.ts` — server calls use an in-process router client, browser calls use `/api/rpc` with credentials included.
+- The web app is a client-rendered SPA. `apps/server` serves `index.html` and injects page metadata (OpenGraph, canonical, JSON-LD) in `apps/server/src/static/web.ts`; there is no React SSR.
+- Builder shell: `apps/web/src/routes/builder/$resumeId`. Public resume route: `apps/web/src/routes/$username/$slug.tsx`.
+- Browser-only preview code: `apps/web/src/features/resume/preview`. Public PDF viewer: `apps/web/src/features/resume/public`. Keep PDF.js/canvas code in these features, not in `packages/pdf`.
+- oRPC client: `apps/web/src/libs/orpc/client.ts` calls `/api/rpc` with credentials included. `apps/web/src/libs/orpc/fetch.ts` stages large request bodies through Blob on Vercel.
 - For React components with explicit props, use a named props type (e.g. `type FooProps = {...}` with `function Foo(props: FooProps)`) rather than inline object annotations, especially with more than one field or with generics.
 
 ## Package boundaries
