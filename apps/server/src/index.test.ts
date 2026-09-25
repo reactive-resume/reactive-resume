@@ -16,6 +16,12 @@ vi.mock("./http/app", () => {
 		},
 	};
 });
+vi.mock("@reactive-resume/auth/config", () => ({
+	initializeAuth: async () => {
+		await Promise.resolve();
+		events.push("auth ready");
+	},
+}));
 vi.mock("@hono/node-server", () => ({
 	serve: () => {
 		events.push("server listening");
@@ -30,6 +36,6 @@ describe("server startup", () => {
 		const entry = await import("./index");
 		expect(events).toEqual([]);
 		await entry.main();
-		expect(events).toEqual(["migrations complete", "auth imported", "app created", "server listening"]);
+		expect(events).toEqual(["migrations complete", "auth imported", "auth ready", "app created", "server listening"]);
 	});
 });

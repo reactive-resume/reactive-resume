@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const pool = vi.hoisted(() => ({
 	query: vi.fn().mockResolvedValue(undefined),
@@ -6,6 +6,16 @@ const pool = vi.hoisted(() => ({
 }));
 
 vi.mock("@reactive-resume/db/client", () => ({ getPool: () => pool }));
+const redis = vi.hoisted(() => ({ getRedis: vi.fn(), publish: vi.fn(), duplicate: vi.fn() }));
+vi.mock("../../redis", () => ({
+	getRedis: redis.getRedis,
+	redisKey: (key: string) => `reactive-resume:preview:${key}`,
+}));
+
+beforeEach(() => {
+	vi.clearAllMocks();
+	redis.getRedis.mockReturnValue(null);
+});
 
 const { publishResumeUpdated, subscribeResumeUpdated } = await import("./events");
 
@@ -18,6 +28,13 @@ const exampleEvent = {
 };
 
 describe("publishResumeUpdated", () => {
+	it("publishes through namespaced Redis when configured without querying Postgres", async () => {
+		redis.getRedis.mockReturnValue(redis);
+		await publishResumeUpdated(exampleEvent);
+		expect(redis.publish).toHaveBeenCalledWith("reactive-resume:preview:resume_updated", JSON.stringify(exampleEvent));
+		expect(pool.query).not.toHaveBeenCalled();
+	});
+
 	it("issues a pg_notify with the channel and serialized event", async () => {
 		pool.query.mockClear();
 
@@ -29,6 +46,77 @@ describe("publishResumeUpdated", () => {
 		expect(sql).toBe("SELECT pg_notify($1, $2)");
 		expect(params?.[0]).toBe("resume_updated");
 		expect(JSON.parse(params?.[1] as string)).toEqual(exampleEvent);
+	});
+});
+
+function makeSubscriber() {
+	const handlers = new Map<string, (...args: string[]) => void>();
+	return {
+		status: "ready",
+		subscribe: vi.fn().mockResolvedValue(1),
+		unsubscribe: vi.fn().mockResolvedValue(0),
+		quit: vi.fn().mockResolvedValue("OK"),
+		disconnect: vi.fn(),
+		on: vi.fn((event: string, handler: (...args: string[]) => void) => handlers.set(event, handler)),
+		off: vi.fn((event: string) => handlers.delete(event)),
+		emit(channel: string, payload: string) {
+			handlers.get("message")?.(channel, payload);
+		},
+	};
+}
+
+describe("Redis resume subscriptions", () => {
+	it("uses a dedicated subscriber, filters messages, and closes it on abort", async () => {
+		const subscriber = makeSubscriber();
+		redis.getRedis.mockReturnValue(redis);
+		redis.duplicate.mockReturnValue(subscriber);
+		const controller = new AbortController();
+		const iterator = subscribeResumeUpdated({ resumeId: "r1", userId: "u1", signal: controller.signal });
+		const first = iterator.next();
+		const channel = "reactive-resume:preview:resume_updated";
+		subscriber.emit("other", JSON.stringify(exampleEvent));
+		subscriber.emit(channel, "not json");
+		subscriber.emit(channel, JSON.stringify({ ...exampleEvent, userId: "other" }));
+		subscriber.emit(channel, JSON.stringify(exampleEvent));
+		expect(await first).toEqual({ done: false, value: exampleEvent });
+		const next = iterator.next();
+		controller.abort();
+		expect((await next).done).toBe(true);
+		expect(redis.duplicate).toHaveBeenCalledWith({ commandTimeout: 5_000 });
+		expect(subscriber.subscribe).toHaveBeenCalledWith(channel);
+		expect(subscriber.unsubscribe).toHaveBeenCalledWith(channel);
+		expect(subscriber.quit).toHaveBeenCalledTimes(1);
+		expect(subscriber.disconnect).toHaveBeenCalledTimes(1);
+		expect(subscriber.off).toHaveBeenCalledWith("message", expect.any(Function));
+		expect(subscriber.off).toHaveBeenCalledWith("error", expect.any(Function));
+		expect(pool.connect).not.toHaveBeenCalled();
+	});
+
+	it("disconnects if aborted while the Redis subscription is still connecting", async () => {
+		const subscriber = makeSubscriber();
+		subscriber.status = "connecting";
+		subscriber.subscribe.mockReturnValue(new Promise(() => {}));
+		redis.getRedis.mockReturnValue(redis);
+		redis.duplicate.mockReturnValue(subscriber);
+		const controller = new AbortController();
+		const iterator = subscribeResumeUpdated({ resumeId: "r1", userId: "u1", signal: controller.signal });
+		const next = iterator.next();
+		controller.abort();
+		expect((await next).done).toBe(true);
+		expect(subscriber.disconnect).toHaveBeenCalledTimes(1);
+		expect(subscriber.unsubscribe).not.toHaveBeenCalled();
+	});
+
+	it("closes the duplicate when subscription setup fails", async () => {
+		const subscriber = makeSubscriber();
+		subscriber.subscribe.mockRejectedValue(new Error("subscribe failed"));
+		redis.getRedis.mockReturnValue(redis);
+		redis.duplicate.mockReturnValue(subscriber);
+		const iterator = subscribeResumeUpdated({ resumeId: "r1", userId: "u1" });
+		await expect(iterator.next()).rejects.toThrow("subscribe failed");
+		expect(subscriber.unsubscribe).toHaveBeenCalledTimes(1);
+		expect(subscriber.quit).toHaveBeenCalledTimes(1);
+		expect(subscriber.disconnect).toHaveBeenCalledTimes(1);
 	});
 });
 

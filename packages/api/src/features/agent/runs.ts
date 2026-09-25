@@ -35,6 +35,8 @@ export async function claimActiveAgentRun(
 				eq(schema.agentThread.id, input.threadId),
 				eq(schema.agentThread.userId, input.userId),
 				isNull(schema.agentThread.activeRunId),
+				isNull(schema.agentThread.deletedAt),
+				eq(schema.agentThread.status, "active"),
 			),
 		)
 		.returning({ id: schema.agentThread.id });

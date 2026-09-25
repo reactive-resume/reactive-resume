@@ -6,12 +6,15 @@
 	"exports": {
 		"./context": "./src/context.ts",
 		"./features/agent/runs": "./src/features/agent/runs.ts",
+		"./features/agent/streams": "./src/features/agent/streams.ts",
 		"./features/flags": "./src/features/flags/index.ts",
 		"./features/resume/export": "./src/features/resume/export.ts",
 		"./features/resume/public-pdf": "./src/features/resume/public-pdf.ts",
 		"./features/resume/social-meta": "./src/features/resume/social-meta.ts",
 		"./features/storage": "./src/features/storage/index.ts",
-		"./routers": "./src/routers/index.ts"
+		"./routers": "./src/routers/index.ts",
+		"./features/storage/transport": "./src/features/storage/transport.ts",
+		"./redis": "./src/redis.ts"
 	},
 	"scripts": {
 		"typecheck": "tsgo --noEmit",
@@ -46,6 +49,7 @@
 		"@reactive-resume/resume": "workspace:*",
 		"@reactive-resume/schema": "workspace:*",
 		"@reactive-resume/utils": "workspace:*",
+		"@vercel/blob": "^2.8.0",
 		"ai": "^7.0.107",
 		"bcrypt": "^6.0.0",
 		"better-auth": "1.7.5",

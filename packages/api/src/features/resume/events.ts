@@ -1,4 +1,5 @@
 import { getPool } from "@reactive-resume/db/client";
+import { getRedis, redisKey } from "../../redis";
 
 const RESUME_UPDATED_CHANNEL = "resume_updated";
 const resumeMutationNames = new Set(["sync", "create", "update", "patch", "lock", "password", "delete"] as const);
@@ -37,14 +38,27 @@ function isResumeUpdatedEvent(value: unknown): value is ResumeUpdatedEvent {
 }
 
 export async function publishResumeUpdated(event: ResumeUpdatedEvent) {
+	const redis = getRedis();
+	if (redis) {
+		await redis.publish(redisKey(RESUME_UPDATED_CHANNEL), JSON.stringify(event));
+		return;
+	}
 	await getPool().query("SELECT pg_notify($1, $2)", [RESUME_UPDATED_CHANNEL, JSON.stringify(event)]);
 }
 
 export async function* subscribeResumeUpdated({ resumeId, userId, signal }: SubscribeResumeUpdatedInput) {
-	const client = await getPool().connect();
+	if (signal?.aborted) return;
+	const subscriber = getRedis()?.duplicate({ commandTimeout: 5_000 });
+	const client = subscriber ? undefined : await getPool().connect();
+	const channel = subscriber ? redisKey(RESUME_UPDATED_CHANNEL) : RESUME_UPDATED_CHANNEL;
 	const queue: ResumeUpdatedEvent[] = [];
 	let done = signal?.aborted ?? false;
 	let wake: (() => void) | undefined;
+	let failure: Error | undefined;
+	let stop: () => void = () => {};
+	const stopped = new Promise<void>((resolve) => {
+		stop = resolve;
+	});
 
 	const resolveWake = () => {
 		wake?.();
@@ -53,11 +67,16 @@ export async function* subscribeResumeUpdated({ resumeId, userId, signal }: Subs
 
 	const onAbort = () => {
 		done = true;
+		stop();
 		resolveWake();
+	};
+	const onError = (error: Error) => {
+		failure = error;
+		onAbort();
 	};
 
 	const onNotification = (notification: PgNotification) => {
-		if (notification.channel !== RESUME_UPDATED_CHANNEL || !notification.payload) return;
+		if (notification.channel !== channel || !notification.payload) return;
 
 		try {
 			const event = JSON.parse(notification.payload) as unknown;
@@ -70,12 +89,16 @@ export async function* subscribeResumeUpdated({ resumeId, userId, signal }: Subs
 			// Ignore malformed notifications; the refetch path is invalidation-only.
 		}
 	};
+	const onMessage = (messageChannel: string, payload: string) => onNotification({ channel: messageChannel, payload });
 
 	signal?.addEventListener("abort", onAbort, { once: true });
-	client.on("notification", onNotification);
+	client?.on("notification", onNotification);
+	subscriber?.on("message", onMessage);
+	subscriber?.on("error", onError);
 
 	try {
-		await client.query(`LISTEN ${RESUME_UPDATED_CHANNEL}`);
+		if (subscriber) await Promise.race([subscriber.subscribe(channel), stopped]);
+		else await client?.query(`LISTEN ${RESUME_UPDATED_CHANNEL}`);
 
 		while (!done) {
 			const event = queue.shift();
@@ -88,14 +111,31 @@ export async function* subscribeResumeUpdated({ resumeId, userId, signal }: Subs
 				wake = resolve;
 			});
 		}
+		if (failure) throw failure;
 	} finally {
 		signal?.removeEventListener("abort", onAbort);
-		client.off("notification", onNotification);
+		client?.off("notification", onNotification);
+		subscriber?.off("message", onMessage);
 
-		try {
-			await client.query(`UNLISTEN ${RESUME_UPDATED_CHANNEL}`);
-		} finally {
-			client.release();
+		if (subscriber) {
+			try {
+				if (subscriber.status === "ready") {
+					try {
+						await subscriber.unsubscribe(channel);
+					} finally {
+						await subscriber.quit();
+					}
+				}
+			} finally {
+				subscriber.disconnect();
+				subscriber.off("error", onError);
+			}
+		} else if (client) {
+			try {
+				await client.query(`UNLISTEN ${RESUME_UPDATED_CHANNEL}`);
+			} finally {
+				client.release();
+			}
 		}
 	}
 }

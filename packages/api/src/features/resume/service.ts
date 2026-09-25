@@ -557,7 +557,7 @@ export const resumeService = {
 
 		if (shouldCountForStatistics(resume, viewer)) {
 			const key = `${resume.id}:${clientKeyFromHeaders(input.requestHeaders)}`;
-			if (shouldCountView(key, Date.now())) {
+			if (await shouldCountView(key, Date.now())) {
 				await resumeService.statistics.increment({ id: resume.id, views: true });
 			}
 		}

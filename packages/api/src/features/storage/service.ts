@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import { dirname, extname, join } from "node:path";
 import {
@@ -10,6 +11,7 @@ import {
 import sharp from "sharp";
 import { env } from "@reactive-resume/env/server";
 import { getLocalDataDirectory } from "@reactive-resume/utils/monorepo.node";
+import { BlobStorageService } from "./blob";
 
 interface StorageWriteInput {
 	key: string;
@@ -36,7 +38,7 @@ interface StorageService {
 
 interface StorageHealthResult {
 	status: "healthy" | "unhealthy";
-	type: "local" | "s3";
+	type: "local" | "s3" | "blob";
 	message: string;
 	error?: string;
 }
@@ -69,7 +71,7 @@ const EXTENSION_BY_CONTENT_TYPE: Record<string, string> = {
 // mapped, not just JPEG. Non-image uploads (e.g. a cover-letter PDF) get their real extension.
 function buildFileKey(userId: string, contentType: string): string {
 	const extension = EXTENSION_BY_CONTENT_TYPE[contentType] ?? "bin";
-	return `uploads/${userId}/pictures/${Date.now()}.${extension}`;
+	return `uploads/${userId}/pictures/${randomUUID()}.${extension}`;
 }
 
 function buildPublicUrl(path: string): string {
@@ -326,9 +328,12 @@ let cachedService: StorageService | null = null;
 
 export function getStorageService(): StorageService {
 	cachedService ??=
-		env.S3_ACCESS_KEY_ID && env.S3_SECRET_ACCESS_KEY && env.S3_BUCKET
-			? new S3StorageService()
-			: new LocalStorageService();
+		env.STORAGE_BACKEND === "blob"
+			? new BlobStorageService()
+			: env.STORAGE_BACKEND === "s3" ||
+					(!env.STORAGE_BACKEND && env.S3_ACCESS_KEY_ID && env.S3_SECRET_ACCESS_KEY && env.S3_BUCKET)
+				? new S3StorageService()
+				: new LocalStorageService();
 	return cachedService;
 }
 

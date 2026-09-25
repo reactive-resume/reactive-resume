@@ -1,7 +1,7 @@
 import type { ApplyResumePatchInput } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import type { JsonPatchOperation } from "@reactive-resume/resume/patch";
 import type { Locale } from "@reactive-resume/utils/locale";
-import type { FilePart, ImagePart, ModelMessage, TextPart, UIMessage } from "ai";
+import type { FilePart, ImagePart, ModelMessage, TextPart, UIMessage, UIMessageChunk } from "ai";
 import type { getModel } from "../ai/service";
 import { ORPCError } from "@orpc/client";
 import { streamToEventIterator } from "@orpc/server";
@@ -24,6 +24,7 @@ import { getAgentModel } from "../ai/service";
 import { aiProvidersService } from "../ai-providers/service";
 import { resumeService } from "../resume/service";
 import { getStorageService, inferContentType } from "../storage/service";
+import { monitorRunCancellation, requestRunCancellation } from "./cancellation";
 import { pruneAgentModelContext } from "./context";
 import { mergeClientToolResponses } from "./messages-merge";
 import {
@@ -45,7 +46,9 @@ const MAX_AGENT_STEPS = 30;
 const MAX_AGENT_OUTPUT_TOKENS = 8_192;
 const MAX_AGENT_MODEL_RETRIES = 2;
 const AGENT_STEP_TIMEOUT_MS = 120_000;
-const AGENT_RUN_TIMEOUT_MS = 600_000;
+// Reserve the final minute of the five-minute request budget for persistence and cleanup.
+const AGENT_RUN_TIMEOUT_MS = 240_000;
+const AGENT_TIMEOUT_MESSAGE = "Time limit reached. Your progress is saved. Ask me to continue.";
 const MAX_ATTACHMENTS_PER_MESSAGE = 10;
 const MAX_ATTACHMENT_BYTES = 25 * 1024 * 1024;
 const MAX_THREAD_ATTACHMENT_BYTES = 100 * 1024 * 1024;
@@ -63,7 +66,7 @@ const MAX_ATTACHMENT_TEXT_CHARS = 40_000;
 const ROLLBACK_CONFLICT_MESSAGE = "The resume changed after this action was applied.";
 const ROLLED_BACK_MESSAGE = "This patch was rolled back when the resume was restored to an earlier state.";
 
-const activeRunControllers = new Map<string, AbortController>();
+const activeRunCleanup = new Map<string, () => void>();
 const activeRunTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
 
 // Abort reasons MUST be an AbortError: the AI SDK only treats `err.name === "AbortError"`
@@ -588,7 +591,8 @@ async function cleanupActiveRun(input: {
 	// heals the claim and the draft together.
 	preserveClaimForReaper?: boolean;
 }) {
-	activeRunControllers.delete(input.runId);
+	activeRunCleanup.get(input.runId)?.();
+	activeRunCleanup.delete(input.runId);
 	clearTimeout(activeRunTimeouts.get(input.runId));
 	activeRunTimeouts.delete(input.runId);
 
@@ -1077,29 +1081,20 @@ export const agentService = {
 		archive: async (input: { id: string; userId: string }) => {
 			assertAgentEnvironment();
 
-			const thread = await getThread({ id: input.id, userId: input.userId });
-			const activeRunId = thread.activeRunId;
-			const activeStreamId = thread.activeStreamId;
-
-			if (activeRunId) {
-				activeRunControllers.get(activeRunId)?.abort(abortReason("USER_ARCHIVED"));
-				activeRunControllers.delete(activeRunId);
-				try {
-					await clearActiveAgentRunIfCurrent({
-						threadId: input.id,
-						userId: input.userId,
-						runId: activeRunId,
-						streamId: activeStreamId,
-					});
-				} catch (error) {
-					console.error("[agent] Failed to clear active run during archive", error);
-				}
-			}
-
-			await db
+			await getThread({ id: input.id, userId: input.userId });
+			const [thread] = await db
 				.update(schema.agentThread)
 				.set({ status: "archived", archivedAt: new Date() })
-				.where(and(eq(schema.agentThread.id, input.id), eq(schema.agentThread.userId, input.userId)));
+				.where(
+					and(
+						eq(schema.agentThread.id, input.id),
+						eq(schema.agentThread.userId, input.userId),
+						isNull(schema.agentThread.deletedAt),
+					),
+				)
+				.returning({ activeRunId: schema.agentThread.activeRunId });
+			if (!thread) throw new ORPCError("NOT_FOUND");
+			if (thread.activeRunId) await requestRunCancellation(thread.activeRunId, "USER_ARCHIVED");
 		},
 
 		delete: async (input: { id: string; userId: string }) => {
@@ -1107,22 +1102,31 @@ export const agentService = {
 
 			await getThread({ id: input.id, userId: input.userId });
 
-			await Promise.all([
-				db.delete(schema.agentAttachment).where(eq(schema.agentAttachment.threadId, input.id)),
-				db
-					.update(schema.agentThread)
-					.set({ status: "deleted", deletedAt: new Date() })
-					.where(and(eq(schema.agentThread.id, input.id), eq(schema.agentThread.userId, input.userId))),
-			]);
-
+			const [thread] = await db
+				.update(schema.agentThread)
+				.set({ status: "deleted", deletedAt: new Date() })
+				.where(
+					and(
+						eq(schema.agentThread.id, input.id),
+						eq(schema.agentThread.userId, input.userId),
+						isNull(schema.agentThread.deletedAt),
+					),
+				)
+				.returning({ activeRunId: schema.agentThread.activeRunId });
+			if (!thread) throw new ORPCError("NOT_FOUND");
 			try {
-				await getStorageService().delete(`uploads/${input.userId}/agent/${input.id}`);
-			} catch (error) {
-				console.error("[agent] Failed to delete thread storage after soft-delete", {
-					threadId: input.id,
-					userId: input.userId,
-					error,
-				});
+				if (thread.activeRunId) await requestRunCancellation(thread.activeRunId, "USER_DELETED");
+			} finally {
+				await db.delete(schema.agentAttachment).where(eq(schema.agentAttachment.threadId, input.id));
+				try {
+					await getStorageService().delete(`uploads/${input.userId}/agent/${input.id}`);
+				} catch (error) {
+					console.error("[agent] Failed to delete thread storage after soft-delete", {
+						threadId: input.id,
+						userId: input.userId,
+						error,
+					});
+				}
 			}
 		},
 	},
@@ -1174,11 +1178,9 @@ export const agentService = {
 			const runId = generateId();
 			const streamId = generateId();
 			const controller = new AbortController();
-			activeRunControllers.set(runId, controller);
 
 			const claimed = await claimActiveAgentRun({ threadId: input.threadId, userId: input.userId, runId, streamId });
 			if (!claimed) {
-				activeRunControllers.delete(runId);
 				throw new ORPCError("CONFLICT", { message: "This thread already has an active run." });
 			}
 
@@ -1196,6 +1198,8 @@ export const agentService = {
 			let draftUiMessage: UIMessage = { id: responseMessageId, role: "assistant", parts: [] };
 
 			try {
+				activeRunCleanup.set(runId, await monitorRunCancellation(runId, controller));
+				controller.signal.throwIfAborted();
 				let attachmentsForModel: AgentAttachmentRecord[] = [];
 
 				if (input.message.role === "assistant") {
@@ -1323,41 +1327,61 @@ export const agentService = {
 
 				return streamToEventIterator(
 					await agentStreamLifecycle.create(streamId, () =>
-						result.toUIMessageStream({
-							originalMessages: messages,
-							generateMessageId: () => responseMessageId,
-							sendSources: true,
-							// Round-trips inside the persisted uiMessage jsonb — no migration needed.
-							messageMetadata: ({ part }) =>
-								part.type === "finish" ? { usage: part.totalUsage, model: runnableProvider.model } : undefined,
-							onFinish: async ({ responseMessage, isAborted }) => {
-								let persistError: unknown;
-								try {
-									await upsertAssistantUiMessage({
-										userId: input.userId,
-										threadId: input.threadId,
-										...(draftRowId ? { rowId: draftRowId } : {}),
-										// A continuation reuses the message; the SDK replaces primitive
-										// metadata, so prior-run usage must be summed back in.
-										message: withAccumulatedUsageMetadata(draftUiMessage, responseMessage),
-										status: isAborted ? "canceled" : "completed",
-									});
-								} catch (error) {
-									persistError = error;
-									throw error;
-								} finally {
-									await cleanupActiveRun({
-										threadId: input.threadId,
-										userId: input.userId,
-										runId,
-										streamId,
-										primaryError: persistError,
-										preserveClaimForReaper: !!persistError,
-									});
-								}
-							},
-							onError: (error) => (error instanceof Error ? error.message : "Agent run failed."),
-						}),
+						result
+							.toUIMessageStream({
+								originalMessages: messages,
+								generateMessageId: () => responseMessageId,
+								sendSources: true,
+								// Round-trips inside the persisted uiMessage jsonb — no migration needed.
+								messageMetadata: ({ part }) =>
+									part.type === "finish" ? { usage: part.totalUsage, model: runnableProvider.model } : undefined,
+								onFinish: async ({ responseMessage, isAborted }) => {
+									let persistError: unknown;
+									try {
+										if (controller.signal.reason?.message === "RUN_TIMEOUT") {
+											responseMessage = {
+												...responseMessage,
+												parts: [...responseMessage.parts, { type: "text", text: AGENT_TIMEOUT_MESSAGE }],
+											};
+										}
+										await upsertAssistantUiMessage({
+											userId: input.userId,
+											threadId: input.threadId,
+											...(draftRowId ? { rowId: draftRowId } : {}),
+											// A continuation reuses the message; the SDK replaces primitive
+											// metadata, so prior-run usage must be summed back in.
+											message: withAccumulatedUsageMetadata(draftUiMessage, responseMessage),
+											status: isAborted ? "canceled" : "completed",
+										});
+									} catch (error) {
+										persistError = error;
+										throw error;
+									} finally {
+										await cleanupActiveRun({
+											threadId: input.threadId,
+											userId: input.userId,
+											runId,
+											streamId,
+											primaryError: persistError,
+											preserveClaimForReaper: !!persistError,
+										});
+									}
+								},
+								onError: (error) => (error instanceof Error ? error.message : "Agent run failed."),
+							})
+							.pipeThrough(
+								new TransformStream<UIMessageChunk, UIMessageChunk>({
+									transform(chunk, output) {
+										if (chunk.type === "abort" && controller.signal.reason?.message === "RUN_TIMEOUT") {
+											const id = `timeout-${runId}`;
+											output.enqueue({ type: "text-start", id });
+											output.enqueue({ type: "text-delta", id, delta: AGENT_TIMEOUT_MESSAGE });
+											output.enqueue({ type: "text-end", id });
+										}
+										output.enqueue(chunk);
+									},
+								}),
+							),
 					),
 				);
 			} catch (error) {
@@ -1384,27 +1408,9 @@ export const agentService = {
 
 			const thread = await getThread({ id: input.threadId, userId: input.userId });
 			const activeRunId = thread.activeRunId;
-			const activeStreamId = thread.activeStreamId;
 			if (!activeRunId) return;
-
-			const controller = activeRunControllers.get(activeRunId);
-			if (controller) {
-				// This replica owns the run: abort only. The claim stays until onFinish has
-				// persisted the terminal (canceled) state, so no new run can interleave with a
-				// still-committing tool or write. onFinish's cleanup releases the claim.
-				controller.abort(abortReason("USER_STOPPED"));
-				return;
-			}
-
-			// No local controller (another replica owns the run, or the process restarted):
-			// best-effort claim release so the user is not stuck. Cross-replica abort signaling
-			// is a documented follow-up; the stale-run reaper covers the leftovers.
-			await clearActiveAgentRunIfCurrent({
-				threadId: input.threadId,
-				userId: input.userId,
-				runId: activeRunId,
-				streamId: activeStreamId,
-			});
+			// Only the owner releases the claim after persisting the terminal transcript.
+			await requestRunCancellation(activeRunId, "USER_STOPPED");
 		},
 		resume: async (input: { userId: string; threadId: string }) => {
 			assertAgentEnvironment();
@@ -1416,45 +1422,72 @@ export const agentService = {
 	attachments: {
 		create: async (input: CreateAttachmentInput) => {
 			assertAgentEnvironment();
-			await getThread({ id: input.threadId, userId: input.userId });
-
-			const [stats] = await db
-				.select({
-					totalBytes: sql<number>`coalesce(sum(${schema.agentAttachment.size}), 0)`,
-					total: count(),
-				})
-				.from(schema.agentAttachment)
-				.where(
-					and(eq(schema.agentAttachment.threadId, input.threadId), eq(schema.agentAttachment.userId, input.userId)),
-				);
-
-			if ((stats?.total ?? 0) >= MAX_ATTACHMENTS_PER_MESSAGE) throw new ORPCError("BAD_REQUEST");
 			if (input.data.byteLength > MAX_ATTACHMENT_BYTES) throw new ORPCError("BAD_REQUEST");
-			if ((stats?.totalBytes ?? 0) + input.data.byteLength > MAX_THREAD_ATTACHMENT_BYTES) {
-				throw new ORPCError("BAD_REQUEST");
-			}
 
 			const mediaType = input.mediaType || inferContentType(input.filename);
 			const id = generateId();
 			const key = `uploads/${input.userId}/agent/${input.threadId}/${id}-${input.filename}`;
+			const storage = getStorageService();
+			let storageAttempted = false;
+			try {
+				return await db.transaction(async (tx) => {
+					// Serialize quota checks with uploads and archive/delete's update of this same row.
+					const [thread] = await tx
+						.select({ id: schema.agentThread.id })
+						.from(schema.agentThread)
+						.where(
+							and(
+								eq(schema.agentThread.id, input.threadId),
+								eq(schema.agentThread.userId, input.userId),
+								eq(schema.agentThread.status, "active"),
+								isNull(schema.agentThread.deletedAt),
+							),
+						)
+						.for("update");
+					if (!thread) throw new ORPCError("NOT_FOUND");
 
-			await getStorageService().write({ key, data: input.data, contentType: mediaType, private: true });
-			const [attachment] = await db
-				.insert(schema.agentAttachment)
-				.values({
-					id,
-					userId: input.userId,
-					threadId: input.threadId,
-					storageKey: key,
-					filename: input.filename,
-					mediaType,
-					size: input.data.byteLength,
-				})
-				.returning();
+					const [stats] = await tx
+						.select({
+							totalBytes: sql<number>`coalesce(sum(${schema.agentAttachment.size}), 0)`,
+							total: count(),
+						})
+						.from(schema.agentAttachment)
+						.where(
+							and(eq(schema.agentAttachment.threadId, input.threadId), eq(schema.agentAttachment.userId, input.userId)),
+						);
+					if ((stats?.total ?? 0) >= MAX_ATTACHMENTS_PER_MESSAGE) throw new ORPCError("BAD_REQUEST");
+					if (Number(stats?.totalBytes ?? 0) + input.data.byteLength > MAX_THREAD_ATTACHMENT_BYTES) {
+						throw new ORPCError("BAD_REQUEST");
+					}
 
-			if (!attachment) throw new Error("AGENT_ATTACHMENT_CREATE_FAILED");
-
-			return toAttachment(attachment);
+					// ponytail: hold the thread lock during storage I/O; reserve quota first if uploads contend.
+					storageAttempted = true;
+					await storage.write({ key, data: input.data, contentType: mediaType, private: true });
+					const [attachment] = await tx
+						.insert(schema.agentAttachment)
+						.values({
+							id,
+							userId: input.userId,
+							threadId: input.threadId,
+							storageKey: key,
+							filename: input.filename,
+							mediaType,
+							size: input.data.byteLength,
+						})
+						.returning();
+					if (!attachment) throw new Error("AGENT_ATTACHMENT_CREATE_FAILED");
+					return toAttachment(attachment);
+				});
+			} catch (error) {
+				if (storageAttempted) {
+					await storage
+						.delete(key)
+						.catch((cleanupError: unknown) =>
+							console.error("[agent] Failed to clean up rejected attachment", cleanupError),
+						);
+				}
+				throw error;
+			}
 		},
 
 		delete: async (input: { id: string; userId: string }) => {

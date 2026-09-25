@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { withTimeout } from "es-toolkit";
 import { getStorageService } from "@reactive-resume/api/features/storage";
+import { getRedis } from "@reactive-resume/api/redis";
 import { db } from "@reactive-resume/db/client";
 import { appVersion } from "../app-version";
 
@@ -32,13 +33,13 @@ async function runCheck(check: () => Promise<object>): Promise<CheckResult> {
 	}
 }
 
-function publicCheck(check: CheckResult, name: "Database" | "Storage"): CheckResult {
+function publicCheck(check: CheckResult, name: "Database" | "Storage" | "Redis"): CheckResult {
 	if (check.status === "healthy") return check;
 	return {
 		status: check.status,
 		latencyMs: check.latencyMs,
 		error: `${name} health check failed.`,
-		...(check.type === "local" || check.type === "s3" ? { type: check.type } : {}),
+		...(check.type === "local" || check.type === "s3" || check.type === "blob" ? { type: check.type } : {}),
 	};
 }
 
@@ -51,8 +52,20 @@ async function checkDatabase() {
 const checkStorage = () => getStorageService().healthcheck();
 
 export async function handleHealth() {
-	const [database, storage] = await Promise.all([runCheck(checkDatabase), runCheck(checkStorage)]);
-	const status = [database, storage].some((check) => check.status === "unhealthy") ? "unhealthy" : "healthy";
+	const redisClient = getRedis();
+	const [database, storage, redis] = await Promise.all([
+		runCheck(checkDatabase),
+		runCheck(checkStorage),
+		redisClient
+			? runCheck(async () => {
+					await redisClient.ping();
+					return { status: "healthy" };
+				})
+			: undefined,
+	]);
+	const status = [database, storage, ...(redis ? [redis] : [])].some((check) => check.status === "unhealthy")
+		? "unhealthy"
+		: "healthy";
 
 	const checks = {
 		service: "reactive-resume",
@@ -62,6 +75,7 @@ export async function handleHealth() {
 		uptime: `${process.uptime().toFixed(2)}s`,
 		database: publicCheck(database, "Database"),
 		storage: publicCheck(storage, "Storage"),
+		...(redis ? { redis: publicCheck(redis, "Redis") } : {}),
 	};
 
 	if (status === "unhealthy") {

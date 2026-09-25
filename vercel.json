@@ -1,0 +1,39 @@
+{
+	"$schema": "https://openapi.vercel.sh/vercel.json",
+	"framework": null,
+	"buildCommand": "pnpm build && node apps/server/dist/prepare-deployment.mjs",
+	"outputDirectory": "apps/web/dist",
+	"functions": {
+		"api/index.mjs": {
+			"maxDuration": 300,
+			"includeFiles": "apps/{web/dist/index.html,server/dist/**}"
+		}
+	},
+	"routes": [
+		{
+			"src": "/",
+			"dest": "/api/index"
+		},
+		{
+			"src": "/index.html",
+			"dest": "/api/index"
+		},
+		{
+			"src": "/(robots\\.txt|sitemap\\.xml|llms\\.txt|schema\\.json)",
+			"dest": "/api/index"
+		},
+		{
+			"handle": "filesystem"
+		},
+		{
+			"src": "/(.*)",
+			"dest": "/api/index"
+		}
+	],
+	"crons": [
+		{
+			"path": "/api/storage/cleanup",
+			"schedule": "0 3 * * *"
+		}
+	]
+}
