@@ -5,7 +5,6 @@ const mocks = vi.hoisted(() => ({
 		APP_URL: "https://resume.test",
 		STORAGE_BACKEND: "blob",
 		DEPLOYMENT_NAMESPACE: "test",
-		CRON_SECRET: "cron-secret",
 	},
 	user: vi.fn(),
 	limit: vi.fn(),
@@ -23,7 +22,7 @@ vi.mock("../../redis", () => ({
 	redisKey: (...parts: string[]) => ["test", ...parts].join(":"),
 }));
 
-import { cleanupStagedBodies, prepareStagedBody, withStagedBody } from "./transport";
+import { prepareStagedBody, withStagedBody } from "./transport";
 
 const id = "74dc653e-3778-41d1-88cf-dbf241a764cc";
 const path = "/api/rpc/storage/uploadFile?batch=1";
@@ -84,22 +83,14 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllEnvs());
 
 describe("staged RPC transport", () => {
-	it("requires the cron secret before deleting abandoned private bodies", async () => {
-		const url = "https://resume.test/api/storage/stage/cleanup";
-		expect((await cleanupStagedBodies(new Request(url))).status).toBe(401);
-		expect((await cleanupStagedBodies(new Request(url, { headers: { authorization: "Bearer wrong" } }))).status).toBe(
-			401,
-		);
-		expect(mocks.blob.list).not.toHaveBeenCalled();
+	it("deletes expired staging bodies while preparing a new upload", async () => {
 		mocks.blob.list.mockResolvedValueOnce({
 			blobs: [
 				{ pathname: "test/_staging/expired", uploadedAt: new Date(Date.now() - 601_000) },
 				{ pathname: "test/_staging/current", uploadedAt: new Date() },
 			],
 		});
-		expect(
-			(await cleanupStagedBodies(new Request(url, { headers: { authorization: "Bearer cron-secret" } }))).status,
-		).toBe(204);
+		expect((await prepareStagedBody(prepareRequest())).status).toBe(200);
 		expect(mocks.blob.del).toHaveBeenCalledExactlyOnceWith(["test/_staging/expired"], {});
 	});
 

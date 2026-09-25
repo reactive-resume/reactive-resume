@@ -3,11 +3,7 @@ import type { Context } from "hono";
 import { isIP } from "node:net";
 import { getConnInfo } from "@hono/node-server/conninfo";
 import { Hono } from "hono";
-import {
-	cleanupStagedBodies,
-	prepareStagedBody,
-	withStagedBody,
-} from "@reactive-resume/api/features/storage/transport";
+import { prepareStagedBody, withStagedBody } from "@reactive-resume/api/features/storage/transport";
 import { handleMcp } from "../mcp/handler";
 import { handleOpenApi } from "../openapi/handler";
 import {
@@ -55,7 +51,6 @@ export function createApp(options: AppOptions = {}) {
 		c.header("Cache-Control", "no-store");
 	});
 
-	app.get("/api/storage/cleanup", (c) => cleanupStagedBodies(c.req.raw));
 	app.on(["GET", "POST"], "/api/storage/stage", (c) => prepareStagedBody(c.req.raw));
 	app.all("/api/rpc", (c) => withStagedBody(c.req.raw, (request) => handleRpc(request, client(c))));
 	app.all("/api/rpc/*", (c) => withStagedBody(c.req.raw, (request) => handleRpc(request, client(c))));

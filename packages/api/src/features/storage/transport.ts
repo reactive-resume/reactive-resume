@@ -1,4 +1,4 @@
-import { randomUUID, timingSafeEqual } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { del, get, issueSignedToken, list, presignUrl } from "@vercel/blob";
 import { z } from "zod";
 import { env } from "@reactive-resume/env/server";
@@ -8,7 +8,7 @@ import { blobOptions, blobPath } from "./blob";
 
 const HEADER = "x-resume-staged-body";
 const TTL_SECONDS = 600;
-// Covers the existing 100 MiB thread attachment allowance, including base64 and RPC framing.
+// Covers the 100 MiB thread attachment allowance, including base64 and RPC framing.
 const MAX_BYTES = 160 * 1024 * 1024;
 const limiter = createRateLimiter("staged-body", { maxRequests: 30, window: 60_000 });
 const payloadSchema = z.object({
@@ -24,7 +24,7 @@ function authenticatedUser(request: Request) {
 	return resolveUserFromRequestHeaders(request.headers);
 }
 
-/** Bounded lazy cleanup; upload credentials expire before an object becomes eligible. */
+/** Bounded lazy cleanup on each prepare; upload credentials expire before an object becomes eligible. */
 async function cleanupExpiredBodies() {
 	const page = await list({ ...blobOptions(), prefix: blobPath("_staging/"), limit: 100 });
 	const expired = page.blobs.filter((blob) => blob.uploadedAt.getTime() < Date.now() - TTL_SECONDS * 1000);
@@ -78,7 +78,7 @@ export async function prepareStagedBody(request: Request): Promise<Response> {
 	return Response.json({ id, url: presignedUrl }, { headers: { "Cache-Control": "no-store" } });
 }
 
-/** Restore the transport body, then let the existing RPC authorization and validators run unchanged. */
+/** Restore the transport body, then run the normal RPC authorization and validators. */
 export async function withStagedBody(request: Request, handle: (request: Request) => Promise<Response>) {
 	const id = request.headers.get(HEADER);
 	if (!id) return handle(request);
@@ -138,15 +138,4 @@ export async function withStagedBody(request: Request, handle: (request: Request
 			console.error("Staged upload cleanup failed", error),
 		);
 	}
-}
-
-export async function cleanupStagedBodies(request: Request) {
-	const supplied = Buffer.from(request.headers.get("authorization") ?? "");
-	const expected = Buffer.from(`Bearer ${env.CRON_SECRET ?? ""}`);
-	if (!enabled() || !env.CRON_SECRET || supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) {
-		return new Response("Unauthorized", { status: 401 });
-	}
-	// Up to 1,000 expired objects per daily invocation; subsequent runs resume from the oldest keys.
-	for (let page = 0; page < 10; page++) await cleanupExpiredBodies();
-	return new Response(null, { status: 204 });
 }

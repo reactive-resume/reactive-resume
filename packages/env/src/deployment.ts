@@ -1,4 +1,4 @@
-/** Normalize deployment-provided aliases without overriding existing self-hosted settings. */
+/** Normalize deployment-provided aliases without overriding explicit settings. */
 export function deploymentEnvironment(input: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
 	const value = (key: string) => input[key]?.trim() || undefined;
 	const vercel = value("VERCEL") === "1";

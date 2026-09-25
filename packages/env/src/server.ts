@@ -72,7 +72,6 @@ export const env = createEnv({
 		SMTP_SECURE: z.stringbool().default(false),
 
 		// Storage (Optional)
-		CRON_SECRET: z.string().min(32).optional(),
 		STORAGE_BACKEND: z.enum(["local", "s3", "blob"]),
 		BLOB_READ_WRITE_TOKEN: z.string().min(1).optional(),
 		BLOB_STORE_ID: z.string().min(1).optional(),
