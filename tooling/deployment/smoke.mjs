@@ -103,7 +103,7 @@ try {
 	assert.equal((await download.arrayBuffer()).byteLength, file.size);
 	await rpc("storage/deleteFile", { filename: uploaded.path });
 	console.log("Pages, auth, resume CRUD, public PDF, 10 MiB upload/download: passed");
-	if (staged && process.env.SMOKE_AI_BASE_URL && process.env.SMOKE_AI_API_KEY) {
+	if (process.env.SMOKE_AI_BASE_URL && process.env.SMOKE_AI_API_KEY) {
 		const provider = await rpc("aiProviders/create", {
 			label: "Smoke provider",
 			provider: "openai-compatible",
@@ -121,7 +121,7 @@ try {
 				mediaType: "text/plain",
 				data: Buffer.alloc(25 * 1024 * 1024, 97).toString("base64"),
 			},
-			true,
+			staged,
 		);
 		assert.equal(attachment.size, 25 * 1024 * 1024);
 		await rpc("agent/attachments/delete", { id: attachment.id });
