@@ -1,99 +1,159 @@
 ---
 title: "Self-hosting on Vercel"
-description: "Deploy Reactive Resume on Vercel Hobby with Neon, private Blob, and Upstash Redis."
+description: "Deploy Reactive Resume on Vercel Hobby with Neon PostgreSQL, private Vercel Blob, and Upstash Redis."
 ---
 
-Reactive Resume uses one Vercel project: static web assets on the CDN and the shared Hono server in a Node.js 24 Function. Docker remains supported with the same API, authentication, templates, and application data format.
+This guide deploys Reactive Resume to a Vercel project with the Deploy with Vercel wizard. The wizard provisions a database, file storage, and Redis for you. You supply two secrets.
 
-## Requirements
+Vercel serves the static web assets from its CDN and runs the shared Hono server in one Node.js 24 Function. Docker is also supported and uses the same API, authentication, templates, and data format. See [Self-hosting with Docker](/self-hosting/docker) for that option.
 
-- A Vercel account and Git provider account.
-- Neon PostgreSQL, Upstash Redis, and a **private** Vercel Blob store, connected through Vercel Marketplace.
-- Three independent random secrets: `AUTH_SECRET`, `ENCRYPTION_SECRET`, and `CRON_SECRET`. Generate each with `openssl rand -hex 32`, and save them in your password manager. Keep their values across redeployments.
+## Before you start
 
-Vercel Hobby supports the configured 300-second Function budget. On both Docker and Vercel, each agent run stops active work after four minutes, leaving time to save and clean up. This is a limit per question/run, not per conversation. Follow-up questions start a fresh timer. Typical shorter answers return immediately. Completed edits and history remain saved after a timeout.
+You need:
 
-Service quotas and permitted use depend on your Vercel and database/storage plans. Check [Vercel limits](https://vercel.com/docs/functions/limitations), [Neon](https://vercel.com/marketplace/neon), and [Upstash](https://vercel.com/marketplace/upstash/upstash-kv) before choosing a plan. Disable automatic paid upgrades if you want a fixed free allowance.
+- A Vercel account and a GitHub account.
+- Two independent random secrets, `AUTH_SECRET` and `ENCRYPTION_SECRET`. Generate each one separately:
+
+  ```bash
+  openssl rand -hex 32
+  ```
+
+  Save both values in a password manager. You must keep the same values for the life of the installation. Losing `ENCRYPTION_SECRET` makes saved AI-provider API keys unreadable.
+
+The wizard connects three services through Vercel Marketplace:
+
+| Service | Used for |
+| --- | --- |
+| Neon PostgreSQL | Application data |
+| Vercel Blob (**private**) | Uploaded pictures, files, and agent attachments |
+| Upstash Redis | Agent streaming and cancellation, shared rate limits, live resume updates |
+
+Quotas and permitted use depend on your Vercel, Neon, and Upstash plans. Review [Vercel limits](https://vercel.com/docs/functions/limitations), [Neon](https://vercel.com/marketplace/neon), and [Upstash](https://vercel.com/marketplace/upstash/upstash-kv) before you choose a plan. Turn off automatic paid upgrades if you want to stay inside a free allowance.
+
+<Note>
+  Each AI agent run stops active work after four minutes. This keeps the run, plus saving and cleanup, inside Vercel Hobby's five-minute Function limit. The limit applies to each question, not to the whole conversation. Docker uses the same limit.
+</Note>
 
 ## Deploy
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Freactive-resume%2Freactive-resume%2Ftree%2Fvercel-docker-deployment&project-name=reactive-resume&repository-name=reactive-resume&env=AUTH_SECRET%2CENCRYPTION_SECRET%2CCRON_SECRET&envDescription=Generate+three+independent+secrets+with+openssl+rand+-hex+32.+Keep+these+values+across+deployments.&envLink=https%3A%2F%2Fgithub.com%2Freactive-resume%2Freactive-resume%2Fblob%2Fvercel-docker-deployment%2Fdocs%2Fself-hosting%2Fvercel.mdx&stores=%5B%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22integrationSlug%22%3A%22neon%22%2C%22productSlug%22%3A%22neon%22%7D%2C%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22integrationSlug%22%3A%22upstash%22%2C%22productSlug%22%3A%22upstash-kv%22%7D%2C%7B%22type%22%3A%22blob%22%2C%22access%22%3A%22private%22%7D%5D)
+<Steps>
+  <Step title="Start the wizard">
+    Click the button:
 
-On Hobby, select your **personal GitHub account** as the Git scope. Private repositories owned by a GitHub organization require Vercel Pro.
+    [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Freactive-resume%2Freactive-resume&project-name=reactive-resume&repository-name=reactive-resume&env=AUTH_SECRET%2CENCRYPTION_SECRET&envDescription=Generate+two+independent+secrets+with+openssl+rand+-hex+32.+Keep+these+values+across+deployments.&envLink=https%3A%2F%2Fdocs.rxresu.me%2Fself-hosting%2Fvercel&stores=%5B%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22integrationSlug%22%3A%22neon%22%2C%22productSlug%22%3A%22neon%22%7D%2C%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22integrationSlug%22%3A%22upstash%22%2C%22productSlug%22%3A%22upstash-kv%22%7D%2C%7B%22type%22%3A%22blob%22%2C%22access%22%3A%22private%22%7D%5D)
+  </Step>
 
-The deployment wizard clones the repository, requests the three services, and asks for the three secrets. Select compatible nearby regions, preferably `iad1` for the default Function region. Review provider terms and pricing in the wizard. Blob access must be **private**.
+  <Step title="Choose the Git scope">
+    On Hobby, select your **personal GitHub account**. Private repositories owned by a GitHub organization require Vercel Pro.
+  </Step>
 
-Leave the project root at the repository root. Use the committed `vercel.json`; do not select the web app subdirectory or override it with an SPA fallback. The build generates both applications, then applies database migrations before publishing. No separate migration command is needed.
+  <Step title="Connect the services">
+    Approve Neon, Upstash, and Blob. Set Blob access to **private**. Pick nearby regions for all three, ideally close to the Function region (`iad1` by default).
+  </Step>
 
-After deployment:
+  <Step title="Enter the secrets">
+    Paste `AUTH_SECRET` and `ENCRYPTION_SECRET`.
+  </Step>
 
-1. Open the production domain and create an account.
-2. Check `/api/health`; database, Blob, and configured Redis should be healthy. A cold database may need a second check.
-3. Add an AI provider and its API key in application settings if you want AI features.
-4. Configure SMTP for verification/recovery emails. Without SMTP, messages appear in server logs.
-5. Add optional OAuth credentials using the callback URLs shown in the [SSO guide](/self-hosting/sso).
+  <Step title="Deploy">
+    Keep the project root at the repository root and keep the committed `vercel.json`. Do not select the `apps/web` subdirectory and do not add an SPA fallback rewrite.
 
-Do not paste Docker's entire `.env.example` into Vercel: its local URLs and S3 defaults select the wrong services.
+    The build compiles both apps and applies database migrations before the deployment goes live. You do not run migrations yourself.
+  </Step>
+</Steps>
 
-## Configuration
+<Warning>
+  Do not paste Docker's `.env.example` into Vercel. Its local URLs and S3 settings select the wrong services.
+</Warning>
 
-| Variable | Behavior |
-| --- | --- |
-| `APP_URL` | Optional on Vercel. Defaults to the stable production domain, or the current deployment domain in preview. Set explicitly for a custom domain. |
-| `DATABASE_URL` | Pooled Neon runtime connection. `POSTGRES_URL` is accepted as a fallback. |
-| `DATABASE_MIGRATION_URL` | Direct migration connection. Defaults to `DATABASE_URL_UNPOOLED`, then `POSTGRES_URL_NON_POOLING`, then runtime URL. |
-| `DATABASE_POOL_MAX` | Maximum connections per Function instance; defaults to 10. |
-| `REDIS_URL` | Redis TCP/TLS URL. Upstash's `KV_URL` is accepted as a fallback. REST API credentials alone are insufficient. |
-| `STORAGE_BACKEND` | Vercel requires `blob`; Docker defaults to S3 when configured, otherwise local disk. |
-| `BLOB_READ_WRITE_TOKEN` | Injected by the connected private Blob store. The SDK also supports `BLOB_STORE_ID` with Vercel OIDC. |
-| `AUTH_SECRET` | Persistent authentication secret. |
-| `ENCRYPTION_SECRET` | Persistent encryption key for saved AI-provider credentials; at least 32 characters. Losing it makes those credentials unreadable. |
-| `CRON_SECRET` | At least 32 characters. Vercel sends it to the authenticated daily staging-cleanup job. |
-| `DEPLOYMENT_NAMESPACE` | Defaults to `production` on Vercel, a branch/deployment namespace in preview, and `default` on Docker. Keep stable after storing files. Use different explicit namespaces if multiple projects share Blob or Redis. |
-| `ALLOW_PREVIEW_MIGRATIONS` | Preview builds fail unless set to `true`, after connecting an isolated preview database. |
+## Check the deployment
 
-Explicit connection variables take precedence over Marketplace aliases. Use separate resources for separate application installations. Adding a custom domain does not change the storage namespace. Update `APP_URL`, OAuth callback URLs, and redeploy when changing the public origin.
+1. Open `https://<your-project>.vercel.app/api/health`. `database`, `storage`, and `redis` should all report `healthy`. A sleeping Neon database can fail the first check; retry once.
+2. Open the production domain and create an account.
+3. Optional: add an AI provider under **Settings** to enable AI features.
+4. Optional: configure SMTP for verification and password-reset emails. Without SMTP, emails are written to the Function logs.
+5. Optional: add social or custom OAuth sign-in with the callback URLs in the [SSO guide](/self-hosting/sso).
 
-## Uploads and private files
+## Use a custom domain
 
-Vercel's ingress limit is smaller than the application's supported file sizes. The web app sends large serialized RPC bodies directly to a private staging object, then submits an authenticated one-use reference. The server restores the original request and applies the existing authorization, limits, image resizing, import parsing, and attachment quotas.
+1. Add the domain to the Vercel project.
+2. Set `APP_URL` to the full origin, for example `https://resume.example.com`.
+3. Update the callback URLs of every OAuth provider you configured.
+4. Redeploy.
 
-General uploads retain their 10 MB limit; agent attachments retain their 25 MiB per-file and 100 MiB per-thread limits. The staging transport accepts up to 160 MiB of serialized RPC data, including base64/framing overhead. Split larger batches. Ordinary Docker requests keep their original transport.
+Changing the domain does not move stored files. Files stay under the same `DEPLOYMENT_NAMESPACE`.
 
-Public pictures are served through application upload routes; Blob objects themselves remain private. Agent attachment authorization is unchanged. Successful and failed finalizations clean up staging objects immediately. Abandoned objects become eligible after ten minutes; later uploads and a daily authenticated job remove expired objects in bounded batches.
+## Update the deployment
 
-External RPC clients sending large requests can use the same protocol:
+Redeploy the same project. Keep its connected services and secrets unchanged.
 
-1. `GET /api/storage/stage` returns `{ enabled: true }` on Vercel.
-2. Serialize the original `POST /api/rpc/...` request. With the same session, API key, or bearer token, `POST /api/storage/stage` with JSON `{ path, contentType, size }`. `path` includes the original query string. A browser must send the configured application origin.
-3. `PUT` those exact bytes to the returned `url`, using `Content-Type: application/octet-stream` and no application credentials.
-4. Send the original RPC URL and authentication headers, with an empty body and `x-resume-staged-body: <id>`.
+- Migrations run in the build step, never in runtime Functions. A database advisory lock serializes concurrent deployments.
+- Rolling back to an older deployment does not roll back the database schema. Keep migrations backward-compatible, or restore a database backup.
 
-References are bound to the authenticated user and exact RPC path, expire after ten minutes, and may only be consumed once. A failed finalization needs a new upload; do not blindly retry a mutation whose response was lost. Direct OpenAPI/MCP bodies remain subject to Vercel's ingress limit; large imports should use the RPC staging protocol.
+## Preview deployments
 
-## Updates, previews, and recovery
+Preview builds refuse to run migrations by default, so untrusted preview code cannot change your production database.
 
-Redeploy the same project and retain its connected resources and secrets. Migrations run outside the build cache and use an advisory lock to serialize concurrent deployments. Runtime Functions never run migrations. Docker still runs them at startup.
+To enable previews:
 
-Preview deployments must use their own database and separate credentials. Connect isolated preview services before setting `ALLOW_PREVIEW_MIGRATIONS=true`; a namespace alone cannot isolate SQL rows. Never connect production databases to untrusted preview code.
+1. Connect separate Neon, Upstash, and Blob resources to the **Preview** environment.
+2. Set `ALLOW_PREVIEW_MIGRATIONS=true` for **Preview** only.
 
-Back up PostgreSQL and Blob, and preserve the secrets separately. Reverting a code deployment does not undo database migrations; use backward-compatible migrations or restore an appropriate database backup. Moving between Docker and Vercel does not automatically copy databases or storage objects.
+A storage namespace does not isolate SQL rows. Never connect the production database to the Preview environment.
 
-For a local Vercel artifact build, run `vercel pull --environment production`, supply local-only replacements for sensitive placeholders, then run `APP_URL=https://your-project.vercel.app vercel build --prod`. The local CLI has no deployment hostname before publishing. Use an isolated database because this command applies migrations. Cloud builds receive the hostname automatically.
+## Back up your data
+
+Back up the Neon database and the Blob store. Store `AUTH_SECRET` and `ENCRYPTION_SECRET` separately from those backups.
+
+Moving between Docker and Vercel does not copy the database or files. Migrate them yourself.
+
+## Build locally
+
+A local Vercel build applies migrations, so run it only against an isolated database.
+
+```bash
+vercel pull --environment production
+APP_URL=https://your-project.vercel.app vercel build --prod
+```
+
+Replace sensitive pulled values with local-only ones first. The CLI has no deployment hostname before publishing, so `APP_URL` is required here. Cloud builds set it automatically.
+
+## Environment variables
+
+Explicit variables take precedence over the Marketplace aliases listed here.
+
+| Variable | Required | Behavior |
+| --- | --- | --- |
+| `AUTH_SECRET` | Yes | Signs sessions and tokens. Keep it constant. |
+| `ENCRYPTION_SECRET` | Yes | At least 32 characters. Encrypts saved AI-provider API keys. Keep it constant. |
+| `APP_URL` | No | Public origin. Defaults to the production domain in Production and to the deployment domain in Preview. Set it for a custom domain. |
+| `DATABASE_URL` | Injected | Pooled runtime connection. Falls back to `POSTGRES_URL`. |
+| `DATABASE_MIGRATION_URL` | No | Direct connection for migrations. Falls back to `DATABASE_URL_UNPOOLED`, then `POSTGRES_URL_NON_POOLING`, then `DATABASE_URL`. |
+| `DATABASE_POOL_MAX` | No | Maximum database connections per Function instance. Default `10`. |
+| `REDIS_URL` | Injected | Redis TCP/TLS URL. Falls back to Upstash's `KV_URL`. REST credentials alone do not work. |
+| `STORAGE_BACKEND` | No | Must resolve to `blob` on Vercel, which is the default. The build fails with any other value. |
+| `BLOB_READ_WRITE_TOKEN` | Injected | Provided by the connected Blob store. `BLOB_STORE_ID` with Vercel OIDC also works. |
+| `DEPLOYMENT_NAMESPACE` | No | Prefix for Blob objects and Redis keys. Defaults to `production`, or to a per-branch value in Preview. Keep it constant after you store files. Set different values if two installations share one Blob store or Redis database. |
+| `ALLOW_PREVIEW_MIGRATIONS` | No | Set to `true` in Preview only after you connect isolated preview resources. |
+
+For SMTP, OAuth providers, and feature flags, use the same variables as Docker. See [Self-hosting with Docker](/self-hosting/docker).
+
+## Upload limits
+
+Vercel limits Function request bodies to 4.5 MB. The web app sends larger requests through private Blob staging, so these application limits still apply:
+
+- General uploads: 10 MB per file.
+- Agent attachments: 25 MiB per file and 100 MiB per thread.
+
+Blob objects are never public. The application serves public pictures and authorizes private files itself. API clients that send large RPC requests must follow the [large RPC requests](/guides/large-rpc-requests) protocol. REST (`/api/openapi`) and MCP request bodies stay subject to the 4.5 MB limit.
 
 ## Troubleshooting
 
-- **First build fails on configuration:** verify all three stores are connected to Production and all three secrets are present. Remove accidental S3 variables.
-- **Preview refuses migrations:** connect an isolated database, then explicitly enable preview migrations.
-- **Large upload returns 413:** use the web app or RPC staging protocol. Pro does not remove the ingress limit.
-- **Agent reconnect/stop fails:** verify Upstash's Redis TLS URL, available quota, and matching namespaces across instances.
-- **Sign-in redirects to another hostname:** set `APP_URL` to the domain you use and redeploy; do not use wildcard trusted origins.
-- **Files disappear after changing configuration:** restore the original `DEPLOYMENT_NAMESPACE` and Blob connection. Do not generate a new namespace per production deployment.
-
-## Deployment checks
-
-Pull requests build a complete Vercel artifact using isolated PostgreSQL and dummy cloud credentials. This checks migration preparation, Node.js 24 module loading, and the 300-second Function configuration without exposing deployment credentials to forks.
-
-The manual **Vercel compatibility** workflow runs authenticated smoke checks against `VERCEL_SMOKE_URL` in the `vercel-smoke` GitHub environment. Use a dedicated test installation: the check creates and deletes its own account, renders a public PDF, and transfers a 10 MiB file. For 25 MiB agent attachment checks, configure `VERCEL_SMOKE_AI_BASE_URL` and the `VERCEL_SMOKE_AI_API_KEY` secret for a deterministic OpenAI-compatible test provider with model `smoke-model`. These checks never need a paid AI model.
-
-Run the same core checks against Docker with `SMOKE_URL=http://localhost:3000 node tooling/deployment/smoke.mjs`.
+| Symptom | Fix |
+| --- | --- |
+| First build fails on configuration | Check that all three services are connected to Production and both secrets are set. Remove any `S3_*` variables and any `STORAGE_BACKEND` value other than `blob`. |
+| Preview build refuses to migrate | Connect isolated preview resources, then set `ALLOW_PREVIEW_MIGRATIONS=true` for Preview. |
+| Large upload returns `413` | Use the web app or the [large RPC requests](/guides/large-rpc-requests) protocol. Vercel Pro does not raise the request body limit. |
+| Agent reconnect or stop fails | Check the Upstash TLS URL, the remaining Upstash quota, and that every environment uses the expected `DEPLOYMENT_NAMESPACE`. |
+| Sign-in redirects to another hostname | Set `APP_URL` to the domain you use and redeploy. Do not add wildcard trusted origins. |
+| Files are missing after a configuration change | Restore the original `DEPLOYMENT_NAMESPACE` and Blob connection. |
