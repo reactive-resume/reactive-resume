@@ -78,7 +78,6 @@ export default defineConfig({
 	deps: {
 		alwaysBundle: [/^@reactive-resume\//, ...bundledInteropPackages],
 		neverBundle: shouldExternalizeThirdParty,
-		onlyBundle: [/^@reactive-resume\//, ...bundledInteropPackages],
 	},
 	plugins: [promptAssetsPlugin],
 });

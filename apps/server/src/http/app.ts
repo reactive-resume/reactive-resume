@@ -51,7 +51,7 @@ export function createApp(options: AppOptions = {}) {
 		c.header("Cache-Control", "no-store");
 	});
 
-	app.on(["GET", "POST"], "/api/storage/stage", (c) => prepareStagedBody(c.req.raw));
+	app.post("/api/storage/stage", (c) => prepareStagedBody(c.req.raw));
 	app.all("/api/rpc", (c) => withStagedBody(c.req.raw, (request) => handleRpc(request, client(c))));
 	app.all("/api/rpc/*", (c) => withStagedBody(c.req.raw, (request) => handleRpc(request, client(c))));
 	app.all("/api/openapi", (c) => handleOpenApi(c.req.raw, client(c)));

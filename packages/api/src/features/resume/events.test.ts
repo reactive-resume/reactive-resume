@@ -7,7 +7,7 @@ const pool = vi.hoisted(() => ({
 
 vi.mock("@reactive-resume/db/client", () => ({ getPool: () => pool }));
 const redis = vi.hoisted(() => ({ getRedis: vi.fn(), publish: vi.fn(), duplicate: vi.fn() }));
-vi.mock("../../redis", () => ({
+vi.mock("@reactive-resume/db/redis", () => ({
 	getRedis: redis.getRedis,
 	redisKey: (key: string) => `reactive-resume:preview:${key}`,
 }));
@@ -52,10 +52,7 @@ describe("publishResumeUpdated", () => {
 function makeSubscriber() {
 	const handlers = new Map<string, (...args: string[]) => void>();
 	return {
-		status: "ready",
 		subscribe: vi.fn().mockResolvedValue(1),
-		unsubscribe: vi.fn().mockResolvedValue(0),
-		quit: vi.fn().mockResolvedValue("OK"),
 		disconnect: vi.fn(),
 		on: vi.fn((event: string, handler: (...args: string[]) => void) => handlers.set(event, handler)),
 		off: vi.fn((event: string) => handlers.delete(event)),
@@ -84,8 +81,6 @@ describe("Redis resume subscriptions", () => {
 		expect((await next).done).toBe(true);
 		expect(redis.duplicate).toHaveBeenCalledWith({ commandTimeout: 5_000 });
 		expect(subscriber.subscribe).toHaveBeenCalledWith(channel);
-		expect(subscriber.unsubscribe).toHaveBeenCalledWith(channel);
-		expect(subscriber.quit).toHaveBeenCalledTimes(1);
 		expect(subscriber.disconnect).toHaveBeenCalledTimes(1);
 		expect(subscriber.off).toHaveBeenCalledWith("message", expect.any(Function));
 		expect(subscriber.off).toHaveBeenCalledWith("error", expect.any(Function));
@@ -94,7 +89,6 @@ describe("Redis resume subscriptions", () => {
 
 	it("disconnects if aborted while the Redis subscription is still connecting", async () => {
 		const subscriber = makeSubscriber();
-		subscriber.status = "connecting";
 		subscriber.subscribe.mockReturnValue(new Promise(() => {}));
 		redis.getRedis.mockReturnValue(redis);
 		redis.duplicate.mockReturnValue(subscriber);
@@ -104,7 +98,6 @@ describe("Redis resume subscriptions", () => {
 		controller.abort();
 		expect((await next).done).toBe(true);
 		expect(subscriber.disconnect).toHaveBeenCalledTimes(1);
-		expect(subscriber.unsubscribe).not.toHaveBeenCalled();
 	});
 
 	it("closes the duplicate when subscription setup fails", async () => {
@@ -114,8 +107,6 @@ describe("Redis resume subscriptions", () => {
 		redis.duplicate.mockReturnValue(subscriber);
 		const iterator = subscribeResumeUpdated({ resumeId: "r1", userId: "u1" });
 		await expect(iterator.next()).rejects.toThrow("subscribe failed");
-		expect(subscriber.unsubscribe).toHaveBeenCalledTimes(1);
-		expect(subscriber.quit).toHaveBeenCalledTimes(1);
 		expect(subscriber.disconnect).toHaveBeenCalledTimes(1);
 	});
 });

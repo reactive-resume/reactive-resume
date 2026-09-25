@@ -74,8 +74,8 @@ jobs:
             }
           }
           const { default: app } = await import('./apps/server/dist/vercel.mjs');
-          const response = await app.fetch(new Request('http://localhost:3000/api/storage/stage'));
-          assert.deepEqual(await response.json(), { enabled: true });
+          const response = await app.fetch(new Request('http://localhost:3000/api/storage/stage', { method: 'POST', body: '{}' }));
+          assert.equal(response.status, 401);
           process.exit(0);
           JS
 

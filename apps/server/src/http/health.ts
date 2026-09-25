@@ -1,8 +1,8 @@
 import { sql } from "drizzle-orm";
 import { withTimeout } from "es-toolkit";
 import { getStorageService } from "@reactive-resume/api/features/storage";
-import { getRedis } from "@reactive-resume/api/redis";
 import { db } from "@reactive-resume/db/client";
+import { getRedis } from "@reactive-resume/db/redis";
 import { appVersion } from "../app-version";
 
 const HEALTHCHECK_TIMEOUT_MS = 1_500;
@@ -63,9 +63,7 @@ export async function handleHealth() {
 				})
 			: undefined,
 	]);
-	const status = [database, storage, ...(redis ? [redis] : [])].some((check) => check.status === "unhealthy")
-		? "unhealthy"
-		: "healthy";
+	const status = [database, storage, redis].some((check) => check?.status === "unhealthy") ? "unhealthy" : "healthy";
 
 	const checks = {
 		service: "reactive-resume",

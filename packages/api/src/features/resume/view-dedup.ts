@@ -1,4 +1,4 @@
-import { getRedis, redisKey } from "../../redis";
+import { getRedis, redisKey } from "@reactive-resume/db/redis";
 
 export { getClientKey as clientKeyFromHeaders } from "../../middleware/rate-limit";
 

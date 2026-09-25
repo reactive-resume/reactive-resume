@@ -42,7 +42,7 @@ const aiProvidersServiceMock = {
 };
 
 vi.mock("@reactive-resume/db/client", () => ({ db: dbMock }));
-vi.mock("../../redis", () => ({
+vi.mock("@reactive-resume/db/redis", () => ({
 	getRedis: () => cancellationRedisMock,
 	redisKey: (...parts: string[]) => ["test", ...parts].join(":"),
 }));

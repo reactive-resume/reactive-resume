@@ -20,12 +20,6 @@ function createInstance(context = Promise.resolve({})) {
 	};
 }
 
-function duplicateResourceError() {
-	return new Error("Failed query: insert into oauth_resource", {
-		cause: Object.assign(new Error("duplicate key violates unique constraint"), { code: "23505" }),
-	});
-}
-
 beforeEach(() => {
 	vi.resetModules();
 	mocks.betterAuth.mockReset();
@@ -82,37 +76,5 @@ describe("auth initialization lifecycle", () => {
 		expect(mocks.betterAuth).toHaveBeenCalledTimes(1);
 		expect(instance.api.getSession).toHaveBeenCalledTimes(1);
 		expect(auth.api).toBe(instance.api);
-	});
-
-	it("retries nested PostgreSQL resource conflicts up to all four audiences", async () => {
-		const recovered = createInstance();
-		for (let index = 0; index < 4; index++) {
-			mocks.betterAuth.mockImplementationOnce(() => createInstance(Promise.reject(duplicateResourceError())));
-		}
-		mocks.betterAuth.mockReturnValue(recovered);
-		const { auth, initializeAuth } = await import("./config");
-
-		await initializeAuth();
-		expect(mocks.betterAuth).toHaveBeenCalledTimes(5);
-		expect(auth.api).toBe(recovered.api);
-	});
-
-	it("stops retrying after the resource-conflict budget is exhausted", async () => {
-		const failure = duplicateResourceError();
-		mocks.betterAuth.mockImplementation(() => createInstance(Promise.reject(failure)));
-		const { initializeAuth } = await import("./config");
-
-		await expect(initializeAuth()).rejects.toBe(failure);
-		expect(mocks.betterAuth).toHaveBeenCalledTimes(5);
-	});
-
-	it("does not retry other PostgreSQL errors or errors mentioning duplicate without its code", async () => {
-		const { initializeAuth } = await import("./config");
-		const failures = [new Error("Failed query", { cause: { code: "08006" } }), new Error("duplicate request")];
-		for (const failure of failures) {
-			mocks.betterAuth.mockImplementationOnce(() => createInstance(Promise.reject(failure)));
-			await expect(initializeAuth()).rejects.toBe(failure);
-		}
-		expect(mocks.betterAuth).toHaveBeenCalledTimes(failures.length);
 	});
 });

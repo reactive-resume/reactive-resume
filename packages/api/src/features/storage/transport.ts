@@ -1,9 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { del, get, issueSignedToken, list, presignUrl } from "@vercel/blob";
 import { z } from "zod";
+import { getRedis, redisKey } from "@reactive-resume/db/redis";
 import { env } from "@reactive-resume/env/server";
 import { resolveUserFromRequestHeaders } from "../../context";
-import { createRateLimiter, getRedis, redisKey } from "../../redis";
+import { createRateLimiter } from "../../redis";
 import { blobOptions, blobPath } from "./blob";
 
 const HEADER = "x-resume-staged-body";
@@ -36,8 +37,6 @@ async function cleanupExpiredBodies() {
 }
 
 export async function prepareStagedBody(request: Request): Promise<Response> {
-	if (request.method === "GET")
-		return Response.json({ enabled: enabled() }, { headers: { "Cache-Control": "no-store" } });
 	if (!enabled()) return new Response("Not Found", { status: 404 });
 	const user = await authenticatedUser(request);
 	if (!user) return new Response("Unauthorized", { status: 401 });
@@ -101,26 +100,9 @@ export async function withStagedBody(request: Request, handle: (request: Request
 	try {
 		const result = await get(stored.pathname, { ...blobOptions(), access: "private", useCache: false });
 		if (result?.statusCode !== 200) return new Response("Upload missing", { status: 400 });
-		// Private Blob reads may be chunked (SDK size=0); enforce the limit on actual bytes.
-		let size = 0;
-		let body: ArrayBuffer;
-		try {
-			body = await new Response(
-				result.stream.pipeThrough(
-					new TransformStream({
-						transform(chunk: Uint8Array, controller) {
-							size += chunk.byteLength;
-							if (size > stored.size || size > MAX_BYTES) throw new RangeError("Upload size mismatch");
-							controller.enqueue(chunk);
-						},
-					}),
-				),
-			).arrayBuffer();
-		} catch (error) {
-			if (error instanceof RangeError) return new Response("Upload size mismatch", { status: 413 });
-			throw error;
-		}
-		if (size !== stored.size) return new Response("Upload size mismatch", { status: 413 });
+		// The signed PUT capped the object at the declared size; reject anything shorter.
+		const body = await new Response(result.stream).arrayBuffer();
+		if (body.byteLength !== stored.size) return new Response("Upload size mismatch", { status: 413 });
 		const headers = new Headers(request.headers);
 		headers.delete(HEADER);
 		headers.delete("content-length");

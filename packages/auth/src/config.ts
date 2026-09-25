@@ -366,26 +366,6 @@ export const auth: Auth = new Proxy({} as Auth, {
 	},
 });
 
-function isUniqueConstraintError(error: unknown): boolean {
-	const seen = new Set<unknown>();
-	let cause = error;
-	while (cause && typeof cause === "object" && !seen.has(cause)) {
-		if ("code" in cause && cause.code === "23505") return true;
-		seen.add(cause);
-		cause = "cause" in cause ? cause.cause : undefined;
-	}
-	return false;
-}
-
 export async function initializeAuth(): Promise<void> {
-	for (let attempt = 0; ; attempt++) {
-		try {
-			await auth.$context;
-			return;
-		} catch (error) {
-			// Concurrent cold starts can race each resource seed; Drizzle wraps the PostgreSQL error.
-			// Retry initialization only, never an auth endpoint or user request.
-			if (attempt >= OAUTH_AUDIENCES.length || !isUniqueConstraintError(error)) throw error;
-		}
-	}
+	await auth.$context;
 }

@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { del, get, list, put } from "@vercel/blob";
 import { env } from "@reactive-resume/env/server";
 
@@ -61,15 +60,9 @@ export class BlobStorageService {
 	}
 
 	async healthcheck() {
-		const key = `.health/${randomUUID()}`;
 		try {
-			try {
-				await this.write({ key, data: new Uint8Array([1]), contentType: "application/octet-stream" });
-				const stored = await this.read(key);
-				if (stored?.data[0] !== 1) throw new Error("Blob health check read failed");
-			} finally {
-				await del(blobPath(key), blobOptions());
-			}
+			// One authenticated list call proves the token and store are reachable.
+			await list({ ...blobOptions(), prefix: blobPath(".health"), limit: 1 });
 			return { status: "healthy" as const, type: "blob" as const, message: "Blob storage is accessible" };
 		} catch {
 			return { status: "unhealthy" as const, type: "blob" as const, message: "Blob storage is unavailable" };

@@ -1,5 +1,5 @@
 import { getPool } from "@reactive-resume/db/client";
-import { getRedis, redisKey } from "../../redis";
+import { getRedis, redisKey } from "@reactive-resume/db/redis";
 
 const RESUME_UPDATED_CHANNEL = "resume_updated";
 const resumeMutationNames = new Set(["sync", "create", "update", "patch", "lock", "password", "delete"] as const);
@@ -118,18 +118,9 @@ export async function* subscribeResumeUpdated({ resumeId, userId, signal }: Subs
 		subscriber?.off("message", onMessage);
 
 		if (subscriber) {
-			try {
-				if (subscriber.status === "ready") {
-					try {
-						await subscriber.unsubscribe(channel);
-					} finally {
-						await subscriber.quit();
-					}
-				}
-			} finally {
-				subscriber.disconnect();
-				subscriber.off("error", onError);
-			}
+			// The duplicate connection exists only for this subscription; closing it unsubscribes.
+			subscriber.disconnect();
+			subscriber.off("error", onError);
 		} else if (client) {
 			try {
 				await client.query(`UNLISTEN ${RESUME_UPDATED_CHANNEL}`);

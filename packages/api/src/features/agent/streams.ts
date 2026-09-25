@@ -2,8 +2,7 @@ import type { UIMessageChunk } from "ai";
 import type { ResumableStreamContext } from "resumable-stream/ioredis";
 import { JsonToSseTransformStream } from "ai";
 import { createResumableStreamContext } from "resumable-stream/ioredis";
-import { env } from "@reactive-resume/env/server";
-import { getRedis } from "../../redis";
+import { getRedis, redisKey } from "@reactive-resume/db/redis";
 
 type AgentStreamContext = Pick<ResumableStreamContext, "createNewResumableStream" | "resumeExistingStream">;
 
@@ -33,7 +32,7 @@ function getAgentStreamContext() {
 	const publisher = getRedis();
 	if (!publisher) throw new Error("Agent streaming requires Redis");
 	streamContext = createResumableStreamContext({
-		keyPrefix: `reactive-resume:${env.DEPLOYMENT_NAMESPACE ?? "default"}:agent-stream`,
+		keyPrefix: redisKey("agent-stream"),
 		waitUntil,
 		publisher,
 		subscriber: publisher.duplicate(),

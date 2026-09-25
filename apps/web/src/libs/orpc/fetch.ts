@@ -1,22 +1,12 @@
-let stagingEnabled: Promise<boolean> | undefined;
+let stagingUnavailable = false;
 
 /** Large RPC bodies bypass the hosting ingress limit while retaining their original wire format. */
 export async function rpcFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
 	const request = new Request(input, { ...init, credentials: "include" });
-	if (request.method !== "POST") return fetch(request);
+	if (stagingUnavailable || request.method !== "POST") return fetch(request);
 	const body = await request.clone().blob();
 	if (body.size < 3 * 1024 * 1024) return fetch(request);
 
-	stagingEnabled ??= fetch("/api/storage/stage", { credentials: "include" })
-		.then(async (response) => {
-			if (!response.ok) throw new Error("Could not check upload support. Please retry.");
-			return (await response.json()).enabled === true;
-		})
-		.catch((error: unknown) => {
-			stagingEnabled = undefined;
-			throw error;
-		});
-	if (!(await stagingEnabled)) return fetch(request);
 	const url = new URL(request.url);
 	const prepared = await fetch("/api/storage/stage", {
 		method: "POST",
@@ -29,6 +19,11 @@ export async function rpcFetch(input: RequestInfo | URL, init?: RequestInit): Pr
 			size: body.size,
 		}),
 	});
+	// Docker has no staging endpoint; send large bodies directly from now on.
+	if (prepared.status === 404) {
+		stagingUnavailable = true;
+		return fetch(request);
+	}
 	if (!prepared.ok) throw new Error(`Could not prepare upload (${prepared.status}). Please retry.`);
 	const stage = (await prepared.json()) as { id: string; url: string };
 	const uploaded = await fetch(stage.url, {

@@ -1,4 +1,4 @@
-import { getRedis, redisKey } from "../../redis";
+import { getRedis, redisKey } from "@reactive-resume/db/redis";
 
 const controllers = new Map<string, AbortController>();
 const CANCELLATION_TTL_MS = 15 * 60_000;

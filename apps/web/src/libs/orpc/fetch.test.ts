@@ -7,7 +7,6 @@ const largeBody = new Uint8Array(5 * 1024 * 1024).fill(173);
 
 function queueStaging() {
 	fetchMock
-		.mockResolvedValueOnce(Response.json({ enabled: true }))
 		.mockResolvedValueOnce(Response.json({ id: "upload-1", url: "https://blob.test/signed-put" }))
 		.mockResolvedValueOnce(new Response("uploaded"))
 		.mockResolvedValueOnce(new Response("rpc-result"));
@@ -45,20 +44,20 @@ describe("RPC fetch", () => {
 			}),
 		);
 		expect(await result.text()).toBe("rpc-result");
-		expect(fetchMock).toHaveBeenCalledTimes(4);
-		const [prepareUrl, preparation] = fetchMock.mock.calls[1] ?? [];
+		expect(fetchMock).toHaveBeenCalledTimes(3);
+		const [prepareUrl, preparation] = fetchMock.mock.calls[0] ?? [];
 		expect(prepareUrl).toBe("/api/storage/stage");
 		expect(JSON.parse(preparation?.body as string)).toEqual({
 			path: "/api/rpc/storage/uploadFile?batch=1",
 			contentType,
 			size: largeBody.length,
 		});
-		const [uploadUrl, upload] = fetchMock.mock.calls[2] ?? [];
+		const [uploadUrl, upload] = fetchMock.mock.calls[1] ?? [];
 		expect(uploadUrl).toBe("https://blob.test/signed-put");
 		expect(upload?.method).toBe("PUT");
 		const uploadedBody = upload?.body as Blob;
 		expect(Buffer.from(await uploadedBody.arrayBuffer()).equals(Buffer.from(largeBody))).toBe(true);
-		const [finalUrl, finalRequest] = fetchMock.mock.calls[3] ?? [];
+		const [finalUrl, finalRequest] = fetchMock.mock.calls[2] ?? [];
 		expect(finalUrl).toBe(rpcUrl);
 		expect(finalRequest?.body).toBeUndefined();
 		expect(finalRequest?.credentials).toBe("include");
@@ -68,31 +67,25 @@ describe("RPC fetch", () => {
 		expect(headers.get("x-example")).toBe("preserved");
 	});
 
-	it("preserves large direct requests when staging is disabled on Docker", async () => {
-		fetchMock.mockResolvedValueOnce(Response.json({ enabled: false })).mockResolvedValueOnce(new Response("ok"));
+	it("sends large requests directly once staging is unavailable on Docker", async () => {
+		fetchMock.mockResolvedValueOnce(new Response("Not Found", { status: 404 })).mockResolvedValue(new Response("ok"));
 		const { rpcFetch } = await import("./fetch");
 		await rpcFetch(rpcUrl, { method: "POST", body: largeBody });
-		expect(fetchMock).toHaveBeenCalledTimes(2);
-		const request = fetchMock.mock.calls[1]?.[0] as Request;
-		expect(request.url).toBe(rpcUrl);
-		expect(Buffer.from(await request.arrayBuffer()).equals(Buffer.from(largeBody))).toBe(true);
+		await rpcFetch(rpcUrl, { method: "POST", body: largeBody });
+		expect(fetchMock).toHaveBeenCalledTimes(3);
+		for (const call of [fetchMock.mock.calls[1], fetchMock.mock.calls[2]]) {
+			const request = call?.[0] as Request;
+			expect(request.url).toBe(rpcUrl);
+			expect(Buffer.from(await request.arrayBuffer()).equals(Buffer.from(largeBody))).toBe(true);
+		}
 	});
 
-	it.each(["network", "http"])(
-		"retries discovery after a transient %s error without dispatching RPC",
-		async (failure) => {
-			if (failure === "network") fetchMock.mockRejectedValueOnce(new Error("Network unavailable"));
-			else fetchMock.mockResolvedValueOnce(new Response("Unavailable", { status: 503 }));
-			const { rpcFetch } = await import("./fetch");
-			await expect(
-				rpcFetch(rpcUrl, { method: "POST", body: largeBody, headers: { "content-type": contentType } }),
-			).rejects.toThrow();
-			expect(fetchMock).toHaveBeenCalledTimes(1);
-			queueStaging();
-			await expect(
-				rpcFetch(rpcUrl, { method: "POST", body: largeBody, headers: { "content-type": contentType } }),
-			).resolves.toBeInstanceOf(Response);
-			expect(fetchMock).toHaveBeenCalledTimes(5);
-		},
-	);
+	it("does not dispatch the RPC when preparation fails", async () => {
+		fetchMock.mockResolvedValueOnce(new Response("Unavailable", { status: 503 }));
+		const { rpcFetch } = await import("./fetch");
+		await expect(
+			rpcFetch(rpcUrl, { method: "POST", body: largeBody, headers: { "content-type": contentType } }),
+		).rejects.toThrow();
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
 });

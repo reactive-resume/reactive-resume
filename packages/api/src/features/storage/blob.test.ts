@@ -91,20 +91,16 @@ describe("BlobStorageService", () => {
 		expect(mocks.del).toHaveBeenCalledTimes(1);
 	});
 
-	it("checks read/write/delete with unique keys and cleans failed checks", async () => {
-		mocks.get.mockImplementation(async () => storedResult());
+	it("checks health with one namespaced list call without leaking errors", async () => {
+		mocks.list.mockResolvedValueOnce({ blobs: [], hasMore: false });
 		expect((await storage.healthcheck()).status).toBe("healthy");
-		expect((await storage.healthcheck()).status).toBe("healthy");
-		const keys = mocks.put.mock.calls.map(([key]) => key);
-		expect(keys[0]).toMatch(/^preview-123\/\.health\//);
-		expect(keys[0]).not.toBe(keys[1]);
-		expect(mocks.del.mock.calls.map(([key]) => key)).toEqual(keys);
-		mocks.get.mockRejectedValueOnce(new Error("private credentials must not escape"));
+		expect(mocks.list).toHaveBeenCalledExactlyOnceWith({ prefix: "preview-123/.health", limit: 1 });
+		expect(mocks.put).not.toHaveBeenCalled();
+		mocks.list.mockRejectedValueOnce(new Error("private credentials must not escape"));
 		expect(await storage.healthcheck()).toEqual({
 			status: "unhealthy",
 			type: "blob",
 			message: "Blob storage is unavailable",
 		});
-		expect(mocks.del).toHaveBeenCalledTimes(3);
 	});
 });

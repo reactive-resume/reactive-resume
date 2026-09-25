@@ -1,6 +1,5 @@
 import type { BetterAuthOptions } from "better-auth";
-import { Redis } from "ioredis";
-import { env } from "@reactive-resume/env/server";
+import { getRedis, redisKey } from "@reactive-resume/db/redis";
 
 // Match Better Auth's rolling inactivity window: only accepted requests extend it.
 const consumeScript = `
@@ -13,28 +12,13 @@ redis.call('PEXPIRE', KEYS[1], ARGV[1])
 return {1, 0}
 `;
 
-let redis: Redis | undefined;
+const redis = getRedis();
 
-export const authRateLimitStorage: NonNullable<BetterAuthOptions["rateLimit"]>["customStorage"] = env.REDIS_URL
+export const authRateLimitStorage: NonNullable<BetterAuthOptions["rateLimit"]>["customStorage"] = redis
 	? {
 			async consume(key, rule) {
 				try {
-					if (!redis) {
-						redis = new Redis(env.REDIS_URL as string, {
-							lazyConnect: true,
-							maxRetriesPerRequest: 2,
-							connectTimeout: 5_000,
-							commandTimeout: 5_000,
-						});
-						redis.on("error", () => console.error("[auth] Rate limit storage unavailable"));
-					}
-					const result = await redis.eval(
-						consumeScript,
-						1,
-						`reactive-resume:${env.DEPLOYMENT_NAMESPACE}:auth:${key}`,
-						rule.window * 1_000,
-						rule.max,
-					);
+					const result = await redis.eval(consumeScript, 1, redisKey("auth", key), rule.window * 1_000, rule.max);
 					if (!Array.isArray(result) || result.length !== 2) throw new Error("Invalid rate limit result");
 					return { allowed: result[0] === 1, retryAfter: result[0] === 1 ? null : Number(result[1]) };
 				} catch {

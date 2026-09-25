@@ -16,8 +16,8 @@ const mocks = vi.hoisted(() => ({
 vi.mock("@vercel/blob", () => mocks.blob);
 vi.mock("@reactive-resume/env/server", () => ({ env: mocks.env }));
 vi.mock("../../context", () => ({ resolveUserFromRequestHeaders: mocks.user }));
-vi.mock("../../redis", () => ({
-	createRateLimiter: () => ({ limit: mocks.limit }),
+vi.mock("../../redis", () => ({ createRateLimiter: () => ({ limit: mocks.limit }) }));
+vi.mock("@reactive-resume/db/redis", () => ({
 	getRedis: mocks.getRedis,
 	redisKey: (...parts: string[]) => ["test", ...parts].join(":"),
 }));
@@ -96,8 +96,6 @@ describe("staged RPC transport", () => {
 
 	it("disables staging on Docker", async () => {
 		vi.stubEnv("VERCEL", "");
-		const result = await prepareStagedBody(new Request("https://resume.test/api/storage/stage"));
-		expect(await result.json()).toEqual({ enabled: false });
 		expect((await prepareStagedBody(prepareRequest())).status).toBe(404);
 		expect(mocks.user).not.toHaveBeenCalled();
 	});
@@ -165,20 +163,13 @@ describe("staged RPC transport", () => {
 	});
 
 	it("rejects a size mismatch before RPC parsing and deletes the staged object", async () => {
-		const cancel = vi.fn();
 		mocks.blob.get.mockResolvedValue({
 			statusCode: 200,
-			blob: { size: wire.length + 1 },
-			stream: new ReadableStream({
-				start(controller) {
-					controller.enqueue(new Uint8Array(wire.length + 1));
-				},
-				cancel,
-			}),
+			blob: { size: wire.length - 1 },
+			stream: new Blob([new Uint8Array(wire.length - 1)]).stream(),
 		});
 		const handle = vi.fn();
 		expect((await withStagedBody(stageRequest(), handle)).status).toBe(413);
-		expect(cancel).toHaveBeenCalled();
 		expect(handle).not.toHaveBeenCalled();
 		expect(mocks.blob.del).toHaveBeenCalledWith(pathname, {});
 	});

@@ -56,8 +56,10 @@ for (const path of ["/", "/auth/login", "/robots.txt", "/sitemap.xml", "/.well-k
 	await checked(await request(path));
 }
 assert.equal((await request("/assets/does-not-exist.js")).status, 404);
-const staged = (await (await checked(await request("/api/storage/stage"))).json()).enabled;
-if (staged) assert.equal((await request("/api/storage/stage", { method: "POST", body: "{}" }, false)).status, 401);
+// Unauthenticated staging returns 401 where supported (Vercel) and 404 where not (Docker).
+const stageStatus = (await request("/api/storage/stage", { method: "POST", body: "{}" }, false)).status;
+assert.ok([401, 404].includes(stageStatus), `unexpected staging status ${stageStatus}`);
+const staged = stageStatus === 401;
 const username = `smoke${Date.now()}`;
 const signup = await checked(
 	await request("/api/auth/sign-up/email", {
