@@ -249,6 +249,21 @@ docker compose logs -f reactive-resume
   </Step>
 </Steps>
 
+## Local startup helper
+
+If you cloned the Reactive Resume repository, you can use the included startup helper to start the Docker Compose stack and open the application automatically:
+
+```bash
+./scripts/self-hosting/start.sh
+```
+The helper waits for the Docker Compose services to become ready before opening the application in your default browser. The timeout can be configured with the `TIMEOUT_SECONDS` environment variable.
+
+For example:
+
+```bash
+TIMEOUT_SECONDS=300 ./scripts/self-hosting/start.sh
+```
+
 ## Unraid and other homelab platforms
 
 Use your platform's generic container configuration to create two separately managed containers: one for Reactive
