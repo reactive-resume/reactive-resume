@@ -336,14 +336,18 @@ services:
       replicas: 1
 
   seaweedfs_create_bucket:
-    image: quay.io/minio/mc:latest
+    image: amazon/aws-cli:latest
+    environment:
+      - AWS_ACCESS_KEY_ID=$S3_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY=$S3_SECRET_ACCESS_KEY
+      - AWS_DEFAULT_REGION=us-east-1
     entrypoint: >
       /bin/sh -c "
-        until mc alias set seaweedfs http://seaweedfs:8333 $S3_ACCESS_KEY_ID $S3_SECRET_ACCESS_KEY; do
+        until aws --endpoint-url http://seaweedfs:8333 s3api head-bucket --bucket $S3_BUCKET 2>/dev/null ||
+          aws --endpoint-url http://seaweedfs:8333 s3 mb s3://$S3_BUCKET; do
           echo 'Waiting for SeaweedFS...';
           sleep 2;
         done;
-        mc mb seaweedfs/$S3_BUCKET --ignore-existing;
       "
     networks:
       - reactive_resume_network

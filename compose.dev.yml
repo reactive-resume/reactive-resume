@@ -97,15 +97,16 @@ services:
       retries: 3
 
   seaweedfs_create_bucket:
-    image: quay.io/minio/mc:latest
+    image: amazon/aws-cli:latest
     restart: on-failure
+    environment:
+      AWS_ACCESS_KEY_ID: seaweedfs
+      AWS_SECRET_ACCESS_KEY: seaweedfs
+      AWS_DEFAULT_REGION: us-east-1
     entrypoint: >
       /bin/sh -c "
-        until mc alias set seaweedfs http://seaweedfs:8333 seaweedfs seaweedfs; do
-          echo 'Waiting for SeaweedFS...';
-          sleep 2;
-        done;
-        mc mb seaweedfs/reactive-resume --ignore-existing;
+        aws --endpoint-url http://seaweedfs:8333 s3api head-bucket --bucket reactive-resume 2>/dev/null ||
+        aws --endpoint-url http://seaweedfs:8333 s3 mb s3://reactive-resume
       "
     depends_on:
       seaweedfs:
