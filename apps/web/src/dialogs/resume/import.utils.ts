@@ -1,4 +1,11 @@
-export type ImportType = "" | "pdf" | "docx" | "reactive-resume-json" | "reactive-resume-v4-json" | "json-resume-json";
+export type ImportType =
+	| ""
+	| "pdf"
+	| "docx"
+	| "linkedin"
+	| "reactive-resume-json"
+	| "reactive-resume-v4-json"
+	| "json-resume-json";
 
 export function detectJsonImportType(parsed: unknown): ImportType {
 	if (!parsed || typeof parsed !== "object") return "";

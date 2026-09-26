@@ -58,6 +58,17 @@ const formSchema = z.discriminatedUnion("type", [
 			),
 	}),
 	z.object({
+		type: z.literal("linkedin"),
+		file: z
+			.instanceof(File)
+			.refine(
+				(file) => file.type === "" || file.type === "application/zip" || file.name.toLowerCase().endsWith(".zip"),
+				{
+					message: "File must be a ZIP archive",
+				},
+			),
+	}),
+	z.object({
 		type: z.literal("reactive-resume-json"),
 		file: z
 			.instanceof(File)
@@ -101,6 +112,11 @@ async function detectImportType(file: File): Promise<ImportType> {
 	const isZip = header[0] === 0x50 && header[1] === 0x4b && header[2] === 0x03 && header[3] === 0x04; // "PK\x03\x04"
 
 	if (isPdf || mime === "application/pdf" || name.endsWith(".pdf")) return "pdf";
+
+	// Word documents are also ZIPs, so a bare "PK" header is ambiguous. LinkedIn's export is
+	// only ever named with a .zip extension, so check that first and let it win the tie.
+	if (name.endsWith(".zip") || mime === "application/zip") return "linkedin";
+
 	if (
 		isZip ||
 		mime === "application/msword" ||
@@ -193,6 +209,12 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 
 						data = parseResumeText(lines.join("\n"));
 					}
+				}
+
+				if (value.type === "linkedin") {
+					const { parseLinkedInExport } = await import("@reactive-resume/import/linkedin");
+					const bytes = new Uint8Array(await value.file.arrayBuffer());
+					data = parseLinkedInExport(bytes);
 				}
 
 				if (value.type === "docx") {
@@ -315,7 +337,8 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 				<DialogDescription>
 					<Trans>
 						Continue where you left off by importing a resume you built in Reactive Resume or another resume builder.
-						Supported formats are PDF, Microsoft Word, and JSON files from Reactive Resume or JSON Resume.
+						Supported formats are PDF, Microsoft Word, a LinkedIn data export, and JSON files from Reactive Resume or
+						JSON Resume.
 					</Trans>
 				</DialogDescription>
 			</DialogHeader>
@@ -399,6 +422,14 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 													label: t({
 														comment: "Import source option for standard JSON Resume format",
 														message: "JSON Resume",
+													}),
+												},
+												{
+													value: "linkedin",
+													textValue: "LinkedIn",
+													label: t({
+														comment: "Import source option for a LinkedIn data export ZIP",
+														message: "LinkedIn (Data Export)",
 													}),
 												},
 												{
