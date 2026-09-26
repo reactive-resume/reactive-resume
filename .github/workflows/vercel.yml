@@ -56,7 +56,7 @@ jobs:
             settings: { framework: null, nodeVersion: '24.x', createdAt: 0 }
           }));
           JS
-          pnpm dlx vercel@60.0.1 build --prod --yes --global-config "$RUNNER_TEMP/vercel-offline"
+          pnpm dlx --allow-build=esbuild vercel@60.0.1 build --prod --yes --global-config "$RUNNER_TEMP/vercel-offline"
       - name: Check Lambda module loading and function budget
         run: |
           node --no-experimental-require-module --input-type=module - <<'JS'

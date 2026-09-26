@@ -2,6 +2,9 @@
 	"$schema": "https://unpkg.com/knip@6/schema.json",
 	"tags": ["-lintignore"],
 	"workspaces": {
+		".": {
+			"entry": ["api/index.mjs"]
+		},
 		"apps/web": {
 			"entry": ["lingui.config.ts", "vite.config.ts", "vitest.config.ts"],
 			"vite": {
@@ -37,6 +40,7 @@
 				"@sindresorhus/slugify",
 				"@t3-oss/env-core",
 				"@uiw/color-convert",
+				"@vercel/blob",
 				"ai",
 				"bcrypt",
 				"cjk-regex",
@@ -45,6 +49,8 @@
 				"drizzle-zod",
 				"fast-json-patch",
 				"fast-png",
+				"ioredis",
+				"jose",
 				"jsonrepair",
 				"node-html-parser",
 				"nodemailer",
