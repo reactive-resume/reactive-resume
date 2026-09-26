@@ -3,9 +3,18 @@ let stagingUnavailable = false;
 /** Large RPC bodies bypass the hosting ingress limit while retaining their original wire format. */
 export async function rpcFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
 	const request = new Request(input, { ...init, credentials: "include" });
-	if (stagingUnavailable || request.method !== "POST") return fetch(request);
-	const body = await request.clone().blob();
-	if (body.size < 3 * 1024 * 1024) return fetch(request);
+	if (request.method !== "POST") return fetch(request);
+	// Send the buffered Blob, not a teed stream: streamed bodies need duplex mode and hide request data.
+	const body = await request.blob();
+	const sendDirect = () =>
+		fetch(request.url, {
+			method: "POST",
+			headers: request.headers,
+			body,
+			credentials: "include",
+			signal: request.signal,
+		});
+	if (stagingUnavailable || body.size < 3 * 1024 * 1024) return sendDirect();
 
 	const url = new URL(request.url);
 	const prepared = await fetch("/api/storage/stage", {
@@ -22,7 +31,7 @@ export async function rpcFetch(input: RequestInfo | URL, init?: RequestInit): Pr
 	// Docker has no staging endpoint; send large bodies directly from now on.
 	if (prepared.status === 404) {
 		stagingUnavailable = true;
-		return fetch(request);
+		return sendDirect();
 	}
 	if (!prepared.ok) throw new Error(`Could not prepare upload (${prepared.status}). Please retry.`);
 	const stage = (await prepared.json()) as { id: string; url: string };

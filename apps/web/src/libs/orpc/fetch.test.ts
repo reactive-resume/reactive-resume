@@ -26,11 +26,13 @@ describe("RPC fetch", () => {
 		const { rpcFetch } = await import("./fetch");
 		await rpcFetch(rpcUrl, { method: "POST", body: "original bytes", headers: { "x-example": "preserved" } });
 		expect(fetchMock).toHaveBeenCalledTimes(1);
-		const request = fetchMock.mock.calls[0]?.[0] as Request;
-		expect(request.url).toBe(rpcUrl);
-		expect(await request.text()).toBe("original bytes");
-		expect(request.headers.get("x-example")).toBe("preserved");
-		expect(request.credentials).toBe("include");
+		const [url, sent = {}] = fetchMock.mock.calls[0] ?? [];
+		expect(url).toBe(rpcUrl);
+		// A buffered Blob (not a stream) keeps the body inspectable and avoids duplex streaming.
+		expect(sent.body).toBeInstanceOf(Blob);
+		expect(await (sent.body as Blob).text()).toBe("original bytes");
+		expect(new Headers(sent.headers).get("x-example")).toBe("preserved");
+		expect(sent.credentials).toBe("include");
 	});
 
 	it("uploads large wire bytes to Blob, then sends a tiny reference to the original RPC", async () => {
@@ -74,9 +76,9 @@ describe("RPC fetch", () => {
 		await rpcFetch(rpcUrl, { method: "POST", body: largeBody });
 		expect(fetchMock).toHaveBeenCalledTimes(3);
 		for (const call of [fetchMock.mock.calls[1], fetchMock.mock.calls[2]]) {
-			const request = call?.[0] as Request;
-			expect(request.url).toBe(rpcUrl);
-			expect(Buffer.from(await request.arrayBuffer()).equals(Buffer.from(largeBody))).toBe(true);
+			const [url, sent = {}] = call ?? [];
+			expect(url).toBe(rpcUrl);
+			expect(Buffer.from(await (sent.body as Blob).arrayBuffer()).equals(Buffer.from(largeBody))).toBe(true);
 		}
 	});
 
