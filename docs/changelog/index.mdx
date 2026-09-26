@@ -4,6 +4,27 @@ description: "Release notes for Reactive Resume covering new features, resume bu
 rss: true
 ---
 
+<Update label="v5.3.2" description="26th September 2026">
+## Highlights
+
+- **Deploy to Vercel in one click.** Self-host Reactive Resume on Vercel Hobby with the Deploy with Vercel button, which provisions Neon PostgreSQL, Upstash Redis, and private Vercel Blob storage and only asks for two secrets. Database migrations run during the build, and uploads keep their full 10 MB file and 25 MiB attachment limits. Docker remains fully supported. See the [Vercel guide](https://docs.rxresu.me/self-hosting/vercel). [8c4031398](https://github.com/reactive-resume/reactive-resume/commit/8c4031398)
+- **Import resumes by drag and drop.** Drop a file anywhere on the import dialog's file area instead of opening the file picker. Thanks to [@s3kfm](https://github.com/s3kfm). [0ac320b0e](https://github.com/reactive-resume/reactive-resume/commit/0ac320b0e)
+
+## Resume Builder & Import
+
+- Fixed JSON Resume imports accepting impossible dates such as month `13`, which then showed as "undefined" in the resume. These dates are now rejected with a clear validation message. Thanks to [@PerryLink](https://github.com/PerryLink). [d3131e097](https://github.com/reactive-resume/reactive-resume/commit/d3131e097)
+- Fixed the deep resume health check scoring templates with side-column section headings, such as Bronzor, far lower than the same content on other templates. Thanks to [@santhiprakash](https://github.com/santhiprakash). [28d0170b0](https://github.com/reactive-resume/reactive-resume/commit/28d0170b0)
+
+## Self-Hosting & Maintenance
+
+- Added a schema check after startup migrations that detects missing tables and logs a clear error, with `STRICT_SCHEMA_CHECK=true` to refuse startup instead of failing later with database errors. Thanks to [@santhiprakash](https://github.com/santhiprakash). [ac69dd3f1](https://github.com/reactive-resume/reactive-resume/commit/ac69dd3f1)
+- Running several instances with a shared Redis now shares rate limits, live resume updates, view counts, and AI agent stop requests across instances. Stopping an agent run whose server has died now frees the conversation immediately. [8c4031398](https://github.com/reactive-resume/reactive-resume/commit/8c4031398)
+- Made the Docker image workflow work in forks without Docker Hub credentials or Blacksmith runners, so contributors can build and publish to GHCR on their own. Thanks to [@GoldenSection0618](https://github.com/GoldenSection0618). [f0bc26cb3](https://github.com/reactive-resume/reactive-resume/commit/f0bc26cb3)
+- Updated dependencies and translations. [4fde62df6](https://github.com/reactive-resume/reactive-resume/commit/4fde62df6), [b5ff720f9](https://github.com/reactive-resume/reactive-resume/commit/b5ff720f9)
+
+**Full Changelog**: [v5.3.1...v5.3.2](https://github.com/reactive-resume/reactive-resume/compare/v5.3.1...v5.3.2)
+</Update>
+
 <Update label="v5.3.1" description="17th September 2026">
 ## Highlights
 
