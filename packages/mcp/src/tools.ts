@@ -465,6 +465,16 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 				json(await client.applications.addNote({ id, text: noteText, date })),
 		],
 		[
+			T.addApplicationInterview,
+			"adding application interview",
+			async (params) => json(await client.applications.addInterview(params as never)),
+		],
+		[
+			T.updateApplicationInterview,
+			"updating application interview",
+			async (params) => json(await client.applications.updateInterview(params as never)),
+		],
+		[
 			T.updateApplicationTimelineEntry,
 			"updating application timeline entry",
 			async (params) => json(await client.applications.updateTimelineEntry(params as never)),

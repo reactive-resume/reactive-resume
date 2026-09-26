@@ -37,6 +37,34 @@ const timelineBaseSchema = z.object({
 	at: z.coerce.date(),
 });
 
+export const interviewKindSchema = z.enum(["screening", "technical", "behavioral", "onsite", "other"]);
+
+export type InterviewKind = z.infer<typeof interviewKindSchema>;
+
+export const INTERVIEW_KINDS = [
+	{ value: "screening", label: "Screening", color: "oklch(0.45 0.08 195)" },
+	{ value: "technical", label: "Technical", color: "oklch(0.52 0.19 285)" },
+	{ value: "behavioral", label: "Behavioral", color: "oklch(0.5 0.1 70)" },
+	{ value: "onsite", label: "Onsite", color: "oklch(0.55 0.15 152)" },
+	{ value: "other", label: "Other", color: "oklch(0.62 0 0)" },
+] as const satisfies ReadonlyArray<{ value: InterviewKind; label: string; color: string }>;
+
+// Interview details editable by the user. `at` on the timeline entry is the scheduled start
+// (full timestamp, unlike stage/note entries which are day-granular).
+export const interviewDetailsSchema = z.object({
+	kind: interviewKindSchema,
+	durationMinutes: z
+		.number()
+		.int()
+		.min(5)
+		.max(24 * 60)
+		.default(60),
+	location: z.string().trim().max(500).default(""),
+	notes: z.string().trim().max(5000).default(""),
+});
+
+export type InterviewDetails = z.infer<typeof interviewDetailsSchema>;
+
 export const applicationTimelineEntrySchema = z.discriminatedUnion("type", [
 	timelineBaseSchema.extend({
 		type: z.literal("stage"),
@@ -46,9 +74,14 @@ export const applicationTimelineEntrySchema = z.discriminatedUnion("type", [
 		type: z.literal("note"),
 		text: z.string().trim().min(1),
 	}),
+	timelineBaseSchema.extend({
+		type: z.literal("interview"),
+		...interviewDetailsSchema.shape,
+	}),
 ]);
 
 export type ApplicationTimelineEntry = z.infer<typeof applicationTimelineEntrySchema>;
+export type InterviewTimelineEntry = Extract<ApplicationTimelineEntry, { type: "interview" }>;
 
 // Reserved for AI enrichment output (autofill / match-score). Free-form so the shape can
 // evolve without a migration. See the AI roadmap in the applications feature.

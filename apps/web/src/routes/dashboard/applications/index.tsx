@@ -5,6 +5,7 @@ import { Trans } from "@lingui/react/macro";
 import {
 	ArchiveIcon,
 	BriefcaseIcon,
+	CalendarDotsIcon,
 	ChartBarIcon,
 	DownloadSimpleIcon,
 	FunnelIcon,
@@ -27,6 +28,7 @@ import { Combobox } from "@/components/ui/combobox";
 import { ApplicationDetailSheet } from "@/features/applications/components/application-detail-sheet";
 import { ApplicationFormSheet } from "@/features/applications/components/application-form-sheet";
 import { ApplicationBoard } from "@/features/applications/components/board";
+import { ApplicationCalendar } from "@/features/applications/components/calendar-view";
 import { ExportApplicationsSheet } from "@/features/applications/components/export-applications-sheet";
 import { ImportApplicationsSheet } from "@/features/applications/components/import-applications-sheet";
 import { ApplicationInsights } from "@/features/applications/components/insights-view";
@@ -46,7 +48,7 @@ type SortKey = (typeof SORT_OPTIONS)[number]["value"];
 
 const searchSchema = z.object({
 	search: z.string().default(""),
-	view: z.enum(["board", "table", "insights"]).default("board"),
+	view: z.enum(["board", "table", "calendar", "insights"]).default("board"),
 	tags: z.array(z.string()).default([]),
 	sort: z.enum(["updated", "applied", "company", "role"]).default("updated"),
 	archived: z.boolean().default(false),
@@ -177,7 +179,7 @@ function RouteComponent() {
 							/>
 						)}
 
-						{view !== "insights" && (
+						{view !== "insights" && view !== "calendar" && (
 							<Combobox
 								className="w-40 min-w-0 shrink max-sm:hidden"
 								value={sort}
@@ -275,6 +277,15 @@ function RouteComponent() {
 									<span className="sr-only">{i18n.t(msg`Table`)}</span>
 								</TabsTrigger>
 								<TabsTrigger
+									value="calendar"
+									title={i18n.t(msg`Calendar`)}
+									nativeButton={false}
+									render={<Link to="." search={(p: Search) => ({ ...p, view: "calendar" })} />}
+								>
+									<CalendarDotsIcon />
+									<span className="sr-only">{i18n.t(msg`Calendar`)}</span>
+								</TabsTrigger>
+								<TabsTrigger
 									value="insights"
 									title={i18n.t(msg`Insights`)}
 									nativeButton={false}
@@ -311,6 +322,13 @@ function RouteComponent() {
 								)}
 								{view === "table" && (
 									<ApplicationTable applications={filtered} onOpen={setSelected} onEdit={setEditing} />
+								)}
+								{view === "calendar" && (
+									<ApplicationCalendar
+										applications={filtered}
+										allApplications={applications ?? []}
+										onOpen={setSelected}
+									/>
 								)}
 								{view === "insights" && <ApplicationInsights applications={applications ?? []} />}
 							</>

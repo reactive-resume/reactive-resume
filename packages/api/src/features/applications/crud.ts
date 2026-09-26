@@ -171,6 +171,38 @@ export const crudRouter = {
 			}),
 		),
 
+	addInterview: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/applications/{id}/interviews",
+			tags: ["Applications"],
+			operationId: "addApplicationInterview",
+			summary: "Schedule an interview",
+			description:
+				"Adds an interview (screening, technical, behavioral, onsite or other) with a scheduled date-time to the application's activity timeline. Applications can have any number of interviews. Requires authentication.",
+			successDescription: "The updated application.",
+		})
+		.input(applicationDto.addInterview.input)
+		.use(resumeMutationRateLimit)
+		.output(applicationDto.addInterview.output)
+		.handler(({ input, context }) => applicationService.addInterview({ ...input, userId: context.user.id })),
+
+	updateInterview: protectedProcedure
+		.route({
+			method: "PUT",
+			path: "/applications/{id}/interviews/{entryId}",
+			tags: ["Applications"],
+			operationId: "updateApplicationInterview",
+			summary: "Update a scheduled interview",
+			description:
+				"Updates an interview timeline entry (date-time, kind, duration, location, notes). Only provided fields are changed. Delete interviews with the timeline entry delete endpoint. Requires authentication.",
+			successDescription: "The updated application.",
+		})
+		.input(applicationDto.updateInterview.input)
+		.use(resumeMutationRateLimit)
+		.output(applicationDto.updateInterview.output)
+		.handler(({ input, context }) => applicationService.updateInterview({ ...input, userId: context.user.id })),
+
 	updateTimelineEntry: protectedProcedure
 		.route({
 			method: "PUT",

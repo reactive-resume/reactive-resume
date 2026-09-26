@@ -105,6 +105,18 @@ Move my Acme Senior Product Engineer application to interview and add a note: Re
 Add a note to the Globex application: Submitted take-home assignment and waiting for review.
 ```
 
+## Schedule interviews
+
+Use `add_application_interview` to put an interview on an application. Each interview has a type (screening, technical, behavioral, onsite, or other), a start date-time, a duration, and an optional location and notes. Interviews show on the application timeline and on the Calendar view of the Applications page, and an application can have any number of them. Use `update_application_interview` to reschedule and `delete_application_timeline_entry` to cancel.
+
+```text
+Schedule a 30-minute screening call with Acme for October 1 at 10:30 Eastern, on Zoom.
+```
+
+```text
+Move my Globex technical interview to the following Tuesday at 2 pm and make it 90 minutes.
+```
+
 ```text
 Set a follow-up date for the Stripe application to next Monday, with the note: Ask whether they need more portfolio examples.
 ```

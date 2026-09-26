@@ -5,7 +5,12 @@
 import type { ToolAnnotations } from "@modelcontextprotocol/sdk/types.js";
 import z from "zod";
 import { resumePatchOperationsSchema } from "@reactive-resume/ai/tools/resume-tool-contracts";
-import { applicationStatusSchema, contactSchema } from "@reactive-resume/schema/applications/data";
+import {
+	applicationStatusSchema,
+	contactSchema,
+	interviewDetailsSchema,
+	interviewKindSchema,
+} from "@reactive-resume/schema/applications/data";
 import { coverLetterDocumentSchema } from "@reactive-resume/schema/cover-letter/data";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { MCP_TOOL_NAME as T } from "./mcp-tool-names";
@@ -65,6 +70,21 @@ const coverLetterEditableFieldsSchema = {
 	content: z.string().max(100_000).optional().describe("Cover-letter body HTML."),
 };
 const timelineDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must use YYYY-MM-DD format.");
+const interviewAtSchema = z.iso
+	.datetime({ offset: true })
+	.describe("Scheduled start as an ISO 8601 date-time with offset, e.g. 2026-10-01T10:30:00-04:00.");
+const interviewKindFieldSchema = interviewKindSchema.describe(
+	"Interview type: screening, technical, behavioral, onsite, or other.",
+);
+const interviewDurationSchema = interviewDetailsSchema.shape.durationMinutes
+	.unwrap()
+	.describe("Length in minutes (5–1440).");
+const interviewLocationSchema = interviewDetailsSchema.shape.location
+	.unwrap()
+	.describe("Meeting link, address, or phone number.");
+const interviewNotesSchema = interviewDetailsSchema.shape.notes
+	.unwrap()
+	.describe("Interviewers, topics to prepare, or other details.");
 const httpUrlSchema = z
 	.string()
 	.trim()
@@ -514,6 +534,34 @@ export const TOOL_META = {
 		}),
 		annotations: WRITE_NON_IDEMPOTENT,
 	},
+	[T.addApplicationInterview]: {
+		title: "Add Application Interview",
+		description: `Schedule an interview on an application. Interviews appear on the application's activity timeline and the Applications calendar; an application can have any number of them. Delete one with \`${T.deleteApplicationTimelineEntry}\`.`,
+		inputSchema: z.object({
+			id: applicationIdSchema,
+			at: interviewAtSchema,
+			kind: interviewKindFieldSchema,
+			durationMinutes: interviewDurationSchema.optional().describe("Length in minutes (5–1440). Defaults to 60."),
+			location: interviewLocationSchema.optional(),
+			notes: interviewNotesSchema.optional(),
+		}),
+		annotations: WRITE_NON_IDEMPOTENT,
+	},
+	[T.updateApplicationInterview]: {
+		title: "Update Application Interview",
+		description:
+			'Reschedule or edit an interview timeline entry. Only provided fields change. The entry must have type "interview".',
+		inputSchema: z.object({
+			id: applicationIdSchema,
+			entryId: applicationTimelineEntryIdSchema,
+			at: interviewAtSchema.optional(),
+			kind: interviewKindFieldSchema.optional(),
+			durationMinutes: interviewDurationSchema.optional(),
+			location: interviewLocationSchema.optional(),
+			notes: interviewNotesSchema.optional(),
+		}),
+		annotations: WRITE_DESTRUCTIVE,
+	},
 	[T.updateApplicationTimelineEntry]: {
 		title: "Update Application Timeline Entry",
 		description: "Update a timeline entry date, or note text for note entries.",
@@ -529,7 +577,7 @@ export const TOOL_META = {
 	},
 	[T.deleteApplicationTimelineEntry]: {
 		title: "Delete Application Timeline Entry",
-		description: "Delete a note or older stage entry. The current stage entry cannot be deleted.",
+		description: "Delete a note, interview, or older stage entry. The current stage entry cannot be deleted.",
 		inputSchema: z.object({ id: applicationIdSchema, entryId: applicationTimelineEntryIdSchema }),
 		annotations: WRITE_DESTRUCTIVE,
 	},

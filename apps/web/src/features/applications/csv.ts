@@ -1,6 +1,11 @@
 import type { ApplicationStatus, Contact } from "@reactive-resume/schema/applications/data";
 import type { Application } from "./types";
-import { applicationStatusSchema, contactSchema, STAGES } from "@reactive-resume/schema/applications/data";
+import {
+	applicationStatusSchema,
+	contactSchema,
+	INTERVIEW_KINDS,
+	STAGES,
+} from "@reactive-resume/schema/applications/data";
 
 // Minimal RFC-4180-ish CSV parser: handles quoted fields, escaped quotes (""), commas and
 // newlines inside quotes, and \r\n. Enough for spreadsheet exports; not a full streaming parser.
@@ -256,6 +261,12 @@ export function exportApplicationsCsv(applications: readonly Application[]): str
 	];
 	const dateOnly = (date: Date) => new Date(date).toISOString().slice(0, 10);
 	const stageLabel = (stage: ApplicationStatus) => STAGES.find((item) => item.value === stage)?.label ?? stage;
+	const timelineText = (entry: Application["activity"][number]) => {
+		if (entry.type === "stage") return stageLabel(entry.stage);
+		if (entry.type === "note") return entry.text;
+		const kind = INTERVIEW_KINDS.find((item) => item.value === entry.kind)?.label ?? entry.kind;
+		return `${kind} interview (${new Date(entry.at).toISOString()})`;
+	};
 	const rows = applications.map((application) => {
 		const timeline = [...application.activity].sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
 		const stages = timeline.filter((entry) => entry.type === "stage");
@@ -279,9 +290,7 @@ export function exportApplicationsCsv(applications: readonly Application[]): str
 				.join("\n"),
 			application.notes ?? "",
 			stages.map((entry) => `${stageLabel(entry.stage)} (${dateOnly(entry.at)})`).join(" → "),
-			timeline
-				.map((entry) => `${dateOnly(entry.at)}: ${entry.type === "stage" ? stageLabel(entry.stage) : entry.text}`)
-				.join("\n"),
+			timeline.map((entry) => `${dateOnly(entry.at)}: ${timelineText(entry)}`).join("\n"),
 			String(application.archived),
 			new Date(application.createdAt).toISOString(),
 			new Date(application.updatedAt).toISOString(),

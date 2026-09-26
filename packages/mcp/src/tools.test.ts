@@ -85,6 +85,8 @@ const clientMock = {
 		create: vi.fn(),
 		update: vi.fn(),
 		addNote: vi.fn(),
+		addInterview: vi.fn(),
+		updateInterview: vi.fn(),
 		updateTimelineEntry: vi.fn(),
 		deleteTimelineEntry: vi.fn(),
 		delete: vi.fn(),
@@ -314,6 +316,37 @@ describe("registerTools", () => {
 			id: "app-1",
 			text: "Recruiter replied",
 			date: "2026-07-12",
+		});
+	});
+
+	it("schedules application interviews through the router client", async () => {
+		clientMock.applications.addInterview.mockResolvedValueOnce({ id: "app-1", company: "Acme" });
+		const { server, registered } = makeFakeServer();
+		registerTools(server as never, clientMock as never, new Headers());
+
+		const tool = registered.find((item) => item.name === "add_application_interview")!;
+		await tool.handler({ id: "app-1", at: "2026-10-01T10:30:00-04:00", kind: "technical", location: "Zoom" });
+
+		expect(clientMock.applications.addInterview).toHaveBeenCalledWith({
+			id: "app-1",
+			at: "2026-10-01T10:30:00-04:00",
+			kind: "technical",
+			location: "Zoom",
+		});
+	});
+
+	it("updates application interviews through the router client", async () => {
+		clientMock.applications.updateInterview.mockResolvedValueOnce({ id: "app-1", company: "Acme" });
+		const { server, registered } = makeFakeServer();
+		registerTools(server as never, clientMock as never, new Headers());
+
+		const tool = registered.find((item) => item.name === "update_application_interview")!;
+		await tool.handler({ id: "app-1", entryId: "entry-1", durationMinutes: 45 });
+
+		expect(clientMock.applications.updateInterview).toHaveBeenCalledWith({
+			id: "app-1",
+			entryId: "entry-1",
+			durationMinutes: 45,
 		});
 	});
 

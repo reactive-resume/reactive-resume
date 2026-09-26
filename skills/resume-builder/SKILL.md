@@ -24,6 +24,7 @@ Reactive Resume MCP can manage job applications as well as resumes. When the use
 - Use `create_application` for one new opportunity or `import_applications` for spreadsheet/CSV rows.
 - Use `update_application` to move stages, archive/unarchive, edit contacts, set follow-ups, link a resume, or update job details.
 - Use `add_application_note` to log timeline activity.
+- Use `add_application_interview` / `update_application_interview` to schedule or reschedule interviews (they appear on the timeline and calendar); delete them with `delete_application_timeline_entry`.
 - Use `attach_application_document` and `remove_application_document` for sent resume or cover-letter PDFs.
 - Use `score_application_match`, `tailor_resume_for_application`, and `draft_application_message` for Application Copilot workflows after a linked resume and job description exist.
 - Review AI-generated cover letters and follow-ups before sending them.

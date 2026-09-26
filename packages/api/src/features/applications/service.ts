@@ -3,6 +3,7 @@ import type {
 	ApplicationStatus,
 	ApplicationTimelineEntry,
 	Contact,
+	InterviewDetails,
 } from "@reactive-resume/schema/applications/data";
 import type { ApplicationDocumentKind } from "../../dto/application";
 import { ORPCError } from "@orpc/client";
@@ -45,6 +46,16 @@ function stageEntry(stage: ApplicationStatus, date?: string): ApplicationTimelin
 
 function noteEntry(text: string, date?: string): ApplicationTimelineEntry {
 	return { id: generateId(), type: "note", text, at: date ? atFromDateString(date) : new Date() };
+}
+
+function interviewAt(value: string): Date {
+	const parsed = new Date(value);
+	if (Number.isNaN(parsed.getTime())) throw new ORPCError("BAD_REQUEST", { message: "Invalid interview date-time." });
+	return parsed;
+}
+
+function interviewEntry(at: string, details: InterviewDetails): ApplicationTimelineEntry {
+	return { id: generateId(), type: "interview", at: interviewAt(at), ...details };
 }
 
 function timelineDay(value: Date | string) {
@@ -419,6 +430,65 @@ export const applicationService = {
 		return stripUserId(updated);
 	},
 
+	addInterview: async (input: InterviewDetails & { id: string; userId: string; at: string }) => {
+		const { id, userId, at, ...details } = input;
+		const event = interviewEntry(at, details);
+		// Same atomic append as addNote so a concurrent note/stage move can't be dropped.
+		const [updated] = await db
+			.update(schema.application)
+			.set({ activity: sql`${schema.application.activity} || ${JSON.stringify([event])}::jsonb` })
+			.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)))
+			.returning();
+
+		if (!updated) throw new ORPCError("NOT_FOUND");
+		return stripUserId(updated);
+	},
+
+	updateInterview: (
+		input: Partial<{ [K in keyof InterviewDetails]: InterviewDetails[K] | undefined }> & {
+			id: string;
+			userId: string;
+			entryId: string;
+			at?: string | undefined;
+		},
+	) => {
+		const { id, userId, entryId, at, ...details } = input;
+		const patch = Object.fromEntries(Object.entries(details).filter(([, value]) => value !== undefined));
+
+		return db.transaction(async (tx) => {
+			await tx.execute(sql`
+				select 1 from ${schema.application}
+				where ${schema.application.id} = ${id} and ${schema.application.userId} = ${userId}
+				for update
+			`);
+
+			const [existing] = await tx
+				.select()
+				.from(schema.application)
+				.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)));
+			if (!existing) throw new ORPCError("NOT_FOUND");
+
+			const target = existing.activity.find((entry) => entry.id === entryId);
+			if (!target) throw new ORPCError("NOT_FOUND");
+			if (target.type !== "interview") {
+				throw new ORPCError("BAD_REQUEST", { message: "Timeline entry is not an interview." });
+			}
+
+			const activity = existing.activity.map((entry) =>
+				entry.id === entryId ? { ...entry, ...patch, ...(at !== undefined ? { at: interviewAt(at) } : {}) } : entry,
+			);
+
+			const [updated] = await tx
+				.update(schema.application)
+				.set({ activity })
+				.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)))
+				.returning();
+
+			if (!updated) throw new ORPCError("NOT_FOUND");
+			return stripUserId(updated);
+		});
+	},
+
 	updateTimelineEntry: (input: {
 		id: string;
 		userId: string;
@@ -442,8 +512,8 @@ export const applicationService = {
 			const activity = existing.activity.map((entry) => {
 				if (entry.id !== input.entryId) return entry;
 
-				if (entry.type === "stage" && input.text !== undefined) {
-					throw new ORPCError("BAD_REQUEST", { message: "Stage timeline text is derived and cannot be edited." });
+				if (entry.type !== "note" && input.text !== undefined) {
+					throw new ORPCError("BAD_REQUEST", { message: "Only note timeline entries have editable text." });
 				}
 
 				return {

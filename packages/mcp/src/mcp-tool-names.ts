@@ -30,6 +30,8 @@ export const MCP_TOOL_NAME = {
 	createApplication: "create_application",
 	updateApplication: "update_application",
 	addApplicationNote: "add_application_note",
+	addApplicationInterview: "add_application_interview",
+	updateApplicationInterview: "update_application_interview",
 	updateApplicationTimelineEntry: "update_application_timeline_entry",
 	deleteApplicationTimelineEntry: "delete_application_timeline_entry",
 	deleteApplication: "delete_application",

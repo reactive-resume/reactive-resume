@@ -6,6 +6,8 @@ import {
 	applicationStatusSchema,
 	applicationTimelineEntrySchema,
 	contactSchema,
+	interviewDetailsSchema,
+	interviewKindSchema,
 } from "@reactive-resume/schema/applications/data";
 
 const MAX_APPLICATION_JOB_DESCRIPTION_CHARS = 20_000;
@@ -13,6 +15,8 @@ const MAX_APPLICATION_DOCUMENT_BYTES = 10 * 1024 * 1024;
 
 const applicationDocumentKindSchema = z.enum(["resume", "cover-letter"]);
 const timelineDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must use YYYY-MM-DD format.");
+// Interviews carry a full timestamp (with offset) so the scheduled time survives timezones.
+const interviewAtSchema = z.iso.datetime({ offset: true }).describe("Scheduled start, as an ISO 8601 date-time.");
 
 const applicationDocumentFileSchema = z
 	.file()
@@ -158,6 +162,31 @@ export const applicationDto = {
 				text: z.string().trim().min(1).optional(),
 			})
 			.refine((value) => value.date !== undefined || value.text !== undefined, "Provide date or text to update."),
+		output: applicationSchema.omit({ userId: true }),
+	},
+
+	// Interviews live on the activity timeline (type "interview") so they show up there and on
+	// the calendar view without a separate table. Deleting goes through deleteTimelineEntry.
+	addInterview: {
+		input: interviewDetailsSchema.extend({
+			id: z.string(),
+			at: interviewAtSchema,
+		}),
+		output: applicationSchema.omit({ userId: true }),
+	},
+
+	updateInterview: {
+		// Explicit optional fields (not interviewDetailsSchema.partial()) so the schema defaults
+		// never overwrite stored values on a partial update.
+		input: z.object({
+			id: z.string(),
+			entryId: z.string(),
+			at: interviewAtSchema.optional(),
+			kind: interviewKindSchema.optional(),
+			durationMinutes: interviewDetailsSchema.shape.durationMinutes.unwrap().optional(),
+			location: interviewDetailsSchema.shape.location.unwrap().optional(),
+			notes: interviewDetailsSchema.shape.notes.unwrap().optional(),
+		}),
 		output: applicationSchema.omit({ userId: true }),
 	},
 

@@ -526,3 +526,77 @@ describe("applicationService.bulkDelete", () => {
 		expect(storageDeleteMock).not.toHaveBeenCalledWith("uploads/user-2/pictures/ignored.pdf");
 	});
 });
+
+describe("applicationService interviews", () => {
+	const captureSet = (returning = [{ ...existing }]) => {
+		const set = vi.fn(() => ({ where: () => ({ returning: () => Promise.resolve(returning) }) }));
+		dbMock.update.mockReturnValue({ set });
+		return set;
+	};
+
+	const interview = {
+		id: "int-1",
+		type: "interview" as const,
+		kind: "screening" as const,
+		at: new Date("2026-10-01T15:00:00.000Z"),
+		durationMinutes: 30,
+		location: "Zoom",
+		notes: "Recruiter call",
+	};
+
+	it("appends an interview entry with the exact scheduled time", async () => {
+		const set = captureSet();
+
+		await applicationService.addInterview({
+			id: "app-1",
+			userId: "user-1",
+			at: "2026-10-01T10:30:00-04:00",
+			kind: "technical",
+			durationMinutes: 90,
+			location: "",
+			notes: "",
+		});
+
+		const [[arg]] = set.mock.calls as unknown as [[{ activity: { values: unknown[] } }]];
+		const value = arg.activity.values.find((item) => typeof item === "string" && item.includes('"type":"interview"'));
+		const [entry] = JSON.parse(String(value)) as [{ type: string; kind: string; at: string; durationMinutes: number }];
+		expect(entry).toMatchObject({ type: "interview", kind: "technical", durationMinutes: 90 });
+		expect(new Date(entry.at).toISOString()).toBe("2026-10-01T14:30:00.000Z");
+	});
+
+	it("updates only the provided interview fields", async () => {
+		setSelectResults([{ ...existing, activity: [...existing.activity, interview] }]);
+		const set = captureSet();
+
+		await applicationService.updateInterview({
+			id: "app-1",
+			userId: "user-1",
+			entryId: "int-1",
+			at: "2026-10-02T16:00:00.000Z",
+			kind: "technical",
+			location: undefined,
+		});
+
+		const [[arg]] = set.mock.calls as unknown as [[{ activity: (typeof interview)[] }]];
+		expect(arg.activity.find((entry) => entry.id === "int-1")).toEqual({
+			...interview,
+			kind: "technical",
+			at: new Date("2026-10-02T16:00:00.000Z"),
+		});
+		expect(dbMock.transaction).toHaveBeenCalled();
+	});
+
+	it("refuses to update a non-interview entry as an interview", async () => {
+		await expect(
+			applicationService.updateInterview({ id: "app-1", userId: "user-1", entryId: "e0", kind: "technical" }),
+		).rejects.toMatchObject({ code: "BAD_REQUEST" });
+	});
+
+	it("rejects text edits on interview entries through the generic timeline update", async () => {
+		setSelectResults([{ ...existing, activity: [...existing.activity, interview] }]);
+
+		await expect(
+			applicationService.updateTimelineEntry({ id: "app-1", userId: "user-1", entryId: "int-1", text: "Nope" }),
+		).rejects.toMatchObject({ code: "BAD_REQUEST" });
+	});
+});

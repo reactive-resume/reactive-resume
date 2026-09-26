@@ -1,10 +1,17 @@
-import type { ApplicationStatus, ApplicationTimelineEntry, Contact } from "@reactive-resume/schema/applications/data";
+import type {
+	ApplicationStatus,
+	ApplicationTimelineEntry,
+	Contact,
+	InterviewTimelineEntry,
+} from "@reactive-resume/schema/applications/data";
 import type { Application } from "../types";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import {
 	ArrowRightIcon,
 	ArrowSquareOutIcon,
+	CalendarPlusIcon,
+	MapPinIcon,
 	PencilSimpleIcon,
 	PlusIcon,
 	TrashIcon,
@@ -31,9 +38,11 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { useConfirm } from "@/hooks/use-confirm";
 import { orpc } from "@/libs/orpc/client";
+import { formatDuration, interviewKindOf, isInterview } from "../interviews";
 import { applicationsListQueryKey } from "../queries";
 import { ApplicationAiCopilot } from "./application-ai-copilot";
 import { FileAttachmentField } from "./file-attachment-field";
+import { InterviewDialog } from "./interview-dialog";
 
 const stageIndex = (status: ApplicationStatus) => STAGES.findIndex((s) => s.value === status);
 const stageOf = (status: ApplicationStatus) => STAGES.find((s) => s.value === status);
@@ -45,6 +54,17 @@ const dateInputValue = (value: Date | string) => {
 
 const formatDate = (value: Date | string) =>
 	new Date(value).toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "UTC", year: "numeric" });
+
+// Interviews carry a real time of day, so show them in the viewer's timezone (stage/note
+// entries are day-granular and rendered in UTC above).
+const formatDateTime = (value: Date | string) =>
+	new Date(value).toLocaleString(undefined, {
+		weekday: "short",
+		month: "short",
+		day: "numeric",
+		hour: "numeric",
+		minute: "2-digit",
+	});
 
 const byNewest = (a: ApplicationTimelineEntry, b: ApplicationTimelineEntry) =>
 	new Date(b.at).getTime() - new Date(a.at).getTime();
@@ -75,6 +95,11 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEdit }: Pr
 	});
 
 	const current = data ?? application;
+	const [interviewDialog, setInterviewDialog] = useState<{ open: boolean; interview: InterviewTimelineEntry | null }>({
+		open: false,
+		interview: null,
+	});
+	const openInterview = (interview: InterviewTimelineEntry | null) => setInterviewDialog({ open: true, interview });
 
 	const invalidate = () => {
 		void queryClient.invalidateQueries({ queryKey: applicationsListQueryKey() });
@@ -260,6 +285,14 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEdit }: Pr
 					{/* AI copilot — placed high so it's discoverable without scrolling past the timeline */}
 					<ApplicationAiCopilot application={current} />
 
+					<Section title={t`Interviews`}>
+						<InterviewList activity={current.activity} onOpen={openInterview} />
+						<Button size="sm" variant="outline" className="self-start" onClick={() => openInterview(null)}>
+							<CalendarPlusIcon />
+							<Trans>Schedule interview</Trans>
+						</Button>
+					</Section>
+
 					{/* contacts */}
 					<Section title={t`Contacts`}>
 						<ContactsEditor
@@ -285,6 +318,7 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEdit }: Pr
 						application={current}
 						pending={addNote.isPending || updateTimelineEntry.isPending || deleteTimelineEntry.isPending}
 						onAddNote={(text) => addNote.mutateAsync({ id: current.id, text })}
+						onOpenInterview={openInterview}
 						onUpdateEntry={(entryId, input) => updateTimelineEntry.mutateAsync({ id: current.id, entryId, ...input })}
 						onDeleteEntry={(entryId) => {
 							void confirm(t`Delete this timeline entry?`, {
@@ -296,6 +330,13 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEdit }: Pr
 						}}
 					/>
 				</div>
+
+				<InterviewDialog
+					application={current}
+					interview={interviewDialog.interview}
+					open={interviewDialog.open}
+					onOpenChange={(open) => setInterviewDialog((prev) => ({ ...prev, open }))}
+				/>
 
 				<div className="flex items-center gap-1 border-border border-t p-4">
 					{current.status !== "rejected" && (
@@ -342,6 +383,7 @@ type ApplicationTimelineProps = {
 	application: Application;
 	pending: boolean;
 	onAddNote: (text: string) => Promise<unknown>;
+	onOpenInterview: (interview: InterviewTimelineEntry) => void;
 	onUpdateEntry: (entryId: string, input: { date?: string; text?: string }) => Promise<unknown>;
 	onDeleteEntry: (entryId: string) => void;
 };
@@ -350,6 +392,7 @@ function ApplicationTimeline({
 	application,
 	pending,
 	onAddNote,
+	onOpenInterview,
 	onUpdateEntry,
 	onDeleteEntry,
 }: ApplicationTimelineProps) {
@@ -405,6 +448,7 @@ function ApplicationTimeline({
 				<div className="relative flex flex-col gap-2 ps-4 before:absolute before:inset-y-2 before:start-1 before:w-px before:bg-border">
 					{sorted.map((entry) => {
 						const stage = entry.type === "stage" ? stageOf(entry.stage) : null;
+						const kind = entry.type === "interview" ? interviewKindOf(entry.kind) : null;
 						const isAnchor = entry.id === anchorId;
 						return (
 							<div
@@ -418,7 +462,7 @@ function ApplicationTimeline({
 										"absolute start-[-17px] top-4 size-2.5 rounded-full border-2 border-card",
 										entry.type === "note" && "bg-primary/70",
 									)}
-									style={stage ? { background: stage.color } : undefined}
+									style={stage || kind ? { background: (stage ?? kind)?.color } : undefined}
 								/>
 								<div className="flex items-start justify-between gap-2">
 									<div className="min-w-0 flex-1">
@@ -426,6 +470,20 @@ function ApplicationTimeline({
 											<div className="font-medium">
 												<Trans>Moved to</Trans> {stage?.label ?? entry.stage}
 											</div>
+										) : entry.type === "interview" ? (
+											<button
+												type="button"
+												className="block w-full rounded-sm text-left hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+												onClick={() => onOpenInterview(entry)}
+											>
+												<span className="block font-medium">
+													{kind?.label ?? entry.kind} <Trans>interview</Trans>
+												</span>
+												<span className="block text-muted-foreground text-xs">
+													{formatDateTime(entry.at)}
+													{entry.location ? ` · ${entry.location}` : ""}
+												</span>
+											</button>
 										) : (
 											<button
 												type="button"
@@ -445,7 +503,7 @@ function ApplicationTimeline({
 										<button
 											type="button"
 											className="rounded-md border border-border px-2 py-1 text-muted-foreground text-xs hover:bg-muted hover:text-foreground"
-											onClick={() => openDate(entry)}
+											onClick={() => (entry.type === "interview" ? onOpenInterview(entry) : openDate(entry))}
 										>
 											{formatDate(entry.at)}
 										</button>
@@ -535,6 +593,64 @@ function ApplicationTimeline({
 				</DialogContent>
 			</Dialog>
 		</Section>
+	);
+}
+
+type InterviewListProps = {
+	activity: ApplicationTimelineEntry[];
+	onOpen: (interview: InterviewTimelineEntry) => void;
+};
+
+// Upcoming interviews first (soonest on top), then past ones (most recent on top).
+function InterviewList({ activity, onOpen }: InterviewListProps) {
+	const now = Date.now();
+	const interviews = activity.filter(isInterview);
+	const upcoming = interviews
+		.filter((entry) => new Date(entry.at).getTime() + entry.durationMinutes * 60_000 >= now)
+		.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
+	const past = interviews.filter((entry) => !upcoming.includes(entry)).sort(byNewest);
+
+	if (interviews.length === 0) {
+		return (
+			<p className="text-muted-foreground text-sm">
+				<Trans>No interviews scheduled.</Trans>
+			</p>
+		);
+	}
+
+	return (
+		<div className="flex flex-col gap-1.5">
+			{[...upcoming, ...past].map((entry) => {
+				const kind = interviewKindOf(entry.kind);
+				const isPast = !upcoming.includes(entry);
+				return (
+					<button
+						key={entry.id}
+						type="button"
+						data-interview={entry.id}
+						className={cn(
+							"flex items-center gap-3 rounded-lg border border-border p-2.5 text-start text-sm hover:bg-muted/50",
+							isPast && "opacity-60",
+						)}
+						onClick={() => onOpen(entry)}
+					>
+						<span className="h-8 w-1 shrink-0 rounded-full" style={{ background: kind?.color }} />
+						<span className="min-w-0 flex-1">
+							<span className="block font-medium">{kind?.label ?? entry.kind}</span>
+							<span className="block text-muted-foreground text-xs">
+								{formatDateTime(entry.at)} · {formatDuration(entry.durationMinutes)}
+							</span>
+						</span>
+						{entry.location && (
+							<span className="flex max-w-[40%] items-center gap-1 truncate text-muted-foreground text-xs">
+								<MapPinIcon className="shrink-0" />
+								<span className="truncate">{entry.location}</span>
+							</span>
+						)}
+					</button>
+				);
+			})}
+		</div>
 	);
 }
 
