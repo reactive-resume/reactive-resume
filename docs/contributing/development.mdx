@@ -102,16 +102,16 @@ These steps set up Reactive Resume for local development, whether you're contrib
   
   <Step title="Run Database Migrations If Needed">
     The server startup path runs migrations before serving traffic. To apply migrations manually without starting the app,
-    load `.env.local` with `dotenvx` because Drizzle Kit reads directly from `process.env`:
+    run the root migration script, which loads `.env.local` before invoking Drizzle Kit:
     
     ```bash
-    dotenvx run -f .env.local -- pnpm run db:migrate
+    pnpm run db:migrate
     ```
   </Step>
   
   <Step title="Start the Development Server">
     ```bash
-    dotenvx run -f .env.local -- pnpm run dev
+    pnpm run dev
     ```
     
     Your local Reactive Resume instance will be available at [http://localhost:3000](http://localhost:3000).
@@ -128,7 +128,7 @@ The scripts you will use most during development:
 
 | Command                        | Description                                                 |
 | ------------------------------ | ----------------------------------------------------------- |
-| `dotenvx run -f .env.local -- pnpm dev` | Start the web and server development processes   |
+| `pnpm dev`                     | Start the web and server development processes             |
 | `pnpm build`                   | Build the production web bundle and server bundle           |
 | `pnpm start`                   | Start the built production server                           |
 | `pnpm typecheck`               | Run TypeScript type checking                                |
@@ -141,9 +141,9 @@ The scripts you will use most during development:
 
 | Command                | Description                                  |
 | ---------------------- | -------------------------------------------- |
-| `dotenvx run -f .env.local -- pnpm run db:generate` | Generate migration files from schema changes |
-| `dotenvx run -f .env.local -- pnpm run db:migrate`  | Apply pending migrations                     |
-| `dotenvx run -f .env.local -- pnpm run db:studio`   | Open Drizzle Studio (database GUI)           |
+| `pnpm db:generate`      | Generate migration files from schema changes |
+| `pnpm db:migrate`       | Apply pending migrations                     |
+| `pnpm db:studio`        | Open Drizzle Studio (database GUI)           |
 
 ### Internationalization
 
@@ -184,7 +184,7 @@ reactive-resume/
 Use Drizzle Studio to explore and manage your database:
 
 ```bash
-dotenvx run -f .env.local -- pnpm run db:studio
+pnpm run db:studio
 ```
 
 This opens a web-based GUI at [https://local.drizzle.studio](https://local.drizzle.studio).
@@ -194,11 +194,11 @@ This opens a web-based GUI at [https://local.drizzle.studio](https://local.drizz
 1. Edit the schema in `packages/db/src/schema/*`
 2. Generate a migration:
    ```bash
-   dotenvx run -f .env.local -- pnpm run db:generate
+   pnpm run db:generate
    ```
 3. Apply the migration:
    ```bash
-   dotenvx run -f .env.local -- pnpm run db:migrate
+   pnpm run db:migrate
    ```
 
 <Warning>Always review generated migrations before applying them, especially when working with existing data.</Warning>
@@ -272,7 +272,7 @@ pnpm run typecheck
 		The Vite web server uses `PORT` (default `3000`), and the Hono server uses `SERVER_PORT` (default `3001`).
 		Either stop the conflicting process or choose alternate ports:
 		```bash
-		PORT=3002 SERVER_PORT=3003 dotenvx run -f .env.local -- pnpm dev
+		PORT=3002 SERVER_PORT=3003 pnpm dev
 		```
 	</Accordion>
 
@@ -300,7 +300,7 @@ pnpm run typecheck
 	<Accordion title="Type errors after pulling changes">
 		The route tree may need regeneration. Run the dev server which auto-generates routes:
 		```bash
-		dotenvx run -f .env.local -- pnpm run dev
+		pnpm run dev
 		```
 		Or run type checking to see specific errors:
 		```bash
