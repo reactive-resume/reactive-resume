@@ -4,8 +4,8 @@ let stagingUnavailable = false;
 export async function rpcFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
 	const request = new Request(input, { ...init, credentials: "include" });
 	if (request.method !== "POST") return fetch(request);
-	// Send the buffered Blob, not a teed stream: streamed bodies need duplex mode and hide request data.
-	const body = await request.blob();
+	// Buffer as bytes: a teed stream needs duplex mode, and a Blob body is not visible to DevTools/CDP.
+	const body = await request.arrayBuffer();
 	const sendDirect = () =>
 		fetch(request.url, {
 			method: "POST",
@@ -14,7 +14,7 @@ export async function rpcFetch(input: RequestInfo | URL, init?: RequestInit): Pr
 			credentials: "include",
 			signal: request.signal,
 		});
-	if (stagingUnavailable || body.size < 3 * 1024 * 1024) return sendDirect();
+	if (stagingUnavailable || body.byteLength < 3 * 1024 * 1024) return sendDirect();
 
 	const url = new URL(request.url);
 	const prepared = await fetch("/api/storage/stage", {
@@ -25,7 +25,7 @@ export async function rpcFetch(input: RequestInfo | URL, init?: RequestInit): Pr
 		body: JSON.stringify({
 			path: `${url.pathname}${url.search}`,
 			contentType: request.headers.get("content-type"),
-			size: body.size,
+			size: body.byteLength,
 		}),
 	});
 	// Docker has no staging endpoint; send large bodies directly from now on.

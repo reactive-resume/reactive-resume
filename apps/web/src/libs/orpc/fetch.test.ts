@@ -28,9 +28,9 @@ describe("RPC fetch", () => {
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 		const [url, sent = {}] = fetchMock.mock.calls[0] ?? [];
 		expect(url).toBe(rpcUrl);
-		// A buffered Blob (not a stream) keeps the body inspectable and avoids duplex streaming.
-		expect(sent.body).toBeInstanceOf(Blob);
-		expect(await (sent.body as Blob).text()).toBe("original bytes");
+		// Plain bytes (not a stream or Blob) keep the body inspectable and avoid duplex streaming.
+		expect(sent.body).toBeInstanceOf(ArrayBuffer);
+		expect(new TextDecoder().decode(sent.body as ArrayBuffer)).toBe("original bytes");
 		expect(new Headers(sent.headers).get("x-example")).toBe("preserved");
 		expect(sent.credentials).toBe("include");
 	});
@@ -57,8 +57,7 @@ describe("RPC fetch", () => {
 		const [uploadUrl, upload] = fetchMock.mock.calls[1] ?? [];
 		expect(uploadUrl).toBe("https://blob.test/signed-put");
 		expect(upload?.method).toBe("PUT");
-		const uploadedBody = upload?.body as Blob;
-		expect(Buffer.from(await uploadedBody.arrayBuffer()).equals(Buffer.from(largeBody))).toBe(true);
+		expect(Buffer.from(upload?.body as ArrayBuffer).equals(Buffer.from(largeBody))).toBe(true);
 		const [finalUrl, finalRequest] = fetchMock.mock.calls[2] ?? [];
 		expect(finalUrl).toBe(rpcUrl);
 		expect(finalRequest?.body).toBeUndefined();
@@ -78,7 +77,7 @@ describe("RPC fetch", () => {
 		for (const call of [fetchMock.mock.calls[1], fetchMock.mock.calls[2]]) {
 			const [url, sent = {}] = call ?? [];
 			expect(url).toBe(rpcUrl);
-			expect(Buffer.from(await (sent.body as Blob).arrayBuffer()).equals(Buffer.from(largeBody))).toBe(true);
+			expect(Buffer.from(sent.body as ArrayBuffer).equals(Buffer.from(largeBody))).toBe(true);
 		}
 	});
 
