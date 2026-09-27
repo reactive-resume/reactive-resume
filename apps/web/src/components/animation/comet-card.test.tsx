@@ -37,20 +37,20 @@ describe("CometCard", () => {
 		expect(glare?.className).toContain("pointer-events-none");
 	});
 
-	it("does not throw when mouse enters / moves over / leaves the card", () => {
+	it("does not throw when pointer moves over / leaves the card", () => {
 		const { container } = render(
 			<CometCard>
 				<span>x</span>
 			</CometCard>,
 		);
 
-		const tiltable = container.querySelector("[class*='will-change-transform']") as HTMLElement;
+		const tiltable = container.querySelector("[class*='rounded-md']") as HTMLElement;
 		expect(tiltable).toBeTruthy();
 
 		expect(() => {
-			fireEvent.mouseMove(tiltable, { clientX: 100, clientY: 50 });
-			fireEvent.mouseMove(tiltable, { clientX: 0, clientY: 0 });
-			fireEvent.mouseLeave(tiltable);
+			fireEvent.pointerMove(tiltable, { clientX: 100, clientY: 50, pointerType: "mouse" });
+			fireEvent.pointerMove(tiltable, { clientX: 0, clientY: 0, pointerType: "mouse" });
+			fireEvent.pointerLeave(tiltable);
 		}).not.toThrow();
 	});
 });

@@ -15,6 +15,7 @@ import { RichInput } from "@/components/input/rich-input";
 import { useDialogStore } from "@/dialogs/store";
 import { useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
+import { EASE_OUT_STRONG } from "@/libs/motion";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
 import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
@@ -189,7 +190,7 @@ const ExperienceForm = withForm({
 								onReorder={handleReorderRoles}
 								className="flex flex-col gap-4 sm:col-span-full"
 							>
-								<AnimatePresence>
+								<AnimatePresence initial={false}>
 									{rolesField.state.value.map((role: RoleItem, index: number) => (
 										<RoleFields
 											key={role.id}
@@ -238,10 +239,11 @@ const RoleFields = withForm({
 				value={role}
 				dragListener={false}
 				dragControls={controls}
-				initial={{ opacity: 1, y: -10 }}
-				animate={{ opacity: 1, y: 0 }}
-				exit={{ opacity: 0, y: -10 }}
-				className="relative grid rounded-md border sm:col-span-full sm:grid-cols-2"
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				exit={{ opacity: 0 }}
+				transition={{ duration: 0.15, ease: EASE_OUT_STRONG }}
+				className="relative grid rounded-md border bg-popover sm:col-span-full sm:grid-cols-2"
 			>
 				<div className="col-span-full flex items-center justify-between rounded-t bg-border/30 px-2 py-1.5">
 					<Button

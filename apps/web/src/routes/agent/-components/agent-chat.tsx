@@ -31,7 +31,6 @@ import {
 	parseJsonEventStream,
 	uiMessageChunkSchema,
 } from "ai";
-import { m } from "motion/react";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -412,14 +411,12 @@ function StarterPromptMarquee({ onSelect }: StarterPromptMarqueeProps) {
 					{ id: `${prompt}-repeat-b`, prompt },
 				]);
 				const duration = 135 + rowIndex * 22;
-				const animate = rowIndex % 2 === 0 ? { x: ["0%", "-33.333%"] } : { x: ["-33.333%", "0%"] };
 
 				return (
-					<m.div
+					<div
 						key={`prompt-row-${row.join("|")}`}
-						className="flex w-max gap-3"
-						animate={animate}
-						transition={{ duration, ease: "linear", repeat: Number.POSITIVE_INFINITY }}
+						className="flex w-max animate-[agent-prompt-marquee_135s_linear_infinite] gap-3 focus-within:[animation-play-state:paused] hover:[animation-play-state:paused]"
+						style={{ animationDuration: `${duration}s`, animationDirection: rowIndex % 2 === 0 ? "normal" : "reverse" }}
 					>
 						{marqueePrompts.map(({ id, prompt }) => (
 							<Button
@@ -432,7 +429,7 @@ function StarterPromptMarquee({ onSelect }: StarterPromptMarqueeProps) {
 								{promptPreview(prompt)}
 							</Button>
 						))}
-					</m.div>
+					</div>
 				);
 			})}
 		</div>

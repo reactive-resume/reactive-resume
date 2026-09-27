@@ -3,7 +3,6 @@ import { Trans } from "@lingui/react/macro";
 import { DownloadSimpleIcon, TrashSimpleIcon } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { m } from "motion/react";
 import { useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Input } from "@reactive-resume/ui/components/input";
@@ -20,7 +19,6 @@ export function AccountSettingsPage() {
 	const confirm = useConfirm();
 	const navigate = useNavigate();
 	const [confirmationText, setConfirmationText] = useState("");
-	const isConfirmationValid = confirmationText === CONFIRMATION_TEXT;
 
 	const { mutate: deleteAccount } = useMutation(orpc.auth.deleteAccount.mutationOptions());
 
@@ -86,28 +84,21 @@ export function AccountSettingsPage() {
 	};
 
 	return (
-		<m.div
-			initial={{ y: -20 }}
-			animate={{ opacity: 1, y: 0 }}
-			transition={{ duration: 0.25, ease: "easeOut" }}
-			className="grid max-w-xl gap-6 will-change-[transform,opacity]"
-		>
+		<div className="grid max-w-xl gap-6">
 			<div className="grid gap-3">
 				<p className="leading-relaxed">
 					<Trans>Download a copy of all your data, including your profile and every resume, as a JSON file.</Trans>
 				</p>
 
-				<m.div
-					className="justify-self-start will-change-transform"
-					whileHover={{ y: -1, scale: 1.01 }}
-					whileTap={{ scale: 0.98 }}
-					transition={{ duration: 0.14, ease: "easeOut" }}
+				<Button
+					variant="outline"
+					className="justify-self-start"
+					onClick={() => exportData(undefined)}
+					disabled={isExporting}
 				>
-					<Button variant="outline" onClick={() => exportData(undefined)} disabled={isExporting}>
-						<DownloadSimpleIcon />
-						<Trans>Export my data</Trans>
-					</Button>
-				</m.div>
+					<DownloadSimpleIcon />
+					<Trans>Export my data</Trans>
+				</Button>
 			</div>
 
 			<hr className="border-border" />
@@ -123,17 +114,15 @@ export function AccountSettingsPage() {
 				placeholder={t`Type "${CONFIRMATION_TEXT}" to confirm`}
 			/>
 
-			<m.div
-				className="justify-self-end will-change-transform"
-				whileHover={!isConfirmationValid ? undefined : { y: -1, scale: 1.01 }}
-				whileTap={!isConfirmationValid ? undefined : { scale: 0.98 }}
-				transition={{ duration: 0.14, ease: "easeOut" }}
+			<Button
+				variant="destructive"
+				className="justify-self-end"
+				onClick={handleDeleteAccount}
+				disabled={confirmationText !== CONFIRMATION_TEXT}
 			>
-				<Button variant="destructive" onClick={handleDeleteAccount} disabled={!isConfirmationValid}>
-					<TrashSimpleIcon />
-					<Trans>Delete Account</Trans>
-				</Button>
-			</m.div>
-		</m.div>
+				<TrashSimpleIcon />
+				<Trans>Delete Account</Trans>
+			</Button>
+		</div>
 	);
 }

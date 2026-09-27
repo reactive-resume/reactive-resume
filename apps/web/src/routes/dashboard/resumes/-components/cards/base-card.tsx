@@ -12,7 +12,7 @@ type BaseCardProps = React.ComponentProps<"div"> & {
 
 export function BaseCard({ title, description, tags, className, children, ...props }: BaseCardProps) {
 	return (
-		<CometCard translateDepth={3} rotateDepth={6}>
+		<CometCard>
 			<div
 				{...props}
 				className={cn(

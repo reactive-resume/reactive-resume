@@ -26,6 +26,7 @@ import {
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { cn } from "@reactive-resume/utils/style";
 import { useDialogStore } from "@/dialogs/store";
 import {
 	useCurrentBuilderResumeSelector,
@@ -137,9 +138,9 @@ function ResumeDownloadButton() {
 
 function SaveStatusIndicator() {
 	const status = useResumeStore((state) => state.saveStatus);
-	if (status === "idle") return null;
 
 	const { icon, label } = match(status)
+		.with("idle", () => ({ icon: null, label: "" }))
 		.with("saving", () => ({
 			icon: <CircleNotchIcon className="animate-spin" />,
 			label: t`Saving…`,
@@ -153,7 +154,11 @@ function SaveStatusIndicator() {
 
 	return (
 		<span
-			className="ms-1 flex shrink-0 items-center gap-x-1 text-muted-foreground text-xs"
+			// Always reserve the slot so the header buttons don't shift when the status appears or clears.
+			className={cn(
+				"ms-1 flex min-w-3 shrink-0 items-center gap-x-1 text-muted-foreground text-xs md:min-w-18",
+				status === "idle" && "invisible",
+			)}
 			aria-live="polite"
 			role="status"
 		>

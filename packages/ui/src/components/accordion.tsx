@@ -1,5 +1,5 @@
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
-import { CaretDownIcon, CaretUpIcon } from "@phosphor-icons/react";
+import { CaretDownIcon } from "@phosphor-icons/react";
 import { cn } from "@reactive-resume/utils/style";
 
 function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
@@ -26,11 +26,7 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
 				{children}
 				<CaretDownIcon
 					data-slot="accordion-trigger-icon"
-					className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
-				/>
-				<CaretUpIcon
-					data-slot="accordion-trigger-icon"
-					className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
+					className="pointer-events-none shrink-0 transition-transform duration-200 ease-out-strong group-aria-expanded/accordion-trigger:rotate-180"
 				/>
 			</AccordionPrimitive.Trigger>
 		</AccordionPrimitive.Header>
@@ -41,17 +37,10 @@ function AccordionContent({ className, children, ...props }: AccordionPrimitive.
 	return (
 		<AccordionPrimitive.Panel
 			data-slot="accordion-content"
-			className="overflow-hidden text-sm data-closed:animate-accordion-up data-open:animate-accordion-down"
+			className="h-(--accordion-panel-height) overflow-hidden text-sm transition-[height] duration-200 ease-out-strong data-ending-style:h-0 data-starting-style:h-0 data-ending-style:duration-150"
 			{...props}
 		>
-			<div
-				className={cn(
-					"h-(--accordion-panel-height) pt-0 pb-2.5 data-ending-style:h-0 data-starting-style:h-0 [&_p:not(:last-child)]:mb-4",
-					className,
-				)}
-			>
-				{children}
-			</div>
+			<div className={cn("pt-0 pb-2.5 [&_p:not(:last-child)]:mb-4", className)}>{children}</div>
 		</AccordionPrimitive.Panel>
 	);
 }

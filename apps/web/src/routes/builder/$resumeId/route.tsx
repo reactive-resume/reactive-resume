@@ -2,7 +2,7 @@ import type { BuilderLayout } from "./-store/sidebar";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useMediaQuery } from "usehooks-ts";
+import { useIsMobile } from "@reactive-resume/ui/hooks/use-mobile";
 import { useBuilderResumeUpdateSubscription, useResumeCleanup, useResumeStore } from "@/features/resume/builder/draft";
 import { orpc } from "@/libs/orpc/client";
 import { createNoindexFollowMeta } from "@/libs/seo";
@@ -73,7 +73,7 @@ function RouteComponent() {
 
 function BuilderLayoutShell({ initialLayout }: { initialLayout: BuilderLayout }) {
 	// Single breakpoint (below `md`) switches between the desktop resizable panels and the mobile tabbed shell.
-	const isMobile = useMediaQuery("(max-width: 767px)", { initializeWithValue: false });
+	const isMobile = useIsMobile();
 
 	if (isMobile) return <MobileBuilderShell />;
 	return <DesktopBuilderShell initialLayout={initialLayout} />;

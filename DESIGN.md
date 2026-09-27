@@ -226,21 +226,24 @@ A custom Tailwind token `--aspect-page: 210 / 297` enforces A4 paper proportions
 
 ## Animation
 
-Animations use the Motion library (formerly Framer Motion) and follow a consistent choreography pattern:
+Motion exists to explain a change, confirm an action, or soften a jump. This is a tool people use for hours, so it stays crisp: short, precise, rarely decorative.
 
-**Entrance animations** use a fade-up reveal: elements start at `opacity: 0, y: 20-100` and animate to `opacity: 1, y: 0`. The hero section uses a larger y-offset (100px) for dramatic effect; subsequent sections use 20px for subtlety.
+**Frequency decides first.** Keyboard-initiated actions (the command palette, ⌘B sidebar toggle, zoom shortcuts, keyboard-opened menus via Base UI's `data-instant`) do not animate. Things hit tens of times a day (list rows, tooltips after the first, context menus) get opacity-only or no motion. Dialogs, sheets and toasts get a standard transition. Only rare moments (marketing pages, first load) get more.
 
-**Timing principles:**
-- **Base duration:** 0.35s–0.6s for standard section reveals, 0.45s for hero elements, up to 1.1s for the hero video entrance.
-- **Stagger pattern:** Sequential delays within a group, typically 0.1s–0.15s apart (hero: 0.55s, 0.7s, 0.82s, 0.95s). For grids, use `index * 0.03`–`0.1` for per-item stagger.
-- **Easing:** `easeOut` for entrances (elements decelerate into position). `easeInOut` for looping/ambient animations.
-- **Performance:** Apply `will-change-[transform,opacity]` on animated elements and `will-change-transform` on continuously animated elements.
+**Tokens.** Never hand-type a curve.
+- CSS: `ease-out-strong` / `var(--ease-out-strong)` (`cubic-bezier(0.23, 1, 0.32, 1)`) for anything entering, exiting or responding; `ease-in-out-strong` for on-screen movement nobody is waiting on (ambient loops, carousels); `ease-drawer` for sheets. Never `ease-in`.
+- Motion (JS): `EASE_OUT_STRONG` from `apps/web/src/libs/motion.ts`.
 
-**Hover/interaction animations** are quick (0.2s) and subtle — small scale bumps (`scale: 1.01`), slight y-offsets (`y: -2`), and `active:translate-y-px` for button press.
+**Durations.** Press feedback 100–160ms, tooltips/popovers/menus 150ms in and 100ms out, dialogs 200ms in and 150ms out, sheets 300ms. App UI stays under 300ms; marketing reveals may run 0.5–0.9s. Exits are faster than entrances.
 
-**Ambient animations** loop infinitely with `easeInOut` — the scroll indicator bounces gently (`y: [0, 5, 0]` over 1.5s).
+**Mechanics.**
+- Popups use interruptible CSS transitions on Base UI's `data-starting-style` / `data-ending-style`, scale from `0.95` (never `0`) and grow from `origin-(--transform-origin)`. Modals stay centred.
+- Animate `transform`/`translate`/`scale` and `opacity` only. No `transition-all`, no permanent `will-change` (Motion promotes layers while it animates).
+- Presses use `active:scale-[0.97]`. `Button` already has it; don't wrap it in Motion hover/tap wrappers.
+- Lists use `AnimatePresence initial={false}` so items animate when added or removed, not every time the list mounts.
+- Continuous loops (marquees, drifting spotlights) are CSS keyframes, so they run off the main thread.
 
-**Reduced motion:** All CSS transitions and animations collapse to `0.01ms` duration and single iteration when `prefers-reduced-motion: reduce` is active. Motion library animations should also respect this preference.
+**Reduced motion:** `MotionConfig reducedMotion="user"` disables Motion transforms, and CSS transitions and animations collapse to `0.01ms` — except `animate-spin`, which keeps spinning so loading never looks frozen. Values driven by `useSpring`/`useMotionValue` bypass `MotionConfig`, so check `useReducedMotion()` there.
 
 ## Elevation & Depth
 

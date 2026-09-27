@@ -4,7 +4,6 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { PaletteIcon, SignOutIcon, TranslateIcon } from "@phosphor-icons/react";
 import { useRouter } from "@tanstack/react-router";
-import { useIsClient } from "usehooks-ts";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -30,7 +29,6 @@ type Props = {
 };
 
 export function UserDropdownMenu({ children }: Props) {
-	const isClient = useIsClient();
 	const router = useRouter();
 	const { i18n } = useLingui();
 	const { theme, setTheme } = useTheme();
@@ -67,7 +65,6 @@ export function UserDropdownMenu({ children }: Props) {
 		});
 	};
 
-	if (!isClient) return null;
 	if (!session?.user) return null;
 
 	return (

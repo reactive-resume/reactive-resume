@@ -40,6 +40,7 @@ import { getInitials } from "@reactive-resume/utils/string";
 import { Copyright } from "@/components/ui/copyright";
 import { useCommandPaletteStore } from "@/features/command-palette/store";
 import { UserDropdownMenu } from "@/features/user/dropdown-menu";
+import { EASE_OUT_STRONG } from "@/libs/motion";
 
 type SidebarItem = {
 	icon: React.ReactNode;
@@ -120,11 +121,11 @@ function SidebarItemList({ items }: SidebarItemListProps) {
 			{items.map((item) => (
 				<SidebarMenuItem key={item.href}>
 					<SidebarMenuButton
-						title={i18n.t(item.label)}
+						tooltip={i18n.t(item.label)}
 						render={
 							<Link to={item.href} activeProps={{ className: "bg-sidebar-accent" }}>
 								{item.icon}
-								<span className="shrink-0 transition-[margin,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:-ms-8 group-data-[collapsible=icon]:opacity-0">
+								<span className="shrink-0 transition-opacity duration-150 ease-out-strong group-data-[collapsible=icon]:opacity-0 group-data-instant/sidebar-wrapper:transition-none">
 									{i18n.t(item.label)}
 								</span>
 							</Link>
@@ -144,12 +145,14 @@ function SidebarSearchButton() {
 
 	return (
 		<SidebarMenuItem>
-			<SidebarMenuButton title={label} tooltip={label} onClick={() => setOpen(true)}>
+			<SidebarMenuButton tooltip={label} onClick={() => setOpen(true)}>
 				<MagnifyingGlassIcon />
-				<span className="flex-1 text-start transition-[margin,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:-ms-8 group-data-[collapsible=icon]:opacity-0">
+				<span className="flex-1 text-start transition-opacity duration-150 ease-out-strong group-data-[collapsible=icon]:opacity-0 group-data-instant/sidebar-wrapper:transition-none">
 					{label}
 				</span>
-				<Kbd className="transition-opacity duration-200 ease-in-out group-data-[collapsible=icon]:opacity-0">⌘K</Kbd>
+				<Kbd className="transition-opacity duration-150 ease-out-strong group-data-[collapsible=icon]:opacity-0 group-data-instant/sidebar-wrapper:transition-none">
+					⌘K
+				</Kbd>
 			</SidebarMenuButton>
 		</SidebarMenuItem>
 	);
@@ -209,14 +212,14 @@ export function DashboardSidebar() {
 						<UserDropdownMenu>
 							{({ session }) => (
 								<SidebarMenuButton className="h-auto gap-x-3 group-data-[collapsible=icon]:p-1!">
-									<Avatar className="size-8 shrink-0 transition-all group-data-[collapsible=icon]:size-6">
+									<Avatar className="size-8 shrink-0 group-data-[collapsible=icon]:size-6">
 										<AvatarImage src={session.user.image ?? undefined} />
 										<AvatarFallback className="group-data-[collapsible=icon]:text-[0.5rem]">
 											{getInitials(session.user.name)}
 										</AvatarFallback>
 									</Avatar>
 
-									<div className="transition-[margin,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:-ms-8 group-data-[collapsible=icon]:opacity-0">
+									<div className="transition-opacity duration-150 ease-out-strong group-data-[collapsible=icon]:opacity-0 group-data-instant/sidebar-wrapper:transition-none">
 										<p className="font-medium">{session.user.name}</p>
 										<p className="text-muted-foreground text-xs">{session.user.email}</p>
 									</div>
@@ -230,11 +233,9 @@ export function DashboardSidebar() {
 					{state === "expanded" && (
 						<m.div
 							key="copyright"
-							className="will-change-[transform,opacity]"
-							initial={{ y: 12, opacity: 0 }}
-							animate={{ y: 0, opacity: 1 }}
-							exit={{ y: 12, opacity: 0 }}
-							transition={{ duration: 0.2, ease: "easeOut" }}
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1, transition: { duration: 0.2, ease: EASE_OUT_STRONG } }}
+							exit={{ opacity: 0, transition: { duration: 0.08 } }}
 						>
 							<Copyright className="wrap-break-word shrink-0 whitespace-normal p-2" />
 						</m.div>

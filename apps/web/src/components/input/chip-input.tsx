@@ -13,7 +13,6 @@ import { CSS } from "@dnd-kit/utilities";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { PencilSimpleIcon, XIcon } from "@phosphor-icons/react";
-import { AnimatePresence, m } from "motion/react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { Badge } from "@reactive-resume/ui/components/badge";
@@ -75,15 +74,10 @@ function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProp
 	};
 
 	return (
-		<m.div
-			layout
-			initial={{ opacity: 0, scale: 0.92, y: -4 }}
-			animate={{ opacity: isDragging ? 0.62 : 1, scale: 1, y: 0 }}
-			exit={{ opacity: 0, scale: 0.92, y: -4 }}
-			transition={{ duration: 0.1, ease: "easeOut" }}
+		<div
 			style={style}
 			ref={setNodeRef}
-			className="group/chip relative touch-none"
+			className={cn("group/chip relative touch-none", isDragging && "opacity-60")}
 			{...attributes}
 			{...listeners}
 		>
@@ -96,11 +90,11 @@ function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProp
 				)}
 			>
 				<span className="max-w-32 truncate sm:max-w-44">{chip}</span>
-				<m.div
-					initial={false}
-					animate={isEditing ? { opacity: 1 } : { opacity: 0.66 }}
-					transition={{ duration: 0.12, ease: "easeOut" }}
-					className="ms-1.5 flex shrink-0 items-center gap-x-0.5 will-change-[opacity] group-focus-within/chip:opacity-100 group-hover/chip:opacity-100"
+				<div
+					className={cn(
+						"ms-1.5 flex shrink-0 items-center gap-x-0.5 transition-opacity duration-150 group-focus-within/chip:opacity-100 group-hover/chip:opacity-100",
+						isEditing ? "opacity-100" : "opacity-65",
+					)}
 				>
 					<button
 						type="button"
@@ -134,9 +128,9 @@ function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProp
 					>
 						<XIcon className="size-3.5" />
 					</button>
-				</m.div>
+				</div>
 			</Badge>
-		</m.div>
+		</div>
 	);
 }
 
@@ -357,21 +351,19 @@ export function ChipInput({
 							className={cn("max-h-24 overflow-y-auto px-2 py-1.5", hasChips ? "border-border/70 border-b" : "hidden")}
 						>
 							<SortableContext items={chips} strategy={rectSortingStrategy}>
-								<m.div layout className="flex flex-wrap gap-1">
-									<AnimatePresence initial={false} mode="popLayout">
-										{chips.map((chip, idx) => (
-											<ChipItem
-												key={chip}
-												id={chip}
-												chip={chip}
-												index={idx}
-												isEditing={editingIndex === idx}
-												onEdit={handleEdit}
-												onRemove={removeChip}
-											/>
-										))}
-									</AnimatePresence>
-								</m.div>
+								<div className="flex flex-wrap gap-1">
+									{chips.map((chip, idx) => (
+										<ChipItem
+											key={chip}
+											id={chip}
+											chip={chip}
+											index={idx}
+											isEditing={editingIndex === idx}
+											onEdit={handleEdit}
+											onRemove={removeChip}
+										/>
+									))}
+								</div>
 							</SortableContext>
 						</div>
 						<div className={cn("flex items-center gap-1.5 px-2", hasChips ? "py-1.5" : "py-0")}>
@@ -393,28 +385,18 @@ export function ChipInput({
 								onChange={handleInputChange}
 								className="h-9 flex-1 border-none p-0 focus-visible:border-none focus-visible:ring-0 dark:bg-transparent"
 							/>
-							<AnimatePresence>
-								{chips.length > 0 && (
-									<m.span
-										layout
-										initial={{ opacity: 0, scale: 0.95 }}
-										animate={{
-											opacity: isEditingKeyword ? 1 : 0.8,
-											scale: 1,
-										}}
-										exit={{ opacity: 0, scale: 0.95 }}
-										transition={{ duration: 0.12, ease: "easeOut" }}
-										className={cn(
-											"flex h-6 min-w-6 shrink-0 items-center justify-center rounded-md border px-1.5 font-medium text-[0.7rem] tabular-nums",
-											isEditingKeyword
-												? "border-primary/30 bg-primary/10 text-primary"
-												: "border-border bg-muted/50 text-foreground/80",
-										)}
-									>
-										{isEditingKeyword ? <Trans>Edit</Trans> : chips.length}
-									</m.span>
-								)}
-							</AnimatePresence>
+							{chips.length > 0 && (
+								<span
+									className={cn(
+										"flex h-6 min-w-6 shrink-0 items-center justify-center rounded-md border px-1.5 font-medium text-[0.7rem] tabular-nums",
+										isEditingKeyword
+											? "border-primary/30 bg-primary/10 text-primary"
+											: "border-border bg-muted/50 text-foreground/80 opacity-80",
+									)}
+								>
+									{isEditingKeyword ? <Trans>Edit</Trans> : chips.length}
+								</span>
+							)}
 						</div>
 					</div>
 				</div>

@@ -1,4 +1,5 @@
 import type { PdfAtsReport } from "@reactive-resume/resume/ats-pdf";
+import type { CSSProperties } from "react";
 import { Trans } from "@lingui/react/macro";
 import { InfoIcon } from "@phosphor-icons/react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
@@ -30,8 +31,11 @@ export function ScoreHeader({ report }: ScoreHeaderProps) {
 
 			<div className="h-1.5 overflow-hidden rounded-full bg-muted">
 				<div
-					className={cn("h-full rounded-full transition-[width] duration-300", tone.bar)}
-					style={{ width: `${report.score}%` }}
+					className={cn(
+						"h-full translate-x-(--fill) rounded-full transition-[translate] duration-300 ease-out-strong rtl:-translate-x-(--fill)",
+						tone.bar,
+					)}
+					style={{ "--fill": `${report.score - 100}%` } as CSSProperties}
 				/>
 			</div>
 

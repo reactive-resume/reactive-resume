@@ -1,6 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useId, useRef, useState } from "react";
 import { coverLetterDocumentSchema } from "@reactive-resume/schema/cover-letter/data";
 import { templateSchema } from "@reactive-resume/schema/templates";
@@ -9,6 +9,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { cn } from "@reactive-resume/utils/style";
 import { Combobox } from "@/components/ui/combobox";
 import { templates } from "@/dialogs/resume/template/data";
 import { getReadableErrorMessage } from "@/libs/error-message";
@@ -46,7 +47,10 @@ export function CoverLetterLibrary({ initialResumeId, resumeReady = true, onEdit
 	useEffect(() => {
 		onEditingChange?.(selectedId !== null);
 	}, [selectedId, onEditingChange]);
-	const query = useQuery(orpc.coverLetters.list.queryOptions({ input: { search: querySearch, offset, limit: 20 } }));
+	const query = useQuery({
+		...orpc.coverLetters.list.queryOptions({ input: { search: querySearch, offset, limit: 20 } }),
+		placeholderData: keepPreviousData,
+	});
 	const resumes = useQuery(orpc.resume.list.queryOptions({ input: {} }));
 	const source = useQuery(
 		orpc.resume.getById.queryOptions({ input: { id: resumeId ?? "" }, enabled: creating && !!resumeId }),
@@ -250,7 +254,12 @@ export function CoverLetterLibrary({ initialResumeId, resumeReady = true, onEdit
 					<Trans>No cover letters found. Create one or import an existing letter.</Trans>
 				</p>
 			) : (
-				<ul className="divide-y rounded-lg border">
+				<ul
+					className={cn(
+						"divide-y rounded-lg border transition-opacity duration-150",
+						query.isPlaceholderData && "opacity-60",
+					)}
+				>
 					{query.data.items.map((letter) => (
 						<li key={letter.id}>
 							<button

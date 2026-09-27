@@ -4,7 +4,6 @@ import { ArrowRightIcon, ChatCircleDotsIcon, FilePlusIcon, GearSixIcon } from "@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { useIsClient } from "usehooks-ts";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Label } from "@reactive-resume/ui/components/label";
@@ -29,7 +28,6 @@ function isAgentConfigError(error: unknown) {
 }
 
 export function NewThreadSetup({ resumeId }: NewThreadSetupProps) {
-	const isClient = useIsClient();
 	const navigate = useNavigate();
 	const { usableProviders, isLoading: isLoadingProviders, error: providersError } = useHasUsableAiProvider();
 	const { data: resumes, isLoading: isLoadingResumes } = useQuery(
@@ -53,8 +51,6 @@ export function NewThreadSetup({ resumeId }: NewThreadSetupProps) {
 
 	const selectedResumeValue = sourceResumeId ?? "__scratch__";
 	const canCreate = !!aiProviderId && usableProviders.length > 0;
-
-	if (!isClient) return null;
 
 	return (
 		<div className="mx-auto grid w-full max-w-4xl gap-6 self-center p-4 lg:p-6">

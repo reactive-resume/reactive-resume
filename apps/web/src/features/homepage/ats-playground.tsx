@@ -2,7 +2,6 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { ArrowRightIcon, ArrowUpRightIcon, FilePdfIcon, SpinnerGapIcon } from "@phosphor-icons/react";
 import { useEffect, useId, useRef, useState } from "react";
-import "./ats-playground.css";
 
 const focusRing = "focus-visible:outline-2 focus-visible:outline-(--home-accent) focus-visible:outline-offset-4";
 const message = "max-w-[300px] text-[14px] leading-[1.8]";
@@ -97,17 +96,13 @@ export default function AtsPlayground() {
 			</div>
 			<div className="flex flex-col items-center gap-[15px] max-[900px]:col-[1] max-[600px]:row-auto max-[900px]:row-[2] max-[600px]:flex-row max-[600px]:flex-wrap max-[600px]:justify-center max-[600px]:gap-2.5">
 				<button
-					className={`motion-safe:active:not-disabled:not-focus-visible:transform-[scale(0.97)] flex min-w-[140px] flex-col items-center gap-[14px] rounded border border-(--home-line) bg-(--home-panel) px-4 py-5 text-(--home-ink) text-[13px] transition-[transform_140ms_cubic-bezier(0.23,1,0.32,1)] hover:not-disabled:border-(--home-accent) disabled:cursor-progress max-[900px]:flex-row max-[900px]:gap-2.5 max-[900px]:py-[13px] ${focusRing}`}
+					className={`motion-safe:active:not-disabled:not-focus-visible:transform-[scale(0.97)] flex min-w-[140px] flex-col items-center gap-[14px] rounded border border-(--home-line) bg-(--home-panel) px-4 py-5 text-(--home-ink) text-[13px] [transition:transform_140ms_var(--ease-out-strong),border-color_150ms_ease] hover:not-disabled:border-(--home-accent) disabled:cursor-progress max-[900px]:flex-row max-[900px]:gap-2.5 max-[900px]:py-[13px] ${focusRing}`}
 					type="button"
 					disabled={isReading}
 					onClick={() => void read(file)}
 				>
 					{isReading ? (
-						<SpinnerGapIcon
-							className="animate-[home-ats-spin_900ms_linear_infinite] text-(--home-accent)"
-							size={22}
-							aria-hidden="true"
-						/>
+						<SpinnerGapIcon className="animate-spin text-(--home-accent)" size={22} aria-hidden="true" />
 					) : (
 						<ArrowRightIcon className="text-(--home-accent)" size={22} aria-hidden="true" />
 					)}

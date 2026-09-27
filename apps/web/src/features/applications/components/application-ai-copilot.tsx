@@ -60,7 +60,7 @@ function FitRing({ score }: { score: number }) {
 				strokeLinecap="round"
 				strokeDasharray={c}
 				strokeDashoffset={c - (Math.max(0, Math.min(100, score)) / 100) * c}
-				className="transition-[stroke-dashoffset] duration-700 ease-out motion-reduce:transition-none"
+				className="transition-[stroke-dashoffset] duration-300 ease-out-strong motion-reduce:transition-none"
 			/>
 		</svg>
 	);

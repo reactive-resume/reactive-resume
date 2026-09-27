@@ -84,7 +84,7 @@ type TemplateCardProps = {
 
 function TemplateCard({ id, metadata, isActive, onSelect }: TemplateCardProps) {
 	return (
-		<CometCard translateDepth={3} rotateDepth={6} glareOpacity={0}>
+		<CometCard glareOpacity={0}>
 			<button
 				type="button"
 				onClick={() => onSelect(id)}
@@ -104,7 +104,7 @@ function TemplateCard({ id, metadata, isActive, onSelect }: TemplateCardProps) {
 			{metadata.tags.length > 0 && (
 				<div className="flex flex-wrap justify-center gap-1 px-1 pb-1">
 					{metadata.tags
-						.sort((a, b) => a.localeCompare(b))
+						.toSorted((a, b) => a.localeCompare(b))
 						.map((tag) => (
 							<Badge key={tag} variant="secondary" className="text-xs">
 								{tag}

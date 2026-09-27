@@ -15,7 +15,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, HeadContent, Outlet, useRouterState } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { domAnimation, LazyMotion, MotionConfig } from "motion/react";
+import { domMax, LazyMotion, MotionConfig } from "motion/react";
 import { useEffect } from "react";
 import { Toaster } from "@reactive-resume/ui/components/toast";
 import { TooltipProvider } from "@reactive-resume/ui/components/tooltip";
@@ -110,7 +110,7 @@ function RootComponent() {
 
 			<QueryClientProvider client={queryClient}>
 				<MotionConfig reducedMotion="user">
-					<LazyMotion features={domAnimation}>
+					<LazyMotion features={domMax}>
 						<I18nProvider i18n={i18n}>
 							<IconContext.Provider value={iconContextValue}>
 								<ThemeProvider theme={theme}>

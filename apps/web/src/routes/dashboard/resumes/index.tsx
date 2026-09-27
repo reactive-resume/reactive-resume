@@ -10,7 +10,7 @@ import {
 	PlusIcon,
 	ReadCvLogoIcon,
 } from "@phosphor-icons/react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, stripSearchParams, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import z from "zod";
@@ -58,13 +58,16 @@ function RouteComponent() {
 	const { openDialog } = useDialogStore();
 
 	const { data: allTags } = useQuery(orpc.resume.tags.list.queryOptions());
-	const { data: resumes } = useQuery(orpc.resume.list.queryOptions({ input: { tags, sort } }));
+	const { data: resumes } = useQuery({
+		...orpc.resume.list.queryOptions({ input: { tags, sort } }),
+		placeholderData: keepPreviousData,
+	});
 
 	const filteredResumes = useMemo(() => {
-		const list = resumes ?? [];
+		if (!resumes) return undefined;
 		const query = searchQuery.trim().toLowerCase();
-		if (!query) return list;
-		return list.filter(
+		if (!query) return resumes;
+		return resumes.filter(
 			(resume) => resume.name.toLowerCase().includes(query) || resume.slug.toLowerCase().includes(query),
 		);
 	}, [resumes, searchQuery]);

@@ -11,7 +11,7 @@ type TemplateShelfProps = { template: Template; onChange: (template: Template) =
 const templates = templateSchema.options;
 const displayName = (name: string) => name[0].toUpperCase() + name.slice(1);
 const roundLinkClass =
-	"inline-flex size-[46px] shrink-0 items-center justify-center rounded-full border border-[#444447] bg-transparent text-(--home-ink) [transition:background-color_150ms_ease,transform_150ms_cubic-bezier(0.23,1,0.32,1)] hover:bg-[#2c2c2f] active:transform-[scale(0.97)] max-[540px]:size-11";
+	"inline-flex size-[46px] shrink-0 items-center justify-center rounded-full border border-[#444447] bg-transparent text-(--home-ink) [transition:background-color_150ms_ease,transform_150ms_var(--ease-out-strong)] hover:bg-[#2c2c2f] active:transform-[scale(0.97)] max-[540px]:size-11";
 
 export function TemplateShelf({ template, onChange }: TemplateShelfProps) {
 	const index = templates.indexOf(template);
@@ -35,7 +35,7 @@ export function TemplateShelf({ template, onChange }: TemplateShelfProps) {
 						<button
 							key={item}
 							type="button"
-							className="transform-[translateX(calc(var(--position)_*_var(--home-paper-step)))_translateY(calc(var(--distance)_*_15px))_translateZ(calc(var(--distance)_*_-80px))_rotateY(calc(var(--position)_*_-12deg))_rotateZ(calc(var(--position)_*_2deg))] absolute top-5 left-[calc(50%_-_var(--home-paper-width)_/_2)] z-[calc(10_-_var(--distance))] aspect-[510/720] w-(--home-paper-width) rounded-[2px] border border-[#dedbd3] bg-[#eee] shadow-[0_25px_28px_#0004,0_2px_1px_#0006] brightness-[calc(1_-_var(--distance)_*_0.18)] [transition:transform_550ms_cubic-bezier(0.23,1,0.32,1),filter_350ms_ease,opacity_220ms_ease] not-aria-pressed:hover:brightness-95 aria-hidden:invisible aria-hidden:opacity-0 group-data-[instant=true]/shelf:transition-none"
+							className="transform-[translateX(calc(var(--position)_*_var(--home-paper-step)))_translateY(calc(var(--distance)_*_15px))_translateZ(calc(var(--distance)_*_-80px))_rotateY(calc(var(--position)_*_-12deg))_rotateZ(calc(var(--position)_*_2deg))] absolute top-5 left-[calc(50%_-_var(--home-paper-width)_/_2)] z-[calc(10_-_var(--distance))] aspect-[510/720] w-(--home-paper-width) rounded-[2px] border border-[#dedbd3] bg-[#eee] shadow-[0_25px_28px_#0004,0_2px_1px_#0006] brightness-[calc(1_-_var(--distance)_*_0.18)] [transition:transform_550ms_var(--ease-out-strong),filter_350ms_ease,opacity_220ms_ease,visibility_220ms] not-aria-pressed:hover:brightness-95 aria-hidden:invisible aria-hidden:opacity-0 group-data-[instant=true]/shelf:transition-none"
 							aria-label={t`Choose ${displayName(item)}`}
 							aria-pressed={item === template}
 							aria-hidden={Math.abs(offset) > 2}
