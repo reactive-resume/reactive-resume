@@ -30,7 +30,9 @@ export default defineConfig({
 		},
 	],
 	webServer: {
-		command: "pnpm start",
+		// Run node directly: pnpm >=12.6 moves script children into their own process group,
+		// so Playwright's group kill misses the server and the job hangs after the tests finish.
+		command: "node apps/server/dist/index.mjs",
 		url: `${baseURL}/api/health`,
 		reuseExistingServer: !isCI,
 		timeout: 120_000,
