@@ -4,7 +4,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { TrashIcon } from "@phosphor-icons/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { INTERVIEW_KINDS } from "@reactive-resume/schema/applications/data";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -88,6 +88,7 @@ export function InterviewDialog({
 }: InterviewDialogProps) {
 	const queryClient = useQueryClient();
 	const confirm = useConfirm();
+	const id = useId();
 	const [draft, setDraft] = useState<Draft>(() => emptyDraft(application?.id ?? ""));
 	const isEditing = !!interview;
 
@@ -171,8 +172,9 @@ export function InterviewDialog({
 
 				<div className="grid gap-4">
 					{!application && (
-						<Field label={t`Application`} required>
+						<Field label={t`Application`} htmlFor={`${id}-application`} required>
 							<Combobox
+								id={`${id}-application`}
 								className="w-full"
 								value={draft.applicationId || null}
 								placeholder={t`Choose an application…`}
@@ -213,16 +215,17 @@ export function InterviewDialog({
 					</Field>
 
 					<div className="grid grid-cols-[1fr_auto] gap-3">
-						<Field label={t`Date & time`} required>
+						<Field label={t`Date & time`} htmlFor={`${id}-at`} required>
 							<Input
+								id={`${id}-at`}
 								type="datetime-local"
 								value={draft.at}
-								onInput={(event) => set("at", event.currentTarget.value)}
 								onChange={(event) => set("at", event.target.value)}
 							/>
 						</Field>
-						<Field label={t`Duration`}>
+						<Field label={t`Duration`} htmlFor={`${id}-duration`}>
 							<Combobox
+								id={`${id}-duration`}
 								className="w-32"
 								value={draft.durationMinutes}
 								options={durations.map((minutes) => ({ value: minutes, label: formatDuration(minutes) }))}
@@ -231,16 +234,18 @@ export function InterviewDialog({
 						</Field>
 					</div>
 
-					<Field label={t`Where`}>
+					<Field label={t`Where`} htmlFor={`${id}-location`}>
 						<Input
+							id={`${id}-location`}
 							value={draft.location}
 							placeholder={t`Video link, office address, or phone number`}
 							onChange={(event) => set("location", event.target.value)}
 						/>
 					</Field>
 
-					<Field label={t`Notes`}>
+					<Field label={t`Notes`} htmlFor={`${id}-notes`}>
 						<Textarea
+							id={`${id}-notes`}
 							rows={3}
 							value={draft.notes}
 							placeholder={t`Who you're meeting, what to prepare…`}
@@ -284,12 +289,12 @@ export function InterviewDialog({
 	);
 }
 
-type FieldProps = { label: string; required?: boolean; children: React.ReactNode };
+type FieldProps = { label: string; htmlFor?: string; required?: boolean; children: React.ReactNode };
 
-function Field({ label, required, children }: FieldProps) {
+function Field({ label, htmlFor, required, children }: FieldProps) {
 	return (
 		<div className="grid gap-1.5">
-			<Label className="text-muted-foreground text-xs">
+			<Label htmlFor={htmlFor} className="text-muted-foreground text-xs">
 				{label}
 				{required && <span className="text-destructive"> *</span>}
 			</Label>

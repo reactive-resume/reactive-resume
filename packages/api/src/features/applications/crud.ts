@@ -210,7 +210,8 @@ export const crudRouter = {
 			tags: ["Applications"],
 			operationId: "updateApplicationTimelineEntry",
 			summary: "Update a timeline entry",
-			description: "Updates a timeline entry date, or note text for note entries. Requires authentication.",
+			description:
+				"Updates a stage or note timeline entry date, or note text for note entries. Interview entries are rejected; use updateApplicationInterview. Requires authentication.",
 			successDescription: "The updated application.",
 		})
 		.input(applicationDto.updateTimelineEntry.input)

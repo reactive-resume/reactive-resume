@@ -564,7 +564,7 @@ export const TOOL_META = {
 	},
 	[T.updateApplicationTimelineEntry]: {
 		title: "Update Application Timeline Entry",
-		description: "Update a timeline entry date, or note text for note entries.",
+		description: `Update a stage or note timeline entry date, or note text for note entries. Interview entries are rejected; use \`${T.updateApplicationInterview}\` for them.`,
 		inputSchema: z
 			.object({
 				id: applicationIdSchema,

@@ -137,6 +137,8 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 						const inMonth = day.getMonth() === month.getMonth();
 						const isToday = key === todayKey;
 						const extra = items.length - MAX_CHIPS_PER_DAY;
+						const date = dayHeadingFormat.format(day);
+						const scheduleLabel = t`Schedule an interview on ${date}`;
 						return (
 							<div
 								key={key}
@@ -151,7 +153,8 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 								<div className="flex items-center justify-between">
 									<button
 										type="button"
-										title={t`Schedule an interview on this day`}
+										title={scheduleLabel}
+										aria-label={scheduleLabel}
 										className="flex size-6 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-muted hover:text-foreground focus-visible:opacity-100 group-hover/day:opacity-100 max-sm:hidden"
 										onClick={() => schedule(day)}
 									>

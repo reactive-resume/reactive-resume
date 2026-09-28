@@ -52,8 +52,14 @@ const dateInputValue = (value: Date | string) => {
 	return Number.isNaN(date.getTime()) ? "" : date.toISOString().slice(0, 10);
 };
 
-const formatDate = (value: Date | string) =>
-	new Date(value).toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "UTC", year: "numeric" });
+// Day-granular stage/note entries render in UTC; pass `local` for interviews, which carry a real time of day.
+const formatDate = (value: Date | string, local = false) =>
+	new Date(value).toLocaleDateString(undefined, {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+		...(local ? {} : { timeZone: "UTC" }),
+	});
 
 // Interviews carry a real time of day, so show them in the viewer's timezone (stage/note
 // entries are day-granular and rendered in UTC above).
@@ -505,7 +511,7 @@ function ApplicationTimeline({
 											className="rounded-md border border-border px-2 py-1 text-muted-foreground text-xs hover:bg-muted hover:text-foreground"
 											onClick={() => (entry.type === "interview" ? onOpenInterview(entry) : openDate(entry))}
 										>
-											{formatDate(entry.at)}
+											{formatDate(entry.at, entry.type === "interview")}
 										</button>
 										{!isAnchor && (
 											<button

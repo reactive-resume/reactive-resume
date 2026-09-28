@@ -512,6 +512,13 @@ export const applicationService = {
 			const activity = existing.activity.map((entry) => {
 				if (entry.id !== input.entryId) return entry;
 
+				// Interviews hold an exact time; a day-granular date edit here could move them to the wrong local day.
+				if (entry.type === "interview") {
+					throw new ORPCError("BAD_REQUEST", {
+						message: "Interview entries must be edited with updateInterview (update_application_interview).",
+					});
+				}
+
 				if (entry.type !== "note" && input.text !== undefined) {
 					throw new ORPCError("BAD_REQUEST", { message: "Only note timeline entries have editable text." });
 				}

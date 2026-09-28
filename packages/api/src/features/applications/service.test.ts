@@ -599,4 +599,14 @@ describe("applicationService interviews", () => {
 			applicationService.updateTimelineEntry({ id: "app-1", userId: "user-1", entryId: "int-1", text: "Nope" }),
 		).rejects.toMatchObject({ code: "BAD_REQUEST" });
 	});
+
+	it("rejects date edits on interview entries through the generic timeline update", async () => {
+		setSelectResults([{ ...existing, activity: [...existing.activity, interview] }]);
+		const set = captureSet();
+
+		await expect(
+			applicationService.updateTimelineEntry({ id: "app-1", userId: "user-1", entryId: "int-1", date: "2026-10-05" }),
+		).rejects.toMatchObject({ code: "BAD_REQUEST", message: expect.stringContaining("updateInterview") });
+		expect(set).not.toHaveBeenCalled();
+	});
 });
