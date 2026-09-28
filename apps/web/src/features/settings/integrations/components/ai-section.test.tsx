@@ -150,6 +150,7 @@ describe("AISettingsSection", () => {
 		renderSection();
 
 		for (const label of [
+			"Requesty",
 			"Mistral AI",
 			"Cohere",
 			"xAI Grok",

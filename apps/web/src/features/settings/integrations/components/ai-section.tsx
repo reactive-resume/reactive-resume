@@ -75,6 +75,13 @@ const providerOptions: AIProviderOption[] = [
 		defaultModel: "openai/gpt-4.1",
 	},
 	{
+		value: "requesty",
+		label: "Requesty",
+		keywords: ["requesty", "router"],
+		defaultBaseURL: AI_PROVIDER_DEFAULT_BASE_URLS.requesty,
+		defaultModel: "openai/gpt-4.1",
+	},
+	{
 		value: "mistral",
 		label: "Mistral AI",
 		keywords: ["mistral", "magistral"],
