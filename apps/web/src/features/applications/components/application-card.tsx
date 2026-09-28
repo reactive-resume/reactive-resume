@@ -31,7 +31,7 @@ export function ApplicationCard({ application, onClick, onEdit, className, dragg
 			}}
 			className={cn(
 				"group relative w-full cursor-pointer rounded-xl border border-border bg-card p-3 text-left shadow-sm outline-none transition-colors hover:border-foreground/25 focus-visible:ring-2 focus-visible:ring-ring",
-				dragging && "opacity-60",
+				dragging && "scale-[1.02] shadow-lg",
 				className,
 			)}
 		>

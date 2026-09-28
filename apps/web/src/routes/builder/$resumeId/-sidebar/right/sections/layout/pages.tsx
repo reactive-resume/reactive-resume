@@ -41,6 +41,7 @@ import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
 import { templates } from "@/dialogs/resume/template/data";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { EASE_OUT_STRONG } from "@/libs/motion";
 import { resolveLayoutSectionTitle } from "./title";
 import { filterVisibleLayoutSectionIds } from "./visibility";
 
@@ -270,7 +271,9 @@ export function LayoutPages() {
 				</Button>
 			</div>
 
-			<DragOverlay>{activeId ? <LayoutItemContent id={activeId} isDragging isOverlay /> : null}</DragOverlay>
+			<DragOverlay dropAnimation={{ duration: 150, easing: `cubic-bezier(${EASE_OUT_STRONG})` }}>
+				{activeId ? <LayoutItemContent id={activeId} isOverlay /> : null}
+			</DragOverlay>
 		</DndContext>
 	);
 }
@@ -617,10 +620,10 @@ function LayoutItemContent({
 			data-overlay={isOverlay ? "true" : undefined}
 			data-dragging={isDragging ? "true" : undefined}
 			className={cn(
-				"group/item flex cursor-grab touch-none select-none items-center gap-x-2 rounded-md border border-border bg-background px-2 py-1.5 font-medium text-sm transition-all duration-200 ease-out",
+				"group/item flex cursor-grab touch-none select-none items-center gap-x-2 rounded-md border border-border bg-background px-2 py-1.5 font-medium text-sm transition-[background-color,border-color] duration-150",
 				"hover:bg-secondary/40 active:cursor-grabbing active:border-primary/60 active:bg-secondary/40",
-				"data-[overlay=true]:cursor-grabbing data-[overlay=true]:border-primary/60 data-[overlay=true]:bg-background",
-				"data-[dragging=true]:cursor-grabbing data-[dragging=true]:border-primary/60 data-[dragging=true]:bg-background",
+				"data-[overlay=true]:cursor-grabbing data-[overlay=true]:border-primary/60 data-[overlay=true]:bg-background data-[overlay=true]:shadow-md",
+				"data-[dragging=true]:cursor-grabbing data-[dragging=true]:opacity-40",
 				className,
 			)}
 			{...rest}

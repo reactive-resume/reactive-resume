@@ -1,0 +1,99 @@
+name: Vercel compatibility
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  artifact:
+    runs-on: ${{ vars.CI_RUNNER_X64 || 'ubuntu-latest' }}
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      APP_URL: http://localhost:3000
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      AUTH_SECRET: isolated-ci-auth-secret-32-characters
+      ENCRYPTION_SECRET: isolated-ci-encryption-secret-32-characters
+      REDIS_URL: redis://localhost:6379
+      STORAGE_BACKEND: blob
+      BLOB_READ_WRITE_TOKEN: vercel_blob_rw_ci_fake_build_only
+      VERCEL: "1"
+      VERCEL_ENV: production
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Local project settings avoid authentication and API calls. Forks receive no cloud credentials.
+      - name: Build Vercel artifact against isolated PostgreSQL
+        run: |
+          mkdir -p .vercel
+          node --input-type=module - <<'JS'
+          import { writeFileSync } from 'node:fs';
+          writeFileSync('.vercel/project.json', JSON.stringify({
+            projectId: 'prj_ci', orgId: 'team_ci', projectName: 'reactive-resume-ci',
+            settings: { framework: null, nodeVersion: '24.x', createdAt: 0 }
+          }));
+          JS
+          pnpm dlx --allow-build=esbuild vercel@60.0.1 build --prod --yes --global-config "$RUNNER_TEMP/vercel-offline"
+      - name: Check Lambda module loading and function budget
+        run: |
+          node --no-experimental-require-module --input-type=module - <<'JS'
+          import assert from 'node:assert/strict';
+          import { readFileSync, readdirSync } from 'node:fs';
+          const config = JSON.parse(readFileSync('.vercel/output/functions/api/index.func/.vc-config.json'));
+          assert.equal(config.runtime, 'nodejs24.x');
+          assert.equal(config.maxDuration, 300);
+          const tracedFiles = Object.keys(config.filePathMap ?? {});
+          assert.ok(tracedFiles.some((path) => path.endsWith('/pdfkit/js/standard-fonts/Helvetica.cjs')));
+          assert.ok(tracedFiles.some((path) => path.endsWith('/pdfkit/js/data/Helvetica.afm')));
+          for (const name of readdirSync('apps/server/dist')) {
+            if (name.endsWith('.mjs') && !['index.mjs', 'prepare-deployment.mjs'].includes(name)) {
+              await import(`./apps/server/dist/${name}`);
+            }
+          }
+          const { default: app } = await import('./apps/server/dist/vercel.mjs');
+          const response = await app.fetch(new Request('http://localhost:3000/api/storage/stage', { method: 'POST', body: '{}' }));
+          assert.equal(response.status, 401);
+          process.exit(0);
+          JS
+
+  live-smoke:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ${{ vars.CI_RUNNER_X64 || 'ubuntu-latest' }}
+    environment: vercel-smoke
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+      - name: Smoke-test dedicated deployment
+        env:
+          SMOKE_URL: ${{ vars.VERCEL_SMOKE_URL }}
+          SMOKE_AI_BASE_URL: ${{ vars.VERCEL_SMOKE_AI_BASE_URL }}
+          SMOKE_AI_API_KEY: ${{ secrets.VERCEL_SMOKE_AI_API_KEY }}
+        run: node tooling/deployment/smoke.mjs

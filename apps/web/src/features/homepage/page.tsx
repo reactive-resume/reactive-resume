@@ -23,12 +23,12 @@ const ExportPlayground = lazy(() => import("./export-playground"));
 const AtsPlayground = lazy(() => import("./ats-playground"));
 const githubUrl = "https://github.com/reactive-resume/reactive-resume";
 const buttonClass =
-	"inline-flex min-h-[52px] items-center justify-center gap-3 rounded-[4px] border border-[#f1f0eb] bg-[#f1f0eb] px-[19px] py-[14px] text-[14px] font-[550] text-[#151516] [transition:background-color_150ms_ease,transform_150ms_cubic-bezier(0.23,1,0.32,1)] hover:bg-[#d9d8d2] active:transform-[scale(0.97)] max-[540px]:min-h-[49px] max-[540px]:gap-[18px] max-[540px]:px-[15px] max-[540px]:py-3 max-[540px]:text-[13px]";
+	"inline-flex min-h-[52px] items-center justify-center gap-3 rounded-[4px] border border-[#f1f0eb] bg-[#f1f0eb] px-[19px] py-[14px] text-[14px] font-[550] text-[#151516] [transition:background-color_150ms_ease,transform_150ms_var(--ease-out-strong)] hover:bg-[#d9d8d2] active:transform-[scale(0.97)] max-[540px]:min-h-[49px] max-[540px]:gap-[18px] max-[540px]:px-[15px] max-[540px]:py-3 max-[540px]:text-[13px]";
 const brandClass = "inline-flex shrink-0 items-center gap-[11px] font-[550] tracking-[-0.04em] max-[540px]:gap-2";
 const paperLinkClass =
 	"group/link flex min-h-[65px] items-center gap-[14px] border-t border-[#2d2e3038] text-[14px] [transition:background-color_160ms_ease] focus-visible:outline-[#37383a]";
 const paperArrowClass =
-	"ml-auto [transition:transform_180ms_cubic-bezier(0.23,1,0.32,1)] group-hover/link:transform-[translate(2px,-2px)]";
+	"ml-auto [transition:transform_180ms_var(--ease-out-strong)] group-hover/link:transform-[translate(2px,-2px)]";
 const contributeLinkClass =
 	"inline-flex min-h-11 items-center gap-2 text-(--home-ink) underline-offset-4 hover:underline";
 type DeferredDemoProps = { children: ReactNode };
@@ -91,7 +91,7 @@ export function Homepage() {
 					>
 						<Trans>Docs</Trans>
 					</a>
-					<div className="[&>a]:hover:[&_svg:last-child]:transform-[rotate(20deg)_scale(1.15)] [&>a>span]:min-w-[6ch] [&>a>span]:border-s [&>a>span]:border-s-[#3d444d] [&>a>span]:ps-2 [&>a>span]:text-center [&>a>span]:font-semibold max-[540px]:[&>a>span]:min-w-0 max-[540px]:[&>a>span]:ps-[6px] [&>a]:inline-flex [&>a]:min-h-[38px] [&>a]:min-w-[128px] [&>a]:items-center [&>a]:gap-2 [&>a]:rounded-[4px] [&>a]:border [&>a]:border-[#3d444d] [&>a]:bg-[#161b22] [&>a]:px-[11px] [&>a]:py-0 [&>a]:text-[#f0f6fc] [&>a]:text-[13px] [&>a]:tabular-nums [&>a]:shadow-[inset_0_1px_0_#ffffff0d,0_3px_0_#09090966] [&>a]:[transition:background-color_180ms_ease,border-color_180ms_ease,box-shadow_180ms_ease] [&>a]:hover:border-[#6e7681] [&>a]:hover:bg-[#21262d] [&>a]:hover:text-(--home-ink) [&>a]:hover:shadow-[inset_0_1px_0_#ffffff14,0_3px_0_#09090966,0_0_18px_#ffffff08] [&>a]:focus-visible:border-[#3d444d] [&>a]:focus-visible:ring-0 max-[540px]:[&>a]:min-w-24 max-[540px]:[&>a]:gap-[5px] max-[540px]:[&>a]:px-[6px] max-[540px]:[&>a]:text-[11px] [&_svg:last-child]:text-[#f0f6fc] [&_svg:last-child]:[transition:transform_220ms_cubic-bezier(0.23,1,0.32,1)] max-[540px]:[&_svg:not([class*='size-'])]:size-[14px]">
+					<div className="[&>a]:hover:[&_svg:last-child]:transform-[rotate(20deg)_scale(1.15)] [&>a>span]:min-w-[6ch] [&>a>span]:border-s [&>a>span]:border-s-[#3d444d] [&>a>span]:ps-2 [&>a>span]:text-center [&>a>span]:font-semibold max-[540px]:[&>a>span]:min-w-0 max-[540px]:[&>a>span]:ps-[6px] [&>a]:inline-flex [&>a]:min-h-[38px] [&>a]:min-w-[128px] [&>a]:items-center [&>a]:gap-2 [&>a]:rounded-[4px] [&>a]:border [&>a]:border-[#3d444d] [&>a]:bg-[#161b22] [&>a]:px-[11px] [&>a]:py-0 [&>a]:text-[#f0f6fc] [&>a]:text-[13px] [&>a]:tabular-nums [&>a]:shadow-[inset_0_1px_0_#ffffff0d,0_3px_0_#09090966] [&>a]:[transition:background-color_180ms_ease,border-color_180ms_ease,box-shadow_180ms_ease] [&>a]:hover:border-[#6e7681] [&>a]:hover:bg-[#21262d] [&>a]:hover:text-(--home-ink) [&>a]:hover:shadow-[inset_0_1px_0_#ffffff14,0_3px_0_#09090966,0_0_18px_#ffffff08] [&>a]:focus-visible:border-[#3d444d] [&>a]:focus-visible:ring-0 max-[540px]:[&>a]:min-w-24 max-[540px]:[&>a]:gap-[5px] max-[540px]:[&>a]:px-[6px] max-[540px]:[&>a]:text-[11px] [&_svg:last-child]:text-[#f0f6fc] [&_svg:last-child]:[transition:transform_220ms_var(--ease-out-strong)] max-[540px]:[&_svg:not([class*='size-'])]:size-[14px]">
 						<GithubStarsButton />
 					</div>
 				</nav>

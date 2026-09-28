@@ -3,6 +3,7 @@ import type { Context } from "hono";
 import { isIP } from "node:net";
 import { getConnInfo } from "@hono/node-server/conninfo";
 import { Hono } from "hono";
+import { prepareStagedBody, withStagedBody } from "@reactive-resume/api/features/storage/transport";
 import { handleMcp } from "../mcp/handler";
 import { handleOpenApi } from "../openapi/handler";
 import {
@@ -33,8 +34,14 @@ const getTrustedClient = (context: Context<ServerEnvironment>): string => {
 	}
 };
 
-export function createApp() {
+type AppOptions = {
+	serveStatic?: boolean;
+	trustedClient?: (request: Request) => string;
+};
+
+export function createApp(options: AppOptions = {}) {
 	const app = new Hono<ServerEnvironment>();
+	const client = (c: Context<ServerEnvironment>) => options.trustedClient?.(c.req.raw) ?? getTrustedClient(c);
 
 	app.use("/auth/*", async (c, next) => {
 		await next();
@@ -44,15 +51,16 @@ export function createApp() {
 		c.header("Cache-Control", "no-store");
 	});
 
-	app.all("/api/rpc", (c) => handleRpc(c.req.raw, getTrustedClient(c)));
-	app.all("/api/rpc/*", (c) => handleRpc(c.req.raw, getTrustedClient(c)));
-	app.all("/api/openapi", (c) => handleOpenApi(c.req.raw, getTrustedClient(c)));
-	app.all("/api/openapi/*", (c) => handleOpenApi(c.req.raw, getTrustedClient(c)));
+	app.post("/api/storage/stage", (c) => prepareStagedBody(c.req.raw));
+	app.all("/api/rpc", (c) => withStagedBody(c.req.raw, (request) => handleRpc(request, client(c))));
+	app.all("/api/rpc/*", (c) => withStagedBody(c.req.raw, (request) => handleRpc(request, client(c))));
+	app.all("/api/openapi", (c) => handleOpenApi(c.req.raw, client(c)));
+	app.all("/api/openapi/*", (c) => handleOpenApi(c.req.raw, client(c)));
 	app.get("/api/auth/oauth", (c) => handleOAuth(c.req.raw));
 	app.all("/api/auth/*", (c) => handleAuth(c.req.raw));
 	app.get("/api/health", () => handleHealth());
 	app.get("/api/resumes/:username/:slug/pdf", (c) =>
-		handlePublicResumePdf(c.req.raw, c.req.param("username"), c.req.param("slug"), getTrustedClient(c)),
+		handlePublicResumePdf(c.req.raw, c.req.param("username"), c.req.param("slug"), client(c)),
 	);
 	app.get("/api/resumes/:id/pdf", (c) => handleResumePdfDownload(c.req.raw, c.req.param("id")));
 	app.get("/api/uploads/*", (c) => handleUpload(c.req.raw));
@@ -76,7 +84,7 @@ export function createApp() {
 	// Must precede the static middleware: serveStatic resolves "/" to dist/index.html and would
 	// return it verbatim, skipping the OpenGraph/Twitter/canonical/JSON-LD injection in handleWebApp.
 	app.on(["GET", "HEAD"], "/", (c) => handleWebApp(c.req.raw));
-	app.use("/*", serveWebDistStatic);
+	if (options.serveStatic !== false) app.use("/*", serveWebDistStatic);
 	app.on(["GET", "HEAD"], "/*", (c) => handleWebApp(c.req.raw));
 
 	return app;

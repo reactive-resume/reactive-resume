@@ -15,7 +15,6 @@ export const getRouter = async () => {
 	const router = createRouter({
 		routeTree,
 		scrollRestoration: true,
-		defaultViewTransition: true,
 		defaultStructuralSharing: true,
 		defaultErrorComponent: ErrorScreen,
 		defaultPendingComponent: LoadingScreen,

@@ -2,6 +2,7 @@ import type { RouterOutput } from "@/libs/orpc/client";
 import { Trans } from "@lingui/react/macro";
 import { AnimatePresence, m } from "motion/react";
 import { cn } from "@reactive-resume/utils/style";
+import { EASE_OUT_STRONG } from "@/libs/motion";
 import { CreateResumeCard } from "./cards/create-card";
 import { ImportResumeCard } from "./cards/import-card";
 import { ResumeCard } from "./cards/resume-card";
@@ -9,7 +10,8 @@ import { ResumeCard } from "./cards/resume-card";
 type Resume = RouterOutput["resume"]["list"][number];
 
 type Props = {
-	resumes: Resume[];
+	/** `undefined` while the first page of resumes is loading. */
+	resumes: Resume[] | undefined;
 	hasResumes: boolean;
 	compact?: boolean;
 };
@@ -22,6 +24,15 @@ export function GridView({ resumes, hasResumes, compact = false }: Props) {
 			: "3xl:grid-cols-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5",
 	);
 
+	if (!resumes) {
+		return (
+			<div className={gridClassName}>
+				<div className="aspect-page rounded-md bg-muted/40" />
+				<div className="aspect-page rounded-md bg-muted/40" />
+			</div>
+		);
+	}
+
 	if (resumes.length === 0 && hasResumes) {
 		return (
 			<p className="py-8 text-center text-muted-foreground text-sm">
@@ -33,25 +44,8 @@ export function GridView({ resumes, hasResumes, compact = false }: Props) {
 	if (resumes.length === 0) {
 		return (
 			<div className={gridClassName}>
-				<m.div
-					initial={{ y: -20 }}
-					animate={{ opacity: 1, y: 0 }}
-					exit={{ y: -20 }}
-					transition={{ duration: 0.2, ease: "easeOut" }}
-					className="will-change-[transform,opacity]"
-				>
-					<CreateResumeCard />
-				</m.div>
-
-				<m.div
-					initial={{ y: -20 }}
-					animate={{ opacity: 1, y: 0 }}
-					exit={{ y: -20 }}
-					transition={{ duration: 0.2, delay: 0.03, ease: "easeOut" }}
-					className="will-change-[transform,opacity]"
-				>
-					<ImportResumeCard />
-				</m.div>
+				<CreateResumeCard />
+				<ImportResumeCard />
 			</div>
 		);
 	}
@@ -59,19 +53,14 @@ export function GridView({ resumes, hasResumes, compact = false }: Props) {
 	return (
 		<div className={gridClassName}>
 			<AnimatePresence initial={false} mode="popLayout">
-				{resumes.map((resume, index) => (
+				{resumes.map((resume) => (
 					<m.div
 						layout
 						key={resume.id}
-						initial={{ y: -20 }}
-						animate={{ opacity: 1, y: 0 }}
-						exit={{
-							opacity: 0,
-							y: -20,
-							filter: "blur(8px)",
-						}}
-						transition={{ duration: 0.2, delay: Math.min(0.12, index * 0.02), ease: "easeOut" }}
-						className="will-change-[transform,opacity]"
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						transition={{ duration: 0.15, ease: EASE_OUT_STRONG }}
 					>
 						<ResumeCard resume={resume} />
 					</m.div>

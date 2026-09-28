@@ -8,7 +8,7 @@ msgstr ""
 "Language: ms\n"
 "Project-Id-Version: reactive-resume\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-06 19:36\n"
+"PO-Revision-Date: 2026-09-28 05:40\n"
 "Last-Translator: \n"
 "Language-Team: Malay\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -43,7 +43,7 @@ msgid "{0, plural, one {# item} other {# items}}"
 msgstr "{0, plural, one {# item} other {# item}}"
 
 #. placeholder {0}: item.roles.length
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "{0, plural, one {# role} other {# roles}}"
 msgstr "{0, plural, one {# peranan} other {# peranan}}"
 
@@ -364,11 +364,11 @@ msgstr "Tambah kata kunci..."
 msgid "Add a label to the URL"
 msgstr "Tambah label pada URL"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/awards.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new award"
 msgstr "Tambah anugerah baharu"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/certifications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new certification"
 msgstr "Tambah pensijilan baharu"
 
@@ -376,15 +376,15 @@ msgstr "Tambah pensijilan baharu"
 msgid "Add a new custom section"
 msgstr "Tambah seksyen tersuai baharu"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/education.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new education"
 msgstr "Tambah pendidikan baharu"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new experience"
 msgstr "Tambah pengalaman baharu"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/interests.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new interest"
 msgstr "Tambah minat baharu"
 
@@ -393,31 +393,31 @@ msgstr "Tambah minat baharu"
 msgid "Add a new item"
 msgstr "Tambah item baharu"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/languages.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new language"
 msgstr "Tambah bahasa baharu"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/profiles.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new profile"
 msgstr "Tambah profil baharu"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/projects.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new project"
 msgstr "Tambah projek baharu"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/publications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new publication"
 msgstr "Tambah penerbitan baharu"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/references.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new reference"
 msgstr "Tambah rujukan baharu"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/skills.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new skill"
 msgstr "Tambah kemahiran baharu"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/volunteer.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new volunteer experience"
 msgstr "Tambah pengalaman sukarelawan baharu"
 
@@ -906,7 +906,7 @@ msgstr "Azerbaijani"
 
 #: src/features/homepage/export-playground.tsx
 msgid "BA"
-msgstr "BA"
+msgstr "Ijazah Sarjana Muda"
 
 #. Action returning a signed-in user to the page where they manage linked providers
 #: src/features/auth/pages/error.tsx
@@ -5057,7 +5057,7 @@ msgstr "Resume contoh untuk {name}"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Sans"
-msgstr "Sans"
+msgstr "Tanpa"
 
 #. Passkey rename prompt confirm action in authentication settings
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -7210,7 +7210,7 @@ msgstr "Kunci API anda telah disalin ke papan keratan."
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Your applications, together"
-msgstr "Permohonan anda, bersama-sama"
+msgstr "Aplikasi anda, bersama-sama"
 
 #: src/features/ats-checker/messages.ts
 #: src/libs/resume/ats.ts
@@ -7227,7 +7227,7 @@ msgstr "Perubahan anda disimpan secara automatik."
 
 #: src/features/homepage/languages-showcase.tsx
 msgid "Your choice applies across the app."
-msgstr "Pilihan anda terpakai merentas aplikasi."
+msgstr "Pilihan anda terpakai di seluruh aplikasi."
 
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
@@ -7243,7 +7243,7 @@ msgstr "Tarikh anda ditulis dalam beberapa cara berbeza."
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Your edit is in."
-msgstr "Suntingan anda telah masuk."
+msgstr "Suntingan anda telah diterima."
 
 #: src/features/ats-checker/messages.ts
 msgid "Your email address is broken across pieces of text."
@@ -7373,11 +7373,11 @@ msgstr "Fail yang anda pilih"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Your tools, connected"
-msgstr "Alatan anda, bersambung"
+msgstr "Alat anda, bersambung"
 
 #: src/features/homepage/export-playground.tsx
 msgid "Your words as a plain-text document, with headings, lists, and links."
-msgstr "Kata-kata anda sebagai dokumen teks kosong, dengan tajuk, senarai dan pautan."
+msgstr "Kata-kata anda sebagai dokumen teks biasa, dengan tajuk, senarai, dan pautan."
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Zoom"
@@ -7399,3 +7399,4 @@ msgstr "Zum keluar"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
+

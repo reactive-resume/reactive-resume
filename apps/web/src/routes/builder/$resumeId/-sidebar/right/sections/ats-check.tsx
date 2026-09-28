@@ -1,4 +1,5 @@
 import type { AtsFinding, AtsSeverity } from "@reactive-resume/resume/ats";
+import type { CSSProperties } from "react";
 import type { AtsCheckResult } from "@/features/ats-checker/run-ats-check";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
@@ -18,6 +19,7 @@ import { AiReviewCard } from "@/features/ats-checker/ai-review/ai-review-card";
 import { AtsPdfReportView } from "@/features/ats-checker/report/report-view";
 import { blobToPdfFile, runAtsCheck } from "@/features/ats-checker/run-ats-check";
 import { useResumeData } from "@/features/resume/builder/draft";
+import { getScrollBehavior } from "@/features/resume/builder/section-recovery";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import {
 	atsFindingItemElementId,
@@ -118,7 +120,7 @@ function LiveLintTier() {
 
 			const item = target.itemId ? document.getElementById(atsFindingItemElementId(target.itemId)) : null;
 			const destination = item ?? document.getElementById(`sidebar-${target.section}`);
-			destination?.scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth" });
+			destination?.scrollIntoView({ block: "start", inline: "nearest", behavior: getScrollBehavior() });
 		},
 		[data, setCollapsed, toggleSidebar],
 	);
@@ -146,8 +148,8 @@ function LiveLintTier() {
 
 					<div className="h-1.5 overflow-hidden rounded-full bg-muted">
 						<div
-							className="h-full rounded-full bg-primary transition-[width] duration-300"
-							style={{ width: `${Math.round((passedRules / totalRules) * 100)}%` }}
+							className="h-full translate-x-(--fill) rounded-full bg-primary transition-[translate] duration-200 ease-out-strong rtl:-translate-x-(--fill)"
+							style={{ "--fill": `${(passedRules / totalRules) * 100 - 100}%` } as CSSProperties}
 						/>
 					</div>
 				</div>

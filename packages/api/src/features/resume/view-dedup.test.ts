@@ -5,23 +5,23 @@ import { clientKeyFromHeaders, shouldCountView } from "./view-dedup";
 const WINDOW_MS = 60 * 60 * 1000;
 
 describe("shouldCountView", () => {
-	it("counts the first view, skips repeats within the window, counts again after it", () => {
+	it("counts the first view, skips repeats within the window, counts again after it", async () => {
 		const key = "resume-1:viewer-a";
 		const t0 = 1_000_000;
 
-		expect(shouldCountView(key, t0)).toBe(true);
-		expect(shouldCountView(key, t0 + 1)).toBe(false);
-		expect(shouldCountView(key, t0 + WINDOW_MS - 1)).toBe(false);
+		expect(await shouldCountView(key, t0)).toBe(true);
+		expect(await shouldCountView(key, t0 + 1)).toBe(false);
+		expect(await shouldCountView(key, t0 + WINDOW_MS - 1)).toBe(false);
 		// Once now is past the window, the same key counts again.
-		expect(shouldCountView(key, t0 + WINDOW_MS + 1)).toBe(true);
+		expect(await shouldCountView(key, t0 + WINDOW_MS + 1)).toBe(true);
 	});
 
-	it("treats different keys independently", () => {
+	it("treats different keys independently", async () => {
 		const t0 = 2_000_000;
 
-		expect(shouldCountView("resume-2:viewer-a", t0)).toBe(true);
-		expect(shouldCountView("resume-2:viewer-b", t0)).toBe(true);
-		expect(shouldCountView("resume-2:viewer-a", t0 + 1)).toBe(false);
+		expect(await shouldCountView("resume-2:viewer-a", t0)).toBe(true);
+		expect(await shouldCountView("resume-2:viewer-b", t0)).toBe(true);
+		expect(await shouldCountView("resume-2:viewer-a", t0 + 1)).toBe(false);
 	});
 });
 

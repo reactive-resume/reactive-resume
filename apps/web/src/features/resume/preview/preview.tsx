@@ -1,6 +1,5 @@
 import type { ResumePreviewProps } from "./preview.shared";
 import { lazy, Suspense } from "react";
-import { useIsClient } from "usehooks-ts";
 import { useResumeData } from "../builder/draft";
 import { ResumePreviewLoader } from "./preview.shared";
 import { getResumePreviewPageCount } from "./preview.shared.utils";
@@ -19,12 +18,9 @@ export function ResumePreview({
 	showPageNumbers = false,
 	...rest
 }: ResumePreviewProps) {
-	const isClient = useIsClient();
 	const builderResumeData = useResumeData();
 	const resumeData = rest.data ?? builderResumeData;
 	const pageCount = getResumePreviewPageCount(resumeData);
-
-	if (!isClient) return null;
 
 	const resolvedProps = { ...rest, pageGap, pageLayout, pageScale, showPageNumbers };
 

@@ -33,7 +33,7 @@ export const CustomFieldsSection = withForm({
 			<form.Field name="customFields" mode="array">
 				{(customFieldsField) => (
 					<Reorder.Group
-						className="touch-none space-y-4"
+						className="space-y-4"
 						values={customFieldsField.state.value}
 						onReorder={(fields) => {
 							customFieldsField.setValue(fields);
@@ -152,15 +152,7 @@ function CustomFieldItem({ field, children }: CustomFieldItemProps) {
 	const controls = useDragControls();
 
 	return (
-		<Reorder.Item
-			key={field.id}
-			value={field}
-			dragListener={false}
-			dragControls={controls}
-			initial={{ opacity: 0, y: -10 }}
-			animate={{ opacity: 1, y: 0 }}
-			className="flex touch-none items-center"
-		>
+		<Reorder.Item value={field} dragListener={false} dragControls={controls} className="flex items-center">
 			<Button
 				size="icon"
 				variant="ghost"

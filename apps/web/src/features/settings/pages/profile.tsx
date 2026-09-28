@@ -12,6 +12,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
+import { EASE_OUT_STRONG } from "@/libs/motion";
 import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
@@ -136,11 +137,8 @@ export function ProfileSettingsPage({ session }: Props) {
 	};
 
 	return (
-		<m.form
-			initial={{ y: -20 }}
-			animate={{ opacity: 1, y: 0 }}
-			transition={{ duration: 0.25, ease: "easeOut" }}
-			className="grid max-w-xl gap-6 will-change-[transform,opacity]"
+		<form
+			className="grid max-w-xl gap-6"
 			onSubmit={(event) => {
 				event.preventDefault();
 				event.stopPropagation();
@@ -258,8 +256,8 @@ export function ProfileSettingsPage({ session }: Props) {
 						initial={{ opacity: 0, y: -8 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: -8 }}
-						transition={{ duration: 0.16, ease: "easeOut" }}
-						className="flex items-center gap-x-4 justify-self-end will-change-[transform,opacity]"
+						transition={{ duration: 0.16, ease: EASE_OUT_STRONG }}
+						className="flex items-center gap-x-4 justify-self-end"
 					>
 						<Button type="reset" variant="ghost" onClick={onCancel}>
 							<Trans comment="Profile settings form action to discard unsaved edits">Cancel</Trans>
@@ -271,6 +269,6 @@ export function ProfileSettingsPage({ session }: Props) {
 					</m.div>
 				)}
 			</AnimatePresence>
-		</m.form>
+		</form>
 	);
 }

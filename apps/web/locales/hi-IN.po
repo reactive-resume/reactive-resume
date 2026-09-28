@@ -8,7 +8,7 @@ msgstr ""
 "Language: hi\n"
 "Project-Id-Version: reactive-resume\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-06 19:36\n"
+"PO-Revision-Date: 2026-09-28 05:40\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -43,7 +43,7 @@ msgid "{0, plural, one {# item} other {# items}}"
 msgstr "{0, plural, one {# आइटम} other {# आइटम}}"
 
 #. placeholder {0}: item.roles.length
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "{0, plural, one {# role} other {# roles}}"
 msgstr "{0, plural, one {# भूमिका} other {# भूमिकाएं}}"
 
@@ -364,11 +364,11 @@ msgstr "एक कीवर्ड जोड़ें..."
 msgid "Add a label to the URL"
 msgstr "URL में एक लेबल जोड़ें"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/awards.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new award"
 msgstr "एक नया पुरस्कार जोड़ें"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/certifications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new certification"
 msgstr "एक नया प्रमाणपत्र जोड़ें"
 
@@ -376,15 +376,15 @@ msgstr "एक नया प्रमाणपत्र जोड़ें"
 msgid "Add a new custom section"
 msgstr "एक नया कस्टम अनुभाग जोड़ें"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/education.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new education"
 msgstr "नई शिक्षा जोड़ें"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new experience"
 msgstr "नया अनुभव जोड़ें"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/interests.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new interest"
 msgstr "नई रुचि जोड़ें"
 
@@ -393,31 +393,31 @@ msgstr "नई रुचि जोड़ें"
 msgid "Add a new item"
 msgstr "एक नया आइटम जोड़ें"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/languages.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new language"
 msgstr "नई भाषा जोड़ें"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/profiles.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new profile"
 msgstr "नया प्रोफ़ाइल जोड़ें"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/projects.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new project"
 msgstr "नया प्रोजेक्ट जोड़ें"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/publications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new publication"
 msgstr "नई प्रकाशन जोड़ें"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/references.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new reference"
 msgstr "नई रेफ़रेंस जोड़ें"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/skills.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new skill"
 msgstr "नई कौशल जोड़ें"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/volunteer.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new volunteer experience"
 msgstr "नया स्वयंसेवी अनुभव जोड़ें"
 
@@ -906,7 +906,7 @@ msgstr "अज़रबैजानी"
 
 #: src/features/homepage/export-playground.tsx
 msgid "BA"
-msgstr "BA"
+msgstr "बीए"
 
 #. Action returning a signed-in user to the page where they manage linked providers
 #: src/features/auth/pages/error.tsx
@@ -1209,7 +1209,7 @@ msgstr "गोला"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Clay"
-msgstr "Clay"
+msgstr "मिट्टी"
 
 #. Clear the highlight color
 #. Clear the text color
@@ -3683,7 +3683,7 @@ msgstr "एक से अधिक ईमेल पता दिखाई दे
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Moss"
-msgstr "Moss"
+msgstr "काई"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -4375,7 +4375,7 @@ msgstr "कृपया PDF फ़ाइल अपलोड करें।"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Plum"
-msgstr "Plum"
+msgstr "आलूबुखारा"
 
 #: src/libs/locale.ts
 msgid "Polish"
@@ -5057,7 +5057,7 @@ msgstr "{name} के लिए नमूना बायोडाटा"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Sans"
-msgstr "Sans"
+msgstr "बिना"
 
 #. Passkey rename prompt confirm action in authentication settings
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -5314,7 +5314,7 @@ msgstr "सर्बियाई"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Serif"
-msgstr "Serif"
+msgstr "सेरिफ़"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Set a password if you want only people who know it to open the public URL."
@@ -7399,3 +7399,4 @@ msgstr "ज़ूम आउट"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "ज़ुलु"
+

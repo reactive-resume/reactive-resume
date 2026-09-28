@@ -25,32 +25,46 @@ function resolveWorkspaceFolder(folderName: string): string {
 	throw new Error(`Could not locate ${folderName} folder relative to ${resolveFromCurrentModule(".")}`);
 }
 
-async function runDatabaseMigrations() {
+export async function runDatabaseMigrations() {
 	console.info("Running database migrations...");
 
-	const pool = new Pool({ connectionString: env.DATABASE_URL });
-	const db = drizzle({ client: pool });
+	const pool = new Pool({
+		connectionString: env.DATABASE_MIGRATION_URL ?? env.DATABASE_URL,
+		max: 1,
+		connectionTimeoutMillis: 10_000,
+	});
 
 	try {
+		const client = await pool.connect();
 		try {
-			await migrate(db, { migrationsFolder: resolveWorkspaceFolder("migrations") });
-			console.info("Database migrations completed");
-		} catch (error) {
-			console.error("Database migrations failed", { error });
-			throw error;
-		}
+			await client.query("SELECT pg_advisory_lock(721830451)");
+			const db = drizzle({ client });
+			try {
+				await migrate(db, { migrationsFolder: resolveWorkspaceFolder("migrations") });
+				console.info("Database migrations completed");
+			} catch (error) {
+				console.error("Database migrations failed", { error });
+				throw error;
+			}
 
-		// Post-migration verification is not a migration failure, so it gets its own log
-		// message. A drifted schema still lets the server boot; STRICT_SCHEMA_CHECK=true
-		// makes the drift fatal instead.
-		try {
-			await verifyMigratedSchema(pool);
-		} catch (error) {
-			console.error("Database schema verification failed", { error });
-			if (env.STRICT_SCHEMA_CHECK) throw error;
-			console.error(
-				"Continuing with a drifted database schema; set STRICT_SCHEMA_CHECK=true to refuse startup instead.",
-			);
+			// Post-migration verification is not a migration failure, so it gets its own log
+			// message. A drifted schema still lets the server boot; STRICT_SCHEMA_CHECK=true
+			// makes the drift fatal instead.
+			try {
+				await verifyMigratedSchema(client);
+			} catch (error) {
+				console.error("Database schema verification failed", { error });
+				if (env.STRICT_SCHEMA_CHECK) throw error;
+				console.error(
+					"Continuing with a drifted database schema; set STRICT_SCHEMA_CHECK=true to refuse startup instead.",
+				);
+			}
+		} finally {
+			try {
+				await client.query("SELECT pg_advisory_unlock(721830451)");
+			} finally {
+				client.release();
+			}
 		}
 	} finally {
 		await pool.end();
@@ -58,7 +72,7 @@ async function runDatabaseMigrations() {
 }
 
 async function validateLocalStoragePath() {
-	if (env.S3_ACCESS_KEY_ID && env.S3_SECRET_ACCESS_KEY && env.S3_BUCKET) return;
+	if (env.STORAGE_BACKEND !== "local") return;
 
 	const dataDirectory = getLocalDataDirectory(env.LOCAL_STORAGE_PATH);
 	console.info(`Validating local storage path: ${dataDirectory}`);

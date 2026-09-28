@@ -67,7 +67,8 @@ vi.mock("../shared/section-item", () => ({
 	),
 }));
 
-const { ProfilesSectionBuilder } = await import("./profiles");
+const { ItemsSection } = await import("../shared/items-section");
+const ProfilesSectionBuilder = () => <ItemsSection type="profiles" />;
 
 beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });

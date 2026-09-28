@@ -9,7 +9,12 @@ declare global {
 
 export function getPool() {
 	if (!globalThis.__pool) {
-		const pool = new Pool({ connectionString: env.DATABASE_URL });
+		const pool = new Pool({
+			connectionString: env.DATABASE_URL,
+			max: env.DATABASE_POOL_MAX,
+			connectionTimeoutMillis: 10_000,
+			idleTimeoutMillis: 10_000,
+		});
 		const logPgError = (error: unknown) => {
 			console.error("[db] postgres connection error:", error);
 		};

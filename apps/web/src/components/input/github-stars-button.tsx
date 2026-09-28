@@ -25,9 +25,7 @@ export function GithubStarsButton() {
 					rel="noopener noreferrer"
 				>
 					<GithubLogoIcon aria-hidden="true" />
-					{starCount != null ? (
-						<CountUp to={starCount} duration={0.5} separator="," className="font-bold" aria-hidden="true" />
-					) : null}
+					{starCount != null ? <CountUp to={starCount} className="font-bold" aria-hidden="true" /> : null}
 					<StarIcon aria-hidden="true" />
 				</a>
 			}

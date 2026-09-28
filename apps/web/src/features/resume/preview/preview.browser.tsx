@@ -9,6 +9,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
+import { EASE_OUT_STRONG } from "@/libs/motion";
 import { usePreviewPausedStore, useResumeData } from "../builder/draft";
 import { PdfCanvasDocument, PdfCanvasPage } from "./pdf-canvas";
 import { ResumePreviewLoader } from "./preview.shared";
@@ -26,7 +27,10 @@ type PreviewPdf = {
 };
 
 const UPDATE_DEBOUNCE_MS = 100;
-const CROSSFADE_DURATION_MS = 180;
+// Incoming layer fades in over the old one; the old layer holds at full opacity until the incoming one is opaque,
+// then drops out. Fading both at once dips the page towards the background mid-swap.
+const INCOMING_TRANSITION = { duration: 0.15, ease: EASE_OUT_STRONG };
+const EXITING_TRANSITION = { duration: 0.1, delay: 0.18 };
 
 const createPreviewPdf = (file: Blob, id: number, hasExistingPreview: boolean, template: Template): PreviewPdf => ({
 	file,
@@ -189,7 +193,7 @@ export function ResumePreviewClient({
 						initial={{ opacity: visiblePdf.phase === "active" ? 1 : 0 }}
 						animate={{ opacity: visiblePdf.phase === "active" ? 1 : 0 }}
 						exit={{ opacity: 0 }}
-						transition={{ duration: CROSSFADE_DURATION_MS / 1000, ease: "easeOut" }}
+						transition={visiblePdf.phase === "exiting" ? EXITING_TRANSITION : INCOMING_TRANSITION}
 						onAnimationComplete={() => {
 							if (visiblePdf.phase !== "exiting") return;
 							setPreviewLayers((current) => removePreviewLayer(current, visiblePdf.id));

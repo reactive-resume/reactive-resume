@@ -8,7 +8,7 @@ msgstr ""
 "Language: bn\n"
 "Project-Id-Version: reactive-resume\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-06 19:36\n"
+"PO-Revision-Date: 2026-09-28 05:40\n"
 "Last-Translator: \n"
 "Language-Team: Bengali\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -43,7 +43,7 @@ msgid "{0, plural, one {# item} other {# items}}"
 msgstr "{0, plural, one {#টি আইটেম} other {#টি আইটেম}}"
 
 #. placeholder {0}: item.roles.length
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "{0, plural, one {# role} other {# roles}}"
 msgstr "{0, plural, one {# ভূমিকা} other {# ভূমিকা}}"
 
@@ -364,11 +364,11 @@ msgstr "একটি কীওয়ার্ড যোগ করুন..."
 msgid "Add a label to the URL"
 msgstr "URL‑এর জন্য একটি লেবেল যোগ করুন"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/awards.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new award"
 msgstr "একটি নতুন পুরস্কার যোগ করুন"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/certifications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new certification"
 msgstr "একটি নতুন সার্টিফিকেশন যোগ করুন"
 
@@ -376,15 +376,15 @@ msgstr "একটি নতুন সার্টিফিকেশন যোগ
 msgid "Add a new custom section"
 msgstr "একটি নতুন কাস্টম বিভাগ যোগ করুন"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/education.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new education"
 msgstr "একটি নতুন শিক্ষা সংক্রান্ত তথ্য যোগ করুন"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new experience"
 msgstr "একটি নতুন অভিজ্ঞতা যোগ করুন"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/interests.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new interest"
 msgstr "একটি নতুন আগ্রহ যোগ করুন"
 
@@ -393,31 +393,31 @@ msgstr "একটি নতুন আগ্রহ যোগ করুন"
 msgid "Add a new item"
 msgstr "একটি নতুন আইটেম যোগ করুন"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/languages.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new language"
 msgstr "একটি নতুন ভাষা যোগ করুন"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/profiles.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new profile"
 msgstr "একটি নতুন প্রোফাইল যোগ করুন"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/projects.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new project"
 msgstr "একটি নতুন প্রোজেক্ট যোগ করুন"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/publications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new publication"
 msgstr "একটি নতুন প্রকাশনা যোগ করুন"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/references.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new reference"
 msgstr "একটি নতুন রেফারেন্স যোগ করুন"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/skills.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new skill"
 msgstr "একটি নতুন স্কিল যোগ করুন"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/volunteer.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new volunteer experience"
 msgstr "একটি নতুন স্বেচ্ছাসেবী অভিজ্ঞতা যোগ করুন"
 
@@ -906,7 +906,7 @@ msgstr "আজারবাইজানি"
 
 #: src/features/homepage/export-playground.tsx
 msgid "BA"
-msgstr "BA"
+msgstr "বিএ"
 
 #. Action returning a signed-in user to the page where they manage linked providers
 #: src/features/auth/pages/error.tsx
@@ -4527,7 +4527,7 @@ msgstr "আপনার জীবনবৃত্তান্ত পাসওয�
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Prototyping"
-msgstr "প্রোটোটাইপ তৈরি"
+msgstr "প্রোটোটাইপিং"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Provider"
@@ -4543,7 +4543,7 @@ msgstr "সরবরাহকারী মডেল"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Public"
-msgstr "সর্বজনীন"
+msgstr "জনসাধারণ"
 
 #: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
@@ -4602,7 +4602,7 @@ msgstr "প্রতিক্রিয়াশীল জীবনবৃত্�
 
 #: src/features/homepage/page.tsx
 msgid "Reactive Resume is free and open source. Amruth and a community of contributors keep it running. If you’d like to support the work, donations help cover hosting and development."
-msgstr "Reactive Resume বিনামূল্যের ও ওপেন সোর্স। Amruth এবং অবদানকারীদের কমিউনিটি এটি চালু রাখেন। কাজটিকে সমর্থন করতে চাইলে অনুদান হোস্টিং ও উন্নয়নের খরচে সহায়তা করে।"
+msgstr "Reactive Resume বিনামূল্যে এবং মুক্ত উৎস।  অমৃত এবং অবদানকারীদের একটি সম্প্রদায় এটিকে চালিয়ে রাখে।  যদি আপনি এই কাজটিকে সমর্থন করতে চান, অনুদান হোস্টিং এবং উন্নয়ন খরচ মেটাতে সাহায্য করে।"
 
 #: src/components/ui/donation-toast.tsx
 msgid "Reactive Resume is free and open source. If it has helped you, please consider donating."
@@ -4636,11 +4636,11 @@ msgstr "জীবনবৃত্তান্ত পড়া হয়েছে"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Read the sample to see its text without the layout. Or try a PDF of your own."
-msgstr "বিন্যাস ছাড়াই এর পাঠ্য দেখতে নমুনাটি পড়ুন। অথবা আপনার নিজের একটি PDF চেষ্টা করুন."
+msgstr "লেআউট ছাড়া টেক্সট দেখতে নমুনাটি পড়ুন। অথবা আপনার নিজস্ব PDF ব্যবহার করে দেখুন।"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Read this resume"
-msgstr "এই জীবনবৃত্তান্ত পড়ুন"
+msgstr "এই জীবনবৃত্তান্তটি পড়ুন"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
@@ -4656,7 +4656,7 @@ msgstr "পঠনযোগ্যতা"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Reading locally"
-msgstr "স্থানীয়ভাবে পড়া হচ্ছে"
+msgstr "স্থানীয়ভাবে পড়া"
 
 #. placeholder {0}: progress.page
 #. placeholder {1}: progress.pageCount
@@ -4666,7 +4666,7 @@ msgstr "{0}টি পৃষ্ঠার মধ্যে {1} নম্বর প�
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Reading PDF"
-msgstr "PDF পড়া হচ্ছে"
+msgstr "পিডিএফ পড়া"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Reading the posting…"
@@ -4674,7 +4674,7 @@ msgstr "বিজ্ঞপ্তি পড়া হচ্ছে…"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Reading this PDF in your browser. Your file is not uploaded."
-msgstr "এই PDF আপনার ব্রাউজারেই পড়া হচ্ছে। আপনার ফাইল আপলোড করা হয় না।"
+msgstr "এই PDFটি আপনার ব্রাউজারে পড়া হচ্ছে। আপনার ফাইল আপলোড হয়নি।"
 
 #: src/features/resume/stylesheet/status.tsx
 msgid "Ready to activate"
@@ -4690,7 +4690,7 @@ msgstr "সতর্কতা সহ সক্রিয় করার জন�
 
 #: src/features/homepage/page.tsx
 msgid "Ready to put your name on it?"
-msgstr "নিজের নাম বসাতে প্রস্তুত?"
+msgstr "এতে আপনার নাম লিখতে প্রস্তুত?"
 
 #: src/dialogs/resume/sections/cover-letter.tsx
 #: src/features/cover-letters/editor.tsx
@@ -4729,7 +4729,7 @@ msgstr "নতুন ডিভাইস নিবন্ধন করুন"
 
 #: src/features/homepage/site-footer.tsx
 msgid "Released under the <0>MIT License</0>."
-msgstr "<0>MIT লাইসেন্স</0>-এর অধীনে প্রকাশিত।"
+msgstr "MIT লাইসেন্সের অধীনে প্রকাশিত</0>"
 
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Reload latest version"
@@ -4819,7 +4819,7 @@ msgstr "সংযুক্ত কভার লেটারটি কি প্�
 
 #: src/features/homepage/page.tsx
 msgid "Report a bug"
-msgstr "বাগ রিপোর্ট করুন"
+msgstr "ত্রুটি রিপোর্ট করুন"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Report a Bug"
@@ -4869,7 +4869,7 @@ msgstr "রিসোর্সসমূহ"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Responsible for working on the design system and helping other teams with their designs."
-msgstr "ডিজাইন সিস্টেমে কাজ করা এবং অন্য দলগুলোকে তাদের ডিজাইনে সাহায্য করার দায়িত্বে ছিলাম।"
+msgstr "ডিজাইন সিস্টেমে কাজ করার এবং অন্যান্য দলকে তাদের ডিজাইনে সহায়তা করার দায়িত্ব।"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Restore"
@@ -4892,7 +4892,7 @@ msgstr "জীবনবৃত্তান্ত"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Resume attached"
-msgstr "জীবনবৃত্তান্ত সংযুক্ত"
+msgstr "রিজিউমি সংযুক্ত"
 
 #: src/features/resume/preview/resume-accessible-text.tsx
 msgid "Resume content"
@@ -4917,7 +4917,7 @@ msgstr "জীবনবৃত্তান্ত সংযুক্ত"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Resume not found"
-msgstr "জীবনবৃত্তান্ত পাওয়া যায়নি"
+msgstr "রিজিউমি পাওয়া যায়নি"
 
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Resume options"
@@ -4929,7 +4929,7 @@ msgstr "জীবনবৃত্তান্ত প্যাচ"
 
 #: src/features/homepage/template-shelf.tsx
 msgid "Resume templates"
-msgstr "জীবনবৃত্তান্তের টেমপ্লেট"
+msgstr "রিজ্যুমের টেমপ্লেটসমূহ"
 
 #: src/dialogs/resume/template/gallery.tsx
 msgid "Resume templates for different professions and tastes. Pick the one that suits you."
@@ -4980,7 +4980,7 @@ msgstr "প্রোডাক্ট লিড ভূমিকায় যেত
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Rhyhorn sample resume"
-msgstr "Rhyhorn নমুনা জীবনবৃত্তান্ত"
+msgstr "রাইহর্ন নমুনা জীবনবৃত্তান্ত"
 
 #: src/components/input/rich-input.tsx
 msgid "Right Align"
@@ -5041,11 +5041,11 @@ msgstr "বেতনের পরিসর"
 
 #: src/features/homepage/page.tsx
 msgid "Same story.<0/>A different look."
-msgstr "একই গল্প।<0/>নতুন রূপে।"
+msgstr "একই গল্প।<0/>একটি ভিন্ন চেহারা।"
 
 #: src/features/homepage/export-playground.tsx
 msgid "Sample download format"
-msgstr "নমুনা ডাউনলোড বিন্যাস"
+msgstr "নমুনা ডাউনলোড ফরম্যাট"
 
 #: src/features/homepage/export-playground.tsx
 msgid "Sample resume"
@@ -5053,11 +5053,11 @@ msgstr "নমুনা জীবনবৃত্তান্ত"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Sample resume for {name}"
-msgstr "{name}-এর নমুনা জীবনবৃত্তান্ত"
+msgstr "এর জন্য নমুনা জীবনবৃত্তান্ত {name}"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Sans"
-msgstr "স্যান্স"
+msgstr "বিহীন"
 
 #. Passkey rename prompt confirm action in authentication settings
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -5133,7 +5133,7 @@ msgstr "… সংরক্ষণ করা হচ্ছে"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Say what you actually did."
-msgstr "আপনি আসলে কী করেছেন, তা লিখুন।"
+msgstr "আপনি আসলে যা করেছেন তা বলুন।"
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Scan the QR code below with your preferred authenticator app. You can also copy the secret below and paste it into your app."
@@ -5219,15 +5219,15 @@ msgstr "দেখুন এই জীবনবৃত্তান্তটি ব
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "See how to connect"
-msgstr "কীভাবে সংযোগ করবেন দেখুন"
+msgstr "কীভাবে সংযোগ করতে হয় দেখুন"
 
 #: src/features/homepage/page.tsx
 msgid "See what<0/>software reads."
-msgstr "সফটওয়্যার কী<0/>পড়তে পারে, দেখুন।"
+msgstr "দেখুন কী<0/>সফটওয়্যার পড়ে।"
 
 #: src/features/homepage/page.tsx
 msgid "See whether your PDF has readable text. Read a sample or try your own PDF. Everything runs in your browser, so your file stays with you."
-msgstr "আপনার PDF-এ পড়ার মতো লেখা আছে কি না দেখুন। একটি নমুনা পড়ুন বা নিজের PDF ব্যবহার করে দেখুন। সবকিছু আপনার ব্রাউজারেই চলে, তাই ফাইলটি আপনার কাছেই থাকে।"
+msgstr "দেখুন আপনার PDF-এ পাঠযোগ্য টেক্সট আছে কিনা। একটি নমুনা দেখুন অথবা আপনার নিজস্ব PDF পরীক্ষা করে দেখুন। সবকিছু আপনার ব্রাউজারে চলে, তাই আপনার ফাইল আপনার কাছেই থাকে।"
 
 #. placeholder {0}: app.company
 #: src/features/applications/components/table-view.tsx
@@ -5302,7 +5302,7 @@ msgstr "আপনার PDF থেকে ইতিমধ্যে এক্স�
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Senior product designer"
-msgstr "সিনিয়র পণ্য ডিজাইনার"
+msgstr "সিনিয়র প্রোডাক্ট ডিজাইনার"
 
 #: src/components/input/rich-input.tsx
 msgid "Separator"
@@ -5370,7 +5370,7 @@ msgstr "শেয়ারিং"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Sharing preview"
-msgstr "শেয়ারিং প্রিভিউ"
+msgstr "প্রিভিউ শেয়ার করা হচ্ছে"
 
 #: src/features/resume/builder/section-recovery.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
@@ -5612,7 +5612,7 @@ msgstr "কিছু টেক্সট ঘোরানো আছে।"
 
 #: src/features/homepage/community-stats.tsx
 msgid "Some totals are unavailable right now."
-msgstr "কিছু মোট সংখ্যা এই মুহূর্তে পাওয়া যাচ্ছে না।"
+msgstr "কিছু মোট পরিমাণ এখনই উপলব্ধ নেই।"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Something else…"
@@ -5628,7 +5628,7 @@ msgstr "সেই ফাইলটি পড়ার সময় কিছু �
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Something went wrong while reading this file. Please try again."
-msgstr "এই ফাইল পড়ার সময় কিছু একটা ভুল হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।"
+msgstr "এই ফাইলটি পড়ার সময় কিছু ভুল হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।"
 
 #: src/features/auth/pages/error.tsx
 msgid "Something went wrong while signing you in. Please try again."
@@ -5702,7 +5702,7 @@ msgstr "স্পনসরশিপ"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Spread pages"
-msgstr "পাতা মেলে ধরুন"
+msgstr "পৃষ্ঠা ছড়িয়ে দিন"
 
 #. Preset button for setting picture aspect ratio to square
 #: src/components/level/combobox.tsx
@@ -5712,7 +5712,7 @@ msgstr "স্কোয়ার"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Stack pages"
-msgstr "পাতা একসঙ্গে করুন"
+msgstr "পৃষ্ঠাগুলো স্তূপ করুন"
 
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/table-view.tsx
@@ -5912,7 +5912,7 @@ msgstr "অভিযোজন ব্যর্থ হয়েছে।"
 
 #: src/features/homepage/page.tsx
 msgid "Take it<0/>with you."
-msgstr "এটি<0/>সঙ্গে নিন।"
+msgstr "এটা আপনার সাথে নিয়ে যান।"
 
 #: src/libs/locale.ts
 msgid "Tamil"
@@ -5959,7 +5959,7 @@ msgstr "টেক্সটের রঙ"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Text extracted"
-msgstr "লেখা নিষ্কাশিত হয়েছে"
+msgstr "উদ্ধৃত পাঠ্য"
 
 #: src/features/ats-checker/messages.ts
 msgid "Text is written one character at a time."
@@ -5975,7 +5975,7 @@ msgstr "থাই"
 
 #: src/features/homepage/page.tsx
 msgid "Thank you for helping keep it free."
-msgstr "এটি বিনামূল্যে রাখতে সাহায্য করার জন্য ধন্যবাদ।"
+msgstr "এটি বিনামূল্যে রাখার জন্য সাহায্য করার জন্য আপনাকে ধন্যবাদ।"
 
 #: src/features/ats-checker/tool.tsx
 msgid "That file could not be read as a PDF."
@@ -6073,7 +6073,7 @@ msgstr "প্রদানকারীর প্রতিক্রিয়া �
 
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
-msgstr "চাকরি খোঁজার<0/>বাকি কাজও।"
+msgstr "আপনার বাকি চাকরির খোঁজও।"
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "The resume preview could not be updated. The last valid preview is still shown."
@@ -7399,3 +7399,4 @@ msgstr "জুম আউট"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "জুলু"
+

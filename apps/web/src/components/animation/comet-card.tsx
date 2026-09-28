@@ -1,63 +1,41 @@
 import type React from "react";
-import { m, useMotionTemplate, useMotionValue, useSpring, useTransform } from "motion/react";
-import { useRef } from "react";
+import { m, useMotionTemplate, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 import { cn } from "@reactive-resume/utils/style";
+import { EASE_OUT_STRONG } from "@/libs/motion";
 
 type Props = {
-	rotateDepth?: number;
-	translateDepth?: number;
 	glareOpacity?: number;
-	scaleFactor?: number;
 	className?: string;
 	children: React.ReactNode;
 };
 
-export const CometCard = ({
-	rotateDepth = 17.5,
-	translateDepth = 20,
-	glareOpacity = 0.4,
-	scaleFactor = 1.05,
-	className,
-	children,
-}: Props) => {
-	const ref = useRef<HTMLDivElement>(null);
+// Critically damped: the tilt follows the pointer without wobbling past it.
+const tiltSpring = { stiffness: 300, damping: 30 };
 
-	const x = useMotionValue(0);
-	const y = useMotionValue(0);
+export const CometCard = ({ glareOpacity = 0.4, className, children }: Props) => {
+	const reduceMotion = useReducedMotion();
 
-	const mouseXSpring = useSpring(x);
-	const mouseYSpring = useSpring(y);
+	const x = useSpring(useMotionValue(0), tiltSpring);
+	const y = useSpring(useMotionValue(0), tiltSpring);
 
-	const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], [`-${rotateDepth}deg`, `${rotateDepth}deg`]);
-	const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], [`${rotateDepth}deg`, `-${rotateDepth}deg`]);
+	const rotateX = useTransform(y, [-0.5, 0.5], ["-6deg", "6deg"]);
+	const rotateY = useTransform(x, [-0.5, 0.5], ["6deg", "-6deg"]);
+	const translateX = useTransform(x, [-0.5, 0.5], ["-3px", "3px"]);
+	const translateY = useTransform(y, [-0.5, 0.5], ["3px", "-3px"]);
 
-	const translateX = useTransform(mouseXSpring, [-0.5, 0.5], [`-${translateDepth}px`, `${translateDepth}px`]);
-	const translateY = useTransform(mouseYSpring, [-0.5, 0.5], [`${translateDepth}px`, `-${translateDepth}px`]);
-
-	const glareX = useTransform(mouseXSpring, [-0.5, 0.5], [0, 100]);
-	const glareY = useTransform(mouseYSpring, [-0.5, 0.5], [0, 100]);
-
+	const glareX = useTransform(x, [-0.5, 0.5], [0, 100]);
+	const glareY = useTransform(y, [-0.5, 0.5], [0, 100]);
 	const glareBackground = useMotionTemplate`radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.9) 10%, rgba(255, 255, 255, 0.75) 20%, rgba(255, 255, 255, 0) 80%)`;
 
-	const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-		if (!ref.current) return;
-
-		const rect = ref.current.getBoundingClientRect();
-
-		const width = rect.width;
-		const height = rect.height;
-
-		const mouseX = e.clientX - rect.left;
-		const mouseY = e.clientY - rect.top;
-
-		const xPct = mouseX / width - 0.5;
-		const yPct = mouseY / height - 0.5;
-
-		x.set(xPct);
-		y.set(yPct);
+	// Touch taps emit synthetic pointer moves that would leave the card stuck mid-tilt, so only follow a real mouse.
+	const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+		if (e.pointerType !== "mouse" || reduceMotion) return;
+		const rect = e.currentTarget.getBoundingClientRect();
+		x.set((e.clientX - rect.left) / rect.width - 0.5);
+		y.set((e.clientY - rect.top) / rect.height - 0.5);
 	};
 
-	const handleMouseLeave = () => {
+	const handlePointerLeave = () => {
 		x.set(0);
 		y.set(0);
 	};
@@ -65,21 +43,20 @@ export const CometCard = ({
 	return (
 		<div className={cn("perspective-distant transform-3d", className)}>
 			<m.div
-				ref={ref}
-				initial={{ scale: 1, z: 0 }}
-				onMouseMove={handleMouseMove}
-				onMouseLeave={handleMouseLeave}
-				className="relative rounded-md will-change-transform"
-				whileHover={{ z: 50, scale: scaleFactor, transition: { duration: 0.2 } }}
-				style={{ rotateX: rotateX, rotateY: rotateY, translateX: translateX, translateY: translateY }}
+				onPointerMove={handlePointerMove}
+				onPointerLeave={handlePointerLeave}
+				className="relative rounded-md"
+				whileHover={{ z: 20, scale: 1.02, transition: { duration: 0.2, ease: EASE_OUT_STRONG } }}
+				style={{ rotateX, rotateY, translateX, translateY }}
 			>
 				{children}
 
-				<m.div
-					transition={{ duration: 0.2 }}
-					style={{ background: glareBackground, opacity: glareOpacity }}
-					className="pointer-events-none absolute inset-0 z-50 h-full w-full rounded-md mix-blend-overlay will-change-[opacity]"
-				/>
+				{glareOpacity > 0 && (
+					<m.div
+						style={{ background: glareBackground, opacity: glareOpacity }}
+						className="pointer-events-none absolute inset-0 z-50 size-full rounded-md mix-blend-overlay"
+					/>
+				)}
 			</m.div>
 		</div>
 	);

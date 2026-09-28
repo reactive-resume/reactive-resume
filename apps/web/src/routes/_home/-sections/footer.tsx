@@ -3,10 +3,10 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { GithubLogoIcon, LinkedinLogoIcon, XLogoIcon } from "@phosphor-icons/react";
 import { m } from "motion/react";
-import { useState } from "react";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Copyright } from "@/components/ui/copyright";
+import { EASE_OUT_STRONG } from "@/libs/motion";
 
 type FooterLinkItem = {
 	url: string;
@@ -48,11 +48,11 @@ export function Footer() {
 	return (
 		<m.footer
 			id="footer"
-			className="p-4 pb-8 will-change-[opacity] md:p-8 md:pb-12"
+			className="p-4 pb-8 md:p-8 md:pb-12"
 			initial={{ opacity: 0 }}
 			whileInView={{ opacity: 1 }}
 			viewport={{ once: true }}
-			transition={{ duration: 0.45 }}
+			transition={{ duration: 0.45, ease: EASE_OUT_STRONG }}
 		>
 			<div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
 				{/* Brand Column */}
@@ -121,31 +121,19 @@ function FooterLinkGroup({ title, links }: FooterLinkGroupProps) {
 }
 
 function FooterLink({ url, label }: FooterLinkItem) {
-	const [isHovered, setIsHovered] = useState(false);
-
 	return (
 		<li className="relative">
 			<a
 				href={url}
 				target="_blank"
 				rel="noopener noreferrer"
-				className="relative inline-block text-sm transition-colors hover:text-foreground"
-				onMouseEnter={() => setIsHovered(true)}
-				onMouseLeave={() => setIsHovered(false)}
+				className="relative inline-block text-sm transition-colors after:pointer-events-none after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:rounded-md after:bg-primary after:content-[''] hover:text-foreground hover:after:scale-x-100 rtl:after:origin-right after:[transition:scale_200ms_var(--ease-out-strong)]"
 			>
 				{label}
 
 				<span className="sr-only">
 					<Trans>(opens in new tab)</Trans>
 				</span>
-
-				<m.div
-					aria-hidden="true"
-					initial={{ width: 0, opacity: 0 }}
-					animate={isHovered ? { width: "100%", opacity: 1 } : { width: 0, opacity: 0 }}
-					transition={{ duration: 0.2, ease: "easeOut" }}
-					className="pointer-events-none absolute inset-s-0 -bottom-0.5 h-px rounded-md bg-primary will-change-[width,opacity]"
-				/>
 			</a>
 		</li>
 	);

@@ -1,7 +1,7 @@
 import type { CSSProperties, PointerEvent } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { motion, useMotionTemplate, useReducedMotion, useSpring } from "motion/react";
+import { m, useMotionTemplate, useReducedMotion, useSpring } from "motion/react";
 import { useId, useRef, useState } from "react";
 import { cn } from "@reactive-resume/utils/style";
 import "./resume-sculpture.css";
@@ -16,7 +16,7 @@ const focusRing =
 const dockLabel = "mb-[7px] block text-[11px] leading-[1.4] text-[#a5a5ab]";
 
 const dockButton =
-	"relative grid min-h-[44px] min-w-[44px] cursor-pointer place-items-center bg-transparent text-[12px] text-[#a5a5ab] [transition:transform_140ms_cubic-bezier(0.23,1,0.32,1),color_150ms_ease]";
+	"relative grid min-h-[44px] min-w-[44px] cursor-pointer place-items-center bg-transparent text-[12px] text-[#a5a5ab] [transition:transform_140ms_var(--ease-out-strong),color_150ms_ease]";
 
 const templateIcon: Record<SculptureTemplate, string> = {
 	ditgar: "bg-[linear-gradient(to_right,#aa8ebe_34%,transparent_34%)]",
@@ -110,7 +110,7 @@ export function ResumeSculpture({
 					onPointerCancel={endDrag}
 					onLostPointerCapture={endDrag}
 				>
-					<motion.div
+					<m.div
 						className="sculpture-rig group/rig transform-3d absolute inset-0"
 						data-spread={spread}
 						data-instant={keyboardAction}
@@ -129,7 +129,7 @@ export function ResumeSculpture({
 								/>
 							);
 						})}
-					</motion.div>
+					</m.div>
 				</div>
 			</div>
 			<div className="flex items-center justify-between @max-[450px]:gap-1 gap-3 @max-[450px]:px-0 px-2 pt-[14px] pb-[18px] text-(--home-muted)">
@@ -351,7 +351,7 @@ function ResumePaper({ name, accent, typeface, template, position }: ResumePaper
 	return (
 		<article
 			className={cn(
-				"sculpture-paper transform-3d absolute top-[2%] left-[24%] aspect-[210/297] w-[56%] origin-[50%_80%] animate-[home-sculpture-assemble_900ms_cubic-bezier(0.23,1,0.32,1)_both] transition-[transform] duration-[650ms] ease-[cubic-bezier(0.23,1,0.32,1)] group-data-[instant=true]/rig:transition-none",
+				"sculpture-paper transform-3d absolute top-[2%] left-[24%] aspect-[210/297] w-[56%] origin-[50%_80%] animate-[home-sculpture-assemble_900ms_var(--ease-out-strong)_both] transition-[transform] duration-[650ms] ease-out-strong group-data-[instant=true]/rig:transition-none",
 				paperTransform[position],
 			)}
 			data-template={template}

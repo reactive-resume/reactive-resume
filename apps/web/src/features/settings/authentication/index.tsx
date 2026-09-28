@@ -1,4 +1,3 @@
-import { m } from "motion/react";
 import { useEnabledProviders } from "./components/hooks";
 import { PasskeysSection } from "./components/passkeys";
 import { PasswordSection } from "./components/password";
@@ -9,27 +8,20 @@ export function AuthenticationSettingsPage() {
 	const { enabledProviders } = useEnabledProviders();
 
 	return (
-		<m.div
-			initial={{ y: -20 }}
-			animate={{ opacity: 1, y: 0 }}
-			transition={{ duration: 0.25, ease: "easeOut" }}
-			className="grid max-w-xl gap-4 will-change-[transform,opacity]"
-		>
+		<div className="grid max-w-xl gap-4">
 			<PasswordSection />
 
 			<TwoFactorSection />
 
 			<PasskeysSection />
 
-			{"google" in enabledProviders && <SocialProviderSection provider="google" animationDelay={0.04} />}
+			{"google" in enabledProviders && <SocialProviderSection provider="google" />}
 
-			{"github" in enabledProviders && <SocialProviderSection provider="github" animationDelay={0.08} />}
+			{"github" in enabledProviders && <SocialProviderSection provider="github" />}
 
-			{"linkedin" in enabledProviders && <SocialProviderSection provider="linkedin" animationDelay={0.12} />}
+			{"linkedin" in enabledProviders && <SocialProviderSection provider="linkedin" />}
 
-			{"custom" in enabledProviders && (
-				<SocialProviderSection provider="custom" animationDelay={0.16} name={enabledProviders.custom} />
-			)}
-		</m.div>
+			{"custom" in enabledProviders && <SocialProviderSection provider="custom" name={enabledProviders.custom} />}
+		</div>
 	);
 }

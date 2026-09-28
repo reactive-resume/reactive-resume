@@ -12,6 +12,7 @@ import {
 import { Link } from "@tanstack/react-router";
 import { m } from "motion/react";
 import { cn } from "@reactive-resume/utils/style";
+import { EASE_OUT_STRONG } from "@/libs/motion";
 import { wrap } from "./classes";
 
 const githubUrl = "https://github.com/reactive-resume/reactive-resume";
@@ -73,7 +74,7 @@ const getSocialLinks = (): SocialLink[] => [
 const linkClass =
 	"group/link inline-flex min-h-9 items-center gap-1 text-(--home-muted) text-[14px] [transition:color_150ms_ease] hover:text-(--home-ink)";
 const arrowClass =
-	"opacity-0 [transition:opacity_180ms_ease,transform_180ms_cubic-bezier(0.23,1,0.32,1)] group-hover/link:transform-[translate(1px,-1px)] group-hover/link:opacity-60";
+	"opacity-0 [transition:opacity_180ms_ease,transform_180ms_var(--ease-out-strong)] group-hover/link:transform-[translate(1px,-1px)] group-hover/link:opacity-60";
 const socialClass =
 	"inline-grid size-10 place-items-center text-(--home-muted) [transition:color_160ms_ease] hover:text-(--home-ink)";
 const metaLinkClass = "text-(--home-ink) underline-offset-[3px] hover:underline";
@@ -201,7 +202,7 @@ export function SiteFooter() {
 					initial={{ opacity: 0, y: 24 }}
 					whileInView={{ opacity: 1, y: 0 }}
 					viewport={{ once: true, amount: 0.3 }}
-					transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
+					transition={{ duration: 0.7, ease: EASE_OUT_STRONG }}
 				>
 					Reactive Resume
 				</m.p>

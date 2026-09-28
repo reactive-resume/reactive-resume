@@ -13,6 +13,7 @@ import { admin, jwt } from "better-auth/plugins";
 import { genericOAuth } from "better-auth/plugins/generic-oauth";
 import { twoFactor } from "better-auth/plugins/two-factor";
 import { username } from "better-auth/plugins/username";
+import { createLocalJWKSet, jwtVerify } from "jose";
 import { createElement } from "react";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
@@ -23,6 +24,7 @@ import { rateLimitConfig, TRUSTED_IP_HEADERS } from "@reactive-resume/utils/rate
 import { generateId, toUsername } from "@reactive-resume/utils/string";
 import { isAllowedOAuthRedirectUri } from "@reactive-resume/utils/url-security.node";
 import { createGithubProfileMapper, createProfileMapper } from "./oauth-profile";
+import { authRateLimitStorage } from "./rate-limit";
 import { getTrustedOrigins } from "./trusted-origins";
 
 const authBaseUrl = env.APP_URL;
@@ -56,7 +58,17 @@ const OAUTH_AUDIENCES = [
 	`${oauthAudienceBase}/mcp/`,
 ];
 
-export function verifyOAuthToken(token: string): Promise<JWTPayload> {
+export async function verifyOAuthToken(token: string): Promise<JWTPayload> {
+	if (process.env.VERCEL === "1" && !process.env.BETTER_AUTH_INTERNAL_URL) {
+		// In-process keys avoid localhost and deployment-protection HTTP round trips.
+		const jwks = await auth.api.getJwks();
+		return (
+			await jwtVerify(token, createLocalJWKSet(jwks), {
+				issuer: `${authBaseUrl}/api/auth`,
+				audience: OAUTH_AUDIENCES,
+			})
+		).payload;
+	}
 	return verifyBearerToken(token, {
 		jwksUrl: `${internalBaseUrl}/api/auth/jwks`,
 		verifyOptions: {
@@ -152,6 +164,7 @@ const getAuthConfig = () => {
 		trustedOrigins: TRUSTED_ORIGINS,
 		rateLimit: {
 			...rateLimitConfig.betterAuth.global,
+			...(authRateLimitStorage ? { customStorage: authRateLimitStorage } : {}),
 			enabled: isRateLimitEnabled,
 		},
 
@@ -329,4 +342,30 @@ const getAuthConfig = () => {
 	});
 };
 
-export const auth = getAuthConfig();
+type Auth = ReturnType<typeof getAuthConfig>;
+
+let authInstance: Auth | undefined;
+
+function getAuthInstance(): Auth {
+	if (authInstance) return authInstance;
+
+	const instance = getAuthConfig();
+	authInstance = instance;
+	// A rejected Better Auth context cannot recover. Let the next request rebuild it.
+	void instance.$context.catch(() => {
+		if (authInstance === instance) authInstance = undefined;
+	});
+	return instance;
+}
+
+// Keep initialization inside a request or explicit deployment preparation, not module evaluation.
+export const auth: Auth = new Proxy({} as Auth, {
+	get(_target, property) {
+		const instance = getAuthInstance();
+		return Reflect.get(instance, property, instance);
+	},
+});
+
+export async function initializeAuth(): Promise<void> {
+	await auth.$context;
+}

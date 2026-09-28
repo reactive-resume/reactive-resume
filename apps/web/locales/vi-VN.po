@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: reactive-resume\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-06 19:37\n"
+"PO-Revision-Date: 2026-09-28 05:40\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -43,7 +43,7 @@ msgid "{0, plural, one {# item} other {# items}}"
 msgstr "{0, plural, one {Mục #} other {Các mặt hàng #}}"
 
 #. placeholder {0}: item.roles.length
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "{0, plural, one {# role} other {# roles}}"
 msgstr "{0, plural, one {# vai trò} other {# vai trò}}"
 
@@ -364,11 +364,11 @@ msgstr "Thêm từ khóa..."
 msgid "Add a label to the URL"
 msgstr "Thêm nhãn cho URL"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/awards.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new award"
 msgstr "Thêm giải thưởng mới"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/certifications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new certification"
 msgstr "Thêm chứng nhận mới"
 
@@ -376,15 +376,15 @@ msgstr "Thêm chứng nhận mới"
 msgid "Add a new custom section"
 msgstr "Thêm phần tuỳ chỉnh mới"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/education.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new education"
 msgstr "Thêm giáo dục mới"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new experience"
 msgstr "Thêm kinh nghiệm mới"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/interests.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new interest"
 msgstr "Thêm sở thích mới"
 
@@ -393,31 +393,31 @@ msgstr "Thêm sở thích mới"
 msgid "Add a new item"
 msgstr "Thêm mục mới"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/languages.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new language"
 msgstr "Thêm ngôn ngữ mới"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/profiles.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new profile"
 msgstr "Thêm hồ sơ mới"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/projects.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new project"
 msgstr "Thêm dự án mới"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/publications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new publication"
 msgstr "Thêm ấn phẩm mới"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/references.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new reference"
 msgstr "Thêm người tham chiếu mới"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/skills.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new skill"
 msgstr "Thêm kỹ năng mới"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/volunteer.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new volunteer experience"
 msgstr "Thêm kinh nghiệm tình nguyện mới"
 
@@ -5223,11 +5223,11 @@ msgstr "Xem cách kết nối"
 
 #: src/features/homepage/page.tsx
 msgid "See what<0/>software reads."
-msgstr "Xem phần mềm<0/>đọc được gì."
+msgstr "Xem phần mềm<0/>đọc được những gì."
 
 #: src/features/homepage/page.tsx
 msgid "See whether your PDF has readable text. Read a sample or try your own PDF. Everything runs in your browser, so your file stays with you."
-msgstr "Xem PDF của bạn có chứa văn bản đọc được hay không. Đọc một bản mẫu hoặc thử với PDF của riêng bạn. Mọi thứ chạy ngay trong trình duyệt, nên tệp của bạn luôn ở phía bạn."
+msgstr "Hãy kiểm tra xem tệp PDF của bạn có chứa văn bản có thể đọc được hay không. Đọc một mẫu hoặc thử với tệp PDF của riêng bạn. Tất cả đều chạy trực tiếp trên trình duyệt của bạn, nên tệp của bạn vẫn nằm trong tay bạn."
 
 #. placeholder {0}: app.company
 #: src/features/applications/components/table-view.tsx
@@ -5302,7 +5302,7 @@ msgstr "Gửi văn bản đã được trích xuất từ PDF của bạn, cùng
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Senior product designer"
-msgstr "Thiết kế sản phẩm cấp cao"
+msgstr "Nhà thiết kế sản phẩm cấp cao"
 
 #: src/components/input/rich-input.tsx
 msgid "Separator"
@@ -5314,7 +5314,7 @@ msgstr "Serbia"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Serif"
-msgstr "Chữ chân (Serif)"
+msgstr "Serif"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Set a password if you want only people who know it to open the public URL."
@@ -5370,7 +5370,7 @@ msgstr "Chia sẻ"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Sharing preview"
-msgstr "Xem trước chế độ chia sẻ"
+msgstr "Chia sẻ bản xem trước"
 
 #: src/features/resume/builder/section-recovery.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
@@ -5391,7 +5391,7 @@ msgstr "Hiển thị phần {title}"
 #: src/features/homepage/languages-showcase.test.tsx
 #: src/features/homepage/languages-showcase.tsx
 msgid "Show all languages"
-msgstr "Hiện tất cả ngôn ngữ"
+msgstr "Hiển thị tất cả các ngôn ngữ"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Show Download Buttons"
@@ -5612,7 +5612,7 @@ msgstr "Một số văn bản bị xoay."
 
 #: src/features/homepage/community-stats.tsx
 msgid "Some totals are unavailable right now."
-msgstr "Một số tổng số hiện không khả dụng."
+msgstr "Hiện tại, một số số liệu tổng hợp chưa có sẵn."
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Something else…"
@@ -5628,7 +5628,7 @@ msgstr "Đã xảy ra lỗi khi đọc tệp đó. Vui lòng thử lại."
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Something went wrong while reading this file. Please try again."
-msgstr "Đã xảy ra lỗi khi đọc tệp này. Vui lòng thử lại."
+msgstr "Đã xảy ra sự cố trong quá trình đọc tệp này. Vui lòng thử lại."
 
 #: src/features/auth/pages/error.tsx
 msgid "Something went wrong while signing you in. Please try again."
@@ -5702,7 +5702,7 @@ msgstr "Tài trợ"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Spread pages"
-msgstr "Trải rộng các trang"
+msgstr "Trang trải rộng"
 
 #. Preset button for setting picture aspect ratio to square
 #: src/components/level/combobox.tsx
@@ -5789,7 +5789,7 @@ msgstr "Ở lại"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Stays in your browser"
-msgstr "Vẫn ở trong trình duyệt của bạn"
+msgstr "Luôn hiển thị trong trình duyệt của bạn"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Still waiting for {provider}… {elapsedSeconds}s"
@@ -5852,7 +5852,7 @@ msgstr "Hãy ủng hộ ứng dụng bằng cách làm bất cứ điều gì b�
 
 #: src/features/homepage/page.tsx
 msgid "Support the project"
-msgstr "Ủng hộ dự án"
+msgstr "Hãy ủng hộ dự án"
 
 #: src/features/ats-checker/messages.ts
 #: src/libs/resume/ats.ts
@@ -5912,7 +5912,7 @@ msgstr "Tinh chỉnh thất bại."
 
 #: src/features/homepage/page.tsx
 msgid "Take it<0/>with you."
-msgstr "Mang nó<0/>theo bạn."
+msgstr "Hãy mang theo<0/>nó."
 
 #: src/libs/locale.ts
 msgid "Tamil"
@@ -5959,7 +5959,7 @@ msgstr "Màu chữ"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Text extracted"
-msgstr "Đã trích xuất văn bản"
+msgstr "Văn bản đã trích xuất"
 
 #: src/features/ats-checker/messages.ts
 msgid "Text is written one character at a time."
@@ -5975,7 +5975,7 @@ msgstr "Thái"
 
 #: src/features/homepage/page.tsx
 msgid "Thank you for helping keep it free."
-msgstr "Cảm ơn bạn đã giúp giữ cho nó miễn phí."
+msgstr "Cảm ơn bạn đã giúp duy trì tính miễn phí của nó."
 
 #: src/features/ats-checker/tool.tsx
 msgid "That file could not be read as a PDF."
@@ -6073,7 +6073,7 @@ msgstr "Không thể xác minh phản hồi của nhà cung cấp. Vui lòng b�
 
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
-msgstr "Cả phần còn lại của<0/>hành trình tìm việc."
+msgstr "Cả phần còn lại của quá trình tìm việc của bạn nữa."
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "The resume preview could not be updated. The last valid preview is still shown."
@@ -6117,7 +6117,7 @@ msgstr "Sau đó, nhập mã 6 chữ số mà ứng dụng cung cấp để ti�
 
 #: src/features/homepage/page.tsx
 msgid "There are other ways to pitch in."
-msgstr "Còn có nhiều cách khác để chung tay."
+msgstr "Còn có những cách khác để chung tay góp sức."
 
 #: src/features/ats-checker/messages.ts
 msgid "There is a gap between two dated roles."
@@ -6218,7 +6218,7 @@ msgstr "Tệp này chứa văn bản màu trắng trên nền trắng."
 
 #: src/features/homepage/ats-playground.tsx
 msgid "This file could not be read as a PDF. Export a new copy and try again."
-msgstr "Không thể đọc tệp này dưới dạng PDF. Hãy xuất một bản mới và thử lại."
+msgstr "Không thể đọc tệp này dưới dạng PDF. Hãy xuất một bản sao mới và thử lại."
 
 #: src/features/ats-checker/messages.ts
 msgid "This file declares no language."
@@ -6258,7 +6258,7 @@ msgstr "Đây là một PDF Portfolio: trang hiển thị chỉ là trang bìa."
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "This is a sample edit. In the app, connect your own AI provider. Turn on Review edits to approve changes before they’re applied."
-msgstr "Đây là một chỉnh sửa mẫu. Trong ứng dụng, hãy kết nối nhà cung cấp AI của riêng bạn. Bật Xem lại các chỉnh sửa để duyệt từng thay đổi trước khi áp dụng."
+msgstr "Đây là một ví dụ về chỉnh sửa. Trong ứng dụng, hãy kết nối với nhà cung cấp AI của riêng bạn. Bật tính năng “Xem lại các chỉnh sửa” để phê duyệt các thay đổi trước khi chúng được áp dụng."
 
 #: src/dialogs/resume/index.tsx
 msgid "This is a URL-friendly name for your resume."
@@ -6312,7 +6312,7 @@ msgstr "PDF này được bảo vệ bằng mật khẩu. Hãy lưu một bản 
 
 #: src/features/homepage/ats-playground.tsx
 msgid "This PDF is too large. Choose a file smaller than 25 MB."
-msgstr "PDF này quá lớn. Hãy chọn một tệp nhỏ hơn 25 MB."
+msgstr "Tệp PDF này quá lớn. Vui lòng chọn một tệp có dung lượng nhỏ hơn 25 MB."
 
 #: src/libs/resume/ats.ts
 msgid "This period ends before it starts."
@@ -6486,11 +6486,11 @@ msgstr "Công cụ"
 
 #: src/features/homepage/community-stats.tsx
 msgid "Total unavailable"
-msgstr "Không có tổng số"
+msgstr "Tổng số không có sẵn"
 
 #: src/features/homepage/community-stats.tsx
 msgid "Totals are refreshed periodically."
-msgstr "Các tổng số được làm mới định kỳ."
+msgstr "Các số liệu tổng hợp được cập nhật định kỳ."
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Track a job you're applying to and link the resume you sent."
@@ -6521,11 +6521,11 @@ msgstr "Hãy thử lại"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Try the settings to see what visitors can access. When you create your resume, you decide how to share it."
-msgstr "Thử các cài đặt để xem khách truy cập có thể truy cập những gì. Khi tạo sơ yếu lý lịch, chính bạn quyết định cách chia sẻ nó."
+msgstr "Hãy thử các tùy chọn cài đặt để xem khách truy cập có thể truy cập những nội dung nào. Khi tạo sơ yếu lý lịch, bạn sẽ quyết định cách chia sẻ nó."
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Try your PDF"
-msgstr "Thử PDF của bạn"
+msgstr "Hãy thử tệp PDF của bạn"
 
 #: src/libs/locale.ts
 msgid "Turkish"
@@ -6857,11 +6857,11 @@ msgstr "Dùng mẫu"
 
 #: src/features/homepage/languages-showcase.tsx
 msgid "Use the app in a language you’re comfortable with. Try a few of the translations made by the community."
-msgstr "Sử dụng ứng dụng bằng một ngôn ngữ bạn thấy thoải mái. Thử vài bản dịch do cộng đồng thực hiện."
+msgstr "Hãy sử dụng ứng dụng bằng ngôn ngữ mà bạn cảm thấy thoải mái. Hãy thử một vài bản dịch do cộng đồng thực hiện."
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Use this wording"
-msgstr "Dùng cách diễn đạt này"
+msgstr "Hãy sử dụng cách diễn đạt này"
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
@@ -6885,7 +6885,7 @@ msgstr "Người dùng"
 
 #: src/features/homepage/export-playground.tsx
 msgid "Uses the name, template, color, and type you chose above."
-msgstr "Sử dụng tên, mẫu, màu sắc và kiểu bạn đã chọn ở trên."
+msgstr "Sử dụng tên, mẫu, màu sắc và kiểu mà bạn đã chọn ở trên."
 
 #: src/libs/locale.ts
 msgid "Uzbek"
@@ -6967,7 +6967,7 @@ msgstr "Lượt xem"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Visitors need your password to open the resume."
-msgstr "Khách truy cập cần mật khẩu của bạn để mở sơ yếu lý lịch."
+msgstr "Người truy cập cần mật khẩu của bạn để mở bản lý lịch."
 
 #: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
@@ -7116,7 +7116,7 @@ msgstr "Các từ bị dính liền nhau khi văn bản được trích xuất."
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Work on your resume from your AI app."
-msgstr "Làm việc trên sơ yếu lý lịch của bạn từ ứng dụng AI của bạn."
+msgstr "Chỉnh sửa sơ yếu lý lịch của bạn ngay trên ứng dụng AI."
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Work OpenAI"
@@ -7124,7 +7124,7 @@ msgstr "Làm việc tại OpenAI"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Worked with engineers from idea to launch."
-msgstr "Đồng hành cùng các kỹ sư từ ý tưởng đến khi ra mắt."
+msgstr "Đã hợp tác với các kỹ sư từ giai đoạn lên ý tưởng cho đến khi ra mắt sản phẩm."
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Working…"
@@ -7399,3 +7399,4 @@ msgstr "Thu nhỏ"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
+

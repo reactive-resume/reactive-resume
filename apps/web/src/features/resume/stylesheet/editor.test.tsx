@@ -28,9 +28,8 @@ const builder = vi.hoisted(() => ({
 	redo: vi.fn(),
 }));
 
-vi.mock("usehooks-ts", async (importOriginal) => ({
-	...(await importOriginal<typeof import("usehooks-ts")>()),
-	useMediaQuery: () => media.mobile,
+vi.mock("@reactive-resume/ui/hooks/use-mobile", () => ({
+	useIsMobile: () => media.mobile,
 }));
 
 vi.mock("@/features/theme/provider", () => ({

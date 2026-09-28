@@ -1,5 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
+import { useReducedMotion } from "motion/react";
 import { Suspense, useState } from "react";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -11,6 +12,7 @@ import { blurFocusedElementOnPan } from "./pan-focus";
 
 export function PreviewPage() {
 	const [pageLayout, setPageLayout] = useState(DEFAULT_BUILDER_PREVIEW_PAGE_LAYOUT);
+	const reduceMotion = useReducedMotion();
 
 	useHotkey("Mod+S", () => {
 		toast.add({
@@ -30,6 +32,7 @@ export function PreviewPage() {
 					initialScale={0.75}
 					limitToBounds={false}
 					wheel={{ step: 0.001 }}
+					doubleClick={{ animationType: "easeOutCubic", animationTime: reduceMotion ? 0 : 200 }}
 					onPanningStart={blurFocusedElementOnPan}
 				>
 					{/* Zoom transforms use left-origin coordinates, regardless of the interface language. */}

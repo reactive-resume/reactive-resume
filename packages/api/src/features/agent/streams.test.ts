@@ -8,6 +8,8 @@ vi.mock("@reactive-resume/db/schema", () => ({
 		id: "agent_threads.id",
 		userId: "agent_threads.user_id",
 		activeRunId: "agent_threads.active_run_id",
+		deletedAt: "agent_threads.deleted_at",
+		status: "agent_threads.status",
 		activeStreamId: "agent_threads.active_stream_id",
 	},
 }));
@@ -68,6 +70,8 @@ describe("agent run state", () => {
 				{ type: "eq", left: "agent_threads.id", right: "thread-1" },
 				{ type: "eq", left: "agent_threads.user_id", right: "user-1" },
 				{ type: "isNull", value: "agent_threads.active_run_id" },
+				{ type: "isNull", value: "agent_threads.deleted_at" },
+				{ type: "eq", left: "agent_threads.status", right: "active" },
 			],
 		});
 	});
