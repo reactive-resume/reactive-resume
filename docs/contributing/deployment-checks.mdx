@@ -1,0 +1,52 @@
+---
+title: "Deployment checks"
+description: "How CI verifies the Vercel build artifact, and how to run the deployment smoke test against Vercel or Docker."
+---
+
+The **Vercel compatibility** workflow (`.github/workflows/vercel.yml`) has two jobs.
+
+## Artifact build
+
+Runs on every pull request and every push to `main`. It needs no Vercel account and no secrets, so fork pull requests run it safely.
+
+The job:
+
+1. Starts an isolated PostgreSQL service.
+2. Writes a local `.vercel/project.json` and runs `vercel build --prod` offline, with placeholder Blob credentials. This also applies migrations to the isolated database.
+3. Checks the generated Function:
+   - runtime is `nodejs24.x` and `maxDuration` is `300`;
+   - PDFKit standard font files are included in the traced files;
+   - every emitted server chunk loads with `--no-experimental-require-module`, which matches the Vercel runtime;
+   - the Vercel entrypoint answers a request.
+
+If a new server dependency fails the module-loading check, add it to `bundledInteropPackages` in `apps/server/tsdown.config.ts`.
+
+## Live smoke test
+
+Runs only when started manually (`workflow_dispatch`). It uses the `vercel-smoke` GitHub environment and runs `tooling/deployment/smoke.mjs` against `VERCEL_SMOKE_URL`.
+
+<Warning>
+  Point the smoke test only at a dedicated test installation. It creates an account, a public resume, and files, then deletes them.
+</Warning>
+
+The script checks health, public pages, signup, resume CRUD, public PDF rendering, a 10 MiB upload and download, and one-time use of staged requests.
+
+To also check a 25 MiB agent attachment, configure a deterministic OpenAI-compatible test provider that serves the model `smoke-model`:
+
+| Name | Kind | Value |
+| --- | --- | --- |
+| `VERCEL_SMOKE_URL` | Variable | Test installation origin |
+| `VERCEL_SMOKE_AI_BASE_URL` | Variable | Test provider base URL |
+| `VERCEL_SMOKE_AI_API_KEY` | Secret | Test provider API key |
+
+No paid AI model is needed.
+
+## Run the smoke test locally
+
+Against a local Docker installation:
+
+```bash
+SMOKE_URL=http://localhost:3000 node tooling/deployment/smoke.mjs
+```
+
+Add `SMOKE_AI_BASE_URL` and `SMOKE_AI_API_KEY` to include the attachment check.

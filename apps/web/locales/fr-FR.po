@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: reactive-resume\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-06 19:36\n"
+"PO-Revision-Date: 2026-09-28 05:40\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -43,7 +43,7 @@ msgid "{0, plural, one {# item} other {# items}}"
 msgstr "{0, plural, one {# élément} other {# éléments}}"
 
 #. placeholder {0}: item.roles.length
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "{0, plural, one {# role} other {# roles}}"
 msgstr "{0, plural, one {# poste} other {# postes}}"
 
@@ -376,11 +376,11 @@ msgstr "Ajouter un mot-clé..."
 msgid "Add a label to the URL"
 msgstr "Ajouter un libellé à l'URL"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/awards.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new award"
 msgstr "Ajouter une nouvelle récompense"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/certifications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new certification"
 msgstr "Ajouter une nouvelle certification"
 
@@ -388,15 +388,15 @@ msgstr "Ajouter une nouvelle certification"
 msgid "Add a new custom section"
 msgstr "Ajouter une nouvelle section personnalisée"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/education.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new education"
 msgstr "Ajouter une nouvelle formation"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new experience"
 msgstr "Ajouter une nouvelle expérience"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/interests.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new interest"
 msgstr "Ajouter un nouveau centre d'intérêt"
 
@@ -405,31 +405,31 @@ msgstr "Ajouter un nouveau centre d'intérêt"
 msgid "Add a new item"
 msgstr "Ajouter un nouvel élément"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/languages.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new language"
 msgstr "Ajouter une nouvelle langue"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/profiles.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new profile"
 msgstr "Ajouter un nouveau profil"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/projects.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new project"
 msgstr "Ajouter un nouveau projet"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/publications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new publication"
 msgstr "Ajouter une nouvelle publication"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/references.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new reference"
 msgstr "Ajouter une nouvelle référence"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/skills.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new skill"
 msgstr "Ajouter une nouvelle compétence"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/volunteer.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new volunteer experience"
 msgstr "Ajouter une nouvelle expérience de bénévolat"
 
@@ -923,7 +923,7 @@ msgstr "Azerbaïdjanais"
 
 #: src/features/homepage/export-playground.tsx
 msgid "BA"
-msgstr "BA"
+msgstr "Licence"
 
 #. Action returning a signed-in user to the page where they manage linked providers
 #: src/features/auth/pages/error.tsx
@@ -1235,7 +1235,7 @@ msgstr "Cercle"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Clay"
-msgstr "Clay"
+msgstr "Argile"
 
 #. Clear the highlight color
 #. Clear the text color
@@ -2029,7 +2029,7 @@ msgstr "Apparence"
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Design systems"
-msgstr "Design systems"
+msgstr "Systèmes de conception"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Designed a shared component library that six product teams use to build consistent interfaces."
@@ -3762,7 +3762,7 @@ msgstr "Plusieurs adresses email apparaissent."
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Moss"
-msgstr "Moss"
+msgstr "Mousse"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -4475,7 +4475,7 @@ msgstr "Veuillez téléverser un fichier PDF."
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Plum"
-msgstr "Plum"
+msgstr "Prune"
 
 #: src/libs/locale.ts
 msgid "Polish"
@@ -5424,7 +5424,7 @@ msgstr "Envoie le texte déjà extrait de votre PDF, ainsi que la description de
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Senior product designer"
-msgstr "Senior product designer"
+msgstr "Concepteur produit senior"
 
 #: src/components/input/rich-input.tsx
 msgid "Separator"
@@ -7553,3 +7553,4 @@ msgstr "Zoom arrière"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zoulou"
+

@@ -14,7 +14,6 @@ import {
 	PencilSimpleLineIcon,
 	TrashSimpleIcon,
 } from "@phosphor-icons/react";
-import { AnimatePresence, Reorder } from "motion/react";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import {
 	DropdownMenu,
@@ -35,38 +34,10 @@ import { useDialogStore } from "@/dialogs/store";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getSectionTitle } from "@/libs/resume/section";
+import { SECTIONS, SectionItemList } from "../shared/items-section";
 import { SectionBase } from "../shared/section-base";
-import { SectionAddItemButton, SectionItem } from "../shared/section-item";
+import { SectionAddItemButton } from "../shared/section-item";
 import { SkillKeywordLayoutMenu } from "../shared/skill-keyword-layout-menu";
-
-// ponytail: data maps replace ts-pattern exhaustive matchers — same coverage, no runtime dependency
-const TITLE_FIELD: Partial<Record<CustomSectionType, string>> = {
-	profiles: "network",
-	experience: "company",
-	education: "school",
-	projects: "name",
-	skills: "name",
-	languages: "language",
-	interests: "name",
-	awards: "title",
-	certifications: "title",
-	publications: "title",
-	volunteer: "organization",
-	references: "name",
-};
-
-const SUBTITLE_FIELD: Partial<Record<CustomSectionType, string>> = {
-	profiles: "username",
-	experience: "position",
-	education: "degree",
-	projects: "period",
-	skills: "proficiency",
-	languages: "fluency",
-	awards: "awarder",
-	certifications: "issuer",
-	publications: "publisher",
-	volunteer: "period",
-};
 
 function truncateHtml(html: string, max = 50): string {
 	const stripped = stripHtml(html);
@@ -104,8 +75,7 @@ function getItemTitle(type: CustomSectionType, item: CustomSectionItemType): str
 			message: "Cover Letter",
 		});
 	}
-	const field = TITLE_FIELD[type];
-	return field && field in item ? String((item as Record<string, unknown>)[field]) : "";
+	return SECTIONS[type].title(item as never);
 }
 
 function getItemSubtitle(type: CustomSectionType, item: CustomSectionItemType): string | undefined {
@@ -116,10 +86,8 @@ function getItemSubtitle(type: CustomSectionType, item: CustomSectionItemType): 
 		}
 		return undefined;
 	}
-	const field = SUBTITLE_FIELD[type];
-	if (!field || !(field in item)) return undefined;
-	const value = (item as Record<string, unknown>)[field];
-	return typeof value === "string" ? value || undefined : undefined;
+	if (type === "summary") return undefined;
+	return SECTIONS[type].subtitle?.(item as never) || undefined;
 }
 
 export function CustomSectionBuilder() {
@@ -127,13 +95,11 @@ export function CustomSectionBuilder() {
 
 	return (
 		<SectionBase type="custom" className={cn("space-y-4", customSections.length === 0 && "border-dashed")}>
-			<AnimatePresence>
-				{customSections
-					.filter((section) => !section.hidden)
-					.map((section) => (
-						<CustomSectionContainer key={section.id} section={section} />
-					))}
-			</AnimatePresence>
+			{customSections
+				.filter((section) => !section.hidden)
+				.map((section) => (
+					<CustomSectionContainer key={section.id} section={section} />
+				))}
 
 			{/* Add Custom Section Button */}
 			<SectionAddItemButton type="custom" variant="outline" className="rounded-md">
@@ -190,20 +156,14 @@ function CustomSectionContainer({ section }: CustomSectionContainerProps) {
 			{/* Section Items */}
 			{section.items.length > 0 && (
 				<div className={cn("border-t", section.hidden && "opacity-50")}>
-					<Reorder.Group axis="y" values={section.items} onReorder={handleReorder}>
-						<AnimatePresence>
-							{section.items.map((item) => (
-								<SectionItem
-									key={item.id}
-									type={section.type}
-									item={item}
-									customSectionId={section.id}
-									title={getItemTitle(section.type, item)}
-									subtitle={getItemSubtitle(section.type, item)}
-								/>
-							))}
-						</AnimatePresence>
-					</Reorder.Group>
+					<SectionItemList
+						type={section.type}
+						items={section.items}
+						onReorder={handleReorder}
+						customSectionId={section.id}
+						getTitle={(item) => getItemTitle(section.type, item)}
+						getSubtitle={(item) => getItemSubtitle(section.type, item)}
+					/>
 				</div>
 			)}
 

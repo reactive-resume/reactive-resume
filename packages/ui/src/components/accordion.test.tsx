@@ -93,7 +93,7 @@ describe("AccordionTrigger", () => {
 		expect(screen.getByTestId("trigger")).toHaveAttribute("data-slot", "accordion-trigger");
 	});
 
-	it("renders down/up caret icons", () => {
+	it("renders a single caret icon that rotates when expanded", () => {
 		const { container } = render(
 			<Accordion>
 				<AccordionItem value="1">
@@ -102,6 +102,6 @@ describe("AccordionTrigger", () => {
 				</AccordionItem>
 			</Accordion>,
 		);
-		expect(container.querySelectorAll("[data-slot=accordion-trigger-icon]")).toHaveLength(2);
+		expect(container.querySelectorAll("[data-slot=accordion-trigger-icon]")).toHaveLength(1);
 	});
 });

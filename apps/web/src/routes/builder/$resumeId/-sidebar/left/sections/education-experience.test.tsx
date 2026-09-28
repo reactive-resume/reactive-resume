@@ -100,8 +100,9 @@ vi.mock("../shared/section-item", () => ({
 	),
 }));
 
-const { EducationSectionBuilder } = await import("./education");
-const { ExperienceSectionBuilder } = await import("./experience");
+const { ItemsSection } = await import("../shared/items-section");
+const EducationSectionBuilder = () => <ItemsSection type="education" />;
+const ExperienceSectionBuilder = () => <ItemsSection type="experience" />;
 
 beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });

@@ -1,8 +1,8 @@
 import { Trans } from "@lingui/react/macro";
-import { createFileRoute, Outlet, redirect, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import Cookies from "js-cookie";
 import { SidebarProvider } from "@reactive-resume/ui/components/sidebar";
 import { createNoindexFollowMeta } from "@/libs/seo";
-import { getDashboardSidebarState, setDashboardSidebarState } from "./-components/functions";
 import { DashboardSidebar } from "./-components/sidebar";
 
 export const Route = createFileRoute("/dashboard")({
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/dashboard")({
 		return { session: context.session };
 	},
 	loader: () => {
-		const sidebarState = getDashboardSidebarState();
+		const sidebarState = Cookies.get("sidebar_state") !== "false";
 		return { sidebarState };
 	},
 	head: () => ({
@@ -21,16 +21,10 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function RouteComponent() {
-	const router = useRouter();
 	const { sidebarState } = Route.useLoaderData();
 
-	const handleSidebarOpenChange = (open: boolean) => {
-		setDashboardSidebarState(open);
-		void router.invalidate();
-	};
-
 	return (
-		<SidebarProvider open={sidebarState} onOpenChange={handleSidebarOpenChange}>
+		<SidebarProvider defaultOpen={sidebarState}>
 			<a
 				href="#main-content"
 				className="sr-only rounded-md bg-popover px-4 py-2 text-sm ring-2 ring-ring focus:not-sr-only focus:absolute focus:inset-s-2 focus:top-2 focus:z-[100]"

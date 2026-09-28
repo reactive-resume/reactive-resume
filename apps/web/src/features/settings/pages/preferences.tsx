@@ -1,6 +1,5 @@
 import { Trans } from "@lingui/react/macro";
 import { ArrowRightIcon } from "@phosphor-icons/react";
-import { m } from "motion/react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Label } from "@reactive-resume/ui/components/label";
 import { LocaleCombobox } from "@/features/locale/combobox";
@@ -8,12 +7,7 @@ import { ThemeCombobox } from "@/features/theme/combobox";
 
 export function PreferencesSettingsPage() {
 	return (
-		<m.div
-			initial={{ y: -20 }}
-			animate={{ opacity: 1, y: 0 }}
-			transition={{ duration: 0.25, ease: "easeOut" }}
-			className="grid max-w-xl gap-6 will-change-[transform,opacity]"
-		>
+		<div className="grid max-w-xl gap-6">
 			<div className="grid gap-1.5">
 				<Label className="mb-0.5">
 					<Trans>Theme</Trans>
@@ -39,6 +33,6 @@ export function PreferencesSettingsPage() {
 					}
 				/>
 			</div>
-		</m.div>
+		</div>
 	);
 }

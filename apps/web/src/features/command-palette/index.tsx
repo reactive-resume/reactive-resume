@@ -98,6 +98,7 @@ export function CommandPalette() {
 			</DialogHeader>
 
 			<DialogContent
+				instant
 				className="overflow-hidden p-0"
 				aria-label={
 					isFirstPage

@@ -2,7 +2,6 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { KeyIcon, PlusIcon, TrashIcon } from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { m } from "motion/react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Separator } from "@reactive-resume/ui/components/separator";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -112,12 +111,7 @@ export function PasskeysSection() {
 	};
 
 	return (
-		<m.div
-			initial={{ y: -20 }}
-			animate={{ opacity: 1, y: 0 }}
-			transition={{ duration: 0.2, delay: 0.3, ease: "easeOut" }}
-			className="will-change-[transform,opacity]"
-		>
+		<div>
 			<Separator />
 
 			<div className="mt-4 grid gap-3">
@@ -166,6 +160,6 @@ export function PasskeysSection() {
 					</div>
 				)}
 			</div>
-		</m.div>
+		</div>
 	);
 }

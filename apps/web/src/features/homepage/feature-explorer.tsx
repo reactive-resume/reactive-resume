@@ -19,11 +19,11 @@ import { cn } from "@reactive-resume/utils/style";
 import { textLink } from "./classes";
 
 const demoClass =
-	"min-h-[492px] animate-[home-feature-enter_220ms_cubic-bezier(0.23,1,0.32,1)_both] px-[30px] py-6 group-data-[instant=true]/explorer:animate-none max-[1100px]:p-[23px] max-[900px]:p-[27px] max-[540px]:px-4 max-[540px]:py-5";
+	"min-h-[492px] animate-[home-feature-enter_220ms_var(--ease-out-strong)_both] px-[30px] py-6 group-data-[instant=true]/explorer:animate-none max-[1100px]:p-[23px] max-[900px]:p-[27px] max-[540px]:px-4 max-[540px]:py-5";
 const demoTopClass = "flex items-center justify-between gap-5 text-[12px] text-(--home-muted)";
 const demoCaptionClass = "mt-[25px] text-[12px] leading-[1.7] text-(--home-muted) max-[540px]:text-[11px]";
 const pressTransition =
-	"[transition:transform_140ms_cubic-bezier(0.23,1,0.32,1),background-color_180ms_ease,color_180ms_ease] active:transform-[scale(0.97)]";
+	"[transition:transform_140ms_var(--ease-out-strong),background-color_180ms_ease,color_180ms_ease] active:transform-[scale(0.97)]";
 const jobCardClass =
 	"min-h-[191px] rounded-[4px] border px-3 py-[14px] max-[540px]:min-h-[183px] max-[540px]:px-2 max-[540px]:py-[13px]";
 const toolBoxClass =
@@ -282,7 +282,7 @@ export function FeatureExplorer() {
 									/>
 								))}
 								<div
-									className={`${jobCardClass} transform-[translateX(calc(var(--stage)_*_(100%_+_var(--home-board-gap))))_rotate(calc(var(--stage)_*_3deg_-_2deg))] absolute top-0 left-0 w-[calc((100%_-_2_*_var(--home-board-gap))_/_3)] border-[#4b4b51] bg-[#2a2a2e] text-(--home-ink) shadow-[0_5px_12px_#0002] [transition:transform_460ms_cubic-bezier(0.23,1,0.32,1)] group-data-[instant=true]/explorer:transition-none`}
+									className={`${jobCardClass} transform-[translateX(calc(var(--stage)_*_(100%_+_var(--home-board-gap))))_rotate(calc(var(--stage)_*_3deg_-_2deg))] absolute top-0 left-0 w-[calc((100%_-_2_*_var(--home-board-gap))_/_3)] border-[#4b4b51] bg-[#2a2a2e] text-(--home-ink) shadow-[0_5px_12px_#0002] [transition:transform_460ms_var(--ease-out-strong)] group-data-[instant=true]/explorer:transition-none`}
 								>
 									<div className="mb-4 grid size-[30px] place-items-center rounded-[4px] bg-[#d8c4ac] font-[Georgia,serif] font-semibold text-[#34302a] text-[19px] leading-none">
 										n.

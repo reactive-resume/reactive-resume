@@ -1,0 +1,87 @@
+---
+title: "Large RPC requests"
+description: "Reference for the staged-body protocol that lets RPC requests larger than the hosting request-body limit reach Reactive Resume on Vercel."
+---
+
+Vercel limits Function request bodies to 4.5 MB. On Vercel installations, RPC requests larger than that are uploaded to private Blob staging first. The server then restores the original request and runs it with the normal authorization, validation, and quota checks.
+
+The web app uses this protocol automatically for request bodies of 3 MiB or more. Docker installations do not need it.
+
+## Scope
+
+| Item | Value |
+| --- | --- |
+| Applies to | `POST /api/rpc/...` only |
+| Does not apply to | REST (`/api/openapi`) and MCP. Their bodies stay subject to the 4.5 MB limit. |
+| Maximum staged size | 160 MiB of serialized request bytes, including base64 and RPC framing |
+| Reference lifetime | Upload URL: 5 minutes. Staging reference: 10 minutes. |
+| Use count | One. A reference is consumed when a finalization request passes the user and path checks, whether the RPC call then succeeds or fails. |
+| Rate limit | 30 staging requests per user per minute |
+
+## Protocol
+
+### 1. Prepare
+
+```http
+POST /api/storage/stage
+Content-Type: application/json
+x-api-key: YOUR_API_KEY
+
+{ "path": "/api/rpc/storage/uploadFile", "contentType": "multipart/form-data; boundary=...", "size": 10485861 }
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `path` | string | Pathname and query string of the original RPC request. Must start with `/api/rpc`. |
+| `contentType` | string | `Content-Type` header of the original request, including any multipart boundary. |
+| `size` | integer | Exact byte length of the serialized original body. |
+
+Authenticate with a session cookie, an `x-api-key` header, or an OAuth bearer token. Browsers must send an `Origin` header that matches the application origin.
+
+Response `200`:
+
+```json
+{ "id": "3f2b9c1e-6a0d-4a57-9d0a-3c1f7b8e2d44", "url": "https://..." }
+```
+
+The endpoint returns `404` when the installation does not support staging, for example on Docker. Send the original request unchanged in that case.
+
+### 2. Upload
+
+```http
+PUT <url from step 1>
+Content-Type: application/octet-stream
+
+<exact serialized body bytes>
+```
+
+Do not send application credentials to this URL. The body must be exactly `size` bytes.
+
+### 3. Finalize
+
+Send the original request with an empty body and the staging reference header:
+
+```http
+POST /api/rpc/storage/uploadFile
+x-api-key: YOUR_API_KEY
+x-resume-staged-body: 3f2b9c1e-6a0d-4a57-9d0a-3c1f7b8e2d44
+```
+
+Use the same `path` and the same user as in step 1. The server replaces the body with the staged bytes, sets `Content-Type` to the stored `contentType`, and returns the normal RPC response.
+
+## Errors
+
+| Status | Step | Cause |
+| --- | --- | --- |
+| `400` | Prepare | Invalid JSON, `path` outside `/api/rpc`, or `size` above the maximum. |
+| `400` | Finalize | Malformed reference, non-`POST` request, or staged object missing. |
+| `401` | Prepare, finalize | Not authenticated, or `Origin` does not match. |
+| `403` | Finalize | Reference belongs to another user or another path. |
+| `404` | Prepare | Staging not available on this installation. |
+| `409` | Finalize | Reference used by a parallel request. |
+| `410` | Finalize | Reference expired or already used. |
+| `413` | Finalize | Uploaded byte count differs from `size`. |
+| `429` | Prepare | Rate limit exceeded. |
+| `503` | Prepare | Redis unavailable. |
+
+A reference cannot be retried. If a finalization response is lost, check the result of the mutation before you stage and send it again.

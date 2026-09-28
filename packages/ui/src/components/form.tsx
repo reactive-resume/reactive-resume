@@ -181,7 +181,7 @@ function FormMessage({ className, errors, ...props }: FormMessageProps) {
 			data-error={hasError}
 			data-slot="form-message"
 			className={cn(
-				"fade-in-0 slide-in-from-top-1 line-clamp-1 animate-in text-xs duration-150",
+				"line-clamp-1 starting:-translate-y-1 text-xs starting:opacity-0 transition-[opacity,translate] duration-150 ease-out-strong",
 				hasError ? "text-destructive" : "text-muted-foreground",
 				className,
 			)}

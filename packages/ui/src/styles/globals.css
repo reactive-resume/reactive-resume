@@ -176,4 +176,12 @@
 		/* biome-ignore lint/complexity/noImportantStyles: required */
 		scroll-behavior: auto !important;
 	}
+
+	/* Spinners are status, not decoration: freezing them makes a loading app look hung. */
+	.animate-spin {
+		/* biome-ignore lint/complexity/noImportantStyles: required */
+		animation-duration: 1.5s !important;
+		/* biome-ignore lint/complexity/noImportantStyles: required */
+		animation-iteration-count: infinite !important;
+	}
 }

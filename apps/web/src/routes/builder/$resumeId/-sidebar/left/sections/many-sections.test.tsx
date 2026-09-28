@@ -125,13 +125,14 @@ vi.mock("../shared/section-item", () => ({
 	),
 }));
 
-const { AwardsSectionBuilder } = await import("./awards");
-const { CertificationsSectionBuilder } = await import("./certifications");
-const { InterestsSectionBuilder } = await import("./interests");
-const { LanguagesSectionBuilder } = await import("./languages");
-const { PublicationsSectionBuilder } = await import("./publications");
-const { ReferencesSectionBuilder } = await import("./references");
-const { VolunteerSectionBuilder } = await import("./volunteer");
+const { ItemsSection } = await import("../shared/items-section");
+const AwardsSectionBuilder = () => <ItemsSection type="awards" />;
+const CertificationsSectionBuilder = () => <ItemsSection type="certifications" />;
+const InterestsSectionBuilder = () => <ItemsSection type="interests" />;
+const LanguagesSectionBuilder = () => <ItemsSection type="languages" />;
+const PublicationsSectionBuilder = () => <ItemsSection type="publications" />;
+const ReferencesSectionBuilder = () => <ItemsSection type="references" />;
+const VolunteerSectionBuilder = () => <ItemsSection type="volunteer" />;
 
 beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });

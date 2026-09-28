@@ -190,7 +190,10 @@ export function ResumeThumbnail({ isLocked, resume }: ResumeThumbnailProps) {
 	return (
 		<div
 			ref={containerRef}
-			className={cn("relative size-full overflow-hidden bg-muted/40 transition-all", isLocked && "blur-xs")}
+			className={cn(
+				"relative size-full overflow-hidden bg-muted/40 transition-[filter] duration-200 ease-out-strong",
+				isLocked && "blur-xs",
+			)}
 		>
 			{thumbnail.status === "ready" ? (
 				<div

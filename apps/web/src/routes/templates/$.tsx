@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
-import { useIsClient } from "usehooks-ts";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { useLocalizedResumeDocument } from "@/features/resume/export/pdf-document";
@@ -20,14 +19,13 @@ export const Route = createFileRoute("/templates/$")({
 });
 
 function TemplatePdfRoute() {
-	const isClient = useIsClient();
 	const params = Route.useParams();
 
 	const templateName = params._splat?.split(".")[0] ?? "azurill";
 	const template = templateSchema.parse(templateName);
 	const resumeDocument = useLocalizedResumeDocument(sampleResumeData, template);
 
-	if (!isClient || !resumeDocument) return null;
+	if (!resumeDocument) return null;
 
 	return (
 		<Suspense fallback={null}>

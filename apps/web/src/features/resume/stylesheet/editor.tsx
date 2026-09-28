@@ -20,7 +20,6 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { BookOpenIcon } from "@phosphor-icons/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useMediaQuery } from "usehooks-ts";
 import { convertLegacyStyleRules } from "@reactive-resume/pdf/semantic-legacy";
 import {
 	buildSemanticTree,
@@ -31,6 +30,7 @@ import {
 import { isFatalStylesheetDiagnostic } from "@reactive-resume/resume/stylesheet";
 import { PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/sheet";
+import { useIsMobile } from "@reactive-resume/ui/hooks/use-mobile";
 import { ColorPicker } from "@/components/input/color-picker";
 import { useIsResumeLocked, useResumeData, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useTheme } from "@/features/theme/provider";
@@ -382,7 +382,7 @@ const createEditorMetadata = (data: ResumeData): SemanticCssEditorMetadata => {
 
 function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps) {
 	const { theme } = useTheme();
-	const isMobile = useMediaQuery("(max-width: 767px)", { initializeWithValue: false });
+	const isMobile = useIsMobile();
 	const [focusOpen, setFocusOpen] = useState(false);
 	const [diagnostics, setDiagnostics] = useState<readonly SemanticCssDiagnostic[]>([]);
 	const [colorTokens, setColorTokens] = useState<readonly SemanticCssColorToken[]>([]);

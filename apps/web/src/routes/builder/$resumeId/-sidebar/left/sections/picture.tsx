@@ -95,7 +95,7 @@ function PicturePreviewControls({
 						alt=""
 						src={normalizedPictureUrl}
 						style={{ objectFit: picture.fit }}
-						className="fade-in relative z-10 size-full animate-in rounded-md transition-opacity group-hover/picture:opacity-20"
+						className="relative z-10 size-full rounded-md transition-opacity group-hover/picture:opacity-20"
 					/>
 				)}
 

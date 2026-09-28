@@ -7,9 +7,9 @@ import { useCallback, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { Button } from "@reactive-resume/ui/components/button";
 import { ResizableGroup, ResizablePanel, ResizableSeparator } from "@reactive-resume/ui/components/resizable";
+import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Tabs, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { cn } from "@reactive-resume/utils/style";
-import { LoadingScreen } from "@/components/layout/loading-screen";
 import { orpc } from "@/libs/orpc/client";
 import { AgentChat } from "./-components/agent-chat";
 import { ResumePane } from "./-components/resume-pane";
@@ -62,9 +62,8 @@ function RouteComponent() {
 		}
 	}, []);
 
-	if (isLoading) return <LoadingScreen />;
-
-	if (error || !data) {
+	// Loading stays local to the chat/resume panes so the thread sidebar remains mounted while switching threads.
+	if (!isLoading && (error || !data)) {
 		return (
 			<div className="grid h-svh place-items-center bg-background p-6 text-center">
 				<div className="space-y-4">
@@ -79,11 +78,17 @@ function RouteComponent() {
 		);
 	}
 
-	const readOnlyReason: "archived" | "missing" | null = data.isReadOnly
+	const readOnlyReason: "archived" | "missing" | null = data?.isReadOnly
 		? data.thread.status === "archived"
 			? "archived"
 			: "missing"
 		: null;
+
+	const loadingPane = (
+		<div className="grid h-full place-items-center">
+			<Spinner className="size-6 text-muted-foreground" />
+		</div>
+	);
 
 	return (
 		<div className="h-svh min-w-0 overflow-hidden bg-background">
@@ -104,18 +109,22 @@ function RouteComponent() {
 						</ResizablePanel>
 						<ResizableSeparator withHandle />
 						<ResizablePanel id="chat" defaultSize="52%" minSize="280px">
-							<AgentChat
-								threadId={threadId}
-								initialMessages={data.messages}
-								isReadOnly={data.isReadOnly}
-								readOnlyReason={readOnlyReason}
-								threadStatus={data.thread.status}
-								reviewPatches={data.thread.reviewPatches}
-								activeRunId={data.thread.activeRunId}
-								actions={data.actions}
-								onToggleThreads={toggleThreadsPanel}
-								onToggleResume={toggleResumePanel}
-							/>
+							{data ? (
+								<AgentChat
+									threadId={threadId}
+									initialMessages={data.messages}
+									isReadOnly={data.isReadOnly}
+									readOnlyReason={readOnlyReason}
+									threadStatus={data.thread.status}
+									reviewPatches={data.thread.reviewPatches}
+									activeRunId={data.thread.activeRunId}
+									actions={data.actions}
+									onToggleThreads={toggleThreadsPanel}
+									onToggleResume={toggleResumePanel}
+								/>
+							) : (
+								loadingPane
+							)}
 						</ResizablePanel>
 						<ResizableSeparator withHandle />
 						<ResizablePanel
@@ -129,7 +138,7 @@ function RouteComponent() {
 							onResize={(size) => setIsResumeCollapsed(size.inPixels < 24)}
 						>
 							<div className={cn("h-full", isResumeCollapsed && "invisible")}>
-								<ResumePane resume={data.resume} />
+								{data && <ResumePane resume={data.resume} />}
 							</div>
 						</ResizablePanel>
 					</ResizableGroup>
@@ -159,19 +168,23 @@ function RouteComponent() {
 							<AgentThreadSidebar activeThreadId={threadId} className="border-e-0" />
 						</div>
 						<div className={cn("h-full min-w-0", mobileTab !== "chat" && "hidden")}>
-							<AgentChat
-								threadId={threadId}
-								initialMessages={data.messages}
-								isReadOnly={data.isReadOnly}
-								readOnlyReason={readOnlyReason}
-								threadStatus={data.thread.status}
-								reviewPatches={data.thread.reviewPatches}
-								activeRunId={data.thread.activeRunId}
-								actions={data.actions}
-							/>
+							{data ? (
+								<AgentChat
+									threadId={threadId}
+									initialMessages={data.messages}
+									isReadOnly={data.isReadOnly}
+									readOnlyReason={readOnlyReason}
+									threadStatus={data.thread.status}
+									reviewPatches={data.thread.reviewPatches}
+									activeRunId={data.thread.activeRunId}
+									actions={data.actions}
+								/>
+							) : (
+								loadingPane
+							)}
 						</div>
 						<div className={cn("h-full min-w-0", mobileTab !== "resume" && "hidden")}>
-							<ResumePane resume={data.resume} />
+							{data && <ResumePane resume={data.resume} />}
 						</div>
 					</div>
 				</div>

@@ -1,5 +1,5 @@
-import { MemoryRatelimiter } from "@orpc/experimental-ratelimit/memory";
 import { ORPCError } from "@orpc/server";
+import { createRateLimiter } from "../../redis";
 
 type PublicRenderRateLimitInput = {
 	/** Sanitized transport identity supplied by the server adapter, never by request headers. */
@@ -14,7 +14,7 @@ export type PublicRenderRateLimiter = {
 export function createPublicRenderRateLimiter(
 	options: { capacity?: number; refillWindowMs?: number } = {},
 ): PublicRenderRateLimiter {
-	const limiter = new MemoryRatelimiter({
+	const limiter = createRateLimiter("public-render", {
 		maxRequests: options.capacity ?? 6,
 		window: options.refillWindowMs ?? 60_000,
 	});

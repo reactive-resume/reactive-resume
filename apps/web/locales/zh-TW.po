@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: reactive-resume\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-06 19:36\n"
+"PO-Revision-Date: 2026-09-28 05:40\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -43,7 +43,7 @@ msgid "{0, plural, one {# item} other {# items}}"
 msgstr "{0, plural, one {# 项目} other {# 项目}}"
 
 #. placeholder {0}: item.roles.length
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "{0, plural, one {# role} other {# roles}}"
 msgstr "{0, plural, one {#角色} other {#角色}}"
 
@@ -376,11 +376,11 @@ msgstr "新增關鍵字..."
 msgid "Add a label to the URL"
 msgstr "為此 URL 新增標籤"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/awards.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new award"
 msgstr "新增得獎紀錄"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/certifications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new certification"
 msgstr "新增證照"
 
@@ -388,15 +388,15 @@ msgstr "新增證照"
 msgid "Add a new custom section"
 msgstr "新增自訂段落"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/education.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new education"
 msgstr "新增學歷"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new experience"
 msgstr "新增經歷"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/interests.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new interest"
 msgstr "新增興趣項目"
 
@@ -405,31 +405,31 @@ msgstr "新增興趣項目"
 msgid "Add a new item"
 msgstr "新增項目"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/languages.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new language"
 msgstr "新增語言"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/profiles.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new profile"
 msgstr "新增個人檔案"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/projects.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new project"
 msgstr "新增專案"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/publications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new publication"
 msgstr "新增出版品"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/references.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new reference"
 msgstr "新增推薦人"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/skills.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new skill"
 msgstr "新增技能"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/volunteer.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new volunteer experience"
 msgstr "新增志工經歷"
 
@@ -923,7 +923,7 @@ msgstr "亞塞拜然語"
 
 #: src/features/homepage/export-playground.tsx
 msgid "BA"
-msgstr "BA"
+msgstr "文學士"
 
 #. Action returning a signed-in user to the page where they manage linked providers
 #: src/features/auth/pages/error.tsx
@@ -1235,7 +1235,7 @@ msgstr "圓形"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Clay"
-msgstr "Clay"
+msgstr "克萊"
 
 #. Clear the highlight color
 #. Clear the text color
@@ -3762,7 +3762,7 @@ msgstr "出現了不只一個電子郵件地址。"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Moss"
-msgstr "Moss"
+msgstr "苔蘚"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -4475,7 +4475,7 @@ msgstr "請上傳 PDF 檔案。"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Plum"
-msgstr "Plum"
+msgstr "李子"
 
 #: src/libs/locale.ts
 msgid "Polish"
@@ -5436,7 +5436,7 @@ msgstr "塞爾維亞語"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Serif"
-msgstr "Serif"
+msgstr "襯線體"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Set a password if you want only people who know it to open the public URL."
@@ -7553,3 +7553,4 @@ msgstr "縮小"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "祖魯語"
+

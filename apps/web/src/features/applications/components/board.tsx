@@ -88,7 +88,10 @@ export function ApplicationBoard({ applications, onOpen, onEdit }: Props) {
 				))}
 			</div>
 
-			<DragOverlay>{activeApp ? <ApplicationCard application={activeApp} dragging /> : null}</DragOverlay>
+			{/* No drop animation: the optimistic move lands after an await, so the default would fly the card back. */}
+			<DragOverlay dropAnimation={null}>
+				{activeApp ? <ApplicationCard application={activeApp} dragging /> : null}
+			</DragOverlay>
 		</DndContext>
 	);
 }

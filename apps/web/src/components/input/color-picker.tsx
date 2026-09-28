@@ -65,7 +65,7 @@ export function ColorPicker({
 			{trigger ?? (
 				<PopoverTrigger>
 					<div
-						className="size-6 shrink-0 cursor-pointer rounded-full border border-foreground/60 transition-all hover:scale-105 focus-visible:outline-hidden"
+						className="size-6 shrink-0 cursor-pointer rounded-full border border-foreground/60 transition-transform duration-150 ease-out-strong focus-visible:outline-hidden active:scale-[0.97]"
 						style={{ backgroundColor: currentValue }}
 					/>
 				</PopoverTrigger>
@@ -95,7 +95,7 @@ export function ColorPicker({
 								aria-pressed={currentValue === color}
 								onClick={() => setCurrentValue(color)}
 								className={cn(
-									"size-5 shrink-0 cursor-pointer rounded-full transition-all hover:scale-105 focus-visible:outline-hidden",
+									"size-5 shrink-0 cursor-pointer rounded-full transition-transform duration-150 ease-out-strong focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.97]",
 									currentValue === color && "border border-foreground/60",
 								)}
 							/>

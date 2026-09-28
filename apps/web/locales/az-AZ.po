@@ -8,7 +8,7 @@ msgstr ""
 "Language: az\n"
 "Project-Id-Version: reactive-resume\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-06 19:36\n"
+"PO-Revision-Date: 2026-09-28 05:40\n"
 "Last-Translator: \n"
 "Language-Team: Azerbaijani\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -43,7 +43,7 @@ msgid "{0, plural, one {# item} other {# items}}"
 msgstr "{0, plural, one {# element} other {# element}}"
 
 #. placeholder {0}: item.roles.length
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "{0, plural, one {# role} other {# roles}}"
 msgstr "{0, plural, one {# rol} other {# rol}}"
 
@@ -376,11 +376,11 @@ msgstr "Açar söz əlavə edin..."
 msgid "Add a label to the URL"
 msgstr "URL‑ə etiket əlavə et"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/awards.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new award"
 msgstr "Yeni mükafat əlavə et"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/certifications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new certification"
 msgstr "Yeni sertifikat əlavə et"
 
@@ -388,15 +388,15 @@ msgstr "Yeni sertifikat əlavə et"
 msgid "Add a new custom section"
 msgstr "Yeni xüsusi bölmə əlavə et"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/education.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new education"
 msgstr "Yeni təhsil məlumatı əlavə et"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new experience"
 msgstr "Yeni iş təcrübəsi əlavə et"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/interests.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new interest"
 msgstr "Yeni maraq əlavə et"
 
@@ -405,31 +405,31 @@ msgstr "Yeni maraq əlavə et"
 msgid "Add a new item"
 msgstr "Yeni element əlavə et"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/languages.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new language"
 msgstr "Yeni dil əlavə et"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/profiles.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new profile"
 msgstr "Yeni profil əlavə et"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/projects.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new project"
 msgstr "Yeni layihə əlavə et"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/publications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new publication"
 msgstr "Yeni nəşr əlavə et"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/references.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new reference"
 msgstr "Yeni referans əlavə et"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/skills.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new skill"
 msgstr "Yeni bacarıq əlavə et"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/volunteer.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new volunteer experience"
 msgstr "Yeni könüllü təcrübəsi əlavə et"
 
@@ -3622,7 +3622,7 @@ msgstr "CV-lər yüklənir…"
 
 #: src/features/homepage/page.tsx
 msgid "Loading the playground…"
-msgstr "Sınaq meydançası yüklənir…"
+msgstr "Oyun meydançasını yükləyir…"
 
 #: src/features/command-palette/pages/resumes.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
@@ -3631,7 +3631,7 @@ msgstr "Mövzular yüklənir…"
 
 #: src/features/homepage/community-stats.tsx
 msgid "Loading total"
-msgstr "Cəmi yüklənir"
+msgstr "Ümumi yüklənir"
 
 #: src/routes/builder/$resumeId/-components/version-history.tsx
 msgid "Loading…"
@@ -3684,7 +3684,7 @@ msgstr "Əsas naviqasiya"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Make it your own"
-msgstr "Özünüzünkü edin"
+msgstr "Onu özünüzünkü edin"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Make the experience section about results and cut the vague responsibilities."
@@ -3700,7 +3700,7 @@ msgstr "Onları görünəcək dərəcədə böyük, qalın və ya böyük hərfl
 
 #: src/features/homepage/page.tsx
 msgid "Make yourself <0/>look good<1/><2>on paper.</2>"
-msgstr "Kağız üzərində <0/>yaxşı<1/><2>görünün.</2>"
+msgstr "Özünü kağız üzərində yaxşı göstər.</2>"
 
 #: src/libs/locale.ts
 msgid "Malay"
@@ -3762,7 +3762,7 @@ msgstr "Birdən çox e-poçt ünvanı görünür."
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Moss"
-msgstr "Mamır"
+msgstr "Yosun"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -3805,11 +3805,11 @@ msgstr "Keçir"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Move to interview"
-msgstr "Müsahibəyə keçirin"
+msgstr "Müsahibəyə keçin"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Move to offer"
-msgstr "Təklifə keçirin"
+msgstr "Təklifə keçin"
 
 #: src/features/ats-checker/messages.ts
 msgid "Move your email and phone number to the top of page one."
@@ -4008,7 +4008,7 @@ msgstr "Əvvəlki məlumat yoxdur"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "No readable text found. This PDF may contain scanned images. Export a PDF with selectable text and try again."
-msgstr "Oxunaqlı mətn tapılmadı. Bu PDF skan edilmiş şəkillər ehtiva edə bilər. Seçilə bilən mətnli PDF ixrac edin və yenidən cəhd edin."
+msgstr "Oxuna bilən mətn tapılmadı. Bu PDF skan edilmiş şəkillər ehtiva edə bilər. Seçilə bilən mətnli PDF ixrac edin və yenidən cəhd edin."
 
 #: src/routes/_home/ats-checker.tsx
 msgid "No repeating the claim that most resumes are thrown out automatically."
@@ -4177,7 +4177,7 @@ msgstr "Süni intellekt köməkçisini açın"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Open design library"
-msgstr "Dizayn kitabxanasını açın"
+msgstr "Açıq dizayn kitabxanası"
 
 #. Button label to open the user's default email app
 #: src/features/auth/pages/forgot-password.tsx
@@ -4198,7 +4198,7 @@ msgstr "İnteqrasiyalar parametrlərini açın"
 
 #: src/features/homepage/template-shelf.tsx
 msgid "Open template PDF"
-msgstr "Şablon PDF-ni açın"
+msgstr "Şablon PDF-i açın"
 
 #: src/features/ats-checker/messages.ts
 msgid "Open the exported file and confirm you can select and copy every part of it."
@@ -4214,7 +4214,7 @@ msgstr "Fayl açılır…"
 
 #: src/features/homepage/template-shelf.tsx
 msgid "Opens in a new tab"
-msgstr "Yeni nişanda açılır"
+msgstr "Yeni nişanədə açılır"
 
 #: src/features/homepage/site-footer.tsx
 #: src/features/resume/stylesheet/editor.tsx
@@ -4334,7 +4334,7 @@ msgstr "Parol qorunması aktiv edilib."
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Password required"
-msgstr "Parol tələb olunur"
+msgstr "Şifrə tələb olunur"
 
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Passwords do not match."
@@ -4431,7 +4431,7 @@ msgstr "CV-niz və ya müraciət məktubunuz üçün format seçin."
 
 #: src/features/homepage/languages-showcase.tsx
 msgid "Pick a language. See it on the page."
-msgstr "Dil seçin. Onu səhifədə görün."
+msgstr "Bir dil seçin. Onu səhifədə görün."
 
 #: src/components/input/icon-picker.tsx
 msgid "Pick an icon"
@@ -4463,7 +4463,7 @@ msgstr "Düz mətn, süni intellekt alətləri və sürətli redaktələr üçü
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Play data flow animation"
-msgstr "Məlumat axını animasiyasını işə salın"
+msgstr "Oyun məlumat axını animasiyasını oynat"
 
 #: src/components/ui/donation-toast.tsx
 msgid "Please support the project"
@@ -4475,7 +4475,7 @@ msgstr "Zəhmət olmasa, PDF faylı yükləyin."
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Plum"
-msgstr "Gavalı"
+msgstr "Ərik"
 
 #: src/libs/locale.ts
 msgid "Polish"
@@ -4520,7 +4520,7 @@ msgstr "Karyeramın hekayəsini dəyişmədən aydınlığı artıran ehtiyatlı
 
 #: src/features/homepage/export-playground.tsx
 msgid "Preparing sample…"
-msgstr "Nümunə hazırlanır…"
+msgstr "Nümunə hazırlamaq…"
 
 #: src/features/resume/export/use-resume-export.ts
 msgid "Preparing your resume for printing..."
@@ -4577,7 +4577,7 @@ msgstr "Göndərməzdən əvvəl formu düz (flat) PDF-ə çap edin və ya ixrac
 
 #: src/features/homepage/site-footer.tsx
 msgid "Privacy Policy"
-msgstr "Məxfilik siyasəti"
+msgstr "Məxfilik Siyasəti"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Private"
@@ -4631,7 +4631,7 @@ msgstr "CV-nizi parolla qoruyun"
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Prototyping"
-msgstr "Prototipləşdirmə"
+msgstr "Prototip hazırlama"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Provider"
@@ -4706,7 +4706,7 @@ msgstr "Reaktiv Rezume (JSON)"
 
 #: src/features/homepage/page.tsx
 msgid "Reactive Resume is free and open source. Amruth and a community of contributors keep it running. If you’d like to support the work, donations help cover hosting and development."
-msgstr "Reactive Resume pulsuz və açıq mənbəlidir. Amruth və töhfəçilər icması onu işlək saxlayır. İşi dəstəkləmək istəsəniz, ianələr yerləşdirmə və inkişaf xərclərini ödəməyə kömək edir."
+msgstr "Reactive Resume pulsuz və açıq mənbədir. Amruth və töhfəçilər icması onu işlək saxlayır. Əgər bu işi dəstəkləmək istəyirsinizsə, ianələr hosting və inkişaf xərclərini qarşılamağa kömək edir."
 
 #: src/components/ui/donation-toast.tsx
 msgid "Reactive Resume is free and open source. If it has helped you, please consider donating."
@@ -4724,7 +4724,7 @@ msgstr "Reaktiv Rezume v4 (JSON)"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Read again"
-msgstr "Yenidən oxuyun"
+msgstr "Yenidən oxu"
 
 #: src/routes/agent/-components/tool-part-card.tsx
 msgid "Read an attachment"
@@ -4740,11 +4740,11 @@ msgstr "CV-ni oxudu"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Read the sample to see its text without the layout. Or try a PDF of your own."
-msgstr "Tərtibatsız mətnini görmək üçün nümunəni oxuyun. Və ya öz PDF-nizi sınayın."
+msgstr "Mətnini tərtibat olmadan görmək üçün nümunəni oxuyun. Ya da öz PDF faylınızı sınayın."
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Read this resume"
-msgstr "Bu CV-ni oxuyun"
+msgstr "Bu tərcümeyi-halı oxuyun"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
@@ -4760,7 +4760,7 @@ msgstr "Oxunaqlılıq"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Reading locally"
-msgstr "Yerli oxunur"
+msgstr "Yerli oxu"
 
 #. placeholder {0}: progress.page
 #. placeholder {1}: progress.pageCount
@@ -4770,7 +4770,7 @@ msgstr "{0} səhifədən {1}-i oxunur…"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Reading PDF"
-msgstr "PDF oxunur"
+msgstr "PDF-i oxu"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Reading the posting…"
@@ -4778,7 +4778,7 @@ msgstr "Elan oxunur…"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Reading this PDF in your browser. Your file is not uploaded."
-msgstr "Bu PDF brauzerinizdə oxunur. Faylınız yüklənmir."
+msgstr "Bu PDF-i brauzerinizdə oxuyursunuz. Faylınız yüklənməyib."
 
 #: src/features/resume/stylesheet/status.tsx
 msgid "Ready to activate"
@@ -4794,7 +4794,7 @@ msgstr "Xəbərdarlıqlarla aktivləşdirməyə hazırdır"
 
 #: src/features/homepage/page.tsx
 msgid "Ready to put your name on it?"
-msgstr "Adınızı ona yazmağa hazırsınız?"
+msgstr "Adını bunun üzərinə yazmağa hazırsan?"
 
 #: src/dialogs/resume/sections/cover-letter.tsx
 #: src/features/cover-letters/editor.tsx
@@ -4833,7 +4833,7 @@ msgstr "Yeni cihazı qeydiyyatdan keçirin"
 
 #: src/features/homepage/site-footer.tsx
 msgid "Released under the <0>MIT License</0>."
-msgstr "<0>MIT lisenziyası</0> altında yayımlanıb."
+msgstr "MIT lisenziyası altında yayımlanmışdır</0>"
 
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Reload latest version"
@@ -4923,7 +4923,7 @@ msgstr "Əlavə edilmiş örtük məktubu dəyişdirilsin?"
 
 #: src/features/homepage/page.tsx
 msgid "Report a bug"
-msgstr "Xəta barədə məlumat verin"
+msgstr "Səhvi bildirin"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Report a Bug"
@@ -4973,7 +4973,7 @@ msgstr "Resurslar"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Responsible for working on the design system and helping other teams with their designs."
-msgstr "Dizayn sistemi üzərində işləməyə və digər komandalara dizaynlarında kömək etməyə məsul."
+msgstr "Dizayn sistemi üzərində işləmək və digər komandaların dizaynlarında onlara kömək etməkdən məsuldur."
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Restore"
@@ -4996,7 +4996,7 @@ msgstr "CV"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Resume attached"
-msgstr "CV əlavə olunub"
+msgstr "Təcrübəmə xülasəsi əlavə edilib"
 
 #: src/features/resume/preview/resume-accessible-text.tsx
 msgid "Resume content"
@@ -5021,7 +5021,7 @@ msgstr "CV əlaqələndirildi"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Resume not found"
-msgstr "CV tapılmadı"
+msgstr "Cv tapılmadı"
 
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Resume options"
@@ -5033,7 +5033,7 @@ msgstr "CV yamağı"
 
 #: src/features/homepage/template-shelf.tsx
 msgid "Resume templates"
-msgstr "CV şablonları"
+msgstr "Təcrübə nümunələri"
 
 #: src/dialogs/resume/template/gallery.tsx
 msgid "Resume templates for different professions and tastes. Pick the one that suits you."
@@ -5145,19 +5145,19 @@ msgstr "Əmək haqqı diapazonu"
 
 #: src/features/homepage/page.tsx
 msgid "Same story.<0/>A different look."
-msgstr "Eyni hekayə.<0/>Başqa görünüş."
+msgstr "Eyni hekayə.<0/>Başqa bir baxış."
 
 #: src/features/homepage/export-playground.tsx
 msgid "Sample download format"
-msgstr "Nümunə endirmə formatı"
+msgstr "Nümunə yükləmə formatı"
 
 #: src/features/homepage/export-playground.tsx
 msgid "Sample resume"
-msgstr "Nümunə CV"
+msgstr "Nümunə tərcümeyi-hal"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Sample resume for {name}"
-msgstr "{name} üçün nümunə CV"
+msgstr "Üçün nümunəvi CV {name}"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Sans"
@@ -5238,7 +5238,7 @@ msgstr "… saxlanılır"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Say what you actually did."
-msgstr "Əslində nə etdiyinizi deyin."
+msgstr "Əslində nə etdiyini de."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Scan the QR code below with your preferred authenticator app. You can also copy the secret below and paste it into your app."
@@ -5341,7 +5341,7 @@ msgstr "Bu CV-nin paylaşımla necə uyğunlaşdığına baxın"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "See how to connect"
-msgstr "Necə qoşulacağınızı görün"
+msgstr "Necə qoşulacağını görün"
 
 #: src/features/homepage/page.tsx
 msgid "See what<0/>software reads."
@@ -7553,3 +7553,4 @@ msgstr "Uzaqlaşdır"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
+

@@ -8,6 +8,7 @@ import { Spotlight } from "@/components/animation/spotlight";
 import { AiReviewCard } from "@/features/ats-checker/ai-review/ai-review-card";
 import { LockedAiCard } from "@/features/ats-checker/ai-review/locked-card";
 import { ParsePreview } from "@/features/ats-checker/parse-preview";
+import { EASE_OUT_STRONG } from "@/libs/motion";
 import { Footer } from "./-sections/footer";
 
 const PAGE_TITLE = "ATS Checker - Reactive Resume";
@@ -91,10 +92,10 @@ function Header() {
 
 			<div className="relative grid items-center gap-8 p-4 md:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,32rem)] lg:gap-12 xl:py-12">
 				<m.div
-					className="space-y-5 will-change-[transform,opacity]"
+					className="space-y-5"
 					initial={{ opacity: 0, y: 16 }}
 					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.5, ease: "easeOut" }}
+					transition={{ duration: 0.5, ease: EASE_OUT_STRONG }}
 				>
 					<h1 className="font-semibold text-4xl tracking-tight md:text-5xl">
 						<Trans>ATS Checker</Trans>
@@ -109,10 +110,9 @@ function Header() {
 				</m.div>
 
 				<m.div
-					className="will-change-[transform,opacity]"
 					initial={{ opacity: 0, y: 24 }}
 					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.55, delay: 0.12, ease: "easeOut" }}
+					transition={{ duration: 0.55, delay: 0.12, ease: EASE_OUT_STRONG }}
 				>
 					<ParsePreview />
 				</m.div>

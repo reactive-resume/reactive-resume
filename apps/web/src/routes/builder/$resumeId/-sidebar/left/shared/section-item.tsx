@@ -1,10 +1,12 @@
 import type {
 	CustomSectionItem,
 	CustomSectionType,
+	ResumeData,
 	SectionItem as SectionItemType,
 	SectionType,
 } from "@reactive-resume/schema/resume/data";
 import type { ButtonProps } from "@reactive-resume/ui/components/button";
+import type { Ref } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import {
@@ -39,6 +41,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { useDialogStore } from "@/dialogs/store";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useConfirm } from "@/hooks/use-confirm";
+import { EASE_OUT_STRONG } from "@/libs/motion";
 import { atsFindingItemElementId } from "@/libs/resume/ats";
 import { getCompatibleMoveTargets, getSourceSectionTitle, moveItem } from "@/libs/resume/move-item";
 
@@ -169,6 +172,8 @@ type Props<T extends CustomSectionItem | SectionItemType> = {
 	title: string;
 	subtitle?: string;
 	customSectionId?: string;
+	// Injected by `AnimatePresence mode="popLayout"` to pop an exiting row out of the flow.
+	ref?: Ref<HTMLLIElement>;
 };
 
 export function SectionItem<T extends CustomSectionItem | SectionItemType>({
@@ -177,28 +182,27 @@ export function SectionItem<T extends CustomSectionItem | SectionItemType>({
 	title,
 	subtitle,
 	customSectionId,
+	ref,
 }: Props<T>) {
 	const confirm = useConfirm();
 	const controls = useDragControls();
 	const { openDialog } = useDialogStore();
 	const updateResumeData = useUpdateResumeData();
 
+	// Returns the items array (and index) this row lives in, from either a custom or a built-in section.
+	const findItem = (draft: ResumeData) => {
+		const items = customSectionId
+			? draft.customSections.find((section) => section.id === customSectionId)?.items
+			: // Type assertion: when customSectionId is not provided, type is always a built-in SectionType
+				draft.sections[type as SectionType].items;
+		const index = items?.findIndex((_item) => _item.id === item.id) ?? -1;
+		return index === -1 || !items ? null : { items, index };
+	};
+
 	const onToggleVisibility = () => {
 		updateResumeData((draft) => {
-			if (customSectionId) {
-				const section = draft.customSections.find((s) => s.id === customSectionId);
-				if (!section) return;
-				const index = section.items.findIndex((_item) => _item.id === item.id);
-				if (index === -1) return;
-				section.items[index].hidden = !section.items[index].hidden;
-			} else {
-				// Type assertion: when customSectionId is not provided, type is always a built-in SectionType
-				const section = draft.sections[type as SectionType];
-				if (!("items" in section)) return;
-				const index = section.items.findIndex((_item) => _item.id === item.id);
-				if (index === -1) return;
-				section.items[index].hidden = !section.items[index].hidden;
-			}
+			const found = findItem(draft);
+			if (found) found.items[found.index].hidden = !found.items[found.index].hidden;
 		});
 	};
 
@@ -227,38 +231,27 @@ export function SectionItem<T extends CustomSectionItem | SectionItemType>({
 		if (!confirmed) return;
 
 		updateResumeData((draft) => {
-			if (customSectionId) {
-				const section = draft.customSections.find((s) => s.id === customSectionId);
-				if (!section) return;
-				const index = section.items.findIndex((_item) => _item.id === item.id);
-				if (index === -1) return;
-				section.items.splice(index, 1);
-			} else {
-				// Type assertion: when customSectionId is not provided, type is always a built-in SectionType
-				const section = draft.sections[type as SectionType];
-				if (!("items" in section)) return;
-				const index = section.items.findIndex((_item) => _item.id === item.id);
-				if (index === -1) return;
-				section.items.splice(index, 1);
-			}
+			const found = findItem(draft);
+			if (found) found.items.splice(found.index, 1);
 		});
 	};
 
 	return (
 		<Reorder.Item
-			key={item.id}
+			ref={ref}
 			id={atsFindingItemElementId(item.id)}
 			value={item}
 			dragListener={false}
 			dragControls={controls}
-			initial={{ opacity: 0, y: -8 }}
-			animate={{ opacity: 1, y: 0 }}
-			exit={{ opacity: 0, y: -8 }}
-			transition={{ duration: 0.16, ease: "easeOut" }}
-			className="group relative flex h-18 select-none border-b will-change-[transform,opacity]"
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			exit={{ opacity: 0 }}
+			transition={{ duration: 0.12, ease: EASE_OUT_STRONG }}
+			whileDrag={{ boxShadow: "0 4px 12px rgb(0 0 0 / 0.08)" }}
+			className="group relative flex h-18 select-none border-b bg-background"
 		>
 			<div
-				className="flex cursor-ns-resize touch-none items-center px-1.5 opacity-40 transition-[background-color,opacity] hover:bg-secondary/40 group-hover:opacity-100"
+				className="flex cursor-grab touch-none items-center px-1.5 opacity-40 transition-[background-color,opacity] hover:bg-secondary/40 active:cursor-grabbing group-hover:opacity-100"
 				onPointerDown={(e) => {
 					e.preventDefault();
 					controls.start(e);

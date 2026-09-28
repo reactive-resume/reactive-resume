@@ -184,7 +184,7 @@ export default function ExportPlayground({ name, accent, typeface, template }: E
 				className="perspective-[1000px] grid justify-items-center px-[30px] pt-[44px] pb-4 max-[700px]:pt-[35px]"
 				aria-hidden="true"
 			>
-				<div className="transform-3d transform-[rotate(-7deg)_rotateY(-12deg)] group-data-[format=docx]:transform-[rotate(-3deg)_rotateY(8deg)] group-data-[format=json]:transform-[rotate(7deg)_rotateY(9deg)] group-data-[format=md]:transform-[rotate(4deg)_rotateY(-7deg)] motion-reduce:transform-[rotate(-4deg)] relative aspect-[0.76] w-[min(100%,285px)] transition-[transform_280ms_cubic-bezier(0.23,1,0.32,1)] group-has-focus-visible:transition-none max-[700px]:w-[225px]">
+				<div className="transform-3d transform-[rotate(-7deg)_rotateY(-12deg)] group-data-[format=docx]:transform-[rotate(-3deg)_rotateY(8deg)] group-data-[format=json]:transform-[rotate(7deg)_rotateY(9deg)] group-data-[format=md]:transform-[rotate(4deg)_rotateY(-7deg)] motion-reduce:transform-[rotate(-4deg)] relative aspect-[0.76] w-[min(100%,285px)] [transition:transform_280ms_var(--ease-out-strong)] group-has-focus-visible:transition-none max-[700px]:w-[225px]">
 					<div className="transform-[translate(-26px,21px)_rotate(-10deg)] absolute inset-0 rounded border border-[#535154] bg-[#242427]" />
 					<div className="transform-[translate(-14px,10px)_rotate(-5deg)] absolute inset-0 rounded border border-[#535154] bg-[#383739]" />
 					<div className="absolute inset-0 flex flex-col overflow-hidden rounded bg-(--home-export-color) p-[25px] text-[#29272c] shadow-[1px_1px_0_#ffffff60_inset,0_24px_48px_#00000050] max-[700px]:p-5">
@@ -226,7 +226,7 @@ export default function ExportPlayground({ name, accent, typeface, template }: E
 						<button
 							key={item.id}
 							type="button"
-							className={`group flex min-h-16 w-full items-center gap-[17px] border-(--home-line) border-b py-3 pr-[15px] pl-2 text-left text-(--home-muted) text-[17px] [transition:color_160ms_ease,background-color_160ms_ease,transform_120ms_cubic-bezier(0.23,1,0.32,1)] hover:not-disabled:bg-[#ffffff08] hover:not-disabled:text-(--home-ink) aria-pressed:bg-[#ffffff04] aria-pressed:text-(--home-ink) aria-pressed:hover:not-disabled:bg-[#ffffff08] ${buttonState}`}
+							className={`group flex min-h-16 w-full items-center gap-[17px] border-(--home-line) border-b py-3 pr-[15px] pl-2 text-left text-(--home-muted) text-[17px] [transition:color_160ms_ease,background-color_160ms_ease,transform_120ms_var(--ease-out-strong)] hover:not-disabled:bg-[#ffffff08] hover:not-disabled:text-(--home-ink) aria-pressed:bg-[#ffffff04] aria-pressed:text-(--home-ink) aria-pressed:hover:not-disabled:bg-[#ffffff08] ${buttonState}`}
 							aria-pressed={format === item.id}
 							disabled={busy}
 							onClick={() => setFormat(item.id)}
@@ -253,7 +253,7 @@ export default function ExportPlayground({ name, accent, typeface, template }: E
 				</p>
 				<button
 					type="button"
-					className={`flex min-h-14 w-full items-center justify-between gap-5 rounded border border-transparent bg-(--home-export-color) px-5 py-4 font-[550] text-[#252329] text-[15px] [transition:transform_120ms_cubic-bezier(0.23,1,0.32,1),opacity_160ms_ease] hover:not-disabled:opacity-90 ${buttonState}`}
+					className={`flex min-h-14 w-full items-center justify-between gap-5 rounded border border-transparent bg-(--home-export-color) px-5 py-4 font-[550] text-[#252329] text-[15px] [transition:transform_120ms_var(--ease-out-strong),opacity_160ms_ease] hover:not-disabled:opacity-90 ${buttonState}`}
 					disabled={busy}
 					aria-describedby={descriptionId}
 					onClick={() => void download()}

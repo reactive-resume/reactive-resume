@@ -41,7 +41,7 @@ function DropdownMenuContent({
 				<MenuPrimitive.Popup
 					data-slot="dropdown-menu-content"
 					className={cn(
-						"relative z-50 max-h-(--available-height) w-fit min-w-[calc(var(--anchor-width)+--spacing(7))] origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-lg bg-popover/70 p-1 text-popover-foreground shadow-md outline-none ring-1 ring-foreground/10 transition-[opacity,scale] duration-150 ease-(--ease-out-strong) before:pointer-events-none before:absolute before:inset-0 before:-z-1 before:rounded-[inherit] before:backdrop-blur-2xl before:backdrop-saturate-150 data-ending-style:scale-95 data-starting-style:scale-95 data-closed:overflow-hidden data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-100 **:data-[slot$=-item]:data-highlighted:bg-foreground/10 **:data-[slot$=-separator]:bg-foreground/5 **:data-[variant=destructive]:**:text-accent-foreground! **:data-[variant=destructive]:text-accent-foreground! **:data-[slot$=-trigger]:aria-expanded:bg-foreground/10! **:data-[slot$=-item]:focus:bg-foreground/10 **:data-[slot$=-trigger]:focus:bg-foreground/10 **:data-[variant=destructive]:focus:bg-foreground/10!",
+						"relative z-50 max-h-(--available-height) w-fit min-w-[calc(var(--anchor-width)+--spacing(7))] origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-lg bg-popover/70 p-1 text-popover-foreground shadow-md outline-none ring-1 ring-foreground/10 backdrop-blur-lg backdrop-saturate-150 transition-[opacity,scale] duration-150 ease-out-strong data-ending-style:scale-95 data-starting-style:scale-95 data-closed:overflow-hidden data-ending-style:opacity-0 data-starting-style:opacity-0 data-instant:transition-none data-ending-style:duration-100 **:data-[slot$=-item]:data-highlighted:bg-foreground/10 **:data-[slot$=-separator]:bg-foreground/5 **:data-[variant=destructive]:**:text-accent-foreground! **:data-[variant=destructive]:text-accent-foreground! **:data-[slot$=-trigger]:aria-expanded:bg-foreground/10! **:data-[slot$=-item]:focus:bg-foreground/10 **:data-[slot$=-trigger]:focus:bg-foreground/10 **:data-[variant=destructive]:focus:bg-foreground/10!",
 						className,
 					)}
 					{...props}
@@ -134,10 +134,7 @@ function DropdownMenuSubContent({
 	return (
 		<DropdownMenuContent
 			data-slot="dropdown-menu-sub-content"
-			className={cn(
-				"relative w-auto min-w-[96px] rounded-lg bg-popover/70 p-1 text-popover-foreground shadow-lg ring-1 ring-foreground/10 transition-[opacity,scale] duration-150 ease-(--ease-out-strong) before:pointer-events-none before:absolute before:inset-0 before:-z-1 before:rounded-[inherit] before:backdrop-blur-2xl before:backdrop-saturate-150 data-ending-style:scale-95 data-starting-style:scale-95 data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-100 **:data-[slot$=-item]:data-highlighted:bg-foreground/10 **:data-[slot$=-separator]:bg-foreground/5 **:data-[variant=destructive]:**:text-accent-foreground! **:data-[variant=destructive]:text-accent-foreground! **:data-[slot$=-trigger]:aria-expanded:bg-foreground/10! **:data-[slot$=-item]:focus:bg-foreground/10 **:data-[slot$=-trigger]:focus:bg-foreground/10 **:data-[variant=destructive]:focus:bg-foreground/10!",
-				className,
-			)}
+			className={cn("w-auto min-w-[96px] shadow-lg", className)}
 			align={align}
 			alignOffset={alignOffset}
 			side={side}

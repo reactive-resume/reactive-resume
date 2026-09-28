@@ -8,7 +8,7 @@ msgstr ""
 "Language: mr\n"
 "Project-Id-Version: reactive-resume\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-06 19:36\n"
+"PO-Revision-Date: 2026-09-28 05:40\n"
 "Last-Translator: \n"
 "Language-Team: Marathi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -43,7 +43,7 @@ msgid "{0, plural, one {# item} other {# items}}"
 msgstr "{0, plural, one {# वस्तू} other {# वस्तू}}"
 
 #. placeholder {0}: item.roles.length
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "{0, plural, one {# role} other {# roles}}"
 msgstr "{0, plural, one {# भूमिका} other {# भूमिका}}"
 
@@ -376,11 +376,11 @@ msgstr "कीवर्ड जोडा..."
 msgid "Add a label to the URL"
 msgstr "URL ला लेबल जोडा"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/awards.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new award"
 msgstr "नवीन पुरस्कार जोडा"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/certifications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new certification"
 msgstr "नवीन प्रमाणपत्र जोडा"
 
@@ -388,15 +388,15 @@ msgstr "नवीन प्रमाणपत्र जोडा"
 msgid "Add a new custom section"
 msgstr "नवीन सानुकूल विभाग जोडा"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/education.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new education"
 msgstr "नवीन शैक्षणिक माहिती जोडा"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new experience"
 msgstr "नवीन अनुभव जोडा"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/interests.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new interest"
 msgstr "नवीन आवड जोडा"
 
@@ -405,31 +405,31 @@ msgstr "नवीन आवड जोडा"
 msgid "Add a new item"
 msgstr "नवीन वस्तू जोडा"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/languages.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new language"
 msgstr "नवीन भाषा जोडा"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/profiles.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new profile"
 msgstr "नवीन प्रोफाईल जोडा"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/projects.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new project"
 msgstr "नवीन प्रोजेक्ट जोडा"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/publications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new publication"
 msgstr "नवीन प्रकाशन जोडा"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/references.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new reference"
 msgstr "नवीन रेफरन्स जोडा"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/skills.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new skill"
 msgstr "नवीन कौशल्य जोडा"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/volunteer.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new volunteer experience"
 msgstr "नवीन स्वयंसेवी अनुभव जोडा"
 
@@ -3762,7 +3762,7 @@ msgstr "एकापेक्षा जास्त ईमेल पत्ते
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Moss"
-msgstr "Moss"
+msgstr "काळवा"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -4475,7 +4475,7 @@ msgstr "कृपया PDF फाइल अपलोड करा."
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Plum"
-msgstr "Plum"
+msgstr "आलूबुखार"
 
 #: src/libs/locale.ts
 msgid "Polish"
@@ -5161,7 +5161,7 @@ msgstr "{name} साठी नमुना रेझ्युमे"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Sans"
-msgstr "Sans"
+msgstr "विना"
 
 #. Passkey rename prompt confirm action in authentication settings
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -5436,7 +5436,7 @@ msgstr "सर्बियन"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Serif"
-msgstr "Serif"
+msgstr "सेरिफ"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Set a password if you want only people who know it to open the public URL."
@@ -6640,7 +6640,7 @@ msgstr "तुमच्या रेझ्युमेचे views आणि dow
 
 #: src/features/homepage/page.tsx
 msgid "Translate the app"
-msgstr "अॅपचे भाषांतर करा"
+msgstr "अॅप अनुवाद करा"
 
 #: src/features/homepage/site-footer.tsx
 #: src/routes/_home/-sections/footer.tsx
@@ -6655,11 +6655,11 @@ msgstr "पुन्हा प्रयत्न करा"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Try the settings to see what visitors can access. When you create your resume, you decide how to share it."
-msgstr "अभ्यागतांना काय पाहता येते हे पाहण्यासाठी सेटिंग्ज वापरून पाहा. तुम्ही तुमचा रेझ्युमे तयार करता तेव्हा तो कसा शेअर करायचा हे तुम्ही ठरवता."
+msgstr "सेटिंग्ज वापरून पहा की अभ्यागत काय प्रवेश करू शकतात. जेव्हा तुम्ही तुमचा रिझ्युमे तयार करता, तेव्हा तुम्ही तो कसा शेअर करायचा ते ठरवता."
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Try your PDF"
-msgstr "तुमची PDF वापरून पाहा"
+msgstr "तुमचा PDF वापरून पहा"
 
 #: src/libs/locale.ts
 msgid "Turkish"
@@ -6744,7 +6744,7 @@ msgstr "कमांड टाईप करा किंवा शोधा…"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Typeface"
-msgstr "टाइपफेस"
+msgstr "अक्षरशैली"
 
 #: src/libs/resume/section.tsx
 msgid "Typography"
@@ -6995,11 +6995,11 @@ msgstr "नमुना वापरा"
 
 #: src/features/homepage/languages-showcase.tsx
 msgid "Use the app in a language you’re comfortable with. Try a few of the translations made by the community."
-msgstr "तुम्हाला सोयीच्या असलेल्या भाषेत अॅप वापरा. समुदायाने केलेली काही भाषांतरे वापरून पाहा."
+msgstr "तुम्हाला सोयीस्कर असलेल्या भाषेत अॅप वापरा. समुदायाने केलेल्या काही अनुवादांचा प्रयत्न करा."
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Use this wording"
-msgstr "हीच शब्दरचना वापरा"
+msgstr "ही शब्दयोजना वापरा"
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
@@ -7023,7 +7023,7 @@ msgstr "वापरकर्ते"
 
 #: src/features/homepage/export-playground.tsx
 msgid "Uses the name, template, color, and type you chose above."
-msgstr "वर तुम्ही निवडलेले नाव, टेम्पलेट, रंग आणि टाइपफेस वापरते."
+msgstr "वरील निवडलेल्या नाव, टेम्पलेट, रंग आणि प्रकारचा वापर करते."
 
 #: src/libs/locale.ts
 msgid "Uzbek"
@@ -7113,7 +7113,7 @@ msgstr "दृश्ये"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Visitors need your password to open the resume."
-msgstr "रेझ्युमे उघडण्यासाठी अभ्यागतांना तुमचा पासवर्ड लागतो."
+msgstr "रिस्यूमे उघडण्यासाठी अभ्यागतांना तुमचा पासवर्ड आवश्यक आहे."
 
 #: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
@@ -7270,7 +7270,7 @@ msgstr "मजकूर काढल्यावर शब्द एकत्र
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Work on your resume from your AI app."
-msgstr "तुमच्या AI अॅपमधून तुमच्या रेझ्युमेवर काम करा."
+msgstr "तुमच्या AI अॅपमधून तुमच्या रिझ्युमेवर काम करा."
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Work OpenAI"
@@ -7278,7 +7278,7 @@ msgstr "ओपनएआयचे कार्य"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Worked with engineers from idea to launch."
-msgstr "कल्पनेपासून प्रकाशनापर्यंत अभियंत्यांसोबत काम केले."
+msgstr "कल्पनेपासून लाँचपर्यंत अभियंत्यांसोबत काम केले."
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Working…"
@@ -7323,7 +7323,7 @@ msgstr "तुम्ही तुमच्या वापरकर्तान�
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "You can always go back to the original."
-msgstr "तुम्ही कधीही मूळ मजकुराकडे परत जाऊ शकता."
+msgstr "तुम्ही नेहमी मूळकडे परत जाऊ शकता."
 
 #: src/features/auth/pages/error.tsx
 msgid "You cancelled the sign-in before it finished."
@@ -7352,7 +7352,7 @@ msgstr "तुमचे खाते हटवले आहे."
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Your AI app"
-msgstr "तुमचे AI अॅप"
+msgstr "तुमचे एआय अॅप"
 
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "Your AI provider could not be reached. Check its settings and try again."
@@ -7364,7 +7364,7 @@ msgstr "तुमची API key क्लिपबोर्डवर कॉप�
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Your applications, together"
-msgstr "तुमचे अर्ज, एकत्र"
+msgstr "तुमच्या सर्व अॅप्लिकेशन्स, एकत्र"
 
 #: src/features/ats-checker/messages.ts
 #: src/libs/resume/ats.ts
@@ -7381,7 +7381,7 @@ msgstr "तुमचे बदल आपोआप सेव्ह केले �
 
 #: src/features/homepage/languages-showcase.tsx
 msgid "Your choice applies across the app."
-msgstr "तुमची निवड संपूर्ण अॅपला लागू होते."
+msgstr "तुमची निवड संपूर्ण अॅपमध्ये लागू होते."
 
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
@@ -7397,7 +7397,7 @@ msgstr "तुमच्या तारखा अनेक वेगवेगळ
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Your edit is in."
-msgstr "तुमचे संपादन झाले."
+msgstr "तुमचे संपादन समाविष्ट झाले आहे."
 
 #: src/features/ats-checker/messages.ts
 msgid "Your email address is broken across pieces of text."
@@ -7503,7 +7503,7 @@ msgstr "तुमच्या रेझ्युमेमध्ये फोट�
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Your resume link"
-msgstr "तुमच्या रेझ्युमेची लिंक"
+msgstr "तुमचा रिझ्युमे लिंक"
 
 #: src/libs/resume/ats.ts
 msgid "Your resume shows no work experience."
@@ -7531,7 +7531,7 @@ msgstr "तुमची साधने, जोडलेली"
 
 #: src/features/homepage/export-playground.tsx
 msgid "Your words as a plain-text document, with headings, lists, and links."
-msgstr "तुमचे शब्द साध्या मजकुराच्या दस्तऐवजाच्या रूपात, शीर्षके, याद्या आणि लिंक्ससह."
+msgstr "शीर्षके, यादी आणि दुवे असलेला तुमचा शब्दसाधनातील मजकूर."
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Zoom"
@@ -7553,3 +7553,4 @@ msgstr "बाहेर झूम करा"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "झुलू"
+

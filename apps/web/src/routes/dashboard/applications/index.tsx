@@ -89,7 +89,7 @@ function RouteComponent() {
 		void navigate({ replace: true, search: (prev: Search) => ({ ...prev, create: false }) });
 	}, [create, navigate]);
 
-	const { data: applications } = useQuery(applicationsListQueryOptions());
+	const { data: applications, isPending } = useQuery(applicationsListQueryOptions());
 	const { data: allTags } = useQuery(orpc.applications.tags.queryOptions());
 
 	useEffect(() => {
@@ -118,7 +118,8 @@ function RouteComponent() {
 
 	const archivedCount = (applications ?? []).filter((app) => app.archived).length;
 
-	const isEmpty = (applications?.length ?? 0) === 0;
+	// While loading render neither the empty state nor the board; a failed load falls back to the empty state.
+	const isEmpty = !applications?.length;
 
 	const setUrlSearch = (patch: Partial<Search>) => void navigate({ search: (prev: Search) => ({ ...prev, ...patch }) });
 
@@ -150,7 +151,7 @@ function RouteComponent() {
 
 			<Separator />
 
-			{isEmpty ? (
+			{isPending ? null : isEmpty ? (
 				<EmptyState onAdd={() => setAddOpen(true)} onImport={() => setImportOpen(true)} />
 			) : (
 				<>

@@ -8,7 +8,7 @@ msgstr ""
 "Language: he\n"
 "Project-Id-Version: reactive-resume\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-06 19:36\n"
+"PO-Revision-Date: 2026-09-28 05:40\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n==2 ? 1 : 2);\n"
@@ -43,7 +43,7 @@ msgid "{0, plural, one {# item} other {# items}}"
 msgstr "{0, plural, one {פריט #} other {# פריטים}}"
 
 #. placeholder {0}: item.roles.length
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "{0, plural, one {# role} other {# roles}}"
 msgstr "{0, plural, one {# תפקיד} other {# תפקידים}}"
 
@@ -376,11 +376,11 @@ msgstr "הוסף מילת מפתח..."
 msgid "Add a label to the URL"
 msgstr "הוסף תווית לכתובת ה־URL"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/awards.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new award"
 msgstr "הוספת פרס חדש"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/certifications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new certification"
 msgstr "הוספת הסמכה חדשה"
 
@@ -388,15 +388,15 @@ msgstr "הוספת הסמכה חדשה"
 msgid "Add a new custom section"
 msgstr "הוספת סעיף מותאם אישית חדש"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/education.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new education"
 msgstr "הוספת השכלה חדשה"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new experience"
 msgstr "הוספת ניסיון חדש"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/interests.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new interest"
 msgstr "הוספת תחביב חדש"
 
@@ -405,31 +405,31 @@ msgstr "הוספת תחביב חדש"
 msgid "Add a new item"
 msgstr "הוספת פריט חדש"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/languages.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new language"
 msgstr "הוספת שפה חדשה"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/profiles.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new profile"
 msgstr "הוספת פרופיל חדש"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/projects.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new project"
 msgstr "הוספת פרויקט חדש"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/publications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new publication"
 msgstr "הוספת פרסום חדש"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/references.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new reference"
 msgstr "הוספת ממליץ חדש"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/skills.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new skill"
 msgstr "הוספת מיומנות חדשה"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/volunteer.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new volunteer experience"
 msgstr "הוספת ניסיון התנדבות חדש"
 
@@ -923,7 +923,7 @@ msgstr "אזרית"
 
 #: src/features/homepage/export-playground.tsx
 msgid "BA"
-msgstr "BA"
+msgstr "תואר ראשון"
 
 #. Action returning a signed-in user to the page where they manage linked providers
 #: src/features/auth/pages/error.tsx
@@ -1235,7 +1235,7 @@ msgstr "עיגול"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Clay"
-msgstr "Clay"
+msgstr "חימר"
 
 #. Clear the highlight color
 #. Clear the text color
@@ -3762,7 +3762,7 @@ msgstr "מופיעה יותר מכתובת דוא״ל אחת."
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Moss"
-msgstr "Moss"
+msgstr "מוס"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -4475,7 +4475,7 @@ msgstr "נא להעלות קובץ PDF."
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Plum"
-msgstr "Plum"
+msgstr "שזיף"
 
 #: src/libs/locale.ts
 msgid "Polish"
@@ -5436,7 +5436,7 @@ msgstr "סרבית"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Serif"
-msgstr "Serif"
+msgstr "סריף"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Set a password if you want only people who know it to open the public URL."
@@ -7553,3 +7553,4 @@ msgstr "התרחקות"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "זולו"
+

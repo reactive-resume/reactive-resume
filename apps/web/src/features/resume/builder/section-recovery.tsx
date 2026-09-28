@@ -26,10 +26,15 @@ export function getVisibleLeftSidebarSections(data: ResumeData): LeftSidebarSect
 	);
 }
 
+/** Smooth scrolling unless the user asked for reduced motion. */
+export function getScrollBehavior(): ScrollBehavior {
+	return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth";
+}
+
 function focusSidebarSection(sectionId: string): void {
 	const editorTarget = document.getElementById(`sidebar-${sectionId}`);
 	if (editorTarget) {
-		editorTarget.scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth" });
+		editorTarget.scrollIntoView({ block: "start", inline: "nearest", behavior: getScrollBehavior() });
 		return;
 	}
 
@@ -39,7 +44,7 @@ function focusSidebarSection(sectionId: string): void {
 		if (!recoveryTarget) return;
 
 		recoveryTarget.focus({ preventScroll: true });
-		recoveryTarget.scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth" });
+		recoveryTarget.scrollIntoView({ block: "start", inline: "nearest", behavior: getScrollBehavior() });
 	};
 
 	const trigger = document.getElementById("sidebar-hidden-sections-trigger");

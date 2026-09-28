@@ -65,7 +65,10 @@ export function ResumePreviewLoader({
 							role="img"
 							aria-label={`Loading resume page ${pageNumber} of ${pageCount}`}
 							style={pageSize}
-							className={cn("aspect-page overflow-hidden rounded-md bg-white", pageClassName)}
+							className={cn(
+								"flex aspect-page items-center justify-center overflow-hidden rounded-md bg-white text-neutral-400",
+								pageClassName,
+							)}
 						>
 							<Spinner className="size-10" />
 						</div>

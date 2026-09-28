@@ -2,7 +2,6 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { BookOpenIcon, KeyIcon, LinkSimpleIcon, PlusIcon, TrashSimpleIcon } from "@phosphor-icons/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { AnimatePresence, m } from "motion/react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Separator } from "@reactive-resume/ui/components/separator";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -67,12 +66,7 @@ export function ApiKeysSettingsPage() {
 	};
 
 	return (
-		<m.div
-			initial={{ y: -20 }}
-			animate={{ opacity: 1, y: 0 }}
-			transition={{ duration: 0.25, ease: "easeOut" }}
-			className="grid max-w-xl gap-6 will-change-[transform,opacity]"
-		>
+		<div className="grid max-w-xl gap-6">
 			<div className="flex items-start gap-4 rounded-md border bg-popover p-6">
 				<div className="rounded-md bg-primary/10 p-2.5">
 					<BookOpenIcon className="text-primary" size={24} />
@@ -115,43 +109,27 @@ export function ApiKeysSettingsPage() {
 					<Trans>Create a new API key</Trans>
 				</Button>
 
-				<AnimatePresence initial={false} mode="popLayout">
-					{apiKeys.map((key, index) => (
-						<m.div
-							key={key.id}
-							className="flex items-center gap-x-4 py-4 will-change-[transform,opacity]"
-							initial={{ opacity: 0, y: -16 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: -16 }}
-							transition={{ duration: 0.16, delay: Math.min(0.12, index * 0.04) }}
-						>
-							<KeyIcon />
+				{apiKeys.map((key) => (
+					<div key={key.id} className="flex items-center gap-x-4 py-4">
+						<KeyIcon />
 
-							<div className="flex-1 space-y-1">
-								<p className="font-mono text-xs">{key.start}...</p>
-								<div className="text-muted-foreground text-xs">
-									{key.expiresAt ? (
-										<Trans>Expires on {key.expiresAt.toLocaleDateString()}</Trans>
-									) : (
-										<Trans>Never expires</Trans>
-									)}
-								</div>
+						<div className="flex-1 space-y-1">
+							<p className="font-mono text-xs">{key.start}...</p>
+							<div className="text-muted-foreground text-xs">
+								{key.expiresAt ? (
+									<Trans>Expires on {key.expiresAt.toLocaleDateString()}</Trans>
+								) : (
+									<Trans>Never expires</Trans>
+								)}
 							</div>
+						</div>
 
-							<m.div
-								className="will-change-transform"
-								whileHover={{ y: -1, scale: 1.03 }}
-								whileTap={{ scale: 0.96 }}
-								transition={{ duration: 0.14, ease: "easeOut" }}
-							>
-								<Button size="icon" variant="ghost" onClick={() => onDelete(key.id)}>
-									<TrashSimpleIcon />
-								</Button>
-							</m.div>
-						</m.div>
-					))}
-				</AnimatePresence>
+						<Button size="icon" variant="ghost" onClick={() => onDelete(key.id)}>
+							<TrashSimpleIcon />
+						</Button>
+					</div>
+				))}
 			</div>
-		</m.div>
+		</div>
 	);
 }

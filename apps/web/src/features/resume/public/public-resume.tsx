@@ -89,7 +89,7 @@ export function PublicResumePage({ resume, username, slug, flags, isRoot = false
 					onClick={() => void onDownloadPDF()}
 					aria-label={t`Download PDF`}
 					title={t`Download PDF`}
-					className="fixed right-6 bottom-6 z-50 rounded-full bg-background/95 opacity-70 shadow-lg backdrop-blur transition-opacity hover:opacity-100 print:hidden"
+					className="fixed right-6 bottom-6 z-50 rounded-full bg-background/95 opacity-70 shadow-lg backdrop-blur transition-[opacity,scale] duration-150 ease-out-strong hover:opacity-100 print:hidden"
 				>
 					{isExporting ? (
 						<CircleNotchIcon className="size-5 animate-spin" />

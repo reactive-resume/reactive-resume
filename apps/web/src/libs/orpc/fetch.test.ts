@@ -1,0 +1,92 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+const fetchMock = vi.fn<typeof fetch>();
+const rpcUrl = "https://resume.test/api/rpc/storage/uploadFile?batch=1";
+const contentType = "multipart/form-data; boundary=original-boundary";
+const largeBody = new Uint8Array(5 * 1024 * 1024).fill(173);
+
+function queueStaging() {
+	fetchMock
+		.mockResolvedValueOnce(Response.json({ id: "upload-1", url: "https://blob.test/signed-put" }))
+		.mockResolvedValueOnce(new Response("uploaded"))
+		.mockResolvedValueOnce(new Response("rpc-result"));
+}
+
+beforeEach(() => {
+	vi.resetModules();
+	fetchMock.mockReset();
+	vi.stubGlobal("fetch", fetchMock);
+});
+
+afterEach(() => vi.unstubAllGlobals());
+
+describe("RPC fetch", () => {
+	it("sends small requests directly with their body and headers", async () => {
+		fetchMock.mockResolvedValue(new Response("ok"));
+		const { rpcFetch } = await import("./fetch");
+		await rpcFetch(rpcUrl, { method: "POST", body: "original bytes", headers: { "x-example": "preserved" } });
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		const [url, sent = {}] = fetchMock.mock.calls[0] ?? [];
+		expect(url).toBe(rpcUrl);
+		// Plain bytes (not a stream or Blob) keep the body inspectable and avoid duplex streaming.
+		expect(sent.body).toBeInstanceOf(ArrayBuffer);
+		expect(new TextDecoder().decode(sent.body as ArrayBuffer)).toBe("original bytes");
+		expect(new Headers(sent.headers).get("x-example")).toBe("preserved");
+		expect(sent.credentials).toBe("include");
+	});
+
+	it("uploads large wire bytes to Blob, then sends a tiny reference to the original RPC", async () => {
+		queueStaging();
+		const { rpcFetch } = await import("./fetch");
+		const result = await rpcFetch(
+			new Request(rpcUrl, {
+				method: "POST",
+				body: largeBody,
+				headers: { "content-type": contentType, "x-example": "preserved" },
+			}),
+		);
+		expect(await result.text()).toBe("rpc-result");
+		expect(fetchMock).toHaveBeenCalledTimes(3);
+		const [prepareUrl, preparation] = fetchMock.mock.calls[0] ?? [];
+		expect(prepareUrl).toBe("/api/storage/stage");
+		expect(JSON.parse(preparation?.body as string)).toEqual({
+			path: "/api/rpc/storage/uploadFile?batch=1",
+			contentType,
+			size: largeBody.length,
+		});
+		const [uploadUrl, upload] = fetchMock.mock.calls[1] ?? [];
+		expect(uploadUrl).toBe("https://blob.test/signed-put");
+		expect(upload?.method).toBe("PUT");
+		expect(Buffer.from(upload?.body as ArrayBuffer).equals(Buffer.from(largeBody))).toBe(true);
+		const [finalUrl, finalRequest] = fetchMock.mock.calls[2] ?? [];
+		expect(finalUrl).toBe(rpcUrl);
+		expect(finalRequest?.body).toBeUndefined();
+		expect(finalRequest?.credentials).toBe("include");
+		const headers = new Headers(finalRequest?.headers);
+		expect(headers.get("x-resume-staged-body")).toBe("upload-1");
+		expect(headers.get("content-type")).toBe(contentType);
+		expect(headers.get("x-example")).toBe("preserved");
+	});
+
+	it("sends large requests directly once staging is unavailable on Docker", async () => {
+		fetchMock.mockResolvedValueOnce(new Response("Not Found", { status: 404 })).mockResolvedValue(new Response("ok"));
+		const { rpcFetch } = await import("./fetch");
+		await rpcFetch(rpcUrl, { method: "POST", body: largeBody });
+		await rpcFetch(rpcUrl, { method: "POST", body: largeBody });
+		expect(fetchMock).toHaveBeenCalledTimes(3);
+		for (const call of [fetchMock.mock.calls[1], fetchMock.mock.calls[2]]) {
+			const [url, sent = {}] = call ?? [];
+			expect(url).toBe(rpcUrl);
+			expect(Buffer.from(sent.body as ArrayBuffer).equals(Buffer.from(largeBody))).toBe(true);
+		}
+	});
+
+	it("does not dispatch the RPC when preparation fails", async () => {
+		fetchMock.mockResolvedValueOnce(new Response("Unavailable", { status: 503 }));
+		const { rpcFetch } = await import("./fetch");
+		await expect(
+			rpcFetch(rpcUrl, { method: "POST", body: largeBody, headers: { "content-type": contentType } }),
+		).rejects.toThrow();
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+});

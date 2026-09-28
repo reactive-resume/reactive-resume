@@ -8,8 +8,35 @@ const rootPackageJson = JSON.parse(readFileSync(new URL("../../package.json", im
 	version?: string;
 };
 
+// Lambda disables require(ESM) and uses stricter CJS export detection than standalone Node.
+const bundledInteropPackages = new Set([
+	"@uiw/color-convert",
+	"@babel/runtime",
+	"sanitize-html",
+	"htmlparser2",
+	"domhandler",
+	"domutils",
+	"domelementtype",
+	"dom-serializer",
+	"entities",
+	"deepmerge",
+	"escape-string-regexp",
+	"is-plain-object",
+	"parse-srcset",
+	"postcss",
+	"nanoid",
+	"picocolors",
+	"source-map-js",
+	"launder",
+	"dayjs",
+]);
+
 const shouldExternalizeThirdParty = (id: string) => {
-	if (id.startsWith("@reactive-resume/")) return false;
+	const packageName = id
+		.split("/")
+		.slice(0, id.startsWith("@") ? 2 : 1)
+		.join("/");
+	if (id.startsWith("@reactive-resume/") || bundledInteropPackages.has(packageName)) return false;
 	if (id.startsWith("@/") || id.startsWith(".") || id.startsWith("/") || id.startsWith("\0")) return false;
 
 	return true;
@@ -33,7 +60,9 @@ const promptAssetsPlugin: TsdownPlugin = {
 };
 
 export default defineConfig({
-	entry: { index: "src/index.ts" },
+	entry: { index: "src/index.ts", vercel: "src/vercel.ts", "prepare-deployment": "src/prepare-deployment.ts" },
+	// Keep import.meta.url-based asset lookup adjacent to the entrypoints.
+	outputOptions: { chunkFileNames: "[name]-[hash].mjs" },
 	format: "esm",
 	platform: "node",
 	target: "node24",
@@ -47,7 +76,7 @@ export default defineConfig({
 	suppressWarnings: [/dynamic import will not move module into another chunk/],
 	outExtensions: () => ({ js: ".mjs" }),
 	deps: {
-		alwaysBundle: [/^@reactive-resume\//],
+		alwaysBundle: [/^@reactive-resume\//, ...bundledInteropPackages],
 		neverBundle: shouldExternalizeThirdParty,
 	},
 	plugins: [promptAssetsPlugin],

@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: reactive-resume\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-06 19:36\n"
+"PO-Revision-Date: 2026-09-28 05:40\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -43,7 +43,7 @@ msgid "{0, plural, one {# item} other {# items}}"
 msgstr "{0, plural, one {# 项目} other {# 项目}}"
 
 #. placeholder {0}: item.roles.length
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "{0, plural, one {# role} other {# roles}}"
 msgstr "{0, plural, one {#角色} other {#角色}}"
 
@@ -376,11 +376,11 @@ msgstr "添加关键字..."
 msgid "Add a label to the URL"
 msgstr "为该 URL 添加标签"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/awards.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new award"
 msgstr "添加新奖项"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/certifications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new certification"
 msgstr "添加新证书"
 
@@ -388,15 +388,15 @@ msgstr "添加新证书"
 msgid "Add a new custom section"
 msgstr "添加新的自定义章节"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/education.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new education"
 msgstr "添加新的教育经历"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new experience"
 msgstr "添加新的工作经历"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/interests.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new interest"
 msgstr "添加新兴趣"
 
@@ -405,31 +405,31 @@ msgstr "添加新兴趣"
 msgid "Add a new item"
 msgstr "增加一项"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/languages.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new language"
 msgstr "添加新语言"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/profiles.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new profile"
 msgstr "添加新个人资料"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/projects.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new project"
 msgstr "添加新项目"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/publications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new publication"
 msgstr "添加新出版物"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/references.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new reference"
 msgstr "添加新推荐人"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/skills.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new skill"
 msgstr "添加新技能"
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/volunteer.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new volunteer experience"
 msgstr "添加新的志愿者经历"
 
@@ -1235,7 +1235,7 @@ msgstr "圆形"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Clay"
-msgstr "Clay"
+msgstr "克莱"
 
 #. Clear the highlight color
 #. Clear the text color
@@ -3762,7 +3762,7 @@ msgstr "出现了不止一个电子邮件地址。"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Moss"
-msgstr "Moss"
+msgstr "苔藓"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -4475,7 +4475,7 @@ msgstr "请上传 PDF 文件。"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Plum"
-msgstr "Plum"
+msgstr "李子"
 
 #: src/libs/locale.ts
 msgid "Polish"
@@ -5349,7 +5349,7 @@ msgstr "看看<0/>软件读到了什么。"
 
 #: src/features/homepage/page.tsx
 msgid "See whether your PDF has readable text. Read a sample or try your own PDF. Everything runs in your browser, so your file stays with you."
-msgstr "看看你的 PDF 是否含有可读文本。读取示例，或试试你自己的 PDF。一切都在浏览器中完成，文件始终在你手里。"
+msgstr "查看您的 PDF 文件中的文本是否可读。阅读示例或试用您自己的 PDF 文件。所有操作都在您的浏览器中进行，因此您的文件始终由您掌控。"
 
 #. placeholder {0}: app.company
 #: src/features/applications/components/table-view.tsx
@@ -5436,7 +5436,7 @@ msgstr "塞尔维亚语"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Serif"
-msgstr "Serif"
+msgstr "衬线体"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Set a password if you want only people who know it to open the public URL."
@@ -5734,7 +5734,7 @@ msgstr "有些文字被旋转了。"
 
 #: src/features/homepage/community-stats.tsx
 msgid "Some totals are unavailable right now."
-msgstr "部分统计数据暂时无法获取。"
+msgstr "目前部分总计数据无法提供。"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Something else…"
@@ -5750,7 +5750,7 @@ msgstr "读取该文件时出了点问题。请重试。"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Something went wrong while reading this file. Please try again."
-msgstr "读取此文件时出错，请重试。"
+msgstr "读取此文件时出现错误。请重试。"
 
 #: src/features/auth/pages/error.tsx
 msgid "Something went wrong while signing you in. Please try again."
@@ -5824,7 +5824,7 @@ msgstr "赞助"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Spread pages"
-msgstr "展开页面"
+msgstr "跨页"
 
 #. Preset button for setting picture aspect ratio to square
 #: src/components/level/combobox.tsx
@@ -5834,7 +5834,7 @@ msgstr "方形"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Stack pages"
-msgstr "叠放页面"
+msgstr "堆叠页面"
 
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/table-view.tsx
@@ -5911,7 +5911,7 @@ msgstr "留下"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Stays in your browser"
-msgstr "只留在你的浏览器里"
+msgstr "保存在您的浏览器中"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Still waiting for {provider}… {elapsedSeconds}s"
@@ -5974,7 +5974,7 @@ msgstr "尽你所能支持这个应用！"
 
 #: src/features/homepage/page.tsx
 msgid "Support the project"
-msgstr "支持这个项目"
+msgstr "支持该项目"
 
 #: src/features/ats-checker/messages.ts
 #: src/libs/resume/ats.ts
@@ -6034,7 +6034,7 @@ msgstr "定制失败。"
 
 #: src/features/homepage/page.tsx
 msgid "Take it<0/>with you."
-msgstr "随身<0/>带着走。"
+msgstr "把它<0/>带走吧。"
 
 #: src/libs/locale.ts
 msgid "Tamil"
@@ -6081,7 +6081,7 @@ msgstr "文本颜色"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Text extracted"
-msgstr "文本已提取"
+msgstr "提取的文本"
 
 #: src/features/ats-checker/messages.ts
 msgid "Text is written one character at a time."
@@ -6097,7 +6097,7 @@ msgstr "泰语"
 
 #: src/features/homepage/page.tsx
 msgid "Thank you for helping keep it free."
-msgstr "感谢你让它保持免费。"
+msgstr "感谢您帮助我们保持其免费。"
 
 #: src/features/ats-checker/tool.tsx
 msgid "That file could not be read as a PDF."
@@ -6195,7 +6195,7 @@ msgstr "无法验证提供商的响应。请重新开始。"
 
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
-msgstr "求职的其余环节，<0/>也一并搞定。"
+msgstr "你求职过程的其余部分<0/>也是如此。"
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "The resume preview could not be updated. The last valid preview is still shown."
@@ -6239,7 +6239,7 @@ msgstr "然后，输入应用提供的 6 位验证码以继续。"
 
 #: src/features/homepage/page.tsx
 msgid "There are other ways to pitch in."
-msgstr "还有其他方式可以出一份力。"
+msgstr "还有其他方式可以贡献一份力量。"
 
 #: src/features/ats-checker/messages.ts
 msgid "There is a gap between two dated roles."
@@ -6340,7 +6340,7 @@ msgstr "该文件包含白底白字的文字。"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "This file could not be read as a PDF. Export a new copy and try again."
-msgstr "无法将此文件作为 PDF 读取。请重新导出一份后再试。"
+msgstr "无法将此文件作为 PDF 文件读取。请导出一份新副本，然后重试。"
 
 #: src/features/ats-checker/messages.ts
 msgid "This file declares no language."
@@ -6380,7 +6380,7 @@ msgstr "这是一个 PDF Portfolio（PDF 作品集包）：可见的页面只是
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "This is a sample edit. In the app, connect your own AI provider. Turn on Review edits to approve changes before they’re applied."
-msgstr "这只是一个编辑示例。在应用中，你可以连接自己的 AI 服务商。开启“审核编辑”后，改动会在应用前先经你确认。"
+msgstr "这是一个示例编辑。在应用中，请连接您自己的 AI 服务提供商。开启“审核编辑”功能，以便在更改应用之前对其进行审批。"
 
 #: src/dialogs/resume/index.tsx
 msgid "This is a URL-friendly name for your resume."
@@ -6438,7 +6438,7 @@ msgstr "此 PDF 受密码保护。请保存一份不受保护的副本后重试�
 
 #: src/features/homepage/ats-playground.tsx
 msgid "This PDF is too large. Choose a file smaller than 25 MB."
-msgstr "此 PDF 过大。请选择小于 25 MB 的文件。"
+msgstr "该 PDF 文件过大。请选择小于 25 MB 的文件。"
 
 #: src/libs/resume/ats.ts
 msgid "This period ends before it starts."
@@ -6620,11 +6620,11 @@ msgstr "工具"
 
 #: src/features/homepage/community-stats.tsx
 msgid "Total unavailable"
-msgstr "总数暂不可用"
+msgstr "总计不可用"
 
 #: src/features/homepage/community-stats.tsx
 msgid "Totals are refreshed periodically."
-msgstr "统计数据会定期刷新。"
+msgstr "总计数据会定期更新。"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Track a job you're applying to and link the resume you sent."
@@ -6640,7 +6640,7 @@ msgstr "跟踪你的简历被查看和下载的次数"
 
 #: src/features/homepage/page.tsx
 msgid "Translate the app"
-msgstr "翻译本应用"
+msgstr "翻译该应用程序"
 
 #: src/features/homepage/site-footer.tsx
 #: src/routes/_home/-sections/footer.tsx
@@ -6655,11 +6655,11 @@ msgstr "再试一次"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Try the settings to see what visitors can access. When you create your resume, you decide how to share it."
-msgstr "试试这些设置，看看访客可以访问什么。创建简历时，由你决定如何分享。"
+msgstr "请尝试调整设置，查看访客可以访问哪些内容。创建简历时，您可以自行决定如何分享简历。"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Try your PDF"
-msgstr "试试你的 PDF"
+msgstr "试用您的 PDF"
 
 #: src/libs/locale.ts
 msgid "Turkish"
@@ -6995,11 +6995,11 @@ msgstr "使用示例"
 
 #: src/features/homepage/languages-showcase.tsx
 msgid "Use the app in a language you’re comfortable with. Try a few of the translations made by the community."
-msgstr "使用你熟悉的语言使用应用。试试社区贡献的一些译文。"
+msgstr "请选择您熟悉的语言来使用该应用。不妨试试社区提供的几种翻译版本。"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Use this wording"
-msgstr "使用这个说法"
+msgstr "请使用此表述"
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
@@ -7023,7 +7023,7 @@ msgstr "用户数"
 
 #: src/features/homepage/export-playground.tsx
 msgid "Uses the name, template, color, and type you chose above."
-msgstr "使用你在上方选择的姓名、模板、颜色和字体。"
+msgstr "使用您在上文中选择的名称、模板、颜色和类型。"
 
 #: src/libs/locale.ts
 msgid "Uzbek"
@@ -7113,7 +7113,7 @@ msgstr "查看"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Visitors need your password to open the resume."
-msgstr "访问者需要输入你的密码才能打开简历。"
+msgstr "访客需要您的密码才能打开简历。"
 
 #: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
@@ -7270,7 +7270,7 @@ msgstr "文字提取出来后，单词会连在一起。"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Work on your resume from your AI app."
-msgstr "在你的 AI 应用里处理简历。"
+msgstr "通过您的AI应用编辑简历。"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Work OpenAI"
@@ -7278,7 +7278,7 @@ msgstr "OpenAI"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Worked with engineers from idea to launch."
-msgstr "从想法到上线，一直与工程师协作。"
+msgstr "从构思到产品发布，全程与工程师们通力合作。"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Working…"
@@ -7323,7 +7323,7 @@ msgstr "你也可以用用户名登录。"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "You can always go back to the original."
-msgstr "你随时可以恢复原文。"
+msgstr "你可以随时回到原版。"
 
 #: src/features/auth/pages/error.tsx
 msgid "You cancelled the sign-in before it finished."
@@ -7352,7 +7352,7 @@ msgstr "你的账户已删除。"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Your AI app"
-msgstr "你的 AI 应用"
+msgstr "您的 AI 应用"
 
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "Your AI provider could not be reached. Check its settings and try again."
@@ -7364,7 +7364,7 @@ msgstr "你的 API key 已复制到剪贴板。"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Your applications, together"
-msgstr "求职申请，集中管理"
+msgstr "您的申请，一并"
 
 #: src/features/ats-checker/messages.ts
 #: src/libs/resume/ats.ts
@@ -7381,7 +7381,7 @@ msgstr "你的更改会自动保存。"
 
 #: src/features/homepage/languages-showcase.tsx
 msgid "Your choice applies across the app."
-msgstr "你的选择适用于整个应用。"
+msgstr "您的选择将适用于整个应用。"
 
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
@@ -7397,7 +7397,7 @@ msgstr "你的日期写法不统一，用了好几种不同的方式。"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Your edit is in."
-msgstr "改动已应用。"
+msgstr "您的修改已提交。"
 
 #: src/features/ats-checker/messages.ts
 msgid "Your email address is broken across pieces of text."
@@ -7434,7 +7434,7 @@ msgstr "你的页边距非常窄。"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Your name"
-msgstr "你的姓名"
+msgstr "您的姓名"
 
 #: src/libs/resume/ats.ts
 msgid "Your page margins are very narrow."
@@ -7503,7 +7503,7 @@ msgstr "你的简历里有一张照片。"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Your resume link"
-msgstr "你的简历链接"
+msgstr "您的简历链接"
 
 #: src/libs/resume/ats.ts
 msgid "Your resume shows no work experience."
@@ -7523,15 +7523,15 @@ msgstr "您保存的求职信将保持不变。"
 
 #: src/features/homepage/ats-playground.tsx
 msgid "Your selected file"
-msgstr "你选择的文件"
+msgstr "您选择的文件"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Your tools, connected"
-msgstr "你的工具已连接"
+msgstr "您的工具，互联互通"
 
 #: src/features/homepage/export-playground.tsx
 msgid "Your words as a plain-text document, with headings, lists, and links."
-msgstr "把你的文字变成纯文本文档，保留标题、列表和链接。"
+msgstr "您的文字以纯文本文档的形式呈现，其中包含标题、列表和链接。"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Zoom"
@@ -7553,3 +7553,4 @@ msgstr "缩小"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "祖鲁语"
+
