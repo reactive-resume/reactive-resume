@@ -23,6 +23,8 @@ const fixture = (html: string, mode: "legacy" | "semantic", css = ""): ResumeDat
 	const data = structuredClone(defaultResumeData);
 	data.basics.name = "Table probe";
 	data.picture.hidden = true;
+	// Keep the featured summary heading off: these assertions measure table geometry/borders only.
+	data.summary.showHeading = false;
 	data.summary.content = html;
 	data.metadata.layout.pages = [{ fullWidth: true, main: ["summary"], sidebar: [] }];
 	data.metadata.typography.body.fontFamily = "Helvetica";
