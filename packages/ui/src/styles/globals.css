@@ -1,10 +1,10 @@
 @import "tailwindcss" source(none);
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "@fontsource-variable/hanken-grotesk";
+@import "@fontsource-variable/hanken-grotesk/wght-italic.css";
 @import "@fontsource-variable/newsreader/opsz.css";
 @import "@fontsource-variable/newsreader/opsz-italic.css";
-@import "@fontsource-variable/hanken-grotesk";
-@import "@fontsource-variable/jetbrains-mono";
 /* Phosphor stays for icons inside resumes (their names are stored in resume data). */
 @import "@phosphor-icons/web/regular/style.css";
 
@@ -134,8 +134,8 @@
 @theme {
 	--font-display: "Newsreader Variable", Georgia, serif;
 	--font-ui: "Hanken Grotesk Variable", system-ui, sans-serif;
-	--font-sans: "Hanken Grotesk Variable", system-ui, sans-serif;
-	--font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+	--font-sans: var(--font-ui);
+	--font-mono: ui-monospace, monospace;
 
 	/* 6 chips and small buttons · 8 controls · 10 list items · 12 cards and menus · 16 dialogs · 18 mobile sheets */
 	--radius-sm: 6px;
@@ -215,6 +215,10 @@
 
 	body {
 		@apply bg-bg text-ink text-sm proportional-nums antialiased selection:bg-accent-soft selection:text-ink;
+	}
+
+	h1 {
+		@apply font-display;
 	}
 
 	/* A 2px accent ring with a 2px gap on every interactive element; never removed. */

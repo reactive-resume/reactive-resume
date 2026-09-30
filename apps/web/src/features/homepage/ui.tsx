@@ -5,7 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 
-/** A Martian Mono label: section kickers, scene numbers, small caps metadata. */
+/** A UI label: section kickers, scene numbers, small caps metadata. */
 export const labelClass =
 	"font-martian font-medium text-[11px] uppercase leading-[1.4] tracking-[.08em] font-stretch-[87.5%]";
 
@@ -39,7 +39,7 @@ type SceneCaptionProps = {
 	className?: string;
 };
 
-/** A pinned scene's caption: "01 / Write" over a sentence or two in Newsreader. */
+/** A pinned scene's caption: "01 / Write" over a sentence or two in the display family. */
 export function SceneCaption({ number, title, children, action, className }: SceneCaptionProps) {
 	return (
 		<div className={cn("flex flex-col gap-3", className)}>

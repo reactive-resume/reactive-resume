@@ -3,15 +3,13 @@
  * section's progress as --p (0 to 1) and every motion below is derived from it with calc(), so React only re-renders
  * on coarse steps. Imported by index.css, not the route, so a server-prerendered page is styled at first paint.
  */
-@import "@fontsource-variable/anybody/wdth.css";
-@import "@fontsource-variable/martian-mono/wdth.css";
-
 /* Short viewports hide the secondary captions of the pinned scenes so nothing overlaps. */
 @custom-variant short (@media (height < 720px));
 
 @theme {
-	--font-anybody: "Anybody Variable", "Noto Sans", system-ui, sans-serif;
-	--font-martian: "Martian Mono Variable", ui-monospace, monospace;
+	/* Existing landing classes share the app's display and UI families. */
+	--font-anybody: var(--font-display);
+	--font-martian: var(--font-ui);
 
 	--animate-breathe: landing-breathe 16s ease-in-out infinite alternate;
 	--animate-drift: landing-drift 90s ease-in-out infinite alternate;

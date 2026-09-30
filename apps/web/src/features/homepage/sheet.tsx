@@ -13,10 +13,10 @@ import { Icon } from "@reactive-resume/ui/components/icon";
  */
 
 const fonts = {
-	sans: "'Hanken Grotesk Variable', system-ui, sans-serif",
-	serif: "'Newsreader Variable', Georgia, serif",
-	mono: "'Martian Mono Variable', ui-monospace, monospace",
-	display: "'Anybody Variable', system-ui, sans-serif",
+	sans: "var(--font-ui)",
+	serif: "var(--font-display)",
+	mono: "var(--font-mono)",
+	display: "var(--font-display)",
 };
 
 export type SheetTemplate = {

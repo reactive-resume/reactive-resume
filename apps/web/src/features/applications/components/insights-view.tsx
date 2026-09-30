@@ -199,7 +199,7 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 const FLOW_COLORS = ["#a5b4fc", "#818cf8", "#22d3ee", "#fbbf24", "#34d399"];
 const FLOW_BG = "#0a0a0f";
 const FLOW_REJECTED = "#fb7185";
-const FLOW_FONT = '"Hanken Grotesk Variable", "Hanken Grotesk", ui-sans-serif, sans-serif';
+const FLOW_FONT = "var(--font-ui)";
 // RxR mark ~18px wide in the 256-unit icon viewBox (the mark's glyphs span y ≈ 36–220).
 const ICON_SCALE = 18 / 256;
 
@@ -211,10 +211,16 @@ function toBase64(buffer: ArrayBuffer): string {
 }
 
 // A rasterized SVG (loaded as an <img>) can't reach the page's webfonts, so the exported PNG falls
-// back to a system font unless the font is inlined. Find the Hanken Grotesk woff2 the app already
+// back to a system font unless the font is inlined. Find the UI woff2 the app already
 // loaded (basic-latin subset covers the chart's English labels), base64 it, and return an
 // @font-face the export SVG can embed. Returns null on any failure so export still proceeds.
 async function uiFontFace(): Promise<string | null> {
+	const uiFamily = getComputedStyle(document.documentElement)
+		.getPropertyValue("--font-ui")
+		.split(",")[0]
+		?.trim()
+		.replace(/["']/g, "");
+	if (!uiFamily) return null;
 	for (const sheet of Array.from(document.styleSheets)) {
 		let rules: CSSRuleList | undefined;
 		try {
@@ -225,7 +231,7 @@ async function uiFontFace(): Promise<string | null> {
 		for (const rule of Array.from(rules ?? [])) {
 			if (!(rule instanceof CSSFontFaceRule)) continue;
 			const family = rule.style.getPropertyValue("font-family").replace(/["']/g, "");
-			if (!family.includes("Hanken Grotesk")) continue;
+			if (family !== uiFamily) continue;
 			if ((rule.style.getPropertyValue("font-style") || "normal") !== "normal") continue;
 			// Keep only the basic-latin subset (covers the chart's English labels). CSSOM normalizes
 			// its range to "U+0-FF" — i.e. "U+" then all-zero start — so match that, not "U+0000".
@@ -237,7 +243,7 @@ async function uiFontFace(): Promise<string | null> {
 				const res = await fetch(url);
 				if (!res.ok) return null;
 				const buffer = await res.arrayBuffer();
-				return `@font-face{font-family:"Hanken Grotesk Variable";font-style:normal;font-weight:100 900;src:url(data:font/woff2;base64,${toBase64(buffer)}) format("woff2");}`;
+				return `@font-face{font-family:"${family}";font-style:normal;font-weight:${rule.style.getPropertyValue("font-weight")};src:url(data:font/woff2;base64,${toBase64(buffer)}) format("woff2");}`;
 			} catch {
 				return null;
 			}
@@ -273,8 +279,9 @@ function PipelineFlow({ insights }: { insights: ReturnType<typeof computeInsight
 		if (!svg) return;
 		// Reveal the export-only watermark on a clone so the on-screen chart stays clean.
 		const clone = svg.cloneNode(true) as SVGSVGElement;
+		clone.style.fontFamily = getComputedStyle(svg).fontFamily;
 		for (const el of clone.querySelectorAll<SVGElement>("[data-export-only]")) el.style.display = "";
-		// Inline the UI font so the rasterized PNG renders in Hanken Grotesk, not a system fallback.
+		// Inline the UI font so the rasterized PNG uses the same type as the app.
 		const fontFace = await uiFontFace();
 		if (fontFace) {
 			const styleEl = document.createElementNS("http://www.w3.org/2000/svg", "style");

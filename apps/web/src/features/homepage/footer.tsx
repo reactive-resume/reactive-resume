@@ -126,8 +126,8 @@ export function LandingFooter() {
 
 			{/* It fades in by sliding up out of the mask's faded bottom; an opacity fade would fail contrast checks. */}
 			<div aria-hidden="true" className="@container mx-auto mt-14 max-w-[1440px] px-(--gutter)">
-				<div className="h-[23cqw] overflow-hidden [mask-image:linear-gradient(to_bottom,#000_35%,transparent_100%)]">
-					<div className="select-none whitespace-nowrap pb-[.06em] font-anybody font-extrabold font-stretch-[78%] text-[17.5cqw] text-ink leading-[.84] tracking-[-.035em] [transform:translateY(calc((1-clamp(0,(var(--p)-.1)/.8,1))*60%))] [transition:transform_.35s_var(--ease)]">
+				<div className="h-[27cqw] overflow-hidden [mask-image:linear-gradient(to_bottom,#000_35%,transparent_100%)]">
+					<div className="select-none whitespace-nowrap pt-[.12em] pb-[.06em] font-anybody font-extrabold font-stretch-[78%] text-[17.5cqw] text-ink leading-[.84] tracking-[-.035em] [transform:translateY(calc((1-clamp(0,(var(--p)-.1)/.8,1))*60%))] [transition:transform_.35s_var(--ease)]">
 						<span className="block">Reactive</span>
 						<span className="block text-accent-text">Resume</span>
 					</div>
