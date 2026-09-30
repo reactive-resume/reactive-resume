@@ -152,7 +152,35 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEdit }: Pr
 		}),
 	);
 
+	// These apply immediately (this sheet has no save/cancel step), so they go through the
+	// server's attach/remove procedures: upload→persist happens in one call, and the previous
+	// file is only deleted after the record stops referencing it — never the other way around.
+	const attachDocument = useMutation(
+		orpc.applications.attachDocument.mutationOptions({
+			onSuccess: invalidate,
+			onError: () => toast.add({ type: "error", description: t`Couldn't upload the file. Please try again.` }),
+		}),
+	);
+
+	const detachDocument = useMutation(
+		orpc.applications.removeDocument.mutationOptions({
+			onSuccess: invalidate,
+			onError: () => toast.add({ type: "error", description: t`Couldn't remove the file. Please try again.` }),
+		}),
+	);
+
 	if (!current) return null;
+
+	const attachmentBusy = update.isPending || attachDocument.isPending || detachDocument.isPending;
+
+	const changeAttachment = (kind: "resume" | "cover-letter", file: File | null) => {
+		if (file) {
+			const toastId = toast.add({ type: "loading", description: t`Uploading…` });
+			attachDocument.mutate({ id: current.id, kind, file }, { onSettled: () => toast.close(toastId) });
+		} else {
+			detachDocument.mutate({ id: current.id, kind });
+		}
+	};
 
 	const idx = stageIndex(current.status);
 	const nextStage = idx >= 0 && idx < STAGES.length - 2 ? STAGES[idx + 1] : null;
@@ -260,14 +288,8 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEdit }: Pr
 									: null
 							}
 							attachLabel={t`Attach a resume file (PDF)`}
-							disabled={update.isPending}
-							onChange={(value) =>
-								update.mutate({
-									id: current.id,
-									resumeFileUrl: value?.url ?? null,
-									resumeFileName: value?.name ?? null,
-								})
-							}
+							disabled={attachmentBusy}
+							onChange={(file) => changeAttachment("resume", file)}
 						/>
 
 						<FileAttachmentField
@@ -277,14 +299,8 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEdit }: Pr
 									: null
 							}
 							attachLabel={t`Attach a cover letter (PDF)`}
-							disabled={update.isPending}
-							onChange={(value) =>
-								update.mutate({
-									id: current.id,
-									coverLetterUrl: value?.url ?? null,
-									coverLetterName: value?.name ?? null,
-								})
-							}
+							disabled={attachmentBusy}
+							onChange={(file) => changeAttachment("cover-letter", file)}
 						/>
 					</Section>
 

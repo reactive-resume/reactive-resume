@@ -1405,8 +1405,8 @@ msgid "Continue where you left off"
 msgstr "Jatka siitä, mihin jäit"
 
 #: src/dialogs/resume/import.tsx
-msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, and JSON files from Reactive Resume or JSON Resume."
-msgstr "Jatka siitä, mihin jäit, tuomalla ansioluettelo, jonka teit Reactive Resumessa tai jossakin toisessa ansioluettelotyökalussa. Tuetut muodot ovat PDF, Microsoft Word sekä Reactive Resumen tai JSON Resumen JSON-tiedostot."
+msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, a LinkedIn data export, and JSON files from Reactive Resume or JSON Resume."
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Contribute code"
@@ -1586,6 +1586,10 @@ msgstr "Aikajanamerkintää ei voitu poistaa."
 msgid "Couldn't move the application. Please try again."
 msgstr "Hakemusta ei voitu siirtää. Yritä uudelleen."
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't remove the file. Please try again."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Couldn't save"
 msgstr "Tallentaminen epäonnistui"
@@ -1610,7 +1614,8 @@ msgstr ""
 msgid "Couldn't update the timeline entry."
 msgstr "Aikajanamerkintää ei voitu päivittää."
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't upload the file. Please try again."
 msgstr "Tiedostoa ei voitu ladata. Yritä uudelleen."
 
@@ -3577,6 +3582,11 @@ msgstr "Linkitetty Reactive Resume"
 #: src/routes/_home/-sections/footer.tsx
 msgid "LinkedIn"
 msgstr "LinkedIn"
+
+#. Import source option for a LinkedIn data export ZIP
+#: src/dialogs/resume/import.tsx
+msgid "LinkedIn (Data Export)"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "LinkedIn, Referral…"
@@ -6148,6 +6158,10 @@ msgstr "Yllä olevat tarkistukset ovat mekaanisia. Tämä kysyy kielimallilta, m
 msgid "The deep check could not finish. Please try again."
 msgstr "Syvätarkistusta ei saatu valmiiksi. Yritä uudelleen."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "The file could not be removed from storage. Your application is up to date."
+msgstr ""
+
 #. Error shown when AI parsing returns invalid resume structure during import
 #: src/dialogs/resume/import.tsx
 msgid "The imported file could not be parsed into a valid resume."
@@ -6922,7 +6936,7 @@ msgstr "Lataa kuva"
 msgid "Uploading picture…"
 msgstr "Kuvan lataaminen…"
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 msgid "Uploading…"
 msgstr "Ladataan…"
 
@@ -7553,4 +7567,3 @@ msgstr "Loitonna"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-

@@ -1405,8 +1405,8 @@ msgid "Continue where you left off"
 msgstr "ትቆሙበት ቦታ ከዚያ ይቀጥሉ"
 
 #: src/dialogs/resume/import.tsx
-msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, and JSON files from Reactive Resume or JSON Resume."
-msgstr "በ Reactive Resume ወይም በሌላ የስራ ልምድ ማስረጃ መገንቢያ የሠሩትን ሰነድ በማስመጣት ካቆሙበት ይቀጥሉ። የሚደገፉ ቅርጸቶች PDF፣ Microsoft Word እና ከ Reactive Resume ወይም ከ JSON Resume የመጡ JSON ፋይሎች ናቸው።"
+msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, a LinkedIn data export, and JSON files from Reactive Resume or JSON Resume."
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Contribute code"
@@ -1586,6 +1586,10 @@ msgstr "የጊዜ መስመር ግቤቱን መሰረዝ አልተቻለም።"
 msgid "Couldn't move the application. Please try again."
 msgstr "ማመልከቻውን ማንቀሳቀስ አልተቻለም። እባክዎ እንደገና ይሞክሩ።"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't remove the file. Please try again."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Couldn't save"
 msgstr "ማስቀመጥ አልተቻለም"
@@ -1610,7 +1614,8 @@ msgstr ""
 msgid "Couldn't update the timeline entry."
 msgstr "የጊዜ መስመር ግቤቱን ማዘመን አልተቻለም።"
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't upload the file. Please try again."
 msgstr "ፋይሉን መስቀል አልተቻለም። እባክዎ እንደገና ይሞክሩ።"
 
@@ -3577,6 +3582,11 @@ msgstr "የተገናኘ ምላሽ ሰጪ የሥራ ልምድ"
 #: src/routes/_home/-sections/footer.tsx
 msgid "LinkedIn"
 msgstr "LinkedIn"
+
+#. Import source option for a LinkedIn data export ZIP
+#: src/dialogs/resume/import.tsx
+msgid "LinkedIn (Data Export)"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "LinkedIn, Referral…"
@@ -6148,6 +6158,10 @@ msgstr "ከላይ ያሉት ቼኮች ስልታዊ ናቸው። ይህ ግን �
 msgid "The deep check could not finish. Please try again."
 msgstr "ጥልቅ ማረጋገጫው መጠናቀቅ አልቻለም። እባክዎ እንደገና ይሞክሩ።"
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "The file could not be removed from storage. Your application is up to date."
+msgstr ""
+
 #. Error shown when AI parsing returns invalid resume structure during import
 #: src/dialogs/resume/import.tsx
 msgid "The imported file could not be parsed into a valid resume."
@@ -6922,7 +6936,7 @@ msgstr "ምስል ስቀል"
 msgid "Uploading picture…"
 msgstr "ፎቶ በመስቀል ላይ…"
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 msgid "Uploading…"
 msgstr "በመስቀል ላይ…"
 
@@ -7553,4 +7567,3 @@ msgstr "አጉር"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "ዙሉ"
-

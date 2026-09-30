@@ -1405,8 +1405,8 @@ msgid "Continue where you left off"
 msgstr "যেখান থেকে থেমেছিলেন সেখান থেকেই চালিয়ে যান"
 
 #: src/dialogs/resume/import.tsx
-msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, and JSON files from Reactive Resume or JSON Resume."
-msgstr "Reactive Resume বা অন্য কোনো জীবনবৃত্তান্ত নির্মাতায় তৈরি করা জীবনবৃত্তান্ত ইমপোর্ট করে যেখানে থেমেছিলেন সেখান থেকেই শুরু করুন। সমর্থিত ফরম্যাট হলো PDF, Microsoft Word, এবং Reactive Resume বা JSON Resume-এর JSON ফাইল।"
+msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, a LinkedIn data export, and JSON files from Reactive Resume or JSON Resume."
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Contribute code"
@@ -1586,6 +1586,10 @@ msgstr "সময়রেখার এন্ট্রি মুছে ফেল
 msgid "Couldn't move the application. Please try again."
 msgstr "আবেদনটি সরানো যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't remove the file. Please try again."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Couldn't save"
 msgstr "সংরক্ষণ করা যায়নি"
@@ -1610,7 +1614,8 @@ msgstr ""
 msgid "Couldn't update the timeline entry."
 msgstr "সময়রেখার এন্ট্রি আপডেট করা যায়নি।"
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't upload the file. Please try again."
 msgstr "ফাইলটি আপলোড করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।"
 
@@ -3577,6 +3582,11 @@ msgstr "লিঙ্কড রিঅ্যাক্টিভ রেজ্যু�
 #: src/routes/_home/-sections/footer.tsx
 msgid "LinkedIn"
 msgstr "লিংকডইন"
+
+#. Import source option for a LinkedIn data export ZIP
+#: src/dialogs/resume/import.tsx
+msgid "LinkedIn (Data Export)"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "LinkedIn, Referral…"
@@ -6148,6 +6158,10 @@ msgstr "উপরের চেকগুলো যান্ত্রিক। এ
 msgid "The deep check could not finish. Please try again."
 msgstr "গভীর চেকটি সম্পূর্ণ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।"
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "The file could not be removed from storage. Your application is up to date."
+msgstr ""
+
 #. Error shown when AI parsing returns invalid resume structure during import
 #: src/dialogs/resume/import.tsx
 msgid "The imported file could not be parsed into a valid resume."
@@ -6922,7 +6936,7 @@ msgstr "ছবি আপলোড করুন"
 msgid "Uploading picture…"
 msgstr "ছবি আপলোড করা হচ্ছে…"
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 msgid "Uploading…"
 msgstr "… আপলোড হচ্ছে"
 
@@ -7553,4 +7567,3 @@ msgstr "জুম আউট"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "জুলু"
-

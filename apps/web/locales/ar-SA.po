@@ -1405,8 +1405,8 @@ msgid "Continue where you left off"
 msgstr "تابع من حيث توقفت"
 
 #: src/dialogs/resume/import.tsx
-msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, and JSON files from Reactive Resume or JSON Resume."
-msgstr "تابع من حيث توقفت باستيراد سيرة ذاتية أنشأتها في Reactive Resume أو في منشئ سير ذاتية آخر. الصيغ المدعومة هي PDF وMicrosoft Word وملفات JSON من Reactive Resume أو JSON Resume."
+msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, a LinkedIn data export, and JSON files from Reactive Resume or JSON Resume."
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Contribute code"
@@ -1586,6 +1586,10 @@ msgstr "تعذر حذف إدخال الجدول الزمني."
 msgid "Couldn't move the application. Please try again."
 msgstr "تعذر نقل الطلب. يرجى المحاولة مرة أخرى."
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't remove the file. Please try again."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Couldn't save"
 msgstr "تعذر الحفظ"
@@ -1610,7 +1614,8 @@ msgstr ""
 msgid "Couldn't update the timeline entry."
 msgstr "تعذر تحديث إدخال الجدول الزمني."
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't upload the file. Please try again."
 msgstr "تعذر تحميل الملف. يرجى المحاولة مرة أخرى."
 
@@ -3577,6 +3582,11 @@ msgstr "السيرة الذاتية التفاعلية المرتبطة"
 #: src/routes/_home/-sections/footer.tsx
 msgid "LinkedIn"
 msgstr "لينكد إن"
+
+#. Import source option for a LinkedIn data export ZIP
+#: src/dialogs/resume/import.tsx
+msgid "LinkedIn (Data Export)"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "LinkedIn, Referral…"
@@ -6148,6 +6158,10 @@ msgstr "الفحوصات أعلاه آلية. أما هذا فيسأل نموذ�
 msgid "The deep check could not finish. Please try again."
 msgstr "تعذّر إكمال الفحص العميق. يرجى المحاولة مرة أخرى."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "The file could not be removed from storage. Your application is up to date."
+msgstr ""
+
 #. Error shown when AI parsing returns invalid resume structure during import
 #: src/dialogs/resume/import.tsx
 msgid "The imported file could not be parsed into a valid resume."
@@ -6922,7 +6936,7 @@ msgstr "تحميل الصورة"
 msgid "Uploading picture…"
 msgstr "جارٍ تحميل الصورة…"
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 msgid "Uploading…"
 msgstr "جارٍ التحميل…"
 
@@ -7553,4 +7567,3 @@ msgstr "تصغير"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "الزولو"
-

@@ -1,28 +1,30 @@
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
 import { FilePdfIcon, UploadSimpleIcon, XIcon } from "@phosphor-icons/react";
-import { useMutation } from "@tanstack/react-query";
 import { useRef } from "react";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { orpc } from "@/libs/orpc/client";
 
 export type FileAttachment = { url: string; name: string };
 
+// A pick that hasn't reached storage yet: the parent keeps the File around and uploads it
+// when (and only if) the surrounding change is committed.
+export type StagedAttachment = FileAttachment & { file: File };
+
 type Props = {
-	// The uploaded file, or null when nothing is attached yet.
+	// The attached file, or null when nothing is attached yet.
 	value: FileAttachment | null;
-	onChange: (value: FileAttachment | null) => void;
+	// Emits the picked File, or null when the attachment is removed. No storage call happens
+	// here — the parent decides when to upload/delete (on save vs. immediately).
+	onChange: (file: File | null) => void;
 	// Copy for the empty-state button, e.g. "Attach a cover letter (PDF)".
 	attachLabel: string;
 	disabled?: boolean;
 };
 
-// PDF-only upload to the shared storage route, used for both the resume file and cover letter.
-// Handles upload + best-effort delete; persistence of the returned URL is the parent's job.
+// PDF-only attachment picker used for the resume file and cover letter. Deliberately a pure
+// value control: staging the File instead of uploading on select — and reporting removal
+// instead of deleting — is what lets a cancelled edit leave storage untouched.
 export function FileAttachmentField({ value, onChange, attachLabel, disabled }: Props) {
 	const inputRef = useRef<HTMLInputElement>(null);
-	const upload = useMutation(orpc.storage.uploadFile.mutationOptions({ meta: { noInvalidate: true } }));
-	const remove = useMutation(orpc.storage.deleteFile.mutationOptions({ meta: { noInvalidate: true } }));
 
 	const onSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
@@ -31,25 +33,9 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 			toast.add({ type: "error", description: t`Please upload a PDF file.` });
 			return;
 		}
-		const toastId = toast.add({ type: "loading", description: t`Uploading…` });
-		upload.mutate(file, {
-			onSuccess: ({ url }) => {
-				toast.close(toastId);
-				onChange({ url, name: file.name });
-				if (inputRef.current) inputRef.current.value = "";
-			},
-			onError: () =>
-				toast.add({ type: "error", description: t`Couldn't upload the file. Please try again.`, id: toastId }),
-		});
-	};
-
-	const clear = () => {
-		if (!value) return;
-		// Best-effort delete of the stored file; the storage route defaults a bare filename to the
-		// user's upload dir. Clear regardless so the UI reflects the removal.
-		const filename = new URL(value.url, window.location.origin).pathname.split("/").pop();
-		if (filename) remove.mutate({ filename });
-		onChange(null);
+		onChange(file);
+		// Reset so picking the same file twice in a row still fires a change event.
+		if (inputRef.current) inputRef.current.value = "";
 	};
 
 	return (
@@ -72,7 +58,7 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 						title={t`Remove file`}
 						disabled={disabled}
 						className="text-muted-foreground hover:text-destructive disabled:opacity-40"
-						onClick={clear}
+						onClick={() => onChange(null)}
 					>
 						<XIcon />
 					</button>
@@ -80,12 +66,12 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 			) : (
 				<button
 					type="button"
-					disabled={disabled || upload.isPending}
+					disabled={disabled}
 					onClick={() => inputRef.current?.click()}
 					className="flex w-full items-center gap-2 rounded-lg border border-border border-dashed p-2.5 text-muted-foreground text-sm hover:bg-muted/50 disabled:opacity-60"
 				>
 					<UploadSimpleIcon />
-					{upload.isPending ? <Trans>Uploading…</Trans> : attachLabel}
+					{attachLabel}
 				</button>
 			)}
 			<input ref={inputRef} type="file" accept="application/pdf" className="hidden" onChange={onSelect} />
