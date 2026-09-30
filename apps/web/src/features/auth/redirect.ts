@@ -1,6 +1,6 @@
 import z from "zod";
 
-// biome-ignore lint/suspicious/noControlCharactersInRegex: Reject URL parser whitespace and control-character normalization.
+// oxlint-disable-next-line no-control-regex -- Reject URL parser whitespace and control-character normalization.
 const unsafeCallbackCharacters = /[\\\u0000-\u0020\u007f]/;
 
 function safeCallbackURL(value: unknown): string | undefined {

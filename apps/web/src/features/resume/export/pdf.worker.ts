@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 
-import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { PdfWorkerRequest, PdfWorkerResponse } from "./pdf-document";
+import type { PageMap } from "@reactive-resume/pdf/page-map";
 import { createResumePdfBlob } from "@reactive-resume/pdf/browser";
 import { createSectionTitleResolverForLocale } from "@/libs/resume/section-title-locale";
 

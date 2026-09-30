@@ -78,7 +78,7 @@ export function URLInput<TValue extends Website>({ value, onChange, hideLabelBut
 						/>
 
 						<PopoverContent className="pt-3">
-							{/** biome-ignore lint/a11y/noStaticElementInteractions: for stopPropagation */}
+							{/** oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- for stopPropagation */}
 							<div role="presentation" className="grid gap-2" onMouseDown={(e) => e.stopPropagation()}>
 								<Label htmlFor="url-label">
 									<Trans comment="Short field label for custom display text associated with a URL">Label</Trans>

@@ -98,7 +98,10 @@ export const resumeVersion = pg.pgTable(
 	},
 	(t) => [
 		pg.index().on(t.resumeId, t.createdAt.desc()),
-		pg.uniqueIndex("resume_version_session_unique").on(t.resumeId, t.sessionId).where(sql`${t.kind} = 'auto'`),
+		pg
+			.uniqueIndex("resume_version_session_unique")
+			.on(t.resumeId, t.sessionId)
+			.where(sql`${t.kind} = 'auto'`),
 	],
 );
 

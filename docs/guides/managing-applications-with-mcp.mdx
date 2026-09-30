@@ -110,7 +110,8 @@ Remove the cover-letter PDF from the Blue Harbor Studio application.
 `attach_application_document` accepts one resume PDF and one cover-letter PDF per application, up to 10 MB each, sent as base64. Attaching a new file replaces the old one.
 
 <Warning>
-  Anyone with the address of an attached PDF can download it without signing in. Attaching a file never sends it to an employer.
+  Anyone with the address of an attached PDF can download it without signing in. Attaching a file never sends it to an
+  employer.
 </Warning>
 
 If your client can't read files from your computer, attach the PDF in the app instead. See [Managing an application](/guides/managing-an-application).
@@ -135,12 +136,12 @@ Draft a cover letter for the Northwind Games application.
 Draft a short follow-up to the recruiter at Northwind Games asking about next steps.
 ```
 
-| Tool | What it changes |
-| --- | --- |
-| `score_application_match` | Saves a new match score on the application, replacing the previous one. |
+| Tool                            | What it changes                                                                                                                                                                              |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `score_application_match`       | Saves a new match score on the application, replacing the previous one.                                                                                                                      |
 | `tailor_resume_for_application` | Creates a private copy of the linked resume with a rewritten summary, links the copy to the application in place of the original and adds a timeline note. The original resume is unchanged. |
-| `draft_application_message` | In cover-letter mode, saves a new cover letter and returns its text and ID. In follow-up mode, returns the text only. It never sends anything. |
-| `autofill_application_from_job` | Returns suggested company, role, location and salary from a pasted posting. It saves nothing. |
+| `draft_application_message`     | In cover-letter mode, saves a new cover letter and returns its text and ID. In follow-up mode, returns the text only. It never sends anything.                                               |
+| `autofill_application_from_job` | Returns suggested company, role, location and salary from a pasted posting. It saves nothing.                                                                                                |
 
 Read anything the AI writes before you use it. You can also tailor resumes and write letters from the app; see [Tailoring a resume for a job](/guides/tailoring-a-resume-for-a-job).
 
@@ -166,13 +167,13 @@ Use Reactive Resume MCP for job applications. Call list_applications before crea
 
 ## Troubleshooting
 
-| Problem | What to do |
-| --- | --- |
-| The client can't see application tools | Reconnect the server and ask the client to refresh its tools. |
-| The client creates duplicates | Ask it to list applications first and match on company and role before creating one. |
-| A stage change to `rejected` or an archive request fails | Those no longer exist. Use the `closed` stage with a reason. |
-| Attaching a document fails | Only PDFs up to 10 MB are accepted. Attach from the app if your client can't read the file. |
-| Scoring, tailoring or drafting fails | Check that a default AI provider is set up and tested. For scoring and tailoring, also check that the application has a job description and a linked resume. |
+| Problem                                                  | What to do                                                                                                                                                   |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| The client can't see application tools                   | Reconnect the server and ask the client to refresh its tools.                                                                                                |
+| The client creates duplicates                            | Ask it to list applications first and match on company and role before creating one.                                                                         |
+| A stage change to `rejected` or an archive request fails | Those no longer exist. Use the `closed` stage with a reason.                                                                                                 |
+| Attaching a document fails                               | Only PDFs up to 10 MB are accepted. Attach from the app if your client can't read the file.                                                                  |
+| Scoring, tailoring or drafting fails                     | Check that a default AI provider is set up and tested. For scoring and tailoring, also check that the application has a job description and a linked resume. |
 
 ## Related guides
 

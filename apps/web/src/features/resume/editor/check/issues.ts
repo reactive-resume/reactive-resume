@@ -4,8 +4,8 @@ import type { ResumeData, SectionType } from "@reactive-resume/schema/resume/dat
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import { t } from "@lingui/core/macro";
 import { atsRuleCategory } from "@reactive-resume/resume/ats";
-import { getSectionTitle } from "@/libs/resume/section";
 import { describeEntry, findEntry, getSectionObject, resolveSection } from "../write/model";
+import { getSectionTitle } from "@/libs/resume/section";
 
 /** How a card fixes its issue: in one step on the resume (with undo), or by opening the entry in Write. */
 type IssueFix =

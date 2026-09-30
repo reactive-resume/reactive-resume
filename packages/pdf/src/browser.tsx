@@ -1,8 +1,8 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { Template } from "@reactive-resume/schema/templates";
 import type { ResumeRenderOptions } from "./context";
 import type { PageMap } from "./page-map";
 import type { SectionTitleResolver } from "./section-title";
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { Template } from "@reactive-resume/schema/templates";
 import wasmUrl from "@formepdf/core/pkg-web/forme_bg.wasm?url";
 import * as forme from "@formepdf/core/worker";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";

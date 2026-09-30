@@ -25,7 +25,7 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
 		<DialogPrimitive.Backdrop
 			data-slot="dialog-overlay"
 			className={cn(
-				"fixed inset-0 isolate z-50 bg-scrim transition-opacity duration-standard ease-enter data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)]",
+				"fixed inset-0 isolate z-50 bg-scrim transition-opacity duration-standard ease-enter data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)] data-starting-style:opacity-0",
 				className,
 			)}
 			{...props}
@@ -56,7 +56,7 @@ function DialogContent({
 			<DialogPrimitive.Popup
 				data-slot="dialog-content"
 				className={cn(
-					"fixed inset-s-1/2 top-1/2 z-50 grid max-h-[calc(100svh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto overscroll-contain rounded-2xl bg-raised p-6 text-ink text-sm shadow-e3 outline-none transition-[opacity,scale] duration-standard ease-enter data-ending-style:scale-[0.98] data-starting-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)] sm:max-w-[480px] rtl:translate-x-1/2",
+					"fixed inset-s-1/2 top-1/2 z-50 grid max-h-[calc(100svh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto overscroll-contain rounded-2xl bg-raised p-6 text-sm text-ink shadow-e3 transition-[opacity,scale] duration-standard ease-enter outline-none data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)] data-starting-style:scale-[0.98] data-starting-style:opacity-0 sm:max-w-[480px] rtl:translate-x-1/2",
 					instant && "transition-none",
 					className,
 				)}
@@ -110,7 +110,7 @@ function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
 	return (
 		<DialogPrimitive.Title
 			data-slot="dialog-title"
-			className={cn("font-display font-medium text-[22px] text-ink leading-7", className)}
+			className={cn("font-display text-[22px] leading-7 font-medium text-ink", className)}
 			{...props}
 		/>
 	);
@@ -121,7 +121,7 @@ function DialogDescription({ className, ...props }: DialogPrimitive.Description.
 		<DialogPrimitive.Description
 			data-slot="dialog-description"
 			className={cn(
-				"text-ink-2 text-sm leading-5 *:[a]:text-accent-text *:[a]:underline *:[a]:underline-offset-3",
+				"text-sm leading-5 text-ink-2 *:[a]:text-accent-text *:[a]:underline *:[a]:underline-offset-3",
 				className,
 			)}
 			{...props}

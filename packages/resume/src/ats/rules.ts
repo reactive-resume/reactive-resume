@@ -1,7 +1,7 @@
-import type { CustomSectionType, ResumeData } from "@reactive-resume/schema/resume/data";
 import type { AtsRuleCode } from "./catalog";
 import type { AtsFinding, AtsFindingParams } from "./types";
 import type { WalkedSection } from "./walk";
+import type { CustomSectionType, ResumeData } from "@reactive-resume/schema/resume/data";
 import { resumeDatesSchema, resumeDatesToPeriod } from "@reactive-resume/schema/resume/dates";
 import {
 	isFutureEndpoint,

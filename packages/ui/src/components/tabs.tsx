@@ -24,7 +24,7 @@ const tabsListVariants = cva(
 		variants: {
 			variant: {
 				default: "rounded-[9px] bg-sunken p-[3px] text-ink-2 group-data-horizontal/tabs:h-9",
-				line: "gap-4 border-line border-b text-ink-2 group-data-horizontal/tabs:h-10",
+				line: "gap-4 border-b border-line text-ink-2 group-data-horizontal/tabs:h-10",
 			},
 		},
 		defaultVariants: {
@@ -76,7 +76,7 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
 		<TabsPrimitive.Tab
 			data-slot="tabs-trigger"
 			className={cn(
-				"touch-target relative inline-flex min-w-fit items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-colors duration-quick hover:text-ink disabled:pointer-events-none disabled:text-ink-3 aria-disabled:pointer-events-none aria-disabled:text-ink-3 data-active:text-ink group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"touch-target relative inline-flex min-w-fit items-center justify-center gap-1.5 font-medium whitespace-nowrap transition-colors duration-quick group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start hover:text-ink disabled:pointer-events-none disabled:text-ink-3 aria-disabled:pointer-events-none aria-disabled:text-ink-3 data-active:text-ink [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
 				"group-data-[variant=default]/tabs-list:h-full group-data-[variant=default]/tabs-list:flex-1 group-data-[variant=default]/tabs-list:rounded-sm group-data-[variant=default]/tabs-list:px-3 group-data-[variant=default]/tabs-list:text-[13px]",
 				"group-data-[variant=line]/tabs-list:h-full group-data-[variant=line]/tabs-list:text-sm",
 				className,
@@ -88,7 +88,7 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
 
 /** A count after a tab label, in mono. */
 function TabsCount({ className, ...props }: React.ComponentProps<"span">) {
-	return <span data-slot="tabs-count" className={cn("font-mono text-ink-3 text-xs", className)} {...props} />;
+	return <span data-slot="tabs-count" className={cn("font-mono text-xs text-ink-3", className)} {...props} />;
 }
 
 function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {

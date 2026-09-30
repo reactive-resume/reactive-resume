@@ -11,7 +11,8 @@
 				try {
 					const match = document.cookie.match(/(?:^|; )theme=([^;]*)/);
 					const theme = match ? decodeURIComponent(match[1]) : "system";
-					const dark = theme === "dark" || (theme !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+					const dark =
+						theme === "dark" || (theme !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 					document.documentElement.classList.toggle("dark", dark);
 				} catch {
 					// Without cookies or matchMedia the page starts light, and the app corrects it once it loads.
@@ -24,7 +25,10 @@
 		<meta name="apple-mobile-web-app-title" content="Reactive Resume" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<!-- Keep under ~120 characters so Google's mobile SERP snippet is not truncated at 3 lines. -->
-		<meta name="description" content="Free, open-source resume builder. Create, update, and share a professional resume in minutes — no ads, no paywall.">
+		<meta
+			name="description"
+			content="Free, open-source resume builder. Create, update, and share a professional resume in minutes — no ads, no paywall."
+		/>
 
 		<link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="128x128" />
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="256x256 any" />
@@ -44,7 +48,11 @@
 			<span class="initial-loader__sr-only">Loading</span>
 		</div>
 		<style>
-			@keyframes app-spin { to { transform: rotate(360deg) } }
+			@keyframes app-spin {
+				to {
+					transform: rotate(360deg);
+				}
+			}
 			#initial-loader {
 				position: fixed;
 				inset: 0;
@@ -55,10 +63,19 @@
 				gap: 24px;
 				background: #f8f7f3;
 			}
-			html.dark #initial-loader { background: #100f0c; }
-			.initial-loader__logo-dark, html.dark .initial-loader__logo-light { display: none; }
-			html.dark .initial-loader__logo-dark { display: block; }
-			#app:not(:empty) ~ #initial-loader { display: none; }
+			html.dark #initial-loader {
+				background: #100f0c;
+			}
+			.initial-loader__logo-dark,
+			html.dark .initial-loader__logo-light {
+				display: none;
+			}
+			html.dark .initial-loader__logo-dark {
+				display: block;
+			}
+			#app:not(:empty) ~ #initial-loader {
+				display: none;
+			}
 			.initial-loader__spinner {
 				width: 24px;
 				height: 24px;
@@ -67,7 +84,10 @@
 				border-radius: 9999px;
 				animation: app-spin 0.7s linear infinite;
 			}
-			html.dark .initial-loader__spinner { border-color: rgba(239, 238, 235, 0.2); border-top-color: #efeeeb; }
+			html.dark .initial-loader__spinner {
+				border-color: rgba(239, 238, 235, 0.2);
+				border-top-color: #efeeeb;
+			}
 			.initial-loader__sr-only {
 				position: absolute;
 				width: 1px;

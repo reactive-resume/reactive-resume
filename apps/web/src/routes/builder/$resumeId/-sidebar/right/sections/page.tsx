@@ -10,11 +10,11 @@ import {
 	InputGroupText,
 } from "@reactive-resume/ui/components/input-group";
 import { Switch } from "@reactive-resume/ui/components/switch";
+import { SectionBase } from "../shared/section-base";
 import { Combobox } from "@/components/ui/combobox";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";
-import { SectionBase } from "../shared/section-base";
 
 export function PageSectionBuilder() {
 	return (
@@ -77,7 +77,7 @@ function PageSectionForm() {
 
 	return (
 		<form
-			className="grid @md:grid-cols-2 grid-cols-1 gap-4"
+			className="grid grid-cols-1 gap-4 @md:grid-cols-2"
 			onSubmit={(event) => {
 				event.preventDefault();
 				event.stopPropagation();

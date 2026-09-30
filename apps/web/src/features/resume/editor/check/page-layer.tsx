@@ -1,7 +1,7 @@
+import type { CheckIssue } from "./issues";
 import type { PageMap, PageMapNode, PageMapTarget } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { CSSProperties } from "react";
-import type { CheckIssue } from "./issues";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { getProposalState } from "@reactive-resume/resume/proposals";
@@ -9,11 +9,11 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
-import { getPdfFindingMessage } from "@/features/ats-checker/messages";
 import { isSameSelection, useEditorStore } from "../store";
 import { findEntry } from "../write/model";
 import { scrollToIssue, useCheckActions } from "./actions";
 import { useCheck } from "./use-check";
+import { getPdfFindingMessage } from "@/features/ats-checker/messages";
 
 const toTarget = (node: PageMapNode): PageMapTarget => {
 	if (node.kind === "item") return { kind: "item", sectionId: node.sectionId, itemId: node.itemId };
@@ -163,7 +163,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 						<div aria-hidden="true" className="absolute" style={boxStyle(node, page)}>
 							<div
 								className={cn(
-									"absolute -inset-x-1.5 -inset-y-[3px] rounded-[3px] outline-[1.5px] outline-solid transition-[outline-color] duration-quick",
+									"absolute -inset-x-1.5 -inset-y-[3px] rounded-[3px] outline-[1.5px] transition-[outline-color] duration-quick outline-solid",
 									isSelected ? "outline-warn" : "outline-transparent",
 								)}
 							/>
@@ -177,8 +177,8 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 							onClick={() => pickIssue(issue)}
 							style={marginStyle(node, page, stack)}
 							className={cn(
-								"pointer-events-auto absolute grid size-[22px] place-items-center rounded-full border-2 border-white bg-warn font-bold text-[11px] text-[oklch(0.22_0.03_80)] shadow-[0_1px_3px_oklch(0_0_0/0.25)]",
-								isSelected && "outline-2 outline-warn outline-offset-1",
+								"pointer-events-auto absolute grid size-[22px] place-items-center rounded-full border-2 border-white bg-warn text-[11px] font-bold text-[oklch(0.22_0.03_80)] shadow-[0_1px_3px_oklch(0_0_0/0.25)]",
+								isSelected && "outline-2 outline-offset-1 outline-warn",
 							)}
 						>
 							{issue.number}
@@ -191,7 +191,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 				<div key={key}>
 					<div
 						aria-hidden="true"
-						className="absolute -m-[3px] rounded-[3px] border-[1.5px] border-info-text border-dashed p-[3px]"
+						className="absolute -m-[3px] rounded-[3px] border-[1.5px] border-dashed border-info-text p-[3px]"
 						style={boxStyle(box, page)}
 					/>
 					<button
@@ -212,7 +212,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 				<span
 					key={`marker:${number}`}
 					aria-hidden="true"
-					className="absolute grid size-5 place-items-center rounded-full bg-accent font-bold text-[11px] text-on-accent"
+					className="absolute grid size-5 place-items-center rounded-full bg-accent text-[11px] font-bold text-on-accent"
 					style={marginStyle(node, page)}
 				>
 					{number}
@@ -243,7 +243,7 @@ export function PageViewToggle() {
 					aria-pressed={view === option.value}
 					onClick={() => setView(option.value)}
 					className={cn(
-						"flex h-[30px] items-center gap-1.5 whitespace-nowrap rounded-[7px] px-3 font-medium text-[13px] max-sm:px-2",
+						"flex h-[30px] items-center gap-1.5 rounded-[7px] px-3 text-[13px] font-medium whitespace-nowrap max-sm:px-2",
 						view === option.value ? "bg-ink text-bg" : "text-ink-2 hover:bg-hover",
 					)}
 				>
@@ -288,7 +288,7 @@ export function IssueStepper() {
 				>
 					<Icon name="close" size={20} />
 				</button>
-				<span className="flex-1 text-center font-semibold text-sm">
+				<span className="flex-1 text-center text-sm font-semibold">
 					<Trans>
 						Issue {issue.number} of {issues.length}
 					</Trans>
@@ -315,8 +315,8 @@ export function IssueStepper() {
 				aria-label={t`Issue ${issue.number}`}
 				className="absolute inset-x-3 bottom-3 z-10 grid gap-2 rounded-xl border border-line bg-surface p-3.5 shadow-e3"
 			>
-				<strong className="font-semibold text-[15px]">{issue.title}</strong>
-				<p className="text-[13px] text-ink-2 leading-[19px]">{issue.body}</p>
+				<strong className="text-[15px] font-semibold">{issue.title}</strong>
+				<p className="text-[13px] leading-[19px] text-ink-2">{issue.body}</p>
 				<Button size="sm" className="h-10 w-fit px-3.5 text-sm" onClick={() => fix(issue)}>
 					{issue.fix.kind === "apply" ? <Icon name={issue.fix.icon} size={18} /> : <Icon name="edit" size={18} />}
 					{issue.fix.label}

@@ -22,12 +22,12 @@ Mint an API key at `https://rxresu.me/dashboard/settings/api-keys` and export it
 
 ### Options
 
-| Key | Default | Description |
-|---|---|---|
-| `apiKey` | `''` | API key from `<url>/dashboard/settings/api-keys`. Empty mounts nothing. |
-| `url` | `https://rxresu.me` | Origin of your instance. Set this if you self-host. |
-| `serverName` | `resume` | Tool namespace. Tools reach the model as `mcp__<serverName>__<rawName>`. |
-| `toolCallTimeoutMs` | `60000` | Per-tool-call timeout. |
+| Key                 | Default             | Description                                                              |
+| ------------------- | ------------------- | ------------------------------------------------------------------------ |
+| `apiKey`            | `''`                | API key from `<url>/dashboard/settings/api-keys`. Empty mounts nothing.  |
+| `url`               | `https://rxresu.me` | Origin of your instance. Set this if you self-host.                      |
+| `serverName`        | `resume`            | Tool namespace. Tools reach the model as `mcp__<serverName>__<rawName>`. |
+| `toolCallTimeoutMs` | `60000`             | Per-tool-call timeout.                                                   |
 
 Every tool Reactive Resume publishes is exposed. Narrowing that set is not currently possible from a plugin: Harness's `ctx.tools.restrict()` requires an agent-scoped context, which a plugin context is not.
 

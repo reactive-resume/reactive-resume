@@ -9,11 +9,11 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { generateId, getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
-import { IconPicker } from "@/components/input/icon-picker";
-import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useEditorStore } from "../store";
 import { TextField, validateEmail, WebsiteField } from "./fields";
 import { PictureSettings } from "./picture-settings";
+import { IconPicker } from "@/components/input/icon-picker";
+import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 
 type TextKey = "name" | "headline" | "email" | "phone" | "location";
 
@@ -59,15 +59,15 @@ export function BasicsCard({ locked }: { locked: boolean }) {
 			>
 				<span
 					aria-hidden="true"
-					className="grid size-10 shrink-0 place-items-center rounded-full bg-accent-soft font-semibold text-accent-text text-sm"
+					className="grid size-10 shrink-0 place-items-center rounded-full bg-accent-soft text-sm font-semibold text-accent-text"
 				>
 					{getInitials(basics.name || "?")}
 				</span>
 				<span className="min-w-0 flex-1">
-					<span className={cn("block truncate font-semibold text-sm", !basics.name && "text-ink-3")}>
+					<span className={cn("block truncate text-sm font-semibold", !basics.name && "text-ink-3")}>
 						{basics.name || <Trans>Your name</Trans>}
 					</span>
-					<span className="block truncate text-ink-3 text-xs">
+					<span className="block truncate text-xs text-ink-3">
 						{[basics.headline, basics.location].filter((part) => part.trim()).join(" · ")}
 					</span>
 				</span>
@@ -81,7 +81,7 @@ export function BasicsCard({ locked }: { locked: boolean }) {
 				<CollapsibleContent>
 					<fieldset
 						disabled={locked}
-						className="m-0 grid min-w-0 grid-cols-2 gap-x-3 gap-y-2.5 border-0 border-line border-t px-3 pt-3 pb-3.5"
+						className="m-0 grid min-w-0 grid-cols-2 gap-x-3 gap-y-2.5 border-0 border-t border-line px-3 pt-3 pb-3.5"
 					>
 						<PhotoRow locked={locked} />
 						<TextField
@@ -133,7 +133,7 @@ function PhotoRow({ locked }: { locked: boolean }) {
 					<Icon name="add_a_photo" />
 				</span>
 			)}
-			<p className="min-w-0 flex-1 text-ink-2 text-xs leading-4">
+			<p className="min-w-0 flex-1 text-xs leading-4 text-ink-2">
 				{!hasPhoto ? (
 					<Trans>No photo. Most ATS ignore photos; some regions expect one.</Trans>
 				) : picture.hidden ? (
@@ -238,7 +238,7 @@ function CustomFields({ fields, locked }: CustomFieldsProps) {
 			<button
 				type="button"
 				disabled={locked}
-				className="flex h-9 w-fit items-center gap-1.5 rounded-lg px-2 text-accent-text text-sm hover:bg-hover disabled:pointer-events-none disabled:opacity-50"
+				className="flex h-9 w-fit items-center gap-1.5 rounded-lg px-2 text-sm text-accent-text hover:bg-hover disabled:pointer-events-none disabled:opacity-50"
 				onClick={() => edit("add", (list) => list.push({ id: generateId(), icon: "acorn", text: "", link: "" }))}
 			>
 				<Icon name="add" size={18} />

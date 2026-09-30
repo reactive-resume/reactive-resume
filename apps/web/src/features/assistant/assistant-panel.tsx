@@ -1,8 +1,8 @@
-import type { IconName } from "@reactive-resume/ui/components/icon";
-import type { ReactNode } from "react";
-import type { RouterOutput } from "@/libs/orpc/client";
 import type { ChatAttachment, MessageContext } from "./chat";
 import type { AssistantDocument } from "./document";
+import type { RouterOutput } from "@/libs/orpc/client";
+import type { IconName } from "@reactive-resume/ui/components/icon";
+import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
@@ -22,6 +22,8 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { Composer, Conversation } from "./conversation";
+import { ProviderSetup } from "./provider-setup";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { formatVersionTime } from "@/features/resume/share/format";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
@@ -29,8 +31,6 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS, stagger } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
-import { Composer, Conversation } from "./conversation";
-import { ProviderSetup } from "./provider-setup";
 
 type UsableProvider = ReturnType<typeof useHasUsableAiProvider>["usableProviders"][number];
 type ThreadSummary = RouterOutput["agent"]["threads"]["list"][number];
@@ -145,9 +145,9 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 
 	return (
 		<section aria-label={t`Assistant`} className="flex h-full min-h-0 flex-col bg-surface">
-			<header className="flex h-[52px] shrink-0 items-center gap-1 border-line border-b ps-4 pe-2">
+			<header className="flex h-[52px] shrink-0 items-center gap-1 border-b border-line ps-4 pe-2">
 				<Icon name="auto_awesome" size={20} className="text-accent-text" />
-				<h2 className="me-auto font-semibold text-[15px]">
+				<h2 className="me-auto text-[15px] font-semibold">
 					<Trans>Assistant</Trans>
 				</h2>
 
@@ -282,7 +282,7 @@ function ConversationLoader({ threadId, document, ...props }: ConversationLoader
 	if (!thread.data || !thread.isFetchedAfterMount)
 		return (
 			// Hidden for the first 150ms, so a quick refetch never flashes a spinner.
-			<div className="grid flex-1 place-items-center starting:opacity-0 transition-opacity delay-150 duration-standard ease-enter">
+			<div className="grid flex-1 place-items-center transition-opacity delay-150 duration-standard ease-enter starting:opacity-0">
 				<Spinner />
 			</div>
 		);
@@ -318,7 +318,7 @@ function ModelMenu({ open, onOpenChange, providers, current, label, onChoose }: 
 					<button
 						type="button"
 						aria-label={t`Model: ${label}`}
-						className="flex h-7 max-w-[140px] items-center gap-0.5 rounded-md px-2 text-ink-2 text-xs transition-colors hover:bg-hover"
+						className="flex h-7 max-w-[140px] items-center gap-0.5 rounded-md px-2 text-xs text-ink-2 transition-colors hover:bg-hover"
 					/>
 				}
 			>
@@ -330,7 +330,7 @@ function ModelMenu({ open, onOpenChange, providers, current, label, onChoose }: 
 					<DropdownMenuItem key={item.id} onClick={() => onChoose(item.id)}>
 						<span className="grid min-w-0 flex-1">
 							<span className="truncate">{item.label}</span>
-							<span className="truncate text-ink-3 text-xs">{item.model}</span>
+							<span className="truncate text-xs text-ink-3">{item.model}</span>
 						</span>
 						{item.id === current?.id && <Icon name="check" size={16} />}
 					</DropdownMenuItem>
@@ -345,7 +345,7 @@ function ModelMenu({ open, onOpenChange, providers, current, label, onChoose }: 
 }
 
 function Notice({ children }: { children: ReactNode }) {
-	return <p className="m-4 rounded-xl bg-sunken p-4 text-ink-2 text-sm">{children}</p>;
+	return <p className="m-4 rounded-xl bg-sunken p-4 text-sm text-ink-2">{children}</p>;
 }
 
 type Suggestion = { icon: IconName; label: string; hint: string };
@@ -399,10 +399,10 @@ function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 	return (
 		<div className="grid min-h-0 flex-1 content-start gap-4 overflow-y-auto p-4">
 			<div className="grid gap-1.5">
-				<h3 className="font-display font-medium text-[22px] leading-7">
+				<h3 className="font-display text-[22px] leading-7 font-medium">
 					<Trans>What should we work on?</Trans>
 				</h3>
-				<p className="text-ink-2 text-sm">
+				<p className="text-sm text-ink-2">
 					{document.posting ? (
 						<Trans>
 							I can see this {kind} and the {document.posting.company} posting. Suggestions come back as edits you can
@@ -413,7 +413,7 @@ function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 					)}
 				</p>
 				{document.locked && (
-					<p className="text-warn-text text-xs">
+					<p className="text-xs text-warn-text">
 						<Trans>This document is locked. Unlock it to get suggestions.</Trans>
 					</p>
 				)}
@@ -429,8 +429,8 @@ function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 						>
 							<Icon name={suggestion.icon} size={20} className="shrink-0 text-ink-2" />
 							<span className="grid min-w-0">
-								<span className="truncate font-medium text-sm">{suggestion.label}</span>
-								<span className="truncate text-ink-3 text-xs">{suggestion.hint}</span>
+								<span className="truncate text-sm font-medium">{suggestion.label}</span>
+								<span className="truncate text-xs text-ink-3">{suggestion.hint}</span>
 							</span>
 						</button>
 					</li>
@@ -496,7 +496,7 @@ function PastConversations({ threads, document, currentId, onOpen }: PastConvers
 	return (
 		<div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-3">
 			<section aria-labelledby="assistant-this-document" className="grid gap-1">
-				<h3 id="assistant-this-document" className="px-3 font-semibold text-ink-3 text-xs uppercase">
+				<h3 id="assistant-this-document" className="px-3 text-xs font-semibold text-ink-3 uppercase">
 					<Trans>This document</Trans>
 				</h3>
 				{mine.length > 0 ? (
@@ -514,14 +514,14 @@ function PastConversations({ threads, document, currentId, onOpen }: PastConvers
 						))}
 					</ul>
 				) : (
-					<p className="px-3 text-ink-2 text-sm">
+					<p className="px-3 text-sm text-ink-2">
 						<Trans>No conversations about this document yet.</Trans>
 					</p>
 				)}
 			</section>
 			{others.length > 0 && (
 				<section aria-labelledby="assistant-other-documents" className="grid gap-1">
-					<h3 id="assistant-other-documents" className="px-3 font-semibold text-ink-3 text-xs uppercase">
+					<h3 id="assistant-other-documents" className="px-3 text-xs font-semibold text-ink-3 uppercase">
 						<Trans>Other documents · {others.length}</Trans>
 					</h3>
 					<ul className="grid">
@@ -572,14 +572,14 @@ function ConversationRow({ thread, current, detail, index, onOpen, onDelete }: C
 					current && "bg-sunken",
 				)}
 			>
-				<span className="truncate font-medium text-sm">{thread.title}</span>
-				<span className="truncate text-ink-3 text-xs">{detail}</span>
+				<span className="truncate text-sm font-medium">{thread.title}</span>
+				<span className="truncate text-xs text-ink-3">{detail}</span>
 			</button>
 			<IconButton
 				icon="close"
 				label={t`Delete ${thread.title}`}
 				size="icon-sm"
-				className="me-1 text-ink-3 opacity-0 transition-[opacity,background-color,border-color,color,filter,scale] focus-visible:opacity-100 group-hover/row:opacity-100"
+				className="me-1 text-ink-3 opacity-0 transition-[opacity,background-color,border-color,color,filter,scale] group-hover/row:opacity-100 focus-visible:opacity-100"
 				onClick={onDelete}
 			/>
 		</li>

@@ -1,6 +1,6 @@
+import type { WritingNote } from "../store";
 import type { PageMapTarget } from "@reactive-resume/pdf/page-map";
 import type { Passage, Proposal } from "@reactive-resume/resume/proposals";
-import type { WritingNote } from "../store";
 import { replaceBlockText } from "@reactive-resume/resume/proposals";
 
 type ReviewSuggestion = {

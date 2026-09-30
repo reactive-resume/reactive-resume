@@ -13,14 +13,14 @@ import { Separator } from "@reactive-resume/ui/components/separator";
 import { SwitchRow } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { CopyLinkButton } from "./copy-link-button";
+import { formatTimeSince, summarizeViews } from "./format";
 import { useCurrentResume, usePatchResume } from "@/features/resume/builder/draft";
 import { ResumePasswordDialog } from "@/features/resume/builder/password-dialog";
 import { useConfirm } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
 import { ENTER_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
-import { CopyLinkButton } from "./copy-link-button";
-import { formatTimeSince, summarizeViews } from "./format";
 
 const SLUG_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -192,7 +192,7 @@ function AddressField({ url, username }: AddressFieldProps) {
 
 	return (
 		<div className={cn("grid gap-1.5 transition-opacity duration-standard", !isPublic && "opacity-45")}>
-			<label htmlFor={id} className="font-medium text-ink-2 text-xs">
+			<label htmlFor={id} className="text-xs font-medium text-ink-2">
 				<Trans>Address</Trans>
 			</label>
 			<div className="flex gap-1.5">
@@ -205,7 +205,7 @@ function AddressField({ url, username }: AddressFieldProps) {
 					)}
 				>
 					{/* A long host or username truncates, so the part being edited stays visible. */}
-					<span className="max-w-[55%] truncate ps-2.5 font-medium font-mono text-[13px] text-ink-3" dir="ltr">
+					<span className="max-w-[55%] truncate ps-2.5 font-mono text-[13px] font-medium text-ink-3" dir="ltr">
 						{window.location.host}/{username}/
 					</span>
 					<input
@@ -216,7 +216,7 @@ function AddressField({ url, username }: AddressFieldProps) {
 						aria-invalid={invalid}
 						aria-describedby={`${id}-message`}
 						onChange={(event) => setSlug(event.target.value.toLowerCase().replace(/\s+/g, "-"))}
-						className="h-full min-w-0 flex-1 bg-transparent pe-1.5 font-medium font-mono text-[13px] text-ink outline-none"
+						className="h-full min-w-0 flex-1 bg-transparent pe-1.5 font-mono text-[13px] font-medium text-ink outline-none"
 					/>
 					{isPublic && slug && (
 						<Icon
@@ -237,7 +237,7 @@ function AddressField({ url, username }: AddressFieldProps) {
 			<p
 				id={`${id}-message`}
 				role="status"
-				className={cn("break-all text-xs leading-4", invalid ? "text-danger-text" : "text-ink-3")}
+				className={cn("text-xs leading-4 break-all", invalid ? "text-danger-text" : "text-ink-3")}
 			>
 				{result?.status === "taken" ? (
 					<>
@@ -263,7 +263,7 @@ function AddressField({ url, username }: AddressFieldProps) {
 			{isPublic && canShare && (
 				<Button
 					variant="secondary"
-					className="pointer-fine:hidden w-fit gap-1.5"
+					className="w-fit gap-1.5 pointer-fine:hidden"
 					onClick={() => void navigator.share({ title: resume.name, url }).catch(() => undefined)}
 				>
 					<Icon name="ios_share" size={18} />
@@ -364,10 +364,10 @@ function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 	return (
 		<section aria-labelledby="share-stats-title" className="grid gap-3">
 			<div className="flex items-baseline justify-between">
-				<h3 id="share-stats-title" className="font-semibold text-sm">
+				<h3 id="share-stats-title" className="text-sm font-semibold">
 					<Trans>Views and downloads</Trans>
 				</h3>
-				<span className="text-ink-3 text-xs">
+				<span className="text-xs text-ink-3">
 					<Trans>Only you see these</Trans>
 				</span>
 			</div>
@@ -392,7 +392,7 @@ function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 							/>
 						))}
 					</div>
-					<div className="flex justify-between font-medium font-mono text-[11px] text-ink-3">
+					<div className="flex justify-between font-mono text-[11px] font-medium text-ink-3">
 						<span>
 							{firstDay
 								? new Date(`${firstDay}T00:00:00`).toLocaleDateString(i18n.locale, { month: "short", day: "numeric" })
@@ -404,11 +404,11 @@ function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 					</div>
 				</>
 			) : (
-				<p className="text-[13px] text-ink-2 leading-[19px]">
+				<p className="text-[13px] leading-[19px] text-ink-2">
 					<Trans>Turn on the public link to count views and downloads. Counts are anonymous.</Trans>
 				</p>
 			)}
-			<p className="text-ink-3 text-xs">
+			<p className="text-xs text-ink-3">
 				<Trans>Download totals can include repeat clicks.</Trans>
 			</p>
 		</section>
@@ -418,8 +418,8 @@ function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 function Stat({ value, label }: { value: number | string; label: string }) {
 	return (
 		<div className="flex flex-col-reverse gap-0.5">
-			<dt className="text-ink-3 text-xs">{label}</dt>
-			<dd className="font-display font-medium text-[26px] leading-[30px]">{value}</dd>
+			<dt className="text-xs text-ink-3">{label}</dt>
+			<dd className="font-display text-[26px] leading-[30px] font-medium">{value}</dd>
 		</div>
 	);
 }

@@ -1,9 +1,9 @@
+import type { ExportFormat } from "@/features/resume/export/use-resume-export";
 import type { LetterWords } from "@reactive-resume/resume/cover-letter";
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
-import type { ExportFormat } from "@/features/resume/export/use-resume-export";
+import { letterPageData } from "./compose";
 import { createExportFile, getDefaultFileName } from "@/features/resume/export/use-resume-export";
 import { client } from "@/libs/orpc/client";
-import { letterPageData } from "./compose";
 
 const asDocument = (letter: CoverLetter, words: LetterWords) => ({
 	name: letter.name,

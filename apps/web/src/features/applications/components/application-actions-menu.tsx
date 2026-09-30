@@ -14,9 +14,9 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
-import { useConfirm } from "@/hooks/use-confirm";
 import { CLOSED_REASONS, getClosedReasonLabel, getStageColor, getStageLabel, PIPELINE } from "../stages";
 import { useApplicationActions } from "../use-application-actions";
+import { useConfirm } from "@/hooks/use-confirm";
 
 // Keep pointer and clicks from reaching the card, which would start a drag or open the detail sheet. React portals
 // bubble synthetic events through the React tree, so a menu item's click would otherwise reach the card.

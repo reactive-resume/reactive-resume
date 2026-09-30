@@ -20,7 +20,7 @@ function AlertDialogOverlay({ className, ...props }: AlertDialogPrimitive.Backdr
 		<AlertDialogPrimitive.Backdrop
 			data-slot="alert-dialog-overlay"
 			className={cn(
-				"fixed inset-0 isolate z-50 bg-scrim transition-opacity duration-standard ease-enter data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)]",
+				"fixed inset-0 isolate z-50 bg-scrim transition-opacity duration-standard ease-enter data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)] data-starting-style:opacity-0",
 				className,
 			)}
 			{...props}
@@ -42,7 +42,7 @@ function AlertDialogContent({
 				data-slot="alert-dialog-content"
 				data-size={size}
 				className={cn(
-					"group/alert-dialog-content fixed inset-s-1/2 top-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl bg-raised p-6 text-ink shadow-e3 outline-none transition-[opacity,scale] duration-standard ease-enter data-ending-style:scale-[0.98] data-starting-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)] data-[size=default]:sm:max-w-[440px] data-[size=sm]:sm:max-w-[360px] rtl:translate-x-1/2",
+					"group/alert-dialog-content fixed inset-s-1/2 top-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl bg-raised p-6 text-ink shadow-e3 transition-[opacity,scale] duration-standard ease-enter outline-none data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)] data-starting-style:scale-[0.98] data-starting-style:opacity-0 data-[size=default]:sm:max-w-[440px] data-[size=sm]:sm:max-w-[360px] rtl:translate-x-1/2",
 					className,
 				)}
 				{...props}
@@ -94,7 +94,7 @@ function AlertDialogTitle({ className, ...props }: React.ComponentProps<typeof A
 	return (
 		<AlertDialogPrimitive.Title
 			data-slot="alert-dialog-title"
-			className={cn("font-display font-medium text-[22px] text-ink leading-7", className)}
+			className={cn("font-display text-[22px] leading-7 font-medium text-ink", className)}
 			{...props}
 		/>
 	);
@@ -108,7 +108,7 @@ function AlertDialogDescription({
 		<AlertDialogPrimitive.Description
 			data-slot="alert-dialog-description"
 			className={cn(
-				"text-pretty text-ink-2 text-sm leading-5 *:[a]:text-accent-text *:[a]:underline *:[a]:underline-offset-3",
+				"text-sm leading-5 text-pretty text-ink-2 *:[a]:text-accent-text *:[a]:underline *:[a]:underline-offset-3",
 				className,
 			)}
 			{...props}

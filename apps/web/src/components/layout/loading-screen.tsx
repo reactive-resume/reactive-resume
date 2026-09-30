@@ -13,7 +13,7 @@ export function LoadingScreen() {
 		<div
 			className={cn(
 				"fixed inset-0 z-50 flex h-svh w-svw flex-col items-center justify-center gap-y-6 bg-bg",
-				hasNavigated && "starting:opacity-0 transition-opacity duration-standard ease-enter",
+				hasNavigated && "transition-opacity duration-standard ease-enter starting:opacity-0",
 			)}
 		>
 			<BrandIcon variant="icon" className="size-12" />

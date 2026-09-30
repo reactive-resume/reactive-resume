@@ -1,7 +1,7 @@
+import type { SectionTitleResolver } from "./section-title";
 import type { PdfDocumentLike } from "@reactive-resume/resume/ats-pdf";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
-import type { SectionTitleResolver } from "./section-title";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";

@@ -15,8 +15,8 @@ import {
 	SheetTitle,
 } from "@reactive-resume/ui/components/sheet";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
-import { Combobox } from "@/components/ui/combobox";
 import { exportApplicationsCsv, selectApplicationsForExport } from "../csv";
+import { Combobox } from "@/components/ui/combobox";
 
 type ExportApplicationsSheetProps = {
 	open: boolean;
@@ -97,11 +97,11 @@ export function ExportApplicationsSheet({ open, onOpenChange, applications, filt
 							</div>
 						</div>
 						{!validRange && (
-							<p role="alert" className="text-danger-text text-sm">
+							<p role="alert" className="text-sm text-danger-text">
 								<Trans>Start date must be on or before end date.</Trans>
 							</p>
 						)}
-						<p className="text-ink-3 text-sm">
+						<p className="text-sm text-ink-3">
 							<Plural value={selected.length} one="# application to export" other="# applications to export" />
 						</p>
 					</div>

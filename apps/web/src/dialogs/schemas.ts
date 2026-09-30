@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import type { NewDocumentDialogData } from "@/features/documents/new-document-dialog";
+import type { ReactNode } from "react";
 
 type EmptyDialog<T extends string> = { [K in T]: { type: K; data?: undefined } }[T];
 

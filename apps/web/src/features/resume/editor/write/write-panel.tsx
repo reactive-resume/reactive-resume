@@ -6,6 +6,11 @@ import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { useEditorStore } from "../store";
+import { AddSectionMenu, StartSuggestions } from "./add-section";
+import { BasicsCard } from "./basics-card";
+import { getOutlineRows, summarizeContent } from "./model";
+import { Outline } from "./outline";
 import { useDialogStore } from "@/dialogs/store";
 import {
 	useCurrentBuilderResumeSelector,
@@ -15,11 +20,6 @@ import {
 } from "@/features/resume/builder/draft";
 import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
-import { useEditorStore } from "../store";
-import { AddSectionMenu, StartSuggestions } from "./add-section";
-import { BasicsCard } from "./basics-card";
-import { getOutlineRows, summarizeContent } from "./model";
-import { Outline } from "./outline";
 
 /**
  * Write: the Basics card, then the outline of sections in print order with their entries, then Add
@@ -43,10 +43,10 @@ export function WritePanel() {
 			<BasicsCard locked={locked} />
 
 			<div>
-				<p className="mb-1.5 flex items-baseline justify-between px-1 font-semibold text-[11px] text-ink-3 uppercase tracking-[0.08em]">
+				<p className="mb-1.5 flex items-baseline justify-between px-1 text-[11px] font-semibold tracking-[0.08em] text-ink-3 uppercase">
 					<Trans>Sections · print order</Trans>
 					{!locked && (
-						<span className="font-normal normal-case tracking-normal">
+						<span className="font-normal tracking-normal normal-case">
 							<Trans>drag · ⌥↑↓</Trans>
 						</span>
 					)}
@@ -61,7 +61,7 @@ export function WritePanel() {
 				{!locked && <AddSectionMenu />}
 			</div>
 
-			<p className="px-1 text-ink-3 text-xs leading-4">
+			<p className="px-1 text-xs leading-4 text-ink-3">
 				<Trans>Hidden sections keep their content but aren't printed or shared. Fields save as you type.</Trans>
 			</p>
 		</div>

@@ -1,7 +1,7 @@
-import type { CustomSection as SchemaCustomSection } from "@reactive-resume/schema/resume/data";
-import type { ComponentProps } from "react";
 import type { PhosphorIcon } from "../../forme/icons";
 import type { StyleInput, TemplatePlacement } from "./styles";
+import type { CustomSection as SchemaCustomSection } from "@reactive-resume/schema/resume/data";
+import type { ComponentProps } from "react";
 
 export type TemplateColorRoles = {
 	foreground: string;

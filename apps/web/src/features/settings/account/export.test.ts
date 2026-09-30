@@ -4,8 +4,8 @@ import { strFromU8, unzipSync } from "fflate";
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
 import { coverLetterDocumentSchema } from "@reactive-resume/schema/cover-letter/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { detectImportKind, detectJsonImportKind, parseResumeJson } from "@/features/resume/import/read-file";
 import { buildAccountZip } from "./export";
+import { detectImportKind, detectJsonImportKind, parseResumeJson } from "@/features/resume/import/read-file";
 
 beforeAll(() => i18n.loadAndActivate({ locale: "en-US", messages: {} }));
 

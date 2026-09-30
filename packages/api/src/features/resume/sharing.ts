@@ -84,14 +84,13 @@ export const sharingRouter = {
 		)
 		.use(resumePasswordRateLimit)
 		.output(z.boolean())
-		.handler(
-			({ context, input }): Promise<boolean> =>
-				resumeService.verifyPassword({
-					username: input.username,
-					slug: input.slug,
-					password: input.password,
-					...(context.resHeaders ? { responseHeaders: context.resHeaders } : {}),
-				}),
+		.handler(({ context, input }): Promise<boolean> =>
+			resumeService.verifyPassword({
+				username: input.username,
+				slug: input.slug,
+				password: input.password,
+				...(context.resHeaders ? { responseHeaders: context.resHeaders } : {}),
+			}),
 		),
 
 	removePassword: protectedProcedure

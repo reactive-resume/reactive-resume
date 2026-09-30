@@ -1,5 +1,5 @@
-import type { Resume } from "@/features/resume/builder/draft";
 import type { VersionSummary } from "./format";
+import type { Resume } from "@/features/resume/builder/draft";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
@@ -17,12 +17,12 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { formatVersionMoment, formatVersionTime, getVersionDetail, getVersionTitle } from "./format";
 import { savePendingChanges, useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { useConfirm, usePrompt } from "@/hooks/use-confirm";
 import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
-import { formatVersionMoment, formatVersionTime, getVersionDetail, getVersionTitle } from "./format";
 
 /** A version as History lists it; resumes and letters share it. */
 type HistoryVersion = Pick<VersionSummary, "id" | "kind" | "name" | "createdAt">;
@@ -205,12 +205,12 @@ export function HistoryTimeline({ source }: { source: HistorySource }) {
 			</ol>
 
 			{!loading && (versions?.length ?? 0) <= 1 && (
-				<p className="text-[13px] text-ink-2 leading-[19px]">
+				<p className="text-[13px] leading-[19px] text-ink-2">
 					<Trans>Only one version so far. Every editing session adds one automatically.</Trans>
 				</p>
 			)}
 
-			<p className="text-ink-3 text-xs leading-[17px]">
+			<p className="text-xs leading-[17px] text-ink-3">
 				<Trans>
 					Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them.
 					Restoring saves the current state first.
@@ -256,10 +256,10 @@ function TimelineItem({ title, detail, selected, last, onSelect, current, named,
 					className="flex min-w-0 flex-1 flex-col items-start gap-0.5 px-2.5 py-[9px] text-start"
 				>
 					<span className="flex max-w-full items-center gap-2">
-						<span className="truncate font-semibold text-[13px]">{title}</span>
+						<span className="truncate text-[13px] font-semibold">{title}</span>
 						{named && <Icon name="bookmark" size={14} className="text-accent-text" />}
 					</span>
-					<span className="text-ink-3 text-xs">{detail}</span>
+					<span className="text-xs text-ink-3">{detail}</span>
 				</button>
 				{menu && <span className="p-1">{menu}</span>}
 			</span>
@@ -305,7 +305,7 @@ function NamedVersionMenu({ version, source }: { version: HistoryVersion; source
 						icon="more_horiz"
 						label={t`Options for ${title}`}
 						size="icon-sm"
-						className="text-ink-2 opacity-0 focus-visible:opacity-100 group-hover/version:opacity-100 data-popup-open:opacity-100"
+						className="text-ink-2 opacity-0 group-hover/version:opacity-100 focus-visible:opacity-100 data-popup-open:opacity-100"
 					/>
 				}
 			/>

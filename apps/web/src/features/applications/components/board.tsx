@@ -1,6 +1,6 @@
+import type { Application } from "../types";
 import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
-import type { Application } from "../types";
 import {
 	DndContext,
 	DragOverlay,
@@ -25,10 +25,10 @@ import {
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
 import { cn } from "@reactive-resume/utils/style";
-import { DRAG_SETTLE } from "@/libs/motion";
 import { CLOSED_REASONS, getClosedReasonLabel, getStageColor, getStageLabel, PIPELINE } from "../stages";
 import { useApplicationActions } from "../use-application-actions";
 import { ApplicationCard } from "./application-card";
+import { DRAG_SETTLE } from "@/libs/motion";
 
 type BoardProps = {
 	applications: Application[];
@@ -161,10 +161,10 @@ function Column({ stage, applications, onOpen }: ColumnProps) {
 				isOver ? "border-accent bg-accent-soft" : "border-transparent",
 			)}
 		>
-			<h3 className="flex items-center gap-2 px-3 py-2.5 font-semibold text-sm">
+			<h3 className="flex items-center gap-2 px-3 py-2.5 text-sm font-semibold">
 				<span aria-hidden="true" className="size-2 rounded-full" style={{ background: getStageColor(stage) }} />
 				{getStageLabel(stage)}
-				<span className="font-mono font-normal text-ink-3 text-xs">{applications.length}</span>
+				<span className="font-mono text-xs font-normal text-ink-3">{applications.length}</span>
 			</h3>
 			<div ref={setNodeRef} className="flex min-h-24 flex-1 flex-col gap-2 overflow-y-auto px-2 pb-2">
 				{shown.map((application) => (
@@ -174,7 +174,7 @@ function Column({ stage, applications, onOpen }: ColumnProps) {
 					<button
 						type="button"
 						onClick={() => setVisible((count) => count + COLUMN_PAGE_SIZE)}
-						className="rounded-lg border border-line border-dashed py-2 text-ink-3 text-xs transition-colors hover:bg-hover"
+						className="rounded-lg border border-dashed border-line py-2 text-xs text-ink-3 transition-colors hover:bg-hover"
 					>
 						{t`Show ${Math.min(remaining, COLUMN_PAGE_SIZE)} more`}
 					</button>

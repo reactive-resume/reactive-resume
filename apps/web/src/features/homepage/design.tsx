@@ -138,7 +138,7 @@ export function Design() {
 
 				<h2
 					id="design-title"
-					className="absolute inset-x-0 top-[11vh] h-[1.05em] font-normal text-[14vw] text-ink opacity-[calc(1-var(--z))] will-change-[transform,opacity] [transform:translateY(calc(var(--z)*-10vh))] min-[900px]:top-[9vh] min-[900px]:text-[clamp(64px,7.5vw,140px)]"
+					className="absolute inset-x-0 top-[11vh] h-[1.05em] [transform:translateY(calc(var(--z)*-10vh))] text-[14vw] font-normal text-ink opacity-[calc(1-var(--z))] will-change-[transform,opacity] min-[900px]:top-[9vh] min-[900px]:text-[clamp(64px,7.5vw,140px)]"
 				>
 					<span className="absolute inset-0 text-center font-display leading-none tracking-[-.03em] opacity-[calc(1-var(--w1))]">
 						{design}
@@ -147,34 +147,34 @@ export function Design() {
 					<span
 						aria-hidden="true"
 						data-text={`${design}.`}
-						className="absolute inset-0 text-center font-medium font-ui text-[.9em] text-[oklch(0.5_0.11_250)] leading-[1.1] tracking-[-.04em] opacity-[calc(var(--w1)*(1-var(--w2)))] before:content-[attr(data-text)] dark:text-[oklch(0.74_0.11_250)]"
+						className="absolute inset-0 text-center font-ui text-[.9em] leading-[1.1] font-medium tracking-[-.04em] text-[oklch(0.5_0.11_250)] opacity-[calc(var(--w1)*(1-var(--w2)))] before:content-[attr(data-text)] dark:text-[oklch(0.74_0.11_250)]"
 					/>
 					<span
 						aria-hidden="true"
 						data-text={`${design}.`}
-						className="absolute inset-0 text-center font-display text-[oklch(0.56_0.13_40)] italic leading-none tracking-[-.03em] opacity-[calc(var(--w2)*(1-var(--w3)))] before:content-[attr(data-text)] dark:text-[oklch(0.74_0.12_40)]"
+						className="absolute inset-0 text-center font-display leading-none tracking-[-.03em] text-[oklch(0.56_0.13_40)] italic opacity-[calc(var(--w2)*(1-var(--w3)))] before:content-[attr(data-text)] dark:text-[oklch(0.74_0.12_40)]"
 					/>
 					<span
 						aria-hidden="true"
 						data-text={`${design}_`}
-						className="absolute inset-0 text-center font-light font-martian text-[.66em] uppercase leading-[1.5] tracking-[-.02em] opacity-[calc(var(--w3)*(1-var(--w4)))] before:content-[attr(data-text)]"
+						className="font-martian absolute inset-0 text-center text-[.66em] leading-[1.5] font-light tracking-[-.02em] uppercase opacity-[calc(var(--w3)*(1-var(--w4)))] before:content-[attr(data-text)]"
 					/>
 					<span
 						aria-hidden="true"
 						data-text={`${design}.`}
-						className="absolute inset-0 text-center font-anybody font-light font-stretch-[90%] uppercase leading-none tracking-[-.03em] opacity-(--w4) before:content-[attr(data-text)]"
+						className="font-anybody absolute inset-0 text-center leading-none font-light tracking-[-.03em] uppercase font-stretch-[90%] opacity-(--w4) before:content-[attr(data-text)]"
 					/>
 				</h2>
 
 				<div
 					aria-hidden="true"
-					className="absolute top-[calc(var(--dpt)-var(--z)*4vh)] left-1/2 grid grid-cols-[repeat(5,var(--pw))] gap-[calc(var(--pw)*.12)] opacity-(--z) will-change-[transform,opacity] [transform:translate(-50%,-50%)_scale(calc(1-var(--z)*(1-var(--smin,.5))))] [transition:transform_.35s_var(--ease)]"
+					className="absolute top-[calc(var(--dpt)-var(--z)*4vh)] left-1/2 grid [transform:translate(-50%,-50%)_scale(calc(1-var(--z)*(1-var(--smin,.5))))] grid-cols-[repeat(5,var(--pw))] gap-[calc(var(--pw)*.12)] opacity-(--z) will-change-[transform,opacity] [transition:transform_.35s_var(--ease)]"
 				>
 					{minis.map((mini) => (
 						<div
 							key={mini.index}
 							className={cn(
-								"relative aspect-[612/792] will-change-transform [transform:translateY(calc((1-var(--z))*var(--rise)))] [transition:transform_.5s_var(--ease)]",
+								"relative aspect-[612/792] [transform:translateY(calc((1-var(--z))*var(--rise)))] will-change-transform [transition:transform_.5s_var(--ease)]",
 								mini.index === 7 && "invisible",
 							)}
 							style={{ "--rise": `${mini.rise}px` } as CSSProperties}
@@ -187,7 +187,7 @@ export function Design() {
 
 				<div
 					data-stack
-					className="absolute top-[calc(var(--dpt)-var(--z)*4vh)] left-1/2 aspect-[612/792] w-(--pw) will-change-transform [transform:translate(-50%,-50%)_scale(calc(1-var(--z)*(1-var(--smin,.5))))] [transition:transform_.35s_var(--ease)]"
+					className="absolute top-[calc(var(--dpt)-var(--z)*4vh)] left-1/2 aspect-[612/792] w-(--pw) [transform:translate(-50%,-50%)_scale(calc(1-var(--z)*(1-var(--smin,.5))))] will-change-transform [transition:transform_.35s_var(--ease)]"
 				>
 					<div className="absolute inset-0 rounded-[2px] shadow-paper" />
 					{sheetTemplates.map((template, index) => (
@@ -196,17 +196,17 @@ export function Design() {
 							className="absolute inset-0"
 							style={{ "--w": index === 0 ? 1 : `var(--w${index})` } as CSSProperties}
 						>
-							<div className="absolute inset-0 overflow-hidden will-change-transform [transform:translateX(calc((1-var(--w))*var(--pw)))]">
-								<div className="absolute inset-0 will-change-transform [transform:translateX(calc((var(--w)-1)*var(--pw)))]">
+							<div className="absolute inset-0 [transform:translateX(calc((1-var(--w))*var(--pw)))] overflow-hidden will-change-transform">
+								<div className="absolute inset-0 [transform:translateX(calc((var(--w)-1)*var(--pw)))] will-change-transform">
 									<Sheet template={template} />
 								</div>
 							</div>
 							{index > 0 && (
 								<div
 									aria-hidden="true"
-									className="absolute -top-[6%] -bottom-[6%] left-0 -ml-px w-0.5 bg-ink opacity-[calc(clamp(0,var(--w)*30,1)*clamp(0,(1-var(--w))*30,1))] will-change-[transform,opacity] [transform:translateX(calc((1-var(--w))*var(--pw)))]"
+									className="absolute -top-[6%] -bottom-[6%] left-0 -ml-px w-0.5 [transform:translateX(calc((1-var(--w))*var(--pw)))] bg-ink opacity-[calc(clamp(0,var(--w)*30,1)*clamp(0,(1-var(--w))*30,1))] will-change-[transform,opacity]"
 								>
-									<span className="absolute -top-1 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-full bg-ink px-[9px] py-[5px] font-martian font-medium text-[10.5px] text-bg leading-none tracking-[.06em]">
+									<span className="font-martian absolute -top-1 left-1/2 -translate-x-1/2 -translate-y-full rounded-full bg-ink px-[9px] py-[5px] text-[10.5px] leading-none font-medium tracking-[.06em] whitespace-nowrap text-bg">
 										{pageNumber(index + 1, templateNames[index])}
 									</span>
 								</div>
@@ -230,7 +230,7 @@ export function Design() {
 					onValueChange={(value) => goToScene(SCENE.design, TEMPLATE_AT[value as number] ?? 0)}
 					inert={zoomed}
 					className={cn(
-						"absolute bottom-[5vh] left-1/2 flex h-auto max-w-[calc(100vw-2*var(--gutter))] -translate-x-1/2 overflow-x-auto whitespace-nowrap rounded-full border border-line bg-[color-mix(in_oklch,var(--surface)_85%,transparent)] p-1 opacity-[calc(1-var(--z)*2)] backdrop-blur-[8px] [scrollbar-width:none] min-[900px]:bottom-[clamp(20px,5vh,44px)]",
+						"absolute bottom-[5vh] left-1/2 flex h-auto max-w-[calc(100vw-2*var(--gutter))] -translate-x-1/2 [scrollbar-width:none] overflow-x-auto rounded-full border border-line bg-[color-mix(in_oklch,var(--surface)_85%,transparent)] p-1 whitespace-nowrap opacity-[calc(1-var(--z)*2)] backdrop-blur-[8px] min-[900px]:bottom-[clamp(20px,5vh,44px)]",
 						!active && "pointer-events-none",
 					)}
 				>
@@ -238,7 +238,7 @@ export function Design() {
 						<SegmentedControlItem
 							key={name}
 							value={index}
-							className="h-8 flex-none rounded-full px-3 font-ui duration-300 data-checked:bg-ink data-checked:text-bg data-checked:shadow-none min-[900px]:px-[13px]"
+							className="h-8 flex-none rounded-full px-3 font-ui duration-300 min-[900px]:px-[13px] data-checked:bg-ink data-checked:text-bg data-checked:shadow-none"
 						>
 							{name}
 						</SegmentedControlItem>
@@ -253,9 +253,9 @@ export function Design() {
 					{t`Pick a template, then set the type, color and spacing. The words stay put, so try as many looks as you like.`}
 				</SceneCaption>
 
-				<p className="pointer-events-none absolute inset-x-(--gutter) bottom-[8vh] text-balance text-center text-[8vw] leading-none opacity-(--z) will-change-[transform,opacity] [transform:translateY(calc((1-var(--z))*30px))] min-[900px]:bottom-[6vh] min-[900px]:text-[clamp(40px,5vw,90px)]">
-					<span className="font-anybody font-light text-ink tracking-[-.02em]">{t`Fifteen templates.`}</span>{" "}
-					<span className="font-display text-accent-text italic tracking-[-.02em]">{t`Make any of them yours.`}</span>
+				<p className="pointer-events-none absolute inset-x-(--gutter) bottom-[8vh] [transform:translateY(calc((1-var(--z))*30px))] text-center text-[8vw] leading-none text-balance opacity-(--z) will-change-[transform,opacity] min-[900px]:bottom-[6vh] min-[900px]:text-[clamp(40px,5vw,90px)]">
+					<span className="font-anybody font-light tracking-[-.02em] text-ink">{t`Fifteen templates.`}</span>{" "}
+					<span className="font-display tracking-[-.02em] text-accent-text italic">{t`Make any of them yours.`}</span>
 				</p>
 			</div>
 		</section>

@@ -2,8 +2,8 @@ import type { MultiComboboxProps, SingleComboboxProps } from "@/components/ui/co
 import { useMemo } from "react";
 import { fontList, getFont, getFontDisplayName, getFontSearchKeywords, sortFontWeights } from "@reactive-resume/fonts";
 import { cn } from "@reactive-resume/utils/style";
-import { Combobox } from "@/components/ui/combobox";
 import { FontDisplay } from "./font-display";
+import { Combobox } from "@/components/ui/combobox";
 
 // Options depend only on the static font list, so compute them once per process
 // instead of per component instance (the body + heading pickers rendered identical output twice).

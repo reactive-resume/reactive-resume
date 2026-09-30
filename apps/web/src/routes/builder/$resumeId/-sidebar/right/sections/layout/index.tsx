@@ -10,11 +10,11 @@ import {
 	InputGroupText,
 } from "@reactive-resume/ui/components/input-group";
 import { Slider } from "@reactive-resume/ui/components/slider";
+import { SectionBase } from "../../shared/section-base";
+import { LayoutPages } from "./pages";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";
-import { SectionBase } from "../../shared/section-base";
-import { LayoutPages } from "./pages";
 
 export function LayoutSectionBuilder() {
 	return (

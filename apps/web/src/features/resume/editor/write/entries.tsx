@@ -1,8 +1,8 @@
+import type { EntryWriter } from "./fields";
+import type { Entry } from "./model";
 import type { CustomSectionType, RoleItem, Website } from "@reactive-resume/schema/resume/data";
 import type { DateFormat, ResumeDates } from "@reactive-resume/schema/resume/dates";
 import type { ReactNode } from "react";
-import type { EntryWriter } from "./fields";
-import type { Entry } from "./model";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { EMPTY_RESUME_DATES } from "@reactive-resume/schema/resume/dates";
@@ -12,12 +12,12 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Slider } from "@reactive-resume/ui/components/slider";
 import { generateId } from "@reactive-resume/utils/string";
-import { ChipInput } from "@/components/input/chip-input";
-import { ColorPicker } from "@/components/input/color-picker";
-import { IconPicker } from "@/components/input/icon-picker";
 import { DatesField } from "./dates-field";
 import { MoreOptions, TextField, WebsiteField } from "./fields";
 import { RichTextEditor } from "./rich-text-editor";
+import { ChipInput } from "@/components/input/chip-input";
+import { ColorPicker } from "@/components/input/color-picker";
+import { IconPicker } from "@/components/input/icon-picker";
 
 export type PageSettings = { locale: string; dateFormat?: DateFormat | undefined };
 
@@ -98,7 +98,7 @@ function Description({
 }: FieldSetProps & { field?: string; label?: string }) {
 	return (
 		<div className="col-span-full grid gap-1.5">
-			<span className="font-medium text-[13px] leading-4">{label ?? t`Description`}</span>
+			<span className="text-[13px] leading-4 font-medium">{label ?? t`Description`}</span>
 			<RichTextEditor
 				label={label ?? t`Description`}
 				value={str(valuesOf(entry)[field])}
@@ -210,7 +210,7 @@ function Roles({ entry, write, page }: FieldSetProps) {
 			{roles.map((role, index) => (
 				<div key={role.id} className="grid grid-cols-2 gap-x-3 gap-y-2.5 rounded-lg border border-line bg-bg p-3">
 					<div className="col-span-full flex items-center justify-between">
-						<span className="font-medium text-[13px] text-ink-2">
+						<span className="text-[13px] font-medium text-ink-2">
 							<Trans>Role {index + 1}</Trans>
 						</span>
 						<div className="flex">
@@ -264,7 +264,7 @@ function Roles({ entry, write, page }: FieldSetProps) {
 						}
 					/>
 					<div className="col-span-full grid gap-1.5">
-						<span className="font-medium text-[13px] leading-4">
+						<span className="text-[13px] leading-4 font-medium">
 							<Trans>Description</Trans>
 						</span>
 						<RichTextEditor

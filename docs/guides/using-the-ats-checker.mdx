@@ -27,6 +27,7 @@ The check runs entirely in your browser. The file isn't uploaded or stored, and 
     <Frame caption="The drop zone and the optional job posting">
       <img src="/images/guides/using-the-ats-checker/drop-zone-and-posting.webp" alt="Drop zone reading Drop a PDF here or choose a file, Up to 25 MB, checked in your browser, never uploaded, with a Check a sample file button and an empty Job posting box below" />
     </Frame>
+
   </Step>
   <Step title="Wait for the three steps">
     The checker shows its progress: **Opening the file**, **Reading the text**, then **Checking layout and content**. This usually takes a few seconds.
@@ -38,7 +39,10 @@ The check runs entirely in your browser. The file isn't uploaded or stored, and 
 The report has the score and issues on the left and your file on the right.
 
 <Frame caption="A finished check">
-  <img src="/images/guides/using-the-ats-checker/checker-result.webp" alt="ATS checker results page with a score of 88, Reads cleanly, issue rows for Readability, Layout and Terms from the posting, a Fix these in the editor button, and the sample resume PDF on the right" />
+  <img
+    src="/images/guides/using-the-ats-checker/checker-result.webp"
+    alt="ATS checker results page with a score of 88, Reads cleanly, issue rows for Readability, Layout and Terms from the posting, a Fix these in the editor button, and the sample resume PDF on the right"
+  />
 </Frame>
 
 **The score.** A number from 0 to 100 with a verdict: **Reads cleanly** (80 and above), **Mostly readable** (50 to 79) or **Hard for software to read** (below 50). It combines five categories, and a serious problem (a blocker) caps it: a PDF with no real text can't score well because its margins are tidy. The score reflects how reliably text comes out of the file, not your chances of getting the job.
@@ -46,18 +50,21 @@ The report has the score and issues on the left and your file on the right.
 **The issue rows.** Each category with something to fix gets a row, worst first. Open a row to see each problem in bold, followed by what to do about it. If you pasted a posting, the last row, **Terms from the posting**, counts the terms found (for example 4/14) and lists the missing ones.
 
 <Frame caption="The score, issue rows and the fix card">
-  <img src="/images/guides/using-the-ats-checker/report-and-fix.webp" alt="Score of 88 with the Readability row open, listing a ligature problem and icon-font glyphs with their fixes, then Layout and Terms from the posting rows and the Fix these in a few minutes card" />
+  <img
+    src="/images/guides/using-the-ats-checker/report-and-fix.webp"
+    alt="Score of 88 with the Readability row open, listing a ligature problem and icon-font glyphs with their fixes, then Layout and Terms from the posting rows and the Fix these in a few minutes card"
+  />
 </Frame>
 
 The five scored categories are:
 
-| Category | What it checks |
-| --- | --- |
-| **Readability** | Whether software can recover the words at all: a real text layer rather than a picture, fonts that map to letters, no hidden text, encryption or form fields in the way, and a sensible file and page size. |
-| **Layout** | Whether the page geometry keeps the reading order: columns, tables, lines stored out of order, tight spacing, very small text and narrow margins. |
-| **Sections** | Whether the resume is split into sections software expects. |
-| **Contact details** | Whether a recruiter can reach you: name, email, phone and links survive intact. |
-| **Dates** | Whether your timeline can be reconstructed from the dates. |
+| Category            | What it checks                                                                                                                                                                                              |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Readability**     | Whether software can recover the words at all: a real text layer rather than a picture, fonts that map to letters, no hidden text, encryption or form fields in the way, and a sensible file and page size. |
+| **Layout**          | Whether the page geometry keeps the reading order: columns, tables, lines stored out of order, tight spacing, very small text and narrow margins.                                                           |
+| **Sections**        | Whether the resume is split into sections software expects.                                                                                                                                                 |
+| **Contact details** | Whether a recruiter can reach you: name, email, phone and links survive intact.                                                                                                                             |
+| **Dates**           | Whether your timeline can be reconstructed from the dates.                                                                                                                                                  |
 
 **Writing** gives advice for the person reading your resume, such as numbers that show impact, first-person pronouns and long bullets. These tips appear in the results alongside the scored findings and never affect the score.
 
@@ -73,7 +80,10 @@ Above your file, switch between two views:
 Compare the two. Look for a sidebar landing in the middle of your experience, contact details split across lines, or icons turning into empty boxes.
 
 <Frame caption="As software reads it: icons from an icon font come out as empty boxes">
-  <img src="/images/guides/using-the-ats-checker/as-software-reads-it.webp" alt="Plain text extracted from the sample resume in a monospace font, with empty box characters where the section icons were" />
+  <img
+    src="/images/guides/using-the-ats-checker/as-software-reads-it.webp"
+    alt="Plain text extracted from the sample resume in a monospace font, with empty box characters where the section icons were"
+  />
 </Frame>
 
 ## Fix the issues in Reactive Resume
@@ -86,7 +96,9 @@ Select **Fix these in the editor** to import the same file into a free Reactive 
 To start over with a different file, select **Check another file**.
 
 <Note>
-  No tool can tell you whether an application will be rejected. That depends on the employer's system, the screening questions and the person reading. The checker measures one thing: how faithfully software can extract your file's text.
+  No tool can tell you whether an application will be rejected. That depends on the employer's system, the screening
+  questions and the person reading. The checker measures one thing: how faithfully software can extract your file's
+  text.
 </Note>
 
 ## Related guides

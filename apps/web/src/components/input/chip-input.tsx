@@ -46,7 +46,7 @@ function ChipDragPreview({ chip }: ChipDragPreviewProps) {
 	return (
 		<Badge
 			variant="outline"
-			className="h-6 max-w-44 cursor-grabbing select-none justify-start rounded-md border-accent bg-sunken px-2 font-medium text-ink text-xs shadow-lg ring-2 ring-accent/25 sm:max-w-52"
+			className="h-6 max-w-44 cursor-grabbing justify-start rounded-md border-accent bg-sunken px-2 text-xs font-medium text-ink shadow-lg ring-2 ring-accent/25 select-none sm:max-w-52"
 		>
 			<span className="truncate">{chip}</span>
 		</Badge>
@@ -91,7 +91,7 @@ function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProp
 			<Badge
 				variant="outline"
 				className={cn(
-					"h-6 max-w-full cursor-grab select-none justify-start gap-0 rounded-md border-line bg-sunken/55 px-2 font-medium text-ink text-xs transition-colors hover:border-ink/20 hover:bg-sunken active:cursor-grabbing",
+					"h-6 max-w-full cursor-grab justify-start gap-0 rounded-md border-line bg-sunken/55 px-2 text-xs font-medium text-ink transition-colors select-none hover:border-ink/20 hover:bg-sunken active:cursor-grabbing",
 					isEditing && "border-accent bg-accent/10 ring-1 ring-accent/40",
 					isDragging && "border-accent bg-sunken shadow-sm",
 				)}
@@ -359,7 +359,7 @@ export function ChipInput({
 				>
 					<div className="flex flex-col">
 						<div
-							className={cn("max-h-24 overflow-y-auto px-2 py-1.5", hasChips ? "border-line/70 border-b" : "hidden")}
+							className={cn("max-h-24 overflow-y-auto px-2 py-1.5", hasChips ? "border-b border-line/70" : "hidden")}
 						>
 							<SortableContext items={chips} strategy={rectSortingStrategy}>
 								<div className="flex flex-wrap gap-1">
@@ -399,7 +399,7 @@ export function ChipInput({
 							{chips.length > 0 && (
 								<span
 									className={cn(
-										"flex h-6 min-w-6 shrink-0 items-center justify-center rounded-md border px-1.5 font-medium text-[0.7rem] tabular-nums",
+										"flex h-6 min-w-6 shrink-0 items-center justify-center rounded-md border px-1.5 text-[0.7rem] font-medium tabular-nums",
 										isEditingKeyword
 											? "border-accent/30 bg-accent/10 text-accent-text"
 											: "border-line bg-sunken/50 text-ink/80 opacity-80",
@@ -415,7 +415,7 @@ export function ChipInput({
 			</DndContext>
 
 			{!hideDescription && (
-				<p className="text-ink-3 text-xs">
+				<p className="text-xs text-ink-3">
 					<Trans>
 						Press <Kbd>{RETURN_KEY}</Kbd> or <Kbd>{COMMA_KEY}</Kbd> to add or save the current keyword.
 					</Trans>

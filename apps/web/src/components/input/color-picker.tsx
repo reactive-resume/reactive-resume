@@ -85,7 +85,7 @@ export function ColorPicker({
 				)}
 
 				<div className="flex flex-col gap-2">
-					<span className="font-medium text-ink-3 text-xs">
+					<span className="text-xs font-medium text-ink-3">
 						<Trans>Presets</Trans>
 					</span>
 
@@ -100,7 +100,7 @@ export function ColorPicker({
 								aria-pressed={currentValue === color}
 								onClick={() => setCurrentValue(color)}
 								className={cn(
-									"size-5 shrink-0 cursor-pointer rounded-full transition-transform duration-quick ease-enter focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent active:scale-[0.97]",
+									"size-5 shrink-0 cursor-pointer rounded-full transition-transform duration-quick ease-enter focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-hidden active:scale-[0.97]",
 									currentValue === color && "border border-ink/60",
 								)}
 							/>
@@ -109,11 +109,11 @@ export function ColorPicker({
 				</div>
 
 				<div className="flex flex-col gap-2">
-					<span className="font-medium text-ink-3 text-xs">
+					<span className="text-xs font-medium text-ink-3">
 						<Trans>Custom</Trans>
 					</span>
 
-					<div className="rounded bg-sunken p-3 *:w-full! [&_.w-color-alpha>div]:rounded-full! [&_.w-color-alpha]:mt-4! [&_.w-color-alpha]:h-4! [&_.w-color-hue]:mt-4! [&_.w-color-hue]:h-4! [&_.w-color-hue]:rounded-full! [&_.w-color-saturation]:h-36! [&_.w-color-saturation]:rounded-[calc(var(--radius-lg)-0.25rem)]!">
+					<div className="rounded bg-sunken p-3 *:w-full! [&_.w-color-alpha]:mt-4! [&_.w-color-alpha]:h-4! [&_.w-color-alpha>div]:rounded-full! [&_.w-color-hue]:mt-4! [&_.w-color-hue]:h-4! [&_.w-color-hue]:rounded-full! [&_.w-color-saturation]:h-36! [&_.w-color-saturation]:rounded-[calc(var(--radius-lg)-0.25rem)]!">
 						<ReactColorColorful color={color} onChange={onColorChange} />
 					</div>
 				</div>

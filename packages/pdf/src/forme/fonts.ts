@@ -1,5 +1,5 @@
-import type { FormeFont } from "@formepdf/react";
 import type { PdfFontRequest } from "../hooks/use-register-fonts";
+import type { FormeFont } from "@formepdf/react";
 import { prepareFontBytes } from "./font-bytes";
 
 // One download per font file for the life of the page or server process.

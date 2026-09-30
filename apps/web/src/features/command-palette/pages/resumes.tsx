@@ -7,11 +7,11 @@ import { CommandLoading } from "cmdk";
 import { CommandItem, CommandShortcut } from "@reactive-resume/ui/components/command";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Kbd } from "@reactive-resume/ui/components/kbd";
+import { useCommandPaletteStore } from "../store";
+import { BaseCommandGroup } from "./base";
 import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { orpc } from "@/libs/orpc/client";
-import { useCommandPaletteStore } from "../store";
-import { BaseCommandGroup } from "./base";
 
 type Application = RouterOutput["applications"]["list"][number];
 type Thread = RouterOutput["agent"]["threads"]["list"][number];
@@ -163,7 +163,7 @@ function ApplicationsPage({ page }: SearchPageProps) {
 					>
 						<Icon name="work" size={16} />
 						<span className="min-w-0 truncate">{application.company}</span>
-						<span className="truncate text-ink-3 text-xs">{application.role}</span>
+						<span className="truncate text-xs text-ink-3">{application.role}</span>
 					</CommandItem>
 				))
 			)}
@@ -216,7 +216,7 @@ function ThreadsPage({ page }: SearchPageProps) {
 						>
 							<Icon name="chat" size={16} />
 							<span className="min-w-0 truncate">{thread.title}</span>
-							<span className="truncate text-ink-3 text-xs">{documentName}</span>
+							<span className="truncate text-xs text-ink-3">{documentName}</span>
 						</CommandItem>
 					);
 				})

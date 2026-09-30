@@ -12,12 +12,12 @@ import {
 } from "@reactive-resume/ui/components/input-group";
 import { Separator } from "@reactive-resume/ui/components/separator";
 import { Switch } from "@reactive-resume/ui/components/switch";
+import { SectionBase } from "../shared/section-base";
 import { FontFamilyCombobox, FontWeightCombobox } from "@/components/typography/combobox";
 import { getNextWeights } from "@/components/typography/get-next-weights";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";
-import { SectionBase } from "../shared/section-base";
 
 export function TypographySectionBuilder() {
 	return (
@@ -68,7 +68,7 @@ function TypographySectionForm() {
 
 	return (
 		<form
-			className="grid @md:grid-cols-2 grid-cols-1 gap-4"
+			className="grid grid-cols-1 gap-4 @md:grid-cols-2"
 			onSubmit={(event) => {
 				event.preventDefault();
 				event.stopPropagation();
@@ -253,7 +253,7 @@ function TypographyFieldGroup({ label }: TypographyFieldGroupProps) {
 	return (
 		<div className="col-span-full flex items-center gap-x-2">
 			<Separator className="basis-[16px]" />
-			<div className="shrink-0 font-medium text-base leading-none">{label}</div>
+			<div className="shrink-0 text-base leading-none font-medium">{label}</div>
 			<Separator className="flex-1" />
 		</div>
 	);

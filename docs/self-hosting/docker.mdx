@@ -23,24 +23,24 @@ The official image runs a single Node.js process on port `3000`. It serves the w
 uploaded files from one address. PDFs are rendered by the app itself, in the browser or on the server, so there is no
 separate printer service.
 
-| Service | Required | Purpose |
-| --- | --- | --- |
-| PostgreSQL | Yes | Stores accounts, resumes, cover letters and applications. Runs as its own container or managed database. |
-| Upload storage | Yes | A folder mounted at `/app/data`, or an S3-compatible bucket instead. |
-| SMTP server | No | Sends verification and password reset emails. Without it, emails are written to the app log. |
-| Redis | No | Shares state between several app processes and lets Assistant replies survive a page reload. |
-| Firecrawl and an AI provider | No | Enable keyword job search, read posting URLs and extract application details. See [Job search and AI](/self-hosting/job-search-and-ai). |
+| Service                      | Required | Purpose                                                                                                                                 |
+| ---------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| PostgreSQL                   | Yes      | Stores accounts, resumes, cover letters and applications. Runs as its own container or managed database.                                |
+| Upload storage               | Yes      | A folder mounted at `/app/data`, or an S3-compatible bucket instead.                                                                    |
+| SMTP server                  | No       | Sends verification and password reset emails. Without it, emails are written to the app log.                                            |
+| Redis                        | No       | Shares state between several app processes and lets Assistant replies survive a page reload.                                            |
+| Firecrawl and an AI provider | No       | Enable keyword job search, read posting URLs and extract application details. See [Job search and AI](/self-hosting/job-search-and-ai). |
 
 The image is published to two registries with the same tags:
 
 - Docker Hub: `amruthpillai/reactive-resume`
 - GitHub Container Registry: `ghcr.io/reactive-resume/reactive-resume`
 
-| Tag | Contents |
-| --- | --- |
-| `latest` | The newest release. |
+| Tag                    | Contents                                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------------------------- |
+| `latest`               | The newest release.                                                                               |
 | `v6`, `v6.0`, `v6.0.0` | A major, minor or exact release. Pin `v6` to get fixes without jumping to the next major version. |
-| `nightly` | The current `main` branch. For testing only. |
+| `nightly`              | The current `main` branch. For testing only.                                                      |
 
 Images are built for `linux/amd64` and `linux/arm64`, so they run on most servers, Apple silicon, and a Raspberry
 Pi 4 or newer running a 64-bit operating system.
@@ -54,6 +54,7 @@ Pi 4 or newer running a 64-bit operating system.
     ```
 
     The next steps create two files in it: `.env` for settings and `compose.yml` for the containers.
+
   </Step>
 
   <Step title="Create the .env file">
@@ -88,6 +89,7 @@ Pi 4 or newer running a 64-bit operating system.
     If you will serve the instance from a domain, set `APP_URL` to that address now, for example
     `https://resume.example.com`. Every other setting is optional; the
     [environment variable reference](/self-hosting/environment-variables) lists them all.
+
   </Step>
 
   <Step title="Create compose.yml">
@@ -133,6 +135,7 @@ Pi 4 or newer running a 64-bit operating system.
       To use GitHub Container Registry instead of Docker Hub, change the image to
       `ghcr.io/reactive-resume/reactive-resume:latest`.
     </Tip>
+
   </Step>
 
   <Step title="Start the containers">
@@ -144,6 +147,7 @@ Pi 4 or newer running a 64-bit operating system.
     On the first start the app creates its database tables. When the log shows a line containing
     `Up and running on`, press <kbd>Ctrl</kbd> <kbd>C</kbd> to stop following the log. Within a minute, `docker compose ps` shows
     the app as `healthy`.
+
   </Step>
 
   <Step title="Create your account">
@@ -155,6 +159,7 @@ Pi 4 or newer running a 64-bit operating system.
     ```bash
     docker compose logs reactive-resume | grep verify-email
     ```
+
   </Step>
 </Steps>
 
@@ -226,11 +231,7 @@ storage outage, so avoid using it to kill containers.
     Back up the database and uploads before every update. See [Back up your data](#back-up-your-data).
   </Step>
 
-  <Step title="Pull the new image">
-    ```bash
-    docker compose pull reactive-resume
-    ```
-  </Step>
+<Step title="Pull the new image">```bash docker compose pull reactive-resume ```</Step>
 
   <Step title="Recreate the app container">
     ```bash
@@ -239,6 +240,7 @@ storage outage, so avoid using it to kill containers.
     ```
 
     The new version applies its migrations on startup. PostgreSQL keeps running.
+
   </Step>
 </Steps>
 
@@ -323,38 +325,39 @@ There is no official app template. Use your platform's generic container setting
       host name, password (URL-encode special characters) and that PostgreSQL is healthy.
     - `Local storage path is not writable`: the folder mounted at `/app/data` isn't writable by UID 1000. Fix its
       owner, or use a named volume.
+
   </Accordion>
 
-  <Accordion title="Sign-in loops back to the sign-in page">
-    `APP_URL` doesn't match the address you're using, or you're on `https://` while `APP_URL` says `http://`. Set
-    `APP_URL` to the exact public address and run `docker compose up -d`.
-  </Accordion>
+<Accordion title="Sign-in loops back to the sign-in page">
+  `APP_URL` doesn't match the address you're using, or you're on `https://` while `APP_URL` says `http://`. Set
+  `APP_URL` to the exact public address and run `docker compose up -d`.
+</Accordion>
 
-  <Accordion title="Verification or password reset emails never arrive">
-    Emails are only sent when `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS` and `SMTP_FROM` are all set. Until then they're
-    written to the app log. If they're set, check `SMTP_PORT` and `SMTP_SECURE` against your provider's settings and
-    look for SMTP errors in the log.
-  </Accordion>
+<Accordion title="Verification or password reset emails never arrive">
+  Emails are only sent when `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS` and `SMTP_FROM` are all set. Until then they're
+  written to the app log. If they're set, check `SMTP_PORT` and `SMTP_SECURE` against your provider's settings and look
+  for SMTP errors in the log.
+</Accordion>
 
-  <Accordion title="/api/health returns 503">
-    Look at which entry says `unhealthy`. For `storage`, check the `/app/data` mount or your S3 settings. For `redis`,
-    check that Redis is running and `REDIS_URL` is correct.
-  </Accordion>
+<Accordion title="/api/health returns 503">
+  Look at which entry says `unhealthy`. For `storage`, check the `/app/data` mount or your S3 settings. For `redis`,
+  check that Redis is running and `REDIS_URL` is correct.
+</Accordion>
 
-  <Accordion title="Uploaded pictures disappear after an update">
-    Nothing persistent was mounted at `/app/data`, so uploads lived inside the old container. Mount a volume there as
-    in the example above. Pictures uploaded before the change are gone.
-  </Accordion>
+<Accordion title="Uploaded pictures disappear after an update">
+  Nothing persistent was mounted at `/app/data`, so uploads lived inside the old container. Mount a volume there as in
+  the example above. Pictures uploaded before the change are gone.
+</Accordion>
 
-  <Accordion title="S3 error: getaddrinfo ENOTFOUND bucket.endpoint">
-    The app is using virtual-hosted addresses, which put the bucket name in front of the endpoint. MinIO, SeaweedFS
-    and most self-hosted services need path-style addresses. Set `S3_FORCE_PATH_STYLE="true"`.
-  </Accordion>
+<Accordion title="S3 error: getaddrinfo ENOTFOUND bucket.endpoint">
+  The app is using virtual-hosted addresses, which put the bucket name in front of the endpoint. MinIO, SeaweedFS and
+  most self-hosted services need path-style addresses. Set `S3_FORCE_PATH_STYLE="true"`.
+</Accordion>
 
-  <Accordion title="The Assistant says it isn't set up on this server">
-    Configure a shared AI provider, or set `ENCRYPTION_SECRET` to at least 32 characters so users can save personal
-    providers. Recreate the container, then check [Job search and AI](/self-hosting/job-search-and-ai).
-  </Accordion>
+<Accordion title="The Assistant says it isn't set up on this server">
+  Configure a shared AI provider, or set `ENCRYPTION_SECRET` to at least 32 characters so users can save personal
+  providers. Recreate the container, then check [Job search and AI](/self-hosting/job-search-and-ai).
+</Accordion>
 
   <Accordion title="PDF download fails in the browser">
     The editor renders PDFs in the browser with WebAssembly. If you add your own Content Security Policy at the proxy,

@@ -1,8 +1,8 @@
 import type { SingleComboboxProps } from "@/components/ui/combobox";
 import { useLingui } from "@lingui/react";
+import { getLocaleOptions } from "./locale-options";
 import { Combobox } from "@/components/ui/combobox";
 import { changeLocale } from "@/libs/locale";
-import { getLocaleOptions } from "./locale-options";
 
 type Props = Omit<SingleComboboxProps, "options" | "value" | "onValueChange">;
 

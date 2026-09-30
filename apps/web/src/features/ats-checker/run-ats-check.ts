@@ -1,5 +1,5 @@
-import type { PdfAtsReport } from "@reactive-resume/resume/ats-pdf";
 import type { ExtractProgress } from "./extract-client";
+import type { PdfAtsReport } from "@reactive-resume/resume/ats-pdf";
 import { extractPdf } from "./extract-client";
 
 export type AtsCheckResult = {
@@ -31,9 +31,10 @@ export async function runAtsCheck(file: File, options: RunAtsCheckOptions = {}):
 
 	const { analyzePdfResume, buildExtractedDocument } = await engine;
 
-	const report = analyzePdfResume(raw, {
-		...(options.jobDescription?.trim() ? { jobDescription: options.jobDescription } : {}),
-	});
+	const report = analyzePdfResume(
+		raw,
+		options.jobDescription?.trim() ? { jobDescription: options.jobDescription } : {},
+	);
 
 	return { report, fullText: buildExtractedDocument(raw).fullText };
 }

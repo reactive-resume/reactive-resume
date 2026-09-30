@@ -24,12 +24,12 @@ pre-commit:
         echo 'Error: merge conflict markers found in staged files'
         exit 1
     - name: lint and format
-      # Every extension Biome is configured to handle here. `mts`/`cts` also cover the `d.mts`/
-      # `d.cts` declaration files, and `css` matters because biome.json enables the CSS parser
-      # with Tailwind directives — those files were previously formatted only by a full `pnpm
-      # check`, never on commit.
-      glob: "*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json,jsonc,css}"
-      run: pnpm biome check --write --unsafe --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      # Keep fixes and formatting sequential, then fail on any remaining diagnostics.
+      glob: "*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json,jsonc,css,scss,less,md,mdx,yml,yaml,html,toml,graphql}"
+      run: |
+        pnpm exec oxlint --fix --no-error-on-unmatched-pattern {staged_files} &&
+        pnpm exec oxfmt --write --no-error-on-unmatched-pattern {staged_files} &&
+        pnpm exec oxlint --deny-warnings --no-error-on-unmatched-pattern {staged_files}
       stage_fixed: true
 
 commit-msg:

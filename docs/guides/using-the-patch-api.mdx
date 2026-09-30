@@ -13,13 +13,13 @@ The patch endpoint lets you make small, targeted changes to a resume's content w
 
 ## Choose PATCH or PUT
 
-| You want to | Use |
-| --- | --- |
-| Change one field, such as the headline or a company name | `PATCH /resumes/{id}` |
-| Add, remove or reorder entries in a section | `PATCH /resumes/{id}` |
-| Change the template, colors, fonts or layout | `PATCH /resumes/{id}` |
-| Rename the resume, change its slug or tags, or make it public | `PUT /resumes/{id}` |
-| Replace the whole resume content at once | `PUT /resumes/{id}` with `data` |
+| You want to                                                   | Use                             |
+| ------------------------------------------------------------- | ------------------------------- |
+| Change one field, such as the headline or a company name      | `PATCH /resumes/{id}`           |
+| Add, remove or reorder entries in a section                   | `PATCH /resumes/{id}`           |
+| Change the template, colors, fonts or layout                  | `PATCH /resumes/{id}`           |
+| Rename the resume, change its slug or tags, or make it public | `PUT /resumes/{id}`             |
+| Replace the whole resume content at once                      | `PUT /resumes/{id}` with `data` |
 
 PATCH only changes the resume's `data`. The name, slug, tags and public setting sit outside `data`, so change them with `PUT`, which updates only the fields you send.
 
@@ -36,25 +36,23 @@ The body holds the operations, and optionally the version of the resume you base
 ```json
 {
   "expectedUpdatedAt": "2026-09-30T00:10:08.197Z",
-  "operations": [
-    { "op": "replace", "path": "/basics/headline", "value": "Senior Game Developer" }
-  ]
+  "operations": [{ "op": "replace", "path": "/basics/headline", "value": "Senior Game Developer" }]
 }
 ```
 
-| Field | Required | Description |
-| --- | --- | --- |
-| `operations` | Yes | At least one JSON Patch operation. They run in order. |
-| `expectedUpdatedAt` | No | The resume's `updatedAt` when you read it. If the resume has changed since, the patch is rejected with `409`. See [Avoid overwriting other edits](#avoid-overwriting-other-edits). |
+| Field               | Required | Description                                                                                                                                                                        |
+| ------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `operations`        | Yes      | At least one JSON Patch operation. They run in order.                                                                                                                              |
+| `expectedUpdatedAt` | No       | The resume's `updatedAt` when you read it. If the resume has changed since, the patch is rejected with `409`. See [Avoid overwriting other edits](#avoid-overwriting-other-edits). |
 
 Each operation has these properties:
 
-| Property | Required | Description |
-| --- | --- | --- |
-| `op` | Yes | `add`, `remove`, `replace`, `move`, `copy` or `test` |
-| `path` | Yes | A [JSON Pointer (RFC 6901)](https://datatracker.ietf.org/doc/html/rfc6901) into the resume data, such as `/basics/name` |
-| `value` | For `add`, `replace` and `test` | The value to write or compare |
-| `from` | For `move` and `copy` | A JSON Pointer to the source |
+| Property | Required                        | Description                                                                                                             |
+| -------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `op`     | Yes                             | `add`, `remove`, `replace`, `move`, `copy` or `test`                                                                    |
+| `path`   | Yes                             | A [JSON Pointer (RFC 6901)](https://datatracker.ietf.org/doc/html/rfc6901) into the resume data, such as `/basics/name` |
+| `value`  | For `add`, `replace` and `test` | The value to write or compare                                                                                           |
+| `from`   | For `move` and `copy`           | A JSON Pointer to the source                                                                                            |
 
 A successful patch returns `200` with the full updated resume, including its new `updatedAt`.
 
@@ -149,12 +147,12 @@ Experience (and its roles), education, projects and volunteer entries, and award
 "dates": { "start": "2022-03", "end": null, "present": true }
 ```
 
-| Field | Value |
-| --- | --- |
-| `start` | A year (`"2022"`) or a year and month (`"2022-03"`), or `null`. Single-date entries (awards, certifications, publications) use only `start`. |
-| `end` | A year or year and month, or `null` while the entry is ongoing or for single dates. |
-| `present` | `true` when the entry is ongoing. It prints as "Present" in the resume's language. |
-| `raw` | Optional. Original text that couldn't be read exactly, such as "Summer 2016". It prints as written until the dates are edited. |
+| Field     | Value                                                                                                                                        |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `start`   | A year (`"2022"`) or a year and month (`"2022-03"`), or `null`. Single-date entries (awards, certifications, publications) use only `start`. |
+| `end`     | A year or year and month, or `null` while the entry is ongoing or for single dates.                                                          |
+| `present` | `true` when the entry is ongoing. It prints as "Present" in the resume's language.                                                           |
+| `raw`     | Optional. Original text that couldn't be read exactly, such as "Summer 2016". It prints as written until the dates are edited.               |
 
 **Write `dates`, not the text.** Each entry also has a text field, `period` (ranges) or `date` (single dates). On every save, the server rewrites that text from `dates`, in the resume's language and date format (`/metadata/page/dateFormat`: `short`, `long`, `numeric` or `iso`). A patch that changes only `period` or `date` is overwritten, and the resume keeps its old dates.
 
@@ -210,18 +208,16 @@ If the resume has moved on, you get `409` with the code `RESUME_VERSION_CONFLICT
 
 ## Errors
 
-| Status | Code | Cause |
-| --- | --- | --- |
-| `400` | `BAD_REQUEST` | The body is malformed, for example `operations` is empty or an operation lacks `value` or `from`. |
-| `400` | `INVALID_PATCH_OPERATIONS` | An operation targets a path that doesn't exist, a `test` failed, or the result doesn't match the schema. `data` holds the failing `index`, the `operation` and a `code` such as `TEST_OPERATION_FAILED` or `OPERATION_PATH_UNRESOLVABLE`. |
-| `401` | `UNAUTHORIZED` | The API key is missing, revoked or expired. |
-| `404` | `NOT_FOUND` | The resume doesn't exist or belongs to someone else. |
-| `409` | `RESUME_VERSION_CONFLICT` | The resume changed after `expectedUpdatedAt`. |
-| `403` | `RESUME_LOCKED` | The resume is locked. Unlock it with `POST /resumes/{id}/lock` and `{ "isLocked": false }`, or in the app. |
+| Status | Code                       | Cause                                                                                                                                                                                                                                     |
+| ------ | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `400`  | `BAD_REQUEST`              | The body is malformed, for example `operations` is empty or an operation lacks `value` or `from`.                                                                                                                                         |
+| `400`  | `INVALID_PATCH_OPERATIONS` | An operation targets a path that doesn't exist, a `test` failed, or the result doesn't match the schema. `data` holds the failing `index`, the `operation` and a `code` such as `TEST_OPERATION_FAILED` or `OPERATION_PATH_UNRESOLVABLE`. |
+| `401`  | `UNAUTHORIZED`             | The API key is missing, revoked or expired.                                                                                                                                                                                               |
+| `404`  | `NOT_FOUND`                | The resume doesn't exist or belongs to someone else.                                                                                                                                                                                      |
+| `409`  | `RESUME_VERSION_CONFLICT`  | The resume changed after `expectedUpdatedAt`.                                                                                                                                                                                             |
+| `403`  | `RESUME_LOCKED`            | The resume is locked. Unlock it with `POST /resumes/{id}/lock` and `{ "isLocked": false }`, or in the app.                                                                                                                                |
 
-<Note>
-  Locked resume writes return HTTP `403` with code `RESUME_LOCKED`. Unlock the resume before retrying.
-</Note>
+<Note>Locked resume writes return HTTP `403` with code `RESUME_LOCKED`. Unlock the resume before retrying.</Note>
 
 ## Related guides
 

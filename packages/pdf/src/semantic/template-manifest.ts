@@ -1,7 +1,7 @@
+import type { PrimitiveBinding, SemanticBindingRegistry } from "./binding-inventory";
 import type { SemanticNodeKind } from "@reactive-resume/resume/stylesheet/types";
 import type { CustomSectionType } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
-import type { PrimitiveBinding, SemanticBindingRegistry } from "./binding-inventory";
 import { azurillSemanticManifest } from "../templates/azurill/semantic";
 import { bronzorSemanticManifest } from "../templates/bronzor/semantic";
 import { chikoritaSemanticManifest } from "../templates/chikorita/semantic";

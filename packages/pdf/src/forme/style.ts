@@ -1,5 +1,5 @@
-import type { Style as FormeStyle } from "@formepdf/react";
 import type { Style, StyleProp } from "./style-types";
+import type { Style as FormeStyle } from "@formepdf/react";
 
 /**
  * react-pdf-style objects (what templates and Semantic CSS produce) → Forme style objects.

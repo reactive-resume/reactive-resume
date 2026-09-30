@@ -98,7 +98,7 @@ function supersedeStaleSnapshots(messages: ModelMessage[]): ModelMessage[] {
 	for (const { messageIndex, partIndex } of stale) {
 		const message = next[messageIndex] as ModelMessage & { content: LoosePart[] };
 		const parts = [...contentParts(message)];
-		// biome-ignore lint/style/noNonNullAssertion: location was collected from this array
+		// oxlint-disable-next-line typescript/no-non-null-assertion -- location was collected from this array
 		parts[partIndex] = supersedeSnapshotPart(parts[partIndex]!);
 		next[messageIndex] = { ...message, content: parts } as ModelMessage;
 	}
@@ -120,7 +120,7 @@ function collapseOldestToolPairs(messages: ModelMessage[], budget: number): Mode
 
 	// The surviving snapshot (last one, by Tier 0) must keep its full pair.
 	for (let index = messages.length - 1; index >= 0; index--) {
-		// biome-ignore lint/style/noNonNullAssertion: index is in range
+		// oxlint-disable-next-line typescript/no-non-null-assertion -- index is in range
 		const part = contentParts(messages[index]!).findLast(isSnapshotResultPart);
 		if (part && typeof part.toolCallId === "string") {
 			survivingSnapshotCallIds.add(part.toolCallId);

@@ -1,6 +1,6 @@
+import type { Application } from "./types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { IconName } from "@reactive-resume/ui/components/icon";
-import type { Application } from "./types";
 import { plural, t } from "@lingui/core/macro";
 import { interviewKindOf, isInterview } from "./interviews";
 import { getClosedReasonLabel } from "./stages";

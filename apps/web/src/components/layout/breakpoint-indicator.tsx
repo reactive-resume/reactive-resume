@@ -18,7 +18,7 @@ export function BreakpointIndicator({ position = "bottom-right" }: BreakpointInd
 	return (
 		<div
 			className={cn(
-				"fixed z-50 flex size-10 items-center justify-center bg-blue-900 p-2 font-bold font-mono text-white text-xs opacity-80 transition-opacity hover:opacity-40 print:hidden",
+				"fixed z-50 flex size-10 items-center justify-center bg-blue-900 p-2 font-mono text-xs font-bold text-white opacity-80 transition-opacity hover:opacity-40 print:hidden",
 				top,
 				right,
 				left,

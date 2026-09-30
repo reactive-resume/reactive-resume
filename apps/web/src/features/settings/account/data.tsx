@@ -17,12 +17,12 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
+import { SettingsRow, SettingsSection } from "../section";
+import { buildAccountZip } from "./export";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
-import { SettingsRow, SettingsSection } from "../section";
-import { buildAccountZip } from "./export";
 
 const CONFIRMATION = "delete";
 
@@ -120,9 +120,9 @@ function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogProps) {
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<div className="grid gap-1.5">
-					<label htmlFor={id} className="font-medium text-[13px]">
+					<label htmlFor={id} className="text-[13px] font-medium">
 						<Trans>
-							Type <b className="font-medium font-mono">{CONFIRMATION}</b> to confirm
+							Type <b className="font-mono font-medium">{CONFIRMATION}</b> to confirm
 						</Trans>
 					</label>
 					<Input

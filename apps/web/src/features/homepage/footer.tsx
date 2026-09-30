@@ -71,7 +71,7 @@ function FooterLinkItem({ link }: { link: FooterLink }): ReactNode {
 /** 11 Footer, ending on the wordmark rising into view, cropped by the page's edge. */
 export function LandingFooter() {
 	return (
-		<footer data-scene={SCENE.footer} className="relative overflow-hidden border-line border-t">
+		<footer data-scene={SCENE.footer} className="relative overflow-hidden border-t border-line">
 			<div className="mx-auto grid max-w-[1440px] grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-x-8 gap-y-10 px-(--gutter) pt-16">
 				<div className="col-span-2 flex min-w-0 flex-col gap-3.5">
 					<img
@@ -88,7 +88,7 @@ export function LandingFooter() {
 						height={140}
 						className="-ms-[18px] -mt-[22px] -mb-[18px] hidden size-[140px] dark:block"
 					/>
-					<div className="flex flex-col gap-1 font-ui text-[13px] text-ink-3 leading-normal">
+					<div className="flex flex-col gap-1 font-ui text-[13px] leading-normal text-ink-3">
 						<p>{t`By the community, for the community.`}</p>
 						<p>
 							<Trans>
@@ -127,7 +127,7 @@ export function LandingFooter() {
 			{/* It fades in by sliding up out of the mask's faded bottom; an opacity fade would fail contrast checks. */}
 			<div aria-hidden="true" className="@container mx-auto mt-14 max-w-[1440px] px-(--gutter)">
 				<div className="h-[27cqw] overflow-hidden [mask-image:linear-gradient(to_bottom,#000_35%,transparent_100%)]">
-					<div className="select-none whitespace-nowrap pt-[.12em] pb-[.06em] font-anybody font-extrabold font-stretch-[78%] text-[17.5cqw] text-ink leading-[.84] tracking-[-.035em] [transform:translateY(calc((1-clamp(0,(var(--p)-.1)/.8,1))*60%))] [transition:transform_.35s_var(--ease)]">
+					<div className="font-anybody [transform:translateY(calc((1-clamp(0,(var(--p)-.1)/.8,1))*60%))] pt-[.12em] pb-[.06em] text-[17.5cqw] leading-[.84] font-extrabold tracking-[-.035em] whitespace-nowrap text-ink font-stretch-[78%] select-none [transition:transform_.35s_var(--ease)]">
 						<span className="block">Reactive</span>
 						<span className="block text-accent-text">Resume</span>
 					</div>

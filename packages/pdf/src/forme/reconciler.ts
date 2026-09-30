@@ -110,7 +110,7 @@ const reconciler = Reconciler({
 		_currentValue2: null,
 	},
 	resetFormInstance: () => {},
-	// biome-ignore lint/suspicious/noExplicitAny: the host config typings trail react-reconciler 0.34.
+	// oxlint-disable-next-line typescript/no-explicit-any -- the host config typings trail react-reconciler 0.34.
 } as any);
 
 /** Renders `element` synchronously and returns the host tree it produced. Errors thrown while rendering rethrow. */
@@ -120,10 +120,10 @@ export function renderHostTree(element: ReactNode): HostNode[] {
 	const onError = (error: unknown) => {
 		errors.push(error);
 	};
-	// biome-ignore lint/suspicious/noExplicitAny: createContainer's arity changes across 0.3x releases.
+	// oxlint-disable-next-line typescript/no-explicit-any -- createContainer's arity changes across 0.3x releases.
 	const create = reconciler.createContainer as (...args: any[]) => unknown;
 	const root = create(container, ConcurrentRoot, null, false, null, "", onError, onError, onError, () => {}, null);
-	// biome-ignore lint/suspicious/noExplicitAny: `updateContainerSync` and `flushSyncWork` exist from 0.31.
+	// oxlint-disable-next-line typescript/no-explicit-any -- `updateContainerSync` and `flushSyncWork` exist from 0.31.
 	const sync = reconciler as any;
 	sync.updateContainerSync(element, root, null, null);
 	sync.flushSyncWork();

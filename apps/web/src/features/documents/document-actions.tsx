@@ -1,5 +1,5 @@
-import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { DocumentSummary } from "./filter";
+import type { IconName } from "@reactive-resume/ui/components/icon";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -21,6 +21,7 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { useNewDocumentsStore } from "./new-documents";
 import { ChipInput } from "@/components/input/chip-input";
 import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
@@ -28,7 +29,6 @@ import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
-import { useNewDocumentsStore } from "./new-documents";
 
 type Ref = { type: DocumentSummary["type"]; id: string };
 const ref = (document: DocumentSummary): Ref => ({ type: document.type, id: document.id });
@@ -301,12 +301,12 @@ export function LinkApplicationDialog({ document: requested, onClose }: LinkAppl
 							<Icon name="work" className="text-ink-2" />
 							<span className="grid min-w-0">
 								<span className="truncate font-medium">{application.role}</span>
-								<span className="truncate text-ink-3 text-xs">{application.company}</span>
+								<span className="truncate text-xs text-ink-3">{application.company}</span>
 							</span>
 						</Button>
 					))}
 					{jobs.length === 0 && (
-						<p className="text-ink-2 text-sm">
+						<p className="text-sm text-ink-2">
 							<Trans>No applications yet. Add one in Applications first.</Trans>
 						</p>
 					)}

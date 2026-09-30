@@ -9,13 +9,13 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
+import { PdfViewer } from "./pdf-viewer";
+import { ResumeReflow } from "./resume-reflow";
 import { LoadingScreen } from "@/components/layout/loading-screen";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
 import { CopyLinkButton } from "@/features/resume/share/copy-link-button";
 import { POP_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
-import { PdfViewer } from "./pdf-viewer";
-import { ResumeReflow } from "./resume-reflow";
 
 const publicResumeRoute = getRouteApi("/$username/$slug");
 
@@ -42,9 +42,7 @@ type PublicResumePageProps = {
  */
 export function PublicResumePage({ resume, username, slug, flags, isRoot = false }: PublicResumePageProps) {
 	const publicResume = useMemo(() => ({ username, slug }), [slug, username]);
-	const { onDownloadPDF, isExporting } = useResumeExport(resume, {
-		...(resume ? { publicResumePdf: { publicResume } } : {}),
-	});
+	const { onDownloadPDF, isExporting } = useResumeExport(resume, resume ? { publicResumePdf: { publicResume } } : {});
 	const phone = useBreakpoint() === "mobile";
 	const [, copy] = useCopyToClipboard();
 
@@ -80,7 +78,7 @@ export function PublicResumePage({ resume, username, slug, flags, isRoot = false
 	);
 
 	const credit = (
-		<footer className="flex justify-center px-4 py-6 text-ink-3 text-sm print:hidden">
+		<footer className="flex justify-center px-4 py-6 text-sm text-ink-3 print:hidden">
 			{flags.disableSignups ? (
 				<Trans>Made with Reactive Resume, free and open source</Trans>
 			) : (
@@ -108,7 +106,7 @@ export function PublicResumePage({ resume, username, slug, flags, isRoot = false
 							<ResumeReflow data={resume.data} />
 							{credit}
 						</main>
-						<div className="sticky bottom-0 flex gap-2 border-line border-t bg-surface px-4 pt-3 pb-[max(1.5rem,env(safe-area-inset-bottom))] print:hidden">
+						<div className="sticky bottom-0 flex gap-2 border-t border-line bg-surface px-4 pt-3 pb-[max(1.5rem,env(safe-area-inset-bottom))] print:hidden">
 							{downloads && download}
 							<Button
 								variant="secondary"
@@ -124,10 +122,10 @@ export function PublicResumePage({ resume, username, slug, flags, isRoot = false
 					</>
 				) : (
 					<>
-						<header className="sticky top-0 z-10 flex h-16 items-center gap-3 border-line border-b bg-surface px-5 print:hidden">
+						<header className="sticky top-0 z-10 flex h-16 items-center gap-3 border-b border-line bg-surface px-5 print:hidden">
 							<div className="grid min-w-0 flex-1">
-								<h1 className="truncate font-display font-medium text-xl leading-6">{basics.name || resume.name}</h1>
-								{subtitle && <p className="truncate text-ink-3 text-xs">{subtitle}</p>}
+								<h1 className="truncate font-display text-xl leading-6 font-medium">{basics.name || resume.name}</h1>
+								{subtitle && <p className="truncate text-xs text-ink-3">{subtitle}</p>}
 							</div>
 							<CopyLinkButton url={window.location.href} label={t`Copy link`} icon="link" />
 							{downloads && download}
@@ -150,10 +148,10 @@ export function SharedResumeUnavailable() {
 	return (
 		<main id="main-content" className="grid min-h-svh place-items-center bg-sunken px-6 text-center">
 			<div className="grid max-w-sm gap-2">
-				<h1 className="font-display font-medium text-[26px] leading-8">
+				<h1 className="font-display text-[26px] leading-8 font-medium">
 					<Trans>This resume isn't shared right now.</Trans>
 				</h1>
-				<p className="text-ink-2 text-sm">
+				<p className="text-sm text-ink-2">
 					<Trans>If someone sent you this link, ask them for a new one.</Trans>
 				</p>
 			</div>

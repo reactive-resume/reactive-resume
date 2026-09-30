@@ -38,9 +38,9 @@ function RouteComponent() {
 		<div className="grid min-h-full content-start lg:grid-cols-[220px_minmax(0,1fr)] lg:content-stretch">
 			<nav
 				aria-label={t`Settings`}
-				className="flex flex-col gap-1 border-line [view-transition-name:settings-nav] max-sm:hidden max-lg:border-b lg:border-e lg:py-7 lg:ps-6 lg:pe-3"
+				className="flex flex-col gap-1 border-line [view-transition-name:settings-nav] max-lg:border-b max-sm:hidden lg:border-e lg:py-7 lg:ps-6 lg:pe-3"
 			>
-				<h1 className="ms-2 mb-3.5 font-display font-medium text-[26px] leading-8 max-lg:hidden">
+				<h1 className="ms-2 mb-3.5 font-display text-[26px] leading-8 font-medium max-lg:hidden">
 					<Trans>Settings</Trans>
 				</h1>
 				<div className="flex gap-1 max-lg:overflow-x-auto max-lg:px-6 max-lg:py-2 lg:flex-col">
@@ -48,7 +48,7 @@ function RouteComponent() {
 						<Link
 							key={page.to}
 							to={page.to}
-							className="flex h-10 shrink-0 items-center gap-2.5 rounded-lg px-2.5 font-medium text-ink-2 text-sm transition-colors duration-quick hover:bg-hover"
+							className="flex h-10 shrink-0 items-center gap-2.5 rounded-lg px-2.5 text-sm font-medium text-ink-2 transition-colors duration-quick hover:bg-hover"
 							activeProps={{ className: "bg-sunken text-ink", "aria-current": "page" }}
 						>
 							<Icon name={page.icon} size={20} />
@@ -56,7 +56,7 @@ function RouteComponent() {
 						</Link>
 					))}
 				</div>
-				<p className="mt-auto px-2.5 text-ink-3 text-xs leading-[18px] max-lg:hidden">
+				<p className="mt-auto px-2.5 text-xs leading-[18px] text-ink-3 max-lg:hidden">
 					<Trans>Reactive Resume {__APP_VERSION__} · MIT</Trans>
 					<br />
 					{getProjectLinks().map((link, index) => (
@@ -70,12 +70,12 @@ function RouteComponent() {
 				</p>
 			</nav>
 
-			<div className="min-w-0 px-12 pt-8 pb-16 max-sm:px-4 max-sm:pt-4 max-lg:px-6">
+			<div className="min-w-0 px-12 pt-8 pb-16 max-lg:px-6 max-sm:px-4 max-sm:pt-4">
 				{!isRoot && (
 					<Link
 						to="/dashboard/settings"
 						viewTransition={popTransition}
-						className="mb-4 inline-flex h-9 items-center gap-1 text-ink-2 text-sm sm:hidden"
+						className="mb-4 inline-flex h-9 items-center gap-1 text-sm text-ink-2 sm:hidden"
 					>
 						<Icon name="chevron_left" size={20} />
 						<Trans>Settings</Trans>

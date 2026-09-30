@@ -12,10 +12,10 @@ company, and bring it back.
 In the resume editor, undo steps back through your changes: typing, adding or deleting entries, moving sections,
 template and design changes, custom styles, and edits you accept from the Assistant.
 
-| Action | Mac | Windows and Linux |
-| --- | --- | --- |
-| Undo | <kbd>⌘</kbd> <kbd>Z</kbd> | <kbd>Ctrl</kbd> <kbd>Z</kbd> |
-| Redo | <kbd>⌘</kbd> <kbd>Shift</kbd> <kbd>Z</kbd> | <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>Z</kbd> or <kbd>Ctrl</kbd> <kbd>Y</kbd> |
+| Action | Mac                                        | Windows and Linux                                                             |
+| ------ | ------------------------------------------ | ----------------------------------------------------------------------------- |
+| Undo   | <kbd>⌘</kbd> <kbd>Z</kbd>                  | <kbd>Ctrl</kbd> <kbd>Z</kbd>                                                  |
+| Redo   | <kbd>⌘</kbd> <kbd>Shift</kbd> <kbd>Z</kbd> | <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>Z</kbd> or <kbd>Ctrl</kbd> <kbd>Y</kbd> |
 
 These shortcuts undo resume-wide changes when your cursor isn't in a text field. Inside a field, they undo your typing
 in that field. Click outside the field first to undo a change such as a template switch.
@@ -46,7 +46,10 @@ History opens in the **Share & export** panel on its **History** tab. On a narro
 **History** tab.
 
 <Frame caption="History lists Now at the top, then saved versions from newest to oldest">
-  <img src="/images/guides/undoing-changes-and-version-history/history-tab.webp" alt="The History tab of the Share & export panel: a field to name the current version, then a timeline with Now, a named version marked with a bookmark, an Editing session and Created" />
+  <img
+    src="/images/guides/undoing-changes-and-version-history/history-tab.webp"
+    alt="The History tab of the Share & export panel: a field to name the current version, then a timeline with Now, a named version marked with a bookmark, an Editing session and Created"
+  />
 </Frame>
 
 Each version shows a title, when it was saved (for example "Today 14:02", "Yesterday 09:15" or a date), and how it was
@@ -56,15 +59,15 @@ saved. History shows the 100 most recent versions.
 
 You don't need to save anything for History to work. Versions are added when:
 
-| Title in History | Saved when | Kept |
-| --- | --- | --- |
-| **Created** / **Imported** | You create or import the resume. | Until you delete the resume |
-| **Editing session** | You edit. Each visit to the editor keeps one version with its latest state, refreshed at most every two minutes. | 90 days |
-| **AI edit** | A change arrives through the API, for example from an MCP client or another AI tool connected to your account. Edits you accept from the Assistant in the editor count as part of your editing session. | 90 days |
-| **Sent to** *company* | An application linked to this resume first moves to **Applied**, **Screening**, **Interview** or **Offer**. | Until you delete the resume |
-| **Before restore** | Just before you restore a version. | Until you delete the resume |
-| **Restored a version** | Right after you restore a version. | 90 days |
-| *Your name* | You save a named version. | Until you delete it |
+| Title in History           | Saved when                                                                                                                                                                                              | Kept                        |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| **Created** / **Imported** | You create or import the resume.                                                                                                                                                                        | Until you delete the resume |
+| **Editing session**        | You edit. Each visit to the editor keeps one version with its latest state, refreshed at most every two minutes.                                                                                        | 90 days                     |
+| **AI edit**                | A change arrives through the API, for example from an MCP client or another AI tool connected to your account. Edits you accept from the Assistant in the editor count as part of your editing session. | 90 days                     |
+| **Sent to** _company_      | An application linked to this resume first moves to **Applied**, **Screening**, **Interview** or **Offer**.                                                                                             | Until you delete the resume |
+| **Before restore**         | Just before you restore a version.                                                                                                                                                                      | Until you delete the resume |
+| **Restored a version**     | Right after you restore a version.                                                                                                                                                                      | 90 days                     |
+| _Your name_                | You save a named version.                                                                                                                                                                               | Until you delete it         |
 
 Resumes and cover letters both have History. A letter's versions work the same way; only the kinds that apply to
 letters appear.
@@ -74,9 +77,7 @@ letters appear.
 Name a version before a big change, or when you send the resume somewhere, so it's easy to find later.
 
 <Steps>
-  <Step title="Open History">
-    Select the **History** icon, or **Share** then **History**.
-  </Step>
+  <Step title="Open History">Select the **History** icon, or **Share** then **History**.</Step>
   <Step title="Type a name">
     In **Name this version**, type a short name such as "Sent to Lumen" or "Before tailoring" (up to 80 characters).
   </Step>
@@ -102,14 +103,20 @@ versions can be renamed or deleted; the others are kept for as long as the table
 </Steps>
 
 <Frame caption="Previewing a named version: the page shows it read-only until you restore it or go back to now">
-  <img src="/images/guides/undoing-changes-and-version-history/history-viewing-a-named-version.webp" alt="The History tab with a dark bar reading Viewing Today 01:44 AM · Original for game studios · read-only, with Restore this version and Back to now buttons, and the named version selected in the timeline" />
+  <img
+    src="/images/guides/undoing-changes-and-version-history/history-viewing-a-named-version.webp"
+    alt="The History tab with a dark bar reading Viewing Today 01:44 AM · Original for game studios · read-only, with Restore this version and Back to now buttons, and the named version selected in the timeline"
+  />
 </Frame>
 
 Restoring never throws anything away. Before it replaces your resume, Reactive Resume saves the current state as
 **Before restore**, then adds **Restored a version** after it. To undo a restore, restore **Before restore**.
 
 <Frame caption="After a restore, the state you replaced is saved as Before restore">
-  <img src="/images/guides/undoing-changes-and-version-history/history-after-restoring.webp" alt="The History timeline after a restore: Now, Restored a version, Before restore, the named version, Editing session and Created" />
+  <img
+    src="/images/guides/undoing-changes-and-version-history/history-after-restoring.webp"
+    alt="The History timeline after a restore: Now, Restored a version, Before restore, the named version, Editing session and Created"
+  />
 </Frame>
 
 <Note>

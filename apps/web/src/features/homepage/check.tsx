@@ -126,16 +126,16 @@ export function Check() {
 
 				<h2
 					id="check-title"
-					className="absolute start-(--gutter) top-[10vh] whitespace-nowrap font-normal text-[16vw] text-ink leading-[.82] min-[900px]:top-[11vh] min-[900px]:text-[clamp(72px,9vw,160px)]"
+					className="absolute start-(--gutter) top-[10vh] text-[16vw] leading-[.82] font-normal whitespace-nowrap text-ink min-[900px]:top-[11vh] min-[900px]:text-[clamp(72px,9vw,160px)]"
 				>
-					<span className="block font-anybody font-light tracking-[-.03em] [clip-path:inset(calc(var(--sv)*120%-20%)_0_-20%_0)]">
+					<span className="font-anybody block font-light tracking-[-.03em] [clip-path:inset(calc(var(--sv)*120%-20%)_0_-20%_0)]">
 						{check}
 						<span className="text-accent">.</span>
 					</span>
 					<span
 						aria-hidden="true"
 						data-text={`${check}.`}
-						className="absolute start-0 top-0 block font-light font-martian text-accent-text tracking-[-.05em] [clip-path:inset(-20%_0_calc((1-var(--sv))*120%)_0)] before:content-[attr(data-text)]"
+						className="font-martian absolute start-0 top-0 block font-light tracking-[-.05em] text-accent-text [clip-path:inset(-20%_0_calc((1-var(--sv))*120%)_0)] before:content-[attr(data-text)]"
 					/>
 					<span
 						aria-hidden="true"
@@ -147,12 +147,12 @@ export function Check() {
 					<div className="flex flex-col gap-3.5">
 						<span className={cn(labelClass, "text-ink-3")}>{t`ATS readability`}</span>
 						<p className="flex items-baseline gap-2.5">
-							<span className="font-anybody font-light text-[48px] text-ink tabular-nums leading-[.9] tracking-[-.03em] min-[900px]:text-[clamp(52px,5vw,92px)]">
+							<span className="font-anybody text-[48px] leading-[.9] font-light tracking-[-.03em] text-ink tabular-nums min-[900px]:text-[clamp(52px,5vw,92px)]">
 								{i18n.number(score)}
 							</span>
 							<span className="font-martian text-[13px] text-ink-3">/ {i18n.number(100)}</span>
 						</p>
-						<ul className="flex flex-col gap-2 font-medium font-ui text-sm leading-[1.3]">
+						<ul className="flex flex-col gap-2 font-ui text-sm leading-[1.3] font-medium">
 							{items.map((item, index) => (
 								<li
 									key={index}
@@ -179,11 +179,11 @@ export function Check() {
 					<SceneCaption
 						number="03"
 						title={check}
-						className="hidden min-[900px]:flex min-[900px]:short:hidden"
+						className="min-[900px]:short:hidden hidden min-[900px]:flex"
 						action={
 							<Link
 								to="/ats-checker"
-								className="flex items-center gap-1.5 self-start font-semibold font-ui text-[15px] text-accent-text transition-colors hover:text-accent-hover"
+								className="flex items-center gap-1.5 self-start font-ui text-[15px] font-semibold text-accent-text transition-colors hover:text-accent-hover"
 							>
 								{t`Check any PDF, no account needed`}
 								<Icon name="arrow_forward" size={19} />
@@ -197,12 +197,12 @@ export function Check() {
 				<div
 					onPointerMove={moveLens}
 					onPointerLeave={releaseLens}
-					className="@container absolute end-[5vw] top-[60%] aspect-[612/792] w-(--pw) cursor-crosshair rounded-[2px] shadow-paper [transform:translateY(-50%)_rotate(1deg)] min-[900px]:end-[10vw] min-[900px]:top-[52%]"
+					className="@container absolute end-[5vw] top-[60%] aspect-[612/792] w-(--pw) [transform:translateY(-50%)_rotate(1deg)] cursor-crosshair rounded-[2px] shadow-paper min-[900px]:end-[10vw] min-[900px]:top-[52%]"
 				>
 					<Sheet />
 					<div
 						aria-hidden="true"
-						className="check-lens absolute inset-0 flex flex-col gap-[2.4cqw] overflow-hidden rounded-[2px] p-[8cqw] font-martian text-[1.55cqw] text-[oklch(0.88_0.09_150)] leading-[1.75] opacity-(--lo)"
+						className="check-lens font-martian absolute inset-0 flex flex-col gap-[2.4cqw] overflow-hidden rounded-[2px] p-[8cqw] text-[1.55cqw] leading-[1.75] text-[oklch(0.88_0.09_150)] opacity-(--lo)"
 					>
 						<ParsedText />
 					</div>
@@ -210,7 +210,7 @@ export function Check() {
 						aria-hidden="true"
 						className="pointer-events-none absolute top-[var(--ly,16%)] left-[var(--lx,50%)] aspect-square w-[32cqw] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[oklch(0.62_0.13_150)] opacity-(--lo) shadow-[inset_0_0_0_1px_oklch(1_0_0/.35),0_20px_50px_-12px_oklch(0_0_0/.5)]"
 					>
-						<span className="absolute -top-2.5 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-full bg-[oklch(0.2_0.03_160)] px-[9px] py-[5px] font-martian font-medium text-[10px] text-[oklch(0.88_0.09_150)] uppercase leading-none tracking-[.08em]">
+						<span className="font-martian absolute -top-2.5 left-1/2 -translate-x-1/2 -translate-y-full rounded-full bg-[oklch(0.2_0.03_160)] px-[9px] py-[5px] text-[10px] leading-none font-medium tracking-[.08em] whitespace-nowrap text-[oklch(0.88_0.09_150)] uppercase">
 							{t`What software reads`}
 						</span>
 					</div>

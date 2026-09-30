@@ -9,15 +9,15 @@ The web app does this for you: it stages any RPC request body of 3 MiB or more, 
 
 ## Scope
 
-| Item | Value |
-| --- | --- |
-| Applies to | `POST /api/rpc/...` only |
-| Does not apply to | The REST API (`/api/openapi`) and MCP (`/mcp`). Their bodies stay subject to the 4.5 MB limit on Vercel. |
-| Available on | Installations running on Vercel with Blob storage (`STORAGE_BACKEND=blob`, the default there). Everywhere else the prepare step returns `404` and you send the request directly. Staging also needs Redis; without it the prepare step returns `503`. |
-| Maximum staged size | 160 MiB of serialized request bytes, including base64 and RPC framing |
-| Lifetimes | Upload URL: 5 minutes. Staging reference: 10 minutes. |
-| Use count | One. The reference is used up as soon as a finalize request passes the user and path checks, whether the RPC call then succeeds or fails. |
-| Rate limit | 30 prepare requests per user per minute |
+| Item                | Value                                                                                                                                                                                                                                                 |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Applies to          | `POST /api/rpc/...` only                                                                                                                                                                                                                              |
+| Does not apply to   | The REST API (`/api/openapi`) and MCP (`/mcp`). Their bodies stay subject to the 4.5 MB limit on Vercel.                                                                                                                                              |
+| Available on        | Installations running on Vercel with Blob storage (`STORAGE_BACKEND=blob`, the default there). Everywhere else the prepare step returns `404` and you send the request directly. Staging also needs Redis; without it the prepare step returns `503`. |
+| Maximum staged size | 160 MiB of serialized request bytes, including base64 and RPC framing                                                                                                                                                                                 |
+| Lifetimes           | Upload URL: 5 minutes. Staging reference: 10 minutes.                                                                                                                                                                                                 |
+| Use count           | One. The reference is used up as soon as a finalize request passes the user and path checks, whether the RPC call then succeeds or fails.                                                                                                             |
+| Rate limit          | 30 prepare requests per user per minute                                                                                                                                                                                                               |
 
 ## Protocol
 
@@ -33,11 +33,11 @@ x-api-key: YOUR_API_KEY
 { "path": "/api/rpc/storage/uploadFile", "contentType": "multipart/form-data; boundary=...", "size": 10485861 }
 ```
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `path` | string | Pathname and query string of the original RPC request. Must start with `/api/rpc`. |
-| `contentType` | string | The original request's `Content-Type` header, including any multipart boundary. |
-| `size` | integer | Exact byte length of the serialized original body. At most 167,772,160 (160 MiB). |
+| Field         | Type    | Description                                                                        |
+| ------------- | ------- | ---------------------------------------------------------------------------------- |
+| `path`        | string  | Pathname and query string of the original RPC request. Must start with `/api/rpc`. |
+| `contentType` | string  | The original request's `Content-Type` header, including any multipart boundary.    |
+| `size`        | integer | Exact byte length of the serialized original body. At most 167,772,160 (160 MiB).  |
 
 Authenticate with an `x-api-key` header, an OAuth bearer token or a session cookie. If the request carries an `Origin` header, it must match the installation's own origin.
 
@@ -76,18 +76,18 @@ Use the same `path` (including the query string) and the same user as in step 1.
 
 ## Errors
 
-| Status | Step | Cause |
-| --- | --- | --- |
-| `400` | Prepare | Invalid JSON, a `path` outside `/api/rpc` or on another origin, or `size` above the maximum. |
-| `400` | Finalize | Malformed reference, a method other than `POST`, staging not available on this installation, or the staged object is missing. |
-| `401` | Prepare, finalize | Not authenticated, or the `Origin` header doesn't match. |
-| `403` | Finalize | The reference belongs to another user or another path. |
-| `404` | Prepare | Staging isn't available on this installation. |
-| `409` | Finalize | A parallel request already used the reference. |
-| `410` | Finalize | The reference expired or was already used. |
-| `413` | Finalize | The uploaded byte count differs from `size`. |
-| `429` | Prepare | Rate limit exceeded. |
-| `503` | Prepare | Redis isn't available. |
+| Status | Step              | Cause                                                                                                                         |
+| ------ | ----------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `400`  | Prepare           | Invalid JSON, a `path` outside `/api/rpc` or on another origin, or `size` above the maximum.                                  |
+| `400`  | Finalize          | Malformed reference, a method other than `POST`, staging not available on this installation, or the staged object is missing. |
+| `401`  | Prepare, finalize | Not authenticated, or the `Origin` header doesn't match.                                                                      |
+| `403`  | Finalize          | The reference belongs to another user or another path.                                                                        |
+| `404`  | Prepare           | Staging isn't available on this installation.                                                                                 |
+| `409`  | Finalize          | A parallel request already used the reference.                                                                                |
+| `410`  | Finalize          | The reference expired or was already used.                                                                                    |
+| `413`  | Finalize          | The uploaded byte count differs from `size`.                                                                                  |
+| `429`  | Prepare           | Rate limit exceeded.                                                                                                          |
+| `503`  | Prepare           | Redis isn't available.                                                                                                        |
 
 A reference can't be retried. If a finalize response is lost, check whether the change was saved before you stage and send the request again.
 

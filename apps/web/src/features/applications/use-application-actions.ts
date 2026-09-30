@@ -1,12 +1,12 @@
-import type { ApplicationClosedReason, ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { Application } from "./types";
+import type { ApplicationClosedReason, ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { getOrpcErrorMessage } from "@/libs/error-message";
-import { orpc } from "@/libs/orpc/client";
 import { applicationsListQueryKey } from "./queries";
 import { getStageLabel } from "./stages";
+import { getOrpcErrorMessage } from "@/libs/error-message";
+import { orpc } from "@/libs/orpc/client";
 
 /** Refreshes everything that shows applications: the list, the open one, stats, tags and documents' job lines. */
 export function useInvalidateApplications() {
@@ -43,15 +43,14 @@ export function useApplicationActions() {
 			const previous = queryClient.getQueryData<Application[]>(listKey);
 			const status = input.status as ApplicationStatus | undefined;
 			queryClient.setQueryData<Application[]>(listKey, (rows) =>
-				rows?.map(
-					(row): Application =>
-						row.id === input.id
-							? {
-									...row,
-									...(status ? { status } : {}),
-									...(input.closedReason !== undefined ? { closedReason: input.closedReason } : {}),
-								}
-							: row,
+				rows?.map((row): Application =>
+					row.id === input.id
+						? {
+								...row,
+								...(status ? { status } : {}),
+								...(input.closedReason !== undefined ? { closedReason: input.closedReason } : {}),
+							}
+						: row,
 				),
 			);
 			return { previous };

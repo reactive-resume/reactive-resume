@@ -25,7 +25,7 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
 		<SheetPrimitive.Backdrop
 			data-slot="sheet-overlay"
 			className={cn(
-				"fixed inset-0 z-50 bg-(--scrim-sheet) transition-opacity duration-emphasized ease-enter data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--d3)*0.7)]",
+				"fixed inset-0 z-50 bg-(--scrim-sheet) transition-opacity duration-emphasized ease-enter data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d3)*0.7)] data-starting-style:opacity-0",
 				className,
 			)}
 			{...props}
@@ -58,15 +58,15 @@ function SheetContent({
 			data-slot="sheet-content"
 			data-side={side}
 			className={cn(
-				"pointer-events-auto fixed z-50 flex flex-col gap-4 bg-raised text-ink text-sm shadow-e3 outline-none transition-[translate] duration-emphasized ease-enter data-ending-style:duration-[calc(var(--d3)*0.7)]",
-				"data-[side=left]:data-ending-style:-translate-x-full data-[side=left]:data-starting-style:-translate-x-full data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-full data-[side=left]:sm:max-w-[440px]",
-				"data-[side=right]:data-ending-style:translate-x-full data-[side=right]:data-starting-style:translate-x-full data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-full data-[side=right]:w-full data-[side=right]:sm:max-w-[440px]",
+				"pointer-events-auto fixed z-50 flex flex-col gap-4 bg-raised text-sm text-ink shadow-e3 transition-[translate] duration-emphasized ease-enter outline-none data-ending-style:duration-[calc(var(--d3)*0.7)]",
+				"data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-full data-[side=left]:data-ending-style:-translate-x-full data-[side=left]:data-starting-style:-translate-x-full data-[side=left]:sm:max-w-[440px]",
+				"data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-full data-[side=right]:w-full data-[side=right]:data-ending-style:translate-x-full data-[side=right]:data-starting-style:translate-x-full data-[side=right]:sm:max-w-[440px]",
 				"rtl:data-[side=left]:data-ending-style:translate-x-full rtl:data-[side=left]:data-starting-style:translate-x-full rtl:data-[side=right]:data-ending-style:-translate-x-full rtl:data-[side=right]:data-starting-style:-translate-x-full",
-				"data-[side=top]:data-ending-style:-translate-y-full data-[side=top]:data-starting-style:-translate-y-full data-[side=top]:inset-x-0 data-[side=top]:top-0",
-				"data-[side=bottom]:data-ending-style:translate-y-full data-[side=bottom]:data-starting-style:translate-y-full data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:max-h-[calc(100svh-2rem)] data-[side=bottom]:rounded-t-3xl data-[side=bottom]:pt-3",
+				"data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:data-ending-style:-translate-y-full data-[side=top]:data-starting-style:-translate-y-full",
+				"data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:max-h-[calc(100svh-2rem)] data-[side=bottom]:rounded-t-3xl data-[side=bottom]:pt-3 data-[side=bottom]:data-ending-style:translate-y-full data-[side=bottom]:data-starting-style:translate-y-full",
 				// Swipe: Base UI moves the popup inline while dragging; on release it rests at the swipe offset and
 				// transitions back to 0, or leaves on the drawer curve, faster for a harder flick.
-				"data-swipe-dismiss:data-ending-style:duration-[calc(var(--d3)*0.7*var(--drawer-swipe-strength,1))] data-swipe-dismiss:data-ending-style:ease-drawer data-swiping:select-none data-[side=bottom]:transition-[translate,transform] data-[side=bottom]:[transform:translateY(var(--drawer-swipe-movement-y,0px))]",
+				"data-swipe-dismiss:data-ending-style:duration-[calc(var(--d3)*0.7*var(--drawer-swipe-strength,1))] data-swipe-dismiss:data-ending-style:ease-drawer data-swiping:select-none data-[side=bottom]:[transform:translateY(var(--drawer-swipe-movement-y,0px))] data-[side=bottom]:transition-[translate,transform]",
 				className,
 			)}
 			{...props}
@@ -111,7 +111,7 @@ function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
 	return (
 		<SheetPrimitive.Title
 			data-slot="sheet-title"
-			className={cn("font-display font-medium text-[22px] text-ink leading-7", className)}
+			className={cn("font-display text-[22px] leading-7 font-medium text-ink", className)}
 			{...props}
 		/>
 	);
@@ -121,7 +121,7 @@ function SheetDescription({ className, ...props }: SheetPrimitive.Description.Pr
 	return (
 		<SheetPrimitive.Description
 			data-slot="sheet-description"
-			className={cn("text-ink-2 text-sm", className)}
+			className={cn("text-sm text-ink-2", className)}
 			{...props}
 		/>
 	);

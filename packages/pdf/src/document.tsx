@@ -1,10 +1,10 @@
+import type { ResumeRenderOptions } from "./context";
+import type { SectionTitleResolver } from "./section-title";
+import type { ResolvedResumeRuntime } from "./semantic";
 import type { LayoutPage, ResumeData, Typography } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import type { Locale } from "@reactive-resume/utils/locale";
 import type { ComponentType } from "react";
-import type { ResumeRenderOptions } from "./context";
-import type { SectionTitleResolver } from "./section-title";
-import type { ResolvedResumeRuntime } from "./semantic";
 import { useMemo } from "react";
 import { Document } from "#react-pdf-renderer";
 import { RenderProvider } from "./context";

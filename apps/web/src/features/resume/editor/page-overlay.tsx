@@ -1,6 +1,6 @@
+import type { EditorSelection } from "./store";
 import type { PageMap, PageMapNode } from "@reactive-resume/pdf/page-map";
 import type { MouseEvent } from "react";
-import type { EditorSelection } from "./store";
 import { Trans } from "@lingui/react/macro";
 import { cn } from "@reactive-resume/utils/style";
 import { isSameSelection, useEditorStore } from "./store";
@@ -71,7 +71,7 @@ export function PageOverlay({ pageIndex, pageMap, onSelect }: PageOverlayProps) 
 						data-section-id={node.kind === "header" ? undefined : node.sectionId}
 						data-item-id={node.kind === "item" ? node.itemId : undefined}
 						className={cn(
-							"absolute cursor-pointer rounded-[4px] outline-[1.5px] outline-solid transition-[background-color,outline-color] duration-quick hover:bg-[oklch(0.5_0.1_150/0.06)]",
+							"absolute cursor-pointer rounded-[4px] outline-[1.5px] transition-[background-color,outline-color] duration-quick outline-solid hover:bg-[oklch(0.5_0.1_150/0.06)]",
 							selected ? "outline-accent" : "outline-transparent",
 						)}
 						style={{
@@ -82,7 +82,7 @@ export function PageOverlay({ pageIndex, pageMap, onSelect }: PageOverlayProps) 
 						}}
 					>
 						{selected && (
-							<span className="absolute start-1 -top-2 rounded-[3px] bg-accent px-1 font-semibold text-[8px] text-on-accent leading-3 max-sm:hidden">
+							<span className="absolute start-1 -top-2 rounded-[3px] bg-accent px-1 text-[8px] leading-3 font-semibold text-on-accent max-sm:hidden">
 								<Trans>Editing</Trans>
 							</span>
 						)}
@@ -93,7 +93,7 @@ export function PageOverlay({ pageIndex, pageMap, onSelect }: PageOverlayProps) 
 				<div
 					key={`style:${node.key}:${node.y}`}
 					data-slot="style-highlight"
-					className="pointer-events-none absolute rounded-[4px] bg-[oklch(0.5_0.1_150/0.08)] starting:opacity-0 outline-dashed outline-[1.5px] outline-accent transition-opacity duration-quick ease-enter"
+					className="pointer-events-none absolute rounded-[4px] bg-[oklch(0.5_0.1_150/0.08)] outline-[1.5px] outline-accent transition-opacity duration-quick ease-enter outline-dashed starting:opacity-0"
 					style={{
 						left: `calc(${(node.x / page.width) * 100}% - 4px)`,
 						top: `calc(${(node.y / page.height) * 100}% - 3px)`,

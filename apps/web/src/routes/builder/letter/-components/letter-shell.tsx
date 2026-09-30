@@ -1,6 +1,6 @@
+import type { LetterMode } from "@/features/letters/use-letter-mode";
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
 import type { IconName } from "@reactive-resume/ui/components/icon";
-import type { LetterMode } from "@/features/letters/use-letter-mode";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
@@ -10,6 +10,11 @@ import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
+import { LetterDesignPanel } from "./design-panel";
+import { LetterBar, useDownloadLetter } from "./letter-bar";
+import { LetterPage } from "./letter-page";
+import { LetterShareSheet } from "./share-sheet";
+import { LetterWritePanel } from "./write-panel";
 import { MobileTabIndicator } from "@/components/layout/mobile-tab-indicator";
 import {
 	AssistantColumn,
@@ -30,11 +35,6 @@ import { usePreviewPausedStore } from "@/features/resume/builder/draft";
 import { useIsLandscape } from "@/features/resume/editor/chrome";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { switchModeInstantly } from "@/libs/motion";
-import { LetterDesignPanel } from "./design-panel";
-import { LetterBar, useDownloadLetter } from "./letter-bar";
-import { LetterPage } from "./letter-page";
-import { LetterShareSheet } from "./share-sheet";
-import { LetterWritePanel } from "./write-panel";
 
 /**
  * The letter editor: the resume editor's shell with Write and Design (no Check). The panel holds who the letter is
@@ -87,7 +87,7 @@ export function LetterShell() {
 						<AssistantReplace
 							replaced={assistantReplaces}
 							assistant={
-								<div className="min-h-0 border-line border-e">
+								<div className="min-h-0 border-e border-line">
 									<LetterAssistant />
 								</div>
 							}
@@ -96,7 +96,7 @@ export function LetterShell() {
 								key={mode}
 								value={mode}
 								aria-label={panelLabel(mode)}
-								className="relative min-h-0 overflow-y-auto border-line border-e bg-surface [overflow-anchor:none]"
+								className="relative min-h-0 overflow-y-auto border-e border-line bg-surface [overflow-anchor:none]"
 							>
 								<ModePanel mode={mode} />
 							</TabsContent>
@@ -147,7 +147,7 @@ function TabletBody({ mode }: { mode: LetterMode }) {
 				aria-label={panelLabel(mode)}
 				inert={!drawerOpen}
 				className={cn(
-					"absolute inset-y-0 start-0 z-20 w-[380px] max-w-[calc(100%-3rem)] overflow-y-auto border-line border-e bg-surface shadow-e3 transition-transform duration-emphasized ease-enter [overflow-anchor:none]",
+					"absolute inset-y-0 start-0 z-20 w-[380px] max-w-[calc(100%-3rem)] overflow-y-auto border-e border-line bg-surface shadow-e3 transition-transform duration-emphasized ease-enter [overflow-anchor:none]",
 					!drawerOpen && "-translate-x-full rtl:translate-x-full",
 				)}
 			>
@@ -176,7 +176,7 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 	const labels: Record<MobileView, string> = { write: t`Write`, page: t`Page`, design: t`Design` };
 
 	useEffect(() => {
-		// biome-ignore lint/nursery/useReactCompiler: a shared store the preview renderer reads, reset on unmount
+		// oxlint-disable-next-line react/set-state-in-effect -- a shared store the preview renderer reads, reset on unmount
 		setPreviewPaused(view !== "page");
 		return () => setPreviewPaused(false);
 	}, [view, setPreviewPaused]);
@@ -200,7 +200,7 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 
 			<nav
 				aria-label={t`Editor views`}
-				className="flex border-line border-t bg-surface pb-[env(safe-area-inset-bottom)]"
+				className="flex border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]"
 			>
 				{MOBILE_TABS.map(({ view: tab, icon }) => {
 					const active = tab === view;

@@ -282,12 +282,13 @@ rate limits.
 
     The app Pod becomes `Ready` once its startup migrations finish and `/api/health` answers `200`. Follow along with
     `kubectl -n reactive-resume logs -f deployment/reactive-resume`.
+
   </Step>
 
-  <Step title="Create your account">
-    Open your `APP_URL` and create an account. You're signed in right away. Without SMTP, the verification email is
-    written to the app log instead of being sent.
-  </Step>
+<Step title="Create your account">
+  Open your `APP_URL` and create an account. You're signed in right away. Without SMTP, the verification email is
+  written to the app log instead of being sent.
+</Step>
 
   <Step title="Check that data persists">
     Create a resume from a sample and upload a profile picture. Then replace the Pod:
@@ -299,6 +300,7 @@ rate limits.
 
     Reload the page. The resume and picture should still be there. Expect a short outage while a single-replica
     Deployment restarts.
+
   </Step>
 
   <Step title="Close sign-ups (optional)">
@@ -376,15 +378,15 @@ A community-maintained Helm chart is available from HelmForge:
     UID 1000; keep `fsGroup: 1000` or fix the volume's permissions.
   </Accordion>
 
-  <Accordion title="The Pod never becomes Ready">
-    Port-forward and call `/api/health`. The entry marked `unhealthy` points at the problem: the database, the
-    uploads volume or S3 settings, or Redis.
-  </Accordion>
+<Accordion title="The Pod never becomes Ready">
+  Port-forward and call `/api/health`. The entry marked `unhealthy` points at the problem: the database, the uploads
+  volume or S3 settings, or Redis.
+</Accordion>
 
-  <Accordion title="Sign-in loops back to the sign-in page">
-    `APP_URL` doesn't match the address in the browser, or it says `http://` while you use `https://`. Fix it in the
-    Secret, apply, and restart the Deployment.
-  </Accordion>
+<Accordion title="Sign-in loops back to the sign-in page">
+  `APP_URL` doesn't match the address in the browser, or it says `http://` while you use `https://`. Fix it in the
+  Secret, apply, and restart the Deployment.
+</Accordion>
 
   <Accordion title="Assistant replies stop partway or attachments fail to upload">
     The Ingress is buffering responses, timing out after 60 seconds, or rejecting large bodies. Apply the annotations

@@ -8,7 +8,7 @@ most common English sense, and gets it wrong. Every entry below has been mistran
 in at least one shipped locale.
 
 **If you are translating, read the term here before translating it.** When the English word has
-a common sense that is *not* the one used here, that wrong sense is listed explicitly.
+a common sense that is _not_ the one used here, that wrong sense is listed explicitly.
 
 Terms are grouped by the part of the product they belong to. Source references point at where the
 string is defined, so you can read the surrounding code when this file is not enough.
@@ -137,7 +137,7 @@ variant, and not a "style" or "pattern".
 
 **Working resume** — the resume a thread is currently editing. "Working" describes the draft
 being worked on, not the user's employment. It is not their work history, not a "job resume",
-and not a *functional résumé*, which is a real and different résumé format.
+and not a _functional résumé_, which is a real and different résumé format.
 
 **Tailor** — a verb: to adapt a resume to a specific job description. Nothing to do with
 dressmaking or sewing.
@@ -249,10 +249,10 @@ Button labels and `aria-label` strings are usually **imperative verbs**: they sa
 control does. Read as a noun or an adjective, they turn into nonsense. This is the most common
 error in the catalogs after the ambiguous nouns above.
 
-**Open** — the verb. `Open AI agent` means *open the AI agent panel*; it does not describe an
+**Open** — the verb. `Open AI agent` means _open the AI agent panel_; it does not describe an
 agent that is "open", and it is **not a reference to OpenAI, the company**. Around forty-five of
 the fifty-three catalogs got this wrong, split between "an open AI agent" and a transliteration
-of *OpenAI*. The same applies to `Open in builder`.
+of _OpenAI_. The same applies to `Open in builder`.
 
 **Close** — likewise the verb, as in `Close AI assistant`. Not "an assistant for closing things",
 and not the adjective "close/nearby".

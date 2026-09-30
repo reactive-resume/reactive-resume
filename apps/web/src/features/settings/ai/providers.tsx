@@ -1,5 +1,5 @@
-import type { AIProvider } from "@reactive-resume/ai/types";
 import type { RouterOutput } from "@/libs/orpc/client";
+import type { AIProvider } from "@reactive-resume/ai/types";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
@@ -21,13 +21,13 @@ import { Label } from "@reactive-resume/ui/components/label";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
+import { SettingsSection } from "../section";
+import { describeTest, keyEnding, providerDefaults, providerLabel, providerOptions } from "./catalog";
 import { Combobox } from "@/components/ui/combobox";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
-import { SettingsSection } from "../section";
-import { describeTest, keyEnding, providerDefaults, providerLabel, providerOptions } from "./catalog";
 
 type SavedProvider = RouterOutput["aiProviders"]["list"][number];
 
@@ -51,10 +51,10 @@ export function ProvidersSection() {
 	if (managed)
 		return (
 			<SettingsSection title={<Trans>AI providers</Trans>} description={<Trans>Managed by your server</Trans>}>
-				<p className="text-ink-2 text-sm">
+				<p className="text-sm text-ink-2">
 					<Trans>AI is enabled globally. Personal providers are disabled.</Trans>
 				</p>
-				<p className="text-ink-3 text-xs">
+				<p className="text-xs text-ink-3">
 					{providerLabel(managed.provider)} · {managed.model}
 				</p>
 			</SettingsSection>
@@ -71,7 +71,7 @@ export function ProvidersSection() {
 					)}
 				</p>
 			) : isLoading ? (
-				<p className="flex items-center gap-2 text-ink-3 text-sm">
+				<p className="flex items-center gap-2 text-sm text-ink-3">
 					<Spinner decorative className="size-3.5" />
 					<Trans>Loading providers…</Trans>
 				</p>
@@ -83,7 +83,7 @@ export function ProvidersSection() {
 					<button
 						type="button"
 						onClick={() => setAdding(true)}
-						className="flex h-10 items-center gap-2 rounded-[10px] border border-line-2 border-dashed px-3 text-start text-sm transition-colors duration-quick hover:bg-hover"
+						className="flex h-10 items-center gap-2 rounded-[10px] border border-dashed border-line-2 px-3 text-start text-sm transition-colors duration-quick hover:bg-hover"
 					>
 						<Icon name="add" size={20} />
 						<Trans>Add provider · Anthropic, Gemini, Ollama, OpenAI-compatible</Trans>
@@ -143,20 +143,20 @@ function ProviderRow({ provider, onEdit }: ProviderRowProps) {
 			<div className="flex flex-wrap items-center gap-3">
 				<span
 					aria-hidden
-					className="grid size-9 shrink-0 place-items-center rounded-lg bg-sunken font-semibold text-ink-2 text-xs"
+					className="grid size-9 shrink-0 place-items-center rounded-lg bg-sunken text-xs font-semibold text-ink-2"
 				>
 					{providerLabel(provider.provider).slice(0, 2)}
 				</span>
 				<span className="grid min-w-0 flex-1 gap-0.5">
-					<span className="flex items-center gap-2 font-semibold text-sm">
+					<span className="flex items-center gap-2 text-sm font-semibold">
 						{provider.label}
 						{!provider.enabled && (
-							<span className="rounded-full bg-sunken px-2 font-medium text-ink-3 text-xs">
+							<span className="rounded-full bg-sunken px-2 text-xs font-medium text-ink-3">
 								<Trans>Off</Trans>
 							</span>
 						)}
 					</span>
-					<span className="truncate text-ink-3 text-xs">
+					<span className="truncate text-xs text-ink-3">
 						<Trans>
 							Model {provider.model} · key ends in {keyEnding(provider.apiKeyPreview)}
 						</Trans>
@@ -184,7 +184,7 @@ function ProviderRow({ provider, onEdit }: ProviderRowProps) {
 				</Button>
 			</div>
 			{error && (
-				<p role="alert" className="ms-12 text-danger-text text-xs">
+				<p role="alert" className="ms-12 text-xs text-danger-text">
 					{error}
 				</p>
 			)}
@@ -364,7 +364,7 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 					</div>
 					<ProviderFieldsForm provider={provider} value={fields} onChange={setFields} />
 					{failure && (
-						<p role="alert" className="text-danger-text text-sm">
+						<p role="alert" className="text-sm text-danger-text">
 							{failure}
 						</p>
 					)}
@@ -469,7 +469,7 @@ function EditProviderForm({ provider, onClose }: EditProviderFormProps) {
 						<span id={`${provider.id}-use`} className="font-medium">
 							<Trans>Use this provider</Trans>
 						</span>
-						<span id={`${provider.id}-use-hint`} className="text-ink-3 text-xs">
+						<span id={`${provider.id}-use-hint`} className="text-xs text-ink-3">
 							<Trans>Only providers that pass their test can be turned on.</Trans>
 						</span>
 					</span>
@@ -482,7 +482,7 @@ function EditProviderForm({ provider, onClose }: EditProviderFormProps) {
 					/>
 				</div>
 				{failure && (
-					<p role="alert" className="text-danger-text text-sm">
+					<p role="alert" className="text-sm text-danger-text">
 						{failure}
 					</p>
 				)}

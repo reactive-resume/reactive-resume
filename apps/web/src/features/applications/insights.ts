@@ -1,5 +1,5 @@
-import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { Application } from "./types";
+import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { STAGES } from "@reactive-resume/schema/applications/data";
 import { PIPELINE } from "./stages";
 

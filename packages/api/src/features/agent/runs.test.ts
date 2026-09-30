@@ -20,9 +20,8 @@ vi.mock("drizzle-orm", () => ({
 	sql: () => ({}),
 }));
 
-const { claimActiveAgentRun, clearActiveAgentRunIfCurrent, isStaleAgentRun, reapStaleAgentRun } = await import(
-	"./runs"
-);
+const { claimActiveAgentRun, clearActiveAgentRunIfCurrent, isStaleAgentRun, reapStaleAgentRun } =
+	await import("./runs");
 
 const NOW = new Date("2026-08-20T12:00:00.000Z");
 

@@ -30,11 +30,9 @@ export const flagsRouter = {
 				smtpEnabled: z.boolean().describe("Whether outbound email (SMTP) is configured on this instance."),
 			}),
 		)
-		.handler(
-			(): FeatureFlags => ({
-				disableSignups: env.FLAG_DISABLE_SIGNUPS,
-				disableEmailAuth: env.FLAG_DISABLE_EMAIL_AUTH,
-				smtpEnabled: isSmtpEnabled(),
-			}),
-		),
+		.handler((): FeatureFlags => ({
+			disableSignups: env.FLAG_DISABLE_SIGNUPS,
+			disableEmailAuth: env.FLAG_DISABLE_EMAIL_AUTH,
+			smtpEnabled: isSmtpEnabled(),
+		})),
 };

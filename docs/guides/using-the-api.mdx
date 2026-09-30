@@ -25,6 +25,7 @@ The Reactive Resume REST API lets your own scripts, extensions and automations r
     <Frame caption="The New API key dialog">
       <img src="/images/guides/using-the-api/new-api-key-dialog.webp" alt="New API key dialog with the name Resume sync script entered and 90 days selected under Expires" />
     </Frame>
+
   </Step>
   <Step title="Copy the key">
     Select **Copy**, store the key somewhere safe (a password manager or your deployment's secret store), then select **Done**.
@@ -36,13 +37,17 @@ The Reactive Resume REST API lets your own scripts, extensions and automations r
     <Warning>
       Reactive Resume shows the key only once. If you lose it, revoke it and create a new one.
     </Warning>
+
   </Step>
 </Steps>
 
 Your keys are listed in the **API keys** table with the date each was created, the date it was last used and when it expires. Expired keys disappear from the list and stop working.
 
 <Frame caption="The API keys section in AI & developer settings">
-  <img src="/images/guides/using-the-api/api-keys-section.webp" alt="API keys table listing two keys, Claude Desktop that never expires and Resume sync script that expires on 29 Dec 2026, each with a Revoke button" />
+  <img
+    src="/images/guides/using-the-api/api-keys-section.webp"
+    alt="API keys table listing two keys, Claude Desktop that never expires and Resume sync script that expires on 29 Dec 2026, each with a Revoke button"
+  />
 </Frame>
 
 ## Make your first request
@@ -98,14 +103,14 @@ The response is the new resume's ID as a JSON string.
 
 Every endpoint, with its parameters, request body and responses, is listed in the **API Reference** tab of these docs. Your own instance also serves the machine-readable OpenAPI document at `/api/openapi/spec.json` (for example `https://rxresu.me/api/openapi/spec.json`). Use the spec from the version you run when you generate a client.
 
-| Area | Paths | What you can do |
-| --- | --- | --- |
-| Resumes | `/resumes`, `/resumes/{id}` | List, read, create, import, update, patch, lock, duplicate, move to Trash, set a sharing password, download a PDF, read version history and statistics |
-| Cover letters | `/cover-letters` | List, read, create, update, duplicate, export and import letters, restore versions, refresh their design from a resume |
-| Documents | `/documents` | Work across resumes and letters: rename, tag, lock, link to an application, move to Trash, restore, delete now |
-| Applications | `/applications` | Track job applications: stages, notes, interviews, attached PDFs, bulk changes, import, statistics |
-| AI | `/ai-providers`, `/ai`, `/agent` | Manage your AI providers, run AI tools such as resume import from PDF, work with assistant conversations |
-| Account | `/auth/account/export`, `/auth/account` | Export your account data, delete your account |
+| Area          | Paths                                   | What you can do                                                                                                                                        |
+| ------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Resumes       | `/resumes`, `/resumes/{id}`             | List, read, create, import, update, patch, lock, duplicate, move to Trash, set a sharing password, download a PDF, read version history and statistics |
+| Cover letters | `/cover-letters`                        | List, read, create, update, duplicate, export and import letters, restore versions, refresh their design from a resume                                 |
+| Documents     | `/documents`                            | Work across resumes and letters: rename, tag, lock, link to an application, move to Trash, restore, delete now                                         |
+| Applications  | `/applications`                         | Track job applications: stages, notes, interviews, attached PDFs, bulk changes, import, statistics                                                     |
+| AI            | `/ai-providers`, `/ai`, `/agent`        | Manage your AI providers, run AI tools such as resume import from PDF, work with assistant conversations                                               |
+| Account       | `/auth/account/export`, `/auth/account` | Export your account data, delete your account                                                                                                          |
 
 `GET /api/health` (outside `/api/openapi`) reports whether the instance and its database and storage are healthy. It needs no key.
 
@@ -123,13 +128,13 @@ A request without valid credentials gets `401` with the code `UNAUTHORIZED`.
 
 ## Limits
 
-| Limit | Value |
-| --- | --- |
-| Requests per API key | 1,000 per hour |
-| Changes to one resume, document or application (create, update, patch, lock, duplicate, delete) | 300 per minute |
-| PDF downloads of one resume (`GET /resumes/{id}/pdf`) | 5 per minute |
-| AI requests | 20 per minute |
-| Request body size on Vercel installations | 4.5 MB (see [Large RPC requests](/guides/large-rpc-requests)) |
+| Limit                                                                                           | Value                                                         |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Requests per API key                                                                            | 1,000 per hour                                                |
+| Changes to one resume, document or application (create, update, patch, lock, duplicate, delete) | 300 per minute                                                |
+| PDF downloads of one resume (`GET /resumes/{id}/pdf`)                                           | 5 per minute                                                  |
+| AI requests                                                                                     | 20 per minute                                                 |
+| Request body size on Vercel installations                                                       | 4.5 MB (see [Large RPC requests](/guides/large-rpc-requests)) |
 
 When you hit a limit, the API responds with `429`. On a self-hosted installation, `FLAG_DISABLE_API_RATE_LIMIT` turns off the per-key limit together with the sign-in limits; the other limits stay on (see [Environment variables](/self-hosting/environment-variables)).
 
@@ -155,6 +160,7 @@ Branch on `code` rather than on the message text.
     <Frame caption="Revoking a key shows an Undo action">
       <img src="/images/guides/using-the-api/revoke-key-undo-toast.webp" alt="Message reading Revoked Claude Desktop. Apps using it stop working now, with an Undo link" />
     </Frame>
+
   </Step>
   <Step title="Undo if you revoked the wrong key">
     Select **Undo** in the message to turn the key back on. When the message closes, the key is deleted for good.

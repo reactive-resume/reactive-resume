@@ -1,8 +1,8 @@
+import type { PageSettings } from "./entries";
+import type { OutlineRow, WriteSection } from "./model";
 import type { DragEndEvent } from "@dnd-kit/core";
 import type { MessageDescriptor } from "@lingui/core";
 import type { CustomSectionType } from "@reactive-resume/schema/resume/data";
-import type { PageSettings } from "./entries";
-import type { OutlineRow, WriteSection } from "./model";
 import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { msg } from "@lingui/core/macro";
@@ -10,13 +10,13 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { Fragment, useMemo } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useEditorStore } from "../store";
 import { addEntryTo } from "./actions";
 import { EntryCard } from "./entry-card";
 import { getEntries, getOutlineRows, getSectionKind, getSectionType, moveSection } from "./model";
 import { SectionRow } from "./section-row";
 import { SummaryEditor } from "./summary-editor";
+import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 
 const ADD_LABELS: Record<CustomSectionType, MessageDescriptor> = {
 	summary: msg`Add text`,
@@ -114,7 +114,7 @@ function Divider({ label, subtle = false }: { label: React.ReactNode; subtle?: b
 		<div className="flex items-center gap-2 px-1 pt-2 pb-1">
 			<span
 				className={
-					subtle ? "text-[11px] text-ink-3" : "font-semibold text-[11px] text-ink-2 uppercase tracking-[0.08em]"
+					subtle ? "text-[11px] text-ink-3" : "text-[11px] font-semibold tracking-[0.08em] text-ink-2 uppercase"
 				}
 			>
 				{label}
@@ -152,7 +152,7 @@ function OutlineSection({ sectionId, locked, page, onMove }: OutlineSectionProps
 						<button
 							type="button"
 							onClick={() => addEntryTo(stableSection)}
-							className="flex h-9 items-center gap-1.5 rounded-lg px-2 text-accent-text text-sm hover:bg-hover"
+							className="flex h-9 items-center gap-1.5 rounded-lg px-2 text-sm text-accent-text hover:bg-hover"
 						>
 							<Icon name="add" size={18} />
 							{i18n._(ADD_LABELS[stableSection.type])}

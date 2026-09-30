@@ -27,6 +27,7 @@ You can start a letter from an application or from **Documents**.
     </Steps>
 
     The new letter is named after the company, for example "Cover letter — Northwind Games". It becomes this application's letter, takes its recipient from the application (the company, and the first contact's name if there is one), and takes your details and design from the application's resume, if it has one.
+
   </Tab>
   <Tab title="From Documents">
     <Steps>
@@ -43,6 +44,7 @@ You can start a letter from an application or from **Documents**.
     </Steps>
 
     The new letter, named "Untitled letter", takes its details and design from the resume you edited most recently. You can link an application and change the resume in the editor.
+
   </Tab>
 </Tabs>
 
@@ -53,7 +55,10 @@ To bring back a letter you downloaded as JSON from Reactive Resume, import the f
 The letter editor looks like the resume editor, with two modes: **Write** and **Design**. The panel on the left holds the letter's details, and the page on the right shows the letter as it will print, updating as you type.
 
 <Frame caption="The letter editor in Write mode">
-  <img src="/images/guides/writing-a-cover-letter/letter-editor-write.webp" alt="The letter editor with For, To and From sections in the left panel and a printed letter from David Kowalski to Priya Shah at Northwind Games on the right" />
+  <img
+    src="/images/guides/writing-a-cover-letter/letter-editor-write.webp"
+    alt="The letter editor with For, To and From sections in the left panel and a printed letter from David Kowalski to Priya Shah at Northwind Games on the right"
+  />
 </Frame>
 
 <Steps>
@@ -71,6 +76,7 @@ The letter editor looks like the resume editor, with two modes: **Write** and **
     <Frame>
       <img src="/images/guides/writing-a-cover-letter/letter-from-resume.webp" alt="The From section with Game Developer Resume selected and the switch Use details from Game Developer Resume turned on, labelled Linked" />
     </Frame>
+
   </Step>
   <Step title="Letter: the body">
     Under **Letter**, select **Write it myself** and type the body. The greeting and sign-off are added around it for you. The editor has the same formatting tools as the resume; see [Formatting text](/guides/formatting-text).
@@ -80,7 +86,10 @@ The letter editor looks like the resume editor, with two modes: **Write** and **
 Below the body, **Length** counts your words against the 180 to 320 words most recruiters read, and says whether the letter is short, comfortable or getting long. It's a guide, not a rule.
 
 <Frame>
-  <img src="/images/guides/writing-a-cover-letter/letter-length-and-design.webp" alt="The Length section showing 85 words and the note Short and direct, fine if the posting asks for brevity, above the Design section reading Matches the resume (Azurill), Change it in Design" />
+  <img
+    src="/images/guides/writing-a-cover-letter/letter-length-and-design.webp"
+    alt="The Length section showing 85 words and the note Short and direct, fine if the posting asks for brevity, above the Design section reading Matches the resume (Azurill), Change it in Design"
+  />
 </Frame>
 
 Changes save automatically. The status under the letter's name in the editor bar shows **Saving…**, **Saved** or, if something went wrong, **Not saved** with **Retry**.
@@ -90,18 +99,24 @@ Changes save automatically. The status under the letter's name in the editor bar
 If you've connected an AI provider, an empty body offers a first draft. See [Connecting an AI provider](/guides/using-ai) to set one up.
 
 <Frame>
-  <img src="/images/guides/writing-a-cover-letter/letter-body-empty.webp" alt="An empty letter body reading Start typing, or draft from what we know: the Northwind Games posting and your resume, with Draft from the posting and Write it myself buttons" />
+  <img
+    src="/images/guides/writing-a-cover-letter/letter-body-empty.webp"
+    alt="An empty letter body reading Start typing, or draft from what we know: the Northwind Games posting and your resume, with Draft from the posting and Write it myself buttons"
+  />
 </Frame>
 
 <Steps>
   <Step title="Start the draft">
-    Select **Draft from the posting** when the letter is linked to an application, or **Draft from your resume** when it only has a resume. The draft uses only what the letter is linked to: the posting, your resume, or both. Select **Stop** to cancel it while it's being written.
+    Select **Draft from the posting** when the letter is linked to an application, or **Draft from your resume** when it
+    only has a resume. The draft uses only what the letter is linked to: the posting, your resume, or both. Select
+    **Stop** to cancel it while it's being written.
   </Step>
   <Step title="Refine it">
     When the draft is ready, ask for **Shorter** or **More personal** versions, or select **Discard** to drop it.
   </Step>
   <Step title="Keep it">
-    Select **Keep** to put the draft in the body. Until you do, the draft never replaces anything, and you can edit it freely afterwards.
+    Select **Keep** to put the draft in the body. Until you do, the draft never replaces anything, and you can edit it
+    freely afterwards.
   </Step>
 </Steps>
 
@@ -127,6 +142,7 @@ By default, a letter linked to a resume uses the resume's template, type and col
     <Frame>
       <img src="/images/guides/writing-a-cover-letter/letter-design-own.webp" alt="Design panel with Match turned off, labelled The letter keeps a design of its own, and a Template grid with Azurill selected" />
     </Frame>
+
   </Step>
 </Steps>
 
@@ -141,16 +157,19 @@ Select **Download PDF** in the editor bar, or press <kbd>⌘</kbd> <kbd>P</kbd> 
 For other formats, select **Share**, or press <kbd>⌘</kbd> <kbd>Shift</kbd> <kbd>E</kbd> (<kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>E</kbd>). The **Share & export** sheet opens on **Download**:
 
 <Frame caption="Download options for a letter">
-  <img src="/images/guides/writing-a-cover-letter/letter-share-download.webp" alt="The Share and export sheet for a letter with Download selected, listing PDF, Resume plus letter (2 files), Word, Markdown and JSON, a File name field and a Download PDF button" />
+  <img
+    src="/images/guides/writing-a-cover-letter/letter-share-download.webp"
+    alt="The Share and export sheet for a letter with Download selected, listing PDF, Resume plus letter (2 files), Word, Markdown and JSON, a File name field and a Download PDF button"
+  />
 </Frame>
 
-| Option | What you get |
-| --- | --- |
-| **PDF** | The letter exactly as it looks on the page. Best for applying. |
+| Option              | What you get                                                                                            |
+| ------------------- | ------------------------------------------------------------------------------------------------------- |
+| **PDF**             | The letter exactly as it looks on the page. Best for applying.                                          |
 | **Resume + letter** | The linked resume and this letter as two PDFs, named to match. Shows only when the letter has a resume. |
-| **Word** | A `.docx` file with simplified layout, for portals that ask for Word. |
-| **Markdown** | Plain text with headings, to paste into application forms. |
-| **JSON** | A backup of the letter that imports back into Reactive Resume as a letter. |
+| **Word**            | A `.docx` file with simplified layout, for portals that ask for Word.                                   |
+| **Markdown**        | Plain text with headings, to paste into application forms.                                              |
+| **JSON**            | A backup of the letter that imports back into Reactive Resume as a letter.                              |
 
 Edit **File name** if you like, then select the download button.
 
@@ -171,7 +190,10 @@ To see earlier versions of a letter, open **History** in the editor bar (the clo
 Select the letter's name in the editor bar to **Rename…**, **Duplicate**, **Lock editing** or **Move to Trash**. A locked letter can't be edited until you select **Unlock editing**. A letter in Trash can be restored for 30 days; see [Using the trash](/guides/using-the-trash).
 
 <Note>
-  In earlier versions, a cover letter could be a section inside a resume. Those letters are now letters of their own in **Documents**, named after the resume and the letter (for example "Frontend Resume — Cover Letter"), still linked to the resume's details and design. The resume no longer contains them. These older letters keep their recipient block as you wrote it under **To**, instead of separate name, company and date fields.
+  In earlier versions, a cover letter could be a section inside a resume. Those letters are now letters of their own in
+  **Documents**, named after the resume and the letter (for example "Frontend Resume — Cover Letter"), still linked to
+  the resume's details and design. The resume no longer contains them. These older letters keep their recipient block as
+  you wrote it under **To**, instead of separate name, company and date fields.
 </Note>
 
 ## Related guides

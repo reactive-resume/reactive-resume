@@ -106,7 +106,7 @@ export function DatesField({ dates, single = false, locale, format, onChange, cl
 
 	return (
 		<fieldset className={cn("grid min-w-0 gap-1.5", className)} aria-describedby={`${id}-note`}>
-			<legend className="mb-1.5 font-medium text-[13px] text-ink leading-4">
+			<legend className="mb-1.5 text-[13px] leading-4 font-medium text-ink">
 				{single ? <Trans>Date</Trans> : <Trans>Dates</Trans>}
 			</legend>
 
@@ -141,7 +141,7 @@ export function DatesField({ dates, single = false, locale, format, onChange, cl
 
 			{!single && (
 				<>
-					{/* biome-ignore lint/a11y/noLabelWithoutControl: Base UI's Switch is the control; wrapping it in a label is its documented pattern. */}
+					{/* oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI's Switch is the control; wrapping it in a label is its documented pattern. */}
 					<label className="flex w-fit cursor-pointer items-center gap-2 p-1 text-sm">
 						<Switch
 							checked={dates.present}
@@ -154,7 +154,7 @@ export function DatesField({ dates, single = false, locale, format, onChange, cl
 
 			<div id={`${id}-note`}>
 				{hasError ? (
-					<p className="flex items-start gap-1 text-danger-text text-xs leading-4">
+					<p className="flex items-start gap-1 text-xs leading-4 text-danger-text">
 						<Icon name="error" size={16} className="shrink-0" />
 						<Trans>
 							This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the
@@ -162,7 +162,7 @@ export function DatesField({ dates, single = false, locale, format, onChange, cl
 						</Trans>
 					</p>
 				) : dates.raw !== undefined ? (
-					<p className="flex items-start gap-1 text-warn-text text-xs leading-4">
+					<p className="flex items-start gap-1 text-xs leading-4 text-warn-text">
 						<Icon name="warning" size={16} className="shrink-0" />
 						{dates.start ? (
 							<Trans>We read "{dates.raw}". Pick a month so it sorts and prints consistently.</Trans>
@@ -171,7 +171,7 @@ export function DatesField({ dates, single = false, locale, format, onChange, cl
 						)}
 					</p>
 				) : reversed ? (
-					<p className="flex items-start gap-1 text-warn-text text-xs leading-4">
+					<p className="flex items-start gap-1 text-xs leading-4 text-warn-text">
 						<Icon name="warning" size={16} className="shrink-0" />
 						<Trans>The end is before the start.</Trans>
 					</p>

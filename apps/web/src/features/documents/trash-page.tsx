@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { orpc } from "@/libs/orpc/client";
 import { DocumentRow } from "./document-card";
+import { orpc } from "@/libs/orpc/client";
 
 const noop = () => undefined;
 
@@ -22,10 +22,10 @@ export function TrashPage() {
 				<Trans>Back to documents</Trans>
 			</Link>
 			<div className="grid gap-1">
-				<h1 className="font-display font-medium text-[30px] leading-9">
+				<h1 className="font-display text-[30px] leading-9 font-medium">
 					<Trans>Trash</Trans>
 				</h1>
-				<p className="text-ink-2 text-sm">
+				<p className="text-sm text-ink-2">
 					<Trans>Items are deleted permanently after 30 days.</Trans>
 				</p>
 			</div>
@@ -36,7 +36,7 @@ export function TrashPage() {
 					<p className="font-semibold">
 						<Trans>Trash is empty</Trans>
 					</p>
-					<p className="text-ink-2 text-sm">
+					<p className="text-sm text-ink-2">
 						<Trans>Items you move here stay for 30 days.</Trans>
 					</p>
 				</div>
@@ -46,7 +46,7 @@ export function TrashPage() {
 						<Trans>Trash</Trans>
 					</caption>
 					<thead>
-						<tr className="border-line border-b font-medium text-ink-3 text-xs">
+						<tr className="border-b border-line text-xs font-medium text-ink-3">
 							<th className="h-10 ps-3 text-start font-medium">
 								<Trans>Name</Trans>
 							</th>

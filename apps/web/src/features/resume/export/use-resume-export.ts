@@ -1,6 +1,6 @@
+import type { PublicResumePdfOptions } from "@/features/resume/public/public-pdf";
 import type { ResumeExportTarget } from "@reactive-resume/resume/export-sections";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { PublicResumePdfOptions } from "@/features/resume/public/public-pdf";
 import { t } from "@lingui/core/macro";
 import { useCallback, useState } from "react";
 import { buildDocx } from "@reactive-resume/docx";
@@ -9,10 +9,10 @@ import { getResumeExportData } from "@reactive-resume/resume/export-sections";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
+import { createResumePdfBlob } from "./pdf-document";
 import { resolvePublicResumePdfBlob } from "@/features/resume/public/public-pdf";
 import { client } from "@/libs/orpc/client";
 import { createSectionTitleResolverForLocale } from "@/libs/resume/section-title-locale";
-import { createResumePdfBlob } from "./pdf-document";
 
 /**
  * Section titles are stored empty by default and resolved (locale-aware) at render time. PDF does

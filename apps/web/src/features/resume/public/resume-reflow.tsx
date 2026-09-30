@@ -68,19 +68,19 @@ function EntryView({ type, entry }: { type: string; entry: Entry }) {
 		<article className="grid gap-0.5">
 			{title && <h3 className="font-semibold">{title}</h3>}
 			{(subtitle.length > 0 || meta.length > 0) && (
-				<p className="text-[#555] text-[14px]">{[...subtitle, ...meta].join(" · ")}</p>
+				<p className="text-[14px] text-[#555]">{[...subtitle, ...meta].join(" · ")}</p>
 			)}
 			{url && /^https?:/i.test(url) && (
 				<a className="w-fit text-[14px] underline" href={url} target="_blank" rel="noopener noreferrer nofollow">
 					{website?.label || url.replace(/^https?:\/\//, "")}
 				</a>
 			)}
-			{keywords.length > 0 && <p className="text-[#555] text-[14px]">{keywords.join(", ")}</p>}
+			{keywords.length > 0 && <p className="text-[14px] text-[#555]">{keywords.join(", ")}</p>}
 			{html && <RichText html={html} className={cn(RICH, "mt-1")} />}
 			{roles.map((role) => (
 				<div key={role.id} className="mt-1.5 grid gap-0.5">
 					<h4 className="font-medium">{text(role, "position")}</h4>
-					{text(role, "period") && <p className="text-[#555] text-[14px]">{text(role, "period")}</p>}
+					{text(role, "period") && <p className="text-[14px] text-[#555]">{text(role, "period")}</p>}
 					{text(role, "description") && <RichText html={text(role, "description")} className={RICH} />}
 				</div>
 			))}
@@ -123,11 +123,11 @@ export function ResumeReflow({ data }: ResumeReflowProps) {
 	return (
 		<div
 			lang={data.metadata.page.locale}
-			className="grid gap-6 bg-white px-5 py-6 text-[#1a1a1a] text-[15px] leading-[1.5]"
+			className="grid gap-6 bg-white px-5 py-6 text-[15px] leading-[1.5] text-[#1a1a1a]"
 			style={{ fontFamily: `"${font}", ui-sans-serif, system-ui, sans-serif` }}
 		>
 			<header className="grid gap-2">
-				<h1 className="font-semibold text-[26px] leading-tight">{basics.name}</h1>
+				<h1 className="text-[26px] leading-tight font-semibold">{basics.name}</h1>
 				{(basics.headline || basics.location) && (
 					<p className="text-[#555]">{[basics.headline, basics.location].filter(Boolean).join(" · ")}</p>
 				)}
@@ -156,7 +156,7 @@ export function ResumeReflow({ data }: ResumeReflowProps) {
 				if (entries.length === 0) return null;
 				return (
 					<section key={sectionId} className="grid gap-3">
-						<h2 className="border-b pb-1 font-semibold text-[17px]" style={{ color: accent, borderColor: accent }}>
+						<h2 className="border-b pb-1 text-[17px] font-semibold" style={{ color: accent, borderColor: accent }}>
 							{getResumeSectionTitle(data, sectionId)}
 						</h2>
 						{entries.map((entry) => (

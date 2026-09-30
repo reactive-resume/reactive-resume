@@ -1,5 +1,5 @@
-import type { ApplicationTimelineEntry, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { Application } from "../../types";
+import type { ApplicationTimelineEntry, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
@@ -24,12 +24,12 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { useClosingValue } from "@/hooks/use-closing-value";
-import { useConfirm } from "@/hooks/use-confirm";
-import { orpc } from "@/libs/orpc/client";
 import { interviewKindOf } from "../../interviews";
 import { getStageColor, getStageLabel } from "../../stages";
 import { useInvalidateApplications } from "../../use-application-actions";
+import { useClosingValue } from "@/hooks/use-closing-value";
+import { useConfirm } from "@/hooks/use-confirm";
+import { orpc } from "@/libs/orpc/client";
 
 const byNewest = (a: ApplicationTimelineEntry, b: ApplicationTimelineEntry) =>
 	new Date(b.at).getTime() - new Date(a.at).getTime();
@@ -103,7 +103,7 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 
 	return (
 		<section aria-labelledby="application-activity" className="grid gap-2">
-			<h3 id="application-activity" className="font-semibold text-ink-3 text-xs uppercase">
+			<h3 id="application-activity" className="text-xs font-semibold text-ink-3 uppercase">
 				<Trans>Activity</Trans>
 			</h3>
 			<form
@@ -141,9 +141,9 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 									{entry.location ? <span className="text-ink-3"> · {entry.location}</span> : null}
 								</button>
 							) : (
-								<span className="min-w-0 flex-1 whitespace-pre-wrap break-words">{text}</span>
+								<span className="min-w-0 flex-1 break-words whitespace-pre-wrap">{text}</span>
 							)}
-							<span className="shrink-0 text-ink-3 text-xs leading-5">
+							<span className="shrink-0 text-xs leading-5 text-ink-3">
 								{formatDate(entry.at, entry.type === "interview")}
 							</span>
 							<DropdownMenu>
@@ -153,7 +153,7 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 											size="icon-xs"
 											variant="ghost"
 											aria-label={t`Options for this entry`}
-											className="-my-1 text-ink-3 opacity-0 focus-visible:opacity-100 group-hover:opacity-100 data-[popup-open]:opacity-100"
+											className="-my-1 text-ink-3 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[popup-open]:opacity-100"
 										/>
 									}
 								>

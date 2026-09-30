@@ -3,9 +3,9 @@ import { Trans } from "@lingui/react/macro";
 import { useNavigate, useRouteContext } from "@tanstack/react-router";
 import { CommandItem } from "@reactive-resume/ui/components/command";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { useDialogStore } from "@/dialogs/store";
 import { useCommandPaletteStore } from "../store";
 import { BaseCommandGroup } from "./base";
+import { useDialogStore } from "@/dialogs/store";
 
 export function NavigationCommandGroup() {
 	const navigate = useNavigate();

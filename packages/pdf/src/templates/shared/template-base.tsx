@@ -1,6 +1,6 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Style } from "../../forme/style-types";
 import type { TemplateIconSlot, TemplateStyleContext } from "./types";
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { useMemo } from "react";
 import { rgbaStringToHex } from "@reactive-resume/utils/color";
 import { View } from "#react-pdf-renderer";

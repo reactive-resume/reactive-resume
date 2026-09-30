@@ -5,8 +5,8 @@ import { EventBus, LinkTarget, PDFLinkService, PDFViewer } from "pdfjs-dist/lega
 import { useEffect, useReducer, useRef } from "react";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
-import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { resolvePublicResumePdfBlob } from "./public-pdf";
+import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import "pdfjs-dist/legacy/web/pdf_viewer.css";
 import "./pdf-viewer.css";
 
@@ -251,7 +251,7 @@ export function PdfViewer({
 			</div>
 
 			{error ? (
-				<div className="absolute inset-0 flex items-center justify-center bg-bg px-6 text-center text-ink-3 text-sm">
+				<div className="absolute inset-0 flex items-center justify-center bg-bg px-6 text-center text-sm text-ink-3">
 					Unable to display PDF preview.
 				</div>
 			) : (

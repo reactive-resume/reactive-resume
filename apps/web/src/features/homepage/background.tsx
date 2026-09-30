@@ -35,13 +35,13 @@ export function LandingBackground() {
 			/>
 			<div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
 				<div className="transition-opacity duration-[.8s] dark:opacity-0">
-					<div className="absolute -inset-[20%] bg-[radial-gradient(38%_34%_at_24%_20%,oklch(0.995_0.04_85/.8),transparent_72%)] motion-safe:animate-breathe" />
-					<div className="window-shadow absolute -top-[30%] -left-[12%] h-[140%] w-[78%] motion-safe:animate-drift" />
+					<div className="motion-safe:animate-breathe absolute -inset-[20%] bg-[radial-gradient(38%_34%_at_24%_20%,oklch(0.995_0.04_85/.8),transparent_72%)]" />
+					<div className="window-shadow motion-safe:animate-drift absolute -top-[30%] -left-[12%] h-[140%] w-[78%]" />
 				</div>
 				{motes.map((style) => (
 					<span
 						key={style.left}
-						className="absolute size-(--size) rounded-full bg-[oklch(0.5_0.04_80/.35)] opacity-0 motion-safe:animate-mote dark:bg-[oklch(0.9_0.06_80/.45)]"
+						className="motion-safe:animate-mote absolute size-(--size) rounded-full bg-[oklch(0.5_0.04_80/.35)] opacity-0 dark:bg-[oklch(0.9_0.06_80/.45)]"
 						style={style as CSSProperties}
 					/>
 				))}

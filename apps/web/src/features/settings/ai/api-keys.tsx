@@ -19,10 +19,10 @@ import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Swap } from "@reactive-resume/ui/components/swap";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { SettingsSection } from "../section";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
-import { SettingsSection } from "../section";
 
 const KEYS = ["auth", "api-keys"];
 const DAY = 24 * 60 * 60;
@@ -95,15 +95,15 @@ export function ApiKeysSection() {
 			{isLoading ? (
 				<Skeleton className="h-14 rounded-xl" />
 			) : keys.length === 0 ? (
-				<p className="rounded-xl border border-line-2 border-dashed p-4 text-ink-2 text-sm starting:opacity-0 transition-opacity duration-standard ease-enter">
+				<p className="rounded-xl border border-dashed border-line-2 p-4 text-sm text-ink-2 transition-opacity duration-standard ease-enter starting:opacity-0">
 					<Trans>No keys yet.</Trans>
 				</p>
 			) : (
-				<table className="w-full overflow-hidden rounded-xl text-[13px] starting:opacity-0 outline outline-line transition-opacity duration-standard ease-enter max-sm:block">
+				<table className="w-full overflow-hidden rounded-xl text-[13px] outline outline-line transition-opacity duration-standard ease-enter max-sm:block starting:opacity-0">
 					<caption className="sr-only">
 						<Trans>API keys</Trans>
 					</caption>
-					<thead className="bg-bg text-ink-3 text-xs max-sm:hidden">
+					<thead className="bg-bg text-xs text-ink-3 max-sm:hidden">
 						<tr className="h-9 text-start">
 							<th scope="col" className="ps-3.5 text-start font-medium">
 								<Trans>Name</Trans>
@@ -128,7 +128,7 @@ export function ApiKeysSection() {
 						{keys.map((key) => (
 							<tr
 								key={key.id}
-								className="h-12 border-line border-t max-sm:flex max-sm:h-auto max-sm:flex-wrap max-sm:items-center max-sm:gap-x-3 max-sm:gap-y-0.5 max-sm:p-3 max-sm:first:border-t-0"
+								className="h-12 border-t border-line max-sm:flex max-sm:h-auto max-sm:flex-wrap max-sm:items-center max-sm:gap-x-3 max-sm:gap-y-0.5 max-sm:p-3 max-sm:first:border-t-0"
 							>
 								<td className="ps-3.5 font-medium max-sm:w-full max-sm:ps-0">
 									{key.name || <span className="font-mono text-ink-2">{key.start}…</span>}
@@ -292,7 +292,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 							/>
 						</div>
 						<fieldset className="grid gap-1.5">
-							<legend className="mb-1.5 font-medium text-sm">
+							<legend className="mb-1.5 text-sm font-medium">
 								<Trans>Expires</Trans>
 							</legend>
 							<div className="grid grid-cols-3 gap-2">
@@ -300,7 +300,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 									<label
 										key={option.label()}
 										className={cn(
-											"flex h-9 cursor-pointer items-center justify-center rounded-lg border border-line-2 font-medium text-sm transition-colors duration-quick hover:bg-hover has-focus-visible:outline-2 has-focus-visible:outline-accent",
+											"flex h-9 cursor-pointer items-center justify-center rounded-lg border border-line-2 text-sm font-medium transition-colors duration-quick hover:bg-hover has-focus-visible:outline-2 has-focus-visible:outline-accent",
 											expiry === index && "border-accent bg-accent-soft text-accent-text",
 										)}
 									>
@@ -317,7 +317,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 							</div>
 						</fieldset>
 						{failure && (
-							<p role="alert" className="text-danger-text text-sm">
+							<p role="alert" className="text-sm text-danger-text">
 								{failure}
 							</p>
 						)}

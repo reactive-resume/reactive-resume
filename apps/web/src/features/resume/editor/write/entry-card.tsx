@@ -1,7 +1,7 @@
-import type { MessageDescriptor } from "@lingui/core";
-import type { KeyboardEvent, ReactNode } from "react";
 import type { PageSettings } from "./entries";
 import type { Entry, WriteSection } from "./model";
+import type { MessageDescriptor } from "@lingui/core";
+import type { KeyboardEvent, ReactNode } from "react";
 import { useDirection } from "@base-ui/react/direction-provider";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -27,15 +27,15 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
-import { useCurrentResume, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { D3, DRAG_SETTLE, EASE, EXIT } from "@/libs/motion";
-import { getCompatibleMoveTargets, getSourceSectionTitle, moveItem } from "@/libs/resume/move-item";
 import { useEditorStore } from "../store";
 import { EntryFields } from "./entries";
 import { useEntry, useEntryWriter } from "./fields";
 import { createEntry, describeEntry, getEntries, getPrimaryField, isDraftEntry } from "./model";
 import { entryElementId, keepOpenedEntryInView } from "./reveal";
 import { useSectionTitle } from "./section-row";
+import { useCurrentResume, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { D3, DRAG_SETTLE, EASE, EXIT } from "@/libs/motion";
+import { getCompatibleMoveTargets, getSourceSectionTitle, moveItem } from "@/libs/resume/move-item";
 
 const DRAFT_HINTS: Record<string, MessageDescriptor> = {
 	company: msg`Appears on the page once it has a company.`,
@@ -94,7 +94,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 	};
 	const fields = (
 		<>
-			{hint && <p className="col-span-full text-ink-3 text-xs">{i18n._(hint)}</p>}
+			{hint && <p className="col-span-full text-xs text-ink-3">{i18n._(hint)}</p>}
 			<EntryFields type={section.type} entry={entry} write={write} page={page} autoFocus={autoFocus} />
 		</>
 	);
@@ -122,7 +122,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 					<button
 						type="button"
 						aria-label={t`Reorder ${title || t`Untitled`}`}
-						className="-ms-px flex h-10 w-5 shrink-0 cursor-grab items-center justify-center text-ink-3 opacity-0 transition-opacity duration-quick focus-visible:opacity-100 active:cursor-grabbing group-hover/entry:opacity-100"
+						className="-ms-px flex h-10 w-5 shrink-0 cursor-grab items-center justify-center text-ink-3 opacity-0 transition-opacity duration-quick group-hover/entry:opacity-100 focus-visible:opacity-100 active:cursor-grabbing"
 						{...attributes}
 						{...listeners}
 					>
@@ -141,7 +141,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 					)}
 				>
 					<span className="flex max-w-full items-center gap-2">
-						<span className={cn("truncate font-semibold text-[13px] leading-[18px]", !title && "text-ink-3")}>
+						<span className={cn("truncate text-[13px] leading-[18px] font-semibold", !title && "text-ink-3")}>
 							{title || <Trans>Untitled</Trans>}
 						</span>
 						{draft && (
@@ -155,7 +155,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 							</Badge>
 						)}
 					</span>
-					{meta && <span className="max-w-full truncate text-ink-3 text-xs leading-4">{meta}</span>}
+					{meta && <span className="max-w-full truncate text-xs leading-4 text-ink-3">{meta}</span>}
 				</button>
 
 				{open && !locked && (
@@ -175,7 +175,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 					<CollapsibleContent>
 						<fieldset
 							disabled={locked}
-							className="m-0 grid min-w-0 gap-y-2.5 border-0 border-line border-t px-3 pt-3 pb-3.5"
+							className="m-0 grid min-w-0 gap-y-2.5 border-0 border-t border-line px-3 pt-3 pb-3.5"
 						>
 							{fields}
 						</fieldset>
@@ -225,11 +225,11 @@ function PhoneEntryScreen({ section, title, locked, onBack, onDelete, children }
 			animate={{ transform: "translateX(0%)", transition: { duration: D3, ease: EASE } }}
 			exit={{ transform: offscreen, transition: { duration: D3 * EXIT, ease: EASE } }}
 		>
-			<div className="flex h-14 shrink-0 items-center gap-1 border-line border-b px-1.5">
+			<div className="flex h-14 shrink-0 items-center gap-1 border-b border-line px-1.5">
 				<button
 					type="button"
 					onClick={onBack}
-					className="flex h-11 items-center gap-0.5 rounded-lg px-2 font-medium text-[15px] text-accent-text"
+					className="flex h-11 items-center gap-0.5 rounded-lg px-2 text-[15px] font-medium text-accent-text"
 				>
 					<Icon name="chevron_left" size={24} />
 					{sectionTitle}

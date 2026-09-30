@@ -1,7 +1,7 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { RichTextEditor } from "./rich-text-editor";
+import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 
 /** The summary: one rich text, with the guidance the spec gives. Improve joins it in M10. */
 export function SummaryEditor({ locked }: { locked: boolean }) {

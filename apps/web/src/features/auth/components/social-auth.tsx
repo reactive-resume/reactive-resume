@@ -9,11 +9,11 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { getAuthRedirectOptions, getOAuthPasskeyOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 import { authClient } from "@/libs/auth/client";
 import { ENTER_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 import { sessionQueryKey } from "@/libs/root-context";
-import { getAuthRedirectOptions, getOAuthPasskeyOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 
 export function SocialAuth() {
 	const { data: providers = {}, isLoading } = useQuery(orpc.auth.providers.list.queryOptions());
@@ -22,7 +22,7 @@ export function SocialAuth() {
 		<>
 			<div className="flex items-center gap-x-2">
 				<hr className="flex-1" />
-				<span className="font-medium text-xs tracking-wide">
+				<span className="text-xs font-medium tracking-wide">
 					<Trans context="Choose to authenticate with a social provider (Google, GitHub, etc.) instead of email and password">
 						or continue with
 					</Trans>

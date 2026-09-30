@@ -214,7 +214,7 @@
 	}
 
 	body {
-		@apply bg-bg text-ink text-sm proportional-nums antialiased selection:bg-accent-soft selection:text-ink;
+		@apply bg-bg text-sm text-ink proportional-nums antialiased selection:bg-accent-soft selection:text-ink;
 	}
 
 	h1 {
@@ -247,7 +247,7 @@
 	}
 
 	.wysiwyg {
-		@apply prose prose-sm prose-stone dark:prose-invert max-w-none prose-p:my-3! prose-li:my-3! prose-ul:my-3! prose-ol:my-3!;
+		@apply prose prose-sm max-w-none prose-stone dark:prose-invert prose-p:my-3! prose-ol:my-3! prose-ul:my-3! prose-li:my-3!;
 	}
 }
 
@@ -299,21 +299,15 @@
 	*,
 	*::before,
 	*::after {
-		/* biome-ignore lint/complexity/noImportantStyles: required */
 		animation-duration: 0.01ms !important;
-		/* biome-ignore lint/complexity/noImportantStyles: required */
 		animation-iteration-count: 1 !important;
-		/* biome-ignore lint/complexity/noImportantStyles: required */
 		transition-duration: 0.01ms !important;
-		/* biome-ignore lint/complexity/noImportantStyles: required */
 		scroll-behavior: auto !important;
 	}
 
 	/* Spinners are status, not decoration: freezing them makes a loading app look hung. */
 	.animate-spin {
-		/* biome-ignore lint/complexity/noImportantStyles: required */
 		animation-duration: 1.5s !important;
-		/* biome-ignore lint/complexity/noImportantStyles: required */
 		animation-iteration-count: infinite !important;
 	}
 }

@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { createNoindexFollowMeta } from "@/libs/seo";
 import { AppShell } from "./-components/app-shell";
+import { createNoindexFollowMeta } from "@/libs/seo";
 
 export const Route = createFileRoute("/dashboard")({
 	component: RouteComponent,

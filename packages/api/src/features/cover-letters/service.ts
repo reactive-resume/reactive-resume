@@ -1,3 +1,4 @@
+import type { CoverLetterListInput, CoverLetterUpdateInput } from "../../dto/cover-letter";
 import type {
 	CoverLetter,
 	CoverLetterDocument,
@@ -5,7 +6,6 @@ import type {
 	CoverLetterStyle,
 } from "@reactive-resume/schema/cover-letter/data";
 import type { Template } from "@reactive-resume/schema/templates";
-import type { CoverLetterListInput, CoverLetterUpdateInput } from "../../dto/cover-letter";
 import { ORPCError } from "@orpc/client";
 import { and, count, desc, eq, ilike, isNull, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";

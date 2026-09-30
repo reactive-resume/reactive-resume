@@ -17,7 +17,7 @@ export function CtaLink({ size, className }: CtaLinkProps) {
 		<Link
 			to="/dashboard"
 			className={cn(
-				"inline-flex shrink-0 items-center rounded-full bg-accent font-semibold font-ui text-on-accent transition-colors hover:bg-accent-hover",
+				"inline-flex shrink-0 items-center rounded-full bg-accent font-ui font-semibold text-on-accent transition-colors hover:bg-accent-hover",
 				size === "header" && "h-[38px] px-4 text-sm",
 				size === "hero" && "h-[54px] gap-2.5 px-6 text-base shadow-e2",
 				size === "closing" && "h-14 gap-2.5 px-7 text-[17px] shadow-e2",
@@ -46,7 +46,7 @@ export function SceneCaption({ number, title, children, action, className }: Sce
 			<span className={cn(labelClass, "text-accent-text")}>
 				{number} / {title}
 			</span>
-			<p className="text-pretty font-display text-base text-ink leading-[1.45] min-[900px]:text-[clamp(17px,1.35vw,20px)]">
+			<p className="font-display text-base leading-[1.45] text-pretty text-ink min-[900px]:text-[clamp(17px,1.35vw,20px)]">
 				{children}
 			</p>
 			{action}

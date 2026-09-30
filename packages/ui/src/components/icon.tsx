@@ -1,5 +1,5 @@
-import type * as React from "react";
 import type { IconName } from "../icons/names";
+import type * as React from "react";
 import { cn } from "@reactive-resume/utils/style";
 
 // Icons that point somewhere are mirrored in right-to-left layouts.

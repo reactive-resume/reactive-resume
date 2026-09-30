@@ -23,7 +23,7 @@ function CommandInput({ className, hint, ...props }: CommandInputProps) {
 	return (
 		<div
 			data-slot="command-input-wrapper"
-			className="flex h-[52px] shrink-0 items-center gap-3 border-line border-b px-4"
+			className="flex h-[52px] shrink-0 items-center gap-3 border-b border-line px-4"
 		>
 			<Icon name="search" className="text-ink-3" />
 			<CommandPrimitive.Input
@@ -44,7 +44,7 @@ function CommandList({ className, ...props }: React.ComponentProps<typeof Comman
 		<CommandPrimitive.List
 			data-slot="command-list"
 			className={cn(
-				"no-scrollbar max-h-[min(420px,60svh)] scroll-py-1.5 overflow-y-auto overflow-x-hidden p-1.5 outline-none",
+				"no-scrollbar max-h-[min(420px,60svh)] scroll-py-1.5 overflow-x-hidden overflow-y-auto p-1.5 outline-none",
 				className,
 			)}
 			{...props}
@@ -56,7 +56,7 @@ function CommandEmpty({ className, ...props }: React.ComponentProps<typeof Comma
 	return (
 		<CommandPrimitive.Empty
 			data-slot="command-empty"
-			className={cn("py-8 text-center text-ink-3 text-sm", className)}
+			className={cn("py-8 text-center text-sm text-ink-3", className)}
 			{...props}
 		/>
 	);
@@ -67,7 +67,7 @@ function CommandGroup({ className, ...props }: React.ComponentProps<typeof Comma
 		<CommandPrimitive.Group
 			data-slot="command-group"
 			className={cn(
-				"overflow-hidden text-ink **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:pt-2.5 **:[[cmdk-group-heading]]:pb-1 **:[[cmdk-group-heading]]:font-semibold **:[[cmdk-group-heading]]:text-ink-3 **:[[cmdk-group-heading]]:text-xs",
+				"overflow-hidden text-ink **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:pt-2.5 **:[[cmdk-group-heading]]:pb-1 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-semibold **:[[cmdk-group-heading]]:text-ink-3",
 				className,
 			)}
 			{...props}
@@ -91,7 +91,7 @@ function CommandItem({ className, children, ...props }: React.ComponentProps<typ
 		<CommandPrimitive.Item
 			data-slot="command-item"
 			className={cn(
-				"group/command-item relative flex h-10 cursor-default select-none items-center gap-3 rounded-md px-3 text-ink text-sm outline-hidden data-[disabled=true]:pointer-events-none data-selected:bg-sunken data-[disabled=true]:text-ink-3 [&_[data-slot=icon]]:text-ink-2 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"group/command-item relative flex h-10 cursor-default items-center gap-3 rounded-md px-3 text-sm text-ink outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:text-ink-3 data-selected:bg-sunken [&_[data-slot=icon]]:text-ink-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
 				className,
 			)}
 			{...props}
@@ -103,7 +103,7 @@ function CommandItem({ className, children, ...props }: React.ComponentProps<typ
 			/>
 			<span
 				aria-hidden="true"
-				className="ms-auto hidden font-mono text-ink-3 text-xs group-has-data-[slot=command-shortcut]/command-item:hidden group-data-selected/command-item:inline group-data-[checked=true]/command-item:hidden"
+				className="ms-auto hidden font-mono text-xs text-ink-3 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:hidden group-data-selected/command-item:inline"
 			>
 				↵
 			</span>
@@ -113,7 +113,7 @@ function CommandItem({ className, children, ...props }: React.ComponentProps<typ
 
 function CommandShortcut({ className, ...props }: React.ComponentProps<"span">) {
 	return (
-		<span data-slot="command-shortcut" className={cn("ms-auto font-mono text-ink-3 text-xs", className)} {...props} />
+		<span data-slot="command-shortcut" className={cn("ms-auto font-mono text-xs text-ink-3", className)} {...props} />
 	);
 }
 

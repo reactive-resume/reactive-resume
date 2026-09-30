@@ -1,3 +1,8 @@
+import type { IconName } from "../../forme/icons";
+import type { Style } from "../../forme/style-types";
+import type { CombinedTextName } from "../../semantic/node-keys";
+import type { StyleInput, TemplatePlacement } from "./styles";
+import type { CustomItemSection, ItemSection } from "./types";
 import type {
 	AwardItem,
 	CertificationItem,
@@ -18,11 +23,6 @@ import type {
 	VolunteerItem,
 } from "@reactive-resume/schema/resume/data";
 import type { ReactNode } from "react";
-import type { IconName } from "../../forme/icons";
-import type { Style } from "../../forme/style-types";
-import type { CombinedTextName } from "../../semantic/node-keys";
-import type { StyleInput, TemplatePlacement } from "./styles";
-import type { CustomItemSection, ItemSection } from "./types";
 import { Children, createContext, Fragment, isValidElement, use } from "react";
 import { View } from "#react-pdf-renderer";
 import { useRender } from "../../context";

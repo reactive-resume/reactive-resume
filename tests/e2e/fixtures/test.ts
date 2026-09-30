@@ -1,5 +1,5 @@
-import type { Page } from "@playwright/test";
 import type { E2EAccount } from "./data";
+import type { Page } from "@playwright/test";
 import { test as base, expect } from "@playwright/test";
 import { createAuthenticatedContext } from "./auth";
 import { createAccount } from "./data";

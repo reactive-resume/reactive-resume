@@ -10,6 +10,7 @@ import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/
 import { Input } from "@reactive-resume/ui/components/input";
 import { Separator } from "@reactive-resume/ui/components/separator";
 import { cn } from "@reactive-resume/utils/style";
+import { SectionBase } from "../shared/section-base";
 import { ColorPicker } from "@/components/input/color-picker";
 import { IconPicker } from "@/components/input/icon-picker";
 import { LevelTypeCombobox } from "@/components/level/combobox";
@@ -18,7 +19,6 @@ import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { D1, EASE } from "@/libs/motion";
 import { useAppForm } from "@/libs/tanstack-form";
-import { SectionBase } from "../shared/section-base";
 
 export function DesignSectionBuilder() {
 	return (
@@ -247,7 +247,7 @@ function LevelSectionForm() {
 				void form.handleSubmit();
 			}}
 		>
-			<h4 className="font-semibold text-lg leading-none tracking-tight">
+			<h4 className="text-lg leading-none font-semibold tracking-tight">
 				<Trans>Level</Trans>
 			</h4>
 

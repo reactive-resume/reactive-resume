@@ -24,9 +24,8 @@ Whatever proxy you use, configure it so that:
   the browser sends them base64-encoded, which makes them about a third larger.
 
 <Warning>
-  Once a proxy is in front, don't publish the app's port `3000` on a public
-  interface, or clients can bypass the proxy's HTTPS and access controls. Remove the `ports`
-  entry, or bind it to `127.0.0.1:3000:3000`.
+  Once a proxy is in front, don't publish the app's port `3000` on a public interface, or clients can bypass the proxy's
+  HTTPS and access controls. Remove the `ports` entry, or bind it to `127.0.0.1:3000:3000`.
 </Warning>
 
 ## Caddy
@@ -174,17 +173,17 @@ With [nginx](https://nginx.org/) you manage certificates yourself, for example w
 `ports` entry from the `reactive-resume` service:
 
 ```yaml compose.yml
-  nginx:
-    image: nginx:stable-alpine
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./certs:/etc/nginx/certs:ro
-    depends_on:
-      - reactive-resume
+nginx:
+  image: nginx:stable-alpine
+  restart: unless-stopped
+  ports:
+    - "80:80"
+    - "443:443"
+  volumes:
+    - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    - ./certs:/etc/nginx/certs:ro
+  depends_on:
+    - reactive-resume
 ```
 
 ```nginx nginx.conf lines expandable
@@ -290,17 +289,17 @@ Redis is optional on a single server, but with it an Assistant reply keeps
 streaming after a page reload. Add a Redis service to your compose file:
 
 ```yaml compose.yml
-  redis:
-    image: redis:8
-    restart: unless-stopped
-    command: redis-server --appendonly yes
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
+redis:
+  image: redis:8
+  restart: unless-stopped
+  command: redis-server --appendonly yes
+  volumes:
+    - redis_data:/data
+  healthcheck:
+    test: ["CMD", "redis-cli", "ping"]
+    interval: 10s
+    timeout: 5s
+    retries: 10
 ```
 
 Add `redis_data:` under `volumes:`, and add `redis` to the app's `depends_on` with `condition: service_healthy`. Then
@@ -346,6 +345,7 @@ accepts public `https://` provider addresses, so you turn on a flag that allows 
     docker compose up -d ollama
     docker compose exec ollama ollama pull llama3.1
     ```
+
   </Step>
 
   <Step title="Allow local AI addresses">
@@ -358,6 +358,7 @@ accepts public `https://` provider addresses, so you turn on a flag that allows 
     ```
 
     Run `docker compose up -d` to apply it.
+
   </Step>
 
   <Step title="Add the provider in Reactive Resume">
@@ -373,6 +374,7 @@ accepts public `https://` provider addresses, so you turn on a flag that allows 
     <Frame caption="The Add provider dialog set up for an Ollama container on the same Docker network">
       <img src="/images/self-hosting/examples/add-provider-local-ollama.webp" alt="Add provider dialog with Ollama Cloud selected, model llama3.1, name Home server Ollama and base URL http://ollama:11434/api" />
     </Frame>
+
   </Step>
 </Steps>
 
@@ -413,6 +415,7 @@ page instead of the home page.
     ```
 
     Run `docker compose up -d`.
+
   </Step>
 </Steps>
 

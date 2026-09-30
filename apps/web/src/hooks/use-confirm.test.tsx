@@ -31,7 +31,7 @@ describe("useConfirm", () => {
 		const cancel = buttons.find((b) => /cancel/i.test(b.textContent ?? ""));
 
 		await act(() => {
-			(cancelBtn as HTMLButtonElement | null)?.click() ?? cancel?.click();
+			((cancelBtn as HTMLButtonElement | null) ?? cancel)?.click();
 		});
 
 		await expect(promise).resolves.toBe(false);

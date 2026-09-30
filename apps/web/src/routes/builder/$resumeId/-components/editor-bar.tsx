@@ -8,13 +8,13 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
+import { DocumentMenu } from "./document-menu";
 import { AssistantButton } from "@/features/assistant/assistant-button";
 import { useCurrentBuilderResumeSelector, useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
 import { useOpenIssueCount } from "@/features/resume/editor/check/use-check";
 import { BackLink, DrawerControls } from "@/features/resume/editor/chrome";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
-import { DocumentMenu } from "./document-menu";
 
 type EditorBarProps = {
 	layout: "desktop" | "tablet" | "mobile";
@@ -32,7 +32,7 @@ export function EditorBar({ layout, pinnable }: EditorBarProps) {
 	const wide = useBreakpoint() === "wide";
 
 	return (
-		<header className="grid h-(--editor-bar) grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-line border-b bg-surface px-3">
+		<header className="grid h-(--editor-bar) grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-b border-line bg-surface px-3">
 			<div className="flex min-w-0 items-center gap-1.5">
 				<BackLink />
 				{layout === "tablet" && <DrawerControls pinnable={pinnable} />}
@@ -89,7 +89,7 @@ function CheckBadge({ count }: { count: number }) {
 	}
 
 	return (
-		<span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-warn-soft px-[5px] font-semibold text-[11px] text-warn-text">
+		<span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-warn-soft px-[5px] text-[11px] font-semibold text-warn-text">
 			{count}
 			<span className="sr-only">
 				<Trans>open issues</Trans>

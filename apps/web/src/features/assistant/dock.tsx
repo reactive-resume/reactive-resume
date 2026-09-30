@@ -3,10 +3,10 @@ import type { Variants } from "motion/react";
 import type { ReactNode } from "react";
 import { useDirection } from "@base-ui/react/direction-provider";
 import { AnimatePresence, m } from "motion/react";
-import { useEditorStore } from "@/features/resume/editor/store";
-import { D2, D3, EASE, EXIT } from "@/libs/motion";
 import { AssistantPanel } from "./assistant-panel";
 import { useLetterAssistantDocument, useResumeAssistantDocument } from "./document";
+import { useEditorStore } from "@/features/resume/editor/store";
+import { D2, D3, EASE, EXIT } from "@/libs/motion";
 
 /**
  * Where the assistant sits (README §6.5): a third column at ≥1280 (the panel narrows to 300px), in place of the panel
@@ -59,7 +59,7 @@ export function AssistantColumn({ children }: AssistantColumnProps) {
 	const instant = useEditorStore((state) => state.assistantInstant);
 
 	return (
-		<div inert={!open} className="min-h-0 min-w-0 overflow-hidden border-line border-s bg-surface">
+		<div inert={!open} className="min-h-0 min-w-0 overflow-hidden border-s border-line bg-surface">
 			<AnimatePresence initial={false} custom={instant}>
 				{open && (
 					<m.div
@@ -158,7 +158,7 @@ export function AssistantOverlay({ place, children }: AssistantOverlayProps) {
 					exit="hidden"
 					className={
 						place === "drawer"
-							? "fixed end-0 top-(--editor-bar) bottom-0 z-40 flex w-[400px] max-w-full flex-col border-line border-s bg-surface shadow-e3"
+							? "fixed end-0 top-(--editor-bar) bottom-0 z-40 flex w-[400px] max-w-full flex-col border-s border-line bg-surface shadow-e3"
 							: "fixed inset-0 z-40 flex flex-col bg-surface pb-[env(safe-area-inset-bottom)]"
 					}
 				>

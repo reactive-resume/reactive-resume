@@ -6,9 +6,9 @@ import { Link } from "@tanstack/react-router";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { localeSchema } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
-import { serializeJsonLd } from "@/libs/seo";
 import { SCENE } from "./scroll";
 import { Doodle, labelClass } from "./ui";
+import { serializeJsonLd } from "@/libs/seo";
 
 type Question = {
 	id: string;
@@ -83,7 +83,7 @@ function FaqItem({ item, index }: FaqItemProps) {
 		"mt-3 inline-flex items-center gap-1 font-medium font-ui text-[14px] text-[oklch(0.42_0.1_150)] underline underline-offset-[3px] transition-colors hover:text-[oklch(0.32_0.1_150)]";
 
 	return (
-		<details name="faq" className="faq-item border-line border-b">
+		<details name="faq" className="faq-item border-b border-line">
 			<summary className="flex cursor-pointer list-none items-start gap-5 rounded-sm py-6 outline-offset-4 focus-visible:outline-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
 				<span className={cn(labelClass, "relative mt-[.7em] w-8 shrink-0 text-center text-ink-3")}>
 					{number}
@@ -96,7 +96,7 @@ function FaqItem({ item, index }: FaqItemProps) {
 						<path data-stroke="circle" pathLength={1} d={circlePath} strokeWidth={2.6} />
 					</svg>
 				</span>
-				<span className="flex-1 text-pretty font-anybody font-light text-[clamp(21px,2vw,30px)] text-ink leading-[1.2] tracking-[-.015em]">
+				<span className="font-anybody flex-1 text-[clamp(21px,2vw,30px)] leading-[1.2] font-light tracking-[-.015em] text-pretty text-ink">
 					{/* Shrink-wrapped, so the underline runs under the words rather than the whole row. */}
 					<span className="relative inline-block pb-1.5">
 						{item.question}
@@ -122,7 +122,7 @@ function FaqItem({ item, index }: FaqItemProps) {
 					className="relative rounded-[3px] bg-paper px-6 py-5 text-[oklch(0.28_0.01_95)] shadow-[0_1px_2px_oklch(0.2_0.01_95/.12),0_18px_36px_-18px_oklch(0.2_0.01_95/.4)]"
 					style={{ "--tilt": `${index % 2 === 0 ? -0.5 : 0.4}deg` } as CSSProperties}
 				>
-					<p className="text-pretty font-display text-[clamp(17px,1.3vw,20px)] leading-normal">{item.answer}</p>
+					<p className="font-display text-[clamp(17px,1.3vw,20px)] leading-normal text-pretty">{item.answer}</p>
 					{item.link &&
 						("to" in item.link ? (
 							<Link to={item.link.to} className={linkClass}>
@@ -161,7 +161,7 @@ export function Faq() {
 			id="faq"
 			data-scene={SCENE.faq}
 			aria-labelledby="faq-title"
-			className="relative mx-auto grid max-w-[1440px] items-start gap-x-16 gap-y-10 border-line border-t px-(--gutter) pt-[12vh] pb-[14vh] min-[900px]:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]"
+			className="relative mx-auto grid max-w-[1440px] items-start gap-x-16 gap-y-10 border-t border-line px-(--gutter) pt-[12vh] pb-[14vh] min-[900px]:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]"
 		>
 			<Doodle
 				name="note"
@@ -173,13 +173,13 @@ export function Faq() {
 				<span className={cn(labelClass, "text-ink-3")}>{t`Questions`}</span>
 				<h2
 					id="faq-title"
-					className="font-anybody font-light text-[clamp(48px,5.6vw,100px)] text-ink leading-[.98] tracking-[-.03em]"
+					className="font-anybody text-[clamp(48px,5.6vw,100px)] leading-[.98] font-light tracking-[-.03em] text-ink"
 				>
 					<Trans>
 						Asked and <em className="font-display font-normal text-accent-text italic">answered.</em>
 					</Trans>
 				</h2>
-				<p className="max-w-[24em] text-pretty font-display text-[clamp(17px,1.4vw,21px)] text-ink-2 leading-normal">
+				<p className="max-w-[24em] font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-pretty text-ink-2">
 					<Trans>
 						The short answers to what people ask before they start. Anything else, ask on{" "}
 						<a
@@ -193,13 +193,13 @@ export function Faq() {
 				</p>
 			</div>
 
-			<div className="border-line border-t">
+			<div className="border-t border-line">
 				{questions.map((item, index) => (
 					<FaqItem key={item.id} item={item} index={index} />
 				))}
 			</div>
 
-			{/* biome-ignore lint/security/noDangerouslySetInnerHtml: structured data, serialized so no answer can close the script. */}
+			{/* oxlint-disable-next-line react/no-danger -- structured data, serialized so no answer can close the script. */}
 			<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }} />
 		</section>
 	);

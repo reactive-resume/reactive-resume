@@ -4,9 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { cn } from "@reactive-resume/utils/style";
+import { isOAuthRedirect } from "../redirect";
 import { authClient } from "@/libs/auth/client";
 import { ENTER_CLASS } from "@/libs/motion";
-import { isOAuthRedirect } from "../redirect";
 
 type OAuthConsentPageProps = {
 	oauthQuery: string;
@@ -64,10 +64,10 @@ export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 	return (
 		<>
 			<div className="space-y-2 text-center">
-				<h1 className="font-semibold text-2xl tracking-tight">
+				<h1 className="text-2xl font-semibold tracking-tight">
 					<Trans>Connect an application</Trans>
 				</h1>
-				<p className="wrap-anywhere text-ink-3 text-sm">
+				<p className="text-sm wrap-anywhere text-ink-3">
 					<Trans>Signed in as {email}</Trans>
 				</p>
 			</div>
@@ -81,9 +81,9 @@ export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 				</p>
 			) : client ? (
 				<div className={cn(ENTER_CLASS, "space-y-4")}>
-					<div className="wrap-anywhere space-y-1">
+					<div className="space-y-1 wrap-anywhere">
 						<p className="font-medium">{client.client_name || clientId}</p>
-						<p className="text-ink-3 text-xs">
+						<p className="text-xs text-ink-3">
 							<Trans>Client ID</Trans>: {clientId}
 						</p>
 					</div>
@@ -113,7 +113,7 @@ export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 						)}
 					</ul>
 					{error && (
-						<p role="alert" className={cn(ENTER_CLASS, "text-danger-text text-sm")}>
+						<p role="alert" className={cn(ENTER_CLASS, "text-sm text-danger-text")}>
 							{error}
 						</p>
 					)}

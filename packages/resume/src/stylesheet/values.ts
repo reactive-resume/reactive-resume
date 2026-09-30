@@ -1,4 +1,3 @@
-import type { CssLocation, CssNode } from "css-tree";
 import type { SemanticCssCompilerDiagnosticCode } from "./diagnostics";
 import type {
 	CompiledDeclaration,
@@ -10,6 +9,7 @@ import type {
 	SourceRange,
 	StyleProgram,
 } from "./types";
+import type { CssLocation, CssNode } from "css-tree";
 import * as csstree from "css-tree";
 import { createDiagnostic, EMPTY_SOURCE_RANGE, isFatalStylesheetDiagnostic } from "./diagnostics";
 import { SEMANTIC_CSS_LIMITS_V1 } from "./limits";

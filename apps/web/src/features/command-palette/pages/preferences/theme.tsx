@@ -2,9 +2,9 @@ import type { Theme } from "@/libs/theme";
 import { Trans } from "@lingui/react/macro";
 import { CommandItem } from "@reactive-resume/ui/components/command";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { useTheme } from "@/features/theme/provider";
 import { useCommandPaletteStore } from "../../store";
 import { BaseCommandGroup } from "../base";
+import { useTheme } from "@/features/theme/provider";
 
 export function ThemeCommandPage() {
 	const { theme: currentTheme, setTheme } = useTheme();

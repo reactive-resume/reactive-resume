@@ -19,7 +19,7 @@ function CollapsibleContent({ className, ...props }: CollapsiblePrimitive.Panel.
 		<CollapsiblePrimitive.Panel
 			data-slot="collapsible-content"
 			className={cn(
-				"h-(--collapsible-panel-height) overflow-clip transition-[height] duration-standard ease-enter data-ending-style:h-0 data-starting-style:h-0 data-ending-style:duration-[calc(var(--d2)*0.7)]",
+				"h-(--collapsible-panel-height) overflow-clip transition-[height] duration-standard ease-enter data-ending-style:h-0 data-ending-style:duration-[calc(var(--d2)*0.7)] data-starting-style:h-0",
 				className,
 			)}
 			{...props}

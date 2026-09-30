@@ -169,7 +169,7 @@ const getAuthConfig = () => {
 		},
 
 		hooks: {
-			// biome-ignore lint/suspicious/useAwait: Better Auth requires middleware callbacks to return a Promise.
+			// oxlint-disable-next-line require-await -- Better Auth requires middleware callbacks to return a Promise.
 			before: createAuthMiddleware(async (ctx) => {
 				if (!ctx.path.includes("/oauth2/register")) return;
 

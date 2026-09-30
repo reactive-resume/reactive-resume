@@ -1,5 +1,5 @@
-import type { CustomSectionType } from "@reactive-resume/schema/resume/data";
 import type { PdfRuleCode } from "./catalog";
+import type { CustomSectionType } from "@reactive-resume/schema/resume/data";
 
 // ---------------------------------------------------------------------------
 // Layer 1 — RawExtraction: what a PDF reader hands us, unmassaged.

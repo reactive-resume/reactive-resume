@@ -28,7 +28,11 @@ export function toStylesheetPickerColor(value: string): string {
 	const normalized = namedColors[literal.toLowerCase()] ?? literal;
 	if (/^#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/i.test(normalized)) {
 		const hex =
-			normalized.length <= 5 ? `#${[...normalized.slice(1)].map((digit) => digit + digit).join("")}` : normalized;
+			normalized.length <= 5
+				? `#${Array.from(normalized.slice(1))
+						.map((digit) => digit + digit)
+						.join("")}`
+				: normalized;
 		const { r, g, b, a } = hexToRgba(hex);
 		return `rgba(${r}, ${g}, ${b}, ${a})`;
 	}

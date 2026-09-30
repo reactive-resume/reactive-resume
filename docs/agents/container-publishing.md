@@ -19,11 +19,11 @@ no cache is persisted between workflow runs. On Blacksmith, the builder persists
 Dockerfile's pnpm cache mounts between runs, keyed per architecture (`Dockerfile-amd64`,
 `Dockerfile-arm64`).
 
-| Trigger | Published aliases | Production deployment |
-| --- | --- | --- |
-| Push to `main` | `sha-*`, `nightly`, timestamped nightly | No |
-| Manual dispatch, default `release=false` | `sha-*`, `canary-<run-id>-<attempt>` | No |
-| Push of a `v*` tag or explicit `release=true` | `sha-*`, `latest`, version/major/minor | When configured: SSH redeploy and Cloudflare purge |
+| Trigger                                       | Published aliases                       | Production deployment                              |
+| --------------------------------------------- | --------------------------------------- | -------------------------------------------------- |
+| Push to `main`                                | `sha-*`, `nightly`, timestamped nightly | No                                                 |
+| Manual dispatch, default `release=false`      | `sha-*`, `canary-<run-id>-<attempt>`    | No                                                 |
+| Push of a `v*` tag or explicit `release=true` | `sha-*`, `latest`, version/major/minor  | When configured: SSH redeploy and Cloudflare purge |
 
 Manual `release=true` republishes the version already in `package.json` and runs configured
 production integrations. SSH redeployment requires `SSH_KEY`, `SSH_HOST`, and `SSH_USER`;

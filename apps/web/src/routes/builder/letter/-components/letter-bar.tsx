@@ -47,7 +47,7 @@ export function LetterBar({ layout, pinnable }: LetterBarProps) {
 	const wide = useBreakpoint() === "wide";
 
 	return (
-		<header className="grid h-(--editor-bar) grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-line border-b bg-surface px-3">
+		<header className="grid h-(--editor-bar) grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-b border-line bg-surface px-3">
 			<div className="flex min-w-0 items-center gap-1.5">
 				<BackLink />
 				{layout === "tablet" && <DrawerControls pinnable={pinnable} />}
@@ -268,7 +268,7 @@ function LetterSaveStatus() {
 	};
 
 	return (
-		<span role="status" aria-live="polite" className="flex min-w-0 items-center gap-1.5 text-ink-3 text-xs leading-4">
+		<span role="status" aria-live="polite" className="flex min-w-0 items-center gap-1.5 text-xs leading-4 text-ink-3">
 			{status === "saving" && (
 				<>
 					<Spinner decorative className="size-3 border-[1.5px]" />

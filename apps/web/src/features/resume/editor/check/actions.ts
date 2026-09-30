@@ -1,12 +1,12 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { CheckIssue } from "./issues";
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
-import { useResumeStore } from "@/features/resume/builder/draft";
 import { useEditorStore } from "../store";
 import { useEditorMode } from "../use-editor-mode";
 import { getScrollBehavior, revealSelectionInPanel } from "../write/reveal";
+import { useResumeStore } from "@/features/resume/builder/draft";
 
 /** The author's Check choices on a draft, created on first use. */
 export function checkStateOf(draft: ResumeData) {
@@ -72,9 +72,12 @@ export function useCheckActions() {
 	};
 
 	const restoreIgnored = () =>
-		editWithUndo((draft) => {
-			checkStateOf(draft).ignored = [];
-		}, t`Ignored issues are back`);
+		editWithUndo(
+			(draft) => {
+				checkStateOf(draft).ignored = [];
+			},
+			t`Ignored issues are back`,
+		);
 
 	return { showOnPage, fix, ignore, restoreIgnored };
 }

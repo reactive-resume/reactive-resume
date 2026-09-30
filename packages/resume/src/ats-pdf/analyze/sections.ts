@@ -1,5 +1,5 @@
-import type { CustomSectionType } from "@reactive-resume/schema/resume/data";
 import type { DetectedHeading, ExtractedDocument, TextLine } from "../types";
+import type { CustomSectionType } from "@reactive-resume/schema/resume/data";
 import { PDF_SECTION_HEADING_LOOKUP } from "../../ats/section-aliases";
 import { columnSegments } from "../extract";
 

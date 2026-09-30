@@ -14,8 +14,6 @@ import {
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { useCurrentBuilderResumeSelector, useResumeStore } from "@/features/resume/builder/draft";
-import { getSectionTitle } from "@/libs/resume/section";
 import { useEditorStore } from "../store";
 import { openEntry } from "./actions";
 import {
@@ -25,6 +23,8 @@ import {
 	CUSTOM_SECTION_TYPES,
 	isSectionInUse,
 } from "./model";
+import { useCurrentBuilderResumeSelector, useResumeStore } from "@/features/resume/builder/draft";
+import { getSectionTitle } from "@/libs/resume/section";
 
 const SECTION_ICONS: Record<CustomSectionType, IconName> = {
 	summary: "short_text",
@@ -97,7 +97,7 @@ export function AddSectionMenu() {
 				render={
 					<button
 						type="button"
-						className="mt-2 flex h-10 w-full items-center justify-center gap-1.5 rounded-lg border border-line-2 border-dashed text-ink-2 text-sm transition-colors duration-quick hover:border-accent hover:text-accent-text"
+						className="mt-2 flex h-10 w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-line-2 text-sm text-ink-2 transition-colors duration-quick hover:border-accent hover:text-accent-text"
 					>
 						<Icon name="add" size={18} />
 						<Trans>Add section</Trans>
@@ -150,8 +150,8 @@ const SUGGESTED: ("summary" | SectionType)[] = ["experience", "education", "skil
 /** A blank resume: the first sections to add, as + chips, and an offer to import instead. */
 export function StartSuggestions({ onImport }: { onImport: () => void }) {
 	return (
-		<div className="grid gap-3 rounded-xl border border-line border-dashed p-4">
-			<p className="text-ink-2 text-sm">
+		<div className="grid gap-3 rounded-xl border border-dashed border-line p-4">
+			<p className="text-sm text-ink-2">
 				<Trans>Start with the sections most resumes have.</Trans>
 			</p>
 			<div className="flex flex-wrap gap-2">
@@ -167,7 +167,7 @@ export function StartSuggestions({ onImport }: { onImport: () => void }) {
 					</button>
 				))}
 			</div>
-			<p className="text-ink-3 text-xs">
+			<p className="text-xs text-ink-3">
 				<Trans>
 					Have a resume already?{" "}
 					<button

@@ -10,13 +10,13 @@ import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { SocialAuth } from "../components/social-auth";
+import { getAuthRedirectOptions, getOAuthPasskeyOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 import { PasswordInput } from "@/components/input/password-input";
 import { authClient } from "@/libs/auth/client";
 import { orpc } from "@/libs/orpc/client";
 import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
-import { SocialAuth } from "../components/social-auth";
-import { getAuthRedirectOptions, getOAuthPasskeyOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 
 const formSchema = z.object({
 	identifier: z.string().trim().toLowerCase(),
@@ -135,7 +135,7 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 	return (
 		<>
 			<div className="space-y-1 text-center">
-				<h1 className="font-semibold text-2xl tracking-tight">
+				<h1 className="text-2xl font-semibold tracking-tight">
 					<Trans comment="Title on the login page">Sign in to your account</Trans>
 				</h1>
 

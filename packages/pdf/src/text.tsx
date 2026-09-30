@@ -1,6 +1,6 @@
+import type { Style, ViewProps } from "./forme/primitives";
 import type { HTMLElement, Node } from "node-html-parser";
 import type { ReactNode } from "react";
-import type { Style, ViewProps } from "./forme/primitives";
 import { NodeType, parse } from "node-html-parser";
 import { createElement, Fragment } from "react";
 import { Text, View } from "./forme/primitives";

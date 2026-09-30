@@ -27,7 +27,8 @@ If a new server dependency breaks the loading check, add it and its own dependen
 The `live-smoke` job runs only when you start the workflow manually (`workflow_dispatch`). It uses the `vercel-smoke` GitHub environment and runs `tooling/deployment/smoke.mjs` against the installation at `VERCEL_SMOKE_URL`.
 
 <Warning>
-	Point the smoke test only at a dedicated test installation. It signs up a new account, publishes a resume, and uploads files, then deletes the account and everything in it.
+  Point the smoke test only at a dedicated test installation. It signs up a new account, publishes a resume, and uploads
+  files, then deletes the account and everything in it.
 </Warning>
 
 The script checks, in order:
@@ -45,11 +46,11 @@ The installation must allow sign-ups and email sign-in, so `FLAG_DISABLE_SIGNUPS
 
 To include the 25 MiB attachment check, configure an OpenAI-compatible test provider that answers a connection test for the model `smoke-model`. No paid AI model is needed; a deterministic stub works.
 
-| Name | Kind | Value |
-| --- | --- | --- |
-| `VERCEL_SMOKE_URL` | Variable | Origin of the test installation |
-| `VERCEL_SMOKE_AI_BASE_URL` | Variable | Base URL of the test provider |
-| `VERCEL_SMOKE_AI_API_KEY` | Secret | API key for the test provider |
+| Name                       | Kind     | Value                           |
+| -------------------------- | -------- | ------------------------------- |
+| `VERCEL_SMOKE_URL`         | Variable | Origin of the test installation |
+| `VERCEL_SMOKE_AI_BASE_URL` | Variable | Base URL of the test provider   |
+| `VERCEL_SMOKE_AI_API_KEY`  | Secret   | API key for the test provider   |
 
 The installation needs `ENCRYPTION_SECRET` set to save the provider. A provider on a private or `http://` address also needs `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true`, which is only safe on an isolated test installation.
 

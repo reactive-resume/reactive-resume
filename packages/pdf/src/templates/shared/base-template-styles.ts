@@ -1,7 +1,7 @@
-import type { Picture, ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Style } from "../../forme/style-types";
 import type { getTemplateMetrics } from "./metrics";
 import type { createRtlStyleHelpers } from "./rtl";
+import type { Picture, ResumeData } from "@reactive-resume/schema/resume/data";
 import { resolveBoldFontWeight } from "@reactive-resume/fonts";
 import { rgbaStringToHex } from "@reactive-resume/utils/color";
 

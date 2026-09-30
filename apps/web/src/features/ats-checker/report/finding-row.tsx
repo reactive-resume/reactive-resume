@@ -26,8 +26,8 @@ export function FindingRow({ finding }: FindingRowProps) {
 				<span className={cn("mt-1.5 size-2 shrink-0 rounded-full", severityDotClass(finding.severity))} aria-hidden />
 
 				<div className="min-w-0 flex-1 space-y-1">
-					<p className="font-medium text-sm leading-snug">{message.title}</p>
-					<p className="text-ink-3 text-xs leading-normal">{message.action}</p>
+					<p className="text-sm leading-snug font-medium">{message.title}</p>
+					<p className="text-xs leading-normal text-ink-3">{message.action}</p>
 				</div>
 
 				<Badge variant="neutral" className="shrink-0">
@@ -38,12 +38,12 @@ export function FindingRow({ finding }: FindingRowProps) {
 			{(evidence?.snippet || evidence?.page !== undefined) && (
 				<div className="flex flex-wrap items-center gap-2">
 					{evidence.snippet && (
-						<code className="min-w-0 truncate rounded bg-sunken px-1.5 py-0.5 font-mono text-ink-3 text-xs">
+						<code className="min-w-0 truncate rounded bg-sunken px-1.5 py-0.5 font-mono text-xs text-ink-3">
 							{evidence.snippet}
 						</code>
 					)}
 					{evidence.page !== undefined && (
-						<Badge variant="outline" className="shrink-0 font-normal text-xs">
+						<Badge variant="outline" className="shrink-0 text-xs font-normal">
 							Page {evidence.page}
 						</Badge>
 					)}

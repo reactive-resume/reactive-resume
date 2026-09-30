@@ -1,6 +1,6 @@
-import type { Template } from "@reactive-resume/schema/templates";
 import type { EditorSelection } from "@/features/resume/editor/store";
 import type { VersionSummary } from "@/features/resume/share/format";
+import type { Template } from "@reactive-resume/schema/templates";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
@@ -89,7 +89,7 @@ export function PageCanvas() {
 			<section
 				ref={canvasRef}
 				// The scroll area takes focus so the page can be scrolled from the keyboard even before its lines load.
-				// biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be reachable by keyboard.
+				// oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region must be reachable by keyboard.
 				tabIndex={0}
 				aria-label={t`Resume page`}
 				// Tapping the page (not a line) closes the tablet drawer but keeps the selection; on phones it
@@ -116,7 +116,7 @@ export function PageCanvas() {
 						shifted && "-translate-x-[120px] rtl:translate-x-[120px]",
 						parser && "hidden",
 					)}
-					pageClassName={cn("rounded-none shadow-page", viewing && "outline-2 outline-ink outline-offset-4")}
+					pageClassName={cn("rounded-none shadow-page", viewing && "outline-2 outline-offset-4 outline-ink")}
 					onRender={setRendered}
 					renderPageCaption={({ pageNumber }) => (
 						<ResumePageCaption
@@ -165,7 +165,7 @@ function ResumePageCaption(props: ResumePageCaptionProps) {
 
 	if (pageNumber === 1) {
 		return (
-			<figcaption className="mb-2.5 flex flex-wrap items-center justify-center gap-2.5 text-center font-medium text-ink-3 text-xs">
+			<figcaption className="mb-2.5 flex flex-wrap items-center justify-center gap-2.5 text-center text-xs font-medium text-ink-3">
 				{viewing ? (
 					<CanvasStatusPill icon="history">
 						<Trans>
@@ -201,8 +201,8 @@ function ResumePageCaption(props: ResumePageCaptionProps) {
 	// Content past the authored pages: a dashed warn line at the page boundary.
 	if (overflow && pageNumber > overflow.authored) {
 		return (
-			<figcaption className="relative mb-2.5 border-warn border-t-[1.5px] border-dashed">
-				<span className="absolute end-0 -top-2.5 rounded bg-sunken px-1.5 font-semibold text-[11px] text-warn-text">
+			<figcaption className="relative mb-2.5 border-t-[1.5px] border-dashed border-warn">
+				<span className="absolute end-0 -top-2.5 rounded bg-sunken px-1.5 text-[11px] font-semibold text-warn-text">
 					<Trans>Page {pageNumber}</Trans>
 				</span>
 			</figcaption>
@@ -210,7 +210,7 @@ function ResumePageCaption(props: ResumePageCaptionProps) {
 	}
 
 	return (
-		<figcaption className="mb-2.5 text-center font-medium text-ink-3 text-xs">
+		<figcaption className="mb-2.5 text-center text-xs font-medium text-ink-3">
 			<Trans>Page {pageNumber}</Trans>
 		</figcaption>
 	);
@@ -242,7 +242,7 @@ function OverflowChip({ authored, lines }: OverflowChipProps) {
 					setFitting(true);
 					void runFit().finally(() => setFitting(false));
 				}}
-				className="h-6 whitespace-nowrap rounded-md bg-surface px-2.5 font-semibold text-ink text-xs shadow-e1 disabled:opacity-60"
+				className="h-6 rounded-md bg-surface px-2.5 text-xs font-semibold whitespace-nowrap text-ink shadow-e1 disabled:opacity-60"
 			>
 				{authored === 1 ? <Trans>Fit to one page</Trans> : <Trans>Fit to {authored} pages</Trans>}
 			</button>

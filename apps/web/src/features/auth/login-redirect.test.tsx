@@ -32,6 +32,7 @@ vi.mock("@tanstack/react-router", () => ({
 	useRouter: () => ({ navigate: mocks.navigate, invalidate: mocks.invalidate }),
 	useNavigate: () => mocks.navigate,
 	Link: ({ to, search: _search, ...props }: ComponentProps<"a"> & { to: string; search?: unknown }) => (
+		// oxlint-disable-next-line jsx-a11y/anchor-has-content -- The Link mock forwards children through props.
 		<a href={to} {...props} />
 	),
 }));

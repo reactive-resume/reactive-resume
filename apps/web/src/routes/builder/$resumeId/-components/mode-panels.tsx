@@ -1,17 +1,17 @@
 import type { EditorMode } from "@/features/resume/editor/store";
+import { DesignPanel } from "./design-panel";
 import { CheckPanel } from "@/features/resume/editor/check/check-panel";
 import { OfflineBanner } from "@/features/resume/editor/save-status";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { selectionFromPanelElement } from "@/features/resume/editor/write/reveal";
 import { WritePanel } from "@/features/resume/editor/write/write-panel";
-import { DesignPanel } from "./design-panel";
 
 function WriteMode() {
 	const select = useEditorStore((state) => state.select);
 
 	return (
 		// Focus events bubble here from every field; the handler only reads where focus landed.
-		// biome-ignore lint/a11y/noStaticElementInteractions: not an interactive element, see above.
+		// oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- not an interactive element, see above.
 		<div
 			onFocus={(event) => {
 				// Fields only: buttons (an entry's title, the chevrons) change the selection themselves.

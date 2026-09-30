@@ -5,10 +5,10 @@ import { useNavigate, useRouteContext, useRouterState } from "@tanstack/react-ro
 import { CommandItem } from "@reactive-resume/ui/components/command";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { openAssistantFrom } from "@/features/assistant/open";
-import { orpc } from "@/libs/orpc/client";
 import { useCommandPaletteStore } from "../store";
 import { BaseCommandGroup } from "./base";
+import { openAssistantFrom } from "@/features/assistant/open";
+import { orpc } from "@/libs/orpc/client";
 
 /**
  * Always the last row: "Ask the assistant '…'". In the editor it asks about the open document; anywhere else it

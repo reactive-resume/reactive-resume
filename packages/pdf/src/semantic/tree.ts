@@ -1,7 +1,3 @@
-import type { SemanticNode, SemanticNodeKind } from "@reactive-resume/resume/stylesheet/types";
-import type { CustomSectionType, LayoutPage, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
-import type { Template } from "@reactive-resume/schema/templates";
-import type { HTMLElement, Node } from "node-html-parser";
 import type { StandardFieldRole } from "./binding-inventory";
 import type {
 	TemplateSemanticChildSelector,
@@ -11,6 +7,10 @@ import type {
 	TemplateSemanticPrimitivePart,
 	TemplateSemanticRegion,
 } from "./template-manifest";
+import type { SemanticNode, SemanticNodeKind } from "@reactive-resume/resume/stylesheet/types";
+import type { CustomSectionType, LayoutPage, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import type { Template } from "@reactive-resume/schema/templates";
+import type { HTMLElement, Node } from "node-html-parser";
 import { NodeType } from "node-html-parser";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { getResumeSectionIcon } from "../section-icon";

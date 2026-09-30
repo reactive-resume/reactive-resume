@@ -7,9 +7,9 @@ import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Dialog } from "@reactive-resume/ui/components/dialog";
+import { NewDocumentDialog } from "./new-document-dialog";
 import { applicationsListQueryKey } from "@/features/applications/queries";
 import { orpc } from "@/libs/orpc/client";
-import { NewDocumentDialog } from "./new-document-dialog";
 
 vi.mock("@tanstack/react-router", () => ({ useNavigate: () => vi.fn() }));
 

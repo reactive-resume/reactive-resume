@@ -13,7 +13,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
 			data-slot="input"
 			className={cn(
 				inputBaseClassName,
-				"h-9 pointer-coarse:h-11 px-3 file:inline-flex file:h-6 file:border-0 file:bg-transparent file:font-medium file:text-ink",
+				"h-9 px-3 file:inline-flex file:h-6 file:border-0 file:bg-transparent file:font-medium file:text-ink pointer-coarse:h-11",
 				className,
 			)}
 			{...props}

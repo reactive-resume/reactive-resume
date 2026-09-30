@@ -42,7 +42,7 @@ describe("publishResumeUpdated", () => {
 		await publishResumeUpdated(exampleEvent);
 
 		expect(pool.query).toHaveBeenCalledTimes(1);
-		// biome-ignore lint/style/noNonNullAssertion: The assertion above verifies the query call exists before destructuring it.
+		// oxlint-disable-next-line typescript/no-non-null-assertion -- The assertion above verifies the query call exists before destructuring it.
 		const [sql, params] = pool.query.mock.calls[0]!;
 		expect(sql).toBe("SELECT pg_notify($1, $2)");
 		expect(params?.[0]).toBe("resume_updated");

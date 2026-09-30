@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import type { Style, StyleProp } from "./style-types";
+import type { ReactNode } from "react";
 import { createElement } from "react";
 
 export type { Style, StyleProp } from "./style-types";

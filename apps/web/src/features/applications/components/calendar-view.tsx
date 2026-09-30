@@ -1,6 +1,6 @@
-import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { ScheduledInterview } from "../interviews";
 import type { Application } from "../types";
+import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
@@ -52,6 +52,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 	const upcomingByDay = [...groupByDay(upcoming).values()];
 	const days = monthGrid(month);
 
+	// oxlint-disable-next-line react/purity -- Read today on each render so an open calendar updates after midnight when navigated.
 	const today = new Date();
 	const todayKey = dayKey(today);
 	const tomorrowKey = dayKey(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1));
@@ -86,8 +87,8 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 			<section className="flex min-h-0 flex-1 flex-col gap-3 lg:overflow-y-auto" data-testid="interview-calendar">
 				<div className="flex flex-wrap items-center gap-x-3 gap-y-2">
 					<div className="flex items-baseline gap-2">
-						<h2 className="font-semibold text-lg capitalize">{monthFormat.format(month)}</h2>
-						<span className="text-ink-3 text-sm">
+						<h2 className="text-lg font-semibold capitalize">{monthFormat.format(month)}</h2>
+						<span className="text-sm text-ink-3">
 							{monthCount === 0 ? (
 								<Trans>No interviews</Trans>
 							) : monthCount === 1 ? (
@@ -125,7 +126,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 						{days.slice(0, 7).map((day) => (
 							<div
 								key={`weekday-${day.getDay()}`}
-								className="border-line border-b p-2 text-center font-medium text-[11px] text-ink-3 uppercase tracking-wide"
+								className="border-b border-line p-2 text-center text-[11px] font-medium tracking-wide text-ink-3 uppercase"
 							>
 								{weekdayFormat.format(day)}
 							</div>
@@ -135,7 +136,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 						key={`${month.getFullYear()}-${month.getMonth()}`}
 						className={cn(
 							"grid grid-cols-7",
-							direction !== 0 && "starting:opacity-0 transition-[opacity,translate] duration-standard ease-enter",
+							direction !== 0 && "transition-[opacity,translate] duration-standard ease-enter starting:opacity-0",
 							direction === 1 && "starting:translate-x-2 rtl:starting:-translate-x-2",
 							direction === -1 && "starting:-translate-x-2 rtl:starting:translate-x-2",
 						)}
@@ -164,7 +165,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 											type="button"
 											title={scheduleLabel}
 											aria-label={scheduleLabel}
-											className="flex size-6 items-center justify-center rounded-md text-ink-3 opacity-0 transition-opacity hover:bg-sunken hover:text-ink focus-visible:opacity-100 group-hover/day:opacity-100 max-sm:hidden"
+											className="flex size-6 items-center justify-center rounded-md text-ink-3 opacity-0 transition-opacity group-hover/day:opacity-100 hover:bg-sunken hover:text-ink focus-visible:opacity-100 max-sm:hidden"
 											onClick={() => schedule(day)}
 										>
 											<Icon name="add" size={14} />
@@ -200,7 +201,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 												<Trans>+{extra} more</Trans>
 											</PopoverTrigger>
 											<PopoverContent align="start" className="flex w-60 flex-col gap-1 p-2">
-												<p className="px-1 pb-1 font-medium text-xs">{dayHeading(day)}</p>
+												<p className="px-1 pb-1 text-xs font-medium">{dayHeading(day)}</p>
 												{items.map((item) => (
 													<InterviewChip
 														key={item.interview.id}
@@ -218,7 +219,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 					</div>
 				</div>
 
-				<div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-ink-3 text-xs">
+				<div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-3">
 					{INTERVIEW_KINDS.map((kind) => (
 						<span key={kind.value} className="flex items-center gap-1.5">
 							<span className="size-2 rounded-full" style={{ background: kind.color }} />
@@ -229,20 +230,20 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 			</section>
 
 			<aside className="flex shrink-0 flex-col gap-4 lg:w-80 lg:overflow-y-auto">
-				<h3 className="font-semibold text-sm">
+				<h3 className="text-sm font-semibold">
 					<Trans>Upcoming interviews</Trans>
 				</h3>
 
 				{upcoming.length === 0 ? (
-					<div className="flex flex-col items-center gap-3 rounded-xl border border-line border-dashed px-4 py-8 text-center">
+					<div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-line px-4 py-8 text-center">
 						<div className="flex size-10 items-center justify-center rounded-full bg-sunken">
 							<Icon name="calendar_today" size={20} className="text-ink-3" />
 						</div>
 						<div className="space-y-1">
-							<p className="font-medium text-sm">
+							<p className="text-sm font-medium">
 								<Trans>Nothing scheduled yet</Trans>
 							</p>
-							<p className="text-ink-3 text-xs">
+							<p className="text-xs text-ink-3">
 								<Trans>Add screening calls and technical interviews to see them here and on the calendar.</Trans>
 							</p>
 						</div>
@@ -257,7 +258,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 						if (!first) return null;
 						return (
 							<div key={dayKey(first.start)} className="flex flex-col gap-2">
-								<h4 className="font-medium text-ink-3 text-xs">{dayHeading(first.start)}</h4>
+								<h4 className="text-xs font-medium text-ink-3">{dayHeading(first.start)}</h4>
 								{group.map((item) => (
 									<UpcomingCard
 										key={item.interview.id}
@@ -308,17 +309,17 @@ function UpcomingCard({ item, timeRange, locale, onEdit, onOpenApplication }: Up
 					<span className="text-ink-3">{formatDuration(item.interview.durationMinutes, locale)}</span>
 				</span>
 				<span className="mt-1 block truncate font-semibold">{item.application.company}</span>
-				<span className="block truncate text-ink-3 text-xs">
+				<span className="block truncate text-xs text-ink-3">
 					{kind?.label ?? item.interview.kind} · {item.application.role}
 				</span>
 				{item.interview.location && (
-					<span className="mt-1.5 flex items-center gap-1 text-ink-3 text-xs">
+					<span className="mt-1.5 flex items-center gap-1 text-xs text-ink-3">
 						<Icon name="location_on" size={16} className="shrink-0" />
 						<span className="truncate">{item.interview.location}</span>
 					</span>
 				)}
 			</button>
-			<button type="button" className="mb-2 text-accent-text text-xs hover:underline" onClick={onOpenApplication}>
+			<button type="button" className="mb-2 text-xs text-accent-text hover:underline" onClick={onOpenApplication}>
 				<Trans>View application</Trans>
 			</button>
 		</div>

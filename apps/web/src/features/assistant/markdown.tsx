@@ -26,7 +26,7 @@ export const AssistantMarkdown = function AssistantMarkdown({ text }: { text: st
 					</pre>
 				),
 				blockquote: ({ children }) => (
-					<blockquote className="my-3 border-line-2 border-s-2 ps-3 text-ink-2">{children}</blockquote>
+					<blockquote className="my-3 border-s-2 border-line-2 ps-3 text-ink-2">{children}</blockquote>
 				),
 				table: ({ children }) => (
 					<div className="my-3 max-w-full overflow-x-auto">

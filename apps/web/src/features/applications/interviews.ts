@@ -1,5 +1,5 @@
-import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { Application } from "./types";
+import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { INTERVIEW_KINDS } from "@reactive-resume/schema/applications/data";
 
 export type ScheduledInterview = {

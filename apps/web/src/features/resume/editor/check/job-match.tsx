@@ -15,14 +15,14 @@ import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { generateId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
+import { useEditorStore } from "../store";
+import { checkStateOf, editWithUndo } from "./actions";
 import { applicationsListQueryKey, applicationsListQueryOptions } from "@/features/applications/queries";
 import { openAssistantFrom } from "@/features/assistant/open";
 import { useCurrentBuilderResumeSelector, useIsResumeLocked, usePatchResume } from "@/features/resume/builder/draft";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
-import { useEditorStore } from "../store";
-import { checkStateOf, editWithUndo } from "./actions";
 
 /** Matches the applications feature's cap on a saved posting. */
 const MAX_POSTING_CHARS = 20_000;
@@ -107,18 +107,24 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 
 	const addToSkills = (term: MatchedTerm) => {
 		const written = term.label;
-		editWithUndo((draft) => {
-			draft.sections.skills.items.push(newSkill(written));
-		}, t`“${written}” added to Skills`);
+		editWithUndo(
+			(draft) => {
+				draft.sections.skills.items.push(newSkill(written));
+			},
+			t`“${written}” added to Skills`,
+		);
 		setOpenTerm(null);
 		setHighlightTerm(term.term);
 	};
 
 	const hideTerm = (term: MatchedTerm) => {
-		editWithUndo((draft) => {
-			const state = checkStateOf(draft);
-			if (!state.hiddenTerms.includes(term.term)) state.hiddenTerms.push(term.term);
-		}, t`“${term.label}” hidden`);
+		editWithUndo(
+			(draft) => {
+				const state = checkStateOf(draft);
+				if (!state.hiddenTerms.includes(term.term)) state.hiddenTerms.push(term.term);
+			},
+			t`“${term.label}” hidden`,
+		);
 		setOpenTerm(null);
 	};
 
@@ -127,23 +133,23 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 			<PostingSource application={application} />
 
 			{!result ? (
-				<p className="flex items-center gap-2 text-ink-2 text-sm">
+				<p className="flex items-center gap-2 text-sm text-ink-2">
 					<Trans>Reading the posting…</Trans>
 				</p>
 			) : result.total === 0 ? (
-				<p className="text-ink-2 text-sm">
+				<p className="text-sm text-ink-2">
 					<Trans>No terms stood out in this posting.</Trans>
 				</p>
 			) : (
 				<>
 					<div className="grid gap-1.5">
 						<div className="flex items-baseline justify-between gap-2">
-							<strong className="font-semibold text-sm">
+							<strong className="text-sm font-semibold">
 								<Trans>
 									{result.found.length} of {result.total} posting terms appear
 								</Trans>
 							</strong>
-							<span className="text-ink-3 text-xs">
+							<span className="text-xs text-ink-3">
 								<Trans>not scored</Trans>
 							</span>
 						</div>
@@ -164,7 +170,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 
 					{result.missing.length > 0 && (
 						<section aria-labelledby="match-missing" className="grid gap-2">
-							<h3 id="match-missing" className="font-semibold text-ink-3 text-xs uppercase">
+							<h3 id="match-missing" className="text-xs font-semibold text-ink-3 uppercase">
 								<Trans>Not in your resume · add only if true</Trans>
 							</h3>
 							<div className="flex flex-wrap gap-1.5">
@@ -175,7 +181,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 										aria-expanded={openTerm === term.term}
 										onClick={() => setOpenTerm(openTerm === term.term ? null : term.term)}
 										className={cn(
-											"flex h-[30px] items-center gap-1 rounded-[7px] border border-dashed px-2.5 font-medium text-[13px] transition-colors duration-quick",
+											"flex h-[30px] items-center gap-1 rounded-[7px] border border-dashed px-2.5 text-[13px] font-medium transition-colors duration-quick",
 											openTerm === term.term ? "border-accent bg-accent-soft" : "border-line-2 hover:bg-hover",
 										)}
 									>
@@ -191,7 +197,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 									aria-label={t`Add “${open.label}”`}
 									className={cn(ENTER_CLASS, "grid gap-2 rounded-xl border border-line bg-raised p-3 shadow-e2")}
 								>
-									<p className="text-[13px] text-ink-2 leading-[19px]">
+									<p className="text-[13px] leading-[19px] text-ink-2">
 										<Plural
 											value={open.jdCount}
 											one={`“${open.label}” appears once in the posting.`}
@@ -219,7 +225,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 
 					{result.found.length > 0 && (
 						<section aria-labelledby="match-found" className="grid gap-2">
-							<h3 id="match-found" className="font-semibold text-ink-3 text-xs uppercase">
+							<h3 id="match-found" className="text-xs font-semibold text-ink-3 uppercase">
 								<Trans>Already covered · pick one to find it on the page</Trans>
 							</h3>
 							<div className="flex flex-wrap gap-1.5">
@@ -232,7 +238,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 											aria-pressed={on}
 											onClick={() => setHighlightTerm(on ? null : term.term)}
 											className={cn(
-												"flex h-7 items-center gap-1 rounded-md px-2 font-medium text-xs transition-colors duration-quick",
+												"flex h-7 items-center gap-1 rounded-md px-2 text-xs font-medium transition-colors duration-quick",
 												on ? "bg-[#F2DE8C] text-[oklch(0.3_0.05_80)]" : "bg-accent-soft text-accent-text",
 											)}
 										>
@@ -248,16 +254,19 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 			)}
 
 			{hiddenTerms.length > 0 && (
-				<p className="text-ink-3 text-xs">
+				<p className="text-xs text-ink-3">
 					<Trans>Hidden: {hiddenTerms.join(", ")}</Trans> ·{" "}
 					<button
 						type="button"
 						disabled={locked}
 						className="font-medium text-ink-2 underline underline-offset-2"
 						onClick={() =>
-							editWithUndo((draft) => {
-								checkStateOf(draft).hiddenTerms = [];
-							}, t`Hidden terms are back`)
+							editWithUndo(
+								(draft) => {
+									checkStateOf(draft).hiddenTerms = [];
+								},
+								t`Hidden terms are back`,
+							)
 						}
 					>
 						<Trans>Show again</Trans>
@@ -315,10 +324,10 @@ function PostingSource({ application }: { application: JobMatch["application"] }
 						<Icon name="content_copy" size={16} />
 					</span>
 					<span className="grid min-w-0 flex-1">
-						<b className="font-semibold text-[13px]">
+						<b className="text-[13px] font-semibold">
 							<Trans>Pasted posting</Trans>
 						</b>
-						<span className="text-ink-3 text-xs">
+						<span className="text-xs text-ink-3">
 							<Trans>For this visit only</Trans>
 						</span>
 					</span>
@@ -334,14 +343,14 @@ function PostingSource({ application }: { application: JobMatch["application"] }
 	return (
 		<div className="grid gap-2 rounded-[10px] bg-bg p-3">
 			<div className="flex items-center gap-2.5">
-				<span className="grid size-7 place-items-center rounded-[7px] bg-sunken font-semibold text-[13px] text-ink-2">
+				<span className="grid size-7 place-items-center rounded-[7px] bg-sunken text-[13px] font-semibold text-ink-2">
 					{application.company.slice(0, 1).toUpperCase()}
 				</span>
 				<span className="grid min-w-0 flex-1">
-					<b className="truncate font-semibold text-[13px]">
+					<b className="truncate text-[13px] font-semibold">
 						{application.role} · {application.company}
 					</b>
-					<span className="text-ink-3 text-xs">
+					<span className="text-xs text-ink-3">
 						<Trans>Posting from the linked application</Trans>
 					</span>
 				</span>
@@ -423,10 +432,10 @@ function NoPosting({ application }: { application: JobMatch["application"] }) {
 	if (application) {
 		return (
 			<div className="grid gap-2.5 rounded-xl border border-line p-4">
-				<strong className="font-semibold text-sm">
+				<strong className="text-sm font-semibold">
 					{application.role} · {application.company}
 				</strong>
-				<p className="text-[13px] text-ink-2 leading-[19px]">
+				<p className="text-[13px] leading-[19px] text-ink-2">
 					<Trans>This application has no posting saved yet. Paste it to match against it.</Trans>
 				</p>
 				<Textarea
@@ -451,19 +460,19 @@ function NoPosting({ application }: { application: JobMatch["application"] }) {
 
 	return (
 		<div className="grid gap-2.5 rounded-xl border border-line p-4">
-			<strong className="font-semibold text-sm">
+			<strong className="text-sm font-semibold">
 				<Trans>Match against a job</Trans>
 			</strong>
-			<p className="text-[13px] text-ink-2 leading-[19px]">
+			<p className="text-[13px] leading-[19px] text-ink-2">
 				<Trans>This resume isn't linked to an application yet.</Trans>
 			</p>
 			<ApplicationPicker value={null} onChange={(id) => void link(id)} />
 			{isPending && (
-				<span className="text-ink-3 text-xs">
+				<span className="text-xs text-ink-3">
 					<Trans>Linking…</Trans>
 				</span>
 			)}
-			<span className="text-center text-ink-3 text-xs">
+			<span className="text-center text-xs text-ink-3">
 				<Trans>or</Trans>
 			</span>
 			<Textarea
@@ -477,7 +486,7 @@ function NoPosting({ application }: { application: JobMatch["application"] }) {
 			<Button size="sm" className="w-fit" disabled={!draft.trim()} onClick={() => setPastedPosting(draft)}>
 				<Trans>Match this posting</Trans>
 			</Button>
-			<span className="text-ink-3 text-xs leading-[17px]">
+			<span className="text-xs leading-[17px] text-ink-3">
 				<Trans>A pasted posting can be saved as an application afterwards.</Trans>
 			</span>
 		</div>

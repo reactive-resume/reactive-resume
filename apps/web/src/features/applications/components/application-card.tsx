@@ -24,13 +24,13 @@ export function ApplicationCard({ application, onClick, withMenu = false, draggi
 				"group relative grid gap-2 rounded-[10px] border border-line bg-surface p-3 shadow-e1 transition-[border-color,scale] duration-quick ease-enter hover:border-line-2 active:not-has-[[data-slot=button]:active]:scale-[0.98]",
 				// The overlay card lifts as it's picked up and settles flat again while the drop animation flies it home.
 				dragging &&
-					"in-[.is-dropping]:rotate-0 rotate-1 starting:rotate-0 in-[.is-dropping]:scale-100 scale-[1.02] starting:scale-100 cursor-grabbing in-[.is-dropping]:shadow-e1 shadow-e3 starting:shadow-e1 transition-[rotate,scale,box-shadow] duration-quick ease-enter **:cursor-grabbing",
+					"scale-[1.02] rotate-1 cursor-grabbing shadow-e3 transition-[rotate,scale,box-shadow] duration-quick ease-enter **:cursor-grabbing in-[.is-dropping]:scale-100 in-[.is-dropping]:rotate-0 in-[.is-dropping]:shadow-e1 starting:scale-100 starting:rotate-0 starting:shadow-e1",
 			)}
 		>
 			<div className="flex items-start gap-2.5">
 				<span
 					aria-hidden="true"
-					className="grid size-7 shrink-0 place-items-center rounded-[7px] bg-sunken font-semibold text-ink-2 text-xs"
+					className="grid size-7 shrink-0 place-items-center rounded-[7px] bg-sunken text-xs font-semibold text-ink-2"
 				>
 					{application.company.slice(0, 1).toUpperCase()}
 				</span>
@@ -39,8 +39,8 @@ export function ApplicationCard({ application, onClick, withMenu = false, draggi
 					onClick={onClick}
 					className="grid min-w-0 flex-1 text-start after:absolute after:inset-0 after:rounded-[10px]"
 				>
-					<span className="truncate font-semibold text-sm">{application.role}</span>
-					<span className="truncate text-ink-3 text-xs">{application.company}</span>
+					<span className="truncate text-sm font-semibold">{application.role}</span>
+					<span className="truncate text-xs text-ink-3">{application.company}</span>
 				</button>
 				{withMenu && <ApplicationActionsMenu application={application} className="relative z-10 -me-1.5 -mt-1.5" />}
 			</div>

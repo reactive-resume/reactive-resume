@@ -33,10 +33,10 @@ import {
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
-import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { DRAG_SETTLE } from "@/libs/motion";
 import { resolveLayoutSectionTitle } from "./title";
 import { filterVisibleLayoutSectionIds } from "./visibility";
+import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { DRAG_SETTLE } from "@/libs/motion";
 
 type ColumnId = "main" | "sidebar";
 
@@ -296,9 +296,9 @@ function PageContainer({
 	return (
 		<div className="space-y-3 rounded-md border border-dashed bg-bg/40">
 			<div className="@container bg-sunken/50 px-4 py-3">
-				<div className="grid @max-[22rem]:grid-cols-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2">
+				<div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 @max-[22rem]:grid-cols-1">
 					<div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
-						<span className="font-medium text-xs">
+						<span className="text-xs font-medium">
 							<Trans comment="Layout editor page label with 1-based page number">Page {pageIndex + 1}</Trans>
 						</span>
 
@@ -309,7 +309,7 @@ function PageContainer({
 								onCheckedChange={(checked) => onToggleFullWidth(pageIndex, checked)}
 							/>
 
-							<span className="font-medium text-ink-3 text-xs">
+							<span className="text-xs font-medium text-ink-3">
 								<Trans comment="Layout editor toggle label that makes a page single-column">Full Width</Trans>
 							</span>
 						</label>
@@ -330,7 +330,7 @@ function PageContainer({
 
 			<div
 				className={cn(
-					"grid w-full @md:grid-cols-2 gap-x-4 gap-y-2 p-4 pt-0 font-medium",
+					"grid w-full gap-x-4 gap-y-2 p-4 pt-0 font-medium @md:grid-cols-2",
 					sidebarPosition === "none" && "@md:grid-cols-1",
 				)}
 			>
@@ -379,7 +379,7 @@ function LayoutColumn({
 	return (
 		<SortableContext id={droppableId} items={items} strategy={verticalListSortingStrategy}>
 			<div className={cn("space-y-1.5", disabled && "opacity-50", className)}>
-				{!hideLabel && <div className="@md:row-start-1 ps-4 font-medium text-xs">{getColumnLabel(columnId)}</div>}
+				{!hideLabel && <div className="ps-4 text-xs font-medium @md:row-start-1">{getColumnLabel(columnId)}</div>}
 
 				<div
 					ref={setNodeRef}
@@ -393,7 +393,7 @@ function LayoutColumn({
 					))}
 
 					{items.length === 0 && (
-						<div className="rounded-md border border-dashed p-4 font-medium text-ink-3 text-xs">
+						<div className="rounded-md border border-dashed p-4 text-xs font-medium text-ink-3">
 							<Trans>Drag and drop sections here to move them between columns</Trans>
 						</div>
 					)}
@@ -574,7 +574,7 @@ function SectionBreakItems({ id }: SectionBreakItemsProps) {
 				<Trans comment="Layout editor toggle that prevents a section from splitting across pages">Keep together</Trans>
 			</DropdownMenuCheckboxItem>
 
-			<p className="px-2 pb-1 text-ink-3 text-xs">
+			<p className="px-2 pb-1 text-xs text-ink-3">
 				<Trans comment="Helper note explaining the keep-together limitation">
 					Only applies when the section fits on a single page.
 				</Trans>
@@ -621,7 +621,7 @@ function LayoutItemContent({
 			data-overlay={isOverlay ? "true" : undefined}
 			data-dragging={isDragging ? "true" : undefined}
 			className={cn(
-				"group/item flex cursor-grab touch-none select-none items-center gap-x-2 rounded-md border border-line bg-bg px-2 py-1.5 font-medium text-sm transition-[background-color,border-color] duration-quick",
+				"group/item flex cursor-grab touch-none items-center gap-x-2 rounded-md border border-line bg-bg px-2 py-1.5 text-sm font-medium transition-[background-color,border-color] duration-quick select-none",
 				"hover:bg-sunken/40 active:cursor-grabbing active:border-accent/60 active:bg-sunken/40",
 				"data-[overlay=true]:cursor-grabbing data-[overlay=true]:border-accent/60 data-[overlay=true]:bg-bg data-[overlay=true]:shadow-md",
 				"data-[dragging=true]:cursor-grabbing data-[dragging=true]:opacity-40",
@@ -638,7 +638,7 @@ function LayoutItemContent({
 					<DropdownMenuTrigger
 						aria-label={t`Move section to another column or page`}
 						onPointerDown={(event) => event.stopPropagation()}
-						className="flex cursor-context-menu items-center rounded p-0.5 opacity-40 transition-opacity hover:bg-sunken/40 focus:outline-none focus-visible:ring-1 group-hover/item:opacity-100"
+						className="flex cursor-context-menu items-center rounded p-0.5 opacity-40 transition-opacity group-hover/item:opacity-100 hover:bg-sunken/40 focus:outline-none focus-visible:ring-1"
 					>
 						<Icon name="more_vert" size={16} />
 					</DropdownMenuTrigger>

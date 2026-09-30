@@ -7,10 +7,10 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { stagger } from "@/libs/motion";
-import { orpc } from "@/libs/orpc/client";
 import { computeInsights, computeOutcomes, computeTimeline } from "../insights";
 import { getStageColor, getStageLabel } from "../stages";
+import { stagger } from "@/libs/motion";
+import { orpc } from "@/libs/orpc/client";
 
 /** The page's shape while stats load: the funnel, the two figures, then the charts. */
 export function InsightsSkeleton() {
@@ -50,7 +50,7 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 
 	if (outcomes.sent === 0) {
 		return (
-			<p className="py-16 text-center text-ink-2 text-sm">
+			<p className="py-16 text-center text-sm text-ink-2">
 				<Trans>Once you've sent a few applications, this shows how far they get and how quickly people reply.</Trans>
 			</p>
 		);
@@ -59,7 +59,7 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 	return (
 		<div className="flex max-w-4xl flex-col gap-4 overflow-y-auto pb-6">
 			<section aria-labelledby="insights-funnel" className="grid gap-3 rounded-xl border border-line p-5">
-				<h2 id="insights-funnel" className="font-semibold text-sm">
+				<h2 id="insights-funnel" className="text-sm font-semibold">
 					<Trans>How far applications get</Trans>
 				</h2>
 				<ol className="grid gap-2">
@@ -75,7 +75,7 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 							</span>
 							<span className="h-5 overflow-hidden rounded bg-sunken">
 								<span
-									className="block h-full origin-left starting:scale-x-0 rounded transition-[scale] delay-(--stagger) duration-emphasized ease-enter motion-reduce:delay-0 rtl:origin-right"
+									className="block h-full origin-left rounded transition-[scale] delay-(--stagger) duration-emphasized ease-enter motion-reduce:delay-0 rtl:origin-right starting:scale-x-0"
 									style={{
 										...stagger(index),
 										width: `${(row.reached / widest) * 100}%`,
@@ -87,29 +87,29 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 						</li>
 					))}
 				</ol>
-				<p className="text-ink-3 text-xs">
+				<p className="text-xs text-ink-3">
 					<Trans>Counts every application that reached each stage, including ones now closed.</Trans>
 				</p>
 			</section>
 
 			<div className="grid gap-4 sm:grid-cols-2">
 				<div className="rounded-xl border border-line p-5">
-					<div className="font-display font-medium text-[34px] leading-10">
+					<div className="font-display text-[34px] leading-10 font-medium">
 						{Math.round((outcomes.heardBack / outcomes.sent) * 100)}%
 					</div>
-					<div className="text-ink-2 text-sm">
+					<div className="text-sm text-ink-2">
 						<Trans>heard back</Trans>
 					</div>
 				</div>
 				<div className="rounded-xl border border-line p-5">
-					<div className="font-display font-medium text-[34px] leading-10">
+					<div className="font-display text-[34px] leading-10 font-medium">
 						{outcomes.medianDaysToReply === null ? (
 							"—"
 						) : (
 							<Plural value={outcomes.medianDaysToReply} one="# day" other="# days" />
 						)}
 					</div>
-					<div className="text-ink-2 text-sm">
+					<div className="text-sm text-ink-2">
 						<Trans>median to first reply</Trans>
 					</div>
 				</div>
@@ -117,10 +117,10 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 
 			{outcomes.tailored.sent + outcomes.base.sent > 0 && (
 				<section aria-labelledby="insights-tailored" className="grid gap-1 rounded-xl border border-line p-5">
-					<h2 id="insights-tailored" className="font-semibold text-sm">
+					<h2 id="insights-tailored" className="text-sm font-semibold">
 						<Trans>Tailored vs. base resume</Trans>
 					</h2>
-					<p className="text-ink-2 text-sm leading-6">
+					<p className="text-sm leading-6 text-ink-2">
 						<Trans>
 							{outcomes.tailored.replied} of {outcomes.tailored.sent} tailored applications got a reply;{" "}
 							{outcomes.base.replied} of {outcomes.base.sent} sent with another resume.
@@ -135,10 +135,10 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 			<div className="grid gap-4 lg:grid-cols-2">
 				{/* application velocity over time */}
 				<div className="rounded-xl border border-line p-5">
-					<h3 className="font-semibold text-sm">
+					<h3 className="text-sm font-semibold">
 						<Trans>Applications over time</Trans>
 					</h3>
-					<p className="mt-0.5 text-ink-3 text-xs">
+					<p className="mt-0.5 text-xs text-ink-3">
 						<Trans>Applications sent per week (last 8 weeks)</Trans>
 					</p>
 					<div className="mt-4 flex items-end gap-2">
@@ -147,7 +147,7 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 								<div className="flex h-28 w-full flex-col justify-end">
 									<span className="mb-1 text-center text-[10px] text-ink-3 tabular-nums">{bucket.count || ""}</span>
 									<div
-										className="w-full origin-bottom starting:scale-y-0 rounded-t bg-accent transition-[scale] delay-(--stagger) duration-emphasized ease-enter motion-reduce:delay-0"
+										className="w-full origin-bottom rounded-t bg-accent transition-[scale] delay-(--stagger) duration-emphasized ease-enter motion-reduce:delay-0 starting:scale-y-0"
 										style={{
 											...stagger(index),
 											height: `${bucket.count ? Math.max((bucket.count / maxWeek) * 100, 8) : 0}%`,
@@ -162,15 +162,15 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 
 				{/* sources */}
 				<div className="rounded-xl border border-line p-5">
-					<h3 className="font-semibold text-sm">
+					<h3 className="text-sm font-semibold">
 						<Trans>Where applications come from</Trans>
 					</h3>
-					<p className="mt-0.5 text-ink-3 text-xs">
+					<p className="mt-0.5 text-xs text-ink-3">
 						<Trans>Count by source</Trans>
 					</p>
 					<div className="mt-4 flex flex-col gap-3">
 						{data.bySource.length === 0 ? (
-							<p className="text-ink-3 text-sm">
+							<p className="text-sm text-ink-3">
 								<Trans>No source data yet.</Trans>
 							</p>
 						) : (
@@ -179,7 +179,7 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 									<span className="w-28 shrink-0 truncate font-medium">{row.source}</span>
 									<div className="h-2.5 flex-1 overflow-hidden rounded-full bg-sunken">
 										<div
-											className="h-full origin-left starting:scale-x-0 rounded-full bg-ink-2 transition-[scale] delay-(--stagger) duration-emphasized ease-enter motion-reduce:delay-0 rtl:origin-right"
+											className="h-full origin-left rounded-full bg-ink-2 transition-[scale] delay-(--stagger) duration-emphasized ease-enter motion-reduce:delay-0 rtl:origin-right starting:scale-x-0"
 											style={{ ...stagger(index), width: `${Math.max((row.count / maxSource) * 100, 3)}%` }}
 										/>
 									</div>
@@ -313,7 +313,7 @@ function PipelineFlow({ insights }: { insights: ReturnType<typeof computeInsight
 	return (
 		<div className="rounded-xl border border-line p-5">
 			<div className="flex items-start justify-between gap-4">
-				<h3 className="font-semibold text-sm">
+				<h3 className="text-sm font-semibold">
 					<Trans>Where your applications went</Trans>
 				</h3>
 				<Button size="sm" variant="secondary" onClick={() => void exportPng()}>

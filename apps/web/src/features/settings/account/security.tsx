@@ -6,12 +6,12 @@ import { Link } from "@tanstack/react-router";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { SettingsRow, SettingsSection } from "../section";
+import { getProviderName, useAuthAccounts, useAuthProviderActions, useEnabledProviders } from "./auth-hooks";
 import { useDialogStore } from "@/dialogs/store";
 import { useConfirm, usePrompt } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
-import { SettingsRow, SettingsSection } from "../section";
-import { getProviderName, useAuthAccounts, useAuthProviderActions, useEnabledProviders } from "./auth-hooks";
 
 const SOCIAL: AuthProvider[] = ["google", "github", "linkedin", "custom"];
 
@@ -163,7 +163,7 @@ function Passkeys() {
 				</Button>
 			</SettingsRow>
 			{passkeys.length > 0 && (
-				<ul className="ms-4 grid border-line border-s ps-3">
+				<ul className="ms-4 grid border-s border-line ps-3">
 					{passkeys.map((passkey) => (
 						<li key={passkey.id} className="flex items-center gap-3 py-1.5 text-sm">
 							<span className="min-w-0 flex-1 truncate">{passkey.name || t`Unnamed passkey`}</span>

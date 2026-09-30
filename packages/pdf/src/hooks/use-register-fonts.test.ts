@@ -1,5 +1,5 @@
-import type { ResumeData, Typography } from "@reactive-resume/schema/resume/data";
 import type { PdfFontRequest } from "./use-register-fonts";
+import type { ResumeData, Typography } from "@reactive-resume/schema/resume/data";
 import { describe, expect, it } from "vitest";
 import { getWebFontSource } from "@reactive-resume/fonts";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";

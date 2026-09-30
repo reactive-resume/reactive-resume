@@ -1,3 +1,4 @@
+import type { PreviewPageSize } from "./preview.shared.utils";
 import type {
 	PDFDocumentLoadingTask,
 	PDFDocumentProxy,
@@ -5,7 +6,6 @@ import type {
 	RenderTask,
 } from "pdfjs-dist/legacy/build/pdf.mjs";
 import type { ReactNode } from "react";
-import type { PreviewPageSize } from "./preview.shared.utils";
 import {
 	AnnotationMode,
 	GlobalWorkerOptions,
@@ -207,7 +207,7 @@ export function PdfCanvasPage({
 		<figure className="shrink-0">
 			{caption ??
 				(showPageNumbers ? (
-					<figcaption className="mb-1 font-medium text-[0.625rem] text-ink-3">
+					<figcaption className="mb-1 text-[0.625rem] font-medium text-ink-3">
 						Page {pageNumber} of {totalPages}
 					</figcaption>
 				) : null)}

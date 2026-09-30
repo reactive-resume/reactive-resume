@@ -667,7 +667,7 @@ export function useCurrentBuilderResumeSelector<T>(selector: (resume: Resume) =>
 	return selected;
 }
 
-export function useResume(): Resume | undefined {
+function useResume(): Resume | undefined {
 	return useBuilderResumeSelector((resume) => resume);
 }
 
@@ -704,7 +704,7 @@ export function useUpdateResumeData() {
 export function useResumeUpdateSubscription({ resumeId, onUpdate, onError }: ResumeUpdateSubscriptionOptions) {
 	const [retryNonce, setRetryNonce] = useState(0);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: retryNonce isn't read; bumping it resubscribes after a dropped stream
+	// oxlint-disable-next-line react/exhaustive-deps -- retryNonce isn't read; bumping it resubscribes after a dropped stream
 	useEffect(() => {
 		if (!resumeId) return;
 

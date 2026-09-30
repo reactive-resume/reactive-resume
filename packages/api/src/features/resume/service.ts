@@ -1,8 +1,8 @@
+import type { ResumeUpdatedEvent } from "./events";
 import type { DbOrTx } from "@reactive-resume/db/client";
 import type { JsonPatchOperation } from "@reactive-resume/resume/patch";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Locale } from "@reactive-resume/utils/locale";
-import type { ResumeUpdatedEvent } from "./events";
 import { ORPCError } from "@orpc/client";
 import { compare, hash } from "bcryptjs";
 import { and, arrayContains, asc, desc, eq, gte, isNotNull, isNull, sql } from "drizzle-orm";

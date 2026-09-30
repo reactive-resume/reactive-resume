@@ -15,12 +15,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createMemoryHistory, createRootRoute, createRouter, RouterContextProvider } from "@tanstack/react-router";
 import { renderToString } from "react-dom/server";
 import { isRTL, localeSchema } from "@reactive-resume/utils/locale";
+import { Homepage } from "./page";
 import { AtsCheckerPage } from "@/features/ats-checker/page";
 import { ThemeProvider } from "@/features/theme/provider";
 import { getLocaleMessages } from "@/libs/locale";
 import { getAtsCheckerMeta, getHomepageMeta } from "@/libs/seo";
 import { Header } from "@/routes/_home/-sections/header";
-import { Homepage } from "./page";
 
 export const locales = localeSchema.options;
 

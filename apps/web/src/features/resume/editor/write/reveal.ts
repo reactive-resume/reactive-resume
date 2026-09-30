@@ -1,6 +1,6 @@
 import type { EditorSelection } from "../store";
-import { D2 } from "@/libs/motion";
 import { useEditorStore } from "../store";
+import { D2 } from "@/libs/motion";
 
 /** The id of an entry's card in the Write panel, which the page and Check scroll to. */
 export const entryElementId = (entryId: string) => `resume-item-${entryId}`;

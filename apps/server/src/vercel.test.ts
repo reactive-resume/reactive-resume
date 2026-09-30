@@ -9,12 +9,11 @@ const mocks = vi.hoisted(() => ({
 	configureAgentStreamLifetime: vi.fn(),
 	pool: {},
 	getPool: vi.fn(),
-	createApp:
-		vi.fn<
-			(options: { serveStatic: boolean; trustedClient: (request: Request) => string }) => {
-				fetch: (request: Request) => Promise<Response>;
-			}
-		>(),
+	createApp: vi.fn<
+		(options: { serveStatic: boolean; trustedClient: (request: Request) => string }) => {
+			fetch: (request: Request) => Promise<Response>;
+		}
+	>(),
 	handle: vi.fn<(request: Request) => Promise<Response>>(),
 }));
 

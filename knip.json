@@ -3,7 +3,7 @@
 	"tags": ["-lintignore"],
 	"workspaces": {
 		"apps/web": {
-			"entry": ["lingui.config.ts", "vite.config.ts", "vitest.config.ts", "src/features/homepage/prerender.tsx"],
+			"entry": ["lingui.config.ts", "vitest.config.ts", "src/features/homepage/prerender.tsx"],
 			"vite": {
 				"config": []
 			},
@@ -48,6 +48,7 @@
 				"fast-json-patch",
 				"fast-png",
 				"fflate",
+				"firecrawl",
 				"ioredis",
 				"jose",
 				"jsonrepair",
@@ -66,11 +67,10 @@
 			]
 		},
 		"tooling": {
-			"entry": ["issue-labels.mjs"]
+			"entry": ["**/*.mjs"]
 		},
 		"packages/api": {
 			"ignoreDependencies": ["ioredis"]
 		}
-	},
-	"ignoreDependencies": ["@reactive-resume/config"]
+	}
 }

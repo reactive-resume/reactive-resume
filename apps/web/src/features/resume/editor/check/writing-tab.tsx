@@ -1,6 +1,6 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { WritingNote } from "../store";
 import type { CheckIssue } from "./issues";
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
@@ -13,15 +13,15 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
-import { AiProviderPicker } from "@/features/settings/integrations/components/ai-provider-picker";
-import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
-import { getOrpcErrorMessage } from "@/libs/error-message";
-import { orpc } from "@/libs/orpc/client";
 import { ProposalList } from "../proposals/proposal-list";
 import { useEditorStore } from "../store";
 import { describeEntry } from "../write/model";
 import { getSectionName } from "./issues";
 import { mapWritingReview } from "./review";
+import { AiProviderPicker } from "@/features/settings/integrations/components/ai-provider-picker";
+import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
+import { getOrpcErrorMessage } from "@/libs/error-message";
+import { orpc } from "@/libs/orpc/client";
 
 /** The endpoint's caps; the text and lists are trimmed here so a long resume is never refused. */
 const MAX_TEXT_CHARS = 50_000;
@@ -85,10 +85,10 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 	if (!hasUsableProvider) {
 		return (
 			<div className="grid gap-3 rounded-xl border border-line p-4">
-				<strong className="font-semibold text-sm">
+				<strong className="text-sm font-semibold">
 					<Trans>A second opinion on your wording</Trans>
 				</strong>
-				<p className="text-[13px] text-ink-2 leading-[19px]">
+				<p className="text-[13px] leading-[19px] text-ink-2">
 					<Trans>
 						Connect your own AI provider to have a language model read your bullets and suggest rewrites. Issues and Job
 						match need no provider.
@@ -106,7 +106,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 
 	if (isPending) {
 		return (
-			<div aria-busy="true" className="flex items-center gap-2.5 rounded-xl border border-line p-4 text-ink-2 text-sm">
+			<div aria-busy="true" className="flex items-center gap-2.5 rounded-xl border border-line p-4 text-sm text-ink-2">
 				<Spinner />
 				<Plural
 					value={passages.length}
@@ -122,7 +122,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 			<div className="grid gap-3">
 				<div
 					role="alert"
-					className="flex gap-2.5 rounded-xl bg-danger-soft p-3 text-[13px] text-danger-text leading-[19px]"
+					className="flex gap-2.5 rounded-xl bg-danger-soft p-3 text-[13px] leading-[19px] text-danger-text"
 				>
 					<Icon name="error" />
 					<span>
@@ -144,7 +144,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 						<Trans>Open AI settings</Trans>
 					</Link>
 				</div>
-				<p className="text-ink-3 text-xs">
+				<p className="text-xs text-ink-3">
 					<Trans>Issues and Job match still work without AI.</Trans>
 				</p>
 			</div>
@@ -154,16 +154,16 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 	if (!review) {
 		return (
 			<div className="grid gap-3 rounded-xl border border-line p-4">
-				<strong className="font-semibold text-sm">
+				<strong className="text-sm font-semibold">
 					<Trans>A second opinion on your wording</Trans>
 				</strong>
-				<p className="text-[13px] text-ink-2 leading-[19px]">
+				<p className="text-[13px] leading-[19px] text-ink-2">
 					<Trans>
 						The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests
 						rewrites. It isn't part of the score.
 					</Trans>
 				</p>
-				<div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-ink-3 text-xs">
+				<div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-ink-3">
 					<Icon name="lock" size={16} />
 					<span>
 						<Trans>
@@ -194,7 +194,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 					<Trans>Review writing</Trans>
 				</Button>
 				{passages.length === 0 && (
-					<p className="text-ink-3 text-xs">
+					<p className="text-xs text-ink-3">
 						<Trans>Add a summary or describe a role first; there's nothing to review yet.</Trans>
 					</p>
 				)}
@@ -204,7 +204,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 
 	return (
 		<div className="grid gap-3">
-			{review.summary && <p className="text-[13px] text-ink-2 leading-[19px]">{review.summary}</p>}
+			{review.summary && <p className="text-[13px] leading-[19px] text-ink-2">{review.summary}</p>}
 
 			{proposals.length > 0 && <ProposalList proposals={proposals} data={data} onSuggestAgain={run} />}
 
@@ -214,10 +214,10 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 
 			{review.strengths.length > 0 && (
 				<section aria-labelledby="writing-strengths" className="grid gap-1.5">
-					<h3 id="writing-strengths" className="pt-1.5 font-semibold text-ink-3 text-xs uppercase">
+					<h3 id="writing-strengths" className="pt-1.5 text-xs font-semibold text-ink-3 uppercase">
 						<Trans>What's working</Trans>
 					</h3>
-					<ul className="grid list-disc gap-1 ps-[18px] text-[13px] text-ink-2 leading-[19px]">
+					<ul className="grid list-disc gap-1 ps-[18px] text-[13px] leading-[19px] text-ink-2">
 						{review.strengths.map((strength) => (
 							<li key={strength}>{strength}</li>
 						))}
@@ -225,7 +225,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 				</section>
 			)}
 
-			<p className="text-ink-3 text-xs leading-[17px]">
+			<p className="text-xs leading-[17px] text-ink-3">
 				<Trans>A model's opinion, not a verdict. It can be wrong.</Trans>{" "}
 				<button type="button" className="font-medium text-ink-2 underline underline-offset-2" onClick={run}>
 					<Trans>Run again</Trans>
@@ -255,7 +255,7 @@ function WritingNoteCard({ note }: { note: WritingNote }) {
 				<span className="font-mono text-[11px] text-ink-3 uppercase">{note.location}</span>
 				<span
 					className={cn(
-						"h-[18px] rounded px-1.5 font-semibold text-[11px] leading-[18px]",
+						"h-[18px] rounded px-1.5 text-[11px] leading-[18px] font-semibold",
 						note.impact === "high" ? "bg-warn-soft text-warn-text" : "bg-sunken text-ink-2",
 					)}
 				>

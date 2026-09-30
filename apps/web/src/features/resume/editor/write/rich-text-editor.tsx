@@ -1,7 +1,7 @@
+import type { ImproveLine } from "./improve";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { Editor } from "@tiptap/react";
 import type { ReactNode } from "react";
-import type { ImproveLine } from "./improve";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
@@ -11,11 +11,11 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { useKeyboardInset } from "@reactive-resume/ui/hooks/use-keyboard-inset";
 import { useIsMobile } from "@reactive-resume/ui/hooks/use-mobile";
 import { cn } from "@reactive-resume/utils/style";
+import { ImprovePanel, lineAtCaret } from "./improve";
 import { hasUnsupportedTableMarkup, richTextExtensions } from "@/components/input/rich-text-extensions";
 import { openAssistantFrom } from "@/features/assistant/open";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { usePrompt } from "@/hooks/use-confirm";
-import { ImprovePanel, lineAtCaret } from "./improve";
 
 type ToolbarAction = {
 	icon: IconName;
@@ -204,7 +204,7 @@ export function RichTextEditor({
 				onMouseDown={(event) => event.preventDefault()}
 				onClick={() => (improving ? setImproving(null) : startImprove())}
 				className={cn(
-					"ms-auto flex shrink-0 items-center gap-1.5 rounded-md bg-accent-soft px-2.5 font-semibold text-accent-text text-xs transition-[filter] duration-quick hover:brightness-95 disabled:opacity-50",
+					"ms-auto flex shrink-0 items-center gap-1.5 rounded-md bg-accent-soft px-2.5 text-xs font-semibold text-accent-text transition-[filter] duration-quick hover:brightness-95 disabled:opacity-50",
 					mobile ? "h-11" : "h-8",
 				)}
 			>
@@ -232,7 +232,7 @@ export function RichTextEditor({
 						role="toolbar"
 						aria-label={t`Formatting`}
 						style={{ bottom: keyboardInset }}
-						className="fixed inset-x-0 z-50 flex h-11 items-center gap-0.5 border-line border-t bg-raised px-1.5 shadow-e2"
+						className="fixed inset-x-0 z-50 flex h-11 items-center gap-0.5 border-t border-line bg-raised px-1.5 shadow-e2"
 					>
 						<div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">{toolbarButtons}</div>
 						<button
@@ -242,7 +242,7 @@ export function RichTextEditor({
 								setImproving(null);
 								editor?.commands.blur();
 							}}
-							className="flex h-11 shrink-0 items-center rounded-md px-3 font-semibold text-accent-text text-sm"
+							className="flex h-11 shrink-0 items-center rounded-md px-3 text-sm font-semibold text-accent-text"
 						>
 							<Trans>Done</Trans>
 						</button>
@@ -251,7 +251,7 @@ export function RichTextEditor({
 				)}
 
 			{readOnlyTable && (
-				<p role="status" className="border-line border-b px-3 py-2 text-ink-2 text-xs">
+				<p role="status" className="border-b border-line px-3 py-2 text-xs text-ink-2">
 					<Trans>
 						Original table formatting is preserved. This content is read-only because it cannot be edited safely.
 					</Trans>
@@ -262,7 +262,7 @@ export function RichTextEditor({
 
 			{/* Under the text, so focusing the field never moves the line you clicked. */}
 			{editing && !readOnlyTable && !mobile && (
-				<div role="toolbar" aria-label={t`Formatting`} className="flex gap-0.5 border-line border-t px-1.5 py-1">
+				<div role="toolbar" aria-label={t`Formatting`} className="flex gap-0.5 border-t border-line px-1.5 py-1">
 					{toolbarButtons}
 				</div>
 			)}
@@ -278,7 +278,7 @@ export function RichTextEditor({
 			)}
 
 			{editing && (
-				<div className="flex items-center justify-between gap-3 border-line border-t px-3 py-1.5 text-ink-3 text-xs">
+				<div className="flex items-center justify-between gap-3 border-t border-line px-3 py-1.5 text-xs text-ink-3">
 					<span>{hint ?? <Trans>Markdown shortcuts on</Trans>}</span>
 					<span className="font-mono">
 						<Plural value={state?.characters ?? 0} one="# character" other="# characters" />

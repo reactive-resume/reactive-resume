@@ -1,9 +1,9 @@
+import type { SemanticCssColorToken } from "./color-tokens";
+import type { SemanticCssEditorMetadata } from "./protocol";
 import type { Extension } from "@codemirror/state";
 import type { SemanticCssDiagnostic, SemanticNode } from "@reactive-resume/resume/stylesheet";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
-import type { SemanticCssColorToken } from "./color-tokens";
-import type { SemanticCssEditorMetadata } from "./protocol";
 import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
 import { css } from "@codemirror/lang-css";
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language";
@@ -30,10 +30,6 @@ import { isFatalStylesheetDiagnostic } from "@reactive-resume/resume/stylesheet"
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/sheet";
-import { ColorPicker } from "@/components/input/color-picker";
-import { useIsResumeLocked, useResumeData, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { useTheme } from "@/features/theme/provider";
-import { useClosingValue } from "@/hooks/use-closing-value";
 import { useEditorStore } from "../editor/store";
 import { serializeStylesheetColor, toStylesheetPickerColor } from "./color-format";
 import {
@@ -46,6 +42,10 @@ import { matchedNodeKeys } from "./highlight";
 import { listStyleTargets, styleTargetFor } from "./targets";
 import { StylesheetToolbar } from "./toolbar";
 import { createCompileWorkerClient } from "./worker-client";
+import { ColorPicker } from "@/components/input/color-picker";
+import { useIsResumeLocked, useResumeData, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { useTheme } from "@/features/theme/provider";
+import { useClosingValue } from "@/hooks/use-closing-value";
 
 const externalReplacement = Annotation.define<boolean>();
 const colorPickerEdit = Annotation.define<boolean>();
@@ -401,7 +401,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 					name: "semantic-css-compiler",
 				}),
 		);
-		// biome-ignore lint/nursery/useReactCompiler: the worker is created here so it can be destroyed on unmount
+		// oxlint-disable-next-line react/set-state-in-effect -- the worker is created here so it can be destroyed on unmount
 		setCompiler(client);
 		return () => client.destroy();
 	}, []);
@@ -523,7 +523,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 				onFocusToggle={toggleFocus}
 			/>
 			{compiled?.source === source && compiled.diagnostics.length > 0 && (
-				<div role="alert" className="text-danger-text text-xs">
+				<div role="alert" className="text-xs text-danger-text">
 					<p>
 						<Trans>Custom styles aren't applied. Fix these errors to apply them:</Trans>
 					</p>
@@ -534,21 +534,21 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 					</ul>
 				</div>
 			)}
-			<p className="text-ink-3 text-xs">
+			<p className="text-xs text-ink-3">
 				<Trans>
 					PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are
 					ignored.
 				</Trans>
 			</p>
 
-			<p className="flex items-center gap-1.5 text-ink-3 text-xs">
+			<p className="flex items-center gap-1.5 text-xs text-ink-3">
 				<Icon name="ink_highlighter" size={16} aria-hidden="true" className="shrink-0" />
 				<span>
 					<Trans>Click anything on the page to style it. The rule you're in is outlined on the page.</Trans>
 				</span>
 			</p>
 
-			<p className="flex items-center gap-1.5 text-ink-3 text-xs">
+			<p className="flex items-center gap-1.5 text-xs text-ink-3">
 				<Icon name="menu_book" size={16} aria-hidden="true" className="shrink-0" />
 				<span>
 					<Trans>Not sure what to write?</Trans>{" "}

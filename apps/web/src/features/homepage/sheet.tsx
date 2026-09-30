@@ -200,7 +200,7 @@ type HeadingProps = {
 function Heading({ template, children, tick }: HeadingProps) {
 	return (
 		<h3
-			className="mb-[1.2cqw] flex items-center justify-between text-(--accent-ink) leading-[1.3]"
+			className="mb-[1.2cqw] flex items-center justify-between leading-[1.3] text-(--accent-ink)"
 			style={template.heading}
 		>
 			{children}
@@ -221,9 +221,9 @@ export function Sheet({ template = sheetTemplates[0] as SheetTemplate }: SheetPr
 	return (
 		<div
 			aria-hidden="true"
-			className="@container absolute inset-0 select-none overflow-hidden rounded-[2px] bg-paper text-start"
+			className="@container absolute inset-0 overflow-hidden rounded-[2px] bg-paper text-start select-none"
 		>
-			<div className="absolute inset-0 flex flex-col text-[oklch(0.3_0.01_95)] leading-normal" style={template.root}>
+			<div className="absolute inset-0 flex flex-col leading-normal text-[oklch(0.3_0.01_95)]" style={template.root}>
 				<header
 					className="flex flex-col gap-[.7cqw] text-[oklch(0.22_0.01_95)]"
 					style={{ alignItems: template.align, ...template.header }}
@@ -231,7 +231,7 @@ export function Sheet({ template = sheetTemplates[0] as SheetTemplate }: SheetPr
 					<span className="leading-none" style={template.title}>
 						{t`Alex Morgan`}
 					</span>
-					<span className="font-medium text-[2.3cqw]" style={{ color: template.subtitleColor }}>
+					<span className="text-[2.3cqw] font-medium" style={{ color: template.subtitleColor }}>
 						{t`Senior Product Designer`}
 					</span>
 					<span

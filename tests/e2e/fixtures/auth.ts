@@ -1,5 +1,5 @@
-import type { APIRequestContext, Browser, BrowserContext, Page } from "@playwright/test";
 import type { E2EAccount } from "./data";
+import type { APIRequestContext, Browser, BrowserContext, Page } from "@playwright/test";
 
 async function assertAuthResponse(response: Awaited<ReturnType<APIRequestContext["post"]>>) {
 	if (response.ok()) return;

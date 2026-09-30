@@ -60,7 +60,7 @@ export function AuthErrorPage({ code, description }: AuthErrorPageProps) {
 	return (
 		<>
 			<div className="space-y-1 text-center">
-				<h1 className="font-semibold text-2xl tracking-tight">
+				<h1 className="text-2xl font-semibold tracking-tight">
 					<Trans comment="Title on the page shown after a failed or cancelled OAuth sign-in">
 						Sign-in didn't complete
 					</Trans>
@@ -77,7 +77,7 @@ export function AuthErrorPage({ code, description }: AuthErrorPageProps) {
 								Details from the provider:
 							</Trans>
 						</span>
-						<span className="block break-words font-mono text-xs">{description}</span>
+						<span className="block font-mono text-xs break-words">{description}</span>
 					</AlertDescription>
 				)}
 			</Alert>

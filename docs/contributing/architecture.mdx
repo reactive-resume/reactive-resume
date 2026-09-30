@@ -50,28 +50,28 @@ The server checks the environment, applies database migrations, and verifies the
 
 ## Workspace map
 
-| Workspace | What it owns |
-| --- | --- |
-| `apps/web` | Routes (`src/routes`, file-based), user-facing features (`src/features`), the PDF.js preview and public viewer, the PWA, and the oRPC browser client |
-| `apps/server` | Hono route composition (`src/http`), RPC and OpenAPI adapters, the MCP transport, static and upload handlers, SEO for HTML shells, and startup checks |
-| `packages/api` | oRPC procedures and business logic, one folder per feature under `src/features/*` |
-| `packages/auth` | Better Auth configuration, helpers, and types |
-| `packages/db` | Drizzle client and schema; generated migrations live in the root `migrations/` folder |
-| `packages/env` | Server environment validation; loads the root `.env` |
-| `packages/schema` | Zod schemas for resumes, cover letters, applications, pages, and templates |
-| `packages/resume` | Pure resume logic with no database, HTTP, or DOM dependencies, such as JSON Patch helpers and social network icons |
-| `packages/pdf` | Resume templates (which also lay out cover letters), the Forme adapter, font resolution, custom-style support, and browser and server PDF adapters |
-| `packages/docx` | DOCX export |
-| `packages/mcp` | MCP tools, prompts, resources, and the server card |
-| `packages/ai` | AI provider types, prompts, and model-facing helpers |
-| `packages/import` | Resume importers |
-| `packages/ui` | Shared UI primitives and hooks in the Base UI / shadcn style |
-| `packages/fonts` | Font metadata |
-| `packages/email` | Email transport and templates |
-| `packages/utils` | Narrow cross-cutting helpers behind explicit export subpaths |
-| `packages/config` | Shared TypeScript and tooling configuration |
-| `packages/dsh-plugin` | A separately built and published plugin that connects a DeepSeek Harness session to Reactive Resume over MCP |
-| `tooling` | Development-only scripts: PDF translation catalog, semantic CSS reference, icon builds, database reset, deployment smoke test |
+| Workspace             | What it owns                                                                                                                                          |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web`            | Routes (`src/routes`, file-based), user-facing features (`src/features`), the PDF.js preview and public viewer, the PWA, and the oRPC browser client  |
+| `apps/server`         | Hono route composition (`src/http`), RPC and OpenAPI adapters, the MCP transport, static and upload handlers, SEO for HTML shells, and startup checks |
+| `packages/api`        | oRPC procedures and business logic, one folder per feature under `src/features/*`                                                                     |
+| `packages/auth`       | Better Auth configuration, helpers, and types                                                                                                         |
+| `packages/db`         | Drizzle client and schema; generated migrations live in the root `migrations/` folder                                                                 |
+| `packages/env`        | Server environment validation; loads the root `.env`                                                                                                  |
+| `packages/schema`     | Zod schemas for resumes, cover letters, applications, pages, and templates                                                                            |
+| `packages/resume`     | Pure resume logic with no database, HTTP, or DOM dependencies, such as JSON Patch helpers and social network icons                                    |
+| `packages/pdf`        | Resume templates (which also lay out cover letters), the Forme adapter, font resolution, custom-style support, and browser and server PDF adapters    |
+| `packages/docx`       | DOCX export                                                                                                                                           |
+| `packages/mcp`        | MCP tools, prompts, resources, and the server card                                                                                                    |
+| `packages/ai`         | AI provider types, prompts, and model-facing helpers                                                                                                  |
+| `packages/import`     | Resume importers                                                                                                                                      |
+| `packages/ui`         | Shared UI primitives and hooks in the Base UI / shadcn style                                                                                          |
+| `packages/fonts`      | Font metadata                                                                                                                                         |
+| `packages/email`      | Email transport and templates                                                                                                                         |
+| `packages/utils`      | Narrow cross-cutting helpers behind explicit export subpaths                                                                                          |
+| `packages/config`     | Shared TypeScript and tooling configuration                                                                                                           |
+| `packages/dsh-plugin` | A separately built and published plugin that connects a DeepSeek Harness session to Reactive Resume over MCP                                          |
+| `tooling`             | Development-only scripts: PDF translation catalog, semantic CSS reference, icon builds, database reset, deployment smoke test                         |
 
 Internal packages are consumed as source through the `exports` map in each `package.json`, which points at `src` files. Don't expect a `dist` folder unless a package builds one explicitly.
 
@@ -81,20 +81,20 @@ Turbo hashes shared Vitest configuration and setup files, tracks transitive sour
 
 ## Where new code goes
 
-| You are changing | Put it here |
-| --- | --- |
-| A page, loader, or user workflow | A route in `apps/web/src/routes` plus the feature folder in `apps/web/src/features/<area>` |
-| An authenticated API procedure or business rule | `packages/api/src/features/<area>` |
-| Pure resume data behavior | `packages/resume` |
-| The shape of resume data | `packages/schema` first, then API DTOs, importers, PDF templates, and web forms that use it |
-| A PDF template or rendering behavior | `packages/pdf` |
-| PDF.js canvas or viewer UI | `apps/web/src/features/resume` (never `packages/pdf`) |
-| DOCX export | `packages/docx` |
-| An MCP tool, prompt, or resource | `packages/mcp` |
-| A generic UI primitive or hook | `packages/ui`; workflow-specific UI stays in its web feature |
-| A database column or table | `packages/db/src/schema/*`, then `pnpm db:generate` |
-| A server environment variable | `packages/env/src/server.ts`, `.env.example`, and `globalPassThroughEnv` plus applicable test-task `env` arrays in `turbo.json` |
-| A dev-only script | `tooling/` |
+| You are changing                                | Put it here                                                                                                                     |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| A page, loader, or user workflow                | A route in `apps/web/src/routes` plus the feature folder in `apps/web/src/features/<area>`                                      |
+| An authenticated API procedure or business rule | `packages/api/src/features/<area>`                                                                                              |
+| Pure resume data behavior                       | `packages/resume`                                                                                                               |
+| The shape of resume data                        | `packages/schema` first, then API DTOs, importers, PDF templates, and web forms that use it                                     |
+| A PDF template or rendering behavior            | `packages/pdf`                                                                                                                  |
+| PDF.js canvas or viewer UI                      | `apps/web/src/features/resume` (never `packages/pdf`)                                                                           |
+| DOCX export                                     | `packages/docx`                                                                                                                 |
+| An MCP tool, prompt, or resource                | `packages/mcp`                                                                                                                  |
+| A generic UI primitive or hook                  | `packages/ui`; workflow-specific UI stays in its web feature                                                                    |
+| A database column or table                      | `packages/db/src/schema/*`, then `pnpm db:generate`                                                                             |
+| A server environment variable                   | `packages/env/src/server.ts`, `.env.example`, and `globalPassThroughEnv` plus applicable test-task `env` arrays in `turbo.json` |
+| A dev-only script                               | `tooling/`                                                                                                                      |
 
 A new template touches several places: `packages/schema/src/templates.ts`, `packages/pdf/src/templates/index.ts`, the template source under `packages/pdf/src/templates/<name>/`, and preview images under `apps/web/public/templates/{jpg,pdf}`.
 

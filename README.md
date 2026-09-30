@@ -163,17 +163,17 @@ For detailed setup instructions, environment configuration, and self-hosting gui
 
 ## Tech Stack
 
-| Category         | Technology                      |
-| ---------------- | ------------------------------- |
+| Category         | Technology                       |
+| ---------------- | -------------------------------- |
 | Framework        | TanStack Router (React 19, Vite) |
-| Runtime          | Node.js                         |
-| Language         | TypeScript                      |
-| Database         | PostgreSQL with Drizzle ORM     |
-| API              | ORPC (Type-safe RPC)            |
-| Auth             | Better Auth                     |
-| Styling          | Tailwind CSS                    |
-| UI Components    | Base UI + shadcn-style package  |
-| State Management | Zustand + TanStack Query        |
+| Runtime          | Node.js                          |
+| Language         | TypeScript                       |
+| Database         | PostgreSQL with Drizzle ORM      |
+| API              | ORPC (Type-safe RPC)             |
+| Auth             | Better Auth                      |
+| Styling          | Tailwind CSS                     |
+| UI Components    | Base UI + shadcn-style package   |
+| State Management | Zustand + TanStack Query         |
 
 ## Documentation
 

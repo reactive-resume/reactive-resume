@@ -69,16 +69,16 @@ export function ImprovePanel({ editor, line, where, onClose }: ImprovePanelProps
 	};
 
 	return (
-		// biome-ignore lint/a11y/noStaticElementInteractions: Escape closes the panel from any control inside it.
+		// oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- Escape closes the panel from any control inside it.
 		<div
-			className="grid gap-1 border-line border-t p-1.5"
+			className="grid gap-1 border-t border-line p-1.5"
 			onKeyDown={(event) => {
 				if (event.key !== "Escape") return;
 				event.stopPropagation();
 				close();
 			}}
 		>
-			<span className="px-2 pt-1 pb-1.5 font-semibold text-ink-3 text-xs uppercase">
+			<span className="px-2 pt-1 pb-1.5 text-xs font-semibold text-ink-3 uppercase">
 				<Trans>Improve selected line</Trans>
 			</span>
 
@@ -87,12 +87,12 @@ export function ImprovePanel({ editor, line, where, onClose }: ImprovePanelProps
 					<p role="status" className="w-fit rounded-sm bg-accent-soft px-1 py-0.5 text-[13px] leading-[19px]">
 						{improve.data.text}
 					</p>
-					<p className="text-ink-3 text-xs">
+					<p className="text-xs text-ink-3">
 						{improve.data.why}
 						{improve.data.addsFacts && <> {t`Check it's accurate.`}</>}
 					</p>
 					{changed && (
-						<p role="alert" className="text-danger-text text-xs">
+						<p role="alert" className="text-xs text-danger-text">
 							<Trans>The line changed since you asked, so it wasn't replaced.</Trans>
 						</p>
 					)}
@@ -108,7 +108,7 @@ export function ImprovePanel({ editor, line, where, onClose }: ImprovePanelProps
 					</div>
 				</div>
 			) : improve.isPending ? (
-				<p role="status" className="flex items-center gap-2 p-2 text-ink-2 text-sm">
+				<p role="status" className="flex items-center gap-2 p-2 text-sm text-ink-2">
 					<Icon name="auto_awesome" size={16} className="animate-pulse motion-reduce:animate-none" />
 					<Trans>Improving…</Trans>
 				</p>
@@ -138,7 +138,7 @@ export function ImprovePanel({ editor, line, where, onClose }: ImprovePanelProps
 						<button
 							key={option.action}
 							type="button"
-							// biome-ignore lint/a11y/noAutofocus: the menu opens from the Improve button.
+							// oxlint-disable-next-line jsx-a11y/no-autofocus -- the menu opens from the Improve button.
 							autoFocus={index === 0}
 							onClick={() => run(option.action)}
 							className="flex h-9 items-center gap-2.5 rounded-md px-2 text-start text-sm transition-colors duration-quick hover:bg-hover"
@@ -160,7 +160,7 @@ export function ImprovePanel({ editor, line, where, onClose }: ImprovePanelProps
 
 			{improve.error && (
 				<div className="grid gap-2 px-2 pb-1">
-					<p role="alert" className="text-danger-text text-xs">
+					<p role="alert" className="text-xs text-danger-text">
 						{getOrpcErrorMessage(improve.error, { fallback: t`Couldn't get a suggestion. Nothing changed.` })}
 					</p>
 					<Button size="sm" variant="secondary" className="w-fit" onClick={() => improve.reset()}>

@@ -32,10 +32,10 @@ export function ProviderSetup() {
 	return (
 		<div className="grid gap-4 p-4">
 			<div className="grid gap-1">
-				<h3 className="font-semibold text-[15px]">
+				<h3 className="text-[15px] font-semibold">
 					<Trans>Connect an AI provider</Trans>
 				</h3>
-				<p className="text-ink-2 text-sm">
+				<p className="text-sm text-ink-2">
 					<Trans>The assistant uses your own key. Nothing is sent anywhere until you connect one.</Trans>
 				</p>
 			</div>
@@ -71,7 +71,7 @@ export function ProviderSetup() {
 				})}
 			</ul>
 
-			<p className="text-ink-3 text-xs">
+			<p className="text-xs text-ink-3">
 				<Trans>
 					More providers and options are in{" "}
 					<Link to="/dashboard/settings/ai" className={buttonVariants({ variant: "link", size: "sm" })}>
@@ -119,7 +119,7 @@ function ConnectForm({ choice }: { choice: Choice }) {
 
 	return (
 		<form
-			className="grid gap-3 border-line border-t bg-bg p-3"
+			className="grid gap-3 border-t border-line bg-bg p-3"
 			onSubmit={(event) => {
 				event.preventDefault();
 				if (ready) connect.mutate();
@@ -157,7 +157,7 @@ function ConnectForm({ choice }: { choice: Choice }) {
 				<Input id={`${id}-model`} value={model} onChange={(event) => setModel(event.target.value)} />
 			</div>
 			{failure && (
-				<p role="alert" className="text-danger-text text-xs">
+				<p role="alert" className="text-xs text-danger-text">
 					{failure}
 				</p>
 			)}

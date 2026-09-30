@@ -1,5 +1,5 @@
-import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { Application } from "../types";
+import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
@@ -20,13 +20,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/com
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
+import { describeNextStep, getNextStep } from "../next-step";
+import { CLOSED_REASONS, getClosedReasonLabel, getStageColor, getStageLabel, LIST_ORDER, PIPELINE } from "../stages";
+import { useInvalidateApplications } from "../use-application-actions";
 import { useConfirm } from "@/hooks/use-confirm";
 import { formatRelativeTime } from "@/libs/locale";
 import { D2, EASE, EXIT } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
-import { describeNextStep, getNextStep } from "../next-step";
-import { CLOSED_REASONS, getClosedReasonLabel, getStageColor, getStageLabel, LIST_ORDER, PIPELINE } from "../stages";
-import { useInvalidateApplications } from "../use-application-actions";
 
 type SortKey = "role" | "next" | "updated";
 type Sort = { key: SortKey; direction: "asc" | "desc" };
@@ -122,7 +122,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 			<table className="w-full border-collapse text-sm">
 				{!phone && (
 					<thead>
-						<tr className="border-line border-b text-ink-3 text-xs">
+						<tr className="border-b border-line text-xs text-ink-3">
 							<th scope="col" className="w-10 ps-3">
 								<span className="sr-only">
 									<Trans>Select</Trans>
@@ -153,7 +153,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 										id={groupId}
 										aria-expanded={open}
 										onClick={() => toggleGroup(status)}
-										className="flex h-9 items-center gap-2 rounded-md px-1.5 font-semibold text-sm transition-colors hover:bg-hover"
+										className="flex h-9 items-center gap-2 rounded-md px-1.5 text-sm font-semibold transition-colors hover:bg-hover"
 									>
 										<Icon
 											name="chevron_right"
@@ -166,7 +166,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 											style={{ background: getStageColor(status) }}
 										/>
 										{getStageLabel(status)}
-										<span className="font-mono font-normal text-ink-3 text-xs">{rows.length}</span>
+										<span className="font-mono text-xs font-normal text-ink-3">{rows.length}</span>
 									</button>
 								</th>
 							</tr>
@@ -224,7 +224,7 @@ function ApplicationRow({ application, phone, selected, checked, onCheck, onOpen
 	const initial = (
 		<span
 			aria-hidden="true"
-			className="grid size-8 shrink-0 place-items-center rounded-[7px] bg-sunken font-semibold text-[13px] text-ink-2"
+			className="grid size-8 shrink-0 place-items-center rounded-[7px] bg-sunken text-[13px] font-semibold text-ink-2"
 		>
 			{application.company.slice(0, 1).toUpperCase()}
 		</span>
@@ -233,7 +233,7 @@ function ApplicationRow({ application, phone, selected, checked, onCheck, onOpen
 	const openButton = (
 		<button type="button" onClick={onOpen} className="grid min-w-0 text-start after:absolute after:inset-0">
 			<span className="truncate font-medium">{application.role}</span>
-			<span className="truncate text-ink-3 text-xs">
+			<span className="truncate text-xs text-ink-3">
 				{phone
 					? `${application.company} · ${next.title}`
 					: [application.company, application.location].filter(Boolean).join(" · ")}
@@ -243,7 +243,7 @@ function ApplicationRow({ application, phone, selected, checked, onCheck, onOpen
 
 	if (phone) {
 		return (
-			<tr className={cn("relative border-line border-b", selected && "bg-accent-soft/50")}>
+			<tr className={cn("relative border-b border-line", selected && "bg-accent-soft/50")}>
 				<td className="py-2.5 ps-1">
 					<div className="flex items-center gap-3">
 						{initial}
@@ -258,7 +258,7 @@ function ApplicationRow({ application, phone, selected, checked, onCheck, onOpen
 	return (
 		<tr
 			className={cn(
-				"relative border-line border-b transition-colors duration-quick hover:bg-hover",
+				"relative border-b border-line transition-colors duration-quick hover:bg-hover",
 				selected && "bg-accent-soft/50",
 			)}
 		>
@@ -303,7 +303,7 @@ function ApplicationRow({ application, phone, selected, checked, onCheck, onOpen
 					</span>
 				)}
 			</td>
-			<td className="whitespace-nowrap px-2 text-ink-3 text-xs max-md:hidden">
+			<td className="px-2 text-xs whitespace-nowrap text-ink-3 max-md:hidden">
 				{formatRelativeTime(application.updatedAt, i18n.locale)}
 			</td>
 		</tr>
@@ -339,7 +339,7 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 
 	return (
 		<div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-ink px-3 py-2 text-bg shadow-e3">
-			<span className="me-1 font-semibold text-sm">
+			<span className="me-1 text-sm font-semibold">
 				<Plural value={ids.length} one="# selected" other="# selected" />
 			</span>
 

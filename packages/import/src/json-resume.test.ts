@@ -1,4 +1,4 @@
-// biome-ignore-all lint/style/noNonNullAssertion: These tests assert imported section lengths before inspecting the first item.
+// oxlint-disable typescript/no-non-null-assertion -- These tests assert imported section lengths before inspecting the first item.
 import { describe, expect, it } from "vitest";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { parseJSONResume } from "./json-resume";

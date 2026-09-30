@@ -118,7 +118,7 @@ const linkContainerNodes = [...containerNodes, "link"] as SemanticNodeKind[];
 const textAndLinkNodes = [...textNodes, "link"] as SemanticNodeKind[];
 const colorNodes = [...containerNodes, ...textNodes, "link", "icon", "level"] as SemanticNodeKind[];
 const spacingNodes = [...containerNodes, ...textNodes, "link", "picture"] as SemanticNodeKind[];
-const structuralNodes = [...SEMANTIC_NODE_KINDS.filter((kind) => kind !== "resume")] as SemanticNodeKind[];
+const structuralNodes = SEMANTIC_NODE_KINDS.filter((kind) => kind !== "resume") as SemanticNodeKind[];
 const lengthProperties = new Set<string>(SEMANTIC_CSS_LENGTH_PROPERTIES_V1);
 const numericLengthUnits = SEMANTIC_CSS_LENGTH_UNITS_V1.filter((unit) => unit !== "%");
 const borderStyleProperties = /^(?:border-style|border-(?:top|right|bottom|left)-style)$/;

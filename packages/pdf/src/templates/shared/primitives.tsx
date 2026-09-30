@@ -1,6 +1,6 @@
-import type { ComponentProps, ReactNode } from "react";
 import type { Style } from "../../forme/style-types";
 import type { StyleInput } from "./styles";
+import type { ComponentProps, ReactNode } from "react";
 import { Children, isValidElement } from "react";
 import { Image, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";

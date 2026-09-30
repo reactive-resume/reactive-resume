@@ -1,5 +1,5 @@
-import type { CssNode } from "css-tree";
 import type { SemanticNode } from "./types";
+import type { CssNode } from "css-tree";
 import SpecificityCalculator from "@bramus/specificity";
 import * as csstree from "css-tree";
 import { SEMANTIC_CSS_LIMITS_V1 } from "./limits";

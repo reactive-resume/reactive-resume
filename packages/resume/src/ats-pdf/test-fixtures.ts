@@ -114,7 +114,7 @@ export function makeRawExtraction(options: FixtureOptions = {}): RawExtraction {
 			height,
 			rotation: pageOptions.rotation ?? 0,
 			items,
-			operators: pageOptions.operators === null ? null : { ...defaultOperators(), ...(pageOptions.operators ?? {}) },
+			operators: pageOptions.operators === null ? null : { ...defaultOperators(), ...pageOptions.operators },
 		});
 	}
 

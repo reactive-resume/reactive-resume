@@ -18,7 +18,10 @@ Reactive Resume runs a [Model Context Protocol (MCP)](https://modelcontextprotoc
 The server address is your instance's address followed by `/mcp`. On the hosted instance it's `https://rxresu.me/mcp`. You can copy it from **Settings** → **AI & developer**, in the **MCP server** section.
 
 <Frame caption="The MCP server section in AI & developer settings">
-  <img src="/images/guides/using-the-mcp-server/mcp-server-settings.webp" alt="MCP server section showing the address https://rxresu.me/mcp with a Copy button and a Setup guide link" />
+  <img
+    src="/images/guides/using-the-mcp-server/mcp-server-settings.webp"
+    alt="MCP server section showing the address https://rxresu.me/mcp with a Copy button and a Setup guide link"
+  />
 </Frame>
 
 ## Connect with OAuth
@@ -36,6 +39,7 @@ The server address is your instance's address followed by `/mcp`. On the hosted 
     <Frame caption="The consent screen for a new MCP client">
       <img src="/images/guides/using-the-mcp-server/oauth-consent.webp" alt="Connect an application screen for a client named Claude, listing access to resumes and job applications, profile information, email address and offline access, with Deny and Allow access buttons" />
     </Frame>
+
   </Step>
   <Step title="Return to your client">
     The browser hands control back to your client, which can now use the Reactive Resume tools.
@@ -71,7 +75,8 @@ If your client only runs local commands, use `mcp-remote` as a bridge. It needs 
 ```
 
 <Warning>
-  An API key in a config file gives full access to your documents. Keep the file private, and revoke the key in Settings if it leaks.
+  An API key in a config file gives full access to your documents. Keep the file private, and revoke the key in Settings
+  if it leaks.
 </Warning>
 
 ## Set up popular clients
@@ -86,6 +91,7 @@ If your client only runs local commands, use `mcp-remote` as a bridge. It needs 
     ```
 
     Then run `/mcp` inside Claude Code and choose **reactive-resume** to sign in.
+
   </Accordion>
   <Accordion title="Cursor">
     Add the server to `.cursor/mcp.json` in your project, or `~/.cursor/mcp.json` for all projects:
@@ -99,6 +105,7 @@ If your client only runs local commands, use `mcp-remote` as a bridge. It needs 
     ```
 
     Cursor offers to sign in when it first connects. To use an API key instead, add the `headers` object shown in [Connect with an API key](#connect-with-an-api-key).
+
   </Accordion>
   <Accordion title="Codex">
     ```bash
@@ -113,6 +120,7 @@ If your client only runs local commands, use `mcp-remote` as a bridge. It needs 
     url = "https://rxresu.me/mcp"
     http_headers = { "x-api-key" = "YOUR_API_KEY" }
     ```
+
   </Accordion>
   <Accordion title="Other clients">
     Use the server address with your client's remote MCP (Streamable HTTP) option. If it asks for a transport, choose HTTP. If it can't do OAuth, send the `x-api-key` header.
@@ -120,7 +128,8 @@ If your client only runs local commands, use `mcp-remote` as a bridge. It needs 
 </AccordionGroup>
 
 <Note>
-  Self-hosting? Replace `https://rxresu.me` with your own address everywhere on this page, for example `https://resume.example.com/mcp`.
+  Self-hosting? Replace `https://rxresu.me` with your own address everywhere on this page, for example
+  `https://resume.example.com/mcp`.
 </Note>
 
 ## Try it
@@ -143,61 +152,61 @@ The server offers 43 tools. Each carries MCP annotations (`readOnlyHint`, `destr
 
 ### Resumes
 
-| Tool | What it does |
-| --- | --- |
-| `list_resumes` | Lists your resumes (ID, name, slug, tags, public and locked status, dates). Filter by `tags`, sort by `lastUpdatedAt`, `createdAt` or `name`. |
-| `list_resume_tags` | Lists every tag used across your resumes. |
-| `read_resume` | Returns a resume's full data. |
-| `download_resume_pdf` | Returns a signed PDF download link that expires in 10 minutes. |
-| `create_resume` | Creates a resume with a `name` and `slug`, empty or with sample content (`withSampleData`). |
-| `import_resume` | Creates a resume from a full resume data object, such as a JSON export. |
-| `duplicate_resume` | Copies a resume under a new `name` and `slug`. |
-| `apply_resume_patch` | Changes a resume's content with JSON Patch operations. See [Using the patch API](/guides/using-the-patch-api). |
-| `update_resume` | Changes the name, slug, tags or public setting, and returns the public address. Passwords can only be set in the app. |
-| `delete_resume` | Moves a resume to Trash, where it stays for 30 days. |
-| `lock_resume` | Locks a resume so it can't be edited or deleted. |
-| `unlock_resume` | Unlocks a resume. |
-| `get_resume_statistics` | Returns view and download counts, and when the resume was last viewed and downloaded. |
+| Tool                    | What it does                                                                                                                                  |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `list_resumes`          | Lists your resumes (ID, name, slug, tags, public and locked status, dates). Filter by `tags`, sort by `lastUpdatedAt`, `createdAt` or `name`. |
+| `list_resume_tags`      | Lists every tag used across your resumes.                                                                                                     |
+| `read_resume`           | Returns a resume's full data.                                                                                                                 |
+| `download_resume_pdf`   | Returns a signed PDF download link that expires in 10 minutes.                                                                                |
+| `create_resume`         | Creates a resume with a `name` and `slug`, empty or with sample content (`withSampleData`).                                                   |
+| `import_resume`         | Creates a resume from a full resume data object, such as a JSON export.                                                                       |
+| `duplicate_resume`      | Copies a resume under a new `name` and `slug`.                                                                                                |
+| `apply_resume_patch`    | Changes a resume's content with JSON Patch operations. See [Using the patch API](/guides/using-the-patch-api).                                |
+| `update_resume`         | Changes the name, slug, tags or public setting, and returns the public address. Passwords can only be set in the app.                         |
+| `delete_resume`         | Moves a resume to Trash, where it stays for 30 days.                                                                                          |
+| `lock_resume`           | Locks a resume so it can't be edited or deleted.                                                                                              |
+| `unlock_resume`         | Unlocks a resume.                                                                                                                             |
+| `get_resume_statistics` | Returns view and download counts, and when the resume was last viewed and downloaded.                                                         |
 
 ### Cover letters
 
-| Tool | What it does |
-| --- | --- |
-| `list_cover_letters` | Lists your cover letters. Filter by name (`search`), `resumeId` or `applicationId`. |
-| `read_cover_letter` | Returns one letter, including its `revision`. |
-| `create_cover_letter` | Creates a letter, optionally linked to a resume (for its sender details and design) or an application. |
-| `update_cover_letter` | Changes a letter's text, recipient, template or links. Needs the latest `revision` as `expectedRevision`. |
+| Tool                         | What it does                                                                                                          |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `list_cover_letters`         | Lists your cover letters. Filter by name (`search`), `resumeId` or `applicationId`.                                   |
+| `read_cover_letter`          | Returns one letter, including its `revision`.                                                                         |
+| `create_cover_letter`        | Creates a letter, optionally linked to a resume (for its sender details and design) or an application.                |
+| `update_cover_letter`        | Changes a letter's text, recipient, template or links. Needs the latest `revision` as `expectedRevision`.             |
 | `refresh_cover_letter_style` | Copies the sender details and design from a resume, keeping the letter's text and template. Needs `expectedRevision`. |
-| `duplicate_cover_letter` | Copies a letter. |
-| `delete_cover_letter` | Moves a letter to Trash for 30 days. Needs `expectedRevision`. |
-| `export_cover_letter` | Returns a letter as versioned cover-letter JSON. |
-| `import_cover_letter` | Creates a letter from cover-letter JSON produced by `export_cover_letter`. |
+| `duplicate_cover_letter`     | Copies a letter.                                                                                                      |
+| `delete_cover_letter`        | Moves a letter to Trash for 30 days. Needs `expectedRevision`.                                                        |
+| `export_cover_letter`        | Returns a letter as versioned cover-letter JSON.                                                                      |
+| `import_cover_letter`        | Creates a letter from cover-letter JSON produced by `export_cover_letter`.                                            |
 
 ### Applications
 
-| Tool | What it does |
-| --- | --- |
-| `list_applications` | Lists your applications with contacts, documents and timeline. Filter by stage (`status`) or `tags`. |
-| `read_application` | Returns one application in full. |
-| `list_application_tags` | Lists every tag used across applications. |
-| `get_application_stats` | Counts applications by stage and source. |
-| `create_application` | Creates an application. `company` and `role` are required. |
-| `update_application` | Changes fields, moves the stage, edits contacts, follow-up and tags, or links a resume and letter. Lists you send replace the old ones. |
-| `add_application_note` | Adds a note to the activity timeline. |
-| `add_application_interview` | Schedules an interview (`screening`, `technical`, `behavioral`, `onsite` or `other`). |
-| `update_application_interview` | Reschedules or edits an interview. |
-| `update_application_timeline_entry` | Changes the date of a stage or note entry, or a note's text. |
-| `delete_application_timeline_entry` | Deletes a note, an interview or an older stage entry. |
-| `delete_application` | Permanently deletes an application and the PDFs uploaded to it. |
-| `bulk_update_applications` | Moves several applications to a stage or adds tags to them. |
-| `bulk_delete_applications` | Permanently deletes several applications. |
-| `import_applications` | Creates up to 500 applications from parsed rows. |
-| `attach_application_document` | Attaches a resume or cover-letter PDF (base64, up to 10 MB) as what you sent. |
-| `remove_application_document` | Removes an attached PDF. |
-| `autofill_application_from_job` | Reads a pasted job posting with your AI provider and suggests company, role, location and salary. |
-| `score_application_match` | Scores the linked resume against the job description with your AI provider. |
-| `tailor_resume_for_application` | Makes a private copy of the linked resume with a summary rewritten for the job by your AI provider, and links the copy to the application. |
-| `draft_application_message` | Drafts a cover letter (saved as a new letter) or a recruiter follow-up with your AI provider. |
+| Tool                                | What it does                                                                                                                               |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `list_applications`                 | Lists your applications with contacts, documents and timeline. Filter by stage (`status`) or `tags`.                                       |
+| `read_application`                  | Returns one application in full.                                                                                                           |
+| `list_application_tags`             | Lists every tag used across applications.                                                                                                  |
+| `get_application_stats`             | Counts applications by stage and source.                                                                                                   |
+| `create_application`                | Creates an application. `company` and `role` are required.                                                                                 |
+| `update_application`                | Changes fields, moves the stage, edits contacts, follow-up and tags, or links a resume and letter. Lists you send replace the old ones.    |
+| `add_application_note`              | Adds a note to the activity timeline.                                                                                                      |
+| `add_application_interview`         | Schedules an interview (`screening`, `technical`, `behavioral`, `onsite` or `other`).                                                      |
+| `update_application_interview`      | Reschedules or edits an interview.                                                                                                         |
+| `update_application_timeline_entry` | Changes the date of a stage or note entry, or a note's text.                                                                               |
+| `delete_application_timeline_entry` | Deletes a note, an interview or an older stage entry.                                                                                      |
+| `delete_application`                | Permanently deletes an application and the PDFs uploaded to it.                                                                            |
+| `bulk_update_applications`          | Moves several applications to a stage or adds tags to them.                                                                                |
+| `bulk_delete_applications`          | Permanently deletes several applications.                                                                                                  |
+| `import_applications`               | Creates up to 500 applications from parsed rows.                                                                                           |
+| `attach_application_document`       | Attaches a resume or cover-letter PDF (base64, up to 10 MB) as what you sent.                                                              |
+| `remove_application_document`       | Removes an attached PDF.                                                                                                                   |
+| `autofill_application_from_job`     | Reads a pasted job posting with your AI provider and suggests company, role, location and salary.                                          |
+| `score_application_match`           | Scores the linked resume against the job description with your AI provider.                                                                |
+| `tailor_resume_for_application`     | Makes a private copy of the linked resume with a summary rewritten for the job by your AI provider, and links the copy to the application. |
+| `draft_application_message`         | Drafts a cover letter (saved as a new letter) or a recruiter follow-up with your AI provider.                                              |
 
 The last four tools send data to the AI provider you set up in Reactive Resume and need a tested default provider. See [Connecting an AI provider](/guides/using-ai).
 
@@ -205,18 +214,18 @@ The last four tools send data to the AI provider you set up in Reactive Resume a
 
 Prompts are ready-made instructions your client can start from. Each takes a resume `id` and includes that resume and the schema.
 
-| Prompt | What it does |
-| --- | --- |
-| `build_resume` | Walks you through building a resume section by section. |
-| `improve_resume` | Suggests concrete improvements to wording, impact and structure. |
-| `review_resume` | Gives a structured critique with a scorecard and prioritized recommendations, without changing anything. |
+| Prompt           | What it does                                                                                             |
+| ---------------- | -------------------------------------------------------------------------------------------------------- |
+| `build_resume`   | Walks you through building a resume section by section.                                                  |
+| `improve_resume` | Suggests concrete improvements to wording, impact and structure.                                         |
+| `review_resume`  | Gives a structured critique with a scorecard and prioritized recommendations, without changing anything. |
 
 ## Resources
 
-| URI | Contents |
-| --- | --- |
-| `resume://_meta/schema` | The resume data JSON Schema, listed in `resources/list`. Clients use it to build valid patches. |
-| `resume://{id}` | One resume's full data as JSON. This is a resource template (`resources/templates/list`); find IDs with `list_resumes`. |
+| URI                     | Contents                                                                                                                |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `resume://_meta/schema` | The resume data JSON Schema, listed in `resources/list`. Clients use it to build valid patches.                         |
+| `resume://{id}`         | One resume's full data as JSON. This is a resource template (`resources/templates/list`); find IDs with `list_resumes`. |
 
 Your instance also publishes a server card at `/.well-known/mcp/server-card.json` that summarizes the tools, prompts and resources, for clients that discover servers without connecting.
 
@@ -231,15 +240,15 @@ This section is for client developers and self-hosters.
 
 ## Troubleshooting
 
-| Problem | What to do |
-| --- | --- |
-| "Unauthorized" and no sign-in window | Your client doesn't support MCP OAuth. Connect with an API key. |
-| The sign-in window says the request is invalid or has expired | Start the connection again from your client. |
-| `401` with an API key | The key is wrong, revoked or expired. Create a new one in **Settings** → **AI & developer**. |
-| A tool says the resume is locked | Unlock it in the app, or ask the client to run `unlock_resume`. |
-| A tool says an ID wasn't found | Ask the client to list resumes, letters or applications first to get valid IDs. |
-| An edit to dates doesn't stick | The client changed the `period` or `date` text. Ask it to write the `dates` object instead. |
-| `import_resume` fails on a large file | Your client's message size limit is too small. Import the file in the app instead. |
+| Problem                                                       | What to do                                                                                            |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| "Unauthorized" and no sign-in window                          | Your client doesn't support MCP OAuth. Connect with an API key.                                       |
+| The sign-in window says the request is invalid or has expired | Start the connection again from your client.                                                          |
+| `401` with an API key                                         | The key is wrong, revoked or expired. Create a new one in **Settings** → **AI & developer**.          |
+| A tool says the resume is locked                              | Unlock it in the app, or ask the client to run `unlock_resume`.                                       |
+| A tool says an ID wasn't found                                | Ask the client to list resumes, letters or applications first to get valid IDs.                       |
+| An edit to dates doesn't stick                                | The client changed the `period` or `date` text. Ask it to write the `dates` object instead.           |
+| `import_resume` fails on a large file                         | Your client's message size limit is too small. Import the file in the app instead.                    |
 | A self-hosted connection made before an upgrade stops working | Remove the server from your client and add it again, so it registers afresh and you approve it again. |
 
 ## Related guides

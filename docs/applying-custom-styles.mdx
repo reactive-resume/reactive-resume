@@ -36,15 +36,18 @@ working when you switch templates. Reach for custom styles when you want somethi
 </Steps>
 
 <Frame caption="The Custom Styles editor, at the end of Design → Advanced">
-  <img src="/images/guides/applying-custom-styles/custom-styles-editor.webp" alt="The Custom Styles heading with a toolbar of five icons (undo, redo, copy, format, focus mode), two hint lines, and an empty code editor" />
+  <img
+    src="/images/guides/applying-custom-styles/custom-styles-editor.webp"
+    alt="The Custom Styles heading with a toolbar of five icons (undo, redo, copy, format, focus mode), two hint lines, and an empty code editor"
+  />
 </Frame>
 
 On a phone, Design opens as a sheet over the page. Select the **Page** tab, then select **Advanced** under the page
 settings.
 
 <Note>
-  **Reset design defaults** doesn't touch your custom styles. It resets the look (fonts, colors, spacing) and
-  keeps your stylesheet, paper size, language, date format and section layout.
+  **Reset design defaults** doesn't touch your custom styles. It resets the look (fonts, colors, spacing) and keeps your
+  stylesheet, paper size, language, date format and section layout.
 </Note>
 
 ## Style one section or entry
@@ -67,7 +70,10 @@ The quickest way to start is to pick the thing you want to change on the page.
 </Steps>
 
 <Frame caption="Clicking the University of Washington entry added a rule for it; the dashed outline shows what the rule styles">
-  <img src="/images/guides/applying-custom-styles/pick-an-entry-on-the-page.webp" alt="The stylesheet editor with a rule for the Education entry University of Washington, and the same entry on the page shown in teal inside a dashed outline" />
+  <img
+    src="/images/guides/applying-custom-styles/pick-an-entry-on-the-page.webp"
+    alt="The stylesheet editor with a rule for the Education entry University of Washington, and the same entry on the page shown in teal inside a dashed outline"
+  />
 </Frame>
 
 A picked rule looks like this:
@@ -75,7 +81,7 @@ A picked rule looks like this:
 ```css
 /* Education › University of Washington */
 section[id="education"] item[id="019bef5a-93e4-7746-ad39-48455f6cef9e"] {
-	color: #0f766e;
+  color: #0f766e;
 }
 ```
 
@@ -92,11 +98,15 @@ typing part of the entry's title, such as `Senior`. The suggestions include matc
 "Section › Entry". Choose one to insert its selector.
 
 <Frame caption="Typing “Senior” suggests the Senior Game Developer entry; choosing it inserts its selector">
-  <img src="/images/guides/applying-custom-styles/find-an-entry-by-name.webp" alt="Autocomplete suggestions under the word Senior, led by Experience › Senior Game Developer with its section and item selector" />
+  <img
+    src="/images/guides/applying-custom-styles/find-an-entry-by-name.webp"
+    alt="Autocomplete suggestions under the word Senior, led by Experience › Senior Game Developer with its section and item selector"
+  />
 </Frame>
 
 Autocomplete also suggests element names and attributes in selectors, property names inside a rule, and values after
 a colon, including your own variables and the read-only `--resume-*` variables. Press <kbd>Ctrl</kbd>
+
 <kbd>Space</kbd> to open the suggestions without typing.
 
 A few more editor helpers:
@@ -108,16 +118,18 @@ A few more editor helpers:
 
 ## Use the editor toolbar
 
-| Button | What it does |
-| --- | --- |
-| **Undo resume change** / **Redo resume change** | Steps back or forward through your resume's changes. |
-| **Copy stylesheet** | Copies the whole stylesheet to your clipboard. |
-| **Format stylesheet** | Tidies indentation and spacing. |
-| **Open focus mode** | Opens the editor in a larger side panel titled **Semantic CSS stylesheet**. Select **Exit focus mode** or close the panel to go back. |
+| Button                                          | What it does                                                                                                                          |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **Undo resume change** / **Redo resume change** | Steps back or forward through your resume's changes.                                                                                  |
+| **Copy stylesheet**                             | Copies the whole stylesheet to your clipboard.                                                                                        |
+| **Format stylesheet**                           | Tidies indentation and spacing.                                                                                                       |
+| **Open focus mode**                             | Opens the editor in a larger side panel titled **Semantic CSS stylesheet**. Select **Exit focus mode** or close the panel to go back. |
 
 While typing in the stylesheet editor, <kbd>⌘</kbd> <kbd>Z</kbd> and <kbd>⌘</kbd> <kbd>Shift</kbd>
-<kbd>Z</kbd> use the editor's local text history. The toolbar buttons use your resume's shared history, so they can
-also reverse a template switch or another resume change. See [Undoing changes and version history](/guides/undoing-changes-and-version-history).
+
+<kbd>Z</kbd> use the editor's local text history. The toolbar buttons use your resume's shared history, so they can also
+reverse a template switch or another resume change. See [Undoing changes and version
+history](/guides/undoing-changes-and-version-history).
 
 Your stylesheet saves automatically with the rest of the resume, and it's part of every saved version in **History**.
 
@@ -173,56 +185,56 @@ are lowercase and case-sensitive.
 
 **Resume structure**
 
-| Element | Targets | Typical use |
-| --- | --- | --- |
-| `resume` | The whole resume | Scope a rule to one template. |
-| `page` | One PDF page | Set a page size. |
-| `region` | The header, main, sidebar or featured area of a page | Style a layout area. |
-| `header` | The resume header | Style the name and contact area. |
-| `section` | A section | Target a section type or placement. |
-| `section-heading` | A section's title | Change heading type or add a rule under it. |
-| `section-items` | The entries in a section | Adjust entry layout and gaps. |
-| `item` | One entry | Space or keep together a job, project or similar entry. |
-| `item-header` | An entry's top row | Align the title, company, dates or similar details. |
+| Element           | Targets                                              | Typical use                                             |
+| ----------------- | ---------------------------------------------------- | ------------------------------------------------------- |
+| `resume`          | The whole resume                                     | Scope a rule to one template.                           |
+| `page`            | One PDF page                                         | Set a page size.                                        |
+| `region`          | The header, main, sidebar or featured area of a page | Style a layout area.                                    |
+| `header`          | The resume header                                    | Style the name and contact area.                        |
+| `section`         | A section                                            | Target a section type or placement.                     |
+| `section-heading` | A section's title                                    | Change heading type or add a rule under it.             |
+| `section-items`   | The entries in a section                             | Adjust entry layout and gaps.                           |
+| `item`            | One entry                                            | Space or keep together a job, project or similar entry. |
+| `item-header`     | An entry's top row                                   | Align the title, company, dates or similar details.     |
 
 **Header and entry content**
 
-| Element | Targets |
-| --- | --- |
-| `picture` | The profile picture. |
-| `name`, `headline` | The name and headline in the header. |
-| `contact-list`, `contact-item` | The contact details in the header. |
-| `combined-text` | A value the template builds from several fields. |
-| `field` | A named field, such as a position, company or date. |
-| `link` | A link. |
-| `icon`, `level` | An icon, or a skill or language level indicator. |
+| Element                        | Targets                                             |
+| ------------------------------ | --------------------------------------------------- |
+| `picture`                      | The profile picture.                                |
+| `name`, `headline`             | The name and headline in the header.                |
+| `contact-list`, `contact-item` | The contact details in the header.                  |
+| `combined-text`                | A value the template builds from several fields.    |
+| `field`                        | A named field, such as a position, company or date. |
+| `link`                         | A link.                                             |
+| `icon`, `level`                | An icon, or a skill or language level indicator.    |
 
 **Rich text and lists**
 
-| Element | Targets |
-| --- | --- |
-| `rich-text`, `rich-heading`, `blockquote`, `paragraph` | Formatted text blocks in descriptions and the summary. |
-| `list`, `list-item`, `list-marker`, `list-item-content` | A list, one list row, its bullet or number, and its text. |
-| `strong`, `emphasis`, `underline`, `strike`, `code`, `text-span`, `mark` | Inline formatting. |
-| `hard-break`, `horizontal-rule` | A line break or horizontal rule. |
-| `template-part` | A template-specific detail. Always guard it with a template (see below). |
+| Element                                                                  | Targets                                                                  |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| `rich-text`, `rich-heading`, `blockquote`, `paragraph`                   | Formatted text blocks in descriptions and the summary.                   |
+| `list`, `list-item`, `list-marker`, `list-item-content`                  | A list, one list row, its bullet or number, and its text.                |
+| `strong`, `emphasis`, `underline`, `strike`, `code`, `text-span`, `mark` | Inline formatting.                                                       |
+| `hard-break`, `horizontal-rule`                                          | A line break or horizontal rule.                                         |
+| `template-part`                                                          | A template-specific detail. Always guard it with a template (see below). |
 
 ### Narrow a selector with attributes
 
-| Attribute | Use it with | Example |
-| --- | --- | --- |
-| `type` | `section`, `icon` | `section[type="experience"]` |
-| `placement` | `region`, `section` | `region[placement="sidebar"]` |
-| `region` | `region`, `header` | `region[region="featured"]` |
-| `origin` | `section` | `section[origin="main"]` |
-| `part` | `region`, `section`, `contact-item`, `item-header` | `region[part~="sidebar-background"]` |
-| `template` | `resume` | `resume[template="azurill"]` |
-| `name` | `field`, `contact-item`, `combined-text`, `template-part` | `field[name="position"]` |
-| `level` | `rich-heading` | `rich-heading[level="2"]` |
-| `direction` | `list-item-content` | `list-item-content[direction="rtl"]` |
-| `page-number` | `page` | `page[page-number="1"]` |
-| `id` | Any element that has one | `section[id="projects"]` |
-| `role` | Any element with roles | `field[role~="secondary-text"]` |
+| Attribute     | Use it with                                               | Example                              |
+| ------------- | --------------------------------------------------------- | ------------------------------------ |
+| `type`        | `section`, `icon`                                         | `section[type="experience"]`         |
+| `placement`   | `region`, `section`                                       | `region[placement="sidebar"]`        |
+| `region`      | `region`, `header`                                        | `region[region="featured"]`          |
+| `origin`      | `section`                                                 | `section[origin="main"]`             |
+| `part`        | `region`, `section`, `contact-item`, `item-header`        | `region[part~="sidebar-background"]` |
+| `template`    | `resume`                                                  | `resume[template="azurill"]`         |
+| `name`        | `field`, `contact-item`, `combined-text`, `template-part` | `field[name="position"]`             |
+| `level`       | `rich-heading`                                            | `rich-heading[level="2"]`            |
+| `direction`   | `list-item-content`                                       | `list-item-content[direction="rtl"]` |
+| `page-number` | `page`                                                    | `page[page-number="1"]`              |
+| `id`          | Any element that has one                                  | `section[id="projects"]`             |
+| `role`        | Any element with roles                                    | `field[role~="secondary-text"]`      |
 
 Attribute matchers `=`, `~=`, `^=` and `*=` are supported. `#projects` is shorthand for `[id="projects"]` when the ID
 is a plain word (section IDs such as `experience` are; entry IDs aren't, so use `item[id="..."]`).
@@ -234,16 +246,16 @@ so `item:nth-of-type(1)` is the first entry.
 
 ```css
 section[type="experience"] > section-heading {
-	border-bottom: 1pt solid #0f766e;
+  border-bottom: 1pt solid #0f766e;
 }
 
 region[placement="sidebar"] {
-	background-color: #f8fafc;
-	padding: 18pt;
+  background-color: #f8fafc;
+  padding: 18pt;
 }
 
 section[type="experience"] item:nth-of-type(1) {
-	margin-bottom: 12pt;
+  margin-bottom: 12pt;
 }
 ```
 
@@ -254,39 +266,39 @@ reuse the resume's values, so your styles follow when you change a color or size
 
 ```css
 :root {
-	--accent: var(--resume-primary-color);
-	--rule: #cbd5e1;
+  --accent: var(--resume-primary-color);
+  --rule: #cbd5e1;
 }
 
 section-heading {
-	color: var(--accent);
-	border-bottom: 1pt solid var(--rule);
-	letter-spacing: 0.4pt;
+  color: var(--accent);
+  border-bottom: 1pt solid var(--rule);
+  letter-spacing: 0.4pt;
 }
 ```
 
 Don't assign a value to a `--resume-*` variable; create your own, such as `--accent`, instead.
 
-| Design setting | Read-only variables |
-| --- | --- |
-| Colors | `--resume-primary-color`, `--resume-text-color`, `--resume-background-color` |
-| Type | `--resume-body-font-size`, `--resume-body-line-height`, `--resume-heading-font-size`, `--resume-heading-line-height` |
-| Page and layout | `--resume-page-gap-x`, `--resume-page-gap-y`, `--resume-page-margin-x`, `--resume-page-margin-y`, `--resume-page-width`, `--resume-page-height`, `--resume-sidebar-width` |
-| Picture | `--resume-picture-size`, `--resume-picture-rotation`, `--resume-picture-aspect-ratio`, `--resume-picture-border-radius`, `--resume-picture-border-width`, `--resume-picture-border-color`, `--resume-picture-shadow-width`, `--resume-picture-shadow-color` |
+| Design setting  | Read-only variables                                                                                                                                                                                                                                         |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Colors          | `--resume-primary-color`, `--resume-text-color`, `--resume-background-color`                                                                                                                                                                                |
+| Type            | `--resume-body-font-size`, `--resume-body-line-height`, `--resume-heading-font-size`, `--resume-heading-line-height`                                                                                                                                        |
+| Page and layout | `--resume-page-gap-x`, `--resume-page-gap-y`, `--resume-page-margin-x`, `--resume-page-margin-y`, `--resume-page-width`, `--resume-page-height`, `--resume-sidebar-width`                                                                                   |
+| Picture         | `--resume-picture-size`, `--resume-picture-rotation`, `--resume-picture-aspect-ratio`, `--resume-picture-border-radius`, `--resume-picture-border-width`, `--resume-picture-border-color`, `--resume-picture-shadow-width`, `--resume-picture-shadow-color` |
 
 Use `pt` for predictable sizes in a PDF. Lengths also accept `px`, `in`, `mm`, `cm`, `em` and `rem`, and `%` where the
 [engine limits](#engine-limits) allow it. `inherit` and `initial` work as values, and `!important` is respected.
 
 ### Properties
 
-| Goal | Properties |
-| --- | --- |
-| Text | `color`, `font-size`, `font-style`, `font-weight`, `letter-spacing`, `line-height`, `text-align`, `text-decoration`, `text-transform`, `text-overflow`, `direction` |
-| Spacing and size | `margin`, `padding` (and their side forms), `gap`, `row-gap`, `column-gap`, `width`, `height`, `min-width`, `max-width`, `min-height`, `max-height`, `aspect-ratio` |
-| Layout | `display` (`flex` or `none`), `flex`, `flex-direction`, `flex-wrap`, `justify-content`, `align-items`, `align-self`, `order`, `position`, `top`, `right`, `bottom`, `left`, `overflow` |
-| Look | `background-color`, `border` (and its side, width, style, color and radius forms), `opacity`, `transform`, `transform-origin` |
-| Picture | `object-fit`, `-resume-shadow-color`, `-resume-shadow-width` |
-| Page breaks | `break-before`, `break-inside`, `orphans`, `widows`, `size` (on `page` only) |
+| Goal             | Properties                                                                                                                                                                             |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Text             | `color`, `font-size`, `font-style`, `font-weight`, `letter-spacing`, `line-height`, `text-align`, `text-decoration`, `text-transform`, `text-overflow`, `direction`                    |
+| Spacing and size | `margin`, `padding` (and their side forms), `gap`, `row-gap`, `column-gap`, `width`, `height`, `min-width`, `max-width`, `min-height`, `max-height`, `aspect-ratio`                    |
+| Layout           | `display` (`flex` or `none`), `flex`, `flex-direction`, `flex-wrap`, `justify-content`, `align-items`, `align-self`, `order`, `position`, `top`, `right`, `bottom`, `left`, `overflow` |
+| Look             | `background-color`, `border` (and its side, width, style, color and radius forms), `opacity`, `transform`, `transform-origin`                                                          |
+| Picture          | `object-fit`, `-resume-shadow-color`, `-resume-shadow-width`                                                                                                                           |
+| Page breaks      | `break-before`, `break-inside`, `orphans`, `widows`, `size` (on `page` only)                                                                                                           |
 
 `background-color` and borders apply to container elements (such as `header`, `section`, `item`, `region`), not to
 text elements. `display: none` hides an element that's already there; to remove content, hide it in **Write** instead,
@@ -296,7 +308,7 @@ Backgrounds must be flat colors. Gradients such as `linear-gradient(...)` aren't
 
 ```css
 header {
-	background-color: #1e293b;
+  background-color: #1e293b;
 }
 ```
 
@@ -306,15 +318,15 @@ List rows, markers and text:
 
 ```css
 rich-text list-item {
-	gap: 4pt;
+  gap: 4pt;
 }
 
 list-marker {
-	color: var(--resume-primary-color);
+  color: var(--resume-primary-color);
 }
 
 list-item-content {
-	line-height: 1.35;
+  line-height: 1.35;
 }
 ```
 
@@ -322,7 +334,7 @@ Space between a skill's level icons (`gap` works too; `row-gap` doesn't change t
 
 ```css
 section[type="skills"] level {
-	column-gap: 4pt;
+  column-gap: 4pt;
 }
 ```
 
@@ -330,11 +342,11 @@ Named fields inside entries:
 
 ```css
 section[type="experience"] field[name="position"] {
-	font-weight: 600;
+  font-weight: 600;
 }
 
 section[type="experience"] field[name="company"] {
-	color: var(--resume-primary-color);
+  color: var(--resume-primary-color);
 }
 ```
 
@@ -345,15 +357,15 @@ change.
 
 ```css
 page {
-	size: 210mm 297mm;
+  size: 210mm 297mm;
 }
 
 section[type="projects"] {
-	break-before: page;
+  break-before: page;
 }
 
 item {
-	break-inside: avoid;
+  break-inside: avoid;
 }
 ```
 
@@ -364,9 +376,9 @@ item {
 
 ```css
 @media (max-width: 600pt) {
-	region[placement="sidebar"] {
-		padding: 12pt;
-	}
+  region[placement="sidebar"] {
+    padding: 12pt;
+  }
 }
 ```
 
@@ -377,24 +389,24 @@ they don't apply by accident after a template change.
 
 ```css
 resume[template="azurill"] template-part[name="timeline-line"] {
-	background-color: #94a3b8;
+  background-color: #94a3b8;
 }
 ```
 
-| Template | Selectors |
-| --- | --- |
-| Azurill | `template-part[name="timeline-content"]`, `template-part[name="timeline-dot"]`, `template-part[name="timeline-line"]`, `template-part[name="timeline-marker"]` |
-| Bronzor | `section[part~="interleaved-section-row"]` |
-| Chikorita | `template-part[name="contact-row-primary"]`, `template-part[name="contact-row-secondary"]` |
-| Ditgar | `template-part[name="featured-summary"]`, `item-header[part~="item-header-border"]`, `region[part~="sidebar-background"]` |
-| Ditto | `template-part[name="contact-offset"]`, `template-part[name="header-band"]`, `template-part[name="picture-anchor"]` |
-| Gengar | `template-part[name="featured-summary"]`, `region[part~="sidebar-background"]` |
-| Glalie | `template-part[name="sidebar-background"]` |
-| Leafish | `template-part[name="header-body"]`, `template-part[name="header-contact-band"]`, `template-part[name="header-intro"]` |
-| Meowth | `template-part[name="education-grade-row"]`, `template-part[name="inline-item-header-leading"]`, `template-part[name="inline-item-header-middle"]`, `template-part[name="inline-item-header-trailing"]` |
-| Pikachu | `template-part[name="header-divider"]` |
-| Rhyhorn | `template-part[name="contact-item-content"]`, `contact-item[part~="contact-item-last"]` |
-| Scizor | `template-part[name="header-name-rule"]` |
+| Template  | Selectors                                                                                                                                                                                               |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Azurill   | `template-part[name="timeline-content"]`, `template-part[name="timeline-dot"]`, `template-part[name="timeline-line"]`, `template-part[name="timeline-marker"]`                                          |
+| Bronzor   | `section[part~="interleaved-section-row"]`                                                                                                                                                              |
+| Chikorita | `template-part[name="contact-row-primary"]`, `template-part[name="contact-row-secondary"]`                                                                                                              |
+| Ditgar    | `template-part[name="featured-summary"]`, `item-header[part~="item-header-border"]`, `region[part~="sidebar-background"]`                                                                               |
+| Ditto     | `template-part[name="contact-offset"]`, `template-part[name="header-band"]`, `template-part[name="picture-anchor"]`                                                                                     |
+| Gengar    | `template-part[name="featured-summary"]`, `region[part~="sidebar-background"]`                                                                                                                          |
+| Glalie    | `template-part[name="sidebar-background"]`                                                                                                                                                              |
+| Leafish   | `template-part[name="header-body"]`, `template-part[name="header-contact-band"]`, `template-part[name="header-intro"]`                                                                                  |
+| Meowth    | `template-part[name="education-grade-row"]`, `template-part[name="inline-item-header-leading"]`, `template-part[name="inline-item-header-middle"]`, `template-part[name="inline-item-header-trailing"]` |
+| Pikachu   | `template-part[name="header-divider"]`                                                                                                                                                                  |
+| Rhyhorn   | `template-part[name="contact-item-content"]`, `contact-item[part~="contact-item-last"]`                                                                                                                 |
+| Scizor    | `template-part[name="header-name-rule"]`                                                                                                                                                                |
 
 Kakuna, Lapras and Onyx have no template-specific parts.
 

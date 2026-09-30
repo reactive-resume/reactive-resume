@@ -1,6 +1,6 @@
+import type { WriteSection } from "./model";
 import type { SectionType } from "@reactive-resume/schema/resume/data";
 import type { KeyboardEvent, ReactNode } from "react";
-import type { WriteSection } from "./model";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { plural, t } from "@lingui/core/macro";
@@ -26,15 +26,15 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { pendingProposals } from "../proposals/proposals";
+import { useEditorStore } from "../store";
+import { addEntryTo } from "./actions";
+import { countEntriesToCheck, getEntries, getSectionObject } from "./model";
 import { IconPicker } from "@/components/input/icon-picker";
 import { useCurrentBuilderResumeSelector, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { usePrompt } from "@/hooks/use-confirm";
 import { DRAG_SETTLE } from "@/libs/motion";
 import { getSectionTitle } from "@/libs/resume/section";
-import { pendingProposals } from "../proposals/proposals";
-import { useEditorStore } from "../store";
-import { addEntryTo } from "./actions";
-import { countEntriesToCheck, getEntries, getSectionObject } from "./model";
 
 /** The printed title: the one the user gave, else the section type's name. */
 export function useSectionTitle(section: WriteSection) {
@@ -116,7 +116,7 @@ export function SectionRow({ section, locked, onMove, children }: SectionRowProp
 					onClick={() => setOpen(section.id, !open)}
 					onKeyDown={onTitleKeyDown}
 					className={cn(
-						"min-w-0 flex-1 truncate rounded-md py-1 text-start font-medium text-sm",
+						"min-w-0 flex-1 truncate rounded-md py-1 text-start text-sm font-medium",
 						hidden && "text-ink-3 line-through",
 					)}
 				>
@@ -134,7 +134,7 @@ export function SectionRow({ section, locked, onMove, children }: SectionRowProp
 					</Badge>
 				)}
 				{section.kind !== "summary" && (
-					<span className="px-1 font-mono text-ink-3 text-xs">
+					<span className="px-1 font-mono text-xs text-ink-3">
 						<span aria-hidden="true">{count}</span>
 						<span className="sr-only">{plural(count, { one: "# entry", other: "# entries" })}</span>
 					</span>

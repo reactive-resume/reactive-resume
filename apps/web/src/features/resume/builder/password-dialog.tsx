@@ -95,7 +95,7 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 							aria-invalid={!!error}
 							aria-describedby={`${id}-hint${error ? ` ${id}-error` : ""}`}
 						/>
-						<p id={`${id}-hint`} className="text-ink-3 text-sm">
+						<p id={`${id}-hint`} className="text-sm text-ink-3">
 							<Trans>Use between 6 and 64 characters.</Trans>
 						</p>
 					</div>
@@ -118,7 +118,7 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 						/>
 					</div>
 					{error && (
-						<p id={`${id}-error`} role="alert" className="text-danger-text text-sm">
+						<p id={`${id}-error`} role="alert" className="text-sm text-danger-text">
 							{error}
 						</p>
 					)}

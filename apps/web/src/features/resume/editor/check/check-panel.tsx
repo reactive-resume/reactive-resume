@@ -1,9 +1,9 @@
-import type { AtsCategory, AtsReport } from "@reactive-resume/resume/ats";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { CSSProperties } from "react";
 import type { CheckTab } from "../store";
 import type { CheckIssue } from "./issues";
 import type { CheckResult } from "./use-check";
+import type { AtsCategory, AtsReport } from "@reactive-resume/resume/ats";
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { CSSProperties } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useState } from "react";
@@ -22,16 +22,16 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
-import { AtsPdfReportView } from "@/features/ats-checker/report/report-view";
-import { blobToPdfFile, runAtsCheck } from "@/features/ats-checker/run-ats-check";
-import { useIsResumeLocked } from "@/features/resume/builder/draft";
-import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { useEditorStore } from "../store";
 import { useCheckActions } from "./actions";
 import { getCategoryDescription, getCategoryName } from "./issues";
 import { JobMatchTab, useJobMatch } from "./job-match";
 import { useCheck } from "./use-check";
 import { WritingTab } from "./writing-tab";
+import { AtsPdfReportView } from "@/features/ats-checker/report/report-view";
+import { blobToPdfFile, runAtsCheck } from "@/features/ats-checker/run-ats-check";
+import { useIsResumeLocked } from "@/features/resume/builder/draft";
+import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 
 /**
  * Check: the score over the live checks, then Issues (numbered cards pinned to their lines), Job match (terms from
@@ -53,12 +53,12 @@ export function CheckPanel() {
 				<TabsList aria-label={t`Check views`} className="h-[38px] w-full">
 					<TabsTrigger value="issues" className="gap-1.5">
 						<Trans>Issues</Trans>
-						<span className="font-mono text-ink-3 text-xs">{check.issues.length}</span>
+						<span className="font-mono text-xs text-ink-3">{check.issues.length}</span>
 					</TabsTrigger>
 					<TabsTrigger value="match" className="gap-1.5">
 						<Trans>Job match</Trans>
 						{match.result && (
-							<span className="font-mono text-ink-3 text-xs">
+							<span className="font-mono text-xs text-ink-3">
 								{match.result.found.length}/{match.result.total}
 							</span>
 						)}
@@ -103,14 +103,14 @@ function ScoreSummary({ report }: { report: AtsReport }) {
 					} as CSSProperties
 				}
 			>
-				<span className="grid size-[70px] place-items-center rounded-full bg-surface font-display font-medium text-[26px]">
+				<span className="grid size-[70px] place-items-center rounded-full bg-surface font-display text-[26px] font-medium">
 					{score}
 				</span>
 			</div>
 
 			<div className="grid min-w-0 gap-1">
-				<strong className="font-semibold text-[15px]">{getVerdict(score)}</strong>
-				<span className="text-[13px] text-ink-2 leading-[19px]">
+				<strong className="text-[15px] font-semibold">{getVerdict(score)}</strong>
+				<span className="text-[13px] leading-[19px] text-ink-2">
 					<Trans>
 						{passedRules} of {totalRules} checks pass.
 					</Trans>{" "}
@@ -120,7 +120,7 @@ function ScoreSummary({ report }: { report: AtsReport }) {
 						<Trans>Nothing to review.</Trans>
 					)}
 				</span>
-				<span className="flex items-center gap-1 text-ink-3 text-xs">
+				<span className="flex items-center gap-1 text-xs text-ink-3">
 					<Icon name="bolt" size={14} />
 					<Trans>Live · updates as you edit</Trans>
 				</span>
@@ -138,7 +138,7 @@ function IssuesTab({ check }: { check: CheckResult }) {
 	return (
 		<div className="grid gap-2.5">
 			{issues.length === 0 ? (
-				<div className="flex gap-2.5 rounded-xl bg-accent-soft p-3 text-[13px] text-accent-text leading-[19px]">
+				<div className="flex gap-2.5 rounded-xl bg-accent-soft p-3 text-[13px] leading-[19px] text-accent-text">
 					<Icon name="check_circle" />
 					<p>
 						<Trans>
@@ -156,7 +156,7 @@ function IssuesTab({ check }: { check: CheckResult }) {
 
 			<CategoryRows report={report} />
 
-			<p className="px-1 text-ink-3 text-xs leading-[17px]">
+			<p className="px-1 text-xs leading-[17px] text-ink-3">
 				<Trans>
 					The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted.
 				</Trans>{" "}
@@ -191,7 +191,7 @@ function IssueCard({ issue, selected, locked }: IssueCardProps) {
 
 	return (
 		// Clicking a card picks it, outlining its line on the page; Show on page does the same from the keyboard.
-		// biome-ignore lint/a11y/useKeyWithClickEvents: the buttons inside cover the keyboard.
+		// oxlint-disable-next-line jsx-a11y/click-events-have-key-events -- the buttons inside cover the keyboard.
 		<li
 			data-issue-card={issue.key}
 			aria-labelledby={titleId}
@@ -204,19 +204,19 @@ function IssueCard({ issue, selected, locked }: IssueCardProps) {
 			<div className="flex items-start gap-2.5">
 				<span
 					aria-hidden="true"
-					className="grid size-[22px] shrink-0 place-items-center rounded-full bg-warn font-bold text-[12px] text-[oklch(0.22_0.03_80)]"
+					className="grid size-[22px] shrink-0 place-items-center rounded-full bg-warn text-[12px] font-bold text-[oklch(0.22_0.03_80)]"
 				>
 					{issue.number}
 				</span>
 				<div className="grid min-w-0 gap-[3px]">
 					<span className="font-mono text-[11px] text-ink-3 uppercase">{getCategoryName(issue.category)}</span>
-					<h3 id={titleId} className="font-semibold text-sm leading-5">
+					<h3 id={titleId} className="text-sm leading-5 font-semibold">
 						<span className="sr-only">
 							<Trans>Issue {issue.number}:</Trans>{" "}
 						</span>
 						{issue.title}
 					</h3>
-					<p className="text-[13px] text-ink-2 leading-[19px]">{issue.body}</p>
+					<p className="text-[13px] leading-[19px] text-ink-2">{issue.body}</p>
 				</div>
 			</div>
 
@@ -269,7 +269,7 @@ function CategoryRows({ report }: { report: AtsReport }) {
 
 	return (
 		<section aria-labelledby="check-categories" className="grid gap-2 pt-2">
-			<h3 id="check-categories" className="px-1 font-semibold text-ink-3 text-xs">
+			<h3 id="check-categories" className="px-1 text-xs font-semibold text-ink-3">
 				<Trans>Checks by category</Trans>
 			</h3>
 			<div className="overflow-hidden rounded-xl border border-line">
@@ -280,20 +280,20 @@ function CategoryRows({ report }: { report: AtsReport }) {
 					const descriptionId = `check-category-${category}`;
 
 					return (
-						<div key={category} className={cn(index > 0 && "border-line border-t")}>
+						<div key={category} className={cn(index > 0 && "border-t border-line")}>
 							<button
 								type="button"
 								aria-expanded={open}
 								aria-controls={descriptionId}
 								onClick={() => setToggled((current) => ({ ...current, [category]: !open }))}
-								className="flex h-12 w-full items-center gap-2.5 px-3 text-start font-medium text-sm transition-colors duration-quick hover:bg-hover"
+								className="flex h-12 w-full items-center gap-2.5 px-3 text-start text-sm font-medium transition-colors duration-quick hover:bg-hover"
 							>
 								<Icon
 									name={failing > 0 ? "error" : "check_circle"}
 									className={failing > 0 ? "text-warn-text" : "text-accent-text"}
 								/>
 								{getCategoryName(category)}
-								<span className={cn("font-normal text-xs", failing > 0 ? "text-warn-text" : "text-ink-3")}>
+								<span className={cn("text-xs font-normal", failing > 0 ? "text-warn-text" : "text-ink-3")}>
 									{failing > 0 ? (
 										<Plural value={failing} one="# to review" other="# to review" />
 									) : (
@@ -312,7 +312,7 @@ function CategoryRows({ report }: { report: AtsReport }) {
 							</button>
 							<Collapsible open={open}>
 								<CollapsibleContent id={descriptionId} keepMounted>
-									<p className="px-3 ps-[42px] pb-3 text-[13px] text-ink-2 leading-[19px]">
+									<p className="px-3 ps-[42px] pb-3 text-[13px] leading-[19px] text-ink-2">
 										{getCategoryDescription(category)}
 									</p>
 								</CollapsibleContent>

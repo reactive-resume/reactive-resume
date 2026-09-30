@@ -102,7 +102,7 @@ function ComboboxContent({
 					data-slot="combobox-content"
 					data-chips={!!anchor}
 					className={cn(
-						"group/combobox-content relative max-h-(--available-height) w-fit min-w-[calc(var(--anchor-width)+--spacing(7))] max-w-(--available-width) origin-(--transform-origin) overflow-hidden rounded-xl bg-raised text-ink shadow-e2 transition-[opacity,scale,translate] duration-standard ease-enter data-[chips=true]:min-w-(--anchor-width) data-ending-style:scale-[0.98] data-starting-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)] *:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-9 *:data-[slot=input-group]:bg-bg *:data-[slot=input-group]:shadow-none",
+						"group/combobox-content relative max-h-(--available-height) w-fit max-w-(--available-width) min-w-[calc(var(--anchor-width)+--spacing(7))] origin-(--transform-origin) overflow-hidden rounded-xl bg-raised text-ink shadow-e2 transition-[opacity,scale,translate] duration-standard ease-enter data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)] data-starting-style:scale-[0.98] data-starting-style:opacity-0 data-[chips=true]:min-w-(--anchor-width) *:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-9 *:data-[slot=input-group]:bg-bg *:data-[slot=input-group]:shadow-none",
 						popupSlideClassName,
 						className,
 					)}
@@ -131,7 +131,7 @@ function ComboboxItem({ className, children, ...props }: ComboboxPrimitive.Item.
 		<ComboboxPrimitive.Item
 			data-slot="combobox-item"
 			className={cn(
-				"relative flex min-h-9 w-full cursor-default select-none items-center gap-2.5 rounded-md ps-2.5 pe-9 text-ink text-sm outline-hidden data-disabled:pointer-events-none data-highlighted:bg-hover data-disabled:text-ink-3 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"relative flex min-h-9 w-full cursor-default items-center gap-2.5 rounded-md ps-2.5 pe-9 text-sm text-ink outline-hidden select-none data-highlighted:bg-hover data-disabled:pointer-events-none data-disabled:text-ink-3 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
 				className,
 			)}
 			{...props}
@@ -151,7 +151,7 @@ function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
 		<ComboboxPrimitive.Empty
 			data-slot="combobox-empty"
 			className={cn(
-				"hidden w-full justify-center py-3 text-center text-ink-3 text-sm group-data-empty/combobox-content:flex",
+				"hidden w-full justify-center py-3 text-center text-sm text-ink-3 group-data-empty/combobox-content:flex",
 				className,
 			)}
 			{...props}
@@ -177,7 +177,7 @@ function ComboboxChips({
 		<ComboboxPrimitive.Chips
 			data-slot="combobox-chips"
 			className={cn(
-				"flex min-h-9 flex-wrap items-center gap-1 rounded-md border border-line-2 bg-raised px-2.5 py-1 text-ink text-sm transition-[border-color,box-shadow] duration-quick focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-soft)] has-aria-invalid:border-danger has-data-[slot=combobox-chip]:px-1",
+				"flex min-h-9 flex-wrap items-center gap-1 rounded-md border border-line-2 bg-raised px-2.5 py-1 text-sm text-ink transition-[border-color,box-shadow] duration-quick focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-soft)] has-aria-invalid:border-danger has-data-[slot=combobox-chip]:px-1",
 				className,
 			)}
 			{...props}

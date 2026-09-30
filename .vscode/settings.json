@@ -1,10 +1,8 @@
 {
-	"biome.enabled": true,
 	"editor.codeActionsOnSave": {
-		"source.fixAll.biome": "explicit",
-		"source.organizeImports.biome": "explicit"
+		"source.fixAll.oxc": "explicit"
 	},
-	"editor.defaultFormatter": "biomejs.biome",
+	"editor.defaultFormatter": "oxc.oxc-vscode",
 	"files.readonlyInclude": {
 		"**/locales/**.po": true,
 		"**/routeTree.gen.ts": true,
@@ -26,9 +24,10 @@
 		["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
 		["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
 	],
-	"tailwindCSS.experimental.configFile": "src/styles/globals.css",
+	"tailwindCSS.experimental.configFile": "packages/ui/src/styles/globals.css",
 	"typescript.experimental.useTsgo": true,
 	"[json]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	}
+		"editor.defaultFormatter": "oxc.oxc-vscode"
+	},
+	"editor.formatOnSave": true
 }

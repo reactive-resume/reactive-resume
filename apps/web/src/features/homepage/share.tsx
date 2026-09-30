@@ -89,7 +89,7 @@ export function Share() {
 					aria-hidden="true"
 					className="absolute inset-0 bg-[radial-gradient(120%_90%_at_70%_0%,oklch(0.24_0.03_265),oklch(0.15_0.02_265)_60%)] opacity-(--nt)"
 				/>
-				<div aria-hidden="true" className="absolute inset-0 opacity-(--nt) [transform:translateY(calc(var(--p)*-8vh))]">
+				<div aria-hidden="true" className="absolute inset-0 [transform:translateY(calc(var(--p)*-8vh))] opacity-(--nt)">
 					{stars.map((star) => (
 						<span
 							key={`${star.left}${star.top}`}
@@ -123,7 +123,7 @@ export function Share() {
 					/>
 				</svg>
 
-				<div className="absolute top-1/2 left-1/2 aspect-[612/792] w-(--pw) rounded-[2px] opacity-[calc(1-clamp(0,(var(--fl)-.82)*6,1))] shadow-paper [transform:translate(-50%,-50%)_translate(calc(var(--dir)*var(--fl)*46vw),calc(var(--fl)*var(--fl)*-70vh))_rotate(calc(var(--dir)*var(--fl)*26deg))_scale(calc(1-var(--fl)*.78))] [transition:transform_.35s_var(--ease)]">
+				<div className="absolute top-1/2 left-1/2 aspect-[612/792] w-(--pw) [transform:translate(-50%,-50%)_translate(calc(var(--dir)*var(--fl)*46vw),calc(var(--fl)*var(--fl)*-70vh))_rotate(calc(var(--dir)*var(--fl)*26deg))_scale(calc(1-var(--fl)*.78))] rounded-[2px] opacity-[calc(1-clamp(0,(var(--fl)-.82)*6,1))] shadow-paper [transition:transform_.35s_var(--ease)]">
 					<Sheet />
 				</div>
 
@@ -131,7 +131,7 @@ export function Share() {
 					{/* The heading reads "Your resume, live at rxresu.me/…"; this label is its visible first half. */}
 					<span
 						aria-hidden="true"
-						className={cn(labelClass, "text-(--night-label) tracking-[.1em] opacity-[clamp(0,var(--tu)*20,1)]")}
+						className={cn(labelClass, "tracking-[.1em] text-(--night-label) opacity-[clamp(0,var(--tu)*20,1)]")}
 					>
 						{t`Your resume, live at`}
 					</span>
@@ -139,7 +139,7 @@ export function Share() {
 						id="share-title"
 						dir="ltr"
 						className={cn(
-							"flex flex-wrap items-center justify-center font-anybody font-light text-(--night-ink) text-[8vw] leading-[1.1] tracking-[-.025em] transition-opacity duration-300 min-[900px]:text-[clamp(34px,4.6vw,88px)]",
+							"font-anybody flex flex-wrap items-center justify-center text-[8vw] leading-[1.1] font-light tracking-[-.025em] text-(--night-ink) transition-opacity duration-300 min-[900px]:text-[clamp(34px,4.6vw,88px)]",
 							isPrivate && "opacity-40",
 						)}
 					>
@@ -165,7 +165,7 @@ export function Share() {
 					<div
 						inert={!ready}
 						className={cn(
-							"flex flex-wrap justify-center gap-3 opacity-(--ui) [transform:translateY(calc((1-var(--ui))*16px))]",
+							"flex [transform:translateY(calc((1-var(--ui))*16px))] flex-wrap justify-center gap-3 opacity-(--ui)",
 							!active && "pointer-events-none",
 						)}
 					>
@@ -189,7 +189,7 @@ export function Share() {
 						<button
 							type="button"
 							onClick={copy}
-							className="flex h-11 items-center gap-1.5 rounded-full bg-(--night-ink) px-[18px] font-semibold font-ui text-(--night-on-ink) text-sm"
+							className="flex h-11 items-center gap-1.5 rounded-full bg-(--night-ink) px-[18px] font-ui text-sm font-semibold text-(--night-on-ink)"
 						>
 							<Icon name={copied ? "check" : "link"} size={18} />
 							{copied ? t`Copied` : t`Copy link`}
@@ -200,7 +200,7 @@ export function Share() {
 						{formats.map((format, index) => (
 							<li
 								key={format.icon}
-								className="flex h-9 items-center gap-2 rounded-md border border-[color-mix(in_oklch,var(--night-chip-line)_calc(var(--f)*100%),transparent)] px-3.5 font-martian font-medium text-(--night-chip) text-[11.5px] uppercase leading-none tracking-[.08em] opacity-(--f) [transform:translateY(calc((1-var(--f))*10px))]"
+								className="font-martian flex h-9 [transform:translateY(calc((1-var(--f))*10px))] items-center gap-2 rounded-md border border-[color-mix(in_oklch,var(--night-chip-line)_calc(var(--f)*100%),transparent)] px-3.5 text-[11.5px] leading-none font-medium tracking-[.08em] text-(--night-chip) uppercase opacity-(--f)"
 								style={{ "--f": `var(--f${index + 1})` } as CSSProperties}
 							>
 								<Icon name={format.icon} size={18} />
@@ -212,7 +212,7 @@ export function Share() {
 
 				<div className="absolute start-(--gutter) bottom-[clamp(20px,5vh,44px)] flex max-w-[90vw] flex-col gap-2.5 opacity-[clamp(0,(var(--p)-.2)*6,1)] min-[900px]:max-w-[min(28em,34vw)]">
 					<span className={cn(labelClass, "text-(--night-label)")}>05 / {share}</span>
-					<p className="text-pretty font-display text-(--night-ink) text-base leading-[1.45] min-[900px]:short:hidden min-[900px]:text-[clamp(17px,1.35vw,20px)]">
+					<p className="min-[900px]:short:hidden font-display text-base leading-[1.45] text-pretty text-(--night-ink) min-[900px]:text-[clamp(17px,1.35vw,20px)]">
 						{t`Share a public link, add a password or keep it private. Export to PDF or Word, or take all your data with you as JSON.`}
 					</p>
 				</div>

@@ -7,9 +7,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
-import { orpc } from "@/libs/orpc/client";
 import { prefersReducedMotion, SCENE, useLanding } from "./scroll";
 import { CtaLink, Doodle, labelClass } from "./ui";
+import { orpc } from "@/libs/orpc/client";
 
 const crowdinUrl = "https://crowdin.com/project/reactive-resume";
 const githubUrl = "https://github.com/reactive-resume/reactive-resume";
@@ -33,7 +33,7 @@ function RollingNumber({ value, roll, delay }: RollingNumberProps) {
 					return (
 						<span key={index} className="inline-block h-[1em] overflow-hidden">
 							<span
-								className="flex starting:translate-y-0 translate-y-[calc(var(--offset)*1em)] flex-col transition-transform duration-[2s] ease-[cubic-bezier(.2,.8,.2,1)]"
+								className="flex translate-y-[calc(var(--offset)*1em)] flex-col transition-transform duration-[2s] ease-[cubic-bezier(.2,.8,.2,1)] starting:translate-y-0"
 								style={
 									{
 										"--offset": roll ? -Math.max(0, digit) : 0,
@@ -81,15 +81,15 @@ export function Numbers() {
 				{rows.map((row, index) => (
 					<div
 						key={row.label}
-						className="flex flex-wrap items-end justify-between gap-x-10 gap-y-3 border-line border-t py-[3.2vh]"
+						className="flex flex-wrap items-end justify-between gap-x-10 gap-y-3 border-t border-line py-[3.2vh]"
 					>
 						<dt className="flex flex-col gap-1.5 pb-[1.2vh]">
 							<span className={cn(labelClass, "text-ink-3")}>{row.label}</span>
-							<span className="font-display text-[clamp(18px,1.6vw,24px)] text-ink-2 italic leading-[1.3]">
+							<span className="font-display text-[clamp(18px,1.6vw,24px)] leading-[1.3] text-ink-2 italic">
 								{row.detail}
 							</span>
 						</dt>
-						<dd className="font-anybody font-light text-[clamp(56px,7.5vw,136px)] text-ink tabular-nums leading-none tracking-[-.03em]">
+						<dd className="font-anybody text-[clamp(56px,7.5vw,136px)] leading-none font-light tracking-[-.03em] text-ink tabular-nums">
 							{row.value == null ? (
 								<span className="text-ink-3">
 									<span aria-hidden="true">—</span>
@@ -102,7 +102,7 @@ export function Numbers() {
 					</div>
 				))}
 			</dl>
-			<p className="border-line border-t pt-3.5 font-ui text-[13px] text-ink-3">{t`Live totals, refreshed every few hours.`}</p>
+			<p className="border-t border-line pt-3.5 font-ui text-[13px] text-ink-3">{t`Live totals, refreshed every few hours.`}</p>
 		</section>
 	);
 }
@@ -156,7 +156,7 @@ export function Languages() {
 			</h2>
 			<div
 				aria-hidden="true"
-				className="h-[1.25em] w-full overflow-hidden font-anybody font-light text-[clamp(48px,7.5vw,140px)] text-ink leading-[1.25] tracking-[-.03em]"
+				className="font-anybody h-[1.25em] w-full overflow-hidden text-[clamp(48px,7.5vw,140px)] leading-[1.25] font-light tracking-[-.03em] text-ink"
 			>
 				<div
 					className="transition-transform duration-[.9s] ease-[cubic-bezier(.7,0,.2,1)]"
@@ -172,7 +172,7 @@ export function Languages() {
 			<div className="flex items-center gap-2">
 				<span
 					lang={current?.lang}
-					className="font-martian font-medium text-[12px] text-accent-text leading-[1.4] tracking-[.1em]"
+					className="font-martian text-[12px] leading-[1.4] font-medium tracking-[.1em] text-accent-text"
 				>
 					{current?.language}
 				</span>
@@ -185,7 +185,7 @@ export function Languages() {
 					<Icon name={paused ? "play_arrow" : "pause"} size={16} filled />
 				</button>
 			</div>
-			<p className="mt-3 max-w-[30em] text-pretty font-display text-[clamp(17px,1.4vw,21px)] text-ink-2 leading-normal">
+			<p className="mt-3 max-w-[30em] font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-pretty text-ink-2">
 				<a
 					href={crowdinUrl}
 					className="text-accent-text italic underline underline-offset-[3px] transition-colors hover:text-accent-hover"
@@ -205,6 +205,8 @@ const receiptButtonClass =
 /** 08 Support: the case for donations, printed as a receipt that totals nothing. */
 export function Support() {
 	const { i18n } = useLingui();
+	// oxlint-disable-next-line react/purity -- The receipt shows the current calendar date on each render, including after midnight.
+	const receiptDate = new Date();
 	const nothing = i18n.number(0, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 	const templates = i18n.number(15);
 	const none = t({
@@ -232,7 +234,7 @@ export function Support() {
 			id="support"
 			data-scene={SCENE.support}
 			aria-labelledby="support-title"
-			className="relative mx-auto grid max-w-[1440px] grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] items-start gap-16 border-line border-t px-(--gutter) pt-[12vh] pb-[16vh]"
+			className="relative mx-auto grid max-w-[1440px] grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] items-start gap-16 border-t border-line px-(--gutter) pt-[12vh] pb-[16vh]"
 		>
 			<Doodle
 				name="jar"
@@ -244,13 +246,13 @@ export function Support() {
 				<span className={cn(labelClass, "text-ink-3")}>{t`Support`}</span>
 				<h2
 					id="support-title"
-					className="font-anybody font-light text-[clamp(48px,5.6vw,100px)] text-ink leading-[.98] tracking-[-.03em]"
+					className="font-anybody text-[clamp(48px,5.6vw,100px)] leading-[.98] font-light tracking-[-.03em] text-ink"
 				>
 					<Trans>
 						Keep it <em className="font-display font-normal text-accent-text italic">free.</em>
 					</Trans>
 				</h2>
-				<p className="max-w-[28em] text-pretty font-display text-[clamp(17px,1.4vw,21px)] text-ink-2 leading-normal">
+				<p className="max-w-[28em] font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-pretty text-ink-2">
 					{t`Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development.`}
 				</p>
 				<ul className="flex flex-wrap gap-2">
@@ -273,18 +275,18 @@ export function Support() {
 					<span className="absolute inset-x-[18px] top-2 h-[3px] rounded-[2px] bg-[oklch(0_0_0/.6)]" />
 				</div>
 				<div className="-mx-3 -mt-[9px] box-content w-full overflow-hidden px-3 pb-10">
-					<div className="drop-shadow-[0_18px_24px_oklch(0.2_0.01_95/.22)] [transform:translateY(calc((1-clamp(0,var(--p)*1.7-.15,1))*-100%))] [transition:transform_.4s_linear]">
-						<div className="receipt-paper bg-[#fdfcf8] px-[26px] pt-[30px] pb-[46px] font-martian font-stretch-[87.5%] text-[12.5px] text-[oklch(0.25_0.01_95)] leading-[1.75]">
+					<div className="[transform:translateY(calc((1-clamp(0,var(--p)*1.7-.15,1))*-100%))] drop-shadow-[0_18px_24px_oklch(0.2_0.01_95/.22)] [transition:transform_.4s_linear]">
+						<div className="receipt-paper font-martian bg-[#fdfcf8] px-[26px] pt-[30px] pb-[46px] text-[12.5px] leading-[1.75] text-[oklch(0.25_0.01_95)] font-stretch-[87.5%]">
 							<div className="mb-4 flex flex-col gap-0.5 text-center">
-								<b className="font-anybody font-semibold font-stretch-[104%] text-[18px] leading-[1.1] tracking-[-.01em]">
+								<b className="font-anybody text-[18px] leading-[1.1] font-semibold tracking-[-.01em] font-stretch-[104%]">
 									REACTIVE RESUME
 								</b>
 								<span className="text-[oklch(0.5_0.01_95)]">{t`A free and open-source resume builder`}</span>
 								<span className="text-[oklch(0.5_0.01_95)] uppercase">
-									{i18n.date(new Date(), { day: "2-digit", month: "short", year: "numeric" })}
+									{i18n.date(receiptDate, { day: "2-digit", month: "short", year: "numeric" })}
 								</span>
 							</div>
-							<dl className="grid grid-cols-[1fr_auto] gap-x-3.5 border-[oklch(0.7_0.01_95)] border-t-[1.5px] border-dashed pt-2.5">
+							<dl className="grid grid-cols-[1fr_auto] gap-x-3.5 border-t-[1.5px] border-dashed border-[oklch(0.7_0.01_95)] pt-2.5">
 								{lineItems.map(([item, amount]) => (
 									<div key={item} className="contents">
 										<dt>{item}</dt>
@@ -292,11 +294,11 @@ export function Support() {
 									</div>
 								))}
 							</dl>
-							<p className="mt-2.5 flex justify-between border-[oklch(0.7_0.01_95)] border-t-[1.5px] border-dashed pt-2.5 font-bold text-base">
+							<p className="mt-2.5 flex justify-between border-t-[1.5px] border-dashed border-[oklch(0.7_0.01_95)] pt-2.5 text-base font-bold">
 								<span className="uppercase">{t`Total`}</span>
 								<span>{i18n.number(0, { style: "currency", currency: "USD" })}</span>
 							</p>
-							<p className="mt-2.5 border-[oklch(0.7_0.01_95)] border-t-[1.5px] border-dashed pt-3 text-[oklch(0.4_0.01_95)]">
+							<p className="mt-2.5 border-t-[1.5px] border-dashed border-[oklch(0.7_0.01_95)] pt-3 text-[oklch(0.4_0.01_95)]">
 								{t`Hosting and development are paid for by people like you. Optional tip:`}
 							</p>
 							<div className="mt-2.5 flex flex-col gap-1.5">
@@ -336,18 +338,18 @@ export function Closing() {
 	return (
 		<section
 			aria-labelledby="closing-title"
-			className="relative mx-auto flex max-w-[1440px] flex-col items-center gap-7 border-line border-t px-(--gutter) pt-[16vh] pb-[18vh] text-center"
+			className="relative mx-auto flex max-w-[1440px] flex-col items-center gap-7 border-t border-line px-(--gutter) pt-[16vh] pb-[18vh] text-center"
 		>
 			<span className={cn(labelClass, "text-ink-3")}>{t`Your turn`}</span>
 			<h2
 				id="closing-title"
-				className="text-balance font-anybody font-light text-[clamp(48px,6vw,108px)] text-ink leading-none tracking-[-.03em]"
+				className="font-anybody text-[clamp(48px,6vw,108px)] leading-none font-light tracking-[-.03em] text-balance text-ink"
 			>
 				<Trans>
 					Put it all on <em className="font-display font-normal text-accent-text italic">one page.</em>
 				</Trans>
 			</h2>
-			<p className="max-w-[28em] text-pretty font-display text-[clamp(17px,1.4vw,21px)] text-ink-2 leading-normal">
+			<p className="max-w-[28em] font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-pretty text-ink-2">
 				{t`Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime.`}
 			</p>
 			<CtaLink size="closing" />

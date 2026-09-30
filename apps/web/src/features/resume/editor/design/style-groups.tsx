@@ -1,7 +1,7 @@
+import type { DensityId, FontPairingId, MarginId } from "./presets";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
 import type { CSSProperties } from "react";
-import type { DensityId, FontPairingId, MarginId } from "./presets";
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { t } from "@lingui/core/macro";
@@ -15,9 +15,6 @@ import { Slider } from "@reactive-resume/ui/components/slider";
 import { SwitchRow } from "@reactive-resume/ui/components/switch";
 import { contrastOnWhite } from "@reactive-resume/utils/color";
 import { cn } from "@reactive-resume/utils/style";
-import { Combobox } from "@/components/ui/combobox";
-import { getLocaleOptions } from "@/features/locale/locale-options";
-import { useResumeData, useUpdateResumeData } from "@/features/resume/builder/draft";
 import {
 	ACCENTS,
 	applyDensity,
@@ -34,6 +31,9 @@ import {
 	rgbaToHex,
 	TEXT_SIZE,
 } from "./presets";
+import { Combobox } from "@/components/ui/combobox";
+import { getLocaleOptions } from "@/features/locale/locale-options";
+import { useResumeData, useUpdateResumeData } from "@/features/resume/builder/draft";
 
 type Metadata = Pick<ResumeData["metadata"], "typography" | "design" | "page">;
 
@@ -95,8 +95,8 @@ export function TypeGroup({ onCustomFonts }: TypeGroupProps) {
 							value={option.id}
 							className="flex h-12 cursor-pointer items-center gap-3 rounded-lg border border-line px-3 text-start transition-colors duration-quick hover:bg-hover data-checked:border-accent data-checked:bg-accent-soft data-checked:hover:bg-accent-soft"
 						>
-							<span className="font-medium text-sm">{option.label}</span>
-							<span className="truncate text-ink-3 text-xs">{familiesLabel(option.heading, option.body)}</span>
+							<span className="text-sm font-medium">{option.label}</span>
+							<span className="truncate text-xs text-ink-3">{familiesLabel(option.heading, option.body)}</span>
 							{pairing === option.id && <Icon name="check" size={18} className="ms-auto text-accent-text" />}
 						</Radio.Root>
 					))}
@@ -106,12 +106,12 @@ export function TypeGroup({ onCustomFonts }: TypeGroupProps) {
 					<button
 						type="button"
 						onClick={onCustomFonts}
-						className="flex h-12 cursor-pointer items-center gap-3 rounded-lg border border-line border-dashed px-3 text-start transition-colors duration-quick hover:bg-hover"
+						className="flex h-12 cursor-pointer items-center gap-3 rounded-lg border border-dashed border-line px-3 text-start transition-colors duration-quick hover:bg-hover"
 					>
-						<span className="font-medium text-sm">
+						<span className="text-sm font-medium">
 							<Trans>Custom</Trans>
 						</span>
-						<span className="truncate text-ink-3 text-xs">
+						<span className="truncate text-xs text-ink-3">
 							{pairing ? <Trans>Any font, in Advanced</Trans> : familiesLabel(heading.fontFamily, body.fontFamily)}
 						</span>
 						<Icon name="arrow_downward" size={18} className="ms-auto text-ink-3" />
@@ -124,7 +124,7 @@ export function TypeGroup({ onCustomFonts }: TypeGroupProps) {
 					<span id={sizeLabelId} className="font-medium">
 						<Trans>Text size</Trans>
 					</span>
-					<span className="font-mono text-ink-2 text-xs">{size} pt</span>
+					<span className="font-mono text-xs text-ink-2">{size} pt</span>
 				</div>
 				<Slider
 					aria-labelledby={sizeLabelId}
@@ -136,13 +136,13 @@ export function TypeGroup({ onCustomFonts }: TypeGroupProps) {
 						write("size", (draft) => applyTextSize(draft, Array.isArray(value) ? (value[0] ?? size) : value))
 					}
 				/>
-				<span className="text-ink-3 text-xs">
+				<span className="text-xs text-ink-3">
 					<Trans>10–11 recommended</Trans>
 				</span>
 			</div>
 
 			<div className="grid gap-2">
-				<span className="font-medium text-[13px]">
+				<span className="text-[13px] font-medium">
 					<Trans>Density</Trans>
 				</span>
 				<SegmentedControl
@@ -198,7 +198,7 @@ export function ColorGroup() {
 					setAccent(value as string);
 				}}
 				// Touch: 48px swatches, four to a row.
-				className="grid grid-cols-8 pointer-coarse:grid-cols-[repeat(4,3rem)] pointer-coarse:justify-between gap-1.5 pointer-coarse:gap-y-3"
+				className="grid grid-cols-8 gap-1.5 pointer-coarse:grid-cols-[repeat(4,3rem)] pointer-coarse:justify-between pointer-coarse:gap-y-3"
 			>
 				{ACCENTS.map((accent) => (
 					<Radio.Root
@@ -231,7 +231,7 @@ export function ColorGroup() {
 			</div>
 
 			{tooLight && (
-				<div className="grid gap-2 rounded-lg bg-warn-soft p-3 text-[13px] text-warn-text leading-[19px]" role="status">
+				<div className="grid gap-2 rounded-lg bg-warn-soft p-3 text-[13px] leading-[19px] text-warn-text" role="status">
 					<span className="flex gap-2">
 						<Icon name="contrast" size={20} />
 						<Trans>Too light for headings on white. It may be hard to read and print faintly.</Trans>
@@ -250,7 +250,7 @@ export function ColorGroup() {
 				</div>
 			)}
 
-			<p className="text-ink-3 text-xs leading-4">
+			<p className="text-xs leading-4 text-ink-3">
 				<Trans>
 					Accent is used for headings, icons and the header band. Body text stays near-black for print and ATS.
 				</Trans>
@@ -271,7 +271,7 @@ export function PageGroup() {
 	return (
 		<div className="grid gap-4">
 			<div className="grid gap-2">
-				<span className="font-medium text-[13px]">
+				<span className="text-[13px] font-medium">
 					<Trans>Paper</Trans>
 				</span>
 				<SegmentedControl
@@ -301,7 +301,7 @@ export function PageGroup() {
 			</div>
 
 			<div className="grid gap-2">
-				<label htmlFor={languageId} className="font-medium text-[13px]">
+				<label htmlFor={languageId} className="text-[13px] font-medium">
 					<Trans>Language</Trans>
 				</label>
 				<Combobox
@@ -318,13 +318,13 @@ export function PageGroup() {
 						)
 					}
 				/>
-				<span className="text-ink-3 text-xs">
+				<span className="text-xs text-ink-3">
 					<Trans>Changes section titles and date words only, not your content.</Trans>
 				</span>
 			</div>
 
 			<div className="grid gap-2">
-				<span className="font-medium text-[13px]">
+				<span className="text-[13px] font-medium">
 					<Trans>Margins</Trans>
 				</span>
 				<SegmentedControl

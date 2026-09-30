@@ -6,7 +6,8 @@ description: "Move users and resumes from a self-hosted Reactive Resume v4 insta
 Reactive Resume v4 used a different database schema, so you can't upgrade a v4 installation in place. Instead, you set up a new installation next to it and copy your users and resumes across. This page covers that move. To upgrade an existing v5 installation, see [Upgrading to v6](/self-hosting/upgrading-to-v6) instead.
 
 <Warning>
-  Keep your v4 instance running until every user and resume is in the new installation and you've checked the result. It's your fallback if something goes wrong. Work only on infrastructure and backups you're authorized to operate.
+  Keep your v4 instance running until every user and resume is in the new installation and you've checked the result.
+  It's your fallback if something goes wrong. Work only on infrastructure and backups you're authorized to operate.
 </Warning>
 
 ## Before you start
@@ -19,9 +20,9 @@ You need:
 
 ## Choose a method
 
-| Method | Best for | How it works |
-| --- | --- | --- |
-| [Import resumes one by one](#import-resumes-one-by-one) | A handful of resumes | Each person exports their v4 resumes as JSON and imports them into the new installation. |
+| Method                                                  | Best for               | How it works                                                                                     |
+| ------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------ |
+| [Import resumes one by one](#import-resumes-one-by-one) | A handful of resumes   | Each person exports their v4 resumes as JSON and imports them into the new installation.         |
 | [Run the migration scripts](#run-the-migration-scripts) | Many users and resumes | Scripts copy users, sign-in methods, resumes, and statistics straight from database to database. |
 
 ## Import resumes one by one
@@ -29,11 +30,11 @@ You need:
 The current version reads v4 JSON exports directly and converts them.
 
 <Steps>
-  <Step title="Export from v4">
-    In your v4 instance, open each resume and export it as JSON.
-  </Step>
+  <Step title="Export from v4">In your v4 instance, open each resume and export it as JSON.</Step>
   <Step title="Import into the new installation">
-    Sign in to the new installation (create an account first if needed), select **New**, then **Import a resume**, and choose the JSON file. Reactive Resume recognizes the v4 format on its own. See [Importing resumes](/guides/importing-resumes) for details.
+    Sign in to the new installation (create an account first if needed), select **New**, then **Import a resume**, and
+    choose the JSON file. Reactive Resume recognizes the v4 format on its own. See [Importing
+    resumes](/guides/importing-resumes) for details.
   </Step>
   <Step title="Check and repeat">
     Look through the imported resume, especially dates and layout, then repeat for the next one.
@@ -45,7 +46,9 @@ The current version reads v4 JSON exports directly and converts them.
 The scripts live in the repository at tag `v5.0.20`, the last release that includes them. They were written against the database schema of that release, so you create the target database with that release first, run the scripts, and only then start the current version, which brings the data forward with its own migrations.
 
 <Warning>
-  Don't run the scripts against a database that a newer release has already set up. They don't fill in columns added later (such as the sign-in `issuer` added in v5.2.8), so migrated users could fail to sign in. Starting the current version after the scripts fills those columns in.
+  Don't run the scripts against a database that a newer release has already set up. They don't fill in columns added
+  later (such as the sign-in `issuer` added in v5.2.8), so migrated users could fail to sign in. Starting the current
+  version after the scripts fills those columns in.
 </Warning>
 
 ### Prepare the scripts
@@ -73,7 +76,8 @@ PRODUCTION_DATABASE_URL="postgresql://user:password@localhost:5432/reactive_resu
 ```
 
 <Warning>
-  Double-check both connection strings. `DATABASE_URL` is the new target and `PRODUCTION_DATABASE_URL` is the old v4 source. Swapping them can destroy data. `PRODUCTION_DATABASE_URL` is used only by these scripts, never by the app.
+  Double-check both connection strings. `DATABASE_URL` is the new target and `PRODUCTION_DATABASE_URL` is the old v4
+  source. Swapping them can destroy data. `PRODUCTION_DATABASE_URL` is used only by these scripts, never by the app.
 </Warning>
 
 ### Create the target schema
@@ -100,7 +104,8 @@ The script:
 It ends with a summary of users created, accounts created, and users skipped.
 
 <Warning>
-  Migrated two-factor authentication is disabled. Before switching traffic, tell affected users to enable it again on the new installation. Treat the transition as a change to account security.
+  Migrated two-factor authentication is disabled. Before switching traffic, tell affected users to enable it again on
+  the new installation. Treat the transition as a change to account security.
 </Warning>
 
 ### Migrate resumes
@@ -118,11 +123,14 @@ The script:
 It ends with a summary of resumes created, resumes skipped, and errors.
 
 <Tip>
-  Each script deletes its progress file when it finishes. Keep `user-id-map.json` as the record of which v4 user became which new user. Don't re-run the scripts against a populated target to "fix" a problem; review the source backup, the map, and the target first.
+  Each script deletes its progress file when it finishes. Keep `user-id-map.json` as the record of which v4 user became
+  which new user. Don't re-run the scripts against a populated target to "fix" a problem; review the source backup, the
+  map, and the target first.
 </Tip>
 
 <Note>
-  These historical scripts register cleanup on normal exit, not on `SIGINT`. Prefer letting a batch finish before stopping it. After an interruption, retain the progress and ID-map files and verify the last batch before resuming.
+  These historical scripts register cleanup on normal exit, not on `SIGINT`. Prefer letting a batch finish before
+  stopping it. After an interruption, retain the progress and ID-map files and verify the last batch before resuming.
 </Note>
 
 ### Start the current version
@@ -132,18 +140,12 @@ Point a current Reactive Resume installation at the target database and start it
 ## After the migration
 
 <Steps>
-  <Step title="Check the data">
-    Sign in as a few users and spot-check their resumes.
-  </Step>
+  <Step title="Check the data">Sign in as a few users and spot-check their resumes.</Step>
   <Step title="Test the essentials">
     Download a resume as PDF, and sign in with email and password and with each social provider you use.
   </Step>
-  <Step title="Switch traffic">
-    Point your DNS or reverse proxy at the new installation.
-  </Step>
-  <Step title="Retire v4">
-    After a grace period with no problems, shut down the v4 instance.
-  </Step>
+  <Step title="Switch traffic">Point your DNS or reverse proxy at the new installation.</Step>
+  <Step title="Retire v4">After a grace period with no problems, shut down the v4 instance.</Step>
 </Steps>
 
 ## What carries over
@@ -153,16 +155,22 @@ Point a current Reactive Resume installation at the target database and start it
     People who signed up with email and password keep their password. No reset is needed.
   </Accordion>
   <Accordion title="Profile pictures and images">
-    The database stores references to pictures, not the files. Give the new installation access to the same storage (for example the same S3 bucket), or people re-upload their pictures.
+    The database stores references to pictures, not the files. Give the new installation access to the same storage (for
+    example the same S3 bucket), or people re-upload their pictures.
   </Accordion>
   <Accordion title="Social and custom OAuth sign-in">
-    Configure the same providers with the same client IDs in the new installation. Custom OAuth now uses a different callback URL, so update your provider as described in [Single sign-on (SSO)](/self-hosting/sso). On the first sign-in, the provider account is linked to the migrated user by email. For custom OAuth, that works only if the user's email was verified in v4; otherwise the sign-in stops with an "account not linked" error.
+    Configure the same providers with the same client IDs in the new installation. Custom OAuth now uses a different
+    callback URL, so update your provider as described in [Single sign-on (SSO)](/self-hosting/sso). On the first
+    sign-in, the provider account is linked to the migrated user by email. For custom OAuth, that works only if the
+    user's email was verified in v4; otherwise the sign-in stops with an "account not linked" error.
   </Accordion>
   <Accordion title="Two-factor authentication">
-    Not carried over. Users who had two-factor authentication in v4 sign in with their password alone, and can set it up again in **Settings → Account**.
+    Not carried over. Users who had two-factor authentication in v4 sign in with their password alone, and can set it up
+    again in **Settings → Account**.
   </Accordion>
   <Accordion title="Schema differences">
-    v4's `visibility` became a public/private flag, a resume's `title` became its `name`, and resume data was reorganized. The scripts and the importer handle these conversions.
+    v4's `visibility` became a public/private flag, a resume's `title` became its `name`, and resume data was
+    reorganized. The scripts and the importer handle these conversions.
   </Accordion>
 </AccordionGroup>
 
@@ -179,16 +187,21 @@ Keep a private record for each case, outside Git, because it links account and r
 
 <Steps>
   <Step title="Confirm a source exists">
-    Check that a source snapshot exists and note when it was taken. Records missing from every available source can't be reconstructed.
+    Check that a source snapshot exists and note when it was taken. Records missing from every available source can't be
+    reconstructed.
   </Step>
   <Step title="Verify ownership and mapping">
-    Verify the requester through your approved account-ownership process, and confirm the old-to-new user mapping. A matching email, resume title, or username alone isn't proof. Stop if either check is incomplete.
+    Verify the requester through your approved account-ownership process, and confirm the old-to-new user mapping. A
+    matching email, resume title, or username alone isn't proof. Stop if either check is incomplete.
   </Step>
   <Step title="Compare without writing">
-    Identical content is a `no-op`. Content that exists only in the source, or differs, is an `export-copy`. Missing evidence, mapping, valid data, or source is `blocked`. Content hashes prove equality only, never ownership or authenticity.
+    Identical content is a `no-op`. Content that exists only in the source, or differs, is an `export-copy`. Missing
+    evidence, mapping, valid data, or source is `blocked`. Content hashes prove equality only, never ownership or
+    authenticity.
   </Step>
   <Step title="Deliver a separate private export">
-    Send the recovered JSON privately through an approved channel, so the person imports it as a new resume. Confirm the delivered hash matches the source.
+    Send the recovered JSON privately through an approved channel, so the person imports it as a new resume. Confirm the
+    delivered hash matches the source.
   </Step>
 </Steps>
 
@@ -198,21 +211,27 @@ Contributors can rehearse the comparison with `tooling/recovery/compare-resume.t
 
 <AccordionGroup>
   <Accordion title="The script says PRODUCTION_DATABASE_URL is not set">
-    Put both `DATABASE_URL` and `PRODUCTION_DATABASE_URL` in `.env` and run the scripts through `dotenvx run --` (or export the variables yourself).
+    Put both `DATABASE_URL` and `PRODUCTION_DATABASE_URL` in `.env` and run the scripts through `dotenvx run --` (or
+    export the variables yourself).
   </Accordion>
   <Accordion title="Users are skipped">
-    A user is skipped when their email or username already exists in the target, or when an earlier run already migrated them. The console output gives the reason.
+    A user is skipped when their email or username already exists in the target, or when an earlier run already migrated
+    them. The console output gives the reason.
   </Accordion>
   <Accordion title="Resumes are skipped">
-    A resume is skipped when its owner isn't in the user ID map, when the owner already has a resume with the same slug, or when an earlier run already migrated it.
+    A resume is skipped when its owner isn't in the user ID map, when the owner already has a resume with the same slug,
+    or when an earlier run already migrated it.
   </Accordion>
   <Accordion title="A resume comes across empty">
-    When a v4 resume can't be parsed, the scripts can create empty default data. Treat that as a failed conversion, not a recovered resume. Keep the source export and import it by hand once you've confirmed it's valid.
+    When a v4 resume can't be parsed, the scripts can create empty default data. Treat that as a failed conversion, not
+    a recovered resume. Keep the source export and import it by hand once you've confirmed it's valid.
   </Accordion>
   <Accordion title="Migrated users can't sign in">
-    Check that you started the current version against the target database after the scripts, so its migrations ran. The startup log shows `Database migrations completed`.
+    Check that you started the current version against the target database after the scripts, so its migrations ran. The
+    startup log shows `Database migrations completed`.
   </Accordion>
   <Accordion title="The migration is slow">
-    The scripts work in batches to spare the databases. Run them off-peak, give both databases enough resources, or adjust the batch size in the script files.
+    The scripts work in batches to spare the databases. Run them off-peak, give both databases enough resources, or
+    adjust the batch size in the script files.
   </Accordion>
 </AccordionGroup>

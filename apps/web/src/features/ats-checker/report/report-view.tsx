@@ -43,7 +43,7 @@ export function AtsPdfReportView({ report, className }: ReportViewProps) {
 			<ScoreHeader report={report} />
 
 			{report.document.truncated && (
-				<p className="text-ink-3 text-xs leading-normal">
+				<p className="text-xs leading-normal text-ink-3">
 					<Trans>
 						Only the first {report.document.pageCount} pages were checked, so this report does not cover the whole file.
 					</Trans>
@@ -64,7 +64,7 @@ export function AtsPdfReportView({ report, className }: ReportViewProps) {
 
 			{report.jd && <JdCoverage jd={report.jd} />}
 
-			<p className="text-ink-3 text-xs leading-normal">
+			<p className="text-xs leading-normal text-ink-3">
 				<Trans>
 					This measures how faithfully software can extract this file's text. It does not predict whether an application
 					will be rejected, and no tool can. Your file was read in this browser and never uploaded.
@@ -89,7 +89,7 @@ function CategorySection({ category, findings }: CategorySectionProps) {
 						<span className={categoryTone(category.score)}>{category.score}</span>
 					</Badge>
 					{findings.length > 0 && (
-						<span className="shrink-0 font-normal text-ink-3 text-xs">
+						<span className="shrink-0 text-xs font-normal text-ink-3">
 							<Trans>{findings.length} to fix</Trans>
 						</span>
 					)}
@@ -97,7 +97,7 @@ function CategorySection({ category, findings }: CategorySectionProps) {
 			</AccordionTrigger>
 
 			<AccordionContent className="space-y-3">
-				<p className="text-ink-3 text-xs leading-normal">
+				<p className="text-xs leading-normal text-ink-3">
 					{getPdfCategoryDescription(category.category)}{" "}
 					<Trans>
 						{category.passedChecks} of {category.applicableChecks} applicable checks passed.
@@ -107,7 +107,7 @@ function CategorySection({ category, findings }: CategorySectionProps) {
 				{findings.length === 0 ? (
 					<div className="flex items-center gap-2 rounded-md border border-dashed p-2.5">
 						<Icon name="check_circle" size={16} className="shrink-0 text-accent-text" />
-						<span className="text-ink-3 text-xs leading-normal">
+						<span className="text-xs leading-normal text-ink-3">
 							<Trans>Nothing to fix here.</Trans>
 						</span>
 					</div>
@@ -141,12 +141,12 @@ function WritingSection({ tips }: WritingSectionProps) {
 			</AccordionTrigger>
 
 			<AccordionContent className="space-y-3">
-				<p className="text-ink-3 text-xs leading-normal">{getPdfCategoryDescription("content")}</p>
+				<p className="text-xs leading-normal text-ink-3">{getPdfCategoryDescription("content")}</p>
 
 				{tips.length === 0 ? (
 					<div className="flex items-center gap-2 rounded-md border border-dashed p-2.5">
 						<Icon name="check_circle" size={16} className="shrink-0 text-accent-text" />
-						<span className="text-ink-3 text-xs leading-normal">
+						<span className="text-xs leading-normal text-ink-3">
 							<Trans>Nothing to suggest.</Trans>
 						</span>
 					</div>

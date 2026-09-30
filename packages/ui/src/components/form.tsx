@@ -146,7 +146,7 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
 		<p
 			data-slot="form-description"
 			id={`${id}-form-item-description`}
-			className={cn("text-[13px] text-ink-3 leading-[18px]", className)}
+			className={cn("text-[13px] leading-[18px] text-ink-3", className)}
 			{...props}
 		/>
 	);
@@ -182,7 +182,7 @@ function FormMessage({ className, errors, ...props }: FormMessageProps) {
 			data-error={hasError}
 			data-slot="form-message"
 			className={cn(
-				"flex items-start gap-1 text-xs leading-4 starting:opacity-0 transition-opacity duration-quick ease-enter",
+				"flex items-start gap-1 text-xs leading-4 transition-opacity duration-quick ease-enter starting:opacity-0",
 				hasError ? "text-danger-text" : "text-ink-3",
 				className,
 			)}

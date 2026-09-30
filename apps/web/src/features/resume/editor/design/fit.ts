@@ -1,12 +1,12 @@
+import type { FitStep } from "./presets";
 import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
-import type { FitStep } from "./presets";
 import { t } from "@lingui/core/macro";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { useResumeStore } from "@/features/resume/builder/draft";
 import { useEditorStore } from "../store";
 import { applyDensity, applyMargins, applyTextSize, fitToPages, matchDensity, matchMargins } from "./presets";
+import { useResumeStore } from "@/features/resume/builder/draft";
 
 const RENDER_TIMEOUT_MS = 8000;
 

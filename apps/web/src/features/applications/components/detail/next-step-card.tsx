@@ -1,5 +1,5 @@
-import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { Application } from "../../types";
+import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
@@ -26,11 +26,11 @@ import { Label } from "@reactive-resume/ui/components/label";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
-import { orpc } from "@/libs/orpc/client";
 import { buildIcs } from "../../ics";
 import { dayKey } from "../../interviews";
 import { describeNextStep, getNextStep } from "../../next-step";
 import { useInvalidateApplications } from "../../use-application-actions";
+import { orpc } from "@/libs/orpc/client";
 
 type NextStepCardProps = {
 	application: Application;
@@ -65,7 +65,7 @@ export function NextStepCard({ application, onScheduleInterview }: NextStepCardP
 
 	return (
 		<section aria-labelledby="application-next-step" className="grid gap-2">
-			<h3 id="application-next-step" className="font-semibold text-ink-3 text-xs uppercase">
+			<h3 id="application-next-step" className="text-xs font-semibold text-ink-3 uppercase">
 				<Trans>Next step</Trans>
 			</h3>
 			<div
@@ -80,8 +80,8 @@ export function NextStepCard({ application, onScheduleInterview }: NextStepCardP
 						className={cn("mt-0.5 shrink-0", text.tone === "warn" ? "text-warn-text" : "text-ink-2")}
 					/>
 					<div className="grid min-w-0 flex-1">
-						<strong className="font-semibold text-sm">{text.title}</strong>
-						{text.sub && <span className="text-ink-2 text-xs leading-[17px]">{text.sub}</span>}
+						<strong className="text-sm font-semibold">{text.title}</strong>
+						{text.sub && <span className="text-xs leading-[17px] text-ink-2">{text.sub}</span>}
 					</div>
 					{step.kind !== "closed" && (
 						<DropdownMenu>

@@ -1,0 +1,62 @@
+{
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"useTabs": true,
+	"printWidth": 120,
+	"sortPackageJson": false,
+	"sortImports": {
+		"newlinesBetween": false,
+		"customGroups": [
+			{
+				"groupName": "types",
+				"selector": "type"
+			},
+			{
+				"groupName": "tests",
+				"elementNamePattern": ["vitest", "vitest/**", "@testing-library/**"]
+			},
+			{
+				"groupName": "workspace",
+				"elementNamePattern": ["@reactive-resume/**"]
+			}
+		],
+		"groups": [
+			"types",
+			"value-builtin",
+			"tests",
+			"value-external",
+			"workspace",
+			["value-internal", "value-parent", "value-sibling", "value-index"],
+			"unknown"
+		]
+	},
+	"sortTailwindcss": {
+		"stylesheet": "./packages/ui/src/styles/globals.css",
+		"functions": ["clsx", "cva", "cn"]
+	},
+	"ignorePatterns": [
+		"**/.turbo/**",
+		"**/.output/**",
+		"**/dist/**",
+		"**/dist-prerender/**",
+		"**/.vercel/**",
+		"**/.wrangler/**",
+		"**/coverage/**",
+		"**/reports/**",
+		"**/routeTree.gen.ts",
+		"packages/pdf/src/semantic/__fixtures__/**/*.css",
+		"pnpm-lock.yaml",
+		"migrations/**",
+		"docs/spec.json",
+		"docs/guides/json-resume-schema.mdx",
+		"skills/resume-builder/references/schema.md"
+	],
+	"overrides": [
+		{
+			"files": ["**/*.md", "**/*.mdx"],
+			"options": {
+				"proseWrap": "preserve",
+				"useTabs": false
+			}
+		}
+	]
+}

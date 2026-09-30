@@ -1,21 +1,21 @@
+import type { ResolvedResumePreviewProps } from "./preview.shared";
+import type { PreviewPageSize } from "./preview.shared.utils";
 import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { Template } from "@reactive-resume/schema/templates";
 import type { MotionStyle } from "motion/react";
-import type { ResolvedResumePreviewProps } from "./preview.shared";
-import type { PreviewPageSize } from "./preview.shared.utils";
 import { t } from "@lingui/core/macro";
 import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
-import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
-import { EASE } from "@/libs/motion";
 import { isEditableElementFocused, usePreviewPausedStore, useResumeData } from "../builder/draft";
 import { PdfCanvasDocument, PdfCanvasPage } from "./pdf-canvas";
 import { ResumePreviewLoader } from "./preview.shared";
 import { getResumePreviewGapValue, getResumePreviewPageCount } from "./preview.shared.utils";
 import { ResumeAccessibleText } from "./resume-accessible-text";
+import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
+import { EASE } from "@/libs/motion";
 
 type PreviewPdf = {
 	file: Blob;

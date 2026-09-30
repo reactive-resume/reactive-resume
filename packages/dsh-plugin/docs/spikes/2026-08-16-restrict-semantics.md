@@ -33,7 +33,7 @@ still auto-installs peer dependencies for the lockfile, so the same
 `dsh-session`'s peer graph.
 
 **Fix that worked:** disable pnpm's peer auto-install and add only the
-packages `dsh-tools`'s *compiled* `lib/index.js` actually imports at
+packages `dsh-tools`'s _compiled_ `lib/index.js` actually imports at
 runtime (checked directly — `import type` lines don't need the package on
 disk, real `import` lines do):
 
@@ -69,12 +69,12 @@ pnpm add @deepseek-ai/dsh-timeout@0.0.1-rc.1 \
 `dsh-system-prompt` and `dsh-invariants` were needed for a second reason,
 not just a `dsh-tools` runtime import: `ToolRegistry.inject = ["systemPrompt"]`
 and its constructor calls `ctx.systemPrompt.tools(...)` immediately, so a
-`systemPrompt` service must be mounted on `ctx` *before* `ToolRegistry` is.
+`systemPrompt` service must be mounted on `ctx` _before_ `ToolRegistry` is.
 `dsh-timeout` surfaced one level further down, as a real (non-type) import
 inside `dsh-llm`'s compiled output.
 
 None of the packages actually needed at `0.0.1-rc.1` depend on
-`dsh-type-meta` — only `dsh-agent` and `dsh-session`'s *peer* list does
+`dsh-type-meta` — only `dsh-agent` and `dsh-session`'s _peer_ list does
 (`dsh-session` doesn't import it at runtime, so it was never installed and
 never missed). Final resolved set: `cordis@4.0.1`, `dsh-tools@0.0.1-rc.1`,
 `schemastery@3.18.1`, `dsh-scope@0.0.1-rc.1`, `dsh-llm@0.0.1-rc.1`,
@@ -153,7 +153,7 @@ plugin-context tree at all — it's a **separate, opt-in scoping layer** from
   It is unconditionally unusable from an unscoped context — this is not a
   silent no-op, it's a thrown error.
 - Even when `scope !== undefined`, `restrict()` computes
-  `known = this.view(scope).restrictableNames` (the scope's *inherited*
+  `known = this.view(scope).restrictableNames` (the scope's _inherited_
   surface — global + ancestor layers) and rejects any name not in that set:
   `"a restriction filters what this scope inherits, never what it registers itself"`.
   A tool registered as a **child** of the exact scope doing the restricting
@@ -189,22 +189,22 @@ await root.plugin(ToolRegistry);
 
 /** Stands in for dsh-mcp-client: registers one tool in whatever scope loads it. */
 const stubBridge = {
-	name: "stub-bridge",
-	inject: ["tools"],
-	apply(ctx: Context) {
-		ctx.tools.register({
-			name: "mcp__resume__list_applications",
-			description: "stub",
-			parameters: { type: "object", properties: {} },
-			output: {
-				schema: { type: "string" },
-				render: (_args: unknown, value: unknown) => [{ type: "text", text: String(value) }],
-			},
-			async execute() {
-				return "ok";
-			},
-		});
-	},
+  name: "stub-bridge",
+  inject: ["tools"],
+  apply(ctx: Context) {
+    ctx.tools.register({
+      name: "mcp__resume__list_applications",
+      description: "stub",
+      parameters: { type: "object", properties: {} },
+      output: {
+        schema: { type: "string" },
+        render: (_args: unknown, value: unknown) => [{ type: "text", text: String(value) }],
+      },
+      async execute() {
+        return "ok";
+      },
+    });
+  },
 };
 
 // The plugin under design mounts the bridge as a child, exactly like this.
@@ -214,12 +214,12 @@ const names = () => root.tools.schemas().map((s) => s.name);
 console.log("BEFORE", names());
 
 try {
-	const dispose = root.tools.restrict({ deny: ["mcp__resume__list_applications"] });
-	console.log("AFTER", names());
-	dispose();
-	console.log("DISPOSED", names());
+  const dispose = root.tools.restrict({ deny: ["mcp__resume__list_applications"] });
+  console.log("AFTER", names());
+  dispose();
+  console.log("DISPOSED", names());
 } catch (err) {
-	console.log("RESTRICT_THREW", (err as Error).message);
+  console.log("RESTRICT_THREW", (err as Error).message);
 }
 ```
 
@@ -239,7 +239,7 @@ an explicit `createScope()`) is unscoped.
 
 Per the brief's Step 4, tried fixing the exception by giving the plugin a
 real `dsh-scope` scope (what `createScope()` provides) and calling
-`restrict()` from *inside* that scope, matching "registering the
+`restrict()` from _inside_ that scope, matching "registering the
 restriction inside the same scope the bridge loads into."
 
 Where a real agent gets this: `@deepseek-ai/dsh-agent-loop@0.0.1-rc.1`
@@ -258,7 +258,7 @@ Confirmed directly: installed both `dsh-agent@0.0.1-rc.1` and
 `dsh-agent-loop@0.0.1-rc.1` with the same
 `--config.auto-install-peers=false --config.strict-peer-dependencies=false`
 workaround used for the rest of the dependency tree (`dsh-type-meta` is only
-a *peer* dependency of `dsh-agent`, never a runtime import — same situation
+a _peer_ dependency of `dsh-agent`, never a runtime import — same situation
 as `dsh-session`/`dsh-scope` above — so it's never actually needed on disk),
 then grepped the installed `lib/index.js` files for `createScope`.
 
@@ -275,22 +275,22 @@ await root.plugin(SystemPrompt);
 await root.plugin(ToolRegistry);
 
 const stubBridge = {
-	name: "stub-bridge",
-	inject: ["tools"],
-	apply(ctx: Context) {
-		ctx.tools.register({
-			name: "mcp__resume__list_applications",
-			description: "stub",
-			parameters: { type: "object", properties: {} },
-			output: {
-				schema: { type: "string" },
-				render: (_args: unknown, value: unknown) => [{ type: "text", text: String(value) }],
-			},
-			async execute() {
-				return "ok";
-			},
-		});
-	},
+  name: "stub-bridge",
+  inject: ["tools"],
+  apply(ctx: Context) {
+    ctx.tools.register({
+      name: "mcp__resume__list_applications",
+      description: "stub",
+      parameters: { type: "object", properties: {} },
+      output: {
+        schema: { type: "string" },
+        render: (_args: unknown, value: unknown) => [{ type: "text", text: String(value) }],
+      },
+      async execute() {
+        return "ok";
+      },
+    });
+  },
 };
 
 // Mint a dsh-scope "Scope" (what dsh-agent-loop does to build agent.ctx --
@@ -309,22 +309,22 @@ console.log("BEFORE(scoped view)", namesFor(root));
 // the "calling scope" Cordis sees is the scope itself (agent.ctx-equivalent).
 let disposeRestrict: (() => void) | undefined;
 const restrictor = {
-	name: "stub-restrictor",
-	inject: ["tools"],
-	apply(ctx: Context) {
-		try {
-			disposeRestrict = ctx.tools.restrict({ deny: ["mcp__resume__list_applications"] });
-			console.log("AFTER(scoped view)", namesFor(root));
-		} catch (err) {
-			console.log("RESTRICT_THREW", (err as Error).message);
-		}
-	},
+  name: "stub-restrictor",
+  inject: ["tools"],
+  apply(ctx: Context) {
+    try {
+      disposeRestrict = ctx.tools.restrict({ deny: ["mcp__resume__list_applications"] });
+      console.log("AFTER(scoped view)", namesFor(root));
+    } catch (err) {
+      console.log("RESTRICT_THREW", (err as Error).message);
+    }
+  },
 };
 await scope.ctx.plugin(restrictor);
 
 if (disposeRestrict) {
-	disposeRestrict();
-	console.log("DISPOSED(scoped view)", namesFor(root));
+  disposeRestrict();
+  console.log("DISPOSED(scoped view)", namesFor(root));
 }
 ```
 
@@ -336,7 +336,7 @@ BEFORE(scoped view) [ 'mcp__resume__list_applications' ]
 RESTRICT_THREW tools.restrict() names unknown inherited tool "mcp__resume__list_applications"; a restriction filters what this scope inherits, never what it registers itself. Restrictable tools: (none)
 ```
 
-`restrict()` is now at least *callable*, but it explicitly refuses: the
+`restrict()` is now at least _callable_, but it explicitly refuses: the
 bridge's tool lives in the same scope's own layer (it was mounted as a
 Cordis child of `scope.ctx`, which is what makes it inherit that scope
 tag), and `restrict()`'s error message says outright that it will never
@@ -346,7 +346,7 @@ the scope to restrict, because nothing was registered in any ancestor of
 it.
 
 I did not chase the remaining permutation (bridge registered as an
-*ancestor* scope's own layer, restrict called from a *descendant* scope of
+_ancestor_ scope's own layer, restrict called from a _descendant_ scope of
 that ancestor) — the class-level doc comment in `dsh-tools` confirms that
 shape is the one `restrict()` is actually built for (a parent scope curbing
 what a child scope inherits from it), but it doesn't match this plugin's

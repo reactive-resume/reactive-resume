@@ -5,7 +5,7 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 
 const buttonVariants = cva(
-	"group/button touch-target relative inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap border border-transparent font-medium text-sm transition-[background-color,border-color,color,filter,scale] duration-quick ease-enter disabled:pointer-events-none aria-busy:cursor-progress [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+	"group/button touch-target relative inline-flex shrink-0 items-center justify-center gap-2 border border-transparent text-sm font-medium whitespace-nowrap transition-[background-color,border-color,color,filter,scale] duration-quick ease-enter select-none disabled:pointer-events-none aria-busy:cursor-progress [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
 	{
 		variants: {
 			variant: {

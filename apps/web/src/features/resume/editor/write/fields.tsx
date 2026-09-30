@@ -1,6 +1,6 @@
+import type { Entry } from "./model";
 import type { Website } from "@reactive-resume/schema/resume/data";
 import type { ComponentProps, ReactNode } from "react";
-import type { Entry } from "./model";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useCallback, useState } from "react";
@@ -9,9 +9,9 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@reactive-r
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
 import { cn } from "@reactive-resume/utils/style";
+import { findEntry } from "./model";
 import { URLInput } from "@/components/input/url-input";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { findEntry } from "./model";
 
 /** One entry of a section, re-rendering only when that entry changes; null once it's deleted. */
 export const useEntry = (sectionId: string, entryId: string) =>
@@ -141,7 +141,7 @@ export function WebsiteField({ label, value, onChange, allowInlineLink = true }:
 			</FormItem>
 
 			{allowInlineLink && (
-				// biome-ignore lint/a11y/noLabelWithoutControl: Base UI's Checkbox is the control; wrapping it in a label is its documented pattern.
+				// oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI's Checkbox is the control; wrapping it in a label is its documented pattern.
 				<label className="flex w-fit cursor-pointer items-center gap-2 text-sm">
 					<Checkbox checked={inline} onCheckedChange={(checked) => onChange({ ...value, inlineLink: checked })} />
 					<Trans>Show link in title</Trans>
@@ -157,7 +157,7 @@ type MoreOptionsProps = { children: ReactNode };
 export function MoreOptions({ children }: MoreOptionsProps) {
 	return (
 		<Collapsible className="col-span-full">
-			<CollapsibleTrigger className="group/more flex w-fit cursor-pointer items-center gap-1 rounded-sm font-medium text-[13px] text-ink-2 transition-colors duration-quick hover:text-ink">
+			<CollapsibleTrigger className="group/more flex w-fit cursor-pointer items-center gap-1 rounded-sm text-[13px] font-medium text-ink-2 transition-colors duration-quick hover:text-ink">
 				<span
 					aria-hidden="true"
 					className="transition-transform duration-standard ease-enter group-data-panel-open/more:rotate-90"

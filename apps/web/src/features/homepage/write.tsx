@@ -58,7 +58,7 @@ export function Write() {
 
 				<h2
 					id="write-title"
-					className="absolute start-(--gutter) top-[10vh] whitespace-nowrap font-anybody font-light text-[16vw] text-ink leading-[.9] tracking-[-.03em] [font-stretch:calc(86%+var(--in)*14%)] [transition:font-stretch_.3s] min-[900px]:top-[11vh] min-[900px]:text-[clamp(72px,9vw,160px)]"
+					className="font-anybody absolute start-(--gutter) top-[10vh] text-[16vw] leading-[.9] font-light tracking-[-.03em] whitespace-nowrap text-ink [font-stretch:calc(86%+var(--in)*14%)] [transition:font-stretch_.3s] min-[900px]:top-[11vh] min-[900px]:text-[clamp(72px,9vw,160px)]"
 				>
 					{t`Write`}
 					<span className="text-accent">.</span>
@@ -72,20 +72,20 @@ export function Write() {
 					{t`Write in one editor beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide.`}
 				</SceneCaption>
 
-				<div className="absolute start-[5vw] top-[calc(10vh+17vw+150px)] h-[120vh] w-[90vw] origin-top-left rounded-[3px] bg-paper p-[6vw] font-ui text-[14px] text-[oklch(0.28_0.01_95)] leading-[1.55] shadow-paper [transform:translateY(calc((1-var(--in))*14vh))_rotate(-1.2deg)_scale(calc(.94+var(--in)*.06))] [transition:transform_.5s_var(--ease)] min-[900px]:start-[42vw] min-[900px]:top-[14vh] min-[900px]:w-[60vw] min-[900px]:px-[5vw] min-[900px]:py-[4.5vw] min-[900px]:text-[clamp(14px,1.3vw,20px)] rtl:origin-top-right">
-					<div className="absolute end-[2vw] top-[1.6vw] flex h-7 items-center gap-1.5 rounded-full bg-[oklch(0.95_0.006_95)] ps-2 pe-[11px] font-medium text-[12px] text-[oklch(0.42_0.01_95)] opacity-(--cl)">
+				<div className="absolute start-[5vw] top-[calc(10vh+17vw+150px)] h-[120vh] w-[90vw] origin-top-left [transform:translateY(calc((1-var(--in))*14vh))_rotate(-1.2deg)_scale(calc(.94+var(--in)*.06))] rounded-[3px] bg-paper p-[6vw] font-ui text-[14px] leading-[1.55] text-[oklch(0.28_0.01_95)] shadow-paper [transition:transform_.5s_var(--ease)] min-[900px]:start-[42vw] min-[900px]:top-[14vh] min-[900px]:w-[60vw] min-[900px]:px-[5vw] min-[900px]:py-[4.5vw] min-[900px]:text-[clamp(14px,1.3vw,20px)] rtl:origin-top-right">
+					<div className="absolute end-[2vw] top-[1.6vw] flex h-7 items-center gap-1.5 rounded-full bg-[oklch(0.95_0.006_95)] ps-2 pe-[11px] text-[12px] font-medium text-[oklch(0.42_0.01_95)] opacity-(--cl)">
 						<Icon name="cloud_done" size={16} className="text-[oklch(0.42_0.1_150)]" />
 						{t`Saved · version ${version}`}
 					</div>
 
 					<div className="grid grid-cols-[minmax(0,1fr)] items-start gap-x-[3vw] gap-y-[.5em] min-[900px]:grid-cols-[minmax(0,1fr)_minmax(0,max(15vw,210px))]">
 						<div className="col-start-1 flex flex-col gap-[.25em]">
-							<span className="mb-[.8em] border-[oklch(0.45_0.1_150/.35)] border-b pb-[.6em] font-martian text-[.7em] text-[oklch(0.45_0.1_150)] uppercase leading-[1.4] tracking-[.14em]">
+							<span className="font-martian mb-[.8em] border-b border-[oklch(0.45_0.1_150/.35)] pb-[.6em] text-[.7em] leading-[1.4] tracking-[.14em] text-[oklch(0.45_0.1_150)] uppercase">
 								{t`Experience`}
 							</span>
 							<div className="flex items-baseline justify-between gap-[1em]">
-								<b className="font-display font-medium text-[1.55em] leading-[1.1]">{t`Lead Product Designer`}</b>
-								<span className="whitespace-nowrap font-martian text-[.72em] text-[oklch(0.5_0.01_95)] uppercase">
+								<b className="font-display text-[1.55em] leading-[1.1] font-medium">{t`Lead Product Designer`}</b>
+								<span className="font-martian text-[.72em] whitespace-nowrap text-[oklch(0.5_0.01_95)] uppercase">
 									{t`2021 – Present`}
 								</span>
 							</div>
@@ -99,7 +99,7 @@ export function Write() {
 									<TypedText
 										text={t`Responsible for the design system and helping other teams with their designs.`}
 										progress="--ta"
-										className="bg-[linear-gradient(oklch(0.55_0.17_27),oklch(0.55_0.17_27))] bg-no-repeat text-[color-mix(in_oklch,oklch(0.28_0.01_95),oklch(0.55_0.15_27)_calc(var(--st)*70%))] [background-position:0_58%] [background-size:calc(var(--st)*100%)_2px] [box-decoration-break:clone]"
+										className="bg-[linear-gradient(oklch(0.55_0.17_27),oklch(0.55_0.17_27))] [box-decoration-break:clone] [background-size:calc(var(--st)*100%)_2px] [background-position:0_58%] bg-no-repeat text-[color-mix(in_oklch,oklch(0.28_0.01_95),oklch(0.55_0.15_27)_calc(var(--st)*70%))]"
 									/>
 								</span>
 								<span className="relative block max-h-[calc(clamp(0,var(--ti)*40,1)*8em)] overflow-hidden ps-[1.1em] before:absolute before:start-[.25em] before:opacity-(--cl) before:content-['•']">
@@ -110,13 +110,13 @@ export function Write() {
 
 						<div
 							className={cn(
-								"relative col-start-1 grid min-w-0 font-ui text-[13px] text-[oklch(0.25_0.01_95)] leading-[1.45] opacity-(--cm) [transform:translateX(calc(var(--dir)*(1-var(--cm))*30px))] [transition:transform_.4s_var(--ease)] min-[900px]:col-start-2 min-[900px]:row-start-2",
+								"relative col-start-1 grid min-w-0 [transform:translateX(calc(var(--dir)*(1-var(--cm))*30px))] font-ui text-[13px] leading-[1.45] text-[oklch(0.25_0.01_95)] opacity-(--cm) [transition:transform_.4s_var(--ease)] min-[900px]:col-start-2 min-[900px]:row-start-2",
 								!active && "pointer-events-none",
 							)}
 						>
 							<span
 								aria-hidden="true"
-								className="absolute -start-[3vw] top-[22px] hidden w-[3vw] border-[oklch(0.5_0.1_150/.6)] border-t-[1.5px] border-dashed min-[900px]:block"
+								className="absolute -start-[3vw] top-[22px] hidden w-[3vw] border-t-[1.5px] border-dashed border-[oklch(0.5_0.1_150/.6)] min-[900px]:block"
 							/>
 							<div
 								inert={step !== 1}
@@ -134,14 +134,14 @@ export function Write() {
 										ref={acceptRef}
 										type="button"
 										onClick={accept}
-										className="h-[30px] rounded-md bg-[oklch(0.5_0.1_150)] px-3 font-semibold text-[12.5px] text-white transition-colors hover:bg-[oklch(0.44_0.1_150)]"
+										className="h-[30px] rounded-md bg-[oklch(0.5_0.1_150)] px-3 text-[12.5px] font-semibold text-white transition-colors hover:bg-[oklch(0.44_0.1_150)]"
 									>
 										{t`Accept`}
 									</button>
 									<button
 										type="button"
 										onClick={() => reopen(false)}
-										className="h-[30px] rounded-md border border-[oklch(0.82_0.008_95)] bg-white px-[11px] font-medium text-[12.5px] text-[oklch(0.25_0.01_95)] transition-colors hover:bg-[oklch(0.96_0.005_95)]"
+										className="h-[30px] rounded-md border border-[oklch(0.82_0.008_95)] bg-white px-[11px] text-[12.5px] font-medium text-[oklch(0.25_0.01_95)] transition-colors hover:bg-[oklch(0.96_0.005_95)]"
 									>
 										{t`Keep mine`}
 									</button>
@@ -158,7 +158,7 @@ export function Write() {
 									ref={undoRef}
 									type="button"
 									onClick={() => reopen(true)}
-									className="ms-auto flex h-7 items-center gap-[3px] rounded-sm px-2 font-medium text-[12.5px] text-[oklch(0.3_0.01_95)] transition-colors hover:bg-[oklch(0.9_0.04_150)] motion-reduce:hidden"
+									className="ms-auto flex h-7 items-center gap-[3px] rounded-sm px-2 text-[12.5px] font-medium text-[oklch(0.3_0.01_95)] transition-colors hover:bg-[oklch(0.9_0.04_150)] motion-reduce:hidden"
 								>
 									<Icon name="undo" size={16} />
 									{t`Undo`}
@@ -173,8 +173,8 @@ export function Write() {
 						</ul>
 						<div className="col-start-1 mt-[1.2em] flex flex-col gap-[.25em]">
 							<div className="flex items-baseline justify-between gap-[1em]">
-								<b className="font-display font-medium text-[1.55em] leading-[1.1]">{t`Product Designer`}</b>
-								<span className="whitespace-nowrap font-martian text-[.72em] text-[oklch(0.5_0.01_95)]">{t`2017 – 2021`}</span>
+								<b className="font-display text-[1.55em] leading-[1.1] font-medium">{t`Product Designer`}</b>
+								<span className="font-martian text-[.72em] whitespace-nowrap text-[oklch(0.5_0.01_95)]">{t`2017 – 2021`}</span>
 							</div>
 							<span className="text-[oklch(0.45_0.01_95)]">{t`Parcel & Co. · Porto`}</span>
 							<ul className="mt-[.3em] list-disc ps-[1.1em]">

@@ -1,5 +1,5 @@
-import type { StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
 import type { CompiledStyleRule, CompileStylesheetResult, StyleProgram } from "./types";
+import type { StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
 import { getCachedStylesheet, setCachedStylesheet, stylesheetCacheKey } from "./cache";
 import { createDiagnostic, isFatalStylesheetDiagnostic } from "./diagnostics";
 import { SEMANTIC_CSS_LIMITS_V1 } from "./limits";

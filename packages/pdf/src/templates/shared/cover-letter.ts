@@ -1,5 +1,5 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { ResumeRenderOptions } from "../../context";
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { filterSections } from "./filtering";
 
 type HeaderResumeData = ResumeData & {

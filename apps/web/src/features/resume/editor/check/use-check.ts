@@ -1,10 +1,10 @@
+import type { CheckIssue } from "./issues";
 import type { AtsReport } from "@reactive-resume/resume/ats";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { CheckIssue } from "./issues";
 import { useDeferredValue, useMemo } from "react";
 import { lintResumeForAts } from "@reactive-resume/resume/ats";
-import { useResumeData } from "@/features/resume/builder/draft";
 import { buildIssues } from "./issues";
+import { useResumeData } from "@/features/resume/builder/draft";
 
 export type CheckResult = { data: ResumeData; report: AtsReport; issues: CheckIssue[] };
 

@@ -1,6 +1,6 @@
-import type { QueryClient } from "@tanstack/react-query";
 import type { PreviewPageSize } from "./preview.shared.utils";
 import type { ResumeThumbnailSize } from "./resume-thumbnail.shared";
+import type { QueryClient } from "@tanstack/react-query";
 import { getResumeThumbnailRenderSize } from "./resume-thumbnail.shared";
 
 const canvasToBlob = (canvas: HTMLCanvasElement) =>

@@ -1,8 +1,8 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { SectionBase } from "../shared/section-base";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { RichTextEditor } from "@/features/resume/editor/write/rich-text-editor";
-import { SectionBase } from "../shared/section-base";
 
 export function NotesSectionBuilder() {
 	return (

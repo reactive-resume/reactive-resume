@@ -9,19 +9,20 @@ If you already have a resume, you don't need to retype it. Import the file and R
 
 Reactive Resume works out the format from the file's contents, so you don't pick a type.
 
-| File | Needs an AI provider? | Notes |
-| --- | --- | --- |
-| **Reactive Resume JSON** (versions 5 and 6) | No | Best for backups and moving between accounts or servers. Keeps everything, including design. |
-| **Reactive Resume v4 JSON** | No | Exports from the old version 4 app. |
-| **JSON Resume** (`.json`) | No | Files that follow the open [JSON Resume](https://jsonresume.org) standard. |
-| **LinkedIn data export** (`.zip`) | No | Reads your profile, positions, education, skills, languages and certifications. |
-| **PDF** | Optional | Read by your AI provider if you've set one up; otherwise read in your browser. |
-| **Word** (`.docx`) | Yes | Read by your AI provider. |
+| File                                        | Needs an AI provider? | Notes                                                                                        |
+| ------------------------------------------- | --------------------- | -------------------------------------------------------------------------------------------- |
+| **Reactive Resume JSON** (versions 5 and 6) | No                    | Best for backups and moving between accounts or servers. Keeps everything, including design. |
+| **Reactive Resume v4 JSON**                 | No                    | Exports from the old version 4 app.                                                          |
+| **JSON Resume** (`.json`)                   | No                    | Files that follow the open [JSON Resume](https://jsonresume.org) standard.                   |
+| **LinkedIn data export** (`.zip`)           | No                    | Reads your profile, positions, education, skills, languages and certifications.              |
+| **PDF**                                     | Optional              | Read by your AI provider if you've set one up; otherwise read in your browser.               |
+| **Word** (`.docx`)                          | Yes                   | Read by your AI provider.                                                                    |
 
 A cover letter exported from Reactive Resume as JSON imports as a letter, not a resume.
 
 <Info>
-  An AI provider is an AI service you connect in **Settings → AI & developer**. Only a provider that is turned on and has passed its connection test counts. See [Connecting an AI provider](/guides/using-ai).
+  An AI provider is an AI service you connect in **Settings → AI & developer**. Only a provider that is turned on and
+  has passed its connection test counts. See [Connecting an AI provider](/guides/using-ai).
 </Info>
 
 ## Import a file
@@ -36,6 +37,7 @@ A cover letter exported from Reactive Resume as JSON imports as a letter, not a 
     <Frame caption="Dropping a file on Documents">
       <img src="/images/guides/importing-resumes/drop-to-import.webp" alt="The Documents page covered by a green drop area reading Drop to import, PDF, Word or JSON. We'll build a resume from it" />
     </Frame>
+
   </Step>
   <Step title="Wait for the three steps">
     The dialog shows **Reading the file**, **Finding sections** and **Filling in entries**, with a note beside each as it finishes. JSON and LinkedIn files take a moment; PDF and Word files read by an AI provider can take longer. Select **Cancel** to stop.
@@ -46,6 +48,7 @@ A cover letter exported from Reactive Resume as JSON imports as a letter, not a 
     <Frame caption="A finished import">
       <img src="/images/guides/importing-resumes/import-finished.webp" alt="The Imported dialog for David-Kowalski-Resume.pdf with all three steps checked, 9 sections and 58 entries found, and Stay here and Open in editor buttons" />
     </Frame>
+
   </Step>
 </Steps>
 
@@ -54,10 +57,13 @@ A cover letter exported from Reactive Resume as JSON imports as a letter, not a 
 When you open an imported resume from the dialog, the **Write** panel starts with a note naming the file you imported and counting its sections and entries.
 
 <Frame caption="The note after an import">
-  <img src="/images/guides/importing-resumes/imported-from-note.webp" alt="A green note reading Imported from David-Kowalski-Resume.pdf. 9 sections, 58 entries. Everything was read clearly" />
+  <img
+    src="/images/guides/importing-resumes/imported-from-note.webp"
+    alt="A green note reading Imported from David-Kowalski-Resume.pdf. 9 sections, 58 entries. Everything was read clearly"
+  />
 </Frame>
 
-If some dates couldn't be read exactly, the note says how many fields need a look, and each of those date fields shows the text it found, for example *We couldn't read "Summer 2019"*. Pick the right month and year so the entry sorts and prints consistently; the count goes down as you fix them. Close the note with **×** when you're done.
+If some dates couldn't be read exactly, the note says how many fields need a look, and each of those date fields shows the text it found, for example _We couldn't read "Summer 2019"_. Pick the right month and year so the entry sorts and prints consistently; the count goes down as you fix them. Close the note with **×** when you're done.
 
 Go through every section before you send the resume. PDF and Word files don't store which text belongs where, so parts can land in the wrong section, lose formatting or come out slightly reworded. Structured files (Reactive Resume JSON, JSON Resume, LinkedIn) come in far more reliably.
 
@@ -65,16 +71,26 @@ Go through every section before you send the resume. PDF and Word files don't st
 
 <AccordionGroup>
   <Accordion title="Reactive Resume JSON">
-    Download it from another resume with **Download** and the JSON format, or extract an individual resume JSON file from **Export everything** (see [Exporting your resume](/guides/exporting-your-resume)). Custom styles written for the older styling system come in converted to the current one. If a version 5 resume contained cover letters, each one becomes its own letter in Documents, linked to the imported resume.
+    Download it from another resume with **Download** and the JSON format, or extract an individual resume JSON file
+    from **Export everything** (see [Exporting your resume](/guides/exporting-your-resume)). Custom styles written for
+    the older styling system come in converted to the current one. If a version 5 resume contained cover letters, each
+    one becomes its own letter in Documents, linked to the imported resume.
   </Accordion>
   <Accordion title="LinkedIn data export">
-    In LinkedIn's settings, request a copy of your data and download the archive when LinkedIn emails you. Import the `.zip` file as it is; don't unzip it. Reactive Resume reads `Profile.csv`, `Positions.csv`, `Education.csv`, `Skills.csv`, `Languages.csv` and `Certifications.csv` and ignores everything else, such as messages. The file never leaves your browser.
+    In LinkedIn's settings, request a copy of your data and download the archive when LinkedIn emails you. Import the
+    `.zip` file as it is; don't unzip it. Reactive Resume reads `Profile.csv`, `Positions.csv`, `Education.csv`,
+    `Skills.csv`, `Languages.csv` and `Certifications.csv` and ignores everything else, such as messages. The file never
+    leaves your browser.
   </Accordion>
   <Accordion title="PDF">
-    With an AI provider set up, the PDF (up to 10 MB) is sent to that provider, which returns the resume's sections. Without one, Reactive Resume reads the PDF's text in your browser and sorts it into sections itself. This works best for simple, one-column resumes. A scanned PDF (a picture of a page) has no text to read and can't be imported this way.
+    With an AI provider set up, the PDF (up to 10 MB) is sent to that provider, which returns the resume's sections.
+    Without one, Reactive Resume reads the PDF's text in your browser and sorts it into sections itself. This works best
+    for simple, one-column resumes. A scanned PDF (a picture of a page) has no text to read and can't be imported this
+    way.
   </Accordion>
   <Accordion title="Word">
-    Word files are always read by your AI provider, so set one up first. Use the modern `.docx` format; older `.doc` files are rejected before parsing. Open them in Word and save as `.docx`. Files can be up to 10 MB.
+    Word files are always read by your AI provider, so set one up first. Use the modern `.docx` format; older `.doc`
+    files are rejected before parsing. Open them in Word and save as `.docx`. Files can be up to 10 MB.
   </Accordion>
 </AccordionGroup>
 
@@ -85,7 +101,10 @@ Go through every section before you send the resume. PDF and Word files don't st
 **"Reading Word files needs an AI provider."** Connect a provider in **Settings → AI & developer** and test it, or import a PDF or JSON version instead. **Choose another file** lets you pick a different file without closing the dialog, and **Start blank** gives you an empty resume.
 
 <Frame caption="A Word file without an AI provider">
-  <img src="/images/guides/importing-resumes/import-word-needs-ai.webp" alt="The Couldn't import dialog for Resume.docx saying Reading Word files needs an AI provider, with Start blank and Choose another file buttons" />
+  <img
+    src="/images/guides/importing-resumes/import-word-needs-ai.webp"
+    alt="The Couldn't import dialog for Resume.docx saying Reading Word files needs an AI provider, with Start blank and Choose another file buttons"
+  />
 </Frame>
 
 **"This PDF is a scanned image."** Try the Word version of the resume, set up an AI provider, or start blank and paste your sections in.

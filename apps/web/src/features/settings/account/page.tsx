@@ -3,10 +3,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useRouteContext, useRouter } from "@tanstack/react-router";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { authClient } from "@/libs/auth/client";
 import { DataSection } from "./data";
 import { ProfileSection } from "./profile";
 import { SecuritySection } from "./security";
+import { authClient } from "@/libs/auth/client";
 
 export function AccountSettings() {
 	const { session } = useRouteContext({ from: "/dashboard" });
@@ -16,7 +16,7 @@ export function AccountSettings() {
 			<ProfileSection session={session} />
 			<SecuritySection />
 			<DataSection />
-			<div className="border-line border-t pt-6">
+			<div className="border-t border-line pt-6">
 				<SignOutButton />
 			</div>
 		</>

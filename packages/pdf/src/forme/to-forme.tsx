@@ -1,10 +1,10 @@
-import type { FormeDocument, Style as FormeStyle } from "@formepdf/react";
-import type { ReactElement, ReactNode } from "react";
 import type { LoadedImage } from "./images";
 import type { PageSize } from "./primitives";
 import type { HostElement, HostNode } from "./reconciler";
 import type { Rgb } from "./style";
 import type { Style, StyleProp } from "./style-types";
+import type { FormeDocument, Style as FormeStyle } from "@formepdf/react";
+import type { ReactElement, ReactNode } from "react";
 import {
 	Document as FormeDocumentElement,
 	Fixed as FormeFixed,

@@ -7,10 +7,10 @@ import { Link, useRouteContext } from "@tanstack/react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "@reactive-resume/ui/components/avatar";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { getInitials } from "@reactive-resume/utils/string";
+import { SignOutButton } from "./account/page";
 import { useTheme } from "@/features/theme/provider";
 import { orpc } from "@/libs/orpc/client";
 import { themeMap } from "@/libs/theme";
-import { SignOutButton } from "./account/page";
 
 // Phones: a section pushes in from the end and Back returns from the start (styles in index.css, after the page
 // transition). Browsers without view-transition types swap instantly, as for every other navigation.
@@ -25,7 +25,7 @@ function Row({ icon, label, value }: RowProps) {
 		<>
 			<Icon name={icon} size={22} className="text-ink-2" />
 			<span className="flex-1">{label}</span>
-			{value && <span className="truncate text-ink-3 text-sm">{value}</span>}
+			{value && <span className="truncate text-sm text-ink-3">{value}</span>}
 			<Icon name="chevron_right" size={22} className="text-ink-3" />
 		</>
 	);
@@ -52,8 +52,8 @@ export function SettingsRoot() {
 					</AvatarFallback>
 				</Avatar>
 				<span className="grid min-w-0">
-					<b className="truncate font-semibold text-lg">{session.user.name}</b>
-					<span className="truncate text-ink-3 text-sm">{session.user.email}</span>
+					<b className="truncate text-lg font-semibold">{session.user.name}</b>
+					<span className="truncate text-sm text-ink-3">{session.user.email}</span>
 				</span>
 			</div>
 

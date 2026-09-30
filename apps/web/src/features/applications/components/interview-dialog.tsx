@@ -1,5 +1,5 @@
-import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { Application } from "../types";
+import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -20,11 +20,11 @@ import { Label } from "@reactive-resume/ui/components/label";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { formatDuration, fromDateTimeLocal, toDateTimeLocal } from "../interviews";
+import { applicationsListQueryKey } from "../queries";
 import { Combobox } from "@/components/ui/combobox";
 import { useConfirm } from "@/hooks/use-confirm";
 import { orpc } from "@/libs/orpc/client";
-import { formatDuration, fromDateTimeLocal, toDateTimeLocal } from "../interviews";
-import { applicationsListQueryKey } from "../queries";
 
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120, 180, 240];
 
@@ -296,7 +296,7 @@ type FieldProps = { label: string; htmlFor?: string; required?: boolean; childre
 function Field({ label, htmlFor, required, children }: FieldProps) {
 	return (
 		<div className="grid gap-1.5">
-			<Label htmlFor={htmlFor} className="text-ink-3 text-xs">
+			<Label htmlFor={htmlFor} className="text-xs text-ink-3">
 				{label}
 				{required && <span className="text-danger-text"> *</span>}
 			</Label>

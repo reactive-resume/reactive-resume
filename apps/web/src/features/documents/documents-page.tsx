@@ -12,13 +12,13 @@ import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/comp
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Tabs, TabsCount, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { cn } from "@reactive-resume/utils/style";
-import { useDialogStore } from "@/dialogs/store";
-import { isEditableElementFocused } from "@/features/resume/builder/draft";
-import { orpc } from "@/libs/orpc/client";
 import { LinkApplicationDialog, TagsDialog } from "./document-actions";
 import { DocumentCard, DocumentRow } from "./document-card";
 import { collectTags, filterDocuments } from "./filter";
 import { useStartDocument } from "./new-document-dialog";
+import { useDialogStore } from "@/dialogs/store";
+import { isEditableElementFocused } from "@/features/resume/builder/draft";
+import { orpc } from "@/libs/orpc/client";
 
 export type DocumentsSearch = {
 	type: DocumentTypeFilter;
@@ -84,7 +84,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 
 	return (
 		<div className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5">
-			<h1 className="font-display font-medium text-[30px] leading-9">
+			<h1 className="font-display text-[30px] leading-9 font-medium">
 				<Trans>Documents</Trans>
 			</h1>
 
@@ -166,7 +166,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 									<Trans>Nothing matches these filters</Trans>
 								)}
 							</p>
-							<p className="text-ink-2 text-sm">
+							<p className="text-sm text-ink-2">
 								<Trans>Search covers titles, tags and linked applications.</Trans>
 							</p>
 							{filtered && (
@@ -185,7 +185,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 								<Trans>Documents</Trans>
 							</caption>
 							<thead>
-								<tr className="border-line border-b text-start font-medium text-ink-3 text-xs">
+								<tr className="border-b border-line text-start text-xs font-medium text-ink-3">
 									<th className="h-10 ps-3 text-start font-medium">
 										<Trans>Name</Trans>
 									</th>
@@ -269,19 +269,19 @@ function FirstRun({ onChooseFile }: { onChooseFile: () => void }) {
 	const { startBlank, trySample, creating } = useStartDocument();
 
 	return (
-		<section className="grid max-w-xl starting:translate-y-2 gap-4 pt-4 starting:opacity-0 transition-[opacity,translate] duration-emphasized ease-enter">
-			<h2 className="font-display font-medium text-[26px] leading-8">
+		<section className="grid max-w-xl gap-4 pt-4 transition-[opacity,translate] duration-emphasized ease-enter starting:translate-y-2 starting:opacity-0">
+			<h2 className="font-display text-[26px] leading-8 font-medium">
 				<Trans>Let's start with what you have</Trans>
 			</h2>
-			<p className="text-ink-2 leading-6">
+			<p className="leading-6 text-ink-2">
 				<Trans>
 					Import your current resume and we'll lay out every section for you to refine. Or start fresh; it takes a
 					minute to get your name on the page.
 				</Trans>
 			</p>
-			<div className="flex flex-wrap items-center gap-3 rounded-xl border-[1.5px] border-line-2 border-dashed p-5">
+			<div className="flex flex-wrap items-center gap-3 rounded-xl border-[1.5px] border-dashed border-line-2 p-5">
 				<Icon name="upload_file" size={24} className="text-ink-2" />
-				<span className="flex-1 text-ink-2 text-sm">
+				<span className="flex-1 text-sm text-ink-2">
 					<Trans>Drop a PDF, Word or JSON file</Trans>
 				</span>
 				<Button onClick={onChooseFile}>
@@ -343,9 +343,9 @@ function LibrarySkeleton({ view }: { view: "grid" | "list" }) {
 	if (view === "list") {
 		return (
 			<div className="grid">
-				<div className="h-10 border-line border-b" />
+				<div className="h-10 border-b border-line" />
 				{Array.from({ length: 6 }, (_, index) => (
-					<div key={index} className="flex h-[45px] items-center border-line border-b ps-3">
+					<div key={index} className="flex h-[45px] items-center border-b border-line ps-3">
 						<Skeleton className="h-4 w-1/3" />
 					</div>
 				))}
@@ -411,16 +411,16 @@ function DropToImport() {
 		<div
 			aria-hidden={!dragging}
 			className={cn(
-				"pointer-events-none fixed inset-3 z-40 grid place-items-center rounded-2xl border-2 border-accent border-dashed bg-accent-soft/80 transition-[opacity,visibility] ease-enter",
+				"pointer-events-none fixed inset-3 z-40 grid place-items-center rounded-2xl border-2 border-dashed border-accent bg-accent-soft/80 transition-[opacity,visibility] ease-enter",
 				dragging ? "visible opacity-100 duration-standard" : "invisible opacity-0 duration-[calc(var(--d2)*0.7)]",
 			)}
 		>
 			<div className="grid justify-items-center gap-2 text-center">
 				<Icon name="download" size={32} className="text-accent-text" />
-				<p className="font-semibold text-lg">
+				<p className="text-lg font-semibold">
 					<Trans>Drop to import</Trans>
 				</p>
-				<p className="text-ink-2 text-sm">
+				<p className="text-sm text-ink-2">
 					<Trans>PDF, Word or JSON. We'll build a resume from it.</Trans>
 				</p>
 			</div>

@@ -91,10 +91,12 @@ marketing:
   typography:
     display: { fontFamily: Anybody, fontWeight: "300–400", fontStretch: "86%–112%" }
     write-title: { fontFamily: Anybody, fontSize: "clamp(72px, 9vw, 160px)", lineHeight: 0.9, fontWeight: 300 }
-    numeral: { fontFamily: Anybody, fontSize: "clamp(56px, 7.5vw, 136px)", fontWeight: 300, fontVariantNumeric: tabular-nums }
+    numeral:
+      { fontFamily: Anybody, fontSize: "clamp(56px, 7.5vw, 136px)", fontWeight: 300, fontVariantNumeric: tabular-nums }
     body: { fontFamily: Newsreader, fontSize: "16–21px", lineHeight: "1.45–1.5", fontWeight: 400 }
     accent: { fontFamily: Newsreader, fontStyle: italic, color: accent-text }
-    label: { fontFamily: Martian Mono, fontSize: 11px, fontWeight: 500, letterSpacing: 0.08em, textTransform: uppercase }
+    label:
+      { fontFamily: Martian Mono, fontSize: 11px, fontWeight: 500, letterSpacing: 0.08em, textTransform: uppercase }
     wordmark: { fontFamily: Anybody, fontSize: 17.5cqw, lineHeight: 0.84, fontWeight: 800, fontStretch: 78% }
   colors:
     graphite: { light: "oklch(0.38 0.01 95 / .3)", dark: "oklch(0.9 0.01 95 / .18)" }
@@ -179,11 +181,11 @@ Icons inside resumes use Phosphor names stored in resume data; they remain separ
 
 ## Motion
 
-| Token | Duration | Use |
-| --- | --- | --- |
-| `duration-quick` | 120ms | Hover, press, toggles, checkboxes, and focus |
-| `duration-standard` | 200ms | Menus, popovers, expansion, content swaps, and dialogs |
-| `duration-emphasized` | 320ms | Sheets, toasts, and the assistant column |
+| Token                 | Duration | Use                                                    |
+| --------------------- | -------- | ------------------------------------------------------ |
+| `duration-quick`      | 120ms    | Hover, press, toggles, checkboxes, and focus           |
+| `duration-standard`   | 200ms    | Menus, popovers, expansion, content swaps, and dialogs |
+| `duration-emphasized` | 320ms    | Sheets, toasts, and the assistant column               |
 
 - Entering and changing state use `ease-enter` (`cubic-bezier(0.2, 0.8, 0.2, 1)`). Exits take 70% of the entry duration.
 - Sliding indicators, reordering, and settling use `ease-in-out-strong` (`cubic-bezier(0.77, 0, 0.175, 1)`). Swipe-dismissed bottom sheets use `ease-drawer`.
@@ -254,14 +256,14 @@ The public homepage in `apps/web/src/features/homepage` shares app colors and th
 
 Pinned scenes contain a sticky `100svh` stage. Scroll progress is `p = clamp(0, −top / max(1, height − viewportHeight), 1)`; `scroll.ts` writes it to `--p` through one animation-frame-throttled scroll listener. CSS derives continuous motion from progress; React receives only coarse scene and step changes.
 
-| Scene | Below 900px | From 900px |
-| --- | --- | --- |
-| Hero | 190vh | 260vh |
-| Write | 280vh | 330vh |
-| Design | 380vh | 440vh |
-| Check | 260vh | 320vh |
-| Tailor | 280vh | 330vh |
-| Share | 240vh | 300vh |
+| Scene  | Below 900px | From 900px |
+| ------ | ----------- | ---------- |
+| Hero   | 190vh       | 260vh      |
+| Write  | 280vh       | 330vh      |
+| Design | 380vh       | 440vh      |
+| Check  | 260vh       | 320vh      |
+| Tailor | 280vh       | 330vh      |
+| Share  | 240vh       | 300vh      |
 
 Light mode combines breathing window light (16 seconds), a drifting mullion shadow (90 seconds), and 18 dust motes. Dark mode adds a neutral 620px cursor glow at 6% opacity. These are decorative and must not obscure text.
 

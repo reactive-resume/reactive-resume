@@ -1,5 +1,5 @@
-import type { AIProvider } from "@reactive-resume/ai/types";
 import type { ComboboxOption } from "@/components/ui/combobox";
+import type { AIProvider } from "@reactive-resume/ai/types";
 import { AI_PROVIDER_DEFAULT_BASE_URLS } from "@reactive-resume/ai/types";
 
 export type AIProviderOption = ComboboxOption<AIProvider> & { defaultBaseURL: string; defaultModel: string };

@@ -13,7 +13,7 @@ export function SaveStatus() {
 	const retrySave = useResumeStore((state) => state.retrySave);
 
 	return (
-		<span role="status" aria-live="polite" className="flex min-w-0 items-center gap-1.5 text-ink-3 text-xs leading-4">
+		<span role="status" aria-live="polite" className="flex min-w-0 items-center gap-1.5 text-xs leading-4 text-ink-3">
 			{status === "saving" && (
 				<>
 					<Spinner decorative className="size-3 border-[1.5px]" />

@@ -113,10 +113,10 @@ function Sidebar() {
 	const openDialog = useDialogStore((state) => state.openDialog);
 
 	return (
-		<aside className="sticky top-0 flex h-svh flex-col gap-3 border-line border-e bg-surface p-3 [view-transition-name:app-nav]">
+		<aside className="sticky top-0 flex h-svh flex-col gap-3 border-e border-line bg-surface p-3 [view-transition-name:app-nav]">
 			<Link to="/" className="flex h-9 items-center gap-2.5 px-1.5">
 				<BrandIcon variant="icon" alt="" className="size-6 shrink-0" />
-				<span className="font-semibold text-sm">Reactive Resume</span>
+				<span className="text-sm font-semibold">Reactive Resume</span>
 			</Link>
 
 			<button
@@ -124,7 +124,7 @@ function Sidebar() {
 				aria-label={t`Search or run…`}
 				aria-keyshortcuts="Meta+K"
 				onClick={() => openPalette(true)}
-				className="flex h-[34px] items-center gap-2 rounded-lg border border-line bg-bg px-2.5 text-ink-3 text-sm transition-colors duration-quick hover:text-ink-2"
+				className="flex h-[34px] items-center gap-2 rounded-lg border border-line bg-bg px-2.5 text-sm text-ink-3 transition-colors duration-quick hover:text-ink-2"
 			>
 				<Icon name="search" size={18} />
 				<span className="flex-1 text-start">
@@ -137,7 +137,7 @@ function Sidebar() {
 				{items.map((item) => (
 					<NavLink key={item.to} item={item} current={isCurrent(item.to)} />
 				))}
-				<div className="mt-2 border-line border-t pt-2">
+				<div className="mt-2 border-t border-line pt-2">
 					<NavLink item={settings} current={isCurrent(settings.to)} />
 				</div>
 			</nav>
@@ -167,8 +167,8 @@ function Sidebar() {
 								<AvatarFallback className="text-[11px]">{getInitials(session.user.name)}</AvatarFallback>
 							</Avatar>
 							<span className="grid min-w-0">
-								<span className="truncate font-medium text-sm">{session.user.name}</span>
-								<span className="text-ink-3 text-xs">
+								<span className="truncate text-sm font-medium">{session.user.name}</span>
+								<span className="text-xs text-ink-3">
 									<Trans>Account</Trans>
 								</span>
 							</span>
@@ -192,7 +192,7 @@ function NavLink({ item, current }: { item: NavItem; current: boolean }) {
 		>
 			<Icon name={item.icon} filled={current} />
 			<span className="flex-1">{item.label}</span>
-			{item.count !== undefined && <span className="font-mono text-ink-3 text-xs">{item.count}</span>}
+			{item.count !== undefined && <span className="font-mono text-xs text-ink-3">{item.count}</span>}
 		</Link>
 	);
 }
@@ -205,7 +205,7 @@ function Rail() {
 	const openDialog = useDialogStore((state) => state.openDialog);
 
 	return (
-		<aside className="sticky top-0 flex h-svh flex-col items-center gap-2 border-line border-e bg-surface py-3 [view-transition-name:app-nav]">
+		<aside className="sticky top-0 flex h-svh flex-col items-center gap-2 border-e border-line bg-surface py-3 [view-transition-name:app-nav]">
 			<Link to="/" aria-label="Reactive Resume" className="mb-1 grid size-8 place-items-center rounded-md">
 				<BrandIcon variant="icon" alt="" className="size-6" />
 			</Link>
@@ -298,7 +298,7 @@ function MobileTabs() {
 	return (
 		<nav
 			aria-label={t`App`}
-			className="sticky bottom-0 z-30 grid grid-cols-4 border-line border-t bg-surface pb-[env(safe-area-inset-bottom)] [view-transition-name:app-nav]"
+			className="sticky bottom-0 z-30 grid grid-cols-4 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] [view-transition-name:app-nav]"
 		>
 			<Link
 				to="/dashboard"

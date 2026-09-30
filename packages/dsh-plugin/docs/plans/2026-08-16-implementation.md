@@ -30,11 +30,12 @@
 
 This task produces a written finding, not shipped code. It gates the `tools` config key in Task 3 and the `ctx.tools.restrict` call in Task 6.
 
-`ToolRegistry.restrict` documents itself as filtering only what a scope **inherits** from ancestors: *"Per-scope filter over the tools a scope INHERITS — the global layer and every ancestor layer on its chain. Restrictions intersect, and do not affect the scope's own registrations."* But `ctx.plugin(mcpClient, …)` mounts the bridge in a **child** scope of the plugin's context. If a parent-scope restriction cannot reach a child scope's registrations, the `tools` key must not ship in 0.1.0 — removing a public config key later is a breaking change.
+`ToolRegistry.restrict` documents itself as filtering only what a scope **inherits** from ancestors: _"Per-scope filter over the tools a scope INHERITS — the global layer and every ancestor layer on its chain. Restrictions intersect, and do not affect the scope's own registrations."_ But `ctx.plugin(mcpClient, …)` mounts the bridge in a **child** scope of the plugin's context. If a parent-scope restriction cannot reach a child scope's registrations, the `tools` key must not ship in 0.1.0 — removing a public config key later is a breaking change.
 
 The question is purely about Cordis scope semantics. It does not need a live MCP server, a Reactive Resume instance, or an API key: a stub plugin that registers one tool in a child scope reproduces the exact topology. Verify it that way.
 
 **Files:**
+
 - Create: `docs/spikes/2026-08-16-restrict-semantics.md`
 
 - [ ] **Step 1: Scaffold a throwaway workspace**
@@ -50,39 +51,39 @@ pnpm add @deepseek-ai/cordis @deepseek-ai/dsh-tools @deepseek-ai/schemastery
 Create `/tmp/dsh-spike/probe.ts`. The goal is to reproduce the plugin's topology: a parent context loads a child plugin, the child registers a tool, and the parent tries to hide it.
 
 ```ts
-import { Context } from '@deepseek-ai/cordis'
-import * as tools from '@deepseek-ai/dsh-tools'
+import { Context } from "@deepseek-ai/cordis";
+import * as tools from "@deepseek-ai/dsh-tools";
 
-const root = new Context()
-await root.plugin(tools)
+const root = new Context();
+await root.plugin(tools);
 
 /** Stands in for dsh-mcp-client: registers one tool in whatever scope loads it. */
 const stubBridge = {
-	name: 'stub-bridge',
-	inject: ['tools'],
-	apply(ctx: Context) {
-		ctx.tools.register({
-			name: 'mcp__resume__list_applications',
-			description: 'stub',
-			parameters: { type: 'object', properties: {} },
-			async execute() {
-				return { content: [{ type: 'text', text: 'ok' }] }
-			},
-		})
-	},
-}
+  name: "stub-bridge",
+  inject: ["tools"],
+  apply(ctx: Context) {
+    ctx.tools.register({
+      name: "mcp__resume__list_applications",
+      description: "stub",
+      parameters: { type: "object", properties: {} },
+      async execute() {
+        return { content: [{ type: "text", text: "ok" }] };
+      },
+    });
+  },
+};
 
 // The plugin under design mounts the bridge as a child, exactly like this.
-await root.plugin(stubBridge)
+await root.plugin(stubBridge);
 
-const names = () => root.tools.schemas().map((s) => s.name)
-console.log('BEFORE', names())
+const names = () => root.tools.schemas().map((s) => s.name);
+console.log("BEFORE", names());
 
-const dispose = root.tools.restrict({ deny: ['mcp__resume__list_applications'] })
-console.log('AFTER', names())
+const dispose = root.tools.restrict({ deny: ["mcp__resume__list_applications"] });
+console.log("AFTER", names());
 
-dispose()
-console.log('DISPOSED', names())
+dispose();
+console.log("DISPOSED", names());
 ```
 
 The `register` call's exact shape must match `ToolDefinition` in `@deepseek-ai/dsh-tools`. Read `node_modules/@deepseek-ai/dsh-tools/lib/types/index.d.ts` and adjust the object to whatever that interface actually requires — the fields above are a best guess and compile errors here are expected, not a blocker. Same for how `ctx.tools` gets bootstrapped: if `root.plugin(tools)` is not how the registry is installed, read the type definitions and find the right way. Record whatever you had to do.
@@ -94,6 +95,7 @@ cd /tmp/dsh-spike && node --experimental-strip-types probe.ts
 ```
 
 Three outcomes:
+
 - `AFTER` omits `mcp__resume__list_applications` → verdict **YES**. Tasks 3 and 6 ship as written.
 - `AFTER` still lists it → verdict **NO**. The `tools` key is deferred per Task 6's fallback note.
 - The probe cannot be made to run at all (registry will not bootstrap standalone, API shapes do not line up) → verdict **INCONCLUSIVE**. Treat that identically to NO: ship without the key rather than shipping one that may not work.
@@ -132,11 +134,13 @@ rm -rf /tmp/dsh-spike
 ### Task 2: Repo scaffold with a green build and test cycle
 
 **Files:**
+
 - Create: `package.json`, `tsconfig.json`, `tsdown.config.ts`, `biome.json`, `.gitignore`, `vitest.config.ts`
 - Create: `src/index.ts`
 - Test: `test/smoke.test.ts`
 
 **Interfaces:**
+
 - Consumes: nothing.
 - Produces: a working `pnpm build`, `pnpm test`, `pnpm typecheck`, and `pnpm check`. Every later task depends on these commands existing.
 
@@ -220,25 +224,25 @@ Note: the `@deepseek-ai/*` packages appear in BOTH `peerDependencies` (what cons
 `tsdown.config.ts`:
 
 ```ts
-import { defineConfig } from 'tsdown'
+import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: ['src/index.ts'],
-  outDir: 'lib',
-  format: ['esm'],
+  entry: ["src/index.ts"],
+  outDir: "lib",
+  format: ["esm"],
   dts: true,
   clean: true,
-})
+});
 ```
 
 `vitest.config.ts`:
 
 ```ts
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  test: { include: ['test/**/*.test.ts'] },
-})
+  test: { include: ["test/**/*.test.ts"] },
+});
 ```
 
 `biome.json`:
@@ -267,12 +271,12 @@ lib
 `test/smoke.test.ts`:
 
 ```ts
-import { expect, it } from 'vitest'
-import { name } from '../src/index.ts'
+import { expect, it } from "vitest";
+import { name } from "../src/index.ts";
 
-it('exports the cordis plugin name', () => {
-	expect(name).toBe('reactive-resume')
-})
+it("exports the cordis plugin name", () => {
+  expect(name).toBe("reactive-resume");
+});
 ```
 
 - [ ] **Step 4: Run it to verify it fails**
@@ -295,7 +299,7 @@ Expected: FAIL — `Failed to resolve import "../src/index.ts"`.
  */
 
 /** Cordis plugin name used by loader diagnostics. */
-export const name = 'reactive-resume'
+export const name = "reactive-resume";
 ```
 
 - [ ] **Step 6: Run tests, typecheck, and build**
@@ -318,11 +322,13 @@ git commit -m "chore: scaffold the plugin package with build, test, and lint"
 ### Task 3: Config schema
 
 **Files:**
+
 - Create: `src/config.ts`
 - Modify: `src/index.ts`
 - Test: `test/config.test.ts`
 
 **Interfaces:**
+
 - Consumes: nothing from earlier tasks.
 - Produces:
   - `export interface Config { apiKey: string; url: string; serverName: string; tools: ToolProfile; toolCallTimeoutMs: number }`
@@ -338,43 +344,43 @@ git commit -m "chore: scaffold the plugin package with build, test, and lint"
 `test/config.test.ts`:
 
 ```ts
-import { expect, it } from 'vitest'
-import { Config } from '../src/config.ts'
+import { expect, it } from "vitest";
+import { Config } from "../src/config.ts";
 
-it('applies defaults for every optional field', () => {
-	const parsed = Config({ apiKey: 'test-key' })
+it("applies defaults for every optional field", () => {
+  const parsed = Config({ apiKey: "test-key" });
 
-	expect(parsed).toEqual({
-		apiKey: 'test-key',
-		url: 'https://rxresu.me',
-		serverName: 'resume',
-		tools: 'all',
-		toolCallTimeoutMs: 60_000,
-	})
-})
+  expect(parsed).toEqual({
+    apiKey: "test-key",
+    url: "https://rxresu.me",
+    serverName: "resume",
+    tools: "all",
+    toolCallTimeoutMs: 60_000,
+  });
+});
 
-it('keeps explicit values', () => {
-	const parsed = Config({
-		apiKey: 'test-key',
-		url: 'http://localhost:3000',
-		serverName: 'rr',
-		tools: 'resume',
-		toolCallTimeoutMs: 5_000,
-	})
+it("keeps explicit values", () => {
+  const parsed = Config({
+    apiKey: "test-key",
+    url: "http://localhost:3000",
+    serverName: "rr",
+    tools: "resume",
+    toolCallTimeoutMs: 5_000,
+  });
 
-	expect(parsed.url).toBe('http://localhost:3000')
-	expect(parsed.serverName).toBe('rr')
-	expect(parsed.tools).toBe('resume')
-	expect(parsed.toolCallTimeoutMs).toBe(5_000)
-})
+  expect(parsed.url).toBe("http://localhost:3000");
+  expect(parsed.serverName).toBe("rr");
+  expect(parsed.tools).toBe("resume");
+  expect(parsed.toolCallTimeoutMs).toBe(5_000);
+});
 
-it('rejects a missing apiKey', () => {
-	expect(() => Config({})).toThrow()
-})
+it("rejects a missing apiKey", () => {
+  expect(() => Config({})).toThrow();
+});
 
-it('rejects an unknown tools profile', () => {
-	expect(() => Config({ apiKey: 'test-key', tools: 'everything' })).toThrow()
-})
+it("rejects an unknown tools profile", () => {
+  expect(() => Config({ apiKey: "test-key", tools: "everything" })).toThrow();
+});
 ```
 
 - [ ] **Step 2: Run it to verify it fails**
@@ -390,41 +396,41 @@ Expected: FAIL — cannot resolve `../src/config.ts`.
 `src/config.ts`:
 
 ```ts
-import z from '@deepseek-ai/schemastery'
+import z from "@deepseek-ai/schemastery";
 
 /** Which group of Reactive Resume tools to expose to the model. */
-export type ToolProfile = 'resume' | 'applications' | 'all'
+export type ToolProfile = "resume" | "applications" | "all";
 
 /** Resolved plugin configuration. Every field is populated after parsing. */
 export interface Config {
-	/** API key minted at `<url>/dashboard/settings/api-keys`. */
-	apiKey: string
-	/** Reactive Resume origin, no trailing slash. */
-	url: string
-	/** Tool namespace: tools reach the model as `mcp__<serverName>__<rawName>`. */
-	serverName: string
-	/** Tool group to expose. */
-	tools: ToolProfile
-	/** Per-tool-call timeout in milliseconds. */
-	toolCallTimeoutMs: number
+  /** API key minted at `<url>/dashboard/settings/api-keys`. */
+  apiKey: string;
+  /** Reactive Resume origin, no trailing slash. */
+  url: string;
+  /** Tool namespace: tools reach the model as `mcp__<serverName>__<rawName>`. */
+  serverName: string;
+  /** Tool group to expose. */
+  tools: ToolProfile;
+  /** Per-tool-call timeout in milliseconds. */
+  toolCallTimeoutMs: number;
 }
 
 export const Config: z<Config> = z.object({
-	apiKey: z.string().required().description('API key from <url>/dashboard/settings/api-keys.'),
-	url: z
-		.string()
-		.default('https://rxresu.me')
-		.description('Reactive Resume origin. Set this for a self-hosted instance.'),
-	serverName: z
-		.string()
-		.default('resume')
-		.description('Tool namespace. Must match [A-Za-z0-9_-]{1,32} and be unique across live MCP instances.'),
-	tools: z
-		.union(['resume', 'applications', 'all'] as const)
-		.default('all')
-		.description('Which Reactive Resume tool group the model sees.'),
-	toolCallTimeoutMs: z.natural().default(60_000).description('Per-tool-call timeout in milliseconds.'),
-})
+  apiKey: z.string().required().description("API key from <url>/dashboard/settings/api-keys."),
+  url: z
+    .string()
+    .default("https://rxresu.me")
+    .description("Reactive Resume origin. Set this for a self-hosted instance."),
+  serverName: z
+    .string()
+    .default("resume")
+    .description("Tool namespace. Must match [A-Za-z0-9_-]{1,32} and be unique across live MCP instances."),
+  tools: z
+    .union(["resume", "applications", "all"] as const)
+    .default("all")
+    .description("Which Reactive Resume tool group the model sees."),
+  toolCallTimeoutMs: z.natural().default(60_000).description("Per-tool-call timeout in milliseconds."),
+});
 ```
 
 - [ ] **Step 4: Run the test to verify it passes**
@@ -442,7 +448,7 @@ If `z.union([...] as const)` does not produce the literal union type, replace it
 Modify `src/index.ts` — append:
 
 ```ts
-export { Config, type ToolProfile } from './config.ts'
+export { Config, type ToolProfile } from "./config.ts";
 ```
 
 - [ ] **Step 6: Commit**
@@ -457,10 +463,12 @@ git commit -m "feat: add the plugin config schema with defaults"
 ### Task 4: Mount the MCP bridge
 
 **Files:**
+
 - Modify: `src/index.ts`
 - Test: `test/apply.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Config` from Task 3.
 - Produces:
   - `export const inject: string[]`
@@ -475,54 +483,54 @@ The test does not boot a real Harness. It passes a hand-rolled fake context that
 `test/apply.test.ts`:
 
 ```ts
-import { expect, it, vi } from 'vitest'
-import { Config } from '../src/config.ts'
-import { apply, inject } from '../src/index.ts'
+import { expect, it, vi } from "vitest";
+import { Config } from "../src/config.ts";
+import { apply, inject } from "../src/index.ts";
 
 /** Minimal stand-in for the parts of the Cordis context `apply` touches. */
 function fakeContext() {
-	return {
-		plugin: vi.fn(async () => undefined),
-		tools: { restrict: vi.fn(() => () => undefined) },
-		systemPrompt: { section: vi.fn(() => () => undefined) },
-	}
+  return {
+    plugin: vi.fn(async () => undefined),
+    tools: { restrict: vi.fn(() => () => undefined) },
+    systemPrompt: { section: vi.fn(() => () => undefined) },
+  };
 }
 
-it('declares the services it needs', () => {
-	expect(inject).toEqual(['tools', 'systemPrompt'])
-})
+it("declares the services it needs", () => {
+  expect(inject).toEqual(["tools", "systemPrompt"]);
+});
 
-it('mounts the MCP bridge with streamable-http and the api key header', async () => {
-	const ctx = fakeContext()
+it("mounts the MCP bridge with streamable-http and the api key header", async () => {
+  const ctx = fakeContext();
 
-	await apply(ctx as never, Config({ apiKey: 'test-key' }))
+  await apply(ctx as never, Config({ apiKey: "test-key" }));
 
-	expect(ctx.plugin).toHaveBeenCalledTimes(1)
-	expect(ctx.plugin.mock.calls[0]?.[1]).toEqual({
-		transport: 'streamable-http',
-		serverName: 'resume',
-		url: 'https://rxresu.me/mcp',
-		headers: { 'x-api-key': 'test-key' },
-		toolCallTimeoutMs: 60_000,
-		failOnStartupError: true,
-	})
-})
+  expect(ctx.plugin).toHaveBeenCalledTimes(1);
+  expect(ctx.plugin.mock.calls[0]?.[1]).toEqual({
+    transport: "streamable-http",
+    serverName: "resume",
+    url: "https://rxresu.me/mcp",
+    headers: { "x-api-key": "test-key" },
+    toolCallTimeoutMs: 60_000,
+    failOnStartupError: true,
+  });
+});
 
-it('strips a trailing slash from the configured url', async () => {
-	const ctx = fakeContext()
+it("strips a trailing slash from the configured url", async () => {
+  const ctx = fakeContext();
 
-	await apply(ctx as never, Config({ apiKey: 'test-key', url: 'http://localhost:3000/' }))
+  await apply(ctx as never, Config({ apiKey: "test-key", url: "http://localhost:3000/" }));
 
-	expect(ctx.plugin.mock.calls[0]?.[1]).toMatchObject({ url: 'http://localhost:3000/mcp' })
-})
+  expect(ctx.plugin.mock.calls[0]?.[1]).toMatchObject({ url: "http://localhost:3000/mcp" });
+});
 
-it('rejects a serverName the bridge would refuse', async () => {
-	const ctx = fakeContext()
+it("rejects a serverName the bridge would refuse", async () => {
+  const ctx = fakeContext();
 
-	await expect(apply(ctx as never, Config({ apiKey: 'test-key', serverName: 'has spaces' }))).rejects.toThrow(
-		/serverName/,
-	)
-})
+  await expect(apply(ctx as never, Config({ apiKey: "test-key", serverName: "has spaces" }))).rejects.toThrow(
+    /serverName/,
+  );
+});
 ```
 
 - [ ] **Step 2: Run it to verify it fails**
@@ -543,23 +551,23 @@ Modify `src/index.ts` to read in full:
  * @module dsh-plugin-reactive-resume
  */
 
-import type { Context } from '@deepseek-ai/cordis'
-import * as mcpClient from '@deepseek-ai/dsh-mcp-client'
-import type { Config } from './config.ts'
+import type { Context } from "@deepseek-ai/cordis";
+import * as mcpClient from "@deepseek-ai/dsh-mcp-client";
+import type { Config } from "./config.ts";
 
 // Re-exports the interface AND the schema — `config.ts` exports both under the
 // name `Config`, and Cordis reads the schema export to validate config before
 // this plugin starts.
-export { Config, type ToolProfile } from './config.ts'
+export { Config, type ToolProfile } from "./config.ts";
 
 /** Cordis plugin name used by loader diagnostics. */
-export const name = 'reactive-resume'
+export const name = "reactive-resume";
 
 /** Services required by this plugin. */
-export const inject = ['tools', 'systemPrompt']
+export const inject = ["tools", "systemPrompt"];
 
 /** `dsh-mcp-client` reserves this shape for a server namespace. */
-const SERVER_NAME_PATTERN = /^[A-Za-z0-9_-]{1,32}$/
+const SERVER_NAME_PATTERN = /^[A-Za-z0-9_-]{1,32}$/;
 
 /**
  * Connect a Reactive Resume account to the session.
@@ -567,20 +575,20 @@ const SERVER_NAME_PATTERN = /^[A-Za-z0-9_-]{1,32}$/
  * @param config - resolved plugin configuration.
  */
 export async function apply(ctx: Context, config: Config): Promise<void> {
-	if (!SERVER_NAME_PATTERN.test(config.serverName)) {
-		throw new Error(`Invalid serverName "${config.serverName}": must match ${SERVER_NAME_PATTERN.source}`)
-	}
+  if (!SERVER_NAME_PATTERN.test(config.serverName)) {
+    throw new Error(`Invalid serverName "${config.serverName}": must match ${SERVER_NAME_PATTERN.source}`);
+  }
 
-	const origin = config.url.replace(/\/+$/, '')
+  const origin = config.url.replace(/\/+$/, "");
 
-	await ctx.plugin(mcpClient, {
-		transport: 'streamable-http',
-		serverName: config.serverName,
-		url: `${origin}/mcp`,
-		headers: { 'x-api-key': config.apiKey },
-		toolCallTimeoutMs: config.toolCallTimeoutMs,
-		failOnStartupError: true,
-	})
+  await ctx.plugin(mcpClient, {
+    transport: "streamable-http",
+    serverName: config.serverName,
+    url: `${origin}/mcp`,
+    headers: { "x-api-key": config.apiKey },
+    toolCallTimeoutMs: config.toolCallTimeoutMs,
+    failOnStartupError: true,
+  });
 }
 ```
 
@@ -604,11 +612,13 @@ git commit -m "feat: mount the Reactive Resume MCP bridge over streamable http"
 ### Task 5: System prompt section
 
 **Files:**
+
 - Create: `src/prompt.ts`
 - Modify: `src/index.ts`
 - Test: `test/prompt.test.ts`
 
 **Interfaces:**
+
 - Consumes: `apply` from Task 4.
 - Produces: `export const PATCH_GUIDE: string`.
 
@@ -619,47 +629,47 @@ This is the plugin's substance — the reason it exists rather than a raw `dsh-m
 `test/prompt.test.ts`:
 
 ```ts
-import { expect, it, vi } from 'vitest'
-import { Config } from '../src/config.ts'
-import { apply } from '../src/index.ts'
-import { PATCH_GUIDE } from '../src/prompt.ts'
+import { expect, it, vi } from "vitest";
+import { Config } from "../src/config.ts";
+import { apply } from "../src/index.ts";
+import { PATCH_GUIDE } from "../src/prompt.ts";
 
 function fakeContext() {
-	return {
-		plugin: vi.fn(async () => undefined),
-		tools: { restrict: vi.fn(() => () => undefined) },
-		systemPrompt: { section: vi.fn(() => () => undefined) },
-	}
+  return {
+    plugin: vi.fn(async () => undefined),
+    tools: { restrict: vi.fn(() => () => undefined) },
+    systemPrompt: { section: vi.fn(() => () => undefined) },
+  };
 }
 
-it('registers one prompt section in the tool-guidance order band', async () => {
-	const ctx = fakeContext()
+it("registers one prompt section in the tool-guidance order band", async () => {
+  const ctx = fakeContext();
 
-	await apply(ctx as never, Config({ apiKey: 'test-key' }))
+  await apply(ctx as never, Config({ apiKey: "test-key" }));
 
-	expect(ctx.systemPrompt.section).toHaveBeenCalledTimes(1)
-	const section = ctx.systemPrompt.section.mock.calls[0]?.[0]
-	expect(section.name).toBe('reactive-resume')
-	expect(section.order).toBeGreaterThanOrEqual(100)
-	expect(section.order).toBeLessThanOrEqual(199)
-	expect(section.text).toBe(PATCH_GUIDE)
-})
+  expect(ctx.systemPrompt.section).toHaveBeenCalledTimes(1);
+  const section = ctx.systemPrompt.section.mock.calls[0]?.[0];
+  expect(section.name).toBe("reactive-resume");
+  expect(section.order).toBeGreaterThanOrEqual(100);
+  expect(section.order).toBeLessThanOrEqual(199);
+  expect(section.text).toBe(PATCH_GUIDE);
+});
 
-it('names the tools it references with the configured namespace', async () => {
-	const ctx = fakeContext()
+it("names the tools it references with the configured namespace", async () => {
+  const ctx = fakeContext();
 
-	await apply(ctx as never, Config({ apiKey: 'test-key', serverName: 'rr' }))
+  await apply(ctx as never, Config({ apiKey: "test-key", serverName: "rr" }));
 
-	const section = ctx.systemPrompt.section.mock.calls[0]?.[0]
-	expect(section.text).toContain('mcp__rr__read_resume')
-	expect(section.text).not.toContain('mcp__resume__read_resume')
-})
+  const section = ctx.systemPrompt.section.mock.calls[0]?.[0];
+  expect(section.text).toContain("mcp__rr__read_resume");
+  expect(section.text).not.toContain("mcp__resume__read_resume");
+});
 
-it('covers the documented failure modes', () => {
-	for (const phrase of ['RFC 6902', 'resume://_meta/schema', 'unlock_resume', 'list_resumes']) {
-		expect(PATCH_GUIDE).toContain(phrase)
-	}
-})
+it("covers the documented failure modes", () => {
+  for (const phrase of ["RFC 6902", "resume://_meta/schema", "unlock_resume", "list_resumes"]) {
+    expect(PATCH_GUIDE).toContain(phrase);
+  }
+});
 ```
 
 Note the second test: the guide must be namespace-aware, so `PATCH_GUIDE` is a template built per `serverName`, not a frozen constant. The third test still asserts against the default-namespace export.
@@ -683,40 +693,40 @@ Expected: FAIL — cannot resolve `../src/prompt.ts`.
  * @returns prompt text naming tools exactly as the model will see them.
  */
 export function buildPatchGuide(serverName: string): string {
-	const t = (raw: string) => `\`mcp__${serverName}__${raw}\``
+  const t = (raw: string) => `\`mcp__${serverName}__${raw}\``;
 
-	return [
-		'## Reactive Resume',
-		'',
-		"These tools operate on the user's real, live resumes and job applications. Changes are immediate and visible in their account.",
-		'',
-		'### Reading before writing',
-		'',
-		`- Call ${t('list_resumes')} to discover resume IDs. IDs are UUIDs, never titles or slugs.`,
-		`- Call ${t('read_resume')} before any edit. Never patch a resume you have not read this session.`,
-		`- If a call fails with "not found", re-run ${t('list_resumes')} rather than guessing an ID.`,
-		'',
-		'### Editing',
-		'',
-		`- ${t('apply_resume_patch')} takes RFC 6902 JSON Patch operations applied to the resume data document.`,
-		`- Read the \`resume://_meta/schema\` resource before constructing paths. Do not infer path shapes from the resume you read — the schema is authoritative about which keys are permitted.`,
-		'- Section entries are arrays of objects, each with its own UUID `id`. Address an existing entry by locating its index from the document you just read; never treat an `id` as an index.',
-		'- Prefer one patch with several operations over several single-operation patches. Operations apply in order and the whole patch fails atomically.',
-		`- Use ${t('update_resume')} only for whole-document replacement. For anything smaller, patch.`,
-		'',
-		'### Locking',
-		'',
-		`- A locked resume rejects every write. When a call fails because the resume is locked, call ${t('unlock_resume')}, make the change, and leave the lock as you found it.`,
-		'',
-		'### Scope',
-		'',
-		'- Never delete a resume or an application unless the user asked for that specific deletion in this conversation.',
-		'- When the user describes a change in prose, restate the concrete edit you are about to make before making it.',
-	].join('\n')
+  return [
+    "## Reactive Resume",
+    "",
+    "These tools operate on the user's real, live resumes and job applications. Changes are immediate and visible in their account.",
+    "",
+    "### Reading before writing",
+    "",
+    `- Call ${t("list_resumes")} to discover resume IDs. IDs are UUIDs, never titles or slugs.`,
+    `- Call ${t("read_resume")} before any edit. Never patch a resume you have not read this session.`,
+    `- If a call fails with "not found", re-run ${t("list_resumes")} rather than guessing an ID.`,
+    "",
+    "### Editing",
+    "",
+    `- ${t("apply_resume_patch")} takes RFC 6902 JSON Patch operations applied to the resume data document.`,
+    `- Read the \`resume://_meta/schema\` resource before constructing paths. Do not infer path shapes from the resume you read — the schema is authoritative about which keys are permitted.`,
+    "- Section entries are arrays of objects, each with its own UUID `id`. Address an existing entry by locating its index from the document you just read; never treat an `id` as an index.",
+    "- Prefer one patch with several operations over several single-operation patches. Operations apply in order and the whole patch fails atomically.",
+    `- Use ${t("update_resume")} only for whole-document replacement. For anything smaller, patch.`,
+    "",
+    "### Locking",
+    "",
+    `- A locked resume rejects every write. When a call fails because the resume is locked, call ${t("unlock_resume")}, make the change, and leave the lock as you found it.`,
+    "",
+    "### Scope",
+    "",
+    "- Never delete a resume or an application unless the user asked for that specific deletion in this conversation.",
+    "- When the user describes a change in prose, restate the concrete edit you are about to make before making it.",
+  ].join("\n");
 }
 
 /** The prompt section for the default `resume` namespace. */
-export const PATCH_GUIDE: string = buildPatchGuide('resume')
+export const PATCH_GUIDE: string = buildPatchGuide("resume");
 ```
 
 - [ ] **Step 4: Register it in `apply`**
@@ -724,17 +734,17 @@ export const PATCH_GUIDE: string = buildPatchGuide('resume')
 In `src/index.ts`, add the import:
 
 ```ts
-import { buildPatchGuide } from './prompt.ts'
+import { buildPatchGuide } from "./prompt.ts";
 ```
 
 and append to the end of `apply`, after the `ctx.plugin(...)` call:
 
 ```ts
-	ctx.systemPrompt.section({
-		name: 'reactive-resume',
-		order: 150,
-		text: buildPatchGuide(config.serverName),
-	})
+ctx.systemPrompt.section({
+  name: "reactive-resume",
+  order: 150,
+  text: buildPatchGuide(config.serverName),
+});
 ```
 
 - [ ] **Step 5: Run the tests to verify they pass**
@@ -757,6 +767,7 @@ git commit -m "feat: teach the model Reactive Resume patch semantics"
 ### Task 6: Generated tool names and drift detection
 
 **Files:**
+
 - Create: `scripts/generate-tool-names.ts`
 - Create: `src/tool-names.generated.ts`
 - Modify: `src/config.ts`
@@ -765,6 +776,7 @@ git commit -m "feat: teach the model Reactive Resume patch semantics"
 - Create: `.github/workflows/drift.yml`
 
 **Interfaces:**
+
 - Consumes: `buildPatchGuide` from Task 5.
 - Produces: `export const TOOL_NAMES: readonly string[]` (raw, un-namespaced names) from `src/tool-names.generated.ts`.
 
@@ -781,31 +793,31 @@ What survives, and why it is not dead: `buildPatchGuide` (Task 5) names five spe
  * Regenerate `src/tool-names.generated.ts` from a live Reactive Resume server card.
  * Usage: node --experimental-strip-types scripts/generate-tool-names.ts [origin]
  */
-import { writeFileSync } from 'node:fs'
+import { writeFileSync } from "node:fs";
 
-const origin = (process.argv[2] ?? 'https://rxresu.me').replace(/\/+$/, '')
+const origin = (process.argv[2] ?? "https://rxresu.me").replace(/\/+$/, "");
 
-const response = await fetch(`${origin}/.well-known/mcp/server-card.json`)
-if (!response.ok) throw new Error(`Server card fetch failed: ${response.status} ${response.statusText}`)
+const response = await fetch(`${origin}/.well-known/mcp/server-card.json`);
+if (!response.ok) throw new Error(`Server card fetch failed: ${response.status} ${response.statusText}`);
 
-const card = (await response.json()) as { tools: { name: string }[] }
-const names = card.tools.map((tool) => tool.name).sort()
+const card = (await response.json()) as { tools: { name: string }[] };
+const names = card.tools.map((tool) => tool.name).sort();
 
-if (names.length === 0) throw new Error('Server card listed no tools')
+if (names.length === 0) throw new Error("Server card listed no tools");
 
 const body = [
-	'// Generated by scripts/generate-tool-names.ts. Do not edit by hand.',
-	`// Source: ${origin}/.well-known/mcp/server-card.json`,
-	'',
-	'/** Raw (un-namespaced) tool names published by Reactive Resume. */',
-	'export const TOOL_NAMES = [',
-	...names.map((name) => `\t'${name}',`),
-	'] as const satisfies readonly string[]',
-	'',
-].join('\n')
+  "// Generated by scripts/generate-tool-names.ts. Do not edit by hand.",
+  `// Source: ${origin}/.well-known/mcp/server-card.json`,
+  "",
+  "/** Raw (un-namespaced) tool names published by Reactive Resume. */",
+  "export const TOOL_NAMES = [",
+  ...names.map((name) => `\t'${name}',`),
+  "] as const satisfies readonly string[]",
+  "",
+].join("\n");
 
-writeFileSync(new URL('../src/tool-names.generated.ts', import.meta.url), body)
-console.log(`Wrote ${names.length} tool names from ${origin}`)
+writeFileSync(new URL("../src/tool-names.generated.ts", import.meta.url), body);
+console.log(`Wrote ${names.length} tool names from ${origin}`);
 ```
 
 - [ ] **Step 2: Run the generator against the live server**
@@ -823,30 +835,30 @@ This is the test that gives the generated list a consumer. It extracts every too
 `test/tool-names.test.ts`:
 
 ```ts
-import { expect, it } from 'vitest'
-import { buildPatchGuide } from '../src/prompt.ts'
-import { TOOL_NAMES } from '../src/tool-names.generated.ts'
+import { expect, it } from "vitest";
+import { buildPatchGuide } from "../src/prompt.ts";
+import { TOOL_NAMES } from "../src/tool-names.generated.ts";
 
 /** Every raw tool name the prompt guide instructs the model to call. */
 function toolsReferencedByGuide(): string[] {
-	const guide = buildPatchGuide('resume')
-	const matches = guide.matchAll(/mcp__resume__([a-z0-9_]+)/g)
-	return [...new Set([...matches].map((match) => match[1] as string))]
+  const guide = buildPatchGuide("resume");
+  const matches = guide.matchAll(/mcp__resume__([a-z0-9_]+)/g);
+  return [...new Set([...matches].map((match) => match[1] as string))];
 }
 
-it('references at least one tool', () => {
-	// Guards the regex itself: a guide rewrite that drops the namespaced form
-	// would otherwise make the next test pass vacuously.
-	expect(toolsReferencedByGuide().length).toBeGreaterThan(0)
-})
+it("references at least one tool", () => {
+  // Guards the regex itself: a guide rewrite that drops the namespaced form
+  // would otherwise make the next test pass vacuously.
+  expect(toolsReferencedByGuide().length).toBeGreaterThan(0);
+});
 
-it('only references tools Reactive Resume actually publishes', () => {
-	const published: readonly string[] = TOOL_NAMES
+it("only references tools Reactive Resume actually publishes", () => {
+  const published: readonly string[] = TOOL_NAMES;
 
-	for (const referenced of toolsReferencedByGuide()) {
-		expect(published).toContain(referenced)
-	}
-})
+  for (const referenced of toolsReferencedByGuide()) {
+    expect(published).toContain(referenced);
+  }
+});
 ```
 
 - [ ] **Step 4: Run it to verify it fails**
@@ -875,19 +887,19 @@ In `src/config.ts`, delete:
 
 ```ts
 /** Which group of Reactive Resume tools to expose to the model. */
-export type ToolProfile = 'resume' | 'applications' | 'all'
+export type ToolProfile = "resume" | "applications" | "all";
 ```
 
 In `src/index.ts`, change the re-export from:
 
 ```ts
-export { Config, type ToolProfile } from './config.ts'
+export { Config, type ToolProfile } from "./config.ts";
 ```
 
 to:
 
 ```ts
-export { Config } from './config.ts'
+export { Config } from "./config.ts";
 ```
 
 Then run `pnpm typecheck` to confirm nothing else referenced it.
@@ -897,26 +909,26 @@ Then run `pnpm typecheck` to confirm nothing else referenced it.
 `test/tool-names-drift.test.ts`:
 
 ```ts
-import { expect, it } from 'vitest'
-import { TOOL_NAMES } from '../src/tool-names.generated.ts'
+import { expect, it } from "vitest";
+import { TOOL_NAMES } from "../src/tool-names.generated.ts";
 
-const ORIGIN = process.env.RXRESUME_ORIGIN ?? 'https://rxresu.me'
+const ORIGIN = process.env.RXRESUME_ORIGIN ?? "https://rxresu.me";
 
 // Network test: skipped unless RXRESUME_CHECK_DRIFT=1, so ordinary `pnpm test`
 // stays offline and deterministic. CI sets the flag on a schedule.
-it.runIf(process.env.RXRESUME_CHECK_DRIFT === '1')(
-	'matches the live server card',
-	async () => {
-		const response = await fetch(`${ORIGIN}/.well-known/mcp/server-card.json`)
-		expect(response.ok).toBe(true)
+it.runIf(process.env.RXRESUME_CHECK_DRIFT === "1")(
+  "matches the live server card",
+  async () => {
+    const response = await fetch(`${ORIGIN}/.well-known/mcp/server-card.json`);
+    expect(response.ok).toBe(true);
 
-		const card = (await response.json()) as { tools: { name: string }[] }
-		const live = card.tools.map((tool) => tool.name).sort()
+    const card = (await response.json()) as { tools: { name: string }[] };
+    const live = card.tools.map((tool) => tool.name).sort();
 
-		expect(live).toEqual([...TOOL_NAMES])
-	},
-	30_000,
-)
+    expect(live).toEqual([...TOOL_NAMES]);
+  },
+  30_000,
+);
 ```
 
 - [ ] **Step 8: Run the full suite twice — offline, then against the live card**
@@ -937,7 +949,7 @@ name: tool-name drift
 
 on:
   schedule:
-    - cron: '0 6 * * 1'
+    - cron: "0 6 * * 1"
   workflow_dispatch:
 
 jobs:
@@ -953,7 +965,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm vitest run test/tool-names-drift.test.ts
         env:
-          RXRESUME_CHECK_DRIFT: '1'
+          RXRESUME_CHECK_DRIFT: "1"
 ```
 
 Note: `pnpm install` needs no `--config` flags here — `pnpm-workspace.yaml` (added in Task 2) carries `autoInstallPeers: false`, `strictPeerDependencies: false`, and `verifyDepsBeforeRun: false`, which is what makes the unpublished `@deepseek-ai/dsh-type-meta` peer a non-issue on a clean runner.
@@ -971,11 +983,13 @@ git commit -m "feat: guard the prompt guide against tool-name drift"
 ### Task 7: CI, README, and publish 0.1.0
 
 **Files:**
+
 - Create: `.github/workflows/ci.yml`
 - Create: `README.md`
 - Create: `LICENSE`
 
 **Interfaces:**
+
 - Consumes: everything from Tasks 2–6.
 - Produces: a published `dsh-plugin-reactive-resume@0.1.0` on npm.
 
@@ -1037,12 +1051,12 @@ Mint an API key at `https://rxresu.me/dashboard/settings/api-keys`, then add a r
 
 ### Options
 
-| Key | Default | Description |
-|---|---|---|
-| `apiKey` | *(required)* | API key from `<url>/dashboard/settings/api-keys`. |
-| `url` | `https://rxresu.me` | Origin of your instance. Set this if you self-host. |
-| `serverName` | `resume` | Tool namespace. Tools reach the model as `mcp__<serverName>__<rawName>`. |
-| `toolCallTimeoutMs` | `60000` | Per-tool-call timeout. |
+| Key                 | Default             | Description                                                              |
+| ------------------- | ------------------- | ------------------------------------------------------------------------ |
+| `apiKey`            | _(required)_        | API key from `<url>/dashboard/settings/api-keys`.                        |
+| `url`               | `https://rxresu.me` | Origin of your instance. Set this if you self-host.                      |
+| `serverName`        | `resume`            | Tool namespace. Tools reach the model as `mcp__<serverName>__<rawName>`. |
+| `toolCallTimeoutMs` | `60000`             | Per-tool-call timeout.                                                   |
 
 All 33 of Reactive Resume's tools are exposed. Narrowing that set is not currently possible from a plugin: Harness's `ctx.tools.restrict()` requires an agent-scoped context, which a plugin context is not.
 

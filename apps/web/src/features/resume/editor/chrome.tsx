@@ -86,10 +86,10 @@ export function DocumentMenuTrigger({ name, isLocked, ...props }: DocumentMenuTr
 			type="button"
 			{...props}
 			aria-label={t`Document menu: ${name}`}
-			className="-mx-1.5 flex min-w-0 max-w-[calc(100%+0.75rem)] flex-col items-start rounded-md px-1.5 py-0.5 text-start transition-colors duration-quick hover:bg-hover"
+			className="-mx-1.5 flex max-w-[calc(100%+0.75rem)] min-w-0 flex-col items-start rounded-md px-1.5 py-0.5 text-start transition-colors duration-quick hover:bg-hover"
 		>
-			<span className="flex min-w-0 max-w-full items-center gap-1.5">
-				<span className="truncate font-semibold text-ink text-sm leading-[18px]">{name}</span>
+			<span className="flex max-w-full min-w-0 items-center gap-1.5">
+				<span className="truncate text-sm leading-[18px] font-semibold text-ink">{name}</span>
 				{isLocked && <Icon name="lock" size={16} className="text-ink-3" />}
 				<Icon name="expand_more" size={16} className="text-ink-3" />
 			</span>
@@ -184,7 +184,7 @@ export function ZoomBar({ fitScale, pageCount }: ZoomBarProps) {
 			<button
 				type="button"
 				aria-label={t`Fit page to width`}
-				className="h-8 min-w-[52px] rounded-[7px] px-1.5 font-medium font-mono text-ink text-xs transition-colors duration-quick hover:bg-hover"
+				className="h-8 min-w-[52px] rounded-[7px] px-1.5 font-mono text-xs font-medium text-ink transition-colors duration-quick hover:bg-hover"
 				onClick={() => setZoom("fit")}
 			>
 				{zoom === "fit" ? <Trans>Fit</Trans> : `${Math.round(current * 100)}%`}
@@ -198,7 +198,7 @@ export function ZoomBar({ fitScale, pageCount }: ZoomBarProps) {
 			>
 				<Icon name="add" />
 			</button>
-			<span className="whitespace-nowrap px-2 font-mono text-ink-3 text-xs">
+			<span className="px-2 font-mono text-xs whitespace-nowrap text-ink-3">
 				<Plural value={pageCount} one="# page" other="# pages" />
 			</span>
 		</div>

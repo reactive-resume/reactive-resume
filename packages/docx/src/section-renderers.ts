@@ -1,5 +1,5 @@
-import type { CustomSection, CustomSectionType, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
 import type { HtmlStyleConfig } from "./html-to-docx";
+import type { CustomSection, CustomSectionType, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
 import { BorderStyle, ExternalHyperlink, HeadingLevel, Paragraph, TabStopPosition, TabStopType, TextRun } from "docx";
 import { htmlToParagraphs } from "./html-to-docx";
 import { toSafeDocxLink } from "./link-utils";

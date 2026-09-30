@@ -1,5 +1,5 @@
-import type { Template } from "@reactive-resume/schema/templates";
 import type { TemplatePage } from "../document";
+import type { Template } from "@reactive-resume/schema/templates";
 import { AzurillPage } from "./azurill/AzurillPage";
 import { BronzorPage } from "./bronzor/BronzorPage";
 import { ChikoritaPage } from "./chikorita/ChikoritaPage";

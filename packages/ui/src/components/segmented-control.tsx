@@ -21,7 +21,7 @@ function SegmentedControlItem({ className, ...props }: Radio.Root.Props) {
 		<Radio.Root
 			data-slot="segmented-control-item"
 			className={cn(
-				"inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-sm px-3 font-medium text-[13px] text-ink-2 transition-[background-color,color,box-shadow] duration-quick hover:text-ink data-checked:bg-raised data-checked:text-ink data-disabled:text-ink-3 data-checked:shadow-e1",
+				"inline-flex flex-1 items-center justify-center gap-1.5 rounded-sm px-3 text-[13px] font-medium whitespace-nowrap text-ink-2 transition-[background-color,color,box-shadow] duration-quick hover:text-ink data-checked:bg-raised data-checked:text-ink data-checked:shadow-e1 data-disabled:text-ink-3",
 				className,
 			)}
 			{...props}

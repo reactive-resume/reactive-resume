@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import type { StyleInput, TemplatePlacement } from "./styles";
 import type {
 	SectionTimelineStyleSlots,
@@ -10,6 +9,7 @@ import type {
 	TemplateStyleSlot,
 	TemplateStyleSlots,
 } from "./types";
+import type { ReactNode } from "react";
 import { createContext, use, useMemo } from "react";
 
 type TemplateContextValue = {

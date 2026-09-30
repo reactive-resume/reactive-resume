@@ -1,5 +1,5 @@
-import type { Template } from "@reactive-resume/schema/templates";
 import type { DesignSource } from "@/features/resume/editor/design/style-groups";
+import type { Template } from "@reactive-resume/schema/templates";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
@@ -84,7 +84,7 @@ export function LetterDesignPanel() {
 	return (
 		<div className="divide-y divide-line">
 			<section aria-labelledby="letter-design-match" className="grid gap-3 px-4 py-5">
-				<h2 id="letter-design-match" className="font-semibold text-[15px]">
+				<h2 id="letter-design-match" className="text-[15px] font-semibold">
 					<Trans>Matching the resume</Trans>
 				</h2>
 				{letter.sourceResumeId ? (
@@ -113,7 +113,7 @@ export function LetterDesignPanel() {
 						)}
 					</>
 				) : (
-					<p className="text-ink-2 text-sm">
+					<p className="text-sm text-ink-2">
 						<Trans>Choose a resume in Write to match its design. Until then, the letter has its own.</Trans>
 					</p>
 				)}
@@ -121,7 +121,7 @@ export function LetterDesignPanel() {
 
 			{!letter.designLinked && (
 				<section aria-labelledby="letter-design-template" className="grid gap-3 px-4 py-5">
-					<h2 id="letter-design-template" className="font-semibold text-[15px]">
+					<h2 id="letter-design-template" className="text-[15px] font-semibold">
 						<Trans>Template</Trans>
 					</h2>
 					<fieldset
@@ -170,7 +170,7 @@ export function LetterDesignPanel() {
 											</span>
 										)}
 									</span>
-									<span className="font-medium text-sm leading-4">{templates[id].name}</span>
+									<span className="text-sm leading-4 font-medium">{templates[id].name}</span>
 								</button>
 							);
 						})}
@@ -181,19 +181,19 @@ export function LetterDesignPanel() {
 			{!letter.designLinked && (
 				<DesignSourceProvider value={designSource}>
 					<section aria-labelledby="letter-design-type" className="grid gap-3 px-4 py-5">
-						<h2 id="letter-design-type" className="font-semibold text-[15px]">
+						<h2 id="letter-design-type" className="text-[15px] font-semibold">
 							<Trans>Type</Trans>
 						</h2>
 						<TypeGroup />
 					</section>
 					<section aria-labelledby="letter-design-color" className="grid gap-3 px-4 py-5">
-						<h2 id="letter-design-color" className="font-semibold text-[15px]">
+						<h2 id="letter-design-color" className="text-[15px] font-semibold">
 							<Trans>Color</Trans>
 						</h2>
 						<ColorGroup />
 					</section>
 					<section aria-labelledby="letter-design-page" className="grid gap-3 px-4 py-5">
-						<h2 id="letter-design-page" className="font-semibold text-[15px]">
+						<h2 id="letter-design-page" className="text-[15px] font-semibold">
 							<Trans>Page</Trans>
 						</h2>
 						<PageGroup />

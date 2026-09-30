@@ -1,7 +1,7 @@
-import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
-import type { CSSProperties, ReactElement, ReactNode } from "react";
 import type { Application } from "@/features/applications/types";
 import type { LetterDraft } from "@/features/letters/store";
+import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
+import type { CSSProperties, ReactElement, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
@@ -66,7 +66,7 @@ function Section({ id, title, aside, children }: SectionProps) {
 	return (
 		<section aria-labelledby={id} className="grid gap-3 px-4 py-5">
 			<div className="flex items-center justify-between gap-3">
-				<h2 id={id} className="font-semibold text-ink-3 text-xs uppercase tracking-[0.04em]">
+				<h2 id={id} className="text-xs font-semibold tracking-[0.04em] text-ink-3 uppercase">
 					{title}
 				</h2>
 				{aside}
@@ -92,7 +92,7 @@ export function LetterWritePanel() {
 	return (
 		<div className="divide-y divide-line">
 			{letter.isLocked && (
-				<p className="flex items-center gap-2 bg-sunken px-4 py-2.5 text-ink-2 text-sm">
+				<p className="flex items-center gap-2 bg-sunken px-4 py-2.5 text-sm text-ink-2">
 					<Icon name="lock" size={18} />
 					<Trans>This letter is locked. Unlock it from its menu to edit.</Trans>
 				</p>
@@ -137,12 +137,12 @@ function ForSection({ letter, application, applications, disabled }: ForSectionP
 						<Icon name="work" />
 						<span className="grid min-w-0">
 							<span className="truncate">{item.role}</span>
-							<span className="truncate text-ink-3 text-xs">{item.company}</span>
+							<span className="truncate text-xs text-ink-3">{item.company}</span>
 						</span>
 					</DropdownMenuItem>
 				))}
 				{choices.length === 0 && (
-					<p className="px-2 py-1.5 text-ink-2 text-sm">
+					<p className="px-2 py-1.5 text-sm text-ink-2">
 						<Trans>No applications yet. Add one in Applications first.</Trans>
 					</p>
 				)}
@@ -170,8 +170,8 @@ function ForSection({ letter, application, applications, disabled }: ForSectionP
 						{application.company.charAt(0).toUpperCase()}
 					</span>
 					<span className="grid min-w-0 flex-1">
-						<span className="truncate font-medium text-sm">{application.role}</span>
-						<span className="flex min-w-0 items-center gap-1.5 text-ink-3 text-xs">
+						<span className="truncate text-sm font-medium">{application.role}</span>
+						<span className="flex min-w-0 items-center gap-1.5 text-xs text-ink-3">
 							<span className="truncate">{application.company}</span>
 							<span aria-hidden="true">·</span>
 							<span
@@ -197,7 +197,7 @@ function ForSection({ letter, application, applications, disabled }: ForSectionP
 							<Icon name="expand_more" className="ms-auto text-ink-3" />
 						</Button>,
 					)}
-					<p className="text-ink-3 text-xs">
+					<p className="text-xs text-ink-3">
 						<Trans>Without one, you fill in the recipient yourself and drafting uses only your resume.</Trans>
 					</p>
 				</>
@@ -223,7 +223,7 @@ function ToSection({ letter, application, disabled }: LetterSectionProps) {
 					heightClassName="min-h-[64px] max-h-[200px]"
 					onChange={(recipient) => edit({ recipient })}
 				/>
-				<p className="text-ink-3 text-xs">
+				<p className="text-xs text-ink-3">
 					<Trans>This letter keeps its recipient as written.</Trans>
 				</p>
 			</Section>
@@ -271,7 +271,7 @@ function ToSection({ letter, application, disabled }: LetterSectionProps) {
 					/>
 				</div>
 			</div>
-			<p className="text-ink-3 text-xs">
+			<p className="text-xs text-ink-3">
 				{application ? (
 					<Trans>Filled from the application. The greeting follows the name.</Trans>
 				) : (
@@ -337,7 +337,7 @@ function FromSection({ letter, disabled }: { letter: CoverLetter; disabled: bool
 					onCheckedChange={setLinked}
 				/>
 			) : (
-				<p className="text-ink-3 text-xs">
+				<p className="text-xs text-ink-3">
 					<Trans>Your name and contact details come from a resume.</Trans>
 				</p>
 			)}
@@ -360,7 +360,7 @@ function BodySection({ letter, application, disabled }: LetterSectionProps) {
 
 	return (
 		<Section id="letter-body" title={<Trans>Letter</Trans>}>
-			{structured && <p className="text-ink-2 text-sm">{name ? words.greeting(name) : words.teamGreeting}</p>}
+			{structured && <p className="text-sm text-ink-2">{name ? words.greeting(name) : words.teamGreeting}</p>}
 
 			{draft.phase !== "idle" ? (
 				<DraftBox
@@ -397,7 +397,7 @@ function BodySection({ letter, application, disabled }: LetterSectionProps) {
 			)}
 
 			{structured && (
-				<p className="text-ink-2 text-sm">
+				<p className="text-sm text-ink-2">
 					{words.signOff}
 					{letter.style.basics.name && (
 						<>
@@ -420,8 +420,8 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 	const canDraft = hasResume || Boolean(application);
 
 	return (
-		<div className="grid justify-items-start gap-3 rounded-xl border border-line-2 border-dashed p-4">
-			<p className="text-ink-2 text-sm">
+		<div className="grid justify-items-start gap-3 rounded-xl border border-dashed border-line-2 p-4">
+			<p className="text-sm text-ink-2">
 				{company && hasResume ? (
 					<Trans>Start typing, or draft from what we know: the {company} posting and your resume.</Trans>
 				) : company ? (
@@ -449,7 +449,7 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 				</Button>
 			</div>
 			{canDraft && !hasUsableProvider && (
-				<p className="text-ink-3 text-xs">
+				<p className="text-xs text-ink-3">
 					<Trans>Drafting needs an AI provider.</Trans>{" "}
 					<Link to="/dashboard/settings/ai" className={buttonVariants({ variant: "link", size: "sm" })}>
 						<Trans>Open AI settings</Trans>
@@ -517,7 +517,7 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 				aria-live="polite"
 				aria-busy={streaming}
 				className={cn(
-					"min-h-[120px] whitespace-pre-wrap rounded-lg bg-accent-soft px-3 py-2.5 text-sm leading-relaxed outline-[1.5px] outline-solid transition-[outline-color] duration-standard",
+					"min-h-[120px] rounded-lg bg-accent-soft px-3 py-2.5 text-sm leading-relaxed whitespace-pre-wrap outline-[1.5px] transition-[outline-color] duration-standard outline-solid",
 					draft.phase === "ready" ? "outline-accent" : "outline-transparent",
 				)}
 			>
@@ -537,14 +537,14 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 				<div
 					className={cn(ENTER_CLASS, "flex flex-wrap items-center gap-1 rounded-xl bg-ink p-1 ps-3 text-bg shadow-e3")}
 				>
-					<span className="me-auto flex items-center gap-1.5 py-1 font-medium text-[13px]">
+					<span className="me-auto flex items-center gap-1.5 py-1 text-[13px] font-medium">
 						<Icon name="auto_awesome" size={16} />
 						{sources}
 					</span>
 					<button
 						type="button"
 						onClick={() => onKeep(draft.text)}
-						className="h-8 rounded-lg bg-accent px-3 font-semibold text-[13px] text-on-accent hover:bg-accent-hover"
+						className="h-8 rounded-lg bg-accent px-3 text-[13px] font-semibold text-on-accent hover:bg-accent-hover"
 					>
 						<Trans>Keep</Trans>
 					</button>
@@ -589,7 +589,7 @@ function LengthSection({ content }: { content: string }) {
 			id="letter-length"
 			title={<Trans>Length</Trans>}
 			aside={
-				<span className={cn("font-medium font-mono text-xs", color)}>
+				<span className={cn("font-mono text-xs font-medium", color)}>
 					<Plural value={words} one="# word" other="# words" />
 				</span>
 			}
@@ -614,7 +614,7 @@ function LengthSection({ content }: { content: string }) {
 					}
 				/>
 			</div>
-			<p className="text-ink-3 text-xs">
+			<p className="text-xs text-ink-3">
 				{length === "empty" ? (
 					<Trans>Most recruiters read 180–320 words. The shaded band shows the range.</Trans>
 				) : length === "short" ? (
@@ -639,7 +639,7 @@ function DesignNote({ letter }: { letter: CoverLetter }) {
 
 	return (
 		<Section id="letter-design" title={<Trans>Design</Trans>}>
-			<p className="text-ink-2 text-sm">
+			<p className="text-sm text-ink-2">
 				{letter.designLinked ? (
 					<Trans>Matches the resume ({summary}).</Trans>
 				) : (

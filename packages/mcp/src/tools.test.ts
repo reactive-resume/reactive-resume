@@ -1,4 +1,4 @@
-// biome-ignore-all lint/style/noNonNullAssertion: These tests assert registered tool names before exercising handlers.
+// oxlint-disable typescript/no-non-null-assertion -- These tests assert registered tool names before exercising handlers.
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ORPCError } from "@orpc/server";

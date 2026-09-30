@@ -17,12 +17,12 @@ import {
 import { toast } from "@reactive-resume/ui/components/toast";
 import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
+import { SettingsSection } from "../section";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { isImeComposing } from "@/libs/keyboard";
 import { orpc } from "@/libs/orpc/client";
 import { sessionQueryKey } from "@/libs/root-context";
-import { SettingsSection } from "../section";
 
 const nameSchema = z.string().trim().min(1).max(64);
 const usernameSchema = z
@@ -101,7 +101,7 @@ function SavedField({
 
 	return (
 		<div className={cn("grid content-start gap-1.5", className)}>
-			<label htmlFor={id} className="font-medium text-ink-2 text-xs">
+			<label htmlFor={id} className="text-xs font-medium text-ink-2">
 				{label}
 			</label>
 			{prefix ? (
@@ -115,12 +115,12 @@ function SavedField({
 				<Input {...inputProps} />
 			)}
 			{error ? (
-				<p id={`${id}-error`} role="alert" className="text-danger-text text-xs">
+				<p id={`${id}-error`} role="alert" className="text-xs text-danger-text">
 					{error}
 				</p>
 			) : (
 				hint && (
-					<p id={`${id}-hint`} className="text-ink-3 text-xs">
+					<p id={`${id}-hint`} className="text-xs text-ink-3">
 						{hint}
 					</p>
 				)
@@ -255,7 +255,7 @@ function ProfilePhoto({ name, image, onChange }: ProfilePhotoProps) {
 		<div className="flex items-center gap-3.5">
 			<Avatar className="size-14">
 				<AvatarImage src={image ?? undefined} alt="" />
-				<AvatarFallback className="bg-accent-soft font-semibold text-accent-text text-lg">
+				<AvatarFallback className="bg-accent-soft text-lg font-semibold text-accent-text">
 					{getInitials(name)}
 				</AvatarFallback>
 			</Avatar>

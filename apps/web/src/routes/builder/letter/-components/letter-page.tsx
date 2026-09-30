@@ -106,7 +106,7 @@ export function LetterPage() {
 			{/* The page has nothing to tab to, so the scroll area itself takes focus for keyboard scrolling. */}
 			<section
 				ref={canvasRef}
-				// biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be reachable by keyboard.
+				// oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- a scrollable region must be reachable by keyboard.
 				tabIndex={0}
 				aria-label={t`Letter page`}
 				className={cn("absolute inset-0 overflow-auto pt-7 pb-24 outline-none", isPhone ? "px-4" : "px-10")}
@@ -121,11 +121,11 @@ export function LetterPage() {
 						"mx-auto w-fit transition-transform duration-emphasized ease-enter",
 						shifted && "-translate-x-[120px] rtl:translate-x-[120px]",
 					)}
-					pageClassName={cn("rounded-none shadow-page", viewing && "outline-2 outline-ink outline-offset-4")}
+					pageClassName={cn("rounded-none shadow-page", viewing && "outline-2 outline-offset-4 outline-ink")}
 					onRender={setRendered}
 					renderPageCaption={({ pageNumber }) =>
 						pageNumber === 1 ? (
-							<figcaption className="mb-2.5 flex min-h-8 flex-wrap items-center justify-center gap-2.5 text-center font-medium text-ink-3 text-xs">
+							<figcaption className="mb-2.5 flex min-h-8 flex-wrap items-center justify-center gap-2.5 text-center text-xs font-medium text-ink-3">
 								{viewing ? (
 									<CanvasStatusPill icon="history">
 										<Trans>
@@ -142,7 +142,7 @@ export function LetterPage() {
 								)}
 							</figcaption>
 						) : (
-							<figcaption className="mb-2.5 text-center font-medium text-ink-3 text-xs">
+							<figcaption className="mb-2.5 text-center text-xs font-medium text-ink-3">
 								<Trans>Page {pageNumber}</Trans>
 							</figcaption>
 						)
@@ -199,13 +199,12 @@ function LetterOverlay({ pageIndex, pageMap, itemId, washed }: LetterOverlayProp
 		// A pointer shortcut, hidden from assistive tech: the panel reaches the same fields by keyboard.
 		<div aria-hidden="true" className="absolute inset-0">
 			{nodes.map((node) => (
-				// biome-ignore lint/a11y/noStaticElementInteractions: hidden from assistive tech, see above.
-				// biome-ignore lint/a11y/useKeyWithClickEvents: the panel offers the same by keyboard.
+				// oxlint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- hidden from assistive tech; the panel offers the same by keyboard.
 				<div
 					key={`${node.key}:${node.y}`}
 					onClick={() => reveal(node.kind === "header" ? "from" : "body")}
 					className={cn(
-						"absolute cursor-pointer rounded-[4px] outline-[1.5px] outline-solid transition-[background-color,outline-color] duration-standard",
+						"absolute cursor-pointer rounded-[4px] outline-[1.5px] transition-[background-color,outline-color] duration-standard outline-solid",
 						washed && node.kind === "item"
 							? "bg-[oklch(0.93_0.05_150/0.55)] mix-blend-multiply outline-[oklch(0.5_0.1_150)]"
 							: "outline-transparent hover:bg-[oklch(0.5_0.1_150/0.06)]",

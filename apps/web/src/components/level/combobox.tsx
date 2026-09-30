@@ -1,5 +1,5 @@
-import type z from "zod";
 import type { SingleComboboxProps } from "@/components/ui/combobox";
+import type z from "zod";
 import { t } from "@lingui/core/macro";
 import { match } from "ts-pattern";
 import { levelDesignSchema } from "@reactive-resume/schema/resume/data";

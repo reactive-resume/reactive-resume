@@ -1,7 +1,7 @@
+import type { ResumeThumbnailSize } from "@/features/resume/preview/resume-thumbnail.shared";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { QueryClient } from "@tanstack/react-query";
 import type { RefObject } from "react";
-import type { ResumeThumbnailSize } from "@/features/resume/preview/resume-thumbnail.shared";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useInView } from "motion/react";
 import { useEffect, useRef, useState } from "react";
@@ -187,7 +187,7 @@ export function ResumeThumbnail({ resume }: ResumeThumbnailProps) {
 			{thumbnail.status === "ready" ? (
 				<div
 					aria-hidden
-					className="absolute inset-0 bg-center bg-contain bg-white bg-no-repeat starting:opacity-0 transition-opacity duration-standard ease-enter"
+					className="absolute inset-0 bg-white bg-contain bg-center bg-no-repeat transition-opacity duration-standard ease-enter starting:opacity-0"
 					style={{ backgroundImage: `url(${thumbnail.url})` }}
 				/>
 			) : hasFailed ? (

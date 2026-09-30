@@ -18,35 +18,35 @@ Path shorthand: `B/` = `apps/web/src/routes/builder/$resumeId/`.
 
 ## 1. Repository map
 
-| Concern | Today | Where | Redesign |
-|---|---|---|---|
-| App and routing | React 19 SPA, TanStack Router file routes, Vite 8. `apps/server` (Hono) serves `index.html` and injects page metadata. No SSR. | `apps/web/src/routes`, `apps/server/src/static/web.ts` | New route tree (§2). Old routes become redirect stubs. |
-| Server data | TanStack Query + oRPC over `/api/rpc`. Router context carries `queryClient`, `orpc`, `theme`, `locale`, `session`, `flags`. | `apps/web/src/libs/orpc`, `apps/web/src/router.tsx` | Reused. New procedures in §3. |
-| Editor draft and autosave | One zustand 5 + immer store (`useResumeStore`). Full-document `resume.update` 500 ms after the last edit, one save in flight. Remote changes arrive through `resume.updates.subscribe`. No offline detection. Last write wins. | `apps/web/src/features/resume/builder/draft.ts` | Kept as the source of truth. Adds offline and error states, a local pending-save queue, and a session id for version grouping. |
-| Undo | Custom stacks of 50 `structuredClone` snapshots, 500 ms global coalescing, `Mod+Z` ignored inside fields | `draft.ts`, `B/-components/dock.tsx` | Reworked: 200 steps, structural sharing, per-field merging, labelled structural steps, undo toast. |
-| Versions | `resume_version` with a free-text English label. Newest 30 kept. Auto snapshot at most every 2 min, plus "AI edit", "Imported", "Before restore". | `packages/api/src/features/resume/service.ts`, `versions.ts`, `B/-components/version-history.tsx` | Adds kind, name, session grouping, 90-day retention and read-only preview. |
-| Forms | TanStack Form v1 via `createFormHook`, Zod 4 schemas as validators | `apps/web/src/libs/tanstack-form.tsx` | Reused. Entries validate on blur and save on change. |
-| Entry editing | One dialog per section type, opened through a global dialog store | `apps/web/src/dialogs/resume/sections/*`, `apps/web/src/dialogs/store.ts` | Replaced by inline entry cards. Field sets move out of the dialogs. |
-| Rich text | TipTap 3, stores HTML. 17-button toolbar (headings, colours, alignment, lists, links, code…). | `apps/web/src/components/input/rich-input.tsx` | Kept. Toolbar restricted to spec §5.3. Extensions stay loaded so existing formatting survives. |
-| Drag and drop | motion `Reorder` for items (pointer only). dnd-kit for layout pages (pointer only). | `B/-sidebar/left/shared/items-section.tsx`, `B/-sidebar/right/sections/layout/pages.tsx` | Outline uses dnd-kit sortable with `KeyboardSensor`, plus ⌥↑/⌥↓ and menu moves. |
-| Overlays | Base UI 1.8 wrappers: dialog, alert-dialog, sheet, popover, menu, context-menu, tooltip, toast. cmdk for the command palette. | `packages/ui/src/components/*` | Restyled. Missing primitives added (§4). |
-| Shortcuts | `@tanstack/react-hotkeys` | `apps/web/src/routes/__root.tsx`, builder dock | Spec keymap (README §4.8). |
-| Styling | Tailwind 4.3, CSS-first. Achromatic shadcn tokens in oklch. `.dark` class. Theme cookie: light or dark, default dark. | `packages/ui/src/styles/globals.css`, `apps/web/src/libs/theme.ts`, `apps/web/src/features/theme` | Desk & Paper tokens and a System theme (M1). |
-| Icons | Phosphor. `@phosphor-icons/react` in about 150 app files. `@phosphor-icons/web` and `phosphor-icons-react-pdf` for icons inside resumes. | | App chrome moves to Material Symbols Rounded. Icons inside resumes stay Phosphor (their names are stored in resume data). |
-| Fonts | IBM Plex Sans Variable in the app, Manrope on the landing page, no mono font | `packages/ui/src/styles/globals.css` | Newsreader, Hanken Grotesk and JetBrains Mono via fontsource. |
-| Motion | `motion` 13 with `LazyMotion` and `MotionConfig reducedMotion="user"`. Easing tokens exist; durations are hand-typed. | `apps/web/src/libs/motion.ts` | Duration tokens 120/200/320 ms, one entry easing, reduced-motion override. |
-| i18n | Lingui 6.8, 55 PO catalogs, macros. PDF section titles are extracted into a catalog by `pnpm pdf:translations`. | `apps/web/lingui.config.ts`, `apps/web/locales`, `tooling/locales` | All new copy through Lingui. "Present" joins the PDF catalog. |
-| Renderer | `@react-pdf/renderer` 4.9 (layout 5.2, patched), 15 templates, semantic node tree used for custom CSS | `packages/pdf` | Emits node keys for the page map. Sidebar side. Preview-only proposal marks. |
-| Live preview | Main-thread `pdf().toBlob()` 100 ms after edits, then pdf.js 6 paints canvases (no text layer). react-zoom-pan-pinch. Crossfade between renders. | `apps/web/src/features/resume/preview` | Becomes the page canvas with an overlay layer for hover, selection, pins and markers. |
-| Thumbnails | Full render, then a page-1 PNG cached per `id:updatedAt`. Template picker uses static JPGs. | `apps/web/src/routes/dashboard/resumes/-components/cards/resume-thumbnail.tsx`, `apps/web/src/features/resume/preview/pdf-thumbnail.ts` | Reused for document cards and for template thumbnails of the user's own content. |
-| Export | PDF, DOCX, Markdown, JSON and Print in the browser. Signed server PDF route for MCP. Public PDF fallback. | `apps/web/src/features/resume/export`, `apps/server/src/http/*`, `packages/docx` | Moves into the Share sheet. |
-| ATS | Live lint on resume JSON (21 rules with pointers to items). PDF engine (77 checks, weighted score, evidence boxes). Job-description matching. AI review. | `packages/resume/src/ats`, `packages/resume/src/ats-pdf`, `packages/api/src/features/ai` | Check mode and the public checker. |
-| AI | 16 providers, AES-GCM keys (`ENCRYPTION_SECRET`). Agent streams through resumable streams (needs Redis). Tools: `read_resume`, `apply_resume_patch`, `ask_user_question`, `web_search`. The builder assistant reuses `AgentChat` and applies patches directly by default. | `packages/ai`, `packages/api/src/features/{ai,agent,ai-providers,applications}`, `apps/web/src/routes/agent` | One assistant panel that only proposes (§3.6). |
-| Import | RR v5 and v4 JSON, JSON Resume, LinkedIn ZIP, PDF (AI or local heuristics), Word (AI). Uncertain fields are not reported. | `packages/import`, `apps/web/src/dialogs/resume/import.tsx` | New dialog flow with review flags. |
-| MCP | 44 tools. Resume patching uses index-based JSON Pointers. `schema.json` resource. | `packages/mcp` | Updated for the date shape. |
-| Schemas | Resume data, cover letters, applications, API keys | `packages/schema`, `packages/db/src/schema` | §3. |
-| Auth | Better Auth: email and password, verification, username, Google, GitHub, LinkedIn, custom OIDC, 2FA, passkeys, API keys, OAuth provider for MCP | `packages/auth` | Account settings page. |
-| Tests | Vitest 5 (happy-dom, Testing Library), 34 test files in `packages/ui`, 140 in `apps/web`. 24 Playwright specs, 3 of them env-gated. | `tests/e2e/specs` | Updated in the milestone that changes each screen. |
+| Concern                   | Today                                                                                                                                                                                                                                                                     | Where                                                                                                                                   | Redesign                                                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| App and routing           | React 19 SPA, TanStack Router file routes, Vite 8. `apps/server` (Hono) serves `index.html` and injects page metadata. No SSR.                                                                                                                                            | `apps/web/src/routes`, `apps/server/src/static/web.ts`                                                                                  | New route tree (§2). Old routes become redirect stubs.                                                                         |
+| Server data               | TanStack Query + oRPC over `/api/rpc`. Router context carries `queryClient`, `orpc`, `theme`, `locale`, `session`, `flags`.                                                                                                                                               | `apps/web/src/libs/orpc`, `apps/web/src/router.tsx`                                                                                     | Reused. New procedures in §3.                                                                                                  |
+| Editor draft and autosave | One zustand 5 + immer store (`useResumeStore`). Full-document `resume.update` 500 ms after the last edit, one save in flight. Remote changes arrive through `resume.updates.subscribe`. No offline detection. Last write wins.                                            | `apps/web/src/features/resume/builder/draft.ts`                                                                                         | Kept as the source of truth. Adds offline and error states, a local pending-save queue, and a session id for version grouping. |
+| Undo                      | Custom stacks of 50 `structuredClone` snapshots, 500 ms global coalescing, `Mod+Z` ignored inside fields                                                                                                                                                                  | `draft.ts`, `B/-components/dock.tsx`                                                                                                    | Reworked: 200 steps, structural sharing, per-field merging, labelled structural steps, undo toast.                             |
+| Versions                  | `resume_version` with a free-text English label. Newest 30 kept. Auto snapshot at most every 2 min, plus "AI edit", "Imported", "Before restore".                                                                                                                         | `packages/api/src/features/resume/service.ts`, `versions.ts`, `B/-components/version-history.tsx`                                       | Adds kind, name, session grouping, 90-day retention and read-only preview.                                                     |
+| Forms                     | TanStack Form v1 via `createFormHook`, Zod 4 schemas as validators                                                                                                                                                                                                        | `apps/web/src/libs/tanstack-form.tsx`                                                                                                   | Reused. Entries validate on blur and save on change.                                                                           |
+| Entry editing             | One dialog per section type, opened through a global dialog store                                                                                                                                                                                                         | `apps/web/src/dialogs/resume/sections/*`, `apps/web/src/dialogs/store.ts`                                                               | Replaced by inline entry cards. Field sets move out of the dialogs.                                                            |
+| Rich text                 | TipTap 3, stores HTML. 17-button toolbar (headings, colours, alignment, lists, links, code…).                                                                                                                                                                             | `apps/web/src/components/input/rich-input.tsx`                                                                                          | Kept. Toolbar restricted to spec §5.3. Extensions stay loaded so existing formatting survives.                                 |
+| Drag and drop             | motion `Reorder` for items (pointer only). dnd-kit for layout pages (pointer only).                                                                                                                                                                                       | `B/-sidebar/left/shared/items-section.tsx`, `B/-sidebar/right/sections/layout/pages.tsx`                                                | Outline uses dnd-kit sortable with `KeyboardSensor`, plus ⌥↑/⌥↓ and menu moves.                                                |
+| Overlays                  | Base UI 1.8 wrappers: dialog, alert-dialog, sheet, popover, menu, context-menu, tooltip, toast. cmdk for the command palette.                                                                                                                                             | `packages/ui/src/components/*`                                                                                                          | Restyled. Missing primitives added (§4).                                                                                       |
+| Shortcuts                 | `@tanstack/react-hotkeys`                                                                                                                                                                                                                                                 | `apps/web/src/routes/__root.tsx`, builder dock                                                                                          | Spec keymap (README §4.8).                                                                                                     |
+| Styling                   | Tailwind 4.3, CSS-first. Achromatic shadcn tokens in oklch. `.dark` class. Theme cookie: light or dark, default dark.                                                                                                                                                     | `packages/ui/src/styles/globals.css`, `apps/web/src/libs/theme.ts`, `apps/web/src/features/theme`                                       | Desk & Paper tokens and a System theme (M1).                                                                                   |
+| Icons                     | Phosphor. `@phosphor-icons/react` in about 150 app files. `@phosphor-icons/web` and `phosphor-icons-react-pdf` for icons inside resumes.                                                                                                                                  |                                                                                                                                         | App chrome moves to Material Symbols Rounded. Icons inside resumes stay Phosphor (their names are stored in resume data).      |
+| Fonts                     | IBM Plex Sans Variable in the app, Manrope on the landing page, no mono font                                                                                                                                                                                              | `packages/ui/src/styles/globals.css`                                                                                                    | Newsreader, Hanken Grotesk and JetBrains Mono via fontsource.                                                                  |
+| Motion                    | `motion` 13 with `LazyMotion` and `MotionConfig reducedMotion="user"`. Easing tokens exist; durations are hand-typed.                                                                                                                                                     | `apps/web/src/libs/motion.ts`                                                                                                           | Duration tokens 120/200/320 ms, one entry easing, reduced-motion override.                                                     |
+| i18n                      | Lingui 6.8, 55 PO catalogs, macros. PDF section titles are extracted into a catalog by `pnpm pdf:translations`.                                                                                                                                                           | `apps/web/lingui.config.ts`, `apps/web/locales`, `tooling/locales`                                                                      | All new copy through Lingui. "Present" joins the PDF catalog.                                                                  |
+| Renderer                  | `@react-pdf/renderer` 4.9 (layout 5.2, patched), 15 templates, semantic node tree used for custom CSS                                                                                                                                                                     | `packages/pdf`                                                                                                                          | Emits node keys for the page map. Sidebar side. Preview-only proposal marks.                                                   |
+| Live preview              | Main-thread `pdf().toBlob()` 100 ms after edits, then pdf.js 6 paints canvases (no text layer). react-zoom-pan-pinch. Crossfade between renders.                                                                                                                          | `apps/web/src/features/resume/preview`                                                                                                  | Becomes the page canvas with an overlay layer for hover, selection, pins and markers.                                          |
+| Thumbnails                | Full render, then a page-1 PNG cached per `id:updatedAt`. Template picker uses static JPGs.                                                                                                                                                                               | `apps/web/src/routes/dashboard/resumes/-components/cards/resume-thumbnail.tsx`, `apps/web/src/features/resume/preview/pdf-thumbnail.ts` | Reused for document cards and for template thumbnails of the user's own content.                                               |
+| Export                    | PDF, DOCX, Markdown, JSON and Print in the browser. Signed server PDF route for MCP. Public PDF fallback.                                                                                                                                                                 | `apps/web/src/features/resume/export`, `apps/server/src/http/*`, `packages/docx`                                                        | Moves into the Share sheet.                                                                                                    |
+| ATS                       | Live lint on resume JSON (21 rules with pointers to items). PDF engine (77 checks, weighted score, evidence boxes). Job-description matching. AI review.                                                                                                                  | `packages/resume/src/ats`, `packages/resume/src/ats-pdf`, `packages/api/src/features/ai`                                                | Check mode and the public checker.                                                                                             |
+| AI                        | 16 providers, AES-GCM keys (`ENCRYPTION_SECRET`). Agent streams through resumable streams (needs Redis). Tools: `read_resume`, `apply_resume_patch`, `ask_user_question`, `web_search`. The builder assistant reuses `AgentChat` and applies patches directly by default. | `packages/ai`, `packages/api/src/features/{ai,agent,ai-providers,applications}`, `apps/web/src/routes/agent`                            | One assistant panel that only proposes (§3.6).                                                                                 |
+| Import                    | RR v5 and v4 JSON, JSON Resume, LinkedIn ZIP, PDF (AI or local heuristics), Word (AI). Uncertain fields are not reported.                                                                                                                                                 | `packages/import`, `apps/web/src/dialogs/resume/import.tsx`                                                                             | New dialog flow with review flags.                                                                                             |
+| MCP                       | 44 tools. Resume patching uses index-based JSON Pointers. `schema.json` resource.                                                                                                                                                                                         | `packages/mcp`                                                                                                                          | Updated for the date shape.                                                                                                    |
+| Schemas                   | Resume data, cover letters, applications, API keys                                                                                                                                                                                                                        | `packages/schema`, `packages/db/src/schema`                                                                                             | §3.                                                                                                                            |
+| Auth                      | Better Auth: email and password, verification, username, Google, GitHub, LinkedIn, custom OIDC, 2FA, passkeys, API keys, OAuth provider for MCP                                                                                                                           | `packages/auth`                                                                                                                         | Account settings page.                                                                                                         |
+| Tests                     | Vitest 5 (happy-dom, Testing Library), 34 test files in `packages/ui`, 140 in `apps/web`. 24 Playwright specs, 3 of them env-gated.                                                                                                                                       | `tests/e2e/specs`                                                                                                                       | Updated in the milestone that changes each screen.                                                                             |
 
 ---
 
@@ -54,17 +54,17 @@ Path shorthand: `B/` = `apps/web/src/routes/builder/$resumeId/`.
 
 ### 2.1 New route tree
 
-| IA node | Route | Search params | Notes |
-|---|---|---|---|
-| Documents (home) | `/dashboard` | `type` (all, resume, letter), `q`, `tags`, `sort` (edited, name, created), `view` (grid, list) | Replaces both libraries. A file dropped anywhere on the page imports it. |
-| Trash | `/dashboard/trash` | | Sidebar item appears only when Trash has items. |
-| Applications | `/dashboard/applications` | `view` (list, board, insights, plus calendar if Q3g), `q`, `closed`, `applicationId` (detail sheet), `create` (Add dialog) | Keeps today's `view`, `applicationId` and `create`, so deep links and command entries keep working. |
-| Settings | `/dashboard/settings/account`, `/dashboard/settings/preferences`, `/dashboard/settings/ai` | | `/dashboard/settings` redirects to Account on desktop and shows the three-row root on mobile. |
-| Editor, resume | `/builder/$resumeId` | `mode` (write, design, check), `sheet` (share, download, history), `assistant` (thread id or `new`) | URL unchanged. |
-| Editor, letter | `/builder/letter/$coverLetterId` | `mode` (write, design), `sheet`, `assistant` | New. The static `letter` segment outranks `$resumeId`. |
-| Shared resume | `/$username/$slug` | | Adds slug redirects. |
-| Public ATS checker | `/ats-checker` | | Rebuilt. |
-| Landing, auth, templates | `/`, `/auth/*`, `/templates/$` | | The landing page isn't in the spec and stays as is. Auth pages pick up the new tokens. |
+| IA node                  | Route                                                                                      | Search params                                                                                                              | Notes                                                                                               |
+| ------------------------ | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Documents (home)         | `/dashboard`                                                                               | `type` (all, resume, letter), `q`, `tags`, `sort` (edited, name, created), `view` (grid, list)                             | Replaces both libraries. A file dropped anywhere on the page imports it.                            |
+| Trash                    | `/dashboard/trash`                                                                         |                                                                                                                            | Sidebar item appears only when Trash has items.                                                     |
+| Applications             | `/dashboard/applications`                                                                  | `view` (list, board, insights, plus calendar if Q3g), `q`, `closed`, `applicationId` (detail sheet), `create` (Add dialog) | Keeps today's `view`, `applicationId` and `create`, so deep links and command entries keep working. |
+| Settings                 | `/dashboard/settings/account`, `/dashboard/settings/preferences`, `/dashboard/settings/ai` |                                                                                                                            | `/dashboard/settings` redirects to Account on desktop and shows the three-row root on mobile.       |
+| Editor, resume           | `/builder/$resumeId`                                                                       | `mode` (write, design, check), `sheet` (share, download, history), `assistant` (thread id or `new`)                        | URL unchanged.                                                                                      |
+| Editor, letter           | `/builder/letter/$coverLetterId`                                                           | `mode` (write, design), `sheet`, `assistant`                                                                               | New. The static `letter` segment outranks `$resumeId`.                                              |
+| Shared resume            | `/$username/$slug`                                                                         |                                                                                                                            | Adds slug redirects.                                                                                |
+| Public ATS checker       | `/ats-checker`                                                                             |                                                                                                                            | Rebuilt.                                                                                            |
+| Landing, auth, templates | `/`, `/auth/*`, `/templates/$`                                                             |                                                                                                                            | The landing page isn't in the spec and stays as is. Auth pages pick up the new tokens.              |
 
 Mode, sheet and assistant live in the URL because other screens deep-link into them: the public checker's CTA opens Check, "Tailor a resume" opens the assistant, and "Open" on a sent document opens History at that version. Refreshing keeps the state.
 
@@ -72,15 +72,15 @@ Mode, sheet and assistant live in the URL because other screens deep-link into t
 
 Old route files become `beforeLoad` redirect stubs for one minor release (Q2), then get deleted.
 
-| Old route | New destination |
-|---|---|
-| `/dashboard/resumes` (with `view`, `sort`, `tags`, `q`) | `/dashboard?type=resume`, params mapped (`compact` becomes `grid`) |
-| `/dashboard/cover-letters` | `/dashboard?type=letter` |
-| `/dashboard/settings/profile`, `/dashboard/settings/authentication` | `/dashboard/settings/account` |
-| `/dashboard/settings/integrations`, `/dashboard/settings/api-keys`, `/dashboard/settings/job-search` | `/dashboard/settings/ai` (job-search is already a redirect) |
-| `/agent` | `/dashboard` |
-| `/agent/new?resumeId=X` | `/builder/X?assistant=new`, or `/dashboard` without a resume |
-| `/agent/$threadId` | The thread's working resume: `/builder/<id>?assistant=<threadId>`. `/dashboard` if that resume is gone. |
+| Old route                                                                                            | New destination                                                                                         |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `/dashboard/resumes` (with `view`, `sort`, `tags`, `q`)                                              | `/dashboard?type=resume`, params mapped (`compact` becomes `grid`)                                      |
+| `/dashboard/cover-letters`                                                                           | `/dashboard?type=letter`                                                                                |
+| `/dashboard/settings/profile`, `/dashboard/settings/authentication`                                  | `/dashboard/settings/account`                                                                           |
+| `/dashboard/settings/integrations`, `/dashboard/settings/api-keys`, `/dashboard/settings/job-search` | `/dashboard/settings/ai` (job-search is already a redirect)                                             |
+| `/agent`                                                                                             | `/dashboard`                                                                                            |
+| `/agent/new?resumeId=X`                                                                              | `/builder/X?assistant=new`, or `/dashboard` without a resume                                            |
+| `/agent/$threadId`                                                                                   | The thread's working resume: `/builder/<id>?assistant=<threadId>`. `/dashboard` if that resume is gone. |
 
 Also updated in the same milestone: command bar entries, links in `docs/` pages, any email template links, and path handling in `apps/server/src/static/web.ts`.
 
@@ -227,13 +227,13 @@ Today `cover_letter` has name, recipient (rich-text HTML), content (HTML), `styl
 
 ### 3.10 Migration sequence and rollback
 
-| Milestone | DDL | Backfill | Rollback |
-|---|---|---|---|
-| M3 | None (read-time upgrade + dual write) | None | Older versions read the dual-written `period`/`date` |
-| M5 | `resume_version.kind`, `name`, `session_id`; `resume_slug_redirect` | `kind` from labels | Additive; older versions ignore it |
-| M6 | `resume.application_id`, `trashed_at`, `auto_name`; `cover_letter.tags`, `is_locked`, `trashed_at` | None | Additive; older versions would show trashed documents again |
-| M8 | `application.closed_reason`, `cover_letter_id`, `sent_*`, `requirements` | `rejected`/`archived` → `closed` | Reverse script |
-| M9 | `cover_letter.sender_linked`, `design_linked`, `recipient_name`, `recipient_company`, `letter_date`, `layout`; `cover_letter_version` | Existing letters → freeform, unlinked | Additive |
+| Milestone | DDL                                                                                                                                   | Backfill                              | Rollback                                                    |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ----------------------------------------------------------- |
+| M3        | None (read-time upgrade + dual write)                                                                                                 | None                                  | Older versions read the dual-written `period`/`date`        |
+| M5        | `resume_version.kind`, `name`, `session_id`; `resume_slug_redirect`                                                                   | `kind` from labels                    | Additive; older versions ignore it                          |
+| M6        | `resume.application_id`, `trashed_at`, `auto_name`; `cover_letter.tags`, `is_locked`, `trashed_at`                                    | None                                  | Additive; older versions would show trashed documents again |
+| M8        | `application.closed_reason`, `cover_letter_id`, `sent_*`, `requirements`                                                              | `rejected`/`archived` → `closed`      | Reverse script                                              |
+| M9        | `cover_letter.sender_linked`, `design_linked`, `recipient_name`, `recipient_company`, `letter_date`, `layout`; `cover_letter_version` | Existing letters → freeform, unlinked | Additive                                                    |
 
 Contract steps (approved on 29 Sep 2026, migration `20260929063245_contract_redesign_legacy_fields`, with `rollback.sql`):
 
@@ -251,55 +251,55 @@ Rule from the spec: keep a library where the repo already has one, and restyle i
 
 ### 4.1 `packages/ui` (generic primitives)
 
-| Component | Plan |
-|---|---|
-| Button | **Restyle.** Primary, secondary, ghost and danger; sizes sm 28, md 36, touch 44; loading (14 px spinner plus a present-participle label, `aria-busy`). |
-| Icon button | **Add** (thin wrapper). Required `aria-label`, tooltip with the shortcut. |
-| Split button | **Restyle** `button-group` (Download PDF ▾). |
-| Input, textarea, input-group | **Restyle.** `input-group` becomes the prefixed input with a status icon (address, username). |
-| Select | **Add** a styled native select, as specified. Combobox stays for long searchable lists (fonts, languages). |
-| Checkbox, switch, slider | **Restyle.** Switch rows make the whole row the `role="switch"` control. |
-| Radio group, radio card | **Add** on Base UI Radio. |
-| Segmented control | **Add** on Base UI ToggleGroup. |
-| Tabs | **Restyle,** plus an underline variant with mono counts. |
-| Menu, context menu, popover, tooltip | **Restyle** (radius 12, e2, enter motion from the trigger). |
-| Dialog, alert dialog | **Restyle** (radius 16, scale from 0.98; alert dialogs name what's kept on cancel). |
-| Sheet | **Restyle.** Side sheet (440/480/400 widths, 0.18 scrim) and bottom sheet (18 px radius, grabber, half and full stops). |
-| Toast | **Restyle.** One at a time, bottom center, ink background, Undo action, 5–6 s, polite live region. |
-| Alert, empty, skeleton, spinner, badge, kbd, avatar, label, separator, scroll-area, form, otp-field | **Restyle.** The spinner becomes the CSS spinner. |
-| Step list with progress | **Add** (labelled steps plus a 4 px bar) for import, the ATS checker and Fit. |
-| File drop zone | **Add** (default, dragging, error) plus the page-wide overlay variant. |
-| Command | **Restyle** cmdk into the 560 px command bar. |
-| Icon | **Add** (Material Symbols Rounded). |
-| Structured date input | **Add.** Two month-year fields, an en dash and a Present switch. Labels come in as props because `packages/ui` can't use Lingui. |
-| Sidebar (shadcn) | **Replace** with the web app shell. Removed from `packages/ui` if nothing else uses it. |
-| Resizable | No longer used by the builder or the agent page. **Removed** if unused. |
-| Accordion | Used for collapsible rows, or **replaced** by a simple disclosure where lighter. |
+| Component                                                                                           | Plan                                                                                                                                                   |
+| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Button                                                                                              | **Restyle.** Primary, secondary, ghost and danger; sizes sm 28, md 36, touch 44; loading (14 px spinner plus a present-participle label, `aria-busy`). |
+| Icon button                                                                                         | **Add** (thin wrapper). Required `aria-label`, tooltip with the shortcut.                                                                              |
+| Split button                                                                                        | **Restyle** `button-group` (Download PDF ▾).                                                                                                           |
+| Input, textarea, input-group                                                                        | **Restyle.** `input-group` becomes the prefixed input with a status icon (address, username).                                                          |
+| Select                                                                                              | **Add** a styled native select, as specified. Combobox stays for long searchable lists (fonts, languages).                                             |
+| Checkbox, switch, slider                                                                            | **Restyle.** Switch rows make the whole row the `role="switch"` control.                                                                               |
+| Radio group, radio card                                                                             | **Add** on Base UI Radio.                                                                                                                              |
+| Segmented control                                                                                   | **Add** on Base UI ToggleGroup.                                                                                                                        |
+| Tabs                                                                                                | **Restyle,** plus an underline variant with mono counts.                                                                                               |
+| Menu, context menu, popover, tooltip                                                                | **Restyle** (radius 12, e2, enter motion from the trigger).                                                                                            |
+| Dialog, alert dialog                                                                                | **Restyle** (radius 16, scale from 0.98; alert dialogs name what's kept on cancel).                                                                    |
+| Sheet                                                                                               | **Restyle.** Side sheet (440/480/400 widths, 0.18 scrim) and bottom sheet (18 px radius, grabber, half and full stops).                                |
+| Toast                                                                                               | **Restyle.** One at a time, bottom center, ink background, Undo action, 5–6 s, polite live region.                                                     |
+| Alert, empty, skeleton, spinner, badge, kbd, avatar, label, separator, scroll-area, form, otp-field | **Restyle.** The spinner becomes the CSS spinner.                                                                                                      |
+| Step list with progress                                                                             | **Add** (labelled steps plus a 4 px bar) for import, the ATS checker and Fit.                                                                          |
+| File drop zone                                                                                      | **Add** (default, dragging, error) plus the page-wide overlay variant.                                                                                 |
+| Command                                                                                             | **Restyle** cmdk into the 560 px command bar.                                                                                                          |
+| Icon                                                                                                | **Add** (Material Symbols Rounded).                                                                                                                    |
+| Structured date input                                                                               | **Add.** Two month-year fields, an en dash and a Present switch. Labels come in as props because `packages/ui` can't use Lingui.                       |
+| Sidebar (shadcn)                                                                                    | **Replace** with the web app shell. Removed from `packages/ui` if nothing else uses it.                                                                |
+| Resizable                                                                                           | No longer used by the builder or the agent page. **Removed** if unused.                                                                                |
+| Accordion                                                                                           | Used for collapsible rows, or **replaced** by a simple disclosure where lighter.                                                                       |
 
 ### 4.2 `apps/web` (feature components)
 
-| Today | Plan |
-|---|---|
-| Dashboard layout, sidebar, header | **Replace** with the app shell (sidebar, icon rail, bottom tabs). |
-| Resume library (grid, list, compact, cards, menus) and cover-letter library | **Replace** with Documents. Cards reuse the thumbnail pipeline; menus reuse the logic in `use-resume-menu-actions.ts`. |
-| Create, import and edit-details dialogs | **Replace** with the New dialog, inline rename, Tags… and the Share address. |
-| Builder shell (three resizable panels, two icon rails, dock, header, mobile shell) | **Replace** with the editor shell: editor bar, mode panel, page canvas, zoom bar, overlay layer. |
-| Left sidebar sections and the item dialogs | **Replace** with the outline, Basics card and entry cards. Field sets are reused from the dialog code. |
-| Right sidebar (template, layout, typography, design, page, custom styles) | **Replace** with Design mode. The CodeMirror stylesheet editor is kept and restyled inside Advanced. |
-| Sharing, statistics, export sections, download dialog, version-history dropdown | **Replace** with the Share & export sheet. |
-| Builder ATS section and public checker report | **Replace** with Check mode and the rebuilt public page. The ATS engines stay. |
-| Notes and Information sections | Move into the document menu. |
-| Builder assistant sheet and the agent pages (`AgentChat`, patch approval cards, thread sidebar, new-thread setup) | **Replace** with the assistant panel. The streaming transport, question-card logic and attachment helpers are reused. |
-| Rich input | **Restyle,** restrict the toolbar, add Improve (M10). |
-| Chip input | **Restyle** as the tag input. |
-| Picture section | Becomes the photo popover in Basics. |
-| Applications board, insights, calendar, CSV sheets | **Restyle.** |
-| Applications table, form sheet, detail sheet, copilot | **Replace** with the grouped list, Add dialog, rebuilt detail sheet and the assistant. |
-| Cover-letter editor dialog | **Replace** with the editor shell for letters. |
-| Six settings pages | **Replace** with three. Password, 2FA and passkey dialogs are reused and restyled. |
-| Public resume page | **Rebuild** (desktop bar and canvas, mobile reflow). |
-| Command palette | **Rebuild** its groups. cmdk and the page-stack store stay. |
-| Theme toggle and combobox | **Replace** with Appearance tiles and ⌘K entries. |
+| Today                                                                                                             | Plan                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Dashboard layout, sidebar, header                                                                                 | **Replace** with the app shell (sidebar, icon rail, bottom tabs).                                                      |
+| Resume library (grid, list, compact, cards, menus) and cover-letter library                                       | **Replace** with Documents. Cards reuse the thumbnail pipeline; menus reuse the logic in `use-resume-menu-actions.ts`. |
+| Create, import and edit-details dialogs                                                                           | **Replace** with the New dialog, inline rename, Tags… and the Share address.                                           |
+| Builder shell (three resizable panels, two icon rails, dock, header, mobile shell)                                | **Replace** with the editor shell: editor bar, mode panel, page canvas, zoom bar, overlay layer.                       |
+| Left sidebar sections and the item dialogs                                                                        | **Replace** with the outline, Basics card and entry cards. Field sets are reused from the dialog code.                 |
+| Right sidebar (template, layout, typography, design, page, custom styles)                                         | **Replace** with Design mode. The CodeMirror stylesheet editor is kept and restyled inside Advanced.                   |
+| Sharing, statistics, export sections, download dialog, version-history dropdown                                   | **Replace** with the Share & export sheet.                                                                             |
+| Builder ATS section and public checker report                                                                     | **Replace** with Check mode and the rebuilt public page. The ATS engines stay.                                         |
+| Notes and Information sections                                                                                    | Move into the document menu.                                                                                           |
+| Builder assistant sheet and the agent pages (`AgentChat`, patch approval cards, thread sidebar, new-thread setup) | **Replace** with the assistant panel. The streaming transport, question-card logic and attachment helpers are reused.  |
+| Rich input                                                                                                        | **Restyle,** restrict the toolbar, add Improve (M10).                                                                  |
+| Chip input                                                                                                        | **Restyle** as the tag input.                                                                                          |
+| Picture section                                                                                                   | Becomes the photo popover in Basics.                                                                                   |
+| Applications board, insights, calendar, CSV sheets                                                                | **Restyle.**                                                                                                           |
+| Applications table, form sheet, detail sheet, copilot                                                             | **Replace** with the grouped list, Add dialog, rebuilt detail sheet and the assistant.                                 |
+| Cover-letter editor dialog                                                                                        | **Replace** with the editor shell for letters.                                                                         |
+| Six settings pages                                                                                                | **Replace** with three. Password, 2FA and passkey dialogs are reused and restyled.                                     |
+| Public resume page                                                                                                | **Rebuild** (desktop bar and canvas, mobile reflow).                                                                   |
+| Command palette                                                                                                   | **Rebuild** its groups. cmdk and the page-stack store stay.                                                            |
+| Theme toggle and combobox                                                                                         | **Replace** with Appearance tiles and ⌘K entries.                                                                      |
 
 ---
 
@@ -314,147 +314,147 @@ Every capability in today's app, and where it lives after the redesign.
 
 ### 5.1 Global shell
 
-| Capability today | After | Status |
-|---|---|---|
-| Main nav: Resumes, Applications, Cover Letters, Agents, ATS Checker, six settings pages | Documents and Applications. Settings from the avatar. Agents → Assistant. ATS Checker → Check mode (public page stays). | Placed |
-| Collapsible sidebar (`Mod+B`) | Fixed 240 px sidebar, icon rail on tablet. `Mod+B` removed. | Proposed |
-| User menu: language, theme, sign out | Preferences and ⌘K. Sign out at the bottom of Settings → Account and on the mobile Account root. | Proposed |
-| Command palette: search resumes, applications and threads; create; theme; language; go to | ⌘K: Search, Go to, Run, Ask. Threads appear as past conversations. | Placed |
-| Shortcuts `Mod+K`, `Mod+Z`, `Mod+Shift+Z`, `Ctrl+Y`, `Mod+0`, `Mod+S` | Spec keymap. `Mod+0` fits the page. `Mod+S` keeps its "saved automatically" toast. | Proposed |
-| Light and Dark themes | Light, Dark and System | Placed |
-| 55 languages, right-to-left | Kept. `DirectionProvider` gets its missing `direction`, so Base UI follows RTL. | Placed |
-| Donation toast | Q3n | Decide |
+| Capability today                                                                          | After                                                                                                                   | Status   |
+| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | -------- |
+| Main nav: Resumes, Applications, Cover Letters, Agents, ATS Checker, six settings pages   | Documents and Applications. Settings from the avatar. Agents → Assistant. ATS Checker → Check mode (public page stays). | Placed   |
+| Collapsible sidebar (`Mod+B`)                                                             | Fixed 240 px sidebar, icon rail on tablet. `Mod+B` removed.                                                             | Proposed |
+| User menu: language, theme, sign out                                                      | Preferences and ⌘K. Sign out at the bottom of Settings → Account and on the mobile Account root.                        | Proposed |
+| Command palette: search resumes, applications and threads; create; theme; language; go to | ⌘K: Search, Go to, Run, Ask. Threads appear as past conversations.                                                      | Placed   |
+| Shortcuts `Mod+K`, `Mod+Z`, `Mod+Shift+Z`, `Ctrl+Y`, `Mod+0`, `Mod+S`                     | Spec keymap. `Mod+0` fits the page. `Mod+S` keeps its "saved automatically" toast.                                      | Proposed |
+| Light and Dark themes                                                                     | Light, Dark and System                                                                                                  | Placed   |
+| 55 languages, right-to-left                                                               | Kept. `DirectionProvider` gets its missing `direction`, so Base UI follows RTL.                                         | Placed   |
+| Donation toast                                                                            | Q3n                                                                                                                     | Decide   |
 
 ### 5.2 Documents and New
 
-| Capability today | After | Status |
-|---|---|---|
-| Grid, list and compact views | Grid and list | Removed (compact) |
-| Sort, tag filter, search on name and slug | Kept. Search also covers linked applications. | Placed |
-| Thumbnails, lock overlay | Kept (lock badge) | Placed |
-| Edit details: name, slug, tags | Inline rename, Tags… in the card menu, address in Share | Placed |
-| Duplicate; lock with confirmation; permanent delete with confirmation | Duplicate; lock without confirmation; Move to Trash with undo; Trash with Restore and Delete now | Placed |
-| Create (name, slug, tags); create a sample resume | New → Start blank; Try with a sample resume | Placed |
-| Import RR JSON, RR v4, JSON Resume, LinkedIn ZIP, PDF, Word; manual format override | New → Import, same formats (LinkedIn ZIP accepted although the tile copy doesn't name it). Auto-detect, with a "Read as…" choice only when detection is ambiguous. | Proposed |
-| Letters library: search, paging, create with template, JSON import and export, duplicate, delete | Letters tab in Documents. Design is inherited from the resume. JSON import through New → Import, JSON export through Share → Download. | Proposed |
-| Copying a letter embedded in a resume into the library | Q3k | Decide |
+| Capability today                                                                                 | After                                                                                                                                                              | Status            |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- |
+| Grid, list and compact views                                                                     | Grid and list                                                                                                                                                      | Removed (compact) |
+| Sort, tag filter, search on name and slug                                                        | Kept. Search also covers linked applications.                                                                                                                      | Placed            |
+| Thumbnails, lock overlay                                                                         | Kept (lock badge)                                                                                                                                                  | Placed            |
+| Edit details: name, slug, tags                                                                   | Inline rename, Tags… in the card menu, address in Share                                                                                                            | Placed            |
+| Duplicate; lock with confirmation; permanent delete with confirmation                            | Duplicate; lock without confirmation; Move to Trash with undo; Trash with Restore and Delete now                                                                   | Placed            |
+| Create (name, slug, tags); create a sample resume                                                | New → Start blank; Try with a sample resume                                                                                                                        | Placed            |
+| Import RR JSON, RR v4, JSON Resume, LinkedIn ZIP, PDF, Word; manual format override              | New → Import, same formats (LinkedIn ZIP accepted although the tile copy doesn't name it). Auto-detect, with a "Read as…" choice only when detection is ambiguous. | Proposed          |
+| Letters library: search, paging, create with template, JSON import and export, duplicate, delete | Letters tab in Documents. Design is inherited from the resume. JSON import through New → Import, JSON export through Share → Download.                             | Proposed          |
+| Copying a letter embedded in a resume into the library                                           | Q3k                                                                                                                                                                | Decide            |
 
 ### 5.3 Editor · Write
 
-| Capability today | After | Status |
-|---|---|---|
-| Picture: upload with crop, URL, show/hide, delete, fit, size, rotation, aspect ratio, radius, border, shadow | Photo popover in Basics, all options | Placed |
-| Basics fields and custom fields (icon, text, link) | Basics card. Custom fields as "Add field" under Website. | Proposed |
-| Summary | Summary row with guidance and Improve | Placed |
-| 12 item sections | The outline lists sections in use; Add section lists the rest. Interests is missing from the spec's list and is added. | Proposed |
-| Section menu: add item, sort by date, show/hide, hide heading, rename, keyword layout, columns 1–6, icon, reset, keep together, start on new page | Eye on the row. Everything else in a row ⋯ menu (the mobile spec already has a row menu). Reset shows an undo toast instead of a confirmation. | Proposed |
-| Item actions: drag, hide, duplicate, move to another section, a new section or a new page, delete | Drag and ⌥↑/⌥↓. Entry ⋯ menu: Hide from page, Duplicate, Move to…, Delete (undo). | Proposed |
-| Custom sections (14 types, including summary and cover letter) | Add section → Custom section → type | Proposed |
-| Role progression | Add role | Placed |
-| Show link in title | Checkbox under the link field (spec Design System forms) | Placed |
-| Type-specific fields: skill level, proficiency, keywords, icon and colour; language level and fluency; profile icon; reference and publication fields | Kept. Secondary fields (level, icon, colour) sit under "More options" in the entry card. | Proposed |
-| Hidden-sections list with Show | Hidden sections stay in the outline (strikethrough, eye) | Placed |
-| Locked banner with "Enable editing" | Read-only panel with "Locked · Unlock" | Proposed |
-| Rich text: headings, underline, strike, code, colours, highlight, alignment, indent, rule | Restricted toolbar. Existing formatting is preserved and removable with Clear formatting. | Placed |
-| Fullscreen rich-text editor | Q3m | Decide |
-| Multi-page layout: add and delete pages, full width per page, main and sidebar per page, sidebar width | Q3f | Decide |
-| Undo, redo, zoom, pan, pinch, double-click zoom | Undo in the bar; zoom bar 60–150 % | Placed |
-| Page stacking toggle | Q3m | Decide |
-| Copy public URL and Open AI agent in the dock | Share; ⌘J assistant | Placed |
-| Cross-tab sync and "updated elsewhere" notice | Kept | Proposed |
+| Capability today                                                                                                                                      | After                                                                                                                                          | Status   |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| Picture: upload with crop, URL, show/hide, delete, fit, size, rotation, aspect ratio, radius, border, shadow                                          | Photo popover in Basics, all options                                                                                                           | Placed   |
+| Basics fields and custom fields (icon, text, link)                                                                                                    | Basics card. Custom fields as "Add field" under Website.                                                                                       | Proposed |
+| Summary                                                                                                                                               | Summary row with guidance and Improve                                                                                                          | Placed   |
+| 12 item sections                                                                                                                                      | The outline lists sections in use; Add section lists the rest. Interests is missing from the spec's list and is added.                         | Proposed |
+| Section menu: add item, sort by date, show/hide, hide heading, rename, keyword layout, columns 1–6, icon, reset, keep together, start on new page     | Eye on the row. Everything else in a row ⋯ menu (the mobile spec already has a row menu). Reset shows an undo toast instead of a confirmation. | Proposed |
+| Item actions: drag, hide, duplicate, move to another section, a new section or a new page, delete                                                     | Drag and ⌥↑/⌥↓. Entry ⋯ menu: Hide from page, Duplicate, Move to…, Delete (undo).                                                              | Proposed |
+| Custom sections (14 types, including summary and cover letter)                                                                                        | Add section → Custom section → type                                                                                                            | Proposed |
+| Role progression                                                                                                                                      | Add role                                                                                                                                       | Placed   |
+| Show link in title                                                                                                                                    | Checkbox under the link field (spec Design System forms)                                                                                       | Placed   |
+| Type-specific fields: skill level, proficiency, keywords, icon and colour; language level and fluency; profile icon; reference and publication fields | Kept. Secondary fields (level, icon, colour) sit under "More options" in the entry card.                                                       | Proposed |
+| Hidden-sections list with Show                                                                                                                        | Hidden sections stay in the outline (strikethrough, eye)                                                                                       | Placed   |
+| Locked banner with "Enable editing"                                                                                                                   | Read-only panel with "Locked · Unlock"                                                                                                         | Proposed |
+| Rich text: headings, underline, strike, code, colours, highlight, alignment, indent, rule                                                             | Restricted toolbar. Existing formatting is preserved and removable with Clear formatting.                                                      | Placed   |
+| Fullscreen rich-text editor                                                                                                                           | Q3m                                                                                                                                            | Decide   |
+| Multi-page layout: add and delete pages, full width per page, main and sidebar per page, sidebar width                                                | Q3f                                                                                                                                            | Decide   |
+| Undo, redo, zoom, pan, pinch, double-click zoom                                                                                                       | Undo in the bar; zoom bar 60–150 %                                                                                                             | Placed   |
+| Page stacking toggle                                                                                                                                  | Q3m                                                                                                                                            | Decide   |
+| Copy public URL and Open AI agent in the dock                                                                                                         | Share; ⌘J assistant                                                                                                                            | Placed   |
+| Cross-tab sync and "updated elsewhere" notice                                                                                                         | Kept                                                                                                                                           | Proposed |
 
 ### 5.4 Editor · Design
 
-| Capability today | After | Status |
-|---|---|---|
-| Template gallery (15, static sample images) | Thumbnails of the user's content, hover preview | Placed |
-| Any of about 500 font families for body and heading, weights, size, line height, German hyphenation | Five pairings, size, density. The rest per Q3b. | Decide |
-| 22 swatches; primary, text and background colours | Eight accents plus a custom hex with contrast check. Text and background per Q3c. | Decide |
-| Level indicator style and icon | Q3d | Decide |
+| Capability today                                                                                        | After                                                                              | Status            |
+| ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ----------------- |
+| Template gallery (15, static sample images)                                                             | Thumbnails of the user's content, hover preview                                    | Placed            |
+| Any of about 500 font families for body and heading, weights, size, line height, German hyphenation     | Five pairings, size, density. The rest per Q3b.                                    | Decide            |
+| 22 swatches; primary, text and background colours                                                       | Eight accents plus a custom hex with contrast check. Text and background per Q3c.  | Decide            |
+| Level indicator style and icon                                                                          | Q3d                                                                                | Decide            |
 | Page: language, A4/Letter/free-form, margins, gaps, hide link underline, hide icons, hide section icons | Page group. Gaps and hide-section-icons in Advanced (Proposed). Free-form per Q3e. | Proposed / Decide |
-| Custom CSS editor | Advanced | Placed |
-| Notes; Information (docs, source, bug report, translations, sponsors, donate) | Document menu | Placed |
-| Export panel | Share → Download | Placed |
+| Custom CSS editor                                                                                       | Advanced                                                                           | Placed            |
+| Notes; Information (docs, source, bug report, translations, sponsors, donate)                           | Document menu                                                                      | Placed            |
+| Export panel                                                                                            | Share → Download                                                                   | Placed            |
 
 ### 5.5 Editor · Check
 
-| Capability today | After | Status |
-|---|---|---|
-| Live lint with jump to item | Issues pinned to their lines | Placed |
-| Optional job description | Job match from the linked application; paste as fallback | Placed |
-| Deep check (PDF report and AI review) | Deep check with a toast; Writing tab | Placed |
-| Choosing the provider for the AI review | Model chip in the Writing tab's disclosure ("Change") | Proposed |
+| Capability today                        | After                                                    | Status   |
+| --------------------------------------- | -------------------------------------------------------- | -------- |
+| Live lint with jump to item             | Issues pinned to their lines                             | Placed   |
+| Optional job description                | Job match from the linked application; paste as fallback | Placed   |
+| Deep check (PDF report and AI review)   | Deep check with a toast; Writing tab                     | Placed   |
+| Choosing the provider for the AI review | Model chip in the Writing tab's disclosure ("Change")    | Proposed |
 
 ### 5.6 Share & export
 
-| Capability today | After | Status |
-|---|---|---|
-| PDF, DOCX, Markdown and JSON downloads; resume and letter tabs | Download tab | Placed |
-| Letter download "Include resume header" | Checkbox in the Download tab for letters | Proposed |
-| Print | Document menu → Print (⌘P becomes Download PDF) | Proposed |
-| Public access, download buttons, copy URL | Link tab | Placed |
-| Password protection | Q3a | Decide |
+| Capability today                                                                                | After                                                                                                                | Status   |
+| ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------- |
+| PDF, DOCX, Markdown and JSON downloads; resume and letter tabs                                  | Download tab                                                                                                         | Placed   |
+| Letter download "Include resume header"                                                         | Checkbox in the Download tab for letters                                                                             | Proposed |
+| Print                                                                                           | Document menu → Print (⌘P becomes Download PDF)                                                                      | Proposed |
+| Public access, download buttons, copy URL                                                       | Link tab                                                                                                             | Placed   |
+| Password protection                                                                             | Q3a                                                                                                                  | Decide   |
 | Statistics: views, downloads, sparkline, change vs previous 30 days, last viewed and downloaded | Views and downloads (30 bars, time since last view). "Change vs previous 30 days" and "last downloaded" are dropped. | Proposed |
-| Version history (automatic, restore with confirmation) | History tab: named versions, preview, restore without confirmation (it's undoable) | Placed |
+| Version history (automatic, restore with confirmation)                                          | History tab: named versions, preview, restore without confirmation (it's undoable)                                   | Placed   |
 
 ### 5.7 Assistant
 
-| Capability today | After | Status |
-|---|---|---|
-| Agents page: thread list, archive, delete | Past conversations grouped by document; delete kept; archive per Q3j | Decide |
-| Model and resume pickers per thread | Model chip; document inferred | Placed |
-| Working on an AI copy or a blank draft | Q3j | Decide |
-| Attachments, web-search sources, token counts, copy transcript or JSON | Q3j | Decide |
-| "Review edits" toggle and auto-apply | Always proposals | Removed (auto-apply) |
-| Restoring an applied edit | ⌘Z and History | Placed |
-| Agent questions (options or your own words) | Clarifying question card | Placed |
-| Builder assistant sheet | Assistant panel | Placed |
-| ATS AI review | Check → Writing | Placed |
-| Application copilot: tailor resume, draft cover letter | Tailor a resume; Write a letter with Draft from the posting | Placed |
-| Application copilot: fit score, follow-up draft | Q3i | Decide |
+| Capability today                                                       | After                                                                | Status               |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------- |
+| Agents page: thread list, archive, delete                              | Past conversations grouped by document; delete kept; archive per Q3j | Decide               |
+| Model and resume pickers per thread                                    | Model chip; document inferred                                        | Placed               |
+| Working on an AI copy or a blank draft                                 | Q3j                                                                  | Decide               |
+| Attachments, web-search sources, token counts, copy transcript or JSON | Q3j                                                                  | Decide               |
+| "Review edits" toggle and auto-apply                                   | Always proposals                                                     | Removed (auto-apply) |
+| Restoring an applied edit                                              | ⌘Z and History                                                       | Placed               |
+| Agent questions (options or your own words)                            | Clarifying question card                                             | Placed               |
+| Builder assistant sheet                                                | Assistant panel                                                      | Placed               |
+| ATS AI review                                                          | Check → Writing                                                      | Placed               |
+| Application copilot: tailor resume, draft cover letter                 | Tailor a resume; Write a letter with Draft from the posting          | Placed               |
+| Application copilot: fit score, follow-up draft                        | Q3i                                                                  | Decide               |
 
 ### 5.8 Applications
 
-| Capability today | After | Status |
-|---|---|---|
-| Board, table, insights views | Board, grouped List, Insights | Placed |
-| Calendar view and interview scheduling (#3539, not in the atlas) | Q3g | Decide |
-| Search, archived toggle | Search, Show closed | Placed |
-| Tag filter, sort (updated, applied, company, role), table bulk actions (move stage, tag, archive, delete) | Q3h | Decide |
-| CSV import (upload, paste, sample, preview) and export (current filters or all, date range) | Import/export icon; column matching confirmed before saving; export options kept | Placed / Proposed |
-| Board drag; card menu (edit, move, archive, delete) | Drag plus a Move to… menu; Close…; Delete in ⋯ | Placed |
-| Add/edit form: job description autofill, company, role, location, salary, source, stage, link, stage date, follow-up, notes | Add dialog from a pasted link or posting; the other fields in the detail sheet | Placed |
-| Resume link or PDF upload; cover-letter PDF upload; tags | Links placed. Uploads and tags per Q3h. | Placed / Decide |
-| Detail: stage bar and move, notes, documents sent, interviews list and schedule, follow-up, mark rejected, archive, delete | Stepper, Next step (interviews and follow-up), What you sent, Notes (autosave), Close application…, Delete in ⋯ | Placed |
-| Contacts (several per application) | Contact cell shows the primary contact; the full list opens from it | Proposed |
-| Timeline: add notes, edit notes, edit entry dates, delete entries | Activity, with each row's ⋯ menu for edit and delete | Proposed |
-| Interview dialog (type, date and time, duration, location, notes) | "Schedule interview" from Next step → Edit; adds `.ics` | Proposed |
-| Insights: tiles, pipeline chart with PNG export, weekly chart, by-source chart | Funnel, heard back, median days, tailored vs base. Extras per Q3p. | Decide |
+| Capability today                                                                                                            | After                                                                                                           | Status            |
+| --------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ----------------- |
+| Board, table, insights views                                                                                                | Board, grouped List, Insights                                                                                   | Placed            |
+| Calendar view and interview scheduling (#3539, not in the atlas)                                                            | Q3g                                                                                                             | Decide            |
+| Search, archived toggle                                                                                                     | Search, Show closed                                                                                             | Placed            |
+| Tag filter, sort (updated, applied, company, role), table bulk actions (move stage, tag, archive, delete)                   | Q3h                                                                                                             | Decide            |
+| CSV import (upload, paste, sample, preview) and export (current filters or all, date range)                                 | Import/export icon; column matching confirmed before saving; export options kept                                | Placed / Proposed |
+| Board drag; card menu (edit, move, archive, delete)                                                                         | Drag plus a Move to… menu; Close…; Delete in ⋯                                                                  | Placed            |
+| Add/edit form: job description autofill, company, role, location, salary, source, stage, link, stage date, follow-up, notes | Add dialog from a pasted link or posting; the other fields in the detail sheet                                  | Placed            |
+| Resume link or PDF upload; cover-letter PDF upload; tags                                                                    | Links placed. Uploads and tags per Q3h.                                                                         | Placed / Decide   |
+| Detail: stage bar and move, notes, documents sent, interviews list and schedule, follow-up, mark rejected, archive, delete  | Stepper, Next step (interviews and follow-up), What you sent, Notes (autosave), Close application…, Delete in ⋯ | Placed            |
+| Contacts (several per application)                                                                                          | Contact cell shows the primary contact; the full list opens from it                                             | Proposed          |
+| Timeline: add notes, edit notes, edit entry dates, delete entries                                                           | Activity, with each row's ⋯ menu for edit and delete                                                            | Proposed          |
+| Interview dialog (type, date and time, duration, location, notes)                                                           | "Schedule interview" from Next step → Edit; adds `.ics`                                                         | Proposed          |
+| Insights: tiles, pipeline chart with PNG export, weekly chart, by-source chart                                              | Funnel, heard back, median days, tailored vs base. Extras per Q3p.                                              | Decide            |
 
 ### 5.9 Settings
 
-| Capability today | After | Status |
-|---|---|---|
-| Profile: name, username, email change with confirmation, resend verification | Account → Profile, plus photo upload (new) | Placed |
-| Preferences: theme, language | Appearance tiles including System, Language, Motion note | Placed |
-| Password, 2FA with backup codes | Sign-in & security | Placed |
-| Passkeys; Google, GitHub, LinkedIn and custom OIDC sign-in | Q3o | Decide |
-| API keys: create with 1, 3, 6 or 12-month expiry; shown once; delete | 30 days, 90 days or Never; shown once; revoke with undo | Placed |
+| Capability today                                                                      | After                                                                                                          | Status   |
+| ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | -------- |
+| Profile: name, username, email change with confirmation, resend verification          | Account → Profile, plus photo upload (new)                                                                     | Placed   |
+| Preferences: theme, language                                                          | Appearance tiles including System, Language, Motion note                                                       | Placed   |
+| Password, 2FA with backup codes                                                       | Sign-in & security                                                                                             | Placed   |
+| Passkeys; Google, GitHub, LinkedIn and custom OIDC sign-in                            | Q3o                                                                                                            | Decide   |
+| API keys: create with 1, 3, 6 or 12-month expiry; shown once; delete                  | 30 days, 90 days or Never; shown once; revoke with undo                                                        | Placed   |
 | Integrations: 16 providers, advanced options, enable switch, test, edit model, delete | Provider rows (Test with latency, Edit). Add provider lists all 16. Enable switch and delete live inside Edit. | Proposed |
-| Account: export data (profile and resumes as JSON); delete by typing "delete" | Export everything (zip with documents and applications); Delete account alert dialog with counts | Placed |
+| Account: export data (profile and resumes as JSON); delete by typing "delete"         | Export everything (zip with documents and applications); Delete account alert dialog with counts               | Placed   |
 
 ### 5.10 Public pages and auth
 
-| Capability today | After | Status |
-|---|---|---|
-| Public resume: PDF viewer, download if allowed, views counted, OG tags, "Build your own resume" | New desktop page and mobile reflow; footer credit | Placed |
-| Password gate for public resumes | Q3a | Decide |
-| `ROOT_RESUME_ID` mode, `/templates/$` | Unchanged (the root mode uses the new public page) | Proposed |
-| Landing page | Unchanged (not in the spec) | Proposed |
+| Capability today                                                                                              | After                                                   | Status   |
+| ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | -------- |
+| Public resume: PDF viewer, download if allowed, views counted, OG tags, "Build your own resume"               | New desktop page and mobile reflow; footer credit       | Placed   |
+| Password gate for public resumes                                                                              | Q3a                                                     | Decide   |
+| `ROOT_RESUME_ID` mode, `/templates/$`                                                                         | Unchanged (the root mode uses the new public page)      | Proposed |
+| Landing page                                                                                                  | Unchanged (not in the spec)                             | Proposed |
 | Auth pages: passkey autofill, social sign-in, 2FA, backup codes, OAuth consent, error page, instance switches | Restyled through tokens only (not designed in the spec) | Proposed |
-| Public ATS checker: in-browser PDF check, job description, categories, coverage | Rebuilt with the parser view and the fix CTA | Placed |
-| Public checker AI review for signed-in users | Q3l | Decide |
-| MCP and API | Unchanged apart from dates | Placed |
+| Public ATS checker: in-browser PDF check, job description, categories, coverage                               | Rebuilt with the parser view and the fix CTA            | Placed   |
+| Public checker AI review for signed-in users                                                                  | Q3l                                                     | Decide   |
+| MCP and API                                                                                                   | Unchanged apart from dates                              | Placed   |
 
 ---
 
@@ -470,7 +470,7 @@ Sizes are relative (S, M, L, XL). XL milestones split into the listed PRs. After
 ### M0 · Preparation and spikes (S)
 
 - Branch strategy per Q1.
-- Handoff folder at the repo root plus a `.gitignore` line. Otherwise Biome, knip and markdownlint lint it, and `pnpm check` rewrites its JavaScript.
+- Handoff folder at the repo root plus a `.gitignore` line. Otherwise Oxlint and knip inspect it, and `pnpm check` rewrites its JavaScript with Oxfmt.
 - Load the TanStack Router skills (`router-core`, `navigation`, `search-params`, `auth-and-guards`) before route work, per `CLAUDE.md`.
 - **Spike A, render cost.** Add performance marks around `createResumePdfBlob`. Measure p50 and p95 for the sample resume and for 2-page and 4-page resumes on a mid-range laptop. The result sets the typing debounce and decides whether rendering moves to a Web Worker before M3 and M4.
 - **Spike B, page map.** Emit `data-rr-key` on section and item containers in the `packages/pdf` primitives and `SectionShell`. Read the layout tree that `Document.onRender` receives, sum parent offsets and draw boxes over the canvas for Onyx, Azurill and Bronzor. Confirm that exported PDFs don't carry the keys, or that carrying them is harmless.
@@ -759,19 +759,19 @@ PRs: settings; shared resume; ATS checker.
 
 ## 8. Risks and spikes
 
-| Risk | Why | Mitigation |
-|---|---|---|
-| Main-thread rendering | Every edit re-renders the whole document with react-pdf on the main thread. Inline editing renders while typing; the gallery renders 15 documents; hover previews and Fit add more. | Spike A. Cache renders by data hash, render thumbnails at idle time, lengthen the debounce while typing, and move react-pdf to a Web Worker if p95 is too high (plausible because fonts load by URL, but unproven here). |
-| Page map relies on an internal react-pdf API | The layout tree passed to `Document.onRender` isn't public. Boxes are relative to parents. Field-level boxes would need a text-layout patch. | Keep the patched renderer pinned. Unit-test the box maths against fixtures. Stay item-level. If layout data is missing, the panel still works. |
-| Editing the letter body on the page | The page is a canvas, and HTML and PDF line breaks differ | Spike C at the start of M9. Fallback, with your OK (Q10): edit the body in the panel while the page updates. |
-| Sidebar Left/Right | The eight two-column templates hard-code their side, and three put the header in the sidebar | Mirror per template in M4. If a template can't mirror cleanly, its Left/Right control is hidden. |
-| Structured dates | Parsed dates print in a normalised format; the public API and MCP shape changes; 55 locales | Dual write, the `raw` fallback, a date format option (Q4), a changelog entry, tests per locale. |
-| Assistant behaviour change | Today's builder assistant applies edits directly by default; the new one only proposes | Server tool and prompt changes. MCP and API are untouched. |
-| Stage rollback | Older versions can't read `closed` | Reverse script shipped with the migration. |
-| E2E churn | Many specs select today's structure (XPath hops, `data-slot`, ids) | Update specs in the milestone that changes each screen; prefer role and label selectors. |
-| Translation volume | Hundreds of new strings across 55 catalogs, and Crowdin lag | English fallback until translated. The section-title messages stay untouched (the PDF catalog tooling throws if they change). |
-| Branch drift | 12 milestones, several XL | Q1. Merge `main` into the integration branch weekly. Additive migrations can land on `main` early. |
-| Self-hosting variations | No Redis, no SMTP, no AI keys | An explicit state for each (assistant unavailable, emails logged, AI features explained). |
+| Risk                                         | Why                                                                                                                                                                                 | Mitigation                                                                                                                                                                                                               |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Main-thread rendering                        | Every edit re-renders the whole document with react-pdf on the main thread. Inline editing renders while typing; the gallery renders 15 documents; hover previews and Fit add more. | Spike A. Cache renders by data hash, render thumbnails at idle time, lengthen the debounce while typing, and move react-pdf to a Web Worker if p95 is too high (plausible because fonts load by URL, but unproven here). |
+| Page map relies on an internal react-pdf API | The layout tree passed to `Document.onRender` isn't public. Boxes are relative to parents. Field-level boxes would need a text-layout patch.                                        | Keep the patched renderer pinned. Unit-test the box maths against fixtures. Stay item-level. If layout data is missing, the panel still works.                                                                           |
+| Editing the letter body on the page          | The page is a canvas, and HTML and PDF line breaks differ                                                                                                                           | Spike C at the start of M9. Fallback, with your OK (Q10): edit the body in the panel while the page updates.                                                                                                             |
+| Sidebar Left/Right                           | The eight two-column templates hard-code their side, and three put the header in the sidebar                                                                                        | Mirror per template in M4. If a template can't mirror cleanly, its Left/Right control is hidden.                                                                                                                         |
+| Structured dates                             | Parsed dates print in a normalised format; the public API and MCP shape changes; 55 locales                                                                                         | Dual write, the `raw` fallback, a date format option (Q4), a changelog entry, tests per locale.                                                                                                                          |
+| Assistant behaviour change                   | Today's builder assistant applies edits directly by default; the new one only proposes                                                                                              | Server tool and prompt changes. MCP and API are untouched.                                                                                                                                                               |
+| Stage rollback                               | Older versions can't read `closed`                                                                                                                                                  | Reverse script shipped with the migration.                                                                                                                                                                               |
+| E2E churn                                    | Many specs select today's structure (XPath hops, `data-slot`, ids)                                                                                                                  | Update specs in the milestone that changes each screen; prefer role and label selectors.                                                                                                                                 |
+| Translation volume                           | Hundreds of new strings across 55 catalogs, and Crowdin lag                                                                                                                         | English fallback until translated. The section-title messages stay untouched (the PDF catalog tooling throws if they change).                                                                                            |
+| Branch drift                                 | 12 milestones, several XL                                                                                                                                                           | Q1. Merge `main` into the integration branch weekly. Additive migrations can land on `main` early.                                                                                                                       |
+| Self-hosting variations                      | No Redis, no SMTP, no AI keys                                                                                                                                                       | An explicit state for each (assistant unavailable, emails logged, AI features explained).                                                                                                                                |
 
 ---
 
@@ -821,7 +821,7 @@ PRs: settings; shared resume; ATS checker.
 - `pnpm --filter web typecheck`, plus `pnpm --filter @reactive-resume/<package> typecheck` for each changed package.
 - `pnpm --filter web test`, plus the tests of each changed package (`ui`, `schema`, `resume`, `pdf`, `api`, `import`, `docx`, `mcp`).
 - `pnpm exec turbo boundaries`.
-- `pnpm exec biome check <changed paths>` to inspect without writing, then `pnpm check`, which writes changes (Biome `--write --unsafe`, markdownlint `--fix`).
+- `pnpm exec oxlint --deny-warnings <changed paths>` and `pnpm exec oxfmt --check <changed paths>` to inspect without writing, then `pnpm check`, which applies safe lint fixes and formatting.
 - `pnpm knip`.
 - `pnpm lingui:extract` when copy changes. It rewrites the PO catalogs and the PDF section-title catalog.
 - `pnpm db:generate`, then `pnpm db:migrate` against the local database, for milestones with schema changes. Review the generated SQL.
@@ -849,9 +849,9 @@ Measured on 28 Sep 2026 in Node (Apple silicon) with `renderToBuffer`, fonts war
 
 **Spike A, render cost (react-pdf layout and serialisation only, no pdf.js painting):**
 
-| Content | Onyx | Azurill | Bronzor | Gengar |
-|---|---|---|---|---|
-| 1 authored page (1–2 physical pages) | p50 41 ms, p95 52 ms | p50 39 ms, p95 43 ms | p50 37 ms, p95 39 ms | p50 31 ms, p95 33 ms |
+| Content                               | Onyx                 | Azurill              | Bronzor               | Gengar               |
+| ------------------------------------- | -------------------- | -------------------- | --------------------- | -------------------- |
+| 1 authored page (1–2 physical pages)  | p50 41 ms, p95 52 ms | p50 39 ms, p95 43 ms | p50 37 ms, p95 39 ms  | p50 31 ms, p95 33 ms |
 | 4 authored pages (4–6 physical pages) | p50 87 ms, p95 88 ms | p50 77 ms, p95 87 ms | p50 85 ms, p95 101 ms | p50 82 ms, p95 84 ms |
 
 Decisions:
@@ -1516,6 +1516,7 @@ Verification:
 Decided 29 Sep 2026: react-pdf is replaced by [Forme](https://www.formepdf.com/) 0.25.0 in a full cutover, and Semantic CSS is ported to it.
 
 The known 0.25.0 defects are accepted until upstream fixes them (the full list is in the log below):
+
 - Extracted text drops the second letter of ligatures ([#156](https://github.com/danmolitor/forme/issues/156)). This one gets a workaround: ligature features are switched off in the bundled font bytes.
 - Arabic, Hindi and Hebrew extracted text is scrambled.
 - A link inside part of a paragraph loses its annotation ([#157](https://github.com/danmolitor/forme/issues/157)).

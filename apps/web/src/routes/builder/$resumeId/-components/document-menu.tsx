@@ -13,6 +13,8 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { NotesSectionBuilder } from "../-sidebar/right/sections/notes";
+import { DocumentDetails } from "./document-details";
 import { useDialogStore } from "@/dialogs/store";
 import { useCurrentBuilderResumeSelector, useCurrentResume, usePatchResume } from "@/features/resume/builder/draft";
 import { DocumentMenuTrigger } from "@/features/resume/editor/chrome";
@@ -20,8 +22,6 @@ import { SaveStatus } from "@/features/resume/editor/save-status";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
 import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
-import { NotesSectionBuilder } from "../-sidebar/right/sections/notes";
-import { DocumentDetails } from "./document-details";
 
 type DocumentDialog = "notes" | "details" | null;
 

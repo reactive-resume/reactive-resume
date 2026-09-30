@@ -1,5 +1,5 @@
-import type { CustomSectionType } from "@reactive-resume/schema/resume/data";
 import type { PdfCheck, PdfCheckContext } from "../types";
+import type { CustomSectionType } from "@reactive-resume/schema/resume/data";
 import { check, failIf, hasNoText, skip } from "./helpers";
 import { THRESHOLDS } from "./thresholds";
 

@@ -1,10 +1,10 @@
+import type { EditorSelection } from "../editor/store";
 import type { SemanticNode } from "@reactive-resume/resume/stylesheet/registry";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { EditorSelection } from "../editor/store";
 import { t } from "@lingui/core/macro";
 import { escapeCssString } from "@reactive-resume/resume/stylesheet/registry";
-import { getSectionTitle } from "@/libs/resume/section";
 import { describeEntry, findEntry, getSectionObject, resolveSection } from "../editor/write/model";
+import { getSectionTitle } from "@/libs/resume/section";
 
 /** One element a stylesheet can aim at: its selector, and a name a person recognises. */
 export type StyleTarget = { selector: string; label: string };

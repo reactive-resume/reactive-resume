@@ -1,7 +1,7 @@
 import type { WriteSection } from "./model";
-import { useResumeStore } from "@/features/resume/builder/draft";
 import { useEditorStore } from "../store";
 import { createEntry, getEntries } from "./model";
+import { useResumeStore } from "@/features/resume/builder/draft";
 
 /** Opens an entry: expands its section, selects it (outlining it on the page) and focuses a new draft. */
 export function openEntry(sectionId: string, entryId: string, options: { focus?: boolean } = {}) {

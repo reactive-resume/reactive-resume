@@ -1,7 +1,7 @@
 import type { SectionTitleResolver } from "@reactive-resume/pdf/section-title";
 import { setupI18n } from "@lingui/core";
-import { getLocaleMessages, resolveLocale } from "@/libs/locale";
 import { createSectionTitleResolver } from "./section-title";
+import { getLocaleMessages, resolveLocale } from "@/libs/locale";
 
 const resolverCache = new Map<string, Promise<SectionTitleResolver>>();
 

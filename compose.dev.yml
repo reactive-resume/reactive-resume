@@ -39,7 +39,13 @@ services:
       seaweedfs_create_bucket:
         condition: service_completed_successfully
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:' + (process.env.SERVER_PORT ?? 3001) + '/api/health').then((r) => { if (!r.ok) process.exit(1); }).catch(() => process.exit(1));"]
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:' + (process.env.SERVER_PORT ?? 3001) + '/api/health').then((r) => { if (!r.ok) process.exit(1); }).catch(() => process.exit(1));",
+        ]
       start_period: 30s
       interval: 30s
       timeout: 10s

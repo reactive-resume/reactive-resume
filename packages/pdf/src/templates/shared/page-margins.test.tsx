@@ -90,6 +90,7 @@ describe("physical page margins (#3337, #3175)", () => {
 				if (!raster) throw new Error("Missing rasterized PDF page");
 				const x = right ? raster.width - 4 : 3;
 				const y = bottom ? raster.height - 4 : 3;
+				// oxlint-disable-next-line unicorn/no-useless-spread -- Convert the Uint8Array pixel to a plain RGB array for assertions.
 				return [...raster.data.slice((y * raster.width + x) * 4, (y * raster.width + x) * 4 + 3)];
 			};
 			const white = [255, 255, 255];

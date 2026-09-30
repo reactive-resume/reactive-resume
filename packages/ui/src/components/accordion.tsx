@@ -10,7 +10,7 @@ function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
 	return (
 		<AccordionPrimitive.Item
 			data-slot="accordion-item"
-			className={cn("not-last:border-line not-last:border-b", className)}
+			className={cn("not-last:border-b not-last:border-line", className)}
 			{...props}
 		/>
 	);
@@ -22,7 +22,7 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
 			<AccordionPrimitive.Trigger
 				data-slot="accordion-trigger"
 				className={cn(
-					"group/accordion-trigger relative flex flex-1 items-center justify-between gap-2 rounded-md py-2.5 text-start font-medium text-ink text-sm aria-disabled:pointer-events-none aria-disabled:text-ink-3 **:data-[slot=accordion-trigger-icon]:ms-auto **:data-[slot=accordion-trigger-icon]:text-ink-3",
+					"group/accordion-trigger relative flex flex-1 items-center justify-between gap-2 rounded-md py-2.5 text-start text-sm font-medium text-ink aria-disabled:pointer-events-none aria-disabled:text-ink-3 **:data-[slot=accordion-trigger-icon]:ms-auto **:data-[slot=accordion-trigger-icon]:text-ink-3",
 					className,
 				)}
 				{...props}
@@ -42,7 +42,7 @@ function AccordionContent({ className, children, ...props }: AccordionPrimitive.
 	return (
 		<AccordionPrimitive.Panel
 			data-slot="accordion-content"
-			className="h-(--accordion-panel-height) overflow-hidden text-sm transition-[height] duration-standard ease-enter data-ending-style:h-0 data-starting-style:h-0 data-ending-style:duration-[calc(var(--d2)*0.7)]"
+			className="h-(--accordion-panel-height) overflow-hidden text-sm transition-[height] duration-standard ease-enter data-ending-style:h-0 data-ending-style:duration-[calc(var(--d2)*0.7)] data-starting-style:h-0"
 			{...props}
 		>
 			<div className={cn("pt-0 pb-2.5 [&_p:not(:last-child)]:mb-4", className)}>{children}</div>

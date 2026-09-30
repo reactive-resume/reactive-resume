@@ -1,5 +1,5 @@
-import type { PropsWithChildren } from "react";
 import type { ResolvedTheme, Theme } from "@/libs/theme";
+import type { PropsWithChildren } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { createContext, use, useEffect, useSyncExternalStore } from "react";
 import { resolveTheme, setThemeCookie, systemDarkQuery } from "@/libs/theme";

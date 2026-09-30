@@ -13,10 +13,10 @@ import { Slider } from "@reactive-resume/ui/components/slider";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
-import { templates } from "@/dialogs/resume/template/data";
-import { useResumeData, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useEditorStore } from "../store";
 import { useTemplateThumbnail } from "./thumbnails";
+import { templates } from "@/dialogs/resume/template/data";
+import { useResumeData, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 
 type Filter = "all" | "one" | "two" | "ats";
 
@@ -110,14 +110,14 @@ export function TemplateGroup({ layout = "grid" }: TemplateGroupProps) {
 						{option.label}
 					</Radio.Root>
 				))}
-				<span className="ms-auto text-ink-3 text-xs">
+				<span className="ms-auto text-xs text-ink-3">
 					<Trans>
 						{shown.length} of {TEMPLATE_IDS.length} shown
 					</Trans>
 				</span>
 			</RadioGroup>
 
-			{/* biome-ignore lint/a11y/noStaticElementInteractions: listens for Esc and pointer exit from the cards; each card is a button. */}
+			{/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- listens for Esc and pointer exit from the cards; each card is a button. */}
 			<div
 				className={
 					layout === "grid"
@@ -198,8 +198,8 @@ function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
 					</span>
 				)}
 			</span>
-			<span className="font-medium text-sm leading-4">{metadata.name}</span>
-			<span className="text-ink-3 text-xs leading-4">{layoutTags(id)}</span>
+			<span className="text-sm leading-4 font-medium">{metadata.name}</span>
+			<span className="text-xs leading-4 text-ink-3">{layoutTags(id)}</span>
 		</button>
 	);
 }
@@ -219,7 +219,7 @@ function SidebarPanel({ data, template }: SidebarPanelProps) {
 
 	return (
 		<div className="grid gap-3 rounded-lg border border-line bg-bg p-3">
-			<p id={titleId} className="font-medium text-sm">
+			<p id={titleId} className="text-sm font-medium">
 				<Trans>Sidebar</Trans>
 			</p>
 			<SegmentedControl
@@ -247,7 +247,7 @@ function SidebarPanel({ data, template }: SidebarPanelProps) {
 					<span id={widthId}>
 						<Trans>Width</Trans>
 					</span>
-					<span className="font-mono text-ink-2 text-xs">{width}%</span>
+					<span className="font-mono text-xs text-ink-2">{width}%</span>
 				</div>
 				<Slider
 					aria-labelledby={`${titleId} ${widthId}`}

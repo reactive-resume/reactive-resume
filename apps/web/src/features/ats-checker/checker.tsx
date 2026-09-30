@@ -1,7 +1,7 @@
-import type { PdfAtsReport, PdfCategory } from "@reactive-resume/resume/ats-pdf";
-import type { CSSProperties } from "react";
 import type { ExtractProgress } from "./extract-client";
 import type { AtsCheckResult } from "./run-ats-check";
+import type { PdfAtsReport, PdfCategory } from "@reactive-resume/resume/ats-pdf";
+import type { CSSProperties } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useNavigate } from "@tanstack/react-router";
@@ -13,13 +13,13 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Tabs, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { cn } from "@reactive-resume/utils/style";
-import { getOrpcErrorMessage } from "@/libs/error-message";
-import { ENTER_CLASS, POP_CLASS, stagger } from "@/libs/motion";
-import { client } from "@/libs/orpc/client";
 import { PdfPasswordRequiredError, PdfTooLargeError, PdfUnreadableError } from "./extract-client";
 import { getPdfCategoryDescription, getPdfCategoryLabel, getPdfFindingMessage } from "./messages";
 import { savePendingImport, takePendingImport } from "./pending-import";
 import { runAtsCheck } from "./run-ats-check";
+import { getOrpcErrorMessage } from "@/libs/error-message";
+import { ENTER_CLASS, POP_CLASS, stagger } from "@/libs/motion";
+import { client } from "@/libs/orpc/client";
 
 // PDF.js and the importers load only once there is a file, so the page's first screen stays light and prerenderable.
 const PdfViewer = lazy(() =>
@@ -122,7 +122,7 @@ export function AtsChecker({ signedIn, importPending }: AtsCheckerProps) {
 	// Each state fades in as it replaces the last. Opacity only: a translate here would make this wrapper the
 	// containing block for the result's fixed mobile bar while it animates.
 	return (
-		<div key={state.name} className="starting:opacity-0 transition-opacity duration-standard ease-enter">
+		<div key={state.name} className="transition-opacity duration-standard ease-enter starting:opacity-0">
 			{state.name === "importing" ? (
 				<p role="status" className="flex items-center justify-center gap-2 py-24 text-ink-2">
 					<Spinner decorative className="size-4" />
@@ -177,10 +177,10 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 	return (
 		<div className="mx-auto grid w-full max-w-[640px] gap-5.5 px-4 py-16 sm:py-18">
 			<div className="grid justify-items-center gap-2.5 text-center">
-				<h1 className="font-display font-medium text-[34px] leading-10 sm:text-[44px] sm:leading-[48px]">
+				<h1 className="font-display text-[34px] leading-10 font-medium sm:text-[44px] sm:leading-[48px]">
 					<Trans>Can software read your resume?</Trans>
 				</h1>
-				<p className="max-w-[520px] text-base text-ink-2 leading-[25px]">
+				<p className="max-w-[520px] text-base leading-[25px] text-ink-2">
 					<Trans>
 						Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order,
 						and how to fix it. Free, no account needed.
@@ -189,10 +189,10 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 			</div>
 
 			{/* A drop zone, not a form: the card takes a dropped file; its buttons take the keyboard. */}
-			{/* biome-ignore lint/a11y/noStaticElementInteractions: dropping is pointer-only; "choose a file" is the keyboard path. */}
+			{/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- dropping is pointer-only; "choose a file" is the keyboard path. */}
 			<div
 				className={cn(
-					"grid justify-items-center gap-2.5 rounded-[14px] border-[1.5px] border-line-2 border-dashed bg-surface p-9 text-center transition-colors duration-quick",
+					"grid justify-items-center gap-2.5 rounded-[14px] border-[1.5px] border-dashed border-line-2 bg-surface p-9 text-center transition-colors duration-quick",
 					dragging && "border-accent bg-accent-soft",
 				)}
 				onDragOver={(event) => {
@@ -210,12 +210,12 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 				<Icon name="upload_file" size={36} className="text-accent-text" />
 				<button
 					type="button"
-					className="font-semibold text-base underline-offset-2 hover:underline"
+					className="text-base font-semibold underline-offset-2 hover:underline"
 					onClick={() => input.current?.click()}
 				>
 					<Trans>Drop a PDF here or choose a file</Trans>
 				</button>
-				<span className="text-ink-3 text-sm">
+				<span className="text-sm text-ink-3">
 					<Trans>Up to 25 MB · checked in your browser, never uploaded</Trans>
 				</span>
 				<Button className="mt-1.5" onClick={() => void sample()}>
@@ -237,13 +237,13 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 			</div>
 
 			{(error ?? sampleError) && (
-				<p role="alert" className="rounded-lg bg-danger-soft px-3 py-2.5 text-danger-text text-sm">
+				<p role="alert" className="rounded-lg bg-danger-soft px-3 py-2.5 text-sm text-danger-text">
 					{error ?? sampleError}
 				</p>
 			)}
 
 			<div className="grid gap-1.5">
-				<label htmlFor={id} className="font-medium text-[13px]">
+				<label htmlFor={id} className="text-[13px] font-medium">
 					<Trans>
 						Job posting <span className="font-normal text-ink-3">· optional, adds a keyword match</span>
 					</Trans>
@@ -258,12 +258,12 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 				/>
 			</div>
 
-			<section aria-labelledby={`${id}-checks`} className="mt-8 grid gap-4 border-line border-t pt-8">
+			<section aria-labelledby={`${id}-checks`} className="mt-8 grid gap-4 border-t border-line pt-8">
 				<div className="grid gap-1.5">
-					<h2 id={`${id}-checks`} className="font-display font-medium text-[22px] leading-7">
+					<h2 id={`${id}-checks`} className="font-display text-[22px] leading-7 font-medium">
 						<Trans>What it checks</Trans>
 					</h2>
-					<p className="text-ink-2 text-sm leading-[21px]">
+					<p className="text-sm leading-[21px] text-ink-2">
 						<Trans>
 							Applicant tracking systems turn your PDF into plain text before anyone reads it. The checker does the
 							same, with the PDF.js library in your browser, then scores how much of your resume survives: 0 to 100,
@@ -274,8 +274,8 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 				<dl className="grid gap-x-6 gap-y-3.5 sm:grid-cols-2">
 					{checkedCategories.map((category) => (
 						<div key={category} className="grid gap-0.5">
-							<dt className="font-semibold text-sm">{getPdfCategoryLabel(category)}</dt>
-							<dd className="text-[13px] text-ink-2 leading-[19px]">{getPdfCategoryDescription(category)}</dd>
+							<dt className="text-sm font-semibold">{getPdfCategoryLabel(category)}</dt>
+							<dd className="text-[13px] leading-[19px] text-ink-2">{getPdfCategoryDescription(category)}</dd>
 						</div>
 					))}
 				</dl>
@@ -291,7 +291,7 @@ function Progress({ file, step }: { file: File; step: number }) {
 	return (
 		<div className="grid place-items-center px-4 py-24">
 			<div role="status" className="grid w-full max-w-[420px] gap-3.5">
-				<b className="truncate font-semibold text-[15px]">
+				<b className="truncate text-[15px] font-semibold">
 					<Trans>Checking {file.name}</Trans>
 				</b>
 				{steps.map((label, index) => (
@@ -393,13 +393,13 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 							} as CSSProperties
 						}
 					>
-						<span className="grid size-[70px] place-items-center rounded-full bg-surface font-display font-medium text-[26px]">
+						<span className="grid size-[70px] place-items-center rounded-full bg-surface font-display text-[26px] font-medium">
 							{report.score}
 						</span>
 					</div>
 					<div className="grid gap-1">
-						<b className="font-semibold text-base">{verdict(report.score)}</b>
-						<span className="text-[13px] text-ink-2 leading-[19px]">
+						<b className="text-base font-semibold">{verdict(report.score)}</b>
+						<span className="text-[13px] leading-[19px] text-ink-2">
 							{issues > 0 ? (
 								<Plural value={issues} one="# issue could cost you a match." other="# issues could cost you a match." />
 							) : (
@@ -411,7 +411,7 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 				</div>
 
 				{report.document.truncated && (
-					<p className="text-ink-3 text-xs">
+					<p className="text-xs text-ink-3">
 						<Trans>Only the first {report.document.pageCount} pages were checked.</Trans>
 					</p>
 				)}
@@ -424,13 +424,13 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 								<div
 									key={row.key}
 									style={stagger(index)}
-									className={cn(ENTER_CLASS, index > 0 && "border-line border-t")}
+									className={cn(ENTER_CLASS, index > 0 && "border-t border-line")}
 								>
 									<button
 										type="button"
 										aria-expanded={expanded}
 										onClick={() => setOpen(expanded ? null : row.key)}
-										className="flex h-12 w-full items-center gap-2.5 px-3.5 text-start font-medium text-sm transition-colors duration-quick hover:bg-hover"
+										className="flex h-12 w-full items-center gap-2.5 px-3.5 text-start text-sm font-medium transition-colors duration-quick hover:bg-hover"
 									>
 										<Icon
 											name={
@@ -450,7 +450,7 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 											)}
 										/>
 										{row.title}
-										<span className="text-ink-3 text-xs">{row.count}</span>
+										<span className="text-xs text-ink-3">{row.count}</span>
 										<Icon
 											name="expand_more"
 											size={20}
@@ -462,7 +462,7 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 									</button>
 									<Collapsible open={expanded}>
 										<CollapsibleContent>
-											<div className="px-3.5 ps-11 pb-3.5 text-[13px] text-ink-2 leading-[19px]">{row.body}</div>
+											<div className="px-3.5 ps-11 pb-3.5 text-[13px] leading-[19px] text-ink-2">{row.body}</div>
 										</CollapsibleContent>
 									</Collapsible>
 								</div>
@@ -471,11 +471,11 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 					</div>
 				)}
 
-				<div className="grid gap-2.5 rounded-xl bg-accent-soft p-4 max-lg:fixed max-lg:inset-x-0 max-lg:bottom-0 max-lg:z-20 max-lg:rounded-none max-lg:border-line max-lg:border-t max-lg:bg-surface max-lg:pb-[max(1rem,env(safe-area-inset-bottom))]">
-					<b className="font-semibold text-[15px] max-lg:hidden">
+				<div className="grid gap-2.5 rounded-xl bg-accent-soft p-4 max-lg:fixed max-lg:inset-x-0 max-lg:bottom-0 max-lg:z-20 max-lg:rounded-none max-lg:border-t max-lg:border-line max-lg:bg-surface max-lg:pb-[max(1rem,env(safe-area-inset-bottom))]">
+					<b className="text-[15px] font-semibold max-lg:hidden">
 						<Trans>Fix these in a few minutes</Trans>
 					</b>
-					<span className="text-[13px] text-ink-2 leading-[19px] max-lg:hidden">
+					<span className="text-[13px] leading-[19px] text-ink-2 max-lg:hidden">
 						<Trans>Import this file into a free Reactive Resume. Every issue is waiting for you in Check.</Trans>
 					</span>
 					<Button className="h-10" onClick={onFix}>
@@ -483,7 +483,7 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 					</Button>
 				</div>
 
-				<button type="button" className="w-fit text-ink-2 text-sm underline underline-offset-2" onClick={onReset}>
+				<button type="button" className="w-fit text-sm text-ink-2 underline underline-offset-2" onClick={onReset}>
 					<Trans>Check another file</Trans>
 				</button>
 			</aside>
@@ -520,7 +520,7 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 						hidden={lens !== "text"}
 						className={cn(
 							ENTER_CLASS,
-							"w-full max-w-[612px] whitespace-pre-wrap rounded-[10px] border border-line bg-raised px-7 py-6 font-mono text-[13px] leading-[21px]",
+							"w-full max-w-[612px] rounded-[10px] border border-line bg-raised px-7 py-6 font-mono text-[13px] leading-[21px] whitespace-pre-wrap",
 						)}
 					>
 						{result.fullText || t`No text could be read from this file.`}

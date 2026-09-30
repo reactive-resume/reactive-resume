@@ -1,3 +1,5 @@
+import type { SemanticCssColorToken } from "./color-tokens";
+import type { StyleTarget } from "./targets";
 import type {
 	AuthoredPageContext,
 	BaseSettingsSnapshot,
@@ -6,8 +8,6 @@ import type {
 	StyleProgram,
 } from "@reactive-resume/resume/stylesheet";
 import type { StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
-import type { SemanticCssColorToken } from "./color-tokens";
-import type { StyleTarget } from "./targets";
 
 export type SemanticCssEditorMetadata = {
 	semanticTree: SemanticNode;

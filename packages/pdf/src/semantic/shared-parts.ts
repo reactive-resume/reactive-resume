@@ -1,9 +1,9 @@
-import type { Template } from "@reactive-resume/schema/templates";
 import type {
 	TemplateSemanticManifest,
 	TemplateSemanticPart,
 	TemplateSemanticPrimitivePart,
 } from "./template-manifest";
+import type { Template } from "@reactive-resume/schema/templates";
 
 const standardRegions = [
 	{ name: "header", placement: "main", origins: [] },

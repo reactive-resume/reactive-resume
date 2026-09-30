@@ -1,6 +1,6 @@
+import type { Style } from "../forme/style-types";
 import type { ResumeData, StyleIntent, StyleRule, StyleSlot } from "@reactive-resume/schema/resume/data";
 import type { SemanticStylesheet, StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
-import type { Style } from "../forme/style-types";
 import {
 	escapeCssComment,
 	escapeCssString,

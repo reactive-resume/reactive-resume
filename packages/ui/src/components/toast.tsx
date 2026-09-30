@@ -35,7 +35,7 @@ function Toast({ className, ...props }: ToastPrimitive.Root.Props) {
 		<ToastPrimitive.Root
 			data-slot="toast"
 			className={cn(
-				"group/toast pointer-events-auto flex w-fit max-w-[min(560px,100%)] select-none items-center rounded-lg bg-ink text-bg shadow-e3 transition-[opacity,translate,transform] duration-emphasized ease-enter [grid-area:1/1] data-[swipe-direction=right]:data-ending-style:translate-x-[calc(var(--toast-swipe-movement-x)+100%)] data-[swipe-direction=down]:data-ending-style:translate-y-[calc(var(--toast-swipe-movement-y)+100%)] data-[swipe-direction=right]:data-ending-style:translate-y-0 data-ending-style:translate-y-2.5 data-limited:translate-y-2.5 data-starting-style:translate-y-2.5 data-ending-style:opacity-0 data-limited:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--d3)*0.7)] data-limited:duration-[calc(var(--d3)*0.7)]",
+				"group/toast pointer-events-auto flex w-fit max-w-[min(560px,100%)] items-center rounded-lg bg-ink text-bg shadow-e3 transition-[opacity,translate,transform] duration-emphasized ease-enter select-none [grid-area:1/1] data-ending-style:translate-y-2.5 data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d3)*0.7)] data-limited:translate-y-2.5 data-limited:opacity-0 data-limited:duration-[calc(var(--d3)*0.7)] data-starting-style:translate-y-2.5 data-starting-style:opacity-0 data-[swipe-direction=down]:data-ending-style:translate-y-[calc(var(--toast-swipe-movement-y)+100%)] data-[swipe-direction=right]:data-ending-style:translate-x-[calc(var(--toast-swipe-movement-x)+100%)] data-[swipe-direction=right]:data-ending-style:translate-y-0",
 				className,
 			)}
 			{...props}
@@ -57,7 +57,7 @@ function ToastTitle({ className, ...props }: ToastPrimitive.Title.Props) {
 	return (
 		<ToastPrimitive.Title
 			data-slot="toast-title"
-			className={cn("font-semibold text-sm empty:hidden", className)}
+			className={cn("text-sm font-semibold empty:hidden", className)}
 			{...props}
 		/>
 	);
@@ -67,7 +67,7 @@ function ToastDescription({ className, ...props }: ToastPrimitive.Description.Pr
 	return (
 		<ToastPrimitive.Description
 			data-slot="toast-description"
-			className={cn("font-medium text-sm empty:hidden", className)}
+			className={cn("text-sm font-medium empty:hidden", className)}
 			{...props}
 		/>
 	);
@@ -79,7 +79,7 @@ function ToastAction({ className, ...props }: ToastPrimitive.Action.Props) {
 		<ToastPrimitive.Action
 			data-slot="toast-action"
 			className={cn(
-				"-my-1 shrink-0 rounded-sm px-1 py-1 font-semibold text-sm underline underline-offset-3 transition-opacity hover:opacity-80",
+				"-my-1 shrink-0 rounded-sm px-1 py-1 text-sm font-semibold underline underline-offset-3 transition-opacity hover:opacity-80",
 				className,
 			)}
 			{...props}

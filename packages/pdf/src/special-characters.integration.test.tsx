@@ -44,31 +44,35 @@ async function readPdf(data: ResumeData) {
 }
 
 describe("special characters in exported PDFs (#3106)", () => {
-	it("embeds non-breaking hyphens in plain and rich text without corrupting adjacent letters", {
-		timeout: 30_000,
-	}, async () => {
-		const data = fixture();
-		data.metadata.typography.body.fontFamily = "IBM Plex Serif";
-		data.metadata.typography.body.fontWeights = ["400", "600"];
-		data.metadata.typography.heading.fontFamily = "IBM Plex Serif";
-		data.metadata.typography.heading.fontWeights = ["600"];
-		data.basics.headline = "Data‑Driven Decision Making";
-		data.summary.content = "<p>AI‑driven hands‑on go‑to‑market non‑SaaS e‑mobility</p>";
+	it(
+		"embeds non-breaking hyphens in plain and rich text without corrupting adjacent letters",
+		{
+			timeout: 30_000,
+		},
+		async () => {
+			const data = fixture();
+			data.metadata.typography.body.fontFamily = "IBM Plex Serif";
+			data.metadata.typography.body.fontWeights = ["400", "600"];
+			data.metadata.typography.heading.fontFamily = "IBM Plex Serif";
+			data.metadata.typography.heading.fontWeights = ["600"];
+			data.basics.headline = "Data‑Driven Decision Making";
+			data.summary.content = "<p>AI‑driven hands‑on go‑to‑market non‑SaaS e‑mobility</p>";
 
-		const { glyphs } = await readPdf(data);
-		// The glyph stream, not pdf.js's text: Forme 0.25 draws the word after a fallback-font glyph ~1.4pt late,
-		// which pdf.js reads as a space.
-		const drawn = glyphs
-			.map((glyph) => glyph.unicode)
-			.join("")
-			.replaceAll(" ", "");
-		expect(drawn).toContain(data.basics.headline.replaceAll(" ", ""));
-		expect(drawn).toContain("AI‑driven hands‑on go‑to‑market non‑SaaS e‑mobility".replaceAll(" ", ""));
-		const hyphens = glyphs.filter((glyph) => glyph.unicode === "‑");
-		expect(hyphens).toHaveLength(7);
-		for (const glyph of hyphens) {
-			expect(glyph.isInFont).toBe(true);
-			expect(glyph.width).toBeGreaterThan(0);
-		}
-	});
+			const { glyphs } = await readPdf(data);
+			// The glyph stream, not pdf.js's text: Forme 0.25 draws the word after a fallback-font glyph ~1.4pt late,
+			// which pdf.js reads as a space.
+			const drawn = glyphs
+				.map((glyph) => glyph.unicode)
+				.join("")
+				.replaceAll(" ", "");
+			expect(drawn).toContain(data.basics.headline.replaceAll(" ", ""));
+			expect(drawn).toContain("AI‑driven hands‑on go‑to‑market non‑SaaS e‑mobility".replaceAll(" ", ""));
+			const hyphens = glyphs.filter((glyph) => glyph.unicode === "‑");
+			expect(hyphens).toHaveLength(7);
+			for (const glyph of hyphens) {
+				expect(glyph.isInFont).toBe(true);
+				expect(glyph.width).toBeGreaterThan(0);
+			}
+		},
+	);
 });

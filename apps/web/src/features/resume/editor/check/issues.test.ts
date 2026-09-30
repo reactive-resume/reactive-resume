@@ -1,5 +1,5 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { CheckIssue } from "./issues";
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { beforeAll, describe, expect, it } from "vitest";
 import { i18n } from "@lingui/core";
 import { produce } from "immer";

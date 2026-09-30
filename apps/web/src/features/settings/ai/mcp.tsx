@@ -17,7 +17,7 @@ export function McpSection() {
 				<Trans>Let AI clients like Claude or Cursor read and edit your resumes, using an API key above.</Trans>
 			}
 		>
-			<div className="flex h-[38px] items-center rounded-lg border border-line-2 bg-raised ps-3 pe-1.5 font-medium font-mono text-[13px]">
+			<div className="flex h-[38px] items-center rounded-lg border border-line-2 bg-raised ps-3 pe-1.5 font-mono text-[13px] font-medium">
 				<span className="min-w-0 flex-1 truncate">{address}</span>
 				<Button
 					size="sm"
@@ -36,7 +36,7 @@ export function McpSection() {
 				href="https://docs.rxresu.me/guides/using-the-mcp-server"
 				target="_blank"
 				rel="noopener noreferrer"
-				className="w-fit text-ink-2 text-sm underline underline-offset-2"
+				className="w-fit text-sm text-ink-2 underline underline-offset-2"
 			>
 				<Trans>Setup guide</Trans>
 			</a>

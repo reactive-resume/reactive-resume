@@ -11,6 +11,11 @@ import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { Tabs, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { CustomStylesSectionBuilder } from "../-sidebar/right/sections/custom-styles";
+import { DesignSectionBuilder } from "../-sidebar/right/sections/design";
+import { LayoutSectionBuilder } from "../-sidebar/right/sections/layout";
+import { PageSectionBuilder } from "../-sidebar/right/sections/page";
+import { TypographySectionBuilder } from "../-sidebar/right/sections/typography";
 import { useIsResumeLocked, useResumeData, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { ColorGroup, PageGroup, TypeGroup } from "@/features/resume/editor/design/style-groups";
 import { TemplateGroup } from "@/features/resume/editor/design/template-group";
@@ -18,11 +23,6 @@ import { OfflineBanner } from "@/features/resume/editor/save-status";
 import { getScrollBehavior } from "@/features/resume/editor/write/reveal";
 import { D2 } from "@/libs/motion";
 import { getSectionTitle } from "@/libs/resume/section";
-import { CustomStylesSectionBuilder } from "../-sidebar/right/sections/custom-styles";
-import { DesignSectionBuilder } from "../-sidebar/right/sections/design";
-import { LayoutSectionBuilder } from "../-sidebar/right/sections/layout";
-import { PageSectionBuilder } from "../-sidebar/right/sections/page";
-import { TypographySectionBuilder } from "../-sidebar/right/sections/typography";
 
 const GROUPS = [
 	{ id: "template", label: () => t`Template` },
@@ -35,7 +35,7 @@ const GROUPS = [
 function Group({ id, title, children }: { id: string; title: ReactNode; children: ReactNode }) {
 	return (
 		<section id={`design-${id}`} aria-labelledby={`design-${id}-title`} className="grid scroll-mt-14 gap-3 px-4 py-5">
-			<h2 id={`design-${id}-title`} className="font-semibold text-[15px]">
+			<h2 id={`design-${id}-title`} className="text-[15px] font-semibold">
 				{title}
 			</h2>
 			{children}
@@ -76,7 +76,7 @@ export function DesignPanel() {
 		<div>
 			<nav
 				aria-label={t`Design groups`}
-				className="sticky top-0 z-10 flex gap-1 overflow-x-auto border-line border-b bg-surface px-3 py-2"
+				className="sticky top-0 z-10 flex gap-1 overflow-x-auto border-b border-line bg-surface px-3 py-2"
 			>
 				{GROUPS.map((group) => (
 					<button
@@ -126,7 +126,7 @@ export function DesignSheet() {
 		<section
 			aria-label={t`Design`}
 			className={cn(
-				"absolute inset-x-0 bottom-0 z-20 flex h-[calc(100%-1rem)] starting:translate-y-full flex-col rounded-t-2xl border-line border-t bg-surface shadow-e3 transition-[translate] duration-emphasized ease-enter [container-type:size]",
+				"[container-type:size] absolute inset-x-0 bottom-0 z-20 flex h-[calc(100%-1rem)] flex-col rounded-t-2xl border-t border-line bg-surface shadow-e3 transition-[translate] duration-emphasized ease-enter starting:translate-y-full",
 				!expanded && "translate-y-[calc(50%-0.5rem)]",
 			)}
 		>
@@ -231,7 +231,7 @@ function AdvancedGroup({ open, onOpenChange }: AdvancedGroupProps) {
 
 	return (
 		<Collapsible id="design-advanced" open={open} onOpenChange={onOpenChange} className="scroll-mt-14 px-4 py-5">
-			<CollapsibleTrigger className="group/advanced flex w-full cursor-pointer items-center justify-between text-start font-semibold text-[15px]">
+			<CollapsibleTrigger className="group/advanced flex w-full cursor-pointer items-center justify-between text-start text-[15px] font-semibold">
 				<Trans>Advanced</Trans>
 				<Icon
 					name="expand_more"
@@ -242,7 +242,7 @@ function AdvancedGroup({ open, onOpenChange }: AdvancedGroupProps) {
 			<CollapsibleContent>
 				<div className="@container grid gap-6 pt-4">
 					<div className="grid gap-1.5">
-						<label htmlFor="design-date-format" className="font-medium text-[13px]">
+						<label htmlFor="design-date-format" className="text-[13px] font-medium">
 							<Trans>Date format</Trans>
 						</label>
 						<NativeSelect
@@ -272,7 +272,7 @@ function AdvancedGroup({ open, onOpenChange }: AdvancedGroupProps) {
 							aria-labelledby={`design-advanced-${type}-title`}
 							className="grid scroll-mt-14 gap-3"
 						>
-							<h3 id={`design-advanced-${type}-title`} className="font-semibold text-[13px] text-ink-2">
+							<h3 id={`design-advanced-${type}-title`} className="text-[13px] font-semibold text-ink-2">
 								{getSectionTitle(type)}
 							</h3>
 							<Section />

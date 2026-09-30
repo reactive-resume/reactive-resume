@@ -8,10 +8,10 @@ import { getProposalState } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
-import { useIsResumeLocked } from "@/features/resume/builder/draft";
-import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { useEditorStore } from "../store";
 import { acceptResumeProposals } from "./proposals";
+import { useIsResumeLocked } from "@/features/resume/builder/draft";
+import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 
 /** The visible text of a passage's HTML, for the card. */
 const passageText = (html: string) =>
@@ -102,8 +102,8 @@ export function ChangeSet({ proposals, states, locked, onAccept, onReject, onSug
 
 	return (
 		<section aria-labelledby={headingId} className="overflow-hidden rounded-xl border border-line">
-			<header className="flex min-h-11 items-center justify-between gap-2 border-line border-b bg-bg px-3 py-2">
-				<h3 id={headingId} className="font-semibold text-sm">
+			<header className="flex min-h-11 items-center justify-between gap-2 border-b border-line bg-bg px-3 py-2">
+				<h3 id={headingId} className="text-sm font-semibold">
 					{title ?? <Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />}
 				</h3>
 				{pending.length > 1 && (
@@ -131,7 +131,7 @@ export function ChangeSet({ proposals, states, locked, onAccept, onReject, onSug
 				))}
 			</ol>
 
-			<p className="border-line border-t px-3 py-2 text-ink-3 text-xs">
+			<p className="border-t border-line px-3 py-2 text-xs text-ink-3">
 				<Trans>A accepts and R rejects the focused edit. ↑ and ↓ move between edits.</Trans>
 			</p>
 		</section>
@@ -158,7 +158,7 @@ function ProposalItem(props: ProposalItemProps) {
 	return (
 		<li
 			data-proposal-index={index}
-			// Roving focus: one edit in the tab order, ↑ and ↓ move between them.
+			// oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Roving focus: one edit in the tab order, ↑ and ↓ move between them.
 			tabIndex={focusable ? 0 : -1}
 			aria-labelledby={labelId}
 			onFocus={props.onFocus}
@@ -167,7 +167,7 @@ function ProposalItem(props: ProposalItemProps) {
 			<div className="flex items-center gap-2">
 				<span
 					aria-hidden="true"
-					className="grid size-5 shrink-0 place-items-center rounded-full bg-accent font-bold text-[11px] text-on-accent"
+					className="grid size-5 shrink-0 place-items-center rounded-full bg-accent text-[11px] font-bold text-on-accent"
 				>
 					{number}
 				</span>
@@ -182,7 +182,7 @@ function ProposalItem(props: ProposalItemProps) {
 			<div className="grid gap-1.5 text-[13px] leading-[19px]">
 				<del className="text-ink-3">{passageText(proposal.before)}</del>
 				<ins className="rounded-[3px] bg-accent-soft px-1 py-0.5 no-underline">{passageText(proposal.after)}</ins>
-				{proposal.why && <span className="text-ink-2 text-xs">{proposal.why}</span>}
+				{proposal.why && <span className="text-xs text-ink-2">{proposal.why}</span>}
 			</div>
 
 			{state === "pending" ? (
@@ -199,7 +199,7 @@ function ProposalItem(props: ProposalItemProps) {
 					key={state}
 					className={cn(
 						ENTER_CLASS,
-						"flex min-h-7 items-center gap-2 font-medium text-xs",
+						"flex min-h-7 items-center gap-2 text-xs font-medium",
 						state === "accepted" && "text-accent-text",
 						state === "rejected" && "text-ink-3",
 						state === "stale" && "text-warn-text",

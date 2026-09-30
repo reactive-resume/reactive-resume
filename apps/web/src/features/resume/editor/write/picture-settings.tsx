@@ -139,7 +139,7 @@ function PictureFitField({ form, onAutoSave }: PictureFieldProps) {
 		<form.Field name="fit">
 			{(field) => (
 				<div className="space-y-1.5">
-					<div className="font-medium text-sm">
+					<div className="text-sm font-medium">
 						<Trans>Fit</Trans>
 					</div>
 					<ButtonGroup role="group" aria-label={t`Fit`} className="w-full">
@@ -244,7 +244,7 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 								<InputGroupText>°</InputGroupText>
 							</InputGroupAddon>
 						</InputGroup>
-						<p className="text-ink-3 text-xs">
+						<p className="text-xs text-ink-3">
 							<Trans>Rotation isn't supported by PDF rendering.</Trans>
 						</p>
 					</FormItem>
@@ -571,7 +571,7 @@ function PictureCropDialog({ cropState, aspect, onClose, onUpload }: PictureCrop
 						<FormLabel className="mb-0">
 							<Trans>Zoom</Trans>
 						</FormLabel>
-						<span className="text-ink-3 text-xs tabular-nums">{zoom.toFixed(1)}×</span>
+						<span className="text-xs text-ink-3 tabular-nums">{zoom.toFixed(1)}×</span>
 					</div>
 					<div className="flex items-center gap-x-3">
 						<Icon name="zoom_out" size={16} className="shrink-0 text-ink-3" />
@@ -814,7 +814,7 @@ export function PictureSettings() {
 
 				<PictureFitField form={form} onAutoSave={handleAutoSave} />
 
-				<div className="grid @md:grid-cols-2 grid-cols-1 gap-4">
+				<div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
 					<PictureGeometryFields form={form} onAutoSave={handleAutoSave} />
 
 					<ColorWidthFields

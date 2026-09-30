@@ -30,7 +30,7 @@ You are a strict resume extraction engine for {{FORMAT_HEADER}}. Convert the att
 - Contact data: copy as-is; do not reformat.
 - Skills: include only explicit skill mentions.
 - Descriptions: output HTML using `<p>`, `<ul>`, `<li>` while preserving meaning.
-{{EXTRA_RULES}}- IDs: generate unique UUIDs for all `id` fields.
+  {{EXTRA_RULES}}- IDs: generate unique UUIDs for all `id` fields.
 - `hidden`: default to `false` unless explicitly indicated otherwise.
 - `columns`: default to `1` unless clearly multi-column by content intent.
 - `website`: when missing, use `{ "url": "", "label": "" }`.

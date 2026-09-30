@@ -1,10 +1,10 @@
+import type { orpc } from "@/libs/orpc/client";
+import type { Theme } from "@/libs/theme";
 import type { IconProps } from "@phosphor-icons/react";
 import type { FeatureFlags } from "@reactive-resume/api/features/flags";
 import type { AuthSession } from "@reactive-resume/auth/types";
 import type { Locale } from "@reactive-resume/utils/locale";
 import type { QueryClient } from "@tanstack/react-query";
-import type { orpc } from "@/libs/orpc/client";
-import type { Theme } from "@/libs/theme";
 import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";

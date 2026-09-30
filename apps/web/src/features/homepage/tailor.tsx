@@ -55,16 +55,16 @@ export function Tailor() {
 
 				<h2
 					id="tailor-title"
-					className="absolute start-(--gutter) top-[10vh] whitespace-nowrap font-normal text-[14vw] text-ink leading-[.86] min-[900px]:top-[11vh] min-[900px]:text-[clamp(64px,8vw,150px)]"
+					className="absolute start-(--gutter) top-[10vh] text-[14vw] leading-[.86] font-normal whitespace-nowrap text-ink min-[900px]:top-[11vh] min-[900px]:text-[clamp(64px,8vw,150px)]"
 				>
-					<span className="block font-anybody font-light tracking-[-.03em] [clip-path:inset(0_-5%_50%_-5%)] [transform:translateX(calc(var(--dir)*(1-var(--sw))*-3vw))]">
+					<span className="font-anybody block [transform:translateX(calc(var(--dir)*(1-var(--sw))*-3vw))] font-light tracking-[-.03em] [clip-path:inset(0_-5%_50%_-5%)]">
 						{tailor}
 						<span className="text-accent">.</span>
 					</span>
 					<span
 						aria-hidden="true"
 						data-text={tailor}
-						className="absolute start-0 top-0 block font-anybody font-light tracking-[-.03em] [clip-path:inset(50%_-5%_-10%_-5%)] [transform:translateX(calc(var(--dir)*(1-var(--sw))*3vw))] before:content-[attr(data-text)] after:text-accent after:content-['.']"
+						className="font-anybody absolute start-0 top-0 block [transform:translateX(calc(var(--dir)*(1-var(--sw))*3vw))] font-light tracking-[-.03em] [clip-path:inset(50%_-5%_-10%_-5%)] before:content-[attr(data-text)] after:text-accent after:content-['.']"
 					/>
 					<span
 						aria-hidden="true"
@@ -75,7 +75,7 @@ export function Tailor() {
 				<SceneCaption
 					number="04"
 					title={tailor}
-					className="absolute end-(--gutter) top-[13vh] hidden w-[min(24em,30vw)] min-[900px]:flex min-[900px]:short:hidden"
+					className="min-[900px]:short:hidden absolute end-(--gutter) top-[13vh] hidden w-[min(24em,30vw)] min-[900px]:flex"
 				>
 					{t`Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role.`}
 				</SceneCaption>
@@ -102,19 +102,19 @@ export function Tailor() {
 				</svg>
 
 				<div className="absolute start-(--gutter) top-[calc(10vh+17vw)] z-2 flex w-[calc(100vw-2*var(--gutter))] flex-col gap-4 min-[900px]:top-[40vh] min-[900px]:w-[min(390px,30vw)]">
-					<div className="flex rotate-[-1deg] flex-col gap-3 rounded-[14px] border border-line bg-raised p-[18px] font-ui text-ink text-sm leading-[1.55] shadow-e3">
+					<div className="flex rotate-[-1deg] flex-col gap-3 rounded-[14px] border border-line bg-raised p-[18px] font-ui text-sm leading-[1.55] text-ink shadow-e3">
 						<div className="flex items-center gap-[11px]">
 							<span
 								aria-hidden="true"
-								className="flex size-9 shrink-0 items-center justify-center rounded-[9px] bg-ink font-anybody font-medium font-stretch-[95%] text-[19px] text-bg leading-none"
+								className="font-anybody flex size-9 shrink-0 items-center justify-center rounded-[9px] bg-ink text-[19px] leading-none font-medium text-bg font-stretch-[95%]"
 							>
 								F
 							</span>
 							<div className="flex flex-col">
-								<b className="font-semibold text-[15px]">{t`Senior Product Designer`}</b>
+								<b className="text-[15px] font-semibold">{t`Senior Product Designer`}</b>
 								<span className="text-[12.5px] text-ink-3">{t`Fieldnote · Remote, EU`}</span>
 							</div>
-							<span className={cn(labelClass, "ms-auto text-[10px] text-ink-3 tracking-[.06em]")}>{t`Posting`}</span>
+							<span className={cn(labelClass, "ms-auto text-[10px] tracking-[.06em] text-ink-3")}>{t`Posting`}</span>
 						</div>
 						<p className="text-ink-2">
 							<Trans>
@@ -124,16 +124,16 @@ export function Tailor() {
 								<PostingKeyword id="d">cross-functional</PostingKeyword> team.
 							</Trans>
 						</p>
-						<div className="flex items-baseline justify-between border-line border-t pt-3">
+						<div className="flex items-baseline justify-between border-t border-line pt-3">
 							<span className={cn(labelClass, "text-[10.5px] text-ink-3")}>{t`Job match`}</span>
-							<span className="font-anybody font-light text-[40px] text-accent-text tabular-nums leading-none tracking-[-.03em]">
+							<span className="font-anybody text-[40px] leading-none font-light tracking-[-.03em] text-accent-text tabular-nums">
 								{i18n.number((MATCH[matched] ?? 0) / 100, { style: "percent" })}
 							</span>
 						</div>
 					</div>
 
-					<div className="hidden flex-col gap-2 rounded-[14px] border border-line-2 border-dashed px-3.5 py-3 min-[900px]:flex min-[900px]:short:hidden">
-						<div className="grid grid-cols-4 font-martian font-medium text-[10px] text-ink-3 uppercase leading-none tracking-[.06em]">
+					<div className="min-[900px]:short:hidden hidden flex-col gap-2 rounded-[14px] border border-dashed border-line-2 px-3.5 py-3 min-[900px]:flex">
+						<div className="font-martian grid grid-cols-4 text-[10px] leading-none font-medium tracking-[.06em] text-ink-3 uppercase">
 							{stages.map((stage) => (
 								<span key={stage.label} className="flex min-w-0 items-center gap-[5px]">
 									<span aria-hidden="true" className={cn("size-[7px] shrink-0 rounded-full", stage.dot)} />
@@ -142,9 +142,9 @@ export function Tailor() {
 							))}
 						</div>
 						<div className="relative h-10">
-							<div className="absolute start-[calc(var(--ap)*25%)] top-0 flex h-10 w-[calc(25%-6px)] min-w-max flex-col justify-center overflow-hidden whitespace-nowrap rounded-[9px] border border-line bg-raised px-2 font-semibold font-ui text-[11.5px] text-ink leading-[1.2] shadow-e2 [transition:inset-inline-start_.5s_var(--ease)]">
+							<div className="absolute start-[calc(var(--ap)*25%)] top-0 flex h-10 w-[calc(25%-6px)] min-w-max flex-col justify-center overflow-hidden rounded-[9px] border border-line bg-raised px-2 font-ui text-[11.5px] leading-[1.2] font-semibold whitespace-nowrap text-ink shadow-e2 [transition:inset-inline-start_.5s_var(--ease)]">
 								{t`Fieldnote`}
-								<span className="font-normal text-[10.5px] text-ink-3">{t`Resume attached`}</span>
+								<span className="text-[10.5px] font-normal text-ink-3">{t`Resume attached`}</span>
 							</div>
 						</div>
 					</div>
@@ -153,10 +153,10 @@ export function Tailor() {
 				<div className="absolute end-[8vw] top-[78%] aspect-[612/792] w-(--pw) -translate-y-1/2 min-[900px]:top-[58%]">
 					<div
 						aria-hidden="true"
-						className="@container absolute inset-0 overflow-hidden rounded-[2px] bg-[#fbfaf6] shadow-paper [transform:translate(calc(var(--dir)*var(--cv)*var(--cvx)),calc(var(--cv)*8%))_rotate(calc(var(--dir)*var(--cv)*-8deg))] [transition:transform_.5s_var(--ease)]"
+						className="@container absolute inset-0 [transform:translate(calc(var(--dir)*var(--cv)*var(--cvx)),calc(var(--cv)*8%))_rotate(calc(var(--dir)*var(--cv)*-8deg))] overflow-hidden rounded-[2px] bg-[#fbfaf6] shadow-paper [transition:transform_.5s_var(--ease)]"
 					>
-						<div className="flex flex-col gap-[2.6cqw] p-[9cqw] font-display text-[2.2cqw] text-[oklch(0.3_0.01_95)] leading-normal">
-							<span className="font-martian font-medium text-[1.6cqw] text-[oklch(0.48_0.1_150)] uppercase tracking-[.08em]">
+						<div className="flex flex-col gap-[2.6cqw] p-[9cqw] font-display text-[2.2cqw] leading-normal text-[oklch(0.3_0.01_95)]">
+							<span className="font-martian text-[1.6cqw] font-medium tracking-[.08em] text-[oklch(0.48_0.1_150)] uppercase">
 								{t`Cover letter · Fieldnote`}
 							</span>
 							<span className="text-[3cqw]">{t`Dear Fieldnote team,`}</span>

@@ -1,9 +1,9 @@
+import type { SemanticCssColorToken } from "./color-tokens";
+import type { SemanticCssEditorMetadata } from "./protocol";
 import type { Completion, CompletionContext, CompletionResult, CompletionSource } from "@codemirror/autocomplete";
 import type { EditorState, Extension } from "@codemirror/state";
 import type { DecorationSet, EditorView as EditorViewType, ViewUpdate } from "@codemirror/view";
 import type { SemanticNode } from "@reactive-resume/resume/stylesheet/registry";
-import type { SemanticCssColorToken } from "./color-tokens";
-import type { SemanticCssEditorMetadata } from "./protocol";
 import { autocompletion } from "@codemirror/autocomplete";
 import { search, searchKeymap } from "@codemirror/search";
 import { Decoration, EditorView, hoverTooltip, keymap, ViewPlugin, WidgetType } from "@codemirror/view";

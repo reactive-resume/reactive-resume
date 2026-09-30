@@ -82,7 +82,7 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 					type="button"
 					disabled={disabled || upload.isPending}
 					onClick={() => inputRef.current?.click()}
-					className="flex w-full items-center gap-2 rounded-lg border border-line border-dashed p-2.5 text-ink-3 text-sm transition-[background-color,opacity] hover:bg-sunken/50 disabled:opacity-60"
+					className="flex w-full items-center gap-2 rounded-lg border border-dashed border-line p-2.5 text-sm text-ink-3 transition-[background-color,opacity] hover:bg-sunken/50 disabled:opacity-60"
 				>
 					<Icon name="upload" size={16} />
 					{upload.isPending ? <Trans>Uploading…</Trans> : attachLabel}

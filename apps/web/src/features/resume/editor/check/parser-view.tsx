@@ -1,15 +1,15 @@
+import type { CheckIssue } from "./issues";
 import type { AtsRuleCode } from "@reactive-resume/resume/ats";
 import type { ExtractedDocument, ResumeSemantics } from "@reactive-resume/resume/ats-pdf";
-import type { CheckIssue } from "./issues";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
-import { extractPdf } from "@/features/ats-checker/extract-client";
-import { blobToPdfFile } from "@/features/ats-checker/run-ats-check";
 import { useEditorStore } from "../store";
 import { useCheck } from "./use-check";
+import { extractPdf } from "@/features/ats-checker/extract-client";
+import { blobToPdfFile } from "@/features/ats-checker/run-ats-check";
 
 type Parsed = { doc: ExtractedDocument; semantics: ResumeSemantics };
 
@@ -51,7 +51,7 @@ const issueOnLine = (issues: readonly CheckIssue[], line: string) =>
 
 function IssueChip({ issue }: { issue: CheckIssue }) {
 	return (
-		<span className="h-[18px] shrink-0 whitespace-nowrap rounded-full bg-warn-soft px-1.5 font-sans font-semibold text-[10px] text-warn-text leading-[18px]">
+		<span className="h-[18px] shrink-0 rounded-full bg-warn-soft px-1.5 font-sans text-[10px] leading-[18px] font-semibold whitespace-nowrap text-warn-text">
 			<Trans>issue {issue.number}</Trans>
 		</span>
 	);
@@ -74,13 +74,13 @@ export function ParserView() {
 	});
 
 	return (
-		<div className="mx-auto grid min-h-[792px] w-[612px] max-w-full content-start gap-[18px] rounded-lg border border-line bg-surface px-8 py-7 font-mono text-[12px] text-ink leading-[19px] max-sm:px-4">
+		<div className="mx-auto grid min-h-[792px] w-[612px] max-w-full content-start gap-[18px] rounded-lg border border-line bg-surface px-8 py-7 font-mono text-[12px] leading-[19px] text-ink max-sm:px-4">
 			{isError ? (
-				<p className="font-sans text-danger-text text-sm">
+				<p className="font-sans text-sm text-danger-text">
 					<Trans>The page's PDF couldn't be read. Edit anything to render it again.</Trans>
 				</p>
 			) : !data ? (
-				<p className="flex items-center gap-2 font-sans text-ink-2 text-sm">
+				<p className="flex items-center gap-2 font-sans text-sm text-ink-2">
 					<Spinner />
 					<Trans>Reading the PDF…</Trans>
 				</p>
@@ -137,7 +137,7 @@ function ParsedText({ parsed, issues }: { parsed: Parsed; issues: readonly Check
 
 	return (
 		<>
-			<div className="flex flex-wrap justify-between gap-2 font-medium text-[11px] text-ink-3 uppercase">
+			<div className="flex flex-wrap justify-between gap-2 text-[11px] font-medium text-ink-3 uppercase">
 				<span>
 					<Trans>Extracted from the PDF on the page · reading order</Trans>
 				</span>

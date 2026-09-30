@@ -1,5 +1,5 @@
-import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { EditorMode, MobileView } from "@/features/resume/editor/store";
+import type { IconName } from "@reactive-resume/ui/components/icon";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { getRouteApi, Outlet } from "@tanstack/react-router";
@@ -8,6 +8,11 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
+import { DesignSheet } from "./design-panel";
+import { EditorBar } from "./editor-bar";
+import { ModePanel } from "./mode-panels";
+import { ShareSheet } from "./share-sheet";
+import { useEditorHotkeys } from "./use-editor-hotkeys";
 import { MobileTabIndicator } from "@/components/layout/mobile-tab-indicator";
 import {
 	AssistantColumn,
@@ -25,11 +30,6 @@ import { useIsLandscape } from "@/features/resume/editor/chrome";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { useEditorMode } from "@/features/resume/editor/use-editor-mode";
 import { revealSelectionInPanel } from "@/features/resume/editor/write/reveal";
-import { DesignSheet } from "./design-panel";
-import { EditorBar } from "./editor-bar";
-import { ModePanel } from "./mode-panels";
-import { ShareSheet } from "./share-sheet";
-import { useEditorHotkeys } from "./use-editor-hotkeys";
 
 /**
  * The editor: a 56px bar over a 400px panel and the page canvas (desktop). On tablets the panel is a 380px
@@ -163,7 +163,7 @@ function DesktopBody({ mode, assistant, narrow }: DesktopBodyProps) {
 			<AssistantReplace
 				replaced={replaced}
 				assistant={
-					<div className="min-h-0 border-line border-e">
+					<div className="min-h-0 border-e border-line">
 						<ResumeAssistant />
 					</div>
 				}
@@ -175,7 +175,7 @@ function DesktopBody({ mode, assistant, narrow }: DesktopBodyProps) {
 					// `relative`: absolutely positioned descendants (sr-only text, say) stay inside this scroller instead of
 					// stretching the document, which would let scrollIntoView shift the whole editor. Keyed by mode so each
 					// mode starts at its top; no scroll anchoring, which yanked the Design panel back while scrolling it.
-					className="relative min-h-0 overflow-y-auto border-line border-e bg-surface [overflow-anchor:none]"
+					className="relative min-h-0 overflow-y-auto border-e border-line bg-surface [overflow-anchor:none]"
 				>
 					<ModePanel mode={mode} />
 				</TabsContent>
@@ -206,7 +206,7 @@ function TabletBody({ mode }: { mode: EditorMode }) {
 				aria-label={panelLabels()[mode]}
 				inert={!drawerOpen}
 				className={cn(
-					"absolute inset-y-0 start-0 z-20 w-[380px] max-w-[calc(100%-3rem)] overflow-y-auto border-line border-e bg-surface shadow-e3 transition-transform duration-emphasized ease-enter [overflow-anchor:none]",
+					"absolute inset-y-0 start-0 z-20 w-[380px] max-w-[calc(100%-3rem)] overflow-y-auto border-e border-line bg-surface shadow-e3 transition-transform duration-emphasized ease-enter [overflow-anchor:none]",
 					!drawerOpen && "-translate-x-full rtl:translate-x-full",
 				)}
 			>
@@ -238,7 +238,7 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 	// it in view above its sheet.
 	const pageVisible = view === "page" || view === "design";
 	useEffect(() => {
-		// biome-ignore lint/nursery/useReactCompiler: a shared store the preview renderer reads, reset on unmount
+		// oxlint-disable-next-line react/set-state-in-effect -- a shared store the preview renderer reads, reset on unmount
 		setPreviewPaused(!pageVisible);
 		return () => setPreviewPaused(false);
 	}, [pageVisible, setPreviewPaused]);
@@ -273,7 +273,7 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 
 			<nav
 				aria-label={t`Editor views`}
-				className="flex border-line border-t bg-surface pb-[env(safe-area-inset-bottom)]"
+				className="flex border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]"
 			>
 				{MOBILE_TABS.map(({ view: tab, icon }) => {
 					const active = tab === view;
@@ -309,10 +309,10 @@ function SelectionBar({ onEdit }: { onEdit: () => void }) {
 	if (!selection) return null;
 
 	return (
-		<div className="absolute bottom-[76px] left-1/2 z-10 flex -translate-x-1/2 starting:translate-y-2 items-center rounded-xl bg-ink p-1 text-bg starting:opacity-0 shadow-e3 transition-[opacity,translate] duration-standard ease-enter">
+		<div className="absolute bottom-[76px] left-1/2 z-10 flex -translate-x-1/2 items-center rounded-xl bg-ink p-1 text-bg shadow-e3 transition-[opacity,translate] duration-standard ease-enter starting:translate-y-2 starting:opacity-0">
 			<button
 				type="button"
-				className="flex h-10 items-center gap-1.5 rounded-lg px-3 font-semibold text-[15px]"
+				className="flex h-10 items-center gap-1.5 rounded-lg px-3 text-[15px] font-semibold"
 				onClick={() => {
 					onEdit();
 					revealSelectionInPanel(selection);

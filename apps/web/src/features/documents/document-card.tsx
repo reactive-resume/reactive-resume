@@ -9,13 +9,13 @@ import { DropdownMenu, DropdownMenuTrigger } from "@reactive-resume/ui/component
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { cn } from "@reactive-resume/utils/style";
-import { isImeComposing } from "@/libs/keyboard";
-import { formatRelativeTime } from "@/libs/locale";
-import { ENTER_CLASS, stagger } from "@/libs/motion";
 import { DocumentMenuContent, useDocumentActions } from "./document-actions";
 import { daysLeftInTrash } from "./filter";
 import { useNewDocumentsStore } from "./new-documents";
 import { ResumeThumbnail } from "./resume-thumbnail";
+import { isImeComposing } from "@/libs/keyboard";
+import { formatRelativeTime } from "@/libs/locale";
+import { ENTER_CLASS, stagger } from "@/libs/motion";
 
 export type DocumentItemProps = {
 	document: DocumentSummary;
@@ -70,7 +70,7 @@ function RenameInput({ document, onDone }: { document: DocumentSummary; onDone: 
 
 	return (
 		<input
-			// biome-ignore lint/a11y/noAutofocus: renaming starts from the menu, so focus goes straight to the field.
+			// oxlint-disable-next-line jsx-a11y/no-autofocus -- renaming starts from the menu, so focus goes straight to the field.
 			autoFocus
 			value={value}
 			maxLength={100}
@@ -86,7 +86,7 @@ function RenameInput({ document, onDone }: { document: DocumentSummary; onDone: 
 					onDone();
 				}
 			}}
-			className="h-7 w-full min-w-0 rounded-md border border-accent bg-raised px-1.5 font-semibold text-sm outline-none ring-3 ring-accent-soft"
+			className="h-7 w-full min-w-0 rounded-md border border-accent bg-raised px-1.5 text-sm font-semibold ring-3 ring-accent-soft outline-none"
 		/>
 	);
 }
@@ -142,7 +142,7 @@ export function DocumentCard({ document, onTags, onLink, introIndex }: DocumentI
 					className={cn(
 						"relative block aspect-page overflow-hidden rounded-[6px] shadow-[0_0_0_1px_var(--line),var(--shadow-1)] transition-[translate,scale,box-shadow] duration-quick ease-enter hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_var(--line),var(--shadow-2)] active:scale-[0.98]",
 						isNew &&
-							"shadow-[0_0_0_2px_var(--accent),var(--shadow-1)] starting:shadow-[0_0_0_2px_transparent,var(--shadow-1)] hover:shadow-[0_0_0_2px_var(--accent),var(--shadow-2)]",
+							"shadow-[0_0_0_2px_var(--accent),var(--shadow-1)] hover:shadow-[0_0_0_2px_var(--accent),var(--shadow-2)] starting:shadow-[0_0_0_2px_transparent,var(--shadow-1)]",
 						document.trashedAt && "pointer-events-none",
 					)}
 				>
@@ -153,7 +153,7 @@ export function DocumentCard({ document, onTags, onLink, introIndex }: DocumentI
 					)}
 					<span className="absolute start-2 top-2 flex gap-1">
 						{isNew && (
-							<span className="rounded bg-accent px-1.5 font-semibold text-[11px] text-on-accent leading-[18px]">
+							<span className="rounded bg-accent px-1.5 text-[11px] leading-[18px] font-semibold text-on-accent">
 								<Trans>New</Trans>
 							</span>
 						)}
@@ -173,11 +173,11 @@ export function DocumentCard({ document, onTags, onLink, introIndex }: DocumentI
 						{renaming ? (
 							<RenameInput document={document} onDone={() => setRenaming(false)} />
 						) : (
-							<h3 className="truncate font-semibold text-sm leading-5">{document.name}</h3>
+							<h3 className="truncate text-sm leading-5 font-semibold">{document.name}</h3>
 						)}
-						<span className="truncate text-ink-3 text-xs">{meta}</span>
+						<span className="truncate text-xs text-ink-3">{meta}</span>
 						{document.application && (
-							<span className="flex min-w-0 items-center gap-1 text-ink-2 text-xs">
+							<span className="flex min-w-0 items-center gap-1 text-xs text-ink-2">
 								<Icon name="work" size={14} />
 								<span className="truncate">{document.application.company}</span>
 							</span>
@@ -224,7 +224,7 @@ export function DocumentRow({ document, onTags, onLink, introIndex }: DocumentIt
 					<tr
 						style={introIndex === undefined ? undefined : stagger(introIndex)}
 						className={cn(
-							"border-line border-b transition-colors duration-quick hover:bg-hover",
+							"border-b border-line transition-colors duration-quick hover:bg-hover",
 							introIndex !== undefined && ENTER_CLASS,
 							document.trashedAt && "opacity-70",
 						)}
@@ -239,24 +239,24 @@ export function DocumentRow({ document, onTags, onLink, introIndex }: DocumentIt
 						) : (
 							<OpenLink
 								document={document}
-								className="min-w-0 truncate text-start font-semibold text-sm hover:underline"
+								className="min-w-0 truncate text-start text-sm font-semibold hover:underline"
 							>
 								{document.name}
 							</OpenLink>
 						)}
 						{isNew && (
-							<span className="rounded bg-accent px-1.5 font-semibold text-[11px] text-on-accent leading-[18px]">
+							<span className="rounded bg-accent px-1.5 text-[11px] leading-[18px] font-semibold text-on-accent">
 								<Trans>New</Trans>
 							</span>
 						)}
 						{document.isLocked && <Icon name="lock" size={16} className="shrink-0 text-ink-3" />}
 					</span>
 				</td>
-				<td className="px-2 text-ink-2 text-sm max-sm:hidden">
+				<td className="px-2 text-sm text-ink-2 max-sm:hidden">
 					{document.type === "resume" ? <Trans>Resume</Trans> : <Trans>Letter</Trans>}
 				</td>
-				<td className="px-2 text-ink-2 text-sm max-sm:hidden">{document.application?.company ?? "—"}</td>
-				<td className="whitespace-nowrap px-2 text-ink-3 text-sm">
+				<td className="px-2 text-sm text-ink-2 max-sm:hidden">{document.application?.company ?? "—"}</td>
+				<td className="px-2 text-sm whitespace-nowrap text-ink-3">
 					{document.trashedAt ? (
 						<Trans>{daysLeftInTrash(document.trashedAt)} days left</Trans>
 					) : (

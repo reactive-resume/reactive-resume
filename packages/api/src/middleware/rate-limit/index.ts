@@ -50,6 +50,7 @@ const storageUploadLimiter = createRateLimiter("storageUploadLimiter", rateLimit
 const storageDeleteLimiter = createRateLimiter("storageDeleteLimiter", rateLimitConfig.orpc.storageDelete);
 const resumeMutationLimiter = createRateLimiter("resumeMutationLimiter", rateLimitConfig.orpc.resumeMutations);
 const disabledLimiter = {
+	// oxlint-disable-next-line require-await -- The limiter contract returns a Promise even when rate limiting is disabled.
 	limit: async () => ({
 		success: true,
 		remaining: Number.POSITIVE_INFINITY,

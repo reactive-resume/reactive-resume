@@ -12,7 +12,7 @@ type RowProps = { label: ReactNode; children: ReactNode };
 
 function Row({ label, children }: RowProps) {
 	return (
-		<div className="grid grid-cols-[7.5rem_minmax(0,1fr)] gap-4 border-line border-t py-2.5 first:border-t-0">
+		<div className="grid grid-cols-[7.5rem_minmax(0,1fr)] gap-4 border-t border-line py-2.5 first:border-t-0">
 			<dt className="text-ink-3">{label}</dt>
 			<dd className="min-w-0 break-words text-ink">{children}</dd>
 		</div>

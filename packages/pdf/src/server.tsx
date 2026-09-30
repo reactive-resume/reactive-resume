@@ -1,6 +1,6 @@
+import type { SectionTitleResolver } from "./section-title";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
-import type { SectionTitleResolver } from "./section-title";
 import * as forme from "@formepdf/core";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { renderResume } from "./forme/render";
