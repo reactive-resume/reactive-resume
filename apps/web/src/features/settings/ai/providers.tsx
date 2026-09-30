@@ -46,6 +46,19 @@ export function ProvidersSection() {
 	const { data: providers, isLoading, error } = useQuery(orpc.aiProviders.list.queryOptions());
 	const [adding, setAdding] = useState(false);
 	const [editing, setEditing] = useState<SavedProvider | null>(null);
+	const managed = providers?.find((provider) => provider.managed);
+
+	if (managed)
+		return (
+			<SettingsSection title={<Trans>AI providers</Trans>} description={<Trans>Managed by your server</Trans>}>
+				<p className="text-ink-2 text-sm">
+					<Trans>AI is enabled globally. Personal providers are disabled.</Trans>
+				</p>
+				<p className="text-ink-3 text-xs">
+					{providerLabel(managed.provider)} · {managed.model}
+				</p>
+			</SettingsSection>
+		);
 
 	return (
 		<SettingsSection title={<Trans>AI providers</Trans>} description={<Trans>Your keys, stored encrypted</Trans>}>

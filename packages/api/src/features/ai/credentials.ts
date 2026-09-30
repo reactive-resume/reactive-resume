@@ -88,8 +88,8 @@ export function assertCredentialEncryptionConfigured() {
 	if (!isCredentialEncryptionConfigured()) throw new Error("AI_CREDENTIAL_ENCRYPTION_UNAVAILABLE");
 }
 
-// The assistant needs stored keys, so ENCRYPTION_SECRET. Redis is optional: with it, replies survive a reload
+// Personal keys need ENCRYPTION_SECRET; server AI uses environment credentials. Redis is optional: replies survive a reload
 // and Stop reaches a run on another server; without it, both work within one server.
 export function assertAgentEnvironment() {
-	if (!isCredentialEncryptionConfigured()) throw new Error("AGENT_ENVIRONMENT_UNAVAILABLE");
+	if (!isCredentialEncryptionConfigured() && !env.AI_PROVIDER) throw new Error("AGENT_ENVIRONMENT_UNAVAILABLE");
 }

@@ -1,0 +1,158 @@
+---
+title: "Job search and AI"
+description: "Connect Firecrawl, optional SearXNG search and an AI provider to your self-hosted Reactive Resume instance."
+---
+
+Use this guide to enable keyword job search, read job-posting URLs and extract application details on your own
+Reactive Resume instance. Start with a working [Docker](/self-hosting/docker),
+[Kubernetes](/self-hosting/kubernetes) or [Vercel](/self-hosting/vercel) deployment running a build that includes the
+Firecrawl integration.
+
+| Service | What it does | Required for |
+| --- | --- | --- |
+| Firecrawl | Searches for postings and reads a selected posting into text. | Keyword search; optional for reading URLs. |
+| SearXNG | Supplies web search results to your self-hosted Firecrawl service. | Optional alternative search backend. |
+| AI provider | Extracts role, company, salary, requirements and other details from posting text. | AI extraction and other AI features. |
+
+Reactive Resume calls Firecrawl and the AI provider separately. Only Firecrawl calls SearXNG. Without Firecrawl,
+the built-in URL reader and pasted text still work; without AI, posting metadata can fill the fields it provides.
+
+## 1. Choose shared services or personal keys
+
+For a shared setup, set the Firecrawl and AI variables on the Reactive Resume server. Each integration then appears
+as **enabled globally** in **Settings → AI & developer**, and users cannot add, edit or delete personal keys for that
+integration. Paid-provider usage is charged to the shared account. Existing personal keys stay stored and become available
+again if you remove the shared configuration.
+
+To let users bring their own keys instead, leave that integration's server variables unset and configure
+`ENCRYPTION_SECRET` with at least 32 characters, different from `AUTH_SECRET`. Users can save a **Firecrawl Cloud API
+key** in settings and [connect a personal AI provider](/guides/using-ai). Personal Firecrawl keys always use Cloud;
+custom Firecrawl URLs are configured only by the operator. Shared configuration does not need `ENCRYPTION_SECRET`.
+
+You can mix these choices, such as shared Firecrawl with personal AI keys. See the
+[environment reference](/self-hosting/environment-variables#ai-and-redis) for all settings.
+
+## 2. Connect Firecrawl
+
+Follow the official [Firecrawl self-hosting guide](https://docs.firecrawl.dev/contributing/self-host) to deploy its
+API and supporting services. Use the release and Compose files recommended there; the npm SDK included in Reactive
+Resume is a client and does not run the service.
+
+Add the connection to **Reactive Resume's** environment:
+
+```dotenv
+# Replace with the address reachable from the Reactive Resume server.
+FIRECRAWL_API_URL="http://firecrawl-api:3002"
+# Set only if your Firecrawl deployment requires a bearer key.
+# FIRECRAWL_API_KEY="replace-with-your-firecrawl-key"
+```
+
+Use the API base URL without `/v2`. A URL alone enables a keyless self-hosted service globally. Keep such a service
+private and follow Firecrawl's [production guidance](https://docs.firecrawl.dev/contributing/self-host#before-production).
+Keep its protections against private destination URLs, unsafe redirects and DNS rebinding enabled; job-posting URLs
+in Reactive Resume must point to public HTTPS destinations.
+
+For Firecrawl Cloud, use its [quickstart](https://docs.firecrawl.dev/introduction) to get a key, set only
+`FIRECRAWL_API_KEY`, and leave `FIRECRAWL_API_URL` unset. Requests then go to `https://api.firecrawl.dev`.
+
+### Container networking and local development
+
+`firecrawl-api` above is an example network alias. Replace it with your service's actual name or alias. Containers in
+separate Compose projects need a [shared external network](https://docs.docker.com/compose/how-tos/networking/#use-an-existing-external-network).
+Inside a container, `localhost` points to that container; use the service's container port on a shared network.
+On Kubernetes or another platform, use an address reachable from the Reactive Resume server.
+
+For host-run local development, publish Firecrawl's container port `3002` as host port `3102` to avoid Reactive
+Resume's email preview on `3002`. Add `FIRECRAWL_API_URL="http://localhost:3102"` to Reactive Resume's `.env.local`.
+
+## 3. Add SearXNG to self-hosted Firecrawl (optional)
+
+Deploy SearXNG using its official [container installation guide](https://docs.searxng.org/admin/installation-docker.html).
+In its `settings.yml`, add `json` to the existing `search.formats` list, keeping other search settings:
+
+```yaml
+search:
+  formats:
+    - html
+    - json
+```
+
+The [search settings reference](https://docs.searxng.org/admin/settings/settings_search.html) documents these formats.
+Then add the following to **Firecrawl's** environment, using an address reachable from its API and workers:
+
+```dotenv
+SEARXNG_ENDPOINT="http://searxng:8080"
+# Optional filters; leave unset to use your SearXNG defaults.
+# SEARXNG_ENGINES="google,bing"
+# SEARXNG_CATEGORIES="general"
+```
+
+Replace `searxng` with your service name or network alias. Use the base URL without `/search`: Firecrawl appends that
+path and requests JSON, as shown in its [SearXNG adapter](https://github.com/firecrawl/firecrawl/blob/v2.11.162/apps/api/src/search/v2/searxng.ts).
+These variables belong to Firecrawl, not Reactive Resume. Your own SearXNG service is used only when Reactive Resume
+connects to your self-hosted Firecrawl.
+
+Restart SearXNG after changing settings, and recreate Firecrawl's services after changing its environment. To check
+JSON output, run this from a host or container that can reach SearXNG, replacing the address as needed:
+
+```bash
+curl --get 'http://searxng:8080/search' \
+  --data-urlencode 'q=software engineer jobs' \
+  --data-urlencode 'format=json'
+```
+
+Expect a JSON response with a `results` array. Disabled JSON output returns `403`; public instances often disable it.
+See the [SearXNG search API](https://docs.searxng.org/dev/search_api.html).
+
+## 4. Connect OpenAI or another AI provider
+
+For OpenAI, follow its [API quickstart](https://developers.openai.com/api/docs/quickstart), create a key in the
+[API dashboard](https://platform.openai.com/api-keys), and enable API billing. API usage is
+[billed separately from ChatGPT subscriptions](https://help.openai.com/en/articles/9039756-managing-billing-settings-on-the-chatgpt-web-and-api-platform).
+
+Set these variables on **Reactive Resume**:
+
+```dotenv
+AI_PROVIDER="openai"
+AI_MODEL="gpt-5-mini"
+AI_API_KEY="replace-with-your-openai-api-key"
+```
+
+`gpt-5-mini` is an example; choose a model your API account can use. Check its
+[model documentation](https://developers.openai.com/api/docs/models/gpt-5-mini) for supported features. Reactive
+Resume's OpenAI integration uses Chat Completions; the Assistant also needs tool calling. Leave `AI_BASE_URL` unset
+for OpenAI's default endpoint. The app reads `AI_API_KEY`, not `OPENAI_API_KEY`.
+
+Other [supported providers](/guides/using-ai#supported-providers) use the same shared variables with their provider
+identifier and model. An OpenAI-compatible gateway also needs `AI_BASE_URL`. For a local model, see
+[Ollama setup](/self-hosting/examples#use-a-local-ai-model-with-ollama) and the
+[AI environment reference](/self-hosting/environment-variables#ai-and-redis). Local or private AI endpoints need
+`FLAG_ALLOW_UNSAFE_AI_BASE_URL=true`; enable it only where you trust every user. Ollama can omit `AI_API_KEY`.
+
+The OpenAI key belongs to Reactive Resume for this workflow. Firecrawl only supplies search results and posting text;
+it does not need an AI-provider key for these features.
+
+## 5. Apply settings and verify the workflow
+
+For the [Docker guide's setup](/self-hosting/docker), put Reactive Resume variables in `.env` and run
+`docker compose up -d reactive-resume`. The source repository's Compose service is named `reactive_resume` instead.
+For local development, edit `.env.local` and restart `pnpm dev`. On other platforms, update the server's environment
+and restart or redeploy it. Keep keys in server configuration or secret storage, never browser build variables.
+
+1. Open **Settings → AI & developer**. Shared integrations should show **enabled globally**; personal mode should
+   allow saving keys.
+2. Open **Applications → Add an application**, enter keywords under **Search job postings**, and run a search.
+3. Choose **Use posting** on a result, import its details, review the extracted fields and save the application.
+4. Try a public HTTPS posting URL directly to check scraping and extraction separately from search.
+
+`/api/health` checks database, storage and configured Redis; it does not verify these integrations. If a step fails:
+
+| Symptom | Check |
+| --- | --- |
+| No keyword search | Configure shared Firecrawl or save a personal Cloud key, then reload. |
+| Firecrawl connection fails | Check its logs, authentication, network address and base URL; use the [self-hosting guide](https://docs.firecrawl.dev/contributing/self-host). |
+| SearXNG returns HTML or `403` | Enable JSON and check proxy/access rules against its [search API](https://docs.searxng.org/dev/search_api.html). |
+| AI extraction fails | Check provider billing, key and model access; verify all required [AI variables](/self-hosting/environment-variables#ai-and-redis). |
+
+Firecrawl scrape failures fall back to the built-in reader, so a successful URL import alone does not prove Firecrawl
+was used. Check your Firecrawl logs as well as keyword search when validating the connection.

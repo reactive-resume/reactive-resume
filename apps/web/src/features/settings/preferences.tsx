@@ -9,7 +9,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { LocaleCombobox } from "@/features/locale/combobox";
 import { useTheme } from "@/features/theme/provider";
 import { themeMap } from "@/libs/theme";
-import { SettingsRow, SettingsSection } from "./section";
+import { SettingsSection } from "./section";
 
 const THEMES: Array<{ value: Theme; icon: IconName }> = [
 	{ value: "light", icon: "light_mode" },
@@ -47,13 +47,6 @@ export function PreferencesSettings() {
 						<Trans>Help translate</Trans>
 					</a>
 				</p>
-			</SettingsSection>
-
-			<SettingsSection title={<Trans>Motion</Trans>}>
-				<SettingsRow
-					title={<Trans>Follows your system's reduced-motion setting.</Trans>}
-					description={<Trans>Nothing in the app animates on its own.</Trans>}
-				/>
 			</SettingsSection>
 		</>
 	);

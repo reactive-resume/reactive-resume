@@ -193,7 +193,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 					<CopyForJob
 						initialSourceId={data?.sourceResumeId}
 						initialJobId={data?.applicationId}
-						onBack={data?.step === "copy" ? undefined : () => setStep({ name: "choose" })}
+						onBack={() => setStep({ name: "choose" })}
 						onCreated={(resumeId, forJob) => {
 							markNew(resumeId);
 							void refreshDocuments();
@@ -537,7 +537,7 @@ function ImportProgress({ stage, notes }: { stage: number; notes: string[] }) {
 type CopyForJobProps = {
 	initialSourceId?: string | undefined;
 	initialJobId?: string | undefined;
-	onBack?: (() => void) | undefined;
+	onBack: () => void;
 	/** The new resume, and whether it was made for a job. */
 	onCreated: (resumeId: string, forJob: boolean) => void;
 };
@@ -590,6 +590,13 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 				<legend className="mb-1.5 font-medium text-ink-2 text-xs">
 					<Trans>Start from</Trans>
 				</legend>
+				{documents && resumes.length === 0 && (
+					<p className="text-ink-2 text-sm">
+						<Trans>
+							You don't have a resume to copy yet. Import or create a resume first, then return to copy it for this job.
+						</Trans>
+					</p>
+				)}
 				<div className="grid max-h-56 gap-1 overflow-y-auto">
 					{resumes.map((resume) => (
 						<label
@@ -671,11 +678,9 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 			</div>
 
 			<div className="flex flex-wrap justify-end gap-2">
-				{onBack && (
-					<Button variant="ghost" onClick={onBack}>
-						<Trans>Back</Trans>
-					</Button>
-				)}
+				<Button variant="ghost" onClick={onBack}>
+					{documents && resumes.length === 0 ? <Trans>Import or create a resume</Trans> : <Trans>Back</Trans>}
+				</Button>
 				<Button disabled={!source || !finalName || isPending} onClick={() => void create()}>
 					<Trans>Create and open</Trans>
 				</Button>

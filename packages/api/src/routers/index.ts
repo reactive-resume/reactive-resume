@@ -5,6 +5,7 @@ import { applicationsRouter } from "../features/applications/router";
 import { authRouter } from "../features/auth/router";
 import { coverLettersRouter } from "../features/cover-letters/router";
 import { documentsRouter } from "../features/documents/router";
+import { firecrawlRouter } from "../features/firecrawl/router";
 import { flagsRouter } from "../features/flags/router";
 import { resumeRouter } from "../features/resume/router";
 import { statisticsRouter } from "../features/statistics/router";
@@ -19,6 +20,7 @@ export default {
 	coverLetters: coverLettersRouter,
 	documents: documentsRouter,
 	flags: flagsRouter,
+	firecrawl: firecrawlRouter,
 	resume: resumeRouter,
 	statistics: statisticsRouter,
 	storage: storageRouter,

@@ -34,7 +34,7 @@ function Row({ icon, label, value }: RowProps) {
 const rowClass =
 	"flex h-14 items-center gap-3 px-3.5 font-medium text-base transition-colors duration-quick ease-enter active:bg-press";
 
-/** Phones: the Account tab is the settings root, three rows showing their current values. */
+/** Phones: the Settings tab opens the root, three rows showing their current values. */
 export function SettingsRoot() {
 	const { i18n } = useLingui();
 	const { session } = useRouteContext({ from: "/dashboard" });

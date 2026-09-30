@@ -26,7 +26,12 @@ This unreleased entry covers **210 commits after `v5.3.2`**, audited through
 on **2026-09-30**. Publication and production deployment remain unverified. For a shorter orientation, read
 [What's new in v6](/guides/whats-new-in-v6).
 
+Firecrawl integration, shared AI configuration, the setup guide and the empty resume-copy dialog fix are additional
+unreleased changes outside that commit audit.
+
 ## Documents, imports & recovery
+
+- **Recover from an empty resume-copy dialog.** Opening **Copy a resume for a job** without an existing resume previously showed an empty source list and a disabled **Create and open** button. The dialog now explains the prerequisite and offers **Import or create a resume**, including when opened directly from an application. Returning to the copy flow keeps that application selected.
 
 <Frame caption="Resumes and letters share one Documents library">
   <img src="/images/guides/managing-documents/documents-grid.webp" alt="Documents with All, Resumes and Letters tabs, search, sorting, tag filters and a grid of resume and letter cards." />
@@ -90,6 +95,8 @@ on **2026-09-30**. Publication and production deployment remain unverified. For 
 
 ## Assistant & AI providers
 
+- **Enable shared AI and Firecrawl services for all users.** Self-hosters can set `AI_PROVIDER`, `AI_MODEL`, `AI_API_KEY` and an optional `AI_BASE_URL`, plus `FIRECRAWL_API_URL` and/or `FIRECRAWL_API_KEY`. Each globally configured integration takes precedence over personal credentials and hides their settings controls; saved personal keys remain available after shared configuration is removed. Shared credentials stay on the server and need no `ENCRYPTION_SECRET`; encrypted personal AI and Firecrawl Cloud keys remain supported when it is set. See [Job search and AI](/self-hosting/job-search-and-ai).
+
 <Frame caption="The assistant works beside the document it is helping with">
   <img src="/images/guides/using-the-assistant/assistant-beside-the-page.webp" alt="The resume editor with an Assistant panel beside the rendered page, suggested starting prompts and a document context chip." />
 </Frame>
@@ -115,6 +122,8 @@ on **2026-09-30**. Publication and production deployment remain unverified. For 
 - **Download matching application documents.** Download a letter as PDF, Word, Markdown or JSON, or download the resume and letter as two matching PDFs. A resume's download panel can include its application's linked letter in the same selected format. Letters also gain named versions and safe restore history. [82fa32790](https://github.com/reactive-resume/reactive-resume/commit/82fa32790), [fdad39c63](https://github.com/reactive-resume/reactive-resume/commit/fdad39c63)
 
 ## Applications & interviews
+
+- **Search and import job postings with Firecrawl.** **Applications → Add an application** supports keyword search through optional Firecrawl Cloud or a self-hosted service. Review up to five results, choose **Use posting**, then import and check the extracted details before saving. Firecrawl also reads pasted posting URLs, while the configured AI provider extracts application fields. Without Firecrawl, or when scraping fails, the built-in URL reader remains available.
 
 <Frame caption="The board shows each application's next step">
   <img src="/images/guides/tracking-job-applications/applications-board-view.webp" alt="Application board columns for Saved, Applied, Screening and Interview, with next-step labels on job cards." />
@@ -196,6 +205,8 @@ on **2026-09-30**. Publication and production deployment remain unverified. For 
 - **Return documented resume API results.** Locked update, patch, restore and delete operations return `403`; a resume can be duplicated using only its ID; list queries accept one tag or repeated tags. The schema resources use the live schema, and development health reports the package version instead of `0.0.0`. [9a803305c](https://github.com/reactive-resume/reactive-resume/commit/9a803305c), [cbc76b03b](https://github.com/reactive-resume/reactive-resume/commit/cbc76b03b)
 
 ## Self-hosting, performance & maintenance
+
+- **Set up job search and AI alongside your instance.** A new [Job search and AI guide](/self-hosting/job-search-and-ai) links official Firecrawl, SearXNG and OpenAI setup instructions, explains shared services and personal keys, and includes container-network and local verification examples. SearXNG supplies JSON search results to self-hosted Firecrawl; Reactive Resume connects separately to Firecrawl and its AI provider. Docker, environment-variable and AI guides link to the setup.
 
 - **Create the SeaweedFS bucket reliably in Compose.** The old `minio/mc` image returns `401 Unauthorized`, breaking bucket setup and the Docker publishing workflow. Development and production Compose switch to the AWS CLI, checking for an existing bucket before creating it and retrying failures. [#3544](https://github.com/reactive-resume/reactive-resume/pull/3544)
 - **Compress static assets and HTML on the Node server.** The server serves compressed web files and application shells to reduce transfer size. [e74403e12](https://github.com/reactive-resume/reactive-resume/commit/e74403e12)

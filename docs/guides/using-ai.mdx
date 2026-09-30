@@ -3,7 +3,11 @@ title: "Connecting an AI provider"
 description: "Add your own AI provider key in Reactive Resume, test the connection, and choose which provider the assistant and other AI features use."
 ---
 
-Reactive Resume doesn't include an AI model of its own. To use the assistant, AI imports, drafting and the other AI features, you connect a provider you already have an account with (such as OpenAI, Anthropic or Google Gemini) using your own API key. Everything else in the app works without AI.
+Reactive Resume doesn't include an AI model of its own. To use the assistant, AI imports, drafting and the other AI features, connect a provider such as OpenAI, Anthropic or Google Gemini. Everything else in the app works without AI.
+
+On a self-hosted instance, the administrator can [configure a shared provider](/self-hosting/job-search-and-ai).
+Settings then show that AI is enabled globally, and personal provider controls are hidden. You can use AI features
+without entering your own key. The steps below apply when personal providers are available.
 
 ## Before you start
 
@@ -112,7 +116,7 @@ If no provider is connected yet, opening the assistant in the editor shows **Con
 
 ## How your key is stored
 
-Your API key is encrypted on the Reactive Resume server with AES-256-GCM before it's saved, and it's never shown again. Settings only ever show the last four characters. When a feature needs the key, the server decrypts it just long enough to call your provider.
+Your personal API key is encrypted on the Reactive Resume server with AES-256-GCM before it's saved, and it's never shown again. Settings only ever show the last four characters. When a feature needs the key, the server decrypts it just long enough to call your provider.
 
 Self-hosted instances encrypt keys with the `ENCRYPTION_SECRET` environment variable. Until it's set, **AI & developer** shows "AI providers aren't available on this server until ENCRYPTION_SECRET is set." If the secret changes later, saved keys can no longer be decrypted. The error asks you to enter the key again: open **Settings → AI & developer**, select **Edit** on the provider, paste the key, and select **Save and test**.
 
@@ -127,7 +131,7 @@ Requests go from the Reactive Resume server to the provider you chose, using you
 | **Check → Writing** | The text of your resume. |
 | Importing a PDF or Word file | The file you import. |
 | Drafting a letter | The linked resume and the application's job posting. |
-| Adding an application | Job posting text you paste in. |
+| Adding an application | Job posting text you paste or import from a URL. |
 
 Your provider handles that data under its own terms and privacy policy. Reactive Resume keeps assistant conversations and their attachments in your account until you delete the conversation.
 

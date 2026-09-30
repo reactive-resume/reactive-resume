@@ -1,7 +1,7 @@
 import type { RouterOutput } from "@/libs/orpc/client";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useId, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -58,15 +58,20 @@ export function AddApplicationDialog({ open, onOpenChange, onAdded }: AddApplica
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="sm:max-w-[560px]">
+			<DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-[560px]">
 				<AddApplicationForm key={instance} onClose={() => onOpenChange(false)} onAdded={onAdded} />
 			</DialogContent>
 		</Dialog>
 	);
 }
 
-function AddApplicationForm({ onClose, onAdded }: { onClose: () => void; onAdded: (id: string) => void }) {
+type AddApplicationFormProps = { onClose: () => void; onAdded: (id: string) => void };
+
+function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 	const id = useId();
+	const { data: firecrawl } = useQuery(orpc.firecrawl.status.queryOptions());
+	const [query, setQuery] = useState("");
+	const search = useMutation(orpc.applications.ai.searchPostings.mutationOptions());
 	const [input, setInput] = useState("");
 	const [role, setRole] = useState("");
 	const [company, setCompany] = useState("");
@@ -156,6 +161,91 @@ function AddApplicationForm({ onClose, onAdded }: { onClose: () => void; onAdded
 					<Trans>Paste a job link or posting, then check the role and company.</Trans>
 				</DialogDescription>
 			</DialogHeader>
+
+			{firecrawl?.configured && (
+				<section className="grid gap-2" aria-labelledby={`${id}-search-label`}>
+					<Label id={`${id}-search-label`} htmlFor={`${id}-search`}>
+						<Trans>Search job postings</Trans>
+					</Label>
+					<div className="flex gap-2">
+						<Input
+							id={`${id}-search`}
+							value={query}
+							maxLength={500}
+							placeholder={t`Role, company or location`}
+							onChange={(event) => {
+								setQuery(event.target.value);
+								search.reset();
+							}}
+							onKeyDown={(event) => {
+								if (event.key === "Enter" && !event.nativeEvent.isComposing) {
+									event.preventDefault();
+									if (query.trim().length >= 2 && !search.isPending) search.mutate({ query });
+								}
+							}}
+						/>
+						<Button
+							type="button"
+							variant="secondary"
+							disabled={query.trim().length < 2 || search.isPending || create.isPending}
+							onClick={() => search.mutate({ query })}
+						>
+							<Trans>Search</Trans>
+						</Button>
+					</div>
+					{search.isPending && (
+						<p className="text-ink-3 text-xs" role="status">
+							<Trans>Searching job postings…</Trans>
+						</p>
+					)}
+					{search.error && (
+						<p className="text-danger-text text-xs" role="alert">
+							{getOrpcErrorMessage(search.error, {
+								fallback: t`Job search failed. Try again or paste a posting link.`,
+							})}
+						</p>
+					)}
+					{search.data?.length === 0 && (
+						<p className="text-ink-3 text-xs" role="status">
+							<Trans>No postings found. Try different keywords.</Trans>
+						</p>
+					)}
+					{search.data && search.data.length > 0 && (
+						<ul className="grid gap-2">
+							{search.data.map((result) => (
+								<li key={result.url} className="rounded-lg border border-line p-3">
+									<strong className="font-medium text-sm">{result.title}</strong>
+									<p className="line-clamp-2 text-ink-3 text-xs">{result.description}</p>
+									<div className="mt-2 flex items-center gap-3">
+										<a
+											href={result.url}
+											target="_blank"
+											rel="noreferrer"
+											className="text-accent-text text-xs hover:underline"
+										>
+											<Trans>View posting</Trans>
+										</a>
+										<Button
+											type="button"
+											size="sm"
+											variant="secondary"
+											disabled={read.isPending || create.isPending}
+											onClick={() => {
+												setInput(result.url);
+												setRole("");
+												setCompany("");
+												search.reset();
+											}}
+										>
+											<Trans>Use posting</Trans>
+										</Button>
+									</div>
+								</li>
+							))}
+						</ul>
+					)}
+				</section>
+			)}
 
 			<div className="grid gap-1.5">
 				<Label htmlFor={`${id}-posting`}>

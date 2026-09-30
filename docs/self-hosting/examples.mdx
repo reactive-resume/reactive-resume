@@ -285,7 +285,8 @@ switch an existing instance.
 
 ## Add Redis and turn on AI
 
-AI features need `ENCRYPTION_SECRET`. Redis is optional on a single server, but with it an Assistant reply keeps
+Personal AI providers need `ENCRYPTION_SECRET`; [shared AI configuration](/self-hosting/job-search-and-ai) does not.
+Redis is optional on a single server, but with it an Assistant reply keeps
 streaming after a page reload. Add a Redis service to your compose file:
 
 ```yaml compose.yml
@@ -465,5 +466,6 @@ someone would use it, the complete configuration, and the environment variables 
 ## Related pages
 
 - [Environment variables](/self-hosting/environment-variables): every setting, with defaults.
+- [Job search and AI](/self-hosting/job-search-and-ai): connect Firecrawl, optional SearXNG and an AI provider.
 - [Self-hosting with Kubernetes](/self-hosting/kubernetes): the same setup as Kubernetes manifests.
 - [Single sign-on](/self-hosting/sso): Google, GitHub, LinkedIn and custom OAuth providers.

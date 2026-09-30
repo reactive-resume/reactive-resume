@@ -1,4 +1,5 @@
 import { ApiKeysSection } from "./api-keys";
+import { FirecrawlSection } from "./firecrawl";
 import { McpSection } from "./mcp";
 import { ProvidersSection } from "./providers";
 
@@ -7,6 +8,7 @@ export function AiDeveloperSettings() {
 	return (
 		<>
 			<ProvidersSection />
+			<FirecrawlSection />
 			<ApiKeysSection />
 			<McpSection />
 		</>

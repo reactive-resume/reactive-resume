@@ -9,14 +9,15 @@ import { generateJson as sharedGenerateJson } from "../ai/generate-json";
 import { getModel } from "../ai/service";
 import { aiProvidersService } from "../ai-providers/service";
 import { coverLetterService } from "../cover-letters/service";
+import { firecrawlService } from "../firecrawl/service";
 import { resumeService } from "../resume/service";
 import {
-	fetchPostingPage,
-	htmlToText,
+	fetchJobPosting,
 	isPostingLink,
 	MAX_POSTING_CHARS,
 	PostingFetchError,
-	readJobPosting,
+	postingSearchResult,
+	searchJobPostings,
 } from "./posting";
 import { applicationService } from "./service";
 
@@ -151,6 +152,34 @@ const aiErrors = {
 };
 
 export const aiRouter = {
+	searchPostings: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/applications/ai/search-postings",
+			operationId: "searchApplicationPostings",
+			summary: "Search job postings",
+			description:
+				"Searches the web for job postings using server-configured Firecrawl or the user's Firecrawl Cloud key. Returns up to five public https links to review and import. Requires authentication.",
+			...reserved,
+		})
+		.input(z.object({ query: z.string().trim().min(2).max(500) }))
+		.use(aiRequestRateLimit)
+		.output(z.array(postingSearchResult))
+		.errors({
+			SEARCH_UNAVAILABLE: { message: "Job search isn't configured on this server.", status: 503 },
+			SEARCH_FAILED: { message: "Job search couldn't be reached. Try again or paste a posting link.", status: 502 },
+		})
+		.handler(async ({ context, input }) => {
+			const config = await firecrawlService.resolve(context.user.id);
+			if (!config) throw new ORPCError("SEARCH_UNAVAILABLE", { status: 503 });
+			try {
+				return await searchJobPostings(input.query, config);
+			} catch {
+				// Provider errors can include request credentials or echo them in their response.
+				throw new ORPCError("SEARCH_FAILED", { status: 502 });
+			}
+		}),
+
 	// Reads a pasted link or posting into an application's fields. A link is fetched on the server (public https
 	// pages only); the page's own job data fills what it can, and an AI provider, when one is set up, reads the rest.
 	parsePosting: protectedProcedure
@@ -173,13 +202,11 @@ export const aiRouter = {
 		.handler(async ({ context, input }) => {
 			const link = isPostingLink(input.input) ? input.input.trim() : null;
 			let text = input.input;
-			let page: ReturnType<typeof readJobPosting> = null;
+			let page: Awaited<ReturnType<typeof fetchJobPosting>>["page"] = null;
 
 			if (link) {
 				try {
-					const html = await fetchPostingPage(link);
-					page = readJobPosting(html);
-					text = page?.description || htmlToText(html);
+					({ page, text } = await fetchJobPosting(link, await firecrawlService.resolve(context.user.id)));
 				} catch (error) {
 					if (error instanceof PostingFetchError)
 						throw new ORPCError("POSTING_UNREADABLE", { status: 422, cause: error });

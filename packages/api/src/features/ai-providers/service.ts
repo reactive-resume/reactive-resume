@@ -1,9 +1,10 @@
 import type { AIProvider } from "@reactive-resume/ai/types";
 import { ORPCError } from "@orpc/client";
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ne, sql } from "drizzle-orm";
 import { aiProviderSchema } from "@reactive-resume/ai/types";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
+import { env } from "@reactive-resume/env/server";
 import { assertCredentialEncryptionConfigured, decryptCredential, encryptCredential } from "../ai/credentials";
 import { testConnection } from "../ai/service";
 import { resolveAiBaseUrl } from "../ai/url-policy";
@@ -11,6 +12,7 @@ import { resolveAiBaseUrl } from "../ai/url-policy";
 type AiProviderRecord = typeof schema.aiProvider.$inferSelect;
 
 export type AiProviderResponse = {
+	managed: boolean;
 	id: string;
 	label: string;
 	provider: AIProvider;
@@ -51,6 +53,7 @@ function toResponse(row: AiProviderRecord): AiProviderResponse {
 	const provider = aiProviderSchema.parse(row.provider);
 
 	return {
+		managed: row.id === serverProviderId(row.userId),
 		id: row.id,
 		label: row.label,
 		provider,
@@ -77,6 +80,7 @@ function normalizeBaseUrl(input: { provider: AIProvider; baseURL?: string | null
 }
 
 async function getOwnedProvider(input: { id: string; userId: string }) {
+	if (input.id === serverProviderId(input.userId)) throw new ORPCError("NOT_FOUND");
 	const [provider] = await db
 		.select()
 		.from(schema.aiProvider)
@@ -88,14 +92,50 @@ async function getOwnedProvider(input: { id: string; userId: string }) {
 	return provider;
 }
 
+const serverProviderId = (userId: string) => `server-ai:${userId}`;
+
+function assertPersonalProvidersAllowed() {
+	if (env.AI_PROVIDER) throw new ORPCError("FORBIDDEN", { message: "AI is managed by the server." });
+}
+
+/** A persisted reference keeps Assistant thread foreign keys valid; server credentials stay in the environment. */
+async function serverProvider(userId: string) {
+	if (!env.AI_PROVIDER || !env.AI_MODEL) return null;
+	const values = {
+		userId,
+		label: "Server AI",
+		provider: env.AI_PROVIDER,
+		model: env.AI_MODEL,
+		baseUrl: env.AI_BASE_URL ?? null,
+		enabled: true,
+		testStatus: "success",
+		encryptedApiKey: "",
+		apiKeySalt: "",
+		apiKeyHash: "",
+		apiKeyPreview: "",
+	};
+	const [row] = await db
+		.insert(schema.aiProvider)
+		.values({ id: serverProviderId(userId), ...values })
+		.onConflictDoUpdate({ target: schema.aiProvider.id, set: values })
+		.returning();
+	if (!row) throw new Error("SERVER_AI_PROVIDER_UNAVAILABLE");
+	return { ...toResponse(row), apiKey: env.AI_API_KEY ?? "", baseURL: env.AI_BASE_URL ?? "" };
+}
+
 export const aiProvidersService = {
 	list: async (input: { userId: string }) => {
+		const global = await serverProvider(input.userId);
+		if (global) {
+			const { apiKey: _apiKey, ...response } = global;
+			return [response];
+		}
 		assertCredentialEncryptionConfigured();
 
 		const providers = await db
 			.select()
 			.from(schema.aiProvider)
-			.where(eq(schema.aiProvider.userId, input.userId))
+			.where(and(eq(schema.aiProvider.userId, input.userId), ne(schema.aiProvider.id, serverProviderId(input.userId))))
 			.orderBy(
 				desc(sql<Date>`coalesce(${schema.aiProvider.lastUsedAt}, '1970-01-01T00:00:00.000Z'::timestamptz)`),
 				asc(schema.aiProvider.createdAt),
@@ -105,6 +145,8 @@ export const aiProvidersService = {
 	},
 
 	getRunnableById: async (input: { id: string; userId: string }) => {
+		const global = await serverProvider(input.userId);
+		if (global) return global;
 		assertCredentialEncryptionConfigured();
 
 		const provider = await getOwnedProvider(input);
@@ -120,6 +162,8 @@ export const aiProvidersService = {
 	},
 
 	getDefaultRunnable: async (input: { userId: string }) => {
+		const global = await serverProvider(input.userId);
+		if (global) return global;
 		assertCredentialEncryptionConfigured();
 
 		const [provider] = await db
@@ -130,6 +174,7 @@ export const aiProvidersService = {
 					eq(schema.aiProvider.userId, input.userId),
 					eq(schema.aiProvider.enabled, true),
 					eq(schema.aiProvider.testStatus, "success"),
+					ne(schema.aiProvider.id, serverProviderId(input.userId)),
 				),
 			)
 			.orderBy(
@@ -148,6 +193,7 @@ export const aiProvidersService = {
 	},
 
 	create: async (input: CreateAiProviderInput) => {
+		assertPersonalProvidersAllowed();
 		assertCredentialEncryptionConfigured();
 
 		const encrypted = encryptCredential(input.apiKey.trim());
@@ -169,6 +215,7 @@ export const aiProvidersService = {
 	},
 
 	update: async (input: UpdateAiProviderInput) => {
+		assertPersonalProvidersAllowed();
 		assertCredentialEncryptionConfigured();
 
 		const existing = await getOwnedProvider(input);
@@ -206,6 +253,7 @@ export const aiProvidersService = {
 	},
 
 	delete: async (input: { id: string; userId: string }) => {
+		assertPersonalProvidersAllowed();
 		assertCredentialEncryptionConfigured();
 
 		await db
@@ -214,6 +262,7 @@ export const aiProvidersService = {
 	},
 
 	test: async (input: { id: string; userId: string }) => {
+		assertPersonalProvidersAllowed();
 		assertCredentialEncryptionConfigured();
 
 		const provider = await getOwnedProvider(input);

@@ -53,8 +53,10 @@ vi.mock("drizzle-orm", () => ({
 	asc: (value: unknown) => ({ type: "asc", value }),
 	desc: (value: unknown) => ({ type: "desc", value }),
 	eq: (left: unknown, right: unknown) => ({ type: "eq", left, right }),
+	ne: (left: unknown, right: unknown) => ({ type: "ne", left, right }),
 	sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({ type: "sql", strings: [...strings], values }),
 }));
+vi.mock("@reactive-resume/env/server", () => ({ env: {} }));
 vi.mock("../ai/credentials", () => ({
 	assertCredentialEncryptionConfigured: vi.fn(),
 	decryptCredential: vi.fn(() => "decrypted-key"),
@@ -110,6 +112,7 @@ describe("aiProvidersService", () => {
 				{ type: "eq", left: "ai_provider.user_id", right: "user-1" },
 				{ type: "eq", left: "ai_provider.enabled", right: true },
 				{ type: "eq", left: "ai_provider.test_status", right: "success" },
+				{ type: "ne", left: "ai_provider.id", right: "server-ai:user-1" },
 			],
 		});
 		expect(queryState.orderByArgs).toEqual([

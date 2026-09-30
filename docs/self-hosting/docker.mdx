@@ -29,6 +29,7 @@ separate printer service.
 | Upload storage | Yes | A folder mounted at `/app/data`, or an S3-compatible bucket instead. |
 | SMTP server | No | Sends verification and password reset emails. Without it, emails are written to the app log. |
 | Redis | No | Shares state between several app processes and lets Assistant replies survive a page reload. |
+| Firecrawl and an AI provider | No | Enable keyword job search, read posting URLs and extract application details. See [Job search and AI](/self-hosting/job-search-and-ai). |
 
 The image is published to two registries with the same tags:
 
@@ -162,8 +163,8 @@ Your instance is running. Next, you might want to:
 - **Keep it private.** After your own account exists, add `FLAG_DISABLE_SIGNUPS="true"` to `.env` and run
   `docker compose up -d`. Nobody else can sign up; existing accounts keep working.
 - **Send real emails.** Add the `SMTP_*` settings from the [reference](/self-hosting/environment-variables#email).
-- **Turn on AI features.** Add `ENCRYPTION_SECRET` (another `openssl rand -hex 32` value). People can then connect
-  their own AI provider and use the Assistant. See [Add Redis and turn on AI](/self-hosting/examples#add-redis-and-turn-on-ai).
+- **Turn on job search and AI.** Connect shared Firecrawl and AI services, or enable personal keys with
+  `ENCRYPTION_SECRET`. See [Job search and AI](/self-hosting/job-search-and-ai).
 - **Serve it over HTTPS.** Put a reverse proxy in front and set `APP_URL` to the public `https://` address. See
   [Deployment examples](/self-hosting/examples).
 
@@ -267,7 +268,7 @@ Your data lives in two places. Back up both, on a schedule, and test that you ca
   folder). With S3, turn on bucket versioning or replication in your provider.
 
 Keep a copy of your `.env` too. Without the same `AUTH_SECRET` and `ENCRYPTION_SECRET`, a restored instance signs
-everyone out, breaks two-factor authentication and loses saved AI provider keys.
+everyone out, breaks two-factor authentication and loses saved AI and Firecrawl keys.
 
 ## Build from the repository
 
@@ -351,8 +352,8 @@ There is no official app template. Use your platform's generic container setting
   </Accordion>
 
   <Accordion title="The Assistant says it isn't set up on this server">
-    `ENCRYPTION_SECRET` isn't set. Set it to at least 32 characters and recreate the container. A shorter value
-    stops the app at startup with `Invalid environment variables`.
+    Configure a shared AI provider, or set `ENCRYPTION_SECRET` to at least 32 characters so users can save personal
+    providers. Recreate the container, then check [Job search and AI](/self-hosting/job-search-and-ai).
   </Accordion>
 
   <Accordion title="PDF download fails in the browser">
@@ -365,5 +366,6 @@ There is no official app template. Use your platform's generic container setting
 
 - [Environment variables](/self-hosting/environment-variables): every setting, with defaults.
 - [Deployment examples](/self-hosting/examples): reverse proxies, S3 storage, Redis and local AI.
+- [Job search and AI](/self-hosting/job-search-and-ai): Firecrawl, SearXNG and shared or personal AI providers.
 - [Self-hosting with Kubernetes](/self-hosting/kubernetes): the same setup as Kubernetes manifests.
 - [Checking service status](/guides/checking-service-status): the status of the hosted instance.

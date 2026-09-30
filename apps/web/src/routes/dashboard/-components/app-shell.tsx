@@ -23,7 +23,7 @@ import { UserDropdownMenu } from "@/features/user/dropdown-menu";
 import { orpc } from "@/libs/orpc/client";
 
 type NavItem = {
-	to: "/dashboard" | "/dashboard/applications" | "/dashboard/trash";
+	to: "/dashboard" | "/dashboard/applications" | "/dashboard/trash" | "/dashboard/settings";
 	icon: IconName;
 	label: string;
 	count?: number;
@@ -47,17 +47,18 @@ function useNavItems() {
 			...(applications ? { count: applications.filter((application) => application.status !== "closed").length } : {}),
 		},
 	];
+	const settings: NavItem = { to: "/dashboard/settings", icon: "settings", label: t`Settings` };
 	const trash: NavItem | null = counts?.trash
 		? { to: "/dashboard/trash", icon: "delete", label: t`Trash`, count: counts.trash }
 		: null;
 
-	return { items, trash };
+	return { items, settings, trash };
 }
 
 /** Whether the item is the current page: Documents is exact, the others match their section. */
 function useIsCurrent() {
 	const matchRoute = useMatchRoute();
-	return (to: NavItem["to"] | "/dashboard/settings") => Boolean(matchRoute({ to, fuzzy: to !== "/dashboard" }));
+	return (to: NavItem["to"]) => Boolean(matchRoute({ to, fuzzy: to !== "/dashboard" }));
 }
 
 /**
@@ -106,7 +107,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 }
 
 function Sidebar() {
-	const { items, trash } = useNavItems();
+	const { items, settings, trash } = useNavItems();
 	const isCurrent = useIsCurrent();
 	const openPalette = useCommandPaletteStore((state) => state.setOpen);
 	const openDialog = useDialogStore((state) => state.openDialog);
@@ -136,6 +137,9 @@ function Sidebar() {
 				{items.map((item) => (
 					<NavLink key={item.to} item={item} current={isCurrent(item.to)} />
 				))}
+				<div className="mt-2 border-line border-t pt-2">
+					<NavLink item={settings} current={isCurrent(settings.to)} />
+				</div>
 			</nav>
 
 			<div className="mt-auto grid gap-2">
@@ -165,7 +169,7 @@ function Sidebar() {
 							<span className="grid min-w-0">
 								<span className="truncate font-medium text-sm">{session.user.name}</span>
 								<span className="text-ink-3 text-xs">
-									<Trans>Settings</Trans>
+									<Trans>Account</Trans>
 								</span>
 							</span>
 						</button>
@@ -195,7 +199,7 @@ function NavLink({ item, current }: { item: NavItem; current: boolean }) {
 
 /** Tablets: the same destinations as icons, with their names in tooltips. */
 function Rail() {
-	const { items, trash } = useNavItems();
+	const { items, settings, trash } = useNavItems();
 	const isCurrent = useIsCurrent();
 	const openPalette = useCommandPaletteStore((state) => state.setOpen);
 	const openDialog = useDialogStore((state) => state.openDialog);
@@ -214,7 +218,7 @@ function Rail() {
 				/>
 			</RailTip>
 			<nav aria-label={t`App`} className="grid gap-1">
-				{items.map((item) => (
+				{[...items, settings].map((item) => (
 					<RailTip key={item.to} label={item.label} icon={item.icon} filled={isCurrent(item.to)}>
 						<Link
 							to={item.to}
@@ -243,7 +247,7 @@ function Rail() {
 				</RailTip>
 				<UserDropdownMenu>
 					{({ session }) => (
-						<button type="button" aria-label={t`Settings`} className="rounded-full">
+						<button type="button" aria-label={t`Account`} className="rounded-full">
 							<Avatar className="size-8">
 								<AvatarImage src={session.user.image ?? undefined} />
 								<AvatarFallback className="text-[11px]">{getInitials(session.user.name)}</AvatarFallback>
@@ -278,7 +282,7 @@ function RailTip({
 	);
 }
 
-/** Phones: Documents · Applications · New · Account, with New as an accent pill in the middle. */
+/** Phones: Documents · Applications · New · Settings, with New as an accent pill in the middle. */
 function MobileTabs() {
 	const isCurrent = useIsCurrent();
 	const openDialog = useDialogStore((state) => state.openDialog);
@@ -324,14 +328,13 @@ function MobileTabs() {
 					<Trans>New</Trans>
 				</span>
 			</button>
-			{/* The Account tab is the settings root (README §6.9, B). */}
 			<Link
 				to="/dashboard/settings"
 				aria-current={isCurrent("/dashboard/settings") ? "page" : undefined}
 				viewTransition={false}
 				className="relative flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
 			>
-				{tab("account_circle", t`Account`, isCurrent("/dashboard/settings"))}
+				{tab("settings", t`Settings`, isCurrent("/dashboard/settings"))}
 			</Link>
 		</nav>
 	);

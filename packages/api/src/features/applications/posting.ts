@@ -1,8 +1,12 @@
 import type { LookupAddress } from "node:dns";
 import type { LookupFunction } from "node:net";
+import type { FirecrawlConfig } from "../firecrawl/service";
 import { lookup } from "node:dns";
+import { lookup as lookupAddresses } from "node:dns/promises";
 import { request } from "node:https";
+import { Firecrawl } from "firecrawl";
 import sanitizeHtml from "sanitize-html";
+import { z } from "zod";
 import { isPrivateOrLoopbackHost, parseUrl } from "@reactive-resume/utils/url-security.node";
 
 /** Matches the applications feature's cap on a saved posting. */
@@ -102,6 +106,73 @@ export function fetchPostingPage(input: string, redirects = 0): Promise<string> 
 		);
 		req.end();
 	});
+}
+
+const firecrawl = (config: FirecrawlConfig) => new Firecrawl({ ...config, timeoutMs: 65_000, maxRetries: 1 });
+
+const scrapeResponse = z.object({
+	markdown: z.string().max(MAX_PAGE_BYTES).optional(),
+	rawHtml: z.string().max(MAX_PAGE_BYTES).optional(),
+	metadata: z.object({ statusCode: z.number().optional() }).optional(),
+});
+
+/** Firecrawl renders dynamic pages; the built-in reader remains the fallback when it is unavailable. */
+export async function fetchJobPosting(
+	input: string,
+	config: FirecrawlConfig | null,
+): Promise<{ page: PagePosting | null; text: string }> {
+	const url = assertPublicPageUrl(input);
+	if (config) {
+		// Preflight before delegating. Firecrawl must also enforce public destinations on redirects and at connect time.
+		const addresses = await lookupAddresses(url.hostname, { all: true }).catch(() => []);
+		if (!allPublic(addresses)) throw new PostingFetchError("unsafe-url");
+		try {
+			const data = scrapeResponse.parse(
+				await firecrawl(config).scrape(url.toString(), {
+					formats: ["markdown", "rawHtml"],
+					onlyMainContent: true,
+					skipTlsVerification: false,
+					timeout: 60_000,
+					autoResume: false,
+				}),
+			);
+			if (data.metadata?.statusCode && data.metadata.statusCode >= 400) throw new PostingFetchError("unreachable");
+			const page = readJobPosting(data.rawHtml ?? "");
+			const text = page?.description || data.markdown?.trim() || htmlToText(data.rawHtml ?? "");
+			if (text) return { page, text: text.slice(0, MAX_POSTING_CHARS) };
+		} catch {
+			// Preserve URL import when Firecrawl is down, rate limited, or cannot read this page.
+		}
+	}
+	const html = await fetchPostingPage(url.toString());
+	const page = readJobPosting(html);
+	return { page, text: (page?.description || htmlToText(html)).slice(0, MAX_POSTING_CHARS) };
+}
+
+export const postingSearchResult = z.object({
+	url: z.string(),
+	title: z.string().max(1_000),
+	description: z.string().max(5_000).default(""),
+});
+
+/** Five web results for an explicit job query; no postings are scraped until the user selects one. */
+export async function searchJobPostings(query: string, config: FirecrawlConfig) {
+	const response = await firecrawl(config).search(`${query} job posting`, {
+		sources: ["web"],
+		limit: 5,
+		timeout: 60_000,
+	});
+	return (response.web ?? [])
+		.flatMap((item) => {
+			const result = postingSearchResult.safeParse(item);
+			if (!result.success) return [];
+			try {
+				return [{ ...result.data, url: assertPublicPageUrl(result.data.url).toString() }];
+			} catch {
+				return [];
+			}
+		})
+		.slice(0, 5);
 }
 
 const ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " " };

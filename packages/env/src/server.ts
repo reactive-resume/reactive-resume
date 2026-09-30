@@ -1,6 +1,7 @@
 import { isAbsolute, join } from "node:path";
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
+import { aiProviderSchema } from "@reactive-resume/ai/types";
 import { findWorkspaceRoot } from "@reactive-resume/utils/monorepo.node";
 import { deploymentEnvironment } from "./deployment";
 
@@ -88,6 +89,14 @@ export const env = createEnv({
 		REDIS_URL: z.url({ protocol: /redis(s)?/ }).optional(),
 		ENCRYPTION_SECRET: z.string().min(32, "ENCRYPTION_SECRET must be at least 32 characters").optional(),
 
+		// Optional job posting search and scraping (operator-controlled; local URLs are allowed).
+		FIRECRAWL_API_URL: z.url({ protocol: /^https?$/ }).optional(),
+		FIRECRAWL_API_KEY: z.string().trim().min(1).optional(),
+		AI_PROVIDER: aiProviderSchema.optional(),
+		AI_MODEL: z.string().trim().min(1).optional(),
+		AI_API_KEY: z.string().trim().min(1).optional(),
+		AI_BASE_URL: z.url({ protocol: /^https?$/ }).optional(),
+
 		// Feature Flags
 		FLAG_DISABLE_SIGNUPS: z.stringbool().default(false),
 		FLAG_DISABLE_EMAIL_AUTH: z.stringbool().default(false),
@@ -99,3 +108,14 @@ export const env = createEnv({
 	runtimeEnv: deploymentEnvironment(process.env),
 	emptyStringAsUndefined: true,
 });
+
+if (
+	(env.AI_PROVIDER || env.AI_MODEL || env.AI_API_KEY || env.AI_BASE_URL) &&
+	(!env.AI_PROVIDER || !env.AI_MODEL || (!env.AI_API_KEY && env.AI_PROVIDER !== "ollama"))
+) {
+	throw new Error("Server AI requires AI_PROVIDER, AI_MODEL and AI_API_KEY (the key is optional for Ollama).");
+}
+
+if (env.AI_PROVIDER === "openai-compatible" && !env.AI_BASE_URL) {
+	throw new Error("The openai-compatible server AI provider requires AI_BASE_URL.");
+}

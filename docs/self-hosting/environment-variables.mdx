@@ -133,17 +133,29 @@ Switching backends does not move files that are already stored. Copy them yourse
 
 ## AI and Redis
 
-AI features are off until `ENCRYPTION_SECRET` is set. People then add their own provider and key in
+For setup instructions and official provider guides, see [Job search and AI](/self-hosting/job-search-and-ai).
+
+To let people bring their own keys, set `ENCRYPTION_SECRET`. They can then add providers in
 **Settings → AI & developer**; see [Connecting an AI provider](/guides/using-ai).
+
+Alternatively, configure a shared provider with `AI_PROVIDER`, `AI_MODEL` and `AI_API_KEY` (the key is optional for
+Ollama). Server configuration takes precedence over personal providers for every AI feature, including the Assistant.
+Settings show that AI is enabled globally and hide personal provider controls; the API also rejects personal provider
+changes. Existing personal providers remain stored and become available again if you remove the server configuration.
+Shared credentials stay in the environment and do not require `ENCRYPTION_SECRET`.
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `ENCRYPTION_SECRET` | unset | Encrypts the AI provider keys people save. At least 32 characters; generate one with `openssl rand -hex 32` and keep it different from `AUTH_SECRET`. A shorter value stops the server at startup. Without it, adding a provider fails and the Assistant says it isn't set up on this server. |
+| `ENCRYPTION_SECRET` | unset | Encrypts personal AI and Firecrawl keys. At least 32 characters; generate one with `openssl rand -hex 32` and keep it different from `AUTH_SECRET`. A shorter value stops the server at startup. Required for saving personal keys. |
+| `AI_PROVIDER` | unset | Shared provider identifier, such as `openai`, `anthropic`, `gemini`, `ollama` or `openai-compatible`. Uses the same providers as the personal provider settings. |
+| `AI_MODEL` | unset | Shared model name, such as `gpt-5-mini`. Required with `AI_PROVIDER`. |
+| `AI_API_KEY` | unset | Shared provider key. Required with `AI_PROVIDER`, except for Ollama. Never returned to the browser. |
+| `AI_BASE_URL` | provider default | Optional shared provider endpoint; required for `openai-compatible`. Local or private endpoints need `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true`. |
 | `REDIS_URL` | unset | Redis connection string, `redis://` or `rediss://`. Optional. |
 | `AI_TEST_TIMEOUT_MS` | `30000` | How long **Save and test** waits for a provider to answer, in milliseconds. Raise it for local models that load slowly on first use. |
 
 <Warning>
-  Changing `ENCRYPTION_SECRET` makes every saved provider key unreadable. People then need to enter their keys again.
+  Changing `ENCRYPTION_SECRET` makes every saved AI and Firecrawl key unreadable. People then need to enter their keys again.
 </Warning>
 
 Redis is optional on a single server. Without it, everything works, with these limits:
@@ -156,6 +168,36 @@ Set `REDIS_URL` when you run more than one server process, or when you want repl
 configured, the [health endpoint](/self-hosting/docker#check-the-health-endpoint) also checks it.
 
 Saved AI providers and Assistant conversations are kept in PostgreSQL, so they remain available without Redis.
+
+## Job posting search and scraping
+
+Firecrawl is optional. People can save their own Firecrawl Cloud key in **Settings → AI & developer** when
+`ENCRYPTION_SECRET` is configured. Personal keys always use Firecrawl Cloud; people cannot enter a custom service URL.
+
+For a shared service, configure either variable below. Server configuration takes precedence: settings show that
+Firecrawl is enabled globally, hide personal key controls, and the API rejects personal key changes. Setting a URL alone
+also enables a keyless self-hosted service globally. Existing personal keys remain stored and become available again if
+you remove the server configuration.
+
+Either setup enables **Search job postings** in **Applications → Add an application** and uses Firecrawl to read pasted
+job links. Without Firecrawl, the built-in link reader and pasted text continue to work. If Firecrawl cannot read a link,
+the server falls back to the built-in reader. The npm `firecrawl` SDK connects to the service; it does not run Firecrawl.
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `FIRECRAWL_API_URL` | unset | Base URL of a Firecrawl v2 API, without `/v2`. Set this for a self-hosted service, for example `http://localhost:3102` when running Reactive Resume directly on the host. Private HTTP service URLs are allowed because only the server operator sets this value. |
+| `FIRECRAWL_API_KEY` | unset | Optional bearer key for the configured service. Setting only this variable uses `https://api.firecrawl.dev`. Leave it unset for a private self-hosted Firecrawl instance with authentication disabled. |
+
+Search returns up to five links. Choose **Use posting** to read a result, review the role and company, then save the
+application. Search does not create applications automatically. Your configured AI provider still extracts salary,
+requirements and other fields; without AI, the page's JSON-LD fills the fields it provides.
+
+See [Job search and AI](/self-hosting/job-search-and-ai) for Firecrawl deployment, optional SearXNG search, container
+networking and a local test. SearXNG variables are configured on Firecrawl, not Reactive Resume.
+
+Job links still require public HTTPS destinations. Keep Firecrawl's protections against private destinations,
+redirects and DNS rebinding enabled. Search queries and selected posting URLs are sent to the configured service;
+resume data and saved AI-provider keys are not sent to Firecrawl.
 
 ## Feature flags
 
@@ -201,7 +243,7 @@ These appear in `.env.example` but are not used by a running server:
 | --- | --- |
 | `GOOGLE_CLOUD_API_KEY` | The script that regenerates the font list. |
 | `CROWDIN_PROJECT_ID`, `CROWDIN_API_TOKEN` | Translation sync tooling. |
-| `COVER_LETTER_TEST_DATABASE_URL`, `OAUTH_TEST_DATABASE_URL` | Test suites that need their own database. |
+| `COVER_LETTER_TEST_DATABASE_URL`, `OAUTH_TEST_DATABASE_URL`, `INTEGRATIONS_TEST_DATABASE_URL` | Test suites that need a disposable database. Integration credential tests create and remove an isolated schema. |
 
 See [Development setup](/contributing/development) for working on the code.
 
