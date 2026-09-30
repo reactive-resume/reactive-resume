@@ -3,6 +3,7 @@ import type z from "zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { DotsSixVerticalIcon, LinkIcon, ListPlusIcon, XIcon } from "@phosphor-icons/react";
+import { useStore } from "@tanstack/react-form";
 import { Reorder, useDragControls } from "motion/react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormItem } from "@reactive-resume/ui/components/form";
@@ -29,103 +30,108 @@ const defaultValues: FormValues = {
 export const CustomFieldsSection = withForm({
 	defaultValues,
 	render: ({ form }) => {
+		const customFields = useStore(form.store, (state) => state.values.customFields ?? []);
+
 		return (
 			<form.Field name="customFields" mode="array">
 				{(customFieldsField) => (
-					<Reorder.Group
-						className="space-y-4"
-						values={customFieldsField.state.value}
-						onReorder={(fields) => {
-							customFieldsField.setValue(fields);
-						}}
-					>
-						{customFieldsField.state.value.map((field: CustomField, index: number) => (
-							<CustomFieldItem key={field.id} field={field}>
-								<form.Field name={`customFields[${index}].icon`}>
-									{(iconField) => (
-										<FormItem className="shrink-0">
-											<FormControl
-												render={
-													<IconPicker
-														name={iconField.name}
-														value={iconField.state.value}
-														className="rounded-r-none! border-e-0!"
-														onChange={(icon) => {
-															iconField.handleChange(icon);
-														}}
-													/>
-												}
-											/>
-										</FormItem>
-									)}
-								</form.Field>
+					<div className="space-y-4">
+						<Reorder.Group
+							axis="y"
+							className="space-y-4"
+							values={customFields}
+							onReorder={(fields) => {
+								customFieldsField.setValue(fields);
+							}}
+						>
+							{customFields.map((field: CustomField, index: number) => (
+								<CustomFieldItem key={field.id} field={field}>
+									<form.Field name={`customFields[${index}].icon`}>
+										{(iconField) => (
+											<FormItem className="shrink-0">
+												<FormControl
+													render={
+														<IconPicker
+															name={iconField.name}
+															value={iconField.state.value}
+															className="rounded-r-none! border-e-0!"
+															onChange={(icon) => {
+																iconField.handleChange(icon);
+															}}
+														/>
+													}
+												/>
+											</FormItem>
+										)}
+									</form.Field>
 
-								<form.Field name={`customFields[${index}].text`}>
-									{(textField) => (
-										<FormItem className="flex-1">
-											<FormControl
-												render={
-													<Input
-														name={textField.name}
-														value={textField.state.value}
-														className="rounded-l-none!"
-														onChange={(e) => {
-															textField.handleChange(e.target.value);
-														}}
-													/>
-												}
-											/>
-										</FormItem>
-									)}
-								</form.Field>
+									<form.Field name={`customFields[${index}].text`}>
+										{(textField) => (
+											<FormItem className="flex-1">
+												<FormControl
+													render={
+														<Input
+															name={textField.name}
+															value={textField.state.value}
+															className="rounded-l-none!"
+															onChange={(e) => {
+																textField.handleChange(e.target.value);
+															}}
+														/>
+													}
+												/>
+											</FormItem>
+										)}
+									</form.Field>
 
-								<form.Field name={`customFields[${index}].link`}>
-									{(linkField) => (
-										<Popover>
-											<PopoverTrigger
-												render={
-													<Button size="icon" variant="ghost" aria-label={t`Add link`} className="ms-1">
-														<LinkIcon />
-													</Button>
-												}
-											/>
+									<form.Field name={`customFields[${index}].link`}>
+										{(linkField) => (
+											<Popover>
+												<PopoverTrigger
+													render={
+														<Button size="icon" variant="ghost" aria-label={t`Add link`} className="ms-1">
+															<LinkIcon />
+														</Button>
+													}
+												/>
 
-											<PopoverContent align="center">
-												<div className="flex flex-col gap-y-1.5">
-													<Label htmlFor={linkField.name} className="text-muted-foreground text-xs">
-														<Trans>Enter the URL to link to</Trans>
-													</Label>
+												<PopoverContent align="center">
+													<div className="flex flex-col gap-y-1.5">
+														<Label htmlFor={linkField.name} className="text-muted-foreground text-xs">
+															<Trans>Enter the URL to link to</Trans>
+														</Label>
 
-													<Input
-														type="url"
-														value={linkField.state.value}
-														id={linkField.name}
-														placeholder={t({
-															comment: "Placeholder text for custom link URL field in resume builder",
-															message: "Must start with https://",
-														})}
-														onChange={(e) => {
-															linkField.handleChange(e.target.value);
-														}}
-													/>
-												</div>
-											</PopoverContent>
-										</Popover>
-									)}
-								</form.Field>
+														<Input
+															type="url"
+															value={linkField.state.value}
+															id={linkField.name}
+															placeholder={t({
+																comment: "Placeholder text for custom link URL field in resume builder",
+																message: "Must start with https://",
+															})}
+															onChange={(e) => {
+																linkField.handleChange(e.target.value);
+															}}
+														/>
+													</div>
+												</PopoverContent>
+											</Popover>
+										)}
+									</form.Field>
 
-								<Button
-									size="icon"
-									variant="ghost"
-									aria-label={t`Remove custom field`}
-									onClick={() => {
-										customFieldsField.removeValue(index);
-									}}
-								>
-									<XIcon />
-								</Button>
-							</CustomFieldItem>
-						))}
+									<Button
+										size="icon"
+										variant="ghost"
+										aria-label={t`Remove custom field`}
+										onClick={() => {
+											customFieldsField.removeValue(index);
+										}}
+									>
+										<XIcon />
+									</Button>
+								</CustomFieldItem>
+							))}
+						</Reorder.Group>
 
 						<Button
 							variant="ghost"
@@ -136,7 +142,7 @@ export const CustomFieldsSection = withForm({
 							<ListPlusIcon />
 							<Trans>Add a custom field</Trans>
 						</Button>
-					</Reorder.Group>
+					</div>
 				)}
 			</form.Field>
 		);
