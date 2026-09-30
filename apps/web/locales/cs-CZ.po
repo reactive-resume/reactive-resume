@@ -1405,8 +1405,8 @@ msgid "Continue where you left off"
 msgstr "Pokračujte tam, kde jste skončili"
 
 #: src/dialogs/resume/import.tsx
-msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, and JSON files from Reactive Resume or JSON Resume."
-msgstr "Navažte tam, kde jste skončili, importem životopisu vytvořeného v Reactive Resume nebo jiném nástroji pro tvorbu životopisů. Podporované formáty jsou PDF, Microsoft Word a soubory JSON z Reactive Resume nebo JSON Resume."
+msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, a LinkedIn data export, and JSON files from Reactive Resume or JSON Resume."
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Contribute code"
@@ -1586,6 +1586,10 @@ msgstr "Záznam časové osy se nepodařilo odstranit."
 msgid "Couldn't move the application. Please try again."
 msgstr "Žádost se nepodařilo přesunout. Zkuste to prosím znovu."
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't remove the file. Please try again."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Couldn't save"
 msgstr "Nepodařilo se uložit"
@@ -1610,7 +1614,8 @@ msgstr ""
 msgid "Couldn't update the timeline entry."
 msgstr "Záznam časové osy se nepodařilo aktualizovat."
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't upload the file. Please try again."
 msgstr "Soubor se nepodařilo nahrát. Zkuste to prosím znovu."
 
@@ -3577,6 +3582,11 @@ msgstr "Propojený reaktivní životopis"
 #: src/routes/_home/-sections/footer.tsx
 msgid "LinkedIn"
 msgstr "LinkedIn"
+
+#. Import source option for a LinkedIn data export ZIP
+#: src/dialogs/resume/import.tsx
+msgid "LinkedIn (Data Export)"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "LinkedIn, Referral…"
@@ -6148,6 +6158,10 @@ msgstr "Kontroly výše jsou mechanické. Toto se ptá jazykového modelu, co by
 msgid "The deep check could not finish. Please try again."
 msgstr "Hloubkovou kontrolu se nepodařilo dokončit. Zkuste to prosím znovu."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "The file could not be removed from storage. Your application is up to date."
+msgstr ""
+
 #. Error shown when AI parsing returns invalid resume structure during import
 #: src/dialogs/resume/import.tsx
 msgid "The imported file could not be parsed into a valid resume."
@@ -6922,7 +6936,7 @@ msgstr "Nahrát obrázek"
 msgid "Uploading picture…"
 msgstr "Nahrávání obrázku…"
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 msgid "Uploading…"
 msgstr "Nahrávání…"
 
@@ -7553,4 +7567,3 @@ msgstr "Oddálit"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-

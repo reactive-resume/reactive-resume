@@ -1405,8 +1405,8 @@ msgid "Continue where you left off"
 msgstr "நீங்கள் நிறுத்திய இடத்தில் இருந்து தொடர்க"
 
 #: src/dialogs/resume/import.tsx
-msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, and JSON files from Reactive Resume or JSON Resume."
-msgstr "Reactive Resume-இலோ வேறு ரெஸ்யூம் பில்டரிலோ நீங்கள் உருவாக்கிய ரெஸ்யூமை இறக்குமதி செய்து, நிறுத்திய இடத்திலிருந்தே தொடரவும். PDF, Microsoft Word, மற்றும் Reactive Resume அல்லது JSON Resume-இன் JSON கோப்புகள் ஆதரிக்கப்படுகின்றன."
+msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, a LinkedIn data export, and JSON files from Reactive Resume or JSON Resume."
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Contribute code"
@@ -1586,6 +1586,10 @@ msgstr "காலவரிசை உள்ளீட்டை நீக்க ம
 msgid "Couldn't move the application. Please try again."
 msgstr "பயன்பாட்டை நகர்த்த முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't remove the file. Please try again."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Couldn't save"
 msgstr "சேமிக்க முடியவில்லை"
@@ -1610,7 +1614,8 @@ msgstr ""
 msgid "Couldn't update the timeline entry."
 msgstr "காலவரிசை உள்ளீட்டை புதுப்பிக்க முடியவில்லை."
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't upload the file. Please try again."
 msgstr "கோப்பைப் பதிவேற்ற முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
@@ -3577,6 +3582,11 @@ msgstr "இணைக்கப்பட்ட Reactive Resume"
 #: src/routes/_home/-sections/footer.tsx
 msgid "LinkedIn"
 msgstr "லிங்க்ட்இன்"
+
+#. Import source option for a LinkedIn data export ZIP
+#: src/dialogs/resume/import.tsx
+msgid "LinkedIn (Data Export)"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "LinkedIn, Referral…"
@@ -6148,6 +6158,10 @@ msgstr "மேலே உள்ள சோதனைகள் இயந்திர
 msgid "The deep check could not finish. Please try again."
 msgstr "ஆழமான சோதனையை முடிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "The file could not be removed from storage. Your application is up to date."
+msgstr ""
+
 #. Error shown when AI parsing returns invalid resume structure during import
 #: src/dialogs/resume/import.tsx
 msgid "The imported file could not be parsed into a valid resume."
@@ -6922,7 +6936,7 @@ msgstr "படத்தைப் பதிவேற்றவும்"
 msgid "Uploading picture…"
 msgstr "படம் பதிவேற்றப்படுகிறது…"
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 msgid "Uploading…"
 msgstr "பதிவேற்றுகிறது…"
 
@@ -7553,4 +7567,3 @@ msgstr "சிறிதாக்கு"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "ஜூலு"
-

@@ -1,11 +1,11 @@
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { Application } from "../types";
-import type { FileAttachment } from "./file-attachment-field";
+import type { FileAttachment, StagedAttachment } from "./file-attachment-field";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { SparkleIcon, XIcon } from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { STAGES } from "@reactive-resume/schema/applications/data";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@reactive-resume/ui/components/accordion";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -49,14 +49,21 @@ const emptyForm = () => ({
 	followUpAt: "",
 	followUpNote: "",
 	notes: "",
-	resumeFile: null as FileAttachment | null,
-	coverLetter: null as FileAttachment | null,
+	resumeFile: null as FileAttachment | StagedAttachment | null,
+	coverLetter: null as FileAttachment | StagedAttachment | null,
 });
 
 type FormState = ReturnType<typeof emptyForm>;
 
 const toAttachment = (url: string | null, name: string | null): FileAttachment | null =>
 	url ? { url, name: name ?? url } : null;
+
+// Public file URLs are served as `${APP_URL}/api/uploads/<key>` — the delete route expects the
+// bare `uploads/...` key. Mirrors `storageKeyFromApplicationUrl` in the applications service.
+const storageKeyFromUrl = (url: string) => {
+	const path = new URL(url, window.location.origin).pathname;
+	return path.match(/^\/(?:api\/)?(uploads\/.+)$/)?.[1] ?? path.split("/").pop() ?? path;
+};
 
 function toForm(app: Application): FormState {
 	return {
@@ -122,13 +129,22 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 		}
 	};
 
+	// Storage mutations are only fired from submit(): picks stay staged in the form until the
+	// record write succeeds, and removals are deleted only after the record stops referencing
+	// them, so cancelling the sheet never mutates storage (and never leaves a broken reference).
+	const upload = useMutation(orpc.storage.uploadFile.mutationOptions({ meta: { noInvalidate: true } }));
+	const removeFile = useMutation(orpc.storage.deleteFile.mutationOptions({ meta: { noInvalidate: true } }));
+
+	// Public URLs of files pushed to storage during a save attempt. If the sheet closes without
+	// a committed save, they would be orphaned — so a cancelled close deletes them best-effort.
+	const sessionUploads = useRef(new Set<string>());
+	const savingRef = useRef(false);
+
 	const create = useMutation(
 		orpc.applications.create.mutationOptions({
 			onSuccess: () => {
 				invalidate();
 				toast.add({ type: "success", description: t`Application added to your pipeline.` });
-				setForm(emptyForm());
-				onOpenChange(false);
 			},
 			onError: () => toast.add({ type: "error", description: t`Couldn't add the application. Please try again.` }),
 		}),
@@ -139,7 +155,6 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 			onSuccess: () => {
 				invalidate();
 				toast.add({ type: "success", description: t`Application updated.` });
-				onOpenChange(false);
 			},
 			onError: () => toast.add({ type: "error", description: t`Couldn't save your changes. Please try again.` }),
 		}),
@@ -167,35 +182,141 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 		autofill.mutate({ jobDescription: posting.slice(0, MAX_JOB_DESCRIPTION_CHARS) });
 	};
 
-	const pending = create.isPending || update.isPending;
+	const pending = create.isPending || update.isPending || upload.isPending;
 
-	const submit = () => {
-		if (!form.company.trim() || !form.role.trim()) return;
-		const payload = {
-			company: form.company.trim(),
-			role: form.role.trim(),
-			status: form.status,
-			location: form.location.trim() || null,
-			salary: form.salary.trim() || null,
-			source: form.source.trim() || null,
-			resumeId: form.resumeId || null,
-			tags: form.tags,
-			sourceUrl: form.sourceUrl.trim() || null,
-			jobDescription: form.jobDescription.trim() || null,
-			notes: form.notes.trim() || null,
-			followUpNote: form.followUpNote.trim() || null,
-			followUpAt: form.followUpAt ? new Date(form.followUpAt) : null,
-			resumeFileUrl: form.resumeFile?.url ?? null,
-			resumeFileName: form.resumeFile?.name ?? null,
-			coverLetterUrl: form.coverLetter?.url ?? null,
-			coverLetterName: form.coverLetter?.name ?? null,
+	const stageAttachment = (key: "resumeFile" | "coverLetter", file: File | null) => {
+		// Object URL doubles as the preview link while the pick stays staged.
+		const next = file ? { url: URL.createObjectURL(file), name: file.name, file } : null;
+		setForm((prev) => {
+			const prior = prev[key];
+			if (prior && "file" in prior) URL.revokeObjectURL(prior.url);
+			return { ...prev, [key]: next };
+		});
+	};
+
+	const deleteStoredFile = (url: string) => {
+		removeFile.mutate(
+			{ filename: storageKeyFromUrl(url) },
+			{
+				onError: () =>
+					toast.add({
+						type: "warning",
+						description: t`The file could not be removed from storage. Your application is up to date.`,
+					}),
+			},
+		);
+	};
+
+	// Drops staged picks and session uploads that never made it into a saved record.
+	const discardPendingFiles = () => {
+		for (const url of sessionUploads.current) deleteStoredFile(url);
+		sessionUploads.current.clear();
+		for (const attachment of [form.resumeFile, form.coverLetter]) {
+			if (attachment && "file" in attachment) URL.revokeObjectURL(attachment.url);
+		}
+	};
+
+	// Latest-render ref: the cleanup below must see the session's current state without
+	// re-firing on every render — re-firing would delete in-flight uploads mid-save.
+	const discardRef = useRef(discardPendingFiles);
+	useEffect(() => {
+		discardRef.current = discardPendingFiles;
+	});
+
+	// Covers unmount mid-edit (e.g. navigating away): the sheet is modal, so its target can't
+	// change while open, and every in-UI close routes through handleOpenChange which already
+	// discards — only abandonment reaches this cleanup. Skipped while a commit is in flight:
+	// submit() still owns cleanup of its own uploads even after unmount.
+	useEffect(() => {
+		return () => {
+			if (!savingRef.current) discardRef.current();
 		};
-		if (application) update.mutate({ id: application.id, ...payload });
-		else create.mutate({ ...payload, stageEnteredAt: form.stageEnteredAt || undefined });
+	}, []);
+
+	const uploadStaged = async (attachment: FileAttachment | StagedAttachment | null): Promise<FileAttachment | null> => {
+		if (!attachment || !("file" in attachment)) return attachment;
+		let url: string;
+		try {
+			({ url } = await upload.mutateAsync(attachment.file));
+		} catch {
+			toast.add({ type: "error", description: t`Couldn't upload the file. Please try again.` });
+			throw new Error("upload failed");
+		}
+		sessionUploads.current.add(url);
+		URL.revokeObjectURL(attachment.url);
+		return { url, name: attachment.name };
+	};
+
+	const submit = async () => {
+		if (!form.company.trim() || !form.role.trim() || savingRef.current) return;
+		savingRef.current = true;
+		try {
+			// Upload staged picks first so the payload carries real storage URLs.
+			const [resumeFile, coverLetter] = await Promise.all([
+				uploadStaged(form.resumeFile),
+				uploadStaged(form.coverLetter),
+			]);
+			setForm((prev) => ({ ...prev, resumeFile, coverLetter }));
+			const payload = {
+				company: form.company.trim(),
+				role: form.role.trim(),
+				status: form.status,
+				location: form.location.trim() || null,
+				salary: form.salary.trim() || null,
+				source: form.source.trim() || null,
+				resumeId: form.resumeId || null,
+				tags: form.tags,
+				sourceUrl: form.sourceUrl.trim() || null,
+				jobDescription: form.jobDescription.trim() || null,
+				notes: form.notes.trim() || null,
+				followUpNote: form.followUpNote.trim() || null,
+				followUpAt: form.followUpAt ? new Date(form.followUpAt) : null,
+				resumeFileUrl: resumeFile?.url ?? null,
+				resumeFileName: resumeFile?.name ?? null,
+				coverLetterUrl: coverLetter?.url ?? null,
+				coverLetterName: coverLetter?.name ?? null,
+			};
+			if (application) await update.mutateAsync({ id: application.id, ...payload });
+			else await create.mutateAsync({ ...payload, stageEnteredAt: form.stageEnteredAt || undefined });
+
+			// The record now owns the committed URLs — drop whatever it no longer references:
+			// attachments removed in this edit and uploads superseded by a later pick.
+			const kept = new Set([resumeFile?.url, coverLetter?.url].filter((url): url is string => !!url));
+			for (const url of [application?.resumeFileUrl, application?.coverLetterUrl]) {
+				if (url && !kept.has(url)) deleteStoredFile(url);
+			}
+			for (const url of sessionUploads.current) {
+				if (!kept.has(url)) deleteStoredFile(url);
+			}
+			sessionUploads.current.clear();
+			if (!application) setForm(emptyForm());
+			onOpenChange(false);
+		} catch {
+			// The mutation's own onError already surfaced a toast; stay open so the user can retry.
+		} finally {
+			savingRef.current = false;
+		}
+	};
+
+	const handleOpenChange = (nextOpen: boolean) => {
+		if (!nextOpen) {
+			// A commit is mid-flight; submit() closes the sheet itself once storage settles.
+			if (savingRef.current) return;
+			discardPendingFiles();
+			// The sheet stays mounted while closed, so a cancelled pick (or an uploaded-but-
+			// unsaved file) would otherwise linger in the form as a draft pointing at a blob URL
+			// or a storage key that discard just deleted. Restore what the record references.
+			setForm((prev) => ({
+				...prev,
+				resumeFile: application ? toAttachment(application.resumeFileUrl, application.resumeFileName) : null,
+				coverLetter: application ? toAttachment(application.coverLetterUrl, application.coverLetterName) : null,
+			}));
+		}
+		onOpenChange(nextOpen);
 	};
 
 	return (
-		<Sheet open={open} onOpenChange={onOpenChange}>
+		<Sheet open={open} onOpenChange={handleOpenChange}>
 			<SheetContent side="right" className="w-full gap-0 data-[side=right]:sm:max-w-lg">
 				<SheetHeader>
 					<SheetTitle>{isEditing ? <Trans>Edit application</Trans> : <Trans>Add application</Trans>}</SheetTitle>
@@ -346,7 +467,8 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 							<FileAttachmentField
 								value={form.resumeFile}
 								attachLabel={t`Or upload a resume PDF`}
-								onChange={(value) => set("resumeFile", value)}
+								disabled={pending}
+								onChange={(file) => stageAttachment("resumeFile", file)}
 							/>
 							<p className="text-[11px] text-muted-foreground">
 								<Trans>Link a Reactive Resume to use AI match scoring and tailoring.</Trans>
@@ -358,7 +480,8 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 						<FileAttachmentField
 							value={form.coverLetter}
 							attachLabel={t`Attach a cover letter (PDF)`}
-							onChange={(value) => set("coverLetter", value)}
+							disabled={pending}
+							onChange={(file) => stageAttachment("coverLetter", file)}
 						/>
 					</Field>
 
@@ -386,7 +509,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 				</div>
 
 				<SheetFooter className="flex-row justify-end gap-2">
-					<Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+					<Button type="button" variant="outline" disabled={pending} onClick={() => handleOpenChange(false)}>
 						<Trans>Cancel</Trans>
 					</Button>
 					<Button type="button" disabled={!form.company.trim() || !form.role.trim() || pending} onClick={submit}>

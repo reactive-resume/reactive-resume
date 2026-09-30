@@ -1405,8 +1405,8 @@ msgid "Continue where you left off"
 msgstr "Continúa donde lo dejaste"
 
 #: src/dialogs/resume/import.tsx
-msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, and JSON files from Reactive Resume or JSON Resume."
-msgstr "Continúa donde lo dejaste importando un currículum que creaste en Reactive Resume o en otro creador de currículums. Los formatos admitidos son PDF, Microsoft Word y archivos JSON de Reactive Resume o JSON Resume."
+msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, a LinkedIn data export, and JSON files from Reactive Resume or JSON Resume."
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Contribute code"
@@ -1586,6 +1586,10 @@ msgstr "No se pudo eliminar la entrada de la cronología."
 msgid "Couldn't move the application. Please try again."
 msgstr "No se pudo mover la candidatura. Inténtalo de nuevo."
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't remove the file. Please try again."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Couldn't save"
 msgstr "No se pudo salvar"
@@ -1610,7 +1614,8 @@ msgstr ""
 msgid "Couldn't update the timeline entry."
 msgstr "No se pudo actualizar la entrada de la cronología."
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't upload the file. Please try again."
 msgstr "No se pudo subir el archivo. Inténtalo de nuevo."
 
@@ -3577,6 +3582,11 @@ msgstr "Reactive Resume vinculado"
 #: src/routes/_home/-sections/footer.tsx
 msgid "LinkedIn"
 msgstr "LinkedIn"
+
+#. Import source option for a LinkedIn data export ZIP
+#: src/dialogs/resume/import.tsx
+msgid "LinkedIn (Data Export)"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "LinkedIn, Referral…"
@@ -6148,6 +6158,10 @@ msgstr "Las comprobaciones anteriores son mecánicas. Esto le pregunta a un mode
 msgid "The deep check could not finish. Please try again."
 msgstr "La comprobación profunda no pudo finalizar. Inténtelo de nuevo."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "The file could not be removed from storage. Your application is up to date."
+msgstr ""
+
 #. Error shown when AI parsing returns invalid resume structure during import
 #: src/dialogs/resume/import.tsx
 msgid "The imported file could not be parsed into a valid resume."
@@ -6922,7 +6936,7 @@ msgstr "Subir foto"
 msgid "Uploading picture…"
 msgstr "Subiendo imagen…"
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 msgid "Uploading…"
 msgstr "Subiendo…"
 
@@ -7553,4 +7567,3 @@ msgstr "Alejar"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulú"
-

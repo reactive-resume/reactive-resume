@@ -1405,8 +1405,8 @@ msgid "Continue where you left off"
 msgstr "បន្ត​ពី​កន្លែង​ដែល​អ្នក​បាន​ឈប់"
 
 #: src/dialogs/resume/import.tsx
-msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, and JSON files from Reactive Resume or JSON Resume."
-msgstr "បន្តពីកន្លែងដែលអ្នកបានឈប់ ដោយនាំចូលប្រវត្តិរូបសង្ខេបដែលអ្នកបានបង្កើតក្នុង Reactive Resume ឬកម្មវិធីបង្កើតប្រវត្តិរូបផ្សេងទៀត។ ទម្រង់ដែលគាំទ្រគឺ PDF, Microsoft Word និងឯកសារ JSON ពី Reactive Resume ឬ JSON Resume។"
+msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, a LinkedIn data export, and JSON files from Reactive Resume or JSON Resume."
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Contribute code"
@@ -1586,6 +1586,10 @@ msgstr "មិនអាចលុបធាតុបន្ទាត់ពេលវ
 msgid "Couldn't move the application. Please try again."
 msgstr "មិនអាចផ្លាស់ទីពាក្យសុំបានទេ។ សូមព្យាយាមម្តងទៀត។"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't remove the file. Please try again."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Couldn't save"
 msgstr "មិនអាចរក្សាទុកបានទេ"
@@ -1610,7 +1614,8 @@ msgstr ""
 msgid "Couldn't update the timeline entry."
 msgstr "មិនអាចធ្វើបច្ចុប្បន្នភាពធាតុបន្ទាត់ពេលវេលាបានទេ។"
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't upload the file. Please try again."
 msgstr "មិនអាចផ្ទុកឡើងឯកសារបានទេ។ សូមព្យាយាមម្តងទៀត។"
 
@@ -3577,6 +3582,11 @@ msgstr "Reactive Resume ដែលបានភ្ជាប់"
 #: src/routes/_home/-sections/footer.tsx
 msgid "LinkedIn"
 msgstr "LinkedIn"
+
+#. Import source option for a LinkedIn data export ZIP
+#: src/dialogs/resume/import.tsx
+msgid "LinkedIn (Data Export)"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "LinkedIn, Referral…"
@@ -6148,6 +6158,10 @@ msgstr "ការត្រួតពិនិត្យខាងលើគឺជា
 msgid "The deep check could not finish. Please try again."
 msgstr "ការត្រួតពិនិត្យស៊ីជម្រៅមិនអាចបញ្ចប់បានទេ។ សូមព្យាយាមម្តងទៀត។"
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "The file could not be removed from storage. Your application is up to date."
+msgstr ""
+
 #. Error shown when AI parsing returns invalid resume structure during import
 #: src/dialogs/resume/import.tsx
 msgid "The imported file could not be parsed into a valid resume."
@@ -6922,7 +6936,7 @@ msgstr "អាប់ឡូដរូបភាព"
 msgid "Uploading picture…"
 msgstr "កំពុងផ្ទុកឡើងរូបភាព…"
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 msgid "Uploading…"
 msgstr "កំពុងផ្ទុកឡើង…"
 
@@ -7553,4 +7567,3 @@ msgstr "បង្រួម"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-

@@ -1405,8 +1405,8 @@ msgid "Continue where you left off"
 msgstr "Qoldirgan joyingizdan davom eting"
 
 #: src/dialogs/resume/import.tsx
-msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, and JSON files from Reactive Resume or JSON Resume."
-msgstr "Reactive Resume'da yoki boshqa rezyume yaratuvchisida tuzgan rezyumengizni import qilib, to'xtagan joyingizdan davom eting. Qo'llab-quvvatlanadigan formatlar: PDF, Microsoft Word va Reactive Resume yoki JSON Resume'dan olingan JSON fayllar."
+msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, a LinkedIn data export, and JSON files from Reactive Resume or JSON Resume."
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Contribute code"
@@ -1586,6 +1586,10 @@ msgstr "Vaqt jadvali yozuvini o‘chirib bo‘lmadi."
 msgid "Couldn't move the application. Please try again."
 msgstr "Arizani ko'chirib bo'lmadi. Qayta urinib ko'ring."
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't remove the file. Please try again."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Couldn't save"
 msgstr "Saqlab bo'lmadi"
@@ -1610,7 +1614,8 @@ msgstr ""
 msgid "Couldn't update the timeline entry."
 msgstr "Vaqt jadvali yozuvini yangilab bo‘lmadi."
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't upload the file. Please try again."
 msgstr "Faylni yuklab bo'lmadi. Qayta urinib ko'ring."
 
@@ -3577,6 +3582,11 @@ msgstr "Bog'langan Reactive Resume"
 #: src/routes/_home/-sections/footer.tsx
 msgid "LinkedIn"
 msgstr "LinkedIn"
+
+#. Import source option for a LinkedIn data export ZIP
+#: src/dialogs/resume/import.tsx
+msgid "LinkedIn (Data Export)"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "LinkedIn, Referral…"
@@ -6148,6 +6158,10 @@ msgstr "Yuqoridagi tekshiruvlar mexanik. Bu esa til modelidan oʻquvchi nuqtalar
 msgid "The deep check could not finish. Please try again."
 msgstr "Chuqur tekshiruvni yakunlab boʻlmadi. Iltimos, qayta urinib koʻring."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "The file could not be removed from storage. Your application is up to date."
+msgstr ""
+
 #. Error shown when AI parsing returns invalid resume structure during import
 #: src/dialogs/resume/import.tsx
 msgid "The imported file could not be parsed into a valid resume."
@@ -6922,7 +6936,7 @@ msgstr "Rasmni yuklang"
 msgid "Uploading picture…"
 msgstr "Rasm yuklanmoqda…"
 
-#: src/features/applications/components/file-attachment-field.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 msgid "Uploading…"
 msgstr "Yuklanmoqda…"
 
@@ -7553,4 +7567,3 @@ msgstr "Kichraytirish"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
