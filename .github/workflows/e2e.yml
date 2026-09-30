@@ -51,12 +51,14 @@ jobs:
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Checkout Repository (Blacksmith)
         if: ${{ vars.USE_BLACKSMITH == 'true' }}
         uses: useblacksmith/checkout@v1
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v6
@@ -67,8 +69,22 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "pnpm"
 
+      - name: Cache Turbo artifacts
+        uses: actions/cache@v5
+        with:
+          path: .turbo/cache
+          key: ${{ runner.os }}-${{ runner.arch }}-turbo-${{ github.workflow }}-${{ hashFiles('pnpm-lock.yaml', '.nvmrc') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-turbo-${{ github.workflow }}-${{ hashFiles('pnpm-lock.yaml', '.nvmrc') }}-
+
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Check Package Boundaries
+        run: pnpm exec turbo boundaries
+
+      - name: Typecheck Affected Packages
+        run: pnpm exec turbo run typecheck --affected
 
       - name: Install Playwright Browser
         timeout-minutes: 10

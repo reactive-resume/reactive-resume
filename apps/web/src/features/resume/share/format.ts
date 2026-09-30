@@ -30,7 +30,7 @@ const UNITS = [
 /** Time since a moment in the largest whole unit, written short: "5m", "2h", "3d", "6w", "1y". */
 export function formatTimeSince(date: Date, locale: string, now = Date.now()) {
 	const elapsed = Math.max(0, now - date.getTime());
-	const { unit, ms } = UNITS.find(({ ms, below }) => elapsed / ms < below) ?? UNITS[UNITS.length - 1];
+	const { unit, ms } = UNITS.find(({ ms, below }) => elapsed / ms < below) ?? UNITS[4];
 	return new Intl.NumberFormat(locale, { style: "unit", unit, unitDisplay: "narrow" }).format(Math.floor(elapsed / ms));
 }
 

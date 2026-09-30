@@ -1,12 +1,12 @@
 import { useState } from "react";
 
 interface CommonControlledStateProps<T> {
-	value?: T;
-	defaultValue?: T;
+	value?: T | undefined;
+	defaultValue?: T | undefined;
 }
 
 type UseControlledStateProps<T, Rest extends unknown[] = []> = CommonControlledStateProps<T> & {
-	onChange?: (value: T, ...args: Rest) => void;
+	onChange?: ((value: T, ...args: Rest) => void) | undefined;
 };
 
 export function useControlledState<T, Rest extends unknown[] = []>(

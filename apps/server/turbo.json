@@ -2,12 +2,18 @@
 	"extends": ["//"],
 	"tags": ["app:server", "runtime:server", "role:adapter"],
 	"tasks": {
-		"test": { "env": ["OAUTH_TEST_DATABASE_URL"] },
-		"test:coverage": { "env": ["OAUTH_TEST_DATABASE_URL"] },
-		"test:agent": { "env": ["OAUTH_TEST_DATABASE_URL"] },
+		"test": {
+			"env": ["$TURBO_EXTENDS$", "OAUTH_TEST_DATABASE_URL"]
+		},
+		"test:coverage": {
+			"env": ["$TURBO_EXTENDS$", "OAUTH_TEST_DATABASE_URL"]
+		},
+		"test:agent": {
+			"env": ["$TURBO_EXTENDS$", "OAUTH_TEST_DATABASE_URL"]
+		},
 		"test:ci": {
 			"cache": false,
-			"env": ["OAUTH_TEST_DATABASE_URL"]
+			"env": ["$TURBO_EXTENDS$", "OAUTH_TEST_DATABASE_URL"]
 		}
 	}
 }

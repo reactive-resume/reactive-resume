@@ -26,14 +26,14 @@ type PdfCanvasDocumentProps = {
 
 type PdfCanvasPageProps = {
 	caption?: ReactNode;
-	className?: string;
+	className?: string | undefined;
 	overlay?: ReactNode;
 	document: PDFDocumentProxy;
 	onLoadSuccess: (pageNumber: number, pageSize: PreviewPageSize) => void;
 	onRenderSuccess?: () => void;
 	pageNumber: number;
 	pageScale: number;
-	pageSize?: PreviewPageSize;
+	pageSize?: PreviewPageSize | undefined;
 	showPageNumbers: boolean;
 	totalPages: number;
 };

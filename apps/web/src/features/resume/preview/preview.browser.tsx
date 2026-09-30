@@ -1,6 +1,6 @@
 import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { Template } from "@reactive-resume/schema/templates";
-import type { CSSProperties } from "react";
+import type { MotionStyle } from "motion/react";
 import type { ResolvedResumePreviewProps } from "./preview.shared";
 import type { PreviewPageSize } from "./preview.shared.utils";
 import { t } from "@lingui/core/macro";
@@ -217,7 +217,7 @@ export function ResumePreviewClient({
 						key={visiblePdf.id}
 						aria-hidden={visiblePdf.phase !== "active"}
 						data-resume-preview-template={visiblePdf.template}
-						style={{ "--resume-preview-page-gap": resolvedPageGap } as CSSProperties}
+						style={{ "--resume-preview-page-gap": resolvedPageGap } as MotionStyle}
 						className={cn("col-start-1 row-start-1", visiblePdf.phase !== "active" && "pointer-events-none")}
 						initial={{ opacity: visiblePdf.phase === "active" ? 1 : 0 }}
 						animate={{ opacity: visiblePdf.phase === "active" ? 1 : 0 }}

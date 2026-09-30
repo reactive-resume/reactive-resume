@@ -42,7 +42,7 @@ function Text({
 	label,
 	wide,
 	autoFocus,
-}: FieldSetProps & { field: string; label: ReactNode; wide?: boolean; autoFocus?: boolean }) {
+}: FieldSetProps & { field: string; label: ReactNode; wide?: boolean; autoFocus?: boolean | undefined }) {
 	return (
 		<TextField
 			label={label}
@@ -308,7 +308,7 @@ export function EntryFields({
 	type,
 	autoFocus,
 	...props
-}: FieldSetProps & { type: CustomSectionType; autoFocus?: boolean }) {
+}: FieldSetProps & { type: CustomSectionType; autoFocus?: boolean | undefined }) {
 	switch (type) {
 		case "experience":
 			return (

@@ -22,9 +22,9 @@ export type Resume = {
 	isLocked: boolean;
 	createdAt: Date;
 	updatedAt: Date;
-	hasPassword?: boolean;
-	isPublic?: boolean;
-	showDownloadButtons?: boolean;
+	hasPassword?: boolean | undefined;
+	isPublic?: boolean | undefined;
+	showDownloadButtons?: boolean | undefined;
 	/** The job application this resume was made for; Check's Job match reads its posting. */
 	applicationId?: string | null;
 };
@@ -57,7 +57,7 @@ type UpdateResumeDataOptions = {
 
 type ResumeStoreState = {
 	resume: Resume | null;
-	resumeId?: string;
+	resumeId?: string | undefined;
 	isReady: boolean;
 	saveStatus: SaveStatus;
 	// Undo/redo stacks of `ResumeData` references. Immer's immutable updates share structure, so a
@@ -90,21 +90,21 @@ type Runtime = {
 	queryClient?: QueryClient;
 	hasPendingLocalChanges: boolean;
 	isSaving: boolean;
-	pendingResume?: Resume;
+	pendingResume?: Resume | undefined;
 	/** The last save failed; don't loop on it. Cleared by the next edit, Retry, reconnecting or success. */
 	saveFailed: boolean;
-	slowSaveToastId?: string;
+	slowSaveToastId?: string | undefined;
 	syncResume: ReturnType<typeof debounce<(resume: Resume) => void>>;
 	beforeUnloadHandler?: () => void;
 	onlineHandler?: () => void;
-	deferredRemoteResume?: Resume;
-	deferredFocusHandler?: () => void;
+	deferredRemoteResume?: Resume | undefined;
+	deferredFocusHandler?: (() => void) | undefined;
 	/** This visit's saves share one autosave version in History. */
 	sessionId: string;
 };
 
 type ResumeUpdateSubscriptionOptions = {
-	resumeId?: string;
+	resumeId?: string | undefined;
 	onUpdate: (event: ResumeUpdateEvent) => Promise<void> | void;
 	onError?: (error: unknown) => void;
 };

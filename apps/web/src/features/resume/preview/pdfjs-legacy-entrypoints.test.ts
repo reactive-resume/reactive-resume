@@ -42,7 +42,7 @@ vi.mock("pdfjs-dist/legacy/build/pdf.mjs", () => pdfjsMock.legacyModule);
 
 describe("PDF.js browser entrypoints", () => {
 	beforeEach(() => {
-		pdfjsMock.legacyModule.GlobalWorkerOptions.workerSrc = undefined;
+		delete pdfjsMock.legacyModule.GlobalWorkerOptions.workerSrc;
 		pdfjsMock.legacyModule.getDocument.mockClear();
 		pdfjsMock.loadingTask.destroy.mockClear();
 		pdfjsMock.pdfDocument.getPage.mockClear();

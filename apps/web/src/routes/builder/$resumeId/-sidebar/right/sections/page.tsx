@@ -11,7 +11,7 @@ import {
 } from "@reactive-resume/ui/components/input-group";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { Combobox } from "@/components/ui/combobox";
-import { useResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";
 import { SectionBase } from "../shared/section-base";
@@ -34,8 +34,8 @@ const CLAMP_MAX = 100;
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
 function PageSectionForm() {
-	const resume = useResume();
-	const page = resume?.data.metadata.page;
+	const resume = useCurrentResume();
+	const page = resume.data.metadata.page;
 	const updateResumeData = useUpdateResumeData();
 
 	const persist = (data: FormValues) => {

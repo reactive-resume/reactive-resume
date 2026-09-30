@@ -3,10 +3,12 @@
 # Base image only; pnpm self-manages to the `packageManager` version in package.json.
 ARG PNPM_VERSION=11.21.0
 ARG NODE_VERSION=24
+ARG TURBO_VERSION=2.11.5
 
 FROM ghcr.io/pnpm/pnpm:${PNPM_VERSION} AS base
 
 ARG NODE_VERSION
+ARG TURBO_VERSION
 
 RUN pnpm runtime set node ${NODE_VERSION} -g --config.store-dir=/pnpm/runtime-store
 
@@ -17,7 +19,7 @@ ENV TURBO_TELEMETRY_DISABLED=1
 FROM base AS pruner
 COPY . .
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
-    pnpm dlx turbo@2.9.12 prune web server --docker
+    pnpm dlx turbo@${TURBO_VERSION} prune web server --docker
 
 FROM base AS builder
 COPY --from=pruner /app/out/json/ ./
@@ -31,7 +33,7 @@ RUN rm -rf apps/web/dist apps/web/dist-prerender apps/server/dist && pnpm turbo 
 FROM base AS runtime-pruner
 COPY . .
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
-    pnpm dlx turbo@2.9.12 prune server --docker
+    pnpm dlx turbo@${TURBO_VERSION} prune server --docker
 
 FROM base AS runtime-deps
 COPY --from=runtime-pruner /app/out/json/ ./

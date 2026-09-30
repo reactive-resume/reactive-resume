@@ -31,8 +31,8 @@ type ComboboxOption<TValue extends string | number = string> = {
 
 type SingleComboboxProps<TValue extends string | number = string> = {
 	options: ComboboxOption<TValue>[];
-	value?: TValue | null;
-	defaultValue?: TValue | null;
+	value?: TValue | null | undefined;
+	defaultValue?: TValue | null | undefined;
 	onValueChange?: (value: TValue | null) => void;
 	multiple?: false;
 	disabled?: boolean;
@@ -47,8 +47,8 @@ type SingleComboboxProps<TValue extends string | number = string> = {
 
 type MultiComboboxProps<TValue extends string | number = string> = {
 	options: ComboboxOption<TValue>[];
-	value?: TValue[] | null;
-	defaultValue?: TValue[] | null;
+	value?: TValue[] | null | undefined;
+	defaultValue?: TValue[] | null | undefined;
 	onValueChange?: (value: TValue[] | null) => void;
 	multiple: true;
 	disabled?: boolean;

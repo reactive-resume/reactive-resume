@@ -22,7 +22,7 @@ export function getNextWeights(fontFamily: string, single = false): Weight[] | n
 		// candidateIndex: 0 (first), 1 (last)
 		const lastIndex = uniqueWeights.length - 1;
 		const candidate = weights.length === 0 ? uniqueWeights[0] : uniqueWeights[lastIndex];
-		if (!selectedWeights.has(candidate)) {
+		if (candidate !== undefined && !selectedWeights.has(candidate)) {
 			weights.push(candidate);
 			selectedWeights.add(candidate);
 		} else break;

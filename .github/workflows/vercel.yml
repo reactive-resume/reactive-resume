@@ -49,6 +49,14 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
+      - name: Cache Turbo artifacts
+        uses: actions/cache@v5
+        with:
+          path: .turbo/cache
+          key: ${{ runner.os }}-${{ runner.arch }}-turbo-${{ github.workflow }}-${{ hashFiles('pnpm-lock.yaml', '.nvmrc') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-turbo-${{ github.workflow }}-${{ hashFiles('pnpm-lock.yaml', '.nvmrc') }}-
+
       - run: pnpm install --frozen-lockfile
       # Local project settings avoid authentication and API calls. Forks receive no cloud credentials.
       - name: Build Vercel artifact against isolated PostgreSQL

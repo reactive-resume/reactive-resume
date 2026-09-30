@@ -19,7 +19,7 @@ import { useCommandPaletteStore } from "./store";
 export function CommandPalette() {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const commandRef = useRef<HTMLDivElement>(null);
-	const [selectedValue, setSelectedValue] = useState<string>();
+	const [selectedValue, setSelectedValue] = useState("");
 	const { open, search, pages, setOpen, setSearch, goBack } = useCommandPaletteStore();
 
 	const isFirstPage = pages.length === 0;

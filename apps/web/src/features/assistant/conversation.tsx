@@ -262,6 +262,11 @@ function toProposals(
 	const output = part.output as ProposeEditsOutput | undefined;
 	return (output?.edits ?? []).map((edit) => ({
 		...edit,
+		target: {
+			sectionId: edit.target.sectionId,
+			field: edit.target.field,
+			...(edit.target.itemId === undefined ? {} : { itemId: edit.target.itemId }),
+		},
 		location: document.locationOf(edit) ?? edit.location,
 		status: statuses.get(edit.id) ?? edit.status,
 		source: "assistant",

@@ -26,7 +26,7 @@ type MonthYearInputProps = DateSettings & {
 	value: YearMonth | null;
 	disabled?: boolean;
 	/** Shown instead of the value, e.g. "Present" while the entry is ongoing. */
-	placeholderValue?: string;
+	placeholderValue?: string | undefined;
 	onCommit: (value: YearMonth | null) => void;
 	onInvalid: (invalid: boolean) => void;
 };
@@ -84,7 +84,7 @@ function MonthYearInput({
 type DatesFieldProps = DateSettings & {
 	dates: ResumeDates;
 	/** Awards, certifications and publications have one date. */
-	single?: boolean;
+	single?: boolean | undefined;
 	onChange: (dates: ResumeDates) => void;
 	className?: string;
 };

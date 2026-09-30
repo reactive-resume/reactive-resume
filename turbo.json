@@ -1,5 +1,5 @@
 {
-	"$schema": "https://v2-10-7.turborepo.dev/schema.json",
+	"$schema": "https://v2-11-5.turborepo.dev/schema.json",
 	"ui": "stream",
 	"boundaries": {
 		"dependencies": {
@@ -44,7 +44,198 @@
 			}
 		}
 	},
-	"globalEnv": [
+	"tasks": {
+		"transit": {
+			"dependsOn": ["^transit"]
+		},
+		"build": {
+			"inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env*"],
+			"outputs": ["dist/**", ".vercel/**"],
+			"dependsOn": ["transit"],
+			"env": ["NODE_ENV"]
+		},
+		"typecheck": {
+			"dependsOn": ["transit"]
+		},
+		"test": {
+			"dependsOn": ["transit"],
+			"env": [
+				"PORT",
+				"SERVER_PORT",
+				"APP_URL",
+				"ROOT_RESUME_ID",
+				"DATABASE_*",
+				"AUTH_SECRET",
+				"BETTER_AUTH_*",
+				"GOOGLE_CLIENT_*",
+				"GITHUB_CLIENT_*",
+				"LINKEDIN_CLIENT_*",
+				"OAUTH_*",
+				"SMTP_*",
+				"LOCAL_STORAGE_PATH",
+				"S3_*",
+				"REDIS_URL",
+				"ENCRYPTION_SECRET",
+				"FIRECRAWL_*",
+				"AI_*",
+				"FLAG_*",
+				"STRICT_SCHEMA_CHECK",
+				"VERCEL",
+				"VERCEL_ENV",
+				"VERCEL_URL",
+				"VERCEL_PROJECT_PRODUCTION_URL",
+				"VERCEL_BRANCH_URL",
+				"POSTGRES_*",
+				"KV_URL",
+				"STORAGE_BACKEND",
+				"BLOB_*",
+				"DEPLOYMENT_NAMESPACE",
+				"ALLOW_PREVIEW_MIGRATIONS",
+				"NODE_ENV"
+			],
+			"inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env*"]
+		},
+		"test:coverage": {
+			"dependsOn": ["transit"],
+			"env": [
+				"PORT",
+				"SERVER_PORT",
+				"APP_URL",
+				"ROOT_RESUME_ID",
+				"DATABASE_*",
+				"AUTH_SECRET",
+				"BETTER_AUTH_*",
+				"GOOGLE_CLIENT_*",
+				"GITHUB_CLIENT_*",
+				"LINKEDIN_CLIENT_*",
+				"OAUTH_*",
+				"SMTP_*",
+				"LOCAL_STORAGE_PATH",
+				"S3_*",
+				"REDIS_URL",
+				"ENCRYPTION_SECRET",
+				"FIRECRAWL_*",
+				"AI_*",
+				"FLAG_*",
+				"STRICT_SCHEMA_CHECK",
+				"VERCEL",
+				"VERCEL_ENV",
+				"VERCEL_URL",
+				"VERCEL_PROJECT_PRODUCTION_URL",
+				"VERCEL_BRANCH_URL",
+				"POSTGRES_*",
+				"KV_URL",
+				"STORAGE_BACKEND",
+				"BLOB_*",
+				"DEPLOYMENT_NAMESPACE",
+				"ALLOW_PREVIEW_MIGRATIONS",
+				"NODE_ENV"
+			],
+			"inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env*"],
+			"outputs": ["coverage/**"]
+		},
+		"test:ci": {
+			"dependsOn": ["transit"],
+			"env": [
+				"PORT",
+				"SERVER_PORT",
+				"APP_URL",
+				"ROOT_RESUME_ID",
+				"DATABASE_*",
+				"AUTH_SECRET",
+				"BETTER_AUTH_*",
+				"GOOGLE_CLIENT_*",
+				"GITHUB_CLIENT_*",
+				"LINKEDIN_CLIENT_*",
+				"OAUTH_*",
+				"SMTP_*",
+				"LOCAL_STORAGE_PATH",
+				"S3_*",
+				"REDIS_URL",
+				"ENCRYPTION_SECRET",
+				"FIRECRAWL_*",
+				"AI_*",
+				"FLAG_*",
+				"STRICT_SCHEMA_CHECK",
+				"VERCEL",
+				"VERCEL_ENV",
+				"VERCEL_URL",
+				"VERCEL_PROJECT_PRODUCTION_URL",
+				"VERCEL_BRANCH_URL",
+				"POSTGRES_*",
+				"KV_URL",
+				"STORAGE_BACKEND",
+				"BLOB_*",
+				"DEPLOYMENT_NAMESPACE",
+				"ALLOW_PREVIEW_MIGRATIONS",
+				"NODE_ENV"
+			],
+			"inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env*"],
+			"outputs": ["reports/**"]
+		},
+		"test:agent": {
+			"dependsOn": ["transit"],
+			"env": [
+				"PORT",
+				"SERVER_PORT",
+				"APP_URL",
+				"ROOT_RESUME_ID",
+				"DATABASE_*",
+				"AUTH_SECRET",
+				"BETTER_AUTH_*",
+				"GOOGLE_CLIENT_*",
+				"GITHUB_CLIENT_*",
+				"LINKEDIN_CLIENT_*",
+				"OAUTH_*",
+				"SMTP_*",
+				"LOCAL_STORAGE_PATH",
+				"S3_*",
+				"REDIS_URL",
+				"ENCRYPTION_SECRET",
+				"FIRECRAWL_*",
+				"AI_*",
+				"FLAG_*",
+				"STRICT_SCHEMA_CHECK",
+				"VERCEL",
+				"VERCEL_ENV",
+				"VERCEL_URL",
+				"VERCEL_PROJECT_PRODUCTION_URL",
+				"VERCEL_BRANCH_URL",
+				"POSTGRES_*",
+				"KV_URL",
+				"STORAGE_BACKEND",
+				"BLOB_*",
+				"DEPLOYMENT_NAMESPACE",
+				"ALLOW_PREVIEW_MIGRATIONS",
+				"NODE_ENV"
+			],
+			"inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env*"],
+			"outputs": ["reports/**"]
+		},
+		"dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"start": {
+			"cache": false,
+			"persistent": true
+		},
+		"db:generate": {
+			"cache": false
+		},
+		"db:migrate": {
+			"cache": false
+		},
+		"db:studio": {
+			"cache": false,
+			"persistent": true
+		},
+		"lingui:extract": {
+			"cache": false
+		}
+	},
+	"globalDependencies": ["vitest.shared.mts", "vitest.setup.ts"],
+	"globalPassThroughEnv": [
 		"PORT",
 		"SERVER_PORT",
 		"APP_URL",
@@ -112,52 +303,7 @@
 		"BLOB_READ_WRITE_TOKEN",
 		"BLOB_STORE_ID",
 		"DEPLOYMENT_NAMESPACE",
-		"ALLOW_PREVIEW_MIGRATIONS"
-	],
-	"tasks": {
-		"transit": {
-			"dependsOn": ["^transit"]
-		},
-		"build": {
-			"inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env*"],
-			"outputs": ["dist/**", ".vercel/**"],
-			"dependsOn": ["transit"]
-		},
-		"typecheck": {
-			"dependsOn": ["transit"]
-		},
-		"test": {
-			"dependsOn": ["transit"]
-		},
-		"test:coverage": {
-			"dependsOn": ["transit"]
-		},
-		"test:ci": {
-			"dependsOn": ["transit"]
-		},
-		"test:agent": {
-			"dependsOn": ["transit"]
-		},
-		"dev": {
-			"cache": false,
-			"persistent": true
-		},
-		"start": {
-			"cache": false,
-			"persistent": true
-		},
-		"db:generate": {
-			"cache": false
-		},
-		"db:migrate": {
-			"cache": false
-		},
-		"db:studio": {
-			"cache": false,
-			"persistent": true
-		},
-		"lingui:extract": {
-			"cache": false
-		}
-	}
+		"ALLOW_PREVIEW_MIGRATIONS",
+		"NODE_ENV"
+	]
 }

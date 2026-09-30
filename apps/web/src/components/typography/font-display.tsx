@@ -6,7 +6,7 @@ interface FontDisplayProps {
 	family: string;
 	label: string;
 	type: "standard" | "web";
-	url?: string;
+	url?: string | undefined;
 }
 
 const loadedFonts = new Set<string>();

@@ -81,8 +81,7 @@ export function getCompatibleMoveTargets(
 	const customSectionById = new Map(resumeData.customSections.map((section) => [section.id, section]));
 	const result: MoveTargetPage[] = [];
 
-	for (let pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-		const page = pages[pageIndex];
+	for (const [pageIndex, page] of pages.entries()) {
 		const allSectionIds = [...page.main, ...page.sidebar];
 		const compatibleSections: MoveTargetSection[] = [];
 

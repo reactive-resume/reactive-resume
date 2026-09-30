@@ -49,6 +49,8 @@ Internal packages are source-consumed through `package.json` export maps pointin
 
 Prerequisites: **Node.js 24** (`.nvmrc`, root `engines`, and Dockerfile), **pnpm 12.8.1** (root `packageManager`; pnpm self-manages to this version), and **Docker with Docker Compose** for local infrastructure. The Dockerfile's `ARG PNPM_VERSION` chooses its base image, not the project's pnpm version. Start your Docker daemon before running Compose.
 
+Shared dependency versions live in the default `catalog` in `pnpm-workspace.yaml`. Use `catalog:` in workspace manifests when that shared range applies; keep intentional exact pins and peer dependency ranges explicit.
+
 Run commands from the workspace root unless stated otherwise:
 
 ```sh
@@ -135,7 +137,7 @@ Multi-place changes:
 - **Resume data shape**: `packages/schema/src/resume/*` first, then API DTOs, importers, PDF rendering, and web forms consuming it.
 - **New template**: `packages/schema/src/templates.ts`, `packages/pdf/src/templates/index.ts`, source under `packages/pdf/src/templates/<name>/`, and previews under `apps/web/public/templates/{jpg,pdf}`.
 - **New DB column/table**: `packages/db/src/schema/*`, then `pnpm db:generate`.
-- **New env var**: `packages/env/src/server.ts`, `.env.example`, **and** the `globalEnv` array in `turbo.json`. Add deployment aliases in `packages/env/src/deployment.ts` when needed. Turborepo strict env mode filters unlisted injected variables from task processes.
+- **New env var**: `packages/env/src/server.ts`, `.env.example`, **and** the `globalPassThroughEnv` array and applicable test-task `env` arrays in `turbo.json`. Add deployment aliases in `packages/env/src/deployment.ts` when needed. Turborepo strict env mode filters unlisted injected variables from task processes.
 
 ## Environment and database
 
@@ -163,7 +165,7 @@ pnpm exec turbo boundaries
 
 - Vitest tests live alongside source as `src/**/*.test.ts(x)` or `src/**/*.spec.ts(x)` (including integration tests). Paths under `pnpm --filter <package>` are package-relative. Pass paths directly after `test`: an extra `--` currently prevents Vitest from filtering the run. Shared settings live in `vitest.shared.mts` and setup in `vitest.setup.ts`; most packages use Node, while `packages/ui` uses `happy-dom`.
 - Coverage uses V8 and writes package-local `coverage/` reports. No shared minimum coverage threshold is configured. `test:ci` writes JSON/JUnit results under package-local `reports/`.
-- Root `pnpm test`, `pnpm test:coverage`, and `pnpm typecheck` run workspace checks through Turbo. CI runs `pnpm exec turbo run test:ci --concurrency=1` to avoid CPU contention in PDF/rate-limit suites.
+- Root `pnpm test`, `pnpm test:coverage`, and `pnpm typecheck` run workspace checks through Turbo. CI checks boundaries and affected-package typechecks, then runs all unit suites with `pnpm exec turbo run test:ci --concurrency=1` to avoid CPU contention in PDF/rate-limit suites. Unit/browser and Vercel workflows persist `.turbo/cache`; cached coverage and test reports restore to package-local output directories.
 - Real-database unit suites use `COVER_LETTER_TEST_DATABASE_URL` and `OAUTH_TEST_DATABASE_URL`; see `.github/workflows/e2e.yml` for isolated database setup. Never point test fixtures at production data.
 - After changing shared contracts, exports, or imports, check affected consumers and run `pnpm exec turbo boundaries`.
 

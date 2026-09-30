@@ -331,7 +331,7 @@ type AccessibleSectionProps = {
 	title: string;
 	hidden: boolean;
 	items: CustomSectionItem[];
-	keywordLayout?: "inline" | "list";
+	keywordLayout?: "inline" | "list" | undefined;
 };
 
 function AccessibleSection({ type, title, hidden, items, keywordLayout }: AccessibleSectionProps) {
@@ -353,7 +353,7 @@ function AccessibleSection({ type, title, hidden, items, keywordLayout }: Access
 }
 
 type ResumeAccessibleTextProps = {
-	data?: ResumeData;
+	data?: ResumeData | undefined;
 };
 
 /**

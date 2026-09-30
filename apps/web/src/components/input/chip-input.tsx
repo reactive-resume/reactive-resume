@@ -233,8 +233,10 @@ export function ChipInput({
 
 	const handleEdit = React.useCallback(
 		(index: number) => {
+			const chip = chips[index];
+			if (chip === undefined) return;
 			setEditingIndex(index);
-			setInput(chips[index]);
+			setInput(chip);
 			inputRef.current?.focus();
 		},
 		[chips],
@@ -244,7 +246,7 @@ export function ChipInput({
 		(newOrder: string[]) => {
 			if (editingIndex !== null) {
 				const editingChip = chips[editingIndex];
-				const newIndex = newOrder.indexOf(editingChip);
+				const newIndex = editingChip === undefined ? -1 : newOrder.indexOf(editingChip);
 				if (newIndex !== -1 && newIndex !== editingIndex) {
 					setEditingIndex(newIndex);
 				}
@@ -282,6 +284,7 @@ export function ChipInput({
 			if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
 				const newOrder = [...chips];
 				const [removed] = newOrder.splice(oldIndex, 1);
+				if (removed === undefined) return;
 				newOrder.splice(newIndex, 0, removed);
 				handleReorder(newOrder);
 			}
@@ -307,7 +310,7 @@ export function ChipInput({
 			if (newValue.includes(",")) {
 				const parts = newValue.split(",");
 				addChips(parts.slice(0, -1));
-				setInput(parts[parts.length - 1]);
+				setInput(parts.at(-1) ?? "");
 			} else {
 				setInput(newValue);
 			}

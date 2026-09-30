@@ -108,8 +108,7 @@ export function LayoutPages() {
 			if (location) return location;
 
 			// Search through all pages
-			for (let pageIndex = 0; pageIndex < layout.pages.length; pageIndex++) {
-				const page = layout.pages[pageIndex];
+			for (const [pageIndex, page] of layout.pages.entries()) {
 				const mainSections = new Set(page.main);
 				const sidebarSections = new Set(page.sidebar);
 				if (mainSections.has(id)) return { pageIndex, columnId: "main" };
@@ -141,6 +140,7 @@ export function LayoutPages() {
 			// Same location, reorder within column
 			if (activeLocation.pageIndex === overLocation.pageIndex && activeLocation.columnId === overLocation.columnId) {
 				const page = layout.pages[activeLocation.pageIndex];
+				if (!page) return;
 				const items = page[activeLocation.columnId];
 				const oldIdx = items.indexOf(activeIdStr);
 				let newIdx = items.indexOf(overIdStr);
@@ -148,12 +148,9 @@ export function LayoutPages() {
 				if (newIdx === -1) newIdx = items.length - 1;
 
 				updateResumeData((draft) => {
-					const colOrder = draft.metadata.layout.pages[activeLocation.pageIndex][activeLocation.columnId];
-					draft.metadata.layout.pages[activeLocation.pageIndex][activeLocation.columnId] = arrayMove(
-						colOrder,
-						oldIdx,
-						newIdx,
-					);
+					const page = draft.metadata.layout.pages[activeLocation.pageIndex];
+					if (!page) return;
+					page[activeLocation.columnId] = arrayMove(page[activeLocation.columnId], oldIdx, newIdx);
 				});
 				return;
 			}
@@ -161,6 +158,7 @@ export function LayoutPages() {
 			// Different location, move between columns/pages
 			const fromPage = layout.pages[activeLocation.pageIndex];
 			const toPage = layout.pages[overLocation.pageIndex];
+			if (!fromPage || !toPage) return;
 			const fromItems = fromPage[activeLocation.columnId];
 			const toItems = toPage[overLocation.columnId];
 			const fromIdx = fromItems.indexOf(activeIdStr);
@@ -172,6 +170,7 @@ export function LayoutPages() {
 			updateResumeData((draft) => {
 				const fromPageDraft = draft.metadata.layout.pages[activeLocation.pageIndex];
 				const toPageDraft = draft.metadata.layout.pages[overLocation.pageIndex];
+				if (!fromPageDraft || !toPageDraft) return;
 				const from = fromPageDraft[activeLocation.columnId];
 				const to = toPageDraft[overLocation.columnId];
 
@@ -201,6 +200,7 @@ export function LayoutPages() {
 				// Find the first available page that isn't being deleted
 				const targetPageIndex = pageIndex === 0 ? 1 : 0;
 				const targetPage = draft.metadata.layout.pages[targetPageIndex];
+				if (!pageToDelete || !targetPage) return;
 
 				// Move all sections from deleted page to target page
 				targetPage.main.push(...pageToDelete.main);
@@ -216,6 +216,7 @@ export function LayoutPages() {
 		(pageIndex: number, fullWidth: boolean) => {
 			updateResumeData((draft) => {
 				const page = draft.metadata.layout.pages[pageIndex];
+				if (!page) return;
 				page.fullWidth = fullWidth;
 
 				if (fullWidth) {
@@ -451,17 +452,20 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 
 	const moveTo = (targetPageIndex: number, targetColumnId: ColumnId) => {
 		updateResumeData((draft) => {
-			const from = draft.metadata.layout.pages[pageIndex][columnId];
+			const from = draft.metadata.layout.pages[pageIndex]?.[columnId];
+			const to = draft.metadata.layout.pages[targetPageIndex]?.[targetColumnId];
+			if (!from || !to) return;
 			const index = from.indexOf(id);
 			if (index === -1) return;
 			from.splice(index, 1);
-			draft.metadata.layout.pages[targetPageIndex][targetColumnId].push(id);
+			to.push(id);
 		});
 	};
 
 	const moveToNewPage = () => {
 		updateResumeData((draft) => {
-			const from = draft.metadata.layout.pages[pageIndex][columnId];
+			const from = draft.metadata.layout.pages[pageIndex]?.[columnId];
+			if (!from) return;
 			const index = from.indexOf(id);
 			if (index === -1) return;
 			from.splice(index, 1);

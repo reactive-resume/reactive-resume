@@ -7,11 +7,11 @@ import { DEFAULT_PDF_PAGE_SIZE, getResumePreviewGapValue, getScaledPreviewPageSi
 
 export type ResumePreviewProps = {
 	className?: string;
-	data?: ResumeData;
+	data?: ResumeData | undefined;
 	pageGap?: CSSProperties["gap"];
 	pageLayout?: "horizontal" | "vertical";
 	pageScale?: number;
-	pageClassName?: string;
+	pageClassName?: string | undefined;
 	showPageNumbers?: boolean;
 	/** Letters show the sender's header, which a document with only a letter otherwise leaves out. */
 	includeCoverLetterHeader?: boolean;

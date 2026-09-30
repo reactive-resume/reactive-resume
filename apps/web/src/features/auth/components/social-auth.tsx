@@ -56,7 +56,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 	const { callbackURL } = useSearch({ from: "/auth" });
 
 	const runSignIn = async (
-		fn: () => Promise<{ data?: unknown; error: { message?: string } | null }>,
+		fn: () => Promise<{ data?: unknown; error: { message?: string | undefined } | null }>,
 		isPasskey = false,
 	) => {
 		const toastId = toast.add({ type: "loading", description: t`Signing in...` });

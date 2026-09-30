@@ -74,7 +74,7 @@ type TextFieldProps = Omit<ComponentProps<typeof Input>, "value" | "onChange"> &
 	/** Checked after the field is first left, then as you type. */
 	validate?: Validator;
 	hint?: ReactNode;
-	wide?: boolean;
+	wide?: boolean | undefined;
 };
 
 /** A labelled text field. Errors appear after the first blur and say how to fix them. */
@@ -109,7 +109,7 @@ export function TextField({
 					/>
 				}
 			/>
-			<FormMessage errors={error ? [error] : undefined} />
+			<FormMessage errors={error ? [error] : []} />
 			{hint && !error && <FormDescription>{hint}</FormDescription>}
 		</FormItem>
 	);
@@ -137,7 +137,7 @@ export function WebsiteField({ label, value, onChange, allowInlineLink = true }:
 						<URLInput value={value} onChange={onChange} hideLabelButton={inline} onBlur={() => setTouched(true)} />
 					}
 				/>
-				<FormMessage errors={error ? [error] : undefined} />
+				<FormMessage errors={error ? [error] : []} />
 			</FormItem>
 
 			{allowInlineLink && (

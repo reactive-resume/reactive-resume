@@ -74,11 +74,7 @@ export async function createExportFile(
 
 	const data = getResumeExportData(resume.data, target);
 	if (format === "pdf") {
-		return createResumePdfBlob(
-			data,
-			undefined,
-			target === "cover-letter" ? { includeCoverLetterHeader: options?.includeCoverLetterHeader } : undefined,
-		);
+		return createResumePdfBlob(data, undefined, target === "cover-letter" ? options : undefined);
 	}
 
 	const resolveTitle = await createSectionTitleResolver(data);

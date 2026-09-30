@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { render, screen } from "@testing-library/react";
-import { beforeAll, expect, it, vi } from "vitest";
+import { assert, beforeAll, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
@@ -19,9 +19,11 @@ function renderAccessibleText(data: typeof sampleResumeData) {
 it("exposes entry and subordinate-role headings with safe nested rich-text lists", () => {
 	// Characterization before this change: item labels had no heading elements and rich-text lists were flattened into one paragraph.
 	const data = structuredClone(sampleResumeData);
+	const item = data.sections.experience.items[0];
+	assert.exists(item);
 	data.sections.experience.items = [
 		{
-			...data.sections.experience.items[0],
+			...item,
 			id: "hierarchy-item",
 			company: "Acme Company",
 			position: "",
@@ -37,7 +39,7 @@ it("exposes entry and subordinate-role headings with safe nested rich-text lists
 			],
 		},
 		{
-			...data.sections.experience.items[0],
+			...item,
 			id: "blank-primary-item",
 			company: "",
 			position: "",

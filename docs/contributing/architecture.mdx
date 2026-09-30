@@ -75,6 +75,10 @@ The server checks the environment, applies database migrations, and verifies the
 
 Internal packages are consumed as source through the `exports` map in each `package.json`, which points at `src` files. Don't expect a `dist` folder unless a package builds one explicitly.
 
+Shared dependency versions live in the default pnpm catalog in `pnpm-workspace.yaml`; workspace manifests use `catalog:` for those ranges. Apps and packages inherit strict TypeScript settings from `packages/config/tsconfig.base.json`.
+
+Turbo hashes shared Vitest configuration and setup files, tracks transitive source dependencies, and restores coverage and test reports from its artifact cache. Runtime variables remain available in strict environment mode through `globalPassThroughEnv`; task-level `env` declarations hash values that affect task results. CI checks package boundaries and typechecks affected packages, runs the full unit suite, and persists `.turbo/cache` between runs.
+
 ## Where new code goes
 
 | You are changing | Put it here |
@@ -89,7 +93,7 @@ Internal packages are consumed as source through the `exports` map in each `pack
 | An MCP tool, prompt, or resource | `packages/mcp` |
 | A generic UI primitive or hook | `packages/ui`; workflow-specific UI stays in its web feature |
 | A database column or table | `packages/db/src/schema/*`, then `pnpm db:generate` |
-| A server environment variable | `packages/env/src/server.ts`, `.env.example`, and `globalEnv` in `turbo.json` |
+| A server environment variable | `packages/env/src/server.ts`, `.env.example`, and `globalPassThroughEnv` plus applicable test-task `env` arrays in `turbo.json` |
 | A dev-only script | `tooling/` |
 
 A new template touches several places: `packages/schema/src/templates.ts`, `packages/pdf/src/templates/index.ts`, the template source under `packages/pdf/src/templates/<name>/`, and preview images under `apps/web/public/templates/{jpg,pdf}`.

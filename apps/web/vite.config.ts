@@ -82,8 +82,10 @@ export default defineConfig({
 	// `vite build` builds the app, then the marketing pages' server entry, then prerenders the pages with it.
 	builder: {
 		buildApp: async (builder) => {
-			await builder.build(builder.environments.client);
-			await builder.build(builder.environments.ssr);
+			const { client, ssr } = builder.environments;
+			if (!client || !ssr) throw new Error("Missing client or SSR build environment");
+			await builder.build(client);
+			await builder.build(ssr);
 			await prerenderPages();
 		},
 	},

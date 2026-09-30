@@ -230,7 +230,8 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 				const parsed = applicationStatusSchema.safeParse(stage === "rejected" ? "closed" : stage);
 				if (parsed.success) record.status = parsed.data;
 			} else if (field === "stageEnteredAt") {
-				record.stageEnteredAt = dateOnly(value);
+				const date = dateOnly(value);
+				if (date !== undefined) record.stageEnteredAt = date;
 			} else record[field] = value as never;
 		});
 

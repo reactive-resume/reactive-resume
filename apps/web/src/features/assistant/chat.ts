@@ -1,5 +1,5 @@
 import type { AgentUIMessage } from "@reactive-resume/ai/tools/agent-tool-contracts";
-import type { FileUIPart, UIMessage } from "ai";
+import type { ChatTransport, FileUIPart, UIMessage } from "ai";
 import { useChat } from "@ai-sdk/react";
 import { eventIteratorToUnproxiedDataStream } from "@orpc/client";
 import { lastAssistantMessageIsCompleteWithToolCalls, parseJsonEventStream, uiMessageChunkSchema } from "ai";
@@ -84,9 +84,9 @@ export function useAssistantChat({ threadId, initialMessages, resume, context, o
 		contextRef.current = context;
 	});
 
-	const transport = useMemo(
+	const transport = useMemo<ChatTransport<AgentUIMessage>>(
 		() => ({
-			async sendMessages(options: { messages: UIMessage[]; abortSignal?: AbortSignal; body?: object }) {
+			async sendMessages(options) {
 				const message = options.messages.at(-1);
 				if (!message) throw new Error("No message to send.");
 				const attachmentIds = attachmentIdsOf(options.body);
@@ -94,7 +94,7 @@ export function useAssistantChat({ threadId, initialMessages, resume, context, o
 					eventIteratorToUnproxiedDataStream(
 						await streamClient.agent.messages.send(
 							{ threadId, message, context: contextRef.current, ...(attachmentIds ? { attachmentIds } : {}) },
-							{ signal: options.abortSignal },
+							options.abortSignal ? { signal: options.abortSignal } : {},
 						),
 					),
 				);

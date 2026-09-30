@@ -3,7 +3,7 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Resume } from "./draft";
 import { act, renderHook } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { sortSectionItemsByPeriod } from "@reactive-resume/resume/section-sort";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
@@ -165,10 +165,12 @@ describe("builder resume autosave", () => {
 			settled = true;
 			return blocked;
 		});
+		assert.exists(completions[0]);
 		completions[0](withBasicsName(initial, "First"));
 		await flushMicrotasks();
 		expect(settled).toBe(false);
 		expect(orpcMocks.updateResume.mock.lastCall?.[0].data.basics.name).toBe("Latest");
+		assert.exists(completions[1]);
 		completions[1](withBasicsName(initial, "Latest"));
 		expect(await result).toBe(false);
 		expect(useResumeStore.getState().resume?.data.basics.name).toBe("Latest");

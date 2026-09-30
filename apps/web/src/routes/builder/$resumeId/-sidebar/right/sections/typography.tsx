@@ -14,7 +14,7 @@ import { Separator } from "@reactive-resume/ui/components/separator";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { FontFamilyCombobox, FontWeightCombobox } from "@/components/typography/combobox";
 import { getNextWeights } from "@/components/typography/get-next-weights";
-import { useResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";
 import { SectionBase } from "../shared/section-base";
@@ -33,7 +33,7 @@ type FormValues = z.infer<typeof formSchema>;
 type FontWeight = FormValues["body"]["fontWeights"][number];
 type TypographyPrefix = "body" | "heading";
 
-function useTypographyForm(typography: FormValues | undefined, persist: (data: FormValues) => void) {
+function useTypographyForm(typography: FormValues, persist: (data: FormValues) => void) {
 	const form = useAppForm({
 		defaultValues: typography,
 		validators: { onChange: formSchema },
@@ -48,8 +48,8 @@ function useTypographyForm(typography: FormValues | undefined, persist: (data: F
 type TypographyForm = ReturnType<typeof useTypographyForm>;
 
 function TypographySectionForm() {
-	const resume = useResume();
-	const typography = resume?.data.metadata.typography;
+	const resume = useCurrentResume();
+	const typography = resume.data.metadata.typography;
 	const updateResumeData = useUpdateResumeData();
 
 	const persist = (data: FormValues) => {
