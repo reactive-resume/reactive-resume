@@ -158,7 +158,14 @@ export async function generateOpenApiSpec({ appUrl, version }: GenerateOpenApiSp
 			const operation = item[method];
 			if (!operation) continue;
 			const body = operation.requestBody;
-			if (body && !("$ref" in body) && body.content["multipart/form-data"]) delete body.content["application/json"];
+			if (body && !("$ref" in body) && body.content["multipart/form-data"]) {
+				const json = body.content["application/json"]?.schema;
+				// Application files are optional; existing JSON clients keep sending record fields only.
+				if ((path === "/applications" || path === "/applications/{id}") && json && "properties" in json) {
+					delete json.properties?.resumeFile;
+					delete json.properties?.coverLetterFile;
+				} else delete body.content["application/json"];
+			}
 			operation.responses ??= {};
 			operation.responses.default = {
 				description: "Structured API error. See status and code; do not branch on message text.",

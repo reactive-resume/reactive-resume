@@ -123,18 +123,7 @@ export const crudRouter = {
 		.input(applicationDto.attachDocument.input)
 		.use(resumeMutationRateLimit)
 		.output(applicationDto.attachDocument.output)
-		.handler(async ({ input, context }) => {
-			const buffer = await input.file.arrayBuffer();
-
-			return applicationService.attachDocument({
-				id: input.id,
-				userId: context.user.id,
-				kind: input.kind,
-				fileName: input.file.name,
-				contentType: input.file.type,
-				data: new Uint8Array(buffer),
-			});
-		}),
+		.handler(({ input, context }) => applicationService.attachDocument({ userId: context.user.id, ...input })),
 
 	removeDocument: protectedProcedure
 		.route({

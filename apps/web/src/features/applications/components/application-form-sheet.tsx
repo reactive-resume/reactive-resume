@@ -51,8 +51,8 @@ const emptyForm = () => ({
 	followUpAt: "",
 	followUpNote: "",
 	notes: "",
-	resumeFile: null as FileAttachment | null,
-	coverLetter: null as FileAttachment | null,
+	resumeFile: null as FileAttachment | File | null,
+	coverLetter: null as FileAttachment | File | null,
 });
 
 type FormState = ReturnType<typeof emptyForm>;
@@ -96,9 +96,11 @@ function toPayload(form: FormState) {
 		notes: form.notes.trim() || null,
 		followUpNote: form.followUpNote.trim() || null,
 		followUpAt: form.followUpAt ? new Date(form.followUpAt) : null,
-		resumeFileUrl: form.resumeFile?.url ?? null,
+		resumeFileUrl: form.resumeFile instanceof File ? null : (form.resumeFile?.url ?? null),
+		...(form.resumeFile instanceof File ? { resumeFile: form.resumeFile } : {}),
 		resumeFileName: form.resumeFile?.name ?? null,
-		coverLetterUrl: form.coverLetter?.url ?? null,
+		coverLetterUrl: form.coverLetter instanceof File ? null : (form.coverLetter?.url ?? null),
+		...(form.coverLetter instanceof File ? { coverLetterFile: form.coverLetter } : {}),
 		coverLetterName: form.coverLetter?.name ?? null,
 	};
 }
@@ -266,7 +268,9 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 	return (
 		<Sheet
 			open={open}
-			onOpenChange={onOpenChange}
+			onOpenChange={(nextOpen) => {
+				if (!pending) onOpenChange(nextOpen);
+			}}
 			onOpenChangeComplete={(next) => {
 				onApplicationOpenChangeComplete(next);
 				// After adding, the fields clear once the sheet has closed; closing without saving keeps the draft.
@@ -486,7 +490,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 				</div>
 
 				<SheetFooter className="flex-row justify-end gap-2">
-					<Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
+					<Button type="button" variant="secondary" disabled={pending} onClick={() => onOpenChange(false)}>
 						<Trans>Cancel</Trans>
 					</Button>
 					<Button type="button" disabled={!form.company.trim() || !form.role.trim() || pending} onClick={submit}>

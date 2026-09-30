@@ -219,7 +219,7 @@ function storageKeyFromApplicationUrl(userId: string, value: string | null | und
 
 async function deleteApplicationAttachments(
 	userId: string,
-	applications: { resumeFileUrl?: string | null; coverLetterUrl?: string | null }[],
+	applications: Pick<EditableFields, "resumeFileUrl" | "coverLetterUrl">[],
 ) {
 	const candidateKeys = [
 		...new Set(
@@ -256,13 +256,54 @@ async function deleteApplicationAttachments(
 function documentFields(kind: ApplicationDocumentKind) {
 	return kind === "resume"
 		? ({
+				file: "resumeFile",
 				url: "resumeFileUrl",
 				name: "resumeFileName",
 			} as const)
 		: ({
+				file: "coverLetterFile",
 				url: "coverLetterUrl",
 				name: "coverLetterName",
 			} as const);
+}
+
+type UploadedDocumentFields = Pick<
+	EditableFields,
+	"resumeFileUrl" | "resumeFileName" | "coverLetterUrl" | "coverLetterName"
+>;
+
+type DocumentFiles = { resumeFile?: File | undefined; coverLetterFile?: File | undefined };
+
+// One request owns the uploads and record write; browser dismissal cannot strand an upload.
+async function withDocumentFiles<T>(
+	userId: string,
+	files: DocumentFiles,
+	save: (fields: UploadedDocumentFields) => Promise<T>,
+) {
+	const uploadedFields: UploadedDocumentFields = {};
+	try {
+		// ponytail: at most two sequential uploads; use allSettled if measured latency warrants concurrency.
+		for (const kind of ["resume", "cover-letter"] as const) {
+			const fields = documentFields(kind);
+			const file = files[fields.file];
+			if (!file) continue;
+			if (file.type !== "application/pdf") {
+				throw new ORPCError("BAD_REQUEST", { message: "Application documents must be PDF files." });
+			}
+			const uploaded = await uploadFile({
+				userId,
+				data: new Uint8Array(await file.arrayBuffer()),
+				contentType: file.type,
+			});
+			uploadedFields[fields.url] = uploaded.url;
+			uploadedFields[fields.name] = file.name;
+		}
+		return await save(uploadedFields);
+	} catch (error) {
+		// The record may already have committed before later work failed. Never delete referenced files.
+		await deleteApplicationAttachments(userId, [uploadedFields]).catch(() => {});
+		throw error;
+	}
 }
 
 const stripUserId = <T extends { userId: string; activity?: ApplicationTimelineEntry[] }>(row: T) => {
@@ -292,16 +333,17 @@ export const applicationService = {
 	},
 
 	create: async (
-		input: EditableFields & {
-			userId: string;
-			company: string;
-			role: string;
-			status?: ApplicationStatus | undefined;
-			closedReason?: ApplicationClosedReason | null | undefined;
-			stageEnteredAt?: string | undefined;
-		},
+		input: EditableFields &
+			DocumentFiles & {
+				userId: string;
+				company: string;
+				role: string;
+				status?: ApplicationStatus | undefined;
+				closedReason?: ApplicationClosedReason | null | undefined;
+				stageEnteredAt?: string | undefined;
+			},
 	) => {
-		const { userId, status, stageEnteredAt, closedReason, ...fields } = input;
+		const { userId, status, stageEnteredAt, closedReason, resumeFile, coverLetterFile, ...fields } = input;
 		const id = generateId();
 		const initialStatus = status ?? "saved";
 		const activity = [stageEntry(initialStatus, stageEnteredAt)];
@@ -309,21 +351,24 @@ export const applicationService = {
 		await assertOwnedResume(userId, fields.resumeId);
 		await assertOwnedCoverLetter(userId, fields.coverLetterId);
 
-		const [row] = await db
-			.insert(schema.application)
-			.values({
-				id,
-				userId,
-				status: initialStatus,
-				...(initialStatus === "closed" && closedReason ? { closedReason } : {}),
-				activity,
-				appliedAt: appliedAtFromTimeline(activity, new Date()),
-				...fields,
-			})
-			.returning();
+		return withDocumentFiles(userId, { resumeFile, coverLetterFile }, async (uploadedFields) => {
+			const [row] = await db
+				.insert(schema.application)
+				.values({
+					id,
+					userId,
+					status: initialStatus,
+					...(initialStatus === "closed" && closedReason ? { closedReason } : {}),
+					activity,
+					appliedAt: appliedAtFromTimeline(activity, new Date()),
+					...fields,
+					...uploadedFields,
+				})
+				.returning();
 
-		if (row) await recordSentResume(row);
-		return id;
+			if (row) await recordSentResume(row);
+			return id;
+		});
 	},
 
 	importMany: async (input: {
@@ -360,17 +405,18 @@ export const applicationService = {
 	},
 
 	update: async (
-		input: EditableFields & {
-			id: string;
-			userId: string;
-			status?: ApplicationStatus | undefined;
-			stageEnteredAt?: string | undefined;
-			closedReason?: ApplicationClosedReason | null | undefined;
-		},
+		input: EditableFields &
+			DocumentFiles & {
+				id: string;
+				userId: string;
+				status?: ApplicationStatus | undefined;
+				stageEnteredAt?: string | undefined;
+				closedReason?: ApplicationClosedReason | null | undefined;
+			},
 	) => {
 		const existing = await requireOwned(input.id, input.userId);
 
-		const { id, userId, status, stageEnteredAt, closedReason, ...fields } = input;
+		const { id, userId, status, stageEnteredAt, closedReason, resumeFile, coverLetterFile, ...fields } = input;
 		if (
 			(existing.sentResumeVersionId && fields.resumeId !== undefined && fields.resumeId !== existing.resumeId) ||
 			(existing.sentCoverLetterVersionId &&
@@ -400,84 +446,36 @@ export const applicationService = {
 						else ${schema.application.appliedAt} end`
 				: undefined;
 
-		const [updated] = await db
-			.update(schema.application)
-			.set({
-				...fields,
-				...(status !== undefined ? { status } : {}),
-				...(appliedAtExpr ? { appliedAt: appliedAtExpr } : {}),
-				...stageFields(status, closedReason),
-				...(activityExpr ? { activity: activityExpr } : {}),
-			})
-			.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)))
-			.returning();
+		return withDocumentFiles(userId, { resumeFile, coverLetterFile }, async (uploadedFields) => {
+			const [updated] = await db
+				.update(schema.application)
+				.set({
+					...fields,
+					...uploadedFields,
+					...(status !== undefined ? { status } : {}),
+					...(appliedAtExpr ? { appliedAt: appliedAtExpr } : {}),
+					...stageFields(status, closedReason),
+					...(activityExpr ? { activity: activityExpr } : {}),
+				})
+				.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)))
+				.returning();
 
-		if (!updated) throw new ORPCError("NOT_FOUND");
-		return stripUserId(await recordSentResume(updated));
+			if (!updated) throw new ORPCError("NOT_FOUND");
+			if (fields.resumeFileUrl !== undefined || fields.coverLetterUrl !== undefined || resumeFile || coverLetterFile) {
+				await deleteApplicationAttachments(userId, [existing]).catch(() => {});
+			}
+			return stripUserId(await recordSentResume(updated));
+		});
 	},
 
-	attachDocument: async (input: {
-		id: string;
-		userId: string;
-		kind: ApplicationDocumentKind;
-		fileName: string;
-		data: Uint8Array;
-		contentType: string;
-	}) => {
-		if (input.contentType !== "application/pdf") {
-			throw new ORPCError("BAD_REQUEST", { message: "Application documents must be PDF files." });
-		}
-
-		const existing = await requireOwned(input.id, input.userId);
+	attachDocument: (input: { id: string; userId: string; kind: ApplicationDocumentKind; file: File }) => {
 		const fields = documentFields(input.kind);
-		const uploaded = await uploadFile({
-			userId: input.userId,
-			data: input.data,
-			contentType: input.contentType,
-		});
-
-		try {
-			const updated = await applicationService.update({
-				id: input.id,
-				userId: input.userId,
-				[fields.url]: uploaded.url,
-				[fields.name]: input.fileName,
-			});
-
-			await deleteApplicationAttachments(input.userId, [
-				{
-					resumeFileUrl: fields.url === "resumeFileUrl" ? existing.resumeFileUrl : null,
-					coverLetterUrl: fields.url === "coverLetterUrl" ? existing.coverLetterUrl : null,
-				},
-			]);
-
-			return updated;
-		} catch (error) {
-			await getStorageService()
-				.delete(uploaded.key)
-				.catch(() => false);
-			throw error;
-		}
+		return applicationService.update({ id: input.id, userId: input.userId, [fields.file]: input.file });
 	},
 
-	removeDocument: async (input: { id: string; userId: string; kind: ApplicationDocumentKind }) => {
-		const existing = await requireOwned(input.id, input.userId);
+	removeDocument: (input: { id: string; userId: string; kind: ApplicationDocumentKind }) => {
 		const fields = documentFields(input.kind);
-		const updated = await applicationService.update({
-			id: input.id,
-			userId: input.userId,
-			[fields.url]: null,
-			[fields.name]: null,
-		});
-
-		await deleteApplicationAttachments(input.userId, [
-			{
-				resumeFileUrl: fields.url === "resumeFileUrl" ? existing.resumeFileUrl : null,
-				coverLetterUrl: fields.url === "coverLetterUrl" ? existing.coverLetterUrl : null,
-			},
-		]);
-
-		return updated;
+		return applicationService.update({ id: input.id, userId: input.userId, [fields.url]: null, [fields.name]: null });
 	},
 
 	// Persist AI-owned enrichment (match score + freeform metadata). Separate from the editable

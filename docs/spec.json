@@ -14505,6 +14505,333 @@
 									"role"
 								]
 							}
+						},
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"company": {
+										"type": "string",
+										"minLength": 1,
+										"description": "The company applied to."
+									},
+									"role": {
+										"type": "string",
+										"minLength": 1,
+										"description": "The role / job title."
+									},
+									"location": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"salary": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"source": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"sourceUrl": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"jobDescription": {
+										"anyOf": [
+											{
+												"type": "string",
+												"maxLength": 20000
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"postingSource": {
+										"anyOf": [
+											{
+												"type": "object",
+												"properties": {
+													"method": {
+														"enum": [
+															"paste",
+															"builtin",
+															"firecrawl",
+															"tavily",
+															"exa"
+														],
+														"type": "string"
+													},
+													"format": {
+														"enum": [
+															"text",
+															"markdown"
+														],
+														"type": "string"
+													},
+													"requestedUrl": {
+														"type": "string",
+														"format": "uri"
+													},
+													"resolvedUrl": {
+														"type": "string",
+														"format": "uri"
+													},
+													"retrievedAt": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"providerFetchedAt": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"truncated": {
+														"type": "boolean"
+													},
+													"completeness": {
+														"enum": [
+															"unknown",
+															"incomplete"
+														],
+														"type": "string"
+													},
+													"fallbackReason": {
+														"enum": [
+															"unsafe-url",
+															"unreachable",
+															"not-a-page",
+															"too-large",
+															"auth",
+															"quota",
+															"malformed",
+															"empty",
+															"challenge",
+															"timeout",
+															"unavailable",
+															"rate-limit"
+														],
+														"type": "string"
+													}
+												},
+												"required": [
+													"method",
+													"format",
+													"truncated",
+													"completeness"
+												]
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"notes": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"resumeFileUrl": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"resumeFileName": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"coverLetterUrl": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"coverLetterName": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"followUpAt": {
+										"anyOf": [
+											{
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"followUpNote": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"contacts": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"name": {
+													"type": "string",
+													"minLength": 1
+												},
+												"role": {
+													"type": "string",
+													"default": ""
+												},
+												"type": {
+													"type": "string",
+													"default": ""
+												},
+												"email": {
+													"type": "string",
+													"default": ""
+												},
+												"phone": {
+													"type": "string",
+													"default": ""
+												}
+											},
+											"required": [
+												"name"
+											]
+										}
+									},
+									"resumeId": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										],
+										"description": "The linked Reactive Resume, if any."
+									},
+									"coverLetterId": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										],
+										"description": "The linked saved cover letter, if any."
+									},
+									"requirements": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										},
+										"description": "What the posting asks for, as read when the application was added."
+									},
+									"tags": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									},
+									"status": {
+										"enum": [
+											"saved",
+											"applied",
+											"screening",
+											"interview",
+											"offer",
+											"closed"
+										],
+										"type": "string"
+									},
+									"closedReason": {
+										"anyOf": [
+											{
+												"enum": [
+													"not-selected",
+													"withdrew",
+													"accepted-other",
+													"no-response"
+												],
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"stageEnteredAt": {
+										"type": "string",
+										"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+									},
+									"resumeFile": {
+										"type": "string",
+										"contentMediaType": "application/pdf"
+									},
+									"coverLetterFile": {
+										"type": "string",
+										"contentMediaType": "application/pdf"
+									}
+								},
+								"required": [
+									"company",
+									"role"
+								]
+							}
 						}
 					}
 				},
@@ -15733,6 +16060,330 @@
 									}
 								}
 							}
+						},
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"company": {
+										"type": "string",
+										"minLength": 1,
+										"description": "The company applied to."
+									},
+									"role": {
+										"type": "string",
+										"minLength": 1,
+										"description": "The role / job title."
+									},
+									"location": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"salary": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"source": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"sourceUrl": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"jobDescription": {
+										"anyOf": [
+											{
+												"type": "string",
+												"maxLength": 20000
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"postingSource": {
+										"anyOf": [
+											{
+												"type": "object",
+												"properties": {
+													"method": {
+														"enum": [
+															"paste",
+															"builtin",
+															"firecrawl",
+															"tavily",
+															"exa"
+														],
+														"type": "string"
+													},
+													"format": {
+														"enum": [
+															"text",
+															"markdown"
+														],
+														"type": "string"
+													},
+													"requestedUrl": {
+														"type": "string",
+														"format": "uri"
+													},
+													"resolvedUrl": {
+														"type": "string",
+														"format": "uri"
+													},
+													"retrievedAt": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"providerFetchedAt": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"truncated": {
+														"type": "boolean"
+													},
+													"completeness": {
+														"enum": [
+															"unknown",
+															"incomplete"
+														],
+														"type": "string"
+													},
+													"fallbackReason": {
+														"enum": [
+															"unsafe-url",
+															"unreachable",
+															"not-a-page",
+															"too-large",
+															"auth",
+															"quota",
+															"malformed",
+															"empty",
+															"challenge",
+															"timeout",
+															"unavailable",
+															"rate-limit"
+														],
+														"type": "string"
+													}
+												},
+												"required": [
+													"method",
+													"format",
+													"truncated",
+													"completeness"
+												]
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"notes": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"resumeFileUrl": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"resumeFileName": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"coverLetterUrl": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"coverLetterName": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"followUpAt": {
+										"anyOf": [
+											{
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"followUpNote": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"contacts": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"name": {
+													"type": "string",
+													"minLength": 1
+												},
+												"role": {
+													"type": "string",
+													"default": ""
+												},
+												"type": {
+													"type": "string",
+													"default": ""
+												},
+												"email": {
+													"type": "string",
+													"default": ""
+												},
+												"phone": {
+													"type": "string",
+													"default": ""
+												}
+											},
+											"required": [
+												"name"
+											]
+										}
+									},
+									"resumeId": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										],
+										"description": "The linked Reactive Resume, if any."
+									},
+									"coverLetterId": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										],
+										"description": "The linked saved cover letter, if any."
+									},
+									"requirements": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										},
+										"description": "What the posting asks for, as read when the application was added."
+									},
+									"tags": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									},
+									"resumeFile": {
+										"type": "string",
+										"contentMediaType": "application/pdf"
+									},
+									"coverLetterFile": {
+										"type": "string",
+										"contentMediaType": "application/pdf"
+									},
+									"status": {
+										"enum": [
+											"saved",
+											"applied",
+											"screening",
+											"interview",
+											"offer",
+											"closed"
+										],
+										"type": "string"
+									},
+									"stageEnteredAt": {
+										"type": "string",
+										"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+									},
+									"closedReason": {
+										"anyOf": [
+											{
+												"enum": [
+													"not-selected",
+													"withdrew",
+													"accepted-other",
+													"no-response"
+												],
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										],
+										"description": "Why the application closed; kept when status stays closed, cleared by any other stage."
+									}
+								}
+							}
 						}
 					}
 				},
@@ -16697,6 +17348,330 @@
 										"items": {
 											"type": "string"
 										}
+									},
+									"status": {
+										"enum": [
+											"saved",
+											"applied",
+											"screening",
+											"interview",
+											"offer",
+											"closed"
+										],
+										"type": "string"
+									},
+									"stageEnteredAt": {
+										"type": "string",
+										"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+									},
+									"closedReason": {
+										"anyOf": [
+											{
+												"enum": [
+													"not-selected",
+													"withdrew",
+													"accepted-other",
+													"no-response"
+												],
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										],
+										"description": "Why the application closed; kept when status stays closed, cleared by any other stage."
+									}
+								}
+							}
+						},
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"company": {
+										"type": "string",
+										"minLength": 1,
+										"description": "The company applied to."
+									},
+									"role": {
+										"type": "string",
+										"minLength": 1,
+										"description": "The role / job title."
+									},
+									"location": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"salary": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"source": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"sourceUrl": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"jobDescription": {
+										"anyOf": [
+											{
+												"type": "string",
+												"maxLength": 20000
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"postingSource": {
+										"anyOf": [
+											{
+												"type": "object",
+												"properties": {
+													"method": {
+														"enum": [
+															"paste",
+															"builtin",
+															"firecrawl",
+															"tavily",
+															"exa"
+														],
+														"type": "string"
+													},
+													"format": {
+														"enum": [
+															"text",
+															"markdown"
+														],
+														"type": "string"
+													},
+													"requestedUrl": {
+														"type": "string",
+														"format": "uri"
+													},
+													"resolvedUrl": {
+														"type": "string",
+														"format": "uri"
+													},
+													"retrievedAt": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"providerFetchedAt": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"truncated": {
+														"type": "boolean"
+													},
+													"completeness": {
+														"enum": [
+															"unknown",
+															"incomplete"
+														],
+														"type": "string"
+													},
+													"fallbackReason": {
+														"enum": [
+															"unsafe-url",
+															"unreachable",
+															"not-a-page",
+															"too-large",
+															"auth",
+															"quota",
+															"malformed",
+															"empty",
+															"challenge",
+															"timeout",
+															"unavailable",
+															"rate-limit"
+														],
+														"type": "string"
+													}
+												},
+												"required": [
+													"method",
+													"format",
+													"truncated",
+													"completeness"
+												]
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"notes": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"resumeFileUrl": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"resumeFileName": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"coverLetterUrl": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"coverLetterName": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"followUpAt": {
+										"anyOf": [
+											{
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"followUpNote": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"contacts": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"name": {
+													"type": "string",
+													"minLength": 1
+												},
+												"role": {
+													"type": "string",
+													"default": ""
+												},
+												"type": {
+													"type": "string",
+													"default": ""
+												},
+												"email": {
+													"type": "string",
+													"default": ""
+												},
+												"phone": {
+													"type": "string",
+													"default": ""
+												}
+											},
+											"required": [
+												"name"
+											]
+										}
+									},
+									"resumeId": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										],
+										"description": "The linked Reactive Resume, if any."
+									},
+									"coverLetterId": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										],
+										"description": "The linked saved cover letter, if any."
+									},
+									"requirements": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										},
+										"description": "What the posting asks for, as read when the application was added."
+									},
+									"tags": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									},
+									"resumeFile": {
+										"type": "string",
+										"contentMediaType": "application/pdf"
+									},
+									"coverLetterFile": {
+										"type": "string",
+										"contentMediaType": "application/pdf"
 									},
 									"status": {
 										"enum": [

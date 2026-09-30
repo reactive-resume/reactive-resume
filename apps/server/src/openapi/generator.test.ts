@@ -143,3 +143,23 @@ it("describes empty responses and common errors without impossible payloads", as
 	);
 	expect(spec.paths?.["/resumes"]?.get?.responses?.["200"]).toHaveProperty("headers.X-Total-Count");
 });
+
+it("keeps JSON application writes and documents optional multipart attachments", async () => {
+	const spec = await generateSpec();
+	for (const [path, method] of [
+		["/applications", "post"],
+		["/applications/{id}", "put"],
+		["/applications/{id}", "patch"],
+	] as const) {
+		const body = spec.paths?.[path]?.[method]?.requestBody;
+		if (!body || "$ref" in body) throw new Error("Missing application request body");
+		const json = body.content["application/json"]?.schema;
+		expect(json).toHaveProperty("properties.company");
+		expect(json).not.toHaveProperty("properties.resumeFile");
+		expect(json).not.toHaveProperty("properties.coverLetterFile");
+		expect(body.content["multipart/form-data"]?.schema).toHaveProperty(
+			"properties.resumeFile.contentMediaType",
+			"application/pdf",
+		);
+	}
+});
