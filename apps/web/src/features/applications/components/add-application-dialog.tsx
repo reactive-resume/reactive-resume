@@ -2,7 +2,7 @@ import type { RouterOutput } from "@/libs/orpc/client";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -19,20 +19,17 @@ import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/comp
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { useInvalidateApplications } from "../use-application-actions";
 import { useDialogStore } from "@/dialogs/store";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { getOrpcErrorMessage } from "@/libs/error-message";
-import { orpc } from "@/libs/orpc/client";
-import { getStageLabel } from "../stages";
-import { useInvalidateApplications } from "../use-application-actions";
+import { client, orpc } from "@/libs/orpc/client";
 
 type Parsed = RouterOutput["applications"]["ai"]["parsePosting"];
 type Stage = "saved" | "applied" | "interview";
 
 const STAGES: readonly Stage[] = ["saved", "applied", "interview"];
 const MAX_POSTING_CHARS = 20_000;
-// Reading waits for a pause in typing, so it starts once the paste has landed.
-const READ_DELAY_MS = 600;
 
 const isLink = (value: string) => /^https?:\/\/\S+$/i.test(value.trim());
 
@@ -69,49 +66,76 @@ type AddApplicationFormProps = { onClose: () => void; onAdded: (id: string) => v
 
 function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 	const id = useId();
-	const { data: firecrawl } = useQuery(orpc.firecrawl.status.queryOptions());
+	const { data: webAccess } = useQuery(orpc.webAccess.status.queryOptions());
+	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const [query, setQuery] = useState("");
 	const search = useMutation(orpc.applications.ai.searchPostings.mutationOptions());
 	const [input, setInput] = useState("");
 	const [role, setRole] = useState("");
 	const [company, setCompany] = useState("");
-	const [stage, setStage] = useState<Stage>("applied");
+	const [stage, setStage] = useState<Stage>("saved");
+	const [stageDate, setStageDate] = useState(() => new Date().toLocaleDateString("en-CA"));
+	const [resumeId, setResumeId] = useState("");
+	const [coverLetterId, setCoverLetterId] = useState("");
+	const [location, setLocation] = useState("");
+	const [salary, setSalary] = useState("");
+	const [pasteOpen, setPasteOpen] = useState(false);
+	const [pastedText, setPastedText] = useState("");
+	const [description, setDescription] = useState<string | null>(null);
 	const [reading, setReading] = useState<{ text: string; result: Parsed } | null>(null);
 	const { hasUsableProvider } = useHasUsableAiProvider();
 	const invalidate = useInvalidateApplications();
 	const openDialog = useDialogStore((state) => state.openDialog);
 
-	const read = useMutation(orpc.applications.ai.parsePosting.mutationOptions());
-	const { mutate: readPosting, reset: resetRead } = read;
+	const controller = useRef<AbortController | null>(null);
+	useEffect(() => () => controller.current?.abort(), []);
+	const read = useMutation({
+		...orpc.applications.ai.parsePosting.mutationOptions(),
+		mutationFn: (value) =>
+			client.applications.ai.parsePosting(value, controller.current ? { signal: controller.current.signal } : {}),
+	});
+	const resetRead = () => {
+		controller.current?.abort();
+		read.reset();
+		setReading(null);
+	};
 	const create = useMutation(orpc.applications.create.mutationOptions());
 
-	const text = input.trim();
-	const link = isLink(text);
-	// A link can always be read (for the page's own job data); pasted text needs the AI provider.
+	const text = (pasteOpen ? pastedText : input).trim();
+	const sourceLink = isLink(input.trim()) ? input.trim() : null;
+	const link = !pasteOpen && Boolean(sourceLink);
 	const readable = text.length > 8 && (link || hasUsableProvider);
-	// A reading belongs to the text it was made from: editing the text drops it.
-	const parsed = readable && reading?.text === text ? reading.result : null;
-
-	useEffect(() => {
-		resetRead();
-		if (!readable) return;
-
-		const timeout = window.setTimeout(() => {
-			readPosting(
-				{ input: text },
-				{
-					onSuccess: (result) => {
-						setReading({ text, result });
-						setRole((current) => current || result.role);
-						setCompany((current) => current || result.company);
-					},
+	const parsed = reading?.text === text ? reading.result : null;
+	const clipped = Boolean(parsed?.postingSource.truncated || (!link && text.length > MAX_POSTING_CHARS));
+	const readPosting = () => {
+		if (!readable || read.isPending) return;
+		const request = new AbortController();
+		controller.current = request;
+		read.mutate(
+			{ input: text },
+			{
+				onSuccess: (result) => {
+					if (request.signal.aborted) return;
+					setReading({ text, result });
+					setRole((current) => current || result.role);
+					setCompany((current) => current || result.company);
+					setLocation((current) => current || result.location);
+					setSalary((current) => current || result.salary);
+					setDescription(result.jobDescription);
 				},
-			);
-		}, READ_DELAY_MS);
-		return () => window.clearTimeout(timeout);
-	}, [text, readable, readPosting, resetRead]);
+				onError: () => {
+					if (link && !request.signal.aborted) setPasteOpen(true);
+				},
+			},
+		);
+	};
 
-	const ready = role.trim().length > 0 && company.trim().length > 0 && !read.isPending && !create.isPending;
+	const ready =
+		role.trim().length > 0 &&
+		company.trim().length > 0 &&
+		(stage === "saved" || Boolean(stageDate)) &&
+		!read.isPending &&
+		!create.isPending;
 
 	const add = async (tailor: boolean) => {
 		if (!ready) return;
@@ -119,24 +143,33 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 			company: company.trim(),
 			role: role.trim(),
 			status: stage,
-			...(parsed?.location ? { location: parsed.location } : {}),
-			...(parsed?.salary ? { salary: parsed.salary } : {}),
+			...(location.trim() ? { location: location.trim() } : {}),
+			...(salary.trim() ? { salary: salary.trim() } : {}),
 			...(parsed?.requirements.length ? { requirements: parsed.requirements } : {}),
-			...(link ? { sourceUrl: text } : {}),
-			// The posting's text: read from the page for a link, or what was pasted.
-			...(parsed?.jobDescription
-				? { jobDescription: parsed.jobDescription }
-				: !link && text
-					? { jobDescription: text.slice(0, MAX_POSTING_CHARS) }
-					: {}),
+			...(sourceLink ? { sourceUrl: sourceLink } : {}),
+			...(stage !== "saved" && stageDate ? { stageEnteredAt: stageDate } : {}),
+			...(resumeId ? { resumeId } : {}),
+			...(stage !== "saved" && coverLetterId ? { coverLetterId } : {}),
+			jobDescription: (description ?? (!link ? text : "")).slice(0, MAX_POSTING_CHARS) || null,
+			postingSource:
+				parsed?.postingSource ??
+				(!link && text
+					? {
+							method: "paste" as const,
+							format: "text" as const,
+							truncated: clipped,
+							completeness: clipped ? ("incomplete" as const) : ("unknown" as const),
+						}
+					: null),
 		};
 		try {
 			const applicationId = await create.mutateAsync(posting);
 			invalidate();
 			toast.add({ description: t`Added ${role.trim()} at ${company.trim()}` });
 			onClose();
-			onAdded(applicationId);
-			if (tailor) openDialog("document.new", { step: "copy", applicationId });
+			if (tailor)
+				openDialog("document.new", { step: "copy", applicationId, ...(resumeId ? { sourceResumeId: resumeId } : {}) });
+			else onAdded(applicationId);
 		} catch (error) {
 			toast.add({
 				type: "error",
@@ -150,19 +183,19 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 			className="grid gap-4"
 			onSubmit={(event) => {
 				event.preventDefault();
-				void add(true);
+				void add(false);
 			}}
 		>
 			<DialogHeader>
 				<DialogTitle>
-					<Trans>Add an application</Trans>
+					<Trans>Save a job</Trans>
 				</DialogTitle>
 				<DialogDescription className="sr-only">
 					<Trans>Paste a job link or posting, then check the role and company.</Trans>
 				</DialogDescription>
 			</DialogHeader>
 
-			{firecrawl?.configured && (
+			{webAccess?.search && (
 				<section className="grid gap-2" aria-labelledby={`${id}-search-label`}>
 					<Label id={`${id}-search-label`} htmlFor={`${id}-search`}>
 						<Trans>Search job postings</Trans>
@@ -194,19 +227,19 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 						</Button>
 					</div>
 					{search.isPending && (
-						<p className="text-ink-3 text-xs" role="status">
+						<p className="text-xs text-ink-3" role="status">
 							<Trans>Searching job postings…</Trans>
 						</p>
 					)}
 					{search.error && (
-						<p className="text-danger-text text-xs" role="alert">
+						<p className="text-xs text-danger-text" role="alert">
 							{getOrpcErrorMessage(search.error, {
 								fallback: t`Job search failed. Try again or paste a posting link.`,
 							})}
 						</p>
 					)}
 					{search.data?.length === 0 && (
-						<p className="text-ink-3 text-xs" role="status">
+						<p className="text-xs text-ink-3" role="status">
 							<Trans>No postings found. Try different keywords.</Trans>
 						</p>
 					)}
@@ -214,14 +247,14 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 						<ul className="grid gap-2">
 							{search.data.map((result) => (
 								<li key={result.url} className="rounded-lg border border-line p-3">
-									<strong className="font-medium text-sm">{result.title}</strong>
-									<p className="line-clamp-2 text-ink-3 text-xs">{result.description}</p>
+									<strong className="text-sm font-medium">{result.title}</strong>
+									<p className="line-clamp-2 text-xs text-ink-3">{result.description}</p>
 									<div className="mt-2 flex items-center gap-3">
 										<a
 											href={result.url}
 											target="_blank"
 											rel="noreferrer"
-											className="text-accent-text text-xs hover:underline"
+											className="text-xs text-accent-text hover:underline"
 										>
 											<Trans>View posting</Trans>
 										</a>
@@ -232,8 +265,13 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 											disabled={read.isPending || create.isPending}
 											onClick={() => {
 												setInput(result.url);
+												setPasteOpen(false);
+												setDescription(null);
+												resetRead();
 												setRole("");
 												setCompany("");
+												setLocation("");
+												setSalary("");
 												search.reset();
 											}}
 										>
@@ -255,11 +293,94 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 					id={`${id}-posting`}
 					rows={4}
 					value={input}
-					maxLength={MAX_POSTING_CHARS}
+					maxLength={100_000}
 					placeholder="https://…"
-					onChange={(event) => setInput(event.target.value)}
+					onChange={(event) => {
+						setInput(event.target.value);
+						setDescription(null);
+						setPasteOpen(false);
+						resetRead();
+					}}
 					autoFocus
 				/>
+				{sourceLink && (
+					<Button
+						type="button"
+						variant="ghost"
+						size="sm"
+						onClick={() => {
+							setPasteOpen(true);
+							setDescription(null);
+							resetRead();
+						}}
+					>
+						<Trans>Paste description instead</Trans>
+					</Button>
+				)}
+				{pasteOpen && (
+					<div className="grid gap-1.5">
+						<Label htmlFor={`${id}-recovery`}>
+							<Trans>Pasted description</Trans>
+						</Label>
+						<Textarea
+							id={`${id}-recovery`}
+							rows={5}
+							value={pastedText}
+							maxLength={100_000}
+							onChange={(event) => {
+								setPastedText(event.target.value);
+								setDescription(null);
+								resetRead();
+							}}
+						/>
+						<p className="text-xs text-ink-3">
+							<Trans>The original link stays with this job.</Trans>
+						</p>
+					</div>
+				)}
+				{readable && (
+					<Button type="button" variant="secondary" size="sm" disabled={read.isPending} onClick={readPosting}>
+						<Trans>Read posting</Trans>
+					</Button>
+				)}
+				{(clipped || parsed?.postingSource.completeness === "incomplete") && (
+					<p className="text-xs text-warn-text" role="alert">
+						<Trans>
+							This description is clipped or incomplete. Review it or paste the full description before preparing.
+						</Trans>
+					</p>
+				)}
+				{parsed?.enrichmentWarning && (
+					<p className="text-xs text-warn-text" role="status">
+						<Trans>AI couldn't fill the details. The posting is retained; complete the fields manually.</Trans>
+					</p>
+				)}
+				{parsed?.postingSource.fallbackReason && (
+					<p className="text-xs text-warn-text" role="status">
+						<Trans>Enhanced reading was unavailable. The built-in reader retrieved this posting.</Trans>
+					</p>
+				)}
+				{parsed && description !== null && (
+					<div className="grid gap-1.5">
+						<Label htmlFor={`${id}-description`}>
+							<Trans>Saved description</Trans>
+						</Label>
+						<Textarea
+							id={`${id}-description`}
+							rows={5}
+							maxLength={MAX_POSTING_CHARS}
+							value={description}
+							onChange={(event) => setDescription(event.target.value)}
+						/>
+						{parsed.postingSource.retrievedAt && (
+							<p className="text-xs text-ink-3">
+								<Trans>
+									Retrieved {parsed.postingSource.retrievedAt}. Origin freshness is unknown unless reported.
+								</Trans>
+							</p>
+						)}
+					</div>
+				)}
 				<ReadStatus
 					text={text}
 					link={link}
@@ -287,29 +408,109 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 			</div>
 
 			<div className="grid gap-1.5">
-				<span id={`${id}-stage`} className="font-medium text-sm">
+				<span id={`${id}-stage`} className="text-sm font-medium">
 					<Trans>Stage</Trans>
 				</span>
 				<SegmentedControl
 					aria-labelledby={`${id}-stage`}
 					value={stage}
 					onValueChange={(value) => setStage(value as Stage)}
-					className="w-fit"
+					className="h-auto w-fit max-w-full flex-wrap"
 				>
 					{STAGES.map((value) => (
-						<SegmentedControlItem key={value} value={value}>
-							{getStageLabel(value)}
+						<SegmentedControlItem
+							key={value}
+							value={value}
+							className="min-h-7 max-w-full flex-auto [overflow-wrap:anywhere] whitespace-normal"
+						>
+							{value === "saved" ? (
+								<Trans>Saved</Trans>
+							) : value === "applied" ? (
+								<Trans>Already applied</Trans>
+							) : (
+								<Trans>Already interviewing</Trans>
+							)}
 						</SegmentedControlItem>
 					))}
 				</SegmentedControl>
 			</div>
 
+			<div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
+				<div className="grid gap-1.5">
+					<Label htmlFor={`${id}-location`}>
+						<Trans>Location</Trans>
+					</Label>
+					<Input id={`${id}-location`} value={location} onChange={(event) => setLocation(event.target.value)} />
+				</div>
+				<div className="grid gap-1.5">
+					<Label htmlFor={`${id}-salary`}>
+						<Trans>Salary</Trans>
+					</Label>
+					<Input id={`${id}-salary`} value={salary} onChange={(event) => setSalary(event.target.value)} />
+				</div>
+			</div>
+			{stage !== "saved" && (
+				<div className="grid gap-1.5">
+					<Label htmlFor={`${id}-date`}>
+						<Trans>Application date</Trans>
+					</Label>
+					<Input
+						id={`${id}-date`}
+						type="date"
+						value={stageDate}
+						required
+						onChange={(event) => setStageDate(event.target.value)}
+					/>
+				</div>
+			)}
+			<div className="grid gap-1.5">
+				<Label htmlFor={`${id}-resume`}>
+					{stage === "saved" ? <Trans>Resume (optional)</Trans> : <Trans>Resume submitted (optional)</Trans>}
+				</Label>
+				<select
+					id={`${id}-resume`}
+					value={resumeId}
+					onChange={(event) => setResumeId(event.target.value)}
+					className="h-9 rounded-md border border-line bg-surface px-2 text-sm"
+				>
+					<option value="">{t`None`}</option>
+					{documents
+						?.filter((document) => document.type === "resume")
+						.map((document) => (
+							<option key={document.id} value={document.id}>
+								{document.name}
+							</option>
+						))}
+				</select>
+			</div>
+			{stage !== "saved" && (
+				<div className="grid gap-1.5">
+					<Label htmlFor={`${id}-letter`}>
+						<Trans>Cover letter submitted (optional)</Trans>
+					</Label>
+					<select
+						id={`${id}-letter`}
+						value={coverLetterId}
+						onChange={(event) => setCoverLetterId(event.target.value)}
+						className="h-9 rounded-md border border-line bg-surface px-2 text-sm"
+					>
+						<option value="">{t`None`}</option>
+						{documents
+							?.filter((document) => document.type === "letter")
+							.map((document) => (
+								<option key={document.id} value={document.id}>
+									{document.name}
+								</option>
+							))}
+					</select>
+				</div>
+			)}
 			<DialogFooter>
 				<Button type="button" variant="secondary" disabled={!ready} onClick={() => void add(false)}>
-					<Trans>Add</Trans>
+					{stage === "saved" ? <Trans>Save job</Trans> : <Trans>Record application</Trans>}
 				</Button>
-				<Button type="submit" disabled={!ready}>
-					<Trans>Add and tailor a resume</Trans>
+				<Button type="button" disabled={!ready} onClick={() => void add(true)}>
+					<Trans>Save and prepare resume</Trans>
 				</Button>
 			</DialogFooter>
 		</form>

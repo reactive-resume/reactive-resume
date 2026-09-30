@@ -6,19 +6,24 @@ description: "Reference for the tools the Reactive Resume assistant can call: re
 The assistant works through a small, fixed set of tools. You never call them yourself: the assistant picks one when your request needs it, and the conversation shows a short status line for each step. This page lists every tool, what it does, and when it's available.
 
 <Frame caption="Tool steps appear as short status lines in the conversation">
-  <img src="/images/guides/ai-agent-tools/tool-status-in-conversation.webp" alt="A request to tighten the summary, followed by the status line Read the resume with a checkmark and the start of a card titled 1 of 1 applied" />
+  <img
+    src="/images/guides/ai-agent-tools/tool-status-in-conversation.webp"
+    alt="A request to tighten the summary, followed by the status line Read the resume with a checkmark and the start of a card titled 1 of 1 applied"
+  />
 </Frame>
 
 ## Tools
 
-| Tool | What it does | Shown in the conversation as | Available when |
-| --- | --- | --- | --- |
-| `read_resume` | Reads the open resume: its full text, plus every passage an edit can target (each paragraph of the summary, each bullet or paragraph of an entry's description), each with an ID. Hidden sections and entries are left out. | **Read the resume** | You're in a resume and the document chip is included in your message. |
-| `read_letter` | Reads the open cover letter's body, sender and recipient, plus the text of the resume it's linked to, if any. The greeting and sign-off aren't editable through the assistant. | **Read the letter** | You're in a letter and the document chip is included in your message. |
-| `propose_edits` | Proposes a set of up to 12 edits with a short title. Each edit either rewrites one passage or adds a new passage after it, and comes with a one-line reason. Nothing changes until you accept. | **Preparing edits…**, then the proposed edits card | Same as the read tool. |
-| `ask_user_question` | Asks you a short question, with up to four suggested answers, before the assistant continues. | A blue question card | Always. |
-| `read_attachment` | Reads a file attached to a message. Text, Markdown and JSON files return their content (up to 40,000 characters). | **Read the attachment** | Always; useful only when the message has attachments. |
-| `web_search` | Searches the web through the provider's own search tool and returns sources. | **Searched the web**, with **Sources** under the reply | Only with an OpenAI provider on its default base URL and a supported model. |
+| Tool                           | What it does                                                                                                                                                                                                                | Shown in the conversation as                                                    | Available when                                                                                |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `read_resume`                  | Reads the open resume: its full text, plus every passage an edit can target (each paragraph of the summary, each bullet or paragraph of an entry's description), each with an ID. Hidden sections and entries are left out. | **Read the resume**                                                             | You're in a resume and the document chip is included in your message.                         |
+| `read_letter`                  | Reads the open cover letter's body, sender and recipient, plus the text of the resume it's linked to, if any. The greeting and sign-off aren't editable through the assistant.                                              | **Read the letter**                                                             | You're in a letter and the document chip is included in your message.                         |
+| `propose_edits`                | Proposes a set of up to 12 edits with a short title. Each edit either rewrites one passage or adds a new passage after it, and comes with a one-line reason. Nothing changes until you accept.                              | **Preparing edits…**, then the proposed edits card                              | Same as the read tool.                                                                        |
+| `ask_user_question`            | Asks you a short question, with up to four suggested answers, before the assistant continues.                                                                                                                               | A blue question card                                                            | Always.                                                                                       |
+| `read_attachment`              | Reads a file attached to a message. Text, Markdown and JSON files return their content (up to 40,000 characters).                                                                                                           | **Read the attachment**                                                         | Always; useful only when the message has attachments.                                         |
+| `search_web`                   | Searches with your selected Firecrawl, Tavily or Exa web connection.                                                                                                                                                        | **Searching the web…**, then **Searched the web** and **Sources**               | An optional web connection is configured. It takes precedence over native model search.       |
+| `read_page`                    | Reads a supplied public URL with your selected reader, falling back to the built-in reader when enhanced reading fails.                                                                                                     | **Reading page…**, then **Read the page**, with clipping warnings when detected | Available with the assistant's custom document tools, including without a web connection.     |
+| `web_search` / `google_search` | Searches through the AI provider's native tool and returns sources.                                                                                                                                                         | **Searching the web…**, then **Searched the web**, with **Sources**             | No external web connection, and a supported direct OpenAI, Anthropic or Gemini configuration. |
 
 ## How edits are placed
 
@@ -38,25 +43,53 @@ Besides what the tools return, each message can include:
 
 ## Web search support
 
-`web_search` uses OpenAI's native search, so it's only offered when all of these are true:
+A selected **Web access** connection always supplies search through `search_web`, regardless of which AI provider you use. Only one search mechanism is offered per reply. Reading a supplied link uses `read_page`; built-in reading needs no commercial web account.
 
-- The provider is **OpenAI** (not OpenAI-compatible or a gateway).
-- The base URL is the default, `https://api.openai.com/v1`.
-- The model is one of `gpt-5.5-pro`, `gpt-5.5`, `gpt-5.4`, `gpt-5.4-pro`, `gpt-5.4-mini`, `gpt-5.4-nano`, `gpt-5`, `gpt-5-mini`, `gpt-5-nano`, `gpt-4.1`, `gpt-4.1-mini` or `o4-mini`, or a dated snapshot of one of them (such as `gpt-4.1-2025-04-14`).
+With no external web connection, these direct configurations support native search alongside the assistant's document tools:
 
-Otherwise, the assistant tells you it can't browse with this model and asks you to paste what it needs, such as the text of a job page.
+| AI provider | Direct base URL                                    | Supported model IDs                                                                                                                                                                                                                                                                                                                             |
+| ----------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OpenAI      | `https://api.openai.com/v1`                        | `gpt-5.5-pro`, `gpt-5.5`, `gpt-5.4`, `gpt-5.4-pro`, `gpt-5.4-mini`, `gpt-5.4-nano`, `gpt-5`, `gpt-5-mini`, `gpt-5-nano`, `gpt-4.1`, `gpt-4.1-mini`, `o4-mini`, and the explicitly supported published snapshots (for example, `gpt-5-mini-2025-08-07` or `gpt-4.1-2025-04-14`). Arbitrary dated model IDs are excluded. Uses the Responses API. |
+| Anthropic   | `https://api.anthropic.com/v1`                     | `claude-sonnet-4-6`, `claude-opus-4-6`. Uses basic `web_search_20250305`; your organization must permit search.                                                                                                                                                                                                                                 |
+| Gemini      | `https://generativelanguage.googleapis.com/v1beta` | `gemini-3.8-flash`, `gemini-3.1-pro-preview`. Combining native grounding and custom tools is a preview capability.                                                                                                                                                                                                                              |
+
+Unknown models and custom gateways do not inherit native search from their provider label. Gemini 2.x cannot combine native grounding with the document tools: use an explicitly configured external web connection instead. If search is unavailable, supply a public URL for reading or paste the relevant text. Native search charges apply to your AI account.
+
+The source list combines validated native source parts and successful search/read results, deduplicates links, and survives reopening the conversation. Links invented in the reply text are not added as retrieved sources. Failed or interrupted web tools show that outcome; they do not show a successful search. Changing AI or web connections preserves the conversation and replays historical native searches as portable source evidence.
+
+See [Anthropic web search](https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool) and [Gemini tool combination](https://ai.google.dev/gemini-api/docs/tool-combination) for provider enablement and compatibility requirements.
 
 ## Limits
 
-| Limit | Value |
-| --- | --- |
-| Edits per proposal set | 12 |
-| Tool steps per reply | 30 |
-| Length of one reply | About 4 minutes, then "Time limit reached. Your progress is saved. Ask me to continue." |
-| Attachments per message | 10 |
-| Size per attachment | 25 MB |
-| Attachments per conversation | 100 MB in total |
-| Text read from one attachment | 40,000 characters |
+| Limit                                       | Value                                                                                   |
+| ------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Edits per proposal set                      | 12                                                                                      |
+| Tool steps per reply                        | 30                                                                                      |
+| Combined custom search/read calls per reply | 6                                                                                       |
+| Page text returned to the model             | 20,000 characters; clipping is reported                                                 |
+| Length of one reply                         | About 4 minutes, then "Time limit reached. Your progress is saved. Ask me to continue." |
+| Attachments per message                     | 10                                                                                      |
+| Size per attachment                         | 25 MB                                                                                   |
+| Attachments per conversation                | 100 MB in total                                                                         |
+| Text read from one attachment               | 40,000 characters                                                                       |
+
+Anthropic searches are capped at six per provider request, and OpenAI built-in tool calls use a six-call provider limit per request. The assistant loop and four-minute deadline also apply. Gemini does not expose a comparable internal-query cap here; the application does not claim to count native provider queries it cannot observe. Stopping a reply cancels outstanding custom retrieval as well as the model request.
+
+## Release verification
+
+Maintainers can opt into a bounded native search probe against a dedicated test installation. Use a tested saved AI connection from the table above, a sample resume without personal data, and a test account with no personal or server-managed external web connection:
+
+```sh
+APP_URL=http://localhost:3000 \
+AI_NATIVE_SMOKE_API_KEY=<test-account-api-key> \
+AI_NATIVE_SMOKE_PROVIDER_ID=<tested-provider-id> \
+AI_NATIVE_SMOKE_RESUME_ID=<sample-resume-id> \
+node tooling/web-access/native-smoke.mjs openai
+```
+
+Repeat with `anthropic` and `gemini` and the corresponding connection ID. The probe requests one native search and one document read, checks returned native sources and the custom document result, watches at most four visible model steps, and stops after 90 seconds. It removes its own conversation even on failure and never prints resume content or provider credentials. Provider-internal searches remain subject to the limits described above.
+
+Mocked SDK checks cover endpoint/tool serialization and returned sources; they do not prove a maintainer's live account, model entitlement or search enablement. Record which live probes ran and which were skipped.
 
 ## Earlier conversations
 

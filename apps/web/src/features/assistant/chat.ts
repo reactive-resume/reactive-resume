@@ -4,7 +4,7 @@ import { useChat } from "@ai-sdk/react";
 import { eventIteratorToUnproxiedDataStream } from "@orpc/client";
 import { lastAssistantMessageIsCompleteWithToolCalls, parseJsonEventStream, uiMessageChunkSchema } from "ai";
 import { useLayoutEffect, useMemo, useRef } from "react";
-import { agentMessageMetadataSchema } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { agentMessageMetadataSchema, agentWebSources } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { streamClient } from "@/libs/orpc/client";
 
 /** What a message shares with the model; each context chip turns one off. */
@@ -41,7 +41,7 @@ export const attachmentPart = (attachment: ChatAttachment): FileUIPart => ({
 	filename: attachment.filename,
 });
 
-type TranscriptLabels = { user: string; assistant: string };
+type TranscriptLabels = { user: string; assistant: string; sources?: string };
 
 /** The conversation as plain text, speaker by speaker, for Copy transcript. Tool steps are left out. */
 export function transcriptOf(messages: readonly UIMessage[], labels: TranscriptLabels) {
@@ -51,7 +51,13 @@ export function transcriptOf(messages: readonly UIMessage[], labels: TranscriptL
 				.flatMap((part) => (part.type === "text" ? [part.text] : []))
 				.join("")
 				.trim();
-			return text ? [`${message.role === "user" ? labels.user : labels.assistant}: ${text}`] : [];
+			const sources = agentWebSources(message)
+				.map((source) => `${source.title}: ${source.url}`)
+				.join("\n");
+			const content = [text, ...(sources ? [`${labels.sources ?? "Sources"}:\n${sources}`] : [])]
+				.filter(Boolean)
+				.join("\n\n");
+			return content ? [`${message.role === "user" ? labels.user : labels.assistant}: ${content}`] : [];
 		})
 		.join("\n\n");
 }

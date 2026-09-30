@@ -18,9 +18,9 @@ import {
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
-import { orpc } from "@/libs/orpc/client";
 import { autoMapHeaders, CSV_FIELDS, mapCsvToApplications, parseCsv, rowsToCsv } from "../csv";
 import { useInvalidateApplications } from "../use-application-actions";
+import { orpc } from "@/libs/orpc/client";
 
 const MAX_IMPORT = 500;
 const SAMPLE =
@@ -36,6 +36,8 @@ const fieldLabel = (field: CsvField) =>
 		salary: t`Salary`,
 		source: t`Source`,
 		sourceUrl: t`Link`,
+		jobDescription: t`Job description`,
+		postingSource: t`Posting source`,
 		notes: t`Notes`,
 		tags: t`Tags`,
 		contactName: t`Contact name`,
@@ -167,7 +169,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 
 					{result && headers.length > 0 && (
 						<section aria-labelledby="import-columns" className="grid gap-2">
-							<h3 id="import-columns" className="font-semibold text-sm">
+							<h3 id="import-columns" className="text-sm font-semibold">
 								<Trans>Columns</Trans>
 							</h3>
 							<ul className="grid gap-1.5">
@@ -209,7 +211,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 									/>
 								</p>
 								{result.skipped > 0 && (
-									<p className="text-ink-2 text-xs">
+									<p className="text-xs text-ink-2">
 										<Plural
 											value={result.skipped}
 											one="# row has no company or role and will be skipped."
@@ -225,7 +227,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 									</p>
 								)}
 								{result.contactsSkipped > 0 && (
-									<p className="text-ink-3 text-xs">
+									<p className="text-xs text-ink-3">
 										<Plural
 											value={result.contactsSkipped}
 											one="# contact has an invalid email or no name; its application still imports."
@@ -234,7 +236,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 									</p>
 								)}
 								{overflow > 0 && (
-									<p className="text-warn-text text-xs">
+									<p className="text-xs text-warn-text">
 										<Trans>
 											Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import
 											the rest.

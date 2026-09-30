@@ -27,7 +27,13 @@ function suggestCopyName(sourceName: string, company?: string) {
 
 async function assertOwnedApplication(userId: string, applicationId: string) {
 	const [application] = await db
-		.select({ id: schema.application.id, company: schema.application.company, resumeId: schema.application.resumeId })
+		.select({
+			id: schema.application.id,
+			company: schema.application.company,
+			resumeId: schema.application.resumeId,
+			status: schema.application.status,
+			sentResumeVersionId: schema.application.sentResumeVersionId,
+		})
 		.from(schema.application)
 		.where(and(eq(schema.application.id, applicationId), eq(schema.application.userId, userId)));
 
@@ -215,8 +221,13 @@ export const documentsService = {
 
 	linkApplication: async (input: DocumentRef & { applicationId: string | null }) => {
 		await assertUnlocked(input);
-		if (input.applicationId) await assertOwnedApplication(input.userId, input.applicationId);
-		if (input.type === "resume") return update(input, { applicationId: input.applicationId });
+		const application = input.applicationId ? await assertOwnedApplication(input.userId, input.applicationId) : null;
+		if (input.type === "resume") {
+			await update(input, { applicationId: input.applicationId });
+			if (application && !application.sentResumeVersionId && (!application.resumeId || application.status === "saved"))
+				await applicationService.update({ userId: input.userId, id: application.id, resumeId: input.id });
+			return;
+		}
 
 		const [letter] = await db
 			.select({ applicationId: schema.coverLetter.sourceApplicationId })
@@ -247,7 +258,7 @@ export const documentsService = {
 		await deleteForGood(input);
 	},
 
-	/** Duplicates a resume for a job: the copy is linked to the application, which gets it if it has no resume yet. */
+	/** Duplicates a resume for a job, selecting the working copy while preserving submitted versions. */
 	copyForJob: async (input: {
 		userId: string;
 		resumeId: string;
@@ -267,9 +278,8 @@ export const documentsService = {
 
 		if (application) {
 			await db.update(schema.resume).set({ applicationId: application.id }).where(eq(schema.resume.id, id));
-			if (!application.resumeId) {
+			if (!application.sentResumeVersionId && (!application.resumeId || application.status === "saved"))
 				await applicationService.update({ userId: input.userId, id: application.id, resumeId: id });
-			}
 		}
 
 		return id;

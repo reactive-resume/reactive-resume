@@ -14,7 +14,10 @@ Connect an AI provider with your own API key. See [Connecting an AI provider](/g
 In the editor, select **Assistant** (the sparkle button) in the editor bar, just before **Share**, or press <kbd>⌘</kbd> <kbd>J</kbd> (<kbd>Ctrl</kbd> <kbd>J</kbd> on Windows and Linux). Press it again, or select **Close the assistant** (×) in the panel, to close it.
 
 <Frame caption="The assistant beside a resume, ready for a first request">
-  <img src="/images/guides/using-the-assistant/assistant-beside-the-page.webp" alt="Resume editor with the Assistant panel open on the right, showing What should we work on? and three suggestions: Find weak bullets, Tighten to one page and Draft a summary" />
+  <img
+    src="/images/guides/using-the-assistant/assistant-beside-the-page.webp"
+    alt="Resume editor with the Assistant panel open on the right, showing What should we work on? and three suggestions: Find weak bullets, Tighten to one page and Draft a summary"
+  />
 </Frame>
 
 On wide screens the assistant opens as a third column. On smaller laptops it takes the place of the left panel, on tablets it slides in as a drawer, and on phones it fills the screen.
@@ -31,6 +34,7 @@ You can also reach it from elsewhere:
     A new conversation starts with a few suggestions, such as **Find weak bullets**, **Tighten to one page** and **Draft a summary** for a resume, or **Make the opening stronger** and **Make it shorter** for a letter. When the document is linked to an application, **Tailor to the … posting** appears first.
 
     Or type in the box (**Ask, or describe a change…**) and press <kbd>Enter</kbd>. Use <kbd>Shift</kbd> <kbd>Enter</kbd> for a new line.
+
   </Step>
   <Step title="Let it read and reply">
     The assistant reads your document, then answers in a sentence or two and shows its suggestions as a set of proposed edits. You can keep editing your document while it works.
@@ -44,11 +48,17 @@ Specific requests work best: "Rewrite my summary for a senior frontend role", "M
 Each proposed edit shows where it lands (for example, **Summary · paragraph 1**), the current text struck through, the new text highlighted, and a short reason. The same change is marked on the page, and the section shows a **proposed** badge, so you can read it in place.
 
 <Frame caption="A proposed edit, shown on the page and in the assistant">
-  <img src="/images/guides/using-the-assistant/proposed-edit-on-page.webp" alt="Resume editor where the summary on the page shows the old text struck through and the new text below it, with a banner reading 1 proposed edit on this page · nothing changes until you accept, and the matching card in the Assistant panel" />
+  <img
+    src="/images/guides/using-the-assistant/proposed-edit-on-page.webp"
+    alt="Resume editor where the summary on the page shows the old text struck through and the new text below it, with a banner reading 1 proposed edit on this page · nothing changes until you accept, and the matching card in the Assistant panel"
+  />
 </Frame>
 
 <Frame caption="The proposed edit card">
-  <img src="/images/guides/using-the-assistant/proposed-edit-card.webp" alt="Card titled 1 proposed edit, with the location Summary · paragraph 1, the old summary struck through, the shorter new summary highlighted in green, the reason, and Accept and Reject buttons" />
+  <img
+    src="/images/guides/using-the-assistant/proposed-edit-card.webp"
+    alt="Card titled 1 proposed edit, with the location Summary · paragraph 1, the old summary struck through, the shorter new summary highlighted in green, the reason, and Accept and Reject buttons"
+  />
 </Frame>
 
 - Select **Accept** to apply an edit, or **Reject** to dismiss it.
@@ -68,7 +78,10 @@ Accepting shows a toast, **Edit applied**, with **Undo**. You can also press <kb
 When the assistant needs a fact or a choice from you, it shows a blue question card with a few answers. Select one, or type your own under **Or in your own words…** and select **Send**. The assistant then continues with your answer.
 
 <Frame caption="A clarifying question from the assistant">
-  <img src="/images/guides/using-the-assistant/clarifying-question-card.webp" alt="A request to add accessibility work, followed by a blue question card asking whether the user has done accessibility work, with the answers Yes, I have and No, skip it and a box to answer in your own words" />
+  <img
+    src="/images/guides/using-the-assistant/clarifying-question-card.webp"
+    alt="A request to add accessibility work, followed by a blue question card asking whether the user has done accessibility work, with the answers Yes, I have and No, skip it and a box to answer in your own words"
+  />
 </Frame>
 
 ## Choose what's shared with each message
@@ -87,27 +100,34 @@ Select the paperclip in the message box to attach files, such as a job descripti
 - You can attach up to 10 files per message, each up to 25 MB, and 100 MB per conversation.
 
 <Note>
-  Attachments work with local, S3-compatible or Vercel Blob storage and stay private. If you use a reverse proxy,
-  allow request bodies of at least 50 MB: files travel base64-encoded, which makes them about a third larger.
+  Attachments work with local, S3-compatible or Vercel Blob storage and stay private. If you use a reverse proxy, allow
+  request bodies of at least 50 MB: files travel base64-encoded, which makes them about a third larger.
 </Note>
 
 ## Search the web
 
-With an **OpenAI** provider on its default base URL and a model that supports web search (such as `gpt-5`, `gpt-5-mini`, `gpt-4.1` or `o4-mini`), the assistant can look things up, such as a company or a public job page. The conversation shows **Searched the web**, and the reply lists its **Sources** as links. With any other provider or model, the assistant says it can't browse and asks you to paste what it needs.
+If you connect an optional **Web access** service in Integrations, the assistant uses that selected service for search and enhanced reading. With no external connection, supported direct OpenAI, Anthropic and Gemini configurations can supply native search through your existing AI account. See [Assistant tools](/guides/ai-agent-tools#web-search-support) for model and endpoint requirements.
+
+You can also supply a public page URL: the assistant uses the selected reader or built-in reading. Page reading does not require a separate search account. Failed reading leads to pasted-text recovery; clipped or incomplete pages are identified before you rely on them.
+
+The conversation shows search/read progress, failures and retrieved **Sources**. Sources remain visible after reopening the conversation. A failed search keeps your conversation and does not silently switch paid providers.
 
 ## Switch models
 
 The model chip in the assistant's header shows the model in use. Select it to switch to another connected provider for this conversation, or choose **Connect another…** to add one in settings.
 
 <Frame caption="The model menu">
-  <img src="/images/guides/using-the-assistant/model-menu.webp" alt="Model menu open under the gpt-5-mini chip, listing the provider Work gateway with its model gpt-5-mini and a checkmark, and Connect another…" />
+  <img
+    src="/images/guides/using-the-assistant/model-menu.webp"
+    alt="Model menu open under the gpt-5-mini chip, listing the provider Work gateway with its model gpt-5-mini and a checkmark, and Connect another…"
+  />
 </Frame>
 
 ## Stop, retry or copy a conversation
 
 - **Stop a reply** with the stop button that replaces send while the assistant is working, or press <kbd>Esc</kbd> in the message box. If it stopped before proposing anything, you'll see **Stopped. No edits were proposed.** with **Continue**.
 - **When the provider returns an error**, your message is kept. Select **Retry**, or **Switch model** to try another provider.
-- **Copy transcript** at the end of the conversation copies the messages as plain text, speaker by speaker, without the tool steps.
+- **Copy transcript** at the end of the conversation copies the messages as plain text, speaker by speaker, without the tool steps, and includes the retrieved source links.
 
 A single reply can run for about four minutes. If it hits that limit, the assistant says "Time limit reached. Your progress is saved. Ask me to continue."
 
@@ -116,7 +136,10 @@ A single reply can run for about four minutes. If it hits that limit, the assist
 Each conversation belongs to one document. Opening the assistant continues that document's latest conversation. Select **New conversation** (the pencil) to start fresh, or **Past conversations** (the clock) to see earlier ones.
 
 <Frame caption="Past conversations for this document">
-  <img src="/images/guides/using-the-assistant/past-conversations.webp" alt="Past conversations list under This document, showing three conversations titled by their first message, each with its time and outcome such as 1 of 1 edits accepted or no edits" />
+  <img
+    src="/images/guides/using-the-assistant/past-conversations.webp"
+    alt="Past conversations list under This document, showing three conversations titled by their first message, each with its time and outcome such as 1 of 1 edits accepted or no edits"
+  />
 </Frame>
 
 Conversations are titled by your first message and show how many edits you accepted. Conversations about your other documents appear under **Other documents**; opening one takes you to that document. To delete a conversation, hover over it, select **×**, then confirm. Its messages and attachments are deleted, but edits you accepted stay in your document.
@@ -124,7 +147,8 @@ Conversations are titled by your first message and show how many edits you accep
 A conversation becomes read-only if its document is locked or deleted, or its provider was deleted. Unlock the document, or pick another model from the model chip, to continue.
 
 <Info>
-  Replies stream while the conversation is open. On instances without Redis (some self-hosted setups), a reply that's still running when you reload the page can't be picked up again; its finished messages are still saved.
+  Replies stream while the conversation is open. On instances without Redis (some self-hosted setups), a reply that's
+  still running when you reload the page can't be picked up again; its finished messages are still saved.
 </Info>
 
 ## Related guides

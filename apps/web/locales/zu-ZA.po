@@ -256,7 +256,7 @@ msgid "{0} posting"
 msgstr ""
 
 #. placeholder {0}: props.providerLabel
-#. placeholder {1}: getOrpcErrorMessage(error, { fallback: t`an error`, allowServerMessage: true })
+#. placeholder {1}: getOrpcErrorMessage(error, { fallback: t`an error`, allowServerMessage: true, })
 #: src/features/assistant/conversation.tsx
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr ""
@@ -678,11 +678,14 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Active"
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 msgid "Activity"
 msgstr ""
 
-#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/list-view.tsx
@@ -756,21 +759,12 @@ msgstr ""
 msgid "Add an address."
 msgstr ""
 
-#: src/features/applications/components/add-application-dialog.tsx
-msgid "Add an application"
-msgstr ""
-
 #: src/features/resume/editor/check/issues.ts
 msgid "Add an email"
 msgstr ""
 
-#: src/features/applications/components/add-application-dialog.tsx
-msgid "Add and tailor a resume"
-msgstr ""
-
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
-#: src/routes/dashboard/applications/index.tsx
 msgid "Add application"
 msgstr ""
 
@@ -963,6 +957,10 @@ msgstr ""
 msgid "AI & developer"
 msgstr ""
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "AI couldn't fill the details. The posting is retained; complete the fields manually."
+msgstr ""
+
 #: src/features/resume/share/format.ts
 msgid "AI edit"
 msgstr ""
@@ -1018,6 +1016,10 @@ msgstr ""
 msgid "Almost none of your bullets carry a number."
 msgstr ""
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Already applied"
+msgstr ""
+
 #: src/features/ats-checker/report/jd-coverage.tsx
 msgid "Already covered"
 msgstr ""
@@ -1028,6 +1030,10 @@ msgstr ""
 
 #: src/features/auth/pages/register.tsx
 msgid "Already have an account? <0/>"
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Already interviewing"
 msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
@@ -1106,6 +1112,7 @@ msgstr ""
 
 #: src/features/assistant/provider-setup.tsx
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr ""
 
@@ -1169,6 +1176,11 @@ msgstr ""
 
 #: src/features/applications/use-application-actions.ts
 msgid "Application closed"
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Application date"
 msgstr ""
 
 #: src/features/applications/components/export-applications-sheet.tsx
@@ -1258,8 +1270,8 @@ msgstr ""
 msgid "Ask the assistant to work it in"
 msgstr ""
 
-#: src/features/settings/ai/firecrawl.tsx
-msgid "Ask your server administrator to enable credential encryption or configure Firecrawl globally."
+#: src/features/settings/ai/web-access.tsx
+msgid "Ask your server administrator to enable credential encryption or configure a shared web connection."
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -1491,6 +1503,10 @@ msgstr ""
 msgid "Built a shared design system used by six product teams, cutting UI review time by 40%."
 msgstr ""
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Built-in reader"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr ""
@@ -1539,6 +1555,7 @@ msgstr ""
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/settings/ai/api-keys.tsx
+#: src/features/settings/ai/web-access.tsx
 #: src/hooks/use-confirm.tsx
 msgid "Cancel"
 msgstr ""
@@ -1557,6 +1574,10 @@ msgstr ""
 #: src/features/settings/account/security.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Change"
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Change connection"
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -1723,6 +1744,10 @@ msgstr ""
 msgid "Choose color"
 msgstr ""
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Choose one service for search and reading. Your key is stored encrypted."
+msgstr ""
+
 #: src/components/level/combobox.tsx
 msgid "Circle"
 msgstr ""
@@ -1870,13 +1895,25 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Confirm applied"
+msgstr ""
+
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Confirm Password"
+msgstr ""
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Confirm submission and choose the documents you actually sent. Their current versions will be saved."
 msgstr ""
 
 #: src/features/assistant/provider-setup.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Connect a service"
 msgstr ""
 
 #: src/features/assistant/provider-setup.tsx
@@ -1889,10 +1926,6 @@ msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Connect another…"
-msgstr ""
-
-#: src/features/settings/ai/firecrawl.tsx
-msgid "Connect your Firecrawl Cloud key. Your key is stored encrypted and used only for your searches and job links."
 msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
@@ -2187,6 +2220,15 @@ msgstr ""
 msgid "Couldn't read that file."
 msgstr ""
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't read this page: {0}"
+msgstr ""
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't record submission. Try again."
+msgstr ""
+
 #: src/features/settings/account/security.tsx
 msgid "Couldn't remove the passkey. Try again."
 msgstr ""
@@ -2318,6 +2360,11 @@ msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Cover letter imported"
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Cover letter submitted (optional)"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -2741,6 +2788,10 @@ msgstr ""
 msgid "Documents"
 msgstr ""
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Documents for this job"
+msgstr ""
+
 #: src/features/homepage/faq.tsx
 msgid "Does it use AI?"
 msgstr ""
@@ -3114,12 +3165,24 @@ msgstr ""
 msgid "English (United Kingdom)"
 msgstr ""
 
-#: src/features/settings/account/profile.tsx
-msgid "Enter a name, up to 64 characters."
+#: src/features/settings/ai/web-access.tsx
+msgid "Enhanced reading failed."
 msgstr ""
 
-#: src/features/settings/ai/firecrawl.tsx
-msgid "Enter a new key to replace the saved one"
+#: src/features/settings/ai/web-access.tsx
+msgid "Enhanced reading succeeded."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Enhanced reading unavailable; used the built-in reader."
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Enhanced reading was unavailable. The built-in reader retrieved this posting."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Enter a name, up to 64 characters."
 msgstr ""
 
 #: src/features/auth/pages/reset-password.tsx
@@ -3425,18 +3488,6 @@ msgstr ""
 
 #: src/libs/locale.ts
 msgid "Finnish"
-msgstr ""
-
-#: src/features/settings/ai/firecrawl.tsx
-msgid "Firecrawl Cloud API key"
-msgstr ""
-
-#: src/features/settings/ai/firecrawl.tsx
-msgid "Firecrawl is enabled globally. Personal keys are disabled."
-msgstr ""
-
-#: src/features/settings/ai/firecrawl.tsx
-msgid "Firecrawl settings couldn't be saved or loaded."
 msgstr ""
 
 #: src/features/resume/editor/chrome.tsx
@@ -4154,6 +4205,7 @@ msgid "Job"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
 msgid "Job description"
 msgstr ""
 
@@ -4537,10 +4589,6 @@ msgstr ""
 msgid "Link a Reactive Resume to use AI match scoring and tailoring."
 msgstr ""
 
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Link a resume or a letter first"
-msgstr ""
-
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Link address"
@@ -4679,10 +4727,11 @@ msgstr ""
 msgid "Loading the total"
 msgstr ""
 
-#: src/features/settings/ai/firecrawl.tsx
+#: src/features/settings/ai/web-access.tsx
 msgid "Loading…"
 msgstr ""
 
+#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/check/parser-view.tsx
@@ -4806,6 +4855,10 @@ msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Margins set to {minimum} pt"
+msgstr ""
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Mark as applied"
 msgstr ""
 
 #: src/features/resume/editor/write/rich-text-editor.tsx
@@ -5293,6 +5346,8 @@ msgstr ""
 msgid "none"
 msgstr ""
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 msgid "None"
 msgstr ""
@@ -5324,6 +5379,7 @@ msgid "Not applied yet"
 msgstr ""
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/web-access.tsx
 msgid "Not connected"
 msgstr ""
 
@@ -5544,6 +5600,10 @@ msgstr ""
 msgid "Open AI settings"
 msgstr ""
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Open application"
+msgstr ""
+
 #. Button label to open the user's default email app
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Open Email Client"
@@ -5579,6 +5639,10 @@ msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Opens the editor on your name. Nothing else to fill in first."
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Optional"
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -5688,6 +5752,10 @@ msgstr ""
 msgid "Page 1 · {formatLabel}"
 msgstr ""
 
+#: src/features/assistant/conversation.tsx
+msgid "Page reading didn't finish."
+msgstr ""
+
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Page view"
 msgstr ""
@@ -5781,6 +5849,10 @@ msgstr ""
 msgid "Paste a job posting…"
 msgstr ""
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Paste description instead"
+msgstr ""
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
 msgstr ""
@@ -5791,6 +5863,11 @@ msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Paste the posting to see which of its terms your resume already has."
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Pasted description"
 msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
@@ -5827,10 +5904,6 @@ msgstr ""
 
 #: src/libs/locale.ts
 msgid "Persian"
-msgstr ""
-
-#: src/features/settings/ai/firecrawl.tsx
-msgid "Personal Firecrawl key saved."
 msgstr ""
 
 #: src/features/resume/editor/check/parser-view.tsx
@@ -5925,6 +5998,10 @@ msgstr ""
 msgid "Posting from the linked application"
 msgstr ""
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Posting source"
+msgstr ""
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Posting terms in your resume"
 msgstr ""
@@ -5940,12 +6017,20 @@ msgstr ""
 msgid "Preferences"
 msgstr ""
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Prepare a resume"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Prepare for next step"
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Prepare me for the interview"
+msgstr ""
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Prepare resume"
 msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
@@ -6081,7 +6166,12 @@ msgstr ""
 msgid "Prototyping"
 msgstr ""
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Provided by the server"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/web-access.tsx
 msgid "Provider"
 msgstr ""
 
@@ -6180,6 +6270,14 @@ msgstr ""
 msgid "Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development."
 msgstr ""
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Read links and optionally search the web"
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Read posting"
+msgstr ""
+
 #: src/features/resume/stylesheet/editor.tsx
 msgid "Read the Applying Custom Styles guide."
 msgstr ""
@@ -6190,6 +6288,10 @@ msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Read the letter"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Read the page"
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -6219,6 +6321,10 @@ msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Readability score: {score} out of 100"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Reading page…"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -6252,12 +6358,20 @@ msgstr ""
 msgid "Reads cleanly"
 msgstr ""
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Reads supported public pages"
+msgstr ""
+
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "Reason"
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Recipient"
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Record application"
 msgstr ""
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -6342,16 +6456,16 @@ msgstr ""
 msgid "Remove {value}"
 msgstr ""
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Remove connection"
+msgstr ""
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
 msgstr ""
 
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Remove file"
-msgstr ""
-
-#: src/features/settings/ai/firecrawl.tsx
-msgid "Remove key"
 msgstr ""
 
 #: src/features/resume/editor/write/entries.tsx
@@ -6503,6 +6617,10 @@ msgstr ""
 msgid "Resume"
 msgstr ""
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Resume (optional)"
+msgstr ""
+
 #: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Resume + letter"
 msgstr ""
@@ -6531,6 +6649,11 @@ msgstr ""
 msgid "Resume page"
 msgstr ""
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Resume submitted (optional)"
+msgstr ""
+
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
@@ -6543,6 +6666,17 @@ msgstr ""
 
 #: src/features/homepage/sections.tsx
 msgid "Resumes created"
+msgstr ""
+
+#. placeholder {0}: application.postingSource.retrievedAt
+#. placeholder {1}: application.postingSource.method
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Retrieved {0} using {1}. Retrieval time does not establish origin freshness."
+msgstr ""
+
+#. placeholder {0}: parsed.postingSource.retrievedAt
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Retrieved {0}. Origin freshness is unknown unless reported."
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -6639,6 +6773,7 @@ msgstr ""
 msgid "Russian"
 msgstr ""
 
+#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Salary"
@@ -6660,12 +6795,20 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Save a job"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
 msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save and link"
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Save and prepare resume"
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -6685,8 +6828,13 @@ msgstr ""
 msgid "Save Changes"
 msgstr ""
 
-#: src/features/settings/ai/firecrawl.tsx
-msgid "Save key"
+#: src/features/settings/ai/web-access.tsx
+msgid "Save connection"
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/routes/dashboard/applications/index.tsx
+msgid "Save job"
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6701,6 +6849,7 @@ msgstr ""
 msgid "saved"
 msgstr ""
 
+#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/stages.ts
 #: src/features/homepage/tailor.tsx
 #: src/features/resume/editor/save-status.tsx
@@ -6718,6 +6867,10 @@ msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Saved as an application and linked"
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Saved description"
 msgstr ""
 
 #. placeholder {0}: window.location.host
@@ -6772,6 +6925,10 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Search and enhanced reading"
+msgstr ""
+
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search applications"
 msgstr ""
@@ -6789,6 +6946,10 @@ msgstr ""
 msgid "Search documents"
 msgstr ""
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Search failed."
+msgstr ""
+
 #. Accessible label for icon picker search input
 #. Placeholder text in icon picker search input
 #: src/components/input/icon-picker.tsx
@@ -6803,16 +6964,16 @@ msgstr ""
 msgid "Search job postings"
 msgstr ""
 
-#: src/features/settings/ai/firecrawl.tsx
-msgid "Search job postings and read job links"
-msgstr ""
-
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Search or run…"
 msgstr ""
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Search succeeded."
 msgstr ""
 
 #: src/components/ui/combobox.tsx
@@ -6830,6 +6991,10 @@ msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Searching job postings…"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Searching the web…"
 msgstr ""
 
 #: src/dialogs/auth/enable-two-factor.tsx
@@ -7517,6 +7682,16 @@ msgstr ""
 msgid "Stylesheet editor"
 msgstr ""
 
+#. placeholder {0}: application.coverLetterName ?? "PDF"
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Submitted attached cover letter: {0}"
+msgstr ""
+
+#. placeholder {0}: application.resumeFileName ?? "PDF"
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Submitted attached resume: {0}"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "Subreddit"
 msgstr ""
@@ -7630,10 +7805,6 @@ msgstr ""
 msgid "Tailor"
 msgstr ""
 
-#: src/features/applications/components/detail/sent-documents.tsx
-msgid "Tailor a resume"
-msgstr ""
-
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
 msgid "Tailor to the {0} posting"
@@ -7682,6 +7853,10 @@ msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Test"
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Test connection"
 msgstr ""
 
 #: src/features/assistant/provider-setup.tsx
@@ -7801,6 +7976,10 @@ msgstr ""
 msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
 msgstr ""
 
+#: src/features/settings/ai/web-access.tsx
+msgid "The built-in reader remains active."
+msgstr ""
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr ""
@@ -7859,6 +8038,10 @@ msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "The order the text is stored in disagrees badly with the order it reads in."
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "The original link stays with this job."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -7963,6 +8146,22 @@ msgstr ""
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr ""
 
+#: src/features/settings/ai/web-access.tsx
+msgid "The service did not respond in time."
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "The service is unavailable or does not support this operation."
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "The service quota is exhausted."
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "The service rejected the credentials."
+msgstr ""
+
 #: src/features/homepage/faq.tsx
 msgid "The short answers to what people ask before they start. Anything else, ask on <0>Discord</0>."
 msgstr ""
@@ -8029,6 +8228,10 @@ msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date."
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "This description is clipped or incomplete. Review it or paste the full description before preparing."
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
@@ -8123,6 +8326,10 @@ msgstr ""
 msgid "This month"
 msgstr ""
 
+#: src/features/assistant/conversation.tsx
+msgid "This page is clipped or incomplete. Check the original before using it."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "This page is in columns, and the text extracts out of order."
 msgstr ""
@@ -8171,6 +8378,10 @@ msgstr ""
 msgid "This resume's sharing settings changed elsewhere."
 msgstr ""
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "This saved description is clipped or incomplete. Review before preparing documents."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Please start again."
 msgstr ""
@@ -8214,6 +8425,10 @@ msgstr ""
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Too many requests. Try again later."
 msgstr ""
 
 #: src/features/homepage/sections.tsx
@@ -8808,6 +9023,23 @@ msgstr ""
 #. placeholder {0}: user.email
 #: src/features/settings/account/profile.tsx
 msgid "We sent a new verification link to {0}."
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Web access"
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Web access settings couldn't be saved or loaded."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Web search didn't finish."
+msgstr ""
+
+#. placeholder {0}: part.errorText
+#: src/features/assistant/conversation.tsx
+msgid "Web search failed: {0}"
 msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx

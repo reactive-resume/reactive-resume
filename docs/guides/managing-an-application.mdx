@@ -6,7 +6,10 @@ description: "Use an application's details sheet to change its stage, plan the n
 Everything about one application lives in its details sheet. Select an application in the List, Board or Calendar view to open it. The sheet slides in from the right (on a phone, it fills the screen).
 
 <Frame caption="An application's details sheet">
-  <img src="/images/guides/managing-an-application/application-detail-sheet.webp" alt="Details sheet for Senior Gameplay Programmer at Northwind Games, showing the stage stepper, Next step, What you sent, salary, source, applied date, contact, tags, notes, and the Close application… and Prepare for next step buttons" />
+  <img
+    src="/images/guides/managing-an-application/application-detail-sheet.webp"
+    alt="Details sheet for Senior Gameplay Programmer at Northwind Games, showing the stage stepper, Next step, What you sent, salary, source, applied date, contact, tags, notes, and the Close application… and Prepare for next step buttons"
+  />
 </Frame>
 
 At the top you see the role, the company and location, and **View posting** when a posting was saved. **View posting** shows the saved posting text and what the job asks for, or opens the job link if only a link was saved.
@@ -15,14 +18,21 @@ At the top you see the role, the company and location, and **View posting** when
 
 The row of bars under the title is the stage stepper: **Saved**, **Applied**, **Screening**, **Interview** and **Offer**. Below it you see the current stage and how long the application has been there.
 
-- To move one stage forward, select **Move to *next stage*** (for example **Move to Offer**).
+- To move one stage forward, select **Move to _next stage_** (for example **Move to Offer**).
 - To jump to any stage, forwards or back, select its name in the stepper.
 
+For a **Saved** job, select **Mark as applied** after submitting. Confirm the **Application date**, choose the resume and cover letter you actually sent (or **None**), and check only the attached PDFs you submitted. Unchecking an attached PDF removes it from the application. Confirming saves the selected documents' current versions and moves the job to **Applied**.
+
+**Open application** opens the original job link in another tab. Opening it or preparing documents keeps the job at its current stage.
+
 <Frame caption="The stage stepper and Move to button">
-  <img src="/images/guides/managing-an-application/detail-sheet-stage-stepper.webp" alt="Header of the details sheet with the stage stepper filled up to Interview, the text Interview for 8 days, and a Move to Offer button" />
+  <img
+    src="/images/guides/managing-an-application/detail-sheet-stage-stepper.webp"
+    alt="Header of the details sheet with the stage stepper filled up to Interview, the text Interview for 8 days, and a Move to Offer button"
+  />
 </Frame>
 
-Each move is added to the activity history with today's date. You can change that date later (see [Keeping notes and history](#keeping-notes-and-history)).
+Each move is added to the activity history. **Mark as applied** uses the date you confirm; other moves use today's date. You can change a stage date later (see [Keeping notes and history](#keeping-notes-and-history)).
 
 ## Planning the next step
 
@@ -30,36 +40,45 @@ Each move is added to the activity history with today's date. You can change tha
 
 1. The next interview that hasn't finished yet.
 2. Otherwise, the follow-up you set.
-3. Otherwise, for **Applied**, how long ago you applied, turning into "No reply in *n* days" after 10 days; for later stages, how long you've been waiting to hear back.
+3. Otherwise, for **Applied**, how long ago you applied, turning into "No reply in _n_ days" after 10 days; for later stages, how long you've been waiting to hear back.
 
 A **Saved** application shows "Not applied yet", and a closed one shows its reason. Overdue follow-ups and long waits are highlighted in amber.
 
 <Frame caption="Next step showing an upcoming interview">
-  <img src="/images/guides/managing-an-application/detail-sheet-next-step.webp" alt="Next step card showing a Technical interview on Fri, Oct 2 at 4:00 PM with a video link, an Edit button and Add to calendar" />
+  <img
+    src="/images/guides/managing-an-application/detail-sheet-next-step.webp"
+    alt="Next step card showing a Technical interview on Fri, Oct 2 at 4:00 PM with a video link, an Edit button and Add to calendar"
+  />
 </Frame>
 
 Select **Edit** to **Schedule an interview…**, **Edit this interview…**, or **Set a follow-up…** (**Change the follow-up…** when one is set). When the next step has a date, **Add to calendar** downloads it as an `.ics` file. See [Scheduling interviews](/guides/scheduling-interviews).
 
 ## Seeing what you sent
 
-**What you sent** shows the resume and cover letter linked to this application.
+For a **Saved** job, **Documents for this job** shows the resume and cover letter you're preparing. After submission, this section becomes **What you sent**.
 
 - Before the application reaches **Applied**, a linked document reads "Linked · not sent yet".
-- Once it reaches **Applied** or later, Reactive Resume saves the version you sent. The row then reads "Version sent *date*", plus the resume's Check score at that moment.
+- When you confirm submission, Reactive Resume saves the current version of each selected document. The row then reads "Version sent _date_", plus the resume's Check score at that moment. Choose the actual submitted documents even if you prepared a different copy.
 - **Open** opens that sent version, read-only, in the document's history. Select **Back to now** there to return to the latest version.
 
 <Frame caption="What you sent, with a linked resume">
-  <img src="/images/guides/managing-an-application/detail-sheet-what-you-sent.webp" alt="What you sent section with Game Developer Resume — Northwind Games, Version sent Sep 8 · Check 86, an Open button, a Write a letter button and the Attach a file instead link" />
+  <img
+    src="/images/guides/managing-an-application/detail-sheet-what-you-sent.webp"
+    alt="What you sent section with Game Developer Resume — Northwind Games, Version sent Sep 8 · Check 86, an Open button, a Write a letter button and the Attach a file instead link"
+  />
 </Frame>
 
-If nothing is linked yet, **Tailor a resume** and **Write a letter** create one for this job. See [Tailoring a resume for a job](/guides/tailoring-a-resume-for-a-job). To link a resume you already have, open **⋯** > **Edit details…** and pick it under **Resume**.
+If nothing is linked yet, **Prepare a resume** and **Write a letter** create one for this job. **Prepare resume** at the bottom also opens the preparation flow for a saved job. You can copy, import or create a resume and edit it manually without AI. See [Tailoring a resume for a job](/guides/tailoring-a-resume-for-a-job). To link a resume you already have, open **⋯** > **Edit details…** and pick it under **Resume**.
 
 ### Attaching a PDF instead
 
 If you sent a file made elsewhere, select **Attach a file instead**, then **Attach a resume file (PDF)** or **Attach a cover letter file (PDF)**. Only PDF files are accepted. Select the file name to open it, or **×** to remove it.
 
 <Frame caption="Attaching PDF files">
-  <img src="/images/guides/managing-an-application/what-you-sent-attach-files.webp" alt="What you sent section with Tailor a resume and Write a letter buttons above two dashed fields: Attach a resume file (PDF) and Attach a cover letter file (PDF)" />
+  <img
+    src="/images/guides/managing-an-application/what-you-sent-attach-files.webp"
+    alt="What you sent section with Tailor a resume and Write a letter buttons above two dashed fields: Attach a resume file (PDF) and Attach a cover letter file (PDF)"
+  />
 </Frame>
 
 ## Editing the key facts
@@ -68,14 +87,17 @@ Below **What you sent** are four facts:
 
 - **Salary** and **Source**: select the value to edit it in place. Press <kbd>Enter</kbd> or select elsewhere to save, or <kbd>Esc</kbd> to cancel.
 - **Applied**: the date you applied (a dash for **Saved** applications).
-- **Contact**: the first contact's name, with "and *n* more" when there are others.
+- **Contact**: the first contact's name, with "and _n_ more" when there are others.
 
 ### Contacts
 
 Select the **Contact** value to see every contact. Select **Add contact**, then enter a **Name** and, if you like, a role, a label (such as Recruiter, Hiring manager, Referral or Interviewer), an email and a phone number. Emails and phone numbers become links you can select. Select **×** next to a contact to remove it.
 
 <Frame caption="The contacts list">
-  <img src="/images/guides/managing-an-application/detail-sheet-contacts.webp" alt="Contacts popover listing Priya Shah, Recruiter, Talent Partner with an email link, and Marcus Lee, Hiring manager, Lead Gameplay Engineer, with an Add contact button" />
+  <img
+    src="/images/guides/managing-an-application/detail-sheet-contacts.webp"
+    alt="Contacts popover listing Priya Shah, Recruiter, Talent Partner with an email link, and Marcus Lee, Hiring manager, Lead Gameplay Engineer, with an Add contact button"
+  />
 </Frame>
 
 ### Tags
@@ -93,7 +115,10 @@ Type in **Add a tag** and press <kbd>Enter</kbd> to add a tag. Select **×** on 
 - To remove an entry, select **Delete…** in the same menu and confirm. The entry that marks when the application entered its current stage can't be deleted.
 
 <Frame caption="Tags, notes and activity">
-  <img src="/images/guides/managing-an-application/detail-sheet-notes-and-activity.webp" alt="Tags, Notes and Activity sections of the details sheet, with an Add a note field and a history of interviews, stage changes and a note, above the Close application… and Prepare for next step buttons" />
+  <img
+    src="/images/guides/managing-an-application/detail-sheet-notes-and-activity.webp"
+    alt="Tags, Notes and Activity sections of the details sheet, with an Add a note field and a history of interviews, stage changes and a note, above the Close application… and Prepare for next step buttons"
+  />
 </Frame>
 
 Dates matter: Insights uses stage dates to work out how quickly people reply. If you add an application after the fact, adjust the dates so they match what happened.
@@ -105,7 +130,10 @@ Open **⋯** at the top of the sheet and select **Edit details…** to edit ever
 If you've [connected an AI provider](/guides/using-ai), the form also has a **Job description** section at the top. Select it to expand it, then paste the full posting there and Reactive Resume fills in the company, role, location and salary; select **Fill fields** to run it again.
 
 <Frame caption="The Edit application form">
-  <img src="/images/guides/managing-an-application/edit-application-sheet.webp" alt="Edit application sheet with a Job description section, Company, Role / title, Location, Salary range, Source, Stage, Job posting link, Resume with Game Developer Resume linked, Cover letter and Tags fields" />
+  <img
+    src="/images/guides/managing-an-application/edit-application-sheet.webp"
+    alt="Edit application sheet with a Job description section, Company, Role / title, Location, Salary range, Source, Stage, Job posting link, Resume with Game Developer Resume linked, Cover letter and Tags fields"
+  />
 </Frame>
 
 ## Closing an application
@@ -113,19 +141,18 @@ If you've [connected an AI provider](/guides/using-ai), the form also has a **Jo
 When an application ends, close it rather than deleting it, so its history still counts in Insights.
 
 <Steps>
-  <Step title="Select Close application…">
-    It's at the bottom of the details sheet.
-  </Step>
+  <Step title="Select Close application…">It's at the bottom of the details sheet.</Step>
   <Step title="Choose a reason">
     Pick **Not selected**, **I withdrew**, **Accepted another offer** or **No response**.
   </Step>
-  <Step title="Confirm">
-    Select **Close application**. Linked documents aren't changed.
-  </Step>
+  <Step title="Confirm">Select **Close application**. Linked documents aren't changed.</Step>
 </Steps>
 
 <Frame caption="Choosing why the application closed">
-  <img src="/images/guides/managing-an-application/close-this-application-dialog.webp" alt="Close this application dialog with the reasons Not selected, I withdrew, Accepted another offer and No response, and Cancel and Close application buttons" />
+  <img
+    src="/images/guides/managing-an-application/close-this-application-dialog.webp"
+    alt="Close this application dialog with the reasons Not selected, I withdrew, Accepted another offer and No response, and Cancel and Close application buttons"
+  />
 </Frame>
 
 You can also close applications from a board card's **⋯** menu, or several at once from the List view. To bring a closed application back, turn on **Show closed**, open it and select **Reopen**. It returns to **Applied**.

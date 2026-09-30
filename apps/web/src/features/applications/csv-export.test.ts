@@ -30,6 +30,7 @@ const application: Application = {
 	updatedAt: new Date("2026-08-12T12:00:00Z"),
 	resumeId: null,
 	jobDescription: null,
+	postingSource: null,
 	matchScore: null,
 	aiMetadata: null,
 	resumeFileUrl: null,
@@ -46,6 +47,21 @@ function exportedRecord(value: Application) {
 }
 
 describe("application CSV export", () => {
+	it("round-trips saved posting text and retrieval evidence", () => {
+		const source = {
+			method: "tavily" as const,
+			format: "markdown" as const,
+			requestedUrl: "https://example.com/job",
+			retrievedAt: "2026-09-30T12:00:00.000Z",
+			truncated: true,
+			completeness: "incomplete" as const,
+		};
+		const value = { ...application, jobDescription: "Job description\nRequirements", postingSource: source };
+		expect(mapCsvToApplications(parseCsv(exportApplicationsCsv([value]))).rows[0]).toMatchObject({
+			jobDescription: value.jobDescription,
+			postingSource: source,
+		});
+	});
 	it("round-trips quoted Unicode, commas and multiline notes through existing import fields", () => {
 		const csv = exportApplicationsCsv([application]);
 		expect(csv.startsWith("\uFEFF")).toBe(true);

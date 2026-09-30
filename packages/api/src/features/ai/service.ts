@@ -122,7 +122,7 @@ export function getModel(input: GetModelInput) {
 }
 
 export function getAgentModel(input: GetModelInput) {
-	if (!supportsProviderNativeWebSearch(input)) return getModel(input);
+	if (input.provider !== "openai" || !supportsProviderNativeWebSearch(input)) return getModel(input);
 
 	return createOpenAI({ apiKey: input.apiKey, baseURL: resolveAiBaseUrl(input) }).responses(input.model);
 }

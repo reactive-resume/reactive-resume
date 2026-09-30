@@ -1,6 +1,6 @@
-import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { Application } from "../types";
 import type { FileAttachment } from "./file-attachment-field";
+import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -21,12 +21,12 @@ import {
 } from "@reactive-resume/ui/components/sheet";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { applicationsListQueryKey } from "../queries";
+import { FileAttachmentField } from "./file-attachment-field";
 import { Combobox } from "@/components/ui/combobox";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { isImeComposing } from "@/libs/keyboard";
 import { orpc } from "@/libs/orpc/client";
-import { applicationsListQueryKey } from "../queries";
-import { FileAttachmentField } from "./file-attachment-field";
 
 // Preset source suggestions surfaced via a <datalist>; the field itself stays free-text.
 const SOURCE_OPTIONS = ["LinkedIn", "Indeed", "Company Website", "Referral", "Recruiter", "Other"];
@@ -136,7 +136,7 @@ function JobDescriptionAutofill({ value, onChange, onFill }: JobDescriptionAutof
 	};
 
 	return (
-		<Accordion className="rounded-lg border border-line border-dashed px-3">
+		<Accordion className="rounded-lg border border-dashed border-line px-3">
 			<AccordionItem value="job-description">
 				<AccordionTrigger>
 					<span className="flex items-center gap-1.5">
@@ -145,7 +145,7 @@ function JobDescriptionAutofill({ value, onChange, onFill }: JobDescriptionAutof
 					</span>
 				</AccordionTrigger>
 				<AccordionContent className="flex flex-col gap-2">
-					<p className="text-ink-3 text-xs">
+					<p className="text-xs text-ink-3">
 						<Trans>
 							Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and
 							keep the text with this application for match scoring and tailoring.
@@ -290,6 +290,19 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 
 				<div className="-mt-1 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pt-1 pb-4 [&>*]:shrink-0">
 					{/* Hidden entirely when AI is off. */}
+					{!aiEnabled && (
+						<Field label={t`Job description`}>
+							{(id) => (
+								<Textarea
+									id={id}
+									rows={6}
+									maxLength={MAX_JOB_DESCRIPTION_CHARS}
+									value={form.jobDescription}
+									onChange={(event) => set("jobDescription", event.target.value)}
+								/>
+							)}
+						</Field>
+					)}
 					{aiEnabled && (
 						<JobDescriptionAutofill
 							value={form.jobDescription}
@@ -496,7 +509,7 @@ function Field({ label, required, children }: FieldProps) {
 	const id = useId();
 	return (
 		<div className="grid gap-1.5">
-			<Label htmlFor={id} className="text-ink-3 text-xs">
+			<Label htmlFor={id} className="text-xs text-ink-3">
 				{label}
 				{required && <span className="text-danger-text"> *</span>}
 			</Label>
@@ -553,7 +566,7 @@ function TagsField({ id, value, suggestions, onChange }: TagsFieldProps) {
 					{value.map((tag) => (
 						<span
 							key={tag}
-							className="inline-flex items-center gap-1 rounded-full bg-sunken px-2 py-0.5 text-ink-3 text-xs"
+							className="inline-flex items-center gap-1 rounded-full bg-sunken px-2 py-0.5 text-xs text-ink-3"
 						>
 							{tag}
 							<button

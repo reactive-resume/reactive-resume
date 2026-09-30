@@ -8,6 +8,36 @@ export const applicationStatusSchema = z.enum(APPLICATION_STATUSES);
 
 export type ApplicationStatus = z.infer<typeof applicationStatusSchema>;
 
+/** How the bounded posting snapshot was obtained; retrieval time is not an origin freshness claim. */
+export const postingSourceSchema = z.object({
+	method: z.enum(["paste", "builtin", "firecrawl", "tavily", "exa"]),
+	format: z.enum(["text", "markdown"]),
+	requestedUrl: z.url({ protocol: /^https?$/ }).optional(),
+	resolvedUrl: z.url({ protocol: /^https?$/ }).optional(),
+	retrievedAt: z.iso.datetime({ offset: true }).optional(),
+	providerFetchedAt: z.iso.datetime({ offset: true }).optional(),
+	truncated: z.boolean(),
+	completeness: z.enum(["unknown", "incomplete"]),
+	fallbackReason: z
+		.enum([
+			"unsafe-url",
+			"unreachable",
+			"not-a-page",
+			"too-large",
+			"auth",
+			"quota",
+			"malformed",
+			"empty",
+			"challenge",
+			"timeout",
+			"unavailable",
+			"rate-limit",
+		])
+		.optional(),
+});
+
+export type PostingSource = z.infer<typeof postingSourceSchema>;
+
 export const applicationClosedReasonSchema = z.enum(["not-selected", "withdrew", "accepted-other", "no-response"]);
 
 export type ApplicationClosedReason = z.infer<typeof applicationClosedReasonSchema>;

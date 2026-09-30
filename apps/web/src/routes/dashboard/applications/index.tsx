@@ -86,14 +86,14 @@ function RouteComponent() {
 
 	useEffect(() => {
 		if (!create) return;
-		// biome-ignore lint/nursery/useReactCompiler: takes the one-shot ?create flag from the address, then clears it
+		// oxlint-disable-next-line react/set-state-in-effect -- takes the one-shot ?create flag from the address, then clears it
 		setAdding(true);
 		void navigate({ replace: true, resetScroll: false, search: (prev: Search) => ({ ...prev, create: false }) });
 	}, [create, navigate]);
 
 	useEffect(() => {
 		if (!applicationId || !applications) return;
-		// biome-ignore lint/nursery/useReactCompiler: takes the one-shot ?applicationId from the address, then clears it
+		// oxlint-disable-next-line react/set-state-in-effect -- takes the one-shot ?applicationId from the address, then clears it
 		setSelectedId(applicationId);
 		void navigate({
 			replace: true,
@@ -113,7 +113,7 @@ function RouteComponent() {
 	return (
 		<div className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5">
 			<header className="flex flex-wrap items-center justify-between gap-3">
-				<h1 className="font-display font-medium text-[30px] leading-9">
+				<h1 className="font-display text-[30px] leading-9 font-medium">
 					<Trans>Applications</Trans>
 				</h1>
 				<div className="flex items-center gap-2">
@@ -134,7 +134,7 @@ function RouteComponent() {
 					</DropdownMenu>
 					<Button onClick={() => setAdding(true)}>
 						<Icon name="add" />
-						<Trans>Add application</Trans>
+						<Trans>Save job</Trans>
 					</Button>
 				</div>
 			</header>
@@ -177,7 +177,7 @@ function RouteComponent() {
 							</TabsList>
 						</Tabs>
 
-						<div className="relative min-w-40 max-w-72 flex-1">
+						<div className="relative max-w-72 min-w-40 flex-1">
 							<Icon
 								name="search"
 								size={18}
@@ -210,7 +210,7 @@ function RouteComponent() {
 						<ViewSkeleton view={shown} />
 					) : noMatches ? (
 						<div className="grid justify-items-center gap-2 py-16 text-center">
-							<p className="font-medium text-sm">
+							<p className="text-sm font-medium">
 								<Trans>No applications match “{query.trim()}”.</Trans>
 							</p>
 							<Button size="sm" variant="secondary" onClick={() => setQuery("")}>
@@ -222,9 +222,9 @@ function RouteComponent() {
 							key={shown}
 							className={cn(
 								viewSwitched
-									? "starting:translate-y-1 starting:opacity-0 transition-[opacity,translate] duration-standard ease-enter"
+									? "transition-[opacity,translate] duration-standard ease-enter starting:translate-y-1 starting:opacity-0"
 									: // The list fades in on its first appearance, after its skeleton.
-										shown === "list" && "starting:opacity-0 transition-opacity duration-standard ease-enter",
+										shown === "list" && "transition-opacity duration-standard ease-enter starting:opacity-0",
 							)}
 						>
 							{shown === "list" && (
@@ -349,20 +349,20 @@ function FollowUpNudge({ applications, onOpen }: { applications: Application[]; 
 
 function EmptyState({ onAdd, onImport }: { onAdd: () => void; onImport: () => void }) {
 	return (
-		<div className="grid starting:translate-y-2 justify-items-center gap-3 py-20 text-center starting:opacity-0 transition-[opacity,translate] duration-emphasized ease-enter">
+		<div className="grid justify-items-center gap-3 py-20 text-center transition-[opacity,translate] duration-emphasized ease-enter starting:translate-y-2 starting:opacity-0">
 			<span className="grid size-12 place-items-center rounded-xl bg-sunken text-ink-2">
 				<Icon name="work" size={26} />
 			</span>
-			<h2 className="font-semibold text-lg">
+			<h2 className="text-lg font-semibold">
 				<Trans>Track your first job</Trans>
 			</h2>
-			<p className="max-w-sm text-ink-2 text-sm">
+			<p className="max-w-sm text-sm text-ink-2">
 				<Trans>Paste a job link. We'll save the posting so Check, the assistant and your letter can use it.</Trans>
 			</p>
 			<div className="flex gap-2">
 				<Button onClick={onAdd}>
 					<Icon name="add" />
-					<Trans>Add application</Trans>
+					<Trans>Save job</Trans>
 				</Button>
 				<Button variant="secondary" onClick={onImport}>
 					<Trans>Import from CSV</Trans>

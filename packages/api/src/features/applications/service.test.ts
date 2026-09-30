@@ -161,6 +161,28 @@ describe("applicationService.update", () => {
 describe("applicationService sent resume", () => {
 	const sentRow = { ...existing, status: "applied" as const, resumeId: "resume-1", sentResumeVersionId: null };
 
+	it.each(["resume", "coverLetter"] as const)(
+		"retains recorded submitted %s linkage when preparing another document",
+		async (kind) => {
+			setSelectResults([
+				{
+					...sentRow,
+					sentResumeVersionId: "sent-resume",
+					coverLetterId: "letter-1",
+					sentCoverLetterVersionId: "sent-letter",
+				},
+			]);
+			await expect(
+				applicationService.update({
+					id: "app-1",
+					userId: "user-1",
+					...(kind === "resume" ? { resumeId: "resume-2" } : { coverLetterId: "letter-2" }),
+				}),
+			).rejects.toMatchObject({ code: "BAD_REQUEST" });
+			expect(dbMock.update).not.toHaveBeenCalled();
+		},
+	);
+
 	it.each(["stage", "resume"] as const)(
 		"saves the sent version and score when the %s is linked at Applied",
 		async (field) => {

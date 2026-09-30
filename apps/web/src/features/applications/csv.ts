@@ -1,9 +1,10 @@
-import type { ApplicationStatus, Contact } from "@reactive-resume/schema/applications/data";
 import type { Application } from "./types";
+import type { ApplicationStatus, Contact, PostingSource } from "@reactive-resume/schema/applications/data";
 import {
 	applicationStatusSchema,
 	contactSchema,
 	INTERVIEW_KINDS,
+	postingSourceSchema,
 	STAGES,
 } from "@reactive-resume/schema/applications/data";
 
@@ -67,6 +68,8 @@ type ParsedApplication = {
 	source?: string;
 	notes?: string;
 	sourceUrl?: string;
+	jobDescription?: string;
+	postingSource?: PostingSource;
 	stageEnteredAt?: string;
 	tags?: string[];
 	contacts?: Contact[];
@@ -117,6 +120,8 @@ const HEADER_ALIASES: Record<string, keyof CsvApplication> = {
 	link: "sourceUrl",
 	"job url": "sourceUrl",
 	"job posting": "sourceUrl",
+	"job description": "jobDescription",
+	"posting source": "postingSource",
 	tags: "tags",
 	"contact name": "contactName",
 	"contact role": "contactRole",
@@ -136,6 +141,8 @@ export const CSV_FIELDS: readonly CsvField[] = [
 	"salary",
 	"source",
 	"sourceUrl",
+	"jobDescription",
+	"postingSource",
 	"notes",
 	"tags",
 	"contactName",
@@ -232,7 +239,15 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 			} else if (field === "stageEnteredAt") {
 				const date = dateOnly(value);
 				if (date !== undefined) record.stageEnteredAt = date;
-			} else record[field] = value as never;
+			} else if (field === "postingSource") {
+				try {
+					const source = postingSourceSchema.safeParse(JSON.parse(value));
+					if (source.success) record.postingSource = source.data;
+				} catch {
+					/* Other fields still import when metadata is malformed. */
+				}
+			} else if (field === "jobDescription") record.jobDescription = value.slice(0, 20_000);
+			else record[field] = value as never;
 		});
 
 		if (!record.company || !record.role) {
@@ -295,6 +310,8 @@ export function exportApplicationsCsv(applications: readonly Application[]): str
 		"Salary",
 		"Source",
 		"URL",
+		"Job Description",
+		"Posting Source",
 		"Tags",
 		"Contacts",
 		"Notes",
@@ -326,6 +343,8 @@ export function exportApplicationsCsv(applications: readonly Application[]): str
 			application.salary ?? "",
 			application.source ?? "",
 			application.sourceUrl ?? "",
+			application.jobDescription ?? "",
+			application.postingSource ? JSON.stringify(application.postingSource) : "",
 			application.tags.length > 0 ? JSON.stringify(application.tags) : "",
 			application.contacts
 				.map(({ name, role, type }) => {

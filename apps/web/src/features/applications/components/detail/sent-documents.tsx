@@ -1,5 +1,5 @@
-import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { Application } from "../../types";
+import type { IconName } from "@reactive-resume/ui/components/icon";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
@@ -9,12 +9,12 @@ import { useState } from "react";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { useDialogStore } from "@/dialogs/store";
-import { getOrpcErrorMessage } from "@/libs/error-message";
-import { orpc } from "@/libs/orpc/client";
 import { PIPELINE } from "../../stages";
 import { useInvalidateApplications } from "../../use-application-actions";
 import { FileAttachmentField } from "../file-attachment-field";
+import { useDialogStore } from "@/dialogs/store";
+import { getOrpcErrorMessage } from "@/libs/error-message";
+import { orpc } from "@/libs/orpc/client";
 
 /** When the application was sent: its first stage at Applied or beyond. */
 function sentOn(application: Application) {
@@ -37,8 +37,8 @@ function SentDocumentRow({ icon, name, status, children }: SentDocumentRowProps)
 		<div className="flex items-center gap-2.5 rounded-xl border border-line p-3">
 			<Icon name={icon} className="shrink-0 text-ink-2" />
 			<div className="grid min-w-0 flex-1">
-				<span className="truncate font-medium text-sm">{name}</span>
-				<span className="text-ink-3 text-xs">{status}</span>
+				<span className="truncate text-sm font-medium">{name}</span>
+				<span className="text-xs text-ink-3">{status}</span>
 			</div>
 			{children}
 		</div>
@@ -92,8 +92,8 @@ export function SentDocuments({ application, disabled }: SentDocumentsProps) {
 
 	return (
 		<section aria-labelledby="application-sent" className="grid gap-2">
-			<h3 id="application-sent" className="font-semibold text-ink-3 text-xs uppercase">
-				<Trans>What you sent</Trans>
+			<h3 id="application-sent" className="text-xs font-semibold text-ink-3 uppercase">
+				{application.status === "saved" ? <Trans>Documents for this job</Trans> : <Trans>What you sent</Trans>}
 			</h3>
 
 			{application.resumeId && (
@@ -157,7 +157,7 @@ export function SentDocuments({ application, disabled }: SentDocumentsProps) {
 							onClick={() => openDialog("document.new", { step: "copy", applicationId: application.id })}
 						>
 							<Icon name="content_copy" size={16} />
-							<Trans>Tailor a resume</Trans>
+							<Trans>Prepare a resume</Trans>
 						</Button>
 					)}
 					{!application.coverLetterId && (
@@ -213,7 +213,7 @@ export function SentDocuments({ application, disabled }: SentDocumentsProps) {
 				<button
 					type="button"
 					onClick={() => setAttaching(true)}
-					className="w-fit text-ink-3 text-xs underline underline-offset-2 hover:text-ink-2"
+					className="w-fit text-xs text-ink-3 underline underline-offset-2 hover:text-ink-2"
 				>
 					<Trans>Attach a file instead</Trans>
 				</button>

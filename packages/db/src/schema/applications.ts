@@ -4,6 +4,7 @@ import type {
 	ApplicationStatus,
 	ApplicationTimelineEntry,
 	Contact,
+	PostingSource,
 } from "@reactive-resume/schema/applications/data";
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import * as pg from "drizzle-orm/pg-core";
@@ -52,6 +53,7 @@ export const application = pg.pgTable(
 		// --- AI reservations (no working AI this pass; see feature AI roadmap) ---
 		sourceUrl: pg.text("source_url"),
 		jobDescription: pg.text("job_description"),
+		postingSource: pg.jsonb("posting_source").$type<PostingSource>(),
 		// What the posting asks for, as read from it when the application was added.
 		requirements: pg.jsonb("requirements").notNull().$type<string[]>().default([]),
 		matchScore: pg.integer("match_score"),

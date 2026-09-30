@@ -111,3 +111,65 @@ it("preserves first-message context exclusions, selected application and attachm
 	);
 	expect(mocks.chat.mock.calls[0]?.[0].context).toEqual(context);
 });
+
+it("reopens native and custom web results with sources, clipping and failed or unfinished tool status", () => {
+	const messages = [
+		{
+			id: "web-history",
+			role: "assistant",
+			parts: [
+				{ type: "tool-web_search", toolCallId: "old-native", state: "output-available", input: {}, output: {} },
+				{ type: "source-url", sourceId: "native", url: "https://company.example/job", title: "Company role" },
+				{
+					type: "tool-search_web",
+					toolCallId: "failed",
+					state: "output-error",
+					input: {},
+					errorText: "Enhanced access quota exhausted",
+				},
+				{ type: "tool-google_search", toolCallId: "stopped", state: "input-available", input: {} },
+				{
+					type: "tool-read_page",
+					toolCallId: "read",
+					state: "output-available",
+					input: { url: "https://careers.example/role" },
+					output: {
+						requestedUrl: "https://careers.example/role",
+						content: "Description",
+						format: "text",
+						method: "builtin",
+						retrievedAt: "2026-09-30T12:00:00Z",
+						truncated: true,
+						completeness: "incomplete",
+					},
+				},
+			],
+		},
+	];
+	mocks.chat.mockReturnValue({ messages, status: "ready", clearError: vi.fn() });
+	render(
+		<I18nProvider i18n={i18n}>
+			<Conversation
+				document={document}
+				threadId="thread-1"
+				initialMessages={[]}
+				activeRun={false}
+				readOnly={false}
+				providerLabel="Local"
+				initialContext={{ document: true, posting: true }}
+				prompt={null}
+				promptAttachments={[]}
+				onPromptSent={() => {}}
+				onSwitchModel={() => {}}
+			/>
+		</I18nProvider>,
+	);
+	expect(screen.getAllByText("Searched the web")).toHaveLength(1);
+	expect(screen.getByRole("alert").textContent).toContain("Enhanced access quota exhausted");
+	expect(screen.getByText("Web search didn't finish.")).toBeDefined();
+	expect(screen.getByText("This page is clipped or incomplete. Check the original before using it.")).toBeDefined();
+	expect(screen.getByRole("link", { name: "Company role" }).getAttribute("href")).toBe("https://company.example/job");
+	expect(screen.getByRole("link", { name: "https://careers.example/role" }).getAttribute("href")).toBe(
+		"https://careers.example/role",
+	);
+});

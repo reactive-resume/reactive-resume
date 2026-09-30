@@ -151,7 +151,7 @@ export const documentsRouter = {
 				"/documents/copy-for-job",
 				"copyResumeForJob",
 				"Copy a resume for a job",
-				"Duplicates a resume and links the copy to a job application; the application gets the copy if it has no resume yet.",
+				"Duplicates a resume and links the copy to a job application. Saved jobs select the copy; submitted document history is preserved.",
 			),
 		)
 		.input(documentsDto.copyForJob.input)

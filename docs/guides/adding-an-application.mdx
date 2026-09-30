@@ -1,47 +1,62 @@
 ---
 title: "Adding an application"
-description: "Add a job to Applications by pasting its link or posting. Reactive Resume saves the posting so Check, the assistant and your letter can use it."
+description: "Save a job from its link or posting, then prepare a resume or record what you already submitted."
 ---
 
-Add an application as soon as you find a job you like, or right after you apply. You paste the job link or the posting text, check the role and company, pick a stage, and you're done. The posting is saved with the application, so [Check](/guides/checking-your-resume), [the assistant](/guides/using-the-assistant) and [your cover letter](/guides/writing-a-cover-letter) can refer to it later.
+Save a job as soon as you find one you like, or record an application you've already submitted. Paste the job link or posting text, check the role and company, and save it. A saved posting gives [Check](/guides/checking-your-resume), [the assistant](/guides/using-the-assistant) and [your cover letter](/guides/writing-a-cover-letter) context for this job.
+
+Saving a job and preparing a resume manually work without an AI connection or an external web account.
 
 ## Add an application
 
 <Steps>
-  <Step title="Open the Add dialog">
-    In **Applications**, select **Add application**. You can also press <kbd>⌘</kbd> <kbd>K</kbd> (<kbd>Ctrl</kbd> <kbd>K</kbd> on Windows and Linux) and run **New Application**.
+  <Step title="Open the Save a job dialog">
+    In **Applications**, select **Save job**. You can also press <kbd>⌘</kbd> <kbd>K</kbd> (<kbd>Ctrl</kbd> <kbd>K</kbd>{" "}
+    on Windows and Linux) and run **New Application**.
   </Step>
   <Step title="Paste the job link or posting">
-    Paste into **Job link or posting text**. A single web address counts as a link; anything else counts as posting text. Reactive Resume starts reading it a moment after you stop typing. The line under the field tells you what it found.
+    Paste into **Job link or posting text**. A single web address counts as a link; anything else counts as posting
+    text. Select **Read posting** to retrieve a link's text and any available job details. Reading starts only when you
+    select the button; you can also save the link without reading it.
   </Step>
   <Step title="Check the role and company">
-    **Role** and **Company** fill in from what was found. Correct them if needed, or type them yourself. Both are required.
+    Reading may fill **Role**, **Company**, **Location** and **Salary**. Correct anything that was found, and fill
+    missing fields yourself. Only **Role** and **Company** are required.
   </Step>
   <Step title="Pick a stage">
-    Choose **Saved**, **Applied** (the default) or **Interview**. You can move the application to any stage later.
+    **Saved** is the default. Choose **Already applied** or **Already interviewing** only if that happened, then confirm
+    the application date and select any documents you actually submitted.
   </Step>
   <Step title="Add it">
-    Select **Add** to save it and open its details. Or select **Add and tailor a resume** to save it and go straight to making a copy of your resume for this job. See [Tailoring a resume for a job](/guides/tailoring-a-resume-for-a-job).
+    Select **Save job** to open its details, or **Record application** when recording a submission. **Save and prepare
+    resume** also opens the flow for copying a resume for this job; your original stays unchanged. See [Tailoring a
+    resume for a job](/guides/tailoring-a-resume-for-a-job).
   </Step>
 </Steps>
 
 <Frame caption="The Add an application dialog with pasted posting text">
-  <img src="/images/guides/adding-an-application/add-an-application-dialog.webp" alt="Add an application dialog with posting text pasted, a hint to fill in the role and company, Role set to Level Designer, Company set to Brightline Studios, the Stage control on Applied, and the Add and Add and tailor a resume buttons" />
+  <img
+    src="/images/guides/adding-an-application/add-an-application-dialog.webp"
+    alt="Add an application dialog with posting text pasted, a hint to fill in the role and company, Role set to Level Designer, Company set to Brightline Studios, the Stage control on Applied, and the Add and Add and tailor a resume buttons"
+  />
 </Frame>
 
 ## What gets read from a posting
 
-What Reactive Resume can read depends on what you paste and whether you've [connected an AI provider](/guides/using-ai):
+What **Read posting** can fill depends on what you paste and whether you already have a usable [AI connection](/guides/using-ai):
 
-| You paste | Without an AI provider | With an AI provider |
-| --- | --- | --- |
-| A job link | Role, company and location, if the page includes structured job details. Many job boards do. | Role, company, location, salary and a short list of what the job asks for. |
-| Posting text | Nothing is read. Fill in the role and company yourself. | Role, company, location, salary and a short list of what the job asks for. |
+| You paste    | Without an AI provider                                                                | With an AI provider                                             |
+| ------------ | ------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| A job link   | Saves the page text; may fill role, company and location from structured job details. | May also fill salary and a short list of what the job asks for. |
+| Posting text | Saves the text. Fill in the role and company yourself.                                | May fill role, company, location, salary and requirements.      |
 
-Either way, the posting text is saved with the application (up to 20,000 characters). For a link, Reactive Resume saves the page's text and keeps the link.
+Pasted text is saved up to 20,000 characters. A link keeps its original address; its description stays empty until you read it or paste text. Review **Saved description** after reading. If the description is clipped or incomplete, use **Paste description instead** to replace it before preparing your resume; the original link is retained. Source details such as retrieval time appear when available, and do not guarantee the posting is current.
+
+AI enrichment is optional. If it fails, the retrieved description is retained so you can complete the fields manually.
 
 <Note>
-  Only public `https://` pages can be read. If a link can't be read, for example because the page needs you to sign in, you see "That link couldn't be read. Paste the posting text instead." Copy the posting from the page and paste it instead.
+  Only public HTTP(S) pages can be read. If a page requires sign-in or can't be retrieved, paste its description in
+  **Paste description instead**, fill in the role and company, and save. The original link stays with the job.
 </Note>
 
 ## Add more details

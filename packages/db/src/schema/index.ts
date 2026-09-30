@@ -4,3 +4,4 @@ export * from "./auth";
 export * from "./cover-letter";
 export * from "./firecrawl";
 export * from "./resume";
+export * from "./web-access";

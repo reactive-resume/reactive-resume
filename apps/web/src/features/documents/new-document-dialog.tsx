@@ -1,5 +1,5 @@
-import type { CSSProperties, Dispatch, SetStateAction } from "react";
 import type { ImportKind } from "@/features/resume/import/read-file";
+import type { CSSProperties, Dispatch, SetStateAction } from "react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
@@ -14,6 +14,7 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { generateRandomName } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
+import { useNewDocumentsStore } from "./new-documents";
 import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { detectImportKind, ImportError, readResumeFile, summarizeImport } from "@/features/resume/import/read-file";
@@ -22,7 +23,6 @@ import { getOrpcErrorMessage } from "@/libs/error-message";
 import { formatRelativeTime } from "@/libs/locale";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
-import { useNewDocumentsStore } from "./new-documents";
 
 export type NewDocumentDialogData = {
 	/** Open on a step other than the three choices. */
@@ -59,7 +59,11 @@ function requireImportKind(kind: ImportKind | null): ImportKind {
 }
 
 /** Runs an import and reports each stage into the dialog's step; a newer run or a cancel drops the older one's updates. */
-function useResumeImport(setStep: Dispatch<SetStateAction<Step>>, openLetter: (coverLetterId: string) => void) {
+function useResumeImport(
+	setStep: Dispatch<SetStateAction<Step>>,
+	openLetter: (coverLetterId: string) => void,
+	applicationId?: string,
+) {
 	const queryClient = useQueryClient();
 	const markNew = useNewDocumentsStore((state) => state.markNew);
 	const { hasUsableProvider } = useHasUsableAiProvider();
@@ -103,6 +107,8 @@ function useResumeImport(setStep: Dispatch<SetStateAction<Step>>, openLetter: (c
 
 			const resumeId = await client.resume.import({ data: resume });
 			if (!current()) return;
+			if (applicationId) await client.documents.linkApplication({ type: "resume", id: resumeId, applicationId });
+			if (!current()) return;
 			markNew(resumeId);
 			void refreshDocuments();
 			setStep({ name: "imported", file, resumeId, ...summary });
@@ -136,6 +142,7 @@ function useResumeImport(setStep: Dispatch<SetStateAction<Step>>, openLetter: (c
  */
 export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | undefined }) {
 	const navigate = useNavigate();
+	const { hasUsableProvider } = useHasUsableAiProvider();
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const markNew = useNewDocumentsStore((state) => state.markNew);
 	const [step, setStep] = useState<Step>({ name: data?.step ?? "choose" } as Step);
@@ -158,7 +165,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 		void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId } });
 	};
 
-	const { importFile, cancel, refreshDocuments } = useResumeImport(setStep, openLetter);
+	const { importFile, cancel, refreshDocuments } = useResumeImport(setStep, openLetter, data?.applicationId);
 
 	// A file dropped on the page starts importing as soon as the dialog opens.
 	const dropped = useRef(data?.file);
@@ -169,7 +176,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 		void importFile(file);
 	});
 
-	const { startBlank, trySample, newLetter, creating } = useStartDocument();
+	const { startBlank, trySample, newLetter, creating } = useStartDocument(data?.applicationId);
 
 	const chooseFile = () => inputRef.current?.click();
 
@@ -197,7 +204,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 						onCreated={(resumeId, forJob) => {
 							markNew(resumeId);
 							void refreshDocuments();
-							openResume(resumeId, { withAssistant: forJob });
+							openResume(resumeId, { withAssistant: forJob && hasUsableProvider });
 						}}
 					/>
 				</div>
@@ -215,7 +222,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 			) : (
 				<div key="choose" className={cn(ENTER_CLASS, "grid gap-4")}>
 					<DialogHeader>
-						<DialogTitle className="font-display font-medium text-[22px]">
+						<DialogTitle className="font-display text-[22px] font-medium">
 							<Trans>New document</Trans>
 						</DialogTitle>
 						<DialogDescription className="sr-only">
@@ -232,16 +239,16 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 							const file = event.dataTransfer.files[0];
 							if (file) void importFile(file);
 						}}
-						className="flex items-start gap-4 rounded-xl border-[1.5px] border-line-2 border-dashed p-5 text-start transition-[background-color,border-color,scale] duration-quick ease-enter hover:border-accent hover:bg-accent-soft active:scale-[0.98]"
+						className="flex items-start gap-4 rounded-xl border-[1.5px] border-dashed border-line-2 p-5 text-start transition-[background-color,border-color,scale] duration-quick ease-enter hover:border-accent hover:bg-accent-soft active:scale-[0.98]"
 					>
 						<span className="grid size-11 shrink-0 place-items-center rounded-[10px] bg-sunken text-ink-2">
 							<Icon name="upload_file" size={24} />
 						</span>
 						<span className="grid gap-1">
-							<span className="font-semibold text-[15px]">
+							<span className="text-[15px] font-semibold">
 								<Trans>Import a resume</Trans>
 							</span>
-							<span className="text-[13px] text-ink-2 leading-[19px]">
+							<span className="text-[13px] leading-[19px] text-ink-2">
 								<Trans>
 									Drop a file here or browse. PDF, Word, Reactive Resume or JSON Resume. We fill in every section and
 									flag anything we're unsure of.
@@ -266,7 +273,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 						/>
 					</div>
 
-					<div className="flex flex-wrap items-center justify-between gap-2 border-line border-t pt-4 text-[13px]">
+					<div className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-4 text-[13px]">
 						<button
 							type="button"
 							className="flex items-center gap-1.5 text-ink-2 hover:text-ink"
@@ -305,7 +312,7 @@ function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onCl
 	return (
 		<div className={cn(ENTER_CLASS, "grid gap-4")}>
 			<DialogHeader>
-				<DialogTitle className="font-display font-medium text-[22px]">
+				<DialogTitle className="font-display text-[22px] font-medium">
 					{step.name === "failed" ? (
 						<Trans>Couldn't import</Trans>
 					) : step.name === "imported" ? (
@@ -321,8 +328,8 @@ function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onCl
 					className="text-ink-2"
 				/>
 				<span className="grid min-w-0 flex-1">
-					<span className="truncate font-medium text-sm">{step.file.name}</span>
-					<span className="text-ink-3 text-xs">{formatSize(step.file.size)}</span>
+					<span className="truncate text-sm font-medium">{step.file.name}</span>
+					<span className="text-xs text-ink-3">{formatSize(step.file.size)}</span>
 				</span>
 				{step.name === "importing" && (
 					<Button variant="ghost" size="sm" onClick={onCancel}>
@@ -349,7 +356,7 @@ function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onCl
 						role="alert"
 						className={cn(
 							ENTER_CLASS,
-							"flex gap-2.5 rounded-[10px] bg-danger-soft p-3 text-[13px] text-danger-text leading-[19px]",
+							"flex gap-2.5 rounded-[10px] bg-danger-soft p-3 text-[13px] leading-[19px] text-danger-text",
 						)}
 					>
 						<Icon name="error" size={20} />
@@ -372,7 +379,7 @@ function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onCl
 						<Icon
 							name="check_circle"
 							size={20}
-							className="starting:scale-80 text-accent-text starting:opacity-0 transition-[opacity,scale] duration-standard ease-enter"
+							className="text-accent-text transition-[opacity,scale] duration-standard ease-enter starting:scale-80 starting:opacity-0"
 						/>
 						<span>
 							<Trans>
@@ -396,7 +403,7 @@ function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onCl
 }
 
 /** Start blank, try a sample, or a new letter: each creates the document at once and opens it. */
-export function useStartDocument() {
+export function useStartDocument(applicationId?: string) {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const closeDialog = useDialogStore((state) => state.closeDialog);
@@ -404,9 +411,11 @@ export function useStartDocument() {
 	const { mutateAsync: createResume, isPending: creating } = useMutation(orpc.resume.create.mutationOptions());
 	const { mutateAsync: createLetter } = useMutation(orpc.coverLetters.create.mutationOptions());
 
-	const created = (id: string) => {
+	const created = async (id: string, type: "resume" | "letter") => {
+		if (applicationId) await client.documents.linkApplication({ type, id, applicationId });
 		markNew(id);
 		void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
+		if (applicationId) void queryClient.invalidateQueries({ queryKey: orpc.applications.key() });
 		closeDialog();
 	};
 	const failed = (error: unknown) =>
@@ -425,7 +434,7 @@ export function useStartDocument() {
 					autoName: true,
 					withSampleData: false,
 				});
-				created(resumeId);
+				await created(resumeId, "resume");
 				void navigate({ to: "/builder/$resumeId", params: { resumeId } });
 			} catch (error) {
 				failed(error);
@@ -434,7 +443,7 @@ export function useStartDocument() {
 		trySample: async () => {
 			try {
 				const resumeId = await createResume({ name: generateRandomName(), tags: [], withSampleData: true });
-				created(resumeId);
+				await created(resumeId, "resume");
 				toast.add({ description: t`Sample resume added. Delete it anytime.` });
 				void navigate({ to: "/builder/$resumeId", params: { resumeId } });
 			} catch (error) {
@@ -455,7 +464,7 @@ export function useStartDocument() {
 			};
 			try {
 				const letter = await createLetter(input);
-				created(letter.id);
+				await created(letter.id, "letter");
 				void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: letter.id } });
 			} catch (error) {
 				failed(error);
@@ -482,8 +491,8 @@ function ChoiceTile({ icon, title, description, onClick, disabled }: ChoiceTileP
 		>
 			<Icon name={icon} size={22} className="mt-0.5 text-ink-2" />
 			<span className="grid gap-0.5">
-				<span className="font-semibold text-sm">{title}</span>
-				<span className="text-[13px] text-ink-2 leading-[18px]">{description}</span>
+				<span className="text-sm font-semibold">{title}</span>
+				<span className="text-[13px] leading-[18px] text-ink-2">{description}</span>
 			</span>
 		</button>
 	);
@@ -512,7 +521,7 @@ function ImportProgress({ stage, notes }: { stage: number; notes: string[] }) {
 								<span className="size-[18px] rounded-full border-[1.5px] border-line-2" />
 							)}
 							<span className="font-medium">{label}</span>
-							{done && notes[index] && <span className="text-ink-3 text-xs">{notes[index]}</span>}
+							{done && notes[index] && <span className="text-xs text-ink-3">{notes[index]}</span>}
 						</li>
 					);
 				})}
@@ -581,17 +590,17 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 	return (
 		<>
 			<DialogHeader>
-				<DialogTitle className="font-display font-medium text-[22px]">
+				<DialogTitle className="font-display text-[22px] font-medium">
 					<Trans>Copy a resume for a job</Trans>
 				</DialogTitle>
 			</DialogHeader>
 
 			<fieldset className="grid gap-1.5">
-				<legend className="mb-1.5 font-medium text-ink-2 text-xs">
+				<legend className="mb-1.5 text-xs font-medium text-ink-2">
 					<Trans>Start from</Trans>
 				</legend>
 				{documents && resumes.length === 0 && (
-					<p className="text-ink-2 text-sm">
+					<p className="text-sm text-ink-2">
 						<Trans>
 							You don't have a resume to copy yet. Import or create a resume first, then return to copy it for this job.
 						</Trans>
@@ -618,8 +627,8 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 							/>
 							<Icon name="description" className="text-ink-2" />
 							<span className="grid min-w-0 flex-1">
-								<span className="truncate font-medium text-sm">{resume.name}</span>
-								<span className="text-ink-3 text-xs">{formatRelativeTime(resume.updatedAt, i18n.locale)}</span>
+								<span className="truncate text-sm font-medium">{resume.name}</span>
+								<span className="text-xs text-ink-3">{formatRelativeTime(resume.updatedAt, i18n.locale)}</span>
 							</span>
 						</label>
 					))}
@@ -627,7 +636,7 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 			</fieldset>
 
 			<fieldset className="grid gap-1.5">
-				<legend className="mb-1.5 font-medium text-ink-2 text-xs">
+				<legend className="mb-1.5 text-xs font-medium text-ink-2">
 					<Trans>For which job?</Trans>
 				</legend>
 				<div className="flex flex-wrap gap-1.5">
@@ -656,14 +665,14 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 					))}
 				</div>
 				{job && (
-					<span className="text-ink-3 text-xs">
+					<span className="text-xs text-ink-3">
 						<Trans>The copy is linked to the application, so Check and the assistant use its posting.</Trans>
 					</span>
 				)}
 			</fieldset>
 
 			<div className="grid gap-1.5">
-				<label htmlFor={nameId} className="font-medium text-ink-2 text-xs">
+				<label htmlFor={nameId} className="text-xs font-medium text-ink-2">
 					<Trans>Name</Trans>
 				</label>
 				<Input
@@ -672,7 +681,7 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 					maxLength={100}
 					onChange={(event) => setName(event.target.value)}
 				/>
-				<span className="text-ink-3 text-xs">
+				<span className="text-xs text-ink-3">
 					<Trans>Suggested from the source and the job. Change it anytime.</Trans>
 				</span>
 			</div>

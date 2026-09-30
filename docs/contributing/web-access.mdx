@@ -1,0 +1,49 @@
+---
+title: "Web access adapters"
+description: "Shared search and reading contracts, provider ownership, safety and contribution checks."
+---
+
+Applications and the Assistant share `searchWeb` and `readPage` in
+`packages/api/src/features/web-access/`. Keep generic retrieval there; JobPosting parsing and the `job posting`
+query suffix belong in Applications. Firecrawl uses its installed SDK; Tavily and Exa use Node fetch with validated
+responses. Select one adapter by the provider discriminant, without a plugin registry or paid-provider fan-out.
+
+## Shared contract
+
+Both functions receive a server-resolved `WebAccessConnection`, the authenticated user ID and an optional abort
+signal. Search returns public URL, title and optional snippet. Reading returns bounded content, format, requested
+and resolved URLs, retrieval time, provider fetch time when supplied, method, truncation and completeness. Optional
+HTML remains server-side for the JobPosting parser. Receiving content now does not prove it was fetched from the
+origin now, and HTTP 200 does not prove a complete job description.
+
+Resolve the selected connection per request or assistant run through `webAccessService`. Never accept credentials,
+user IDs, arbitrary headers or provider URLs from model tool inputs. Personal connections have fixed official
+endpoints; only operator-controlled Firecrawl configuration accepts a custom service URL.
+
+## Safety and behavior
+
+The shared boundary owns rate limits, the end-to-end deadline, public-target validation and bounded results. Preserve
+DNS, private-address and redirect checks in the built-in reader. External readers need equivalent protections within
+their services because an initial URL check cannot enforce a remote reader's network behavior. Cancellation and
+unsafe URLs stop immediately. Recoverable external read failures may use the built-in reader within the same budget;
+search never silently changes to another paid provider.
+
+Reject malformed, empty and access-challenge results. For Tavily, use full Markdown extraction without query-based
+reranking and inspect per-URL failures even when HTTP status is 200. For Exa, request page text and current freshness
+controls rather than deprecated `livecrawl`, highlights or summaries. Keep search responses small and read a selected
+page only when requested. Remote content is untrusted data, including in assistant tool output.
+
+Connection tests call `probeWebAccess`, which probes provider search and reading independently without built-in
+fallback. Status queries do not call providers. Logs may contain provider, operation, duration, safe failure category
+and fallback outcome; they must never contain keys, raw pages or private resume content.
+
+## Contribution checks
+
+Extend shared table-driven mocked HTTP tests for mapping, per-URL failures, authentication/quota failures,
+malformed/empty results, timeout, response limits and abort. Preserve built-in URL/DNS/redirect and fallback tests.
+Credential integration checks use `INTEGRATIONS_TEST_DATABASE_URL` with isolated schemas in a disposable database.
+Run affected typechecks, non-mutating lint, package boundaries and the production/serverless build checks.
+
+Run the opt-in [live connection check](/self-hosting/job-search-and-ai#opt-in-live-connection-check) separately for
+every supported provider with maintainer test credentials. Record which live checks passed and which were unavailable;
+mocked checks do not verify a paid account, quota or remote service deployment.

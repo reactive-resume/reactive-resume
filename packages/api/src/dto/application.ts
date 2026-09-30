@@ -9,6 +9,7 @@ import {
 	contactSchema,
 	interviewDetailsSchema,
 	interviewKindSchema,
+	postingSourceSchema,
 } from "@reactive-resume/schema/applications/data";
 
 const MAX_APPLICATION_JOB_DESCRIPTION_CHARS = 20_000;
@@ -54,6 +55,7 @@ const applicationSchema = createSelectSchema(schema.application, {
 	source: z.string().trim().nullable(),
 	sourceUrl: httpUrlSchema.nullable(),
 	jobDescription: z.string().max(MAX_APPLICATION_JOB_DESCRIPTION_CHARS).nullable(),
+	postingSource: postingSourceSchema.nullable(),
 	matchScore: z.number().int().min(0).max(100).nullable(),
 	aiMetadata: aiMetadataSchema.nullable(),
 	notes: z.string().nullable(),
@@ -90,6 +92,7 @@ const editableSchema = applicationSchema.pick({
 	source: true,
 	sourceUrl: true,
 	jobDescription: true,
+	postingSource: true,
 	notes: true,
 	resumeFileUrl: true,
 	resumeFileName: true,
@@ -144,6 +147,7 @@ export const applicationDto = {
 		input: editableSchema.partial().extend({
 			id: z.string(),
 			status: applicationStatusSchema.optional(),
+			stageEnteredAt: timelineDateSchema.optional(),
 			closedReason: applicationClosedReasonSchema
 				.nullable()
 				.optional()

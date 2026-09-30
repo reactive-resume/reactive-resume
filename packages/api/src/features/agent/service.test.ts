@@ -104,7 +104,12 @@ vi.mock("@reactive-resume/db/schema", () => ({
 		size: "agent_attachments.size",
 		createdAt: "agent_attachments.created_at",
 	},
-	resume: { name: "resume.name", id: "resume.id", userId: "resume.user_id", slug: "resume.slug" },
+	resume: {
+		name: "resume.name",
+		id: "resume.id",
+		userId: "resume.user_id",
+		slug: "resume.slug",
+	},
 	coverLetter: { name: "cover_letter.name", id: "cover_letter.id" },
 	aiProvider: { label: "ai_provider.label", id: "ai_provider.id" },
 }));
@@ -116,7 +121,11 @@ vi.mock("drizzle-orm", () => ({
 	desc: (value: unknown) => ({ type: "desc", value }),
 	eq: (left: unknown, right: unknown) => ({ type: "eq", left, right }),
 	gte: (left: unknown, right: unknown) => ({ type: "gte", left, right }),
-	inArray: (left: unknown, values: unknown[]) => ({ type: "inArray", left, values }),
+	inArray: (left: unknown, values: unknown[]) => ({
+		type: "inArray",
+		left,
+		values,
+	}),
 	isNull: (value: unknown) => ({ type: "isNull", value }),
 	max: (value: unknown) => ({ type: "max", value }),
 	sql: () => ({ type: "sql" }),
@@ -142,9 +151,20 @@ vi.mock("../ai/service", () => ({
 	})),
 }));
 vi.mock("../ai/credentials", () => ({ assertAgentEnvironment: vi.fn() }));
-vi.mock("../ai-providers/service", () => ({ aiProvidersService: aiProvidersServiceMock }));
+vi.mock("../ai-providers/service", () => ({
+	aiProvidersService: aiProvidersServiceMock,
+}));
+vi.mock("../web-access/credentials", () => ({
+	webAccessService: { resolve: vi.fn(async () => null) },
+}));
+vi.mock("../web-access/service", () => ({
+	searchWeb: vi.fn(),
+	readPage: vi.fn(),
+}));
 vi.mock("../resume/service", () => ({ resumeService: resumeServiceMock }));
-vi.mock("../cover-letters/service", () => ({ coverLetterService: { getById: vi.fn() } }));
+vi.mock("../cover-letters/service", () => ({
+	coverLetterService: { getById: vi.fn() },
+}));
 const documentMock = {
 	loadDocument: vi.fn(),
 	findPosting: vi.fn(),
@@ -174,8 +194,12 @@ vi.mock("./tools", () => ({
 	buildAgentInstructions: vi.fn(),
 	buildAgentTools: vi.fn(() => ({})),
 }));
-vi.mock("@reactive-resume/schema/resume/default", () => ({ defaultResumeData: {} }));
-vi.mock("@reactive-resume/utils/string", () => ({ generateId: () => "test-id" }));
+vi.mock("@reactive-resume/schema/resume/default", () => ({
+	defaultResumeData: {},
+}));
+vi.mock("@reactive-resume/utils/string", () => ({
+	generateId: () => "test-id",
+}));
 vi.mock("@orpc/server", () => ({ streamToEventIterator: vi.fn() }));
 
 beforeEach(() => {
@@ -188,8 +212,13 @@ beforeEach(() => {
 	claimActiveAgentRunMock.mockReset();
 	for (const mock of Object.values(messagesPersistenceMock)) mock.mockReset();
 	messagesPersistenceMock.applyStepToUiMessage.mockImplementation((message: unknown) => message);
-	messagesPersistenceMock.insertDraftAssistantMessage.mockResolvedValue({ rowId: "draft-row-1", sequence: 1 });
-	messagesPersistenceMock.upsertAssistantUiMessage.mockResolvedValue({ rowId: "draft-row-1" });
+	messagesPersistenceMock.insertDraftAssistantMessage.mockResolvedValue({
+		rowId: "draft-row-1",
+		sequence: 1,
+	});
+	messagesPersistenceMock.upsertAssistantUiMessage.mockResolvedValue({
+		rowId: "draft-row-1",
+	});
 	messagesPersistenceMock.deleteDraftIfEmpty.mockResolvedValue(undefined);
 	messagesPersistenceMock.withAccumulatedUsageMetadata.mockImplementation((_previous: unknown, next: unknown) => next);
 	messagesPersistenceMock.nextMessageSequence.mockResolvedValue(1);
@@ -198,7 +227,12 @@ beforeEach(() => {
 	for (const mock of Object.values(resumeServiceMock)) mock.mockReset();
 	for (const mock of Object.values(aiProvidersServiceMock)) mock.mockReset();
 	for (const mock of Object.values(documentMock)) mock.mockReset();
-	documentMock.loadDocument.mockResolvedValue({ kind: "resume", name: "Resume", locked: false, applicationId: null });
+	documentMock.loadDocument.mockResolvedValue({
+		kind: "resume",
+		name: "Resume",
+		locked: false,
+		applicationId: null,
+	});
 	documentMock.findPosting.mockResolvedValue(null);
 });
 
@@ -288,12 +322,20 @@ describe("agentService.messages.send", () => {
 			role: "user",
 			status: "completed",
 			sequence: 0,
-			uiMessage: { id: "ui-message-1", role: "user", parts: [{ type: "text", text: "Hi" }] },
+			uiMessage: {
+				id: "ui-message-1",
+				role: "user",
+				parts: [{ type: "text", text: "Hi" }],
+			},
 		};
 		dbMock.insert.mockReturnValue({
-			values: vi.fn(() => ({ returning: vi.fn(async () => [persistedMessage]) })),
+			values: vi.fn(() => ({
+				returning: vi.fn(async () => [persistedMessage]),
+			})),
 		});
-		dbMock.update.mockReturnValue({ set: vi.fn(() => ({ where: vi.fn(async () => undefined) })) });
+		dbMock.update.mockReturnValue({
+			set: vi.fn(() => ({ where: vi.fn(async () => undefined) })),
+		});
 		claimActiveAgentRunMock.mockResolvedValue(true);
 		aiProvidersServiceMock.getRunnableById.mockResolvedValue({
 			id: "provider-1",
@@ -309,7 +351,9 @@ describe("agentService.messages.send", () => {
 		]);
 		vi.mocked(convertToModelMessages).mockResolvedValue([{ role: "user", content: [{ type: "text", text: "Hi" }] }]);
 		class MockToolLoopAgent {
-			stream = vi.fn(async () => ({ toUIMessageStream: vi.fn(() => new ReadableStream()) }));
+			stream = vi.fn(async () => ({
+				toUIMessageStream: vi.fn(() => new ReadableStream()),
+			}));
 		}
 		vi.mocked(ToolLoopAgent).mockImplementation(MockToolLoopAgent as never);
 		vi.mocked(agentStreamLifecycle.create).mockResolvedValue(new ReadableStream());
@@ -324,8 +368,12 @@ describe("agentService.messages.send", () => {
 			await agentService.messages.send({
 				threadId: "thread-1",
 				userId: "user-1",
-				// biome-ignore lint/suspicious/noExplicitAny: minimal fixture for unit test
-				message: { id: "ui-message-1", role: "user", parts: [{ type: "text", text: "Hi" }] } as any,
+				message: {
+					id: "ui-message-1",
+					role: "user",
+					parts: [{ type: "text", text: "Hi" }],
+					// oxlint-disable-next-line typescript/no-explicit-any -- minimal fixture for unit test
+				} as any,
 				...(context ? { context } : {}),
 			});
 		};
@@ -333,13 +381,22 @@ describe("agentService.messages.send", () => {
 		const { buildAgentInstructions, buildAgentTools } = await import("./tools");
 
 		await send();
-		expect(vi.mocked(buildAgentTools).mock.calls[0]?.[0]).toMatchObject({ document: "resume" });
-		expect(vi.mocked(buildAgentInstructions).mock.calls[0]?.[0]).toMatchObject({ document: { kind: "resume" } });
+		expect(vi.mocked(buildAgentTools).mock.calls[0]?.[0]).toMatchObject({
+			document: "resume",
+		});
+		expect(vi.mocked(buildAgentInstructions).mock.calls[0]?.[0]).toMatchObject({
+			document: { kind: "resume" },
+		});
 		expect(documentMock.findPosting).toHaveBeenCalledTimes(1);
 
 		await send({ document: false, posting: false });
-		expect(vi.mocked(buildAgentTools).mock.calls[1]?.[0]).toMatchObject({ document: null });
-		expect(vi.mocked(buildAgentInstructions).mock.calls[1]?.[0]).toMatchObject({ document: null, posting: null });
+		expect(vi.mocked(buildAgentTools).mock.calls[1]?.[0]).toMatchObject({
+			document: null,
+		});
+		expect(vi.mocked(buildAgentInstructions).mock.calls[1]?.[0]).toMatchObject({
+			document: null,
+			posting: null,
+		});
 		expect(documentMock.findPosting).toHaveBeenCalledTimes(1);
 	});
 
@@ -406,7 +463,10 @@ describe("agentService.messages.send", () => {
 			baseURL: null,
 		});
 		aiProvidersServiceMock.markUsed.mockResolvedValue(undefined);
-		storageServiceMock.read.mockResolvedValue({ data: new TextEncoder().encode("hello"), contentType: "text/plain" });
+		storageServiceMock.read.mockResolvedValue({
+			data: new TextEncoder().encode("hello"),
+			contentType: "text/plain",
+		});
 
 		const [{ convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }] = await Promise.all([
 			import("ai"),
@@ -442,7 +502,7 @@ describe("agentService.messages.send", () => {
 						filename: "forged-name.bin",
 					},
 				],
-				// biome-ignore lint/suspicious/noExplicitAny: minimal fixture for unit test
+				// oxlint-disable-next-line typescript/no-explicit-any -- minimal fixture for unit test
 			} as any,
 			attachmentIds: ["attachment-1"],
 		});
@@ -470,7 +530,10 @@ describe("agentService.messages.send", () => {
 						role: "user",
 						content: [
 							{ type: "text", text: "Use this file" },
-							expect.objectContaining({ type: "text", text: expect.stringContaining("hello") }),
+							expect.objectContaining({
+								type: "text",
+								text: expect.stringContaining("hello"),
+							}),
 						],
 					},
 				],
@@ -480,7 +543,10 @@ describe("agentService.messages.send", () => {
 
 	// Regression (defect 8): a question continuation streams into the SAME uiMessage id; onFinish
 	// must upsert the existing assistant row instead of inserting a duplicate row.
-	it("continues the existing assistant row on a question continuation instead of inserting a duplicate", async () => {
+	it.each([
+		{ provider: "openai", model: "gpt-5" },
+		{ provider: "gemini", model: "gemini-3.8-flash" },
+	])("continues one row and replays portable web evidence with correct $provider metadata", async (provider) => {
 		const activeThread = buildActiveThread();
 		const userMessage = {
 			id: "message-user-1",
@@ -489,9 +555,16 @@ describe("agentService.messages.send", () => {
 			role: "user",
 			status: "completed",
 			sequence: 0,
-			uiMessage: { id: "ui-user-1", role: "user", parts: [{ type: "text", text: "Change the name" }] },
+			uiMessage: {
+				id: "ui-user-1",
+				role: "user",
+				parts: [{ type: "text", text: "Change the name" }],
+			},
 		};
-		const question = { question: "How broadly should I rename?", choices: ["Only the header"] };
+		const question = {
+			question: "How broadly should I rename?",
+			choices: ["Only the header"],
+		};
 		const unansweredAssistantMessage = {
 			id: "message-assistant-1",
 			userId: "user-1",
@@ -502,11 +575,27 @@ describe("agentService.messages.send", () => {
 			uiMessage: {
 				id: "ui-assistant-1",
 				role: "assistant",
-				parts: [{ type: "tool-ask_user_question", toolCallId: "call-1", state: "input-available", input: question }],
+				metadata: { provider: "gemini", model: "gemini-3.8-flash" },
+				parts: [
+					{
+						type: "tool-ask_user_question",
+						toolCallId: "call-1",
+						state: "input-available",
+						input: question,
+						...(provider.provider === "gemini"
+							? {
+									callProviderMetadata: {
+										google: { thoughtSignature: "opaque-signature" },
+									},
+								}
+							: {}),
+					},
+				],
 			},
 		};
 		const answeredAssistantModelInput = {
 			...unansweredAssistantMessage.uiMessage,
+			metadata: { provider: "gemini", model: "gemini-3.8-flash" },
 			parts: [
 				{
 					type: "tool-ask_user_question",
@@ -514,6 +603,13 @@ describe("agentService.messages.send", () => {
 					state: "output-available",
 					input: question,
 					output: "Only the header",
+					...(provider.provider === "gemini"
+						? {
+								callProviderMetadata: {
+									google: { thoughtSignature: "opaque-signature" },
+								},
+							}
+						: {}),
 				},
 			],
 		};
@@ -524,16 +620,49 @@ describe("agentService.messages.send", () => {
 				parts: answeredAssistantModelInput.parts.map((part) => ({
 					...part,
 					callProviderMetadata: { openai: { itemId: "fc_duplicate_item" } },
+					...(provider.provider === "gemini"
+						? {
+								callProviderMetadata: {
+									openai: { itemId: "fc_duplicate_item" },
+									google: { thoughtSignature: "opaque-signature" },
+								},
+							}
+						: {}),
 					resultProviderMetadata: { openai: { itemId: "fc_duplicate_item" } },
 				})),
+			},
+		};
+		const earlierNative = {
+			...unansweredAssistantMessage,
+			id: "native-history",
+			sequence: 0.5,
+			uiMessage: {
+				id: "native-history",
+				role: "assistant",
+				parts: [
+					{
+						type: "tool-web_search",
+						toolCallId: "native",
+						state: "output-available",
+						input: {},
+						output: { encryptedContent: "provider-owned-payload" },
+						callProviderMetadata: { openai: { itemId: "ws_old" } },
+					},
+					{
+						type: "source-url",
+						sourceId: "source",
+						url: "https://company.example/job",
+						title: "Role",
+					},
+				],
 			},
 		};
 		const updateSets: unknown[] = [];
 
 		dbMock.select
 			.mockImplementationOnce(() => selectLimitResult([activeThread]))
-			.mockImplementationOnce(() => selectOrderByResult([userMessage, unansweredAssistantMessage]))
-			.mockImplementationOnce(() => selectOrderByResult([userMessage, answeredAssistantMessage]));
+			.mockImplementationOnce(() => selectOrderByResult([userMessage, earlierNative, unansweredAssistantMessage]))
+			.mockImplementationOnce(() => selectOrderByResult([userMessage, earlierNative, answeredAssistantMessage]));
 		dbMock.update.mockImplementation(() => ({
 			set: vi.fn((value) => {
 				updateSets.push(value);
@@ -544,8 +673,7 @@ describe("agentService.messages.send", () => {
 		claimActiveAgentRunMock.mockResolvedValue(true);
 		aiProvidersServiceMock.getRunnableById.mockResolvedValue({
 			id: "provider-1",
-			provider: "openai",
-			model: "gpt-5",
+			...provider,
 			apiKey: "secret",
 			baseURL: null,
 		});
@@ -580,19 +708,44 @@ describe("agentService.messages.send", () => {
 		await agentService.messages.send({
 			threadId: "thread-1",
 			userId: "user-1",
-			// biome-ignore lint/suspicious/noExplicitAny: minimal fixture for unit test
+			// oxlint-disable-next-line typescript/no-explicit-any -- minimal fixture for unit test
 			message: answeredAssistantModelInput as any,
 		});
 
 		expect(updateSets).toContainEqual(expect.objectContaining({ uiMessage: answeredAssistantModelInput }));
-		expect(convertToModelMessages).toHaveBeenCalledWith([userMessage.uiMessage, answeredAssistantModelInput]);
+		expect(convertToModelMessages).toHaveBeenCalledWith([
+			userMessage.uiMessage,
+			expect.objectContaining({
+				parts: expect.arrayContaining([
+					expect.objectContaining({
+						type: "text",
+						text: expect.stringContaining("https://company.example/job"),
+					}),
+					{
+						type: "source-url",
+						sourceId: "source",
+						url: "https://company.example/job",
+						title: "Role",
+					},
+				]),
+			}),
+			answeredAssistantModelInput,
+		]);
+		const replayed = vi.mocked(convertToModelMessages).mock.calls.at(-1)?.[0];
+		expect(JSON.stringify(replayed)).not.toContain("provider-owned-payload");
+		expect(JSON.stringify(replayed)).not.toContain("ws_old");
 
 		const onFinish = uiStreamOptions?.onFinish as (event: Record<string, unknown>) => Promise<void>;
 		const continuedMessage = {
 			...answeredAssistantMessage.uiMessage,
 			parts: [...answeredAssistantMessage.uiMessage.parts, { type: "text", text: "Renamed the header." }],
 		};
-		await onFinish({ responseMessage: continuedMessage, isAborted: false, isContinuation: true, messages: [] });
+		await onFinish({
+			responseMessage: continuedMessage,
+			isAborted: false,
+			isContinuation: true,
+			messages: [],
+		});
 
 		expect(messagesPersistenceMock.insertDraftAssistantMessage).not.toHaveBeenCalled();
 		expect(dbMock.insert).not.toHaveBeenCalled();
@@ -704,7 +857,9 @@ describe("agentService.messages.send", () => {
 		]);
 		vi.mocked(convertToModelMessages).mockResolvedValue([{ role: "user", content: [{ type: "text", text: "Retry" }] }]);
 		class MockToolLoopAgent {
-			stream = vi.fn(async () => ({ toUIMessageStream: vi.fn(() => new ReadableStream()) }));
+			stream = vi.fn(async () => ({
+				toUIMessageStream: vi.fn(() => new ReadableStream()),
+			}));
 		}
 		vi.mocked(ToolLoopAgent).mockImplementation(MockToolLoopAgent as never);
 		vi.mocked(agentStreamLifecycle.create).mockResolvedValue(new ReadableStream());
@@ -715,7 +870,7 @@ describe("agentService.messages.send", () => {
 		await agentService.messages.send({
 			threadId: "thread-1",
 			userId: "user-1",
-			// biome-ignore lint/suspicious/noExplicitAny: minimal fixture for unit test
+			// oxlint-disable-next-line typescript/no-explicit-any -- minimal fixture for unit test
 			message: retryMessage.uiMessage as any,
 		});
 
@@ -764,11 +919,18 @@ describe("agentService.messages.send", () => {
 		const sending = agentService.messages.send({
 			threadId: "thread-1",
 			userId: "user-1",
-			// biome-ignore lint/suspicious/noExplicitAny: malformed fixture on purpose
-			message: { id: "ui-message-1", role: "user", parts: [{ type: "text" }] } as any,
+			message: {
+				id: "ui-message-1",
+				role: "user",
+				parts: [{ type: "text" }],
+				// oxlint-disable-next-line typescript/no-explicit-any -- malformed fixture on purpose
+			} as any,
 		});
 
-		await expect(sending).rejects.toMatchObject({ code: "BAD_REQUEST", message: "Invalid UI message parts." });
+		await expect(sending).rejects.toMatchObject({
+			code: "BAD_REQUEST",
+			message: "Invalid UI message parts.",
+		});
 		expect(claimActiveAgentRunMock).not.toHaveBeenCalled();
 		expect(dbMock.insert).not.toHaveBeenCalled();
 	});
@@ -811,7 +973,9 @@ describe("agentService.attachments.create", () => {
 			const tx = {
 				select: vi
 					.fn()
-					.mockImplementationOnce(() => ({ from: () => ({ where: () => lockQuery }) }))
+					.mockImplementationOnce(() => ({
+						from: () => ({ where: () => lockQuery }),
+					}))
 					.mockImplementation(() => {
 						quotaRead();
 						return selectWhereResult([{ total, totalBytes: String(totalBytes) }]);
@@ -846,7 +1010,10 @@ describe("agentService.attachments.create", () => {
 		storageWrite.resolve();
 		const settled = await results;
 		expect(settled[0]?.status).toBe("fulfilled");
-		expect(settled[1]).toMatchObject({ status: "rejected", reason: { code: "BAD_REQUEST" } });
+		expect(settled[1]).toMatchObject({
+			status: "rejected",
+			reason: { code: "BAD_REQUEST" },
+		});
 		expect(lockModes).toEqual(["update", "update"]);
 		expect(storageServiceMock.write).toHaveBeenCalledTimes(1);
 		expect(storageServiceMock.delete).not.toHaveBeenCalled();
@@ -859,7 +1026,13 @@ describe("agentService.attachments.create", () => {
 			"agent_attachments.user_id": input.userId,
 			"agent_attachments.message_id": `message-${index}`,
 		}));
-		type Condition = { type: string; conditions?: Condition[]; left?: string; right?: unknown; value?: string };
+		type Condition = {
+			type: string;
+			conditions?: Condition[];
+			left?: string;
+			right?: unknown;
+			value?: string;
+		};
 		// Evaluates the mocked drizzle conditions, so each count follows the query's own filter.
 		const matches = (row: Record<string, unknown>, condition: Condition): boolean =>
 			condition.type === "and"
@@ -868,7 +1041,11 @@ describe("agentService.attachments.create", () => {
 					? row[condition.value ?? ""] == null
 					: row[condition.left ?? ""] === condition.right;
 		dbMock.select
-			.mockReturnValueOnce({ from: () => ({ where: () => ({ for: async () => [{ id: input.threadId }] }) }) })
+			.mockReturnValueOnce({
+				from: () => ({
+					where: () => ({ for: async () => [{ id: input.threadId }] }),
+				}),
+			})
 			.mockImplementation((columns: Record<string, { type: string }>) => ({
 				from: () => ({
 					where: (condition: Condition) => {
@@ -880,7 +1057,9 @@ describe("agentService.attachments.create", () => {
 				}),
 			}));
 		dbMock.insert.mockReturnValue({
-			values: (value: object) => ({ returning: async () => [{ ...value, createdAt: new Date() }] }),
+			values: (value: object) => ({
+				returning: async () => [{ ...value, createdAt: new Date() }],
+			}),
 		});
 		const { agentService } = await import("./service");
 
@@ -908,7 +1087,11 @@ describe("agentService.messages.stop", () => {
 				role: "user",
 				status: "completed",
 				sequence: 0,
-				uiMessage: { id: "ui-message-1", role: "user", parts: [{ type: "text", text: "hi" }] },
+				uiMessage: {
+					id: "ui-message-1",
+					role: "user",
+					parts: [{ type: "text", text: "hi" }],
+				},
 			};
 
 			dbMock.select
@@ -918,13 +1101,22 @@ describe("agentService.messages.stop", () => {
 				.mockImplementationOnce(() => selectOrderByResult([persistedMessage]))
 				// stop(): getThread now reports the active run registered by send() (generateId() -> "test-id")
 				.mockImplementationOnce(() =>
-					selectLimitResult([buildActiveThread({ activeRunId: "test-id", activeStreamId: "test-id" })]),
+					selectLimitResult([
+						buildActiveThread({
+							activeRunId: "test-id",
+							activeStreamId: "test-id",
+						}),
+					]),
 				);
 
 			dbMock.insert.mockReturnValue({
-				values: vi.fn(() => ({ returning: vi.fn(async () => [persistedMessage]) })),
+				values: vi.fn(() => ({
+					returning: vi.fn(async () => [persistedMessage]),
+				})),
 			});
-			dbMock.update.mockReturnValue({ set: vi.fn(() => ({ where: vi.fn(async () => undefined) })) });
+			dbMock.update.mockReturnValue({
+				set: vi.fn(() => ({ where: vi.fn(async () => undefined) })),
+			});
 
 			claimActiveAgentRunMock.mockResolvedValue(true);
 			clearActiveAgentRunIfCurrentMock.mockResolvedValue(undefined);
@@ -989,15 +1181,22 @@ describe("agentService.messages.stop", () => {
 			await agentService.messages.send({
 				threadId: "thread-1",
 				userId: "user-1",
-				// biome-ignore lint/suspicious/noExplicitAny: minimal fixture for unit test
-				message: { id: "ui-message-1", role: "user", parts: [{ type: "text", text: "hi" }] } as any,
+				message: {
+					id: "ui-message-1",
+					role: "user",
+					parts: [{ type: "text", text: "hi" }],
+					// oxlint-disable-next-line typescript/no-explicit-any -- minimal fixture for unit test
+				} as any,
 			});
 
 			expect(capturedSignal).toBeDefined();
 			expect(capturedSignal?.aborted).toBe(false);
 
 			if (action === "stop") {
-				await agentService.messages.stop({ userId: "user-1", threadId: "thread-1" });
+				await agentService.messages.stop({
+					userId: "user-1",
+					threadId: "thread-1",
+				});
 			} else if (action === "timeout") {
 				await vi.advanceTimersByTimeAsync(239_999);
 				expect(capturedSignal?.aborted).toBe(false);
@@ -1011,7 +1210,9 @@ describe("agentService.messages.stop", () => {
 				expect(reason.name).toBe("AbortError");
 				expect(reason.message).toBe(action === "stop" ? "USER_STOPPED" : "RUN_TIMEOUT");
 			}
-			const finalChunk: UIMessageChunk = { type: action === "complete" ? "finish" : "abort" };
+			const finalChunk: UIMessageChunk = {
+				type: action === "complete" ? "finish" : "abort",
+			};
 			source?.enqueue(finalChunk);
 			source?.close();
 			await streamDone;
@@ -1033,7 +1234,11 @@ describe("agentService.messages.stop", () => {
 			expect(clearActiveAgentRunIfCurrentMock).not.toHaveBeenCalled();
 			expect(onFinish).toBeDefined();
 			await onFinish?.({
-				responseMessage: { id: "assistant-1", role: "assistant", parts: [{ type: "text", text: "Saved answer" }] },
+				responseMessage: {
+					id: "assistant-1",
+					role: "assistant",
+					parts: [{ type: "text", text: "Saved answer" }],
+				},
 				isAborted: action !== "complete",
 			});
 			expect(messagesPersistenceMock.upsertAssistantUiMessage).toHaveBeenCalledWith(
@@ -1043,7 +1248,12 @@ describe("agentService.messages.stop", () => {
 						parts: expect.arrayContaining([
 							{ type: "text", text: "Saved answer" },
 							...(action === "timeout"
-								? [{ type: "text", text: "Time limit reached. Your progress is saved. Ask me to continue." }]
+								? [
+										{
+											type: "text",
+											text: "Time limit reached. Your progress is saved. Ask me to continue.",
+										},
+									]
 								: []),
 						]),
 					}),
@@ -1057,7 +1267,10 @@ describe("agentService.messages.stop", () => {
 		dbMock.select.mockImplementation(() => selectLimitResult([buildActiveThread({ activeRunId: "remote-run" })]));
 		vi.mocked((await import("./runs")).reapStaleAgentRun).mockClear();
 		const { agentService } = await import("./service");
-		await agentService.messages.stop({ userId: "user-1", threadId: "thread-1" });
+		await agentService.messages.stop({
+			userId: "user-1",
+			threadId: "thread-1",
+		});
 		expect(cancellationRedisMock.set).toHaveBeenCalledWith(
 			"test:agent-cancellation:remote-run",
 			"USER_STOPPED",
@@ -1094,7 +1307,9 @@ describe("agentService.threads.delete", () => {
 		const deleteWhere = vi.fn(async () => undefined);
 		dbMock.delete.mockReturnValue({ where: deleteWhere });
 
-		const updateWhere = vi.fn(() => ({ returning: vi.fn(async () => [{ activeRunId: "delete-run" }]) }));
+		const updateWhere = vi.fn(() => ({
+			returning: vi.fn(async () => [{ activeRunId: "delete-run" }]),
+		}));
 		const updateSet = vi.fn(() => ({ where: updateWhere }));
 		dbMock.update.mockReturnValue({ set: updateSet });
 

@@ -2971,6 +2971,84 @@
 													}
 												]
 											},
+											"postingSource": {
+												"anyOf": [
+													{
+														"type": "object",
+														"properties": {
+															"method": {
+																"enum": [
+																	"paste",
+																	"builtin",
+																	"firecrawl",
+																	"tavily",
+																	"exa"
+																],
+																"type": "string"
+															},
+															"format": {
+																"enum": [
+																	"text",
+																	"markdown"
+																],
+																"type": "string"
+															},
+															"requestedUrl": {
+																"type": "string",
+																"format": "uri"
+															},
+															"resolvedUrl": {
+																"type": "string",
+																"format": "uri"
+															},
+															"retrievedAt": {
+																"type": "string",
+																"format": "date-time"
+															},
+															"providerFetchedAt": {
+																"type": "string",
+																"format": "date-time"
+															},
+															"truncated": {
+																"type": "boolean"
+															},
+															"completeness": {
+																"enum": [
+																	"unknown",
+																	"incomplete"
+																],
+																"type": "string"
+															},
+															"fallbackReason": {
+																"enum": [
+																	"unsafe-url",
+																	"unreachable",
+																	"not-a-page",
+																	"too-large",
+																	"auth",
+																	"quota",
+																	"malformed",
+																	"empty",
+																	"challenge",
+																	"timeout",
+																	"unavailable",
+																	"rate-limit"
+																],
+																"type": "string"
+															}
+														},
+														"required": [
+															"method",
+															"format",
+															"truncated",
+															"completeness"
+														]
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
 											"requirements": {
 												"type": "array",
 												"items": {
@@ -3257,6 +3335,7 @@
 											"tags",
 											"sourceUrl",
 											"jobDescription",
+											"postingSource",
 											"requirements",
 											"matchScore",
 											"aiMetadata",
@@ -3349,6 +3428,84 @@
 											{
 												"type": "string",
 												"maxLength": 20000
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"postingSource": {
+										"anyOf": [
+											{
+												"type": "object",
+												"properties": {
+													"method": {
+														"enum": [
+															"paste",
+															"builtin",
+															"firecrawl",
+															"tavily",
+															"exa"
+														],
+														"type": "string"
+													},
+													"format": {
+														"enum": [
+															"text",
+															"markdown"
+														],
+														"type": "string"
+													},
+													"requestedUrl": {
+														"type": "string",
+														"format": "uri"
+													},
+													"resolvedUrl": {
+														"type": "string",
+														"format": "uri"
+													},
+													"retrievedAt": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"providerFetchedAt": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"truncated": {
+														"type": "boolean"
+													},
+													"completeness": {
+														"enum": [
+															"unknown",
+															"incomplete"
+														],
+														"type": "string"
+													},
+													"fallbackReason": {
+														"enum": [
+															"unsafe-url",
+															"unreachable",
+															"not-a-page",
+															"too-large",
+															"auth",
+															"quota",
+															"malformed",
+															"empty",
+															"challenge",
+															"timeout",
+															"unavailable",
+															"rate-limit"
+														],
+														"type": "string"
+													}
+												},
+												"required": [
+													"method",
+													"format",
+													"truncated",
+													"completeness"
+												]
 											},
 											{
 												"type": "null"
@@ -3733,6 +3890,84 @@
 												}
 											]
 										},
+										"postingSource": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"method": {
+															"enum": [
+																"paste",
+																"builtin",
+																"firecrawl",
+																"tavily",
+																"exa"
+															],
+															"type": "string"
+														},
+														"format": {
+															"enum": [
+																"text",
+																"markdown"
+															],
+															"type": "string"
+														},
+														"requestedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"resolvedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"retrievedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"providerFetchedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"truncated": {
+															"type": "boolean"
+														},
+														"completeness": {
+															"enum": [
+																"unknown",
+																"incomplete"
+															],
+															"type": "string"
+														},
+														"fallbackReason": {
+															"enum": [
+																"unsafe-url",
+																"unreachable",
+																"not-a-page",
+																"too-large",
+																"auth",
+																"quota",
+																"malformed",
+																"empty",
+																"challenge",
+																"timeout",
+																"unavailable",
+																"rate-limit"
+															],
+															"type": "string"
+														}
+													},
+													"required": [
+														"method",
+														"format",
+														"truncated",
+														"completeness"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -4019,6 +4254,7 @@
 										"tags",
 										"sourceUrl",
 										"jobDescription",
+										"postingSource",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -4120,6 +4356,84 @@
 											{
 												"type": "string",
 												"maxLength": 20000
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"postingSource": {
+										"anyOf": [
+											{
+												"type": "object",
+												"properties": {
+													"method": {
+														"enum": [
+															"paste",
+															"builtin",
+															"firecrawl",
+															"tavily",
+															"exa"
+														],
+														"type": "string"
+													},
+													"format": {
+														"enum": [
+															"text",
+															"markdown"
+														],
+														"type": "string"
+													},
+													"requestedUrl": {
+														"type": "string",
+														"format": "uri"
+													},
+													"resolvedUrl": {
+														"type": "string",
+														"format": "uri"
+													},
+													"retrievedAt": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"providerFetchedAt": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"truncated": {
+														"type": "boolean"
+													},
+													"completeness": {
+														"enum": [
+															"unknown",
+															"incomplete"
+														],
+														"type": "string"
+													},
+													"fallbackReason": {
+														"enum": [
+															"unsafe-url",
+															"unreachable",
+															"not-a-page",
+															"too-large",
+															"auth",
+															"quota",
+															"malformed",
+															"empty",
+															"challenge",
+															"timeout",
+															"unavailable",
+															"rate-limit"
+														],
+														"type": "string"
+													}
+												},
+												"required": [
+													"method",
+													"format",
+													"truncated",
+													"completeness"
+												]
 											},
 											{
 												"type": "null"
@@ -4274,6 +4588,10 @@
 											"closed"
 										],
 										"type": "string"
+									},
+									"stageEnteredAt": {
+										"type": "string",
+										"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
 									},
 									"closedReason": {
 										"anyOf": [
@@ -4463,6 +4781,84 @@
 												}
 											]
 										},
+										"postingSource": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"method": {
+															"enum": [
+																"paste",
+																"builtin",
+																"firecrawl",
+																"tavily",
+																"exa"
+															],
+															"type": "string"
+														},
+														"format": {
+															"enum": [
+																"text",
+																"markdown"
+															],
+															"type": "string"
+														},
+														"requestedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"resolvedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"retrievedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"providerFetchedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"truncated": {
+															"type": "boolean"
+														},
+														"completeness": {
+															"enum": [
+																"unknown",
+																"incomplete"
+															],
+															"type": "string"
+														},
+														"fallbackReason": {
+															"enum": [
+																"unsafe-url",
+																"unreachable",
+																"not-a-page",
+																"too-large",
+																"auth",
+																"quota",
+																"malformed",
+																"empty",
+																"challenge",
+																"timeout",
+																"unavailable",
+																"rate-limit"
+															],
+															"type": "string"
+														}
+													},
+													"required": [
+														"method",
+														"format",
+														"truncated",
+														"completeness"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -4749,6 +5145,7 @@
 										"tags",
 										"sourceUrl",
 										"jobDescription",
+										"postingSource",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -4887,6 +5284,84 @@
 														{
 															"type": "string",
 															"maxLength": 20000
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"postingSource": {
+													"anyOf": [
+														{
+															"type": "object",
+															"properties": {
+																"method": {
+																	"enum": [
+																		"paste",
+																		"builtin",
+																		"firecrawl",
+																		"tavily",
+																		"exa"
+																	],
+																	"type": "string"
+																},
+																"format": {
+																	"enum": [
+																		"text",
+																		"markdown"
+																	],
+																	"type": "string"
+																},
+																"requestedUrl": {
+																	"type": "string",
+																	"format": "uri"
+																},
+																"resolvedUrl": {
+																	"type": "string",
+																	"format": "uri"
+																},
+																"retrievedAt": {
+																	"type": "string",
+																	"format": "date-time"
+																},
+																"providerFetchedAt": {
+																	"type": "string",
+																	"format": "date-time"
+																},
+																"truncated": {
+																	"type": "boolean"
+																},
+																"completeness": {
+																	"enum": [
+																		"unknown",
+																		"incomplete"
+																	],
+																	"type": "string"
+																},
+																"fallbackReason": {
+																	"enum": [
+																		"unsafe-url",
+																		"unreachable",
+																		"not-a-page",
+																		"too-large",
+																		"auth",
+																		"quota",
+																		"malformed",
+																		"empty",
+																		"challenge",
+																		"timeout",
+																		"unavailable",
+																		"rate-limit"
+																	],
+																	"type": "string"
+																}
+															},
+															"required": [
+																"method",
+																"format",
+																"truncated",
+																"completeness"
+															]
 														},
 														{
 															"type": "null"
@@ -5314,6 +5789,84 @@
 												}
 											]
 										},
+										"postingSource": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"method": {
+															"enum": [
+																"paste",
+																"builtin",
+																"firecrawl",
+																"tavily",
+																"exa"
+															],
+															"type": "string"
+														},
+														"format": {
+															"enum": [
+																"text",
+																"markdown"
+															],
+															"type": "string"
+														},
+														"requestedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"resolvedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"retrievedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"providerFetchedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"truncated": {
+															"type": "boolean"
+														},
+														"completeness": {
+															"enum": [
+																"unknown",
+																"incomplete"
+															],
+															"type": "string"
+														},
+														"fallbackReason": {
+															"enum": [
+																"unsafe-url",
+																"unreachable",
+																"not-a-page",
+																"too-large",
+																"auth",
+																"quota",
+																"malformed",
+																"empty",
+																"challenge",
+																"timeout",
+																"unavailable",
+																"rate-limit"
+															],
+															"type": "string"
+														}
+													},
+													"required": [
+														"method",
+														"format",
+														"truncated",
+														"completeness"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -5600,6 +6153,7 @@
 										"tags",
 										"sourceUrl",
 										"jobDescription",
+										"postingSource",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -5817,6 +6371,84 @@
 												}
 											]
 										},
+										"postingSource": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"method": {
+															"enum": [
+																"paste",
+																"builtin",
+																"firecrawl",
+																"tavily",
+																"exa"
+															],
+															"type": "string"
+														},
+														"format": {
+															"enum": [
+																"text",
+																"markdown"
+															],
+															"type": "string"
+														},
+														"requestedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"resolvedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"retrievedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"providerFetchedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"truncated": {
+															"type": "boolean"
+														},
+														"completeness": {
+															"enum": [
+																"unknown",
+																"incomplete"
+															],
+															"type": "string"
+														},
+														"fallbackReason": {
+															"enum": [
+																"unsafe-url",
+																"unreachable",
+																"not-a-page",
+																"too-large",
+																"auth",
+																"quota",
+																"malformed",
+																"empty",
+																"challenge",
+																"timeout",
+																"unavailable",
+																"rate-limit"
+															],
+															"type": "string"
+														}
+													},
+													"required": [
+														"method",
+														"format",
+														"truncated",
+														"completeness"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -6103,6 +6735,7 @@
 										"tags",
 										"sourceUrl",
 										"jobDescription",
+										"postingSource",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -6333,6 +6966,84 @@
 												}
 											]
 										},
+										"postingSource": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"method": {
+															"enum": [
+																"paste",
+																"builtin",
+																"firecrawl",
+																"tavily",
+																"exa"
+															],
+															"type": "string"
+														},
+														"format": {
+															"enum": [
+																"text",
+																"markdown"
+															],
+															"type": "string"
+														},
+														"requestedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"resolvedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"retrievedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"providerFetchedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"truncated": {
+															"type": "boolean"
+														},
+														"completeness": {
+															"enum": [
+																"unknown",
+																"incomplete"
+															],
+															"type": "string"
+														},
+														"fallbackReason": {
+															"enum": [
+																"unsafe-url",
+																"unreachable",
+																"not-a-page",
+																"too-large",
+																"auth",
+																"quota",
+																"malformed",
+																"empty",
+																"challenge",
+																"timeout",
+																"unavailable",
+																"rate-limit"
+															],
+															"type": "string"
+														}
+													},
+													"required": [
+														"method",
+														"format",
+														"truncated",
+														"completeness"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -6619,6 +7330,7 @@
 										"tags",
 										"sourceUrl",
 										"jobDescription",
+										"postingSource",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -6873,6 +7585,84 @@
 												}
 											]
 										},
+										"postingSource": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"method": {
+															"enum": [
+																"paste",
+																"builtin",
+																"firecrawl",
+																"tavily",
+																"exa"
+															],
+															"type": "string"
+														},
+														"format": {
+															"enum": [
+																"text",
+																"markdown"
+															],
+															"type": "string"
+														},
+														"requestedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"resolvedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"retrievedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"providerFetchedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"truncated": {
+															"type": "boolean"
+														},
+														"completeness": {
+															"enum": [
+																"unknown",
+																"incomplete"
+															],
+															"type": "string"
+														},
+														"fallbackReason": {
+															"enum": [
+																"unsafe-url",
+																"unreachable",
+																"not-a-page",
+																"too-large",
+																"auth",
+																"quota",
+																"malformed",
+																"empty",
+																"challenge",
+																"timeout",
+																"unavailable",
+																"rate-limit"
+															],
+															"type": "string"
+														}
+													},
+													"required": [
+														"method",
+														"format",
+														"truncated",
+														"completeness"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -7159,6 +7949,7 @@
 										"tags",
 										"sourceUrl",
 										"jobDescription",
+										"postingSource",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -7414,6 +8205,84 @@
 												}
 											]
 										},
+										"postingSource": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"method": {
+															"enum": [
+																"paste",
+																"builtin",
+																"firecrawl",
+																"tavily",
+																"exa"
+															],
+															"type": "string"
+														},
+														"format": {
+															"enum": [
+																"text",
+																"markdown"
+															],
+															"type": "string"
+														},
+														"requestedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"resolvedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"retrievedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"providerFetchedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"truncated": {
+															"type": "boolean"
+														},
+														"completeness": {
+															"enum": [
+																"unknown",
+																"incomplete"
+															],
+															"type": "string"
+														},
+														"fallbackReason": {
+															"enum": [
+																"unsafe-url",
+																"unreachable",
+																"not-a-page",
+																"too-large",
+																"auth",
+																"quota",
+																"malformed",
+																"empty",
+																"challenge",
+																"timeout",
+																"unavailable",
+																"rate-limit"
+															],
+															"type": "string"
+														}
+													},
+													"required": [
+														"method",
+														"format",
+														"truncated",
+														"completeness"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -7700,6 +8569,7 @@
 										"tags",
 										"sourceUrl",
 										"jobDescription",
+										"postingSource",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -7935,6 +8805,84 @@
 												}
 											]
 										},
+										"postingSource": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"method": {
+															"enum": [
+																"paste",
+																"builtin",
+																"firecrawl",
+																"tavily",
+																"exa"
+															],
+															"type": "string"
+														},
+														"format": {
+															"enum": [
+																"text",
+																"markdown"
+															],
+															"type": "string"
+														},
+														"requestedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"resolvedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"retrievedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"providerFetchedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"truncated": {
+															"type": "boolean"
+														},
+														"completeness": {
+															"enum": [
+																"unknown",
+																"incomplete"
+															],
+															"type": "string"
+														},
+														"fallbackReason": {
+															"enum": [
+																"unsafe-url",
+																"unreachable",
+																"not-a-page",
+																"too-large",
+																"auth",
+																"quota",
+																"malformed",
+																"empty",
+																"challenge",
+																"timeout",
+																"unavailable",
+																"rate-limit"
+															],
+															"type": "string"
+														}
+													},
+													"required": [
+														"method",
+														"format",
+														"truncated",
+														"completeness"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -8221,6 +9169,7 @@
 										"tags",
 										"sourceUrl",
 										"jobDescription",
+										"postingSource",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -8434,6 +9383,84 @@
 												}
 											]
 										},
+										"postingSource": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"method": {
+															"enum": [
+																"paste",
+																"builtin",
+																"firecrawl",
+																"tavily",
+																"exa"
+															],
+															"type": "string"
+														},
+														"format": {
+															"enum": [
+																"text",
+																"markdown"
+															],
+															"type": "string"
+														},
+														"requestedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"resolvedUrl": {
+															"type": "string",
+															"format": "uri"
+														},
+														"retrievedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"providerFetchedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"truncated": {
+															"type": "boolean"
+														},
+														"completeness": {
+															"enum": [
+																"unknown",
+																"incomplete"
+															],
+															"type": "string"
+														},
+														"fallbackReason": {
+															"enum": [
+																"unsafe-url",
+																"unreachable",
+																"not-a-page",
+																"too-large",
+																"auth",
+																"quota",
+																"malformed",
+																"empty",
+																"challenge",
+																"timeout",
+																"unavailable",
+																"rate-limit"
+															],
+															"type": "string"
+														}
+													},
+													"required": [
+														"method",
+														"format",
+														"truncated",
+														"completeness"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"requirements": {
 											"type": "array",
 											"items": {
@@ -8720,6 +9747,7 @@
 										"tags",
 										"sourceUrl",
 										"jobDescription",
+										"postingSource",
 										"requirements",
 										"matchScore",
 										"aiMetadata",
@@ -8988,7 +10016,7 @@
 			"post": {
 				"operationId": "searchApplicationPostings",
 				"summary": "Search job postings",
-				"description": "Searches the web for job postings using server-configured Firecrawl or the user's Firecrawl Cloud key. Returns up to five public https links to review and import. Requires authentication.",
+				"description": "Searches using the selected Firecrawl, Tavily or Exa connection. Returns up to five public links to review and import. Requires authentication.",
 				"tags": [
 					"Applications",
 					"AI"
@@ -9041,6 +10069,66 @@
 											"title"
 										]
 									}
+								}
+							}
+						}
+					},
+					"429": {
+						"description": "429",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "RATE_LIMIT_EXCEEDED"
+												},
+												"status": {
+													"const": 429
+												},
+												"message": {
+													"type": "string",
+													"default": "Too many web requests. Try again later."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
 								}
 							}
 						}
@@ -9187,7 +10275,7 @@
 									"input": {
 										"type": "string",
 										"minLength": 1,
-										"maxLength": 20000
+										"maxLength": 100000
 									}
 								},
 								"required": [
@@ -9239,6 +10327,90 @@
 											],
 											"description": "The link, when a link was given."
 										},
+										"postingSource": {
+											"type": "object",
+											"properties": {
+												"method": {
+													"enum": [
+														"paste",
+														"builtin",
+														"firecrawl",
+														"tavily",
+														"exa"
+													],
+													"type": "string"
+												},
+												"format": {
+													"enum": [
+														"text",
+														"markdown"
+													],
+													"type": "string"
+												},
+												"requestedUrl": {
+													"type": "string",
+													"format": "uri"
+												},
+												"resolvedUrl": {
+													"type": "string",
+													"format": "uri"
+												},
+												"retrievedAt": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"providerFetchedAt": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"truncated": {
+													"type": "boolean"
+												},
+												"completeness": {
+													"enum": [
+														"unknown",
+														"incomplete"
+													],
+													"type": "string"
+												},
+												"fallbackReason": {
+													"enum": [
+														"unsafe-url",
+														"unreachable",
+														"not-a-page",
+														"too-large",
+														"auth",
+														"quota",
+														"malformed",
+														"empty",
+														"challenge",
+														"timeout",
+														"unavailable",
+														"rate-limit"
+													],
+													"type": "string"
+												}
+											},
+											"required": [
+												"method",
+												"format",
+												"truncated",
+												"completeness"
+											]
+										},
+										"enrichmentWarning": {
+											"anyOf": [
+												{
+													"enum": [
+														"ai-unavailable"
+													],
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"filledBy": {
 											"enum": [
 												"ai",
@@ -9257,6 +10429,8 @@
 										"requirements",
 										"jobDescription",
 										"sourceUrl",
+										"postingSource",
+										"enrichmentWarning",
 										"filledBy"
 									]
 								}
@@ -9344,6 +10518,66 @@
 												"message": {
 													"type": "string",
 													"default": "That link couldn't be read. Paste the posting text instead."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
+					"429": {
+						"description": "429",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "RATE_LIMIT_EXCEEDED"
+												},
+												"status": {
+													"const": 429
+												},
+												"message": {
+													"type": "string",
+													"default": "Too many web requests. Try again later."
 												},
 												"data": {}
 											},
@@ -18940,7 +20174,7 @@
 			"post": {
 				"operationId": "copyResumeForJob",
 				"summary": "Copy a resume for a job",
-				"description": "Duplicates a resume and links the copy to a job application; the application gets the copy if it has no resume yet. Requires authentication.",
+				"description": "Duplicates a resume and links the copy to a job application. Saved jobs select the copy; submitted document history is preserved. Requires authentication.",
 				"tags": [
 					"Documents"
 				],
@@ -19171,6 +20405,66 @@
 							}
 						}
 					},
+					"409": {
+						"description": "409",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "CONFLICT"
+												},
+												"status": {
+													"const": 409
+												},
+												"message": {
+													"type": "string",
+													"default": "Manage the selected provider through /integrations/web-access."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
 					"412": {
 						"description": "412",
 						"content": {
@@ -19278,6 +20572,66 @@
 												"message": {
 													"type": "string",
 													"default": "Firecrawl is managed by the server."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "409",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "CONFLICT"
+												},
+												"status": {
+													"const": 409
+												},
+												"message": {
+													"type": "string",
+													"default": "Manage the selected provider through /integrations/web-access."
 												},
 												"data": {}
 											},
@@ -47251,6 +48605,567 @@
 								"schema": {
 									"type": "number",
 									"description": "The number of GitHub stars."
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/integrations/web-access": {
+			"get": {
+				"operationId": "getWebAccessStatus",
+				"summary": "Get search and reading availability",
+				"tags": [
+					"Integrations"
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"builtInReader": {
+											"const": true
+										},
+										"configured": {
+											"type": "boolean"
+										},
+										"provider": {
+											"anyOf": [
+												{
+													"enum": [
+														"firecrawl",
+														"tavily",
+														"exa"
+													],
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"managed": {
+											"type": "boolean"
+										},
+										"canSave": {
+											"type": "boolean"
+										},
+										"search": {
+											"type": "boolean"
+										},
+										"read": {
+											"const": true
+										}
+									},
+									"required": [
+										"builtInReader",
+										"configured",
+										"provider",
+										"managed",
+										"canSave",
+										"search",
+										"read"
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "saveWebAccessKey",
+				"summary": "Select a personal web connection",
+				"tags": [
+					"Integrations"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"provider": {
+										"enum": [
+											"firecrawl",
+											"tavily",
+											"exa"
+										],
+										"type": "string"
+									},
+									"apiKey": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 2000
+									}
+								},
+								"required": [
+									"provider",
+									"apiKey"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"not": {}
+										},
+										{
+											"not": {}
+										}
+									]
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "403",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "FORBIDDEN"
+												},
+												"status": {
+													"const": 403
+												},
+												"message": {
+													"type": "string",
+													"default": "Web access is managed by the server."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
+					"412": {
+						"description": "412",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "PRECONDITION_FAILED"
+												},
+												"status": {
+													"const": 412
+												},
+												"message": {
+													"type": "string",
+													"default": "Credential encryption is not configured."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteWebAccessKey",
+				"summary": "Remove the personal web connection",
+				"tags": [
+					"Integrations"
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"not": {}
+										},
+										{
+											"not": {}
+										}
+									]
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "403",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "FORBIDDEN"
+												},
+												"status": {
+													"const": 403
+												},
+												"message": {
+													"type": "string",
+													"default": "Web access is managed by the server."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
+					"412": {
+						"description": "412",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "PRECONDITION_FAILED"
+												},
+												"status": {
+													"const": 412
+												},
+												"message": {
+													"type": "string",
+													"default": "Credential encryption is not configured."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/integrations/web-access/test": {
+			"post": {
+				"operationId": "testWebAccessConnection",
+				"summary": "Test provider search and reading independently",
+				"tags": [
+					"Integrations"
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"search": {
+											"type": "object",
+											"properties": {
+												"success": {
+													"type": "boolean"
+												},
+												"error": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"success"
+											]
+										},
+										"read": {
+											"type": "object",
+											"properties": {
+												"success": {
+													"type": "boolean"
+												},
+												"error": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"success"
+											]
+										}
+									},
+									"required": [
+										"search",
+										"read"
+									]
+								}
+							}
+						}
+					},
+					"412": {
+						"description": "412",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "PRECONDITION_FAILED"
+												},
+												"status": {
+													"const": 412
+												},
+												"message": {
+													"type": "string",
+													"default": "No external web connection is configured."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
+					"429": {
+						"description": "429",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "RATE_LIMIT_EXCEEDED"
+												},
+												"status": {
+													"const": 429
+												},
+												"message": {
+													"type": "string",
+													"default": "Too many web requests. Try again later."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
 								}
 							}
 						}

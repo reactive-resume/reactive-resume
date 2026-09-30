@@ -81,16 +81,41 @@ describe("copyForJob", () => {
 		expect(applicationServiceMock.update).toHaveBeenCalledWith({ userId: "u1", id: "a1", resumeId: "copy" });
 	});
 
-	it("leaves an application's existing resume alone", async () => {
-		resumeServiceMock.getById.mockResolvedValueOnce(source);
-		dbMock.select.mockReturnValueOnce(rows([{ id: "a1", company: "Orbital", resumeId: "base" }]));
-		resumeServiceMock.create.mockResolvedValueOnce("copy");
-		const set = updates();
+	it.each(["saved", "applied"])(
+		"prepares a copy at %s while preserving its base and submitted documents",
+		async (status) => {
+			resumeServiceMock.getById.mockResolvedValueOnce(source);
+			dbMock.select.mockReturnValueOnce(rows([{ id: "a1", company: "Orbital", resumeId: "base", status }]));
+			resumeServiceMock.create.mockResolvedValueOnce("copy");
+			const set = updates();
 
-		await documentsService.copyForJob({ userId: "u1", resumeId: "r1", applicationId: "a1", name: "Mine" });
+			await documentsService.copyForJob({ userId: "u1", resumeId: "r1", applicationId: "a1", name: "Mine" });
 
-		expect(resumeServiceMock.create).toHaveBeenCalledWith(expect.objectContaining({ name: "Mine" }));
-		expect(set).toHaveBeenCalledTimes(1);
-		expect(applicationServiceMock.update).not.toHaveBeenCalled();
+			expect(resumeServiceMock.create).toHaveBeenCalledWith(expect.objectContaining({ name: "Mine" }));
+			expect(set).toHaveBeenCalledTimes(1);
+			if (status === "saved")
+				expect(applicationServiceMock.update).toHaveBeenCalledWith({ userId: "u1", id: "a1", resumeId: "copy" });
+			else expect(applicationServiceMock.update).not.toHaveBeenCalled();
+			expect(resumeServiceMock.create).toHaveBeenCalledWith(expect.objectContaining({ data: source.data }));
+		},
+	);
+});
+
+describe("linkApplication", () => {
+	it.each([
+		{ status: "saved", resumeId: null, sentResumeVersionId: null, selected: true },
+		{ status: "saved", resumeId: "base", sentResumeVersionId: null, selected: true },
+		{ status: "applied", resumeId: "submitted", sentResumeVersionId: "version", selected: false },
+		{ status: "saved", resumeId: "submitted", sentResumeVersionId: "version", selected: false },
+	])("links manual preparation while preserving submission history: %j", async ({ selected, ...application }) => {
+		dbMock.select.mockReturnValueOnce(rows([{ isLocked: false, trashedAt: null }]));
+		dbMock.select.mockReturnValueOnce(rows([{ id: "a1", company: "Orbital", ...application }]));
+		const set = vi.fn(() => ({ where: () => ({ returning: async () => [{ id: "new" }] }) }));
+		dbMock.update.mockReturnValue({ set });
+		await documentsService.linkApplication({ userId: "u1", type: "resume", id: "new", applicationId: "a1" });
+		expect(set).toHaveBeenCalledWith({ applicationId: "a1" });
+		if (selected)
+			expect(applicationServiceMock.update).toHaveBeenCalledWith({ userId: "u1", id: "a1", resumeId: "new" });
+		else expect(applicationServiceMock.update).not.toHaveBeenCalled();
 	});
 });

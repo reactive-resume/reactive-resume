@@ -1,33 +1,40 @@
+import type { ChatAttachment, MessageContext } from "./chat";
+import type { AssistantDocument } from "./document";
 import type { ProposeEditsOutput } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { UIMessage } from "ai";
 import type { ReactNode } from "react";
-import type { ChatAttachment, MessageContext } from "./chat";
-import type { AssistantDocument } from "./document";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { useEffect, useEffectEvent, useId, useMemo, useRef, useState } from "react";
+import { agentWebSources, readPageOutputSchema } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { attachmentPart, fileToBase64, transcriptOf, useAssistantChat } from "./chat";
+import { AssistantMarkdown } from "./markdown";
 import { ChangeSet } from "@/features/resume/editor/proposals/proposal-list";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { isImeComposing } from "@/libs/keyboard";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
-import { attachmentPart, fileToBase64, transcriptOf, useAssistantChat } from "./chat";
-import { AssistantMarkdown } from "./markdown";
 
 type EditStatus = Proposal["status"];
 type Part = UIMessage["parts"][number];
-type ToolPart = Part & { toolCallId?: string; state?: string; input?: unknown; output?: unknown; errorText?: string };
+type ToolPart = Part & {
+	toolCallId?: string;
+	state?: string;
+	input?: unknown;
+	output?: unknown;
+	errorText?: string;
+};
 
 type ConversationProps = {
 	threadId: string;
@@ -57,7 +64,10 @@ export function Conversation(props: ConversationProps) {
 	// Messages already in the thread when it opens are history; only new ones rise in.
 	const [initialIds] = useState(() => new Set(props.initialMessages.map((message) => message.id)));
 
-	const refresh = () => void queryClient.invalidateQueries({ queryKey: orpc.agent.threads.list.key() });
+	const refresh = () =>
+		void queryClient.invalidateQueries({
+			queryKey: orpc.agent.threads.list.key(),
+		});
 	const { messages, sendMessage, status, error, clearError, regenerate, stop, addToolOutput } = useAssistantChat({
 		threadId,
 		initialMessages: props.initialMessages,
@@ -86,7 +96,9 @@ export function Conversation(props: ConversationProps) {
 		onPromptSent();
 		const files = promptAttachments.map(attachmentPart);
 		sendMessage(files.length > 0 ? { text: prompt, files } : { text: prompt }, {
-			body: { attachmentIds: promptAttachments.map((attachment) => attachment.id) },
+			body: {
+				attachmentIds: promptAttachments.map((attachment) => attachment.id),
+			},
 		});
 	}, [prompt, promptAttachments, onPromptSent, sendMessage]);
 
@@ -111,7 +123,7 @@ export function Conversation(props: ConversationProps) {
 			),
 		[messages, statuses, document],
 	);
-	// biome-ignore lint/nursery/useReactCompiler: publishes to the editor store, which the page canvas reads
+	// oxlint-disable-next-line react/set-state-in-effect -- publishes to the editor store, which the page canvas reads
 	useEffect(() => setAssistantProposals(proposals), [proposals, setAssistantProposals]);
 	useEffect(() => () => setAssistantProposals([]), [setAssistantProposals]);
 
@@ -139,7 +151,7 @@ export function Conversation(props: ConversationProps) {
 				const undone = toProposals(part, statuses, document).filter(
 					(proposal) => proposal.status === "accepted" && document.stateOf(proposal) === "pending",
 				);
-				// biome-ignore lint/nursery/useReactCompiler: an undo happens in the resume store; the new status is also saved to the thread
+				// oxlint-disable-next-line react/set-state-in-effect -- an undo happens in the resume store; the new status is also saved to the thread
 				if (undone.length > 0) recordUndone(message, part, undone, "pending");
 			}
 		}
@@ -176,20 +188,26 @@ export function Conversation(props: ConversationProps) {
 						readOnly={readOnly}
 						statuses={statuses}
 						document={document}
-						onAnswer={(toolCallId, answer) => addToolOutput({ tool: "ask_user_question", toolCallId, output: answer })}
+						onAnswer={(toolCallId, answer) =>
+							addToolOutput({
+								tool: "ask_user_question",
+								toolCallId,
+								output: answer,
+							})
+						}
 						onRecord={record}
 					/>
 				))}
 
 				{status === "submitted" && (
-					<p className={cn("flex items-center gap-2 text-ink-3 text-sm", ENTER_CLASS)}>
+					<p className={cn("flex items-center gap-2 text-sm text-ink-3", ENTER_CLASS)}>
 						<Spinner decorative className="size-3.5" />
 						<Trans>Thinking…</Trans>
 					</p>
 				)}
 
 				{stopped && !streaming && !proposedInLast && (
-					<p className="flex items-center gap-2 text-ink-2 text-sm starting:opacity-0 transition-opacity duration-standard ease-enter">
+					<p className="flex items-center gap-2 text-sm text-ink-2 transition-opacity duration-standard ease-enter starting:opacity-0">
 						<Icon name="stop_circle" size={18} className="text-ink-3" />
 						<Trans>Stopped. No edits were proposed.</Trans>
 						<button
@@ -205,14 +223,17 @@ export function Conversation(props: ConversationProps) {
 				{error && !streaming && (
 					<div
 						role="alert"
-						className="grid gap-2 rounded-xl bg-danger-soft p-3 text-[13px] text-danger-text starting:opacity-0 transition-opacity duration-standard ease-enter"
+						className="grid gap-2 rounded-xl bg-danger-soft p-3 text-[13px] text-danger-text transition-opacity duration-standard ease-enter starting:opacity-0"
 					>
 						<span className="flex gap-2">
 							<Icon name="error" size={18} className="shrink-0" />
 							<Trans>
 								{props.providerLabel} returned “
-								{getOrpcErrorMessage(error, { fallback: t`an error`, allowServerMessage: true })}”. Your message is
-								kept.
+								{getOrpcErrorMessage(error, {
+									fallback: t`an error`,
+									allowServerMessage: true,
+								})}
+								”. Your message is kept.
 							</Trans>
 						</span>
 						<span className="flex gap-1.5">
@@ -227,7 +248,7 @@ export function Conversation(props: ConversationProps) {
 				)}
 
 				{!streaming && messages.length > 0 && (
-					<div className="flex justify-end starting:opacity-0 transition-opacity duration-standard ease-enter">
+					<div className="flex justify-end transition-opacity duration-standard ease-enter starting:opacity-0">
 						<Button size="sm" variant="ghost" className="text-ink-3" onClick={() => void copyTranscript(messages)}>
 							<Icon name="content_copy" size={16} />
 							<Trans>Copy transcript</Trans>
@@ -299,12 +320,9 @@ function MessageView({
 		const files = message.parts.filter((part) => part.type === "file");
 		return (
 			<div className={cn("ms-8 grid justify-items-end gap-1", enter && ENTER_CLASS)}>
-				{text && <p className="whitespace-pre-wrap rounded-[12px_12px_4px_12px] bg-sunken px-3 py-2 text-sm">{text}</p>}
-				{files.map((file, index) => (
-					<span
-						key={`${message.id}-file-${index}`}
-						className="flex items-center gap-1 rounded-md bg-sunken px-2 py-1 text-ink-2 text-xs"
-					>
+				{text && <p className="rounded-[12px_12px_4px_12px] bg-sunken px-3 py-2 text-sm whitespace-pre-wrap">{text}</p>}
+				{files.map((file) => (
+					<span key={file.url} className="flex items-center gap-1 rounded-md bg-sunken px-2 py-1 text-xs text-ink-2">
 						<Icon name="attach_file" size={14} />
 						{(file as { filename?: string }).filename ?? t`Attachment`}
 					</span>
@@ -313,9 +331,7 @@ function MessageView({
 		);
 	}
 
-	const sources = message.parts.filter((part) => part.type === "source-url") as Array<
-		Part & { url: string; title?: string }
-	>;
+	const sources = agentWebSources(message);
 	const lastTextIndex = message.parts.findLastIndex((part) => part.type === "text");
 
 	return (
@@ -335,6 +351,7 @@ function MessageView({
 					<ToolPartView
 						key={key}
 						part={part as ToolPart}
+						streaming={streaming}
 						message={message}
 						readOnly={readOnly}
 						statuses={statuses}
@@ -349,9 +366,9 @@ function MessageView({
 					<span className="font-medium text-ink-3">
 						<Trans>Sources</Trans>
 					</span>
-					{sources.map((source, index) => (
+					{sources.map((source) => (
 						<a
-							key={`${source.url}-${index}`}
+							key={source.url}
 							href={source.url}
 							target="_blank"
 							rel="noreferrer"
@@ -366,9 +383,18 @@ function MessageView({
 	);
 }
 
-type ToolPartViewProps = Omit<MessageViewProps, "streaming" | "enter"> & { part: ToolPart };
+type ToolPartViewProps = Omit<MessageViewProps, "enter"> & { part: ToolPart };
 
-function ToolPartView({ part, message, readOnly, statuses, document, onAnswer, onRecord }: ToolPartViewProps) {
+function ToolPartView({
+	part,
+	streaming,
+	message,
+	readOnly,
+	statuses,
+	document,
+	onAnswer,
+	onRecord,
+}: ToolPartViewProps) {
 	const working = part.state === "input-streaming" || part.state === "input-available";
 
 	switch (part.type) {
@@ -386,11 +412,55 @@ function ToolPartView({ part, message, readOnly, statuses, document, onAnswer, o
 				</Status>
 			);
 		case "tool-web_search":
+		case "tool-google_search":
+		case "tool-search_web":
+		case "tool-read_page": {
+			const reading = part.type === "tool-read_page";
+			if (working && !streaming)
+				return (
+					<p className="text-xs text-ink-3">
+						{reading ? <Trans>Page reading didn't finish.</Trans> : <Trans>Web search didn't finish.</Trans>}
+					</p>
+				);
+			if (part.state === "output-error")
+				return (
+					<p role="alert" className="text-xs text-danger-text">
+						{reading ? (
+							<Trans>Couldn't read this page: {part.errorText}</Trans>
+						) : (
+							<Trans>Web search failed: {part.errorText}</Trans>
+						)}
+					</p>
+				);
+			const page = reading ? readPageOutputSchema.safeParse(part.output) : null;
 			return (
-				<Status working={working}>
-					<Trans>Searched the web</Trans>
-				</Status>
+				<div className="grid gap-1">
+					<Status working={working}>
+						{reading ? (
+							working ? (
+								<Trans>Reading page…</Trans>
+							) : (
+								<Trans>Read the page</Trans>
+							)
+						) : working ? (
+							<Trans>Searching the web…</Trans>
+						) : (
+							<Trans>Searched the web</Trans>
+						)}
+					</Status>
+					{page?.success && (page.data.truncated || page.data.completeness === "incomplete") && (
+						<p className="text-xs text-ink-3">
+							<Trans>This page is clipped or incomplete. Check the original before using it.</Trans>
+						</p>
+					)}
+					{page?.success && page.data.fallbackReason && (
+						<p className="text-xs text-ink-3">
+							<Trans>Enhanced reading unavailable; used the built-in reader.</Trans>
+						</p>
+					)}
+				</div>
 			);
+		}
 		case "tool-apply_resume_patch":
 			// Conversations from before the assistant only proposed edits.
 			return (
@@ -403,7 +473,7 @@ function ToolPartView({ part, message, readOnly, statuses, document, onAnswer, o
 		case "tool-propose_edits": {
 			if (part.state === "output-error")
 				return (
-					<p className="text-danger-text text-xs">
+					<p className="text-xs text-danger-text">
 						<Trans>Couldn't propose these edits: {part.errorText}</Trans>
 					</p>
 				);
@@ -442,7 +512,7 @@ function ToolPartView({ part, message, readOnly, statuses, document, onAnswer, o
 						/>
 					)}
 					{output.skipped.length > 0 && (
-						<p className="text-ink-3 text-xs">
+						<p className="text-xs text-ink-3">
 							<Plural
 								value={output.skipped.length}
 								one="# edit couldn't be placed: its text changed. Ask again to redo it."
@@ -460,7 +530,7 @@ function ToolPartView({ part, message, readOnly, statuses, document, onAnswer, o
 
 function Status({ working, children }: { working: boolean; children: ReactNode }) {
 	return (
-		<p className="flex items-center gap-1.5 text-ink-3 text-xs">
+		<p className="flex items-center gap-1.5 text-xs text-ink-3">
 			{/* A fixed 14px slot, so the label doesn't shift when the spinner turns into a check. */}
 			<span className="grid size-3.5 shrink-0 place-items-center">
 				{working ? <Spinner decorative className="size-3" /> : <Icon name="check" size={14} className={POP_CLASS} />}
@@ -470,7 +540,11 @@ function Status({ working, children }: { working: boolean; children: ReactNode }
 	);
 }
 
-type QuestionCardProps = { part: ToolPart; readOnly: boolean; onAnswer: (toolCallId: string, answer: string) => void };
+type QuestionCardProps = {
+	part: ToolPart;
+	readOnly: boolean;
+	onAnswer: (toolCallId: string, answer: string) => void;
+};
 
 /** The assistant asks before writing anything the document doesn't say: an info-soft card with its choices. */
 function QuestionCard({ part, readOnly, onAnswer }: QuestionCardProps) {
@@ -487,7 +561,7 @@ function QuestionCard({ part, readOnly, onAnswer }: QuestionCardProps) {
 
 	return (
 		<div className="grid gap-2.5 rounded-xl bg-info-soft p-3 text-info-text">
-			<p className="font-medium text-sm">{question}</p>
+			<p className="text-sm font-medium">{question}</p>
 			{answer !== null ? (
 				<p className="text-[13px] opacity-80">
 					<Trans>You answered: {answer}</Trans>
@@ -518,7 +592,7 @@ function QuestionCard({ part, readOnly, onAnswer }: QuestionCardProps) {
 							value={other}
 							onChange={(event) => setOther(event.target.value)}
 							placeholder={t`Or in your own words…`}
-							className="h-8 min-w-0 flex-1 rounded-md border border-line-2 bg-raised px-2 text-ink text-sm outline-none transition-[border-color,box-shadow] focus:border-accent"
+							className="h-8 min-w-0 flex-1 rounded-md border border-line-2 bg-raised px-2 text-sm text-ink transition-[border-color,box-shadow] outline-none focus:border-accent"
 						/>
 						<Button type="submit" size="sm" disabled={!other.trim()}>
 							<Trans>Send</Trans>
@@ -579,14 +653,20 @@ export function Composer(props: ComposerProps) {
 						mediaType: file.type || "application/octet-stream",
 						data: await fileToBase64(file),
 					});
-					return { id: attachment.id, filename: attachment.filename, mediaType: attachment.mediaType };
+					return {
+						id: attachment.id,
+						filename: attachment.filename,
+						mediaType: attachment.mediaType,
+					};
 				}),
 			);
 			setAttachments((current) => [...current, ...uploaded]);
 		} catch (error) {
 			toast.add({
 				type: "error",
-				description: getOrpcErrorMessage(error, { fallback: t`Couldn't attach the file.` }),
+				description: getOrpcErrorMessage(error, {
+					fallback: t`Couldn't attach the file.`,
+				}),
 			});
 		} finally {
 			setUploading(false);
@@ -601,7 +681,13 @@ export function Composer(props: ComposerProps) {
 			label: document.name,
 		},
 		...(document.posting
-			? [{ key: "posting" as const, icon: "work" as const, label: t`${document.posting.company} posting` }]
+			? [
+					{
+						key: "posting" as const,
+						icon: "work" as const,
+						label: t`${document.posting.company} posting`,
+					},
+				]
 			: []),
 	].filter((chip) => context[chip.key]);
 
@@ -620,7 +706,7 @@ export function Composer(props: ComposerProps) {
 			: t`Sends your message to ${provider} with your key, only when you press send.`;
 
 	return (
-		<div className="grid gap-2 border-line border-t bg-surface px-3 pt-2.5 pb-3">
+		<div className="grid gap-2 border-t border-line bg-surface px-3 pt-2.5 pb-3">
 			{(chips.length > 0 || attachments.length > 0) && (
 				<div className="flex flex-wrap gap-1.5">
 					{chips.map((chip) => (
@@ -702,7 +788,7 @@ export function Composer(props: ComposerProps) {
 				</button>
 			</div>
 
-			<p className="text-ink-3 text-xs leading-4">{disclosure}</p>
+			<p className="text-xs leading-4 text-ink-3">{disclosure}</p>
 		</div>
 	);
 }
@@ -718,7 +804,7 @@ type RemovableChipProps = {
 
 function RemovableChip({ icon, label, maxWidth, removeLabel, onRemove }: RemovableChipProps) {
 	return (
-		<span className="flex h-[26px] items-center gap-1 rounded-md bg-sunken ps-2 text-ink-2 text-xs">
+		<span className="flex h-[26px] items-center gap-1 rounded-md bg-sunken ps-2 text-xs text-ink-2">
 			<Icon name={icon} size={15} />
 			<span className={cn(maxWidth, "truncate")}>{label}</span>
 			<button
@@ -735,7 +821,13 @@ function RemovableChip({ icon, label, maxWidth, removeLabel, onRemove }: Removab
 
 async function copyTranscript(messages: readonly UIMessage[]) {
 	try {
-		await navigator.clipboard.writeText(transcriptOf(messages, { user: t`You`, assistant: t`Assistant` }));
+		await navigator.clipboard.writeText(
+			transcriptOf(messages, {
+				user: t`You`,
+				assistant: t`Assistant`,
+				sources: t`Sources`,
+			}),
+		);
 		toast.add({ description: t`Transcript copied` });
 	} catch {
 		toast.add({ description: t`Couldn't copy the transcript.` });

@@ -6,6 +6,7 @@ const route = { tags: ["Integrations"] };
 const errors = {
 	FORBIDDEN: { message: "Firecrawl is managed by the server.", status: 403 },
 	PRECONDITION_FAILED: { message: "Credential encryption is not configured.", status: 412 },
+	CONFLICT: { message: "Manage the selected provider through /integrations/web-access.", status: 409 },
 };
 
 export const firecrawlRouter = {

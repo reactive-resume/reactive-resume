@@ -81,8 +81,13 @@ async function withStoredEditStatuses(
 }
 
 function toolPartFromCall(part: StepContentPart): UiMessagePart {
+	const metadata = {
+		...(part.providerMetadata ? { callProviderMetadata: part.providerMetadata } : {}),
+		...(part.providerExecuted ? { providerExecuted: true } : {}),
+	};
 	if (part.dynamic) {
 		return {
+			...metadata,
 			type: "dynamic-tool",
 			toolName: String(part.toolName),
 			toolCallId: String(part.toolCallId),
@@ -92,6 +97,7 @@ function toolPartFromCall(part: StepContentPart): UiMessagePart {
 	}
 
 	return {
+		...metadata,
 		type: `tool-${String(part.toolName)}`,
 		toolCallId: String(part.toolCallId),
 		state: "input-available",
@@ -100,7 +106,7 @@ function toolPartFromCall(part: StepContentPart): UiMessagePart {
 }
 
 // Pure fold: append one step's content (text, reasoning, tool call/result/error) to a UI message.
-// Sources, files, and approval parts are skipped — the authoritative onFinish message carries them.
+// Files and approval parts are skipped — the authoritative onFinish message carries them.
 export function applyStepToUiMessage(message: UIMessage, step: AgentStepLike): UIMessage {
 	const parts: UiMessagePart[] = [...message.parts, { type: "step-start" } as UiMessagePart];
 	const toolPartIndexByCallId = new Map<string, number>();
@@ -110,6 +116,15 @@ export function applyStepToUiMessage(message: UIMessage, step: AgentStepLike): U
 			continue;
 		}
 		const content = rawContent as StepContentPart;
+		if (content.type === "source" && content.sourceType === "url" && typeof content.url === "string") {
+			parts.push({
+				type: "source-url",
+				sourceId: String(content.id),
+				url: content.url,
+				...(typeof content.title === "string" ? { title: content.title } : {}),
+			});
+			continue;
+		}
 		if (content.type === "text" && typeof content.text === "string" && content.text) {
 			parts.push({ type: "text", text: content.text } as UiMessagePart);
 			continue;
@@ -129,7 +144,11 @@ export function applyStepToUiMessage(message: UIMessage, step: AgentStepLike): U
 		if ((content.type === "tool-result" || content.type === "tool-error") && typeof content.toolCallId === "string") {
 			const resolution =
 				content.type === "tool-result"
-					? { state: "output-available", output: content.output }
+					? {
+							state: "output-available",
+							output: content.output,
+							...(content.providerMetadata ? { resultProviderMetadata: content.providerMetadata } : {}),
+						}
 					: {
 							state: "output-error",
 							errorText: content.error instanceof Error ? content.error.message : String(content.error),
@@ -266,7 +285,7 @@ export async function upsertAssistantUiMessage(
 
 		if (updated.length === 1) {
 			if (isFinal) await touchThread(input, database);
-			// biome-ignore lint/style/noNonNullAssertion: length checked above
+			// oxlint-disable-next-line typescript/no-non-null-assertion -- length checked above
 			return { rowId: updated[0]!.id };
 		}
 	}
@@ -286,7 +305,7 @@ export async function upsertAssistantUiMessage(
 
 	if (updatedById.length >= 1) {
 		if (isFinal) await touchThread(input, database);
-		// biome-ignore lint/style/noNonNullAssertion: length checked above
+		// oxlint-disable-next-line typescript/no-non-null-assertion -- length checked above
 		return { rowId: updatedById[0]!.id };
 	}
 

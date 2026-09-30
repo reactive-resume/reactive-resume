@@ -42,6 +42,35 @@ describe("applyStepToUiMessage", () => {
 
 		expect(second.parts.map((part) => part.type)).toEqual(["step-start", "text", "step-start", "text"]);
 	});
+
+	it("keeps native sources and Google function signatures in a crash-recovery draft", () => {
+		const folded = applyStepToUiMessage(emptyMessage(), {
+			content: [
+				{ type: "source", sourceType: "url", id: "src", url: "https://company.example/job", title: "Role" },
+				{
+					type: "tool-call",
+					toolCallId: "read",
+					toolName: "read_resume",
+					input: {},
+					providerMetadata: { google: { thoughtSignature: "opaque-signature" } },
+				},
+				{ type: "tool-result", toolCallId: "read", toolName: "read_resume", output: { text: "Resume" } },
+			],
+		});
+		expect(folded.parts).toContainEqual({
+			type: "source-url",
+			sourceId: "src",
+			url: "https://company.example/job",
+			title: "Role",
+		});
+		expect(folded.parts).toContainEqual(
+			expect.objectContaining({
+				type: "tool-read_resume",
+				state: "output-available",
+				callProviderMetadata: { google: { thoughtSignature: "opaque-signature" } },
+			}),
+		);
+	});
 });
 
 type ScriptedDb = {

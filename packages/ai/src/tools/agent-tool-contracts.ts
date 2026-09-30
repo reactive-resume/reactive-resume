@@ -10,6 +10,85 @@ export const askUserQuestionInputSchema = z.object({
 	recommendedChoice: z.string().trim().optional(),
 });
 
+export const searchWebInputSchema = z.object({
+	query: z.string().trim().min(1).max(500),
+});
+export const readPageInputSchema = z.object({ url: z.url().max(2_048) });
+export const searchWebOutputSchema = z.array(
+	z.object({
+		url: z.string(),
+		title: z.string(),
+		snippet: z.string().optional(),
+	}),
+);
+export const readPageOutputSchema = z.object({
+	requestedUrl: z.string(),
+	resolvedUrl: z.string().optional(),
+	content: z.string(),
+	format: z.enum(["text", "markdown"]),
+	retrievedAt: z.iso.datetime({ offset: true }),
+	providerFetchedAt: z.iso.datetime({ offset: true }).optional(),
+	method: z.enum(["builtin", "firecrawl", "tavily", "exa"]),
+	truncated: z.boolean(),
+	completeness: z.enum(["unknown", "incomplete"]),
+	fallbackReason: z.string().optional(),
+});
+export type SearchWebOutput = z.infer<typeof searchWebOutputSchema>;
+export type ReadPageOutput = z.infer<typeof readPageOutputSchema>;
+
+export type AgentWebSource = {
+	url: string;
+	title: string;
+	kind: "native" | "search" | "page";
+};
+
+// Link validation only; the server reader additionally checks DNS and redirects before fetching.
+function publicSourceUrl(value: string): string | null {
+	try {
+		const url = new URL(value);
+		const host = url.hostname.toLowerCase().replace(/\.$/, "");
+		if (!["http:", "https:"].includes(url.protocol) || url.username || url.password) return null;
+		// Source links use public hostnames. Reject IP literals and local names instead of guessing IP ranges in the browser.
+		if (
+			!host.includes(".") ||
+			/^[\d.]+$/.test(host) ||
+			host.includes(":") ||
+			/(?:^|\.)(?:localhost|local|internal|lan)$/.test(host) ||
+			host.endsWith(".home.arpa")
+		)
+			return null;
+		url.hash = "";
+		return url.toString();
+	} catch {
+		return null;
+	}
+}
+
+/** Sources from successful retrieval and native source parts, never links invented in response text. */
+export function agentWebSources(message: UIMessage): AgentWebSource[] {
+	const sources = new Map<string, AgentWebSource>();
+	const add = (value: string, title: string, kind: AgentWebSource["kind"]) => {
+		const url = publicSourceUrl(value);
+		if (url && !sources.has(url)) sources.set(url, { url, title: title.trim() || url, kind });
+	};
+	for (const part of message.parts) {
+		if (part.type === "source-url") {
+			add(part.url, part.title ?? "", "native");
+			continue;
+		}
+		const toolPart = part as { state?: string; output?: unknown };
+		if (toolPart.state !== "output-available") continue;
+		if (part.type === "tool-search_web") {
+			const parsed = searchWebOutputSchema.safeParse(toolPart.output);
+			if (parsed.success) for (const result of parsed.data) add(result.url, result.title, "search");
+		} else if (part.type === "tool-read_page") {
+			const parsed = readPageOutputSchema.safeParse(toolPart.output);
+			if (parsed.success) add(parsed.data.resolvedUrl ?? parsed.data.requestedUrl, "", "page");
+		}
+	}
+	return [...sources.values()];
+}
+
 /** One edit: rewrite a passage of the document, or add a new passage after it. */
 export const proposedEditInputSchema = z.object({
 	passageId: z.string().trim().min(1).describe("The id of a passage from read_resume or read_letter."),
@@ -57,6 +136,7 @@ export const proposeEditsOutputSchema = z.looseObject({
 export const agentMessageMetadataSchema = z
 	.looseObject({
 		model: z.string().optional(),
+		provider: z.string().optional(),
 		usage: z
 			.looseObject({
 				inputTokens: z.number().optional(),
@@ -92,8 +172,17 @@ export type AgentTools = {
 	read_letter: { input: Record<string, never>; output: unknown };
 	read_attachment: { input: { attachmentId: string }; output: unknown };
 	propose_edits: { input: ProposeEditsInput; output: ProposeEditsOutput };
-	// Provider-native web search (OpenAI Responses); input/output shapes are provider-owned.
+	search_web: {
+		input: z.infer<typeof searchWebInputSchema>;
+		output: SearchWebOutput;
+	};
+	read_page: {
+		input: z.infer<typeof readPageInputSchema>;
+		output: ReadPageOutput;
+	};
+	// Provider-native search names remain readable in existing conversations.
 	web_search: { input: unknown; output: unknown };
+	google_search: { input: unknown; output: unknown };
 };
 
 export type AgentUIMessage = UIMessage<AgentMessageMetadata, UIDataTypes, AgentTools>;

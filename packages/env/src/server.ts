@@ -89,7 +89,11 @@ export const env = createEnv({
 		REDIS_URL: z.url({ protocol: /redis(s)?/ }).optional(),
 		ENCRYPTION_SECRET: z.string().min(32, "ENCRYPTION_SECRET must be at least 32 characters").optional(),
 
-		// Optional job posting search and scraping (operator-controlled; local URLs are allowed).
+		// Optional search and enhanced reading; custom URLs are operator-controlled Firecrawl services.
+		WEB_ACCESS_PROVIDER: z.enum(["firecrawl", "tavily", "exa"]).optional(),
+		WEB_ACCESS_API_KEY: z.string().trim().min(1).optional(),
+		WEB_ACCESS_API_URL: z.url({ protocol: /^https?$/ }).optional(),
+		// Legacy aliases are used only when no generic configuration is supplied.
 		FIRECRAWL_API_URL: z.url({ protocol: /^https?$/ }).optional(),
 		FIRECRAWL_API_KEY: z.string().trim().min(1).optional(),
 		AI_PROVIDER: aiProviderSchema.optional(),
@@ -108,6 +112,17 @@ export const env = createEnv({
 	runtimeEnv: deploymentEnvironment(process.env),
 	emptyStringAsUndefined: true,
 });
+
+if (
+	(env.WEB_ACCESS_PROVIDER || env.WEB_ACCESS_API_KEY || env.WEB_ACCESS_API_URL) &&
+	(!env.WEB_ACCESS_PROVIDER ||
+		(!env.WEB_ACCESS_API_KEY && !(env.WEB_ACCESS_PROVIDER === "firecrawl" && env.WEB_ACCESS_API_URL)) ||
+		(env.WEB_ACCESS_PROVIDER !== "firecrawl" && env.WEB_ACCESS_API_URL))
+) {
+	throw new Error(
+		"Web access requires WEB_ACCESS_PROVIDER and WEB_ACCESS_API_KEY; only Firecrawl accepts WEB_ACCESS_API_URL, which may be keyless.",
+	);
+}
 
 if (
 	(env.AI_PROVIDER || env.AI_MODEL || env.AI_API_KEY || env.AI_BASE_URL) &&

@@ -27,39 +27,39 @@ turn on an optional feature.
 
 ## Required
 
-| Variable | Description |
-| --- | --- |
-| `APP_URL` | The public address people use to reach your instance, for example `https://resume.example.com`. Must start with `http://` or `https://`. Used for sign-in redirects, OAuth callbacks, links in emails, public resume links, social previews and upload URLs. With an `https://` address, session cookies are marked secure. |
-| `DATABASE_URL` | PostgreSQL connection string: `postgresql://USER:PASSWORD@HOST:5432/DATABASE`. Must start with `postgres://` or `postgresql://`. URL-encode special characters in the password. Add provider options such as `?sslmode=require` when your database needs them. |
-| `AUTH_SECRET` | Secret used to sign sessions and encrypt sign-in data. Generate one with `openssl rand -hex 32`. |
+| Variable       | Description                                                                                                                                                                                                                                                                                                                 |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `APP_URL`      | The public address people use to reach your instance, for example `https://resume.example.com`. Must start with `http://` or `https://`. Used for sign-in redirects, OAuth callbacks, links in emails, public resume links, social previews and upload URLs. With an `https://` address, session cookies are marked secure. |
+| `DATABASE_URL` | PostgreSQL connection string: `postgresql://USER:PASSWORD@HOST:5432/DATABASE`. Must start with `postgres://` or `postgresql://`. URL-encode special characters in the password. Add provider options such as `?sslmode=require` when your database needs them.                                                              |
+| `AUTH_SECRET`  | Secret used to sign sessions and encrypt sign-in data. Generate one with `openssl rand -hex 32`.                                                                                                                                                                                                                            |
 
 <Warning>
-  Keep `AUTH_SECRET` the same for the life of your instance. Changing it signs everyone out and makes data encrypted with
-  it unreadable, including two-factor authentication secrets and the keys that sign API and MCP access tokens.
+  Keep `AUTH_SECRET` the same for the life of your instance. Changing it signs everyone out and makes data encrypted
+  with it unreadable, including two-factor authentication secrets and the keys that sign API and MCP access tokens.
 </Warning>
 
 ## Server
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `PORT` | `3000` | Port the production server listens on. The official image sets it to `3000`. If you change it, update your port mapping and health check to match. |
-| `NODE_ENV` | `production` in the image | When `production`, the server listens on `PORT` and turns on rate limiting. Leave it as the image sets it. |
-| `SERVER_PORT` | `3001` | Port the server listens on when `NODE_ENV` is not `production`, which is the local development setup. Ignored by the image. |
-| `ROOT_RESUME_ID` | unset | Shows one public resume at `/` instead of the home page. See [Show one resume at your root address](/self-hosting/examples#show-one-resume-at-your-root-address). |
+| Variable         | Default                   | Description                                                                                                                                                       |
+| ---------------- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PORT`           | `3000`                    | Port the production server listens on. The official image sets it to `3000`. If you change it, update your port mapping and health check to match.                |
+| `NODE_ENV`       | `production` in the image | When `production`, the server listens on `PORT` and turns on rate limiting. Leave it as the image sets it.                                                        |
+| `SERVER_PORT`    | `3001`                    | Port the server listens on when `NODE_ENV` is not `production`, which is the local development setup. Ignored by the image.                                       |
+| `ROOT_RESUME_ID` | unset                     | Shows one public resume at `/` instead of the home page. See [Show one resume at your root address](/self-hosting/examples#show-one-resume-at-your-root-address). |
 
 ## Database
 
-| Variable | Default | Description |
-| --- | --- | --- |
+| Variable                 | Default        | Description                                                                                                                                                                                                    |
+| ------------------------ | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `DATABASE_MIGRATION_URL` | `DATABASE_URL` | Separate connection string for the migrations that run at startup. Set it when `DATABASE_URL` goes through a connection pooler (such as PgBouncer or a provider's pooled endpoint) that cannot run migrations. |
-| `DATABASE_POOL_MAX` | `10` | Maximum number of database connections each server process opens, from `1` to `100`. |
-| `STRICT_SCHEMA_CHECK` | `false` | After migrations, the server compares the live schema with what the migrations expect. By default a mismatch is logged and the server keeps starting. Set `true` to refuse to start instead. |
+| `DATABASE_POOL_MAX`      | `10`           | Maximum number of database connections each server process opens, from `1` to `100`.                                                                                                                           |
+| `STRICT_SCHEMA_CHECK`    | `false`        | After migrations, the server compares the live schema with what the migrations expect. By default a mismatch is logged and the server keeps starting. Set `true` to refuse to start instead.                   |
 
 ## Sign-in
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `BETTER_AUTH_API_KEY` | unset | Connects the instance to the Better Auth dashboard service. Most instances leave it empty. |
+| Variable                   | Default                  | Description                                                                                                                                                                    |
+| -------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `BETTER_AUTH_API_KEY`      | unset                    | Connects the instance to the Better Auth dashboard service. Most instances leave it empty.                                                                                     |
 | `BETTER_AUTH_INTERNAL_URL` | `http://127.0.0.1:$PORT` | Address the server uses to reach itself when it verifies OAuth access tokens from API and MCP clients. Set it only if the server cannot reach itself on `127.0.0.1` at `PORT`. |
 
 ### Social sign-in
@@ -67,10 +67,10 @@ turn on an optional feature.
 Each provider appears on the sign-in page once both of its variables are set. See [Single sign-on](/self-hosting/sso)
 for callback URLs and provider setup.
 
-| Variables | Provider |
-| --- | --- |
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google |
-| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | GitHub |
+| Variables                                      | Provider |
+| ---------------------------------------------- | -------- |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`     | Google   |
+| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`     | GitHub   |
 | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET` | LinkedIn |
 
 ### Custom OAuth or OpenID Connect provider
@@ -79,16 +79,16 @@ Use these to sign in through your own identity provider, such as Authentik, Keyc
 turned on when the client ID and secret are set together with either a discovery URL or all three manual endpoints.
 Its callback URL is `APP_URL` followed by `/api/auth/callback/custom`.
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `OAUTH_PROVIDER_NAME` | `Custom OAuth` | Name shown on the sign-in button. |
-| `OAUTH_CLIENT_ID` | unset | Client ID issued by your provider. |
-| `OAUTH_CLIENT_SECRET` | unset | Client secret issued by your provider. |
-| `OAUTH_DISCOVERY_URL` | unset | The provider's `.well-known/openid-configuration` address. Preferred for OpenID Connect providers. |
-| `OAUTH_AUTHORIZATION_URL` | unset | Authorization endpoint. Use with the next two instead of a discovery URL. |
-| `OAUTH_TOKEN_URL` | unset | Token endpoint. |
-| `OAUTH_USER_INFO_URL` | unset | User info endpoint. |
-| `OAUTH_SCOPES` | `openid profile email` | Space-separated scopes to request. |
+| Variable                  | Default                | Description                                                                                        |
+| ------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------- |
+| `OAUTH_PROVIDER_NAME`     | `Custom OAuth`         | Name shown on the sign-in button.                                                                  |
+| `OAUTH_CLIENT_ID`         | unset                  | Client ID issued by your provider.                                                                 |
+| `OAUTH_CLIENT_SECRET`     | unset                  | Client secret issued by your provider.                                                             |
+| `OAUTH_DISCOVERY_URL`     | unset                  | The provider's `.well-known/openid-configuration` address. Preferred for OpenID Connect providers. |
+| `OAUTH_AUTHORIZATION_URL` | unset                  | Authorization endpoint. Use with the next two instead of a discovery URL.                          |
+| `OAUTH_TOKEN_URL`         | unset                  | Token endpoint.                                                                                    |
+| `OAUTH_USER_INFO_URL`     | unset                  | User info endpoint.                                                                                |
+| `OAUTH_SCOPES`            | `openid profile email` | Space-separated scopes to request.                                                                 |
 
 ## Email
 
@@ -96,13 +96,13 @@ Reactive Resume sends email for account verification, password resets and email 
 `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS` and `SMTP_FROM` are all set. Until then, each email is written to the server log
 instead, so you can still copy verification links from there.
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `SMTP_HOST` | unset | SMTP server hostname. |
-| `SMTP_PORT` | `587` | SMTP server port. |
-| `SMTP_USER` | unset | SMTP username. |
-| `SMTP_PASS` | unset | SMTP password. |
-| `SMTP_FROM` | unset | Sender address, for example `Reactive Resume <noreply@example.com>`. |
+| Variable      | Default | Description                                                                                                                                                 |
+| ------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SMTP_HOST`   | unset   | SMTP server hostname.                                                                                                                                       |
+| `SMTP_PORT`   | `587`   | SMTP server port.                                                                                                                                           |
+| `SMTP_USER`   | unset   | SMTP username.                                                                                                                                              |
+| `SMTP_PASS`   | unset   | SMTP password.                                                                                                                                              |
+| `SMTP_FROM`   | unset   | Sender address, for example `Reactive Resume <noreply@example.com>`.                                                                                        |
 | `SMTP_SECURE` | `false` | `true` connects with TLS from the start (usually port `465`). `false` upgrades the connection with STARTTLS when the server offers it (usually port `587`). |
 
 ## Storage
@@ -110,23 +110,23 @@ instead, so you can still copy verification links from there.
 Uploads such as profile pictures, files attached to applications and Assistant attachments are stored in one of three
 backends.
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `STORAGE_BACKEND` | automatic | `local`, `s3` or `blob`. When unset: `s3` if `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` and `S3_BUCKET` are all set; otherwise `blob` on Vercel and `local` everywhere else. |
-| `LOCAL_STORAGE_PATH` | `/app/data` in the image | Folder for local uploads. Must be an absolute path. In a source checkout it defaults to `data/` in the repository. The server checks that it is writable at startup and refuses to start if it is not. |
-| `S3_ACCESS_KEY_ID` | unset | Access key for S3 or an S3-compatible service. |
-| `S3_SECRET_ACCESS_KEY` | unset | Secret key. |
-| `S3_BUCKET` | unset | Bucket name. The bucket can stay private: the app reads objects with its own credentials and serves them itself. |
-| `S3_REGION` | `us-east-1` | Bucket region. |
-| `S3_ENDPOINT` | AWS | Endpoint for non-AWS services, for example `https://<account>.r2.cloudflarestorage.com` or `http://seaweedfs:8333`. |
-| `S3_FORCE_PATH_STYLE` | `false` | `true` for path-style addresses (`https://endpoint/bucket`), which MinIO and SeaweedFS need. `false` for virtual-hosted addresses (`https://bucket.endpoint`), used by AWS S3 and Cloudflare R2. |
-| `BLOB_READ_WRITE_TOKEN` | unset | Vercel Blob token. On Vercel it is injected when you connect a Blob store. |
-| `BLOB_STORE_ID` | unset | Vercel Blob store ID, when the token alone does not identify the store. |
-| `DEPLOYMENT_NAMESPACE` | `default` | Prefix for Redis keys and Blob paths, so several instances can share one Redis or Blob store without mixing data. Letters, numbers, `.`, `_` and `-` only. On Vercel it is `production`, or the branch address on previews. |
+| Variable                | Default                  | Description                                                                                                                                                                                                                 |
+| ----------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `STORAGE_BACKEND`       | automatic                | `local`, `s3` or `blob`. When unset: `s3` if `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` and `S3_BUCKET` are all set; otherwise `blob` on Vercel and `local` everywhere else.                                                |
+| `LOCAL_STORAGE_PATH`    | `/app/data` in the image | Folder for local uploads. Must be an absolute path. In a source checkout it defaults to `data/` in the repository. The server checks that it is writable at startup and refuses to start if it is not.                      |
+| `S3_ACCESS_KEY_ID`      | unset                    | Access key for S3 or an S3-compatible service.                                                                                                                                                                              |
+| `S3_SECRET_ACCESS_KEY`  | unset                    | Secret key.                                                                                                                                                                                                                 |
+| `S3_BUCKET`             | unset                    | Bucket name. The bucket can stay private: the app reads objects with its own credentials and serves them itself.                                                                                                            |
+| `S3_REGION`             | `us-east-1`              | Bucket region.                                                                                                                                                                                                              |
+| `S3_ENDPOINT`           | AWS                      | Endpoint for non-AWS services, for example `https://<account>.r2.cloudflarestorage.com` or `http://seaweedfs:8333`.                                                                                                         |
+| `S3_FORCE_PATH_STYLE`   | `false`                  | `true` for path-style addresses (`https://endpoint/bucket`), which MinIO and SeaweedFS need. `false` for virtual-hosted addresses (`https://bucket.endpoint`), used by AWS S3 and Cloudflare R2.                            |
+| `BLOB_READ_WRITE_TOKEN` | unset                    | Vercel Blob token. On Vercel it is injected when you connect a Blob store.                                                                                                                                                  |
+| `BLOB_STORE_ID`         | unset                    | Vercel Blob store ID, when the token alone does not identify the store.                                                                                                                                                     |
+| `DEPLOYMENT_NAMESPACE`  | `default`                | Prefix for Redis keys and Blob paths, so several instances can share one Redis or Blob store without mixing data. Letters, numbers, `.`, `_` and `-` only. On Vercel it is `production`, or the branch address on previews. |
 
 <Note>
-  Assistant attachments stay private with every backend. Local storage writes them in a separate namespace that
-  public upload routes never serve. General file uploads allow 10 MB; Assistant attachments allow 25 MB per file.
+  Assistant attachments stay private with every backend. Local storage writes them in a separate namespace that public
+  upload routes never serve. General file uploads allow 10 MB; Assistant attachments allow 25 MB per file.
 </Note>
 
 Switching backends does not move files that are already stored. Copy them yourself before you switch.
@@ -144,18 +144,19 @@ Settings show that AI is enabled globally and hide personal provider controls; t
 changes. Existing personal providers remain stored and become available again if you remove the server configuration.
 Shared credentials stay in the environment and do not require `ENCRYPTION_SECRET`.
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `ENCRYPTION_SECRET` | unset | Encrypts personal AI and Firecrawl keys. At least 32 characters; generate one with `openssl rand -hex 32` and keep it different from `AUTH_SECRET`. A shorter value stops the server at startup. Required for saving personal keys. |
-| `AI_PROVIDER` | unset | Shared provider identifier, such as `openai`, `anthropic`, `gemini`, `ollama` or `openai-compatible`. Uses the same providers as the personal provider settings. |
-| `AI_MODEL` | unset | Shared model name, such as `gpt-5-mini`. Required with `AI_PROVIDER`. |
-| `AI_API_KEY` | unset | Shared provider key. Required with `AI_PROVIDER`, except for Ollama. Never returned to the browser. |
-| `AI_BASE_URL` | provider default | Optional shared provider endpoint; required for `openai-compatible`. Local or private endpoints need `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true`. |
-| `REDIS_URL` | unset | Redis connection string, `redis://` or `rediss://`. Optional. |
-| `AI_TEST_TIMEOUT_MS` | `30000` | How long **Save and test** waits for a provider to answer, in milliseconds. Raise it for local models that load slowly on first use. |
+| Variable             | Default          | Description                                                                                                                                                                                                                          |
+| -------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ENCRYPTION_SECRET`  | unset            | Encrypts personal AI and web-access keys. At least 32 characters; generate one with `openssl rand -hex 32` and keep it different from `AUTH_SECRET`. A shorter value stops the server at startup. Required for saving personal keys. |
+| `AI_PROVIDER`        | unset            | Shared provider identifier, such as `openai`, `anthropic`, `gemini`, `ollama` or `openai-compatible`. Uses the same providers as the personal provider settings.                                                                     |
+| `AI_MODEL`           | unset            | Shared model name, such as `gpt-5-mini`. Required with `AI_PROVIDER`.                                                                                                                                                                |
+| `AI_API_KEY`         | unset            | Shared provider key. Required with `AI_PROVIDER`, except for Ollama. Never returned to the browser.                                                                                                                                  |
+| `AI_BASE_URL`        | provider default | Optional shared provider endpoint; required for `openai-compatible`. Local or private endpoints need `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true`.                                                                                           |
+| `REDIS_URL`          | unset            | Redis connection string, `redis://` or `rediss://`. Optional.                                                                                                                                                                        |
+| `AI_TEST_TIMEOUT_MS` | `30000`          | How long **Save and test** waits for a provider to answer, in milliseconds. Raise it for local models that load slowly on first use.                                                                                                 |
 
 <Warning>
-  Changing `ENCRYPTION_SECRET` makes every saved AI and Firecrawl key unreadable. People then need to enter their keys again.
+  Changing `ENCRYPTION_SECRET` makes every saved AI and web-access key unreadable. People then need to enter their keys
+  again.
 </Warning>
 
 Redis is optional on a single server. Without it, everything works, with these limits:
@@ -169,47 +170,52 @@ configured, the [health endpoint](/self-hosting/docker#check-the-health-endpoint
 
 Saved AI providers and Assistant conversations are kept in PostgreSQL, so they remain available without Redis.
 
-## Job posting search and scraping
+## Web access
 
-Firecrawl is optional. People can save their own Firecrawl Cloud key in **Settings → AI & developer** when
-`ENCRYPTION_SECRET` is configured. Personal keys always use Firecrawl Cloud; people cannot enter a custom service URL.
+The built-in reader is active without credentials. Search and enhanced reading use one optional connection:
+Firecrawl, Tavily or Exa. People can select a provider and save one personal key in **Settings → AI & developer →
+Web access** when `ENCRYPTION_SECRET` is configured. Personal connections use official cloud endpoints.
 
-For a shared service, configure either variable below. Server configuration takes precedence: settings show that
-Firecrawl is enabled globally, hide personal key controls, and the API rejects personal key changes. Setting a URL alone
-also enables a keyless self-hosted service globally. Existing personal keys remain stored and become available again if
-you remove the server configuration.
+For a shared service, set `WEB_ACCESS_PROVIDER` and `WEB_ACCESS_API_KEY`. Only Firecrawl accepts a custom
+`WEB_ACCESS_API_URL`, including a keyless self-hosted service. Server configuration takes precedence, settings say
+**Provided by the server**, and personal changes are rejected. Stored personal connections become available again
+when the shared configuration is removed. Shared connections do not require `ENCRYPTION_SECRET`.
 
-Either setup enables **Search job postings** in **Applications → Add an application** and uses Firecrawl to read pasted
-job links. Without Firecrawl, the built-in link reader and pasted text continue to work. If Firecrawl cannot read a link,
-the server falls back to the built-in reader. The npm `firecrawl` SDK connects to the service; it does not run Firecrawl.
+Explicit generic configuration wins over legacy Firecrawl variables. Incomplete generic configuration, a missing key
+for Tavily/Exa, or a custom URL for those providers stops startup instead of silently choosing another connection.
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `FIRECRAWL_API_URL` | unset | Base URL of a Firecrawl v2 API, without `/v2`. Set this for a self-hosted service, for example `http://localhost:3102` when running Reactive Resume directly on the host. Private HTTP service URLs are allowed because only the server operator sets this value. |
-| `FIRECRAWL_API_KEY` | unset | Optional bearer key for the configured service. Setting only this variable uses `https://api.firecrawl.dev`. Leave it unset for a private self-hosted Firecrawl instance with authentication disabled. |
+| Variable              | Default         | Description                                                                                                                                                                |
+| --------------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `WEB_ACCESS_PROVIDER` | unset           | One selected provider: `firecrawl`, `tavily` or `exa`.                                                                                                                     |
+| `WEB_ACCESS_API_KEY`  | unset           | Shared provider key. Required except for Firecrawl with an explicit custom URL.                                                                                            |
+| `WEB_ACCESS_API_URL`  | Firecrawl Cloud | Optional Firecrawl base URL without `/v2`, e.g. `http://localhost:3102`. Private service URLs are operator-controlled. Tavily and Exa always use their official endpoints. |
+| `FIRECRAWL_API_URL`   | unset           | Legacy Firecrawl URL alias, used only when no `WEB_ACCESS_*` configuration is supplied. A URL alone permits keyless self-hosted Firecrawl.                                 |
+| `FIRECRAWL_API_KEY`   | unset           | Legacy Firecrawl key alias. A key alone selects Firecrawl Cloud when no generic configuration is supplied.                                                                 |
 
-Search returns up to five links. Choose **Use posting** to read a result, review the role and company, then save the
-application. Search does not create applications automatically. Your configured AI provider still extracts salary,
-requirements and other fields; without AI, the page's JSON-LD fills the fields it provides.
+Connections enable Applications keyword search and assistant web tools. URL import uses the selected reader, then
+falls back to the built-in reader on recoverable failures. Saving pasted text and manual preparation work without
+either web-access or AI credentials. Search returns up to five links; choosing a result does not create an application
+until the user reviews and saves it.
 
-See [Job search and AI](/self-hosting/job-search-and-ai) for Firecrawl deployment, optional SearXNG search, container
-networking and a local test. SearXNG variables are configured on Firecrawl, not Reactive Resume.
+**Test connection** checks search and enhanced reading independently, without reader fallback. Rendering settings
+does not call external services. Quota and authentication failures leave manual workflows available.
 
-Job links still require public HTTPS destinations. Keep Firecrawl's protections against private destinations,
-redirects and DNS rebinding enabled. Search queries and selected posting URLs are sent to the configured service;
-resume data and saved AI-provider keys are not sent to Firecrawl.
+See [Job search and AI](/self-hosting/job-search-and-ai) for connection setup, Firecrawl deployment, optional SearXNG
+search and migration/rollback guidance. Public page URLs remain protected against private destinations, redirects
+and DNS rebinding. A remote reader must enforce these protections internally too. Search queries and selected URLs
+go to the chosen service; resume data and AI keys do not.
 
 ## Feature flags
 
 All flags default to `false`.
 
-| Variable | When set to `true` |
-| --- | --- |
-| `FLAG_DISABLE_SIGNUPS` | No new accounts can be created, by email or by social sign-in. Existing accounts keep working. Create your own account first. |
-| `FLAG_DISABLE_EMAIL_AUTH` | Turns off email and password sign-in and sign-up, along with forgot password and reset password. People sign in with social or custom OAuth providers only, so configure at least one first. |
-| `FLAG_DISABLE_IMAGE_PROCESSING` | Stores uploaded pictures as they are. Normally pictures are resized to fit 800 × 800 pixels and saved as JPEG. Useful on low-powered hardware such as a Raspberry Pi. |
-| `FLAG_DISABLE_API_RATE_LIMIT` | Turns off API and authentication rate limiting, including sign-in, sign-up, OAuth, requests made with API keys, PDF export and AI requests. Intended for test installations. |
-| `FLAG_ALLOW_UNSAFE_AI_BASE_URL` | Lets AI providers use `http://` addresses and private or local network addresses, such as an Ollama server on your network. Without it, a provider's base URL must be public `https://`. |
+| Variable                               | When set to `true`                                                                                                                                                                                                                                                                      |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `FLAG_DISABLE_SIGNUPS`                 | No new accounts can be created, by email or by social sign-in. Existing accounts keep working. Create your own account first.                                                                                                                                                           |
+| `FLAG_DISABLE_EMAIL_AUTH`              | Turns off email and password sign-in and sign-up, along with forgot password and reset password. People sign in with social or custom OAuth providers only, so configure at least one first.                                                                                            |
+| `FLAG_DISABLE_IMAGE_PROCESSING`        | Stores uploaded pictures as they are. Normally pictures are resized to fit 800 × 800 pixels and saved as JPEG. Useful on low-powered hardware such as a Raspberry Pi.                                                                                                                   |
+| `FLAG_DISABLE_API_RATE_LIMIT`          | Turns off API and authentication rate limiting, including sign-in, sign-up, OAuth, requests made with API keys, PDF export and AI requests. Intended for test installations.                                                                                                            |
+| `FLAG_ALLOW_UNSAFE_AI_BASE_URL`        | Lets AI providers use `http://` addresses and private or local network addresses, such as an Ollama server on your network. Without it, a provider's base URL must be public `https://`.                                                                                                |
 | `FLAG_ALLOW_UNSAFE_OAUTH_REDIRECT_URI` | Lets MCP and OAuth clients that register themselves use any redirect address, including custom schemes and private hosts. By default a redirect must go to your instance's own address, an `http://` loopback address (`localhost`, `127.0.0.1`, `::1`) or a public `https://` address. |
 
 <Warning>
@@ -223,14 +229,14 @@ All flags default to `false`.
 On Vercel (when `VERCEL=1`), the server fills in some variables from the ones Vercel's integrations inject. A value
 you set yourself always wins.
 
-| Variable | Filled from |
-| --- | --- |
-| `APP_URL` | `https://` plus `VERCEL_PROJECT_PRODUCTION_URL` in production, or `VERCEL_URL` on previews |
-| `DATABASE_URL` | `POSTGRES_URL` |
-| `DATABASE_MIGRATION_URL` | `DATABASE_URL_UNPOOLED`, then `POSTGRES_URL_NON_POOLING` |
-| `REDIS_URL` | `KV_URL` |
-| `STORAGE_BACKEND` | `blob`, unless S3 credentials are set |
-| `DEPLOYMENT_NAMESPACE` | `production`, or `VERCEL_BRANCH_URL` on previews |
+| Variable                 | Filled from                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------ |
+| `APP_URL`                | `https://` plus `VERCEL_PROJECT_PRODUCTION_URL` in production, or `VERCEL_URL` on previews |
+| `DATABASE_URL`           | `POSTGRES_URL`                                                                             |
+| `DATABASE_MIGRATION_URL` | `DATABASE_URL_UNPOOLED`, then `POSTGRES_URL_NON_POOLING`                                   |
+| `REDIS_URL`              | `KV_URL`                                                                                   |
+| `STORAGE_BACKEND`        | `blob`, unless S3 credentials are set                                                      |
+| `DEPLOYMENT_NAMESPACE`   | `production`, or `VERCEL_BRANCH_URL` on previews                                           |
 
 Vercel builds also read `ALLOW_PREVIEW_MIGRATIONS`: preview builds refuse to run migrations unless it is `true`, so a
 preview can't change your production database by accident. See [Self-hosting on Vercel](/self-hosting/vercel).
@@ -239,10 +245,10 @@ preview can't change your production database by accident. See [Self-hosting on 
 
 These appear in `.env.example` but are not used by a running server:
 
-| Variable | Used by |
-| --- | --- |
-| `GOOGLE_CLOUD_API_KEY` | The script that regenerates the font list. |
-| `CROWDIN_PROJECT_ID`, `CROWDIN_API_TOKEN` | Translation sync tooling. |
+| Variable                                                                                      | Used by                                                                                                         |
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `GOOGLE_CLOUD_API_KEY`                                                                        | The script that regenerates the font list.                                                                      |
+| `CROWDIN_PROJECT_ID`, `CROWDIN_API_TOKEN`                                                     | Translation sync tooling.                                                                                       |
 | `COVER_LETTER_TEST_DATABASE_URL`, `OAUTH_TEST_DATABASE_URL`, `INTEGRATIONS_TEST_DATABASE_URL` | Test suites that need a disposable database. Integration credential tests create and remove an isolated schema. |
 
 See [Development setup](/contributing/development) for working on the code.

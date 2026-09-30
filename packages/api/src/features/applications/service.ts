@@ -1,3 +1,4 @@
+import type { ApplicationDocumentKind } from "../../dto/application";
 import type {
 	AiMetadata,
 	ApplicationClosedReason,
@@ -6,7 +7,6 @@ import type {
 	Contact,
 	InterviewDetails,
 } from "@reactive-resume/schema/applications/data";
-import type { ApplicationDocumentKind } from "../../dto/application";
 import { ORPCError } from "@orpc/client";
 import { and, arrayContains, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
@@ -107,6 +107,7 @@ type EditableFields = {
 	source?: string | null | undefined;
 	sourceUrl?: string | null | undefined;
 	jobDescription?: string | null | undefined;
+	postingSource?: import("@reactive-resume/schema/applications/data").PostingSource | null | undefined;
 	notes?: string | null | undefined;
 	resumeFileUrl?: string | null | undefined;
 	resumeFileName?: string | null | undefined;
@@ -363,16 +364,28 @@ export const applicationService = {
 			id: string;
 			userId: string;
 			status?: ApplicationStatus | undefined;
+			stageEnteredAt?: string | undefined;
 			closedReason?: ApplicationClosedReason | null | undefined;
 		},
 	) => {
-		await requireOwned(input.id, input.userId);
+		const existing = await requireOwned(input.id, input.userId);
 
-		const { id, userId, status, closedReason, ...fields } = input;
+		const { id, userId, status, stageEnteredAt, closedReason, ...fields } = input;
+		if (
+			(existing.sentResumeVersionId && fields.resumeId !== undefined && fields.resumeId !== existing.resumeId) ||
+			(existing.sentCoverLetterVersionId &&
+				fields.coverLetterId !== undefined &&
+				fields.coverLetterId !== existing.coverLetterId)
+		) {
+			throw new ORPCError("BAD_REQUEST", {
+				message:
+					"Recorded submitted documents cannot be replaced. Prepare a copy to keep the submitted versions intact.",
+			});
+		}
 		await assertOwnedResume(userId, fields.resumeId);
 		await assertOwnedCoverLetter(userId, fields.coverLetterId);
 
-		const statusEntry = status !== undefined ? stageEntry(status) : undefined;
+		const statusEntry = status !== undefined ? stageEntry(status, stageEnteredAt) : undefined;
 		// Append in SQL so concurrent notes/stage events are not overwritten by a stale array.
 		const activityExpr =
 			statusEntry !== undefined

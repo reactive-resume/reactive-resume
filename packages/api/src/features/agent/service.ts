@@ -1,7 +1,8 @@
+import type { getModel } from "../ai/service";
+import type { WebAccessConnection } from "../web-access/contracts";
+import type { AssistantDocument } from "./document";
 import type { ProposeEditsInput, ProposeEditsOutput } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import type { FilePart, ImagePart, ModelMessage, TextPart, UIMessage, UIMessageChunk } from "ai";
-import type { getModel } from "../ai/service";
-import type { AssistantDocument } from "./document";
 import { ORPCError } from "@orpc/client";
 import { streamToEventIterator } from "@orpc/server";
 import {
@@ -14,15 +15,18 @@ import {
 	wrapLanguageModel,
 } from "ai";
 import { and, asc, count, desc, eq, inArray, isNull, sql } from "drizzle-orm";
+import { agentWebSources } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { generateId } from "@reactive-resume/utils/string";
+import { aiProvidersService } from "../ai-providers/service";
 import { assertAgentEnvironment } from "../ai/credentials";
 import { getAgentModel } from "../ai/service";
-import { aiProvidersService } from "../ai-providers/service";
 import { coverLetterService } from "../cover-letters/service";
 import { resumeService } from "../resume/service";
 import { getStorageService, inferContentType } from "../storage/service";
+import { webAccessService } from "../web-access/credentials";
+import { readPage, searchWeb } from "../web-access/service";
 import { isRunAlive, monitorRunCancellation, requestRunCancellation } from "./cancellation";
 import { pruneAgentModelContext } from "./context";
 import { documentOf, documentView, findPosting, loadDocument, resolveEdits } from "./document";
@@ -42,7 +46,7 @@ import {
 import { repairAgentToolCall } from "./repair";
 import { claimActiveAgentRun, clearActiveAgentRunIfCurrent, isStaleAgentRun, reapStaleAgentRun } from "./runs";
 import { agentStreamLifecycle } from "./streams";
-import { buildAgentInstructions, buildAgentTools } from "./tools";
+import { buildAgentInstructions, buildAgentTools, MAX_AGENT_WEB_CALLS } from "./tools";
 
 const MAX_AGENT_STEPS = 30;
 const MAX_AGENT_OUTPUT_TOKENS = 8_192;
@@ -184,14 +188,22 @@ function withoutAgentAttachmentUiParts(message: UIMessage): UIMessage {
 }
 
 // Provider output metadata can contain provider-owned item IDs. Keep it in UI history, but do not replay it as model input.
-function withoutProviderMetadata(message: UIMessage): UIMessage {
+function withoutProviderMetadata(message: UIMessage, provider: { provider: string; model: string }): UIMessage {
+	const metadata = message.metadata as { provider?: string; model?: string } | undefined;
+	const preserveGoogleSignature =
+		provider.provider === "gemini" && metadata?.provider === "gemini" && metadata.model === provider.model;
 	const cleanMessage = {
 		...message,
 		parts: message.parts.map((part) => {
 			const cleanPart = { ...part } as Record<string, unknown>;
-			delete cleanPart.providerMetadata;
-			delete cleanPart.callProviderMetadata;
-			delete cleanPart.resultProviderMetadata;
+			for (const key of ["providerMetadata", "callProviderMetadata", "resultProviderMetadata"]) {
+				const value = cleanPart[key] as { google?: { thoughtSignature?: unknown } } | undefined;
+				if (preserveGoogleSignature && typeof value?.google?.thoughtSignature === "string") {
+					cleanPart[key] = {
+						google: { thoughtSignature: value.google.thoughtSignature },
+					};
+				} else delete cleanPart[key];
+			}
 			return cleanPart as UIMessage["parts"][number];
 		}),
 	} as Record<string, unknown> & UIMessage;
@@ -222,8 +234,33 @@ function withoutLegacyPatchParts(message: UIMessage): UIMessage {
 	};
 }
 
-function toModelInputMessage(message: UIMessage): UIMessage {
-	return withoutLegacyPatchParts(withoutProviderMetadata(withoutAgentAttachmentUiParts(message)));
+function toModelInputMessage(
+	message: UIMessage,
+	provider: { provider: string; model: string },
+	externalSearch: boolean,
+): UIMessage {
+	const sources = agentWebSources(message)
+		.map((source) => `${source.title}: ${source.url}`)
+		.join("\n");
+	// Native calls are provider-owned (including Anthropic encrypted results). Replay portable evidence
+	// instead, so changing models or the selected web connection cannot send an incompatible native call.
+	const portable = {
+		...message,
+		parts: message.parts.map((part) => {
+			if (
+				part.type !== "tool-web_search" &&
+				part.type !== "tool-google_search" &&
+				!(part.type === "tool-search_web" && !externalSearch)
+			)
+				return part;
+			const state = (part as AgentToolPart).state;
+			return {
+				type: "text" as const,
+				text: `Earlier web search ${state === "output-available" ? "completed" : "did not complete"}.${sources ? ` Retrieved sources:\n${sources}` : ""}`,
+			};
+		}),
+	};
+	return withoutLegacyPatchParts(withoutProviderMetadata(withoutAgentAttachmentUiParts(portable), provider));
 }
 
 type AgentToolPart = UIMessage["parts"][number] & {
@@ -304,23 +341,31 @@ function buildAttachmentModelParts(input: AttachmentModelInput[]): Array<TextPar
 function uniqueAttachmentIds(ids: unknown) {
 	if (ids === undefined) return [];
 	if (!Array.isArray(ids)) {
-		throw new ORPCError("BAD_REQUEST", { message: "Attachment IDs must be an array." });
+		throw new ORPCError("BAD_REQUEST", {
+			message: "Attachment IDs must be an array.",
+		});
 	}
 
 	if (ids.length > MAX_ATTACHMENTS_PER_MESSAGE) {
-		throw new ORPCError("BAD_REQUEST", { message: "Too many attachments for one message." });
+		throw new ORPCError("BAD_REQUEST", {
+			message: "Too many attachments for one message.",
+		});
 	}
 
 	const unique = new Set<string>();
 	for (const id of ids) {
 		if (typeof id !== "string" || !id.trim()) {
-			throw new ORPCError("BAD_REQUEST", { message: "Attachment IDs must be non-empty strings." });
+			throw new ORPCError("BAD_REQUEST", {
+				message: "Attachment IDs must be non-empty strings.",
+			});
 		}
 		unique.add(id.trim());
 	}
 
 	if (unique.size !== ids.length) {
-		throw new ORPCError("BAD_REQUEST", { message: "Attachment IDs must be unique." });
+		throw new ORPCError("BAD_REQUEST", {
+			message: "Attachment IDs must be unique.",
+		});
 	}
 
 	return [...unique];
@@ -384,7 +429,9 @@ async function linkAttachmentsToMessage(input: {
 		.returning({ id: schema.agentAttachment.id });
 
 	if (linked.length !== ids.length) {
-		throw new ORPCError("CONFLICT", { message: "One or more attachments were already linked to another message." });
+		throw new ORPCError("CONFLICT", {
+			message: "One or more attachments were already linked to another message.",
+		});
 	}
 }
 
@@ -394,7 +441,9 @@ function readAttachmentModelInputs(attachments: AgentAttachmentRecord[]): Promis
 		attachments.map(async (attachment) => {
 			const stored = await storage.read(attachment.storageKey);
 			if (!stored) {
-				throw new ORPCError("BAD_REQUEST", { message: `Attachment ${attachment.filename} could not be read.` });
+				throw new ORPCError("BAD_REQUEST", {
+					message: `Attachment ${attachment.filename} could not be read.`,
+				});
 			}
 
 			return { attachment, data: stored.data };
@@ -409,7 +458,7 @@ function attachModelPartsToLatestUserMessage(
 	if (parts.length === 0) return messages;
 	const index = messages.findLastIndex((m) => m.role === "user");
 	if (index === -1) return messages;
-	// biome-ignore lint/style/noNonNullAssertion: index is valid; findLastIndex returned != -1
+	// oxlint-disable-next-line typescript/no-non-null-assertion -- index is valid; findLastIndex returned != -1
 	const msg = messages[index]!;
 	if (msg.role !== "user") return messages; // ponytail: redundant at runtime; keeps TS narrowed to user-message content type
 	const content = typeof msg.content === "string" ? [{ type: "text" as const, text: msg.content }] : msg.content;
@@ -460,10 +509,15 @@ async function persistMessage(input: {
 }
 
 async function updateAssistantToolResultMessage(input: { userId: string; threadId: string; message: UIMessage }) {
-	const existingRows = await listThreadMessages({ threadId: input.threadId, userId: input.userId });
+	const existingRows = await listThreadMessages({
+		threadId: input.threadId,
+		userId: input.userId,
+	});
 	const existingRow = existingRows.find((row) => row.role === "assistant" && toMessage(row).id === input.message.id);
 	if (!existingRow) {
-		throw new ORPCError("BAD_REQUEST", { message: "The answered assistant message was not found." });
+		throw new ORPCError("BAD_REQUEST", {
+			message: "The answered assistant message was not found.",
+		});
 	}
 
 	const {
@@ -475,15 +529,21 @@ async function updateAssistantToolResultMessage(input: { userId: string; threadI
 	} = mergeClientToolResponses(toMessage(existingRow), input.message);
 
 	if (conflictingCount > 0) {
-		throw new ORPCError("BAD_REQUEST", { message: "This approval was already answered with a different decision." });
+		throw new ORPCError("BAD_REQUEST", {
+			message: "This approval was already answered with a different decision.",
+		});
 	}
 	// A recorded-but-unexecuted approval (pendingContinuationCount) proceeds: a prior continuation
 	// attempt failed after persisting the decision, and this retry is the recovery path.
 	if (mergedCount === 0 && pendingContinuationCount === 0) {
 		if (alreadyResolvedCount > 0) {
-			throw new ORPCError("CONFLICT", { message: "This response was already handled." });
+			throw new ORPCError("CONFLICT", {
+				message: "This response was already handled.",
+			});
 		}
-		throw new ORPCError("BAD_REQUEST", { message: "No matching unanswered user question was found." });
+		throw new ORPCError("BAD_REQUEST", {
+			message: "No matching unanswered user question was found.",
+		});
 	}
 
 	await db
@@ -654,7 +714,9 @@ async function proposeEdits(input: {
 	if (output.edits.length > 0) {
 		await db
 			.update(schema.agentThread)
-			.set({ editsProposed: sql`${schema.agentThread.editsProposed} + ${output.edits.length}` })
+			.set({
+				editsProposed: sql`${schema.agentThread.editsProposed} + ${output.edits.length}`,
+			})
 			.where(and(eq(schema.agentThread.id, input.threadId), eq(schema.agentThread.userId, input.userId)));
 	}
 	return output;
@@ -665,7 +727,12 @@ function createAgent(input: {
 	threadId: string;
 	/** Null when the message leaves the document out. */
 	document: (AssistantDocument & { name: string }) | null;
-	posting: { role: string; company: string; text: string; notes?: string } | null;
+	posting: {
+		role: string;
+		company: string;
+		text: string;
+		notes?: string;
+	} | null;
 	provider: {
 		provider: Parameters<typeof getModel>[0]["provider"];
 		model: string;
@@ -673,6 +740,8 @@ function createAgent(input: {
 		baseURL?: string;
 	};
 	model: ReturnType<typeof getModel>;
+	connection: WebAccessConnection | null;
+	signal: AbortSignal;
 }) {
 	// One greppable JSON line per tool execution.
 	const timedToolHandler =
@@ -702,17 +771,43 @@ function createAgent(input: {
 	const tools = buildAgentTools({
 		provider: input.provider,
 		document: document?.kind ?? null,
+		externalSearch: input.connection !== null,
+		signal: input.signal,
 		handlers: {
+			searchWeb: timedToolHandler("search_web", (query: string, signal: AbortSignal) =>
+				searchWeb(query, {
+					connection: input.connection,
+					userId: input.userId,
+					signal,
+				}),
+			),
+			readPage: timedToolHandler("read_page", async (url: string, signal: AbortSignal) => {
+				const { html: _html, ...page } = await readPage(url, {
+					connection: input.connection,
+					userId: input.userId,
+					signal,
+				});
+				return page;
+			}),
 			readDocument: timedToolHandler("read_document", async () => {
 				if (!document) throw new Error("The document isn't shared with this message.");
 				return documentView(await loadDocument(input.userId, document));
 			}),
 			readAttachment: timedToolHandler("read_attachment", (attachmentId: string) =>
-				readAttachment({ id: attachmentId, threadId: input.threadId, userId: input.userId }),
+				readAttachment({
+					id: attachmentId,
+					threadId: input.threadId,
+					userId: input.userId,
+				}),
 			),
 			proposeEdits: timedToolHandler("propose_edits", (edits: ProposeEditsInput) => {
 				if (!document) throw new Error("The document isn't shared with this message.");
-				return proposeEdits({ userId: input.userId, threadId: input.threadId, document, edits });
+				return proposeEdits({
+					userId: input.userId,
+					threadId: input.threadId,
+					document,
+					edits,
+				});
 			}),
 		},
 	});
@@ -720,25 +815,41 @@ function createAgent(input: {
 	const instructionsText = buildAgentInstructions({
 		document: document ? { kind: document.kind, name: document.name } : null,
 		posting: input.posting,
-		hasProviderNativeSearch: "web_search" in tools,
+		searchTool:
+			"search_web" in tools
+				? "search_web"
+				: "web_search" in tools
+					? "web_search"
+					: "google_search" in tools
+						? "google_search"
+						: null,
+		canReadPage: "read_page" in tools,
 	});
 
 	return new ToolLoopAgent({
 		// Providers without native inputExamples support get them appended to the tool description.
-		model: wrapLanguageModel({ model: input.model, middleware: addToolInputExamplesMiddleware() }),
+		model: wrapLanguageModel({
+			model: input.model,
+			middleware: addToolInputExamplesMiddleware(),
+		}),
 		// The loop re-sends stable instructions every step; on anthropic, prompt caching pays from step 2.
 		instructions:
 			input.provider.provider === "anthropic"
 				? {
 						role: "system",
 						content: instructionsText,
-						providerOptions: { anthropic: { cacheControl: { type: "ephemeral" } } },
+						providerOptions: {
+							anthropic: { cacheControl: { type: "ephemeral" } },
+						},
 					}
 				: instructionsText,
 		repairToolCall: repairAgentToolCall,
 		stopWhen: isStepCount(MAX_AGENT_STEPS),
 		maxOutputTokens: MAX_AGENT_OUTPUT_TOKENS,
 		maxRetries: MAX_AGENT_MODEL_RETRIES,
+		...("web_search" in tools && input.provider.provider === "openai"
+			? { providerOptions: { openai: { maxToolCalls: MAX_AGENT_WEB_CALLS } } }
+			: {}),
 		timeout: { stepMs: AGENT_STEP_TIMEOUT_MS },
 		// Runs before every loop step, so an older document snapshot never outlives a newer read.
 		prepareStep: ({ messages }) => {
@@ -782,7 +893,10 @@ async function describeDocument(userId: string, document: AssistantDocument | nu
 			const resume = await resumeService.getById({ id: document.id, userId });
 			return { ...document, name: resume.name, locked: resume.isLocked };
 		}
-		const letter = await coverLetterService.getById({ id: document.id, userId });
+		const letter = await coverLetterService.getById({
+			id: document.id,
+			userId,
+		});
 		return { ...document, name: letter.name, locked: letter.isLocked };
 	} catch {
 		return null;
@@ -816,18 +930,33 @@ export const agentService = {
 				: input.resumeId
 					? { kind: "resume", id: input.resumeId }
 					: null;
-			if (!document) throw new ORPCError("BAD_REQUEST", { message: "Choose a resume or a letter." });
+			if (!document)
+				throw new ORPCError("BAD_REQUEST", {
+					message: "Choose a resume or a letter.",
+				});
 
 			// Confirms the caller owns the document (throws otherwise) and names it for the summary.
 			const described =
 				document.kind === "resume"
-					? await resumeService.getById({ id: document.id, userId: input.userId })
-					: await coverLetterService.getById({ id: document.id, userId: input.userId });
+					? await resumeService.getById({
+							id: document.id,
+							userId: input.userId,
+						})
+					: await coverLetterService.getById({
+							id: document.id,
+							userId: input.userId,
+						});
 
 			const provider = input.aiProviderId
-				? await aiProvidersService.getRunnableById({ id: input.aiProviderId, userId: input.userId })
+				? await aiProvidersService.getRunnableById({
+						id: input.aiProviderId,
+						userId: input.userId,
+					})
 				: await aiProvidersService.getDefaultRunnable({ userId: input.userId });
-			if (!provider) throw new ORPCError("BAD_REQUEST", { message: "No tested AI provider is available." });
+			if (!provider)
+				throw new ORPCError("BAD_REQUEST", {
+					message: "No tested AI provider is available.",
+				});
 
 			const [thread] = await db
 				.insert(schema.agentThread)
@@ -892,7 +1021,10 @@ export const agentService = {
 			assertAgentEnvironment();
 
 			await getThread({ id: input.id, userId: input.userId });
-			const provider = await aiProvidersService.getRunnableById({ id: input.aiProviderId, userId: input.userId });
+			const provider = await aiProvidersService.getRunnableById({
+				id: input.aiProviderId,
+				userId: input.userId,
+			});
 
 			const [updated] = await db
 				.update(schema.agentThread)
@@ -942,13 +1074,20 @@ export const agentService = {
 		send: async (input: SendMessageInput) => {
 			assertAgentEnvironment();
 
-			const thread = await getThread({ id: input.threadId, userId: input.userId });
+			const thread = await getThread({
+				id: input.threadId,
+				userId: input.userId,
+			});
 			if (thread.status === "archived") {
-				throw new ORPCError("CONFLICT", { message: "This thread is archived." });
+				throw new ORPCError("CONFLICT", {
+					message: "This thread is archived.",
+				});
 			}
 			if (thread.activeRunId) {
 				if (!isStaleAgentRun(thread)) {
-					throw new ORPCError("CONFLICT", { message: "This thread already has an active run." });
+					throw new ORPCError("CONFLICT", {
+						message: "This thread already has an active run.",
+					});
 				}
 				// Lazy reap: a dead run's claim heals on the next send instead of CONFLICTing forever.
 				await reapStaleAgentRun({
@@ -960,20 +1099,31 @@ export const agentService = {
 			}
 			const document = documentOf(thread);
 			if (!document || !thread.aiProviderId) {
-				throw new ORPCError("BAD_REQUEST", { message: "This conversation is read-only." });
+				throw new ORPCError("BAD_REQUEST", {
+					message: "This conversation is read-only.",
+				});
 			}
 			if (input.message.role !== "user" && input.message.role !== "assistant") {
-				throw new ORPCError("BAD_REQUEST", { message: "Agent messages must be user messages or tool results." });
+				throw new ORPCError("BAD_REQUEST", {
+					message: "Agent messages must be user messages or tool results.",
+				});
 			}
 
 			// Deliberately schema-less: provider-echoed tool parts must pass, and replayed history is never re-validated.
-			const validated = await safeValidateUIMessages({ messages: [input.message] });
+			const validated = await safeValidateUIMessages({
+				messages: [input.message],
+			});
 			if (!validated.success) {
-				throw new ORPCError("BAD_REQUEST", { message: "Invalid UI message parts." });
+				throw new ORPCError("BAD_REQUEST", {
+					message: "Invalid UI message parts.",
+				});
 			}
 
 			const loaded = await loadDocument(input.userId, document);
-			if (loaded.locked) throw new ORPCError("BAD_REQUEST", { message: "Unlock the document to change it." });
+			if (loaded.locked)
+				throw new ORPCError("BAD_REQUEST", {
+					message: "Unlock the document to change it.",
+				});
 			const posting =
 				input.context?.posting === false
 					? null
@@ -994,9 +1144,16 @@ export const agentService = {
 			const streamId = generateId();
 			const controller = new AbortController();
 
-			const claimed = await claimActiveAgentRun({ threadId: input.threadId, userId: input.userId, runId, streamId });
+			const claimed = await claimActiveAgentRun({
+				threadId: input.threadId,
+				userId: input.userId,
+				runId,
+				streamId,
+			});
 			if (!claimed) {
-				throw new ORPCError("CONFLICT", { message: "This thread already has an active run." });
+				throw new ORPCError("CONFLICT", {
+					message: "This thread already has an active run.",
+				});
 			}
 
 			// Whole-run wall clock. Must abort with an AbortError (see abortReason) — never AbortSignal.timeout().
@@ -1010,7 +1167,11 @@ export const agentService = {
 			let draftRowId: string | undefined;
 			let insertedDraft = false;
 			const responseMessageId = generateId();
-			let draftUiMessage: UIMessage = { id: responseMessageId, role: "assistant", parts: [] };
+			let draftUiMessage: UIMessage = {
+				id: responseMessageId,
+				role: "assistant",
+				parts: [],
+			};
 
 			try {
 				activeRunCleanup.set(runId, await monitorRunCancellation(runId, controller));
@@ -1019,7 +1180,9 @@ export const agentService = {
 
 				if (input.message.role === "assistant") {
 					if (attachments.length > 0) {
-						throw new ORPCError("BAD_REQUEST", { message: "Tool result messages cannot include attachments." });
+						throw new ORPCError("BAD_REQUEST", {
+							message: "Tool result messages cannot include attachments.",
+						});
 					}
 
 					// Merge AFTER the exclusive claim: concurrent approve/deny requests serialize on
@@ -1071,14 +1234,23 @@ export const agentService = {
 					}
 				}
 
-				await aiProvidersService.markUsed({ id: runnableProvider.id, userId: input.userId });
+				await aiProvidersService.markUsed({
+					id: runnableProvider.id,
+					userId: input.userId,
+				});
 
 				const messageRows = await repairLegacyAskUserQuestionAnswers(
-					await listThreadMessages({ threadId: input.threadId, userId: input.userId }),
+					await listThreadMessages({
+						threadId: input.threadId,
+						userId: input.userId,
+					}),
 					{ threadId: input.threadId, userId: input.userId },
 				);
 				const messages = messageRows.map(toMessage);
-				const modelMessages = await convertToModelMessages(messages.map(toModelInputMessage));
+				const connection = await webAccessService.resolve(input.userId);
+				const modelMessages = await convertToModelMessages(
+					messages.map((message) => toModelInputMessage(message, runnableProvider, connection !== null)),
+				);
 				const attachmentModelParts = buildAttachmentModelParts(await readAttachmentModelInputs(attachmentsForModel));
 
 				// Draft row inserted after the replay snapshot (so it is not replayed) and before the
@@ -1098,6 +1270,8 @@ export const agentService = {
 					threadId: input.threadId,
 					document: input.context?.document === false ? null : { ...document, name: loaded.name },
 					posting,
+					connection,
+					signal: controller.signal,
 					provider: {
 						provider: runnableProvider.provider,
 						model: runnableProvider.model,
@@ -1132,6 +1306,14 @@ export const agentService = {
 						);
 						try {
 							draftUiMessage = applyStepToUiMessage(draftUiMessage, step);
+							draftUiMessage = {
+								...draftUiMessage,
+								metadata: {
+									...(draftUiMessage.metadata as Record<string, unknown> | undefined),
+									provider: runnableProvider.provider,
+									model: runnableProvider.model,
+								},
+							};
 							const upserted = await upsertAssistantUiMessage({
 								userId: input.userId,
 								threadId: input.threadId,
@@ -1155,8 +1337,15 @@ export const agentService = {
 								sendSources: true,
 								// Round-trips inside the persisted uiMessage jsonb — no migration needed.
 								messageMetadata: ({ part }) =>
-									part.type === "finish" ? { usage: part.totalUsage, model: runnableProvider.model } : undefined,
-								onFinish: async ({ responseMessage, isAborted }) => {
+									part.type === "finish"
+										? {
+												usage: part.totalUsage,
+												model: runnableProvider.model,
+												provider: runnableProvider.provider,
+											}
+										: undefined,
+								onFinish: async ({ responseMessage: completedMessage, isAborted }) => {
+									let responseMessage = completedMessage;
 									let persistError: unknown;
 									try {
 										if (controller.signal.reason?.message === "RUN_TIMEOUT") {
@@ -1188,7 +1377,10 @@ export const agentService = {
 										});
 									}
 								},
-								onError: (error) => (error instanceof Error ? error.message : "Agent run failed."),
+								onError: (error) => {
+									const message = error instanceof Error ? error.message : "Agent run failed.";
+									return runnableProvider.apiKey ? message.replaceAll(runnableProvider.apiKey, "***") : message;
+								},
 							})
 							.pipeThrough(
 								new TransformStream<UIMessageChunk, UIMessageChunk>({
@@ -1196,7 +1388,11 @@ export const agentService = {
 										if (chunk.type === "abort" && controller.signal.reason?.message === "RUN_TIMEOUT") {
 											const id = `timeout-${runId}`;
 											output.enqueue({ type: "text-start", id });
-											output.enqueue({ type: "text-delta", id, delta: AGENT_TIMEOUT_MESSAGE });
+											output.enqueue({
+												type: "text-delta",
+												id,
+												delta: AGENT_TIMEOUT_MESSAGE,
+											});
 											output.enqueue({ type: "text-end", id });
 										}
 										output.enqueue(chunk);
@@ -1207,9 +1403,11 @@ export const agentService = {
 				);
 			} catch (error) {
 				if (insertedDraft && draftRowId) {
-					await deleteDraftIfEmpty({ rowId: draftRowId, threadId: input.threadId, userId: input.userId }).catch(
-						(cleanupError: unknown) => console.error("[agent] Failed to delete empty draft", cleanupError),
-					);
+					await deleteDraftIfEmpty({
+						rowId: draftRowId,
+						threadId: input.threadId,
+						userId: input.userId,
+					}).catch((cleanupError: unknown) => console.error("[agent] Failed to delete empty draft", cleanupError));
 				}
 				await cleanupActiveRun({
 					threadId: input.threadId,
@@ -1227,7 +1425,10 @@ export const agentService = {
 		stop: async (input: { userId: string; threadId: string }) => {
 			assertAgentEnvironment();
 
-			const thread = await getThread({ id: input.threadId, userId: input.userId });
+			const thread = await getThread({
+				id: input.threadId,
+				userId: input.userId,
+			});
 			const activeRunId = thread.activeRunId;
 			if (!activeRunId) return;
 			// A live owner releases the claim after persisting the terminal transcript.
@@ -1244,7 +1445,10 @@ export const agentService = {
 		},
 		resume: async (input: { userId: string; threadId: string }) => {
 			assertAgentEnvironment();
-			const thread = await getThread({ id: input.threadId, userId: input.userId });
+			const thread = await getThread({
+				id: input.threadId,
+				userId: input.userId,
+			});
 			return streamToEventIterator(await agentStreamLifecycle.resume(thread.activeStreamId));
 		},
 
@@ -1262,7 +1466,10 @@ export const agentService = {
 			assertAgentEnvironment();
 			await getThread({ id: input.threadId, userId: input.userId });
 
-			const rows = await listThreadMessages({ threadId: input.threadId, userId: input.userId });
+			const rows = await listThreadMessages({
+				threadId: input.threadId,
+				userId: input.userId,
+			});
 			const row = rows.find((candidate) => toMessage(candidate).id === input.messageId);
 			if (!row) throw new ORPCError("NOT_FOUND");
 
@@ -1331,7 +1538,9 @@ export const agentService = {
 					if ((unsent?.total ?? 0) >= MAX_ATTACHMENTS_PER_MESSAGE) throw new ORPCError("BAD_REQUEST");
 
 					const [stats] = await tx
-						.select({ totalBytes: sql<number>`coalesce(sum(${schema.agentAttachment.size}), 0)` })
+						.select({
+							totalBytes: sql<number>`coalesce(sum(${schema.agentAttachment.size}), 0)`,
+						})
 						.from(schema.agentAttachment)
 						.where(
 							and(eq(schema.agentAttachment.threadId, input.threadId), eq(schema.agentAttachment.userId, input.userId)),
@@ -1342,7 +1551,12 @@ export const agentService = {
 
 					// ponytail: hold the thread lock during storage I/O; reserve quota first if uploads contend.
 					storageAttempted = true;
-					await storage.write({ key, data: input.data, contentType: mediaType, private: true });
+					await storage.write({
+						key,
+						data: input.data,
+						contentType: mediaType,
+						private: true,
+					});
 					const [attachment] = await tx
 						.insert(schema.agentAttachment)
 						.values({
