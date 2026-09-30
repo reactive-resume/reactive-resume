@@ -19,6 +19,10 @@ export const resume = pg.pgTable(
 		showDownloadButtons: pg.boolean("show_download_buttons").notNull().default(true),
 		isLocked: pg.boolean("is_locked").notNull().default(false),
 		password: pg.text("password"),
+		// Separate feedback/comment-mode toggle and password, gated on isPublic (see resume-critique.ts
+		// for the critiquer identity + comment tables this unlocks).
+		critiqueEnabled: pg.boolean("critique_enabled").notNull().default(false),
+		critiquePassword: pg.text("critique_password"),
 		data: pg
 			.jsonb("data")
 			.notNull()

@@ -62,6 +62,8 @@ function RouteComponent() {
 		resume.isPublic,
 		resume.showDownloadButtons,
 		resume.hasPassword,
+		resume.critiqueEnabled,
+		resume.hasCritiquePassword,
 		resume.updatedAt,
 		resume,
 	]);

@@ -166,7 +166,9 @@ describe("resume DTO output validation", () => {
 			isLocked: false,
 			showDownloadButtons: true,
 			updatedAt: new Date("2026-01-01T00:00:00Z"),
+			critiqueEnabled: false,
 			hasPassword: false,
+			hasCritiquePassword: false,
 		};
 		expect(resumeDto.restoreVersion.output.parse(resume)).toEqual(resume);
 	});

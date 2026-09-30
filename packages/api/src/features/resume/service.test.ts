@@ -483,6 +483,32 @@ describe("update", () => {
 		},
 	);
 
+	it("also turns off critiqueEnabled in the same statement when isPublic is set to false", async () => {
+		const row = { ...createResumeRow(defaultResumeData), isPublic: false, critiqueEnabled: false };
+		const select = createLockedSelectChain([{ data: defaultResumeData, isLocked: false }]);
+		const update = createUpdateChain([row]);
+		dbMock.transaction.mockImplementationOnce(async (callback: (tx: unknown) => Promise<unknown>) =>
+			callback({ select: () => select.chain, update: () => update.chain }),
+		);
+
+		await resumeService.update({ id: "r1", userId: "u1", isPublic: false });
+
+		expect(update.set).toHaveBeenCalledWith({ isPublic: false, critiqueEnabled: false });
+	});
+
+	it("does not touch critiqueEnabled when isPublic is set to true", async () => {
+		const row = { ...createResumeRow(defaultResumeData), isPublic: true };
+		const select = createLockedSelectChain([{ data: defaultResumeData, isLocked: false }]);
+		const update = createUpdateChain([row]);
+		dbMock.transaction.mockImplementationOnce(async (callback: (tx: unknown) => Promise<unknown>) =>
+			callback({ select: () => select.chain, update: () => update.chain }),
+		);
+
+		await resumeService.update({ id: "r1", userId: "u1", isPublic: true });
+
+		expect(update.set).toHaveBeenCalledWith({ isPublic: true });
+	});
+
 	it("throws RESUME_LOCKED when the pre-read reports the resume is locked", async () => {
 		const select = createLockedSelectChain([{ data: defaultResumeData, isLocked: true, updatedAt: new Date() }]);
 		dbMock.transaction.mockImplementationOnce(async (callback: (tx: unknown) => Promise<unknown>) =>

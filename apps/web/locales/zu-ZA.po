@@ -38,7 +38,7 @@ msgid "{0, plural, one {# item} other {# items}}"
 msgstr ""
 
 #. placeholder {0}: item.roles.length
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "{0, plural, one {# role} other {# roles}}"
 msgstr ""
 
@@ -371,11 +371,11 @@ msgstr ""
 msgid "Add a label to the URL"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/awards.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new award"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/certifications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new certification"
 msgstr ""
 
@@ -383,15 +383,15 @@ msgstr ""
 msgid "Add a new custom section"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/education.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new education"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new experience"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/interests.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new interest"
 msgstr ""
 
@@ -400,31 +400,31 @@ msgstr ""
 msgid "Add a new item"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/languages.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new language"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/profiles.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new profile"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/projects.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new project"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/publications.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new publication"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/references.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new reference"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/skills.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new skill"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-sidebar/left/sections/volunteer.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/items-section.tsx
 msgid "Add a new volunteer experience"
 msgstr ""
 
@@ -464,6 +464,10 @@ msgstr ""
 
 #: src/libs/resume/ats.ts
 msgid "Add at least a city and country so roles can be matched to your region."
+msgstr ""
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "Add Comment"
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -623,6 +627,10 @@ msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Allow access"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Allow Feedback / Critique Mode"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
@@ -1053,6 +1061,7 @@ msgstr ""
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/homepage/ats-playground.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/public/critique-overlay.tsx
 #: src/features/settings/integrations/components/ai-section.tsx
 #: src/features/settings/pages/account.tsx
 #: src/features/settings/pages/api-keys.tsx
@@ -1090,6 +1099,10 @@ msgstr ""
 
 #: src/features/command-palette/pages/preferences/index.tsx
 msgid "Change language to…"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Change Password"
 msgstr ""
 
 #: src/features/command-palette/pages/preferences/index.tsx
@@ -1247,6 +1260,10 @@ msgstr ""
 msgid "Clear selection"
 msgstr ""
 
+#: src/features/resume/public/critique-overlay.tsx
+msgid "Click anywhere on the resume"
+msgstr ""
+
 #: src/dialogs/resume/import.tsx
 msgid "Click here to select a file to import"
 msgstr ""
@@ -1286,6 +1303,19 @@ msgstr ""
 #. Accessible label for command palette dialog when browsing a nested command page
 #: src/features/command-palette/index.tsx
 msgid "Command Palette - {currentPage}"
+msgstr ""
+
+#. placeholder {0}: view.displayName
+#: src/features/resume/public/critique-resume.tsx
+msgid "Commenting as {0}"
+msgstr ""
+
+#: src/features/resume/builder/critique-review-sheet.tsx
+msgid "Comments left by people you've shared your feedback link with. Pins show where on the page."
+msgstr ""
+
+#: src/features/resume/builder/critique-review-sheet.tsx
+msgid "Comments will show up here once someone leaves feedback on your resume."
 msgstr ""
 
 #: src/features/homepage/site-footer.tsx
@@ -1388,8 +1418,10 @@ msgstr ""
 
 #. Button label to continue to dashboard after successful registration
 #. Final action button after saving backup codes
+#. Primary action button label to unlock a resume's feedback link
 #. Primary action button to proceed to next step in two-factor setup
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/register.tsx
 msgid "Continue"
 msgstr ""
@@ -1400,7 +1432,7 @@ msgid "Continue where you left off"
 msgstr ""
 
 #: src/dialogs/resume/import.tsx
-msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, and JSON files from Reactive Resume or JSON Resume."
+msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, a LinkedIn data export, and JSON files from Reactive Resume or JSON Resume."
 msgstr ""
 
 #: src/features/homepage/page.tsx
@@ -1440,6 +1472,10 @@ msgstr ""
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Copy Backup Codes"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Copy feedback URL"
 msgstr ""
 
 #: src/features/cover-letters/editor-dialog.tsx
@@ -1792,6 +1828,10 @@ msgstr ""
 msgid "Creating your resume..."
 msgstr ""
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Critiquers will need this password to leave comments. Share it only with people you trust."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Crop and Upload"
 msgstr ""
@@ -1909,6 +1949,7 @@ msgstr ""
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/table-view.tsx
 #: src/features/cover-letters/editor-dialog.tsx
+#: src/features/resume/public/critique-overlay.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 #: src/features/settings/pages/api-keys.tsx
 #: src/routes/agent/-components/agent-chat.tsx
@@ -1950,6 +1991,10 @@ msgstr ""
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Delete this application?"
+msgstr ""
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "Delete this comment?"
 msgstr ""
 
 #: src/features/cover-letters/editor-dialog.tsx
@@ -2072,7 +2117,12 @@ msgid "Discord"
 msgstr ""
 
 #: src/features/applications/components/application-ai-copilot.tsx
+#: src/features/resume/builder/critique-status-actions.tsx
 msgid "Dismiss"
+msgstr ""
+
+#: src/features/resume/builder/critique-status-actions.tsx
+msgid "Dismissed"
 msgstr ""
 
 #: src/features/homepage/page.tsx
@@ -2222,6 +2272,10 @@ msgstr ""
 msgid "Dutch"
 msgstr ""
 
+#: src/features/auth/pages/critique-password.tsx
+msgid "e.g. Jane - Career Coach"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/version-history.tsx
 msgid "Earlier versions are kept; the builder's undo history is reset."
 msgstr ""
@@ -2229,6 +2283,7 @@ msgstr ""
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/resume/public/critique-overlay.tsx
 #: src/routes/builder/$resumeId/-components/mobile-builder-shell.tsx
 msgid "Edit"
 msgstr ""
@@ -2387,6 +2442,10 @@ msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account"
+msgstr ""
+
+#: src/features/auth/pages/critique-password.tsx
+msgid "Enter the password the resume owner shared with you, and let us know who you are."
 msgstr ""
 
 #: src/features/auth/pages/resume-password.tsx
@@ -2665,7 +2724,9 @@ msgstr ""
 msgid "Failed to upload picture. Please try again."
 msgstr ""
 
+#. Fallback toast when critique password verification fails unexpectedly
 #. Fallback toast when resume password verification fails unexpectedly
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/resume-password.tsx
 msgid "Failed to verify the password. Please try again."
 msgstr ""
@@ -2688,6 +2749,23 @@ msgstr ""
 
 #: src/features/homepage/site-footer.tsx
 msgid "Features"
+msgstr ""
+
+#: src/features/resume/builder/critique-review-sheet.tsx
+msgid "Feedback"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Feedback link copied to clipboard."
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Feedback link password has been set."
+msgstr ""
+
+#. Form field label for the generated feedback/critique link in sharing settings
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Feedback URL"
 msgstr ""
 
 #: src/features/homepage/page.tsx
@@ -3019,6 +3097,7 @@ msgstr ""
 
 #. Accessible label for button that hides password in registration form
 #. Accessible label for button that hides password in reset-password form
+#. Accessible label for button that hides password on feedback access screen
 #. Accessible label for button that hides password on protected resume screen
 #. Accessible label for button that hides the password in login form
 #. Accessible label for toggle button that hides the visible current password
@@ -3028,6 +3107,7 @@ msgstr ""
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -3481,12 +3561,20 @@ msgstr ""
 msgid "Leave"
 msgstr ""
 
+#: src/features/resume/public/critique-overlay.tsx
+msgid "Leave a comment..."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Leave at least half an inch around the page."
 msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "Leave empty to reset the title to the original."
+msgstr ""
+
+#: src/features/auth/pages/critique-password.tsx
+msgid "Leave feedback on this resume"
 msgstr ""
 
 #: src/dialogs/resume/import.tsx
@@ -3503,6 +3591,10 @@ msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Let mentors or friends leave inline comments on your resume."
 msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
@@ -3571,6 +3663,11 @@ msgstr ""
 #: src/features/settings/authentication/components/hooks.tsx
 #: src/routes/_home/-sections/footer.tsx
 msgid "LinkedIn"
+msgstr ""
+
+#. Import source option for a LinkedIn data export ZIP
+#: src/dialogs/resume/import.tsx
+msgid "LinkedIn (Data Export)"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -3719,6 +3816,10 @@ msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Margin (Vertical)"
+msgstr ""
+
+#: src/features/resume/builder/critique-status-actions.tsx
+msgid "Mark Implemented"
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -3870,6 +3971,10 @@ msgstr ""
 msgid "New Application"
 msgstr ""
 
+#: src/features/resume/public/critique-overlay.tsx
+msgid "New comment"
+msgstr ""
+
 #: src/components/input/rich-input.tsx
 msgid "New Line"
 msgstr ""
@@ -3967,6 +4072,10 @@ msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No email address was found."
+msgstr ""
+
+#: src/features/resume/builder/critique-review-sheet.tsx
+msgid "No feedback yet"
 msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
@@ -4264,9 +4373,10 @@ msgstr ""
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: Math.floor(offset / 20) + 1
+#. placeholder {0}: comment.pageNumber
 #. placeholder {0}: pageIndex + 1
-#. placeholder {0}: targetPageIndex + 1
 #: src/features/cover-letters/library.tsx
+#: src/features/resume/builder/critique-review-sheet.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
@@ -4300,11 +4410,13 @@ msgid "Passkeys"
 msgstr ""
 
 #. Authentication provider display name in account settings
+#. Label for password input on feedback access form
 #. Label for password input on login form
 #. Label for password input on protected resume access form
 #. Label for password input on registration form
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/resume-password.tsx
@@ -4393,6 +4505,10 @@ msgstr ""
 
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "PDFs already attached to applications will remain available."
+msgstr ""
+
+#: src/features/resume/builder/critique-status-actions.tsx
+msgid "Pending"
 msgstr ""
 
 #: src/dialogs/resume/sections/education.tsx
@@ -4492,6 +4608,10 @@ msgstr ""
 #: src/dialogs/resume/sections/experience.tsx
 #: src/dialogs/resume/sections/reference.tsx
 msgid "Position"
+msgstr ""
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "Post"
 msgstr ""
 
 #: src/libs/resume/ats.ts
@@ -4887,6 +5007,10 @@ msgstr ""
 msgid "Renders your current resume to PDF and runs the full file check in your browser. Nothing is uploaded."
 msgstr ""
 
+#: src/features/resume/builder/critique-status-actions.tsx
+msgid "Reopen"
+msgstr ""
+
 #: src/dialogs/resume/sections/experience.tsx
 msgid "Reorder"
 msgstr ""
@@ -4959,6 +5083,10 @@ msgstr ""
 
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
+msgstr ""
+
+#: src/features/resume/builder/critique-status-actions.tsx
+msgid "Resolved"
 msgstr ""
 
 #: src/features/homepage/site-footer.tsx
@@ -5160,6 +5288,7 @@ msgstr ""
 
 #. Passkey rename prompt confirm action in authentication settings
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/resume/public/critique-overlay.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "Save"
 msgstr ""
@@ -5434,6 +5563,14 @@ msgid "Serif"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Set a password before sharing this link — critiquers need it to leave comments."
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Set a password for your feedback link"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Set a password if you want only people who know it to open the public URL."
 msgstr ""
 
@@ -5479,6 +5616,10 @@ msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Shadow Width"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Share this link and its password with the people you want feedback from."
 msgstr ""
 
 #: src/libs/resume/section.tsx
@@ -5533,6 +5674,7 @@ msgstr ""
 
 #. Accessible label for button that reveals password in registration form
 #. Accessible label for button that reveals password in reset-password form
+#. Accessible label for button that reveals password on feedback access screen
 #. Accessible label for button that reveals password on protected resume screen
 #. Accessible label for button that reveals the password in login form
 #. Accessible label for toggle button that reveals the masked current password
@@ -5542,6 +5684,7 @@ msgstr ""
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -5751,9 +5894,12 @@ msgstr ""
 msgid "Something went wrong while signing you in. Please try again."
 msgstr ""
 
+#. Fallback toast when a critique comment action fails unexpectedly
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/resume/builder/critique-review-sheet.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/public/critique-resume.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Something went wrong. Please try again."
 msgstr ""
@@ -6164,6 +6310,7 @@ msgstr ""
 msgid "The pages are pictures, with no text behind them."
 msgstr ""
 
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/resume-password.tsx
 msgid "The password you entered is incorrect"
 msgstr ""
@@ -6190,6 +6337,14 @@ msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
+msgstr ""
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "The resume owner dismissed this comment."
+msgstr ""
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "The resume owner marked this as implemented."
 msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
@@ -7070,6 +7225,7 @@ msgstr ""
 msgid "Verifying code…"
 msgstr ""
 
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/resume-password.tsx
 msgid "Verifying password..."
 msgstr ""
@@ -7100,6 +7256,14 @@ msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "View application"
+msgstr ""
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "View comment"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "View Feedback"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
@@ -7429,6 +7593,11 @@ msgstr ""
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Your name"
+msgstr ""
+
+#. Label for the critiquer's own name input on the feedback access form
+#: src/features/auth/pages/critique-password.tsx
+msgid "Your Name"
 msgstr ""
 
 #: src/libs/resume/ats.ts

@@ -82,6 +82,10 @@ describe("rateLimitConfig", () => {
 			expect(rateLimitConfig.orpc.resumePassword).toEqual({ maxRequests: 5, window: 10 * 60 * 1000 });
 		});
 
+		it("limits critique password verification to 5 per 10 minutes", () => {
+			expect(rateLimitConfig.orpc.critiquePassword).toEqual({ maxRequests: 5, window: 10 * 60 * 1000 });
+		});
+
 		it("limits PDF export to 5 per minute", () => {
 			expect(rateLimitConfig.orpc.pdfExport).toEqual({ maxRequests: 5, window: 60 * 1000 });
 		});

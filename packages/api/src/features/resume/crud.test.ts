@@ -116,7 +116,9 @@ describe("resume sharing update route", () => {
 				data: defaultResumeData,
 				isPublic: true,
 				isLocked: false,
+				critiqueEnabled: false,
 				hasPassword: false,
+				hasCritiquePassword: false,
 				showDownloadButtons,
 				updatedAt: new Date(),
 			};

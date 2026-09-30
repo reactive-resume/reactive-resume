@@ -29,6 +29,10 @@ vi.mock("@/libs/orpc/client", () => ({
 			setPassword: { mutationOptions: () => ({ mutationFn: mocks.setPassword }) },
 			update: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 			removePassword: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+			critique: {
+				setEnabled: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+				setPassword: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+			},
 		},
 	},
 }));

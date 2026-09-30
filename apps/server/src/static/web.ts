@@ -59,6 +59,21 @@ function isPublicResumePath(pathname: string): boolean {
 	return segments.length === 2 && firstSegment !== undefined && !reservedPublicResumeSegments.has(firstSegment);
 }
 
+// The feedback/critique page lives one segment deeper than the public resume page
+// (/{username}/{slug}/critique) and needs the same shell-not-404 treatment, but never the
+// resume's own social-card metadata — critique links are for invited critiquers, not sharing.
+function isPublicResumeCritiquePath(pathname: string): boolean {
+	const segments = getPathSegments(pathname);
+	const [firstSegment] = segments;
+
+	return (
+		segments.length === 3 &&
+		segments[2] === "critique" &&
+		firstSegment !== undefined &&
+		!reservedPublicResumeSegments.has(firstSegment)
+	);
+}
+
 const BASE_SECURITY_HEADERS = {
 	"X-Frame-Options": "DENY",
 	"X-Content-Type-Options": "nosniff",
@@ -269,7 +284,7 @@ function getFallbackResponseHeaders(pathname: string) {
 	if (pathname === "/" || indexableAppPaths.has(pathname)) {
 		return { "Content-Type": "text/html; charset=UTF-8", ...BASE_SECURITY_HEADERS };
 	}
-	if (isNoindexShellPath(pathname) || isPublicResumePath(pathname)) {
+	if (isNoindexShellPath(pathname) || isPublicResumePath(pathname) || isPublicResumeCritiquePath(pathname)) {
 		return {
 			"Content-Type": "text/html; charset=UTF-8",
 			"X-Robots-Tag": "noindex, follow",

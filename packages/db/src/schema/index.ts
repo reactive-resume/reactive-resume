@@ -3,3 +3,4 @@ export * from "./applications";
 export * from "./auth";
 export * from "./cover-letter";
 export * from "./resume";
+export * from "./resume-critique";

@@ -471,6 +471,10 @@ msgstr "ആപ്ലിക്കേഷൻ ചേർക്കുക"
 msgid "Add at least a city and country so roles can be matched to your region."
 msgstr "നിങ്ങളുടെ പ്രദേശവുമായി റോളുകൾ പൊരുത്തപ്പെടുത്തുന്നതിന് കുറഞ്ഞത് ഒരു നഗരവും രാജ്യവും ചേർക്കുക."
 
+#: src/features/resume/public/critique-overlay.tsx
+msgid "Add Comment"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Add contact"
 msgstr "കോൺടാക്റ്റ് ചേർക്കുക"
@@ -629,6 +633,10 @@ msgstr "എല്ലാ ആപ്ലിക്കേഷനുകളും (ആർ
 #: src/features/auth/pages/consent.tsx
 msgid "Allow access"
 msgstr "പ്രവേശനം അനുവദിക്കുക"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Allow Feedback / Critique Mode"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Allow Public Access"
@@ -1058,6 +1066,7 @@ msgstr ""
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/homepage/ats-playground.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/public/critique-overlay.tsx
 #: src/features/settings/integrations/components/ai-section.tsx
 #: src/features/settings/pages/account.tsx
 #: src/features/settings/pages/api-keys.tsx
@@ -1096,6 +1105,10 @@ msgstr "ഭാഷ മാറ്റുക"
 #: src/features/command-palette/pages/preferences/index.tsx
 msgid "Change language to…"
 msgstr "ഭാഷ… ആക്കുക"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Change Password"
+msgstr ""
 
 #: src/features/command-palette/pages/preferences/index.tsx
 msgid "Change theme to…"
@@ -1252,6 +1265,10 @@ msgstr "ഫിൽട്ടറുകൾ മായ്ക്കുക"
 msgid "Clear selection"
 msgstr "തിരഞ്ഞെടുപ്പ് മായ്ക്കുക"
 
+#: src/features/resume/public/critique-overlay.tsx
+msgid "Click anywhere on the resume"
+msgstr ""
+
 #: src/dialogs/resume/import.tsx
 msgid "Click here to select a file to import"
 msgstr "ഇംപോർട്ട് ചെയ്യാൻ ഒരു ഫയൽ തിരഞ്ഞെടുക്കാൻ ഇവിടെ ക്ലിക്ക് ചെയ്യുക"
@@ -1292,6 +1309,19 @@ msgstr "കമാൻഡ് പാലറ്റ്"
 #: src/features/command-palette/index.tsx
 msgid "Command Palette - {currentPage}"
 msgstr "കമാൻഡ് പാലറ്റ് - {currentPage}"
+
+#. placeholder {0}: view.displayName
+#: src/features/resume/public/critique-resume.tsx
+msgid "Commenting as {0}"
+msgstr ""
+
+#: src/features/resume/builder/critique-review-sheet.tsx
+msgid "Comments left by people you've shared your feedback link with. Pins show where on the page."
+msgstr ""
+
+#: src/features/resume/builder/critique-review-sheet.tsx
+msgid "Comments will show up here once someone leaves feedback on your resume."
+msgstr ""
 
 #: src/features/homepage/site-footer.tsx
 #: src/routes/_home/-sections/footer.tsx
@@ -1393,8 +1423,10 @@ msgstr "ഉള്ളടക്കം ഒരു ഗ്രിഡിലായി ക
 
 #. Button label to continue to dashboard after successful registration
 #. Final action button after saving backup codes
+#. Primary action button label to unlock a resume's feedback link
 #. Primary action button to proceed to next step in two-factor setup
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/register.tsx
 msgid "Continue"
 msgstr "തുടരുക"
@@ -1405,8 +1437,8 @@ msgid "Continue where you left off"
 msgstr "നിങ്ങൾ അവസാനിപ്പിച്ചിടത്തു നിന്നു തുടരുക"
 
 #: src/dialogs/resume/import.tsx
-msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, and JSON files from Reactive Resume or JSON Resume."
-msgstr "Reactive Resume ലോ മറ്റൊരു റിസ്യൂം ബിൽഡറിലോ നിങ്ങൾ ഉണ്ടാക്കിയ റിസ്യൂം ഇംപോർട്ട് ചെയ്ത്, നിർത്തിയിടത്തുനിന്ന് തുടരുക. PDF, Microsoft Word, Reactive Resume അല്ലെങ്കിൽ JSON Resume ന്റെ JSON ഫയലുകൾ എന്നിവയ്ക്ക് പിന്തുണയുണ്ട്."
+msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, a LinkedIn data export, and JSON files from Reactive Resume or JSON Resume."
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Contribute code"
@@ -1446,6 +1478,10 @@ msgstr "നിങ്ങളുടെ ഉപകരണം നഷ്ടപ്പെ�
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Copy Backup Codes"
 msgstr "ബാക്കപ്പ് കോഡുകൾ പകർത്തുക"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Copy feedback URL"
+msgstr ""
 
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Copy from resume"
@@ -1797,6 +1833,10 @@ msgstr "നിങ്ങളുടെ API കീ സൃഷ്‌ടിക്കു
 msgid "Creating your resume..."
 msgstr "നിങ്ങളുടെ റിസ്യൂം സൃഷ്‌ടിക്കുന്നു..."
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Critiquers will need this password to leave comments. Share it only with people you trust."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Crop and Upload"
 msgstr "ചിത്രം ക്രോപ്പ് ചെയ്ത് അപ്‌ലോഡ് ചെയ്യുക"
@@ -1914,6 +1954,7 @@ msgstr "ഡിഗ്രി"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/table-view.tsx
 #: src/features/cover-letters/editor-dialog.tsx
+#: src/features/resume/public/critique-overlay.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 #: src/features/settings/pages/api-keys.tsx
 #: src/routes/agent/-components/agent-chat.tsx
@@ -1956,6 +1997,10 @@ msgstr "ഈ ഏജന്റ് ത്രെഡ് ഇല്ലാതാക്ക
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Delete this application?"
 msgstr "ഈ അപേക്ഷ ഇല്ലാതാക്കണോ?"
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "Delete this comment?"
+msgstr ""
 
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Delete this cover letter?"
@@ -2077,8 +2122,13 @@ msgid "Discord"
 msgstr "ഡിസ്‌കോർഡ്"
 
 #: src/features/applications/components/application-ai-copilot.tsx
+#: src/features/resume/builder/critique-status-actions.tsx
 msgid "Dismiss"
 msgstr "നിരസിക്കുക"
+
+#: src/features/resume/builder/critique-status-actions.tsx
+msgid "Dismissed"
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Docs"
@@ -2227,6 +2277,10 @@ msgstr ""
 msgid "Dutch"
 msgstr "ഡച്ച്"
 
+#: src/features/auth/pages/critique-password.tsx
+msgid "e.g. Jane - Career Coach"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/version-history.tsx
 msgid "Earlier versions are kept; the builder's undo history is reset."
 msgstr "മുൻ പതിപ്പുകൾ സൂക്ഷിക്കുന്നു; ബിൽഡറുടെ പഴയപടിയാക്കൽ ചരിത്രം പുനഃസജ്ജമാക്കുന്നു."
@@ -2234,6 +2288,7 @@ msgstr "മുൻ പതിപ്പുകൾ സൂക്ഷിക്കുന�
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/resume/public/critique-overlay.tsx
 #: src/routes/builder/$resumeId/-components/mobile-builder-shell.tsx
 msgid "Edit"
 msgstr "എഡിറ്റ് ചെയ്യുക"
@@ -2393,6 +2448,10 @@ msgstr "സാധുവായ ഒരു ഇമെയിൽ വിലാസം �
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account"
 msgstr "നിങ്ങളുടെ അക്കൗണ്ടിലേക്ക് പ്രവേശിക്കാൻ, നിങ്ങൾ സൂക്ഷിച്ചിരിക്കുന്ന ബാക്കപ്പ് കോഡുകളിലൊന്ന് നൽകുക"
+
+#: src/features/auth/pages/critique-password.tsx
+msgid "Enter the password the resume owner shared with you, and let us know who you are."
+msgstr ""
 
 #: src/features/auth/pages/resume-password.tsx
 msgid "Enter the password the resume owner shared with you."
@@ -2670,7 +2729,9 @@ msgstr "അറ്റാച്ചുമെന്റ് അപ്‌ലോഡ് �
 msgid "Failed to upload picture. Please try again."
 msgstr "ചിത്രം അപ്‌ലോഡ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു. ദയവായി വീണ്ടും ശ്രമിക്കുക."
 
+#. Fallback toast when critique password verification fails unexpectedly
 #. Fallback toast when resume password verification fails unexpectedly
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/resume-password.tsx
 msgid "Failed to verify the password. Please try again."
 msgstr "പാസ്‌വേഡ് പരിശോധിക്കാൻ പരാജയപ്പെട്ടു. ദയവായി വീണ്ടും ശ്രമിക്കുക."
@@ -2694,6 +2755,23 @@ msgstr "ഗുരുതരമായ പിശക്"
 #: src/features/homepage/site-footer.tsx
 msgid "Features"
 msgstr "സവിശേഷതകൾ"
+
+#: src/features/resume/builder/critique-review-sheet.tsx
+msgid "Feedback"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Feedback link copied to clipboard."
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Feedback link password has been set."
+msgstr ""
+
+#. Form field label for the generated feedback/critique link in sharing settings
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Feedback URL"
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Fifteen templates, all free. Pick one you like. You can change the type, color, and layout in the editor."
@@ -3024,6 +3102,7 @@ msgstr "ലിങ്ക് അടിവര മറയ്ക്കുക"
 
 #. Accessible label for button that hides password in registration form
 #. Accessible label for button that hides password in reset-password form
+#. Accessible label for button that hides password on feedback access screen
 #. Accessible label for button that hides password on protected resume screen
 #. Accessible label for button that hides the password in login form
 #. Accessible label for toggle button that hides the visible current password
@@ -3033,6 +3112,7 @@ msgstr "ലിങ്ക് അടിവര മറയ്ക്കുക"
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -3486,6 +3566,10 @@ msgstr "ചെയ്ത ജോലി ആദ്യം പറയൂ. വായി�
 msgid "Leave"
 msgstr "വിടുക"
 
+#: src/features/resume/public/critique-overlay.tsx
+msgid "Leave a comment..."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Leave at least half an inch around the page."
 msgstr "പേജിന് ചുറ്റും കുറഞ്ഞത് അര ഇഞ്ച് വിടുക."
@@ -3493,6 +3577,10 @@ msgstr "പേജിന് ചുറ്റും കുറഞ്ഞത് അര
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "Leave empty to reset the title to the original."
 msgstr "ശീർഷകം ആദ്ധ്യത്തിലേതിലേക്ക് റീസെറ്റ് ചെയ്യാൻ, ഇത് ശൂന്യമാക്കി വിടുക."
+
+#: src/features/auth/pages/critique-password.tsx
+msgid "Leave feedback on this resume"
+msgstr ""
 
 #: src/dialogs/resume/import.tsx
 msgid "Leave to set up an AI provider?"
@@ -3509,6 +3597,10 @@ msgstr "നിയമപരം"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "നീളം ഒരു കുറവല്ല, ഒരു സാർവത്രിക ഒറ്റ-പേജ് നിയമവുമില്ല. അർഹമായ പേജുകൾ നിലനിർത്തുക."
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Let mentors or friends leave inline comments on your resume."
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Letter"
@@ -3577,6 +3669,11 @@ msgstr "ലിങ്ക് ചെയ്‌ത Reactive Resume"
 #: src/routes/_home/-sections/footer.tsx
 msgid "LinkedIn"
 msgstr "ലിങ്ക്ഡ്ഇൻ"
+
+#. Import source option for a LinkedIn data export ZIP
+#: src/dialogs/resume/import.tsx
+msgid "LinkedIn (Data Export)"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "LinkedIn, Referral…"
@@ -3725,6 +3822,10 @@ msgstr "മാർജിൻ (തിരശ്ചീനം)"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Margin (Vertical)"
 msgstr "മാർജിൻ (ലംബം)"
+
+#: src/features/resume/builder/critique-status-actions.tsx
+msgid "Mark Implemented"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Mark rejected"
@@ -3875,6 +3976,10 @@ msgstr "ഈ സെർവറിൽ പുതിയ അക്കൗണ്ട് �
 msgid "New Application"
 msgstr "പുതിയ ആപ്ലിക്കേഷൻ"
 
+#: src/features/resume/public/critique-overlay.tsx
+msgid "New comment"
+msgstr ""
+
 #: src/components/input/rich-input.tsx
 msgid "New Line"
 msgstr "പുതിയ വരി"
@@ -3973,6 +4078,10 @@ msgstr "വിദ്യാഭ്യാസ വിഭാഗം കണ്ടെത�
 #: src/features/ats-checker/messages.ts
 msgid "No email address was found."
 msgstr "ഇമെയിൽ വിലാസം കണ്ടെത്തിയില്ല."
+
+#: src/features/resume/builder/critique-review-sheet.tsx
+msgid "No feedback yet"
+msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "No interviews"
@@ -4269,9 +4378,10 @@ msgstr "പേജ്"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: Math.floor(offset / 20) + 1
+#. placeholder {0}: comment.pageNumber
 #. placeholder {0}: pageIndex + 1
-#. placeholder {0}: targetPageIndex + 1
 #: src/features/cover-letters/library.tsx
+#: src/features/resume/builder/critique-review-sheet.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
@@ -4305,11 +4415,13 @@ msgid "Passkeys"
 msgstr "പാസ്‌കീകൾ"
 
 #. Authentication provider display name in account settings
+#. Label for password input on feedback access form
 #. Label for password input on login form
 #. Label for password input on protected resume access form
 #. Label for password input on registration form
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/resume-password.tsx
@@ -4399,6 +4511,10 @@ msgstr "PDF വാചക പാളി"
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "PDFs already attached to applications will remain available."
 msgstr "ആപ്ലിക്കേഷനുകളിൽ ഇതിനകം അറ്റാച്ച് ചെയ്തിട്ടുള്ള PDF-കൾ തുടർന്നും ലഭ്യമാകും."
+
+#: src/features/resume/builder/critique-status-actions.tsx
+msgid "Pending"
+msgstr ""
 
 #: src/dialogs/resume/sections/education.tsx
 #: src/dialogs/resume/sections/experience.tsx
@@ -4498,6 +4614,10 @@ msgstr "പോർച്ചുഗീസ് (പോർച്ചുഗൽ)"
 #: src/dialogs/resume/sections/reference.tsx
 msgid "Position"
 msgstr "പദവി"
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "Post"
+msgstr ""
 
 #: src/libs/resume/ats.ts
 msgid "Prefer a conventional heading such as \"Work Experience\" or \"Education\"."
@@ -4892,6 +5012,10 @@ msgstr "പുനർനാമകരണം ചെയ്യുക"
 msgid "Renders your current resume to PDF and runs the full file check in your browser. Nothing is uploaded."
 msgstr "നിങ്ങളുടെ ഇപ്പോഴത്തെ റിസ്യൂം PDF ആക്കി, മുഴുവൻ ഫയൽ പരിശോധനയും നിങ്ങളുടെ ബ്രൗസറിൽ തന്നെ നടത്തുന്നു. ഒന്നും അപ്‌ലോഡ് ചെയ്യുന്നില്ല."
 
+#: src/features/resume/builder/critique-status-actions.tsx
+msgid "Reopen"
+msgstr ""
+
 #: src/dialogs/resume/sections/experience.tsx
 msgid "Reorder"
 msgstr "പുനഃക്രമീകരിക്കുക"
@@ -4965,6 +5089,10 @@ msgstr "നിങ്ങളുടെ പാസ്‌വേഡ് റീസെറ�
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
 msgstr "നിങ്ങളുടെ പാസ്‌വേഡ് റീസെറ്റ് ചെയ്യുന്നു..."
+
+#: src/features/resume/builder/critique-status-actions.tsx
+msgid "Resolved"
+msgstr ""
 
 #: src/features/homepage/site-footer.tsx
 #: src/routes/_home/-sections/footer.tsx
@@ -5165,6 +5293,7 @@ msgstr "ഇല്ലാതെ"
 
 #. Passkey rename prompt confirm action in authentication settings
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/resume/public/critique-overlay.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "Save"
 msgstr "സേവ് ചെയ്യുക"
@@ -5439,6 +5568,14 @@ msgid "Serif"
 msgstr "സെരിഫ്"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Set a password before sharing this link — critiquers need it to leave comments."
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Set a password for your feedback link"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Set a password if you want only people who know it to open the public URL."
 msgstr "പാസ്‌വേഡ് അറിയുന്നവർ മാത്രം പൊതു URL തുറക്കണമെന്ന് ആഗ്രഹിക്കുന്നുവെങ്കിൽ, ഒരു പാസ്‌വേഡ് സജ്ജമാക്കുക."
 
@@ -5485,6 +5622,10 @@ msgstr "ഓത്‌ന്റിക്കേറ്റർ ആപ്പ് സജ�
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Shadow Width"
 msgstr "ഷാഡോ വീതി"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Share this link and its password with the people you want feedback from."
+msgstr ""
 
 #: src/libs/resume/section.tsx
 msgid "Sharing"
@@ -5538,6 +5679,7 @@ msgstr "ശീർഷകത്തിൽ ലിങ്ക് കാണിക്ക�
 
 #. Accessible label for button that reveals password in registration form
 #. Accessible label for button that reveals password in reset-password form
+#. Accessible label for button that reveals password on feedback access screen
 #. Accessible label for button that reveals password on protected resume screen
 #. Accessible label for button that reveals the password in login form
 #. Accessible label for toggle button that reveals the masked current password
@@ -5547,6 +5689,7 @@ msgstr "ശീർഷകത്തിൽ ലിങ്ക് കാണിക്ക�
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -5756,9 +5899,12 @@ msgstr "ഈ ഫയൽ വായിക്കുന്നതിനിടെ എന
 msgid "Something went wrong while signing you in. Please try again."
 msgstr "നിങ്ങളെ സൈൻ ഇൻ ചെയ്യുമ്പോൾ എന്തോ കുഴപ്പം സംഭവിച്ചു. ദയവായി വീണ്ടും ശ്രമിക്കുക."
 
+#. Fallback toast when a critique comment action fails unexpectedly
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/resume/builder/critique-review-sheet.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/public/critique-resume.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Something went wrong. Please try again."
 msgstr "എന്തോ പിശക് സംഭവിച്ചു. ദയവായി വീണ്ടും ശ്രമിക്കുക."
@@ -6169,6 +6315,7 @@ msgstr "നിങ്ങൾ തിരയുന്ന പേജ് നീക്ക
 msgid "The pages are pictures, with no text behind them."
 msgstr "പേജുകൾ ചിത്രങ്ങളാണ്, പിന്നിൽ ടെക്സ്റ്റൊന്നുമില്ല."
 
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/resume-password.tsx
 msgid "The password you entered is incorrect"
 msgstr "നിങ്ങൾ നൽകിയ പാസ്‌വേഡ് തെറ്റാണ്"
@@ -6196,6 +6343,14 @@ msgstr "ദാതാവിന്റെ പ്രതികരണം പരിശ�
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
 msgstr "നിങ്ങളുടെ ജോലി അന്വേഷണത്തിന്റെ<0/>ബാക്കി ഭാഗവും."
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "The resume owner dismissed this comment."
+msgstr ""
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "The resume owner marked this as implemented."
+msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "The resume preview could not be updated. The last valid preview is still shown."
@@ -7075,6 +7230,7 @@ msgstr "കോഡ് പരിശോദിക്കുന്നു..."
 msgid "Verifying code…"
 msgstr "കോഡ് പരിശോധിക്കുന്നു…"
 
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/resume-password.tsx
 msgid "Verifying password..."
 msgstr "പാസ്‌വേഡ് പരിശോദിക്കുന്നു..."
@@ -7105,6 +7261,14 @@ msgstr "വിയറ്റ്നാമീസ്"
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "View application"
+msgstr ""
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "View comment"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "View Feedback"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
@@ -7436,6 +7600,11 @@ msgstr "നിങ്ങളുടെ മാർജിനുകൾ വളരെ ഇ
 msgid "Your name"
 msgstr "നിങ്ങളുടെ പേര്"
 
+#. Label for the critiquer's own name input on the feedback access form
+#: src/features/auth/pages/critique-password.tsx
+msgid "Your Name"
+msgstr ""
+
 #: src/libs/resume/ats.ts
 msgid "Your page margins are very narrow."
 msgstr "നിങ്ങളുടെ പേജ് മാർജിനുകൾ വളരെ ഇടുങ്ങിയതാണ്."
@@ -7553,4 +7722,3 @@ msgstr "സൂം ഔട്ട് ചെയ്യുക"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "സൂളു"
-

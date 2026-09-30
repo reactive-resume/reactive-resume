@@ -39,6 +39,7 @@ export const rateLimitConfig = {
 	},
 	orpc: {
 		resumePassword: { maxRequests: 5, window: 10 * 60 * 1000 },
+		critiquePassword: { maxRequests: 5, window: 10 * 60 * 1000 },
 		pdfExport: { maxRequests: 5, window: 60 * 1000 },
 		aiRequest: { maxRequests: 20, window: 60 * 1000 },
 		storageUpload: { maxRequests: 20, window: 60 * 1000 },

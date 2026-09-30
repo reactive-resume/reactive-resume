@@ -20,6 +20,9 @@ type PdfViewerProps = {
 		username: string;
 		slug: string;
 	};
+	// Fired whenever the rendered page layout changes (initial render, page load, resize) so a
+	// caller can re-measure `.page` element positions, e.g. to overlay comment pins.
+	onLayout?: () => void;
 };
 
 type PdfViewerOptions = ConstructorParameters<typeof PDFViewer>[0] & {
@@ -73,11 +76,13 @@ function pdfViewerReducer(state: PdfViewerState, action: PdfViewerAction): PdfVi
 	}
 }
 
-export function PdfViewer({ className, data, publicResume, includeCoverLetterHeader }: PdfViewerProps) {
+export function PdfViewer({ className, data, publicResume, includeCoverLetterHeader, onLayout }: PdfViewerProps) {
 	const rootRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const viewerRef = useRef<HTMLDivElement>(null);
 	const fileRef = useRef<Blob | null>(null);
+	const onLayoutRef = useRef(onLayout);
+	onLayoutRef.current = onLayout;
 	const [{ error, fileVersion, isReady, viewerHeight }, dispatch] = useReducer(
 		pdfViewerReducer,
 		INITIAL_PDF_VIEWER_STATE,
@@ -150,6 +155,7 @@ export function PdfViewer({ className, data, publicResume, includeCoverLetterHea
 				const nextHeight = Math.ceil(viewer.scrollHeight);
 				dispatch({ type: "height", height: nextHeight });
 				pdfViewer?.update();
+				onLayoutRef.current?.();
 			});
 		};
 

@@ -241,6 +241,23 @@ describe("web app fallback classification", () => {
 		expect(await response.text()).toBe("<html>app</html>");
 	});
 
+	it("serves noindex shell for the feedback/critique page instead of a 404", async () => {
+		const response = await handleWebApp(new Request("https://example.com/alice/resume/critique"));
+
+		expect(response.status).toBe(200);
+		expect(response.headers.get("Content-Type")).toBe("text/html; charset=UTF-8");
+		expect(response.headers.get("X-Robots-Tag")).toBe("noindex, follow");
+		expect(await response.text()).toBe("<html>app</html>");
+		expect(mocks.getPublicResumeSocialMeta).not.toHaveBeenCalled();
+	});
+
+	it("still 404s a three-segment path that isn't the critique page", async () => {
+		const response = await handleWebApp(new Request("https://example.com/alice/resume/download"));
+
+		expect(response.status).toBe(404);
+		expect(await response.text()).toBe("Not Found");
+	});
+
 	it("returns noindex 404 for unknown non-asset routes", async () => {
 		const response = await handleWebApp(new Request("https://example.com/unknown/extra/path"));
 

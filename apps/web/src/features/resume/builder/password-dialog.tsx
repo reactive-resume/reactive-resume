@@ -17,9 +17,18 @@ import { Label } from "@reactive-resume/ui/components/label";
 type ResumePasswordDialogProps = {
 	onSubmit: (password: string) => Promise<void>;
 	onClose: () => void;
+	title?: string;
+	description?: string;
+	submitLabel?: string;
 };
 
-export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialogProps) {
+export function ResumePasswordDialog({
+	onSubmit,
+	onClose,
+	title,
+	description,
+	submitLabel,
+}: ResumePasswordDialogProps) {
 	const id = useId();
 	const submitting = useRef(false);
 	const [password, setPassword] = useState("");
@@ -63,11 +72,9 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 		>
 			<DialogContent showCloseButton={!isPending} className="sm:max-w-md">
 				<DialogHeader>
-					<DialogTitle>
-						<Trans>Protect your resume with a password</Trans>
-					</DialogTitle>
+					<DialogTitle>{title ?? t`Protect your resume with a password`}</DialogTitle>
 					<DialogDescription>
-						<Trans>Anyone who opens the public URL will need this password.</Trans>
+						{description ?? t`Anyone who opens the public URL will need this password.`}
 					</DialogDescription>
 				</DialogHeader>
 				<form
@@ -128,7 +135,7 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 							<Trans>Cancel</Trans>
 						</Button>
 						<Button type="submit" disabled={isPending}>
-							<Trans>Set Password</Trans>
+							{submitLabel ?? t`Set Password`}
 						</Button>
 					</DialogFooter>
 				</form>

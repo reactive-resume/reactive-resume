@@ -179,7 +179,9 @@ async function applyResumePatchTx(
 			isLocked: schema.resume.isLocked,
 			showDownloadButtons: schema.resume.showDownloadButtons,
 			updatedAt: schema.resume.updatedAt,
+			critiqueEnabled: schema.resume.critiqueEnabled,
 			hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
+			hasCritiquePassword: sql<boolean>`${schema.resume.critiquePassword} IS NOT NULL`,
 		});
 
 	if (!resume) {
@@ -502,7 +504,9 @@ export const resumeService = {
 				isLocked: schema.resume.isLocked,
 				showDownloadButtons: schema.resume.showDownloadButtons,
 				updatedAt: schema.resume.updatedAt,
+				critiqueEnabled: schema.resume.critiqueEnabled,
 				hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
+				hasCritiquePassword: sql<boolean>`${schema.resume.critiquePassword} IS NOT NULL`,
 			})
 			.from(schema.resume)
 			.where(and(eq(schema.resume.id, input.id), eq(schema.resume.userId, input.userId)));
@@ -641,6 +645,8 @@ export const resumeService = {
 					...(normalizedData ? { data: normalizedData } : {}),
 					...(input.isPublic !== undefined ? { isPublic: input.isPublic } : {}),
 					...(input.showDownloadButtons !== undefined ? { showDownloadButtons: input.showDownloadButtons } : {}),
+					// Feedback/critique mode requires public access; turning public access off also turns it off.
+					...(input.isPublic === false ? { critiqueEnabled: false } : {}),
 				};
 
 				const [updated] = await tx
@@ -663,7 +669,9 @@ export const resumeService = {
 						isLocked: schema.resume.isLocked,
 						showDownloadButtons: schema.resume.showDownloadButtons,
 						updatedAt: schema.resume.updatedAt,
+						critiqueEnabled: schema.resume.critiqueEnabled,
 						hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
+						hasCritiquePassword: sql<boolean>`${schema.resume.critiquePassword} IS NOT NULL`,
 					});
 
 				if (!updated) throw new ORPCError("NOT_FOUND");

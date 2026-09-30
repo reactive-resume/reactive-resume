@@ -471,6 +471,10 @@ msgstr "応募を追加"
 msgid "Add at least a city and country so roles can be matched to your region."
 msgstr "役割をあなたの地域に合わせられるように、少なくとも都市と国を追加してください。"
 
+#: src/features/resume/public/critique-overlay.tsx
+msgid "Add Comment"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Add contact"
 msgstr "連絡先を追加"
@@ -629,6 +633,10 @@ msgstr "すべての応募（アーカイブ済みを含む）"
 #: src/features/auth/pages/consent.tsx
 msgid "Allow access"
 msgstr "アクセスを許可"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Allow Feedback / Critique Mode"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Allow Public Access"
@@ -1058,6 +1066,7 @@ msgstr ""
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/homepage/ats-playground.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/public/critique-overlay.tsx
 #: src/features/settings/integrations/components/ai-section.tsx
 #: src/features/settings/pages/account.tsx
 #: src/features/settings/pages/api-keys.tsx
@@ -1096,6 +1105,10 @@ msgstr "言語を変更"
 #: src/features/command-palette/pages/preferences/index.tsx
 msgid "Change language to…"
 msgstr "言語を…に変更します"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Change Password"
+msgstr ""
 
 #: src/features/command-palette/pages/preferences/index.tsx
 msgid "Change theme to…"
@@ -1252,6 +1265,10 @@ msgstr "フィルターをクリア"
 msgid "Clear selection"
 msgstr "選択をクリア"
 
+#: src/features/resume/public/critique-overlay.tsx
+msgid "Click anywhere on the resume"
+msgstr ""
+
 #: src/dialogs/resume/import.tsx
 msgid "Click here to select a file to import"
 msgstr "ここをクリックしてインポートするファイルを選択"
@@ -1292,6 +1309,19 @@ msgstr "コマンドパレット"
 #: src/features/command-palette/index.tsx
 msgid "Command Palette - {currentPage}"
 msgstr "コマンドパレット - {currentPage}"
+
+#. placeholder {0}: view.displayName
+#: src/features/resume/public/critique-resume.tsx
+msgid "Commenting as {0}"
+msgstr ""
+
+#: src/features/resume/builder/critique-review-sheet.tsx
+msgid "Comments left by people you've shared your feedback link with. Pins show where on the page."
+msgstr ""
+
+#: src/features/resume/builder/critique-review-sheet.tsx
+msgid "Comments will show up here once someone leaves feedback on your resume."
+msgstr ""
 
 #: src/features/homepage/site-footer.tsx
 #: src/routes/_home/-sections/footer.tsx
@@ -1393,8 +1423,10 @@ msgstr "コンテンツがグリッドレイアウトになっています。"
 
 #. Button label to continue to dashboard after successful registration
 #. Final action button after saving backup codes
+#. Primary action button label to unlock a resume's feedback link
 #. Primary action button to proceed to next step in two-factor setup
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/register.tsx
 msgid "Continue"
 msgstr "続行"
@@ -1405,8 +1437,8 @@ msgid "Continue where you left off"
 msgstr "中断したところから再開"
 
 #: src/dialogs/resume/import.tsx
-msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, and JSON files from Reactive Resume or JSON Resume."
-msgstr "Reactive Resume や他の履歴書ビルダーで作成した履歴書をインポートして、続きから作業できます。対応形式は PDF、Microsoft Word、および Reactive Resume または JSON Resume の JSON ファイルです。"
+msgid "Continue where you left off by importing a resume you built in Reactive Resume or another resume builder. Supported formats are PDF, Microsoft Word, a LinkedIn data export, and JSON files from Reactive Resume or JSON Resume."
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Contribute code"
@@ -1446,6 +1478,10 @@ msgstr "デバイスを紛失した場合に備えて、これらのバックア
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Copy Backup Codes"
 msgstr "バックアップコードをコピー"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Copy feedback URL"
+msgstr ""
 
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Copy from resume"
@@ -1797,6 +1833,10 @@ msgstr "API キーを作成しています..."
 msgid "Creating your resume..."
 msgstr "履歴書を作成しています…"
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Critiquers will need this password to leave comments. Share it only with people you trust."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Crop and Upload"
 msgstr "トリミングしてアップロード"
@@ -1914,6 +1954,7 @@ msgstr "学位"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/table-view.tsx
 #: src/features/cover-letters/editor-dialog.tsx
+#: src/features/resume/public/critique-overlay.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 #: src/features/settings/pages/api-keys.tsx
 #: src/routes/agent/-components/agent-chat.tsx
@@ -1956,6 +1997,10 @@ msgstr "このエージェントスレッドを削除しますか？"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Delete this application?"
 msgstr "この応募を削除しますか？"
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "Delete this comment?"
+msgstr ""
 
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Delete this cover letter?"
@@ -2077,8 +2122,13 @@ msgid "Discord"
 msgstr "Discord"
 
 #: src/features/applications/components/application-ai-copilot.tsx
+#: src/features/resume/builder/critique-status-actions.tsx
 msgid "Dismiss"
 msgstr "閉じる"
+
+#: src/features/resume/builder/critique-status-actions.tsx
+msgid "Dismissed"
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Docs"
@@ -2227,6 +2277,10 @@ msgstr ""
 msgid "Dutch"
 msgstr "オランダ語"
 
+#: src/features/auth/pages/critique-password.tsx
+msgid "e.g. Jane - Career Coach"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/version-history.tsx
 msgid "Earlier versions are kept; the builder's undo history is reset."
 msgstr "以前のバージョンは保持されますが、ビルダーの元に戻す履歴はリセットされます。"
@@ -2234,6 +2288,7 @@ msgstr "以前のバージョンは保持されますが、ビルダーの元に
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/resume/public/critique-overlay.tsx
 #: src/routes/builder/$resumeId/-components/mobile-builder-shell.tsx
 msgid "Edit"
 msgstr "編集"
@@ -2393,6 +2448,10 @@ msgstr "有効なメールアドレスを入力してください。"
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account"
 msgstr "保存してあるバックアップコードのうち 1 つを入力して、アカウントにアクセスしてください。"
+
+#: src/features/auth/pages/critique-password.tsx
+msgid "Enter the password the resume owner shared with you, and let us know who you are."
+msgstr ""
 
 #: src/features/auth/pages/resume-password.tsx
 msgid "Enter the password the resume owner shared with you."
@@ -2670,7 +2729,9 @@ msgstr "添付ファイルのアップロードに失敗しました。"
 msgid "Failed to upload picture. Please try again."
 msgstr "画像のアップロードに失敗しました。もう一度お試しください。"
 
+#. Fallback toast when critique password verification fails unexpectedly
 #. Fallback toast when resume password verification fails unexpectedly
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/resume-password.tsx
 msgid "Failed to verify the password. Please try again."
 msgstr "パスワードの確認に失敗しました。もう一度お試しください。"
@@ -2694,6 +2755,23 @@ msgstr "致命的なエラー"
 #: src/features/homepage/site-footer.tsx
 msgid "Features"
 msgstr "機能"
+
+#: src/features/resume/builder/critique-review-sheet.tsx
+msgid "Feedback"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Feedback link copied to clipboard."
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Feedback link password has been set."
+msgstr ""
+
+#. Form field label for the generated feedback/critique link in sharing settings
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Feedback URL"
+msgstr ""
 
 #: src/features/homepage/page.tsx
 msgid "Fifteen templates, all free. Pick one you like. You can change the type, color, and layout in the editor."
@@ -3024,6 +3102,7 @@ msgstr "リンクの下線を非表示にする"
 
 #. Accessible label for button that hides password in registration form
 #. Accessible label for button that hides password in reset-password form
+#. Accessible label for button that hides password on feedback access screen
 #. Accessible label for button that hides password on protected resume screen
 #. Accessible label for button that hides the password in login form
 #. Accessible label for toggle button that hides the visible current password
@@ -3033,6 +3112,7 @@ msgstr "リンクの下線を非表示にする"
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -3486,6 +3566,10 @@ msgstr "まず何をしたかを書きましょう。相手が思い浮かべら
 msgid "Leave"
 msgstr "離れる"
 
+#: src/features/resume/public/critique-overlay.tsx
+msgid "Leave a comment..."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Leave at least half an inch around the page."
 msgstr "ページの周囲に少なくとも0.5インチの余白を残してください。"
@@ -3493,6 +3577,10 @@ msgstr "ページの周囲に少なくとも0.5インチの余白を残してく
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "Leave empty to reset the title to the original."
 msgstr "空欄のままにすると、タイトルは元の名前にリセットされます。"
+
+#: src/features/auth/pages/critique-password.tsx
+msgid "Leave feedback on this resume"
+msgstr ""
 
 #: src/dialogs/resume/import.tsx
 msgid "Leave to set up an AI provider?"
@@ -3509,6 +3597,10 @@ msgstr "法務"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "長さそのものは欠点ではなく、1ページに収めるべきという普遍的なルールもありません。価値のあるページだけを残してください。"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Let mentors or friends leave inline comments on your resume."
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Letter"
@@ -3577,6 +3669,11 @@ msgstr "リンク済み Reactive Resume"
 #: src/routes/_home/-sections/footer.tsx
 msgid "LinkedIn"
 msgstr "LinkedIn"
+
+#. Import source option for a LinkedIn data export ZIP
+#: src/dialogs/resume/import.tsx
+msgid "LinkedIn (Data Export)"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "LinkedIn, Referral…"
@@ -3725,6 +3822,10 @@ msgstr "余白（左右）"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Margin (Vertical)"
 msgstr "余白（上下）"
+
+#: src/features/resume/builder/critique-status-actions.tsx
+msgid "Mark Implemented"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Mark rejected"
@@ -3875,6 +3976,10 @@ msgstr "このサーバーでは現在、新規アカウントの登録が無効
 msgid "New Application"
 msgstr "新規申請"
 
+#: src/features/resume/public/critique-overlay.tsx
+msgid "New comment"
+msgstr ""
+
 #: src/components/input/rich-input.tsx
 msgid "New Line"
 msgstr "改行"
@@ -3973,6 +4078,10 @@ msgstr "学歴セクションが見つかりませんでした。"
 #: src/features/ats-checker/messages.ts
 msgid "No email address was found."
 msgstr "メールアドレスが見つかりませんでした。"
+
+#: src/features/resume/builder/critique-review-sheet.tsx
+msgid "No feedback yet"
+msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "No interviews"
@@ -4269,9 +4378,10 @@ msgstr "ページ"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: Math.floor(offset / 20) + 1
+#. placeholder {0}: comment.pageNumber
 #. placeholder {0}: pageIndex + 1
-#. placeholder {0}: targetPageIndex + 1
 #: src/features/cover-letters/library.tsx
+#: src/features/resume/builder/critique-review-sheet.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
@@ -4305,11 +4415,13 @@ msgid "Passkeys"
 msgstr "パスキー"
 
 #. Authentication provider display name in account settings
+#. Label for password input on feedback access form
 #. Label for password input on login form
 #. Label for password input on protected resume access form
 #. Label for password input on registration form
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/resume-password.tsx
@@ -4399,6 +4511,10 @@ msgstr "PDFのテキストレイヤー"
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "PDFs already attached to applications will remain available."
 msgstr "すでに応募に添付されている PDF は引き続き利用できます。"
+
+#: src/features/resume/builder/critique-status-actions.tsx
+msgid "Pending"
+msgstr ""
 
 #: src/dialogs/resume/sections/education.tsx
 #: src/dialogs/resume/sections/experience.tsx
@@ -4498,6 +4614,10 @@ msgstr "ポルトガル語（ポルトガル）"
 #: src/dialogs/resume/sections/reference.tsx
 msgid "Position"
 msgstr "役職"
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "Post"
+msgstr ""
 
 #: src/libs/resume/ats.ts
 msgid "Prefer a conventional heading such as \"Work Experience\" or \"Education\"."
@@ -4892,6 +5012,10 @@ msgstr "名前を変更"
 msgid "Renders your current resume to PDF and runs the full file check in your browser. Nothing is uploaded."
 msgstr "現在の履歴書を PDF に書き出し、ブラウザ内でファイルチェックをすべて実行します。アップロードは行いません。"
 
+#: src/features/resume/builder/critique-status-actions.tsx
+msgid "Reopen"
+msgstr ""
+
 #: src/dialogs/resume/sections/experience.tsx
 msgid "Reorder"
 msgstr "並び替え"
@@ -4965,6 +5089,10 @@ msgstr "パスワードをリセット"
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
 msgstr "パスワードをリセットしています..."
+
+#: src/features/resume/builder/critique-status-actions.tsx
+msgid "Resolved"
+msgstr ""
 
 #: src/features/homepage/site-footer.tsx
 #: src/routes/_home/-sections/footer.tsx
@@ -5165,6 +5293,7 @@ msgstr "Sans"
 
 #. Passkey rename prompt confirm action in authentication settings
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/resume/public/critique-overlay.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "Save"
 msgstr "保存"
@@ -5439,6 +5568,14 @@ msgid "Serif"
 msgstr "セリフ"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Set a password before sharing this link — critiquers need it to leave comments."
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Set a password for your feedback link"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Set a password if you want only people who know it to open the public URL."
 msgstr "公開 URL を、知っている人だけが開けるようにしたい場合は、パスワードを設定してください。"
 
@@ -5485,6 +5622,10 @@ msgstr "認証アプリを設定"
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Shadow Width"
 msgstr "影の幅"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "Share this link and its password with the people you want feedback from."
+msgstr ""
 
 #: src/libs/resume/section.tsx
 msgid "Sharing"
@@ -5538,6 +5679,7 @@ msgstr "タイトルにリンクを表示する"
 
 #. Accessible label for button that reveals password in registration form
 #. Accessible label for button that reveals password in reset-password form
+#. Accessible label for button that reveals password on feedback access screen
 #. Accessible label for button that reveals password on protected resume screen
 #. Accessible label for button that reveals the password in login form
 #. Accessible label for toggle button that reveals the masked current password
@@ -5547,6 +5689,7 @@ msgstr "タイトルにリンクを表示する"
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -5756,9 +5899,12 @@ msgstr "このファイルの読み取り中に問題が発生しました。も
 msgid "Something went wrong while signing you in. Please try again."
 msgstr "サインイン中に問題が発生しました。もう一度お試しください。"
 
+#. Fallback toast when a critique comment action fails unexpectedly
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/resume/builder/critique-review-sheet.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/public/critique-resume.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Something went wrong. Please try again."
 msgstr "問題が発生しました。もう一度お試しください。"
@@ -6169,6 +6315,7 @@ msgstr "お探しのページは移動されたか、既に存在しない可能
 msgid "The pages are pictures, with no text behind them."
 msgstr "ページが画像であり、背後にテキストがありません。"
 
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/resume-password.tsx
 msgid "The password you entered is incorrect"
 msgstr "入力されたパスワードが正しくありません。"
@@ -6196,6 +6343,14 @@ msgstr "プロバイダーの応答を検証できませんでした。最初か
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
 msgstr "仕事探しの残りも、<0/>ここでまとめて。"
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "The resume owner dismissed this comment."
+msgstr ""
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "The resume owner marked this as implemented."
+msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "The resume preview could not be updated. The last valid preview is still shown."
@@ -7075,6 +7230,7 @@ msgstr "コードを確認しています..."
 msgid "Verifying code…"
 msgstr "検証コード…"
 
+#: src/features/auth/pages/critique-password.tsx
 #: src/features/auth/pages/resume-password.tsx
 msgid "Verifying password..."
 msgstr "パスワードを確認しています..."
@@ -7105,6 +7261,14 @@ msgstr "ベトナム語"
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "View application"
+msgstr ""
+
+#: src/features/resume/public/critique-overlay.tsx
+msgid "View comment"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
+msgid "View Feedback"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
@@ -7436,6 +7600,11 @@ msgstr "余白が非常に狭くなっています。"
 msgid "Your name"
 msgstr "あなたの名前"
 
+#. Label for the critiquer's own name input on the feedback access form
+#: src/features/auth/pages/critique-password.tsx
+msgid "Your Name"
+msgstr ""
+
 #: src/libs/resume/ats.ts
 msgid "Your page margins are very narrow."
 msgstr "ページの余白が非常に狭いです。"
@@ -7553,4 +7722,3 @@ msgstr "ズームアウト"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "ズールー語"
-

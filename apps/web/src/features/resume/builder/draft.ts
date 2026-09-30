@@ -23,6 +23,8 @@ export type Resume = {
 	hasPassword?: boolean;
 	isPublic?: boolean;
 	showDownloadButtons?: boolean;
+	critiqueEnabled?: boolean;
+	hasCritiquePassword?: boolean;
 };
 
 // Mirrors the server-side ResumeUpdatedEvent discriminator (packages/api resume/events.ts).
@@ -419,6 +421,8 @@ export const useResumeStore = create<ResumeStore>()(
 				state.resume.hasPassword = resume.hasPassword;
 				state.resume.isPublic = resume.isPublic;
 				state.resume.showDownloadButtons = resume.showDownloadButtons;
+				state.resume.critiqueEnabled = resume.critiqueEnabled;
+				state.resume.hasCritiquePassword = resume.hasCritiquePassword;
 			});
 		},
 

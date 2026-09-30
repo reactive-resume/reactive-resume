@@ -21,6 +21,7 @@ import { Route as AgentThreadIdRouteImport } from "./routes/agent/$threadId";
 import { Route as AgentNewRouteImport } from "./routes/agent/new";
 import { Route as AuthIndexRouteImport } from "./routes/auth/index";
 import { Route as AuthConsentRouteImport } from "./routes/auth/consent";
+import { Route as AuthCritiquePasswordRouteImport } from "./routes/auth/critique-password";
 import { Route as AuthErrorRouteImport } from "./routes/auth/error";
 import { Route as AuthForgotPasswordRouteImport } from "./routes/auth/forgot-password";
 import { Route as AuthLoginRouteImport } from "./routes/auth/login";
@@ -33,6 +34,8 @@ import { Route as BuilderResumeIdRouteRouteImport } from "./routes/builder/$resu
 import { Route as DashboardIndexRouteImport } from "./routes/dashboard/index";
 import { Route as DashboardCoverLettersRouteImport } from "./routes/dashboard/cover-letters";
 import { Route as TemplatesSplatRouteImport } from "./routes/templates/$";
+import { Route as UsernameSlugIndexRouteImport } from "./routes/$username/$slug.index";
+import { Route as UsernameSlugCritiqueRouteImport } from "./routes/$username/$slug.critique";
 import { Route as BuilderResumeIdIndexRouteImport } from "./routes/builder/$resumeId/index";
 import { Route as DashboardApplicationsIndexRouteImport } from "./routes/dashboard/applications/index";
 import { Route as DashboardResumesIndexRouteImport } from "./routes/dashboard/resumes/index";
@@ -103,6 +106,11 @@ const AuthConsentRoute = AuthConsentRouteImport.update({
   path: "/consent",
   getParentRoute: () => AuthRouteRoute,
 } as any);
+const AuthCritiquePasswordRoute = AuthCritiquePasswordRouteImport.update({
+  id: "/critique-password",
+  path: "/critique-password",
+  getParentRoute: () => AuthRouteRoute,
+} as any);
 const AuthErrorRoute = AuthErrorRouteImport.update({
   id: "/error",
   path: "/error",
@@ -162,6 +170,16 @@ const TemplatesSplatRoute = TemplatesSplatRouteImport.update({
   id: "/templates/$",
   path: "/templates/$",
   getParentRoute: () => rootRouteImport,
+} as any);
+const UsernameSlugIndexRoute = UsernameSlugIndexRouteImport.update({
+  id: "/",
+  path: "/",
+  getParentRoute: () => UsernameSlugRoute,
+} as any);
+const UsernameSlugCritiqueRoute = UsernameSlugCritiqueRouteImport.update({
+  id: "/critique",
+  path: "/critique",
+  getParentRoute: () => UsernameSlugRoute,
 } as any);
 const BuilderResumeIdIndexRoute = BuilderResumeIdIndexRouteImport.update({
   id: "/",
@@ -228,11 +246,12 @@ export interface FileRoutesByFullPath {
   "/auth": typeof AuthRouteRouteWithChildren;
   "/dashboard": typeof DashboardRouteRouteWithChildren;
   "/builder/$resumeId": typeof BuilderResumeIdRouteRouteWithChildren;
-  "/$username/$slug": typeof UsernameSlugRoute;
+  "/$username/$slug": typeof UsernameSlugRouteWithChildren;
   "/ats-checker": typeof HomeAtsCheckerRoute;
   "/agent/$threadId": typeof AgentThreadIdRoute;
   "/agent/new": typeof AgentNewRoute;
   "/auth/consent": typeof AuthConsentRoute;
+  "/auth/critique-password": typeof AuthCritiquePasswordRoute;
   "/auth/error": typeof AuthErrorRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
   "/auth/login": typeof AuthLoginRoute;
@@ -247,22 +266,24 @@ export interface FileRoutesByFullPath {
   "/auth/": typeof AuthIndexRoute;
   "/dashboard/": typeof DashboardIndexRoute;
   "/dashboard/settings/integrations": typeof DashboardSettingsIntegrationsRouteRoute;
+  "/$username/$slug/critique": typeof UsernameSlugCritiqueRoute;
   "/dashboard/settings/account": typeof DashboardSettingsAccountRoute;
   "/dashboard/settings/api-keys": typeof DashboardSettingsApiKeysRoute;
   "/dashboard/settings/job-search": typeof DashboardSettingsJobSearchRoute;
   "/dashboard/settings/preferences": typeof DashboardSettingsPreferencesRoute;
   "/dashboard/settings/profile": typeof DashboardSettingsProfileRoute;
+  "/$username/$slug/": typeof UsernameSlugIndexRoute;
   "/builder/$resumeId/": typeof BuilderResumeIdIndexRoute;
   "/dashboard/applications/": typeof DashboardApplicationsIndexRoute;
   "/dashboard/resumes/": typeof DashboardResumesIndexRoute;
   "/dashboard/settings/authentication/": typeof DashboardSettingsAuthenticationIndexRoute;
 }
 export interface FileRoutesByTo {
-  "/$username/$slug": typeof UsernameSlugRoute;
   "/ats-checker": typeof HomeAtsCheckerRoute;
   "/agent/$threadId": typeof AgentThreadIdRoute;
   "/agent/new": typeof AgentNewRoute;
   "/auth/consent": typeof AuthConsentRoute;
+  "/auth/critique-password": typeof AuthCritiquePasswordRoute;
   "/auth/error": typeof AuthErrorRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
   "/auth/login": typeof AuthLoginRoute;
@@ -278,11 +299,13 @@ export interface FileRoutesByTo {
   "/auth": typeof AuthIndexRoute;
   "/dashboard": typeof DashboardIndexRoute;
   "/dashboard/settings/integrations": typeof DashboardSettingsIntegrationsRouteRoute;
+  "/$username/$slug/critique": typeof UsernameSlugCritiqueRoute;
   "/dashboard/settings/account": typeof DashboardSettingsAccountRoute;
   "/dashboard/settings/api-keys": typeof DashboardSettingsApiKeysRoute;
   "/dashboard/settings/job-search": typeof DashboardSettingsJobSearchRoute;
   "/dashboard/settings/preferences": typeof DashboardSettingsPreferencesRoute;
   "/dashboard/settings/profile": typeof DashboardSettingsProfileRoute;
+  "/$username/$slug": typeof UsernameSlugIndexRoute;
   "/builder/$resumeId": typeof BuilderResumeIdIndexRoute;
   "/dashboard/applications": typeof DashboardApplicationsIndexRoute;
   "/dashboard/resumes": typeof DashboardResumesIndexRoute;
@@ -295,11 +318,12 @@ export interface FileRoutesById {
   "/auth": typeof AuthRouteRouteWithChildren;
   "/dashboard": typeof DashboardRouteRouteWithChildren;
   "/builder/$resumeId": typeof BuilderResumeIdRouteRouteWithChildren;
-  "/$username/$slug": typeof UsernameSlugRoute;
+  "/$username/$slug": typeof UsernameSlugRouteWithChildren;
   "/_home/ats-checker": typeof HomeAtsCheckerRoute;
   "/agent/$threadId": typeof AgentThreadIdRoute;
   "/agent/new": typeof AgentNewRoute;
   "/auth/consent": typeof AuthConsentRoute;
+  "/auth/critique-password": typeof AuthCritiquePasswordRoute;
   "/auth/error": typeof AuthErrorRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
   "/auth/login": typeof AuthLoginRoute;
@@ -315,11 +339,13 @@ export interface FileRoutesById {
   "/auth/": typeof AuthIndexRoute;
   "/dashboard/": typeof DashboardIndexRoute;
   "/dashboard/settings/integrations": typeof DashboardSettingsIntegrationsRouteRoute;
+  "/$username/$slug/critique": typeof UsernameSlugCritiqueRoute;
   "/dashboard/settings/account": typeof DashboardSettingsAccountRoute;
   "/dashboard/settings/api-keys": typeof DashboardSettingsApiKeysRoute;
   "/dashboard/settings/job-search": typeof DashboardSettingsJobSearchRoute;
   "/dashboard/settings/preferences": typeof DashboardSettingsPreferencesRoute;
   "/dashboard/settings/profile": typeof DashboardSettingsProfileRoute;
+  "/$username/$slug/": typeof UsernameSlugIndexRoute;
   "/builder/$resumeId/": typeof BuilderResumeIdIndexRoute;
   "/dashboard/applications/": typeof DashboardApplicationsIndexRoute;
   "/dashboard/resumes/": typeof DashboardResumesIndexRoute;
@@ -338,6 +364,7 @@ export interface FileRouteTypes {
     | "/agent/$threadId"
     | "/agent/new"
     | "/auth/consent"
+    | "/auth/critique-password"
     | "/auth/error"
     | "/auth/forgot-password"
     | "/auth/login"
@@ -352,22 +379,24 @@ export interface FileRouteTypes {
     | "/auth/"
     | "/dashboard/"
     | "/dashboard/settings/integrations"
+    | "/$username/$slug/critique"
     | "/dashboard/settings/account"
     | "/dashboard/settings/api-keys"
     | "/dashboard/settings/job-search"
     | "/dashboard/settings/preferences"
     | "/dashboard/settings/profile"
+    | "/$username/$slug/"
     | "/builder/$resumeId/"
     | "/dashboard/applications/"
     | "/dashboard/resumes/"
     | "/dashboard/settings/authentication/";
   fileRoutesByTo: FileRoutesByTo;
   to:
-    | "/$username/$slug"
     | "/ats-checker"
     | "/agent/$threadId"
     | "/agent/new"
     | "/auth/consent"
+    | "/auth/critique-password"
     | "/auth/error"
     | "/auth/forgot-password"
     | "/auth/login"
@@ -383,11 +412,13 @@ export interface FileRouteTypes {
     | "/auth"
     | "/dashboard"
     | "/dashboard/settings/integrations"
+    | "/$username/$slug/critique"
     | "/dashboard/settings/account"
     | "/dashboard/settings/api-keys"
     | "/dashboard/settings/job-search"
     | "/dashboard/settings/preferences"
     | "/dashboard/settings/profile"
+    | "/$username/$slug"
     | "/builder/$resumeId"
     | "/dashboard/applications"
     | "/dashboard/resumes"
@@ -404,6 +435,7 @@ export interface FileRouteTypes {
     | "/agent/$threadId"
     | "/agent/new"
     | "/auth/consent"
+    | "/auth/critique-password"
     | "/auth/error"
     | "/auth/forgot-password"
     | "/auth/login"
@@ -419,11 +451,13 @@ export interface FileRouteTypes {
     | "/auth/"
     | "/dashboard/"
     | "/dashboard/settings/integrations"
+    | "/$username/$slug/critique"
     | "/dashboard/settings/account"
     | "/dashboard/settings/api-keys"
     | "/dashboard/settings/job-search"
     | "/dashboard/settings/preferences"
     | "/dashboard/settings/profile"
+    | "/$username/$slug/"
     | "/builder/$resumeId/"
     | "/dashboard/applications/"
     | "/dashboard/resumes/"
@@ -436,7 +470,7 @@ export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren;
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren;
   BuilderResumeIdRouteRoute: typeof BuilderResumeIdRouteRouteWithChildren;
-  UsernameSlugRoute: typeof UsernameSlugRoute;
+  UsernameSlugRoute: typeof UsernameSlugRouteWithChildren;
   TemplatesSplatRoute: typeof TemplatesSplatRoute;
 }
 
@@ -526,6 +560,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AuthConsentRouteImport;
       parentRoute: typeof AuthRouteRoute;
     };
+    "/auth/critique-password": {
+      id: "/auth/critique-password";
+      path: "/critique-password";
+      fullPath: "/auth/critique-password";
+      preLoaderRoute: typeof AuthCritiquePasswordRouteImport;
+      parentRoute: typeof AuthRouteRoute;
+    };
     "/auth/error": {
       id: "/auth/error";
       path: "/error";
@@ -609,6 +650,20 @@ declare module "@tanstack/react-router" {
       fullPath: "/templates/$";
       preLoaderRoute: typeof TemplatesSplatRouteImport;
       parentRoute: typeof rootRouteImport;
+    };
+    "/$username/$slug/": {
+      id: "/$username/$slug/";
+      path: "/";
+      fullPath: "/$username/$slug/";
+      preLoaderRoute: typeof UsernameSlugIndexRouteImport;
+      parentRoute: typeof UsernameSlugRoute;
+    };
+    "/$username/$slug/critique": {
+      id: "/$username/$slug/critique";
+      path: "/critique";
+      fullPath: "/$username/$slug/critique";
+      preLoaderRoute: typeof UsernameSlugCritiqueRouteImport;
+      parentRoute: typeof UsernameSlugRoute;
     };
     "/builder/$resumeId/": {
       id: "/builder/$resumeId/";
@@ -715,6 +770,7 @@ const AgentRouteRouteWithChildren = AgentRouteRoute._addFileChildren(
 
 interface AuthRouteRouteChildren {
   AuthConsentRoute: typeof AuthConsentRoute;
+  AuthCritiquePasswordRoute: typeof AuthCritiquePasswordRoute;
   AuthErrorRoute: typeof AuthErrorRoute;
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute;
   AuthLoginRoute: typeof AuthLoginRoute;
@@ -728,6 +784,7 @@ interface AuthRouteRouteChildren {
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthConsentRoute: AuthConsentRoute,
+  AuthCritiquePasswordRoute: AuthCritiquePasswordRoute,
   AuthErrorRoute: AuthErrorRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
@@ -788,13 +845,27 @@ const BuilderResumeIdRouteRouteChildren: BuilderResumeIdRouteRouteChildren = {
 const BuilderResumeIdRouteRouteWithChildren =
   BuilderResumeIdRouteRoute._addFileChildren(BuilderResumeIdRouteRouteChildren);
 
+interface UsernameSlugRouteChildren {
+  UsernameSlugCritiqueRoute: typeof UsernameSlugCritiqueRoute;
+  UsernameSlugIndexRoute: typeof UsernameSlugIndexRoute;
+}
+
+const UsernameSlugRouteChildren: UsernameSlugRouteChildren = {
+  UsernameSlugCritiqueRoute: UsernameSlugCritiqueRoute,
+  UsernameSlugIndexRoute: UsernameSlugIndexRoute,
+};
+
+const UsernameSlugRouteWithChildren = UsernameSlugRoute._addFileChildren(
+  UsernameSlugRouteChildren,
+);
+
 const rootRouteChildren: RootRouteChildren = {
   HomeRouteRoute: HomeRouteRouteWithChildren,
   AgentRouteRoute: AgentRouteRouteWithChildren,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
   BuilderResumeIdRouteRoute: BuilderResumeIdRouteRouteWithChildren,
-  UsernameSlugRoute: UsernameSlugRoute,
+  UsernameSlugRoute: UsernameSlugRouteWithChildren,
   TemplatesSplatRoute: TemplatesSplatRoute,
 };
 export const routeTree = rootRouteImport

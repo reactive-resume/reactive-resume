@@ -1,4 +1,5 @@
 import { publicProcedure } from "../../context";
+import { resumeCritiqueRouter } from "../resume-critique/router";
 import { crudRouter } from "./crud";
 import { updatesRouter } from "./event-router";
 import { getRootResume } from "./root";
@@ -17,6 +18,7 @@ export const resumeRouter = {
 	tags: tagsRouter,
 	statistics: resumeStatisticsRouter,
 	updates: updatesRouter,
+	critique: resumeCritiqueRouter,
 
 	list: crudRouter.list,
 	getById: crudRouter.getById,

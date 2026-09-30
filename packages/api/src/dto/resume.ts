@@ -14,6 +14,14 @@ const resumeSchema = createSelectSchema(schema.resume, {
 	showDownloadButtons: z.boolean().describe("Whether download buttons are shown on the public resume page."),
 	isLocked: z.boolean().describe("Whether the resume is locked."),
 	password: z.string().trim().min(6).max(64).nullable().describe("The password of the resume, if any."),
+	critiqueEnabled: z.boolean().describe("Whether feedback/critique mode is enabled."),
+	critiquePassword: z
+		.string()
+		.trim()
+		.min(6)
+		.max(64)
+		.nullable()
+		.describe("The critique-link password of the resume, if any."),
 	data: resumeDataSchema,
 	userId: z.string().describe("The ID of the user who owns the resume."),
 	createdAt: z.date().describe("The date and time the resume was created."),
@@ -29,12 +37,16 @@ export const resumeDto = {
 			})
 			.optional()
 			.default({ tags: [], sort: "lastUpdatedAt" }),
-		output: z.array(resumeSchema.omit({ data: true, password: true, userId: true })),
+		output: z.array(
+			resumeSchema.omit({ data: true, password: true, critiqueEnabled: true, critiquePassword: true, userId: true }),
+		),
 	},
 
 	getById: {
 		input: resumeSchema.pick({ id: true }),
-		output: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({ hasPassword: z.boolean() }),
+		output: resumeSchema
+			.omit({ password: true, critiquePassword: true, userId: true, createdAt: true })
+			.extend({ hasPassword: z.boolean(), hasCritiquePassword: z.boolean() }),
 	},
 
 	getBySlug: {
@@ -44,7 +56,15 @@ export const resumeDto = {
 		// features/resume/access-policy.ts). Relax the `min(1)` constraint here so
 		// the redacted public response passes output validation.
 		output: resumeSchema
-			.omit({ name: true, password: true, userId: true, createdAt: true, updatedAt: true })
+			.omit({
+				name: true,
+				password: true,
+				critiqueEnabled: true,
+				critiquePassword: true,
+				userId: true,
+				createdAt: true,
+				updatedAt: true,
+			})
 			.extend({ name: z.string() }),
 	},
 
@@ -65,7 +85,9 @@ export const resumeDto = {
 			.pick({ name: true, slug: true, tags: true, data: true, isPublic: true, showDownloadButtons: true })
 			.partial()
 			.extend({ id: z.string(), data: writableResumeDataSchema.optional() }),
-		output: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({ hasPassword: z.boolean() }),
+		output: resumeSchema
+			.omit({ password: true, critiquePassword: true, userId: true, createdAt: true })
+			.extend({ hasPassword: z.boolean(), hasCritiquePassword: z.boolean() }),
 	},
 
 	setLocked: {
@@ -95,7 +117,9 @@ export const resumeDto = {
 				.min(1)
 				.describe("An array of JSON Patch (RFC 6902) operations to apply to the resume data."),
 		}),
-		output: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({ hasPassword: z.boolean() }),
+		output: resumeSchema
+			.omit({ password: true, critiquePassword: true, userId: true, createdAt: true })
+			.extend({ hasPassword: z.boolean(), hasCritiquePassword: z.boolean() }),
 	},
 
 	duplicate: {
@@ -124,6 +148,8 @@ export const resumeDto = {
 			resumeId: z.string().describe("The ID of the resume to restore."),
 			versionId: z.string().describe("The ID of the version snapshot to restore."),
 		}),
-		output: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({ hasPassword: z.boolean() }),
+		output: resumeSchema
+			.omit({ password: true, critiquePassword: true, userId: true, createdAt: true })
+			.extend({ hasPassword: z.boolean(), hasCritiquePassword: z.boolean() }),
 	},
 };
