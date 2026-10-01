@@ -53,4 +53,19 @@ describe("resume write route validation", () => {
 		expect(mocks.update).not.toHaveBeenCalled();
 		expect(mocks.snapshot).not.toHaveBeenCalled();
 	});
+
+	it.each([false, true])("puts the account holder's name on a new resume (sample data: %s)", async (withSampleData) => {
+		const client = createRouterClient(crudRouter, {
+			context: { locale: "en-US", reqHeaders: new Headers(), user: { id: "user-id", name: "Sam Taylor" } } as never,
+		});
+
+		await client.create({ name: "Outstanding Blue Whale", tags: [], withSampleData });
+
+		expect(mocks.create).toHaveBeenCalledWith(
+			expect.objectContaining({
+				name: "Outstanding Blue Whale",
+				data: expect.objectContaining({ basics: expect.objectContaining({ name: "Sam Taylor" }) }),
+			}),
+		);
+	});
 });
