@@ -55,6 +55,7 @@ type TemplateHeaderStyles = {
 	name: Style;
 	contactList: Style;
 	contactItem: Style;
+	contactText?: Style | undefined;
 };
 
 export const TemplateHeader = ({
@@ -68,12 +69,17 @@ export const TemplateHeader = ({
 	const hasPicture = hasTemplatePicture(picture);
 	const contactList = (
 		<SemanticContactListView style={styles.contactList}>
-			<EmailContactItem email={basics.email} style={styles.contactItem} />
-			<PhoneContactItem phone={basics.phone} style={styles.contactItem} />
-			<LocationContactItem location={basics.location} style={styles.contactItem} />
-			<WebsiteContactItem website={basics.website} style={styles.contactItem} />
+			<EmailContactItem email={basics.email} style={styles.contactItem} textStyle={styles.contactText} />
+			<PhoneContactItem phone={basics.phone} style={styles.contactItem} textStyle={styles.contactText} />
+			<LocationContactItem location={basics.location} style={styles.contactItem} textStyle={styles.contactText} />
+			<WebsiteContactItem website={basics.website} style={styles.contactItem} textStyle={styles.contactText} />
 			{basics.customFields.map((field) => (
-				<CustomFieldContactItem key={field.id} field={field} style={styles.contactItem} />
+				<CustomFieldContactItem
+					key={field.id}
+					field={field}
+					style={styles.contactItem}
+					textStyle={styles.contactText}
+				/>
 			))}
 		</SemanticContactListView>
 	);

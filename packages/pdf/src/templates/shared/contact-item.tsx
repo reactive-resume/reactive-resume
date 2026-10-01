@@ -32,7 +32,7 @@ const useContactNodeKeys = (name: string, id?: string, primitiveNodeKey?: string
 type WebsiteContactItemProps = {
 	website: WebsiteDisplay;
 	style?: ContactStyle;
-	textStyle?: ContactStyle;
+	textStyle?: ContactStyle | undefined;
 	iconColor?: string;
 	primitiveNodeKey?: string | undefined;
 };
@@ -40,7 +40,7 @@ type WebsiteContactItemProps = {
 type CustomFieldContactItemProps = {
 	field: CustomField;
 	style?: ContactStyle;
-	textStyle?: ContactStyle;
+	textStyle?: ContactStyle | undefined;
 	iconColor?: string;
 	primitiveNodeKey?: string | undefined;
 };
@@ -105,7 +105,7 @@ export const CustomFieldContactItem = ({
 type EmailContactItemProps = {
 	email: string;
 	style?: ContactStyle;
-	textStyle?: ContactStyle;
+	textStyle?: ContactStyle | undefined;
 	iconColor?: string;
 	/** Override icon; defaults to "envelope". ditgar uses "at". */
 	iconName?: IconName;
@@ -136,7 +136,7 @@ export const EmailContactItem = ({
 type PhoneContactItemProps = {
 	phone: string;
 	style?: ContactStyle;
-	textStyle?: ContactStyle;
+	textStyle?: ContactStyle | undefined;
 	iconColor?: string;
 	primitiveNodeKey?: string | undefined;
 };
@@ -158,7 +158,7 @@ export const PhoneContactItem = ({ phone, style, textStyle, iconColor, primitive
 type LocationContactItemProps = {
 	location: string;
 	style?: ContactStyle;
-	textStyle?: ContactStyle;
+	textStyle?: ContactStyle | undefined;
 	iconColor?: string;
 	primitiveNodeKey?: string | undefined;
 };

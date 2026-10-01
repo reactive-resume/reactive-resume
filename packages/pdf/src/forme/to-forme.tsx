@@ -518,6 +518,13 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
 				let inline: HostNode[] = [];
 				const flush = () => {
 					if (inline.length === 0) return;
+					// A lone text is a block of its own, as in react-pdf: it keeps its box styles (how it flexes in a row).
+					const [only] = inline;
+					if (inline.length === 1 && only && only.type !== "#text") {
+						children.push(convertNode(only, inner, children.length));
+						inline = [];
+						return;
+					}
 					const runs = convertChildren(inline, { ...inner, inText: true });
 					children.push(createElement(FormeText, { key: children.length, style: context.textDefaults }, ...runs));
 					inline = [];

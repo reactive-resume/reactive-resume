@@ -54,6 +54,7 @@ import {
 	useTemplateStyle,
 } from "./context";
 import { filterItems, hasVisibleItems, isSectionVisible, isVisibleSummary } from "./filtering";
+import { parseStyleFontSize } from "./icon-size";
 import { LevelDisplay } from "./level-display";
 import { getTemplateMetrics } from "./metrics";
 import {
@@ -339,6 +340,7 @@ const SectionShell = ({ sectionId, title, showHeading = true, children }: Sectio
 	const resolved = useResolvedNode(sectionNodeKey);
 	const visible = useSemanticNodeVisible(sectionNodeKey);
 	const sectionStyle = useTemplateStyle("section");
+	const headingStyle = useTemplateStyle("heading");
 	const sectionHeadingStyle = useTemplateStyle("sectionHeading");
 	const sectionHeadingContainerStyle = useTemplateStyle("sectionHeadingContainer");
 	const sectionTitle = getResumeSectionTitle(data, sectionId, title);
@@ -352,6 +354,15 @@ const SectionShell = ({ sectionId, title, showHeading = true, children }: Sectio
 	const sectionHeadingVisible = useSemanticNodeVisible(sectionHeadingNodeKey);
 	const sectionIcon = getResumeSectionIcon(data, sectionId);
 	const showIcon = Boolean(sectionIcon) && !data.metadata.page.hideSectionIcons;
+	const sectionHeadingTextStyle = getSectionHeadingTextStyle(
+		sectionHeadingStyle,
+		sectionHeadingTextOf(sectionHeadingResolved.style),
+	);
+	// The title as `Heading` draws it; a line height in other units than a multiplier falls back to the typography's.
+	const { fontSize: titleFontSize, lineHeight: titleLineHeight } = mergeStyles(headingStyle, sectionHeadingTextStyle);
+	const titleLineBox =
+		(parseStyleFontSize(titleFontSize) ?? data.metadata.typography.heading.fontSize) *
+		(typeof titleLineHeight === "number" ? titleLineHeight : data.metadata.typography.heading.lineHeight);
 	const { keepTogether, startOnNewPage } = getSectionBreaks(data, sectionId);
 	// wrap={false} keeps the whole section on one page; break forces it onto a fresh page.
 	// Only set the props when enabled so we never pass undefined (exactOptionalPropertyTypes).
@@ -396,14 +407,9 @@ const SectionShell = ({ sectionId, title, showHeading = true, children }: Sectio
 						<SectionHeadingIcon
 							nodeKey={semanticNodeKeys.icon(sectionHeadingNodeKey, "section")}
 							name={sectionIcon as IconName}
+							titleLineHeight={titleLineBox}
 						/>
-						<Heading
-							bindSemanticNode={false}
-							style={getSectionHeadingTextStyle(
-								sectionHeadingStyle,
-								sectionHeadingTextOf(sectionHeadingResolved.style),
-							)}
-						>
+						<Heading bindSemanticNode={false} style={sectionHeadingTextStyle}>
 							{sectionTitle}
 						</Heading>
 					</View>

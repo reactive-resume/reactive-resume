@@ -526,8 +526,13 @@ export const SectionHeadingIcon = ({
 	style,
 	size: sizeProp,
 	nodeKey,
+	titleLineHeight,
 	...props
-}: ComponentProps<typeof PhosphorIcon> & { nodeKey?: string | undefined }) => {
+}: ComponentProps<typeof PhosphorIcon> & {
+	nodeKey?: string | undefined;
+	/** Height in points of a line of the title beside the icon, which the icon is centred on. */
+	titleLineHeight?: number | undefined;
+}) => {
 	const data = useRender();
 	const { style: sectionIconStyle, ...sectionIconProps } = useTemplateIconSlot("sectionHeadingIcon");
 	const { style: fallbackIconStyle, ...fallbackIconProps } = useTemplateIconSlot("icon");
@@ -545,13 +550,20 @@ export const SectionHeadingIcon = ({
 
 	// Icon size follows heading fontSize so they scale together
 	const headingFontSize = data.metadata.typography.heading.fontSize;
-	const resolvedSize =
+	let resolvedSize =
 		resolveIconSize({
 			size: sizeProp,
 			styles: [asStyleInput(iconStyle), asStyleInput(style)],
 		}) ??
 		templateIconSize ??
 		headingFontSize;
+	// The row lines its children up at the top, and a line's text sits in the middle of its line height: the icon
+	// moves down by half what's left of the line, and never grows past the line, so it stays level with the title.
+	let lineStyle: Style | undefined;
+	if (typeof resolvedSize === "number" && titleLineHeight !== undefined) {
+		resolvedSize = Math.min(resolvedSize, titleLineHeight);
+		lineStyle = { marginTop: (titleLineHeight - resolvedSize) / 2 };
+	}
 	const resolved = useResolvedNode(nodeKey);
 	const visible = useSemanticNodeVisible(nodeKey);
 	if (!visible) return null;
@@ -560,9 +572,9 @@ export const SectionHeadingIcon = ({
 		<PhosphorIcon
 			{...iconPropsWithoutDisplay}
 			{...props}
-			{...(resolvedSize === undefined ? {} : { size: resolvedSize })}
+			size={resolvedSize}
 			{...(resolved.style?.color === undefined ? {} : { color: resolved.style.color })}
-			style={composeStyles(asStyleInput(iconStyle), asStyleInput(style), resolved.style)}
+			style={composeStyles(lineStyle, asStyleInput(iconStyle), asStyleInput(style), resolved.style)}
 		/>
 	);
 };

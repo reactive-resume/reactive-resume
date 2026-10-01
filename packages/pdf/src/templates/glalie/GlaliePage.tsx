@@ -30,6 +30,7 @@ type GlalieStyles = Omit<TemplateStyleSlots, "page"> & {
 	headerName: Style;
 	contactList: Style;
 	contactItem: Style;
+	contactText: Style;
 };
 
 type GlalieTemplate = {
@@ -122,6 +123,7 @@ const Header = ({ styles }: GlalieHeaderProps) => (
 			name: styles.headerName,
 			contactList: styles.contactList,
 			contactItem: styles.contactItem,
+			contactText: styles.contactText,
 		}}
 		contactListOutsideTitle
 	/>
@@ -220,6 +222,11 @@ const useGlalieTemplate = (): GlalieTemplate => {
 				flexDirection: r.row,
 				alignItems: "center",
 				columnGap: metrics.gapX(1 / 6),
+			},
+			// The text takes the rest of the row, so a long email or link wraps inside the box instead of running out.
+			contactText: {
+				flexGrow: 1,
+				flexBasis: 0,
 			},
 		});
 
