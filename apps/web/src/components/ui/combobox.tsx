@@ -204,7 +204,7 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 				triggerNode
 			)}
 
-			<ComboboxContent>
+			<ComboboxContent aria-label={placeholder ?? t`Options`}>
 				<ComboboxInput
 					showTrigger={false}
 					placeholder={placeholder ?? t`Search...`}

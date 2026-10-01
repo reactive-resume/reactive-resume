@@ -751,6 +751,10 @@ msgstr "Add a tag"
 msgid "Add a tag and press Enter…"
 msgstr "Add a tag and press Enter…"
 
+#: src/features/settings/ai/providers.tsx
+msgid "Add AI provider"
+msgstr "Add AI provider"
+
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "Add an @ and the domain, like name@example.com"
@@ -853,10 +857,6 @@ msgstr "Add project"
 msgid "Add provider"
 msgstr "Add provider"
 
-#: src/features/settings/ai/providers.tsx
-msgid "Add provider · Anthropic, Gemini, Ollama, OpenAI-compatible"
-msgstr "Add provider · Anthropic, Gemini, Ollama, OpenAI-compatible"
-
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add publication"
 msgstr "Add publication"
@@ -952,6 +952,7 @@ msgid "Afrikaans"
 msgstr "Afrikaans"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "AI & developer"
@@ -965,9 +966,9 @@ msgstr "AI couldn't fill the details. The posting is retained; complete the fiel
 msgid "AI edit"
 msgstr "AI edit"
 
-#: src/features/settings/ai/providers.tsx
-msgid "AI is enabled globally. Personal providers are disabled."
-msgstr "AI is enabled globally. Personal providers are disabled."
+#: src/features/settings/ai/web-access.tsx
+msgid "AI is optional. Saving and preparing jobs doesn't need it."
+msgstr "AI is optional. Saving and preparing jobs doesn't need it."
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/providers.tsx
@@ -1093,6 +1094,10 @@ msgstr "Another of your resumes uses this address."
 #: src/features/assistant/conversation.tsx
 msgid "Answer in your own words"
 msgstr "Answer in your own words"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Anthropic, Gemini, Ollama, OpenAI-compatible"
+msgstr "Anthropic, Gemini, Ollama, OpenAI-compatible"
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Any font, in Advanced"
@@ -1301,6 +1306,10 @@ msgstr "Assistant (your key)"
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Assistant conversations"
 msgstr "Assistant conversations"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Assistant."
+msgstr "Assistant."
 
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/sections.tsx
@@ -1744,10 +1753,6 @@ msgstr "Choose another file"
 msgid "Choose color"
 msgstr "Choose color"
 
-#: src/features/settings/ai/web-access.tsx
-msgid "Choose one service for search and reading. Your key is stored encrypted."
-msgstr "Choose one service for search and reading. Your key is stored encrypted."
-
 #: src/components/level/combobox.tsx
 msgid "Circle"
 msgstr "Circle"
@@ -1920,6 +1925,10 @@ msgstr "Connect a service"
 msgid "Connect an AI provider"
 msgstr "Connect an AI provider"
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Connect an AI provider above to use the assistant. Saving and preparing jobs doesn't need one."
+msgstr "Connect an AI provider above to use the assistant. Saving and preparing jobs doesn't need one."
+
 #: src/features/auth/pages/consent.tsx
 msgid "Connect an application"
 msgstr "Connect an application"
@@ -1927,6 +1936,10 @@ msgstr "Connect an application"
 #: src/features/assistant/assistant-panel.tsx
 msgid "Connect another…"
 msgstr "Connect another…"
+
+#: src/features/settings/ai/page.tsx
+msgid "Connect the tools you use for writing, job search and working with your resumes."
+msgstr "Connect the tools you use for writing, job search and working with your resumes."
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Connect your own AI provider to have a language model read your bullets and suggest rewrites. Issues and Job match need no provider."
@@ -1936,6 +1949,10 @@ msgstr "Connect your own AI provider to have a language model read your bullets 
 #: src/features/settings/ai/providers.tsx
 msgid "Connected"
 msgstr "Connected"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Connection saved"
+msgstr "Connection saved"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Contact"
@@ -3166,12 +3183,8 @@ msgid "English (United Kingdom)"
 msgstr "English (United Kingdom)"
 
 #: src/features/settings/ai/web-access.tsx
-msgid "Enhanced reading failed."
-msgstr "Enhanced reading failed."
-
-#: src/features/settings/ai/web-access.tsx
-msgid "Enhanced reading succeeded."
-msgstr "Enhanced reading succeeded."
+msgid "Enhanced reading failed"
+msgstr "Enhanced reading failed"
 
 #: src/features/assistant/conversation.tsx
 msgid "Enhanced reading unavailable; used the built-in reader."
@@ -3197,6 +3210,10 @@ msgstr "Enter a valid email address."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Enter a web address, like example.com"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "Enter any model ID supported by your endpoint."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account"
@@ -3681,6 +3698,11 @@ msgstr "Generating your PDF..."
 #: src/libs/locale.ts
 msgid "German"
 msgstr "German"
+
+#. placeholder {0}: PROVIDER_SITES[provider]
+#: src/features/settings/ai/web-access.tsx
+msgid "Get a key at <0>{0}</0>. It's stored encrypted and used only for your requests."
+msgstr "Get a key at <0>{0}</0>. It's stored encrypted and used only for your requests."
 
 #: src/features/homepage/footer.tsx
 msgid "Get started"
@@ -4339,6 +4361,15 @@ msgstr "Keeps the most specific parts"
 msgid "Kept as it is"
 msgstr "Kept as it is"
 
+#. placeholder {0}: keyEnding(provider.apiKeyPreview)
+#: src/features/settings/ai/providers.tsx
+msgid "Key ends in {0}"
+msgstr "Key ends in {0}"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Key stored encrypted"
+msgstr "Key stored encrypted"
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Keys act as you and can read and edit your documents."
 msgstr "Keys act as you and can read and edit your documents."
@@ -4710,9 +4741,17 @@ msgstr "Loading applications…"
 msgid "Loading connection request..."
 msgstr "Loading connection request..."
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Loading connection…"
+msgstr "Loading connection…"
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
 msgstr "Loading conversations…"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Loading model suggestions… You can also enter any model ID."
+msgstr "Loading model suggestions… You can also enter any model ID."
 
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
@@ -4726,10 +4765,6 @@ msgstr "Loading resumes…"
 #: src/features/homepage/sections.tsx
 msgid "Loading the total"
 msgstr "Loading the total"
-
-#: src/features/settings/ai/web-access.tsx
-msgid "Loading…"
-msgstr "Loading…"
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-form-sheet.tsx
@@ -4820,6 +4855,10 @@ msgstr "Malay"
 #: src/libs/locale.ts
 msgid "Malayalam"
 msgstr "Malayalam"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Managed by server"
+msgstr "Managed by server"
 
 #: src/features/settings/ai/providers.tsx
 msgid "Managed by your server"
@@ -4923,11 +4962,9 @@ msgstr "mixed format"
 msgid "Model"
 msgstr "Model"
 
-#. placeholder {0}: provider.model
-#. placeholder {1}: keyEnding(provider.apiKeyPreview)
 #: src/features/settings/ai/providers.tsx
-msgid "Model {0} · key ends in {1}"
-msgstr "Model {0} · key ends in {1}"
+msgid "Model suggestions are unavailable. You can still enter any model ID."
+msgstr "Model suggestions are unavailable. You can still enter any model ID."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Model: {label}"
@@ -5106,6 +5143,10 @@ msgstr "Narrow"
 #: src/features/resume/editor/design/fit.ts
 msgid "narrow margins"
 msgstr "narrow margins"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Needs attention"
+msgstr "Needs attention"
 
 #: src/libs/locale.ts
 msgid "Nepali"
@@ -5316,6 +5357,10 @@ msgstr "No source data yet."
 msgid "No specific terms could be pulled out of that job description, so it may be mostly boilerplate. Paste the requirements section for a more useful comparison."
 msgstr "No specific terms could be pulled out of that job description, so it may be mostly boilerplate. Paste the requirements section for a more useful comparison."
 
+#: src/features/settings/ai/providers.tsx
+msgid "No suggestions for this provider. Enter any model ID."
+msgstr "No suggestions for this provider. Enter any model ID."
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "No terms stood out in this posting."
 msgstr "No terms stood out in this posting."
@@ -5379,7 +5424,6 @@ msgid "Not applied yet"
 msgstr "Not applied yet"
 
 #: src/features/settings/account/security.tsx
-#: src/features/settings/ai/web-access.tsx
 msgid "Not connected"
 msgstr "Not connected"
 
@@ -5649,6 +5693,7 @@ msgstr "Optional"
 msgid "Optional for local Ollama"
 msgstr "Optional for local Ollama"
 
+#: src/components/ui/combobox.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Options"
@@ -5864,6 +5909,10 @@ msgstr "Paste the full job description here…"
 #: src/features/ats-checker/checker.tsx
 msgid "Paste the posting to see which of its terms your resume already has."
 msgstr "Paste the posting to see which of its terms your resume already has."
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Paste your key"
+msgstr "Paste your key"
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -6167,8 +6216,8 @@ msgid "Prototyping"
 msgstr "Prototyping"
 
 #: src/features/settings/ai/web-access.tsx
-msgid "Provided by the server"
-msgstr "Provided by the server"
+msgid "Provided by your server: {connectedProvider}."
+msgstr "Provided by your server: {connectedProvider}."
 
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/ai/web-access.tsx
@@ -6270,10 +6319,6 @@ msgstr "Reactive Resume is free and open source. If it has helped you, please co
 msgid "Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development."
 msgstr "Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development."
 
-#: src/features/settings/ai/web-access.tsx
-msgid "Read links and optionally search the web"
-msgstr "Read links and optionally search the web"
-
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Read posting"
 msgstr "Read posting"
@@ -6285,6 +6330,10 @@ msgstr "Read the Applying Custom Styles guide."
 #: src/features/assistant/conversation.tsx
 msgid "Read the attachment"
 msgstr "Read the attachment"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Read the job links you save. Saving and preparing jobs works without a connection."
+msgstr "Read the job links you save. Saving and preparing jobs works without a connection."
 
 #: src/features/assistant/conversation.tsx
 msgid "Read the letter"
@@ -6353,14 +6402,22 @@ msgstr "Reading the text"
 msgid "Reading Word files needs an AI provider. Set one up in Settings, or import a PDF or JSON file instead."
 msgstr "Reading Word files needs an AI provider. Set one up in Settings, or import a PDF or JSON file instead."
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Reading works"
+msgstr "Reading works"
+
 #: src/features/ats-checker/checker.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Reads cleanly"
 msgstr "Reads cleanly"
 
 #: src/features/settings/ai/web-access.tsx
-msgid "Reads supported public pages"
-msgstr "Reads supported public pages"
+msgid "Reads supported public job pages. No account needed."
+msgstr "Reads supported public job pages. No account needed."
+
+#: src/features/settings/ai/providers.tsx
+msgid "Ready"
+msgstr "Ready"
 
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "Reason"
@@ -6832,6 +6889,10 @@ msgstr "Save Changes"
 msgid "Save connection"
 msgstr "Save connection"
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Save first, then test search and reading. No test runs automatically."
+msgstr "Save first, then test search and reading. No test runs automatically."
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Save job"
@@ -6929,6 +6990,10 @@ msgstr "Search"
 msgid "Search and enhanced reading"
 msgstr "Search and enhanced reading"
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Search and reading are set up for everyone here. Ask your administrator about changes."
+msgstr "Search and reading are set up for everyone here. Ask your administrator about changes."
+
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search applications"
 msgstr "Search applications"
@@ -6947,8 +7012,8 @@ msgid "Search documents"
 msgstr "Search documents"
 
 #: src/features/settings/ai/web-access.tsx
-msgid "Search failed."
-msgstr "Search failed."
+msgid "Search failed"
+msgstr "Search failed"
 
 #. Accessible label for icon picker search input
 #. Placeholder text in icon picker search input
@@ -6959,6 +7024,10 @@ msgstr "Search for an icon"
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Search for…"
 msgstr "Search for…"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Search from Applications and the assistant, and read pages the built-in reader can't. One service covers both."
+msgstr "Search from Applications and the assistant, and read pages the built-in reader can't. One service covers both."
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Search job postings"
@@ -6973,8 +7042,8 @@ msgid "Search role, company or contact"
 msgstr "Search role, company or contact"
 
 #: src/features/settings/ai/web-access.tsx
-msgid "Search succeeded."
-msgstr "Search succeeded."
+msgid "Search works"
+msgstr "Search works"
 
 #: src/components/ui/combobox.tsx
 msgid "Search..."
@@ -6988,6 +7057,10 @@ msgstr "Search…"
 #: src/features/assistant/conversation.tsx
 msgid "Searched the web"
 msgstr "Searched the web"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Searches and reads pages with {connectedProvider}, whichever AI provider you use."
+msgstr "Searches and reads pages with {connectedProvider}, whichever AI provider you use."
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Searching job postings…"
@@ -7704,6 +7777,10 @@ msgstr "Suggest again"
 msgid "Suggested from the source and the job. Change it anytime."
 msgstr "Suggested from the source and the job. Change it anytime."
 
+#: src/features/settings/ai/providers.tsx
+msgid "Suggestions from <0>models.dev</0>. You can also enter any model ID."
+msgstr "Suggestions from <0>models.dev</0>. You can also enter any model ID."
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Suggests cuts, never deletes on its own"
 msgstr "Suggests cuts, never deletes on its own"
@@ -7858,6 +7935,14 @@ msgstr "Test"
 #: src/features/settings/ai/web-access.tsx
 msgid "Test connection"
 msgstr "Test connection"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Tested with {connectedProvider}. Only this service was tested."
+msgstr "Tested with {connectedProvider}. Only this service was tested."
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Testing search and reading with {connectedProvider}…"
+msgstr "Testing search and reading with {connectedProvider}…"
 
 #: src/features/assistant/provider-setup.tsx
 #: src/features/settings/ai/providers.tsx
@@ -8485,6 +8570,7 @@ msgstr "Try a sample"
 #: src/components/layout/error-screen.tsx
 #: src/features/resume/editor/write/improve.tsx
 #: src/features/resume/share/download-tab.tsx
+#: src/features/settings/ai/web-access.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Try again"
 msgstr "Try again"
@@ -8837,6 +8923,10 @@ msgstr "Use this provider"
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
 msgstr "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Used when {connectedProvider} can't read a page. No account needed."
+msgstr "Used when {connectedProvider} can't read a page. No account needed."
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 msgid "User research"
@@ -8856,6 +8946,10 @@ msgstr "Uses facts from your resume"
 #: src/features/assistant/assistant-panel.tsx
 msgid "Uses the linked application"
 msgstr "Uses the linked application"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Uses your AI provider's own web search where supported, and reads links with the built-in reader."
+msgstr "Uses your AI provider's own web search where supported, and reads links with the built-in reader."
 
 #: src/libs/locale.ts
 msgid "Uzbek"
@@ -9222,6 +9316,10 @@ msgstr "Write the full address so it is recognised as a link."
 msgid "Writing"
 msgstr "Writing"
 
+#: src/features/settings/ai/providers.tsx
+msgid "Writing help, tailored suggestions and the assistant. Your keys stay encrypted."
+msgstr "Writing help, tailored suggestions and the assistant. Your keys stay encrypted."
+
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"
 msgstr "writing, tailoring and sending"
@@ -9353,10 +9451,6 @@ msgstr "Your headings look the same as your body text."
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your headline changed on the resume. The letter updated too."
 msgstr "Your headline changed on the resume. The letter updated too."
-
-#: src/features/settings/ai/providers.tsx
-msgid "Your keys, stored encrypted"
-msgstr "Your keys, stored encrypted"
 
 #: src/features/ats-checker/messages.ts
 msgid "Your lines are packed very tightly."

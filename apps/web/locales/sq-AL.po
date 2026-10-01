@@ -756,6 +756,10 @@ msgstr ""
 msgid "Add a tag and press Enter…"
 msgstr "Shto një etiketë dhe shtyp Enter…"
 
+#: src/features/settings/ai/providers.tsx
+msgid "Add AI provider"
+msgstr ""
+
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add an @ and the domain, like name@example.com"
 msgstr ""
@@ -858,10 +862,6 @@ msgstr ""
 msgid "Add provider"
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
-msgid "Add provider · Anthropic, Gemini, Ollama, OpenAI-compatible"
-msgstr ""
-
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add publication"
 msgstr ""
@@ -957,6 +957,7 @@ msgid "Afrikaans"
 msgstr "Afrikanisht"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "AI & developer"
@@ -970,8 +971,8 @@ msgstr ""
 msgid "AI edit"
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
-msgid "AI is enabled globally. Personal providers are disabled."
+#: src/features/settings/ai/web-access.tsx
+msgid "AI is optional. Saving and preparing jobs doesn't need it."
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -1098,6 +1099,10 @@ msgstr ""
 #: src/features/assistant/conversation.tsx
 msgid "Answer in your own words"
 msgstr "Përgjigjuni me fjalët tuaja"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Anthropic, Gemini, Ollama, OpenAI-compatible"
+msgstr ""
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Any font, in Advanced"
@@ -1305,6 +1310,10 @@ msgstr ""
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Assistant conversations"
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Assistant."
 msgstr ""
 
 #: src/features/homepage/footer.tsx
@@ -1749,10 +1758,6 @@ msgstr ""
 msgid "Choose color"
 msgstr ""
 
-#: src/features/settings/ai/web-access.tsx
-msgid "Choose one service for search and reading. Your key is stored encrypted."
-msgstr ""
-
 #: src/components/level/combobox.tsx
 msgid "Circle"
 msgstr "Rreth"
@@ -1925,12 +1930,20 @@ msgstr ""
 msgid "Connect an AI provider"
 msgstr ""
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Connect an AI provider above to use the assistant. Saving and preparing jobs doesn't need one."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Connect an application"
 msgstr "Lidhni një aplikacion"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Connect another…"
+msgstr ""
+
+#: src/features/settings/ai/page.tsx
+msgid "Connect the tools you use for writing, job search and working with your resumes."
 msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
@@ -1941,6 +1954,10 @@ msgstr ""
 #: src/features/settings/ai/providers.tsx
 msgid "Connected"
 msgstr "I lidhur"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Connection saved"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Contact"
@@ -3171,11 +3188,7 @@ msgid "English (United Kingdom)"
 msgstr "Anglisht (Mbretëria e Bashkuar)"
 
 #: src/features/settings/ai/web-access.tsx
-msgid "Enhanced reading failed."
-msgstr ""
-
-#: src/features/settings/ai/web-access.tsx
-msgid "Enhanced reading succeeded."
+msgid "Enhanced reading failed"
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -3201,6 +3214,10 @@ msgstr "Fut një adresë të vlefshme emaili."
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
+msgstr ""
+
+#: src/features/settings/ai/providers.tsx
+msgid "Enter any model ID supported by your endpoint."
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
@@ -3686,6 +3703,11 @@ msgstr "Po gjenerohet PDF-ja juaj..."
 #: src/libs/locale.ts
 msgid "German"
 msgstr "Gjermanisht"
+
+#. placeholder {0}: PROVIDER_SITES[provider]
+#: src/features/settings/ai/web-access.tsx
+msgid "Get a key at <0>{0}</0>. It's stored encrypted and used only for your requests."
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Get started"
@@ -4344,6 +4366,15 @@ msgstr ""
 msgid "Kept as it is"
 msgstr ""
 
+#. placeholder {0}: keyEnding(provider.apiKeyPreview)
+#: src/features/settings/ai/providers.tsx
+msgid "Key ends in {0}"
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Key stored encrypted"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Keys act as you and can read and edit your documents."
 msgstr ""
@@ -4715,8 +4746,16 @@ msgstr "Duke ngarkuar aplikimet…"
 msgid "Loading connection request..."
 msgstr "Kërkesa për lidhje po ngarkohet..."
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Loading connection…"
+msgstr ""
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
+msgstr ""
+
+#: src/features/settings/ai/providers.tsx
+msgid "Loading model suggestions… You can also enter any model ID."
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -4730,10 +4769,6 @@ msgstr "Duke ngarkuar CV-të…"
 
 #: src/features/homepage/sections.tsx
 msgid "Loading the total"
-msgstr ""
-
-#: src/features/settings/ai/web-access.tsx
-msgid "Loading…"
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -4825,6 +4860,10 @@ msgstr "Malajisht"
 #: src/libs/locale.ts
 msgid "Malayalam"
 msgstr "Malajalam"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Managed by server"
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Managed by your server"
@@ -4928,10 +4967,8 @@ msgstr ""
 msgid "Model"
 msgstr "Modeli"
 
-#. placeholder {0}: provider.model
-#. placeholder {1}: keyEnding(provider.apiKeyPreview)
 #: src/features/settings/ai/providers.tsx
-msgid "Model {0} · key ends in {1}"
+msgid "Model suggestions are unavailable. You can still enter any model ID."
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
@@ -5110,6 +5147,10 @@ msgstr ""
 
 #: src/features/resume/editor/design/fit.ts
 msgid "narrow margins"
+msgstr ""
+
+#: src/features/settings/ai/providers.tsx
+msgid "Needs attention"
 msgstr ""
 
 #: src/libs/locale.ts
@@ -5321,6 +5362,10 @@ msgstr "Nuk ka ende të dhëna burimore."
 msgid "No specific terms could be pulled out of that job description, so it may be mostly boilerplate. Paste the requirements section for a more useful comparison."
 msgstr "Nuk u nxorën terma specifikë nga ai përshkrim pune, ndaj mund të jetë kryesisht standard. Ngjitni seksionin e kërkesave për një krahasim më të dobishëm."
 
+#: src/features/settings/ai/providers.tsx
+msgid "No suggestions for this provider. Enter any model ID."
+msgstr ""
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "No terms stood out in this posting."
 msgstr ""
@@ -5384,7 +5429,6 @@ msgid "Not applied yet"
 msgstr ""
 
 #: src/features/settings/account/security.tsx
-#: src/features/settings/ai/web-access.tsx
 msgid "Not connected"
 msgstr "I palidhur"
 
@@ -5654,6 +5698,7 @@ msgstr ""
 msgid "Optional for local Ollama"
 msgstr ""
 
+#: src/components/ui/combobox.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Options"
@@ -5868,6 +5913,10 @@ msgstr "Ngjitni këtu përshkrimin e plotë të punës…"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Paste the posting to see which of its terms your resume already has."
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Paste your key"
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -6172,7 +6221,7 @@ msgid "Prototyping"
 msgstr "Prototipimi"
 
 #: src/features/settings/ai/web-access.tsx
-msgid "Provided by the server"
+msgid "Provided by your server: {connectedProvider}."
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -6275,10 +6324,6 @@ msgstr "Reactive Resume është falas dhe me kod të hapur. Nëse ju ka ndihmuar
 msgid "Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development."
 msgstr ""
 
-#: src/features/settings/ai/web-access.tsx
-msgid "Read links and optionally search the web"
-msgstr ""
-
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Read posting"
 msgstr ""
@@ -6289,6 +6334,10 @@ msgstr "Lexoni udhëzuesin Zbatimi i Stileve të Personalizuara."
 
 #: src/features/assistant/conversation.tsx
 msgid "Read the attachment"
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Read the job links you save. Saving and preparing jobs works without a connection."
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -6358,13 +6407,21 @@ msgstr ""
 msgid "Reading Word files needs an AI provider. Set one up in Settings, or import a PDF or JSON file instead."
 msgstr ""
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Reading works"
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Reads cleanly"
 msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
-msgid "Reads supported public pages"
+msgid "Reads supported public job pages. No account needed."
+msgstr ""
+
+#: src/features/settings/ai/providers.tsx
+msgid "Ready"
 msgstr ""
 
 #: src/features/applications/components/detail/close-dialog.tsx
@@ -6837,6 +6894,10 @@ msgstr "Ruaj ndryshimet"
 msgid "Save connection"
 msgstr ""
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Save first, then test search and reading. No test runs automatically."
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Save job"
@@ -6934,6 +6995,10 @@ msgstr "Kërko"
 msgid "Search and enhanced reading"
 msgstr ""
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Search and reading are set up for everyone here. Ask your administrator about changes."
+msgstr ""
+
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search applications"
 msgstr ""
@@ -6952,7 +7017,7 @@ msgid "Search documents"
 msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
-msgid "Search failed."
+msgid "Search failed"
 msgstr ""
 
 #. Accessible label for icon picker search input
@@ -6964,6 +7029,10 @@ msgstr "Kërkoni një ikonë"
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Search for…"
 msgstr "Kërko për…"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Search from Applications and the assistant, and read pages the built-in reader can't. One service covers both."
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Search job postings"
@@ -6978,7 +7047,7 @@ msgid "Search role, company or contact"
 msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
-msgid "Search succeeded."
+msgid "Search works"
 msgstr ""
 
 #: src/components/ui/combobox.tsx
@@ -6992,6 +7061,10 @@ msgstr "Kërko…"
 
 #: src/features/assistant/conversation.tsx
 msgid "Searched the web"
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Searches and reads pages with {connectedProvider}, whichever AI provider you use."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -7709,6 +7782,10 @@ msgstr ""
 msgid "Suggested from the source and the job. Change it anytime."
 msgstr ""
 
+#: src/features/settings/ai/providers.tsx
+msgid "Suggestions from <0>models.dev</0>. You can also enter any model ID."
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Suggests cuts, never deletes on its own"
 msgstr ""
@@ -7862,6 +7939,14 @@ msgstr "Test"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Test connection"
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Tested with {connectedProvider}. Only this service was tested."
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Testing search and reading with {connectedProvider}…"
 msgstr ""
 
 #: src/features/assistant/provider-setup.tsx
@@ -8490,6 +8575,7 @@ msgstr ""
 #: src/components/layout/error-screen.tsx
 #: src/features/resume/editor/write/improve.tsx
 #: src/features/resume/share/download-tab.tsx
+#: src/features/settings/ai/web-access.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Try again"
 msgstr "Provo përsëri"
@@ -8842,6 +8928,10 @@ msgstr ""
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
 msgstr "Përdorni listën normale me pika të redaktuesit tuaj, që shenja të rastësishme të mos bien në mes të fjalisë."
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Used when {connectedProvider} can't read a page. No account needed."
+msgstr ""
+
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 msgid "User research"
@@ -8860,6 +8950,10 @@ msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Uses the linked application"
+msgstr ""
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Uses your AI provider's own web search where supported, and reads links with the built-in reader."
 msgstr ""
 
 #: src/libs/locale.ts
@@ -9227,6 +9321,10 @@ msgstr "Shkruani adresën e plotë që të njihet si lidhje."
 msgid "Writing"
 msgstr "Shkrimi"
 
+#: src/features/settings/ai/providers.tsx
+msgid "Writing help, tailored suggestions and the assistant. Your keys stay encrypted."
+msgstr ""
+
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"
 msgstr ""
@@ -9357,10 +9455,6 @@ msgstr "Titujt tuaj duken njësoj si teksti kryesor."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your headline changed on the resume. The letter updated too."
-msgstr ""
-
-#: src/features/settings/ai/providers.tsx
-msgid "Your keys, stored encrypted"
 msgstr ""
 
 #: src/features/ats-checker/messages.ts

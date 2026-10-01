@@ -1,6 +1,68 @@
 import type { ComboboxOption } from "@/components/ui/combobox";
 import type { AIProvider } from "@reactive-resume/ai/types";
+import { z } from "zod";
 import { AI_PROVIDER_DEFAULT_BASE_URLS } from "@reactive-resume/ai/types";
+
+export const modelsDevProviderIds: Record<AIProvider, string | null> = {
+	openai: "openai",
+	anthropic: "anthropic",
+	gemini: "google",
+	"vercel-ai-gateway": "vercel",
+	openrouter: "openrouter",
+	mistral: "mistral",
+	cohere: "cohere",
+	xai: "xai",
+	groq: "groq",
+	deepseek: "deepseek",
+	togetherai: "togetherai",
+	fireworks: "fireworks-ai",
+	cerebras: "cerebras",
+	perplexity: "perplexity",
+	ollama: "ollama-cloud",
+	"openai-compatible": null,
+};
+
+const catalogProviderSchema = z.object({ models: z.record(z.string(), z.unknown()) });
+const catalogModelSchema = z.object({
+	id: z.string().min(1),
+	name: z.string().min(1),
+	release_date: z.string().optional(),
+	status: z.string().optional(),
+	modalities: z.object({ input: z.array(z.string()), output: z.array(z.string()) }),
+	limit: z.object({ context: z.number().positive(), output: z.number().positive() }),
+});
+
+/** Public, optional suggestions. Provider-specific IDs must be kept intact, including gateway prefixes. */
+export async function loadModelSuggestions(signal: AbortSignal) {
+	const response = await fetch("https://models.dev/api.json", {
+		signal: AbortSignal.any([signal, AbortSignal.timeout(10_000)]),
+		credentials: "omit",
+		referrerPolicy: "no-referrer",
+	});
+	if (!response.ok) throw new Error("Model suggestions are unavailable");
+	const catalog = z.record(z.string(), z.unknown()).parse(await response.json());
+	return Object.fromEntries<z.infer<typeof catalogModelSchema>[]>(
+		Object.values(modelsDevProviderIds).flatMap((id) => {
+			if (!id) return [];
+			const provider = catalogProviderSchema.safeParse(catalog[id]);
+			const models = provider.success
+				? Object.values(provider.data.models).flatMap((entry) => {
+						const model = catalogModelSchema.safeParse(entry);
+						if (
+							!model.success ||
+							model.data.status === "deprecated" ||
+							!model.data.modalities.input.includes("text") ||
+							!model.data.modalities.output.includes("text")
+						)
+							return [];
+						return [model.data];
+					})
+				: [];
+			models.sort((a, b) => (b.release_date ?? "").localeCompare(a.release_date ?? "") || a.name.localeCompare(b.name));
+			return [[id, models]];
+		}),
+	);
+}
 
 export type AIProviderOption = ComboboxOption<AIProvider> & { defaultBaseURL: string; defaultModel: string };
 

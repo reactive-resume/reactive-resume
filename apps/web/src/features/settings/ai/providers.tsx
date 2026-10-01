@@ -21,8 +21,15 @@ import { Label } from "@reactive-resume/ui/components/label";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
-import { SettingsSection } from "../section";
-import { describeTest, keyEnding, providerDefaults, providerLabel, providerOptions } from "./catalog";
+import {
+	describeTest,
+	keyEnding,
+	loadModelSuggestions,
+	modelsDevProviderIds,
+	providerDefaults,
+	providerLabel,
+	providerOptions,
+} from "./catalog";
 import { Combobox } from "@/components/ui/combobox";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -43,57 +50,106 @@ const secretInputProps = {
 const isConfigError = (error: unknown) => error instanceof ORPCError && error.code === "PRECONDITION_FAILED";
 
 export function ProvidersSection() {
+	const id = useId();
 	const { data: providers, isLoading, error } = useQuery(orpc.aiProviders.list.queryOptions());
 	const [adding, setAdding] = useState(false);
 	const [editing, setEditing] = useState<SavedProvider | null>(null);
 	const managed = providers?.find((provider) => provider.managed);
 
-	if (managed)
-		return (
-			<SettingsSection title={<Trans>AI providers</Trans>} description={<Trans>Managed by your server</Trans>}>
-				<p className="text-sm text-ink-2">
-					<Trans>AI is enabled globally. Personal providers are disabled.</Trans>
-				</p>
-				<p className="text-xs text-ink-3">
-					{providerLabel(managed.provider)} · {managed.model}
-				</p>
-			</SettingsSection>
-		);
-
 	return (
-		<SettingsSection title={<Trans>AI providers</Trans>} description={<Trans>Your keys, stored encrypted</Trans>}>
-			{error ? (
-				<p role="alert" className="rounded-lg bg-warn-soft p-3 text-sm text-warn-text">
-					{isConfigError(error) ? (
-						<Trans>AI providers aren't available on this server until ENCRYPTION_SECRET is set.</Trans>
-					) : (
-						<Trans>AI providers couldn't be loaded. Reload to try again.</Trans>
-					)}
-				</p>
-			) : isLoading ? (
-				<p className="flex items-center gap-2 text-sm text-ink-3">
-					<Spinner decorative className="size-3.5" />
-					<Trans>Loading providers…</Trans>
-				</p>
-			) : (
-				<>
-					{providers?.map((provider) => (
-						<ProviderRow key={provider.id} provider={provider} onEdit={() => setEditing(provider)} />
-					))}
-					<button
-						type="button"
-						onClick={() => setAdding(true)}
-						className="flex h-10 items-center gap-2 rounded-[10px] border border-dashed border-line-2 px-3 text-start text-sm transition-colors duration-quick hover:bg-hover"
-					>
-						<Icon name="add" size={20} />
-						<Trans>Add provider · Anthropic, Gemini, Ollama, OpenAI-compatible</Trans>
-					</button>
-				</>
-			)}
+		<section aria-labelledby={`${id}-title`} className="overflow-hidden rounded-xl border border-line bg-surface">
+			<header className="flex items-start gap-3 border-b border-line p-5">
+				<span
+					aria-hidden
+					className="grid size-10 shrink-0 place-items-center rounded-[10px] bg-accent-soft text-accent-text"
+				>
+					<Icon name="auto_awesome" size={22} />
+				</span>
+				<div className="grid min-w-0 flex-1 gap-1.5">
+					<h2 id={`${id}-title`} className="text-base font-semibold">
+						<Trans>AI providers</Trans>
+					</h2>
+					<p className="max-w-[56ch] text-sm leading-6 text-ink-2">
+						<Trans>Writing help, tailored suggestions and the assistant. Your keys stay encrypted.</Trans>
+					</p>
+				</div>
+			</header>
+			<div className="grid gap-4 p-5">
+				{managed ? (
+					<div className="flex items-center gap-3">
+						<ProviderLogo provider={managed.provider} className="size-10 rounded-[10px] bg-sunken" />
+						<div className="grid min-w-0 gap-1">
+							<p className="text-sm font-medium">{providerLabel(managed.provider)}</p>
+							<p className="text-xs break-all text-ink-3">{managed.model}</p>
+							<p className="text-xs text-ink-2">
+								<Trans>Managed by your server</Trans>
+							</p>
+						</div>
+					</div>
+				) : error ? (
+					<p role="alert" className="rounded-lg bg-warn-soft p-3 text-sm text-warn-text">
+						{isConfigError(error) ? (
+							<Trans>AI providers aren't available on this server until ENCRYPTION_SECRET is set.</Trans>
+						) : (
+							<Trans>AI providers couldn't be loaded. Reload to try again.</Trans>
+						)}
+					</p>
+				) : isLoading ? (
+					<p className="flex items-center gap-2 text-sm text-ink-3">
+						<Spinner decorative className="size-3.5" />
+						<Trans>Loading providers…</Trans>
+					</p>
+				) : (
+					<>
+						{providers?.map((provider) => (
+							<ProviderRow key={provider.id} provider={provider} onEdit={() => setEditing(provider)} />
+						))}
+						<button
+							type="button"
+							onClick={() => setAdding(true)}
+							className="flex min-h-14 items-center gap-3 rounded-[10px] border border-dashed border-line-2 px-3 py-2.5 text-start text-sm transition-colors duration-quick hover:bg-hover"
+						>
+							<Icon name="add" size={20} />
+							<span className="grid gap-0.5">
+								<span className="font-medium">
+									<Trans>Add AI provider</Trans>
+								</span>
+								<span className="text-xs text-ink-3">
+									<Trans>Anthropic, Gemini, Ollama, OpenAI-compatible</Trans>
+								</span>
+							</span>
+						</button>
+					</>
+				)}
+			</div>
 
 			<AddProviderDialog open={adding} onOpenChange={setAdding} />
 			<EditProviderDialog provider={editing} onClose={() => setEditing(null)} />
-		</SettingsSection>
+		</section>
+	);
+}
+
+type ProviderLogoProps = { provider: AIProvider; className?: string };
+
+function ProviderLogo({ provider, className }: ProviderLogoProps) {
+	const [failed, setFailed] = useState(false);
+	const id = modelsDevProviderIds[provider];
+	return (
+		<span aria-hidden className={cn("grid size-6 shrink-0 place-items-center", className)}>
+			{id && !failed ? (
+				<img
+					src={`https://models.dev/logos/${id}.svg`}
+					alt=""
+					width={24}
+					height={24}
+					className="size-5 object-contain brightness-0 dark:invert"
+					referrerPolicy="no-referrer"
+					onError={() => setFailed(true)}
+				/>
+			) : (
+				<Icon name="auto_awesome" size={20} />
+			)}
+		</span>
 	);
 }
 
@@ -139,49 +195,58 @@ function ProviderRow({ provider, onEdit }: ProviderRowProps) {
 	const error = test.result ? test.result.error : provider.testStatus === "failure" ? provider.testError : null;
 
 	return (
-		<div className="grid gap-1.5 py-1">
-			<div className="flex flex-wrap items-center gap-3">
-				<span
-					aria-hidden
-					className="grid size-9 shrink-0 place-items-center rounded-lg bg-sunken text-xs font-semibold text-ink-2"
-				>
-					{providerLabel(provider.provider).slice(0, 2)}
-				</span>
+		<div className="grid gap-2 rounded-[10px] border border-line p-3">
+			<div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3 sm:flex sm:items-center">
+				<ProviderLogo provider={provider.provider} className="size-10 rounded-lg bg-sunken" />
 				<span className="grid min-w-0 flex-1 gap-0.5">
-					<span className="flex items-center gap-2 text-sm font-semibold">
-						{provider.label}
-						{!provider.enabled && (
-							<span className="rounded-full bg-sunken px-2 text-xs font-medium text-ink-3">
+					<span className="flex flex-wrap items-center gap-2 text-sm font-semibold">
+						<span className="break-words">{provider.label}</span>
+						<span
+							className={cn(
+								"rounded-full px-2 py-0.5 text-xs font-medium",
+								provider.testStatus === "failure"
+									? "bg-danger-soft text-danger-text"
+									: provider.enabled
+										? "bg-accent-soft text-accent-text"
+										: "bg-sunken text-ink-3",
+							)}
+						>
+							{provider.testStatus === "failure" ? (
+								<Trans>Needs attention</Trans>
+							) : provider.enabled ? (
+								<Trans>Ready</Trans>
+							) : (
 								<Trans>Off</Trans>
-							</span>
-						)}
+							)}
+						</span>
 					</span>
-					<span className="truncate text-xs text-ink-3">
-						<Trans>
-							Model {provider.model} · key ends in {keyEnding(provider.apiKeyPreview)}
-						</Trans>
+					<span className="text-xs break-all text-ink-2">{provider.model}</span>
+					<span className="text-xs text-ink-3">
+						<Trans>Key ends in {keyEnding(provider.apiKeyPreview)}</Trans>
 					</span>
 				</span>
-				<Button
-					size="sm"
-					variant="secondary"
-					aria-live="polite"
-					disabled={test.isPending}
-					className={cn(test.result?.ok && "text-accent-text", test.result && !test.result.ok && "text-danger-text")}
-					onClick={() => void test.run(provider.id)}
-				>
-					{test.isPending ? (
-						<>
-							<Spinner decorative className="size-3.5" />
-							<Trans>Testing…</Trans>
-						</>
-					) : (
-						(test.result?.label ?? <Trans>Test</Trans>)
-					)}
-				</Button>
-				<Button size="sm" variant="ghost" onClick={onEdit}>
-					<Trans>Edit</Trans>
-				</Button>
+				<div className="col-start-2 flex items-center gap-2 sm:ms-auto">
+					<Button
+						size="sm"
+						variant="secondary"
+						aria-live="polite"
+						disabled={test.isPending}
+						className={cn(test.result?.ok && "text-accent-text", test.result && !test.result.ok && "text-danger-text")}
+						onClick={() => void test.run(provider.id)}
+					>
+						{test.isPending ? (
+							<>
+								<Spinner decorative className="size-3.5" />
+								<Trans>Testing…</Trans>
+							</>
+						) : (
+							(test.result?.label ?? <Trans>Test</Trans>)
+						)}
+					</Button>
+					<Button size="sm" variant="ghost" onClick={onEdit}>
+						<Trans>Edit</Trans>
+					</Button>
+				</div>
 			</div>
 			{error && (
 				<p role="alert" className="ms-12 text-xs text-danger-text">
@@ -206,6 +271,19 @@ function ProviderFieldsForm({ provider, value, onChange, keyOptional }: Provider
 	const id = useId();
 	const set = (patch: Partial<ProviderFields>) => onChange({ ...value, ...patch });
 	const defaults = providerDefaults(provider);
+	const catalogId = modelsDevProviderIds[provider];
+	const {
+		data: catalog,
+		isPending: loadingModels,
+		isError: modelsUnavailable,
+	} = useQuery({
+		queryKey: ["models.dev"],
+		queryFn: ({ signal }) => loadModelSuggestions(signal),
+		enabled: catalogId !== null,
+		staleTime: 60 * 60 * 1000,
+		retry: false,
+	});
+	const models = catalogId ? (catalog?.[catalogId] ?? []) : [];
 
 	return (
 		<div className="grid gap-3 sm:grid-cols-2">
@@ -228,19 +306,52 @@ function ProviderFieldsForm({ provider, value, onChange, keyOptional }: Provider
 					{...secretInputProps}
 				/>
 			</div>
-			<div className="grid gap-1.5">
+			<div className="grid gap-1.5 sm:col-span-2">
 				<Label htmlFor={`${id}-model`}>
 					<Trans>Model</Trans>
 				</Label>
 				<Input
 					id={`${id}-model`}
+					list={`${id}-models`}
+					aria-describedby={`${id}-model-hint`}
 					value={value.model}
 					placeholder={defaults.model || "gpt-4.1"}
 					onChange={(event) => set({ model: event.target.value })}
 					{...secretInputProps}
 				/>
+				<datalist id={`${id}-models`}>
+					{models.map((model) => (
+						<option key={model.id} value={model.id}>
+							{model.name}
+						</option>
+					))}
+				</datalist>
+				<p id={`${id}-model-hint`} className="text-xs leading-5 text-ink-3">
+					{!catalogId ? (
+						<Trans>Enter any model ID supported by your endpoint.</Trans>
+					) : modelsUnavailable ? (
+						<Trans>Model suggestions are unavailable. You can still enter any model ID.</Trans>
+					) : loadingModels ? (
+						<Trans>Loading model suggestions… You can also enter any model ID.</Trans>
+					) : models.length === 0 ? (
+						<Trans>No suggestions for this provider. Enter any model ID.</Trans>
+					) : (
+						<Trans>
+							Suggestions from{" "}
+							<a
+								href="https://models.dev/"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="underline underline-offset-2 hover:text-ink"
+							>
+								models.dev
+							</a>
+							. You can also enter any model ID.
+						</Trans>
+					)}
+				</p>
 			</div>
-			<div className="grid gap-1.5">
+			<div className="grid gap-1.5 sm:col-span-2">
 				<Label htmlFor={`${id}-label`}>
 					<Trans>Name</Trans>
 				</Label>
@@ -347,14 +458,24 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 					}}
 				>
 					<div className="grid gap-1.5">
-						<Label htmlFor={`${id}-provider`}>
+						<Label htmlFor={`${id}-provider`} className="flex items-center gap-2">
+							<ProviderLogo key={provider} provider={provider} />
 							<Trans>Provider</Trans>
 						</Label>
 						<Combobox
 							id={`${id}-provider`}
 							value={provider}
 							showClear={false}
-							options={providerOptions}
+							options={providerOptions.map((option) => ({
+								...option,
+								textValue: String(option.label),
+								label: (
+									<>
+										<ProviderLogo provider={option.value} />
+										{option.label}
+									</>
+								),
+							}))}
 							onValueChange={(next) => {
 								if (!next) return;
 								setProvider(next);
