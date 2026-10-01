@@ -307,6 +307,29 @@ const ROW_ITEM_KEYS = new Set([
 	"breakBefore",
 ]);
 
+// What Forme's Text ignores: it paints no background, border or padding of its own, so a text that has them sits in
+// a box that does.
+const TEXT_BOX_KEYS = new Set([
+	"backgroundColor",
+	...PADDING_KEYS,
+	"borderWidth",
+	"borderTopWidth",
+	"borderRightWidth",
+	"borderBottomWidth",
+	"borderLeftWidth",
+	"borderColor",
+	"borderTopColor",
+	"borderRightColor",
+	"borderBottomColor",
+	"borderLeftColor",
+	"borderStyle",
+	"borderRadius",
+	"borderTopLeftRadius",
+	"borderTopRightRadius",
+	"borderBottomRightRadius",
+	"borderBottomLeftRadius",
+]);
+
 const isEmptyText = (node: HostNode): boolean =>
 	"text" in node
 		? node.text.length === 0
@@ -545,12 +568,14 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
 			const children = convertChildren(node.children, childContext(context, converted, true));
 			const textStyle: FormeStyle = { ...context.textDefaults, ...flowStyle(props, style) };
 			// Forme 0.25 loses the rest of the page (boxes at y -1.8e308) when a row with a text as a direct child breaks
-			// across pages. The text sits in a box that takes its place in the row.
-			if (context.rowParent && !context.inText) {
+			// across pages. The text sits in a box that takes its place in the row; a text with a background, border or
+			// padding sits in a box that paints them (see `TEXT_BOX_KEYS`).
+			const paintsBox = Object.keys(textStyle).some((property) => TEXT_BOX_KEYS.has(property));
+			if ((context.rowParent || paintsBox) && !context.inText) {
 				const box: Record<string, unknown> = {};
 				const text: Record<string, unknown> = {};
 				for (const [property, value] of Object.entries(textStyle))
-					(ROW_ITEM_KEYS.has(property) ? box : text)[property] = value;
+					(ROW_ITEM_KEYS.has(property) || TEXT_BOX_KEYS.has(property) ? box : text)[property] = value;
 				const inner = createElement(FormeText, { style: text as FormeStyle, ...(href ? { href } : {}) }, ...children);
 				tagNode(inner, props, context);
 				const wrapper = createElement(FormeView, { key, style: box as FormeStyle }, inner);
