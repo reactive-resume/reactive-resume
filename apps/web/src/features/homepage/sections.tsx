@@ -205,7 +205,7 @@ export function Languages() {
 const pillLinkClass =
 	"flex h-10 items-center gap-2 rounded-full border border-line-2 px-3.5 font-medium font-ui text-ink text-sm transition-colors hover:bg-hover";
 const receiptButtonClass =
-	"flex h-[42px] items-center justify-between rounded-md px-3.5 font-semibold font-ui text-sm transition-colors";
+	"flex h-[42px] items-center justify-between rounded-md px-3.5 font-semibold text-sm transition-colors";
 
 /** 08 Support: the case for donations, printed as a receipt that totals nothing. */
 export function Support() {
@@ -281,11 +281,9 @@ export function Support() {
 				</div>
 				<div className="-mx-3 -mt-[9px] box-content w-full overflow-hidden px-3 pb-10">
 					<div className="[transform:translateY(calc((1-clamp(0,var(--p)*1.7-.15,1))*-100%))] drop-shadow-[0_18px_24px_oklch(0.2_0.01_95/.22)] [transition:transform_.4s_linear]">
-						<div className="receipt-paper font-martian bg-[#fdfcf8] px-[26px] pt-[30px] pb-[46px] text-[12.5px] leading-[1.75] text-[oklch(0.25_0.01_95)] font-stretch-[87.5%]">
+						<div className="receipt-paper bg-[#fdfcf8] px-[26px] pt-[30px] pb-[46px] font-['Courier_New',Courier,monospace] text-[12.5px] leading-[1.75] text-[oklch(0.25_0.01_95)]">
 							<div className="mb-4 flex flex-col gap-0.5 text-center">
-								<b className="font-anybody text-[18px] leading-[1.1] font-semibold tracking-[-.01em] font-stretch-[104%]">
-									REACTIVE RESUME
-								</b>
+								<b className="text-[18px] leading-[1.1] font-semibold tracking-[-.01em]">REACTIVE RESUME</b>
 								<span className="text-[oklch(0.5_0.01_95)]">{t`A free and open-source resume builder`}</span>
 								<span className="text-[oklch(0.5_0.01_95)] uppercase">
 									{i18n.date(receiptDate, { day: "2-digit", month: "short", year: "numeric" })}
