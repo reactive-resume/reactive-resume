@@ -93,7 +93,7 @@ async function deleteForGood(ref: DocumentRef) {
 	await db.delete(schema.coverLetter).where(owned(ref));
 }
 
-/** Documents trashed more than 30 days ago go for good. It runs when the user lists documents, so no scheduler. */
+/** Documents trashed more than 30 days ago go for good. Runs only through the explicit authenticated cleanup operation. */
 async function purgeExpired(userId: string) {
 	const cutoff = new Date(Date.now() - TRASH_RETENTION_MS);
 	const [resumes, letters] = await Promise.all([
@@ -115,9 +115,9 @@ async function purgeExpired(userId: string) {
 
 export const documentsService = {
 	/** Every live resume and letter (or everything in Trash), newest edit first. The app filters and sorts them. */
-	list: async (input: { userId: string; trashed: boolean }): Promise<DocumentSummary[]> => {
-		await purgeExpired(input.userId);
+	purgeExpired,
 
+	list: async (input: { userId: string; trashed: boolean }): Promise<DocumentSummary[]> => {
 		const [resumes, letters] = await Promise.all([
 			db
 				.select({

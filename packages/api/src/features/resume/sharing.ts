@@ -23,7 +23,9 @@ export const sharingRouter = {
 				...input,
 				requestHeaders: context.reqHeaders,
 				...(context.trustedClient ? { trustedClient: context.trustedClient } : {}),
-				...(context.user?.id ? { currentUserId: context.user.id } : {}),
+				...(context.user?.id && context.authentication?.permissions.includes("read")
+					? { currentUserId: context.user.id }
+					: {}),
 			}),
 		),
 

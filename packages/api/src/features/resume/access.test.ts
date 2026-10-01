@@ -1,24 +1,44 @@
-import { createHash } from "node:crypto";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-const envMock = vi.hoisted(() => ({ APP_URL: "https://example.com" }));
+const envMock = vi.hoisted(() => ({ APP_URL: "https://example.com", AUTH_SECRET: "test-resume-access-secret" }));
 
 vi.mock("@reactive-resume/env/server", () => ({ env: envMock }));
 
 const { hasResumeAccess, grantResumeAccess } = await import("./access");
 
-const signToken = (resumeId: string, passwordHash: string) =>
-	createHash("sha256").update(`${resumeId}:${passwordHash}`).digest("hex");
+const grantedCookie = (resumeId = "resume-42", passwordHash = "hash") => {
+	const headers = new Headers();
+	grantResumeAccess(headers, resumeId, passwordHash);
+	const cookie = headers.get("Set-Cookie")?.split(";")[0];
+	if (!cookie) throw new Error("Resume access grant did not issue a cookie.");
+	return cookie;
+};
 
-const requestHeadersWithCookie = (name: string, value: string) =>
-	new Headers({ Cookie: `other=value; ${name}=${value}; theme=dark` });
+afterEach(() => vi.restoreAllMocks());
 
 describe("hasResumeAccess", () => {
-	it("returns false for a cookie value that does not match the expected signed token", () => {
-		// Same length as a real token, so the comparison itself has to reject it.
-		const headers = requestHeadersWithCookie("resume_access_resume-1", "0".repeat(64));
+	it("rejects replay after the signed ten-minute expiration, even when cookie is supplied manually", () => {
+		const now = vi.spyOn(Date, "now").mockReturnValue(1_800_000_000_000);
+		const headers = new Headers({ cookie: grantedCookie() });
+		expect(hasResumeAccess(headers, "resume-42", "hash")).toBe(true);
+		now.mockReturnValue(1_800_000_599_999);
+		expect(hasResumeAccess(headers, "resume-42", "hash")).toBe(true);
+		now.mockReturnValue(1_800_000_600_000);
+		expect(hasResumeAccess(headers, "resume-42", "hash")).toBe(false);
+	});
 
-		expect(hasResumeAccess(headers, "resume-1", "hash")).toBe(false);
+	it("binds access to the signed expiration, resource and current password", () => {
+		vi.spyOn(Date, "now").mockReturnValue(1_800_000_000_000);
+		const cookie = grantedCookie();
+		const headers = new Headers({ cookie });
+		expect(hasResumeAccess(headers, "resume-42", "hash")).toBe(true);
+		expect(hasResumeAccess(headers, "resume-42", "changed-password")).toBe(false);
+		expect(hasResumeAccess(new Headers({ cookie: cookie.replace("resume-42", "other") }), "other", "hash")).toBe(false);
+		expect(
+			hasResumeAccess(new Headers({ cookie: cookie.replace("1800000600000", "1900000600000") }), "resume-42", "hash"),
+		).toBe(false);
+		const altered = `${cookie.slice(0, -1)}${cookie.endsWith("0") ? "1" : "0"}`;
+		expect(hasResumeAccess(new Headers({ cookie: altered }), "resume-42", "hash")).toBe(false);
 	});
 });
 
@@ -29,7 +49,7 @@ describe("grantResumeAccess", () => {
 		grantResumeAccess(responseHeaders, "resume-42", "hash");
 
 		const cookie = responseHeaders.get("Set-Cookie");
-		expect(cookie).toContain(`resume_access_resume-42=${signToken("resume-42", "hash")}`);
+		expect(cookie).toMatch(/^resume_access_resume-42=\d+\.[a-f0-9]{64};/);
 		expect(cookie).toContain("Path=/");
 		expect(cookie).toContain("HttpOnly");
 		expect(cookie).toContain("SameSite=Lax");

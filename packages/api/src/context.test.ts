@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { createProcedureClient } from "@orpc/server";
 import { env } from "@reactive-resume/env/server";
 
 const authMock = vi.hoisted(() => ({
@@ -21,7 +22,8 @@ vi.mock("@reactive-resume/db/client", () => ({ db: dbMock }));
 vi.mock("@reactive-resume/db/schema", () => ({ user: { __table: "user" } }));
 vi.mock("drizzle-orm", () => ({ eq: () => "EQ" }));
 
-const { resolveUserFromRequestHeaders } = await import("./context");
+const { resolveUserFromRequestHeaders, resolveAuthenticationFromRequestHeaders, protectedProcedure } =
+	await import("./context");
 
 const setupDbResolves = (userResult: unknown) => {
 	dbMock.select.mockReturnValueOnce({
@@ -92,6 +94,7 @@ describe("cookie request origins", () => {
 	it("accepts same-origin cookies and explicit bearer credentials from other origins", async () => {
 		reset();
 		authMock.api.getSession.mockResolvedValue({ user: { id: "session-user" } });
+		setupDbResolves({ id: "session-user" });
 		await expect(
 			resolveUserFromRequestHeaders(new Headers({ cookie: "session=valid", origin: new URL(env.APP_URL).origin })),
 		).resolves.toMatchObject({ id: "session-user" });
@@ -102,5 +105,56 @@ describe("cookie request origins", () => {
 				new Headers({ authorization: "Bearer token", cookie: "session=valid", origin: "https://client.example" }),
 			),
 		).resolves.toMatchObject({ id: "token-user" });
+	});
+});
+
+describe("credential authorization", () => {
+	it.each([
+		{ banned: true, banExpires: null, allowed: false },
+		{ banned: true, banExpires: new Date("2999-01-01"), allowed: false },
+		{ banned: true, banExpires: new Date("2000-01-01"), allowed: true },
+	])("enforces active bans for explicit credentials: %j", async ({ banned, banExpires, allowed }) => {
+		reset();
+		authMock.api.verifyApiKey.mockResolvedValue({ valid: true, key: { referenceId: "owner" } });
+		setupDbResolves({ id: "owner", banned, banExpires });
+		const result = await resolveUserFromRequestHeaders(new Headers({ "x-api-key": "key" }));
+		expect(result?.id ?? null).toBe(allowed ? "owner" : null);
+	});
+
+	it.each([
+		{ permissions: { api: ["read"] }, method: "GET" as const, allowed: true },
+		{ permissions: { api: ["read"] }, method: "POST" as const, allowed: false },
+		{ permissions: { api: ["write"] }, method: "DELETE" as const, allowed: false },
+		{ permissions: null, method: "POST" as const, allowed: true },
+		{ permissions: {}, method: "GET" as const, allowed: false },
+	])("enforces API-key permissions at procedure execution: %j", async ({ permissions, method, allowed }) => {
+		reset();
+		authMock.api.verifyApiKey.mockResolvedValue({ valid: true, key: { referenceId: "owner", permissions } });
+		setupDbResolves({ id: "owner" });
+		const operation = createProcedureClient(
+			protectedProcedure.route({ method }).handler(() => "executed"),
+			{
+				context: { locale: "en-US", reqHeaders: new Headers({ "x-api-key": "key" }) },
+			},
+		);
+		if (allowed) await expect(operation(undefined)).resolves.toBe("executed");
+		else await expect(operation(undefined)).rejects.toMatchObject({ code: "FORBIDDEN" });
+	});
+
+	it("preserves OAuth read-only scope when another identity cookie is present", async () => {
+		reset();
+		verifyOAuthTokenMock.mockResolvedValue({ sub: "owner", scope: "api:read" });
+		setupDbResolves({ id: "owner" });
+		const authentication = await resolveAuthenticationFromRequestHeaders(
+			new Headers({ authorization: "Bearer token", cookie: "session=other" }),
+		);
+		const operation = createProcedureClient(
+			protectedProcedure.route({ method: "POST" }).handler(() => "executed"),
+			{
+				context: { locale: "en-US", reqHeaders: new Headers(), authentication },
+			},
+		);
+		await expect(operation(undefined)).rejects.toMatchObject({ code: "FORBIDDEN" });
+		expect(authMock.api.getSession).not.toHaveBeenCalled();
 	});
 });

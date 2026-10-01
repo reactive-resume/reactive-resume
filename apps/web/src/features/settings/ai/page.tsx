@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/react/macro";
 import { ApiKeysSection } from "./api-keys";
+import { ConnectedAppsSection } from "./connected-apps";
 import { McpSection } from "./mcp";
 import { ProvidersSection } from "./providers";
 import { WebAccessSection } from "./web-access";
@@ -19,6 +20,7 @@ export function AiDeveloperSettings() {
 			<ProvidersSection />
 			<WebAccessSection />
 			<ApiKeysSection />
+			<ConnectedAppsSection />
 			<McpSection />
 		</>
 	);

@@ -75,8 +75,8 @@ If your client only runs local commands, use `mcp-remote` as a bridge. It needs 
 ```
 
 <Warning>
-  An API key in a config file gives full access to your documents. Keep the file private, and revoke the key in Settings
-  if it leaks.
+  An API key in a config file grants its configured permissions. Choose read-only access when edits are unnecessary.
+  Keep the file private, and revoke the key in Settings if it leaks.
 </Warning>
 
 ## Set up popular clients
@@ -148,25 +148,25 @@ For job applications, see [Managing applications with MCP](/guides/managing-appl
 
 ## Tools
 
-The server offers 43 tools. Each carries MCP annotations (`readOnlyHint`, `destructiveHint` and others), so clients can run read-only tools freely and ask you before tools that change or delete data.
+The server keeps the original 43 tool names and adds API-derived tools for the remaining workflows. Each advertises input/output schemas, structured results and MCP annotations. Clients should use these hints to decide when to request confirmation; the server independently enforces authentication, permissions and ownership. Use `tools/list` or the server card for the current catalog.
 
 ### Resumes
 
-| Tool                    | What it does                                                                                                                                  |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `list_resumes`          | Lists your resumes (ID, name, slug, tags, public and locked status, dates). Filter by `tags`, sort by `lastUpdatedAt`, `createdAt` or `name`. |
-| `list_resume_tags`      | Lists every tag used across your resumes.                                                                                                     |
-| `read_resume`           | Returns a resume's full data.                                                                                                                 |
-| `download_resume_pdf`   | Returns a signed PDF download link that expires in 10 minutes.                                                                                |
-| `create_resume`         | Creates a resume with a `name` and `slug`, empty or with sample content (`withSampleData`).                                                   |
-| `import_resume`         | Creates a resume from a full resume data object, such as a JSON export.                                                                       |
-| `duplicate_resume`      | Copies a resume under a new `name` and `slug`.                                                                                                |
-| `apply_resume_patch`    | Changes a resume's content with JSON Patch operations. See [Using the patch API](/guides/using-the-patch-api).                                |
-| `update_resume`         | Changes the name, slug, tags or public setting, and returns the public address. Passwords can only be set in the app.                         |
-| `delete_resume`         | Moves a resume to Trash, where it stays for 30 days.                                                                                          |
-| `lock_resume`           | Locks a resume so it can't be edited or deleted.                                                                                              |
-| `unlock_resume`         | Unlocks a resume.                                                                                                                             |
-| `get_resume_statistics` | Returns view and download counts, and when the resume was last viewed and downloaded.                                                         |
+| Tool                    | What it does                                                                                                                                                  |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `list_resumes`          | Lists your resumes (ID, name, slug, tags, public and locked status, dates). Filter by `tags`, sort by `lastUpdatedAt`, `createdAt` or `name`.                 |
+| `list_resume_tags`      | Lists every tag used across your resumes.                                                                                                                     |
+| `read_resume`           | Returns full data, with ID, name and `updatedAt` in `structuredContent`.                                                                                      |
+| `download_resume_pdf`   | Returns a signed PDF download link that expires in 10 minutes.                                                                                                |
+| `create_resume`         | Creates a resume with a `name` and `slug`, empty or with sample content (`withSampleData`).                                                                   |
+| `import_resume`         | Creates a resume from a full resume data object, such as a JSON export.                                                                                       |
+| `duplicate_resume`      | Copies a resume under a new `name` and `slug`.                                                                                                                |
+| `apply_resume_patch`    | Changes content with JSON Patch; supply `expectedUpdatedAt` from `read_resume` to reject stale edits. See [Using the patch API](/guides/using-the-patch-api). |
+| `update_resume`         | Changes the name, slug, tags or public setting, and returns the public address. Use `api_resume_set_password` for passwords.                                  |
+| `delete_resume`         | Moves a resume to Trash, where it stays for 30 days.                                                                                                          |
+| `lock_resume`           | Locks a resume so it can't be edited or deleted.                                                                                                              |
+| `unlock_resume`         | Unlocks a resume.                                                                                                                                             |
+| `get_resume_statistics` | Returns view and download counts, and when the resume was last viewed and downloaded.                                                                         |
 
 ### Cover letters
 
@@ -201,7 +201,7 @@ The server offers 43 tools. Each carries MCP annotations (`readOnlyHint`, `destr
 | `bulk_update_applications`          | Moves several applications to a stage or adds tags to them.                                                                                |
 | `bulk_delete_applications`          | Permanently deletes several applications.                                                                                                  |
 | `import_applications`               | Creates up to 500 applications from parsed rows.                                                                                           |
-| `attach_application_document`       | Attaches a resume or cover-letter PDF (base64, up to 10 MB) as what you sent.                                                              |
+| `attach_application_document`       | Attaches a PDF using bounded inline base64 or an owned storage reference (up to 10 MiB).                                                   |
 | `remove_application_document`       | Removes an attached PDF.                                                                                                                   |
 | `autofill_application_from_job`     | Reads a pasted job posting with your AI provider and suggests company, role, location and salary.                                          |
 | `score_application_match`           | Scores the linked resume against the job description with your AI provider.                                                                |
@@ -209,6 +209,53 @@ The server offers 43 tools. Each carries MCP annotations (`readOnlyHint`, `destr
 | `draft_application_message`         | Drafts a cover letter (saved as a new letter) or a recruiter follow-up with your AI provider.                                              |
 
 The last four tools send data to the AI provider you set up in Reactive Resume and need a tested default provider. See [Connecting an AI provider](/guides/using-ai).
+
+### Additional API workflows
+
+Additional tools use `api_` followed by the API router path in snake case. Inputs come from the same validated contracts as the API. Existing tool names remain available.
+
+| Area                       | Examples                                                                                       | Coverage                                                                                                                  |
+| -------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Resume history and sharing | `api_resume_list_versions`, `api_resume_restore_version`, `api_resume_set_password`            | List/read/create/rename/delete/restore versions; passwords, slug availability, public reads and daily statistics          |
+| Letter history and drafts  | `api_cover_letters_get_version`, `api_cover_letters_draft`                                     | All version actions; draft, shorter and personal variants; existing update tool accepts complete style fields             |
+| Document library           | `api_documents_list`, `api_documents_copy_for_job`, `api_documents_purge_expired`              | Counts, names, tags, locks, application links, Trash, restore, permanent deletion and expired Trash cleanup               |
+| Files and exports          | `api_rest_document_exports_resume`, `api_rest_document_exports_letter`, `api_rest_file_upload` | PDF, DOCX, Markdown and JSON exports; file upload/delete and supported file imports                                       |
+| Checks and AI              | `api_rest_check_resume`, `api_rest_check_pdf`, `api_rest_match_resume`, `api_ai_improve`       | Deterministic checks and matching; PDF/DOCX parsing, qualitative review, line rewrites, job search and posting extraction |
+| Assistant                  | `api_agent_threads_start`, `api_agent_messages_send`, `api_agent_attachments_create`           | Threads, messages, cancellation, resumable replies, proposed edit status and attachments                                  |
+| Account and instance       | `api_auth_export_data`, `api_auth_delete_account`, `api_flags_get`                             | Account export/deletion, enabled auth providers and platform statistics                                                   |
+| Integrations               | `api_ai_providers_list`, `api_web_access_status`                                               | Provider list/test/delete and web connection status/test/delete; credential entry uses browser handoffs                   |
+
+Resume and letter exports return authenticated REST URLs. Download with your existing credentials or open in your signed-in browser. Letter localization words are encoded in the URL. No generated file is permanently copied into storage by the export tool.
+
+Lists default to 20 results and accept `limit` (up to 100) and `offset`; continue paging until no more results. Array results use `{ items: [...] }` in `structuredContent`. Scalar results use `{ result: ... }`. Dates use ISO 8601. Resume edits can use optimistic concurrency with `expectedUpdatedAt`; letter edits require `expectedRevision`. After a conflict, reread before retrying.
+
+Document listing never deletes expired Trash. Run `api_documents_purge_expired` explicitly to permanently remove documents trashed more than 30 days ago. Individual permanent deletion requires moving the document to Trash first.
+
+### File limits and references
+
+The Streamable HTTP JSON request limit is 4 MiB. Inline base64 is limited to 3 MiB of encoded text (approximately 2.25 MiB of file bytes), leaving space for JSON metadata. Larger files use an owned `storagePath` returned by the REST file upload or assistant attachment endpoint:
+
+```json
+{
+  "file": {
+    "name": "resume.pdf",
+    "contentType": "application/pdf",
+    "storagePath": "uploads/YOUR_USER_ID/pictures/FILE_ID.pdf"
+  }
+}
+```
+
+The server reads storage directly and verifies the account prefix and path segments. External URLs and other users' files cannot be used as references. The API still validates each operation's file type and size: ordinary uploads/imports and application PDFs allow 10 MiB, PDF checking allows 25,000,000 bytes, and assistant attachments allow 25 MiB. Upload larger assistant attachments through their REST endpoint before referencing them. Small application attachments use `fileName`, `contentType`, and either `dataBase64` or `storagePath`.
+
+### Browser and streaming workflows
+
+`open_account_settings` opens profile, security, API keys, preferences or account settings. Provider creation/update and web credential entry return their authenticated settings page. Password changes, passkeys, two-factor authentication and provider credentials require user interaction in that browser. Browser preferences, local undo and document selection remain browser workflows; durable edits and history are available through MCP.
+
+MCP is stateless and accepts POST requests with JSON responses. GET/DELETE return 405; there is no standalone SSE subscription. Draft/message streams are collected up to 500,000 characters; `truncated` identifies longer responses. Read the assistant thread for persisted replies. `api_resume_updates_subscribe` returns an owned snapshot; poll its `updatedAt` for changes. `api_resume_verify_password` returns a resource cookie capability; pass it as `resourceCookie` to `api_resume_get_by_slug`. It expires server-side after ten minutes and cannot authenticate an account.
+
+The installed SDK uses its supported MCP 1.x protocol negotiation, including `2025-11-25`. Protocol revisions beyond that require a separate SDK/compatibility upgrade; this server does not claim support for untested future versions.
+
+Browser requests must use the configured application Origin; native clients normally omit Origin. Responses are private and uncached. Request/user rate limits supplement each API operation's own limits; signed PDF downloads share the renderer limit with REST exports.
 
 ## Prompts
 
@@ -233,10 +280,12 @@ Your instance also publishes a server card at `/.well-known/mcp/server-card.json
 
 This section is for client developers and self-hosters.
 
-- The server accepts `Authorization: Bearer <token>` (an OAuth access token) first, then `x-api-key: <key>`.
+- The server checks `x-api-key: <key>` first, then `Authorization: Bearer <token>`. MCP never accepts account session cookies. Invalid explicit credentials cannot borrow a browser session.
 - A request with neither gets `401` and a `WWW-Authenticate: Bearer resource_metadata="<instance>/.well-known/oauth-protected-resource"` header. OAuth clients use it to discover the authorization server.
 - Authorization server metadata is at `/.well-known/oauth-authorization-server`. The authorization server supports dynamic client registration and PKCE with `S256`.
-- The consent screen always lists API access, plus the scopes the client asked for: `profile`, `email` and `offline_access` (which lets the client refresh its token while you're away).
+- New OAuth clients can request `api:read`, `api:write` and `api:delete`. The consent screen describes these permissions alongside identity scopes. Existing identity-only grants and legacy keys without permission statements retain account-wide access for compatibility.
+- The server checks the user, client, login session and consent grant on every authenticated request. Disabled clients, banned accounts, ended sessions and revoked grants cannot continue using signed tokens. Proof-bound DPoP tokens are rejected: this endpoint supports ordinary bearer access tokens.
+- Revoke a connection under Settings → AI & developer → Connected applications. Revoking the application grant invalidates existing access and refresh tokens. The authorization provider does not support revoking one self-contained JWT independently of its grant.
 
 ## Troubleshooting
 
@@ -248,7 +297,7 @@ This section is for client developers and self-hosters.
 | A tool says the resume is locked                              | Unlock it in the app, or ask the client to run `unlock_resume`.                                       |
 | A tool says an ID wasn't found                                | Ask the client to list resumes, letters or applications first to get valid IDs.                       |
 | An edit to dates doesn't stick                                | The client changed the `period` or `date` text. Ask it to write the `dates` object instead.           |
-| `import_resume` fails on a large file                         | Your client's message size limit is too small. Import the file in the app instead.                    |
+| A tool rejects a large file                                   | Upload through the REST file/attachment endpoint and pass an owned storage reference.                 |
 | A self-hosted connection made before an upgrade stops working | Remove the server from your client and add it again, so it registers afresh and you approve it again. |
 
 ## Related guides

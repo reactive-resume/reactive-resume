@@ -1,89 +1,21 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { RouterClient } from "@orpc/server";
-import type { resumePatchOperationsSchema } from "@reactive-resume/ai/tools/resume-tool-contracts";
+import type { RequestAuthentication } from "@reactive-resume/api/context";
 import type router from "@reactive-resume/api/routers";
 import type z from "zod";
-import { Buffer } from "node:buffer";
 import { ORPCError } from "@orpc/server";
 import { resolveUserFromRequestHeaders } from "@reactive-resume/api/context";
+import { applicationDto } from "@reactive-resume/api/dto/application";
+import { coverLetterDto } from "@reactive-resume/api/dto/cover-letter";
+import { resumeDto } from "@reactive-resume/api/dto/resume";
 import { createResumePdfDownloadUrl } from "@reactive-resume/api/features/resume/export";
 import { env } from "@reactive-resume/env/server";
-import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
+import { readMcpFile } from "./files";
 import { MCP_TOOL_NAME } from "./mcp-tool-names";
+import { json, text, withErrorHandling } from "./results";
 import { TOOL_META } from "./tool-meta";
 
-type PatchOperation = z.infer<typeof resumePatchOperationsSchema>[number];
-
 // ── Shared Helpers ───────────────���──────────────────────────────
-
-function errorMessage(error: unknown): string {
-	return error instanceof Error ? error.message : String(error);
-}
-
-/**
- * Maps a failed router call to an actionable next step for the model.
- *
- * Matches on the error's `code` and `status` rather than its message: procedures
- * throw `new ORPCError("RESUME_LOCKED")` and friends without a message, so the
- * message is the code itself (`"RESUME_LOCKED"`) or oRPC's own default
- * (`"Not Found"` for `NOT_FOUND`), and HTTP status never appears in it at all.
- */
-function errorHint(error: unknown): string {
-	if (!(error instanceof ORPCError)) return "";
-
-	const { unlockResume, listResumes, listApplications } = MCP_TOOL_NAME;
-	const { code, status } = error;
-
-	// Check codes before statuses: RESUME_SLUG_ALREADY_EXISTS is thrown with status 400.
-	if (code === "RESUME_SLUG_ALREADY_EXISTS") return "\n\nHint: The slug is already in use. Try a different one.";
-	if (code === "INVALID_SLUG")
-		return "\n\nHint: Use lowercase letters and numbers joined by single dashes, e.g. 'product-designer'.";
-	if (code === "RESUME_LOCKED") return `\n\nHint: This resume is locked. Use \`${unlockResume}\` first.`;
-	// Every tool shares this handler, so the wording stays entity-agnostic: `NOT_FOUND` is
-	// thrown by the application procedures too, and resume-flavoured advice misdirects there.
-	if (code === "NOT_FOUND" || status === 404)
-		return `\n\nHint: Not found. Check the ID — \`${listResumes}\`, \`${MCP_TOOL_NAME.listCoverLetters}\`, and \`${listApplications}\` return valid ones.`;
-	if (code === "FORBIDDEN" || status === 403)
-		return "\n\nHint: Permission denied. This account cannot access that record.";
-	if (status === 400) return "\n\nHint: Invalid request. Check the input parameters against the tool's schema.";
-	return "";
-}
-
-/**
- * Wraps an async tool handler with consistent error formatting.
- * On success, returns the handler's result directly.
- * On failure, returns `{ isError: true, content: [{ type: "text", text }] }` with actionable hints.
- */
-function withErrorHandling<T>(label: string, handler: (params: T) => Promise<CallToolResult>) {
-	return async (params: T): Promise<CallToolResult> => {
-		try {
-			return await handler(params);
-		} catch (error) {
-			return {
-				isError: true,
-				content: [{ type: "text", text: `Error ${label}: ${errorMessage(error)}${errorHint(error)}` }],
-			};
-		}
-	};
-}
-
-function text(value: string): CallToolResult {
-	return { content: [{ type: "text", text: value }] };
-}
-
-function json(value: unknown): CallToolResult {
-	return text(JSON.stringify(value, null, 2));
-}
-
-function fileFromBase64(input: { fileName: string; contentType: string; dataBase64: string }): File {
-	if (input.contentType !== "application/pdf") throw new Error("Application documents must be PDF files.");
-
-	const bytes = Buffer.from(input.dataBase64, "base64");
-	if (bytes.length === 0) throw new Error("Application document cannot be empty.");
-
-	return new File([bytes], input.fileName, { type: input.contentType });
-}
 
 function coerceFollowUpAt(input: Record<string, unknown>): Record<string, unknown> {
 	if (!("followUpAt" in input)) return input;
@@ -119,19 +51,26 @@ const T = MCP_TOOL_NAME;
 
 // ── Tool Registration ────────────────────���──────────────────────
 
-export function registerTools(server: McpServer, client: RouterClient<typeof router>, requestHeaders: Headers) {
+export function registerTools(
+	server: McpServer,
+	client: RouterClient<typeof router>,
+	requestHeaders: Headers,
+	authentication?: RequestAuthentication,
+) {
 	// ── List Resumes ──────────────────���───────────────────────────
 	server.registerTool(
 		T.listResumes,
 		TOOL_META[T.listResumes],
 		withErrorHandling(
 			"listing resumes",
-			async ({ tags, sort }: { tags: string[]; sort: "lastUpdatedAt" | "createdAt" | "name" }) => {
-				const resumes = await client.resume.list({ tags, sort });
-
-				if (resumes.length === 0) return text(`No resumes found. Use \`${T.createResume}\` to create one.`);
-
-				return json(resumes);
+			async (params: z.infer<(typeof TOOL_META)[typeof T.listResumes]["inputSchema"]>) => {
+				const resumes = await client.resume.list(params);
+				return text(JSON.stringify(resumes, null, 2), {
+					items: resumes,
+					limit: params.limit,
+					offset: params.offset,
+					nextOffset: resumes.length === params.limit ? params.offset + resumes.length : null,
+				});
 			},
 		),
 	);
@@ -142,8 +81,6 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 		TOOL_META[T.listResumeTags],
 		withErrorHandling("listing resume tags", async () => {
 			const tags = await client.resume.tags.list();
-
-			if (tags.length === 0) return text("No tags in use yet. Add tags when creating or updating a resume.");
 
 			return json(tags);
 		}),
@@ -156,7 +93,7 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 		withErrorHandling("getting resume", async ({ id }: { id: string }) => {
 			const resume = await client.resume.getById({ id });
 
-			return json(resume.data);
+			return text(JSON.stringify(resume.data, null, 2), resume);
 		}),
 	);
 
@@ -166,8 +103,8 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 		TOOL_META[T.downloadResumePdf],
 		withErrorHandling("creating PDF download URL", async ({ id }: { id: string }) => {
 			const resume = await client.resume.getById({ id });
-			const user = await resolveUserFromRequestHeaders(requestHeaders);
-			if (!user) throw new Error("Unauthorized");
+			const user = authentication?.user ?? (await resolveUserFromRequestHeaders(requestHeaders));
+			if (!user) throw new ORPCError("UNAUTHORIZED");
 
 			const signedUrl = createResumePdfDownloadUrl({ resumeId: id, userId: user.id });
 
@@ -188,21 +125,13 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 		TOOL_META[T.createResume],
 		withErrorHandling(
 			"creating resume",
-			async ({
-				name,
-				slug,
-				tags,
-				withSampleData,
-			}: {
-				name: string;
-				slug?: string | undefined;
-				tags: string[];
-				withSampleData: boolean;
-			}) => {
-				const id = await client.resume.create({ name, ...(slug ? { slug } : {}), tags, withSampleData });
+			async (params: z.infer<(typeof TOOL_META)[typeof T.createResume]["inputSchema"]>) => {
+				const { name, slug, withSampleData } = params;
+				const id = await client.resume.create(params);
 
 				return text(
 					`Created resume "${name}" (ID: ${id}) ${slug ? `with slug "${slug}"` : "with a generated address"}.${withSampleData ? " Pre-filled with sample data." : ""}\n\nNext steps: Use \`${T.getResume}\` to view it, or \`${T.patchResume}\` to start editing.`,
+					{ id },
 				);
 			},
 		),
@@ -213,7 +142,7 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 		T.importResume,
 		TOOL_META[T.importResume],
 		withErrorHandling("importing resume", async ({ data }: { data: unknown }) => {
-			const parsed = resumeDataSchema.safeParse(data);
+			const parsed = resumeDto.import.input.safeParse({ data });
 			if (!parsed.success)
 				return {
 					isError: true,
@@ -225,10 +154,11 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 					],
 				};
 
-			const id = await client.resume.import({ data: parsed.data });
+			const id = await client.resume.import(parsed.data);
 
 			return text(
 				`Imported resume (ID: ${id}).\n\nNext steps: Use \`${T.getResume}\` to inspect metadata (name/slug were auto-generated), or \`${T.updateResume}\` / \`${T.patchResume}\` to adjust.`,
+				{ id },
 			);
 		}),
 	);
@@ -259,6 +189,7 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 
 				return text(
 					`Duplicated resume${name ? ` as "${name}"` : ""} (ID: ${newId}) ${slug ? `with slug "${slug}"` : "with a generated address"}.\n\nNext steps: Use \`${T.getResume}\` to view it, or \`${T.patchResume}\` to customize.`,
+					{ id: newId },
 				);
 			},
 		),
@@ -268,12 +199,16 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 	server.registerTool(
 		T.patchResume,
 		TOOL_META[T.patchResume],
-		withErrorHandling("patching resume", async ({ id, operations }: { id: string; operations: PatchOperation[] }) => {
-			const resume = await client.resume.patch({ id, operations });
-			const summary = operations.map((op) => `${op.op} ${op.path}`).join(", ");
+		withErrorHandling(
+			"patching resume",
+			async (params: z.infer<(typeof TOOL_META)[typeof T.patchResume]["inputSchema"]>) => {
+				const { operations } = params;
+				const resume = await client.resume.patch(resumeDto.patch.input.parse(params));
+				const summary = operations.map((op) => `${op.op} ${op.path}`).join(", ");
 
-			return text(`Applied ${operations.length} operation(s) to "${resume.name}": ${summary}`);
-		}),
+				return text(`Applied ${operations.length} operation(s) to "${resume.name}": ${summary}`, resume);
+			},
+		),
 	);
 
 	// ── Update Resume (metadata) ─────────────────��───────────────
@@ -281,25 +216,12 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 		T.updateResume,
 		TOOL_META[T.updateResume],
 		withErrorHandling("updating resume", async (params) => {
-			const { id, name, slug, tags, isPublic } = params as {
-				id: string;
-				name?: string | undefined;
-				slug?: string | undefined;
-				tags?: string[] | undefined;
-				isPublic?: boolean;
-			};
-			if (name === undefined && slug === undefined && tags === undefined && isPublic === undefined)
-				throw new Error("Provide at least one of: name, slug, tags, isPublic.");
+			const input = resumeDto.update.input.parse(params);
+			if (!Object.entries(input).some(([key, value]) => key !== "id" && key !== "sessionId" && value !== undefined))
+				throw new ORPCError("BAD_REQUEST", { message: "Provide at least one field to update." });
+			const resume = await client.resume.update(input);
 
-			const resume = await client.resume.update({
-				id,
-				...(name !== undefined ? { name } : {}),
-				...(slug !== undefined ? { slug } : {}),
-				...(tags !== undefined ? { tags } : {}),
-				...(isPublic !== undefined ? { isPublic } : {}),
-			});
-
-			const user = await resolveUserFromRequestHeaders(requestHeaders);
+			const user = authentication?.user ?? (await resolveUserFromRequestHeaders(requestHeaders));
 			const username =
 				user && "username" in user && typeof (user as { username: unknown }).username === "string"
 					? (user as { username: string }).username
@@ -325,6 +247,7 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 					"",
 					resumeShareUrlNotes({ isPublic: resume.isPublic, hasPassword: resume.hasPassword }),
 				].join("\n"),
+				payload,
 			);
 		}),
 	);
@@ -336,7 +259,7 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 		withErrorHandling("deleting resume", async ({ id }: { id: string }) => {
 			await client.resume.delete({ id });
 
-			return text(`Deleted resume (${id}) and all associated files.`);
+			return text(`Moved resume (${id}) to Trash. Restore it within 30 days.`);
 		}),
 	);
 
@@ -374,192 +297,317 @@ export function registerTools(server: McpServer, client: RouterClient<typeof rou
 	);
 
 	// ── Independent Cover Letters + Applications ────────────────────
-	type CoverLetterOrApplicationTool = readonly [
-		name: (typeof T)[keyof typeof T],
-		label: string,
-		handler: (params: never) => Promise<CallToolResult>,
-	];
-
-	const coverLetterAndApplicationTools: CoverLetterOrApplicationTool[] = [
-		[
-			T.listCoverLetters,
+	server.registerTool(
+		T.listCoverLetters,
+		TOOL_META[T.listCoverLetters],
+		withErrorHandling(
 			"listing cover letters",
-			async (params) => json(await client.coverLetters.list(params as never)),
-		],
-		[
-			T.readCoverLetter,
-			"reading cover letter",
-			async ({ id }: { id: string }) => json(await client.coverLetters.getById({ id })),
-		],
-		[
-			T.createCoverLetter,
-			"creating cover letter",
-			async (params) => json(await client.coverLetters.create(params as never)),
-		],
-		[
-			T.updateCoverLetter,
-			"updating cover letter",
-			async (params) => json(await client.coverLetters.update(params as never)),
-		],
-		[
-			T.refreshCoverLetterStyle,
-			"refreshing cover letter style",
-			async (params) => json(await client.coverLetters.refreshStyle(params as never)),
-		],
-		[
-			T.duplicateCoverLetter,
-			"duplicating cover letter",
-			async (params) => json(await client.coverLetters.duplicate(params as never)),
-		],
-		[
-			T.deleteCoverLetter,
-			"deleting cover letter",
-			async (params) => {
-				await client.coverLetters.delete(params as never);
-				return text(`Deleted cover letter (${(params as { id: string }).id}).`);
+			async (params: z.infer<(typeof TOOL_META)[typeof T.listCoverLetters]["inputSchema"]>) => {
+				const result = await client.coverLetters.list(coverLetterDto.list.input.parse(params));
+				return text(JSON.stringify(result, null, 2), {
+					...result,
+					limit: params.limit,
+					offset: params.offset,
+					nextOffset: params.offset + result.items.length < result.total ? params.offset + result.items.length : null,
+				});
 			},
-		],
-		[
-			T.exportCoverLetter,
-			"exporting cover letter",
-			async ({ id }: { id: string }) => json(await client.coverLetters.export({ id })),
-		],
-		[
-			T.importCoverLetter,
+		),
+	);
+
+	server.registerTool(
+		T.readCoverLetter,
+		TOOL_META[T.readCoverLetter],
+		withErrorHandling("reading cover letter", async ({ id }: { id: string }) =>
+			json(await client.coverLetters.getById({ id })),
+		),
+	);
+
+	server.registerTool(
+		T.createCoverLetter,
+		TOOL_META[T.createCoverLetter],
+		withErrorHandling(
+			"creating cover letter",
+			async (params: z.infer<(typeof TOOL_META)[typeof T.createCoverLetter]["inputSchema"]>) =>
+				json(await client.coverLetters.create(coverLetterDto.create.input.parse(params))),
+		),
+	);
+
+	server.registerTool(
+		T.updateCoverLetter,
+		TOOL_META[T.updateCoverLetter],
+		withErrorHandling(
+			"updating cover letter",
+			async (params: z.infer<(typeof TOOL_META)[typeof T.updateCoverLetter]["inputSchema"]>) =>
+				json(await client.coverLetters.update(coverLetterDto.update.input.parse(params))),
+		),
+	);
+
+	server.registerTool(
+		T.refreshCoverLetterStyle,
+		TOOL_META[T.refreshCoverLetterStyle],
+		withErrorHandling(
+			"refreshing cover letter style",
+			async (params: z.infer<(typeof TOOL_META)[typeof T.refreshCoverLetterStyle]["inputSchema"]>) =>
+				json(await client.coverLetters.refreshStyle(coverLetterDto.refreshStyle.input.parse(params))),
+		),
+	);
+
+	server.registerTool(
+		T.duplicateCoverLetter,
+		TOOL_META[T.duplicateCoverLetter],
+		withErrorHandling(
+			"duplicating cover letter",
+			async (params: z.infer<(typeof TOOL_META)[typeof T.duplicateCoverLetter]["inputSchema"]>) =>
+				json(await client.coverLetters.duplicate(coverLetterDto.duplicate.input.parse(params))),
+		),
+	);
+
+	server.registerTool(
+		T.deleteCoverLetter,
+		TOOL_META[T.deleteCoverLetter],
+		withErrorHandling(
+			"deleting cover letter",
+			async (params: z.infer<(typeof TOOL_META)[typeof T.deleteCoverLetter]["inputSchema"]>) => {
+				await client.coverLetters.delete(coverLetterDto.delete.input.parse(params));
+				return text(`Moved cover letter to Trash (${params.id}).`);
+			},
+		),
+	);
+
+	server.registerTool(
+		T.exportCoverLetter,
+		TOOL_META[T.exportCoverLetter],
+		withErrorHandling("exporting cover letter", async ({ id }: { id: string }) =>
+			json(await client.coverLetters.export({ id })),
+		),
+	);
+
+	server.registerTool(
+		T.importCoverLetter,
+		TOOL_META[T.importCoverLetter],
+		withErrorHandling(
 			"importing cover letter",
-			async ({ document }: { document: unknown }) => json(await client.coverLetters.import({ document } as never)),
-		],
-		[
-			T.listApplications,
+			async (params: z.infer<(typeof TOOL_META)[typeof T.importCoverLetter]["inputSchema"]>) =>
+				json(await client.coverLetters.import(params)),
+		),
+	);
+
+	server.registerTool(
+		T.listApplications,
+		TOOL_META[T.listApplications],
+		withErrorHandling(
 			"listing applications",
-			async (params) => json(await client.applications.list(params as never)),
-		],
-		[
-			T.readApplication,
-			"reading application",
-			async ({ id }: { id: string }) => json(await client.applications.getById({ id })),
-		],
-		[T.listApplicationTags, "listing application tags", async () => json(await client.applications.tags())],
-		[T.getApplicationStats, "getting application stats", async () => json(await client.applications.stats())],
-		[
-			T.createApplication,
+			async (params: z.infer<(typeof TOOL_META)[typeof T.listApplications]["inputSchema"]>) => {
+				const items = await client.applications.list(params);
+				return text(JSON.stringify(items, null, 2), {
+					items,
+					limit: params.limit,
+					offset: params.offset,
+					nextOffset: items.length === params.limit ? params.offset + items.length : null,
+				});
+			},
+		),
+	);
+
+	server.registerTool(
+		T.readApplication,
+		TOOL_META[T.readApplication],
+		withErrorHandling("reading application", async ({ id }: { id: string }) =>
+			json(await client.applications.getById({ id })),
+		),
+	);
+
+	server.registerTool(
+		T.listApplicationTags,
+		TOOL_META[T.listApplicationTags],
+		withErrorHandling("listing application tags", async () => json(await client.applications.tags())),
+	);
+
+	server.registerTool(
+		T.getApplicationStats,
+		TOOL_META[T.getApplicationStats],
+		withErrorHandling("getting application stats", async () => json(await client.applications.stats())),
+	);
+
+	server.registerTool(
+		T.createApplication,
+		TOOL_META[T.createApplication],
+		withErrorHandling(
 			"creating application",
-			async (params) => {
-				const id = await client.applications.create(coerceFollowUpAt(params as Record<string, unknown>) as never);
+			async (params: z.infer<(typeof TOOL_META)[typeof T.createApplication]["inputSchema"]>) => {
+				const id = await client.applications.create(applicationDto.create.input.parse(coerceFollowUpAt(params)));
 				return json({ id });
 			},
-		],
-		[
-			T.updateApplication,
+		),
+	);
+
+	server.registerTool(
+		T.updateApplication,
+		TOOL_META[T.updateApplication],
+		withErrorHandling(
 			"updating application",
-			async (params) =>
-				json(await client.applications.update(coerceFollowUpAt(params as Record<string, unknown>) as never)),
-		],
-		[
-			T.addApplicationNote,
+			async (params: z.infer<(typeof TOOL_META)[typeof T.updateApplication]["inputSchema"]>) =>
+				json(await client.applications.update(applicationDto.update.input.parse(coerceFollowUpAt(params)))),
+		),
+	);
+
+	server.registerTool(
+		T.addApplicationNote,
+		TOOL_META[T.addApplicationNote],
+		withErrorHandling(
 			"adding application note",
 			async ({ id, text: noteText, date }: { id: string; text: string; date?: string | undefined }) =>
 				json(await client.applications.addNote({ id, text: noteText, date })),
-		],
-		[
-			T.addApplicationInterview,
+		),
+	);
+
+	server.registerTool(
+		T.addApplicationInterview,
+		TOOL_META[T.addApplicationInterview],
+		withErrorHandling(
 			"adding application interview",
-			async (params) => json(await client.applications.addInterview(params as never)),
-		],
-		[
-			T.updateApplicationInterview,
+			async (params: z.infer<(typeof TOOL_META)[typeof T.addApplicationInterview]["inputSchema"]>) =>
+				json(await client.applications.addInterview(applicationDto.addInterview.input.parse(params))),
+		),
+	);
+
+	server.registerTool(
+		T.updateApplicationInterview,
+		TOOL_META[T.updateApplicationInterview],
+		withErrorHandling(
 			"updating application interview",
-			async (params) => json(await client.applications.updateInterview(params as never)),
-		],
-		[
-			T.updateApplicationTimelineEntry,
+			async (params: z.infer<(typeof TOOL_META)[typeof T.updateApplicationInterview]["inputSchema"]>) =>
+				json(await client.applications.updateInterview(applicationDto.updateInterview.input.parse(params))),
+		),
+	);
+
+	server.registerTool(
+		T.updateApplicationTimelineEntry,
+		TOOL_META[T.updateApplicationTimelineEntry],
+		withErrorHandling(
 			"updating application timeline entry",
-			async (params) => json(await client.applications.updateTimelineEntry(params as never)),
-		],
-		[
-			T.deleteApplicationTimelineEntry,
-			"deleting application timeline entry",
-			async ({ id, entryId }: { id: string; entryId: string }) =>
-				json(await client.applications.deleteTimelineEntry({ id, entryId })),
-		],
-		[
-			T.deleteApplication,
-			"deleting application",
-			async ({ id }: { id: string }) => {
-				await client.applications.delete({ id });
-				return text(`Deleted application (${id}).`);
-			},
-		],
-		[
-			T.bulkUpdateApplications,
+			async (params: z.infer<(typeof TOOL_META)[typeof T.updateApplicationTimelineEntry]["inputSchema"]>) =>
+				json(await client.applications.updateTimelineEntry(applicationDto.updateTimelineEntry.input.parse(params))),
+		),
+	);
+
+	server.registerTool(
+		T.deleteApplicationTimelineEntry,
+		TOOL_META[T.deleteApplicationTimelineEntry],
+		withErrorHandling("deleting application timeline entry", async ({ id, entryId }: { id: string; entryId: string }) =>
+			json(await client.applications.deleteTimelineEntry({ id, entryId })),
+		),
+	);
+
+	server.registerTool(
+		T.deleteApplication,
+		TOOL_META[T.deleteApplication],
+		withErrorHandling("deleting application", async ({ id }: { id: string }) => {
+			await client.applications.delete({ id });
+			return text(`Deleted application (${id}).`);
+		}),
+	);
+
+	server.registerTool(
+		T.bulkUpdateApplications,
+		TOOL_META[T.bulkUpdateApplications],
+		withErrorHandling(
 			"bulk updating applications",
-			async (params) => json(await client.applications.bulkUpdate(params as never)),
-		],
-		[
-			T.bulkDeleteApplications,
-			"bulk deleting applications",
-			async ({ ids }: { ids: string[] }) => json(await client.applications.bulkDelete({ ids })),
-		],
-		[
-			T.importApplications,
+			async (params: z.infer<(typeof TOOL_META)[typeof T.bulkUpdateApplications]["inputSchema"]>) =>
+				json(await client.applications.bulkUpdate(applicationDto.bulkUpdate.input.parse(params))),
+		),
+	);
+
+	server.registerTool(
+		T.bulkDeleteApplications,
+		TOOL_META[T.bulkDeleteApplications],
+		withErrorHandling("bulk deleting applications", async ({ ids }: { ids: string[] }) =>
+			json(await client.applications.bulkDelete({ ids })),
+		),
+	);
+
+	server.registerTool(
+		T.importApplications,
+		TOOL_META[T.importApplications],
+		withErrorHandling(
 			"importing applications",
-			async (params) => {
-				const input = params as { items: Array<Record<string, unknown>> };
-				return json(
-					await client.applications.import({ items: input.items.map((item) => coerceFollowUpAt(item)) } as never),
-				);
-			},
-		],
-		[
-			T.attachApplicationDocument,
+			async (params: z.infer<(typeof TOOL_META)[typeof T.importApplications]["inputSchema"]>) =>
+				json(
+					await client.applications.import(
+						applicationDto.import.input.parse({ items: params.items.map(coerceFollowUpAt) }),
+					),
+				),
+		),
+	);
+
+	server.registerTool(
+		T.attachApplicationDocument,
+		TOOL_META[T.attachApplicationDocument],
+		withErrorHandling(
 			"attaching application document",
-			async ({
-				id,
-				kind,
-				fileName,
-				contentType,
-				dataBase64,
-			}: {
-				id: string;
-				kind: "resume" | "cover-letter";
-				fileName: string;
-				contentType: string;
-				dataBase64: string;
-			}) => {
-				const file = fileFromBase64({ fileName, contentType, dataBase64 });
-				return json(await client.applications.attachDocument({ id, kind, file }));
+			async (params: z.infer<(typeof TOOL_META)[typeof T.attachApplicationDocument]["inputSchema"]>) => {
+				const user = authentication?.user ?? (await resolveUserFromRequestHeaders(requestHeaders));
+				if (!user) throw new ORPCError("UNAUTHORIZED");
+				const file = await readMcpFile(
+					{
+						name: params.fileName,
+						contentType: params.contentType,
+						...(params.dataBase64 !== undefined
+							? { dataBase64: params.dataBase64 }
+							: { storagePath: params.storagePath }),
+					},
+					user.id,
+				);
+				if ((await file.slice(0, 5).text()) !== "%PDF-")
+					throw new ORPCError("BAD_REQUEST", { message: "Supply a PDF file." });
+				return json(await client.applications.attachDocument({ id: params.id, kind: params.kind, file }));
 			},
-		],
-		[
-			T.removeApplicationDocument,
+		),
+	);
+
+	server.registerTool(
+		T.removeApplicationDocument,
+		TOOL_META[T.removeApplicationDocument],
+		withErrorHandling(
 			"removing application document",
 			async ({ id, kind }: { id: string; kind: "resume" | "cover-letter" }) =>
 				json(await client.applications.removeDocument({ id, kind })),
-		],
-		[
-			T.autofillApplicationFromJob,
+		),
+	);
+
+	server.registerTool(
+		T.autofillApplicationFromJob,
+		TOOL_META[T.autofillApplicationFromJob],
+		withErrorHandling(
 			"autofilling application from job",
-			async (params) => json(await client.applications.ai.autofill(params as never)),
-		],
-		[
-			T.scoreApplicationMatch,
-			"scoring application match",
-			async ({ id }: { id: string }) => json(await client.applications.ai.matchScore({ id })),
-		],
-		[
-			T.tailorResumeForApplication,
-			"tailoring resume for application",
-			async ({ id }: { id: string }) => json(await client.applications.ai.tailorResume({ id })),
-		],
-		[
-			T.draftApplicationMessage,
+			async (params: z.infer<(typeof TOOL_META)[typeof T.autofillApplicationFromJob]["inputSchema"]>) =>
+				json(await client.applications.ai.autofill(params)),
+		),
+	);
+
+	server.registerTool(
+		T.scoreApplicationMatch,
+		TOOL_META[T.scoreApplicationMatch],
+		withErrorHandling("scoring application match", async ({ id }: { id: string }) =>
+			json(await client.applications.ai.matchScore({ id })),
+		),
+	);
+
+	server.registerTool(
+		T.tailorResumeForApplication,
+		TOOL_META[T.tailorResumeForApplication],
+		withErrorHandling("tailoring resume for application", async ({ id }: { id: string }) =>
+			json(await client.applications.ai.tailorResume({ id })),
+		),
+	);
+
+	server.registerTool(
+		T.draftApplicationMessage,
+		TOOL_META[T.draftApplicationMessage],
+		withErrorHandling(
 			"drafting application message",
 			async ({ id, kind }: { id: string; kind: "cover-letter" | "follow-up" }) =>
 				json(await client.applications.ai.draftMessage({ id, kind })),
-		],
-	];
-
-	for (const [name, label, handler] of coverLetterAndApplicationTools) {
-		server.registerTool(name, TOOL_META[name], withErrorHandling(label, handler) as never);
-	}
+		),
+	);
 }

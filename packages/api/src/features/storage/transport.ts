@@ -3,7 +3,7 @@ import { del, get, issueSignedToken, list, presignUrl } from "@vercel/blob";
 import { z } from "zod";
 import { getRedis, redisKey } from "@reactive-resume/db/redis";
 import { env } from "@reactive-resume/env/server";
-import { resolveUserFromRequestHeaders } from "../../context";
+import { resolveAuthenticationFromRequestHeaders } from "../../context";
 import { createRateLimiter } from "../../redis";
 import { blobOptions, blobPath } from "./blob";
 
@@ -19,10 +19,10 @@ const payloadSchema = z.object({
 });
 const enabled = () => process.env.VERCEL === "1" && env.STORAGE_BACKEND === "blob";
 
-function authenticatedUser(request: Request) {
+function authenticatedRequest(request: Request) {
 	const origin = request.headers.get("origin");
 	if (origin && origin !== new URL(env.APP_URL).origin) return null;
-	return resolveUserFromRequestHeaders(request.headers);
+	return resolveAuthenticationFromRequestHeaders(request.headers);
 }
 
 /** Bounded lazy cleanup on each prepare; upload credentials expire before an object becomes eligible. */
@@ -38,8 +38,11 @@ async function cleanupExpiredBodies() {
 
 export async function prepareStagedBody(request: Request): Promise<Response> {
 	if (!enabled()) return new Response("Not Found", { status: 404 });
-	const user = await authenticatedUser(request);
-	if (!user) return new Response("Unauthorized", { status: 401 });
+	const authentication = await authenticatedRequest(request);
+	if (!authentication) return new Response("Unauthorized", { status: 401 });
+	if (!authentication.permissions.includes("write"))
+		return new Response("Upload requires api:write permission", { status: 403 });
+	const user = authentication.user;
 	if (!(await limiter.limit(user.id)).success) return new Response("Too many uploads", { status: 429 });
 	const parsed = payloadSchema.safeParse(await request.json().catch(() => null));
 	if (!parsed.success) return new Response("Invalid upload", { status: 400 });
@@ -84,8 +87,11 @@ export async function withStagedBody(request: Request, handle: (request: Request
 	if (!enabled() || request.method !== "POST" || !z.uuid().safeParse(id).success) {
 		return new Response("Invalid upload reference", { status: 400 });
 	}
-	const user = await authenticatedUser(request);
-	if (!user) return new Response("Unauthorized", { status: 401 });
+	const authentication = await authenticatedRequest(request);
+	if (!authentication) return new Response("Unauthorized", { status: 401 });
+	if (!authentication.permissions.includes("write"))
+		return new Response("Upload requires api:write permission", { status: 403 });
+	const user = authentication.user;
 	const redis = getRedis();
 	const key = redisKey("staged-body", id);
 	const raw = await redis?.get(key);

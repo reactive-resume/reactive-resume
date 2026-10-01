@@ -1,13 +1,13 @@
 import { beforeEach, expect, it, vi } from "vitest";
 
 const resolve = vi.hoisted(() => vi.fn());
-vi.mock("@reactive-resume/api/context", () => ({ resolveUserFromRequestHeaders: resolve }));
+vi.mock("@reactive-resume/api/context", () => ({ resolveAuthenticationFromRequestHeaders: resolve }));
 
 import { AuthError, authenticateRequest } from "./auth";
 
 beforeEach(() => resolve.mockReset());
 it("resolves MCP credentials through the shared API auth policy without accepting cookies", async () => {
-	resolve.mockResolvedValue({ id: "user-1" });
+	resolve.mockResolvedValue({ user: { id: "user-1" }, method: "bearer", permissions: ["read"] });
 	await authenticateRequest(
 		new Request("https://resume.example/mcp", {
 			headers: { authorization: "Bearer valid-token", "x-api-key": "expired-key", cookie: "session=browser" },

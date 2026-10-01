@@ -1,5 +1,7 @@
+import { ORPCError } from "@orpc/server";
 import { createSelectSchema } from "drizzle-zod";
 import z from "zod";
+import { auth } from "@reactive-resume/auth/config";
 import * as schema from "@reactive-resume/db/schema";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { protectedProcedure, publicProcedure } from "../../context";
@@ -24,6 +26,38 @@ export const authRouter = {
 			.output(z.partialRecord(z.enum(["credential", "passkey", "google", "github", "linkedin", "custom"]), z.string()))
 			.handler(() => authService.providers.list()),
 	},
+
+	createApiKey: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/auth/api-keys",
+			tags: ["Authentication"],
+			operationId: "createScopedApiKey",
+			summary: "Create an API key",
+			description:
+				"Create a read-only or full-access API key. Requires a browser session; keys and OAuth tokens cannot create credentials.",
+		})
+		.input(
+			z.object({
+				name: z.string().trim().min(1).max(64),
+				expiresIn: z.number().int().positive().nullable(),
+				access: z.enum(["read", "full"]),
+			}),
+		)
+		.output(z.object({ key: z.string() }))
+		.handler(async ({ context, input }) => {
+			if (context.authentication?.method !== "session")
+				throw new ORPCError("FORBIDDEN", { message: "Create API keys in your browser settings." });
+			const result = await auth.api.createApiKey({
+				body: {
+					userId: context.user.id,
+					name: input.name,
+					expiresIn: input.expiresIn,
+					permissions: { api: input.access === "read" ? ["read"] : ["read", "write", "delete"] },
+				},
+			});
+			return { key: result.key };
+		}),
 
 	exportData: protectedProcedure
 		.route({

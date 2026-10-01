@@ -40,7 +40,11 @@ describe("handleResumePdfDownload", () => {
 		expect(response.headers.get("Content-Disposition")).toBe('attachment; filename="Scizor.pdf"');
 		expect(response.headers.get("Cache-Control")).toBe("private, no-store");
 		expect(await response.text()).toBe("%PDF");
-		expect(mocks.createResumePdfDownload).toHaveBeenCalledWith({ id: "resume-1", userId: "user-1" });
+		expect(mocks.createResumePdfDownload).toHaveBeenCalledWith({
+			id: "resume-1",
+			userId: "user-1",
+			resHeaders: expect.any(Headers),
+		});
 	});
 
 	it("rejects missing, invalid, and expired tokens before rendering", async () => {
@@ -66,5 +70,18 @@ describe("handleResumePdfDownload", () => {
 		);
 		expect(response.status).toBe(410);
 		expect(mocks.createResumePdfDownload).not.toHaveBeenCalled();
+	});
+	it("returns the shared renderer's rate limit as HTTP 429", async () => {
+		mocks.verifyResumePdfDownloadToken.mockReturnValueOnce({ ok: true, userId: "user-1" });
+		mocks.createResumePdfDownload.mockRejectedValueOnce({
+			code: "TOO_MANY_REQUESTS",
+			data: { reset: Date.now() + 30_000 },
+		});
+		const response = await handleResumePdfDownload(
+			new Request("https://example.com/api/resumes/resume-1/pdf?token=signed"),
+			"resume-1",
+		);
+		expect(response.status).toBe(429);
+		expect(Number(response.headers.get("Retry-After"))).toBeGreaterThan(0);
 	});
 });

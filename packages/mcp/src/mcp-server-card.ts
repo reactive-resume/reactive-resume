@@ -1,5 +1,6 @@
 import { toJsonSchemaCompat } from "@modelcontextprotocol/sdk/server/zod-json-schema-compat.js";
 import { MCP_TOOL_NAME as T } from "./mcp-tool-names";
+import { PARITY_TOOL_META } from "./parity";
 import { PROMPT_META } from "./prompts";
 import { TOOL_META } from "./tool-meta";
 
@@ -30,13 +31,16 @@ export function buildMcpServerInfo(version: string) {
  */
 export function buildMcpServerCard(appVersion: string) {
 	// ponytail: derived from TOOL_META; title/description/inputSchema/annotations declared once
-	const tools = Object.entries(TOOL_META).map(([name, { title, description, inputSchema, annotations }]) => ({
-		name,
-		title,
-		description,
-		inputSchema: toJsonSchemaCompat(inputSchema),
-		annotations,
-	}));
+	const tools = Object.entries({ ...TOOL_META, ...PARITY_TOOL_META }).map(
+		([name, { title, description, inputSchema, outputSchema, annotations }]) => ({
+			name,
+			title,
+			description,
+			inputSchema: toJsonSchemaCompat(inputSchema, { strictUnions: true, pipeStrategy: "input" }),
+			outputSchema: toJsonSchemaCompat(outputSchema, { strictUnions: true, pipeStrategy: "output" }),
+			annotations,
+		}),
+	);
 
 	const prompts = Object.entries(PROMPT_META).map(([name, meta]) => ({
 		name,

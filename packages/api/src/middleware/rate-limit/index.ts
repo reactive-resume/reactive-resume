@@ -1,5 +1,6 @@
 import type { Ratelimiter } from "@orpc/experimental-ratelimit";
 import { createRatelimitMiddleware } from "@orpc/experimental-ratelimit";
+import { ORPCError } from "@orpc/server";
 import { env } from "@reactive-resume/env/server";
 import { rateLimitConfig } from "@reactive-resume/utils/rate-limit";
 import { createRateLimiter } from "../../redis";
@@ -72,6 +73,18 @@ export const pdfExportRateLimit = createRatelimitMiddleware<ContextWithHeaders, 
 	limiter: productionLimiter(pdfLimiter),
 	key: ({ context }, input) => `pdf-export:${getUserKey(context)}:${input.id}`,
 });
+
+/** Shared by REST exports and signed download links, at the actual rendering boundary. */
+export async function consumePdfExportLimit(input: { id: string; userId: string; resHeaders?: Headers }) {
+	const result = await productionLimiter(pdfLimiter).limit(`pdf-export:${input.userId}:${input.id}`);
+	const reset = result.reset ?? Date.now() + 60_000;
+	input.resHeaders?.set("ratelimit-remaining", String(result.remaining));
+	input.resHeaders?.set("ratelimit-reset", String(reset));
+	if (!result.success) {
+		input.resHeaders?.set("retry-after", String(Math.max(1, Math.ceil((reset - Date.now()) / 1000))));
+		throw new ORPCError("TOO_MANY_REQUESTS", { data: { reset } });
+	}
+}
 
 export const resumeDownloadRateLimit = createRatelimitMiddleware<
 	ContextWithHeaders,

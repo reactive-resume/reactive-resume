@@ -160,6 +160,7 @@ function toAttachment(row: AgentAttachmentRecord) {
 		filename: row.filename,
 		mediaType: row.mediaType,
 		size: row.size,
+		storagePath: row.storageKey,
 		createdAt: row.createdAt,
 	};
 }

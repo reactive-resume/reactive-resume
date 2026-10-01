@@ -6,7 +6,7 @@ import { paginate } from "../../pagination";
 import { documentsService } from "./service";
 
 const route = (
-	method: "GET" | "POST",
+	method: "GET" | "POST" | "DELETE",
 	path: `/${string}`,
 	operationId: string,
 	summary: string,
@@ -22,6 +22,21 @@ const route = (
 
 /** Resumes and saved cover letters as one library: list, rename, tag, lock, link, Trash and Copy for a job. */
 export const documentsRouter = {
+	purgeExpired: protectedProcedure
+		.route(
+			route(
+				"DELETE",
+				"/documents/trash/expired",
+				"purgeExpiredDocuments",
+				"Delete expired Trash",
+				"Permanently deletes documents in this account that have been in Trash more than 30 days.",
+			),
+		)
+		.input(z.object({}).optional())
+		.output(z.void())
+		.use(resumeMutationRateLimit)
+		.handler(({ context }) => documentsService.purgeExpired(context.user.id)),
+
 	list: protectedProcedure
 		.route(
 			route(
@@ -29,7 +44,7 @@ export const documentsRouter = {
 				"/documents",
 				"listDocuments",
 				"List documents",
-				"Returns the user's resumes and saved cover letters (or those in Trash), newest edit first, with the job application each was made for. Documents in Trash for more than 30 days are deleted first.",
+				"Returns the user's resumes and saved cover letters (or those in Trash), newest edit first, with the job application each was made for.",
 			),
 		)
 		.input(documentsDto.list.input)

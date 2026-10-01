@@ -91,11 +91,32 @@ export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 						<Trans>Only allow applications you trust. This application will be able to:</Trans>
 					</p>
 					<ul className="list-disc space-y-2 pl-5 text-sm">
-						<li>
-							<Trans>
-								Access your account through the API, including reading and changing your resumes and job applications.
-							</Trans>
-						</li>
+						{["api:read", "api:write", "api:delete"].some((scope) => scopes.has(scope)) ? (
+							<>
+								{scopes.has("api:read") && (
+									<li>
+										<Trans>Read your documents and job applications.</Trans>
+									</li>
+								)}
+								{scopes.has("api:write") && (
+									<li>
+										<Trans>Create and change your documents and job applications.</Trans>
+									</li>
+								)}
+								{scopes.has("api:delete") && (
+									<li>
+										<Trans>Delete your documents and account data.</Trans>
+									</li>
+								)}
+							</>
+						) : (
+							<li>
+								<Trans>
+									Access your account through the API, including reading, changing and deleting your documents and job
+									applications.
+								</Trans>
+							</li>
+						)}
 						{scopes.has("profile") && (
 							<li>
 								<Trans>Read your profile information.</Trans>

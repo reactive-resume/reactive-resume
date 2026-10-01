@@ -37,6 +37,7 @@ export const agentAttachmentSchema = z.object({
 	filename: z.string(),
 	mediaType: z.string(),
 	size: z.number(),
+	storagePath: z.string().optional(),
 	createdAt: z.date(),
 });
 export const agentConversationSchema = z.object({

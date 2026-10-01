@@ -100,8 +100,8 @@ export function createApp(options: AppOptions = {}) {
 	app.get("/api/uploads/*", (c) => handleUpload(c.req.raw));
 	app.get("/uploads/*", (c) => handleUpload(c.req.raw));
 	app.get("/schema.json", () => handleSchemaJson());
-	app.all("/mcp", (c) => handleMcp(c.req.raw));
-	app.all("/mcp/*", (c) => handleMcp(c.req.raw));
+	app.all("/mcp", (c) => handleMcp(c.req.raw, client(c)));
+	app.all("/mcp/*", (c) => handleMcp(c.req.raw, client(c)));
 
 	app.get("/.well-known/mcp/server-card.json", () => handleMcpServerCard());
 	app.get("/.well-known/oauth-authorization-server", (c) => handleOAuthAuthorizationServer(c.req.raw));

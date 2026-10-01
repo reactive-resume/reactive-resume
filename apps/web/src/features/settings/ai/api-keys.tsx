@@ -23,6 +23,7 @@ import { SettingsSection } from "../section";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
+import { client } from "@/libs/orpc/client";
 
 const KEYS = ["auth", "api-keys"];
 const DAY = 24 * 60 * 60;
@@ -188,6 +189,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 	const id = useId();
 	const [name, setName] = useState("");
 	const [expiry, setExpiry] = useState(0);
+	const [access, setAccess] = useState<"read" | "full">("full");
 	const [key, setKey] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
 	const [creating, setCreating] = useState(false);
@@ -198,6 +200,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 	const reset = () => {
 		setName("");
 		setExpiry(0);
+		setAccess("full");
 		setKey(null);
 		setFailure(null);
 		setCopied(false);
@@ -206,14 +209,19 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 	const create = async () => {
 		setCreating(true);
 		setFailure(null);
-		const { data, error } = await authClient.apiKey.create({
-			name: name.trim(),
-			expiresIn: EXPIRIES[expiry]?.seconds ?? null,
-		});
-		setCreating(false);
-		if (error || !data) return setFailure(getReadableErrorMessage(error, t`Couldn't create the key. Try again.`));
-		setKey(data.key);
-		onCreated();
+		try {
+			const data = await client.auth.createApiKey({
+				name: name.trim(),
+				expiresIn: EXPIRIES[expiry]?.seconds ?? null,
+				access,
+			});
+			setKey(data.key);
+			onCreated();
+		} catch (error) {
+			setFailure(getReadableErrorMessage(error, t`Couldn't create the key. Try again.`));
+		} finally {
+			setCreating(false);
+		}
 	};
 
 	return (
@@ -290,6 +298,20 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 								placeholder={t`Claude Desktop`}
 								onChange={(event) => setName(event.target.value)}
 							/>
+						</div>
+						<div className="grid gap-1.5">
+							<Label htmlFor={`${id}-access`}>
+								<Trans>Access</Trans>
+							</Label>
+							<select
+								id={`${id}-access`}
+								value={access}
+								onChange={(event) => setAccess(event.target.value === "read" ? "read" : "full")}
+								className="h-9 rounded-lg border border-line-2 bg-bg px-3 text-sm"
+							>
+								<option value="read">{t`Read only`}</option>
+								<option value="full">{t`Read, write and delete`}</option>
+							</select>
 						</div>
 						<fieldset className="grid gap-1.5">
 							<legend className="mb-1.5 text-sm font-medium">

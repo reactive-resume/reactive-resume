@@ -54,7 +54,9 @@ const defaultDependencies: PublicResumePdfDependencies = {
 	hasPasswordAccess: async (requestHeaders, resumeId, passwordHash) =>
 		(await import("./access")).hasResumeAccess(requestHeaders, resumeId, passwordHash),
 	resolveCurrentUserId: async (requestHeaders) =>
-		(await import("../../context")).resolveUserFromRequestHeaders(requestHeaders).then((user) => user?.id),
+		(await import("../../context"))
+			.resolveAuthenticationFromRequestHeaders(requestHeaders)
+			.then((authentication) => (authentication?.permissions.includes("read") ? authentication.user.id : undefined)),
 	rateLimiter: publicRenderRateLimiter,
 	renderPdf: async (input) =>
 		(await import("@reactive-resume/pdf/server")).createResumePdfFile({ ...input, uploadOrigin: env.APP_URL }),

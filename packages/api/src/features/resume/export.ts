@@ -3,7 +3,7 @@ import z from "zod";
 import { env } from "@reactive-resume/env/server";
 import { generateFilename } from "@reactive-resume/utils/file";
 import { protectedProcedure } from "../../context";
-import { pdfExportRateLimit } from "../../middleware/rate-limit";
+import { consumePdfExportLimit } from "../../middleware/rate-limit";
 import { parseStoredResumeData } from "./resume-data-validation";
 import { resumeService } from "./service";
 
@@ -12,10 +12,12 @@ export { createResumePdfDownloadUrl, verifyResumePdfDownloadToken } from "./pdf-
 type CreateResumePdfDownloadInput = {
 	id: string;
 	userId: string;
+	resHeaders?: Headers;
 };
 
 export async function createResumePdfDownload(input: CreateResumePdfDownloadInput) {
 	const resume = await resumeService.getById({ id: input.id, userId: input.userId });
+	await consumePdfExportLimit(input);
 	const data = parseStoredResumeData(resume.data);
 	const filename = generateFilename(resume.name, "pdf");
 
@@ -70,5 +72,10 @@ export const downloadResumePdfProcedure = protectedProcedure
 			body: z.file().mime("application/pdf"),
 		}),
 	)
-	.use(pdfExportRateLimit)
-	.handler(({ context, input }) => createResumePdfDownload({ id: input.id, userId: context.user.id }));
+	.handler(({ context, input }) =>
+		createResumePdfDownload({
+			id: input.id,
+			userId: context.user.id,
+			...(context.resHeaders && { resHeaders: context.resHeaders }),
+		}),
+	);

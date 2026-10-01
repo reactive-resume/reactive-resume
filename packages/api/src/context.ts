@@ -7,74 +7,78 @@ import { db } from "@reactive-resume/db/client";
 import { user } from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
 
+export type RequestPermission = "read" | "write" | "delete";
+export type RequestAuthentication = {
+	user: User;
+	method: "apiKey" | "bearer" | "session";
+	permissions: readonly RequestPermission[];
+};
+
 interface ORPCContext {
 	locale: Locale;
 	reqHeaders: Headers;
 	resHeaders?: Headers;
 	trustedClient?: string;
+	/** Set only by a server adapter after authenticating this request. */
+	authentication?: RequestAuthentication | null;
 }
 
-async function getUserFromBearerToken(headers: Headers): Promise<User | null> {
+const fullPermissions: readonly RequestPermission[] = ["read", "write", "delete"];
+
+async function findActiveUser(id: string): Promise<User | null> {
+	const [result] = await db.select().from(user).where(eq(user.id, id)).limit(1);
+	if (!result || (result.banned && (!result.banExpires || result.banExpires > new Date()))) return null;
+	return result;
+}
+
+async function getAuthenticationFromBearerToken(headers: Headers): Promise<RequestAuthentication | null> {
 	try {
 		const authHeader = headers.get("authorization");
 		if (!authHeader?.startsWith("Bearer ")) return null;
-
 		const payload = await verifyOAuthToken(authHeader.slice(7));
-		if (!payload?.sub) return null;
-
-		const [userResult] = await db.select().from(user).where(eq(user.id, payload.sub)).limit(1);
-		return userResult ?? null;
-	} catch (error) {
-		console.warn("Bearer token verification failed:", error);
+		if (!payload.sub) return null;
+		const result = await findActiveUser(payload.sub);
+		if (!result) return null;
+		const scopes = typeof payload.scope === "string" ? payload.scope.split(/\s+/) : [];
+		const explicitPermissions = scopes.filter((scope) => scope.startsWith("api:"));
+		// Existing grants used identity scopes for account-wide access. Explicit
+		// application scopes opt into least privilege without breaking those grants.
+		const permissions = explicitPermissions.length
+			? fullPermissions.filter((permission) => scopes.includes(`api:${permission}`))
+			: fullPermissions;
+		return { user: result, method: "bearer", permissions };
+	} catch {
 		return null;
 	}
 }
 
-async function getUserFromHeaders(headers: Headers): Promise<User | null> {
-	try {
-		const result = await auth.api.getSession({ headers });
-		if (!result?.user) return null;
-
-		return result.user;
-	} catch (error) {
-		console.warn("Session verification failed:", error);
-		return null;
-	}
-}
-
-async function getUserFromApiKey(apiKey: string): Promise<User | null> {
+async function getAuthenticationFromApiKey(apiKey: string): Promise<RequestAuthentication | null> {
 	try {
 		const result = await auth.api.verifyApiKey({ body: { key: apiKey } });
 		if (!result.key || !result.valid) return null;
-
-		const [userResult] = await db.select().from(user).where(eq(user.id, result.key.referenceId)).limit(1);
-		if (!userResult) return null;
-
-		return userResult;
-	} catch (error) {
-		console.warn("API key verification failed:", error);
+		const activeUser = await findActiveUser(result.key.referenceId);
+		if (!activeUser) return null;
+		const statements: unknown = result.key.permissions;
+		const apiPermissions = statements && typeof statements === "object" && "api" in statements ? statements.api : [];
+		const permissions =
+			statements == null
+				? fullPermissions
+				: fullPermissions.filter((permission) => Array.isArray(apiPermissions) && apiPermissions.includes(permission));
+		return { user: activeUser, method: "apiKey", permissions };
+	} catch {
 		return null;
 	}
 }
 
-/**
- * Resolve the authenticated user from the same headers oRPC uses (`x-api-key`,
- * `Authorization: Bearer`, or session cookies). Tries each auth method in
- * priority order and returns the first valid identity. Used directly by
- * oRPC's `publicProcedure` and by callers outside oRPC handlers (e.g. MCP
- * tools) where `context.user` is not in scope.
- */
-export async function resolveUserFromRequestHeaders(headers: Headers): Promise<User | null> {
+/** API key, then OAuth bearer token, then same-origin session cookies. */
+export async function resolveAuthenticationFromRequestHeaders(headers: Headers): Promise<RequestAuthentication | null> {
 	const apiKey = headers.get("x-api-key");
 	if (apiKey) {
-		const apiKeyUser = await getUserFromApiKey(apiKey);
-		if (apiKeyUser) return apiKeyUser;
+		const authentication = await getAuthenticationFromApiKey(apiKey);
+		if (authentication) return authentication;
 	}
-	const bearerUser = await getUserFromBearerToken(headers);
-	if (bearerUser) return bearerUser;
-
-	// Cookie credentials are ambient. Never use them for a request from another origin,
-	// including multipart uploads that browsers can submit without a CORS preflight.
+	const bearer = await getAuthenticationFromBearerToken(headers);
+	if (bearer) return bearer;
 	const origin = headers.get("origin");
 	if (
 		headers.has("cookie") &&
@@ -82,7 +86,22 @@ export async function resolveUserFromRequestHeaders(headers: Headers): Promise<U
 	) {
 		throw new ORPCError("FORBIDDEN", { message: "Cross-origin session requests are not allowed." });
 	}
-	return getUserFromHeaders(headers);
+	// Do not let Better Auth turn an API key into an unrestricted synthetic session.
+	const sessionHeaders = new Headers(headers);
+	sessionHeaders.delete("x-api-key");
+	sessionHeaders.delete("authorization");
+	try {
+		const result = await auth.api.getSession({ headers: sessionHeaders, query: { disableCookieCache: true } });
+		if (!result?.user) return null;
+		const activeUser = await findActiveUser(result.user.id);
+		return activeUser ? { user: activeUser, method: "session", permissions: fullPermissions } : null;
+	} catch {
+		return null;
+	}
+}
+
+export async function resolveUserFromRequestHeaders(headers: Headers): Promise<User | null> {
+	return (await resolveAuthenticationFromRequestHeaders(headers))?.user ?? null;
 }
 
 const base = os.$context<ORPCContext>();
@@ -90,12 +109,16 @@ const base = os.$context<ORPCContext>();
 export const publicProcedure = base
 	.route({ spec: (operation) => ({ ...operation, security: [] }) })
 	.use(async ({ context, next }) => {
-		const user = await resolveUserFromRequestHeaders(context.reqHeaders);
+		const authentication =
+			context.authentication === undefined
+				? await resolveAuthenticationFromRequestHeaders(context.reqHeaders)
+				: context.authentication;
 
 		return next({
 			context: {
 				...context,
-				user,
+				authentication,
+				user: authentication?.user ?? null,
 			},
 		});
 	});
@@ -104,8 +127,19 @@ export const protectedProcedure = publicProcedure
 	.route({
 		spec: (operation) => ({ ...operation, security: [{ apiKey: [] }, { bearerAuth: [] }, { cookieAuth: [] }] }),
 	})
-	.use(({ context, next }) => {
+	.use(({ context, procedure, next }) => {
 		if (!context.user) throw new ORPCError("UNAUTHORIZED");
+		const route = procedure["~orpc"].route;
+		const permission =
+			route.method === "GET"
+				? "read"
+				: route.method === "DELETE" || /^(delete|bulkDelete|purge)/i.test(route.operationId ?? "")
+					? "delete"
+					: "write";
+		if (!context.authentication?.permissions.includes(permission)) {
+			context.resHeaders?.set("WWW-Authenticate", `Bearer error="insufficient_scope", scope="api:${permission}"`);
+			throw new ORPCError("FORBIDDEN", { message: `This credential requires api:${permission} permission.` });
+		}
 
 		return next({
 			context: {

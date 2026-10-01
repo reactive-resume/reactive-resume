@@ -12283,6 +12283,9 @@
 													"size": {
 														"type": "number"
 													},
+													"storagePath": {
+														"type": "string"
+													},
 													"createdAt": {
 														"type": "string",
 														"format": "date-time",
@@ -13353,6 +13356,9 @@
 										},
 										"size": {
 											"type": "number"
+										},
+										"storagePath": {
+											"type": "string"
 										},
 										"createdAt": {
 											"type": "string",
@@ -25636,6 +25642,120 @@
 					}
 				},
 				"security": []
+			}
+		},
+		"/auth/api-keys": {
+			"post": {
+				"operationId": "createScopedApiKey",
+				"summary": "Create an API key",
+				"description": "Create a read-only or full-access API key. Requires a browser session; keys and OAuth tokens cannot create credentials.",
+				"tags": [
+					"Authentication"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 64
+									},
+									"expiresIn": {
+										"anyOf": [
+											{
+												"type": "integer",
+												"minimum": -9007199254740991,
+												"maximum": 9007199254740991,
+												"exclusiveMinimum": 0
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"access": {
+										"enum": [
+											"read",
+											"full"
+										],
+										"type": "string"
+									}
+								},
+								"required": [
+									"name",
+									"expiresIn",
+									"access"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"key": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"key"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				]
 			}
 		},
 		"/auth/account/export": {
@@ -41070,11 +41190,78 @@
 				]
 			}
 		},
+		"/documents/trash/expired": {
+			"delete": {
+				"operationId": "purgeExpiredDocuments",
+				"summary": "Delete expired Trash",
+				"description": "Permanently deletes documents in this account that have been in Trash more than 30 days. Requires authentication.",
+				"tags": [
+					"Documents"
+				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				]
+			}
+		},
 		"/documents": {
 			"get": {
 				"operationId": "listDocuments",
 				"summary": "List documents",
-				"description": "Returns the user's resumes and saved cover letters (or those in Trash), newest edit first, with the job application each was made for. Documents in Trash for more than 30 days are deleted first. Requires authentication.",
+				"description": "Returns the user's resumes and saved cover letters (or those in Trash), newest edit first, with the job application each was made for. Requires authentication.",
 				"tags": [
 					"Documents"
 				],

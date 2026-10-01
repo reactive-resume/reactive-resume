@@ -2,8 +2,10 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { RouterClient } from "@orpc/server";
 import type router from "@reactive-resume/api/routers";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { ORPCError } from "@orpc/server";
 import { createResumeDataJsonSchema } from "@reactive-resume/schema/resume/json-schema";
 import { MCP_TOOL_NAME as T } from "./mcp-tool-names";
+import { safeMcpError } from "./results";
 
 export function registerResources(server: McpServer, client: RouterClient<typeof router>) {
 	// ── Resource: resume://{id} ──────────────────────────────────
@@ -24,20 +26,26 @@ export function registerResources(server: McpServer, client: RouterClient<typeof
 			].join(" "),
 		},
 		async (uri: URL) => {
-			const id = uri.href.replace(/^resume:\/\//, "");
-			if (!id) throw new Error("Invalid resume URI. Expected format: resume://{id}");
+			try {
+				const match = /^resume:\/\/([^/?#]+)$/.exec(uri.href);
+				const id = match?.[1] ? decodeURIComponent(match[1]) : "";
+				if (!id || /[\s/?#@]/.test(id))
+					throw new ORPCError("BAD_REQUEST", { message: "Invalid resume URI. Expected format: resume://{id}" });
 
-			const resume = await client.resume.getById({ id });
+				const resume = await client.resume.getById({ id });
 
-			return {
-				contents: [
-					{
-						uri: uri.href,
-						mimeType: "application/json" as const,
-						text: JSON.stringify(resume.data, null, 2),
-					},
-				],
-			};
+				return {
+					contents: [
+						{
+							uri: uri.href,
+							mimeType: "application/json" as const,
+							text: JSON.stringify(resume.data, null, 2),
+						},
+					],
+				};
+			} catch (error) {
+				throw safeMcpError(error, "reading resume resource");
+			}
 		},
 	);
 
@@ -58,15 +66,21 @@ export function registerResources(server: McpServer, client: RouterClient<typeof
 				"custom sections, and metadata (template, layout, typography, colors, CSS).",
 			].join(" "),
 		},
-		(uri: URL) => ({
-			contents: [
-				{
-					uri: uri.href,
-					mimeType: "application/json" as const,
-					// Generated from the Zod schema, like /schema.json, so it never drifts from what writes accept.
-					text: JSON.stringify(createResumeDataJsonSchema(), null, 2),
-				},
-			],
-		}),
+		(uri: URL) => {
+			try {
+				return {
+					contents: [
+						{
+							uri: uri.href,
+							mimeType: "application/json" as const,
+							// Generated from the Zod schema, like /schema.json, so it never drifts from what writes accept.
+							text: JSON.stringify(createResumeDataJsonSchema(), null, 2),
+						},
+					],
+				};
+			} catch (error) {
+				throw safeMcpError(error, "reading resume schema resource");
+			}
+		},
 	);
 }
