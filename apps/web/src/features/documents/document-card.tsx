@@ -255,7 +255,7 @@ export function DocumentRow({ document, onTags, onLink, introIndex }: DocumentIt
 				<td className="px-2 text-sm text-ink-2 max-sm:hidden">
 					{document.type === "resume" ? <Trans>Resume</Trans> : <Trans>Letter</Trans>}
 				</td>
-				<td className="px-2 text-sm text-ink-2 max-sm:hidden">{document.application?.company ?? "—"}</td>
+				<td className="truncate px-2 text-sm text-ink-2 max-sm:hidden">{document.application?.company ?? "—"}</td>
 				<td className="px-2 text-sm whitespace-nowrap text-ink-3">
 					{document.trashedAt ? (
 						<Trans>{daysLeftInTrash(document.trashedAt)} days left</Trans>

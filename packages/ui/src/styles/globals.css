@@ -237,17 +237,17 @@
 		cursor: pointer;
 	}
 
-	/* Inputs render at 16px on touch devices so iOS doesn't zoom into them. */
-	@media (pointer: coarse) {
-		input,
-		select,
-		textarea {
-			font-size: max(16px, 1em);
-		}
-	}
-
 	.wysiwyg {
 		@apply prose prose-sm max-w-none prose-stone dark:prose-invert prose-p:my-3! prose-ol:my-3! prose-ul:my-3! prose-li:my-3!;
+	}
+}
+
+/* Outside layers so text-size utilities cannot undo the iOS zoom prevention. */
+@media (pointer: coarse) {
+	input,
+	select,
+	textarea {
+		font-size: max(16px, 1em);
 	}
 }
 

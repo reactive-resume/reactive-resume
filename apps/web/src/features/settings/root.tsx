@@ -1,5 +1,6 @@
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
+import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
@@ -44,6 +45,9 @@ export function SettingsRoot() {
 
 	return (
 		<div className="grid gap-4">
+			<h1 className="font-display text-[30px] leading-9 font-medium lg:hidden">
+				<Trans>Settings</Trans>
+			</h1>
 			<div className="flex items-center gap-3">
 				<Avatar className="size-12">
 					<AvatarImage src={session.user.image ?? undefined} alt="" />
@@ -57,7 +61,10 @@ export function SettingsRoot() {
 				</span>
 			</div>
 
-			<nav className="divide-y divide-line overflow-hidden rounded-[14px] border border-line bg-surface">
+			<nav
+				aria-label={t`Settings`}
+				className="divide-y divide-line overflow-hidden rounded-[14px] border border-line bg-surface"
+			>
 				<Link to="/dashboard/settings/account" viewTransition={pushTransition} className={rowClass}>
 					<Row icon="account_circle" label={<Trans>Account</Trans>} />
 				</Link>

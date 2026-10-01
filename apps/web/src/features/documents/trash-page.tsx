@@ -4,13 +4,20 @@ import { Link } from "@tanstack/react-router";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { DocumentRow } from "./document-card";
+import { LibraryError } from "./library-error";
 import { orpc } from "@/libs/orpc/client";
 
 const noop = () => undefined;
 
 /** Trash: documents stay 30 days, then go for good. Restore, or Delete now after one confirmation. */
 export function TrashPage() {
-	const { data: documents, isPending } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: true } }));
+	const {
+		data: documents,
+		isPending,
+		isError,
+		isFetching,
+		refetch,
+	} = useQuery(orpc.documents.list.queryOptions({ input: { trashed: true } }));
 
 	return (
 		<div className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5">
@@ -30,7 +37,9 @@ export function TrashPage() {
 				</p>
 			</div>
 
-			{!isPending && documents?.length === 0 ? (
+			{isError && <LibraryError retrying={isFetching} onRetry={() => void refetch()} />}
+
+			{isError && !documents ? null : !isPending && documents?.length === 0 ? (
 				<div className="grid justify-items-center gap-2 py-16 text-center">
 					<Icon name="delete" size={28} className="text-ink-3" />
 					<p className="font-semibold">
@@ -41,7 +50,7 @@ export function TrashPage() {
 					</p>
 				</div>
 			) : (
-				<table className="w-full border-collapse">
+				<table className="w-full table-fixed border-collapse">
 					<caption className="sr-only">
 						<Trans>Trash</Trans>
 					</caption>
@@ -50,16 +59,16 @@ export function TrashPage() {
 							<th className="h-10 ps-3 text-start font-medium">
 								<Trans>Name</Trans>
 							</th>
-							<th className="px-2 text-start font-medium max-sm:hidden">
+							<th className="w-24 px-2 text-start font-medium max-sm:hidden">
 								<Trans>Type</Trans>
 							</th>
-							<th className="px-2 text-start font-medium max-sm:hidden">
+							<th className="w-1/4 px-2 text-start font-medium max-sm:hidden">
 								<Trans>Application</Trans>
 							</th>
-							<th className="px-2 text-start font-medium">
+							<th className="w-28 px-2 text-start font-medium max-sm:w-24">
 								<Trans>Deleted in</Trans>
 							</th>
-							<th className="w-10">
+							<th className="w-12">
 								<span className="sr-only">
 									<Trans>Options</Trans>
 								</span>

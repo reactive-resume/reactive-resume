@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@reactive-resume/ui/components/input-group";
 import { Kbd } from "@reactive-resume/ui/components/kbd";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
@@ -15,6 +16,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { LinkApplicationDialog, TagsDialog } from "./document-actions";
 import { DocumentCard, DocumentRow } from "./document-card";
 import { collectTags, filterDocuments } from "./filter";
+import { LibraryError } from "./library-error";
 import { useStartDocument } from "./new-document-dialog";
 import { useDialogStore } from "@/dialogs/store";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
@@ -44,7 +46,13 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const [linkFor, setLinkFor] = useState<DocumentSummary | null>(null);
 	// Grid and list animate in only after a switch, never on the page's first render.
 	const [viewSwitched, setViewSwitched] = useState(false);
-	const { data: documents, isPending } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
+	const {
+		data: documents,
+		isPending,
+		isError,
+		isFetching,
+		refetch,
+	} = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	// The library staggers in on its first appearance only; cards that appear later (filters, a new document) don't.
 	const [intro, setIntro] = useState(true);
 	useEffect(() => {
@@ -76,7 +84,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		resume: all.filter((document) => document.type === "resume").length,
 		letter: all.filter((document) => document.type === "letter").length,
 	};
-	const filtered = search.q.trim() !== "" || search.tags.length > 0;
+	const filtered = search.type !== "all" || search.q.trim() !== "" || search.tags.length > 0;
 	const itemProps = {
 		onTags: setTagsFor,
 		onLink: setLinkFor,
@@ -88,7 +96,9 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 				<Trans>Documents</Trans>
 			</h1>
 
-			{!isPending && all.length === 0 ? (
+			{isError && <LibraryError retrying={isFetching} onRetry={() => void refetch()} />}
+
+			{isError && !documents ? null : !isPending && all.length === 0 ? (
 				<FirstRun onChooseFile={() => openDialog("document.new", undefined)} />
 			) : (
 				<>
@@ -111,19 +121,22 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 						</Tabs>
 
 						<div className="ms-auto flex flex-wrap items-center gap-2 max-sm:ms-0 max-sm:w-full">
-							<div className="flex h-9 w-60 items-center gap-2 rounded-lg border border-line-2 bg-raised px-2.5 focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft max-sm:w-full">
-								<Icon name="search" size={18} className="text-ink-3" />
-								<input
+							<InputGroup className="w-60 max-sm:w-full">
+								<InputGroupAddon>
+									<Icon name="search" size={18} />
+								</InputGroupAddon>
+								<InputGroupInput
 									ref={searchRef}
 									type="search"
 									value={search.q}
 									aria-label={t`Search documents`}
 									placeholder={t`Search`}
 									onChange={(event) => onSearchChange({ q: event.target.value })}
-									className="h-full min-w-0 flex-1 bg-transparent text-sm outline-none"
 								/>
-								<Kbd className="max-sm:hidden">/</Kbd>
-							</div>
+								<InputGroupAddon align="inline-end" className="max-sm:hidden pointer-coarse:hidden">
+									<Kbd>/</Kbd>
+								</InputGroupAddon>
+							</InputGroup>
 							<div className="w-[150px]">
 								<NativeSelect
 									aria-label={t`Sort`}
@@ -180,7 +193,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 							)}
 						</div>
 					) : view === "list" ? (
-						<table className={cn("w-full border-collapse", viewEnter)}>
+						<table className={cn("w-full table-fixed border-collapse", viewEnter)}>
 							<caption className="sr-only">
 								<Trans>Documents</Trans>
 							</caption>
@@ -189,16 +202,16 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 									<th className="h-10 ps-3 text-start font-medium">
 										<Trans>Name</Trans>
 									</th>
-									<th className="px-2 text-start font-medium max-sm:hidden">
+									<th className="w-24 px-2 text-start font-medium max-sm:hidden">
 										<Trans>Type</Trans>
 									</th>
-									<th className="px-2 text-start font-medium max-sm:hidden">
+									<th className="w-1/4 px-2 text-start font-medium max-sm:hidden">
 										<Trans>Application</Trans>
 									</th>
-									<th className="px-2 text-start font-medium">
+									<th className="w-28 px-2 text-start font-medium max-sm:w-24">
 										<Trans>Edited</Trans>
 									</th>
-									<th className="w-10">
+									<th className="w-12">
 										<span className="sr-only">
 											<Trans>Options</Trans>
 										</span>
@@ -288,23 +301,23 @@ function FirstRun({ onChooseFile }: { onChooseFile: () => void }) {
 					<Trans>Choose a file</Trans>
 				</Button>
 			</div>
-			<div className="flex gap-4 text-sm">
-				<button
-					type="button"
+			<div className="flex flex-wrap gap-4 text-sm">
+				<Button
+					variant="link"
 					disabled={creating}
-					className="text-ink-2 underline underline-offset-2 hover:text-ink"
+					className="text-ink-2 underline underline-offset-2 hover:text-ink pointer-coarse:min-h-11"
 					onClick={() => void startBlank()}
 				>
 					<Trans>Start blank</Trans>
-				</button>
-				<button
-					type="button"
+				</Button>
+				<Button
+					variant="link"
 					disabled={creating}
-					className="text-ink-2 underline underline-offset-2 hover:text-ink"
+					className="text-ink-2 underline underline-offset-2 hover:text-ink pointer-coarse:min-h-11"
 					onClick={() => void trySample()}
 				>
 					<Trans>Try a sample</Trans>
-				</button>
+				</Button>
 			</div>
 		</section>
 	);
@@ -327,7 +340,7 @@ function TagFilter({ tags, active, onChange }: TagFilterProps) {
 						aria-pressed={isActive}
 						onClick={() => onChange(isActive ? active.filter((known) => known !== tag) : [...active, tag])}
 						className={cn(
-							"h-7 rounded-full border px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
+							"min-h-7 rounded-full border px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97] pointer-coarse:min-h-11",
 							isActive ? "border-accent bg-accent-soft text-accent-text" : "border-line-2 text-ink-2 hover:bg-hover",
 						)}
 					>

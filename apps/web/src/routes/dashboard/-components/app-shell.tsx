@@ -65,7 +65,9 @@ function useIsCurrent() {
  * The app shell for Documents, Trash, Applications and Settings: a 240px sidebar at ≥1024, an icon rail at
  * 640–1023 and a bottom tab bar below 640. N opens New anywhere outside a field.
  */
-export function AppShell({ children }: { children: ReactNode }) {
+type AppShellProps = { children: ReactNode };
+
+export function AppShell({ children }: AppShellProps) {
 	const breakpoint = useBreakpoint();
 	const openDialog = useDialogStore((state) => state.openDialog);
 
@@ -74,22 +76,15 @@ export function AppShell({ children }: { children: ReactNode }) {
 		openDialog("document.new", undefined);
 	});
 
-	if (breakpoint === "mobile") {
-		return (
-			<div className="grid min-h-svh grid-rows-[minmax(0,1fr)_auto] bg-bg">
-				<main id="main-content" className="min-w-0">
-					{children}
-				</main>
-				<MobileTabs />
-			</div>
-		);
-	}
-
 	return (
 		<div
 			className={cn(
 				"grid min-h-svh bg-bg",
-				breakpoint === "tablet" ? "grid-cols-[64px_minmax(0,1fr)]" : "grid-cols-[240px_minmax(0,1fr)]",
+				breakpoint === "mobile"
+					? "grid-rows-[minmax(0,1fr)_auto]"
+					: breakpoint === "tablet"
+						? "grid-cols-[64px_minmax(0,1fr)]"
+						: "grid-cols-[240px_minmax(0,1fr)]",
 			)}
 		>
 			<a
@@ -98,10 +93,11 @@ export function AppShell({ children }: { children: ReactNode }) {
 			>
 				<Trans>Skip to main content</Trans>
 			</a>
-			{breakpoint === "tablet" ? <Rail /> : <Sidebar />}
+			{breakpoint !== "mobile" && (breakpoint === "tablet" ? <Rail /> : <Sidebar />)}
 			<main id="main-content" className="min-w-0">
 				{children}
 			</main>
+			{breakpoint === "mobile" && <MobileTabs />}
 		</div>
 	);
 }
