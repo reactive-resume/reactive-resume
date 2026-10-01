@@ -58,7 +58,7 @@ For each section the user wants to include, gather specific details. Never inven
 
 Ask about preferences:
 
-- Template preference (15 available: azurill, bronzor, chikorita, ditto, ditgar, gengar, glalie, kakuna, lapras, leafish, meowth, onyx, pikachu, rhyhorn, scizor)
+- Template preference (17 available: azurill, bronzor, chikorita, ditto, ditgar, gengar, glalie, kakuna, lapras, leafish, meowth, onyx, pikachu, porygon, rhyhorn, scizor, smeargle)
 - Page format: A4 or Letter
 - Which sections to include and their order
 

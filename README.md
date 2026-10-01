@@ -49,7 +49,7 @@ You own your data. The codebase is open source under the MIT license, with no tr
 
 **Templates**
 
-- 15 templates to choose from
+- 17 templates to choose from
 - A4 and Letter page sizes
 - Customizable colors, fonts, and spacing
 - Structured Style Rules for section and text styling
@@ -139,6 +139,14 @@ You own your data. The codebase is open source under the MIT license, with no tr
     <td align="center">
       <img src="apps/web/public/templates/jpg/scizor.jpg" alt="Scizor" width="150" />
       <br /><sub><b>Scizor</b></sub>
+    </td>
+    <td align="center">
+      <img src="apps/web/public/templates/jpg/porygon.jpg" alt="Porygon" width="150" />
+      <br /><sub><b>Porygon</b></sub>
+    </td>
+    <td align="center">
+      <img src="apps/web/public/templates/jpg/smeargle.jpg" alt="Smeargle" width="150" />
+      <br /><sub><b>Smeargle</b></sub>
     </td>
   </tr>
 </table>

@@ -15,8 +15,10 @@ import { leafishSemanticManifest } from "../templates/leafish/semantic";
 import { meowthSemanticManifest } from "../templates/meowth/semantic";
 import { onyxSemanticManifest } from "../templates/onyx/semantic";
 import { pikachuSemanticManifest } from "../templates/pikachu/semantic";
+import { porygonSemanticManifest } from "../templates/porygon/semantic";
 import { rhyhornSemanticManifest } from "../templates/rhyhorn/semantic";
 import { scizorSemanticManifest } from "../templates/scizor/semantic";
+import { smeargleSemanticManifest } from "../templates/smeargle/semantic";
 import { SHARED_BINDING_REGISTRY } from "./binding-inventory";
 
 export type TemplateSemanticPlacement = "main" | "sidebar";
@@ -145,8 +147,10 @@ const TEMPLATE_SEMANTIC_MANIFESTS = {
 	meowth: meowthSemanticManifest,
 	onyx: onyxSemanticManifest,
 	pikachu: pikachuSemanticManifest,
+	porygon: porygonSemanticManifest,
 	rhyhorn: rhyhornSemanticManifest,
 	scizor: scizorSemanticManifest,
+	smeargle: smeargleSemanticManifest,
 } as const satisfies Readonly<Record<Template, TemplateSemanticManifest>>;
 
 export function getTemplateSemanticManifest(template: Template): TemplateSemanticManifest {

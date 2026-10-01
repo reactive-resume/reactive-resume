@@ -39,7 +39,8 @@ Gemini, Vercel AI Gateway, OpenRouter, Mistral AI, Cohere, xAI Grok, Groq, DeepS
 Fireworks, Cerebras, Perplexity, Ollama.
 
 Template names are proper nouns and are never translated: Azurill, Bronzor, Chikorita, Ditgar,
-Ditto, Gengar, Glalie, Kakuna, Lapras, Leafish, Meowth, Onyx, Pikachu, Rhyhorn, Scizor.
+Ditto, Gengar, Glalie, Kakuna, Lapras, Leafish, Meowth, Onyx, Pikachu, Porygon, Rhyhorn, Scizor,
+Smeargle.
 
 ## The document
 

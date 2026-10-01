@@ -15,7 +15,7 @@ type BaseTemplateStylesInput = {
 };
 
 /**
- * Returns the ~20 byte-identical style slots shared by all 15 templates as plain objects.
+ * Returns the ~20 byte-identical style slots shared by every template as plain objects.
  * Each template spreads the result into its own StyleSheet.create() call and overrides only
  * the slots that differ (heading fontWeight, bold fallback, inline gap, picture extras, etc.).
  *
@@ -129,7 +129,7 @@ export function createBaseTemplateStyles({
 		alignEnd: { ...r.alignEnd } satisfies Style,
 
 		/**
-		 * Standard picture style shared by 14/15 templates.
+		 * Standard picture style shared by every template but ditto.
 		 * ditto overrides: spread this and add `position: "absolute"`, `top`, `left`, `marginLeft`.
 		 */
 		picture: {

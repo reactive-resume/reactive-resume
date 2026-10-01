@@ -66,7 +66,7 @@ An empty `title` means the template's default heading in the resume's language.
 - **Rich text is HTML.** Fields such as `description` and `summary.content` hold HTML strings.
 - **IDs.** Every item and custom section needs a unique `id`. Use a UUID.
 - **Cover letters.** The schema still accepts custom sections of type `cover-letter` so older exports stay valid. When you save or import such a resume, Reactive Resume moves each letter into a cover letter of its own and removes the section. See [Writing a cover letter](/guides/writing-a-cover-letter).
-- **Templates.** `metadata.template` is one of the 15 templates: `azurill`, `bronzor`, `chikorita`, `ditgar`, `ditto`, `gengar`, `glalie`, `kakuna`, `lapras`, `leafish`, `meowth`, `onyx`, `pikachu`, `rhyhorn` or `scizor`.
+- **Templates.** `metadata.template` is one of the 17 templates: `azurill`, `bronzor`, `chikorita`, `ditgar`, `ditto`, `gengar`, `glalie`, `kakuna`, `lapras`, `leafish`, `meowth`, `onyx`, `pikachu`, `porygon`, `rhyhorn`, `scizor` or `smeargle`.
 - **No version field.** Resume objects have no top-level `version` or `$schema` property. Don't add one; point your tools at the schema URL instead.
 
 ## Validate resume data
@@ -4370,8 +4370,10 @@ The complete schema, generated from the source code of this version.
 						"meowth",
 						"onyx",
 						"pikachu",
+						"porygon",
 						"rhyhorn",
-						"scizor"
+						"scizor",
+						"smeargle"
 					]
 				},
 				"layout": {

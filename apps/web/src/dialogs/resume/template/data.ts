@@ -88,6 +88,21 @@ export const templates = {
 		imageUrl: "/templates/jpg/pikachu.jpg",
 		tags: ["Two-column", "Simple", "Creative", "Editorial", "Junior", "Accent colors"],
 	},
+	porygon: {
+		name: "Porygon",
+		description: msg`Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan.`,
+		imageUrl: "/templates/jpg/porygon.jpg",
+		tags: [
+			"Single-column",
+			"ATS friendly",
+			"Ruled grid",
+			"Dense",
+			"Structured",
+			"Engineering",
+			"Operations",
+			"Asian style",
+		],
+	},
 	rhyhorn: {
 		name: "Rhyhorn",
 		description: msg`Single-column with a minimal top header and lots of whitespace; clean and modern for designers or content creators.`,
@@ -99,5 +114,11 @@ export const templates = {
 		description: msg`Single-column with uppercase section headings and a primary-color top rule on every page; polished for executive, consulting, or startup resumes.`,
 		imageUrl: "/templates/jpg/scizor.jpg",
 		tags: ["Single-column", "ATS friendly", "Uppercase headings", "Executive", "Consulting", "Startup"],
+	},
+	smeargle: {
+		name: "Smeargle",
+		description: msg`Single-column set like a magazine feature: a large display name under an uppercase kicker, the summary as an italic standfirst and italic section headings; refined for writers, designers, and communications roles.`,
+		imageUrl: "/templates/jpg/smeargle.jpg",
+		tags: ["Single-column", "ATS friendly", "Editorial", "Magazine", "Serif", "Writer", "Designer", "Communications"],
 	},
 } as const satisfies Record<Template, TemplateMetadata>;
