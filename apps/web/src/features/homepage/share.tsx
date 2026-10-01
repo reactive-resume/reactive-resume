@@ -189,7 +189,10 @@ export function Share() {
 						<button
 							type="button"
 							onClick={copy}
-							className="flex h-11 items-center gap-1.5 rounded-full bg-(--night-ink) px-[18px] font-ui text-sm font-semibold text-(--night-on-ink)"
+							className={cn(
+								"flex h-11 items-center gap-1.5 rounded-full px-[18px] font-ui text-sm font-semibold text-(--night-on-ink) transition-colors duration-standard",
+								copied ? "bg-(--night-accent)" : "bg-(--night-ink)",
+							)}
 						>
 							<Icon name={copied ? "check" : "link"} size={18} />
 							{copied ? t`Copied` : t`Copy link`}

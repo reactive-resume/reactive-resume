@@ -130,15 +130,17 @@ const words = [
 /** 07 Languages. The word turns over every 1.9s while the section is near; it can be paused. */
 export function Languages() {
 	const near = useLanding((state) => state.activeScene >= SCENE.numbers && state.activeScene <= SCENE.support);
+	const reducedMotion = useLanding((state) => state.reducedMotion);
 	const [index, setIndex] = useState(0);
 	const [paused, setPaused] = useState(false);
-	const current = words[index] ?? words[0];
+	const current = words[index % words.length] ?? words[0];
+	const previous = words[(index - 1) % words.length];
 
 	useEffect(() => {
 		if (!near || paused || prefersReducedMotion()) return;
-		const timer = window.setInterval(() => setIndex((value) => (value + 1) % words.length), 1900);
+		const timer = window.setInterval(() => setIndex((value) => value + 1), 1900);
 		return () => window.clearInterval(timer);
-	}, [near, paused]);
+	}, [near, paused, reducedMotion]);
 
 	return (
 		<section
@@ -159,14 +161,17 @@ export function Languages() {
 				className="font-anybody h-[1.25em] w-full overflow-hidden text-[clamp(48px,7.5vw,140px)] leading-[1.25] font-light tracking-[-.03em] text-ink"
 			>
 				<div
-					className="transition-transform duration-[.9s] ease-[cubic-bezier(.7,0,.2,1)]"
-					style={{ transform: `translateY(${index * -1.25}em)` }}
+					key={index}
+					className={cn(index > 0 && "motion-safe:animate-language-turn [transform:translateY(-1.25em)]")}
 				>
-					{words.map((item) => (
-						<div key={item.lang} lang={item.lang} dir={item.dir} className="h-[1.25em] whitespace-nowrap">
-							{item.word}
+					{previous && (
+						<div lang={previous.lang} dir={previous.dir} className="h-[1.25em] whitespace-nowrap">
+							{previous.word}
 						</div>
-					))}
+					)}
+					<div lang={current?.lang} dir={current?.dir} className="h-[1.25em] whitespace-nowrap">
+						{current?.word}
+					</div>
 				</div>
 			</div>
 			<div className="flex items-center gap-2">

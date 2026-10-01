@@ -24,6 +24,7 @@ export const SCENE = {
  */
 type LandingState = {
 	activeScene: number;
+	reducedMotion: boolean;
 	scrolled: boolean;
 	/** Write: 0 while the line is typed, 1 while the assistant's comment is up, 2 once the suggestion is accepted. */
 	writeStep: 0 | 1 | 2;
@@ -45,6 +46,7 @@ type LandingState = {
 
 export const useLanding = create<LandingState>()(() => ({
 	activeScene: SCENE.hero,
+	reducedMotion: false,
 	scrolled: false,
 	writeStep: 0,
 	designStep: 0,
@@ -171,7 +173,7 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 
 			// Check's lens follows a Lissajous path down the page, unless the pointer is steering it.
 			const checkSection = sectionAt(SCENE.check);
-			if (checkSection && checkSection.dataset.lensHover === undefined) {
+			if (checkSection && (reduced || checkSection.dataset.lensHover === undefined)) {
 				checkSection.style.setProperty("--lx", `${(50 + 30 * Math.sin(scan * Math.PI * 2.5)).toFixed(2)}%`);
 				checkSection.style.setProperty("--ly", `${(14 + 72 * scan).toFixed(2)}%`);
 			}
@@ -187,6 +189,7 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 			const state = useLanding.getState();
 			const next: Partial<LandingState> = {
 				activeScene,
+				reducedMotion: reduced,
 				scrolled: window.scrollY > 8,
 				writeStep: write1 >= 0.84 ? 2 : write1 >= 0.4 ? 1 : 0,
 				designStep: stepsPassed(design, [0.15, 0.31, 0.47, 0.63]),

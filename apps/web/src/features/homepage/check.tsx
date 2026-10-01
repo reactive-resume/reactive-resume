@@ -5,7 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { useRef } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
-import { SCENE, useLanding } from "./scroll";
+import { prefersReducedMotion, SCENE, useLanding } from "./scroll";
 import { designSystemBullet, ProfileSummary, Sheet } from "./sheet";
 import { Doodle, labelClass, SceneCaption } from "./ui";
 
@@ -97,7 +97,7 @@ export function Check() {
 	// The pointer steers the lens while it's over the page; on leaving, the scroll engine takes it back.
 	const moveLens = (event: PointerEvent<HTMLDivElement>) => {
 		const section = sectionRef.current;
-		if (!section || event.pointerType !== "mouse") return;
+		if (!section || event.pointerType !== "mouse" || prefersReducedMotion()) return;
 		const rect = event.currentTarget.getBoundingClientRect();
 		section.dataset.lensHover = "";
 		section.style.setProperty("--lx", `${(((event.clientX - rect.left) / rect.width) * 100).toFixed(2)}%`);

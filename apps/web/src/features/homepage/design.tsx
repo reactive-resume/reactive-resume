@@ -168,7 +168,7 @@ export function Design() {
 
 				<div
 					aria-hidden="true"
-					className="absolute top-[calc(var(--dpt)-var(--z)*4vh)] left-1/2 grid [transform:translate(-50%,-50%)_scale(calc(1-var(--z)*(1-var(--smin,.5))))] grid-cols-[repeat(5,var(--pw))] gap-[calc(var(--pw)*.12)] opacity-(--z) will-change-[transform,opacity] [transition:transform_.35s_var(--ease)]"
+					className="absolute top-(--dpt) left-1/2 grid [transform:translate(-50%,calc(-50%-var(--z)*4vh))_scale(calc(1-var(--z)*(1-var(--smin,.5))))] grid-cols-[repeat(5,var(--pw))] gap-[calc(var(--pw)*.12)] opacity-(--z) will-change-[transform,opacity] [transition:transform_.35s_var(--ease)]"
 				>
 					{minis.map((mini) => (
 						<div
@@ -187,7 +187,7 @@ export function Design() {
 
 				<div
 					data-stack
-					className="absolute top-[calc(var(--dpt)-var(--z)*4vh)] left-1/2 aspect-[612/792] w-(--pw) [transform:translate(-50%,-50%)_scale(calc(1-var(--z)*(1-var(--smin,.5))))] will-change-transform [transition:transform_.35s_var(--ease)]"
+					className="absolute top-(--dpt) left-1/2 aspect-[612/792] w-(--pw) [transform:translate(-50%,calc(-50%-var(--z)*4vh))_scale(calc(1-var(--z)*(1-var(--smin,.5))))] will-change-transform [transition:transform_.35s_var(--ease)]"
 				>
 					<div className="absolute inset-0 rounded-[2px] shadow-paper" />
 					{sheetTemplates.map((template, index) => (
