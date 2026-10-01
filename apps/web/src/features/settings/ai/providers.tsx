@@ -58,21 +58,13 @@ export function ProvidersSection() {
 
 	return (
 		<section aria-labelledby={`${id}-title`} className="overflow-hidden rounded-xl border border-line bg-surface">
-			<header className="flex items-start gap-3 border-b border-line p-5">
-				<span
-					aria-hidden
-					className="grid size-10 shrink-0 place-items-center rounded-[10px] bg-accent-soft text-accent-text"
-				>
-					<Icon name="auto_awesome" size={22} />
-				</span>
-				<div className="grid min-w-0 flex-1 gap-1.5">
-					<h2 id={`${id}-title`} className="text-base font-semibold">
-						<Trans>AI providers</Trans>
-					</h2>
-					<p className="max-w-[56ch] text-sm leading-6 text-ink-2">
-						<Trans>Writing help, tailored suggestions and the assistant. Your keys stay encrypted.</Trans>
-					</p>
-				</div>
+			<header className="grid gap-1 border-b border-line px-5 py-4 max-sm:px-4">
+				<h2 id={`${id}-title`} className="text-[17px] font-semibold">
+					<Trans>AI providers</Trans>
+				</h2>
+				<p className="max-w-[60ch] text-[13px] leading-5 text-ink-3">
+					<Trans>Writing help, tailored suggestions and the assistant. Your keys stay encrypted.</Trans>
+				</p>
 			</header>
 			<div className="grid gap-4 p-5">
 				{managed ? (
