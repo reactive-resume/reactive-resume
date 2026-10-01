@@ -13,7 +13,7 @@ it("keeps smoke dispatches out of release publishing and production deployment",
 	try {
 		for (const [event, ref, release, expected] of [
 			["push", "refs/heads/main", "", "nightly"],
-			["push", "refs/tags/v5.3.0", "", "release"],
+			["push", "refs/tags/v6.0.0", "", "release"],
 			["workflow_dispatch", "refs/heads/main", "", "canary"],
 			["workflow_dispatch", "refs/heads/main", "false", "canary"],
 			["workflow_dispatch", "refs/heads/main", "true", "release"],
