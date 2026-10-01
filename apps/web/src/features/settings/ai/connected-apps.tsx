@@ -18,7 +18,14 @@ export function ConnectedAppsSection() {
 		queryFn: async () => {
 			const { data, error } = await authClient.oauth2.getConsents();
 			if (error) throw new Error(t`Could not load connected applications.`);
-			return data ?? [];
+			return Promise.all(
+				(data ?? []).map(async (connection) => {
+					const client = await authClient.oauth2
+						.publicClient({ query: { client_id: connection.clientId } })
+						.catch(() => null);
+					return { ...connection, clientName: client?.data?.client_name?.trim() || connection.clientId };
+				}),
+			);
 		},
 	});
 	const revoke = useMutation({
@@ -48,7 +55,7 @@ export function ConnectedAppsSection() {
 					{connections.map((connection) => (
 						<li key={connection.id} className="flex items-center justify-between gap-3 py-3">
 							<div className="min-w-0 text-sm">
-								<p className="font-medium break-all">{connection.clientId}</p>
+								<p className="font-medium break-all">{connection.clientName}</p>
 								<p className="break-words text-ink-3">{connection.scopes.join(", ")}</p>
 							</div>
 							<Button

@@ -35,10 +35,10 @@ function RouteComponent() {
 	const isRoot = pathname.replace(/\/$/, "") === "/dashboard/settings";
 
 	return (
-		<div className="grid min-h-full content-start lg:grid-cols-[220px_minmax(0,1fr)] lg:content-stretch">
+		<div className="grid min-h-full content-start sm:h-svh sm:min-h-0 sm:grid-rows-[auto_minmax(0,1fr)] sm:overflow-hidden lg:grid-cols-[220px_minmax(0,1fr)] lg:grid-rows-1 lg:content-stretch">
 			<nav
 				aria-label={t`Settings`}
-				className="flex flex-col gap-1 border-line [view-transition-name:settings-nav] max-lg:border-b max-sm:hidden lg:border-e lg:py-7 lg:ps-6 lg:pe-3"
+				className="flex flex-col gap-1 border-line [view-transition-name:settings-nav] max-lg:border-b max-sm:hidden lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:border-e lg:py-7 lg:ps-6 lg:pe-3"
 			>
 				<h1 className="ms-2 mb-3.5 font-display text-[26px] leading-8 font-medium max-lg:hidden">
 					<Trans>Settings</Trans>
@@ -70,7 +70,7 @@ function RouteComponent() {
 				</p>
 			</nav>
 
-			<div className="min-w-0 px-12 pt-8 pb-16 max-lg:px-6 max-sm:px-4 max-sm:pt-4">
+			<div className="min-w-0 px-12 pt-8 pb-16 max-lg:px-6 max-sm:px-4 max-sm:pt-4 sm:min-h-0 sm:overflow-y-auto sm:overscroll-contain">
 				{!isRoot && (
 					<Link
 						to="/dashboard/settings"
