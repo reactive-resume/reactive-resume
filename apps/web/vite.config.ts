@@ -2,7 +2,7 @@ import type { ProxyOptions } from "vite";
 import { readFileSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { lingui, linguiTransformerBabelPreset } from "@lingui/vite-plugin";
+import { lingui } from "@lingui/vite-plugin";
 import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
@@ -54,6 +54,11 @@ async function prerenderPages() {
 		}
 	}
 }
+
+// TanStack Router loads `route.tsx?tsr-split=…`. The native parser infers syntax from the filename,
+// and the query hides `.tsx`, so JSX is parsed as JS.
+const linguiPlugin = () =>
+	lingui({ macroTransform: { parser: { syntax: "typescript", tsx: true, decorators: true } } });
 
 const serverPaths = ["/api", "/mcp", "/uploads", "/.well-known", "/schema.json"] as const;
 
@@ -110,7 +115,7 @@ export default defineConfig({
 	// The PDF worker renders templates with translated section titles, so it needs the catalogs and macros too.
 	worker: {
 		format: "es",
-		plugins: () => [lingui(), babel({ presets: [linguiTransformerBabelPreset()] })],
+		plugins: () => [linguiPlugin()],
 	},
 
 	server: {
@@ -141,9 +146,9 @@ export default defineConfig({
 			autoCodeSplitting: true,
 		}),
 		viteReact(),
-		lingui(),
+		linguiPlugin(),
 		// Keep @babel/core on 7: under Babel 8, React Compiler 1.0 skips every function with a destructuring default
 		// (guarded by src/react-compiler.test.ts).
-		babel({ presets: [reactCompilerPreset(), linguiTransformerBabelPreset()] }),
+		babel({ presets: [reactCompilerPreset()] }),
 	],
 });
