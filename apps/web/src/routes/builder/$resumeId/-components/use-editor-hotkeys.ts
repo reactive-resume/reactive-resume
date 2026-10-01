@@ -58,7 +58,8 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 			if (isEditableElementFocused() && document.activeElement instanceof HTMLElement) document.activeElement.blur();
 			useEditorStore.getState().select(null);
 		},
-		{ preventDefault: false, stopPropagation: false },
+		// Command palette binds Escape too. Both handlers should run.
+		{ preventDefault: false, stopPropagation: false, conflictBehavior: "allow" },
 	);
 
 	useHotkey("Mod+S", () => {

@@ -36,8 +36,10 @@ export function CommandPalette() {
 		},
 		{
 			hotkey: "Escape",
+			// The editor also binds Escape. `allow` keeps both; `enabled` so a closed palette does not
+			// preventDefault every Escape on the page.
+			options: { enabled: open, conflictBehavior: "allow" },
 			callback: () => {
-				if (!open) return;
 				setOpen(false);
 			},
 		},
