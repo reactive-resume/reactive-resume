@@ -151,11 +151,12 @@ function renderChildren(parent: HtmlElement | undefined, nodes: Node[], options:
 	const converted = nodes.map(toConverted).filter((node): node is Converted => node !== null);
 	const runs: { block: boolean; items: Converted[] }[] = [];
 	let lastBlock: boolean | undefined;
+	const inlineParent = parent !== undefined && !isBlock(parent);
 
 	converted.forEach((node, index) => {
 		let item = node;
 		if (typeof item === "string" && options.collapse) {
-			if (lastBlock !== false) item = item.replace(/^[\t\n\f\r ]+/, "");
+			if (lastBlock !== false && !inlineParent) item = item.replace(/^[\t\n\f\r ]+/, "");
 			const next = converted[index + 1];
 			if (next && isBlock(next)) item = item.replace(/[\t\n\f\r ]+$/, "");
 			item = collapseWhitespace(item);

@@ -281,17 +281,21 @@ function toProposals(
 	document: AssistantDocument,
 ): Proposal[] {
 	const output = part.output as ProposeEditsOutput | undefined;
-	return (output?.edits ?? []).map((edit) => ({
-		...edit,
-		target: {
+	return (output?.edits ?? []).map((edit) => {
+		const target = {
 			sectionId: edit.target.sectionId,
 			field: edit.target.field,
 			...(edit.target.itemId === undefined ? {} : { itemId: edit.target.itemId }),
-		},
-		location: document.locationOf(edit) ?? edit.location,
-		status: statuses.get(edit.id) ?? edit.status,
-		source: "assistant",
-	}));
+			...(edit.target.roleId === undefined ? {} : { roleId: edit.target.roleId }),
+		};
+		return {
+			...edit,
+			target,
+			location: document.locationOf({ ...edit, target }) ?? edit.location,
+			status: statuses.get(edit.id) ?? edit.status,
+			source: "assistant",
+		};
+	});
 }
 
 type MessageViewProps = {
@@ -788,7 +792,16 @@ export function Composer(props: ComposerProps) {
 				</button>
 			</div>
 
-			<p className="text-xs leading-4 text-ink-3">{disclosure}</p>
+			<p className="text-xs leading-4 text-ink-3">
+				{disclosure}{" "}
+				{!context.document || !context.posting ? (
+					<Trans>
+						Each send starts fresh with this message and selected files. Previous conversation history stays here.
+					</Trans>
+				) : (
+					<Trans>Previous messages, including document details, are also sent.</Trans>
+				)}
+			</p>
 		</div>
 	);
 }

@@ -66,12 +66,14 @@ function useResumeHistory(): HistorySource {
 		nowDetail: t`The resume as it is`,
 		errorMessage: getResumeErrorMessage,
 		save: async (name) => {
-			await savePendingChanges(resume.id);
+			if (!(await savePendingChanges(resume.id)))
+				throw new Error(t`Couldn't save your changes. Try again before continuing.`);
 			await orpc.resume.createVersion.call({ resumeId: resume.id, name });
 			void refresh();
 		},
 		restore: async (versionId) => {
-			await savePendingChanges(resume.id);
+			if (!(await savePendingChanges(resume.id)))
+				throw new Error(t`Couldn't save your changes. Try again before continuing.`);
 			const restored = await orpc.resume.restoreVersion.call({ resumeId: resume.id, versionId });
 			useResumeStore.getState().replaceResumeFromServer(restored as Resume);
 			queryClient.setQueryData(orpc.resume.getById.queryKey({ input: { id: resume.id } }), {

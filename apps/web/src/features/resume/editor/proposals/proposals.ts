@@ -4,6 +4,7 @@ import { t } from "@lingui/core/macro";
 import { produce } from "immer";
 import {
 	applyProposal,
+	applyTo,
 	getProposalState,
 	readTarget,
 	splitBlock,
@@ -58,14 +59,9 @@ export function markProposals(data: ResumeData, proposals: readonly Proposal[]):
 	return produce(data, (draft) => {
 		for (const proposal of pending) {
 			const value = readTarget(draft, proposal.target);
-			if (value === undefined || !value.includes(proposal.before)) continue;
-
 			const marked = markChange(proposal.before, proposal.after);
-			writeTarget(
-				draft,
-				proposal.target,
-				value.replace(proposal.before, () => marked),
-			);
+			const next = applyTo(value, { before: proposal.before, after: marked });
+			if (next !== undefined) writeTarget(draft, proposal.target, next);
 		}
 	});
 }

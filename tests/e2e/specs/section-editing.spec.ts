@@ -35,3 +35,22 @@ test("adds an experience item and persists it across reloads", async ({ authPage
 	await expect(page.getByText(company).filter({ visible: true }).first()).toBeVisible();
 	await expect(page.getByText(position).filter({ visible: true }).first()).toBeVisible();
 });
+
+test("keeps formatting controls accessible when tabbing from the editor", async ({ authPage: page }, testInfo) => {
+	await createSampleResumeFromDashboard(page, testInfo);
+	await openSidebarSection(page, "Summary");
+	const summary = page.getByRole("textbox", { name: "Summary", exact: true });
+	await summary.fill("Keyboard formatting");
+	await summary.press("ControlOrMeta+A");
+	expect(await summary.evaluate(() => window.getSelection()?.toString())).toBe("Keyboard formatting");
+	await summary.press("Tab");
+	const toolbar = page.getByRole("toolbar", { name: "Formatting" });
+	const bold = toolbar.getByRole("button", { name: "Bold", exact: true });
+	await expect(bold).toBeFocused();
+	const wasBold = (await bold.getAttribute("aria-pressed")) === "true";
+	await bold.press("Enter");
+	await expect(bold).toHaveAttribute("aria-pressed", String(!wasBold));
+	if (wasBold) await expect(summary.locator("strong")).toHaveCount(0);
+	else await expect(summary.locator("strong")).toHaveText("Keyboard formatting");
+	await expect(toolbar).toBeVisible();
+});

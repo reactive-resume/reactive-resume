@@ -3,21 +3,19 @@ import type { AtsRuleCode } from "@reactive-resume/resume/ats";
 import type { ExtractedDocument, ResumeSemantics } from "@reactive-resume/resume/ats-pdf";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
 import { useCheck } from "./use-check";
 import { extractPdf } from "@/features/ats-checker/extract-client";
 import { blobToPdfFile } from "@/features/ats-checker/run-ats-check";
+import { useCurrentBuilderResumeSelector } from "@/features/resume/builder/draft";
 
 type Parsed = { doc: ExtractedDocument; semantics: ResumeSemantics };
 
 /** Reads the PDF on the page the way a parser does: its text layer in reading order, and what it recognises. */
-async function parseRenderedPdf(): Promise<Parsed> {
-	const file = useEditorStore.getState().rendered.file;
-	if (!file) throw new Error("The page hasn't rendered yet.");
-
+async function parseRenderedPdf(file: Blob): Promise<Parsed> {
 	// The operator pass (hidden text, images of text) feeds the full check, not this view, so it's skipped.
 	const engine = import("@reactive-resume/resume/ats-pdf");
 	engine.catch(() => {}); // Awaited below; see run-ats-check.ts.
@@ -62,12 +60,17 @@ function IssueChip({ issue }: { issue: CheckIssue }) {
  * recognises and the lines behind open issues highlighted.
  */
 export function ParserView() {
-	const version = useEditorStore((state) => state.rendered.version);
+	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
+	const { file, version } = useEditorStore((state) => state.rendered);
 	const issues = useCheck()?.issues ?? [];
 	const { data, isError } = useQuery({
-		queryKey: ["check-parser-view", version],
-		queryFn: parseRenderedPdf,
-		placeholderData: keepPreviousData,
+		queryKey: ["check-parser-view", resumeId, version],
+		queryFn: () => {
+			if (!file) throw new Error("The page hasn't rendered yet.");
+			return parseRenderedPdf(file);
+		},
+		enabled: !!file,
+		placeholderData: (previous, query) => (query?.queryKey[1] === resumeId ? previous : undefined),
 		staleTime: Number.POSITIVE_INFINITY,
 		gcTime: 60_000,
 		retry: false,

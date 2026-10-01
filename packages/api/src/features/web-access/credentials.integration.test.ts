@@ -7,8 +7,6 @@ import { Pool } from "pg";
 const fixture = vi.hoisted(() => ({ db: undefined as ReturnType<typeof drizzle> | undefined }));
 const env = vi.hoisted(() => ({
 	ENCRYPTION_SECRET: "integration-test-encryption-secret-32-chars",
-	FIRECRAWL_API_URL: "",
-	FIRECRAWL_API_KEY: "",
 	WEB_ACCESS_PROVIDER: "" as "" | "firecrawl" | "tavily" | "exa",
 	WEB_ACCESS_API_KEY: "",
 	WEB_ACCESS_API_URL: "",
@@ -26,8 +24,7 @@ vi.mock("@reactive-resume/db/client", () => ({
 
 // Opt in with a disposable PostgreSQL database. Each run owns and removes a separate schema.
 describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration credentials and server precedence", () => {
-	let firecrawl: typeof import("./service").firecrawlService;
-	let web: typeof import("../web-access/credentials").webAccessService;
+	let web: typeof import("./credentials").webAccessService;
 	let ai: typeof import("../ai-providers/service").aiProvidersService;
 	let pool: Pool;
 	let admin: Pool;
@@ -43,16 +40,19 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 		await pool.query(
 			'CREATE TABLE "user" (id text PRIMARY KEY); CREATE TABLE resume (id text PRIMARY KEY); CREATE TABLE application (id text PRIMARY KEY)',
 		);
-		for (const name of [
-			"20260513181752_bent_human_cannonball",
-			"20260930140759_perpetual_drax",
-			"20260930195321_colossal_the_hood",
-		]) {
+		for (const name of ["20260513181752_bent_human_cannonball", "20261001042749_v6_release"]) {
 			const sql = await readFile(new URL(`../../../../../migrations/${name}/migration.sql`, import.meta.url), "utf8");
-			await pool.query(sql.replaceAll('"public".', ""));
+			// The fixture owns the AI tables and web credentials, not the rest of the v6 upgrade.
+			const statements = sql
+				.split("--> statement-breakpoint")
+				.filter(
+					(statement) =>
+						name !== "20261001042749_v6_release" ||
+						/^(?:CREATE TABLE|ALTER TABLE) "web_access_credentials"/.test(statement.trim()),
+				);
+			await pool.query(statements.join("\n").replaceAll('"public".', ""));
 		}
-		firecrawl = (await import("./service")).firecrawlService;
-		web = (await import("../web-access/credentials")).webAccessService;
+		web = (await import("./credentials")).webAccessService;
 		ai = (await import("../ai-providers/service")).aiProvidersService;
 	});
 	afterAll(async () => {
@@ -63,8 +63,6 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 	beforeEach(async () => {
 		Object.assign(env, {
 			ENCRYPTION_SECRET: "integration-test-encryption-secret-32-chars",
-			FIRECRAWL_API_URL: "",
-			FIRECRAWL_API_KEY: "",
 			WEB_ACCESS_PROVIDER: "",
 			WEB_ACCESS_API_KEY: "",
 			WEB_ACCESS_API_URL: "",
@@ -76,81 +74,25 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 		await pool.query("TRUNCATE \"user\" CASCADE; INSERT INTO \"user\" VALUES ('alice'),('bob')");
 	});
 
-	it("encrypts personal Cloud keys, isolates accounts, and locks personal writes under server configuration", async () => {
-		expect(await firecrawl.resolve("alice")).toBeNull();
-		await firecrawl.save("alice", "fc-alice-secret");
-		await firecrawl.save("bob", "fc-bob-secret");
-		expect(await firecrawl.resolve("alice")).toEqual({
-			apiUrl: "https://api.firecrawl.dev",
-			apiKey: "fc-alice-secret",
-		});
-		expect(await firecrawl.resolve("bob")).toEqual({ apiUrl: "https://api.firecrawl.dev", apiKey: "fc-bob-secret" });
-		const saved = (await pool.query("SELECT encrypted_api_key FROM web_access_credentials")).rows;
-		expect(JSON.stringify(saved)).not.toContain("fc-alice-secret");
-		expect(JSON.stringify(saved)).not.toContain("fc-bob-secret");
-		await firecrawl.delete("alice");
-		expect(await firecrawl.resolve("alice")).toBeNull();
-		expect(await firecrawl.status("bob")).toEqual({ managed: false, configured: true, canSave: true });
-
-		env.FIRECRAWL_API_URL = "http://firecrawl:3002";
-		env.FIRECRAWL_API_KEY = "server-key";
-		expect(await firecrawl.resolve("bob")).toEqual({ apiUrl: "http://firecrawl:3002", apiKey: "server-key" });
-		expect(await firecrawl.status("alice")).toEqual({ managed: true, configured: true, canSave: false });
-		await expect(firecrawl.save("bob", "override")).rejects.toMatchObject({ code: "FORBIDDEN" });
-		await expect(firecrawl.delete("bob")).rejects.toMatchObject({ code: "FORBIDDEN" });
-		env.FIRECRAWL_API_KEY = "";
-		env.ENCRYPTION_SECRET = "";
-		expect(await firecrawl.resolve("alice")).toEqual({ apiUrl: "http://firecrawl:3002", apiKey: "" });
-		env.FIRECRAWL_API_URL = "";
-		expect(await firecrawl.status("alice")).toEqual({ managed: false, configured: false, canSave: false });
-		await expect(firecrawl.save("alice", "secret")).rejects.toMatchObject({ code: "PRECONDITION_FAILED" });
-	});
-
-	it("backfills existing Firecrawl ciphertext unchanged without activating legacy keys again", async () => {
-		const client = await pool.connect();
-		try {
-			await client.query("BEGIN");
-			await client.query("DROP TABLE web_access_credentials; ALTER TABLE application DROP COLUMN posting_source");
-			await client.query("INSERT INTO firecrawl_credentials VALUES ('alice','opaque-existing-ciphertext')");
-			const migration = await readFile(
-				new URL("../../../../../migrations/20260930195321_colossal_the_hood/migration.sql", import.meta.url),
-				"utf8",
-			);
-			await client.query(migration.replaceAll('"public".', ""));
-			expect((await client.query("SELECT * FROM web_access_credentials")).rows).toEqual([
-				{ user_id: "alice", provider: "firecrawl", encrypted_api_key: "opaque-existing-ciphertext" },
-			]);
-			expect((await client.query("SELECT encrypted_api_key FROM firecrawl_credentials")).rows).toEqual([
-				{ encrypted_api_key: "opaque-existing-ciphertext" },
-			]);
-		} finally {
-			await client.query("ROLLBACK");
-			client.release();
-		}
-		await pool.query("INSERT INTO firecrawl_credentials VALUES ('alice','obsolete')");
+	it("encrypts personal keys, isolates accounts, and replaces or removes one selected connection", async () => {
 		expect(await web.resolve("alice")).toBeNull();
-		await web.save("alice", "tavily", "tavily-personal");
-		expect((await pool.query("SELECT * FROM firecrawl_credentials")).rows).toEqual([]);
-	});
-
-	it("keeps one personal provider, isolates keys and rejects legacy changes to another provider", async () => {
+		await web.save("bob", "firecrawl", "fc-bob-secret");
 		for (const provider of ["firecrawl", "tavily", "exa"] as const) {
 			await web.save("alice", provider, `${provider}-personal`);
 			expect(await web.resolve("alice")).toMatchObject({ provider, apiKey: `${provider}-personal` });
-			expect(await web.resolve("bob")).toBeNull();
-			expect((await pool.query("SELECT COUNT(*)::int AS count FROM web_access_credentials")).rows).toEqual([
-				{ count: 1 },
-			]);
+			expect(await web.resolve("bob")).toEqual({
+				provider: "firecrawl",
+				apiUrl: "https://api.firecrawl.dev",
+				apiKey: "fc-bob-secret",
+			});
+			const saved = (await pool.query("SELECT user_id, encrypted_api_key FROM web_access_credentials")).rows;
+			expect(saved).toHaveLength(2);
+			expect(JSON.stringify(saved)).not.toContain(`${provider}-personal`);
+			expect(JSON.stringify(saved)).not.toContain("fc-bob-secret");
 		}
-		expect(await firecrawl.status("alice")).toEqual({ managed: false, configured: false, canSave: false });
-		expect(await firecrawl.resolve("alice")).toBeNull();
-		await expect(firecrawl.save("alice", "legacy-overwrite")).rejects.toMatchObject({ code: "CONFLICT" });
-		await expect(firecrawl.delete("alice")).rejects.toMatchObject({ code: "CONFLICT" });
-		// The SQL guard also protects a legacy save after a concurrent provider replacement.
-		await expect(web.save("alice", "firecrawl", "legacy-race", true)).rejects.toMatchObject({ code: "CONFLICT" });
-		expect(await web.resolve("alice")).toMatchObject({ provider: "exa", apiKey: "exa-personal" });
-		await pool.query("INSERT INTO firecrawl_credentials VALUES ('alice','obsolete')");
 		await web.delete("alice");
+		expect(await web.resolve("alice")).toBeNull();
+		expect(await web.resolve("bob")).toMatchObject({ provider: "firecrawl", apiKey: "fc-bob-secret" });
 		expect(await web.status("alice")).toMatchObject({
 			configured: false,
 			provider: null,
@@ -158,21 +100,20 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 			read: true,
 			builtInReader: true,
 		});
-		expect((await pool.query("SELECT * FROM firecrawl_credentials")).rows).toEqual([]);
+		env.ENCRYPTION_SECRET = "";
+		expect(await web.status("alice")).toMatchObject({ managed: false, configured: false, canSave: false });
+		await expect(web.save("alice", "firecrawl", "secret")).rejects.toMatchObject({ code: "PRECONDITION_FAILED" });
+		await expect(web.delete("alice")).rejects.toMatchObject({ code: "PRECONDITION_FAILED" });
 	});
 
-	it("gives explicit generic server configuration precedence over aliases and personal credentials", async () => {
+	it("uses server credentials without encryption and restores personal connections when disabled", async () => {
 		await web.save("alice", "exa", "personal-exa");
-		Object.assign(env, {
-			FIRECRAWL_API_KEY: "legacy-server",
-			WEB_ACCESS_PROVIDER: "tavily",
-			WEB_ACCESS_API_KEY: "server-tavily",
-		});
+		Object.assign(env, { WEB_ACCESS_PROVIDER: "tavily", WEB_ACCESS_API_KEY: "server-tavily" });
 		expect(await web.resolve("alice")).toEqual({ provider: "tavily", apiKey: "server-tavily" });
 		expect(await web.status("alice")).toMatchObject({ managed: true, provider: "tavily", canSave: false });
 		await expect(web.save("alice", "exa", "override")).rejects.toMatchObject({ code: "FORBIDDEN" });
 		await expect(web.delete("alice")).rejects.toMatchObject({ code: "FORBIDDEN" });
-		await expect(firecrawl.save("alice", "override")).rejects.toMatchObject({ code: "CONFLICT" });
+		expect(JSON.stringify(await web.status("alice"))).not.toContain("server-tavily");
 		Object.assign(env, {
 			WEB_ACCESS_PROVIDER: "firecrawl",
 			WEB_ACCESS_API_KEY: "",
@@ -180,7 +121,12 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 			ENCRYPTION_SECRET: "",
 		});
 		expect(await web.resolve("bob")).toEqual({ provider: "firecrawl", apiKey: "", apiUrl: "http://firecrawl:3002" });
-		expect(JSON.stringify(await web.status("alice"))).not.toContain("server-tavily");
+		Object.assign(env, {
+			WEB_ACCESS_PROVIDER: "",
+			WEB_ACCESS_API_URL: "",
+			ENCRYPTION_SECRET: "integration-test-encryption-secret-32-chars",
+		});
+		expect(await web.resolve("alice")).toEqual({ provider: "exa", apiKey: "personal-exa" });
 	});
 
 	it("routes AI through server credentials, keeps thread references valid, and restores personal providers when disabled", async () => {

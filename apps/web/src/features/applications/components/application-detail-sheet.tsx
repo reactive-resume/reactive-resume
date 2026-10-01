@@ -5,7 +5,7 @@ import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -24,13 +24,13 @@ import {
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@reactive-resume/ui/components/sheet";
-import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { daysInStage } from "../next-step";
 import { getClosedReasonLabel, getNextStage, getStageColor, getStageLabel, PIPELINE } from "../stages";
 import { useApplicationActions, useInvalidateApplications } from "../use-application-actions";
+import { ApplicationNotes } from "./application-notes";
 import { Activity } from "./detail/activity";
 import { CloseDialog } from "./detail/close-dialog";
 import { Contacts } from "./detail/contacts";
@@ -253,7 +253,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 				<SentDocuments application={application} disabled={remove.isPending} />
 				<Facts application={application} locale={i18n.locale} />
 				<Tags application={application} />
-				<Notes application={application} />
+				<ApplicationNotes application={application} />
 				<Activity application={application} onOpenInterview={(entry) => setInterview({ open: true, entry })} />
 			</div>
 
@@ -442,58 +442,6 @@ function Tags({ application }: { application: Application }) {
 					/>
 				</form>
 			</div>
-		</section>
-	);
-}
-
-// Notes save a moment after typing stops.
-const NOTES_SAVE_DELAY_MS = 800;
-
-function Notes({ application }: { application: Application }) {
-	const id = useId();
-	const invalidate = useInvalidateApplications();
-	const [notes, setNotes] = useState(application.notes ?? "");
-	const saved = useRef(application.notes ?? "");
-	const { mutate } = useMutation({
-		...orpc.applications.update.mutationOptions(),
-		onSuccess: () => invalidate(application.id),
-		onError: () => toast.add({ type: "error", description: t`Couldn't save the notes.` }),
-	});
-
-	useEffect(() => {
-		if (notes === saved.current) return;
-		const timeout = window.setTimeout(() => {
-			saved.current = notes;
-			mutate({ id: application.id, notes: notes.trim() ? notes : null });
-		}, NOTES_SAVE_DELAY_MS);
-		return () => window.clearTimeout(timeout);
-	}, [notes, application.id, mutate]);
-
-	// Closing the sheet mid-sentence still saves what was typed.
-	const latest = useRef(notes);
-	useEffect(
-		() => () => {
-			if (latest.current !== saved.current)
-				mutate({ id: application.id, notes: latest.current.trim() ? latest.current : null });
-		},
-		[application.id, mutate],
-	);
-
-	return (
-		<section className="grid gap-2">
-			<label htmlFor={id} className="text-xs font-semibold text-ink-3 uppercase">
-				<Trans>Notes</Trans>
-			</label>
-			<Textarea
-				id={id}
-				rows={3}
-				value={notes}
-				placeholder={t`Anything to remember about this job`}
-				onChange={(event) => {
-					latest.current = event.target.value;
-					setNotes(event.target.value);
-				}}
-			/>
 		</section>
 	);
 }

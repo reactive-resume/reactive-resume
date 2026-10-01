@@ -11,6 +11,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { createResumePdfBlob } from "./pdf-document";
 import { resolvePublicResumePdfBlob } from "@/features/resume/public/public-pdf";
+import { getReadableErrorMessage } from "@/libs/error-message";
 import { client } from "@/libs/orpc/client";
 import { createSectionTitleResolverForLocale } from "@/libs/resume/section-title-locale";
 
@@ -156,8 +157,11 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 				// Statistics are best effort and must not delay or fail a completed browser download.
 				void client.resume.statistics.recordDownload(exportOptions.publicResumePdf.publicResume).catch(() => undefined);
 			}
-		} catch {
-			toast.add({ type: "error", description: t`Could not generate the PDF. Please try again.` });
+		} catch (error) {
+			toast.add({
+				type: "error",
+				description: getReadableErrorMessage(error, t`Could not generate the PDF. Please try again.`),
+			});
 		}
 		setIsExporting(false);
 		toast.close(toastId);
@@ -173,10 +177,10 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 				: createResumePdfBlob(resume.data);
 		try {
 			printPdf(await makeBlob());
-		} catch {
+		} catch (error) {
 			toast.add({
 				type: "error",
-				description: t`Could not prepare your resume for printing. Please try again.`,
+				description: getReadableErrorMessage(error, t`Could not prepare your resume for printing. Please try again.`),
 			});
 		}
 		setIsExporting(false);

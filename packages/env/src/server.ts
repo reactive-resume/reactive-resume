@@ -1,3 +1,4 @@
+import { isIP } from "node:net";
 import { isAbsolute, join } from "node:path";
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
@@ -27,6 +28,28 @@ export const env = createEnv({
 			.transform((value) => value || undefined)
 			.optional(),
 		SERVER_PORT: z.coerce.number().int().min(1).max(65535).default(3001),
+		TRUSTED_PROXIES: z
+			.string()
+			.transform((value) =>
+				value
+					.split(",")
+					.map((range) => range.trim())
+					.filter(Boolean),
+			)
+			.pipe(
+				z.array(
+					z.string().refine((range) => {
+						const [address, prefix, ...rest] = range.split("/");
+						const family = isIP(address ?? "");
+						return (
+							family > 0 &&
+							rest.length === 0 &&
+							(prefix === undefined || (/^\d+$/.test(prefix) && Number(prefix) <= (family === 4 ? 32 : 128)))
+						);
+					}, "TRUSTED_PROXIES must contain comma-separated IP addresses or CIDRs"),
+				),
+			)
+			.default([]),
 
 		// Database
 		DATABASE_URL: z.url({ protocol: /postgres(ql)?/ }),
@@ -93,9 +116,6 @@ export const env = createEnv({
 		WEB_ACCESS_PROVIDER: z.enum(["firecrawl", "tavily", "exa"]).optional(),
 		WEB_ACCESS_API_KEY: z.string().trim().min(1).optional(),
 		WEB_ACCESS_API_URL: z.url({ protocol: /^https?$/ }).optional(),
-		// Legacy aliases are used only when no generic configuration is supplied.
-		FIRECRAWL_API_URL: z.url({ protocol: /^https?$/ }).optional(),
-		FIRECRAWL_API_KEY: z.string().trim().min(1).optional(),
 		AI_PROVIDER: aiProviderSchema.optional(),
 		AI_MODEL: z.string().trim().min(1).optional(),
 		AI_API_KEY: z.string().trim().min(1).optional(),

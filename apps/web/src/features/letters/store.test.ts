@@ -34,6 +34,16 @@ const letter: CoverLetter = {
 
 const store = () => useLetterEditorStore.getState();
 
+function deferred<T>() {
+	let resolve: (value: T) => void = vi.fn();
+	let reject: (error: unknown) => void = vi.fn();
+	const promise = new Promise<T>((accept, fail) => {
+		resolve = accept;
+		reject = fail;
+	});
+	return { promise, resolve, reject };
+}
+
 function* chunks(...parts: string[]) {
 	yield* parts;
 }
@@ -44,6 +54,50 @@ beforeEach(() => {
 });
 
 describe("saving", () => {
+	it.each(["success", "failure"])("ignores an old session's %s while another letter is edited", async (result) => {
+		const request = deferred<CoverLetter>();
+		mocks.update.mockReturnValueOnce(request.promise).mockImplementation(async (input) => ({
+			...letter,
+			...input,
+			revision: 2,
+		}));
+		store().edit({ content: "<p>A's edit</p>" });
+		const saving = store().flush();
+		store().load({ ...letter, id: "B" });
+		store().edit({ content: "<p>B's edit</p>" });
+		if (result === "success") request.resolve({ ...letter, content: "<p>A's edit</p>", revision: 2 });
+		else request.reject(new ORPCError("CONFLICT"));
+		await saving;
+		expect(store().letter).toMatchObject({ id: "B", content: "<p>B's edit</p>" });
+		expect(store().pending).toEqual({ content: "<p>B's edit</p>" });
+		expect(store().status).toBe("saving");
+		await store().flush();
+		expect(mocks.update.mock.calls.map(([input]) => input.id)).toEqual(["letter", "B"]);
+	});
+
+	it("reports failed saves, retains the draft, and prevents a destructive change", async () => {
+		mocks.update.mockRejectedValue(new Error("offline"));
+		store().edit({ content: "<p>Unsaved</p>" });
+		expect(await store().flush()).toBe(false);
+		const restore = vi.fn();
+		await expect(store().change(restore)).rejects.toThrow();
+		expect(restore).not.toHaveBeenCalled();
+		expect(store().letter?.content).toBe("<p>Unsaved</p>");
+		expect(store().pending).toEqual({ content: "<p>Unsaved</p>" });
+	});
+
+	it("ignores a response after the same letter is reopened", async () => {
+		const request = deferred<CoverLetter>();
+		mocks.update.mockReturnValue(request.promise);
+		store().edit({ content: "<p>Old visit</p>" });
+		const saving = store().flush();
+		store().reset();
+		store().load(letter);
+		request.resolve({ ...letter, content: "<p>Old visit</p>", revision: 2 });
+		await saving;
+		expect(store().letter).toEqual(letter);
+	});
+
 	it("keeps what was typed while the server's copy comes back trimmed, and bumps the revision", async () => {
 		mocks.update.mockImplementation(async (input: { recipientName: string }) => ({
 			...letter,

@@ -3,6 +3,7 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import { getResumeSectionTitle } from "@reactive-resume/pdf/section-title";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { contrastOnWhite } from "@reactive-resume/utils/color";
+import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { reflowOrder } from "./reflow";
 import { RichText } from "./rich-text";
@@ -63,6 +64,7 @@ function EntryView({ type, entry }: { type: string; entry: Entry }) {
 	const url = typeof entry.url === "string" ? entry.url : website?.url;
 	const keywords = Array.isArray(entry.keywords) ? (entry.keywords as string[]).filter(Boolean) : [];
 	const html = text(entry, "content") || text(entry, "description");
+	const phone = type === "references" ? text(entry, "phone") : "";
 
 	return (
 		<article className="grid gap-0.5">
@@ -76,6 +78,11 @@ function EntryView({ type, entry }: { type: string; entry: Entry }) {
 				</a>
 			)}
 			{keywords.length > 0 && <p className="text-[14px] text-[#555]">{keywords.join(", ")}</p>}
+			{phone && (
+				<a className="w-fit text-[14px] underline" href={`tel:${phone.replace(/\s+/g, "")}`}>
+					{phone}
+				</a>
+			)}
 			{html && <RichText html={html} className={cn(RICH, "mt-1")} />}
 			{roles.map((role) => (
 				<div key={role.id} className="mt-1.5 grid gap-0.5">
@@ -88,7 +95,7 @@ function EntryView({ type, entry }: { type: string; entry: Entry }) {
 	);
 }
 
-type ContactPill = { icon: IconName; label: string; href: string };
+type ContactPill = { icon: IconName; label: string; href?: string };
 
 function contactPills(basics: ResumeData["basics"]): ContactPill[] {
 	const pills: ContactPill[] = [];
@@ -101,8 +108,12 @@ function contactPills(basics: ResumeData["basics"]): ContactPill[] {
 			href: basics.website.url,
 		});
 	for (const field of basics.customFields)
-		if (field.text && /^(https?:|mailto:|tel:)/i.test(field.link))
-			pills.push({ icon: "link", label: field.text, href: field.link });
+		if (field.text)
+			pills.push({
+				icon: "link",
+				label: field.text,
+				...(/^(https?:|mailto:|tel:)/i.test(field.link) ? { href: field.link } : {}),
+			});
 	return pills;
 }
 
@@ -123,6 +134,7 @@ export function ResumeReflow({ data }: ResumeReflowProps) {
 	return (
 		<div
 			lang={data.metadata.page.locale}
+			dir={isRTL(data.metadata.page.locale) ? "rtl" : "ltr"}
 			className="grid gap-6 bg-white px-5 py-6 text-[15px] leading-[1.5] text-[#1a1a1a]"
 			style={{ fontFamily: `"${font}", ui-sans-serif, system-ui, sans-serif` }}
 		>
@@ -132,18 +144,21 @@ export function ResumeReflow({ data }: ResumeReflowProps) {
 					<p className="text-[#555]">{[basics.headline, basics.location].filter(Boolean).join(" · ")}</p>
 				)}
 				<ul className="flex flex-wrap gap-2">
-					{contactPills(basics).map((pill) => (
-						<li key={pill.href}>
-							<a
-								href={pill.href}
-								className="flex h-9 items-center gap-1.5 rounded-full border border-[#ddd] px-3 text-[14px]"
-								{...(pill.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer nofollow" } : {})}
-							>
-								<Icon name={pill.icon} size={18} />
-								<span className="max-w-[16rem] truncate">{pill.label}</span>
-							</a>
-						</li>
-					))}
+					{contactPills(basics).map((pill, index) => {
+						const Tag = pill.href ? "a" : "span";
+						return (
+							<li key={`${index}:${pill.label}`}>
+								<Tag
+									href={pill.href}
+									className="flex h-9 items-center gap-1.5 rounded-full border border-[#ddd] px-3 text-[14px]"
+									{...(pill.href?.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer nofollow" } : {})}
+								>
+									<Icon name={pill.icon} size={18} />
+									<span className="max-w-[16rem] truncate">{pill.label}</span>
+								</Tag>
+							</li>
+						);
+					})}
 				</ul>
 			</header>
 

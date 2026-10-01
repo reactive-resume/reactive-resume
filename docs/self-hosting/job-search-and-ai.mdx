@@ -43,8 +43,8 @@ You can mix these choices, such as shared web access with personal AI keys. See 
 ## 2. Connect Firecrawl
 
 Follow the official [Firecrawl self-hosting guide](https://docs.firecrawl.dev/contributing/self-host) to deploy its
-API and supporting services. Use the release and Compose files recommended there; the npm SDK included in Reactive
-Resume is a client and does not run the service.
+API and supporting services. Use the release and Compose files recommended there. Reactive Resume connects to
+that service over HTTP.
 
 Add the connection to **Reactive Resume's** environment:
 
@@ -64,8 +64,7 @@ in Reactive Resume must point to public HTTPS destinations.
 For Firecrawl Cloud, use its [quickstart](https://docs.firecrawl.dev/introduction) to get a key, set only
 `WEB_ACCESS_PROVIDER="firecrawl"` and `WEB_ACCESS_API_KEY`, and leave `WEB_ACCESS_API_URL` unset. Requests then go to
 `https://api.firecrawl.dev`. Tavily and Exa use fixed official endpoints and require a key. Supplying their own API URL
-is rejected. Existing `FIRECRAWL_API_KEY`/`FIRECRAWL_API_URL` variables remain aliases when every generic variable is
-unset; partial generic configuration never falls back to those aliases.
+is rejected. Incomplete web-access configuration fails startup.
 
 ### Container networking and local development
 
@@ -171,18 +170,12 @@ and restart or redeploy it. Keep keys in server configuration or secret storage,
 Reading failures can fall back to the built-in reader, so a successful URL import alone does not prove the external
 service was used. Review the displayed posting source and use the independent connection test.
 
-## Existing credentials and rollback
+## Credential backups
 
-The migration copies Firecrawl ciphertext unchanged into `web_access_credentials` with provider `firecrawl`; users
-keep their selected connection without entering keys again. The generic table is the sole runtime source. The old
-`firecrawl_credentials` table remains as a rollback artifact, and replacing or removing a connection removes that
-user's obsolete legacy key. Legacy API endpoints cannot overwrite or delete a selected Tavily/Exa connection.
-
-Back up PostgreSQL and preserve `ENCRYPTION_SECRET` before deployment. Restore the backup into a disposable database
-and verify existing keys resolve before upgrading the live installation. If rolling back after connection changes,
-restore the matching pre-upgrade backup or explicitly migrate current Firecrawl credentials back to the legacy table;
-old binaries cannot read Tavily/Exa credentials. Retaining the old table alone does not restore keys removed during
-connection changes.
+Personal connections store encrypted keys in `web_access_credentials`. Preserve `ENCRYPTION_SECRET` with the
+PostgreSQL backup so restored keys can be decrypted. Verify restored connections in a disposable installation
+before upgrading the live installation. The retired Firecrawl API, environment aliases and credential table are
+removed; all providers use `/integrations/web-access` and the `WEB_ACCESS_*` variables.
 
 ## Opt-in live connection check
 

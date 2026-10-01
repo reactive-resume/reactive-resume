@@ -8,6 +8,7 @@ import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import {
 	additionAfter,
 	blockText,
+	canApplyTo,
 	collectLetterPassages,
 	collectPassages,
 	readTarget,
@@ -177,6 +178,13 @@ export function resolveEdits(document: LoadedDocument, input: ProposeEditsInput)
 			skipped.push({
 				passageId: edit.passageId,
 				reason: "No passage has this id now: the document changed since it was read. Read it again.",
+			});
+			continue;
+		}
+		if (!canApplyTo(document.read(passage.target), { before: passage.html })) {
+			skipped.push({
+				passageId: edit.passageId,
+				reason: "This passage is ambiguous or changed. Edit its repeated text manually, or read the document again.",
 			});
 			continue;
 		}

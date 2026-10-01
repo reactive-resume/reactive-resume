@@ -2,6 +2,10 @@ import { t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 
 export function getReadableErrorMessage(error: unknown, fallback: string): string {
+	if (error instanceof Error && error.cause === "pdf-text-loss") {
+		if (error.message.startsWith("Fonts could not be loaded:")) return t`Fonts could not be loaded. Retry the export.`;
+		return t`Some PDF text could not be rendered. Choose a font containing these characters, then retry the export.`;
+	}
 	if (error instanceof ORPCError && error.code === "BAD_REQUEST") {
 		const data: unknown = error.data;
 		if (typeof data === "object" && data !== null && "issues" in data && Array.isArray(data.issues)) {

@@ -53,7 +53,7 @@ No separate search, scraping, extraction, and research setup is required. AI con
 3. Preserve the source link and saved description used for preparation; show retrieval information for fetched content. Refreshing a posting must not silently replace the evidence behind existing documents.
 4. Connect saving to existing resume selection, copy-for-job, manual editing, and assistant review flows. Keep letters optional.
 5. Make external application handoff and confirmed submission distinct, using existing sent-document history.
-6. Support Firecrawl, Tavily, and Exa for both search and page reading through shared application-owned functions. Preserve existing Firecrawl credentials, custom server endpoints, URL protections, and built-in fallback.
+6. Support Firecrawl, Tavily, and Exa for both search and page reading through shared application-owned functions. Preserve custom server endpoints, URL protections, and built-in fallback.
 7. Connect those same functions to the existing AI SDK assistant and support verified native-search configurations for OpenAI, Anthropic, and Gemini. Complete capability selection, source display, cancellation, and error handling in the same release.
 8. Replace Firecrawl-specific settings and feature gates with one optional web connection and capability-based availability. Retain optional search without promoting broad job discovery as a new product promise.
 
@@ -63,15 +63,15 @@ These changes should reuse existing application records and pipeline stages. Pre
 
 ### Provider choice
 
-| External provider | Search              | Read a supplied URL | Reason to include                                                                 |
-| ----------------- | ------------------- | ------------------- | --------------------------------------------------------------------------------- |
-| Firecrawl         | Existing Search API | Existing Scrape API | Preserve current users, custom endpoints, and self-hosted deployments.            |
-| Tavily            | Search API          | Extract API         | One alternative connection covers both operations.                                |
-| Exa               | Search API          | Contents API        | A third independent backend covers both operations without another setup concept. |
+| External provider | Search     | Read a supplied URL | Reason to include                                                                 |
+| ----------------- | ---------- | ------------------- | --------------------------------------------------------------------------------- |
+| Firecrawl         | Search API | Scrape API          | Support custom endpoints and self-hosted deployments.                             |
+| Tavily            | Search API | Extract API         | One alternative connection covers both operations.                                |
+| Exa               | Search API | Contents API        | A third independent backend covers both operations without another setup concept. |
 
 These are three actual external search providers; native LLM search is additional support and does not substitute for the three-provider requirement. Each can be used independently. Supporting all three does not mean configuring or calling all three.
 
-Keep the installed Firecrawl SDK. Implement the two small Tavily and Exa HTTP adapters with Node's built-in fetch and Zod response validation. The application needs their search/read endpoints, not their entire SDKs. Use the installed AI SDK's `tool()` to expose shared functions to the assistant; adding provider-specific AI SDK tool packages would duplicate the configuration and normalization needed by ordinary UI requests.
+Implement all three HTTP adapters with the existing bounded JSON transport and Zod response validation. The application needs their search/read endpoints, not their entire SDKs. Use the installed AI SDK's `tool()` to expose shared functions to the assistant; adding provider-specific AI SDK tool packages would duplicate the configuration and normalization needed by ordinary UI requests.
 
 For Tavily imports, request Markdown extraction without query-based chunk reranking and inspect per-URL failures even on HTTP 200. For Exa imports, request page text rather than highlights or summaries and use the documented freshness controls; the older `livecrawl` option is deprecated. Search requests should avoid full-page extraction and generated answers. Fetch a selected result only when it is needed. [Tavily Search](https://docs.tavily.com/documentation/api-reference/endpoint/search), [Tavily Extract](https://docs.tavily.com/documentation/api-reference/endpoint/extract), [Exa Search](https://exa.ai/docs/reference/search), [Exa Contents](https://exa.ai/docs/reference/get-contents).
 
@@ -132,19 +132,19 @@ Native-search support is limited to verified model/endpoint combinations and doc
 
 Store one selected external connection per user: provider plus encrypted API key. Reuse existing credential encryption. Do not create a table or settings card per provider, store several inactive keys, or require separate defaults for search and reading.
 
-Add a generic `web_access_credentials` table and backfill existing Firecrawl ciphertext as provider `firecrawl` in a generated migration, without decrypting it or asking users to enter keys again. The new service becomes the sole runtime source. Retain the old table only as a compatibility/rollback artifact, not another active configuration source; replacement or deletion of a user's connection must also remove any obsolete legacy key for that user. Review SQL and verify backup/restore before deployment. Application rollback after configuration changes must account for the new credentials rather than assuming old binaries understand them.
+Use the generic `web_access_credentials` table as the sole credential source. The pre-release Firecrawl API has no users or compatibility promise; remove its handlers, environment aliases and retired credential table. Keep historical migrations and generate a migration that drops the obsolete table. Review SQL and verify backup/restore before deployment.
 
-Expose generic status, save, delete, and test procedures under `/integrations/web-access`. Keep the existing Firecrawl endpoints as narrow compatibility handlers. Legacy reads report Firecrawl availability only when Firecrawl is selected. Legacy writes must not overwrite or delete an active Tavily/Exa connection; return a conflict directing clients to the generic endpoint. Keep all existing server-managed and encryption-precondition checks.
+Expose status, save, delete, and test procedures under `/integrations/web-access`. Keep all server-managed and encryption-precondition checks.
 
-Server configuration uses `WEB_ACCESS_PROVIDER`, `WEB_ACCESS_API_KEY`, and an optional `WEB_ACCESS_API_URL` for a custom Firecrawl service. Tavily and Exa use their official fixed endpoints. Preserve `FIRECRAWL_API_KEY` and `FIRECRAWL_API_URL` as aliases when no generic configuration is supplied. Explicit generic configuration wins; partial or inconsistent generic configuration fails validation rather than silently falling back. A self-hosted Firecrawl endpoint may remain keyless as today. Personal connections use cloud endpoints and do not expose arbitrary base URLs.
+Server configuration uses `WEB_ACCESS_PROVIDER`, `WEB_ACCESS_API_KEY`, and an optional `WEB_ACCESS_API_URL` for a custom Firecrawl service. Tavily and Exa use their official fixed endpoints. Partial or inconsistent configuration fails validation. A self-hosted Firecrawl endpoint may be keyless. Personal connections use cloud endpoints and do not expose arbitrary base URLs.
 
-Resolver order is explicit server configuration, legacy server Firecrawl configuration, personal connection, then built-in reading only. Server-managed configuration continues to disable personal credential changes. Resolve credentials for each request/run; never keep a singleton client containing a user's key.
+Resolver order is server configuration, personal connection, then built-in reading only. Server-managed configuration disables personal credential changes. Resolve credentials for each request/run; never keep a singleton client containing a user's key.
 
 Status should communicate available capabilities, selected provider, managed/personal ownership, and whether keys can be changed, without returning secrets. A user-triggered connection test probes search and reading independently and reports actual results, including unsupported self-hosted search or quota failures. The test must bypass reader fallback so a successful built-in fetch cannot falsely validate a broken provider. Do not retest or incur external calls every time settings renders.
 
 ### UI and operational behavior
 
-Replace the Firecrawl settings section with a single provider selector inside the optional connection form: Firecrawl, Tavily, Exa. Use generic availability to gate Applications search. Existing Firecrawl users see their connection already selected after migration. New users see a working built-in reader and an optional connection action.
+Use a single provider selector inside the optional connection form: Firecrawl, Tavily, Exa. Use generic availability to gate Applications search. New users see a working built-in reader and an optional connection action.
 
 Complete the Save/Applied, source review, truncation recovery, preparation, and submission changes from the product scope in the same release. Every provider must pass through the same workflow and receive the same error treatment.
 
@@ -156,16 +156,16 @@ Log provider, operation, duration, safe failure category, and fallback outcome. 
 
 Work in the following dependency order and release only when the complete end state passes. These are implementation tasks, not separate product increments.
 
-| Order | Work                                                                                                                                            | Main existing owners                                                                                                              |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| 1     | Fix the shared contracts, selection rules, and final provider set before editing consumers.                                                     | `packages/api/src/features/web-access/`, `packages/ai/src/tools/agent-tool-contracts.ts`                                          |
-| 2     | Build all three adapters and move the safe built-in reader; keep job normalization in Applications.                                             | `packages/api/src/features/applications/posting.ts`, new web-access feature                                                       |
-| 3     | Add one credential migration, resolver, generic integration router, and legacy compatibility handlers.                                          | `packages/db/src/schema/firecrawl.ts`, `migrations/`, `packages/api/src/features/firecrawl/`, `packages/api/src/routers/index.ts` |
-| 4     | Wire Applications and the assistant to the shared service, including native search, tool contracts, source rendering, cancellation, and errors. | `applications/ai.ts`, `agent/tools.ts`, `agent/service.ts`, `ai/capabilities.ts`, `ai/service.ts`, web assistant feature          |
-| 5     | Finish the one-connection settings UI and agreed job-saving/preparation workflow against the final contracts.                                   | Web settings, Applications, document-copy/detail features, application schema/DTOs                                                |
-| 6     | Update environment validation, docs, API spec, translations, and deployment checks; run the whole acceptance matrix.                            | `packages/env/src/server.ts`, `.env.example`, `turbo.json`, self-hosting/AI guides, `docs/spec.json`, Lingui catalogs             |
+| Order | Work                                                                                                                                            | Main existing owners                                                                                                                |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | Fix the shared contracts, selection rules, and final provider set before editing consumers.                                                     | `packages/api/src/features/web-access/`, `packages/ai/src/tools/agent-tool-contracts.ts`                                            |
+| 2     | Build all three adapters and move the safe built-in reader; keep job normalization in Applications.                                             | `packages/api/src/features/applications/posting.ts`, new web-access feature                                                         |
+| 3     | Use one credential table, resolver and generic integration router; retire pre-release compatibility code.                                       | `packages/db/src/schema/web-access.ts`, `migrations/`, `packages/api/src/features/web-access/`, `packages/api/src/routers/index.ts` |
+| 4     | Wire Applications and the assistant to the shared service, including native search, tool contracts, source rendering, cancellation, and errors. | `applications/ai.ts`, `agent/tools.ts`, `agent/service.ts`, `ai/capabilities.ts`, `ai/service.ts`, web assistant feature            |
+| 5     | Finish the one-connection settings UI and agreed job-saving/preparation workflow against the final contracts.                                   | Web settings, Applications, document-copy/detail features, application schema/DTOs                                                  |
+| 6     | Update environment validation, docs, API spec, translations, and deployment checks; run the whole acceptance matrix.                            | `packages/env/src/server.ts`, `.env.example`, `turbo.json`, self-hosting/AI guides, `docs/spec.json`, Lingui catalogs               |
 
-This order avoids rewriting the UI or assistant once per provider. Keep all runtime-specific code in its current owning packages. Check server bundling and package export boundaries; retaining the Firecrawl SDK and using built-in fetch avoids adding two more vendor SDK bundles.
+This order avoids rewriting the UI or assistant once per provider. Keep all runtime-specific code in its current owning packages. Check server bundling and package export boundaries; the bounded native transport needs no vendor SDK bundles.
 
 ## Acceptance conditions
 
@@ -179,7 +179,7 @@ This order avoids rewriting the UI or assistant once per provider. Keep all runt
 - Existing Firecrawl search, rendered reading, custom server URL support, and direct-reader fallback keep working.
 - Firecrawl, Tavily, and Exa each work independently for Applications search/import and assistant search/read. Users need only the selected provider's credentials.
 - Native assistant search works for verified OpenAI, Anthropic, and Gemini configurations without an external web connection. Unsupported combinations fail clearly or use an explicitly configured external connection.
-- Explicit provider selection is respected, existing credentials migrate, and legacy API calls cannot overwrite another provider's configuration.
+- Explicit provider selection is respected; each account has one encrypted connection, with changes disabled under server configuration.
 - All web tools show correct progress, errors, and validated sources after streaming and after reloading a conversation. Cancellation stops outstanding retrieval.
 - Core behavior works on Docker and Vercel without adding required services or containers.
 
@@ -191,7 +191,7 @@ Use the existing Vitest and Playwright setup. Add focused behavior checks; no ne
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Adapter contract          | Table-driven mocked HTTP checks for all three providers: result mapping, per-URL errors, auth/quota failures, malformed/empty results, timeout, response limit, and abort.                                            |
 | URL safety and fallback   | Existing private-host/DNS/redirect checks remain effective; failure falls back within budget, while unsafe URLs and abort do not.                                                                                     |
-| Credentials and migration | Existing Firecrawl rows survive; users cannot access each other's keys; server precedence, partial env errors, deletion, and legacy-route conflicts behave as specified.                                              |
+| Credentials and migration | The retired table is removed; users cannot access each other's keys; server precedence, partial env errors, connection replacement and deletion behave as specified.                                                  |
 | AI SDK and history        | Tool selection, compatible native/custom combinations, capability-aware instructions, sources, stop behavior, and old conversation rendering/replay.                                                                  |
 | Product journey           | Save/paste/manual preparation without services; all three provider choices through the same UI; failed enrichment retains the posting; Saved stays distinct from Applied; submitted document versions remain correct. |
 | Deployment                | Affected typechecks/tests, non-mutating lint, package boundaries, production build, and existing serverless artifact checks. Verify Docker and Vercel environment handling.                                           |
@@ -215,7 +215,7 @@ Keep public-URL validation, redirect and network protections, credential encrypt
 - Email/calendar synchronization and automatic submission.
 - A general plugin platform or custom connector protocol.
 
-Document the adapter contract and contribution checks as part of this release. Evaluate completeness, reliability, latency, deployment behavior, and cost per usable import; published feature lists alone do not establish a best hosted default. Existing installs keep Firecrawl, while new installs start with the built-in reader and no commercial connection.
+Document the adapter contract and contribution checks as part of this release. Evaluate completeness, reliability, latency, deployment behavior, and cost per usable import; published feature lists alone do not establish a best hosted default. New installs start with the built-in reader and no commercial connection.
 
 ## Implementation verification
 

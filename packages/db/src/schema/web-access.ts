@@ -1,7 +1,7 @@
 import * as pg from "drizzle-orm/pg-core";
 import { user } from "./auth";
 
-/** One selected web connection; Firecrawl's old table is retained only for rollback. */
+/** One selected web connection per user. */
 export const webAccessCredential = pg.pgTable("web_access_credentials", {
 	userId: pg
 		.text("user_id")

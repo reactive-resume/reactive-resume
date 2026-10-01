@@ -1,4 +1,5 @@
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
+import { t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 import { create } from "zustand/react";
 import { generateId } from "@reactive-resume/utils/string";
@@ -53,8 +54,8 @@ type LetterEditorStore = {
 	draft: LetterDraft;
 	load: (letter: CoverLetter) => void;
 	edit: (edits: LetterEdits) => void;
-	/** Saves what's pending now; resolves once everything typed so far is saved (or has failed). */
-	flush: () => Promise<void>;
+	/** Saves everything typed so far. False on failure; edits remain for retry. */
+	flush: () => Promise<boolean>;
 	/**
 	 * Saves what's pending, then makes a change that returns the letter (a link, a template, a restore). Throws what
 	 * the change throws, so the caller can say what went wrong.
@@ -78,7 +79,12 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 	sessionId: generateId(),
 	draft: idleDraft,
 
-	load: (letter) => set({ letter, status: "saved", pending: {}, sessionId: generateId(), draft: idleDraft }),
+	load: (letter) => {
+		clearTimeout(timer);
+		drafting?.abort();
+		drafting = null;
+		set({ letter, status: "saved", pending: {}, sessionId: generateId(), draft: idleDraft });
+	},
 
 	edit: (edits) => {
 		set((state) =>
@@ -95,11 +101,14 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 	},
 
 	flush: async () => {
+		const { sessionId } = get();
 		clearTimeout(timer);
 		if (inflight) await inflight;
+		if (get().sessionId !== sessionId) return false;
 
-		const { letter, pending, sessionId, status } = get();
-		if (!letter || !hasEdits(pending) || status === "conflict") return;
+		const { letter, pending, status } = get();
+		if (!letter || !hasEdits(pending) || status === "conflict") return status === "saved";
+		const current = (state: LetterEditorStore) => state.letter?.id === letter.id && state.sessionId === sessionId;
 
 		set({ pending: {}, status: "saving" });
 		inflight = (async () => {
@@ -112,13 +121,21 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 				});
 				// What was typed stays as typed (the server trims and cleans what it stores), and so does anything typed
 				// since.
-				set((state) => ({
-					letter: applyEdits(saved, mergeEdits(pending, state.pending)),
-					status: hasEdits(state.pending) ? "saving" : "saved",
-				}));
+				set((state) =>
+					current(state)
+						? {
+								letter: applyEdits(saved, mergeEdits(pending, state.pending)),
+								status: hasEdits(state.pending) ? "saving" : "saved",
+							}
+						: state,
+				);
 			} catch (error) {
 				const conflict = error instanceof ORPCError && error.code === "CONFLICT";
-				set((state) => ({ pending: mergeEdits(pending, state.pending), status: conflict ? "conflict" : "error" }));
+				set((state) =>
+					current(state)
+						? { pending: mergeEdits(pending, state.pending), status: conflict ? "conflict" : "error" }
+						: state,
+				);
 			} finally {
 				inflight = null;
 			}
@@ -126,22 +143,30 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 		await inflight;
 
 		// Typed while that save was on its way.
-		if (get().status === "saving" && hasEdits(get().pending)) await get().flush();
+		if (!current(get())) return false;
+		if (get().status === "saving" && hasEdits(get().pending)) return get().flush();
+		return get().status === "saved";
 	},
 
 	change: async (action) => {
-		await get().flush();
+		const { sessionId } = get();
+		if (!(await get().flush())) throw new Error(t`Couldn't save your changes. Try again before continuing.`);
 		const { letter } = get();
-		if (!letter) throw new Error("No letter is open.");
+		if (!letter || get().sessionId !== sessionId) throw new Error("No letter is open.");
 		const next = await action(letter);
-		set((state) => ({ letter: applyEdits(next, state.pending) }));
+		set((state) =>
+			state.letter?.id === letter.id && state.sessionId === sessionId
+				? { letter: applyEdits(next, state.pending) }
+				: state,
+		);
 		return next;
 	},
 
 	reset: () => {
 		clearTimeout(timer);
 		drafting?.abort();
-		set({ letter: null, status: "saved", pending: {}, draft: idleDraft });
+		drafting = null;
+		set({ letter: null, status: "saved", pending: {}, sessionId: generateId(), draft: idleDraft });
 	},
 }));
 

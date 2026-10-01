@@ -1,3 +1,6 @@
+import type { LookupAddress } from "node:dns";
+import type { LookupFunction } from "node:net";
+import { lookup } from "node:dns";
 import { BlockList, isIP } from "node:net";
 
 function normalizeHostname(hostname: string) {
@@ -63,6 +66,19 @@ export function isPrivateOrLoopbackHost(hostname: string) {
 
 	return false;
 }
+
+/** Check every address during the socket's actual DNS lookup, preventing rebinding. */
+export const publicLookup: LookupFunction = (hostname, options, callback) => {
+	lookup(hostname, { ...options, all: true }, (error, addresses) => {
+		if (error) return callback(error, "", 4);
+		const list = addresses as LookupAddress[];
+		if (!list.length || list.some((entry) => isPrivateOrLoopbackHost(entry.address)))
+			return callback(new Error("Private network address refused", { cause: "unsafe-url" }), "", 4);
+		if (options.all) return (callback as unknown as (error: null, addresses: LookupAddress[]) => void)(null, list);
+		const [first] = list;
+		callback(null, first?.address ?? "", first?.family ?? 4);
+	});
+};
 
 export function parseUrl(input: string) {
 	try {

@@ -5,7 +5,7 @@ description: "Shared search and reading contracts, provider ownership, safety an
 
 Applications and the Assistant share `searchWeb` and `readPage` in
 `packages/api/src/features/web-access/`. Keep generic retrieval there; JobPosting parsing and the `job posting`
-query suffix belong in Applications. Firecrawl uses its installed SDK; Tavily and Exa use Node fetch with validated
+query suffix belong in Applications. All three providers use the shared bounded JSON transport with validated
 responses. Select one adapter by the provider discriminant, without a plugin registry or paid-provider fan-out.
 
 ## Shared contract

@@ -4,10 +4,10 @@ packages:
   - tooling
 catalogMode: prefer
 catalog:
-  "@better-auth/api-key": "^1.7.6"
+  "@better-auth/api-key": "1.7.7"
   "@better-auth/infra": "^0.4.13"
-  "@better-auth/oauth-provider": "^1.7.6"
-  "@better-auth/passkey": "^1.7.6"
+  "@better-auth/oauth-provider": "1.7.7"
+  "@better-auth/passkey": "1.7.7"
   "@orpc/client": "^1.15.4"
   "@orpc/server": "^1.15.4"
   "@types/node": "^26.6.3"
@@ -18,7 +18,7 @@ catalog:
   "@uiw/color-convert": "^2.10.3"
   "ai": "^7.0.124"
   "bcryptjs": "^3.0.3"
-  "better-auth": "1.7.6"
+  "better-auth": "1.7.7"
   "drizzle-orm": "1.0.0-rc.4"
   "es-toolkit": "^1.52.0"
   "fflate": "^0.8.3"
@@ -36,7 +36,9 @@ allowBuilds:
   sharp: true
 minimumReleaseAge: 0
 overrides:
+  "@formepdf/core": file:./vendor/forme/formepdf-core-0.26.0-reactive.1.tgz
   "@better-auth/infra>@better-fetch/fetch": 1.3.2
+  next@<16.3.6: 16.3.6
   esbuild@>=0.17.0 <0.28.1: ^0.28.1
   postcss@<8.5.10: ^8.5.14
   samlify@<2.13.0: ^2.13.0

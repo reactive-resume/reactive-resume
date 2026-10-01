@@ -1,4 +1,5 @@
 import type { CoverLetterListInput, CoverLetterUpdateInput } from "../../dto/cover-letter";
+import type { DbOrTx } from "@reactive-resume/db/client";
 import type {
 	CoverLetter,
 	CoverLetterDocument,
@@ -7,7 +8,7 @@ import type {
 } from "@reactive-resume/schema/cover-letter/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { ORPCError } from "@orpc/client";
-import { and, count, desc, eq, ilike, isNull, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, isNull, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
@@ -110,51 +111,67 @@ async function assertOwnedApplication(userId: string, id?: string) {
  * A letter for an application is the letter that application sends: a new one becomes its letter if it has none, and
  * moving a letter to another application takes it along.
  */
-export async function linkLetterApplication(input: {
-	userId: string;
-	letterId: string;
-	from?: string | null | undefined;
-	to?: string | null | undefined;
-	replace: boolean;
-}) {
+async function linkLetterApplication(
+	client: DbOrTx,
+	input: {
+		userId: string;
+		letterId: string;
+		from?: string | null | undefined;
+		to?: string | null | undefined;
+		replace: boolean;
+	},
+) {
+	if (input.from === input.to) return;
 	const table = schema.application;
-	if (input.from && input.from !== input.to) {
-		await db
+	const ids = [input.from, input.to].filter((id): id is string => Boolean(id));
+	if (!ids.length) return;
+	const applications = await client
+		.select({ id: table.id, coverLetterId: table.coverLetterId, sentVersion: table.sentCoverLetterVersionId })
+		.from(table)
+		.where(and(eq(table.userId, input.userId), inArray(table.id, ids)))
+		.orderBy(asc(table.id))
+		.for("update");
+	if (input.to && !applications.some((application) => application.id === input.to)) throw new ORPCError("NOT_FOUND");
+	for (const application of applications) {
+		const next =
+			application.id === input.from && application.coverLetterId === input.letterId
+				? null
+				: application.id === input.to && (input.replace || !application.coverLetterId)
+					? input.letterId
+					: application.coverLetterId;
+		if (next === application.coverLetterId) continue;
+		if (application.sentVersion)
+			throw new ORPCError("BAD_REQUEST", {
+				message:
+					"Recorded submitted documents cannot be replaced. Prepare a copy to keep the submitted versions intact.",
+			});
+		await client
 			.update(table)
-			.set({ coverLetterId: null })
-			.where(and(eq(table.id, input.from), eq(table.userId, input.userId), eq(table.coverLetterId, input.letterId)));
-	}
-	if (input.to && input.to !== input.from) {
-		await db
-			.update(table)
-			.set({ coverLetterId: input.letterId })
-			.where(
-				and(
-					eq(table.id, input.to),
-					eq(table.userId, input.userId),
-					...(input.replace ? [] : [isNull(table.coverLetterId)]),
-				),
-			);
+			.set({ coverLetterId: next })
+			.where(and(eq(table.id, application.id), eq(table.userId, input.userId)));
 	}
 }
 
-async function insert(input: {
-	userId: string;
-	name: string;
-	recipient: string;
-	content: string;
-	style: CoverLetterStyle;
-	layout?: CoverLetterLayout | undefined;
-	recipientName?: string | undefined;
-	recipientCompany?: string | undefined;
-	letterDate?: string | null | undefined;
-	sourceResumeId?: string | null;
-	sourceApplicationId?: string | null;
-	senderLinked?: boolean;
-	designLinked?: boolean;
-}): Promise<CoverLetter> {
+async function insert(
+	input: {
+		userId: string;
+		name: string;
+		recipient: string;
+		content: string;
+		style: CoverLetterStyle;
+		layout?: CoverLetterLayout | undefined;
+		recipientName?: string | undefined;
+		recipientCompany?: string | undefined;
+		letterDate?: string | null | undefined;
+		sourceResumeId?: string | null;
+		sourceApplicationId?: string | null;
+		senderLinked?: boolean;
+		designLinked?: boolean;
+	},
+	client: DbOrTx = db,
+): Promise<CoverLetter> {
 	const content = coverLetterContentSchema.parse(input);
-	const [row] = await db
+	const [row] = await client
 		.insert(schema.coverLetter)
 		.values({
 			...content,
@@ -169,15 +186,16 @@ async function insert(input: {
 		.returning();
 	if (!row) throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Failed to save the letter." });
 	const letter = toLetter(row);
-	await writeLetterVersion(db, { letter, userId: input.userId, kind: "created" });
+	await writeLetterVersion(client, { letter, userId: input.userId, kind: "created" });
 	return letter;
 }
 
 async function updateRevision(
 	input: RevisionInput,
 	changes: Partial<typeof schema.coverLetter.$inferInsert>,
+	client: DbOrTx = db,
 ): Promise<CoverLetter> {
-	const [row] = await db
+	const [row] = await client
 		.update(schema.coverLetter)
 		.set({ ...changes, revision: sql`${schema.coverLetter.revision} + 1` })
 		.where(
@@ -234,22 +252,33 @@ export const coverLetterService = {
 		const style = await getResumeStyle(input.userId, input.resumeId);
 		if (input.template) style.metadata.template = input.template;
 		const linked = Boolean(input.resumeId) && !input.template;
-		const letter = await insert({
-			userId: input.userId,
-			name: input.name,
-			recipient: input.recipient ?? "",
-			content: input.content ?? "",
-			style,
-			layout: input.layout ?? (input.recipient?.trim() ? "freeform" : "structured"),
-			recipientName: input.recipientName ?? application?.contacts[0]?.name ?? "",
-			recipientCompany: input.recipientCompany ?? application?.company ?? "",
-			letterDate: input.letterDate === undefined ? today() : input.letterDate,
-			sourceResumeId: input.resumeId ?? null,
-			sourceApplicationId: input.applicationId ?? null,
-			senderLinked: Boolean(input.resumeId),
-			designLinked: linked,
+		const letter = await db.transaction(async (tx) => {
+			const letter = await insert(
+				{
+					userId: input.userId,
+					name: input.name,
+					recipient: input.recipient ?? "",
+					content: input.content ?? "",
+					style,
+					layout: input.layout ?? (input.recipient?.trim() ? "freeform" : "structured"),
+					recipientName: input.recipientName ?? application?.contacts[0]?.name ?? "",
+					recipientCompany: input.recipientCompany ?? application?.company ?? "",
+					letterDate: input.letterDate === undefined ? today() : input.letterDate,
+					sourceResumeId: input.resumeId ?? null,
+					sourceApplicationId: input.applicationId ?? null,
+					senderLinked: Boolean(input.resumeId),
+					designLinked: linked,
+				},
+				tx,
+			);
+			await linkLetterApplication(tx, {
+				userId: input.userId,
+				letterId: letter.id,
+				to: input.applicationId,
+				replace: false,
+			});
+			return letter;
 		});
-		await linkLetterApplication({ userId: input.userId, letterId: letter.id, to: input.applicationId, replace: false });
 		return resolveLinks(letter, input.userId);
 	},
 	update: async (input: CoverLetterUpdateInput & { userId: string }) => {
@@ -300,16 +329,23 @@ export const coverLetterService = {
 		if (input.recipientCompany !== undefined) changes.recipientCompany = input.recipientCompany.trim();
 		if (input.letterDate !== undefined) changes.letterDate = input.letterDate;
 
-		const updated = await resolveLinks(await updateRevision(input, changes), input.userId);
-		if (input.applicationId !== undefined) {
-			await linkLetterApplication({
-				userId: input.userId,
-				letterId: input.id,
-				from: stored.sourceApplicationId,
-				to: input.applicationId,
-				replace: true,
-			});
-		}
+		const persist = async (client: DbOrTx) => {
+			const updated = await updateRevision(input, changes, client);
+			if (input.applicationId !== undefined) {
+				await linkLetterApplication(client, {
+					userId: input.userId,
+					letterId: input.id,
+					from: stored.sourceApplicationId,
+					to: input.applicationId,
+					replace: true,
+				});
+			}
+			return updated;
+		};
+		const updated = await resolveLinks(
+			await (input.applicationId === undefined ? persist(db) : db.transaction(persist)),
+			input.userId,
+		);
 		await saveLetterSessionVersion({
 			letter: updated,
 			userId: input.userId,

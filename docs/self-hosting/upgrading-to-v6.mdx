@@ -9,11 +9,11 @@ This page is for installations already on v5. Coming from v4? Follow [Migrating 
 
 ## What to expect
 
-- **Migrations run on startup**, as in v5. Seven new migrations add columns and tables, move data, and drop two legacy columns. You don't run anything by hand.
-- **v5 can't run against the upgraded database.** The last migrations remove columns that v5 reads, so stop every v5 instance before the first v6 instance starts. There's no mixed v5 and v6 rolling update.
+- **Migrations run on startup**, as in v5. One v6 migration adds columns and tables, moves data, and drops two legacy columns. You don't run anything by hand.
+- **v5 can't run against the upgraded database.** The v6 migration removes columns that v5 reads, so stop every v5 instance before the first v6 instance starts. There's no mixed v5 and v6 rolling update.
 - **Cover letters leave resumes.** Every letter stored inside a resume becomes a saved letter of its own.
 - **Old style-editor styles need a one-time manual conversion**, with a script you run yourself. Nothing converts them automatically.
-- **No new environment variables.** Everything you set for v5.3 keeps working. `REDIS_URL` is now optional for the assistant.
+- **New optional environment variables** configure server AI and web access. Existing v5.3 settings keep working. Reverse proxies need `TRUSTED_PROXIES` to preserve per-visitor authentication limits; `REDIS_URL` is now optional for the assistant outside Vercel.
 - **Vercel projects must switch to the Services framework preset** before they deploy v6.
 
 ## Before you upgrade
@@ -131,21 +131,21 @@ PostgreSQL 18 changes the default data layout. Changing the image tag alone does
 
 ## What the migrations change
 
-Every migration runs once, in order, under an advisory lock. Three of them ship a `rollback.sql` next to `migration.sql` in the repository's `migrations/` folder.
+Existing v5 migrations stay unchanged. The unreleased v6 changes are consolidated in `20261001042749_v6_release`, generated from the current schema with the v5 data conversions included once. It runs under an advisory lock and ships one `rollback.sql` alongside `migration.sql`.
 
-| Migration                                         | What it does                                                                                                                                                                                                                                        | Rollback script |
-| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
-| `20260928171330_resume_version_kinds`             | Adds a `kind`, `name`, and session to resume versions (filled in from the old labels) and a `resume_slug_redirect` table, so a renamed public link keeps working for 30 days.                                                                       | No (additive)   |
-| `20260928175116_documents_trash_and_links`        | Adds Trash (`trashed_at`) to resumes and letters, tags and locking to letters, and a link from a resume to the application it was made for.                                                                                                         | No (additive)   |
-| `20260928193941_applications_closed_and_sent`     | Adds the **Closed** stage with a reason, and what was sent with an application. Turns `rejected` applications into closed (not selected) and archived ones into closed. Gives an application its letter when exactly one letter was written for it. | Yes             |
-| `20260928201742_letters_structured_and_versions`  | Adds structured recipient fields, links to a resume's details and design, and version history (`cover_letter_version`) for letters. Existing letters keep their free-form layout and their own copied details.                                      | No (additive)   |
-| `20260928211634_assistant_documents_and_outcomes` | Lets assistant conversations belong to a letter and count proposed and accepted edits.                                                                                                                                                              | No (additive)   |
-| `20260929063245_contract_redesign_legacy_fields`  | Closes anything still archived or rejected, then drops `application.archived` and `resume_version.label`. After this, v5 no longer works against the database.                                                                                      | Yes             |
-| `20260929071322_letters_leave_resumes`            | Saves every cover letter stored inside a resume as a letter of its own, then removes the cover-letter sections from resumes and their page layouts.                                                                                                 | Yes             |
+| Area            | What changes                                                                                                                                                                                                                                  |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Resume versions | Adds `kind`, `name`, and session fields, fills kinds from old labels, then removes `label`.                                                                                                                                                   |
+| Public links    | Adds `resume_slug_redirect`, so renamed public links keep working for 30 days.                                                                                                                                                                |
+| Documents       | Adds Trash to resumes and letters, tags and locking to letters, and links from resumes to applications.                                                                                                                                       |
+| Applications    | Adds the Closed stage and reason, sent document versions and Check score, requirements, and posting provenance. Converts rejected and archived applications once, updates their timeline, links unambiguous letters, then removes `archived`. |
+| Letters         | Adds structured recipient fields, live links to resume details and design, and version history. Saves embedded resume letters as separate documents and removes their sections from resumes and page layouts.                                 |
+| Assistant       | Adds conversations about letters and counts of proposed and accepted edits.                                                                                                                                                                   |
+| Web access      | Creates `web_access_credentials` directly for encrypted per-user connections.                                                                                                                                                                 |
 
 ### Cover letters leaving resumes
 
-In v5, a resume could hold cover letters as a section. The last migration moves each of them, hidden ones included, into a saved letter:
+In v5, a resume could hold cover letters as a section. The v6 migration moves each of them, hidden ones included, into a saved letter:
 
 - The letter is named after the resume and the section, for example "Product Designer — Cover letter".
 - It's linked to the resume, and takes its sender details and design from it, so it looks as it did inside the resume.
@@ -224,8 +224,12 @@ See [Using the MCP server](/guides/using-the-mcp-server) and [Managing applicati
 
 ## Environment variables
 
-v6 adds no environment variables and removes none. Two behaviors changed:
+Existing variables remain supported. New settings are optional unless your deployment uses the corresponding feature:
 
+- `AI_PROVIDER`, `AI_MODEL`, `AI_API_KEY`, and `AI_BASE_URL` configure a server AI provider. Set provider, model, and key together; Ollama may omit the key. `openai-compatible` also requires a base URL. Configuring this shared provider disables personal AI providers. Leave these unset to continue using user-configured providers.
+- `WEB_ACCESS_PROVIDER`, `WEB_ACCESS_API_KEY`, and `WEB_ACCESS_API_URL` configure server web access. Providers are Firecrawl, Tavily, and Exa. Set provider and key together; only Firecrawl accepts a custom API URL, which may be keyless.
+- `TRUSTED_PROXIES` lists comma-separated proxy IP addresses or CIDRs. Behind nginx, Caddy, or Traefik, include the immediate proxy and any trusted intermediate hops. The proxy must append or replace `X-Forwarded-For` with the actual client address. Leave this unset for direct connections. Never include public client networks: forwarded headers are trusted only through configured proxy addresses.
+- `FLAG_DISABLE_API_RATE_LIMIT` now disables all API and authentication limits, including PDF exports and AI requests. Keep it `false` on public installations.
 - `REDIS_URL` is optional for the assistant. Without Redis, replies can't resume after a page reload, and **Stop** reaches only a reply running on the same server. `ENCRYPTION_SECRET` is still required for AI providers and the assistant. Vercel still requires Redis.
 - The web build now also produces `apps/web/dist-prerender` (localized marketing pages). The Docker image includes it. If you build and deploy the server yourself, copy it next to `apps/web/dist`; without it, those pages render in the browser instead.
 
@@ -244,23 +248,21 @@ Restoring the backup you took before the upgrade is the safest way back, and the
 If you must keep data written since the upgrade, you can undo the migrations that v5 can't live with, by hand, before starting v5:
 
 1. Stop every v6 instance.
-2. Run the rollback scripts with `psql`, newest first:
+2. Run the consolidated rollback script with `psql`:
 
    ```bash
-   psql "$DATABASE_URL" -f migrations/20260929071322_letters_leave_resumes/rollback.sql
-   psql "$DATABASE_URL" -f migrations/20260929063245_contract_redesign_legacy_fields/rollback.sql
-   psql "$DATABASE_URL" -f migrations/20260928193941_applications_closed_and_sent/rollback.sql
+   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f migrations/20261001042749_v6_release/rollback.sql
    ```
 
-   The first puts letters back into the resumes they came from (one section per resume per run; run it again for a resume that had several). The second restores `application.archived` and `resume_version.label`. The third turns closed applications back into `rejected` or archived.
+   The script puts letters back into the resumes they came from (one section per resume per run; run it again for a resume that had several), restores `application.archived` and `resume_version.label`, and turns closed applications back into `rejected` or archived. These steps run in one transaction.
 
 3. Start v5.
 
 Columns and tables added by v6 stay; v5 ignores them. The letters saved from resumes stay too, so in v5 each one shows both inside its resume and in the cover letter library. Documents in Trash show up again in v5, because v5 doesn't know about Trash. If you converted old styles, the converted stylesheets stay, and `--restore` with your backup file puts the originals back.
 
 <Warning>
-  The rollback scripts don't change the migration ledger, so the v6 migrations stay recorded as applied. Upgrading the
-  same database to v6 again won't re-run them. Take a fresh backup and ask in [GitHub
+  The rollback script doesn't change the migration ledger, so the v6 migration stays recorded as applied. Upgrading the
+  same database to v6 again won't re-run it. Take a fresh backup and ask in [GitHub
   Discussions](https://github.com/reactive-resume/reactive-resume/discussions) before you try.
 </Warning>
 

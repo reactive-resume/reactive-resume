@@ -6,7 +6,7 @@ import type { Template } from "@reactive-resume/schema/templates";
 import wasmUrl from "@formepdf/core/pkg-web/forme_bg.wasm?url";
 import * as forme from "@formepdf/core/worker";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";
-import { renderResume } from "./forme/render";
+import { assertPdfText, renderResume } from "./forme/render";
 
 export type CreateResumePdfBlobOptions = {
 	data: ResumeData;
@@ -19,11 +19,11 @@ export type CreateResumePdfBlobOptions = {
 
 export const createResumePdfBlob = async ({ onPageMap, ...input }: CreateResumePdfBlobOptions): Promise<Blob> => {
 	const data = parseResumeData(input.data);
-	// The 6.5 MB engine downloads with the first PDF, not with the app.
+	// The engine downloads with the first PDF, not with the app.
 	await forme.init(wasmUrl);
-	const { pdf, pageMap, missingFonts } = await renderResume(forme, { ...input, data });
-	// Without its fonts the document would look wrong; callers fall back to the server's PDF instead.
-	if (missingFonts.length > 0) throw new Error(`Fonts could not be loaded: ${missingFonts.join(", ")}`);
+	const result = await renderResume(forme, { ...input, data });
+	assertPdfText(result);
+	const { pdf, pageMap } = result;
 	onPageMap?.(pageMap);
 	return new Blob([pdf as Uint8Array<ArrayBuffer>], { type: "application/pdf" });
 };

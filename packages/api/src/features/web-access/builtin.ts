@@ -1,10 +1,8 @@
 import type { LookupAddress } from "node:dns";
-import type { LookupFunction } from "node:net";
-import { lookup } from "node:dns";
 import { lookup as lookupAddresses } from "node:dns/promises";
 import { request } from "node:https";
 import sanitizeHtml from "sanitize-html";
-import { isPrivateOrLoopbackHost, parseUrl } from "@reactive-resume/utils/url-security.node";
+import { isPrivateOrLoopbackHost, parseUrl, publicLookup } from "@reactive-resume/utils/url-security.node";
 import { MAX_PAGE_BYTES, WebAccessError } from "./contracts";
 
 /** Preserve the posting reader's HTTPS-only policy. */
@@ -40,18 +38,6 @@ export async function assertPublicTarget(input: string, signal: AbortSignal) {
 	if (!allPublic(addresses)) throw new WebAccessError("unsafe-url");
 	return url;
 }
-
-/** Validate every address on the socket's actual lookup, preventing DNS rebinding. */
-const publicLookup: LookupFunction = (hostname, options, callback) => {
-	lookup(hostname, { ...options, all: true }, (error, addresses) => {
-		if (error) return callback(error, "", 4);
-		const list = addresses as LookupAddress[];
-		if (!allPublic(list)) return callback(new WebAccessError("unsafe-url"), "", 4);
-		if (options.all) return (callback as unknown as (error: null, addresses: LookupAddress[]) => void)(null, list);
-		const [first] = list;
-		callback(null, first?.address ?? "", first?.family ?? 4);
-	});
-};
 
 export function readBuiltinPage(
 	input: string,
@@ -112,6 +98,7 @@ export function readBuiltinPage(
 		);
 		req.on("error", (error) => {
 			if (signal.aborted) return reject(signal.reason);
+			if (error.cause === "unsafe-url") return reject(new WebAccessError("unsafe-url"));
 			reject(error instanceof WebAccessError ? error : new WebAccessError("unreachable"));
 		});
 		req.end();

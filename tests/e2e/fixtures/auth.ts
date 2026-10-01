@@ -33,7 +33,7 @@ export async function logoutViaUi(page: Page, account: E2EAccount) {
 		.getByRole("button", { name: new RegExp(account.name) })
 		.click();
 	await page.getByRole("menuitem", { name: "Sign out" }).click();
-	await page.goto("/auth/login");
+	await page.waitForURL(/\/auth\/login/);
 }
 
 async function registerViaApi(request: APIRequestContext, account: E2EAccount, baseURL: string) {

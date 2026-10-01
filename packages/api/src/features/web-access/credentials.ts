@@ -1,8 +1,8 @@
 import type { WebAccessConnection, WebAccessProvider } from "./contracts";
 import { ORPCError } from "@orpc/client";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
-import { firecrawlCredential, webAccessCredential } from "@reactive-resume/db/schema";
+import { webAccessCredential } from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
 import { decryptCredential, encryptCredential } from "../ai/credentials";
 
@@ -16,13 +16,7 @@ function serverConfig(): WebAccessConnection | null {
 				: {}),
 		};
 	}
-	return env.FIRECRAWL_API_URL || env.FIRECRAWL_API_KEY
-		? {
-				provider: "firecrawl",
-				apiUrl: env.FIRECRAWL_API_URL || "https://api.firecrawl.dev",
-				apiKey: env.FIRECRAWL_API_KEY || "",
-			}
-		: null;
+	return null;
 }
 
 async function savedCredential(userId: string) {
@@ -39,11 +33,6 @@ function assertPersonalKeysAllowed() {
 	if (!env.ENCRYPTION_SECRET)
 		throw new ORPCError("PRECONDITION_FAILED", { message: "Credential encryption is not configured." });
 }
-
-const legacyConflict = () =>
-	new ORPCError("CONFLICT", {
-		message: "A different web provider is selected. Manage this connection through /integrations/web-access.",
-	});
 
 export const webAccessService = {
 	status: async (userId: string) => {
@@ -73,43 +62,16 @@ export const webAccessService = {
 				}
 			: null;
 	},
-	/** Legacy writes may only change Firecrawl, including when racing a generic provider change. */
-	save: async (userId: string, provider: WebAccessProvider, apiKey: string, legacyFirecrawl = false) => {
+	save: async (userId: string, provider: WebAccessProvider, apiKey: string) => {
 		assertPersonalKeysAllowed();
 		const { encryptedApiKey } = encryptCredential(apiKey.trim());
-		await db.transaction(async (tx) => {
-			const saved = await tx
-				.insert(webAccessCredential)
-				.values({ userId, provider, encryptedApiKey })
-				.onConflictDoUpdate({
-					target: webAccessCredential.userId,
-					set: { provider, encryptedApiKey },
-					...(legacyFirecrawl ? { setWhere: eq(webAccessCredential.provider, "firecrawl") } : {}),
-				})
-				.returning({ userId: webAccessCredential.userId });
-			if (saved.length === 0) throw legacyConflict();
-			await tx.delete(firecrawlCredential).where(eq(firecrawlCredential.userId, userId));
-		});
+		await db
+			.insert(webAccessCredential)
+			.values({ userId, provider, encryptedApiKey })
+			.onConflictDoUpdate({ target: webAccessCredential.userId, set: { provider, encryptedApiKey } });
 	},
-	delete: async (userId: string, legacyFirecrawl = false) => {
+	delete: async (userId: string) => {
 		assertPersonalKeysAllowed();
-		await db.transaction(async (tx) => {
-			const [saved] = await tx
-				.select()
-				.from(webAccessCredential)
-				.where(eq(webAccessCredential.userId, userId))
-				.limit(1)
-				.for("update");
-			if (legacyFirecrawl && saved && saved.provider !== "firecrawl") throw legacyConflict();
-			await tx
-				.delete(webAccessCredential)
-				.where(
-					and(
-						eq(webAccessCredential.userId, userId),
-						legacyFirecrawl ? eq(webAccessCredential.provider, "firecrawl") : undefined,
-					),
-				);
-			await tx.delete(firecrawlCredential).where(eq(firecrawlCredential.userId, userId));
-		});
+		await db.delete(webAccessCredential).where(eq(webAccessCredential.userId, userId));
 	},
 };

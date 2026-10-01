@@ -2,6 +2,7 @@ import { gunzipSync } from "node:zlib";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
+	trustedProxies: [] as string[],
 	handleAuth: vi.fn(),
 	handleOAuth: vi.fn(),
 	handleRpc: vi.fn(),
@@ -22,6 +23,11 @@ const mocks = vi.hoisted(() => ({
 	serveWebDistStatic: vi.fn(),
 	handleWebApp: vi.fn(),
 }));
+
+vi.mock("@reactive-resume/env/server", async (original) => {
+	const { env } = await original<typeof import("@reactive-resume/env/server")>();
+	return { env: { ...env, TRUSTED_PROXIES: mocks.trustedProxies } };
+});
 
 vi.mock("./auth", () => ({
 	handleAuth: mocks.handleAuth,
@@ -82,6 +88,7 @@ const transportEnv = (remoteAddress: string) =>
 
 beforeEach(() => {
 	vi.clearAllMocks();
+	mocks.trustedProxies.length = 0;
 	mocks.handleAuth.mockResolvedValue(new Response("auth"));
 	mocks.handleOAuth.mockResolvedValue(new Response("oauth"));
 	mocks.handleRpc.mockResolvedValue(new Response("rpc"));
@@ -104,6 +111,24 @@ beforeEach(() => {
 });
 
 describe("createApp", () => {
+	it.each([
+		["127.0.0.1", "127.0.0.1", "198.51.100.1", "198.51.100.1"],
+		["127.0.0.1", "::ffff:127.0.0.1", "198.51.100.1", "198.51.100.1"],
+		["10.0.0.0/8", "10.2.3.4", "198.51.100.1, 10.3.4.5", "198.51.100.1"],
+		["::1/128", "::1", "2001:db8::1", "2001:db8::1"],
+		["127.0.0.1", "127.0.0.1", "192.0.2.99, 198.51.100.1", "198.51.100.1"],
+		["127.0.0.1", "203.0.113.9", "198.51.100.1", "203.0.113.9"],
+		["127.0.0.1", "127.0.0.1", "invalid, 198.51.100.1", "127.0.0.1"],
+	])("resolves auth client through trusted %s from socket %s", async (proxy, peer, forwarded, expected) => {
+		mocks.trustedProxies.push(proxy);
+		const { createApp } = await import("./app");
+		const request = new Request("http://localhost/api/auth/sign-in/email", {
+			headers: { "x-forwarded-for": forwarded },
+		});
+		await createApp().fetch(request, transportEnv(peer));
+		expect(mocks.handleAuth).toHaveBeenCalledWith(request, expected);
+	});
+
 	it("routes /api/auth/oauth to the OAuth bridge before the Better Auth wildcard", async () => {
 		const { createApp } = await import("./app");
 		const app = createApp();

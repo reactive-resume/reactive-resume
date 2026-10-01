@@ -1,4 +1,4 @@
-import type { Proposal, ProposalState } from "@reactive-resume/resume/proposals";
+import type { Passage, Proposal, ProposalState } from "@reactive-resume/resume/proposals";
 import { t } from "@lingui/core/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useSearch } from "@tanstack/react-router";
@@ -31,16 +31,24 @@ export type AssistantDocument = {
 	/** Applies proposals as one undo step, with Undo in the toast. */
 	accept: (proposals: readonly Proposal[]) => void;
 	/** Where a proposal lands, in the app's language, when its passage is still there. */
-	locationOf: (proposal: Pick<Proposal, "before">) => string | undefined;
+	locationOf: (proposal: Pick<Proposal, "before" | "target">) => string | undefined;
 };
 
 const bullet = (n: number) => t`bullet ${n}`;
 const paragraph = (n: number) => t`paragraph ${n}`;
 
 /** Finds the passage a proposal replaces, or the one an addition follows. */
-function locate(passages: readonly { html: string; location: string }[], before: string) {
-	return passages.find((passage) => passage.html && (before === passage.html || before.startsWith(passage.html)))
-		?.location;
+function locate(passages: readonly Passage[], { before, target }: Pick<Proposal, "before" | "target">) {
+	const matches = passages.filter(
+		(passage) =>
+			passage.target.sectionId === target.sectionId &&
+			passage.target.itemId === target.itemId &&
+			passage.target.roleId === target.roleId &&
+			passage.target.field === target.field &&
+			passage.html &&
+			(before === passage.html || before.startsWith(passage.html)),
+	);
+	return matches.length === 1 ? matches[0]?.location : undefined;
 }
 
 export function useResumeAssistantDocument(): AssistantDocument {
@@ -70,7 +78,7 @@ export function useResumeAssistantDocument(): AssistantDocument {
 			posting: application ? { id: application.id, company: application.company, role: application.role } : null,
 			stateOf: (proposal) => getProposalState(resume.data, proposal),
 			accept: acceptResumeProposals,
-			locationOf: (proposal) => locate(passages, proposal.before),
+			locationOf: (proposal) => locate(passages, proposal),
 		};
 	}, [resume.id, resume.name, resume.isLocked, resume.data, application]);
 }
@@ -103,7 +111,7 @@ export function useLetterAssistantDocument(): AssistantDocument | null {
 					actionProps: { children: t`Undo`, onClick: () => edit({ content: before }) },
 				});
 			},
-			locationOf: (proposal) => locate(passages, proposal.before),
+			locationOf: (proposal) => locate(passages, proposal),
 		};
 	}, [letter, application]);
 }

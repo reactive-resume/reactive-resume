@@ -168,6 +168,7 @@ beforeEach(() => {
 	vi.stubEnv("NODE_ENV", "test");
 	vi.stubGlobal("fetch", (input: string | URL | Request, options?: RequestInit) => {
 		const url = new globalThis.URL(input instanceof Request ? input.url : input.toString());
+		if (url.origin === endpoint) return nativeFetch(input, options);
 		const provider = url.hostname === "api.tavily.com" ? "tavily" : "exa";
 		return nativeFetch(`${endpoint}/${provider}${url.pathname}`, options);
 	});

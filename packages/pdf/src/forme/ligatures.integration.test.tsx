@@ -20,8 +20,7 @@ const extractedText = async (fontFamily: string) => {
 	return (await page.getTextContent()).items.map((item) => ("str" in item ? item.str : "")).join(" ");
 };
 
-// Forme 0.25 keeps only the first letter of a ligature in the text layer (#156), so ligatures are switched off in
-// the font bytes. A font with fi/fl/ff ligatures must still extract every letter.
+// Keep native fi/fl/ff shaping while preserving every source letter in the exported text layer.
 describe("ligatures", () => {
 	it("extract whole words in IBM Plex Serif", { timeout: 60_000 }, async () => {
 		const text = (await extractedText("IBM Plex Serif")).replaceAll(/\s+/g, " ");

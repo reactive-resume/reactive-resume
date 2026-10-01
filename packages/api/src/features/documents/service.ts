@@ -4,7 +4,7 @@ import { and, count, eq, isNotNull, isNull, lt, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { applicationService } from "../applications/service";
-import { linkLetterApplication } from "../cover-letters/service";
+import { coverLetterService } from "../cover-letters/service";
 import { resumeService } from "../resume/service";
 
 type DocumentType = DocumentSummary["type"];
@@ -229,17 +229,12 @@ export const documentsService = {
 			return;
 		}
 
-		const [letter] = await db
-			.select({ applicationId: schema.coverLetter.sourceApplicationId })
-			.from(schema.coverLetter)
-			.where(owned(input));
-		await update(input, {}, { sourceApplicationId: input.applicationId });
-		await linkLetterApplication({
+		const letter = await coverLetterService.getById({ id: input.id, userId: input.userId });
+		await coverLetterService.update({
+			id: input.id,
 			userId: input.userId,
-			letterId: input.id,
-			from: letter?.applicationId,
-			to: input.applicationId,
-			replace: true,
+			expectedRevision: letter.revision,
+			applicationId: input.applicationId,
 		});
 	},
 

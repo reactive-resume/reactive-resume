@@ -244,9 +244,8 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 					const markerResolved = resolveNode(markerNodeKey);
 					const contentResolved = resolveNode(contentNodeKey);
 					const isOrderedList = isRichTextElementInsideOrderedList(element);
-					// Forme 0.25 doesn't reorder neutral characters in RTL text, so the RTL marker is written in visual order.
 					const number = element.indexOfType + 1;
-					const marker = isOrderedList ? (rtl ? `.${number}` : `${number}.`) : "•";
+					const marker = isOrderedList ? `${number}.` : "•";
 					// Reserve the same gutter throughout a list, then let Yoga measure wider
 					// glyphs. An explicit authored width keeps its ordinary CSS geometry.
 					let orderedMarkerStyle: Style | undefined;

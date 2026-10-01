@@ -5,6 +5,36 @@ import { HOST } from "./primitives";
 export type LoadedImage = { src: string; width: number; height: number };
 
 const MIME_TYPES = { png: "image/png", jpeg: "image/jpeg", webp: "image/webp" } as const;
+export const MAX_IMAGE_BYTES = 12_000_000;
+export const IMAGE_TIMEOUT_MS = 10_000;
+
+export async function readImageBytes(source: string): Promise<Uint8Array> {
+	if (source.startsWith("data:") && source.length > MAX_IMAGE_BYTES * 1.4 + 100) throw new Error("Image exceeds 12 MB");
+	const response = await fetch(source, { signal: AbortSignal.timeout(IMAGE_TIMEOUT_MS) });
+	if (!response.ok) throw new Error(`HTTP ${response.status}`);
+	const reader = response.body?.getReader();
+	if (!reader) throw new Error("Image has no body");
+	const chunks: Uint8Array[] = [];
+	let size = 0;
+	try {
+		for (;;) {
+			const { value, done } = await reader.read();
+			if (done) break;
+			size += value.byteLength;
+			if (size > MAX_IMAGE_BYTES) throw new Error("Image exceeds 12 MB");
+			chunks.push(value);
+		}
+	} finally {
+		await reader.cancel();
+	}
+	const bytes = new Uint8Array(size);
+	let offset = 0;
+	for (const chunk of chunks) {
+		bytes.set(chunk, offset);
+		offset += chunk.byteLength;
+	}
+	return bytes;
+}
 
 const u16be = (bytes: Uint8Array, at: number) => ((bytes[at] ?? 0) << 8) | (bytes[at + 1] ?? 0);
 const u16le = (bytes: Uint8Array, at: number) => (bytes[at] ?? 0) | ((bytes[at + 1] ?? 0) << 8);
@@ -71,17 +101,22 @@ export function imageSources(tree: HostNode[]): string[] {
  * Downloads the pictures once, before layout. Forme would fetch them itself, but a failed download there fails the
  * whole document; here the picture is left out with a warning, as react-pdf did.
  */
-export async function loadImages(sources: readonly string[]) {
+export async function loadImages(sources: readonly string[], read = readImageBytes) {
 	const images = new Map<string, LoadedImage>();
 	const warnings: string[] = [];
 	await Promise.all(
 		sources.map(async (source) => {
 			try {
-				const response = await fetch(source);
-				if (!response.ok) throw new Error(`HTTP ${response.status}`);
-				const bytes = new Uint8Array(await response.arrayBuffer());
+				const bytes = await read(source);
 				const header = readImageHeader(bytes);
 				if (!header) throw new Error("not a PNG, JPEG or WebP image");
+				if (
+					bytes.length > MAX_IMAGE_BYTES ||
+					header.width < 1 ||
+					header.height < 1 ||
+					header.width * header.height > 25_000_000
+				)
+					throw new Error("Image exceeds size limit");
 				images.set(source, {
 					src: `data:${MIME_TYPES[header.format]};base64,${toBase64(bytes)}`,
 					width: header.width,

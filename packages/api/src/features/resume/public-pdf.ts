@@ -1,5 +1,6 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { ORPCError } from "@orpc/server";
+import { env } from "@reactive-resume/env/server";
 import { generateFilename } from "@reactive-resume/utils/file";
 import { assertCanView } from "./access-policy";
 import { publicRenderRateLimiter } from "./public-render-rate-limit";
@@ -55,7 +56,8 @@ const defaultDependencies: PublicResumePdfDependencies = {
 	resolveCurrentUserId: async (requestHeaders) =>
 		(await import("../../context")).resolveUserFromRequestHeaders(requestHeaders).then((user) => user?.id),
 	rateLimiter: publicRenderRateLimiter,
-	renderPdf: async (input) => (await import("@reactive-resume/pdf/server")).createResumePdfFile(input),
+	renderPdf: async (input) =>
+		(await import("@reactive-resume/pdf/server")).createResumePdfFile({ ...input, uploadOrigin: env.APP_URL }),
 };
 
 export async function createPublicResumePdf(

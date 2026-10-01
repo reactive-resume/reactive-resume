@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { useKeyboardInset } from "@reactive-resume/ui/hooks/use-keyboard-inset";
@@ -110,6 +110,7 @@ export function RichTextEditor({
 	heightClassName = "max-h-[360px] min-h-[88px]",
 }: RichTextEditorProps) {
 	const [focused, setFocused] = useState(false);
+	const toolbar = useRef<HTMLDivElement>(null);
 	const [improving, setImproving] = useState<ImproveLine | null>(null);
 	const actions = useToolbarActions();
 	const ai = useHasUsableAiProvider();
@@ -138,8 +139,6 @@ export function RichTextEditor({
 			},
 		},
 		onUpdate: ({ editor }) => onChange(editor.getHTML()),
-		onFocus: () => setFocused(true),
-		onBlur: () => setFocused(false),
 	});
 
 	const state = useEditorState({
@@ -216,6 +215,11 @@ export function RichTextEditor({
 
 	return (
 		<div
+			onFocus={() => setFocused(true)}
+			onBlur={(event) => {
+				const next = event.relatedTarget;
+				if (!event.currentTarget.contains(next) && !toolbar.current?.contains(next)) setFocused(false);
+			}}
 			className={cn(
 				"rounded-lg border border-line-2 bg-raised transition-[border-color,box-shadow] duration-quick",
 				editing && "border-accent shadow-[0_0_0_3px_var(--accent-soft)]",
@@ -229,6 +233,7 @@ export function RichTextEditor({
 				mobile &&
 				createPortal(
 					<div
+						ref={toolbar}
 						role="toolbar"
 						aria-label={t`Formatting`}
 						style={{ bottom: keyboardInset }}
@@ -240,6 +245,7 @@ export function RichTextEditor({
 							onMouseDown={(event) => event.preventDefault()}
 							onClick={() => {
 								setImproving(null);
+								setFocused(false);
 								editor?.commands.blur();
 							}}
 							className="flex h-11 shrink-0 items-center rounded-md px-3 text-sm font-semibold text-accent-text"
@@ -262,7 +268,12 @@ export function RichTextEditor({
 
 			{/* Under the text, so focusing the field never moves the line you clicked. */}
 			{editing && !readOnlyTable && !mobile && (
-				<div role="toolbar" aria-label={t`Formatting`} className="flex gap-0.5 border-t border-line px-1.5 py-1">
+				<div
+					ref={toolbar}
+					role="toolbar"
+					aria-label={t`Formatting`}
+					className="flex gap-0.5 border-t border-line px-1.5 py-1"
+				>
 					{toolbarButtons}
 				</div>
 			)}

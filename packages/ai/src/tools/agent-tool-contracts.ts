@@ -110,6 +110,7 @@ export const proposeEditsInputSchema = z.object({
 const proposalTargetSchema = z.object({
 	sectionId: z.string(),
 	itemId: z.string().optional(),
+	roleId: z.string().optional(),
 	field: z.string(),
 });
 

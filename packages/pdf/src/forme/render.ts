@@ -28,6 +28,7 @@ export type RenderResumeInput = {
 	template?: Template | undefined;
 	renderOptions?: ResumeRenderOptions | undefined;
 	resolveSectionTitle?: SectionTitleResolver | undefined;
+	readImage?: ((source: string) => Promise<Uint8Array>) | undefined;
 };
 
 export type RenderedResume = {
@@ -38,9 +39,27 @@ export type RenderedResume = {
 	layout: RenderWithLayoutResult["layout"];
 	/** Font families that couldn't be downloaded; their text falls back to the standard PDF fonts. */
 	missingFonts: string[];
-	/** What the engine couldn't draw as asked; for diagnostics, never shown as errors. */
+	/** Rendering diagnostics; export entrypoints reject warnings that indicate lost text. */
 	warnings: string[];
 };
+
+/** A downloadable file must retain its text; preview success and downloaded fonts alone cannot prove that. */
+export function assertPdfText({ missingFonts, warnings }: Pick<RenderedResume, "missingFonts" | "warnings">) {
+	if (missingFonts.length > 0)
+		throw new Error(`Fonts could not be loaded: ${missingFonts.join(", ")}. Retry the export.`, {
+			cause: "pdf-text-loss",
+		});
+	if (
+		warnings.some(
+			(warning) =>
+				warning.includes('was rendered as "?"') || warning.includes("character(s) of source text did not render"),
+		)
+	)
+		throw new Error(
+			"Some PDF text could not be rendered. Choose a font containing these characters, then retry the export.",
+			{ cause: "pdf-text-loss" },
+		);
+}
 
 // A4 height: a free-form page is never shorter than a sheet of paper, as before.
 const FREE_FORM_MIN_HEIGHT = 841.89;
@@ -121,6 +140,7 @@ export function renderResume(engine: FormeEngine, input: RenderResumeInput): Pro
 			...(input.renderOptions ? { renderOptions: input.renderOptions } : {}),
 			resolveSectionTitle: input.resolveSectionTitle,
 		}),
+		input.readImage,
 	);
 }
 
@@ -128,7 +148,11 @@ export function renderResume(engine: FormeEngine, input: RenderResumeInput): Pro
  * Renders an element tree (normally a `ResumeDocument`) to PDF. The fonts come from the `data` prop of the root
  * element when it has one; without it, only the standard PDF fonts are available.
  */
-export async function renderResumeElement(engine: FormeEngine, element: ReactElement): Promise<RenderedResume> {
+export async function renderResumeElement(
+	engine: FormeEngine,
+	element: ReactElement,
+	readImage?: (source: string) => Promise<Uint8Array>,
+): Promise<RenderedResume> {
 	const data = (element.props as { data?: ResumeData }).data;
 	const fontRequests = data
 		? resolvePdfFonts(
@@ -141,7 +165,7 @@ export async function renderResumeElement(engine: FormeEngine, element: ReactEle
 	const [{ fonts, warnings: fontWarnings, missing }] = await Promise.all([loadFonts(fontRequests), loadIcons()]);
 
 	const tree = renderHostTree(element);
-	const { images, warnings: imageWarnings } = await loadImages(imageSources(tree));
+	const { images, warnings: imageWarnings } = await loadImages(imageSources(tree), readImage);
 
 	const breakBeforeListItems = new Set<number>();
 	const breakBeforeSections = new Set<string>();

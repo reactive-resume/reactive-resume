@@ -1111,7 +1111,7 @@ msgstr "Anyone who opens the public URL will need this password."
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Anyone with the link will be able to view your resume."
 
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-notes.tsx
 msgid "Anything to remember about this job"
 msgstr "Anything to remember about this job"
 
@@ -2270,7 +2270,7 @@ msgstr "Couldn't save the application."
 msgid "Couldn't save the follow-up."
 msgstr "Couldn't save the follow-up."
 
-#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-notes.tsx
 msgid "Couldn't save the notes."
 msgstr "Couldn't save the notes."
 
@@ -2289,6 +2289,14 @@ msgstr "Couldn't save the tags."
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't save your changes. Please try again."
 msgstr "Couldn't save your changes. Please try again."
+
+#: src/features/letters/store.ts
+#: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/$coverLetterId.tsx
+msgid "Couldn't save your changes. Try again before continuing."
+msgstr "Couldn't save your changes. Try again before continuing."
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/sent-documents.tsx
@@ -2854,6 +2862,11 @@ msgstr "Download application details, contacts, notes, and timeline history as C
 msgid "Download CSV"
 msgstr "Download CSV"
 
+#: src/features/resume/share/download-tab.tsx
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "Download failed."
+msgstr "Download failed."
+
 #: src/features/resume/public/public-resume.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -3006,6 +3019,10 @@ msgstr "Duration"
 #: src/libs/locale.ts
 msgid "Dutch"
 msgstr "Dutch"
+
+#: src/features/assistant/conversation.tsx
+msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
+msgstr "Each send starts fresh with this message and selected files. Previous conversation history stays here."
 
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
@@ -3591,6 +3608,10 @@ msgstr "Font Weight"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgid "Font Weights"
 msgstr "Font Weights"
+
+#: src/libs/error-message.ts
+msgid "Fonts could not be loaded. Retry the export."
+msgstr "Fonts could not be loaded. Retry the export."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "For"
@@ -5481,8 +5502,8 @@ msgstr "Not verified yet. Resend the link"
 msgid "Note"
 msgstr "Note"
 
-#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/application-notes.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/libs/resume/section.tsx
@@ -6126,6 +6147,10 @@ msgstr "Previewing {0} · click to apply"
 msgid "Previous issue"
 msgstr "Previous issue"
 
+#: src/features/assistant/conversation.tsx
+msgid "Previous messages, including document details, are also sent."
+msgstr "Previous messages, including document details, are also sent."
+
 #: src/features/applications/components/calendar-view.tsx
 msgid "Previous month"
 msgstr "Previous month"
@@ -6742,6 +6767,10 @@ msgstr "Retrieved {0}. Origin freshness is unknown unless reported."
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Retry"
 msgstr "Retry"
+
+#: src/features/applications/components/application-notes.tsx
+msgid "Retry save"
+msgstr "Retry save"
 
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -7516,6 +7545,10 @@ msgstr "Some glyphs have no meaning outside this file."
 #: src/features/ats-checker/messages.ts
 msgid "Some lines are stored out of reading order."
 msgstr "Some lines are stored out of reading order."
+
+#: src/libs/error-message.ts
+msgid "Some PDF text could not be rendered. Choose a font containing these characters, then retry the export."
+msgstr "Some PDF text could not be rendered. Choose a font containing these characters, then retry the export."
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."

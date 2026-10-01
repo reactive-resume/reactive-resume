@@ -21,6 +21,7 @@ import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useCurrentResume } from "@/features/resume/builder/draft";
 import { useOpenIssueCount } from "@/features/resume/editor/check/use-check";
 import { createExportFile, getDefaultFileName, sanitizeFileName } from "@/features/resume/export/use-resume-export";
+import { getReadableErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { client } from "@/libs/orpc/client";
 
@@ -271,8 +272,9 @@ export function DownloadTab({ onReview }: DownloadTabProps) {
 				toast.add({ description: t`Downloaded ${file}` });
 			}
 			setState("done");
-		} catch {
+		} catch (error) {
 			setState("error");
+			toast.add({ type: "error", description: getReadableErrorMessage(error, t`Download failed.`) });
 		}
 	};
 

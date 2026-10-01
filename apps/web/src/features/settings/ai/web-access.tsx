@@ -38,7 +38,6 @@ export function WebAccessSection() {
 		setEditing(false);
 		test.reset();
 		void queryClient.invalidateQueries({ queryKey: orpc.webAccess.status.key() });
-		void queryClient.invalidateQueries({ queryKey: orpc.firecrawl.status.key() });
 	};
 	const save = useMutation(orpc.webAccess.save.mutationOptions({ onSuccess: refresh }));
 	const remove = useMutation(orpc.webAccess.delete.mutationOptions({ onSuccess: refresh }));

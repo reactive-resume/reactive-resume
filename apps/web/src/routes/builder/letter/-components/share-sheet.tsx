@@ -24,7 +24,7 @@ import {
 } from "@/features/resume/share/download-tab";
 import { HistoryTimeline } from "@/features/resume/share/history-tab";
 import { useClosingValue } from "@/hooks/use-closing-value";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { getOrpcErrorMessage, getReadableErrorMessage } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
 /**
@@ -146,8 +146,9 @@ function LetterDownloadTab() {
 				toast.add({ description: t`Downloaded ${file}` });
 			}
 			setState("done");
-		} catch {
+		} catch (error) {
 			setState("error");
+			toast.add({ type: "error", description: getReadableErrorMessage(error, t`Download failed.`) });
 		}
 	};
 
@@ -201,7 +202,8 @@ function useLetterHistory(open: boolean): HistorySource {
 		nowDetail: t`The letter as it is`,
 		errorMessage: (error) => getOrpcErrorMessage(error, { fallback: t`Something went wrong. Try again.` }),
 		save: async (name) => {
-			await useLetterEditorStore.getState().flush();
+			if (!(await useLetterEditorStore.getState().flush()))
+				throw new Error(t`Couldn't save your changes. Try again before continuing.`);
 			await client.coverLetters.createVersion({ id, name });
 			void refresh();
 		},

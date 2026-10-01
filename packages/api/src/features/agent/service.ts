@@ -1108,6 +1108,13 @@ export const agentService = {
 					message: "Agent messages must be user messages or tool results.",
 				});
 			}
+			// Opt-out applies to the entire provider context, including document-derived prose and tool results.
+			const freshContext = input.context?.document === false || input.context?.posting === false;
+			if (freshContext && input.message.role !== "user") {
+				throw new ORPCError("BAD_REQUEST", {
+					message: "Send a new message after removing context. Previous tool approvals cannot be continued.",
+				});
+			}
 
 			// Deliberately schema-less: provider-echoed tool parts must pass, and replayed history is never re-validated.
 			const validated = await safeValidateUIMessages({
@@ -1247,9 +1254,10 @@ export const agentService = {
 					{ threadId: input.threadId, userId: input.userId },
 				);
 				const messages = messageRows.map(toMessage);
+				const replay = freshContext ? [withAttachmentUiParts(input.message, attachmentsForModel)] : messages;
 				const connection = await webAccessService.resolve(input.userId);
 				const modelMessages = await convertToModelMessages(
-					messages.map((message) => toModelInputMessage(message, runnableProvider, connection !== null)),
+					replay.map((message) => toModelInputMessage(message, runnableProvider, connection !== null)),
 				);
 				const attachmentModelParts = buildAttachmentModelParts(await readAttachmentModelInputs(attachmentsForModel));
 

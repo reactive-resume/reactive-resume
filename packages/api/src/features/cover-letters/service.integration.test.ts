@@ -50,19 +50,26 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		});
 		fixture.db = drizzle({ client: fixture.pool });
 		await fixture.pool.query(
-			`CREATE TABLE "user" (id text PRIMARY KEY); CREATE TABLE resume (id text PRIMARY KEY, user_id text, data jsonb); CREATE TABLE application (id text PRIMARY KEY, user_id text, company text NOT NULL DEFAULT '', contacts jsonb NOT NULL DEFAULT '[]', cover_letter_id text, updated_at timestamptz);`,
+			`CREATE TABLE "user" (id text PRIMARY KEY); CREATE TABLE resume (id text PRIMARY KEY, user_id text, data jsonb); CREATE TABLE application (id text PRIMARY KEY, user_id text, company text NOT NULL DEFAULT '', contacts jsonb NOT NULL DEFAULT '[]', cover_letter_id text, updated_at timestamptz, resume_id text, status text DEFAULT 'saved', sent_resume_version_id text);`,
 		);
 		// The migrations that shape the letter tables, in order.
-		for (const name of [
-			"20260905121445_cover_letter_library",
-			"20260928175116_documents_trash_and_links",
-			"20260928201742_letters_structured_and_versions",
-		]) {
+		for (const name of ["20260905121445_cover_letter_library", "20261001042749_v6_release"]) {
 			const migration = await readFile(
 				new URL(`../../../../../migrations/${name}/migration.sql`, import.meta.url),
 				"utf8",
 			);
-			await fixture.pool.query(migration.replaceAll('"public".', ""));
+			// This fixture owns only the letter tables; full upgrade coverage lives in the DB package.
+			for (const statement of migration.split("--> statement-breakpoint")) {
+				const sql = statement.trim().replace(/^--[^\n]*\n/, "");
+				if (
+					/^(?:CREATE TABLE|ALTER TABLE) "cover_letter(?:_version)?"|^CREATE (?:UNIQUE )?INDEX .* ON "cover_letter(?:_version)?"/.test(
+						sql,
+					) ||
+					/^ALTER TABLE "application" .*"sent_cover_letter_version_id"/.test(sql)
+				) {
+					await fixture.pool.query(sql.replaceAll('"public".', ""));
+				}
+			}
 		}
 		service = (await import("./service")).coverLetterService;
 	});
@@ -95,6 +102,59 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		).rejects.toMatchObject({ code: "CONFLICT" });
 		await expect(service.delete({ userId: "alice", id: created.id, expectedRevision: 1 })).rejects.toMatchObject({
 			code: "CONFLICT",
+		});
+	});
+
+	it("keeps submitted letters and their snapshots intact through every linking path", async () => {
+		const original = await service.create({ userId: "alice", name: "Submitted", applicationId: "alice-app" });
+		const version = await service.recordSent({ userId: "alice", id: original.id, company: "Lumen" });
+		await getPool().query("UPDATE application SET sent_cover_letter_version_id=$1 WHERE id='alice-app'", [version.id]);
+		const replacement = await service.create({ userId: "alice", name: "Replacement" });
+		const { documentsService } = await import("../documents/service");
+		for (const change of [
+			() =>
+				documentsService.linkApplication({
+					userId: "alice",
+					type: "letter",
+					id: replacement.id,
+					applicationId: "alice-app",
+				}),
+			() => service.update({ userId: "alice", id: replacement.id, expectedRevision: 1, applicationId: "alice-app" }),
+			() => service.update({ userId: "alice", id: original.id, expectedRevision: 1, applicationId: null }),
+		]) {
+			await expect(change()).rejects.toMatchObject({ code: "BAD_REQUEST" });
+			const application = (
+				await getPool().query(
+					"SELECT cover_letter_id, sent_cover_letter_version_id FROM application WHERE id='alice-app'",
+				)
+			).rows[0];
+			expect(application).toEqual({ cover_letter_id: original.id, sent_cover_letter_version_id: version.id });
+			expect(await service.getById({ userId: "alice", id: replacement.id })).toMatchObject({
+				revision: 1,
+				sourceApplicationId: null,
+			});
+		}
+		const { getLetterVersion } = await import("./versions");
+		expect(
+			await getLetterVersion({ userId: "alice", coverLetterId: original.id, versionId: version.id }),
+		).toMatchObject({ data: { name: "Submitted" } });
+	});
+
+	it("lists permanent checkpoints behind more than 100 recent autosaves", async () => {
+		const letter = await service.create({ userId: "alice", name: "Long history" });
+		const named = await service.createVersion({ userId: "alice", id: letter.id, name: "Keep forever" });
+		const sent = await service.recordSent({ userId: "alice", id: letter.id, company: "Lumen" });
+		await getPool().query(
+			`INSERT INTO cover_letter_version (id, cover_letter_id, user_id, data, kind, created_at)
+			SELECT 'auto-' || n, $1, 'alice', '{}'::jsonb, 'auto', now() + n * interval '1 second' FROM generate_series(1,120) n`,
+			[letter.id],
+		);
+		const { listLetterVersions } = await import("./versions");
+		const versions = await listLetterVersions({ userId: "alice", coverLetterId: letter.id });
+		expect(versions.map((version) => version.id)).toEqual(expect.arrayContaining([named.id, sent.id]));
+		expect(versions.filter((version) => version.kind === "auto")).toHaveLength(100);
+		await expect(listLetterVersions({ userId: "bob", coverLetterId: letter.id })).rejects.toMatchObject({
+			code: "NOT_FOUND",
 		});
 	});
 

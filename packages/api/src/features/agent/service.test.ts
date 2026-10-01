@@ -361,10 +361,29 @@ describe("agentService.messages.send", () => {
 
 		const { agentService } = await import("./service");
 		const send = async (context?: { document: boolean; posting: boolean }) => {
+			const privateHistory = {
+				...persistedMessage,
+				id: "old-message",
+				role: "assistant",
+				uiMessage: {
+					id: "old-ui-message",
+					role: "assistant",
+					parts: [
+						{ type: "text", text: "Your email is private-marker@example.test" },
+						{
+							type: "tool-read_resume",
+							toolCallId: "read-1",
+							state: "output-available",
+							input: {},
+							output: { data: { email: "private-marker@example.test" } },
+						},
+					],
+				},
+			};
 			dbMock.select
 				.mockImplementationOnce(() => selectLimitResult([buildActiveThread()]))
 				.mockImplementationOnce(() => selectWhereResult([{ total: 1 }]))
-				.mockImplementationOnce(() => selectOrderByResult([persistedMessage]));
+				.mockImplementationOnce(() => selectOrderByResult([privateHistory, persistedMessage]));
 			await agentService.messages.send({
 				threadId: "thread-1",
 				userId: "user-1",
@@ -381,6 +400,9 @@ describe("agentService.messages.send", () => {
 		const { buildAgentInstructions, buildAgentTools } = await import("./tools");
 
 		await send();
+		expect(JSON.stringify(vi.mocked(convertToModelMessages).mock.calls.at(-1)?.[0])).toContain(
+			"private-marker@example.test",
+		);
 		expect(vi.mocked(buildAgentTools).mock.calls[0]?.[0]).toMatchObject({
 			document: "resume",
 		});
@@ -390,6 +412,7 @@ describe("agentService.messages.send", () => {
 		expect(documentMock.findPosting).toHaveBeenCalledTimes(1);
 
 		await send({ document: false, posting: false });
+		expect(vi.mocked(convertToModelMessages).mock.calls.at(-1)?.[0]).toEqual([persistedMessage.uiMessage]);
 		expect(vi.mocked(buildAgentTools).mock.calls[1]?.[0]).toMatchObject({
 			document: null,
 		});

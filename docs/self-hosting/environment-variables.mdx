@@ -189,8 +189,6 @@ for Tavily/Exa, or a custom URL for those providers stops startup instead of sil
 | `WEB_ACCESS_PROVIDER` | unset           | One selected provider: `firecrawl`, `tavily` or `exa`.                                                                                                                     |
 | `WEB_ACCESS_API_KEY`  | unset           | Shared provider key. Required except for Firecrawl with an explicit custom URL.                                                                                            |
 | `WEB_ACCESS_API_URL`  | Firecrawl Cloud | Optional Firecrawl base URL without `/v2`, e.g. `http://localhost:3102`. Private service URLs are operator-controlled. Tavily and Exa always use their official endpoints. |
-| `FIRECRAWL_API_URL`   | unset           | Legacy Firecrawl URL alias, used only when no `WEB_ACCESS_*` configuration is supplied. A URL alone permits keyless self-hosted Firecrawl.                                 |
-| `FIRECRAWL_API_KEY`   | unset           | Legacy Firecrawl key alias. A key alone selects Firecrawl Cloud when no generic configuration is supplied.                                                                 |
 
 Connections enable Applications keyword search and assistant web tools. URL import uses the selected reader, then
 falls back to the built-in reader on recoverable failures. Saving pasted text and manual preparation work without
@@ -201,7 +199,7 @@ until the user reviews and saves it.
 does not call external services. Quota and authentication failures leave manual workflows available.
 
 See [Job search and AI](/self-hosting/job-search-and-ai) for connection setup, Firecrawl deployment, optional SearXNG
-search and migration/rollback guidance. Public page URLs remain protected against private destinations, redirects
+search and backup guidance. Public page URLs remain protected against private destinations, redirects
 and DNS rebinding. A remote reader must enforce these protections internally too. Search queries and selected URLs
 go to the chosen service; resume data and AI keys do not.
 

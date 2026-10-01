@@ -44,3 +44,34 @@ test("retains the current draft when saving during navigation fails", async ({ a
 	await page.goto(url);
 	await expect(page.getByRole("textbox", { name: "Full name", exact: true })).toHaveValue("Keep unsaved draft");
 });
+
+test("retains failed letter edits until navigation can save them", async ({ authPage: page }, testInfo) => {
+	const created = await page.request.post("/api/openapi/cover-letters", {
+		data: { name: `Letter ${testInfo.testId}` },
+	});
+	expect(created.ok()).toBe(true);
+	const letter = (await created.json()) as { id: string };
+	await page.goto(`/builder/letter/${letter.id}`);
+	const url = page.url();
+	const letterUpdate = "**/api/rpc/coverLetters/update";
+	let attempts = 0;
+	await page.route(letterUpdate, async (route) => {
+		attempts++;
+		await route.abort("failed");
+	});
+	await page.getByRole("button", { name: "Write it myself", exact: true }).click();
+	const body = page.getByRole("textbox", { name: "Letter body", exact: true });
+	await body.fill("Retain this failed letter draft");
+	await expect(page.getByRole("status").filter({ hasText: "Not saved" })).toBeVisible();
+	await clickDashboardWithoutNavigationWait(page);
+	await expect.poll(() => attempts).toBeGreaterThanOrEqual(2);
+	expect(page.url()).toBe(url);
+	await expect(body).toHaveText("Retain this failed letter draft");
+	await page.unroute(letterUpdate);
+	await clickDashboardWithoutNavigationWait(page);
+	await page.waitForURL(/\/dashboard/);
+	await page.goto(url);
+	await expect(page.getByRole("textbox", { name: "Letter body", exact: true })).toHaveText(
+		"Retain this failed letter draft",
+	);
+});

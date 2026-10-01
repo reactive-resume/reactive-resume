@@ -1,9 +1,9 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "8a11975b-fc83-403b-b46b-55bd3699c52e",
+  "id": "47c9455c-793e-4050-b005-cd674c2095f4",
   "prevIds": [
-    "1847f4ee-9364-4ee3-bb19-af6032f4c3f1"
+    "ac3bd283-6f5f-47de-bfd9-8f16f090c7ef"
   ],
   "ddl": [
     {
@@ -141,12 +141,6 @@
     {
       "isRlsEnabled": false,
       "name": "cover_letter_version",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "firecrawl_credentials",
       "entityType": "tables",
       "schema": "public"
     },
@@ -4471,32 +4465,6 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "user_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "firecrawl_credentials"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "encrypted_api_key",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "firecrawl_credentials"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
       "name": "id",
       "entityType": "columns",
       "schema": "public",
@@ -6965,23 +6933,6 @@
     {
       "nameExplicit": false,
       "columns": [
-        "user_id"
-      ],
-      "schemaTo": "public",
-      "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "firecrawl_credentials_user_id_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "firecrawl_credentials"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
         "application_id"
       ],
       "schemaTo": "public",
@@ -7360,16 +7311,6 @@
       "name": "cover_letter_version_pkey",
       "schema": "public",
       "table": "cover_letter_version",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
-        "user_id"
-      ],
-      "nameExplicit": false,
-      "name": "firecrawl_credentials_pkey",
-      "schema": "public",
-      "table": "firecrawl_credentials",
       "entityType": "pks"
     },
     {

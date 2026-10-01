@@ -27,7 +27,7 @@ import { useLetterEditorStore } from "@/features/letters/store";
 import { BackLink, DocumentMenuTrigger, DrawerControls } from "@/features/resume/editor/chrome";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { usePrompt } from "@/hooks/use-confirm";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { getOrpcErrorMessage, getReadableErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 
@@ -106,8 +106,11 @@ export function useDownloadLetter() {
 		try {
 			const blob = await createLetterFile(letter, words, "pdf");
 			downloadWithAnchor(blob, `${letterFileName(letter, words)}.pdf`);
-		} catch {
-			toast.add({ type: "error", description: t`Could not generate the PDF. Please try again.` });
+		} catch (error) {
+			toast.add({
+				type: "error",
+				description: getReadableErrorMessage(error, t`Could not generate the PDF. Please try again.`),
+			});
 		}
 		setBusy(false);
 		toast.close(toastId);
@@ -182,7 +185,8 @@ function LetterMenu() {
 
 	const duplicate = async () => {
 		try {
-			await useLetterEditorStore.getState().flush();
+			if (!(await useLetterEditorStore.getState().flush()))
+				throw new Error(t`Couldn't save your changes. Try again before continuing.`);
 			const copy = await client.coverLetters.duplicate({ id });
 			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 			toast.add({ description: t`Duplicated` });
@@ -205,7 +209,8 @@ function LetterMenu() {
 	// Undoable, so it doesn't ask first: the letter waits in Trash for 30 days.
 	const trash = async () => {
 		try {
-			await useLetterEditorStore.getState().flush();
+			if (!(await useLetterEditorStore.getState().flush()))
+				throw new Error(t`Couldn't save your changes. Try again before continuing.`);
 			await client.documents.trash(ref);
 			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 			void navigate({ to: "/dashboard" });

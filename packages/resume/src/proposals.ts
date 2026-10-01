@@ -7,7 +7,7 @@ import { escapeHtml } from "@reactive-resume/utils/string";
  */
 
 /** A field that holds rich text: the summary's content, an entry's description, or a letter's body. */
-export type ProposalTarget = { sectionId: string; itemId?: string; field: string };
+export type ProposalTarget = { sectionId: string; itemId?: string; roleId?: string; field: string };
 
 type ProposalSource = "check" | "assistant" | "improve";
 
@@ -34,33 +34,42 @@ export const LETTER_SECTION_ID = "letter";
 
 type Entry = { id: string } & Record<string, unknown>;
 
-function findEntry(data: ResumeData, sectionId: string, itemId: string): Entry | undefined {
+function findEntry(data: ResumeData, { sectionId, itemId, roleId }: ProposalTarget): Entry | undefined {
 	const builtin = (data.sections as Record<string, { items: Entry[] } | undefined>)[sectionId];
 	const items = builtin?.items ?? data.customSections.find((section) => section.id === sectionId)?.items;
-	return (items as Entry[] | undefined)?.find((entry) => entry.id === itemId);
+	const entry = (items as Entry[] | undefined)?.find((entry) => entry.id === itemId);
+	return roleId
+		? Array.isArray(entry?.roles)
+			? (entry.roles as Entry[]).find((role) => role.id === roleId)
+			: undefined
+		: entry;
 }
 
 export function readTarget(data: ResumeData, target: ProposalTarget): string | undefined {
 	if (!target.itemId)
 		return target.sectionId === "summary" && target.field === "content" ? data.summary.content : undefined;
 
-	const value = findEntry(data, target.sectionId, target.itemId)?.[target.field];
+	const value = findEntry(data, target)?.[target.field];
 	return typeof value === "string" ? value : undefined;
 }
 
 export function writeTarget(draft: ResumeData, target: ProposalTarget, value: string) {
 	if (!target.itemId) {
-		draft.summary.content = value;
+		if (target.sectionId === "summary" && target.field === "content") draft.summary.content = value;
 		return;
 	}
 
-	const entry = findEntry(draft, target.sectionId, target.itemId);
+	const entry = findEntry(draft, target);
 	if (entry) entry[target.field] = value;
 }
 
 /** A pending proposal can be applied only while its passage is still in the text, word for word. */
-export const canApplyTo = (value: string | undefined, proposal: Pick<Proposal, "before">) =>
-	value?.includes(proposal.before) ?? false;
+export function canApplyTo(value: string | undefined, { before }: Pick<Proposal, "before">) {
+	if (value === undefined) return false;
+	if (!before) return value === "";
+	const index = value.indexOf(before);
+	return index >= 0 && value.indexOf(before, index + 1) < 0;
+}
 
 export const canApply = (data: ResumeData, proposal: Proposal) =>
 	canApplyTo(readTarget(data, proposal.target), proposal);
@@ -72,8 +81,8 @@ export const canApply = (data: ResumeData, proposal: Proposal) =>
 export function getStateIn(value: string, proposal: Proposal): ProposalState {
 	if (proposal.status === "rejected") return "rejected";
 	if (proposal.status === "accepted")
-		return value.includes(proposal.before) && !value.includes(proposal.after) ? "pending" : "accepted";
-	return value.includes(proposal.before) ? "pending" : "stale";
+		return canApplyTo(value, proposal) && !value.includes(proposal.after) ? "pending" : "accepted";
+	return canApplyTo(value, proposal) ? "pending" : "stale";
 }
 
 export const getProposalState = (data: ResumeData, proposal: Proposal): ProposalState =>
@@ -81,7 +90,7 @@ export const getProposalState = (data: ResumeData, proposal: Proposal): Proposal
 
 /** The text with `after` in place of `before`, or `undefined` when the proposal is out of date. */
 export function applyTo(value: string | undefined, proposal: Pick<Proposal, "before" | "after">) {
-	if (value === undefined || !value.includes(proposal.before)) return undefined;
+	if (value === undefined || !canApplyTo(value, proposal)) return undefined;
 	// A replacer function, so "$&" or "$1" in the new text stay literal.
 	return value.replace(proposal.before, () => proposal.after);
 }
@@ -118,6 +127,7 @@ export function replaceBlockText(block: string, text: string): string {
  * new block of the same kind follows it, so a new bullet lands as its own list item.
  */
 export function additionAfter(value: string, passageHtml: string, text: string) {
+	if (!canApplyTo(value, { before: passageHtml })) return undefined;
 	const index = value.indexOf(passageHtml);
 	if (index < 0) return undefined;
 
@@ -215,7 +225,7 @@ function passagesOf(
 	if (blocks.length === 0 && labels.includeEmpty && !html.trim()) {
 		return [
 			{
-				id: `p_${hash(`${target.sectionId}|${target.itemId ?? ""}|${target.field}|`)}`,
+				id: `p_${hash(`${target.sectionId}|${target.itemId ?? ""}|${target.roleId ?? ""}|${target.field}|`)}`,
 				target,
 				location: where.join(" · "),
 				html: "",
@@ -226,7 +236,7 @@ function passagesOf(
 
 	return blocks.map((block) => {
 		const place = block.bullet ? labels.bullet(++bullets) : labels.paragraph(++paragraphs);
-		const base = `p_${hash(`${target.sectionId}|${target.itemId ?? ""}|${target.field}|${block.text}`)}`;
+		const base = `p_${hash(`${target.sectionId}|${target.itemId ?? ""}|${target.roleId ?? ""}|${target.field}|${block.text}`)}`;
 		const count = (seen.get(base) ?? 0) + 1;
 		seen.set(base, count);
 		return {
@@ -272,17 +282,27 @@ export function collectPassages(data: ResumeData, labels: PassageLabels): Passag
 		if (section.hidden || section.type === "cover-letter") continue;
 
 		for (const entry of section.items) {
-			if (entry.hidden || typeof entry.description !== "string") continue;
+			if (entry.hidden) continue;
 			const title = labels.entryTitle(section.type, entry);
-			passages.push(
-				...passagesOf(
-					entry.description,
-					{ sectionId: section.id, itemId: entry.id, field: "description" },
-					[labels.sectionTitle(section.id), ...(title ? [title] : [])],
-					labels,
-					seen,
-				),
-			);
+			const where = [labels.sectionTitle(section.id), ...(title ? [title] : [])];
+			const field = section.type === "summary" ? "content" : "description";
+			if (typeof entry[field] === "string")
+				passages.push(
+					...passagesOf(entry[field], { sectionId: section.id, itemId: entry.id, field }, where, labels, seen),
+				);
+			if (Array.isArray(entry.roles))
+				for (const role of entry.roles as Entry[]) {
+					if (typeof role.description !== "string") continue;
+					passages.push(
+						...passagesOf(
+							role.description,
+							{ sectionId: section.id, itemId: entry.id, roleId: role.id, field: "description" },
+							[...where, ...(typeof role.position === "string" && role.position ? [role.position] : [])],
+							labels,
+							seen,
+						),
+					);
+				}
 		}
 	}
 

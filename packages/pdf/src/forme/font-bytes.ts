@@ -1,27 +1,6 @@
 import { unzlibSync } from "fflate";
 
-/**
- * Font bytes for Forme: WOFF files become plain sfnt, and ligatures are switched off.
- *
- * Forme 0.25 maps a ligature glyph back to only its first character in the PDF's ToUnicode table, so "Profiles"
- * set with an fi ligature extracts as "Profles" and applicant tracking systems read the wrong word
- * (danmolitor/forme#156). Renaming the GSUB `liga`, `clig`, `dlig` and `hlig` feature tags stops the shaper from
- * applying them. `rlig` stays: Arabic needs its required ligatures to be readable at all.
- * ponytail: byte patch until Forme fixes #156; drop it then.
- */
-
 const WOFF = 0x774f4646; // "wOFF"
-const LIGATURE_FEATURES = new Set(["liga", "clig", "dlig", "hlig"]);
-// Any tag the shaper doesn't know works; this one says why it's there.
-const DISABLED_TAG = [0x78, 0x6c, 0x69, 0x67]; // "xlig"
-
-const tagAt = (view: DataView, offset: number) =>
-	String.fromCharCode(
-		view.getUint8(offset),
-		view.getUint8(offset + 1),
-		view.getUint8(offset + 2),
-		view.getUint8(offset + 3),
-	);
 
 /** WOFF 1.0 → sfnt: inflate each table and lay them out after a fresh table directory. */
 function woffToSfnt(bytes: Uint8Array): Uint8Array {
@@ -73,36 +52,9 @@ function woffToSfnt(bytes: Uint8Array): Uint8Array {
 	return out;
 }
 
-/** Renames the discretionary ligature features in GSUB, in place. Returns how many it renamed. */
-function disableLigatures(sfnt: Uint8Array): number {
-	const view = new DataView(sfnt.buffer, sfnt.byteOffset, sfnt.byteLength);
-	const numTables = view.getUint16(4);
-	for (let index = 0; index < numTables; index++) {
-		const record = 12 + index * 16;
-		if (tagAt(view, record) !== "GSUB") continue;
-		const gsub = view.getUint32(record + 8);
-		const featureList = gsub + view.getUint16(gsub + 6);
-		const featureCount = view.getUint16(featureList);
-		let renamed = 0;
-		for (let feature = 0; feature < featureCount; feature++) {
-			const tag = featureList + 2 + feature * 6;
-			if (!LIGATURE_FEATURES.has(tagAt(view, tag))) continue;
-			sfnt.set(DISABLED_TAG, tag);
-			renamed++;
-		}
-		return renamed;
-	}
-	return 0;
-}
-
-/** Font file bytes ready for Forme. Formats it can't patch (WOFF2, collections) pass through unchanged. */
+/** WOFF 1.0 becomes sfnt; other supported formats pass through unchanged. */
 export function prepareFontBytes(bytes: Uint8Array): Uint8Array {
 	if (bytes.byteLength < 12) return bytes;
 	const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-	const signature = view.getUint32(0);
-	const sfnt = signature === WOFF ? woffToSfnt(bytes) : bytes.slice();
-	const flavor = new DataView(sfnt.buffer, sfnt.byteOffset, sfnt.byteLength).getUint32(0);
-	// TrueType (0x00010000, "true") and CFF ("OTTO") share the table directory layout.
-	if (flavor === 0x00010000 || flavor === 0x74727565 || flavor === 0x4f54544f) disableLigatures(sfnt);
-	return sfnt;
+	return view.getUint32(0) === WOFF ? woffToSfnt(bytes) : bytes;
 }

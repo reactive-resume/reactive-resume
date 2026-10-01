@@ -218,5 +218,6 @@ export const useEditorStore = create<EditorStore>()((set) => ({
 	setWritingReview: (writingReview) => set({ writingReview }),
 	setExportCheck: (exportCheck) => set({ exportCheck }),
 	setExportReportOpen: (exportReportOpen) => set({ exportReportOpen }),
-	reset: () => set(initialState),
+	reset: () =>
+		set((state) => ({ ...initialState, rendered: { ...initialState.rendered, version: state.rendered.version + 1 } })),
 }));

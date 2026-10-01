@@ -1,7 +1,7 @@
 import type { DbOrTx } from "@reactive-resume/db/client";
 import type { PgColumn, PgTable } from "drizzle-orm/pg-core";
 import { ORPCError } from "@orpc/client";
-import { and, desc, eq, inArray, lt, notInArray } from "drizzle-orm";
+import { and, desc, eq, inArray, lt, notInArray, or } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 
 // An editing session's autosave is refreshed at most this often.
@@ -10,7 +10,7 @@ const SESSION_REFRESH_MS = 2 * 60 * 1000;
 const RETENTION_MS = 90 * 24 * 60 * 60 * 1000;
 // A safety cap on autosaves per document, so storage stays bounded however often it's edited.
 const MAX_AUTOSAVES = 500;
-// History shows at most this many versions, newest first.
+// Bound recent expiring versions; permanent checkpoints always remain discoverable.
 const LIST_LIMIT = 100;
 
 type VersionSummary<TKind extends string> = { id: string; kind: TKind; name: string | null; createdAt: Date };
@@ -139,12 +139,25 @@ export function createVersionHistory<TKind extends string, TData>(config: {
 				.where(and(eq(config.owner.id, input.documentId), eq(config.owner.userId, input.userId)));
 			if (!owner) throw new ORPCError("NOT_FOUND");
 
+			const recent = db
+				.select({ id: v.id })
+				.from(v.table)
+				.where(
+					and(eq(v.document, input.documentId), eq(v.userId, input.userId), inArray(v.kind, [...config.expiringKinds])),
+				)
+				.orderBy(desc(v.createdAt))
+				.limit(LIST_LIMIT);
 			const versions = await db
 				.select(summary)
 				.from(v.table)
-				.where(eq(v.document, input.documentId))
-				.orderBy(desc(v.createdAt))
-				.limit(LIST_LIMIT);
+				.where(
+					and(
+						eq(v.document, input.documentId),
+						eq(v.userId, input.userId),
+						or(notInArray(v.kind, [...config.expiringKinds]), inArray(v.id, recent)),
+					),
+				)
+				.orderBy(desc(v.createdAt));
 			return versions as VersionSummary<TKind>[];
 		},
 
