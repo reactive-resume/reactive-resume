@@ -79,7 +79,7 @@ export const sharingRouter = {
 			z.object({
 				username: z.string().min(1).describe("The username of the resume owner."),
 				slug: z.string().min(1).describe("The slug of the resume."),
-				password: z.string().min(1).describe("The password to verify."),
+				password: z.string().min(1).max(64).describe("The password to verify."),
 			}),
 		)
 		.use(resumePasswordRateLimit)

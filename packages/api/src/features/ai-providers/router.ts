@@ -1,9 +1,9 @@
-import type { AiProviderResponse } from "./service";
 import { ORPCError } from "@orpc/client";
-import { type } from "@orpc/server";
 import z from "zod";
 import { protectedProcedure } from "../../context";
+import { aiProviderResponseSchema } from "../../dto/ai-provider";
 import { aiRequestRateLimit } from "../../middleware/rate-limit";
+import { paginate, paginationShape } from "../../pagination";
 import { providerInput, updateProviderInput } from "./inputs";
 import { aiProvidersService } from "./service";
 
@@ -25,11 +25,14 @@ export const aiProvidersRouter = {
 			summary: "List saved AI providers",
 			description: "Lists saved provider/model/API key combinations for the authenticated user. API keys are redacted.",
 		})
-		.output(type<AiProviderResponse[]>())
+		.output(z.array(aiProviderResponseSchema))
 		.errors({
 			PRECONDITION_FAILED: { message: "AI agent workspace is not configured.", status: 412 },
 		})
-		.handler(({ context }) => aiProvidersService.list({ userId: context.user.id })),
+		.input(z.object(paginationShape).default({}))
+		.handler(async ({ context, input }) =>
+			paginate(await aiProvidersService.list({ userId: context.user.id }), input, context.resHeaders),
+		),
 
 	create: protectedProcedure
 		.route({
@@ -41,7 +44,7 @@ export const aiProvidersRouter = {
 			description: "Stores an encrypted provider/model/API key combination. The key is never returned.",
 		})
 		.input(providerInput)
-		.output(type<AiProviderResponse>())
+		.output(aiProviderResponseSchema)
 		.errors({
 			BAD_REQUEST: { message: "Invalid AI provider configuration.", status: 400 },
 			FORBIDDEN: { message: "AI is managed by the server.", status: 403 },
@@ -74,7 +77,7 @@ export const aiProvidersRouter = {
 				"Updates a saved provider/model/API key combination. Updating the key requires retesting before use.",
 		})
 		.input(updateProviderInput)
-		.output(type<AiProviderResponse>())
+		.output(aiProviderResponseSchema)
 		.errors({
 			BAD_REQUEST: { message: "Invalid AI provider configuration.", status: 400 },
 			FORBIDDEN: { message: "AI is managed by the server.", status: 403 },
@@ -126,7 +129,7 @@ export const aiProvidersRouter = {
 			description: "Decrypts the saved API key server-side and validates the provider/model connection.",
 		})
 		.input(z.object({ id: z.string() }))
-		.output(type<AiProviderResponse>())
+		.output(aiProviderResponseSchema)
 		.use(aiRequestRateLimit)
 		.errors({
 			BAD_REQUEST: { message: "Invalid AI provider configuration.", status: 400 },

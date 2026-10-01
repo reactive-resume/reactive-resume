@@ -1,6 +1,8 @@
+import z from "zod";
 import { protectedProcedure } from "../../context";
 import { applicationDto } from "../../dto/application";
 import { resumeMutationRateLimit } from "../../middleware/rate-limit";
+import { paginate, paginationShape } from "../../pagination";
 import { applicationService } from "./service";
 
 export const crudRouter = {
@@ -17,12 +19,16 @@ export const crudRouter = {
 		})
 		.input(applicationDto.list.input)
 		.output(applicationDto.list.output)
-		.handler(({ input, context }) =>
-			applicationService.list({
-				userId: context.user.id,
-				...(input.status ? { status: input.status } : {}),
-				...(input.tags ? { tags: input.tags } : {}),
-			}),
+		.handler(async ({ input, context }) =>
+			paginate(
+				await applicationService.list({
+					userId: context.user.id,
+					...(input.status ? { status: input.status } : {}),
+					...(input.tags ? { tags: input.tags } : {}),
+				}),
+				input,
+				context.resHeaders,
+			),
 		),
 
 	getById: protectedProcedure
@@ -305,5 +311,8 @@ export const crudRouter = {
 			successDescription: "Distinct tags.",
 		})
 		.output(applicationDto.tags.output)
-		.handler(({ context }) => applicationService.listTags({ userId: context.user.id })),
+		.input(z.object(paginationShape).default({}))
+		.handler(async ({ context, input }) =>
+			paginate(await applicationService.listTags({ userId: context.user.id }), input, context.resHeaders),
+		),
 };

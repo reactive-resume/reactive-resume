@@ -1,5 +1,7 @@
 import type { IShadingAttributesProperties } from "docx";
+import type { HTMLElement, Node } from "node-html-parser";
 import { ExternalHyperlink, HeadingLevel, Paragraph, TextRun } from "docx";
+import { parse, NodeType } from "node-html-parser";
 import { isDarkColor, parseColorString } from "@reactive-resume/utils/color";
 import { toSafeDocxLink } from "./link-utils";
 
@@ -24,11 +26,11 @@ interface InlineStyle {
 type InlineChild = TextRun | ExternalHyperlink;
 
 const preservesWhitespace = (node: Node) => {
-	let ancestor = node.parentElement;
+	let ancestor = node.parentNode;
 	while (ancestor) {
 		if (/^(P|H[1-6])$/.test(ancestor.tagName) && ancestor.getAttribute("data-resume-whitespace") === "preserve")
 			return true;
-		ancestor = ancestor.parentElement;
+		ancestor = ancestor.parentNode;
 	}
 	return false;
 };
@@ -50,6 +52,18 @@ function toDocxColorValue(value: string) {
 	if (!rgba) return null;
 
 	return [rgba.r, rgba.g, rgba.b].map((channel) => channel.toString(16).padStart(2, "0").toUpperCase()).join("");
+}
+
+function styleProperty(element: HTMLElement | undefined, property: string): string | undefined {
+	return element
+		?.getAttribute("style")
+		?.split(";")
+		.reverse()
+		.map((declaration) => {
+			const colon = declaration.indexOf(":");
+			return [declaration.slice(0, colon).trim().toLowerCase(), declaration.slice(colon + 1).trim()];
+		})
+		.find(([name]) => name === property)?.[1];
 }
 
 function mergeStyle(parent: InlineStyle, tag: string, element?: HTMLElement): InlineStyle {
@@ -75,7 +89,7 @@ function mergeStyle(parent: InlineStyle, tag: string, element?: HTMLElement): In
 			next.font = "Courier New";
 			break;
 		case "MARK": {
-			const bgColor = (element as HTMLElement | undefined)?.style.backgroundColor;
+			const bgColor = styleProperty(element, "background-color");
 			const fill = bgColor ? toDocxColorValue(bgColor) : null;
 			next.shading = { fill: fill ?? "FFFF00" };
 			if (bgColor && isDarkColor(bgColor)) next.color = "FFFFFF";
@@ -83,7 +97,7 @@ function mergeStyle(parent: InlineStyle, tag: string, element?: HTMLElement): In
 		}
 	}
 
-	const colorValue = (element as HTMLElement | undefined)?.style.color;
+	const colorValue = styleProperty(element, "color");
 	if (colorValue) {
 		const color = toDocxColorValue(colorValue);
 		if (color) next.color = color;
@@ -96,7 +110,7 @@ function collectInlineChildren(node: Node, style: InlineStyle): InlineChild[] {
 	const children: InlineChild[] = [];
 
 	for (const child of node.childNodes) {
-		if (child.nodeType === Node.TEXT_NODE) {
+		if (child.nodeType === NodeType.TEXT_NODE) {
 			const text = (child.textContent ?? "").replace(/\t/g, preservesWhitespace(child) ? "    " : "\t");
 			if (text) {
 				children.push(new TextRun({ text, ...style }));
@@ -104,7 +118,7 @@ function collectInlineChildren(node: Node, style: InlineStyle): InlineChild[] {
 			continue;
 		}
 
-		if (child.nodeType !== Node.ELEMENT_NODE) continue;
+		if (child.nodeType !== NodeType.ELEMENT_NODE) continue;
 
 		const el = child as HTMLElement;
 		const tag = el.tagName;
@@ -184,7 +198,7 @@ function processBlockElement(
 
 			if (hasNestedBlocks) {
 				for (const liChild of li.childNodes) {
-					if (liChild.nodeType === Node.TEXT_NODE) {
+					if (liChild.nodeType === NodeType.TEXT_NODE) {
 						const text = (liChild.textContent ?? "").trim();
 						if (text) {
 							paragraphs.push(
@@ -195,7 +209,7 @@ function processBlockElement(
 								}),
 							);
 						}
-					} else if (liChild.nodeType === Node.ELEMENT_NODE) {
+					} else if (liChild.nodeType === NodeType.ELEMENT_NODE) {
 						processBlockElement(liChild as HTMLElement, mergedStyle, paragraphs, level, quoteIndent);
 					}
 				}
@@ -217,16 +231,16 @@ function processBlockElement(
 
 	if (tag === "BLOCKQUOTE") {
 		const quoteStyle = { ...mergedStyle, italics: true };
-		const inline = el.ownerDocument.createElement("p");
+		const inline = parse("<p></p>").firstChild as HTMLElement;
 		const flushInline = () => {
-			if (!inline.hasChildNodes()) return;
+			if (inline.childNodes.length === 0) return;
 			processBlockElement(inline, quoteStyle, paragraphs, listLevel, quoteIndent + 720);
-			inline.replaceChildren();
+			inline.set_content([]);
 		};
 		// Keep each semantic paragraph's own offset and preserve adjacent inline
 		// content as one paragraph. Nested quotes add their existing 720-twip inset.
 		for (const child of el.childNodes) {
-			if (child.nodeType === Node.ELEMENT_NODE) {
+			if (child.nodeType === NodeType.ELEMENT_NODE) {
 				const element = child as HTMLElement;
 				if (HEADING_MAP[element.tagName] || /^(P|DIV|UL|OL|BLOCKQUOTE|PRE|HR)$/.test(element.tagName)) {
 					flushInline();
@@ -234,8 +248,9 @@ function processBlockElement(
 					continue;
 				}
 			}
-			if (child.nodeType === Node.TEXT_NODE && !child.textContent?.trim() && !inline.hasChildNodes()) continue;
-			inline.appendChild(child.cloneNode(true));
+			if (child.nodeType === NodeType.TEXT_NODE && !child.textContent?.trim() && inline.childNodes.length === 0)
+				continue;
+			inline.appendChild(child.clone());
 		}
 		flushInline();
 		return;
@@ -281,7 +296,7 @@ function processBlockElement(
 
 /**
  * Converts an HTML string (from TipTap rich text editor) into an array of docx Paragraphs.
- * Uses the browser's DOMParser to parse HTML, then walks the DOM tree to produce
+ * Parses HTML without browser globals, then walks the tree to produce
  * structured docx content with proper formatting (bold, italic, lists, links, etc.).
  *
  * @param html - The HTML string to convert
@@ -297,14 +312,13 @@ export function htmlToParagraphs(html: string, styleConfig?: HtmlStyleConfig): P
 	if (styleConfig?.size) baseStyle.size = styleConfig.size;
 	if (styleConfig?.color) baseStyle.color = styleConfig.color;
 
-	const parser = new DOMParser();
-	const doc = parser.parseFromString(html, "text/html");
+	const doc = parse(html);
 	// Script and style text is code, not content: drop it before any walk below prints it.
-	for (const element of doc.body.querySelectorAll("script, style")) element.remove();
+	for (const element of doc.querySelectorAll("script, style")) element.remove();
 	const paragraphs: Paragraph[] = [];
 
-	for (const child of doc.body.childNodes) {
-		if (child.nodeType === Node.TEXT_NODE) {
+	for (const child of doc.childNodes) {
+		if (child.nodeType === NodeType.TEXT_NODE) {
 			const text = (child.textContent ?? "").trim();
 			if (text) {
 				paragraphs.push(new Paragraph({ children: [new TextRun({ text, ...baseStyle })] }));
@@ -312,7 +326,7 @@ export function htmlToParagraphs(html: string, styleConfig?: HtmlStyleConfig): P
 			continue;
 		}
 
-		if (child.nodeType === Node.ELEMENT_NODE) {
+		if (child.nodeType === NodeType.ELEMENT_NODE) {
 			processBlockElement(child as HTMLElement, baseStyle, paragraphs);
 		}
 	}

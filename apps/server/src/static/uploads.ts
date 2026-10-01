@@ -21,9 +21,16 @@ export async function handleUpload(request: Request) {
 
 	const filename = filePath.split("/").pop() ?? filePath;
 	const contentType = storedFile.contentType ?? inferContentType(filename);
+	const isPublicPicture = filePath.startsWith("pictures/") && INLINE_CONTENT_TYPES.has(contentType);
+	if (!isPublicPicture) {
+		const { resolveUserFromRequestHeaders } = await import("@reactive-resume/api/context");
+		const user = await resolveUserFromRequestHeaders(request.headers).catch(() => null);
+		if (user?.id !== userId)
+			return new Response("Not Found", { status: 404, headers: { "Cache-Control": "no-store" } });
+	}
 	const etag = createEtag(storedFile);
 
-	if (isNotModified(request.headers, etag)) return makeNotModifiedResponse(etag);
+	if (isPublicPicture && isNotModified(request.headers, etag)) return makeNotModifiedResponse(etag);
 
 	const shouldForceDownload = !INLINE_CONTENT_TYPES.has(contentType);
 
@@ -35,7 +42,7 @@ export async function handleUpload(request: Request) {
 		headers.set("Content-Disposition", `attachment; filename="${encodeURIComponent(basename(filename))}"`);
 	}
 
-	headers.set("Cache-Control", "public, max-age=31536000, immutable");
+	headers.set("Cache-Control", isPublicPicture ? "public, max-age=31536000, immutable" : "private, no-store");
 	headers.set("ETag", etag);
 	headers.set("X-Content-Type-Options", "nosniff");
 	headers.set("X-Robots-Tag", "noindex, nofollow");

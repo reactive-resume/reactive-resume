@@ -2,7 +2,8 @@ import { eventIterator } from "@orpc/server";
 import z from "zod";
 import { protectedProcedure } from "../../context";
 import { coverLetterDto } from "../../dto/cover-letter";
-import { aiRequestRateLimit } from "../../middleware/rate-limit";
+import { aiRequestRateLimit, resumeMutationRateLimit } from "../../middleware/rate-limit";
+import { paginate } from "../../pagination";
 import { draftLetterBody } from "./draft";
 import { coverLetterService } from "./service";
 import { deleteLetterVersion, getLetterVersion, listLetterVersions, renameLetterVersion } from "./versions";
@@ -46,6 +47,7 @@ export const coverLettersRouter = {
 			successDescription: "The newly created cover letter.",
 		})
 		.input(coverLetterDto.create.input)
+		.use(resumeMutationRateLimit)
 		.output(coverLetterDto.create.output)
 		.handler(({ context, input }) => coverLetterService.create({ ...input, userId: context.user.id })),
 	update: protectedProcedure
@@ -59,6 +61,7 @@ export const coverLettersRouter = {
 			successDescription: "The updated cover letter.",
 		})
 		.input(coverLetterDto.update.input)
+		.use(resumeMutationRateLimit)
 		.output(coverLetterDto.update.output)
 		.handler(({ context, input }) => coverLetterService.update({ ...input, userId: context.user.id })),
 	refreshStyle: protectedProcedure
@@ -72,6 +75,7 @@ export const coverLettersRouter = {
 			successDescription: "The cover letter with refreshed style.",
 		})
 		.input(coverLetterDto.refreshStyle.input)
+		.use(resumeMutationRateLimit)
 		.output(coverLetterDto.refreshStyle.output)
 		.handler(({ context, input }) => coverLetterService.refreshStyle({ ...input, userId: context.user.id })),
 	duplicate: protectedProcedure
@@ -85,6 +89,7 @@ export const coverLettersRouter = {
 			successDescription: "The duplicated cover letter.",
 		})
 		.input(coverLetterDto.duplicate.input)
+		.use(resumeMutationRateLimit)
 		.output(coverLetterDto.duplicate.output)
 		.handler(({ context, input }) => coverLetterService.duplicate({ ...input, userId: context.user.id })),
 	delete: protectedProcedure
@@ -99,6 +104,7 @@ export const coverLettersRouter = {
 			successDescription: "The cover letter is in Trash.",
 		})
 		.input(coverLetterDto.delete.input)
+		.use(resumeMutationRateLimit)
 		.output(coverLetterDto.delete.output)
 		.handler(({ context, input }) => coverLetterService.delete({ ...input, userId: context.user.id })),
 	export: protectedProcedure
@@ -125,6 +131,7 @@ export const coverLettersRouter = {
 			successDescription: "The imported cover letter.",
 		})
 		.input(coverLetterDto.import.input)
+		.use(resumeMutationRateLimit)
 		.output(coverLetterDto.import.output)
 		.handler(({ context, input }) => coverLetterService.import({ ...input, userId: context.user.id })),
 	listVersions: protectedProcedure
@@ -140,7 +147,13 @@ export const coverLettersRouter = {
 		})
 		.input(coverLetterDto.listVersions.input)
 		.output(coverLetterDto.listVersions.output)
-		.handler(({ context, input }) => listLetterVersions({ coverLetterId: input.id, userId: context.user.id })),
+		.handler(async ({ context, input }) =>
+			paginate(
+				await listLetterVersions({ coverLetterId: input.id, userId: context.user.id }),
+				input,
+				context.resHeaders,
+			),
+		),
 	getVersion: protectedProcedure
 		.route({
 			method: "GET",
@@ -167,6 +180,7 @@ export const coverLettersRouter = {
 			successDescription: "The new version.",
 		})
 		.input(coverLetterDto.createVersion.input)
+		.use(resumeMutationRateLimit)
 		.output(coverLetterDto.createVersion.output)
 		.handler(({ context, input }) => coverLetterService.createVersion({ ...input, userId: context.user.id })),
 	renameVersion: protectedProcedure
@@ -180,6 +194,7 @@ export const coverLettersRouter = {
 			successDescription: "The renamed version.",
 		})
 		.input(coverLetterDto.renameVersion.input)
+		.use(resumeMutationRateLimit)
 		.output(coverLetterDto.renameVersion.output)
 		.handler(({ context, input }) =>
 			renameLetterVersion({
@@ -200,6 +215,7 @@ export const coverLettersRouter = {
 			successDescription: "The version was deleted.",
 		})
 		.input(coverLetterDto.deleteVersion.input)
+		.use(resumeMutationRateLimit)
 		.output(coverLetterDto.deleteVersion.output)
 		.handler(({ context, input }) =>
 			deleteLetterVersion({ coverLetterId: input.id, userId: context.user.id, versionId: input.versionId }),
@@ -216,6 +232,7 @@ export const coverLettersRouter = {
 			successDescription: "The restored letter.",
 		})
 		.input(coverLetterDto.restoreVersion.input)
+		.use(resumeMutationRateLimit)
 		.output(coverLetterDto.restoreVersion.output)
 		.handler(({ context, input }) => coverLetterService.restoreVersion({ ...input, userId: context.user.id })),
 	draft: protectedProcedure

@@ -112,7 +112,51 @@ Every endpoint, with its parameters, request body and responses, is listed in th
 | AI            | `/ai-providers`, `/ai`, `/agent`        | Manage your AI providers, run AI tools such as resume import from PDF, work with assistant conversations                                               |
 | Account       | `/auth/account/export`, `/auth/account` | Export your account data, delete your account                                                                                                          |
 
+Additional app workflows have REST endpoints:
+
+| Workflow                                                                                | Endpoint                                                                         |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| PDF, JSON Resume, Reactive Resume v4/current, LinkedIn imports                          | `POST /resumes/file-imports`                                                     |
+| PDF, Word, Markdown and JSON exports                                                    | `GET /resumes/{id}/exports/{format}`, `GET /cover-letters/{id}/exports/{format}` |
+| Editor content checks and job-term matching                                             | `GET /resumes/{id}/checks`, `POST /resumes/{id}/job-matches`                     |
+| Public PDF readability checker                                                          | `POST /pdf-checks`                                                               |
+| File uploads and deletion                                                               | `POST /files`, `DELETE /files`                                                   |
+| Web search integration settings and connection tests                                    | `/integrations/web-access`                                                       |
+| Sign-in, sessions, profile, passwords, two-factor authentication, passkeys and API keys | `/api/auth/*` (outside `/api/openapi`)                                           |
+
+Authentication workflows use Better Auth's native HTTP API and its own error contract. Your instance publishes their specification at `/api/auth/open-api/generate-schema`; use that specification for the enabled authentication methods. Browser interactions such as zoom, print dialogs and local undo do not require separate server endpoints: use document changes, versions and exports for the corresponding data workflows.
+
 `GET /api/health` (outside `/api/openapi`) reports whether the instance and its database and storage are healthy. It needs no key.
+
+## Imports and exports
+
+File imports accept a multipart form. The format is one of `PDF`, `REACTIVE_RESUME`, `REACTIVE_RESUME_V4`, `JSON_RESUME` or `LINKEDIN`; the maximum file size is 10 MiB. PDF imports read the text layer without AI. AI-assisted PDF and Word parsing remain available under `/ai/pdf-parses` and `/ai/docx-parses`; save the resulting data through `/resumes/imports`.
+
+```bash
+curl "https://rxresu.me/api/openapi/resumes/file-imports" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -F "format=JSON_RESUME" -F "file=@resume.json"
+
+curl "https://rxresu.me/api/openapi/resumes/RESUME_ID/exports/docx" \
+  -H "x-api-key: YOUR_API_KEY" -o resume.docx
+```
+
+Exports accept `pdf`, `docx`, `md` or `json` and return a downloadable file. They enforce document ownership. The public checker accepts a multipart `file` (PDF, maximum 25 MB) and optional `jobDescription` text. It stores nothing, examines at most 30 pages and reports truncation or skipped checks. Parsing has a 45-second deadline. Hosting-provider request limits still apply.
+
+## Pagination and partial updates
+
+Collection endpoints support `limit` (1–100) and `offset` (zero-based). For existing array responses, omitting both preserves the complete array for compatibility. Supplying only `offset` selects a page size of 20. The `X-Total-Count` header reports the total before slicing; paginated responses also include `X-Limit` and `X-Offset`. The cover-letter list retains its existing `{ items, total }` response and default pagination.
+
+```bash
+curl "https://rxresu.me/api/openapi/resumes?limit=20&offset=20" \
+  -H "x-api-key: YOUR_API_KEY" -i
+```
+
+Use `PATCH` for partial application, interview, timeline-entry and cover-letter updates. Resume content uses JSON Patch at `/resumes/{id}`; metadata uses `PATCH /resumes/{id}/metadata`. Resource-oriented paths such as `/resumes/{id}/copies` and `/documents/{type}/{id}/trash` are preferred for new integrations. Existing verb-based routes, partial `PUT` routes, response shapes and enum values remain supported.
+
+## Retries
+
+State-changing operations do not implement `Idempotency-Key`. Treat mutations as unsafe to retry automatically, including requests that timed out: the change might already have happened. Read the current resource before deciding whether to repeat a write. Repeating create, copy, import or AI operations can create duplicates or incur provider charges.
 
 ## Authentication methods
 
@@ -122,9 +166,11 @@ The API accepts three kinds of credentials:
 2. `Authorization: Bearer <token>`: an OAuth access token, which MCP clients get when you connect them with OAuth. See [Using the MCP server](/guides/using-the-mcp-server).
 3. The session cookie of a signed-in browser.
 
-Send one of them. If a request has an `x-api-key` header, the API ignores any bearer token, so a wrong key isn't rescued by a valid token.
+Send one credential. When several are present, the server tries API key, bearer token, then session cookie, using the first valid credential. Cookie-authenticated requests with a foreign `Origin` or cross-site fetch metadata are rejected; explicit API keys and bearer tokens do not rely on browser cookies.
 
-A request without valid credentials gets `401` with the code `UNAUTHORIZED`.
+A private request without valid credentials gets `401` with the code `UNAUTHORIZED`. Public operations are marked with `security: []` in the OpenAPI specification. Public resumes still enforce visibility, trash status and sharing passwords, and redact private data.
+
+REST data responses use `Cache-Control: no-store`. Uploaded profile images are public; other uploaded files require the owner's credentials, including conditional download requests. Assistant attachments are not exposed through the uploads URL. Unknown and unauthorized file URLs return `404`.
 
 ## Limits
 
@@ -133,10 +179,12 @@ A request without valid credentials gets `401` with the code `UNAUTHORIZED`.
 | Requests per API key                                                                            | 1,000 per hour                                                |
 | Changes to one resume, document or application (create, update, patch, lock, duplicate, delete) | 300 per minute                                                |
 | PDF downloads of one resume (`GET /resumes/{id}/pdf`)                                           | 5 per minute                                                  |
+| Public PDF checks per client address                                                            | 5 per minute                                                  |
+| REST request body size (before endpoint-specific limits)                                        | 40 MiB                                                        |
 | AI requests                                                                                     | 20 per minute                                                 |
 | Request body size on Vercel installations                                                       | 4.5 MB (see [Large RPC requests](/guides/large-rpc-requests)) |
 
-When you hit a limit, the API responds with `429`. On a self-hosted installation, `FLAG_DISABLE_API_RATE_LIMIT` turns off the per-key limit together with the sign-in limits; the other limits stay on (see [Environment variables](/self-hosting/environment-variables)).
+Procedure limits apply in production. When you hit a limit, the API responds with `429`. On a self-hosted installation, `FLAG_DISABLE_API_RATE_LIMIT` turns off the per-key limit together with the sign-in limits; the procedure limits also turn off (see [Environment variables](/self-hosting/environment-variables)).
 
 ## Errors
 
@@ -146,7 +194,7 @@ Errors come back as JSON with a machine-readable `code`, the HTTP `status` and a
 { "defined": false, "code": "NOT_FOUND", "status": 404, "message": "Not Found" }
 ```
 
-Branch on `code` rather than on the message text.
+Branch on `code` rather than on the message text. Invalid input uses `400`, missing authentication `401`, forbidden actions `403`, missing or inaccessible resources `404`, conflicts `409`, oversized requests `413`, rate limits `429`, and unexpected failures `500`. Unexpected failures do not expose internal exception details.
 
 ## Revoke a key
 

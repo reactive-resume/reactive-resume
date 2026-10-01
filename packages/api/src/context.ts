@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { auth, verifyOAuthToken } from "@reactive-resume/auth/config";
 import { db } from "@reactive-resume/db/client";
 import { user } from "@reactive-resume/db/schema";
+import { env } from "@reactive-resume/env/server";
 
 interface ORPCContext {
 	locale: Locale;
@@ -72,29 +73,44 @@ export async function resolveUserFromRequestHeaders(headers: Headers): Promise<U
 	const bearerUser = await getUserFromBearerToken(headers);
 	if (bearerUser) return bearerUser;
 
+	// Cookie credentials are ambient. Never use them for a request from another origin,
+	// including multipart uploads that browsers can submit without a CORS preflight.
+	const origin = headers.get("origin");
+	if (
+		headers.has("cookie") &&
+		((origin && origin !== new URL(env.APP_URL).origin) || headers.get("sec-fetch-site") === "cross-site")
+	) {
+		throw new ORPCError("FORBIDDEN", { message: "Cross-origin session requests are not allowed." });
+	}
 	return getUserFromHeaders(headers);
 }
 
 const base = os.$context<ORPCContext>();
 
-export const publicProcedure = base.use(async ({ context, next }) => {
-	const user = await resolveUserFromRequestHeaders(context.reqHeaders);
+export const publicProcedure = base
+	.route({ spec: (operation) => ({ ...operation, security: [] }) })
+	.use(async ({ context, next }) => {
+		const user = await resolveUserFromRequestHeaders(context.reqHeaders);
 
-	return next({
-		context: {
-			...context,
-			user,
-		},
+		return next({
+			context: {
+				...context,
+				user,
+			},
+		});
 	});
-});
 
-export const protectedProcedure = publicProcedure.use(({ context, next }) => {
-	if (!context.user) throw new ORPCError("UNAUTHORIZED");
+export const protectedProcedure = publicProcedure
+	.route({
+		spec: (operation) => ({ ...operation, security: [{ apiKey: [] }, { bearerAuth: [] }, { cookieAuth: [] }] }),
+	})
+	.use(({ context, next }) => {
+		if (!context.user) throw new ORPCError("UNAUTHORIZED");
 
-	return next({
-		context: {
-			...context,
-			user: context.user,
-		},
+		return next({
+			context: {
+				...context,
+				user: context.user,
+			},
+		});
 	});
-});

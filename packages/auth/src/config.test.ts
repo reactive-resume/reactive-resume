@@ -21,3 +21,12 @@ describe("session freshness", () => {
 		expect(auth.options.session?.freshAge).toBe(0);
 	});
 });
+
+it("publishes the configured native authentication HTTP contract", async () => {
+	const response = await auth.handler(new Request(`${env.APP_URL}/api/auth/open-api/generate-schema`));
+	expect(response.status).toBe(200);
+	const spec = await response.json();
+	expect(spec.paths).toHaveProperty("/sign-in/email");
+	expect(spec.paths).toHaveProperty("/get-session");
+	expect(spec.paths).toHaveProperty("/api-key/create");
+});

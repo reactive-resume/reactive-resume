@@ -41,6 +41,7 @@ const bundledInteropPackages = new Set([
 	"source-map-js",
 	"launder",
 	"dayjs",
+	"wink-porter2-stemmer",
 ]);
 
 const packageNameOf = (id: string) =>

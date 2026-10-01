@@ -91,3 +91,55 @@ describe("generateOpenApiSpec", () => {
 		expect(findImpossibleRequestSchemas(spec)).toEqual([]);
 	});
 });
+
+it("documents anonymous routes, all supported credentials, and additive PATCH routes", async () => {
+	const spec = await generateSpec();
+	expect(spec.paths?.["/flags"]?.get?.security).toEqual([]);
+	expect(spec.paths?.["/resumes/{username}/{slug}"]?.get?.security).toEqual([]);
+	expect(spec.paths?.["/resumes"]?.get?.security).toEqual([{ apiKey: [] }, { bearerAuth: [] }, { cookieAuth: [] }]);
+	for (const path of ["/applications/{id}", "/cover-letters/{id}"]) {
+		expect(spec.paths?.[path]?.put?.requestBody).toBeDefined();
+		expect(spec.paths?.[path]?.patch?.requestBody).toBeDefined();
+	}
+	expect(spec.paths?.["/files"]?.post?.requestBody).toHaveProperty("content.multipart/form-data");
+	expect(spec.paths?.["/files"]?.post?.requestBody).not.toHaveProperty("content.application/json");
+	expect(spec.paths?.["/resumes"]?.get?.parameters).toEqual(
+		expect.arrayContaining([
+			expect.objectContaining({ name: "limit", in: "query" }),
+			expect.objectContaining({ name: "offset", in: "query" }),
+		]),
+	);
+});
+
+it("gives every published app operation an explicit route and input/output contracts", async () => {
+	const { openAPIRouter } = await import("./generator");
+	const visit = (node: unknown, path: string) => {
+		if (!node || typeof node !== "object") return;
+		if ("~orpc" in node) {
+			const definition = node["~orpc"] as {
+				route: { tags?: string[]; method?: string; path?: string };
+				inputSchema?: unknown;
+				outputSchema?: unknown;
+			};
+			if (definition.route.tags?.includes("Internal")) return;
+			expect(definition.route.method, path).toBeDefined();
+			expect(definition.route.path, path).toBeDefined();
+			expect(definition.inputSchema, path).toBeDefined();
+			expect(definition.outputSchema, path).toBeDefined();
+			return;
+		}
+		for (const [key, value] of Object.entries(node)) visit(value, `${path}.${key}`);
+	};
+	visit(openAPIRouter, "api");
+});
+
+it("describes empty responses and common errors without impossible payloads", async () => {
+	const spec = await generateSpec();
+	const deleted = spec.paths?.["/files"]?.delete?.responses?.["200"];
+	expect(deleted).toBeDefined();
+	expect(deleted).not.toHaveProperty("content");
+	expect(spec.paths?.["/resumes"]?.get?.responses?.default).toHaveProperty(
+		"content.application/json.schema.properties.code",
+	);
+	expect(spec.paths?.["/resumes"]?.get?.responses?.["200"]).toHaveProperty("headers.X-Total-Count");
+});

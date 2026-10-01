@@ -1,4 +1,5 @@
 import { count } from "drizzle-orm";
+import z from "zod";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 
@@ -62,9 +63,8 @@ const fetchGitHubStarsOnce = async (): Promise<number | null> => {
 		});
 		if (!response.ok) return null;
 
-		const data = (await response.json()) as { stargazers_count?: unknown };
-		const stars = Number(data.stargazers_count);
-		return Number.isFinite(stars) && stars > 0 ? stars : null;
+		const data = z.object({ stargazers_count: z.number().int().nonnegative() }).safeParse(await response.json());
+		return data.success ? data.data.stargazers_count : null;
 	} catch {
 		return null;
 	}

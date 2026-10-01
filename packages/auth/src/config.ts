@@ -9,7 +9,7 @@ import { compare, hash } from "bcryptjs";
 import { APIError, betterAuth } from "better-auth";
 import { createAuthMiddleware } from "better-auth/api";
 import { verifyBearerToken } from "better-auth/oauth2";
-import { admin, jwt } from "better-auth/plugins";
+import { admin, jwt, openAPI } from "better-auth/plugins";
 import { genericOAuth } from "better-auth/plugins/generic-oauth";
 import { twoFactor } from "better-auth/plugins/two-factor";
 import { username } from "better-auth/plugins/username";
@@ -303,6 +303,7 @@ const getAuthConfig = () => {
 		},
 
 		plugins: [
+			openAPI({ disableDefaultReference: true }),
 			jwt(),
 			admin(),
 			passkey(),

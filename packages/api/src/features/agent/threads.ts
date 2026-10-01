@@ -1,5 +1,7 @@
 import z from "zod";
 import { protectedProcedure } from "../../context";
+import { agentThreadSchema, agentConversationSchema } from "../../dto/agent";
+import { paginate, paginationShape } from "../../pagination";
 import { mapAgentEnvironmentError } from "./routing";
 import { agentService } from "./service";
 
@@ -13,7 +15,11 @@ export const threadsRouter = {
 			summary: "List agent threads",
 		})
 		.use(mapAgentEnvironmentError)
-		.handler(({ context }) => agentService.threads.list({ userId: context.user.id })),
+		.output(z.array(agentThreadSchema))
+		.input(z.object(paginationShape).default({}))
+		.handler(async ({ context, input }) =>
+			paginate(await agentService.threads.list({ userId: context.user.id }), input, context.resHeaders),
+		),
 
 	start: protectedProcedure
 		.route({
@@ -37,6 +43,7 @@ export const threadsRouter = {
 				}),
 		)
 		.use(mapAgentEnvironmentError)
+		.output(agentThreadSchema)
 		.handler(({ context, input }) => agentService.threads.start({ userId: context.user.id, ...input })),
 
 	get: protectedProcedure
@@ -49,6 +56,7 @@ export const threadsRouter = {
 		})
 		.input(z.object({ id: z.string() }))
 		.use(mapAgentEnvironmentError)
+		.output(agentConversationSchema)
 		.handler(({ context, input }) => agentService.threads.get({ id: input.id, userId: context.user.id })),
 
 	update: protectedProcedure
@@ -61,6 +69,7 @@ export const threadsRouter = {
 		})
 		.input(z.object({ id: z.string(), aiProviderId: z.string().min(1) }))
 		.use(mapAgentEnvironmentError)
+		.output(agentThreadSchema)
 		.handler(({ context, input }) =>
 			agentService.threads.update({ id: input.id, userId: context.user.id, aiProviderId: input.aiProviderId }),
 		),

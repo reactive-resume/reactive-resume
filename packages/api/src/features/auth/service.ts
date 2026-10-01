@@ -8,7 +8,7 @@ import { env } from "@reactive-resume/env/server";
 import { coverLetterService } from "../cover-letters/service";
 import { getStorageService } from "../storage/service";
 
-export type ProviderList = Partial<Record<AuthProvider, string>>;
+type ProviderList = Partial<Record<AuthProvider, string>>;
 
 const providers = {
 	list: (): ProviderList => {

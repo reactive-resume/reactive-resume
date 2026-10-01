@@ -14,6 +14,7 @@ const githubRouter = {
 				"Returns the number of GitHub stars for the Reactive Resume repository. The count is cached for up to 6 hours and falls back to a last-known value if the GitHub API is unavailable. No authentication required.",
 			successDescription: "The number of GitHub stars for the Reactive Resume repository.",
 		})
+		.input(z.object({}).optional())
 		.output(z.number().describe("The number of GitHub stars."))
 		.handler(() => statisticsService.github.getStarCount()),
 };
@@ -27,6 +28,7 @@ export const statisticsRouter = {
 			operationId: "getStatisticsTotals",
 			summary: "Get user and resume totals with their cache timestamp",
 		})
+		.input(z.object({}).optional())
 		.output(
 			z.object({
 				users: z.number(),

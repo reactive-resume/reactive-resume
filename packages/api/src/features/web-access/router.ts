@@ -1,4 +1,5 @@
 import { ORPCError } from "@orpc/client";
+import z from "zod";
 import { protectedProcedure } from "../../context";
 import { webAccessDto } from "../../dto/web-access";
 import { WebAccessError } from "./contracts";
@@ -20,6 +21,7 @@ export const webAccessRouter = {
 			operationId: "getWebAccessStatus",
 			summary: "Get search and reading availability",
 		})
+		.input(z.object({}).optional())
 		.output(webAccessDto.status.output)
 		.handler(({ context }) => webAccessService.status(context.user.id)),
 	save: protectedProcedure
@@ -43,6 +45,7 @@ export const webAccessRouter = {
 			summary: "Remove the personal web connection",
 		})
 		.errors(errors)
+		.input(z.object({}).optional())
 		.output(webAccessDto.delete.output)
 		.handler(({ context }) => webAccessService.delete(context.user.id)),
 	test: protectedProcedure
@@ -57,6 +60,7 @@ export const webAccessRouter = {
 			PRECONDITION_FAILED: { message: "No external web connection is configured.", status: 412 },
 			RATE_LIMIT_EXCEEDED: { message: "Too many web requests. Try again later.", status: 429 },
 		})
+		.input(z.object({}).optional())
 		.output(webAccessDto.test.output)
 		.handler(async ({ context, signal }) => {
 			const connection = await webAccessService.resolve(context.user.id);

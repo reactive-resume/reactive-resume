@@ -1,4 +1,5 @@
 import z from "zod";
+import { paginationShape } from "../pagination";
 
 const documentTypeSchema = z.enum(["resume", "letter"]).describe("resume, or letter (a saved cover letter).");
 const documentRefSchema = z.object({
@@ -26,7 +27,10 @@ export type DocumentSummary = z.infer<typeof documentSchema>;
 export const documentsDto = {
 	list: {
 		input: z
-			.object({ trashed: z.boolean().default(false).describe("List the documents in Trash instead.") })
+			.object({
+				...paginationShape,
+				trashed: z.boolean().default(false).describe("List the documents in Trash instead."),
+			})
 			.default({ trashed: false }),
 		output: z.array(documentSchema),
 	},

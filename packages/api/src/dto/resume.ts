@@ -4,6 +4,7 @@ import * as schema from "@reactive-resume/db/schema";
 import { jsonPatchOperationSchema } from "@reactive-resume/resume/patch";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { writableResumeDataSchema } from "@reactive-resume/schema/resume/write";
+import { paginationShape } from "../pagination";
 
 const resumeSchema = createSelectSchema(schema.resume, {
 	id: z.string().describe("The ID of the resume."),
@@ -38,6 +39,7 @@ export const resumeDto = {
 	list: {
 		input: z
 			.object({
+				...paginationShape,
 				tags: z
 					.union([z.string().transform((tag) => [tag]), z.array(z.string())])
 					.optional()
@@ -168,7 +170,10 @@ export const resumeDto = {
 	},
 
 	listVersions: {
-		input: z.object({ resumeId: z.string().describe("The ID of the resume whose version history to list.") }),
+		input: z.object({
+			...paginationShape,
+			resumeId: z.string().describe("The ID of the resume whose version history to list."),
+		}),
 		output: z.array(versionSchema),
 	},
 

@@ -1,7 +1,7 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { ORPCError } from "@orpc/client";
 import { AISDKError } from "ai";
 import { flattenError, ZodError, z } from "zod";
+import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { protectedProcedure } from "../../context";
 import { aiRequestRateLimit } from "../../middleware/rate-limit";
 import { aiProvidersService } from "../ai-providers/service";
@@ -57,7 +57,8 @@ export const aiRouter = {
 		.input(z.object({ aiProviderId: z.string().optional(), file: fileInputSchema }))
 		.use(aiRequestRateLimit)
 		.errors(aiErrors)
-		.handler(async ({ context, input }): Promise<ResumeData> => {
+		.output(resumeDataSchema)
+		.handler(async ({ context, input }) => {
 			try {
 				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);
 				return await aiService.parsePdf({
@@ -95,6 +96,7 @@ export const aiRouter = {
 		)
 		.use(aiRequestRateLimit)
 		.errors(aiErrors)
+		.output(resumeDataSchema)
 		.handler(async ({ context, input }) => {
 			try {
 				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);

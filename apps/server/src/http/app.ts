@@ -3,6 +3,7 @@ import type { Context } from "hono";
 import { BlockList, isIP } from "node:net";
 import { getConnInfo } from "@hono/node-server/conninfo";
 import { Hono } from "hono";
+import { bodyLimit } from "hono/body-limit";
 import { compress } from "hono/compress";
 import { prepareStagedBody, withStagedBody } from "@reactive-resume/api/features/storage/transport";
 import { env } from "@reactive-resume/env/server";
@@ -72,6 +73,17 @@ export function createApp(options: AppOptions = {}) {
 		c.header("Referrer-Policy", "no-referrer");
 		c.header("Cache-Control", "no-store");
 	});
+
+	app.use(
+		"/api/openapi/*",
+		bodyLimit({
+			maxSize: 40 * 1024 * 1024,
+			onError: (c) => {
+				c.header("Cache-Control", "no-store");
+				return c.json({ defined: false, code: "PAYLOAD_TOO_LARGE", status: 413, message: "Payload too large" }, 413);
+			},
+		}),
+	);
 
 	app.post("/api/storage/stage", (c) => prepareStagedBody(c.req.raw));
 	app.all("/api/rpc", (c) => withStagedBody(c.req.raw, (request) => handleRpc(request, client(c))));

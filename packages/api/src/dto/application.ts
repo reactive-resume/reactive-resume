@@ -11,6 +11,7 @@ import {
 	interviewKindSchema,
 	postingSourceSchema,
 } from "@reactive-resume/schema/applications/data";
+import { paginationShape } from "../pagination";
 
 const MAX_APPLICATION_JOB_DESCRIPTION_CHARS = 20_000;
 const MAX_APPLICATION_DOCUMENT_BYTES = 10 * 1024 * 1024;
@@ -119,6 +120,7 @@ export const applicationDto = {
 	list: {
 		input: z
 			.object({
+				...paginationShape,
 				status: applicationStatusSchema.optional(),
 				tags: z.array(z.string()).optional(),
 			})

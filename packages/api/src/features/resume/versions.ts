@@ -1,6 +1,7 @@
 import { protectedProcedure } from "../../context";
 import { resumeDto } from "../../dto/resume";
 import { resumeMutationRateLimit } from "../../middleware/rate-limit";
+import { paginate } from "../../pagination";
 import { resumeService } from "./service";
 
 export const versionsRouter = {
@@ -17,8 +18,12 @@ export const versionsRouter = {
 		})
 		.input(resumeDto.listVersions.input)
 		.output(resumeDto.listVersions.output)
-		.handler(({ context, input }) =>
-			resumeService.versions.list({ resumeId: input.resumeId, userId: context.user.id }),
+		.handler(async ({ context, input }) =>
+			paginate(
+				await resumeService.versions.list({ resumeId: input.resumeId, userId: context.user.id }),
+				input,
+				context.resHeaders,
+			),
 		),
 
 	getVersion: protectedProcedure

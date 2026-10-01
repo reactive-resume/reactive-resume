@@ -466,6 +466,9 @@ importers:
       css-tree:
         specifier: ^3.2.1
         version: 3.2.1
+      docx:
+        specifier: ^9.8.1
+        version: 9.8.1
       drizzle-orm:
         specifier: 'catalog:'
         version: 1.0.0-rc.4(@types/pg@8.23.1)(pg@8.23.1)(zod@4.6.5)
@@ -505,6 +508,9 @@ importers:
       ollama-ai-provider-v2:
         specifier: ^4.0.1
         version: 4.0.1(ai@7.0.124(zod@4.6.5))(zod@4.6.5)
+      pdfjs-dist:
+        specifier: 6.3.289
+        version: 6.3.289
       pg:
         specifier: 'catalog:'
         version: 8.23.1
@@ -798,9 +804,6 @@ importers:
       '@babel/core':
         specifier: ^7.29.7
         version: 7.29.7(supports-color@7.2.0)
-      '@lingui/babel-plugin-lingui-macro':
-        specifier: ^6.9.0
-        version: 6.9.0(@babel/core@7.29.7(supports-color@7.2.0))
       '@lingui/cli':
         specifier: ^6.9.0
         version: 6.9.0(babel-plugin-macros@3.1.0)(esbuild@0.28.2)(rolldown@1.2.12)(supports-color@7.2.0)
@@ -952,9 +955,15 @@ importers:
       '@reactive-resume/db':
         specifier: workspace:*
         version: link:../db
+      '@reactive-resume/docx':
+        specifier: workspace:*
+        version: link:../docx
       '@reactive-resume/env':
         specifier: workspace:*
         version: link:../env
+      '@reactive-resume/import':
+        specifier: workspace:*
+        version: link:../import
       '@reactive-resume/pdf':
         specifier: workspace:*
         version: link:../pdf
@@ -997,6 +1006,9 @@ importers:
       ollama-ai-provider-v2:
         specifier: ^4.0.1
         version: 4.0.1(ai@7.0.124(zod@4.6.5))(zod@4.6.5)
+      pdfjs-dist:
+        specifier: 6.3.289
+        version: 6.3.289
       resumable-stream:
         specifier: ^2.2.13
         version: 2.2.13
@@ -1146,6 +1158,9 @@ importers:
       docx:
         specifier: ^9.8.1
         version: 9.8.1
+      node-html-parser:
+        specifier: ^9.0.4
+        version: 9.0.4
     devDependencies:
       '@reactive-resume/config':
         specifier: workspace:*

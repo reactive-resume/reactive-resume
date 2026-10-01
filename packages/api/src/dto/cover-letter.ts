@@ -8,6 +8,7 @@ import {
 	coverLetterStyleSchema,
 } from "@reactive-resume/schema/cover-letter/data";
 import { templateSchema } from "@reactive-resume/schema/templates";
+import { paginationShape } from "../pagination";
 
 const idSchema = z.object({ id: z.string().min(1) });
 const revisionSchema = idSchema.extend({ expectedRevision: z.number().int().min(1) });
@@ -96,7 +97,7 @@ export const coverLetterDto = {
 		}),
 		output: coverLetterSchema,
 	},
-	listVersions: { input: idSchema, output: z.array(letterVersionSummarySchema) },
+	listVersions: { input: idSchema.extend(paginationShape), output: z.array(letterVersionSummarySchema) },
 	getVersion: { input: versionRefSchema, output: letterVersionSchema },
 	createVersion: { input: idSchema.extend({ name: versionNameSchema }), output: letterVersionSummarySchema },
 	renameVersion: { input: versionRefSchema.extend({ name: versionNameSchema }), output: letterVersionSummarySchema },

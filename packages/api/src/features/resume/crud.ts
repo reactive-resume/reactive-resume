@@ -2,6 +2,7 @@ import { generateId, generateRandomName } from "@reactive-resume/utils/string";
 import { protectedProcedure } from "../../context";
 import { resumeDto } from "../../dto/resume";
 import { resumeMutationRateLimit } from "../../middleware/rate-limit";
+import { paginate } from "../../pagination";
 import { documentsService } from "../documents/service";
 import { createResumeData } from "./initial-data";
 import { parseStoredResumeData } from "./resume-data-validation";
@@ -21,12 +22,16 @@ export const crudRouter = {
 		})
 		.input(resumeDto.list.input.optional().default({ tags: [], sort: "lastUpdatedAt" }))
 		.output(resumeDto.list.output)
-		.handler(({ input, context }) =>
-			resumeService.list({
-				userId: context.user.id,
-				tags: input.tags,
-				sort: input.sort,
-			}),
+		.handler(async ({ input, context }) =>
+			paginate(
+				await resumeService.list({
+					userId: context.user.id,
+					tags: input.tags,
+					sort: input.sort,
+				}),
+				input,
+				context.resHeaders,
+			),
 		),
 
 	getById: protectedProcedure
@@ -144,6 +149,7 @@ export const crudRouter = {
 				id: input.id,
 				userId: context.user.id,
 				...(input.name !== undefined ? { name: input.name } : {}),
+				...(input.sessionId !== undefined ? { sessionId: input.sessionId } : {}),
 				...(input.slug !== undefined ? { slug: input.slug } : {}),
 				...(input.tags !== undefined ? { tags: input.tags } : {}),
 				...(input.data !== undefined ? { data: input.data } : {}),

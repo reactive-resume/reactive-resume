@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { env } from "@reactive-resume/env/server";
 
 const authMock = vi.hoisted(() => ({
 	api: {
@@ -73,5 +74,33 @@ describe("resolveUserFromRequestHeaders", () => {
 
 		expect(verifyOAuthTokenMock).toHaveBeenCalledWith("xxx.yyy.zzz");
 		expect(user).toMatchObject({ id: "user-bearer", name: "Bob" });
+	});
+});
+
+describe("cookie request origins", () => {
+	it.each([{ origin: "https://attacker.example" }, { origin: "null" }, { "sec-fetch-site": "cross-site" }])(
+		"rejects ambient credentials from another origin: %j",
+		async (originHeaders) => {
+			reset();
+			authMock.api.getSession.mockResolvedValue({ user: { id: "owner" } });
+			const headers = new Headers({ cookie: "session=valid", ...originHeaders });
+			await expect(resolveUserFromRequestHeaders(headers)).rejects.toMatchObject({ code: "FORBIDDEN" });
+			expect(authMock.api.getSession).not.toHaveBeenCalled();
+		},
+	);
+
+	it("accepts same-origin cookies and explicit bearer credentials from other origins", async () => {
+		reset();
+		authMock.api.getSession.mockResolvedValue({ user: { id: "session-user" } });
+		await expect(
+			resolveUserFromRequestHeaders(new Headers({ cookie: "session=valid", origin: new URL(env.APP_URL).origin })),
+		).resolves.toMatchObject({ id: "session-user" });
+		verifyOAuthTokenMock.mockResolvedValueOnce({ sub: "token-user" });
+		setupDbResolves({ id: "token-user" });
+		await expect(
+			resolveUserFromRequestHeaders(
+				new Headers({ authorization: "Bearer token", cookie: "session=valid", origin: "https://client.example" }),
+			),
+		).resolves.toMatchObject({ id: "token-user" });
 	});
 });

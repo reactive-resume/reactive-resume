@@ -239,3 +239,16 @@ it.each(["/auth/consent", "/auth/consent/", "/auth/login"])("prevents framing or
 	expect(response.headers.get("referrer-policy")).toBe("no-referrer");
 	expect(response.headers.get("cache-control")).toBe("no-store");
 });
+
+it("rejects oversized REST requests before parsing multipart uploads", async () => {
+	const { createApp } = await import("./app");
+	const response = await createApp().request("http://localhost:3000/api/openapi/files", {
+		method: "POST",
+		headers: { "Content-Length": String(40 * 1024 * 1024 + 1) },
+		body: "x",
+	});
+	expect(response.status).toBe(413);
+	expect(await response.json()).toMatchObject({ code: "PAYLOAD_TOO_LARGE", status: 413 });
+	expect(response.headers.get("cache-control")).toBe("no-store");
+	expect(mocks.handleOpenApi).not.toHaveBeenCalled();
+});

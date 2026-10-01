@@ -1,6 +1,8 @@
+import z from "zod";
 import { protectedProcedure } from "../../context";
 import { documentsDto } from "../../dto/documents";
 import { resumeMutationRateLimit } from "../../middleware/rate-limit";
+import { paginate } from "../../pagination";
 import { documentsService } from "./service";
 
 const route = (
@@ -32,7 +34,13 @@ export const documentsRouter = {
 		)
 		.input(documentsDto.list.input)
 		.output(documentsDto.list.output)
-		.handler(({ context, input }) => documentsService.list({ userId: context.user.id, trashed: input.trashed })),
+		.handler(async ({ context, input }) =>
+			paginate(
+				await documentsService.list({ userId: context.user.id, trashed: input.trashed }),
+				input,
+				context.resHeaders,
+			),
+		),
 
 	counts: protectedProcedure
 		.route(
@@ -44,6 +52,7 @@ export const documentsRouter = {
 				"Counts live resumes and letters, and everything in Trash.",
 			),
 		)
+		.input(z.object({}).optional())
 		.output(documentsDto.counts.output)
 		.handler(({ context }) => documentsService.counts({ userId: context.user.id })),
 

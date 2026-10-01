@@ -1,3 +1,4 @@
+import type { ResumeRenderOptions } from "./context";
 import type { SectionTitleResolver } from "./section-title";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
@@ -10,6 +11,7 @@ export type CreateResumePdfFileOptions = {
 	data: ResumeData;
 	filename: string;
 	template?: Template | undefined;
+	renderOptions?: ResumeRenderOptions | undefined;
 	resolveSectionTitle?: SectionTitleResolver | undefined;
 	/** Operator-configured app origin; only its public picture upload paths may use private addresses. */
 	uploadOrigin?: string | undefined;

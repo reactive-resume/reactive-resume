@@ -1,4 +1,4 @@
-import { createCanvas } from "@napi-rs/canvas";
+import { fileURLToPath } from "node:url";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 
 export type RasterizedPdfPage = {
@@ -7,40 +7,40 @@ export type RasterizedPdfPage = {
 	data: Uint8Array;
 };
 
-type RasterPage = {
-	getViewport(input: { scale: number }): { width: number; height: number };
-	render(input: unknown): { promise: Promise<unknown> };
-	cleanup(): void;
+type RasterCanvas = {
+	canvas: HTMLCanvasElement;
+	context: CanvasRenderingContext2D;
 };
 
-type RasterDocument = {
-	numPages: number;
-	getPage(pageNumber: number): Promise<RasterPage>;
-};
-
-type RasterLoadingTask = {
-	promise: Promise<RasterDocument>;
-	destroy(): Promise<void>;
+type RasterCanvasFactory = {
+	create(width: number, height: number): RasterCanvas;
+	destroy(canvas: RasterCanvas): void;
 };
 
 export async function rasterizePdf(bytes: Uint8Array): Promise<readonly RasterizedPdfPage[]> {
-	const loadingTask = getDocument({ data: bytes }) as unknown as RasterLoadingTask;
+	const loadingTask = getDocument({
+		data: bytes,
+		standardFontDataUrl: fileURLToPath(new URL("standard_fonts/", import.meta.resolve("pdfjs-dist/package.json"))),
+	});
 	const pages: RasterizedPdfPage[] = [];
 
 	try {
 		const document = await loadingTask.promise;
+		// Use PDF.js's canvas implementation: a separately resolved native canvas can reject its Path2D objects.
+		const canvasFactory = document.canvasFactory as RasterCanvasFactory;
 		for (let pageNumber = 1; pageNumber <= document.numPages; pageNumber += 1) {
 			const page = await document.getPage(pageNumber);
+			let surface: RasterCanvas | undefined;
 			try {
 				const viewport = page.getViewport({ scale: 1.5 });
 				const width = Math.ceil(viewport.width);
 				const height = Math.ceil(viewport.height);
-				const canvas = createCanvas(width, height);
-				const context = canvas.getContext("2d");
+				surface = canvasFactory.create(width, height);
+				const { canvas, context } = surface;
 
 				await page.render({
-					canvas: canvas as unknown as HTMLCanvasElement,
-					canvasContext: context as unknown as CanvasRenderingContext2D,
+					canvas,
+					canvasContext: context,
 					viewport,
 				}).promise;
 				pages.push({
@@ -49,6 +49,7 @@ export async function rasterizePdf(bytes: Uint8Array): Promise<readonly Rasteriz
 					data: Uint8Array.from(context.getImageData(0, 0, width, height).data),
 				});
 			} finally {
+				if (surface) canvasFactory.destroy(surface);
 				page.cleanup();
 			}
 		}

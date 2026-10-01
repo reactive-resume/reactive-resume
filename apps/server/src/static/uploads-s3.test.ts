@@ -16,6 +16,9 @@ vi.mock("@reactive-resume/env/server", () => ({ env: envMock }));
 
 type StoredObject = { data: Buffer; contentType: string };
 type StorageRequest = { method: string; path: string; headers: IncomingHttpHeaders };
+const resolveUser = vi.hoisted(() => vi.fn());
+vi.mock("@reactive-resume/api/context", () => ({ resolveUserFromRequestHeaders: resolveUser }));
+
 const objects = new Map<string, StoredObject>();
 const requests: StorageRequest[] = [];
 
@@ -62,6 +65,7 @@ beforeAll(async () => {
 });
 
 beforeEach(() => {
+	resolveUser.mockReset();
 	objects.clear();
 	requests.length = 0;
 });
@@ -102,8 +106,31 @@ it("stores private attachments without ACLs while keeping them outside the publi
 it.each(["text/html", "image/svg+xml"])("downloads stored %s uploads instead of rendering them", async (type) => {
 	const key = "uploads/user-1/pictures/upload.bin";
 	await storage.write({ key, data: new TextEncoder().encode("<script>alert(1)</script>"), contentType: type });
+	resolveUser.mockResolvedValue({ id: "user-1" });
 	const response = await handleUpload(new Request(`${envMock.APP_URL}/api/${key}`));
 	expect(response.status).toBe(200);
 	expect(response.headers.get("Content-Type")).toBe("application/octet-stream");
 	expect(response.headers.get("Content-Disposition")).toBe('attachment; filename="upload.bin"');
+});
+
+it("requires the upload owner before serving application PDFs, including conditional requests", async () => {
+	const key = "uploads/user-1/pictures/application.pdf";
+	await storage.write({
+		key,
+		data: new TextEncoder().encode("private application PDF"),
+		contentType: "application/pdf",
+	});
+	for (const viewer of [null, { id: "other-user" }]) {
+		resolveUser.mockResolvedValue(viewer);
+		const response = await handleUpload(
+			new Request(`${envMock.APP_URL}/api/${key}`, { headers: { "If-None-Match": '"test-etag"' } }),
+		);
+		expect(response.status).toBe(404);
+		expect(await response.text()).not.toContain("private application PDF");
+	}
+	resolveUser.mockResolvedValue({ id: "user-1" });
+	const response = await handleUpload(new Request(`${envMock.APP_URL}/api/${key}`));
+	expect(response.status).toBe(200);
+	expect(await response.text()).toBe("private application PDF");
+	expect(response.headers.get("Cache-Control")).toBe("private, no-store");
 });

@@ -2,6 +2,7 @@ import type { OpenAPI } from "@orpc/openapi";
 import { OpenAPIGenerator } from "@orpc/openapi";
 import { JSON_SCHEMA_INPUT_REGISTRY, ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { downloadResumePdfProcedure } from "@reactive-resume/api/features/resume/export";
+import { restAliases } from "@reactive-resume/api/rest";
 import router from "@reactive-resume/api/routers";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { createResumeDataJsonSchema } from "@reactive-resume/schema/resume/json-schema";
@@ -9,6 +10,7 @@ import { writableResumeDataSchema } from "@reactive-resume/schema/resume/write";
 
 export const openAPIRouter = {
 	...router,
+	rest: restAliases,
 	resume: {
 		...router.resume,
 		downloadPdf: downloadResumePdfProcedure,
@@ -79,11 +81,12 @@ const healthResponseSchema = {
 } satisfies OpenAPI.SchemaObject;
 
 export async function generateOpenApiSpec({ appUrl, version }: GenerateOpenApiSpecOptions) {
-	return await openAPIGenerator.generate(openAPIRouter, {
+	const spec = await openAPIGenerator.generate(openAPIRouter, {
 		info: {
 			title: "Reactive Resume",
 			version,
-			description: "Reactive Resume API",
+			description:
+				"Reactive Resume API. Mutations do not support Idempotency-Key. Do not automatically retry POST, PUT, PATCH or DELETE requests after a timeout: first read the resource to determine whether the operation succeeded. Existing enum values and response shapes are retained for compatibility.",
 			license: { name: "MIT", url: "https://github.com/reactive-resume/reactive-resume/blob/main/LICENSE" },
 			contact: { name: "Amruth Pillai", email: "hello@amruthpillai.com", url: "https://amruthpillai.com" },
 		},
@@ -116,6 +119,19 @@ export async function generateOpenApiSpec({ appUrl, version }: GenerateOpenApiSp
 		},
 		components: {
 			securitySchemes: {
+				bearerAuth: {
+					type: "http",
+					scheme: "bearer",
+					bearerFormat: "JWT",
+					description: "An OAuth access token issued by this instance for its API/MCP resource.",
+				},
+				cookieAuth: {
+					type: "apiKey",
+					in: "cookie",
+					name: "better-auth.session_token",
+					description:
+						"Browser session (secure deployments use the __Secure- prefix). Cookie requests must originate from this instance.",
+				},
 				apiKey: {
 					type: "apiKey",
 					name: "x-api-key",
@@ -124,7 +140,66 @@ export async function generateOpenApiSpec({ appUrl, version }: GenerateOpenApiSp
 				},
 			},
 		},
-		security: [{ apiKey: [] }],
+		security: [{ apiKey: [] }, { bearerAuth: [] }, { cookieAuth: [] }],
 		filter: ({ contract }) => !contract["~orpc"].route.tags?.includes("Internal"),
 	});
+	// Void results have no HTTP body; Zod's impossible JSON schema is not a response payload.
+	const isVoid = (schema: unknown): boolean => {
+		if (!schema || typeof schema !== "object") return false;
+		const value = schema as { not?: object; anyOf?: unknown[] };
+		return (
+			(value.not !== undefined && Object.keys(value.not).length === 0) ||
+			(Array.isArray(value.anyOf) && value.anyOf.every(isVoid))
+		);
+	};
+	for (const [path, item] of Object.entries(spec.paths ?? {})) {
+		if (!item || path === "/api/health") continue;
+		for (const method of ["get", "post", "put", "patch", "delete"] as const) {
+			const operation = item[method];
+			if (!operation) continue;
+			const body = operation.requestBody;
+			if (body && !("$ref" in body) && body.content["multipart/form-data"]) delete body.content["application/json"];
+			operation.responses ??= {};
+			operation.responses.default = {
+				description: "Structured API error. See status and code; do not branch on message text.",
+				content: {
+					"application/json": {
+						schema: {
+							type: "object",
+							required: ["defined", "code", "status", "message"],
+							properties: {
+								defined: { type: "boolean" },
+								code: { type: "string" },
+								status: { type: "integer" },
+								message: { type: "string" },
+								data: {},
+							},
+						},
+					},
+				},
+			};
+			for (const response of Object.values(operation.responses)) {
+				if ("$ref" in response) continue;
+				const schema = response.content?.["application/json"]?.schema;
+				if (isVoid(schema)) delete response.content;
+				if (
+					schema &&
+					"type" in schema &&
+					schema.type === "array" &&
+					operation.parameters?.some((parameter) => "name" in parameter && parameter.name === "limit")
+				) {
+					response.headers = {
+						...response.headers,
+						"X-Total-Count": { description: "Total matching results before pagination.", schema: { type: "integer" } },
+						"X-Limit": { description: "Page size, when pagination is requested.", schema: { type: "integer" } },
+						"X-Offset": {
+							description: "Zero-based offset, when pagination is requested.",
+							schema: { type: "integer" },
+						},
+					};
+				}
+			}
+		}
+	}
+	return spec;
 }

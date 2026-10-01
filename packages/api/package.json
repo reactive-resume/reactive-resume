@@ -13,8 +13,9 @@
 		"./features/resume/public-pdf": "./src/features/resume/public-pdf.ts",
 		"./features/resume/social-meta": "./src/features/resume/social-meta.ts",
 		"./features/storage": "./src/features/storage/index.ts",
-		"./routers": "./src/routers/index.ts",
-		"./features/storage/transport": "./src/features/storage/transport.ts"
+		"./features/storage/transport": "./src/features/storage/transport.ts",
+		"./rest": "./src/routers/rest.ts",
+		"./routers": "./src/routers/index.ts"
 	},
 	"scripts": {
 		"typecheck": "tsgo --noEmit",
@@ -44,7 +45,9 @@
 		"@reactive-resume/ai": "workspace:*",
 		"@reactive-resume/auth": "workspace:*",
 		"@reactive-resume/db": "workspace:*",
+		"@reactive-resume/docx": "workspace:*",
 		"@reactive-resume/env": "workspace:*",
+		"@reactive-resume/import": "workspace:*",
 		"@reactive-resume/pdf": "workspace:*",
 		"@reactive-resume/resume": "workspace:*",
 		"@reactive-resume/schema": "workspace:*",
@@ -59,6 +62,7 @@
 		"ioredis": "catalog:",
 		"jsonrepair": "catalog:",
 		"ollama-ai-provider-v2": "^4.0.1",
+		"pdfjs-dist": "6.3.289",
 		"resumable-stream": "^2.2.13",
 		"sanitize-html": "^2.18.0",
 		"sharp": "^0.35.5",
