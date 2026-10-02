@@ -46,7 +46,7 @@ async function prerenderPages() {
 				.replace(/<html lang="[^"]*">/, () => `<html lang="${locale}" dir="${page.dir}">`)
 				.replace(/<title>[^<]*<\/title>/, () => `<title>${escapeHtml(page.title)}</title>`)
 				.replace(
-					/<meta name="description"[^>]*>/,
+					/<meta\s+name="description"[^>]*>/,
 					() => `<meta name="description" content="${escapeHtml(page.description)}">`,
 				)
 				.replace('<div id="app"></div>', () => `<div id="app">${page.html}</div>`);

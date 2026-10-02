@@ -96,7 +96,7 @@ function FaqItem({ item, index }: FaqItemProps) {
 						<path data-stroke="circle" pathLength={1} d={circlePath} strokeWidth={2.6} />
 					</svg>
 				</span>
-				<span className="font-anybody flex-1 text-[clamp(21px,2vw,30px)] leading-[1.2] font-light tracking-[-.015em] text-pretty text-ink">
+				<h3 className="font-anybody flex-1 text-[clamp(21px,2vw,30px)] leading-[1.2] font-light tracking-[-.015em] text-pretty text-ink">
 					{/* Shrink-wrapped, so the underline runs under the words rather than the whole row. */}
 					<span className="relative inline-block pb-1.5">
 						{item.question}
@@ -109,7 +109,7 @@ function FaqItem({ item, index }: FaqItemProps) {
 							<path data-stroke="underline" pathLength={1} d={underlinePath} strokeWidth={1.6} />
 						</svg>
 					</span>
-				</span>
+				</h3>
 				<span aria-hidden="true" data-plus className="relative mt-[.55em] size-5 shrink-0 text-ink-2">
 					<span className="absolute inset-x-0 top-1/2 h-[1.5px] -translate-y-1/2 rounded-full bg-current" />
 					<span className="absolute inset-y-0 left-1/2 w-[1.5px] -translate-x-1/2 rounded-full bg-current" />
@@ -181,7 +181,7 @@ export function Faq() {
 				</h2>
 				<p className="max-w-[24em] font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-pretty text-ink-2">
 					<Trans>
-						The short answers to what people ask before they start. Anything else, ask on{" "}
+						8 short answers to what people ask before they start. Anything else, ask on{" "}
 						<a
 							href="https://discord.gg/aSyA5ZSxpb"
 							className="text-accent-text italic underline underline-offset-[3px] transition-colors hover:text-accent-hover"

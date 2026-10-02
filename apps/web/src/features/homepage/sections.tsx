@@ -6,6 +6,7 @@ import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { localeSchema } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { prefersReducedMotion, SCENE, useLanding } from "./scroll";
 import { CtaLink, Doodle, labelClass } from "./ui";
@@ -102,7 +103,7 @@ export function Numbers() {
 					</div>
 				))}
 			</dl>
-			<p className="border-t border-line pt-3.5 font-ui text-[13px] text-ink-3">{t`Live totals, refreshed every few hours.`}</p>
+			<p className="border-t border-line pt-3.5 font-ui text-[13px] text-ink-3">{t`Live totals, refreshed every 6 hours.`}</p>
 		</section>
 	);
 }
@@ -129,6 +130,8 @@ const words = [
 
 /** 07 Languages. The word turns over every 1.9s while the section is near; it can be paused. */
 export function Languages() {
+	const { i18n } = useLingui();
+	const languageCount = i18n.number(localeSchema.options.length - 1);
 	const near = useLanding((state) => state.activeScene >= SCENE.numbers && state.activeScene <= SCENE.support);
 	const reducedMotion = useLanding((state) => state.reducedMotion);
 	const [index, setIndex] = useState(0);
@@ -195,7 +198,7 @@ export function Languages() {
 					href={crowdinUrl}
 					className="text-accent-text italic underline underline-offset-[3px] transition-colors hover:text-accent-hover"
 				>
-					{t`Help translate it into yours.`}
+					{t`Translated into ${languageCount} languages. Help translate it into yours.`}
 				</a>
 			</p>
 		</section>
@@ -258,7 +261,7 @@ export function Support() {
 					</Trans>
 				</h2>
 				<p className="max-w-[28em] font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-pretty text-ink-2">
-					{t`Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development.`}
+					{t`Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development. There are 0 paid tiers.`}
 				</p>
 				<ul className="flex flex-wrap gap-2">
 					{pills.map((pill) => (
@@ -353,7 +356,7 @@ export function Closing() {
 				</Trans>
 			</h2>
 			<p className="max-w-[28em] font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-pretty text-ink-2">
-				{t`Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime.`}
+				{t`Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime. Start with 1 resume.`}
 			</p>
 			<CtaLink size="closing" />
 		</section>

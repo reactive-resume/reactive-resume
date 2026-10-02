@@ -437,6 +437,10 @@ msgstr "{since, plural, =0 {從今天起} one {# 日} other {# 天}}"
 msgid "{size} pt"
 msgstr "{size} pt"
 
+#: src/features/homepage/design.tsx
+msgid "{templateCount} templates."
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
 msgstr "{title} 已清除"
@@ -527,6 +531,10 @@ msgstr "30天"
 #: src/features/homepage/hero.tsx
 msgid "40% faster reviews"
 msgstr "審核速度提升 40%"
+
+#: src/features/homepage/faq.tsx
+msgid "8 short answers to what people ask before they start. Anything else, ask on <0>Discord</0>."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "90 days"
@@ -636,6 +644,10 @@ msgstr "有一個網址沒有寫 https://。"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "A4"
 msgstr "A4"
+
+#: src/features/homepage/footer.tsx
+msgid "About"
+msgstr ""
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Accent colour"
@@ -1682,8 +1694,8 @@ msgid "Check it's accurate."
 msgstr "檢查一下是否準確。"
 
 #: src/features/homepage/check.tsx
-msgid "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you."
-msgstr "Check 以招募軟體的方式讀取您的履歷，並用簡單的語言解釋需要修改的內容。它在您的瀏覽器中運行，因此文件會留在您身邊。"
+msgid "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Check the exported file contains everything you expect, and that all of it is selectable text."
@@ -1972,6 +1984,7 @@ msgid "Connection saved"
 msgstr "連線已儲存"
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/homepage/footer.tsx
 msgid "Contact"
 msgstr "接觸"
 
@@ -3499,10 +3512,6 @@ msgstr "Fieldnote"
 msgid "Fieldnote · Remote, EU"
 msgstr "Fieldnote · 遠程，歐盟"
 
-#: src/features/homepage/design.tsx
-msgid "Fifteen templates."
-msgstr "十五個模板。"
-
 #: src/features/homepage/hero.tsx
 msgid "Figma"
 msgstr "Figma"
@@ -3716,8 +3725,8 @@ msgid "Free-form"
 msgstr "自由形式"
 
 #: src/libs/seo.ts
-msgid "Free, open-source resume builder. Create, update, and share your resume, with no ads and no paywall."
-msgstr "免費、開源的履歷產生器。創建、更新和分享您的履歷，沒有廣告，也沒有付費專區。"
+msgid "Free, open-source resume builder. Create, update, and share your resume, with PDF and Word downloads, no ads and no paywall."
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "French"
@@ -3868,10 +3877,6 @@ msgstr "幫助和文檔"
 #: src/features/settings/preferences.tsx
 msgid "Help translate"
 msgstr "幫忙翻譯"
-
-#: src/features/homepage/sections.tsx
-msgid "Help translate it into yours."
-msgstr "幫忙把它翻譯成你的。"
 
 #: src/components/level/combobox.tsx
 #: src/features/resume/editor/write/entries.tsx
@@ -4788,8 +4793,8 @@ msgid "Live at {0}"
 msgstr "現場直播：{0}"
 
 #: src/features/homepage/sections.tsx
-msgid "Live totals, refreshed every few hours."
-msgstr "即時總計，每隔幾個小時刷新一次。"
+msgid "Live totals, refreshed every 6 hours."
+msgstr ""
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading applications…"
@@ -5944,6 +5949,10 @@ msgstr "密碼不符。"
 msgid "Past conversations"
 msgstr "過去的談話"
 
+#: src/features/homepage/tailor.tsx
+msgid "Paste 1 job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste a job link or posting, then check the role and company."
 msgstr "貼上職位連結或職位發布，然後檢查職位和公司。"
@@ -5951,10 +5960,6 @@ msgstr "貼上職位連結或職位發布，然後檢查職位和公司。"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Paste a job link. We'll save the posting so Check, the assistant and your letter can use it."
 msgstr "貼上職位連結。我們將保存招聘訊息，以便檢查、助理和您的信件可以使用它。"
-
-#: src/features/homepage/tailor.tsx
-msgid "Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr "貼上招募資訊一次。它會提供您的履歷的改編副本、比賽分數、求職信草稿以及追蹤職位的位置。"
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
@@ -6043,13 +6048,13 @@ msgstr "照片從頁面隱藏。"
 msgid "Photo on the page."
 msgstr "頁面上的照片。"
 
-#: src/features/homepage/design.tsx
-msgid "Pick a template, then set the type, color and spacing. The words stay put, so try as many looks as you like."
-msgstr "選擇一個模板，然後設定類型、顏色和間距。文字保持不變，所以可以嘗試盡可能多的外觀。"
-
 #: src/components/input/icon-picker.tsx
 msgid "Pick an icon"
 msgstr "選擇一個圖標"
+
+#: src/features/homepage/design.tsx
+msgid "Pick from {templateCount} templates, then set the type, color and spacing. The words stay put, so try as many looks as you like."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Pick one format and use it everywhere."
@@ -6378,16 +6383,16 @@ msgid "Reactive Resume {__APP_VERSION__} · MIT"
 msgstr "Reactive Resume {__APP_VERSION__} · MIT"
 
 #: src/features/homepage/hero.tsx
-msgid "Reactive Resume is a free, open-source resume builder. Write it, design it, check it and tailor it for every job."
-msgstr "Reactive Resume 是一個免費的開源履歷產生器。編寫、設計、檢查並針對每項工作進行調整。"
+msgid "Reactive Resume is a free, open-source resume builder. Write it, design it, check it and tailor it for every job. Start with 1 resume."
+msgstr ""
 
 #: src/components/ui/donation-toast.tsx
 msgid "Reactive Resume is free and open source. If it has helped you, please consider donating."
 msgstr "Reactive Resume 是免費開源的。如果它對您有所幫助，請考慮捐贈。"
 
 #: src/features/homepage/sections.tsx
-msgid "Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development."
-msgstr "Reactive Resume 在 MIT License 下開源。 Amruth Pillai 和貢獻者社群使其保持運行，並透過捐款來支付託管和開發費用。"
+msgid "Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development. There are 0 paid tiers."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read only"
@@ -7340,8 +7345,8 @@ msgid "Share & export"
 msgstr "分享和匯出"
 
 #: src/features/homepage/share.tsx
-msgid "Share a public link, add a password or keep it private. Export to PDF or Word, or take all your data with you as JSON."
-msgstr "共享公共連結、新增密碼或保密。匯出為 PDF 或 Word，或將所有資料作為 JSON 隨身攜帶。"
+msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Share public resume"
@@ -7793,8 +7798,8 @@ msgid "Start from one you have and link the application."
 msgstr "從您擁有的一份工作申請開始並連結該工作申請。"
 
 #: src/features/homepage/sections.tsx
-msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime."
-msgstr "從頭開始或匯入您擁有的東西。這需要幾分鐘的時間，您可以隨時返回。"
+msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime. Start with 1 resume."
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Start on a new page"
@@ -8358,10 +8363,6 @@ msgstr "服務配額已用完。"
 msgid "The service rejected the credentials."
 msgstr "該服務拒絕了憑據。"
 
-#: src/features/homepage/faq.tsx
-msgid "The short answers to what people ask before they start. Anything else, ask on <0>Discord</0>."
-msgstr "對人們開始之前提出的問題的簡短回答。還有什麼問題，請在 <0>Discord</0> 上詢問。"
-
 #: src/features/settings/ai/providers.tsx
 msgid "The test didn't run."
 msgstr "測試沒有運行。"
@@ -8654,6 +8655,10 @@ msgstr "翻譯"
 #: src/features/homepage/sections.tsx
 msgid "Translate the app"
 msgstr "翻譯這個應用程式"
+
+#: src/features/homepage/sections.tsx
+msgid "Translated into {languageCount} languages. Help translate it into yours."
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Translations"
@@ -9407,8 +9412,8 @@ msgid "Write each role as a clear title and company line, with the dates alongsi
 msgstr "把每一段經歷都寫成清晰的「職稱 + 公司」一行，並在旁邊標註日期。"
 
 #: src/features/homepage/write.tsx
-msgid "Write in one editor beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide."
-msgstr "在即時頁面旁的一個編輯器中進行書寫。它會在您鍵入時保存並保留每個版本。向助理詢問更清晰的線條：它建議，你決定。"
+msgid "Write in 1 editor beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write it as one uninterrupted piece, with no special spacing."

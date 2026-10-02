@@ -79,7 +79,7 @@ const githubUrl = "https://github.com/reactive-resume/reactive-resume";
 // description, and the social cards reuse them.
 const ROOT_TITLE = "Reactive Resume — A free and open-source resume builder";
 const ROOT_DESCRIPTION =
-	"Free, open-source resume builder. Create, update, and share your resume, with no ads and no paywall.";
+	"Free, open-source resume builder. Create, update, and share your resume, with PDF and Word downloads, no ads and no paywall.";
 const ATS_CHECKER_TITLE = "Free ATS resume checker — Reactive Resume";
 const ATS_CHECKER_DESCRIPTION =
 	"Check whether software can read your resume PDF. Runs entirely in your browser, so your file is never uploaded.";
@@ -93,9 +93,11 @@ function organization(origin: string): StructuredData {
 		"@id": `${origin}/#organization`,
 		name: "Reactive Resume",
 		url: `${origin}/`,
+		contactPoint: { "@type": "ContactPoint", contactType: "support", email: "hello@amruthpillai.com" },
 		logo: { "@type": "ImageObject", url: `${origin}/pwa-512x512.png`, width: 512, height: 512 },
 		sameAs: [
 			githubUrl,
+			"https://www.linkedin.com/company/reactive-resume",
 			"https://opencollective.com/reactive-resume",
 			"https://www.reddit.com/r/reactiveresume",
 			"https://discord.gg/aSyA5ZSxpb",
@@ -207,7 +209,7 @@ function createPageSeoMarkup(options: PageSeoOptions) {
 function readPageMeta(html: string, fallback: { title: string; description: string }) {
 	return {
 		title: html.match(/<title>([^<]*)<\/title>/)?.[1] ?? fallback.title,
-		description: html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? fallback.description,
+		description: html.match(/<meta\s+name="description"\s+content="([^"]*)"/)?.[1] ?? fallback.description,
 	};
 }
 

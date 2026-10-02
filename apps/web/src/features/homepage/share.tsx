@@ -176,14 +176,15 @@ export function Share() {
 							className="h-auto rounded-full border border-(--night-line) bg-(--night-fill) p-1"
 						>
 							{[t`Public`, t`Password`, t`Private`].map((label, index) => (
-								<SegmentedControlItem
-									key={label}
-									value={index}
-									className="h-[34px] flex-none rounded-full px-3.5 font-ui text-(--night-ink-2) duration-300 hover:text-(--night-ink) data-checked:bg-(--night-ink) data-checked:text-(--night-on-ink) data-checked:shadow-none"
-								>
-									<Icon name={visibilityIcons[index] ?? "public"} size={17} />
-									{label}
-								</SegmentedControlItem>
+								<label key={label} className="contents">
+									<SegmentedControlItem
+										value={index}
+										className="h-[34px] flex-none rounded-full px-3.5 font-ui text-(--night-ink-2) duration-300 hover:text-(--night-ink) data-checked:bg-(--night-ink) data-checked:text-(--night-on-ink) data-checked:shadow-none"
+									>
+										<Icon name={visibilityIcons[index] ?? "public"} size={17} />
+										{label}
+									</SegmentedControlItem>
+								</label>
 							))}
 						</SegmentedControl>
 						<button
@@ -216,7 +217,7 @@ export function Share() {
 				<div className="absolute start-(--gutter) bottom-[clamp(20px,5vh,44px)] flex max-w-[90vw] flex-col gap-2.5 opacity-[clamp(0,(var(--p)-.2)*6,1)] min-[900px]:max-w-[min(28em,34vw)]">
 					<span className={cn(labelClass, "text-(--night-label)")}>05 / {share}</span>
 					<p className="min-[900px]:short:hidden font-display text-base leading-[1.45] text-pretty text-(--night-ink) min-[900px]:text-[clamp(17px,1.35vw,20px)]">
-						{t`Share a public link, add a password or keep it private. Export to PDF or Word, or take all your data with you as JSON.`}
+						{t`Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON.`}
 					</p>
 				</div>
 			</div>

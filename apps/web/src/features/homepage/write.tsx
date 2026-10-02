@@ -69,7 +69,7 @@ export function Write() {
 					title={t`Write`}
 					className="absolute inset-x-(--gutter) top-[calc(10vh+17vw)] opacity-(--in) min-[900px]:end-auto min-[900px]:top-auto min-[900px]:bottom-[clamp(20px,5vh,44px)] min-[900px]:max-w-[min(30em,34vw)]"
 				>
-					{t`Write in one editor beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide.`}
+					{t`Write in 1 editor beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide.`}
 				</SceneCaption>
 
 				<div className="absolute start-[5vw] top-[calc(10vh+17vw+150px)] h-[120vh] w-[90vw] origin-top-left [transform:translateY(calc((1-var(--in))*14vh))_rotate(-1.2deg)_scale(calc(.94+var(--in)*.06))] rounded-[3px] bg-paper p-[6vw] font-ui text-[14px] leading-[1.55] text-[oklch(0.28_0.01_95)] shadow-paper [transition:transform_.5s_var(--ease)] min-[900px]:start-[42vw] min-[900px]:top-[14vh] min-[900px]:w-[60vw] min-[900px]:px-[5vw] min-[900px]:py-[4.5vw] min-[900px]:text-[clamp(14px,1.3vw,20px)] rtl:origin-top-right">

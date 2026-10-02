@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
+import { templateSchema } from "@reactive-resume/schema/templates";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { cn } from "@reactive-resume/utils/style";
 import { goToScene, SCENE, useLanding } from "./scroll";
@@ -41,7 +42,7 @@ const minis = Array.from({ length: 15 }, (_, index) => {
 	};
 });
 
-const bar = "h-[1.6cqw] bg-[oklch(0.88_0.006_95)]";
+const lines = "bg-[repeating-linear-gradient(to_bottom,oklch(0.88_0.006_95)_0_1.6cqw,transparent_1.6cqw_4.2cqw)]";
 
 function MiniPage({ mini }: { mini: (typeof minis)[number] }) {
 	const accentBar = { background: mini.accent };
@@ -70,28 +71,11 @@ function MiniPage({ mini }: { mini: (typeof minis)[number] }) {
 						className="flex flex-col gap-[2.6cqw] px-[5cqw] py-[7cqw]"
 						style={{ order: mini.sidebarEnd ? 2 : 0, background: `color-mix(in oklch, ${mini.accent} 10%, white)` }}
 					>
-						<span className="h-[2.2cqw] w-[60%]" style={accentBar} />
-						<span className={bar} />
-						<span className={bar} />
-						<span className={cn(bar, "w-[70%]")} />
-						<span className="mt-[3cqw] h-[2.2cqw] w-1/2" style={accentBar} />
-						<span className={bar} />
+						<div className={cn(lines, "h-[23cqw]")} />
 					</div>
 				)}
 				<div className="order-1 flex flex-col gap-[2.6cqw] px-[8cqw] py-[7cqw]">
-					<span className="h-[2.2cqw] w-[32%]" style={accentBar} />
-					<span className={bar} />
-					<span className={bar} />
-					<span className={cn(bar, "w-[80%]")} />
-					<span className="mt-[3cqw] h-[2.2cqw] w-[40%]" style={accentBar} />
-					<span className={bar} />
-					<span className={bar} />
-					<span className={cn(bar, "w-[64%]")} />
-					<span className={bar} />
-					<span className={cn(bar, "w-[72%]")} />
-					<span className="mt-[3cqw] h-[2.2cqw] w-[36%]" style={accentBar} />
-					<span className={bar} />
-					<span className={cn(bar, "w-[55%]")} />
+					<div className={cn(lines, "h-[60cqw]")} />
 				</div>
 			</div>
 		</div>
@@ -118,6 +102,7 @@ export function Design() {
 	const zoomed = useLanding((state) => state.designZoomed);
 	const active = useLanding((state) => state.activeScene === SCENE.design);
 	const design = t`Design`;
+	const templateCount = i18n.number(templateSchema.options.length);
 	const templateNames = sheetTemplates.map((template) => i18n._(template.name));
 
 	return (
@@ -235,13 +220,14 @@ export function Design() {
 					)}
 				>
 					{templateNames.map((name, index) => (
-						<SegmentedControlItem
-							key={name}
-							value={index}
-							className="h-8 flex-none rounded-full px-3 font-ui duration-300 min-[900px]:px-[13px] data-checked:bg-ink data-checked:text-bg data-checked:shadow-none"
-						>
-							{name}
-						</SegmentedControlItem>
+						<label key={name} className="contents">
+							<SegmentedControlItem
+								value={index}
+								className="h-8 flex-none rounded-full px-3 font-ui duration-300 min-[900px]:px-[13px] data-checked:bg-ink data-checked:text-bg data-checked:shadow-none"
+							>
+								{name}
+							</SegmentedControlItem>
+						</label>
 					))}
 				</SegmentedControl>
 
@@ -250,11 +236,11 @@ export function Design() {
 					title={design}
 					className="absolute start-(--gutter) bottom-[clamp(20px,5vh,44px)] hidden max-w-[22em] opacity-[calc(1-var(--z)*2)] min-[1100px]:flex"
 				>
-					{t`Pick a template, then set the type, color and spacing. The words stay put, so try as many looks as you like.`}
+					{t`Pick from ${templateCount} templates, then set the type, color and spacing. The words stay put, so try as many looks as you like.`}
 				</SceneCaption>
 
 				<p className="pointer-events-none absolute inset-x-(--gutter) bottom-[8vh] [transform:translateY(calc((1-var(--z))*30px))] text-center text-[8vw] leading-none text-balance opacity-(--z) will-change-[transform,opacity] min-[900px]:bottom-[6vh] min-[900px]:text-[clamp(40px,5vw,90px)]">
-					<span className="font-anybody font-light tracking-[-.02em] text-ink">{t`Fifteen templates.`}</span>{" "}
+					<span className="font-anybody font-light tracking-[-.02em] text-ink">{t`${templateCount} templates.`}</span>{" "}
 					<span className="font-display tracking-[-.02em] text-accent-text italic">{t`Make any of them yours.`}</span>
 				</p>
 			</div>

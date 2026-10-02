@@ -77,7 +77,7 @@ export function Tailor() {
 					title={tailor}
 					className="min-[900px]:short:hidden absolute end-(--gutter) top-[13vh] hidden w-[min(24em,30vw)] min-[900px]:flex"
 				>
-					{t`Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role.`}
+					{t`Paste 1 job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role.`}
 				</SceneCaption>
 
 				<svg

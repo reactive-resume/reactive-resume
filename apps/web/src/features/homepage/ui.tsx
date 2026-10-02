@@ -82,6 +82,8 @@ export function Doodle({ name, wipe, className, style, eager = false }: DoodlePr
 	return (
 		<img
 			src={`/doodles/${name}.webp`}
+			srcSet={`/doodles/${name}-small.webp ${Math.round(width / 2)}w, /doodles/${name}.webp ${width}w`}
+			sizes="(min-width: 900px) 16vw, 30vw"
 			alt=""
 			aria-hidden="true"
 			width={width}
@@ -95,10 +97,10 @@ export function Doodle({ name, wipe, className, style, eager = false }: DoodlePr
 	);
 }
 
-/** Splits text into user-perceived characters, so accents and conjuncts type in as one. */
-function useGraphemes(text: string) {
+/** Splits text into words, preserving spaces and punctuation while reducing decorative DOM nodes. */
+function useGraphemes(text: string, characters: boolean) {
 	const { i18n } = useLingui();
-	const segmenter = new Intl.Segmenter(i18n.locale, { granularity: "grapheme" });
+	const segmenter = new Intl.Segmenter(i18n.locale, { granularity: characters ? "grapheme" : "word" });
 	return Array.from(segmenter.segment(text), (part) => part.segment);
 }
 
@@ -118,7 +120,7 @@ type TypedTextProps = {
  * is in the page once, as visually hidden text, so screen readers and search engines read it as a sentence.
  */
 export function TypedText({ text, progress, className, charClassName, charStyle, rate }: TypedTextProps) {
-	const characters = useGraphemes(text);
+	const characters = useGraphemes(text, Boolean(charStyle));
 	const style = { "--typed": `var(${progress})`, "--typed-rate": rate } as CSSProperties;
 
 	return (

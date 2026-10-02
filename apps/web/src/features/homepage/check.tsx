@@ -190,7 +190,7 @@ export function Check() {
 							</Link>
 						}
 					>
-						{t`Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you.`}
+						{t`Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads.`}
 					</SceneCaption>
 				</div>
 

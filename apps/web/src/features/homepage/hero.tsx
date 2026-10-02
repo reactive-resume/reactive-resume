@@ -248,7 +248,7 @@ export function Hero() {
 
 				<div className="absolute inset-x-(--gutter) bottom-[clamp(20px,4vh,40px)] z-2 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
 					<p className="max-w-full font-display text-base leading-[1.45] text-pretty text-ink-2 min-[900px]:max-w-[min(25em,calc(50vw-var(--pw)/2-5vw))] min-[900px]:text-[clamp(17px,1.3vw,20px)]">
-						{t`Reactive Resume is a free, open-source resume builder. Write it, design it, check it and tailor it for every job.`}
+						{t`Reactive Resume is a free, open-source resume builder. Write it, design it, check it and tailor it for every job. Start with 1 resume.`}
 					</p>
 					<CtaLink size="hero" />
 				</div>
