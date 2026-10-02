@@ -288,8 +288,8 @@ function FirstRun({ onChooseFile }: { onChooseFile: () => void }) {
 			</h2>
 			<p className="leading-6 text-ink-2">
 				<Trans>
-					Import your current resume and we'll lay out every section for you to refine. Or start fresh; it takes a
-					minute to get your name on the page.
+					Import your current resume and we'll lay out every section for you to refine. Or start fresh. Start with your
+					name. Build from there.
 				</Trans>
 			</p>
 			<div className="flex flex-wrap items-center gap-3 rounded-xl border-[1.5px] border-dashed border-line-2 p-5">
