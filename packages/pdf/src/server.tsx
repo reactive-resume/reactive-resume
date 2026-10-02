@@ -4,7 +4,7 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import * as forme from "@formepdf/core";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";
-import { readServerImage } from "./forme/images.node";
+import { readServerImage } from "./forme/images.node.ts";
 import { assertPdfText, renderResume } from "./forme/render";
 
 export type CreateResumePdfFileOptions = {

@@ -4,7 +4,7 @@
 	"type": "module",
 	"private": true,
 	"scripts": {
-		"dev": "tsx watch src/index.ts",
+		"dev": "tsx watch --tsconfig ../../tsconfig.json src/index.ts",
 		"build": "tsdown",
 		"start": "node dist/index.mjs",
 		"docs:gen": "tsx src/openapi/generate-spec.ts",
