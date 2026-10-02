@@ -1,4 +1,4 @@
-name: Vercel compatibility
+name: Vercel Compatibility
 
 on:
   pull_request:
@@ -62,21 +62,20 @@ jobs:
       - name: Build Vercel artifact against isolated PostgreSQL
         run: |
           mkdir -p .vercel
-          node --input-type=module - <<'JS'
-          import { writeFileSync } from 'node:fs';
-          writeFileSync('.vercel/project.json', JSON.stringify({
-            projectId: 'prj_ci', orgId: 'team_ci', projectName: 'reactive-resume-ci',
-            settings: { framework: 'services', nodeVersion: '24.x', createdAt: 0 }
-          }));
-          JS
-          pnpm dlx --allow-build=esbuild vercel@61.0.0 build --prod --yes --global-config "$RUNNER_TEMP/vercel-offline"
+          cat > .vercel/project.json <<'JSON'
+          {
+            "projectId": "prj_ci", "orgId": "team_ci", "projectName": "reactive-resume-ci",
+            "settings": { "framework": "services", "nodeVersion": "24.x", "createdAt": 0 }
+          }
+          JSON
+          pnpm dlx --allow-build=esbuild vercel@61.0.0 build --prod --standalone --yes --global-config "$RUNNER_TEMP/vercel-offline"
       # Runs the backend Function from a copy outside the checkout, so a dependency the build left out fails here.
       - name: Check backend Function loading and budget
         run: |
           node --no-experimental-require-module --input-type=module - <<'JS'
           import assert from 'node:assert/strict';
-          import { cpSync, lstatSync, mkdirSync, readFileSync, readlinkSync, symlinkSync } from 'node:fs';
-          import { dirname, join } from 'node:path';
+          import { cpSync, readFileSync } from 'node:fs';
+          import { join } from 'node:path';
           const func = '.vercel/output/services/backend/functions/index.func';
           const config = JSON.parse(readFileSync(`${func}/.vc-config.json`));
           assert.equal(config.runtime, 'nodejs24.x');
@@ -84,11 +83,6 @@ jobs:
           assert.equal(config.handler, 'apps/server/vercel.mjs');
           const root = join(process.env.RUNNER_TEMP, 'backend-function');
           cpSync(func, root, { recursive: true, verbatimSymlinks: true });
-          for (const [path, source] of Object.entries(config.filePathMap ?? {})) {
-            mkdirSync(dirname(join(root, path)), { recursive: true });
-            if (lstatSync(source).isSymbolicLink()) symlinkSync(readlinkSync(source), join(root, path));
-            else cpSync(source, join(root, path));
-          }
           const { default: app } = await import(join(root, config.handler));
           const stage = await app.fetch(new Request('http://localhost:3000/api/storage/stage', { method: 'POST', body: '{}' }));
           assert.equal(stage.status, 401);

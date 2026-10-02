@@ -3,7 +3,7 @@ title: "Deployment checks"
 description: "How CI verifies the Vercel build artifact on every pull request, and how to run the deployment smoke test against a Vercel or Docker installation."
 ---
 
-Reactive Resume ships as a Docker image and as a Vercel project. The **Vercel compatibility** workflow (`.github/workflows/vercel.yml`) catches problems that only show up in a deployed build. It has two jobs: an offline artifact build that runs on every pull request, and a live smoke test you start by hand. You can run the same smoke test against your own installation.
+Reactive Resume ships as a Docker image and as a Vercel project. The **Vercel Compatibility** workflow (`.github/workflows/vercel.yml`) catches problems that only show up in a deployed build. It has two jobs: an offline artifact build that runs on every pull request, and a live smoke test you start by hand. You can run the same smoke test against your own installation.
 
 ## Artifact build
 
@@ -12,7 +12,7 @@ The `artifact` job runs on every pull request, every push to `main`, and every m
 The job:
 
 1. Starts an isolated PostgreSQL service.
-2. Writes a local `.vercel/project.json` with the `services` framework, then runs `vercel build --prod` offline with placeholder Blob credentials. The build applies migrations to the isolated database.
+2. Writes a local `.vercel/project.json` with the `services` framework, then runs `vercel build --prod --standalone` offline with placeholder Blob credentials. Vercel packages dependencies into the Function output; the build applies migrations to the isolated database.
 3. Checks the `backend` service Function:
    - its runtime is `nodejs24.x`, `maxDuration` is `300`, and its handler is `apps/server/vercel.mjs`;
    - a copy of the Function outside the checkout loads with `--no-experimental-require-module`, like the Vercel runtime does, so a dependency the build left out fails the job;
