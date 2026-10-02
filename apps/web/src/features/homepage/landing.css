@@ -6,10 +6,27 @@
 /* Short viewports hide the secondary captions of the pinned scenes so nothing overlaps. */
 @custom-variant short (@media (height < 720px));
 
+@font-face {
+	font-family: "IBM Plex Mono";
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url("/fonts/ibm-plex-mono-500.ttf") format("truetype");
+}
+
+@font-face {
+	font-family: "IBM Plex Mono";
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url("/fonts/ibm-plex-mono-700.ttf") format("truetype");
+}
+
 @theme {
 	/* Existing landing classes share the app's display and UI families. */
 	--font-anybody: var(--font-display);
 	--font-martian: var(--font-ui);
+	--font-receipt: "IBM Plex Mono", ui-monospace, monospace;
 
 	--animate-breathe: landing-breathe 16s ease-in-out infinite alternate;
 	--animate-drift: landing-drift 90s ease-in-out infinite alternate;

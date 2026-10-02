@@ -284,9 +284,9 @@ export function Support() {
 				</div>
 				<div className="-mx-3 -mt-[9px] box-content w-full overflow-hidden px-3 pb-10">
 					<div className="[transform:translateY(calc((1-clamp(0,var(--p)*1.7-.15,1))*-100%))] drop-shadow-[0_18px_24px_oklch(0.2_0.01_95/.22)] [transition:transform_.4s_linear]">
-						<div className="receipt-paper bg-[#fdfcf8] px-[26px] pt-[30px] pb-[46px] font-['Courier_New',Courier,monospace] text-[12.5px] leading-[1.75] text-[oklch(0.25_0.01_95)]">
+						<div className="receipt-paper font-receipt bg-[#fdfcf8] px-[26px] pt-[30px] pb-[46px] text-[14px] leading-[1.75] font-medium text-[oklch(0.25_0.01_95)]">
 							<div className="mb-4 flex flex-col gap-0.5 text-center">
-								<b className="text-[18px] leading-[1.1] font-semibold tracking-[-.01em]">REACTIVE RESUME</b>
+								<b className="text-[18px] leading-[1.1] font-bold tracking-[-.01em]">REACTIVE RESUME</b>
 								<span className="text-[oklch(0.5_0.01_95)]">{t`A free and open-source resume builder`}</span>
 								<span className="text-[oklch(0.5_0.01_95)] uppercase">
 									{i18n.date(receiptDate, { day: "2-digit", month: "short", year: "numeric" })}
@@ -295,7 +295,7 @@ export function Support() {
 							<dl className="grid grid-cols-[1fr_auto] gap-x-3.5 border-t-[1.5px] border-dashed border-[oklch(0.7_0.01_95)] pt-2.5">
 								{lineItems.map(([item, amount]) => (
 									<div key={item} className="contents">
-										<dt>{item}</dt>
+										<dt className="capitalize">{item}</dt>
 										<dd>{amount}</dd>
 									</div>
 								))}
