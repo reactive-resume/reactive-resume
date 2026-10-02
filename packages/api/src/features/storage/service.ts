@@ -28,7 +28,7 @@ interface StorageReadResult {
 	contentType?: string;
 }
 
-interface StorageService {
+export interface StorageService {
 	list(prefix: string): Promise<string[]>;
 	write(input: StorageWriteInput): Promise<void>;
 	read(key: string): Promise<StorageReadResult | null>;
@@ -38,7 +38,7 @@ interface StorageService {
 
 interface StorageHealthResult {
 	status: "healthy" | "unhealthy";
-	type: "local" | "s3" | "blob";
+	type: "local" | "s3" | "blob" | "r2";
 	message: string;
 	error?: string;
 }
@@ -326,7 +326,13 @@ class S3StorageService implements StorageService {
 
 let cachedService: StorageService | null = null;
 
+/** Platforms with native storage bindings configure their adapter before handling requests. */
+export function configureStorageService(service: StorageService): void {
+	cachedService = service;
+}
+
 export function getStorageService(): StorageService {
+	if (env.STORAGE_BACKEND === "r2" && !cachedService) throw new Error("R2 storage binding is not configured");
 	cachedService ??=
 		env.STORAGE_BACKEND === "blob"
 			? new BlobStorageService()

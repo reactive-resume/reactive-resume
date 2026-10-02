@@ -39,7 +39,9 @@ function publicCheck(check: CheckResult, name: "Database" | "Storage" | "Redis")
 		status: check.status,
 		latencyMs: check.latencyMs,
 		error: `${name} health check failed.`,
-		...(check.type === "local" || check.type === "s3" || check.type === "blob" ? { type: check.type } : {}),
+		...(check.type === "local" || check.type === "s3" || check.type === "blob" || check.type === "r2"
+			? { type: check.type }
+			: {}),
 	};
 }
 

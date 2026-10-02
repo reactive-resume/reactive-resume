@@ -6,7 +6,7 @@ import { aiProviderSchema } from "@reactive-resume/ai/types";
 import { findWorkspaceRoot } from "@reactive-resume/utils/monorepo.node";
 import { deploymentEnvironment } from "./deployment";
 
-const workspaceRoot = findWorkspaceRoot();
+const workspaceRoot = process.env.CLOUDFLARE === "1" ? null : findWorkspaceRoot();
 
 if (workspaceRoot) {
 	try {
@@ -21,6 +21,7 @@ if (workspaceRoot) {
 export const env = createEnv({
 	server: {
 		// Application
+		CLOUDFLARE: z.stringbool().default(false),
 		APP_URL: z.url({ protocol: /https?/ }),
 		ROOT_RESUME_ID: z
 			.string()
@@ -96,7 +97,7 @@ export const env = createEnv({
 		SMTP_SECURE: z.stringbool().default(false),
 
 		// Storage (Optional)
-		STORAGE_BACKEND: z.enum(["local", "s3", "blob"]),
+		STORAGE_BACKEND: z.enum(["local", "s3", "blob", "r2"]),
 		BLOB_READ_WRITE_TOKEN: z.string().min(1).optional(),
 		BLOB_STORE_ID: z.string().min(1).optional(),
 		DEPLOYMENT_NAMESPACE: z.string().regex(/^[a-zA-Z0-9._-]+$/),

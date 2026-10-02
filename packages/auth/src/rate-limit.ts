@@ -1,4 +1,5 @@
 import type { BetterAuthOptions } from "better-auth";
+import { getCoordination } from "@reactive-resume/db/coordination";
 import { getRedis, redisKey } from "@reactive-resume/db/redis";
 
 // Match Better Auth's rolling inactivity window: only accepted requests extend it.
@@ -30,17 +31,31 @@ function consumeLocally(key: string, rule: { window: number; max: number }) {
 	return { allowed: true, retryAfter: null };
 }
 
-export const authRateLimitStorage: NonNullable<BetterAuthOptions["rateLimit"]>["customStorage"] = redis
-	? {
-			async consume(key, rule) {
-				try {
-					const result = await redis.eval(consumeScript, 1, redisKey("auth", key), rule.window * 1_000, rule.max);
-					if (!Array.isArray(result) || result.length !== 2) throw new Error("Invalid rate limit result");
-					return { allowed: result[0] === 1, retryAfter: result[0] === 1 ? null : Number(result[1]) };
-				} catch (error) {
-					console.error("[auth] Redis rate limit unavailable; using per-instance limits", error);
-					return consumeLocally(key, rule);
-				}
-			},
-		}
-	: undefined;
+export const authRateLimitStorage: NonNullable<BetterAuthOptions["rateLimit"]>["customStorage"] =
+	redis || process.env.CLOUDFLARE === "1"
+		? {
+				async consume(key, rule) {
+					const service = getCoordination();
+					if (service) {
+						const result = await service.consume(redisKey("auth", key), {
+							window: rule.window * 1_000,
+							max: rule.max,
+							rolling: true,
+						});
+						return {
+							allowed: result.allowed,
+							retryAfter: result.allowed ? null : Math.max(1, Math.ceil((result.reset - Date.now()) / 1_000)),
+						};
+					}
+					if (!redis) throw new Error("Cloudflare auth coordination is not configured");
+					try {
+						const result = await redis.eval(consumeScript, 1, redisKey("auth", key), rule.window * 1_000, rule.max);
+						if (!Array.isArray(result) || result.length !== 2) throw new Error("Invalid rate limit result");
+						return { allowed: result[0] === 1, retryAfter: result[0] === 1 ? null : Number(result[1]) };
+					} catch (error) {
+						console.error("[auth] Redis rate limit unavailable; using per-instance limits", error);
+						return consumeLocally(key, rule);
+					}
+				},
+			}
+		: undefined;

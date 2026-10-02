@@ -6,6 +6,8 @@ const HEARTBEAT_TTL_MS = 10_000;
 
 export async function requestRunCancellation(runId: string, reason: string): Promise<void> {
 	try {
+		const shared = getCoordination();
+		if (shared) await shared.set(redisKey("agent-cancellation", runId), reason, CANCELLATION_TTL_MS);
 		await getRedis()?.set(redisKey("agent-cancellation", runId), reason, "PX", CANCELLATION_TTL_MS);
 	} finally {
 		controllers.get(runId)?.abort(new DOMException(reason, "AbortError"));
@@ -16,6 +18,7 @@ export async function requestRunCancellation(runId: string, reason: string): Pro
 export async function monitorRunCancellation(runId: string, controller: AbortController): Promise<() => void> {
 	controllers.set(runId, controller);
 	const redis = getRedis();
+	const shared = getCoordination();
 	let stopped = false;
 	let timeout: ReturnType<typeof setTimeout> | undefined;
 	const cleanup = () => {
@@ -25,16 +28,21 @@ export async function monitorRunCancellation(runId: string, controller: AbortCon
 	};
 
 	const check = async () => {
-		if (stopped || !redis) return;
+		if (stopped || (!redis && !shared)) return;
 		try {
 			// Keep beating after an abort: the owner still holds the claim while it persists the transcript.
-			await redis.set(redisKey("agent-run-alive", runId), "1", "PX", HEARTBEAT_TTL_MS);
-			const reason = controller.signal.aborted ? null : await redis.get(redisKey("agent-cancellation", runId));
+			if (shared) await shared.set(redisKey("agent-run-alive", runId), "1", HEARTBEAT_TTL_MS);
+			else await redis?.set(redisKey("agent-run-alive", runId), "1", "PX", HEARTBEAT_TTL_MS);
+			const reason = controller.signal.aborted
+				? null
+				: shared
+					? await shared.get(redisKey("agent-cancellation", runId))
+					: await redis?.get(redisKey("agent-cancellation", runId));
 			if (!stopped && reason) controller.abort(new DOMException(reason, "AbortError"));
 		} catch {
 			if (!stopped) controller.abort(new DOMException("CANCELLATION_UNAVAILABLE", "AbortError"));
 		}
-		// ponytail: two Redis commands per second per run; pub/sub can reduce traffic at higher concurrency.
+		// ponytail: two shared operations per second per run; pub/sub can reduce traffic at higher concurrency.
 		if (!stopped) timeout = setTimeout(() => void check(), 1_000);
 	};
 	await check();
@@ -44,8 +52,12 @@ export async function monitorRunCancellation(runId: string, controller: AbortCon
 /** False once a run's owner has stopped heartbeating, meaning it died without releasing its claim. */
 export async function isRunAlive(runId: string, startedAt: Date | null): Promise<boolean> {
 	const redis = getRedis();
-	if (!redis) return true;
+	const shared = getCoordination();
+	if (!redis && !shared) return true;
 	// A just-claimed run may not have written its first heartbeat yet.
 	if (startedAt && Date.now() - startedAt.getTime() < HEARTBEAT_TTL_MS) return true;
-	return (await redis.exists(redisKey("agent-run-alive", runId))) === 1;
+	return shared
+		? (await shared.get(redisKey("agent-run-alive", runId))) !== null
+		: (await redis?.exists(redisKey("agent-run-alive", runId))) === 1;
 }
+import { getCoordination } from "@reactive-resume/db/coordination";

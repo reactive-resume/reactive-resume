@@ -1,6 +1,7 @@
 import type { LookupAddress } from "node:dns";
 import type { LookupFunction } from "node:net";
 import { lookup } from "node:dns";
+import { lookup as lookupAddresses, resolve4, resolve6 } from "node:dns/promises";
 import { BlockList, isIP } from "node:net";
 
 function normalizeHostname(hostname: string) {
@@ -79,6 +80,45 @@ export const publicLookup: LookupFunction = (hostname, options, callback) => {
 		callback(null, first?.address ?? "", first?.family ?? 4);
 	});
 };
+
+/** Workers implements resolve4/resolve6, but not dns.lookup. */
+export async function resolveHostAddresses(hostname: string): Promise<Pick<LookupAddress, "address">[]> {
+	const host = stripIpv6Brackets(hostname);
+	if (isIP(host)) return [{ address: host }];
+	if (process.env.CLOUDFLARE !== "1") return lookupAddresses(host, { all: true });
+	const results = await Promise.allSettled([resolve4(host), resolve6(host)]);
+	return results.flatMap((result) =>
+		result.status === "fulfilled" ? result.value.map((address) => ({ address })) : [],
+	);
+}
+
+/** Requires global_fetch_strictly_public: Workers enforces public routing at connection time, including rebinding. */
+export async function fetchWorkerPublicUrl(
+	input: URL,
+	options: { signal: AbortSignal; headers?: HeadersInit },
+): Promise<Response> {
+	if (process.env.CLOUDFLARE !== "1") throw new Error("Public Worker fetch requires Cloudflare");
+	let url = input;
+	for (let redirects = 0; redirects <= 3; redirects++) {
+		if (!/^https?:$/.test(url.protocol) || url.username || url.password || isPrivateOrLoopbackHost(url.hostname)) {
+			throw new Error("Private network address refused", { cause: "unsafe-url" });
+		}
+		const addresses = await resolveHostAddresses(url.hostname);
+		options.signal.throwIfAborted();
+		if (!addresses.length || addresses.some(({ address }) => isPrivateOrLoopbackHost(address))) {
+			throw new Error("Private network address refused", { cause: "unsafe-url" });
+		}
+		const response = await fetch(url, { ...options, redirect: "manual" });
+		const location = response.headers.get("location");
+		if (response.status < 300 || response.status >= 400 || !location) return response;
+		await response.body?.cancel();
+		const next = new URL(location, url);
+		if (url.protocol === "https:" && next.protocol !== "https:")
+			throw new Error("HTTPS redirect required", { cause: "unsafe-url" });
+		url = next;
+	}
+	throw new Error("Too many redirects");
+}
 
 export function parseUrl(input: string) {
 	try {

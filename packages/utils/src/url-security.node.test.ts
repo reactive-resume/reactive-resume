@@ -1,5 +1,8 @@
-import { describe, expect, it } from "vitest";
-import { isAllowedOAuthRedirectUri, isPrivateOrLoopbackHost } from "./url-security.node";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { fetchWorkerPublicUrl, isAllowedOAuthRedirectUri, isPrivateOrLoopbackHost } from "./url-security.node";
+
+const dns = vi.hoisted(() => ({ lookup: vi.fn(), resolve4: vi.fn(), resolve6: vi.fn() }));
+vi.mock("node:dns/promises", () => dns);
 
 describe("isPrivateOrLoopbackHost", () => {
 	it.each([
@@ -133,4 +136,60 @@ describe("isAllowedOAuthRedirectUri", () => {
 		expect(isAllowedOAuthRedirectUri("https://api.example.com/cb", trustedOrigins)).toBe(true);
 		expect(isAllowedOAuthRedirectUri("https://claude.ai/api/mcp/auth_callback", trustedOrigins)).toBe(true);
 	});
+});
+
+describe("fetchWorkerPublicUrl", () => {
+	const network = vi.fn<typeof fetch>();
+	const options = () => ({ signal: new AbortController().signal });
+	beforeEach(() => {
+		vi.stubEnv("CLOUDFLARE", "1");
+		vi.stubGlobal("fetch", network);
+		dns.resolve4.mockResolvedValue(["1.1.1.1"]);
+		dns.resolve6.mockRejectedValue(new Error("No IPv6 records"));
+	});
+	afterEach(() => {
+		vi.resetAllMocks();
+		vi.unstubAllGlobals();
+		vi.unstubAllEnvs();
+	});
+
+	it("reads public redirects without automatically following unchecked destinations", async () => {
+		network.mockResolvedValueOnce(
+			new Response(null, { status: 302, headers: { location: "https://next.example/page" } }),
+		);
+		network.mockResolvedValueOnce(new Response("public page"));
+		const response = await fetchWorkerPublicUrl(new URL("https://example.com"), options());
+		expect(await response.text()).toBe("public page");
+		expect(network.mock.calls.map(([url, init]) => [String(url), init?.redirect])).toEqual([
+			["https://example.com/", "manual"],
+			["https://next.example/page", "manual"],
+		]);
+	});
+
+	it("refuses a host if any DNS answer is private", async () => {
+		dns.resolve6.mockResolvedValue(["fd00::1"]);
+		await expect(fetchWorkerPublicUrl(new URL("https://example.com"), options())).rejects.toMatchObject({
+			cause: "unsafe-url",
+		});
+		expect(network).not.toHaveBeenCalled();
+	});
+
+	it("fails closed when DNS cannot resolve either address family", async () => {
+		dns.resolve4.mockRejectedValue(new Error("DNS unavailable"));
+		await expect(fetchWorkerPublicUrl(new URL("https://example.com"), options())).rejects.toMatchObject({
+			cause: "unsafe-url",
+		});
+		expect(network).not.toHaveBeenCalled();
+	});
+
+	it.each(["https://127.0.0.1/admin", "https://[::1]/admin", "http://next.example/page"])(
+		"refuses redirect to %s",
+		async (location) => {
+			network.mockResolvedValueOnce(new Response(null, { status: 302, headers: { location } }));
+			await expect(fetchWorkerPublicUrl(new URL("https://example.com"), options())).rejects.toMatchObject({
+				cause: "unsafe-url",
+			});
+			expect(network).toHaveBeenCalledTimes(1);
+		},
+	);
 });

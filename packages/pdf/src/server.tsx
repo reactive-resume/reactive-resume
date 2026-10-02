@@ -7,6 +7,8 @@ import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { readServerImage } from "./forme/images.node.ts";
 import { assertPdfText, renderResume } from "./forme/render";
 
+export { configureOwnPictureReader } from "./forme/images.node";
+
 export type CreateResumePdfFileOptions = {
 	data: ResumeData;
 	filename: string;

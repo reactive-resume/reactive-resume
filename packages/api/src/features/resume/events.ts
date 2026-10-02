@@ -1,5 +1,6 @@
 import { on, once } from "node:events";
 import { getPool } from "@reactive-resume/db/client";
+import { getCoordination } from "@reactive-resume/db/coordination";
 import { getRedis, redisKey } from "@reactive-resume/db/redis";
 
 const RESUME_UPDATED_CHANNEL = "resume_updated";
@@ -39,6 +40,8 @@ function isResumeUpdatedEvent(value: unknown): value is ResumeUpdatedEvent {
 }
 
 export async function publishResumeUpdated(event: ResumeUpdatedEvent) {
+	const shared = getCoordination();
+	if (shared) return shared.publish(redisKey(RESUME_UPDATED_CHANNEL, event.resumeId), JSON.stringify(event));
 	const redis = getRedis();
 	if (redis) {
 		await redis.publish(redisKey(RESUME_UPDATED_CHANNEL), JSON.stringify(event));
@@ -63,6 +66,14 @@ const isAbort = (error: unknown) => error instanceof Error && error.name === "Ab
 
 export async function* subscribeResumeUpdated({ resumeId, userId, signal }: SubscribeResumeUpdatedInput) {
 	if (signal?.aborted) return;
+	const shared = getCoordination();
+	if (shared) {
+		for await (const payload of shared.subscribe(redisKey(RESUME_UPDATED_CHANNEL, resumeId), signal)) {
+			const event = readEvent(payload, resumeId, userId);
+			if (event) yield event;
+		}
+		return;
+	}
 	const subscriber = getRedis()?.duplicate({ commandTimeout: 5_000 });
 	const client = subscriber ? undefined : await getPool().connect();
 	const channel = subscriber ? redisKey(RESUME_UPDATED_CHANNEL) : RESUME_UPDATED_CHANNEL;

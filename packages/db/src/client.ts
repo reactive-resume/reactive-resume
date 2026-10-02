@@ -1,6 +1,9 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { env } from "@reactive-resume/env/server";
+
+const requestDatabase = new AsyncLocalStorage<{ pool: Pool; database: ReturnType<typeof drizzle> }>();
 
 declare global {
 	var __pool: Pool | undefined;
@@ -8,6 +11,8 @@ declare global {
 }
 
 export function getPool() {
+	const request = requestDatabase.getStore();
+	if (request) return request.pool;
 	if (!globalThis.__pool) {
 		const pool = new Pool({
 			connectionString: env.DATABASE_URL,
@@ -35,7 +40,19 @@ export function getPool() {
 
 // ponytail: two private fns collapsed; getPool() is already a singleton, global cache preserved
 globalThis.__drizzle ??= drizzle({ client: getPool() });
-export const db = globalThis.__drizzle;
+
+/** Workers must create sockets inside a request and cannot reuse them in another request. */
+export function withDatabasePool<T>(pool: Pool, callback: () => T): T {
+	return requestDatabase.run({ pool, database: drizzle({ client: pool }) }, callback);
+}
+
+export const db = new Proxy(globalThis.__drizzle, {
+	get(target, property) {
+		const database = requestDatabase.getStore()?.database ?? target;
+		const value = Reflect.get(database, property, database) as unknown;
+		return typeof value === "function" ? value.bind(database) : value;
+	},
+});
 
 /** The client, or a transaction on it: helpers that write take either, so callers choose the transaction. */
 export type DbOrTx = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];

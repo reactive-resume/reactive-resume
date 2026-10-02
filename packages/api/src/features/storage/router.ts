@@ -4,8 +4,6 @@ import { protectedProcedure } from "../../context";
 import { storageDeleteRateLimit, storageUploadRateLimit } from "../../middleware/rate-limit";
 import { getStorageService, isImageFile, processImageForUpload, uploadFile } from "./service";
 
-const storageService = getStorageService();
-
 const fileSchema = z.file().max(10 * 1024 * 1024, "File size must be less than 10MB");
 
 const filenameSchema = z.object({
@@ -98,7 +96,7 @@ export const storageRouter = {
 				throw new ORPCError("FORBIDDEN");
 			}
 
-			const deleted = await storageService.delete(key);
+			const deleted = await getStorageService().delete(key);
 
 			if (!deleted) throw new ORPCError("NOT_FOUND");
 		}),

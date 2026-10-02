@@ -112,7 +112,7 @@ backends.
 
 | Variable                | Default                  | Description                                                                                                                                                                                                                 |
 | ----------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `STORAGE_BACKEND`       | automatic                | `local`, `s3` or `blob`. When unset: `s3` if `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` and `S3_BUCKET` are all set; otherwise `blob` on Vercel and `local` everywhere else.                                                |
+| `STORAGE_BACKEND`       | automatic                | `local`, `s3`, `blob` or `r2` (Workers only). When unset: `r2` on Cloudflare Workers; otherwise `s3` if `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` and `S3_BUCKET` are all set, `blob` on Vercel and `local` elsewhere.     |
 | `LOCAL_STORAGE_PATH`    | `/app/data` in the image | Folder for local uploads. Must be an absolute path. In a source checkout it defaults to `data/` in the repository. The server checks that it is writable at startup and refuses to start if it is not.                      |
 | `S3_ACCESS_KEY_ID`      | unset                    | Access key for S3 or an S3-compatible service.                                                                                                                                                                              |
 | `S3_SECRET_ACCESS_KEY`  | unset                    | Secret key.                                                                                                                                                                                                                 |
@@ -256,3 +256,7 @@ See [Development setup](/contributing/development) for working on the code.
 - [Self-hosting with Docker](/self-hosting/docker): a complete setup with PostgreSQL.
 - [Deployment examples](/self-hosting/examples): reverse proxies, S3 storage, Redis and local AI.
 - [Single sign-on](/self-hosting/sso): provider setup for the sign-in variables.
+
+## Cloudflare Workers
+
+Set `CLOUDFLARE=1` in Wrangler. The runtime uses native R2 (`STORAGE_BACKEND=r2`), disables native image processing, and receives its PostgreSQL connection through the `HYPERDRIVE` binding. Keep `REDIS_URL` unset; SQLite Durable Objects provide shared limits, live updates, and cancellation. See [Self-hosting on Cloudflare](/self-hosting/cloudflare) for required bindings, secrets, migrations, and runtime differences.

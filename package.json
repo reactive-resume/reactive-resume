@@ -24,6 +24,10 @@
 	],
 	"scripts": {
 		"build": "pnpm pdf:translations && turbo run build",
+		"build:cloudflare": "pnpm pdf:translations && pnpm --filter web build && node tooling/cloudflare/build.mjs",
+		"dev:cloudflare": "CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV=false wrangler dev",
+		"deploy:cloudflare": "pnpm build:cloudflare && wrangler deploy",
+		"check:cloudflare": "pnpm build:cloudflare && wrangler deploy --dry-run",
 		"check": "pnpm pdf:translations && pnpm lint:fix && pnpm format && pnpm lint",
 		"docs:gen": "pnpm --filter server docs:gen && pnpm --filter @reactive-resume/tooling docs:gen",
 		"db:generate": "dotenvx run --ignore=MISSING_ENV_FILE -f .env.local -- turbo run db:generate --filter=@reactive-resume/db",
@@ -47,7 +51,8 @@
 		"lint:fix": "oxlint --fix",
 		"lint:agent": "oxlint --deny-warnings --format=agent",
 		"format": "oxfmt --write",
-		"format:check": "oxfmt --check"
+		"format:check": "oxfmt --check",
+		"test:cloudflare": "node tooling/cloudflare/smoke.mjs"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^21.2.3",
@@ -71,6 +76,7 @@
 		"pg": "catalog:",
 		"turbo": "^2.11.6",
 		"typescript": "catalog:",
-		"vitest": "catalog:"
+		"vitest": "catalog:",
+		"wrangler": "catalog:"
 	}
 }

@@ -1,3 +1,4 @@
+import type { ReadWebFile } from "../static/web";
 import type { Http2Bindings, HttpBindings } from "@hono/node-server";
 import type { Context } from "hono";
 import { BlockList, isIP } from "node:net";
@@ -52,6 +53,7 @@ const getTrustedClient = (context: Context<ServerEnvironment>, proxies: BlockLis
 type AppOptions = {
 	serveStatic?: boolean;
 	trustedClient?: (request: Request) => string;
+	readWebFile?: ReadWebFile;
 };
 
 export function createApp(options: AppOptions = {}) {
@@ -122,9 +124,9 @@ export function createApp(options: AppOptions = {}) {
 
 	// Must precede the static middleware: serveStatic resolves "/" to dist/index.html and would
 	// return it verbatim, skipping the OpenGraph/Twitter/canonical/JSON-LD injection in handleWebApp.
-	app.on(["GET", "HEAD"], "/", (c) => handleWebApp(c.req.raw));
-	if (options.serveStatic !== false) app.use("/*", serveWebDistStatic);
-	app.on(["GET", "HEAD"], "/*", (c) => handleWebApp(c.req.raw));
+	app.on(["GET", "HEAD"], "/", (c) => handleWebApp(c.req.raw, options.readWebFile));
+	if (options.serveStatic !== false && serveWebDistStatic) app.use("/*", serveWebDistStatic);
+	app.on(["GET", "HEAD"], "/*", (c) => handleWebApp(c.req.raw, options.readWebFile));
 
 	return app;
 }

@@ -101,7 +101,8 @@ try {
 	form.set("data", JSON.stringify({ json: {}, maps: [[]] }));
 	form.set("0", file);
 	const uploaded = await rpc("storage/uploadFile", form, staged);
-	const download = await checked(await request(uploaded.url, {}, false));
+	assert.equal((await request(uploaded.url, {}, false)).status, 404, "non-image files require owner authentication");
+	const download = await checked(await request(uploaded.url));
 	assert.equal((await download.arrayBuffer()).byteLength, file.size);
 	await rpc("storage/deleteFile", { filename: uploaded.path });
 	console.log("Pages, auth, resume CRUD, public PDF, 10 MiB upload/download: passed");

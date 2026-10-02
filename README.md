@@ -197,11 +197,13 @@ The full documentation lives at [docs.rxresu.me](https://docs.rxresu.me):
 
 ## Self-Hosting
 
-Reactive Resume supports Docker and Vercel Hobby.
+Reactive Resume supports Docker, Vercel Hobby, and Cloudflare Workers Paid.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Freactive-resume%2Freactive-resume&project-name=reactive-resume&repository-name=reactive-resume&env=AUTH_SECRET%2CENCRYPTION_SECRET&envDescription=Generate+two+independent+secrets+with+openssl+rand+-hex+32.+Keep+these+values+across+deployments.&envLink=https%3A%2F%2Fdocs.rxresu.me%2Fself-hosting%2Fvercel&stores=%5B%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22integrationSlug%22%3A%22neon%22%2C%22productSlug%22%3A%22neon%22%7D%2C%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22integrationSlug%22%3A%22upstash%22%2C%22productSlug%22%3A%22upstash-kv%22%7D%2C%7B%22type%22%3A%22blob%22%2C%22access%22%3A%22private%22%7D%5D)
 
 Vercel provisions Neon PostgreSQL, private Blob storage, and Upstash Redis through its deployment wizard. Supply two persistent secrets, then deploy. See the [Vercel guide](docs/self-hosting/vercel.mdx) for setup, limits, and optional SMTP/OAuth configuration.
+
+Cloudflare deployment uses Workers with Static Assets, private R2 storage, SQLite Durable Objects, and PostgreSQL through Hyperdrive. No Redis or container is required. See the [Cloudflare guide](docs/self-hosting/cloudflare.mdx) for setup, pricing, and runtime limits. The first version requires an existing PostgreSQL database; fully Cloudflare-native database provisioning and a deploy button are separate work.
 
 For Docker, the stack includes:
 

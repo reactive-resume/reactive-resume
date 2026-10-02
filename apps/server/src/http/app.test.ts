@@ -187,7 +187,7 @@ describe("createApp", () => {
 		expect(mocks.handleOpenApi).toHaveBeenNthCalledWith(2, unknownOpenApiRequest, "unknown");
 	});
 
-	it("routes GET / to the web app handler so SEO markup is injected", async () => {
+	it("routes GET / to the web app before static files", async () => {
 		const { createApp } = await import("./app");
 		const app = createApp();
 		const request = new Request("http://localhost:3001/");
@@ -195,7 +195,7 @@ describe("createApp", () => {
 		const response = await app.fetch(request);
 
 		expect(response.status).toBe(200);
-		expect(mocks.handleWebApp).toHaveBeenCalledWith(request);
+		expect(await response.text()).toBe("web");
 		expect(mocks.serveWebDistStatic).not.toHaveBeenCalled();
 	});
 

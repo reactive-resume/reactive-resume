@@ -258,14 +258,16 @@ async function createPublicResumeSeoMarkup(pathname: string, origin: string) {
 	};
 }
 
-export const serveWebDistStatic = serveStatic({
-	root: staticRoot,
-	onFound: (_path, context) => {
-		if (/^\/videos\/.*-v\d+\.(?:mp4|webp)$/.test(context.req.path)) {
-			context.header("Cache-Control", "public, max-age=31536000, immutable");
-		}
-	},
-});
+export const serveWebDistStatic = env.CLOUDFLARE
+	? undefined
+	: serveStatic({
+			root: staticRoot,
+			onFound: (_path, context) => {
+				if (/^\/videos\/.*-v\d+\.(?:mp4|webp)$/.test(context.req.path)) {
+					context.header("Cache-Control", "public, max-age=31536000, immutable");
+				}
+			},
+		});
 
 function getFallbackResponseHeaders(pathname: string) {
 	if (pathname === "/" && env.ROOT_RESUME_ID) {
@@ -346,7 +348,9 @@ const prerenderedPages: Record<
 };
 
 // ponytail: GET and HEAD share the same routing logic; method determines body presence
-export async function handleWebApp(request: Request) {
+export type ReadWebFile = (path: string) => Promise<string>;
+
+export async function handleWebApp(request: Request, readFile: ReadWebFile = (path) => fs.readFile(path, "utf-8")) {
 	const isHead = request.method === "HEAD";
 	const pathname = new URL(request.url).pathname;
 
@@ -359,7 +363,7 @@ export async function handleWebApp(request: Request) {
 
 	if (isHead) return new Response(null, { status: 200, headers });
 
-	const html = await fs.readFile(indexHtmlPath, "utf-8");
+	const html = await readFile(indexHtmlPath);
 
 	if (pathname === "/" && env.ROOT_RESUME_ID) {
 		const canonicalUrl = new URL("/", env.APP_URL).toString();
@@ -380,9 +384,9 @@ export async function handleWebApp(request: Request) {
 		const { locale, requested } = getPageLocale(request);
 		const origin = new URL(env.APP_URL).origin;
 		// Without a prerendered page (a build that skipped it), the app renders the page in the browser.
-		const page = await fs
-			.readFile(`${prerenderRoot}/${prerendered.name}/${locale}.html`, "utf-8")
-			.catch(() => prerendered.fallback(html));
+		const page = await readFile(`${prerenderRoot}/${prerendered.name}/${locale}.html`).catch(() =>
+			prerendered.fallback(html),
+		);
 		const markup = createPageSeoMarkup({
 			canonicalUrl: new URL(pathname, env.APP_URL).toString(),
 			locale,

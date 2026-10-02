@@ -1,8 +1,13 @@
 import type { LookupAddress } from "node:dns";
-import { lookup as lookupAddresses } from "node:dns/promises";
 import { request } from "node:https";
 import sanitizeHtml from "sanitize-html";
-import { isPrivateOrLoopbackHost, parseUrl, publicLookup } from "@reactive-resume/utils/url-security.node";
+import {
+	fetchWorkerPublicUrl,
+	isPrivateOrLoopbackHost,
+	parseUrl,
+	publicLookup,
+	resolveHostAddresses,
+} from "@reactive-resume/utils/url-security.node";
 import { MAX_PAGE_BYTES, WebAccessError } from "./contracts";
 
 /** Preserve the posting reader's HTTPS-only policy. */
@@ -30,7 +35,7 @@ export function abortable<T>(promise: Promise<T>, signal: AbortSignal): Promise<
 
 export async function assertPublicTarget(input: string, signal: AbortSignal) {
 	const url = assertPublicPageUrl(input);
-	const addresses = await abortable(lookupAddresses(url.hostname, { all: true }), signal).catch((error) => {
+	const addresses = await abortable(resolveHostAddresses(url.hostname), signal).catch((error) => {
 		signal.throwIfAborted();
 		if (error instanceof WebAccessError) throw error;
 		throw new WebAccessError("unreachable");
@@ -46,6 +51,7 @@ export function readBuiltinPage(
 ): Promise<{ html: string; resolvedUrl: string }> {
 	signal.throwIfAborted();
 	const url = assertPublicPageUrl(input);
+	if (process.env.CLOUDFLARE === "1") return readWorkerPage(url, signal);
 	return new Promise((resolve, reject) => {
 		const req = request(
 			url,
@@ -103,6 +109,43 @@ export function readBuiltinPage(
 		});
 		req.end();
 	});
+}
+
+async function readWorkerPage(url: URL, signal: AbortSignal): Promise<{ html: string; resolvedUrl: string }> {
+	try {
+		const response = await fetchWorkerPublicUrl(url, {
+			signal,
+			headers: { accept: "text/html,application/xhtml+xml,text/plain;q=0.9" },
+		});
+		if (!response.ok) {
+			await response.body?.cancel();
+			throw new WebAccessError("unreachable");
+		}
+		if (!/text\/html|application\/xhtml\+xml|text\/plain/i.test(response.headers.get("content-type") ?? "")) {
+			await response.body?.cancel();
+			throw new WebAccessError("not-a-page");
+		}
+		const reader = response.body?.getReader();
+		if (!reader) throw new WebAccessError("not-a-page");
+		const chunks: Uint8Array[] = [];
+		let size = 0;
+		try {
+			for (;;) {
+				const { value, done } = await reader.read();
+				if (done) break;
+				size += value.byteLength;
+				if (size > MAX_PAGE_BYTES) throw new WebAccessError("too-large");
+				chunks.push(value);
+			}
+		} finally {
+			await reader.cancel();
+		}
+		return { html: Buffer.concat(chunks).toString("utf8"), resolvedUrl: response.url || url.href };
+	} catch (error) {
+		signal.throwIfAborted();
+		if (error instanceof WebAccessError) throw error;
+		throw new WebAccessError(error instanceof Error && error.cause === "unsafe-url" ? "unsafe-url" : "unreachable");
+	}
 }
 
 const ENTITIES: Record<string, string> = {

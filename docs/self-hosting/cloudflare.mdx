@@ -1,0 +1,168 @@
+---
+title: "Self-hosting on Cloudflare"
+description: "Run Reactive Resume on Workers with Static Assets, private R2 storage, Durable Objects, and PostgreSQL through Hyperdrive."
+---
+
+Reactive Resume runs on **Cloudflare Workers**, with the web app served by **Workers Static Assets**, files in a private **R2** bucket, and shared coordination in **SQLite-backed Durable Objects**. PDF exports use WebAssembly inside Workers; no container, browser service, Redis server, or Cloudflare Images subscription is required.
+
+<Note>
+  This is the first Cloudflare runtime milestone. Application data still lives in PostgreSQL, connected through
+  Hyperdrive. Hyperdrive pools connections to your database; it does not host a PostgreSQL database. D1 uses SQLite and
+  is not compatible with the current PostgreSQL schema and transactions. A fully Cloudflare-hosted database and an
+  end-to-end deploy button require a separate database migration and provisioning workflow.
+</Note>
+
+## Services and cost
+
+| Service                 | Purpose                                                                      | Cost controls                                                                                      |
+| ----------------------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Workers + Static Assets | HTTP/API/MCP, dynamic page metadata, static web files                        | Assets go directly to Cloudflare's asset service. Only dynamic requests invoke the application.    |
+| R2 Standard             | Pictures, job application files, assistant attachments                       | Private bucket; native binding needs no S3 credentials. No R2 egress charge.                       |
+| SQLite Durable Objects  | Atomic rate limits, live resume updates, assistant cancellation and liveness | Counters expire. Live updates use WebSocket hibernation, with no periodic database polling.        |
+| Hyperdrive              | PostgreSQL connection pooling                                                | Included with Workers; disable query caching to keep sessions and edits current.                   |
+| PostgreSQL              | Accounts, resumes, letters, applications, assistant history                  | Use an existing database or choose a provider with an allowance appropriate for your installation. |
+
+This setup requires **Workers Paid**: password hashing and PDF generation exceed the Free plan's 10 ms CPU budget. As of October 2026, Workers Paid starts at **$5/month**, including 10 million dynamic requests and 30 million CPU milliseconds. Static asset requests are free and unlimited. The checked-in configuration caps CPU at 30 seconds per request; network waiting time is separate. See [Workers pricing](https://developers.cloudflare.com/workers/platform/pricing/) and [limits](https://developers.cloudflare.com/workers/platform/limits/).
+
+R2 Standard includes 10 GB-month of storage, 1 million Class A operations and 10 million Class B operations per month. Use Standard storage for these small, frequently accessed files; Infrequent Access adds retrieval fees and a minimum storage duration. See [R2 pricing](https://developers.cloudflare.com/r2/pricing/).
+
+Hyperdrive pooling is included in Workers Paid, with no separate Hyperdrive query charge. Your PostgreSQL provider bills separately. [Hyperdrive pricing](https://developers.cloudflare.com/hyperdrive/platform/pricing/).
+
+If your PostgreSQL database scales to zero, avoid frequent uptime probes to `/api/health`: it queries the database and can keep compute awake.
+
+Durable Object requests, active duration, and SQLite storage have their own included allowances and usage charges. Idle hibernating WebSockets avoid active duration charges, but rate-limit calls and assistant heartbeats still count as operations. Set billing alerts and review [Durable Objects pricing](https://developers.cloudflare.com/durable-objects/platform/pricing/). The $5 Workers subscription is a starting cost, not a guaranteed total bill; database, email and AI provider costs are additional.
+
+## Before you start
+
+You need a Cloudflare account with Workers Paid and R2 enabled, Node.js 24, pnpm 12.8.1, and a PostgreSQL database reachable by Hyperdrive. Keep PostgreSQL TLS enabled. Run the commands below from the repository root.
+
+```bash
+pnpm install --frozen-lockfile
+pnpm exec wrangler login
+```
+
+Generate **two independent** secrets and save them in a password manager:
+
+```bash
+openssl rand -hex 32
+openssl rand -hex 32
+```
+
+Keep `AUTH_SECRET` and `ENCRYPTION_SECRET` across deployments. Changing them invalidates sessions or makes saved AI credentials unreadable.
+
+## Configure resources
+
+1. Create a private R2 bucket:
+
+   ```bash
+   pnpm exec wrangler r2 bucket create reactive-resume
+   ```
+
+   Leave public access and `r2.dev` disabled. The application exposes public profile pictures itself; other uploads require the owning account's session.
+
+2. Create a **Hyperdrive configuration** in the Cloudflare dashboard using your PostgreSQL connection details. Turn **query caching off**. Do not cache authentication queries, permission checks, or resume edits. If creating it through Wrangler, include `--caching-disabled`; the [Hyperdrive setup guide](https://developers.cloudflare.com/hyperdrive/get-started/) describes the connection options.
+
+3. Edit root `wrangler.jsonc`:
+
+   - Replace the all-zero `hyperdrive[0].id` with your Hyperdrive ID.
+   - Set `vars.APP_URL` to your final HTTPS origin, for example `https://reactive-resume.<your-subdomain>.workers.dev` or `https://resume.example.com`.
+   - If you chose another bucket name, update `r2_buckets[0].bucket_name`.
+   - Keep `CLOUDFLARE=1`, `STORAGE_BACKEND=r2`, and `FLAG_DISABLE_IMAGE_PROCESSING=true`.
+   - Keep both compatibility flags. `global_fetch_strictly_public` is part of the external image/page reader's private-network protection.
+
+   Wrangler creates the `Coordination` Durable Object namespace and its SQLite migration on deployment. No manual table or Redis setup is needed.
+
+4. Store the secrets using Wrangler's interactive prompts:
+
+   ```bash
+   pnpm exec wrangler secret put AUTH_SECRET
+   pnpm exec wrangler secret put ENCRYPTION_SECRET
+   ```
+
+<Warning>
+  Do not copy Docker's `.env.example` or `.env.local` into Cloudflare. Container hostnames and S3 credentials select the
+  wrong services. Do not set `DATABASE_URL` or `REDIS_URL` on the Worker: its database connection comes from the
+  Hyperdrive binding and its coordination comes from Durable Objects.
+</Warning>
+
+## Migrate and deploy
+
+Apply the repository's PostgreSQL migrations from a trusted machine **before** deploying. Set `DATABASE_URL` in your shell or secret manager to the database's direct connection string, then run:
+
+```bash
+pnpm --filter @reactive-resume/db db:migrate
+```
+
+This package command reads `DATABASE_URL` directly. The root `pnpm db:migrate` command loads `.env.local`, so use the package command above to avoid selecting an unrelated local database. Never commit the connection string. Back up an existing database before an upgrade.
+
+Build and inspect the deployment without publishing:
+
+```bash
+pnpm check:cloudflare
+```
+
+Publish the application and its static assets:
+
+```bash
+pnpm deploy:cloudflare
+```
+
+These commands compile the web app and Worker into `apps/server/dist-cloudflare`. Wrangler uploads the Worker, WebAssembly PDF engine, prompt files, and static assets. Database migrations run on your machine, not during requests. Builds and dry runs do not mutate the database.
+
+For Git deployments through **Workers Builds**, keep the repository root as the project root. Use `pnpm build:cloudflare` as the build command and `pnpm exec wrangler deploy` as the deploy command. Configure the same bindings and persistent secrets; apply migrations in a trusted deployment step before publishing. Preview builds need separate PostgreSQL, Hyperdrive, R2, and Durable Object resources.
+
+## Check the installation
+
+1. Open `/api/health`. Database and storage should report `healthy`, with storage type `r2`.
+2. Create an account, create a resume, and refresh the page to verify persistence.
+3. Upload a profile picture. Share the resume publicly and download its PDF.
+4. Open the same resume in two tabs. An edit should invalidate the other tab's data.
+5. Optional: add SMTP and OAuth credentials, or server AI credentials, using Wrangler secrets and the [environment variable reference](/self-hosting/environment-variables). Redeploy after changing plain variables.
+
+For a custom domain, add it to the Worker in Cloudflare and update `APP_URL` and your OAuth callback URLs. Keep `DEPLOYMENT_NAMESPACE` unchanged so stored files remain available.
+
+## Runtime differences
+
+- Uploaded images retain their original format. Workers does not run native Sharp, so automatic server resizing/conversion stays disabled. Upload PNG, JPEG or WebP pictures; these formats work in PDF exports.
+- Assistant replies stream live, and cancellation works across Worker instances. An in-progress stream cannot reconnect after a reload in this Redis-free setup; completed messages remain in PostgreSQL.
+- Workers has a 128 MB memory limit. Large resumes, large images, or multiple concurrent server PDF renders can exceed it. Normal browser downloads render in the browser, reducing server CPU cost. Monitor Worker CPU/memory errors before increasing limits or serving a large public installation.
+- SMTP port 25 is blocked by Cloudflare. Use a provider on port 465/587, or another supported submission port. Without SMTP, verification/reset emails appear in logs.
+- Private-network image and job-posting URLs are refused. Public images and page redirects are checked before fetching. Operator-configured external AI/search providers still require reachable public endpoints.
+- The Worker does not run PostgreSQL migrations or the Node startup schema check. Apply migrations before every upgrade and verify `/api/health` after deployment.
+
+## Local development and smoke tests
+
+Build first:
+
+```bash
+pnpm build:cloudflare
+```
+
+Create an ignored `.dev.vars` containing local-only secrets and the local application origin:
+
+```dotenv
+APP_URL=http://localhost:8787
+AUTH_SECRET=<local-random-secret>
+ENCRYPTION_SECRET=<different-local-secret-at-least-32-characters>
+```
+
+Point Hyperdrive's emulator at an already migrated, disposable local PostgreSQL database:
+
+```bash
+export CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE='<local-postgresql-url>'
+pnpm dev:cloudflare
+```
+
+The development script prevents Wrangler from reading `.env`/`.env.local`; `.dev.vars` supplies Worker variables. Local R2 and Durable Object data stays under ignored `.wrangler/`. Rebuild after source changes, then restart Wrangler.
+
+With local PostgreSQL running, test the **built** Worker and its real emulated bindings:
+
+```bash
+pnpm test:cloudflare
+```
+
+The smoke test creates, migrates, and deletes a new disposable database. It covers authentication, resume transactions, R2 uploads/access control, live updates, PDF pictures, assistant streaming/cancellation, atomic counters across eviction, and state expiry. It never deploys remotely. Its default admin URL is the development Compose PostgreSQL on `localhost:5432`; use `CLOUDFLARE_TEST_DATABASE_ADMIN_URL` to select another **local** database admin connection.
+
+## Backups and upgrades
+
+Back up PostgreSQL and R2, and preserve both secrets separately. Redeploy the same Worker and bindings after applying migrations. Keep the Durable Object migration history in `wrangler.jsonc`; do not remove an applied tag. Rolling back code does not roll back PostgreSQL schema or file changes. Moving from Docker/Vercel does not copy data or uploads automatically.
