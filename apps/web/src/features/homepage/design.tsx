@@ -91,7 +91,7 @@ const pageLabel = "font-martian font-medium text-[calc(var(--pw)*.045)] leading-
 
 /**
  * 02 Design. The word "Design." changes its type as five templates wipe across the page in turn, then the scene
- * zooms out to a contact sheet of all fifteen. The template tabs jump to each wipe.
+ * zooms out to a contact sheet of illustrative thumbnails. The template tabs jump to each wipe.
  *
  * Everything that moves with the scroll sits on its own layer (will-change), and the wipes slide clipped layers
  * rather than animating clip-path. Otherwise every scrolled frame repaints the whole sticky stage, which Android

@@ -5,6 +5,7 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { templateSchema } from "@reactive-resume/schema/templates";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { localeSchema } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
@@ -216,7 +217,7 @@ export function Support() {
 	// oxlint-disable-next-line react/purity -- The receipt shows the current calendar date on each render, including after midnight.
 	const receiptDate = new Date();
 	const nothing = i18n.number(0, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-	const templates = i18n.number(15);
+	const templates = i18n.number(templateSchema.options.length);
 	const none = t({
 		message: "none",
 		comment: "Receipt line amount for something Reactive Resume doesn't have, e.g. ads.",
