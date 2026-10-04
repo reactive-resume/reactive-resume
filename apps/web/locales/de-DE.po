@@ -344,6 +344,11 @@ msgstr "{entry} benennt die Rolle, aber nicht das, was Sie getan haben, daher we
 msgid "{failing, plural, one {# to review} other {# to review}}"
 msgstr "{failing, plural, one {# zur Überprüfung} other {# zur Überprüfung}}"
 
+#. Time left in the Product Hunt launch day
+#: src/components/ui/product-hunt-banner.tsx
+msgid "{hours}h {minutes}m left"
+msgstr "Noch {hours} Std. {minutes} Min."
+
 #: src/features/ats-checker/checker.tsx
 msgid "{issues, plural, one {# issue could cost you a match.} other {# issues could cost you a match.}}"
 msgstr "{issues, plural, one {Das #-Problem könnte Sie ein Match kosten.} other {#-Probleme könnten Sie ein Match kosten.}}"
@@ -439,7 +444,7 @@ msgstr "{size} pt"
 
 #: src/features/homepage/design.tsx
 msgid "{templateCount} templates."
-msgstr ""
+msgstr "{templateCount} Vorlagen."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
@@ -534,7 +539,7 @@ msgstr "40 % schnellere Bewertungen"
 
 #: src/features/homepage/faq.tsx
 msgid "8 short answers to what people ask before they start. Anything else, ask on <0>Discord</0>."
-msgstr ""
+msgstr "8 kurze Antworten auf häufige Fragen vor dem Start. Weitere Fragen können Sie auf <0>Discord</0> stellen."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "90 days"
@@ -647,7 +652,7 @@ msgstr "A4"
 
 #: src/features/homepage/footer.tsx
 msgid "About"
-msgstr ""
+msgstr "Über uns"
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Accent colour"
@@ -676,11 +681,11 @@ msgstr "Habe ein anderes Angebot angenommen"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Access"
-msgstr ""
+msgstr "Zugriff"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
-msgstr ""
+msgstr "Greifen Sie über die API auf Ihr Konto zu, um Ihre Dokumente und Bewerbungen zu lesen, zu ändern und zu löschen."
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/hero.tsx
@@ -1695,7 +1700,7 @@ msgstr "Überprüfen Sie, ob es korrekt ist."
 
 #: src/features/homepage/check.tsx
 msgid "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads."
-msgstr ""
+msgstr "Die Prüfung liest Ihren Lebenslauf wie eine Bewerbungssoftware und erklärt verständlich, was Sie verbessern können. Sie läuft in Ihrem Browser, sodass die Datei bei Ihnen bleibt: 0 Uploads."
 
 #: src/features/ats-checker/messages.ts
 msgid "Check the exported file contains everything you expect, and that all of it is selectable text."
@@ -1711,7 +1716,7 @@ msgstr "Prüfen Sie, ob die Software Ihren Lebenslauf PDF lesen kann. Läuft vol
 
 #: src/features/documents/library-error.tsx
 msgid "Check your connection and try again."
-msgstr ""
+msgstr "Prüfen Sie Ihre Verbindung und versuchen Sie es erneut."
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Check your email for a link to reset your password."
@@ -1977,7 +1982,7 @@ msgstr "Verbunden"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
-msgstr ""
+msgstr "Verbundene Anwendungen"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Connection saved"
@@ -2143,7 +2148,7 @@ msgstr "Die PDF-Datei konnte nicht erstellt werden. Bitte versuchen Sie es erneu
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not load connected applications."
-msgstr ""
+msgstr "Verbundene Anwendungen konnten nicht geladen werden."
 
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
@@ -2151,7 +2156,7 @@ msgstr "Ihr Lebenslauf konnte nicht zum Drucken vorbereitet werden. Bitte versuc
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not revoke this connection. Try again."
-msgstr ""
+msgstr "Diese Verbindung konnte nicht widerrufen werden. Versuchen Sie es erneut."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Could not set up two-factor authentication."
@@ -2256,7 +2261,7 @@ msgstr "Die Stellenbewerbung konnte nicht verlinkt werden."
 
 #: src/features/documents/library-error.tsx
 msgid "Couldn't load documents"
-msgstr ""
+msgstr "Dokumente konnten nicht geladen werden"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
@@ -2457,7 +2462,7 @@ msgstr "Erstellen Sie zunächst einen Lebenslauf und fragen Sie dann danach."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications."
-msgstr ""
+msgstr "Erstellen und ändern Sie Ihre Dokumente und Bewerbungen."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Create and open"
@@ -2718,7 +2723,7 @@ msgstr "Konto löschen?"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Delete your documents and account data."
-msgstr ""
+msgstr "Löschen Sie Ihre Dokumente und Kontodaten."
 
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -2835,6 +2840,7 @@ msgstr "Trennen"
 msgid "Discord"
 msgstr "Discord"
 
+#: src/components/ui/product-hunt-banner.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 #: src/routes/dashboard/applications/index.tsx
@@ -3726,7 +3732,7 @@ msgstr "Freiform"
 
 #: src/libs/seo.ts
 msgid "Free, open-source resume builder. Create, update, and share your resume, with PDF and Word downloads, no ads and no paywall."
-msgstr ""
+msgstr "Kostenloser, quelloffener Lebenslauf-Editor. Erstellen, aktualisieren und teilen Sie Ihren Lebenslauf, mit Downloads als PDF und Word, ohne Werbung und ohne Bezahlschranke."
 
 #: src/libs/locale.ts
 msgid "French"
@@ -4087,7 +4093,7 @@ msgstr "Importieren Sie diese Datei in ein kostenloses Reactive Resume. Jede Aus
 
 #: src/features/documents/documents-page.tsx
 msgid "Import your current resume and we'll lay out every section for you to refine. Or start fresh. Start with your name. Build from there."
-msgstr ""
+msgstr "Importieren Sie Ihren bisherigen Lebenslauf. Wir ordnen alle Abschnitte an, damit Sie sie verfeinern können. Oder beginnen Sie neu: erst mit Ihrem Namen, dann mit dem Rest."
 
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/share/format.ts
@@ -4248,6 +4254,11 @@ msgstr "Sie werden nicht mehr angemeldet."
 #: src/features/applications/components/interview-dialog.tsx
 msgid "It will show on the application's timeline and on the calendar."
 msgstr "Es wird in der Chronik der Bewerbung und im Kalender angezeigt."
+
+#. Body of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "It's free and open source, and always will be. If it has helped you, an upvote today helps more people find it."
+msgstr "Es ist kostenlos und Open Source und wird es immer bleiben. Wenn es Ihnen geholfen hat, hilft Ihre Stimme heute mehr Menschen, es zu entdecken."
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "It's removed from the timeline for good."
@@ -4792,9 +4803,14 @@ msgstr "Live · Updates, während Sie bearbeiten"
 msgid "Live at {0}"
 msgstr "Live unter {0}"
 
+#. Eyebrow on the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Live on Product Hunt"
+msgstr "Jetzt auf Product Hunt"
+
 #: src/features/homepage/sections.tsx
 msgid "Live totals, refreshed every 6 hours."
-msgstr ""
+msgstr "Aktuelle Gesamtzahlen, alle 6 Stunden aktualisiert."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading applications…"
@@ -4810,7 +4826,7 @@ msgstr "Verbindung wird geladen…"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Loading connections..."
-msgstr ""
+msgstr "Verbindungen werden geladen..."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -5326,7 +5342,7 @@ msgstr "Keine Befehle passen zu dieser Suche."
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications."
-msgstr ""
+msgstr "Keine verbundenen Anwendungen."
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -5951,7 +5967,7 @@ msgstr "Vergangene Gespräche"
 
 #: src/features/homepage/tailor.tsx
 msgid "Paste 1 job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr ""
+msgstr "Fügen Sie 1 Stellenanzeige einmal ein. Daraus entstehen eine angepasste Kopie Ihres Lebenslaufs, eine Bewertung der Übereinstimmung, ein Anschreiben-Entwurf und ein Ort, um die Bewerbung zu verfolgen."
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste a job link or posting, then check the role and company."
@@ -6054,7 +6070,7 @@ msgstr "Wählen Sie ein Symbol aus"
 
 #: src/features/homepage/design.tsx
 msgid "Pick from {templateCount} templates, then set the type, color and spacing. The words stay put, so try as many looks as you like."
-msgstr ""
+msgstr "Wählen Sie aus {templateCount} Vorlagen und stellen Sie dann Schrift, Farbe und Abstände ein. Der Text bleibt erhalten, sodass Sie beliebig viele Designs ausprobieren können."
 
 #: src/features/ats-checker/messages.ts
 msgid "Pick one format and use it everywhere."
@@ -6247,6 +6263,10 @@ msgstr "Produktdesigner"
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "Produktdesigner mit neun Jahren Erfahrung im Aufbau von <0>Designsystemen</0> und forschungsbasierten Produkten für B2B-Teams."
 
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Product Hunt launch"
+msgstr "Start auf Product Hunt"
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
 msgstr "Kompetenz"
@@ -6384,7 +6404,7 @@ msgstr "Reactive Resume {__APP_VERSION__} · MIT"
 
 #: src/features/homepage/hero.tsx
 msgid "Reactive Resume is a free, open-source resume builder. Write it, design it, check it and tailor it for every job. Start with 1 resume."
-msgstr ""
+msgstr "Reactive Resume ist ein kostenloser, quelloffener Lebenslauf-Editor. Schreiben, gestalten und prüfen Sie Ihren Lebenslauf und passen Sie ihn an jede Stelle an. Beginnen Sie mit 1 Lebenslauf."
 
 #: src/components/ui/donation-toast.tsx
 msgid "Reactive Resume is free and open source. If it has helped you, please consider donating."
@@ -6392,11 +6412,16 @@ msgstr "Reactive Resume ist kostenlos und Open Source. Wenn es Ihnen geholfen ha
 
 #: src/features/homepage/sections.tsx
 msgid "Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development. There are 0 paid tiers."
-msgstr ""
+msgstr "Reactive Resume ist unter der MIT License quelloffen. Amruth Pillai und eine Gemeinschaft von Mitwirkenden halten es am Laufen. Spenden finanzieren Hosting und Entwicklung. Es gibt 0 kostenpflichtige Tarife."
+
+#. Title of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Reactive Resume v6 is here!"
+msgstr "Reactive Resume v6 ist da!"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read only"
-msgstr ""
+msgstr "Nur lesen"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Read posting"
@@ -6432,7 +6457,7 @@ msgstr "Lesen Sie den Leitfaden zum Selbsthosting"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your documents and job applications."
-msgstr ""
+msgstr "Lesen Sie Ihre Dokumente und Bewerbungen."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
@@ -6444,7 +6469,7 @@ msgstr "Ihre Profilinformationen lesen."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
-msgstr ""
+msgstr "Lesen, schreiben und löschen"
 
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
@@ -6841,7 +6866,7 @@ msgstr "Speichern Sie erneut"
 
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
-msgstr ""
+msgstr "Erneuter Versuch…"
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Review"
@@ -6866,11 +6891,11 @@ msgstr "{0} widerrufen"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke access"
-msgstr ""
+msgstr "Zugriff widerrufen"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke an application's access to your account."
-msgstr ""
+msgstr "Widerrufen Sie den Zugriff einer Anwendung auf Ihr Konto."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -7346,7 +7371,7 @@ msgstr "Teilen und exportieren"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
-msgstr ""
+msgstr "Teilen Sie einen öffentlichen Link, legen Sie ein Passwort fest oder halten Sie alles privat. Wählen Sie aus 3 Sichtbarkeitsoptionen. Exportieren Sie als PDF oder Word oder nehmen Sie alle Ihre Daten als JSON mit."
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Share public resume"
@@ -7530,11 +7555,11 @@ msgstr "seit dem letzten Aufruf"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
-msgstr ""
+msgstr "Einspaltiges Formular nach dem Vorbild des japanischen Rirekisho: ein Kopfbereich aus umrandeten Feldern und jeder Abschnitt als Tabelle mit durchgehendem Titelbalken. Kompakt und schnell zu erfassen, geeignet für technische und operative Stellen oder Bewerbungen in Japan."
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column set like a magazine feature: a large display name under an uppercase kicker, the summary as an italic standfirst and italic section headings; refined for writers, designers, and communications roles."
-msgstr ""
+msgstr "Einspaltiger Satz im Stil eines Magazinbeitrags: ein großer Name unter einer kurzen Überschrift in Großbuchstaben, eine kursive Zusammenfassung als Vorspann und kursive Abschnittstitel. Ein elegantes Design für Schreibende, Designer und Kommunikationsberufe."
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column with a magenta left border accent; compact and efficient for entry-level or internship applications."
@@ -7799,7 +7824,7 @@ msgstr "Beginnen Sie mit einem vorhandenen Formular und verknüpfen Sie die Bewe
 
 #: src/features/homepage/sections.tsx
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime. Start with 1 resume."
-msgstr ""
+msgstr "Beginnen Sie neu oder importieren Sie vorhandene Inhalte. Es dauert nur wenige Minuten, und Sie können jederzeit zurückkehren. Beginnen Sie mit 1 Lebenslauf."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Start on a new page"
@@ -7910,6 +7935,11 @@ msgstr "Zusammenfassung"
 #: src/features/homepage/sections.tsx
 msgid "Support"
 msgstr "Unterstützung"
+
+#. Button on the launch-day banner that opens the Product Hunt page
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Support on Product Hunt"
+msgstr "Auf Product Hunt unterstützen"
 
 #: src/features/ats-checker/messages.ts
 msgid "Swap the start and end dates."
@@ -8658,7 +8688,7 @@ msgstr "Die App übersetzen"
 
 #: src/features/homepage/sections.tsx
 msgid "Translated into {languageCount} languages. Help translate it into yours."
-msgstr ""
+msgstr "In {languageCount} Sprachen übersetzt. Helfen Sie, es in Ihre Sprache zu übersetzen."
 
 #: src/features/homepage/footer.tsx
 msgid "Translations"
@@ -9413,7 +9443,7 @@ msgstr "Schreiben Sie jede Rolle als klare Titel- und Firmenzeile, mit den Daten
 
 #: src/features/homepage/write.tsx
 msgid "Write in 1 editor beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide."
-msgstr ""
+msgstr "Schreiben Sie in 1 Editor neben einer Live-Seitenvorschau. Beim Tippen wird gespeichert und jede Version bleibt erhalten. Bitten Sie den Assistenten um eine bessere Formulierung: Er schlägt vor, Sie entscheiden."
 
 #: src/features/ats-checker/messages.ts
 msgid "Write it as one uninterrupted piece, with no special spacing."

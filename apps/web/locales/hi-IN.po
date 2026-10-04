@@ -344,6 +344,11 @@ msgstr "{entry} भूमिका का नाम देता है ले�
 msgid "{failing, plural, one {# to review} other {# to review}}"
 msgstr "{failing, plural, one {# समीक्षा करने के लिए} other {# समीक्षा करने के लिए}}"
 
+#. Time left in the Product Hunt launch day
+#: src/components/ui/product-hunt-banner.tsx
+msgid "{hours}h {minutes}m left"
+msgstr "{hours} घंटे और {minutes} मिनट शेष"
+
 #: src/features/ats-checker/checker.tsx
 msgid "{issues, plural, one {# issue could cost you a match.} other {# issues could cost you a match.}}"
 msgstr "{issues, plural, one {# समस्या से आपको मैच गंवाना पड़ सकता है।} other {# समस्याएँ आपकी कीमत चुका सकती हैं।}}"
@@ -439,7 +444,7 @@ msgstr "{size} पीटी"
 
 #: src/features/homepage/design.tsx
 msgid "{templateCount} templates."
-msgstr ""
+msgstr "{templateCount} टेम्पलेट्स."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
@@ -534,7 +539,7 @@ msgstr "40% तेज़ समीक्षाएँ"
 
 #: src/features/homepage/faq.tsx
 msgid "8 short answers to what people ask before they start. Anything else, ask on <0>Discord</0>."
-msgstr ""
+msgstr "आरंभ करने से पहले सामान्य प्रश्नों के 8 संक्षिप्त उत्तर। किसी अन्य प्रश्न के लिए, <0>Discord</0> पर पूछें।"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "90 days"
@@ -647,7 +652,7 @@ msgstr "ए4"
 
 #: src/features/homepage/footer.tsx
 msgid "About"
-msgstr ""
+msgstr "इस ऐप के बारे में"
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Accent colour"
@@ -676,11 +681,11 @@ msgstr "एक और प्रस्ताव स्वीकार कर ल�
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Access"
-msgstr ""
+msgstr "पहुँच"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
-msgstr ""
+msgstr "API के माध्यम से अपने खाते तक पहुंचें, जिसमें आपके दस्तावेज़ों और नौकरी आवेदनों को पढ़ना, बदलना और हटाना शामिल है।"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/hero.tsx
@@ -1695,7 +1700,7 @@ msgstr "जांचें कि यह सटीक है."
 
 #: src/features/homepage/check.tsx
 msgid "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads."
-msgstr ""
+msgstr "जाँच सुविधा आपके बायोडाटा को भर्ती सॉफ्टवेयर की तरह पढ़ती है और सरल शब्दों में बताती है कि क्या ठीक करना है। यह आपके ब्राउज़र में चलता है, इसलिए आपकी फ़ाइल आपके डिवाइस पर रहती है: 0 अपलोड।"
 
 #: src/features/ats-checker/messages.ts
 msgid "Check the exported file contains everything you expect, and that all of it is selectable text."
@@ -1711,7 +1716,7 @@ msgstr "जांचें कि सॉफ़्टवेयर आपका �
 
 #: src/features/documents/library-error.tsx
 msgid "Check your connection and try again."
-msgstr ""
+msgstr "अपना कनेक्शन जांचें और पुनः प्रयास करें।"
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Check your email for a link to reset your password."
@@ -1977,7 +1982,7 @@ msgstr "जुड़े हुए"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
-msgstr ""
+msgstr "कनेक्टेड एप्लिकेशन"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Connection saved"
@@ -2143,7 +2148,7 @@ msgstr "PDF नहीं बनाया जा सका। कृपया फ
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not load connected applications."
-msgstr ""
+msgstr "कनेक्टेड एप्लिकेशन लोड नहीं हो सके."
 
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
@@ -2151,7 +2156,7 @@ msgstr "आपका रेज़्यूमे प्रिंट करने
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not revoke this connection. Try again."
-msgstr ""
+msgstr "इस कनेक्शन को रद्द नहीं किया जा सका. पुनः प्रयास करें।"
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Could not set up two-factor authentication."
@@ -2256,7 +2261,7 @@ msgstr "नौकरी आवेदन लिंक नहीं किया �
 
 #: src/features/documents/library-error.tsx
 msgid "Couldn't load documents"
-msgstr ""
+msgstr "दस्तावेज़ लोड नहीं हो सके"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
@@ -2457,7 +2462,7 @@ msgstr "पहले एक बायोडाटा बनाएं, फिर 
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications."
-msgstr ""
+msgstr "अपने दस्तावेज़ और नौकरी आवेदन बनाएं और बदलें।"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Create and open"
@@ -2718,7 +2723,7 @@ msgstr "अपना खाता हटाएं?"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Delete your documents and account data."
-msgstr ""
+msgstr "अपने दस्तावेज़ और खाता डेटा हटाएं."
 
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -2835,6 +2840,7 @@ msgstr "डिसकनेक्ट करें"
 msgid "Discord"
 msgstr "डिस्कॉर्ड"
 
+#: src/components/ui/product-hunt-banner.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 #: src/routes/dashboard/applications/index.tsx
@@ -3726,7 +3732,7 @@ msgstr "मुफ्त फॉर्म"
 
 #: src/libs/seo.ts
 msgid "Free, open-source resume builder. Create, update, and share your resume, with PDF and Word downloads, no ads and no paywall."
-msgstr ""
+msgstr "मुफ़्त, ओपन-सोर्स रेज़्यूमे बिल्डर। PDF और Word डाउनलोड के साथ, बिना किसी विज्ञापन और बिना किसी पेवॉल के अपना बायोडाटा बनाएं, अपडेट करें और साझा करें।"
 
 #: src/libs/locale.ts
 msgid "French"
@@ -4087,7 +4093,7 @@ msgstr "इस फ़ाइल को निःशुल्क Reactive Resume �
 
 #: src/features/documents/documents-page.tsx
 msgid "Import your current resume and we'll lay out every section for you to refine. Or start fresh. Start with your name. Build from there."
-msgstr ""
+msgstr "अपना वर्तमान बायोडाटा आयात करें और हम आपके लिए प्रत्येक अनुभाग को परिष्कृत करेंगे। या फिर नए सिरे से शुरुआत करें. अपने नाम से शुरू करें. वहां से निर्माण करें."
 
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/share/format.ts
@@ -4248,6 +4254,11 @@ msgstr "यह अब आपको साइन इन नहीं करेग
 #: src/features/applications/components/interview-dialog.tsx
 msgid "It will show on the application's timeline and on the calendar."
 msgstr "यह नौकरी आवेदन की टाइमलाइन और कैलेंडर पर दिखाई देगा।"
+
+#. Body of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "It's free and open source, and always will be. If it has helped you, an upvote today helps more people find it."
+msgstr "यह मुफ़्त और खुला स्रोत है, और हमेशा रहेगा। यदि इससे आपको मदद मिली है, तो आज एक अपवोट से अधिक लोगों को इसे ढूंढने में मदद मिलेगी।"
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "It's removed from the timeline for good."
@@ -4792,9 +4803,14 @@ msgstr "जैसे ही आप संपादित करते हैं 
 msgid "Live at {0}"
 msgstr "{0} पर लाइव"
 
+#. Eyebrow on the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Live on Product Hunt"
+msgstr "Product Hunt पर लाइव"
+
 #: src/features/homepage/sections.tsx
 msgid "Live totals, refreshed every 6 hours."
-msgstr ""
+msgstr "लाइव योग, हर 6 घंटे में ताज़ा।"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading applications…"
@@ -4810,7 +4826,7 @@ msgstr "कनेक्शन लोड हो रहा है..."
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Loading connections..."
-msgstr ""
+msgstr "कनेक्शन लोड हो रहे हैं..."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -5326,7 +5342,7 @@ msgstr "उस खोज से कोई कमांड मेल नहीं
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications."
-msgstr ""
+msgstr "कोई कनेक्टेड एप्लिकेशन नहीं."
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -5951,7 +5967,7 @@ msgstr "पिछली बातचीत"
 
 #: src/features/homepage/tailor.tsx
 msgid "Paste 1 job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr ""
+msgstr "1 जॉब पोस्टिंग एक बार चिपकाएँ। इसका उपयोग अपने बायोडाटा की एक अनुकूलित प्रति बनाने के लिए करें, एक स्कोर जो यह दर्शाए कि आपका बायोडाटा नौकरी से कितना मेल खाता है, एक ड्राफ्ट कवर लेटर और आपके नौकरी आवेदन को ट्रैक करने के लिए एक जगह।"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste a job link or posting, then check the role and company."
@@ -6054,7 +6070,7 @@ msgstr "एक आइकन चुनें"
 
 #: src/features/homepage/design.tsx
 msgid "Pick from {templateCount} templates, then set the type, color and spacing. The words stay put, so try as many looks as you like."
-msgstr ""
+msgstr "{templateCount} टेम्प्लेट में से चुनें, फिर फ़ॉन्ट, रंग और रिक्ति सेट करें। आपका टेक्स्ट वही रहता है, इसलिए आप जितने चाहें उतने डिज़ाइन आज़माएँ।"
 
 #: src/features/ats-checker/messages.ts
 msgid "Pick one format and use it everywhere."
@@ -6247,6 +6263,10 @@ msgstr "उत्पाद डिज़ाइनर"
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "B2B टीमों के लिए <0>डिज़ाइन सिस्टम</0> और शोध-आधारित उत्पाद बनाने का नौ साल का अनुभव रखने वाला उत्पाद डिज़ाइनर।"
 
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Product Hunt launch"
+msgstr "Product Hunt लॉन्च"
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
 msgstr "दक्षता"
@@ -6384,7 +6404,7 @@ msgstr "Reactive Resume {__APP_VERSION__} · MIT"
 
 #: src/features/homepage/hero.tsx
 msgid "Reactive Resume is a free, open-source resume builder. Write it, design it, check it and tailor it for every job. Start with 1 resume."
-msgstr ""
+msgstr "Reactive Resume एक मुफ़्त, ओपन-सोर्स रेज़्युमे बिल्डर है। अपना बायोडाटा लिखें, इसे डिज़ाइन करें, इसकी जांच करें और इसे हर उस नौकरी के लिए अनुकूलित करें जिसके लिए आप आवेदन करते हैं। 1 बायोडाटा से शुरुआत करें."
 
 #: src/components/ui/donation-toast.tsx
 msgid "Reactive Resume is free and open source. If it has helped you, please consider donating."
@@ -6392,11 +6412,16 @@ msgstr "रिएक्टिव रिज्यूम मुफ़्त और
 
 #: src/features/homepage/sections.tsx
 msgid "Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development. There are 0 paid tiers."
-msgstr ""
+msgstr "MIT License के अंतर्गत Reactive Resume खुला स्रोत है। Amruth Pillai और योगदानकर्ताओं का एक समुदाय इसे चालू रखता है, और होस्टिंग और विकास के लिए दान का भुगतान किया जाता है। 0 सशुल्क स्तर हैं।"
+
+#. Title of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Reactive Resume v6 is here!"
+msgstr "Reactive Resume v6 यहाँ है!"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read only"
-msgstr ""
+msgstr "केवल पढ़ने योग्य पहुंच"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Read posting"
@@ -6432,7 +6457,7 @@ msgstr "स्व-होस्टिंग मार्गदर्शिका 
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your documents and job applications."
-msgstr ""
+msgstr "अपने दस्तावेज़ और नौकरी आवेदन पढ़ें।"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
@@ -6444,7 +6469,7 @@ msgstr "अपनी प्रोफ़ाइल जानकारी पढ़
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
-msgstr ""
+msgstr "पढ़ें, लिखें और हटाएं"
 
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
@@ -6841,7 +6866,7 @@ msgstr "सहेजने का पुनः प्रयास करें"
 
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
-msgstr ""
+msgstr "पुनः प्रयास किया जा रहा है..."
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Review"
@@ -6866,11 +6891,11 @@ msgstr "{0} को निरस्त करें"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke access"
-msgstr ""
+msgstr "एक्सेस अक्षम करें"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke an application's access to your account."
-msgstr ""
+msgstr "अपने खाते तक किसी एप्लिकेशन की पहुंच रद्द करें."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -7346,7 +7371,7 @@ msgstr "साझा करें और निर्यात करें"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
-msgstr ""
+msgstr "एक सार्वजनिक लिंक साझा करें, एक पासवर्ड जोड़ें या इसे निजी रखें। 3 दृश्यता विकल्पों में से चुनें. PDF या Word पर निर्यात करें, या अपना सारा डेटा JSON के रूप में अपने साथ ले जाएं।"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Share public resume"
@@ -7530,11 +7555,11 @@ msgstr "अंतिम दृश्य के बाद से"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
-msgstr ""
+msgstr "जापानी रिरेकिशो बायोडाटा से प्रेरित एक सिंगल-कॉलम फॉर्म: बॉर्डर वाले फ़ील्ड से बना एक हेडर, और प्रत्येक अनुभाग को एक ठोस शीर्षक बार के साथ एक तालिका के रूप में प्रस्तुत किया जाता है। कॉम्पैक्ट और स्कैन करने में आसान, जापान में इंजीनियरिंग नौकरियों, संचालन नौकरियों या नौकरी अनुप्रयोगों के लिए उपयुक्त।"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column set like a magazine feature: a large display name under an uppercase kicker, the summary as an italic standfirst and italic section headings; refined for writers, designers, and communications roles."
-msgstr ""
+msgstr "एक पत्रिका लेख से प्रेरित एकल-स्तंभ लेआउट: अपरकेस में एक छोटे शीर्षक के नीचे बड़े प्रकार में आपका नाम, इटैलिक में सारांश, और इटैलिक में अनुभाग शीर्षक। लेखकों, डिज़ाइनरों और संचार पेशेवरों के लिए एक परिष्कृत डिज़ाइन।"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column with a magenta left border accent; compact and efficient for entry-level or internship applications."
@@ -7799,7 +7824,7 @@ msgstr "आपके पास जो है उससे शुरू करे
 
 #: src/features/homepage/sections.tsx
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime. Start with 1 resume."
-msgstr ""
+msgstr "शुरुआत से शुरू करें या जो आपके पास है उसे आयात करें। इसमें कुछ मिनट लगते हैं और आप किसी भी समय इस पर वापस आ सकते हैं। 1 बायोडाटा से शुरुआत करें."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Start on a new page"
@@ -7910,6 +7935,11 @@ msgstr "सारांश"
 #: src/features/homepage/sections.tsx
 msgid "Support"
 msgstr "सहायता"
+
+#. Button on the launch-day banner that opens the Product Hunt page
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Support on Product Hunt"
+msgstr "Product Hunt पर हमारा समर्थन करें"
 
 #: src/features/ats-checker/messages.ts
 msgid "Swap the start and end dates."
@@ -8658,7 +8688,7 @@ msgstr "ऐप का अनुवाद करें"
 
 #: src/features/homepage/sections.tsx
 msgid "Translated into {languageCount} languages. Help translate it into yours."
-msgstr ""
+msgstr "{languageCount} भाषाओं में अनुवादित। ऐप को अपनी भाषा में अनुवाद करने में सहायता करें।"
 
 #: src/features/homepage/footer.tsx
 msgid "Translations"
@@ -9413,7 +9443,7 @@ msgstr "हर भूमिका को एक स्पष्ट शीर्�
 
 #: src/features/homepage/write.tsx
 msgid "Write in 1 editor beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide."
-msgstr ""
+msgstr "लाइव दस्तावेज़ पूर्वावलोकन के आगे 1 संपादक में लिखें। जैसे ही आप टाइप करते हैं आपका काम सहेजा जाता है, और हर संस्करण रखा जाता है। सहायक से किसी वाक्य को सुधारने के लिए कहें: यह परिवर्तन सुझाता है, और आप निर्णय लेते हैं।"
 
 #: src/features/ats-checker/messages.ts
 msgid "Write it as one uninterrupted piece, with no special spacing."

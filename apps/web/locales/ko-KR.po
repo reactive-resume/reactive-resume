@@ -344,6 +344,11 @@ msgstr "{entry}는 역할의 이름을 지정하지만 사용자가 수행한 �
 msgid "{failing, plural, one {# to review} other {# to review}}"
 msgstr "{failing, plural, one {# 검토} other {# 검토}}"
 
+#. Time left in the Product Hunt launch day
+#: src/components/ui/product-hunt-banner.tsx
+msgid "{hours}h {minutes}m left"
+msgstr "{hours}시간 {minutes}분 남음"
+
 #: src/features/ats-checker/checker.tsx
 msgid "{issues, plural, one {# issue could cost you a match.} other {# issues could cost you a match.}}"
 msgstr "{issues, plural, one {# 문제로 인해 일치 비용이 발생할 수 있습니다.} other {# 문제로 인해 일치 비용이 발생할 수 있습니다.}}"
@@ -439,7 +444,7 @@ msgstr "{size}pt"
 
 #: src/features/homepage/design.tsx
 msgid "{templateCount} templates."
-msgstr ""
+msgstr "{templateCount}개의 템플릿."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
@@ -534,7 +539,7 @@ msgstr "40% 더 빠른 검토 속도"
 
 #: src/features/homepage/faq.tsx
 msgid "8 short answers to what people ask before they start. Anything else, ask on <0>Discord</0>."
-msgstr ""
+msgstr "시작하기 전에 자주 묻는 질문에 대한 8가지 짧은 답변입니다. 기타 궁금한 사항은 <0>Discord</0>에 문의하세요."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "90 days"
@@ -647,7 +652,7 @@ msgstr "A4"
 
 #: src/features/homepage/footer.tsx
 msgid "About"
-msgstr ""
+msgstr "이 앱 정보"
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Accent colour"
@@ -676,11 +681,11 @@ msgstr "다른 제안을 수락함"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Access"
-msgstr ""
+msgstr "액세스"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
-msgstr ""
+msgstr "문서 및 입사 지원서 읽기, 변경 및 삭제를 포함하여 API를 통해 계정에 액세스하세요."
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/hero.tsx
@@ -1695,7 +1700,7 @@ msgstr "정확한지 확인하세요."
 
 #: src/features/homepage/check.tsx
 msgid "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads."
-msgstr ""
+msgstr "검토 기능은 채용 소프트웨어와 같은 방식으로 이력서를 읽고 수정 사항을 간단한 단어로 설명합니다. 브라우저에서 실행되므로 파일이 기기에 유지됩니다. 업로드 횟수는 0회입니다."
 
 #: src/features/ats-checker/messages.ts
 msgid "Check the exported file contains everything you expect, and that all of it is selectable text."
@@ -1711,7 +1716,7 @@ msgstr "소프트웨어가 이력서 PDF를 읽을 수 있는지 확인하세요
 
 #: src/features/documents/library-error.tsx
 msgid "Check your connection and try again."
-msgstr ""
+msgstr "연결을 확인하고 다시 시도하세요."
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Check your email for a link to reset your password."
@@ -1977,7 +1982,7 @@ msgstr "연결됨"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
-msgstr ""
+msgstr "연결된 애플리케이션"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Connection saved"
@@ -2143,7 +2148,7 @@ msgstr "PDF를 생성하지 못했습니다. 다시 시도하세요."
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not load connected applications."
-msgstr ""
+msgstr "연결된 애플리케이션을 로드할 수 없습니다."
 
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
@@ -2151,7 +2156,7 @@ msgstr "이력서를 인쇄용으로 준비하지 못했습니다. 다시 시도
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not revoke this connection. Try again."
-msgstr ""
+msgstr "이 연결을 취소할 수 없습니다. 다시 시도해 보세요."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Could not set up two-factor authentication."
@@ -2256,7 +2261,7 @@ msgstr "채용 지원서를 연결할 수 없습니다."
 
 #: src/features/documents/library-error.tsx
 msgid "Couldn't load documents"
-msgstr ""
+msgstr "문서를 로드할 수 없습니다."
 
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
@@ -2457,7 +2462,7 @@ msgstr "먼저 이력서를 작성한 다음 그것에 대해 물어보십시오
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications."
-msgstr ""
+msgstr "문서와 입사 지원서를 작성하고 변경하세요."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Create and open"
@@ -2718,7 +2723,7 @@ msgstr "계정을 삭제하시겠습니까?"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Delete your documents and account data."
-msgstr ""
+msgstr "문서와 계정 데이터를 삭제하세요."
 
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -2835,6 +2840,7 @@ msgstr "연결 해제"
 msgid "Discord"
 msgstr "디스코드"
 
+#: src/components/ui/product-hunt-banner.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 #: src/routes/dashboard/applications/index.tsx
@@ -3726,7 +3732,7 @@ msgstr "자유 형식"
 
 #: src/libs/seo.ts
 msgid "Free, open-source resume builder. Create, update, and share your resume, with PDF and Word downloads, no ads and no paywall."
-msgstr ""
+msgstr "무료 오픈 소스 이력서 작성 도구입니다. PDF 및 Word 다운로드, 광고 및 페이월 없이 이력서를 작성, 업데이트 및 공유하세요."
 
 #: src/libs/locale.ts
 msgid "French"
@@ -4087,7 +4093,7 @@ msgstr "이 파일을 무료 Reactive Resume로 가져옵니다. 모든 문제�
 
 #: src/features/documents/documents-page.tsx
 msgid "Import your current resume and we'll lay out every section for you to refine. Or start fresh. Start with your name. Build from there."
-msgstr ""
+msgstr "현재 이력서를 가져오시면 귀하가 다듬을 수 있도록 모든 섹션을 구성해 드립니다. 아니면 새로 시작하세요. 당신의 이름으로 시작하세요. 거기에서 빌드하십시오."
 
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/share/format.ts
@@ -4248,6 +4254,11 @@ msgstr "더 이상 로그인되지 않습니다."
 #: src/features/applications/components/interview-dialog.tsx
 msgid "It will show on the application's timeline and on the calendar."
 msgstr "이는 입사 지원서의 타임라인과 달력에 표시됩니다."
+
+#. Body of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "It's free and open source, and always will be. If it has helped you, an upvote today helps more people find it."
+msgstr "무료이며 오픈 소스이며 앞으로도 그럴 것입니다. 도움이 되셨다면 오늘 공감을 눌러주시면 더 많은 사람들이 찾을 수 있게 됩니다."
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "It's removed from the timeline for good."
@@ -4792,9 +4803,14 @@ msgstr "실시간 · 편집 시 업데이트"
 msgid "Live at {0}"
 msgstr "{0}에서 라이브"
 
+#. Eyebrow on the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Live on Product Hunt"
+msgstr "Product Hunt에서 라이브"
+
 #: src/features/homepage/sections.tsx
 msgid "Live totals, refreshed every 6 hours."
-msgstr ""
+msgstr "실시간 합계는 6시간마다 새로 고쳐집니다."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading applications…"
@@ -4810,7 +4826,7 @@ msgstr "연결 로드 중…"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Loading connections..."
-msgstr ""
+msgstr "연결 로드 중..."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -5326,7 +5342,7 @@ msgstr "검색과 일치하는 명령이 없습니다."
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications."
-msgstr ""
+msgstr "연결된 애플리케이션이 없습니다."
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -5951,7 +5967,7 @@ msgstr "지난 대화"
 
 #: src/features/homepage/tailor.tsx
 msgid "Paste 1 job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr ""
+msgstr "채용 공고 1개를 한 번 붙여넣으세요. 이를 사용하여 이력서의 맞춤형 사본, 이력서가 직무와 얼마나 잘 일치하는지 보여주는 점수, 표지 초안 및 입사 지원을 추적할 수 있는 장소를 만들 수 있습니다."
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste a job link or posting, then check the role and company."
@@ -6054,7 +6070,7 @@ msgstr "아이콘을 선택하세요"
 
 #: src/features/homepage/design.tsx
 msgid "Pick from {templateCount} templates, then set the type, color and spacing. The words stay put, so try as many looks as you like."
-msgstr ""
+msgstr "{templateCount}개의 템플릿 중에서 선택한 다음 글꼴, 색상 및 간격을 설정하세요. 텍스트는 동일하게 유지되므로 원하는 만큼 디자인을 시도해 보세요."
 
 #: src/features/ats-checker/messages.ts
 msgid "Pick one format and use it everywhere."
@@ -6247,6 +6263,10 @@ msgstr "제품 디자이너"
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "B2B 팀을 위한 <0>디자인 시스템</0>과 조사 기반 제품을 구축한 9년 경력의 제품 디자이너."
 
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Product Hunt launch"
+msgstr "Product Hunt 출시"
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
 msgstr "숙련도"
@@ -6384,7 +6404,7 @@ msgstr "Reactive Resume {__APP_VERSION__} · MIT"
 
 #: src/features/homepage/hero.tsx
 msgid "Reactive Resume is a free, open-source resume builder. Write it, design it, check it and tailor it for every job. Start with 1 resume."
-msgstr ""
+msgstr "Reactive Resume는 무료 오픈 소스 이력서 작성 도구입니다. 이력서를 작성하고, 디자인하고, 확인하고, 지원하는 모든 직업에 맞게 조정하세요. 이력서 1개로 시작하세요."
 
 #: src/components/ui/donation-toast.tsx
 msgid "Reactive Resume is free and open source. If it has helped you, please consider donating."
@@ -6392,11 +6412,16 @@ msgstr "Reactive Resume는 무료 오픈 소스 소프트웨어입니다. 도움
 
 #: src/features/homepage/sections.tsx
 msgid "Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development. There are 0 paid tiers."
-msgstr ""
+msgstr "Reactive Resume는 MIT License의 오픈 소스입니다. Amruth Pillai와 기여자 커뮤니티가 이를 계속 운영하고 있으며 기부금으로 호스팅 및 개발 비용을 지불합니다. 0개의 유료 등급이 있습니다."
+
+#. Title of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Reactive Resume v6 is here!"
+msgstr "Reactive Resume v6이 출시되었습니다!"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read only"
-msgstr ""
+msgstr "읽기 전용 액세스"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Read posting"
@@ -6432,7 +6457,7 @@ msgstr "셀프 호스팅 가이드 읽기"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your documents and job applications."
-msgstr ""
+msgstr "문서와 입사 지원서를 읽어보세요."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
@@ -6444,7 +6469,7 @@ msgstr "프로필 정보를 읽습니다."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
-msgstr ""
+msgstr "읽기, 쓰기 및 삭제"
 
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
@@ -6841,7 +6866,7 @@ msgstr "다시 저장해 보세요"
 
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
-msgstr ""
+msgstr "재시도 중…"
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Review"
@@ -6866,11 +6891,11 @@ msgstr "{0} 취소"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke access"
-msgstr ""
+msgstr "액세스 취소"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke an application's access to your account."
-msgstr ""
+msgstr "귀하의 계정에 대한 애플리케이션의 액세스를 취소하십시오."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -7346,7 +7371,7 @@ msgstr "공유 및 내보내기"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
-msgstr ""
+msgstr "공개 링크를 공유하고 비밀번호를 추가하거나 비공개로 유지하세요. 3가지 공개 옵션 중에서 선택하세요. PDF 또는 Word로 내보내거나 모든 데이터를 JSON로 가져가세요."
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Share public resume"
@@ -7530,11 +7555,11 @@ msgstr "마지막으로 본 이후"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
-msgstr ""
+msgstr "일본의 rirekisho 이력서에서 영감을 받은 단일 열 형식: 테두리가 있는 필드로 구성된 헤더와 단단한 제목 표시줄이 있는 테이블로 표시되는 모든 섹션. 작고 스캔하기 쉬우며 일본의 엔지니어링 작업, 운영 작업 또는 작업 응용 프로그램에 적합합니다."
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column set like a magazine feature: a large display name under an uppercase kicker, the summary as an italic standfirst and italic section headings; refined for writers, designers, and communications roles."
-msgstr ""
+msgstr "잡지 기사에서 영감을 받은 단일 열 레이아웃입니다. 대문자로 된 짧은 제목 아래에 큰 글자로 된 이름, 이탤릭체로 된 요약, 이탤릭체로 된 섹션 제목이 있습니다. 작가, 디자이너, 커뮤니케이션 전문가를 위한 세련된 디자인입니다."
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column with a magenta left border accent; compact and efficient for entry-level or internship applications."
@@ -7799,7 +7824,7 @@ msgstr "가지고 있는 것부터 시작하여 입사 지원서를 연결하세
 
 #: src/features/homepage/sections.tsx
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime. Start with 1 resume."
-msgstr ""
+msgstr "처음부터 시작하거나 가지고 있는 것을 가져오세요. 몇 분 정도 걸리며 언제든지 다시 돌아올 수 있습니다. 이력서 1개로 시작하세요."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Start on a new page"
@@ -7910,6 +7935,11 @@ msgstr "요약"
 #: src/features/homepage/sections.tsx
 msgid "Support"
 msgstr "지원하다"
+
+#. Button on the launch-day banner that opens the Product Hunt page
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Support on Product Hunt"
+msgstr "Product Hunt에서 우리를 지원하세요"
 
 #: src/features/ats-checker/messages.ts
 msgid "Swap the start and end dates."
@@ -8658,7 +8688,7 @@ msgstr "앱 번역하기"
 
 #: src/features/homepage/sections.tsx
 msgid "Translated into {languageCount} languages. Help translate it into yours."
-msgstr ""
+msgstr "{languageCount}개 언어로 번역되었습니다. 앱을 귀하의 언어로 번역하도록 도와주세요."
 
 #: src/features/homepage/footer.tsx
 msgid "Translations"
@@ -9413,7 +9443,7 @@ msgstr "각 직무를 명확한 직함과 회사명 줄로 작성하고, 옆에 
 
 #: src/features/homepage/write.tsx
 msgid "Write in 1 editor beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide."
-msgstr ""
+msgstr "실시간 문서 미리보기 옆에 있는 1개의 편집기에서 작성하세요. 입력하는 동안 작업 내용이 저장되며 모든 버전이 유지됩니다. 어시스턴트에게 문장을 개선해 달라고 요청하세요. 어시스턴트가 변경 사항을 제안하면 여러분이 결정합니다."
 
 #: src/features/ats-checker/messages.ts
 msgid "Write it as one uninterrupted piece, with no special spacing."

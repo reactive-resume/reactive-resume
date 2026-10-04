@@ -344,6 +344,11 @@ msgstr "{entry} يسمي الدور ولكن ليس ما قمت به، لذلك 
 msgid "{failing, plural, one {# to review} other {# to review}}"
 msgstr "{failing, plural, one {# للمراجعة} other {# للمراجعة}}"
 
+#. Time left in the Product Hunt launch day
+#: src/components/ui/product-hunt-banner.tsx
+msgid "{hours}h {minutes}m left"
+msgstr "{hours} ساعة و {minutes} دقيقة متبقية"
+
 #: src/features/ats-checker/checker.tsx
 msgid "{issues, plural, one {# issue could cost you a match.} other {# issues could cost you a match.}}"
 msgstr "{issues, plural, one {قد تكلفك مشكلة # مباراة.} other {قد تكلفك مشكلات # مباراة.}}"
@@ -439,7 +444,7 @@ msgstr "{size} نقطة"
 
 #: src/features/homepage/design.tsx
 msgid "{templateCount} templates."
-msgstr ""
+msgstr "{templateCount} قوالب."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
@@ -534,7 +539,7 @@ msgstr "مراجعات أسرع بنسبة 40%"
 
 #: src/features/homepage/faq.tsx
 msgid "8 short answers to what people ask before they start. Anything else, ask on <0>Discord</0>."
-msgstr ""
+msgstr "8 إجابات قصيرة على الأسئلة الشائعة قبل البدء. لأية أسئلة أخرى، اسأل على <0>Discord</0>."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "90 days"
@@ -647,7 +652,7 @@ msgstr "حجم الورق A4"
 
 #: src/features/homepage/footer.tsx
 msgid "About"
-msgstr ""
+msgstr "حول هذا التطبيق"
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Accent colour"
@@ -676,11 +681,11 @@ msgstr "قبلت عرضا آخر"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Access"
-msgstr ""
+msgstr "الوصول"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
-msgstr ""
+msgstr "قم بالوصول إلى حسابك من خلال API، بما في ذلك قراءة المستندات وطلبات العمل وتغييرها وحذفها."
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/hero.tsx
@@ -1695,7 +1700,7 @@ msgstr "تأكد من دقتها."
 
 #: src/features/homepage/check.tsx
 msgid "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads."
-msgstr ""
+msgstr "تقرأ ميزة فحص سيرتك الذاتية بالطريقة التي يفعلها برنامج التوظيف وتشرح ما يجب إصلاحه بكلمات بسيطة. يتم تشغيله في متصفحك، لذا يبقى ملفك على جهازك: 0 تحميلات."
 
 #: src/features/ats-checker/messages.ts
 msgid "Check the exported file contains everything you expect, and that all of it is selectable text."
@@ -1711,7 +1716,7 @@ msgstr "تحقق مما إذا كان البرنامج يمكنه قراءة س�
 
 #: src/features/documents/library-error.tsx
 msgid "Check your connection and try again."
-msgstr ""
+msgstr "تحقق من اتصالك وحاول مرة أخرى."
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Check your email for a link to reset your password."
@@ -1977,7 +1982,7 @@ msgstr "متصل"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
-msgstr ""
+msgstr "التطبيقات المتصلة"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Connection saved"
@@ -2143,7 +2148,7 @@ msgstr "تعذّر إنشاء ملف PDF. يرجى المحاولة مرة أخ�
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not load connected applications."
-msgstr ""
+msgstr "لا يمكن تحميل التطبيقات المتصلة."
 
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
@@ -2151,7 +2156,7 @@ msgstr "تعذّر تجهيز سيرتك الذاتية للطباعة. يرجى
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not revoke this connection. Try again."
-msgstr ""
+msgstr "لا يمكن إلغاء هذا الاتصال. حاول ثانية."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Could not set up two-factor authentication."
@@ -2256,7 +2261,7 @@ msgstr "لا يمكن ربط طلب الوظيفة."
 
 #: src/features/documents/library-error.tsx
 msgid "Couldn't load documents"
-msgstr ""
+msgstr "تعذر تحميل المستندات"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
@@ -2457,7 +2462,7 @@ msgstr "أنشئ سيرة ذاتية أولاً، ثم اسأل عنها."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications."
-msgstr ""
+msgstr "إنشاء وتغيير المستندات وطلبات العمل الخاصة بك."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Create and open"
@@ -2718,7 +2723,7 @@ msgstr "هل تريد حذف حسابك؟"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Delete your documents and account data."
-msgstr ""
+msgstr "احذف مستنداتك وبيانات حسابك."
 
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -2835,6 +2840,7 @@ msgstr "قطع الاتصال"
 msgid "Discord"
 msgstr "ديسكورد"
 
+#: src/components/ui/product-hunt-banner.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 #: src/routes/dashboard/applications/index.tsx
@@ -3726,7 +3732,7 @@ msgstr "حر الشكل"
 
 #: src/libs/seo.ts
 msgid "Free, open-source resume builder. Create, update, and share your resume, with PDF and Word downloads, no ads and no paywall."
-msgstr ""
+msgstr "منشئ السيرة الذاتية مجاني ومفتوح المصدر. قم بإنشاء سيرتك الذاتية وتحديثها ومشاركتها، من خلال تنزيلات PDF وWord، بدون إعلانات وبدون نظام حظر الاشتراك غير المدفوع."
 
 #: src/libs/locale.ts
 msgid "French"
@@ -4087,7 +4093,7 @@ msgstr "قم باستيراد هذا الملف إلى ملف Reactive Resume ا
 
 #: src/features/documents/documents-page.tsx
 msgid "Import your current resume and we'll lay out every section for you to refine. Or start fresh. Start with your name. Build from there."
-msgstr ""
+msgstr "قم باستيراد سيرتك الذاتية الحالية وسنقوم بوضع كل قسم لك لتحسينه. أو ابدأ جديدًا. ابدأ باسمك. البناء من هناك."
 
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/share/format.ts
@@ -4248,6 +4254,11 @@ msgstr "لن يقوم بتسجيل الدخول بعد الآن."
 #: src/features/applications/components/interview-dialog.tsx
 msgid "It will show on the application's timeline and on the calendar."
 msgstr "وسوف تظهر على الجدول الزمني لطلب الوظيفة وعلى التقويم."
+
+#. Body of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "It's free and open source, and always will be. If it has helped you, an upvote today helps more people find it."
+msgstr "إنه مجاني ومفتوح المصدر، وسيظل كذلك دائمًا. إذا كان قد ساعدك، فإن التصويت الإيجابي اليوم يساعد المزيد من الأشخاص في العثور عليه."
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "It's removed from the timeline for good."
@@ -4792,9 +4803,14 @@ msgstr "مباشر · التحديثات أثناء التحرير"
 msgid "Live at {0}"
 msgstr "العيش في {0}"
 
+#. Eyebrow on the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Live on Product Hunt"
+msgstr "مباشر على Product Hunt"
+
 #: src/features/homepage/sections.tsx
 msgid "Live totals, refreshed every 6 hours."
-msgstr ""
+msgstr "المجاميع الحية، يتم تحديثها كل 6 ساعات."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading applications…"
@@ -4810,7 +4826,7 @@ msgstr "جارٍ تحميل الاتصال…"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Loading connections..."
-msgstr ""
+msgstr "جارٍ تحميل الاتصالات..."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -5326,7 +5342,7 @@ msgstr "لا توجد أوامر تطابق هذا البحث."
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications."
-msgstr ""
+msgstr "لا توجد تطبيقات متصلة."
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -5951,7 +5967,7 @@ msgstr "المحادثات الماضية"
 
 #: src/features/homepage/tailor.tsx
 msgid "Paste 1 job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr ""
+msgstr "قم بلصق إعلان وظيفة واحد مرة واحدة. استخدمه لإنشاء نسخة مخصصة من سيرتك الذاتية، ودرجة توضح مدى توافق سيرتك الذاتية مع الوظيفة، ومسودة خطاب تقديمي، ومكان لتتبع طلب الوظيفة الخاص بك."
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste a job link or posting, then check the role and company."
@@ -6054,7 +6070,7 @@ msgstr "اختر أيقونة"
 
 #: src/features/homepage/design.tsx
 msgid "Pick from {templateCount} templates, then set the type, color and spacing. The words stay put, so try as many looks as you like."
-msgstr ""
+msgstr "اختر من بين {templateCount} قالبًا، ثم قم بتعيين الخطوط واللون والتباعد. يظل النص الخاص بك كما هو، لذا جرب العديد من التصميمات التي تريدها."
 
 #: src/features/ats-checker/messages.ts
 msgid "Pick one format and use it everywhere."
@@ -6247,6 +6263,10 @@ msgstr "مصمم المنتج"
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "مصمم منتجات لديه تسع سنوات من الخبرة في بناء <0>أنظمة التصميم</0> ومنتجات تستند إلى الأبحاث لفرق B2B."
 
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Product Hunt launch"
+msgstr "إطلاق Product Hunt"
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
 msgstr "مدى الإتقان"
@@ -6384,7 +6404,7 @@ msgstr "Reactive Resume {__APP_VERSION__} · MIT"
 
 #: src/features/homepage/hero.tsx
 msgid "Reactive Resume is a free, open-source resume builder. Write it, design it, check it and tailor it for every job. Start with 1 resume."
-msgstr ""
+msgstr "Reactive Resume هو منشئ سيرة ذاتية مجاني ومفتوح المصدر. اكتب سيرتك الذاتية، وصممها، وراجعها، وقم بتكييفها مع كل وظيفة تتقدم لها. ابدأ بسيرة ذاتية واحدة."
 
 #: src/components/ui/donation-toast.tsx
 msgid "Reactive Resume is free and open source. If it has helped you, please consider donating."
@@ -6392,11 +6412,16 @@ msgstr "برنامج Reactive Resume مجاني ومفتوح المصدر. إذ�
 
 #: src/features/homepage/sections.tsx
 msgid "Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development. There are 0 paid tiers."
-msgstr ""
+msgstr "Reactive Resume مفتوح المصدر تحت MIT License. يعمل Amruth Pillai ومجتمع المساهمين على استمرار تشغيله، وتدفع التبرعات مقابل الاستضافة والتطوير. هناك 0 مستويات مدفوعة."
+
+#. Title of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Reactive Resume v6 is here!"
+msgstr "Reactive Resume v6 هنا!"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read only"
-msgstr ""
+msgstr "الوصول للقراءة فقط"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Read posting"
@@ -6432,7 +6457,7 @@ msgstr "اقرأ دليل الاستضافة الذاتية"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your documents and job applications."
-msgstr ""
+msgstr "قراءة المستندات الخاصة بك وطلبات العمل."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
@@ -6444,7 +6469,7 @@ msgstr "اقرأ معلومات ملفك الشخصي."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
-msgstr ""
+msgstr "القراءة والكتابة والحذف"
 
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
@@ -6841,7 +6866,7 @@ msgstr "أعد محاولة الحفظ"
 
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
-msgstr ""
+msgstr "جارٍ إعادة المحاولة..."
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Review"
@@ -6866,11 +6891,11 @@ msgstr "إبطال {0}"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke access"
-msgstr ""
+msgstr "إبطال الوصول"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke an application's access to your account."
-msgstr ""
+msgstr "قم بإلغاء وصول التطبيق إلى حسابك."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -7346,7 +7371,7 @@ msgstr "مشاركة وتصدير"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
-msgstr ""
+msgstr "شارك رابطًا عامًا أو أضف كلمة مرور أو احتفظ به خاصًا. اختر من بين 3 خيارات للرؤية. قم بالتصدير إلى PDF أو Word، أو اصطحب جميع بياناتك معك باسم JSON."
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Share public resume"
@@ -7530,11 +7555,11 @@ msgstr "منذ آخر مشاهدة"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
-msgstr ""
+msgstr "نموذج ذو عمود واحد مستوحى من السيرة الذاتية اليابانية rirekisho: رأس مصنوع من حقول محاطة، ويتم تقديم كل قسم كجدول بشريط عنوان ثابت. صغير الحجم وسهل المسح الضوئي، ومناسب للوظائف الهندسية أو وظائف العمليات أو طلبات العمل في اليابان."
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column set like a magazine feature: a large display name under an uppercase kicker, the summary as an italic standfirst and italic section headings; refined for writers, designers, and communications roles."
-msgstr ""
+msgstr "تخطيط ذو عمود واحد مستوحى من مقال في مجلة: اسمك بخط كبير أسفل عنوان قصير بأحرف كبيرة، وملخص بخط مائل، وعناوين الأقسام بخط مائل. تصميم راقي للكتاب والمصممين ومحترفي الاتصالات."
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column with a magenta left border accent; compact and efficient for entry-level or internship applications."
@@ -7799,7 +7824,7 @@ msgstr "ابدأ من واحد لديك واربط طلب الوظيفة."
 
 #: src/features/homepage/sections.tsx
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime. Start with 1 resume."
-msgstr ""
+msgstr "ابدأ من الصفر أو قم باستيراد ما لديك. يستغرق الأمر بضع دقائق، ويمكنك العودة إليه في أي وقت. ابدأ بسيرة ذاتية واحدة."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Start on a new page"
@@ -7910,6 +7935,11 @@ msgstr "الملخّص"
 #: src/features/homepage/sections.tsx
 msgid "Support"
 msgstr "يدعم"
+
+#. Button on the launch-day banner that opens the Product Hunt page
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Support on Product Hunt"
+msgstr "ادعمنا على Product Hunt"
 
 #: src/features/ats-checker/messages.ts
 msgid "Swap the start and end dates."
@@ -8658,7 +8688,7 @@ msgstr "ترجم التطبيق"
 
 #: src/features/homepage/sections.tsx
 msgid "Translated into {languageCount} languages. Help translate it into yours."
-msgstr ""
+msgstr "ترجمت إلى {languageCount} لغة. ساعد في ترجمة التطبيق إلى لغتك."
 
 #: src/features/homepage/footer.tsx
 msgid "Translations"
@@ -9413,7 +9443,7 @@ msgstr "اكتب كل دور كسطر واضح للمسمى الوظيفي وا�
 
 #: src/features/homepage/write.tsx
 msgid "Write in 1 editor beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide."
-msgstr ""
+msgstr "اكتب في محرر واحد بجوار المعاينة المباشرة للمستند. يتم حفظ عملك أثناء الكتابة، ويتم الاحتفاظ بكل إصدار. اطلب من المساعد تحسين الجملة: فهو يقترح تغييرات، وعليك أن تقرر."
 
 #: src/features/ats-checker/messages.ts
 msgid "Write it as one uninterrupted piece, with no special spacing."

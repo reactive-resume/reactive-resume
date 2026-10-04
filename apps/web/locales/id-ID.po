@@ -344,6 +344,11 @@ msgstr "{entry} menyebutkan peran tersebut tetapi bukan apa yang Anda lakukan, s
 msgid "{failing, plural, one {# to review} other {# to review}}"
 msgstr "{failing, plural, one {# untuk ditinjau} other {# untuk ditinjau}}"
 
+#. Time left in the Product Hunt launch day
+#: src/components/ui/product-hunt-banner.tsx
+msgid "{hours}h {minutes}m left"
+msgstr "{hours} jam {minutes} menit tersisa"
+
 #: src/features/ats-checker/checker.tsx
 msgid "{issues, plural, one {# issue could cost you a match.} other {# issues could cost you a match.}}"
 msgstr "{issues, plural, one {Masalah # bisa membuat Anda kehilangan uang.} other {Masalah # bisa membuat Anda kehilangan uang.}}"
@@ -439,7 +444,7 @@ msgstr "{size} pt"
 
 #: src/features/homepage/design.tsx
 msgid "{templateCount} templates."
-msgstr ""
+msgstr "{templateCount} templat."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
@@ -534,7 +539,7 @@ msgstr "Ulasan 40% lebih cepat"
 
 #: src/features/homepage/faq.tsx
 msgid "8 short answers to what people ask before they start. Anything else, ask on <0>Discord</0>."
-msgstr ""
+msgstr "8 jawaban singkat atas pertanyaan umum sebelum memulai. Untuk pertanyaan lainnya, tanyakan di <0>Discord</0>."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "90 days"
@@ -647,7 +652,7 @@ msgstr "A4"
 
 #: src/features/homepage/footer.tsx
 msgid "About"
-msgstr ""
+msgstr "Tentang aplikasi ini"
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Accent colour"
@@ -676,11 +681,11 @@ msgstr "Menerima tawaran lain"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Access"
-msgstr ""
+msgstr "Akses"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
-msgstr ""
+msgstr "Akses akun Anda melalui API, termasuk membaca, mengubah dan menghapus dokumen dan lamaran pekerjaan Anda."
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/hero.tsx
@@ -1695,7 +1700,7 @@ msgstr "Periksa keakuratannya."
 
 #: src/features/homepage/check.tsx
 msgid "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads."
-msgstr ""
+msgstr "Fitur Pemeriksaan membaca resume Anda seperti yang dilakukan perangkat lunak rekrutmen dan menjelaskan apa yang harus diperbaiki dengan kata-kata sederhana. Ini berjalan di browser Anda, sehingga file Anda tetap ada di perangkat Anda: 0 unggahan."
 
 #: src/features/ats-checker/messages.ts
 msgid "Check the exported file contains everything you expect, and that all of it is selectable text."
@@ -1711,7 +1716,7 @@ msgstr "Periksa apakah perangkat lunak dapat membaca resume Anda PDF. Berjalan s
 
 #: src/features/documents/library-error.tsx
 msgid "Check your connection and try again."
-msgstr ""
+msgstr "Periksa koneksi Anda dan coba lagi."
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Check your email for a link to reset your password."
@@ -1977,7 +1982,7 @@ msgstr "Terhubung"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
-msgstr ""
+msgstr "Aplikasi yang terhubung"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Connection saved"
@@ -2143,7 +2148,7 @@ msgstr "Tidak dapat membuat PDF. Silakan coba lagi."
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not load connected applications."
-msgstr ""
+msgstr "Tidak dapat memuat aplikasi yang terhubung."
 
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
@@ -2151,7 +2156,7 @@ msgstr "Tidak dapat menyiapkan resume Anda untuk dicetak. Silakan coba lagi."
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not revoke this connection. Try again."
-msgstr ""
+msgstr "Tidak dapat mencabut hubungan ini. Coba lagi."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Could not set up two-factor authentication."
@@ -2256,7 +2261,7 @@ msgstr "Tidak dapat menautkan lamaran pekerjaan."
 
 #: src/features/documents/library-error.tsx
 msgid "Couldn't load documents"
-msgstr ""
+msgstr "Tidak dapat memuat dokumen"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
@@ -2457,7 +2462,7 @@ msgstr "Buat resume terlebih dahulu, lalu tanyakan tentangnya."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications."
-msgstr ""
+msgstr "Buat dan ubah dokumen dan lamaran pekerjaan Anda."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Create and open"
@@ -2718,7 +2723,7 @@ msgstr "Hapus akun Anda?"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Delete your documents and account data."
-msgstr ""
+msgstr "Hapus dokumen dan data akun Anda."
 
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -2835,6 +2840,7 @@ msgstr "Putuskan"
 msgid "Discord"
 msgstr "Discord"
 
+#: src/components/ui/product-hunt-banner.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 #: src/routes/dashboard/applications/index.tsx
@@ -3726,7 +3732,7 @@ msgstr "Bentuk bebas"
 
 #: src/libs/seo.ts
 msgid "Free, open-source resume builder. Create, update, and share your resume, with PDF and Word downloads, no ads and no paywall."
-msgstr ""
+msgstr "Pembuat resume sumber terbuka dan gratis. Buat, perbarui, dan bagikan resume Anda, dengan unduhan PDF dan Word, tanpa iklan dan tanpa paywall."
 
 #: src/libs/locale.ts
 msgid "French"
@@ -4087,7 +4093,7 @@ msgstr "Impor file ini ke Reactive Resume gratis. Setiap masalah menunggu Anda d
 
 #: src/features/documents/documents-page.tsx
 msgid "Import your current resume and we'll lay out every section for you to refine. Or start fresh. Start with your name. Build from there."
-msgstr ""
+msgstr "Impor resume Anda saat ini dan kami akan menyiapkan setiap bagian untuk Anda perbaiki. Atau mulai dari awal. Mulailah dengan nama Anda. Bangun dari sana."
 
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/share/format.ts
@@ -4248,6 +4254,11 @@ msgstr "Itu tidak akan membuat Anda masuk lagi."
 #: src/features/applications/components/interview-dialog.tsx
 msgid "It will show on the application's timeline and on the calendar."
 msgstr "Ini akan ditampilkan di timeline lamaran pekerjaan dan di kalender."
+
+#. Body of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "It's free and open source, and always will be. If it has helped you, an upvote today helps more people find it."
+msgstr "Ini gratis dan open source, dan akan selalu begitu. Jika itu membantu Anda, suara positif hari ini akan membantu lebih banyak orang menemukannya."
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "It's removed from the timeline for good."
@@ -4792,9 +4803,14 @@ msgstr "Langsung · perbarui saat Anda mengedit"
 msgid "Live at {0}"
 msgstr "Langsung di {0}"
 
+#. Eyebrow on the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Live on Product Hunt"
+msgstr "Langsung di Product Hunt"
+
 #: src/features/homepage/sections.tsx
 msgid "Live totals, refreshed every 6 hours."
-msgstr ""
+msgstr "Total langsung, disegarkan setiap 6 jam."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading applications…"
@@ -4810,7 +4826,7 @@ msgstr "Memuat koneksi…"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Loading connections..."
-msgstr ""
+msgstr "Memuat koneksi..."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -5326,7 +5342,7 @@ msgstr "Tidak ada perintah yang cocok dengan pencarian itu."
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications."
-msgstr ""
+msgstr "Tidak ada aplikasi yang terhubung."
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -5951,7 +5967,7 @@ msgstr "Percakapan masa lalu"
 
 #: src/features/homepage/tailor.tsx
 msgid "Paste 1 job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr ""
+msgstr "Tempel 1 postingan pekerjaan satu kali. Gunakan untuk membuat salinan resume Anda yang disesuaikan, skor yang menunjukkan seberapa cocok resume Anda dengan pekerjaan, draf surat lamaran, dan tempat untuk melacak lamaran pekerjaan Anda."
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste a job link or posting, then check the role and company."
@@ -6054,7 +6070,7 @@ msgstr "Pilih ikon"
 
 #: src/features/homepage/design.tsx
 msgid "Pick from {templateCount} templates, then set the type, color and spacing. The words stay put, so try as many looks as you like."
-msgstr ""
+msgstr "Pilih dari {templateCount} templat, lalu atur font, warna, dan spasi. Teks Anda tetap sama, jadi cobalah desain sebanyak yang Anda suka."
 
 #: src/features/ats-checker/messages.ts
 msgid "Pick one format and use it everywhere."
@@ -6247,6 +6263,10 @@ msgstr "Desainer Produk"
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "Desainer produk dengan pengalaman sembilan tahun membangun <0>sistem desain</0> dan produk berbasis riset untuk tim B2B."
 
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Product Hunt launch"
+msgstr "Peluncuran Product Hunt"
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
 msgstr "Kemahiran"
@@ -6384,7 +6404,7 @@ msgstr "Reactive Resume {__APP_VERSION__} · MIT"
 
 #: src/features/homepage/hero.tsx
 msgid "Reactive Resume is a free, open-source resume builder. Write it, design it, check it and tailor it for every job. Start with 1 resume."
-msgstr ""
+msgstr "Reactive Resume adalah pembuat resume sumber terbuka dan gratis. Tulis resume Anda, rancang, periksa, dan sesuaikan dengan setiap pekerjaan yang Anda lamar. Mulailah dengan 1 resume."
 
 #: src/components/ui/donation-toast.tsx
 msgid "Reactive Resume is free and open source. If it has helped you, please consider donating."
@@ -6392,11 +6412,16 @@ msgstr "Reactive Resume gratis dan bersifat open source. Jika aplikasi ini berma
 
 #: src/features/homepage/sections.tsx
 msgid "Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development. There are 0 paid tiers."
-msgstr ""
+msgstr "Reactive Resume adalah open source di bawah MIT License. Amruth Pillai dan komunitas kontributor tetap menjalankannya, dan sumbangan membayar untuk hosting dan pengembangan. Ada 0 tingkatan berbayar."
+
+#. Title of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Reactive Resume v6 is here!"
+msgstr "Reactive Resume v6 telah hadir!"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read only"
-msgstr ""
+msgstr "Akses hanya baca"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Read posting"
@@ -6432,7 +6457,7 @@ msgstr "Baca panduan hosting mandiri"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your documents and job applications."
-msgstr ""
+msgstr "Baca dokumen dan lamaran pekerjaan Anda."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
@@ -6444,7 +6469,7 @@ msgstr "Baca informasi profil Anda."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
-msgstr ""
+msgstr "Membaca, menulis, dan menghapus"
 
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
@@ -6841,7 +6866,7 @@ msgstr "Coba simpan lagi"
 
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
-msgstr ""
+msgstr "Mencoba lagi…"
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Review"
@@ -6866,11 +6891,11 @@ msgstr "Cabut {0}"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke access"
-msgstr ""
+msgstr "Cabut akses"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke an application's access to your account."
-msgstr ""
+msgstr "Cabut akses aplikasi ke akun Anda."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -7346,7 +7371,7 @@ msgstr "Bagikan & ekspor"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
-msgstr ""
+msgstr "Bagikan tautan publik, tambahkan kata sandi, atau jadikan pribadi. Pilih dari 3 opsi visibilitas. Ekspor ke PDF atau Word, atau bawa semua data Anda sebagai JSON."
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Share public resume"
@@ -7530,11 +7555,11 @@ msgstr "sejak tampilan terakhir"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
-msgstr ""
+msgstr "Bentuk satu kolom yang terinspirasi oleh resume rirekisho Jepang: header terbuat dari bidang yang dibatasi, dan setiap bagian disajikan sebagai tabel dengan bilah judul yang solid. Ringkas dan mudah dipindai, cocok untuk pekerjaan teknik, pekerjaan operasi, atau lamaran pekerjaan di Jepang."
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column set like a magazine feature: a large display name under an uppercase kicker, the summary as an italic standfirst and italic section headings; refined for writers, designers, and communications roles."
-msgstr ""
+msgstr "Tata letak satu kolom yang terinspirasi oleh artikel majalah: nama Anda diketik besar di bawah judul pendek dalam huruf besar, ringkasan dalam huruf miring, dan judul bagian dalam huruf miring. Desain yang disempurnakan untuk penulis, desainer, dan profesional komunikasi."
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column with a magenta left border accent; compact and efficient for entry-level or internship applications."
@@ -7799,7 +7824,7 @@ msgstr "Mulailah dari yang Anda miliki dan tautkan lamaran pekerjaan."
 
 #: src/features/homepage/sections.tsx
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime. Start with 1 resume."
-msgstr ""
+msgstr "Mulai dari awal atau impor apa yang Anda miliki. Dibutuhkan beberapa menit, dan Anda dapat kembali melakukannya kapan saja. Mulailah dengan 1 resume."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Start on a new page"
@@ -7910,6 +7935,11 @@ msgstr "Ringkasan"
 #: src/features/homepage/sections.tsx
 msgid "Support"
 msgstr "Mendukung"
+
+#. Button on the launch-day banner that opens the Product Hunt page
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Support on Product Hunt"
+msgstr "Dukung kami di Product Hunt"
 
 #: src/features/ats-checker/messages.ts
 msgid "Swap the start and end dates."
@@ -8658,7 +8688,7 @@ msgstr "Terjemahkan aplikasi"
 
 #: src/features/homepage/sections.tsx
 msgid "Translated into {languageCount} languages. Help translate it into yours."
-msgstr ""
+msgstr "Diterjemahkan ke dalam {languageCount} bahasa. Membantu menerjemahkan aplikasi ke dalam bahasa Anda."
 
 #: src/features/homepage/footer.tsx
 msgid "Translations"
@@ -9413,7 +9443,7 @@ msgstr "Tulis setiap peran sebagai baris jabatan dan perusahaan yang jelas, deng
 
 #: src/features/homepage/write.tsx
 msgid "Write in 1 editor beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide."
-msgstr ""
+msgstr "Tulis dalam 1 editor di samping pratinjau dokumen langsung. Pekerjaan Anda disimpan saat Anda mengetik, dan setiap versi disimpan. Minta asisten untuk memperbaiki kalimat: ini menyarankan perubahan, dan Anda yang memutuskan."
 
 #: src/features/ats-checker/messages.ts
 msgid "Write it as one uninterrupted piece, with no special spacing."

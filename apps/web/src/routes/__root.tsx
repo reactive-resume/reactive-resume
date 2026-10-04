@@ -22,6 +22,7 @@ import { TooltipProvider } from "@reactive-resume/ui/components/tooltip";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { BreakpointIndicator } from "@/components/layout/breakpoint-indicator";
 import { DonationToast } from "@/components/ui/donation-toast";
+import { ProductHuntBanner } from "@/components/ui/product-hunt-banner";
 import { DialogManager } from "@/dialogs/manager";
 import { CommandPalette } from "@/features/command-palette";
 import { ThemeProvider } from "@/features/theme/provider";
@@ -81,6 +82,7 @@ function RootComponent() {
 													<Outlet />
 
 													{!isBuilder && <DonationToast />}
+													<ProductHuntBanner />
 													<DialogManager />
 													<CommandPalette />
 													<Toaster />

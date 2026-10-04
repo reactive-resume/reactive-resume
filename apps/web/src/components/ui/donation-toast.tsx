@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { useState } from "react";
 import { useTimeout } from "usehooks-ts";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { isProductHuntLaunchLive } from "./product-hunt-banner";
 
 const TOAST_ID = "donation-toast";
 const SHOW_TOAST_DELAY_MS = 5 * 60 * 1000; // 5 minutes
@@ -22,7 +23,8 @@ export function DonationToast() {
 	};
 
 	const showToast = () => {
-		if (dismissed === "true") return;
+		// One ask at a time: the Product Hunt banner has the corner on launch day.
+		if (dismissed === "true" || isProductHuntLaunchLive()) return;
 
 		toast.add({
 			id: TOAST_ID,

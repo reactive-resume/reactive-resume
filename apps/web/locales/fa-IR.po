@@ -344,6 +344,11 @@ msgstr "{entry} نقش را نام‌گذاری می‌کند، اما کاری 
 msgid "{failing, plural, one {# to review} other {# to review}}"
 msgstr "{failing, plural, one {# برای بررسی} other {# برای بررسی}}"
 
+#. Time left in the Product Hunt launch day
+#: src/components/ui/product-hunt-banner.tsx
+msgid "{hours}h {minutes}m left"
+msgstr "{hours} ساعت و {minutes} دقیقه باقی مانده است"
+
 #: src/features/ats-checker/checker.tsx
 msgid "{issues, plural, one {# issue could cost you a match.} other {# issues could cost you a match.}}"
 msgstr "{issues, plural, one {مشکل # ممکن است برای شما هزینه ای داشته باشد.} other {مشکلات # ممکن است برای شما هزینه ای داشته باشد.}}"
@@ -439,7 +444,7 @@ msgstr "{size} pt"
 
 #: src/features/homepage/design.tsx
 msgid "{templateCount} templates."
-msgstr ""
+msgstr "{templateCount} قالب."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
@@ -534,7 +539,7 @@ msgstr "40٪ بررسی سریعتر"
 
 #: src/features/homepage/faq.tsx
 msgid "8 short answers to what people ask before they start. Anything else, ask on <0>Discord</0>."
-msgstr ""
+msgstr "8 پاسخ کوتاه به سوالات رایج قبل از شروع. برای هر گونه سوال دیگری، از <0>Discord</0> بپرسید."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "90 days"
@@ -647,7 +652,7 @@ msgstr "A4"
 
 #: src/features/homepage/footer.tsx
 msgid "About"
-msgstr ""
+msgstr "درباره این برنامه"
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Accent colour"
@@ -676,11 +681,11 @@ msgstr "پیشنهاد دیگری را پذیرفت"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Access"
-msgstr ""
+msgstr "دسترسی داشته باشید"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
-msgstr ""
+msgstr "از طریق API به حساب خود دسترسی داشته باشید، از جمله خواندن، تغییر و حذف اسناد و برنامه های شغلی."
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/hero.tsx
@@ -1695,7 +1700,7 @@ msgstr "بررسی کنید دقیق است"
 
 #: src/features/homepage/check.tsx
 msgid "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads."
-msgstr ""
+msgstr "ویژگی بررسی رزومه شما را به روشی که نرم افزار استخدام انجام می دهد می خواند و توضیح می دهد که چه چیزی را باید اصلاح کنید. در مرورگر شما اجرا می شود، بنابراین فایل شما در دستگاه شما باقی می ماند: 0 بارگذاری."
 
 #: src/features/ats-checker/messages.ts
 msgid "Check the exported file contains everything you expect, and that all of it is selectable text."
@@ -1711,7 +1716,7 @@ msgstr "بررسی کنید که آیا نرم افزار می تواند رزو
 
 #: src/features/documents/library-error.tsx
 msgid "Check your connection and try again."
-msgstr ""
+msgstr "اتصال خود را بررسی کنید و دوباره امتحان کنید."
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Check your email for a link to reset your password."
@@ -1977,7 +1982,7 @@ msgstr "متصل"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
-msgstr ""
+msgstr "برنامه های متصل"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Connection saved"
@@ -2143,7 +2148,7 @@ msgstr "ساخت فایل PDF ممکن نشد. لطفاً دوباره تلاش 
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not load connected applications."
-msgstr ""
+msgstr "برنامه های متصل بارگیری نشد."
 
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
@@ -2151,7 +2156,7 @@ msgstr "آماده‌سازی رزومهٔ شما برای چاپ ممکن نش�
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not revoke this connection. Try again."
-msgstr ""
+msgstr "نمی توان این ارتباط را لغو کرد. دوباره امتحان کنید."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Could not set up two-factor authentication."
@@ -2256,7 +2261,7 @@ msgstr "درخواست شغل پیوند داده نشد."
 
 #: src/features/documents/library-error.tsx
 msgid "Couldn't load documents"
-msgstr ""
+msgstr "اسناد بارگیری نشد"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
@@ -2457,7 +2462,7 @@ msgstr "ابتدا یک رزومه ایجاد کنید، سپس در مورد آ
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications."
-msgstr ""
+msgstr "اسناد و درخواست های شغلی خود را ایجاد و تغییر دهید."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Create and open"
@@ -2718,7 +2723,7 @@ msgstr "حساب کاربری خود را حذف کنید؟"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Delete your documents and account data."
-msgstr ""
+msgstr "اسناد و اطلاعات حساب خود را حذف کنید."
 
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -2835,6 +2840,7 @@ msgstr "قطع اتصال"
 msgid "Discord"
 msgstr "دیسکورد"
 
+#: src/components/ui/product-hunt-banner.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 #: src/routes/dashboard/applications/index.tsx
@@ -3726,7 +3732,7 @@ msgstr "فرم آزاد"
 
 #: src/libs/seo.ts
 msgid "Free, open-source resume builder. Create, update, and share your resume, with PDF and Word downloads, no ads and no paywall."
-msgstr ""
+msgstr "رزومه ساز رایگان و منبع باز. رزومه خود را با دانلودهای PDF و Word، بدون تبلیغات و بدون پرداخت دیواری ایجاد کنید، به روز کنید و به اشتراک بگذارید."
 
 #: src/libs/locale.ts
 msgid "French"
@@ -4087,7 +4093,7 @@ msgstr "این فایل را به یک Reactive Resume رایگان وارد ک�
 
 #: src/features/documents/documents-page.tsx
 msgid "Import your current resume and we'll lay out every section for you to refine. Or start fresh. Start with your name. Build from there."
-msgstr ""
+msgstr "رزومه فعلی خود را وارد کنید و ما هر بخش را برای شما تنظیم می کنیم تا اصلاح کنید. یا تازه شروع کنید. با نام خود شروع کنید. از آنجا بساز"
 
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/share/format.ts
@@ -4248,6 +4254,11 @@ msgstr "دیگر شما را وارد سیستم نمی کند."
 #: src/features/applications/components/interview-dialog.tsx
 msgid "It will show on the application's timeline and on the calendar."
 msgstr "در جدول زمانی درخواست کار و در تقویم نشان داده می شود."
+
+#. Body of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "It's free and open source, and always will be. If it has helped you, an upvote today helps more people find it."
+msgstr "این رایگان و متن باز است و همیشه خواهد بود. اگر به شما کمک کرده است، رأی موافق امروز به افراد بیشتری کمک می کند آن را پیدا کنند."
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "It's removed from the timeline for good."
@@ -4792,9 +4803,14 @@ msgstr "زنده · به روز رسانی در هنگام ویرایش"
 msgid "Live at {0}"
 msgstr "زنده در {0}"
 
+#. Eyebrow on the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Live on Product Hunt"
+msgstr "زنده در Product Hunt"
+
 #: src/features/homepage/sections.tsx
 msgid "Live totals, refreshed every 6 hours."
-msgstr ""
+msgstr "مجموعات زنده، هر 6 ساعت یکبار تجدید می شوند."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading applications…"
@@ -4810,7 +4826,7 @@ msgstr "در حال بارگیری اتصال…"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Loading connections..."
-msgstr ""
+msgstr "در حال بارگیری اتصالات..."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -5326,7 +5342,7 @@ msgstr "هیچ دستوری با این جستجو مطابقت ندارد."
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications."
-msgstr ""
+msgstr "هیچ برنامه متصلی وجود ندارد."
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -5951,7 +5967,7 @@ msgstr "گفتگوهای گذشته"
 
 #: src/features/homepage/tailor.tsx
 msgid "Paste 1 job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr ""
+msgstr "1 پست شغلی را یک بار بچسبانید. از آن برای ایجاد یک کپی مناسب از رزومه خود، امتیازی که نشان می دهد رزومه شما چقدر با شغل مطابقت دارد، پیش نویس نامه پوششی و مکانی برای پیگیری درخواست شغلی خود استفاده کنید."
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste a job link or posting, then check the role and company."
@@ -6054,7 +6070,7 @@ msgstr "یک آیکون انتخاب کنید"
 
 #: src/features/homepage/design.tsx
 msgid "Pick from {templateCount} templates, then set the type, color and spacing. The words stay put, so try as many looks as you like."
-msgstr ""
+msgstr "از بین {templateCount} قالب انتخاب کنید، سپس فونت، رنگ و فاصله را تنظیم کنید. متن شما ثابت می ماند، بنابراین هر تعداد طرحی که دوست دارید امتحان کنید."
 
 #: src/features/ats-checker/messages.ts
 msgid "Pick one format and use it everywhere."
@@ -6247,6 +6263,10 @@ msgstr "طراح محصول"
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "طراح محصول با نه سال تجربه در ساخت <0>سیستم‌های طراحی</0> و محصولات مبتنی بر پژوهش برای تیم‌های B2B."
 
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Product Hunt launch"
+msgstr "راه اندازی Product Hunt"
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
 msgstr "مهارت"
@@ -6384,7 +6404,7 @@ msgstr "Reactive Resume {__APP_VERSION__} · MIT"
 
 #: src/features/homepage/hero.tsx
 msgid "Reactive Resume is a free, open-source resume builder. Write it, design it, check it and tailor it for every job. Start with 1 resume."
-msgstr ""
+msgstr "Reactive Resume یک رزومه ساز رایگان و منبع باز است. رزومه خود را بنویسید، آن را طراحی کنید، بررسی کنید و آن را با هر شغلی که برای آن درخواست می کنید، تطبیق دهید. با 1 رزومه شروع کنید."
 
 #: src/components/ui/donation-toast.tsx
 msgid "Reactive Resume is free and open source. If it has helped you, please consider donating."
@@ -6392,11 +6412,16 @@ msgstr "رزومه واکنشی رایگان و متن‌باز است. اگر �
 
 #: src/features/homepage/sections.tsx
 msgid "Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development. There are 0 paid tiers."
-msgstr ""
+msgstr "Reactive Resume منبع باز تحت MIT License است. Amruth Pillai و جامعه ای از مشارکت کنندگان آن را در حال اجرا نگه می دارند و کمک های مالی برای میزبانی و توسعه هزینه می کنند. 0 ردیف پولی وجود دارد."
+
+#. Title of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Reactive Resume v6 is here!"
+msgstr "Reactive Resume v6 اینجاست!"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read only"
-msgstr ""
+msgstr "دسترسی فقط خواندنی"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Read posting"
@@ -6432,7 +6457,7 @@ msgstr "راهنمای خود میزبانی را بخوانید"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your documents and job applications."
-msgstr ""
+msgstr "مدارک و درخواست های شغلی خود را بخوانید."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
@@ -6444,7 +6469,7 @@ msgstr "اطلاعات پروفایل خود را بخوانید."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
-msgstr ""
+msgstr "بخوانید، بنویسید و حذف کنید"
 
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
@@ -6841,7 +6866,7 @@ msgstr "دوباره سعی کنید ذخیره کنید"
 
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
-msgstr ""
+msgstr "در حال تلاش مجدد…"
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Review"
@@ -6866,11 +6891,11 @@ msgstr "{0} را لغو کنید"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke access"
-msgstr ""
+msgstr "لغو دسترسی"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke an application's access to your account."
-msgstr ""
+msgstr "دسترسی یک برنامه کاربردی به حساب خود را لغو کنید."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -7346,7 +7371,7 @@ msgstr "اشتراک گذاری و صادرات"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
-msgstr ""
+msgstr "یک پیوند عمومی را به اشتراک بگذارید، یک رمز عبور اضافه کنید یا آن را خصوصی نگه دارید. از 3 گزینه دید انتخاب کنید. به PDF یا Word صادر کنید یا تمام داده های خود را به عنوان JSON با خود ببرید."
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Share public resume"
@@ -7530,11 +7555,11 @@ msgstr "از آخرین مشاهده"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
-msgstr ""
+msgstr "یک فرم تک ستونی با الهام از رزومه ژاپنی ریکیشو: هدر ساخته شده از فیلدهای حاشیه‌دار، و هر بخش به صورت جدولی با نوار عنوان جامد ارائه می‌شود. فشرده و آسان برای اسکن، مناسب برای مشاغل مهندسی، مشاغل عملیاتی یا برنامه های شغلی در ژاپن."
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column set like a magazine feature: a large display name under an uppercase kicker, the summary as an italic standfirst and italic section headings; refined for writers, designers, and communications roles."
-msgstr ""
+msgstr "طرح تک ستونی با الهام از یک مقاله مجله: نام شما با حروف بزرگ در زیر عنوان کوتاه با حروف بزرگ، خلاصه با حروف کج، و عناوین بخش با حروف کج. یک طرح تصفیه شده برای نویسندگان، طراحان و متخصصان ارتباطات."
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column with a magenta left border accent; compact and efficient for entry-level or internship applications."
@@ -7799,7 +7824,7 @@ msgstr "از یکی که دارید شروع کنید و درخواست کار �
 
 #: src/features/homepage/sections.tsx
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime. Start with 1 resume."
-msgstr ""
+msgstr "از ابتدا شروع کنید یا آنچه دارید وارد کنید. چند دقیقه طول می کشد، و شما می توانید در هر زمان به آن بازگردید. با 1 رزومه شروع کنید."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Start on a new page"
@@ -7910,6 +7935,11 @@ msgstr "خلاصه"
 #: src/features/homepage/sections.tsx
 msgid "Support"
 msgstr "پشتیبانی کنید"
+
+#. Button on the launch-day banner that opens the Product Hunt page
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Support on Product Hunt"
+msgstr "در Product Hunt از ما حمایت کنید"
 
 #: src/features/ats-checker/messages.ts
 msgid "Swap the start and end dates."
@@ -8658,7 +8688,7 @@ msgstr "برنامه را ترجمه کنید"
 
 #: src/features/homepage/sections.tsx
 msgid "Translated into {languageCount} languages. Help translate it into yours."
-msgstr ""
+msgstr "به {languageCount} زبان ترجمه شده است. به ترجمه برنامه به زبان خود کمک کنید."
 
 #: src/features/homepage/footer.tsx
 msgid "Translations"
@@ -9413,7 +9443,7 @@ msgstr "هر نقش را با یک عنوان و نام شرکت واضح بنو
 
 #: src/features/homepage/write.tsx
 msgid "Write in 1 editor beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide."
-msgstr ""
+msgstr "در 1 ویرایشگر در کنار پیش‌نمایش سند زنده بنویسید. کار شما در حین تایپ ذخیره می شود و هر نسخه نگه داشته می شود. از دستیار بخواهید جمله ای را بهبود بخشد: این جمله تغییراتی را پیشنهاد می کند و شما تصمیم می گیرید."
 
 #: src/features/ats-checker/messages.ts
 msgid "Write it as one uninterrupted piece, with no special spacing."

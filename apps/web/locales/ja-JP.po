@@ -344,6 +344,11 @@ msgstr "{entry} はロールに名前を付けますが、何をしたかは指�
 msgid "{failing, plural, one {# to review} other {# to review}}"
 msgstr "{failing, plural, one {# をレビューする} other {# をレビューする}}"
 
+#. Time left in the Product Hunt launch day
+#: src/components/ui/product-hunt-banner.tsx
+msgid "{hours}h {minutes}m left"
+msgstr "残り {hours} 時間 {minutes} 分"
+
 #: src/features/ats-checker/checker.tsx
 msgid "{issues, plural, one {# issue could cost you a match.} other {# issues could cost you a match.}}"
 msgstr "{issues, plural, one {# の問題により、マッチが失われる可能性があります。} other {# の問題により、マッチが失われる可能性があります。}}"
@@ -439,7 +444,7 @@ msgstr "{size} ポイント"
 
 #: src/features/homepage/design.tsx
 msgid "{templateCount} templates."
-msgstr ""
+msgstr "{templateCount} のテンプレート。"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
@@ -534,7 +539,7 @@ msgstr "レビューが 40% 高速化"
 
 #: src/features/homepage/faq.tsx
 msgid "8 short answers to what people ask before they start. Anything else, ask on <0>Discord</0>."
-msgstr ""
+msgstr "始める前に、よくある質問に対する 8 つの短い回答。その他のご質問については、<0>Discord</0> でお問い合わせください。"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "90 days"
@@ -647,7 +652,7 @@ msgstr "A4"
 
 #: src/features/homepage/footer.tsx
 msgid "About"
-msgstr ""
+msgstr "このアプリについて"
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Accent colour"
@@ -676,11 +681,11 @@ msgstr "別のオファーを受け入れました"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Access"
-msgstr ""
+msgstr "アクセス"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
-msgstr ""
+msgstr "API を通じてアカウントにアクセスし、ドキュメントや求人応募の読み取り、変更、削除を行います。"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/hero.tsx
@@ -1695,7 +1700,7 @@ msgstr "正確であることを確認してください。"
 
 #: src/features/homepage/check.tsx
 msgid "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads."
-msgstr ""
+msgstr "チェック 機能は、採用ソフトウェアと同じ方法で履歴書を読み取り、修正すべき点を簡単な言葉で説明します。ブラウザで実行されるため、ファイルはデバイス上に残ります: アップロード数は 0 です。"
 
 #: src/features/ats-checker/messages.ts
 msgid "Check the exported file contains everything you expect, and that all of it is selectable text."
@@ -1711,7 +1716,7 @@ msgstr "ソフトウェアが履歴書 PDF を読み取れるかどうかを確�
 
 #: src/features/documents/library-error.tsx
 msgid "Check your connection and try again."
-msgstr ""
+msgstr "接続を確認して、もう一度試してください。"
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Check your email for a link to reset your password."
@@ -1977,7 +1982,7 @@ msgstr "接続済み"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
-msgstr ""
+msgstr "接続されたアプリケーション"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Connection saved"
@@ -2143,7 +2148,7 @@ msgstr "PDF を生成できませんでした。もう一度お試しくださ�
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not load connected applications."
-msgstr ""
+msgstr "接続されているアプリケーションをロードできませんでした。"
 
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
@@ -2151,7 +2156,7 @@ msgstr "履歴書を印刷用に準備できませんでした。もう一度お
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not revoke this connection. Try again."
-msgstr ""
+msgstr "この接続を取り消すことができませんでした。もう一度やり直してください。"
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Could not set up two-factor authentication."
@@ -2256,7 +2261,7 @@ msgstr "求人アプリケーションをリンクできませんでした。"
 
 #: src/features/documents/library-error.tsx
 msgid "Couldn't load documents"
-msgstr ""
+msgstr "ドキュメントをロードできませんでした"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
@@ -2457,7 +2462,7 @@ msgstr "まず履歴書を作成してから、それについて質問してく
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications."
-msgstr ""
+msgstr "書類や応募書類を作成、変更します。"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Create and open"
@@ -2718,7 +2723,7 @@ msgstr "アカウントを削除しますか?"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Delete your documents and account data."
-msgstr ""
+msgstr "書類とアカウントデータを削除します。"
 
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -2835,6 +2840,7 @@ msgstr "切断"
 msgid "Discord"
 msgstr "Discord"
 
+#: src/components/ui/product-hunt-banner.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 #: src/routes/dashboard/applications/index.tsx
@@ -3726,7 +3732,7 @@ msgstr "自由形式"
 
 #: src/libs/seo.ts
 msgid "Free, open-source resume builder. Create, update, and share your resume, with PDF and Word downloads, no ads and no paywall."
-msgstr ""
+msgstr "無料のオープンソース履歴書ビルダー。 PDF および Word をダウンロードして、広告やペイウォールなしで履歴書を作成、更新、共有できます。"
 
 #: src/libs/locale.ts
 msgid "French"
@@ -4087,7 +4093,7 @@ msgstr "このファイルを無料の Reactive Resume にインポートしま�
 
 #: src/features/documents/documents-page.tsx
 msgid "Import your current resume and we'll lay out every section for you to refine. Or start fresh. Start with your name. Build from there."
-msgstr ""
+msgstr "現在の履歴書をインポートすると、各セクションをレイアウトして調整できます。あるいは新たに始めましょう。まずはあなたの名前から始めましょう。そこから構築します。"
 
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/share/format.ts
@@ -4248,6 +4254,11 @@ msgstr "サインインできなくなります。"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "It will show on the application's timeline and on the calendar."
 msgstr "求人応募のタイムラインとカレンダーに表示されます。"
+
+#. Body of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "It's free and open source, and always will be. If it has helped you, an upvote today helps more people find it."
+msgstr "これは無料でオープンソースであり、今後もそうあり続けます。それがあなたにとって役に立ったのであれば、今日の賛成票を投じて、より多くの人がそれを見つけられるようにしてください。"
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "It's removed from the timeline for good."
@@ -4792,9 +4803,14 @@ msgstr "編集しながらライブ更新します"
 msgid "Live at {0}"
 msgstr "{0}でのライブ"
 
+#. Eyebrow on the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Live on Product Hunt"
+msgstr "Product Hunt でライブ"
+
 #: src/features/homepage/sections.tsx
 msgid "Live totals, refreshed every 6 hours."
-msgstr ""
+msgstr "ライブ合計。6 時間ごとに更新されます。"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading applications…"
@@ -4810,7 +4826,7 @@ msgstr "接続を読み込み中…"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Loading connections..."
-msgstr ""
+msgstr "接続を読み込み中..."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -5326,7 +5342,7 @@ msgstr "検索に一致するコマンドはありません。"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications."
-msgstr ""
+msgstr "接続されているアプリケーションはありません。"
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -5951,7 +5967,7 @@ msgstr "過去の会話"
 
 #: src/features/homepage/tailor.tsx
 msgid "Paste 1 job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr ""
+msgstr "求人情報を 1 件ずつ貼り付けます。これを使用して、履歴書のカスタマイズされたコピー、履歴書が仕事にどの程度適合しているかを示すスコア、カバーレターの草稿、および求人への応募を追跡する場所を作成します。"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste a job link or posting, then check the role and company."
@@ -6054,7 +6070,7 @@ msgstr "アイコンを選択してください"
 
 #: src/features/homepage/design.tsx
 msgid "Pick from {templateCount} templates, then set the type, color and spacing. The words stay put, so try as many looks as you like."
-msgstr ""
+msgstr "{templateCount} 個のテンプレートから選択し、フォント、色、間隔を設定します。テキストは同じままなので、好きなだけデザインを試してください。"
 
 #: src/features/ats-checker/messages.ts
 msgid "Pick one format and use it everywhere."
@@ -6247,6 +6263,10 @@ msgstr "プロダクトデザイナー"
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "B2Bチーム向けの<0>デザインシステム</0>や調査に基づいたプロダクトの構築に9年の経験を持つプロダクトデザイナー。"
 
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Product Hunt launch"
+msgstr "Product Hunt発売"
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
 msgstr "熟練度"
@@ -6384,7 +6404,7 @@ msgstr "Reactive Resume {__APP_VERSION__} · MIT"
 
 #: src/features/homepage/hero.tsx
 msgid "Reactive Resume is a free, open-source resume builder. Write it, design it, check it and tailor it for every job. Start with 1 resume."
-msgstr ""
+msgstr "Reactive Resume は、無料のオープンソースの履歴書ビルダーです。履歴書を書き、デザインし、チェックし、応募するすべての仕事に適応させます。履歴書1枚から始めましょう。"
 
 #: src/components/ui/donation-toast.tsx
 msgid "Reactive Resume is free and open source. If it has helped you, please consider donating."
@@ -6392,11 +6412,16 @@ msgstr "Reactive Resumeは無料のオープンソースソフトウェアです
 
 #: src/features/homepage/sections.tsx
 msgid "Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development. There are 0 paid tiers."
-msgstr ""
+msgstr "Reactive Resume は、MIT License の下でオープンソースです。 Amruth Pillai と貢献者のコミュニティによって運営が続けられ、ホスティングと開発の費用は寄付によって支払われます。有料レベルは 0 です。"
+
+#. Title of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Reactive Resume v6 is here!"
+msgstr "Reactive Resume v6 が登場しました!"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read only"
-msgstr ""
+msgstr "読み取り専用アクセス"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Read posting"
@@ -6432,7 +6457,7 @@ msgstr "セルフホスティング ガイドを読む"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your documents and job applications."
-msgstr ""
+msgstr "書類や応募書類を読んでください。"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
@@ -6444,7 +6469,7 @@ msgstr "プロフィール情報を読み取ります。"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
-msgstr ""
+msgstr "読み取り、書き込み、削除"
 
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
@@ -6841,7 +6866,7 @@ msgstr "保存を再試行してください"
 
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
-msgstr ""
+msgstr "再試行中…"
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Review"
@@ -6866,11 +6891,11 @@ msgstr "{0}を取り消す"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke access"
-msgstr ""
+msgstr "アクセスを取り消す"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke an application's access to your account."
-msgstr ""
+msgstr "アプリケーションのアカウントへのアクセスを取り消します。"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -7346,7 +7371,7 @@ msgstr "共有とエクスポート"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
-msgstr ""
+msgstr "公開リンクを共有し、パスワードを追加するか、非公開にしてください。 3 つの表示オプションから選択します。 PDF または Word にエクスポートするか、すべてのデータを JSON として持ち歩きます。"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Share public resume"
@@ -7530,11 +7555,11 @@ msgstr "最後に見たときから"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
-msgstr ""
+msgstr "日本の履歴書の履歴書からインスピレーションを得た 1 列のフォームです。ヘッダーは枠線で囲まれたフィールドで構成され、各セクションは実線のタイトル バーが付いた表として表示されます。コンパクトでスキャンしやすく、日本のエンジニアリング職、オペレーション職、求人応募に適しています。"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column set like a magazine feature: a large display name under an uppercase kicker, the summary as an italic standfirst and italic section headings; refined for writers, designers, and communications roles."
-msgstr ""
+msgstr "雑誌の記事をヒントにした 1 列のレイアウト。大文字の短い見出しの下に大きな文字であなたの名前、斜体で概要、斜体でセクション見出しが表示されます。ライター、デザイナー、コミュニケーションの専門家向けの洗練されたデザイン。"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column with a magenta left border accent; compact and efficient for entry-level or internship applications."
@@ -7799,7 +7824,7 @@ msgstr "あなたが持っているものから始めて、求人アプリケー
 
 #: src/features/homepage/sections.tsx
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime. Start with 1 resume."
-msgstr ""
+msgstr "ゼロから始めるか、手持ちのものをインポートしてください。数分かかりますが、いつでも元に戻すことができます。履歴書1枚から始めましょう。"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Start on a new page"
@@ -7910,6 +7935,11 @@ msgstr "サマリー"
 #: src/features/homepage/sections.tsx
 msgid "Support"
 msgstr "サポート"
+
+#. Button on the launch-day banner that opens the Product Hunt page
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Support on Product Hunt"
+msgstr "Product Hunt でサポートしてください"
 
 #: src/features/ats-checker/messages.ts
 msgid "Swap the start and end dates."
@@ -8658,7 +8688,7 @@ msgstr "アプリを翻訳する"
 
 #: src/features/homepage/sections.tsx
 msgid "Translated into {languageCount} languages. Help translate it into yours."
-msgstr ""
+msgstr "{languageCount} の言語に翻訳されています。アプリをあなたの言語に翻訳してください。"
 
 #: src/features/homepage/footer.tsx
 msgid "Translations"
@@ -9413,7 +9443,7 @@ msgstr "各職務を、役職名と会社名を明確にした1行として記�
 
 #: src/features/homepage/write.tsx
 msgid "Write in 1 editor beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide."
-msgstr ""
+msgstr "ライブドキュメントプレビューの隣にある 1 つのエディタで書き込みます。作業内容は入力時に保存され、すべてのバージョンが保持されます。アシスタントに文章を改善するよう依頼します。アシスタントが変更を提案し、あなたが決定します。"
 
 #: src/features/ats-checker/messages.ts
 msgid "Write it as one uninterrupted piece, with no special spacing."

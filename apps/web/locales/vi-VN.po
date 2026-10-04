@@ -344,6 +344,11 @@ msgstr "{entry} đặt tên cho vai trò chứ không phải tên bạn đã là
 msgid "{failing, plural, one {# to review} other {# to review}}"
 msgstr "{failing, plural, one {# để xem xét} other {# để xem xét}}"
 
+#. Time left in the Product Hunt launch day
+#: src/components/ui/product-hunt-banner.tsx
+msgid "{hours}h {minutes}m left"
+msgstr "Còn lại {hours} giờ {minutes} phút"
+
 #: src/features/ats-checker/checker.tsx
 msgid "{issues, plural, one {# issue could cost you a match.} other {# issues could cost you a match.}}"
 msgstr "{issues, plural, one {Sự cố # có thể khiến bạn mất một trận đấu.} other {Các vấn đề về # có thể khiến bạn mất một trận đấu.}}"
@@ -439,7 +444,7 @@ msgstr "{size} điểm"
 
 #: src/features/homepage/design.tsx
 msgid "{templateCount} templates."
-msgstr ""
+msgstr "{templateCount} mẫu."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
@@ -534,7 +539,7 @@ msgstr "Đánh giá nhanh hơn 40%"
 
 #: src/features/homepage/faq.tsx
 msgid "8 short answers to what people ask before they start. Anything else, ask on <0>Discord</0>."
-msgstr ""
+msgstr "8 câu trả lời ngắn cho các câu hỏi thường gặp trước khi bắt đầu Nếu có bất kỳ câu hỏi nào khác, hãy hỏi <0>Discord</0>."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "90 days"
@@ -647,7 +652,7 @@ msgstr "Khổ giấy A4"
 
 #: src/features/homepage/footer.tsx
 msgid "About"
-msgstr ""
+msgstr "Giới thiệu về ứng dụng này"
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Accent colour"
@@ -676,11 +681,11 @@ msgstr "Đã chấp nhận một lời đề nghị khác"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Access"
-msgstr ""
+msgstr "Truy cập"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
-msgstr ""
+msgstr "Truy cập tài khoản của bạn thông qua API, bao gồm đọc, thay đổi và xóa tài liệu cũng như đơn xin việc của bạn."
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/hero.tsx
@@ -1695,7 +1700,7 @@ msgstr "Kiểm tra xem nó có chính xác không."
 
 #: src/features/homepage/check.tsx
 msgid "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads."
-msgstr ""
+msgstr "Tính năng Kiểm tra đọc sơ yếu lý lịch của bạn theo cách mà phần mềm tuyển dụng thực hiện và giải thích những điều cần khắc phục bằng những từ ngữ đơn giản. Nó chạy trong trình duyệt của bạn, vì vậy tệp của bạn vẫn ở trên thiết bị của bạn: 0 lượt tải lên."
 
 #: src/features/ats-checker/messages.ts
 msgid "Check the exported file contains everything you expect, and that all of it is selectable text."
@@ -1711,7 +1716,7 @@ msgstr "Kiểm tra xem phần mềm có thể đọc được sơ yếu lý lị
 
 #: src/features/documents/library-error.tsx
 msgid "Check your connection and try again."
-msgstr ""
+msgstr "Hãy kiểm tra kết nối của bạn và thử lại."
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Check your email for a link to reset your password."
@@ -1977,7 +1982,7 @@ msgstr "Đã kết nối"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
-msgstr ""
+msgstr "Ứng dụng được kết nối"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Connection saved"
@@ -2143,7 +2148,7 @@ msgstr "Không thể tạo tệp PDF. Vui lòng thử lại."
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not load connected applications."
-msgstr ""
+msgstr "Không thể tải các ứng dụng được kết nối."
 
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
@@ -2151,7 +2156,7 @@ msgstr "Không thể chuẩn bị sơ yếu lý lịch của bạn để in. Vui
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Could not revoke this connection. Try again."
-msgstr ""
+msgstr "Không thể thu hồi kết nối này. Hãy thử lại."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Could not set up two-factor authentication."
@@ -2256,7 +2261,7 @@ msgstr "Không thể liên kết đơn xin việc."
 
 #: src/features/documents/library-error.tsx
 msgid "Couldn't load documents"
-msgstr ""
+msgstr "Không thể tải tài liệu"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
@@ -2457,7 +2462,7 @@ msgstr "Trước tiên hãy tạo một bản lý lịch, sau đó hỏi về n�
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications."
-msgstr ""
+msgstr "Tạo và thay đổi tài liệu và đơn xin việc của bạn."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Create and open"
@@ -2718,7 +2723,7 @@ msgstr "Xóa tài khoản của bạn?"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Delete your documents and account data."
-msgstr ""
+msgstr "Xóa tài liệu và dữ liệu tài khoản của bạn."
 
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -2835,6 +2840,7 @@ msgstr "Ngắt kết nối"
 msgid "Discord"
 msgstr "Discord"
 
+#: src/components/ui/product-hunt-banner.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 #: src/routes/dashboard/applications/index.tsx
@@ -3726,7 +3732,7 @@ msgstr "Hình thức tự do"
 
 #: src/libs/seo.ts
 msgid "Free, open-source resume builder. Create, update, and share your resume, with PDF and Word downloads, no ads and no paywall."
-msgstr ""
+msgstr "Trình tạo sơ yếu lý lịch mã nguồn mở, miễn phí. Tạo, cập nhật và chia sẻ sơ yếu lý lịch của bạn với các bản tải xuống PDF và Word, không có quảng cáo và không có tường phí."
 
 #: src/libs/locale.ts
 msgid "French"
@@ -4087,7 +4093,7 @@ msgstr "Nhập tệp này vào Reactive Resume miễn phí. Mọi vấn đề đ
 
 #: src/features/documents/documents-page.tsx
 msgid "Import your current resume and we'll lay out every section for you to refine. Or start fresh. Start with your name. Build from there."
-msgstr ""
+msgstr "Nhập sơ yếu lý lịch hiện tại của bạn và chúng tôi sẽ trình bày từng phần để bạn tinh chỉnh. Hoặc bắt đầu mới. Bắt đầu với tên của bạn. Xây dựng từ đó."
 
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/share/format.ts
@@ -4248,6 +4254,11 @@ msgstr "Nó sẽ không đăng nhập cho bạn nữa."
 #: src/features/applications/components/interview-dialog.tsx
 msgid "It will show on the application's timeline and on the calendar."
 msgstr "Nó sẽ hiển thị trên dòng thời gian của đơn xin việc và trên lịch."
+
+#. Body of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "It's free and open source, and always will be. If it has helped you, an upvote today helps more people find it."
+msgstr "Nó là nguồn mở và miễn phí, và sẽ luôn như vậy. Nếu nó giúp ích cho bạn thì một lượt tán thành ngay hôm nay sẽ giúp nhiều người tìm thấy nó hơn."
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "It's removed from the timeline for good."
@@ -4792,9 +4803,14 @@ msgstr "Trực tiếp · cập nhật khi bạn chỉnh sửa"
 msgid "Live at {0}"
 msgstr "Trực tiếp tại {0}"
 
+#. Eyebrow on the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Live on Product Hunt"
+msgstr "Trực tiếp trên Product Hunt"
+
 #: src/features/homepage/sections.tsx
 msgid "Live totals, refreshed every 6 hours."
-msgstr ""
+msgstr "Tổng số trực tiếp, được làm mới sau mỗi 6 giờ."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading applications…"
@@ -4810,7 +4826,7 @@ msgstr "Đang tải kết nối…"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Loading connections..."
-msgstr ""
+msgstr "Đang tải kết nối..."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -5326,7 +5342,7 @@ msgstr "Không có lệnh nào khớp với tìm kiếm đó."
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications."
-msgstr ""
+msgstr "Không có ứng dụng được kết nối."
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -5951,7 +5967,7 @@ msgstr "Cuộc trò chuyện trước đây"
 
 #: src/features/homepage/tailor.tsx
 msgid "Paste 1 job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr ""
+msgstr "Dán 1 tin tuyển dụng một lần. Sử dụng nó để tạo một bản sao sơ ​​yếu lý lịch phù hợp, điểm số cho thấy sơ yếu lý lịch của bạn phù hợp với công việc như thế nào, một lá thư xin việc nháp và một nơi để theo dõi đơn xin việc của bạn."
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste a job link or posting, then check the role and company."
@@ -6054,7 +6070,7 @@ msgstr "Chọn một biểu tượng"
 
 #: src/features/homepage/design.tsx
 msgid "Pick from {templateCount} templates, then set the type, color and spacing. The words stay put, so try as many looks as you like."
-msgstr ""
+msgstr "Chọn từ {templateCount} mẫu, sau đó đặt phông chữ, màu sắc và khoảng cách. Văn bản của bạn vẫn giữ nguyên, vì vậy hãy thử bao nhiêu thiết kế tùy thích."
 
 #: src/features/ats-checker/messages.ts
 msgid "Pick one format and use it everywhere."
@@ -6247,6 +6263,10 @@ msgstr "Nhà thiết kế sản phẩm"
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "Nhà thiết kế sản phẩm với chín năm kinh nghiệm xây dựng <0>hệ thống thiết kế</0> và sản phẩm dựa trên nghiên cứu cho các nhóm B2B."
 
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Product Hunt launch"
+msgstr "Ra mắt Product Hunt"
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
 msgstr "Trình độ"
@@ -6384,7 +6404,7 @@ msgstr "Reactive Resume {__APP_VERSION__} · MIT"
 
 #: src/features/homepage/hero.tsx
 msgid "Reactive Resume is a free, open-source resume builder. Write it, design it, check it and tailor it for every job. Start with 1 resume."
-msgstr ""
+msgstr "Reactive Resume là trình tạo sơ yếu lý lịch mã nguồn mở, miễn phí. Viết sơ yếu lý lịch của bạn, thiết kế nó, kiểm tra nó và điều chỉnh nó cho phù hợp với mọi công việc bạn ứng tuyển. Bắt đầu với 1 sơ yếu lý lịch."
 
 #: src/components/ui/donation-toast.tsx
 msgid "Reactive Resume is free and open source. If it has helped you, please consider donating."
@@ -6392,11 +6412,16 @@ msgstr "Reactive Resume là phần mềm mã nguồn mở miễn phí. Nếu th�
 
 #: src/features/homepage/sections.tsx
 msgid "Reactive Resume is open source under the MIT License. Amruth Pillai and a community of contributors keep it running, and donations pay for hosting and development. There are 0 paid tiers."
-msgstr ""
+msgstr "Reactive Resume là mã nguồn mở dưới MIT License. Amruth Pillai và cộng đồng những người đóng góp duy trì hoạt động của nó và các khoản đóng góp sẽ chi trả cho việc lưu trữ và phát triển. Có 0 bậc trả phí."
+
+#. Title of the launch-day banner
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Reactive Resume v6 is here!"
+msgstr "Reactive Resume v6 đã có mặt!"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read only"
-msgstr ""
+msgstr "Quyền truy cập chỉ đọc"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Read posting"
@@ -6432,7 +6457,7 @@ msgstr "Đọc hướng dẫn tự lưu trữ"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your documents and job applications."
-msgstr ""
+msgstr "Đọc tài liệu và đơn xin việc của bạn."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
@@ -6444,7 +6469,7 @@ msgstr "Đọc thông tin hồ sơ của bạn."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
-msgstr ""
+msgstr "Đọc, viết và xóa"
 
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
@@ -6841,7 +6866,7 @@ msgstr "Thử lưu lại"
 
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
-msgstr ""
+msgstr "Đang thử lại…"
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Review"
@@ -6866,11 +6891,11 @@ msgstr "Thu hồi {0}"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke access"
-msgstr ""
+msgstr "Thu hồi quyền truy cập"
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Revoke an application's access to your account."
-msgstr ""
+msgstr "Thu hồi quyền truy cập của ứng dụng vào tài khoản của bạn."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -7346,7 +7371,7 @@ msgstr "Chia sẻ và xuất"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
-msgstr ""
+msgstr "Chia sẻ liên kết công khai, thêm mật khẩu hoặc giữ nó ở chế độ riêng tư. Chọn từ 3 tùy chọn hiển thị. Xuất sang PDF hoặc Word hoặc mang theo tất cả dữ liệu của bạn dưới dạng JSON."
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "Share public resume"
@@ -7530,11 +7555,11 @@ msgstr "kể từ lần xem cuối cùng"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
-msgstr ""
+msgstr "Biểu mẫu một cột lấy cảm hứng từ sơ yếu lý lịch rirekisho của Nhật Bản: tiêu đề được tạo từ các trường có viền và mọi phần được trình bày dưới dạng bảng có thanh tiêu đề vững chắc. Nhỏ gọn và dễ quét, phù hợp với các công việc kỹ thuật, công việc vận hành hoặc xin việc tại Nhật Bản."
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column set like a magazine feature: a large display name under an uppercase kicker, the summary as an italic standfirst and italic section headings; refined for writers, designers, and communications roles."
-msgstr ""
+msgstr "Bố cục một cột lấy cảm hứng từ một bài báo trên tạp chí: tên của bạn được viết cỡ lớn bên dưới một tiêu đề ngắn viết hoa, một bản tóm tắt in nghiêng và các tiêu đề phần in nghiêng. Một thiết kế tinh tế dành cho các nhà văn, nhà thiết kế và chuyên gia truyền thông."
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column with a magenta left border accent; compact and efficient for entry-level or internship applications."
@@ -7799,7 +7824,7 @@ msgstr "Bắt đầu từ cái bạn có và liên kết đơn xin việc."
 
 #: src/features/homepage/sections.tsx
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime. Start with 1 resume."
-msgstr ""
+msgstr "Bắt đầu từ đầu hoặc nhập những gì bạn có. Việc này mất vài phút và bạn có thể quay lại bất cứ lúc nào. Bắt đầu với 1 sơ yếu lý lịch."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Start on a new page"
@@ -7910,6 +7935,11 @@ msgstr "Tóm tắt"
 #: src/features/homepage/sections.tsx
 msgid "Support"
 msgstr "Ủng hộ"
+
+#. Button on the launch-day banner that opens the Product Hunt page
+#: src/components/ui/product-hunt-banner.tsx
+msgid "Support on Product Hunt"
+msgstr "Hãy ủng hộ chúng tôi trên Product Hunt"
 
 #: src/features/ats-checker/messages.ts
 msgid "Swap the start and end dates."
@@ -8658,7 +8688,7 @@ msgstr "Dịch ứng dụng"
 
 #: src/features/homepage/sections.tsx
 msgid "Translated into {languageCount} languages. Help translate it into yours."
-msgstr ""
+msgstr "Được dịch sang {languageCount} ngôn ngữ. Giúp dịch ứng dụng sang ngôn ngữ của bạn."
 
 #: src/features/homepage/footer.tsx
 msgid "Translations"
@@ -9413,7 +9443,7 @@ msgstr "Viết mỗi vai trò thành một dòng rõ ràng gồm chức danh và
 
 #: src/features/homepage/write.tsx
 msgid "Write in 1 editor beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide."
-msgstr ""
+msgstr "Viết bằng 1 trình chỉnh sửa bên cạnh bản xem trước tài liệu trực tiếp. Công việc của bạn được lưu khi bạn nhập và mọi phiên bản đều được lưu giữ. Yêu cầu trợ lý cải thiện câu: nó gợi ý những thay đổi và bạn quyết định."
 
 #: src/features/ats-checker/messages.ts
 msgid "Write it as one uninterrupted piece, with no special spacing."
