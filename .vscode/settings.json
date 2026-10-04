@@ -1,8 +1,12 @@
 {
+	"[json]": {
+		"editor.defaultFormatter": "oxc.oxc-vscode"
+	},
 	"editor.codeActionsOnSave": {
 		"source.fixAll.oxc": "explicit"
 	},
 	"editor.defaultFormatter": "oxc.oxc-vscode",
+	"editor.formatOnSave": true,
 	"files.readonlyInclude": {
 		"**/locales/**.po": true,
 		"**/routeTree.gen.ts": true,
@@ -13,6 +17,7 @@
 		"**/routeTree.gen.ts": true,
 		"pnpm-lock.yaml": true
 	},
+	"js/ts.experimental.useTsgo": true,
 	"search.exclude": {
 		"**/locales/**.po": true,
 		"**/routeTree.gen.ts": true,
@@ -24,10 +29,5 @@
 		["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
 		["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
 	],
-	"tailwindCSS.experimental.configFile": "packages/ui/src/styles/globals.css",
-	"typescript.experimental.useTsgo": true,
-	"[json]": {
-		"editor.defaultFormatter": "oxc.oxc-vscode"
-	},
-	"editor.formatOnSave": true
+	"tailwindCSS.experimental.configFile": "packages/ui/src/styles/globals.css"
 }
