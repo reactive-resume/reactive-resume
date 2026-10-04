@@ -32,8 +32,14 @@ export type CloudflareBindings = {
 	COORDINATION: DurableObjectNamespace;
 };
 
-const requests = new AsyncLocalStorage<{ bindings: CloudflareBindings; ctx: ExecutionContext }>();
-configureAgentStreamLifetime((promise) => requests.getStore()?.ctx.waitUntil(promise));
+/** `background` holds work that outlives the response, such as assistant runs, and still needs the pool. */
+type RequestStore = { bindings: CloudflareBindings; ctx: ExecutionContext; background: Promise<unknown>[] };
+const requests = new AsyncLocalStorage<RequestStore>();
+configureAgentStreamLifetime((promise) => {
+	const store = requests.getStore();
+	store?.background.push(promise);
+	store?.ctx.waitUntil(promise);
+});
 configureOwnPictureReader(async (key) => {
 	const file = await getStorageService().read(key);
 	if (!file || file.size > 12_000_000) throw new Error("Picture unavailable or exceeds 12 MB");
@@ -99,21 +105,19 @@ const app = createApp({
 	},
 });
 
-/** Keep the request's pool alive until streaming finishes, including client cancellation. */
-function closePoolAfterResponse(
-	response: Response,
-	pool: Pool,
-	bindings: CloudflareBindings,
-	ctx: ExecutionContext,
-): Response {
+const endPool = (pool: Pool, store: RequestStore) =>
+	store.ctx.waitUntil(Promise.allSettled(store.background).then(() => pool.end()));
+
+/** Keep the request's pool alive until streaming and background work finish, including client cancellation. */
+function closePoolAfterResponse(response: Response, pool: Pool, store: RequestStore): Response {
 	let closed = false;
 	const close = () => {
 		if (!closed) {
 			closed = true;
-			ctx.waitUntil(pool.end());
+			endPool(pool, store);
 		}
 	};
-	const run = <T>(callback: () => T) => requests.run({ bindings, ctx }, () => withDatabasePool(pool, callback));
+	const run = <T>(callback: () => T) => requests.run(store, () => withDatabasePool(pool, callback));
 	if (!response.body) {
 		close();
 		return response;
@@ -173,17 +177,18 @@ export default {
 		};
 		pool.on("error", logError);
 		pool.on("connect", (client) => client.on("error", logError));
+		const store: RequestStore = { bindings, ctx, background: [] };
 		try {
-			const response = await requests.run({ bindings, ctx }, () =>
+			const response = await requests.run(store, () =>
 				withDatabasePool(pool, async () => {
 					await initializeAuth();
 					await init(wasm);
 					return app.fetch(new Request(request, { headers }));
 				}),
 			);
-			return closePoolAfterResponse(response, pool, bindings, ctx);
+			return closePoolAfterResponse(response, pool, store);
 		} catch (error) {
-			ctx.waitUntil(pool.end());
+			endPool(pool, store);
 			throw error;
 		}
 	},

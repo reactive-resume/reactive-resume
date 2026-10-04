@@ -47,7 +47,14 @@ export function createAgentStreamLifecycle(options: AgentStreamLifecycleOptions)
 		async create(streamId: string, makeStream: () => ReadableStream<UIMessageChunk>) {
 			const toSse = () => makeStream().pipeThrough(new JsonToSseTransformStream());
 			const context = options.getContext();
-			if (!context) return toSse();
+			if (!context) {
+				if (!waitUntil) return toSse();
+				// Without a resumable store, the run would end with the client's connection. Draining a copy
+				// keeps it going until it finishes or is stopped, so its transcript and claim are always settled.
+				const [client, run] = toSse().tee();
+				waitUntil(run.pipeTo(new WritableStream()));
+				return client;
+			}
 
 			const stream = await context.createNewResumableStream(streamId, toSse);
 			return stream ?? emptyAgentStream();
