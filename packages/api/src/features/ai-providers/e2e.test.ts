@@ -83,6 +83,11 @@ function seedProvider(overrides: Record<string, unknown> = {}) {
 			enabled: false,
 			testStatus: "untested",
 			testError: null,
+			credentialMethod: "api_key",
+			credentialScope: null,
+			needsReauth: false,
+			reauthReason: null,
+			reauthAt: null,
 			lastTestedAt: null,
 			lastUsedAt: null,
 			createdAt: new Date("2026-08-01T00:00:00Z"),
@@ -145,5 +150,46 @@ describe("POST /ai-providers/{id}/test — end to end", () => {
 			code: "BAD_REQUEST",
 			message: "Invalid AI provider configuration.",
 		});
+	});
+});
+
+describe("OrcaRouter model-choice step — end to end", () => {
+	beforeEach(() => {
+		seedProvider({ provider: "orcarouter", model: "", baseUrl: "https://api.orcarouter.ai/v1" });
+	});
+
+	it("serves the live catalog for a saved row that has no model yet", async () => {
+		stubProvider(200, {
+			data: [
+				{
+					id: "deepseek/deepseek-v4-pro",
+					name: "DeepSeek V4 Pro",
+					supported_endpoint_types: ["openai"],
+					architecture: { input_modalities: ["text"], output_modalities: ["text"] },
+				},
+			],
+		});
+
+		const catalog = await client.orcaCatalog({ id: "provider-1", entryPoint: "chat" });
+
+		expect(catalog.source).toBe("live");
+		expect(catalog.models.map((model) => model.id)).toEqual(["deepseek/deepseek-v4-pro"]);
+	});
+
+	it("leaves an untested model-less row alone instead of failing its test on an empty model", async () => {
+		// Nothing is stubbed: an empty model never reaches the network.
+		const response = await client.test({ id: "provider-1" });
+
+		expect(response.testStatus).toBe("untested");
+		expect(response.model).toBe("");
+	});
+
+	it("keeps the catalog readable from the owning row even though it is not yet runnable", async () => {
+		// The runnable gate that generation uses must still refuse this row.
+		await expect(
+			import("./service").then(({ aiProvidersService }) =>
+				aiProvidersService.getRunnableById({ id: "provider-1", userId: "user-1" }),
+			),
+		).rejects.toMatchObject({ message: "AI provider must be tested and enabled before use." });
 	});
 });

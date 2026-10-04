@@ -21,6 +21,12 @@ import * as schema from "@reactive-resume/db/schema";
 import { generateId } from "@reactive-resume/utils/string";
 import { aiProvidersService } from "../ai-providers/service";
 import { assertAgentEnvironment } from "../ai/credentials";
+import {
+	assertOrcaRouterModelAcceptsAttachments,
+	OrcaRouterModelCapabilityError,
+	OrcaRouterModelUnknownError,
+} from "../ai/orcarouter/attachments";
+import { markOrcaRouterCredentialRejected } from "../ai/orcarouter/lifecycle";
 import { getAgentModel } from "../ai/service";
 import { coverLetterService } from "../cover-letters/service";
 import { resumeService } from "../resume/service";
@@ -1257,6 +1263,24 @@ export const agentService = {
 				const messages = messageRows.map(toMessage);
 				const replay = freshContext ? [withAttachmentUiParts(input.message, attachmentsForModel)] : messages;
 				const connection = await webAccessService.resolve(input.userId);
+
+				// Fail closed on OrcaRouter before a non-text attachment reaches the model: the stored
+				// model id is re-checked against the live catalog's declared input modalities.
+				if (runnableProvider.provider === "orcarouter" && attachmentsForModel.length > 0) {
+					try {
+						await assertOrcaRouterModelAcceptsAttachments({
+							apiKey: runnableProvider.apiKey,
+							model: runnableProvider.model,
+							mediaTypes: attachmentsForModel.map((attachment) => attachment.mediaType),
+						});
+					} catch (error) {
+						if (error instanceof OrcaRouterModelCapabilityError || error instanceof OrcaRouterModelUnknownError) {
+							throw new ORPCError("BAD_REQUEST", { message: error.message });
+						}
+						throw error;
+					}
+				}
+
 				const modelMessages = await convertToModelMessages(
 					replay.map((message) => toModelInputMessage(message, runnableProvider, connection !== null)),
 				);
@@ -1387,6 +1411,15 @@ export const agentService = {
 									}
 								},
 								onError: (error) => {
+									void markOrcaRouterCredentialRejected({
+										userId: input.userId,
+										provider: {
+											id: runnableProvider.id,
+											provider: runnableProvider.provider,
+											apiKeyFingerprint: runnableProvider.apiKeyFingerprint,
+										},
+										error,
+									});
 									const message = error instanceof Error ? error.message : "Agent run failed.";
 									return runnableProvider.apiKey ? message.replaceAll(runnableProvider.apiKey, "***") : message;
 								},

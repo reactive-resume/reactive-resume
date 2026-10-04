@@ -211,6 +211,11 @@ msgstr "{0} मिला, {unreadable} अपठनीय है"
 msgid "{0} interview"
 msgstr "{0} साक्षात्कार"
 
+#. placeholder {0}: models.length
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "{0} models from OrcaRouter"
+msgstr ""
+
 #. placeholder {0}: report.passedChecks
 #. placeholder {1}: report.applicableChecks
 #: src/features/ats-checker/report/score-header.tsx
@@ -1142,6 +1147,7 @@ msgid "Anything to remember about this job"
 msgstr "इस नौकरी के बारे में याद रखने लायक कुछ भी"
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
@@ -1590,6 +1596,7 @@ msgstr "क्या सॉफ़्टवेयर आपका बायोड
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/settings/ai/api-keys.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/hooks/use-confirm.tsx
 msgid "Cancel"
@@ -1867,6 +1874,10 @@ msgstr "बंद करना…"
 msgid "Closed"
 msgstr "बंद किया हुआ"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Code from OrcaRouter"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Color"
@@ -1951,6 +1962,10 @@ msgstr "कनेक्ट करें"
 msgid "Connect a service"
 msgstr "एक सेवा कनेक्ट करें"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Connect again"
+msgstr ""
+
 #: src/features/assistant/provider-setup.tsx
 msgid "Connect an AI provider"
 msgstr "एक AI प्रदाता कनेक्ट करें"
@@ -1971,6 +1986,10 @@ msgstr "दूसरे को कनेक्ट करें..."
 msgid "Connect the tools you use for writing, job search and working with your resumes."
 msgstr "लेखन, नौकरी खोज और अपने बायोडाटा के साथ काम करने के लिए आपके द्वारा उपयोग किए जाने वाले टूल को कनेक्ट करें।"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Connect with OrcaRouter"
+msgstr ""
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Connect your own AI provider to have a language model read your bullets and suggest rewrites. Issues and Job match need no provider."
 msgstr "भाषा मॉडल द्वारा आपकी सूची प्रविष्टियों को पढ़ने और पुनः लिखने का सुझाव देने के लिए अपने स्वयं के एआई प्रदाता से कनेक्ट करें। मुद्दों और जॉब मैच के लिए किसी प्रदाता की आवश्यकता नहीं है।"
@@ -1987,6 +2006,10 @@ msgstr "कनेक्टेड एप्लिकेशन"
 #: src/features/settings/ai/web-access.tsx
 msgid "Connection saved"
 msgstr "कनेक्शन सहेजा गया"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Consent screen"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/homepage/footer.tsx
@@ -2064,6 +2087,7 @@ msgstr "बात चिट"
 #: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 msgid "Copied"
 msgstr "कॉपी किया गया"
 
@@ -2072,6 +2096,7 @@ msgstr "कॉपी किया गया"
 #: src/features/resume/share/link-tab.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 msgid "Copy"
 msgstr "कॉपी करें"
 
@@ -2243,6 +2268,10 @@ msgstr "प्रदाता को हटाया नहीं जा सक�
 msgid "Couldn't export. Try again."
 msgstr "निर्यात नहीं किया जा सका. पुनः प्रयास करें।"
 
+#: src/features/settings/ai/orcarouter-connect.ts
+msgid "Couldn't finish the OrcaRouter sign-in."
+msgstr ""
+
 #: src/features/resume/editor/write/improve.tsx
 msgid "Couldn't get a suggestion. Nothing changed."
 msgstr "कोई सुझाव नहीं मिल सका. कुछ भी नहीं बदला।"
@@ -2366,9 +2395,17 @@ msgstr "ईमेल नहीं भेजा जा सका. पुनः �
 msgid "Couldn't start the conversation. Try again."
 msgstr "बातचीत शुरू नहीं हो सकी. पुनः प्रयास करें।"
 
+#: src/features/settings/ai/orcarouter-connect.ts
+msgid "Couldn't start the OrcaRouter sign-in."
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Couldn't switch models."
 msgstr "मॉडल स्विच नहीं किया जा सका."
+
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't switch the model."
+msgstr ""
 
 #: src/features/applications/components/list-view.tsx
 msgid "Couldn't update the applications. Try again."
@@ -2488,6 +2525,10 @@ msgstr "\"{finalName}\" बनाया गया"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Created and linked to {0}"
 msgstr "बनाया गया और {0} से लिंक किया गया"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Created in the <0>OrcaRouter console</0>. It is encrypted on the server and never shown again."
+msgstr ""
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Crop and Upload"
@@ -3567,6 +3608,10 @@ msgstr "कमज़ोर सूची प्रविष्टियाँ ढ
 #: src/features/documents/new-document-dialog.tsx
 msgid "Finding sections"
 msgstr "अनुभाग ढूँढना"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Finish connecting"
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Finnish"
@@ -4836,6 +4881,15 @@ msgstr "बातचीत लोड हो रही है..."
 msgid "Loading model suggestions… You can also enter any model ID."
 msgstr "मॉडल सुझाव लोड हो रहे हैं... आप कोई भी मॉडल आईडी भी दर्ज कर सकते हैं।"
 
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Loading models from OrcaRouter…"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Loading models…"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
 msgid "Loading providers…"
@@ -4939,6 +4993,10 @@ msgstr "मलय"
 msgid "Malayalam"
 msgstr "मलयालम"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Manage or revoke keys in the <0>authorized apps</0> list."
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Managed by server"
 msgstr "सर्वर द्वारा प्रबंधित"
@@ -5040,10 +5098,16 @@ msgstr "एमआईटी लाइसेंस"
 msgid "mixed format"
 msgstr "मिश्रित स्वरूप"
 
+#: src/features/assistant/conversation.tsx
 #: src/features/assistant/provider-setup.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Model"
 msgstr "मॉडल"
+
+#: src/features/assistant/conversation.tsx
+msgid "Model list unavailable"
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Model suggestions are unavailable. You can still enter any model ID."
@@ -5395,6 +5459,11 @@ msgstr "कोई पंक्ति नौकरी के शीर्षक �
 #: src/features/resume/editor/check/issues.ts
 msgid "No location"
 msgstr "कोई स्थान नहीं"
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "No models for this capability"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "No open issues"
@@ -5760,6 +5829,10 @@ msgstr "सार्वजनिक पृष्ठ खोलें"
 msgid "Open the exported file and confirm you can select and copy every part of it."
 msgstr "एक्सपोर्ट की गई फ़ाइल खोलें और पुष्टि करें कि आप इसके हर हिस्से को चुन और कॉपी कर सकते हैं।"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Open the OrcaRouter consent screen, approve Reactive Resume, then paste the code it shows below."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Opening the file"
 msgstr "फ़ाइल खुल रही है"
@@ -5822,6 +5895,22 @@ msgstr "या आपके अपने शब्दों में..."
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Or upload a resume PDF"
 msgstr "या रेज़्यूमे PDF अपलोड करें"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "OrcaRouter account connected."
+msgstr ""
+
+#: src/features/settings/ai/providers.tsx
+msgid "OrcaRouter no longer accepts this key. Connect again."
+msgstr ""
+
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "OrcaRouter returned no models for this capability."
+msgstr ""
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "OrcaRouter sign-in method"
+msgstr ""
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Organization"
@@ -5980,6 +6069,10 @@ msgstr "नौकरी का लिंक चिपकाएँ. हम नौ
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
 msgstr "नौकरी की पोस्टिंग चिपकाएँ..."
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Paste an sk-orca-… key"
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste description instead"
@@ -6580,6 +6673,10 @@ msgstr "रेफ़रल"
 msgid "Referred by…, things to emphasize, etc."
 msgstr "किसके द्वारा रेफ़र किया गया…, ज़ोर देने योग्य बातें आदि।"
 
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Refresh"
+msgstr ""
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Reject"
 msgstr "अस्वीकार करना"
@@ -7026,9 +7123,17 @@ msgstr "पहले सहेजें, फिर खोज और पढ़न
 msgid "Save job"
 msgstr "नौकरी बचाओ"
 
+#: src/features/settings/ai/providers.tsx
+msgid "Save key"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Save the file with every page upright."
 msgstr "फ़ाइल को इस तरह सहेजें कि हर पेज सीधा हो।"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Save the key first. The model list is read from OrcaRouter with it, and appears here once it is stored."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save to the application"
@@ -7228,6 +7333,11 @@ msgstr "चुनना"
 #: src/features/applications/components/list-view.tsx
 msgid "Select {0} at {1}"
 msgstr "{1} पर {0} चुनें"
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Select a model"
+msgstr ""
 
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
 msgid "Select an AI provider"
@@ -7467,6 +7577,11 @@ msgstr "टेम्प्लेट दिखाएँ"
 msgid "Show them again"
 msgstr "उन्हें फिर से दिखाओ"
 
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Showing a small verified list because OrcaRouter was unreachable."
+msgstr ""
+
 #. Layout editor column label for the secondary sidebar area
 #: src/features/homepage/sheet.tsx
 #: src/features/resume/editor/design/template-group.tsx
@@ -7511,6 +7626,14 @@ msgstr "अपने अकाउंट मे साइन इन करें�
 #: src/features/settings/account/security.tsx
 msgid "Sign in with your fingerprint, face or device PIN"
 msgstr "अपने फ़िंगरप्रिंट, चेहरे या डिवाइस पिन से साइन इन करें"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Sign in with your OrcaRouter account"
+msgstr ""
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Sign in with your OrcaRouter account and Reactive Resume receives its own key, billed to you and revocable at any time."
+msgstr ""
 
 #. User menu action to sign out of current account
 #: src/features/settings/account/page.tsx
@@ -8271,6 +8394,11 @@ msgstr "पत्र फिर से बायोडाटा के डिज�
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "आपके पूछने के बाद से लाइन बदल गई, इसलिए इसे बदला नहीं गया।"
 
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "The OrcaRouter model list couldn't be loaded. Refresh to try again."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "जिस क्रम में टेक्स्ट संग्रहीत है, वह पढ़ने के क्रम से काफ़ी अलग है।"
@@ -8310,6 +8438,11 @@ msgstr "नौकरी की पोस्टिंग पढ़ी नही�
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "The posting saved with this application."
 msgstr "इस नौकरी आवेदन के साथ नौकरी पोस्टिंग सहेजी गई।"
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "The previous model is not available for this capability any more. Choose another one."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer."

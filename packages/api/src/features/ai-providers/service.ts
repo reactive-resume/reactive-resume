@@ -23,6 +23,13 @@ export type AiProviderResponse = {
 	testError: string | null;
 	apiKeyPreview: string;
 	apiKeyFingerprint: string;
+	/** How the stored key was obtained: a pasted API key, or the OrcaRouter connect flow. */
+	credentialMethod: string;
+	credentialScope: string | null;
+	/** True when OrcaRouter rejected this credential; only a successful reconnect clears it. */
+	needsReauth: boolean;
+	reauthReason: string | null;
+	reauthAt: Date | null;
 	lastTestedAt: Date | null;
 	lastUsedAt: Date | null;
 	createdAt: Date;
@@ -36,6 +43,8 @@ type CreateAiProviderInput = {
 	model: string;
 	baseURL?: string | null;
 	apiKey: string;
+	credentialMethod?: string;
+	credentialScope?: string | null;
 };
 
 type UpdateAiProviderInput = {
@@ -47,6 +56,8 @@ type UpdateAiProviderInput = {
 	baseURL?: string | null;
 	apiKey?: string;
 	enabled?: boolean;
+	credentialMethod?: string;
+	credentialScope?: string | null;
 };
 
 function toResponse(row: AiProviderRecord): AiProviderResponse {
@@ -65,6 +76,11 @@ function toResponse(row: AiProviderRecord): AiProviderResponse {
 		apiKeyPreview: row.apiKeyPreview,
 		// The hash identifies the key without revealing it; the ciphertext and salt never leave the server.
 		apiKeyFingerprint: row.apiKeyHash,
+		credentialMethod: row.credentialMethod,
+		credentialScope: row.credentialScope,
+		needsReauth: row.needsReauth,
+		reauthReason: row.reauthReason,
+		reauthAt: row.reauthAt,
 		lastTestedAt: row.lastTestedAt,
 		lastUsedAt: row.lastUsedAt,
 		createdAt: row.createdAt,
@@ -113,6 +129,11 @@ async function serverProvider(userId: string) {
 		apiKeySalt: "",
 		apiKeyHash: "",
 		apiKeyPreview: "",
+		credentialMethod: "api_key",
+		credentialScope: null,
+		needsReauth: false,
+		reauthReason: null,
+		reauthAt: null,
 	};
 	const [row] = await db
 		.insert(schema.aiProvider)
@@ -153,6 +174,29 @@ export const aiProvidersService = {
 		if (!provider.enabled || provider.testStatus !== "success") {
 			throw new ORPCError("BAD_REQUEST", { message: "AI provider must be tested and enabled before use." });
 		}
+
+		return {
+			...toResponse(provider),
+			apiKey: decryptCredential(provider.encryptedApiKey),
+			baseURL: provider.baseUrl ?? "",
+		};
+	},
+
+	/**
+	 * A row this user owns, with its key, without the "tested and enabled" gate.
+	 *
+	 * The OrcaRouter model catalog and the model-choice step need the key before a model exists to
+	 * test: a fresh OrcaRouter row is saved with no model, and the catalog is what tells the user
+	 * which model to pick. This is the same ownership check and the same decryption as
+	 * `getRunnableById`; it deliberately stays off that method's list of usable providers, which the
+	 * assistant and generation paths still read.
+	 */
+	getOwnedSecret: async (input: { id: string; userId: string }) => {
+		const global = await serverProvider(input.userId);
+		if (global) return global;
+		assertCredentialEncryptionConfigured();
+
+		const provider = await getOwnedProvider(input);
 
 		return {
 			...toResponse(provider),
@@ -205,6 +249,12 @@ export const aiProvidersService = {
 				provider: input.provider,
 				model: input.model.trim(),
 				baseUrl: normalizeBaseUrl(input),
+				credentialMethod: input.credentialMethod ?? "api_key",
+				credentialScope: input.credentialScope ?? null,
+				// A brand-new credential is not in a rejected state, whatever the previous one was.
+				needsReauth: false,
+				reauthReason: null,
+				reauthAt: null,
 				...encrypted,
 			})
 			.returning();
@@ -229,6 +279,10 @@ export const aiProvidersService = {
 		const modelChanged = input.model !== undefined && input.model.trim() !== existing.model;
 		const baseUrlChanged = input.baseURL !== undefined && nextBaseUrl !== existing.baseUrl;
 		const runtimeChanged = credentialChanged || providerChanged || modelChanged || baseUrlChanged;
+		const credentialFields = {
+			...(input.credentialMethod !== undefined ? { credentialMethod: input.credentialMethod } : {}),
+			...(input.credentialScope !== undefined ? { credentialScope: input.credentialScope } : {}),
+		};
 
 		if (input.enabled === true && existing.testStatus !== "success" && !runtimeChanged) {
 			throw new ORPCError("BAD_REQUEST", { message: "AI provider must be tested successfully before enabling." });
@@ -244,6 +298,10 @@ export const aiProvidersService = {
 				...(input.enabled !== undefined && !runtimeChanged ? { enabled: input.enabled } : {}),
 				...(runtimeChanged ? { enabled: false, testStatus: "untested", lastTestedAt: null, testError: null } : {}),
 				...encrypted,
+				// A successful key replacement is the only thing that clears a terminal reauth state: the old
+				// ciphertext is only ever overwritten together with the flag.
+				...(credentialChanged ? { needsReauth: false, reauthReason: null, reauthAt: null } : {}),
+				...credentialFields,
 			})
 			.where(and(eq(schema.aiProvider.id, input.id), eq(schema.aiProvider.userId, input.userId)))
 			.returning();
@@ -268,6 +326,13 @@ export const aiProvidersService = {
 		const provider = await getOwnedProvider(input);
 		const parsedProvider = aiProviderSchema.parse(provider.provider);
 		const apiKey = decryptCredential(provider.encryptedApiKey);
+
+		// An OrcaRouter row can be saved with no model yet while the user chooses one from the live
+		// catalog. There is nothing to call, so leave it saved and untested instead of failing on an
+		// empty model id; the test runs once a model is picked.
+		if (!provider.model.trim()) {
+			return toResponse(provider);
+		}
 
 		try {
 			const result = await testConnection({
@@ -308,10 +373,100 @@ export const aiProvidersService = {
 		}
 	},
 
+	/** Ownership check reused by the connect flow, which must not be able to touch another user's row. */
+	assertOwnedProvider: async (input: { id: string; userId: string }) => {
+		await getOwnedProvider(input);
+	},
+
+	/**
+	 * Stores a freshly obtained credential on an existing row. Used by the PKCE connect flow, which
+	 * replaces the stored key only after the old one is no longer useful, and marks the row untested so
+	 * the user sees a real connection test before it is used again.
+	 */
+	replaceCredential: async (input: {
+		id: string;
+		userId: string;
+		apiKey: string;
+		credentialMethod: string;
+		credentialScope: string | null;
+		label?: string;
+	}) => {
+		assertPersonalProvidersAllowed();
+		assertCredentialEncryptionConfigured();
+
+		const encrypted = encryptCredential(input.apiKey.trim());
+		const [updated] = await db
+			.update(schema.aiProvider)
+			.set({
+				...encrypted,
+				credentialMethod: input.credentialMethod,
+				credentialScope: input.credentialScope,
+				needsReauth: false,
+				reauthReason: null,
+				reauthAt: null,
+				enabled: false,
+				testStatus: "untested",
+				lastTestedAt: null,
+				testError: null,
+				...(input.label ? { label: input.label } : {}),
+			})
+			.where(and(eq(schema.aiProvider.id, input.id), eq(schema.aiProvider.userId, input.userId)))
+			.returning();
+
+		if (!updated) throw new ORPCError("NOT_FOUND");
+		return toResponse(updated);
+	},
+
 	markUsed: async (input: { id: string; userId: string }) => {
 		await db
 			.update(schema.aiProvider)
 			.set({ lastUsedAt: new Date() })
+			.where(and(eq(schema.aiProvider.id, input.id), eq(schema.aiProvider.userId, input.userId)));
+	},
+
+	/**
+	 * Terminal reauthentication: OrcaRouter rejected this credential. The transition is bound to the
+	 * exact credential generation that made the rejected request — the stored key fingerprint — so a
+	 * stale failure from an old request can never mark a key that has already been replaced as broken.
+	 * No refresh is attempted: durable OrcaRouter keys are reused until they are revoked.
+	 */
+	markNeedsReauth: async (input: {
+		id: string;
+		userId: string;
+		/** Fingerprint captured when the rejected request claimed its credential; null accepts the current one. */
+		credentialGeneration: string | null;
+		reason: string;
+	}) => {
+		const [updated] = await db
+			.update(schema.aiProvider)
+			.set({
+				needsReauth: true,
+				reauthReason: input.reason,
+				reauthAt: new Date(),
+				enabled: false,
+				testStatus: "failure",
+				testError: input.reason,
+			})
+			.where(
+				and(
+					eq(schema.aiProvider.id, input.id),
+					eq(schema.aiProvider.userId, input.userId),
+					eq(schema.aiProvider.needsReauth, false),
+					input.credentialGeneration ? eq(schema.aiProvider.apiKeyHash, input.credentialGeneration) : undefined,
+				),
+			)
+			// `.returning()`, rather than `rowCount`, so the caller can tell from a mocked or real driver
+			// whether this call performed the transition. Detecting a transition is documented as not
+			// reliable with `rowCount`. Nothing here reads the returned row.
+			.returning({ id: schema.aiProvider.id });
+
+		return updated !== undefined;
+	},
+
+	clearReauth: async (input: { id: string; userId: string }) => {
+		await db
+			.update(schema.aiProvider)
+			.set({ needsReauth: false, reauthReason: null, reauthAt: null })
 			.where(and(eq(schema.aiProvider.id, input.id), eq(schema.aiProvider.userId, input.userId)));
 	},
 };

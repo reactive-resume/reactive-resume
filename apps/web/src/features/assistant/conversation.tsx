@@ -7,7 +7,7 @@ import type { UIMessage } from "ai";
 import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { useEffect, useEffectEvent, useId, useMemo, useRef, useState } from "react";
 import { agentWebSources, readPageOutputSchema } from "@reactive-resume/ai/tools/agent-tool-contracts";
@@ -19,6 +19,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { attachmentPart, fileToBase64, transcriptOf, useAssistantChat } from "./chat";
 import { AssistantMarkdown } from "./markdown";
+import { Combobox } from "@/components/ui/combobox";
 import { ChangeSet } from "@/features/resume/editor/proposals/proposal-list";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { getOrpcErrorMessage } from "@/libs/error-message";
@@ -44,6 +45,8 @@ type ConversationProps = {
 	document: AssistantDocument;
 	readOnly: boolean;
 	providerLabel: string;
+	/** Set for OrcaRouter: the composer offers a model chooser over the live catalog for this provider. */
+	orcaProviderId?: string | null;
 	/** A message to send as soon as the conversation opens (the first message, ⌘K Ask). */
 	prompt: string | null;
 	promptAttachments: ChatAttachment[];
@@ -262,6 +265,7 @@ export function Conversation(props: ConversationProps) {
 				context={context}
 				onContextChange={setContext}
 				providerLabel={props.providerLabel}
+				orcaProviderId={props.orcaProviderId ?? null}
 				streaming={streaming}
 				disabled={readOnly}
 				threadId={threadId}
@@ -613,6 +617,8 @@ type ComposerProps = {
 	context: MessageContext;
 	onContextChange: (context: MessageContext) => void;
 	providerLabel: string;
+	/** OrcaRouter only: switches the model chooser on and filters it by the attached modalities. */
+	orcaProviderId?: string | null;
 	streaming: boolean;
 	disabled: boolean;
 	/** Attachments need a conversation to belong to. */
@@ -711,6 +717,12 @@ export function Composer(props: ComposerProps) {
 
 	return (
 		<div className="grid gap-2 border-t border-line bg-surface px-3 pt-2.5 pb-3">
+			{props.orcaProviderId && (
+				<OrcaComposerModel
+					providerId={props.orcaProviderId}
+					mediaTypes={attachments.map((attachment) => attachment.mediaType)}
+				/>
+			)}
 			{(chips.length > 0 || attachments.length > 0) && (
 				<div className="flex flex-wrap gap-1.5">
 					{chips.map((chip) => (
@@ -802,6 +814,98 @@ export function Composer(props: ComposerProps) {
 					<Trans>Previous messages, including document details, are also sent.</Trans>
 				)}
 			</p>
+		</div>
+	);
+}
+
+type OrcaComposerModelProps = {
+	providerId: string;
+	/** Media types attached to the message being written; these decide which models remain offered. */
+	mediaTypes: readonly string[];
+};
+
+/**
+ * The model chooser beside the OrcaRouter composer.
+ *
+ * The app stores one model per provider, so whichever model is chosen here becomes the provider's
+ * model and every later send uses it. What the user can choose depends on what they have attached:
+ * with no attachment the live chat catalog applies, and adding an image narrows the list to models
+ * that declare image input. The list is never free text.
+ */
+function OrcaComposerModel({ providerId, mediaTypes }: OrcaComposerModelProps) {
+	const queryClient = useQueryClient();
+	const [chosen, setChosen] = useState<string | null>(null);
+	const providersQuery = useQuery(orpc.aiProviders.list.queryOptions());
+	const provider = providersQuery.data?.find((item) => item.id === providerId);
+	const storedModel = provider?.model ?? "";
+
+	const entryPoint = mediaTypes.some((mediaType) => mediaType.startsWith("image/")) ? "assistant_image" : "chat";
+	const current = chosen ?? storedModel;
+
+	const catalog = useQuery(
+		orpc.aiProviders.orcaCatalog.queryOptions({
+			input: { id: providerId, entryPoint },
+			staleTime: 5 * 60 * 1000,
+			retry: false,
+		}),
+	);
+	const models = catalog.data?.models ?? [];
+	// Fail closed while the catalog is in flight: offering nothing is safer than offering a model
+	// that may not accept what is attached.
+	const options = catalog.isSuccess ? models.map((model) => ({ value: model.id, label: model.name })) : [];
+	const invalidated =
+		catalog.isSuccess && Boolean(current) && !models.some((model) => model.id === current) ? current : null;
+
+	const choose = (next: string | null) => {
+		if (!next) return;
+		// Remember the pick locally so the control is responsive, then persist it: the next send reads
+		// the provider's model, and a model/credential change resets the connection test by design.
+		setChosen(next);
+		client.aiProviders.update({ id: providerId, model: next }).then(
+			() => void queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() }),
+			(error: unknown) =>
+				toast.add({
+					type: "error",
+					description: getOrpcErrorMessage(error, { fallback: t`Couldn't switch the model.` }),
+				}),
+		);
+	};
+
+	return (
+		<div className="grid gap-1" data-testid="orca-composer-model">
+			<div className="flex items-center gap-2">
+				<span className="text-xs text-ink-3">
+					<Trans>Model</Trans>
+				</span>
+				<Combobox
+					id={`${providerId}-composer-model`}
+					value={options.some((option) => option.value === current) ? current : null}
+					options={options}
+					disabled={!catalog.isSuccess}
+					showClear={false}
+					placeholder={
+						catalog.isPending ? t`Loading models…` : catalog.isError ? t`Model list unavailable` : t`Select a model`
+					}
+					emptyMessage={t`No models for this capability`}
+					align="end"
+					onValueChange={choose}
+				/>
+			</div>
+			{catalog.isError ? (
+				<p role="alert" className="text-xs text-danger-text" data-testid="orca-catalog-error">
+					<Trans>The OrcaRouter model list couldn't be loaded. Refresh to try again.</Trans>
+				</p>
+			) : catalog.data?.source === "seed" ? (
+				<p className="text-xs text-warn-text" data-testid="orca-catalog-degraded">
+					{catalog.data.degradedReason ?? (
+						<Trans>Showing a small verified list because OrcaRouter was unreachable.</Trans>
+					)}
+				</p>
+			) : invalidated ? (
+				<p role="alert" className="text-xs text-warn-text" data-testid="orca-model-invalidated">
+					<Trans>The previous model is not available for this capability any more. Choose another one.</Trans>
+				</p>
+			) : null}
 		</div>
 	);
 }

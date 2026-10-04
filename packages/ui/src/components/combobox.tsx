@@ -4,6 +4,8 @@ import { InputGroup, InputGroupButton, InputGroupInput } from "@reactive-resume/
 import { popupSlideClassName } from "@reactive-resume/ui/components/menu-styles";
 import { cn } from "@reactive-resume/utils/style";
 
+export type ComboboxContentAlign = "start" | "center" | "end";
+
 const ComboboxRoot = ComboboxPrimitive.Root;
 
 const useFilter = ComboboxPrimitive.useFilter;
@@ -71,7 +73,7 @@ function ComboboxContent({
 					data-slot="combobox-content"
 					data-chips={!!anchor}
 					className={cn(
-						"group/combobox-content relative max-h-(--available-height) w-fit max-w-(--available-width) min-w-[calc(var(--anchor-width)+--spacing(7))] origin-(--transform-origin) overflow-hidden rounded-xl bg-raised text-ink shadow-e2 transition-[opacity,scale,translate] duration-standard ease-enter data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)] data-starting-style:scale-[0.98] data-starting-style:opacity-0 data-[chips=true]:min-w-(--anchor-width) *:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-9 *:data-[slot=input-group]:bg-bg *:data-[slot=input-group]:shadow-none",
+						"group/combobox-content relative max-h-(--available-height) w-fit max-w-(--available-width) min-w-[calc(var(--anchor-width)+--spacing(7))] origin-(--transform-origin) overflow-hidden rounded-xl border border-line bg-raised text-ink shadow-e2 transition-[opacity,scale,translate] duration-standard ease-enter data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d2)*0.7)] data-starting-style:scale-[0.98] data-starting-style:opacity-0 data-[chips=true]:min-w-(--anchor-width) *:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-9 *:data-[slot=input-group]:bg-bg *:data-[slot=input-group]:shadow-none",
 						popupSlideClassName,
 						className,
 					)}

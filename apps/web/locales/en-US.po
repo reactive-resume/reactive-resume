@@ -206,6 +206,11 @@ msgstr "{0} found, {unreadable} unreadable"
 msgid "{0} interview"
 msgstr "{0} interview"
 
+#. placeholder {0}: models.length
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "{0} models from OrcaRouter"
+msgstr "{0} models from OrcaRouter"
+
 #. placeholder {0}: report.passedChecks
 #. placeholder {1}: report.applicableChecks
 #: src/features/ats-checker/report/score-header.tsx
@@ -1137,6 +1142,7 @@ msgid "Anything to remember about this job"
 msgstr "Anything to remember about this job"
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
@@ -1585,6 +1591,7 @@ msgstr "Can software read your resume?"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/settings/ai/api-keys.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/hooks/use-confirm.tsx
 msgid "Cancel"
@@ -1862,6 +1869,10 @@ msgstr "Close…"
 msgid "Closed"
 msgstr "Closed"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Code from OrcaRouter"
+msgstr "Code from OrcaRouter"
+
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Color"
@@ -1946,6 +1957,10 @@ msgstr "Connect"
 msgid "Connect a service"
 msgstr "Connect a service"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Connect again"
+msgstr "Connect again"
+
 #: src/features/assistant/provider-setup.tsx
 msgid "Connect an AI provider"
 msgstr "Connect an AI provider"
@@ -1966,6 +1981,10 @@ msgstr "Connect another…"
 msgid "Connect the tools you use for writing, job search and working with your resumes."
 msgstr "Connect the tools you use for writing, job search and working with your resumes."
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Connect with OrcaRouter"
+msgstr "Connect with OrcaRouter"
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Connect your own AI provider to have a language model read your bullets and suggest rewrites. Issues and Job match need no provider."
 msgstr "Connect your own AI provider to have a language model read your bullets and suggest rewrites. Issues and Job match need no provider."
@@ -1982,6 +2001,10 @@ msgstr "Connected applications"
 #: src/features/settings/ai/web-access.tsx
 msgid "Connection saved"
 msgstr "Connection saved"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Consent screen"
+msgstr "Consent screen"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/homepage/footer.tsx
@@ -2059,6 +2082,7 @@ msgstr "Conversations"
 #: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 msgid "Copied"
 msgstr "Copied"
 
@@ -2067,6 +2091,7 @@ msgstr "Copied"
 #: src/features/resume/share/link-tab.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 msgid "Copy"
 msgstr "Copy"
 
@@ -2238,6 +2263,10 @@ msgstr "Couldn't delete the provider."
 msgid "Couldn't export. Try again."
 msgstr "Couldn't export. Try again."
 
+#: src/features/settings/ai/orcarouter-connect.ts
+msgid "Couldn't finish the OrcaRouter sign-in."
+msgstr "Couldn't finish the OrcaRouter sign-in."
+
 #: src/features/resume/editor/write/improve.tsx
 msgid "Couldn't get a suggestion. Nothing changed."
 msgstr "Couldn't get a suggestion. Nothing changed."
@@ -2361,9 +2390,17 @@ msgstr "Couldn't send the email. Try again."
 msgid "Couldn't start the conversation. Try again."
 msgstr "Couldn't start the conversation. Try again."
 
+#: src/features/settings/ai/orcarouter-connect.ts
+msgid "Couldn't start the OrcaRouter sign-in."
+msgstr "Couldn't start the OrcaRouter sign-in."
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Couldn't switch models."
 msgstr "Couldn't switch models."
+
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't switch the model."
+msgstr "Couldn't switch the model."
 
 #: src/features/applications/components/list-view.tsx
 msgid "Couldn't update the applications. Try again."
@@ -2483,6 +2520,10 @@ msgstr "Created “{finalName}”"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Created and linked to {0}"
 msgstr "Created and linked to {0}"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Created in the <0>OrcaRouter console</0>. It is encrypted on the server and never shown again."
+msgstr "Created in the <0>OrcaRouter console</0>. It is encrypted on the server and never shown again."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Crop and Upload"
@@ -3562,6 +3603,10 @@ msgstr "Find weak bullets"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Finding sections"
 msgstr "Finding sections"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Finish connecting"
+msgstr "Finish connecting"
 
 #: src/libs/locale.ts
 msgid "Finnish"
@@ -4831,6 +4876,15 @@ msgstr "Loading conversations…"
 msgid "Loading model suggestions… You can also enter any model ID."
 msgstr "Loading model suggestions… You can also enter any model ID."
 
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Loading models from OrcaRouter…"
+msgstr "Loading models from OrcaRouter…"
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Loading models…"
+msgstr "Loading models…"
+
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
 msgid "Loading providers…"
@@ -4934,6 +4988,10 @@ msgstr "Malay"
 msgid "Malayalam"
 msgstr "Malayalam"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Manage or revoke keys in the <0>authorized apps</0> list."
+msgstr "Manage or revoke keys in the <0>authorized apps</0> list."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Managed by server"
 msgstr "Managed by server"
@@ -5035,10 +5093,16 @@ msgstr "MIT License"
 msgid "mixed format"
 msgstr "mixed format"
 
+#: src/features/assistant/conversation.tsx
 #: src/features/assistant/provider-setup.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Model"
 msgstr "Model"
+
+#: src/features/assistant/conversation.tsx
+msgid "Model list unavailable"
+msgstr "Model list unavailable"
 
 #: src/features/settings/ai/providers.tsx
 msgid "Model suggestions are unavailable. You can still enter any model ID."
@@ -5390,6 +5454,11 @@ msgstr "No lines look like a job title paired with an employer."
 #: src/features/resume/editor/check/issues.ts
 msgid "No location"
 msgstr "No location"
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "No models for this capability"
+msgstr "No models for this capability"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "No open issues"
@@ -5755,6 +5824,10 @@ msgstr "Open public page"
 msgid "Open the exported file and confirm you can select and copy every part of it."
 msgstr "Open the exported file and confirm you can select and copy every part of it."
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Open the OrcaRouter consent screen, approve Reactive Resume, then paste the code it shows below."
+msgstr "Open the OrcaRouter consent screen, approve Reactive Resume, then paste the code it shows below."
+
 #: src/features/ats-checker/checker.tsx
 msgid "Opening the file"
 msgstr "Opening the file"
@@ -5817,6 +5890,22 @@ msgstr "Or in your own words…"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Or upload a resume PDF"
 msgstr "Or upload a resume PDF"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "OrcaRouter account connected."
+msgstr "OrcaRouter account connected."
+
+#: src/features/settings/ai/providers.tsx
+msgid "OrcaRouter no longer accepts this key. Connect again."
+msgstr "OrcaRouter no longer accepts this key. Connect again."
+
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "OrcaRouter returned no models for this capability."
+msgstr "OrcaRouter returned no models for this capability."
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "OrcaRouter sign-in method"
+msgstr "OrcaRouter sign-in method"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Organization"
@@ -5975,6 +6064,10 @@ msgstr "Paste a job link. We'll save the posting so Check, the assistant and you
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
 msgstr "Paste a job posting…"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Paste an sk-orca-… key"
+msgstr "Paste an sk-orca-… key"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste description instead"
@@ -6575,6 +6668,10 @@ msgstr "Referral"
 msgid "Referred by…, things to emphasize, etc."
 msgstr "Referred by…, things to emphasize, etc."
 
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Refresh"
+msgstr "Refresh"
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Reject"
 msgstr "Reject"
@@ -7021,9 +7118,17 @@ msgstr "Save first, then test search and reading. No test runs automatically."
 msgid "Save job"
 msgstr "Save job"
 
+#: src/features/settings/ai/providers.tsx
+msgid "Save key"
+msgstr "Save key"
+
 #: src/features/ats-checker/messages.ts
 msgid "Save the file with every page upright."
 msgstr "Save the file with every page upright."
+
+#: src/features/settings/ai/providers.tsx
+msgid "Save the key first. The model list is read from OrcaRouter with it, and appears here once it is stored."
+msgstr "Save the key first. The model list is read from OrcaRouter with it, and appears here once it is stored."
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save to the application"
@@ -7223,6 +7328,11 @@ msgstr "Select"
 #: src/features/applications/components/list-view.tsx
 msgid "Select {0} at {1}"
 msgstr "Select {0} at {1}"
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Select a model"
+msgstr "Select a model"
 
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
 msgid "Select an AI provider"
@@ -7462,6 +7572,11 @@ msgstr "Show templates"
 msgid "Show them again"
 msgstr "Show them again"
 
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Showing a small verified list because OrcaRouter was unreachable."
+msgstr "Showing a small verified list because OrcaRouter was unreachable."
+
 #. Layout editor column label for the secondary sidebar area
 #: src/features/homepage/sheet.tsx
 #: src/features/resume/editor/design/template-group.tsx
@@ -7506,6 +7621,14 @@ msgstr "Sign in to your account"
 #: src/features/settings/account/security.tsx
 msgid "Sign in with your fingerprint, face or device PIN"
 msgstr "Sign in with your fingerprint, face or device PIN"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Sign in with your OrcaRouter account"
+msgstr "Sign in with your OrcaRouter account"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Sign in with your OrcaRouter account and Reactive Resume receives its own key, billed to you and revocable at any time."
+msgstr "Sign in with your OrcaRouter account and Reactive Resume receives its own key, billed to you and revocable at any time."
 
 #. User menu action to sign out of current account
 #: src/features/settings/account/page.tsx
@@ -8266,6 +8389,11 @@ msgstr "The letter matches the resume's design again"
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "The line changed since you asked, so it wasn't replaced."
 
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "The OrcaRouter model list couldn't be loaded. Refresh to try again."
+msgstr "The OrcaRouter model list couldn't be loaded. Refresh to try again."
+
 #: src/features/ats-checker/messages.ts
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "The order the text is stored in disagrees badly with the order it reads in."
@@ -8305,6 +8433,11 @@ msgstr "The posting couldn't be read. Fill in the role and company."
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "The posting saved with this application."
 msgstr "The posting saved with this application."
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "The previous model is not available for this capability any more. Choose another one."
+msgstr "The previous model is not available for this capability any more. Choose another one."
 
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer."

@@ -9,6 +9,8 @@ export const modelsDevProviderIds: Record<AIProvider, string | null> = {
 	gemini: "google",
 	"vercel-ai-gateway": "vercel",
 	openrouter: "openrouter",
+	// OrcaRouter's model list is served by the OrcaRouter API itself (see ./orcarouter), not by models.dev.
+	orcarouter: null,
 	mistral: "mistral",
 	cohere: "cohere",
 	xai: "xai",
@@ -105,6 +107,16 @@ export const providerOptions: AIProviderOption[] = [
 		defaultModel: "openai/gpt-4.1",
 	},
 	{
+		value: "orcarouter",
+		label: "OrcaRouter",
+		keywords: ["orcarouter", "router", "gateway", "openai-compatible"],
+		defaultBaseURL: AI_PROVIDER_DEFAULT_BASE_URLS.orcarouter,
+		// No pre-filled model: OrcaRouter's models are read from its own live catalog, so the dialog
+		// stores the key first and then asks for a model from the real list instead of accepting a
+		// typed-in id. Every other provider keeps a known-good default.
+		defaultModel: "",
+	},
+	{
 		value: "mistral",
 		label: "Mistral AI",
 		keywords: ["mistral", "magistral"],
@@ -194,6 +206,22 @@ export function providerDefaults(provider: AIProvider) {
 
 export function providerLabel(provider: AIProvider) {
 	return String(providerOptions.find((option) => option.value === provider)?.label ?? provider);
+}
+
+/**
+ * OrcaRouter offers two explicit ways in: paste an existing `sk-orca-…` key, or sign in with an
+ * OrcaRouter account. They are separate choices because they fail differently and one does not
+ * replace the other — a user without a browser can still paste a key, and a user without a key can
+ * still sign in.
+ */
+export type OrcaAuthMethod = "api_key" | "pkce";
+
+export function orcaCredentialMethodLabel(method: string): "API key" | "OrcaRouter account" {
+	return method === "pkce" ? "OrcaRouter account" : "API key";
+}
+
+export function providerAuthMethods(provider: AIProvider): OrcaAuthMethod[] {
+	return provider === "orcarouter" ? ["api_key", "pkce"] : ["api_key"];
 }
 
 /** "…9f2a" from the stored preview ("sk-a...9f2a"); short keys only ever show dots. */

@@ -211,6 +211,11 @@ msgstr "{0}가 발견됨, {unreadable}를 읽을 수 없음"
 msgid "{0} interview"
 msgstr "{0} 인터뷰"
 
+#. placeholder {0}: models.length
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "{0} models from OrcaRouter"
+msgstr ""
+
 #. placeholder {0}: report.passedChecks
 #. placeholder {1}: report.applicableChecks
 #: src/features/ats-checker/report/score-header.tsx
@@ -1142,6 +1147,7 @@ msgid "Anything to remember about this job"
 msgstr "이 직업에 대해 기억에 남는 것이 있다면"
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
@@ -1590,6 +1596,7 @@ msgstr "소프트웨어가 이력서를 읽을 수 있나요?"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/settings/ai/api-keys.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/hooks/use-confirm.tsx
 msgid "Cancel"
@@ -1867,6 +1874,10 @@ msgstr "닫다…"
 msgid "Closed"
 msgstr "닫은"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Code from OrcaRouter"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Color"
@@ -1951,6 +1962,10 @@ msgstr "연결"
 msgid "Connect a service"
 msgstr "서비스 연결"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Connect again"
+msgstr ""
+
 #: src/features/assistant/provider-setup.tsx
 msgid "Connect an AI provider"
 msgstr "AI 공급자 연결"
@@ -1971,6 +1986,10 @@ msgstr "다른 것을 연결하세요…"
 msgid "Connect the tools you use for writing, job search and working with your resumes."
 msgstr "글쓰기, 구직, 이력서 작업에 사용하는 도구를 연결하세요."
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Connect with OrcaRouter"
+msgstr ""
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Connect your own AI provider to have a language model read your bullets and suggest rewrites. Issues and Job match need no provider."
 msgstr "자체 AI 공급자를 연결하여 언어 모델이 목록 항목을 읽고 다시 쓰기를 제안하도록 하세요. 문제 및 직업 일치에는 공급자가 필요하지 않습니다."
@@ -1987,6 +2006,10 @@ msgstr "연결된 애플리케이션"
 #: src/features/settings/ai/web-access.tsx
 msgid "Connection saved"
 msgstr "연결이 저장되었습니다."
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Consent screen"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/homepage/footer.tsx
@@ -2064,6 +2087,7 @@ msgstr "대화"
 #: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 msgid "Copied"
 msgstr "복사됨"
 
@@ -2072,6 +2096,7 @@ msgstr "복사됨"
 #: src/features/resume/share/link-tab.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 msgid "Copy"
 msgstr "복사"
 
@@ -2243,6 +2268,10 @@ msgstr "제공업체를 삭제할 수 없습니다."
 msgid "Couldn't export. Try again."
 msgstr "내보낼 수 없습니다. 다시 시도해 보세요."
 
+#: src/features/settings/ai/orcarouter-connect.ts
+msgid "Couldn't finish the OrcaRouter sign-in."
+msgstr ""
+
 #: src/features/resume/editor/write/improve.tsx
 msgid "Couldn't get a suggestion. Nothing changed."
 msgstr "추천을 받을 수 없습니다. 아무것도 바뀌지 않았습니다."
@@ -2366,9 +2395,17 @@ msgstr "이메일을 보낼 수 없습니다. 다시 시도해 보세요."
 msgid "Couldn't start the conversation. Try again."
 msgstr "대화를 시작할 수 없습니다. 다시 시도해 보세요."
 
+#: src/features/settings/ai/orcarouter-connect.ts
+msgid "Couldn't start the OrcaRouter sign-in."
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Couldn't switch models."
 msgstr "모델을 전환할 수 없습니다."
+
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't switch the model."
+msgstr ""
 
 #: src/features/applications/components/list-view.tsx
 msgid "Couldn't update the applications. Try again."
@@ -2488,6 +2525,10 @@ msgstr "“{finalName}”를 만들었습니다."
 #: src/features/documents/new-document-dialog.tsx
 msgid "Created and linked to {0}"
 msgstr "{0}를 생성하고 연결했습니다."
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Created in the <0>OrcaRouter console</0>. It is encrypted on the server and never shown again."
+msgstr ""
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Crop and Upload"
@@ -3567,6 +3608,10 @@ msgstr "약한 목록 항목 찾기"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Finding sections"
 msgstr "섹션 찾기"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Finish connecting"
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Finnish"
@@ -4836,6 +4881,15 @@ msgstr "대화 로드 중…"
 msgid "Loading model suggestions… You can also enter any model ID."
 msgstr "모델 제안 로드 중... 어떤 모델 ID든 입력할 수도 있습니다."
 
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Loading models from OrcaRouter…"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Loading models…"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
 msgid "Loading providers…"
@@ -4939,6 +4993,10 @@ msgstr "말레이어"
 msgid "Malayalam"
 msgstr "말라얄람어"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Manage or revoke keys in the <0>authorized apps</0> list."
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Managed by server"
 msgstr "서버에서 관리"
@@ -5040,10 +5098,16 @@ msgstr "MIT 라이선스"
 msgid "mixed format"
 msgstr "혼합 형식"
 
+#: src/features/assistant/conversation.tsx
 #: src/features/assistant/provider-setup.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Model"
 msgstr "모델"
+
+#: src/features/assistant/conversation.tsx
+msgid "Model list unavailable"
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Model suggestions are unavailable. You can still enter any model ID."
@@ -5395,6 +5459,11 @@ msgstr "직함과 회사명이 함께 있는 줄을 찾을 수 없습니다."
 #: src/features/resume/editor/check/issues.ts
 msgid "No location"
 msgstr "위치 없음"
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "No models for this capability"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "No open issues"
@@ -5760,6 +5829,10 @@ msgstr "공개 페이지 열기"
 msgid "Open the exported file and confirm you can select and copy every part of it."
 msgstr "내보낸 파일을 열어 모든 부분을 선택하고 복사할 수 있는지 확인하세요."
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Open the OrcaRouter consent screen, approve Reactive Resume, then paste the code it shows below."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Opening the file"
 msgstr "파일 열기"
@@ -5822,6 +5895,22 @@ msgstr "아니면 자신의 말로…"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Or upload a resume PDF"
 msgstr "또는 이력서 PDF 업로드"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "OrcaRouter account connected."
+msgstr ""
+
+#: src/features/settings/ai/providers.tsx
+msgid "OrcaRouter no longer accepts this key. Connect again."
+msgstr ""
+
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "OrcaRouter returned no models for this capability."
+msgstr ""
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "OrcaRouter sign-in method"
+msgstr ""
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Organization"
@@ -5980,6 +6069,10 @@ msgstr "채용 링크를 붙여넣으세요. 수표, 조수 및 귀하의 편지
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
 msgstr "채용 공고 붙여넣기…"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Paste an sk-orca-… key"
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste description instead"
@@ -6580,6 +6673,10 @@ msgstr "추천"
 msgid "Referred by…, things to emphasize, etc."
 msgstr "추천인…, 강조할 내용 등"
 
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Refresh"
+msgstr ""
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Reject"
 msgstr "거부하다"
@@ -7026,9 +7123,17 @@ msgstr "먼저 저장한 다음 검색 및 읽기를 테스트하세요. 자동�
 msgid "Save job"
 msgstr "직업 저장"
 
+#: src/features/settings/ai/providers.tsx
+msgid "Save key"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Save the file with every page upright."
 msgstr "모든 페이지가 똑바로 보이도록 파일을 저장하세요."
+
+#: src/features/settings/ai/providers.tsx
+msgid "Save the key first. The model list is read from OrcaRouter with it, and appears here once it is stored."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save to the application"
@@ -7228,6 +7333,11 @@ msgstr "선택하다"
 #: src/features/applications/components/list-view.tsx
 msgid "Select {0} at {1}"
 msgstr "{1}에서 {0}를 선택하세요."
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Select a model"
+msgstr ""
 
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
 msgid "Select an AI provider"
@@ -7467,6 +7577,11 @@ msgstr "템플릿 표시"
 msgid "Show them again"
 msgstr "다시 보여주세요"
 
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Showing a small verified list because OrcaRouter was unreachable."
+msgstr ""
+
 #. Layout editor column label for the secondary sidebar area
 #: src/features/homepage/sheet.tsx
 #: src/features/resume/editor/design/template-group.tsx
@@ -7511,6 +7626,14 @@ msgstr "계정에 로그인"
 #: src/features/settings/account/security.tsx
 msgid "Sign in with your fingerprint, face or device PIN"
 msgstr "지문, 얼굴 또는 장치 PIN으로 로그인"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Sign in with your OrcaRouter account"
+msgstr ""
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Sign in with your OrcaRouter account and Reactive Resume receives its own key, billed to you and revocable at any time."
+msgstr ""
 
 #. User menu action to sign out of current account
 #: src/features/settings/account/page.tsx
@@ -8271,6 +8394,11 @@ msgstr "편지가 이력서의 디자인과 다시 일치합니다."
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "요청한 이후 줄이 변경되었으므로 교체되지 않았습니다."
 
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "The OrcaRouter model list couldn't be loaded. Refresh to try again."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "텍스트가 저장된 순서가 실제로 읽히는 순서와 크게 다릅니다."
@@ -8310,6 +8438,11 @@ msgstr "채용 공고를 읽을 수 없습니다. 역할과 회사를 입력하�
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "The posting saved with this application."
 msgstr "이 채용 지원서와 함께 저장된 채용 공고입니다."
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "The previous model is not available for this capability any more. Choose another one."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer."

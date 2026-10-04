@@ -6,6 +6,7 @@ import { Button } from "@reactive-resume/ui/components/button";
 import {
 	ComboboxClear,
 	ComboboxContent,
+	type ComboboxContentAlign,
 	ComboboxEmpty,
 	ComboboxInput,
 	ComboboxItem,
@@ -40,6 +41,8 @@ type SingleComboboxProps<TValue extends string | number = string> = {
 	placeholder?: string;
 	emptyMessage?: React.ReactNode;
 	className?: string;
+	/** Which trigger edge the panel lines up with. Defaults to the leading edge. */
+	align?: ComboboxContentAlign;
 	id?: string;
 	name?: string;
 	render?: UseRenderRenderProp<ComboboxTriggerState>;
@@ -56,6 +59,8 @@ type MultiComboboxProps<TValue extends string | number = string> = {
 	placeholder?: string;
 	emptyMessage?: React.ReactNode;
 	className?: string;
+	/** Which trigger edge the panel lines up with. Defaults to the leading edge. */
+	align?: ComboboxContentAlign;
 	id?: string;
 	name?: string;
 	render?: UseRenderRenderProp<ComboboxTriggerState>;
@@ -78,6 +83,7 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 		placeholder,
 		emptyMessage,
 		className,
+		align = "start",
 		id,
 		name,
 		render,
@@ -204,7 +210,7 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 				triggerNode
 			)}
 
-			<ComboboxContent aria-label={placeholder ?? t`Options`}>
+			<ComboboxContent align={align} aria-label={placeholder ?? t`Options`}>
 				<ComboboxInput
 					placeholder={placeholder ?? t`Search...`}
 					render={<Input disabled={disabled} className="border-none focus-visible:border-none focus-visible:ring-0" />}

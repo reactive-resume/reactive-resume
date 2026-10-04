@@ -211,6 +211,11 @@ msgstr "找到 {0}，{unreadable} 不可讀"
 msgid "{0} interview"
 msgstr "{0}採訪"
 
+#. placeholder {0}: models.length
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "{0} models from OrcaRouter"
+msgstr ""
+
 #. placeholder {0}: report.passedChecks
 #. placeholder {1}: report.applicableChecks
 #: src/features/ats-checker/report/score-header.tsx
@@ -1142,6 +1147,7 @@ msgid "Anything to remember about this job"
 msgstr "關於這份工作有什麼需要記住的"
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
@@ -1590,6 +1596,7 @@ msgstr "軟體可以讀取您的履歷嗎？"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/settings/ai/api-keys.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/hooks/use-confirm.tsx
 msgid "Cancel"
@@ -1867,6 +1874,10 @@ msgstr "關閉…"
 msgid "Closed"
 msgstr "關閉"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Code from OrcaRouter"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Color"
@@ -1951,6 +1962,10 @@ msgstr "連結"
 msgid "Connect a service"
 msgstr "連線服務"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Connect again"
+msgstr ""
+
 #: src/features/assistant/provider-setup.tsx
 msgid "Connect an AI provider"
 msgstr "連接人工智慧提供者"
@@ -1971,6 +1986,10 @@ msgstr "連接另一個…"
 msgid "Connect the tools you use for writing, job search and working with your resumes."
 msgstr "連結您用於寫作、求職和處理履歷的工具。"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Connect with OrcaRouter"
+msgstr ""
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Connect your own AI provider to have a language model read your bullets and suggest rewrites. Issues and Job match need no provider."
 msgstr "連接您自己的 AI 供應商，讓語言模型讀取您的清單項目並建議重寫。問題和工作配對不需要提供者。"
@@ -1987,6 +2006,10 @@ msgstr "已連結的應用程式"
 #: src/features/settings/ai/web-access.tsx
 msgid "Connection saved"
 msgstr "連線已儲存"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Consent screen"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/homepage/footer.tsx
@@ -2064,6 +2087,7 @@ msgstr "對話"
 #: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 msgid "Copied"
 msgstr "已複製"
 
@@ -2072,6 +2096,7 @@ msgstr "已複製"
 #: src/features/resume/share/link-tab.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
 msgid "Copy"
 msgstr "複製"
 
@@ -2243,6 +2268,10 @@ msgstr "無法刪除提供者。"
 msgid "Couldn't export. Try again."
 msgstr "無法導出。再試一次。"
 
+#: src/features/settings/ai/orcarouter-connect.ts
+msgid "Couldn't finish the OrcaRouter sign-in."
+msgstr ""
+
 #: src/features/resume/editor/write/improve.tsx
 msgid "Couldn't get a suggestion. Nothing changed."
 msgstr "無法得到建議。一切都沒有改變。"
@@ -2366,9 +2395,17 @@ msgstr "無法傳送電子郵件。再試一次。"
 msgid "Couldn't start the conversation. Try again."
 msgstr "無法開始對話。再試一次。"
 
+#: src/features/settings/ai/orcarouter-connect.ts
+msgid "Couldn't start the OrcaRouter sign-in."
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Couldn't switch models."
 msgstr "無法切換型號。"
+
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't switch the model."
+msgstr ""
 
 #: src/features/applications/components/list-view.tsx
 msgid "Couldn't update the applications. Try again."
@@ -2488,6 +2525,10 @@ msgstr "創建“{finalName}”"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Created and linked to {0}"
 msgstr "建立並連結到 {0}"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Created in the <0>OrcaRouter console</0>. It is encrypted on the server and never shown again."
+msgstr ""
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Crop and Upload"
@@ -3567,6 +3608,10 @@ msgstr "尋找弱清單條目"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Finding sections"
 msgstr "查找部分"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Finish connecting"
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Finnish"
@@ -4836,6 +4881,15 @@ msgstr "正在加載對話..."
 msgid "Loading model suggestions… You can also enter any model ID."
 msgstr "正在載入模型建議...您也可以輸入任何模型 ID。"
 
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Loading models from OrcaRouter…"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Loading models…"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
 msgid "Loading providers…"
@@ -4939,6 +4993,10 @@ msgstr "馬來語"
 msgid "Malayalam"
 msgstr "馬拉雅拉姆語"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Manage or revoke keys in the <0>authorized apps</0> list."
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Managed by server"
 msgstr "由伺服器管理"
@@ -5040,10 +5098,16 @@ msgstr "MIT 授權"
 msgid "mixed format"
 msgstr "混合格式"
 
+#: src/features/assistant/conversation.tsx
 #: src/features/assistant/provider-setup.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Model"
 msgstr "模型"
+
+#: src/features/assistant/conversation.tsx
+msgid "Model list unavailable"
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Model suggestions are unavailable. You can still enter any model ID."
@@ -5395,6 +5459,11 @@ msgstr "沒有看起來像「職稱 + 雇主」這種搭配的行。"
 #: src/features/resume/editor/check/issues.ts
 msgid "No location"
 msgstr "沒有位置"
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "No models for this capability"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "No open issues"
@@ -5760,6 +5829,10 @@ msgstr "開啟公共頁面"
 msgid "Open the exported file and confirm you can select and copy every part of it."
 msgstr "開啟匯出的檔案，確認您可以選取並複製其中的每一部分。"
 
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Open the OrcaRouter consent screen, approve Reactive Resume, then paste the code it shows below."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Opening the file"
 msgstr "開啟文件"
@@ -5822,6 +5895,22 @@ msgstr "或用自己的話說..."
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Or upload a resume PDF"
 msgstr "或上傳履歷 PDF"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "OrcaRouter account connected."
+msgstr ""
+
+#: src/features/settings/ai/providers.tsx
+msgid "OrcaRouter no longer accepts this key. Connect again."
+msgstr ""
+
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "OrcaRouter returned no models for this capability."
+msgstr ""
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "OrcaRouter sign-in method"
+msgstr ""
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Organization"
@@ -5980,6 +6069,10 @@ msgstr "貼上職位連結。我們將保存招聘訊息，以便檢查、助理
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
 msgstr "貼上招募資訊..."
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Paste an sk-orca-… key"
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste description instead"
@@ -6580,6 +6673,10 @@ msgstr "推薦"
 msgid "Referred by…, things to emphasize, etc."
 msgstr "推薦人…、要強調的事項等"
 
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Refresh"
+msgstr ""
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Reject"
 msgstr "拒絕"
@@ -7026,9 +7123,17 @@ msgstr "先儲存，然後測試搜尋和閱讀。沒有測試自動運行。"
 msgid "Save job"
 msgstr "保存工作"
 
+#: src/features/settings/ai/providers.tsx
+msgid "Save key"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Save the file with every page upright."
 msgstr "儲存檔案時確保每一頁都是正向的。"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Save the key first. The model list is read from OrcaRouter with it, and appears here once it is stored."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save to the application"
@@ -7228,6 +7333,11 @@ msgstr "選擇"
 #: src/features/applications/components/list-view.tsx
 msgid "Select {0} at {1}"
 msgstr "在 {1} 處選擇 {0}"
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Select a model"
+msgstr ""
 
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
 msgid "Select an AI provider"
@@ -7467,6 +7577,11 @@ msgstr "顯示模板"
 msgid "Show them again"
 msgstr "再次向他們展示"
 
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "Showing a small verified list because OrcaRouter was unreachable."
+msgstr ""
+
 #. Layout editor column label for the secondary sidebar area
 #: src/features/homepage/sheet.tsx
 #: src/features/resume/editor/design/template-group.tsx
@@ -7511,6 +7626,14 @@ msgstr "登入您的帳戶"
 #: src/features/settings/account/security.tsx
 msgid "Sign in with your fingerprint, face or device PIN"
 msgstr "使用您的指紋、臉部或裝置 PIN 碼登錄"
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Sign in with your OrcaRouter account"
+msgstr ""
+
+#: src/features/settings/ai/orcarouter-connect-panel.tsx
+msgid "Sign in with your OrcaRouter account and Reactive Resume receives its own key, billed to you and revocable at any time."
+msgstr ""
 
 #. User menu action to sign out of current account
 #: src/features/settings/account/page.tsx
@@ -8271,6 +8394,11 @@ msgstr "這封信再次與履歷的設計相匹配"
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "自您提出要求以來，線路發生了變化，因此沒有被替換。"
 
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "The OrcaRouter model list couldn't be loaded. Refresh to try again."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "文字的儲存順序與閱讀順序嚴重不一致。"
@@ -8310,6 +8438,11 @@ msgstr "無法閱讀招募資訊。填寫角色和公司。"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "The posting saved with this application."
 msgstr "職位發布與此職位申請一起保存。"
+
+#: src/features/assistant/conversation.tsx
+#: src/features/settings/ai/orcarouter-model-selector.tsx
+msgid "The previous model is not available for this capability any more. Choose another one."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer."

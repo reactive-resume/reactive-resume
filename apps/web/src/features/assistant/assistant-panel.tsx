@@ -77,6 +77,9 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 		usable.find((item) => item.id === (threadId ? summary?.aiProviderId : providerId)) ??
 		(threadId ? undefined : usable[0]);
 	const providerLabel = provider?.label ?? summary?.providerLabel ?? t`your provider`;
+	// Present only for OrcaRouter: the composer then offers a model chooser over the live catalog,
+	// filtered by the modality of whatever is attached to the message being written.
+	const orcaProviderId = provider?.provider === "orcarouter" ? provider.id : null;
 
 	const ensureThread = async (): Promise<string> => {
 		if (draftThread.current) return draftThread.current;
@@ -241,6 +244,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 						context={context}
 						onContextChange={setContext}
 						providerLabel={providerLabel}
+						orcaProviderId={orcaProviderId}
 						streaming={starting}
 						disabled={document.locked}
 						threadId={null}

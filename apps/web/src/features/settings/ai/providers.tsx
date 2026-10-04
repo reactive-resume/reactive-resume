@@ -26,10 +26,14 @@ import {
 	keyEnding,
 	loadModelSuggestions,
 	modelsDevProviderIds,
+	type OrcaAuthMethod,
+	orcaCredentialMethodLabel,
 	providerDefaults,
 	providerLabel,
 	providerOptions,
 } from "./catalog";
+import { OrcaAuthMethods } from "./orcarouter-connect-panel";
+import { OrcaModelSelector } from "./orcarouter-model-selector";
 import { Combobox } from "@/components/ui/combobox";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -216,6 +220,11 @@ function ProviderRow({ provider, onEdit }: ProviderRowProps) {
 					<span className="text-xs text-ink-3">
 						<Trans>Key ends in {keyEnding(provider.apiKeyPreview)}</Trans>
 					</span>
+					{provider.provider === "orcarouter" && (
+						<span className="text-xs text-ink-3" data-testid="orca-credential-method">
+							{orcaCredentialMethodLabel(provider.credentialMethod)}
+						</span>
+					)}
 				</span>
 				<div className="col-start-2 flex items-center gap-2 sm:ms-auto">
 					<Button
@@ -240,6 +249,11 @@ function ProviderRow({ provider, onEdit }: ProviderRowProps) {
 					</Button>
 				</div>
 			</div>
+			{provider.needsReauth && (
+				<p role="alert" data-testid="orca-reauth" className="ms-12 text-xs text-danger-text">
+					{provider.reauthReason ?? <Trans>OrcaRouter no longer accepts this key. Connect again.</Trans>}
+				</p>
+			)}
 			{error && (
 				<p role="alert" className="ms-12 text-xs text-danger-text">
 					{error}
@@ -257,13 +271,26 @@ type ProviderFieldsProps = {
 	onChange: (value: ProviderFields) => void;
 	/** Editing: an empty key keeps the saved one. */
 	keyOptional?: boolean;
+	/** The saved row, when editing. OrcaRouter needs its id to read the catalog and to reconnect. */
+	providerId?: string | undefined;
+	/** OrcaRouter only: called with the provider id once the account sign-in stored a key. */
+	onOrcaConnected?: (providerId: string) => void;
 };
 
-function ProviderFieldsForm({ provider, value, onChange, keyOptional }: ProviderFieldsProps) {
+function ProviderFieldsForm({
+	provider,
+	value,
+	onChange,
+	keyOptional,
+	providerId,
+	onOrcaConnected,
+}: ProviderFieldsProps) {
 	const id = useId();
 	const set = (patch: Partial<ProviderFields>) => onChange({ ...value, ...patch });
 	const defaults = providerDefaults(provider);
 	const catalogId = modelsDevProviderIds[provider];
+	const [authMethod, setAuthMethod] = useState<OrcaAuthMethod>("api_key");
+	const isOrcaRouter = provider === "orcarouter";
 	const {
 		data: catalog,
 		isPending: loadingModels,
@@ -279,70 +306,102 @@ function ProviderFieldsForm({ provider, value, onChange, keyOptional }: Provider
 
 	return (
 		<div className="grid gap-3 sm:grid-cols-2">
-			<div className="grid gap-1.5 sm:col-span-2">
-				<Label htmlFor={`${id}-key`}>
-					<Trans>API key</Trans>
-				</Label>
-				<Input
-					id={`${id}-key`}
-					type="password"
-					value={value.apiKey}
-					placeholder={
-						keyOptional
-							? t`Leave empty to keep the saved key`
-							: provider === "ollama"
-								? t`Optional for local Ollama`
-								: undefined
-					}
-					onChange={(event) => set({ apiKey: event.target.value })}
-					{...secretInputProps}
+			{isOrcaRouter ? (
+				<OrcaAuthMethods
+					method={authMethod}
+					onMethodChange={setAuthMethod}
+					apiKey={value.apiKey}
+					onApiKeyChange={(apiKey) => set({ apiKey })}
+					apiKeyPlaceholder={keyOptional ? t`Leave empty to keep the saved key` : "sk-orca-…"}
+					providerId={providerId ?? null}
+					label={value.label.trim() || null}
+					onConnected={(connectedId) => {
+						if (connectedId) onOrcaConnected?.(connectedId);
+					}}
 				/>
-			</div>
-			<div className="grid gap-1.5 sm:col-span-2">
-				<Label htmlFor={`${id}-model`}>
-					<Trans>Model</Trans>
-				</Label>
-				<Input
-					id={`${id}-model`}
-					list={`${id}-models`}
-					aria-describedby={`${id}-model-hint`}
-					value={value.model}
-					placeholder={defaults.model || "gpt-4.1"}
-					onChange={(event) => set({ model: event.target.value })}
-					{...secretInputProps}
-				/>
-				<datalist id={`${id}-models`}>
-					{models.map((model) => (
-						<option key={model.id} value={model.id}>
-							{model.name}
-						</option>
-					))}
-				</datalist>
-				<p id={`${id}-model-hint`} className="text-xs leading-5 text-ink-3">
-					{!catalogId ? (
-						<Trans>Enter any model ID supported by your endpoint.</Trans>
-					) : modelsUnavailable ? (
-						<Trans>Model suggestions are unavailable. You can still enter any model ID.</Trans>
-					) : loadingModels ? (
-						<Trans>Loading model suggestions… You can also enter any model ID.</Trans>
-					) : models.length === 0 ? (
-						<Trans>No suggestions for this provider. Enter any model ID.</Trans>
-					) : (
+			) : (
+				<div className="grid gap-1.5 sm:col-span-2">
+					<Label htmlFor={`${id}-key`}>
+						<Trans>API key</Trans>
+					</Label>
+					<Input
+						id={`${id}-key`}
+						type="password"
+						value={value.apiKey}
+						placeholder={
+							keyOptional
+								? t`Leave empty to keep the saved key`
+								: provider === "ollama"
+									? t`Optional for local Ollama`
+									: undefined
+						}
+						onChange={(event) => set({ apiKey: event.target.value })}
+						{...secretInputProps}
+					/>
+				</div>
+			)}
+			{isOrcaRouter ? (
+				providerId ? (
+					<OrcaModelSelector
+						providerId={providerId}
+						entryPoint="chat"
+						value={value.model}
+						onValueChange={(model) => set({ model })}
+					/>
+				) : (
+					<p className="text-xs leading-5 text-ink-3 sm:col-span-2" data-testid="orca-model-after-save">
 						<Trans>
-							Suggestions from{" "}
-							<a
-								href="https://models.dev/"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="underline underline-offset-2 hover:text-ink"
-							>
-								models.dev
-							</a>
-							. You can also enter any model ID.
+							Save the key first. The model list is read from OrcaRouter with it, and appears here once it is stored.
 						</Trans>
-					)}
-				</p>
-			</div>
+					</p>
+				)
+			) : (
+				<div className="grid gap-1.5 sm:col-span-2">
+					<Label htmlFor={`${id}-model`}>
+						<Trans>Model</Trans>
+					</Label>
+					<Input
+						id={`${id}-model`}
+						list={`${id}-models`}
+						aria-describedby={`${id}-model-hint`}
+						value={value.model}
+						placeholder={defaults.model || "gpt-4.1"}
+						onChange={(event) => set({ model: event.target.value })}
+						{...secretInputProps}
+					/>
+					<datalist id={`${id}-models`}>
+						{models.map((model) => (
+							<option key={model.id} value={model.id}>
+								{model.name}
+							</option>
+						))}
+					</datalist>
+					<p id={`${id}-model-hint`} className="text-xs leading-5 text-ink-3">
+						{!catalogId ? (
+							<Trans>Enter any model ID supported by your endpoint.</Trans>
+						) : modelsUnavailable ? (
+							<Trans>Model suggestions are unavailable. You can still enter any model ID.</Trans>
+						) : loadingModels ? (
+							<Trans>Loading model suggestions… You can also enter any model ID.</Trans>
+						) : models.length === 0 ? (
+							<Trans>No suggestions for this provider. Enter any model ID.</Trans>
+						) : (
+							<Trans>
+								Suggestions from{" "}
+								<a
+									href="https://models.dev/"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="underline underline-offset-2 hover:text-ink"
+								>
+									models.dev
+								</a>
+								. You can also enter any model ID.
+							</Trans>
+						)}
+					</p>
+				</div>
+			)}
 			<div className="grid gap-1.5 sm:col-span-2">
 				<Label htmlFor={`${id}-label`}>
 					<Trans>Name</Trans>
@@ -354,19 +413,21 @@ function ProviderFieldsForm({ provider, value, onChange, keyOptional }: Provider
 					onChange={(event) => set({ label: event.target.value })}
 				/>
 			</div>
-			<div className="grid gap-1.5 sm:col-span-2">
-				<Label htmlFor={`${id}-url`}>
-					<Trans>Base URL</Trans>
-				</Label>
-				<Input
-					id={`${id}-url`}
-					type="url"
-					value={value.baseURL}
-					placeholder={defaults.baseURL || "https://gateway.example.com/v1"}
-					onChange={(event) => set({ baseURL: event.target.value })}
-					{...secretInputProps}
-				/>
-			</div>
+			{!isOrcaRouter && (
+				<div className="grid gap-1.5 sm:col-span-2">
+					<Label htmlFor={`${id}-url`}>
+						<Trans>Base URL</Trans>
+					</Label>
+					<Input
+						id={`${id}-url`}
+						type="url"
+						value={value.baseURL}
+						placeholder={defaults.baseURL || "https://gateway.example.com/v1"}
+						onChange={(event) => set({ baseURL: event.target.value })}
+						{...secretInputProps}
+					/>
+				</div>
+			)}
 		</div>
 	);
 }
@@ -380,13 +441,27 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 	const [provider, setProvider] = useState<AIProvider>("openai");
 	const [fields, setFields] = useState<ProviderFields>({ label: "", apiKey: "", ...providerDefaults("openai") });
 	const [failure, setFailure] = useState<string | null>(null);
+	// OrcaRouter: the model list needs a stored key, so the row is created first and the model is chosen
+	// from the real catalog afterwards, instead of asking the user to type a model id.
+	const [orcaProviderId, setOrcaProviderId] = useState<string | null>(null);
 	const create = useMutation(orpc.aiProviders.create.mutationOptions({ meta: { noInvalidate: true } }));
+	const update = useMutation(orpc.aiProviders.update.mutationOptions({ meta: { noInvalidate: true } }));
 	const test = useMutation(orpc.aiProviders.test.mutationOptions({ meta: { noInvalidate: true } }));
 
 	const reset = () => {
 		setProvider("openai");
 		setFields({ label: "", apiKey: "", ...providerDefaults("openai") });
 		setFailure(null);
+		setOrcaProviderId(null);
+	};
+
+	const invalidate = () => queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() });
+
+	const testAndReport = async (providerId: string) => {
+		invalidate();
+		const tested = await test.mutateAsync({ id: providerId });
+		if (tested.testStatus === "success") onOpenChange(false);
+		else setFailure(tested.testError ?? t`The provider didn't answer. Check the key, the model and the base URL.`);
 	};
 
 	const save = async () => {
@@ -398,11 +473,23 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 			baseURL: fields.baseURL.trim(),
 			apiKey: fields.apiKey.trim(),
 		};
-		let tested: Awaited<ReturnType<typeof test.mutateAsync>> | undefined;
 		try {
+			if (provider === "orcarouter" && !fields.model.trim()) {
+				// No model chosen yet: store the key, then ask for a model from the live catalog.
+				const created = await create.mutateAsync({ ...input, model: "" });
+				invalidate();
+				setOrcaProviderId(created.id);
+				return;
+			}
+			if (orcaProviderId) {
+				await update.mutateAsync({ id: orcaProviderId, model: input.model });
+				await testAndReport(orcaProviderId);
+				return;
+			}
 			const created = await create.mutateAsync(input);
-			tested = await test.mutateAsync({ id: created.id });
+			await testAndReport(created.id);
 		} catch (error) {
+			invalidate();
 			setFailure(
 				getOrpcErrorMessage(error, {
 					byCode: {
@@ -413,18 +500,11 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 				}),
 			);
 		}
-		void queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() });
-		if (!tested) return;
-		if (tested.testStatus === "success") {
-			onOpenChange(false);
-		} else {
-			// The provider is saved either way; its row keeps the error and a Test button.
-			setFailure(tested.testError ?? t`The provider didn't answer. Check the key, the model and the base URL.`);
-		}
 	};
 
-	const pending = create.isPending || test.isPending;
-	const ready = Boolean((provider === "ollama" || fields.apiKey.trim()) && fields.model.trim());
+	const pending = create.isPending || test.isPending || update.isPending;
+	const needsKey = provider !== "ollama" && !orcaProviderId;
+	const ready = Boolean((!needsKey || fields.apiKey.trim()) && (provider === "orcarouter" || fields.model.trim()));
 
 	return (
 		<Dialog
@@ -458,6 +538,7 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 							id={`${id}-provider`}
 							value={provider}
 							showClear={false}
+							disabled={Boolean(orcaProviderId)}
 							options={providerOptions.map((option) => ({
 								...option,
 								textValue: String(option.label),
@@ -471,11 +552,21 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 							onValueChange={(next) => {
 								if (!next) return;
 								setProvider(next);
+								setOrcaProviderId(null);
 								setFields((current) => ({ ...current, ...providerDefaults(next) }));
 							}}
 						/>
 					</div>
-					<ProviderFieldsForm provider={provider} value={fields} onChange={setFields} />
+					<ProviderFieldsForm
+						provider={provider}
+						value={fields}
+						onChange={setFields}
+						providerId={orcaProviderId ?? undefined}
+						onOrcaConnected={(connectedId) => {
+							setOrcaProviderId(connectedId);
+							invalidate();
+						}}
+					/>
 					{failure && (
 						<p role="alert" className="text-sm text-danger-text">
 							{failure}
@@ -483,7 +574,13 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 					)}
 					<DialogFooter>
 						<Button type="submit" disabled={!ready || pending} loading={pending}>
-							{test.isPending ? <Trans>Testing the connection…</Trans> : <Trans>Save and test</Trans>}
+							{test.isPending ? (
+								<Trans>Testing the connection…</Trans>
+							) : provider === "orcarouter" && !orcaProviderId ? (
+								<Trans>Save key</Trans>
+							) : (
+								<Trans>Save and test</Trans>
+							)}
 						</Button>
 					</DialogFooter>
 				</form>
@@ -576,7 +673,14 @@ function EditProviderForm({ provider, onClose }: EditProviderFormProps) {
 					if (changed) void save();
 				}}
 			>
-				<ProviderFieldsForm provider={provider.provider} value={fields} onChange={setFields} keyOptional />
+				<ProviderFieldsForm
+					provider={provider.provider}
+					value={fields}
+					onChange={setFields}
+					keyOptional
+					providerId={provider.id}
+					onOrcaConnected={() => void invalidate()}
+				/>
 				<div className="flex items-center justify-between gap-3 text-sm">
 					<span className="grid gap-0.5">
 						<span id={`${provider.id}-use`} className="font-medium">

@@ -34,6 +34,17 @@ export const aiProvider = pg.pgTable(
 		apiKeySalt: pg.text("api_key_salt").notNull(),
 		apiKeyHash: pg.text("api_key_hash").notNull(),
 		apiKeyPreview: pg.text("api_key_preview").notNull(),
+		// How the stored key was obtained: "api_key" (pasted) or "pkce" (OrcaRouter connect flow). The key
+		// itself is identical either way; this only drives the account/status UI and the reauth lifecycle.
+		credentialMethod: pg.text("credential_method").notNull().default("api_key"),
+		// The scope OrcaRouter granted, when the connect flow reported one. Null for pasted keys.
+		credentialScope: pg.text("credential_scope"),
+		// Terminal reauthentication state: set when the provider rejects the credential, cleared only by a
+		// successful reconnect. The rejection is attributed to the exact credential generation (apiKeyHash)
+		// that made the rejected request, so a late failure cannot mark a replaced key as broken.
+		needsReauth: pg.boolean("needs_reauth").notNull().default(false),
+		reauthReason: pg.text("reauth_reason"),
+		reauthAt: pg.timestamp("reauth_at", { withTimezone: true }),
 		testStatus: pg.text("test_status").notNull().default("untested"),
 		testError: pg.text("test_error"),
 		lastTestedAt: pg.timestamp("last_tested_at", { withTimezone: true }),

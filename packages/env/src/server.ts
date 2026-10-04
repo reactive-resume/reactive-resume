@@ -122,6 +122,13 @@ export const env = createEnv({
 		AI_API_KEY: z.string().trim().min(1).optional(),
 		AI_BASE_URL: z.url({ protocol: /^https?$/ }).optional(),
 
+		// OrcaRouter connect flow. Authentication and inference are separate public origins; a
+		// self-hosted install that serves both sets ORCA_BASE_URL, and the explicit per-origin values
+		// win over it.
+		ORCA_BASE_URL: z.url({ protocol: /^https?$/ }).optional(),
+		ORCA_AUTH_BASE_URL: z.url({ protocol: /^https?$/ }).optional(),
+		ORCA_API_BASE_URL: z.url({ protocol: /^https?$/ }).optional(),
+
 		// Feature Flags
 		FLAG_DISABLE_SIGNUPS: z.stringbool().default(false),
 		FLAG_DISABLE_EMAIL_AUTH: z.stringbool().default(false),
