@@ -26,6 +26,11 @@ const applicationDocumentFileSchema = z
 	.max(MAX_APPLICATION_DOCUMENT_BYTES, "File size must be less than 10MB")
 	.mime(["application/pdf"], "Application documents must be PDF files.");
 
+const documentFilesShape = {
+	resumeFile: applicationDocumentFileSchema.optional(),
+	coverLetterFile: applicationDocumentFileSchema.optional(),
+};
+
 const httpUrlSchema = z
 	.string()
 	.trim()
@@ -135,7 +140,7 @@ export const applicationDto = {
 	},
 
 	create: {
-		input: createInputSchema,
+		input: createInputSchema.extend(documentFilesShape),
 		output: z.string().describe("The ID of the created application."),
 	},
 
@@ -147,6 +152,7 @@ export const applicationDto = {
 
 	update: {
 		input: editableSchema.partial().extend({
+			...documentFilesShape,
 			id: z.string(),
 			status: applicationStatusSchema.optional(),
 			stageEnteredAt: timelineDateSchema.optional(),

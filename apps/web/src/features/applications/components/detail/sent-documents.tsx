@@ -187,8 +187,7 @@ export function SentDocuments({ application, disabled }: SentDocumentsProps) {
 						onChange={(value) =>
 							update.mutate({
 								id: application.id,
-								resumeFileUrl: value?.url ?? null,
-								resumeFileName: value?.name ?? null,
+								...(value ? { resumeFile: value } : { resumeFileUrl: null, resumeFileName: null }),
 							})
 						}
 					/>
@@ -203,8 +202,7 @@ export function SentDocuments({ application, disabled }: SentDocumentsProps) {
 						onChange={(value) =>
 							update.mutate({
 								id: application.id,
-								coverLetterUrl: value?.url ?? null,
-								coverLetterName: value?.name ?? null,
+								...(value ? { coverLetterFile: value } : { coverLetterUrl: null, coverLetterName: null }),
 							})
 						}
 					/>

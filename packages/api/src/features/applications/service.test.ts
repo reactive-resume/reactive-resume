@@ -358,9 +358,7 @@ describe("applicationService.attachDocument", () => {
 				id: "app-1",
 				userId: "user-1",
 				kind: "cover-letter",
-				fileName: "cover.txt",
-				contentType: "text/plain",
-				data: new Uint8Array([1]),
+				file: new File(["text"], "cover.txt", { type: "text/plain" }),
 			}),
 		).rejects.toMatchObject({ code: "BAD_REQUEST" });
 
@@ -369,7 +367,6 @@ describe("applicationService.attachDocument", () => {
 
 	it("does not delete the replaced upload when another application still references it", async () => {
 		setSelectResults(
-			[{ ...existing }],
 			[{ ...existing }],
 			[
 				{
@@ -386,9 +383,7 @@ describe("applicationService.attachDocument", () => {
 			id: "app-1",
 			userId: "user-1",
 			kind: "resume",
-			fileName: "sent-resume.pdf",
-			contentType: "application/pdf",
-			data: new Uint8Array([1, 2, 3]),
+			file: new File(["%PDF"], "sent-resume.pdf", { type: "application/pdf" }),
 		});
 
 		expect(storageDeleteMock).not.toHaveBeenCalledWith("uploads/user-1/pictures/resume.pdf");
@@ -459,5 +454,110 @@ describe("applicationService interviews", () => {
 			at: new Date("2026-10-02T16:00:00.000Z"),
 		});
 		expect(dbMock.transaction).toHaveBeenCalled();
+	});
+});
+
+describe("application attachment lifecycle", () => {
+	const pdf = (name: string) => new File(["%PDF-1.4"], name, { type: "application/pdf" });
+	const newUrl = "/api/uploads/user-1/pictures/new.pdf";
+	const newKey = "uploads/user-1/pictures/new.pdf";
+
+	function storedApplication(shared = false, fail = false) {
+		let row: Record<string, unknown> = { ...existing };
+		dbMock.select.mockImplementation(() => ({
+			from: () => ({ where: () => Promise.resolve([row, ...(shared ? [{ ...existing, id: "app-2" }] : [])]) }),
+		}));
+		const save = (fields: Record<string, unknown>) => ({
+			returning: async () => {
+				if (fail) throw new Error("save failed");
+				row = { ...row, ...fields };
+				return [row];
+			},
+		});
+		dbMock.insert.mockImplementation(() => ({ values: save }));
+		dbMock.update.mockImplementation(() => ({
+			set: (fields: Record<string, unknown>) => ({ where: () => save(fields) }),
+		}));
+		return () => row;
+	}
+
+	it.each(["create", "update"] as const)("%s rolls back uploads after a failed record write", async (operation) => {
+		const row = storedApplication(false, true);
+		await expect(
+			applicationService[operation]({
+				userId: "user-1",
+				id: "app-1",
+				company: "Stripe",
+				role: "Engineer",
+				resumeFile: pdf("new.pdf"),
+			}),
+		).rejects.toThrow("save failed");
+		expect(uploadFileMock).toHaveBeenCalledOnce();
+		expect(storageDeleteMock).toHaveBeenCalledExactlyOnceWith(newKey);
+		expect(row().resumeFileUrl).toBe(existing.resumeFileUrl);
+	});
+
+	it("cleans the first upload when the second fails, without starting a record write", async () => {
+		storedApplication();
+		// Let the first file succeed, then reject the second.
+		uploadFileMock
+			.mockReset()
+			.mockResolvedValueOnce({ url: newUrl, key: newKey })
+			.mockRejectedValueOnce(new Error("upload failed"));
+		await expect(
+			applicationService.create({
+				userId: "user-1",
+				company: "Stripe",
+				role: "Engineer",
+				resumeFile: pdf("new.pdf"),
+				coverLetterFile: pdf("cover.pdf"),
+			}),
+		).rejects.toThrow("upload failed");
+		expect(dbMock.insert).not.toHaveBeenCalled();
+		expect(storageDeleteMock).toHaveBeenCalledExactlyOnceWith(newKey);
+	});
+
+	it.each([false, true])(
+		"replacement deletes old storage only after save, with shared reference=%s",
+		async (shared) => {
+			const row = storedApplication(shared);
+			storageDeleteMock.mockImplementation(async (key: string) => {
+				expect(row().resumeFileUrl).toBe(newUrl);
+				expect(key).toBe("uploads/user-1/pictures/resume.pdf");
+				return true;
+			});
+			await applicationService.update({ id: "app-1", userId: "user-1", resumeFile: pdf("new.pdf") });
+			expect(row().resumeFileUrl).toBe(newUrl);
+			expect(row().resumeFileName).toBe("new.pdf");
+			expect(row()).not.toHaveProperty("resumeFile");
+			expect(storageDeleteMock).toHaveBeenCalledTimes(shared ? 0 : 1);
+		},
+	);
+
+	it("does not roll back a committed attachment if recording its sent version fails", async () => {
+		const row = storedApplication();
+		writeVersionMock.mockRejectedValueOnce(new Error("snapshot failed"));
+		await expect(
+			applicationService.update({
+				id: "app-1",
+				userId: "user-1",
+				status: "applied",
+				resumeId: "resume-1",
+				resumeFile: pdf("new.pdf"),
+			}),
+		).rejects.toThrow("snapshot failed");
+		expect(row().resumeFileUrl).toBe(newUrl);
+		expect(storageDeleteMock).not.toHaveBeenCalledWith(newKey);
+	});
+
+	it("removal commits before deleting the old file", async () => {
+		const row = storedApplication();
+		storageDeleteMock.mockImplementation(async () => {
+			expect(row().resumeFileUrl).toBeNull();
+			return true;
+		});
+		await applicationService.removeDocument({ id: "app-1", userId: "user-1", kind: "resume" });
+		expect(row().resumeFileUrl).toBeNull();
+		expect(storageDeleteMock).toHaveBeenCalledExactlyOnceWith("uploads/user-1/pictures/resume.pdf");
 	});
 });
