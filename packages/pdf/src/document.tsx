@@ -60,11 +60,14 @@ export const ResumeDocument = ({
 	const resumeData = useMemo(() => ({ ...data, metadata: { ...data.metadata, typography } }), [data, typography]);
 	const pageSize = getTemplatePageSize(resumeData.metadata.page.format);
 	const pageMinHeightStyle = getTemplatePageMinHeightStyle(resumeData.metadata.page.format);
-	const headerResumeData = renderOptions ? { ...resumeData, renderOptions } : resumeData;
+	const headerResumeData = useMemo(
+		() => (renderOptions ? { ...resumeData, renderOptions } : resumeData),
+		[resumeData, renderOptions],
+	);
 	const stylesheetMode = resolveStylesheetMode(resumeData);
 	const runtime = useMemo(
-		() => semanticRuntime ?? resolveResumeRuntime({ data: resumeData, template, mode: stylesheetMode }),
-		[resumeData, semanticRuntime, stylesheetMode, template],
+		() => semanticRuntime ?? resolveResumeRuntime({ data: headerResumeData, template, mode: stylesheetMode }),
+		[headerResumeData, semanticRuntime, stylesheetMode, template],
 	);
 	const semanticMode = semanticRuntime ? "semantic" : stylesheetMode;
 
