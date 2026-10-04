@@ -12,10 +12,14 @@ beforeEach(() => {
 		"AI_MODEL",
 		"AI_API_KEY",
 		"AI_BASE_URL",
+		"REDIS_URL",
 	])
 		vi.stubEnv(name, undefined);
 });
-afterEach(() => vi.unstubAllEnvs());
+afterEach(() => {
+	vi.unstubAllEnvs();
+	vi.restoreAllMocks();
+});
 
 describe("server web access configuration", () => {
 	it.each([
@@ -38,5 +42,33 @@ describe("server web access configuration", () => {
 		vi.stubEnv("WEB_ACCESS_PROVIDER", "firecrawl");
 		vi.stubEnv("WEB_ACCESS_API_URL", "http://firecrawl:3002");
 		expect((await import("./server")).env.WEB_ACCESS_API_KEY).toBeUndefined();
+	});
+});
+
+describe("redis url userinfo", () => {
+	it.each([
+		"redis://localhost:6379",
+		"rediss://localhost:6379/0",
+		"redis://:password@localhost:6379",
+		"redis://default:password@localhost:6379/0",
+		"redis://acl-user:password@localhost:6379",
+	])("accepts %s", async (url) => {
+		vi.stubEnv("REDIS_URL", url);
+		expect((await import("./server")).env.REDIS_URL).toBe(url);
+	});
+
+	it.each([
+		"redis://password@localhost:6379", // password in the username slot (no colon in userinfo)
+		"redis://user:@localhost:6379", // named user with an explicitly empty password
+	])("rejects %s", async (url) => {
+		vi.stubEnv("REDIS_URL", url);
+		const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
+		expect(consoleError).toHaveBeenCalledWith(
+			expect.any(String),
+			expect.arrayContaining([
+				expect.objectContaining({ message: expect.stringContaining("username but no password") }),
+			]),
+		);
 	});
 });

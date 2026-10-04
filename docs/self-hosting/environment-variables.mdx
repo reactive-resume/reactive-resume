@@ -168,6 +168,11 @@ Redis is optional on a single server. Without it, everything works, with these l
 Set `REDIS_URL` when you run more than one server process, or when you want replies to survive a reload. When Redis is
 configured, the [health endpoint](/self-hosting/docker#check-the-health-endpoint) also checks it.
 
+For password-only authentication (`redis-server --requirepass`), leave the username empty —
+`redis://:<password>@<host>` — or use the built-in ACL user, `redis://default:<password>@<host>`. A named username
+only works when the server has a matching ACL user; otherwise Redis replies `WRONGPASS invalid username-password
+pair`.
+
 Saved AI providers and Assistant conversations are kept in PostgreSQL, so they remain available without Redis.
 
 ## Web access
