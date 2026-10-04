@@ -1,4 +1,19 @@
 {
 	"extends": ["//"],
-	"tags": ["runtime:server", "role:infra"]
+	"tags": ["runtime:server", "role:infra"],
+	"tasks": {
+		"test": {
+			"env": ["$TURBO_EXTENDS$", "COVER_LETTER_TEST_DATABASE_URL"]
+		},
+		"test:coverage": {
+			"env": ["$TURBO_EXTENDS$", "COVER_LETTER_TEST_DATABASE_URL"]
+		},
+		"test:agent": {
+			"env": ["$TURBO_EXTENDS$", "COVER_LETTER_TEST_DATABASE_URL"]
+		},
+		"test:ci": {
+			"cache": false,
+			"env": ["$TURBO_EXTENDS$", "COVER_LETTER_TEST_DATABASE_URL"]
+		}
+	}
 }

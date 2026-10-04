@@ -1,5 +1,4 @@
-import { readFile } from "node:fs/promises";
-import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
+import { execFileSync } from "node:child_process";
 import { expect, test } from "../fixtures/test";
 
 test("browser PDF downloads preserve shaped scripts and report unsupported text", async ({
@@ -35,19 +34,9 @@ test("browser PDF downloads preserve shaped scripts and report unsupported text"
 		expect(await download.failure()).toBeNull();
 		const path = await download.path();
 		if (!path) throw new Error("Browser did not save the PDF");
-		const loading = getDocument({ data: new Uint8Array(await readFile(path)) });
-		try {
-			const pdf = await loading.promise;
-			const content = await (await pdf.getPage(1)).getTextContent();
-			expect(
-				content.items
-					.map((item) => ("str" in item ? item.str : ""))
-					.join("")
-					.replace(/\s+/g, " "),
-			).toContain(text);
-		} finally {
-			await loading.destroy();
-		}
+		// Read logical text, including /ActualText for shaped clusters, from the browser's downloaded file.
+		const extracted = execFileSync("pdftotext", ["-enc", "UTF-8", path, "-"], { encoding: "utf8" });
+		expect(extracted.replace(/[\u202A-\u202E]/g, "").replace(/\s+/g, " ")).toContain(text);
 	}
 	data.summary.content = "<p>Unsupported \u{10FFFF}</p>";
 	expect((await page.request.put(`/api/openapi/resumes/${id}`, { data: { data } })).ok()).toBe(true);

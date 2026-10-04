@@ -4,6 +4,8 @@ Reactive Resume uses Playwright for PR-gated browser coverage of deterministic c
 
 ## Local setup
 
+Install Poppler (`brew install poppler` on macOS or `sudo apt-get install poppler-utils` on Debian/Ubuntu). The browser PDF download test uses `pdftotext` to verify logical Unicode text, including `/ActualText` spans.
+
 Start PostgreSQL:
 
 `sudo docker compose -f compose.dev.yml up -d postgres`

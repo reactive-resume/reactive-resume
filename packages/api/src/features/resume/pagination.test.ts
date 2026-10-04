@@ -6,6 +6,9 @@ vi.mock("@reactive-resume/auth/config", () => ({
 	auth: { api: { getSession: vi.fn().mockResolvedValue({ user: { id: "owner" } }) } },
 	verifyOAuthToken: vi.fn(),
 }));
+vi.mock("@reactive-resume/db/client", () => ({
+	db: { select: () => ({ from: () => ({ where: () => ({ limit: async () => [{ id: "owner", banned: false }] }) }) }) },
+}));
 const { crudRouter } = await import("./crud");
 
 it("paginates the owner's filtered list without changing legacy array responses", async () => {

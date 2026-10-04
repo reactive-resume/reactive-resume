@@ -1,5 +1,6 @@
+import { execFileSync } from "node:child_process";
 import { expect, it } from "vitest";
-import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
+import { act } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { createResumePdfFile } from "../server";
 
@@ -11,19 +12,15 @@ async function exportText(html: string, font = "Noto Sans", locale = "en-US") {
 	data.metadata.layout.pages = [{ fullWidth: true, main: ["summary"], sidebar: [] }];
 	data.metadata.typography.body.fontFamily = font;
 	data.metadata.typography.heading.fontFamily = font;
-	const file = await createResumePdfFile({ data, filename: "text.pdf" });
-	const task = getDocument({ data: new Uint8Array(await file.arrayBuffer()) });
-	const document = await task.promise;
-	try {
-		const pages: string[] = [];
-		for (let page = 1; page <= document.numPages; page++) {
-			const content = await (await document.getPage(page)).getTextContent();
-			pages.push(content.items.map((item) => ("str" in item ? item.str : "")).join(""));
-		}
-		return pages.join("\n").replace(/\s+/g, " ");
-	} finally {
-		await task.destroy();
-	}
+	const file = await act(() => createResumePdfFile({ data, filename: "text.pdf" }));
+	// PDF.js ignores /ActualText and infers separators from glyph positions, which corrupts
+	// shaped clusters and emoji. Poppler reads the PDF's logical text, including these spans.
+	const text = execFileSync("pdftotext", ["-enc", "UTF-8", "-", "-"], {
+		input: Buffer.from(await file.arrayBuffer()),
+		encoding: "utf8",
+	});
+	// Poppler adds directional wrappers and page/line separators; keep source marks and joiners.
+	return text.replace(/[\u202A-\u202E]/g, "").replace(/\s+/g, " ");
 }
 
 it.each([

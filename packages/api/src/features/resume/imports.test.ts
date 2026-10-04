@@ -6,6 +6,9 @@ vi.mock("@reactive-resume/auth/config", () => ({
 	auth: { api: { getSession: vi.fn().mockResolvedValue({ user: { id: "owner" } }) } },
 	verifyOAuthToken: vi.fn(),
 }));
+vi.mock("@reactive-resume/db/client", () => ({
+	db: { select: () => ({ from: () => ({ where: () => ({ limit: async () => [{ id: "owner", banned: false }] }) }) }) },
+}));
 const { importResumeFile } = await import("./imports");
 
 it("imports JSON Resume into the authenticated account and rejects invalid files before writing", async () => {

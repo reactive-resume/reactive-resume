@@ -80,6 +80,9 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install PDF Text Extractor
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+
       - name: Check Package Boundaries
         run: pnpm exec turbo boundaries
 
