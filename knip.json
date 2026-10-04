@@ -1,6 +1,7 @@
 {
 	"$schema": "https://unpkg.com/knip@6/schema.json",
 	"tags": ["-lintignore"],
+	"ignoreBinaries": ["pdftotext"],
 	"workspaces": {
 		"apps/web": {
 			"entry": ["lingui.config.ts", "vitest.config.ts", "src/features/homepage/prerender.tsx"],
@@ -12,7 +13,7 @@
 			}
 		},
 		"apps/server": {
-			"entry": ["vercel.mjs"],
+			"entry": ["vercel.mjs", "src/cloudflare/index.ts", "src/cloudflare/sharp.ts"],
 			"ignoreDependencies": [
 				"@ai-sdk/anthropic",
 				"@ai-sdk/cerebras",
@@ -33,7 +34,6 @@
 				"@better-auth/infra",
 				"@better-auth/passkey",
 				"@bramus/specificity",
-				"@formepdf/core",
 				"@formepdf/react",
 				"@orpc/experimental-ratelimit",
 				"@sindresorhus/slugify",
@@ -68,7 +68,8 @@
 			]
 		},
 		"tooling": {
-			"entry": ["**/*.mjs"]
+			"entry": ["**/*.mjs", "mcp/seed.ts"],
+			"ignoreDependencies": ["@formepdf/core", "@orpc/client", "css-tree"]
 		},
 		"packages/api": {
 			"ignoreDependencies": ["ioredis"]

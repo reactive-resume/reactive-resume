@@ -13,7 +13,7 @@ import { json, withErrorHandling } from "./results";
 export const MCP_ROUTER = { ...router, rest: restAliases };
 
 // Explicit allowlist: adding an API procedure never silently grants MCP access.
-export const PARITY_PROCEDURES = {
+const PARITY_PROCEDURES = {
 	"resume.listVersions": router.resume.listVersions,
 	"resume.getVersion": router.resume.getVersion,
 	"resume.createVersion": router.resume.createVersion,
@@ -86,7 +86,7 @@ export const PARITY_PROCEDURES = {
 	"rest.fileUpload": restAliases.fileUpload,
 } as const;
 
-export function parityToolName(path: string): string {
+function parityToolName(path: string): string {
 	return `api_${path
 		.replaceAll(".", "_")
 		.replace(/([a-z])([A-Z])/g, "$1_$2")
@@ -110,7 +110,7 @@ const readOnlyPosts = new Set([
 const exportPaths = new Set(["rest.documentExports.resume", "rest.documentExports.letter"]);
 
 /** These workflows require browser interaction so secrets and security ceremonies stay with the user. */
-export const BROWSER_HANDOFFS = {
+const BROWSER_HANDOFFS = {
 	"aiProviders.create": "ai",
 	"aiProviders.update": "ai",
 	"webAccess.save": "ai",

@@ -20,7 +20,7 @@ export const fileInputSchema = z.union([
 	}),
 ]);
 
-export const fileOutputSchema = z.object({
+const fileOutputSchema = z.object({
 	url: z.url(),
 	name: z.string(),
 	contentType: z.string(),
