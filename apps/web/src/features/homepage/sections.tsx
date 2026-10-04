@@ -65,9 +65,13 @@ function RollingNumber({ value, roll, delay }: RollingNumberProps) {
 export function Numbers() {
 	const inView = useLanding((state) => state.numbersInView);
 	const { data } = useQuery(orpc.statistics.getTotals.queryOptions({ staleTime: statisticsStaleTime }));
+	const { data: stars } = useQuery(
+		orpc.statistics.github.getStarCount.queryOptions({ staleTime: statisticsStaleTime }),
+	);
 	const rows = [
 		{ label: t`People using it`, detail: t`writing, tailoring and sending`, value: data?.users },
 		{ label: t`Resumes created`, detail: t`and counting`, value: data?.resumes },
+		{ label: t`Stars on GitHub`, detail: t`from developers who back it`, value: stars },
 	];
 
 	return (
