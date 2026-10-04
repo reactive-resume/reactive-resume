@@ -113,7 +113,7 @@ export const GengarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 							partKeys={["featured-summary"]}
 							style={styles.specialContainer}
 						>
-							<Section section={featuredSummarySection} placement="main" showHeading={false} />
+							<Section section={featuredSummarySection} placement="main" />
 						</SemanticRegionTemplatePartView>
 					)}
 
