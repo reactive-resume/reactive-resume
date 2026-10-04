@@ -32,6 +32,8 @@ type SemanticProps = {
 	bindCurrentNode?: boolean | undefined;
 };
 
+type SemanticTextProps = ComponentProps<typeof PdfText> & SemanticProps;
+
 type SemanticLinkProps = SemanticProps & {
 	semanticRole?: string | undefined;
 };
@@ -133,7 +135,7 @@ export const Text = ({
 	bindSemanticNode,
 	bindCurrentNode: _bindCurrentNode,
 	...props
-}: ComponentProps<typeof PdfText> & SemanticProps) => {
+}: SemanticTextProps) => {
 	const textStyle = useTemplateStyle("text");
 	const resolvedNodeKey = usePrimitiveNodeKey({
 		nodeKey,
@@ -216,62 +218,16 @@ export const Link = ({
 	);
 };
 
-export const Small = ({
-	style,
-	nodeKey,
-	semanticField,
-	bindSemanticNode,
-	bindCurrentNode: _bindCurrentNode,
-	...props
-}: ComponentProps<typeof PdfText> & SemanticProps) => {
-	const textStyle = useTemplateStyle("text");
+export const Small = ({ style, ...props }: SemanticTextProps) => {
 	const smallStyle = useTemplateStyle("small");
-	const resolvedNodeKey = usePrimitiveNodeKey({
-		nodeKey,
-		semanticField,
-		bindSemanticNode,
-		children: getChildren(props),
-	});
-	const resolved = useResolvedNode(resolvedNodeKey);
-	const visible = useSemanticNodeVisible(resolvedNodeKey);
-	if (!visible) return null;
 
-	return (
-		<PdfText
-			{...props}
-			{...resolvedPdfTextProps(resolved)}
-			style={composeStyles(textStyle, smallStyle, asStyleInput(style), resolved.style, safeTextStyle)}
-		/>
-	);
+	return <Text {...props} style={composeStyles(smallStyle, asStyleInput(style))} />;
 };
 
-export const Bold = ({
-	style,
-	nodeKey,
-	semanticField,
-	bindSemanticNode,
-	bindCurrentNode: _bindCurrentNode,
-	...props
-}: ComponentProps<typeof PdfText> & SemanticProps) => {
-	const textStyle = useTemplateStyle("text");
+export const Bold = ({ style, ...props }: SemanticTextProps) => {
 	const boldStyle = useTemplateStyle("bold");
-	const resolvedNodeKey = usePrimitiveNodeKey({
-		nodeKey,
-		semanticField,
-		bindSemanticNode,
-		children: getChildren(props),
-	});
-	const resolved = useResolvedNode(resolvedNodeKey);
-	const visible = useSemanticNodeVisible(resolvedNodeKey);
-	if (!visible) return null;
 
-	return (
-		<PdfText
-			{...props}
-			{...resolvedPdfTextProps(resolved)}
-			style={composeStyles(textStyle, boldStyle, asStyleInput(style), resolved.style, safeTextStyle)}
-		/>
-	);
+	return <Text {...props} style={composeStyles(boldStyle, asStyleInput(style))} />;
 };
 
 export const Icon = ({

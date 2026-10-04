@@ -6,6 +6,7 @@ import type {
 	SectionType,
 } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
+import { sectionTypeSchema } from "@reactive-resume/schema/resume/data";
 import { EMPTY_RESUME_DATES } from "@reactive-resume/schema/resume/dates";
 import { generateId, stripHtml } from "@reactive-resume/utils/string";
 
@@ -17,20 +18,9 @@ export type Entry = CustomSectionItem;
 /** A section of the outline: the summary, a built-in section (keyed by type) or a custom section (by id). */
 export type WriteSection = { id: string; kind: "summary" | "builtin" | "custom"; type: CustomSectionType };
 
-export const BUILTIN_SECTION_TYPES = [
-	"profiles",
-	"experience",
-	"education",
-	"projects",
-	"skills",
-	"languages",
-	"interests",
-	"awards",
-	"certifications",
-	"publications",
-	"volunteer",
-	"references",
-] as const satisfies readonly SectionType[];
+export const BUILTIN_SECTION_TYPES: readonly SectionType[] = sectionTypeSchema.options.filter(
+	(type) => type !== "summary" && type !== "cover-letter",
+);
 
 export const CUSTOM_SECTION_TYPES = [
 	"experience",

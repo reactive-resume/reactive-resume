@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
-import { afterEach, vi } from "vitest";
+import { afterEach } from "vitest";
 
 // Several units under test transitively import the validated server env, which throws at import
 // time when a required variable is missing. Tests are expected to run without a .env, so seed the
@@ -21,46 +21,3 @@ afterEach(() => {
 // logs "The current testing environment is not configured to support act(...)" on every
 // `act()` call, so set it here instead.
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
-
-// jsdom polyfills for browser APIs that some libraries (cmdk, base-ui)
-// rely on but jsdom does not implement.
-if (typeof globalThis.ResizeObserver === "undefined") {
-	globalThis.ResizeObserver = class ResizeObserver {
-		observe() {}
-		unobserve() {}
-		disconnect() {}
-	} as unknown as typeof ResizeObserver;
-}
-
-if (typeof globalThis.IntersectionObserver === "undefined") {
-	globalThis.IntersectionObserver = class IntersectionObserver {
-		root = null;
-		rootMargin = "";
-		thresholds: ReadonlyArray<number> = [];
-		observe() {}
-		unobserve() {}
-		disconnect() {}
-		takeRecords() {
-			return [];
-		}
-	} as unknown as typeof IntersectionObserver;
-}
-
-// scrollIntoView is used by cmdk and other libs; jsdom does not implement it.
-if (typeof Element !== "undefined" && !Element.prototype.scrollIntoView) {
-	Element.prototype.scrollIntoView = function scrollIntoView() {};
-}
-
-// matchMedia is used by next-themes and other UI libs; jsdom does not provide it.
-if (typeof window !== "undefined" && !window.matchMedia) {
-	window.matchMedia = vi.fn().mockImplementation((query: string) => ({
-		matches: false,
-		media: query,
-		onchange: null,
-		addEventListener: () => {},
-		removeEventListener: () => {},
-		addListener: () => {},
-		removeListener: () => {},
-		dispatchEvent: () => false,
-	}));
-}

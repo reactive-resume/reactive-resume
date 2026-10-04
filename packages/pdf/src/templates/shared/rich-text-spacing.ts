@@ -1,18 +1,9 @@
 import type { Style } from "../../forme/style-types";
 import type { StyleInput } from "./styles";
+import type { HTMLElement, Node } from "node-html-parser";
 import { NodeType } from "node-html-parser";
 import { parseFiniteNumber, parsePxValue, parseStyleFontSize } from "./icon-size";
 import { composeStyles } from "./styles";
-
-type RichTextSpacingElement = {
-	nodeType: number;
-	tag?: string;
-	localName?: string;
-	rawTagName?: string;
-	tagName?: string;
-	parentNode?: RichTextSpacingElement | null;
-	childNodes?: unknown[];
-};
 
 type RichTextProseSpacing = {
 	paragraph: Style;
@@ -31,37 +22,15 @@ const parseLineHeight = (
 	return undefined;
 };
 
-const isElementNode = (node: unknown): node is RichTextSpacingElement =>
-	typeof node === "object" && node !== null && "nodeType" in node && node.nodeType === NodeType.ELEMENT_NODE;
+const isElementNode = (node: Node): node is HTMLElement => node.nodeType === NodeType.ELEMENT_NODE;
 
-const readTagName = (
-	element: RichTextSpacingElement,
-	key: "tag" | "localName" | "rawTagName" | "tagName",
-): string | undefined => {
-	try {
-		const tagName = element[key];
-
-		return typeof tagName === "string" ? tagName : undefined;
-	} catch {
-		return undefined;
-	}
-};
-
-const normalizeTagName = (element: RichTextSpacingElement): string | undefined =>
-	(
-		readTagName(element, "tag") ??
-		readTagName(element, "localName") ??
-		readTagName(element, "rawTagName") ??
-		readTagName(element, "tagName")
-	)?.toLowerCase();
-
-const isRichTextTag = (element: RichTextSpacingElement, ...tagNames: string[]): boolean => {
-	const normalizedTagName = normalizeTagName(element);
+const isRichTextTag = (element: HTMLElement, ...tagNames: string[]): boolean => {
+	const normalizedTagName = element.rawTagName?.toLowerCase();
 
 	return normalizedTagName !== undefined && tagNames.includes(normalizedTagName);
 };
 
-const getRootElement = (element: RichTextSpacingElement): RichTextSpacingElement => {
+const getRootElement = (element: HTMLElement): HTMLElement => {
 	let root = element;
 
 	while (root.parentNode) {
@@ -71,10 +40,10 @@ const getRootElement = (element: RichTextSpacingElement): RichTextSpacingElement
 	return root;
 };
 
-const getTopLevelFlowElements = (root: RichTextSpacingElement): RichTextSpacingElement[] => {
-	const flowElements: RichTextSpacingElement[] = [];
+const getTopLevelFlowElements = (root: HTMLElement): HTMLElement[] => {
+	const flowElements: HTMLElement[] = [];
 
-	for (const childNode of root.childNodes ?? []) {
+	for (const childNode of root.childNodes) {
 		if (!isElementNode(childNode)) continue;
 		const child = childNode;
 
@@ -85,7 +54,7 @@ const getTopLevelFlowElements = (root: RichTextSpacingElement): RichTextSpacingE
 
 		if (!isRichTextTag(child, "ul", "ol")) continue;
 
-		for (const listChildNode of child.childNodes ?? []) {
+		for (const listChildNode of child.childNodes) {
 			if (isElementNode(listChildNode) && isRichTextTag(listChildNode, "li")) {
 				flowElements.push(listChildNode);
 			}
@@ -129,7 +98,7 @@ export const resolveRichTextBodyLineHeight = (...styles: StyleInput[]): number |
 	return bodyLineHeight.type === "multiplier" ? bodyFontSize * bodyLineHeight.value : bodyLineHeight.value;
 };
 
-export const getRichTextEdgeTrimStyle = (element: RichTextSpacingElement): Style => {
+export const getRichTextEdgeTrimStyle = (element: HTMLElement): Style => {
 	const flowElements = getTopLevelFlowElements(getRootElement(element));
 	const flowIndex = flowElements.indexOf(element);
 
@@ -141,7 +110,7 @@ export const getRichTextEdgeTrimStyle = (element: RichTextSpacingElement): Style
 	};
 };
 
-export const isRichTextElementInsideListItem = (element: RichTextSpacingElement): boolean => {
+export const isRichTextElementInsideListItem = (element: HTMLElement): boolean => {
 	let current = element.parentNode;
 
 	while (current) {
@@ -152,7 +121,7 @@ export const isRichTextElementInsideListItem = (element: RichTextSpacingElement)
 	return false;
 };
 
-export const isRichTextElementInsideOrderedList = (element: RichTextSpacingElement): boolean => {
+export const isRichTextElementInsideOrderedList = (element: HTMLElement): boolean => {
 	let current = element.parentNode;
 
 	while (current) {

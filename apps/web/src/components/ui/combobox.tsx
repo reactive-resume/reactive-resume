@@ -206,7 +206,6 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 
 			<ComboboxContent aria-label={placeholder ?? t`Options`}>
 				<ComboboxInput
-					showTrigger={false}
 					placeholder={placeholder ?? t`Search...`}
 					render={<Input disabled={disabled} className="border-none focus-visible:border-none focus-visible:ring-0" />}
 				/>

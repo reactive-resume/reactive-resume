@@ -1,13 +1,7 @@
-import type * as React from "react";
 import { Combobox as ComboboxPrimitive } from "@base-ui/react";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupButton,
-	InputGroupInput,
-} from "@reactive-resume/ui/components/input-group";
-import { menuSeparatorClassName, popupSlideClassName } from "@reactive-resume/ui/components/menu-styles";
+import { InputGroup, InputGroupButton, InputGroupInput } from "@reactive-resume/ui/components/input-group";
+import { popupSlideClassName } from "@reactive-resume/ui/components/menu-styles";
 import { cn } from "@reactive-resume/utils/style";
 
 const ComboboxRoot = ComboboxPrimitive.Root;
@@ -44,35 +38,10 @@ function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
 	);
 }
 
-function ComboboxInput({
-	className,
-	children,
-	disabled = false,
-	showTrigger = true,
-	showClear = false,
-	...props
-}: ComboboxPrimitive.Input.Props & {
-	showTrigger?: boolean;
-	showClear?: boolean;
-}) {
+function ComboboxInput({ className, children, disabled = false, ...props }: ComboboxPrimitive.Input.Props) {
 	return (
 		<InputGroup className={cn("w-auto", className)}>
 			<ComboboxPrimitive.Input render={<InputGroupInput disabled={disabled} />} {...props} />
-			{(showTrigger || showClear) && (
-				<InputGroupAddon align="inline-end">
-					{showTrigger && (
-						<InputGroupButton
-							size="icon-xs"
-							variant="ghost"
-							render={<ComboboxTrigger />}
-							data-slot="input-group-button"
-							className="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
-							disabled={disabled}
-						/>
-					)}
-					{showClear && <ComboboxClear disabled={disabled} />}
-				</InputGroupAddon>
-			)}
 			{children}
 		</InputGroup>
 	);
@@ -159,45 +128,7 @@ function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
 	);
 }
 
-function ComboboxSeparator({ className, ...props }: ComboboxPrimitive.Separator.Props) {
-	return (
-		<ComboboxPrimitive.Separator
-			data-slot="combobox-separator"
-			className={cn(menuSeparatorClassName, className)}
-			{...props}
-		/>
-	);
-}
-
-function ComboboxChips({
-	className,
-	...props
-}: React.ComponentPropsWithRef<typeof ComboboxPrimitive.Chips> & ComboboxPrimitive.Chips.Props) {
-	return (
-		<ComboboxPrimitive.Chips
-			data-slot="combobox-chips"
-			className={cn(
-				"flex min-h-9 flex-wrap items-center gap-1 rounded-md border border-line-2 bg-raised px-2.5 py-1 text-sm text-ink transition-[border-color,box-shadow] duration-quick focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-soft)] has-aria-invalid:border-danger has-data-[slot=combobox-chip]:px-1",
-				className,
-			)}
-			{...props}
-		/>
-	);
-}
-
-function ComboboxChipsInput({ className, ...props }: ComboboxPrimitive.Input.Props) {
-	return (
-		<ComboboxPrimitive.Input
-			data-slot="combobox-chip-input"
-			className={cn("min-w-16 flex-1 outline-none", className)}
-			{...props}
-		/>
-	);
-}
-
 export {
-	ComboboxChips,
-	ComboboxChipsInput,
 	ComboboxClear,
 	ComboboxContent,
 	ComboboxEmpty,
@@ -205,7 +136,6 @@ export {
 	ComboboxItem,
 	ComboboxList,
 	ComboboxRoot,
-	ComboboxSeparator,
 	ComboboxTrigger,
 	ComboboxValue,
 	useFilter,
