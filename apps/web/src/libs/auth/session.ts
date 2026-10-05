@@ -5,6 +5,12 @@ import { authClient } from "./client";
 
 export const getSession = async (): Promise<AuthSession | null> => {
 	const { data, error } = await authClient.getSession();
-	if (error) return null;
-	return data as AuthSession;
+	if (error) {
+		// HTTP 401 explicitly denotes an unauthenticated state or expired session.
+		if (error.status === 401) return null;
+		// For transient errors (e.g. 429 Too Many Requests, 5xx server/DB errors, network drops),
+		// throw so callers can differentiate between unauthenticated and transient failures.
+		throw new Error(error.message || `Session check failed with status ${error.status}`);
+	}
+	return (data as AuthSession) ?? null;
 };

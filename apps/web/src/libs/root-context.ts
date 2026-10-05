@@ -1,3 +1,4 @@
+import type { AuthSession } from "@reactive-resume/auth/types";
 import type { QueryClient } from "@tanstack/react-query";
 import { getSession } from "./auth/session";
 import { getLocale, loadLocale } from "./locale";
@@ -15,12 +16,23 @@ export async function loadRootContext(queryClient: QueryClient) {
 	const theme = getTheme();
 	const locale = getLocale();
 
-	const [session, flags] = await Promise.all([
-		queryClient.query({
+	const sessionPromise = queryClient
+		.query({
 			queryKey: sessionQueryKey,
 			queryFn: getSession,
 			staleTime: (query) => (query.state.data ? 60_000 : 0),
-		}),
+		})
+		.catch((error: unknown) => {
+			const cached = queryClient.getQueryData<AuthSession | null>(sessionQueryKey);
+			if (cached) {
+				console.warn("[session] Failed to refresh session, retaining cached session:", error);
+				return cached;
+			}
+			throw error;
+		});
+
+	const [session, flags] = await Promise.all([
+		sessionPromise,
 		queryClient.query({ queryKey: flagsQueryKey, queryFn: () => client.flags.get(), staleTime: 5 * 60_000 }),
 		loadLocale(locale),
 	]);

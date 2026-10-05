@@ -18,7 +18,12 @@ export const getQueryClient = () => {
 		mutationCache: new MutationCache({
 			onSettled: (_1, _2, _3, _4, _5, context) => {
 				if (context?.meta?.noInvalidate) return;
-				void queryClient.invalidateQueries();
+				void queryClient.invalidateQueries({
+					predicate: (query) => {
+						const key = query.queryKey[0];
+						return key !== "auth" && key !== "flags";
+					},
+				});
 			},
 		}),
 	});
