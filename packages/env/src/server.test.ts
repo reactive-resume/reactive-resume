@@ -58,8 +58,14 @@ describe("redis url userinfo", () => {
 	});
 
 	it.each([
-		"redis://password@localhost:6379", // password in the username slot (no colon in userinfo)
-		"redis://user:@localhost:6379", // named user with an explicitly empty password
+		"redis://acl-user:@localhost:6379", // named ACL user with an empty password (nopass) — AUTH <user> "" is valid
+	])("accepts %s", async (url) => {
+		vi.stubEnv("REDIS_URL", url);
+		expect((await import("./server")).env.REDIS_URL).toBe(url);
+	});
+
+	it.each([
+		"redis://password@localhost:6379", // password in the username slot (userinfo with no colon)
 	])("rejects %s", async (url) => {
 		vi.stubEnv("REDIS_URL", url);
 		const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -67,8 +73,18 @@ describe("redis url userinfo", () => {
 		expect(consoleError).toHaveBeenCalledWith(
 			expect.any(String),
 			expect.arrayContaining([
-				expect.objectContaining({ message: expect.stringContaining("username but no password") }),
+				expect.objectContaining({ message: expect.stringContaining("userinfo has no password field") }),
 			]),
+		);
+	});
+
+	it("rejects a malformed URL as a normal validation failure, not a parse crash", async () => {
+		vi.stubEnv("REDIS_URL", "not a url");
+		const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+		await expect(import("./server")).rejects.toThrow("Invalid environment variables");
+		expect(consoleError).toHaveBeenCalledWith(
+			expect.any(String),
+			expect.arrayContaining([expect.objectContaining({ code: "invalid_format", format: "url" })]),
 		);
 	});
 });

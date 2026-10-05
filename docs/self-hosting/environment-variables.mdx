@@ -171,7 +171,7 @@ configured, the [health endpoint](/self-hosting/docker#check-the-health-endpoint
 For password-only authentication (`redis-server --requirepass`), leave the username empty —
 `redis://:<password>@<host>` — or use the built-in ACL user, `redis://default:<password>@<host>`. A named username
 only works when the server has a matching ACL user; otherwise Redis replies `WRONGPASS invalid username-password
-pair`.
+pair`. Passwordless (`nopass`) ACL users keep an explicitly empty password: `redis://<user>:@<host>`.
 
 Saved AI providers and Assistant conversations are kept in PostgreSQL, so they remain available without Redis.
 
