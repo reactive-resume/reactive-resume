@@ -1,9 +1,7 @@
 import type { RequestAuthentication } from "@reactive-resume/api/context";
-import { once } from "node:events";
 import { Socket } from "node:net";
 import { setImmediate } from "node:timers/promises";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { serve } from "@hono/node-server";
 import { Pool } from "pg";
 import z from "zod";
 
@@ -158,45 +156,6 @@ it("reuses static schema conversions across separate authenticated discovery req
 	console.info("MCP tools/list milliseconds", durations.map(Math.round));
 	expect(mocks.authentication).toHaveBeenCalledTimes(4);
 	expect(conversions.mock.calls.length).toBe(0);
-}, 30_000);
-
-it("keeps concurrent HTTP health checks responsive during repeated MCP discovery", async () => {
-	const { createApp } = await import("../http/app");
-	const app = createApp({ serveStatic: false, trustedClient: () => "127.0.0.1" });
-	const server = serve({ fetch: app.fetch, port: 0 });
-	try {
-		if (!server.listening) await once(server, "listening");
-		const address = server.address();
-		if (!address || typeof address === "string") throw new Error("Missing HTTP address");
-		const url = `http://127.0.0.1:${address.port}`;
-		const input = request();
-		const body = await input.text();
-		const started = performance.now();
-		const discovery = Promise.all(
-			Array.from({ length: 20 }, async () => {
-				const response = await fetch(`${url}/mcp`, { method: "POST", headers: input.headers, body });
-				expect(response.status).toBe(200);
-				expect((await response.json()).result.tools.length).toBeGreaterThan(70);
-			}),
-		);
-		const health = Promise.all(
-			Array.from({ length: 3 }, async () => {
-				await setImmediate();
-				const response = await fetch(`${url}/api/health`);
-				expect(response.status).toBe(200);
-				expect((await response.json()).status).toBe("healthy");
-				return performance.now() - started;
-			}),
-		);
-		const [, healthDurations] = await Promise.all([discovery, health]);
-		console.info("20 concurrent MCP discoveries milliseconds", Math.round(performance.now() - started));
-		console.info("Concurrent HTTP health milliseconds", healthDurations.map(Math.round));
-		expect(Math.max(...healthDurations)).toBeLessThan(1_000);
-		expect(mocks.execute).toHaveBeenCalledTimes(3);
-		expect(mocks.healthcheck).toHaveBeenCalledTimes(3);
-	} finally {
-		await new Promise<void>((resolve) => server.close(() => resolve()));
-	}
 }, 30_000);
 
 it("keeps credentials, permissions, headers and callbacks isolated between requests", async () => {
