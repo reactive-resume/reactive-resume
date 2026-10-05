@@ -239,6 +239,7 @@ describe("builder resume autosave", () => {
 	afterEach(() => {
 		vi.clearAllTimers();
 		vi.useRealTimers();
+		vi.unstubAllGlobals();
 		useResumeStore.getState().reset();
 	});
 
@@ -262,11 +263,13 @@ describe("builder resume autosave", () => {
 		hook.unmount();
 	});
 
-	it("coalesces rapid local edits into one full-data update", async () => {
+	it("initializes and autosaves rapid edits without crypto.randomUUID (HTTP LAN origins)", async () => {
+		vi.stubGlobal("crypto", { getRandomValues: crypto.getRandomValues.bind(crypto) });
 		const initial = makeResume("resume-rapid");
 		const updated = withBasicsName(initial, "Latest Name");
 		orpcMocks.updateResume.mockResolvedValue(updated);
 		useResumeStore.getState().initialize(initial);
+		expect(useResumeStore.getState().isReady).toBe(true);
 
 		useResumeStore.getState().updateResumeData((draft) => {
 			draft.basics.name = "First Name";
@@ -284,6 +287,7 @@ describe("builder resume autosave", () => {
 			expect.objectContaining({ signal: expect.any(AbortSignal) }),
 		);
 		expect(orpcMocks.patchResume).not.toHaveBeenCalled();
+		expect(useResumeStore.getState().saveStatus).toBe("saved");
 	});
 
 	it("saves the latest pending snapshot after an in-flight save resolves", async () => {

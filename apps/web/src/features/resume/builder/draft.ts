@@ -11,6 +11,7 @@ import { immer } from "zustand/middleware/immer";
 import { create } from "zustand/react";
 import { syncResumeDates } from "@reactive-resume/schema/resume/dates";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { generateId } from "@reactive-resume/utils/string";
 import { orpc, streamClient } from "@/libs/orpc/client";
 
 export type Resume = {
@@ -334,7 +335,7 @@ function createRuntime(): Runtime {
 		isSaving: false,
 		saveFailed: false,
 		syncResume,
-		sessionId: crypto.randomUUID(),
+		sessionId: generateId(),
 	};
 
 	runtime.beforeUnloadHandler = () => runtime.syncResume.flush();
