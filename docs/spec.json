@@ -220,7 +220,14 @@
 							}
 						}
 					}
-				}
+				},
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/health\""
+					}
+				]
 			}
 		},
 		"/ai/parse-pdf": {
@@ -4660,6 +4667,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/ai/parse-pdf\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"file\": {\n    \"name\": \"<string>\",\n    \"data\": \"<string>\"\n  }\n}'"
 					}
 				]
 			}
@@ -9110,6 +9124,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/ai/parse-docx\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"file\": {\n    \"name\": \"<string>\",\n    \"data\": \"<string>\"\n  },\n  \"mediaType\": \"application/msword\"\n}'"
+					}
 				]
 			}
 		},
@@ -9410,6 +9431,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/ai/ats-review\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"extractedText\": \"<string>\"\n}'"
+					}
 				]
 			}
 		},
@@ -9657,6 +9685,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/ai/improve\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"line\": \"<string>\",\n  \"action\": \"verb\"\n}'"
 					}
 				]
 			}
@@ -9948,6 +9983,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/ai-providers\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			},
@@ -10361,6 +10403,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/ai-providers\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"label\": \"<string>\",\n  \"provider\": \"openai\",\n  \"model\": \"<string>\",\n  \"apiKey\": \"<string>\"\n}'"
 					}
 				]
 			}
@@ -10844,6 +10893,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PATCH \"https://rxresu.me/api/openapi/ai-providers/<id>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
 				]
 			},
 			"delete": {
@@ -11028,6 +11084,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/ai-providers/<id>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -11521,6 +11584,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/ai-providers/<id>/test\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			}
 		},
@@ -11789,6 +11859,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/agent/threads\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			},
 			"post": {
@@ -12029,6 +12106,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/agent/threads\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}
@@ -12398,6 +12482,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/agent/threads/<id>\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			},
 			"patch": {
@@ -12644,6 +12735,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PATCH \"https://rxresu.me/api/openapi/agent/threads/<id>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"aiProviderId\": \"<string>\"\n}'"
+					}
 				]
 			},
 			"delete": {
@@ -12707,6 +12805,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/agent/threads/<id>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -12911,6 +13016,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/agent/messages/send\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"threadId\": \"<string>\",\n  \"message\": {\n    \"id\": \"<string>\",\n    \"role\": \"system\",\n    \"parts\": [\n      {\n        \"type\": \"<string>\"\n      }\n    ]\n  }\n}'"
+					}
 				]
 			}
 		},
@@ -13021,6 +13133,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/agent/messages/stop\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"threadId\": \"<string>\"\n}'"
 					}
 				]
 			}
@@ -13155,6 +13274,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/agent/messages/resume?threadId=<threadId>\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			}
 		},
@@ -13282,6 +13408,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/agent/messages/edit-status\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"threadId\": \"<string>\",\n  \"messageId\": \"<string>\",\n  \"toolCallId\": \"<string>\",\n  \"edits\": [\n    {\n      \"id\": \"<string>\",\n      \"status\": \"pending\"\n    }\n  ]\n}'"
 					}
 				]
 			}
@@ -13425,6 +13558,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/agent/attachments\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"threadId\": \"<string>\",\n  \"filename\": \"<string>\",\n  \"mediaType\": \"<string>\",\n  \"data\": \"<string>\"\n}'"
+					}
 				]
 			}
 		},
@@ -13490,6 +13630,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/agent/attachments/<id>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -14174,6 +14321,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/applications\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			},
@@ -14889,6 +15043,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"company\": \"<string>\",\n  \"role\": \"<string>\"\n}'"
+					}
 				]
 			},
 			"patch": {
@@ -15015,6 +15176,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PATCH \"https://rxresu.me/api/openapi/applications\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"ids\": [\n    \"<string>\"\n  ]\n}'"
+					}
 				]
 			},
 			"delete": {
@@ -15107,6 +15275,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/applications\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"ids\": [\n    \"<string>\"\n  ]\n}'"
 					}
 				]
 			}
@@ -15722,6 +15897,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/applications/<id>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			},
@@ -16980,6 +17162,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PUT \"https://rxresu.me/api/openapi/applications/<id>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
 				]
 			},
 			"delete": {
@@ -17045,6 +17234,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/applications/<id>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			},
@@ -18303,6 +18499,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PATCH \"https://rxresu.me/api/openapi/applications/<id>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
 				]
 			}
 		},
@@ -18711,6 +18914,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/import\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"items\": [\n    {\n      \"company\": \"<string>\",\n      \"role\": \"<string>\"\n    }\n  ]\n}'"
 					}
 				]
 			}
@@ -19346,7 +19556,14 @@
 							}
 						}
 					}
-				}
+				},
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/<id>/documents/<kind>\" --header \"x-api-key: <api-key>\" --form \"file=@<file>\""
+					}
+				]
 			},
 			"delete": {
 				"operationId": "removeApplicationDocument",
@@ -19969,6 +20186,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/applications/<id>/documents/<kind>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -20606,6 +20830,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/<id>/notes\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"text\": \"<string>\"\n}'"
 					}
 				]
 			}
@@ -21267,6 +21498,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/<id>/interviews\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"kind\": \"screening\",\n  \"at\": \"<string>\"\n}'"
 					}
 				]
 			}
@@ -21930,6 +22168,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PUT \"https://rxresu.me/api/openapi/applications/<id>/interviews/<entryId>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
 				]
 			},
 			"patch": {
@@ -22590,6 +22835,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PATCH \"https://rxresu.me/api/openapi/applications/<id>/interviews/<entryId>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
 				]
 			}
 		},
@@ -23232,6 +23484,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PUT \"https://rxresu.me/api/openapi/applications/<id>/timeline/<entryId>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
 				]
 			},
 			"delete": {
@@ -23851,6 +24110,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/applications/<id>/timeline/<entryId>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			},
@@ -24492,6 +24758,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PATCH \"https://rxresu.me/api/openapi/applications/<id>/timeline/<entryId>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
 				]
 			}
 		},
@@ -24620,6 +24893,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/bulk-update\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"ids\": [\n    \"<string>\"\n  ]\n}'"
+					}
 				]
 			}
 		},
@@ -24714,6 +24994,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/bulk-delete\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"ids\": [\n    \"<string>\"\n  ]\n}'"
 					}
 				]
 			}
@@ -24834,6 +25121,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/applications/stats\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			}
 		},
@@ -24946,6 +25240,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/applications/tags\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -25232,6 +25533,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/ai/search-postings\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"query\": \"<string>\"\n}'"
 					}
 				]
 			}
@@ -25699,6 +26007,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/ai/parse-posting\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"input\": \"<string>\"\n}'"
+					}
 				]
 			}
 		},
@@ -25922,6 +26237,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/ai/autofill\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"jobDescription\": \"<string>\"\n}'"
+					}
 				]
 			}
 		},
@@ -26119,6 +26441,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/<id>/ai/match-score\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -26346,6 +26675,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/<id>/ai/draft-message\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"kind\": \"cover-letter\"\n}'"
+					}
 				]
 			}
 		},
@@ -26551,6 +26887,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/<id>/ai/tailor-resume\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			}
 		},
@@ -26620,7 +26963,14 @@
 						}
 					}
 				},
-				"security": []
+				"security": [],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/auth/providers\""
+					}
+				]
 			}
 		},
 		"/auth/api-keys": {
@@ -26733,6 +27083,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/auth/api-keys\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"name\": \"<string>\",\n  \"expiresIn\": 123,\n  \"access\": \"read\"\n}'"
 					}
 				]
 			}
@@ -32238,6 +32595,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/auth/account/export\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			}
 		},
@@ -32304,6 +32668,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/auth/account\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}
@@ -33066,6 +33437,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/cover-letters\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			},
@@ -33846,6 +34224,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"name\": \"<string>\"\n}'"
+					}
 				]
 			}
 		},
@@ -34547,6 +34932,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/cover-letters/<id>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			},
@@ -35605,6 +35997,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PUT \"https://rxresu.me/api/openapi/cover-letters/<id>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"expectedRevision\": 123\n}'"
+					}
 				]
 			},
 			"delete": {
@@ -35690,6 +36089,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/cover-letters/<id>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"expectedRevision\": 123\n}'"
 					}
 				]
 			},
@@ -36748,6 +37154,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PATCH \"https://rxresu.me/api/openapi/cover-letters/<id>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"expectedRevision\": 123\n}'"
+					}
 				]
 			}
 		},
@@ -37475,6 +37888,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/<id>/refresh-style\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"expectedRevision\": 123,\n  \"resumeId\": \"<string>\"\n}'"
+					}
 				]
 			}
 		},
@@ -38194,6 +38614,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/<id>/duplicate\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
 				]
 			}
 		},
@@ -38844,6 +39271,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/cover-letters/<id>/export\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -40133,6 +40567,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/import\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"document\": {\n    \"name\": \"<string>\",\n    \"recipient\": \"<string>\",\n    \"content\": \"<string>\",\n    \"style\": {\n      \"basics\": {\n        \"name\": \"<string>\",\n        \"headline\": \"<string>\",\n        \"email\": \"<string>\",\n        \"phone\": \"<string>\",\n        \"location\": \"<string>\",\n        \"website\": {\n          \"url\": \"<string>\",\n          \"label\": \"<string>\"\n        },\n        \"customFields\": [\n          {\n            \"id\": \"<string>\",\n            \"icon\": \"<string>\",\n            \"text\": \"<string>\",\n            \"link\": \"<string>\"\n          }\n        ]\n      },\n      \"picture\": {\n        \"hidden\": true,\n        \"fit\": \"cover\",\n        \"url\": \"<string>\",\n        \"size\": 123,\n        \"rotation\": 123,\n        \"aspectRatio\": 123,\n        \"borderRadius\": 123,\n        \"borderColor\": \"<string>\",\n        \"borderWidth\": 123,\n        \"shadowColor\": \"<string>\",\n        \"shadowWidth\": 123\n      },\n      \"metadata\": {\n        \"template\": \"azurill\",\n        \"page\": {\n          \"gapX\": 123,\n          \"gapY\": 123,\n          \"marginX\": 123,\n          \"marginY\": 123,\n          \"format\": \"a4\",\n          \"locale\": \"<string>\",\n          \"hideLinkUnderline\": true,\n          \"hideIcons\": true,\n          \"hideSectionIcons\": true\n        },\n        \"design\": {\n          \"level\": {\n            \"icon\": \"<string>\",\n            \"type\": \"hidden\"\n          },\n          \"colors\": {\n            \"primary\": \"<string>\",\n            \"text\": \"<string>\",\n            \"background\": \"<string>\"\n          }\n        },\n        \"typography\": {\n          \"body\": {\n            \"fontFamily\": \"<string>\",\n            \"fontWeights\": [\n              \"100\"\n            ],\n            \"fontSize\": 123,\n            \"lineHeight\": 123\n          },\n          \"heading\": {\n            \"fontFamily\": \"<string>\",\n            \"fontWeights\": [\n              \"100\"\n            ],\n            \"fontSize\": 123,\n            \"lineHeight\": 123\n          }\n        },\n        \"styleRules\": [\n          \"<string>\"\n        ]\n      },\n      \"sectionId\": \"<string>\",\n      \"itemId\": \"<string>\"\n    },\n    \"format\": \"reactive-resume-cover-letter\",\n    \"version\": 1\n  }\n}'"
+					}
 				]
 			}
 		},
@@ -40294,6 +40735,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/cover-letters/<id>/versions\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			},
 			"post": {
@@ -40425,6 +40873,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/<id>/versions\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"name\": \"<string>\"\n}'"
 					}
 				]
 			}
@@ -41112,6 +41567,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/cover-letters/<id>/versions/<versionId>\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			},
 			"patch": {
@@ -41253,6 +41715,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PATCH \"https://rxresu.me/api/openapi/cover-letters/<id>/versions/<versionId>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"name\": \"<string>\"\n}'"
+					}
 				]
 			},
 			"delete": {
@@ -41327,6 +41796,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/cover-letters/<id>/versions/<versionId>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -42039,6 +42515,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/<id>/versions/<versionId>/restore\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			}
 		},
@@ -42200,6 +42683,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/<id>/draft\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
 				]
 			}
 		},
@@ -42266,6 +42756,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/documents/trash/expired\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}
@@ -42477,6 +42974,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/documents\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			}
 		},
@@ -42557,6 +43061,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/documents/counts\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -42649,6 +43160,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/documents/rename\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"type\": \"resume\",\n  \"id\": \"<string>\",\n  \"name\": \"<string>\"\n}'"
 					}
 				]
 			}
@@ -42746,6 +43264,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/documents/tags\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"type\": \"resume\",\n  \"id\": \"<string>\",\n  \"tags\": [\n    \"<string>\"\n  ]\n}'"
+					}
 				]
 			}
 		},
@@ -42835,6 +43360,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/documents/lock\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"type\": \"resume\",\n  \"id\": \"<string>\",\n  \"isLocked\": true\n}'"
 					}
 				]
 			}
@@ -42935,6 +43467,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/documents/application\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"type\": \"resume\",\n  \"id\": \"<string>\",\n  \"applicationId\": \"<string>\"\n}'"
+					}
 				]
 			}
 		},
@@ -43020,6 +43559,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/documents/trash\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"type\": \"resume\",\n  \"id\": \"<string>\"\n}'"
 					}
 				]
 			}
@@ -43107,6 +43653,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/documents/restore\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"type\": \"resume\",\n  \"id\": \"<string>\"\n}'"
+					}
 				]
 			}
 		},
@@ -43192,6 +43745,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/documents/purge\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"type\": \"resume\",\n  \"id\": \"<string>\"\n}'"
 					}
 				]
 			}
@@ -43289,6 +43849,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/documents/copy-for-job\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"resumeId\": \"<string>\"\n}'"
+					}
 				]
 			}
 		},
@@ -43363,7 +43930,14 @@
 						}
 					}
 				},
-				"security": []
+				"security": [],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/flags\""
+					}
+				]
 			}
 		},
 		"/resumes/tags": {
@@ -43476,6 +44050,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/resumes/tags\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			}
 		},
@@ -43548,7 +44129,14 @@
 						}
 					}
 				},
-				"security": []
+				"security": [],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/<username>/<slug>/statistics/download\""
+					}
+				]
 			}
 		},
 		"/resumes/{id}/statistics": {
@@ -43670,6 +44258,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/resumes/<id>/statistics\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			}
 		},
@@ -43779,6 +44374,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/resumes/<id>/statistics/daily\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -43945,6 +44547,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/resumes/<id>/updates\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -44152,6 +44761,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/resumes\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			},
 			"post": {
@@ -44315,6 +44931,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"name\": \"<string>\",\n  \"tags\": [\n    \"<string>\"\n  ]\n}'"
 					}
 				]
 			}
@@ -48691,6 +49314,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/resumes/<id>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			},
@@ -53217,6 +53847,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PUT \"https://rxresu.me/api/openapi/resumes/<id>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			},
@@ -57891,6 +58528,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PATCH \"https://rxresu.me/api/openapi/resumes/<id>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"operations\": [\n    {\n      \"op\": \"add\",\n      \"path\": \"<string>\"\n    }\n  ]\n}'"
+					}
 				]
 			},
 			"delete": {
@@ -58016,6 +58660,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/resumes/<id>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -62358,7 +63009,14 @@
 						}
 					}
 				},
-				"security": []
+				"security": [],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/resumes/<username>/<slug>\""
+					}
+				]
 			}
 		},
 		"/resumes/{resumeId}/slug-check": {
@@ -62467,6 +63125,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/resumes/<resumeId>/slug-check?slug=<slug>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -62611,6 +63276,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/import\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"data\": {\n    \"picture\": {\n      \"hidden\": true,\n      \"url\": \"<string>\",\n      \"size\": 123,\n      \"rotation\": 123,\n      \"aspectRatio\": 123,\n      \"borderRadius\": 123,\n      \"borderColor\": \"<string>\",\n      \"borderWidth\": 123,\n      \"shadowColor\": \"<string>\",\n      \"shadowWidth\": 123\n    },\n    \"basics\": {\n      \"name\": \"<string>\",\n      \"headline\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone\": \"<string>\",\n      \"location\": \"<string>\",\n      \"website\": {\n        \"url\": \"<string>\",\n        \"label\": \"<string>\"\n      },\n      \"customFields\": [\n        {\n          \"id\": \"<string>\",\n          \"icon\": \"<string>\",\n          \"text\": \"<string>\",\n          \"link\": \"<string>\"\n        }\n      ]\n    },\n    \"summary\": {\n      \"title\": \"<string>\",\n      \"icon\": \"<string>\",\n      \"columns\": 123,\n      \"hidden\": true,\n      \"keepTogether\": true,\n      \"startOnNewPage\": true,\n      \"content\": \"<string>\"\n    },\n    \"sections\": {\n      \"profiles\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"icon\": \"<string>\",\n            \"iconColor\": \"<string>\",\n            \"network\": \"<string>\",\n            \"username\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            }\n          }\n        ]\n      },\n      \"experience\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"company\": \"<string>\",\n            \"position\": \"<string>\",\n            \"location\": \"<string>\",\n            \"period\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"description\": \"<string>\",\n            \"roles\": [\n              {\n                \"id\": \"<string>\",\n                \"position\": \"<string>\",\n                \"period\": \"<string>\",\n                \"description\": \"<string>\"\n              }\n            ]\n          }\n        ]\n      },\n      \"education\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"school\": \"<string>\",\n            \"degree\": \"<string>\",\n            \"area\": \"<string>\",\n            \"grade\": \"<string>\",\n            \"location\": \"<string>\",\n            \"period\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"description\": \"<string>\"\n          }\n        ]\n      },\n      \"projects\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"name\": \"<string>\",\n            \"period\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"description\": \"<string>\"\n          }\n        ]\n      },\n      \"skills\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"icon\": \"<string>\",\n            \"iconColor\": \"<string>\",\n            \"name\": \"<string>\",\n            \"proficiency\": \"<string>\",\n            \"level\": 123,\n            \"keywords\": [\n              \"<string>\"\n            ]\n          }\n        ]\n      },\n      \"languages\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"language\": \"<string>\",\n            \"fluency\": \"<string>\",\n            \"level\": 123\n          }\n        ]\n      },\n      \"interests\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"icon\": \"<string>\",\n            \"iconColor\": \"<string>\",\n            \"name\": \"<string>\",\n            \"keywords\": [\n              \"<string>\"\n            ]\n          }\n        ]\n      },\n      \"awards\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"title\": \"<string>\",\n            \"awarder\": \"<string>\",\n            \"date\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"description\": \"<string>\"\n          }\n        ]\n      },\n      \"certifications\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"title\": \"<string>\",\n            \"issuer\": \"<string>\",\n            \"date\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"description\": \"<string>\"\n          }\n        ]\n      },\n      \"publications\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"title\": \"<string>\",\n            \"publisher\": \"<string>\",\n            \"date\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"description\": \"<string>\"\n          }\n        ]\n      },\n      \"volunteer\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"organization\": \"<string>\",\n            \"location\": \"<string>\",\n            \"period\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"description\": \"<string>\"\n          }\n        ]\n      },\n      \"references\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"name\": \"<string>\",\n            \"position\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"phone\": \"<string>\",\n            \"description\": \"<string>\"\n          }\n        ]\n      }\n    },\n    \"customSections\": [\n      {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"id\": \"<string>\",\n        \"type\": \"cover-letter\",\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"recipient\": \"<string>\",\n            \"content\": \"<string>\"\n          }\n        ]\n      }\n    ],\n    \"metadata\": {\n      \"template\": \"azurill\",\n      \"layout\": {\n        \"sidebarWidth\": 123,\n        \"pages\": [\n          {\n            \"fullWidth\": true,\n            \"main\": [\n              \"<string>\"\n            ],\n            \"sidebar\": [\n              \"<string>\"\n            ]\n          }\n        ]\n      },\n      \"page\": {\n        \"gapX\": 123,\n        \"gapY\": 123,\n        \"marginX\": 123,\n        \"marginY\": 123,\n        \"format\": \"a4\",\n        \"locale\": \"<string>\",\n        \"hideLinkUnderline\": true,\n        \"hideIcons\": true,\n        \"hideSectionIcons\": true\n      },\n      \"design\": {\n        \"level\": {\n          \"icon\": \"<string>\",\n          \"type\": \"hidden\"\n        },\n        \"colors\": {\n          \"primary\": \"<string>\",\n          \"text\": \"<string>\",\n          \"background\": \"<string>\"\n        }\n      },\n      \"typography\": {\n        \"body\": {\n          \"fontFamily\": \"<string>\",\n          \"fontWeights\": [\n            \"100\"\n          ],\n          \"fontSize\": 123,\n          \"lineHeight\": 123\n        },\n        \"heading\": {\n          \"fontFamily\": \"<string>\",\n          \"fontWeights\": [\n            \"100\"\n          ],\n          \"fontSize\": 123,\n          \"lineHeight\": 123\n        }\n      },\n      \"notes\": \"<string>\",\n      \"styleRules\": [\n        \"<string>\"\n      ]\n    }\n  }\n}'"
+					}
 				]
 			}
 		},
@@ -62698,6 +63370,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/<id>/lock\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"isLocked\": true\n}'"
+					}
 				]
 			},
 			"put": {
@@ -62782,6 +63461,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PUT \"https://rxresu.me/api/openapi/resumes/<id>/lock\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"isLocked\": true\n}'"
 					}
 				]
 			}
@@ -62871,6 +63557,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PUT \"https://rxresu.me/api/openapi/resumes/<id>/password\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"password\": \"<string>\"\n}'"
+					}
 				]
 			},
 			"delete": {
@@ -62936,6 +63629,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/resumes/<id>/password\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -63034,7 +63734,14 @@
 						}
 					}
 				},
-				"security": []
+				"security": [],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/<username>/<slug>/password/verify\" --header \"Content-Type: application/json\" --data '{\n  \"password\": \"<string>\"\n}'"
+					}
+				]
 			}
 		},
 		"/resumes/{id}/duplicate": {
@@ -63138,6 +63845,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/<id>/duplicate\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}
@@ -63304,6 +64018,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/resumes/<resumeId>/versions\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			},
 			"post": {
@@ -63440,6 +64161,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/<resumeId>/versions\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"name\": \"<string>\"\n}'"
 					}
 				]
 			}
@@ -67795,6 +68523,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/resumes/<resumeId>/versions/<versionId>\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			},
 			"patch": {
@@ -67941,6 +68676,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PATCH \"https://rxresu.me/api/openapi/resumes/<resumeId>/versions/<versionId>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"name\": \"<string>\"\n}'"
+					}
 				]
 			},
 			"delete": {
@@ -68015,6 +68757,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/resumes/<resumeId>/versions/<versionId>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -72389,6 +73138,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/<resumeId>/versions/<versionId>/restore\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			}
 		},
@@ -72483,6 +73239,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/resumes/<id>/pdf\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			}
 		},
@@ -72561,7 +73324,14 @@
 						}
 					}
 				},
-				"security": []
+				"security": [],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/statistics\""
+					}
+				]
 			}
 		},
 		"/statistics/github/stars": {
@@ -72617,7 +73387,14 @@
 						}
 					}
 				},
-				"security": []
+				"security": [],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/statistics/github/stars\""
+					}
+				]
 			}
 		},
 		"/integrations/web-access": {
@@ -72724,6 +73501,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/integrations/web-access\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			},
@@ -72928,6 +73712,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PUT \"https://rxresu.me/api/openapi/integrations/web-access\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"provider\": \"firecrawl\",\n  \"apiKey\": \"<string>\"\n}'"
+					}
 				]
 			},
 			"delete": {
@@ -73111,6 +73902,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/integrations/web-access\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}
@@ -73339,6 +74137,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/integrations/web-access/test\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
 				]
 			}
 		},
@@ -73435,6 +74240,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/resumes/<id>/exports/<format>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -73569,6 +74381,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/cover-letters/<id>/exports/<format>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -73855,6 +74674,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/resumes/<id>/checks\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -74873,7 +75699,14 @@
 						}
 					}
 				},
-				"security": []
+				"security": [],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/pdf-checks\" --form \"file=@<file>\""
+					}
+				]
 			}
 		},
 		"/resumes/{id}/job-matches": {
@@ -75038,6 +75871,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/<id>/job-matches\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"jobDescription\": \"<string>\"\n}'"
+					}
 				]
 			}
 		},
@@ -75132,6 +75972,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/file-imports\" --header \"x-api-key: <api-key>\" --form \"file=@<file>\" --form \"format=REACTIVE_RESUME\""
 					}
 				]
 			}
@@ -79661,6 +80508,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PATCH \"https://rxresu.me/api/openapi/resumes/<id>/metadata\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
 				]
 			}
 		},
@@ -79765,6 +80619,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/<id>/copies\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}
@@ -79908,6 +80769,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/imports\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"data\": {\n    \"picture\": {\n      \"hidden\": true,\n      \"url\": \"<string>\",\n      \"size\": 123,\n      \"rotation\": 123,\n      \"aspectRatio\": 123,\n      \"borderRadius\": 123,\n      \"borderColor\": \"<string>\",\n      \"borderWidth\": 123,\n      \"shadowColor\": \"<string>\",\n      \"shadowWidth\": 123\n    },\n    \"basics\": {\n      \"name\": \"<string>\",\n      \"headline\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone\": \"<string>\",\n      \"location\": \"<string>\",\n      \"website\": {\n        \"url\": \"<string>\",\n        \"label\": \"<string>\"\n      },\n      \"customFields\": [\n        {\n          \"id\": \"<string>\",\n          \"icon\": \"<string>\",\n          \"text\": \"<string>\",\n          \"link\": \"<string>\"\n        }\n      ]\n    },\n    \"summary\": {\n      \"title\": \"<string>\",\n      \"icon\": \"<string>\",\n      \"columns\": 123,\n      \"hidden\": true,\n      \"keepTogether\": true,\n      \"startOnNewPage\": true,\n      \"content\": \"<string>\"\n    },\n    \"sections\": {\n      \"profiles\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"icon\": \"<string>\",\n            \"iconColor\": \"<string>\",\n            \"network\": \"<string>\",\n            \"username\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            }\n          }\n        ]\n      },\n      \"experience\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"company\": \"<string>\",\n            \"position\": \"<string>\",\n            \"location\": \"<string>\",\n            \"period\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"description\": \"<string>\",\n            \"roles\": [\n              {\n                \"id\": \"<string>\",\n                \"position\": \"<string>\",\n                \"period\": \"<string>\",\n                \"description\": \"<string>\"\n              }\n            ]\n          }\n        ]\n      },\n      \"education\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"school\": \"<string>\",\n            \"degree\": \"<string>\",\n            \"area\": \"<string>\",\n            \"grade\": \"<string>\",\n            \"location\": \"<string>\",\n            \"period\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"description\": \"<string>\"\n          }\n        ]\n      },\n      \"projects\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"name\": \"<string>\",\n            \"period\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"description\": \"<string>\"\n          }\n        ]\n      },\n      \"skills\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"icon\": \"<string>\",\n            \"iconColor\": \"<string>\",\n            \"name\": \"<string>\",\n            \"proficiency\": \"<string>\",\n            \"level\": 123,\n            \"keywords\": [\n              \"<string>\"\n            ]\n          }\n        ]\n      },\n      \"languages\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"language\": \"<string>\",\n            \"fluency\": \"<string>\",\n            \"level\": 123\n          }\n        ]\n      },\n      \"interests\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"icon\": \"<string>\",\n            \"iconColor\": \"<string>\",\n            \"name\": \"<string>\",\n            \"keywords\": [\n              \"<string>\"\n            ]\n          }\n        ]\n      },\n      \"awards\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"title\": \"<string>\",\n            \"awarder\": \"<string>\",\n            \"date\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"description\": \"<string>\"\n          }\n        ]\n      },\n      \"certifications\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"title\": \"<string>\",\n            \"issuer\": \"<string>\",\n            \"date\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"description\": \"<string>\"\n          }\n        ]\n      },\n      \"publications\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"title\": \"<string>\",\n            \"publisher\": \"<string>\",\n            \"date\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"description\": \"<string>\"\n          }\n        ]\n      },\n      \"volunteer\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"organization\": \"<string>\",\n            \"location\": \"<string>\",\n            \"period\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"description\": \"<string>\"\n          }\n        ]\n      },\n      \"references\": {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"name\": \"<string>\",\n            \"position\": \"<string>\",\n            \"website\": {\n              \"url\": \"<string>\",\n              \"label\": \"<string>\",\n              \"inlineLink\": true\n            },\n            \"phone\": \"<string>\",\n            \"description\": \"<string>\"\n          }\n        ]\n      }\n    },\n    \"customSections\": [\n      {\n        \"title\": \"<string>\",\n        \"icon\": \"<string>\",\n        \"columns\": 123,\n        \"hidden\": true,\n        \"keepTogether\": true,\n        \"startOnNewPage\": true,\n        \"id\": \"<string>\",\n        \"type\": \"cover-letter\",\n        \"items\": [\n          {\n            \"id\": \"<string>\",\n            \"hidden\": true,\n            \"recipient\": \"<string>\",\n            \"content\": \"<string>\"\n          }\n        ]\n      }\n    ],\n    \"metadata\": {\n      \"template\": \"azurill\",\n      \"layout\": {\n        \"sidebarWidth\": 123,\n        \"pages\": [\n          {\n            \"fullWidth\": true,\n            \"main\": [\n              \"<string>\"\n            ],\n            \"sidebar\": [\n              \"<string>\"\n            ]\n          }\n        ]\n      },\n      \"page\": {\n        \"gapX\": 123,\n        \"gapY\": 123,\n        \"marginX\": 123,\n        \"marginY\": 123,\n        \"format\": \"a4\",\n        \"locale\": \"<string>\",\n        \"hideLinkUnderline\": true,\n        \"hideIcons\": true,\n        \"hideSectionIcons\": true\n      },\n      \"design\": {\n        \"level\": {\n          \"icon\": \"<string>\",\n          \"type\": \"hidden\"\n        },\n        \"colors\": {\n          \"primary\": \"<string>\",\n          \"text\": \"<string>\",\n          \"background\": \"<string>\"\n        }\n      },\n      \"typography\": {\n        \"body\": {\n          \"fontFamily\": \"<string>\",\n          \"fontWeights\": [\n            \"100\"\n          ],\n          \"fontSize\": 123,\n          \"lineHeight\": 123\n        },\n        \"heading\": {\n          \"fontFamily\": \"<string>\",\n          \"fontWeights\": [\n            \"100\"\n          ],\n          \"fontSize\": 123,\n          \"lineHeight\": 123\n        }\n      },\n      \"notes\": \"<string>\",\n      \"styleRules\": [\n        \"<string>\"\n      ]\n    }\n  }\n}'"
 					}
 				]
 			}
@@ -84282,6 +85150,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/<resumeId>/versions/<versionId>/restorations\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			}
 		},
@@ -84379,7 +85254,14 @@
 						}
 					}
 				},
-				"security": []
+				"security": [],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/<username>/<slug>/password-verifications\" --header \"Content-Type: application/json\" --data '{\n  \"password\": \"<string>\"\n}'"
+					}
+				]
 			}
 		},
 		"/resumes/{resumeId}/slug-availability": {
@@ -84489,6 +85371,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/resumes/<resumeId>/slug-availability?slug=<slug>\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			}
 		},
@@ -84561,7 +85450,14 @@
 						}
 					}
 				},
-				"security": []
+				"security": [],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/<username>/<slug>/statistics/downloads\""
+					}
+				]
 			}
 		},
 		"/cover-letters/{id}/copies": {
@@ -85279,6 +86175,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/<id>/copies\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}
@@ -86568,6 +87471,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/imports\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"document\": {\n    \"name\": \"<string>\",\n    \"recipient\": \"<string>\",\n    \"content\": \"<string>\",\n    \"style\": {\n      \"basics\": {\n        \"name\": \"<string>\",\n        \"headline\": \"<string>\",\n        \"email\": \"<string>\",\n        \"phone\": \"<string>\",\n        \"location\": \"<string>\",\n        \"website\": {\n          \"url\": \"<string>\",\n          \"label\": \"<string>\"\n        },\n        \"customFields\": [\n          {\n            \"id\": \"<string>\",\n            \"icon\": \"<string>\",\n            \"text\": \"<string>\",\n            \"link\": \"<string>\"\n          }\n        ]\n      },\n      \"picture\": {\n        \"hidden\": true,\n        \"fit\": \"cover\",\n        \"url\": \"<string>\",\n        \"size\": 123,\n        \"rotation\": 123,\n        \"aspectRatio\": 123,\n        \"borderRadius\": 123,\n        \"borderColor\": \"<string>\",\n        \"borderWidth\": 123,\n        \"shadowColor\": \"<string>\",\n        \"shadowWidth\": 123\n      },\n      \"metadata\": {\n        \"template\": \"azurill\",\n        \"page\": {\n          \"gapX\": 123,\n          \"gapY\": 123,\n          \"marginX\": 123,\n          \"marginY\": 123,\n          \"format\": \"a4\",\n          \"locale\": \"<string>\",\n          \"hideLinkUnderline\": true,\n          \"hideIcons\": true,\n          \"hideSectionIcons\": true\n        },\n        \"design\": {\n          \"level\": {\n            \"icon\": \"<string>\",\n            \"type\": \"hidden\"\n          },\n          \"colors\": {\n            \"primary\": \"<string>\",\n            \"text\": \"<string>\",\n            \"background\": \"<string>\"\n          }\n        },\n        \"typography\": {\n          \"body\": {\n            \"fontFamily\": \"<string>\",\n            \"fontWeights\": [\n              \"100\"\n            ],\n            \"fontSize\": 123,\n            \"lineHeight\": 123\n          },\n          \"heading\": {\n            \"fontFamily\": \"<string>\",\n            \"fontWeights\": [\n              \"100\"\n            ],\n            \"fontSize\": 123,\n            \"lineHeight\": 123\n          }\n        },\n        \"styleRules\": [\n          \"<string>\"\n        ]\n      },\n      \"sectionId\": \"<string>\",\n      \"itemId\": \"<string>\"\n    },\n    \"format\": \"reactive-resume-cover-letter\",\n    \"version\": 1\n  }\n}'"
+					}
 				]
 			}
 		},
@@ -87295,6 +88205,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/<id>/style-refreshes\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"expectedRevision\": 123,\n  \"resumeId\": \"<string>\"\n}'"
+					}
 				]
 			}
 		},
@@ -87455,6 +88372,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/<id>/drafts\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}
@@ -88167,6 +89091,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/<id>/versions/<versionId>/restorations\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			}
 		},
@@ -88268,6 +89199,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PATCH \"https://rxresu.me/api/openapi/documents/<type>/<id>/name\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"name\": \"<string>\"\n}'"
 					}
 				]
 			}
@@ -88375,6 +89313,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PUT \"https://rxresu.me/api/openapi/documents/<type>/<id>/tags\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"tags\": [\n    \"<string>\"\n  ]\n}'"
+					}
 				]
 			}
 		},
@@ -88474,6 +89419,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PUT \"https://rxresu.me/api/openapi/documents/<type>/<id>/lock\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"isLocked\": true\n}'"
 					}
 				]
 			}
@@ -88584,6 +89536,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PUT \"https://rxresu.me/api/openapi/documents/<type>/<id>/application\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"applicationId\": \"<string>\"\n}'"
+					}
 				]
 			}
 		},
@@ -88666,6 +89625,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PUT \"https://rxresu.me/api/openapi/documents/<type>/<id>/trash\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			},
 			"delete": {
@@ -88745,6 +89711,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/documents/<type>/<id>/trash\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -88827,6 +89800,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/documents/<type>/<id>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -88923,6 +89903,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/documents/copies\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"resumeId\": \"<string>\"\n}'"
 					}
 				]
 			}
@@ -89209,6 +90196,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/ai/posting-searches\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"query\": \"<string>\"\n}'"
 					}
 				]
 			}
@@ -89676,6 +90670,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/ai/posting-parses\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"input\": \"<string>\"\n}'"
+					}
 				]
 			}
 		},
@@ -89899,6 +90900,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/ai/autofills\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"jobDescription\": \"<string>\"\n}'"
+					}
 				]
 			}
 		},
@@ -90096,6 +91104,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/<id>/ai/match-scores\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -90323,6 +91338,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/<id>/ai/message-drafts\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"kind\": \"cover-letter\"\n}'"
+					}
 				]
 			}
 		},
@@ -90527,6 +91549,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/<id>/ai/tailored-resumes\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -90936,6 +91965,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/imports\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"items\": [\n    {\n      \"company\": \"<string>\",\n      \"role\": \"<string>\"\n    }\n  ]\n}'"
 					}
 				]
 			}
@@ -91429,6 +92465,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/ai-providers/<id>/tests\" --header \"x-api-key: <api-key>\""
+					}
 				]
 			}
 		},
@@ -91656,6 +92699,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/integrations/web-access/tests\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
 				]
 			}
 		},
@@ -91865,6 +92915,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/agent/threads/<threadId>/messages\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"message\": {\n    \"id\": \"<string>\",\n    \"role\": \"system\",\n    \"parts\": [\n      {\n        \"type\": \"<string>\"\n      }\n    ]\n  }\n}'"
+					}
 				]
 			}
 		},
@@ -91979,6 +93036,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/agent/threads/<threadId>/run\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}
@@ -92110,6 +93174,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/agent/threads/<threadId>/stream\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -92248,6 +93319,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PATCH \"https://rxresu.me/api/openapi/agent/threads/<threadId>/messages/<messageId>/edits\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"toolCallId\": \"<string>\",\n  \"edits\": [\n    {\n      \"id\": \"<string>\",\n      \"status\": \"pending\"\n    }\n  ]\n}'"
 					}
 				]
 			}
@@ -96689,6 +97767,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/ai/pdf-parses\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"file\": {\n    \"name\": \"<string>\",\n    \"data\": \"<string>\"\n  }\n}'"
 					}
 				]
 			}
@@ -101139,6 +102224,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/ai/docx-parses\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"file\": {\n    \"name\": \"<string>\",\n    \"data\": \"<string>\"\n  },\n  \"mediaType\": \"application/msword\"\n}'"
+					}
 				]
 			}
 		},
@@ -101439,6 +102531,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/ai/ats-reviews\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"extractedText\": \"<string>\"\n}'"
+					}
 				]
 			}
 		},
@@ -101687,6 +102786,13 @@
 					{
 						"cookieAuth": []
 					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/ai/improvements\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"line\": \"<string>\",\n  \"action\": \"verb\"\n}'"
+					}
 				]
 			}
 		},
@@ -101788,6 +102894,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/files\" --header \"x-api-key: <api-key>\" --form \"file=@<file>\""
 					}
 				]
 			},
@@ -101983,6 +103096,13 @@
 					},
 					{
 						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/files\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"filename\": \"<string>\"\n}'"
 					}
 				]
 			}

@@ -208,5 +208,80 @@ export async function generateOpenApiSpec({ appUrl, version }: GenerateOpenApiSp
 			}
 		}
 	}
+	addCurlSamples(spec);
 	return spec;
+}
+
+type JsonSchema = OpenAPI.SchemaObject | OpenAPI.ReferenceObject;
+
+// Mintlify's generated cURL samples use Bash `\` line continuations, which break when
+// pasted into PowerShell or cmd. A custom sample labelled "cURL" replaces that tab only;
+// the other generated languages stay as they are.
+function addCurlSamples(spec: OpenAPI.Document) {
+	const resolve = (schema: JsonSchema | undefined): OpenAPI.SchemaObject => {
+		let current = schema;
+		while (current && "$ref" in current) {
+			const name = current.$ref.replace("#/components/schemas/", "");
+			current = spec.components?.schemas?.[name];
+		}
+		return current ?? {};
+	};
+	// Placeholder body with required fields only, in the same `<string>` style Mintlify uses.
+	const example = (schema: JsonSchema | undefined, parents: ReadonlySet<string> = new Set()): unknown => {
+		const isRef = schema !== undefined && "$ref" in schema;
+		if (isRef && parents.has(schema.$ref)) return {};
+		const seen = isRef ? new Set(parents).add(schema.$ref) : parents;
+		const value = resolve(schema);
+		if ("const" in value) return value.const;
+		if (value.enum) return value.enum[0];
+		const options = value.anyOf ?? value.oneOf;
+		if (options) return example(options.find((option) => resolve(option).type !== "null") ?? options[0], seen);
+		if (value.allOf) return Object.assign({}, ...value.allOf.map((part) => example(part, seen)));
+		const type = Array.isArray(value.type) ? value.type.find((item) => item !== "null") : value.type;
+		if (type === "object" || value.properties) {
+			return Object.fromEntries((value.required ?? []).map((key) => [key, example(value.properties?.[key], seen)]));
+		}
+		if (type === "array") return [example("items" in value ? value.items : undefined, seen)];
+		if (type === "integer" || type === "number") return 123;
+		if (type === "boolean") return true;
+		return "<string>";
+	};
+
+	for (const [path, item] of Object.entries(spec.paths ?? {})) {
+		if (!item) continue;
+		for (const method of ["get", "post", "put", "patch", "delete"] as const) {
+			const operation = item[method];
+			if (!operation) continue;
+			const query = (operation.parameters ?? [])
+				.filter((parameter): parameter is OpenAPI.ParameterObject => !("$ref" in parameter))
+				.filter((parameter) => parameter.in === "query" && parameter.required)
+				.map((parameter) => `${parameter.name}=<${parameter.name}>`)
+				.join("&");
+			// `<id>` rather than `{id}`: cURL treats braces in URLs as glob patterns.
+			const url = `${(operation.servers ?? spec.servers)?.[0]?.url ?? ""}${path.replace(/\{(\w+)\}/g, "<$1>")}${query ? `?${query}` : ""}`;
+			// Double quotes work in POSIX shells, PowerShell and cmd alike.
+			const args = method === "get" ? [`"${url}"`] : [`--request ${method.toUpperCase()}`, `"${url}"`];
+			if ((operation.security ?? spec.security)?.length) args.push(`--header "x-api-key: <api-key>"`);
+
+			const body = operation.requestBody && !("$ref" in operation.requestBody) ? operation.requestBody.content : {};
+			const json = body["application/json"];
+			const form = body["multipart/form-data"];
+			if (json) {
+				// Newlines inside a quoted argument are not line continuations, so the body stays readable.
+				args.push(`--header "Content-Type: application/json"`);
+				args.push(`--data '${JSON.stringify(example(json.schema), null, 2)}'`);
+			} else if (form) {
+				const fields = resolve(form.schema);
+				for (const key of fields.required ?? []) {
+					const field = resolve(fields.properties?.[key]);
+					const value = "contentMediaType" in field ? "@<file>" : example(field);
+					args.push(`--form "${key}=${typeof value === "string" ? value : JSON.stringify(value)}"`);
+				}
+			}
+
+			Object.assign(operation, {
+				"x-codeSamples": [{ lang: "bash", label: "cURL", source: `curl ${args.join(" ")}` }],
+			});
+		}
+	}
 }

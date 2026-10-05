@@ -163,3 +163,19 @@ it("keeps JSON application writes and documents optional multipart attachments",
 		);
 	}
 });
+
+it("overrides every generated cURL sample with one that has no shell line continuations", async () => {
+	const spec = await generateSpec();
+	const samples = Object.values(spec.paths ?? {}).flatMap((item) =>
+		(["get", "post", "put", "patch", "delete"] as const).flatMap((method) => {
+			const operation = item?.[method] as { "x-codeSamples"?: { label: string; source: string }[] } | undefined;
+			return operation ? [operation["x-codeSamples"]?.find((sample) => sample.label === "cURL")?.source] : [];
+		}),
+	);
+	expect(samples.length).toBeGreaterThan(0);
+	for (const source of samples) expect(source).toMatch(/^curl [^\\]*$/);
+	expect(spec.paths?.["/api/health"]?.get).toHaveProperty(
+		"x-codeSamples.0.source",
+		'curl "https://rxresu.me/api/health"',
+	);
+});
