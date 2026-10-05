@@ -119,15 +119,20 @@ describe("createApp", () => {
 		["127.0.0.1", "127.0.0.1", "192.0.2.99, 198.51.100.1", "198.51.100.1"],
 		["127.0.0.1", "203.0.113.9", "198.51.100.1", "203.0.113.9"],
 		["127.0.0.1", "127.0.0.1", "invalid, 198.51.100.1", "127.0.0.1"],
-	])("resolves auth client through trusted %s from socket %s", async (proxy, peer, forwarded, expected) => {
-		mocks.trustedProxies.push(proxy);
-		const { createApp } = await import("./app");
-		const request = new Request("http://localhost/api/auth/sign-in/email", {
-			headers: { "x-forwarded-for": forwarded },
-		});
-		await createApp().fetch(request, transportEnv(peer));
-		expect(mocks.handleAuth).toHaveBeenCalledWith(request, expected);
-	});
+	])(
+		"resolves auth client through trusted %s from socket %s",
+		async (proxy, peer, forwarded, expected) => {
+			mocks.trustedProxies.push(proxy);
+			const { createApp } = await import("./app");
+			const request = new Request("http://localhost/api/auth/sign-in/email", {
+				headers: { "x-forwarded-for": forwarded },
+			});
+			await createApp().fetch(request, transportEnv(peer));
+			expect(mocks.handleAuth).toHaveBeenCalledWith(request, expected);
+			// The first case pays for the cold import of the whole app, which takes seconds under a parallel run.
+		},
+		15_000,
+	);
 
 	it("routes /api/auth/oauth to the OAuth bridge before the Better Auth wildcard", async () => {
 		const { createApp } = await import("./app");
