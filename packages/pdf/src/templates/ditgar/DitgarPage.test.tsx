@@ -64,3 +64,99 @@ describe("Ditgar item-header alignment (#3068)", () => {
 		assertAligned(await renderText({ columns: 1, gapX: 4 }));
 	});
 });
+
+function twoColumnFixture(sidebarSide?: "left" | "right", locale = "en-US"): ResumeData {
+	const data = structuredClone(defaultResumeData);
+	data.metadata.typography.body.fontFamily = "Helvetica";
+	data.metadata.typography.heading.fontFamily = "Helvetica";
+	data.metadata.page.hideIcons = true;
+	data.metadata.page.locale = locale;
+	data.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 1, text: "@version 1;" } };
+	data.basics.name = "Ada Lovelace";
+	data.summary.title = "Summary";
+	data.summary.content = "<p>Seasoned engineer shipping reliable systems.</p>";
+	data.sections.experience.title = "Experience";
+	data.sections.experience.items.push({
+		id: "experience-1",
+		hidden: false,
+		company: "Initech",
+		position: "Senior Engineer",
+		location: "",
+		period: "2020 - Present",
+		website: { url: "", label: "", inlineLink: false },
+		roles: [],
+		description: "<p>Shipped reliable systems.</p>",
+	});
+	data.sections.profiles.title = "Profiles";
+	data.sections.profiles.items.push({
+		id: "profile-1",
+		hidden: false,
+		icon: "github-logo",
+		iconColor: "",
+		network: "GitHub",
+		username: "ada",
+		website: { url: "https://github.com/ada", label: "github.com/ada", inlineLink: false },
+	});
+	data.sections.skills.title = "Skills";
+	data.sections.skills.items.push({
+		id: "skill-1",
+		hidden: false,
+		icon: "code",
+		iconColor: "",
+		name: "TypeScript",
+		proficiency: "Expert",
+		level: 5,
+		keywords: [],
+	});
+	data.metadata.layout.sidebarSide = sidebarSide;
+	data.metadata.layout.pages = [{ fullWidth: false, main: ["summary", "experience"], sidebar: ["profiles", "skills"] }];
+	return data;
+}
+
+const columnOrderRuns = async (sidebarSide?: "left" | "right", locale?: string) => {
+	const bytes = await act(() =>
+		renderToBuffer(<ResumeDocument data={twoColumnFixture(sidebarSide, locale)} template="ditgar" />),
+	);
+	const loading = getDocument({ data: new Uint8Array(bytes), useSystemFonts: true });
+	try {
+		const document = await loading.promise;
+		expect(document.numPages).toBe(1);
+		const page = await document.getPage(1);
+		return (await page.getTextContent()).items.flatMap((item, index) =>
+			"str" in item && item.str ? [{ text: item.str, x: item.transform[4], index }] : [],
+		);
+	} finally {
+		await loading.destroy();
+	}
+};
+
+describe("Ditgar text-layer column order (#3543)", () => {
+	it.each([
+		["en-US", undefined, "left"],
+		["en-US", "right", "right"],
+		["ar-SA", undefined, "right"],
+		["ar-SA", "left", "left"],
+	] as const)(
+		"emits the main column before the sidebar on the %s side (locale %s)",
+		async (locale, sidebarSide, expectedSide) => {
+			const runs = await columnOrderRuns(sidebarSide, locale);
+
+			const firstIndex = (headings: string[]) => {
+				const indices = headings
+					.map((heading) => runs.find((run) => run.text.includes(heading))?.index)
+					.filter((index): index is number => index !== undefined);
+				expect(indices.length).toBeGreaterThan(0);
+				return Math.min(...indices);
+			};
+
+			const mainIndex = firstIndex(["Summary", "Experience"]);
+			const sidebarIndex = firstIndex(["Profiles", "Skills"]);
+			expect(mainIndex).toBeLessThan(sidebarIndex);
+
+			const sidebarRun = runs.find((run) => run.text.includes("Profiles"));
+			const mainRun = runs.find((run) => run.text.includes("Experience"));
+			if (expectedSide === "left") expect(sidebarRun?.x).toBeLessThan(mainRun?.x ?? 0);
+			else expect(sidebarRun?.x).toBeGreaterThan(mainRun?.x ?? 0);
+		},
+	);
+});

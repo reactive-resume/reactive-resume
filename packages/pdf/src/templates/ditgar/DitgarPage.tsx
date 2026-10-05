@@ -1,4 +1,5 @@
 import type { TemplatePageProps } from "../../document";
+import type { PageSize } from "../../forme/primitives";
 import type { Style } from "../../forme/style-types";
 import type { TemplateColorRoles, TemplateFeatures, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
 import { useMemo } from "react";
@@ -30,7 +31,7 @@ import {
 } from "../shared/primitives";
 import { Section } from "../shared/sections";
 import { SidebarBackground } from "../shared/sidebar-background";
-import { composeStyles, headerNameLineHeight, resolvePlacementColor } from "../shared/styles";
+import { composeStyles, headerNameLineHeight, mergeStyles, resolvePlacementColor } from "../shared/styles";
 import { useTemplateBase } from "../shared/template-base";
 
 type DitgarStyles = Omit<TemplateStyleSlots, "page"> & {
@@ -66,6 +67,17 @@ const ditgarFeatures = {
 
 const ditgarItemHeaderBorderWidth = 2;
 
+const pageWidthPoints = (size: PageSize | undefined): number => {
+	if (typeof size === "object" && typeof size.width === "number") return size.width;
+	return size === "LETTER" ? 612 : 595.28;
+};
+
+/** A horizontal page inset in points; percentage or shorthand strings the converter can't resolve read as 0. */
+const numericInset = (style: Style, side: "Left" | "Right"): number =>
+	[style[`padding${side}`], style.paddingHorizontal, style.padding].find(
+		(value): value is number => typeof value === "number",
+	) ?? 0;
+
 export const DitgarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pageNumber }: TemplatePageProps) => {
 	const data = useRender();
 	const pageNodeKey = semanticNodeKeys.page(pageNumber);
@@ -74,6 +86,20 @@ export const DitgarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 	const { colors, styles } = useDitgarTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
 	const showSidebar = !page.fullWidth || showHeader;
+	// The text layer follows the render-tree order, so the main column draws first and the sidebar second. When the
+	// sidebar sits on the left both columns translate back to their own side; the swap is paint-only, so it repeats
+	// on every page fragment a column splits into.
+	const swapColumns = showSidebar && !data.columnsReversed;
+	const pageStyle = mergeStyles(
+		styles.page,
+		{ paddingVertical: metrics.page.paddingVertical },
+		pageMinHeightStyle,
+		semanticPageStyle,
+	);
+	const rowWidth =
+		pageWidthPoints(semanticPageSize ?? pageSize) - numericInset(pageStyle, "Left") - numericInset(pageStyle, "Right");
+	const sidebarWidth = (metadata.layout.sidebarWidth / 100) * rowWidth;
+	const mainWidth = rowWidth - sidebarWidth;
 	const sidebarSections = useRenderedSectionIds(pageNodeKey, filterSections(page.sidebar, data));
 	const mainSections = useRenderedSectionIds(pageNodeKey, filterSections(page.main, data));
 	const { featuredSummarySection, regularSections: regularMainSections } = getFeaturedSummaryLayout({
@@ -102,29 +128,13 @@ export const DitgarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 						width={`${metadata.layout.sidebarWidth}%`}
 					/>
 				)}
-				{showSidebar && (
-					<View
-						style={composeStyles(styles.sidebarColumn, {
-							width: `${metadata.layout.sidebarWidth}%`,
-							marginTop: -metrics.page.paddingVertical,
-						})}
-					>
-						{showHeader && <Header styles={styles} colors={colors} />}
-
-						{!page.fullWidth && (
-							<SemanticRegionView
-								region="sidebar"
-								style={composeStyles(styles.sidebarContent, { rowGap: metrics.sectionGap })}
-							>
-								{regularSidebarSections.map((section) => (
-									<Section key={section} section={section} placement="sidebar" />
-								))}
-							</SemanticRegionView>
-						)}
-					</View>
-				)}
-
-				<View style={composeStyles(styles.mainColumn, { marginTop: -metrics.page.paddingVertical })}>
+				<View
+					style={composeStyles(
+						styles.mainColumn,
+						{ marginTop: -metrics.page.paddingVertical },
+						swapColumns ? { transform: `translateX(${sidebarWidth})` } : undefined,
+					)}
+				>
 					{featuredSummarySection && (
 						<SemanticRegionTemplatePartView
 							region="featured"
@@ -141,6 +151,32 @@ export const DitgarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 						))}
 					</SemanticRegionView>
 				</View>
+
+				{showSidebar && (
+					<View
+						style={composeStyles(
+							styles.sidebarColumn,
+							{
+								width: `${metadata.layout.sidebarWidth}%`,
+								marginTop: -metrics.page.paddingVertical,
+							},
+							swapColumns ? { transform: `translateX(${-mainWidth})` } : undefined,
+						)}
+					>
+						{showHeader && <Header styles={styles} colors={colors} />}
+
+						{!page.fullWidth && (
+							<SemanticRegionView
+								region="sidebar"
+								style={composeStyles(styles.sidebarContent, { rowGap: metrics.sectionGap })}
+							>
+								{regularSidebarSections.map((section) => (
+									<Section key={section} section={section} placement="sidebar" />
+								))}
+							</SemanticRegionView>
+						)}
+					</View>
+				)}
 			</TemplateProvider>
 		</Page>
 	);
@@ -218,7 +254,9 @@ const useDitgarTemplate = (): DitgarTemplate => {
 			...base,
 			page: {
 				...base.page,
-				flexDirection: r.columns,
+				// Always `row`: the text layer emits children in flow order, so the main column comes first in the tree
+				// and the sidebar second, regardless of which side the sidebar is on.
+				flexDirection: "row",
 			},
 			section: {
 				flexDirection: "column",
