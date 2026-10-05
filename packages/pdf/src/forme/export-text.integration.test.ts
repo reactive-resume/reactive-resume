@@ -33,6 +33,7 @@ it.each([
 	["日本語の履歴書 職務経験", "Noto Sans JP", "ja-JP"],
 	["Hello 💻 engineer 🚀 coding 😀", "Noto Sans", "en-US"],
 	["Family 👨‍👩‍👧‍👦 love 👩‍❤️‍💋‍👩 ❤️", "Noto Sans", "en-US"],
+	["LessPass 6.1k⭐★ rated ★★★☆☆", "IBM Plex Sans", "en-US"],
 ] as const)("preserves exported Unicode text: %s", { timeout: 60_000 }, async (text, font, locale) => {
 	expect(await exportText(`<p>${text}</p>`, font, locale)).toContain(text);
 });

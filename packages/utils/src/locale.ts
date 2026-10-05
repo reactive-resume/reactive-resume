@@ -97,7 +97,18 @@ export function getLocaleAlternates(pageUrl: string) {
 // of falling back to a Latin/Han-only font and producing tofu. "emoji" is
 // content-detected only (never locale-derived) and resolves to Noto Emoji so
 // pictographs and regional indicators render instead of mojibake (#3321).
-export type Script = "hangul" | "kana" | "han-traditional" | "han-simplified" | "arabic" | "hebrew" | "thai" | "emoji";
+// "symbols" is content-detected too and resolves to Noto Sans Symbols 2 for
+// text symbols such as ★ that neither Latin fonts nor Noto Emoji cover (#3581).
+export type Script =
+	| "hangul"
+	| "kana"
+	| "han-traditional"
+	| "han-simplified"
+	| "arabic"
+	| "hebrew"
+	| "thai"
+	| "emoji"
+	| "symbols";
 
 // The CJK subset of `Script`. CJK needs extra per-character line breaking that
 // must NOT be applied to Arabic (cursive, joined letters) or Thai (combining

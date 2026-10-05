@@ -85,6 +85,8 @@ const scriptFonts: Record<Script, { serif: string; sansSerif: string }> = {
 	// Monochrome outlines (TrueType glyf, not CBDT bitmaps) so react-pdf can
 	// embed them; the serif/sans distinction is meaningless for emoji (#3321).
 	emoji: { serif: "Noto Emoji", sansSerif: "Noto Emoji" },
+	// Text symbols (★, ☆, ●, ■, ◆, ✦, ✓) that aren't emoji (#3581).
+	symbols: { serif: "Noto Sans Symbols 2", sansSerif: "Noto Sans Symbols 2" },
 };
 
 // Covers General Punctuation (U+2000–U+206F) and other symbols missing from
