@@ -37,7 +37,8 @@ it("hides an existing donation toast when launch starts without recording a dism
 	expect(screen.getByText("Please support the project")).toBeVisible();
 
 	await act(() => vi.advanceTimersByTimeAsync(60_000));
-	await act(() => vi.advanceTimersByTimeAsync(20));
+	// Base UI unmounts a closing toast a few animation frames later; leave room for them whatever the clock phase.
+	await act(() => vi.advanceTimersByTimeAsync(100));
 	expect(screen.queryByText("Please support the project")).not.toBeInTheDocument();
 	expect(Cookies.get(DISMISSED_COOKIE)).toBeUndefined();
 
