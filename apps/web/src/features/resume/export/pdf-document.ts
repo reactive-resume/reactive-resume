@@ -17,7 +17,8 @@ type RenderInput = { data: ResumeData; template?: Template | undefined; renderOp
 export type PdfWorkerRequest = RenderInput & { id: number };
 export type PdfWorkerResponse =
 	| { id: number; blob: Blob; pageMap: PageMap | undefined }
-	| { id: number; error: string };
+	// `cause` survives the worker boundary so callers can still tell text loss apart (see `getReadableErrorMessage`).
+	| { id: number; error: string; cause: string | undefined };
 
 type Rendered = { blob: Blob; pageMap: PageMap | undefined };
 
@@ -61,7 +62,7 @@ function getWorker(): Worker | null {
 		const request = pending.get(response.id);
 		if (!request) return;
 		pending.delete(response.id);
-		if ("error" in response) request.reject(new Error(response.error));
+		if ("error" in response) request.reject(new Error(response.error, { cause: response.cause }));
 		else request.resolve({ blob: response.blob, pageMap: response.pageMap });
 	});
 	// Every render is caught inside the worker, so an error here means it couldn't start: render here instead.

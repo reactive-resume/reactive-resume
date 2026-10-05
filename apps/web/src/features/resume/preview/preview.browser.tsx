@@ -15,6 +15,7 @@ import { ResumePreviewLoader } from "./preview.shared";
 import { getResumePreviewGapValue, getResumePreviewPageCount } from "./preview.shared.utils";
 import { ResumeAccessibleText } from "./resume-accessible-text";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
+import { getReadableErrorMessage } from "@/libs/error-message";
 import { EASE } from "@/libs/motion";
 
 type PreviewPdf = {
@@ -156,11 +157,16 @@ export function ResumePreviewClient({
 					hasPreviewRef.current = true;
 					setPreviewLayers((current) => addPreviewLayer(current, nextPdf));
 				}
-			} catch {
+			} catch (error) {
 				if (stale()) return;
+				const fallback = t`The resume preview could not be updated. The last valid preview is still shown.`;
 				toast.add({
 					type: "error",
-					description: t`The resume preview could not be updated. The last valid preview is still shown.`,
+					// Name the cause the user can fix (an unsupported character, a font that didn't load); keep other engine errors generic.
+					description:
+						error instanceof Error && error.cause === "pdf-text-loss"
+							? getReadableErrorMessage(error, fallback)
+							: fallback,
 					id: "resume-preview-render-error",
 				});
 			}

@@ -21,6 +21,11 @@ self.addEventListener("message", async ({ data: request }: MessageEvent<PdfWorke
 		});
 		self.postMessage({ id, blob, pageMap } satisfies PdfWorkerResponse);
 	} catch (error) {
-		self.postMessage({ id, error: error instanceof Error ? error.message : String(error) } satisfies PdfWorkerResponse);
+		const cause = error instanceof Error && typeof error.cause === "string" ? error.cause : undefined;
+		self.postMessage({
+			id,
+			error: error instanceof Error ? error.message : String(error),
+			cause,
+		} satisfies PdfWorkerResponse);
 	}
 });
