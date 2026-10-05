@@ -45,7 +45,9 @@ function hasCompleteUserinfo(raw: string): boolean {
 	const authority =
 		terminator === -1 ? raw.slice(authorityStart) : raw.slice(authorityStart, authorityStart + terminator);
 	const userinfoEnd = authority.lastIndexOf("@");
-	if (userinfoEnd === -1) return true; // no userinfo
+	// `userinfoEnd === 0` is an empty userinfo ("redis://@host") — ioredis reads it exactly like no
+	// userinfo and sends no AUTH, so it passes the same way a missing "@" does.
+	if (userinfoEnd <= 0) return true;
 	return authority.slice(0, userinfoEnd).includes(":");
 }
 

@@ -59,6 +59,7 @@ describe("redis url userinfo", () => {
 
 	it.each([
 		"redis://acl-user:@localhost:6379", // named ACL user with an empty password (nopass) — AUTH <user> "" is valid
+		"redis://@localhost:6379", // empty userinfo — ioredis treats it like no userinfo and sends no AUTH
 	])("accepts %s", async (url) => {
 		vi.stubEnv("REDIS_URL", url);
 		expect((await import("./server")).env.REDIS_URL).toBe(url);
