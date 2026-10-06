@@ -1,6 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useSelector } from "@tanstack/react-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
@@ -20,7 +21,7 @@ import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
 	identifier: z.string().trim().toLowerCase(),
-	password: z.string().trim().min(6).max(64),
+	password: z.string().min(8).max(64),
 });
 
 type Props = {
@@ -108,6 +109,8 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 			await submitLogin({ value, callbackURL, reauthenticate, navigate, queryClient, router });
 		},
 	});
+
+	const isSubmitting = useSelector(form.store, (state) => state.isSubmitting);
 
 	useEffect(() => {
 		if (!("passkey" in providers)) return;
@@ -220,7 +223,7 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 								<FormControl
 									render={
 										<PasswordInput
-											min={6}
+											min={8}
 											max={64}
 											autoComplete="section-login current-password"
 											name={field.name}
@@ -235,7 +238,7 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 						)}
 					</form.Field>
 
-					<Button type="submit" className="w-full">
+					<Button type="submit" className="w-full" disabled={isSubmitting}>
 						<Trans comment="Primary action button label on login form">Sign in</Trans>
 					</Button>
 				</form>

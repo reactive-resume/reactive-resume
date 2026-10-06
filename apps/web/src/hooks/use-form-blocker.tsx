@@ -1,6 +1,6 @@
 import type { AnyFormApi } from "@tanstack/react-form";
 import { t } from "@lingui/core/macro";
-import { useStore } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-form";
 import { useEffect, useRef } from "react";
 import { useDialogStore } from "@/dialogs/store";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -14,8 +14,8 @@ export function useFormBlocker(form: Pick<AnyFormApi, "store">, options?: UseFor
 	const onOpenChange = useDialogStore((state) => state.onOpenChange);
 	const setOnBeforeClose = useDialogStore((state) => state.setOnBeforeClose);
 
-	const isDirty = useStore(form.store, (state) => state.isDirty);
-	const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
+	const isDirty = useSelector(form.store, (state) => state.isDirty);
+	const isSubmitting = useSelector(form.store, (state) => state.isSubmitting);
 	const shouldBlockRef = useRef(options?.shouldBlock);
 
 	useEffect(() => {

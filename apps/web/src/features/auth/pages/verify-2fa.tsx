@@ -1,5 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useSelector } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
 import z from "zod";
@@ -72,6 +73,8 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 			void navigate(getAuthRedirectOptions(callbackURL));
 		},
 	});
+
+	const isSubmitting = useSelector(form.store, (state) => state.isSubmitting);
 
 	return (
 		<>
@@ -151,7 +154,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 						}
 					/>
 
-					<Button type="submit" className="flex-1">
+					<Button type="submit" className="flex-1" disabled={isSubmitting}>
 						<Icon name="check" size={16} />
 						{backupCode ? (
 							<Trans comment="Primary action button to submit backup code">Verify</Trans>

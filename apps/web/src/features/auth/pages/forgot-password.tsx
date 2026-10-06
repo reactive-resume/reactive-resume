@@ -1,5 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useSelector } from "@tanstack/react-form";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import z from "zod";
@@ -49,6 +50,8 @@ export function ForgotPasswordPage() {
 			toast.close(toastId);
 		},
 	});
+
+	const isSubmitting = useSelector(form.store, (state) => state.isSubmitting);
 
 	if (submitted) return <PostForgotPasswordScreen />;
 
@@ -109,7 +112,7 @@ export function ForgotPasswordPage() {
 					)}
 				</form.Field>
 
-				<Button type="submit" className="w-full">
+				<Button type="submit" className="w-full" disabled={isSubmitting}>
 					<Trans comment="Primary action button label on forgot-password form">Send Password Reset Email</Trans>
 				</Button>
 			</form>

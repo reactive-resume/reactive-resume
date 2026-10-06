@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import type z from "zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useStore } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-form";
 import { AnimatePresence, m } from "motion/react";
 import { colorDesignSchema, levelDesignSchema } from "@reactive-resume/schema/resume/data";
 import { resolveLevelDisplaySizes } from "@reactive-resume/schema/resume/level-display-sizes";
@@ -232,8 +232,8 @@ function LevelSectionForm() {
 	});
 	useSyncFormValues(form, levelDesign);
 
-	const previewType = useStore(form.store, (s) => s.values.type);
-	const previewIcon = useStore(form.store, (s) => s.values.icon);
+	const previewType = useSelector(form.store, (s) => s.values.type);
+	const previewIcon = useSelector(form.store, (s) => s.values.icon);
 	const { decorationSize, levelIconExplicitSize } = resolveLevelDisplaySizes({
 		bodyFontSize: resume.data.metadata.typography.body.fontSize,
 	});

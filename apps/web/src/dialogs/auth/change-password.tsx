@@ -1,9 +1,11 @@
 import type { DialogProps } from "../store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useSelector } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import {
 	DialogContent,
 	DialogDescription,
@@ -23,8 +25,9 @@ import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z
 	.object({
-		currentPassword: z.string().min(6).max(64),
+		currentPassword: z.string().min(8).max(64),
 		newPassword: z.string().min(8).max(64),
+		revokeOtherSessions: z.boolean(),
 	})
 	.refine((data) => data.newPassword !== data.currentPassword, {
 		message: "New password cannot be the same as the current password.",
@@ -39,6 +42,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 		defaultValues: {
 			currentPassword: "",
 			newPassword: "",
+			revokeOtherSessions: false,
 		},
 		validators: {
 			onSubmit: formSchema,
@@ -49,6 +53,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 			const { error } = await authClient.changePassword({
 				currentPassword: value.currentPassword,
 				newPassword: value.newPassword,
+				revokeOtherSessions: value.revokeOtherSessions,
 			});
 
 			if (error) {
@@ -71,6 +76,8 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 			closeDialog();
 		},
 	});
+
+	const isSubmitting = useSelector(form.store, (state) => state.isSubmitting);
 
 	useFormBlocker(form);
 
@@ -103,7 +110,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 							<FormControl
 								render={
 									<PasswordInput
-										min={6}
+										min={8}
 										max={64}
 										autoComplete="current-password"
 										name={field.name}
@@ -142,8 +149,21 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 					)}
 				</form.Field>
 
+				<form.Field name="revokeOtherSessions">
+					{(field) => (
+						<FormItem className="flex items-center gap-2.5">
+							<FormControl
+								render={<Checkbox name={field.name} checked={field.state.value} onCheckedChange={field.handleChange} />}
+							/>
+							<FormLabel>
+								<Trans>Sign out from all other devices</Trans>
+							</FormLabel>
+						</FormItem>
+					)}
+				</form.Field>
+
 				<DialogFooter>
-					<Button type="submit">
+					<Button type="submit" disabled={isSubmitting}>
 						<Trans comment="Primary action button to submit changed password">Update Password</Trans>
 					</Button>
 				</DialogFooter>

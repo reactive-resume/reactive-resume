@@ -14,6 +14,7 @@ export const rateLimitConfig = {
 			max: 60,
 			customRules: {
 				"/sign-in/email": { window: 60, max: 5 },
+				"/sign-in/username": { window: 60, max: 5 },
 				"/sign-up/email": { window: 60, max: 3 },
 				"/request-password-reset": { window: 600, max: 3 },
 				"/send-verification-email": { window: 600, max: 3 },

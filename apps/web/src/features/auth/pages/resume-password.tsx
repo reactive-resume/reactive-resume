@@ -1,6 +1,7 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
+import { useSelector } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import z from "zod";
@@ -26,7 +27,7 @@ type ResumePasswordPageProps = {
 export function ResumePasswordPage({ username, slug, redirectPath }: ResumePasswordPageProps) {
 	const navigate = useNavigate();
 
-	const { mutate: verifyPassword } = useMutation(orpc.resume.verifyPassword.mutationOptions());
+	const { mutate: verifyPassword, isPending } = useMutation(orpc.resume.verifyPassword.mutationOptions());
 
 	const form = useAppForm({
 		defaultValues: { password: "" },
@@ -72,6 +73,8 @@ export function ResumePasswordPage({ username, slug, redirectPath }: ResumePassw
 		},
 	});
 
+	const isSubmitting = useSelector(form.store, (state) => state.isSubmitting) || isPending;
+
 	return (
 		<>
 			<div className="space-y-4 text-center">
@@ -116,7 +119,7 @@ export function ResumePasswordPage({ username, slug, redirectPath }: ResumePassw
 					)}
 				</form.Field>
 
-				<Button type="submit" className="w-full">
+				<Button type="submit" className="w-full" disabled={isSubmitting}>
 					<Icon name="lock_open" size={16} />
 					<Trans comment="Primary action button label to unlock a password-protected resume">Unlock</Trans>
 				</Button>

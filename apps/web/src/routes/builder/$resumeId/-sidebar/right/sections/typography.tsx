@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type z from "zod";
 import { Trans } from "@lingui/react/macro";
-import { useStore } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-form";
 import { typographySchema } from "@reactive-resume/schema/resume/data";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import {
@@ -115,7 +115,7 @@ type TypographyGroupFieldsProps = {
 };
 
 function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroupFieldsProps) {
-	const fontFamily = useStore(form.store, (s) => s.values[prefix].fontFamily);
+	const fontFamily = useSelector(form.store, (s) => s.values[prefix].fontFamily);
 
 	return (
 		<>

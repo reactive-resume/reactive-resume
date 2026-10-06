@@ -1,7 +1,7 @@
 import type { DialogProps } from "../store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useStore } from "@tanstack/react-form";
+import { useSelector } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { QRCodeSVG } from "qrcode.react";
@@ -31,7 +31,7 @@ import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
 
 const enableFormSchema = z.object({
-	password: z.string().min(6).max(64),
+	password: z.string().min(8).max(64),
 });
 
 const verifyFormSchema = z.object({
@@ -126,10 +126,10 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 		},
 	});
 
-	const enableIsDirty = useStore(enableForm.store, (s) => s.isDirty);
-	const enableIsSubmitting = useStore(enableForm.store, (s) => s.isSubmitting);
-	const verifyIsDirty = useStore(verifyForm.store, (s) => s.isDirty);
-	const verifyIsSubmitting = useStore(verifyForm.store, (s) => s.isSubmitting);
+	const enableIsDirty = useSelector(enableForm.store, (s) => s.isDirty);
+	const enableIsSubmitting = useSelector(enableForm.store, (s) => s.isSubmitting);
+	const verifyIsDirty = useSelector(verifyForm.store, (s) => s.isDirty);
+	const verifyIsSubmitting = useSelector(verifyForm.store, (s) => s.isSubmitting);
 
 	const { requestClose } = useFormBlocker(enableForm, {
 		shouldBlock: () => {
@@ -200,7 +200,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 									<FormControl
 										render={
 											<PasswordInput
-												min={6}
+												min={8}
 												max={64}
 												autoComplete="current-password"
 												name={field.name}
@@ -216,7 +216,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 						</enableForm.Field>
 
 						<DialogFooter>
-							<Button type="submit">
+							<Button type="submit" disabled={enableIsSubmitting}>
 								<Trans>Continue</Trans>
 							</Button>
 						</DialogFooter>
@@ -284,7 +284,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 									<Button type="button" variant="secondary" onClick={requestClose}>
 										<Trans comment="Secondary action button to close two-factor setup dialog">Cancel</Trans>
 									</Button>
-									<Button type="submit">
+									<Button type="submit" disabled={verifyIsSubmitting}>
 										<Trans comment="Primary action button to proceed to next step in two-factor setup">Continue</Trans>
 									</Button>
 								</DialogFooter>

@@ -1,5 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useSelector } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -52,6 +53,8 @@ export function ResetPasswordPage({ token }: Props) {
 		},
 	});
 
+	const isSubmitting = useSelector(form.store, (state) => state.isSubmitting);
+
 	return (
 		<>
 			<div className="space-y-1 text-center">
@@ -96,7 +99,7 @@ export function ResetPasswordPage({ token }: Props) {
 					)}
 				</form.Field>
 
-				<Button type="submit" className="w-full">
+				<Button type="submit" className="w-full" disabled={isSubmitting}>
 					<Trans comment="Primary action button label on reset-password form">Reset Password</Trans>
 				</Button>
 			</form>
