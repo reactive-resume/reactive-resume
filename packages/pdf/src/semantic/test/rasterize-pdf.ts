@@ -18,9 +18,14 @@ type RasterCanvasFactory = {
 };
 
 export async function rasterizePdf(bytes: Uint8Array): Promise<readonly RasterizedPdfPage[]> {
+	const standardFontDataPath = fileURLToPath(
+		new URL("standard_fonts/", import.meta.resolve("pdfjs-dist/package.json")),
+	).replaceAll("\\", "/");
+	const standardFontDataUrl = standardFontDataPath.endsWith("/") ? standardFontDataPath : `${standardFontDataPath}/`;
+
 	const loadingTask = getDocument({
 		data: bytes,
-		standardFontDataUrl: fileURLToPath(new URL("standard_fonts/", import.meta.resolve("pdfjs-dist/package.json"))),
+		standardFontDataUrl,
 	});
 	const pages: RasterizedPdfPage[] = [];
 
