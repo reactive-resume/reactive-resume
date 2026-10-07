@@ -292,11 +292,9 @@ export function PageGroup() {
 						<Trans>Letter</Trans>
 					</SegmentedControlItem>
 					<SegmentedControlItem value="a4">A4</SegmentedControlItem>
-					{page.format === "free-form" && (
-						<SegmentedControlItem value="free-form">
-							<Trans>Free-form</Trans>
-						</SegmentedControlItem>
-					)}
+					<SegmentedControlItem value="free-form">
+						<Trans>Free-form</Trans>
+					</SegmentedControlItem>
 				</SegmentedControl>
 			</div>
 
