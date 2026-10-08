@@ -1,7 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
-import { useSelector } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import z from "zod";
@@ -73,8 +72,6 @@ export function ResumePasswordPage({ username, slug, redirectPath }: ResumePassw
 		},
 	});
 
-	const isSubmitting = useSelector(form.store, (state) => state.isSubmitting) || isPending;
-
 	return (
 		<>
 			<div className="space-y-4 text-center">
@@ -104,8 +101,8 @@ export function ResumePasswordPage({ username, slug, redirectPath }: ResumePassw
 							<FormControl
 								render={
 									<PasswordInput
-										min={6}
-										max={64}
+										minLength={6}
+										maxLength={64}
 										autoComplete="new-password"
 										name={field.name}
 										value={field.state.value}
@@ -119,7 +116,7 @@ export function ResumePasswordPage({ username, slug, redirectPath }: ResumePassw
 					)}
 				</form.Field>
 
-				<Button type="submit" className="w-full" disabled={isSubmitting}>
+				<Button type="submit" className="w-full" disabled={isPending}>
 					<Icon name="lock_open" size={16} />
 					<Trans comment="Primary action button label to unlock a password-protected resume">Unlock</Trans>
 				</Button>

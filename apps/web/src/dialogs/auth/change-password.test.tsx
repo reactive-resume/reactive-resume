@@ -49,7 +49,7 @@ it("sends revokeOtherSessions: true when user checks the option", async () => {
 	expect(mocks.close).toHaveBeenCalled();
 });
 
-it("sends revokeOtherSessions: false by default when not checked", async () => {
+it("preserves a legacy current password and keeps other sessions by default", async () => {
 	render(
 		<I18nProvider i18n={i18n}>
 			<Dialog open>
@@ -58,13 +58,13 @@ it("sends revokeOtherSessions: false by default when not checked", async () => {
 		</I18nProvider>,
 	);
 
-	fireEvent.change(screen.getByLabelText("Current Password"), { target: { value: "oldPassword123" } });
+	fireEvent.change(screen.getByLabelText("Current Password"), { target: { value: "old123" } });
 	fireEvent.change(screen.getByLabelText("New Password"), { target: { value: "newPassword456" } });
 	fireEvent.click(screen.getByRole("button", { name: "Update Password" }));
 
 	await waitFor(() => {
 		expect(mocks.changePassword).toHaveBeenCalledWith({
-			currentPassword: "oldPassword123",
+			currentPassword: "old123",
 			newPassword: "newPassword456",
 			revokeOtherSessions: false,
 		});

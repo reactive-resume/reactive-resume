@@ -31,7 +31,7 @@ import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
 
 const enableFormSchema = z.object({
-	password: z.string().min(8).max(64),
+	password: z.string().min(6).max(64),
 });
 
 const verifyFormSchema = z.object({
@@ -200,8 +200,8 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 									<FormControl
 										render={
 											<PasswordInput
-												min={8}
-												max={64}
+												minLength={6}
+												maxLength={64}
 												autoComplete="current-password"
 												name={field.name}
 												value={field.state.value}

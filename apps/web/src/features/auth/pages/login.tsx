@@ -21,7 +21,7 @@ import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
 	identifier: z.string().trim().toLowerCase(),
-	password: z.string().min(8).max(64),
+	password: z.string().min(6).max(64),
 });
 
 type Props = {
@@ -223,8 +223,8 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 								<FormControl
 									render={
 										<PasswordInput
-											min={8}
-											max={64}
+											minLength={6}
+											maxLength={64}
 											autoComplete="section-login current-password"
 											name={field.name}
 											value={field.state.value}

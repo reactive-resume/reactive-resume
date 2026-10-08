@@ -25,7 +25,7 @@ import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z
 	.object({
-		currentPassword: z.string().min(8).max(64),
+		currentPassword: z.string().min(6).max(64),
 		newPassword: z.string().min(8).max(64),
 		revokeOtherSessions: z.boolean(),
 	})
@@ -110,8 +110,8 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 							<FormControl
 								render={
 									<PasswordInput
-										min={8}
-										max={64}
+										minLength={6}
+										maxLength={64}
 										autoComplete="current-password"
 										name={field.name}
 										value={field.state.value}
@@ -134,8 +134,8 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 							<FormControl
 								render={
 									<PasswordInput
-										min={8}
-										max={64}
+										minLength={8}
+										maxLength={64}
 										autoComplete="new-password"
 										name={field.name}
 										value={field.state.value}

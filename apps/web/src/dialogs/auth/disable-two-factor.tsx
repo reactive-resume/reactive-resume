@@ -25,7 +25,7 @@ import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
-	password: z.string().min(8).max(64),
+	password: z.string().min(6).max(64),
 });
 
 export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">) {
@@ -106,8 +106,8 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 							<FormControl
 								render={
 									<PasswordInput
-										min={8}
-										max={64}
+										minLength={6}
+										maxLength={64}
 										autoComplete="current-password"
 										name={field.name}
 										value={field.state.value}

@@ -220,8 +220,8 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 								<FormControl
 									render={
 										<PasswordInput
-											min={8}
-											max={64}
+											minLength={8}
+											maxLength={64}
 											autoComplete="section-register new-password"
 											name={field.name}
 											value={field.state.value}

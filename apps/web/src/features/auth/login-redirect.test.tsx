@@ -78,17 +78,37 @@ function renderLogin() {
 	);
 }
 
-function submitLogin(container: HTMLElement, identifier: string) {
+function submitLogin(container: HTMLElement, identifier: string, passwordValue = "password123") {
 	const input = container.querySelector('input[name="identifier"]');
 	const password = container.querySelector('input[name="password"]');
 	const form = container.querySelector("form");
 	if (!input || !password || !form) throw new Error("Login form is missing");
 	fireEvent.change(input, { target: { value: identifier } });
-	fireEvent.change(password, { target: { value: "password123" } });
+	fireEvent.change(password, { target: { value: passwordValue } });
 	fireEvent.submit(form);
 }
 
 describe("OAuth callback after sign-in", () => {
+	it("accepts a legacy password and prevents duplicate sign-in until a failed request finishes", async () => {
+		let finish: (() => void) | undefined;
+		mocks.email.mockReturnValue(
+			new Promise((resolve) => {
+				finish = () => resolve({ error: { message: "Invalid credentials" } });
+			}),
+		);
+		const { container } = renderLogin();
+		const submit = screen.getByRole<HTMLButtonElement>("button", { name: "Sign in" });
+		submitLogin(container, "john@example.com", "old123");
+		await waitFor(() => expect(mocks.email).toHaveBeenCalledOnce());
+		expect(mocks.email).toHaveBeenCalledWith(expect.objectContaining({ password: "old123" }));
+		expect(submit.disabled).toBe(true);
+		fireEvent.click(submit);
+		expect(mocks.email).toHaveBeenCalledOnce();
+		finish?.();
+		await waitFor(() => expect(submit.disabled).toBe(false));
+		expect(mocks.navigate).not.toHaveBeenCalled();
+	});
+
 	it.each(["john@example.com", "john"])(
 		"resumes the signed server callback after email/username sign-in (%s)",
 		async (identifier) => {
