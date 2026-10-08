@@ -97,6 +97,11 @@ it("documents anonymous routes, all supported credentials, and additive PATCH ro
 	expect(spec.paths?.["/flags"]?.get?.security).toEqual([]);
 	expect(spec.paths?.["/resumes/{username}/{slug}"]?.get?.security).toEqual([]);
 	expect(spec.paths?.["/resumes"]?.get?.security).toEqual([{ apiKey: [] }, { bearerAuth: [] }, { cookieAuth: [] }]);
+	expect(spec.paths?.["/auth/account"]?.delete?.security).toEqual([{ cookieAuth: [] }]);
+	expect(spec.paths?.["/auth/account"]?.delete).toHaveProperty(
+		"x-codeSamples.0.source",
+		expect.stringContaining('--cookie "<session-cookie>"'),
+	);
 	for (const path of ["/applications/{id}", "/cover-letters/{id}"]) {
 		expect(spec.paths?.[path]?.put?.requestBody).toBeDefined();
 		expect(spec.paths?.[path]?.patch?.requestBody).toBeDefined();

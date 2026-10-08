@@ -222,7 +222,7 @@ Additional tools use `api_` followed by the API router path in snake case. Input
 | Files and exports          | `api_rest_document_exports_resume`, `api_rest_document_exports_letter`, `api_rest_file_upload` | PDF, DOCX, Markdown and JSON exports; file upload/delete and supported file imports                                       |
 | Checks and AI              | `api_rest_check_resume`, `api_rest_check_pdf`, `api_rest_match_resume`, `api_ai_improve`       | Deterministic checks and matching; PDF/DOCX parsing, qualitative review, line rewrites, job search and posting extraction |
 | Assistant                  | `api_agent_threads_start`, `api_agent_messages_send`, `api_agent_attachments_create`           | Threads, messages, cancellation, resumable replies, proposed edit status and attachments                                  |
-| Account and instance       | `api_auth_export_data`, `api_auth_delete_account`, `api_flags_get`                             | Account export/deletion, enabled auth providers and platform statistics                                                   |
+| Account and instance       | `api_auth_export_data`, `api_auth_delete_account`, `api_flags_get`                             | Account export, browser handoff for account deletion, enabled auth providers and platform statistics                      |
 | Integrations               | `api_ai_providers_list`, `api_web_access_status`                                               | Provider list/test/delete and web connection status/test/delete; credential entry uses browser handoffs                   |
 
 Resume and letter exports return authenticated REST URLs. Download with your existing credentials or open in your signed-in browser. Letter localization words are encoded in the URL. No generated file is permanently copied into storage by the export tool.
@@ -249,7 +249,7 @@ The server reads storage directly and verifies the account prefix and path segme
 
 ### Browser and streaming workflows
 
-`open_account_settings` opens profile, security, API keys, preferences or account settings. Provider creation/update and web credential entry return their authenticated settings page. Password changes, passkeys, two-factor authentication and provider credentials require user interaction in that browser. Browser preferences, local undo and document selection remain browser workflows; durable edits and history are available through MCP.
+`open_account_settings` opens profile, security, API keys, preferences or account settings. Provider creation/update and web credential entry return their authenticated settings page. Account deletion, password changes, passkeys, two-factor authentication and provider credentials require user interaction in that browser. Browser preferences, local undo and document selection remain browser workflows; durable edits and history are available through MCP.
 
 MCP is stateless and accepts POST requests with JSON responses. GET/DELETE return 405; there is no standalone SSE subscription. Draft/message streams are collected up to 500,000 characters; `truncated` identifies longer responses. Read the assistant thread for persisted replies. `api_resume_updates_subscribe` returns an owned snapshot; poll its `updatedAt` for changes. `api_resume_verify_password` returns a resource cookie capability; pass it as `resourceCookie` to `api_resume_get_by_slug`. It expires server-side after ten minutes and cannot authenticate an account.
 

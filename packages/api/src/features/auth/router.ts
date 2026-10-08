@@ -94,6 +94,7 @@ export const authRouter = {
 
 	deleteAccount: protectedProcedure
 		.route({
+			spec: (operation) => ({ ...operation, security: [{ cookieAuth: [] }] }),
 			method: "DELETE",
 			path: "/auth/account",
 			tags: ["Authentication"],

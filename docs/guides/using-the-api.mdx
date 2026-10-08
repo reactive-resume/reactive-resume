@@ -168,6 +168,8 @@ The API accepts three kinds of credentials:
 
 Send one credential. When several are present, the server tries API key, bearer token, then session cookie, using the first valid credential. Cookie-authenticated requests with a foreign `Origin` or cross-site fetch metadata are rejected; explicit API keys and bearer tokens do not rely on browser cookies.
 
+Account deletion (`DELETE /auth/account`) requires a browser session; API keys and OAuth tokens receive `403 FORBIDDEN`. Delete your account in **Settings → Account**.
+
 A private request without valid credentials gets `401` with the code `UNAUTHORIZED`. Public operations are marked with `security: []` in the OpenAPI specification. Public resumes still enforce visibility, trash status and sharing passwords, and redact private data.
 
 REST data responses use `Cache-Control: no-store`. Uploaded profile images are public; other uploaded files require the owner's credentials, including conditional download requests. Assistant attachments are not exposed through the uploads URL. Unknown and unauthorized file URLs return `404`.

@@ -72,7 +72,6 @@ const PARITY_PROCEDURES = {
 	"agent.attachments.delete": router.agent.attachments.delete,
 	"auth.providers.list": router.auth.providers.list,
 	"auth.exportData": router.auth.exportData,
-	"auth.deleteAccount": router.auth.deleteAccount,
 	"flags.get": router.flags.get,
 	"statistics.getTotals": router.statistics.getTotals,
 	"statistics.github.getStarCount": router.statistics.github.getStarCount,
@@ -116,6 +115,7 @@ const BROWSER_HANDOFFS = {
 	"webAccess.save": "ai",
 	"resume.getRoot": "",
 	"auth.createApiKey": "api-keys",
+	"auth.deleteAccount": "account",
 } as const;
 
 const handoffAnnotations = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };

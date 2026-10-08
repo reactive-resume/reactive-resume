@@ -20,6 +20,7 @@ import { registerTools } from "./tools";
 let client: Client;
 let server: McpServer;
 const calls = {
+	auth: { deleteAccount: vi.fn() },
 	resume: { listVersions: vi.fn(), getById: vi.fn() },
 	rest: { fileUpload: vi.fn(), documentExports: { resume: vi.fn() } },
 	coverLetters: { draft: vi.fn() },
@@ -57,6 +58,14 @@ beforeEach(async () => {
 afterEach(async () => {
 	await client?.close();
 	await server?.close();
+});
+
+it("hands account deletion to browser settings without invoking the API", async () => {
+	const result = await client.callTool({ name: "api_auth_delete_account", arguments: {} });
+	expect(result.isError).not.toBe(true);
+	expect(result.structuredContent).toMatchObject({ action: "auth.deleteAccount", requiresBrowser: true });
+	expect(new URL((result.structuredContent as { url: string }).url).pathname).toBe("/dashboard/settings/account");
+	expect(calls.auth.deleteAccount).not.toHaveBeenCalled();
 });
 
 it("discovers API-derived contracts and exchanges native files and dates through the SDK", async () => {

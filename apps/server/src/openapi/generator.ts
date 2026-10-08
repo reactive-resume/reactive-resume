@@ -261,7 +261,14 @@ function addCurlSamples(spec: OpenAPI.Document) {
 			const url = `${(operation.servers ?? spec.servers)?.[0]?.url ?? ""}${path.replace(/\{(\w+)\}/g, "<$1>")}${query ? `?${query}` : ""}`;
 			// Double quotes work in POSIX shells, PowerShell and cmd alike.
 			const args = method === "get" ? [`"${url}"`] : [`--request ${method.toUpperCase()}`, `"${url}"`];
-			if ((operation.security ?? spec.security)?.length) args.push(`--header "x-api-key: <api-key>"`);
+			const security = operation.security ?? spec.security;
+			if (security?.length) {
+				args.push(
+					security.some((requirement) => "apiKey" in requirement)
+						? `--header "x-api-key: <api-key>"`
+						: `--cookie "<session-cookie>"`,
+				);
+			}
 
 			const body = operation.requestBody && !("$ref" in operation.requestBody) ? operation.requestBody.content : {};
 			const json = body["application/json"];

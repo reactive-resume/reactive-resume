@@ -32609,7 +32609,7 @@
 			"delete": {
 				"operationId": "deleteAccount",
 				"summary": "Delete user account",
-				"description": "Permanently deletes the authenticated user's account, including all resumes, uploaded files (profile pictures, screenshots, PDFs), and associated data. This action is irreversible. Requires authentication.",
+				"description": "Permanently deletes the authenticated user's account, including all resumes, uploaded files (profile pictures, screenshots, PDFs), and associated data. This action is irreversible. Requires a browser session; keys and OAuth tokens cannot delete accounts.",
 				"tags": [
 					"Authentication"
 				],
@@ -32661,12 +32661,6 @@
 				},
 				"security": [
 					{
-						"apiKey": []
-					},
-					{
-						"bearerAuth": []
-					},
-					{
 						"cookieAuth": []
 					}
 				],
@@ -32674,7 +32668,7 @@
 					{
 						"lang": "bash",
 						"label": "cURL",
-						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/auth/account\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/auth/account\" --cookie \"<session-cookie>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}
