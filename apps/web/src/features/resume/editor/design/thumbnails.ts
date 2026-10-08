@@ -2,6 +2,8 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { buildMarkdown } from "@reactive-resume/resume/markdown";
+import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { createPdfFirstPageImageUrl, releaseThumbnailUrls } from "@/features/resume/preview/pdf-thumbnail";
 
@@ -42,6 +44,10 @@ function fingerprint(data: ResumeData) {
 export function useTemplateThumbnail(template: Template, data: ResumeData, enabled: boolean) {
 	const queryClient = useQueryClient();
 	const hash = fingerprint(data);
+	// New resumes inherit account details; those alone don't show a template's section layout.
+	const hasContent = Boolean(
+		buildMarkdown({ ...data, basics: defaultResumeData.basics }).trim() || (!data.picture.hidden && data.picture.url),
+	);
 
 	useEffect(() => {
 		releaseThumbnailUrls(queryClient, QUERY_KEY);
@@ -55,10 +61,10 @@ export function useTemplateThumbnail(template: Template, data: ResumeData, enabl
 				const pdf = await createResumePdfBlob({ ...data, metadata: { ...data.metadata, template } });
 				return createPdfFirstPageImageUrl(pdf, SIZE, signal);
 			}),
-		enabled,
+		enabled: enabled && hasContent,
 		staleTime: Number.POSITIVE_INFINITY,
 		gcTime: 5 * 60 * 1000,
 		// Keep the previous image while the content changes, so thumbnails don't flash back to the sample.
-		placeholderData: (previous) => previous,
+		placeholderData: (previous) => (hasContent ? previous : undefined),
 	});
 }
