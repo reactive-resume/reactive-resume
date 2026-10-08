@@ -1,0 +1,32 @@
+---
+title: "Self-hosting on your NAS"
+description: "Community guides for running Reactive Resume v6 on a Synology or UGREEN NAS with Docker."
+---
+
+Lixandru Marius Bogdan ([@mariushosting](https://github.com/mariushosting)) has written step-by-step guides for running
+Reactive Resume v6 on a Synology or UGREEN NAS. Both guides deploy a Docker Compose stack through Dockhand with the
+app, PostgreSQL 18 and SeaweedFS for file storage, set up HTTPS through a reverse proxy, send email through Gmail SMTP,
+and finish by turning off new sign-ups. Thank you, Marius, for writing and maintaining them.
+
+<CardGroup cols={2}>
+  <Card
+    title="Synology NAS"
+    icon="hard-drive"
+    href="https://mariushosting.com/how-to-install-reactive-resume-v6-on-your-synology-nas/"
+  >
+    HTTPS through the DSM reverse proxy with a `synology.me` certificate.
+  </Card>
+  <Card
+    title="UGREEN NAS"
+    icon="hard-drive"
+    href="https://mariushosting.com/how-to-install-reactive-resume-v6-on-your-ugreen-nas/"
+  >
+    HTTPS through Nginx Proxy Manager with a No-IP dynamic DNS hostname.
+  </Card>
+</CardGroup>
+
+<Note>
+  These guides are maintained by their author on mariushosting.com, not by the Reactive Resume project. If a step
+  differs from [Self-hosting with Docker](/self-hosting/docker) or [Environment
+  variables](/self-hosting/environment-variables), those pages describe the current release.
+</Note>

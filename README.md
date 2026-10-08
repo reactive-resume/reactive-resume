@@ -42,7 +42,7 @@ Create a free account, import an existing resume or start fresh, and see the fin
 You own your data. The codebase is open source under the MIT license, with no tracking, no ads, and no paid tier. Optional AI features use a provider you connect; hosting and provider usage may have their own costs.
 
 > [!NOTE]
-> This branch contains the upcoming **v6** release. Read [what's new in v6](docs/guides/whats-new-in-v6.mdx) and the [release notes](docs/changelog/index.mdx) for the full changes. Existing self-hosted installations should follow [Upgrading to v6](docs/self-hosting/upgrading-to-v6.mdx).
+> This branch contains the upcoming **v6** release. Read [what's new in v6](docs/guides/whats-new-in-v6.mdx) and the [release notes](docs/changelog/index.mdx) for the full changes. Existing self-hosted installations should follow [Migrating from v5](docs/self-hosting/upgrading-to-v6.mdx).
 
 ![Reactive Resume v6 editor with Write, Design, and Check modes and a live PDF preview](docs/images/getting-started/editor-overview.webp)
 
@@ -246,7 +246,7 @@ The full documentation lives at [docs.rxresu.me](https://docs.rxresu.me):
 | [Exporting your resume](docs/guides/exporting-your-resume.mdx)                       | PDF, Word, Markdown, and JSON downloads      |
 | [API](docs/guides/using-the-api.mdx) and [MCP](docs/guides/using-the-mcp-server.mdx) | Connect scripts and external assistants      |
 | [Self-hosting](docs/self-hosting/docker.mdx)                                         | Deploy on your own infrastructure            |
-| [Upgrading to v6](docs/self-hosting/upgrading-to-v6.mdx)                             | Migrations and integration changes           |
+| [Migrating from v5](docs/self-hosting/upgrading-to-v6.mdx)                           | Migrations and integration changes           |
 | [Development setup](docs/contributing/development.mdx)                               | Local development environment                |
 | [Project architecture](docs/contributing/architecture.mdx)                           | Codebase structure and package boundaries    |
 
@@ -281,7 +281,7 @@ docker pull ghcr.io/reactive-resume/reactive-resume:latest
 
 See the [Docker guide](docs/self-hosting/docker.mdx) or [Kubernetes guide](docs/self-hosting/kubernetes.mdx) for complete instructions. Self-hosters can also configure [shared AI and job-search services](docs/self-hosting/job-search-and-ai.mdx).
 
-For a v5 upgrade, back up your database and uploads and stop all v5 instances before applying v6 migrations. Old visual style rules require a manual conversion; API and MCP integrations also have changes. Follow [Upgrading to v6](docs/self-hosting/upgrading-to-v6.mdx).
+For a v5 upgrade, back up your database and uploads and stop all v5 instances before applying v6 migrations. Old visual style rules require a manual conversion; API and MCP integrations also have changes. Follow [Migrating from v5](docs/self-hosting/upgrading-to-v6.mdx).
 
 ## Support
 

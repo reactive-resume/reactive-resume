@@ -1,5 +1,5 @@
 ---
-title: "Upgrading to v6"
+title: "Migrating from v5"
 description: "Upgrade a self-hosted Reactive Resume v5 installation to v6: back up, run the startup migrations, convert old styles, and check API and MCP changes."
 ---
 
@@ -54,7 +54,7 @@ This page is for installations already on v5. Coming from v4? Follow [Migrating 
   <Tab title="Kubernetes">
     Scale the v5 Deployment to zero, or set the Deployment's update strategy to `Recreate`, so no v5 pod runs next to a v6 pod. Then change the image tag and apply. The first v6 pod takes a database advisory lock and applies the migrations; other pods wait for it.
 
-    See [Self-hosting on Kubernetes](/self-hosting/kubernetes) for the manifests.
+    See [Self-hosting with Kubernetes](/self-hosting/kubernetes) for the manifests.
 
   </Tab>
   <Tab title="Vercel">

@@ -351,7 +351,7 @@ Pods that start together are safe: they take turns on migrations, and only one a
 
 For fully reproducible deployments, pin an exact tag such as `v6.0.0` (or an image digest), change it in
 `reactive-resume.yaml`, and run `kubectl apply -f reactive-resume.yaml`. Coming from v5? Read
-[Upgrading to v6](/self-hosting/upgrading-to-v6) first.
+[Migrating from v5](/self-hosting/upgrading-to-v6) first.
 
 Back up PostgreSQL and the uploads (the PVC or the S3 bucket) on a schedule, and keep a copy of the Secret. Update
 PostgreSQL separately from the app, following your operator's or provider's upgrade process.
