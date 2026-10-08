@@ -119,6 +119,7 @@ function Keywords({ entry, write, label }: FieldSetProps & { label: ReactNode })
 			<FormControl
 				render={
 					<ChipInput
+						allowCommas
 						value={valuesOf(entry).keywords ?? []}
 						onChange={(keywords) =>
 							write("keywords", (target) => {

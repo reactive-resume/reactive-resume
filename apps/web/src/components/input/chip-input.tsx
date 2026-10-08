@@ -146,6 +146,7 @@ type Props = Omit<React.ComponentProps<"div">, "value" | "onChange"> & {
 	defaultValue?: string[];
 	onChange?: (value: string[]) => void;
 	hideDescription?: boolean;
+	allowCommas?: boolean;
 };
 
 export function ChipInput({
@@ -154,6 +155,7 @@ export function ChipInput({
 	onChange,
 	className,
 	hideDescription = false,
+	allowCommas = false,
 	id: idProp,
 	"aria-describedby": ariaDescribedByProp,
 	"aria-invalid": ariaInvalidProp,
@@ -297,7 +299,7 @@ export function ChipInput({
 			const newValue = e.target.value;
 
 			if (editingIndex !== null) {
-				if (newValue.includes(",")) {
+				if (!allowCommas && newValue.includes(",")) {
 					updateChip(editingIndex, newValue.replace(",", ""));
 					setEditingIndex(null);
 					setInput("");
@@ -307,7 +309,7 @@ export function ChipInput({
 				return;
 			}
 
-			if (newValue.includes(",")) {
+			if (!allowCommas && newValue.includes(",")) {
 				const parts = newValue.split(",");
 				addChips(parts.slice(0, -1));
 				setInput(parts.at(-1) ?? "");
@@ -315,13 +317,13 @@ export function ChipInput({
 				setInput(newValue);
 			}
 		},
-		[addChips, editingIndex, updateChip],
+		[addChips, allowCommas, editingIndex, updateChip],
 	);
 
 	const handleKeyDown = React.useCallback(
 		(e: React.KeyboardEvent<HTMLInputElement>) => {
 			if (isImeComposing(e)) return;
-			if (e.key === "Enter" || e.key === ",") {
+			if (e.key === "Enter" || (!allowCommas && e.key === ",")) {
 				e.preventDefault();
 
 				if (editingIndex !== null) {
@@ -339,7 +341,7 @@ export function ChipInput({
 				setInput("");
 			}
 		},
-		[input, addChip, editingIndex, updateChip],
+		[input, addChip, allowCommas, editingIndex, updateChip],
 	);
 
 	return (
@@ -416,9 +418,15 @@ export function ChipInput({
 
 			{!hideDescription && (
 				<p className="text-xs text-ink-3">
-					<Trans>
-						Press <Kbd>{RETURN_KEY}</Kbd> or <Kbd>{COMMA_KEY}</Kbd> to add or save the current keyword.
-					</Trans>
+					{allowCommas ? (
+						<Trans>
+							Press <Kbd>{RETURN_KEY}</Kbd> to add or save the current keyword.
+						</Trans>
+					) : (
+						<Trans>
+							Press <Kbd>{RETURN_KEY}</Kbd> or <Kbd>{COMMA_KEY}</Kbd> to add or save the current keyword.
+						</Trans>
+					)}
 				</p>
 			)}
 		</div>
