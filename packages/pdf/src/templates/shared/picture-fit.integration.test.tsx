@@ -1,7 +1,9 @@
+import type { Template } from "@reactive-resume/schema/templates";
 import { describe, expect, it } from "vitest";
 import { createCanvas } from "@napi-rs/canvas";
 import { act, createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { templateSchema } from "@reactive-resume/schema/templates";
 import { ResumeDocument } from "../../document";
 import { renderToBuffer } from "../../forme/testing";
 import { rasterizePdf } from "../../semantic/test/rasterize-pdf";
@@ -63,7 +65,7 @@ function markedImage(orientation: Orientation) {
 	return canvas.toDataURL("image/png");
 }
 
-async function rasterPicture(orientation: Orientation, fit: Fit) {
+async function rasterPicture(orientation: Orientation, fit: Fit, template: Template = "onyx", aspectRatio = 1) {
 	const data = structuredClone(defaultResumeData);
 	data.basics.name = "Picture fit";
 	data.metadata.typography.body.fontFamily = "Helvetica";
@@ -75,16 +77,14 @@ async function rasterPicture(orientation: Orientation, fit: Fit) {
 		hidden: false,
 		fit,
 		size: 100,
-		aspectRatio: 1,
+		aspectRatio,
 		borderRadius: 0,
 		borderColor: "rgba(255, 0, 255, 1)",
 		borderWidth: 6,
 		shadowColor: "rgba(0, 255, 255, 1)",
 		shadowWidth: 8,
 	});
-	const element = createElement(ResumeDocument, { data, template: "onyx" }) as unknown as Parameters<
-		typeof renderToBuffer
-	>[0];
+	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<typeof renderToBuffer>[0];
 	let bytes = new Uint8Array();
 	await act(async () => {
 		bytes = new Uint8Array(await renderToBuffer(element));
@@ -180,6 +180,15 @@ function expectedContainBounds(orientation: Orientation, borderWidth: number): B
 }
 
 describe("picture fit geometry (#2782)", () => {
+	it.each(templateSchema.options)("uses the picture aspect ratio for the frame in %s", async (template) => {
+		const page = await rasterPicture("landscape", "contain", template, 2);
+		const frame = requiredColorBounds(page, frameColor, "frame");
+		expect(Math.abs(frame.right - frame.left + 1 - 150)).toBeLessThanOrEqual(1);
+		expect(Math.abs(frame.bottom - frame.top + 1 - 75)).toBeLessThanOrEqual(1);
+		const edges = Object.entries(marker).map(([name, color]) => requiredColorBounds(page, color, name));
+		expectSameCenter(mergedBounds(edges), frame);
+	});
+
 	it.each(["landscape"] as const)(
 		"keeps every %s source edge visible and centered in contain mode",
 		async (orientation) => {

@@ -134,7 +134,7 @@ export function createBaseTemplateStyles({
 		 */
 		picture: {
 			width: picture.size,
-			height: picture.size,
+			height: picture.size / picture.aspectRatio,
 			objectFit: picture.fit,
 			aspectRatio: picture.aspectRatio,
 			borderRadius: picture.borderRadius,
