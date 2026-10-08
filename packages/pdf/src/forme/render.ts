@@ -1,6 +1,7 @@
 import type { ResumeRenderOptions } from "../context";
 import type { PageMap } from "../page-map";
 import type { SectionTitleResolver } from "../section-title";
+import type { ConvertedDocument } from "./to-forme";
 import type { ElementInfo, RenderWithLayoutResult } from "@formepdf/core";
 import type { FormeDocument } from "@formepdf/react";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
@@ -116,13 +117,31 @@ function listMarkersLeftBehind(layout: RenderWithLayoutResult["layout"]): number
 	return [...markerPage].flatMap(([line, page]) => ((contentPage.get(line) ?? page) > page ? [line - 1] : []));
 }
 
-/** A free-form page's content height: the lowest box on it plus the page's bottom margin. */
+/**
+ * Where a box's content ends on a free-form measuring page. A box reaching the bottom of the space it sits in was
+ * stretched to fill the measuring page (the content box around repeated backgrounds, a row page's columns,
+ * `minHeight: "100%"`), so it ends where its own children do instead.
+ */
+function contentBottom(element: ElementInfo, limit: number): number {
+	const bottom = element.y + element.height;
+	if (bottom + element.style.margin.bottom < limit - 0.5) return bottom;
+	const { padding, borderWidth } = element.style;
+	const end = padding.bottom + borderWidth.bottom;
+	const content = element.children.reduce(
+		(lowest, child) => Math.max(lowest, contentBottom(child, bottom - end) + child.style.margin.bottom),
+		element.y + padding.top + borderWidth.top,
+	);
+	return content + end;
+}
+
+/** A free-form page's content height: where its content ends plus the page's bottom margin. */
 function measuredHeight(result: RenderWithLayoutResult, pageIndex: number, marginBottom: number) {
 	const page = result.layout.pages[pageIndex];
 	if (!page) return FREE_FORM_MIN_HEIGHT;
 	// Repeated backgrounds span the page they're measured on, so they don't count.
 	const content = page.elements.filter((element) => !isFixed(element));
-	const bottom = content.reduce((lowest, element) => Math.max(lowest, element.y + element.height), 0);
+	const pageBottom = page.contentY + page.contentHeight;
+	const bottom = content.reduce((lowest, element) => Math.max(lowest, contentBottom(element, pageBottom)), 0);
 	return Math.max(FREE_FORM_MIN_HEIGHT, Math.ceil(bottom + marginBottom));
 }
 
@@ -170,29 +189,33 @@ export async function renderResumeElement(
 	const breakBeforeListItems = new Set<number>();
 	const breakBeforeSections = new Set<string>();
 	const layOutOnce = async (keepNestedRowsWhole: boolean) => {
-		const { document, warnings } = toFormeDocument(tree, {
-			images,
-			keepNestedRowsWhole,
-			breakBeforeListItems,
-			breakBeforeSections,
-		});
+		const convert = (freeFormHeights?: (number | undefined)[]) =>
+			toFormeDocument(tree, {
+				images,
+				keepNestedRowsWhole,
+				breakBeforeListItems,
+				breakBeforeSections,
+				freeFormHeights,
+			});
 		// Forme rewrites the font entries it's given (bytes to base64), so each render gets its own.
-		const render = () =>
+		const render = ({ document }: ConvertedDocument) =>
 			engine.renderSerializedDocWithLayout({ ...document, fonts: fonts.map((font) => ({ ...font })) });
-		let result = await render();
+		let converted = convert();
+		let result = await render(converted);
 
-		// Free-form pages grow with their content: measure it, then render once more at that height.
-		let measured = false;
-		document.children.forEach((page, index) => {
+		// Free-form pages grow with their content: measure it, then convert and render once more at that height, so
+		// what spans the page (repeated backgrounds, percentages of it) spans the measured one.
+		const heights = converted.document.children.map((page, index) => {
 			const kind = page.kind as PageKind;
-			if (kind.type !== "Page" || typeof kind.config.size !== "object") return;
-			const { width, height } = kind.config.size.Custom;
-			if (height !== FREE_FORM_MEASURE_HEIGHT) return;
-			kind.config.size = { Custom: { width, height: measuredHeight(result, index, kind.config.margin.bottom) } };
-			measured = true;
+			if (kind.type !== "Page" || typeof kind.config.size !== "object") return undefined;
+			if (kind.config.size.Custom.height !== FREE_FORM_MEASURE_HEIGHT) return undefined;
+			return measuredHeight(result, index, kind.config.margin.bottom);
 		});
-		if (measured) result = await render();
-		return { result, warnings };
+		if (heights.some((height) => height !== undefined)) {
+			converted = convert(heights);
+			result = await render(converted);
+		}
+		return { result, warnings: converted.warnings };
 	};
 
 	// A marker left on the page its first line leaves: that item starts the next page instead. Breaks move what

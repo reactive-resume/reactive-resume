@@ -22,7 +22,7 @@ import { flattenAlpha, flattenStyle, toFormeStyle, toPoints, WHITE } from "./sty
 
 // A4 in points, the size used for `vw`/`vh` until a page says otherwise.
 const DEFAULT_PAGE = { width: 595.28, height: 841.89 };
-/** Free-form pages start this tall; `renderResume` measures the content and renders again at its height. */
+/** Free-form pages start this tall; `renderResume` measures the content and converts again at its height. */
 export const FREE_FORM_MEASURE_HEIGHT = 14_400;
 
 type SourceLocation = { file: string; line: number; column: number };
@@ -81,15 +81,15 @@ const PADDING_KEYS = [
 	"paddingVertical",
 ] as const;
 
-const pageDimensions = (size: PageSize | undefined) => {
+const pageDimensions = (size: PageSize | undefined, freeFormHeight = FREE_FORM_MEASURE_HEIGHT) => {
 	if (size === "LETTER") return { width: 612, height: 792 };
-	if (size && typeof size === "object") return { width: size.width, height: size.height ?? FREE_FORM_MEASURE_HEIGHT };
+	if (size && typeof size === "object") return { width: size.width, height: size.height ?? freeFormHeight };
 	return DEFAULT_PAGE;
 };
 
-const pageSizeProp = (size: PageSize | undefined) => {
+const pageSizeProp = (size: PageSize | undefined, dimensions: { width: number; height: number }) => {
 	if (size === "LETTER") return "Letter" as const;
-	if (size && typeof size === "object") return pageDimensions(size);
+	if (size && typeof size === "object") return dimensions;
 	return "A4" as const;
 };
 
@@ -859,9 +859,9 @@ function tagNode(element: object, props: Record<string, unknown>, context: Conte
 	else if (listItem) context.sourceMap.set(element, { file: LIST_SOURCE, ...place });
 }
 
-function convertPage(page: HostElement, context: Context, key: number): ReactNode {
+function convertPage(page: HostElement, context: Context, key: number, freeFormHeight?: number): ReactNode {
 	const size = page.props.size as PageSize | undefined;
-	const dimensions = pageDimensions(size);
+	const dimensions = pageDimensions(size, freeFormHeight);
 	const pageContext: Context = { ...context, pageWidth: dimensions.width, pageHeight: dimensions.height };
 	const flat = flattenStyle(page.props.style as StyleProp);
 	const margin = pageMargin(flat, pageContext);
@@ -879,7 +879,11 @@ function convertPage(page: HostElement, context: Context, key: number): ReactNod
 	const { children } = unreversed;
 	const fixed = children.filter((child) => isValidElement(child) && child.type === FormeFixed);
 	if (fixed.length === 0)
-		return createElement(FormePage, { key, size: pageSizeProp(size), margin, style: converted.style }, ...children);
+		return createElement(
+			FormePage,
+			{ key, size: pageSizeProp(size, dimensions), margin, style: converted.style },
+			...children,
+		);
 
 	// Forme lays repeated bands out with the page's other children, so on a row page they'd take a column's place.
 	// The page's own layout moves to a box around the flowing content, and the bands stay outside it.
@@ -889,7 +893,7 @@ function convertPage(page: HostElement, context: Context, key: number): ReactNod
 		(PAGE_LAYOUT_KEYS.has(property) ? layoutStyle : pageStyle)[property] = value;
 	return createElement(
 		FormePage,
-		{ key, size: pageSizeProp(size), margin, style: pageStyle as FormeStyle },
+		{ key, size: pageSizeProp(size, dimensions), margin, style: pageStyle as FormeStyle },
 		...fixed,
 		createElement(
 			FormeView,
@@ -932,6 +936,8 @@ export type ConvertOptions = {
 	breakBeforeListItems?: ReadonlySet<number>;
 	/** Wholly unplaced sections that need an explicit page break on the final render retry. */
 	breakBeforeSections?: ReadonlySet<string>;
+	/** Measured heights of free-form pages, by page index; an unmeasured one is `FREE_FORM_MEASURE_HEIGHT` tall. */
+	freeFormHeights?: readonly (number | undefined)[] | undefined;
 };
 
 export function toFormeDocument(
@@ -941,6 +947,7 @@ export function toFormeDocument(
 		keepNestedRowsWhole = false,
 		breakBeforeListItems = new Set(),
 		breakBeforeSections = new Set(),
+		freeFormHeights = [],
 	}: ConvertOptions = {},
 ): ConvertedDocument {
 	const root = tree.find((node): node is HostElement => node.type === HOST.document);
@@ -974,7 +981,7 @@ export function toFormeDocument(
 	const { props } = root;
 	const pages = root.children
 		.filter((child): child is HostElement => child.type === HOST.page)
-		.map((page, index) => convertPage(page, context, index));
+		.map((page, index) => convertPage(page, context, index, freeFormHeights[index]));
 	const metadata: Record<string, string> = {};
 	for (const [from, to] of [
 		["title", "title"],
