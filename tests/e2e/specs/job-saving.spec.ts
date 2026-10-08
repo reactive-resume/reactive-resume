@@ -122,7 +122,8 @@ test("unreadable link preserves fields and source while offering immediate paste
 	await expect(dialog).not.toBeVisible();
 	const jobs = await (await page.request.get("/api/openapi/applications")).json();
 	expect(jobs[0]).toMatchObject({ sourceUrl: source, jobDescription: "Complete manual description", status: "saved" });
-	const external = page.getByRole("link", { name: "Open application", exact: true });
+	await page.getByRole("button", { name: "Open workspace", exact: true }).click();
+	const external = page.getByRole("link", { name: "View posting", exact: true });
 	await expect(external).toHaveAttribute("href", source);
 	const popup = page.waitForEvent("popup");
 	await external.click();

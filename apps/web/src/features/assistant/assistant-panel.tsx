@@ -313,7 +313,7 @@ type ModelMenuProps = {
 	onChoose: (id: string) => void;
 };
 
-export function ModelMenu({ open, onOpenChange, providers, current, label, onChoose }: ModelMenuProps) {
+function ModelMenu({ open, onOpenChange, providers, current, label, onChoose }: ModelMenuProps) {
 	const navigate = useNavigate();
 
 	return (

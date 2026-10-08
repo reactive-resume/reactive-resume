@@ -47,7 +47,7 @@ export function scheduleKind(kind: string): { icon: IconName; title: string } {
 // ---- Wall-clock time in the Preferences timezone ----
 
 /** "2026-10-08" and "17:58": the wall clock in `timeZone` at `at`. */
-export function toZoned(at: Date, timeZone: string) {
+function toZoned(at: Date, timeZone: string) {
 	const parts = Object.fromEntries(
 		new Intl.DateTimeFormat("en-CA", {
 			timeZone,
@@ -65,7 +65,7 @@ export function toZoned(at: Date, timeZone: string) {
 }
 
 /** Invalid or skipped local times remain invalid, so the form can explain them before saving. */
-export function fromZoned(date: string, time: string, timeZone: string) {
+function fromZoned(date: string, time: string, timeZone: string) {
 	return fromZonedDateTime(date, time.slice(0, 5), timeZone) ?? new Date(Number.NaN);
 }
 

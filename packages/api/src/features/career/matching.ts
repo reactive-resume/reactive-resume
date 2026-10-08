@@ -1,5 +1,5 @@
 /** What a posting doesn't say, named as a missing fact rather than a problem. */
-export type Unknown = "salary" | "office";
+type Unknown = "salary" | "office";
 
 // ponytail: a small English stop list; preferences in other languages simply keep more of their words significant.
 const STOP_WORDS = new Set(["an", "and", "at", "for", "from", "in", "of", "on", "or", "the", "to", "with", "within"]);

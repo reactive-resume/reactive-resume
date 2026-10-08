@@ -73,7 +73,7 @@ const archiveKinds = {
 } satisfies Record<WorkspaceTab, SavedItem["data"]["kind"] | null>;
 
 /** The interview a workspace is about: the next one to come, else the latest one if it ended in the last day. */
-export function currentInterview(application: Application, now: Date) {
+function currentInterview(application: Application, now: Date) {
 	const interviews = application.activity.filter(isInterview).sort((a, b) => +new Date(a.at) - +new Date(b.at));
 	const end = (interview: InterviewTimelineEntry) => +new Date(interview.at) + interview.durationMinutes * 60_000;
 	return (
@@ -83,7 +83,7 @@ export function currentInterview(application: Application, now: Date) {
 }
 
 /** Rule 7: the tab a stage opens on. Offers are compared in Career, so an offer opens on its messages. */
-export function defaultTab(application: Application, now: Date): WorkspaceTab {
+function defaultTab(application: Application, now: Date): WorkspaceTab {
 	const interview = currentInterview(application, now);
 	const ended = interview && +new Date(interview.at) + interview.durationMinutes * 60_000 < +now;
 	switch (application.status) {
