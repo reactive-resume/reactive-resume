@@ -5,7 +5,7 @@ import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeDocument } from "../../document";
 import { renderToBuffer } from "../../forme/testing";
 
-for (const template of ["ditgar", "gengar"] as const) {
+for (const template of ["ditgar", "gengar", "leafish"] as const) {
 	describe(`${template} featured summary heading`, () => {
 		it.each([
 			[true, true],

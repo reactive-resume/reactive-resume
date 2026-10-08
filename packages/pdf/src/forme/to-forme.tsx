@@ -54,7 +54,7 @@ type Context = {
 	/** Whether the parent lays its children out in a row. */
 	rowParent: boolean;
 	keepNestedRowsWhole: boolean;
-	breakBeforeSections: ReadonlySet<string>;
+	breakBeforeNodes: ReadonlySet<string>;
 	/** The parent's padding: Forme places absolute boxes inside it, react-pdf over it. */
 	parentPadding: Edges;
 	/** The opaque colour behind the element being converted (see `flattenAlpha`). */
@@ -472,7 +472,7 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
 			let children = spread.children;
 			const viewStyle = flowStyle(props, spread.style);
 			const nodeKey = props[RESUME_NODE_PROP];
-			if (typeof nodeKey === "string" && context.breakBeforeSections.has(nodeKey)) viewStyle.breakBefore = true;
+			if (typeof nodeKey === "string" && context.breakBeforeNodes.has(nodeKey)) viewStyle.breakBefore = true;
 			if (context.listItem?.role === LIST_ROLE.item && context.lists.breakBefore.has(context.listItem.index))
 				viewStyle.breakBefore = true;
 			// Forme ignores a page break on an item of a row: the row takes it, as the item can't start a page without it.
@@ -934,8 +934,8 @@ export type ConvertOptions = {
 	keepNestedRowsWhole?: boolean;
 	/** List items (by index, see `LIST_ROLE`) that start a new page, so their marker stays with their first line. */
 	breakBeforeListItems?: ReadonlySet<number>;
-	/** Wholly unplaced sections that need an explicit page break on the final render retry. */
-	breakBeforeSections?: ReadonlySet<string>;
+	/** Unplaced sections or items that need an explicit page break on a render retry. */
+	breakBeforeNodes?: ReadonlySet<string>;
 	/** Measured heights of free-form pages, by page index; an unmeasured one is `FREE_FORM_MEASURE_HEIGHT` tall. */
 	freeFormHeights?: readonly (number | undefined)[] | undefined;
 };
@@ -946,7 +946,7 @@ export function toFormeDocument(
 		images = new Map(),
 		keepNestedRowsWhole = false,
 		breakBeforeListItems = new Set(),
-		breakBeforeSections = new Set(),
+		breakBeforeNodes = new Set(),
 		freeFormHeights = [],
 	}: ConvertOptions = {},
 ): ConvertedDocument {
@@ -962,7 +962,7 @@ export function toFormeDocument(
 		insideRow: false,
 		rowParent: false,
 		keepNestedRowsWhole,
-		breakBeforeSections,
+		breakBeforeNodes,
 		images,
 		backdrop: WHITE,
 		pageMargin: undefined,

@@ -11,7 +11,7 @@ import type { ReactElement } from "react";
 import { createElement } from "react";
 import { ResumeDocument } from "../document";
 import { resolvePdfFonts, resumeContentContainsCJK, resumeContentScripts } from "../hooks/use-register-fonts";
-import { extractPageMap, NODE_SOURCE_PREFIX, parseResumeNodeKey } from "../page-map";
+import { extractPageMap, NODE_CONTENT_PREFIX, NODE_SOURCE_PREFIX, parseResumeNodeKey } from "../page-map";
 import { loadFonts } from "./fonts";
 import { loadIcons } from "./icons";
 import { imageSources, loadImages } from "./images";
@@ -76,23 +76,29 @@ const misplacesABox = (result: RenderWithLayoutResult) =>
 		}),
 	);
 
-/** Whole sections Forme lost while splitting a column, rather than ordinary off-page fragments. */
-function unplacedSections(layout: RenderWithLayoutResult["layout"]): string[] {
+/** Missing sections and items with text Forme failed to place while splitting a column. */
+function unplacedBlocks(layout: RenderWithLayoutResult["layout"]): string[] {
 	const placed = new Set(
 		extractPageMap(layout)
 			.nodes.filter((node) => node.kind === "section")
 			.map((node) => node.key),
 	);
 	const missing = new Set<string>();
-	const visit = (element: ElementInfo) => {
+	const visit = (element: ElementInfo, itemKey?: string) => {
+		let ownerItemKey = itemKey;
 		const source = element.sourceLocation?.file;
+		if (source?.startsWith(NODE_SOURCE_PREFIX) || source?.startsWith(NODE_CONTENT_PREFIX)) {
+			const key = source.slice(source.indexOf(":") + 1);
+			if (parseResumeNodeKey(key)?.kind === "item") ownerItemKey = key;
+		}
 		if (source?.startsWith(NODE_SOURCE_PREFIX) && (offPage(element.y) || offPage(element.height))) {
 			const key = source.slice(NODE_SOURCE_PREFIX.length);
 			if (parseResumeNodeKey(key)?.kind === "section" && !placed.has(key)) missing.add(key);
 		}
-		element.children.forEach(visit);
+		if (element.kind === "Text" && offPage(element.y) && ownerItemKey) missing.add(ownerItemKey);
+		for (const child of element.children) visit(child, ownerItemKey);
 	};
-	for (const page of layout.pages) page.elements.forEach(visit);
+	for (const page of layout.pages) for (const element of page.elements) visit(element);
 	return [...missing];
 }
 
@@ -187,14 +193,14 @@ export async function renderResumeElement(
 	const { images, warnings: imageWarnings } = await loadImages(imageSources(tree), readImage);
 
 	const breakBeforeListItems = new Set<number>();
-	const breakBeforeSections = new Set<string>();
+	const breakBeforeNodes = new Set<string>();
 	const layOutOnce = async (keepNestedRowsWhole: boolean) => {
 		const convert = (freeFormHeights?: (number | undefined)[]) =>
 			toFormeDocument(tree, {
 				images,
 				keepNestedRowsWhole,
 				breakBeforeListItems,
-				breakBeforeSections,
+				breakBeforeNodes,
 				freeFormHeights,
 			});
 		// Forme rewrites the font entries it's given (bytes to base64), so each render gets its own.
@@ -231,10 +237,12 @@ export async function renderResumeElement(
 
 	let { result, warnings } = await layOut(false);
 	if (misplacesABox(result)) ({ result, warnings } = await layOut(true));
-	const missingSections = unplacedSections(result.layout);
-	if (missingSections.length > 0) {
-		// A section that disappeared gets an explicit next-page start; never discard its content to make it fit.
-		for (const key of missingSections) breakBeforeSections.add(key);
+	// ponytail: three repairs cap rendering cost; remove this workaround when Forme fixes nested pagination.
+	for (let pass = 0; pass < 3; pass++) {
+		const first = unplacedBlocks(result.layout).find((key) => !breakBeforeNodes.has(key));
+		if (!first) break;
+		// Retry the first failed block from a fresh page; later failures may recover without extra breaks.
+		breakBeforeNodes.add(first);
 		({ result, warnings } = await layOut(true));
 	}
 	if (misplacesABox(result))

@@ -129,7 +129,7 @@ const Header = ({ styles }: LeafishHeaderProps) => {
 							<Text>{basics.headline}</Text>
 						</View>
 
-						<Section section="summary" placement="main" showHeading={false} />
+						<Section section="summary" placement="main" />
 					</View>
 				</SemanticTemplatePartView>
 			</SemanticTemplatePartView>
