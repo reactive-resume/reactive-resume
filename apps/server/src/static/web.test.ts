@@ -63,7 +63,7 @@ describe("web app fallback classification", () => {
 		expect(html).toContain(
 			'<meta property="og:description" content="Reactive Resume is a free and open-source resume builder that makes it easy to create, update, and share your resume.">',
 		);
-		expect(html).toContain('"contactType":"support","email":"hello@amruthpillai.com"');
+		expect(html).toContain('"contactType":"support","email":"amruth@rxresu.me"');
 		expect(html).not.toContain("utm_source");
 
 		const dashboardResponse = await handleWebApp(new Request("https://example.com/dashboard"));

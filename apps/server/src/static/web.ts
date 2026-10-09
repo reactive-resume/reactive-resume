@@ -93,7 +93,7 @@ function organization(origin: string): StructuredData {
 		"@id": `${origin}/#organization`,
 		name: "Reactive Resume",
 		url: `${origin}/`,
-		contactPoint: { "@type": "ContactPoint", contactType: "support", email: "hello@amruthpillai.com" },
+		contactPoint: { "@type": "ContactPoint", contactType: "support", email: "amruth@rxresu.me" },
 		logo: { "@type": "ImageObject", url: `${origin}/pwa-512x512.png`, width: 512, height: 512 },
 		sameAs: [
 			githubUrl,

@@ -88,7 +88,7 @@ export async function generateOpenApiSpec({ appUrl, version }: GenerateOpenApiSp
 			description:
 				"Reactive Resume API. Mutations do not support Idempotency-Key. Do not automatically retry POST, PUT, PATCH or DELETE requests after a timeout: first read the resource to determine whether the operation succeeded. Existing enum values and response shapes are retained for compatibility.",
 			license: { name: "MIT", url: "https://github.com/reactive-resume/reactive-resume/blob/main/LICENSE" },
-			contact: { name: "Amruth Pillai", email: "hello@amruthpillai.com", url: "https://amruthpillai.com" },
+			contact: { name: "Amruth Pillai", email: "amruth@rxresu.me", url: "https://amruthpillai.com" },
 		},
 		servers: [{ url: `${appUrl}/api/openapi` }],
 		paths: {

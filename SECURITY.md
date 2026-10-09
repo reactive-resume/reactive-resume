@@ -19,7 +19,7 @@ privately instead of opening a public issue.
 Preferred reporting channels:
 
 - Use GitHub's private vulnerability reporting for this repository.
-- If that is unavailable, email `hello@amruthpillai.com` with the subject
+- If that is unavailable, email `amruth@rxresu.me` with the subject
   `Security Vulnerability: Reactive Resume`.
 
 Please include as much detail as possible, including:

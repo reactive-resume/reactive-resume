@@ -41,7 +41,7 @@ const getColumns = (): { id: string; title: string; links: FooterLink[] }[] => [
 			{ label: t`Discord`, href: "https://discord.gg/aSyA5ZSxpb" },
 			{ label: t`Subreddit`, href: "https://reddit.com/r/reactiveresume" },
 			{ label: t`Translations`, href: "https://crowdin.com/project/reactive-resume" },
-			{ label: t`Contact`, href: "mailto:hello@amruthpillai.com" },
+			{ label: t`Contact`, href: "mailto:amruth@rxresu.me" },
 			{ label: "LinkedIn", href: "https://www.linkedin.com/company/reactive-resume" },
 			{ label: "Amruth Pillai · X", href: "https://x.com/KingOKings" },
 			{ label: t`Report an issue`, href: `${githubUrl}/issues` },
