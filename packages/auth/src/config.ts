@@ -188,10 +188,7 @@ const getAuthConfig = () => {
 			before: createAuthMiddleware(async (ctx) => {
 				if (ctx.path === "/oauth2/delete-consent") {
 					const origin = ctx.headers?.get("origin");
-					if (
-						(origin && origin !== new URL(authBaseUrl).origin) ||
-						ctx.headers?.get("sec-fetch-site") === "cross-site"
-					) {
+					if ((origin && !TRUSTED_ORIGINS.includes(origin)) || ctx.headers?.get("sec-fetch-site") === "cross-site") {
 						throw new APIError("FORBIDDEN", { message: "Cross-origin consent changes are not allowed." });
 					}
 					const current = await auth.api.getSession({

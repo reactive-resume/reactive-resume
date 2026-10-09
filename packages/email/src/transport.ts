@@ -37,12 +37,16 @@ export const sendEmail = async ({ to, subject, react }: SendEmailOptions) => {
 	};
 
 	if (!transport) {
-		console.info("SMTP not configured; skipping email send.", {
-			to: payload.to,
-			subject: payload.subject,
-			text: payload.text,
-			html: payload.html,
-		});
+		if (process.env.NODE_ENV !== "production") {
+			console.info("SMTP not configured; skipping email send.", {
+				to: payload.to,
+				subject: payload.subject,
+				text: payload.text,
+				html: payload.html,
+			});
+		} else {
+			console.info("SMTP not configured; skipping email send.", { to, subject });
+		}
 		return;
 	}
 

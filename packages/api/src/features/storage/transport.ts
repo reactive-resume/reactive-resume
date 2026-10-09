@@ -1,12 +1,14 @@
 import { randomUUID } from "node:crypto";
 import { del, get, issueSignedToken, list, presignUrl } from "@vercel/blob";
 import { z } from "zod";
+import { getTrustedOrigins } from "@reactive-resume/auth/trusted-origins";
 import { getRedis, redisKey } from "@reactive-resume/db/redis";
 import { env } from "@reactive-resume/env/server";
 import { resolveAuthenticationFromRequestHeaders } from "../../context";
 import { createRateLimiter } from "../../redis";
 import { blobOptions, blobPath } from "./blob";
 
+const TRUSTED_ORIGINS = getTrustedOrigins(env.APP_URL);
 const HEADER = "x-resume-staged-body";
 const TTL_SECONDS = 600;
 // Covers the 100 MiB thread attachment allowance, including base64 and RPC framing.
@@ -21,7 +23,7 @@ const enabled = () => process.env.VERCEL === "1" && env.STORAGE_BACKEND === "blo
 
 function authenticatedRequest(request: Request) {
 	const origin = request.headers.get("origin");
-	if (origin && origin !== new URL(env.APP_URL).origin) return null;
+	if (origin && !TRUSTED_ORIGINS.includes(origin)) return null;
 	return resolveAuthenticationFromRequestHeaders(request.headers);
 }
 
@@ -47,7 +49,7 @@ export async function prepareStagedBody(request: Request): Promise<Response> {
 	const parsed = payloadSchema.safeParse(await request.json().catch(() => null));
 	if (!parsed.success) return new Response("Invalid upload", { status: 400 });
 	const target = new URL(parsed.data.path, env.APP_URL);
-	if (target.origin !== new URL(env.APP_URL).origin || !/^\/api\/rpc(?:\/|$)/.test(target.pathname)) {
+	if (!TRUSTED_ORIGINS.includes(target.origin) || !/^\/api\/rpc(?:\/|$)/.test(target.pathname)) {
 		return new Response("Invalid target", { status: 400 });
 	}
 	const redis = getRedis();

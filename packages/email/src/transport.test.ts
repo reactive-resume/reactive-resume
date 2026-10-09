@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 const envMock = vi.hoisted(() => ({
 	SMTP_HOST: undefined as string | undefined,
@@ -34,8 +34,43 @@ const resetEnv = () => {
 	createTransport.mockClear();
 	sendMail.mockClear();
 };
-
 describe("sendEmail", () => {
+	const originalNodeEnv = process.env.NODE_ENV;
+
+	afterEach(() => {
+		process.env.NODE_ENV = originalNodeEnv;
+	});
+
+	it("skips email send and logs without body in production when SMTP is not configured", async () => {
+		resetEnv();
+		process.env.NODE_ENV = "production";
+		const infoSpy = vi.spyOn(console, "info").mockImplementation(() => {});
+		await expect(
+			sendEmail({ to: "user@example.com", subject: "Reset password", react: fakeReact }),
+		).resolves.toBeUndefined();
+		expect(infoSpy).toHaveBeenCalledWith("SMTP not configured; skipping email send.", {
+			to: "user@example.com",
+			subject: "Reset password",
+		});
+		infoSpy.mockRestore();
+	});
+
+	it("skips email send and logs with body in development when SMTP is not configured", async () => {
+		resetEnv();
+		process.env.NODE_ENV = "development";
+		const infoSpy = vi.spyOn(console, "info").mockImplementation(() => {});
+		await expect(
+			sendEmail({ to: "user@example.com", subject: "Reset password", react: fakeReact }),
+		).resolves.toBeUndefined();
+		expect(infoSpy).toHaveBeenCalledWith("SMTP not configured; skipping email send.", {
+			to: "user@example.com",
+			subject: "Reset password",
+			text: "plain text body",
+			html: "<p>html body</p>",
+		});
+		infoSpy.mockRestore();
+	});
+
 	it("does not throw if the SMTP transport itself errors", async () => {
 		resetEnv();
 		envMock.SMTP_HOST = "smtp.example.com";

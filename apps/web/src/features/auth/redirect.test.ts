@@ -29,6 +29,18 @@ describe("authentication callback", () => {
 		const callbackURL = "/dashboard?next=https%3A%2F%2Fexample.com";
 		expect(authSearchSchema.parse({ callbackURL }).callbackURL).toBe(callbackURL);
 	});
+	it("routes internal SPA paths without reloading document", () => {
+		expect(getAuthRedirectOptions("/dashboard")).toEqual({
+			href: "/dashboard",
+			reloadDocument: false,
+			replace: true,
+		});
+		expect(getAuthRedirectOptions("/builder/resume-123")).toEqual({
+			href: "/builder/resume-123",
+			reloadDocument: false,
+			replace: true,
+		});
+	});
 });
 
 describe("signed OAuth sign-in context", () => {

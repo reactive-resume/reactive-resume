@@ -196,8 +196,8 @@ const ResumeForm = withForm({
 								<FormControl
 									render={
 										<Input
-											min={1}
-											max={64}
+											minLength={1}
+											maxLength={64}
 											name={field.name}
 											value={field.state.value}
 											onBlur={field.handleBlur}

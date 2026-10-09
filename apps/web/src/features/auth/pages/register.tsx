@@ -21,7 +21,7 @@ import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
-	name: z.string().min(3).max(64),
+	name: z.string().trim().min(1).max(64),
 	username: z
 		.string()
 		.min(3)
@@ -138,8 +138,8 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 								<FormControl
 									render={
 										<Input
-											min={3}
-											max={64}
+											minLength={1}
+											maxLength={64}
 											autoComplete="section-register name"
 											placeholder={t({
 												comment: "Example full name placeholder on registration form",
@@ -166,8 +166,8 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 								<FormControl
 									render={
 										<Input
-											min={3}
-											max={64}
+											minLength={3}
+											maxLength={64}
 											autoComplete="section-register username"
 											placeholder={t({
 												comment: "Example username placeholder on registration form",

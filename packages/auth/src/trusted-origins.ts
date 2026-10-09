@@ -1,5 +1,10 @@
 export function getTrustedOrigins(appUrl: string): string[] {
-	const trustedOrigins = new Set<string>(["http://localhost:3000", "http://127.0.0.1:3000"]);
+	const trustedOrigins = new Set<string>();
+
+	if (process.env.NODE_ENV !== "production") {
+		trustedOrigins.add("http://localhost:3000");
+		trustedOrigins.add("http://127.0.0.1:3000");
+	}
 
 	const configuredUrl = new URL(appUrl);
 	trustedOrigins.add(configuredUrl.origin);

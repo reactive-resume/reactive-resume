@@ -23,8 +23,8 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/builder/letter/$coverLetterId")({
 	component: RouteComponent,
 	validateSearch: searchSchema,
-	beforeLoad: ({ context }) => {
-		if (!context.session) throw redirect({ to: "/auth/login", replace: true });
+	beforeLoad: ({ context, location }) => {
+		if (!context.session) throw redirect({ to: "/auth/login", search: { callbackURL: location.href }, replace: true });
 		return { session: context.session };
 	},
 	loader: async ({ params, context }) => {

@@ -106,6 +106,17 @@ describe("cookie request origins", () => {
 			),
 		).resolves.toMatchObject({ id: "token-user" });
 	});
+
+	it("accepts loopback alias origins for session cookies", async () => {
+		reset();
+		authMock.api.getSession.mockResolvedValue({ user: { id: "loopback-user" } });
+		setupDbResolves({ id: "loopback-user" });
+		const loopbackOrigin =
+			new URL(env.APP_URL).hostname === "localhost" ? "http://127.0.0.1:3000" : "http://localhost:3000";
+		await expect(
+			resolveUserFromRequestHeaders(new Headers({ cookie: "session=valid", origin: loopbackOrigin })),
+		).resolves.toMatchObject({ id: "loopback-user" });
+	});
 });
 
 describe("credential authorization", () => {

@@ -3,10 +3,12 @@ import { randomUUID } from "node:crypto";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { ORPCError } from "@orpc/server";
 import { consumeMcpRequestLimit, consumeMcpUserLimit } from "@reactive-resume/api/features/mcp/transport";
+import { getTrustedOrigins } from "@reactive-resume/auth/trusted-origins";
 import { env } from "@reactive-resume/env/server";
 import { AuthError, authenticateRequest } from "./auth";
 import { createMcpServer } from "./server";
 
+const TRUSTED_ORIGINS = getTrustedOrigins(env.APP_URL);
 const responseHeaders = {
 	"Cache-Control": "no-store",
 	"X-Content-Type-Options": "nosniff",
@@ -24,7 +26,7 @@ export async function handleMcp(request: Request, trustedClient = "unknown") {
 	let transport: WebStandardStreamableHTTPServerTransport | undefined;
 	try {
 		const origin = request.headers.get("origin");
-		if (origin !== null && origin !== new URL(env.APP_URL).origin) {
+		if (origin !== null && !TRUSTED_ORIGINS.includes(origin)) {
 			return errorResponse(403, "Origin is not allowed. Use the configured application origin or a native MCP client.");
 		}
 		if (request.method !== "POST") {

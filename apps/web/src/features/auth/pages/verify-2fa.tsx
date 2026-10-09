@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
@@ -17,10 +18,12 @@ import { useAppForm } from "@/libs/tanstack-form";
 
 const totpSchema = z.object({
 	code: z.string().length(6, "Code must be 6 digits"),
+	trustDevice: z.boolean(),
 });
 
 const backupCodeSchema = z.object({
 	code: z.string().trim(),
+	trustDevice: z.boolean(),
 });
 
 type TwoFactorVerificationPageProps = {
@@ -34,7 +37,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 	const navigate = useNavigate();
 
 	const form = useAppForm({
-		defaultValues: { code: "" },
+		defaultValues: { code: "", trustDevice: false },
 		validators: { onSubmit: backupCode ? backupCodeSchema : totpSchema },
 		onSubmit: async ({ value }) => {
 			const toastId = toast.add({
@@ -44,8 +47,16 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 			const rawCode = value.code.trim().replaceAll("-", "");
 			const code = backupCode ? `${rawCode.slice(0, 5)}-${rawCode.slice(5)}` : value.code;
 			const { data, error } = backupCode
-				? await authClient.twoFactor.verifyBackupCode({ code, ...getOAuthSignInOptions(callbackURL) })
-				: await authClient.twoFactor.verifyTotp({ code, ...getOAuthSignInOptions(callbackURL) });
+				? await authClient.twoFactor.verifyBackupCode({
+						code,
+						trustDevice: value.trustDevice,
+						...getOAuthSignInOptions(callbackURL),
+					})
+				: await authClient.twoFactor.verifyTotp({
+						code,
+						trustDevice: value.trustDevice,
+						...getOAuthSignInOptions(callbackURL),
+					});
 
 			if (error) {
 				toast.add({
@@ -133,6 +144,19 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 								}
 							/>
 							<FormMessage errors={field.state.meta.errors} />
+						</FormItem>
+					)}
+				</form.Field>
+
+				<form.Field name="trustDevice">
+					{(field) => (
+						<FormItem className="flex items-center gap-2.5 justify-self-center">
+							<FormControl
+								render={<Checkbox name={field.name} checked={field.state.value} onCheckedChange={field.handleChange} />}
+							/>
+							<FormLabel>
+								<Trans>Trust this device for 30 days</Trans>
+							</FormLabel>
 						</FormItem>
 					)}
 				</form.Field>

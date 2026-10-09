@@ -188,9 +188,31 @@ describe("OAuth callback after two-factor verification", () => {
 		fireEvent.change(input, { target: { value: code } });
 		fireEvent.submit(form);
 		await waitFor(() =>
-			expect(mocks.verifyBackupCode).toHaveBeenCalledWith(expect.objectContaining({ code: "82cNK-qaOiN" })),
+			expect(mocks.verifyBackupCode).toHaveBeenCalledWith(
+				expect.objectContaining({ code: "82cNK-qaOiN", trustDevice: false }),
+			),
 		);
 	});
+
+	it("sends trustDevice: true when user checks the option", async () => {
+		const { container } = render(
+			<I18nProvider i18n={i18n}>
+				<VerifyTwoFactorPage />
+			</I18nProvider>,
+		);
+		const input = container.querySelector('input[name="code"]');
+		const checkbox = screen.getByRole("checkbox", { name: "Trust this device for 30 days" });
+		const form = container.querySelector("form");
+		if (!input || !form) throw new Error("Verification form is missing");
+
+		fireEvent.change(input, { target: { value: "123456" } });
+		fireEvent.click(checkbox);
+		fireEvent.submit(form);
+		await waitFor(() =>
+			expect(mocks.verifyTotp).toHaveBeenCalledWith(expect.objectContaining({ code: "123456", trustDevice: true })),
+		);
+	});
+
 	it.each([false, true])("resumes the callback after verifying a code (backup: %s)", async (backup) => {
 		const { container } = render(
 			<I18nProvider i18n={i18n}>{backup ? <VerifyTwoFactorBackupPage /> : <VerifyTwoFactorPage />}</I18nProvider>,
