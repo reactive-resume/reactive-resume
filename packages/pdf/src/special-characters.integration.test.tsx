@@ -75,4 +75,19 @@ describe("special characters in exported PDFs (#3106)", () => {
 			}
 		},
 	);
+
+	it("exports a paragraph that ends in a line break in a standard PDF font (#3593)", { timeout: 30_000 }, async () => {
+		const data = fixture();
+		data.metadata.typography.body.fontFamily = "Helvetica";
+		data.metadata.typography.heading.fontFamily = "Helvetica";
+		data.summary.content = '<p data-resume-whitespace="preserve">Lead Test Engineer<br></p>';
+
+		const { glyphs } = await readPdf(data);
+
+		const drawn = glyphs
+			.map((glyph) => glyph.unicode)
+			.join("")
+			.replaceAll(" ", "");
+		expect(drawn).toContain("LeadTestEngineer");
+	});
 });

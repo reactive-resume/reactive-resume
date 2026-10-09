@@ -99,15 +99,12 @@ function appendUsernameSuffix(base: string, suffix: string): string {
 async function isUsernameTaken(candidate: string): Promise<boolean> {
 	const normalizedCandidate = candidate.trim().toLowerCase();
 
+	// Both columns are stored lowercase (the username plugin normalizes them), so plain equality uses their unique
+	// indexes; `lower()` read every user on each check (#3593).
 	const [existingUser] = await db
 		.select({ id: schema.user.id })
 		.from(schema.user)
-		.where(
-			or(
-				eq(lower(schema.user.username), normalizedCandidate),
-				eq(lower(schema.user.displayUsername), normalizedCandidate),
-			),
-		)
+		.where(or(eq(schema.user.username, normalizedCandidate), eq(schema.user.displayUsername, normalizedCandidate)))
 		.limit(1);
 
 	return Boolean(existingUser);

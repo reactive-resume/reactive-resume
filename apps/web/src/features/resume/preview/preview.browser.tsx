@@ -4,8 +4,10 @@ import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { Template } from "@reactive-resume/schema/templates";
 import type { MotionStyle } from "motion/react";
 import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { Button } from "@reactive-resume/ui/components/button";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
@@ -124,6 +126,9 @@ export function ResumePreviewClient({
 	const reducedMotion = useReducedMotion();
 
 	const [previewLayers, setPreviewLayers] = useState<PreviewPdf[]>([]);
+	// Why the first render failed: with nothing to keep on screen, the page says so in place of its loader.
+	const [failure, setFailure] = useState<string | null>(null);
+	const [attempt, setAttempt] = useState(0);
 
 	const pdfIdRef = useRef(0);
 	const requestIdRef = useRef(0);
@@ -155,18 +160,21 @@ export function ResumePreviewClient({
 					const nextPdf = createPreviewPdf(blob, pdfIdRef.current++, resumeData.metadata.template, pageMap);
 
 					hasPreviewRef.current = true;
+					setFailure(null);
 					setPreviewLayers((current) => addPreviewLayer(current, nextPdf));
 				}
 			} catch (error) {
 				if (stale()) return;
+				// Name the cause the user can fix (an unsupported character, a font that didn't load); keep other engine errors generic.
+				const textLoss = error instanceof Error && error.cause === "pdf-text-loss";
+				if (!hasPreviewRef.current) {
+					setFailure(textLoss ? getReadableErrorMessage(error, "") : t`Something went wrong`);
+					return;
+				}
 				const fallback = t`The resume preview could not be updated. The last valid preview is still shown.`;
 				toast.add({
 					type: "error",
-					// Name the cause the user can fix (an unsupported character, a font that didn't load); keep other engine errors generic.
-					description:
-						error instanceof Error && error.cause === "pdf-text-loss"
-							? getReadableErrorMessage(error, fallback)
-							: fallback,
+					description: textLoss ? getReadableErrorMessage(error, fallback) : fallback,
 					id: "resume-preview-render-error",
 				});
 			}
@@ -180,7 +188,7 @@ export function ResumePreviewClient({
 			cancelled = true;
 			window.clearTimeout(timeoutId);
 		};
-	}, [paused, resumeData, includeCoverLetterHeader]);
+	}, [paused, resumeData, includeCoverLetterHeader, attempt]);
 
 	const activeLayer = getActivePreviewLayer(previewLayers);
 	const activePageCount = activeLayer?.numPages ?? 0;
@@ -215,6 +223,23 @@ export function ResumePreviewClient({
 							pageLayout={pageLayout}
 							pageScale={pageScale}
 							showPageNumbers={showPageNumbers}
+							failure={
+								failure ? (
+									<div role="alert" className="grid justify-items-center gap-3 p-6 text-center text-sm text-ink-2">
+										<p>{failure}</p>
+										<Button
+											variant="secondary"
+											size="sm"
+											onClick={() => {
+												setFailure(null);
+												setAttempt((count) => count + 1);
+											}}
+										>
+											<Trans>Try again</Trans>
+										</Button>
+									</div>
+								) : undefined
+							}
 						/>
 					</m.div>
 				)}

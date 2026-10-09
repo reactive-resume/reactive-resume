@@ -4,11 +4,13 @@ import { prepareFontBytes } from "./font-bytes";
 
 // One download per font file for the life of the page or server process.
 const cache = new Map<string, Promise<Uint8Array>>();
+// A stalled download fails the render instead of holding the preview on its loader. CJK faces are 10–15 MB.
+const DOWNLOAD_TIMEOUT_MS = 120_000;
 
 const load = (src: string) => {
 	let bytes = cache.get(src);
 	if (!bytes) {
-		bytes = fetch(src)
+		bytes = fetch(src, { signal: AbortSignal.timeout(DOWNLOAD_TIMEOUT_MS) })
 			.then((response) => {
 				if (!response.ok) throw new Error(`Font ${src}: HTTP ${response.status}`);
 				return response.arrayBuffer();

@@ -35,6 +35,8 @@ type ResumePreviewLoaderProps = Pick<ResumePreviewProps, "pageClassName" | "show
 	pageGap?: CSSProperties["gap"];
 	pageLayout?: "horizontal" | "vertical";
 	pageScale?: number;
+	/** Shown on the first page in place of the spinner when the render failed. */
+	failure?: ReactNode;
 };
 
 // ponytail: normalizeResumePreviewProps deleted — defaults now live in ResumePreview destructuring
@@ -46,6 +48,7 @@ export function ResumePreviewLoader({
 	pageLayout = "horizontal",
 	pageScale = 1,
 	showPageNumbers = false,
+	failure,
 }: ResumePreviewLoaderProps) {
 	const pageSize = getScaledPreviewPageSize(DEFAULT_PDF_PAGE_SIZE, pageScale);
 	const resolvedPageGap = getResumePreviewGapValue(pageGap);
@@ -72,15 +75,15 @@ export function ResumePreviewLoader({
 						) : null}
 
 						<div
-							role="img"
-							aria-label={`Loading resume page ${pageNumber} of ${pageCount}`}
+							role={failure ? undefined : "img"}
+							aria-label={failure ? undefined : `Loading resume page ${pageNumber} of ${pageCount}`}
 							style={pageSize}
 							className={cn(
 								"flex aspect-page items-center justify-center overflow-hidden rounded-md bg-white text-ink-3",
 								pageClassName,
 							)}
 						>
-							<Spinner className="size-10" />
+							{failure ? pageNumber === 1 && failure : <Spinner className="size-10" />}
 						</div>
 					</figure>
 				);

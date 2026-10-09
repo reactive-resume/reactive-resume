@@ -15,7 +15,7 @@ vi.mock("./forme/render", async (importOriginal) => ({
 	...(await importOriginal<typeof import("./forme/render")>()),
 	renderResume: rendererMock.renderResume,
 }));
-vi.mock("@formepdf/core/worker", () => ({ init: vi.fn(async () => {}) }));
+vi.mock("@formepdf/core/worker", () => ({ init: vi.fn(async () => {}), renderSerializedDocWithLayout: vi.fn() }));
 
 describe("createResumePdfBlob", () => {
 	it("rejects when a font can't be downloaded, so callers fall back to the server's PDF", async () => {

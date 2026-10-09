@@ -335,6 +335,25 @@ const isEmptyText = (node: HostNode): boolean =>
 		? node.text.length === 0
 		: (node.type === HOST.text || node.type === HOST.link) && node.children.every(isEmptyText);
 
+/**
+ * A text's runs without the line breaks that end it. A browser draws nothing for a `<br>` that ends a paragraph;
+ * Forme 0.28 draws that "\n" as a glyph, "?" in the standard PDF fonts, and the export then rejects the text (#3593).
+ */
+function withoutTrailingBreaks(nodes: HostNode[]): HostNode[] {
+	const last = nodes.at(-1);
+	if (!last) return nodes;
+	if ("text" in last) {
+		const text = last.text.replace(/\n+$/, "");
+		if (text === last.text) return nodes;
+		return text ? [...nodes.slice(0, -1), { ...last, text }] : withoutTrailingBreaks(nodes.slice(0, -1));
+	}
+	if (last.type !== HOST.text && last.type !== HOST.link) return nodes;
+	const children = withoutTrailingBreaks(last.children);
+	if (children === last.children) return nodes;
+	if (children.length === 0) return withoutTrailingBreaks(nodes.slice(0, -1));
+	return [...nodes.slice(0, -1), { ...last, children }];
+}
+
 const MIRRORED_JUSTIFY: Record<string, FormeStyle["justifyContent"]> = {
 	"flex-start": "flex-end",
 	"flex-end": "flex-start",
@@ -548,7 +567,7 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
 						inline = [];
 						return;
 					}
-					const runs = convertChildren(inline, { ...inner, inText: true });
+					const runs = convertChildren(withoutTrailingBreaks(inline), { ...inner, inText: true });
 					children.push(createElement(FormeText, { key: children.length, style: context.textDefaults }, ...runs));
 					inline = [];
 				};
@@ -565,7 +584,8 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
 				tagNode(element, props, context);
 				return element;
 			}
-			const children = convertChildren(node.children, childContext(context, converted, true));
+			const runs = context.inText ? node.children : withoutTrailingBreaks(node.children);
+			const children = convertChildren(runs, childContext(context, converted, true));
 			const textStyle: FormeStyle = { ...context.textDefaults, ...flowStyle(props, style) };
 			// Forme 0.25 loses the rest of the page (boxes at y -1.8e308) when a row with a text as a direct child breaks
 			// across pages. The text sits in a box that takes its place in the row; a text with a background, border or

@@ -21,6 +21,8 @@ import { FIXED_SOURCE, FREE_FORM_MEASURE_HEIGHT, LIST_ROLE, toFormeDocument } fr
 /** The Forme entry point for this runtime: `@formepdf/core` in Node, `@formepdf/core/worker` in browsers. */
 export type FormeEngine = {
 	renderSerializedDocWithLayout: (document: Record<string, unknown>) => Promise<RenderWithLayoutResult>;
+	/** What to hand Forme for a font's bytes, given every character the document draws (see `browser.tsx`). */
+	prepareFont?: ((bytes: Uint8Array, text: string) => Uint8Array | string) | undefined;
 };
 
 export type RenderResumeInput = {
@@ -60,6 +62,20 @@ export function assertPdfText({ missingFonts, warnings }: Pick<RenderedResume, "
 			"Some PDF text could not be rendered. Choose a font containing these characters, then retry the export.",
 			{ cause: "pdf-text-loss" },
 		);
+}
+
+/** Every character in the document's strings, sorted: its text, plus style values and links, which cost little. */
+function documentText(document: FormeDocument): string {
+	const characters = new Set<string>();
+	const visit = (value: unknown, key?: string) => {
+		if (typeof value === "string") {
+			// Pictures are data URIs: base64 adds no character a font needs.
+			if (key !== "src") for (const character of value) characters.add(character);
+		} else if (Array.isArray(value)) for (const item of value) visit(item);
+		else if (value && typeof value === "object") for (const [name, item] of Object.entries(value)) visit(item, name);
+	};
+	visit(document);
+	return [...characters].sort().join("");
 }
 
 // A4 height: a free-form page is never shorter than a sheet of paper, as before.
@@ -206,6 +222,8 @@ export async function renderResumeElement(
 
 	const breakBeforeListItems = new Set<number>();
 	const breakBeforeNodes = new Set<string>();
+	// Every pass draws the same text, so the fonts are prepared once, from the first pass's document.
+	let formeFonts: typeof fonts | undefined;
 	const layOutOnce = async (keepNestedRowsWhole: boolean) => {
 		const convert = (freeFormHeights?: (number | undefined)[]) =>
 			toFormeDocument(tree, {
@@ -216,8 +234,16 @@ export async function renderResumeElement(
 				freeFormHeights,
 			});
 		// Forme rewrites the font entries it's given (bytes to base64), so each render gets its own.
-		const render = ({ document }: ConvertedDocument) =>
-			engine.renderSerializedDocWithLayout({ ...document, fonts: fonts.map((font) => ({ ...font })) });
+		const render = ({ document }: ConvertedDocument) => {
+			if (!formeFonts) {
+				const { prepareFont } = engine;
+				const text = prepareFont ? documentText(document) : "";
+				formeFonts = prepareFont
+					? fonts.map((font) => ({ ...font, src: prepareFont(font.src as Uint8Array, text) }))
+					: fonts;
+			}
+			return engine.renderSerializedDocWithLayout({ ...document, fonts: formeFonts.map((font) => ({ ...font })) });
+		};
 		let converted = convert();
 		let result = await render(converted);
 
