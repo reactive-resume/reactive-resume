@@ -7,8 +7,8 @@ async function assertAuthResponse(response: Awaited<ReturnType<APIRequestContext
 	throw new Error(`Authentication request failed with ${response.status()}: ${await response.text()}`);
 }
 
-export async function registerViaUi(page: Page, account: E2EAccount) {
-	await page.goto("/auth/register");
+export async function registerViaUi(page: Page, account: E2EAccount, callbackURL?: string) {
+	await page.goto(`/auth/register${callbackURL ? `?callbackURL=${encodeURIComponent(callbackURL)}` : ""}`);
 	await page.getByRole("textbox", { name: "Name", exact: true }).fill(account.name);
 	await page.getByLabel("Username").fill(account.username);
 	await page.getByLabel("Email Address", { exact: true }).fill(account.email);
@@ -18,8 +18,8 @@ export async function registerViaUi(page: Page, account: E2EAccount) {
 	await page.waitForURL(/\/dashboard/);
 }
 
-export async function loginViaUi(page: Page, account: E2EAccount) {
-	await page.goto("/auth/login");
+export async function loginViaUi(page: Page, account: E2EAccount, path = "/auth/login") {
+	await page.goto(path);
 	await page.getByLabel("Email Address", { exact: true }).fill(account.email);
 	await page.getByLabel("Password", { exact: true }).fill(account.password);
 	await page.getByRole("button", { name: "Sign in" }).click();

@@ -71,17 +71,18 @@ describe("sendEmail", () => {
 		infoSpy.mockRestore();
 	});
 
-	it("does not throw if the SMTP transport itself errors", async () => {
+	it("does not throw or log sensitive details if the SMTP transport errors", async () => {
 		resetEnv();
+		process.env.NODE_ENV = "production";
 		envMock.SMTP_HOST = "smtp.example.com";
 		envMock.SMTP_USER = "user";
 		envMock.SMTP_PASS = "pass";
 		envMock.SMTP_FROM = "noreply@example.com";
-		sendMail.mockRejectedValueOnce(new Error("boom"));
+		sendMail.mockRejectedValueOnce(new Error("SMTP rejected password=secret reset-token=private"));
 
 		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 		await expect(sendEmail({ to: "a@b.com", subject: "hi", react: fakeReact })).resolves.toBeUndefined();
-		expect(errorSpy).toHaveBeenCalled();
+		expect(errorSpy).toHaveBeenCalledExactlyOnceWith("There was an error sending mail.");
 		errorSpy.mockRestore();
 	});
 });

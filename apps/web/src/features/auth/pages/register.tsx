@@ -13,7 +13,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { SocialAuth } from "../components/social-auth";
-import { getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
+import { getAuthRedirectOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 import { PasswordInput } from "@/components/input/password-input";
 import { authClient } from "@/libs/auth/client";
 import { ENTER_CLASS } from "@/libs/motion";
@@ -53,7 +53,7 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 			const oauthOptions = getOAuthSignInOptions(callbackURL);
 			const createPrompt = new URLSearchParams(oauthOptions.oauth_query).get("prompt")?.split(" ").includes("create");
 			const { data, error } = await authClient.signUp.email({
-				name: value.name,
+				name: value.name.trim(),
 				email: value.email,
 				password: value.password,
 				username: value.username,
@@ -248,6 +248,7 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 
 function PostSignupScreen() {
 	const { callbackURL } = useSearch({ from: "/auth" });
+	const redirectOptions = getAuthRedirectOptions(callbackURL);
 	return (
 		// Replaces the form in place: fades up into the auth column, with the layout's 24px gap.
 		<div className={cn(ENTER_CLASS, "grid gap-y-6")}>
@@ -272,10 +273,10 @@ function PostSignupScreen() {
 			<Button
 				nativeButton={false}
 				render={
-					<a href={callbackURL ?? "/dashboard"}>
+					<Link to={redirectOptions.href} reloadDocument={redirectOptions.reloadDocument} replace>
 						<Trans comment="Button label to continue to dashboard after successful registration">Continue</Trans>{" "}
 						<Icon name="arrow-right" size={16} />
-					</a>
+					</Link>
 				}
 			/>
 		</div>

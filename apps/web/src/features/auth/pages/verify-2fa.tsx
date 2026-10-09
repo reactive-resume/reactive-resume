@@ -46,17 +46,10 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 			});
 			const rawCode = value.code.trim().replaceAll("-", "");
 			const code = backupCode ? `${rawCode.slice(0, 5)}-${rawCode.slice(5)}` : value.code;
+			const options = { code, trustDevice: value.trustDevice, ...getOAuthSignInOptions(callbackURL) };
 			const { data, error } = backupCode
-				? await authClient.twoFactor.verifyBackupCode({
-						code,
-						trustDevice: value.trustDevice,
-						...getOAuthSignInOptions(callbackURL),
-					})
-				: await authClient.twoFactor.verifyTotp({
-						code,
-						trustDevice: value.trustDevice,
-						...getOAuthSignInOptions(callbackURL),
-					});
+				? await authClient.twoFactor.verifyBackupCode(options)
+				: await authClient.twoFactor.verifyTotp(options);
 
 			if (error) {
 				toast.add({

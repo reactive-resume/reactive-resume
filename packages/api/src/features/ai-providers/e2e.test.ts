@@ -49,7 +49,11 @@ vi.mock("drizzle-orm", () => ({
 
 // Real AES-GCM credential encryption runs; it only needs a secret.
 vi.mock("@reactive-resume/env/server", () => ({
-	env: { ENCRYPTION_SECRET: "e2e-encryption-secret", FLAG_ALLOW_UNSAFE_AI_BASE_URL: true },
+	env: {
+		APP_URL: "http://localhost:3000",
+		ENCRYPTION_SECRET: "e2e-encryption-secret",
+		FLAG_ALLOW_UNSAFE_AI_BASE_URL: true,
+	},
 }));
 
 vi.mock("@reactive-resume/auth/config", () => ({
