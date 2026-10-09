@@ -4,6 +4,43 @@ description: "Release notes for Reactive Resume covering new features, resume bu
 rss: true
 ---
 
+<Update label="v6.0.2" description="9th October 2026">
+
+## Highlights
+
+- **Bring Reactive Resume into Claude, Codex and ChatGPT.** Eight agent skills now cover the whole job search, from resume content, bullets and tailoring to application tracking, interview prep, mock interviews and offer negotiation. Install them as one plugin that also connects the hosted MCP server, or one by one with the skills CLI. Every skill works from conversation alone, asks before changing your documents, and never invents facts or numbers. [Agent skills guide](/guides/using-agent-skills). [86fc23237](https://github.com/reactive-resume/reactive-resume/commit/86fc23237), [1df97dde5](https://github.com/reactive-resume/reactive-resume/commit/1df97dde5), [369c9bcfe](https://github.com/reactive-resume/reactive-resume/commit/369c9bcfe)
+- **Write cover letters in your language.** Automatic greetings and sign-offs follow the letter's language instead of always appearing in English. You can now edit the greeting, the sign-off and the full signature, including your name and contact details, or return to the default with one click. Thanks to @EdShedisson for reporting [#3601](https://github.com/reactive-resume/reactive-resume/issues/3601). [b69c6fd5e](https://github.com/reactive-resume/reactive-resume/commit/b69c6fd5e)
+- **Connect AI agents faster.** The MCP tool list is about 80% smaller, so agents load Reactive Resume's tools quicker and leave more of their context for your work. Setting up the MCP server in a coding agent is now one `npx add-mcp` command. [e58934a5d](https://github.com/reactive-resume/reactive-resume/commit/e58934a5d), [74578aef4](https://github.com/reactive-resume/reactive-resume/commit/74578aef4), [2cd21b25c](https://github.com/reactive-resume/reactive-resume/commit/2cd21b25c), [86dd97129](https://github.com/reactive-resume/reactive-resume/commit/86dd97129)
+
+## Sign-in & Accounts
+
+- Fixed sign-in on installations opened through `localhost` or `127.0.0.1`, including on custom ports, while production installations keep their cross-site cookie protections. Sign-in now returns you to the exact page you were trying to open, and two-factor verification offers an optional **Trust this device for 30 days**. Thanks to @iwmywn. [#3602](https://github.com/reactive-resume/reactive-resume/pull/3602)
+- Improved registration: names are trimmed, one-character names are accepted, and name fields show their length limits. [#3602](https://github.com/reactive-resume/reactive-resume/pull/3602)
+
+## Resume Builder & PDF Export
+
+- Fixed list items overlapping each other where a list continues onto the next page. [2d44aff10](https://github.com/reactive-resume/reactive-resume/commit/2d44aff10)
+- Fixed **Test connection** for OpenAI reasoning models that reject a temperature setting. [75d9d1955](https://github.com/reactive-resume/reactive-resume/commit/75d9d1955)
+
+## AI Agents & MCP
+
+- Changed how agents handle resume share passwords: `api_resume_set_password` and `api_resume_verify_password` no longer accept a password and instead return a link where you set or enter it in the browser, so passwords never pass through an AI conversation. [0d5e7aca0](https://github.com/reactive-resume/reactive-resume/commit/0d5e7aca0)
+- Added the data you share with connected AI apps to the privacy policy: what they can read and change, how long it is kept, and how to revoke access. [94567e982](https://github.com/reactive-resume/reactive-resume/commit/94567e982)
+
+## Homepage & Translations
+
+- Added two homepage scenes, **Prepare** and **Remember**, showing interview preparation and reusable stories, and smoothed the scroll story on phones and in dark mode. [0c9c1e0dd](https://github.com/reactive-resume/reactive-resume/commit/0c9c1e0dd)
+- Completed every translation and corrected mistranslations, such as "apply" for a job versus applying a change, and picture **Cover** and **Contain** options. [0c9c1e0dd](https://github.com/reactive-resume/reactive-resume/commit/0c9c1e0dd)
+
+## Self-Hosting & Maintenance
+
+- Stopped authentication email content and raw SMTP errors, which can contain reset links or credentials, from appearing in production logs. Development installations without SMTP still log verification links. Thanks to @iwmywn. [#3602](https://github.com/reactive-resume/reactive-resume/pull/3602)
+- Added the optional `OPENAI_APPS_CHALLENGE_TOKEN`, served at `/.well-known/openai-apps-challenge`, for publishing your own instance's MCP server as a ChatGPT or Codex plugin. [40f4595c6](https://github.com/reactive-resume/reactive-resume/commit/40f4595c6)
+
+**Full Changelog**: [v6.0.1...v6.0.2](https://github.com/reactive-resume/reactive-resume/compare/v6.0.1...v6.0.2)
+
+</Update>
+
 <Update label="v6.0.1" description="8th October 2026">
 
 ## Breaking changes & upgrade actions
