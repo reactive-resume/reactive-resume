@@ -44,11 +44,11 @@ test("browser PDF downloads preserve shaped scripts and report unsupported text"
 	const textLoss = page.getByText(
 		"Some PDF text could not be rendered. Choose a font containing these characters, then retry the export.",
 	);
-	// The preview reports it first (#3581); let that toast time out so the next one can only come from the download.
-	await expect(textLoss).toBeVisible();
-	await expect(textLoss).toBeHidden({ timeout: 15_000 });
+	// The preview reports it first (#3581), in place of the page it couldn't draw (#3593); the download adds its own.
+	await expect(textLoss).toHaveCount(1);
+	await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
 	await page.getByRole("button", { name: "Download PDF", exact: true }).click();
-	await expect(textLoss).toBeVisible();
+	await expect(textLoss).toHaveCount(2);
 	const rejected = await page.request.get(`/api/openapi/resumes/${id}/pdf`);
 	expect(rejected.status()).toBe(400);
 	expect(await rejected.text()).toContain("Choose a font containing these characters");
