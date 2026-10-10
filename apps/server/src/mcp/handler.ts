@@ -3,8 +3,8 @@ import { randomUUID } from "node:crypto";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { ORPCError } from "@orpc/server";
 import { consumeMcpRequestLimit, consumeMcpUserLimit } from "@reactive-resume/api/features/mcp/transport";
-import { getTrustedOrigins } from "@reactive-resume/auth/trusted-origins";
 import { env } from "@reactive-resume/env/server";
+import { getTrustedOrigins } from "@reactive-resume/utils/trusted-origins";
 import { AuthError, authenticateRequest } from "./auth";
 import { createMcpServer } from "./server";
 

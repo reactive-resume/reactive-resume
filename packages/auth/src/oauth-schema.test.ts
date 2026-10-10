@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { oauthProvider } from "@better-auth/oauth-provider";
-import { getTableColumns, is, Table } from "drizzle-orm";
+import { getColumns, is, Table } from "drizzle-orm";
 import * as dbSchema from "@reactive-resume/db/schema";
 
 const plugin = oauthProvider({ loginPage: "/login", consentPage: "/consent" });
@@ -10,7 +10,7 @@ describe("OAuth provider persistence schema", () => {
 		const table = Reflect.get(dbSchema, modelName);
 		expect(is(table, Table), `Missing table ${modelName}`).toBe(true);
 		if (!is(table, Table)) return;
-		const columns = getTableColumns(table);
+		const columns = getColumns(table);
 		for (const field of Object.keys(model.fields)) {
 			expect(columns, `${modelName}.${field}`).toHaveProperty(field);
 		}
