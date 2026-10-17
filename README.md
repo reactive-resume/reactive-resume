@@ -78,7 +78,7 @@ You own your data. The codebase is open source under the MIT license, with no tr
 
 **Templates and Customization**
 
-- 17 templates, including the new Porygon and Smeargle, previewed with your own content
+- 18 templates, including the new Porygon and Smeargle, previewed with your own content
 - One-column, two-column, and ATS-safe template filters
 - Font presets, custom fonts, colors, spacing, A4 and Letter paper, and left or right sidebars
 - Fit overflowing content by adjusting density, margins, and text size
@@ -177,6 +177,10 @@ You own your data. The codebase is open source under the MIT license, with no tr
     <td align="center">
       <img src="apps/web/public/templates/jpg/onyx.jpg" alt="Onyx" width="150" />
       <br /><sub><b>Onyx</b></sub>
+    </td>
+    <td align="center">
+      <img src="apps/web/public/templates/jpg/persian.jpg" alt="Persian" width="150" />
+      <br /><sub><b>Persian</b></sub>
     </td>
     <td align="center">
       <img src="apps/web/public/templates/jpg/pikachu.jpg" alt="Pikachu" width="150" />

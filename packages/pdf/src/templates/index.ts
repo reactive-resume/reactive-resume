@@ -12,6 +12,7 @@ import { LaprasPage } from "./lapras/LaprasPage";
 import { LeafishPage } from "./leafish/LeafishPage";
 import { MeowthPage } from "./meowth/MeowthPage";
 import { OnyxPage } from "./onyx/OnyxPage";
+import { PersianPage } from "./persian/PersianPage";
 import { PikachuPage } from "./pikachu/PikachuPage";
 import { PorygonPage } from "./porygon/PorygonPage";
 import { RhyhornPage } from "./rhyhorn/RhyhornPage";
@@ -31,6 +32,7 @@ const templatePages: Partial<Record<Template, TemplatePage>> = {
 	leafish: LeafishPage,
 	meowth: MeowthPage,
 	onyx: OnyxPage,
+	persian: PersianPage,
 	pikachu: PikachuPage,
 	porygon: PorygonPage,
 	rhyhorn: RhyhornPage,

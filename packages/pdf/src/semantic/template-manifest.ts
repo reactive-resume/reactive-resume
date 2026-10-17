@@ -14,6 +14,7 @@ import { laprasSemanticManifest } from "../templates/lapras/semantic";
 import { leafishSemanticManifest } from "../templates/leafish/semantic";
 import { meowthSemanticManifest } from "../templates/meowth/semantic";
 import { onyxSemanticManifest } from "../templates/onyx/semantic";
+import { persianSemanticManifest } from "../templates/persian/semantic";
 import { pikachuSemanticManifest } from "../templates/pikachu/semantic";
 import { porygonSemanticManifest } from "../templates/porygon/semantic";
 import { rhyhornSemanticManifest } from "../templates/rhyhorn/semantic";
@@ -146,6 +147,7 @@ const TEMPLATE_SEMANTIC_MANIFESTS = {
 	leafish: leafishSemanticManifest,
 	meowth: meowthSemanticManifest,
 	onyx: onyxSemanticManifest,
+	persian: persianSemanticManifest,
 	pikachu: pikachuSemanticManifest,
 	porygon: porygonSemanticManifest,
 	rhyhorn: rhyhornSemanticManifest,

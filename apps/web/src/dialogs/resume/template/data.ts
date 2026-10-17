@@ -82,6 +82,12 @@ export const templates = {
 		imageUrl: "/templates/jpg/onyx.jpg",
 		tags: ["Single-column", "ATS friendly", "Sidebar", "Grid layout", "Versatile", "Professional", "Technical"],
 	},
+	persian: {
+		name: "Persian",
+		description: msg`Single-column Wall Street style with a centered header and ruled section headings.`,
+		imageUrl: "/templates/jpg/persian.jpg",
+		tags: ["Single-column", "ATS friendly", "Finance", "Consulting", "Traditional"],
+	},
 	pikachu: {
 		name: "Pikachu",
 		description: msg`Two-column with a left margin color; simple and approachable for creative, editorial, or junior roles.`,
