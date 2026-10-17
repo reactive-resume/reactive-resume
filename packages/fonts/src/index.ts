@@ -100,6 +100,25 @@ const punctuationFallbackFonts = {
 	sansSerif: "Noto Sans",
 } as const;
 
+// Self-hosting option (#3377): when `NEXT_PUBLIC_WEB_FONT_BASE_URL` is set,
+// the default jsDelivr CDN URLs for the "web" type fonts are repointed to the
+// operator's own host. This lets privacy-conscious / offline self-hosters avoid
+// the external CDN entirely. The mirrored assets must keep the same
+// `<font>/<file>.woff` path layout as the jsDelivr `gh/bitmaks/cm-web-fonts`
+// source. When unset, behaviour is unchanged.
+const WEB_FONT_CDN_PREFIX = "https://cdn.jsdelivr.net/gh/bitmaks/cm-web-fonts@latest";
+const WEB_FONT_BASE_URL = (
+	typeof process !== "undefined" ? process.env.NEXT_PUBLIC_WEB_FONT_BASE_URL : undefined
+)?.replace(/\/$/, "");
+
+const rewriteWebFontUrl = (url: string): string => {
+	if (!WEB_FONT_BASE_URL) return url;
+	if (url.startsWith(WEB_FONT_CDN_PREFIX)) {
+		return WEB_FONT_BASE_URL + url.slice(WEB_FONT_CDN_PREFIX.length);
+	}
+	return url;
+};
+
 const webFontList = webFontListJSON as WebFont[];
 const webFontMap = new Map<string, WebFont>(webFontList.map((font) => [font.family, font]));
 const standardFontList = standardPdfFontList.filter((font) => !webFontMap.has(font.family));
@@ -185,7 +204,9 @@ export function getWebFontSource(family: string, weight: FontWeight = "400", ita
 	if (!webFont) return null;
 
 	const key = `${weight}${italic ? "italic" : ""}` as FontFileWeight;
-	return webFont.files[key] ?? (italic ? webFont.files[weight] : undefined) ?? webFont.preview;
+	return rewriteWebFontUrl(
+		webFont.files[key] ?? (italic ? webFont.files[weight] : undefined) ?? webFont.preview,
+	);
 }
 
 export function sortFontWeights<T extends string>(fontWeights: T[]): T[] {
