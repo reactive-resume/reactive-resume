@@ -1,6 +1,6 @@
 import type { Application } from "../types";
 // @vitest-environment happy-dom
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -17,6 +17,7 @@ vi.mock("@/libs/orpc/client", () => ({
 	},
 }));
 vi.mock("../use-application-actions", () => ({ useInvalidateApplications: () => mocks.invalidate }));
+vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
 vi.mock("@reactive-resume/ui/hooks/use-breakpoint", () => ({ useBreakpoint: () => mocks.breakpoint }));
 
 const LONG_NOTE =
@@ -42,14 +43,14 @@ const application = (over: Partial<Application> = {}): Application =>
 		...over,
 	}) as Application;
 
-function renderList(applications: Application[], breakpoint = "desktop") {
+function renderList(applications: Application[], breakpoint = "desktop", onOpen = vi.fn()) {
 	mocks.breakpoint = breakpoint;
 	i18n.load("en", {});
 	i18n.activate("en");
 	return render(
 		<QueryClientProvider client={new QueryClient()}>
 			<I18nProvider i18n={i18n}>
-				<ApplicationList applications={applications} showClosed selectedId={null} onOpen={() => {}} />
+				<ApplicationList applications={applications} showClosed selectedId={null} onOpen={onOpen} />
 			</I18nProvider>
 		</QueryClientProvider>,
 	);
@@ -95,3 +96,49 @@ it("keeps automatic layout and single-cell rows on phones", () => {
 	expect(container.querySelector("thead")).toBeNull();
 	expect(screen.getByText(`Globex · ${LONG_NOTE}`)).toBeTruthy();
 });
+
+const twoApplications = () => [
+	application(),
+	application({ id: "app-2", role: "Product Designer", company: "Initech", location: "Austin" }),
+];
+
+it.each(["desktop", "mobile"] as const)("opens the clicked row's application on %s", (breakpoint) => {
+	const onOpen = vi.fn();
+	renderList(twoApplications(), breakpoint, onOpen);
+
+	fireEvent.click(screen.getByText("Product Designer").closest("tr") as HTMLElement);
+
+	expect(onOpen).toHaveBeenCalledOnce();
+	expect(onOpen).toHaveBeenCalledWith(expect.objectContaining({ id: "app-2" }));
+});
+
+it("opens once when the role button itself is clicked", () => {
+	const onOpen = vi.fn();
+	renderList(twoApplications(), "desktop", onOpen);
+
+	fireEvent.click(screen.getByRole("button", { name: /Product Designer/ }));
+
+	expect(onOpen).toHaveBeenCalledOnce();
+	expect(onOpen).toHaveBeenCalledWith(expect.objectContaining({ id: "app-2" }));
+});
+
+it("selects a row without opening it", () => {
+	const onOpen = vi.fn();
+	renderList(twoApplications(), "desktop", onOpen);
+
+	const checkbox = screen.getByRole("checkbox", { name: "Select Product Designer at Initech" });
+	fireEvent.click(checkbox);
+	fireEvent.click(checkbox.closest("td") as HTMLElement);
+
+	expect(onOpen).not.toHaveBeenCalled();
+	expect(checkbox.getAttribute("aria-checked")).toBe("true");
+});
+
+it.each(["desktop", "mobile"] as const)(
+	"does not stretch a click target over the page on %s, since Safari ignores position on table rows",
+	(breakpoint) => {
+		const { container } = renderList(twoApplications(), breakpoint);
+
+		expect(container.querySelector("[class*='after:absolute']")).toBeNull();
+	},
+);
