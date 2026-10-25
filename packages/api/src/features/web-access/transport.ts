@@ -1,5 +1,5 @@
 import z from "zod";
-import { assertPublicPageUrl } from "./builtin";
+import { assertPublicPageUrl, readCapped } from "./builtin";
 import { MAX_CONTENT_CHARS, MAX_PAGE_BYTES, MAX_SEARCH_RESULTS, WebAccessError } from "./contracts";
 
 export function parseResponse<T>(schema: z.ZodType<T>, input: unknown): T {
@@ -39,27 +39,12 @@ async function requestJson(url: string, init: RequestInit, signal: AbortSignal) 
 		await response.body?.cancel();
 		throw new WebAccessError("too-large");
 	}
-	const reader = response.body?.getReader();
-	if (!reader) throw new WebAccessError("empty");
-	const chunks: Uint8Array[] = [];
-	let bytes = 0;
+	if (!response.body) throw new WebAccessError("empty");
+	const text = (await readCapped(response.body, signal)).toString("utf8");
 	try {
-		while (true) {
-			signal.throwIfAborted();
-			const { done, value } = await reader.read();
-			if (done) break;
-			bytes += value.byteLength;
-			if (bytes > MAX_PAGE_BYTES) throw new WebAccessError("too-large");
-			chunks.push(value);
-		}
-		try {
-			return JSON.parse(Buffer.concat(chunks).toString("utf8")) as unknown;
-		} catch {
-			throw new WebAccessError("malformed");
-		}
-	} finally {
-		await reader.cancel().catch(() => {});
-		reader.releaseLock();
+		return JSON.parse(text) as unknown;
+	} catch {
+		throw new WebAccessError("malformed");
 	}
 }
 

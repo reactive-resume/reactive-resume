@@ -19,8 +19,6 @@ import { scoreChecks } from "./score";
 export type AnalyzePdfOptions = {
 	/** Injected so a report is reproducible: the same bytes and the same clock give the same report. */
 	now?: Date;
-	/** BCP-47 tag used for date parsing; defaults to the document's own declared language. */
-	locale?: string;
 	/** When present, keyword coverage is computed and reported alongside — never inside — the score. */
 	jobDescription?: string;
 };
@@ -83,10 +81,7 @@ export function analyzePdfResume(raw: RawExtraction, options: AnalyzePdfOptions 
 	const now = options.now ?? new Date();
 
 	const doc = buildExtractedDocument(raw);
-	const semantics = buildResumeSemantics(raw, doc, {
-		now,
-		...(options.locale ? { locale: options.locale } : {}),
-	});
+	const semantics = buildResumeSemantics(raw, doc, { now });
 
 	const context: PdfCheckContext = { raw, doc, semantics, now };
 	const checks = PDF_CHECKS.map((check) => runCheck(check, context));

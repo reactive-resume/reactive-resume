@@ -67,16 +67,6 @@ function toInputSchema(schema: z.ZodType): Record<string, unknown> {
 	return jsonSchema;
 }
 
-// The spec passes the arguments as an object; tolerate implementations that hand over their JSON text.
-function readArguments(input: unknown): unknown {
-	if (typeof input !== "string") return input ?? {};
-	try {
-		return JSON.parse(input);
-	} catch {
-		return input;
-	}
-}
-
 type WebMcpToolDefinition<Input extends z.ZodObject> = {
 	/** Lowercase snake_case, unique on the page. */
 	name: string;
@@ -98,7 +88,7 @@ export function defineWebMcpTool<Input extends z.ZodObject>(definition: WebMcpTo
 		inputSchema: toInputSchema(definition.input),
 		annotations: definition.annotations ?? {},
 		execute: async (input, options) => {
-			const parsed = definition.input.safeParse(readArguments(input));
+			const parsed = definition.input.safeParse(input ?? {});
 			if (!parsed.success) throw new Error(`Invalid input.\n${z.prettifyError(parsed.error)}`);
 
 			const result = await definition.execute(parsed.data, options?.signal);

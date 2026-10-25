@@ -1,8 +1,12 @@
 import type { DbOrTx } from "@reactive-resume/db/client";
-import { and, eq, gt, inArray, like, or, sql } from "drizzle-orm";
+import type { SQL } from "drizzle-orm";
+import type { SelectedFields } from "drizzle-orm/pg-core";
+import type { SelectResultFields } from "drizzle-orm/query-builders/select.types";
+import { and, desc, eq, gt, inArray, isNull, like, or, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
-import { slugify } from "@reactive-resume/utils/string";
+import { slugify } from "@reactive-resume/utils/slug";
+import { ownerIsNotBanned } from "./access-policy";
 
 /** Lowercase letters and numbers, in groups joined by single dashes. Only new and changed slugs must match. */
 export const SLUG_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -93,4 +97,32 @@ export function matchesSlug(slug: string) {
 				),
 		),
 	);
+}
+
+/**
+ * The resume at `username`/`slug` (current slug or unexpired redirect), outside Trash, with an unbanned owner and
+ * meeting any `extra` conditions. A resume's current slug wins over another's redirect.
+ */
+export async function findResumeBySlug<TColumns extends SelectedFields>(
+	input: { username: string; slug: string },
+	columns: TColumns,
+	...extra: (SQL | undefined)[]
+): Promise<SelectResultFields<TColumns> | undefined> {
+	// Widened for the query builder, whose types can't follow a generic selection; the result is narrowed back.
+	const [resume] = await db
+		.select(columns as SelectedFields)
+		.from(schema.resume)
+		.innerJoin(schema.user, eq(schema.resume.userId, schema.user.id))
+		.where(
+			and(
+				matchesSlug(input.slug),
+				eq(schema.user.username, input.username),
+				isNull(schema.resume.trashedAt),
+				ownerIsNotBanned(),
+				...extra,
+			),
+		)
+		.orderBy(desc(sql`${schema.resume.slug} = ${input.slug}`))
+		.limit(1);
+	return resume as SelectResultFields<TColumns> | undefined;
 }

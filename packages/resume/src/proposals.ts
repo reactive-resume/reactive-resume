@@ -1,5 +1,5 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import { escapeHtml } from "@reactive-resume/utils/string";
+import { escapeHtml, fnv1a } from "@reactive-resume/utils/string";
 
 /**
  * Suggested edits to a document's text, shared by Check, the assistant and Improve. A proposal replaces one passage
@@ -205,14 +205,7 @@ export type PassageLabels = {
 };
 
 // FNV-1a: short and stable. The text is part of the key, so ids never outlive the words they name.
-function hash(value: string) {
-	let h = 0x811c9dc5;
-	for (let index = 0; index < value.length; index++) {
-		h ^= value.charCodeAt(index);
-		h = Math.imul(h, 0x01000193);
-	}
-	return (h >>> 0).toString(36);
-}
+const hash = (value: string) => fnv1a(value).toString(36);
 
 function passagesOf(
 	html: string,

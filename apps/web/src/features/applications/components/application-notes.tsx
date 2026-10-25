@@ -23,7 +23,7 @@ export function ApplicationNotes({ application }: ApplicationNotesProps) {
 	const { mutateAsync, isError } = useMutation({
 		...orpc.applications.update.mutationOptions(),
 		onSuccess: () => invalidate(application.id),
-		onError: () => toast.add({ type: "error", description: t`Couldn't save the notes.` }),
+		onError: () => toast.add({ type: "error", description: t`Couldn't save the notes. Try again.` }),
 	});
 	const save = useCallback(() => {
 		const pending: Promise<void> = (saves.get(application.id) ?? Promise.resolve())
@@ -63,7 +63,7 @@ export function ApplicationNotes({ application }: ApplicationNotesProps) {
 
 	return (
 		<section className="grid gap-2">
-			<label htmlFor={id} className="text-xs font-semibold text-ink-3 uppercase">
+			<label htmlFor={id} className="text-xs font-semibold text-ink-3">
 				<Trans>Notes</Trans>
 			</label>
 			<Textarea

@@ -177,84 +177,31 @@ function buildHeader(data: ResumeData, colorHex: string, textColorHex: string): 
 	}
 
 	const contactParts: (TextRun | ExternalHyperlink)[] = [];
-	const addSeparator = () => {
+	const plain = (text: string) => new TextRun({ text, size: bodySize, font: bodyFont, color: textColorHex });
+	const linked = (text: string, link: string) =>
+		new ExternalHyperlink({
+			link,
+			children: [new TextRun({ text, color: colorHex, underline: {}, size: bodySize, font: bodyFont })],
+		});
+	const add = (part: TextRun | ExternalHyperlink) => {
 		if (contactParts.length > 0) {
 			contactParts.push(new TextRun({ text: "  |  ", color: "999999", size: bodySize, font: bodyFont }));
 		}
+		contactParts.push(part);
 	};
 
-	if (basics.email) {
-		const mailtoLink = toSafeLink(`mailto:${basics.email}`);
-		if (mailtoLink) {
-			addSeparator();
-			contactParts.push(
-				new ExternalHyperlink({
-					link: mailtoLink,
-					children: [
-						new TextRun({ text: basics.email, color: colorHex, underline: {}, size: bodySize, font: bodyFont }),
-					],
-				}),
-			);
-		}
-	}
-
-	if (basics.phone) {
-		addSeparator();
-		contactParts.push(new TextRun({ text: basics.phone, size: bodySize, font: bodyFont, color: textColorHex }));
-	}
-
-	if (basics.location) {
-		addSeparator();
-		contactParts.push(new TextRun({ text: basics.location, size: bodySize, font: bodyFont, color: textColorHex }));
-	}
-
-	if (basics.website.url) {
-		const websiteLink = toSafeLink(basics.website.url);
-		if (websiteLink) {
-			addSeparator();
-			contactParts.push(
-				new ExternalHyperlink({
-					link: websiteLink,
-					children: [
-						new TextRun({
-							text: basics.website.label || websiteLink,
-							color: colorHex,
-							underline: {},
-							size: bodySize,
-							font: bodyFont,
-						}),
-					],
-				}),
-			);
-		}
-	}
+	// Email and website entries with an unsafe link are dropped entirely; custom fields fall back to plain text.
+	const mailtoLink = basics.email && toSafeLink(`mailto:${basics.email}`);
+	if (mailtoLink) add(linked(basics.email, mailtoLink));
+	if (basics.phone) add(plain(basics.phone));
+	if (basics.location) add(plain(basics.location));
+	const websiteLink = basics.website.url && toSafeLink(basics.website.url);
+	if (websiteLink) add(linked(basics.website.label || websiteLink, websiteLink));
 
 	for (const field of basics.customFields) {
 		if (!field.text) continue;
-		addSeparator();
-		if (field.link) {
-			const customLink = toSafeLink(field.link);
-			if (customLink) {
-				contactParts.push(
-					new ExternalHyperlink({
-						link: customLink,
-						children: [
-							new TextRun({
-								text: field.text,
-								color: colorHex,
-								underline: {},
-								size: bodySize,
-								font: bodyFont,
-							}),
-						],
-					}),
-				);
-			} else {
-				contactParts.push(new TextRun({ text: field.text, size: bodySize, font: bodyFont, color: textColorHex }));
-			}
-		} else {
-			contactParts.push(new TextRun({ text: field.text, size: bodySize, font: bodyFont, color: textColorHex }));
-		}
+		const customLink = field.link && toSafeLink(field.link);
+		add(customLink ? linked(field.text, customLink) : plain(field.text));
 	}
 
 	if (contactParts.length > 0) {
@@ -315,10 +262,7 @@ function buildTwoColumnTable(
 		rows: [new TableRow({ children: cells })],
 		width: { size: 100, type: WidthType.PERCENTAGE },
 		borders: {
-			top: { style: BorderStyle.NONE, size: 0 },
-			bottom: { style: BorderStyle.NONE, size: 0 },
-			left: { style: BorderStyle.NONE, size: 0 },
-			right: { style: BorderStyle.NONE, size: 0 },
+			...NO_BORDERS,
 			insideHorizontal: { style: BorderStyle.NONE, size: 0 },
 			insideVertical: { style: BorderStyle.NONE, size: 0 },
 		},

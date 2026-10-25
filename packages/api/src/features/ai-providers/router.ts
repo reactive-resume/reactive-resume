@@ -11,8 +11,24 @@ function isInvalidAiBaseUrl(error: unknown) {
 	return error instanceof Error && error.message === "INVALID_AI_BASE_URL";
 }
 
+// Each procedure lists the ones it can fail with.
+const providerErrors = {
+	BAD_REQUEST: { message: "That provider setup isn't valid. Check the base URL and try again.", status: 400 },
+	BAD_GATEWAY: {
+		message: "The AI provider returned an error or couldn't be reached. Try again, or check its settings.",
+		status: 502,
+	},
+	FORBIDDEN: { message: "AI is set up by the server administrator and can't be changed here.", status: 403 },
+	NOT_FOUND: { message: "This AI provider no longer exists. Reload and choose another provider.", status: 404 },
+	PRECONDITION_FAILED: {
+		message: "AI providers aren't available on this server. Ask the server administrator to set ENCRYPTION_SECRET.",
+		status: 412,
+	},
+};
+const { BAD_REQUEST, BAD_GATEWAY, FORBIDDEN, NOT_FOUND, PRECONDITION_FAILED } = providerErrors;
+
 function throwInvalidProviderConfig(): never {
-	throw new ORPCError("BAD_REQUEST", { message: "Invalid AI provider configuration." });
+	throw new ORPCError("BAD_REQUEST", { message: BAD_REQUEST.message });
 }
 
 export const aiProvidersRouter = {
@@ -26,9 +42,7 @@ export const aiProvidersRouter = {
 			description: "Lists saved provider/model/API key combinations for the authenticated user. API keys are redacted.",
 		})
 		.output(z.array(aiProviderResponseSchema))
-		.errors({
-			PRECONDITION_FAILED: { message: "AI agent workspace is not configured.", status: 412 },
-		})
+		.errors({ PRECONDITION_FAILED })
 		.input(z.object(paginationShape).default({}))
 		.handler(async ({ context, input }) =>
 			paginate(await aiProvidersService.list({ userId: context.user.id }), input, context.resHeaders),
@@ -45,11 +59,7 @@ export const aiProvidersRouter = {
 		})
 		.input(providerInput)
 		.output(aiProviderResponseSchema)
-		.errors({
-			BAD_REQUEST: { message: "Invalid AI provider configuration.", status: 400 },
-			FORBIDDEN: { message: "AI is managed by the server.", status: 403 },
-			PRECONDITION_FAILED: { message: "AI agent workspace is not configured.", status: 412 },
-		})
+		.errors({ BAD_REQUEST, FORBIDDEN, PRECONDITION_FAILED })
 		.handler(async ({ context, input }) => {
 			try {
 				return await aiProvidersService.create({
@@ -78,12 +88,7 @@ export const aiProvidersRouter = {
 		})
 		.input(updateProviderInput)
 		.output(aiProviderResponseSchema)
-		.errors({
-			BAD_REQUEST: { message: "Invalid AI provider configuration.", status: 400 },
-			FORBIDDEN: { message: "AI is managed by the server.", status: 403 },
-			NOT_FOUND: { message: "AI provider was not found.", status: 404 },
-			PRECONDITION_FAILED: { message: "AI agent workspace is not configured.", status: 412 },
-		})
+		.errors({ BAD_REQUEST, FORBIDDEN, NOT_FOUND, PRECONDITION_FAILED })
 		.handler(async ({ context, input }) => {
 			try {
 				return await aiProvidersService.update({
@@ -113,10 +118,7 @@ export const aiProvidersRouter = {
 		})
 		.input(z.object({ id: z.string() }))
 		.output(z.void())
-		.errors({
-			FORBIDDEN: { message: "AI is managed by the server.", status: 403 },
-			PRECONDITION_FAILED: { message: "AI agent workspace is not configured.", status: 412 },
-		})
+		.errors({ FORBIDDEN, PRECONDITION_FAILED })
 		.handler(({ context, input }) => aiProvidersService.delete({ id: input.id, userId: context.user.id })),
 
 	setDefault: protectedProcedure
@@ -132,10 +134,10 @@ export const aiProvidersRouter = {
 		.input(z.object({ id: z.string() }))
 		.output(aiProviderResponseSchema)
 		.errors({
-			BAD_REQUEST: { message: "Test and switch on this connection before making it the default.", status: 400 },
-			FORBIDDEN: { message: "AI is managed by the server.", status: 403 },
-			NOT_FOUND: { message: "AI provider was not found.", status: 404 },
-			PRECONDITION_FAILED: { message: "AI agent workspace is not configured.", status: 412 },
+			BAD_REQUEST: { message: "Test and turn on this provider before making it the default.", status: 400 },
+			FORBIDDEN,
+			NOT_FOUND,
+			PRECONDITION_FAILED,
 		})
 		.handler(({ context, input }) => aiProvidersService.setDefault({ id: input.id, userId: context.user.id })),
 
@@ -151,20 +153,16 @@ export const aiProvidersRouter = {
 		.input(z.object({ id: z.string() }))
 		.output(aiProviderResponseSchema)
 		.use(aiRequestRateLimit)
-		.errors({
-			BAD_REQUEST: { message: "Invalid AI provider configuration.", status: 400 },
-			FORBIDDEN: { message: "AI is managed by the server.", status: 403 },
-			BAD_GATEWAY: { message: "The AI provider returned an error or is unreachable.", status: 502 },
-			NOT_FOUND: { message: "AI provider was not found.", status: 404 },
-			PRECONDITION_FAILED: { message: "AI agent workspace is not configured.", status: 412 },
-		})
+		.errors({ BAD_REQUEST, FORBIDDEN, BAD_GATEWAY, NOT_FOUND, PRECONDITION_FAILED })
 		.handler(async ({ context, input }) => {
 			try {
 				return await aiProvidersService.test({ id: input.id, userId: context.user.id });
 			} catch (error) {
 				if (isInvalidAiBaseUrl(error)) throwInvalidProviderConfig();
 				if (error instanceof ORPCError) throw error;
-				throw new ORPCError("BAD_GATEWAY", { message: "Could not reach the AI provider." });
+				throw new ORPCError("BAD_GATEWAY", {
+					message: "Couldn't reach the AI provider. Check its settings and try again.",
+				});
 			}
 		}),
 };

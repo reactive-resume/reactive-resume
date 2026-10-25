@@ -63,7 +63,7 @@ export function DownloadTab({ resume, offline }: DownloadProps) {
 		try {
 			if (chosen !== "pdf" || !offline) await flushResume(resume.id);
 			const current = useResumeStore.getState().document;
-			if (current?.id !== resume.id) throw new Error(t`Resume could not be loaded.`);
+			if (current?.id !== resume.id) throw new Error(t`Couldn't load the resume.`);
 			if (print) {
 				await printResume(current.data, name);
 				return;

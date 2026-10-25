@@ -10,34 +10,13 @@ const ResumePreviewClient = lazy(() =>
 
 export type { ResumePreviewProps };
 
-// ponytail: normalizeResumePreviewProps removed — defaults inlined here, single call site
-export function ResumePreview({
-	pageGap = 16,
-	pageLayout = "horizontal",
-	pageScale = 1,
-	showPageNumbers = false,
-	...rest
-}: ResumePreviewProps) {
+export function ResumePreview(props: ResumePreviewProps) {
 	const builderResumeData = useResumeData();
-	const resumeData = rest.data ?? builderResumeData;
-	const pageCount = getResumePreviewPageCount(resumeData);
-
-	const resolvedProps = { ...rest, pageGap, pageLayout, pageScale, showPageNumbers };
+	const pageCount = getResumePreviewPageCount(props.data ?? builderResumeData);
 
 	return (
-		<Suspense
-			fallback={
-				<ResumePreviewLoader
-					pageCount={pageCount}
-					pageClassName={rest.pageClassName}
-					pageGap={pageGap}
-					pageLayout={pageLayout}
-					pageScale={pageScale}
-					showPageNumbers={showPageNumbers}
-				/>
-			}
-		>
-			<ResumePreviewClient {...resolvedProps} />
+		<Suspense fallback={<ResumePreviewLoader {...props} pageCount={pageCount} />}>
+			<ResumePreviewClient {...props} />
 		</Suspense>
 	);
 }

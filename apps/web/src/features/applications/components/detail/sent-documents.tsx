@@ -8,12 +8,11 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { toast } from "@reactive-resume/ui/components/toast";
 import { PIPELINE } from "../../stages";
 import { useInvalidateApplications } from "../../use-application-actions";
 import { FileAttachmentField } from "../file-attachment-field";
 import { useDialogStore } from "@/dialogs/store";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
 /** When the application was sent: its first stage at Applied or beyond. */
@@ -62,8 +61,7 @@ export function SentDocuments({ application, disabled }: SentDocumentsProps) {
 	const update = useMutation({
 		...orpc.applications.update.mutationOptions(),
 		onSuccess: () => invalidate(application.id),
-		onError: (error) =>
-			toast.add({ type: "error", description: getOrpcErrorMessage(error, { fallback: t`Couldn't save.` }) }),
+		onError: (error) => toastError(error, t`Couldn't save the documents. Try again.`),
 	});
 	const createLetter = useMutation(orpc.coverLetters.create.mutationOptions());
 
@@ -83,16 +81,13 @@ export function SentDocuments({ application, disabled }: SentDocumentsProps) {
 			invalidate(application.id);
 			void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: created.id } });
 		} catch (error) {
-			toast.add({
-				type: "error",
-				description: getOrpcErrorMessage(error, { fallback: t`Couldn't create the letter.` }),
-			});
+			toastError(error, t`Couldn't create the letter. Try again.`);
 		}
 	};
 
 	return (
 		<section aria-labelledby="application-sent" className="grid gap-2">
-			<h3 id="application-sent" className="text-xs font-semibold text-ink-3 uppercase">
+			<h3 id="application-sent" className="text-xs font-semibold text-ink-3">
 				{application.status === "saved" ? <Trans>Documents for this job</Trans> : <Trans>What you sent</Trans>}
 			</h3>
 

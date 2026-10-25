@@ -100,10 +100,6 @@ describe("defineWebMcpTool", () => {
 		await expect(text.execute(undefined)).resolves.toBe("plain");
 	});
 
-	it("reads arguments given as JSON text", async () => {
-		await expect(echo.execute('{"text":"hi"}')).resolves.toBe('{"text":"hi"}');
-	});
-
 	it("refuses input that doesn't match the schema, saying why", async () => {
 		await expect(echo.execute({ text: "" })).rejects.toThrow(/Invalid input\.[\s\S]*text/);
 	});

@@ -8,13 +8,13 @@ export function signInErrorMessage(i18n: I18n, error: unknown): string {
 	const code = error instanceof Error && "code" in error ? String(error.code) : undefined;
 	switch (code) {
 		case "access_denied":
-			return i18n._(msg`You cancelled the sign-in before it finished.`);
+			return i18n._(msg`You canceled the sign-in before it finished.`);
 		case "invalid_grant":
 		case "state_mismatch":
 		case "issuer_mismatch":
-			return i18n._(msg`This sign-in attempt expired or was already used. Please start again.`);
+			return i18n._(msg`This sign-in attempt expired or was already used. Sign in again.`);
 		default:
-			return i18n._(msg`Something went wrong while signing you in. Please try again.`);
+			return i18n._(msg`Couldn't sign you in. Try again.`);
 	}
 }
 

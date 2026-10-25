@@ -38,6 +38,7 @@ const mocks = {
 		useWindowDimensions: () => ({ height: 844, width: 390 }),
 	},
 	"react-native-reanimated": {},
+	"react-native-worklets": {},
 	"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
 	"@lodev09/react-native-true-sheet": { TrueSheet: "TrueSheet" },
 	"./button": { Button: "Button" },

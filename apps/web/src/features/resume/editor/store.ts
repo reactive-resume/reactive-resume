@@ -99,37 +99,14 @@ type EditorStore = {
 	 */
 	exportCheck: { report: PdfAtsReport; data: ResumeData } | null;
 	exportReportOpen: boolean;
-	select: (selection: EditorSelection | null) => void;
 	setZoom: (zoom: number | "fit") => void;
-	setDrawerOpen: (open: boolean) => void;
-	setDrawerPinned: (pinned: boolean) => void;
 	/** Opens the sheet on a tab, or closes it (which also returns the page to now). */
 	setShareTab: (tab: ShareTab | null) => void;
-	setHistoryVersion: (versionId: string | null) => void;
 	setAssistantOpen: (open: boolean, instant?: boolean) => void;
-	setAssistantThread: (thread: string | null) => void;
-	setAssistantPrompt: (prompt: string | null) => void;
-	setAssistantDraft: (draft: string | null) => void;
-	setAssistantProposals: (proposals: readonly Proposal[]) => void;
-	setAssistantSuggestions: (suggestions: "prepare" | null) => void;
 	setSectionOpen: (sectionId: string, open: boolean) => void;
 	markSectionAdded: (sectionId: string) => void;
-	setFocusEntry: (entryId: string | null) => void;
-	setBasicsOpen: (open: boolean) => void;
-	setPreviewTemplate: (template: Template | null) => void;
-	setStyleHighlight: (keys: readonly string[]) => void;
 	setRendered: (render: { pageCount: number; pageMap: PageMap | undefined; file: Blob }) => void;
-	setMobileView: (view: MobileView) => void;
-	setCheckTab: (tab: CheckTab) => void;
-	setCheckIssue: (key: string | null) => void;
-	setPageView: (view: "page" | "parser") => void;
-	setHighlightTerm: (term: string | null) => void;
-	setPastedPosting: (posting: string) => void;
-	setProposals: (proposals: readonly Proposal[]) => void;
 	setProposalStatus: (ids: readonly string[], status: Proposal["status"]) => void;
-	setWritingReview: (review: WritingReview | null) => void;
-	setExportCheck: (check: { report: PdfAtsReport; data: ResumeData } | null) => void;
-	setExportReportOpen: (open: boolean) => void;
 	reset: () => void;
 };
 
@@ -180,18 +157,9 @@ const initialState = {
 
 export const useEditorStore = create<EditorStore>()((set) => ({
 	...initialState,
-	select: (selection) => set({ selection }),
 	setZoom: (zoom) => set({ zoom: zoom === "fit" ? "fit" : clampZoom(zoom) }),
-	setDrawerOpen: (drawerOpen) => set({ drawerOpen }),
-	setDrawerPinned: (drawerPinned) => set({ drawerPinned }),
 	setShareTab: (shareTab) => set(shareTab ? { shareTab } : { shareTab, historyVersionId: null }),
-	setHistoryVersion: (historyVersionId) => set({ historyVersionId }),
 	setAssistantOpen: (assistantOpen, instant = false) => set({ assistantOpen, assistantInstant: instant }),
-	setAssistantThread: (assistantThread) => set({ assistantThread }),
-	setAssistantPrompt: (assistantPrompt) => set({ assistantPrompt }),
-	setAssistantDraft: (assistantDraft) => set({ assistantDraft }),
-	setAssistantProposals: (assistantProposals) => set({ assistantProposals }),
-	setAssistantSuggestions: (assistantSuggestions) => set({ assistantSuggestions }),
 	setSectionOpen: (sectionId, open) =>
 		set((state) => {
 			const isOpen = state.openSections.includes(sectionId);
@@ -204,25 +172,11 @@ export const useEditorStore = create<EditorStore>()((set) => ({
 		set((state) =>
 			state.addedSections.includes(sectionId) ? state : { addedSections: [...state.addedSections, sectionId] },
 		),
-	setFocusEntry: (focusEntryId) => set({ focusEntryId }),
-	setBasicsOpen: (basicsOpen) => set({ basicsOpen }),
-	setPreviewTemplate: (previewTemplate) => set({ previewTemplate }),
-	setStyleHighlight: (styleHighlight) => set({ styleHighlight }),
 	setRendered: (render) => set((state) => ({ rendered: { ...render, version: state.rendered.version + 1 } })),
-	setMobileView: (mobileView) => set({ mobileView }),
-	setCheckTab: (checkTab) => set({ checkTab }),
-	setCheckIssue: (checkIssue) => set({ checkIssue }),
-	setPageView: (pageView) => set({ pageView }),
-	setHighlightTerm: (highlightTerm) => set({ highlightTerm }),
-	setPastedPosting: (pastedPosting) => set({ pastedPosting }),
-	setProposals: (proposals) => set({ proposals }),
 	setProposalStatus: (ids, status) =>
 		set((state) => ({
 			proposals: state.proposals.map((proposal) => (ids.includes(proposal.id) ? { ...proposal, status } : proposal)),
 		})),
-	setWritingReview: (writingReview) => set({ writingReview }),
-	setExportCheck: (exportCheck) => set({ exportCheck }),
-	setExportReportOpen: (exportReportOpen) => set({ exportReportOpen }),
 	reset: () =>
 		set((state) => ({ ...initialState, rendered: { ...initialState.rendered, version: state.rendered.version + 1 } })),
 }));

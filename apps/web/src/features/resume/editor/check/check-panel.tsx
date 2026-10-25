@@ -28,6 +28,7 @@ import { getCategoryDescription, getCategoryName } from "./issues";
 import { JobMatchTab, useJobMatch } from "./job-match";
 import { useCheck } from "./use-check";
 import { WritingTab } from "./writing-tab";
+import { RollingNumber } from "@/components/ui/rolling-number";
 import { AtsPdfReportView } from "@/features/ats-checker/report/report-view";
 import { blobToPdfFile, runAtsCheck } from "@/features/ats-checker/run-ats-check";
 import { useIsResumeLocked } from "@/features/resume/builder/draft";
@@ -40,7 +41,6 @@ import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 export function CheckPanel() {
 	const check = useCheck();
 	const tab = useEditorStore((state) => state.checkTab);
-	const setTab = useEditorStore((state) => state.setCheckTab);
 	const match = useJobMatch(check?.data);
 
 	if (!check) return null;
@@ -49,7 +49,11 @@ export function CheckPanel() {
 		<div className="grid content-start gap-3.5 p-4 pb-12">
 			<ScoreSummary report={check.report} />
 
-			<Tabs value={tab} onValueChange={(value) => setTab(value as CheckTab)} className="gap-3.5">
+			<Tabs
+				value={tab}
+				onValueChange={(value) => useEditorStore.setState({ checkTab: value as CheckTab })}
+				className="gap-3.5"
+			>
 				<TabsList aria-label={t`Check views`} className="h-[38px] w-full">
 					<TabsTrigger value="issues" className="gap-1.5">
 						<Trans>Issues</Trans>
@@ -104,7 +108,7 @@ function ScoreSummary({ report }: { report: AtsReport }) {
 				}
 			>
 				<span className="grid size-[70px] place-items-center rounded-full bg-surface font-display text-[26px] font-medium">
-					{score}
+					<RollingNumber value={score} />
 				</span>
 			</div>
 
@@ -185,7 +189,6 @@ type IssueCardProps = { issue: CheckIssue; selected: boolean; locked: boolean };
 /** A numbered card: category, title, a plain explanation, the fix, Show on page and Ignore (or Keep). */
 function IssueCard({ issue, selected, locked }: IssueCardProps) {
 	const { fix, ignore, showOnPage } = useCheckActions();
-	const setCheckIssue = useEditorStore((state) => state.setCheckIssue);
 	const titleId = `issue-${issue.number}-title`;
 	const applies = issue.fix.kind === "apply";
 
@@ -195,7 +198,7 @@ function IssueCard({ issue, selected, locked }: IssueCardProps) {
 		<li
 			data-issue-card={issue.key}
 			aria-labelledby={titleId}
-			onClick={() => setCheckIssue(issue.key)}
+			onClick={() => useEditorStore.setState({ checkIssue: issue.key })}
 			className={cn(
 				"grid cursor-pointer gap-2.5 rounded-xl border bg-surface p-3.5 transition-[border-color,box-shadow] duration-standard",
 				selected ? "border-warn shadow-e2" : "border-line",
@@ -204,12 +207,12 @@ function IssueCard({ issue, selected, locked }: IssueCardProps) {
 			<div className="flex items-start gap-2.5">
 				<span
 					aria-hidden="true"
-					className="grid size-[22px] shrink-0 place-items-center rounded-full bg-warn text-[12px] font-bold text-[oklch(0.22_0.03_80)]"
+					className="grid size-[22px] shrink-0 place-items-center rounded-sm bg-warn text-[12px] font-bold text-[oklch(0.22_0.03_80)]"
 				>
 					{issue.number}
 				</span>
 				<div className="grid min-w-0 gap-[3px]">
-					<span className="font-mono text-[11px] text-ink-3 uppercase">{getCategoryName(issue.category)}</span>
+					<span className="font-mono text-xs text-ink-3">{getCategoryName(issue.category)}</span>
 					<h3 id={titleId} className="text-sm leading-5 font-semibold">
 						<span className="sr-only">
 							<Trans>Issue {issue.number}:</Trans>{" "}
@@ -347,8 +350,6 @@ function DeepCheck({ data }: { data: ResumeData }) {
 	const [running, setRunning] = useState(false);
 	const report = useEditorStore((state) => state.exportCheck?.report ?? null);
 	const reportOpen = useEditorStore((state) => state.exportReportOpen);
-	const setExportCheck = useEditorStore((state) => state.setExportCheck);
-	const setReportOpen = useEditorStore((state) => state.setExportReportOpen);
 
 	const run = async () => {
 		setRunning(true);
@@ -360,14 +361,14 @@ function DeepCheck({ data }: { data: ResumeData }) {
 		}
 
 		const problems = result.report.findings.length;
-		setExportCheck({ report: result.report, data });
+		useEditorStore.setState({ exportCheck: { report: result.report, data } });
 
 		toast.add(
 			problems === 0
 				? { description: t`Exported PDF checked: it reads cleanly too.` }
 				: {
 						description: t`Exported PDF checked: ${problems} more to look at.`,
-						actionProps: { children: t`Show`, onClick: () => setReportOpen(true) },
+						actionProps: { children: t`Show`, onClick: () => useEditorStore.setState({ exportReportOpen: true }) },
 					},
 		);
 	};
@@ -379,7 +380,10 @@ function DeepCheck({ data }: { data: ResumeData }) {
 				{running ? <Trans>Checking the exported PDF…</Trans> : <Trans>Also check the exported PDF</Trans>}
 			</Button>
 
-			<Dialog open={reportOpen && report !== null} onOpenChange={setReportOpen}>
+			<Dialog
+				open={reportOpen && report !== null}
+				onOpenChange={(open) => useEditorStore.setState({ exportReportOpen: open })}
+			>
 				<DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-2xl">
 					<DialogHeader>
 						<DialogTitle>

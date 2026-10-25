@@ -249,7 +249,7 @@ describe("OAuth account creation", () => {
 		const form = container.querySelector("form");
 		if (!form) throw new Error("Missing registration form");
 		fireEvent.submit(form);
-		await waitFor(() => expect(screen.getByText(/>=8/)).toBeDefined());
+		await waitFor(() => expect(screen.getByText("Use at least 8 characters.")).toBeDefined());
 		expect(mocks.signup).not.toHaveBeenCalled();
 	});
 	it("continues a create prompt only after successful signup with a trimmed one-character name", async () => {

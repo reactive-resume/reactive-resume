@@ -431,18 +431,18 @@ describe("builder resume undo/redo", () => {
 		});
 
 		expect(store().undoStack.length).toBe(1);
-		expect(store().canUndo).toBe(true);
-		expect(store().canRedo).toBe(false);
+		expect(store().undoStack.length > 0).toBe(true);
+		expect(store().redoStack.length > 0).toBe(false);
 		expect(store().resume?.data.basics.name).toBe("Second");
 
 		store().undo();
 		expect(store().resume?.data.basics.name).toBe(defaultResumeData.basics.name);
-		expect(store().canUndo).toBe(false);
-		expect(store().canRedo).toBe(true);
+		expect(store().undoStack.length > 0).toBe(false);
+		expect(store().redoStack.length > 0).toBe(true);
 
 		store().redo();
 		expect(store().resume?.data.basics.name).toBe("Second");
-		expect(store().canRedo).toBe(false);
+		expect(store().redoStack.length > 0).toBe(false);
 	});
 
 	it("merges typing in one field into one step, but not edits to different fields", () => {
@@ -545,7 +545,7 @@ describe("builder resume undo/redo", () => {
 
 		store().undo();
 		expect(store().resume?.data.sections.experience.items).toEqual(authoredItems);
-		expect(store().canUndo).toBe(false);
+		expect(store().undoStack.length > 0).toBe(false);
 	});
 
 	it("retains the chosen order through autosave/reload and never resorts later field edits", async () => {
@@ -618,13 +618,13 @@ describe("builder resume undo/redo", () => {
 			draft.basics.name = "One";
 		});
 		store().undo();
-		expect(store().canRedo).toBe(true);
+		expect(store().redoStack.length > 0).toBe(true);
 
 		store().updateResumeData((draft) => {
 			draft.basics.name = "Two";
 		});
 
-		expect(store().canRedo).toBe(false);
+		expect(store().redoStack.length > 0).toBe(false);
 		expect(store().redoStack.length).toBe(0);
 	});
 
@@ -643,7 +643,9 @@ describe("builder resume undo/redo", () => {
 		store().replaceResumeFromServer({ ...current, data: cloneResumeData(current.data) });
 
 		expect(store().undoStack.length).toBe(1);
-		expect(store().canUndo).toBe(true);
+		expect(store().undoStack.length > 0).toBe(true);
+		// The same object stays, so the preview doesn't render the identical document again.
+		expect(store().resume?.data).toBe(current.data);
 	});
 
 	it("clears the undo stack when the server sends different data (external rebase)", () => {
@@ -661,7 +663,7 @@ describe("builder resume undo/redo", () => {
 		store().replaceResumeFromServer(withBasicsName(current, "External Name"));
 
 		expect(store().undoStack.length).toBe(0);
-		expect(store().canUndo).toBe(false);
+		expect(store().undoStack.length > 0).toBe(false);
 	});
 });
 

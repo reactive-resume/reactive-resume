@@ -2,6 +2,8 @@ import type { ResolvedNodeStyle, SemanticNode } from "@reactive-resume/resume/st
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { resolveBoldFontWeight } from "@reactive-resume/fonts";
+import { findSection } from "../section-title";
+import { getTemplatePageSize } from "../templates/shared/page-size";
 
 export type BuildPdfBaseStylesInput = {
 	data: ResumeData;
@@ -32,24 +34,6 @@ const textKinds = new Set([
 
 const headingKinds = new Set(["name", "section-heading", "rich-heading"]);
 
-type SectionBreaks = {
-	keepTogether?: boolean;
-	startOnNewPage?: boolean;
-};
-
-const resolveSectionBreaks = (data: ResumeData, id: string | undefined): SectionBreaks | undefined => {
-	if (!id) return {};
-	if (id === "summary") return data.summary;
-	if (id in data.sections) return data.sections[id as keyof typeof data.sections];
-	return data.customSections.find((section) => section.id === id);
-};
-
-const pageSize = (format: ResumeData["metadata"]["page"]["format"]) => {
-	if (format === "letter") return "LETTER" as const;
-	if (format === "free-form") return { width: 595.28 };
-	return "A4" as const;
-};
-
 export function buildPdfBaseStyles({
 	data,
 	tree,
@@ -73,7 +57,7 @@ export function buildPdfBaseStyles({
 			style["font-size"] = body.fontSize;
 			style["font-weight"] = bodyWeight;
 			style["line-height"] = body.lineHeight;
-			structural.pageSize = pageSize(data.metadata.page.format);
+			structural.pageSize = getTemplatePageSize(data.metadata.page.format);
 		}
 
 		if (textKinds.has(node.kind)) {
@@ -107,7 +91,7 @@ export function buildPdfBaseStyles({
 		}
 
 		if (node.kind === "section") {
-			const section = resolveSectionBreaks(data, node.id);
+			const section = node.id ? findSection(data, node.id) : undefined;
 			if (section?.keepTogether) structural.breakInside = "avoid";
 			if (section?.startOnNewPage) structural.breakBefore = "page";
 		}

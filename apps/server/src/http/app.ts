@@ -92,19 +92,25 @@ export function createApp(options: AppOptions = {}) {
 			maxSize,
 			onError: (c) => {
 				c.header("Cache-Control", "no-store");
-				return c.json({ defined: false, code: "PAYLOAD_TOO_LARGE", status: 413, message: "Payload too large" }, 413);
+				return c.json(
+					{
+						defined: false,
+						code: "PAYLOAD_TOO_LARGE",
+						status: 413,
+						message: "This request is too large. Use a smaller file and try again.",
+					},
+					413,
+				);
 			},
 		});
 	app.use("/api/openapi/*", limitBody(40 * 1024 * 1024));
-	app.use("/api/rpc", limitBody(160 * 1024 * 1024));
+	// Hono's `/x/*` also matches `/x`, so each wildcard below covers its base path too.
 	app.use("/api/rpc/*", limitBody(160 * 1024 * 1024));
 	app.use("/api/auth/*", limitBody(1024 * 1024));
 	app.use("/api/storage/stage", limitBody(64 * 1024));
 
 	app.post("/api/storage/stage", (c) => prepareStagedBody(c.req.raw));
-	app.all("/api/rpc", (c) => withStagedBody(c.req.raw, (request) => handleRpc(request, client(c))));
 	app.all("/api/rpc/*", (c) => withStagedBody(c.req.raw, (request) => handleRpc(request, client(c))));
-	app.all("/api/openapi", (c) => handleOpenApi(c.req.raw, client(c)));
 	app.all("/api/openapi/*", (c) => handleOpenApi(c.req.raw, client(c)));
 	app.get("/api/auth/oauth", (c) => handleOAuth(c.req.raw));
 	app.all("/api/auth/*", (c) => handleAuth(c.req.raw, client(c)));
@@ -118,31 +124,25 @@ export function createApp(options: AppOptions = {}) {
 	app.get("/uploads/*", (c) => handleUpload(c.req.raw));
 	app.get("/schema.json", () => handleSchemaJson());
 	app.get("/openapi.json", () => handleOpenApiDocument());
-	app.all("/mcp", (c) => handleMcp(c.req.raw, client(c)));
 	app.all("/mcp/*", (c) => handleMcp(c.req.raw, client(c)));
 
 	app.get("/.well-known/apple-app-site-association", () => handleAppleAppSiteAssociation());
 	app.get("/.well-known/assetlinks.json", () => handleAndroidAssetLinks());
 	app.get("/.well-known/integrations.json", () => handleIntegrations());
-	app.on(["GET", "HEAD"], "/.well-known/api-catalog", (c) => handleApiCatalog({ head: c.req.method === "HEAD" }));
-	app.on(["GET", "HEAD"], "/.well-known/agent-skills/index.json", (c) =>
-		handleAgentSkillsIndex({ head: c.req.method === "HEAD" }),
-	);
-	app.on(["GET", "HEAD"], "/.well-known/agent-skills/:filename", (c) =>
-		handleAgentSkillArchive(c.req.param("filename"), { head: c.req.method === "HEAD" }),
-	);
+	// Hono answers HEAD by running the GET route and dropping the body, headers kept.
+	app.get("/.well-known/api-catalog", () => handleApiCatalog());
+	app.get("/.well-known/agent-skills/index.json", () => handleAgentSkillsIndex());
+	app.get("/.well-known/agent-skills/:filename", (c) => handleAgentSkillArchive(c.req.param("filename")));
 	app.get("/.well-known/mcp/server-card.json", () => handleMcpServerCard());
-	app.get("/.well-known/oauth-authorization-server", (c) => handleOAuthAuthorizationServer(c.req.raw));
 	app.get("/.well-known/oauth-authorization-server/*", (c) => handleOAuthAuthorizationServer(c.req.raw));
 	app.get("/.well-known/openid-configuration", (c) => handleOpenIdConfiguration(c.req.raw));
-	app.get("/.well-known/oauth-protected-resource", () => handleOAuthProtectedResource());
 	app.get("/.well-known/oauth-protected-resource/*", () => handleOAuthProtectedResource());
 	app.get("/.well-known/openai-apps-challenge", () => handleOpenAiAppsChallenge());
 	app.all("/.well-known/*", () => handleWellKnownFallback());
 
-	app.on(["GET", "HEAD"], "/robots.txt", (c) => handleRobots({ head: c.req.method === "HEAD" }));
-	app.on(["GET", "HEAD"], "/sitemap.xml", (c) => handleSitemap({ head: c.req.method === "HEAD" }));
-	app.on(["GET", "HEAD"], "/llms.txt", (c) => handleLlms({ head: c.req.method === "HEAD" }));
+	app.get("/robots.txt", () => handleRobots());
+	app.get("/sitemap.xml", () => handleSitemap());
+	app.get("/llms.txt", () => handleLlms());
 
 	// Compresses only the web app's files and HTML shells: every route registered above answers before reaching
 	// it, so API, MCP, and upload streams are never buffered or re-encoded. Where a CDN serves the static files
@@ -151,9 +151,9 @@ export function createApp(options: AppOptions = {}) {
 
 	// Must precede the static middleware: serveStatic resolves "/" to dist/index.html and would
 	// return it verbatim, skipping the OpenGraph/Twitter/canonical/JSON-LD injection in handleWebApp.
-	app.on(["GET", "HEAD"], ["/", "/index.html"], (c) => handleWebApp(c.req.raw, options.readWebFile));
+	app.on("GET", ["/", "/index.html"], (c) => handleWebApp(c.req.raw, options.readWebFile));
 	if (options.serveStatic !== false && serveWebDistStatic) app.use("/*", serveWebDistStatic);
-	app.on(["GET", "HEAD"], "/*", (c) => handleWebApp(c.req.raw, options.readWebFile));
+	app.get("/*", (c) => handleWebApp(c.req.raw, options.readWebFile));
 
 	return app;
 }

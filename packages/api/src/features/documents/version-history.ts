@@ -103,7 +103,7 @@ export function createVersionHistory<TKind extends string, TData>(config: {
 				sessionId: input.sessionId ?? null,
 			} as never)
 			.returning(summary);
-		if (!version) throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Failed to save the version." });
+		if (!version) throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Couldn't save the version. Try again." });
 
 		await prune(client, input.documentId);
 		return version as VersionSummary<TKind>;

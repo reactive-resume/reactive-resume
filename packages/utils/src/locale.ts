@@ -162,3 +162,10 @@ export function isRTL(locale: string): boolean {
 	const language = locale.split("-")[0]?.toLowerCase() ?? "";
 	return RTL_LANGUAGES.has(language);
 }
+
+/** "a, b and c" in the locale's words. Hermes may ship without Intl.ListFormat; a comma list reads fine there. */
+export function formatList(locale: string, items: readonly string[]): string {
+	return typeof Intl.ListFormat === "function"
+		? new Intl.ListFormat(locale, { type: "conjunction" }).format(items)
+		: items.join(", ");
+}

@@ -44,10 +44,11 @@ workflow artifacts. Base64 is encoding, not encryption.
 - `IOS_DISTRIBUTION_P12_PASSWORD`: password for that `.p12`.
 - `IOS_PROVISION_PROFILE_BASE64`: base64 of the App Store profile for `me.rxresu`,
   team `654ASRW868`, covering the current app entitlements and certificate.
-- `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`: raw service-account JSON with release-to-testing
+- `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`: raw service-account JSON with release-to-production
   permission for this app. Required only for Android uploads.
 - `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_PRIVATE_KEY`: App Store Connect team API key ID,
-  issuer UUID, and raw `.p8` private key. Required only for iOS uploads.
+  issuer UUID, and raw `.p8` private key with App Manager or Admin access.
+  Required only for iOS uploads and App Review submission.
 
 Play App Signing retains its existing app-signing certificate. Do not replace
 `MOBILE_ANDROID_CERT_SHA256` with the upload-keystore fingerprint. Keep bundle/package
@@ -84,11 +85,16 @@ Merely naming an environment does not configure these protection rules.
 
 ## Build and upload
 
-1. Deploy backward-compatible backend changes first. Update app `version` in
+1. Deploy backward-compatible backend changes first. Complete device QA and store
+   declarations before enabling uploads. Prepare listing/reviewer details and release
+   notes in the consoles; the workflow retains existing listings and screenshots.
+   Update app `version` in
    `apps/mobile/app.config.ts` when needed; iOS requires a new version string after a
    version has been released. CI supplies the build number automatically.
-2. Dispatch **Mobile Release** on `main`, choose `all`, `android`, or `ios`, and leave
-   **format=store** and **upload** disabled for the first signing check. Approve the
+2. Dispatch **Mobile Release** on `main`, choose `all`, `android`, or `ios`, set
+   **format=store**, and enable **upload** for production submission. Leave **upload**
+   disabled for a build-only signing check. Production requests require successful
+   latest main-push CI at the exact source commit before uploading. Approve the
    `mobile-signing` gate. The workflow validates signing credentials after approval,
    runs mobile source checks, fetches checksum-pinned Forme binaries, loads the EAS
    `production` environment, and generates fresh native projects.
@@ -102,18 +108,20 @@ Merely naming an environment does not configure these protection rules.
    Actions retention is capped at 90 days for this public repository and deleting a run
    still deletes its artifacts: export evidence to your permanent release records
    before expiry. This is longer retention, not permanent off-site storage.
-4. Dispatch with **upload** enabled when ready. Upload jobs start only after every
-   selected platform built successfully, then pass the `mobile-store` environment gate.
-   They publish the exact signed artifacts from that run. Android creates a **completed
-   release on the internal testing track**, then promotes that exact version to every
-   other existing testing track, including open and closed beta tracks. Production
-   tracks are excluded. iOS waits for processing and assigns the build to **all existing
-   TestFlight groups**, internal and external, submitting for beta review and notifying
-   external testers when applicable. Configure at least one TestFlight group first.
-   Store-side processing and beta review can delay availability; public store releases
-   remain separate.
-5. Confirm tester access, complete signed-device QA and store declarations, then
-   submit for public review and production rollout in the consoles. Follow the
+4. If **upload** is enabled, approve `mobile-store` after inspecting artifacts from this
+   run. Upload jobs start only after every selected platform built successfully and
+   submit those exact signed artifacts. Android uploads directly to **production**
+   with a completed, full rollout and sends changes for review; it fails rather than
+   silently falling back to changes requiring manual review submission. iOS creates
+   or updates the IPA's app version, waits for that exact build to finish processing,
+   submits it for **App Review**, and sets **automatic release after approval**.
+   No Play testing tracks or TestFlight groups are used.
+5. Check each store's processing/review status and verify the published versions.
+   Workflow success means submission, not store approval or public availability.
+   Google Managed Publishing, if enabled, still requires publishing approved changes
+   in Play Console; disable it there if automatic publication after review is desired.
+   Incomplete listing/reviewer details, declarations, release notes, pending reviews,
+   agreements, or insufficient API permissions can block submission. Follow the
    [release handoff](./mobile-release-handoff.md#signed-device-test-matrix).
 
 CI creates temporary signing files with restrictive permissions, imports the Apple

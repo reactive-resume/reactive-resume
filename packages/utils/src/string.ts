@@ -1,5 +1,3 @@
-import _slugify from "@sindresorhus/slugify";
-import { adjectives, animals, colors, uniqueNamesGenerator } from "unique-names-generator";
 import { v7 as uuidv7 } from "uuid";
 
 /**
@@ -8,17 +6,6 @@ import { v7 as uuidv7 } from "uuid";
  */
 export function generateId() {
 	return uuidv7();
-}
-
-/** Slugifies a string, with some pre-defined options.
- *
- * @param value - The value to slugify.
- * @returns The slugified value.
- */
-export function slugify(value: string) {
-	const slug = _slugify(value, { decamelize: false });
-	if (slug || !value.trim()) return slug;
-	return slugify(generateRandomName());
 }
 
 /**
@@ -46,19 +33,6 @@ export function toUsername(value: string) {
 		.toLowerCase()
 		.replace(/[^a-z0-9._-]/g, "")
 		.slice(0, 64);
-}
-
-/**
- * Generates a random name using the unique-names-generator library.
- * @returns The random name.
- */
-export function generateRandomName() {
-	return uniqueNamesGenerator({
-		dictionaries: [adjectives, colors, animals],
-		style: "capital",
-		separator: " ",
-		length: 3,
-	});
 }
 
 /**
@@ -92,4 +66,11 @@ export function filterOptions<T extends { value: string; label: string }>(option
 export function stripHtml(html: string | undefined): string {
 	if (!html) return "";
 	return html.replace(/<[^>]*>/g, "").trim();
+}
+
+/** FNV-1a over the text: a short, stable fingerprint. Not for security. */
+export function fnv1a(text: string): number {
+	let hash = 0x811c9dc5;
+	for (let index = 0; index < text.length; index++) hash = Math.imul(hash ^ text.charCodeAt(index), 0x01000193);
+	return hash >>> 0;
 }

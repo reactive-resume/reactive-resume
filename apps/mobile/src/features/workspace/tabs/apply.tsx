@@ -364,7 +364,7 @@ function AnswerCard({
 					value={text}
 					maxLength={6000}
 					editable={!disabled}
-					placeholder={t`Write your answer, or draft one from your Knowledge.`}
+					helper={t`Write your answer, or draft one from your Knowledge.`}
 					onChangeText={setText}
 					onBlur={answerSave.flush}
 				/>
@@ -480,7 +480,7 @@ function Checklist({
 				format === "md" ? "net.daringfireball.markdown" : "public.plain-text",
 			);
 		} catch {
-			showToast({ message: t`Couldn't share the answers.` });
+			showToast({ message: t`Couldn't share the answers. Try again.` });
 		}
 	};
 
@@ -506,7 +506,7 @@ function Checklist({
 			workspace.save({ checklist: [...new Set([...workspace.current().checklist, items.length - 1])] });
 			showToast({ message: t`Marked as applied. The versions you sent are kept.` });
 		} catch (error) {
-			showToast({ message: workspaceError(error, t`Couldn't mark it as applied.`) });
+			showToast({ message: workspaceError(error, t`Couldn't mark it as applied. Try again.`) });
 		} finally {
 			onSubmittingChange(false);
 			void invalidate();

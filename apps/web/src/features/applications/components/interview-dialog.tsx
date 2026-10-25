@@ -184,18 +184,18 @@ export function InterviewDialog({
 
 	const add = useMutation(
 		orpc.applications.addInterview.mutationOptions({
-			onError: () => toast.add({ type: "error", description: t`Couldn't schedule the interview.` }),
+			onError: () => toast.add({ type: "error", description: t`Couldn't schedule the interview. Try again.` }),
 		}),
 	);
 	const update = useMutation(
 		orpc.applications.updateInterview.mutationOptions({
-			onError: () => toast.add({ type: "error", description: t`Couldn't update the interview.` }),
+			onError: () => toast.add({ type: "error", description: t`Couldn't update the interview. Try again.` }),
 		}),
 	);
 	const remove = useMutation(
 		orpc.applications.deleteTimelineEntry.mutationOptions({
 			onSettled: (_data, _error, variables) => invalidate(variables.id),
-			onError: () => toast.add({ type: "error", description: t`Couldn't delete the interview.` }),
+			onError: () => toast.add({ type: "error", description: t`Couldn't delete the interview. Try again.` }),
 		}),
 	);
 

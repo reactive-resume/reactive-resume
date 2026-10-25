@@ -65,7 +65,7 @@ export function NextStepCard({ application, onScheduleInterview }: NextStepCardP
 
 	return (
 		<section aria-labelledby="application-next-step" className="grid gap-2">
-			<h3 id="application-next-step" className="text-xs font-semibold text-ink-3 uppercase">
+			<h3 id="application-next-step" className="text-xs font-semibold text-ink-3">
 				<Trans>Next step</Trans>
 			</h3>
 			<div
@@ -139,7 +139,7 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 			invalidate(application.id);
 			onOpenChange(false);
 		},
-		onError: () => toast.add({ type: "error", description: t`Couldn't save the follow-up.` }),
+		onError: () => toast.add({ type: "error", description: t`Couldn't save the follow-up. Try again.` }),
 	});
 
 	return (

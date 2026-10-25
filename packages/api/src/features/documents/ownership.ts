@@ -3,8 +3,11 @@ import { ORPCError } from "@orpc/client";
 import { eq } from "drizzle-orm";
 import * as schema from "@reactive-resume/db/schema";
 
-/** Match application submission's owner-first order before document/application FK writes. */
-export async function lockDocumentOwner(tx: DbOrTx, userId: string) {
+/**
+ * Locks the user's row so one user's writers run one at a time (owner first, before document or application writes)
+ * without blocking foreign-key checks against it. NOT_FOUND when the user is gone.
+ */
+export async function lockUser(tx: DbOrTx, userId: string) {
 	const [owner] = await tx
 		.select({ id: schema.user.id })
 		.from(schema.user)

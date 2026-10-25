@@ -1,31 +1,18 @@
 import type { LetterMode } from "@/features/letters/use-letter-mode";
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
-import type { IconName } from "@reactive-resume/ui/components/icon";
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { getRouteApi } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { LetterDesignPanel } from "./design-panel";
 import { LetterBar, useDownloadLetter } from "./letter-bar";
 import { LetterPage } from "./letter-page";
 import { LetterShareSheet } from "./share-sheet";
 import { LetterWritePanel } from "./write-panel";
-import { MobileTabIndicator } from "@/components/layout/mobile-tab-indicator";
-import {
-	AssistantColumn,
-	AssistantOverlay,
-	AssistantReplace,
-	assistantGridTransition,
-	assistantPlaceFor,
-	columnsWithAssistant,
-	LetterAssistant,
-} from "@/features/assistant/dock";
+import { LetterAssistant } from "@/features/assistant/dock";
 import { useLetterEditorStore } from "@/features/letters/store";
 import {
 	useLetterMode,
@@ -34,7 +21,7 @@ import {
 } from "@/features/letters/use-letter-mode";
 import { useLetterWebMcpTools } from "@/features/letters/webmcp";
 import { usePreviewPausedStore } from "@/features/resume/builder/draft";
-import { useIsLandscape } from "@/features/resume/editor/chrome";
+import { EditorFrame, MobileTabBar, useEditorLayout } from "@/features/resume/editor/chrome/shell";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { switchModeInstantly } from "@/libs/motion";
 
@@ -46,17 +33,8 @@ const routeApi = getRouteApi("/builder/letter/$coverLetterId");
  */
 export function LetterShell() {
 	const [mode, setMode] = useLetterMode();
-	const breakpoint = useBreakpoint();
-	const layout = breakpoint === "mobile" ? "mobile" : breakpoint === "tablet" ? "tablet" : "desktop";
-	const landscape = useIsLandscape();
-	const pinnable = layout === "tablet" && landscape;
-	const pinned = useEditorStore((state) => state.drawerPinned) && pinnable;
+	const editorLayout = useEditorLayout();
 	const resetEditor = useEditorStore((state) => state.reset);
-	const assistantOpen = useEditorStore((state) => state.assistantOpen);
-	const assistantInstant = useEditorStore((state) => state.assistantInstant);
-	const assistantPlace = assistantPlaceFor(breakpoint);
-	const assistantColumn = assistantPlace === "column" && !pinned;
-	const assistantReplaces = assistantPlace === "replace" && assistantOpen;
 
 	// Zoom, open sheets and the History version belong to one document.
 	useEffect(() => resetEditor, [resetEditor]);
@@ -68,107 +46,28 @@ export function LetterShell() {
 
 	return (
 		<Tabs value={mode} onValueChange={(value) => setMode(value as LetterMode)} className="contents">
-			<div className="grid h-svh grid-rows-[var(--editor-bar)_minmax(0,1fr)] overflow-hidden bg-bg">
-				<a
-					href="#main-content"
-					className="sr-only rounded-md bg-raised px-4 py-2 text-sm focus:not-sr-only focus:absolute focus:inset-s-2 focus:top-2 focus:z-[100]"
-				>
-					<Trans>Skip to the page</Trans>
-				</a>
-
-				<LetterBar layout={layout} pinnable={pinnable} />
-
-				{(layout === "desktop" || pinned) && (
-					<div
-						className={cn("relative grid min-h-0", assistantGridTransition(assistantOpen, assistantInstant))}
-						style={{
-							gridTemplateColumns: assistantColumn
-								? columnsWithAssistant(assistantOpen)
-								: pinned
-									? "380px minmax(0,1fr)"
-									: "var(--editor-panel) minmax(0,1fr)",
-						}}
-					>
-						<AssistantReplace
-							replaced={assistantReplaces}
-							assistant={
-								<div className="min-h-0 border-e border-line">
-									<LetterAssistant />
-								</div>
-							}
-						>
-							<TabsContent
-								key={mode}
-								value={mode}
-								aria-label={panelLabel(mode)}
-								className="relative min-h-0 overflow-y-auto border-e border-line bg-surface [overflow-anchor:none]"
-							>
-								<ModePanel mode={mode} />
-							</TabsContent>
-						</AssistantReplace>
-						<main id="main-content" className="min-h-0 min-w-0">
-							<LetterPage />
-						</main>
-						{assistantColumn && (
-							<AssistantColumn>
-								<LetterAssistant />
-							</AssistantColumn>
-						)}
-					</div>
-				)}
-				{layout === "tablet" && !pinned && <TabletBody mode={mode} />}
-				{layout === "mobile" && <MobileBody mode={mode} onModeChange={setMode} />}
-
-				{(assistantPlace === "drawer" || assistantPlace === "screen") && (
-					<AssistantOverlay place={assistantPlace}>
-						<LetterAssistant />
-					</AssistantOverlay>
-				)}
-
+			<EditorFrame
+				editorLayout={editorLayout}
+				bar={<LetterBar layout={editorLayout.layout} pinnable={editorLayout.pinnable} />}
+				mode={mode}
+				panelLabel={mode === "design" ? t`Design` : t`Letter details`}
+				panel={<ModePanel mode={mode} />}
+				page={<LetterPage />}
+				assistant={<LetterAssistant />}
+				mobile={<MobileBody mode={mode} onModeChange={setMode} />}
+			>
 				<LetterShareSheet />
 				<LetterHotkeys onModeChange={setMode} />
-			</div>
+			</EditorFrame>
 		</Tabs>
 	);
 }
-
-const panelLabel = (mode: LetterMode) => (mode === "design" ? t`Design` : t`Letter details`);
 
 function ModePanel({ mode }: { mode: LetterMode }) {
 	return mode === "design" ? <LetterDesignPanel /> : <LetterWritePanel />;
 }
 
-function TabletBody({ mode }: { mode: LetterMode }) {
-	const drawerOpen = useEditorStore((state) => state.drawerOpen);
-
-	return (
-		<div className="relative min-h-0">
-			<main id="main-content" className="h-full min-w-0">
-				<LetterPage />
-			</main>
-			<TabsContent
-				key={mode}
-				value={mode}
-				aria-label={panelLabel(mode)}
-				inert={!drawerOpen}
-				className={cn(
-					"absolute inset-y-0 start-0 z-20 w-[380px] max-w-[calc(100%-3rem)] overflow-y-auto border-e border-line bg-surface shadow-e3 transition-transform duration-emphasized ease-enter [overflow-anchor:none]",
-					!drawerOpen && "-translate-x-full rtl:translate-x-full",
-				)}
-			>
-				<ModePanel mode={mode} />
-			</TabsContent>
-		</div>
-	);
-}
-
 type MobileView = "write" | "page" | "design";
-
-const MOBILE_TABS: { view: MobileView; icon: IconName }[] = [
-	{ view: "write", icon: "pencil-simple" },
-	{ view: "page", icon: "file-text" },
-	{ view: "design", icon: "palette" },
-];
 
 type MobileBodyProps = { mode: LetterMode; onModeChange: (mode: LetterMode) => void };
 
@@ -176,9 +75,7 @@ type MobileBodyProps = { mode: LetterMode; onModeChange: (mode: LetterMode) => v
 function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 	const stored = useEditorStore((state) => state.mobileView);
 	const view: MobileView = stored === "page" || stored === "design" || stored === "write" ? stored : mode;
-	const setView = useEditorStore((state) => state.setMobileView);
 	const setPreviewPaused = usePreviewPausedStore((state) => state.setPaused);
-	const labels: Record<MobileView, string> = { write: t`Write`, page: t`Page`, design: t`Design` };
 
 	useEffect(() => {
 		// oxlint-disable-next-line react/set-state-in-effect -- a shared store the preview renderer reads, reset on unmount
@@ -203,34 +100,15 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 				)}
 			</div>
 
-			<nav
-				aria-label={t`Editor views`}
-				className="flex border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]"
-			>
-				{MOBILE_TABS.map(({ view: tab, icon }) => {
-					const active = tab === view;
-
-					return (
-						<button
-							key={tab}
-							type="button"
-							aria-current={active ? "page" : undefined}
-							onClick={() => {
-								setView(tab);
-								if (tab !== "page") onModeChange(tab);
-							}}
-							className={cn(
-								"relative flex min-h-[52px] flex-1 flex-col items-center justify-center gap-0.5 text-[11px] transition-[color,scale] duration-quick ease-enter active:scale-[0.97]",
-								active ? "font-semibold text-ink" : "text-ink-2",
-							)}
-						>
-							{active && <MobileTabIndicator />}
-							<Icon name={icon} size={24} filled={active} />
-							{labels[tab]}
-						</button>
-					);
-				})}
-			</nav>
+			<MobileTabBar
+				tabs={[
+					{ view: "write", icon: "pencil-simple", label: t`Write` },
+					{ view: "page", icon: "file-text", label: t`Page` },
+					{ view: "design", icon: "palette", label: t`Design` },
+				]}
+				view={view}
+				onModeChange={onModeChange}
+			/>
 		</div>
 	);
 }

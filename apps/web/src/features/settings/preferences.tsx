@@ -84,7 +84,10 @@ function TimezoneSetting({ id }: { id: string }) {
 		const { error } = await authClient.updateUser({ timezone });
 		if (error) {
 			setValue(previous);
-			toast.add({ type: "error", description: getReadableErrorMessage(error, t`Couldn't save the timezone.`) });
+			toast.add({
+				type: "error",
+				description: getReadableErrorMessage(error, t`Couldn't save the timezone. Try again.`),
+			});
 			return;
 		}
 		await queryClient.invalidateQueries({ queryKey: sessionQueryKey });

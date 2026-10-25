@@ -82,7 +82,7 @@ function TabBadge({ value, tone }: BadgeProps) {
 				start: size.icon.bar / 2 + space.s1,
 				minWidth: badgeMinWidth,
 				paddingHorizontal: space.s1,
-				borderRadius: radius.rPill,
+				borderRadius: radius.rLg,
 				borderWidth: space.s0,
 				borderColor: colors.surface,
 				backgroundColor: colors[badgeColors[tone].background],
@@ -141,7 +141,7 @@ export function BarItem({ label, icon, focused, onPress, badge, badgeTone = "acc
 				<View
 					style={{
 						...size.newPill,
-						borderRadius: radius.rPill,
+						borderRadius: radius.rLg,
 						backgroundColor: colors.accent,
 						alignItems: "center",
 						justifyContent: "center",
@@ -208,8 +208,6 @@ function RailMarker({ index, count, width }: RailMarkerProps) {
 					top: -1,
 					left: 0,
 					height: railMarker.height,
-					borderBottomLeftRadius: railMarker.height,
-					borderBottomRightRadius: railMarker.height,
 					backgroundColor: colors.accent,
 				},
 				style,
@@ -345,7 +343,7 @@ function SidebarItem({
 					style={{
 						minWidth: badgeMinWidth,
 						paddingHorizontal: space.s1,
-						borderRadius: radius.rPill,
+						borderRadius: radius.rLg,
 						backgroundColor: colors.accent,
 						alignItems: "center",
 					}}

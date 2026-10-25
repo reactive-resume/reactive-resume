@@ -1,18 +1,13 @@
+import type { StorageService } from "../storage";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { createHash } from "node:crypto";
 import { ORPCError } from "@orpc/server";
 import { env } from "@reactive-resume/env/server";
 import { generateFilename } from "@reactive-resume/utils/file";
-import { assertCanView, ownerIsNotBanned } from "./access-policy";
+import { matchesIfNoneMatch } from "@reactive-resume/utils/http";
+import { assertCanView, redactResumeForViewer } from "./access-policy";
 import { publicRenderRateLimiter } from "./public-render-rate-limit";
 import { parseStoredResumeData } from "./resume-data-validation";
-
-type PublicRenderResume = {
-	id: string;
-	userId: string;
-	data: ResumeData;
-	isPublic: boolean;
-	passwordHash: string | null;
-};
 
 export type CreatePublicResumePdfInput = {
 	username: string;
@@ -21,77 +16,98 @@ export type CreatePublicResumePdfInput = {
 	trustedClient: string;
 };
 
-export type PublicResumePdfDependencies = {
-	findResume(input: Pick<CreatePublicResumePdfInput, "username" | "slug">): Promise<PublicRenderResume | null>;
-	hasPasswordAccess(requestHeaders: Headers, resumeId: string, passwordHash: string | null): boolean | Promise<boolean>;
-	resolveCurrentUserId(requestHeaders: Headers): Promise<string | undefined>;
-	rateLimiter: { consume(input: { trustedClient: string; resumeId: string }): void | Promise<void> };
-	renderPdf(input: { data: ResumeData; filename: string }): Promise<File>;
+// A cached file is re-rendered after a day, so template, font and engine fixes reach it without an edit.
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+// Renders in progress, so a burst of visitors to one resume waits for one render instead of starting many.
+const rendering = new Map<string, Promise<Uint8Array>>();
+
+const findResume = async (input: Pick<CreatePublicResumePdfInput, "username" | "slug">) => {
+	const [schema, { findResumeBySlug }] = await Promise.all([import("@reactive-resume/db/schema"), import("./slugs")]);
+	return findResumeBySlug(input, {
+		id: schema.resume.id,
+		userId: schema.resume.userId,
+		data: schema.resume.data,
+		isPublic: schema.resume.isPublic,
+		passwordHash: schema.resume.password,
+	});
 };
 
-const findResume = async ({ username, slug }: Pick<CreatePublicResumePdfInput, "username" | "slug">) => {
-	const [{ db }, schema, { and, desc, eq, isNull, sql }, { matchesSlug }] = await Promise.all([
-		import("@reactive-resume/db/client"),
-		import("@reactive-resume/db/schema"),
-		import("drizzle-orm"),
-		import("./slugs"),
-	]);
-	const [resume] = await db
-		.select({
-			id: schema.resume.id,
-			userId: schema.resume.userId,
-			data: schema.resume.data,
-			isPublic: schema.resume.isPublic,
-			passwordHash: schema.resume.password,
-		})
-		.from(schema.resume)
-		.innerJoin(schema.user, eq(schema.resume.userId, schema.user.id))
-		.where(
-			and(matchesSlug(slug), eq(schema.user.username, username), isNull(schema.resume.trashedAt), ownerIsNotBanned()),
-		)
-		.orderBy(desc(sql`${schema.resume.slug} = ${slug}`))
-		.limit(1);
-	return resume ?? null;
-};
+const resolveCurrentUserId = async (requestHeaders: Headers) =>
+	(await import("../../context"))
+		.resolveAuthenticationFromRequestHeaders(requestHeaders)
+		.then((authentication) => (authentication?.permissions.includes("read") ? authentication.user.id : undefined))
+		// A cross-site session is refused (FORBIDDEN); fall back to the anonymous view, like /uploads.
+		.catch(() => undefined);
 
-const defaultDependencies: PublicResumePdfDependencies = {
-	findResume,
-	hasPasswordAccess: async (requestHeaders, resumeId, passwordHash) =>
-		(await import("./access")).hasResumeAccess(requestHeaders, resumeId, passwordHash),
-	resolveCurrentUserId: async (requestHeaders) =>
-		(await import("../../context"))
-			.resolveAuthenticationFromRequestHeaders(requestHeaders)
-			.then((authentication) => (authentication?.permissions.includes("read") ? authentication.user.id : undefined))
-			// A cross-site session is refused (FORBIDDEN); fall back to the anonymous view, like /uploads.
-			.catch(() => undefined),
-	rateLimiter: publicRenderRateLimiter,
-	renderPdf: async (input) =>
-		(await import("@reactive-resume/pdf/server")).createResumePdfFile({ ...input, uploadOrigin: env.APP_URL }),
-};
+/** `body` is null when the request's `If-None-Match` already names this version (answer 304). */
+export type PublicResumePdf = { body: File | null; filename: string; etag: string };
 
 /**
  * Renders a PDF for a public resume identified by username and slug (current or unexpired redirect).
- * Enforces visibility, password access, and rate limiting before generating the file.
+ * Enforces visibility, password access, and rate limiting before generating the file, or before confirming a
+ * cached copy is current.
  */
-export async function createPublicResumePdf(
-	input: CreatePublicResumePdfInput,
-	dependencies: Partial<PublicResumePdfDependencies> = {},
-): Promise<{ body: File; filename: string }> {
-	const deps = { ...defaultDependencies, ...dependencies };
-	const resume = await deps.findResume(input);
+export async function createPublicResumePdf(input: CreatePublicResumePdfInput): Promise<PublicResumePdf> {
+	const resume = await findResume(input);
 	if (!resume) throw new ORPCError("NOT_FOUND");
 
-	const currentUserId = await deps.resolveCurrentUserId(input.requestHeaders);
+	const currentUserId = await resolveCurrentUserId(input.requestHeaders);
 	assertCanView(resume, currentUserId ? { id: currentUserId } : null);
-	if (resume.passwordHash && !(await deps.hasPasswordAccess(input.requestHeaders, resume.id, resume.passwordHash))) {
+	if (
+		resume.passwordHash &&
+		!(await import("./access")).hasResumeAccess(input.requestHeaders, resume.id, resume.passwordHash)
+	) {
 		throw new ORPCError("NEED_PASSWORD", {
 			status: 401,
 			data: { username: input.username, slug: input.slug },
 		});
 	}
 
-	const data = parseStoredResumeData(resume.data);
-	await deps.rateLimiter.consume({ trustedClient: input.trustedClient, resumeId: resume.id });
+	// Every visitor gets the anonymous view, so one cached file serves them all (hidden content never prints anyway).
+	const { data } = redactResumeForViewer({ name: "", data: parseStoredResumeData(resume.data) }, false);
 	const filename = generateFilename(data.basics.name || "Resume", "pdf");
-	return { body: await deps.renderPdf({ data, filename }), filename };
+	const hash = createHash("sha256").update(JSON.stringify(data)).digest("hex").slice(0, 32);
+	// Under the resume's pdfs/ folder: deleted with the resume or account, and /uploads serves it only to the owner.
+	const folder = `uploads/${resume.userId}/pdfs/${resume.id}`;
+	const key = `${folder}/public-${hash}.pdf`;
+	const etag = `"${hash}"`;
+	if (matchesIfNoneMatch(input.requestHeaders.get("if-none-match"), etag)) return { body: null, filename, etag };
+	// The cache is best effort: without storage, or when it fails, every request renders as before.
+	const storage = await import("../storage")
+		.then(({ getStorageService }) => getStorageService())
+		.catch(() => undefined);
+
+	const cached = await storage?.read(key).catch(() => null);
+	const fresh = cached && (!cached.lastModified || Date.now() - cached.lastModified.getTime() < CACHE_TTL_MS);
+	if (cached && fresh)
+		return { body: new File([cached.data as Uint8Array<ArrayBuffer>], filename, PDF), filename, etag };
+
+	let pending = rendering.get(key);
+	if (!pending) {
+		// Only a render spends the visitor's budget; a cached file is as cheap as a picture.
+		await publicRenderRateLimiter.consume({ trustedClient: input.trustedClient, resumeId: resume.id });
+		pending = renderAndStore(storage, { data, filename, folder, key });
+		rendering.set(key, pending);
+		void pending.finally(() => rendering.delete(key)).catch(() => undefined);
+	}
+	return { body: new File([(await pending) as Uint8Array<ArrayBuffer>], filename, PDF), filename, etag };
+}
+
+const PDF = { type: "application/pdf" };
+
+async function renderAndStore(
+	storage: StorageService | undefined,
+	{ data, filename, folder, key }: { data: ResumeData; filename: string; folder: string; key: string },
+): Promise<Uint8Array> {
+	const { createResumePdfFile } = await import("@reactive-resume/pdf/server");
+	const file = await createResumePdfFile({ data, filename, uploadOrigin: env.APP_URL });
+	const bytes = new Uint8Array(await file.arrayBuffer());
+	await storage
+		?.write({ key, data: bytes, contentType: "application/pdf" })
+		.then(async () => {
+			const stale = (await storage.list(folder)).filter((name) => name !== key && name.includes("/public-"));
+			await Promise.all(stale.map((name) => storage.delete(name)));
+		})
+		.catch((error: unknown) => console.warn("Failed to cache public resume PDF", error));
+	return bytes;
 }

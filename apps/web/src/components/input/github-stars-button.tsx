@@ -1,8 +1,8 @@
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { GithubLogoIcon, StarIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@reactive-resume/ui/components/button";
-import { CountUp } from "../animation/count-up";
+import { RollingNumber } from "@/components/ui/rolling-number";
 import { orpc } from "@/libs/orpc/client";
 
 export function GithubStarsButton() {
@@ -10,7 +10,10 @@ export function GithubStarsButton() {
 
 	const ariaLabel =
 		starCount != null
-			? t`Star us on GitHub, currently ${starCount.toLocaleString()} stars (opens in new tab)`
+			? plural(starCount, {
+					one: "Star us on GitHub, currently # star (opens in new tab)",
+					other: "Star us on GitHub, currently # stars (opens in new tab)",
+				})
 			: t`Star us on GitHub (opens in new tab)`;
 
 	return (
@@ -25,7 +28,7 @@ export function GithubStarsButton() {
 					rel="noopener noreferrer"
 				>
 					<GithubLogoIcon aria-hidden="true" />
-					{starCount != null ? <CountUp to={starCount} className="font-bold" aria-hidden="true" /> : null}
+					{starCount != null ? <RollingNumber value={starCount} className="font-bold" /> : null}
 					<StarIcon aria-hidden="true" />
 				</a>
 			}

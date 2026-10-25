@@ -165,9 +165,9 @@ export function DatesField({ dates, single = false, locale, format, onChange, cl
 					<p className="flex items-start gap-1 text-xs leading-4 text-warn-text">
 						<Icon name="warning" size={16} className="shrink-0" />
 						{dates.start ? (
-							<Trans>We read "{dates.raw}". Pick a month so it sorts and prints consistently.</Trans>
+							<Trans>Read as “{dates.raw}”. Pick a month so it sorts and prints consistently.</Trans>
 						) : (
-							<Trans>We couldn't read "{dates.raw}". Enter the dates so they sort and print consistently.</Trans>
+							<Trans>Couldn't read “{dates.raw}”. Enter the dates so they sort and print consistently.</Trans>
 						)}
 					</p>
 				) : reversed ? (

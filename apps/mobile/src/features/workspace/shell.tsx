@@ -199,7 +199,7 @@ type HeaderProps = { application: Application; onAskCoach: () => void };
 
 function Header({ application, onAskCoach }: HeaderProps) {
 	const { t } = useLingui();
-	const { colors, space } = useTheme();
+	const { colors, radius, space } = useTheme();
 	const router = useRouter();
 	const { day } = useUserTime();
 	useWorkspaceChrome({ title: application.company, subtitle: application.role });
@@ -221,7 +221,7 @@ function Header({ application, onAskCoach }: HeaderProps) {
 						style={{
 							width: 8,
 							height: 8,
-							borderRadius: 4,
+							borderRadius: radius.rSm,
 							backgroundColor: getStageColor(application.status, colors),
 						}}
 					/>
@@ -289,7 +289,7 @@ function TabBadges({ saved, interview, now }: TabBadgesProps) {
 					extra && palette ? (
 						<View
 							key={tab}
-							style={{ paddingHorizontal: space.s1, borderRadius: radius.rPill, backgroundColor: palette.background }}
+							style={{ paddingHorizontal: space.s1, borderRadius: radius.rLg, backgroundColor: palette.background }}
 						>
 							<Text variant="micro" color={palette.text}>
 								{extra.text}

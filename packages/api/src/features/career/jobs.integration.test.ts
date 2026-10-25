@@ -565,4 +565,26 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 		await run();
 		expect(fixture.email).toHaveBeenCalledOnce();
 	});
+
+	it("deletes notifications read more than 90 days ago and keeps unread and recently read ones", async () => {
+		const day = 24 * 60 * 60 * 1000;
+		const old = new Date(Date.now() - 91 * day);
+		await getDb()
+			.insert(tables.careerNotification)
+			.values([
+				{ userId: "alice", key: "read-old", notice: { type: "schedule-failed", reason: "failed" }, readAt: old },
+				{
+					userId: "alice",
+					key: "read-recent",
+					notice: { type: "schedule-failed", reason: "failed" },
+					readAt: new Date(Date.now() - 89 * day),
+				},
+				{ userId: "alice", key: "unread-old", notice: { type: "schedule-failed", reason: "failed" }, createdAt: old },
+			]);
+		await run();
+		const keys = (await getDb().select({ key: tables.careerNotification.key }).from(tables.careerNotification)).map(
+			(row) => row.key,
+		);
+		expect(keys.sort()).toEqual(["read-recent", "unread-old"]);
+	});
 });

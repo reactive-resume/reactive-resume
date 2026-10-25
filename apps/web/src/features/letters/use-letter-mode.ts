@@ -34,9 +34,8 @@ export function useOpenLetterVersionFromUrl() {
 
 	useEffect(() => {
 		if (!version) return;
-		const editor = useEditorStore.getState();
-		editor.setShareTab("history");
-		editor.setHistoryVersion(version);
+		useEditorStore.getState().setShareTab("history");
+		useEditorStore.setState({ historyVersionId: version });
 		void navigate({
 			to: ".",
 			resetScroll: false,

@@ -2,7 +2,7 @@ import type { Style } from "../../forme/style-types";
 import type { StyleInput } from "./styles";
 import { richTextMarkClassName } from "./rich-text-html";
 import { safeTextStyle } from "./safe-text-style";
-import { mergeLinkStyles, mergeStyles } from "./styles";
+import { mergeStyles } from "./styles";
 
 type RichTextProseSpacing = {
 	paragraph: Style;
@@ -50,5 +50,7 @@ export const createRichTextStylesheet = ({
 	li: mergeStyles(proseSpacing.listItem),
 	[`.${richTextMarkClassName}`]: mergeStyles(richMarkStyle, richMarkRuleStyle, safeTextStyle),
 	p: mergeStyles(richParagraphStyle, richParagraphRuleStyle, safeTextStyle, proseSpacing.paragraph),
-	a: mergeLinkStyles({ hideUnderline: hideLinkUnderline === true }, linkStyle, richLinkRuleStyle, safeTextStyle),
+	a: mergeStyles(linkStyle, richLinkRuleStyle, safeTextStyle, {
+		textDecoration: hideLinkUnderline ? "none" : "underline",
+	}),
 });

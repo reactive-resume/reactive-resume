@@ -73,13 +73,12 @@ export function Design() {
 				<Doodle
 					name="curve"
 					wipe="clamp(0, (var(--p) - .03) / .2, 1)"
-					className="start-[79vw] top-[62vh] w-[16vw] translate-y-[calc(var(--p)*-50px)] rotate-[8deg] max-[900px]:hidden"
-					style={{ "--doodle-fade": "calc(1 - var(--z))" } as CSSProperties}
+					className="start-[79vw] top-[62vh] w-[16vw] translate-y-[calc(var(--p)*-50px)] rotate-[8deg] [--doodle-fade:calc(1-var(--z))] max-[900px]:hidden"
 				/>
 
 				<div
 					aria-hidden="true"
-					className="absolute inset-x-0 top-[23vh] h-[1.05em] [transform:translateY(calc(var(--z)*-10vh))] text-[7vw] font-normal text-ink opacity-[calc(1-var(--z))] will-change-[transform,opacity] min-[900px]:top-[22vh] min-[900px]:text-[clamp(32px,3.5vw,64px)]"
+					className="absolute inset-x-0 top-[12vh] h-[1.05em] [transform:translateY(calc(var(--z)*-10vh))] text-[15vw] font-normal text-ink opacity-[calc(1-var(--z))] will-change-[transform,opacity] min-[900px]:top-[10vh] min-[900px]:text-[clamp(80px,10vw,180px)]"
 				>
 					<span className="absolute inset-0 text-center font-display leading-none tracking-[-.03em] opacity-[calc(1-clamp(0,(var(--w1)-.35)*3.4,1))]">
 						{design}
@@ -130,7 +129,7 @@ export function Design() {
 										loading="lazy"
 										decoding="async"
 										draggable={false}
-										className="absolute inset-0 size-full rounded-[2px] bg-paper object-contain shadow-paper dark:brightness-[.93]"
+										className="absolute inset-0 size-full rounded-sm bg-paper object-contain shadow-paper dark:brightness-[.93]"
 									/>
 									<span className={cn(pageLabel, "absolute start-0 top-[calc(100%+10px)]")}>
 										{templates[cell.template].name}
@@ -145,7 +144,7 @@ export function Design() {
 					data-stack
 					className="absolute top-(--dpt) left-1/2 aspect-[612/792] w-(--pw) [transform:translate(calc(-50%-var(--dir)*var(--z)*.56*var(--pw)*(1-var(--z)*(1-var(--smin,.5)))),calc(-50%-var(--z)*8vh))_scale(calc(1-var(--z)*(1-var(--smin,.5))))] opacity-[clamp(0,var(--p)*20,1)] will-change-[transform,opacity] [transition:transform_.35s_var(--ease)]"
 				>
-					<div className="absolute inset-0 rounded-[2px] shadow-paper" />
+					<div className="absolute inset-0 rounded-sm shadow-paper" />
 					{sheetTemplates.map((template, index) => (
 						<div
 							key={template.name.id}
@@ -162,7 +161,7 @@ export function Design() {
 									aria-hidden="true"
 									className="absolute -top-[6%] -bottom-[6%] left-0 -ml-px w-0.5 [transform:translateX(calc((1-var(--w))*var(--pw)))] bg-ink opacity-[calc(clamp(0,var(--w)*30,1)*clamp(0,(1-var(--w))*30,1))] will-change-[transform,opacity]"
 								>
-									<span className="font-martian absolute -top-1 left-1/2 -translate-x-1/2 -translate-y-full rounded-full bg-ink px-[9px] py-[5px] text-[10.5px] leading-none font-medium tracking-[.06em] whitespace-nowrap text-bg">
+									<span className="font-martian absolute -top-1 left-1/2 -translate-x-1/2 -translate-y-full rounded-sm bg-ink px-[9px] py-[5px] text-[10.5px] leading-none font-medium tracking-[.06em] whitespace-nowrap text-bg">
 										{pageNumber(index + 1, templateNames[index] ?? "")}
 									</span>
 								</div>
@@ -187,7 +186,7 @@ export function Design() {
 					onValueChange={(value) => goToScene(SCENE.design, TEMPLATE_AT[value as number] ?? 0)}
 					inert={zoomed}
 					className={cn(
-						"absolute bottom-[5vh] left-1/2 flex h-auto max-w-[calc(100vw-2*var(--gutter))] -translate-x-1/2 scroll-px-1 [scrollbar-width:none] overflow-x-auto rounded-full border border-line bg-[color-mix(in_oklch,var(--surface)_85%,transparent)] p-1 whitespace-nowrap opacity-[calc(1-var(--z)*2)] backdrop-blur-[8px] min-[900px]:bottom-[clamp(20px,5vh,44px)]",
+						"blur-ok:backdrop-blur-[8px] absolute bottom-[5vh] left-1/2 flex h-auto max-w-[calc(100vw-2*var(--gutter))] -translate-x-1/2 scroll-px-1 [scrollbar-width:none] overflow-x-auto rounded-sm border border-line bg-[color-mix(in_oklch,var(--surface)_85%,transparent)] p-1 whitespace-nowrap opacity-[calc(1-var(--z)*2)] min-[900px]:bottom-[clamp(20px,5vh,44px)]",
 						!active && "pointer-events-none",
 					)}
 				>
@@ -195,7 +194,7 @@ export function Design() {
 						<label key={name} className="contents">
 							<SegmentedControlItem
 								value={index}
-								className="h-8 flex-none rounded-full px-3 font-ui duration-300 min-[900px]:px-[13px] data-checked:bg-ink data-checked:text-bg data-checked:shadow-none"
+								className="h-8 flex-none rounded-sm px-3 font-ui duration-300 min-[900px]:px-[13px] data-checked:bg-ink data-checked:text-bg data-checked:shadow-none"
 							>
 								{name}
 							</SegmentedControlItem>
@@ -213,13 +212,15 @@ export function Design() {
 
 				<h2
 					id="design-title"
-					className="absolute inset-x-(--gutter) bottom-[8vh] [transform:translateY(calc((1-var(--z))*30px))] text-center text-[8vw] leading-none font-normal text-balance opacity-(--z) will-change-[transform,opacity] min-[900px]:bottom-[5vh] min-[900px]:text-[clamp(36px,4vw,72px)]"
+					className="pointer-events-none absolute inset-x-(--gutter) top-[12vh] bottom-[8vh] [transform:translateY(calc((1-var(--z))*30px))] text-center text-[8vw] leading-none font-normal text-balance opacity-(--z) will-change-[transform,opacity] min-[900px]:bottom-[5vh] min-[900px]:text-[clamp(36px,4vw,72px)]"
 				>
-					<Link to="/resume-templates" inert={!zoomed}>
-						<span className="font-anybody font-light tracking-[-.02em] text-ink">
+					<Link to="/resume-templates" inert={!zoomed} className="flex h-full flex-col justify-between">
+						<span className="font-anybody pointer-events-auto font-light tracking-[-.02em] text-ink">
 							{t`${templateCount} free resume templates.`}
-						</span>{" "}
-						<span className="font-display tracking-[-.02em] text-accent-text italic">{t`Make any of them yours.`}</span>
+						</span>
+						<span className="pointer-events-auto font-display tracking-[-.02em] text-accent-text italic">
+							{t`Make any of them yours.`}
+						</span>
 					</Link>
 				</h2>
 			</div>

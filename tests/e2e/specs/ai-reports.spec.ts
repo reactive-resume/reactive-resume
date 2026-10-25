@@ -30,14 +30,14 @@ test("stores a private AI report, exports it, and deletes it only after account 
 	await page.goto("/dashboard/settings/account?deleteAccount=true");
 	const dialog = page.getByRole("alertdialog");
 	await expect(dialog).toBeVisible();
-	await expect(dialog.getByRole("button", { name: "Delete", exact: true })).toBeDisabled();
+	await expect(dialog.getByRole("button", { name: "Delete account", exact: true })).toBeDisabled();
 	await dialog.getByRole("button", { name: "Keep account" }).click();
 	await expect(dialog).not.toBeVisible();
 	await expect(await page.request.get("/api/openapi/auth/account/export")).toBeOK();
 	await page.reload();
 	await expect(dialog).toBeVisible();
 	await dialog.getByRole("textbox").fill("delete");
-	await dialog.getByRole("button", { name: "Delete", exact: true }).click();
+	await dialog.getByRole("button", { name: "Delete account", exact: true }).click();
 	await page.waitForURL("/");
 	const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 	try {

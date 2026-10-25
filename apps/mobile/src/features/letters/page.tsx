@@ -60,7 +60,7 @@ export function LetterPages({ data, zoomBar = true }: { data: ResumeData | null;
 			{preview.error ? (
 				<Banner
 					tone="danger"
-					message={t`Preview could not be rendered. Retry, or try another template or font in Design.`}
+					message={t`Couldn't render the preview. Retry, or try another template or font in Design.`}
 					action={{ label: t`Retry`, onPress: preview.retry }}
 				/>
 			) : null}
@@ -69,8 +69,8 @@ export function LetterPages({ data, zoomBar = true }: { data: ResumeData | null;
 					tone="warn"
 					message={
 						result.lostCharacters.length > 0
-							? t`Some characters could not be drawn: ${result.lostCharacters.join(", ")}. Choose another font in Design.`
-							: t`Some text could not be drawn. Choose another font in Design.`
+							? t`Some characters couldn't be drawn: ${result.lostCharacters.join(", ")}. Choose another font in Design.`
+							: t`Some text couldn't be drawn. Choose another font in Design.`
 					}
 				/>
 			) : null}

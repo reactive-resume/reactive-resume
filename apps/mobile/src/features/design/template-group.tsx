@@ -3,18 +3,23 @@ import type { TemplateFilter } from "./presets";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { useLingui } from "@lingui/react/macro";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
-import { useEffect, useState } from "react";
-import { PixelRatio, Pressable, ScrollView, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { I18nManager, Pressable, ScrollView, View } from "react-native";
+import { create } from "zustand";
 import { templateLayouts } from "@reactive-resume/schema/templates";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { Field, Slider } from "./controls";
 import { TEMPLATES, matchesFilter, templateName } from "./presets";
 import { useSession } from "@/auth/session";
-import { usePreview } from "@/preview/usePreview";
+import {
+	readStoredTemplateThumbnail,
+	storeTemplateThumbnail,
+	templateThumbnailKey,
+} from "@/features/documents/thumbnail-store";
+import { enqueueThumbnail, renderFirstPage, thumbnailPixelWidth } from "@/preview/thumbnail-queue";
 import { Chip, Icon, Segmented, Text, haptics, useTheme } from "@/ui";
-
-const A4_WIDTH_PT = 595.28;
 
 type TemplateGroupProps = {
 	data: ResumeData;
@@ -30,7 +35,13 @@ type TemplateGroupProps = {
 	onApply: (template: Template) => void;
 };
 
-/** Template: filter chips, then thumbnails rendered from the user's own resume, one at a time. */
+/**
+ * The design sheet's vertical scroll (offset and viewport height), written by the design pane. A store rather than
+ * props, so scrolling re-renders only the template grid.
+ */
+export const useSheetScroll = create(() => ({ offset: 0, height: 0 }));
+
+/** Template: filter chips, then thumbnails rendered from the user's own resume, one at a time, near the screen. */
 export function TemplateGroup(props: TemplateGroupProps) {
 	const { data, layout, columns = 3, width, disabled, preview, onPreview, onApply } = props;
 	const { t } = useLingui();
@@ -38,11 +49,33 @@ export function TemplateGroup(props: TemplateGroupProps) {
 	const [filter, setFilter] = useState<TemplateFilter>("all");
 	// Thumbnails render from the resume as it was when Template opened, so every edit doesn't redraw 17 pages.
 	const [snapshot] = useState(data);
-	const [rendered, setRendered] = useState(0);
+	const content = useMemo(() => templateThumbnailKey(snapshot), [snapshot]);
+	// The visible window: cards outside it (plus a card or row either side) don't render.
+	const [strip, setStrip] = useState({ offset: 0, width: 0 });
+	const sheetOffset = useSheetScroll((state) => state.offset);
+	const sheetHeight = useSheetScroll((state) => state.height);
+	// Where the grid sits in the sheet's content: this group's top plus the grid's top within it.
+	const [groupTop, setGroupTop] = useState(0);
+	const [grid, setGrid] = useState({ top: 0, height: 0 });
 	const shown = TEMPLATES.filter((id) => matchesFilter(id, filter));
 	const current = data.metadata.template;
 	const cardWidth =
 		layout === "strip" ? space.s12 * 2 + space.s4 : (width - space.s3 * (columns - 1)) / Math.max(1, columns);
+	const pitch = cardWidth + space.s3;
+	const isNear = (index: number) => {
+		if (layout === "grid") {
+			if (!sheetHeight || !grid.height) return false;
+			const rows = Math.ceil(shown.length / Math.max(1, columns));
+			const rowPitch = (grid.height + space.s3) / rows;
+			const rowTop = groupTop + grid.top + Math.floor(index / Math.max(1, columns)) * rowPitch;
+			return rowTop < sheetOffset + sheetHeight + rowPitch && rowTop + rowPitch > sheetOffset - rowPitch;
+		}
+		// Horizontal offsets aren't consistent across platforms in right-to-left layouts: render every card in turn.
+		if (I18nManager.isRTL) return true;
+		const start = strip.offset - pitch;
+		const end = strip.offset + (strip.width || width) + pitch;
+		return index * pitch < end && (index + 1) * pitch > start;
+	};
 	const filters: { id: TemplateFilter; label: string }[] = [
 		{ id: "all", label: t`All` },
 		{ id: "one", label: t`One column` },
@@ -54,10 +87,9 @@ export function TemplateGroup(props: TemplateGroupProps) {
 			key={id}
 			id={id}
 			data={snapshot}
+			content={content}
 			width={cardWidth}
-			// Renders wait their turn: card n starts once the n cards before it have finished.
-			enabled={index <= rendered}
-			onRendered={() => setRendered((value) => Math.max(value, index + 1))}
+			near={isNear(index)}
 			selected={id === current}
 			previewing={id === preview}
 			disabled={disabled}
@@ -67,17 +99,14 @@ export function TemplateGroup(props: TemplateGroupProps) {
 	));
 
 	return (
-		<View style={{ gap: space.s3 }}>
+		<View style={{ gap: space.s3 }} onLayout={(event) => setGroupTop(event.nativeEvent.layout.y)}>
 			<View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: space.s2 }}>
 				{filters.map((option) => (
 					<Chip
 						key={option.id}
 						label={option.label}
 						selected={filter === option.id}
-						onPress={() => {
-							setFilter(option.id);
-							setRendered(0);
-						}}
+						onPress={() => setFilter(option.id)}
 					/>
 				))}
 				<Text variant="caption" color="ink3" style={{ marginStart: "auto" }}>
@@ -85,11 +114,32 @@ export function TemplateGroup(props: TemplateGroupProps) {
 				</Text>
 			</View>
 			{layout === "strip" ? (
-				<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: space.s3 }}>
+				<ScrollView
+					horizontal
+					showsHorizontalScrollIndicator={false}
+					contentContainerStyle={{ gap: space.s3 }}
+					scrollEventThrottle={100}
+					onLayout={(event) => {
+						const stripWidth = event.nativeEvent.layout.width;
+						setStrip((value) => ({ ...value, width: stripWidth }));
+					}}
+					onScroll={(event) => {
+						const offset = event.nativeEvent.contentOffset.x;
+						setStrip((value) => ({ ...value, offset }));
+					}}
+				>
 					{cards}
 				</ScrollView>
 			) : (
-				<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s3 }}>{cards}</View>
+				<View
+					style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s3 }}
+					onLayout={(event) => {
+						const { y, height } = event.nativeEvent.layout;
+						setGrid({ top: y, height });
+					}}
+				>
+					{cards}
+				</View>
 			)}
 			{templateLayouts[current].columns === 2 ? <SidebarCard {...props} /> : null}
 		</View>
@@ -99,9 +149,11 @@ export function TemplateGroup(props: TemplateGroupProps) {
 type TemplateCardProps = {
 	id: Template;
 	data: ResumeData;
+	/** The snapshot's fingerprint: same content, same previews. */
+	content: string;
 	width: number;
-	enabled: boolean;
-	onRendered: () => void;
+	/** On or near the screen; only these render, and a card that leaves before its turn is skipped. */
+	near: boolean;
 	selected: boolean;
 	previewing: boolean;
 	disabled: boolean;
@@ -113,20 +165,34 @@ type TemplateCardProps = {
 const PREVIEW_LINGER_MS = 3000;
 
 function TemplateCard(props: TemplateCardProps) {
-	const { id, data, width, enabled, onRendered, selected, previewing, disabled, onPreview, onApply } = props;
+	const { id, data, content, width, near, selected, previewing, disabled, onPreview, onApply } = props;
 	const { t } = useLingui();
 	const { colors, fonts, motion, radius, space, shadows } = useTheme();
 	const session = useSession();
 	const [held, setHeld] = useState(false);
-	const preview = usePreview(enabled ? data : null, id, {
-		pages: [0],
-		scale: Math.min(6, (width / A4_WIDTH_PT) * PixelRatio.get()),
+	const queryClient = useQueryClient();
+	const pixelWidth = thumbnailPixelWidth(width);
+	const queryKey = useMemo(() => ["template-thumbnail", id, content, pixelWidth], [id, content, pixelWidth]);
+	const { data: thumbnail } = useQuery({
+		queryKey,
+		queryFn: ({ signal }) => {
+			// A refetch with the same template and content draws the same image, so keep it.
+			const kept = queryClient.getQueryData<string>(queryKey) ?? readStoredTemplateThumbnail(content, id, pixelWidth);
+			if (kept) return kept;
+			return enqueueThumbnail(
+				() => renderFirstPage(data, pixelWidth, (uri) => storeTemplateThumbnail(content, id, pixelWidth, uri), id),
+				signal,
+			);
+		},
+		enabled: near && pixelWidth > 0,
+		staleTime: Number.POSITIVE_INFINITY,
+		// A failed render keeps the template's sample image, as before.
+		retry: false,
 	});
-	const thumbnail = preview.result?.pages[0]?.uri;
-	const done = !!thumbnail || preview.error;
+	// Scrolled away before its turn: give the slot to the cards now on screen.
 	useEffect(() => {
-		if (done) onRendered();
-	}, [done, onRendered]);
+		if (!near) void queryClient.cancelQueries({ queryKey, exact: true });
+	}, [near, queryClient, queryKey]);
 	useEffect(() => {
 		if (held || !previewing) return;
 		const timer = setTimeout(() => onPreview(null), PREVIEW_LINGER_MS);
@@ -185,7 +251,7 @@ function TemplateCard(props: TemplateCardProps) {
 							end: space.s1,
 							width: space.s5,
 							height: space.s5,
-							borderRadius: radius.rPill,
+							borderRadius: radius.rLg,
 							backgroundColor: colors.accent,
 							alignItems: "center",
 							justifyContent: "center",

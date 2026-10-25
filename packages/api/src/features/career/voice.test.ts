@@ -74,7 +74,7 @@ describe("career voice transcription", () => {
 		async (kind) => {
 			if (kind === "untested")
 				mocks.provider.mockRejectedValue(
-					new ORPCError("BAD_REQUEST", { message: "AI provider must be tested and enabled before use." }),
+					new ORPCError("BAD_REQUEST", { message: "Test and turn on this AI provider before using it." }),
 				);
 			if (kind === "compatible") mocks.provider.mockResolvedValue({ ...provider, provider: "openai-compatible" });
 			if (kind === "unoffered model") mocks.provider.mockResolvedValue({ ...provider, provider: "groq" });
@@ -137,7 +137,7 @@ describe("career voice transcription", () => {
 		const response = client.transcribe(input());
 		await expect(response).rejects.toMatchObject({
 			code: "BAD_GATEWAY",
-			message: expect.stringContaining("retry or type your answer"),
+			message: expect.stringContaining("try again or type your answer"),
 		});
 		await expect(response).rejects.not.toThrow("private-audio-fixture");
 		await expect(response).rejects.not.toThrow("test-only-key");

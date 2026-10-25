@@ -1,6 +1,6 @@
 // Desk & Paper tokens for React Native.
 // Screens use these and nothing else; add a missing token here rather than hard-coding a value.
-import { Easing, Platform } from "react-native";
+import { Easing } from "react-native";
 
 export type ColorScheme = "light" | "dark";
 
@@ -108,17 +108,18 @@ export const colors: Record<ColorScheme, Colors> = { light, dark };
 // own family, loaded under these names in src/ui/fonts.ts.
 export const fonts = {
 	ui: {
-		400: "HankenGrotesk-Regular",
-		500: "HankenGrotesk-Medium",
-		600: "HankenGrotesk-SemiBold",
-		700: "HankenGrotesk-Bold",
+		400: "Figtree-Regular",
+		500: "Figtree-Medium",
+		600: "Figtree-SemiBold",
+		700: "Figtree-Bold",
 	},
+	/** Instrument Serif ships one weight (no bold); never pair it with fontWeight. */
 	display: {
-		400: "Newsreader-Regular",
-		500: "Newsreader-Medium",
-		600: "Newsreader-SemiBold",
+		400: "InstrumentSerif-Regular",
 	},
-	mono: Platform.select({ ios: "Menlo", default: "monospace" }),
+	mono: {
+		400: "GeistMono-Regular",
+	},
 } as const;
 
 type TextStyleToken = {
@@ -130,10 +131,10 @@ type TextStyleToken = {
 };
 
 export const type = {
-	largeIOS: { fontFamily: fonts.display[500], fontSize: 34, lineHeight: 41, letterSpacing: -0.3 },
-	largeAnd: { fontFamily: fonts.display[500], fontSize: 28, lineHeight: 34, letterSpacing: 0 },
-	display: { fontFamily: fonts.display[500], fontSize: 28, lineHeight: 34, letterSpacing: -0.2 },
-	heading: { fontFamily: fonts.display[500], fontSize: 22, lineHeight: 28, letterSpacing: 0 },
+	largeIOS: { fontFamily: fonts.display[400], fontSize: 34, lineHeight: 41, letterSpacing: -0.3 },
+	largeAnd: { fontFamily: fonts.display[400], fontSize: 28, lineHeight: 34, letterSpacing: 0 },
+	display: { fontFamily: fonts.display[400], fontSize: 28, lineHeight: 34, letterSpacing: -0.2 },
+	heading: { fontFamily: fonts.display[400], fontSize: 22, lineHeight: 28, letterSpacing: 0 },
 	title: { fontFamily: fonts.ui[600], fontSize: 17, lineHeight: 22, letterSpacing: 0 },
 	bodyLarge: { fontFamily: fonts.ui[400], fontSize: 16, lineHeight: 22, letterSpacing: 0 },
 	body: { fontFamily: fonts.ui[400], fontSize: 15, lineHeight: 21, letterSpacing: 0 },
@@ -141,10 +142,18 @@ export const type = {
 	callout: { fontFamily: fonts.ui[400], fontSize: 13, lineHeight: 18, letterSpacing: 0 },
 	caption: { fontFamily: fonts.ui[500], fontSize: 12, lineHeight: 16, letterSpacing: 0 },
 	micro: { fontFamily: fonts.ui[600], fontSize: 11, lineHeight: 13, letterSpacing: 0.1, maxFontSizeMultiplier: 1.6 },
-	mono: { fontFamily: fonts.mono, fontSize: 13, lineHeight: 18, letterSpacing: 0 },
+	mono: { fontFamily: fonts.mono[400], fontSize: 13, lineHeight: 18, letterSpacing: 0 },
+	/** Section labels and eyebrows, in sentence case. */
+	eyebrow: {
+		fontFamily: fonts.ui[600],
+		fontSize: 12,
+		lineHeight: 16,
+		letterSpacing: 0,
+		maxFontSizeMultiplier: 1.6,
+	},
 } satisfies Record<string, TextStyleToken>;
 
-/** `pageThumb`: Newsreader 400 that scales with the letter card, 3.3% of its width. */
+/** `pageThumb`: Instrument Serif 400 that scales with the letter card, 3.3% of its width. */
 export const pageThumb = { fontFamily: fonts.display[400], widthRatio: 0.033 } as const;
 
 // §3 Spacing, 4 pt grid.
@@ -173,15 +182,10 @@ export const size = {
 
 // §4 Radii.
 export const radius = {
-	rSm: 6,
-	rMd: 8,
-	rLg: 10,
-	rXl: 12,
-	r2xl: 16,
-	r3xl: 18,
-	r4xl: 24,
-	rSheetA: 28,
-	rPill: 999,
+	rSm: 2,
+	rMd: 3,
+	/** Every larger shape (cards, sheets, former pills): corners stay square-ish everywhere. */
+	rLg: 4,
 } as const;
 
 // §5 Shadows. `boxShadow` first; `ios` and `elevation` are the legacy fallback for Android below API 28.

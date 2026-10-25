@@ -21,18 +21,25 @@ import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
-	name: z.string().trim().min(1).max(64),
+	name: z
+		.string()
+		.trim()
+		.min(1, { error: () => t`Enter your name.` })
+		.max(64, { error: () => t`Use 64 characters or fewer.` }),
 	username: z
 		.string()
-		.min(3)
-		.max(64)
+		.min(3, { error: () => t`Use at least 3 characters.` })
+		.max(64, { error: () => t`Use 64 characters or fewer.` })
 		.trim()
 		.toLowerCase()
 		.regex(/^[a-z0-9._-]+$/, {
-			message: "Username can only contain lowercase letters, numbers, dots, hyphens and underscores.",
+			error: () => t`Use only lowercase letters, numbers, dots, hyphens and underscores.`,
 		}),
-	email: z.email().toLowerCase(),
-	password: z.string().min(8).max(64),
+	email: z.email({ error: () => t`Enter a valid email address.` }).toLowerCase(),
+	password: z
+		.string()
+		.min(8, { error: () => t`Use at least 8 characters.` })
+		.max(64, { error: () => t`Use 64 characters or fewer.` }),
 });
 
 type Props = {
@@ -69,7 +76,7 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 						error.message ||
 						t({
 							comment: "Fallback toast when account registration fails without a server error message",
-							message: "Failed to create your account. Please try again.",
+							message: "Couldn't create your account. Try again.",
 						}),
 					id: toastId,
 				});
@@ -190,7 +197,7 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 						{(field) => (
 							<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
 								<FormLabel>
-									<Trans comment="Label for email input on registration form">Email Address</Trans>
+									<Trans comment="Label for email input on registration form">Email address</Trans>
 								</FormLabel>
 								<FormControl
 									render={
@@ -254,7 +261,7 @@ function PostSignupScreen() {
 		<div className={cn(ENTER_CLASS, "grid gap-y-6")}>
 			<div className="space-y-1 text-center">
 				<h1 className="text-2xl font-semibold tracking-tight">
-					<Trans>You've got mail!</Trans>
+					<Trans>Check your email</Trans>
 				</h1>
 				<p className="text-ink-3">
 					<Trans>Check your email for a link to verify your account.</Trans>

@@ -30,13 +30,13 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 	const submit = async () => {
 		if (submitting.current) return;
 		if (password.length < 6 || password.length > 64) {
-			setError(t`Password must be between 6 and 64 characters.`);
+			setError(t`Use between 6 and 64 characters.`);
 			return;
 		}
 		// Both values are entered in this browser form; no server-held secret is compared.
 		// nosemgrep
 		if (password !== confirmation) {
-			setError(t`Passwords do not match.`);
+			setError(t`Enter the same password in both fields.`);
 			return;
 		}
 
@@ -47,7 +47,7 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 			await onSubmit(password);
 			onClose();
 		} catch (error) {
-			setError(error instanceof ORPCError ? error.message : t`Something went wrong. Please try again.`);
+			setError(error instanceof ORPCError ? error.message : t`Couldn't set the password. Try again.`);
 		}
 		submitting.current = false;
 		setIsPending(false);
@@ -101,7 +101,7 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 					</div>
 					<div className="space-y-2">
 						<Label htmlFor={`${id}-confirmation`}>
-							<Trans>Confirm Password</Trans>
+							<Trans>Confirm password</Trans>
 						</Label>
 						<Input
 							id={`${id}-confirmation`}
@@ -127,7 +127,7 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 							<Trans>Cancel</Trans>
 						</Button>
 						<Button type="submit" disabled={isPending}>
-							<Trans>Set Password</Trans>
+							<Trans>Set password</Trans>
 						</Button>
 					</DialogFooter>
 				</form>

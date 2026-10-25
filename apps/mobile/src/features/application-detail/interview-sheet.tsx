@@ -210,8 +210,8 @@ function InterviewForm({ application, interview, onClose }: InterviewFormProps) 
 			saving.current = false;
 			showToast({
 				message: interview
-					? t`Couldn't update the interview.`
-					: t`Could not confirm the save. Check the application before retrying to avoid a duplicate.`,
+					? t`Couldn't update the interview. Try again.`
+					: t`Couldn't confirm the save. Check the application before retrying to avoid a duplicate.`,
 			});
 			return;
 		}
@@ -220,7 +220,7 @@ function InterviewForm({ application, interview, onClose }: InterviewFormProps) 
 		try {
 			if (entryId) await applyReminder(saved, entryId);
 		} catch {
-			showToast({ message: t`Interview saved. Couldn't update its reminder.` });
+			showToast({ message: t`Interview saved. Couldn't update its reminder. Edit the interview to try again.` });
 		}
 	};
 
@@ -241,7 +241,7 @@ function InterviewForm({ application, interview, onClose }: InterviewFormProps) 
 			void client.applications
 				.deleteTimelineEntry({ id: application.id, entryId: interview.id })
 				.then(() => reminders.turnOff(target))
-				.catch(() => showToast({ message: t`Couldn't delete the interview.` }))
+				.catch(() => showToast({ message: t`Couldn't delete the interview. Try again.` }))
 				.finally(() => {
 					releaseReminder(interview.id);
 					void invalidate();

@@ -107,7 +107,7 @@ export function CheckPage({
 			)}
 			{preview.rendering && <Text variant="callout" color="ink3">{t`Updating preview…`}</Text>}
 			{preview.result?.hasTextLoss && (
-				<Banner tone="warn" message={t`Some characters could not be rendered. Check the page before exporting.`} />
+				<Banner tone="warn" message={t`Some characters couldn't be rendered. Check the page before exporting.`} />
 			)}
 			<View style={{ display: lens === "parser" ? "flex" : "none" }}>
 				<Parser
@@ -195,7 +195,7 @@ export function CheckPage({
 													[I18nManager.isRTL ? "right" : "left"]: space.s1 + Math.floor(ordinal / 2) * size.hit,
 													width: size.hit,
 													height: size.hit,
-													borderRadius: radius.rPill,
+													borderRadius: radius.rLg,
 													alignItems: "center",
 													justifyContent: "center",
 													backgroundColor: colors.paperWarnSoft,

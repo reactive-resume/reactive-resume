@@ -22,7 +22,7 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 		const file = event.target.files?.[0];
 		if (!file) return;
 		if (file.type !== "application/pdf") {
-			toast.add({ type: "error", description: t`Please upload a PDF file.` });
+			toast.add({ type: "error", description: t`Choose a PDF file.` });
 			return;
 		}
 		onChange(file);

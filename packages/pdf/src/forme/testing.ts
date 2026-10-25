@@ -1,7 +1,7 @@
 import type { HostNode } from "./reconciler";
 import type { ReactElement } from "react";
 import * as forme from "@formepdf/core";
-import { loadIcons } from "./icons";
+import { loadAllIcons } from "./icons";
 import { HOST } from "./primitives";
 import { renderHostTree } from "./reconciler";
 import { renderResumeElement } from "./render";
@@ -14,8 +14,8 @@ import { renderResumeElement } from "./render";
 /** @lintignore Tests reach these through the module namespace. */
 export { Document, Image, Link, Page, Svg, Text, View } from "./primitives";
 
-// Icons draw nothing until their paths are loaded; `renderResume` waits for them, and so do the tests.
-await loadIcons();
+// Icons draw nothing until their paths are loaded; `renderResume` loads what it draws, the tests load them all.
+await loadAllIcons();
 
 export type RenderedNode =
 	| { type: "TEXT_INSTANCE"; value: string }

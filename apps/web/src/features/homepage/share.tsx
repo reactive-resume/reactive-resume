@@ -108,7 +108,7 @@ export function Share() {
 				<Doodle
 					name="plane"
 					wipe="clamp(0, (var(--p) - .12) / .2, 1)"
-					className="start-[7vw] top-[max(13vh,120px)] w-[14vw] translate-y-[calc(var(--p)*-30px)] rotate-[-8deg] opacity-[calc(var(--nt)*.6)]! [filter:invert(1)]!"
+					className="start-[7vw] top-[max(13vh,120px)] w-[14vw] translate-y-[calc(var(--p)*-30px)] rotate-[-8deg] opacity-[calc(var(--nt)*.85)]!"
 				/>
 
 				<svg
@@ -125,11 +125,11 @@ export function Share() {
 						// Not non-scaling: that measures the dash in screen pixels, which breaks the pathLength-based draw.
 						strokeWidth={0.1}
 						strokeDasharray={1}
-						style={{ strokeDashoffset: "calc(1 - var(--fl))" }}
+						className="[stroke-dashoffset:calc(1-var(--fl))]"
 					/>
 				</svg>
 
-				<div className="absolute top-1/2 left-1/2 aspect-[612/792] w-(--pw) [transform:translate(-50%,-50%)_translate(calc(var(--dir)*var(--fl)*46vw),calc(var(--fl)*var(--fl)*-70vh))_rotate(calc(var(--dir)*var(--fl)*26deg))_scale(calc(1-var(--fl)*.78))] rounded-[2px] opacity-[calc(clamp(0,var(--p)*20,1)*(1-clamp(0,(var(--fl)-.6)*4,1)))] shadow-paper [transition:transform_.35s_var(--ease)]">
+				<div className="absolute top-1/2 left-1/2 aspect-[612/792] w-(--pw) [transform:translate(-50%,-50%)_translate(calc(var(--dir)*var(--fl)*46vw),calc(var(--fl)*var(--fl)*-70vh))_rotate(calc(var(--dir)*var(--fl)*26deg))_scale(calc(1-var(--fl)*.78))] rounded-sm opacity-[calc(clamp(0,var(--p)*20,1)*(1-clamp(0,(var(--fl)-.6)*4,1)))] shadow-paper [transition:transform_.35s_var(--ease)]">
 					<Sheet />
 				</div>
 
@@ -177,13 +177,13 @@ export function Share() {
 							aria-label={t`Visibility`}
 							value={visibility}
 							onValueChange={(value) => setVisibility(value as number)}
-							className="h-auto rounded-full border border-(--night-line) bg-(--night-fill) p-1"
+							className="h-auto rounded-sm border border-(--night-line) bg-(--night-fill) p-1"
 						>
 							{[t`Public`, t`Password`, t`Private`].map((label, index) => (
 								<label key={label} className="contents">
 									<SegmentedControlItem
 										value={index}
-										className="h-[34px] flex-none rounded-full px-3.5 font-ui text-(--night-ink-2) duration-300 not-data-checked:hover:text-(--night-ink) data-checked:bg-(--night-ink) data-checked:text-(--night-on-ink) data-checked:shadow-none"
+										className="h-[34px] flex-none rounded-sm px-3.5 font-ui text-(--night-ink-2) duration-300 not-data-checked:hover:text-(--night-ink) data-checked:bg-(--night-ink) data-checked:text-(--night-on-ink) data-checked:shadow-none"
 									>
 										<Icon name={visibilityIcons[index] ?? "globe-hemisphere-west"} size={17} />
 										{label}
@@ -195,7 +195,7 @@ export function Share() {
 							type="button"
 							onClick={copy}
 							className={cn(
-								"flex h-11 items-center gap-1.5 rounded-full px-[18px] font-ui text-sm font-semibold text-(--night-on-ink) transition-colors duration-standard",
+								"flex h-11 items-center gap-1.5 rounded-sm px-[18px] font-ui text-sm font-semibold text-(--night-on-ink) transition-colors duration-standard",
 								copied ? "bg-(--night-accent)" : "bg-(--night-ink)",
 							)}
 						>
@@ -208,7 +208,7 @@ export function Share() {
 						{formats.map((format, index) => (
 							<li
 								key={format.icon}
-								className="font-martian flex h-9 [transform:translateY(calc((1-var(--f))*10px))] items-center gap-2 rounded-md border border-[color-mix(in_oklch,var(--night-chip-line)_calc(var(--f)*100%),transparent)] px-3.5 text-[11.5px] leading-none font-medium tracking-[.08em] text-(--night-chip) uppercase opacity-(--f)"
+								className="font-martian flex h-9 [transform:translateY(calc((1-var(--f))*10px))] items-center gap-2 rounded-md border border-[color-mix(in_oklch,var(--night-chip-line)_calc(var(--f)*100%),transparent)] px-3.5 text-[11.5px] leading-none font-medium text-(--night-chip) opacity-(--f)"
 								style={{ "--f": `var(--f${index + 1})` } as CSSProperties}
 							>
 								<Icon name={format.icon} size={18} />

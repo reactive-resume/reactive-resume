@@ -199,7 +199,7 @@ export function getPdfFindingMessage(code: PdfRuleCode): PdfFindingMessage {
 				action: t`Use plain headings such as "Experience", "Education" and "Skills".`,
 			}))
 			.with("FEW_SECTION_HEADINGS", () => ({
-				title: t`Only one recognisable section heading was found.`,
+				title: t`Only one recognizable section heading was found.`,
 				action: t`Break the resume into the usual sections so it can be segmented.`,
 			}))
 			.with("NO_EDUCATION_SECTION", () => ({
@@ -212,7 +212,7 @@ export function getPdfFindingMessage(code: PdfRuleCode): PdfFindingMessage {
 			}))
 			.with("HEADINGS_NOT_DISTINGUISHED", () => ({
 				title: t`Your headings look the same as your body text.`,
-				action: t`Make them visibly larger, bolder or capitalised.`,
+				action: t`Make them visibly larger, bolder or capitalized.`,
 			}))
 			.with("VERY_SHORT_DOCUMENT", () => ({
 				title: t`Very few words were recovered for a resume.`,
@@ -265,7 +265,7 @@ export function getPdfFindingMessage(code: PdfRuleCode): PdfFindingMessage {
 			}))
 			.with("BARE_URL_WITHOUT_PROTOCOL", () => ({
 				title: t`A web address is written without https://.`,
-				action: t`Write the full address so it is recognised as a link.`,
+				action: t`Write the full address so it is recognized as a link.`,
 			}))
 			.with("PHONE_FORMAT_UNUSUAL", () => ({
 				title: t`Your phone number is written in an unusual shape.`,
@@ -282,7 +282,7 @@ export function getPdfFindingMessage(code: PdfRuleCode): PdfFindingMessage {
 			}))
 			.with("UNPARSEABLE_DATE_RANGE", () => ({
 				title: t`A date range is written in a form most software cannot read.`,
-				action: t`Use a recognised form such as "Jan 2020 - Mar 2022" or "2020 - 2022".`,
+				action: t`Use a recognized form such as "Jan 2020 - Mar 2022" or "2020 - 2022".`,
 			}))
 			.with("REVERSED_DATE_RANGE", () => ({
 				title: t`A date range ends before it starts.`,

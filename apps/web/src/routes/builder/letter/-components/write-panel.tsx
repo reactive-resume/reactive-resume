@@ -68,7 +68,7 @@ function Section({ id, title, aside, children }: SectionProps) {
 	return (
 		<section aria-labelledby={id} className="grid gap-3 px-4 py-5">
 			<div className="flex items-center justify-between gap-3">
-				<h2 id={id} className="text-xs font-semibold tracking-[0.04em] text-ink-3 uppercase">
+				<h2 id={id} className="text-xs font-semibold text-ink-3">
 					{title}
 				</h2>
 				{aside}
@@ -178,7 +178,7 @@ function ForSection({ letter, application, applications, disabled }: ForSectionP
 							<span aria-hidden="true">·</span>
 							<span
 								aria-hidden="true"
-								className="size-1.5 shrink-0 rounded-full"
+								className="size-1.5 shrink-0 rounded-sm"
 								style={{ background: getStageColor(application.status) }}
 							/>
 							{getStageLabel(application.status)}
@@ -640,7 +640,7 @@ function LengthSection({ content }: { content: string }) {
 				</span>
 			}
 		>
-			<div aria-hidden="true" className="relative h-1.5 overflow-hidden rounded-full bg-sunken">
+			<div aria-hidden="true" className="relative h-1.5 overflow-hidden rounded-sm bg-sunken">
 				<span
 					className="absolute inset-y-0 bg-line-2"
 					style={{
@@ -650,7 +650,7 @@ function LengthSection({ content }: { content: string }) {
 				/>
 				<span
 					className={cn(
-						"absolute inset-y-0 start-0 w-full translate-x-(--fill) rounded-full transition-[translate] duration-quick ease-enter rtl:-translate-x-(--fill)",
+						"absolute inset-y-0 start-0 w-full translate-x-(--fill) rounded-sm transition-[translate] duration-quick ease-enter rtl:-translate-x-(--fill)",
 						fill,
 					)}
 					style={

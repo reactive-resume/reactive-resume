@@ -1,9 +1,9 @@
 ---
-title: "Setting up two-factor authentication"
+title: "Setting up two-step verification"
 description: "Turn on two-step verification in Reactive Resume with an authenticator app, save your backup codes, and turn it off again when you need to."
 ---
 
-Two-step verification adds a second check when you sign in: after your password, you enter a 6-digit code from an authenticator app on your phone or computer. Someone who learns your password still can't get in without it.
+Two-step verification (also called two-factor authentication, or 2FA) adds a second check when you sign in: after your password, you enter a 6-digit code from an authenticator app on your phone or computer. Someone who learns your password still can't get in without it.
 
 ## Before you start
 
@@ -18,28 +18,28 @@ Two-step verification adds a second check when you sign in: after your password,
   </Step>
 
   <Step title="Turn the switch on and enter your password">
-    The **Enable Two-Factor Authentication** dialog asks for your **Password**. Enter it and select **Continue**.
+    The **Turn on two-step verification** dialog asks for your **Password**. Enter it and select **Continue**.
 
     <Frame>
-      <img src="/images/guides/setting-up-two-factor-authentication/enter-password.webp" alt="The Enable Two-Factor Authentication dialog asking for your password, with a Continue button" />
+      <img src="/images/guides/setting-up-two-factor-authentication/enter-password.webp" alt="The Turn on two-step verification dialog asking for your password, with a Continue button" />
     </Frame>
 
   </Step>
 
   <Step title="Save your backup codes">
-    **Copy Backup Codes** shows 10 one-time codes. Select **Download** to save them as a text file, or **Copy** to paste them somewhere safe, such as your password manager. Then select **Continue**.
+    **Save your backup codes** shows 10 one-time codes. Select **Download codes** to save them as a text file, or **Copy codes** to paste them somewhere safe, such as your password manager. Then select **Continue**.
 
     <Frame>
-      <img src="/images/guides/setting-up-two-factor-authentication/backup-codes.webp" alt="The Copy Backup Codes dialog listing ten codes in two columns, with Download, Copy and Continue buttons" />
+      <img src="/images/guides/setting-up-two-factor-authentication/backup-codes.webp" alt="The Save your backup codes dialog listing ten codes in two columns, with Download codes, Copy codes and Continue buttons" />
     </Frame>
 
   </Step>
 
   <Step title="Add Reactive Resume to your authenticator app">
-    In **Setup Authenticator App**, scan the QR code with your app. If you can't scan it, select the copy button next to the secret key above the code and paste the key into your app.
+    In **Set up your authenticator app**, scan the QR code with your app. If you can't scan it, select the copy button next to the secret key above the code and paste the key into your app.
 
     <Frame>
-      <img src="/images/guides/setting-up-two-factor-authentication/scan-qr-code.webp" alt="The Setup Authenticator App dialog with a secret key and copy button, a QR code, six code boxes, and Cancel and Continue buttons" />
+      <img src="/images/guides/setting-up-two-factor-authentication/scan-qr-code.webp" alt="The Set up your authenticator app dialog with a secret key and copy button, a QR code, six code boxes, and Cancel and Continue buttons" />
     </Frame>
 
   </Step>
@@ -66,7 +66,7 @@ The switch now shows two-step verification is on. From your next sign-in, Reacti
 
 ## Sign in with a code
 
-After your password, enter the code from your app on the **Two-Factor Authentication** page. If you don't have your app, select **Lost access to your authenticator?** and enter a backup code. Each backup code works once. See [Signing in](/guides/signing-in#enter-a-two-step-code) for details.
+After your password, enter the code from your app on the **Two-step verification** page. If you don't have your app, select **Lost access to your authenticator?** and enter a backup code. Each backup code works once. See [Signing in](/guides/signing-in#enter-a-two-step-code) for details.
 
 Signing in with a [passkey](/guides/setting-up-passkeys) or a linked social account doesn't ask for a code.
 
@@ -78,14 +78,14 @@ Signing in with a [passkey](/guides/setting-up-passkeys) or a linked social acco
   </Step>
 
   <Step title="Confirm with your password">
-    In **Disable Two-Factor Authentication**, enter your **Password** and select **Disable 2FA**.
+    In **Turn off two-step verification?**, enter your **Password** and select **Turn off two-step verification**.
   </Step>
 </Steps>
 
 <Frame caption="Turning off two-step verification needs your password">
   <img
     src="/images/guides/setting-up-two-factor-authentication/disable-dialog.webp"
-    alt="The Disable Two-Factor Authentication dialog with a Password field and a Disable 2FA button"
+    alt="The Turn off two-step verification? dialog with a Password field and a Turn off two-step verification button"
   />
 </Frame>
 

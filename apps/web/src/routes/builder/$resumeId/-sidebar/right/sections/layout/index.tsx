@@ -39,9 +39,6 @@ function LayoutSectionForm() {
 	const form = useAppForm({
 		defaultValues: { sidebarWidth: layout.sidebarWidth },
 		validators: { onChange: formSchema },
-		onSubmit: ({ value }) => {
-			persist(value);
-		},
 	});
 	useSyncFormValues(form, { sidebarWidth: layout.sidebarWidth });
 
@@ -52,19 +49,12 @@ function LayoutSectionForm() {
 	const labelId = React.useId();
 
 	return (
-		<form
-			className="space-y-4"
-			onSubmit={(event) => {
-				event.preventDefault();
-				event.stopPropagation();
-				void form.handleSubmit();
-			}}
-		>
+		<div className="space-y-4">
 			<form.Field name="sidebarWidth">
 				{(field) => (
 					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
 						<FormLabel id={labelId}>
-							<Trans>Sidebar Width</Trans>
+							<Trans>Sidebar width</Trans>
 						</FormLabel>
 						<div className="flex items-center gap-4">
 							<Slider
@@ -105,6 +95,6 @@ function LayoutSectionForm() {
 					</FormItem>
 				)}
 			</form.Field>
-		</form>
+		</div>
 	);
 }

@@ -186,7 +186,7 @@ function ScheduleForm({
 				{!available ? (
 					<Banner
 						tone="warn"
-						message={t`Scheduled work is not available on this server. Ask the server owner to configure it.`}
+						message={t`Scheduled work is not available on this server. Ask your server administrator to configure it.`}
 					/>
 				) : null}
 				<Text color="ink3">{t`Times are shown in ${timezone}. Change timezone in Settings → Preferences.`}</Text>

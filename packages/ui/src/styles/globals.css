@@ -1,14 +1,14 @@
 @import "tailwindcss" source(none);
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/hanken-grotesk";
-@import "@fontsource-variable/hanken-grotesk/wght-italic.css";
-@import "@fontsource-variable/newsreader/opsz.css";
-@import "@fontsource-variable/newsreader/opsz-italic.css";
+@import "@fontsource-variable/figtree/wght.css";
+@import "@fontsource-variable/figtree/wght-italic.css";
+@import "@fontsource/instrument-serif/400.css";
+@import "@fontsource/instrument-serif/400-italic.css";
+@import "@fontsource-variable/geist-mono/wght.css";
 /* Phosphor's web font draws the icons inside resumes (their names are stored in resume data). */
 @import "@phosphor-icons/web/regular/style.css";
-
-@plugin "@tailwindcss/typography";
+@import "./typeset.css";
 
 @source "../**/*.{ts,tsx}";
 @source "../../../../apps/**/*.{ts,tsx}";
@@ -123,19 +123,22 @@
 }
 
 @theme {
-	--font-display: "Newsreader Variable", Georgia, serif;
-	--font-ui: "Hanken Grotesk Variable", system-ui, sans-serif;
+	/* Instrument Serif has one weight (400 and italic): never set it semibold or bold. */
+	--font-display: "Instrument Serif", Georgia, serif;
+	--font-ui: "Figtree Variable", system-ui, sans-serif;
 	--font-sans: var(--font-ui);
-	--font-mono: ui-monospace, monospace;
+	--font-mono: "Geist Mono Variable", ui-monospace, monospace;
 
-	/* 6 chips and small buttons · 8 controls · 10 list items · 12 cards and menus · 16 dialogs · 18 mobile sheets */
-	--radius-sm: 6px;
-	--radius-md: 8px;
-	--radius-lg: 10px;
-	--radius-xl: 12px;
-	--radius-2xl: 16px;
-	--radius-3xl: 18px;
-	--radius-4xl: 24px;
+	/* Corners are 2–4px everywhere: 2 chips, tags and small marks · 3 controls · 4 cards, menus, dialogs, sheets. */
+	--radius: 4px;
+	--radius-xs: 2px;
+	--radius-sm: 2px;
+	--radius-md: 3px;
+	--radius-lg: 4px;
+	--radius-xl: 4px;
+	--radius-2xl: 4px;
+	--radius-3xl: 4px;
+	--radius-4xl: 4px;
 
 	--aspect-page: 210 / 297;
 }
@@ -227,10 +230,6 @@
 	[role="button"]:not(:disabled) {
 		cursor: pointer;
 	}
-
-	.wysiwyg {
-		@apply prose prose-sm max-w-none prose-stone dark:prose-invert prose-p:my-3! prose-ol:my-3! prose-ul:my-3! prose-li:my-3!;
-	}
 }
 
 /* Outside layers so text-size utilities cannot undo the iOS zoom prevention. */
@@ -269,5 +268,12 @@
 		animation-iteration-count: 1 !important;
 		transition-duration: 0.01ms !important;
 		scroll-behavior: auto !important;
+	}
+}
+
+/* An undo toast's fuse: it burns down over the toast's timeout (see ToastFuse). */
+@keyframes toast-fuse {
+	to {
+		scale: 0 1;
 	}
 }

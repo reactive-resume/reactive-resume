@@ -23,7 +23,7 @@ import { useInvalidateApplications } from "../use-application-actions";
 import { useDialogStore } from "@/dialogs/store";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
 type Parsed = RouterOutput["applications"]["ai"]["parsePosting"];
@@ -173,10 +173,7 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 				openDialog("document.new", { step: "copy", applicationId, ...(resumeId ? { sourceResumeId: resumeId } : {}) });
 			else onAdded(applicationId);
 		} catch (error) {
-			toast.add({
-				type: "error",
-				description: getOrpcErrorMessage(error, { fallback: t`Couldn't add the application.` }),
-			});
+			toastError(error, t`Couldn't add the application. Try again.`);
 		}
 	};
 
@@ -598,7 +595,7 @@ function ReadStatus({ text, link, readable, pending, error, parsed, ai }: ReadSt
 			) : ai ? (
 				<Trans>Fill in the role and company. The posting is saved with the application.</Trans>
 			) : (
-				<Trans>Fill in the role and company. Connect an AI provider in settings to read them from the posting.</Trans>
+				<Trans>Fill in the role and company. Connect an AI provider in Settings to read them from the posting.</Trans>
 			)}
 		</p>
 	);

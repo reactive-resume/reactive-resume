@@ -453,7 +453,7 @@ export function Chip({ label, selected, onPress, icon, onRemove }: ChipProps) {
 				gap: space.s1,
 				paddingStart: space.s3,
 				paddingEnd: onRemove ? space.s1 + space.s0 : space.s3,
-				borderRadius: radius.rPill,
+				borderRadius: radius.rLg,
 				borderWidth: 1,
 				borderColor: selected ? colors.accent : colors.line2,
 				backgroundColor: pressed && onPress && !android ? colors.sunken : selected ? colors.accentSoft : colors.raised,

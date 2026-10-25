@@ -78,7 +78,7 @@ export async function verifyOAuthToken(token: string): Promise<JWTPayload> {
 				),
 			)
 			.limit(1);
-		if (!session) throw new APIError("UNAUTHORIZED", { message: "OAuth session has ended." });
+		if (!session) throw new APIError("UNAUTHORIZED", { message: "OAuth session has ended. Sign in again." });
 	}
 	const [consent] = await db
 		.select()
@@ -153,29 +153,21 @@ export type AccountLinkHook = (params: {
 	toUserId: string;
 }) => Promise<(() => Promise<void>) | void>;
 
-const accountLinkHooks = new Set<AccountLinkHook>();
+let accountLinkHook: AccountLinkHook | undefined;
 
-export function registerAccountLinkHook(hook: AccountLinkHook): () => void {
-	accountLinkHooks.add(hook);
-	return () => {
-		accountLinkHooks.delete(hook);
-	};
-}
-
-export function clearAccountLinkHooks(): void {
-	accountLinkHooks.clear();
+/** Sets the one account-link hook; no argument clears it. */
+export function setAccountLinkHook(hook?: AccountLinkHook): void {
+	accountLinkHook = hook;
 }
 
 /** Cleans up outside the database after Better Auth deletes a user (guest cleanup after linking, admin removal). */
 export type UserDeleteHook = (userId: string) => Promise<void>;
 
-const userDeleteHooks = new Set<UserDeleteHook>();
+let userDeleteHook: UserDeleteHook | undefined;
 
-export function registerUserDeleteHook(hook: UserDeleteHook): () => void {
-	userDeleteHooks.add(hook);
-	return () => {
-		userDeleteHooks.delete(hook);
-	};
+/** Sets the one user-delete hook; no argument clears it. */
+export function setUserDeleteHook(hook?: UserDeleteHook): void {
+	userDeleteHook = hook;
 }
 
 export async function linkAnonymousAccount({
@@ -187,8 +179,7 @@ export async function linkAnonymousAccount({
 }): Promise<void> {
 	if (fromUserId === toUserId) return;
 
-	const cleanups: (() => Promise<void>)[] = [];
-	await db.transaction(async (tx) => {
+	const cleanup = await db.transaction(async (tx) => {
 		const rewriteUploadsJson = (column: unknown) =>
 			sql`cast(replace(cast(${column} as text), 'uploads/' || ${fromUserId} || '/', 'uploads/' || ${toUserId} || '/') as jsonb)`;
 
@@ -253,19 +244,13 @@ export async function linkAnonymousAccount({
 			.where(eq(schema.resumeSlugRedirect.userId, fromUserId));
 
 		// Ownership updates lock document rows, so guest saves cannot add uncopied references during copying.
-		for (const hook of accountLinkHooks) {
-			const cleanup = await hook({ fromUserId, toUserId });
-			if (cleanup) cleanups.push(cleanup);
-		}
+		return accountLinkHook?.({ fromUserId, toUserId });
 	});
 
-	const results = await Promise.allSettled(
-		cleanups.map(async (cleanup) => {
-			await cleanup();
-		}),
-	);
-	for (const result of results) {
-		if (result.status === "rejected") console.warn("Failed to clean up linked account resources:", result.reason);
+	try {
+		await cleanup?.();
+	} catch (error) {
+		console.warn("Failed to clean up linked account resources:", error);
 	}
 }
 
@@ -328,12 +313,10 @@ const getAuthConfig = () => {
 				delete: {
 					// The user row is already gone, so a failed cleanup is logged rather than failing the request.
 					after: async (user) => {
-						for (const hook of userDeleteHooks) {
-							try {
-								await hook(user.id);
-							} catch (error) {
-								console.error("Failed to clean up deleted user %s:", user.id, error);
-							}
+						try {
+							await userDeleteHook?.(user.id);
+						} catch (error) {
+							console.error("Failed to clean up deleted user %s:", user.id, error);
 						}
 					},
 				},
@@ -360,7 +343,7 @@ const getAuthConfig = () => {
 					if (await isUsernameReserved(toUsername(requestedUsername), claimant))
 						throw new APIError("UNPROCESSABLE_ENTITY", {
 							code: "USERNAME_IS_ALREADY_TAKEN",
-							message: "Username is already taken. Please try another.",
+							message: "This username is already taken. Choose another.",
 						});
 				}
 				if (user && !ctx.request && ["/update-user", "/api-key/list", "/api-key/delete"].includes(ctx.path)) {
@@ -384,7 +367,9 @@ const getAuthConfig = () => {
 					};
 				}
 				if (ctx.path === "/sign-in/anonymous" && (!env.FLAG_ENABLE_GUEST_LOGIN || env.FLAG_DISABLE_SIGNUPS)) {
-					throw new APIError("FORBIDDEN", { message: "Guest login is disabled." });
+					throw new APIError("FORBIDDEN", {
+						message: "Guest access is turned off on this server. Create an account or sign in.",
+					});
 				}
 				if (ctx.path === "/verify-email") {
 					// A verification link signs in as its account, and the anonymous plugin would then move the

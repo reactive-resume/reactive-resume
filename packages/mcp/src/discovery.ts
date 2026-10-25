@@ -1,7 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
+import { toJsonSchemaCompat } from "@modelcontextprotocol/sdk/server/zod-json-schema-compat.js";
 import { ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
-import { discoveryJsonSchema } from "./contracts";
 import { PARITY_TOOL_META } from "./parity";
 import { TOOL_META } from "./tool-meta";
 
@@ -11,11 +11,11 @@ function buildToolDefinitions() {
 			name,
 			title,
 			description,
-			inputSchema: discoveryJsonSchema(inputSchema, {
+			inputSchema: toJsonSchemaCompat(inputSchema, {
 				strictUnions: true,
 				pipeStrategy: "input",
 			}) as Tool["inputSchema"],
-			outputSchema: discoveryJsonSchema(outputSchema, { strictUnions: true, pipeStrategy: "output" }) as NonNullable<
+			outputSchema: toJsonSchemaCompat(outputSchema, { strictUnions: true, pipeStrategy: "output" }) as NonNullable<
 				Tool["outputSchema"]
 			>,
 			annotations,

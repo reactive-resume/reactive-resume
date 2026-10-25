@@ -1,4 +1,4 @@
-import type { ResolvedResumePreviewProps } from "./preview.shared";
+import type { ResumePreviewProps } from "./preview.shared";
 import type { PreviewPageSize } from "./preview.shared.utils";
 import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { Template } from "@reactive-resume/schema/templates";
@@ -16,8 +16,8 @@ import { isEditableElementFocused, usePreviewPausedStore, useResumeData } from "
 import { PdfCanvasDocument, PdfCanvasPage } from "./pdf-canvas";
 import { ResumePreviewLoader } from "./preview.shared";
 import { getResumePreviewGapValue, getResumePreviewPageCount } from "./preview.shared.utils";
-import { ResumeAccessibleText } from "./resume-accessible-text";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
+import { ResumeReflow } from "@/features/resume/public/resume-reflow";
 import { getLostCharactersMessage, getReadableErrorMessage } from "@/libs/error-message";
 import { EASE } from "@/libs/motion";
 
@@ -112,15 +112,15 @@ export function ResumePreviewClient({
 	className,
 	data,
 	pageGap = 16,
-	pageLayout,
-	pageScale,
+	pageLayout = "horizontal",
+	pageScale = 1,
 	pageClassName,
-	showPageNumbers,
+	showPageNumbers = false,
 	renderPageCaption,
 	renderPageOverlay,
 	onRender,
 	includeCoverLetterHeader = false,
-}: ResolvedResumePreviewProps) {
+}: ResumePreviewProps) {
 	const builderResumeData = useResumeData();
 	const resumeData = data ?? builderResumeData;
 	const paused = usePreviewPausedStore((state) => state.paused);
@@ -154,7 +154,7 @@ export function ResumePreviewClient({
 				if (stale()) return;
 				let pageMap: PageMap | undefined;
 				let lost: string[] | null = null;
-				const blob = await createResumePdfBlob(resumeData, undefined, renderOptions, {
+				const blob = await createResumePdfBlob(resumeData, renderOptions, {
 					onPageMap: (map) => {
 						pageMap = map;
 					},
@@ -176,10 +176,10 @@ export function ResumePreviewClient({
 				// Name the cause the user can fix (a font that didn't load); keep other engine errors generic.
 				const textLoss = error instanceof Error && error.cause === "pdf-text-loss";
 				if (!hasPreviewRef.current) {
-					setFailure(textLoss ? getReadableErrorMessage(error, "") : t`Something went wrong`);
+					setFailure(textLoss ? getReadableErrorMessage(error, "") : t`Couldn't show the preview.`);
 					return;
 				}
-				const fallback = t`The resume preview could not be updated. The last valid preview is still shown.`;
+				const fallback = t`Couldn't update the preview. The last working version is still shown. Edit anything to try again.`;
 				toast.add({
 					type: "error",
 					description: textLoss ? getReadableErrorMessage(error, fallback) : fallback,
@@ -216,7 +216,10 @@ export function ResumePreviewClient({
 
 	return (
 		<div className={cn("grid", className)}>
-			<ResumeAccessibleText data={resumeData} />
+			{/* The pages are canvases, opaque to assistive tech; this is the same content as text, in print order. */}
+			<section className="sr-only" aria-label={t`Resume content`}>
+				<ResumeReflow data={resumeData} />
+			</section>
 			{lostCharacters && (
 				<p
 					role="status"

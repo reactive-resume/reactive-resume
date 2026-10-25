@@ -146,7 +146,7 @@ export function handleIntegrations() {
 }
 
 /** RFC 9727 API catalog: the REST API and MCP server, each with its description and documentation. */
-export function handleApiCatalog(options: { head?: boolean } = {}) {
+export function handleApiCatalog() {
 	const baseUrl = appUrl();
 	const linkset = {
 		linkset: [
@@ -164,7 +164,7 @@ export function handleApiCatalog(options: { head?: boolean } = {}) {
 		],
 	};
 
-	return new Response(options.head ? null : JSON.stringify(linkset), {
+	return new Response(JSON.stringify(linkset), {
 		headers: {
 			"Content-Type": 'application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"',
 			"Cache-Control": "public, max-age=3600",

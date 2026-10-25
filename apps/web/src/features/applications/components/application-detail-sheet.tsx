@@ -111,7 +111,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 	const onDelete = async () => {
 		const confirmed = await confirm(t`Delete this application?`, {
 			description: t`“${application.role} · ${application.company}” and its timeline are deleted permanently. This can't be undone.`,
-			confirmText: t`Delete`,
+			confirmText: t`Delete application`,
 		});
 		if (!confirmed) return;
 		remove.mutate({ id: application.id }, { onSuccess: onDeleted });
@@ -124,7 +124,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 					<div className="flex items-start gap-3 pe-8">
 						<span
 							aria-hidden="true"
-							className="grid size-10 shrink-0 place-items-center rounded-[9px] bg-sunken font-semibold text-ink-2"
+							className="grid size-10 shrink-0 place-items-center rounded-lg bg-sunken font-semibold text-ink-2"
 						>
 							{application.company.slice(0, 1).toUpperCase()}
 						</span>
@@ -194,7 +194,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 										className="grid w-full gap-1.5 text-start"
 									>
 										<span
-											className="h-1.5 rounded-full transition-colors duration-standard"
+											className="h-1.5 rounded-sm transition-colors duration-standard"
 											style={{
 												background: !closed && index <= reached ? getStageColor(stage) : "var(--line)",
 											}}
@@ -215,7 +215,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 							<span className="flex items-center gap-1.5 text-sm">
 								<span
 									aria-hidden="true"
-									className="size-2 rounded-full"
+									className="size-2 rounded-sm"
 									style={{ background: getStageColor(application.status) }}
 								/>
 								<strong className="font-semibold">{getStageLabel(application.status)}</strong>
@@ -305,7 +305,7 @@ function Facts({ application, locale }: { application: Application; locale: stri
 	const update = useMutation({
 		...orpc.applications.update.mutationOptions(),
 		onSuccess: () => invalidate(application.id),
-		onError: () => toast.add({ type: "error", description: t`Couldn't save.` }),
+		onError: () => toast.add({ type: "error", description: t`Couldn't save the change. Try again.` }),
 	});
 	const applied = new Date(application.appliedAt).toLocaleDateString(locale, {
 		month: "short",
@@ -326,13 +326,13 @@ function Facts({ application, locale }: { application: Application; locale: stri
 				onSave={(source) => update.mutate({ id: application.id, source })}
 			/>
 			<div className="grid gap-0.5">
-				<dt className="text-xs font-semibold text-ink-3 uppercase">
+				<dt className="text-xs font-semibold text-ink-3">
 					<Trans>Applied</Trans>
 				</dt>
 				<dd className="text-sm font-medium">{application.status === "saved" ? "—" : applied}</dd>
 			</div>
 			<div className="grid gap-0.5">
-				<dt className="text-xs font-semibold text-ink-3 uppercase">
+				<dt className="text-xs font-semibold text-ink-3">
 					<Trans>Contact</Trans>
 				</dt>
 				<dd className="min-w-0">
@@ -363,7 +363,7 @@ function InlineFact({ label, value, onSave }: InlineFactProps) {
 
 	return (
 		<div className="grid gap-0.5">
-			<dt className="text-xs font-semibold text-ink-3 uppercase">
+			<dt className="text-xs font-semibold text-ink-3">
 				<label htmlFor={id}>{label}</label>
 			</dt>
 			<dd>
@@ -405,13 +405,13 @@ function Tags({ application }: { application: Application }) {
 	const update = useMutation({
 		...orpc.applications.update.mutationOptions(),
 		onSuccess: () => invalidate(application.id),
-		onError: () => toast.add({ type: "error", description: t`Couldn't save the tags.` }),
+		onError: () => toast.add({ type: "error", description: t`Couldn't save the tags. Try again.` }),
 	});
 	const save = (tags: string[]) => update.mutate({ id: application.id, tags });
 
 	return (
 		<section aria-labelledby="application-tags" className="grid gap-2">
-			<h3 id="application-tags" className="text-xs font-semibold text-ink-3 uppercase">
+			<h3 id="application-tags" className="text-xs font-semibold text-ink-3">
 				<Trans>Tags</Trans>
 			</h3>
 			<div className="flex flex-wrap items-center gap-1.5">
@@ -632,7 +632,7 @@ function PostingDialog({ application, open, onOpenChange }: PostingDialogProps) 
 				)}
 				{application.requirements.length > 0 && (
 					<section aria-labelledby="posting-requirements" className="grid gap-2">
-						<h3 id="posting-requirements" className="text-xs font-semibold text-ink-3 uppercase">
+						<h3 id="posting-requirements" className="text-xs font-semibold text-ink-3">
 							<Trans>What it asks for</Trans>
 						</h3>
 						<ul className="flex flex-wrap gap-1.5">

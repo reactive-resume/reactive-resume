@@ -88,7 +88,7 @@ export async function* draftLetterBody(
 	// The client names the provider in "Drafting stopped: … didn't respond".
 	const unreachable = (cause?: unknown) =>
 		new ORPCError("BAD_GATEWAY", {
-			message: "Could not reach the AI provider.",
+			message: "Couldn't reach the AI provider. Check its settings and try again.",
 			data: { provider: provider.label },
 			cause,
 		});

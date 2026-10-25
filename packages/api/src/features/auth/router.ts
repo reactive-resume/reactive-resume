@@ -193,7 +193,7 @@ export const authRouter = {
 		.output(z.object({ key: z.string() }))
 		.handler(async ({ context, input }) => {
 			if (context.authentication?.method !== "session")
-				throw new ORPCError("FORBIDDEN", { message: "Create API keys in your browser settings." });
+				throw new ORPCError("FORBIDDEN", { message: "Create API keys from Settings in a web browser." });
 			await assertRecentSignIn(context.reqHeaders);
 			const result = await auth.api.createApiKey({
 				body: {
@@ -277,7 +277,7 @@ export const authRouter = {
 		.output(z.void())
 		.handler(async ({ context }) => {
 			if (context.authentication?.method !== "session")
-				throw new ORPCError("FORBIDDEN", { message: "Account deletion must be performed in your browser settings." });
+				throw new ORPCError("FORBIDDEN", { message: "Delete your account from Settings in a web browser." });
 			await assertRecentSignIn(context.reqHeaders);
 			await authService.deleteAccount({ userId: context.user.id });
 		}),

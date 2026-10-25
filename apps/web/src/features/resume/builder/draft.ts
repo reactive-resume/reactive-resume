@@ -65,14 +65,11 @@ type ResumeStoreState = {
 	// step costs only the parts that changed.
 	undoStack: ResumeData[];
 	redoStack: ResumeData[];
-	canUndo: boolean;
-	canRedo: boolean;
 };
 
 type ResumeStoreActions = {
 	initialize: (resume: Resume | null) => void;
 	reset: () => void;
-	replaceResumeDraft: (resume: Resume) => void;
 	replaceResumeFromServer: (resume: Resume) => void;
 	updateResumeData: (fn: (draft: WritableDraft<ResumeData>) => void, options?: UpdateResumeDataOptions) => void;
 	patchResume: (fn: (draft: WritableDraft<Resume>) => void) => void;
@@ -178,6 +175,19 @@ function isBrowserOffline() {
 }
 
 let lockedToastId: string | undefined;
+
+function warnLocked() {
+	lockedToastId = toast.add({
+		type: "error",
+		description: t`This resume is locked. Unlock it from its menu to edit.`,
+		id: lockedToastId,
+	});
+}
+
+function clearHistory(state: WritableDraft<ResumeStoreState>) {
+	state.undoStack = [];
+	state.redoStack = [];
+}
 
 function getResumeQueryKey(id: string): QueryKey {
 	return orpc.resume.getById.queryOptions({ input: { id } }).queryKey as QueryKey;
@@ -405,8 +415,6 @@ export const useResumeStore = create<ResumeStore>()(
 		saveStatus: "idle",
 		undoStack: [],
 		redoStack: [],
-		canUndo: false,
-		canRedo: false,
 
 		initialize: (resume) => {
 			if (resume) setRuntimeBaseline(resume);
@@ -421,10 +429,7 @@ export const useResumeStore = create<ResumeStore>()(
 				state.resume = restored ?? resume;
 				state.resumeId = resume?.id;
 				state.isReady = resume !== null;
-				state.undoStack = [];
-				state.redoStack = [];
-				state.canUndo = false;
-				state.canRedo = false;
+				clearHistory(state);
 			});
 
 			if (restored) {
@@ -444,24 +449,7 @@ export const useResumeStore = create<ResumeStore>()(
 				state.resume = null;
 				state.resumeId = undefined;
 				state.isReady = false;
-				state.undoStack = [];
-				state.redoStack = [];
-				state.canUndo = false;
-				state.canRedo = false;
-			});
-		},
-
-		replaceResumeDraft: (resume) => {
-			resetHistoryRuntime();
-
-			set((state) => {
-				state.resume = resume;
-				state.resumeId = resume.id;
-				state.isReady = true;
-				state.undoStack = [];
-				state.redoStack = [];
-				state.canUndo = false;
-				state.canRedo = false;
+				clearHistory(state);
 			});
 		},
 
@@ -471,20 +459,18 @@ export const useResumeStore = create<ResumeStore>()(
 			// This runs both for the echo of our own autosave (identical data → keep history) and for
 			// external/cross-tab/AI rebases (different data → local undo history no longer applies).
 			const current = get().resume;
-			const isRebase = !current || !isEqual(current.data, resume.data);
+			// An echo keeps the data object the store already holds: a new but identical one would make everything that
+			// renders from it run again, the preview's PDF render of every page included, after every save.
+			const keptData = current && isEqual(current.data, resume.data) ? current.data : undefined;
+			const isRebase = keptData === undefined;
 			if (isRebase) resetHistoryRuntime();
 
 			set((state) => {
-				state.resume = resume;
+				state.resume = keptData ? { ...resume, data: keptData } : resume;
 				state.resumeId = resume.id;
 				state.isReady = true;
 
-				if (isRebase) {
-					state.undoStack = [];
-					state.redoStack = [];
-					state.canUndo = false;
-					state.canRedo = false;
-				}
+				if (isRebase) clearHistory(state);
 			});
 		},
 
@@ -521,11 +507,7 @@ export const useResumeStore = create<ResumeStore>()(
 			if (!currentResume) return;
 
 			if (currentResume.isLocked) {
-				lockedToastId = toast.add({
-					type: "error",
-					description: t`This resume is locked and cannot be updated.`,
-					id: lockedToastId,
-				});
+				warnLocked();
 				return;
 			}
 
@@ -560,8 +542,6 @@ export const useResumeStore = create<ResumeStore>()(
 				// identical to the draft, so an autosave never reads as an outside change.
 				syncResumeDates(state.resume.data as ResumeData);
 				state.saveStatus = "saving";
-				state.canUndo = state.undoStack.length > 0;
-				state.canRedo = state.redoStack.length > 0;
 			});
 
 			getRuntime(currentResume.id).hasPendingLocalChanges = true;
@@ -598,11 +578,7 @@ function applyHistoryStep(get: StoreGet, set: ImmerSet, direction: "undo" | "red
 	if (!currentResume) return;
 
 	if (currentResume.isLocked) {
-		lockedToastId = toast.add({
-			type: "error",
-			description: t`This resume is locked and cannot be updated.`,
-			id: lockedToastId,
-		});
+		warnLocked();
 		return;
 	}
 
@@ -627,8 +603,6 @@ function applyHistoryStep(get: StoreGet, set: ImmerSet, direction: "undo" | "red
 
 		draft.resume.data = snapshot;
 		draft.saveStatus = "saving";
-		draft.canUndo = draft.undoStack.length > 0;
-		draft.canRedo = draft.redoStack.length > 0;
 	});
 
 	getRuntime(currentResume.id).hasPendingLocalChanges = true;

@@ -15,8 +15,7 @@ export const menuPopupClassName = `relative z-50 max-h-(--available-height) min-
 export const menuItemClassName =
 	"relative flex min-h-9 cursor-default select-none items-center gap-2.5 rounded-md px-2.5 text-ink text-sm outline-hidden data-disabled:pointer-events-none data-highlighted:bg-hover data-inset:ps-9 data-disabled:text-ink-3 data-[variant=destructive]:not-data-disabled:text-danger-text [&_[data-slot=icon]]:text-ink-2 data-disabled:[&_[data-slot=icon]]:text-ink-3 data-[variant=destructive]:not-data-disabled:[&_[data-slot=icon]]:text-danger-text [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0";
 
-export const menuLabelClassName =
-	"px-2.5 pt-2 pb-1 font-semibold text-[12px] text-ink-3 uppercase tracking-[0.02em] data-inset:ps-9";
+export const menuLabelClassName = "px-2.5 pt-2 pb-1 font-semibold text-[12px] text-ink-3 data-inset:ps-9";
 
 export const menuSeparatorClassName = "-mx-1 my-1 h-px bg-line";
 

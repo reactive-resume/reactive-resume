@@ -10,8 +10,6 @@ const isVisibleCoverLetterSection = (section: ResumeData["customSections"][numbe
 export const getVisibleCoverLetterSectionIds = (data: ResumeData) =>
 	data.customSections.filter(isVisibleCoverLetterSection).map((section) => section.id);
 
-export const resumeHasCoverLetter = (data: ResumeData) => getVisibleCoverLetterSectionIds(data).length > 0;
-
 /** True when every laid-out section is a visible cover letter; such a document prints no resume header. */
 export function isCoverLetterOnlyDocument(data: ResumeData): boolean {
 	const sectionIds = data.metadata.layout.pages.flatMap((page) => [...page.main, ...page.sidebar]);

@@ -1,7 +1,6 @@
 import type { FontWeight } from "@reactive-resume/fonts";
 import type { ResumeData, Typography } from "@reactive-resume/schema/resume/data";
 import type { Locale, Script } from "@reactive-resume/utils/locale";
-import { letters as cjkLetters } from "cjk-regex";
 import {
 	getFont,
 	getPdfFallbackFontFamilies,
@@ -19,7 +18,6 @@ type FontWeightRange = {
 };
 
 const fallbackFontFamily = "IBM Plex Serif";
-const cjkLetterRegex = cjkLetters().toRegExp();
 const fontWeightValues = new Set<FontWeight>(["100", "200", "300", "400", "500", "600", "700", "800", "900"]);
 const preferredFallbackFontWeights = ["400", "700", "600", "500"] satisfies FontWeight[];
 
@@ -130,30 +128,14 @@ const resolvePdfTypography = (typography: Typography): Typography => {
 	};
 };
 
-const containsCjkLetters = (value: unknown): boolean => {
-	if (typeof value === "string") return cjkLetterRegex.test(value);
-	if (!value || typeof value !== "object") return false;
-	if (Array.isArray(value)) return value.some(containsCjkLetters);
-
-	return Object.values(value as Record<string, unknown>).some(containsCjkLetters);
-};
-
-export const resumeContentContainsCJK = (data: ResumeData): boolean => {
-	return containsCjkLetters({
-		basics: data.basics,
-		summary: data.summary,
-		sections: data.sections,
-		customSections: data.customSections,
-	});
-};
-
 // Detect which non-Latin writing systems actually appear in the content so we
 // only register (and correctly order) the fallback fonts that are needed.
 // Codepoints cannot distinguish Simplified from Traditional Han, so Han maps to
 // "han-simplified"; Traditional ordering instead comes from the zh-TW locale.
 const hangulRegex = /[가-힯ᄀ-ᇿ㄰-㆏ꥠ-꥿]/;
 const kanaRegex = /[぀-ゟ゠-ヿㇰ-ㇿ]/;
-const hanRegex = /[㐀-䶿一-鿿豈-﫿]/;
+// Any CJK letter (Bopomofo, Hangul or Kana too) adds the SC face, which also covers Han outside the BMP (Ext-B+).
+const hanRegex = /[\p{Script=Han}\p{Script=Hangul}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Bopomofo}]/u;
 
 // Arabic + Supplement + Extended-A + Presentation Forms-A/B (covers Persian).
 const arabicRegex = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-ﻼ]/;
@@ -236,7 +218,6 @@ export const resumeUsesItalic = (data: ResumeData): boolean =>
 export const resolvePdfFonts = (
 	typography: Typography,
 	locale: Locale,
-	hasCjkContent = false,
 	scripts?: Set<Script>,
 	usesItalic = true,
 ): { typography: PdfTypography; fonts: PdfFontRequest[] } => {
@@ -283,9 +264,6 @@ export const resolvePdfFonts = (
 	// actually contains them. Register the regular and bold ranges so glyph
 	// fallback preserves <strong>/font-weight.
 	const fallbackScripts = new Set<Script>(scripts ?? []);
-	// `hasCjkContent` is a script-agnostic flag (cjk-regex); when it is set
-	// without an explicit script set, assume Han so a SC fallback is registered.
-	if (hasCjkContent) fallbackScripts.add("han-simplified");
 
 	const bodyFallbacks = getPdfFallbackFontFamilies(bodyFontFamily, { locale, scripts: fallbackScripts });
 	const headingFallbacks = getPdfFallbackFontFamilies(headingFontFamily, { locale, scripts: fallbackScripts });

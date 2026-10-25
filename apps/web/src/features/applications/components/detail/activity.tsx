@@ -103,7 +103,7 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 
 	return (
 		<section aria-labelledby="application-activity" className="grid gap-2">
-			<h3 id="application-activity" className="text-xs font-semibold text-ink-3 uppercase">
+			<h3 id="application-activity" className="text-xs font-semibold text-ink-3">
 				<Trans>Activity</Trans>
 			</h3>
 			<form
@@ -130,7 +130,7 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 					const { dot, text } = describe(entry);
 					return (
 						<li key={entry.id} className="group flex items-start gap-2.5 py-1.5 text-sm">
-							<span aria-hidden="true" className="mt-1.5 size-2 shrink-0 rounded-full" style={{ background: dot }} />
+							<span aria-hidden="true" className="mt-1.5 size-2 shrink-0 rounded-sm" style={{ background: dot }} />
 							{entry.type === "interview" ? (
 								<button
 									type="button"
@@ -183,7 +183,7 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 										onClick={async () => {
 											const confirmed = await confirm(t`Delete this entry?`, {
 												description: t`It's removed from the timeline for good.`,
-												confirmText: t`Delete`,
+												confirmText: t`Delete entry`,
 											});
 											if (confirmed) deleteEntry.mutate({ id: application.id, entryId: entry.id });
 										}}

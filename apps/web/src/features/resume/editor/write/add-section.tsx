@@ -160,7 +160,7 @@ export function StartSuggestions({ onImport }: { onImport: () => void }) {
 						key={type}
 						type="button"
 						onClick={() => addSection(type)}
-						className="flex h-8 items-center gap-1 rounded-full border border-line-2 bg-raised px-3 text-sm hover:border-accent hover:text-accent-text"
+						className="flex h-8 items-center gap-1 rounded-sm border border-line-2 bg-raised px-3 text-sm hover:border-accent hover:text-accent-text"
 					>
 						<Icon name="plus" size={16} />
 						{getSectionTitle(type)}

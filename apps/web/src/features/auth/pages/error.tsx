@@ -8,41 +8,41 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 function getErrorMessage(code: string | undefined): string {
 	switch (code) {
 		case "access_denied":
-			return t`You cancelled the sign-in before it finished.`;
+			return t`You canceled the sign-in before it finished. Try again when you're ready.`;
 		case "no_code":
 		case "state_not_found":
 		case "invalid_callback_request":
-			return t`This sign-in attempt expired or was already used. Please start again.`;
+			return t`This sign-in attempt expired or was already used. Try again.`;
 		case "invalid_code":
-			return t`The provider rejected this sign-in attempt. Please start again.`;
+			return t`The provider rejected this sign-in attempt. Try again.`;
 		case "oauth_provider_not_found":
-			return t`That sign-in provider is no longer available on this server.`;
+			return t`That sign-in provider is no longer available on this server. Use another sign-in method.`;
 		case "issuer_missing":
 		case "issuer_mismatch":
 		case "nonce_binding_missing":
-			return t`The provider's response could not be verified. Please start again.`;
+			return t`The provider's response couldn't be verified. Try again.`;
 		case "unable_to_get_user_info":
-			return t`We couldn't read your profile from the provider.`;
+			return t`Couldn't read your profile from the provider. Try again.`;
 		case "email_not_found":
-			return t`The provider didn't share an email address, which is required to sign in.`;
+			return t`The provider didn't share an email address, which is required. Allow email access when the provider asks, or use another sign-in method.`;
 		case "email_not_verified":
-			return t`Your email address isn't verified with the provider.`;
+			return t`Your email address isn't verified with the provider. Verify it there, then try again.`;
 		case "email_does_not_match":
-			return t`That provider account uses a different email address than your account.`;
+			return t`That provider account uses a different email address than your account. Use a provider account with the same email address.`;
 		case "account_already_linked_to_different_user":
-			return t`That provider account is already linked to a different user.`;
+			return t`That provider account is already linked to another account. Use a different provider account.`;
 		case "unable_to_link_account":
-			return t`We couldn't link that provider account. Please try again.`;
+			return t`Couldn't link that provider account. Try again.`;
 		case "signup_disabled":
-			return t`New account sign-ups are currently disabled on this server.`;
+			return t`This server isn't accepting new accounts. Sign in with an existing account.`;
 		case "invalid_client":
 		case "client_disabled":
 		case "unauthorized_client":
 		case "invalid_redirect":
 		case "unsupported_response_type":
-			return t`The application that sent you here made an invalid authorization request.`;
+			return t`The application that sent you here made an invalid authorization request. Return to the application and try again.`;
 		default:
-			return t`Something went wrong while signing you in. Please try again.`;
+			return t`Couldn't sign you in. Try again.`;
 	}
 }
 

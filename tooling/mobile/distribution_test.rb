@@ -30,117 +30,37 @@ class DistributionContract
   end
 
   def upload_to_play_store(**options)
+    raise "Play must upload only to production" unless options[:track] == "production"
     @uploads << options
   end
 
-  def upload_to_testflight(**options)
+  def upload_to_app_store(**options)
     @uploads << options
-  end
-end
-
-module Supply
-  class Client
-    class << self
-      attr_accessor :track_names, :read_error, :aborted
-
-      def make_from_config
-        new
-      end
-    end
-
-    def begin_edit(package_name:)
-      raise "Unexpected Play app" unless package_name == "me.rxresu"
-      self.class.aborted = false
-    end
-
-    def tracks
-      raise self.class.read_error if self.class.read_error
-      self.class.track_names.map { |name| Struct.new(:track).new(name) }
-    end
-
-    def abort_current_edit
-      self.class.aborted = true
-    end
-  end
-end
-
-module Spaceship
-  module ConnectAPI
-    class App
-      class << self
-        attr_accessor :groups
-
-        def get(app_id:)
-          raise "Unexpected App Store app" unless app_id == "6823975835"
-          new
-        end
-      end
-
-      def get_beta_groups
-        self.class.groups
-      end
-    end
-  end
-end
-
-module UI
-  def self.user_error!(message)
-    raise message
   end
 end
 
 ENV["RUNNER_TEMP"] = Dir.tmpdir
-ENV["MOBILE_BUILD_NUMBER"] = "100"
 %w[GOOGLE_PLAY_SERVICE_ACCOUNT_JSON ASC_KEY_ID ASC_ISSUER_ID ASC_PRIVATE_KEY].each { |name| ENV[name] = "fixture" }
 contract = DistributionContract.new
-Supply::Client.track_names = ["production", "internal", "alpha", "beta", "closed-qa", "wear:production"]
 contract.publish(:android)
 play = contract.uploads.first
-raise "Play release must reach internal testers" unless play[:track] == "internal" && play[:release_status] == "completed"
-promotions = contract.uploads.drop(1)
-raise "Every existing Play testing track must receive the build" unless
-  promotions.map { |options| options[:track_promote_to] } == ["alpha", "beta", "closed-qa"]
-raise "Promotions must use this exact binary and publish a completed release" unless promotions.all? { |options|
-  options[:track] == "internal" && options[:version_code] == 100 &&
-    options[:track_promote_release_status] == "completed" && options[:skip_upload_aab]
-}
-raise "Track discovery must close its read edit" unless Supply::Client.aborted
+raise "Play must upload once" unless contract.uploads.length == 1
+raise "Play must submit a full production release for review" unless
+  play[:release_status] == "completed" && !play[:changes_not_sent_for_review] &&
+    play[:rescue_changes_not_sent_for_review] == false
+raise "Play must upload this run's signed artifact to the correct app" unless
+  play[:package_name] == "me.rxresu" && play[:aab] == File.join(Dir.tmpdir, "mobile-release/ReactiveResume.aab")
 
-group = Struct.new(:id, :is_internal_group)
-Spaceship::ConnectAPI::App.groups = [group.new("internal-team", true), group.new("external-beta", false), group.new("internal-qa", true)]
 contract.publish(:ios)
-testflight = contract.uploads.last
-raise "TestFlight must wait and distribute" unless
-  testflight[:skip_submission] == false && testflight[:skip_waiting_for_build_processing] == false
-raise "Every existing TestFlight group must receive the build" unless
-  testflight[:groups] == ["internal-team", "external-beta", "internal-qa"]
-raise "External TestFlight testers require beta review and notification" unless
-  testflight[:distribute_external] && testflight[:submit_beta_review] && testflight[:notify_external_testers] &&
-    !testflight[:changelog].empty?
-
-Spaceship::ConnectAPI::App.groups = [group.new("internal-team", true)]
-contract.publish(:ios)
-testflight = contract.uploads.last
-raise "Internal-only TestFlight groups need no external beta review" unless
-  testflight[:distribute_external] == false && testflight[:submit_beta_review] == false
-
-Spaceship::ConnectAPI::App.groups = []
-uploaded = contract.uploads.length
-begin
-  contract.publish(:ios)
-  raise "Missing groups must prevent upload"
-rescue RuntimeError => error
-  raise unless error.message == "Configure a TestFlight testing group before publishing"
-end
-raise "Missing groups must not upload" unless contract.uploads.length == uploaded
-
-Supply::Client.read_error = RuntimeError.new("Track discovery failed")
-begin
-  contract.publish(:android)
-  raise "Track discovery errors must prevent promotions"
-rescue RuntimeError => error
-  raise unless error.message == "Track discovery failed"
-end
-raise "Track discovery failure must close its edit without promotions" unless
-  Supply::Client.aborted && contract.uploads.length == uploaded + 1
-puts "Distribution contracts passed"
+app_store = contract.uploads.last
+raise "iOS must upload once to the App Store" unless contract.uploads.length == 2
+raise "App Store must submit for review and release after approval" unless
+  app_store[:submit_for_review] && app_store[:automatic_release] && app_store[:skip_metadata] == false
+# Fastlane reads version/build from this IPA to create the version and await the matching processed build.
+raise "App Store must upload and select this run's signed artifact" unless
+  app_store[:app_identifier] == "me.rxresu" &&
+    app_store[:ipa] == File.join(Dir.tmpdir, "mobile-release/ReactiveResume.ipa") &&
+    !app_store[:skip_binary_upload] && !app_store[:build_number]
+raise "App Store API-key precheck must exclude unsupported in-app purchase checks" unless
+  app_store[:precheck_include_in_app_purchases] == false
+puts "Production distribution contracts passed"

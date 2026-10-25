@@ -72,7 +72,7 @@ function SheetContent({
 			{...props}
 		>
 			{side === "bottom" && (
-				<span aria-hidden="true" className="mx-auto block h-[5px] w-9 shrink-0 rounded-full bg-line-2" />
+				<span aria-hidden="true" className="mx-auto block h-[5px] w-9 shrink-0 rounded-sm bg-line-2" />
 			)}
 			{/* Content is where a mouse press clicks rather than starts a swipe; `contents` keeps it out of the layout. */}
 			<SheetPrimitive.Content className="contents">{children}</SheetPrimitive.Content>

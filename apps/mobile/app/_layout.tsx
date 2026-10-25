@@ -15,6 +15,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { restoreSession } from "@/auth/session";
 import { SessionGate } from "@/auth/session-gate";
 import { useOpenReminder } from "@/features/reminders/open";
+import { useReviewPrompt } from "@/features/reviews/use-review-prompt";
 import { i18n, initI18n } from "@/i18n";
 import { EmptyState, Screen, Toaster, WindowSafeAreaProvider, useReducedMotion, useTheme } from "@/ui";
 import { fontAssets } from "@/ui/fonts";
@@ -57,8 +58,8 @@ function CrashScreen({ onRetry }: CrashScreenProps) {
 		<Screen scroll={false} edges={["top", "bottom"]} contentStyle={{ flex: 1, justifyContent: "center" }}>
 			<EmptyState
 				icon="warning-circle"
-				title={t`Something went wrong`}
-				message={t`This screen stopped working. Try again, or restart the app.`}
+				title={t`This screen stopped working`}
+				message={t`Try again, or restart the app.`}
 				action={{ label: t`Try again`, onPress: onRetry }}
 			/>
 		</Screen>
@@ -70,6 +71,7 @@ function RootStack() {
 	const navigationTheme = useNavigationTheme();
 	const reduced = useReducedMotion();
 	useOpenReminder();
+	useReviewPrompt();
 
 	return (
 		<ThemeProvider value={navigationTheme}>

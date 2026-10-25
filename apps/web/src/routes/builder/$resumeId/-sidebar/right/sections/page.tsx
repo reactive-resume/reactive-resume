@@ -39,9 +39,6 @@ function PageSectionForm() {
 	const form = useAppForm({
 		defaultValues: page,
 		validators: { onChange: formSchema },
-		onSubmit: ({ value }) => {
-			persist(value);
-		},
 	});
 	useSyncFormValues(form, page);
 
@@ -50,27 +47,20 @@ function PageSectionForm() {
 	};
 
 	const pageNumberFields = [
-		{ name: "marginX" as const, label: <Trans>Margin (Horizontal)</Trans>, min: CLAMP_MIN, max: CLAMP_MAX },
-		{ name: "marginY" as const, label: <Trans>Margin (Vertical)</Trans>, min: CLAMP_MIN, max: CLAMP_MAX },
-		{ name: "gapX" as const, label: <Trans>Spacing (Horizontal)</Trans>, min: 0, max: undefined },
-		{ name: "gapY" as const, label: <Trans>Spacing (Vertical)</Trans>, min: 0, max: undefined },
+		{ name: "marginX" as const, label: <Trans>Horizontal margin</Trans>, min: CLAMP_MIN, max: CLAMP_MAX },
+		{ name: "marginY" as const, label: <Trans>Vertical margin</Trans>, min: CLAMP_MIN, max: CLAMP_MAX },
+		{ name: "gapX" as const, label: <Trans>Horizontal spacing</Trans>, min: 0, max: undefined },
+		{ name: "gapY" as const, label: <Trans>Vertical spacing</Trans>, min: 0, max: undefined },
 	];
 
 	const pageSwitchFields = [
-		{ name: "hideLinkUnderline" as const, label: <Trans>Hide Link Underline</Trans> },
-		{ name: "hideIcons" as const, label: <Trans>Hide Icons</Trans> },
-		{ name: "hideSectionIcons" as const, label: <Trans>Hide Section Icons</Trans> },
+		{ name: "hideLinkUnderline" as const, label: <Trans>Underline links</Trans> },
+		{ name: "hideIcons" as const, label: <Trans>Show icons</Trans> },
+		{ name: "hideSectionIcons" as const, label: <Trans>Show section icons</Trans> },
 	];
 
 	return (
-		<form
-			className="grid grid-cols-1 gap-4 @md:grid-cols-2"
-			onSubmit={(event) => {
-				event.preventDefault();
-				event.stopPropagation();
-				void form.handleSubmit();
-			}}
-		>
+		<div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
 			{pageNumberFields.map(({ name, label, min, max }) => (
 				<form.Field key={name} name={name}>
 					{(field) => (
@@ -113,9 +103,10 @@ function PageSectionForm() {
 							<FormControl
 								render={
 									<Switch
-										checked={field.state.value}
+										// Labels describe the ON state; the stored flags are hide*, so the switch is inverted.
+										checked={!field.state.value}
 										onCheckedChange={(checked) => {
-											field.handleChange(checked);
+											field.handleChange(!checked);
 											handleAutoSave();
 										}}
 									/>
@@ -126,6 +117,6 @@ function PageSectionForm() {
 					)}
 				</form.Field>
 			))}
-		</form>
+		</div>
 	);
 }

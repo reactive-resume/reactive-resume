@@ -71,7 +71,7 @@ The server checks the environment, applies database migrations, and verifies the
 | `packages/utils`      | Narrow cross-cutting helpers behind explicit export subpaths                                                                                          |
 | `packages/config`     | Shared TypeScript and tooling configuration                                                                                                           |
 | `packages/dsh-plugin` | A separately built and published plugin that connects a DeepSeek Harness session to Reactive Resume over MCP                                          |
-| `tooling`             | Development-only scripts: PDF translation catalog, semantic CSS reference, icon builds, database reset, deployment smoke test                         |
+| `tooling`             | Development-only scripts: PDF translation catalog, semantic CSS reference, icon builds, deployment smoke test                                         |
 
 Internal packages are consumed as source through the `exports` map in each `package.json`, which points at `src` files. Don't expect a `dist` folder unless a package builds one explicitly.
 

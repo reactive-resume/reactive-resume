@@ -28,8 +28,6 @@ const iso8601 = z
 	);
 
 const locationSchema = z.looseObject({
-	address: z.string().optional(),
-	postalCode: z.string().optional(),
 	city: z.string().optional(),
 	countryCode: z.string().optional(),
 	region: z.string().optional(),
@@ -56,7 +54,6 @@ const basicsSchema = z.looseObject({
 const workSchema = z.looseObject({
 	name: z.string().optional(),
 	location: z.string().optional(),
-	description: z.string().optional(),
 	position: z.string().optional(),
 	url: z.url().optional(),
 	startDate: iso8601.optional(),
@@ -67,7 +64,6 @@ const workSchema = z.looseObject({
 
 const volunteerSchema = z.looseObject({
 	organization: z.string().optional(),
-	position: z.string().optional(),
 	url: z.url().optional(),
 	startDate: iso8601.optional(),
 	endDate: iso8601.optional(),
@@ -133,23 +129,12 @@ const projectSchema = z.looseObject({
 	name: z.string().optional(),
 	description: z.string().optional(),
 	highlights: z.array(z.string()).optional(),
-	keywords: z.array(z.string()).optional(),
 	startDate: iso8601.optional(),
 	endDate: iso8601.optional(),
 	url: z.url().optional(),
-	roles: z.array(z.string()).optional(),
-	entity: z.string().optional(),
-	type: z.string().optional(),
-});
-
-const metaSchema = z.looseObject({
-	canonical: z.url().optional(),
-	version: z.string().optional(),
-	lastModified: z.string().optional(),
 });
 
 const jsonResumeSchema = z.looseObject({
-	$schema: z.url().optional(),
 	basics: basicsSchema.optional(),
 	work: z.array(workSchema).optional(),
 	volunteer: z.array(volunteerSchema).optional(),
@@ -162,276 +147,192 @@ const jsonResumeSchema = z.looseObject({
 	interests: z.array(interestSchema).optional(),
 	references: z.array(referenceSchema).optional(),
 	projects: z.array(projectSchema).optional(),
-	meta: metaSchema.optional(),
 });
 
 type JSONResume = z.infer<typeof jsonResumeSchema>;
 
 // ponytail: stateless two-method class → two plain functions
 function convertJSONResume(jsonResume: JSONResume): ResumeData {
-	// A shallow spread would leave `sections`/`picture`/etc. as the same object as
-	// defaultResumeData; every `result.sections.x = ...` below would then mutate that shared
-	// singleton and leak into the next unrelated import call. Clone it instead.
+	// Clone so the writes below never mutate the shared defaultResumeData singleton.
 	const result: ResumeData = structuredClone(defaultResumeData);
 
-	// Map basics
-	if (jsonResume.basics) {
-		const basics = jsonResume.basics;
-		result.basics = {
-			name: basics.name || "",
-			headline: basics.label || "",
-			email: basics.email || "",
-			phone: basics.phone || "",
-			location: [basics.location?.city, basics.location?.region, basics.location?.countryCode]
-				.filter(Boolean)
-				.join(", "),
-			website: createUrl(basics.url),
-			customFields: [],
-		};
-
-		// Map image to picture
-		if (basics.image) {
-			result.picture = {
-				...defaultResumeData.picture,
-				url: basics.image,
-				hidden: false,
-			};
-		}
-	}
-
-	// Map summary
-	if (jsonResume.basics?.summary) {
-		result.summary = {
-			...defaultResumeData.summary,
-			content: toHtmlDescription(jsonResume.basics.summary),
-			hidden: false,
-		};
-	}
+	const basics = jsonResume.basics ?? {};
+	result.basics = {
+		name: basics.name || "",
+		headline: basics.label || "",
+		email: basics.email || "",
+		phone: basics.phone || "",
+		location: [basics.location?.city, basics.location?.region, basics.location?.countryCode].filter(Boolean).join(", "),
+		website: createUrl(basics.url),
+		customFields: [],
+	};
+	result.picture.url = basics.image ?? "";
+	result.summary.content = toHtmlDescription(basics.summary);
 
 	// Map work to experience
-	if (jsonResume.work && jsonResume.work.length > 0) {
-		result.sections.experience = {
-			...defaultResumeData.sections.experience,
-			items: jsonResume.work
-				.filter((work) => work.name || work.position)
-				.map((work) => ({
-					id: generateId(),
-					hidden: false,
-					company: work.name || "",
-					position: work.position || "",
-					location: work.location || "",
-					period: "",
-					dates: toRangeDates(work.startDate, work.endDate),
-					website: createItemWebsite(work.url),
-					roles: [],
-					description: toHtmlDescription(work.summary, work.highlights),
-				})),
-		};
-	}
+	result.sections.experience.items = (jsonResume.work ?? [])
+		.filter((work) => work.name || work.position)
+		.map((work) => ({
+			id: generateId(),
+			hidden: false,
+			company: work.name || "",
+			position: work.position || "",
+			location: work.location || "",
+			period: "",
+			dates: toRangeDates(work.startDate, work.endDate),
+			website: createItemWebsite(work.url),
+			roles: [],
+			description: toHtmlDescription(work.summary, work.highlights),
+		}));
 
 	// Map education
-	if (jsonResume.education && jsonResume.education.length > 0) {
-		result.sections.education = {
-			...defaultResumeData.sections.education,
-			items: jsonResume.education
-				.filter((edu) => edu.institution)
-				.map((edu) => ({
-					id: generateId(),
-					hidden: false,
-					school: edu.institution || "",
-					degree: [edu.studyType, edu.area].filter(Boolean).join(" in ") || "",
-					area: edu.area || "",
-					grade: edu.score || "",
-					location: "",
-					period: "",
-					dates: toRangeDates(edu.startDate, edu.endDate),
-					website: createItemWebsite(edu.url),
-					description: edu.courses && edu.courses.length > 0 ? arrayToHtmlList(edu.courses) : "",
-				})),
-		};
-	}
+	result.sections.education.items = (jsonResume.education ?? [])
+		.filter((edu) => edu.institution)
+		.map((edu) => ({
+			id: generateId(),
+			hidden: false,
+			school: edu.institution || "",
+			degree: [edu.studyType, edu.area].filter(Boolean).join(" in ") || "",
+			area: edu.area || "",
+			grade: edu.score || "",
+			location: "",
+			period: "",
+			dates: toRangeDates(edu.startDate, edu.endDate),
+			website: createItemWebsite(edu.url),
+			description: arrayToHtmlList(edu.courses ?? []),
+		}));
 
 	// Map projects
-	if (jsonResume.projects && jsonResume.projects.length > 0) {
-		result.sections.projects = {
-			...defaultResumeData.sections.projects,
-			items: jsonResume.projects
-				.filter((project) => project.name)
-				.map((project) => ({
-					id: generateId(),
-					hidden: false,
-					name: project.name || "",
-					period: "",
-					dates: toRangeDates(project.startDate, project.endDate),
-					website: createItemWebsite(project.url),
-					description: toHtmlDescription(project.description, project.highlights),
-				})),
-		};
-	}
+	result.sections.projects.items = (jsonResume.projects ?? [])
+		.filter((project) => project.name)
+		.map((project) => ({
+			id: generateId(),
+			hidden: false,
+			name: project.name || "",
+			period: "",
+			dates: toRangeDates(project.startDate, project.endDate),
+			website: createItemWebsite(project.url),
+			description: toHtmlDescription(project.description, project.highlights),
+		}));
 
 	// Map skills
-	if (jsonResume.skills && jsonResume.skills.length > 0) {
-		result.sections.skills = {
-			...defaultResumeData.sections.skills,
-			items: jsonResume.skills
-				.filter((skill) => skill.name)
-				.map((skill) => ({
-					id: generateId(),
-					hidden: false,
-					icon: "star",
-					iconColor: "",
-					name: skill.name || "",
-					proficiency: skill.level || "",
-					level: parseLevel(skill.level),
-					keywords: skill.keywords || [],
-				})),
-		};
-	}
+	result.sections.skills.items = (jsonResume.skills ?? [])
+		.filter((skill) => skill.name)
+		.map((skill) => ({
+			id: generateId(),
+			hidden: false,
+			icon: "star",
+			iconColor: "",
+			name: skill.name || "",
+			proficiency: skill.level || "",
+			level: parseLevel(skill.level),
+			keywords: skill.keywords || [],
+		}));
 
 	// Map languages
-	if (jsonResume.languages && jsonResume.languages.length > 0) {
-		result.sections.languages = {
-			...defaultResumeData.sections.languages,
-			items: jsonResume.languages
-				.filter((lang) => lang.language)
-				.map((lang) => ({
-					id: generateId(),
-					hidden: false,
-					language: lang.language || "",
-					fluency: lang.fluency || "",
-					level: parseLevel(lang.fluency),
-				})),
-		};
-	}
+	result.sections.languages.items = (jsonResume.languages ?? [])
+		.filter((lang) => lang.language)
+		.map((lang) => ({
+			id: generateId(),
+			hidden: false,
+			language: lang.language || "",
+			fluency: lang.fluency || "",
+			level: parseLevel(lang.fluency),
+		}));
 
 	// Map interests
-	if (jsonResume.interests && jsonResume.interests.length > 0) {
-		result.sections.interests = {
-			...defaultResumeData.sections.interests,
-			items: jsonResume.interests
-				.filter((interest) => interest.name)
-				.map((interest) => ({
-					id: generateId(),
-					hidden: false,
-					icon: "star",
-					iconColor: "",
-					name: interest.name || "",
-					keywords: interest.keywords || [],
-				})),
-		};
-	}
+	result.sections.interests.items = (jsonResume.interests ?? [])
+		.filter((interest) => interest.name)
+		.map((interest) => ({
+			id: generateId(),
+			hidden: false,
+			icon: "star",
+			iconColor: "",
+			name: interest.name || "",
+			keywords: interest.keywords || [],
+		}));
 
 	// Map awards
-	if (jsonResume.awards && jsonResume.awards.length > 0) {
-		result.sections.awards = {
-			...defaultResumeData.sections.awards,
-			items: jsonResume.awards
-				.filter((award) => award.title)
-				.map((award) => ({
-					id: generateId(),
-					hidden: false,
-					title: award.title || "",
-					awarder: award.awarder || "",
-					date: "",
-					dates: toSingleDates(award.date),
-					website: createItemWebsite(),
-					description: toHtmlDescription(award.summary),
-				})),
-		};
-	}
+	result.sections.awards.items = (jsonResume.awards ?? [])
+		.filter((award) => award.title)
+		.map((award) => ({
+			id: generateId(),
+			hidden: false,
+			title: award.title || "",
+			awarder: award.awarder || "",
+			date: "",
+			dates: toSingleDates(award.date),
+			website: createItemWebsite(),
+			description: toHtmlDescription(award.summary),
+		}));
 
 	// Map certificates
-	if (jsonResume.certificates && jsonResume.certificates.length > 0) {
-		result.sections.certifications = {
-			...defaultResumeData.sections.certifications,
-			items: jsonResume.certificates
-				.filter((cert) => cert.name)
-				.map((cert) => ({
-					id: generateId(),
-					hidden: false,
-					title: cert.name || "",
-					issuer: cert.issuer || "",
-					date: "",
-					dates: toSingleDates(cert.date),
-					website: createItemWebsite(cert.url),
-					description: "",
-				})),
-		};
-	}
+	result.sections.certifications.items = (jsonResume.certificates ?? [])
+		.filter((cert) => cert.name)
+		.map((cert) => ({
+			id: generateId(),
+			hidden: false,
+			title: cert.name || "",
+			issuer: cert.issuer || "",
+			date: "",
+			dates: toSingleDates(cert.date),
+			website: createItemWebsite(cert.url),
+			description: "",
+		}));
 
 	// Map publications
-	if (jsonResume.publications && jsonResume.publications.length > 0) {
-		result.sections.publications = {
-			...defaultResumeData.sections.publications,
-			items: jsonResume.publications
-				.filter((pub) => pub.name)
-				.map((pub) => ({
-					id: generateId(),
-					hidden: false,
-					title: pub.name || "",
-					publisher: pub.publisher || "",
-					date: "",
-					dates: toSingleDates(pub.releaseDate),
-					website: createItemWebsite(pub.url),
-					description: toHtmlDescription(pub.summary),
-				})),
-		};
-	}
+	result.sections.publications.items = (jsonResume.publications ?? [])
+		.filter((pub) => pub.name)
+		.map((pub) => ({
+			id: generateId(),
+			hidden: false,
+			title: pub.name || "",
+			publisher: pub.publisher || "",
+			date: "",
+			dates: toSingleDates(pub.releaseDate),
+			website: createItemWebsite(pub.url),
+			description: toHtmlDescription(pub.summary),
+		}));
 
 	// Map volunteer
-	if (jsonResume.volunteer && jsonResume.volunteer.length > 0) {
-		result.sections.volunteer = {
-			...defaultResumeData.sections.volunteer,
-			items: jsonResume.volunteer
-				.filter((vol) => vol.organization)
-				.map((vol) => ({
-					id: generateId(),
-					hidden: false,
-					organization: vol.organization || "",
-					location: "",
-					period: "",
-					dates: toRangeDates(vol.startDate, vol.endDate),
-					website: createItemWebsite(vol.url),
-					description: toHtmlDescription(vol.summary, vol.highlights),
-				})),
-		};
-	}
+	result.sections.volunteer.items = (jsonResume.volunteer ?? [])
+		.filter((vol) => vol.organization)
+		.map((vol) => ({
+			id: generateId(),
+			hidden: false,
+			organization: vol.organization || "",
+			location: "",
+			period: "",
+			dates: toRangeDates(vol.startDate, vol.endDate),
+			website: createItemWebsite(vol.url),
+			description: toHtmlDescription(vol.summary, vol.highlights),
+		}));
 
 	// Map references
-	if (jsonResume.references && jsonResume.references.length > 0) {
-		result.sections.references = {
-			...defaultResumeData.sections.references,
-			items: jsonResume.references
-				.filter((ref) => ref.name || ref.reference)
-				.map((ref) => ({
-					id: generateId(),
-					hidden: false,
-					name: ref.name || "",
-					position: "",
-					website: createItemWebsite(),
-					phone: "",
-					description: toHtmlDescription(ref.reference),
-				})),
-		};
-	}
+	result.sections.references.items = (jsonResume.references ?? [])
+		.filter((ref) => ref.name || ref.reference)
+		.map((ref) => ({
+			id: generateId(),
+			hidden: false,
+			name: ref.name || "",
+			position: "",
+			website: createItemWebsite(),
+			phone: "",
+			description: toHtmlDescription(ref.reference),
+		}));
 
 	// Map profiles (from basics.profiles) to profiles section
-	if (jsonResume.basics?.profiles && jsonResume.basics.profiles.length > 0) {
-		result.sections.profiles = {
-			...defaultResumeData.sections.profiles,
-			items: jsonResume.basics.profiles
-				.filter((profile) => profile.network)
-				.map((profile) => ({
-					id: generateId(),
-					hidden: false,
-					icon: getNetworkIcon(profile.network),
-					iconColor: "",
-					network: profile.network || "",
-					username: profile.username || "",
-					website: createItemWebsite(profile.url, profile.username || profile.network),
-				})),
-		};
-	}
+	result.sections.profiles.items = (basics.profiles ?? [])
+		.filter((profile) => profile.network)
+		.map((profile) => ({
+			id: generateId(),
+			hidden: false,
+			icon: getNetworkIcon(profile.network),
+			iconColor: "",
+			network: profile.network || "",
+			username: profile.username || "",
+			website: createItemWebsite(profile.url, profile.username || profile.network),
+		}));
 
 	return resumeDataSchema.parse(result);
 }

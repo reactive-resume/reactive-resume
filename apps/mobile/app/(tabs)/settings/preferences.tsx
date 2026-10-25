@@ -59,7 +59,7 @@ export default function PreferencesScreen() {
 			setPicker(null);
 			await queryClient.invalidateQueries({ queryKey: orpc.auth.getProfile.key() });
 		},
-		onError: () => showToast({ message: t`Couldn't save the timezone.` }),
+		onError: () => showToast({ message: t`Couldn't save the timezone. Try again.` }),
 	});
 	const languageName = (value: Locale) => i18n._(localeMap[value]);
 	const languages = localeSchema.options.map((value) => ({ value, label: languageName(value) }));
@@ -217,7 +217,7 @@ export default function PreferencesScreen() {
 				open={restart}
 				title={t`Restart to change text direction`}
 				message={t`Your language is saved. Restart Reactive Resume to apply the new left-to-right or right-to-left layout.`}
-				confirmLabel={__DEV__ ? t`Reload now` : t`OK`}
+				confirmLabel={__DEV__ ? t`Reload now` : t`Done`}
 				cancelLabel={t`Later`}
 				onCancel={() => setRestart(false)}
 				onConfirm={() => {

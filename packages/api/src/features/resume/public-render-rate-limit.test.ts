@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
-import { createPublicRenderRateLimiter } from "./public-render-rate-limit";
+import { publicRenderRateLimiter as limiter } from "./public-render-rate-limit";
 
 beforeEach(() => {
 	vi.useFakeTimers();
@@ -10,9 +10,13 @@ afterEach(() => {
 	vi.useRealTimers();
 });
 
+// Six renders per visitor and resume a minute.
+const spendBudget = async (input: { trustedClient: string; resumeId: string }) => {
+	for (let i = 0; i < 6; i++) await limiter.consume(input);
+};
+
 describe("public render rate limit", () => {
 	it("cannot reset a transport client's budget by rotating forwarding headers", async () => {
-		const limiter = createPublicRenderRateLimiter({ capacity: 1, refillWindowMs: 60_000 });
 		const first = {
 			trustedClient: "203.0.113.9",
 			requestHeaders: new Headers({
@@ -29,14 +33,13 @@ describe("public render rate limit", () => {
 			}),
 		};
 
-		await limiter.consume(first);
+		await spendBudget(first);
 
 		await expect(limiter.consume(rotated)).rejects.toMatchObject({ code: "RATE_LIMIT_EXCEEDED", status: 429 });
 	});
 
 	it("keeps budgets separate by client IP and resume", async () => {
-		const limiter = createPublicRenderRateLimiter({ capacity: 1, refillWindowMs: 60_000 });
-		await limiter.consume({ trustedClient: "203.0.113.7", resumeId: "resume-1" });
+		await spendBudget({ trustedClient: "203.0.113.7", resumeId: "resume-1" });
 
 		await expect(limiter.consume({ trustedClient: "203.0.113.8", resumeId: "resume-1" })).resolves.toBeUndefined();
 		await expect(limiter.consume({ trustedClient: "203.0.113.7", resumeId: "resume-2" })).resolves.toBeUndefined();

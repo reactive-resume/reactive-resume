@@ -7,6 +7,7 @@ import type { EditStatus, ProposalHandlers } from "./messages";
 import type { ToolPart } from "./proposals";
 import type { SavedThread } from "./recovery";
 import type { IconName } from "@/ui";
+import type { LegendListRef } from "@legendapp/list/react-native";
 import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { UIMessage } from "ai";
 import type { ReactNode } from "react";
@@ -18,11 +19,11 @@ import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import * as Clipboard from "expo-clipboard";
 import * as DocumentPicker from "expo-document-picker";
 import { File } from "expo-file-system";
-import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { RefreshControl, ActivityIndicator, AppState, Pressable, ScrollView, TextInput, View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { attachmentPart, refreshThreads, transcriptOf, useAssistantChat } from "./chat";
-import { FileChip, MessageView } from "./messages";
+import { FileChip, MessageView, Status } from "./messages";
 import { isProposeEdits, publishProposals, toProposals } from "./proposals";
 import { createRequestLane, recoverRun } from "./recovery";
 import { client, orpc, SessionChangedError } from "@/api/client";
@@ -422,10 +423,15 @@ function Conversation(props: ConversationProps) {
 			.then(() => refreshThreads(queryClient))
 			.catch(() => undefined);
 	};
-	const recordUndone = useEffectEvent(record);
+	// Kept current for the memoized handlers below, so the message rows keep their props while a reply streams.
+	const recordRef = useRef(record);
+	useLayoutEffect(() => {
+		recordRef.current = record;
+	});
 
-	// Undoing an accepted edit (the toast's Undo, or undo in the editor) makes it pending again.
-	useEffect(() => {
+	// Undoing an accepted edit (the toast's Undo, or undo in the editor) makes it pending again. Only an undo (the
+	// document) or a status change can cause one, so streamed chunks don't re-check every edit.
+	const recordUndone = useEffectEvent(() => {
 		if (!document) return;
 		for (const message of messages)
 			for (const part of message.parts) {
@@ -433,26 +439,47 @@ function Conversation(props: ConversationProps) {
 				const undone = toProposals(part, statuses).filter(
 					(proposal) => proposal.status === "accepted" && document.stateOf(proposal) === "pending",
 				);
-				// oxlint-disable-next-line react/set-state-in-effect -- an undo happens in the draft store; the new status is also saved to the thread
-				if (undone.length > 0) recordUndone(message, part, undone, "pending");
+				if (undone.length > 0) record(message, part, undone, "pending");
 			}
-	}, [messages, statuses, document]);
+	});
+	// oxlint-disable-next-line react/set-state-in-effect -- an undo happens in the draft store; the new status is also saved to the thread
+	useEffect(() => recordUndone(), [statuses, document]);
 
-	const handlers: ProposalHandlers | null = document
-		? {
-				statuses,
-				stateOf: document.stateOf,
-				locked: document.locked,
-				onAccept: (message, part, chosen) => {
-					document.accept(chosen);
-					record(message, part, chosen, "accepted");
-				},
-				onReject: (message, part, chosen) => record(message, part, chosen, "rejected"),
-			}
-		: null;
+	const handlers = useMemo<ProposalHandlers | null>(
+		() =>
+			document
+				? {
+						statuses,
+						stateOf: document.stateOf,
+						locked: document.locked,
+						onAccept: (message, part, chosen) => {
+							document.accept(chosen);
+							recordRef.current(message, part, chosen, "accepted");
+						},
+						onReject: (message, part, chosen) => recordRef.current(message, part, chosen, "rejected"),
+					}
+				: null,
+		[document, statuses],
+	);
+	const answer = useMemo(
+		() =>
+			fresh
+				? null
+				: (toolCallId: string, output: string) =>
+						// The answer's automatic continuation is a request too: it waits for anything open to end.
+						void lane.run(async () => {
+							await addToolOutput({ tool: "ask_user_question", toolCallId, output } as never);
+						}),
+		[fresh, lane, addToolOutput],
+	);
+	const extraData = useMemo(() => ({ streaming, readOnly, handlers, answer }), [streaming, readOnly, handlers, answer]);
 
 	const last = messages.at(-1);
 	const proposedInLast = last?.role === "assistant" && last.parts.some(isProposeEdits);
+
+	// "Latest" shows once the reader has scrolled away from the newest message; the list follows only at the end.
+	const list = useRef<LegendListRef>(null);
+	const [behind, setBehind] = useState(false);
 
 	const copyTranscript = async () => {
 		try {
@@ -461,115 +488,128 @@ function Conversation(props: ConversationProps) {
 			);
 			showToast({ message: t`Transcript copied` });
 		} catch {
-			showToast({ message: t`Couldn't copy the transcript.` });
+			showToast({ message: t`Couldn't copy the transcript. Try again.` });
 		}
 	};
 
 	return (
 		<KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-			<LegendList
-				data={messages}
-				keyExtractor={(message) => message.id}
-				extraData={{ streaming, readOnly, handlers, fresh }}
-				initialScrollAtEnd
-				maintainScrollAtEnd={{ animated: false }}
-				maintainVisibleContentPosition
-				maintainScrollAtEndThreshold={0.2}
-				recycleItems={false}
-				alwaysBounceVertical
-				refreshControl={
-					props.onRefresh ? <RefreshControl {...pull} tintColor={colors.accent} colors={[colors.accent]} /> : undefined
-				}
-				style={{ flex: 1 }}
-				accessibilityLabel={t`Conversation`}
-				contentContainerStyle={{ padding: space.s4 }}
-				ItemSeparatorComponent={() => <View style={{ height: space.s4 }} />}
-				keyboardDismissMode="interactive"
-				keyboardShouldPersistTaps="handled"
-				ListEmptyComponent={!streaming ? <Empty render={props.empty} send={(text) => void send(text)} /> : null}
-				renderItem={({ item: message, index }) => (
-					<MessageView
-						message={message}
-						streaming={streaming && index === messages.length - 1}
-						readOnly={readOnly}
-						proposals={handlers}
-						onAnswer={
-							fresh
-								? null
-								: (toolCallId, answer) =>
-										// The answer's automatic continuation is a request too: it waits for anything open to end.
-										void lane.run(async () => {
-											await addToolOutput({ tool: "ask_user_question", toolCallId, output: answer } as never);
-										})
-						}
-					/>
-				)}
-				ListFooterComponent={
-					<View style={{ gap: space.s4, paddingTop: space.s4 }}>
-						{status === "submitted" ? (
-							<View style={{ flexDirection: "row", alignItems: "center", gap: space.s2 }}>
-								<ActivityIndicator size="small" />
-								<Text variant="callout" color="ink3">
+			<View style={{ flex: 1 }}>
+				<LegendList
+					ref={list}
+					onScroll={(event) => {
+						const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+						setBehind(contentSize.height - layoutMeasurement.height - contentOffset.y > 160);
+					}}
+					scrollEventThrottle={64}
+					data={messages}
+					keyExtractor={(message) => message.id}
+					extraData={extraData}
+					initialScrollAtEnd
+					maintainScrollAtEnd={{ animated: false }}
+					maintainVisibleContentPosition
+					maintainScrollAtEndThreshold={0.2}
+					recycleItems={false}
+					alwaysBounceVertical
+					refreshControl={
+						props.onRefresh ? (
+							<RefreshControl {...pull} tintColor={colors.accent} colors={[colors.accent]} />
+						) : undefined
+					}
+					style={{ flex: 1 }}
+					accessibilityLabel={t`Conversation`}
+					contentContainerStyle={{ padding: space.s4 }}
+					ItemSeparatorComponent={() => <View style={{ height: space.s4 }} />}
+					keyboardDismissMode="interactive"
+					keyboardShouldPersistTaps="handled"
+					ListEmptyComponent={!streaming ? <Empty render={props.empty} send={(text) => void send(text)} /> : null}
+					renderItem={({ item: message, index }) => (
+						<MessageView
+							message={message}
+							streaming={streaming && index === messages.length - 1}
+							readOnly={readOnly}
+							proposals={handlers}
+							onAnswer={answer}
+						/>
+					)}
+					ListFooterComponent={
+						<View style={{ gap: space.s4, paddingTop: space.s4 }}>
+							{status === "submitted" ? (
+								<Status status="running">
 									<Trans>Thinking…</Trans>
-								</Text>
-							</View>
-						) : null}
+								</Status>
+							) : null}
 
-						{stopped && !streaming && !proposedInLast ? (
-							<View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: space.s2 }}>
-								<Icon name="stop-circle" size={18} color={colors.ink3} />
-								<Text variant="callout" color="ink2">
-									{document ? <Trans>Stopped. No edits were proposed.</Trans> : <Trans>Stopped</Trans>}
-								</Text>
-								<Button variant="link" label={t`Continue`} disabled={readOnly} onPress={() => send(t`Continue`)} />
-							</View>
-						) : null}
-
-						{error && !streaming ? (
-							<View
-								accessibilityRole="alert"
-								style={{
-									gap: space.s2,
-									padding: space.s3,
-									borderRadius: radius.rXl,
-									backgroundColor: colors.dangerSoft,
-								}}
-							>
-								<View style={{ flexDirection: "row", gap: space.s2 }}>
-									<Icon name="warning-circle" size={18} color={colors.dangerText} />
-									<Text variant="callout" color="dangerText" style={{ flex: 1 }}>
-										<Trans>
-											{props.connection} returned “{errorText(error, t`an error`)}”. Your message is kept.
-										</Trans>
+							{stopped && !streaming && !proposedInLast ? (
+								<View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: space.s2 }}>
+									<Icon name="stop-circle" size={18} color={colors.ink3} />
+									<Text variant="callout" color="ink2">
+										{document ? <Trans>Stopped. No edits were proposed.</Trans> : <Trans>Stopped</Trans>}
 									</Text>
+									<Button variant="link" label={t`Continue`} disabled={readOnly} onPress={() => send(t`Continue`)} />
 								</View>
-								{continuationBlocked ? (
-									<Text variant="callout" color="dangerText">
-										<Trans>Context is left out, so reply with a new message instead.</Trans>
-									</Text>
-								) : null}
-								<View style={{ flexDirection: "row", gap: space.s2 }}>
-									<Button
-										size="sm"
-										variant="secondary"
-										icon="arrow-clockwise"
-										label={t`Retry`}
-										disabled={readOnly || continuationBlocked}
-										onPress={retry}
-									/>
-									{props.onSwitchModel ? (
-										<Button size="sm" variant="ghost" label={t`Switch model`} onPress={props.onSwitchModel} />
+							) : null}
+
+							{error && !streaming ? (
+								<View
+									accessibilityRole="alert"
+									style={{
+										gap: space.s2,
+										padding: space.s3,
+										borderRadius: radius.rLg,
+										backgroundColor: colors.dangerSoft,
+									}}
+								>
+									<View style={{ flexDirection: "row", gap: space.s2 }}>
+										<Icon name="warning-circle" size={18} color={colors.dangerText} />
+										<Text variant="callout" color="dangerText" style={{ flex: 1 }}>
+											<Trans>
+												{props.connection} returned “{errorText(error, t`an error`)}”. Your message is kept.
+											</Trans>
+										</Text>
+									</View>
+									{continuationBlocked ? (
+										<Text variant="callout" color="dangerText">
+											<Trans>Context is left out, so reply with a new message instead.</Trans>
+										</Text>
 									) : null}
+									<View style={{ flexDirection: "row", gap: space.s2 }}>
+										<Button
+											size="sm"
+											variant="secondary"
+											icon="arrow-clockwise"
+											label={t`Retry`}
+											disabled={readOnly || continuationBlocked}
+											onPress={retry}
+										/>
+										{props.onSwitchModel ? (
+											<Button size="sm" variant="ghost" label={t`Switch model`} onPress={props.onSwitchModel} />
+										) : null}
+									</View>
 								</View>
-							</View>
-						) : null}
+							) : null}
 
-						{!streaming && messages.length > 0 ? (
-							<Button variant="ghost" size="sm" icon="copy" label={t`Copy transcript`} onPress={copyTranscript} />
-						) : null}
+							{!streaming && messages.length > 0 ? (
+								<Button variant="ghost" size="sm" icon="copy" label={t`Copy transcript`} onPress={copyTranscript} />
+							) : null}
+						</View>
+					}
+				/>
+				{behind ? (
+					<View
+						pointerEvents="box-none"
+						style={{ position: "absolute", bottom: space.s3, start: 0, end: 0, alignItems: "center" }}
+					>
+						<Button
+							size="sm"
+							variant="secondary"
+							icon="arrow-down"
+							label={t`Latest`}
+							onPress={() => void list.current?.scrollToEnd({ animated: true })}
+						/>
 					</View>
-				}
-			/>
+				) : null}
+			</View>
 
 			<Composer
 				{...props}
@@ -661,7 +701,7 @@ function Composer(props: ComposerProps) {
 			threadId = await props.ensureThread();
 		} catch (error) {
 			for (const { key } of files) drop(key);
-			showToast({ message: errorText(error, t`Couldn't attach the file.`) });
+			showToast({ message: errorText(error, t`Couldn't attach the file. Try again.`) });
 			return;
 		}
 		// One file at a time: only one base64 copy is in memory at once.
@@ -685,7 +725,7 @@ function Composer(props: ComposerProps) {
 				);
 			} catch (error) {
 				drop(key);
-				showToast({ message: errorText(error, t`Couldn't attach the file.`) });
+				showToast({ message: errorText(error, t`Couldn't attach the file. Try again.`) });
 			}
 		}
 	};
@@ -724,7 +764,7 @@ function Composer(props: ComposerProps) {
 					alignItems: "flex-end",
 					gap: space.s1,
 					padding: space.s1,
-					borderRadius: radius.rXl,
+					borderRadius: radius.rLg,
 					borderWidth: 1,
 					borderColor: colors.line2,
 					backgroundColor: colors.raised,
@@ -771,7 +811,7 @@ function Composer(props: ComposerProps) {
 						style={{
 							width: 34,
 							height: 34,
-							borderRadius: radius.rPill,
+							borderRadius: radius.rLg,
 							alignItems: "center",
 							justifyContent: "center",
 							backgroundColor: props.streaming ? colors.ink : hasText ? colors.accent : colors.sunken,

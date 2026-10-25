@@ -1,6 +1,5 @@
 import type { ResumeRenderOptions } from "./context";
-import type { SectionTitleResolver } from "./section-title";
-import type { ResolvedResumeRuntime } from "./semantic";
+import type { ResolvedResumeRuntime } from "./semantic/resolve";
 import type { LayoutPage, ResumeData, Typography } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import type { Locale } from "@reactive-resume/utils/locale";
@@ -8,7 +7,7 @@ import type { ComponentType } from "react";
 import { useMemo } from "react";
 import { Document } from "#react-pdf-renderer";
 import { RenderProvider } from "./context";
-import { resolvePdfFonts, resumeContentContainsCJK, resumeContentScripts } from "./hooks/use-register-fonts";
+import { resolvePdfFonts, resumeContentScripts } from "./hooks/use-register-fonts";
 import { SemanticRenderProvider } from "./semantic/context";
 import { resolveResumeRuntime } from "./semantic/resolve";
 import { getTemplatePage } from "./templates";
@@ -29,28 +28,19 @@ type ResumeDocumentProps = {
 	data: ResumeData;
 	template: Template;
 	renderOptions?: ResumeRenderOptions | undefined;
-	resolveSectionTitle?: SectionTitleResolver | undefined;
 	semanticRuntime?: ResolvedResumeRuntime | undefined;
 };
 
 const getLayoutPageKey = (page: LayoutPage, pageIndex: number) =>
 	`${page.fullWidth ? "full" : "split"}:${page.main.join(",")}:${page.sidebar.join(",")}:${pageIndex}`;
 
-export const ResumeDocument = ({
-	data,
-	template,
-	renderOptions,
-	resolveSectionTitle,
-	semanticRuntime,
-}: ResumeDocumentProps) => {
+export const ResumeDocument = ({ data, template, renderOptions, semanticRuntime }: ResumeDocumentProps) => {
 	const TemplatePageComponent = getTemplatePage(template);
-	const hasCjkContent = useMemo(() => resumeContentContainsCJK(data), [data]);
 	const scripts = useMemo(() => resumeContentScripts(data), [data]);
 	const typography = useMemo(
 		() =>
-			resolvePdfFonts(data.metadata.typography, data.metadata.page.locale as Locale, hasCjkContent, scripts)
-				.typography as Typography,
-		[data.metadata.typography, data.metadata.page.locale, hasCjkContent, scripts],
+			resolvePdfFonts(data.metadata.typography, data.metadata.page.locale as Locale, scripts).typography as Typography,
+		[data.metadata.typography, data.metadata.page.locale, scripts],
 	);
 
 	// `resolvePdfFonts` widens `fontFamily` to `string | string[]` for CJK
@@ -74,12 +64,7 @@ export const ResumeDocument = ({
 			sourceTree={runtime.sourceTree}
 			renderTree={runtime.renderTree}
 		>
-			<RenderProvider
-				data={resumeData}
-				template={template}
-				resolveSectionTitle={resolveSectionTitle}
-				renderOptions={renderOptions}
-			>
+			<RenderProvider data={resumeData} template={template} renderOptions={renderOptions}>
 				<Document
 					title={resumeData.basics.name}
 					author={resumeData.basics.name}

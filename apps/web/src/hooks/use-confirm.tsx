@@ -10,6 +10,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@reactive-resume/ui/components/alert-dialog";
+import { HoldButton } from "@reactive-resume/ui/components/hold-button";
 import { Input } from "@reactive-resume/ui/components/input";
 import { cn } from "@reactive-resume/utils/style";
 import { isImeComposing } from "@/libs/keyboard";
@@ -20,6 +21,8 @@ type AskOptions = {
 	cancelText?: string;
 	/** Prompts only: the text the field starts with. */
 	defaultValue?: string;
+	/** Confirmations only: the confirm button must be held, for actions that can't be undone. */
+	hold?: boolean;
 };
 
 type AskState = AskOptions & {
@@ -78,9 +81,15 @@ export function ConfirmDialogProvider({ children }: { children: React.ReactNode 
 
 					<AlertDialogFooter>
 						<AlertDialogCancel onClick={() => answer(null)}>{state.cancelText ?? t`Cancel`}</AlertDialogCancel>
-						<AlertDialogAction onClick={() => answer(state.withInput ? value : "")}>
-							{state.confirmText ?? t`Confirm`}
-						</AlertDialogAction>
+						{state.hold ? (
+							<HoldButton variant="danger" onConfirm={() => answer("")}>
+								{state.confirmText}
+							</HoldButton>
+						) : (
+							<AlertDialogAction onClick={() => answer(state.withInput ? value : "")}>
+								{state.confirmText ?? t`Confirm`}
+							</AlertDialogAction>
+						)}
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
@@ -104,5 +113,5 @@ export function useConfirm() {
 /** Resolves with the text entered, or null when the user cancels. */
 export function usePrompt() {
 	const ask = useAsk();
-	return (title: string, options?: AskOptions) => ask(title, options, true);
+	return (title: string, options?: Omit<AskOptions, "hold">) => ask(title, options, true);
 }

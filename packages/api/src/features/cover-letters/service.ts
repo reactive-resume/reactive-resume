@@ -19,7 +19,7 @@ import {
 } from "@reactive-resume/schema/cover-letter/data";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { lockDocumentOwner } from "../documents/ownership";
+import { lockUser } from "../documents/ownership";
 import { resumeService } from "../resume/service";
 import { sanitizeCoverLetterHtml } from "./html";
 import { getLetterVersion, saveLetterSessionVersion, writeLetterVersion } from "./versions";
@@ -177,7 +177,7 @@ async function insert(
 ): Promise<CoverLetter> {
 	if (client === db)
 		return db.transaction(async (tx) => {
-			await lockDocumentOwner(tx, input.userId);
+			await lockUser(tx, input.userId);
 			return insert(input, tx);
 		});
 	const content = coverLetterContentSchema.parse(input);
@@ -194,7 +194,7 @@ async function insert(
 			designLinked: input.designLinked ?? false,
 		})
 		.returning();
-	if (!row) throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Failed to save the letter." });
+	if (!row) throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Couldn't save the letter. Try again." });
 	const letter = toLetter(row);
 	await writeLetterVersion(client, { letter, userId: input.userId, kind: "created" });
 	return letter;
@@ -207,7 +207,7 @@ async function updateRevision(
 ): Promise<CoverLetter> {
 	if (client === db)
 		return db.transaction(async (tx) => {
-			await lockDocumentOwner(tx, input.userId);
+			await lockUser(tx, input.userId);
 			return updateRevision(input, changes, tx);
 		});
 	const [row] = await client
@@ -268,7 +268,7 @@ export const coverLetterService = {
 		if (input.template) style.metadata.template = input.template;
 		const linked = Boolean(input.resumeId) && !input.template;
 		const letter = await db.transaction(async (tx) => {
-			await lockDocumentOwner(tx, input.userId);
+			await lockUser(tx, input.userId);
 			const letter = await insert(
 				{
 					userId: input.userId,
@@ -366,7 +366,7 @@ export const coverLetterService = {
 			await (input.applicationId === undefined
 				? persist(db)
 				: db.transaction(async (tx) => {
-						await lockDocumentOwner(tx, input.userId);
+						await lockUser(tx, input.userId);
 						return persist(tx);
 					})),
 			input.userId,

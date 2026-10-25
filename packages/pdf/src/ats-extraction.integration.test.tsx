@@ -1,4 +1,3 @@
-import type { SectionTitleResolver } from "./section-title";
 import type { PdfDocumentLike } from "@reactive-resume/resume/ats-pdf";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
@@ -17,17 +16,8 @@ const NOW = new Date("2024-06-15T00:00:00Z");
 const fixture = (name: string) =>
 	new Uint8Array(readFileSync(fileURLToPath(new URL(`../fixtures/ats/${name}`, import.meta.url))));
 
-/**
- * Section headings come from a resolver, not from the resume data — `title` is empty for every
- * stock section. Rendering without one produces a heading-less PDF that no real export looks
- * like, so the app's own behaviour is mirrored here.
- */
-const resolveSectionTitle: SectionTitleResolver = (input) => input.defaultEnglishTitle ?? input.sectionId;
-
 async function renderResume(data: ResumeData, template: Template = "onyx"): Promise<Uint8Array> {
-	const element = createElement(ResumeDocument, { data, template, resolveSectionTitle }) as unknown as Parameters<
-		typeof renderToBuffer
-	>[0];
+	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<typeof renderToBuffer>[0];
 	return new Uint8Array(await renderToBuffer(element));
 }
 

@@ -182,7 +182,7 @@ export function parseLinkedInExport(zipBytes: Uint8Array): ResumeData {
 	} catch (error) {
 		if (error instanceof ZipEntryTooLargeError) {
 			throw new Error(
-				`"${error.entry}" in this ZIP is larger than 5 MB, which is too large for a LinkedIn data export.`,
+				`"${error.entry}" in this ZIP is larger than 5 MB, which is too large for a LinkedIn data export. Upload the ZIP exactly as LinkedIn provided it.`,
 			);
 		}
 		throw new Error(
@@ -199,7 +199,7 @@ export function parseLinkedInExport(zipBytes: Uint8Array): ResumeData {
 
 	if (!profile && positions.length === 0 && education.length === 0) {
 		throw new Error(
-			"This ZIP doesn't look like a LinkedIn data export. Expected a Profile.csv, Positions.csv, or Education.csv inside it.",
+			"This ZIP isn't a LinkedIn data export. Upload the ZIP from LinkedIn's \"Get a copy of your data\" page; it includes Profile.csv, Positions.csv or Education.csv.",
 		);
 	}
 

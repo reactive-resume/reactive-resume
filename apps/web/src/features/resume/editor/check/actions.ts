@@ -39,24 +39,22 @@ export function useCheckActions() {
 	const breakpoint = useBreakpoint();
 
 	const showOnPage = (issue: CheckIssue) => {
-		const editor = useEditorStore.getState();
-		editor.setCheckIssue(issue.key);
-		editor.setPageView("page");
+		useEditorStore.setState({ checkIssue: issue.key, pageView: "page" });
 		// The page is behind the drawer on tablets and in its own view on phones.
-		if (breakpoint === "tablet") editor.setDrawerOpen(false);
-		if (breakpoint === "mobile") editor.setMobileView("page");
+		if (breakpoint === "tablet") useEditorStore.setState({ drawerOpen: false });
+		if (breakpoint === "mobile") useEditorStore.setState({ mobileView: "page" });
 		scrollToIssue(issue.key, "page");
 	};
 
 	const fix = (issue: CheckIssue) => {
 		if (issue.fix.kind === "apply") {
 			editWithUndo(issue.fix.apply, t`${issue.fix.done}. Issue resolved.`);
-			useEditorStore.getState().setCheckIssue(null);
+			useEditorStore.setState({ checkIssue: null });
 			return;
 		}
 
 		setMode("write");
-		if (breakpoint === "mobile") useEditorStore.getState().setMobileView("write");
+		if (breakpoint === "mobile") useEditorStore.setState({ mobileView: "write" });
 		revealSelectionInPanel(issue.fix.target);
 	};
 
@@ -68,7 +66,7 @@ export function useCheckActions() {
 			},
 			issue.keepLabel ? t`Kept as it is` : t`Issue ignored`,
 		);
-		useEditorStore.getState().setCheckIssue(null);
+		useEditorStore.setState({ checkIssue: null });
 	};
 
 	const restoreIgnored = () =>

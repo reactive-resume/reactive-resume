@@ -1,4 +1,4 @@
-import type { ProxyOptions } from "vite-plus";
+import type { Plugin, ProxyOptions } from "vite-plus";
 import { readFileSync } from "node:fs";
 import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -36,7 +36,7 @@ async function prerenderPages() {
 	const shell = await readFile(`${webRoot}dist/index.html`, "utf8");
 	const assets = await readdir(`${webRoot}dist/assets`);
 	// These fonts paint the first screen. Discover the build's hashed URLs before CSS would request them.
-	const fontPreloads = ["hanken-grotesk-latin-wght-normal-", "newsreader-latin-opsz-normal-"]
+	const fontPreloads = ["figtree-latin-wght-normal-", "instrument-serif-latin-400-normal-"]
 		.map((prefix) => {
 			const asset = assets.find((name) => name.startsWith(prefix) && name.endsWith(".woff2"));
 			if (!asset) throw new Error(`Missing marketing font: ${prefix}`);
@@ -67,6 +67,29 @@ async function prerenderPages() {
 		}
 	}
 }
+
+// Each Phosphor icon module carries all six weights, and every page loads the ~165 icons of the Icon registry
+// (packages/ui/src/components/icon.tsx). The app renders only regular (the default, also set by IconContext) and
+// fill, so the other four are cut from the source. A new weight must be added to `keptWeights`.
+const keptWeights = new Set(["regular", "fill"]);
+const phosphorWeightsPlugin = (): Plugin => ({
+	name: "phosphor-weights",
+	transform: {
+		filter: { id: /@phosphor-icons[\\/]react[\\/]dist[\\/]defs[\\/]/ },
+		handler(code, id) {
+			// Entries look like `\n  [\n    "bold",\n    …\n  ]`; their content is indented deeper.
+			const kept = new Set<string>();
+			const result = code.replaceAll(/\n {2}\[\n {4}"(\w+)",[\s\S]*?\n {2}\],?/g, (entry, weight: string) => {
+				if (!keptWeights.has(weight)) return "";
+				kept.add(weight);
+				return entry;
+			});
+			if (kept.size !== keptWeights.size || result.length === code.length)
+				throw new Error(`Unexpected Phosphor icon format in ${id}; update phosphorWeightsPlugin`);
+			return { code: result, map: null };
+		},
+	},
+});
 
 // TanStack Router loads `route.tsx?tsr-split=…`. The native parser infers syntax from the filename,
 // and the query hides `.tsx`, so JSX is parsed as JS.
@@ -122,9 +145,23 @@ export default defineConfig({
 		chunkSizeWarningLimit: 10 * 1024, // 10 MB
 		rolldownOptions: {
 			external: ["bcryptjs", "sharp", "@aws-sdk/client-s3", "ioredis", "linkedom"],
-			// Every page loads the libraries the entry imports statically; one file instead of ~100 tiny ones saves
-			// a round trip each on slow connections. App modules stay split to keep their execution order.
-			output: { codeSplitting: { groups: [{ name: "vendor", test: /node_modules/, tags: ["$initial"] }] } },
+			// Every page loads the libraries the entry imports statically, so they ship as two files instead of ~80:
+			// React, the router, Query and Lingui, which rarely change and stay cached across deploys, and the rest.
+			// Libraries only lazy routes import split by the import graph. App modules stay split to keep their
+			// execution order.
+			output: {
+				codeSplitting: {
+					groups: [
+						{
+							name: "framework",
+							test: /[\\/]node_modules[\\/](?:react|react-dom|scheduler|use-sync-external-store|@tanstack[\\/](?:history|store|react-store|router-core|react-router|query-core|react-query)|@lingui[\\/](?:core|react))[\\/]/,
+							tags: ["$initial"],
+							priority: 1,
+						},
+						{ name: "vendor", test: /[\\/]node_modules[\\/]/, tags: ["$initial"] },
+					],
+				},
+			},
 		},
 	},
 
@@ -142,6 +179,7 @@ export default defineConfig({
 	},
 
 	plugins: [
+		phosphorWeightsPlugin(),
 		{
 			name: "cloudflare-rocket-loader-bootstrap",
 			transformIndexHtml: {

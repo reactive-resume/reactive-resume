@@ -216,7 +216,7 @@ established term, keep "passkey" in English rather than reusing the word for pas
 
 **Password** — the ordinary secret. Distinct from the above, always.
 
-**Two-factor authentication (2FA)** — a second verification step at sign-in.
+**Two-step verification** — a second verification step at sign-in, using a code from an authenticator app (also called two-factor authentication, 2FA).
 
 **Backup codes** — single-use codes for signing in when the second factor is unavailable.
 

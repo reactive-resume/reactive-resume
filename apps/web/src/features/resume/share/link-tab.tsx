@@ -25,7 +25,7 @@ import { orpc } from "@/libs/orpc/client";
 const SLUG_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 const errorMessage = (error: unknown) =>
-	error instanceof ORPCError ? error.message : t`Something went wrong. Please try again.`;
+	error instanceof ORPCError ? error.message : t`Couldn't update sharing. Try again.`;
 
 /**
  * Link: the public switch, the address with its live check, copy, downloads for visitors, open, QR code and
@@ -286,7 +286,7 @@ function PasswordRow() {
 	const turnOff = async () => {
 		const confirmed = await confirm(t`Remove the password?`, {
 			description: t`Anyone with the link will be able to view your resume.`,
-			confirmText: t`Remove`,
+			confirmText: t`Remove password`,
 		});
 		if (!confirmed) return;
 		try {
@@ -387,7 +387,7 @@ function ViewsAndDownloads({ isPublic }: { isPublic: boolean }) {
 						{summary.bars.map((bar) => (
 							<span
 								key={bar.date}
-								className="flex-1 rounded-t-[2px] bg-line-2"
+								className="flex-1 rounded-t-sm bg-line-2"
 								style={{ height: `${Math.max(6, Math.round(bar.height * 100))}%` }}
 							/>
 						))}

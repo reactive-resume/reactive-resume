@@ -115,7 +115,7 @@ export function Parser({ pdf, optedIn, onOptIn, offline, issues, onSelect, refre
 						onPress={() => {
 							controller.current?.abort();
 							setRequestState(
-								(state) => state && { ...state, pending: false, error: t`PDF check cancelled. Retry when ready.` },
+								(state) => state && { ...state, pending: false, error: t`PDF check canceled. Retry when ready.` },
 							);
 						}}
 					/>

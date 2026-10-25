@@ -17,6 +17,7 @@ import { PdfPasswordRequiredError, PdfTooLargeError, PdfUnreadableError } from "
 import { getPdfCategoryDescription, getPdfCategoryLabel, getPdfFindingMessage } from "./messages";
 import { savePendingImport, takePendingImport } from "./pending-import";
 import { runAtsCheck } from "./run-ats-check";
+import { RollingNumber } from "@/components/ui/rolling-number";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS, POP_CLASS, stagger } from "@/libs/motion";
 import { client } from "@/libs/orpc/client";
@@ -42,8 +43,9 @@ function describeError(error: unknown) {
 	if (error instanceof PdfPasswordRequiredError)
 		return t`This PDF is password protected. Save an unprotected copy and try again.`;
 	if (error instanceof PdfTooLargeError) return t`That file is too large to check. PDFs up to 25 MB work.`;
-	if (error instanceof PdfUnreadableError) return t`That file couldn't be read as a PDF.`;
-	return t`Something went wrong while reading that file. Try again.`;
+	if (error instanceof PdfUnreadableError)
+		return t`That file couldn't be read as a PDF. Choose a PDF file and try again.`;
+	return t`Couldn't read that file. Try again.`;
 }
 
 type AtsCheckerProps = {
@@ -192,7 +194,7 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 			{/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- dropping is pointer-only; "choose a file" is the keyboard path. */}
 			<div
 				className={cn(
-					"grid justify-items-center gap-2.5 rounded-[14px] border-[1.5px] border-dashed border-line-2 bg-surface p-9 text-center transition-colors duration-quick",
+					"grid justify-items-center gap-2.5 rounded-lg border-[1.5px] border-dashed border-line-2 bg-surface p-9 text-center transition-colors duration-quick",
 					dragging && "border-accent bg-accent-soft",
 				)}
 				onDragOver={(event) => {
@@ -305,7 +307,7 @@ function Progress({ file, step }: { file: File; step: number }) {
 							) : index === step ? (
 								<Spinner decorative className={cn(POP_CLASS, "size-4")} />
 							) : (
-								<span aria-hidden className="size-3 rounded-full border-[1.5px] border-current" />
+								<span aria-hidden className="size-3 rounded-sm border-[1.5px] border-current" />
 							)}
 						</span>
 						{label}
@@ -394,7 +396,7 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 						}
 					>
 						<span className="grid size-[70px] place-items-center rounded-full bg-surface font-display text-[26px] font-medium">
-							{report.score}
+							<RollingNumber value={report.score} duration="480ms" />
 						</span>
 					</div>
 					<div className="grid gap-1">
@@ -520,7 +522,7 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 						hidden={lens !== "text"}
 						className={cn(
 							ENTER_CLASS,
-							"w-full max-w-[612px] rounded-[10px] border border-line bg-raised px-7 py-6 font-mono text-[13px] leading-[21px] whitespace-pre-wrap",
+							"w-full max-w-[612px] rounded-lg border border-line bg-raised px-7 py-6 font-mono text-[13px] leading-[21px] whitespace-pre-wrap",
 						)}
 					>
 						{result.fullText || t`No text could be read from this file.`}

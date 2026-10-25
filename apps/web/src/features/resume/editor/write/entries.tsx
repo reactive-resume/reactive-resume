@@ -183,14 +183,14 @@ function IconAndColor({ entry, write }: FieldSetProps) {
 				}
 				trigger={
 					<PopoverTrigger
-						aria-label={t`Icon colour`}
+						aria-label={t`Icon color`}
 						className="flex h-9 items-center gap-2 rounded-lg border border-line-2 bg-raised px-2.5 text-sm"
 					>
 						<span
-							className="size-4 rounded-full border border-line-2"
+							className="size-4 rounded-sm border border-line-2"
 							style={{ backgroundColor: str(values.iconColor) || "currentColor" }}
 						/>
-						<Trans>Icon colour</Trans>
+						<Trans>Icon color</Trans>
 					</PopoverTrigger>
 				}
 			/>

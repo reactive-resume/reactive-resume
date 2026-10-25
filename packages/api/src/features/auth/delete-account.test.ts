@@ -37,7 +37,7 @@ it.each(["apiKey", "bearer", "session"] as const)(
 		} else {
 			await expect(remove({})).rejects.toMatchObject({
 				code: "FORBIDDEN",
-				message: "Account deletion must be performed in your browser settings.",
+				message: "Delete your account from Settings in a web browser.",
 			});
 			expect(deleteAccount).not.toHaveBeenCalled();
 		}

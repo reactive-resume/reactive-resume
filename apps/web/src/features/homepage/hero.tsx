@@ -5,17 +5,41 @@ import { useEffect, useRef } from "react";
 import { cn } from "@reactive-resume/utils/style";
 import { prefersReducedMotion, SCENE } from "./scroll";
 import { Sheet } from "./sheet";
-import { CtaLink, Doodle, labelClass } from "./ui";
+import { CtaLink, Doodle } from "./ui";
 
 const fragmentKind = {
 	display: "font-anybody leading-none",
 	serif: "font-display leading-none",
-	mono: "font-martian text-[12px] uppercase leading-none",
-	pill: "rounded-full px-3.5 py-[9px] font-semibold font-ui text-[15px] leading-none",
+	mono: "font-martian text-[12px] leading-none",
+	pill: "rounded-sm px-3.5 py-[9px] font-semibold font-ui text-[15px] leading-none",
 };
 
 // The field is dimmed to 78%, so the light pills take a deeper green to keep their text at 4.5:1.
 const pillAccent = "bg-accent-soft text-[oklch(0.36_0.1_150)] dark:text-accent-text";
+
+/** The four lines of the headline; the footer repeats them. Lines 2 and 4 are highlighted. */
+export const getHeadline = () =>
+	[
+		t({
+			message: "A free, open-source",
+			comment: "Hero headline, line 1 of 4: A free, open-source / resume builder / and / career manager.",
+		}),
+		t({
+			message: "resume builder",
+			comment:
+				"Hero headline, line 2 of 4: A free, open-source / resume builder / and / career manager. Lines 2 and 4 are highlighted: keep each a complete phrase.",
+		}),
+		t({
+			message: "and",
+			context: "hero headline",
+			comment: "Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.",
+		}),
+		t({
+			message: "career manager.",
+			comment:
+				"Hero headline, line 4 of 4: A free, open-source / resume builder / and / career manager. Lines 2 and 4 are highlighted: keep each a complete phrase.",
+		}),
+	] as const;
 
 /**
  * The eighteen career fragments that converge into the page. Each starts at (x, y), drifts to (tx, ty) and scales
@@ -131,24 +155,7 @@ export function Hero() {
 		return () => window.clearTimeout(timer);
 	}, []);
 
-	const headline = [
-		t({
-			message: "A free, open-source",
-			comment: "Hero headline, line 1 of 4: A free, open-source / resume builder / and career / manager.",
-		}),
-		t({
-			message: "resume builder",
-			comment: "Hero headline, line 2 of 4: A free, open-source / resume builder / and career / manager.",
-		}),
-		t({
-			message: "and career",
-			comment: "Hero headline, line 3 of 4: A free, open-source / resume builder / and career / manager.",
-		}),
-		t({
-			message: "manager.",
-			comment: "Hero headline, line 4 of 4: A free, open-source / resume builder / and career / manager.",
-		}),
-	] as const;
+	const headline = getHeadline();
 
 	return (
 		<section
@@ -201,10 +208,6 @@ export function Hero() {
 					className="start-[4vw] top-[61%] w-[6vw] [transform:translate(calc(var(--mx,0)*22px),calc(var(--my,0)*16px))_rotate(calc(16deg+var(--mx,0)*-4deg))_translateY(calc(var(--p)*-30px))] [transition:mask-position_1.4s_var(--ease)_1.3s,transform_1.1s_var(--ease)] max-[900px]:hidden"
 				/>
 
-				<p className={cn(labelClass, "absolute inset-x-(--gutter) top-[92px] z-2 text-ink-3")}>
-					{t`Your next chapter starts here`}
-				</p>
-
 				<div
 					aria-hidden="true"
 					className="pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,transparent_0,transparent_120px,#000_200px,#000_calc(100%-250px),transparent_calc(100%-170px))] opacity-78 max-[900px]:[mask-image:linear-gradient(to_bottom,transparent_0,transparent_260px,#000_330px,#000_calc(100%-250px),transparent_calc(100%-170px))]"
@@ -220,7 +223,7 @@ export function Hero() {
 					))}
 				</div>
 
-				<div className="hero-page absolute top-(--pt) left-1/2 aspect-[612/792] w-(--pw) rounded-[2px] shadow-paper">
+				<div className="hero-page absolute top-(--pt) left-1/2 aspect-[612/792] w-(--pw) rounded-sm shadow-paper">
 					<Sheet />
 				</div>
 
@@ -229,30 +232,27 @@ export function Hero() {
 					className="absolute inset-x-(--gutter) top-32 font-display text-[8vw] leading-[1.05] font-light text-ink min-[900px]:sr-only"
 				>
 					{headline[0]} <br className="min-[900px]:hidden" />
-					{headline[1]} <br className="min-[900px]:hidden" />
-					<em className="text-accent-text">
-						{headline[2]} {headline[3]}
-					</em>
+					<em className="text-accent-text">{headline[1]}</em> <br className="min-[900px]:hidden" />
+					{headline[2]} <em className="text-accent-text">{headline[3]}</em>
 				</h1>
 
-				{/* The headline, drawn as two halves either side of the page (below 900px, stacked above it). */}
+				{/* The headline, drawn as two halves either side of the page (below 900px, stacked above it). Both halves share one
+				    size; a translation too long for its side wraps instead of running off screen. */}
 				<div
 					aria-hidden="true"
-					className="hero-headline-start absolute end-[calc(50%+var(--pw)/2+2.6vw)] top-1/2 hidden text-end text-[3vw] leading-none whitespace-nowrap text-ink min-[900px]:block"
+					className="hero-headline-start absolute end-[calc(50%+var(--pw)/2+2.6vw)] top-1/2 hidden max-w-[calc(50vw-var(--pw)/2-2.6vw-var(--gutter))] text-end text-[3.4vw] leading-none text-balance text-ink min-[900px]:block"
 				>
 					<span className="font-anybody block font-light tracking-[-.025em] [font-stretch:calc(112%-var(--e)*12%)]">
 						{headline[0]}
 					</span>
-					<span className="font-anybody block font-normal tracking-[-.025em] [font-stretch:calc(90%+var(--e)*10%)]">
-						{headline[1]}
-					</span>
+					<span className="block font-display tracking-[-.02em] text-accent-text italic">{headline[1]}</span>
 				</div>
 				<div
 					aria-hidden="true"
-					className="absolute start-[calc(50%+var(--pw)/2+2.6vw)] top-1/2 hidden [transform:translate(calc(var(--dir)*(1-var(--e))*6vw),-50%)] text-[3.6vw] leading-none whitespace-nowrap opacity-[clamp(0,(var(--e)-.5)*3,1)] [transition:transform_.45s_var(--ease)] min-[900px]:block"
+					className="absolute start-[calc(50%+var(--pw)/2+2.6vw)] top-1/2 hidden max-w-[calc(50vw-var(--pw)/2-2.6vw-var(--gutter))] [transform:translate(calc(var(--dir)*(1-var(--e))*6vw),-50%)] text-[3.4vw] leading-none text-balance opacity-[clamp(0,(var(--e)-.5)*3,1)] [transition:transform_.45s_var(--ease)] min-[900px]:block"
 				>
-					<span className="block font-display tracking-[-.02em] text-accent-text italic">{headline[2]}</span>
-					<span className="font-anybody block tracking-[-.025em] text-ink">{headline[3]}</span>
+					<span className="font-anybody block tracking-[-.025em] text-ink">{headline[2]}</span>
+					<span className="block font-display tracking-[-.02em] text-accent-text italic">{headline[3]}</span>
 				</div>
 
 				<div className="absolute inset-x-(--gutter) bottom-[clamp(20px,4vh,40px)] z-2 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">

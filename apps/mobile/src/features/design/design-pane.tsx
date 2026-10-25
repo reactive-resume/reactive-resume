@@ -1,7 +1,7 @@
 import type { AdvancedId } from "./advanced";
 import type { PickerSpec } from "./picker";
 import { useLingui } from "@lingui/react/macro";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { I18nManager, Pressable, View, useWindowDimensions } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import Animated, { FadeIn, LinearTransition, ReduceMotion, SlideInLeft, SlideInRight } from "react-native-reanimated";
@@ -19,7 +19,7 @@ import { LayoutScreen } from "./layout-screen";
 import { Picker } from "./picker";
 import { TemplatePreviewCaption } from "./preview-caption";
 import { ColorGroup, PageGroup, TypeGroup } from "./style-groups";
-import { TemplateGroup } from "./template-group";
+import { TemplateGroup, useSheetScroll } from "./template-group";
 import { client } from "@/api/client";
 import { useSession } from "@/auth/session";
 import { useResumeStore } from "@/draft";
@@ -30,6 +30,8 @@ import { Banner, IconButton, Skeleton, Text, haptics, showToast, useReducedMotio
 
 type Tab = "template" | "type" | "color" | "page";
 type Entry = { kind: "advanced"; id: AdvancedId } | { kind: "picker"; spec: PickerSpec };
+
+const SCROLL_STEP = 100;
 
 /**
  * Design. Phone: the page in the top half and a sheet with Template · Type · Color · Page tabs; the grabber raises
@@ -58,6 +60,8 @@ export function DesignPane({ id }: { id: string }) {
 	const disabled = locked || !data;
 	const full = tablet || expanded;
 	const top = stack.at(-1);
+	// A pushed or popped screen gets a new scroll view, which starts at the top.
+	useEffect(() => useSheetScroll.setState({ offset: 0 }), [top]);
 
 	const push = (entry: Entry) => {
 		setExpanded(true);
@@ -75,7 +79,7 @@ export function DesignPane({ id }: { id: string }) {
 		colours: t`Design`,
 		page: t`Page`,
 		layout: t`Layout`,
-		styles: t`Custom Styles`,
+		styles: t`Custom styles`,
 	};
 	const tabs: { id: Tab; label: string }[] = [
 		{ id: "template", label: t`Template` },
@@ -146,7 +150,7 @@ export function DesignPane({ id }: { id: string }) {
 		) : draft.status === "error" && !draft.document ? (
 			<Banner
 				tone="danger"
-				message={t`Resume could not be loaded.`}
+				message={t`Couldn't load the resume.`}
 				action={{ label: t`Retry`, onPress: () => void draft.open(id).catch(() => undefined) }}
 			/>
 		) : locked ? (
@@ -156,7 +160,7 @@ export function DesignPane({ id }: { id: string }) {
 				message={t`This resume is locked. Unlock it first to make changes.`}
 				action={{
 					label: t`Unlock`,
-					onPress: () => void unlock().catch(() => showToast({ message: t`Couldn't unlock the resume.` })),
+					onPress: () => void unlock().catch(() => showToast({ message: t`Couldn't unlock the resume. Try again.` })),
 				}}
 			/>
 		) : null;
@@ -178,7 +182,7 @@ export function DesignPane({ id }: { id: string }) {
 						style={{
 							width: size.grabber.width,
 							height: size.grabber.height,
-							borderRadius: radius.rPill,
+							borderRadius: radius.rLg,
 							backgroundColor: colors.line2,
 						}}
 					/>
@@ -251,6 +255,14 @@ export function DesignPane({ id }: { id: string }) {
 						scrollEnabled={!scrollLocked}
 						keyboardShouldPersistTaps="handled"
 						contentContainerStyle={{ padding: space.s4, paddingBottom: space.s12 }}
+						// The template grid renders only rows near the screen. Steps of SCROLL_STEP keep its re-renders rare;
+						// it renders a whole row beyond each edge, which covers the rounding.
+						onLayout={(event) => useSheetScroll.setState({ height: event.nativeEvent.layout.height })}
+						onScroll={(event) =>
+							useSheetScroll.setState({
+								offset: Math.floor(event.nativeEvent.contentOffset.y / SCROLL_STEP) * SCROLL_STEP,
+							})
+						}
 					>
 						{body()}
 					</KeyboardAwareScrollView>
@@ -291,8 +303,8 @@ export function DesignPane({ id }: { id: string }) {
 					bottom: 0,
 					height: expanded ? height - space.s3 : height / 2,
 					backgroundColor: colors.surface,
-					borderTopStartRadius: radius.r3xl,
-					borderTopEndRadius: radius.r3xl,
+					borderTopStartRadius: radius.rLg,
+					borderTopEndRadius: radius.rLg,
 					boxShadow: shadows.e3.boxShadow,
 					overflow: "hidden",
 				}}

@@ -10,8 +10,7 @@ const mocks = vi.hoisted(() => ({
 	threads: [] as unknown[],
 	start: vi.fn(),
 	attach: vi.fn(),
-	setSelected: vi.fn(),
-	setPrompt: vi.fn(),
+	setState: vi.fn(),
 	invalidate: vi.fn(),
 }));
 vi.mock("@tanstack/react-query", async (importOriginal) => ({
@@ -23,14 +22,8 @@ vi.mock("@tanstack/react-query", async (importOriginal) => ({
 vi.mock("@tanstack/react-router", () => ({ useNavigate: () => vi.fn(), Link: () => null }));
 vi.mock("@/features/resume/editor/store", () => ({
 	useEditorStore: Object.assign(
-		(select: (state: unknown) => unknown) =>
-			select({
-				assistantThread: mocks.selected,
-				setAssistantThread: mocks.setSelected,
-				assistantPrompt: null,
-				setAssistantPrompt: mocks.setPrompt,
-			}),
-		{ getState: () => ({ setAssistantSuggestions: vi.fn() }) },
+		(select: (state: unknown) => unknown) => select({ assistantThread: mocks.selected, assistantPrompt: null }),
+		{ setState: mocks.setState },
 	),
 }));
 vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () => ({
@@ -66,8 +59,8 @@ beforeEach(() => {
 	vi.clearAllMocks();
 	mocks.selected = null;
 	mocks.threads = [];
-	mocks.setSelected.mockImplementation((selected: string) => {
-		mocks.selected = selected;
+	mocks.setState.mockImplementation((partial: { assistantThread?: string }) => {
+		if (partial.assistantThread !== undefined) mocks.selected = partial.assistantThread;
 	});
 	mocks.start.mockResolvedValue({ id: "draft-thread" });
 	mocks.attach.mockResolvedValue({ id: "file-1", filename: "posting.txt", mediaType: "text/plain" });
@@ -97,5 +90,5 @@ it("keeps first-message text and attachments when the draft appears in a backgro
 	);
 	expect((screen.getByRole("textbox") as HTMLTextAreaElement).value).toBe("Keep my first message");
 	expect(screen.getByText("posting.txt")).toBeDefined();
-	expect(mocks.setSelected).toHaveBeenCalledWith("new");
+	expect(mocks.setState).toHaveBeenCalledWith({ assistantThread: "new" });
 });

@@ -1,28 +1,15 @@
 import { isIP } from "node:net";
 import { APIError } from "better-auth/api";
 import { getStorageService, migrateUserStorage } from "@reactive-resume/api/features/storage";
-import { auth, registerAccountLinkHook, registerUserDeleteHook } from "@reactive-resume/auth/config";
+import { auth, setAccountLinkHook, setUserDeleteHook } from "@reactive-resume/auth/config";
 import { env } from "@reactive-resume/env/server";
 import { TRUSTED_IP_HEADERS } from "@reactive-resume/utils/rate-limit";
 import { isAllowedOAuthRedirectUri } from "@reactive-resume/utils/url-security.node";
 
-const accountLinkStorageMigrationHook = async ({ fromUserId, toUserId }: { fromUserId: string; toUserId: string }) => {
-	try {
-		return await migrateUserStorage(fromUserId, toUserId);
-	} catch (error) {
-		console.error("Failed to migrate storage from %s to %s:", fromUserId, toUserId, error);
-		throw error;
-	}
-};
-
-export function registerAccountLinkStorageMigration(): () => void {
-	return registerAccountLinkHook(accountLinkStorageMigrationHook);
-}
-
-registerAccountLinkStorageMigration();
+setAccountLinkHook(({ fromUserId, toUserId }) => migrateUserStorage(fromUserId, toUserId));
 
 // Better Auth's own user deletion (guest cleanup after linking, admin removal) leaves uploads behind.
-registerUserDeleteHook(async (userId) => {
+setUserDeleteHook(async (userId) => {
 	await getStorageService().delete(`uploads/${userId}`);
 });
 

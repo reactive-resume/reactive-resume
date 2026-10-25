@@ -16,12 +16,13 @@ import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { SwitchRow } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
+import { formatList } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useTicks, useWorkspace } from "../hooks";
 import { Eyebrow, flash, minutesUntil, PrivacyLine, useCareerTime, Working, workingSteps } from "../shared";
 import { interviewTypeLabel } from "@/features/applications/components/interview-dialog";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
 type Briefing = SavedItem & { data: SavedData<"briefing"> };
@@ -181,7 +182,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 			case "practise":
 				return (
 					<Button size="sm" variant="secondary" onClick={() => go("practise", { speak: true })}>
-						<Trans>Practise</Trans>
+						<Trans context="Button: rehearse interview answers">Practice</Trans>
 					</Button>
 				);
 			case "none":
@@ -197,7 +198,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 						<h2 className="font-display text-[22px] leading-7 font-medium">{data.headline}</h2>
 						<p className="text-sm text-ink-2">{data.summary}</p>
 					</div>
-					<span className="flex flex-wrap items-baseline gap-x-2 font-mono text-xs font-medium text-ink-3 uppercase">
+					<span className="flex flex-wrap items-baseline gap-x-2 font-mono text-xs font-medium text-ink-3">
 						<Trans>
 							{doneMinutes} of {total} min
 						</Trans>
@@ -217,7 +218,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 						)}
 					</span>
 				</div>
-				<div aria-hidden="true" className="flex h-1.5 gap-0.5 overflow-hidden rounded-[3px]">
+				<div aria-hidden="true" className="flex h-1.5 gap-0.5 overflow-hidden rounded-md">
 					{data.plan.map((row, index) => (
 						<span
 							key={`${row.title}-${index}`}
@@ -243,7 +244,7 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 								checked={done(index)}
 								onCheckedChange={(checked) => ticks.toggle(String(index), checked)}
 							/>
-							<span className="font-mono text-xs leading-5 font-medium text-ink-3 uppercase">
+							<span className="font-mono text-xs leading-5 font-medium text-ink-3">
 								<Trans>{row.minutes} min</Trans>
 							</span>
 							<div className="col-start-2 grid gap-0.5 sm:col-start-auto">
@@ -343,14 +344,7 @@ function RefreshSwitch({ application, interview }: RefreshSwitchProps) {
 				description: row.enabled ? t`Briefing refresh is on · ${when(row.nextRunAt)}` : t`Briefing refresh paused`,
 			});
 		},
-		onError: (error) =>
-			toast.add({
-				type: "error",
-				description: getOrpcErrorMessage(error, {
-					fallback: t`Couldn't change the schedule.`,
-					allowServerMessage: true,
-				}),
-			}),
+		onError: (error) => toastError(error, t`Couldn't change the schedule. Try again.`, { allowServerMessage: true }),
 	});
 
 	const enabled = save.isPending ? save.variables.enabled : (schedule?.enabled ?? false);
@@ -517,7 +511,7 @@ function Soon({ application, interview, briefing, now, go }: SoonProps) {
 	const ticks = useTicks(application.id, `now:${interview.id}`);
 	const [reading, setReading] = useState(false);
 	const minutes = minutesUntil(new Date(interview.at), now);
-	const list = (names: string[]) => new Intl.ListFormat(locale, { type: "conjunction" }).format(names);
+	const list = (names: string[]) => formatList(locale, names);
 	const names = interview.participants.map((person) => person.name);
 	const heading =
 		minutes > 0
@@ -532,7 +526,7 @@ function Soon({ application, interview, briefing, now, go }: SoonProps) {
 	if (mobile)
 		return (
 			<div className="grid gap-2">
-				<div className="flex items-center gap-3 rounded-[14px] bg-warn-soft px-4 py-3.5">
+				<div className="flex items-center gap-3 rounded-lg bg-warn-soft px-4 py-3.5">
 					<Icon name="timer" size={28} className="shrink-0 text-warn-text" />
 					<div className="grid min-w-0">
 						<p className="font-display text-[22px] leading-7 font-medium">{heading}</p>
@@ -581,15 +575,11 @@ function Soon({ application, interview, briefing, now, go }: SoonProps) {
 				{/* The workspace is full screen on phones (no app tab bar), so the bar pads for the safe area itself. */}
 				<div className="sticky bottom-0 -mx-4 mt-3 -mb-6 flex gap-2 border-t border-line bg-surface px-4 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))]">
 					{briefing && (
-						<Button
-							variant="secondary"
-							className="h-12 flex-1 rounded-[10px] text-[15px]"
-							onClick={() => setReading(true)}
-						>
+						<Button variant="secondary" className="h-12 flex-1 rounded-lg text-[15px]" onClick={() => setReading(true)}>
 							<Trans>Briefing</Trans>
 						</Button>
 					)}
-					<Button className="h-12 flex-[1.4] rounded-[10px] text-[15px]" onClick={rehearse}>
+					<Button className="h-12 flex-[1.4] rounded-lg text-[15px]" onClick={rehearse}>
 						<Icon name="microphone" size={22} />
 						<Trans>Rehearse aloud</Trans>
 					</Button>
@@ -634,7 +624,7 @@ function Soon({ application, interview, briefing, now, go }: SoonProps) {
 								key={row.title}
 								htmlFor={`${id}-${index}`}
 								className={cn(
-									"flex cursor-pointer items-start gap-3 rounded-[10px] px-3 py-2.5 transition-colors duration-quick",
+									"flex cursor-pointer items-start gap-3 rounded-lg px-3 py-2.5 transition-colors duration-quick",
 									on ? "bg-accent-soft" : "bg-bg",
 								)}
 							>
@@ -652,7 +642,7 @@ function Soon({ application, interview, briefing, now, go }: SoonProps) {
 									</span>
 									<span className="text-[13px] leading-[19px] text-ink-2">{row.detail}</span>
 								</span>
-								<span className="ms-auto font-mono text-xs font-medium whitespace-nowrap text-ink-3 uppercase">
+								<span className="ms-auto font-mono text-xs font-medium whitespace-nowrap text-ink-3">
 									<Trans>{row.minutes} min</Trans>
 								</span>
 							</label>

@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vite-plus/test";
 import { createRouterClient } from "@orpc/server";
 import { eq } from "drizzle-orm";
 import { Pool } from "pg";
-import { auth, linkAnonymousAccount, registerAccountLinkHook } from "@reactive-resume/auth/config";
+import { auth, linkAnonymousAccount, setAccountLinkHook } from "@reactive-resume/auth/config";
 import { db, withDatabasePool } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
@@ -108,7 +108,7 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 			`INSERT INTO resume (id, name, slug, data, user_id) VALUES ('failed-resume', 'Guest', 'failed', $1, 'failed-guest')`,
 			[JSON.stringify(data)],
 		);
-		const unregister = registerAccountLinkHook(async () => {
+		setAccountLinkHook(async () => {
 			throw new Error("Copy unavailable");
 		});
 		try {
@@ -116,7 +116,7 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 				withDatabasePool(pool, () => linkAnonymousAccount({ fromUserId: "failed-guest", toUserId: "link-owner" })),
 			).rejects.toThrow("Copy unavailable");
 		} finally {
-			unregister();
+			setAccountLinkHook();
 		}
 		expect((await pool.query("SELECT user_id, data FROM resume WHERE id = 'failed-resume'")).rows).toEqual([
 			{ user_id: "failed-guest", data },
@@ -131,7 +131,7 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 		);
 		const copying = Promise.withResolvers<void>();
 		const resumeCopy = Promise.withResolvers<void>();
-		const unregister = registerAccountLinkHook(async () => {
+		setAccountLinkHook(async () => {
 			copying.resolve();
 			await resumeCopy.promise;
 		});
@@ -148,7 +148,7 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 		} finally {
 			resumeCopy.resolve();
 			await linking;
-			unregister();
+			setAccountLinkHook();
 			await client.query("RESET lock_timeout");
 			client.release();
 		}

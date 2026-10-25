@@ -270,7 +270,10 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 					},
 					() => {
 						setAppliedNow(null);
-						toast.add({ type: "error", description: t`Couldn't update the application. Nothing was changed.` });
+						toast.add({
+							type: "error",
+							description: t`Couldn't update the application. Nothing was changed. Try again.`,
+						});
 					},
 				),
 		});

@@ -33,7 +33,7 @@ export function TrashPage() {
 					</Link>
 				}
 				title={<Trans>Trash</Trans>}
-				description={<Trans>Items are deleted permanently after 30 days.</Trans>}
+				description={<Trans>Documents are deleted permanently after 30 days.</Trans>}
 			/>
 
 			{isError && <LibraryError retrying={isFetching} onRetry={() => void refetch()} />}
@@ -45,7 +45,7 @@ export function TrashPage() {
 						<Trans>Trash is empty</Trans>
 					</p>
 					<p className="text-sm text-ink-2">
-						<Trans>Items you move here stay for 30 days.</Trans>
+						<Trans>Documents you move here stay for 30 days.</Trans>
 					</p>
 				</div>
 			) : (

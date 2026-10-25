@@ -8,9 +8,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouteContext, useRouter } from "@tanstack/react-router";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { EMPTY_WORKSPACE } from "@reactive-resume/schema/career";
-import { toast } from "@reactive-resume/ui/components/toast";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
 export type SavedItem = RouterOutput["career"]["savedItems"][number];
@@ -82,12 +81,8 @@ export function useWorkspace(applicationId: string) {
 		scope: { id: `career-workspace:${applicationId}` },
 		meta: { noInvalidate: true },
 		onError: (error) => {
-			toast.add({
-				type: "error",
-				description: getOrpcErrorMessage(error, {
-					fallback: t`Couldn't save that change. Check your connection and try again.`,
-					allowServerMessage: true,
-				}),
+			toastError(error, t`Couldn't save that change. Check your connection and try again.`, {
+				allowServerMessage: true,
 			});
 		},
 	});
@@ -179,13 +174,7 @@ export function useGenerate(applicationId: string) {
 		},
 		onError: (error) => {
 			const name = provider?.label ?? t`Your AI connection`;
-			toast.add({
-				type: "error",
-				description: getOrpcErrorMessage(error, {
-					fallback: t`${name} didn't respond. Nothing was changed; try again.`,
-					allowServerMessage: true,
-				}),
-			});
+			toastError(error, t`${name} didn't respond. Nothing was changed; try again.`, { allowServerMessage: true });
 		},
 	});
 	return {

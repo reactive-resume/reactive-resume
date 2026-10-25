@@ -7,9 +7,7 @@ import { Plugin } from "@tiptap/pm/state";
 import { ReplaceAroundStep, ReplaceStep } from "@tiptap/pm/transform";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
 import { combineTransactionSteps, Extension, getChangedRanges } from "@tiptap/react";
-
-export const whitespaceAttribute = "data-resume-whitespace";
-export const whitespacePreserveValue = "preserve";
+import { hasUnsupportedTableMarkup, whitespaceAttribute, whitespacePreserveValue } from "./rich-text-markup";
 
 const preservedWhitespace = {
 	default: null,
@@ -98,16 +96,8 @@ const markPastedHtml = (html: string) => {
 	return root.innerHTML;
 };
 
-type LiteralWhitespaceOptions = {
-	hasUnsupportedTableMarkup: (html: string) => boolean;
-};
-
-export const LiteralWhitespaceInput = Extension.create<LiteralWhitespaceOptions>({
+export const LiteralWhitespaceInput = Extension.create({
 	name: "literalWhitespaceInput",
-
-	addOptions() {
-		return { hasUnsupportedTableMarkup: (html) => /<\/?table(?=\s|\/?>|$)/i.test(html) };
-	},
 
 	addProseMirrorPlugins() {
 		let rejectHtmlPaste = false;
@@ -138,7 +128,7 @@ export const LiteralWhitespaceInput = Extension.create<LiteralWhitespaceOptions>
 					},
 					transformPastedHTML: (html) => {
 						// Inspect original bytes before either DOM parser can repair unsafe tables.
-						rejectHtmlPaste = this.options.hasUnsupportedTableMarkup(html);
+						rejectHtmlPaste = hasUnsupportedTableMarkup(html);
 						return rejectHtmlPaste ? "" : markPastedHtml(html);
 					},
 					handlePaste: () => {

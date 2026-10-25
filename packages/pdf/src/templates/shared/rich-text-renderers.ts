@@ -10,13 +10,6 @@ import {
 import { safeTextStyle } from "./safe-text-style";
 import { composeStyles, mergeStyles } from "./styles";
 
-export const toRichTextStyleArray = (style: Style | Style[] | undefined): Style[] => {
-	if (!style) return [];
-	if (Array.isArray(style)) return style.filter(Boolean);
-
-	return [style];
-};
-
 type RichTextParagraphRendererProps = {
 	children: ReactNode;
 	element: Parameters<typeof isRichTextElementInsideListItem>[0];
@@ -41,7 +34,7 @@ export const renderRichTextParagraph = ({
 	textProps,
 }: RichTextParagraphRendererProps) => {
 	const paragraphStyles = isRichTextElementInsideListItem(element)
-		? toRichTextStyleArray(style).map(stripRichTextVerticalMargins)
+		? composeStyles(style).map(stripRichTextVerticalMargins)
 		: style;
 
 	const composedStyle = composeStyles(

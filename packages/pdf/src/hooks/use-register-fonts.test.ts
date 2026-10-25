@@ -37,7 +37,7 @@ describe("resolvePdfFonts", () => {
 	it("retains the hyphenation preference when adding fallback font stacks", () => {
 		const { registerFonts } = withRegistry();
 		const configured = { ...typography, hyphenation: true };
-		expect(registerFonts(configured, "de-DE", false, new Set(["emoji"])).hyphenation).toBe(true);
+		expect(registerFonts(configured, "de-DE", new Set(["emoji"])).hyphenation).toBe(true);
 		expect(registerFonts(configured, "zh-CN").hyphenation).toBe(true);
 	});
 
@@ -78,7 +78,7 @@ describe("resolvePdfFonts", () => {
 			heading: { ...typography.heading, fontFamily: "Noto Sans SC", fontWeights: ["600"] },
 		} satisfies Typography;
 
-		registerFonts(cjkTypography, "zh-CN", true, new Set(["han-simplified"]), false);
+		registerFonts(cjkTypography, "zh-CN", new Set(["han-simplified"]), false);
 
 		const cjkFaces = registered
 			.filter((font) => font.family.endsWith(" SC"))
@@ -109,7 +109,7 @@ describe("resolvePdfFonts", () => {
 		const emojiSource = getWebFontSource("Noto Emoji", "400", false);
 		const { registered, registerFonts } = withRegistry();
 
-		const pdfTypography = registerFonts(typography, "en-US", false, new Set(["emoji"]));
+		const pdfTypography = registerFonts(typography, "en-US", new Set(["emoji"]));
 
 		expect(pdfTypography.body.fontFamily).toEqual(["IBM Plex Serif", "Noto Emoji", "Noto Serif"]);
 		expect(registered).toContainEqual(
@@ -126,7 +126,7 @@ describe("resolvePdfFonts", () => {
 
 	it("registers the Noto Sans Symbols fallback for arrows without downloading Symbols 2", () => {
 		const { registered, registerFonts } = withRegistry();
-		const pdfTypography = registerFonts(typography, "en-US", false, new Set(["arrows"]));
+		const pdfTypography = registerFonts(typography, "en-US", new Set(["arrows"]));
 		expect(pdfTypography.body.fontFamily).toEqual(["IBM Plex Serif", "Noto Sans Symbols", "Noto Serif"]);
 		expect(registered).toContainEqual({
 			family: "Noto Sans Symbols",
@@ -141,7 +141,7 @@ describe("resolvePdfFonts", () => {
 		const symbolsSource = getWebFontSource("Noto Sans Symbols 2", "400", false);
 		const { registered, registerFonts } = withRegistry();
 
-		const pdfTypography = registerFonts(typography, "en-US", false, new Set(["symbols"]));
+		const pdfTypography = registerFonts(typography, "en-US", new Set(["symbols"]));
 
 		expect(pdfTypography.body.fontFamily).toEqual(["IBM Plex Serif", "Noto Sans Symbols 2", "Noto Serif"]);
 		expect(registered).toContainEqual(
@@ -277,7 +277,7 @@ describe("italic faces", () => {
 		["a stylesheet", withSummary("<p>Plain</p>", "summary { font-style: italic; }"), true],
 	])("are registered only when the resume uses italics: %s", (_, data, italic) => {
 		expect(resumeUsesItalic(data)).toBe(italic);
-		const fonts = resolvePdfFonts(typography, "en-US", false, undefined, resumeUsesItalic(data)).fonts;
+		const fonts = resolvePdfFonts(typography, "en-US", undefined, resumeUsesItalic(data)).fonts;
 		expect(fonts.some((font) => font.italic)).toBe(italic);
 	});
 

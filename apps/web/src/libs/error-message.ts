@@ -1,5 +1,6 @@
 import { plural, t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
+import { toast } from "@reactive-resume/ui/components/toast";
 
 export function getReadableErrorMessage(error: unknown, fallback: string): string {
 	// A font download failed (see `assertPdfFonts`).
@@ -49,13 +50,22 @@ export function getOrpcErrorMessage(
 	return options.fallback;
 }
 
+/** An error toast naming what failed; a mapped server message wins over the fallback. */
+export function toastError(
+	error: unknown,
+	fallback: string,
+	options: Omit<Parameters<typeof getOrpcErrorMessage>[1], "fallback"> = {},
+) {
+	toast.add({ type: "error", description: getOrpcErrorMessage(error, { ...options, fallback }) });
+}
+
 export function getResumeErrorMessage(error: unknown): string {
 	return getOrpcErrorMessage(error, {
 		byCode: {
-			RESUME_SLUG_ALREADY_EXISTS: "A resume with this slug already exists.",
-			RESUME_LOCKED: "This resume is locked. Unlock it first to make changes.",
+			RESUME_SLUG_ALREADY_EXISTS: t`Another resume already uses this address. Choose a different one.`,
+			RESUME_LOCKED: t`This resume is locked. Unlock it to make changes.`,
 		},
-		fallback: "Something went wrong. Please try again.",
+		fallback: t`Couldn't update the resume. Try again.`,
 	});
 }
 

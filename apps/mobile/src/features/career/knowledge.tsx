@@ -15,8 +15,9 @@ export function KnowledgeScreen() {
 	const { fontScale } = useWindowDimensions();
 	const session = useSession();
 	const { facts, stories, profile } = useCareerQueries();
-	return (
-		<Screen onRefresh={() => Promise.allSettled([facts.refetch(), stories.refetch(), profile.refetch()])}>
+	const refresh = () => Promise.allSettled([facts.refetch(), stories.refetch(), profile.refetch()]);
+	const intro = (
+		<>
 			<Text color="ink3">{t`Your facts, stories and preferences. Editing Knowledge sends nothing to an AI connection.`}</Text>
 			<Segmented
 				orientation={fontScale > 1.3 ? "vertical" : "horizontal"}
@@ -29,9 +30,21 @@ export function KnowledgeScreen() {
 					{ value: "preferences", label: t`Preferences` },
 				]}
 			/>
-			{tab === "facts" ? (
-				<Facts key={session.server} />
-			) : tab === "stories" ? (
+		</>
+	);
+	// Facts can run to hundreds, so that tab scrolls as a virtualized list with the intro as its header.
+	if (tab === "facts")
+		return (
+			<Screen scroll={false} contentStyle={{ padding: 0 }}>
+				<Facts key={session.server} onRefresh={refresh}>
+					{intro}
+				</Facts>
+			</Screen>
+		);
+	return (
+		<Screen onRefresh={refresh}>
+			{intro}
+			{tab === "stories" ? (
 				<Stories key={session.server} />
 			) : (
 				<>

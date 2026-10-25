@@ -324,7 +324,7 @@ function StylesheetCodeEditor({
 										type="button"
 										title={t`Edit color ${shownColor.token.value}`}
 										aria-label={t`Edit color ${shownColor.token.value}`}
-										className="pointer-events-auto size-3 rounded-full border border-ink/40"
+										className="pointer-events-auto size-3 rounded-sm border border-ink/40"
 										style={{ backgroundColor: shownColor.token.value }}
 									/>
 								}
@@ -387,20 +387,14 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	const data = useResumeData();
 	const updateResumeData = useUpdateResumeData();
 	const isLocked = useIsResumeLocked();
-	const canUndo = useResumeStore((state) => state.canUndo);
-	const canRedo = useResumeStore((state) => state.canRedo);
+	const canUndo = useResumeStore((state) => state.undoStack.length > 0);
+	const canRedo = useResumeStore((state) => state.redoStack.length > 0);
 	const undo = useResumeStore((state) => state.undo);
 	const redo = useResumeStore((state) => state.redo);
 	const editorViewRef = useRef<EditorView | null>(null);
 	const compileGenerationRef = useRef(0);
 	useEffect(() => {
-		const client = createCompileWorkerClient(
-			() =>
-				new Worker(new URL("./stylesheet.worker.ts", import.meta.url), {
-					type: "module",
-					name: "semantic-css-compiler",
-				}),
-		);
+		const client = createCompileWorkerClient();
 		// oxlint-disable-next-line react/set-state-in-effect -- the worker is created here so it can be destroyed on unmount
 		setCompiler(client);
 		return () => client.destroy();
@@ -427,14 +421,14 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	}, [data, disabled]);
 
 	// The rule under the cursor is outlined on the page, and nothing is once the editor loses focus or closes.
-	useEffect(() => () => useEditorStore.getState().setStyleHighlight([]), []);
+	useEffect(() => () => useEditorStore.setState({ styleHighlight: [] }), []);
 	const highlightRuleAt = (offset: number | null) => {
 		const view = editorViewRef.current;
 		const keys =
 			offset === null || !view ? [] : matchedNodeKeys(view.state.doc.toString(), offset, metadata.semanticTree);
-		const { styleHighlight, setStyleHighlight } = useEditorStore.getState();
+		const { styleHighlight } = useEditorStore.getState();
 		if (keys.length !== styleHighlight.length || keys.some((key, index) => key !== styleHighlight[index]))
-			setStyleHighlight(keys);
+			useEditorStore.setState({ styleHighlight: keys });
 	};
 
 	useEffect(() => {
@@ -558,7 +552,7 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						<Trans>Read the Applying Custom Styles guide.</Trans>
+						<Trans>Read the “Applying custom styles” guide.</Trans>
 						<span className="sr-only">
 							{" "}
 							(<Trans>opens in new tab</Trans>)

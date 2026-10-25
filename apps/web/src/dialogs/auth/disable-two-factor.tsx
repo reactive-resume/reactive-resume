@@ -25,7 +25,10 @@ import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
-	password: z.string().min(6).max(64),
+	password: z
+		.string()
+		.min(6, { error: () => t`Enter your password.` })
+		.max(64, { error: () => t`Use 64 characters or fewer.` }),
 });
 
 export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">) {
@@ -39,7 +42,7 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 		onSubmit: async ({ value }) => {
 			const toastId = toast.add({
 				type: "loading",
-				description: t`Disabling two-factor authentication...`,
+				description: t`Turning off two-step verification…`,
 			});
 
 			const { error } = await authClient.twoFactor.disable({ password: value.password });
@@ -51,7 +54,7 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 						error,
 						t({
 							comment: "Fallback toast when disabling two-factor authentication fails",
-							message: "Failed to disable two-factor authentication. Please try again.",
+							message: "Couldn't turn off two-step verification. Check your password and try again.",
 						}),
 					),
 					id: toastId,
@@ -61,7 +64,7 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 
 			toast.add({
 				type: "success",
-				description: t`Two-factor authentication is now disabled.`,
+				description: t`Two-step verification turned off`,
 				id: toastId,
 			});
 			void queryClient.invalidateQueries({ queryKey: sessionQueryKey }).then(() => router.invalidate());
@@ -75,16 +78,16 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 	useFormBlocker(form);
 
 	return (
-		<DialogContent>
+		<DialogContent closeLabel={t`Close`}>
 			<DialogHeader>
 				<DialogTitle className="flex items-center gap-x-2">
 					<Icon name="lock-open" size={16} />
-					<Trans>Disable Two-Factor Authentication</Trans>
+					<Trans>Turn off two-step verification?</Trans>
 				</DialogTitle>
 				<DialogDescription>
 					<Trans>
-						Enter your password to disable two-factor authentication. Your account will be less secure without 2FA
-						enabled.
+						Enter your password to turn off two-step verification. Without it, your password alone can sign in to your
+						account.
 					</Trans>
 				</DialogDescription>
 			</DialogHeader>
@@ -123,7 +126,9 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 
 				<DialogFooter>
 					<Button type="submit" variant="danger" disabled={isSubmitting}>
-						<Trans comment="Destructive action button to turn off two-factor authentication">Disable 2FA</Trans>
+						<Trans comment="Destructive action button to turn off two-factor authentication">
+							Turn off two-step verification
+						</Trans>
 					</Button>
 				</DialogFooter>
 			</form>

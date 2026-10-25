@@ -1,11 +1,7 @@
 import type { ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
 import { getDefaultSectionIconName } from "@reactive-resume/schema/resume/section-icons";
 
-type RenderData = ResumeData & {
-	resolveSectionTitle?: unknown;
-};
-
-export const getResumeSectionIcon = (data: RenderData, sectionId: string): string => {
+export const getResumeSectionIcon = (data: ResumeData, sectionId: string): string => {
 	if (sectionId === "summary") {
 		const icon = data.summary.icon;
 		if (icon === "none") return "";

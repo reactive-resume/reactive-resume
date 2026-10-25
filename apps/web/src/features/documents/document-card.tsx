@@ -1,7 +1,7 @@
 import type { DocumentSummary } from "./filter";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
@@ -35,7 +35,8 @@ export type DocumentItemProps = {
 function useDocumentMeta(document: DocumentSummary) {
 	const { i18n } = useLingui();
 	const type = document.type === "resume" ? t`Resume` : t`Letter`;
-	if (document.trashedAt) return t`${type} · ${daysLeftInTrash(document.trashedAt)} days left`;
+	if (document.trashedAt)
+		return plural(daysLeftInTrash(document.trashedAt), { one: `${type} · # day left`, other: `${type} · # days left` });
 	return t`${type} · Edited ${formatRelativeTime(document.updatedAt, i18n.locale)}`;
 }
 
@@ -109,13 +110,13 @@ function RenameInput({ document, onDone }: { document: DocumentSummary; onDone: 
 function LetterThumbnail({ name }: { name: string }) {
 	return (
 		<div aria-hidden="true" className="flex size-full flex-col gap-1.5 bg-white p-[14%] text-[0]">
-			<span className="h-1.5 w-2/5 rounded-full bg-[#c9c9c9]" />
-			<span className="mb-3 h-1 w-3/5 rounded-full bg-[#e2e2e2]" />
-			<span className="h-1 w-1/3 rounded-full bg-[#d4d4d4]" />
+			<span className="h-1.5 w-2/5 rounded-sm bg-[#c9c9c9]" />
+			<span className="mb-3 h-1 w-3/5 rounded-sm bg-[#e2e2e2]" />
+			<span className="h-1 w-1/3 rounded-sm bg-[#d4d4d4]" />
 			{Array.from({ length: 7 }, (_, index) => (
-				<span key={index} className={cn("h-1 rounded-full bg-[#e6e6e6]", index % 3 === 2 ? "w-4/5" : "w-full")} />
+				<span key={index} className={cn("h-1 rounded-sm bg-[#e6e6e6]", index % 3 === 2 ? "w-4/5" : "w-full")} />
 			))}
-			<span className="mt-2 h-1 w-1/4 rounded-full bg-[#d4d4d4]" />
+			<span className="mt-2 h-1 w-1/4 rounded-sm bg-[#d4d4d4]" />
 			<span className="sr-only">{name}</span>
 		</div>
 	);
@@ -175,7 +176,7 @@ export function DocumentCard({
 						label={document.name}
 						onSelect={selecting && onSelectedChange ? () => onSelectedChange(!selected) : undefined}
 						className={cn(
-							"relative block aspect-page overflow-hidden rounded-[6px] shadow-[0_0_0_1px_var(--line),var(--shadow-1)] transition-[translate,scale,box-shadow] duration-quick ease-enter hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_var(--line),var(--shadow-2)] active:scale-[0.98]",
+							"relative block aspect-page overflow-hidden rounded-md shadow-[0_0_0_1px_var(--line),var(--shadow-1)] transition-[translate,scale,box-shadow] duration-quick ease-enter hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_var(--line),var(--shadow-2)] active:scale-[0.98]",
 							(isNew || selected) &&
 								"shadow-[0_0_0_2px_var(--accent),var(--shadow-1)] hover:shadow-[0_0_0_2px_var(--accent),var(--shadow-2)] starting:shadow-[0_0_0_2px_transparent,var(--shadow-1)]",
 							document.trashedAt && "pointer-events-none",
@@ -320,7 +321,7 @@ export function DocumentRow({
 				<td className="truncate px-2 text-sm text-ink-2 max-sm:hidden">{document.application?.company ?? "—"}</td>
 				<td className="px-2 text-sm whitespace-nowrap text-ink-3">
 					{document.trashedAt ? (
-						<Trans>{daysLeftInTrash(document.trashedAt)} days left</Trans>
+						<Plural value={daysLeftInTrash(document.trashedAt)} one="# day left" other="# days left" />
 					) : (
 						formatRelativeTime(document.updatedAt, i18n.locale)
 					)}

@@ -86,7 +86,9 @@ export async function resolveAuthenticationFromRequestHeaders(headers: Headers):
 		headers.has("cookie") &&
 		((origin && !TRUSTED_ORIGINS.includes(origin)) || headers.get("sec-fetch-site") === "cross-site")
 	) {
-		throw new ORPCError("FORBIDDEN", { message: "Cross-origin session requests are not allowed." });
+		throw new ORPCError("FORBIDDEN", {
+			message: "This request came from another site. Open Reactive Resume directly and try again.",
+		});
 	}
 	// Do not let Better Auth turn an API key into an unrestricted synthetic session.
 	const sessionHeaders = new Headers(headers);
@@ -145,7 +147,9 @@ export const protectedProcedure = publicProcedure
 		const permission = requiredPermission(procedure["~orpc"].route);
 		if (!context.authentication?.permissions.includes(permission)) {
 			context.resHeaders?.set("WWW-Authenticate", `Bearer error="insufficient_scope", scope="api:${permission}"`);
-			throw new ORPCError("FORBIDDEN", { message: `This credential requires api:${permission} permission.` });
+			throw new ORPCError("FORBIDDEN", {
+				message: `This credential needs the api:${permission} permission. Use a credential that includes it.`,
+			});
 		}
 
 		return next({

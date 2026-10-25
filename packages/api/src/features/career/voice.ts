@@ -126,7 +126,7 @@ export const careerVoiceRouter = {
 				return { id: row.id, text };
 			} catch {
 				throw new ORPCError("BAD_GATEWAY", {
-					message: "Transcription failed. Your recording remains in this browser; retry or type your answer.",
+					message: "Couldn't transcribe the recording. It's still on this device, so try again or type your answer.",
 				});
 			}
 		}),

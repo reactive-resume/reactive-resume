@@ -98,7 +98,7 @@ function getAgentSkills() {
 	return skills;
 }
 
-export function handleAgentSkillsIndex(options: { head?: boolean } = {}) {
+export function handleAgentSkillsIndex() {
 	const index = {
 		$schema: SCHEMA_URL,
 		skills: getAgentSkills().map(({ name, description, digest }) => ({
@@ -110,16 +110,16 @@ export function handleAgentSkillsIndex(options: { head?: boolean } = {}) {
 		})),
 	};
 
-	return new Response(options.head ? null : JSON.stringify(index), {
+	return new Response(JSON.stringify(index), {
 		headers: { "Content-Type": "application/json", "Cache-Control": cacheControl },
 	});
 }
 
-export function handleAgentSkillArchive(filename: string, options: { head?: boolean } = {}) {
+export function handleAgentSkillArchive(filename: string) {
 	const skill = getAgentSkills().find(({ name }) => `${name}.tar.gz` === filename);
 	if (!skill) return new Response("Not Found", { status: 404, headers: { "Cache-Control": "no-store" } });
 
-	return new Response(options.head ? null : new Uint8Array(skill.archive), {
+	return new Response(new Uint8Array(skill.archive), {
 		headers: {
 			"Content-Type": "application/gzip",
 			"Content-Length": String(skill.archive.length),

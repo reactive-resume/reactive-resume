@@ -12,7 +12,7 @@ export function MobileTabIndicator() {
 			aria-hidden="true"
 			layoutId="mobile-tab-indicator"
 			transition={TAB_SPRING}
-			className="absolute inset-x-0 -top-px mx-auto h-0.5 w-8 rounded-full bg-accent"
+			className="absolute inset-x-0 -top-px mx-auto h-0.5 w-8 rounded-sm bg-accent"
 		/>
 	);
 }

@@ -5,6 +5,7 @@ import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
 	AccessibilityInfo,
+	I18nManager,
 	Modal,
 	Platform,
 	Pressable,
@@ -13,7 +14,18 @@ import {
 	useWindowDimensions,
 	View,
 } from "react-native";
-import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from "react-native-reanimated";
+import Animated, {
+	cancelAnimation,
+	Easing,
+	FadeIn,
+	FadeInDown,
+	FadeOut,
+	FadeOutDown,
+	useAnimatedStyle,
+	useSharedValue,
+	withTiming,
+} from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import { Button } from "./button";
 import { haptics, useIsWide, useReducedMotion } from "./motion";
 import { useWindowSafeAreaInsets } from "./safe-area";
@@ -162,7 +174,7 @@ export function Sheet({
 			maxContentWidth={size.formSheet}
 			maxContentHeight={Math.round((height - insets.top) * 0.9)}
 			backgroundColor={colors.raised}
-			cornerRadius={wide ? radius.r2xl : android ? radius.rSheetA : radius.r3xl}
+			cornerRadius={radius.rLg}
 			grabber={!wide}
 			accessibilityOptions={title ? { paneTitle: title } : {}}
 			scrollable
@@ -272,7 +284,7 @@ export function EditorSheet({
 				open={confirm && !pending}
 				title={t`Discard changes?`}
 				message={t`You have unsaved changes.`}
-				confirmLabel={t`Discard`}
+				confirmLabel={t`Discard changes`}
 				cancelLabel={t`Keep editing`}
 				destructive
 				onConfirm={() => {
@@ -293,6 +305,8 @@ export type ConfirmDialogProps = {
 	cancelLabel?: string | undefined;
 	/** Styles the confirm button as destructive. */
 	destructive?: boolean | undefined;
+	/** The confirm button must be held, for actions that can't be undone. */
+	hold?: boolean | undefined;
 	onConfirm: () => void;
 	onCancel: () => void;
 };
@@ -306,15 +320,41 @@ type DialogActionProps = {
 	fill?: boolean;
 	/** iOS: a hairline before the button; `stacked` puts it above instead of at the start. */
 	separator?: "start" | "top" | undefined;
+	/** Acts only after a HOLD_MS hold, while a fill rises behind the label. */
+	hold?: boolean | undefined;
 };
 
-function DialogAction({ label, onPress, color, bold, fill, separator }: DialogActionProps) {
-	const { colors, radius, size, space } = useTheme();
+const HOLD_MS = 1200;
+
+function DialogAction({ label, onPress, color, bold, fill, separator, hold }: DialogActionProps) {
+	const { t } = useLingui();
+	const { colors, motion, radius, size, space } = useTheme();
+	const progress = useSharedValue(0);
+	const fillStyle = useAnimatedStyle(() => ({ transform: [{ scaleX: progress.get() }] }));
+
+	const startHold = () => {
+		if (!hold) return;
+		haptics.light();
+		progress.set(
+			withTiming(1, { duration: HOLD_MS, easing: Easing.linear }, (finished) => {
+				if (finished) scheduleOnRN(onPress);
+			}),
+		);
+	};
+	const endHold = () => {
+		if (!hold) return;
+		cancelAnimation(progress);
+		progress.set(withTiming(0, { duration: motion.d1 }));
+	};
 
 	return (
 		<Pressable
 			accessibilityRole="button"
-			onPress={onPress}
+			accessibilityHint={hold ? t`Press and hold` : undefined}
+			// A screen reader activates with a tap, and the dialog has already asked.
+			onPress={hold ? () => screenReader && onPress() : onPress}
+			onPressIn={startHold}
+			onPressOut={endHold}
 			android_ripple={{ color: colors.press }}
 			style={({ pressed }) =>
 				android
@@ -337,6 +377,24 @@ function DialogAction({ label, onPress, color, bold, fill, separator }: DialogAc
 						}
 			}
 		>
+			{hold ? (
+				<Animated.View
+					pointerEvents="none"
+					style={[
+						{
+							position: "absolute",
+							top: 0,
+							bottom: 0,
+							start: 0,
+							end: 0,
+							backgroundColor: colors[color],
+							opacity: 0.16,
+							transformOrigin: I18nManager.isRTL ? "right" : "left",
+						},
+						fillStyle,
+					]}
+				/>
+			) : null}
 			<Text variant={android ? "label" : "title"} weight={android || bold ? 600 : 400} color={color} align="center">
 				{label}
 			</Text>
@@ -355,6 +413,7 @@ export function ConfirmDialog({
 	confirmLabel,
 	cancelLabel,
 	destructive,
+	hold,
 	onConfirm,
 	onCancel,
 }: ConfirmDialogProps) {
@@ -369,7 +428,6 @@ export function ConfirmDialog({
 		if (destructive) haptics.warning();
 		onConfirm();
 	};
-
 	return (
 		<Modal
 			visible={open}
@@ -390,7 +448,7 @@ export function ConfirmDialog({
 					style={{
 						width: Math.min(alertWidth, width - space.s10 * 2),
 						maxHeight: height - space.s12 * 2,
-						borderRadius: android ? radius.rSheetA : radius.r2xl,
+						borderRadius: radius.rLg,
 						backgroundColor: colors.raised,
 						boxShadow: shadows.e3.boxShadow,
 						overflow: "hidden",
@@ -430,7 +488,7 @@ export function ConfirmDialog({
 							}}
 						>
 							<DialogAction label={cancel} onPress={onCancel} color="accentText" />
-							<DialogAction label={confirmLabel} onPress={confirm} color={confirmColor} />
+							<DialogAction label={confirmLabel} onPress={confirm} color={confirmColor} hold={hold} />
 						</View>
 					) : (
 						<View
@@ -442,7 +500,7 @@ export function ConfirmDialog({
 						>
 							{stacked ? (
 								<>
-									<DialogAction label={confirmLabel} onPress={confirm} color={confirmColor} bold />
+									<DialogAction label={confirmLabel} onPress={confirm} color={confirmColor} bold hold={hold} />
 									<DialogAction label={cancel} onPress={onCancel} color="accentText" separator="top" />
 								</>
 							) : (
@@ -455,6 +513,7 @@ export function ConfirmDialog({
 										bold
 										fill
 										separator="start"
+										hold={hold}
 									/>
 								</>
 							)}
@@ -476,7 +535,7 @@ export type ToastOptions = {
 	duration?: number | undefined;
 };
 
-type ActiveToast = ToastOptions & { id: number };
+type ActiveToast = ToastOptions & { id: number; lifetime: number };
 
 let toasts: ActiveToast[] = [];
 let nextToastId = 1;
@@ -512,9 +571,9 @@ export function showToast(options: ToastOptions): number {
 	const hasAction = !!options.action || !!options.undo;
 	// The new toast replaces the current one, and its timer with it.
 	for (const toast of toasts) clearToastTimer(toast.id);
-	emitToasts([{ ...options, id }]);
-	AccessibilityInfo.announceForAccessibility(options.message);
 	const duration = toastLifetime(options.duration ?? (hasAction ? 6000 : 4000));
+	emitToasts([{ ...options, id, lifetime: duration }]);
+	AccessibilityInfo.announceForAccessibility(options.message);
 	toastTimers.set(
 		id,
 		setTimeout(() => dismissToast(id), duration),
@@ -524,6 +583,38 @@ export function showToast(options: ToastOptions): number {
 
 /** The imperative toast API (alias of `showToast`). */
 export const toast = showToast;
+
+/** A toast with an action burns a thin fuse along its bottom edge for the time it has left. */
+function ToastFuse({ duration }: { duration: number }) {
+	const { colors, radius } = useTheme();
+	const left = useSharedValue(1);
+	const style = useAnimatedStyle(() => ({ transform: [{ scaleX: left.get() }] }));
+
+	useEffect(() => {
+		left.set(withTiming(0, { duration, easing: Easing.linear }));
+	}, [left, duration]);
+
+	// Inset by the corner radius so the fuse stays on the straight part of the edge.
+	const inset = android ? radius.rSm : radius.rLg;
+	return (
+		<Animated.View
+			pointerEvents="none"
+			style={[
+				{
+					position: "absolute",
+					bottom: 0,
+					start: inset,
+					end: inset,
+					height: 2,
+					backgroundColor: colors.bg,
+					opacity: 0.4,
+					transformOrigin: I18nManager.isRTL ? "right" : "left",
+				},
+				style,
+			]}
+		/>
+	);
+}
 
 /** Renders the active toast. Mounted once, in app/_layout.tsx. */
 export function Toaster() {
@@ -576,7 +667,7 @@ export function Toaster() {
 							maxWidth: size.formSheet,
 							paddingStart: space.s4,
 							paddingEnd: action ? space.s1 + space.s0 : space.s4,
-							borderRadius: android ? radius.rSm : radius.r2xl,
+							borderRadius: android ? radius.rSm : radius.rLg,
 							backgroundColor: colors.ink,
 							boxShadow: (wide ? shadows.e2 : shadows.e3).boxShadow,
 						}}
@@ -603,6 +694,7 @@ export function Toaster() {
 								</Text>
 							</Pressable>
 						) : null}
+						{action && !reduced ? <ToastFuse duration={item.lifetime} /> : null}
 					</Animated.View>
 				);
 			})}

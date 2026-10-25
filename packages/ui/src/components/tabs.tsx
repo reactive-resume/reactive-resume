@@ -23,7 +23,7 @@ const tabsListVariants = cva(
 	{
 		variants: {
 			variant: {
-				default: "rounded-[9px] bg-sunken p-[3px] text-ink-2 group-data-horizontal/tabs:h-9",
+				default: "rounded-lg bg-sunken p-[3px] text-ink-2 group-data-horizontal/tabs:h-9",
 				line: "gap-4 border-b border-line text-ink-2 group-data-horizontal/tabs:h-10",
 			},
 		},

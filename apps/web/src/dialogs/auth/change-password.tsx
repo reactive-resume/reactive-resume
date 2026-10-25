@@ -25,12 +25,18 @@ import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z
 	.object({
-		currentPassword: z.string().min(6).max(64),
-		newPassword: z.string().min(8).max(64),
+		currentPassword: z
+			.string()
+			.min(6, { error: () => t`Enter your current password.` })
+			.max(64, { error: () => t`Use 64 characters or fewer.` }),
+		newPassword: z
+			.string()
+			.min(8, { error: () => t`Use at least 8 characters.` })
+			.max(64, { error: () => t`Use 64 characters or fewer.` }),
 		revokeOtherSessions: z.boolean(),
 	})
 	.refine((data) => data.newPassword !== data.currentPassword, {
-		message: "New password cannot be the same as the current password.",
+		error: () => t`Choose a password that's different from your current one.`,
 		path: ["newPassword"],
 	});
 
@@ -48,7 +54,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 			onSubmit: formSchema,
 		},
 		onSubmit: async ({ value }) => {
-			const toastId = toast.add({ type: "loading", description: t`Updating your password...` });
+			const toastId = toast.add({ type: "loading", description: t`Changing your password…` });
 
 			const { error } = await authClient.changePassword({
 				currentPassword: value.currentPassword,
@@ -63,7 +69,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 						error,
 						t({
 							comment: "Fallback toast when changing account password fails",
-							message: "Failed to update your password. Please try again.",
+							message: "Couldn't change your password. Check your current password and try again.",
 						}),
 					),
 					id: toastId,
@@ -71,7 +77,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 				return;
 			}
 
-			toast.add({ type: "success", description: t`Your password has been updated.`, id: toastId });
+			toast.add({ type: "success", description: t`Password changed`, id: toastId });
 			void queryClient.invalidateQueries({ queryKey: ["auth", "accounts"] });
 			closeDialog();
 		},
@@ -82,14 +88,14 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 	useFormBlocker(form);
 
 	return (
-		<DialogContent>
+		<DialogContent closeLabel={t`Close`}>
 			<DialogHeader>
 				<DialogTitle className="flex items-center gap-x-2">
 					<Icon name="password" size={16} />
-					<Trans>Update your password</Trans>
+					<Trans>Change your password</Trans>
 				</DialogTitle>
 				<DialogDescription>
-					<Trans>Enter your current password and a new password to update your account.</Trans>
+					<Trans>Enter your current password, then choose a new one.</Trans>
 				</DialogDescription>
 			</DialogHeader>
 
@@ -105,7 +111,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 					{(field) => (
 						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
 							<FormLabel>
-								<Trans>Current Password</Trans>
+								<Trans>Current password</Trans>
 							</FormLabel>
 							<FormControl
 								render={
@@ -129,7 +135,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 					{(field) => (
 						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
 							<FormLabel>
-								<Trans>New Password</Trans>
+								<Trans>New password</Trans>
 							</FormLabel>
 							<FormControl
 								render={
@@ -156,7 +162,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 								render={<Checkbox name={field.name} checked={field.state.value} onCheckedChange={field.handleChange} />}
 							/>
 							<FormLabel>
-								<Trans>Sign out from all other devices</Trans>
+								<Trans>Sign out of all other devices</Trans>
 							</FormLabel>
 						</FormItem>
 					)}
@@ -164,7 +170,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 
 				<DialogFooter>
 					<Button type="submit" disabled={isSubmitting}>
-						<Trans comment="Primary action button to submit changed password">Update Password</Trans>
+						<Trans comment="Primary action button to submit changed password">Change password</Trans>
 					</Button>
 				</DialogFooter>
 			</form>

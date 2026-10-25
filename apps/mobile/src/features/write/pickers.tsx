@@ -177,7 +177,7 @@ export function ColorPickerSheet({ open, title, value, allowDefault, onClose, on
 						style={{
 							width: size.hit,
 							height: size.hit,
-							borderRadius: radius.rPill,
+							borderRadius: radius.rLg,
 							borderWidth: !value ? 3 : 1,
 							borderColor: !value ? colors.accent : colors.line2,
 							alignItems: "center",
@@ -197,7 +197,7 @@ export function ColorPickerSheet({ open, title, value, allowDefault, onClose, on
 						style={{
 							width: size.hit,
 							height: size.hit,
-							borderRadius: radius.rPill,
+							borderRadius: radius.rLg,
 							borderWidth: value === color ? 3 : 1,
 							borderColor: value === color ? colors.accent : colors.line2,
 							backgroundColor: color,
@@ -213,7 +213,7 @@ export function ColorPickerSheet({ open, title, value, allowDefault, onClose, on
 					onChangeText={setCustom}
 					autoCapitalize="none"
 					autoCorrect={false}
-					error={custom.trim() && !valid ? t`Enter a hex colour like #1a1a1a, or rgba(…).` : undefined}
+					error={custom.trim() && !valid ? t`Enter a hex color like #1a1a1a, or rgba(…).` : undefined}
 				/>
 				<Button label={t`Done`} disabled={!valid} onPress={() => onChange(custom.trim())} />
 			</View>
@@ -238,7 +238,7 @@ export function ColorRow({ label, value, disabled, onPress }: ColorRowProps) {
 					style={{
 						width: space.s6,
 						height: space.s6,
-						borderRadius: radius.rPill,
+						borderRadius: radius.rLg,
 						borderWidth: 1,
 						borderColor: colors.line2,
 						backgroundColor: value || colors.ink,

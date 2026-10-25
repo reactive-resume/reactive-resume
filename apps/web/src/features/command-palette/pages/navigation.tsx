@@ -60,12 +60,12 @@ export function NavigationCommandGroup() {
 				</CommandItem>
 
 				<CommandItem
-					keywords={[t`ATS Checker`, t`Check a PDF`]}
+					keywords={[t`ATS checker`, t`Check a PDF`]}
 					value="navigation.ats-checker"
 					onSelect={() => onNavigate("/ats-checker")}
 				>
 					<Icon name="seal-check" size={16} />
-					<Trans>ATS Checker</Trans>
+					<Trans>ATS checker</Trans>
 				</CommandItem>
 
 				<CommandItem
@@ -80,7 +80,7 @@ export function NavigationCommandGroup() {
 
 				<CommandItem
 					disabled={!session}
-					keywords={[t`New Application`, t`Add application`, t`Job`]}
+					keywords={[t`New application`, t`Add application`, t`Job`]}
 					value="navigation.applications.new"
 					onSelect={async () => {
 						await navigate({ to: "/dashboard/applications", search: { create: true } });
@@ -88,7 +88,7 @@ export function NavigationCommandGroup() {
 					}}
 				>
 					<Icon name="plus" size={16} />
-					<Trans>New Application</Trans>
+					<Trans>New application</Trans>
 				</CommandItem>
 
 				<CommandItem
@@ -110,8 +110,8 @@ export function NavigationCommandGroup() {
 						t`Password`,
 						t`Two-step verification`,
 						t`Passkeys`,
-						t`Export Data`,
-						t`Delete Account`,
+						t`Export data`,
+						t`Delete account`,
 					]}
 					value="navigation.settings.account"
 					onSelect={() => onNavigate("/dashboard/settings/account")}
@@ -130,7 +130,7 @@ export function NavigationCommandGroup() {
 				</CommandItem>
 
 				<CommandItem
-					keywords={[t`AI & developer`, t`AI providers`, t`API Keys`, t`MCP`, t`Integrations`]}
+					keywords={[t`AI & developer`, t`AI providers`, t`API keys`, t`MCP`, t`Integrations`]}
 					value="navigation.settings.ai"
 					onSelect={() => onNavigate("/dashboard/settings/ai")}
 				>

@@ -93,6 +93,5 @@ describe("handleApiCatalog", () => {
 			"https://rxresu.me/mcp",
 		]);
 		expect(catalog.linkset[0]["service-desc"][0].href).toBe("https://rxresu.me/openapi.json");
-		expect(await handleApiCatalog({ head: true }).text()).toBe("");
 	});
 });

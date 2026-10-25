@@ -12,6 +12,7 @@ import { localeSchema } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { prefersReducedMotion, SCENE, useLanding } from "./scroll";
 import { CtaLink, Doodle, labelClass } from "./ui";
+import { RollingNumber } from "@/components/ui/rolling-number";
 import { orpc } from "@/libs/orpc/client";
 
 const crowdinUrl = "https://crowdin.com/project/reactive-resume";
@@ -20,49 +21,6 @@ const githubUrl = "https://github.com/reactive-resume/reactive-resume";
 const statisticsStaleTime = 6 * 60 * 60 * 1000;
 // A fresh self-hosted install has a handful of users; a total that small reads as a joke, so it isn't shown.
 const smallestTotalShown = 100;
-
-type RollingNumberProps = { value: number; roll: boolean; delay: number };
-
-/** A total whose digits roll up into place, one column per digit, in the locale's own digits. */
-function RollingNumber({ value, roll, delay }: RollingNumberProps) {
-	const { i18n } = useLingui();
-	const text = i18n.number(value);
-	const digits = Array.from({ length: 10 }, (_, digit) => i18n.number(digit));
-
-	return (
-		<>
-			<span className="sr-only">{text}</span>
-			<span aria-hidden="true" dir="ltr" className="inline-flex">
-				{Array.from(text).map((character, index) => {
-					const digit = digits.indexOf(character);
-					return (
-						<span key={index} className="inline-block h-[1.15em] overflow-hidden">
-							<span
-								className="flex translate-y-[calc(var(--offset)*1.15em)] flex-col transition-transform duration-[2s] ease-[cubic-bezier(.2,.8,.2,1)] starting:translate-y-0"
-								style={
-									{
-										"--offset": roll ? -Math.max(0, digit) : 0,
-										transitionDelay: `${delay + index * 80}ms`,
-									} as CSSProperties
-								}
-							>
-								{digit === -1 ? (
-									<span className="h-[1.15em] leading-[1.15]">{character}</span>
-								) : (
-									digits.map((glyph) => (
-										<span key={glyph} className="h-[1.15em] leading-[1.15]">
-											{glyph}
-										</span>
-									))
-								)}
-							</span>
-						</span>
-					);
-				})}
-			</span>
-		</>
-	);
-}
 
 /** 08 Numbers: the live community totals, side by side, each figure over what it counts. */
 export function Numbers() {
@@ -109,7 +67,7 @@ export function Numbers() {
 									<span className="sr-only">{t`Loading the total`}</span>
 								</span>
 							) : (
-								<RollingNumber value={row.value} roll={inView} delay={index * 150} />
+								<RollingNumber value={row.value} roll={inView} delay={index * 150} duration="2s" stagger={80} />
 							)}
 						</dd>
 					</div>
@@ -200,17 +158,18 @@ export function Languages() {
 					type="button"
 					onClick={() => setPaused((value) => !value)}
 					aria-label={paused ? t`Play the list of languages` : t`Pause the list of languages`}
-					className="grid size-6 place-items-center rounded-full text-ink-3 transition-colors hover:bg-hover hover:text-ink motion-reduce:hidden"
+					className="grid size-6 place-items-center rounded-sm text-ink-3 transition-colors hover:bg-hover hover:text-ink motion-reduce:hidden"
 				>
 					<Icon name={paused ? "play" : "pause"} size={16} filled />
 				</button>
 			</div>
-			<p className="mt-3 max-w-[30em] font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-pretty text-ink-2">
+			<p className="mt-3 flex max-w-[30em] flex-col font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-pretty text-ink-2">
+				<span>{t`Translated into ${languageCount} languages.`}</span>{" "}
 				<a
 					href={crowdinUrl}
 					className="text-accent-text italic underline underline-offset-[3px] transition-colors hover:text-accent-hover"
 				>
-					{t`Translated into ${languageCount} languages. Help translate it into yours.`}
+					{t`Help translate it into yours.`}
 				</a>
 			</p>
 		</section>
@@ -218,7 +177,7 @@ export function Languages() {
 }
 
 const pillLinkClass =
-	"flex h-10 items-center gap-2 rounded-full border border-line-2 px-3.5 font-medium font-ui text-ink text-sm transition-colors hover:bg-hover";
+	"flex h-10 items-center gap-2 rounded-sm border border-line-2 px-3.5 font-medium font-ui text-ink text-sm transition-colors hover:bg-hover";
 const receiptButtonClass =
 	"flex h-[42px] items-center justify-between rounded-md px-3.5 font-semibold text-sm transition-colors";
 
@@ -303,9 +262,9 @@ export function Support() {
 			<div className="flex w-[min(100%,400px)] flex-col items-center justify-self-center">
 				<div
 					aria-hidden="true"
-					className="relative z-2 h-[18px] w-[calc(100%+36px)] rounded-[9px] bg-ink shadow-[inset_0_-4px_0_oklch(0_0_0/.35),0_6px_14px_-6px_oklch(0_0_0/.4)]"
+					className="relative z-2 h-[18px] w-[calc(100%+36px)] rounded-lg bg-ink shadow-[inset_0_-4px_0_oklch(0_0_0/.35),0_6px_14px_-6px_oklch(0_0_0/.4)]"
 				>
-					<span className="absolute inset-x-[18px] top-2 h-[3px] rounded-[2px] bg-[oklch(0_0_0/.6)]" />
+					<span className="absolute inset-x-[18px] top-2 h-[3px] rounded-sm bg-[oklch(0_0_0/.6)]" />
 				</div>
 				<div className="-mx-3 -mt-[9px] box-content w-full overflow-hidden px-3 pb-10">
 					<div className="[transform:translateY(calc((1-clamp(0,var(--p)*1.7-.15,1))*-100%))] drop-shadow-[0_18px_24px_oklch(0.2_0.01_95/.22)] [transition:transform_.4s_linear]">
@@ -313,7 +272,7 @@ export function Support() {
 							<div className="mb-4 flex flex-col gap-0.5 text-center">
 								<b className="text-[18px] leading-[1.1] font-bold tracking-[-.01em]">REACTIVE RESUME</b>
 								<span className="text-[oklch(0.5_0.01_95)]">{t`A free and open-source resume builder`}</span>
-								<span className="text-[oklch(0.5_0.01_95)] uppercase">
+								<span className="text-[oklch(0.5_0.01_95)]">
 									{i18n.date(receiptDate, { day: "2-digit", month: "short", year: "numeric" })}
 								</span>
 							</div>
@@ -326,7 +285,7 @@ export function Support() {
 								))}
 							</dl>
 							<p className="mt-2.5 flex justify-between border-t-[1.5px] border-dashed border-[oklch(0.7_0.01_95)] pt-2.5 text-base font-bold">
-								<span className="uppercase">{t`Total`}</span>
+								<span className="">{t`Total`}</span>
 								<span>{i18n.number(0, { style: "currency", currency: "USD" })}</span>
 							</p>
 							<p className="mt-2.5 border-t-[1.5px] border-dashed border-[oklch(0.7_0.01_95)] pt-3 text-[oklch(0.4_0.01_95)]">
@@ -383,21 +342,21 @@ export function Closing() {
 		>
 			<div
 				aria-hidden="true"
-				className="mb-4 w-[min(100%,560px)] rounded-[14px] border border-dashed border-line-2 px-3.5 py-3"
+				className="mb-4 w-[min(100%,560px)] rounded-lg border border-dashed border-line-2 px-3.5 py-3"
 			>
-				<div className="font-martian grid grid-cols-4 gap-2 text-[10px] leading-none font-medium tracking-[.06em] text-ink-3 uppercase">
+				<div className="font-martian grid grid-cols-4 gap-2 text-xs leading-none font-medium text-ink-3">
 					{stages.map((stage) => (
 						<span key={stage.label} className="flex min-w-0 items-center gap-[5px]">
-							<span className={cn("size-[7px] shrink-0 rounded-full", stage.dot)} />
+							<span className={cn("size-[7px] shrink-0 rounded-sm", stage.dot)} />
 							{stage.label}
 						</span>
 					))}
 				</div>
 				<div className="mt-2.5 grid grid-cols-4 gap-2 text-start">
-					<span className="flex h-11 items-center justify-center rounded-[9px] border-[1.5px] border-dashed border-accent font-display text-[15px] text-accent-text italic">
+					<span className="flex h-11 items-center justify-center rounded-lg border-[1.5px] border-dashed border-accent font-display text-[15px] text-accent-text italic">
 						{t`Yours`}
 					</span>
-					<span className="col-start-3 flex h-11 min-w-0 flex-col justify-center rounded-[9px] border border-line bg-raised px-2 font-ui text-[11.5px] leading-[1.2] font-semibold text-ink shadow-e2">
+					<span className="col-start-3 flex h-11 min-w-0 flex-col justify-center rounded-lg border border-line bg-raised px-2 font-ui text-[11.5px] leading-[1.2] font-semibold text-ink shadow-e2">
 						{t`Fieldnote`}
 						<span className="truncate text-[10.5px] font-normal text-ink-3">{t`Interview done`}</span>
 					</span>

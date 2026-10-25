@@ -2,7 +2,7 @@
 // the Page tab (ported from apps/web/src/features/resume/editor/proposals/proposals.ts).
 import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { produce } from "immer";
 import { useMemo } from "react";
 import { create } from "zustand";
@@ -70,7 +70,7 @@ export function acceptResumeProposals(proposals: readonly Proposal[]) {
 	if (accepted === store.data) return;
 	let eligible = true;
 	const toastId = showToast({
-		message: proposals.length === 1 ? t`Edit applied` : t`${proposals.length} edits applied`,
+		message: plural(proposals.length, { 1: "Edit applied", other: "# edits applied" }),
 		action: {
 			label: t`Undo`,
 			onPress: () => {
@@ -110,8 +110,12 @@ export const useAssistantProposals = create<{ resumeId: string | null; proposals
 	proposals: [],
 }));
 
-export const publishProposals = (resumeId: string, proposals: readonly Proposal[]) =>
+/** Skips an unchanged list: a streaming reply rebuilds it on every chunk, and Page re-marks on each publish. */
+export const publishProposals = (resumeId: string, proposals: readonly Proposal[]) => {
+	const current = useAssistantProposals.getState();
+	if (current.resumeId === resumeId && JSON.stringify(current.proposals) === JSON.stringify(proposals)) return;
 	useAssistantProposals.setState({ resumeId, proposals });
+};
 
 /** The proposals still waiting on the user (not accepted, rejected or out of date). */
 export const pendingProposals = (data: ResumeData, proposals: readonly Proposal[]) =>

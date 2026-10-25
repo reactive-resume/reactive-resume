@@ -3,7 +3,7 @@ import type { Application } from "../types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { useState } from "react";
 import { INTERVIEW_KINDS } from "@reactive-resume/schema/applications/data";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -89,13 +89,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 					<div className="flex items-baseline gap-2">
 						<h2 className="text-lg font-semibold capitalize">{monthFormat.format(month)}</h2>
 						<span className="text-sm text-ink-3">
-							{monthCount === 0 ? (
-								<Trans>No interviews</Trans>
-							) : monthCount === 1 ? (
-								<Trans>1 interview</Trans>
-							) : (
-								<Trans>{monthCount} interviews</Trans>
-							)}
+							<Plural value={monthCount} _0="No interviews" one="# interview" other="# interviews" />
 						</span>
 					</div>
 
@@ -126,7 +120,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 						{days.slice(0, 7).map((day) => (
 							<div
 								key={`weekday-${day.getDay()}`}
-								className="border-b border-line p-2 text-center text-[11px] font-medium tracking-wide text-ink-3 uppercase"
+								className="border-b border-line p-2 text-center text-xs font-medium text-ink-3"
 							>
 								{weekdayFormat.format(day)}
 							</div>
@@ -172,7 +166,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 										</button>
 										<span
 											className={cn(
-												"flex size-6 items-center justify-center rounded-full text-xs",
+												"flex size-6 items-center justify-center rounded-sm text-xs",
 												!inMonth && "text-ink-3",
 												isToday && "bg-accent font-semibold text-on-accent",
 											)}
@@ -222,7 +216,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 				<div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-3">
 					{INTERVIEW_KINDS.map((kind) => (
 						<span key={kind.value} className="flex items-center gap-1.5">
-							<span className="size-2 rounded-full" style={{ background: kind.color }} />
+							<span className="size-2 rounded-sm" style={{ background: kind.color }} />
 							{kind.label}
 						</span>
 					))}
@@ -236,7 +230,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 
 				{upcoming.length === 0 ? (
 					<div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-line px-4 py-8 text-center">
-						<div className="flex size-10 items-center justify-center rounded-full bg-sunken">
+						<div className="flex size-10 items-center justify-center rounded-sm bg-sunken">
 							<Icon name="calendar-blank" size={20} className="text-ink-3" />
 						</div>
 						<div className="space-y-1">
@@ -342,7 +336,7 @@ function InterviewChip({ item, time, onOpen }: InterviewChipProps) {
 			style={{ borderInlineStartColor: kind?.color }}
 			onClick={onOpen}
 		>
-			<span className="size-2 shrink-0 rounded-full sm:hidden" style={{ background: kind?.color }} />
+			<span className="size-2 shrink-0 rounded-sm sm:hidden" style={{ background: kind?.color }} />
 			<span className="flex min-w-0 items-baseline gap-1.5 max-sm:hidden">
 				<span className="shrink-0 text-ink-3 tabular-nums">{time}</span>
 				<span className="truncate font-medium">{item.application.company}</span>

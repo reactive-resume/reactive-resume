@@ -103,3 +103,14 @@ export function safeMcpError(error: unknown, operation: string): McpError {
 		},
 	);
 }
+
+type DynamicClient = { [key: string]: DynamicClient | ((input: unknown) => Promise<unknown>) };
+export function getClientCall(client: object, path: string) {
+	let value: DynamicClient | ((input: unknown) => Promise<unknown>) = client as DynamicClient;
+	for (const part of path.split(".")) {
+		if (typeof value === "function" || !value[part]) throw new Error(`Missing MCP client procedure: ${path}`);
+		value = value[part];
+	}
+	if (typeof value !== "function") throw new Error(`Invalid MCP client procedure: ${path}`);
+	return value;
+}

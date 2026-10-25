@@ -1,5 +1,4 @@
 import type { MultiComboboxProps, SingleComboboxProps } from "@/components/ui/combobox";
-import { useMemo } from "react";
 import { fontList, getFont, getFontDisplayName, getFontSearchKeywords, sortFontWeights } from "@reactive-resume/fonts";
 import { cn } from "@reactive-resume/utils/style";
 import { FontDisplay } from "./font-display";
@@ -39,24 +38,13 @@ export function FontWeightCombobox({
 	defaultValue,
 	...props
 }: FontWeightComboboxProps) {
-	const options = useMemo(() => {
-		const fontData = getFont(fontFamily);
-
-		let weights: string[] = [];
-
-		if (fontData && Array.isArray(fontData.weights) && fontData.weights.length > 0) {
-			weights = sortFontWeights(fontData.weights);
-		} else {
-			// Fallback to all possible weights
-			weights = ["100", "200", "300", "400", "500", "600", "700", "800", "900"];
-		}
-
-		return weights.map((variant: string) => ({
-			value: variant,
-			label: variant,
-			keywords: [variant],
-		}));
-	}, [fontFamily]);
+	const fontData = getFont(fontFamily);
+	// Fall back to every possible weight when the font lists none.
+	const weights =
+		fontData && Array.isArray(fontData.weights) && fontData.weights.length > 0
+			? sortFontWeights(fontData.weights)
+			: ["100", "200", "300", "400", "500", "600", "700", "800", "900"];
+	const options = weights.map((variant: string) => ({ value: variant, label: variant, keywords: [variant] }));
 
 	const sortedValue = value ? sortFontWeights(value).slice(single ? -1 : 0) : value;
 	const sortedDefaultValue = defaultValue ? sortFontWeights(defaultValue).slice(single ? -1 : 0) : defaultValue;

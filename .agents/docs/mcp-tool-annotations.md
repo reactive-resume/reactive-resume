@@ -2,7 +2,7 @@
 
 Audit date: 2026-10-24. This is the reviewer justification for every registered tool, including API aliases and browser handoffs. Annotations describe the tool call itself and every supported input branch, including indirect cleanup and scheduled effects. The server uses the same metadata for SDK registration, `tools/list` and the public server card.
 
-All four hints are explicitly `true` or `false`; none is omitted or `null`. Adding an API tool requires a classification in `PARITY_ANNOTATIONS`. Regression tests check the complete inventory, these documented values, and SDK/server-card agreement.
+All four hints are explicitly `true` or `false`; none is omitted or `null`. Adding an API tool requires a classification in `PARITY_PROCEDURES`. Regression tests check the complete inventory, these documented values, and SDK/server-card agreement.
 
 ## Meaning of each hint
 

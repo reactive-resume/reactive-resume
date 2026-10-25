@@ -1,6 +1,6 @@
 import { t } from "@lingui/core/macro";
-import { Plural, Trans } from "@lingui/react/macro";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Trans } from "@lingui/react/macro";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useId, useState } from "react";
 import {
@@ -19,10 +19,10 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { SettingsRow, SettingsSection } from "../section";
 import { buildAccountZip } from "./export";
-import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { clearAccountData } from "@/libs/auth/clear-account-data";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
-import { client, orpc } from "@/libs/orpc/client";
+import { client } from "@/libs/orpc/client";
 
 const CONFIRMATION = "delete";
 
@@ -38,7 +38,10 @@ export function DataSection({ openDeletion = false }: DataSectionProps) {
 			downloadWithAnchor(new Blob([zip as BlobPart], { type: "application/zip" }), `reactive-resume-${date}.zip`);
 		},
 		onError: (error) =>
-			toast.add({ type: "error", description: getReadableErrorMessage(error, t`Couldn't export. Try again.`) }),
+			toast.add({
+				type: "error",
+				description: getReadableErrorMessage(error, t`Couldn't export your data. Try again.`),
+			}),
 	});
 
 	return (
@@ -77,30 +80,21 @@ function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogProps) {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const [typed, setTyped] = useState("");
-	const { data: counts } = useQuery({ ...orpc.documents.counts.queryOptions(), enabled: open });
-	const { data: applications } = useQuery({ ...applicationsListQueryOptions(), enabled: open });
-	const { data: keys } = useQuery({
-		queryKey: ["auth", "api-keys"],
-		queryFn: () => authClient.apiKey.list(),
-		select: ({ data }) => data?.apiKeys ?? [],
-		enabled: open,
-	});
 
 	const remove = useMutation({
 		mutationFn: () => client.auth.deleteAccount(),
 		onSuccess: async () => {
 			await authClient.signOut();
-			queryClient.clear();
+			clearAccountData(queryClient);
 			toast.add({ description: t`Your account was deleted.` });
 			void navigate({ to: "/" });
 		},
 		onError: (error) =>
-			toast.add({ type: "error", description: getReadableErrorMessage(error, t`Couldn't delete the account.`) }),
+			toast.add({
+				type: "error",
+				description: getReadableErrorMessage(error, t`Couldn't delete your account. Try again.`),
+			}),
 	});
-
-	const documents = (counts?.resume ?? 0) + (counts?.letter ?? 0) + (counts?.trash ?? 0);
-	const applicationCount = applications?.length ?? 0;
-	const keyCount = keys?.length ?? 0;
 
 	return (
 		<AlertDialog
@@ -115,22 +109,9 @@ function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogProps) {
 						<Trans>Delete your account?</Trans>
 					</AlertDialogTitle>
 					<AlertDialogDescription>
-						<Plural value={documents} one="# document" other="# documents" />,{" "}
-						<Plural value={applicationCount} one="# application" other="# applications" />,{" "}
-						<Plural value={keyCount} one="# API key" other="# API keys" />{" "}
-						<Trans>and every public link are removed permanently. This can't be undone.</Trans>{" "}
 						<Trans>
-							If you used Sign in with Apple and Reactive Resume is still listed in your Apple Account after deletion,
-							remove its access there too.
-						</Trans>{" "}
-						<a
-							href="https://support.apple.com/en-us/102571"
-							target="_blank"
-							rel="noopener noreferrer"
-							className="underline"
-						>
-							<Trans>Apple revocation instructions</Trans>
-						</a>
+							All your documents, applications, API keys and public links are deleted for good. This can't be undone.
+						</Trans>
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<div className="grid gap-1.5">
@@ -157,7 +138,7 @@ function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogProps) {
 						loading={remove.isPending}
 						onClick={() => remove.mutate()}
 					>
-						<Trans>Delete</Trans>
+						<Trans>Delete account</Trans>
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>

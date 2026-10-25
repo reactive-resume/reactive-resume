@@ -21,7 +21,7 @@ function RichText({ html }: RichTextProps) {
 	const runStyle = (run: Run): TextStyle => ({
 		...(run.bold ? { fontFamily: fonts.ui[700] } : {}),
 		...(run.italic ? { fontStyle: "italic" } : {}),
-		...(run.code ? { fontFamily: fonts.mono } : {}),
+		...(run.code ? { fontFamily: fonts.mono[400] } : {}),
 		textDecorationLine:
 			run.href || run.underline
 				? run.strike
@@ -119,7 +119,7 @@ export function ResumeReflow({ data }: ResumeReflowProps) {
 								alignItems: "center",
 								gap: space.s1,
 								paddingHorizontal: space.s3,
-								borderRadius: radius.rPill,
+								borderRadius: radius.rLg,
 								borderWidth: 1,
 								borderColor: colors.paperLine,
 								opacity: pressed ? 0.6 : 1,

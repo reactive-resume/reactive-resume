@@ -217,7 +217,7 @@ function EvidenceEditor({ requirement, onCancel, onSaved }: EvidenceEditorProps)
 			if (!fact) throw new Error("not saved");
 			onSaved(fact.id);
 		} catch (error) {
-			showToast({ message: workspaceError(error, t`Couldn't save that to Knowledge.`) });
+			showToast({ message: workspaceError(error, t`Couldn't save that to Knowledge. Try again.`) });
 		}
 	};
 

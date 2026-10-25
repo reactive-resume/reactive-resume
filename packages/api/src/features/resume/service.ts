@@ -14,19 +14,13 @@ import { applyResumePatches, ResumePatchError } from "@reactive-resume/resume/pa
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { generateId } from "@reactive-resume/utils/string";
 import { adoptEmbeddedLetters } from "../cover-letters/embedded";
-import { lockDocumentOwner } from "../documents/ownership";
+import { lockUser } from "../documents/ownership";
 import { getStorageService } from "../storage/service";
 import { grantResumeAccess, hasResumeAccess } from "./access";
-import {
-	assertCanView,
-	isOwner,
-	ownerIsNotBanned,
-	redactResumeForViewer,
-	shouldCountForStatistics,
-} from "./access-policy";
+import { assertCanView, isOwner, redactResumeForViewer, shouldCountForStatistics } from "./access-policy";
 import { publishResumeUpdated } from "./events";
 import { parseStoredResumeData, parseWritableResumeData } from "./resume-data-validation";
-import { checkSlug, findFreeSlug, matchesSlug, recordSlugChange, SLUG_PATTERN } from "./slugs";
+import { checkSlug, findFreeSlug, findResumeBySlug, recordSlugChange, SLUG_PATTERN } from "./slugs";
 import {
 	deleteVersion,
 	getVersion,
@@ -40,7 +34,7 @@ import { clientKeyFromHeaders, shouldCountView } from "./view-dedup";
 function resumeVersionConflict(updatedAt: Date) {
 	return new ORPCError("RESUME_VERSION_CONFLICT", {
 		status: 409,
-		message: "The resume changed after this patch was generated.",
+		message: "The resume changed after this patch was generated. Read the resume again and regenerate the patch.",
 		data: { updatedAt: updatedAt.toISOString() },
 	});
 }
@@ -94,6 +88,21 @@ const activeResumeWhere = (id: string, userId: string) => and(...activeResumeCon
 /** Matches an active, editable (unlocked and not in Trash) resume owned by the user. */
 const activeUnlockedResumeWhere = (id: string, userId: string) =>
 	and(...activeResumeConditions(id, userId), eq(schema.resume.isLocked, false));
+
+/** The fields a resume read or write returns to its owner. */
+const resumeColumns = {
+	id: schema.resume.id,
+	name: schema.resume.name,
+	slug: schema.resume.slug,
+	tags: schema.resume.tags,
+	data: schema.resume.data,
+	isPublic: schema.resume.isPublic,
+	isLocked: schema.resume.isLocked,
+	showDownloadButtons: schema.resume.showDownloadButtons,
+	createdAt: schema.resume.createdAt,
+	updatedAt: schema.resume.updatedAt,
+	hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
+};
 
 async function applyResumePatchTx(
 	client: DbOrTx,
@@ -156,19 +165,7 @@ async function applyResumePatchTx(
 		.update(schema.resume)
 		.set({ data: patchedData })
 		.where(activeUnlockedResumeWhere(input.id, input.userId))
-		.returning({
-			id: schema.resume.id,
-			name: schema.resume.name,
-			slug: schema.resume.slug,
-			tags: schema.resume.tags,
-			data: schema.resume.data,
-			isPublic: schema.resume.isPublic,
-			isLocked: schema.resume.isLocked,
-			showDownloadButtons: schema.resume.showDownloadButtons,
-			createdAt: schema.resume.createdAt,
-			updatedAt: schema.resume.updatedAt,
-			hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
-		});
+		.returning(resumeColumns);
 
 	if (!resume) {
 		if (input.expectedUpdatedAt) throw resumeVersionConflict(existing.updatedAt);
@@ -206,25 +203,12 @@ const statistics = {
 		trustedClient?: string;
 		currentUserId?: string;
 	}): Promise<boolean> => {
-		const [resume] = await db
-			.select({
-				id: schema.resume.id,
-				userId: schema.resume.userId,
-				isPublic: schema.resume.isPublic,
-				passwordHash: schema.resume.password,
-			})
-			.from(schema.resume)
-			.innerJoin(schema.user, eq(schema.resume.userId, schema.user.id))
-			.where(
-				and(
-					matchesSlug(input.slug),
-					eq(schema.user.username, input.username),
-					isNull(schema.resume.trashedAt),
-					ownerIsNotBanned(),
-				),
-			)
-			.orderBy(desc(sql`${schema.resume.slug} = ${input.slug}`))
-			.limit(1);
+		const resume = await findResumeBySlug(input, {
+			id: schema.resume.id,
+			userId: schema.resume.userId,
+			isPublic: schema.resume.isPublic,
+			passwordHash: schema.resume.password,
+		});
 
 		if (!resume) throw new ORPCError("NOT_FOUND");
 		const viewer = input.currentUserId ? { id: input.currentUserId } : null;
@@ -499,20 +483,7 @@ export const resumeService = {
 
 	getById: async (input: { id: string; userId: string }) => {
 		const [resume] = await db
-			.select({
-				id: schema.resume.id,
-				name: schema.resume.name,
-				slug: schema.resume.slug,
-				tags: schema.resume.tags,
-				data: schema.resume.data,
-				isPublic: schema.resume.isPublic,
-				isLocked: schema.resume.isLocked,
-				showDownloadButtons: schema.resume.showDownloadButtons,
-				createdAt: schema.resume.createdAt,
-				updatedAt: schema.resume.updatedAt,
-				hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
-				applicationId: schema.resume.applicationId,
-			})
+			.select({ ...resumeColumns, applicationId: schema.resume.applicationId })
 			.from(schema.resume)
 			// Read-only and owner-scoped, so resumes in Trash stay readable for their thumbnails; writes reject them.
 			.where(and(eq(schema.resume.id, input.id), eq(schema.resume.userId, input.userId)));
@@ -532,33 +503,19 @@ export const resumeService = {
 		requirePublic?: boolean;
 		expectedResumeId?: string;
 	}) => {
-		const [resume] = await db
-			.select({
-				id: schema.resume.id,
-				userId: schema.resume.userId,
-				name: schema.resume.name,
-				slug: schema.resume.slug,
-				tags: schema.resume.tags,
-				data: schema.resume.data,
-				isPublic: schema.resume.isPublic,
-				isLocked: schema.resume.isLocked,
-				showDownloadButtons: schema.resume.showDownloadButtons,
-				passwordHash: schema.resume.password,
-				hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
-			})
-			.from(schema.resume)
-			.innerJoin(schema.user, eq(schema.resume.userId, schema.user.id))
-			.where(
-				and(
-					matchesSlug(input.slug),
-					eq(schema.user.username, input.username),
-					isNull(schema.resume.trashedAt),
-					ownerIsNotBanned(),
-				),
-			)
-			// A resume's current slug wins over another's redirect (renames delete clashing redirects anyway).
-			.orderBy(desc(sql`${schema.resume.slug} = ${input.slug}`))
-			.limit(1);
+		const resume = await findResumeBySlug(input, {
+			id: schema.resume.id,
+			userId: schema.resume.userId,
+			name: schema.resume.name,
+			slug: schema.resume.slug,
+			tags: schema.resume.tags,
+			data: schema.resume.data,
+			isPublic: schema.resume.isPublic,
+			isLocked: schema.resume.isLocked,
+			showDownloadButtons: schema.resume.showDownloadButtons,
+			passwordHash: schema.resume.password,
+			hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
+		});
 
 		if (
 			!resume ||
@@ -649,8 +606,8 @@ export const resumeService = {
 				throw new ORPCError("RESUME_SLUG_ALREADY_EXISTS", { status: 400 });
 			}
 
-			console.error("Failed to create resume:", error);
-			throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Failed to create resume" });
+			console.error("Couldn't create the resume. Try again.:", error);
+			throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Couldn't create the resume. Try again." });
 		}
 	},
 
@@ -728,19 +685,7 @@ export const resumeService = {
 					.update(schema.resume)
 					.set(updateData)
 					.where(activeUnlockedResumeWhere(input.id, input.userId))
-					.returning({
-						id: schema.resume.id,
-						name: schema.resume.name,
-						slug: schema.resume.slug,
-						tags: schema.resume.tags,
-						data: schema.resume.data,
-						isPublic: schema.resume.isPublic,
-						isLocked: schema.resume.isLocked,
-						showDownloadButtons: schema.resume.showDownloadButtons,
-						createdAt: schema.resume.createdAt,
-						updatedAt: schema.resume.updatedAt,
-						hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
-					});
+					.returning(resumeColumns);
 
 				if (!updated) throw new ORPCError("NOT_FOUND");
 				return updated;
@@ -752,8 +697,8 @@ export const resumeService = {
 					throw new ORPCError("RESUME_SLUG_ALREADY_EXISTS", { status: 400 });
 				}
 
-				console.error("Failed to update resume:", error);
-				throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Failed to update resume" });
+				console.error("Couldn't update the resume. Try again.:", error);
+				throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Couldn't update the resume. Try again." });
 			});
 
 		// Data edits refresh this editing session's version (see saveSessionVersion).
@@ -815,22 +760,12 @@ export const resumeService = {
 		updateResumePassword({ ...input, password: await hash(input.password, 10) }),
 
 	verifyPassword: async (input: { slug: string; username: string; password: string; responseHeaders?: Headers }) => {
-		const [resume] = await db
-			.select({ id: schema.resume.id, password: schema.resume.password })
-			.from(schema.resume)
-			.innerJoin(schema.user, eq(schema.resume.userId, schema.user.id))
-			.where(
-				and(
-					isNotNull(schema.resume.password),
-					eq(schema.resume.isPublic, true),
-					matchesSlug(input.slug),
-					ownerIsNotBanned(),
-					eq(schema.user.username, input.username),
-					isNull(schema.resume.trashedAt),
-				),
-			)
-			.orderBy(desc(sql`${schema.resume.slug} = ${input.slug}`))
-			.limit(1);
+		const resume = await findResumeBySlug(
+			input,
+			{ id: schema.resume.id, password: schema.resume.password },
+			isNotNull(schema.resume.password),
+			eq(schema.resume.isPublic, true),
+		);
 
 		// A miss costs the same bcrypt work as a wrong password, so timing doesn't reveal which addresses exist.
 		const passwordHash = resume?.password ?? (await unusedPasswordHash());
@@ -857,7 +792,7 @@ export const resumeService = {
 			input.trashedBefore ? lt(schema.resume.trashedAt, input.trashedBefore) : undefined,
 		);
 		const deleted = await db.transaction(async (tx) => {
-			await lockDocumentOwner(tx, input.userId);
+			await lockUser(tx, input.userId);
 			const [resume] = await tx.select({ isLocked: schema.resume.isLocked }).from(schema.resume).where(target);
 
 			if (!resume) {

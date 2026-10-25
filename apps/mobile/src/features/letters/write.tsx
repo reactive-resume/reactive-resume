@@ -57,8 +57,8 @@ function Section({ title, aside, children }: SectionProps) {
 	return (
 		<View style={{ gap: space.s3, padding: space.s4, borderBottomWidth: 1, borderBottomColor: colors.line }}>
 			<View style={{ flexDirection: "row", alignItems: "center", gap: space.s3 }}>
-				<Text accessibilityRole="header" variant="micro" color="ink3" style={{ flex: 1 }}>
-					{title.toLocaleUpperCase()}
+				<Text accessibilityRole="header" variant="eyebrow" color="ink3" style={{ flex: 1 }}>
+					{title}
 				</Text>
 				{aside}
 			</View>
@@ -83,7 +83,7 @@ export function LetterWrite({ id }: { id: string }) {
 		return status === "error" ? (
 			<Banner
 				tone="danger"
-				message={t`Cover letter could not be loaded.`}
+				message={t`Couldn't load the cover letter.`}
 				action={{
 					label: t`Retry`,
 					onPress: () =>
@@ -173,7 +173,7 @@ function ForSection({ application, applications, disabled }: ForSectionProps) {
 						padding: space.s3,
 						borderWidth: 1,
 						borderColor: colors.line,
-						borderRadius: radius.rXl,
+						borderRadius: radius.rLg,
 					}}
 				>
 					<View
@@ -202,7 +202,7 @@ function ForSection({ application, applications, disabled }: ForSectionProps) {
 								style={{
 									width: space.s2 - space.s0,
 									height: space.s2 - space.s0,
-									borderRadius: radius.rPill,
+									borderRadius: radius.rLg,
 									backgroundColor: getStageColor(application.status, colors),
 								}}
 							/>
@@ -338,7 +338,8 @@ function FromSection({ letter, disabled }: { letter: LetterDocument; disabled: b
 	const { t } = useLingui();
 	const resumes = useResumes();
 	const resume = resumes.data?.find((item) => item.id === letter.sourceResumeId);
-	const resumeName = resume?.name ?? t`the resume`;
+	const resumeName = resume?.name;
+	const useDetailsLabel = resumeName ? t`Use details from “${resumeName}”` : t`Use details from the resume`;
 
 	const setResume = (resumeId: string) =>
 		void relinkLetter((draft) => {
@@ -381,19 +382,14 @@ function FromSection({ letter, disabled }: { letter: LetterDocument; disabled: b
 			) : null}
 			{letter.sourceResumeId ? (
 				<ListRow
-					title={t`Use details from “${resumeName}”`}
+					title={useDetailsLabel}
 					subtitle={
 						letter.senderLinked
 							? t`Linked. Name, email, phone and city update when the resume does.`
 							: t`Off. The letter keeps its own copy of your details.`
 					}
 					trailing={
-						<Switch
-							label={t`Use details from “${resumeName}”`}
-							value={letter.senderLinked}
-							disabled={disabled}
-							onValueChange={setLinked}
-						/>
+						<Switch label={useDetailsLabel} value={letter.senderLinked} disabled={disabled} onValueChange={setLinked} />
 					}
 				/>
 			) : (
@@ -532,7 +528,7 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 				borderWidth: 1,
 				borderStyle: "dashed",
 				borderColor: colors.line2,
-				borderRadius: radius.rXl,
+				borderRadius: radius.rLg,
 			}}
 		>
 			<Text color="ink2">
@@ -709,7 +705,7 @@ function LengthSection({ words }: { words: number }) {
 				importantForAccessibility="no-hide-descendants"
 				style={{
 					height: space.s2 - space.s0,
-					borderRadius: radius.rPill,
+					borderRadius: radius.rLg,
 					backgroundColor: colors.sunken,
 					overflow: "hidden",
 				}}
@@ -728,7 +724,7 @@ function LengthSection({ words }: { words: number }) {
 					style={{
 						height: "100%",
 						width: percent(Math.min(words, LETTER_LENGTH.scale)),
-						borderRadius: radius.rPill,
+						borderRadius: radius.rLg,
 						backgroundColor: length === "empty" ? colors.line2 : length === "comfortable" ? colors.accent : colors.warn,
 					}}
 				/>

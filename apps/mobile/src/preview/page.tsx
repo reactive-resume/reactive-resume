@@ -1,5 +1,6 @@
 import type { ResumeDraftStore } from "@/draft/types";
 import type { PageMapNode } from "@reactive-resume/pdf/page-map";
+import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -128,7 +129,7 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 			{preview.error ? (
 				<Banner
 					tone="danger"
-					message={t`Preview could not be rendered. Retry, or try another template or font in Design.`}
+					message={t`Couldn't render the preview. Retry, or try another template or font in Design.`}
 					action={{ label: t`Retry`, onPress: preview.retry }}
 				/>
 			) : null}
@@ -137,8 +138,8 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 					tone="warn"
 					message={
 						result.lostCharacters.length > 0
-							? t`Some characters could not be drawn: ${result.lostCharacters.join(", ")}. Choose another font in Design.`
-							: t`Some text could not be drawn. Choose another font in Design.`
+							? t`Some characters couldn't be drawn: ${result.lostCharacters.join(", ")}. Choose another font in Design.`
+							: t`Some text couldn't be drawn. Choose another font in Design.`
 					}
 				/>
 			) : null}
@@ -188,7 +189,7 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 										<Text variant="callout" color="warnText">{t`Runs onto page ${authored + 1}`}</Text>
 										<Button
 											variant="secondary"
-											label={authored === 1 ? t`Fit to one page` : t`Fit to ${authored} pages`}
+											label={plural(authored, { 1: "Fit to one page", other: "Fit to # pages" })}
 											disabled={draft.locked || preview.rendering}
 											loading={fitting}
 											onPress={() => {

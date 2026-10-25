@@ -27,10 +27,10 @@ export function useFormBlocker(form: Pick<AnyFormApi, "store">, options?: UseFor
 			const shouldBlock = shouldBlockRef.current ? shouldBlockRef.current() : isDirty && !isSubmitting;
 			if (!shouldBlock) return true;
 
-			return confirm(t`Are you sure you want to close this dialog?`, {
-				description: t`You have unsaved changes that will be lost.`,
-				confirmText: t`Leave`,
-				cancelText: t`Stay`,
+			return confirm(t`Discard unsaved changes?`, {
+				description: t`If you close this dialog, your changes are lost.`,
+				confirmText: t`Discard changes`,
+				cancelText: t`Keep editing`,
 			});
 		});
 		return () => setOnBeforeClose(null);

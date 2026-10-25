@@ -6,11 +6,14 @@
 	"exports": {
 		"./color": "./src/color.ts",
 		"./file": "./src/file.ts",
+		"./http": "./src/http.ts",
 		"./link": "./src/link.ts",
 		"./locale": "./src/locale.ts",
 		"./monorepo.node": "./src/monorepo.node.ts",
+		"./queue": "./src/queue.ts",
 		"./rate-limit": "./src/rate-limit.ts",
 		"./region": "./src/region.ts",
+		"./slug": "./src/slug.ts",
 		"./string": "./src/string.ts",
 		"./style": "./src/style.ts",
 		"./timezone": "./src/timezone.ts",
@@ -20,8 +23,7 @@
 		"typecheck": "tsrs --noEmit",
 		"test": "vp test run --passWithNoTests",
 		"test:coverage": "vp test run --coverage --passWithNoTests",
-		"test:ci": "vp test run --reporter=default --reporter=github-actions --reporter=json --reporter=junit --outputFile.json=reports/vitest-results.json --outputFile.junit=reports/vitest-junit.xml --passWithNoTests",
-		"test:agent": "vp test run --reporter=agent --reporter=json --outputFile.json=reports/vitest-results.json --passWithNoTests"
+		"test:ci": "vp test run --reporter=default --reporter=github-actions --reporter=json --reporter=junit --outputFile.json=reports/vitest-results.json --outputFile.junit=reports/vitest-junit.xml --passWithNoTests"
 	},
 	"dependencies": {
 		"@sindresorhus/slugify": "^3.0.1",

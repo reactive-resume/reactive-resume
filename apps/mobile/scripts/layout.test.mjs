@@ -1,7 +1,7 @@
 // Run: node apps/mobile/scripts/layout.test.mjs
 // Execute shipped layout components; native measurements and navigation are boundary fixtures.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
@@ -502,8 +502,12 @@ for (const title of ["All your applications are closed", "Your job search starts
 }
 
 // Browse every printable glyph, search beyond the old 60-result cap, select and clear.
-const iconPaths = JSON.parse(
-	readFileSync(new URL("../../../packages/pdf/src/forme/phosphor-icons.json", import.meta.url)),
+const iconDirectory = new URL("../../../packages/pdf/src/forme/phosphor-icons/", import.meta.url);
+const iconPaths = Object.assign(
+	{},
+	...readdirSync(iconDirectory)
+		.filter((file) => file.endsWith(".json"))
+		.map((file) => JSON.parse(readFileSync(new URL(file, iconDirectory)))),
 );
 const resumeIcons = load("../../../packages/schema/src/icons.ts").icons;
 const { IconPickerSheet } = load("features/write/pickers.tsx", {

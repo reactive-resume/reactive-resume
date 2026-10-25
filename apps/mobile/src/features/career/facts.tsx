@@ -1,11 +1,13 @@
 import type { Fact } from "./hooks";
 import type { RouterInput } from "@/api/client";
 import type { FactCategory } from "@reactive-resume/schema/career";
+import type { ReactNode } from "react";
+import { AnimatedLegendList } from "@legendapp/list/reanimated";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import * as Crypto from "expo-crypto";
-import { useRef, useState } from "react";
-import { View } from "react-native";
+import { memo, useCallback, useDeferredValue, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { RefreshControl, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { client, useCareerAction, useCareerQueries, useCareerTime, useUndoRows } from "./hooks";
 import { Actions, EditorSheet, LoadState, SwitchRow } from "./shared";
@@ -26,6 +28,7 @@ import {
 	useFirstAppearance,
 	useTheme,
 } from "@/ui";
+import { usePullRefresh } from "@/ui/use-pull-refresh";
 
 const categoryLabel = (category: string) =>
 	({ accomplishment: t`Accomplishment`, experience: t`Experience`, skill: t`Skill`, preference: t`Preference` })[
@@ -36,11 +39,30 @@ const categories = (): { value: FactCategory; label: string }[] =>
 		value: value as FactCategory,
 		label: categoryLabel(value),
 	}));
-export function Facts() {
+type FactsProps = {
+	/** The Knowledge intro and tab switch, scrolled with the list as its header. */
+	children?: ReactNode;
+	onRefresh: () => Promise<unknown>;
+};
+
+type RowActions = {
+	onToggle: (fact: Fact, active: boolean) => void;
+	onShare: (fact: Fact) => void;
+	onSource: (fact: Fact) => void;
+	onCorrect: (fact: Fact) => void;
+	onForget: (fact: Fact) => void;
+};
+
+const keyOf = (fact: Fact) => fact.id;
+
+export function Facts({ children, onRefresh }: FactsProps) {
 	const { t } = useLingui();
-	const { space } = useTheme();
+	const { colors, space } = useTheme();
 	const { facts } = useCareerQueries();
+	const pull = usePullRefresh(onRefresh);
 	const [search, setSearch] = useState("");
+	// Typing stays responsive; the list filters in a deferred render.
+	const query = useDeferredValue(search).trim().toLocaleLowerCase();
 	const [category, setCategory] = useState("all");
 	const [editor, setEditor] = useState<{ fact: Fact | null } | null>(null);
 	const [source, setSource] = useState<Fact | null>(null);
@@ -66,17 +88,48 @@ export function Facts() {
 		}
 	};
 	const { when } = useCareerTime();
-	const rows = (facts.data ?? []).filter(
-		(fact) =>
-			!undo.hidden.includes(fact.id) &&
-			(category === "all" || fact.category === category) &&
-			`${fact.text} ${fact.source.quote} ${fact.company ?? ""}`
-				.toLocaleLowerCase()
-				.includes(search.trim().toLocaleLowerCase()),
+	const rows = useMemo(
+		() =>
+			(facts.data ?? []).filter(
+				(fact) =>
+					!undo.hidden.includes(fact.id) &&
+					(category === "all" || fact.category === category) &&
+					`${fact.text} ${fact.source.quote} ${fact.company ?? ""}`.toLocaleLowerCase().includes(query),
+			),
+		[facts.data, undo.hidden, category, query],
 	);
 	const firstAppearance = useFirstAppearance(!facts.isPending);
-	return (
-		<View style={{ gap: space.s4 }}>
+
+	// Rows get one set of callbacks for the screen's life, so a change re-renders only the row it touches.
+	const forgotten = t`Fact forgotten`;
+	const latest = useRef({ updateFact, remove: undo.remove, forgotten });
+	useLayoutEffect(() => {
+		latest.current = { updateFact, remove: undo.remove, forgotten };
+	});
+	const [actions] = useState<RowActions>(() => ({
+		onToggle: (fact, active) => void latest.current.updateFact({ id: fact.id, status: active ? "active" : "excluded" }),
+		onShare: (fact) => void latest.current.updateFact({ id: fact.id, share: true }),
+		onSource: setSource,
+		onCorrect: (fact) => setEditor({ fact }),
+		onForget: (fact) =>
+			latest.current.remove(fact.id, latest.current.forgotten, () => client.career.forgetFact({ id: fact.id })),
+	}));
+	const renderItem = useCallback(
+		({ item, index }: { item: Fact; index: number }) => (
+			<FactRow
+				fact={item}
+				index={index}
+				first={firstAppearance}
+				pending={updating.includes(item.id)}
+				actions={actions}
+			/>
+		),
+		[firstAppearance, updating, actions],
+	);
+
+	const header = (
+		<View style={{ gap: space.s4, paddingBottom: space.s4 }}>
+			{children}
 			<TextField label={t`Search facts`} value={search} onChangeText={setSearch} />
 			<SelectSheet
 				label={t`Type`}
@@ -92,49 +145,24 @@ export function Facts() {
 			{!facts.isPending && !facts.isError && !rows.length ? (
 				<EmptyState title={t`No facts match`} message={t`Add a fact or try another word or type.`} />
 			) : null}
-			{rows.map((fact, index) => (
-				<Animated.View key={fact.id} {...listItemMotion(index, firstAppearance)} layout={listLayout}>
-					<Card style={{ gap: space.s3 }}>
-						<Actions>
-							<Chip label={categoryLabel(fact.category)} />
-							<Chip label={fact.company ? t`${fact.company} only` : t`All applications`} />
-						</Actions>
-						<Text>{fact.text}</Text>
-						<Text variant="callout" color="ink3">
-							{fact.usedBy.stories + fact.usedBy.savedItems === 0
-								? t`Not used in a story or saved item yet`
-								: `${plural(fact.usedBy.stories, { one: "Backs # story", other: "Backs # stories" })} · ${plural(fact.usedBy.savedItems, { one: "used in # saved item", other: "used in # saved items" })}`}
-						</Text>
-						<SwitchRow
-							label={t`Use this fact`}
-							value={fact.status === "active"}
-							disabled={updating.includes(fact.id)}
-							onValueChange={(active) => {
-								void updateFact({ id: fact.id, status: active ? "active" : "excluded" });
-							}}
-						/>
-						<Actions>
-							<Button variant="ghost" label={t`View source`} onPress={() => setSource(fact)} />
-							<Button variant="ghost" label={t`Correct`} onPress={() => setEditor({ fact })} />
-							{fact.applicationId ? (
-								<Button
-									variant="ghost"
-									label={t`Use for all applications`}
-									disabled={updating.includes(fact.id)}
-									onPress={() => {
-										void updateFact({ id: fact.id, share: true });
-									}}
-								/>
-							) : null}
-							<Button
-								variant="ghost"
-								label={t`Forget`}
-								onPress={() => undo.remove(fact.id, t`Fact forgotten`, () => client.career.forgetFact({ id: fact.id }))}
-							/>
-						</Actions>
-					</Card>
-				</Animated.View>
-			))}
+		</View>
+	);
+
+	return (
+		<>
+			<AnimatedLegendList
+				data={rows}
+				keyExtractor={keyOf}
+				renderItem={renderItem}
+				extraData={updating}
+				ListHeaderComponent={header}
+				refreshControl={<RefreshControl {...pull} tintColor={colors.accent} colors={[colors.accent]} />}
+				contentInsetAdjustmentBehavior="automatic"
+				alwaysBounceVertical
+				itemLayoutAnimation={listLayout}
+				style={{ flex: 1 }}
+				contentContainerStyle={{ paddingHorizontal: space.s4, paddingTop: space.s4 }}
+			/>
 			{editor ? <FactEditor key={editor.fact?.id ?? "new"} fact={editor.fact} onClose={() => setEditor(null)} /> : null}
 			<Sheet open={!!source} onClose={() => setSource(null)} title={t`Source and correction history`} detents={[0.75]}>
 				<View style={{ padding: space.s4, gap: space.s3 }}>
@@ -169,9 +197,52 @@ export function Facts() {
 					<Button variant="ghost" label={t`Close`} onPress={() => setSource(null)} />
 				</View>
 			</Sheet>
-		</View>
+		</>
 	);
 }
+
+type FactRowProps = { fact: Fact; index: number; first: boolean; pending: boolean; actions: RowActions };
+
+// Memoized: the app has no React Compiler, and typing or one toggle shouldn't re-render every card.
+const FactRow = memo(function FactRow({ fact, index, first, pending, actions }: FactRowProps) {
+	const { t } = useLingui();
+	const { space } = useTheme();
+	return (
+		<Animated.View {...listItemMotion(index, first)} style={{ paddingBottom: space.s4 }}>
+			<Card style={{ gap: space.s3 }}>
+				<Actions>
+					<Chip label={categoryLabel(fact.category)} />
+					<Chip label={fact.company ? t`${fact.company} only` : t`All applications`} />
+				</Actions>
+				<Text>{fact.text}</Text>
+				<Text variant="callout" color="ink3">
+					{fact.usedBy.stories + fact.usedBy.savedItems === 0
+						? t`Not used in a story or saved item yet`
+						: `${plural(fact.usedBy.stories, { one: "Backs # story", other: "Backs # stories" })} · ${plural(fact.usedBy.savedItems, { one: "used in # saved item", other: "used in # saved items" })}`}
+				</Text>
+				<SwitchRow
+					label={t`Use this fact`}
+					value={fact.status === "active"}
+					disabled={pending}
+					onValueChange={(active) => actions.onToggle(fact, active)}
+				/>
+				<Actions>
+					<Button variant="ghost" label={t`View source`} onPress={() => actions.onSource(fact)} />
+					<Button variant="ghost" label={t`Correct`} onPress={() => actions.onCorrect(fact)} />
+					{fact.applicationId ? (
+						<Button
+							variant="ghost"
+							label={t`Use for all applications`}
+							disabled={pending}
+							onPress={() => actions.onShare(fact)}
+						/>
+					) : null}
+					<Button variant="ghost" label={t`Forget`} onPress={() => actions.onForget(fact)} />
+				</Actions>
+			</Card>
+		</Animated.View>
+	);
+});
 
 type FactEditorProps = { fact: Fact | null; onClose: () => void };
 function FactEditor({ fact, onClose }: FactEditorProps) {

@@ -71,7 +71,10 @@ export function Score({ report }: ScoreProps) {
 							: t`Hard for software to read`}
 				</Text>
 				<Text variant="callout" color="ink2">
-					{t`${report.passedRules} of ${report.totalRules} checks pass.` +
+					{plural(report.totalRules, {
+						one: `${report.passedRules} of # check passes.`,
+						other: `${report.passedRules} of # checks pass.`,
+					}) +
 						" " +
 						plural(report.findings.length, { one: "# thing to review.", other: "# things to review." })}
 				</Text>

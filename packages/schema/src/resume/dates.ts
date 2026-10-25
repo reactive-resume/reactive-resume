@@ -232,12 +232,6 @@ export function formatResumeDates(dates: ResumeDates, options: DateFormatOptions
 	return start && end ? `${start} – ${end}` : start || end;
 }
 
-type PageDateOptions = { locale: string; dateFormat?: DateFormat | undefined };
-
-/** Prints an entry's dates, or its legacy text when it has none (data that skipped the read-time upgrade). */
-export const formatEntryDates = (dates: ResumeDates | undefined, text: string, page: PageDateOptions) =>
-	dates ? formatResumeDates(dates, { locale: page.locale, format: page.dateFormat }) : text;
-
 /**
  * Rewrites each entry's text (`period` or `date`) from its structured dates, in the resume's locale and date
  * format. Dates are the only source: an edit to the text alone is overwritten. Entries without dates (new

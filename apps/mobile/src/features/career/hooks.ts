@@ -166,7 +166,7 @@ export function useUndoRows() {
 		const operation = withUndo({
 			message,
 			restore,
-			failed: () => showToast({ message: t`Couldn't save that change. The item has been restored.` }),
+			failed: () => showToast({ message: t`Couldn't save that change. The item is restored; try again.` }),
 			commit: async () => {
 				try {
 					if (getServer() === server && active.current.status === "signed-in") await commit();

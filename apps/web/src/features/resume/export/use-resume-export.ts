@@ -3,9 +3,6 @@ import type { ResumeExportTarget } from "@reactive-resume/resume/export-sections
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { useCallback, useState } from "react";
-import { buildDocx } from "@reactive-resume/docx";
-import { buildOdt } from "@reactive-resume/odt";
-import { getResumeSectionTitle } from "@reactive-resume/pdf/section-title";
 import { getResumeExportData } from "@reactive-resume/resume/export-sections";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -14,17 +11,16 @@ import { createResumePdfBlob } from "./pdf-document";
 import { resolvePublicResumePdfBlob } from "@/features/resume/public/public-pdf";
 import { getLostCharactersMessage, getReadableErrorMessage } from "@/libs/error-message";
 import { client } from "@/libs/orpc/client";
-import { createSectionTitleResolverForLocale } from "@/libs/resume/section-title-locale";
 
-/**
- * Section titles are stored empty by default and resolved (locale-aware) at render time. PDF does
- * this via an injected resolver; DOCX, ODT and Markdown reuse the same resolution here so their
- * section headings aren't blank. Returns a `(sectionId) => title` function.
- */
-const createSectionTitleResolver = async (data: ResumeData) => {
-	const resolveSectionTitle = await createSectionTitleResolverForLocale(data.metadata.page.locale);
-	const dataWithResolver = { ...data, resolveSectionTitle };
-	return (sectionId: string) => getResumeSectionTitle(dataWithResolver, sectionId);
+// DOCX and ODT are large and only some exports need them; they load when one starts.
+const loadDocx = () => import("@reactive-resume/docx");
+const loadOdt = () => import("@reactive-resume/odt");
+
+/** Starts loading the DOCX and ODT builders, for controls that lead to those formats. */
+export const preloadDocumentExport = () => {
+	void loadDocx();
+	void loadOdt();
+	void import("@reactive-resume/pdf/section-title");
 };
 
 // ponytail: loosened from Resume to Pick so public-resume (where name may be "" for non-owners) can reuse
@@ -80,15 +76,17 @@ export async function createExportFile(
 
 	const data = getResumeExportData(resume.data, target);
 	if (format === "pdf") {
-		return createResumePdfBlob(data, undefined, target === "cover-letter" ? options : undefined, {
+		return createResumePdfBlob(data, target === "cover-letter" ? options : undefined, {
 			onLostCharacters: warnLostCharacters,
 		});
 	}
 
-	const resolveTitle = await createSectionTitleResolver(data);
+	// Section titles are stored empty by default; DOCX, ODT and Markdown use the PDF's localized headings.
+	const { getResumeSectionTitle } = await import("@reactive-resume/pdf/section-title");
+	const resolveTitle = (sectionId: string) => getResumeSectionTitle(data, sectionId);
 	if (format === "md") return new Blob([buildMarkdown(data, resolveTitle)], { type: "text/markdown" });
-	if (format === "odt") return buildOdt(data, resolveTitle);
-	return buildDocx(data, resolveTitle);
+	if (format === "odt") return (await loadOdt()).buildOdt(data, resolveTitle);
+	return (await loadDocx()).buildDocx(data, resolveTitle);
 }
 
 /** Prints a PDF blob through a hidden iframe; if the browser blocks that, opens it in a new tab instead. */
@@ -118,40 +116,11 @@ function printPdf(blob: Blob) {
 export function useResumeExport(resume: ExportableResume | undefined, exportOptions: UseResumeExportOptions = {}) {
 	const [isExporting, setIsExporting] = useState(false);
 
-	const onDownloadJSON = useCallback(async () => {
-		if (!resume) return;
-		try {
-			downloadWithAnchor(await createExportFile(resume, "json"), `${getDefaultFileName(resume)}.json`);
-		} catch {
-			toast.add({ type: "error", description: t`Could not generate the JSON. Please try again.` });
-		}
-	}, [resume]);
-
-	const onDownloadMarkdown = useCallback(async () => {
-		if (!resume) return;
-		try {
-			const blob = await createExportFile(resume, "md");
-			downloadWithAnchor(blob, `${getDefaultFileName(resume)}.md`);
-		} catch {
-			toast.add({ type: "error", description: t`Could not generate the Markdown. Please try again.` });
-		}
-	}, [resume]);
-
-	const onDownloadDOCX = useCallback(async () => {
-		if (!resume) return;
-		try {
-			const blob = await createExportFile(resume, "docx");
-			downloadWithAnchor(blob, `${getDefaultFileName(resume)}.docx`);
-		} catch {
-			toast.add({ type: "error", description: t`Could not generate the DOCX. Please try again.` });
-		}
-	}, [resume]);
-
 	const onDownloadPDF = useCallback(async () => {
 		if (!resume) return;
 		const toastId = toast.add({
 			type: "loading",
-			description: t`Generating your PDF...`,
+			description: t`Generating PDF…`,
 		});
 		setIsExporting(true);
 		const makeBlob = () =>
@@ -168,7 +137,7 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 		} catch (error) {
 			toast.add({
 				type: "error",
-				description: getReadableErrorMessage(error, t`Could not generate the PDF. Please try again.`),
+				description: getReadableErrorMessage(error, t`Couldn't generate the PDF. Try again.`),
 			});
 		}
 		setIsExporting(false);
@@ -177,23 +146,23 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 
 	const onPrint = useCallback(async () => {
 		if (!resume) return;
-		const toastId = toast.add({ type: "loading", description: t`Preparing your resume for printing...` });
+		const toastId = toast.add({ type: "loading", description: t`Preparing resume for printing…` });
 		setIsExporting(true);
 		const makeBlob = () =>
 			exportOptions.publicResumePdf
 				? resolvePublicResumePdfBlob({ data: resume.data, ...exportOptions.publicResumePdf })
-				: createResumePdfBlob(resume.data, undefined, undefined, { onLostCharacters: warnLostCharacters });
+				: createResumePdfBlob(resume.data, undefined, { onLostCharacters: warnLostCharacters });
 		try {
 			printPdf(await makeBlob());
 		} catch (error) {
 			toast.add({
 				type: "error",
-				description: getReadableErrorMessage(error, t`Could not prepare your resume for printing. Please try again.`),
+				description: getReadableErrorMessage(error, t`Couldn't prepare the resume for printing. Try again.`),
 			});
 		}
 		setIsExporting(false);
 		toast.close(toastId);
 	}, [exportOptions.publicResumePdf, resume]);
 
-	return { onDownloadJSON, onDownloadMarkdown, onDownloadDOCX, onDownloadPDF, onPrint, isExporting };
+	return { onDownloadPDF, onPrint, isExporting };
 }

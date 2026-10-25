@@ -67,7 +67,7 @@ function DebriefBody({ application, version, now }: WorkspaceTabProps) {
 				<View
 					style={{
 						padding: space.s4,
-						borderRadius: radius.rXl,
+						borderRadius: radius.rLg,
 						borderWidth: 1,
 						borderStyle: "dashed",
 						borderColor: colors.line2,
@@ -330,7 +330,7 @@ function WeekPlan({ application, review, now, readOnly }: WeekPlanProps) {
 		try {
 			await shareText(`${company}-practice-week.ics`, ics, "text/calendar", "com.apple.ical.ics");
 		} catch {
-			showToast({ message: t`Couldn't share the calendar file.` });
+			showToast({ message: t`Couldn't share the calendar file. Try again.` });
 		}
 	};
 

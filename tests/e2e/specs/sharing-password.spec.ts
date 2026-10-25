@@ -10,11 +10,11 @@ test("password-protects a public resume and unlocks it as a visitor", async ({ b
 	await requirePassword.click();
 	const dialog = page.getByRole("dialog", { name: "Protect your resume with a password" });
 	await dialog.getByLabel("Password", { exact: true }).fill(password);
-	await dialog.getByLabel("Confirm Password", { exact: true }).fill("different-password");
-	await dialog.getByRole("button", { name: "Set Password" }).click();
-	await expect(dialog.getByRole("alert")).toHaveText("Passwords do not match.");
-	await dialog.getByLabel("Confirm Password", { exact: true }).fill(password);
-	await dialog.getByRole("button", { name: "Set Password" }).click();
+	await dialog.getByLabel("Confirm password", { exact: true }).fill("different-password");
+	await dialog.getByRole("button", { name: "Set password" }).click();
+	await expect(dialog.getByRole("alert")).toHaveText("Enter the same password in both fields.");
+	await dialog.getByLabel("Confirm password", { exact: true }).fill(password);
+	await dialog.getByRole("button", { name: "Set password" }).click();
 	await expect(requirePassword).toBeChecked();
 
 	const anonymous = await browser.newPage();

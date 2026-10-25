@@ -39,7 +39,7 @@ type LetterFormat = ExportFormat | "both";
 async function flushLetter(id: string) {
 	if (!(await saveLetter(id))) throw new Error(t`Couldn't save your changes. Try again before continuing.`);
 	const document = useLetterStore.getState().document;
-	if (document?.id !== id) throw new Error(t`Cover letter could not be loaded.`);
+	if (document?.id !== id) throw new Error(t`Couldn't load the cover letter.`);
 	return document;
 }
 
@@ -90,7 +90,7 @@ function LetterDownload({ letter, offline }: { letter: LetterDocument; offline: 
 	const { space } = useTheme();
 	const resumes = useResumes();
 	const resumeId = letter.sourceResumeId;
-	const resumeName = resumes.data?.find((item) => item.id === resumeId)?.name ?? t`your resume`;
+	const resumeName = resumes.data?.find((item) => item.id === resumeId)?.name;
 	const sender = letter.style.basics.name.trim() || letter.name;
 	const [format, setFormat] = useState<LetterFormat>("pdf");
 	const [name, setName] = useState(safeFileName(t`${sender}-Cover-Letter`).replaceAll(" ", "-"));
@@ -111,7 +111,9 @@ function LetterDownload({ letter, offline }: { letter: LetterDocument; offline: 
 						id: "both" as const,
 						label: t`Resume + letter`,
 						extension: t`2 files`,
-						description: t`This letter and “${resumeName}” as two PDFs, named to match.`,
+						description: resumeName
+							? t`This letter and “${resumeName}” as two PDFs, named to match.`
+							: t`This letter and your resume as two PDFs, named to match.`,
 					},
 				]
 			: []),
@@ -151,7 +153,7 @@ function LetterDownload({ letter, offline }: { letter: LetterDocument; offline: 
 		try {
 			// Offline, the PDF renders from what's on this device; everything else needs the saved letter.
 			const current = offline && local(as) ? useLetterStore.getState().document : await flushLetter(letter.id);
-			if (current?.id !== letter.id) throw new Error(t`Cover letter could not be loaded.`);
+			if (current?.id !== letter.id) throw new Error(t`Couldn't load the cover letter.`);
 			const directory = exportDirectory();
 			const pdf = async (fileName: string) =>
 				exportFile({
@@ -182,7 +184,7 @@ function LetterDownload({ letter, offline }: { letter: LetterDocument; offline: 
 			}
 			for (const [file, type] of files) await shareExport(file, type);
 		} catch (cause) {
-			setError(cause instanceof Error ? cause.message : t`Download failed.`);
+			setError(cause instanceof Error ? cause.message : t`Download failed. Try again.`);
 		} finally {
 			active.current = false;
 			setBusy(false);
@@ -355,7 +357,7 @@ function LetterHistory({ letter, offline, version: openVersion }: LetterHistoryP
 					open={restoring}
 					title={t`Restore this version?`}
 					message={t`The current state will be saved as “Before restore” first.`}
-					confirmLabel={t`Restore`}
+					confirmLabel={t`Restore version`}
 					onCancel={() => setRestoring(false)}
 					onConfirm={() => void restore()}
 				/>
@@ -454,7 +456,7 @@ function LetterHistory({ letter, offline, version: openVersion }: LetterHistoryP
 				title={t`Delete “${menu ? versionTitle(menu) : ""}”?`}
 				message={t`Named versions are kept until you delete them. This can't be undone.`}
 				destructive
-				confirmLabel={t`Delete`}
+				confirmLabel={t`Delete version`}
 				onCancel={() => setMenu(null)}
 				onConfirm={() => void mutateVersion(true)}
 			/>

@@ -119,6 +119,7 @@ vi.mock("drizzle-orm", () => ({
 	asc: (value: unknown) => ({ type: "asc", value }),
 	count: () => ({ type: "count" }),
 	desc: (value: unknown) => ({ type: "desc", value }),
+	getColumns: (table: object) => table,
 	eq: (left: unknown, right: unknown) => ({ type: "eq", left, right }),
 	gte: (left: unknown, right: unknown) => ({ type: "gte", left, right }),
 	inArray: (left: unknown, values: unknown[]) => ({

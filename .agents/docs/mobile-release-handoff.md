@@ -100,6 +100,22 @@ update if none exists. This changes the mobile app only. Coordinate backend roll
 separately and preserve API compatibility in both
 directions. Do not bump runtime versions just to force an incompatible update through.
 
+### Native review prompts
+
+The `expo-store-review` integration requires fresh iOS and Android binaries. It requests
+the platform review UI after five minutes of signed-in foreground use, waiting for a
+main tab and a hidden keyboard. Background time does not count; a new account or app
+launch starts a new five-minute wait. A device-local three-day cooldown survives app
+restarts and account changes. Store quotas may suppress the UI; ratings, dismissals,
+and completed reviews are not observable. No rating filtering or automatic store
+redirect is used. Settings → Support → Report an issue independently opens GitHub's
+new-issue chooser.
+
+Before release, verify foreground/background timing, sign-out, keyboard/editor
+deferral, and cooldown persistence on both platforms. TestFlight does not show the
+production review prompt; use Apple's development behavior and Play's internal test
+track as appropriate, and record actual store-build results separately.
+
 ### Database and web release
 
 - Include migration `migrations/20261017135047_clammy_the_enforcers/` for `ai_content_report`; normal server startup applies migrations. Back up production before deployment and inspect migration logs. Do not reset the database or delete volumes.
@@ -156,13 +172,11 @@ binaries and deploy the backend first.
 
 1. Deploy the backend first. Keep the API backward compatible: older binaries and OTA bundles remain in use.
 2. Optionally bump `version` in `apps/mobile/app.config.ts` (for example `1.0.0` to `1.1.0`). CI supplies increasing iOS build numbers and Android version codes. iOS needs a new version string after a version is released; Play needs only a higher `versionCode`.
-3. Dispatch **Mobile Release** on `main`, platform `all`. The [Blacksmith setup guide](./mobile-ci.md) covers migrating existing signing credentials, seeding `MOBILE_BUILD_NUMBER_BASE`, and configuring the `mobile-store` approval environment. Build without uploads first to verify signing. No EAS Build credits are used.
-4. Dispatch with **format=store** and **upload** enabled to publish the signed artifacts to every existing Play testing track and all existing TestFlight groups, including external beta groups. iOS waits for processing and submits for TestFlight beta review where required; configure at least one TestFlight group first. This does not submit public App Store review or publish a production release. Fastlane signs locally using existing credentials and does not synchronize Apple capabilities. If exporting credentials through `eas credentials`, keep `EXPO_NO_CAPABILITY_SYNC=1`; Apple sign-in uses web Services ID `me.rxresu.web`, so turning off its primary App ID's Sign in with Apple capability would break sign-in.
-
-5. **App Store Connect:** wait for processing, test through TestFlight, create the new app version, attach the build, write "What's New", and submit for review. Release manually or automatically after approval.
-6. **Play Console:** the build is published on `internal` and promoted to every other existing non-production testing track. After testing, promote it to production with release notes. Use a staged rollout for risky changes.
-7. Run the [signed-device test matrix](#signed-device-test-matrix) on the store-installed builds before promoting to production.
-8. Confirm that a later OTA update reaches the new binary, because its fingerprint and runtime version changed.
+3. Complete the [signed-device test matrix](#signed-device-test-matrix), store declarations, listing/reviewer details, and release notes before submission. The workflow retains saved listings and screenshots. Ensure Play credentials permit production releases and the App Store Connect key has App Manager or Admin access. No testing tracks or TestFlight groups are required.
+4. Dispatch **Mobile Release** on `main`, platform `all`, **format=store**, and **upload** enabled. Approve `mobile-signing`, inspect this run's signed artifacts, then approve `mobile-store` to submit them. Latest main-push CI must have passed for the exact source commit before upload begins. Leave **upload** disabled if only checking a build. The [Blacksmith setup guide](./mobile-ci.md) covers credentials, build numbering, and approval environments. No EAS Build credits are used. Fastlane does not synchronize Apple capabilities. If exporting credentials through `eas credentials`, keep `EXPO_NO_CAPABILITY_SYNC=1`; Apple sign-in uses web Services ID `me.rxresu.web`, so turning off its primary App ID's Sign in with Apple capability would break sign-in.
+5. **App Store Connect:** the workflow uploads the IPA, creates or updates its app version, waits for its matching processed build, submits for App Review, and sets automatic release after approval. Missing metadata or a pending review can block submission; review status and public availability must be checked separately.
+6. **Play Console:** the workflow uploads directly to production with a completed, full rollout and sends changes for review. It does not publish to testing tracks. Review and Managed Publishing still control public availability; if Managed Publishing is enabled, publish approved changes in the console, or disable it there for automatic publication after review.
+7. Verify both public store versions and smoke-test store-installed builds. Workflow success proves submission, not approval or publication. Confirm that a later OTA update reaches each new binary, because its fingerprint and runtime version changed.
 
 Stable distribution uses the App Store and Play Store. IPA and AAB files are not attached to GitHub Releases. Manual Android APKs are available through Actions artifacts as described below; they do not replace store builds or store review.
 

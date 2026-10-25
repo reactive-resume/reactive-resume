@@ -21,7 +21,7 @@ export function AuthHeader({ subtitle }: AuthHeaderProps) {
 				style={{
 					width: space.s12 * 2,
 					height: space.s12 * 2,
-					borderRadius: radius.r2xl,
+					borderRadius: radius.rLg,
 					marginBottom: space.s2,
 				}}
 			/>

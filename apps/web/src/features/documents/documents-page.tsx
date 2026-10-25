@@ -26,7 +26,7 @@ import { LinkApplicationDialog, TagsDialog, useBatchActions } from "./document-a
 import { DocumentCard, DocumentRow } from "./document-card";
 import { collectTags, filterDocuments } from "./filter";
 import { LibraryError } from "./library-error";
-import { useStartDocument } from "./new-document-dialog";
+import { useStartDocument } from "./use-start-document";
 import { PageHeader } from "@/components/layout/page-header";
 import { useDialogStore } from "@/dialogs/store";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
@@ -395,7 +395,7 @@ type TagFilterProps = {
 
 const chipClassName = (isActive: boolean) =>
 	cn(
-		"min-h-7 rounded-full border px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97] pointer-coarse:min-h-11",
+		"min-h-7 rounded-sm border px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97] pointer-coarse:min-h-11",
 		isActive ? "border-accent bg-accent-soft text-accent-text" : "border-line-2 text-ink-2 hover:bg-hover",
 	);
 
@@ -548,7 +548,7 @@ function LibrarySkeleton({ view }: { view: "grid" | "list" }) {
 		<div className="grid grid-cols-[repeat(auto-fill,minmax(180px,204px))] gap-x-7 gap-y-[22px] max-sm:grid-cols-2 max-sm:gap-4">
 			{Array.from({ length: 6 }, (_, index) => (
 				<div key={index} className="grid gap-2">
-					<Skeleton className="aspect-page rounded-[6px]" />
+					<Skeleton className="aspect-page rounded-md" />
 					<Skeleton className="h-4 w-3/4 rounded" />
 				</div>
 			))}

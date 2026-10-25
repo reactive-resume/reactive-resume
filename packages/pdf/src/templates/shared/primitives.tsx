@@ -21,7 +21,7 @@ import { useTemplateIconSlot, useTemplatePageNodeKey, useTemplateStyle } from ".
 import { resolveIconSize } from "./icon-size";
 import { getPictureShadow } from "./picture-shadow";
 import { safeTextStyle } from "./safe-text-style";
-import { composeLinkStyles, composeStyles, mergeStyles } from "./styles";
+import { composeStyles, mergeStyles } from "./styles";
 
 const asStyleInput = (style: unknown): StyleInput => style as StyleInput;
 
@@ -210,7 +210,9 @@ export const Link = ({
 			{...props}
 			{...resolvedPdfTextProps(resolved)}
 			style={composeStyles(
-				composeLinkStyles({ hideUnderline: metadata.page.hideLinkUnderline }, linkStyle, asStyleInput(style)),
+				linkStyle,
+				asStyleInput(style),
+				{ textDecoration: metadata.page.hideLinkUnderline ? "none" : "underline" },
 				resolved.style,
 				safeTextStyle,
 			)}

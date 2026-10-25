@@ -26,7 +26,7 @@ import {
 	upcomingInterviews,
 } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
 type Notification = RouterOutput["career"]["notifications"][number];
@@ -47,7 +47,7 @@ export function TodayPage({ schedule, onScheduleChange }: TodayPageProps) {
 		...orpc.career.deleteSchedule.mutationOptions(),
 		onError: (error, { id }) => {
 			setDeleted((current) => current.filter((item) => item !== id));
-			failed(error, t`Couldn't delete this schedule.`);
+			toastError(error, t`Couldn't delete this schedule. Try again.`, { allowServerMessage: true });
 		},
 	});
 	const deleteSchedule = (id: string) => {
@@ -117,9 +117,6 @@ function SectionHeading({ id, title, count, note }: SectionHeadingProps) {
 	);
 }
 
-const failed = (error: unknown, fallback: string) =>
-	toast.add({ type: "error", description: getOrpcErrorMessage(error, { fallback, allowServerMessage: true }) });
-
 // ---- Needs you ----
 
 const notificationKind = (kind: Notification["notice"]["type"]): { icon: IconName; tone: string; action: string } => {
@@ -150,7 +147,7 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 		onError: (error, { id }) => {
 			setPending((current) => current.filter((item) => item !== id));
 			setReadAt(id, null);
-			failed(error, t`Couldn't mark this as read.`);
+			toastError(error, t`Couldn't mark this as read. Try again.`, { allowServerMessage: true });
 		},
 	});
 
@@ -174,18 +171,21 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 		});
 	};
 
+	// One lookup table and one formatter per render, not a scan and a constructor per row.
+	const companies = new Map(applications?.map((application) => [application.id, application.company]));
+	const relativeDay = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
 	const meta = (row: Notification) => {
 		const source =
 			row.notice.type === "opportunities"
 				? t`Opportunity discovery`
 				: row.notice.type === "briefing"
 					? t`Interview preparation`
-					: applications?.find((application) => application.id === row.applicationId)?.company;
+					: row.applicationId
+						? companies.get(row.applicationId)
+						: undefined;
 		const offset = dayOffset(row.createdAt, now);
 		const stamp =
-			offset === null
-				? when(row.createdAt)
-				: `${new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(offset, "day")}, ${time(row.createdAt)}`;
+			offset === null ? when(row.createdAt) : `${relativeDay.format(offset, "day")}, ${time(row.createdAt)}`;
 		return [source, stamp].filter(Boolean).join(" · ");
 	};
 
@@ -220,11 +220,12 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 											<div
 												role="group"
 												aria-labelledby={`note-${row.id}`}
-												className="flex items-start gap-3.5 px-4 py-3.5"
+												// Off-screen rows skip layout and paint; they stay findable and readable.
+												className="flex items-start gap-3.5 px-4 py-3.5 [contain-intrinsic-size:auto_96px] [content-visibility:auto]"
 											>
 												<span
 													aria-hidden="true"
-													className={cn("grid size-[34px] shrink-0 place-items-center rounded-[9px]", kind.tone)}
+													className={cn("grid size-[34px] shrink-0 place-items-center rounded-lg", kind.tone)}
 												>
 													<Icon name={kind.icon} size={20} />
 												</span>
@@ -324,7 +325,8 @@ function NewRoles({ ref, now, deleted, onOpenSchedule, className }: NewRolesProp
 			const row = rows?.find((item) => item.id === id);
 			toast.add({ description: row ? t`Saved ${companyOf(row)} to Applications` : t`Saved to Applications` });
 		},
-		onError: (error) => failed(error, t`Couldn't save this role to Applications.`),
+		onError: (error) =>
+			toastError(error, t`Couldn't save this role to Applications. Try again.`, { allowServerMessage: true }),
 	});
 	const untrack = useMutation({
 		...orpc.applications.delete.mutationOptions(),
@@ -335,13 +337,14 @@ function NewRoles({ ref, now, deleted, onOpenSchedule, className }: NewRolesProp
 				Object.fromEntries(Object.entries(current).filter(([, entry]) => entry.applicationId !== applicationId)),
 			);
 		},
-		onError: (error) => failed(error, t`Couldn't remove it from Applications.`),
+		onError: (error) =>
+			toastError(error, t`Couldn't remove it from Applications. Try again.`, { allowServerMessage: true }),
 	});
 	const dismiss = useMutation({
 		...orpc.career.dismissOpportunity.mutationOptions(),
 		onError: (error, { id }) => {
 			setHidden((current) => current.filter((item) => item !== id));
-			failed(error, t`Couldn't hide this role.`);
+			toastError(error, t`Couldn't hide this role. Try again.`, { allowServerMessage: true });
 		},
 	});
 
@@ -493,7 +496,7 @@ function RoleCard({ row, found, tracked, pending, onTrack, onUndo, onDismiss }: 
 			<div className="flex items-start gap-3">
 				<span
 					aria-hidden="true"
-					className="grid size-9 shrink-0 place-items-center rounded-[9px] bg-sunken text-sm font-semibold text-ink-2"
+					className="grid size-9 shrink-0 place-items-center rounded-lg bg-sunken text-sm font-semibold text-ink-2"
 				>
 					{getInitials(company).slice(0, 1)}
 				</span>
@@ -605,7 +608,7 @@ function ComingUp({ now, className }: ComingUpProps) {
 				</span>
 			</Eyebrow>
 			<div className="flex items-start gap-3">
-				<span className="flex w-11 shrink-0 flex-col items-center rounded-[9px] bg-sunken py-1.5">
+				<span className="flex w-11 shrink-0 flex-col items-center rounded-lg bg-sunken py-1.5">
 					<span className="font-mono text-[11px] font-medium text-ink-3">
 						{format(start, { weekday: "short" }).toLocaleUpperCase(locale)}
 					</span>
@@ -617,7 +620,7 @@ function ComingUp({ now, className }: ComingUpProps) {
 					<p className="flex items-center gap-1.5 text-sm font-semibold">
 						<span
 							aria-hidden="true"
-							className="size-2 shrink-0 rounded-full"
+							className="size-2 shrink-0 rounded-sm"
 							style={{ backgroundColor: `var(--stage-${application.status})` }}
 						/>
 						{t`${kind} interview`}
@@ -688,7 +691,7 @@ function Schedules({ deleted, onOpenSchedule, className }: SchedulesProps) {
 				queryClient.setQueryData(queryKey, (current) =>
 					current?.map((item) => (item.id === previous.id ? previous : item)),
 				);
-			failed(error, t`Couldn't change this schedule.`);
+			toastError(error, t`Couldn't change this schedule. Try again.`, { allowServerMessage: true });
 		},
 	});
 	// A stable order (kind, then newest): an update must not reshuffle rows that share a creation time.

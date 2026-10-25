@@ -1,7 +1,7 @@
 {
 	"name": "reactive-resume",
 	"description": "Reactive Resume is a free and open-source resume builder that makes it easy to create, update, and share your resume.",
-	"version": "6.0.5",
+	"version": "6.0.6",
 	"private": true,
 	"license": "MIT",
 	"author": {
@@ -45,7 +45,6 @@
 		"test:ci": "turbo run test:ci --concurrency=1",
 		"test:e2e": "playwright test",
 		"test:e2e:ui": "playwright test --ui",
-		"test:agent": "turbo run test:agent --concurrency=1",
 		"pdf:translations": "pnpm --filter @reactive-resume/tooling pdf:translations",
 		"lint": "vp lint --deny-warnings",
 		"lint:fix": "vp lint --fix",
@@ -68,7 +67,7 @@
 		"@types/pg": "catalog:",
 		"@vitest/coverage-v8": "5.0.5",
 		"happy-dom": "^21.0.4",
-		"knip": "^6.42.1",
+		"knip": "^6.43.0",
 		"lefthook": "^2.2.2",
 		"pg": "catalog:",
 		"react": "catalog:",

@@ -1,3 +1,5 @@
+import { createSerialQueue } from "@reactive-resume/utils/queue";
+
 export type ResumeThumbnailSize = {
 	height: number;
 	width: number;
@@ -43,3 +45,25 @@ export const getResumeThumbnailRenderSize = (pageSize: ResumeThumbnailSize, targ
 		width: Math.min(bounds.width, Math.ceil(pageSize.width * scale)),
 	};
 };
+
+const renderQueue = createSerialQueue();
+
+/** Resolves once the browser is idle (at most 2 s), or after 50 ms where idle callbacks aren't supported. */
+export const whenIdle = () =>
+	new Promise<void>((resolve) => {
+		if ("requestIdleCallback" in window) window.requestIdleCallback(() => resolve(), { timeout: 2000 });
+		else setTimeout(resolve, 50);
+	});
+
+/**
+ * Runs thumbnail renders one at a time, when the browser is idle, so they never compete with the page.
+ * A task whose signal aborts while it waits is skipped.
+ */
+export function enqueueThumbnailRender<T>(task: () => Promise<T>, signal?: AbortSignal): Promise<T> {
+	return renderQueue(async () => {
+		signal?.throwIfAborted();
+		await whenIdle();
+		signal?.throwIfAborted();
+		return task();
+	});
+}

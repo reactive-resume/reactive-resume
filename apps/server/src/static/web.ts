@@ -27,7 +27,7 @@ const indexHtmlPath = `${staticRoot}/index.html`;
 // The marketing pages prerendered per locale by the web build (apps/web/vite.config.ts), as <page>/<locale>.html, kept
 // beside dist/ so they're never served at an address of their own.
 const prerenderRoot = `${staticRoot}-prerender`;
-const noindexShellPrefixes = ["/auth", "/dashboard", "/builder", "/agent", "/templates"];
+const noindexShellPrefixes = ["/auth", "/dashboard", "/builder", "/agent"];
 /**
  * Marketing pages the SPA owns that search engines should index.
  *
@@ -125,13 +125,13 @@ function htmlResponse(html: string, headers: Record<string, string>, template = 
 const githubUrl = "https://github.com/reactive-resume/reactive-resume";
 // The English copy, for a build without prerendered pages; a prerendered page carries its own locale's title and
 // description, and the social cards reuse them.
-const ROOT_TITLE = "Free Resume Builder with PDF &amp; Word Downloads | Reactive Resume";
+const ROOT_TITLE = "Free resume builder with PDF &amp; Word downloads | Reactive Resume";
 const ROOT_DESCRIPTION =
 	"Free, open-source resume builder. Create, update, and share your resume, with PDF and Word downloads, no ads and no paywall.";
-const ATS_CHECKER_TITLE = "Free ATS resume checker — Reactive Resume";
+const ATS_CHECKER_TITLE = "Free ATS resume checker | Reactive Resume";
 const ATS_CHECKER_DESCRIPTION =
 	"Check whether software can read your resume PDF. Runs entirely in your browser, so your file is never uploaded.";
-const TEMPLATES_TITLE = "Free Resume Templates with PDF Examples | Reactive Resume";
+const TEMPLATES_TITLE = "Free resume templates with PDF examples | Reactive Resume";
 const TEMPLATES_DESCRIPTION =
 	"Browse free resume templates, compare one-column and two-column layouts, and download sample PDFs. Customize your resume and export to PDF or Word.";
 
@@ -185,7 +185,7 @@ function homepageStructuredData(origin: string): StructuredData {
 					"Resume editor with a live page preview",
 					`${templateSchema.options.length} templates`,
 					"PDF, Word (DOCX), Markdown and JSON export",
-					"Import from PDF, LinkedIn, JSON Resume and Word",
+					"Import from PDF, LinkedIn and JSON Resume, or Word with an AI provider",
 					"ATS readability checker",
 					"Public or password-protected sharing links",
 					"Cover letters and a job application tracker",
@@ -237,22 +237,29 @@ function createPageSeoMarkup(options: PageSeoOptions) {
 		.map(({ hreflang, href }) => `<link rel="alternate" hreflang="${hreflang}" href="${escapeAttribute(href)}">`)
 		.join("");
 
+	const url = escapeAttribute(pageUrl);
+
 	return `
-		<link rel="canonical" href="${escapeAttribute(pageUrl)}">
+		<link rel="canonical" href="${url}">
 		${alternates}
-		<meta property="og:type" content="website">
-		<meta property="og:site_name" content="Reactive Resume">
 		<meta property="og:locale" content="${options.locale.replace("-", "_")}">
-		<meta property="og:title" content="${options.title}">
-		<meta property="og:description" content="${options.description}">
-		<meta property="og:url" content="${escapeAttribute(pageUrl)}">
-		<meta property="og:image" content="${options.imageUrl}">
-		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:title" content="${options.title}">
-		<meta name="twitter:description" content="${options.description}">
-		<meta name="twitter:image" content="${options.imageUrl}">
+		${socialTags({ type: "website", title: options.title, description: options.description, url, image: options.imageUrl })}
 		<script type="application/ld+json">${JSON.stringify(options.structuredData).replaceAll("<", "\\u003c")}</script>
 	`;
+}
+
+/** OpenGraph and Twitter card tags. Every value must already be HTML-escaped. */
+function socialTags(tags: { type: string; title: string; description: string; url: string; image: string }) {
+	return `<meta property="og:type" content="${tags.type}">
+		<meta property="og:site_name" content="Reactive Resume">
+		<meta property="og:title" content="${tags.title}">
+		<meta property="og:description" content="${tags.description}">
+		<meta property="og:url" content="${tags.url}">
+		<meta property="og:image" content="${tags.image}">
+		<meta name="twitter:card" content="summary_large_image">
+		<meta name="twitter:title" content="${tags.title}">
+		<meta name="twitter:description" content="${tags.description}">
+		<meta name="twitter:image" content="${tags.image}">`;
 }
 
 /** The title and description a page was built with, still HTML-escaped. */
@@ -284,28 +291,36 @@ async function createPublicResumeSeoMarkup(pathname: string, origin: string) {
 	if (!meta) return null;
 
 	const canonicalUrl = escapeAttribute(`${origin}/${username}/${slug}`);
-	const imageUrl = `${origin}/opengraph/banner.jpg`;
-	const pageTitle = escapeAttribute(`${meta.name} - Reactive Resume`);
-	const title = escapeAttribute(meta.title);
+	// Wider screens show the server's PDF (apps/web public-pdf.ts): start it with the HTML, not after the app boots.
+	// The href is the one the app fetches, so the browser hands the app this response instead of asking again.
+	const pdfUrl = escapeAttribute(`/api/resumes/${reencode(username)}/${reencode(slug)}/pdf`);
 	const description = escapeAttribute(meta.description);
+	const social = socialTags({
+		type: "profile",
+		title: escapeAttribute(meta.title),
+		description,
+		url: canonicalUrl,
+		image: `${origin}/opengraph/banner.jpg`,
+	});
 
 	return {
-		pageTitle,
+		pageTitle: escapeAttribute(`${meta.name} - Reactive Resume`),
 		description,
 		markup: `
 		<link rel="canonical" href="${canonicalUrl}">
-		<meta property="og:type" content="profile">
-		<meta property="og:site_name" content="Reactive Resume">
-		<meta property="og:title" content="${title}">
-		<meta property="og:description" content="${description}">
-		<meta property="og:url" content="${canonicalUrl}">
-		<meta property="og:image" content="${imageUrl}">
-		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:title" content="${title}">
-		<meta name="twitter:description" content="${description}">
-		<meta name="twitter:image" content="${imageUrl}">
+		${social}
+		<link rel="preload" href="${pdfUrl}" as="fetch" crossorigin="use-credentials" media="(min-width: 640px)">
 	`,
 	};
+}
+
+/** A path segment as the app's router decodes it and `encodeURIComponent` writes it back. */
+function reencode(segment: string) {
+	try {
+		return encodeURIComponent(decodeURIComponent(segment));
+	} catch {
+		return encodeURIComponent(segment);
+	}
 }
 
 export const serveWebDistStatic = env.CLOUDFLARE
@@ -358,20 +373,11 @@ function getPageLocale(request: Request) {
 	return { locale: isLocale(saved) ? saved : defaultLocale, requested: false };
 }
 
-function notFoundResponse(options: { head?: boolean; noindex?: boolean } = {}) {
-	const headers = new Headers({ "Content-Type": "text/plain; charset=UTF-8" });
-	if (options.noindex) headers.set("X-Robots-Tag", "noindex, nofollow");
-
-	return new Response(options.head ? null : "Not Found", {
-		status: 404,
-		headers,
-	});
-}
-
+/** Swaps the page's <title> and description. Function replacers keep `$&`, `$'` etc. in user text literal. */
 const withMeta = (html: string, meta: { title: string; description: string }) =>
 	html
-		.replace(/<title>[^<]*<\/title>/, `<title>${meta.title}</title>`)
-		.replace(/<meta\s+name="description"[^>]*>/, `<meta name="description" content="${meta.description}">`);
+		.replace(/<title>[^<]*<\/title>/, () => `<title>${meta.title}</title>`)
+		.replace(/<meta\s+name="description"[^>]*>/, () => `<meta name="description" content="${meta.description}">`);
 
 /** The indexable pages the web build prerenders, by path. */
 const prerenderedPages: Record<
@@ -381,8 +387,6 @@ const prerenderedPages: Record<
 		meta: { title: string; description: string };
 		image: string;
 		structuredData: (origin: string) => StructuredData;
-		/** The page when the build has no prerendered copy: the app shell, titled for the page. */
-		fallback: (shell: string) => string;
 	}
 > = {
 	"/": {
@@ -390,14 +394,12 @@ const prerenderedPages: Record<
 		meta: { title: ROOT_TITLE, description: ROOT_DESCRIPTION },
 		image: "/opengraph/banner.jpg",
 		structuredData: homepageStructuredData,
-		fallback: (shell) => withMeta(shell, { title: ROOT_TITLE, description: ROOT_DESCRIPTION }),
 	},
 	"/ats-checker": {
 		name: "ats-checker",
 		meta: { title: ATS_CHECKER_TITLE, description: ATS_CHECKER_DESCRIPTION },
 		image: "/opengraph/ats-checker.png",
 		structuredData: atsCheckerStructuredData,
-		fallback: (shell) => withMeta(shell, { title: ATS_CHECKER_TITLE, description: ATS_CHECKER_DESCRIPTION }),
 	},
 	"/resume-templates": {
 		name: "resume-templates",
@@ -419,26 +421,28 @@ const prerenderedPages: Record<
 				})),
 			},
 		}),
-		fallback: (shell) => withMeta(shell, { title: TEMPLATES_TITLE, description: TEMPLATES_DESCRIPTION }),
 	},
 };
 
-// ponytail: GET and HEAD share the same routing logic; method determines body presence
 export type ReadWebFile = (path: string) => Promise<string>;
 
 export async function handleWebApp(request: Request, readFile: ReadWebFile = (path) => fs.readFile(path, "utf-8")) {
-	const isHead = request.method === "HEAD";
 	const requestedPath = new URL(request.url).pathname;
 	const pathname = requestedPath === "/index.html" ? "/" : requestedPath;
 
 	if (!isNoindexShellPath(pathname) && isAssetPath(pathname)) {
-		return new Response(isHead ? null : "Not Found", { status: 404 });
+		return new Response("Not Found", { status: 404 });
 	}
 
 	const headers = getFallbackResponseHeaders(pathname);
-	if (!headers) return notFoundResponse({ head: isHead, noindex: true });
+	if (!headers)
+		return new Response("Not Found", {
+			status: 404,
+			headers: { "Content-Type": "text/plain; charset=UTF-8", "X-Robots-Tag": "noindex, nofollow" },
+		});
 
-	if (isHead) return new Response(null, { status: 200, headers });
+	// Hono drops HEAD bodies itself; returning early skips reading the shell and a public resume's DB lookup.
+	if (request.method === "HEAD") return new Response(null, { status: 200, headers });
 
 	const html = await readFile(indexHtmlPath);
 
@@ -446,9 +450,7 @@ export async function handleWebApp(request: Request, readFile: ReadWebFile = (pa
 		const canonicalUrl = new URL("/", env.APP_URL).toString();
 		// Root configuration never discloses a target in the HTML shell. The public API
 		// gates data and browser metadata; shell requests must not count extra views.
-		const shell = html
-			.replace(/<title>[^<]*<\/title>/, "<title>Reactive Resume</title>")
-			.replace(/<meta\s+name="description"[^>]*>/, '<meta name="description" content="">');
+		const shell = withMeta(html, { title: "Reactive Resume", description: "" });
 		const markup = `<link rel="canonical" href="${escapeAttribute(canonicalUrl)}" data-root-resume-shell><meta name="robots" content="noindex, follow" data-root-resume-shell>`;
 		return htmlResponse(
 			shell.replace("</head>", () => `${markup}</head>`),
@@ -461,9 +463,9 @@ export async function handleWebApp(request: Request, readFile: ReadWebFile = (pa
 	if (prerendered) {
 		const { locale, requested } = getPageLocale(request);
 		const origin = new URL(env.APP_URL).origin;
-		// Without a prerendered page (a build that skipped it), the app renders the page in the browser.
+		// Without a prerendered page (a build that skipped it), the app shell titled for the page renders it in the browser.
 		const page = await readFile(`${prerenderRoot}/${prerendered.name}/${locale}.html`).catch(() =>
-			prerendered.fallback(html),
+			withMeta(html, prerendered.meta),
 		);
 		const markup = createPageSeoMarkup({
 			canonicalUrl: new URL(pathname, env.APP_URL).toString(),
@@ -486,13 +488,8 @@ export async function handleWebApp(request: Request, readFile: ReadWebFile = (pa
 		const resumeSeo = await createPublicResumeSeoMarkup(pathname, new URL(env.APP_URL).origin);
 		if (resumeSeo) {
 			// The shell's generic title/description are replaced so shares and previews show the resume,
-			// not the marketing copy baked into index.html. Function replacers keep `$&`, `$'` etc. in user text literal.
-			const withTitle = html
-				.replace(/<title>[^<]*<\/title>/, () => `<title>${resumeSeo.pageTitle}</title>`)
-				.replace(
-					/<meta\s+name="description"[^>]*>/,
-					() => `<meta name="description" content="${resumeSeo.description}">`,
-				);
+			// not the marketing copy baked into index.html.
+			const withTitle = withMeta(html, { title: resumeSeo.pageTitle, description: resumeSeo.description });
 
 			return htmlResponse(
 				withTitle.replace("</head>", () => `${resumeSeo.markup}</head>`),

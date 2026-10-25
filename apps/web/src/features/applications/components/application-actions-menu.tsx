@@ -32,7 +32,7 @@ export function ApplicationActionsMenu({ application, className }: ApplicationAc
 	const onDelete = async () => {
 		const confirmed = await confirm(t`Delete this application?`, {
 			description: t`“${application.role} · ${application.company}” and its timeline are deleted permanently. This can't be undone.`,
-			confirmText: t`Delete`,
+			confirmText: t`Delete application`,
 		});
 		if (confirmed) remove.mutate({ id: application.id });
 	};
@@ -69,7 +69,7 @@ export function ApplicationActionsMenu({ application, className }: ApplicationAc
 								>
 									<span
 										aria-hidden="true"
-										className="size-2 rounded-full"
+										className="size-2 rounded-sm"
 										style={{ background: getStageColor(status) }}
 									/>
 									{getStageLabel(status)}

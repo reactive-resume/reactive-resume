@@ -29,9 +29,14 @@ async function savedCredential(userId: string) {
 }
 
 function assertPersonalKeysAllowed() {
-	if (serverConfig()) throw new ORPCError("FORBIDDEN", { message: "Web access is managed by the server." });
+	if (serverConfig())
+		throw new ORPCError("FORBIDDEN", {
+			message: "Web access is set by the server administrator and can't be changed here.",
+		});
 	if (!env.ENCRYPTION_SECRET)
-		throw new ORPCError("PRECONDITION_FAILED", { message: "Credential encryption is not configured." });
+		throw new ORPCError("PRECONDITION_FAILED", {
+			message: "Web access can't be saved on this server. Ask the server administrator to set ENCRYPTION_SECRET.",
+		});
 }
 
 /** Search runs through the web connection or, without one, through the operator's SearXNG. Reading needs neither. */

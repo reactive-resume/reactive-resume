@@ -62,7 +62,7 @@ export function SettingsRoot() {
 
 			<nav
 				aria-label={t`Settings`}
-				className="divide-y divide-line overflow-hidden rounded-[14px] border border-line bg-surface"
+				className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface"
 			>
 				<Link to="/dashboard/settings/account" viewTransition={pushTransition} className={rowClass}>
 					<Row icon="user-circle" label={<Trans>Account</Trans>} />
@@ -83,7 +83,7 @@ export function SettingsRoot() {
 				href="https://docs.rxresu.me"
 				target="_blank"
 				rel="noopener noreferrer"
-				className="flex h-12 items-center rounded-[14px] border border-line bg-surface px-3.5 font-medium transition-colors duration-quick ease-enter active:bg-press"
+				className="flex h-12 items-center rounded-lg border border-line bg-surface px-3.5 font-medium transition-colors duration-quick ease-enter active:bg-press"
 			>
 				<Trans>Help & docs</Trans>
 			</a>

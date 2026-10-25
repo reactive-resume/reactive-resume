@@ -40,7 +40,7 @@ export function useConversationProvider(
 			await client.agent.threads.update({ id: threadId, aiProviderId: id }, { context: { scope } });
 			refreshThreads(queryClient);
 		} catch {
-			showToast({ message: t`Couldn't switch models.` });
+			showToast({ message: t`Couldn't switch models. Try again.` });
 		}
 	};
 

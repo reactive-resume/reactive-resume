@@ -125,7 +125,6 @@ function findRepeatedOpenings(bullets: readonly string[]): string[] {
 }
 
 export type SemanticsOptions = {
-	locale?: string;
 	now: Date;
 };
 
@@ -135,7 +134,8 @@ export function buildResumeSemantics(
 	document: ExtractedDocument,
 	options: SemanticsOptions,
 ): ResumeSemantics {
-	const locale = options.locale ?? (raw.metadata.language || "en-US");
+	// Dates parse in the document's own declared language.
+	const locale = raw.metadata.language || "en-US";
 
 	const headings = detectHeadings(document);
 	const contact = analyzeContact(raw, document);

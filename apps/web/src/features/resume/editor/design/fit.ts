@@ -2,7 +2,7 @@ import type { FitStep } from "./presets";
 import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useEditorStore } from "../store";
 import { applyDensity, applyMargins, applyTextSize, fitToPages, matchDensity, matchMargins } from "./presets";
@@ -88,7 +88,10 @@ export async function runFit() {
 		const pages = useEditorStore.getState().rendered.pageCount;
 		toast.add({
 			type: "warning",
-			description: t`Still ${pages} pages at 9 pt. Hide a section or shorten entries.`,
+			description: plural(pages, {
+				one: "Still # page at 9 pt. Hide a section or shorten entries.",
+				other: "Still # pages at 9 pt. Hide a section or shorten entries.",
+			}),
 			...(applied ? { actionProps: undoAction } : {}),
 		});
 		return;
@@ -100,7 +103,7 @@ export async function runFit() {
 		.filter(Boolean)
 		.join(", ");
 	toast.add({
-		description: authored === 1 ? t`Fits on one page: ${details}` : t`Fits on ${authored} pages: ${details}`,
+		description: plural(authored, { 1: `Fits on one page: ${details}`, other: `Fits on # pages: ${details}` }),
 		actionProps: undoAction,
 	});
 }

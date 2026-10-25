@@ -16,7 +16,7 @@ const githubRouter = {
 		})
 		.input(z.object({}).optional())
 		.output(z.number().describe("The number of GitHub stars."))
-		.handler(() => statisticsService.github.getStarCount()),
+		.handler(() => statisticsService.getStarCount()),
 };
 
 export const statisticsRouter = {

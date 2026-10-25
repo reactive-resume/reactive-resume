@@ -1,4 +1,4 @@
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -70,13 +70,13 @@ export function LandingHeader() {
 							aria-current={active ? "step" : undefined}
 							onClick={() => goToScene(scene, 0.04)}
 							className={cn(
-								"font-martian flex h-[34px] items-center gap-[7px] rounded-full px-[11px] text-[11px] leading-none font-medium tracking-[.08em] uppercase font-stretch-[87.5%] transition-opacity duration-300",
+								"font-martian flex h-[34px] items-center gap-[7px] rounded-sm px-[11px] text-xs leading-none font-medium font-stretch-[87.5%] transition-opacity duration-300",
 								!active && "opacity-65 hover:opacity-100",
 							)}
 						>
 							<span
 								aria-hidden="true"
-								className={cn("size-1.5 rounded-full transition-colors duration-300", active && "bg-accent")}
+								className={cn("size-1.5 rounded-sm transition-colors duration-300", active && "bg-accent")}
 							/>
 							{label}
 						</button>
@@ -119,8 +119,13 @@ function GithubLink() {
 		return () => cancelAnimationFrame(frame);
 	}, [stars, i18n.locale]);
 
-	const count = stars == null ? null : i18n.number(stars);
-	const label = count ? t`Star Reactive Resume on GitHub, ${count} stars` : t`Star Reactive Resume on GitHub`;
+	const label =
+		stars == null
+			? t`Star Reactive Resume on GitHub`
+			: plural(stars, {
+					one: "Star Reactive Resume on GitHub, # star",
+					other: "Star Reactive Resume on GitHub, # stars",
+				});
 
 	return (
 		<a

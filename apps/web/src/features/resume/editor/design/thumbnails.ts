@@ -4,38 +4,18 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { fnv1a } from "@reactive-resume/utils/string";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
-import { createPdfFirstPageImageUrl, releaseThumbnailUrls } from "@/features/resume/preview/pdf-thumbnail";
+import { createPdfFirstPageImage, releaseThumbnailUrls } from "@/features/resume/preview/pdf-thumbnail";
+import { enqueueThumbnailRender } from "@/features/resume/preview/resume-thumbnail.shared";
 
 const QUERY_KEY = "template-thumbnail";
 // Twice the gallery card (about 172 × 243 CSS px), so thumbnails stay sharp on high-density screens.
 const SIZE = { width: 344, height: 486 };
 
-let queue: Promise<unknown> = Promise.resolve();
-
-const whenIdle = () =>
-	new Promise<void>((resolve) => {
-		if ("requestIdleCallback" in window) window.requestIdleCallback(() => resolve(), { timeout: 2000 });
-		else setTimeout(resolve, 50);
-	});
-
-/** Renders one thumbnail at a time, when the browser is idle, so they never compete with the page. */
-function enqueue<T>(task: () => Promise<T>): Promise<T> {
-	const run = queue.then(whenIdle).then(task);
-	queue = run.catch(() => undefined);
-	return run;
-}
-
-/** FNV-1a over the content, so a thumbnail re-renders only when the resume changes. */
-function fingerprint(data: ResumeData) {
-	const text = JSON.stringify({ ...data, metadata: { ...data.metadata, template: null } });
-	let hash = 0x811c9dc5;
-	for (let index = 0; index < text.length; index++) {
-		hash ^= text.charCodeAt(index);
-		hash = Math.imul(hash, 0x01000193);
-	}
-	return (hash >>> 0).toString(36);
-}
+/** A hash of the content, so a thumbnail re-renders only when the resume changes. */
+const fingerprint = (data: ResumeData) =>
+	fnv1a(JSON.stringify({ ...data, metadata: { ...data.metadata, template: null } })).toString(36);
 
 /**
  * A template's first page rendered from the user's own content, font and colour. Cached by template and
@@ -56,14 +36,13 @@ export function useTemplateThumbnail(template: Template, data: ResumeData, enabl
 	return useQuery({
 		queryKey: [QUERY_KEY, template, hash],
 		queryFn: ({ signal }) =>
-			enqueue(async () => {
-				signal.throwIfAborted();
+			enqueueThumbnailRender(async () => {
 				const pdf = await createResumePdfBlob({ ...data, metadata: { ...data.metadata, template } });
-				return createPdfFirstPageImageUrl(pdf, SIZE, signal);
-			}),
+				return URL.createObjectURL(await createPdfFirstPageImage(pdf, SIZE, signal));
+			}, signal),
 		enabled: enabled && hasContent,
-		staleTime: Number.POSITIVE_INFINITY,
-		gcTime: 5 * 60 * 1000,
+		// Mutations invalidate every query; the same template and content draw the same image, so never refetch.
+		staleTime: "static",
 		// Keep the previous image while the content changes, so thumbnails don't flash back to the sample.
 		placeholderData: (previous) => (hasContent ? previous : undefined),
 	});

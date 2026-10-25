@@ -5,6 +5,7 @@ import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useInView } from "motion/react";
 import { useEffect, useId, useRef, useState } from "react";
 import { templateLayouts } from "@reactive-resume/schema/templates";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -40,7 +41,7 @@ const layoutTags = (id: Template) => {
 /** Applies a template with the page's cross-fade and an Undo toast. Font, size and colour carry across. */
 function applyTemplate(template: Template) {
 	const { resume, updateResumeData, undo } = useResumeStore.getState();
-	useEditorStore.getState().setPreviewTemplate(null);
+	useEditorStore.setState({ previewTemplate: null });
 	if (!resume || resume.data.metadata.template === template) return;
 
 	updateResumeData(
@@ -70,9 +71,8 @@ type TemplateGroupProps = {
 export function TemplateGroup({ layout = "grid" }: TemplateGroupProps) {
 	const data = useResumeData();
 	const [filter, setFilter] = useState<Filter>("all");
-	const setPreview = useEditorStore((state) => state.setPreviewTemplate);
 	// Leaving Design (by shortcut, say) never leaves a preview on the page.
-	useEffect(() => () => setPreview(null), [setPreview]);
+	useEffect(() => () => useEditorStore.setState({ previewTemplate: null }), []);
 	if (!data) return null;
 
 	const current = data.metadata.template;
@@ -85,12 +85,13 @@ export function TemplateGroup({ layout = "grid" }: TemplateGroupProps) {
 	];
 
 	const onGridBlur = (event: FocusEvent<HTMLDivElement>) => {
-		if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setPreview(null);
+		if (!event.currentTarget.contains(event.relatedTarget as Node | null))
+			useEditorStore.setState({ previewTemplate: null });
 	};
 	const onGridKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
 		if (event.key !== "Escape" || !useEditorStore.getState().previewTemplate) return;
 		event.stopPropagation();
-		setPreview(null);
+		useEditorStore.setState({ previewTemplate: null });
 	};
 
 	return (
@@ -105,7 +106,7 @@ export function TemplateGroup({ layout = "grid" }: TemplateGroupProps) {
 					<Radio.Root
 						key={option.id}
 						value={option.id}
-						className="flex h-7 cursor-pointer items-center rounded-full border border-line-2 px-3 text-[13px] text-ink-2 transition-colors duration-quick hover:bg-hover data-checked:border-accent data-checked:bg-accent-soft data-checked:font-medium data-checked:text-accent-text"
+						className="flex h-7 cursor-pointer items-center rounded-sm border border-line-2 px-3 text-[13px] text-ink-2 transition-colors duration-quick hover:bg-hover data-checked:border-accent data-checked:bg-accent-soft data-checked:font-medium data-checked:text-accent-text"
 					>
 						{option.label}
 					</Radio.Root>
@@ -124,7 +125,7 @@ export function TemplateGroup({ layout = "grid" }: TemplateGroupProps) {
 						? "grid grid-cols-2 gap-3"
 						: "-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1 *:w-28 *:shrink-0 *:snap-start"
 				}
-				onPointerLeave={() => setPreview(null)}
+				onPointerLeave={() => useEditorStore.setState({ previewTemplate: null })}
 				onBlur={onGridBlur}
 				onKeyDown={onGridKeyDown}
 			>
@@ -134,7 +135,7 @@ export function TemplateGroup({ layout = "grid" }: TemplateGroupProps) {
 						id={id}
 						data={data}
 						selected={id === current}
-						onPreview={() => setPreview(id === current ? null : id)}
+						onPreview={() => useEditorStore.setState({ previewTemplate: id === current ? null : id })}
 					/>
 				))}
 			</div>
@@ -147,17 +148,21 @@ export function TemplateGroup({ layout = "grid" }: TemplateGroupProps) {
 type TemplateCardProps = { id: Template; data: ResumeData; selected: boolean; onPreview: () => void };
 
 function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
-	const { data: thumbnail } = useTemplateThumbnail(id, data, true);
+	const ref = useRef<HTMLButtonElement>(null);
+	// Only cards on or near the screen render, so a font or colour change doesn't re-render every template.
+	const isInView = useInView(ref, { margin: "240px" });
+	const { data: thumbnail } = useTemplateThumbnail(id, data, isInView);
 	const metadata = templates[id];
 	const hold = useRef<{ timer?: number; previewing: boolean }>({ previewing: false });
 
 	const endHold = () => {
 		window.clearTimeout(hold.current.timer);
-		if (hold.current.previewing) useEditorStore.getState().setPreviewTemplate(null);
+		if (hold.current.previewing) useEditorStore.setState({ previewTemplate: null });
 	};
 
 	return (
 		<button
+			ref={ref}
 			type="button"
 			aria-pressed={selected}
 			onPointerEnter={(event: PointerEvent) => {
@@ -193,7 +198,7 @@ function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
 			>
 				<img src={thumbnail ?? metadata.imageUrl} alt="" className="size-full object-cover object-top" />
 				{selected && (
-					<span className="absolute end-1.5 top-1.5 grid size-5 place-items-center rounded-full bg-accent text-on-accent">
+					<span className="absolute end-1.5 top-1.5 grid size-5 place-items-center rounded-sm bg-accent text-on-accent">
 						<Icon name="check" size={14} />
 					</span>
 				)}

@@ -2,18 +2,13 @@ import { CryptoDigestAlgorithm, digestStringAsync } from "expo-crypto";
 import { Directory, File, Paths } from "expo-file-system";
 import { fetch as expoFetch } from "expo/fetch";
 import { configureFontReader, configureImageFetch, downloadFont } from "@reactive-resume/pdf/native";
+import { createSerialQueue } from "@reactive-resume/utils/queue";
 import { getServer } from "@/auth/session";
 
 const MAX_IMAGE_BYTES = 12_000_000;
 const MAX_FONT_CACHE_BYTES = 200_000_000;
 let configured = false;
-let cacheQueue: Promise<unknown> = Promise.resolve();
-
-function inFontCache<T>(operation: () => Promise<T>): Promise<T> {
-	const result = cacheQueue.then(operation);
-	cacheQueue = result.catch(() => undefined);
-	return result;
-}
+const inFontCache = createSerialQueue();
 
 function isFont(bytes: Uint8Array): boolean {
 	if (bytes.length < 4) return false;

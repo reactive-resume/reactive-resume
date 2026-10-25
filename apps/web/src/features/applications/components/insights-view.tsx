@@ -1,5 +1,5 @@
 import type { Application } from "../types";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useRef } from "react";
@@ -68,7 +68,7 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 							<span className="flex items-center gap-1.5 text-ink-2">
 								<span
 									aria-hidden="true"
-									className="size-2 rounded-full"
+									className="size-2 rounded-sm"
 									style={{ background: getStageColor(row.status) }}
 								/>
 								{getStageLabel(row.status)}
@@ -177,9 +177,9 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 							data.bySource.map((row, index) => (
 								<div key={row.source} className="flex items-center gap-3 text-xs">
 									<span className="w-28 shrink-0 truncate font-medium">{row.source}</span>
-									<div className="h-2.5 flex-1 overflow-hidden rounded-full bg-sunken">
+									<div className="h-2.5 flex-1 overflow-hidden rounded-sm bg-sunken">
 										<div
-											className="h-full origin-left rounded-full bg-ink-2 transition-[scale] delay-(--stagger) duration-emphasized ease-enter motion-reduce:delay-0 rtl:origin-right starting:scale-x-0"
+											className="h-full origin-left rounded-sm bg-ink-2 transition-[scale] delay-(--stagger) duration-emphasized ease-enter motion-reduce:delay-0 rtl:origin-right starting:scale-x-0"
 											style={{ ...stagger(index), width: `${Math.max((row.count / maxSource) * 100, 3)}%` }}
 										/>
 									</div>
@@ -349,7 +349,7 @@ function PipelineFlow({ insights }: { insights: ReturnType<typeof computeInsight
 					{t`Job search pipeline`}
 				</text>
 				<text x={padX} y={60} fontSize={12} fill="#71717a">
-					{t`${insights.total} active applications`}
+					{plural(insights.total, { one: "# active application", other: "# active applications" })}
 				</text>
 				{insights.closed > 0 && (
 					<g>

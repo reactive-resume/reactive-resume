@@ -17,12 +17,15 @@ import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
 
 const totpSchema = z.object({
-	code: z.string().length(6, "Code must be 6 digits"),
+	code: z.string().length(6, { error: () => t`Enter the 6-digit code.` }),
 	trustDevice: z.boolean(),
 });
 
 const backupCodeSchema = z.object({
-	code: z.string().trim(),
+	code: z
+		.string()
+		.trim()
+		.min(1, { error: () => t`Enter a backup code.` }),
 	trustDevice: z.boolean(),
 });
 
@@ -59,11 +62,11 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 						(backupCode
 							? t({
 									comment: "Fallback toast when verifying a backup two-factor authentication code fails",
-									message: "Failed to verify your backup code. Please try again.",
+									message: "Couldn't verify your backup code. Check the code and try again.",
 								})
 							: t({
 									comment: "Fallback toast when verifying a two-factor authentication code fails",
-									message: "Failed to verify your code. Please try again.",
+									message: "Couldn't verify your code. Check the code and try again.",
 								})),
 					id: toastId,
 				});
@@ -84,13 +87,13 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 		<>
 			<div className="space-y-1 text-center">
 				<h1 className="text-2xl font-semibold tracking-tight">
-					{backupCode ? <Trans>Verify with a Backup Code</Trans> : <Trans>Two-Factor Authentication</Trans>}
+					{backupCode ? <Trans>Verify with a backup code</Trans> : <Trans>Two-step verification</Trans>}
 				</h1>
 				<div className="text-ink-3">
 					{backupCode ? (
-						<Trans>Enter one of your saved backup codes to access your account</Trans>
+						<Trans>Enter one of your saved backup codes to access your account.</Trans>
 					) : (
-						<Trans>Enter the verification code from your authenticator app</Trans>
+						<Trans>Enter the verification code from your authenticator app.</Trans>
 					)}
 				</div>
 			</div>
@@ -163,7 +166,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 							<Link to={backupCode ? "/auth/verify-2fa" : "/auth/login"} search={{ callbackURL, reauthenticate }}>
 								<Icon name="arrow-left" size={16} />
 								{backupCode ? (
-									<Trans comment="Secondary navigation button on backup-code verification screen">Go Back</Trans>
+									<Trans comment="Secondary navigation button on backup-code verification screen">Go back</Trans>
 								) : (
 									<Trans comment="Secondary navigation button on 2FA verification screen">Back to sign in</Trans>
 								)}

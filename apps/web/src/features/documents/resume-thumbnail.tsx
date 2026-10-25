@@ -1,5 +1,4 @@
 import type { ResumeThumbnailSize } from "@/features/resume/preview/resume-thumbnail.shared";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { QueryClient } from "@tanstack/react-query";
 import type { RefObject } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -7,35 +6,27 @@ import { useInView } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
+import { readStoredThumbnail, storeThumbnail } from "./thumbnail-store";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
-import { createPdfFirstPageImageUrl, releaseThumbnailUrls } from "@/features/resume/preview/pdf-thumbnail";
-import { getResumeThumbnailCacheKey, getResumeThumbnailSize } from "@/features/resume/preview/resume-thumbnail.shared";
+import { createPdfFirstPageImage, releaseThumbnailUrls } from "@/features/resume/preview/pdf-thumbnail";
+import {
+	enqueueThumbnailRender,
+	getResumeThumbnailCacheKey,
+	getResumeThumbnailSize,
+} from "@/features/resume/preview/resume-thumbnail.shared";
 import { orpc } from "@/libs/orpc/client";
 
-type ThumbnailState = { status: "error" | "idle" | "loading" } | { status: "ready"; url: string };
+type ThumbnailState = { status: "error" | "loading" } | { status: "ready"; url: string };
+
+type ThumbnailResume = { id: string; updatedAt: Date };
 
 type ResumeThumbnailProps = {
-	resume: { id: string; updatedAt: Date };
+	resume: ThumbnailResume;
 };
 
-const throwIfAborted = (signal: AbortSignal) => {
-	if (signal.aborted) throw new DOMException("Thumbnail generation aborted.", "AbortError");
-};
-
-const THUMBNAIL_CACHE_TIME = 5 * 60 * 1000;
-const createResumeThumbnailUrl = async (data: ResumeData, size: ResumeThumbnailSize, signal: AbortSignal) => {
-	const pdf = await createResumePdfBlob(data);
-	throwIfAborted(signal);
-
-	const url = await createPdfFirstPageImageUrl(pdf, size, signal);
-
-	if (signal.aborted) {
-		URL.revokeObjectURL(url);
-		throwIfAborted(signal);
-	}
-
-	return url;
-};
+// In a build this chunk's URL is content-hashed, including the PDF renderer it imports (and, through it, the
+// worker's hashed URL), so it changes whenever templates, fonts or the engine change. In dev it never changes.
+const RENDERER_BUILD = `${__APP_VERSION__} ${import.meta.url}`;
 
 function useThumbnailSize(containerRef: RefObject<HTMLDivElement | null>, enabled: boolean) {
 	const [size, setSize] = useState<ResumeThumbnailSize>({ width: 0, height: 0 });
@@ -94,14 +85,11 @@ const findLatestThumbnail = (queryClient: QueryClient, resumePrefix: string) => 
 	return latest?.url;
 };
 
-function useResumeThumbnail(
-	data: ResumeData | undefined,
-	cacheKey: string,
-	size: ResumeThumbnailSize,
-	enabled: boolean,
-): ThumbnailState {
+function useResumeThumbnail(resume: ThumbnailResume, size: ResumeThumbnailSize, enabled: boolean): ThumbnailState {
 	const queryClient = useQueryClient();
-	const resumePrefix = `${cacheKey.slice(0, cacheKey.lastIndexOf(":"))}:`;
+	const cacheKey = getResumeThumbnailCacheKey(resume.id, resume.updatedAt);
+	const resumePrefix = `${resume.id}:`;
+	const queryKey = ["resume-thumbnail", cacheKey, size.width, size.height];
 
 	useEffect(() => {
 		releaseThumbnailUrls(queryClient, "resume-thumbnail");
@@ -112,15 +100,26 @@ function useResumeThumbnail(
 		error: thumbnailError,
 		isError: thumbnailIsError,
 	} = useQuery({
-		queryKey: ["resume-thumbnail", cacheKey, size.width, size.height],
-		queryFn: ({ signal }) => {
-			if (!data) throw new Error("Resume data is required to generate a thumbnail.");
-			return createResumeThumbnailUrl(data, size, signal);
+		queryKey,
+		queryFn: async ({ signal }) => {
+			const version = { updatedAt: resume.updatedAt, size, build: RENDERER_BUILD };
+			const stored = await readStoredThumbnail(resume.id, version);
+			signal.throwIfAborted();
+			if (stored) return URL.createObjectURL(stored);
+
+			return enqueueThumbnailRender(async () => {
+				const { data } = await queryClient.fetchQuery(orpc.resume.getById.queryOptions({ input: { id: resume.id } }));
+				signal.throwIfAborted();
+				const pdf = await createResumePdfBlob(data);
+				const image = await createPdfFirstPageImage(pdf, size, signal);
+				void storeThumbnail(resume.id, version, image);
+				return URL.createObjectURL(image);
+			}, signal);
 		},
-		enabled: Boolean(enabled && data && size.width && size.height),
+		enabled: Boolean(enabled && size.width && size.height),
 		placeholderData: (previous) => previous ?? findLatestThumbnail(queryClient, resumePrefix),
-		staleTime: Number.POSITIVE_INFINITY,
-		gcTime: THUMBNAIL_CACHE_TIME,
+		// Any mutation invalidates every query; this image can't have changed, so never refetch.
+		staleTime: "static",
 	});
 	const previousThumbnailData = useRef<string | undefined>(undefined);
 
@@ -160,27 +159,15 @@ function useResumeThumbnail(
 
 	if (thumbnailIsError) return { status: "error" };
 	if (thumbnailData) return { status: "ready", url: thumbnailData };
-	if (!data || !cacheKey) return { status: "idle" };
-
 	return { status: "loading" };
 }
 
-/** The resume's first page, rendered once it scrolls near view and cached until it changes. */
+/** The resume's first page, rendered once it scrolls near view and stored on the device until it changes. */
 export function ResumeThumbnail({ resume }: ResumeThumbnailProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const isInView = useInView(containerRef, { amount: 0.1, margin: "240px" });
 	const size = useThumbnailSize(containerRef, isInView);
-	const { data: resumeData, isError: resumeIsError } = useQuery({
-		...orpc.resume.getById.queryOptions({ input: { id: resume.id } }),
-		enabled: isInView,
-	});
-	const thumbnail = useResumeThumbnail(
-		resumeData?.data,
-		getResumeThumbnailCacheKey(resume.id, resume.updatedAt),
-		size,
-		isInView,
-	);
-	const hasFailed = resumeIsError || thumbnail.status === "error";
+	const thumbnail = useResumeThumbnail(resume, size, isInView);
 
 	return (
 		<div ref={containerRef} className="relative size-full overflow-hidden bg-white">
@@ -190,7 +177,7 @@ export function ResumeThumbnail({ resume }: ResumeThumbnailProps) {
 					className="absolute inset-0 bg-white bg-contain bg-center bg-no-repeat transition-opacity duration-standard ease-enter starting:opacity-0"
 					style={{ backgroundImage: `url(${thumbnail.url})` }}
 				/>
-			) : hasFailed ? (
+			) : thumbnail.status === "error" ? (
 				<div className="absolute inset-0 flex items-center justify-center text-ink-3">
 					<Icon name="file-text" size={24} />
 				</div>

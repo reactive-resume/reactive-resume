@@ -28,7 +28,7 @@ it("opens the deletion deep link at confirmation, never deletes on navigation, a
 			</QueryClientProvider>
 		</I18nProvider>,
 	);
-	const confirm = await screen.findByRole("button", { name: /^Delete$/ });
+	const confirm = await screen.findByRole("button", { name: /^Delete account$/ });
 	expect(confirm).toBeDisabled();
 	fireEvent.change(screen.getByRole("textbox"), { target: { value: "delete" } });
 	expect(confirm).toBeEnabled();

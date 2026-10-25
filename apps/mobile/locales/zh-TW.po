@@ -7,10 +7,6 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: zh-TW\n"
 
-#: src/features/applications/list-screen.tsx
-msgid " · Including closed"
-msgstr " · 包含已結束"
-
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
 #: src/features/application-detail/detail-screen.tsx
@@ -46,12 +42,12 @@ msgid "“{value}” ends before it starts."
 msgstr "「{value}」在開始之前就結束了。"
 
 #: src/features/check/issues.ts
-msgid "“{value}” isn't a form systems recognise, such as Mar 2020 – Present."
-msgstr "「{value}」不是系統識別的表單，例如 Mar 2020 – Present。"
+msgid "“{value}” isn't a form systems recognize, such as Mar 2020 – Present."
+msgstr "「{value}」不是系統能識別的格式，例如 Mar 2020 – Present。"
 
 #: src/features/check/issues.ts
-msgid "“{value}” isn't a form systems recognise, such as March 2022."
-msgstr "「{value}」不是系統識別的表單，例如 March 2022。"
+msgid "“{value}” isn't a form systems recognize, such as March 2022."
+msgstr "「{value}」不是系統能識別的格式，例如 March 2022。"
 
 #: src/features/check/issues.ts
 msgid "“{value}” isn't a plain address like name@example.com."
@@ -61,12 +57,32 @@ msgstr "“{value}”不是像 name@example.com 這樣的普通位址。"
 msgid "“{value}” starts after today. Check the year, or mark it as current."
 msgstr "「{value}」從今天開始。檢查年份，或將其標記為當前年份。"
 
+#. placeholder {0}: proposals.length
+#: src/features/assistant/document.ts
+#: src/features/assistant/proposals.ts
+msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
+msgstr "{0, plural, =1 {已套用修改} other {已套用 # 處修改}}"
+
 #. placeholder {0}: open.jdCount
 #. placeholder {1}: open.label
 #. placeholder {2}: open.label
 #: src/features/check/job-match.tsx
 msgid "{0, plural, one {“{1}” appears once in the posting. If it's part of your experience, add it where it belongs.} other {“{2}” appears # times in the posting. If it's part of your experience, add it where it belongs.}}"
 msgstr "{0, plural, one {「{1}」在職缺說明中出現一次。如果符合您的經驗，請加入適當位置。} other {「{2}」在職缺說明中出現 # 次。如果符合您的經驗，請加入適當位置。}}"
+
+#. placeholder {0}: report.totalRules
+#. placeholder {1}: report.passedRules
+#. placeholder {2}: report.passedRules
+#: src/features/check/score.tsx
+msgid "{0, plural, one {{1} of # check passes.} other {{2} of # checks pass.}}"
+msgstr "{0, plural, one {# 項檢查中有 {1} 項通過。} other {# 項檢查中有 {2} 項通過。}}"
+
+#. placeholder {0}: thread.editsProposed
+#. placeholder {1}: thread.editsAccepted
+#. placeholder {2}: thread.editsAccepted
+#: src/features/assistant/threads.tsx
+msgid "{0, plural, one {{1} of # edit accepted} other {{2} of # edits accepted}}"
+msgstr "{0, plural, one {# 處修改中已接受 {1} 處} other {# 處修改中已接受 {2} 處}}"
 
 #. placeholder {0}: value.report.applicableChecks
 #. placeholder {1}: value.report.passedChecks
@@ -82,10 +98,31 @@ msgstr "{0, plural, one {匯出 PDF 的 # 項檢查中，有 {1} 項通過。} o
 msgid "{0, plural, one {{1} of # posting term covered} other {{2} of # posting terms covered}}"
 msgstr "{0, plural, one {已涵蓋職缺說明中 # 個關鍵字的 {1} 個} other {已涵蓋職缺說明中 # 個關鍵字的 {2} 個}}"
 
+#. placeholder {0}: applications.length
+#. placeholder {0}: section.total
+#. placeholder {1}: getStageLabel(section.status)
+#. placeholder {1}: getStageLabel(stage)
+#. placeholder {2}: getStageLabel(section.status)
+#. placeholder {2}: getStageLabel(stage)
+#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {{1}, # application} other {{2}, # applications}}"
+msgstr "{0, plural, one {{1}，# 筆應徵紀錄} other {{2}，# 筆應徵紀錄}}"
+
+#. placeholder {0}: ids.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {{count} of # application changed.} other {{count} of # applications changed.}}"
+msgstr "{0, plural, other {# 筆應徵紀錄中已變更 {count} 筆。}}"
+
 #. placeholder {0}: data.answers.length
 #: src/features/workspace/tabs/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, other {# 個回答}}"
+
+#. placeholder {0}: selectedIds.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
+msgstr "{0, plural, other {已選擇 # 筆應徵紀錄。}}"
 
 #. placeholder {0}: text.trim().length
 #: src/features/write/rich-text-field.tsx
@@ -137,12 +174,19 @@ msgstr "{0, plural, one {# 筆項目} other {# 筆項目}}"
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, other {# 個事實}}"
 
+#. placeholder {0}: filtered.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {# match} other {# matches}}"
+msgstr "{0, plural, other {# 個相符項目}}"
+
 #. placeholder {0}: data.officeDays
 #: src/features/career/offers.tsx
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {每週到辦公室 # 天} other {每週到辦公室 # 天}}"
 
+#. placeholder {0}: metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
+#: src/features/design/advanced.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, other {# 頁}}"
@@ -181,6 +225,21 @@ msgstr "{0, plural, other {# 天前申請}}"
 #: src/features/career/facts.tsx
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, other {佐證 # 個故事}}"
+
+#. placeholder {0}: selectedIds.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
+msgstr "{0, plural, other {刪除 # 筆應徵紀錄？}}"
+
+#. placeholder {0}: selectedIds.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
+msgstr "{0, plural, other {刪除 # 筆應徵紀錄}}"
+
+#. placeholder {0}: purge?.length ?? 0
+#: src/features/documents/library.tsx
+msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
+msgstr "{0, plural, other {永久刪除 # 份文件？}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -270,17 +329,6 @@ msgstr "{0}(我的)"
 msgid "{0} → {1}: {2}{3}"
 msgstr "{0} → {1}: {2}{3}"
 
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0} applications selected."
-msgstr "已選取 {0} 筆應徵紀錄。"
-
-#. placeholder {0}: proposals.length
-#: src/features/assistant/document.ts
-#: src/features/assistant/proposals.ts
-msgid "{0} edits applied"
-msgstr "{0} 編輯已套用"
-
 #. placeholder {0}: draft.time
 #. placeholder {1}: draft.timezone
 #. placeholder {2}: when(at)
@@ -315,27 +363,10 @@ msgstr "{0}面試 · {1} 分鐘"
 msgid "{0} less"
 msgstr "減少 {0}"
 
-#. placeholder {0}: filtered.length
-#: src/features/applications/list-screen.tsx
-msgid "{0} matches"
-msgstr "{0} 個符合項目"
-
 #. placeholder {0}: formatMoney(time.locale, data.currency, difference)
 #: src/features/career/offers.tsx
 msgid "{0} more"
 msgstr "多 {0}"
-
-#. placeholder {0}: report.passedRules
-#. placeholder {1}: report.totalRules
-#: src/features/check/score.tsx
-msgid "{0} of {1} checks pass."
-msgstr "{1} 項檢查中有 {0} 項通過。"
-
-#. placeholder {0}: thread.editsAccepted
-#. placeholder {1}: thread.editsProposed
-#: src/features/assistant/threads.tsx
-msgid "{0} of {1} edits accepted"
-msgstr "{0} 的 {1} 編輯已接受"
 
 #. placeholder {0}: shown.length
 #. placeholder {1}: TEMPLATES.length
@@ -355,11 +386,6 @@ msgstr "{1} 筆客製化應徵中有 {0} 筆得到回覆；使用其他履歷送
 #: src/features/career/facts.tsx
 msgid "{0} only"
 msgstr "僅{0}"
-
-#. placeholder {0}: metadata.layout.pages.length
-#: src/features/design/advanced.tsx
-msgid "{0} pages"
-msgstr "{0}頁"
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-screen.tsx
@@ -382,15 +408,6 @@ msgstr "已選取 {0} 項"
 #: src/features/share/download.tsx
 msgid "{0}-Resume"
 msgstr "{0}-履歷"
-
-#. placeholder {0}: getStageLabel(section.status)
-#. placeholder {0}: getStageLabel(stage)
-#. placeholder {1}: applications.length
-#. placeholder {1}: section.total
-#: src/features/applications-board/board-screen.tsx
-#: src/features/applications/list-screen.tsx
-msgid "{0}, {1} applications"
-msgstr "{0}，{1} 筆應徵紀錄"
 
 #. placeholder {0}: title || t`Untitled`
 #. placeholder {1}: row.index + 1
@@ -418,6 +435,10 @@ msgstr "{active, plural, one {# 筆進行中的應徵紀錄} other {# 筆進行�
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}。將此應徵紀錄和知識庫傳送給供應商；供應商可能收費。"
 
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
+msgstr "{authored, plural, =1 {調整為一頁} other {調整為 # 頁}}"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "{characters, plural, one {# character} other {# characters}}"
 msgstr "{characters, plural, other {# 個字元}}"
@@ -441,11 +462,6 @@ msgstr "{count, plural, one {# 欄} other {# 欄}}"
 #: src/features/workspace/tabs/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
 msgstr "{count, plural, other {套用 # 項變更}}"
-
-#. placeholder {0}: ids.length
-#: src/features/applications/list-screen.tsx
-msgid "{count} of {0} applications changed."
-msgstr "已變更 {count} 筆應徵紀錄，共 {0} 筆。"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{day} · {length}m"
@@ -647,10 +663,6 @@ msgstr "1天"
 msgid "1 h"
 msgstr "1小時"
 
-#: src/features/design/advanced.tsx
-msgid "1 page"
-msgstr "1頁"
-
 #: src/features/workspace/tabs/prepare.tsx
 msgid "10-minute briefing"
 msgstr "10 分鐘簡報"
@@ -776,7 +788,7 @@ msgid "Above your office-day limit."
 msgstr "超過您設定的每週到辦公室天數上限。"
 
 #: src/features/design/style-groups.tsx
-msgid "Accent colour"
+msgid "Accent color"
 msgstr "強調色"
 
 #: src/features/design/style-groups.tsx
@@ -1001,7 +1013,7 @@ msgid "Add one with its country code; some application forms require it before y
 msgstr "新增一個帶國碼的號碼；有些申請表單要求先填寫才能送出。"
 
 #: src/features/design/layout-screen.tsx
-msgid "Add Page"
+msgid "Add page"
 msgstr "新增頁面"
 
 #: src/features/write/fields.ts
@@ -1194,10 +1206,6 @@ msgstr "人工智慧提供者"
 msgid "AI providers aren't available on this server until ENCRYPTION_SECRET is set."
 msgstr "在設定 ENCRYPTION_SECRET 之前，AI 提供者在此伺服器上不可用。"
 
-#: src/features/applications/add-sheet.tsx
-msgid "AI providers could not be loaded. Retry or fill the details manually."
-msgstr "無法載入AI 供應商。重試或手動填寫詳細資料。"
-
 #: src/features/write/improve.tsx
 msgid "AI providers couldn't be loaded."
 msgstr "無法載入AI 供應商。"
@@ -1205,6 +1213,10 @@ msgstr "無法載入AI 供應商。"
 #: src/features/ai/provider-list.tsx
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "無法載入 AI 提供者。重新加載再試一次。"
+
+#: src/features/applications/add-sheet.tsx
+msgid "AI providers couldn't be loaded. Retry or fill the details manually."
+msgstr "無法載入 AI 提供者。請再試一次，或手動填寫詳細資料。"
 
 #: src/features/applications/add-sheet.tsx
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
@@ -1372,13 +1384,10 @@ msgstr "API鑰匙"
 msgid "API key revoked. Apps using it stop working now."
 msgstr "API 金鑰已撤銷。使用此金鑰的應用程式會立即停止運作。"
 
+#: src/features/search/search-screen.tsx
 #: src/features/settings/api-keys.tsx
 msgid "API keys"
 msgstr "API按鍵"
-
-#: src/features/search/search-screen.tsx
-msgid "API Keys"
-msgstr "API Key"
 
 #: app/(tabs)/settings/preferences.tsx
 msgid "Appearance"
@@ -1454,8 +1463,8 @@ msgid "Applications"
 msgstr "應徵紀錄"
 
 #: src/features/applications/list-screen.tsx
-msgid "Applications and their attachments will be deleted permanently. This cannot be undone."
-msgstr "應徵紀錄及其附件將永久刪除。此操作無法撤銷。"
+msgid "Applications and their attachments will be deleted permanently. This can't be undone."
+msgstr "應徵紀錄及其附件將被永久刪除。此操作無法復原。"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -1510,8 +1519,8 @@ msgstr "正在套用變更。關閉此面板不會取消要求。"
 
 #. placeholder {0}: selected?.name ?? ""
 #: src/features/settings/api-keys.tsx
-msgid "Apps using “{0}” will stop working. This cannot be undone."
-msgstr "使用「{0}」的應用程式將停止運作。此操作無法撤銷。"
+msgid "Apps using “{0}” will stop working. This can't be undone."
+msgstr "使用「{0}」的應用程式將停止運作。此操作無法復原。"
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
@@ -1587,7 +1596,7 @@ msgid "Ask, or describe a change…"
 msgstr "詢問或描述更改..."
 
 #: src/features/write/picture-screen.tsx
-msgid "Aspect Ratio"
+msgid "Aspect ratio"
 msgstr "顯示比例"
 
 #: app/letter/[id]/_layout.tsx
@@ -1604,13 +1613,10 @@ msgid "At 09:00 that day ({timeZone})."
 msgstr "當日09:00({timeZone})。"
 
 #: app/_layout.tsx
-msgid "ATS checker"
-msgstr "ATS檢查器"
-
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
-msgid "ATS Checker"
-msgstr "ATS 檢查工具"
+msgid "ATS checker"
+msgstr "ATS檢查器"
 
 #: src/features/design/template-group.tsx
 msgid "ATS-safe"
@@ -1725,7 +1731,7 @@ msgid "Backed by"
 msgstr "依據"
 
 #: src/features/design/advanced.tsx
-msgid "Background Color"
+msgid "Background color"
 msgstr "背景顏色"
 
 #: src/features/design/style-groups.tsx
@@ -1813,15 +1819,15 @@ msgid "Bonus conditions"
 msgstr "獎金條件"
 
 #: src/features/write/picture-screen.tsx
-msgid "Border Color"
+msgid "Border color"
 msgstr "邊框顏色"
 
 #: src/features/write/picture-screen.tsx
-msgid "Border Radius"
+msgid "Border radius"
 msgstr "邊框弧度"
 
 #: src/features/write/picture-screen.tsx
-msgid "Border Width"
+msgid "Border width"
 msgstr "邊框寬度"
 
 #: src/features/ats-checker/messages.ts
@@ -2287,7 +2293,7 @@ msgid "Color"
 msgstr "顏色"
 
 #: src/features/design/advanced.tsx
-msgid "Colours and level"
+msgid "Colors and level"
 msgstr "顏色與級別"
 
 #: src/features/write/section-sheet.tsx
@@ -2347,7 +2353,7 @@ msgid "Confirm applied"
 msgstr "確認已申請"
 
 #: src/features/share/link.tsx
-msgid "Confirm Password"
+msgid "Confirm password"
 msgstr "確認密碼"
 
 #: src/features/application-detail/sheets.tsx
@@ -2541,34 +2547,17 @@ msgstr "修正事實"
 msgid "Correct the year, or write \"Present\" for ongoing work."
 msgstr "更正年份，或為仍在進行的工作寫上「現在」。"
 
-#: src/features/applications/error.ts
-msgid "Could not complete the request. Check your connection and try again."
-msgstr "無法完成請求。檢查您的連線並重試。"
-
-#: src/features/applications/add-sheet.tsx
-msgid "Could not confirm the save. Check Applications before retrying to avoid a duplicate."
-msgstr "無法確認儲存。在重試之前檢查應徵紀錄以避免重複。"
-
-#: src/features/application-detail/interview-sheet.tsx
-msgid "Could not confirm the save. Check the application before retrying to avoid a duplicate."
-msgstr "无法确认保存。在重試之前檢查應用程式以避免重複。"
-
-#. placeholder {0}: unresolved.join(", ")
-#: src/features/write/hooks.ts
-msgid "Could not sort these items; they stayed at the end: {0}."
-msgstr "無法排序這些項目，它們已留在最後：{0}。"
-
 #: src/features/assistant/chat-view.tsx
-msgid "Couldn't attach the file."
-msgstr "無法附加文件。"
+msgid "Couldn't attach the file. Try again."
+msgstr "無法附加檔案。請再試一次。"
 
 #: app/(tabs)/settings/preferences.tsx
 msgid "Couldn't change the language. Try again."
 msgstr "無法改變語言。再試一次。"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "Couldn't change the schedule."
-msgstr "無法變更排程。"
+msgid "Couldn't change the schedule. Try again."
+msgstr "無法變更排程。請再試一次。"
 
 #: src/features/share/download.tsx
 msgid "Couldn't check for a linked cover letter."
@@ -2582,6 +2571,10 @@ msgstr "無法檢查或儲存該位址。再試一次。"
 msgid "Couldn't check your AI providers."
 msgstr "無法檢查您的 AI 供應商。"
 
+#: src/features/applications/error.ts
+msgid "Couldn't complete the request. Check your connection and try again."
+msgstr "無法完成要求。請檢查網路連線後再試一次。"
+
 #: src/features/documents/queries.ts
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
@@ -2591,25 +2584,33 @@ msgstr "無法完成此操作。再試一次。"
 msgid "Couldn't confirm AI connections. Try again before using the assistant."
 msgstr "無法確認AI連線。使用助手之前請重試。"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Couldn't confirm the save. Check Applications before retrying to avoid a duplicate."
+msgstr "無法確認是否已儲存。再試一次前請先檢查「應徵紀錄」，以免重複。"
+
+#: src/features/application-detail/interview-sheet.tsx
+msgid "Couldn't confirm the save. Check the application before retrying to avoid a duplicate."
+msgstr "無法確認是否已儲存。再試一次前請先檢查該應徵紀錄，以免重複。"
+
 #: src/features/assistant/chat-view.tsx
-msgid "Couldn't copy the transcript."
-msgstr "無法複製文字記錄。"
+msgid "Couldn't copy the transcript. Try again."
+msgstr "無法複製文字記錄。請再試一次。"
 
 #: src/features/application-detail/sections.tsx
-msgid "Couldn't create the letter."
-msgstr "無法創建這封信。"
-
-#: src/features/assistant/threads.tsx
-msgid "Couldn't delete it."
-msgstr "無法刪除它。"
+msgid "Couldn't create the letter. Try again."
+msgstr "無法建立這封信。請再試一次。"
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "Couldn't delete it. It's back in Saved."
 msgstr "無法刪除它。它又回到了「已儲存」。"
 
+#: src/features/assistant/threads.tsx
+msgid "Couldn't delete the conversation. Try again."
+msgstr "無法刪除對話。請再試一次。"
+
 #: src/features/application-detail/interview-sheet.tsx
-msgid "Couldn't delete the interview."
-msgstr "無法刪除採訪。"
+msgid "Couldn't delete the interview. Try again."
+msgstr "無法刪除面試。請再試一次。"
 
 #: src/features/public/public-resume.tsx
 msgid "Couldn't download the PDF. Try again."
@@ -2674,9 +2675,24 @@ msgstr "無法載入履歷。"
 msgid "Couldn't load statistics."
 msgstr "無法載入統計資料。"
 
+#: src/features/assistant/assistant-screen.tsx
+#: src/features/letters/share.tsx
+#: src/features/letters/write.tsx
+msgid "Couldn't load the cover letter."
+msgstr "無法載入求職信。"
+
 #: src/features/check/job-match.tsx
 msgid "Couldn't load the linked posting."
 msgstr "無法載入連結的職缺說明。"
+
+#: app/builder/[id]/page.tsx
+#: app/builder/[id]/write.tsx
+#: src/features/assistant/assistant-screen.tsx
+#: src/features/design/design-pane.tsx
+#: src/features/share/document.ts
+#: src/features/share/download.tsx
+msgid "Couldn't load the resume."
+msgstr "無法載入履歷。"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
@@ -2713,8 +2729,8 @@ msgid "Couldn't load your timezone."
 msgstr "無法載入您的時區。"
 
 #: src/features/workspace/tabs/apply.tsx
-msgid "Couldn't mark it as applied."
-msgstr "無法標記為已申請。"
+msgid "Couldn't mark it as applied. Try again."
+msgstr "無法標記為已申請。請再試一次。"
 
 #: app/(tabs)/settings/account.tsx
 #: app/(tabs)/settings/index.tsx
@@ -2725,8 +2741,8 @@ msgid "Couldn't open the browser. Try again."
 msgstr "無法開啟瀏覽器。再試一次。"
 
 #: src/features/career/today.tsx
-msgid "Couldn't open the posting."
-msgstr "無法開啟職缺。"
+msgid "Couldn't open the posting. Try again."
+msgstr "無法開啟職缺公告。請再試一次。"
 
 #: src/features/check/screen.tsx
 msgid "Couldn't open this resume"
@@ -2744,6 +2760,16 @@ msgstr "無法提出這些編輯：{0}"
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "無法聯絡您的 AI 供應商。請重試或檢查 AI 設定中的金鑰。"
+
+#. placeholder {0}: dates.raw
+#: src/features/write/date-field.tsx
+msgid "Couldn't read “{0}”. Enter the dates so they sort and print consistently."
+msgstr "無法讀取「{0}」。請輸入日期，以便一致地排序和列印。"
+
+#: src/features/ats-checker/check.ts
+#: src/features/ats-checker/checker.tsx
+msgid "Couldn't read that file. Try again."
+msgstr "無法讀取該檔案。請再試一次。"
 
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
@@ -2770,9 +2796,18 @@ msgstr "無法重新整理您的文件。"
 msgid "Couldn't remember that. Try again."
 msgstr "無法記住該內容。請重試。"
 
+#: src/features/application-detail/sections.tsx
+msgid "Couldn't remove the file. Try again."
+msgstr "無法移除檔案。請再試一次。"
+
 #: src/features/assistant/coach-screen.tsx
-msgid "Couldn't rename it."
-msgstr "無法重新命名。"
+msgid "Couldn't rename the conversation. Try again."
+msgstr "無法重新命名對話。請再試一次。"
+
+#: src/features/letters/page.tsx
+#: src/preview/page.tsx
+msgid "Couldn't render the preview. Retry, or try another template or font in Design."
+msgstr "無法產生預覽。請再試一次，或在「設計」中改用其他範本或字型。"
 
 #: src/features/check/page.tsx
 msgid "Couldn't render this resume."
@@ -2789,40 +2824,41 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "無法儲存該變更。請檢查網路連線後重試。"
 
 #: src/features/career/hooks.ts
-msgid "Couldn't save that change. The item has been restored."
-msgstr "無法儲存該變更。該項目已恢復。"
-
-#: src/features/workspace/tabs/fit.tsx
-msgid "Couldn't save that to Knowledge."
-msgstr "無法儲存到知識庫。"
+msgid "Couldn't save that change. The item is restored; try again."
+msgstr "無法儲存該變更。該項目已還原，請再試一次。"
 
 #: src/features/workspace/tabs/debrief.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Couldn't save that to Knowledge. Try again."
 msgstr "無法儲存到知識庫。請重試。"
 
 #: src/features/application-detail/sheets.tsx
-msgid "Couldn't save the contacts."
-msgstr "無法儲存聯絡人。"
+msgid "Couldn't save the contacts. Try again."
+msgstr "無法儲存聯絡人。請再試一次。"
 
 #: src/features/application-detail/sheets.tsx
-msgid "Couldn't save the follow-up."
-msgstr "無法儲存後續內容。"
+msgid "Couldn't save the follow-up. Try again."
+msgstr "無法儲存後續追蹤。請再試一次。"
+
+#: src/features/application-detail/sheets.tsx
+msgid "Couldn't save the job description. Try again."
+msgstr "無法儲存職務說明。請再試一次。"
 
 #: src/features/application-detail/sections.tsx
 msgid "Couldn't save the notes. Your text is still here."
 msgstr "無法儲存筆記。你的文字還在這裡。"
 
 #: src/features/application-detail/sections.tsx
-msgid "Couldn't save the tags."
-msgstr "無法儲存標籤。"
+msgid "Couldn't save the tags. Try again."
+msgstr "無法儲存標籤。請再試一次。"
 
 #: app/(tabs)/settings/preferences.tsx
 msgid "Couldn't save the theme. Try again."
 msgstr "無法儲存主題。再試一次。"
 
 #: app/(tabs)/settings/preferences.tsx
-msgid "Couldn't save the timezone."
-msgstr "無法儲存時區。"
+msgid "Couldn't save the timezone. Try again."
+msgstr "無法儲存時區。請再試一次。"
 
 #: src/features/public/public-resume.tsx
 msgid "Couldn't save your blocked-author setting. Try again."
@@ -2846,11 +2882,6 @@ msgstr "無法儲存您的變更。您所做的編輯仍然在此裝置上。再
 msgid "Couldn't save your preferences. Your draft is still here."
 msgstr "無法儲存您的偏好設定。你的草稿還在這裡。"
 
-#: src/features/application-detail/sections.tsx
-#: src/features/application-detail/sheets.tsx
-msgid "Couldn't save."
-msgstr "無法保存。"
-
 #: src/features/settings/profile.tsx
 msgid "Couldn't save. Try again."
 msgstr "無法保存。再試一次。"
@@ -2864,28 +2895,37 @@ msgid "Couldn't send the report. Your text is kept; try again."
 msgstr "無法發送報告。您的文字將被保留；再試一次。"
 
 #: src/features/workspace/tabs/apply.tsx
-msgid "Couldn't share the answers."
-msgstr "無法分享答案。"
+msgid "Couldn't share the answers. Try again."
+msgstr "無法分享答案。請再試一次。"
 
 #: src/features/application-detail/sections.tsx
-msgid "Couldn't share the calendar event."
-msgstr "無法共用行事曆事件。"
+msgid "Couldn't share the calendar event. Try again."
+msgstr "無法共用行事曆事件。請再試一次。"
 
 #: src/features/workspace/tabs/debrief.tsx
-msgid "Couldn't share the calendar file."
-msgstr "無法共用行事曆檔案。"
+msgid "Couldn't share the calendar file. Try again."
+msgstr "無法共用行事曆檔案。請再試一次。"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Couldn't share the picture. Try again."
 msgstr "無法分享圖片。再試一次。"
 
 #: src/features/workspace/tabs/practise.tsx
-msgid "Couldn't share the recording."
-msgstr "無法分享錄音。"
+msgid "Couldn't share the recording. Try again."
+msgstr "無法分享錄音。請再試一次。"
 
 #: src/features/settings/sign-out.tsx
 msgid "Couldn't sign out. Try again."
 msgstr "無法註銷。再試一次。"
+
+#: src/auth/messages.ts
+msgid "Couldn't sign you in. Try again."
+msgstr "無法讓您登入。請再試一次。"
+
+#. placeholder {0}: unresolved.join(", ")
+#: src/features/write/hooks.ts
+msgid "Couldn't sort these items, so they stayed at the end: {0}."
+msgstr "無法排序這些項目，因此它們保留在最後：{0}。"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Couldn't start recording. Try again, or type your answer."
@@ -2896,32 +2936,32 @@ msgid "Couldn't start the conversation. Try again."
 msgstr "無法開始對話。再試一次。"
 
 #: src/features/assistant/provider.tsx
-msgid "Couldn't switch models."
-msgstr "無法切換型號。"
+msgid "Couldn't switch models. Try again."
+msgstr "無法切換模型。請再試一次。"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Couldn't transcribe. Your recording is still here."
 msgstr "無法轉錄。您的錄音仍在這裡。"
 
 #: src/features/assistant/messages.tsx
-msgid "Couldn't undo that."
-msgstr "無法撤銷。"
+msgid "Couldn't undo that. Try again."
+msgstr "無法復原。請再試一次。"
 
 #: src/features/design/design-pane.tsx
-msgid "Couldn't unlock the resume."
-msgstr "無法解鎖履歷。"
+msgid "Couldn't unlock the resume. Try again."
+msgstr "無法解鎖履歷。請再試一次。"
 
 #: src/features/write/outline.tsx
 msgid "Couldn't unlock this resume. Try again."
 msgstr "無法解鎖此履歷。再試一次。"
 
 #: src/features/workspace/tabs/messages.tsx
-msgid "Couldn't update the application. Nothing was changed."
-msgstr "無法更新應徵紀錄。未做任何變更。"
+msgid "Couldn't update the application. Nothing was changed; try again."
+msgstr "無法更新應徵紀錄。未做任何變更，請再試一次。"
 
 #: src/features/application-detail/interview-sheet.tsx
-msgid "Couldn't update the interview."
-msgstr "無法更新採訪。"
+msgid "Couldn't update the interview. Try again."
+msgstr "無法更新面試。請再試一次。"
 
 #: src/features/settings/profile.tsx
 msgid "Couldn't update the photo. Check camera permissions, choose a photo smaller than 10 MB, and try again."
@@ -2938,6 +2978,14 @@ msgstr "無法上傳檔案。再試一次。"
 #: src/features/settings/profile.tsx
 msgid "Couldn't upload the photo."
 msgstr "無法上傳照片。"
+
+#: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Try again."
+msgstr "無法上傳照片。請再試一次。"
+
+#: src/features/public/public-resume.tsx
+msgid "Couldn't verify the password. Try again."
+msgstr "無法驗證密碼。請再試一次。"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -2978,12 +3026,6 @@ msgstr "求職信"
 #: src/features/application-detail/sections.tsx
 msgid "Cover letter — {0}"
 msgstr "求職信 — {0}"
-
-#: src/features/assistant/assistant-screen.tsx
-#: src/features/letters/share.tsx
-#: src/features/letters/write.tsx
-msgid "Cover letter could not be loaded."
-msgstr "無法載入求職信。"
 
 #: src/features/application-detail/sections.tsx
 msgid "Cover letter file"
@@ -3060,7 +3102,7 @@ msgid "Custom"
 msgstr "自訂"
 
 #: src/features/design/style-groups.tsx
-msgid "Custom colour (hex)"
+msgid "Custom color (hex)"
 msgstr "自訂顏色（十六進位）"
 
 #: src/features/write/basics-screen.tsx
@@ -3073,7 +3115,7 @@ msgstr "客製化部分"
 
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
-msgid "Custom Styles"
+msgid "Custom styles"
 msgstr "自訂樣式"
 
 #: src/features/design/advanced.tsx
@@ -3107,8 +3149,8 @@ msgid "Dark theme"
 msgstr "深色主題"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing cancelled. Nothing was sent to the AI provider."
-msgstr "数据共享已取消。沒有向人工智慧提供者發送任何內容。"
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr "資料共享已取消。沒有向 AI 提供者傳送任何內容。"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sheets.tsx
@@ -3176,10 +3218,6 @@ msgstr "預設"
 msgid "Degree"
 msgstr "學位"
 
-#: src/features/ai/provider-editor.tsx
-#: src/features/application-detail/detail-screen.tsx
-#: src/features/applications/list-screen.tsx
-#: src/features/assistant/threads.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -3187,7 +3225,13 @@ msgstr "學位"
 msgid "Delete"
 msgstr "刪除"
 
+#. placeholder {0}: purge[0]?.name
+#: src/features/documents/library.tsx
+msgid "Delete “{0}” forever?"
+msgstr "永久刪除「{0}」？"
+
 #. placeholder {0}: menu ? versionTitle(menu) : ""
+#: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Delete “{0}”?"
 msgstr "刪除「{0}」？"
@@ -3200,28 +3244,30 @@ msgid "Delete {0}"
 msgstr "刪除{0}"
 
 #: app/(tabs)/settings/account.tsx
+#: src/features/search/search-screen.tsx
 msgid "Delete account"
 msgstr "刪除帳戶"
 
-#: src/features/search/search-screen.tsx
-msgid "Delete Account"
-msgstr "刪除帳號"
+#: src/features/application-detail/detail-screen.tsx
+msgid "Delete application"
+msgstr "刪除應徵紀錄"
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Delete application…"
+msgstr "刪除應徵紀錄…"
+
+#: src/features/assistant/threads.tsx
+msgid "Delete conversation"
+msgstr "刪除對話"
 
 #: src/features/application-detail/sections.tsx
 msgid "Delete entry"
 msgstr "刪除條目"
 
+#: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
 msgid "Delete entry…"
 msgstr "刪除項目…"
-
-#: src/features/documents/library.tsx
-msgid "Delete forever"
-msgstr "永久刪除"
-
-#: src/features/documents/library.tsx
-msgid "Delete forever?"
-msgstr "永久刪除？"
 
 #: src/features/documents/library.tsx
 msgid "Delete forever…"
@@ -3236,12 +3282,8 @@ msgid "Delete it. Hidden keywords are treated as a deliberate attempt to game th
 msgstr "刪除它。隱藏關鍵詞會被視為故意操縱搜尋結果的行為。"
 
 #: src/features/design/layout-screen.tsx
-msgid "Delete Page"
+msgid "Delete page"
 msgstr "刪除頁面"
-
-#: src/features/write/picture-screen.tsx
-msgid "Delete picture"
-msgstr "刪除圖片"
 
 #: src/features/ai/provider-editor.tsx
 msgid "Delete provider"
@@ -3254,10 +3296,6 @@ msgstr "刪除行程"
 #: src/features/write/section-sheet.tsx
 msgid "Delete section"
 msgstr "刪除部分"
-
-#: src/features/applications/list-screen.tsx
-msgid "Delete selected applications?"
-msgstr "刪除選定的應徵紀錄？"
 
 #: src/features/career/stories.tsx
 msgid "Delete story"
@@ -3280,11 +3318,10 @@ msgid "Delete this provider?"
 msgstr "刪除該提供者？"
 
 #: src/features/history/history.tsx
-msgid "Delete this version?"
-msgstr "刪除該版本？"
+#: src/features/letters/share.tsx
+msgid "Delete version"
+msgstr "刪除版本"
 
-#: src/features/application-detail/detail-screen.tsx
-#: src/features/application-detail/sections.tsx
 #: src/features/applications/list-screen.tsx
 msgid "Delete…"
 msgstr "刪除…"
@@ -3368,11 +3405,14 @@ msgstr "不同的貨幣或支付週期。不計算金錢差額。"
 msgid "Direction"
 msgstr "方向"
 
-#: src/features/applications/add-sheet.tsx
 #: src/features/letters/write.tsx
-#: src/ui/overlays.tsx
 msgid "Discard"
 msgstr "捨棄"
+
+#: src/features/applications/add-sheet.tsx
+#: src/ui/overlays.tsx
+msgid "Discard changes"
+msgstr "捨棄變更"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -3415,9 +3455,17 @@ msgstr "文件類型"
 msgid "Documents"
 msgstr "文件"
 
+#: src/features/documents/library.tsx
+msgid "Documents are deleted permanently after 30 days."
+msgstr "文件將在 30 天後永久刪除。"
+
 #: src/features/application-detail/sections.tsx
 msgid "Documents for this job"
 msgstr "這份工作的文件"
+
+#: src/features/documents/library.tsx
+msgid "Documents you move here stay for 30 days."
+msgstr "您移至此處的文件會保留 30 天。"
 
 #. placeholder {0}: document.name
 #: src/features/assistant/assistant-screen.tsx
@@ -3437,6 +3485,7 @@ msgstr "不要分享"
 msgid "Donate on Open Collective"
 msgstr "透過 Open Collective 捐款"
 
+#: app/(tabs)/settings/preferences.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
@@ -3472,8 +3521,8 @@ msgid "Download both PDFs"
 msgstr "下載兩份 PDF"
 
 #: src/features/letters/share.tsx
-msgid "Download failed."
-msgstr "下載失敗。"
+msgid "Download failed. Try again."
+msgstr "下載失敗。請再試一次。"
 
 #: src/features/letters/share.tsx
 msgid "Download opens the system share sheet. Choose a storage provider to save the file."
@@ -3601,7 +3650,7 @@ msgid "Duplicate"
 msgstr "複製"
 
 #: src/features/document-menu/index.tsx
-msgid "Duplicate Resume"
+msgid "Duplicate resume"
 msgstr "複製履歷"
 
 #: src/features/settings/locale-names.ts
@@ -3634,15 +3683,11 @@ msgstr "編輯"
 msgid "Edit {0}: {1}"
 msgstr "編輯{0}：{1}"
 
-#: src/features/assistant/document.ts
-#: src/features/assistant/proposals.ts
-msgid "Edit applied"
-msgstr "編輯已套用"
-
 #: src/features/application-detail/sheets.tsx
 msgid "Edit date"
 msgstr "編輯日期"
 
+#: src/features/application-detail/sections.tsx
 #: src/preview/page.tsx
 msgid "Edit entry"
 msgstr "編輯條目"
@@ -3681,10 +3726,6 @@ msgstr "編輯電子郵件"
 msgid "Edit the link"
 msgstr "編輯連結"
 
-#: src/features/application-detail/sections.tsx
-msgid "Edit…"
-msgstr "編輯…"
-
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Editing session"
@@ -3708,7 +3749,7 @@ msgid "Email (optional)"
 msgstr "電子郵件（選填）"
 
 #: src/features/check/issues.ts
-msgid "Email address won't be recognised"
+msgid "Email address won't be recognized"
 msgstr "電子郵件地址將無法被識別"
 
 #: src/features/application-detail/sheets.tsx
@@ -3724,7 +3765,7 @@ msgid "Empty letter"
 msgstr "空求職信"
 
 #: src/features/documents/library.tsx
-msgid "Empty Trash"
+msgid "Empty trash"
 msgstr "清空垃圾箱"
 
 #: src/features/write/date-field.tsx
@@ -3752,8 +3793,8 @@ msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "請輸入完整金額，例如 95000。您先前的金額未變更。"
 
 #: src/features/write/pickers.tsx
-msgid "Enter a hex colour like #1a1a1a, or rgba(…)."
-msgstr "輸入十六進制顏色，如 #1a1a1a 或 rgba(…)。"
+msgid "Enter a hex color like #1a1a1a, or rgba(…)."
+msgstr "輸入十六進位顏色，例如 #1a1a1a 或 rgba(…)。"
 
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
@@ -3863,7 +3904,7 @@ msgid "Export a smaller PDF and check it again, or start a blank resume and fix 
 msgstr "請匯出較小的 PDF 再檢查，或建立空白履歷並在其中修正這些問題。"
 
 #: src/features/search/search-screen.tsx
-msgid "Export Data"
+msgid "Export data"
 msgstr "匯出資料"
 
 #: src/features/settings/export.tsx
@@ -3902,14 +3943,6 @@ msgstr "事實"
 #: src/features/ai/provider-list.tsx
 msgid "Failed"
 msgstr "失敗的"
-
-#: src/features/write/picture-screen.tsx
-msgid "Failed to upload picture. Please try again."
-msgstr "上傳圖片失敗。請再試一次。"
-
-#: src/features/public/public-resume.tsx
-msgid "Failed to verify the password. Please try again."
-msgstr "驗證密碼失敗。請再試一次。"
 
 #: app/(tabs)/settings/preferences.tsx
 msgid "Feedback"
@@ -4010,14 +4043,6 @@ msgstr "契合度"
 msgid "Fit checks, briefings, practice feedback, debriefs, answers and replies land here as the other tabs create them."
 msgstr "契合度檢查、簡報、練習回饋、回顧、回答和回覆會在其他分頁產生後顯示在這裡。"
 
-#: src/preview/page.tsx
-msgid "Fit to {authored} pages"
-msgstr "適用於{authored}頁面"
-
-#: src/preview/page.tsx
-msgid "Fit to one page"
-msgstr "適合一頁"
-
 #: src/features/check/issues.ts
 msgid "Fix the date"
 msgstr "確定日期"
@@ -4070,7 +4095,7 @@ msgid "Follow-up reminder"
 msgstr "跟進提醒"
 
 #: src/features/design/advanced.tsx
-msgid "Font Family"
+msgid "Font family"
 msgstr "字體"
 
 #: src/features/design/style-groups.tsx
@@ -4079,15 +4104,15 @@ msgid "Font pairing"
 msgstr "字體配對"
 
 #: src/features/design/advanced.tsx
-msgid "Font Size"
+msgid "Font size"
 msgstr "字體大小"
 
 #: src/features/design/advanced.tsx
-msgid "Font Weight"
+msgid "Font weight"
 msgstr "字重"
 
 #: src/features/design/advanced.tsx
-msgid "Font Weights"
+msgid "Font weights"
 msgstr "字重預設"
 
 #: src/features/letters/write.tsx
@@ -4165,7 +4190,7 @@ msgid "From your experience entries"
 msgstr "根據您的經驗條目"
 
 #: src/features/career/search-regions-field.tsx
-msgid "From your time zone"
+msgid "From your timezone"
 msgstr "根據您的時區"
 
 #: src/features/write/basics-screen.tsx
@@ -4174,7 +4199,7 @@ msgstr "姓名"
 
 #. Layout editor toggle label that makes a page single-column
 #: src/features/design/layout-screen.tsx
-msgid "Full Width"
+msgid "Full width"
 msgstr "全幅寬"
 
 #: src/features/settings/locale-names.ts
@@ -4344,21 +4369,13 @@ msgstr "隱藏詳細訊息"
 msgid "Hide from page"
 msgstr "從頁面隱藏"
 
-#: src/features/design/advanced.tsx
-msgid "Hide Icons"
-msgstr "隱藏圖示"
-
 #: src/features/ai/provider-editor.tsx
 msgid "Hide key"
 msgstr "隱藏金鑰"
 
 #: app/(tabs)/settings/licences.tsx
-msgid "Hide licence"
+msgid "Hide license"
 msgstr "隱藏授權條款"
-
-#: src/features/design/advanced.tsx
-msgid "Hide Link Underline"
-msgstr "隱藏連結下劃線"
 
 #: src/features/public/public-resume.tsx
 msgid "Hide password"
@@ -4367,10 +4384,6 @@ msgstr "隱藏密碼"
 #: src/features/career/today.tsx
 msgid "Hide read"
 msgstr "隱藏已讀"
-
-#: src/features/design/advanced.tsx
-msgid "Hide Section Icons"
-msgstr "隱藏版塊圖標"
 
 #: src/features/check/issues.ts
 msgid "Hide the photo"
@@ -4398,6 +4411,18 @@ msgstr "歷史"
 #: src/features/write/outline.tsx
 msgid "hold ⋮⋮ to move"
 msgstr "按住⋮⋮移動"
+
+#: src/features/documents/library.tsx
+msgid "Hold to delete"
+msgstr "按住以刪除"
+
+#: src/features/design/advanced.tsx
+msgid "Horizontal margin"
+msgstr "水平邊界"
+
+#: src/features/design/advanced.tsx
+msgid "Horizontal spacing"
+msgstr "水平間距"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "How did it go?"
@@ -4468,7 +4493,7 @@ msgid "Icon"
 msgstr "圖示"
 
 #: src/features/write/entry-fields.tsx
-msgid "Icon colour"
+msgid "Icon color"
 msgstr "圖示顏色"
 
 #: src/features/write/section-sheet.tsx
@@ -4521,12 +4546,12 @@ msgid "Import a resume"
 msgstr "導入履歷"
 
 #: src/features/documents/import-file.ts
-msgid "Import cancelled."
+msgid "Import canceled."
 msgstr "匯入已取消。"
 
 #: src/features/documents/new-document.tsx
-msgid "Import cancelled. Refresh Documents before retrying if the upload had finished."
-msgstr "匯入已取消。如果上傳已完成，請先重新整理文件，然後再試一次。"
+msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
+msgstr "匯入已取消。如果上傳已完成，請先重新整理「文件」，然後再試一次。"
 
 #: src/features/documents/new-document.tsx
 msgid "Import file"
@@ -4564,6 +4589,10 @@ msgstr "改進選定的線路"
 #: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "改善…"
+
+#: src/features/applications/list-screen.tsx
+msgid "Including closed"
+msgstr "包含已結束"
 
 #: src/features/design/controls.tsx
 msgid "Increase {label}"
@@ -4630,8 +4659,8 @@ msgid "Interview saved"
 msgstr "已儲存面試"
 
 #: src/features/application-detail/interview-sheet.tsx
-msgid "Interview saved. Couldn't update its reminder."
-msgstr "採訪已保存。無法更新其提醒。"
+msgid "Interview saved. Couldn't update its reminder. Edit the interview to try again."
+msgstr "面試已儲存。無法更新其提醒。請編輯該面試以再試一次。"
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Interview saved. The reminder time has already passed."
@@ -4695,14 +4724,6 @@ msgstr "義大利語"
 msgid "Italic"
 msgstr "斜體"
 
-#: src/features/documents/library.tsx
-msgid "Items are deleted permanently after 30 days."
-msgstr "條目將在 30 天後永久刪除。"
-
-#: src/features/documents/library.tsx
-msgid "Items you move here stay for 30 days."
-msgstr "您移至此處的條目會保留 30 天。"
-
 #: src/features/assistant/threads.tsx
 msgid "Its messages and attachments are deleted. Edits you accepted stay in the document."
 msgstr "其訊息和附件將被刪除。您接受的編輯保留在文件中。"
@@ -4752,8 +4773,8 @@ msgid "Job search couldn't be reached. Try again or paste a posting link."
 msgstr "無法進行求職。請重試或貼上職缺說明連結。"
 
 #: src/features/applications/error.ts
-msgid "Job search isn't configured on this server."
-msgstr "在此伺服器上未配置職位搜尋。"
+msgid "Job search isn't configured on this server. Paste a posting link instead."
+msgstr "此伺服器未設定職缺搜尋。請改為貼上職缺公告連結。"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Job search pipeline"
@@ -4890,10 +4911,6 @@ msgstr "韓文"
 msgid "Label"
 msgstr "標籤"
 
-#: src/features/application-detail/sheets.tsx
-msgid "Label, e.g. Recruiter"
-msgstr "標籤，例如招聘人員"
-
 #: src/features/write/picture-screen.tsx
 msgid "Landscape"
 msgstr "橫向"
@@ -4922,6 +4939,10 @@ msgstr "最後編輯"
 #: app/(tabs)/settings/preferences.tsx
 msgid "Later"
 msgstr "後來"
+
+#: src/features/assistant/chat-view.tsx
+msgid "Latest"
+msgstr "最新"
 
 #: src/features/settings/locale-names.ts
 msgid "Latvian"
@@ -5050,7 +5071,7 @@ msgid "Level"
 msgstr "等級"
 
 #: app/(tabs)/settings/licences.tsx
-msgid "Licences"
+msgid "Licenses"
 msgstr "授權條款"
 
 #: src/features/ats-checker/messages.ts
@@ -5071,7 +5092,7 @@ msgid "Likely questions, from the posting and your resume"
 msgstr "招聘啟事和履歷中可能出現的問題"
 
 #: src/features/design/advanced.tsx
-msgid "Line Height"
+msgid "Line height"
 msgstr "行高"
 
 #: src/features/check/issues.ts
@@ -5340,7 +5361,7 @@ msgid "Make the visible text and the destination match."
 msgstr "讓可見文字和實際連結指向的位址保持一致。"
 
 #: src/features/ats-checker/messages.ts
-msgid "Make them visibly larger, bolder or capitalised."
+msgid "Make them visibly larger, bolder or capitalized."
 msgstr "把它們改得明顯更大、更粗或全部大寫。"
 
 #: src/features/settings/locale-names.ts
@@ -5375,14 +5396,6 @@ msgstr "2022 年 3 月"
 #: src/features/settings/locale-names.ts
 msgid "Marathi"
 msgstr "馬拉提語"
-
-#: src/features/design/advanced.tsx
-msgid "Margin (Horizontal)"
-msgstr "邊界（水平）"
-
-#: src/features/design/advanced.tsx
-msgid "Margin (Vertical)"
-msgstr "邊界（垂直）"
 
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design.tsx
@@ -5438,6 +5451,10 @@ msgstr "符合「{resumeName}」"
 #: src/features/search/search-screen.tsx
 msgid "Match system theme"
 msgstr "匹配系統主題"
+
+#: src/features/letters/design.tsx
+msgid "Match the resume"
+msgstr "與履歷保持一致"
 
 #: src/features/career/offers.tsx
 msgid "Matches a preferred location."
@@ -5765,8 +5782,8 @@ msgid "New API key"
 msgstr "全新 API 鑰匙"
 
 #: src/features/search/search-screen.tsx
-msgid "New Application"
-msgstr "新申請"
+msgid "New application"
+msgstr "新應徵紀錄"
 
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -5785,13 +5802,10 @@ msgstr "新的求職信代替"
 msgid "New document"
 msgstr "新文件"
 
+#: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "New page"
-msgstr "新頁面"
-
-#: src/features/design/layout-screen.tsx
-msgid "New Page"
 msgstr "新頁面"
 
 #: src/features/career/today.tsx
@@ -5989,8 +6003,8 @@ msgid "No Reactive Resume server answered at this address. Check the spelling, o
 msgstr "沒有Reactive Resume伺服器在此位址應答。檢查拼寫，或詢問管理員伺服器是否允許應用程式登入。"
 
 #: src/features/check/job-match.tsx
-msgid "No recognisable terms in this posting."
-msgstr "該職缺說明中沒有可識別的術語。"
+msgid "No recognizable terms in this posting."
+msgstr "此職缺公告中沒有可識別的術語。"
 
 #: src/features/career/today.tsx
 msgid "No reply yet"
@@ -6251,21 +6265,9 @@ msgstr "離線 · 已儲存在此裝置上"
 msgid "Offline. Edits are saved on this device and sync when you reconnect."
 msgstr "離線。編輯內容將儲存在此裝置上，並在您重新連線時同步。"
 
-#: app/(tabs)/settings/preferences.tsx
-msgid "OK"
-msgstr "好的"
-
 #: src/features/career/today.tsx
 msgid "On"
 msgstr "開"
-
-#: src/features/applications/next-step.ts
-msgid "On-site"
-msgstr "現場"
-
-#: src/features/career/today.tsx
-msgid "On-site interview"
-msgstr "現場面試"
 
 #: src/features/share/link.tsx
 msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
@@ -6293,8 +6295,8 @@ msgid "Only enabled facts can back a story. Leave unsupported outcomes blank."
 msgstr "只有啟用的事實可支持故事。沒有證據的成果請留白。"
 
 #: src/features/ats-checker/messages.ts
-msgid "Only one recognisable section heading was found."
-msgstr "只找到一個可識別的部分標題。"
+msgid "Only one recognizable section heading was found."
+msgstr "只找到一個可識別的區塊標題。"
 
 #: src/features/history/history.tsx
 msgid "Only one version so far. Every editing session adds one automatically."
@@ -6335,7 +6337,12 @@ msgid "Only you see these"
 msgstr "這些只有你能看到"
 
 #: src/features/application-detail/hooks.ts
+#: src/features/applications/next-step.ts
 msgid "Onsite"
+msgstr "現場面試"
+
+#: src/features/career/today.tsx
+msgid "Onsite interview"
 msgstr "現場面試"
 
 #: src/features/documents/document-sheets.tsx
@@ -6419,7 +6426,7 @@ msgid "Open workspace"
 msgstr "開啟工作區"
 
 #: app/(tabs)/settings/index.tsx
-msgid "Open-source licences"
+msgid "Open-source licenses"
 msgstr "開放原始碼授權條款"
 
 #: src/features/letters/share.tsx
@@ -6662,8 +6669,8 @@ msgid "PDF · tap to preview"
 msgstr "PDF · 點一下預覽"
 
 #: src/features/check/parser.tsx
-msgid "PDF check cancelled. Retry when ready."
-msgstr "PDF 檢查已取消。準備好後可重試。"
+msgid "PDF check canceled. Retry when ready."
+msgstr "PDF 檢查已取消。準備好後請再試一次。"
 
 #: src/features/application-detail/sections.tsx
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables AI match scoring and tailoring."
@@ -6713,6 +6720,10 @@ msgstr "電話"
 msgid "Phone (optional)"
 msgstr "電話（選填）"
 
+#: src/features/write/picture-screen.tsx
+msgid "Photo"
+msgstr "照片"
+
 #: src/features/check/issues.ts
 msgid "Photo hidden"
 msgstr "照片已隱藏"
@@ -6744,10 +6755,6 @@ msgstr "選兩個例子"
 #: src/features/workspace/parts.tsx
 msgid "Picking your stories"
 msgstr "正在挑選您的故事"
-
-#: src/features/write/picture-screen.tsx
-msgid "Picture"
-msgstr "圖片"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Pipeline flow"
@@ -6820,10 +6827,21 @@ msgstr "職缺公告"
 msgid "Posting"
 msgstr "職缺公告"
 
+#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/practise.tsx
+#: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Practice"
 msgstr "練習"
+
+#: src/shell/workspace-chrome.tsx
+msgctxt "Application workspace tab: rehearse interview answers"
+msgid "Practice"
+msgstr "練習"
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "Practice another question"
+msgstr "練習另一個問題"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -6837,18 +6855,8 @@ msgstr "這是練習重點，而非對雇主決策原因的結論。"
 msgid "Practice priority:"
 msgstr "練習重點："
 
-#: src/features/workspace/parts.tsx
-#: src/features/workspace/tabs/prepare.tsx
-#: src/shell/workspace-chrome.tsx
-msgid "Practise"
-msgstr "練習"
-
 #: src/features/workspace/tabs/practise.tsx
-msgid "Practise another question"
-msgstr "練習另一個問題"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Practising your story: {storyTitle}"
+msgid "Practicing your story: {storyTitle}"
 msgstr "正在練習您的故事：{storyTitle}"
 
 #: src/features/ats-checker/messages.ts
@@ -6913,6 +6921,10 @@ msgstr "正在準備檔案…"
 msgid "Present"
 msgstr "至今"
 
+#: src/ui/overlays.tsx
+msgid "Press and hold"
+msgstr "長按"
+
 #: src/features/design/template-group.tsx
 msgid "Press and hold to preview it on the page."
 msgstr "長按可在頁面上預覽。"
@@ -6920,11 +6932,6 @@ msgstr "長按可在頁面上預覽。"
 #: src/features/design/layout-screen.tsx
 msgid "Press and hold, then drag to another column or page."
 msgstr "長按後拖曳至其他欄或頁面。"
-
-#: src/features/letters/page.tsx
-#: src/preview/page.tsx
-msgid "Preview could not be rendered. Retry, or try another template or font in Design."
-msgstr "無法產生預覽。請重試，或在設計中改用其他範本或字型。"
 
 #. placeholder {0}: templateName(template)
 #: src/features/design/preview-caption.tsx
@@ -6952,7 +6959,7 @@ msgid "Previous workspace tabs"
 msgstr "上一個工作區選項卡"
 
 #: src/features/design/advanced.tsx
-msgid "Primary Color"
+msgid "Primary color"
 msgstr "主要顏色"
 
 #: src/features/document-menu/index.tsx
@@ -7004,7 +7011,7 @@ msgid "Profiles"
 msgstr "個人檔案"
 
 #: src/features/design/advanced.tsx
-msgid "Progress Bar"
+msgid "Progress bar"
 msgstr "進度條"
 
 #: src/features/write/fields.ts
@@ -7136,7 +7143,7 @@ msgid "Read it for me"
 msgstr "幫我讀一下"
 
 #: app/(tabs)/settings/licences.tsx
-msgid "Read licence"
+msgid "Read license"
 msgstr "閱讀授權條款"
 
 #: src/features/applications/add-sheet.tsx
@@ -7292,7 +7299,7 @@ msgid "Rectangle"
 msgstr "長方形"
 
 #: src/features/design/advanced.tsx
-msgid "Rectangle (Full Width)"
+msgid "Rectangle (full width)"
 msgstr "長方形（全幅寬）"
 
 #: app/builder/[id]/_layout.tsx
@@ -7393,8 +7400,6 @@ msgstr "提醒會顯示在這裡。電子郵件副本為選用功能，需要已
 msgid "Remote"
 msgstr "遠端"
 
-#: src/features/share/link.tsx
-#: src/features/write/picture-screen.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "消除"
@@ -7424,12 +7429,17 @@ msgstr "刪除字段"
 msgid "Remove file"
 msgstr "移除檔案"
 
+#: src/features/share/link.tsx
+msgid "Remove password"
+msgstr "移除密碼"
+
 #. placeholder {0}: index + 1
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Remove person {0}"
 msgstr "移除第 {0} 位人員"
 
 #: src/features/settings/profile.tsx
+#: src/features/write/picture-screen.tsx
 msgid "Remove photo"
 msgstr "移除照片"
 
@@ -7578,8 +7588,6 @@ msgid "Restart to change text direction"
 msgstr "重新啟動以變更文字方向"
 
 #: src/features/documents/library.tsx
-#: src/features/history/history.tsx
-#: src/features/letters/share.tsx
 msgid "Restore"
 msgstr "恢復"
 
@@ -7592,6 +7600,11 @@ msgstr "恢復此版本"
 #: src/features/letters/share.tsx
 msgid "Restore this version?"
 msgstr "還原此版本？"
+
+#: src/features/history/history.tsx
+#: src/features/letters/share.tsx
+msgid "Restore version"
+msgstr "還原版本"
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -7615,15 +7628,6 @@ msgstr "履歷"
 #: src/features/letters/share.tsx
 msgid "Resume + letter"
 msgstr "履歷+信件"
-
-#: app/builder/[id]/page.tsx
-#: app/builder/[id]/write.tsx
-#: src/features/assistant/assistant-screen.tsx
-#: src/features/design/design-pane.tsx
-#: src/features/share/document.ts
-#: src/features/share/download.tsx
-msgid "Resume could not be loaded."
-msgstr "無法載入履歷。"
 
 #: src/features/document-menu/index.tsx
 msgid "Resume details"
@@ -7792,6 +7796,10 @@ msgstr "撤銷"
 #: src/features/settings/api-keys.tsx
 msgid "Revoke API key?"
 msgstr "撤銷 API 金鑰？"
+
+#: src/features/settings/api-keys.tsx
+msgid "Revoke key"
+msgstr "撤銷金鑰"
 
 #: src/features/settings/api-keys.tsx
 msgid "Revoke this API key"
@@ -8049,8 +8057,8 @@ msgid "Schedule interview"
 msgstr "安排面試"
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Scheduled work is not available on this server. Ask the server owner to configure it."
-msgstr "此伺服器無法執行排程工作。請伺服器擁有者進行設定。"
+msgid "Scheduled work is not available on this server. Ask your server administrator to configure it."
+msgstr "此伺服器無法執行排程工作。請讓伺服器管理員進行設定。"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Scheduled work isn't available on this server."
@@ -8185,7 +8193,7 @@ msgid "Sections · print order"
 msgstr "章節·列印順序"
 
 #: src/features/check/issues.ts
-msgid "Sections use headings systems recognise, and work experience shows."
+msgid "Sections use headings systems recognize, and work experience shows."
 msgstr "各區塊使用系統能辨識的標題，且工作經歷已顯示。"
 
 #: src/features/documents/document-sheets.tsx
@@ -8349,11 +8357,11 @@ msgid "Sexual content"
 msgstr "色情內容"
 
 #: src/features/write/picture-screen.tsx
-msgid "Shadow Color"
+msgid "Shadow color"
 msgstr "陰影顏色"
 
 #: src/features/write/picture-screen.tsx
-msgid "Shadow Width"
+msgid "Shadow width"
 msgstr "陰影寬度"
 
 #: src/features/public/public-resume.tsx
@@ -8471,6 +8479,10 @@ msgstr "顯示標題"
 msgid "Show hidden terms again"
 msgstr "重新顯示隱藏的關鍵字"
 
+#: src/features/design/advanced.tsx
+msgid "Show icons"
+msgstr "顯示圖示"
+
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "顯示金鑰"
@@ -8496,12 +8508,16 @@ msgid "Show password"
 msgstr "顯示密碼"
 
 #: src/features/write/picture-screen.tsx
-msgid "Show picture"
-msgstr "顯示圖片"
+msgid "Show photo"
+msgstr "顯示照片"
 
 #: src/features/career/today.tsx
 msgid "Show read"
 msgstr "顯示已讀"
+
+#: src/features/design/advanced.tsx
+msgid "Show section icons"
+msgstr "顯示區塊圖示"
 
 #: src/features/application-detail/detail-screen.tsx
 msgid "Showing saved details. They couldn't be refreshed."
@@ -8534,12 +8550,9 @@ msgstr "側邊欄在主欄之後閱讀"
 msgid "Sidebar side"
 msgstr "側邊欄側"
 
+#: src/features/design/layout-screen.tsx
 #: src/features/design/template-group.tsx
 msgid "Sidebar width"
-msgstr "側邊欄寬度"
-
-#: src/features/design/layout-screen.tsx
-msgid "Sidebar Width"
 msgstr "側邊欄寬度"
 
 #: src/features/check/issues.ts
@@ -8597,7 +8610,7 @@ msgid "Sign in to see your documents"
 msgstr "登入以檢視您的文件"
 
 #: src/features/assistant/assistant-screen.tsx
-msgid "Sign in to use the Assistant."
+msgid "Sign in to use the assistant."
 msgstr "登入以使用助理。"
 
 #: src/features/application-detail/detail-screen.tsx
@@ -8709,11 +8722,11 @@ msgstr "有些字元會變成問號。"
 #. placeholder {0}: result.lostCharacters.join(", ")
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
-msgid "Some characters could not be drawn: {0}. Choose another font in Design."
-msgstr "無法繪製部分字元：{0}。請在設計中選擇其他字型。"
+msgid "Some characters couldn't be drawn: {0}. Choose another font in Design."
+msgstr "無法繪製部分字元：{0}。請在「設計」中選擇其他字型。"
 
 #: src/features/check/page.tsx
-msgid "Some characters could not be rendered. Check the page before exporting."
+msgid "Some characters couldn't be rendered. Check the page before exporting."
 msgstr "無法呈現部分字元。匯出前請檢查頁面。"
 
 #: src/features/ats-checker/messages.ts
@@ -8729,13 +8742,13 @@ msgid "Some systems mishandle images, and photos are discouraged in some countri
 msgstr "有些系統對圖像處理不當，並且在某些國家/地區不鼓勵使用照片。"
 
 #: src/features/check/issues.ts
-msgid "Some systems only recognise links that start with https://. This one reads as plain text: “{value}”."
-msgstr "有些系統僅識別以 https://. 開頭的鏈接，該鏈接讀作純文本：“{value}”。"
+msgid "Some systems only recognize links that start with https://. This one reads as plain text: “{value}”."
+msgstr "有些系統只識別以 https:// 開頭的連結。該連結會被讀作純文字：「{value}」。"
 
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
-msgid "Some text could not be drawn. Choose another font in Design."
-msgstr "無法繪製部分文字。請在設計中選擇其他字型。"
+msgid "Some text couldn't be drawn. Choose another font in Design."
+msgstr "無法繪製部分文字。請在「設計」中選擇其他字型。"
 
 #: src/features/history/history.tsx
 msgid "Some text couldn't be rendered."
@@ -8748,19 +8761,6 @@ msgstr "有些文字落在頁面之外。"
 #: src/features/ats-checker/messages.ts
 msgid "Some text is rotated."
 msgstr "有些文字被旋轉了。"
-
-#: app/_layout.tsx
-msgid "Something went wrong"
-msgstr "出問題了"
-
-#: src/features/ats-checker/check.ts
-#: src/features/ats-checker/checker.tsx
-msgid "Something went wrong while reading that file. Try again."
-msgstr "讀取該文件時出現問題。再試一次。"
-
-#: src/auth/messages.ts
-msgid "Something went wrong while signing you in. Please try again."
-msgstr "登入時發生錯誤。請再試一次。"
 
 #: src/features/documents/library.tsx
 msgid "Sort"
@@ -8795,14 +8795,6 @@ msgstr "GitHub 上的原始碼"
 #: src/features/assistant/messages.tsx
 msgid "Sources"
 msgstr "來源"
-
-#: src/features/design/advanced.tsx
-msgid "Spacing (Horizontal)"
-msgstr "間距（水平）"
-
-#: src/features/design/advanced.tsx
-msgid "Spacing (Vertical)"
-msgstr "間距（垂直）"
 
 #: src/features/settings/locale-names.ts
 msgid "Spanish"
@@ -9206,7 +9198,7 @@ msgid "Text"
 msgstr "文字"
 
 #: src/features/design/advanced.tsx
-msgid "Text Color"
+msgid "Text color"
 msgstr "字型色彩"
 
 #: src/features/check/issues.ts
@@ -9404,18 +9396,15 @@ msgid "The pages are pictures, with no text behind them."
 msgstr "這些頁面是圖片，背後沒有文字。"
 
 #: src/features/public/public-resume.tsx
-msgid "The password you entered is incorrect"
-msgstr "您輸入的密碼不正確"
+msgid "The password you entered is incorrect. Try again."
+msgstr "您輸入的密碼不正確。請再試一次。"
 
 #: src/features/check/parser.tsx
 msgid "The PDF is checked on the server and not stored. Send this preview to see what software reads."
 msgstr "PDF 會在伺服器上檢查，不會儲存。傳送此預覽即可瞭解軟體讀到了什麼。"
 
-#: src/features/ai/provider-list.tsx
-msgid "The provider didn't answer."
-msgstr "提供者沒有回答。"
-
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
 msgstr "提供者沒有回答。檢查鑰匙、型號和底座URL。"
 
@@ -9426,11 +9415,6 @@ msgstr "原因保留為 Insights。連結的文檔不會受到影響。"
 #: src/features/ats-checker/checker.tsx
 msgid "The rest of the file isn't in this report."
 msgstr "此報告未包含檔案的其餘部分。"
-
-#: src/features/letters/design.tsx
-#: src/features/letters/write.tsx
-msgid "the resume"
-msgstr "履歷"
 
 #: src/features/history/history.tsx
 msgid "The resume as it is"
@@ -9465,28 +9449,28 @@ msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "無法載入伺服器版本。文字已保留，請重試。"
 
 #: src/features/applications/error.ts
-msgid "The service could not be reached. Try again or fill the details manually."
-msgstr "無法連線至服務。請重試或手動填寫資料。"
+msgid "The service couldn't be reached. Try again or fill the details manually."
+msgstr "無法連線至服務。請再試一次，或手動填寫資料。"
 
 #: src/features/ai/web-access.tsx
-msgid "The service did not respond in time."
-msgstr "服務沒有及時回覆。"
+msgid "The service didn't respond in time. Try again."
+msgstr "服務沒有及時回應。請再試一次。"
 
 #: src/features/ai/web-access.tsx
-msgid "The service is unavailable or does not support this operation."
-msgstr "該服務不可用或不支援此操作。"
+msgid "The service is unavailable or doesn't support this operation. Try again later or connect another service."
+msgstr "該服務無法使用或不支援此操作。請稍後再試一次，或連接其他服務。"
 
 #: src/features/ai/web-access.tsx
-msgid "The service quota is exhausted."
-msgstr "服務配額已用完。"
+msgid "The service quota is used up. Check your plan with the service."
+msgstr "該服務的配額已用完。請檢查您在該服務的方案。"
 
 #: src/features/ai/web-access.tsx
-msgid "The service rejected the credentials."
-msgstr "該服務拒絕了憑據。"
+msgid "The service rejected the credentials. Check the API key."
+msgstr "該服務拒絕了憑證。請檢查 API 金鑰。"
 
 #: src/features/ai/error.ts
-msgid "The test didn't run."
-msgstr "測試沒有運行。"
+msgid "The test didn't run. Try again."
+msgstr "測試沒有執行。請再試一次。"
 
 #: src/features/ats-checker/messages.ts
 msgid "The text comes out unreadable."
@@ -9542,8 +9526,8 @@ msgid "Thinking…"
 msgstr "思維…"
 
 #: app/(tabs)/settings/licences.tsx
-msgid "Third-party software notices. Select a dependency to read its licence."
-msgstr "第三方軟體聲明。選取相依項目以閱讀其授權條款。"
+msgid "Third-party software notices. Tap a dependency to read its license."
+msgstr "第三方軟體聲明。點按相依項目以閱讀其授權條款。"
 
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/workspace/shell.tsx
@@ -9691,6 +9675,10 @@ msgstr "此 JSON 不是支援的履歷或求職信。"
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "此字母與“{resumeName}”為兩個PDFs，命名相符。"
 
+#: src/features/letters/share.tsx
+msgid "This letter and your resume as two PDFs, named to match."
+msgstr "這封信和您的履歷，作為兩個名稱相符的 PDF。"
+
 #: src/draft/conflict-sheet.tsx
 msgid "This letter changed elsewhere"
 msgstr "此求職信已在其他地方變更"
@@ -9756,7 +9744,7 @@ msgid "This resume is long."
 msgstr "這份履歷比較長。"
 
 #: src/features/public/public-resume.tsx
-msgid "This resume is password protected"
+msgid "This resume is password-protected"
 msgstr "這份履歷受密碼保護"
 
 #: src/features/public/public-resume.tsx
@@ -9780,8 +9768,8 @@ msgid "This saved version is no longer available."
 msgstr "此已儲存版本已無法使用。"
 
 #: app/_layout.tsx
-msgid "This screen stopped working. Try again, or restart the app."
-msgstr "此畫面已停止運作。請再試一次，或重新啟動 App。"
+msgid "This screen stopped working"
+msgstr "此畫面已停止運作"
 
 #: src/auth/messages.ts
 msgid "This server is too old for the app. Ask your administrator to update it."
@@ -9796,8 +9784,8 @@ msgid "This server uses http. The app needs https."
 msgstr "此伺服器使用 http。應用程式需要 https。"
 
 #: src/auth/messages.ts
-msgid "This sign-in attempt expired or was already used. Please start again."
-msgstr "這次登入嘗試已過期或已被使用。請重新開始。"
+msgid "This sign-in attempt expired or was already used. Sign in again."
+msgstr "這次登入嘗試已過期或已被使用。請重新登入。"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "This story is unavailable or uses facts that are switched off."
@@ -9994,6 +9982,10 @@ msgstr "在瀏覽器中重試"
 msgid "Try again with this"
 msgstr "用這個再試一次"
 
+#: app/_layout.tsx
+msgid "Try again, or restart the app."
+msgstr "請再試一次，或重新啟動 App。"
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "請嘗試其他搜尋或清除篩選條件。"
@@ -10044,8 +10036,8 @@ msgid "Two stories"
 msgstr "兩個故事"
 
 #: app/(tabs)/settings/account.tsx
-msgid "Two-factor authentication"
-msgstr "雙重驗證"
+msgid "Two-step verification"
+msgstr "兩步驟驗證"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
@@ -10090,6 +10082,7 @@ msgstr "取消封鎖作者"
 msgid "Underline"
 msgstr "底線"
 
+#: src/features/design/advanced.tsx
 #: src/features/design/style-groups.tsx
 msgid "Underline links"
 msgstr "底線連結"
@@ -10191,16 +10184,13 @@ msgid "Upload a PDF and see the text an applicant tracking system extracts: what
 msgstr "上傳 PDF 並查看申請人追蹤系統提取的文字：缺少什麼、有什麼問題以及如何修復。免費，無需帳戶。"
 
 #: src/features/write/picture-screen.tsx
-msgid "Upload picture"
-msgstr "上傳圖片"
+msgid "Upload photo"
+msgstr "上傳照片"
 
 #: src/features/settings/profile.tsx
+#: src/features/write/picture-screen.tsx
 msgid "Uploading photo…"
 msgstr "正在上傳照片…"
-
-#: src/features/write/picture-screen.tsx
-msgid "Uploading picture…"
-msgstr "正在上傳圖片…"
 
 #: src/features/write/picture-screen.tsx
 msgid "URL"
@@ -10243,8 +10233,8 @@ msgid "Use a plain international form, such as +1 555 010 1234."
 msgstr "使用簡單的國際格式，例如 +1 555 010 1234。"
 
 #: src/features/ats-checker/messages.ts
-msgid "Use a recognised form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
-msgstr "使用公認的格式，例如「2020 年 1 月 - 2022 年 3 月」或「2020 年 - 2022 年」。"
+msgid "Use a recognized form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
+msgstr "使用可識別的格式，例如「2020 年 1 月 - 2022 年 3 月」或「2020 年 - 2022 年」。"
 
 #: src/features/ats-checker/messages.ts
 msgid "Use a single column for anything that has to be read in sequence."
@@ -10271,10 +10261,6 @@ msgstr "請使用 http 或 https 連結。"
 msgid "Use at least 9pt."
 msgstr "至少使用 9pt。"
 
-#: src/features/design/advanced.tsx
-msgid "Use color {color}"
-msgstr "使用顏色 {color}"
-
 #: src/features/letters/write.tsx
 msgid "Use default"
 msgstr "使用預設值"
@@ -10282,6 +10268,10 @@ msgstr "使用預設值"
 #: src/features/letters/write.tsx
 msgid "Use details from “{resumeName}”"
 msgstr "使用「{resumeName}」中的資料"
+
+#: src/features/letters/write.tsx
+msgid "Use details from the resume"
+msgstr "使用履歷中的資料"
 
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
@@ -10293,7 +10283,7 @@ msgid "Use lowercase letters, numbers and single dashes."
 msgstr "使用小寫字母、數字和單破折號。"
 
 #: src/features/career/search-regions-field.tsx
-msgid "Use my time zone"
+msgid "Use my timezone"
 msgstr "使用我的時區"
 
 #: src/features/check/issues.ts
@@ -10404,7 +10394,7 @@ msgid "Verbal offer"
 msgstr "口頭錄取"
 
 #: src/features/public/public-resume.tsx
-msgid "Verifying password..."
+msgid "Verifying password…"
 msgstr "正在驗證密碼…"
 
 #: src/features/letters/share.tsx
@@ -10434,6 +10424,14 @@ msgstr "版本已發送 {date}"
 #: src/features/application-detail/sections.tsx
 msgid "Version sent {date} · Check {0}"
 msgstr "版本已發送 {date} · 檢查 {0}"
+
+#: src/features/design/advanced.tsx
+msgid "Vertical margin"
+msgstr "垂直邊界"
+
+#: src/features/design/advanced.tsx
+msgid "Vertical spacing"
+msgstr "垂直間距"
 
 #: src/features/ats-checker/messages.ts
 msgid "Very few words were recovered for a resume."
@@ -10511,13 +10509,8 @@ msgstr "等待回音"
 
 #. placeholder {0}: dates.raw
 #: src/features/write/date-field.tsx
-msgid "We couldn't read \"{0}\". Enter the dates so they sort and print consistently."
-msgstr "我們無法讀取“{0}”。輸入日期，以便它們一致地排序和列印。"
-
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "We read \"{0}\". Pick a month so it sorts and prints consistently."
-msgstr "我們讀到“{0}”。選擇一個月，以便一致地排序和列印。"
+msgid "We read “{0}”. Pick a month so it sorts and prints consistently."
+msgstr "讀取為「{0}」。請選擇月份，以便一致地排序和列印。"
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
@@ -10590,7 +10583,7 @@ msgid "What goes in it?"
 msgstr "裡面有什麼？"
 
 #: src/features/assistant/coach-screen.tsx
-msgid "What interview answers should I practise?"
+msgid "What interview answers should I practice?"
 msgstr "我應該練習哪些面試回答？"
 
 #: src/features/career/offers.tsx
@@ -10649,10 +10642,9 @@ msgstr "什麼在起作用"
 msgid "When do you need a decision?"
 msgstr "需要在何時做出決定？"
 
-#. placeholder {0}: parts.join(", ")
 #: src/features/assistant/coach-screen.tsx
-msgid "When you press send, {0} go to {connection}."
-msgstr "按下傳送後，{0} 會傳送至 {connection}。"
+msgid "When you tap send, {list} go to {connection}."
+msgstr "點按傳送後，{list} 會傳送至 {connection}。"
 
 #: app/(auth)/sign-in.tsx
 msgid "When you're done, the browser closes and you come back here."
@@ -10713,7 +10705,7 @@ msgid "Word"
 msgstr "Word"
 
 #: src/features/ai/provider-list.tsx
-msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practise need one. Editing, Design, the readability checks and downloads work without one."
+msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
 msgstr "Word 匯入、改善、助理、求職信草稿、職涯教練與生成，以及語音練習都需要 AI 供應商。編輯、設計、可讀性檢查和下載則不需要。"
 
 #: src/features/ats-checker/messages.ts
@@ -10779,8 +10771,8 @@ msgid "Write one about something you did, in five parts."
 msgstr "以五個部分寫下您做過的一件事。"
 
 #: src/features/ats-checker/messages.ts
-msgid "Write the full address so it is recognised as a link."
-msgstr "寫出完整位址，使其能被識別為連結。"
+msgid "Write the full address so it is recognized as a link."
+msgstr "寫出完整網址，使其能被識別為連結。"
 
 #: src/features/workspace/tabs/fit.tsx
 msgid "Write what you did."
@@ -10830,7 +10822,7 @@ msgstr "您可以使用現有帳戶登入。"
 
 #: src/auth/messages.ts
 #: src/auth/use-sign-in.ts
-msgid "You cancelled the sign-in before it finished."
+msgid "You canceled the sign-in before it finished."
 msgstr "您在登入完成前取消了登入。"
 
 #: src/features/workspace/tabs/debrief.tsx
@@ -11053,10 +11045,6 @@ msgstr "根據您選擇的功能和上下文，您的請求和相關簡歷、信
 #: src/features/career/offers.tsx
 msgid "Your requirements"
 msgstr "您的條件"
-
-#: src/features/letters/share.tsx
-msgid "your resume"
-msgstr "你的履歷"
 
 #: src/features/check/issues.ts
 msgid "Your resume has a photo"

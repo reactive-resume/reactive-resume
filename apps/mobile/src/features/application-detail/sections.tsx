@@ -58,8 +58,8 @@ export function Section({ title, children }: SectionBlockProps) {
 	const { space } = useTheme();
 	return (
 		<View style={{ gap: space.s2 }}>
-			<Text variant="caption" color="ink3">
-				{title.toLocaleUpperCase()}
+			<Text variant="eyebrow" color="ink3">
+				{title}
 			</Text>
 			{children}
 		</View>
@@ -106,7 +106,7 @@ export function StageStepper({ application, onMarkApplied }: StageStepperProps) 
 						<View
 							style={{
 								height: 6,
-								borderRadius: radius.rPill,
+								borderRadius: radius.rLg,
 								backgroundColor: !closed && index <= reached ? getStageColor(stage, colors) : colors.line,
 							}}
 						/>
@@ -117,7 +117,9 @@ export function StageStepper({ application, onMarkApplied }: StageStepperProps) 
 				))}
 			</View>
 			<View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: space.s2 }}>
-				<View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: getStageColor(status, colors) }} />
+				<View
+					style={{ width: 8, height: 8, borderRadius: radius.rSm, backgroundColor: getStageColor(status, colors) }}
+				/>
 				<Text variant="label">{getStageLabel(status)}</Text>
 				<Text color="ink3">
 					{closed ? "" : plural(days, { 0: "· since today", one: "· for # day", other: "· for # days" })}
@@ -181,7 +183,7 @@ export function NextStepCard({ application, onOpenInterview }: SectionProps & In
 		void shareIcs(
 			interview ? interviewEvent(interview, title) : followUpEvent(application.id, step.at, title),
 			icsFileName(application.company, zonedParts(step.at, timeZone).date),
-		).catch(() => showToast({ message: t`Couldn't share the calendar event.` }));
+		).catch(() => showToast({ message: t`Couldn't share the calendar event. Try again.` }));
 	};
 
 	return (
@@ -296,7 +298,7 @@ export function WhatYouSent({ application }: SectionProps) {
 			},
 			{
 				onSuccess: (created) => router.push(routes.letter(created.id)),
-				onError: () => showToast({ message: t`Couldn't create the letter.` }),
+				onError: () => showToast({ message: t`Couldn't create the letter. Try again.` }),
 			},
 		);
 
@@ -490,7 +492,7 @@ export function Facts({ application }: SectionProps) {
 				onChange={(tags) =>
 					update.mutate(
 						{ id: application.id, tags: [...new Set(tags.map((tag) => tag.trim()).filter(Boolean))] },
-						{ onError: () => showToast({ message: t`Couldn't save the tags.` }) },
+						{ onError: () => showToast({ message: t`Couldn't save the tags. Try again.` }) },
 					)
 				}
 			/>
@@ -612,7 +614,7 @@ type DatedEntry = Exclude<ApplicationTimelineEntry, { type: "interview" }>;
 /** TIMELINE: stage changes, notes and interviews, newest first; the entry anchoring the current stage stays. */
 export function Timeline({ application, onOpenInterview }: SectionProps & InterviewOpener) {
 	const { t } = useLingui();
-	const { colors, space } = useTheme();
+	const { colors, radius, space } = useTheme();
 	const { when, utcDay } = useUserTime();
 	const { addNote, updateEntry, deleteEntry } = useDetailMutations(application.id);
 	const [note, setNote] = useState("");
@@ -664,14 +666,14 @@ export function Timeline({ application, onOpenInterview }: SectionProps & Interv
 					return (
 						<ListRow
 							key={entry.id}
-							leading={<View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: dot }} />}
+							leading={<View style={{ width: 8, height: 8, borderRadius: radius.rSm, backgroundColor: dot }} />}
 							title={text}
 							subtitle={entry.type === "interview" ? when(entry.at) : utcDay(entry.at)}
-							accessibilityHint={entry.type === "interview" ? t`Edit interview` : t`Edit…`}
+							accessibilityHint={entry.type === "interview" ? t`Edit interview` : t`Edit entry`}
 							onPress={() => (entry.type === "interview" ? onOpenInterview(entry) : setEditing(entry))}
 							trailing={
 								entry.id === anchorId ? null : (
-									<IconButton icon="trash" size={18} label={t`Delete…`} onPress={() => setDeleting(entry)} />
+									<IconButton icon="trash" size={18} label={t`Delete entry…`} onPress={() => setDeleting(entry)} />
 								)
 							}
 						/>
@@ -805,7 +807,7 @@ export function Attachments({ application }: SectionProps) {
 					if (removing)
 						removeDocument.mutate(
 							{ id: application.id, kind: removing },
-							{ onError: () => showToast({ message: t`Couldn't save.` }) },
+							{ onError: () => showToast({ message: t`Couldn't remove the file. Try again.` }) },
 						);
 					setRemoving(null);
 				}}

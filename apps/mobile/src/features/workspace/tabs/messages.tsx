@@ -97,7 +97,7 @@ function PasteBox({ application, initial, readOnly, onSave, fetchServer }: Paste
 				value={message}
 				maxLength={20_000}
 				editable={!readOnly}
-				placeholder={t`Paste the email or message, without the signature.`}
+				helper={t`Paste the email or message, without the signature.`}
 				onChangeText={draft.setValue}
 				onBlur={autosave.flush}
 			/>
@@ -248,7 +248,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 		withUndo({
 			message: t`Application updated`,
 			restore: () => replyApplies.finish(pendingKey),
-			failed: () => showToast({ message: t`Couldn't update the application. Nothing was changed.` }),
+			failed: () => showToast({ message: t`Couldn't update the application. Nothing was changed; try again.` }),
 			// The client, not this screen's mutation: the commit may run after the screen is gone.
 			commit: async () => {
 				try {

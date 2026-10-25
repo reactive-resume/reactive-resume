@@ -82,7 +82,7 @@ function AlertDialogMedia({ className, ...props }: React.ComponentProps<"div">) 
 		<div
 			data-slot="alert-dialog-media"
 			className={cn(
-				"row-span-2 inline-flex size-10 items-center justify-center rounded-full bg-danger-soft text-danger-text *:[svg:not([class*='size-'])]:size-5",
+				"row-span-2 inline-flex size-10 items-center justify-center rounded-sm bg-danger-soft text-danger-text *:[svg:not([class*='size-'])]:size-5",
 				className,
 			)}
 			{...props}

@@ -7,7 +7,7 @@ function isAgentEnvironmentUnavailable(error: unknown) {
 
 function throwUnavailable(): never {
 	throw new ORPCError("PRECONDITION_FAILED", {
-		message: "The assistant isn't set up on this server: ENCRYPTION_SECRET is not configured.",
+		message: "The assistant isn't available on this server. Ask the server administrator to set ENCRYPTION_SECRET.",
 	});
 }
 

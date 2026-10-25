@@ -364,7 +364,7 @@ function TabBadge({ tone, children }: { tone: "accent" | "warn" | "info" | "plai
 	return (
 		<span
 			className={cn(
-				"inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1.5 font-mono text-[11px] font-medium",
+				"inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-sm px-1.5 font-mono text-[11px] font-medium",
 				tone === "accent" && "bg-accent-soft text-accent-text",
 				tone === "warn" && "bg-warn-soft text-warn-text",
 				tone === "info" && "bg-info-soft text-info-text",
@@ -407,7 +407,7 @@ function WorkspaceHeader({ application, onAskCoach }: WorkspaceHeaderProps) {
 					</h1>
 					<p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-ink-2">
 						<span className="flex items-center gap-1.5 text-ink">
-							<span aria-hidden="true" className={cn("size-2 rounded-full", stageDot[application.status])} />
+							<span aria-hidden="true" className={cn("size-2 rounded-sm", stageDot[application.status])} />
 							{getStageLabel(application.status)}
 						</span>
 						{application.location && <span>· {application.location}</span>}
@@ -430,7 +430,7 @@ function WorkspaceHeader({ application, onAskCoach }: WorkspaceHeaderProps) {
 							{PIPELINE.map((stage, index) => (
 								<span
 									key={stage}
-									className={cn("h-1.5 w-10 rounded-full", index <= reached ? stageDot[stage] : "bg-line")}
+									className={cn("h-1.5 w-10 rounded-sm", index <= reached ? stageDot[stage] : "bg-line")}
 								/>
 							))}
 						</div>
@@ -553,7 +553,7 @@ function ContextColumn({ application, interview, now, onEdit }: ContextColumnPro
 					</Eyebrow>
 					{upcoming.participants.map((person) => (
 						<div key={`${person.name}-${person.role}`} className="flex items-center gap-2.5">
-							<span className="grid size-[30px] shrink-0 place-items-center rounded-full bg-sunken text-xs font-semibold text-ink-2">
+							<span className="grid size-[30px] shrink-0 place-items-center rounded-sm bg-sunken text-xs font-semibold text-ink-2">
 								{getInitials(person.name)}
 							</span>
 							<div className="grid min-w-0">

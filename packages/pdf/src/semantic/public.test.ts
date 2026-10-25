@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
-import { resolveResumeRuntime } from "@reactive-resume/pdf/semantic";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { resolveResumeRuntime } from "./resolve";
 
 describe("@reactive-resume/pdf/semantic", () => {
 	it("falls back to base presentation and preserves fatal source diagnostics", () => {

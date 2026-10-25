@@ -78,7 +78,7 @@ export function ImprovePanel({ editor, line, where, onClose }: ImprovePanelProps
 				close();
 			}}
 		>
-			<span className="px-2 pt-1 pb-1.5 text-xs font-semibold text-ink-3 uppercase">
+			<span className="px-2 pt-1 pb-1.5 text-xs font-semibold text-ink-3">
 				<Trans>Improve selected line</Trans>
 			</span>
 

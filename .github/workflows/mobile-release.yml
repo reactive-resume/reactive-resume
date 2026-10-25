@@ -19,7 +19,7 @@ on:
         options: [arm64-v8a, armeabi-v7a, x86_64]
         default: arm64-v8a
       upload:
-        description: Publish to all Play testing tracks and TestFlight groups (no production release)
+        description: Submit selected platforms directly to production after store review
         type: boolean
         default: false
 
@@ -94,7 +94,7 @@ jobs:
         run: |
           bundle exec ruby tooling/mobile/signing_test.rb
           ruby tooling/mobile/build_test.rb
-      - name: Check beta distribution targets
+      - name: Check production distribution
         run: ruby tooling/mobile/distribution_test.rb
       - uses: actions/setup-java@v5
         if: matrix.platform == 'android'
@@ -192,20 +192,28 @@ jobs:
   upload:
     needs: [prepare, build]
     if: inputs.upload && inputs.format == 'store'
+    permissions:
+      actions: read
+      contents: read
     environment: mobile-store
     strategy:
       fail-fast: false
       matrix:
         platform: ${{ fromJSON(needs.prepare.outputs.platforms) }}
     runs-on: ${{ matrix.platform == 'ios' && 'blacksmith-12vcpu-macos-latest' || 'blacksmith-32vcpu-ubuntu-2404' }}
-    timeout-minutes: 30
+    timeout-minutes: 60
     env:
-      MOBILE_BUILD_NUMBER: ${{ needs.prepare.outputs.build_number }}
       BUNDLE_GEMFILE: ${{ github.workspace }}/tooling/mobile/Gemfile
     steps:
       - uses: useblacksmith/checkout@v1
         with:
           persist-credentials: false
+      - name: Require successful CI for the exact production commit
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+        with:
+          script: |
+            const { requireSuccessfulCI } = await import(`${process.env.GITHUB_WORKSPACE}/tooling/docker/check-ci.mjs`);
+            await requireSuccessfulCI({ github, repo: context.repo, sha: context.sha });
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
@@ -218,7 +226,7 @@ jobs:
         with:
           name: mobile-${{ matrix.platform }}-${{ needs.prepare.outputs.build_number }}
           path: ${{ runner.temp }}/mobile-release
-      - name: Publish to beta testers without production rollout
+      - name: Submit production release for store review
         working-directory: tooling/mobile
         env:
           PLATFORM: ${{ matrix.platform }}

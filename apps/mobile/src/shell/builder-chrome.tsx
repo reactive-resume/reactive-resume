@@ -327,7 +327,7 @@ function ShareButton({ tablet, shared, onPress }: ShareButtonProps) {
 					gap: space.s0,
 					paddingHorizontal: space.s2,
 					paddingVertical: space.s0,
-					borderRadius: radius.rPill,
+					borderRadius: radius.rLg,
 					backgroundColor: colors.accentSoft,
 				}}
 			>

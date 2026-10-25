@@ -6,19 +6,8 @@ const downloadHeaders = {
 	"Referrer-Policy": "no-referrer",
 };
 
-function unauthorizedResponse() {
-	return new Response("Unauthorized", {
-		status: 401,
-		headers: downloadHeaders,
-	});
-}
-
-function expiredResponse() {
-	return new Response("Download link expired", {
-		status: 410,
-		headers: downloadHeaders,
-	});
-}
+const text = (body: string, status: number, extra: Record<string, string> = {}) =>
+	new Response(body, { status, headers: { ...downloadHeaders, ...extra } });
 
 function errorStatus(error: unknown) {
 	const code = typeof error === "object" && error && "code" in error ? (error as { code?: unknown }).code : undefined;
@@ -29,13 +18,14 @@ function errorStatus(error: unknown) {
 export async function handleResumePdfDownload(request: Request, id: string) {
 	const searchParams = new URL(request.url).searchParams;
 	const token = searchParams.get("token");
-	if (!token) return unauthorizedResponse();
+	if (!token) return text("Unauthorized", 401);
 
 	const verification = verifyResumePdfDownloadToken({ resumeId: id, token });
-	if (!verification.ok) return verification.reason === "expired" ? expiredResponse() : unauthorizedResponse();
+	if (!verification.ok)
+		return verification.reason === "expired" ? text("Download link expired", 410) : text("Unauthorized", 401);
 	// Links made before letters left resumes may ask for the resume's cover letter, which is now a letter of its own.
 	const target = searchParams.get("target");
-	if (target && target !== "resume") return new Response("Not found", { status: 404, headers: downloadHeaders });
+	if (target && target !== "resume") return text("Not found", 404);
 
 	try {
 		const resHeaders = new Headers();
@@ -54,17 +44,9 @@ export async function handleResumePdfDownload(request: Request, id: string) {
 		if (status === 500) console.error("[PDF Download]", { name: error instanceof Error ? error.name : "Unknown" });
 		const reset =
 			typeof error === "object" && error && "data" in error ? (error.data as { reset?: number })?.reset : undefined;
-		return new Response(
-			status === 429 ? "Too many PDF exports. Retry after the rate limit resets." : "Failed to generate resume PDF",
-			{
-				status,
-				headers: {
-					...downloadHeaders,
-					...(status === 429 && {
-						"Retry-After": String(reset ? Math.max(1, Math.ceil((reset - Date.now()) / 1000)) : 60),
-					}),
-				},
-			},
-		);
+		if (status !== 429) return text("Couldn't generate the resume PDF. Try again.", status);
+		return text("Too many PDF exports. Try again in a few minutes.", 429, {
+			"Retry-After": String(reset ? Math.max(1, Math.ceil((reset - Date.now()) / 1000)) : 60),
+		});
 	}
 }

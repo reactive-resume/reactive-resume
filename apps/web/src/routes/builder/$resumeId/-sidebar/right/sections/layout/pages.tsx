@@ -17,6 +17,7 @@ import { Trans } from "@lingui/react/macro";
 import { useReducedMotion } from "motion/react";
 import { useCallback, useId, useState } from "react";
 import { match } from "ts-pattern";
+import { filterSections } from "@reactive-resume/pdf/filtering";
 import { templateLayouts } from "@reactive-resume/schema/templates";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -34,7 +35,6 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
 import { resolveLayoutSectionTitle } from "./title";
-import { filterVisibleLayoutSectionIds } from "./visibility";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { DRAG_SETTLE } from "@/libs/motion";
 
@@ -250,8 +250,8 @@ export function LayoutPages() {
 						pageIndex={pageIndex}
 						page={{
 							...page,
-							main: filterVisibleLayoutSectionIds(page.main, resume.data),
-							sidebar: filterVisibleLayoutSectionIds(page.sidebar, resume.data),
+							main: filterSections(page.main, resume.data),
+							sidebar: filterSections(page.sidebar, resume.data),
 						}}
 						canDelete={layout.pages.length > 1}
 						sidebarPosition={templateSidebarPosition}
@@ -262,7 +262,7 @@ export function LayoutPages() {
 
 				<Button variant="secondary" className="self-end" onClick={handleAddPage}>
 					<Icon name="plus" size={16} />
-					<Trans>Add Page</Trans>
+					<Trans>Add page</Trans>
 				</Button>
 			</div>
 
@@ -310,7 +310,7 @@ function PageContainer({
 							/>
 
 							<span className="text-xs font-medium text-ink-3">
-								<Trans comment="Layout editor toggle label that makes a page single-column">Full Width</Trans>
+								<Trans comment="Layout editor toggle label that makes a page single-column">Full width</Trans>
 							</span>
 						</label>
 					</div>
@@ -322,7 +322,7 @@ function PageContainer({
 							className="size-auto gap-x-2.5 justify-self-end p-0!"
 						>
 							<Icon name="trash" size={16} />
-							<Trans>Delete Page</Trans>
+							<Trans>Delete page</Trans>
 						</Button>
 					)}
 				</div>
@@ -517,7 +517,7 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 
 				<DropdownMenuItem onClick={moveToNewPage}>
 					<Icon name="plus-circle" size={16} />
-					<Trans>New Page</Trans>
+					<Trans>New page</Trans>
 				</DropdownMenuItem>
 			</DropdownMenuSubContent>
 		</DropdownMenuSub>

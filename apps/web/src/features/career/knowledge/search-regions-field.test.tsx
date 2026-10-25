@@ -49,7 +49,7 @@ describe("SearchRegionsField", () => {
 		render(<Harness initial={null} accountTimeZone="Asia/Singapore" onChange={onChange} />);
 		expect(screen.getByText("Where you're looking for work")).toBeInTheDocument();
 		expect(screen.getByText("Singapore")).toBeInTheDocument();
-		expect(screen.getByText("From your time zone")).toBeInTheDocument();
+		expect(screen.getByText("From your timezone")).toBeInTheDocument();
 		expect(onChange).not.toHaveBeenCalled();
 	});
 
@@ -67,7 +67,7 @@ describe("SearchRegionsField", () => {
 		const onChange = vi.fn();
 		render(<Harness initial={["AU"]} accountTimeZone="UTC" onChange={onChange} />);
 		await user.click(screen.getByRole("button", { name: "Remove Australia" }));
-		await user.click(screen.getByRole("button", { name: "Use my time zone" }));
+		await user.click(screen.getByRole("button", { name: "Use my timezone" }));
 		expect(onChange.mock.calls.map(([value]) => value)).toEqual([[], null]);
 		expect(screen.getByText("Anywhere")).toBeInTheDocument();
 	});
@@ -123,7 +123,7 @@ describe("SearchRegionsField", () => {
 		const user = userEvent.setup();
 		const onChange = vi.fn();
 		render(<Harness initial={["DE"]} accountTimeZone="Asia/Singapore" onChange={onChange} />);
-		await user.click(screen.getByRole("button", { name: "Use my time zone" }));
+		await user.click(screen.getByRole("button", { name: "Use my timezone" }));
 		expect(onChange).toHaveBeenLastCalledWith(null);
 		expect(screen.getByText("Singapore")).toBeInTheDocument();
 	});

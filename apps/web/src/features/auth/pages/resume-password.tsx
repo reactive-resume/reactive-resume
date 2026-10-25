@@ -14,7 +14,10 @@ import { orpc } from "@/libs/orpc/client";
 import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
-	password: z.string().min(6).max(64),
+	password: z
+		.string()
+		.min(6, { error: () => t`Enter the password.` })
+		.max(64, { error: () => t`Use 64 characters or fewer.` }),
 });
 
 type ResumePasswordPageProps = {
@@ -47,10 +50,10 @@ export function ResumePasswordPage({ username, slug, redirectPath }: ResumePassw
 							formApi.setFieldMeta("password", (meta) => ({
 								...meta,
 								isTouched: true,
-								errors: [{ message: t`The password you entered is incorrect` }],
+								errors: [{ message: t`That password isn't correct. Check it with the resume owner and try again.` }],
 								errorMap: {
 									...meta.errorMap,
-									onSubmit: { message: t`The password you entered is incorrect` },
+									onSubmit: { message: t`That password isn't correct. Check it with the resume owner and try again.` },
 								},
 							}));
 						} else {
@@ -60,7 +63,7 @@ export function ResumePasswordPage({ username, slug, redirectPath }: ResumePassw
 									error,
 									t({
 										comment: "Fallback toast when resume password verification fails unexpectedly",
-										message: "Failed to verify the password. Please try again.",
+										message: "Couldn't verify the password. Try again.",
 									}),
 								),
 								id: toastId,
@@ -76,7 +79,7 @@ export function ResumePasswordPage({ username, slug, redirectPath }: ResumePassw
 		<>
 			<div className="space-y-4 text-center">
 				<h1 className="text-2xl font-semibold tracking-tight">
-					<Trans>This resume is password protected</Trans>
+					<Trans>This resume is password-protected</Trans>
 				</h1>
 
 				<div className="leading-relaxed text-ink-3">

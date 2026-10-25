@@ -146,7 +146,7 @@ export function SearchScreen() {
 		{
 			key: "ats",
 			icon: "seal-check",
-			title: t`ATS Checker`,
+			title: t`ATS checker`,
 			keywords: [t`Check a PDF`],
 			root: true,
 			onPress: () => go(routes.atsChecker()),
@@ -154,7 +154,7 @@ export function SearchScreen() {
 		{
 			key: "new-application",
 			icon: "briefcase",
-			title: t`New Application`,
+			title: t`New application`,
 			keywords: [t`Add application`, t`Job`],
 			account: true,
 			root: true,
@@ -189,7 +189,7 @@ export function SearchScreen() {
 			key: "account",
 			icon: "user-circle",
 			title: t`Account`,
-			keywords: [t`Profile`, t`Password`, t`Passkeys`, t`Export Data`, t`Delete Account`],
+			keywords: [t`Profile`, t`Password`, t`Passkeys`, t`Export data`, t`Delete account`],
 			account: true,
 			onPress: () => go(routes.settings("account")),
 		},
@@ -205,7 +205,7 @@ export function SearchScreen() {
 			key: "ai",
 			icon: "key",
 			title: t`AI & developer`,
-			keywords: [t`AI providers`, t`API Keys`, t`MCP`],
+			keywords: [t`AI providers`, t`API keys`, t`MCP`],
 			account: true,
 			onPress: () => go(routes.settings("ai")),
 		},
@@ -274,7 +274,7 @@ export function SearchScreen() {
 			key: "applications",
 			heading: t`Applications`,
 			rows: [
-				{ key: "create", icon: "plus", title: t`New Application`, onPress: () => go(routes.applications()) },
+				{ key: "create", icon: "plus", title: t`New application`, onPress: () => go(routes.applications()) },
 				...rank(query, jobs).map(applicationRow),
 			],
 			loading: loading(applications.isPending, t`Loading applications…`),
@@ -351,7 +351,7 @@ export function SearchScreen() {
 						gap: space.s2,
 						minHeight: size.input,
 						paddingHorizontal: space.s3,
-						borderRadius: radius.rXl,
+						borderRadius: radius.rLg,
 						backgroundColor: colors.sunken,
 					}}
 				>

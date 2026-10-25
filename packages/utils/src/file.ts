@@ -1,4 +1,4 @@
-import { slugify } from "./string";
+import { slugify } from "./slug";
 
 export function generateFilename(prefix: string, extension?: string) {
 	const name = slugify(prefix);
@@ -18,4 +18,14 @@ export function downloadWithAnchor(blob: Blob, filename: string) {
 	document.body.removeChild(a);
 
 	setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+/** "12 kB" or "3.4 MB" (decimal units), never less than 1 kB. */
+export function formatFileSize(bytes: number, locale: string): string {
+	const inMegabytes = bytes >= 1_000_000;
+	return new Intl.NumberFormat(locale, {
+		style: "unit",
+		unit: inMegabytes ? "megabyte" : "kilobyte",
+		maximumFractionDigits: inMegabytes ? 1 : 0,
+	}).format(inMegabytes ? bytes / 1_000_000 : Math.max(1, Math.round(bytes / 1000)));
 }

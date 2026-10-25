@@ -38,7 +38,7 @@ export default function PageScreen() {
 			) : draft.status === "error" && !current ? (
 				<Banner
 					tone="danger"
-					message={t`Resume could not be loaded.`}
+					message={t`Couldn't load the resume.`}
 					action={{ label: t`Retry`, onPress: () => void draft.open(id).catch(() => undefined) }}
 				/>
 			) : null}

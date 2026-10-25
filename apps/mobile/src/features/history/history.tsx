@@ -252,10 +252,10 @@ export function HistoryPanel({ resume, offline }: HistoryProps) {
 			</Sheet>
 			<ConfirmDialog
 				open={!!menu && mode === "delete"}
-				title={t`Delete this version?`}
+				title={t`Delete “${menu ? versionTitle(menu) : ""}”?`}
 				message={t`Named versions are kept until you delete them. This can't be undone.`}
 				destructive
-				confirmLabel={t`Delete`}
+				confirmLabel={t`Delete version`}
 				onCancel={() => setMenu(null)}
 				onConfirm={() => {
 					void mutateVersion(true);
@@ -265,7 +265,7 @@ export function HistoryPanel({ resume, offline }: HistoryProps) {
 				open={restoring}
 				title={t`Restore this version?`}
 				message={t`The current state will be saved as “Before restore” first.`}
-				confirmLabel={t`Restore`}
+				confirmLabel={t`Restore version`}
 				onCancel={() => setRestoring(false)}
 				onConfirm={() => void restore()}
 			/>

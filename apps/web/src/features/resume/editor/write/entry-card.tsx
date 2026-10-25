@@ -68,7 +68,6 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 	const write = useEntryWriter(section.id, entryId);
 	const open = useEditorStore((state) => state.selection?.kind === "item" && state.selection.itemId === entryId);
 	const autoFocus = useEditorStore((state) => state.focusEntryId === entryId);
-	const select = useEditorStore((state) => state.select);
 	const { setNodeRef, transform, transition, isDragging, attributes, listeners } = useSortable({
 		id: entryId,
 		disabled: locked,
@@ -78,7 +77,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 
 	// The first field took focus as it mounted; later openings shouldn't steal focus again.
 	useEffect(() => {
-		if (autoFocus) useEditorStore.getState().setFocusEntry(null);
+		if (autoFocus) useEditorStore.setState({ focusEntryId: null });
 	}, [autoFocus]);
 
 	if (!entry) return null;
@@ -89,7 +88,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 	const hint = draft && primaryField ? DRAFT_HINTS[primaryField] : undefined;
 
 	const toggle = () => {
-		select(open ? null : { kind: "item", sectionId: section.id, itemId: entryId });
+		useEditorStore.setState({ selection: open ? null : { kind: "item", sectionId: section.id, itemId: entryId } });
 		if (!open) keepOpenedEntryInView(entryId);
 	};
 	const fields = (
@@ -112,7 +111,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 			data-entry-id={entryId}
 			style={{ transform: CSS.Translate.toString(transform), transition: transition }}
 			className={cn(
-				"group/entry relative scroll-mt-[60px] rounded-[10px] border border-line bg-surface transition-[border-color,box-shadow] duration-quick ease-enter",
+				"group/entry relative scroll-mt-[60px] rounded-lg border border-line bg-surface transition-[border-color,box-shadow] duration-quick ease-enter",
 				open && "border-accent shadow-e1",
 				isDragging && "z-10 bg-raised shadow-e2",
 			)}
@@ -136,7 +135,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 					onClick={toggle}
 					onKeyDown={onTitleKeyDown}
 					className={cn(
-						"flex min-w-0 flex-1 flex-col items-start gap-0.5 rounded-[9px] py-2.5 pe-2 text-start",
+						"flex min-w-0 flex-1 flex-col items-start gap-0.5 rounded-lg py-2.5 pe-2 text-start",
 						locked ? "ps-3" : "ps-0.5",
 					)}
 				>
@@ -191,7 +190,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 						title={title}
 						locked={locked}
 						onDelete={() => deleteEntry(section, entryId)}
-						onBack={() => select(null)}
+						onBack={() => useEditorStore.setState({ selection: null })}
 					>
 						{fields}
 					</PhoneEntryScreen>
@@ -257,7 +256,7 @@ function deleteEntry(section: WriteSection, entryId: string) {
 		},
 		{ newStep: true },
 	);
-	useEditorStore.getState().select(null);
+	useEditorStore.setState({ selection: null });
 	toast.add({ description: t`Entry deleted`, actionProps: { children: t`Undo`, onClick: undo } });
 }
 
@@ -291,7 +290,7 @@ function EntryMenu({ section, entry }: EntryMenuProps) {
 			},
 			{ newStep: true },
 		);
-		useEditorStore.getState().select({ kind: "item", sectionId: section.id, itemId: copy.id });
+		useEditorStore.setState({ selection: { kind: "item", sectionId: section.id, itemId: copy.id } });
 	};
 
 	const toggleHidden = () =>

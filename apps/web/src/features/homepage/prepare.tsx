@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { useEffect, useRef, useState } from "react";
@@ -109,10 +109,7 @@ function Clock() {
 				strokeWidth="1.4"
 				strokeLinecap="round"
 				opacity="var(--nw)"
-				style={{
-					transformOrigin: "100px 100px",
-					transform: "rotate(calc(clamp(0, (var(--p) - .7) / .13, 1) * 1080deg))",
-				}}
+				className="origin-[100px_100px] [transform:rotate(calc(clamp(0,(var(--p)-.7)/.13,1)*1080deg))]"
 			/>
 			<circle cx="100" cy="100" r="5.5" fill="var(--accent)" />
 		</svg>
@@ -145,7 +142,7 @@ function ClockReadout({ step }: { step: number }) {
 }
 
 /** Paper drawn on in either theme: the light theme's tokens, so the product's own colours read the same. */
-const sheet = "on-paper relative h-full overflow-hidden rounded-[3px] bg-paper shadow-paper";
+const sheet = "on-paper relative h-full overflow-hidden rounded-md bg-paper shadow-paper";
 const note = "font-ui text-[.86em] text-ink-3";
 
 /** A pencil tick in a pencil box, drawn as `tick` goes from 0 to 1. */
@@ -183,9 +180,7 @@ function MessagesPanel() {
 	const time = useTime(INTERVIEW_AT);
 	return (
 		<div className={cn(sheet, "flex flex-col gap-[1em] p-[1.8em]")}>
-			<span className="font-martian text-[.74em] font-medium tracking-[.08em] text-ink-3 uppercase">
-				{t`Messages · Pasted from your email`}
-			</span>
+			<span className="font-martian text-[.74em] font-medium text-ink-3">{t`Messages · Pasted from your email`}</span>
 			<div className="flex flex-col gap-[.15em] border-b border-line pb-[.7em] text-[.92em] text-ink-2">
 				<span>
 					<b className="font-semibold text-ink">{t`From`}</b> {t`Sam, Fieldnote`}
@@ -199,7 +194,7 @@ function MessagesPanel() {
 				<span className="mt-[.3em] block italic">{t`Sam`}</span>
 			</p>
 
-			<div className="flex [transform:translateY(calc((1-var(--mr))*10px))] flex-col gap-[.7em] rounded-[.75em] border border-line bg-raised p-[1.1em] opacity-(--mr) shadow-e2 [transition:transform_.4s_var(--ease)]">
+			<div className="flex [transform:translateY(calc((1-var(--mr))*10px))] flex-col gap-[.7em] rounded-sm border border-line bg-raised p-[1.1em] opacity-(--mr) shadow-e2 [transition:transform_.4s_var(--ease)]">
 				<span className="flex items-center gap-[.45em] text-[.86em] font-medium text-ink-2">
 					<Icon name="sparkle" size={15} className="text-accent-text" />
 					{t`Read it for me`}
@@ -213,16 +208,16 @@ function MessagesPanel() {
 					<Icon name="check" size={17} className="mt-[.1em] shrink-0 text-accent-text" />
 					{t`Asks for an example of your onboarding work.`}
 				</span>
-				<div className="mt-[.2em] flex flex-wrap items-center justify-between gap-[.6em] rounded-[.6em] border border-accent bg-surface px-[.9em] py-[.7em]">
+				<div className="mt-[.2em] flex flex-wrap items-center justify-between gap-[.6em] rounded-sm border border-accent bg-surface px-[.9em] py-[.7em]">
 					<span className="flex items-center gap-[.6em] font-medium text-ink">
-						<span className="relative grid size-[1.25em] place-items-center rounded-[.3em] border border-line-2">
-							<span className="absolute inset-[-1px] grid place-items-center rounded-[.3em] bg-accent text-on-accent opacity-(--mc)">
+						<span className="relative grid size-[1.25em] place-items-center rounded-sm border border-line-2">
+							<span className="absolute inset-[-1px] grid place-items-center rounded-sm bg-accent text-on-accent opacity-(--mc)">
 								<Icon name="check" size={13} />
 							</span>
 						</span>
 						{t`Move to Interview`}
 					</span>
-					<span className="grid h-[2.3em] place-items-center rounded-[.5em] bg-accent px-[1em] font-semibold text-on-accent">
+					<span className="grid h-[2.3em] place-items-center rounded-sm bg-accent px-[1em] font-semibold text-on-accent">
 						<span className="col-start-1 row-start-1 opacity-[calc(1-var(--mc))]">{t`Apply 1 change`}</span>
 						<span className="col-start-1 row-start-1 flex items-center gap-[.4em] opacity-(--mc)">
 							<Icon name="check" size={16} />
@@ -266,7 +261,7 @@ function FitPanel() {
 			requirement: t`Mentor other designers`,
 			tone: "missing",
 			label: t`No evidence yet`,
-			evidence: t`Your Knowledge doesn’t mention mentoring.`,
+			evidence: t`Knowledge doesn’t mention mentoring.`,
 		},
 	] as const;
 
@@ -276,9 +271,7 @@ function FitPanel() {
 				<h3 className="max-w-[17em] font-display text-[1.55em] leading-[1.15] text-ink">
 					{t`A strong match, with one question to resolve`}
 				</h3>
-				<span className="font-martian text-[.74em] tracking-[.06em] text-ink-3 uppercase">
-					{t`3 supported · 1 partly · 1 missing`}
-				</span>
+				<span className="font-martian text-[.74em] text-ink-3">{t`3 supported · 1 partly · 1 missing`}</span>
 			</div>
 			<ul className="flex flex-col divide-y divide-line border-y border-line">
 				{rows.map((row, index) => (
@@ -317,7 +310,7 @@ function PlanPanel() {
 			title: t`Questions to ask`,
 			detail: t`Who owns the design system today? What does success look like in 90 days?`,
 		},
-		{ minutes: 5, title: t`Say it aloud`, detail: t`Practise your introduction once. Keep it to about 90 seconds.` },
+		{ minutes: 5, title: t`Say it aloud`, detail: t`Practice your introduction once. Keep it to about 90 seconds.` },
 	];
 
 	return (
@@ -329,14 +322,14 @@ function PlanPanel() {
 		>
 			<h3 className="font-display text-[1.55em] leading-[1.15] text-ink">{t`A focused 30-minute plan`}</h3>
 			<span className="text-ink-2">{t`Built from the posting, Sam’s message and your two strongest stories.`}</span>
-			<div aria-hidden="true" className="h-[.3em] overflow-hidden rounded-full bg-[oklch(0.93_0.006_95)]">
-				<div className="h-full origin-left [transform:scaleX(calc((var(--k1)*10+var(--k2)*10+var(--k3)*5+var(--k4)*5)/30))] rounded-full bg-[oklch(0.5_0.1_150)] rtl:origin-right" />
+			<div aria-hidden="true" className="h-[.3em] overflow-hidden rounded-sm bg-[oklch(0.93_0.006_95)]">
+				<div className="h-full origin-left [transform:scaleX(calc((var(--k1)*10+var(--k2)*10+var(--k3)*5+var(--k4)*5)/30))] rounded-sm bg-[oklch(0.5_0.1_150)] rtl:origin-right" />
 			</div>
 			<ul className="flex flex-col gap-[.35em]">
 				{rows.map((row, index) => (
 					<li key={row.title} className="flex items-start gap-[.8em] py-[.4em]">
 						<PencilTick tick={`--k${index + 1}`} />
-						<span className="font-martian w-[4.4em] shrink-0 pt-[.2em] text-[.76em] tracking-[.06em] text-ink-3 uppercase">
+						<span className="font-martian w-[4.4em] shrink-0 pt-[.2em] text-[.76em] text-ink-3">
 							{t`${i18n.number(row.minutes)} min`}
 						</span>
 						<span className="flex min-w-0 flex-1 flex-col gap-[.15em]">
@@ -389,20 +382,20 @@ function PractisePanel({ active }: { active: boolean }) {
 	return (
 		<div className={cn(sheet, "flex flex-col gap-[.9em] border-t-[.35em] border-[oklch(0.7_0.12_25/.55)] p-[1.8em]")}>
 			<div className="flex flex-wrap items-center justify-between gap-[1em]">
-				<span className="font-martian text-[.74em] tracking-[.08em] text-ink-3 uppercase">{t`Question 1 of 4 · Practice`}</span>
+				<span className="font-martian text-[.74em] text-ink-3">{t`Question 1 of 4 · Practice`}</span>
 				<button
 					type="button"
 					onClick={hear}
 					aria-pressed={speaking}
 					title={t`Uses your browser’s voice`}
-					className="-me-[.5em] inline-flex h-[2.2em] items-center gap-[.4em] rounded-[.5em] px-[.6em] font-medium text-ink transition-colors hover:bg-hover"
+					className="-me-[.5em] inline-flex h-[2.2em] items-center gap-[.4em] rounded-sm px-[.6em] font-medium text-ink transition-colors hover:bg-hover"
 				>
 					<Icon name={speaking ? "stop" : "speaker-high"} size={17} />
 					{speaking ? t`Stop` : t`Hear it`}
 				</button>
 			</div>
 			<p className="font-display text-[1.4em] leading-[1.25] text-pretty text-ink">{question}</p>
-			<p className="min-h-[5.6em] rounded-[.5em] border border-line-2 px-[.9em] py-[.7em] leading-[1.55] text-ink">
+			<p className="min-h-[5.6em] rounded-sm border border-line-2 px-[.9em] py-[.7em] leading-[1.55] text-ink">
 				<TypedText
 					text={t`At Northwind Labs I led research for our onboarding redesign. I interviewed 14 customers, found three drop-off points, and we shipped a shorter setup. Activation rose from 31% to 44%.`}
 					progress="--ty"
@@ -448,7 +441,7 @@ function DebriefPanel() {
 						<span
 							key={outcome}
 							className={cn(
-								"inline-flex h-[2.1em] items-center rounded-full border border-line-2 px-[.85em] text-[.92em] font-medium text-ink",
+								"inline-flex h-[2.1em] items-center rounded-sm border border-line-2 px-[.85em] text-[.92em] font-medium text-ink",
 								index === 1 &&
 									"bg-[color-mix(in_oklch,var(--ink)_calc(var(--db1)*100%),transparent)] text-[color-mix(in_oklch,white_calc(var(--db1)*100%),var(--ink))]",
 							)}
@@ -461,13 +454,13 @@ function DebriefPanel() {
 			<div className="flex flex-col gap-[.6em] border-t border-line pt-[.8em]">
 				<b className="font-semibold text-ink">{t`Keep the evidence precise`}</b>
 				<p className="flex items-start gap-[.6em] text-ink opacity-(--db2)">
-					<span className="font-martian mt-[.1em] shrink-0 rounded-[.3em] bg-accent-soft px-[.45em] py-[.15em] text-[.74em] tracking-[.06em] text-accent-text uppercase">
+					<span className="font-martian mt-[.1em] shrink-0 rounded-sm bg-accent-soft px-[.45em] py-[.15em] text-[.74em] text-accent-text">
 						{t`Supported`}
 					</span>
-					{t`The 13-point activation lift. Your Knowledge has the before and after.`}
+					{t`The 13-point activation lift. Knowledge has the before and after.`}
 				</p>
 				<p className="flex items-start gap-[.6em] text-ink opacity-(--db3)">
-					<span className="font-martian mt-[.1em] shrink-0 rounded-[.3em] bg-warn-soft px-[.45em] py-[.15em] text-[.74em] tracking-[.06em] text-warn-text uppercase">
+					<span className="font-martian mt-[.1em] shrink-0 rounded-sm bg-warn-soft px-[.45em] py-[.15em] text-[.74em] text-warn-text">
 						{t`Observation`}
 					</span>
 					{t`Fewer support tickets isn’t backed by a number yet. Say it as something you noticed.`}
@@ -485,6 +478,22 @@ function DebriefPanel() {
 }
 
 /**
+ * The Prepare tab's badge: time to the interview, to the hour (to five minutes in the last hour). It subscribes on its
+ * own so the scene doesn't re-render while the clock winds.
+ */
+function Countdown() {
+	const { i18n } = useLingui();
+	const left = useLanding((state) => {
+		const remaining = INTERVIEW_AT - state.prepareClock;
+		return remaining >= 60 ? Math.floor(remaining / 60) * 60 : Math.max(0, remaining);
+	});
+	if (left <= 0) return t`Now`;
+	return left >= 60
+		? i18n.number(left / 60, { style: "unit", unit: "hour", unitDisplay: "narrow" })
+		: i18n.number(left, { style: "unit", unit: "minute", unitDisplay: "narrow" });
+}
+
+/**
  * 06 Prepare. The resume Share sent off comes back as a reply: Fieldnote confirms an interview today at half past
  * five. The scroll winds a pencil clock through the day while the application's folder moves from tab to tab: the
  * message read, the fit stamped, a plan ticked off, an answer practised. At the interview everything but the clock
@@ -493,7 +502,6 @@ function DebriefPanel() {
 export function Prepare() {
 	const { i18n } = useLingui();
 	const scrolledStep = useLanding((state) => state.prepareStep);
-	const clock = useLanding((state) => state.prepareClock);
 	const active = useLanding((state) => state.activeScene === SCENE.prepare);
 	const reducedMotion = useLanding((state) => state.reducedMotion);
 	// Reduced motion rests the scene at its end, so there the tabs switch sheets in place instead of scrolling.
@@ -503,25 +511,15 @@ export function Prepare() {
 	const tabsRef = useRef<HTMLDivElement>(null);
 	const prepare = t`Prepare`;
 
-	const left = INTERVIEW_AT - clock;
-	const countdown =
-		step >= STEP.debrief
-			? null
-			: left <= 0
-				? t`Now`
-				: left >= 60
-					? i18n.number(Math.floor(left / 60), { style: "unit", unit: "hour", unitDisplay: "narrow" })
-					: i18n.number(left, { style: "unit", unit: "minute", unitDisplay: "narrow" });
-
 	// The product's tabs in its own order; Apply and Saved aren't part of this day, so they're labels, not buttons.
-	const tabs: { label: string; step?: number; badge?: string | null }[] = [
+	const tabs: { label: string; step?: number; badge?: ReactNode }[] = [
 		{
 			label: t({ message: "Fit", context: "Application workspace tab: how well a job fits your experience" }),
 			step: STEP.fit,
 		},
 		{ label: t`Apply` },
-		{ label: prepare, step: STEP.plan, badge: countdown },
-		{ label: t`Practise`, step: STEP.practise },
+		{ label: prepare, step: STEP.plan, badge: step >= STEP.debrief ? null : <Countdown /> },
+		{ label: t`Practice`, step: STEP.practise },
 		{ label: t`Debrief`, step: STEP.debrief },
 		{ label: t`Messages`, step: STEP.messages, badge: step > STEP.messages ? i18n.number(1) : null },
 		{ label: t({ message: "Saved", context: "Application workspace tab: earlier results kept for this job" }) },
@@ -531,7 +529,7 @@ export function Prepare() {
 	const dialLabels: Record<number, string> = {
 		[STEP.fit]: t({ message: "Fit", context: "Application workspace tab: how well a job fits your experience" }),
 		[STEP.plan]: prepare,
-		[STEP.practise]: t`Practise`,
+		[STEP.practise]: t`Practice`,
 		[STEP.interview]: t`Interview`,
 		[STEP.debrief]: t`Debrief`,
 	};
@@ -565,13 +563,7 @@ export function Prepare() {
 				{/* The day's light through the window: high and cool in the morning, long and warm by late afternoon, gone at dusk. */}
 				<div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden dark:hidden">
 					<div className="absolute inset-0 opacity-[calc(1-clamp(0,(var(--p)-.8)/.14,1))] [background:radial-gradient(55%_60%_at_calc(84%-var(--p)*34%)_calc(8%+var(--p)*46%),color-mix(in_oklch,oklch(0.96_0.025_235/.7),oklch(0.92_0.1_68/.75)_calc(clamp(0,(var(--p)-.2)/.5,1)*100%)),transparent_70%)]" />
-					<div
-						className="window-shadow absolute start-[28%] -top-[20%] h-[140%] w-[78%] opacity-[calc(1-clamp(0,(var(--p)-.78)/.14,1))]"
-						style={{
-							transform:
-								"skewX(calc(-6deg - var(--p) * 30deg)) rotate(calc(-3deg - var(--p) * 9deg)) translateX(calc(var(--p) * -12vw))",
-						}}
-					/>
+					<div className="window-shadow absolute start-[28%] -top-[20%] h-[140%] w-[78%] [transform:skewX(calc(-6deg-var(--p)*30deg))_rotate(calc(-3deg-var(--p)*9deg))_translateX(calc(var(--p)*-12vw))]! opacity-[calc(1-clamp(0,(var(--p)-.78)/.14,1))]" />
 					<div className="absolute inset-0 bg-[linear-gradient(to_bottom,oklch(0.6_0.06_280/.12),transparent_70%)] opacity-[clamp(0,(var(--p)-.8)/.14,1)]" />
 				</div>
 
@@ -592,7 +584,7 @@ export function Prepare() {
 								key={mark.step}
 								aria-hidden="true"
 								className={cn(
-									"font-martian absolute hidden -translate-x-1/2 -translate-y-1/2 text-[10.5px] font-medium tracking-[.08em] whitespace-nowrap uppercase transition-colors duration-300 min-[900px]:block",
+									"font-martian absolute hidden -translate-x-1/2 -translate-y-1/2 text-xs font-medium whitespace-nowrap transition-colors duration-300 min-[900px]:block",
 									mark.step === step ? "text-accent-text" : mark.step < step ? "text-ink-3" : "text-ink-3/60",
 								)}
 								style={{ left: `${50 + mark.x * 66}%`, top: `${50 + mark.y * 62}%` }}
@@ -615,7 +607,7 @@ export function Prepare() {
 					title={prepare}
 					className="min-[900px]:short:hidden absolute start-(--gutter) bottom-[clamp(20px,5vh,44px)] hidden max-w-[min(25em,30vw)] opacity-(--in) min-[900px]:flex"
 				>
-					{t`Get a plan for the interview, built from the posting and your own stories. Practise out loud, then write down how it went.`}
+					{t`Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went.`}
 				</SceneCaption>
 
 				{/* The application's folder. Its sheets share one cell; the one in front is the tab in front. */}
@@ -636,14 +628,14 @@ export function Prepare() {
 									<>
 										{tab.label}
 										{tab.badge && (
-											<span className="rounded-full bg-[oklch(0.42_0.1_150)] px-[.5em] py-[.15em] text-[.92em] leading-none text-white tabular-nums">
+											<span className="rounded-sm bg-[oklch(0.42_0.1_150)] px-[.5em] py-[.15em] text-[.92em] leading-none text-white tabular-nums">
 												{tab.badge}
 											</span>
 										)}
 									</>
 								);
 								const tabClass = cn(
-									"font-martian flex h-[2.6em] shrink-0 items-center gap-[.5em] rounded-t-[.55em] px-[1em] text-[.74em] font-medium tracking-[.08em] whitespace-nowrap uppercase transition-[transform,background-color,color] duration-300",
+									"font-martian flex h-[2.6em] shrink-0 items-center gap-[.5em] rounded-t-sm px-[1em] text-[.74em] font-medium whitespace-nowrap transition-[transform,background-color,color] duration-300",
 									front
 										? "bg-[oklch(0.87_0.05_80)] text-[oklch(0.25_0.03_70)] dark:bg-[oklch(0.62_0.045_78)] dark:text-[oklch(0.16_0.02_70)]"
 										: "translate-y-[.4em] bg-[oklch(0.8_0.05_74)] text-[oklch(0.38_0.03_70)] dark:bg-[oklch(0.5_0.04_72)] dark:text-[oklch(0.14_0.02_70)]",
@@ -672,25 +664,25 @@ export function Prepare() {
 							})}
 						</div>
 						{/* The folder's label: the same Fieldnote role Tailor applied to, its stage moving on when the change is applied. */}
-						<span className="me-[.6em] mb-[.45em] hidden shrink-0 -rotate-1 items-center gap-[.5em] rounded-[.35em] bg-paper py-[.3em] ps-[.35em] pe-[.7em] text-[.8em] font-medium text-[oklch(0.3_0.01_95)] shadow-e1 @min-[640px]:flex">
-							<span className="font-anybody grid size-[1.6em] place-items-center rounded-[.3em] bg-[oklch(0.22_0.01_95)] text-[1.05em] leading-none text-white">
+						<span className="me-[.6em] mb-[.45em] hidden shrink-0 -rotate-1 items-center gap-[.5em] rounded-sm bg-paper py-[.3em] ps-[.35em] pe-[.7em] text-[.8em] font-medium text-[oklch(0.3_0.01_95)] shadow-e1 @min-[640px]:flex">
+							<span className="font-anybody grid size-[1.6em] place-items-center rounded-sm bg-[oklch(0.22_0.01_95)] text-[1.05em] leading-none text-white">
 								F
 							</span>
 							{t`Fieldnote`}
 							<span className="grid">
 								<span className="col-start-1 row-start-1 flex items-center gap-[.35em] opacity-[calc(1-var(--mc))]">
-									<span className="size-[.5em] rounded-full bg-stage-applied" />
+									<span className="size-[.5em] rounded-sm bg-stage-applied" />
 									{t`Applied`}
 								</span>
 								<span className="col-start-1 row-start-1 flex items-center gap-[.35em] opacity-(--mc)">
-									<span className="size-[.5em] rounded-full bg-stage-interview" />
+									<span className="size-[.5em] rounded-sm bg-stage-interview" />
 									{t`Interview`}
 								</span>
 							</span>
 						</span>
 					</div>
 
-					<div className="grid min-h-0 flex-1 overflow-hidden rounded-[10px] bg-[linear-gradient(165deg,oklch(0.87_0.05_80),oklch(0.81_0.055_72))] p-[clamp(10px,1.6vw,22px)] shadow-paper dark:bg-[linear-gradient(165deg,oklch(0.62_0.045_78),oklch(0.55_0.05_70))]">
+					<div className="grid min-h-0 flex-1 overflow-hidden rounded-lg bg-[linear-gradient(165deg,oklch(0.87_0.05_80),oklch(0.81_0.055_72))] p-[clamp(10px,1.6vw,22px)] shadow-paper dark:bg-[linear-gradient(165deg,oklch(0.62_0.045_78),oklch(0.55_0.05_70))]">
 						{panels.map(([panelStep, entry, rotation, panel]) => (
 							<div
 								key={panelStep}

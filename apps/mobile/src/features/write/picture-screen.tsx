@@ -93,7 +93,7 @@ export function PictureScreen() {
 				message:
 					error.message === t`Choose a photo smaller than 10 MB.`
 						? error.message
-						: t`Failed to upload picture. Please try again.`,
+						: t`Couldn't upload the photo. Try again.`,
 				action: { label: t`Retry`, onPress: () => upload.mutate() },
 			}),
 	});
@@ -113,11 +113,11 @@ export function PictureScreen() {
 		set("url", "", true);
 	};
 
-	if (!picture) return <EditorScreen title={t`Picture`}>{null}</EditorScreen>;
+	if (!picture) return <EditorScreen title={t`Photo`}>{null}</EditorScreen>;
 	const url = resolvePictureUrl(picture.url, server);
 
 	return (
-		<EditorScreen title={t`Picture`}>
+		<EditorScreen title={t`Photo`}>
 			<View style={{ flexDirection: "row", alignItems: "center", gap: space.s3 }}>
 				<View
 					style={{
@@ -134,7 +134,7 @@ export function PictureScreen() {
 				</View>
 				<View style={{ flex: 1, gap: space.s2 }}>
 					<Button
-						label={upload.isPending ? t`Uploading picture…` : url ? t`Replace photo` : t`Upload picture`}
+						label={upload.isPending ? t`Uploading photo…` : url ? t`Replace photo` : t`Upload photo`}
 						icon="upload-simple"
 						loading={upload.isPending}
 						disabled={locked}
@@ -144,7 +144,7 @@ export function PictureScreen() {
 						<Button
 							variant="ghost"
 							icon="trash"
-							label={t`Delete picture`}
+							label={t`Remove photo`}
 							disabled={locked}
 							onPress={() => setConfirmRemove(true)}
 						/>
@@ -163,12 +163,12 @@ export function PictureScreen() {
 			/>
 			<View style={{ flexDirection: "row", alignItems: "center", gap: space.s2 }}>
 				<Switch
-					label={t`Show picture`}
+					label={t`Show photo`}
 					value={!picture.hidden}
 					disabled={locked}
 					onValueChange={(shown) => set("hidden", !shown, true)}
 				/>
-				<Text>{t`Show picture`}</Text>
+				<Text>{t`Show photo`}</Text>
 			</View>
 
 			<Segmented
@@ -203,7 +203,7 @@ export function PictureScreen() {
 				onChange={(value) => set("rotation", value)}
 			/>
 			<NumberField
-				label={t`Aspect Ratio`}
+				label={t`Aspect ratio`}
 				value={picture.aspectRatio}
 				min={0.5}
 				max={2.5}
@@ -235,7 +235,7 @@ export function PictureScreen() {
 				/>
 			</View>
 			<NumberField
-				label={t`Border Radius`}
+				label={t`Border radius`}
 				unit="pt"
 				value={picture.borderRadius}
 				min={0}
@@ -247,13 +247,13 @@ export function PictureScreen() {
 
 			<View>
 				<ColorRow
-					label={t`Border Color`}
+					label={t`Border color`}
 					value={picture.borderColor}
 					disabled={locked}
 					onPress={() => setColorFor("borderColor")}
 				/>
 				<NumberField
-					label={t`Border Width`}
+					label={t`Border width`}
 					unit="pt"
 					value={picture.borderWidth}
 					min={0}
@@ -264,13 +264,13 @@ export function PictureScreen() {
 			</View>
 			<View>
 				<ColorRow
-					label={t`Shadow Color`}
+					label={t`Shadow color`}
 					value={picture.shadowColor}
 					disabled={locked}
 					onPress={() => setColorFor("shadowColor")}
 				/>
 				<NumberField
-					label={t`Shadow Width`}
+					label={t`Shadow width`}
 					unit="pt"
 					value={picture.shadowWidth}
 					min={0}
@@ -282,7 +282,7 @@ export function PictureScreen() {
 
 			<ColorPickerSheet
 				open={colorFor !== null}
-				title={colorFor === "shadowColor" ? t`Shadow Color` : t`Border Color`}
+				title={colorFor === "shadowColor" ? t`Shadow color` : t`Border color`}
 				value={colorFor ? picture[colorFor] : ""}
 				onClose={() => setColorFor(null)}
 				onChange={(color) => {
@@ -293,7 +293,7 @@ export function PictureScreen() {
 			<ConfirmDialog
 				open={confirmRemove}
 				title={t`Remove this photo?`}
-				confirmLabel={t`Remove`}
+				confirmLabel={t`Remove photo`}
 				destructive
 				onConfirm={remove}
 				onCancel={() => setConfirmRemove(false)}

@@ -16,7 +16,7 @@ export const tabLabel = (tab: WorkspaceTab) =>
 		fit: t({ message: "Fit", context: "Application workspace tab: how well a job fits your experience" }),
 		apply: t`Apply`,
 		prepare: t`Prepare`,
-		practise: t`Practise`,
+		practise: t`Practice`,
 		debrief: t`Debrief`,
 		messages: t`Messages`,
 		saved: t({ message: "Saved", context: "Application workspace tab: earlier results kept for this job" }),
@@ -234,7 +234,7 @@ export function EmptyNotice({ title, message, children }: EmptyNoticeProps) {
 				alignItems: "center",
 				gap: space.s3,
 				padding: space.s6,
-				borderRadius: radius.rXl,
+				borderRadius: radius.rLg,
 				borderWidth: 1,
 				borderStyle: "dashed",
 				borderColor: colors.line2,
@@ -300,7 +300,7 @@ export function Progress({ value, label }: { value: number; label: string }) {
 			accessibilityRole="progressbar"
 			accessibilityLabel={label}
 			accessibilityValue={{ min: 0, max: 100, now: Math.round(clamped * 100) }}
-			style={{ height: 6, borderRadius: radius.rPill, backgroundColor: colors.line, overflow: "hidden" }}
+			style={{ height: 6, borderRadius: radius.rLg, backgroundColor: colors.line, overflow: "hidden" }}
 		>
 			<View style={{ width: `${clamped * 100}%`, height: "100%", backgroundColor: colors.accent }} />
 		</View>
