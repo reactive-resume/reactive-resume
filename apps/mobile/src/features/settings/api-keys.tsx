@@ -84,8 +84,8 @@ export function ApiKeys({ userId }: ApiKeysProps) {
 			<ConfirmDialog
 				open={selected !== null}
 				title={t`Revoke API key?`}
-				message={t`Apps using “${selected?.name ?? ""}” will stop working. This cannot be undone.`}
-				confirmLabel={t`Revoke`}
+				message={t`Apps using “${selected?.name ?? ""}” will stop working. This can't be undone.`}
+				confirmLabel={t`Revoke key`}
 				destructive
 				onCancel={() => setSelected(null)}
 				onConfirm={() => {

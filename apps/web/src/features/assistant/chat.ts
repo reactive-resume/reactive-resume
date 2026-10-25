@@ -1,13 +1,9 @@
-import type { AgentUIMessage } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import type { WorkspaceTab } from "@reactive-resume/schema/career";
-import type { ChatTransport, FileUIPart, UIMessage } from "ai";
-import { useChat } from "@ai-sdk/react";
-import { eventIteratorToUnproxiedDataStream } from "@orpc/client";
+import type { FileUIPart, UIMessage } from "ai";
 import { useQueryClient } from "@tanstack/react-query";
-import { lastAssistantMessageIsCompleteWithToolCalls, parseJsonEventStream, uiMessageChunkSchema } from "ai";
-import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
-import { agentMessageMetadataSchema, agentWebSources } from "@reactive-resume/ai/tools/agent-tool-contracts";
-import { client, orpc, streamClient } from "@/libs/orpc/client";
+import { useEffect } from "react";
+import { agentWebSources } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { client, orpc } from "@/libs/orpc/client";
 
 /** What a message shares with the model; each context chip turns one off. The career coach uses the last four. */
 export type MessageContext = {
@@ -22,28 +18,6 @@ export type MessageContext = {
 };
 
 export type ChatAttachment = { id: string; filename: string; mediaType: string };
-
-function parseSse(stream: ReadableStream<string>) {
-	return parseJsonEventStream({
-		stream: stream.pipeThrough(new TextEncoderStream()),
-		schema: uiMessageChunkSchema,
-	}).pipeThrough(
-		new TransformStream({
-			transform(chunk, controller) {
-				if (!chunk.success) {
-					console.warn("[assistant] dropping malformed SSE frame", chunk.error);
-					return;
-				}
-				controller.enqueue(chunk.value);
-			},
-		}),
-	);
-}
-
-const attachmentIdsOf = (body: object | undefined) =>
-	body && "attachmentIds" in body && Array.isArray(body.attachmentIds)
-		? body.attachmentIds.filter((id): id is string => typeof id === "string")
-		: undefined;
 
 export const attachmentPart = (attachment: ChatAttachment): FileUIPart => ({
 	type: "file",
@@ -80,60 +54,6 @@ export const fileToBase64 = (file: File) =>
 		reader.onerror = reject;
 		reader.readAsDataURL(file);
 	});
-
-type UseAssistantChatInput = {
-	threadId: string;
-	initialMessages: UIMessage[];
-	/** A reply was streaming when the conversation opened: pick it up again (needs Redis on the server). */
-	resume: boolean;
-	/** Read when a message is sent, so the chips always apply to the next message. */
-	context: MessageContext;
-	onFinish: () => void;
-};
-
-/**
- * The conversation's chat: messages stream in over oRPC, answers to the assistant's questions continue the reply,
- * and only the newest message is sent (the server keeps the transcript).
- */
-export function useAssistantChat({ threadId, initialMessages, resume, context, onFinish }: UseAssistantChatInput) {
-	const contextRef = useRef(context);
-	useLayoutEffect(() => {
-		contextRef.current = context;
-	});
-
-	const transport = useMemo<ChatTransport<AgentUIMessage>>(
-		() => ({
-			async sendMessages(options) {
-				const message = options.messages.at(-1);
-				if (!message) throw new Error("No message to send.");
-				const attachmentIds = attachmentIdsOf(options.body);
-				return parseSse(
-					eventIteratorToUnproxiedDataStream(
-						await streamClient.agent.messages.send(
-							{ threadId, message, context: contextRef.current, ...(attachmentIds ? { attachmentIds } : {}) },
-							options.abortSignal ? { signal: options.abortSignal } : {},
-						),
-					),
-				);
-			},
-			async reconnectToStream() {
-				return parseSse(eventIteratorToUnproxiedDataStream(await streamClient.agent.messages.resume({ threadId })));
-			},
-		}),
-		[threadId],
-	);
-
-	return useChat<AgentUIMessage>({
-		id: threadId,
-		messages: initialMessages as AgentUIMessage[],
-		resume,
-		transport,
-		throttle: 50,
-		messageMetadataSchema: agentMessageMetadataSchema,
-		sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
-		onFinish,
-	});
-}
 
 /**
  * A conversation whose connection was switched off or removed continues on `provider` (the default, which its privacy

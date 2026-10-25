@@ -3,8 +3,42 @@
  * section's progress as --p (0 to 1) and every motion below is derived from it with calc(), so React only re-renders
  * on coarse steps. Imported by index.css, not the route, so a server-prerendered page is styled at first paint.
  */
+/*
+ * Write's lines and comment reveal by clip and translate instead of max-height (see write.tsx). Registered as lengths
+ * so their em values resolve once, at the grid, and the comment's smaller text doesn't change the distances.
+ */
+@property --wov {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
+}
+
+@property --wnv {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
+}
+
+@property --wcv {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
+}
+
 /* Short viewports hide the secondary captions of the pinned scenes so nothing overlaps. */
 @custom-variant short (@media (height < 720px));
+
+/*
+ * Backdrop blur, only where it's cheap: a mouse-driven, non-Gecko browser. Firefox and phones re-blur the backdrop on
+ * every scroll frame, which halved the landing page's frame rate there; they get the plain tinted backdrop instead.
+ */
+@custom-variant blur-ok {
+	@media (pointer: fine) {
+		@supports not (-moz-appearance: none) {
+			@slot;
+		}
+	}
+}
 
 @font-face {
 	font-family: "IBM Plex Mono";
@@ -169,16 +203,17 @@
 	pointer-events: none;
 	user-select: none;
 	height: auto;
-	opacity: calc(0.72 * var(--doodle-fade, 1));
+	opacity: calc(0.92 * var(--doodle-fade, 1));
 	mask-image: linear-gradient(110deg, #000 40%, transparent 60%);
 	mask-size: 300% 100%;
 	mask-repeat: no-repeat;
 	mask-position: calc((1 - var(--wipe, 1)) * 100%) 0;
 	transition: mask-position 0.35s linear;
 
+	/* Watercolour keeps its colours at night, a little dimmer so it sits back from the text. */
 	.dark & {
-		opacity: calc(0.42 * var(--doodle-fade, 1));
-		filter: invert(1) brightness(1.1);
+		opacity: calc(0.8 * var(--doodle-fade, 1));
+		filter: brightness(0.92);
 	}
 }
 
@@ -288,7 +323,8 @@
 	background-image:
 		repeating-linear-gradient(0deg, oklch(0.6 0.1 150 / 0.1) 0 1px, transparent 1px 4cqw),
 		repeating-linear-gradient(90deg, oklch(0.6 0.1 150 / 0.1) 0 1px, transparent 1px 4cqw);
-	clip-path: circle(11cqw at var(--lx, 50%) var(--ly, 16%));
+	/* A touch wider than the glass (which is slightly oval): the brass rim drawn over it hides the overflow. */
+	clip-path: circle(12.2cqw at var(--lx, 50%) var(--ly, 16%));
 }
 
 /* Ink that turns light as Share's night falls (--nt) and back as it lifts, whatever the theme. */
@@ -304,23 +340,44 @@
 		color-mix(in oklch, var(--bg) 82%, transparent) 45%,
 		transparent 100%
 	);
-	backdrop-filter: blur(10px);
 	mask-image: linear-gradient(to bottom, #000 40%, transparent);
+
+	@variant blur-ok {
+		backdrop-filter: blur(10px);
+	}
 }
 
-/* The blurred shadow of a window's mullions falling across the desk. */
+/*
+ * The soft shadow of a window's mullions falling across the desk. The softness is drawn into the gradients (what a
+ * 28px blur of 3%-wide bars looks like) rather than applied with filter: blur(), which kept the GPU busy re-blurring a
+ * screen-sized layer for the whole visit, and made Firefox and phones drop frames while scrolling.
+ */
 @utility window-shadow {
+	--mullion: oklch(0.35 0.02 80 / 0.034);
+	--mullion-edge: oklch(0.35 0.02 80 / 0.016);
+	--transom: oklch(0.35 0.02 80 / 0.03);
+	--transom-edge: oklch(0.35 0.02 80 / 0.014);
 	background-image:
 		linear-gradient(
 			90deg,
-			transparent 0 30%,
-			oklch(0.35 0.02 80 / 0.075) 30% 33%,
-			transparent 33% 63%,
-			oklch(0.35 0.02 80 / 0.075) 63% 66%,
-			transparent 66%
+			transparent 26.5%,
+			var(--mullion-edge) 29%,
+			var(--mullion) 31.5%,
+			var(--mullion-edge) 34%,
+			transparent 36.5% 59.5%,
+			var(--mullion-edge) 62%,
+			var(--mullion) 64.5%,
+			var(--mullion-edge) 67%,
+			transparent 69.5%
 		),
-		linear-gradient(0deg, transparent 0 46%, oklch(0.35 0.02 80 / 0.065) 46% 49%, transparent 49%);
-	filter: blur(28px);
+		linear-gradient(
+			0deg,
+			transparent 43%,
+			var(--transom-edge) 45.5%,
+			var(--transom) 47.5%,
+			var(--transom-edge) 49.5%,
+			transparent 52%
+		);
 	transform-origin: 0 0;
 	transform: skewX(-16deg) rotate(-8deg);
 }
@@ -478,4 +535,82 @@
 		filter: blur(4px);
 		translate: 0 0.25em;
 	}
+}
+
+/*
+ * The footer's desk. scroll.ts writes --dp, 0 as the desk's top enters the screen and 1 when the page ends, and the
+ * drawing paints itself in from the window down, just ahead of the fold, while it rises and settles into place. It blends into the
+ * page (multiply on light, lighten on dark), and its far edges fade out so the desk has no hard ends on wide screens.
+ */
+@utility footer-desk {
+	--dp: 1;
+	/* The edge of the paint-in, a soft wash just above the fold: the window paints first, the desk as it arrives. */
+	--wash: calc(var(--dp) * 130%);
+	position: relative;
+	width: 100%;
+	max-width: 1800px;
+	margin: clamp(8px, 2vw, 32px) auto 0;
+	aspect-ratio: 2172 / 724;
+
+	/* Phones show the middle of the desk (window, resume and calendar) larger instead of the whole width. */
+	@media (width < 700px) {
+		aspect-ratio: 16 / 10;
+	}
+
+	/* Desktop: the desk rises into the footer's content, its top fading into the page so the two read as one. */
+	@media (width >= 1000px) {
+		margin-top: clamp(-150px, -7vw, -64px);
+	}
+}
+
+@utility footer-desk-art {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	pointer-events: none;
+	user-select: none;
+	mask-image:
+		linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent),
+		linear-gradient(to bottom, #000 calc(var(--wash) - 30%), transparent var(--wash));
+	mask-composite: intersect;
+
+	@media (width >= 1000px) {
+		mask-image:
+			linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent),
+			linear-gradient(to bottom, transparent 8%, #000 34%),
+			linear-gradient(to bottom, #000 calc(var(--wash) - 30%), transparent var(--wash));
+		mask-composite: intersect;
+	}
+	/* On the drawing itself, not the desk: a translated parent would isolate it from the page it blends into. */
+	translate: 0 calc((1 - var(--dp)) * 12%);
+	scale: calc(1.04 - var(--dp) * 0.04);
+	transform-origin: 50% 100%;
+}
+
+/* Morning light from the window, on the wall around it. Light theme only: at night the lamp lights the desk. */
+@utility footer-dawn {
+	position: absolute;
+	left: 50%;
+	top: 0;
+	width: 60%;
+	height: 90%;
+	translate: -50% calc((1 - var(--dp)) * 30%);
+	opacity: var(--dp);
+	background: radial-gradient(closest-side, oklch(0.95 0.06 120 / 0.7), transparent);
+
+	.dark & {
+		display: none;
+	}
+}
+
+/*
+ * Paper grain over the whole page: fractal noise kept in the alpha channel of black specks, so it composites with plain
+ * opacity (a blend mode on a fixed full-screen layer would repaint the page on every scroll frame). Static, so reduced
+ * motion has nothing to stop. Dark mode inverts it to pale specks.
+ */
+@utility paper-grain {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2.2 0 0 0 -.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+	background-size: 220px;
 }

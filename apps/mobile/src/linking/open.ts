@@ -1,6 +1,7 @@
 import { t } from "@lingui/core/macro";
 import * as WebBrowser from "expo-web-browser";
 import { Alert } from "react-native";
+import { createSerialQueue } from "@reactive-resume/utils/queue";
 import { parseDeepLink } from "./parse";
 import { getAccessToken, getServer, restoreSession, signIn } from "@/auth/session";
 import { initI18n } from "@/i18n";
@@ -20,7 +21,7 @@ function confirm(title: string, message: string, action: string): Promise<boolea
 	});
 }
 
-let queue: Promise<unknown> = Promise.resolve();
+const queue = createSerialQueue();
 
 async function browserFallback(path: string, fallback: string | null): Promise<string | null> {
 	// A browser tab avoids dispatching a rejected App Link straight back to this app via Linking.openURL.
@@ -40,7 +41,7 @@ export function redirectSystemPath({
 	if (immediate?.kind === "callback") return path;
 	if (immediate?.kind === "root") return "/";
 	const fallback = initial ? "/" : null;
-	const result = queue.then(async () => {
+	return queue(async () => {
 		try {
 			// One shared restore: a warm link that lands during launch waits for it instead of reading a half-loaded server.
 			await restoreSession();
@@ -86,6 +87,4 @@ export function redirectSystemPath({
 			return browserFallback(path, fallback);
 		}
 	});
-	queue = result.catch(() => null);
-	return result;
 }

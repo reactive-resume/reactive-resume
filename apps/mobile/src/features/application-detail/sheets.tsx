@@ -224,7 +224,7 @@ function FollowUpForm({ application, onClose }: Omit<ApplicationSheetProps, "ope
 						await reminders.turnOff({ kind: "follow-up", applicationId: application.id });
 					}
 				},
-				onError: () => showToast({ message: t`Couldn't save the follow-up.` }),
+				onError: () => showToast({ message: t`Couldn't save the follow-up. Try again.` }),
 			},
 		);
 
@@ -385,7 +385,10 @@ function PostingBody({ application, onClose }: Omit<ApplicationSheetProps, "open
 				onPress={() =>
 					update.mutate(
 						{ id: application.id, jobDescription: text.trim() ? text : null },
-						{ onSuccess: onClose, onError: () => showToast({ message: t`Couldn't save.` }) },
+						{
+							onSuccess: onClose,
+							onError: () => showToast({ message: t`Couldn't save the job description. Try again.` }),
+						},
 					)
 				}
 			/>
@@ -405,7 +408,7 @@ export function ContactsSheet({ application, open, onClose }: ApplicationSheetPr
 	const save = (contacts: Contact[], onSuccess = () => {}) =>
 		update.mutate(
 			{ id: application.id, contacts },
-			{ onSuccess, onError: () => showToast({ message: t`Couldn't save the contacts.` }) },
+			{ onSuccess, onError: () => showToast({ message: t`Couldn't save the contacts. Try again.` }) },
 		);
 	const set = (key: keyof typeof EMPTY_CONTACT) => (value: string) => {
 		setError("");
@@ -444,12 +447,7 @@ export function ContactsSheet({ application, open, onClose }: ApplicationSheetPr
 				<Text variant="label">{t`Add contact`}</Text>
 				<TextField label={t`Name`} value={draft.name} onChangeText={set("name")} />
 				<TextField label={t`Role (optional)`} value={draft.role} onChangeText={set("role")} />
-				<TextField
-					label={t`Label`}
-					value={draft.type}
-					placeholder={t`Label, e.g. Recruiter`}
-					onChangeText={set("type")}
-				/>
+				<TextField label={t`Label`} value={draft.type} placeholder={t`Recruiter`} onChangeText={set("type")} />
 				<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
 					{[t`Recruiter`, t`Hiring manager`, t`Referral`, t`Interviewer`].map((label) => (
 						<Chip key={label} label={label} selected={draft.type === label} onPress={() => set("type")(label)} />

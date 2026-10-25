@@ -49,12 +49,12 @@ msgid "“{value}” ends before it starts."
 msgstr "“{value}” beidzas pirms tā sākuma."
 
 #: src/features/resume/editor/check/issues.ts
-msgid "“{value}” isn't a form systems recognise, such as Mar 2020 – Present."
-msgstr "“{value}” nav veidlapu sistēmas, ko atpazīst, piemēram, 2020. gada marts — tagadne."
+msgid "“{value}” isn't a form systems recognize, such as Mar 2020 – Present."
+msgstr "“{value}” nav sistēmām atpazīstams formāts, piemēram, 2020. gada marts – tagad."
 
 #: src/features/resume/editor/check/issues.ts
-msgid "“{value}” isn't a form systems recognise, such as March 2022."
-msgstr "“{value}” nav veidlapu sistēmas, ko atpazīst, piemēram, 2022. gada marts."
+msgid "“{value}” isn't a form systems recognize, such as March 2022."
+msgstr "“{value}” nav sistēmām atpazīstams formāts, piemēram, 2022. gada marts."
 
 #: src/features/resume/editor/check/issues.ts
 msgid "“{value}” isn't a plain address like name@example.com."
@@ -76,6 +76,11 @@ msgstr "“Kā jūs mērījāt lietotāju ievadīšanas pārveides rezultātus?�
 msgid "(no header)"
 msgstr "(nav galvenes)"
 
+#. placeholder {0}: proposals.length
+#: src/features/resume/editor/proposals/proposals.ts
+msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
+msgstr "{0, plural, =1 {Labojums piemērots} zero {Piemēroti # labojumi} one {Piemērots # labojums} other {Piemēroti # labojumi}}"
+
 #. placeholder {0}: open.jdCount
 #. placeholder {1}: open.label
 #. placeholder {2}: open.label
@@ -83,10 +88,25 @@ msgstr "(nav galvenes)"
 msgid "{0, plural, one {“{1}” appears once in the posting.} other {“{2}” appears #× in the posting.}}"
 msgstr "{0, plural, one {“{1}” darba sludinājumā parādās vienu reizi.} other {Darba sludinājumā “{2}” parādās #×.}}"
 
+#. placeholder {0}: daysLeftInTrash(document.trashedAt)
+#: src/features/documents/document-card.tsx
+msgid "{0, plural, one {{type} · # day left} other {{type} · # days left}}"
+msgstr "{0, plural, zero {{type} · atlikušas # dienas} one {{type} · atlikusi # diena} other {{type} · atlikušas # dienas}}"
+
+#. placeholder {0}: insights.total
+#: src/features/applications/components/insights-view.tsx
+msgid "{0, plural, one {# active application} other {# active applications}}"
+msgstr "{0, plural, zero {# aktīvi pieteikumi} one {# aktīvs pieteikums} other {# aktīvi pieteikumi}}"
+
 #. placeholder {0}: data.answers.length
 #: src/features/career/workspace/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, zero {# atbildes} one {# atbilde} other {# atbildes}}"
+
+#. placeholder {0}: result.deleted
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {# application deleted} other {# applications deleted}}"
+msgstr "{0, plural, zero {Dzēsti # pieteikumi} one {Dzēsts # pieteikums} other {Dzēsti # pieteikumi}}"
 
 #. placeholder {0}: importable.length
 #: src/features/applications/components/import-applications-sheet.tsx
@@ -98,13 +118,18 @@ msgstr "{0, plural, one {# darba pieteikums ir gatavs importēšanai} other {# d
 msgid "{0, plural, one {# application to export} other {# applications to export}}"
 msgstr "{0, plural, zero {# pieteikumu eksportēšanai} one {# pieteikums eksportēšanai} other {# pieteikumi eksportēšanai}}"
 
+#. placeholder {0}: result.updated
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {# application updated} other {# applications updated}}"
+msgstr "{0, plural, zero {Atjaunināti # pieteikumi} one {Atjaunināts # pieteikums} other {Atjaunināti # pieteikumi}}"
+
 #. placeholder {0}: applications.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {# application} other {# applications}}"
 msgstr "{0, plural, zero {# pieteikumi} one {# pieteikums} other {# pieteikumi}}"
 
 #. placeholder {0}: state?.characters ?? 0
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "{0, plural, one {# character} other {# characters}}"
 msgstr "{0, plural, one {# raksturs} other {# rakstzīmes}}"
 
@@ -112,6 +137,11 @@ msgstr "{0, plural, one {# raksturs} other {# rakstzīmes}}"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
 msgstr "{0, plural, one {# kontaktpersonai ir nederīgs e-pasts vai nav vārda; tā darba pieteikums joprojām tiek importēts.} other {# kontaktpersonām ir nederīgs e-pasts vai nav vārda; viņu darba pieteikumi joprojām tiek importēti.}}"
+
+#. placeholder {0}: daysLeftInTrash(document.trashedAt)
+#: src/features/documents/document-card.tsx
+msgid "{0, plural, one {# day left} other {# days left}}"
+msgstr "{0, plural, zero {Atlikušas # dienas} one {Atlikusi # diena} other {Atlikušas # dienas}}"
 
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
@@ -128,12 +158,22 @@ msgstr "{0, plural, zero {# dokumenti pārvietoti uz atkritni} one {# dokuments 
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
 msgstr "{0, plural, one {# labojumu nevarēja ievietot: tā teksts ir mainīts. Jautājiet vēlreiz, lai to atkārtotu.} other {# labojumus nevarēja ievietot: to teksts ir mainīts. Lūdziet vēlreiz tās atkārtot.}}"
 
+#. placeholder {0}: step.entries
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0, plural, one {# entry} other {# entries}}"
+msgstr "{0, plural, zero {# ieraksti} one {# ieraksts} other {# ieraksti}}"
+
 #. placeholder {0}: knowledge.active.length
 #. placeholder {0}: used.facts.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, zero {# fakti} one {# fakts} other {# fakti}}"
+
+#. placeholder {0}: step.flagged
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0, plural, one {# field is flagged for a quick look in the editor.} other {# fields are flagged for a quick look in the editor.}}"
+msgstr "{0, plural, zero {# lauki ir atzīmēti ātrai pārbaudei redaktorā.} one {# lauks ir atzīmēts ātrai pārbaudei redaktorā.} other {# lauki ir atzīmēti ātrai pārbaudei redaktorā.}}"
 
 #. placeholder {0}: report.ignored.length
 #: src/features/resume/editor/check/check-panel.tsx
@@ -153,10 +193,16 @@ msgstr "{0, plural, one {Rindai # nav uzņēmuma vai lomas, un tā tiks izlaista
 
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: used.offers.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 msgid "{0, plural, one {# saved offer} other {# saved offers}}"
 msgstr "{0, plural, zero {# saglabāti piedāvājumi} one {# saglabāts piedāvājums} other {# saglabāti piedāvājumi}}"
+
+#. placeholder {0}: step.sections
+#. placeholder {0}: summary.sections
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0, plural, one {# section} other {# sections}}"
+msgstr "{0, plural, zero {# sadaļas} one {# sadaļa} other {# sadaļas}}"
 
 #. placeholder {0}: ids.length
 #: src/features/applications/components/list-view.tsx
@@ -164,12 +210,12 @@ msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {Atlasīts #} other {Atlasīts #}}"
 
 #. placeholder {0}: used.stories.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {# story} other {# stories}}"
 msgstr "{0, plural, zero {# stāsti} one {# stāsts} other {# stāsti}}"
 
 #. placeholder {0}: remembered.ids.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, zero {Zināšanām pievienoti # fakti.} one {Zināšanām pievienots # fakts.} other {Zināšanām pievienoti # fakti.}}"
 
@@ -182,6 +228,16 @@ msgstr "{0, plural, zero {Pieteikts pirms # dienām} one {Pieteikts pirms # dien
 #: src/features/career/knowledge/facts.tsx
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, zero {Pamato # stāstus} one {Pamato # stāstu} other {Pamato # stāstus}}"
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
+msgstr "{0, plural, zero {Vai dzēst # pieteikumus?} one {Vai dzēst # pieteikumu?} other {Vai dzēst # pieteikumus?}}"
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
+msgstr "{0, plural, zero {Dzēst # pieteikumus} one {Dzēst # pieteikumu} other {Dzēst # pieteikumus}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -197,6 +253,11 @@ msgstr "{0, plural, zero {Atrasts amats, uzņēmums un # prasības. Pirms saglab
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{0, plural, one {Import # application} other {Import # applications}}"
 msgstr "{0, plural, one {Importēt # darba pieteikumu} other {Importējiet # darba pieteikumus}}"
+
+#. placeholder {0}: response.imported
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, zero {Importēti # pieteikumi.} one {Importēts # pieteikums.} other {Importēti # pieteikumi.}}"
 
 #. placeholder {0}: knowledge.active.length
 #: src/features/career/coach.tsx
@@ -214,7 +275,7 @@ msgid "{0, plural, one {Reading # passage of your resume…} other {Reading # bu
 msgstr "{0, plural, one {Lasot jūsu CV fragmentu #…} other {# saraksta ierakstu un jūsu CV rindkopu lasīšana…}}"
 
 #. placeholder {0}: items.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {Remember # fact?} other {Remember # facts?}}"
 msgstr "{0, plural, zero {Atcerēties # faktus?} one {Atcerēties # faktu?} other {Atcerēties # faktus?}}"
 
@@ -222,6 +283,11 @@ msgstr "{0, plural, zero {Atcerēties # faktus?} one {Atcerēties # faktu?} othe
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, zero {Sākās pirms # minūtēm} one {Sākās pirms # minūtes} other {Sākās pirms # minūtēm}}"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/document-actions.tsx
+msgid "{0, plural, one {Tags for # document} other {Tags for # documents}}"
+msgstr "{0, plural, zero {Atzīmes # dokumentiem} one {Atzīmes # dokumentam} other {Atzīmes # dokumentiem}}"
 
 #. placeholder {0}: fact.usedBy.savedItems
 #: src/features/career/knowledge/facts.tsx
@@ -243,36 +309,15 @@ msgstr "{0} · {providerLabel}. Nosūta šo pieteikumu un jūsu Zināšanas; jū
 msgid "{0} (copy)"
 msgstr "{0} (kopija)"
 
-#. placeholder {0}: insights.total
-#: src/features/applications/components/insights-view.tsx
-msgid "{0} active applications"
-msgstr "{0} aktīvi darba pieteikumi"
-
 #. placeholder {0}: insights.closed
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} closed"
 msgstr "{0} slēgts"
 
-#. placeholder {0}: daysLeftInTrash(document.trashedAt)
-#: src/features/documents/document-card.tsx
-msgid "{0} days left"
-msgstr "Atlikušas {0} dienas"
-
 #. placeholder {0}: proposals.length
 #: src/features/assistant/document.ts
-#: src/features/resume/editor/proposals/proposals.ts
 msgid "{0} edits applied"
 msgstr "{0} labojumi ir piemēroti"
-
-#. placeholder {0}: step.entries
-#: src/features/documents/new-document-dialog.tsx
-msgid "{0} entries"
-msgstr "{0} ieraksti"
-
-#. placeholder {0}: step.flagged
-#: src/features/documents/new-document-dialog.tsx
-msgid "{0} fields are flagged for a quick look in the editor."
-msgstr "{0} lauki ir atzīmēti ar karodziņu, lai tos varētu ātri apskatīt redaktorā."
 
 #. placeholder {0}: semantics.dates.length
 #: src/features/resume/editor/check/parser-view.tsx
@@ -370,18 +415,6 @@ msgstr "{0} darba sludinājums"
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr "{0} atgrieza “{1}”. Jūsu ziņojums tiek saglabāts."
 
-#. placeholder {0}: step.sections
-#. placeholder {0}: summary.sections
-#: src/features/documents/new-document-dialog.tsx
-msgid "{0} sections"
-msgstr "{0} sekcijas"
-
-#. placeholder {0}: step.sections
-#. placeholder {1}: step.entries
-#: src/features/documents/new-document-dialog.tsx
-msgid "{0} sections and {1} entries found."
-msgstr "Atrastas sadaļas {0} un {1} ieraksti."
-
 #. placeholder {0}: report.skippedChecks
 #: src/features/ats-checker/report/score-header.tsx
 msgid "{0} skipped"
@@ -421,9 +454,13 @@ msgstr "{0}. Problēma atrisināta."
 msgid "{accepted} of {0} applied"
 msgstr "Piemēroti {accepted} no {0}"
 
-#: src/features/settings/account/data.tsx
-msgid "{applicationCount, plural, one {# application} other {# applications}}"
-msgstr "{applicationCount, plural, one {# darba pieteikums} other {# darba pieteikumi}}"
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
+msgstr "{authored, plural, =1 {Ietilpināt vienā lapā} zero {Ietilpināt # lapās} one {Ietilpināt # lapā} other {Ietilpināt # lapās}}"
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Fits on one page: {details}} other {Fits on # pages: {details}}}"
+msgstr "{authored, plural, =1 {Ietilpst vienā lapā: {details}} zero {Ietilpst # lapās: {details}} one {Ietilpst # lapā: {details}} other {Ietilpst # lapās: {details}}}"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "{base} (copy)"
@@ -441,17 +478,17 @@ msgstr "{column, plural, one {# kolonna} other {# kolonnas}}"
 msgid "{company} only"
 msgstr "Tikai {company}"
 
-#: src/routes/dashboard/applications/index.tsx
-msgid "{company}: no reply for {days} days. A short follow-up is usually fine now."
-msgstr "{company}: {days} dienas nav atbildes. Īsa novērošana tagad parasti ir piemērota."
-
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "{connection} didn't respond."
 msgstr "{connection} neatbildēja."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# ieraksts} other {# ieraksti}}"
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "{count, plural, one {# open issue} other {# open issues}}"
+msgstr "{count, plural, zero {# atvērtas problēmas} one {# atvērta problēma} other {# atvērtas problēmas}}"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
@@ -464,6 +501,10 @@ msgstr "{count} bezmaksas CV veidnes. Izvēlieties sev piemērotāko veidni."
 #: src/features/documents/documents-page.tsx
 msgid "{count} selected"
 msgstr "Atlasīti: {count}"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, zero {{company}: # dienas nav atbildes. Īss atgādinājums tagad parasti ir piemērots.} one {{company}: # dienu nav atbildes. Īss atgādinājums tagad parasti ir piemērots.} other {{company}: # dienas nav atbildes. Īss atgādinājums tagad parasti ir piemērots.}}"
 
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day a week} other {# office days a week}}"
@@ -480,10 +521,6 @@ msgstr "{days, plural, zero {# dienas birojā, zem jūsu robežas} one {# diena 
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day, your limit} other {# office days, your limit}}"
 msgstr "{days, plural, zero {# dienas birojā, jūsu robeža} one {# diena birojā, jūsu robeža} other {# dienas birojā, jūsu robeža}}"
-
-#: src/features/settings/account/data.tsx
-msgid "{documents, plural, one {# document} other {# documents}}"
-msgstr "{documents, plural, one {# dokuments} other {# dokumenti}}"
 
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
@@ -542,10 +579,6 @@ msgstr "{issues, plural, one {# problēma jums var maksāt par summu.} other {# 
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {Cekā ir # lieta, kas jāpārskata. Jūs joprojām varat lejupielādēt.} other {Cekā ir # lietas, kas jāpārskata. Jūs joprojām varat lejupielādēt.}}"
 
-#: src/features/settings/account/data.tsx
-msgid "{keyCount, plural, one {# API key} other {# API keys}}"
-msgstr "{keyCount, plural, one {# API atslēga} other {# API atslēgas}}"
-
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -584,8 +617,8 @@ msgid "{minutes} min"
 msgstr "{minutes} min"
 
 #: src/features/applications/components/calendar-view.tsx
-msgid "{monthCount} interviews"
-msgstr "{monthCount} intervijas"
+msgid "{monthCount, plural, =0 {No interviews} one {# interview} other {# interviews}}"
+msgstr "{monthCount, plural, =0 {Nav interviju} zero {# intervijas} one {# intervija} other {# intervijas}}"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "{name} added to page 1"
@@ -636,6 +669,10 @@ msgstr "{open, plural, one {# lieta, kas jāpārskata.} other {# lietas, kas jā
 msgid "{pageCount, plural, one {# page} other {# pages}}"
 msgstr "{pageCount, plural, one {# lapa} other {# lapas}}"
 
+#: src/features/resume/editor/design/fit.ts
+msgid "{pages, plural, one {Still # page at 9 pt. Hide a section or shorten entries.} other {Still # pages at 9 pt. Hide a section or shorten entries.}}"
+msgstr "{pages, plural, zero {Joprojām # lapas pie 9 pt. Paslēpiet sadaļu vai saīsiniet ierakstus.} one {Joprojām # lapa pie 9 pt. Paslēpiet sadaļu vai saīsiniet ierakstus.} other {Joprojām # lapas pie 9 pt. Paslēpiet sadaļu vai saīsiniet ierakstus.}}"
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{pairing} type"
 msgstr "{pairing} tips"
@@ -667,6 +704,18 @@ msgstr "{since, plural, =0 {kopš šodienas} one {# dienai} other {# dienām}}"
 #: src/features/resume/editor/design/fit.ts
 msgid "{size} pt"
 msgstr "{size} pt"
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, zero {# rindās nebija uzņēmuma vai lomas, tās tika izlaistas.} one {# rindā nebija uzņēmuma vai lomas, tā tika izlaista.} other {# rindās nebija uzņēmuma vai lomas, tās tika izlaistas.}}"
+
+#: src/components/input/github-stars-button.tsx
+msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
+msgstr "{starCount, plural, zero {Novērtējiet mūs GitHub ar zvaigzni, pašlaik # zvaigznes (atveras jaunā cilnē)} one {Novērtējiet mūs GitHub ar zvaigzni, pašlaik # zvaigzne (atveras jaunā cilnē)} other {Novērtējiet mūs GitHub ar zvaigzni, pašlaik # zvaigznes (atveras jaunā cilnē)}}"
+
+#: src/features/homepage/header.tsx
+msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
+msgstr "{stars, plural, zero {Novērtējiet Reactive Resume GitHub ar zvaigzni, # zvaigznes} one {Novērtējiet Reactive Resume GitHub ar zvaigzni, # zvaigzne} other {Novērtējiet Reactive Resume GitHub ar zvaigzni, # zvaigznes}}"
 
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
@@ -712,11 +761,6 @@ msgstr "{toCheck, plural, one {# lauks ir jāapskata.} other {# lauki ir jāapsk
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {#, lai pārbaudītu} other {#, lai pārbaudītu}}"
-
-#. placeholder {0}: daysLeftInTrash(document.trashedAt)
-#: src/features/documents/document-card.tsx
-msgid "{type} · {0} days left"
-msgstr "{type} · {0} atlikušas dienas"
 
 #. placeholder {0}: formatRelativeTime(document.updatedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
@@ -782,10 +826,6 @@ msgstr "06/2017 – 2021"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "1 column, inline"
 msgstr "1 kolonna, iekļauta"
-
-#: src/features/applications/components/calendar-view.tsx
-msgid "1 interview"
-msgstr "1 intervija"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "10-minute briefing"
@@ -894,7 +934,7 @@ msgstr "Datums netiks nolasīts"
 msgid "A fact changed. Review this story."
 msgstr "Fakts ir mainījies. Pārskatiet šo stāstu."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
 msgstr "Fakts, ko vēlāk aizmirsāt"
 
@@ -914,7 +954,7 @@ msgstr "Fonts ir norādīts, bet nav iegults."
 msgid "A free and open-source resume builder"
 msgstr "Bezmaksas un atvērtā koda CV veidotājs"
 
-#. Hero headline, line 1 of 4: A free, open-source / resume builder / and career / manager.
+#. Hero headline, line 1 of 4: A free, open-source / resume builder / and / career manager.
 #: src/features/homepage/hero.tsx
 msgid "A free, open-source"
 msgstr "Bezmaksas atvērtā pirmkoda rīks"
@@ -944,7 +984,7 @@ msgid "A model's opinion, not a verdict. It can be wrong."
 msgstr "Modeļa viedoklis, nevis spriedums. Tas var būt nepareizi."
 
 #: src/features/settings/account/security.tsx
-msgid "A name helps you tell passkeys apart, like \"Work laptop\"."
+msgid "A name helps you tell passkeys apart, like “Work laptop”."
 msgstr "Nosaukums palīdz atšķirt piekļuves atslēgas, piemēram, “Darba klēpjdators”."
 
 #: src/features/ats-checker/messages.ts
@@ -967,7 +1007,7 @@ msgstr "Atgādinājums par reģistrēšanos, kas tiek rādīts kā nākamā darb
 msgid "A role has no description"
 msgstr "Lomai nav apraksta"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "A saved offer"
 msgstr "Saglabāts piedāvājums"
 
@@ -983,7 +1023,7 @@ msgstr "Vēl viens acu pāris."
 msgid "A short follow-up is usually fine now"
 msgstr "Īsa novērošana tagad parasti ir piemērota"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "A story you've since deleted"
 msgstr "Stāsts, ko vēlāk izdzēsāt"
 
@@ -1008,7 +1048,7 @@ msgid "About 90 seconds when spoken"
 msgstr "Apmēram 90 sekundes, runājot skaļi"
 
 #: src/features/resume/editor/design/style-groups.tsx
-msgid "Accent colour"
+msgid "Accent color"
 msgstr "Akcenta krāsa"
 
 #: src/features/resume/editor/design/style-groups.tsx
@@ -1307,7 +1347,7 @@ msgid "Add one with its country code; some application forms require it before y
 msgstr "Pievienojiet to ar valsts kodu; dažas pieteikuma veidlapas to pieprasa pirms iesniegšanas."
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Add Page"
+msgid "Add page"
 msgstr "Pievienot lapu"
 
 #: src/features/settings/account/security.tsx
@@ -1415,19 +1455,19 @@ msgstr "Pievienots {0} pie {1}"
 msgid "Added by you"
 msgstr "Pievienojāt jūs"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Added to Knowledge as a preference."
 msgstr "Pievienots Zināšanām kā preference."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Added to Knowledge as a skill."
 msgstr "Pievienots Zināšanām kā prasme."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Added to Knowledge as an accomplishment."
 msgstr "Pievienots Zināšanām kā sasniegums."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Added to Knowledge as an experience."
 msgstr "Pievienots Zināšanām kā pieredze."
 
@@ -1548,15 +1588,15 @@ msgstr "Albāņu"
 msgid "Alex Morgan"
 msgstr "Alex Morgan"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
-msgid "Align centre"
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Align center"
 msgstr "Līdzināt centrā"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Align left"
 msgstr "Līdzināt pa kreisi"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Align right"
 msgstr "Līdzināt pa labi"
 
@@ -1578,6 +1618,10 @@ msgstr "Visi darba pieteikumi (arī slēgtie)"
 #: src/features/settings/account/data.tsx
 msgid "All documents and applications as JSON, in one zip"
 msgstr "Visi dokumenti un darba pieteikumi kā JSON, vienā rāvējslēdzējā"
+
+#: src/features/settings/account/data.tsx
+msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
+msgstr "Visi jūsu dokumenti, darba pieteikumi, API atslēgas un publiskās saites tiks neatgriezeniski dzēsti. Šo darbību nevar atsaukt."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Allow access"
@@ -1646,30 +1690,31 @@ msgid "an error"
 msgstr "kļūda"
 
 #: src/components/layout/error-screen.tsx
-msgid "An unexpected error stopped this page from loading. You can try again or head back."
-msgstr "Negaidīta kļūda apturēja šīs lapas ielādi. Varat mēģināt vēlreiz vai atgriezties."
+msgid "An unexpected error stopped this page from loading. Try again, or go to the dashboard."
+msgstr "Negaidīta kļūda apturēja šīs lapas ielādi. Mēģiniet vēlreiz vai dodieties uz informācijas paneli."
+
+#. Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.
+#: src/features/homepage/hero.tsx
+msgctxt "hero headline"
+msgid "and"
+msgstr "un"
 
 #. placeholder {0}: others.length
 #: src/features/applications/components/detail/contacts.tsx
 msgid "and {0} more"
 msgstr "un {0} vairāk"
 
-#. Hero headline, line 3 of 4: A free, open-source / resume builder / and career / manager.
-#: src/features/homepage/hero.tsx
-msgid "and career"
-msgstr "un karjeras"
-
 #: src/features/homepage/sections.tsx
 msgid "and counting"
 msgstr "un skaitīšana"
 
-#: src/features/settings/account/data.tsx
-msgid "and every public link are removed permanently. This can't be undone."
-msgstr "un visas publiskās saites tiek neatgriezeniski noņemtas. Šo darbību nevar atsaukt."
-
 #: src/features/resume/share/link-tab.tsx
 msgid "Another of your resumes uses this address."
 msgstr "Šī adrese tiek izmantota citā jūsu CV."
+
+#: src/libs/error-message.ts
+msgid "Another resume already uses this address. Choose a different one."
+msgstr "Šo adresi jau izmanto cits CV. Izvēlieties citu."
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/remember.tsx
@@ -1680,7 +1725,7 @@ msgstr "Atbilde"
 msgid "Answer by"
 msgstr "Atbildes veids"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Answer copied"
 msgstr "Atbilde nokopēta"
 
@@ -1730,12 +1775,9 @@ msgstr "Jebkur"
 msgid "API key"
 msgstr "API atslēga"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "API keys"
-msgstr "API atslēgas"
-
-#: src/features/command-palette/pages/navigation.tsx
-msgid "API Keys"
 msgstr "API atslēgas"
 
 #: src/routes/dashboard/-components/app-shell.tsx
@@ -1785,10 +1827,6 @@ msgstr "Parādās lapā, tiklīdz tai ir izveidota organizācija."
 msgid "Apple"
 msgstr "Apple"
 
-#: src/features/settings/account/data.tsx
-msgid "Apple revocation instructions"
-msgstr "Apple atsaukšanas instrukcijas"
-
 #: src/features/ats-checker/checker.tsx
 msgid "Applicant tracking systems turn your PDF into plain text before anyone reads it. The checker does the same, with the PDF.js library in your browser, then scores how much of your resume survives: 0 to 100, from how reliably the text comes out, not from your chances of getting the job."
 msgstr "Pretendentu izsekošanas sistēmas pārvērš jūsu PDF vienkāršā tekstā, pirms kāds to izlasa. Pārbaudītājs dara to pašu, izmantojot PDF.js bibliotēku jūsu pārlūkprogrammā, un pēc tam novērtē, cik daudz no jūsu CV saglabājas: no 0 līdz 100, pamatojoties uz to, cik uzticams teksts iznāk, nevis no jūsu iespējām iegūt darbu."
@@ -1801,8 +1839,8 @@ msgid "Application"
 msgstr "Pieteikums"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Application added to your pipeline."
-msgstr "Pieteikums pievienots jūsu procesam."
+msgid "Application added"
+msgstr "Pieteikums pievienots"
 
 #: src/features/homepage/remember.tsx
 msgid "Application answer"
@@ -1845,15 +1883,12 @@ msgstr "pieteikumu kopsavilkumi"
 msgid "Application tabs"
 msgstr "Pieteikuma cilnes"
 
+#: src/features/applications/components/application-form-sheet.tsx
 #: src/features/career/workspace/messages.tsx
 msgid "Application updated"
 msgstr "Pieteikums atjaunināts"
 
-#: src/features/applications/components/application-form-sheet.tsx
-msgid "Application updated."
-msgstr "Pieteikums atjaunināts."
-
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -1928,10 +1963,6 @@ msgstr "Arābu"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Archived (closes it)"
 msgstr "Arhivēts (to aizver)"
-
-#: src/hooks/use-form-blocker.tsx
-msgid "Are you sure you want to close this dialog?"
-msgstr "Vai tiešām vēlaties aizvērt šo dialogu?"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Area of study"
@@ -2016,8 +2047,8 @@ msgid "Asks for an example of your onboarding work."
 msgstr "Lūdz jūsu lietotāju ievadīšanas darba piemēru."
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Aspect Ratio"
-msgstr "Proporcijas"
+msgid "Aspect ratio"
+msgstr "Malu attiecība"
 
 #: src/features/assistant/assistant-button.tsx
 #: src/features/assistant/assistant-panel.tsx
@@ -2047,13 +2078,10 @@ msgstr "Uzņēmumā Northwind Labs vadīju lietotāju ievadīšanas pārveides i
 msgid "At Northwind Labs, most new teams stalled before they finished setup."
 msgstr "Uzņēmumā Northwind Labs lielākā daļa jauno komandu iestrēga, pirms pabeidza iestatīšanu."
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
-msgstr "ATS pārbaudītājs"
-
-#: src/features/command-palette/pages/navigation.tsx
-msgid "ATS Checker"
 msgstr "ATS pārbaudītājs"
 
 #: src/features/homepage/check.tsx
@@ -2086,13 +2114,9 @@ msgid "Attach a resume file (PDF)"
 msgstr "Pievienot CV failu (PDF)"
 
 #: src/features/assistant/conversation.tsx
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Attachment"
 msgstr "Pielikums"
-
-#: src/features/applications/components/application-form-sheet.tsx
-msgid "Auto-fill failed."
-msgstr "Automātiskā aizpilde neizdevās."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Automatically"
@@ -2114,7 +2138,6 @@ msgstr "Izvairieties no izteiktiem burtu atstarpju efektiem un pēc tam eksport�
 msgid "Awarder"
 msgstr "Apbalvotājs"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Awards"
 msgstr "Apbalvojumi"
@@ -2173,7 +2196,7 @@ msgid "Backed by"
 msgstr "Pamato"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
-msgid "Background Color"
+msgid "Background color"
 msgstr "Fona krāsa"
 
 #: src/features/auth/pages/verify-2fa.tsx
@@ -2181,8 +2204,8 @@ msgid "Backup code"
 msgstr "Rezerves kods"
 
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Backup codes copied to clipboard."
-msgstr "Rezerves kodi ir nokopēti starpliktuvē."
+msgid "Backup codes copied"
+msgstr "Rezerves kodi nokopēti"
 
 #: src/features/homepage/sheet.tsx
 msgid "Banner"
@@ -2230,7 +2253,7 @@ msgstr "Vislabākais pieteikumiem"
 msgid "Blocker"
 msgstr "Bloķētājs"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Blue"
 msgstr "Zila"
 
@@ -2251,7 +2274,7 @@ msgstr "Pamatteksts ir ļoti mazs"
 msgid "Body text set to {minimum} pt"
 msgstr "Pamatteksts iestatīts uz {minimum} pt"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Bold"
 msgstr "Treknraksts"
 
@@ -2260,15 +2283,15 @@ msgid "Bonus"
 msgstr "Prēmija"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Border Color"
+msgid "Border color"
 msgstr "Apmales krāsa"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Border Radius"
+msgid "Border radius"
 msgstr "Apmales rādiuss"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Border Width"
+msgid "Border width"
 msgstr "Apmales platums"
 
 #: src/features/career/offers.tsx
@@ -2318,11 +2341,6 @@ msgstr "Izveidojiet profesionālu CV, lejupielādējiet to PDF vai Microsoft Wor
 msgid "Build your resume"
 msgstr "Izveidojiet savu CV"
 
-#. Screen-reader dialog title for the command palette in the resume builder
-#: src/features/command-palette/content.tsx
-msgid "Builder Command Palette"
-msgstr "Veidotāja komandu palete"
-
 #: src/features/homepage/sheet.tsx
 msgid "Built a shared design system used by six product teams, cutting UI review time by 40%."
 msgstr "Izveidoja kopīgu dizaina sistēmu, ko izmanto sešas produktu komandas, samazinot lietotāja interfeisa pārskatīšanas laiku par 40%."
@@ -2348,7 +2366,7 @@ msgstr "Bulgāru"
 msgid "bullet {n}"
 msgstr "saraksta ieraksts {n}"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Bulleted list"
 msgstr "Saraksts ar aizzīmēm"
@@ -2409,11 +2427,15 @@ msgstr "Karjera"
 msgid "Career coach (your key)"
 msgstr "Karjeras konsultants (jūsu atslēga)"
 
+#. Hero headline, line 4 of 4: A free, open-source / resume builder / and / career manager. Lines 2 and 4 are highlighted: keep each a complete phrase.
+#: src/features/homepage/hero.tsx
+msgid "career manager."
+msgstr "karjeras pārvaldībai."
+
 #: src/libs/locale.ts
 msgid "Catalan"
 msgstr "Katalāņu"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Certifications"
 msgstr "Sertifikāti"
@@ -2425,7 +2447,7 @@ msgstr "Sertifikāti"
 msgid "Change"
 msgstr "Mainīt"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Change connection"
 msgstr "Mainiet savienojumu"
@@ -2441,6 +2463,11 @@ msgstr "Mainīt valodu"
 #: src/features/command-palette/pages/preferences/index.tsx
 msgid "Change language to…"
 msgstr "Mainīt valodu uz…"
+
+#. Primary action button to submit changed password
+#: src/dialogs/auth/change-password.tsx
+msgid "Change password"
+msgstr "Mainīt paroli"
 
 #: src/features/settings/account/profile.tsx
 msgid "Change photo"
@@ -2466,6 +2493,10 @@ msgstr "Mainiet šo laika skalas ierakstu."
 msgid "Change timezone"
 msgstr "Mainīt laika joslu"
 
+#: src/dialogs/auth/change-password.tsx
+msgid "Change your password"
+msgstr "Mainiet savu paroli"
+
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Changed elsewhere"
 msgstr "Mainīts citur"
@@ -2490,6 +2521,11 @@ msgstr "Maina tikai sadaļu nosaukumus un datuma vārdus, nevis jūsu saturu."
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
 msgstr "Mainot to, uz jauno adresi tiek nosūtīts apstiprinājums. Jūsu lietotājvārds ir daļa no katras publiskās saites."
 
+#: src/dialogs/auth/change-password.tsx
+msgid "Changing your password…"
+msgstr "Notiek paroles maiņa…"
+
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
@@ -2561,6 +2597,11 @@ msgid "Check your connection and try again."
 msgstr "Pārbaudiet savienojumu un mēģiniet vēlreiz."
 
 #: src/features/auth/pages/forgot-password.tsx
+#: src/features/auth/pages/register.tsx
+msgid "Check your email"
+msgstr "Pārbaudiet savu e-pastu"
+
+#: src/features/auth/pages/forgot-password.tsx
 msgid "Check your email for a link to reset your password."
 msgstr "Pārbaudiet savu e-pastu, lai atrastu saiti paroles atiestatīšanai."
 
@@ -2626,6 +2667,14 @@ msgstr "Izvēlieties failu"
 msgid "Choose a file to import"
 msgstr "Izvēlieties importējamo failu"
 
+#: src/dialogs/auth/change-password.tsx
+msgid "Choose a password that's different from your current one."
+msgstr "Izvēlieties paroli, kas atšķiras no pašreizējās."
+
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "Choose a PDF file."
+msgstr "Izvēlieties PDF failu."
+
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Izvēlieties CV, lai tas atbilstu tā noformējumam. Līdz tam vēstulei ir sava."
@@ -2672,7 +2721,7 @@ msgstr "Claude Desktop"
 msgid "Clear"
 msgstr "Notīrīt"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Clear formatting"
 msgstr "Notīrīt formatējumu"
 
@@ -2705,15 +2754,20 @@ msgstr "Noklikšķiniet uz jebkura lapas, lai to veidotu. Noteikums, kurā atrod
 msgid "Client ID"
 msgstr "Klienta ID"
 
+#: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/disable-two-factor.tsx
+#: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/career/workspace/prepare.tsx
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/settings/ai/api-keys.tsx
+#: src/features/settings/ai/providers.tsx
 msgid "Close"
 msgstr "Aizvērt"
 
@@ -2729,6 +2783,10 @@ msgstr "Aizveriet darba pieteikumu"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Close application…"
 msgstr "Aizvērt darba pieteikumu…"
+
+#: src/routes/__root.tsx
+msgid "Close notification"
+msgstr "Aizvērt paziņojumu"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Close the assistant"
@@ -2754,7 +2812,7 @@ msgstr "Slēgts"
 msgid "Coach"
 msgstr "Konsultants"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Code"
 msgstr "Kods"
 
@@ -2786,14 +2844,15 @@ msgstr "Gaidāmie"
 
 #. Accessible label for command list region inside command palette
 #. Accessible label for the command palette dialog
+#. Screen-reader dialog title for the command palette
 #: src/features/command-palette/content.tsx
-msgid "Command Palette"
+msgid "Command palette"
 msgstr "Komandu palete"
 
 #. Accessible label for command palette dialog when browsing a nested command page
 #: src/features/command-palette/content.tsx
-msgid "Command Palette - {currentPage}"
-msgstr "Komandu palete - {currentPage}"
+msgid "Command palette: {currentPage}"
+msgstr "Komandu palete: {currentPage}"
 
 #: src/features/homepage/footer.tsx
 msgid "Community"
@@ -2855,8 +2914,8 @@ msgid "Confirm applied"
 msgstr "Apstiprināt pieteikšanos"
 
 #: src/features/resume/builder/password-dialog.tsx
-msgid "Confirm Password"
-msgstr "Apstipriniet paroli"
+msgid "Confirm password"
+msgstr "Apstiprināt paroli"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Confirm submission and choose the documents you actually sent. Their current versions will be saved."
@@ -2931,9 +2990,9 @@ msgstr "Savienots"
 msgid "Connected applications"
 msgstr "Saistītās lietojumprogrammas"
 
-#: src/features/career/shared.tsx
-msgid "Connecting the dots"
-msgstr "Sasaista detaļas"
+#: src/features/settings/account/auth-hooks.ts
+msgid "Connecting your {providerName} account…"
+msgstr "Notiek {providerName} konta savienošana…"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Connection saved"
@@ -3024,7 +3083,7 @@ msgid "Contribution unclear"
 msgstr "Ieguldījums neskaidrs"
 
 #: src/features/assistant/conversation.tsx
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Conversation"
 msgstr "Saruna"
 
@@ -3050,10 +3109,6 @@ msgstr "Sarunas"
 msgid "Conversations about one job live in its workspace."
 msgstr "Sarunas par konkrētu darbu atrodas tā darba telpā."
 
-#: src/features/career/shared.tsx
-msgid "Cooking"
-msgstr "Gatavo"
-
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3061,9 +3116,7 @@ msgstr "Gatavo"
 msgid "Copied"
 msgstr "Kopēts"
 
-#. Action button to copy two-factor backup codes to clipboard
-#: src/dialogs/auth/enable-two-factor.tsx
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/resume/share/link-tab.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
@@ -3074,17 +3127,14 @@ msgstr "Kopēt"
 msgid "Copy a resume for a job"
 msgstr "Kopējiet darba CV"
 
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Copy and store these backup codes in case you lose your device."
-msgstr "Kopējiet un uzglabājiet šos rezerves kodus gadījumam, ja pazaudējat ierīci."
-
 #: src/features/career/workspace/apply.tsx
 msgid "Copy answers"
 msgstr "Kopēt atbildes"
 
+#. Action button to copy two-factor backup codes to clipboard
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Copy Backup Codes"
-msgstr "Kopēt rezerves kodus"
+msgid "Copy codes"
+msgstr "Kopēt kodus"
 
 #: src/features/career/coach.tsx
 msgid "Copy conversation"
@@ -3152,59 +3202,14 @@ msgstr "Labot šo faktu"
 msgid "Corrected {correctedOn} · original kept"
 msgstr "Labots {correctedOn} · oriģināls saglabāts"
 
-#: src/features/auth/pages/consent.tsx
-msgid "Could not complete this connection. Restart the connection from your client and try again."
-msgstr "Nevarēja pabeigt šo savienojumu. Restartējiet savienojumu no sava klienta un mēģiniet vēlreiz."
-
-#: src/features/resume/export/use-resume-export.ts
-msgid "Could not generate the DOCX. Please try again."
-msgstr "Neizdevās izveidot DOCX. Lūdzu, mēģiniet vēlreiz."
-
-#: src/features/resume/export/use-resume-export.ts
-msgid "Could not generate the JSON. Please try again."
-msgstr "Nevarēja ģenerēt JSON. Lūdzu, mēģiniet vēlreiz."
-
-#: src/features/resume/export/use-resume-export.ts
-msgid "Could not generate the Markdown. Please try again."
-msgstr "Nevarēja ģenerēt Markdown. Lūdzu, mēģiniet vēlreiz."
-
-#: src/features/resume/export/use-resume-export.ts
-#: src/routes/builder/letter/-components/letter-bar.tsx
-msgid "Could not generate the PDF. Please try again."
-msgstr "Neizdevās izveidot PDF. Lūdzu, mēģiniet vēlreiz."
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Could not load connected applications."
-msgstr "Nevarēja ielādēt pievienotās lietojumprogrammas."
-
-#: src/features/resume/export/use-resume-export.ts
-msgid "Could not prepare your resume for printing. Please try again."
-msgstr "Neizdevās sagatavot jūsu CV drukāšanai. Lūdzu, mēģiniet vēlreiz."
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Could not revoke this connection. Try again."
-msgstr "Nevarēja atsaukt šo savienojumu. Mēģiniet vēlreiz."
-
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Could not set up two-factor authentication."
-msgstr "Neizdevās iestatīt divu faktoru autentifikāciju."
-
-#. placeholder {0}: unresolved.join(", ")
-#: src/features/resume/editor/write/section-row.tsx
-msgid "Could not sort these items; they stayed at the end: {0}."
-msgstr "Nevarēja kārtot šos vienumus; viņi palika beigās: {0}."
-
 #: src/features/career/knowledge/facts.tsx
-msgid "Couldn't add that fact."
-msgstr "Nevarēja pievienot šo faktu."
+msgid "Couldn't add that fact. Try again."
+msgstr "Nevarēja pievienot šo faktu. Mēģiniet vēlreiz."
 
 #: src/features/applications/components/add-application-dialog.tsx
-msgid "Couldn't add the application."
-msgstr "Nevarēja pievienot darba pieteikumu."
-
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Couldn't add the application. Please try again."
-msgstr "Neizdevās pievienot pieteikumu. Lūdzu, mēģiniet vēlreiz."
+msgid "Couldn't add the application. Try again."
+msgstr "Nevarēja pievienot pieteikumu. Mēģiniet vēlreiz."
 
 #: src/features/settings/account/security.tsx
 msgid "Couldn't add the passkey. Try again."
@@ -3212,12 +3217,8 @@ msgstr "Nevarēja pievienot ieejas atslēgu. Mēģiniet vēlreiz."
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
-msgid "Couldn't attach the file."
-msgstr "Nevarēja pievienot failu."
-
-#: src/features/settings/ai/providers.tsx
-msgid "Couldn't change it."
-msgstr "Nevarēja to mainīt."
+msgid "Couldn't attach the file. Try again."
+msgstr "Nevarēja pievienot failu. Mēģiniet vēlreiz."
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Couldn't change the design. Try again."
@@ -3228,96 +3229,138 @@ msgid "Couldn't change the email. Try again."
 msgstr "Nevarēja mainīt e-pastu. Mēģiniet vēlreiz."
 
 #: src/features/career/workspace/prepare.tsx
-msgid "Couldn't change the schedule."
-msgstr "Nevarēja mainīt grafiku."
+msgid "Couldn't change the schedule. Try again."
+msgstr "Nevarēja mainīt grafiku. Mēģiniet vēlreiz."
 
 #: src/features/career/today.tsx
-msgid "Couldn't change this schedule."
-msgstr "Nevarēja mainīt šo grafiku."
+msgid "Couldn't change this schedule. Try again."
+msgstr "Nevarēja mainīt šo grafiku. Mēģiniet vēlreiz."
+
+#. Fallback toast when changing account password fails
+#: src/dialogs/auth/change-password.tsx
+msgid "Couldn't change your password. Check your current password and try again."
+msgstr "Nevarēja mainīt paroli. Pārbaudiet pašreizējo paroli un mēģiniet vēlreiz."
+
+#: src/features/auth/pages/consent.tsx
+msgid "Couldn't complete this connection. Restart the connection from your client and try again."
+msgstr "Nevarēja pabeigt šo savienojumu. Restartējiet savienojumu no sava klienta un mēģiniet vēlreiz."
+
+#. Fallback toast when linking a social authentication provider fails
+#: src/features/settings/account/auth-hooks.ts
+msgid "Couldn't connect your {providerName} account. Try again."
+msgstr "Nevarēja savienot jūsu {providerName} kontu. Mēģiniet vēlreiz."
 
 #: src/features/assistant/provider-setup.tsx
 msgid "Couldn't connect. Check the key and try again."
 msgstr "Nevarēja izveidot savienojumu. Pārbaudiet atslēgu un mēģiniet vēlreiz."
 
 #: src/features/auth/pages/login.tsx
-msgid "Couldn't continue as a guest. Please try again."
-msgstr "Neizdevās turpināt kā viesim. Lūdzu, mēģiniet vēlreiz."
+msgid "Couldn't continue as a guest. Try again."
+msgstr "Nevarēja turpināt kā viesim. Mēģiniet vēlreiz."
 
 #: src/features/career/offers.tsx
 msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "Nevarēja nokopēt jautājumus. Atlasiet tekstu un nokopējiet to manuāli."
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Couldn't copy the resume."
-msgstr "Nevarēja nokopēt CV."
+msgid "Couldn't copy the resume. Try again."
+msgstr "Nevarēja nokopēt CV. Mēģiniet vēlreiz."
 
 #: src/features/assistant/conversation.tsx
-msgid "Couldn't copy the transcript."
-msgstr "Nevarēja nokopēt atšifrējumu."
+msgid "Couldn't copy the transcript. Try again."
+msgstr "Nevarēja nokopēt atšifrējumu. Mēģiniet vēlreiz."
 
 #: src/features/career/coach-thread.tsx
-msgid "Couldn't copy to the clipboard."
-msgstr "Nevarēja nokopēt starpliktuvē."
+msgid "Couldn't copy to the clipboard. Try again."
+msgstr "Nevarēja nokopēt starpliktuvē. Mēģiniet vēlreiz."
 
-#: src/features/documents/new-document-dialog.tsx
-msgid "Couldn't create the document."
-msgstr "Nevarēja izveidot dokumentu."
+#: src/features/documents/use-start-document.ts
+msgid "Couldn't create the document. Try again."
+msgstr "Nevarēja izveidot dokumentu. Mēģiniet vēlreiz."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't create the key. Try again."
 msgstr "Nevarēja izveidot atslēgu. Mēģiniet vēlreiz."
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Couldn't create the letter."
-msgstr "Nevarēja izveidot vēstuli."
+msgid "Couldn't create the letter. Try again."
+msgstr "Nevarēja izveidot vēstuli. Mēģiniet vēlreiz."
 
-#: src/features/assistant/assistant-panel.tsx
-msgid "Couldn't delete it."
-msgstr "Nevarēja to izdzēst."
+#. Fallback toast when account registration fails without a server error message
+#: src/features/auth/pages/register.tsx
+msgid "Couldn't create your account. Try again."
+msgstr "Nevarēja izveidot jūsu kontu. Mēģiniet vēlreiz."
 
 #: src/features/career/knowledge/stories.tsx
-msgid "Couldn't delete that story."
-msgstr "Nevarēja izdzēst šo stāstu."
+msgid "Couldn't delete that story. Try again."
+msgstr "Nevarēja izdzēst šo stāstu. Mēģiniet vēlreiz."
 
-#: src/features/settings/account/data.tsx
-msgid "Couldn't delete the account."
-msgstr "Nevarēja izdzēst kontu."
+#: src/features/applications/use-application-actions.ts
+msgid "Couldn't delete the application. Try again."
+msgstr "Nevarēja izdzēst pieteikumu. Mēģiniet vēlreiz."
 
 #: src/features/applications/components/list-view.tsx
 msgid "Couldn't delete the applications. Try again."
 msgstr "Nevarēja izdzēst darba pieteikumus. Mēģiniet vēlreiz."
 
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't delete the document. Try again."
+msgstr "Nevarēja izdzēst dokumentu. Mēģiniet vēlreiz."
+
 #: src/features/applications/components/interview-dialog.tsx
-msgid "Couldn't delete the interview."
-msgstr "Nevarēja izdzēst interviju."
+msgid "Couldn't delete the interview. Try again."
+msgstr "Nevarēja izdzēst interviju. Mēģiniet vēlreiz."
 
 #: src/features/settings/ai/providers.tsx
-msgid "Couldn't delete the provider."
-msgstr "Nevarēja izdzēst pakalpojumu sniedzēju."
+msgid "Couldn't delete the provider. Try again."
+msgstr "Nevarēja izdzēst pakalpojumu sniedzēju. Mēģiniet vēlreiz."
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
-msgid "Couldn't delete this conversation."
-msgstr "Nevarēja izdzēst šo sarunu."
+msgid "Couldn't delete this conversation. Try again."
+msgstr "Nevarēja izdzēst šo sarunu. Mēģiniet vēlreiz."
 
 #: src/features/career/today.tsx
-msgid "Couldn't delete this schedule."
-msgstr "Nevarēja izdzēst šo grafiku."
+msgid "Couldn't delete this schedule. Try again."
+msgstr "Nevarēja izdzēst šo grafiku. Mēģiniet vēlreiz."
 
 #: src/features/settings/account/data.tsx
-msgid "Couldn't export. Try again."
-msgstr "Nevarēja eksportēt. Mēģiniet vēlreiz."
+msgid "Couldn't delete your account. Try again."
+msgstr "Nevarēja izdzēst jūsu kontu. Mēģiniet vēlreiz."
+
+#. Fallback toast when unlinking a social authentication provider fails
+#: src/features/settings/account/auth-hooks.ts
+msgid "Couldn't disconnect your {providerName} account. Try again."
+msgstr "Nevarēja atvienot jūsu {providerName} kontu. Mēģiniet vēlreiz."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't duplicate the document. Try again."
+msgstr "Nevarēja dublēt dokumentu. Mēģiniet vēlreiz."
+
+#: src/features/settings/account/data.tsx
+msgid "Couldn't export your data. Try again."
+msgstr "Nevarēja eksportēt jūsu datus. Mēģiniet vēlreiz."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Couldn't fill in the fields. Try again, or fill them in yourself."
+msgstr "Nevarēja aizpildīt laukus. Mēģiniet vēlreiz vai aizpildiet tos paši."
 
 #: src/features/career/knowledge/facts.tsx
-msgid "Couldn't forget that fact."
-msgstr "Nevarēja aizmirst šo faktu."
+msgid "Couldn't forget that fact. Try again."
+msgstr "Nevarēja aizmirst šo faktu. Mēģiniet vēlreiz."
+
+#: src/features/resume/export/use-resume-export.ts
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Couldn't generate the PDF. Try again."
+msgstr "Nevarēja ģenerēt PDF. Mēģiniet vēlreiz."
 
 #: src/features/resume/editor/write/improve.tsx
 msgid "Couldn't get a suggestion. Nothing changed."
 msgstr "Nevarēja saņemt ieteikumu. Nekas nemainījās."
 
 #: src/features/career/today.tsx
-msgid "Couldn't hide this role."
-msgstr "Nevarēja paslēpt šo vakanci."
+msgid "Couldn't hide this role. Try again."
+msgstr "Nevarēja paslēpt šo vakanci. Mēģiniet vēlreiz."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't import"
@@ -3327,9 +3370,18 @@ msgstr "Nevarēja importēt"
 msgid "Couldn't import the file. Try again from Documents."
 msgstr "Nevarēja importēt failu. Mēģiniet vēlreiz no sadaļas Dokumenti."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Couldn't import the file. Try again, or start blank."
+msgstr "Nevarēja importēt failu. Mēģiniet vēlreiz vai sāciet ar tukšu."
+
+#: src/features/auth/pages/error.tsx
+msgid "Couldn't link that provider account. Try again."
+msgstr "Nevarēja saistīt šo pakalpojumu sniedzēja kontu. Mēģiniet vēlreiz."
+
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Couldn't link the application."
-msgstr "Nevarēja saistīt darba pieteikumu."
+msgid "Couldn't link the application. Try again."
+msgstr "Nevarēja saistīt pieteikumu. Mēģiniet vēlreiz."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't load AI connections. Try again before importing this file."
@@ -3343,6 +3395,10 @@ msgstr "Nevarēja ielādēt AI savienojumus. Jūsu saglabātie savienojumi nav m
 msgid "Couldn't load applications. Try again."
 msgstr "Nevarēja ielādēt pieteikumus. Mēģiniet vēlreiz."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Couldn't load connected applications. Refresh the page to try again."
+msgstr "Nevarēja ielādēt pievienotās lietotnes. Atsvaidziniet lapu, lai mēģinātu vēlreiz."
+
 #: src/features/documents/library-error.tsx
 msgid "Couldn't load documents"
 msgstr "Nevarēja ielādēt dokumentus"
@@ -3350,6 +3406,10 @@ msgstr "Nevarēja ielādēt dokumentus"
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't load interviews. Retry"
 msgstr "Nevarēja ielādēt intervijas. Mēģināt vēlreiz"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Couldn't load or save web access settings. Try again."
+msgstr "Nevarēja ielādēt vai saglabāt tīmekļa piekļuves iestatījumus. Mēģiniet vēlreiz."
 
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
@@ -3359,17 +3419,29 @@ msgstr "Nevarēja ielādēt parauga failu. Mēģiniet vēlreiz."
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "Nevarēja ielādēt. Jūsu saglabātie dati nav mainījušies."
 
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't lock the document. Try again."
+msgstr "Nevarēja bloķēt dokumentu. Mēģiniet vēlreiz."
+
 #: src/features/settings/ai/providers.tsx
-msgid "Couldn't make it the default."
-msgstr "Nevarēja iestatīt kā noklusējumu."
+msgid "Couldn't make this provider the default. Try again."
+msgstr "Nevarēja iestatīt šo pakalpojumu sniedzēju kā noklusējumu. Mēģiniet vēlreiz."
 
 #: src/features/career/workspace/apply.tsx
-msgid "Couldn't mark it as applied."
-msgstr "Nevarēja atzīmēt kā pieteiktu."
+msgid "Couldn't mark it as applied. Try again."
+msgstr "Nevarēja atzīmēt kā pieteiktu. Mēģiniet vēlreiz."
 
 #: src/features/career/today.tsx
-msgid "Couldn't mark this as read."
-msgstr "Nevarēja atzīmēt kā izlasītu."
+msgid "Couldn't mark this as read. Try again."
+msgstr "Nevarēja atzīmēt kā izlasītu. Mēģiniet vēlreiz."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't move the document to Trash. Try again."
+msgstr "Nevarēja pārvietot dokumentu uz atkritni. Mēģiniet vēlreiz."
+
+#: src/features/resume/export/use-resume-export.ts
+msgid "Couldn't prepare the resume for printing. Try again."
+msgstr "Nevarēja sagatavot CV drukāšanai. Mēģiniet vēlreiz."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
@@ -3384,106 +3456,139 @@ msgstr "Nevarēja sazināties ar AI nodrošinātāju. Pēc brīža mēģiniet v�
 msgid "Couldn't reach your AI provider. Its key may have expired."
 msgstr "Nevarēja sazināties ar jūsu AI nodrošinātāju. Iespējams, ka tās atslēgas derīguma termiņš ir beidzies."
 
+#. placeholder {0}: dates.raw
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Couldn't read “{0}”. Enter the dates so they sort and print consistently."
+msgstr "Nevarēja nolasīt “{0}”. Ievadiet datumus, lai tie tiktu kārtoti un drukāti konsekventi."
+
 #: src/features/applications/components/import-applications-sheet.tsx
-msgid "Couldn't read that file."
-msgstr "Nevarēja nolasīt šo failu."
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "Nevarēja nolasīt šo failu. Izvēlieties .csv failu un mēģiniet vēlreiz."
+
+#: src/features/ats-checker/checker.tsx
+msgid "Couldn't read that file. Try again."
+msgstr "Nevarēja nolasīt šo failu. Mēģiniet vēlreiz."
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
+msgstr "Nevarēja nolasīt datumus ierakstos {entries}, tāpēc tie paliek beigās. Izlabojiet datumus un kārtojiet vēlreiz."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
 msgstr "Nevarēja izlasīt šo lapu: {0}"
 
+#: src/features/auth/pages/error.tsx
+msgid "Couldn't read your profile from the provider. Try again."
+msgstr "Nevarēja nolasīt jūsu profilu no pakalpojumu sniedzēja. Mēģiniet vēlreiz."
+
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Couldn't record submission. Try again."
 msgstr "Nevarēja ierakstīt iesniegšanu. Mēģiniet vēlreiz."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Couldn't remember that. Try again."
 msgstr "Nevarēja to atcerēties. Mēģiniet vēlreiz."
 
 #: src/features/career/today.tsx
-msgid "Couldn't remove it from Applications."
-msgstr "Nevarēja noņemt no pieteikumiem."
+msgid "Couldn't remove it from Applications. Try again."
+msgstr "Nevarēja noņemt no pieteikumiem. Mēģiniet vēlreiz."
 
 #: src/features/settings/account/security.tsx
 msgid "Couldn't remove the passkey. Try again."
 msgstr "Nevarēja noņemt ieejas atslēgu. Mēģiniet vēlreiz."
 
-#: src/features/career/coach.tsx
-msgid "Couldn't rename it."
-msgstr "Nevarēja pārdēvēt."
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't rename the document. Try again."
+msgstr "Nevarēja pārdēvēt dokumentu. Mēģiniet vēlreiz."
 
 #: src/features/settings/account/security.tsx
-msgid "Couldn't rename the passkey."
-msgstr "Nevarēja pārdēvēt ieejas atslēgu."
+msgid "Couldn't rename the passkey. Try again."
+msgstr "Nevarēja pārdēvēt piekļuves atslēgu. Mēģiniet vēlreiz."
+
+#: src/features/career/coach.tsx
+msgid "Couldn't rename this conversation. Try again."
+msgstr "Nevarēja pārdēvēt šo sarunu. Mēģiniet vēlreiz."
+
+#. Fallback toast when resetting password fails and no backend message is available
+#: src/features/auth/pages/reset-password.tsx
+msgid "Couldn't reset your password. Try again."
+msgstr "Nevarēja atiestatīt jūsu paroli. Mēģiniet vēlreiz."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't restore the document. Try again."
+msgstr "Nevarēja atjaunot dokumentu. Mēģiniet vēlreiz."
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Couldn't revoke the key."
-msgstr "Nevarēja atsaukt atslēgu."
+msgid "Couldn't revoke the key. Try again."
+msgstr "Nevarēja atsaukt atslēgu. Mēģiniet vēlreiz."
 
-#: src/features/career/knowledge/facts.tsx
-msgid "Couldn't save that change."
-msgstr "Nevarēja saglabāt šo izmaiņu."
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "Nevarēja atsaukt šo savienojumu. Mēģiniet vēlreiz."
 
 #: src/features/career/hooks.ts
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Nevarēja saglabāt šo izmaiņu. Pārbaudiet savienojumu un mēģiniet vēlreiz."
 
+#: src/features/career/knowledge/facts.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Nevarēja saglabāt šīs izmaiņas. Mēģiniet vēlreiz."
 
-#: src/features/career/workspace/fit.tsx
-msgid "Couldn't save that to Knowledge."
-msgstr "Nevarēja saglabāt Zināšanās."
-
 #: src/features/career/workspace/debrief.tsx
+#: src/features/career/workspace/fit.tsx
 msgid "Couldn't save that to Knowledge. Try again."
 msgstr "Nevarēja saglabāt Zināšanās. Mēģiniet vēlreiz."
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Couldn't save the application."
-msgstr "Nevarēja saglabāt darba pieteikumu."
-
-#: src/features/applications/components/detail/next-step-card.tsx
-msgid "Couldn't save the follow-up."
-msgstr "Nevarēja saglabāt sekošanu."
-
-#: src/features/applications/components/application-notes.tsx
-msgid "Couldn't save the notes."
-msgstr "Nevarēja saglabāt piezīmes."
-
-#: src/features/resume/editor/check/job-match.tsx
-msgid "Couldn't save the posting."
-msgstr "Nevarēja saglabāt darba sludinājumu."
-
-#: src/features/settings/ai/providers.tsx
-msgid "Couldn't save the provider."
-msgstr "Nevarēja saglabāt pakalpojumu sniedzēju."
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Couldn't save the story."
-msgstr "Nevarēja saglabāt stāstu."
+msgid "Couldn't save the application. Try again."
+msgstr "Nevarēja saglabāt pieteikumu. Mēģiniet vēlreiz."
 
 #: src/features/applications/components/application-detail-sheet.tsx
-msgid "Couldn't save the tags."
-msgstr "Nevarēja saglabāt atzīmes."
+msgid "Couldn't save the change. Try again."
+msgstr "Nevarēja saglabāt izmaiņu. Mēģiniet vēlreiz."
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Couldn't save the documents. Try again."
+msgstr "Nevarēja saglabāt dokumentus. Mēģiniet vēlreiz."
+
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "Couldn't save the follow-up. Try again."
+msgstr "Nevarēja saglabāt atgādinājumu. Mēģiniet vēlreiz."
+
+#: src/features/applications/components/application-notes.tsx
+msgid "Couldn't save the notes. Try again."
+msgstr "Nevarēja saglabāt piezīmes. Mēģiniet vēlreiz."
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Couldn't save the posting. Try again."
+msgstr "Nevarēja saglabāt darba sludinājumu. Mēģiniet vēlreiz."
+
+#: src/features/settings/ai/providers.tsx
+msgid "Couldn't save the provider. Try again."
+msgstr "Nevarēja saglabāt pakalpojumu sniedzēju. Mēģiniet vēlreiz."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Couldn't save the story. Try again."
+msgstr "Nevarēja saglabāt stāstu. Mēģiniet vēlreiz."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't save the tags. Try again."
+msgstr "Nevarēja saglabāt atzīmes. Mēģiniet vēlreiz."
 
 #: src/features/settings/preferences.tsx
-msgid "Couldn't save the timezone."
-msgstr "Nevarēja saglabāt laika joslu."
+msgid "Couldn't save the timezone. Try again."
+msgstr "Nevarēja saglabāt laika joslu. Mēģiniet vēlreiz."
 
 #: src/features/career/today.tsx
-msgid "Couldn't save this role to Applications."
-msgstr "Nevarēja saglabāt šo vakanci pieteikumos."
+msgid "Couldn't save this role to Applications. Try again."
+msgstr "Nevarēja saglabāt šo vakanci pieteikumos. Mēģiniet vēlreiz."
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Couldn't save this schedule."
-msgstr "Nevarēja saglabāt šo grafiku."
-
-#: src/features/applications/components/application-form-sheet.tsx
-msgid "Couldn't save your changes. Please try again."
-msgstr "Neizdevās saglabāt izmaiņas. Lūdzu, mēģiniet vēlreiz."
+msgid "Couldn't save this schedule. Try again."
+msgstr "Nevarēja saglabāt šo grafiku. Mēģiniet vēlreiz."
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
@@ -3493,26 +3598,58 @@ msgstr "Neizdevās saglabāt izmaiņas. Lūdzu, mēģiniet vēlreiz."
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "Nevarēja saglabāt izmaiņas. Pirms turpināt, mēģiniet vēlreiz."
 
-#: src/features/career/knowledge/preferences.tsx
-msgid "Couldn't save your preferences."
-msgstr "Nevarēja saglabāt jūsu preferences."
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Couldn't save your changes. Try again."
+msgstr "Nevarēja saglabāt jūsu izmaiņas. Mēģiniet vēlreiz."
 
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/detail/sent-documents.tsx
-msgid "Couldn't save."
-msgstr "Nevarēja saglabāt."
+#: src/features/career/knowledge/preferences.tsx
+msgid "Couldn't save your preferences. Try again."
+msgstr "Nevarēja saglabāt jūsu preferences. Mēģiniet vēlreiz."
 
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't save. Try again."
 msgstr "Nevarēja saglabāt. Mēģiniet vēlreiz."
 
 #: src/features/applications/components/interview-dialog.tsx
-msgid "Couldn't schedule the interview."
-msgstr "Nevarēja ieplānot interviju."
+msgid "Couldn't schedule the interview. Try again."
+msgstr "Nevarēja ieplānot interviju. Mēģiniet vēlreiz."
 
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't send the email. Try again."
 msgstr "Nevarēja nosūtīt e-pastu. Mēģiniet vēlreiz."
+
+#. Fallback toast when requesting password reset email fails without backend message
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Couldn't send the password reset email. Try again."
+msgstr "Nevarēja nosūtīt paroles atiestatīšanas e-pastu. Mēģiniet vēlreiz."
+
+#: src/features/resume/builder/password-dialog.tsx
+msgid "Couldn't set the password. Try again."
+msgstr "Nevarēja iestatīt paroli. Mēģiniet vēlreiz."
+
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Couldn't set up two-step verification. Try again."
+msgstr "Nevarēja iestatīt divpakāpju verifikāciju. Mēģiniet vēlreiz."
+
+#: src/features/resume/preview/preview.browser.tsx
+msgid "Couldn't show the preview."
+msgstr "Nevarēja parādīt priekšskatījumu."
+
+#. Fallback toast when sign-in fails and no server error message is available
+#. Fallback toast when sign-in fails without an error message
+#: src/features/auth/components/social-auth.tsx
+#: src/features/auth/pages/login.tsx
+msgid "Couldn't sign in. Try again."
+msgstr "Nevarēja pieteikties. Mēģiniet vēlreiz."
+
+#. Fallback toast when signing out fails
+#: src/features/user/dropdown-menu.tsx
+msgid "Couldn't sign out. Try again."
+msgstr "Nevarēja izrakstīties. Mēģiniet vēlreiz."
+
+#: src/features/auth/pages/error.tsx
+msgid "Couldn't sign you in. Try again."
+msgstr "Nevarēja jūs pieteikt. Mēģiniet vēlreiz."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Couldn't start recording. Choose an audio file, or type your answer."
@@ -3524,40 +3661,108 @@ msgid "Couldn't start the conversation. Try again."
 msgstr "Nevarēja sākt sarunu. Mēģiniet vēlreiz."
 
 #: src/features/career/coach.tsx
-msgid "Couldn't switch connections."
-msgstr "Nevarēja pārslēgt savienojumu."
+msgid "Couldn't switch connections. Try again."
+msgstr "Nevarēja pārslēgt savienojumus. Mēģiniet vēlreiz."
 
 #: src/features/assistant/assistant-panel.tsx
-msgid "Couldn't switch models."
-msgstr "Nevarēja pārslēgt modeļus."
+msgid "Couldn't switch models. Try again."
+msgstr "Nevarēja pārslēgt modeļus. Mēģiniet vēlreiz."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Couldn't transcribe. Your recording is still here."
 msgstr "Nevarēja atšifrēt. Jūsu ieraksts joprojām ir šeit."
 
-#: src/features/career/coach-thread.tsx
-msgid "Couldn't undo that."
-msgstr "Nevarēja to atsaukt."
+#. Fallback toast when disabling two-factor authentication fails
+#: src/dialogs/auth/disable-two-factor.tsx
+msgid "Couldn't turn off two-step verification. Check your password and try again."
+msgstr "Nevarēja izslēgt divpakāpju verifikāciju. Pārbaudiet paroli un mēģiniet vēlreiz."
+
+#. Fallback toast when enabling two-factor authentication fails
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Couldn't turn on two-step verification. Check your password and try again."
+msgstr "Nevarēja ieslēgt divpakāpju verifikāciju. Pārbaudiet paroli un mēģiniet vēlreiz."
+
+#: src/features/settings/ai/providers.tsx
+msgid "Couldn't turn the provider on or off. Try again."
+msgstr "Nevarēja ieslēgt vai izslēgt pakalpojumu sniedzēju. Mēģiniet vēlreiz."
+
+#: src/features/career/coach-chat.tsx
+msgid "Couldn't undo that. Try again."
+msgstr "Nevarēja to atsaukt. Mēģiniet vēlreiz."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't unlink the application. Try again."
+msgstr "Nevarēja atsaistīt pieteikumu. Mēģiniet vēlreiz."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't unlock the document. Try again."
+msgstr "Nevarēja atbloķēt dokumentu. Mēģiniet vēlreiz."
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Couldn't update sharing. Try again."
+msgstr "Nevarēja atjaunināt kopīgošanu. Mēģiniet vēlreiz."
 
 #: src/features/career/workspace/messages.tsx
-msgid "Couldn't update the application. Nothing was changed."
-msgstr "Nevarēja atjaunināt pieteikumu. Nekas netika mainīts."
+msgid "Couldn't update the application. Nothing was changed. Try again."
+msgstr "Nevarēja atjaunināt pieteikumu. Nekas netika mainīts. Mēģiniet vēlreiz."
+
+#: src/features/applications/use-application-actions.ts
+msgid "Couldn't update the application. Try again."
+msgstr "Nevarēja atjaunināt pieteikumu. Mēģiniet vēlreiz."
 
 #: src/features/applications/components/list-view.tsx
 msgid "Couldn't update the applications. Try again."
 msgstr "Nevarēja atjaunināt darba pieteikumus. Mēģiniet vēlreiz."
 
 #: src/features/applications/components/interview-dialog.tsx
-msgid "Couldn't update the interview."
-msgstr "Nevarēja atjaunināt interviju."
+msgid "Couldn't update the interview. Try again."
+msgstr "Nevarēja atjaunināt interviju. Mēģiniet vēlreiz."
+
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Couldn't update the letter. Try again."
+msgstr "Nevarēja atjaunināt vēstuli. Mēģiniet vēlreiz."
+
+#: src/features/resume/preview/preview.browser.tsx
+msgid "Couldn't update the preview. The last working version is still shown. Edit anything to try again."
+msgstr "Nevarēja atjaunināt priekšskatījumu. Joprojām redzama pēdējā darbojošā versija. Rediģējiet jebko, lai mēģinātu vēlreiz."
+
+#: src/libs/error-message.ts
+msgid "Couldn't update the resume. Try again."
+msgstr "Nevarēja atjaunināt CV. Mēģiniet vēlreiz."
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Couldn't update the timeline. Try again."
 msgstr "Nevarēja atjaunināt laika skalu. Mēģiniet vēlreiz."
 
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "Couldn't update this letter's versions. Try again."
+msgstr "Nevarēja atjaunināt šīs vēstules versijas. Mēģiniet vēlreiz."
+
+#. Fallback toast when uploading profile picture for resume fails
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/settings/account/profile.tsx
-msgid "Couldn't upload the photo."
-msgstr "Nevarēja augšupielādēt fotoattēlu."
+msgid "Couldn't upload the photo. Try again."
+msgstr "Nevarēja augšupielādēt fotoattēlu. Mēģiniet vēlreiz."
+
+#. Fallback toast when verifying two-factor setup code fails
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Couldn't verify the code. Enter the current code from your authenticator app."
+msgstr "Nevarēja pārbaudīt kodu. Ievadiet pašreizējo kodu no autentifikatora lietotnes."
+
+#. Fallback toast when resume password verification fails unexpectedly
+#: src/features/auth/pages/resume-password.tsx
+msgid "Couldn't verify the password. Try again."
+msgstr "Nevarēja pārbaudīt paroli. Mēģiniet vēlreiz."
+
+#. Fallback toast when verifying a backup two-factor authentication code fails
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Couldn't verify your backup code. Check the code and try again."
+msgstr "Nevarēja pārbaudīt jūsu rezerves kodu. Pārbaudiet kodu un mēģiniet vēlreiz."
+
+#. Fallback toast when verifying a two-factor authentication code fails
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Couldn't verify your code. Check the code and try again."
+msgstr "Nevarēja pārbaudīt jūsu kodu. Pārbaudiet kodu un mēģiniet vēlreiz."
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Count by source"
@@ -3593,7 +3798,6 @@ msgstr "Aizpildīt"
 msgid "Cover letter"
 msgstr "Motivācijas vēstule"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Cover Letter"
 msgstr "Motivācijas vēstule"
@@ -3683,12 +3887,12 @@ msgid "Created and linked to {0}"
 msgstr "Izveidots un saistīts ar {0}"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Crop and Upload"
+msgid "Crop and upload"
 msgstr "Apgriezt un augšupielādēt"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Crop picture"
-msgstr "Apgriezt attēlu"
+msgid "Crop photo"
+msgstr "Apgriezt fotoattēlu"
 
 #: src/features/homepage/sheet.tsx
 msgid "Cross-functional leadership"
@@ -3711,7 +3915,7 @@ msgid "Current focus, relevant experience, and why this role interests you."
 msgstr "Pašreizējais fokuss, atbilstošā pieredze un kāpēc jūs interesē šis amats."
 
 #: src/dialogs/auth/change-password.tsx
-msgid "Current Password"
+msgid "Current password"
 msgstr "Pašreizējā parole"
 
 #: src/components/input/color-picker.tsx
@@ -3720,7 +3924,7 @@ msgid "Custom"
 msgstr "Pielāgots"
 
 #: src/features/resume/editor/design/style-groups.tsx
-msgid "Custom colour (hex)"
+msgid "Custom color (hex)"
 msgstr "Pielāgota krāsa (hex)"
 
 #. Authentication provider display name in account settings
@@ -3733,11 +3937,11 @@ msgid "Custom section"
 msgstr "Pielāgota sadaļa"
 
 #: src/libs/resume/section.tsx
-msgid "Custom Sections"
+msgid "Custom sections"
 msgstr "Pielāgotās sadaļas"
 
 #: src/libs/resume/section.tsx
-msgid "Custom Styles"
+msgid "Custom styles"
 msgstr "Pielāgoti stili"
 
 #: src/features/resume/stylesheet/editor.tsx
@@ -3828,7 +4032,7 @@ msgstr "Izvērtējums"
 msgid "Deep breath."
 msgstr "Dziļi ieelpojiet."
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "Noklusējums"
@@ -3837,19 +4041,12 @@ msgstr "Noklusējums"
 msgid "Degree"
 msgstr "Grāds"
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/interview-dialog.tsx
-#: src/features/applications/components/list-view.tsx
-#: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/share/history-tab.tsx
-#: src/features/settings/account/data.tsx
-#: src/features/settings/ai/providers.tsx
 msgid "Delete"
 msgstr "Dzēst"
 
@@ -3857,6 +4054,11 @@ msgstr "Dzēst"
 #: src/features/documents/document-actions.tsx
 msgid "Delete “{0}” now?"
 msgstr "Vai dzēst “{0}” tūlīt?"
+
+#. placeholder {0}: provider.label
+#: src/features/settings/ai/providers.tsx
+msgid "Delete “{0}”?"
+msgstr "Vai dzēst “{0}”?"
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Delete “{title}”?"
@@ -3867,19 +4069,21 @@ msgstr "Vai dzēst “{title}”?"
 msgid "Delete {0}"
 msgstr "Dzēst {0}"
 
-#. placeholder {0}: ids.length
-#: src/features/applications/components/list-view.tsx
-msgid "Delete {0} applications?"
-msgstr "Vai dzēst {0} darba pieteikumus?"
-
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/account/data.tsx
 msgid "Delete account"
 msgstr "Dzēst kontu"
 
-#: src/features/command-palette/pages/navigation.tsx
-msgid "Delete Account"
-msgstr "Dzēst kontu"
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Delete application"
+msgstr "Dzēst pieteikumu"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Delete conversation"
+msgstr "Dzēst sarunu"
+
+#: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
 msgstr "Dzēst ierakstu"
@@ -3889,20 +4093,12 @@ msgid "Delete it. Hidden keywords are treated as a deliberate attempt to game th
 msgstr "Dzēsiet to. Slēpti atslēgvārdi tiek uzskatīti par apzinātu mēģinājumu manipulēt ar meklēšanu."
 
 #: src/features/documents/document-actions.tsx
-msgid "Delete now"
-msgstr "Dzēst tūlīt"
-
-#: src/features/documents/document-actions.tsx
 msgid "Delete now…"
 msgstr "Dzēst tūlīt…"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Delete Page"
+msgid "Delete page"
 msgstr "Dzēst lapu"
-
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Delete picture"
-msgstr "Dzēst attēlu"
 
 #: src/features/settings/ai/providers.tsx
 msgid "Delete provider"
@@ -3933,9 +4129,9 @@ msgstr "Vai dzēst šo sarunu?"
 msgid "Delete this entry?"
 msgstr "Vai dzēst šo ierakstu?"
 
-#: src/features/settings/ai/providers.tsx
-msgid "Delete this provider?"
-msgstr "Vai dzēst šo pakalpojumu sniedzēju?"
+#: src/features/resume/share/history-tab.tsx
+msgid "Delete version"
+msgstr "Dzēst versiju"
 
 #: src/features/settings/account/data.tsx
 msgid "Delete your account?"
@@ -3966,11 +4162,6 @@ msgstr "Dzēsts “{0}”"
 msgid "Deleted “{title}”"
 msgstr "Dzēsts “{title}”"
 
-#. placeholder {0}: result.deleted
-#: src/features/applications/components/list-view.tsx
-msgid "Deleted {0}"
-msgstr "Dzēsts {0}"
-
 #: src/features/career/offers.tsx
 msgid "Deleted application"
 msgstr "Dzēsts pieteikums"
@@ -3988,8 +4179,8 @@ msgid "Density"
 msgstr "Blīvums"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Deny"
-msgstr "Noraidīt"
+msgid "Deny access"
+msgstr "Liegt piekļuvi"
 
 #: src/features/ats-checker/messages.ts
 msgid "Describe each role with short bullets. Solid paragraphs are harder to skim and to segment."
@@ -4072,31 +4263,30 @@ msgstr "Cita valūta, nesalīdzina"
 msgid "Different pay period, not compared"
 msgstr "Cits maksājuma periods, nesalīdzina"
 
-#. Destructive action button to turn off two-factor authentication
-#: src/dialogs/auth/disable-two-factor.tsx
-msgid "Disable 2FA"
-msgstr "Deaktivēt 2FA"
-
-#: src/dialogs/auth/disable-two-factor.tsx
-msgid "Disable Two-Factor Authentication"
-msgstr "Deaktivēt divu faktoru autentifikāciju"
-
-#: src/dialogs/auth/disable-two-factor.tsx
-msgid "Disabling two-factor authentication..."
-msgstr "Tiek deaktivēta divu faktoru autentifikācija..."
-
 #: src/features/career/schedule-sheet.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Discard"
 msgstr "Izmest"
 
+#: src/hooks/use-form-blocker.tsx
+msgid "Discard changes"
+msgstr "Atmest izmaiņas"
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Discard changes?"
 msgstr "Atmest izmaiņas?"
 
+#: src/hooks/use-form-blocker.tsx
+msgid "Discard unsaved changes?"
+msgstr "Vai atmest nesaglabātās izmaiņas?"
+
 #: src/features/settings/account/security.tsx
 msgid "Disconnect"
 msgstr "Atvienot"
+
+#: src/features/settings/account/auth-hooks.ts
+msgid "Disconnecting your {providerName} account…"
+msgstr "Notiek {providerName} konta atvienošana…"
 
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -4126,10 +4316,18 @@ msgstr "Dokumentācija"
 msgid "Documents"
 msgstr "Dokumenti"
 
+#: src/features/documents/trash-page.tsx
+msgid "Documents are deleted permanently after 30 days."
+msgstr "Dokumenti tiek neatgriezeniski dzēsti pēc 30 dienām."
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Documents for this job"
 msgstr "Dokumenti šim darbam"
+
+#: src/features/documents/trash-page.tsx
+msgid "Documents you move here stay for 30 days."
+msgstr "Dokumenti, kurus pārvietojat šeit, paliek 30 dienas."
 
 #: src/features/homepage/faq.tsx
 msgid "Does it use AI?"
@@ -4150,7 +4348,7 @@ msgstr "Nesūtiet {0}"
 msgid "Donate"
 msgstr "Ziedot"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Done"
 msgstr "Gatavs"
@@ -4164,13 +4362,10 @@ msgstr "Gatavs · {0}"
 msgid "Double-checking"
 msgstr "Pārbauda vēlreiz"
 
-#. Action button to download two-factor backup codes as a text file
-#: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
 #: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Download"
 msgstr "Lejupielādēt"
@@ -4187,18 +4382,22 @@ msgstr "Lejupielādējiet {name} PDF paraugu"
 msgid "Download application details, contacts, notes, and timeline history as CSV."
 msgstr "Lejupielādējiet pieteikumu informāciju, kontaktpersonas, piezīmes un laika skalas vēsturi CSV formātā."
 
+#. Action button to download two-factor backup codes as a text file
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Download codes"
+msgstr "Lejupielādēt kodus"
+
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download CSV"
 msgstr "Lejupielādēt CSV"
 
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/share-sheet.tsx
-msgid "Download failed."
-msgstr "Lejupielāde neizdevās."
+msgid "Download failed. Try again."
+msgstr "Lejupielāde neizdevās. Mēģiniet vēlreiz."
 
+#: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/public/public-resume.tsx
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Download PDF"
 msgstr "Lejupielādēt PDF"
 
@@ -4350,17 +4549,17 @@ msgid "Duplicate"
 msgstr "Dublēt"
 
 #: src/dialogs/resume/index.tsx
-msgid "Duplicate Resume"
+msgid "Duplicate resume"
 msgstr "Dublēt CV"
 
 #: src/dialogs/resume/index.tsx
 msgid "Duplicate your resume to create a new one, just like the original."
 msgstr "Dublējiet savu CV, lai izveidotu jaunu, tieši tādu pašu kā oriģinālu."
 
+#. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
-msgid "Duplicated"
-msgstr "Dublēts"
+msgid "Duplicated “{0}”"
+msgstr "“{0}” dublēts"
 
 #: src/dialogs/resume/index.tsx
 msgid "Duplicating your resume..."
@@ -4409,7 +4608,6 @@ msgid "Edit application"
 msgstr "Rediģēt pieteikumu"
 
 #: src/features/assistant/document.ts
-#: src/features/resume/editor/proposals/proposals.ts
 msgid "Edit applied"
 msgstr "Labojums piemērots"
 
@@ -4495,8 +4693,7 @@ msgstr "Rediģēšanas sesija"
 msgid "Editor mode"
 msgstr "Redaktora režīms"
 
-#: src/routes/builder/$resumeId/-components/editor-shell.tsx
-#: src/routes/builder/letter/-components/letter-shell.tsx
+#: src/features/resume/editor/chrome/shell.tsx
 msgid "Editor views"
 msgstr "Redaktora skati"
 
@@ -4506,7 +4703,6 @@ msgstr "Redakcija"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Education"
 msgstr "Izglītība"
@@ -4527,11 +4723,11 @@ msgstr "E-pasts (neobligāti)"
 #: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
-msgid "Email Address"
+msgid "Email address"
 msgstr "E-pasta adrese"
 
 #: src/features/resume/editor/check/issues.ts
-msgid "Email address won't be recognised"
+msgid "Email address won't be recognized"
 msgstr "E-pasta adrese netiks atpazīta"
 
 #: src/features/settings/account/profile.tsx
@@ -4545,14 +4741,6 @@ msgstr "Nosūtiet vervētājam e-pastu"
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "Eksportējot iegultiet visus fontus, lai rakstzīmes tiktu attēlotas tā, kā iecerēts."
-
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Enable Two-Factor Authentication"
-msgstr "Iespējot divu faktoru autentifikāciju"
-
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Enabling two-factor authentication…"
-msgstr "Divfaktoru autentifikācijas iespējošana…"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -4587,6 +4775,10 @@ msgstr "Uzlabotā lasīšana nebija pieejama. Iebūvētais lasītājs izguva šo
 msgid "Enjoying Reactive Resume?"
 msgstr "Patīk Reactive Resume?"
 
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Enter a backup code."
+msgstr "Ievadiet rezerves kodu."
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Ievadiet pilnu summu, piemēram, 95000. Iepriekšējā summa nav mainīta."
@@ -4596,10 +4788,12 @@ msgid "Enter a name, up to 64 characters."
 msgstr "Ievadiet nosaukumu, līdz 64 rakstzīmēm."
 
 #: src/features/auth/pages/reset-password.tsx
-msgid "Enter a new password for your account"
-msgstr "Ievadiet jaunu sava konta paroli"
+msgid "Enter a new password for your account."
+msgstr "Ievadiet jaunu sava konta paroli."
 
 #: src/features/applications/components/detail/contacts.tsx
+#: src/features/auth/pages/forgot-password.tsx
+#: src/features/auth/pages/register.tsx
 #: src/features/settings/account/profile.tsx
 msgid "Enter a valid email address."
 msgstr "Ievadiet derīgu e-pasta adresi."
@@ -4613,28 +4807,55 @@ msgid "Enter any model ID supported by your endpoint."
 msgstr "Ievadiet jebkuru modeļa ID, ko atbalsta jūsu galapunkts."
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Enter one of your saved backup codes to access your account"
-msgstr "Ievadiet vienu no saglabātajiem rezerves kodiem, lai piekļūtu savam kontam"
+msgid "Enter one of your saved backup codes to access your account."
+msgstr "Ievadiet vienu no saglabātajiem rezerves kodiem, lai piekļūtu savam kontam."
+
+#: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Enter the 6-digit code."
+msgstr "Ievadiet 6 ciparu kodu."
 
 #: src/features/auth/pages/resume-password.tsx
 msgid "Enter the password the resume owner shared with you."
 msgstr "Ievadiet paroli, ko jums ir izsniedzis CV īpašnieks."
 
+#: src/features/auth/pages/resume-password.tsx
+msgid "Enter the password."
+msgstr "Ievadiet paroli."
+
+#: src/features/resume/builder/password-dialog.tsx
+msgid "Enter the same password in both fields."
+msgstr "Ievadiet vienu un to pašu paroli abos laukos."
+
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Enter the verification code from your authenticator app"
-msgstr "Ievadiet verifikācijas kodu no savas autentifikatora lietotnes"
+msgid "Enter the verification code from your authenticator app."
+msgstr "Ievadiet verifikācijas kodu no autentifikatora lietotnes."
 
 #: src/dialogs/auth/change-password.tsx
-msgid "Enter your current password and a new password to update your account."
-msgstr "Ievadiet savu pašreizējo paroli un jaunu paroli, lai atjauninātu kontu."
+msgid "Enter your current password, then choose a new one."
+msgstr "Ievadiet pašreizējo paroli, pēc tam izvēlieties jaunu."
+
+#: src/dialogs/auth/change-password.tsx
+msgid "Enter your current password."
+msgstr "Ievadiet pašreizējo paroli."
+
+#: src/features/auth/pages/register.tsx
+msgid "Enter your name."
+msgstr "Ievadiet savu vārdu."
 
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Enter your password to confirm setting up two-factor authentication. Once it is on, you need a code from your authenticator app every time you sign in."
-msgstr "Ievadiet savu paroli, lai apstiprinātu divu faktoru autentifikācijas iestatīšanu. Kad tā ir ieslēgta, katrā pieteikšanās reizē būs nepieciešams kods no autentifikācijas lietotnes."
+msgid "Enter your password to set up two-step verification. Once it's on, you need a code from your authenticator app every time you sign in."
+msgstr "Ievadiet paroli, lai iestatītu divpakāpju verifikāciju. Kad tā ir ieslēgta, katrā pieteikšanās reizē būs nepieciešams kods no autentifikatora lietotnes."
 
 #: src/dialogs/auth/disable-two-factor.tsx
-msgid "Enter your password to disable two-factor authentication. Your account will be less secure without 2FA enabled."
-msgstr "Ievadiet savu paroli, lai deaktivētu divu faktoru autentifikāciju. Bez ieslēgtas 2FA jūsu konts būs mazāk drošs."
+msgid "Enter your password to turn off two-step verification. Without it, your password alone can sign in to your account."
+msgstr "Ievadiet paroli, lai izslēgtu divpakāpju verifikāciju. Bez tās jūsu kontā varēs pieteikties tikai ar paroli."
+
+#: src/dialogs/auth/disable-two-factor.tsx
+#: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/login.tsx
+msgid "Enter your password."
+msgstr "Ievadiet savu paroli."
 
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Entry deleted"
@@ -4697,7 +4918,6 @@ msgstr "Iziet no fokusa režīma"
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/write.tsx
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Experience"
 msgstr "Pieredze"
@@ -4720,7 +4940,7 @@ msgid "Export applications"
 msgstr "Eksportēt pieteikumus"
 
 #: src/features/command-palette/pages/navigation.tsx
-msgid "Export Data"
+msgid "Export data"
 msgstr "Eksportēt datus"
 
 #: src/features/settings/account/data.tsx
@@ -4784,7 +5004,7 @@ msgstr "Fakts aizmirsts"
 msgid "Fact type"
 msgstr "Fakta veids"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "Fakti"
@@ -4796,80 +5016,6 @@ msgstr "Fakti, stāsti un preferences, kas ieslēgti Zināšanās"
 #: src/features/settings/ai/providers.tsx
 msgid "Failed"
 msgstr "Neizdevās"
-
-#. Fallback toast when account registration fails without a server error message
-#: src/features/auth/pages/register.tsx
-msgid "Failed to create your account. Please try again."
-msgstr "Neizdevās izveidot kontu. Lūdzu, mēģiniet vēlreiz."
-
-#. Fallback toast when disabling two-factor authentication fails
-#: src/dialogs/auth/disable-two-factor.tsx
-msgid "Failed to disable two-factor authentication. Please try again."
-msgstr "Neizdevās atspējot divu faktoru autentifikāciju. Lūdzu, mēģiniet vēlreiz."
-
-#. Fallback toast when enabling two-factor authentication fails
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Failed to enable two-factor authentication. Please try again."
-msgstr "Neizdevās iespējot divu faktoru autentifikāciju. Lūdzu, mēģiniet vēlreiz."
-
-#. Fallback toast when linking a social authentication provider fails
-#: src/features/settings/account/auth-hooks.ts
-msgid "Failed to link provider. Please try again."
-msgstr "Neizdevās savienot pakalpojumu sniedzēju. Lūdzu, mēģiniet vēlreiz."
-
-#. Fallback toast when resetting password fails and no backend message is available
-#: src/features/auth/pages/reset-password.tsx
-msgid "Failed to reset your password. Please try again."
-msgstr "Neizdevās atiestatīt paroli. Lūdzu, mēģiniet vēlreiz."
-
-#. Fallback toast when requesting password reset email fails without backend message
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Failed to send password reset email. Please try again."
-msgstr "Neizdevās nosūtīt paroles atiestatīšanas e-pastu. Lūdzu, mēģiniet vēlreiz."
-
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
-#: src/features/auth/components/social-auth.tsx
-#: src/features/auth/pages/login.tsx
-msgid "Failed to sign in. Please try again."
-msgstr "Neizdevās pierakstīties. Lūdzu, mēģiniet vēlreiz."
-
-#. Fallback toast when signing out fails
-#: src/features/user/dropdown-menu.tsx
-msgid "Failed to sign out. Please try again."
-msgstr "Neizdevās izrakstīties. Lūdzu, mēģiniet vēlreiz."
-
-#. Fallback toast when unlinking a social authentication provider fails
-#: src/features/settings/account/auth-hooks.ts
-msgid "Failed to unlink provider. Please try again."
-msgstr "Neizdevās atvienot pakalpojumu sniedzēju. Lūdzu, mēģiniet vēlreiz."
-
-#. Fallback toast when changing account password fails
-#: src/dialogs/auth/change-password.tsx
-msgid "Failed to update your password. Please try again."
-msgstr "Neizdevās atjaunināt paroli. Lūdzu, mēģiniet vēlreiz."
-
-#. Fallback toast when uploading profile picture for resume fails
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Failed to upload picture. Please try again."
-msgstr "Neizdevās augšupielādēt attēlu. Lūdzu, mēģiniet vēlreiz."
-
-#. Fallback toast when resume password verification fails unexpectedly
-#: src/features/auth/pages/resume-password.tsx
-msgid "Failed to verify the password. Please try again."
-msgstr "Neizdevās pārbaudīt paroli. Lūdzu, mēģiniet vēlreiz."
-
-#. Fallback toast when verifying a backup two-factor authentication code fails
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Failed to verify your backup code. Please try again."
-msgstr "Neizdevās pārbaudīt jūsu dublējuma kodu. Lūdzu, mēģiniet vēlreiz."
-
-#. Fallback toast when verifying a two-factor authentication code fails
-#. Fallback toast when verifying two-factor setup code fails
-#: src/dialogs/auth/enable-two-factor.tsx
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Failed to verify your code. Please try again."
-msgstr "Jūsu kodu neizdevās pārbaudīt. Lūdzu, mēģiniet vēlreiz."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -4925,8 +5071,8 @@ msgid "Fill fields"
 msgstr "Aizpildīt laukus"
 
 #: src/features/applications/components/add-application-dialog.tsx
-msgid "Fill in the role and company. Connect an AI provider in settings to read them from the posting."
-msgstr "Aizpildiet lomu un uzņēmumu. Iestatījumos pievienojiet AI pakalpojumu sniedzēju, lai tos izlasītu no darba sludinājuma."
+msgid "Fill in the role and company. Connect an AI provider in Settings to read them from the posting."
+msgstr "Aizpildiet lomu un uzņēmumu. Iestatījumos pievienojiet AI pakalpojumu sniedzēju, lai tos nolasītu no darba sludinājuma."
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Fill in the role and company. The posting is saved with the application."
@@ -4996,22 +5142,6 @@ msgstr "Atbilstības pārbaudes, atgādnes, vingrināšanās atsauksmes, izvērt
 msgid "Fit page to width"
 msgstr "Pielāgot lapu platumam"
 
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
-msgid "Fit to {authored} pages"
-msgstr "Piemērots {authored} lapām"
-
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
-msgid "Fit to one page"
-msgstr "Ietilpināt vienā lapā"
-
-#: src/features/resume/editor/design/fit.ts
-msgid "Fits on {authored} pages: {details}"
-msgstr "Piemērots {authored} lapām: {details}"
-
-#: src/features/resume/editor/design/fit.ts
-msgid "Fits on one page: {details}"
-msgstr "Ietilpst vienā lapā: {details}"
-
 #: src/features/resume/editor/check/issues.ts
 msgid "Fix the date"
 msgstr "Labojiet datumu"
@@ -5074,7 +5204,7 @@ msgid "Follow-up reminder"
 msgstr "Atgādinājums sazināties atkārtoti"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
-msgid "Font Family"
+msgid "Font family"
 msgstr "Fonta saime"
 
 #: src/features/resume/editor/design/style-groups.tsx
@@ -5082,15 +5212,15 @@ msgid "Font pairing"
 msgstr "Fontu savienošana pārī"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
-msgid "Font Size"
+msgid "Font size"
 msgstr "Fonta izmērs"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
-msgid "Font Weight"
+msgid "Font weight"
 msgstr "Fonta biezums"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
-msgid "Font Weights"
+msgid "Font weights"
 msgstr "Fonta biezumi"
 
 #: src/libs/error-message.ts
@@ -5144,8 +5274,8 @@ msgstr "Aizmirst"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
-msgid "Forgot Password?"
-msgstr "Aizmirsi paroli?"
+msgid "Forgot password?"
+msgstr "Aizmirsāt paroli?"
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
@@ -5159,9 +5289,15 @@ msgstr "Formāts"
 msgid "Format stylesheet"
 msgstr "Stilu lapas formatēšana"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Formatting"
 msgstr "Formatēšana"
+
+#. placeholder {0}: step.sections
+#. placeholder {1}: step.entries
+#: src/features/documents/new-document-dialog.tsx
+msgid "Found {0, plural, one {# section} other {# sections}} and {1, plural, one {# entry} other {# entries}}."
+msgstr "Atrastas {0, plural, zero {# sadaļas} one {# sadaļa} other {# sadaļas}} un {1, plural, zero {# ieraksti} one {# ieraksts} other {# ieraksti}}."
 
 #. placeholder {0}: day(row.firstSeenAt)
 #: src/features/career/today.tsx
@@ -5185,11 +5321,11 @@ msgid "Free ATS resume checker"
 msgstr "Bezmaksas ATS CV pārbaudītājs"
 
 #: src/libs/seo.ts
-msgid "Free Resume Builder with PDF & Word Downloads"
-msgstr "Bezmaksas CV veidotājs ar PDF un Microsoft Word lejupielādēm"
+msgid "Free resume builder with PDF & Word downloads"
+msgstr "Bezmaksas CV veidotājs ar PDF un Word lejupielādēm"
 
 #: src/libs/seo.ts
-msgid "Free Resume Templates with PDF Examples"
+msgid "Free resume templates with PDF examples"
 msgstr "Bezmaksas CV veidnes ar PDF piemēriem"
 
 #: src/features/resume/editor/design/style-groups.tsx
@@ -5249,8 +5385,8 @@ msgid "From your resume"
 msgstr "No jūsu CV"
 
 #: src/features/career/knowledge/search-regions-field.tsx
-msgid "From your time zone"
-msgstr "Pamatojoties uz jūsu laika joslu"
+msgid "From your timezone"
+msgstr "Pēc jūsu laika joslas"
 
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Full name"
@@ -5258,7 +5394,7 @@ msgstr "Pilns vārds"
 
 #. Layout editor toggle label that makes a page single-column
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Full Width"
+msgid "Full width"
 msgstr "Pilns platums"
 
 #: src/dialogs/resume/index.tsx
@@ -5267,8 +5403,8 @@ msgstr "Ģenerēt nejaušu nosaukumu"
 
 #: src/features/resume/export/use-resume-export.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
-msgid "Generating your PDF..."
-msgstr "Notiek jūsu PDF izveide..."
+msgid "Generating PDF…"
+msgstr "Notiek PDF ģenerēšana…"
 
 #: src/libs/locale.ts
 msgid "German"
@@ -5280,7 +5416,7 @@ msgid "Get a key at <0>{0}</0>. It's stored encrypted and used only for your req
 msgstr "Iegūstiet atslēgu vietnē <0>{0}</0>. Tas tiek saglabāts šifrēts un tiek izmantots tikai jūsu pieprasījumiem."
 
 #: src/features/homepage/prepare.tsx
-msgid "Get a plan for the interview, built from the posting and your own stories. Practise out loud, then write down how it went."
+msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "Saņemiet intervijas plānu, kas balstīts uz sludinājumu un jūsu pašu stāstiem. Vingrinieties skaļi un pēc tam pierakstiet, kā gāja."
 
 #: src/features/career/workspace/practise.tsx
@@ -5332,7 +5468,7 @@ msgstr "Lai saglabātu, piešķiriet stāstam nosaukumu."
 
 #. Secondary navigation button on backup-code verification screen
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Go Back"
+msgid "Go back"
 msgstr "Atpakaļ"
 
 #: src/components/layout/not-found-screen.tsx
@@ -5364,21 +5500,21 @@ msgstr "Google"
 msgid "Grade"
 msgstr "Atzīme"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Gray"
+msgstr "Pelēka"
+
 #: src/libs/locale.ts
 msgid "Greek"
 msgstr "Grieķu"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Green"
 msgstr "Zaļa"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Greeting"
 msgstr "Uzruna"
-
-#: src/features/resume/editor/write/rich-text-editor.tsx
-msgid "Grey"
-msgstr "Pelēka"
 
 #: src/features/documents/documents-page.tsx
 msgid "Grid"
@@ -5406,15 +5542,15 @@ msgctxt "Headings or Titles (H1, H2, H3, H4, H5, H6)"
 msgid "Heading"
 msgstr "Virsraksts"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Heading 1"
 msgstr "Virsraksts 1"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Heading 2"
 msgstr "Virsraksts 2"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Heading 3"
 msgstr "Virsraksts 3"
 
@@ -5451,6 +5587,10 @@ msgstr "Palīdziet man pārvērst sasniegumu stāstā: situācija, uzdevums, dar
 msgid "Help translate"
 msgstr "Palīdziet tulkot"
 
+#: src/features/homepage/sections.tsx
+msgid "Help translate it into yours."
+msgstr "Palīdziet to pārtulkot savā valodā."
+
 #: src/features/homepage/prepare.tsx
 msgid "Hi Alex, great to confirm: you’ll meet our design team today at {time}, by video. Could you bring an example of your onboarding work?"
 msgstr "Sveiki, Alex! Prieks apstiprināt: šodien {time} jūs tiksieties ar mūsu dizaina komandu video zvanā. Vai varētu atnest savu lietotāju ievadīšanas darba piemēru?"
@@ -5477,10 +5617,9 @@ msgstr "Slēptajās sadaļās tiek saglabāts saturs, taču tās netiek drukāta
 msgid "Hidden terms are back"
 msgstr "Slēptie termini ir atgriezušies"
 
-#. placeholder {0}: hiddenTerms.join(", ")
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Hidden: {0}"
-msgstr "Slēpts: {0}"
+msgid "Hidden: {hiddenList}"
+msgstr "Paslēpts: {hiddenList}"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Hide {title} from the page"
@@ -5489,14 +5628,6 @@ msgstr "Paslēpt {title} no lapas"
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Hide from page"
 msgstr "Slēpt no lapas"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Hide Icons"
-msgstr "Slēpt ikonas"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Hide Link Underline"
-msgstr "Slēpt saites pasvītrojumu"
 
 #: src/features/resume/editor/chrome.tsx
 msgid "Hide panel"
@@ -5508,12 +5639,8 @@ msgid "Hide password"
 msgstr "Paslēpt paroli"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Hide picture"
-msgstr "Slēpt attēlu"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Hide Section Icons"
-msgstr "Slēpt sadaļu ikonas"
+msgid "Hide photo"
+msgstr "Paslēpt fotoattēlu"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Hide the photo"
@@ -5523,7 +5650,7 @@ msgstr "Paslēpt fotoattēlu"
 msgid "High"
 msgstr "Augsts"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Highlight"
 msgstr "Izcēlums"
 
@@ -5540,20 +5667,31 @@ msgstr "Nomas menedžeris"
 msgid "Hiring team"
 msgstr "Pieņemšanas komanda"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
 #: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "History"
 msgstr "Vēsture"
+
+#: src/features/documents/document-actions.tsx
+msgid "Hold to delete"
+msgstr "Turiet, lai dzēstu"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Home"
 msgstr "Mājas"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Horizontal line"
 msgstr "Horizontāla līnija"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Horizontal margin"
+msgstr "Horizontālā mala"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Horizontal spacing"
+msgstr "Horizontālais atstatums"
 
 #: src/features/homepage/sections.tsx
 msgid "Hosting and development are paid for by people like you. Optional tip:"
@@ -5631,7 +5769,7 @@ msgid "Icon"
 msgstr "Ikona"
 
 #: src/features/resume/editor/write/entries.tsx
-msgid "Icon colour"
+msgid "Icon color"
 msgstr "Ikonas krāsa"
 
 #: src/features/resume/editor/write/section-row.tsx
@@ -5662,9 +5800,9 @@ msgstr "Ja kāds jums nosūtīja šo saiti, pieprasiet viņam jaunu."
 msgid "If the app did not open, try again on a device where it is installed."
 msgstr "Ja lietotne netika atvērta, mēģiniet vēlreiz ierīcē, kurā tā ir instalēta."
 
-#: src/features/settings/account/data.tsx
-msgid "If you used Sign in with Apple and Reactive Resume is still listed in your Apple Account after deletion, remove its access there too."
-msgstr "Ja izmantojāt funkciju Pierakstīties, izmantojot Apple un Reactive Resume pēc dzēšanas joprojām ir norādīts jūsu Apple kontā, noņemiet arī tā piekļuvi."
+#: src/hooks/use-form-blocker.tsx
+msgid "If you close this dialog, your changes are lost."
+msgstr "Ja aizvērsiet šo dialogu, jūsu izmaiņas tiks zaudētas."
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Ignore"
@@ -5732,16 +5870,6 @@ msgstr "Importējiet savu pašreizējo CV, un mēs izkārtosim katru sadaļu, ko
 msgid "Imported"
 msgstr "Importēts"
 
-#. placeholder {0}: response.imported
-#: src/features/applications/components/import-applications-sheet.tsx
-msgid "Imported {0} applications."
-msgstr "Importētie {0} darba pieteikumi."
-
-#. placeholder {0}: response.imported
-#: src/features/applications/components/import-applications-sheet.tsx
-msgid "Imported {0} applications. {skipped} rows had no company or role and were skipped."
-msgstr "Importētie {0} darba pieteikumi. {skipped} rindām nebija uzņēmuma vai lomas, un tās tika izlaistas."
-
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Imported from {imported}."
 msgstr "Importēts no {imported}."
@@ -5754,7 +5882,7 @@ msgstr "Notiek importēšana"
 msgid "Importing it into your new resume…"
 msgstr "Notiek tā importēšana jūsu jaunajā CV…"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Improve"
 msgstr "Uzlabot"
 
@@ -5774,7 +5902,7 @@ msgstr "Labā kompānijā"
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "Palieliniet rindstarpu, lai divas rindas nesaplūstu vienā."
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Indent"
 msgstr "Palielināt atkāpi"
 
@@ -5798,7 +5926,6 @@ msgstr "Ieskati"
 msgid "Integrations"
 msgstr "Integrācija"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Interests"
 msgstr "Intereses"
@@ -5957,10 +6084,6 @@ msgstr "Iespējams, tas ir izdzēsts. Izvēlieties citu stāstu vai pievienojiet
 msgid "It will be deleted for good and can't be restored."
 msgstr "Tas tiks dzēsts uz visiem laikiem, un to nevarēs atjaunot."
 
-#: src/features/settings/account/security.tsx
-msgid "It will no longer sign you in."
-msgstr "Tas jūs vairs nepierakstīs."
-
 #: src/features/applications/components/interview-dialog.tsx
 msgid "It will show on the application's timeline and on the calendar."
 msgstr "Tas tiks parādīts darba pieteikuma laika skalā un kalendārā."
@@ -5977,17 +6100,9 @@ msgstr "Tas uz visiem laikiem ir noņemts no laika skalas."
 msgid "Italian"
 msgstr "Itāļu"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Italic"
 msgstr "Slīpraksts"
-
-#: src/features/documents/trash-page.tsx
-msgid "Items are deleted permanently after 30 days."
-msgstr "ieraksti tiek neatgriezeniski dzēsti pēc 30 dienām."
-
-#: src/features/documents/trash-page.tsx
-msgid "Items you move here stay for 30 days."
-msgstr "ieraksti, kurus pārceļat uz šejieni, paliek 30 dienas."
 
 #. placeholder {0}: providers[0]?.label ?? ""
 #: src/features/career/schedule-sheet.tsx
@@ -6078,7 +6193,7 @@ msgstr "Pievienojieties Discord kopienai"
 msgid "JSON read"
 msgstr "JSON lasīt"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
 msgstr "Līdzināt abās malās"
 
@@ -6104,6 +6219,7 @@ msgid "Keep account"
 msgstr "Saglabājiet kontu"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/hooks/use-form-blocker.tsx
 msgid "Keep editing"
 msgstr "Turpināt rediģēt"
 
@@ -6186,6 +6302,10 @@ msgstr "Paturēts jūsu variants"
 msgid "Key ends in {0}"
 msgstr "Atslēga beidzas ar {0}"
 
+#: src/features/settings/ai/api-keys.tsx
+msgid "Key revoked. Apps using it stop working now."
+msgstr "Atslēga atsaukta. Lietotnes, kas to izmanto, tagad pārstāj darboties."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Key stored encrypted"
 msgstr "Atslēga saglabāta šifrēta"
@@ -6210,6 +6330,7 @@ msgstr "Khmeru"
 msgid "Kind regards,"
 msgstr "Ar cieņu,"
 
+#: src/features/homepage/remember.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Knowledge"
@@ -6218,6 +6339,10 @@ msgstr "Zināšanas"
 #: src/features/career/coach.tsx
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
 msgstr "Nevarēja ielādēt Zināšanas. Mēģiniet vēlreiz vai pirms sūtīšanas izslēdziet Zināšanas."
+
+#: src/features/homepage/prepare.tsx
+msgid "Knowledge doesn’t mention mentoring."
+msgstr "Zināšanās nav minēta mentorēšana."
 
 #: src/libs/locale.ts
 msgid "Korean"
@@ -6251,7 +6376,6 @@ msgstr "Valoda"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Languages"
 msgstr "Valodas"
@@ -6269,6 +6393,11 @@ msgstr "Pēdējo reizi rediģēts"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "Pēdējo reizi lietots"
+
+#: src/features/assistant/conversation.tsx
+#: src/features/career/coach-chat.tsx
+msgid "Latest"
+msgstr "Jaunākais"
 
 #: src/libs/locale.ts
 msgid "Latvian"
@@ -6308,7 +6437,6 @@ msgid "Learning budget"
 msgstr "Mācību budžets"
 
 #: src/features/career/offers.tsx
-#: src/hooks/use-form-blocker.tsx
 msgid "Leave"
 msgstr "Aiziet"
 
@@ -6320,13 +6448,13 @@ msgstr "Atstājiet vismaz pusi collas brīvas vietas ap lapu."
 msgid "Leave empty to keep the saved key"
 msgstr "Atstājiet tukšu, lai saglabātu saglabāto atslēgu"
 
-#: src/features/resume/editor/write/section-row.tsx
-msgid "Leave empty to reset the title to the original."
-msgstr "Atstājiet tukšu, lai atjaunotu sākotnējo virsrakstu."
-
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Leave it empty to remove the link."
 msgstr "Lai noņemtu saiti, atstājiet to tukšu."
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Leave it empty to use the original title."
+msgstr "Atstājiet tukšu, lai izmantotu sākotnējo virsrakstu."
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Leave out"
@@ -6414,6 +6542,10 @@ msgstr "Burta pamatteksts"
 msgid "Letter details"
 msgstr "Vēstules detaļas"
 
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Letter duplicated"
+msgstr "Vēstule dublēta"
+
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Letter page"
 msgstr "Vēstules lapa"
@@ -6455,7 +6587,7 @@ msgid "Likely questions, from the posting and your resume"
 msgstr "Iespējamie jautājumi no darba sludinājuma un jūsu CV"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
-msgid "Line Height"
+msgid "Line height"
 msgstr "Rindu augstums"
 
 #: src/features/resume/editor/check/issues.ts
@@ -6472,7 +6604,7 @@ msgstr "Lasot tik tuvu rindas, var iet kopā. Izmantojiet vismaz {minimum}."
 
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/write/fields.tsx
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Link"
 msgstr "Saite"
@@ -6486,7 +6618,7 @@ msgid "Link a Reactive Resume to use AI match scoring and tailoring."
 msgstr "Piesaistiet Reactive Resume CV, lai izmantotu AI atbilstības vērtēšanu un pielāgošanu."
 
 #: src/features/resume/editor/write/basics-card.tsx
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Link address"
 msgstr "Saites adrese"
 
@@ -6556,10 +6688,6 @@ msgstr "LinkedIn"
 msgid "LinkedIn, Referral…"
 msgstr "LinkedIn, ieteikums…"
 
-#: src/features/settings/account/auth-hooks.ts
-msgid "Linking your {providerName} account..."
-msgstr "Tiek savienots jūsu {providerName} konts..."
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Linking…"
 msgstr "Notiek saistīšana…"
@@ -6606,6 +6734,10 @@ msgstr "Tiešraide pie {0}"
 #: src/features/homepage/sections.tsx
 msgid "Live totals, refreshed every 6 hours."
 msgstr "Kopējie tiešraides dati, atsvaidzināti ik pēc 6 stundām."
+
+#: src/components/layout/loading-screen.tsx
+msgid "Loading"
+msgstr "Ielādē"
 
 #: src/features/settings/integrations/ai-provider-load-state.tsx
 msgid "Loading AI connections…"
@@ -6660,6 +6792,10 @@ msgstr "Notiek CV ielāde…"
 msgid "Loading saved version…"
 msgstr "Ielādē saglabāto versiju…"
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/custom-styles.tsx
+msgid "Loading stylesheet editor…"
+msgstr "Ielādē stilu lapas redaktoru…"
+
 #: src/features/homepage/sections.tsx
 msgid "Loading the total"
 msgstr "Notiek kopsummas ielāde"
@@ -6682,7 +6818,7 @@ msgstr "Notiek ielāde…"
 msgid "Location"
 msgstr "Atrašanās vieta"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Locations"
 msgstr "Atrašanās vietas"
 
@@ -6777,8 +6913,8 @@ msgid "Make the visible text and the destination match."
 msgstr "Panāciet, lai redzamais teksts un mērķa adrese sakristu."
 
 #: src/features/ats-checker/messages.ts
-msgid "Make them visibly larger, bolder or capitalised."
-msgstr "Padariet tos manāmi lielākus, treknākus vai rakstītus ar lielajiem burtiem."
+msgid "Make them visibly larger, bolder or capitalized."
+msgstr "Padariet tos manāmi lielākus, treknākus vai ar lielajiem burtiem."
 
 #: src/libs/locale.ts
 msgid "Malay"
@@ -6796,11 +6932,6 @@ msgstr "Pārvalda serveris"
 msgid "Managed by your server"
 msgstr "Pārvalda jūsu serveris"
 
-#. Hero headline, line 4 of 4: A free, open-source / resume builder / and career / manager.
-#: src/features/homepage/hero.tsx
-msgid "manager."
-msgstr "pārvaldībai."
-
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "Daudzas aizzīmes sākas ar vienu un to pašu frāzi."
@@ -6812,14 +6943,6 @@ msgstr "2022. gada marts"
 #: src/libs/locale.ts
 msgid "Marathi"
 msgstr "Marathu"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Margin (Horizontal)"
-msgstr "Mala (horizontāli)"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Margin (Vertical)"
-msgstr "Mala (vertikāli)"
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Margins"
@@ -6854,7 +6977,7 @@ msgstr "Atzīmējiet pieteikumu kā pieteiktu, lai saglabātu nosūtītās versi
 msgid "Markdown (.md)"
 msgstr "Markdown (.md)"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Markdown shortcuts on"
 msgstr "Markdown īsceļi ieslēgti"
 
@@ -6986,8 +7109,7 @@ msgstr "Modelis: {label}"
 msgid "Mono"
 msgstr "Mono"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/features/resume/editor/chrome/bar.tsx
 msgid "More download formats"
 msgstr "Vairāk lejupielādes formātu"
 
@@ -6995,7 +7117,7 @@ msgstr "Vairāk lejupielādes formātu"
 msgid "More for {title}"
 msgstr "Vairāk: {title}"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "More formatting"
 msgstr "Vairāk formatējuma"
 
@@ -7183,10 +7305,6 @@ msgstr "Nosauciet šo ieejas atslēgu"
 msgid "Name this version"
 msgstr "Nosauciet šo versiju"
 
-#: src/features/resume/share/history-tab.tsx
-msgid "Name this version, e.g. Sent to Lumen"
-msgstr "Nosauciet šo versiju, piem. Nosūtīts uz Lumen"
-
 #: src/features/resume/editor/check/issues.ts
 msgid "Name, email, phone and location are found, and links are full addresses."
 msgstr "Tiek atrasts vārds, e-pasts, tālrunis un atrašanās vieta, un saites ir pilnas adreses."
@@ -7237,17 +7355,13 @@ msgstr "Nekad"
 msgid "New"
 msgstr "Jauns"
 
-#: src/features/auth/pages/error.tsx
-msgid "New account sign-ups are currently disabled on this server."
-msgstr "Jaunu kontu reģistrācija šajā serverī pašlaik ir atspējota."
-
 #: src/features/settings/ai/api-keys.tsx
 msgid "New API key"
 msgstr "Jauna atslēga API"
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
-msgid "New Application"
+msgid "New application"
 msgstr "Jauns pieteikums"
 
 #: src/features/assistant/assistant-panel.tsx
@@ -7275,17 +7389,14 @@ msgid "New key"
 msgstr "Jauna atslēga"
 
 #: src/features/resume/editor/write/entry-card.tsx
-msgid "New page"
-msgstr "Jauna lapa"
-
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "New Page"
+msgid "New page"
 msgstr "Jauna lapa"
 
 #. Label for new password input on reset-password form
 #: src/dialogs/auth/change-password.tsx
 #: src/features/auth/pages/reset-password.tsx
-msgid "New Password"
+msgid "New password"
 msgstr "Jaunā parole"
 
 #: src/features/career/today.tsx
@@ -7376,8 +7487,8 @@ msgid "No commands match that search."
 msgstr "Šai meklēšanai neatbilst neviena komanda."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications."
-msgstr "Nav pievienotu lietojumprogrammu."
+msgid "No connected applications yet. Apps you allow to access your account appear here."
+msgstr "Vēl nav pievienotu lietotņu. Šeit parādās lietotnes, kurām atļaujat piekļūt jūsu kontam."
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -7436,10 +7547,6 @@ msgstr "Vēl nav faktu, ko piesaistīt. Pievienojiet tos sadaļā “Fakti”."
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet. Add one above."
 msgstr "Vēl nav faktu. Pievienojiet vienu augstāk."
-
-#: src/features/applications/components/calendar-view.tsx
-msgid "No interviews"
-msgstr "Nav interviju"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "No job yet"
@@ -7655,7 +7762,7 @@ msgstr "Vēl nav ierakstīts. Atstājiet tukšu, līdz varēsiet to pamatot."
 msgid "Not saved"
 msgstr "Nav saglabāts"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Not saved — this fact was forgotten before."
 msgstr "Nav saglabāts — šis fakts jau iepriekš tika aizmirsts."
 
@@ -7780,7 +7887,7 @@ msgstr "Uzteikuma termiņš"
 msgid "Now"
 msgstr "Tagad"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Numbered list"
 msgstr "Numurēts saraksts"
 
@@ -7887,7 +7994,7 @@ msgid "Only if you want it to. Add your own key from OpenAI, Anthropic, Google G
 msgstr "Tikai tad, ja vēlaties. Pievienojiet savu atslēgu no OpenAI, Anthropic, Google Gemini, OpenRouter, Ollama vai cita nodrošinātāja, lai iegūtu precīzākus formulējumus, pielāgošanu darba sludinājumam, konsultācijas par pieteikumiem un intervijām un Word failu lasīšanu. Bez atslēgas AI pakalpojumam nekas netiek sūtīts."
 
 #: src/features/ats-checker/messages.ts
-msgid "Only one recognisable section heading was found."
+msgid "Only one recognizable section heading was found."
 msgstr "Atrasts tikai viens atpazīstams sadaļas virsraksts."
 
 #: src/features/resume/share/history-tab.tsx
@@ -7950,8 +8057,8 @@ msgstr "Atvērt atgādni"
 
 #. Button label to open the user's default email app
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Open Email Client"
-msgstr "Atvērt e-pasta klientu"
+msgid "Open email app"
+msgstr "Atvērt e-pasta lietotni"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Open focus mode"
@@ -7970,12 +8077,8 @@ msgstr "Atveriet redaktoru"
 msgid "Open in Offers"
 msgstr "Atvērt piedāvājumos"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-msgid "open issues"
-msgstr "atklāti jautājumi"
-
-#: src/features/career/coach-thread.tsx
-msgid "Open Preferences"
+#: src/features/career/coach-chat.tsx
+msgid "Open preferences"
 msgstr "Atvērt preferences"
 
 #: src/features/resume/share/link-tab.tsx
@@ -8079,7 +8182,7 @@ msgstr "Vai saviem vārdiem..."
 msgid "Or upload a resume PDF"
 msgstr "Vai arī augšupielādējiet CV PDF"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Orange"
 msgstr "Oranža"
 
@@ -8091,6 +8194,7 @@ msgstr "Organizācija"
 msgid "Original page"
 msgstr "Oriģinālā lapa"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "Oriģinālais tabulas formatējums ir saglabāts. Šis saturs ir tikai lasāms, jo to nevar droši rediģēt."
@@ -8120,7 +8224,7 @@ msgstr "no 100"
 msgid "Out of date: the text has changed since."
 msgstr "Novecojis: teksts kopš tā laika ir mainīts."
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Outdent"
 msgstr "Samazināt atkāpi"
 
@@ -8160,6 +8264,10 @@ msgstr "1. lapa"
 msgid "Page 1 · {formatLabel}"
 msgstr "1. lapa · {formatLabel}"
 
+#: src/components/layout/not-found-screen.tsx
+msgid "Page not found"
+msgstr "Lapa nav atrasta"
+
 #: src/features/assistant/conversation.tsx
 msgid "Page reading didn't finish."
 msgstr "Lapas lasīšana netika pabeigta."
@@ -8172,7 +8280,7 @@ msgstr "Lapas skatījums"
 msgid "Paper"
 msgstr "Papīrs"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Paragraph"
 msgstr "Rindkopa"
 
@@ -8225,21 +8333,21 @@ msgstr "Piekļuves atslēgas"
 msgid "Password"
 msgstr "Parole"
 
-#: src/features/resume/builder/password-dialog.tsx
-msgid "Password must be between 6 and 64 characters."
-msgstr "Parolei jābūt no 6 līdz 64 rakstzīmēm garai."
+#: src/dialogs/auth/change-password.tsx
+msgid "Password changed"
+msgstr "Parole nomainīta"
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Password removed"
 msgstr "Parole noņemta"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Password reset. Sign in with your new password."
+msgstr "Parole atiestatīta. Piesakieties ar jauno paroli."
+
 #: src/features/resume/share/link-tab.tsx
 msgid "Password set"
 msgstr "Parole iestatīta"
-
-#: src/features/resume/builder/password-dialog.tsx
-msgid "Passwords do not match."
-msgstr "Paroles nesakrīt."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Past conversations"
@@ -8437,10 +8545,6 @@ msgstr "Plāno jūsu nedēļu"
 msgid "Play the list of languages"
 msgstr "Atskaņojiet valodu sarakstu"
 
-#: src/features/applications/components/file-attachment-field.tsx
-msgid "Please upload a PDF file."
-msgstr "Lūdzu, augšupielādējiet PDF failu."
-
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "Poļu"
@@ -8495,8 +8599,28 @@ msgstr "darba sludinājumu nosacījumus savā CV"
 
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/saved.tsx
+#: src/features/homepage/prepare.tsx
 msgid "Practice"
 msgstr "Vingrināšanās"
+
+#: src/features/career/shared.tsx
+msgctxt "Application workspace tab: rehearse interview answers"
+msgid "Practice"
+msgstr "Vingrināties"
+
+#: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/prepare.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice"
+msgstr "Vingrināties"
+
+#: src/features/homepage/remember.tsx
+msgid "Practice · Your opening, about 40 seconds aloud"
+msgstr "Vingrināšanās · Jūsu ievads, apmēram 40 sekundes skaļi"
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice another question"
+msgstr "Vingrināties ar citu jautājumu"
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -8516,27 +8640,12 @@ msgstr "Vingrināšanās prioritāte:"
 msgid "Practice questions are simulated, not from Fieldnote."
 msgstr "Vingrināšanās jautājumi ir simulēti, nevis no Fieldnote."
 
-#: src/features/career/knowledge/stories.tsx
-#: src/features/career/shared.tsx
-#: src/features/career/workspace/prepare.tsx
 #: src/features/homepage/prepare.tsx
-msgid "Practise"
-msgstr "Vingrināties"
-
-#: src/features/homepage/remember.tsx
-msgid "Practise · Your opening, about 40 seconds aloud"
-msgstr "Vingrināšanās · Jūsu ievads, apmēram 40 sekundes skaļi"
-
-#: src/features/career/workspace/practise.tsx
-msgid "Practise another question"
-msgstr "Vingrināties ar citu jautājumu"
-
-#: src/features/homepage/prepare.tsx
-msgid "Practise your introduction once. Keep it to about 90 seconds."
+msgid "Practice your introduction once. Keep it to about 90 seconds."
 msgstr "Vienreiz izmēģiniet savu prezentāciju par sevi. Turiet to apmēram 90 sekunžu garumā."
 
 #: src/features/career/workspace/practise.tsx
-msgid "Practising your story: {storyTitle}"
+msgid "Practicing your story: {storyTitle}"
 msgstr "Vingrināšanās ar stāstu: {storyTitle}"
 
 #: src/features/ats-checker/messages.ts
@@ -8555,7 +8664,7 @@ msgstr "Preference"
 msgid "Preferences"
 msgstr "Preferences"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgctxt "Career preferences: the roles, places, pay and ways of working you want"
 msgid "Preferences"
@@ -8563,6 +8672,7 @@ msgstr "Preferences"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/shared.tsx
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Prepare"
@@ -8589,11 +8699,10 @@ msgid "Preparing edits…"
 msgstr "Notiek labojumu sagatavošana…"
 
 #: src/features/resume/export/use-resume-export.ts
-msgid "Preparing your resume for printing..."
-msgstr "Gatavojam CV drukāšanai..."
+msgid "Preparing resume for printing…"
+msgstr "Gatavo CV drukāšanai…"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/features/resume/editor/chrome/bar.tsx
 msgid "Preparing…"
 msgstr "Notiek sagatavošana…"
 
@@ -8641,7 +8750,7 @@ msgid "Previous month"
 msgstr "Iepriekšējais mēnesis"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
-msgid "Primary Color"
+msgid "Primary color"
 msgstr "Primārā krāsa"
 
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -8706,16 +8815,14 @@ msgstr "Personas {0} profila saite"
 msgid "Profile links must be public HTTPS addresses."
 msgstr "Profila saitēm jābūt publiskām HTTPS adresēm."
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Profiles"
 msgstr "Profili"
 
 #: src/components/level/combobox.tsx
-msgid "Progress Bar"
+msgid "Progress bar"
 msgstr "Progresa josla"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Projects"
 msgstr "Projekti"
@@ -8771,7 +8878,6 @@ msgstr "Publisko profilu saites nav obligātas, un tās tiek izmantotas tikai ta
 msgid "Public, with a password"
 msgstr "Publisks, ar paroli"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Publications"
 msgstr "Publikācijas"
@@ -8780,7 +8886,7 @@ msgstr "Publikācijas"
 msgid "Publisher"
 msgstr "Izdevējs"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Purple"
 msgstr "Violeta"
 
@@ -8792,7 +8898,7 @@ msgstr "Ievietojiet vienkāršu e-pasta adresi pirmās lapas augšdaļas tuvumā
 msgid "Put it all on <0>one page.</0>"
 msgstr "Ievietojiet to visu <0>vienā lapā.</0>"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Put the caret in a line to improve it"
 msgstr "Lai uzlabotu to, novietojiet to vienā rindā"
 
@@ -8803,6 +8909,11 @@ msgstr "QR kods"
 #: src/features/resume/share/link-tab.tsx
 msgid "QR code for {url}"
 msgstr "QR kods {url}"
+
+#. Accessible title for QR code image shown during two-factor setup
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "QR code for two-step verification"
+msgstr "QR kods divpakāpju verifikācijai"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Question {position} of {total}"
@@ -8894,6 +9005,11 @@ msgstr "Nolasa {0}, un tas var izmantot šī konta žetonus."
 msgid "Read aloud by your browser's voice."
 msgstr "Nolasa jūsu pārlūkprogrammas balss."
 
+#. placeholder {0}: dates.raw
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Read as “{0}”. Pick a month so it sorts and prints consistently."
+msgstr "Nolasīts kā “{0}”. Izvēlieties mēnesi, lai tas tiktu kārtots un drukāts konsekventi."
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Read briefing"
 msgstr "Lasīt atgādni"
@@ -8917,8 +9033,8 @@ msgid "Read questions with"
 msgstr "Jautājumus lasīt ar"
 
 #: src/features/resume/stylesheet/editor.tsx
-msgid "Read the Applying Custom Styles guide."
-msgstr "Izlasiet rokasgrāmatu Pielāgotu stilu lietošana."
+msgid "Read the “Applying custom styles” guide."
+msgstr "Izlasiet rokasgrāmatu “Pielāgotu stilu lietošana”."
 
 #: src/features/assistant/conversation.tsx
 msgid "Read the attachment"
@@ -9114,10 +9230,10 @@ msgid "Rectangle"
 msgstr "Taisnstūris"
 
 #: src/components/level/combobox.tsx
-msgid "Rectangle (Full Width)"
+msgid "Rectangle (full width)"
 msgstr "Taisnstūris (pilns platums)"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Red"
 msgstr "Sarkana"
 
@@ -9125,7 +9241,6 @@ msgstr "Sarkana"
 msgid "Redo resume change"
 msgstr "Atkārtot CV izmaiņu"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "References"
 msgstr "Atsauksmes"
@@ -9180,6 +9295,7 @@ msgid "Reload"
 msgstr "Pārlādēt"
 
 #: src/features/career/shared.tsx
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/remember.tsx
 msgid "Remember"
@@ -9189,12 +9305,12 @@ msgstr "Atcerēties"
 msgid "Remember facts from my messages"
 msgstr "Atcerēties faktus no maniem ziņojumiem"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/debrief.tsx
 msgid "Remember for {company} only?"
 msgstr "Atcerēties tikai uzņēmumam {company}?"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Remember this for future coaching?"
 msgstr "Atcerēties to turpmākām konsultācijām?"
 
@@ -9202,7 +9318,7 @@ msgstr "Atcerēties to turpmākām konsultācijām?"
 msgid "Remember your password? <0/>"
 msgstr "Atceraties paroli? <0/>"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Remembered: “{text}”"
 msgstr "Atcerēts: “{text}”"
 
@@ -9227,12 +9343,13 @@ msgstr "Attālināti"
 msgid "Remote, Hybrid, a city…"
 msgstr "Attālināti, hibrīdi, pilsēta…"
 
-#: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/resume/share/link-tab.tsx
-#: src/features/settings/account/profile.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "Noņemt"
+
+#: src/features/settings/account/security.tsx
+msgid "Remove “{name}”?"
+msgstr "Vai noņemt “{name}”?"
 
 #. placeholder {0}: attachment.filename
 #. placeholder {0}: contact.name
@@ -9270,10 +9387,23 @@ msgstr "Noņemt lauku"
 msgid "Remove file"
 msgstr "Noņemt failu"
 
+#: src/features/settings/account/security.tsx
+msgid "Remove passkey"
+msgstr "Noņemt piekļuves atslēgu"
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Remove password"
+msgstr "Noņemt paroli"
+
 #. placeholder {0}: index + 1
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Remove person {0}"
 msgstr "Noņemt personu {0}"
+
+#: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/settings/account/profile.tsx
+msgid "Remove photo"
+msgstr "Noņemt fotoattēlu"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Remove question"
@@ -9291,10 +9421,6 @@ msgstr "Noņemt birku"
 msgid "Remove the password?"
 msgstr "Vai noņemt paroli?"
 
-#: src/features/settings/account/security.tsx
-msgid "Remove this passkey?"
-msgstr "Vai noņemt šo ieejas atslēgu?"
-
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Remove this photo?"
 msgstr "Vai noņemt šo fotoattēlu?"
@@ -9308,6 +9434,10 @@ msgstr "Pārdēvēt"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Rename letter"
 msgstr "Pārdēvēt burtu"
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Rename section"
+msgstr "Pārdēvēt sadaļu"
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Rename version"
@@ -9363,14 +9493,11 @@ msgstr "Atbilde"
 msgid "Reply copied"
 msgstr "Atbilde nokopēta"
 
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/sections.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Report a bug"
 msgstr "Ziņot par kļūdu"
-
-#: src/features/homepage/footer.tsx
-msgid "Report an issue"
-msgstr "Ziņot par problēmu"
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Require a password"
@@ -9398,7 +9525,7 @@ msgstr "Atiestatīt dizaina noklusējuma iestatījumus"
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
-msgid "Reset Password"
+msgid "Reset password"
 msgstr "Atiestatīt paroli"
 
 #: src/features/auth/pages/reset-password.tsx
@@ -9463,6 +9590,8 @@ msgstr "CV"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-card.tsx
+#: src/routes/_home/index.tsx
+#: src/routes/$username/$slug.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "CV"
@@ -9487,7 +9616,7 @@ msgstr "CV + vēstule"
 msgid "Resume attached"
 msgstr "CV pievienots"
 
-#. Hero headline, line 2 of 4: A free, open-source / resume builder / and career / manager.
+#. Hero headline, line 2 of 4: A free, open-source / resume builder / and / career manager. Lines 2 and 4 are highlighted: keep each a complete phrase.
 #: src/features/homepage/hero.tsx
 msgid "resume builder"
 msgstr "CV veidošanai"
@@ -9496,7 +9625,7 @@ msgstr "CV veidošanai"
 msgid "Resume builder"
 msgstr "CV veidotājs"
 
-#: src/features/resume/preview/resume-accessible-text.tsx
+#: src/features/resume/preview/preview.browser.tsx
 msgid "Resume content"
 msgstr "CV saturs"
 
@@ -9606,7 +9735,7 @@ msgstr "Izvērtēšanai nepieciešams AI savienojums. <0>Pievienojiet to iestat�
 msgid "Revoke"
 msgstr "Atsaukt"
 
-#. placeholder {0}: key.name || key.start || ""
+#. placeholder {0}: key.name || key.start || t`unnamed key`
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "Atsaukt {0}"
@@ -9661,7 +9790,7 @@ msgstr "Personas {0} amats"
 msgid "Role, company or location"
 msgstr "Loma, uzņēmums vai atrašanās vieta"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Roles"
 msgstr "Amati"
 
@@ -9737,15 +9866,13 @@ msgstr "Sam, Fieldnote"
 msgid "Same you. Less starting over."
 msgstr "Tas pats jūs. Mazāk sākšanas no nulles."
 
-#: src/features/documents/new-document-dialog.tsx
+#: src/features/documents/use-start-document.ts
 msgid "Sample resume added. Delete it anytime."
 msgstr "Pievienots CV paraugs. Izdzēsiet to jebkurā laikā."
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
-#: src/features/documents/document-actions.tsx
 #: src/features/resume/share/history-tab.tsx
-#: src/features/settings/account/security.tsx
 msgid "Save"
 msgstr "Saglabāt"
 
@@ -9777,12 +9904,9 @@ msgstr "Saglabājiet vēl vienu piedāvājumu, lai salīdzinātu"
 msgid "Save as application…"
 msgstr "Saglabāt kā darba pieteikumu…"
 
+#: src/dialogs/resume/index.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Save changes"
-msgstr "Saglabāt izmaiņas"
-
-#: src/dialogs/resume/index.tsx
-msgid "Save Changes"
 msgstr "Saglabāt izmaiņas"
 
 #: src/features/settings/ai/web-access.tsx
@@ -9806,6 +9930,10 @@ msgstr "Saglabāt interviju"
 msgid "Save job"
 msgstr "Saglabāt darbu"
 
+#: src/features/settings/account/security.tsx
+msgid "Save name"
+msgstr "Saglabāt nosaukumu"
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Save schedule"
 msgstr "Saglabāt grafiku"
@@ -9813,6 +9941,10 @@ msgstr "Saglabāt grafiku"
 #: src/features/career/knowledge/stories.tsx
 msgid "Save story"
 msgstr "Saglabāt stāstu"
+
+#: src/features/documents/document-actions.tsx
+msgid "Save tags"
+msgstr "Saglabāt atzīmes"
 
 #: src/features/ats-checker/messages.ts
 msgid "Save the file with every page upright."
@@ -9829,6 +9961,10 @@ msgstr "Saglabāt Zināšanās"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save to the application"
 msgstr "Saglabājiet darba pieteikumā"
+
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Save your backup codes"
+msgstr "Saglabājiet rezerves kodus"
 
 #: src/features/resume/share/format.ts
 msgid "saved"
@@ -9869,7 +10005,7 @@ msgid "Saved {0} to Applications"
 msgstr "{0} saglabāts pieteikumos"
 
 #. placeholder {0}: story.data.title
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Saved a story: {0}"
 msgstr "Saglabāts stāsts: {0}"
 
@@ -9885,7 +10021,7 @@ msgstr "Saglabāts apraksts"
 msgid "Saved just now"
 msgstr "Saglabāts tikko"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Saved offers"
 msgstr "Saglabātie piedāvājumi"
 
@@ -9901,7 +10037,7 @@ msgstr "Saglabāts pieteikumos kopā ar sludinājumu"
 msgid "Saved to Knowledge as a fact"
 msgstr "Saglabāts Zināšanās kā fakts"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/debrief.tsx
 msgid "Saved to Knowledge, private to this application."
 msgstr "Saglabāts Zināšanās, redzams tikai šim pieteikumam."
@@ -9930,8 +10066,8 @@ msgid "Say it aloud"
 msgstr "Pasakiet to skaļi"
 
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Scan the QR code below with your preferred authenticator app. You can also copy the secret below and paste it into your app."
-msgstr "Skenējiet zemāk redzamo QR kodu ar savu izvēlēto autentifikatora lietotni. Varat arī nokopēt zemāk esošo slepeno kodu un ielīmēt to lietotnē."
+msgid "Scan the QR code with your authenticator app, or copy the secret and paste it into the app."
+msgstr "Skenējiet QR kodu ar autentifikatora lietotni vai nokopējiet slepeno atslēgu un ielīmējiet to lietotnē."
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Schedule an interview"
@@ -10019,7 +10155,7 @@ msgstr "Meklēšana neizdevās"
 
 #. Accessible label for icon picker search input
 #. Placeholder text in icon picker search input
-#: src/components/input/icon-picker.tsx
+#: src/components/input/icon-picker-grid.tsx
 msgid "Search for an icon"
 msgstr "Meklēt ikonu"
 
@@ -10092,7 +10228,7 @@ msgstr "Veic meklēšanu, izmantojot jūsu servera meklēšanu, un lasa lapas ar
 msgid "Searching job postings…"
 msgstr "Darba sludinājumu meklēšana…"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Searching the web"
 msgstr "Meklē tīmeklī"
 
@@ -10101,8 +10237,8 @@ msgid "Searching the web…"
 msgstr "Meklēšana tīmeklī…"
 
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Secret copied to clipboard."
-msgstr "Noslēpums nokopēts starpliktuvē."
+msgid "Secret copied"
+msgstr "Slepenā atslēga nokopēta"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Section headings"
@@ -10118,8 +10254,8 @@ msgid "Sections · print order"
 msgstr "Sadaļas · drukas pasūtījums"
 
 #: src/features/resume/editor/check/issues.ts
-msgid "Sections use headings systems recognise, and work experience shows."
-msgstr "Sadaļas izmanto virsrakstu sistēmas atpazīšanai, un darba pieredze liecina."
+msgid "Sections use headings systems recognize, and work experience shows."
+msgstr "Sadaļās izmantoti sistēmām atpazīstami virsraksti, un darba pieredze ir redzama."
 
 #: src/features/career/workspace/prepare.tsx
 msgid "See below"
@@ -10172,8 +10308,8 @@ msgstr "Sūtīt"
 
 #. Primary action button label on forgot-password form
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Send Password Reset Email"
-msgstr "Nosūtīt paroles atiestatīšanas e-pastu"
+msgid "Send reset link"
+msgstr "Nosūtīt atiestatīšanas saiti"
 
 #: src/features/ats-checker/messages.ts
 msgid "Send the resume itself rather than a portfolio wrapper."
@@ -10254,6 +10390,10 @@ msgstr "Nosūtīts"
 msgid "Sent to {0}"
 msgstr "Nosūtīts uz {0}"
 
+#: src/features/resume/share/history-tab.tsx
+msgid "Sent to Lumen"
+msgstr "Nosūtīts uz Lumen"
+
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "Serbu"
@@ -10267,7 +10407,7 @@ msgid "Set a password"
 msgstr "Iestatiet paroli"
 
 #: src/features/resume/builder/password-dialog.tsx
-msgid "Set Password"
+msgid "Set password"
 msgstr "Iestatīt paroli"
 
 #: src/features/ats-checker/messages.ts
@@ -10282,6 +10422,10 @@ msgstr "Iestatīt meklēšanu"
 msgid "Set up web search in Settings"
 msgstr "Iestatiet tīmekļa meklēšanu iestatījumos"
 
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Set up your authenticator app"
+msgstr "Iestatiet autentifikatora lietotni"
+
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
@@ -10290,22 +10434,19 @@ msgstr "Iestatiet tīmekļa meklēšanu iestatījumos"
 msgid "Settings"
 msgstr "Iestatījumi"
 
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Setup Authenticator App"
-msgstr "Iestatīt autentifikatora lietotni"
-
 #: src/features/settings/ai/mcp.tsx
 msgid "Setup guide"
 msgstr "Iestatīšanas rokasgrāmata"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Shadow Color"
-msgstr "Ēnu krāsa"
+msgid "Shadow color"
+msgstr "Ēnas krāsa"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Shadow Width"
+msgid "Shadow width"
 msgstr "Ēnas platums"
 
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/share.tsx
 #: src/features/resume/public/public-resume.tsx
@@ -10314,8 +10455,7 @@ msgstr "Ēnas platums"
 msgid "Share"
 msgstr "Dalīties"
 
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/features/resume/editor/chrome/share-sheet.tsx
 msgid "Share & export"
 msgstr "Kopīgot un eksportēt"
 
@@ -10327,8 +10467,7 @@ msgstr "Kopīgojiet publisku saiti, pievienojiet paroli vai saglabājiet to priv
 msgid "Share public resume"
 msgstr "Kopīgojiet publisko CV"
 
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/features/resume/editor/chrome/share-sheet.tsx
 msgid "Share sections"
 msgstr "Kopīgojiet sadaļas"
 
@@ -10410,6 +10549,10 @@ msgstr "Izrāde slēgta"
 msgid "Show heading"
 msgstr "Rādīt virsrakstu"
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Show icons"
+msgstr "Rādīt ikonas"
+
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
 msgstr "Rādīt saiti virsrakstā"
@@ -10430,8 +10573,12 @@ msgid "Show password"
 msgstr "Rādīt paroli"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Show picture"
-msgstr "Rādīt attēlu"
+msgid "Show photo"
+msgstr "Rādīt fotoattēlu"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Show section icons"
+msgstr "Rādīt sadaļu ikonas"
 
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Show templates"
@@ -10466,8 +10613,8 @@ msgid "Sidebar side"
 msgstr "Sānjoslas puse"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
-msgid "Sidebar Width"
-msgstr "Sānu joslas platums"
+msgid "Sidebar width"
+msgstr "Sānjoslas platums"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Sidebars are often read last, or mixed into the main column."
@@ -10502,7 +10649,7 @@ msgid "Sign out"
 msgstr "Atteikties"
 
 #: src/dialogs/auth/change-password.tsx
-msgid "Sign out from all other devices"
+msgid "Sign out of all other devices"
 msgstr "Izrakstīties no visām citām ierīcēm"
 
 #. Primary action button label on registration form
@@ -10603,7 +10750,6 @@ msgstr "Prasme"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Skills"
 msgstr "Prasmes"
@@ -10613,7 +10759,7 @@ msgid "Skip"
 msgstr "Izlaist"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Skip and Upload"
+msgid "Skip and upload"
 msgstr "Izlaist un augšupielādēt"
 
 #: src/features/homepage/page.tsx
@@ -10625,8 +10771,7 @@ msgstr "Pāriet uz saturu"
 msgid "Skip to main content"
 msgstr "Pāriet uz galveno saturu"
 
-#: src/routes/builder/$resumeId/-components/editor-shell.tsx
-#: src/routes/builder/letter/-components/letter-shell.tsx
+#: src/features/resume/editor/chrome/shell.tsx
 msgid "Skip to the page"
 msgstr "Pāriet uz lapu"
 
@@ -10679,8 +10824,8 @@ msgid "Some systems mishandle images, and photos are discouraged in some countri
 msgstr "Dažas sistēmas nepareizi apstrādā attēlus, un dažās valstīs fotoattēli nav ieteicami."
 
 #: src/features/resume/editor/check/issues.ts
-msgid "Some systems only recognise links that start with https://. This one reads as plain text: “{value}”."
-msgstr "Dažas sistēmas atpazīst tikai saites, kas sākas ar https://. Šis ir vienkāršs teksts: “{value}”."
+msgid "Some systems only recognize links that start with https://. This one reads as plain text: “{value}”."
+msgstr "Dažas sistēmas atpazīst tikai saites, kas sākas ar https://. Šī tiek nolasīta kā vienkāršs teksts: “{value}”."
 
 #: src/features/ats-checker/messages.ts
 msgid "Some text falls outside the page."
@@ -10689,35 +10834,6 @@ msgstr "Daļa teksta atrodas ārpus lapas."
 #: src/features/ats-checker/messages.ts
 msgid "Some text is rotated."
 msgstr "Daļa teksta ir pagriezta."
-
-#: src/components/layout/error-screen.tsx
-#: src/features/resume/preview/preview.browser.tsx
-msgid "Something went wrong"
-msgstr "Kaut kas nogāja greizi"
-
-#: src/features/documents/new-document-dialog.tsx
-msgid "Something went wrong while importing. Try again, or start blank."
-msgstr "Importējot radās problēma. Mēģiniet vēlreiz vai sāciet tukšu."
-
-#: src/features/ats-checker/checker.tsx
-msgid "Something went wrong while reading that file. Try again."
-msgstr "Lasot šo failu, radās problēma. Mēģiniet vēlreiz."
-
-#: src/features/auth/pages/error.tsx
-msgid "Something went wrong while signing you in. Please try again."
-msgstr "Piesakoties radās kļūda. Lūdzu, mēģiniet vēlreiz."
-
-#: src/features/resume/builder/password-dialog.tsx
-#: src/features/resume/share/link-tab.tsx
-msgid "Something went wrong. Please try again."
-msgstr "Kaut kas nogāja greizi. Lūdzu, mēģiniet vēlreiz."
-
-#: src/features/applications/use-application-actions.ts
-#: src/features/documents/document-actions.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
-msgid "Something went wrong. Try again."
-msgstr "Kaut kas nogāja greizi. Mēģiniet vēlreiz."
 
 #: src/features/documents/documents-page.tsx
 msgid "Sort"
@@ -10740,18 +10856,10 @@ msgid "Source code"
 msgstr "Avota kods"
 
 #: src/features/assistant/conversation.tsx
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 msgid "Sources"
 msgstr "Avoti"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Spacing (Horizontal)"
-msgstr "Atstatums (horizontāli)"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Spacing (Vertical)"
-msgstr "Atstatums (vertikāli)"
 
 #: src/libs/locale.ts
 msgid "Spanish"
@@ -10824,18 +10932,9 @@ msgstr "Standarta sadaļu virsraksti"
 msgid "Star Reactive Resume on GitHub"
 msgstr "Zvaigzne Reactive Resume uz GitHub"
 
-#: src/features/homepage/header.tsx
-msgid "Star Reactive Resume on GitHub, {count} stars"
-msgstr "Zvaigzne Reactive Resume uz GitHub, {count} zvaigznēm"
-
 #: src/components/input/github-stars-button.tsx
 msgid "Star us on GitHub (opens in new tab)"
 msgstr "Uzdodiet mums zvaigznīti GitHub (atveras jaunā cilnē)"
-
-#. placeholder {0}: starCount.toLocaleString()
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub, currently {0} stars (opens in new tab)"
-msgstr "Uzdodiet mums zvaigznīti GitHub, pašlaik {0} zvaigznes (atveras jaunā cilnē)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -10932,17 +11031,9 @@ msgstr "Statistika"
 msgid "Status"
 msgstr "Statuss"
 
-#: src/hooks/use-form-blocker.tsx
-msgid "Stay"
-msgstr "Palikt"
-
 #: src/features/documents/new-document-dialog.tsx
 msgid "Stay here"
 msgstr "Paliec šeit"
-
-#: src/features/resume/editor/design/fit.ts
-msgid "Still {pages} pages at 9 pt. Hide a section or shorten entries."
-msgstr "Joprojām {pages} lapas ar 9 punktiem. Slēpt sadaļu vai saīsināt ierakstus."
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
@@ -10963,7 +11054,7 @@ msgstr "Apturēt ierakstīšanu"
 msgid "Stop when you're done. Nothing is sent until then."
 msgstr "Kad pabeidzat, apturiet. Līdz tam nekas netiek sūtīts."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Stopped"
 msgstr "Apturēts"
 
@@ -10976,7 +11067,11 @@ msgstr "Apturēts pie {0}"
 msgid "Stopped. No edits were proposed."
 msgstr "Apstājās. Netika piedāvāti labojumi."
 
-#: src/features/career/coach-thread.tsx
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Store these backup codes somewhere safe. Each one signs you in once if you lose your device."
+msgstr "Glabājiet šos rezerves kodus drošā vietā. Ja pazaudējat ierīci, katrs no tiem ļauj pieteikties vienu reizi."
+
+#: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Stories"
@@ -11006,7 +11101,7 @@ msgstr "Stāsts nav atrasts"
 msgid "Strengthen"
 msgstr "Ko stiprināt"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Strikethrough"
 msgstr "Pārsvītrots"
 
@@ -11069,7 +11164,6 @@ msgid "Summaries of your open applications"
 msgstr "Jūsu aktīvo pieteikumu kopsavilkumi"
 
 #: src/features/resume/editor/write/summary-editor.tsx
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Summary"
 msgstr "Kopsavilkums"
@@ -11104,6 +11198,7 @@ msgstr "Izslēdziet to"
 msgid "Switch model"
 msgstr "Pārslēdziet modeli"
 
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to dark mode"
 msgstr "Pārslēdzieties uz tumšo režīmu"
@@ -11112,6 +11207,7 @@ msgstr "Pārslēdzieties uz tumšo režīmu"
 msgid "Switch to dark theme"
 msgstr "Pārslēgt uz tumšo tēmu"
 
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Pārslēdzieties uz gaismas režīmu"
@@ -11167,11 +11263,6 @@ msgstr "Tagi"
 #: src/dialogs/resume/index.tsx
 msgid "Tags can be used to categorize your resume by keywords."
 msgstr "Tagus var izmantot, lai kategorizētu savu CV pēc atslēgvārdiem."
-
-#. placeholder {0}: documents.length
-#: src/features/documents/document-actions.tsx
-msgid "Tags for {0} documents"
-msgstr "Dokumentu tagi ({0})"
 
 #: src/features/ats-checker/messages.ts
 msgid "Tags give software an explicit reading order. Enable them when exporting, if your tool offers it."
@@ -11315,16 +11406,13 @@ msgstr "Testēšana…"
 msgid "Text"
 msgstr "Teksts"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Text alignment"
 msgstr "Teksta līdzinājums"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
-msgid "Text Color"
-msgstr "Teksta krāsa"
-
-#: src/features/resume/editor/write/rich-text-editor.tsx
-msgid "Text colour"
+msgid "Text color"
 msgstr "Teksta krāsa"
 
 #: src/features/resume/editor/check/issues.ts
@@ -11359,7 +11447,7 @@ msgstr "Teksts atrodas galvenes vai kājenes zonā."
 msgid "Text size"
 msgstr "Teksta lielums"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Text style"
 msgstr "Teksta stils"
 
@@ -11384,8 +11472,8 @@ msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesig
 msgstr "Paldies, Sam! Lūk, viens piemērs: uzņēmumā Northwind Labs es vadīju lietotāju ievadīšanas pārveidi, sākot ar 14 klientu intervijām un beidzot ar īsāku iestatīšanu."
 
 #: src/features/ats-checker/checker.tsx
-msgid "That file couldn't be read as a PDF."
-msgstr "Šo failu nevarēja nolasīt kā PDF."
+msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
+msgstr "Šo failu nevarēja nolasīt kā PDF. Izvēlieties PDF failu un mēģiniet vēlreiz."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file is too large to check. PDFs up to 25 MB work."
@@ -11395,13 +11483,17 @@ msgstr "Šis fails ir pārāk liels, lai to pārbaudītu. PDFs līdz 25 MB darbs
 msgid "That link couldn't be read. Paste the posting text instead."
 msgstr "Šo saiti nevarēja izlasīt. Tā vietā ielīmējiet darba sludinājuma tekstu."
 
-#: src/features/auth/pages/error.tsx
-msgid "That provider account is already linked to a different user."
-msgstr "Šis pakalpojumu sniedzēja konts jau ir saistīts ar citu lietotāju."
+#: src/features/auth/pages/resume-password.tsx
+msgid "That password isn't correct. Check it with the resume owner and try again."
+msgstr "Parole nav pareiza. Pārbaudiet to pie CV īpašnieka un mēģiniet vēlreiz."
 
 #: src/features/auth/pages/error.tsx
-msgid "That provider account uses a different email address than your account."
-msgstr "Šis pakalpojumu sniedzēja konts izmanto citu e-pasta adresi nekā jūsu konts."
+msgid "That provider account is already linked to another account. Use a different provider account."
+msgstr "Šis pakalpojumu sniedzēja konts jau ir saistīts ar citu kontu. Izmantojiet citu pakalpojumu sniedzēja kontu."
+
+#: src/features/auth/pages/error.tsx
+msgid "That provider account uses a different email address than your account. Use a provider account with the same email address."
+msgstr "Šis pakalpojumu sniedzēja konts izmanto citu e-pasta adresi nekā jūsu konts. Izmantojiet pakalpojumu sniedzēja kontu ar to pašu e-pasta adresi."
 
 #: src/features/settings/ai/providers.tsx
 msgid "That provider setup isn't valid. Check the base URL."
@@ -11412,24 +11504,24 @@ msgid "That recording was empty or over 2 MB. Try a shorter answer."
 msgstr "Ieraksts bija tukšs vai lielāks par 2 MB. Mēģiniet atbildēt īsāk."
 
 #: src/features/auth/pages/error.tsx
-msgid "That sign-in provider is no longer available on this server."
-msgstr "Šis pieteikšanās pakalpojumu sniedzējs šajā serverī vairs nav pieejams."
+msgid "That sign-in provider is no longer available on this server. Use another sign-in method."
+msgstr "Šis pieteikšanās pakalpojumu sniedzējs šajā serverī vairs nav pieejams. Izmantojiet citu pieteikšanās veidu."
 
 #: src/features/resume/share/download-tab.tsx
 msgid "The {label} file couldn't be generated. Try again, or download PDF instead."
 msgstr "{label} failu nevarēja ģenerēt. Mēģiniet vēlreiz vai tā vietā lejupielādējiet PDF."
 
 #: src/features/homepage/prepare.tsx
-msgid "The 13-point activation lift. Your Knowledge has the before and after."
-msgstr "Aktivizācijas pieaugums par 13 procentpunktiem. Jūsu Zināšanās ir rādītāji pirms un pēc."
+msgid "The 13-point activation lift. Knowledge has the before and after."
+msgstr "Aktivizācijas pieaugums par 13 procentpunktiem. Zināšanās ir rādītāji pirms un pēc."
 
 #: src/features/homepage/faq.tsx
 msgid "The app is translated into {languages} languages by volunteers, and a resume can be written in any language, including right-to-left scripts like Arabic and Hebrew."
 msgstr "Brīvprātīgie šo lietotni tulko {languages} valodās, un CV var rakstīt jebkurā valodā, tostarp rakstībā no labās puses uz kreiso, piemēram, arābu un ebreju valodā."
 
 #: src/features/auth/pages/error.tsx
-msgid "The application that sent you here made an invalid authorization request."
-msgstr "Lietotne, kas jūs atsūtīja šeit, veica nederīgu autorizācijas pieprasījumu."
+msgid "The application that sent you here made an invalid authorization request. Return to the application and try again."
+msgstr "Lietotne, kas jūs atsūtīja šeit, veica nederīgu autorizācijas pieprasījumu. Atgriezieties lietotnē un mēģiniet vēlreiz."
 
 #: src/features/documents/document-actions.tsx
 msgid "The application this letter is for."
@@ -11495,10 +11587,6 @@ msgstr "Failu nevarēja nolasīt kā CV."
 msgid "The greeting follows the name."
 msgstr "Sveiciens seko vārdam."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "the key"
-msgstr "atslēga"
-
 #: src/features/settings/ai/providers.tsx
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Atslēga tiek šifrēta serverī un nekad vairs netiek rādīta. Saglabāšana pārbauda savienojumu."
@@ -11563,10 +11651,6 @@ msgstr "Lapas PDF nevarēja nolasīt. Rediģējiet jebko, lai to atkal renderēt
 msgid "The pages are pictures, with no text behind them."
 msgstr "Lapas ir attēli bez teksta aiz tiem."
 
-#: src/features/auth/pages/resume-password.tsx
-msgid "The password you entered is incorrect"
-msgstr "Ievadītā parole ir nepareiza"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "The posting asks for “{label}”. If it's true for me, work it into my resume where it fits. Ask me first."
 msgstr "Darba sludinājumā tiek prasīts “{label}”. Ja tā attiecas uz mani, iekļaujiet to manā CV, kur tas atbilst. Vispirms pajautā man."
@@ -11579,10 +11663,6 @@ msgstr "Darba sludinājumu nevarēja izlasīt. Aizpildiet lomu un uzņēmumu."
 msgid "The posting saved with this application."
 msgstr "Darba sludinājums ir saglabāts ar šo darba pieteikumu."
 
-#: src/features/settings/ai/providers.tsx
-msgid "The provider didn't answer."
-msgstr "Pakalpojumu sniedzējs neatbildēja."
-
 #: src/features/assistant/provider-setup.tsx
 msgid "The provider didn't answer. Check the key and the model."
 msgstr "Pakalpojumu sniedzējs neatbildēja. Pārbaudiet atslēgu un modeli."
@@ -11592,20 +11672,20 @@ msgid "The provider didn't answer. Check the key, the model and the base URL."
 msgstr "Pakalpojumu sniedzējs neatbildēja. Pārbaudiet atslēgu, modeli un bāzi URL."
 
 #: src/features/auth/pages/error.tsx
-msgid "The provider didn't share an email address, which is required to sign in."
-msgstr "Pakalpojumu sniedzējs nenorādīja e-pasta adresi, kas nepieciešama pieteikšanās veikšanai."
+msgid "The provider didn't share an email address, which is required. Allow email access when the provider asks, or use another sign-in method."
+msgstr "Pakalpojumu sniedzējs nekopīgoja e-pasta adresi, kas ir obligāta. Atļaujiet piekļuvi e-pastam, kad pakalpojumu sniedzējs to prasa, vai izmantojiet citu pieteikšanās veidu."
 
 #: src/features/auth/pages/error.tsx
-msgid "The provider rejected this sign-in attempt. Please start again."
-msgstr "Pakalpojumu sniedzējs noraidīja šo pieteikšanās mēģinājumu. Lūdzu, sāciet no jauna."
+msgid "The provider rejected this sign-in attempt. Try again."
+msgstr "Pakalpojumu sniedzējs noraidīja šo pieteikšanās mēģinājumu. Mēģiniet vēlreiz."
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The provider returned a review that couldn't be read. Try again."
 msgstr "Pakalpojumu sniedzējs atgrieza atsauksmi, kuru nevarēja izlasīt. Mēģiniet vēlreiz."
 
 #: src/features/auth/pages/error.tsx
-msgid "The provider's response could not be verified. Please start again."
-msgstr "Pakalpojumu sniedzēja atbildi neizdevās pārbaudīt. Lūdzu, sāciet no jauna."
+msgid "The provider's response couldn't be verified. Try again."
+msgstr "Pakalpojumu sniedzēja atbildi nevarēja pārbaudīt. Mēģiniet vēlreiz."
 
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
@@ -11619,10 +11699,6 @@ msgstr "CV"
 #: src/features/resume/share/history-tab.tsx
 msgid "The resume as it is"
 msgstr "CV tāds, kāds tas ir"
-
-#: src/features/resume/preview/preview.browser.tsx
-msgid "The resume preview could not be updated. The last valid preview is still shown."
-msgstr "CV priekšskatījumu nevarēja atjaunināt. Joprojām tiek rādīts pēdējais derīgais priekšskatījums."
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The review couldn't finish. Try again."
@@ -11658,24 +11734,24 @@ msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "Rezultāts atspoguļo to, cik uzticams teksts tiek iegūts, nevis jūsu iespējas."
 
 #: src/features/settings/ai/web-access.tsx
-msgid "The service did not respond in time."
-msgstr "Dienests laicīgi nereaģēja."
+msgid "The service didn't respond in time. Try again."
+msgstr "Pakalpojums laikus neatbildēja. Mēģiniet vēlreiz."
 
 #: src/features/settings/ai/web-access.tsx
-msgid "The service is unavailable or does not support this operation."
-msgstr "Pakalpojums nav pieejams vai neatbalsta šo darbību."
+msgid "The service is unavailable or doesn't support this. Try again later."
+msgstr "Pakalpojums nav pieejams vai to neatbalsta. Mēģiniet vēlāk."
 
 #: src/features/settings/ai/web-access.tsx
-msgid "The service quota is exhausted."
-msgstr "Pakalpojuma kvota ir izsmelta."
+msgid "The service rejected the API key. Check the key and save it again."
+msgstr "Pakalpojums noraidīja API atslēgu. Pārbaudiet atslēgu un saglabājiet to vēlreiz."
 
 #: src/features/settings/ai/web-access.tsx
-msgid "The service rejected the credentials."
-msgstr "Pakalpojums noraidīja akreditācijas datus."
+msgid "The service's quota is used up. Check your plan with the service, or try again later."
+msgstr "Pakalpojuma kvota ir izsmelta. Pārbaudiet savu plānu pakalpojumā vai mēģiniet vēlāk."
 
 #: src/features/settings/ai/providers.tsx
-msgid "The test didn't run."
-msgstr "Pārbaude nedarbojās."
+msgid "The test didn't run. Try again."
+msgstr "Pārbaude netika palaista. Mēģiniet vēlreiz."
 
 #: src/features/ats-checker/messages.ts
 msgid "The text comes out unreadable."
@@ -11694,8 +11770,8 @@ msgid "Theme"
 msgstr "Tēma"
 
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Then, enter the 6 digit code that the app provides to continue."
-msgstr "Pēc tam ievadiet 6 ciparu kodu, ko nodrošina lietotne, lai turpinātu."
+msgid "Then enter the 6-digit code from the app."
+msgstr "Pēc tam ievadiet 6 ciparu kodu no lietotnes."
 
 #: src/features/ats-checker/messages.ts
 msgid "There is a gap between two dated roles."
@@ -11750,13 +11826,13 @@ msgid "This browser can't take dictation, and none of your AI connections can tr
 msgstr "Šī pārlūkprogramma neatbalsta diktēšanu, un neviens no jūsu AI savienojumiem nevar atšifrēt runu (to var OpenAI, Google Gemini, Mistral, xAI, Groq vai Vercel AI Gateway). <0>Pievienojiet savienojumu iestatījumos</0> vai ievadiet atbildi."
 
 #: src/features/auth/pages/consent.tsx
-msgid "This connection request is invalid or has expired."
-msgstr "Šis savienojuma pieprasījums nav derīgs vai ir beidzies."
+msgid "This connection request is invalid or has expired. Start the connection again from your client."
+msgstr "Šis savienojuma pieprasījums nav derīgs vai ir beidzies. Sāciet savienojumu vēlreiz no sava klienta."
 
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
-msgid "This conversation couldn't be opened."
-msgstr "Šo sarunu nevarēja atvērt."
+msgid "This conversation couldn't be opened. Refresh the page to try again."
+msgstr "Šo sarunu nevarēja atvērt. Atsvaidziniet lapu, lai mēģinātu vēlreiz."
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date."
@@ -11858,6 +11934,10 @@ msgstr "Tas mēra, cik precīzi programmatūra spēj izgūt šī faila tekstu. T
 msgid "This month"
 msgstr "Šomēnes"
 
+#: src/components/layout/error-screen.tsx
+msgid "This page didn't load"
+msgstr "Šī lapa netika ielādēta"
+
 #: src/features/assistant/conversation.tsx
 msgid "This page is clipped or incomplete. Check the original before using it."
 msgstr "Šī lapa ir apgriezta vai nepabeigta. Pirms lietošanas pārbaudiet oriģinālu."
@@ -11883,15 +11963,19 @@ msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Šis PDF ir aizsargāts ar paroli. Saglabājiet neaizsargātu kopiju un mēģiniet vēlreiz."
 
 #: src/features/resume/builder/draft.ts
-msgid "This resume is locked and cannot be updated."
-msgstr "Šis CV ir bloķēts un to nevar atjaunināt."
+msgid "This resume is locked. Unlock it from its menu to edit."
+msgstr "Šis CV ir bloķēts. Atbloķējiet to tā izvēlnē, lai rediģētu."
+
+#: src/libs/error-message.ts
+msgid "This resume is locked. Unlock it to make changes."
+msgstr "Šis CV ir bloķēts. Atbloķējiet to, lai veiktu izmaiņas."
 
 #: src/features/ats-checker/messages.ts
 msgid "This resume is long."
 msgstr "Šis CV ir garš."
 
 #: src/features/auth/pages/resume-password.tsx
-msgid "This resume is password protected"
+msgid "This resume is password-protected"
 msgstr "Šis CV ir aizsargāts ar paroli"
 
 #: src/features/resume/editor/check/job-match.tsx
@@ -11927,8 +12011,12 @@ msgid "This saved version is no longer available."
 msgstr "Šī saglabātā versija vairs nav pieejama."
 
 #: src/features/auth/pages/error.tsx
-msgid "This sign-in attempt expired or was already used. Please start again."
-msgstr "Šī pieteikšanās mēģinājuma termiņš ir beidzies vai tas jau ir izmantots. Lūdzu, sāciet no jauna."
+msgid "This server isn't accepting new accounts. Sign in with an existing account."
+msgstr "Šis serveris nepieņem jaunus kontus. Piesakieties ar esošu kontu."
+
+#: src/features/auth/pages/error.tsx
+msgid "This sign-in attempt expired or was already used. Try again."
+msgstr "Šī pieteikšanās mēģinājuma termiņš ir beidzies vai tas jau ir izmantots. Mēģiniet vēlreiz."
 
 #: src/features/auth/pages/register.tsx
 msgid "This step is optional, but recommended."
@@ -12079,8 +12167,8 @@ msgid "Translate the app"
 msgstr "Tulkojiet lietotni"
 
 #: src/features/homepage/sections.tsx
-msgid "Translated into {languageCount} languages. Help translate it into yours."
-msgstr "Tulkots {languageCount} valodā. Palīdziet tulkot lietotni savā valodā."
+msgid "Translated into {languageCount} languages."
+msgstr "Tulkots {languageCount} valodās."
 
 #: src/features/homepage/footer.tsx
 msgid "Translations"
@@ -12114,7 +12202,7 @@ msgid "Try a sample"
 msgstr "Izmēģiniet paraugu"
 
 #: src/components/layout/error-screen.tsx
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/shell.tsx
@@ -12156,6 +12244,15 @@ msgstr "Turku"
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "Eksportējot izslēdziet izvēles ligatūras."
 
+#. Destructive action button to turn off two-factor authentication
+#: src/dialogs/auth/disable-two-factor.tsx
+msgid "Turn off two-step verification"
+msgstr "Izslēgt divpakāpju verifikāciju"
+
+#: src/dialogs/auth/disable-two-factor.tsx
+msgid "Turn off two-step verification?"
+msgstr "Vai izslēgt divpakāpju verifikāciju?"
+
 #: src/features/resume/share/link-tab.tsx
 msgid "Turn on the link to choose an address."
 msgstr "Ieslēdziet saiti, lai izvēlētos adresi."
@@ -12164,9 +12261,21 @@ msgstr "Ieslēdziet saiti, lai izvēlētos adresi."
 msgid "Turn on the public link to count views and downloads. Counts are anonymous."
 msgstr "Ieslēdziet publisko saiti, lai uzskaitītu skatījumus un lejupielādes. Lietojumu skaits ir anonīms."
 
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Turn on two-step verification"
+msgstr "Ieslēgt divpakāpju verifikāciju"
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "Ieslēgt šo grafiku"
+
+#: src/dialogs/auth/disable-two-factor.tsx
+msgid "Turning off two-step verification…"
+msgstr "Notiek divpakāpju verifikācijas izslēgšana…"
+
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Turning on two-step verification…"
+msgstr "Notiek divpakāpju verifikācijas ieslēgšana…"
 
 #: src/features/resume/editor/design/template-group.tsx
 #: src/features/templates/gallery.tsx
@@ -12214,26 +12323,18 @@ msgid "Two-column, minimal with light gray sidebar and subtle icons; professiona
 msgstr "Divkolonnu izkārtojums, minimāls ar gaiši pelēku sānu joslu un diskrētām ikonām; profesionāls un neuzkrītošs juridiskiem, finanšu vai vadības amatiem."
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Two-Factor Authentication"
-msgstr "Divu faktoru autentifikācija"
-
-#: src/dialogs/auth/disable-two-factor.tsx
-msgid "Two-factor authentication is now disabled."
-msgstr "Divu faktoru autentifikācija tagad ir atspējota."
-
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Two-factor authentication is now enabled."
-msgstr "Divu faktoru autentifikācija tagad ir iespējota."
-
-#. Accessible title for QR code image shown during two-factor setup
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Two-Factor Authentication QR Code"
-msgstr "Divu faktoru autentifikācija QR kods"
-
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/account/security.tsx
 msgid "Two-step verification"
 msgstr "Divpakāpju verifikācija"
+
+#: src/dialogs/auth/disable-two-factor.tsx
+msgid "Two-step verification turned off"
+msgstr "Divpakāpju verifikācija izslēgta"
+
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Two-step verification turned on"
+msgstr "Divpakāpju verifikācija ieslēgta"
 
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/workspace/practise.tsx
@@ -12271,16 +12372,17 @@ msgstr "Tipogrāfija"
 msgid "Ukrainian"
 msgstr "Ukraiņu"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Underline"
 msgstr "Pasvītrots"
 
 #: src/features/resume/editor/design/style-groups.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Underline links"
 msgstr "Pasvītrot saites"
 
 #: src/features/assistant/document.ts
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
 #: src/features/career/today.tsx
 #: src/features/career/workspace/fit.tsx
@@ -12322,10 +12424,6 @@ msgstr "Atsaistīt"
 msgid "Unlink this application"
 msgstr "Atsaistīt šo darba pieteikumu"
 
-#: src/features/settings/account/auth-hooks.ts
-msgid "Unlinking your {providerName} account..."
-msgstr "Tiek atvienots jūsu {providerName} konts..."
-
 #. Primary action button label to unlock a password-protected resume
 #: src/features/auth/pages/resume-password.tsx
 #: src/features/documents/document-actions.tsx
@@ -12344,6 +12442,10 @@ msgstr "Atbloķējiet rediģēšanu"
 msgid "Unlock it first"
 msgstr "Vispirms atbloķējiet to"
 
+#: src/features/settings/ai/api-keys.tsx
+msgid "unnamed key"
+msgstr "nenosaukta atslēga"
+
 #: src/features/settings/account/security.tsx
 msgid "Unnamed passkey"
 msgstr "Nenosaukta piekļuves atslēga"
@@ -12353,11 +12455,11 @@ msgstr "Nenosaukta piekļuves atslēga"
 msgid "Untitled"
 msgstr "Bez nosaukuma"
 
-#: src/features/documents/new-document-dialog.tsx
+#: src/features/documents/use-start-document.ts
 msgid "Untitled letter"
 msgstr "Vēstule bez nosaukuma"
 
-#: src/features/documents/new-document-dialog.tsx
+#: src/features/documents/use-start-document.ts
 msgid "Untitled resume"
 msgstr "CV bez nosaukuma"
 
@@ -12377,39 +12479,21 @@ msgstr "Līdz 25 MB · pārbaudīts jūsu pārlūkprogrammā, nekad nav augšupi
 msgid "Upcoming interviews"
 msgstr "Gaidāmās intervijas"
 
-#. Primary action button to submit changed password
-#: src/dialogs/auth/change-password.tsx
-msgid "Update Password"
-msgstr "Atjaunināt paroli"
-
 #: src/dialogs/resume/index.tsx
-msgid "Update Resume"
+msgid "Update resume"
 msgstr "Atjaunināt CV"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Update this application's details."
 msgstr "Atjauniniet šī pieteikuma informāciju."
 
-#: src/dialogs/auth/change-password.tsx
-msgid "Update your password"
-msgstr "Atjauniniet savu paroli"
-
 #: src/features/applications/components/list-view.tsx
 msgid "Updated"
 msgstr "Atjaunināts"
 
-#. placeholder {0}: result.updated
-#: src/features/applications/components/list-view.tsx
-msgid "Updated {0}"
-msgstr "Atjaunināts {0}"
-
 #: src/features/documents/document-actions.tsx
 msgid "Updated {done} of {total}. Locked documents, and letters for public links, were skipped."
 msgstr "Atjaunināti {done} no {total}. Bloķētie dokumenti, kā arī motivācijas vēstules publiskajām saitēm, tika izlaisti."
-
-#: src/dialogs/auth/change-password.tsx
-msgid "Updating your password..."
-msgstr "Tiek atjaunināta jūsu parole..."
 
 #: src/dialogs/resume/index.tsx
 msgid "Updating your resume..."
@@ -12424,12 +12508,12 @@ msgid "Upload a PDF and see the text an applicant tracking system extracts: what
 msgstr "Augšupielādējiet PDF un skatiet tekstu, ko izvilk pieteikuma iesniedzēja izsekošanas sistēma: kas trūkst, kas nav kārtībā un kā to labot. Bezmaksas, konts nav nepieciešams."
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Upload picture"
-msgstr "Augšupielādēt attēlu"
+msgid "Upload photo"
+msgstr "Augšupielādēt fotoattēlu"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Uploading picture…"
-msgstr "Augšupielādē attēlu…"
+msgid "Uploading photo…"
+msgstr "Augšupielādē fotoattēlu…"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "URL"
@@ -12455,6 +12539,16 @@ msgstr "Izmantojiet {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Izmantojiet 3–64 mazos burtus, ciparus, punktus, defises un pasvītras."
 
+#: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/disable-two-factor.tsx
+#: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/login.tsx
+#: src/features/auth/pages/register.tsx
+#: src/features/auth/pages/reset-password.tsx
+#: src/features/auth/pages/resume-password.tsx
+msgid "Use 64 characters or fewer."
+msgstr "Izmantojiet ne vairāk kā 64 rakstzīmes."
+
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Use a darker shade"
 msgstr "Izmantojiet tumšāku nokrāsu"
@@ -12464,7 +12558,7 @@ msgid "Use a plain international form, such as +1 555 010 1234."
 msgstr "Izmantojiet vienkāršu starptautisku formātu, piemēram, +1 555 010 1234."
 
 #: src/features/ats-checker/messages.ts
-msgid "Use a recognised form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
+msgid "Use a recognized form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
 msgstr "Izmantojiet atpazīstamu formātu, piemēram, \"Jan 2020 - Mar 2022\" vai \"2020 - 2022\"."
 
 #: src/features/ats-checker/messages.ts
@@ -12475,6 +12569,16 @@ msgstr "Izmantojiet vienu kolonnu visam, kas jālasa secīgi."
 msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "Izmantojiet A4 vai US Letter formātu, lai izkārtojums saglabātos atkārtotas attēlošanas laikā."
 
+#: src/features/auth/pages/register.tsx
+msgid "Use at least 3 characters."
+msgstr "Izmantojiet vismaz 3 rakstzīmes."
+
+#: src/dialogs/auth/change-password.tsx
+#: src/features/auth/pages/register.tsx
+#: src/features/auth/pages/reset-password.tsx
+msgid "Use at least 8 characters."
+msgstr "Izmantojiet vismaz 8 rakstzīmes."
+
 #: src/features/ats-checker/messages.ts
 msgid "Use at least 9pt."
 msgstr "Izmantojiet vismaz 9pt."
@@ -12484,7 +12588,6 @@ msgid "Use between 6 and 64 characters."
 msgstr "Izmantojiet no 6 līdz 64 rakstzīmēm."
 
 #: src/components/input/color-picker.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Use color {color}"
 msgstr "Izmantojiet krāsu {color}"
 
@@ -12510,12 +12613,16 @@ msgid "Use lowercase letters, numbers and single dashes."
 msgstr "Izmantojiet mazos burtus, ciparus un atsevišķas domuzīmes."
 
 #: src/features/career/knowledge/search-regions-field.tsx
-msgid "Use my time zone"
-msgstr "Izmantojiet manu laika joslu"
+msgid "Use my timezone"
+msgstr "Izmantot manu laika joslu"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use one column"
 msgstr "Izmantojiet vienu kolonnu"
+
+#: src/features/auth/pages/register.tsx
+msgid "Use only lowercase letters, numbers, dots, hyphens and underscores."
+msgstr "Izmantojiet tikai mazos burtus, ciparus, punktus, defises un pasvītras."
 
 #: src/features/ats-checker/messages.ts
 msgid "Use plain headings such as \"Experience\", \"Education\" and \"Skills\"."
@@ -12549,7 +12656,7 @@ msgstr "Izmantojiet šo pakalpojumu sniedzēju"
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
 msgstr "Izmantojiet redaktora parasto aizzīmju sarakstu, lai nejauši glifi nenokļūtu teikuma vidū."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Used"
 msgstr "Izmantots"
 
@@ -12634,7 +12741,7 @@ msgid "Verify"
 msgstr "Verificēt"
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Verify with a Backup Code"
+msgid "Verify with a backup code"
 msgstr "Verificēt ar rezerves kodu"
 
 #: src/features/career/schedule-sheet.tsx
@@ -12674,6 +12781,14 @@ msgstr "Versija nosūtīta {date} · Pārbaudiet {0}"
 msgid "Versions"
 msgstr "Versijas"
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Vertical margin"
+msgstr "Vertikālā mala"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Vertical spacing"
+msgstr "Vertikālais atstatums"
+
 #: src/features/ats-checker/messages.ts
 msgid "Very few words were recovered for a resume."
 msgstr "Vienam CV tika atgūts ļoti maz vārdu."
@@ -12690,7 +12805,7 @@ msgstr "Video saite, biroja adrese vai tālruņa numurs"
 msgid "Vietnamese"
 msgstr "Vjetnamiešu"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "View"
@@ -12740,7 +12855,6 @@ msgstr "Apmeklētāji to ievada, pirms viņi redz CV. Kopīgojiet to tikai ar ci
 msgid "Voice settings"
 msgstr "Balss iestatījumi"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
 msgstr "Brīvprātīgais darbs"
@@ -12761,28 +12875,6 @@ msgstr "Brīdinājums"
 msgid "WCAG 2.1 AA"
 msgstr "WCAG 2.1 AA"
 
-#: src/components/layout/not-found-screen.tsx
-msgid "We couldn't find that page"
-msgstr "Mēs nevarējām atrast šo lapu."
-
-#: src/features/auth/pages/error.tsx
-msgid "We couldn't link that provider account. Please try again."
-msgstr "Mums neizdevās saistīt šo pakalpojumu sniedzēja kontu. Lūdzu, mēģiniet vēlreiz."
-
-#. placeholder {0}: dates.raw
-#: src/features/resume/editor/write/dates-field.tsx
-msgid "We couldn't read \"{0}\". Enter the dates so they sort and print consistently."
-msgstr "Mēs nevarējām izlasīt \"{0}\". Ievadiet datumus, lai tie tiktu kārtoti un drukāti konsekventi."
-
-#: src/features/auth/pages/error.tsx
-msgid "We couldn't read your profile from the provider."
-msgstr "Mums neizdevās nolasīt jūsu profilu no pakalpojumu sniedzēja."
-
-#. placeholder {0}: dates.raw
-#: src/features/resume/editor/write/dates-field.tsx
-msgid "We read \"{0}\". Pick a month so it sorts and prints consistently."
-msgstr "Mēs lasām \"{0}\". Izvēlieties mēnesi, lai tas kārtotos un drukātu konsekventi."
-
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "We read the page and save the posting for Check, the assistant and your letter."
 msgstr "Mēs lasām lapu un saglabājam darba sludinājumu Čekam, asistentam un jūsu vēstulei."
@@ -12792,8 +12884,8 @@ msgid "We sent a confirmation link to {email}. Open it to finish the change."
 msgstr "Mēs nosūtījām apstiprinājuma saiti uz {email}. Atveriet to, lai pabeigtu izmaiņas."
 
 #: src/features/settings/account/profile.tsx
-msgid "We sent a link to {currentEmail} to approve the change. After that, confirm {email} from its own email."
-msgstr "Mēs nosūtījām saiti uz {currentEmail}, lai apstiprinātu izmaiņas. Pēc tam apstipriniet {email}, izmantojot ziņojumu, kas nosūtīts uz šo e-pasta adresi."
+msgid "We sent a link to {currentEmail} to approve the change. Then open the link we send to {email}."
+msgstr "Mēs nosūtījām saiti uz {currentEmail}, lai apstiprinātu izmaiņas. Pēc tam atveriet saiti, ko nosūtīsim uz {email}."
 
 #. placeholder {0}: user.email
 #: src/features/settings/account/profile.tsx
@@ -12803,10 +12895,6 @@ msgstr "Mēs nosūtījām jaunu verifikācijas saiti uz {0}."
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "Piekļuve tīmeklim"
-
-#: src/features/settings/ai/web-access.tsx
-msgid "Web access settings couldn't be saved or loaded."
-msgstr "Tīmekļa piekļuves iestatījumus nevarēja saglabāt vai ielādēt."
 
 #: src/features/career/coach.tsx
 msgid "Web research"
@@ -12875,10 +12963,6 @@ msgstr "Ko tieši jūs darījāt?"
 msgid "What did you say, as close as you remember?"
 msgstr "Ko jūs atbildējāt? Pēc iespējas tuvāk tam, ko atceraties."
 
-#: src/features/resume/editor/write/section-row.tsx
-msgid "What do you want to rename this section to?"
-msgstr "Uz kādu nosaukumu vēlaties pārdēvēt šo sadaļu?"
-
 #: src/features/homepage/faq.tsx
 msgid "What formats can I download?"
 msgstr "Kādus formātus es varu lejupielādēt?"
@@ -12888,7 +12972,7 @@ msgid "What goes in it?"
 msgstr "Kas tajā iet?"
 
 #: src/features/career/coach.tsx
-msgid "What interview answers should I practise?"
+msgid "What interview answers should I practice?"
 msgstr "Kuras intervijas atbildes man vajadzētu vingrināt?"
 
 #: src/features/career/offers.tsx
@@ -12907,7 +12991,7 @@ msgstr "Ko tas prasa"
 msgid "What it checks"
 msgstr "Ko tas pārbauda"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "What matters"
 msgstr "Kas ir svarīgi"
 
@@ -13107,6 +13191,7 @@ msgstr "Vērts pajautāt"
 msgid "Worth asking {0}"
 msgstr "Vērts pajautāt: {0}"
 
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/write.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
@@ -13165,7 +13250,7 @@ msgid "Write one about something you did, in five parts. Leave a part blank unti
 msgstr "Uzrakstiet vienu stāstu par kaut ko, ko darījāt, piecās daļās. Atstājiet daļu tukšu, līdz varēsiet to pamatot."
 
 #: src/features/ats-checker/messages.ts
-msgid "Write the full address so it is recognised as a link."
+msgid "Write the full address so it is recognized as a link."
 msgstr "Rakstiet pilnu adresi, lai to atpazītu kā saiti."
 
 #: src/features/career/workspace/fit.tsx
@@ -13186,7 +13271,7 @@ msgstr "Uzrakstiet savu profesionālo CV"
 msgid "Writing"
 msgstr "Teksts"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Writing an answer…"
 msgstr "Raksta atbildi…"
 
@@ -13207,7 +13292,7 @@ msgid "Yes. Every feature is free: all {templates} templates, PDF and Word downl
 msgstr "Jā. Katra funkcija ir bezmaksas: visas {templates} veidnes, PDF un Word lejupielādes, ATS pārbaudītājs, pavadvēstules un darbu izsekotājs. Nav reklāmu, nav izsekošanas un nav apmaksāta līmeņa. Ziedojumi maksā par hostingu un attīstību."
 
 #: src/features/homepage/faq.tsx
-msgid "Yes. Every job you track gets its own workspace: check your fit against the posting, draft answers from stories you wrote once, get a short plan before the interview, practise out loud with feedback and debrief afterwards. When offers arrive, compare them side by side. The coaching uses your own AI key; the comparison doesn’t need one."
+msgid "Yes. Every job you track gets its own workspace: check your fit against the posting, draft answers from stories you wrote once, get a short plan before the interview, practice out loud with feedback and debrief afterwards. When offers arrive, compare them side by side. The coaching uses your own AI key; the comparison doesn’t need one."
 msgstr "Jā. Katram izsekotajam darbam ir sava darba telpa: pārbaudiet atbilstību sludinājumam, sagatavojiet atbildes no vienreiz uzrakstītiem stāstiem, saņemiet īsu plānu pirms intervijas, vingrinieties skaļi ar atsauksmēm un pēc tam izvērtējiet. Kad pienāk piedāvājumi, salīdziniet tos blakus. Konsultēšanai tiek izmantota jūsu AI atslēga; salīdzināšanai tā nav vajadzīga."
 
 #: src/features/homepage/faq.tsx
@@ -13252,9 +13337,13 @@ msgstr "Varat turpināt rediģēt. Izmaiņas tiek sinhronizētas, kad atkal esat
 msgid "You can keep up to 30 application questions."
 msgstr "Varat saglabāt līdz 30 pieteikuma jautājumiem."
 
+#: src/features/settings/account/security.tsx
+msgid "You can no longer sign in with this passkey."
+msgstr "Ar šo piekļuves atslēgu vairs nevarat pieteikties."
+
 #: src/features/auth/pages/error.tsx
-msgid "You cancelled the sign-in before it finished."
-msgstr "Jūs atcēlāt pieteikšanos, pirms tā tika pabeigta."
+msgid "You canceled the sign-in before it finished. Try again when you're ready."
+msgstr "Jūs atcēlāt pieteikšanos, pirms tā tika pabeigta. Mēģiniet vēlreiz, kad esat gatavs."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "You don't have a resume to copy yet. Import or create a resume first, then return to copy it for this job."
@@ -13263,10 +13352,6 @@ msgstr "Jums vēl nav CV, ko kopēt. Vispirms importējiet vai izveidojiet CV, p
 #: src/features/career/workspace/debrief.tsx
 msgid "You forgot this before, so it wasn't saved again."
 msgstr "Jūs to jau iepriekš aizmirsāt, tāpēc tas netika saglabāts vēlreiz."
-
-#: src/hooks/use-form-blocker.tsx
-msgid "You have unsaved changes that will be lost."
-msgstr "Jums ir nesaglabātas izmaiņas, kas tiks zaudētas."
 
 #: src/features/homepage/prepare.tsx
 msgid "You partnered with engineering. How you led the work isn’t described yet."
@@ -13315,11 +13400,6 @@ msgstr "Viss apskatīts"
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "Jūs izmantojat viesa kontu"
-
-#: src/features/auth/pages/forgot-password.tsx
-#: src/features/auth/pages/register.tsx
-msgid "You've got mail!"
-msgstr "Jums ir jauna vēstule!"
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
@@ -13414,8 +13494,8 @@ msgid "Your email address is broken across pieces of text."
 msgstr "Jūsu e-pasta adrese ir sadalīta pa vairākiem teksta fragmentiem."
 
 #: src/features/auth/pages/error.tsx
-msgid "Your email address isn't verified with the provider."
-msgstr "Jūsu e-pasta adrese nav apstiprināta pie pakalpojumu sniedzēja."
+msgid "Your email address isn't verified with the provider. Verify it there, then try again."
+msgstr "Jūsu e-pasta adrese nav apstiprināta pie pakalpojumu sniedzēja. Apstipriniet to tur un pēc tam mēģiniet vēlreiz."
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -13444,14 +13524,6 @@ msgstr "Jūsu CV virsraksts ir mainīts. Vēstule arī atjaunināta."
 #: src/features/career/workspace/debrief.tsx
 msgid "your Knowledge"
 msgstr "jūsu Zināšanas"
-
-#: src/features/homepage/remember.tsx
-msgid "Your Knowledge"
-msgstr "Jūsu Zināšanas"
-
-#: src/features/homepage/prepare.tsx
-msgid "Your Knowledge doesn’t mention mentoring."
-msgstr "Jūsu Zināšanās nav minēta mentorēšana."
 
 #: src/features/ats-checker/messages.ts
 msgid "Your lines are packed very tightly."
@@ -13485,10 +13557,6 @@ msgstr "Jūsu vārds ir mainīts CV. Vēstule arī atjaunināta."
 msgid "Your name is missing"
 msgstr "Trūkst jūsu vārda"
 
-#: src/features/homepage/hero.tsx
-msgid "Your next chapter starts here"
-msgstr "Jūsu nākamā nodaļa sākas šeit"
-
 #: src/features/career/workspace/saved.tsx
 msgid "your notes"
 msgstr "jūsu piezīmes"
@@ -13504,14 +13572,6 @@ msgstr "Jūsu ievads"
 #: src/features/career/workspace/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Jūsu ievads, stāsti, ko pieminēt, un jautājumi, ko uzdot. 10 minūtes pirms zvana tas kļūst par jūsu kontrolsarakstu."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Your password has been reset. You can now sign in with your new password."
-msgstr "Jūsu parole ir atiestatīta. Tagad varat pieteikties ar jauno paroli."
-
-#: src/dialogs/auth/change-password.tsx
-msgid "Your password has been updated."
-msgstr "Jūsu parole ir atjaunināta."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your phone number changed on the resume. The letter updated too."

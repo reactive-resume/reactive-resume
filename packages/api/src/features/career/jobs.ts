@@ -10,6 +10,7 @@ import { generateId } from "@reactive-resume/utils/string";
 import { STALE_AGENT_RUN_TTL_MS } from "../agent/runs";
 import { aiProvidersService } from "../ai-providers/service";
 import { readOpenPosting, searchJobPostings } from "../applications/posting";
+import { lockUser } from "../documents/ownership";
 import { documentsService } from "../documents/service";
 import { webAccessService } from "../web-access/credentials";
 import { searchScope } from "../web-access/regions";
@@ -27,12 +28,13 @@ const workspaceUrl = (applicationId: string | null, tab?: string) =>
 function assertRunner() {
 	if (!isCareerSchedulingEnabled())
 		throw new ORPCError("PRECONDITION_FAILED", {
-			message: "Configure CRON_SECRET on Vercel before enabling schedules.",
+			message: "Schedules aren't available on this server. Ask the server administrator to set CRON_SECRET.",
 		});
 }
 
 // Enough for a discovery search per field plus briefings and follow-ups for a busy search.
 const MAX_SCHEDULES_PER_USER = 100;
+const READ_NOTIFICATION_TTL_MS = 90 * 24 * 60 * 60 * 1000;
 // Due jobs inspected per claim; owners that are busy or locked are skipped, not waited on.
 const CLAIM_CANDIDATES = 20;
 
@@ -53,14 +55,14 @@ export const careerJobs = {
 		if (input.kind === "prepare" && interview?.type === "interview")
 			input.nextRunAt = prepareRunAt(new Date(interview.at), input.lead ?? "24h", input.timezone);
 		if (input.kind === "discovery" && !input.query)
-			throw new ORPCError("BAD_REQUEST", { message: "Supply a public job-search query." });
+			throw new ORPCError("BAD_REQUEST", { message: "Enter a job search query." });
 		if (input.kind !== "discovery" && !input.applicationId)
 			throw new ORPCError("BAD_REQUEST", { message: "Choose an application." });
 		if (input.kind === "prepare" && !input.interviewId)
 			throw new ORPCError("BAD_REQUEST", { message: "Choose an interview round." });
 		if (input.kind === "prepare" && input.enabled) {
 			if (!input.aiProviderId)
-				throw new ORPCError("BAD_REQUEST", { message: "Choose a tested AI connection for scheduled preparation." });
+				throw new ORPCError("BAD_REQUEST", { message: "Choose a tested AI provider for scheduled preparation." });
 			await aiProvidersService.getRunnableById({ userId, id: input.aiProviderId });
 		} else if (input.aiProviderId) {
 			// Any other schedule may name a connection too; it still has to be one of the account's own.
@@ -68,7 +70,8 @@ export const careerJobs = {
 				.select({ id: tables.aiProvider.id })
 				.from(tables.aiProvider)
 				.where(and(eq(tables.aiProvider.id, input.aiProviderId), eq(tables.aiProvider.userId, userId)));
-			if (!provider) throw new ORPCError("NOT_FOUND", { message: "That AI connection doesn't exist." });
+			if (!provider)
+				throw new ORPCError("NOT_FOUND", { message: "That AI provider no longer exists. Choose another provider." });
 		}
 		if (input.email) {
 			const [owner] = await db
@@ -77,7 +80,8 @@ export const careerJobs = {
 				.where(eq(tables.user.id, userId));
 			if (!owner?.verified || !env.SMTP_HOST || !env.SMTP_USER || !env.SMTP_PASS || !env.SMTP_FROM)
 				throw new ORPCError("PRECONDITION_FAILED", {
-					message: "Owner email reminders require a verified account email and configured SMTP.",
+					message:
+						"Email reminders need a verified email address and email delivery on this server. Verify your email, or turn off email reminders.",
 				});
 		}
 		const { id, ...values } = input;
@@ -105,11 +109,7 @@ export const careerJobs = {
 			}
 			if (!id) {
 				// Serialize this user's creates so the cap holds under concurrent requests.
-				await tx
-					.select({ id: tables.user.id })
-					.from(tables.user)
-					.where(eq(tables.user.id, userId))
-					.for("no key update");
+				await lockUser(tx, userId);
 				const [count] = await tx
 					.select({ total: sql<number>`count(*)::int` })
 					.from(tables.careerSchedule)
@@ -604,7 +604,7 @@ export async function runCareerJobs() {
 					status: job.attempts >= 3 ? "failed" : "queued",
 					lease: null,
 					leaseUntil: new Date(Date.now() + 300_000),
-					error: "Career work failed. Check the selected provider and application, then review this schedule.",
+					error: "This schedule failed. Check the selected provider and application, then review the schedule.",
 				})
 				.where(
 					and(
@@ -637,5 +637,10 @@ export async function runCareerJobs() {
 		.delete(tables.releasedUsername)
 		.where(lte(tables.releasedUsername.releasedAt, new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)))
 		.catch((error: unknown) => console.error("[auth] Released username cleanup failed", error));
+	// Read notifications go after 90 days, so the list every dashboard page loads stops growing. Unread ones stay.
+	await db
+		.delete(tables.careerNotification)
+		.where(lte(tables.careerNotification.readAt, new Date(Date.now() - READ_NOTIFICATION_TTL_MS)))
+		.catch((error: unknown) => console.error("[career] Read notification cleanup failed", error));
 	return { processed };
 }

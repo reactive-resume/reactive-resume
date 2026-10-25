@@ -1,17 +1,23 @@
 import type { DialogSchema } from "./schemas";
-import { authDialogRenderers } from "./auth/registry";
-import { documentDialogRenderers } from "./document/registry";
-import { resumeDialogRenderers } from "./resume/registry";
+import { ChangePasswordDialog } from "./auth/change-password";
+import { DisableTwoFactorDialog } from "./auth/disable-two-factor";
+import { EnableTwoFactorDialog } from "./auth/enable-two-factor";
+import { ResumeDialog } from "./resume";
+import { NewDocumentDialog } from "@/features/documents/new-document-dialog";
 
-const dialogRendererByType = new Map(
-	[...authDialogRenderers, ...documentDialogRenderers, ...resumeDialogRenderers].map(
-		(renderer) => [renderer.type, renderer] as const,
-	),
-);
-
-export const renderDialog = (dialog: DialogSchema | null) => {
-	if (!dialog) return null;
-	const renderer = dialogRendererByType.get(dialog.type);
-	if (renderer) return renderer.render(dialog as never);
-	return null;
+export const renderDialog = (dialog: DialogSchema) => {
+	switch (dialog.type) {
+		case "auth.change-password":
+			return <ChangePasswordDialog />;
+		case "auth.two-factor.enable":
+			return <EnableTwoFactorDialog />;
+		case "auth.two-factor.disable":
+			return <DisableTwoFactorDialog />;
+		case "document.new":
+			return <NewDocumentDialog data={dialog.data} />;
+		case "resume.update":
+			return <ResumeDialog mode="update" data={dialog.data} />;
+		case "resume.duplicate":
+			return <ResumeDialog mode="duplicate" data={dialog.data} />;
+	}
 };

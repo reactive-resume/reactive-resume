@@ -64,7 +64,7 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 	const titles = {
 		menu: t`Document options`,
 		rename: t`Rename`,
-		duplicate: t`Duplicate Resume`,
+		duplicate: t`Duplicate resume`,
 		notes: t`Notes`,
 		details: t`Resume details`,
 	};

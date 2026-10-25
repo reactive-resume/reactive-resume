@@ -133,7 +133,7 @@ export function TodayScreen() {
 												: next.interview.kind === "behavioral"
 													? t`Behavioral interview`
 													: next.interview.kind === "onsite"
-														? t`On-site interview`
+														? t`Onsite interview`
 														: t`Interview`}
 									</Text>
 									<Text>{time.when(next.start)}</Text>
@@ -300,7 +300,7 @@ export function TodayScreen() {
 												onPress={() => {
 													if (/^https?:\/\//i.test(row.url))
 														void openBrowserAsync(row.url).catch(() =>
-															showToast({ message: t`Couldn't open the posting.` }),
+															showToast({ message: t`Couldn't open the posting. Try again.` }),
 														);
 												}}
 											/>

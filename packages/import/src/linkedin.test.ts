@@ -13,7 +13,7 @@ function makeZip(files: Record<string, string>): Uint8Array {
 describe("parseLinkedInExport", () => {
 	it("throws when the ZIP has none of the expected LinkedIn CSVs", () => {
 		const zip = makeZip({ "Random.csv": "a,b\n1,2\n" });
-		expect(() => parseLinkedInExport(zip)).toThrow(/doesn't look like a LinkedIn data export/);
+		expect(() => parseLinkedInExport(zip)).toThrow(/isn't a LinkedIn data export/);
 	});
 
 	it("imports basics and summary from Profile.csv", () => {

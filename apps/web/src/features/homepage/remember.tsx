@@ -73,7 +73,7 @@ function useDraft(destination: Destination, withResult: boolean): Draft {
 	};
 	const contexts: Record<Destination, string> = {
 		answer: t`Apply · Describe a product improvement you led.`,
-		opening: t`Practise · Your opening, about 40 seconds aloud`,
+		opening: t`Practice · Your opening, about 40 seconds aloud`,
 		reply: t`Messages · Reply to Sam at Fieldnote`,
 	};
 	const kept = drafts[destination].filter(([part]) => withResult || part !== "r");
@@ -140,9 +140,9 @@ export function Remember() {
 			<div className="mt-[7vh] grid items-start gap-x-[5vw] gap-y-12 min-[1000px]:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
 				{/* Knowledge: the story on an index card, with its result's fact clipped to it. */}
 				<div className="relative flex [transform:translateY(calc((1-var(--rin))*8vh))_rotate(calc(-1.2deg-(1-var(--rin))*3deg))] flex-col opacity-[clamp(0,var(--rin)*3,1)] [transition:transform_.5s_var(--ease)]">
-					<span className={cn(labelClass, "mb-3 text-ink-3")}>{t`Your Knowledge`}</span>
-					<div className="on-paper rounded-[3px] bg-paper px-[clamp(18px,2vw,30px)] py-[clamp(18px,2vw,26px)] shadow-paper">
-						<span className="font-martian flex items-center gap-2 text-[11px] font-medium tracking-[.08em] text-accent-text uppercase">
+					<span className={cn(labelClass, "mb-3 text-ink-3")}>{t`Knowledge`}</span>
+					<div className="on-paper rounded-md bg-paper px-[clamp(18px,2vw,30px)] py-[clamp(18px,2vw,26px)] shadow-paper">
+						<span className="font-martian flex items-center gap-2 text-xs font-medium text-accent-text">
 							<Icon name="book-open" size={15} />
 							{t`Story · 5 of 5 parts`}
 						</span>
@@ -165,7 +165,7 @@ export function Remember() {
 										<span
 											aria-hidden="true"
 											className={cn(
-												"grid size-6 shrink-0 place-items-center rounded-[5px] border text-[12px] font-bold transition-[background-color,border-color,color] duration-300",
+												"grid size-6 shrink-0 place-items-center rounded-md border text-[12px] font-bold transition-[background-color,border-color,color] duration-300",
 												missing
 													? "border-dashed border-line-2 text-ink-3"
 													: used
@@ -179,7 +179,7 @@ export function Remember() {
 											<span className="flex flex-wrap items-center gap-x-2 text-[12px] font-semibold text-ink-2">
 												{part.label}
 												{missing && (
-													<span className="inline-flex items-center gap-1 rounded-[4px] bg-warn-soft px-1.5 text-[11px] font-medium text-warn-text">
+													<span className="inline-flex items-center gap-1 rounded-lg bg-warn-soft px-1.5 text-[11px] font-medium text-warn-text">
 														<Icon name="question" size={12} />
 														{t`No evidence yet`}
 													</span>
@@ -203,11 +203,11 @@ export function Remember() {
 						/>
 						<div
 							className={cn(
-								"on-paper rounded-[3px] bg-paper px-5 py-4 ring-2 shadow-paper transition-shadow duration-500",
+								"on-paper rounded-md bg-paper px-5 py-4 ring-2 shadow-paper transition-shadow duration-500",
 								withResult ? "ring-transparent" : "ring-[oklch(0.75_0.09_70/.6)]",
 							)}
 						>
-							<span className="font-martian flex items-center gap-2 text-[10.5px] font-medium tracking-[.08em] text-ink-3 uppercase">
+							<span className="font-martian flex items-center gap-2 text-xs font-medium text-ink-3">
 								{t`Fact · Accomplishment`}
 							</span>
 							<p className="mt-1.5 font-ui text-[14px] leading-[1.5] text-ink">
@@ -242,8 +242,7 @@ export function Remember() {
 									strokeLinecap="round"
 									strokeLinejoin="round"
 									strokeDasharray="1 2"
-									className="[filter:url(#landing-pencil)] [transition:stroke-dashoffset_.8s_var(--ease)]"
-									style={{ strokeDashoffset: "calc(1 - clamp(0, (var(--p) - .55) / .25, 1))" }}
+									className="[filter:url(#landing-pencil)] [stroke-dashoffset:calc(1-clamp(0,(var(--p)-.55)/.25,1))] [transition:stroke-dashoffset_.8s_var(--ease)]"
 								/>
 							</svg>
 							<span className="mb-6 -rotate-3 font-display text-[19px] whitespace-nowrap italic opacity-[clamp(0,(var(--p)-.6)*6,1)]">
@@ -262,13 +261,13 @@ export function Remember() {
 							setDestination(value as Destination);
 							setChanged(true);
 						}}
-						className="h-auto max-w-full [scrollbar-width:none] self-start overflow-x-auto rounded-full border border-line bg-[color-mix(in_oklch,var(--surface)_85%,transparent)] p-1"
+						className="h-auto max-w-full [scrollbar-width:none] self-start overflow-x-auto rounded-sm border border-line bg-[color-mix(in_oklch,var(--surface)_85%,transparent)] p-1"
 					>
 						{destinations.map((item) => (
 							<SegmentedControlItem
 								key={item.value}
 								value={item.value}
-								className="h-9 flex-none rounded-full px-3.5 font-ui text-[13.5px] duration-300 data-checked:bg-ink data-checked:text-bg data-checked:shadow-none"
+								className="h-9 flex-none rounded-sm px-3.5 font-ui text-[13.5px] duration-300 data-checked:bg-ink data-checked:text-bg data-checked:shadow-none"
 							>
 								<span className="max-[520px]:hidden">{item.label}</span>
 								<span className="min-[521px]:hidden">{item.short}</span>
@@ -276,10 +275,8 @@ export function Remember() {
 						))}
 					</SegmentedControl>
 
-					<div className="on-paper relative rotate-[.5deg] rounded-[3px] bg-paper px-[clamp(20px,3.4vw,52px)] py-[clamp(22px,3vw,44px)] shadow-paper">
-						<span className="font-martian text-[11px] font-medium tracking-[.08em] text-accent-text uppercase">
-							{draft.context}
-						</span>
+					<div className="on-paper relative rotate-[.5deg] rounded-md bg-paper px-[clamp(20px,3.4vw,52px)] py-[clamp(22px,3vw,44px)] shadow-paper">
+						<span className="font-martian text-xs font-medium text-accent-text">{draft.context}</span>
 						<p
 							key={`${destination}-${withResult}`}
 							aria-live="polite"

@@ -11,6 +11,14 @@ const errorStatus = (error: unknown): number => {
 	return 500;
 };
 
+// Browsers keep the file but ask again on every use: the access checks run first, then a current copy gets 304.
+// `private` keeps it out of shared caches; Vary names every input that decides access.
+const cacheHeaders = (etag: string) => ({
+	"Cache-Control": "private, no-cache",
+	ETag: etag,
+	Vary: "Cookie, Authorization, X-Api-Key",
+});
+
 export async function handlePublicResumePdf(
 	request: Request,
 	username: string,
@@ -25,12 +33,14 @@ export async function handlePublicResumePdf(
 			trustedClient,
 		});
 
+		if (!result.body) return new Response(null, { status: 304, headers: cacheHeaders(result.etag) });
+
 		return new Response(result.body, {
 			headers: {
 				"Content-Type": "application/pdf",
 				"Content-Disposition": `inline; filename="${result.filename.replaceAll('"', "")}"`,
-				"Cache-Control": "private, no-store",
 				"X-Content-Type-Options": "nosniff",
+				...cacheHeaders(result.etag),
 			},
 		});
 	} catch (error) {

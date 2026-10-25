@@ -17,7 +17,7 @@ export function ConnectedAppsSection() {
 		queryKey,
 		queryFn: async () => {
 			const { data, error } = await authClient.oauth2.getConsents();
-			if (error) throw new Error(t`Could not load connected applications.`);
+			if (error) throw new Error(t`Couldn't load connected applications. Refresh the page to try again.`);
 			return Promise.all(
 				(data ?? []).map(async (connection) => {
 					const client = await authClient.oauth2
@@ -31,7 +31,7 @@ export function ConnectedAppsSection() {
 	const revoke = useMutation({
 		mutationFn: async (id: string) => {
 			const { error } = await authClient.oauth2.deleteConsent({ id });
-			if (error) throw new Error(t`Could not revoke this connection. Try again.`);
+			if (error) throw new Error(t`Couldn't revoke this connection. Try again.`);
 		},
 		onSuccess: () => queryClient.invalidateQueries({ queryKey }),
 	});
@@ -48,7 +48,7 @@ export function ConnectedAppsSection() {
 				</p>
 			) : connections.length === 0 ? (
 				<p className="text-sm text-ink-3">
-					<Trans>No connected applications.</Trans>
+					<Trans>No connected applications yet. Apps you allow to access your account appear here.</Trans>
 				</p>
 			) : (
 				<ul className="divide-y divide-line">

@@ -21,7 +21,7 @@ import {
 	richTextMarkClassName,
 	richTextSemanticNodeKeyAttribute,
 } from "./rich-text-html";
-import { renderRichTextParagraph, renderWithBoundedIndent, toRichTextStyleArray } from "./rich-text-renderers";
+import { renderRichTextParagraph, renderWithBoundedIndent } from "./rich-text-renderers";
 import {
 	createRichTextProseSpacing,
 	getRichTextEdgeTrimStyle,
@@ -275,7 +275,7 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 							flexShrink: 0,
 						};
 					}
-					const itemStyles = toRichTextStyleArray(style);
+					const itemStyles = composeStyles(style);
 					const contentItemStyles = itemStyles.map(stripRichTextVerticalMargins);
 
 					// The scoped @react-pdf/layout patch keeps these companions together using

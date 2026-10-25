@@ -45,7 +45,7 @@ export async function importDocument(
 ): Promise<ImportedDocument> {
 	const server = getServer();
 	const assertCurrent = () => {
-		if (signal.aborted) throw new ImportError(t`Import cancelled.`);
+		if (signal.aborted) throw new ImportError(t`Import canceled.`);
 		if (getServer() !== server) throw new ImportError(t`Server changed. Return to Documents and try again.`);
 	};
 	const file = new File(asset.uri);

@@ -4,7 +4,6 @@ import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 
 const mocks = vi.hoisted(() => ({ renderHere: vi.fn() }));
 vi.mock("@reactive-resume/pdf/browser", () => ({ createResumePdfBlob: mocks.renderHere }));
-vi.mock("@/libs/resume/section-title-locale", () => ({ createSectionTitleResolverForLocale: async () => () => "" }));
 
 const pageMap = { pages: [{ width: 595, height: 842 }], nodes: [] };
 
@@ -39,7 +38,7 @@ describe("createResumePdfBlob", () => {
 		const { createResumePdfBlob } = await import("./pdf-document");
 		const onPageMap = vi.fn();
 
-		await expect(createResumePdfBlob(sampleResumeData, undefined, undefined, { onPageMap })).resolves.toBe(blob);
+		await expect(createResumePdfBlob(sampleResumeData, undefined, { onPageMap })).resolves.toBe(blob);
 		expect(onPageMap).toHaveBeenCalledWith(pageMap);
 		// Later renders skip the broken worker.
 		await createResumePdfBlob(sampleResumeData);

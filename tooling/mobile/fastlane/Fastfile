@@ -44,31 +44,17 @@ platform :android do
     end
   end
 
-  desc "Publish to every existing Play testing track"
+  desc "Submit a Google Play production release"
   lane :upload do
-    options = {
+    upload_to_play_store(
       package_name: "me.rxresu",
       json_key_data: ENV.fetch("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"),
-      track: "internal", release_status: "completed",
+      aab: File.join(OUTPUT, "ReactiveResume.aab"),
+      track: "production", release_status: "completed",
+      changes_not_sent_for_review: false, rescue_changes_not_sent_for_review: false,
       skip_upload_apk: true, skip_upload_metadata: true, skip_upload_changelogs: true,
       skip_upload_images: true, skip_upload_screenshots: true
-    }
-    version_code = Integer(ENV.fetch("MOBILE_BUILD_NUMBER"), 10)
-    upload_to_play_store(**options, aab: File.join(OUTPUT, "ReactiveResume.aab"))
-
-    client = Supply::Client.make_from_config
-    client.begin_edit(package_name: "me.rxresu")
-    begin
-      tracks = client.tracks.map(&:track).reject { |track| track == "internal" || track.split(":").last == "production" }
-    ensure
-      client.abort_current_edit
-    end
-    tracks.each do |track|
-      upload_to_play_store(
-        **options, skip_upload_aab: true, track_promote_to: track,
-        track_promote_release_status: "completed", version_code: version_code
-      )
-    end
+    )
   end
 end
 
@@ -126,21 +112,19 @@ platform :ios do
     end
   end
 
-  desc "Publish to all existing TestFlight groups"
+  desc "Submit to App Review and release automatically after approval"
   lane :upload do
     api_key = app_store_connect_api_key(
       key_id: ENV.fetch("ASC_KEY_ID"), issuer_id: ENV.fetch("ASC_ISSUER_ID"),
       key_content: ENV.fetch("ASC_PRIVATE_KEY")
     )
-    groups = Spaceship::ConnectAPI::App.get(app_id: "6823975835").get_beta_groups
-    UI.user_error!("Configure a TestFlight testing group before publishing") if groups.empty?
-    external = groups.any? { |group| !group.is_internal_group }
-    upload_to_testflight(
-      api_key: api_key, app_identifier: "me.rxresu", apple_id: "6823975835",
+    upload_to_app_store(
+      api_key: api_key, app_identifier: "me.rxresu",
       ipa: File.join(OUTPUT, "ReactiveResume.ipa"),
-      skip_submission: false, skip_waiting_for_build_processing: false,
-      groups: groups.map(&:id), distribute_external: external, submit_beta_review: external,
-      notify_external_testers: true, changelog: "Please test resume editing, PDF export and account sign-in."
+      submit_for_review: true, automatic_release: true,
+      # Metadata processing also applies automatic_release; existing listing fields stay in App Store Connect.
+      skip_metadata: false, skip_screenshots: true, force: true,
+      precheck_include_in_app_purchases: false
     )
   end
 end

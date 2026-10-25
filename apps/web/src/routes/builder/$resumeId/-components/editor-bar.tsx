@@ -1,20 +1,18 @@
 import type { EditorMode } from "@/features/resume/editor/store";
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
-import { ButtonGroup } from "@reactive-resume/ui/components/button-group";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { DocumentMenu } from "./document-menu";
-import { AssistantButton } from "@/features/assistant/assistant-button";
 import { useCurrentBuilderResumeSelector, useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
 import { useOpenIssueCount } from "@/features/resume/editor/check/use-check";
-import { BackLink, DrawerControls } from "@/features/resume/editor/chrome";
+import { DownloadButtons, EditorBarFrame } from "@/features/resume/editor/chrome/bar";
 import { useEditorStore } from "@/features/resume/editor/store";
-import { useResumeExport } from "@/features/resume/export/use-resume-export";
+import { preloadDocumentExport, useResumeExport } from "@/features/resume/export/use-resume-export";
 
 type EditorBarProps = {
 	layout: "desktop" | "tablet" | "mobile";
@@ -30,30 +28,22 @@ export function EditorBar({ layout, pinnable }: EditorBarProps) {
 	// Download and Share need a connection.
 	const offline = useResumeStore((state) => state.saveStatus === "offline");
 	const wide = useBreakpoint() === "wide";
+	const resume = useCurrentResume();
+	const { onDownloadPDF, isExporting } = useResumeExport(resume);
 
 	return (
-		<header className="grid h-(--editor-bar) grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-b border-line bg-surface px-3">
-			<div className="flex min-w-0 items-center gap-1.5">
-				<BackLink />
-				{layout === "tablet" && <DrawerControls pinnable={pinnable} />}
-				<div className="flex min-w-0 flex-col items-start">
-					<DocumentMenu />
-				</div>
-			</div>
-
-			{layout === "mobile" ? <span /> : <ModeTabs />}
-
-			<div className="flex items-center justify-end gap-1">
-				{layout === "desktop" && <HistoryButton />}
-				{/* Every layout opens the assistant from the ✦: a column, a drawer, or full screen on phones. */}
-				<span className={layout === "desktop" ? "me-1.5" : undefined}>
-					<AssistantButton />
-				</span>
-				{/* Below 1280 the bar is too narrow for Share's label next to everything else. */}
-				<ShareButton compact={layout !== "desktop" || !wide} disabled={offline} />
-				<DownloadButtons compact={layout === "mobile"} iconOnly={layout === "tablet"} disabled={offline} />
-			</div>
-		</header>
+		<EditorBarFrame layout={layout} pinnable={pinnable} menu={<DocumentMenu />} modes={<ModeTabs />}>
+			{/* Below 1280 the bar is too narrow for Share's label next to everything else. */}
+			<ShareButton compact={layout !== "desktop" || !wide} disabled={offline} />
+			<DownloadButtons
+				busy={isExporting}
+				onDownload={() => void onDownloadPDF()}
+				onPreload={preloadDocumentExport}
+				compact={layout === "mobile"}
+				iconOnly={layout === "tablet"}
+				disabled={offline}
+			/>
+		</EditorBarFrame>
 	);
 }
 
@@ -89,26 +79,12 @@ function CheckBadge({ count }: { count: number }) {
 	}
 
 	return (
-		<span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-warn-soft px-[5px] text-[11px] font-semibold text-warn-text">
-			{count}
+		<span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-sm bg-warn-soft px-[5px] text-[11px] font-semibold text-warn-text">
+			<span aria-hidden="true">{count}</span>
 			<span className="sr-only">
-				<Trans>open issues</Trans>
+				<Plural value={count} one="# open issue" other="# open issues" />
 			</span>
 		</span>
-	);
-}
-
-/** History lives in the Share & export sheet; the clock opens it there. */
-function HistoryButton() {
-	const setShareTab = useEditorStore((state) => state.setShareTab);
-
-	return (
-		<IconButton
-			icon="clock-counter-clockwise"
-			label={t`History`}
-			className="text-ink-2"
-			onClick={() => setShareTab("history")}
-		/>
 	);
 }
 
@@ -154,50 +130,5 @@ function ShareButton({ compact, disabled }: ToolbarActionProps) {
 				</Badge>
 			)}
 		</Button>
-	);
-}
-
-/** Download PDF is the only filled button; the ▾ segment opens the Download tab with every format. */
-function DownloadButtons({ compact, iconOnly, disabled }: ToolbarActionProps & { iconOnly?: boolean }) {
-	const resume = useCurrentResume();
-	const { onDownloadPDF, isExporting } = useResumeExport(resume);
-	const setShareTab = useEditorStore((state) => state.setShareTab);
-
-	if (compact) {
-		return (
-			<IconButton
-				icon="download-simple"
-				label={t`Download PDF`}
-				shortcut="⌘P"
-				disabled={disabled || isExporting}
-				onClick={() => void onDownloadPDF()}
-			/>
-		);
-	}
-
-	return (
-		<ButtonGroup aria-label={t`Download`}>
-			{/* Tablets drop the label so the bar fits beside the mode switch; the button keeps its name. */}
-			<Button
-				loading={isExporting}
-				disabled={disabled}
-				size={iconOnly ? "icon" : "default"}
-				aria-label={iconOnly ? t`Download PDF` : undefined}
-				className="gap-1.5"
-				onClick={() => void onDownloadPDF()}
-			>
-				{!isExporting && <Icon name="download-simple" />}
-				{iconOnly ? null : isExporting ? <Trans>Preparing…</Trans> : <Trans>Download PDF</Trans>}
-			</Button>
-			<Button
-				size="icon"
-				disabled={disabled || isExporting}
-				aria-label={t`More download formats`}
-				className="w-8 border-s border-s-[oklch(1_0_0/0.25)]"
-				onClick={() => setShareTab("download")}
-			>
-				<Icon name="caret-down" />
-			</Button>
-		</ButtonGroup>
 	);
 }

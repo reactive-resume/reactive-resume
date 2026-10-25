@@ -5,6 +5,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { cn } from "@reactive-resume/utils/style";
 import { getPdfFindingMessage } from "../messages";
+import { RollingNumber } from "@/components/ui/rolling-number";
 
 function scoreTone(score: number) {
 	if (score >= 80) return { text: "text-accent-text", bar: "bg-accent" };
@@ -23,17 +24,19 @@ export function ScoreHeader({ report }: ScoreHeaderProps) {
 	return (
 		<div className="space-y-3 rounded-md border bg-surface p-3">
 			<div className="flex items-baseline gap-2">
-				<span className={cn("text-4xl leading-none font-bold tabular-nums", tone.text)}>{report.score}</span>
+				<span className={cn("text-4xl leading-none font-bold tabular-nums", tone.text)}>
+					<RollingNumber value={report.score} />
+				</span>
 				<span className="text-sm text-ink-3">
 					<Trans>out of 100</Trans>
 				</span>
 			</div>
 
 			{/* Fills from empty when the report first shows. The starting --fill needs !important to beat the inline one; it's derived through --fill so RTL still fills from the right. */}
-			<div className="h-1.5 overflow-hidden rounded-full bg-sunken">
+			<div className="h-1.5 overflow-hidden rounded-sm bg-sunken">
 				<div
 					className={cn(
-						"h-full translate-x-(--fill) rounded-full transition-[translate,background-color] duration-emphasized ease-enter rtl:-translate-x-(--fill) starting:[--fill:-100%]!",
+						"h-full translate-x-(--fill) rounded-sm transition-[translate,background-color] duration-emphasized ease-enter rtl:-translate-x-(--fill) starting:[--fill:-100%]!",
 						tone.bar,
 					)}
 					style={{ "--fill": `${report.score - 100}%` } as CSSProperties}

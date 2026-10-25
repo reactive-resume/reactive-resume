@@ -33,8 +33,6 @@ const NONE: readonly never[] = [];
 export function PageCanvas() {
 	const data = useResumeData();
 	const format = useCurrentBuilderResumeSelector((resume) => resume.data.metadata.page.format);
-	const select = useEditorStore((state) => state.select);
-	const setDrawerOpen = useEditorStore((state) => state.setDrawerOpen);
 	const previewTemplate = useEditorStore((state) => state.previewTemplate);
 	const historyVersionId = useEditorStore((state) => state.historyVersionId);
 	const pageView = useEditorStore((state) => state.pageView);
@@ -77,9 +75,9 @@ export function PageCanvas() {
 	const shifted = sheetOpen && (breakpoint === "desktop" || breakpoint === "wide");
 
 	const onSelect = (selection: EditorSelection) => {
-		select(selection);
+		useEditorStore.setState({ selection });
 		// Tablet: tapping a line opens the drawer on that entry.
-		if (breakpoint === "tablet") setDrawerOpen(true);
+		if (breakpoint === "tablet") useEditorStore.setState({ drawerOpen: true });
 		// Phones show the page and the panel one at a time; the selection bar opens the entry instead.
 		if (mode === "write" && !isPhone) revealSelectionInPanel(selection);
 	};
@@ -96,8 +94,8 @@ export function PageCanvas() {
 				// dismisses the selection bar.
 				onPointerDown={(event) => {
 					if ((event.target as HTMLElement).closest("[data-kind]")) return;
-					if (breakpoint === "tablet") setDrawerOpen(false);
-					if (isPhone) select(null);
+					if (breakpoint === "tablet") useEditorStore.setState({ drawerOpen: false });
+					if (isPhone) useEditorStore.setState({ selection: null });
 				}}
 				className={cn(
 					"absolute inset-0 overflow-auto pb-24 outline-none",
@@ -248,7 +246,7 @@ function OverflowChip({ authored, lines }: OverflowChipProps) {
 				}}
 				className="h-6 rounded-md bg-surface px-2.5 text-xs font-semibold whitespace-nowrap text-ink shadow-e1 disabled:opacity-60"
 			>
-				{authored === 1 ? <Trans>Fit to one page</Trans> : <Trans>Fit to {authored} pages</Trans>}
+				<Plural value={authored} _1="Fit to one page" other="Fit to # pages" />
 			</button>
 		</span>
 	);

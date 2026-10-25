@@ -127,7 +127,11 @@ function JobDescriptionAutofill({ value, onChange, onFill }: JobDescriptionAutof
 				onFill(result);
 				toast.add({ type: "success", description: t`Filled in what we could from the posting.` });
 			},
-			onError: (error) => toast.add({ type: "error", description: error.message || t`Auto-fill failed.` }),
+			onError: (error) =>
+				toast.add({
+					type: "error",
+					description: error.message || t`Couldn't fill in the fields. Try again, or fill them in yourself.`,
+				}),
 		}),
 	);
 
@@ -238,10 +242,10 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 		orpc.applications.create.mutationOptions({
 			onSuccess: () => {
 				invalidate();
-				toast.add({ type: "success", description: t`Application added to your pipeline.` });
+				toast.add({ type: "success", description: t`Application added` });
 				onOpenChange(false);
 			},
-			onError: () => toast.add({ type: "error", description: t`Couldn't add the application. Please try again.` }),
+			onError: () => toast.add({ type: "error", description: t`Couldn't add the application. Try again.` }),
 		}),
 	);
 
@@ -249,10 +253,10 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 		orpc.applications.update.mutationOptions({
 			onSuccess: () => {
 				invalidate();
-				toast.add({ type: "success", description: t`Application updated.` });
+				toast.add({ type: "success", description: t`Application updated` });
 				onOpenChange(false);
 			},
-			onError: () => toast.add({ type: "error", description: t`Couldn't save your changes. Please try again.` }),
+			onError: () => toast.add({ type: "error", description: t`Couldn't save your changes. Try again.` }),
 		}),
 	);
 
@@ -570,7 +574,7 @@ function TagsField({ id, value, suggestions, onChange }: TagsFieldProps) {
 					{value.map((tag) => (
 						<span
 							key={tag}
-							className="inline-flex items-center gap-1 rounded-full bg-sunken px-2 py-0.5 text-xs text-ink-3"
+							className="inline-flex items-center gap-1 rounded-sm bg-sunken px-2 py-0.5 text-xs text-ink-3"
 						>
 							{tag}
 							<button

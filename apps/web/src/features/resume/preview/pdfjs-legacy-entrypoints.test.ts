@@ -26,6 +26,9 @@ const pdfjsMock = vi.hoisted(() => {
 			AnnotationMode: { DISABLE: 0 },
 			getDocument: vi.fn(() => loadingTask),
 			GlobalWorkerOptions: {} as { workerSrc?: string },
+			PDFWorker: class PDFWorker {
+				destroyed = false;
+			},
 			RenderingCancelledException: class RenderingCancelledException extends Error {},
 		},
 		loadingTask,
@@ -66,8 +69,8 @@ describe("PDF.js browser entrypoints", () => {
 		const cancel = vi.fn(() => rejectRender(new pdfjsMock.legacyModule.RenderingCancelledException("cancelled")));
 		pdfjsMock.page.render.mockReturnValueOnce({ promise, cancel });
 		const controller = new AbortController();
-		const { createPdfFirstPageImageUrl } = await import("./pdf-thumbnail");
-		const pending = createPdfFirstPageImageUrl(new Blob(["%PDF"]), { width: 600, height: 900 }, controller.signal);
+		const { createPdfFirstPageImage } = await import("./pdf-thumbnail");
+		const pending = createPdfFirstPageImage(new Blob(["%PDF"]), { width: 600, height: 900 }, controller.signal);
 		const rejected = expect(pending).rejects.toMatchObject({ name: "AbortError" });
 		await vi.waitFor(() => expect(pdfjsMock.page.render).toHaveBeenCalledTimes(1));
 		try {

@@ -87,7 +87,7 @@ function DocumentItem({
 				gap: space.s2,
 				padding: space.s3,
 				backgroundColor: selected ? colors.selectedFill : colors.surface,
-				borderRadius: radius.rXl,
+				borderRadius: radius.rLg,
 				borderWidth: 1,
 				borderColor: selected ? colors.accent : colors.line,
 			}}
@@ -301,7 +301,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 			</View>
 			{session.status === "signed-in" && (
 				<>
-					{trashed && <Text color="ink2">{t`Items are deleted permanently after 30 days.`}</Text>}
+					{trashed && <Text color="ink2">{t`Documents are deleted permanently after 30 days.`}</Text>}
 					{recoverable.length > 0 && (
 						<View style={{ gap: space.s2 }}>
 							<Text variant="title" accessibilityRole="header">{t`Unsynced on this device`}</Text>
@@ -409,7 +409,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 						</View>
 					)}
 					{trashed && all.length > 0 && (
-						<Button label={t`Empty Trash`} variant="danger" disabled={operations.busy} onPress={() => setPurge(all)} />
+						<Button label={t`Empty trash`} variant="danger" disabled={operations.busy} onPress={() => setPurge(all)} />
 					)}
 				</>
 			)}
@@ -481,7 +481,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 								all.length
 									? t`Try another search or clear your filters.`
 									: trashed
-										? t`Items you move here stay for 30 days.`
+										? t`Documents you move here stay for 30 days.`
 										: t`Import your current resume, or start fresh with your name.`
 							}
 							action={
@@ -538,7 +538,11 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 				))}
 			<ConfirmDialog
 				open={session.status === "signed-in" && purge !== null}
-				title={t`Delete forever?`}
+				title={
+					purge?.length === 1
+						? t`Delete “${purge[0]?.name}” forever?`
+						: plural(purge?.length ?? 0, { one: "Delete # document forever?", other: "Delete # documents forever?" })
+				}
 				message={
 					purge?.length === 1
 						? t`“${purge[0]?.name}” will be deleted for good and can't be restored.`
@@ -547,8 +551,9 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 								other: "# documents will be deleted for good and can't be restored.",
 							})
 				}
-				confirmLabel={t`Delete forever`}
+				confirmLabel={t`Hold to delete`}
 				destructive
+				hold
 				onCancel={() => {
 					if (!operations.busy) setPurge(null);
 				}}

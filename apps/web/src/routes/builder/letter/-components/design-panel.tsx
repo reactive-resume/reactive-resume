@@ -59,11 +59,10 @@ function useLetterDesignSource() {
  */
 export function LetterDesignPanel() {
 	const letter = useLetterEditorStore((state) => state.letter);
-	const setPreview = useEditorStore((state) => state.setPreviewTemplate);
 	const designSource = useLetterDesignSource();
 	const { data: resumes } = useQuery(orpc.resume.list.queryOptions({ input: {} }));
 	// Leaving Design never leaves a preview on the page.
-	useEffect(() => () => setPreview(null), [setPreview]);
+	useEffect(() => () => useEditorStore.setState({ previewTemplate: null }), []);
 	if (!letter) return null;
 
 	const resume = resumes?.find((item) => item.id === letter.sourceResumeId);
@@ -127,9 +126,10 @@ export function LetterDesignPanel() {
 					<fieldset
 						disabled={disabled}
 						className="m-0 grid min-w-0 grid-cols-2 gap-3 border-0 p-0"
-						onMouseLeave={() => setPreview(null)}
+						onMouseLeave={() => useEditorStore.setState({ previewTemplate: null })}
 						onBlur={(event) => {
-							if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setPreview(null);
+							if (!event.currentTarget.contains(event.relatedTarget as Node | null))
+								useEditorStore.setState({ previewTemplate: null });
 						}}
 					>
 						<legend className="sr-only">
@@ -142,10 +142,10 @@ export function LetterDesignPanel() {
 									key={id}
 									type="button"
 									aria-pressed={selected}
-									onMouseEnter={() => setPreview(id === current ? null : id)}
-									onFocus={() => setPreview(id === current ? null : id)}
+									onMouseEnter={() => useEditorStore.setState({ previewTemplate: id === current ? null : id })}
+									onFocus={() => useEditorStore.setState({ previewTemplate: id === current ? null : id })}
 									onClick={() => {
-										setPreview(null);
+										useEditorStore.setState({ previewTemplate: null });
 										if (!selected) void updateDesign({ template: id }).catch(failed);
 									}}
 									className="group/template grid gap-1.5 text-start disabled:cursor-not-allowed disabled:opacity-60"
@@ -165,7 +165,7 @@ export function LetterDesignPanel() {
 											className="size-full object-cover object-top"
 										/>
 										{selected && (
-											<span className="absolute end-1.5 top-1.5 grid size-5 place-items-center rounded-full bg-accent text-on-accent">
+											<span className="absolute end-1.5 top-1.5 grid size-5 place-items-center rounded-sm bg-accent text-on-accent">
 												<Icon name="check" size={14} />
 											</span>
 										)}

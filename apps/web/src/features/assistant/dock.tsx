@@ -1,9 +1,11 @@
+import type { AssistantDocument } from "./document";
 import type { Breakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import type { Variants } from "motion/react";
 import type { ReactNode } from "react";
 import { useDirection } from "@base-ui/react/direction-provider";
 import { AnimatePresence, m } from "motion/react";
-import { AssistantPanel } from "./assistant-panel";
+import { lazy, Suspense } from "react";
+import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { useLetterAssistantDocument, useResumeAssistantDocument } from "./document";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { D2, D3, EASE, EXIT } from "@/libs/motion";
@@ -169,6 +171,25 @@ export function AssistantOverlay({ place, children }: AssistantOverlayProps) {
 	);
 }
 
+// The panel (AI SDK, Markdown) loads when the assistant first opens; hovering ✦ starts it early.
+export const loadAssistantPanel = () => import("./assistant-panel");
+const AssistantPanel = lazy(() => loadAssistantPanel().then((module) => ({ default: module.AssistantPanel })));
+
+function Panel({ document }: { document: AssistantDocument }) {
+	return (
+		<Suspense
+			fallback={
+				// Hidden for the first 150ms, so a quick load never flashes a spinner.
+				<div className="grid h-full flex-1 place-items-center transition-opacity delay-150 duration-standard ease-enter starting:opacity-0">
+					<Spinner />
+				</div>
+			}
+		>
+			<AssistantPanel document={document} onClose={closeAssistant} />
+		</Suspense>
+	);
+}
+
 /** Closing the panel hands focus back to the ✦ button in the bar, as closing any panel should. */
 function closeAssistant() {
 	useEditorStore.getState().setAssistantOpen(false);
@@ -177,11 +198,11 @@ function closeAssistant() {
 
 export function ResumeAssistant() {
 	const document = useResumeAssistantDocument();
-	return <AssistantPanel document={document} onClose={closeAssistant} />;
+	return <Panel document={document} />;
 }
 
 export function LetterAssistant() {
 	const document = useLetterAssistantDocument();
 	if (!document) return null;
-	return <AssistantPanel document={document} onClose={closeAssistant} />;
+	return <Panel document={document} />;
 }

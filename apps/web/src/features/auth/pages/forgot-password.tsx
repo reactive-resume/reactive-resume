@@ -15,7 +15,7 @@ import { ENTER_CLASS } from "@/libs/motion";
 import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
-	email: z.email(),
+	email: z.email({ error: () => t`Enter a valid email address.` }),
 });
 
 export function ForgotPasswordPage() {
@@ -39,7 +39,7 @@ export function ForgotPasswordPage() {
 						error.message ||
 						t({
 							comment: "Fallback toast when requesting password reset email fails without backend message",
-							message: "Failed to send password reset email. Please try again.",
+							message: "Couldn't send the password reset email. Try again.",
 						}),
 					id: toastId,
 				});
@@ -92,7 +92,7 @@ export function ForgotPasswordPage() {
 					{(field) => (
 						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
 							<FormLabel>
-								<Trans comment="Label for email input on forgot-password form">Email Address</Trans>
+								<Trans comment="Label for email input on forgot-password form">Email address</Trans>
 							</FormLabel>
 							<FormControl
 								render={
@@ -113,7 +113,7 @@ export function ForgotPasswordPage() {
 				</form.Field>
 
 				<Button type="submit" className="w-full" disabled={isSubmitting}>
-					<Trans comment="Primary action button label on forgot-password form">Send Password Reset Email</Trans>
+					<Trans comment="Primary action button label on forgot-password form">Send reset link</Trans>
 				</Button>
 			</form>
 		</>
@@ -126,7 +126,7 @@ function PostForgotPasswordScreen() {
 		<div className={cn(ENTER_CLASS, "grid gap-y-6")}>
 			<div className="space-y-1 text-center">
 				<h1 className="text-2xl font-semibold tracking-tight">
-					<Trans>You've got mail!</Trans>
+					<Trans>Check your email</Trans>
 				</h1>
 				<p className="text-ink-3">
 					<Trans>Check your email for a link to reset your password.</Trans>
@@ -137,7 +137,7 @@ function PostForgotPasswordScreen() {
 				nativeButton={false}
 				render={
 					<a href="mailto:">
-						<Trans comment="Button label to open the user's default email app">Open Email Client</Trans>
+						<Trans comment="Button label to open the user's default email app">Open email app</Trans>
 					</a>
 				}
 			/>

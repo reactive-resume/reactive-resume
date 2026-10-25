@@ -178,6 +178,21 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 				measuredScenes.add(SCENE.check);
 			}
 
+			// Write's two lines and the comment keep their full height; the scene clips and translates by these instead of
+			// reflowing (write.tsx). Below 1280px the comment sits under the lines, above it beside them.
+			const write = nearby.has(SCENE.write) && !measuredScenes.has(SCENE.write) ? sectionAt(SCENE.write) : undefined;
+			const oldLine = write?.querySelector<HTMLElement>("[data-line-old]");
+			const newLine = write?.querySelector<HTMLElement>("[data-line-new]");
+			const comment = write?.querySelector<HTMLElement>("[data-write-comment]");
+			if (write && oldLine && newLine && comment) {
+				const inline = window.innerWidth < 1280;
+				write.style.setProperty("--oh", `${oldLine.offsetHeight}px`);
+				write.style.setProperty("--nh", `${newLine.offsetHeight}px`);
+				write.style.setProperty("--cmh-inline", inline ? `${comment.offsetHeight}px` : "0px");
+				write.style.setProperty("--cmh-side", inline ? "0px" : `${comment.offsetHeight}px`);
+				measuredScenes.add(SCENE.write);
+			}
+
 			const design =
 				nearby.has(SCENE.design) && !measuredScenes.has(SCENE.design) ? sectionAt(SCENE.design) : undefined;
 			const stack = design?.querySelector<HTMLElement>("[data-stack]");
@@ -214,6 +229,16 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 			}
 			// Descendant geometry would force content-visibility to render an offscreen scene.
 			layout(nearby);
+			// The footer's desk paints itself in as it scrolls up, finishing exactly when the page ends.
+			const desk = nearby.has(SCENE.footer)
+				? sectionAt(SCENE.footer)?.querySelector<HTMLElement>(".footer-desk")
+				: null;
+			if (desk) {
+				const rect = desk.getBoundingClientRect();
+				// The desk ends the page, so its bottom meets the screen's bottom exactly when scrolling ends.
+				const value = reduced ? "1" : clamp01((viewportHeight - rect.top) / Math.max(1, rect.height)).toFixed(3);
+				if (desk.style.getPropertyValue("--dp") !== value) desk.style.setProperty("--dp", value);
+			}
 			const tailorSection = sectionAt(SCENE.tailor);
 			if (tailorSection && nearby.has(SCENE.tailor) && window.innerWidth >= 900) drawThreads(tailorSection);
 			for (const section of sections) {

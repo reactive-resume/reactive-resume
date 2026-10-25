@@ -26,6 +26,7 @@ import * as SecureStore from "expo-secure-store";
 import Storage from "expo-sqlite/kv-store";
 import * as WebBrowser from "expo-web-browser";
 import { useSyncExternalStore } from "react";
+import { fnv1a } from "@reactive-resume/utils/string";
 import {
 	discover,
 	forgetClient,
@@ -110,11 +111,7 @@ const scopeOf = (server: string, accessToken: string | null | undefined) => {
 };
 
 // FNV-1a: tells two refresh tokens apart without storing one a second time.
-const fingerprint = (value: string) => {
-	let hash = 0x811c9dc5;
-	for (let index = 0; index < value.length; index++) hash = Math.imul(hash ^ value.charCodeAt(index), 0x01000193);
-	return (hash >>> 0).toString(16);
-};
+const fingerprint = (value: string) => fnv1a(value).toString(16);
 
 const setSession = (next: Session) => {
 	session = next;
@@ -415,7 +412,7 @@ export class SignOutCleanupError extends AggregateError {
 /**
  * Signs out the current account, after any queued refresh, and invalidates every sign-in still in the browser.
  * Against a snapshot of that account only: revokes its refresh token (best effort, bounded), clears its local data
- * (drafts, application notes, Career drafts), then deletes its tokens. The server and its registered
+ * (drafts, application notes, Career drafts) and every stored library thumbnail, then deletes its tokens. The server and its registered
  * client are kept. Access tokens already issued stay valid until they expire (at most an hour).
  * Credentials are always removed and the session always ends signed out; a cleanup that fails does not stop the others
  * and is reported afterwards as a `SignOutCleanupError`.
@@ -434,6 +431,11 @@ export function signOut(): Promise<void> {
 		};
 
 		await revoke(departing.server, departing.tokens?.refreshToken);
+		await attempt(async () => {
+			// Imported here, like the draft runtime below, to keep this module free of feature imports.
+			const { clearStoredThumbnails } = await import("@/features/documents/thumbnail-store");
+			await clearStoredThumbnails();
+		});
 		const { scope } = departing;
 		if (scope) {
 			await attempt(async () => {

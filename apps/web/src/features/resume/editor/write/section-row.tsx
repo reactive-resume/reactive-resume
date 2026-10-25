@@ -3,6 +3,7 @@ import type { SectionType } from "@reactive-resume/schema/resume/data";
 import type { KeyboardEvent, ReactNode } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { i18n } from "@lingui/core";
 import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useState } from "react";
@@ -25,6 +26,7 @@ import {
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { formatList } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { pendingProposals } from "../proposals/proposals";
 import { useEditorStore } from "../store";
@@ -219,16 +221,17 @@ function SectionMenu({ section, title, onMove }: SectionMenuProps) {
 			{ newStep: true },
 		);
 		if (unresolved.length > 0) {
+			const entries = formatList(i18n.locale, unresolved);
 			toast.add({
 				type: "warning",
-				description: t`Could not sort these items; they stayed at the end: ${unresolved.join(", ")}.`,
+				description: t`Couldn't read the dates on ${entries}, so they stay at the end. Fix their dates and sort again.`,
 			});
 		}
 	};
 
 	const rename = async () => {
-		const next = await prompt(t`What do you want to rename this section to?`, {
-			description: t`Leave empty to reset the title to the original.`,
+		const next = await prompt(t`Rename section`, {
+			description: t`Leave it empty to use the original title.`,
 			defaultValue: settings.title,
 		});
 		if (next === null || next === settings.title) return;

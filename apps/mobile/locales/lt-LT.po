@@ -7,10 +7,6 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: lt-LT\n"
 
-#: src/features/applications/list-screen.tsx
-msgid " · Including closed"
-msgstr "· Įskaitant uždaras"
-
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
 #: src/features/application-detail/detail-screen.tsx
@@ -46,12 +42,12 @@ msgid "“{value}” ends before it starts."
 msgstr "„{value}“ baigiasi anksčiau nei prasideda."
 
 #: src/features/check/issues.ts
-msgid "“{value}” isn't a form systems recognise, such as Mar 2020 – Present."
-msgstr "„{value}“ nėra formų sistemos, kurias atpažįsta, pvz., 2020 m. kovo mėn. – dabar."
+msgid "“{value}” isn't a form systems recognize, such as Mar 2020 – Present."
+msgstr "„{value}“ nėra sistemų atpažįstama forma, pvz., 2020 m. kovas – dabar."
 
 #: src/features/check/issues.ts
-msgid "“{value}” isn't a form systems recognise, such as March 2022."
-msgstr "„{value}“ nėra formos sistemos, kurią atpažįsta, pvz., 2022 m. kovo mėn."
+msgid "“{value}” isn't a form systems recognize, such as March 2022."
+msgstr "„{value}“ nėra sistemų atpažįstama forma, pvz., 2022 m. kovas."
 
 #: src/features/check/issues.ts
 msgid "“{value}” isn't a plain address like name@example.com."
@@ -61,12 +57,32 @@ msgstr "„{value}“ nėra paprastas adresas, kaip name@example.com."
 msgid "“{value}” starts after today. Check the year, or mark it as current."
 msgstr "„{value}“ prasideda po šiandien. Patikrinkite metus arba pažymėkite kaip esamus."
 
+#. placeholder {0}: proposals.length
+#: src/features/assistant/document.ts
+#: src/features/assistant/proposals.ts
+msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
+msgstr "{0, plural, =1 {Pakeitimas pritaikytas} one {Pritaikytas # pakeitimas} few {Pritaikyti # pakeitimai} many {Pritaikyta # pakeitimo} other {Pritaikyta # pakeitimų}}"
+
 #. placeholder {0}: open.jdCount
 #. placeholder {1}: open.label
 #. placeholder {2}: open.label
 #: src/features/check/job-match.tsx
 msgid "{0, plural, one {“{1}” appears once in the posting. If it's part of your experience, add it where it belongs.} other {“{2}” appears # times in the posting. If it's part of your experience, add it where it belongs.}}"
 msgstr "{0, plural, one {„{1}“ skelbime paminėta vieną kartą. Jei tai atitinka jūsų patirtį, įtraukite tinkamoje vietoje.} few {„{2}“ skelbime paminėta # kartus. Jei tai atitinka jūsų patirtį, įtraukite tinkamoje vietoje.} other {„{2}“ skelbime paminėta # kartų. Jei tai atitinka jūsų patirtį, įtraukite tinkamoje vietoje.}}"
+
+#. placeholder {0}: report.totalRules
+#. placeholder {1}: report.passedRules
+#. placeholder {2}: report.passedRules
+#: src/features/check/score.tsx
+msgid "{0, plural, one {{1} of # check passes.} other {{2} of # checks pass.}}"
+msgstr "{0, plural, one {Sėkminga {1} iš # patikros.} few {Sėkmingos {2} iš # patikrų.} many {Sėkmingos {2} iš # patikros.} other {Sėkmingos {2} iš # patikrų.}}"
+
+#. placeholder {0}: thread.editsProposed
+#. placeholder {1}: thread.editsAccepted
+#. placeholder {2}: thread.editsAccepted
+#: src/features/assistant/threads.tsx
+msgid "{0, plural, one {{1} of # edit accepted} other {{2} of # edits accepted}}"
+msgstr "{0, plural, one {Priimta {1} iš # pakeitimo} few {Priimta {2} iš # pakeitimų} many {Priimta {2} iš # pakeitimo} other {Priimta {2} iš # pakeitimų}}"
 
 #. placeholder {0}: value.report.applicableChecks
 #. placeholder {1}: value.report.passedChecks
@@ -82,10 +98,31 @@ msgstr "{0, plural, one {Sėkmingos eksportuoto PDF patikros: {1} iš #.} other 
 msgid "{0, plural, one {{1} of # posting term covered} other {{2} of # posting terms covered}}"
 msgstr "{0, plural, one {Įtraukti skelbimo terminai: {1} iš #} other {Įtraukti skelbimo terminai: {2} iš #}}"
 
+#. placeholder {0}: applications.length
+#. placeholder {0}: section.total
+#. placeholder {1}: getStageLabel(section.status)
+#. placeholder {1}: getStageLabel(stage)
+#. placeholder {2}: getStageLabel(section.status)
+#. placeholder {2}: getStageLabel(stage)
+#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {{1}, # application} other {{2}, # applications}}"
+msgstr "{0, plural, one {{1}, # paraiška} few {{2}, # paraiškos} many {{2}, # paraiškos} other {{2}, # paraiškų}}"
+
+#. placeholder {0}: ids.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {{count} of # application changed.} other {{count} of # applications changed.}}"
+msgstr "{0, plural, one {Pakeista {count} iš # paraiškos.} few {Pakeista {count} iš # paraiškų.} many {Pakeista {count} iš # paraiškos.} other {Pakeista {count} iš # paraiškų.}}"
+
 #. placeholder {0}: data.answers.length
 #: src/features/workspace/tabs/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {# atsakymas} few {# atsakymai} many {# atsakymo} other {# atsakymų}}"
+
+#. placeholder {0}: selectedIds.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
+msgstr "{0, plural, one {Pasirinkta # paraiška.} few {Pasirinktos # paraiškos.} many {Pasirinkta # paraiškos.} other {Pasirinkta # paraiškų.}}"
 
 #. placeholder {0}: text.trim().length
 #: src/features/write/rich-text-field.tsx
@@ -137,12 +174,19 @@ msgstr "{0, plural, one {# įrašas} few {# įrašai} many {# įrašo} other {# 
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# faktas} few {# faktai} many {# fakto} other {# faktų}}"
 
+#. placeholder {0}: filtered.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {# match} other {# matches}}"
+msgstr "{0, plural, one {# atitikmuo} few {# atitikmenys} many {# atitikmens} other {# atitikmenų}}"
+
 #. placeholder {0}: data.officeDays
 #: src/features/career/offers.tsx
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {# diena biure per savaitę} few {# dienos biure per savaitę} many {# dienos biure per savaitę} other {# dienų biure per savaitę}}"
 
+#. placeholder {0}: metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
+#: src/features/design/advanced.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, one {# puslapis} few {# puslapiai} many {# puslapio} other {# puslapių}}"
@@ -181,6 +225,21 @@ msgstr "{0, plural, one {Pateikta prieš # dieną} few {Pateikta prieš # dienas
 #: src/features/career/facts.tsx
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, one {Pagrindžia # istoriją} few {Pagrindžia # istorijas} many {Pagrindžia # istorijos} other {Pagrindžia # istorijų}}"
+
+#. placeholder {0}: selectedIds.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
+msgstr "{0, plural, one {Ištrinti # paraišką?} few {Ištrinti # paraiškas?} many {Ištrinti # paraiškos?} other {Ištrinti # paraiškų?}}"
+
+#. placeholder {0}: selectedIds.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
+msgstr "{0, plural, one {Ištrinti # paraišką} few {Ištrinti # paraiškas} many {Ištrinti # paraiškos} other {Ištrinti # paraiškų}}"
+
+#. placeholder {0}: purge?.length ?? 0
+#: src/features/documents/library.tsx
+msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
+msgstr "{0, plural, one {Ištrinti # dokumentą visam laikui?} few {Ištrinti # dokumentus visam laikui?} many {Ištrinti # dokumento visam laikui?} other {Ištrinti # dokumentų visam laikui?}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -270,17 +329,6 @@ msgstr "{0} (mano)"
 msgid "{0} → {1}: {2}{3}"
 msgstr "{0} → {1}: {2}{3}"
 
-#. placeholder {0}: selectedIds.length
-#: src/features/applications/list-screen.tsx
-msgid "{0} applications selected."
-msgstr "Pasirinkta {0} darbo paraiškų."
-
-#. placeholder {0}: proposals.length
-#: src/features/assistant/document.ts
-#: src/features/assistant/proposals.ts
-msgid "{0} edits applied"
-msgstr "Pritaikyta pakeitimų: {0}"
-
 #. placeholder {0}: draft.time
 #. placeholder {1}: draft.timezone
 #. placeholder {2}: when(at)
@@ -315,27 +363,10 @@ msgstr "{0} darbo pokalbis · {1} min."
 msgid "{0} less"
 msgstr "{0} mažiau"
 
-#. placeholder {0}: filtered.length
-#: src/features/applications/list-screen.tsx
-msgid "{0} matches"
-msgstr "{0} atitikmenų"
-
 #. placeholder {0}: formatMoney(time.locale, data.currency, difference)
 #: src/features/career/offers.tsx
 msgid "{0} more"
 msgstr "{0} daugiau"
-
-#. placeholder {0}: report.passedRules
-#. placeholder {1}: report.totalRules
-#: src/features/check/score.tsx
-msgid "{0} of {1} checks pass."
-msgstr "{0} iš {1} patikrinimų praeina."
-
-#. placeholder {0}: thread.editsAccepted
-#. placeholder {1}: thread.editsProposed
-#: src/features/assistant/threads.tsx
-msgid "{0} of {1} edits accepted"
-msgstr "{0} iš {1} priimti pakeitimai"
 
 #. placeholder {0}: shown.length
 #. placeholder {1}: TEMPLATES.length
@@ -355,11 +386,6 @@ msgstr "{0} iš {1} pritaikytos darbo paraiškos gavo atsakymą; {2} iš {3} iš
 #: src/features/career/facts.tsx
 msgid "{0} only"
 msgstr "Tik {0}"
-
-#. placeholder {0}: metadata.layout.pages.length
-#: src/features/design/advanced.tsx
-msgid "{0} pages"
-msgstr "{0} puslapių"
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-screen.tsx
@@ -382,15 +408,6 @@ msgstr "Pasirinktas {0}"
 #: src/features/share/download.tsx
 msgid "{0}-Resume"
 msgstr "{0}-Gyvenimo-aprašymas"
-
-#. placeholder {0}: getStageLabel(section.status)
-#. placeholder {0}: getStageLabel(stage)
-#. placeholder {1}: applications.length
-#. placeholder {1}: section.total
-#: src/features/applications-board/board-screen.tsx
-#: src/features/applications/list-screen.tsx
-msgid "{0}, {1} applications"
-msgstr "{0}, {1} darbo paraiškos"
 
 #. placeholder {0}: title || t`Untitled`
 #. placeholder {1}: row.index + 1
@@ -418,6 +435,10 @@ msgstr "{active, plural, one {# aktyvi paraiška} few {# aktyvios paraiškos} ot
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. Išsiunčia šią darbo paraišką ir jūsų Žinios; jūsų teikėjas gali apmokestinti."
 
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
+msgstr "{authored, plural, =1 {Sutalpinti į vieną puslapį} one {Sutalpinti į # puslapį} few {Sutalpinti į # puslapius} many {Sutalpinti į # puslapio} other {Sutalpinti į # puslapių}}"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "{characters, plural, one {# character} other {# characters}}"
 msgstr "{characters, plural, one {# simbolis} few {# simboliai} many {# simbolio} other {# simbolių}}"
@@ -441,11 +462,6 @@ msgstr "{count, plural, one {# stulpelis} few {# stulpeliai} many {# stulpelio} 
 #: src/features/workspace/tabs/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
 msgstr "{count, plural, one {Pritaikyti # pakeitimą} few {Pritaikyti # pakeitimus} many {Pritaikyti # pakeitimo} other {Pritaikyti # pakeitimų}}"
-
-#. placeholder {0}: ids.length
-#: src/features/applications/list-screen.tsx
-msgid "{count} of {0} applications changed."
-msgstr "Pakeista {count} iš {0} darbo paraiškų."
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{day} · {length}m"
@@ -647,10 +663,6 @@ msgstr "1 diena"
 msgid "1 h"
 msgstr "1 val."
 
-#: src/features/design/advanced.tsx
-msgid "1 page"
-msgstr "1 puslapis"
-
 #: src/features/workspace/tabs/prepare.tsx
 msgid "10-minute briefing"
 msgstr "10 minučių atmintinė"
@@ -776,8 +788,8 @@ msgid "Above your office-day limit."
 msgstr "Viršijamas jūsų dienų biure limitas."
 
 #: src/features/design/style-groups.tsx
-msgid "Accent colour"
-msgstr "Akcentinė spalva"
+msgid "Accent color"
+msgstr "Akcento spalva"
 
 #: src/features/design/style-groups.tsx
 msgid "Accent is used for headings, icons and the header band. Body text stays near-black for print and ATS."
@@ -1001,7 +1013,7 @@ msgid "Add one with its country code; some application forms require it before y
 msgstr "Pridėkite jį su šalies kodu – kai kurios paraiškų formos jo reikalauja prieš pateikiant."
 
 #: src/features/design/layout-screen.tsx
-msgid "Add Page"
+msgid "Add page"
 msgstr "Pridėti puslapį"
 
 #: src/features/write/fields.ts
@@ -1194,10 +1206,6 @@ msgstr "AI teikėjai"
 msgid "AI providers aren't available on this server until ENCRYPTION_SECRET is set."
 msgstr "AI teikėjai šiame serveryje nepasiekiami, kol nenustatytas ENCRYPTION_SECRET."
 
-#: src/features/applications/add-sheet.tsx
-msgid "AI providers could not be loaded. Retry or fill the details manually."
-msgstr "Nepavyko įkelti AI teikėjų. Bandyti dar kartą arba užpildykite išsamią informaciją rankiniu būdu."
-
 #: src/features/write/improve.tsx
 msgid "AI providers couldn't be loaded."
 msgstr "Nepavyko įkelti AI teikėjų."
@@ -1205,6 +1213,10 @@ msgstr "Nepavyko įkelti AI teikėjų."
 #: src/features/ai/provider-list.tsx
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "AI teikėjų nepavyko įkelti. Įkelkite iš naujo ir bandykite dar kartą."
+
+#: src/features/applications/add-sheet.tsx
+msgid "AI providers couldn't be loaded. Retry or fill the details manually."
+msgstr "Nepavyko įkelti AI teikėjų. Bandykite dar kartą arba užpildykite informaciją rankiniu būdu."
 
 #: src/features/applications/add-sheet.tsx
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
@@ -1372,12 +1384,9 @@ msgstr "API raktas"
 msgid "API key revoked. Apps using it stop working now."
 msgstr "API raktas atšauktas. Ją naudojančios programos dabar nustoja veikti."
 
+#: src/features/search/search-screen.tsx
 #: src/features/settings/api-keys.tsx
 msgid "API keys"
-msgstr "API raktai"
-
-#: src/features/search/search-screen.tsx
-msgid "API Keys"
 msgstr "API raktai"
 
 #: app/(tabs)/settings/preferences.tsx
@@ -1454,8 +1463,8 @@ msgid "Applications"
 msgstr "Paraiškos"
 
 #: src/features/applications/list-screen.tsx
-msgid "Applications and their attachments will be deleted permanently. This cannot be undone."
-msgstr "darbo paraiškos ir jų priedai bus ištrinti visam laikui. To negalima anuliuoti."
+msgid "Applications and their attachments will be deleted permanently. This can't be undone."
+msgstr "Paraiškos ir jų priedai bus ištrinti visam laikui. To negalima anuliuoti."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -1510,8 +1519,8 @@ msgstr "Pakeitimų taikymas. Uždarius šį lapą užklausa neatšaukiama."
 
 #. placeholder {0}: selected?.name ?? ""
 #: src/features/settings/api-keys.tsx
-msgid "Apps using “{0}” will stop working. This cannot be undone."
-msgstr "Programos, kuriose naudojamas „{0}“, nustos veikti. To negalima anuliuoti."
+msgid "Apps using “{0}” will stop working. This can't be undone."
+msgstr "Programos, naudojančios „{0}“, nustos veikti. To negalima anuliuoti."
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
@@ -1587,8 +1596,8 @@ msgid "Ask, or describe a change…"
 msgstr "Paklauskite arba aprašykite pakeitimą…"
 
 #: src/features/write/picture-screen.tsx
-msgid "Aspect Ratio"
-msgstr "Vaizdo santykis"
+msgid "Aspect ratio"
+msgstr "Kraštinių santykis"
 
 #: app/letter/[id]/_layout.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -1604,13 +1613,10 @@ msgid "At 09:00 that day ({timeZone})."
 msgstr "Tą dieną 09:00 ({timeZone})."
 
 #: app/_layout.tsx
-msgid "ATS checker"
-msgstr "ATS tikrintuvas"
-
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
-msgid "ATS Checker"
-msgstr "ATS patikra"
+msgid "ATS checker"
+msgstr "ATS tikrintuvas"
 
 #: src/features/design/template-group.tsx
 msgid "ATS-safe"
@@ -1725,7 +1731,7 @@ msgid "Backed by"
 msgstr "Pagrindžia"
 
 #: src/features/design/advanced.tsx
-msgid "Background Color"
+msgid "Background color"
 msgstr "Fono spalva"
 
 #: src/features/design/style-groups.tsx
@@ -1813,15 +1819,15 @@ msgid "Bonus conditions"
 msgstr "Premijos sąlygos"
 
 #: src/features/write/picture-screen.tsx
-msgid "Border Color"
-msgstr "Kraštinės spalva"
+msgid "Border color"
+msgstr "Rėmelio spalva"
 
 #: src/features/write/picture-screen.tsx
-msgid "Border Radius"
+msgid "Border radius"
 msgstr "Rėmelio spindulys"
 
 #: src/features/write/picture-screen.tsx
-msgid "Border Width"
+msgid "Border width"
 msgstr "Rėmelio plotis"
 
 #: src/features/ats-checker/messages.ts
@@ -2287,7 +2293,7 @@ msgid "Color"
 msgstr "Spalva"
 
 #: src/features/design/advanced.tsx
-msgid "Colours and level"
+msgid "Colors and level"
 msgstr "Spalvos ir lygis"
 
 #: src/features/write/section-sheet.tsx
@@ -2347,7 +2353,7 @@ msgid "Confirm applied"
 msgstr "Patvirtinti pateikimą"
 
 #: src/features/share/link.tsx
-msgid "Confirm Password"
+msgid "Confirm password"
 msgstr "Patvirtinkite slaptažodį"
 
 #: src/features/application-detail/sheets.tsx
@@ -2541,34 +2547,17 @@ msgstr "Taisyti faktą"
 msgid "Correct the year, or write \"Present\" for ongoing work."
 msgstr "Pataisykite metus arba tebevykstančiam darbui parašykite „Present“."
 
-#: src/features/applications/error.ts
-msgid "Could not complete the request. Check your connection and try again."
-msgstr "Nepavyko užbaigti užklausos. Patikrinkite ryšį ir bandykite dar kartą."
-
-#: src/features/applications/add-sheet.tsx
-msgid "Could not confirm the save. Check Applications before retrying to avoid a duplicate."
-msgstr "Nepavyko patvirtinti išsaugojimo. Prieš bandydami dar kartą patikrinkite darbo paraiškas, kad išvengtumėte pasikartojimo."
-
-#: src/features/application-detail/interview-sheet.tsx
-msgid "Could not confirm the save. Check the application before retrying to avoid a duplicate."
-msgstr "Nepavyko patvirtinti išsaugojimo. Prieš bandydami dar kartą patikrinkite programą, kad išvengtumėte pasikartojimo."
-
-#. placeholder {0}: unresolved.join(", ")
-#: src/features/write/hooks.ts
-msgid "Could not sort these items; they stayed at the end: {0}."
-msgstr "Nepavyko surūšiuoti šių elementų; jie liko pabaigoje: {0}."
-
 #: src/features/assistant/chat-view.tsx
-msgid "Couldn't attach the file."
-msgstr "Nepavyko pridėti failo."
+msgid "Couldn't attach the file. Try again."
+msgstr "Nepavyko pridėti failo. Bandykite dar kartą."
 
 #: app/(tabs)/settings/preferences.tsx
 msgid "Couldn't change the language. Try again."
 msgstr "Nepavyko pakeisti kalbos. Bandykite dar kartą."
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "Couldn't change the schedule."
-msgstr "Nepavyko pakeisti tvarkaraščio."
+msgid "Couldn't change the schedule. Try again."
+msgstr "Nepavyko pakeisti tvarkaraščio. Bandykite dar kartą."
 
 #: src/features/share/download.tsx
 msgid "Couldn't check for a linked cover letter."
@@ -2582,6 +2571,10 @@ msgstr "Nepavyko patikrinti arba išsaugoti šio adreso. Bandykite dar kartą."
 msgid "Couldn't check your AI providers."
 msgstr "Nepavyko patikrinti jūsų AI teikėjų."
 
+#: src/features/applications/error.ts
+msgid "Couldn't complete the request. Check your connection and try again."
+msgstr "Nepavyko užbaigti užklausos. Patikrinkite ryšį ir bandykite dar kartą."
+
 #: src/features/documents/queries.ts
 #: src/ui/overlays.tsx
 msgid "Couldn't complete this action. Try again."
@@ -2591,25 +2584,33 @@ msgstr "Nepavyko atlikti šio veiksmo. Bandykite dar kartą."
 msgid "Couldn't confirm AI connections. Try again before using the assistant."
 msgstr "Nepavyko patvirtinti AI jungčių. Prieš naudodami asistentą bandykite dar kartą."
 
+#: src/features/applications/add-sheet.tsx
+msgid "Couldn't confirm the save. Check Applications before retrying to avoid a duplicate."
+msgstr "Nepavyko patvirtinti išsaugojimo. Prieš bandydami dar kartą patikrinkite Paraiškas, kad išvengtumėte dublikato."
+
+#: src/features/application-detail/interview-sheet.tsx
+msgid "Couldn't confirm the save. Check the application before retrying to avoid a duplicate."
+msgstr "Nepavyko patvirtinti išsaugojimo. Prieš bandydami dar kartą patikrinkite paraišką, kad išvengtumėte dublikato."
+
 #: src/features/assistant/chat-view.tsx
-msgid "Couldn't copy the transcript."
-msgstr "Nepavyko nukopijuoti nuorašo."
+msgid "Couldn't copy the transcript. Try again."
+msgstr "Nepavyko nukopijuoti nuorašo. Bandykite dar kartą."
 
 #: src/features/application-detail/sections.tsx
-msgid "Couldn't create the letter."
-msgstr "Nepavyko sukurti laiško."
-
-#: src/features/assistant/threads.tsx
-msgid "Couldn't delete it."
-msgstr "Nepavyko ištrinti."
+msgid "Couldn't create the letter. Try again."
+msgstr "Nepavyko sukurti laiško. Bandykite dar kartą."
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "Couldn't delete it. It's back in Saved."
 msgstr "Nepavyko ištrinti. Jis grįžta į Išsaugota."
 
+#: src/features/assistant/threads.tsx
+msgid "Couldn't delete the conversation. Try again."
+msgstr "Nepavyko ištrinti pokalbio. Bandykite dar kartą."
+
 #: src/features/application-detail/interview-sheet.tsx
-msgid "Couldn't delete the interview."
-msgstr "Nepavyko ištrinti interviu."
+msgid "Couldn't delete the interview. Try again."
+msgstr "Nepavyko ištrinti pokalbio. Bandykite dar kartą."
 
 #: src/features/public/public-resume.tsx
 msgid "Couldn't download the PDF. Try again."
@@ -2674,9 +2675,24 @@ msgstr "Nepavyko įkelti gyvenimo aprašymų."
 msgid "Couldn't load statistics."
 msgstr "Nepavyko įkelti statistikos."
 
+#: src/features/assistant/assistant-screen.tsx
+#: src/features/letters/share.tsx
+#: src/features/letters/write.tsx
+msgid "Couldn't load the cover letter."
+msgstr "Nepavyko įkelti motyvacinio laiško."
+
 #: src/features/check/job-match.tsx
 msgid "Couldn't load the linked posting."
 msgstr "Nepavyko įkelti susieto darbo skelbimo."
+
+#: app/builder/[id]/page.tsx
+#: app/builder/[id]/write.tsx
+#: src/features/assistant/assistant-screen.tsx
+#: src/features/design/design-pane.tsx
+#: src/features/share/document.ts
+#: src/features/share/download.tsx
+msgid "Couldn't load the resume."
+msgstr "Nepavyko įkelti gyvenimo aprašymo."
 
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
@@ -2713,8 +2729,8 @@ msgid "Couldn't load your timezone."
 msgstr "Nepavyko įkelti laiko juostos."
 
 #: src/features/workspace/tabs/apply.tsx
-msgid "Couldn't mark it as applied."
-msgstr "Nepavyko pažymėti kaip pateiktos."
+msgid "Couldn't mark it as applied. Try again."
+msgstr "Nepavyko pažymėti kaip pateiktos. Bandykite dar kartą."
 
 #: app/(tabs)/settings/account.tsx
 #: app/(tabs)/settings/index.tsx
@@ -2725,8 +2741,8 @@ msgid "Couldn't open the browser. Try again."
 msgstr "Nepavyko atidaryti naršyklės. Bandykite dar kartą."
 
 #: src/features/career/today.tsx
-msgid "Couldn't open the posting."
-msgstr "Nepavyko atidaryti darbo skelbimo."
+msgid "Couldn't open the posting. Try again."
+msgstr "Nepavyko atidaryti darbo skelbimo. Bandykite dar kartą."
 
 #: src/features/check/screen.tsx
 msgid "Couldn't open this resume"
@@ -2744,6 +2760,16 @@ msgstr "Nepavyko pasiūlyti šių pakeitimų: {0}"
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "Nepavyko susisiekti su jūsų AI teikėju. Bandykite dar kartą arba patikrinkite jo raktą AI nustatymuose."
+
+#. placeholder {0}: dates.raw
+#: src/features/write/date-field.tsx
+msgid "Couldn't read “{0}”. Enter the dates so they sort and print consistently."
+msgstr "Nepavyko perskaityti „{0}“. Įveskite datas, kad jos būtų rūšiuojamos ir spausdinamos nuosekliai."
+
+#: src/features/ats-checker/check.ts
+#: src/features/ats-checker/checker.tsx
+msgid "Couldn't read that file. Try again."
+msgstr "Nepavyko nuskaityti to failo. Bandykite dar kartą."
 
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
@@ -2770,9 +2796,18 @@ msgstr "Nepavyko atnaujinti dokumentų."
 msgid "Couldn't remember that. Try again."
 msgstr "Nepavyko to įsiminti. Bandykite dar kartą."
 
+#: src/features/application-detail/sections.tsx
+msgid "Couldn't remove the file. Try again."
+msgstr "Nepavyko pašalinti failo. Bandykite dar kartą."
+
 #: src/features/assistant/coach-screen.tsx
-msgid "Couldn't rename it."
-msgstr "Nepavyko pervadinti."
+msgid "Couldn't rename the conversation. Try again."
+msgstr "Nepavyko pervadinti pokalbio. Bandykite dar kartą."
+
+#: src/features/letters/page.tsx
+#: src/preview/page.tsx
+msgid "Couldn't render the preview. Retry, or try another template or font in Design."
+msgstr "Nepavyko atvaizduoti peržiūros. Bandykite dar kartą arba skiltyje Dizainas pasirinkite kitą šabloną ar šriftą."
 
 #: src/features/check/page.tsx
 msgid "Couldn't render this resume."
@@ -2789,40 +2824,41 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Nepavyko išsaugoti šio pakeitimo. Patikrinkite interneto ryšį ir bandykite dar kartą."
 
 #: src/features/career/hooks.ts
-msgid "Couldn't save that change. The item has been restored."
-msgstr "Nepavyko išsaugoti šio pakeitimo. Elementas buvo atkurtas."
-
-#: src/features/workspace/tabs/fit.tsx
-msgid "Couldn't save that to Knowledge."
-msgstr "Nepavyko išsaugoti į Žinias."
+msgid "Couldn't save that change. The item is restored; try again."
+msgstr "Nepavyko išsaugoti šio pakeitimo. Elementas atkurtas; bandykite dar kartą."
 
 #: src/features/workspace/tabs/debrief.tsx
+#: src/features/workspace/tabs/fit.tsx
 msgid "Couldn't save that to Knowledge. Try again."
 msgstr "Nepavyko išsaugoti į Žinias. Bandykite dar kartą."
 
 #: src/features/application-detail/sheets.tsx
-msgid "Couldn't save the contacts."
-msgstr "Nepavyko išsaugoti kontaktų."
+msgid "Couldn't save the contacts. Try again."
+msgstr "Nepavyko išsaugoti kontaktų. Bandykite dar kartą."
 
 #: src/features/application-detail/sheets.tsx
-msgid "Couldn't save the follow-up."
-msgstr "Nepavyko išsaugoti tolesnių veiksmų."
+msgid "Couldn't save the follow-up. Try again."
+msgstr "Nepavyko išsaugoti priminimo. Bandykite dar kartą."
+
+#: src/features/application-detail/sheets.tsx
+msgid "Couldn't save the job description. Try again."
+msgstr "Nepavyko išsaugoti darbo aprašymo. Bandykite dar kartą."
 
 #: src/features/application-detail/sections.tsx
 msgid "Couldn't save the notes. Your text is still here."
 msgstr "Nepavyko išsaugoti užrašų. Jūsų tekstas vis dar yra čia."
 
 #: src/features/application-detail/sections.tsx
-msgid "Couldn't save the tags."
-msgstr "Nepavyko išsaugoti žymų."
+msgid "Couldn't save the tags. Try again."
+msgstr "Nepavyko išsaugoti žymų. Bandykite dar kartą."
 
 #: app/(tabs)/settings/preferences.tsx
 msgid "Couldn't save the theme. Try again."
 msgstr "Nepavyko išsaugoti temos. Bandykite dar kartą."
 
 #: app/(tabs)/settings/preferences.tsx
-msgid "Couldn't save the timezone."
-msgstr "Nepavyko išsaugoti laiko juostos."
+msgid "Couldn't save the timezone. Try again."
+msgstr "Nepavyko išsaugoti laiko juostos. Bandykite dar kartą."
 
 #: src/features/public/public-resume.tsx
 msgid "Couldn't save your blocked-author setting. Try again."
@@ -2846,11 +2882,6 @@ msgstr "Nepavyko išsaugoti pakeitimų. Jūsų pakeitimai vis dar yra šiame įr
 msgid "Couldn't save your preferences. Your draft is still here."
 msgstr "Nepavyko išsaugoti jūsų nuostatų. Jūsų juodraštis vis dar yra čia."
 
-#: src/features/application-detail/sections.tsx
-#: src/features/application-detail/sheets.tsx
-msgid "Couldn't save."
-msgstr "Nepavyko išsaugoti."
-
 #: src/features/settings/profile.tsx
 msgid "Couldn't save. Try again."
 msgstr "Nepavyko išsaugoti. Bandykite dar kartą."
@@ -2864,28 +2895,37 @@ msgid "Couldn't send the report. Your text is kept; try again."
 msgstr "Nepavyko išsiųsti ataskaitos. Jūsų tekstas saugomas; bandykite dar kartą."
 
 #: src/features/workspace/tabs/apply.tsx
-msgid "Couldn't share the answers."
-msgstr "Nepavyko pasidalinti atsakymais."
+msgid "Couldn't share the answers. Try again."
+msgstr "Nepavyko pasidalinti atsakymais. Bandykite dar kartą."
 
 #: src/features/application-detail/sections.tsx
-msgid "Couldn't share the calendar event."
-msgstr "Nepavyko bendrinti kalendoriaus įvykio."
+msgid "Couldn't share the calendar event. Try again."
+msgstr "Nepavyko bendrinti kalendoriaus įvykio. Bandykite dar kartą."
 
 #: src/features/workspace/tabs/debrief.tsx
-msgid "Couldn't share the calendar file."
-msgstr "Nepavyko bendrinti kalendoriaus failo."
+msgid "Couldn't share the calendar file. Try again."
+msgstr "Nepavyko bendrinti kalendoriaus failo. Bandykite dar kartą."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Couldn't share the picture. Try again."
 msgstr "Nepavyko bendrinti nuotraukos. Bandykite dar kartą."
 
 #: src/features/workspace/tabs/practise.tsx
-msgid "Couldn't share the recording."
-msgstr "Nepavyko bendrinti įrašo."
+msgid "Couldn't share the recording. Try again."
+msgstr "Nepavyko bendrinti įrašo. Bandykite dar kartą."
 
 #: src/features/settings/sign-out.tsx
 msgid "Couldn't sign out. Try again."
 msgstr "Nepavyko atsijungti. Bandykite dar kartą."
+
+#: src/auth/messages.ts
+msgid "Couldn't sign you in. Try again."
+msgstr "Nepavyko jūsų prijungti. Bandykite dar kartą."
+
+#. placeholder {0}: unresolved.join(", ")
+#: src/features/write/hooks.ts
+msgid "Couldn't sort these items, so they stayed at the end: {0}."
+msgstr "Nepavyko surūšiuoti šių elementų, todėl jie liko pabaigoje: {0}."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Couldn't start recording. Try again, or type your answer."
@@ -2896,32 +2936,32 @@ msgid "Couldn't start the conversation. Try again."
 msgstr "Nepavyko pradėti pokalbio. Bandykite dar kartą."
 
 #: src/features/assistant/provider.tsx
-msgid "Couldn't switch models."
-msgstr "Nepavyko pakeisti modelių."
+msgid "Couldn't switch models. Try again."
+msgstr "Nepavyko perjungti modelių. Bandykite dar kartą."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Couldn't transcribe. Your recording is still here."
 msgstr "Nepavyko transkribuoti. Jūsų įrašas vis dar čia."
 
 #: src/features/assistant/messages.tsx
-msgid "Couldn't undo that."
-msgstr "Nepavyko to atšaukti."
+msgid "Couldn't undo that. Try again."
+msgstr "Nepavyko to anuliuoti. Bandykite dar kartą."
 
 #: src/features/design/design-pane.tsx
-msgid "Couldn't unlock the resume."
-msgstr "Nepavyko atrakinti gyvenimo aprašymo."
+msgid "Couldn't unlock the resume. Try again."
+msgstr "Nepavyko atrakinti gyvenimo aprašymo. Bandykite dar kartą."
 
 #: src/features/write/outline.tsx
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Nepavyko atrakinti šio gyvenimo aprašymo. Bandykite dar kartą."
 
 #: src/features/workspace/tabs/messages.tsx
-msgid "Couldn't update the application. Nothing was changed."
-msgstr "Nepavyko atnaujinti paraiškos. Niekas nepakeista."
+msgid "Couldn't update the application. Nothing was changed; try again."
+msgstr "Nepavyko atnaujinti paraiškos. Niekas nepakeista; bandykite dar kartą."
 
 #: src/features/application-detail/interview-sheet.tsx
-msgid "Couldn't update the interview."
-msgstr "Nepavyko atnaujinti interviu."
+msgid "Couldn't update the interview. Try again."
+msgstr "Nepavyko atnaujinti pokalbio. Bandykite dar kartą."
 
 #: src/features/settings/profile.tsx
 msgid "Couldn't update the photo. Check camera permissions, choose a photo smaller than 10 MB, and try again."
@@ -2938,6 +2978,14 @@ msgstr "Nepavyko įkelti failo. Bandykite dar kartą."
 #: src/features/settings/profile.tsx
 msgid "Couldn't upload the photo."
 msgstr "Nepavyko įkelti nuotraukos."
+
+#: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Try again."
+msgstr "Nepavyko įkelti nuotraukos. Bandykite dar kartą."
+
+#: src/features/public/public-resume.tsx
+msgid "Couldn't verify the password. Try again."
+msgstr "Nepavyko patikrinti slaptažodžio. Bandykite dar kartą."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -2978,12 +3026,6 @@ msgstr "Motyvacinis laiškas"
 #: src/features/application-detail/sections.tsx
 msgid "Cover letter — {0}"
 msgstr "Motyvacinis laiškas – {0}"
-
-#: src/features/assistant/assistant-screen.tsx
-#: src/features/letters/share.tsx
-#: src/features/letters/write.tsx
-msgid "Cover letter could not be loaded."
-msgstr "Nepavyko įkelti motyvacinio laiško."
 
 #: src/features/application-detail/sections.tsx
 msgid "Cover letter file"
@@ -3060,8 +3102,8 @@ msgid "Custom"
 msgstr "Pasirinktinis"
 
 #: src/features/design/style-groups.tsx
-msgid "Custom colour (hex)"
-msgstr "Pasirinktinė spalva (šešioliktainis)"
+msgid "Custom color (hex)"
+msgstr "Pasirinktinė spalva (hex)"
 
 #: src/features/write/basics-screen.tsx
 msgid "Custom fields"
@@ -3073,7 +3115,7 @@ msgstr "Pasirinktinis skyrius"
 
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
-msgid "Custom Styles"
+msgid "Custom styles"
 msgstr "Pasirinktiniai stiliai"
 
 #: src/features/design/advanced.tsx
@@ -3107,7 +3149,7 @@ msgid "Dark theme"
 msgstr "Tamsi tema"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing cancelled. Nothing was sent to the AI provider."
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
 msgstr "Duomenų bendrinimas atšauktas. AI teikėjui nieko nebuvo išsiųsta."
 
 #: src/features/application-detail/interview-sheet.tsx
@@ -3176,10 +3218,6 @@ msgstr "Numatytasis"
 msgid "Degree"
 msgstr "Laipsnis"
 
-#: src/features/ai/provider-editor.tsx
-#: src/features/application-detail/detail-screen.tsx
-#: src/features/applications/list-screen.tsx
-#: src/features/assistant/threads.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 #: src/features/workspace/tabs/saved.tsx
@@ -3187,7 +3225,13 @@ msgstr "Laipsnis"
 msgid "Delete"
 msgstr "Ištrinti"
 
+#. placeholder {0}: purge[0]?.name
+#: src/features/documents/library.tsx
+msgid "Delete “{0}” forever?"
+msgstr "Ištrinti „{0}“ visam laikui?"
+
 #. placeholder {0}: menu ? versionTitle(menu) : ""
+#: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Delete “{0}”?"
 msgstr "Ištrinti „{0}“?"
@@ -3200,28 +3244,30 @@ msgid "Delete {0}"
 msgstr "Ištrinti {0}"
 
 #: app/(tabs)/settings/account.tsx
+#: src/features/search/search-screen.tsx
 msgid "Delete account"
 msgstr "Ištrinti paskyrą"
 
-#: src/features/search/search-screen.tsx
-msgid "Delete Account"
-msgstr "Ištrinti paskyrą"
+#: src/features/application-detail/detail-screen.tsx
+msgid "Delete application"
+msgstr "Ištrinti paraišką"
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Delete application…"
+msgstr "Ištrinti paraišką…"
+
+#: src/features/assistant/threads.tsx
+msgid "Delete conversation"
+msgstr "Ištrinti pokalbį"
 
 #: src/features/application-detail/sections.tsx
 msgid "Delete entry"
 msgstr "Ištrinti įrašą"
 
+#: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
 msgid "Delete entry…"
 msgstr "Ištrinti įrašą…"
-
-#: src/features/documents/library.tsx
-msgid "Delete forever"
-msgstr "Ištrinti visam laikui"
-
-#: src/features/documents/library.tsx
-msgid "Delete forever?"
-msgstr "Ištrinti visam laikui?"
 
 #: src/features/documents/library.tsx
 msgid "Delete forever…"
@@ -3236,12 +3282,8 @@ msgid "Delete it. Hidden keywords are treated as a deliberate attempt to game th
 msgstr "Pašalinkite juos. Paslėpti raktažodžiai laikomi sąmoningu bandymu apgauti paiešką."
 
 #: src/features/design/layout-screen.tsx
-msgid "Delete Page"
+msgid "Delete page"
 msgstr "Ištrinti puslapį"
-
-#: src/features/write/picture-screen.tsx
-msgid "Delete picture"
-msgstr "Ištrinti paveikslėlį"
 
 #: src/features/ai/provider-editor.tsx
 msgid "Delete provider"
@@ -3254,10 +3296,6 @@ msgstr "Ištrinti tvarkaraštį"
 #: src/features/write/section-sheet.tsx
 msgid "Delete section"
 msgstr "Ištrinti skyrių"
-
-#: src/features/applications/list-screen.tsx
-msgid "Delete selected applications?"
-msgstr "Ištrinti pasirinktas darbo paraiškas?"
 
 #: src/features/career/stories.tsx
 msgid "Delete story"
@@ -3280,11 +3318,10 @@ msgid "Delete this provider?"
 msgstr "Ištrinti šį teikėją?"
 
 #: src/features/history/history.tsx
-msgid "Delete this version?"
-msgstr "Ištrinti šią versiją?"
+#: src/features/letters/share.tsx
+msgid "Delete version"
+msgstr "Ištrinti versiją"
 
-#: src/features/application-detail/detail-screen.tsx
-#: src/features/application-detail/sections.tsx
 #: src/features/applications/list-screen.tsx
 msgid "Delete…"
 msgstr "Ištrinti…"
@@ -3368,11 +3405,14 @@ msgstr "Skirtingos valiutos arba mokėjimo laikotarpiai. Pinigų skirtumas neska
 msgid "Direction"
 msgstr "Kryptis"
 
-#: src/features/applications/add-sheet.tsx
 #: src/features/letters/write.tsx
-#: src/ui/overlays.tsx
 msgid "Discard"
 msgstr "Išmesti"
+
+#: src/features/applications/add-sheet.tsx
+#: src/ui/overlays.tsx
+msgid "Discard changes"
+msgstr "Atmesti pakeitimus"
 
 #: src/features/applications/add-sheet.tsx
 #: src/ui/overlays.tsx
@@ -3415,9 +3455,17 @@ msgstr "Dokumento tipas"
 msgid "Documents"
 msgstr "Dokumentai"
 
+#: src/features/documents/library.tsx
+msgid "Documents are deleted permanently after 30 days."
+msgstr "Dokumentai ištrinami visam laikui po 30 dienų."
+
 #: src/features/application-detail/sections.tsx
 msgid "Documents for this job"
 msgstr "Šio darbo dokumentai"
+
+#: src/features/documents/library.tsx
+msgid "Documents you move here stay for 30 days."
+msgstr "Čia perkelti dokumentai lieka 30 dienų."
 
 #. placeholder {0}: document.name
 #: src/features/assistant/assistant-screen.tsx
@@ -3437,6 +3485,7 @@ msgstr "Nesidalinkite"
 msgid "Donate on Open Collective"
 msgstr "Paremkite per „Open Collective“"
 
+#: app/(tabs)/settings/preferences.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
@@ -3472,8 +3521,8 @@ msgid "Download both PDFs"
 msgstr "Atsisiųsti abu PDF"
 
 #: src/features/letters/share.tsx
-msgid "Download failed."
-msgstr "Atsisiųsti nepavyko."
+msgid "Download failed. Try again."
+msgstr "Atsisiųsti nepavyko. Bandykite dar kartą."
 
 #: src/features/letters/share.tsx
 msgid "Download opens the system share sheet. Choose a storage provider to save the file."
@@ -3601,7 +3650,7 @@ msgid "Duplicate"
 msgstr "Dubliuoti"
 
 #: src/features/document-menu/index.tsx
-msgid "Duplicate Resume"
+msgid "Duplicate resume"
 msgstr "Dubliuoti gyvenimo aprašymą"
 
 #: src/features/settings/locale-names.ts
@@ -3634,15 +3683,11 @@ msgstr "Redaguoti"
 msgid "Edit {0}: {1}"
 msgstr "Redaguoti {0}: {1}"
 
-#: src/features/assistant/document.ts
-#: src/features/assistant/proposals.ts
-msgid "Edit applied"
-msgstr "Pritaikytas redagavimas"
-
 #: src/features/application-detail/sheets.tsx
 msgid "Edit date"
 msgstr "Redaguoti datą"
 
+#: src/features/application-detail/sections.tsx
 #: src/preview/page.tsx
 msgid "Edit entry"
 msgstr "Redaguoti įrašą"
@@ -3681,10 +3726,6 @@ msgstr "Redaguoti el. laišką"
 msgid "Edit the link"
 msgstr "Redaguoti nuorodą"
 
-#: src/features/application-detail/sections.tsx
-msgid "Edit…"
-msgstr "Redaguoti…"
-
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Editing session"
@@ -3708,7 +3749,7 @@ msgid "Email (optional)"
 msgstr "El. paštas (neprivaloma)"
 
 #: src/features/check/issues.ts
-msgid "Email address won't be recognised"
+msgid "Email address won't be recognized"
 msgstr "El. pašto adresas nebus atpažintas"
 
 #: src/features/application-detail/sheets.tsx
@@ -3724,8 +3765,8 @@ msgid "Empty letter"
 msgstr "Tuščias motyvacinis laiškas"
 
 #: src/features/documents/library.tsx
-msgid "Empty Trash"
-msgstr "Tuščias Šiukšliadėžė"
+msgid "Empty trash"
+msgstr "Išvalyti šiukšliadėžę"
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -3752,8 +3793,8 @@ msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Įveskite visą sumą, pvz., 95000. Ankstesnė suma nepakeista."
 
 #: src/features/write/pickers.tsx
-msgid "Enter a hex colour like #1a1a1a, or rgba(…)."
-msgstr "Įveskite šešioliktainę spalvą, pvz., #1a1a1a arba rgba(…)."
+msgid "Enter a hex color like #1a1a1a, or rgba(…)."
+msgstr "Įveskite hex spalvą, pvz., #1a1a1a, arba rgba(…)."
 
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
@@ -3863,7 +3904,7 @@ msgid "Export a smaller PDF and check it again, or start a blank resume and fix 
 msgstr "Eksportuokite mažesnį PDF ir patikrinkite dar kartą arba sukurkite tuščią gyvenimo aprašymą ir ištaisykite problemas jame."
 
 #: src/features/search/search-screen.tsx
-msgid "Export Data"
+msgid "Export data"
 msgstr "Eksportuoti duomenis"
 
 #: src/features/settings/export.tsx
@@ -3902,14 +3943,6 @@ msgstr "Faktai"
 #: src/features/ai/provider-list.tsx
 msgid "Failed"
 msgstr "Nepavyko"
-
-#: src/features/write/picture-screen.tsx
-msgid "Failed to upload picture. Please try again."
-msgstr "Nepavyko įkelti paveikslėlio. Bandykite dar kartą."
-
-#: src/features/public/public-resume.tsx
-msgid "Failed to verify the password. Please try again."
-msgstr "Nepavyko patikrinti slaptažodžio. Bandykite dar kartą."
 
 #: app/(tabs)/settings/preferences.tsx
 msgid "Feedback"
@@ -4010,14 +4043,6 @@ msgstr "Atitiktis"
 msgid "Fit checks, briefings, practice feedback, debriefs, answers and replies land here as the other tabs create them."
 msgstr "Atitikties patikros, atmintinės, praktikos atsiliepimai, aptarimai, atsakymai ir atsakymai į žinutes atsiranda čia, kai juos sukuria kiti skirtukai."
 
-#: src/preview/page.tsx
-msgid "Fit to {authored} pages"
-msgstr "Tinka {authored} puslapiams"
-
-#: src/preview/page.tsx
-msgid "Fit to one page"
-msgstr "Talpinti į vieną puslapį"
-
 #: src/features/check/issues.ts
 msgid "Fix the date"
 msgstr "Pataisykite datą"
@@ -4070,7 +4095,7 @@ msgid "Follow-up reminder"
 msgstr "Priminimas susisiekti"
 
 #: src/features/design/advanced.tsx
-msgid "Font Family"
+msgid "Font family"
 msgstr "Šriftų šeima"
 
 #: src/features/design/style-groups.tsx
@@ -4079,16 +4104,16 @@ msgid "Font pairing"
 msgstr "Šriftų poravimas"
 
 #: src/features/design/advanced.tsx
-msgid "Font Size"
+msgid "Font size"
 msgstr "Šrifto dydis"
 
 #: src/features/design/advanced.tsx
-msgid "Font Weight"
+msgid "Font weight"
 msgstr "Šrifto storis"
 
 #: src/features/design/advanced.tsx
-msgid "Font Weights"
-msgstr "Šrifto variantai"
+msgid "Font weights"
+msgstr "Šrifto storiai"
 
 #: src/features/letters/write.tsx
 msgid "For"
@@ -4165,7 +4190,7 @@ msgid "From your experience entries"
 msgstr "Iš savo patirties įrašų"
 
 #: src/features/career/search-regions-field.tsx
-msgid "From your time zone"
+msgid "From your timezone"
 msgstr "Pagal jūsų laiko juostą"
 
 #: src/features/write/basics-screen.tsx
@@ -4174,7 +4199,7 @@ msgstr "Pilnas vardas"
 
 #. Layout editor toggle label that makes a page single-column
 #: src/features/design/layout-screen.tsx
-msgid "Full Width"
+msgid "Full width"
 msgstr "Visas plotis"
 
 #: src/features/settings/locale-names.ts
@@ -4344,21 +4369,13 @@ msgstr "Slėpti detales"
 msgid "Hide from page"
 msgstr "Slėpti nuo puslapio"
 
-#: src/features/design/advanced.tsx
-msgid "Hide Icons"
-msgstr "Slėpti piktogramas"
-
 #: src/features/ai/provider-editor.tsx
 msgid "Hide key"
 msgstr "Slėpti raktą"
 
 #: app/(tabs)/settings/licences.tsx
-msgid "Hide licence"
+msgid "Hide license"
 msgstr "Slėpti licenciją"
-
-#: src/features/design/advanced.tsx
-msgid "Hide Link Underline"
-msgstr "Slėpti nuorodos pabraukimą"
 
 #: src/features/public/public-resume.tsx
 msgid "Hide password"
@@ -4367,10 +4384,6 @@ msgstr "Paslėpti slaptažodį"
 #: src/features/career/today.tsx
 msgid "Hide read"
 msgstr "Slėpti skaitytus elementus"
-
-#: src/features/design/advanced.tsx
-msgid "Hide Section Icons"
-msgstr "Slėpti skyrių piktogramas"
 
 #: src/features/check/issues.ts
 msgid "Hide the photo"
@@ -4398,6 +4411,18 @@ msgstr "Istorija"
 #: src/features/write/outline.tsx
 msgid "hold ⋮⋮ to move"
 msgstr "laikykite nuspaudę ⋮⋮, kad judėtumėte"
+
+#: src/features/documents/library.tsx
+msgid "Hold to delete"
+msgstr "Laikykite, kad ištrintumėte"
+
+#: src/features/design/advanced.tsx
+msgid "Horizontal margin"
+msgstr "Horizontali paraštė"
+
+#: src/features/design/advanced.tsx
+msgid "Horizontal spacing"
+msgstr "Horizontalūs tarpai"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "How did it go?"
@@ -4468,8 +4493,8 @@ msgid "Icon"
 msgstr "Ikona"
 
 #: src/features/write/entry-fields.tsx
-msgid "Icon colour"
-msgstr "Ikonos spalva"
+msgid "Icon color"
+msgstr "Piktogramos spalva"
 
 #: src/features/write/section-sheet.tsx
 msgid "Icon…"
@@ -4521,12 +4546,12 @@ msgid "Import a resume"
 msgstr "Importuoti gyvenimo aprašymą"
 
 #: src/features/documents/import-file.ts
-msgid "Import cancelled."
-msgstr "Importas atšauktas."
+msgid "Import canceled."
+msgstr "Importavimas atšauktas."
 
 #: src/features/documents/new-document.tsx
-msgid "Import cancelled. Refresh Documents before retrying if the upload had finished."
-msgstr "Importas atšauktas. Prieš bandydami dar kartą atnaujinkite Dokumentai, jei įkėlimas buvo baigtas."
+msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
+msgstr "Importavimas atšauktas. Jei įkėlimas buvo baigtas, prieš bandydami dar kartą atnaujinkite Dokumentus."
 
 #: src/features/documents/new-document.tsx
 msgid "Import file"
@@ -4564,6 +4589,10 @@ msgstr "Pagerinkite pasirinktą eilutę"
 #: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Tobulinama…"
+
+#: src/features/applications/list-screen.tsx
+msgid "Including closed"
+msgstr "Įskaitant uždarytas"
 
 #: src/features/design/controls.tsx
 msgid "Increase {label}"
@@ -4630,8 +4659,8 @@ msgid "Interview saved"
 msgstr "Pokalbis išsaugotas"
 
 #: src/features/application-detail/interview-sheet.tsx
-msgid "Interview saved. Couldn't update its reminder."
-msgstr "Interviu išsaugotas. Nepavyko atnaujinti priminimo."
+msgid "Interview saved. Couldn't update its reminder. Edit the interview to try again."
+msgstr "Pokalbis išsaugotas. Nepavyko atnaujinti jo priminimo. Redaguokite pokalbį, kad bandytumėte dar kartą."
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Interview saved. The reminder time has already passed."
@@ -4695,14 +4724,6 @@ msgstr "Italų"
 msgid "Italic"
 msgstr "Kursyvas"
 
-#: src/features/documents/library.tsx
-msgid "Items are deleted permanently after 30 days."
-msgstr "įrašai ištrinami visam laikui po 30 dienų."
-
-#: src/features/documents/library.tsx
-msgid "Items you move here stay for 30 days."
-msgstr "įrašai, kuriuos čia perkeliate, lieka 30 dienų."
-
 #: src/features/assistant/threads.tsx
 msgid "Its messages and attachments are deleted. Edits you accepted stay in the document."
 msgstr "Jo pranešimai ir priedai ištrinami. Pataisymai, su kuriais sutikote, lieka dokumente."
@@ -4752,8 +4773,8 @@ msgid "Job search couldn't be reached. Try again or paste a posting link."
 msgstr "Nepavyko pasiekti darbo paieškos. Bandykite dar kartą arba įklijuokite darbo skelbimo nuorodą."
 
 #: src/features/applications/error.ts
-msgid "Job search isn't configured on this server."
-msgstr "Šiame serveryje darbo paieška nesukonfigūruota."
+msgid "Job search isn't configured on this server. Paste a posting link instead."
+msgstr "Šiame serveryje darbo paieška nesukonfigūruota. Vietoj to įklijuokite skelbimo nuorodą."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Job search pipeline"
@@ -4890,10 +4911,6 @@ msgstr "Korėjiečių"
 msgid "Label"
 msgstr "Etiketė"
 
-#: src/features/application-detail/sheets.tsx
-msgid "Label, e.g. Recruiter"
-msgstr "Etiketė, pvz. Verbuotojas"
-
 #: src/features/write/picture-screen.tsx
 msgid "Landscape"
 msgstr "Gulsčias"
@@ -4922,6 +4939,10 @@ msgstr "Paskutinį kartą redaguota"
 #: app/(tabs)/settings/preferences.tsx
 msgid "Later"
 msgstr "Vėliau"
+
+#: src/features/assistant/chat-view.tsx
+msgid "Latest"
+msgstr "Naujausia"
 
 #: src/features/settings/locale-names.ts
 msgid "Latvian"
@@ -5050,7 +5071,7 @@ msgid "Level"
 msgstr "Lygis"
 
 #: app/(tabs)/settings/licences.tsx
-msgid "Licences"
+msgid "Licenses"
 msgstr "Licencijos"
 
 #: src/features/ats-checker/messages.ts
@@ -5071,8 +5092,8 @@ msgid "Likely questions, from the posting and your resume"
 msgstr "Galimi klausimai iš darbo skelbimo ir jūsų gyvenimo aprašymo"
 
 #: src/features/design/advanced.tsx
-msgid "Line Height"
-msgstr "Tarpueilio aukštis"
+msgid "Line height"
+msgstr "Eilutės aukštis"
 
 #: src/features/check/issues.ts
 msgid "Line height set to {minimum}"
@@ -5340,8 +5361,8 @@ msgid "Make the visible text and the destination match."
 msgstr "Padarykite, kad matomas tekstas ir nuorodos adresas sutaptų."
 
 #: src/features/ats-checker/messages.ts
-msgid "Make them visibly larger, bolder or capitalised."
-msgstr "Padarykite juos akivaizdžiai didesnius, paryškintus ar didžiosiomis raidėmis."
+msgid "Make them visibly larger, bolder or capitalized."
+msgstr "Padarykite juos akivaizdžiai didesnius, paryškintus arba didžiosiomis raidėmis."
 
 #: src/features/settings/locale-names.ts
 msgid "Malay"
@@ -5375,14 +5396,6 @@ msgstr "2022 m. kovo mėn"
 #: src/features/settings/locale-names.ts
 msgid "Marathi"
 msgstr "Maratų"
-
-#: src/features/design/advanced.tsx
-msgid "Margin (Horizontal)"
-msgstr "Paraštė (horizontali)"
-
-#: src/features/design/advanced.tsx
-msgid "Margin (Vertical)"
-msgstr "Paraštė (vertikali)"
 
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design.tsx
@@ -5438,6 +5451,10 @@ msgstr "Derinti su „{resumeName}“"
 #: src/features/search/search-screen.tsx
 msgid "Match system theme"
 msgstr "Suderinkite sistemos temą"
+
+#: src/features/letters/design.tsx
+msgid "Match the resume"
+msgstr "Pritaikyti gyvenimo aprašymą"
 
 #: src/features/career/offers.tsx
 msgid "Matches a preferred location."
@@ -5765,7 +5782,7 @@ msgid "New API key"
 msgstr "Naujas API raktas"
 
 #: src/features/search/search-screen.tsx
-msgid "New Application"
+msgid "New application"
 msgstr "Nauja paraiška"
 
 #: src/features/assistant/assistant-screen.tsx
@@ -5785,13 +5802,10 @@ msgstr "Vietoj to naujas motyvacinis laiškas"
 msgid "New document"
 msgstr "Naujas dokumentas"
 
+#: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "New page"
-msgstr "Naujas puslapis"
-
-#: src/features/design/layout-screen.tsx
-msgid "New Page"
 msgstr "Naujas puslapis"
 
 #: src/features/career/today.tsx
@@ -5989,7 +6003,7 @@ msgid "No Reactive Resume server answered at this address. Check the spelling, o
 msgstr "Šiuo adresu neatsiliepė joks Reactive Resume serveris. Patikrinkite rašybą arba paklauskite administratoriaus, ar serveris leidžia prisijungti prie programos."
 
 #: src/features/check/job-match.tsx
-msgid "No recognisable terms in this posting."
+msgid "No recognizable terms in this posting."
 msgstr "Šiame darbo skelbime nėra atpažįstamų terminų."
 
 #: src/features/career/today.tsx
@@ -6251,21 +6265,9 @@ msgstr "Neprisijungus · išsaugota šiame įrenginyje"
 msgid "Offline. Edits are saved on this device and sync when you reconnect."
 msgstr "Neprisijungus. Pakeitimai išsaugomi šiame įrenginyje ir sinchronizuojami, kai vėl prisijungiate."
 
-#: app/(tabs)/settings/preferences.tsx
-msgid "OK"
-msgstr "Gerai"
-
 #: src/features/career/today.tsx
 msgid "On"
 msgstr "Įjungta"
-
-#: src/features/applications/next-step.ts
-msgid "On-site"
-msgstr "Vietoje"
-
-#: src/features/career/today.tsx
-msgid "On-site interview"
-msgstr "Pokalbis vietoje"
 
 #: src/features/share/link.tsx
 msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
@@ -6293,7 +6295,7 @@ msgid "Only enabled facts can back a story. Leave unsupported outcomes blank."
 msgstr "Tik įgalinti faktai gali patvirtinti istoriją. Nepalaikomus rezultatus palikite tuščią."
 
 #: src/features/ats-checker/messages.ts
-msgid "Only one recognisable section heading was found."
+msgid "Only one recognizable section heading was found."
 msgstr "Rasta tik viena atpažįstama skyriaus antraštė."
 
 #: src/features/history/history.tsx
@@ -6335,8 +6337,13 @@ msgid "Only you see these"
 msgstr "Tai matote tik jūs"
 
 #: src/features/application-detail/hooks.ts
+#: src/features/applications/next-step.ts
 msgid "Onsite"
 msgstr "Biure"
+
+#: src/features/career/today.tsx
+msgid "Onsite interview"
+msgstr "Pokalbis vietoje"
 
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
@@ -6419,7 +6426,7 @@ msgid "Open workspace"
 msgstr "Atidaryti darbo erdvę"
 
 #: app/(tabs)/settings/index.tsx
-msgid "Open-source licences"
+msgid "Open-source licenses"
 msgstr "Atvirojo kodo licencijos"
 
 #: src/features/letters/share.tsx
@@ -6662,7 +6669,7 @@ msgid "PDF · tap to preview"
 msgstr "PDF · Palieskite, kad peržiūrėtumėte"
 
 #: src/features/check/parser.tsx
-msgid "PDF check cancelled. Retry when ready."
+msgid "PDF check canceled. Retry when ready."
 msgstr "PDF patikra atšaukta. Bandykite dar kartą, kai būsite pasiruošę."
 
 #: src/features/application-detail/sections.tsx
@@ -6713,6 +6720,10 @@ msgstr "Telefonas"
 msgid "Phone (optional)"
 msgstr "Telefonas (neprivaloma)"
 
+#: src/features/write/picture-screen.tsx
+msgid "Photo"
+msgstr "Nuotrauka"
+
 #: src/features/check/issues.ts
 msgid "Photo hidden"
 msgstr "Nuotrauka paslėpta"
@@ -6744,10 +6755,6 @@ msgstr "Pasirinkite du pavyzdžius"
 #: src/features/workspace/parts.tsx
 msgid "Picking your stories"
 msgstr "Atrenkamos jūsų istorijos"
-
-#: src/features/write/picture-screen.tsx
-msgid "Picture"
-msgstr "Paveikslėlis"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Pipeline flow"
@@ -6820,10 +6827,21 @@ msgstr "skelbimas"
 msgid "Posting"
 msgstr "Darbo skelbimas"
 
+#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/practise.tsx
+#: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Practice"
 msgstr "Praktika"
+
+#: src/shell/workspace-chrome.tsx
+msgctxt "Application workspace tab: rehearse interview answers"
+msgid "Practice"
+msgstr "Praktikuotis"
+
+#: src/features/workspace/tabs/practise.tsx
+msgid "Practice another question"
+msgstr "Praktikuoti kitą klausimą"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -6837,18 +6855,8 @@ msgstr "Tai praktikos prioritetai, o ne išvados apie tai, kodėl darbdavys pri�
 msgid "Practice priority:"
 msgstr "Praktikos prioritetas:"
 
-#: src/features/workspace/parts.tsx
-#: src/features/workspace/tabs/prepare.tsx
-#: src/shell/workspace-chrome.tsx
-msgid "Practise"
-msgstr "Praktikuotis"
-
 #: src/features/workspace/tabs/practise.tsx
-msgid "Practise another question"
-msgstr "Praktikuoti kitą klausimą"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Practising your story: {storyTitle}"
+msgid "Practicing your story: {storyTitle}"
 msgstr "Praktikuojatės pasakoti istoriją: {storyTitle}"
 
 #: src/features/ats-checker/messages.ts
@@ -6913,6 +6921,10 @@ msgstr "Ruošiamas failas…"
 msgid "Present"
 msgstr "Dabar"
 
+#: src/ui/overlays.tsx
+msgid "Press and hold"
+msgstr "Paspauskite ir palaikykite"
+
 #: src/features/design/template-group.tsx
 msgid "Press and hold to preview it on the page."
 msgstr "Paspauskite ir palaikykite, kad peržiūrėtumėte jį puslapyje."
@@ -6920,11 +6932,6 @@ msgstr "Paspauskite ir palaikykite, kad peržiūrėtumėte jį puslapyje."
 #: src/features/design/layout-screen.tsx
 msgid "Press and hold, then drag to another column or page."
 msgstr "Paspauskite ir palaikykite, tada vilkite į kitą stulpelį arba puslapį."
-
-#: src/features/letters/page.tsx
-#: src/preview/page.tsx
-msgid "Preview could not be rendered. Retry, or try another template or font in Design."
-msgstr "Nepavyko pateikti peržiūros. Bandyti dar kartą arba pabandykite kitą šabloną ar šriftą Dizainas."
 
 #. placeholder {0}: templateName(template)
 #: src/features/design/preview-caption.tsx
@@ -6952,7 +6959,7 @@ msgid "Previous workspace tabs"
 msgstr "Ankstesni darbo srities skirtukai"
 
 #: src/features/design/advanced.tsx
-msgid "Primary Color"
+msgid "Primary color"
 msgstr "Pagrindinė spalva"
 
 #: src/features/document-menu/index.tsx
@@ -7004,7 +7011,7 @@ msgid "Profiles"
 msgstr "Profiliai"
 
 #: src/features/design/advanced.tsx
-msgid "Progress Bar"
+msgid "Progress bar"
 msgstr "Progreso juosta"
 
 #: src/features/write/fields.ts
@@ -7136,7 +7143,7 @@ msgid "Read it for me"
 msgstr "Perskaityti už mane"
 
 #: app/(tabs)/settings/licences.tsx
-msgid "Read licence"
+msgid "Read license"
 msgstr "Skaityti licenciją"
 
 #: src/features/applications/add-sheet.tsx
@@ -7292,7 +7299,7 @@ msgid "Rectangle"
 msgstr "Stačiakampis"
 
 #: src/features/design/advanced.tsx
-msgid "Rectangle (Full Width)"
+msgid "Rectangle (full width)"
 msgstr "Stačiakampis (visas plotis)"
 
 #: app/builder/[id]/_layout.tsx
@@ -7393,8 +7400,6 @@ msgstr "Priminimai rodomi čia. El. pašto kopijos neprivalomos, joms reikia pat
 msgid "Remote"
 msgstr "Nuotoliniu būdu"
 
-#: src/features/share/link.tsx
-#: src/features/write/picture-screen.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "Pašalinti"
@@ -7424,12 +7429,17 @@ msgstr "Pašalinti lauką"
 msgid "Remove file"
 msgstr "Pašalinti failą"
 
+#: src/features/share/link.tsx
+msgid "Remove password"
+msgstr "Pašalinti slaptažodį"
+
 #. placeholder {0}: index + 1
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Remove person {0}"
 msgstr "Pašalinti asmenį {0}"
 
 #: src/features/settings/profile.tsx
+#: src/features/write/picture-screen.tsx
 msgid "Remove photo"
 msgstr "Pašalinti nuotrauką"
 
@@ -7578,8 +7588,6 @@ msgid "Restart to change text direction"
 msgstr "Paleiskite iš naujo, kad pakeistumėte teksto kryptį"
 
 #: src/features/documents/library.tsx
-#: src/features/history/history.tsx
-#: src/features/letters/share.tsx
 msgid "Restore"
 msgstr "Atkurti"
 
@@ -7592,6 +7600,11 @@ msgstr "Atkurti šią versiją"
 #: src/features/letters/share.tsx
 msgid "Restore this version?"
 msgstr "Atkurti šią versiją?"
+
+#: src/features/history/history.tsx
+#: src/features/letters/share.tsx
+msgid "Restore version"
+msgstr "Atkurti versiją"
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -7615,15 +7628,6 @@ msgstr "Gyvenimo aprašymas"
 #: src/features/letters/share.tsx
 msgid "Resume + letter"
 msgstr "gyvenimo aprašymas + laiškas"
-
-#: app/builder/[id]/page.tsx
-#: app/builder/[id]/write.tsx
-#: src/features/assistant/assistant-screen.tsx
-#: src/features/design/design-pane.tsx
-#: src/features/share/document.ts
-#: src/features/share/download.tsx
-msgid "Resume could not be loaded."
-msgstr "Nepavyko įkelti gyvenimo aprašymo."
 
 #: src/features/document-menu/index.tsx
 msgid "Resume details"
@@ -7792,6 +7796,10 @@ msgstr "Atšaukti"
 #: src/features/settings/api-keys.tsx
 msgid "Revoke API key?"
 msgstr "Atšaukti API raktą?"
+
+#: src/features/settings/api-keys.tsx
+msgid "Revoke key"
+msgstr "Atšaukti raktą"
 
 #: src/features/settings/api-keys.tsx
 msgid "Revoke this API key"
@@ -8049,8 +8057,8 @@ msgid "Schedule interview"
 msgstr "Suplanuokite pokalbį"
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Scheduled work is not available on this server. Ask the server owner to configure it."
-msgstr "Suplanuotas darbas šiame serveryje nepasiekiamas. Paprašykite serverio savininko jį sukonfigūruoti."
+msgid "Scheduled work is not available on this server. Ask your server administrator to configure it."
+msgstr "Suplanuotas darbas šiame serveryje nepasiekiamas. Paprašykite serverio administratoriaus jį sukonfigūruoti."
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Scheduled work isn't available on this server."
@@ -8185,8 +8193,8 @@ msgid "Sections · print order"
 msgstr "Skyriai · spausdinimo tvarka"
 
 #: src/features/check/issues.ts
-msgid "Sections use headings systems recognise, and work experience shows."
-msgstr "Skyriuose naudojamos antraščių sistemos atpažinimas, o darbo patirtis rodo."
+msgid "Sections use headings systems recognize, and work experience shows."
+msgstr "Skyriuose naudojamos sistemų atpažįstamos antraštės, o darbo patirtis matoma."
 
 #: src/features/documents/document-sheets.tsx
 msgid "Select"
@@ -8349,11 +8357,11 @@ msgid "Sexual content"
 msgstr "Seksualinis turinys"
 
 #: src/features/write/picture-screen.tsx
-msgid "Shadow Color"
-msgstr "Šešėlių spalva"
+msgid "Shadow color"
+msgstr "Šešėlio spalva"
 
 #: src/features/write/picture-screen.tsx
-msgid "Shadow Width"
+msgid "Shadow width"
 msgstr "Šešėlio plotis"
 
 #: src/features/public/public-resume.tsx
@@ -8471,6 +8479,10 @@ msgstr "Rodyti antraštę"
 msgid "Show hidden terms again"
 msgstr "Dar kartą rodyti paslėptus terminus"
 
+#: src/features/design/advanced.tsx
+msgid "Show icons"
+msgstr "Rodyti piktogramas"
+
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Rodyti raktą"
@@ -8496,12 +8508,16 @@ msgid "Show password"
 msgstr "Rodyti slaptažodį"
 
 #: src/features/write/picture-screen.tsx
-msgid "Show picture"
-msgstr "Rodyti paveikslėlį"
+msgid "Show photo"
+msgstr "Rodyti nuotrauką"
 
 #: src/features/career/today.tsx
 msgid "Show read"
 msgstr "Rodyti perskaitytus"
+
+#: src/features/design/advanced.tsx
+msgid "Show section icons"
+msgstr "Rodyti skyrių piktogramas"
 
 #: src/features/application-detail/detail-screen.tsx
 msgid "Showing saved details. They couldn't be refreshed."
@@ -8534,12 +8550,9 @@ msgstr "Šoninė juosta skaitoma po pagrindinio stulpelio"
 msgid "Sidebar side"
 msgstr "Šoninės juostos pusė"
 
+#: src/features/design/layout-screen.tsx
 #: src/features/design/template-group.tsx
 msgid "Sidebar width"
-msgstr "Šoninės juostos plotis"
-
-#: src/features/design/layout-screen.tsx
-msgid "Sidebar Width"
 msgstr "Šoninės juostos plotis"
 
 #: src/features/check/issues.ts
@@ -8597,8 +8610,8 @@ msgid "Sign in to see your documents"
 msgstr "Prisijunkite, kad pamatytumėte savo dokumentus"
 
 #: src/features/assistant/assistant-screen.tsx
-msgid "Sign in to use the Assistant."
-msgstr "Prisijunkite, kad galėtumėte naudoti Padėjėjas."
+msgid "Sign in to use the assistant."
+msgstr "Prisijunkite, kad galėtumėte naudoti padėjėją."
 
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -8709,12 +8722,12 @@ msgstr "Kai kurie simboliai pasirodo kaip klaustukai."
 #. placeholder {0}: result.lostCharacters.join(", ")
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
-msgid "Some characters could not be drawn: {0}. Choose another font in Design."
-msgstr "Kai kurių simbolių nepavyko nupiešti: {0}. Pasirinkite kitą šriftą Dizainas."
+msgid "Some characters couldn't be drawn: {0}. Choose another font in Design."
+msgstr "Kai kurių simbolių nepavyko nupiešti: {0}. Skiltyje Dizainas pasirinkite kitą šriftą."
 
 #: src/features/check/page.tsx
-msgid "Some characters could not be rendered. Check the page before exporting."
-msgstr "Kai kurių simbolių nepavyko pateikti. Prieš eksportuodami patikrinkite puslapį."
+msgid "Some characters couldn't be rendered. Check the page before exporting."
+msgstr "Kai kurių simbolių nepavyko atvaizduoti. Prieš eksportuodami patikrinkite puslapį."
 
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
@@ -8729,13 +8742,13 @@ msgid "Some systems mishandle images, and photos are discouraged in some countri
 msgstr "Kai kurios sistemos netinkamai apdoroja vaizdus, ​​o kai kuriose šalyse nuotraukos nerekomenduojamos."
 
 #: src/features/check/issues.ts
-msgid "Some systems only recognise links that start with https://. This one reads as plain text: “{value}”."
-msgstr "Kai kurios sistemos atpažįsta tik nuorodas, prasidedančias https://. Ši nuoroda nuskaitoma kaip paprastas tekstas: „{value}“."
+msgid "Some systems only recognize links that start with https://. This one reads as plain text: “{value}”."
+msgstr "Kai kurios sistemos atpažįsta tik nuorodas, prasidedančias https://. Ši nuskaitoma kaip paprastas tekstas: „{value}“."
 
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
-msgid "Some text could not be drawn. Choose another font in Design."
-msgstr "Kai kurio teksto nepavyko nupiešti. Pasirinkite kitą šriftą Dizainas."
+msgid "Some text couldn't be drawn. Choose another font in Design."
+msgstr "Dalies teksto nepavyko nupiešti. Skiltyje Dizainas pasirinkite kitą šriftą."
 
 #: src/features/history/history.tsx
 msgid "Some text couldn't be rendered."
@@ -8748,19 +8761,6 @@ msgstr "Dalis teksto patenka už puslapio ribų."
 #: src/features/ats-checker/messages.ts
 msgid "Some text is rotated."
 msgstr "Dalis teksto pasukta."
-
-#: app/_layout.tsx
-msgid "Something went wrong"
-msgstr "Kažkas nutiko ne taip"
-
-#: src/features/ats-checker/check.ts
-#: src/features/ats-checker/checker.tsx
-msgid "Something went wrong while reading that file. Try again."
-msgstr "Skaitant tą failą kažkas nutiko. Bandykite dar kartą."
-
-#: src/auth/messages.ts
-msgid "Something went wrong while signing you in. Please try again."
-msgstr "Jungiant įvyko klaida. Bandykite dar kartą."
 
 #: src/features/documents/library.tsx
 msgid "Sort"
@@ -8795,14 +8795,6 @@ msgstr "Pirminis kodas „GitHub“"
 #: src/features/assistant/messages.tsx
 msgid "Sources"
 msgstr "Šaltiniai"
-
-#: src/features/design/advanced.tsx
-msgid "Spacing (Horizontal)"
-msgstr "Tarpai (horizontalūs)"
-
-#: src/features/design/advanced.tsx
-msgid "Spacing (Vertical)"
-msgstr "Tarpai (vertikalūs)"
 
 #: src/features/settings/locale-names.ts
 msgid "Spanish"
@@ -9206,7 +9198,7 @@ msgid "Text"
 msgstr "Tekstas"
 
 #: src/features/design/advanced.tsx
-msgid "Text Color"
+msgid "Text color"
 msgstr "Teksto spalva"
 
 #: src/features/check/issues.ts
@@ -9404,18 +9396,15 @@ msgid "The pages are pictures, with no text behind them."
 msgstr "Puslapiai yra paveikslėliai be jokio teksto po jais."
 
 #: src/features/public/public-resume.tsx
-msgid "The password you entered is incorrect"
-msgstr "Neteisingas slaptažodis"
+msgid "The password you entered is incorrect. Try again."
+msgstr "Įvestas slaptažodis neteisingas. Bandykite dar kartą."
 
 #: src/features/check/parser.tsx
 msgid "The PDF is checked on the server and not stored. Send this preview to see what software reads."
 msgstr "PDF yra patikrintas serveryje ir nesaugomas. Išsiųskite šią peržiūrą, kad pamatytumėte, ką skaito programinė įranga."
 
-#: src/features/ai/provider-list.tsx
-msgid "The provider didn't answer."
-msgstr "Teikėjas neatsakė."
-
 #: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-list.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
 msgstr "Teikėjas neatsakė. Patikrinkite raktą, modelį ir pagrindą URL."
 
@@ -9426,11 +9415,6 @@ msgstr "Priežastis saugoma „Insights“. Susieti dokumentai neliečiami."
 #: src/features/ats-checker/checker.tsx
 msgid "The rest of the file isn't in this report."
 msgstr "Likusios failo dalies šioje ataskaitoje nėra."
-
-#: src/features/letters/design.tsx
-#: src/features/letters/write.tsx
-msgid "the resume"
-msgstr "gyvenimo aprašymas"
 
 #: src/features/history/history.tsx
 msgid "The resume as it is"
@@ -9465,28 +9449,28 @@ msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "Nepavyko įkelti serverio versijos. Jūsų tekstas saugomas; bandykite dar kartą."
 
 #: src/features/applications/error.ts
-msgid "The service could not be reached. Try again or fill the details manually."
-msgstr "Su tarnyba nepavyko susisiekti. Bandykite dar kartą arba užpildykite informaciją rankiniu būdu."
+msgid "The service couldn't be reached. Try again or fill the details manually."
+msgstr "Nepavyko pasiekti paslaugos. Bandykite dar kartą arba užpildykite informaciją rankiniu būdu."
 
 #: src/features/ai/web-access.tsx
-msgid "The service did not respond in time."
-msgstr "Tarnyba laiku neatsakė."
+msgid "The service didn't respond in time. Try again."
+msgstr "Paslauga laiku neatsakė. Bandykite dar kartą."
 
 #: src/features/ai/web-access.tsx
-msgid "The service is unavailable or does not support this operation."
-msgstr "Paslauga nepasiekiama arba nepalaiko šios operacijos."
+msgid "The service is unavailable or doesn't support this operation. Try again later or connect another service."
+msgstr "Paslauga nepasiekiama arba nepalaiko šios operacijos. Bandykite vėliau arba prijunkite kitą paslaugą."
 
 #: src/features/ai/web-access.tsx
-msgid "The service quota is exhausted."
-msgstr "Paslaugų kvota išnaudota."
+msgid "The service quota is used up. Check your plan with the service."
+msgstr "Paslaugos kvota išnaudota. Patikrinkite savo planą paslaugoje."
 
 #: src/features/ai/web-access.tsx
-msgid "The service rejected the credentials."
-msgstr "Tarnyba atmetė įgaliojimus."
+msgid "The service rejected the credentials. Check the API key."
+msgstr "Paslauga atmetė prisijungimo duomenis. Patikrinkite API raktą."
 
 #: src/features/ai/error.ts
-msgid "The test didn't run."
-msgstr "Testas neįvyko."
+msgid "The test didn't run. Try again."
+msgstr "Testas nebuvo paleistas. Bandykite dar kartą."
 
 #: src/features/ats-checker/messages.ts
 msgid "The text comes out unreadable."
@@ -9542,8 +9526,8 @@ msgid "Thinking…"
 msgstr "Galvoju…"
 
 #: app/(tabs)/settings/licences.tsx
-msgid "Third-party software notices. Select a dependency to read its licence."
-msgstr "Pranešimai apie trečiųjų šalių programinę įrangą. Pasirinkite priklausomybę, kad perskaitytumėte jos licenciją."
+msgid "Third-party software notices. Tap a dependency to read its license."
+msgstr "Pranešimai apie trečiųjų šalių programinę įrangą. Bakstelėkite priklausomybę, kad perskaitytumėte jos licenciją."
 
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/workspace/shell.tsx
@@ -9691,6 +9675,10 @@ msgstr "Šis JSON nėra palaikomas gyvenimo aprašymas ar motyvacinis laiškas."
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Ši raidė ir „{resumeName}“ kaip du PDFs, pavadinti taip, kad atitiktų."
 
+#: src/features/letters/share.tsx
+msgid "This letter and your resume as two PDFs, named to match."
+msgstr "Šis laiškas ir jūsų gyvenimo aprašymas kaip du PDF failai suderintais pavadinimais."
+
 #: src/draft/conflict-sheet.tsx
 msgid "This letter changed elsewhere"
 msgstr "Šis motyvacinis laiškas pasikeitė kitur"
@@ -9756,7 +9744,7 @@ msgid "This resume is long."
 msgstr "Šis gyvenimo aprašymas ilgas."
 
 #: src/features/public/public-resume.tsx
-msgid "This resume is password protected"
+msgid "This resume is password-protected"
 msgstr "Šis gyvenimo aprašymas apsaugotas slaptažodžiu"
 
 #: src/features/public/public-resume.tsx
@@ -9780,8 +9768,8 @@ msgid "This saved version is no longer available."
 msgstr "Ši išsaugota versija nebepasiekiama."
 
 #: app/_layout.tsx
-msgid "This screen stopped working. Try again, or restart the app."
-msgstr "Šis ekranas nustojo veikti. Bandykite dar kartą arba paleiskite programėlę iš naujo."
+msgid "This screen stopped working"
+msgstr "Šis ekranas nustojo veikti"
 
 #: src/auth/messages.ts
 msgid "This server is too old for the app. Ask your administrator to update it."
@@ -9796,8 +9784,8 @@ msgid "This server uses http. The app needs https."
 msgstr "Šis serveris naudoja http. Programai reikia https."
 
 #: src/auth/messages.ts
-msgid "This sign-in attempt expired or was already used. Please start again."
-msgstr "Šio prisijungimo bandymo galiojimas baigėsi arba jis jau panaudotas. Pradėkite iš naujo."
+msgid "This sign-in attempt expired or was already used. Sign in again."
+msgstr "Šio prisijungimo bandymo galiojimas baigėsi arba jis jau panaudotas. Prisijunkite dar kartą."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "This story is unavailable or uses facts that are switched off."
@@ -9994,6 +9982,10 @@ msgstr "Bandykite dar kartą naršyklėje"
 msgid "Try again with this"
 msgstr "Bandyti dar kartą su šiuo"
 
+#: app/_layout.tsx
+msgid "Try again, or restart the app."
+msgstr "Bandykite dar kartą arba paleiskite programėlę iš naujo."
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Išbandykite kitą paiešką arba išvalykite filtrus."
@@ -10044,8 +10036,8 @@ msgid "Two stories"
 msgstr "Dvi istorijos"
 
 #: app/(tabs)/settings/account.tsx
-msgid "Two-factor authentication"
-msgstr "Dviejų veiksnių autentifikavimas"
+msgid "Two-step verification"
+msgstr "Patvirtinimas dviem veiksmais"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
@@ -10090,6 +10082,7 @@ msgstr "Atblokuoti autorių"
 msgid "Underline"
 msgstr "Pabraukta"
 
+#: src/features/design/advanced.tsx
 #: src/features/design/style-groups.tsx
 msgid "Underline links"
 msgstr "Pabraukite nuorodas"
@@ -10191,15 +10184,12 @@ msgid "Upload a PDF and see the text an applicant tracking system extracts: what
 msgstr "Įkelkite PDF ir peržiūrėkite tekstą, kurį ištraukia pareiškėjo stebėjimo sistema: ko trūksta, kas neveikia ir kaip tai ištaisyti. Nemokama, nereikia sąskaitos."
 
 #: src/features/write/picture-screen.tsx
-msgid "Upload picture"
+msgid "Upload photo"
 msgstr "Įkelti nuotrauką"
 
 #: src/features/settings/profile.tsx
-msgid "Uploading photo…"
-msgstr "Įkeliama nuotrauka…"
-
 #: src/features/write/picture-screen.tsx
-msgid "Uploading picture…"
+msgid "Uploading photo…"
 msgstr "Įkeliama nuotrauka…"
 
 #: src/features/write/picture-screen.tsx
@@ -10243,8 +10233,8 @@ msgid "Use a plain international form, such as +1 555 010 1234."
 msgstr "Naudokite paprastą tarptautinį formatą, pvz., +1 555 010 1234."
 
 #: src/features/ats-checker/messages.ts
-msgid "Use a recognised form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
-msgstr "Naudokite atpažįstamą formatą, pvz., „Jan 2020 - Mar 2022“ arba „2020 - 2022“."
+msgid "Use a recognized form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
+msgstr "Naudokite atpažįstamą formą, pvz., \"Jan 2020 - Mar 2022\" arba \"2020 - 2022\"."
 
 #: src/features/ats-checker/messages.ts
 msgid "Use a single column for anything that has to be read in sequence."
@@ -10271,10 +10261,6 @@ msgstr "Naudokite http arba https nuorodą."
 msgid "Use at least 9pt."
 msgstr "Naudokite bent 9pt dydį."
 
-#: src/features/design/advanced.tsx
-msgid "Use color {color}"
-msgstr "Naudokite spalvą {color}"
-
 #: src/features/letters/write.tsx
 msgid "Use default"
 msgstr "Naudoti numatytąjį"
@@ -10282,6 +10268,10 @@ msgstr "Naudoti numatytąjį"
 #: src/features/letters/write.tsx
 msgid "Use details from “{resumeName}”"
 msgstr "Naudoti duomenis iš „{resumeName}“"
+
+#: src/features/letters/write.tsx
+msgid "Use details from the resume"
+msgstr "Naudoti informaciją iš gyvenimo aprašymo"
 
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
@@ -10293,8 +10283,8 @@ msgid "Use lowercase letters, numbers and single dashes."
 msgstr "Naudokite mažąsias raides, skaičius ir pavienius brūkšnelius."
 
 #: src/features/career/search-regions-field.tsx
-msgid "Use my time zone"
-msgstr "Naudokite mano laiko juostą"
+msgid "Use my timezone"
+msgstr "Naudoti mano laiko juostą"
 
 #: src/features/check/issues.ts
 msgid "Use one column"
@@ -10404,8 +10394,8 @@ msgid "Verbal offer"
 msgstr "Žodinis pasiūlymas"
 
 #: src/features/public/public-resume.tsx
-msgid "Verifying password..."
-msgstr "Tikrinamas slaptažodis..."
+msgid "Verifying password…"
+msgstr "Tikrinamas slaptažodis…"
 
 #: src/features/letters/share.tsx
 msgid "Version"
@@ -10434,6 +10424,14 @@ msgstr "Išsiųsta versija {date}"
 #: src/features/application-detail/sections.tsx
 msgid "Version sent {date} · Check {0}"
 msgstr "Išsiųsta versija {date} · Patikrinkite {0}"
+
+#: src/features/design/advanced.tsx
+msgid "Vertical margin"
+msgstr "Vertikali paraštė"
+
+#: src/features/design/advanced.tsx
+msgid "Vertical spacing"
+msgstr "Vertikalūs tarpai"
 
 #: src/features/ats-checker/messages.ts
 msgid "Very few words were recovered for a resume."
@@ -10511,13 +10509,8 @@ msgstr "Laukiama atsakymo"
 
 #. placeholder {0}: dates.raw
 #: src/features/write/date-field.tsx
-msgid "We couldn't read \"{0}\". Enter the dates so they sort and print consistently."
-msgstr "Nepavyko perskaityti „{0}“. Įveskite datas, kad jos būtų rūšiuojamos ir spausdinamos nuosekliai."
-
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "We read \"{0}\". Pick a month so it sorts and prints consistently."
-msgstr "Skaitome „{0}“. Pasirinkite mėnesį, kad jis būtų rūšiuojamas ir spausdinamas nuosekliai."
+msgid "We read “{0}”. Pick a month so it sorts and prints consistently."
+msgstr "Nuskaitėme „{0}“. Pasirinkite mėnesį, kad jis būtų rūšiuojamas ir spausdinamas nuosekliai."
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
@@ -10590,7 +10583,7 @@ msgid "What goes in it?"
 msgstr "Kas jame dedasi?"
 
 #: src/features/assistant/coach-screen.tsx
-msgid "What interview answers should I practise?"
+msgid "What interview answers should I practice?"
 msgstr "Kokius pokalbio atsakymus turėčiau praktikuoti?"
 
 #: src/features/career/offers.tsx
@@ -10649,10 +10642,9 @@ msgstr "Kas veikia"
 msgid "When do you need a decision?"
 msgstr "Kada jums reikia sprendimo?"
 
-#. placeholder {0}: parts.join(", ")
 #: src/features/assistant/coach-screen.tsx
-msgid "When you press send, {0} go to {connection}."
-msgstr "Kai paspausite siųsti, {0} pereikite prie {connection}."
+msgid "When you tap send, {list} go to {connection}."
+msgstr "Kai bakstelėsite siųsti, {list} bus išsiųsta į {connection}."
 
 #: app/(auth)/sign-in.tsx
 msgid "When you're done, the browser closes and you come back here."
@@ -10713,8 +10705,8 @@ msgid "Word"
 msgstr "Word"
 
 #: src/features/ai/provider-list.tsx
-msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practise need one. Editing, Design, the readability checks and downloads work without one."
-msgstr "Word importui, Tobulinti, asistentui, laiškų juodraščiams, Karjeros konsultacijoms ir turinio kūrimui bei balso pratyboms reikia AI teikėjo. Redagavimas, Dizainas, skaitomumo patikros ir atsisiuntimai veikia be jo."
+msgid "Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one."
+msgstr "Word importui, Tobulinti, padėjėjui, laiškų juodraščiams, Karjeros konsultacijoms ir generavimui bei balso pratyboms jo reikia. Redagavimas, Dizainas, skaitomumo patikros ir atsisiuntimai veikia be jo."
 
 #: src/features/ats-checker/messages.ts
 msgid "Words run together when the text is extracted."
@@ -10779,8 +10771,8 @@ msgid "Write one about something you did, in five parts."
 msgstr "Parašykite vieną apie tai, ką padarėte, iš penkių dalių."
 
 #: src/features/ats-checker/messages.ts
-msgid "Write the full address so it is recognised as a link."
-msgstr "Rašykite pilną adresą, kad jis būtų atpažintas kaip nuoroda."
+msgid "Write the full address so it is recognized as a link."
+msgstr "Rašykite visą adresą, kad jis būtų atpažintas kaip nuoroda."
 
 #: src/features/workspace/tabs/fit.tsx
 msgid "Write what you did."
@@ -10830,7 +10822,7 @@ msgstr "Galite prisijungti naudodami jau turimą paskyrą."
 
 #: src/auth/messages.ts
 #: src/auth/use-sign-in.ts
-msgid "You cancelled the sign-in before it finished."
+msgid "You canceled the sign-in before it finished."
 msgstr "Atšaukėte prisijungimą jam dar nepasibaigus."
 
 #: src/features/workspace/tabs/debrief.tsx
@@ -11053,10 +11045,6 @@ msgstr "Jūsų prašymas ir atitinkamas gyvenimo aprašymas, laiškas, darbo ske
 #: src/features/career/offers.tsx
 msgid "Your requirements"
 msgstr "Jūsų reikalavimai"
-
-#: src/features/letters/share.tsx
-msgid "your resume"
-msgstr "tavo gyvenimo aprašymas"
 
 #: src/features/check/issues.ts
 msgid "Your resume has a photo"

@@ -286,7 +286,7 @@ it("hands the selected story to Practise for the next interview", async () => {
 		},
 	];
 	mount(<StoriesPage storyId="chosen-story" edit={false} />);
-	const button = await screen.findByRole("button", { name: /^Practise$/ });
+	const button = await screen.findByRole("button", { name: /^Practice$/ });
 	fireEvent.click(button);
 	expect(api.navigate).toHaveBeenCalledWith(
 		expect.objectContaining({

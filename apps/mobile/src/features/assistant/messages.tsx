@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { plural } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { ActivityIndicator, Linking, Pressable, TextInput, View } from "react-native";
 import { blockText } from "@reactive-resume/resume/proposals";
 import { webSources } from "./chat";
@@ -35,7 +35,14 @@ type MessageViewProps = {
 	onAnswer: ((toolCallId: string, answer: string) => void) | null;
 };
 
-export function MessageView({ message, streaming, readOnly, proposals, onAnswer }: MessageViewProps) {
+/** Memoized: while a reply streams, only its own message re-renders; the ones above keep their props. */
+export const MessageView = memo(function MessageView({
+	message,
+	streaming,
+	readOnly,
+	proposals,
+	onAnswer,
+}: MessageViewProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 
@@ -50,7 +57,7 @@ export function MessageView({ message, streaming, readOnly, proposals, onAnswer 
 							paddingHorizontal: space.s3,
 							paddingVertical: space.s2,
 							backgroundColor: colors.sunken,
-							borderRadius: radius.rXl,
+							borderRadius: radius.rLg,
 							borderBottomEndRadius: radius.rSm,
 						}}
 					>
@@ -119,7 +126,7 @@ export function MessageView({ message, streaming, readOnly, proposals, onAnswer 
 			) : null}
 		</View>
 	);
-}
+});
 
 type FileChipProps = { name: string; busy?: boolean | undefined; onRemove?: (() => void) | undefined };
 
@@ -159,13 +166,30 @@ export function FileChip({ name, busy, onRemove }: FileChipProps) {
 	);
 }
 
-/** A tool step: a spinner while it runs, a check when done. */
-export function Status({ working, children }: { working: boolean; children: ReactNode }) {
+type StatusProps = { status?: "running" | "error" | "pending" | undefined; children: ReactNode };
+
+/**
+ * One step the assistant took, as a quiet trace line (the web's Trace): a spinner while it runs, a check when done,
+ * a warning in danger when it failed, a dash and dimmed when it never finished.
+ */
+export function Status({ status, children }: StatusProps) {
 	const { colors, space } = useTheme();
+	const color = status === "error" ? colors.dangerText : status === "pending" ? colors.ink3 : colors.accent;
 	return (
-		<View style={{ flexDirection: "row", alignItems: "center", gap: space.s2 }}>
-			{working ? <ActivityIndicator size="small" /> : <Icon name="check" size={14} color={colors.accent} />}
-			<Text variant="caption" color="ink3">
+		<View
+			accessibilityRole={status === "error" ? "alert" : undefined}
+			style={{ flexDirection: "row", alignItems: "center", gap: space.s2, opacity: status === "pending" ? 0.7 : 1 }}
+		>
+			{status === "running" ? (
+				<ActivityIndicator size="small" />
+			) : (
+				<Icon
+					name={status === "error" ? "warning-circle" : status === "pending" ? "minus" : "check"}
+					size={14}
+					color={color}
+				/>
+			)}
+			<Text variant="caption" color={status === "error" ? "dangerText" : "ink3"} style={{ flexShrink: 1 }}>
 				{children}
 			</Text>
 		</View>
@@ -182,13 +206,13 @@ function ToolPartView({ part, message, streaming, readOnly, proposals, onAnswer 
 		case "tool-read_resume":
 		case "tool-read_letter":
 			return (
-				<Status working={working}>
+				<Status status={working ? "running" : undefined}>
 					{part.type === "tool-read_letter" ? <Trans>Read the letter</Trans> : <Trans>Read the resume</Trans>}
 				</Status>
 			);
 		case "tool-read_attachment":
 			return (
-				<Status working={working}>
+				<Status status={working ? "running" : undefined}>
 					<Trans>Read the attachment</Trans>
 				</Status>
 			);
@@ -199,26 +223,26 @@ function ToolPartView({ part, message, streaming, readOnly, proposals, onAnswer 
 			const reading = part.type === "tool-read_page";
 			if (working && !streaming)
 				return (
-					<Text variant="caption" color="ink3">
+					<Status status="pending">
 						{reading ? <Trans>Page reading didn't finish.</Trans> : <Trans>Web search didn't finish.</Trans>}
-					</Text>
+					</Status>
 				);
 			if (part.state === "output-error")
 				return (
-					<Text variant="caption" color="dangerText">
+					<Status status="error">
 						{reading ? (
 							<Trans>Couldn't read this page: {part.errorText}</Trans>
 						) : (
 							<Trans>Web search failed: {part.errorText}</Trans>
 						)}
-					</Text>
+					</Status>
 				);
 			const page = reading
 				? (part.output as { truncated?: unknown; completeness?: unknown; fallbackReason?: unknown })
 				: null;
 			return (
 				<View style={{ gap: space.s1 }}>
-					<Status working={working}>
+					<Status status={working ? "running" : undefined}>
 						{reading ? (
 							working ? (
 								<Trans>Reading page…</Trans>
@@ -246,7 +270,7 @@ function ToolPartView({ part, message, streaming, readOnly, proposals, onAnswer 
 		}
 		case "tool-apply_resume_patch":
 			return (
-				<Status working={false}>
+				<Status>
 					<Trans>Changed the resume directly (an earlier conversation)</Trans>
 				</Status>
 			);
@@ -255,13 +279,13 @@ function ToolPartView({ part, message, streaming, readOnly, proposals, onAnswer 
 		case "tool-propose_edits": {
 			if (part.state === "output-error")
 				return (
-					<Text variant="caption" color="dangerText">
+					<Status status="error">
 						<Trans>Couldn't propose these edits: {part.errorText}</Trans>
-					</Text>
+					</Status>
 				);
 			if (!isProposeEdits(part))
 				return (
-					<Status working>
+					<Status status="running">
 						<Trans>Preparing edits…</Trans>
 					</Status>
 				);
@@ -294,7 +318,7 @@ function ToolPartView({ part, message, streaming, readOnly, proposals, onAnswer 
 			const story = part.output as { data?: { title?: unknown } } | undefined;
 			const title = typeof story?.data?.title === "string" ? story.data.title : null;
 			return part.state === "output-available" && title ? (
-				<Status working={false}>
+				<Status>
 					<Trans>Saved a story: {title}</Trans>
 				</Status>
 			) : null;
@@ -323,7 +347,7 @@ function QuestionCard({ part, readOnly, onAnswer }: QuestionCardProps) {
 	if (!question) return null;
 
 	return (
-		<View style={{ gap: space.s3, padding: space.s3, borderRadius: radius.rXl, backgroundColor: colors.infoSoft }}>
+		<View style={{ gap: space.s3, padding: space.s3, borderRadius: radius.rLg, backgroundColor: colors.infoSoft }}>
 			<Text variant="label" color="infoText">
 				{question}
 			</Text>
@@ -394,7 +418,7 @@ function ChangeSet({ proposals, states, locked, onAccept, onReject }: ChangeSetP
 	const accepted = states.filter((state) => state === "accepted").length;
 
 	return (
-		<View style={{ borderWidth: 1, borderColor: colors.line, borderRadius: radius.rXl, overflow: "hidden" }}>
+		<View style={{ borderWidth: 1, borderColor: colors.line, borderRadius: radius.rLg, overflow: "hidden" }}>
 			<View
 				style={{
 					flexDirection: "row",
@@ -432,7 +456,7 @@ function ChangeSet({ proposals, states, locked, onAccept, onReject }: ChangeSetP
 							style={{
 								minWidth: 20,
 								minHeight: 20,
-								borderRadius: radius.rPill,
+								borderRadius: radius.rLg,
 								alignItems: "center",
 								justifyContent: "center",
 								backgroundColor: colors.accent,
@@ -447,7 +471,7 @@ function ChangeSet({ proposals, states, locked, onAccept, onReject }: ChangeSetP
 							color="ink3"
 							numberOfLines={1}
 							accessibilityLabel={t`Edit ${index + 1}: ${proposal.location}`}
-							style={{ flex: 1, textTransform: "uppercase" }}
+							style={{ flex: 1 }}
 						>
 							{proposal.location}
 						</Text>
@@ -462,7 +486,7 @@ function ChangeSet({ proposals, states, locked, onAccept, onReject }: ChangeSetP
 						style={{
 							alignSelf: "flex-start",
 							paddingHorizontal: space.s1,
-							borderRadius: 3,
+							borderRadius: radius.rMd,
 							backgroundColor: colors.accentSoft,
 						}}
 					>
@@ -547,7 +571,7 @@ function RememberNote({ part }: { part: ToolPart }) {
 							.then(refresh)
 							.catch(() => {
 								setOutcome("pending");
-								showToast({ message: t`Couldn't undo that.` });
+								showToast({ message: t`Couldn't undo that. Try again.` });
 							});
 					}}
 				/>
@@ -558,13 +582,13 @@ function RememberNote({ part }: { part: ToolPart }) {
 
 	if (outcome === "saved")
 		return (
-			<Status working={false}>
+			<Status>
 				<Trans>Added to Knowledge.</Trans>
 			</Status>
 		);
 
 	return (
-		<View style={{ gap: space.s2, padding: space.s3, borderRadius: radius.rXl, backgroundColor: colors.sunken }}>
+		<View style={{ gap: space.s2, padding: space.s3, borderRadius: radius.rLg, backgroundColor: colors.sunken }}>
 			<Text variant="label">
 				<Trans>Remember this for future coaching?</Trans>
 			</Text>

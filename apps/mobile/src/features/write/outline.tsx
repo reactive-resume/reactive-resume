@@ -246,8 +246,8 @@ function Divider({ label, subtle }: { label: string; subtle: boolean }) {
 				paddingTop: space.s3,
 			}}
 		>
-			<Text variant="micro" color={subtle ? "ink3" : "ink2"}>
-				{subtle ? label : label.toLocaleUpperCase()}
+			<Text variant={subtle ? "micro" : "eyebrow"} color={subtle ? "ink3" : "ink2"}>
+				{label}
 			</Text>
 			<View style={{ flex: 1, height: 1, backgroundColor: colors.line }} />
 		</View>
@@ -480,20 +480,20 @@ function BasicsCard({ resumeId, data }: { resumeId: string; data: ResumeData }) 
 				alignItems: "center",
 				gap: space.s3,
 				padding: space.s3,
-				borderRadius: radius.rXl,
+				borderRadius: radius.rLg,
 				borderWidth: 1,
 				borderColor: colors.line,
 				backgroundColor: pressed ? colors.press : colors.surface,
 			})}
 		>
 			{photo ? (
-				<Image source={{ uri: photo }} style={{ width: space.s10, height: space.s10, borderRadius: radius.rPill }} />
+				<Image source={{ uri: photo }} style={{ width: space.s10, height: space.s10, borderRadius: radius.rLg }} />
 			) : (
 				<View
 					style={{
 						width: space.s10,
 						height: space.s10,
-						borderRadius: radius.rPill,
+						borderRadius: radius.rLg,
 						backgroundColor: colors.accentSoft,
 						alignItems: "center",
 						justifyContent: "center",
@@ -567,7 +567,7 @@ function StartSuggestions({ onAdd }: { onAdd: (type: "summary" | SectionType) =>
 			style={{
 				gap: space.s3,
 				padding: space.s4,
-				borderRadius: radius.rXl,
+				borderRadius: radius.rLg,
 				borderWidth: 1,
 				borderColor: colors.line,
 				borderStyle: "dashed",

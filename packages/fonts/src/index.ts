@@ -28,22 +28,10 @@ export type WebFont = {
 
 type FontRecord = StandardFont | WebFont;
 
-const preferredChineseFontFamilies = [
-	"Noto Sans SC",
-	"Noto Serif SC",
-	"PingFang SC",
-	"Microsoft YaHei",
-	"Source Han Sans SC",
-	"Source Han Serif SC",
-	"Songti SC",
-	"SimSun",
-	"SimHei",
-	"KaiTi",
-	"FangSong",
-	"ZCOOL QingKe HuangYou",
-] as const;
+const preferredChineseFontFamilies = ["Noto Sans SC", "Noto Serif SC", "ZCOOL QingKe HuangYou"] as const;
 
-const standardPdfFontList = [
+// None of these is in webfontlist.json.
+const standardFontList = [
 	{ type: "standard", category: "sans-serif", family: "Helvetica", weights: ["400", "700"] },
 	{ type: "standard", category: "monospace", family: "Courier", weights: ["400", "700"] },
 	{ type: "standard", category: "serif", family: "Times-Roman", weights: ["400", "700"] },
@@ -102,7 +90,6 @@ const punctuationFallbackFonts = {
 
 const webFontList = webFontListJSON as WebFont[];
 const webFontMap = new Map<string, WebFont>(webFontList.map((font) => [font.family, font]));
-const standardFontList = standardPdfFontList.filter((font) => !webFontMap.has(font.family));
 
 const fontMap = new Map<string, FontRecord>();
 const chinesePrioritySet = new Set<string>(preferredChineseFontFamilies);

@@ -18,7 +18,7 @@ export function useSignIn() {
 		try {
 			const done = await signIn(server);
 			setAttempt(
-				done ? { state: "idle" } : { state: "failed", message: t`You cancelled the sign-in before it finished.` },
+				done ? { state: "idle" } : { state: "failed", message: t`You canceled the sign-in before it finished.` },
 			);
 		} catch (error) {
 			setAttempt({ state: "failed", message: signInErrorMessage(i18n, error) });

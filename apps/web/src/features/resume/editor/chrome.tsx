@@ -123,8 +123,6 @@ export function BackLink() {
 export function DrawerControls({ pinnable }: { pinnable: boolean }) {
 	const open = useEditorStore((state) => state.drawerOpen);
 	const pinned = useEditorStore((state) => state.drawerPinned) && pinnable;
-	const setOpen = useEditorStore((state) => state.setDrawerOpen);
-	const setPinned = useEditorStore((state) => state.setDrawerPinned);
 
 	return (
 		<>
@@ -134,7 +132,7 @@ export function DrawerControls({ pinnable }: { pinnable: boolean }) {
 					label={open ? t`Hide panel` : t`Show panel`}
 					aria-expanded={open}
 					className="text-ink-2"
-					onClick={() => setOpen(!open)}
+					onClick={() => useEditorStore.setState({ drawerOpen: !open })}
 				/>
 			)}
 			{pinnable && (open || pinned) && (
@@ -145,8 +143,7 @@ export function DrawerControls({ pinnable }: { pinnable: boolean }) {
 					className={cn("text-ink-2", pinned && "bg-accent-soft text-accent-text")}
 					onClick={() => {
 						// Unpinning leaves the drawer open over the page.
-						setPinned(!pinned);
-						setOpen(true);
+						useEditorStore.setState({ drawerPinned: !pinned, drawerOpen: true });
 					}}
 				/>
 			)}
@@ -168,7 +165,7 @@ export function ZoomBar({ fitScale, pageCount }: ZoomBarProps) {
 	useHotkey("Mod+0", () => setZoom("fit"));
 
 	const buttonClassName =
-		"flex size-8 items-center justify-center rounded-[7px] text-ink-2 transition-colors duration-quick hover:bg-hover disabled:text-ink-3 disabled:hover:bg-transparent";
+		"flex size-8 items-center justify-center rounded-lg text-ink-2 transition-colors duration-quick hover:bg-hover disabled:text-ink-3 disabled:hover:bg-transparent";
 
 	return (
 		<div className="absolute bottom-[18px] left-1/2 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-line bg-raised p-1 shadow-e2">
@@ -184,7 +181,7 @@ export function ZoomBar({ fitScale, pageCount }: ZoomBarProps) {
 			<button
 				type="button"
 				aria-label={t`Fit page to width`}
-				className="h-8 min-w-[52px] rounded-[7px] px-1.5 font-mono text-xs font-medium text-ink transition-colors duration-quick hover:bg-hover"
+				className="h-8 min-w-[52px] rounded-lg px-1.5 font-mono text-xs font-medium text-ink transition-colors duration-quick hover:bg-hover"
 				onClick={() => setZoom("fit")}
 			>
 				{zoom === "fit" ? <Trans>Fit</Trans> : `${Math.round(current * 100)}%`}

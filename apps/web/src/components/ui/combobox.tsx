@@ -85,48 +85,36 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 
 	const { contains } = useFilter();
 
-	const optionMap = React.useMemo(() => new Map(options.map((opt) => [String(opt.value), opt])), [options]);
+	const optionMap = new Map(options.map((opt) => [String(opt.value), opt]));
 
-	const findOption = React.useCallback(
-		(v: TValue | TValue[] | null | undefined) => {
-			if (multiple) {
-				if (!v || !Array.isArray(v)) return [];
-				return (v as TValue[]).flatMap((item) => {
-					const option = optionMap.get(String(item));
-					return option ? [option] : [];
-				});
-			}
-			if (v == null) return null;
-			return optionMap.get(String(v)) ?? null;
-		},
-		[optionMap, multiple],
-	);
+	const findOption = (v: TValue | TValue[] | null | undefined) => {
+		if (multiple) {
+			if (!v || !Array.isArray(v)) return [];
+			return (v as TValue[]).flatMap((item) => {
+				const option = optionMap.get(String(item));
+				return option ? [option] : [];
+			});
+		}
+		if (v == null) return null;
+		return optionMap.get(String(v)) ?? null;
+	};
 
 	type OptionValue = ComboboxOption<TValue>[] | ComboboxOption<TValue> | null;
 
-	const resolvedValue = React.useMemo(
-		() => (props.value !== undefined ? (findOption(props.value) as OptionValue) : undefined),
-		[props.value, findOption],
-	);
+	const resolvedValue = props.value !== undefined ? (findOption(props.value) as OptionValue) : undefined;
+	const resolvedDefaultValue =
+		props.defaultValue !== undefined ? (findOption(props.defaultValue) as OptionValue) : undefined;
 
-	const resolvedDefaultValue = React.useMemo(
-		() => (props.defaultValue !== undefined ? (findOption(props.defaultValue) as OptionValue) : undefined),
-		[props.defaultValue, findOption],
-	);
-
-	const handleExternalChange = React.useCallback(
-		(option: ComboboxOption<TValue>[] | ComboboxOption<TValue> | null) => {
-			if (multiple) {
-				const arrOpt = Array.isArray(option) ? option : option ? [option] : [];
-				(props as MultiComboboxProps<TValue>).onValueChange?.(arrOpt.length > 0 ? arrOpt.map((opt) => opt.value) : []);
-			} else {
-				const value = option && !Array.isArray(option) ? (option as ComboboxOption<TValue>).value : null;
-				const cb = props.onValueChange as ((value: TValue | null) => void) | undefined;
-				cb?.(value ?? null);
-			}
-		},
-		[props, multiple],
-	);
+	const handleExternalChange = (option: ComboboxOption<TValue>[] | ComboboxOption<TValue> | null) => {
+		if (multiple) {
+			const arrOpt = Array.isArray(option) ? option : option ? [option] : [];
+			(props as MultiComboboxProps<TValue>).onValueChange?.(arrOpt.length > 0 ? arrOpt.map((opt) => opt.value) : []);
+		} else {
+			const value = option && !Array.isArray(option) ? (option as ComboboxOption<TValue>).value : null;
+			const cb = props.onValueChange as ((value: TValue | null) => void) | undefined;
+			cb?.(value ?? null);
+		}
+	};
 
 	const [selectedValue, setSelectedValue] = useControlledState({
 		value: resolvedValue,
@@ -134,25 +122,17 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 		onChange: handleExternalChange,
 	});
 
-	const itemToStringLabel = React.useCallback(
-		(item: ComboboxOption<TValue>) =>
-			item.textValue ?? (typeof item.label === "string" ? item.label : String(item.value)),
-		[],
-	);
+	const itemToStringLabel = (item: ComboboxOption<TValue>) =>
+		item.textValue ?? (typeof item.label === "string" ? item.label : String(item.value));
 
-	const isItemEqualToValue = React.useCallback(
-		(a: ComboboxOption<TValue>, b: ComboboxOption<TValue>) => String(a.value) === String(b.value),
-		[],
-	);
+	const isItemEqualToValue = (a: ComboboxOption<TValue>, b: ComboboxOption<TValue>) =>
+		String(a.value) === String(b.value);
 
-	const filter = React.useCallback(
-		(item: ComboboxOption<TValue>, query: string) => {
-			const labelStr = typeof item.label === "string" ? item.label : (item.textValue ?? String(item.value));
-			if (contains(labelStr, query)) return true;
-			return item.keywords?.some((kw) => contains(kw, query)) ?? false;
-		},
-		[contains],
-	);
+	const filter = (item: ComboboxOption<TValue>, query: string) => {
+		const labelStr = typeof item.label === "string" ? item.label : (item.textValue ?? String(item.value));
+		if (contains(labelStr, query)) return true;
+		return item.keywords?.some((kw) => contains(kw, query)) ?? false;
+	};
 
 	const hasSelectedValue = multiple
 		? Array.isArray(selectedValue) && selectedValue.length > 0

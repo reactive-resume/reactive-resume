@@ -21,7 +21,10 @@ import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
 	identifier: z.string().trim().toLowerCase(),
-	password: z.string().min(6).max(64),
+	password: z
+		.string()
+		.min(6, { error: () => t`Enter your password.` })
+		.max(64, { error: () => t`Use 64 characters or fewer.` }),
 });
 
 type Props = {
@@ -64,7 +67,7 @@ async function submitLogin({ value, callbackURL, reauthenticate, navigate, query
 					result.error.message ||
 					t({
 						comment: "Fallback toast when sign-in fails and no server error message is available",
-						message: "Failed to sign in. Please try again.",
+						message: "Couldn't sign in. Try again.",
 					}),
 				id: toastId,
 			});
@@ -89,7 +92,7 @@ async function submitLogin({ value, callbackURL, reauthenticate, navigate, query
 		await router.invalidate();
 		void navigate(getAuthRedirectOptions(callbackURL));
 	} catch {
-		toast.add({ type: "error", description: t`Failed to sign in. Please try again.`, id: toastId });
+		toast.add({ type: "error", description: t`Couldn't sign in. Try again.`, id: toastId });
 	}
 }
 
@@ -122,7 +125,7 @@ export function LoginPage({ disableEmailAuth, disableSignups, allowGuestLogin }:
 			void navigate(getAuthRedirectOptions(callbackURL));
 		},
 		onError: (error) =>
-			toast.add({ type: "error", description: error.message || t`Couldn't continue as a guest. Please try again.` }),
+			toast.add({ type: "error", description: error.message || t`Couldn't continue as a guest. Try again.` }),
 	});
 
 	useEffect(() => {
@@ -190,7 +193,7 @@ export function LoginPage({ disableEmailAuth, disableSignups, allowGuestLogin }:
 						{(field) => (
 							<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
 								<FormLabel>
-									<Trans comment="Label for login identifier input that accepts email or username">Email Address</Trans>
+									<Trans comment="Label for login identifier input that accepts email or username">Email address</Trans>
 								</FormLabel>
 								<FormControl
 									render={
@@ -228,7 +231,7 @@ export function LoginPage({ disableEmailAuth, disableSignups, allowGuestLogin }:
 										className="h-auto p-0 text-xs leading-none"
 										render={
 											<Link to="/auth/forgot-password">
-												<Trans comment="Link label to password reset page from login form">Forgot Password?</Trans>
+												<Trans comment="Link label to password reset page from login form">Forgot password?</Trans>
 											</Link>
 										}
 									/>

@@ -2,6 +2,7 @@ import type { GroupProps } from "./style-groups";
 import type { FontWeight } from "@reactive-resume/fonts";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { DateFormat } from "@reactive-resume/schema/resume/dates";
+import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import * as Clipboard from "expo-clipboard";
 import { useEffect, useState } from "react";
@@ -10,7 +11,7 @@ import { fontList, getFont, getFontDisplayName, sortFontWeights } from "@reactiv
 import { compileStylesheet, isFatalStylesheetDiagnostic } from "@reactive-resume/resume/stylesheet";
 import { icons } from "@reactive-resume/schema/icons";
 import { Field, Stepper, SwitchRow } from "./controls";
-import { DATE_FORMATS, QUICK_COLORS, parseColorInput, resetDesign, rgbaToHex } from "./presets";
+import { DATE_FORMATS, parseColorInput, resetDesign, rgbaToHex } from "./presets";
 import { useResumeStore } from "@/draft";
 import { Button, Chip, Icon, ListRow, SelectSheet, Text, showToast, useTheme, type IconName } from "@/ui";
 
@@ -35,15 +36,15 @@ export function AdvancedGroup({ data, write, disabled, open, onOpenChange, onPus
 			title: t`Typography`,
 			value: `${getFontDisplayName(metadata.typography.body.fontFamily)} · ${metadata.typography.body.fontSize} pt`,
 		},
-		{ id: "colours", icon: "palette", title: t`Design`, value: t`Colours and level` },
+		{ id: "colours", icon: "palette", title: t`Design`, value: t`Colors and level` },
 		{ id: "page", icon: "file-text", title: t`Page`, value: `${metadata.page.marginX} × ${metadata.page.marginY} pt` },
 		{
 			id: "layout",
 			icon: "square-split-horizontal",
 			title: t`Layout`,
-			value: metadata.layout.pages.length === 1 ? t`1 page` : t`${metadata.layout.pages.length} pages`,
+			value: plural(metadata.layout.pages.length, { one: "# page", other: "# pages" }),
 		},
-		{ id: "styles", icon: "code", title: t`Custom Styles`, value: css ? t`Custom` : t`None` },
+		{ id: "styles", icon: "code", title: t`Custom styles`, value: css ? t`Custom` : t`None` },
 	];
 
 	const reset = () => {
@@ -147,13 +148,13 @@ export function TypographyScreen({ data, write, disabled, pick }: GroupProps) {
 						: t({ message: "Heading", context: "Headings or Titles (H1, H2, H3, H4, H5, H6)" })}
 				</Text>
 				<ListRow
-					title={t`Font Family`}
+					title={t`Font family`}
 					subtitle={getFontDisplayName(item.fontFamily)}
 					chevron
 					disabled={disabled}
 					onPress={() =>
 						pick({
-							title: t`Font Family`,
+							title: t`Font family`,
 							value: item.fontFamily,
 							options: FONT_OPTIONS,
 							onPick: (family) =>
@@ -169,7 +170,7 @@ export function TypographyScreen({ data, write, disabled, pick }: GroupProps) {
 						})
 					}
 				/>
-				<Field label={prefix === "body" ? t`Font Weights` : t`Font Weight`}>
+				<Field label={prefix === "body" ? t`Font weights` : t`Font weight`}>
 					<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
 						{available.map((weight) => {
 							const selected = item.fontWeights.includes(weight);
@@ -201,7 +202,7 @@ export function TypographyScreen({ data, write, disabled, pick }: GroupProps) {
 					</View>
 				</Field>
 				<Stepper
-					label={t`Font Size`}
+					label={t`Font size`}
 					value={item.fontSize}
 					unit="pt"
 					min={6}
@@ -219,7 +220,7 @@ export function TypographyScreen({ data, write, disabled, pick }: GroupProps) {
 					}
 				/>
 				<Stepper
-					label={t`Line Height`}
+					label={t`Line height`}
 					value={item.lineHeight}
 					unit="x"
 					min={0.5}
@@ -322,73 +323,38 @@ const ICON_OPTIONS = icons.filter(Boolean).map((name) => ({ value: name, label: 
 /** Advanced → Design: primary, text and background colours, and how skill and language levels draw. */
 export function ColoursScreen({ data, write, disabled, pick }: GroupProps) {
 	const { t } = useLingui();
-	const { colors, radius, space, size } = useTheme();
+	const { space } = useTheme();
 	const { design } = data.metadata;
-	const setColor = (name: "primary" | "text" | "background", value: string, discrete = false) =>
-		write(
-			`colors.${name}`,
-			(draft) => {
-				draft.metadata.design.colors[name] = value;
-			},
-			discrete,
-		);
+	const setColor = (name: "primary" | "text" | "background", value: string) =>
+		write(`colors.${name}`, (draft) => {
+			draft.metadata.design.colors[name] = value;
+		});
 	const levelNames: Record<LevelType, string> = {
 		hidden: t`Hidden`,
 		circle: t`Circle`,
 		square: t`Square`,
 		rectangle: t`Rectangle`,
-		"rectangle-full": t`Rectangle (Full Width)`,
-		"progress-bar": t`Progress Bar`,
+		"rectangle-full": t`Rectangle (full width)`,
+		"progress-bar": t`Progress bar`,
 		icon: t`Icon`,
 	};
-	const swatch = size.chip;
 
 	return (
 		<View style={{ gap: space.s4 }}>
-			<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
-				{QUICK_COLORS.map((color) => {
-					const selected = color === design.colors.primary;
-					return (
-						<Pressable
-							key={color}
-							accessibilityRole="radio"
-							accessibilityLabel={t`Use color ${color}`}
-							accessibilityState={{ checked: selected, disabled }}
-							disabled={disabled}
-							hitSlop={(size.hit - swatch) / 2}
-							onPress={() => setColor("primary", color, true)}
-							style={{
-								width: swatch,
-								height: swatch,
-								borderRadius: radius.rMd,
-								backgroundColor: color,
-								alignItems: "center",
-								justifyContent: "center",
-							}}
-						>
-							{selected ? (
-								<View
-									style={{ width: space.s4, height: space.s4, borderRadius: radius.rSm, backgroundColor: colors.ink }}
-								/>
-							) : null}
-						</Pressable>
-					);
-				})}
-			</View>
 			<ColorField
-				label={t`Primary Color`}
+				label={t`Primary color`}
 				value={design.colors.primary}
 				disabled={disabled}
 				onChange={(value) => setColor("primary", value)}
 			/>
 			<ColorField
-				label={t`Text Color`}
+				label={t`Text color`}
 				value={design.colors.text}
 				disabled={disabled}
 				onChange={(value) => setColor("text", value)}
 			/>
 			<ColorField
-				label={t`Background Color`}
+				label={t`Background color`}
 				value={design.colors.background}
 				disabled={disabled}
 				onChange={(value) => setColor("background", value)}
@@ -443,15 +409,15 @@ export function AdvancedPageScreen({ data, write, disabled }: GroupProps) {
 	type NumberKey = "marginX" | "marginY" | "gapX" | "gapY";
 	type SwitchKey = "hideLinkUnderline" | "hideIcons" | "hideSectionIcons";
 	const numbers: { key: NumberKey; label: string; max?: number }[] = [
-		{ key: "marginX", label: t`Margin (Horizontal)`, max: 100 },
-		{ key: "marginY", label: t`Margin (Vertical)`, max: 100 },
-		{ key: "gapX", label: t`Spacing (Horizontal)` },
-		{ key: "gapY", label: t`Spacing (Vertical)` },
+		{ key: "marginX", label: t`Horizontal margin`, max: 100 },
+		{ key: "marginY", label: t`Vertical margin`, max: 100 },
+		{ key: "gapX", label: t`Horizontal spacing` },
+		{ key: "gapY", label: t`Vertical spacing` },
 	];
 	const switches: { key: SwitchKey; label: string }[] = [
-		{ key: "hideLinkUnderline", label: t`Hide Link Underline` },
-		{ key: "hideIcons", label: t`Hide Icons` },
-		{ key: "hideSectionIcons", label: t`Hide Section Icons` },
+		{ key: "hideLinkUnderline", label: t`Underline links` },
+		{ key: "hideIcons", label: t`Show icons` },
+		{ key: "hideSectionIcons", label: t`Show section icons` },
 	];
 	return (
 		<View style={{ gap: space.s2 }}>
@@ -480,13 +446,14 @@ export function AdvancedPageScreen({ data, write, disabled }: GroupProps) {
 				<SwitchRow
 					key={key}
 					label={label}
-					value={page[key]}
+					// Labels describe the ON state; the stored flags are hide*, so the switch is inverted.
+					value={!page[key]}
 					disabled={disabled}
 					onChange={(value) =>
 						write(
 							`page.${key}`,
 							(draft) => {
-								draft.metadata.page[key] = value;
+								draft.metadata.page[key] = !value;
 							},
 							true,
 						)
@@ -500,7 +467,7 @@ export function AdvancedPageScreen({ data, write, disabled }: GroupProps) {
 /** Errors list once typing pauses (mockup: 500 ms). */
 const COMPILE_DELAY_MS = 500;
 
-/** Advanced → Custom Styles: the semantic CSS stylesheet in a monospace field, with its errors and Copy. */
+/** Advanced → Custom styles: the semantic CSS stylesheet in a monospace field, with its errors and Copy. */
 export function StylesScreen({ data, write, disabled }: GroupProps) {
 	const { t } = useLingui();
 	const { colors, radius, space, type } = useTheme();

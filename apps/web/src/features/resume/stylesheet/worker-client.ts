@@ -1,28 +1,19 @@
 import type { CompileWorkerInput, CompileWorkerRequest, CompileWorkerResponse } from "./protocol";
 
-type WorkerListener = (event: MessageEvent<unknown>) => void;
-type WorkerErrorListener = (event: ErrorEvent) => void;
-
-export type StylesheetWorker = {
-	postMessage(message: unknown, transfer?: Transferable[]): void;
-	terminate(): void;
-	addEventListener(type: "message", listener: WorkerListener): void;
-	addEventListener(type: "error", listener: WorkerErrorListener): void;
-	removeEventListener(type: "message", listener: WorkerListener): void;
-	removeEventListener(type: "error", listener: WorkerErrorListener): void;
-};
-
 type Pending<T> = {
 	resolve(value: T): void;
 	reject(error: Error): void;
 };
 
-export function createCompileWorkerClient(createWorker: () => StylesheetWorker) {
-	const worker = createWorker();
+export function createCompileWorkerClient() {
+	const worker = new Worker(new URL("./stylesheet.worker.ts", import.meta.url), {
+		type: "module",
+		name: "semantic-css-compiler",
+	});
 	const pending = new Map<number, Pending<CompileWorkerResponse>>();
 	let latestRequestId = 0;
 
-	const onMessage: WorkerListener = ({ data }) => {
+	const onMessage = ({ data }: MessageEvent<unknown>) => {
 		const response = data as CompileWorkerResponse;
 		if (response?.type !== "compile_result") return;
 		const request = pending.get(response.requestId);
@@ -32,7 +23,7 @@ export function createCompileWorkerClient(createWorker: () => StylesheetWorker) 
 		// results aborts the edit pipeline and can leave the editor stuck on Checking.
 		request.resolve(response);
 	};
-	const onError: WorkerErrorListener = (event) => {
+	const onError = (event: ErrorEvent) => {
 		const error = new Error(event.message || "Stylesheet compiler worker failed to load.");
 		for (const request of pending.values()) request.reject(error);
 		pending.clear();

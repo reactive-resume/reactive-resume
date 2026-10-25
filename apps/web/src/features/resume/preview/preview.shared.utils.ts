@@ -6,7 +6,9 @@ export type PreviewPageSize = {
 	width: number;
 };
 
-const PDF_PAGE_RENDER_SCALE = 4;
+// Pages are drawn at the screen's pixel density, and never below 2x so text stays crisp on 1x screens. A fixed 4x
+// drew 4–16 times the pixels the screen shows, on every update of every page.
+const MIN_PREVIEW_RENDER_SCALE = 2;
 const MAX_PREVIEW_CANVAS_PIXELS = 16_777_216; // 4096 * 4096
 
 export const DEFAULT_PDF_PAGE_SIZE: PreviewPageSize = {
@@ -16,7 +18,7 @@ export const DEFAULT_PDF_PAGE_SIZE: PreviewPageSize = {
 
 export const getPreviewCanvasScale = (width: number, height: number) => {
 	const devicePixelRatio = window.devicePixelRatio || 1;
-	const desiredScale = Math.max(PDF_PAGE_RENDER_SCALE, devicePixelRatio);
+	const desiredScale = Math.max(MIN_PREVIEW_RENDER_SCALE, devicePixelRatio);
 	const desiredPixels = width * height * desiredScale * desiredScale;
 
 	if (desiredPixels <= MAX_PREVIEW_CANVAS_PIXELS) return desiredScale;

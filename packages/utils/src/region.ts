@@ -13,7 +13,7 @@ export const countryCodeSchema = z
 export const searchRegionsSchema = z
 	.array(countryCodeSchema)
 	.max(3)
-	.refine((codes) => new Set(codes).size === codes.length, "Countries must be distinct.")
+	.refine((codes) => new Set(codes).size === codes.length, "Remove duplicate countries.")
 	.nullable()
 	.optional();
 

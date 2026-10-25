@@ -229,8 +229,8 @@ function PasswordPrompt({ username, slug, onUnlocked }: PasswordPromptProps) {
 		onSuccess: onUnlocked,
 		onError: (cause) => {
 			if (cause instanceof ORPCError && cause.code === "INVALID_PASSWORD")
-				setError(t`The password you entered is incorrect`);
-			else showToast({ message: t`Failed to verify the password. Please try again.` });
+				setError(t`The password you entered is incorrect. Try again.`);
+			else showToast({ message: t`Couldn't verify the password. Try again.` });
 		},
 	});
 	const submit = () => {
@@ -251,7 +251,7 @@ function PasswordPrompt({ username, slug, onUnlocked }: PasswordPromptProps) {
 				style={{
 					width: 56,
 					height: 56,
-					borderRadius: radius.r2xl,
+					borderRadius: radius.rLg,
 					backgroundColor: colors.sunken,
 					alignItems: "center",
 					justifyContent: "center",
@@ -260,7 +260,7 @@ function PasswordPrompt({ username, slug, onUnlocked }: PasswordPromptProps) {
 				<Icon name="lock" size={28} color={colors.ink2} />
 			</View>
 			<Text variant="heading" accessibilityRole="header">
-				{t`This resume is password protected`}
+				{t`This resume is password-protected`}
 			</Text>
 			<Text color="ink2">{t`Enter the password the resume owner shared with you.`}</Text>
 			<TextField
@@ -291,7 +291,7 @@ function PasswordPrompt({ username, slug, onUnlocked }: PasswordPromptProps) {
 				}
 			/>
 			<Button
-				label={verify.isPending ? t`Verifying password...` : t`Unlock`}
+				label={verify.isPending ? t`Verifying password…` : t`Unlock`}
 				icon="lock-open"
 				loading={verify.isPending}
 				disabled={password.length < 6 || verify.isPending}

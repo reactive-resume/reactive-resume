@@ -243,7 +243,7 @@ export function getPdfFindingMessage(code: PdfRuleCode): PdfFindingMessage {
 			};
 		case "FEW_SECTION_HEADINGS":
 			return {
-				title: t`Only one recognisable section heading was found.`,
+				title: t`Only one recognizable section heading was found.`,
 				action: t`Break the resume into the usual sections so it can be segmented.`,
 			};
 		case "NO_EDUCATION_SECTION":
@@ -259,7 +259,7 @@ export function getPdfFindingMessage(code: PdfRuleCode): PdfFindingMessage {
 		case "HEADINGS_NOT_DISTINGUISHED":
 			return {
 				title: t`Your headings look the same as your body text.`,
-				action: t`Make them visibly larger, bolder or capitalised.`,
+				action: t`Make them visibly larger, bolder or capitalized.`,
 			};
 		case "VERY_SHORT_DOCUMENT":
 			return {
@@ -325,7 +325,7 @@ export function getPdfFindingMessage(code: PdfRuleCode): PdfFindingMessage {
 		case "BARE_URL_WITHOUT_PROTOCOL":
 			return {
 				title: t`A web address is written without https://.`,
-				action: t`Write the full address so it is recognised as a link.`,
+				action: t`Write the full address so it is recognized as a link.`,
 			};
 		case "PHONE_FORMAT_UNUSUAL":
 			return {
@@ -346,7 +346,7 @@ export function getPdfFindingMessage(code: PdfRuleCode): PdfFindingMessage {
 		case "UNPARSEABLE_DATE_RANGE":
 			return {
 				title: t`A date range is written in a form most software cannot read.`,
-				action: t`Use a recognised form such as "Jan 2020 - Mar 2022" or "2020 - 2022".`,
+				action: t`Use a recognized form such as "Jan 2020 - Mar 2022" or "2020 - 2022".`,
 			};
 		case "REVERSED_DATE_RANGE":
 			return {

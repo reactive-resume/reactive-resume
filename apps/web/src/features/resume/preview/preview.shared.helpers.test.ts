@@ -19,8 +19,8 @@ describe("getPreviewCanvasScale", () => {
 	it("clamps the scale when the page would exceed the canvas pixel budget", () => {
 		setDevicePixelRatio(1);
 		const scale = getPreviewCanvasScale(2000, 3000);
-		// Should NOT exceed the 4x desired scale and must satisfy the pixel budget.
-		expect(scale).toBeLessThan(4);
+		// Below the 2x minimum here, because the page would exceed the pixel budget.
+		expect(scale).toBeLessThan(2);
 		expect(scale * scale * 2000 * 3000).toBeLessThanOrEqual(16_777_216 + 1);
 	});
 });

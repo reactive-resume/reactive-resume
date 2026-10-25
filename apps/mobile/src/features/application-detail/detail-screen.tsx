@@ -132,7 +132,7 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 					variant="danger"
 					fullWidth
 					icon="trash"
-					label={t`Delete…`}
+					label={t`Delete application…`}
 					disabled={remove.isPending}
 					onPress={() => setOverlay({ kind: "delete" })}
 				/>
@@ -151,7 +151,7 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 				open={overlay?.kind === "delete"}
 				title={t`Delete this application?`}
 				message={t`“${application.role} · ${application.company}” and its timeline are deleted permanently. This can't be undone.`}
-				confirmLabel={t`Delete`}
+				confirmLabel={t`Delete application`}
 				destructive
 				onCancel={close}
 				onConfirm={() => {

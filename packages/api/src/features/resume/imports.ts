@@ -59,7 +59,7 @@ export const importResumeFile = protectedProcedure
 			if (needsLegacyStyleConversion(data.metadata)) data.metadata.stylesheet = convertLegacyStylesheet(data);
 		} catch (error) {
 			throw new ORPCError("BAD_REQUEST", {
-				message: "The file is not a valid resume in the selected format.",
+				message: "This file isn't a valid resume in the selected format. Check the format and try again.",
 				cause: error,
 			});
 		}

@@ -1,5 +1,6 @@
-// Write's data operations, ported from apps/web/src/features/resume/editor/write/model.ts and
-// apps/web/src/libs/resume/move-item.ts. Pure: no React, no Lingui, so Design, Check and Node checks can use it.
+import type { MoveTarget } from "@reactive-resume/resume/move-item";
+// Write's data operations, ported from apps/web/src/features/resume/editor/write/model.ts; moving entries is shared
+// through @reactive-resume/resume/move-item. Pure: no React, no Lingui, so Design, Check and Node checks can use it.
 import type {
 	CustomSection,
 	CustomSectionItem,
@@ -10,6 +11,7 @@ import type {
 	SectionType,
 } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
+import { moveItem as moveResumeItem } from "@reactive-resume/resume/move-item";
 import { sectionTypeSchema } from "@reactive-resume/schema/resume/data";
 import { EMPTY_RESUME_DATES } from "@reactive-resume/schema/resume/dates";
 import { generateId, stripHtml } from "@reactive-resume/utils/string";
@@ -475,11 +477,6 @@ export function applySectionDrop(draft: WritableDraft<ResumeData>, drop: Extract
 // Entry options → Move to…
 // ---------------------------------------------------------------------------------------------------------------
 
-export type MoveTarget =
-	| { type: "section"; sectionId: string }
-	| { type: "new-section"; pageIndex: number; title: string }
-	| { type: "new-page"; title: string };
-
 /** Sections of the same type on each page an entry can move to. Titles are resolved by the caller. */
 export function getCompatibleMoveTargets(data: Data, type: CustomSectionType, sourceSectionId: string) {
 	return data.metadata.layout.pages.map((page, pageIndex) => ({
@@ -508,37 +505,10 @@ function makeCustomSection(id: string, type: CustomSectionType, title: string, i
 }
 
 /** Moves an entry atomically, then removes only a custom source section emptied by that move. */
-export function moveItem(draft: WritableDraft<ResumeData>, section: WriteSection, itemId: string, target: MoveTarget) {
-	const customSectionId = section.kind === "custom" ? section.id : undefined;
-	const source = getEntries(draft, section);
-	const index = source.findIndex((item) => item.id === itemId);
-	if (index === -1 || section.kind === "summary") return;
-
-	if (target.type === "section") {
-		if (target.sectionId === section.id) return;
-		const destination = resolveSection(draft, target.sectionId);
-		if (!destination || destination.type !== section.type || destination.kind === "summary") return;
-		const [item] = source.splice(index, 1);
-		if (item) getEntries(draft, destination).push(item);
-	} else {
-		if (target.type === "new-section" && !draft.metadata.layout.pages[target.pageIndex]) return;
-		const [item] = source.splice(index, 1);
-		if (!item) return;
-		const id = generateId();
-		draft.customSections.push(
-			makeCustomSection(id, section.type, target.title, item as SectionItem) as WritableDraft<CustomSection>,
-		);
-		if (target.type === "new-section") draft.metadata.layout.pages[target.pageIndex]?.main.push(id);
-		else draft.metadata.layout.pages.push({ fullWidth: false, main: [id], sidebar: [] });
-	}
-
-	if (!customSectionId || source.length > 0) return;
-	draft.customSections = draft.customSections.filter((custom) => custom.id !== customSectionId);
-	draft.metadata.layout.pages = draft.metadata.layout.pages.filter((page, pageIndex) => {
-		const affected = page.main.includes(customSectionId) || page.sidebar.includes(customSectionId);
-		if (!affected) return true;
-		page.main = page.main.filter((id) => id !== customSectionId);
-		page.sidebar = page.sidebar.filter((id) => id !== customSectionId);
-		return pageIndex === 0 || page.main.length > 0 || page.sidebar.length > 0;
+export const moveItem = (draft: WritableDraft<ResumeData>, section: WriteSection, itemId: string, target: MoveTarget) =>
+	moveResumeItem(draft, {
+		itemId,
+		type: section.type,
+		customSectionId: section.kind === "custom" ? section.id : undefined,
+		target,
 	});
-}

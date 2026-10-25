@@ -1,5 +1,6 @@
 import type { ThreadSummary } from "./chat";
 import type { ReactNode } from "react";
+import { plural } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -34,7 +35,7 @@ export function useDeleteThread(onDeleted?: (id: string) => void) {
 			open={target !== null}
 			title={t`Delete this conversation?`}
 			message={t`Its messages and attachments are deleted. Edits you accepted stay in the document.`}
-			confirmLabel={t`Delete`}
+			confirmLabel={t`Delete conversation`}
 			destructive
 			onCancel={() => setTarget(null)}
 			onConfirm={() => {
@@ -47,7 +48,7 @@ export function useDeleteThread(onDeleted?: (id: string) => void) {
 						refreshThreads(queryClient);
 						onDeleted?.(thread.id);
 					})
-					.catch(() => showToast({ message: t`Couldn't delete it.` }));
+					.catch(() => showToast({ message: t`Couldn't delete the conversation. Try again.` }));
 			}}
 		/>
 	);
@@ -74,7 +75,12 @@ export function PastConversations({ threads, isMine, currentId, onOpen, onDelete
 	const others = threads.filter((thread) => !isMine(thread) && (thread.workingResumeId || thread.coverLetterId));
 
 	const outcome = (thread: ThreadSummary) =>
-		thread.editsProposed === 0 ? t`no edits` : t`${thread.editsAccepted} of ${thread.editsProposed} edits accepted`;
+		thread.editsProposed === 0
+			? t`no edits`
+			: plural(thread.editsProposed, {
+					one: `${thread.editsAccepted} of # edit accepted`,
+					other: `${thread.editsAccepted} of # edits accepted`,
+				});
 
 	const row = (thread: ThreadSummary, other: boolean) => (
 		<ListRow
@@ -116,12 +122,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 	const { space } = useTheme();
 	return (
 		<View style={{ gap: space.s1, marginBottom: space.s4 }}>
-			<Text
-				variant="caption"
-				color="ink3"
-				accessibilityRole="header"
-				style={{ paddingHorizontal: space.s4, textTransform: "uppercase" }}
-			>
+			<Text variant="eyebrow" color="ink3" accessibilityRole="header" style={{ paddingHorizontal: space.s4 }}>
 				{title}
 			</Text>
 			{children}

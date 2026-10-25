@@ -17,6 +17,7 @@ vi.mock("@reactive-resume/utils/file", () => ({ downloadWithAnchor: mocks.downlo
 vi.mock("@/features/resume/export/use-resume-export", () => ({
 	createExportFile: mocks.generate,
 	getDefaultFileName: () => "resume",
+	preloadDocumentExport: () => undefined,
 	sanitizeFileName: (value: string) => value,
 }));
 

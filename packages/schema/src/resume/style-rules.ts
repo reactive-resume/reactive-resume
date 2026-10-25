@@ -1,4 +1,5 @@
-import type { CustomSectionType, ResumeData, SectionType, StyleIntent, StyleSlot } from "./data";
+import type { CustomSectionType, ResumeData, StyleIntent, StyleSlot } from "./data";
+import { sectionTypeSchema } from "./data";
 
 export type SectionStyleRuleContext = {
 	sectionId: string;
@@ -11,26 +12,9 @@ export type ResolveStyleRuleSlotOptions = {
 	sectionType?: CustomSectionType | undefined;
 };
 
-const builtInSectionTypes = new Set<SectionType>([
-	"profiles",
-	"experience",
-	"education",
-	"projects",
-	"skills",
-	"languages",
-	"interests",
-	"awards",
-	"certifications",
-	"publications",
-	"volunteer",
-	"references",
-]);
-
 export const getSectionStyleRuleContext = (data: ResumeData, sectionId: string): SectionStyleRuleContext => {
-	if (sectionId === "summary") return { sectionId, sectionType: "summary" };
-	if (builtInSectionTypes.has(sectionId as SectionType)) {
-		return { sectionId, sectionType: sectionId as SectionType };
-	}
+	const type = sectionId as CustomSectionType;
+	if (type !== "cover-letter" && sectionTypeSchema.options.includes(type)) return { sectionId, sectionType: type };
 
 	const customSection = data.customSections.find((section) => section.id === sectionId);
 
@@ -44,19 +28,11 @@ export const resolveStyleIntentForSlot = (data: ResumeData, options: ResolveStyl
 
 		if (rule.target.scope === "global") return true;
 		if (rule.target.scope === "sectionType") return rule.target.sectionType === options.sectionType;
-		if (rule.target.scope === "sectionId") return rule.target.sectionId === options.sectionId;
-
-		return false;
+		return rule.target.sectionId === options.sectionId;
 	});
 
-	const specificity = { global: 0, sectionType: 1, sectionId: 2 } satisfies Record<
-		"global" | "sectionType" | "sectionId",
-		number
-	>;
+	const specificity = { global: 0, sectionType: 1, sectionId: 2 };
+	matchingRules.sort((a, b) => specificity[a.target.scope] - specificity[b.target.scope]);
 
-	const bySpecificity = [...matchingRules].sort((a, b) => {
-		return specificity[a.target.scope] - specificity[b.target.scope];
-	});
-
-	return Object.assign({}, ...bySpecificity.map((rule) => rule.slots[options.slot]));
+	return Object.assign({}, ...matchingRules.map((rule) => rule.slots[options.slot]));
 };

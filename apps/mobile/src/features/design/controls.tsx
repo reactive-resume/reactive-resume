@@ -118,14 +118,14 @@ export function Slider({ label, value, min, max, step, format, onChange, disable
 				onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
 				style={{ height: size.hit, justifyContent: "center", opacity: disabled ? 0.45 : 1 }}
 			>
-				<View style={{ height: space.s1, borderRadius: radius.rPill, backgroundColor: colors.line }}>
+				<View style={{ height: space.s1, borderRadius: radius.rLg, backgroundColor: colors.line }}>
 					<Animated.View
 						style={[
 							{
 								position: "absolute",
 								start: 0,
 								height: space.s1,
-								borderRadius: radius.rPill,
+								borderRadius: radius.rLg,
 								backgroundColor: colors.accent,
 							},
 							fillStyle,
@@ -140,7 +140,7 @@ export function Slider({ label, value, min, max, step, format, onChange, disable
 							start: 0,
 							width: thumb,
 							height: thumb,
-							borderRadius: thumb / 2,
+							borderRadius: radius.rSm,
 							backgroundColor: colors.raised,
 							borderWidth: 1,
 							borderColor: colors.line2,

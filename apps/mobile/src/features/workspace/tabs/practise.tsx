@@ -81,7 +81,7 @@ function Practise({ application, version, interview, speak: speakFirst, story, n
 		return (
 			<View style={{ gap: space.s3 }}>
 				<Banner tone="warn" message={t`This story is unavailable or uses facts that are switched off.`} />
-				<Button variant="secondary" label={t`Practise another question`} onPress={() => go("practise")} />
+				<Button variant="secondary" label={t`Practice another question`} onPress={() => go("practise")} />
 			</View>
 		);
 
@@ -364,7 +364,7 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 				trailing={<HearIt key={question.text} text={question.text} voice={voice} player={player} />}
 			>
 				<Text variant="heading">{question.text}</Text>
-				{storyTitle ? <Text color="ink2">{t`Practising your story: ${storyTitle}`}</Text> : null}
+				{storyTitle ? <Text color="ink2">{t`Practicing your story: ${storyTitle}`}</Text> : null}
 			</Block>
 
 			<Block title={t`Your answer`}>
@@ -454,7 +454,7 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 								style={({ pressed }) => ({
 									width: 52,
 									height: 52,
-									borderRadius: radius.rPill,
+									borderRadius: radius.rLg,
 									alignItems: "center",
 									justifyContent: "center",
 									backgroundColor: colors.danger,
@@ -601,7 +601,7 @@ function RecordingActions({ audio, player }: { audio: Recording; player: Player 
 				label={t`Share recording`}
 				onPress={() =>
 					void Sharing.shareAsync(audio.uri, { mimeType: "audio/mp4", UTI: "public.mpeg-4-audio" }).catch(() =>
-						showToast({ message: t`Couldn't share the recording.` }),
+						showToast({ message: t`Couldn't share the recording. Try again.` }),
 					)
 				}
 			/>

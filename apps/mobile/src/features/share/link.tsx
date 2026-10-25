@@ -294,7 +294,7 @@ export function LinkTab({ resume, offline }: LinkProps) {
 						editable={!operations.busy}
 					/>
 					<TextField
-						label={t`Confirm Password`}
+						label={t`Confirm password`}
 						value={confirmation}
 						onChangeText={setConfirmation}
 						secureTextEntry
@@ -318,7 +318,7 @@ export function LinkTab({ resume, offline }: LinkProps) {
 				open={dialog === "remove-password"}
 				title={t`Remove the password?`}
 				message={t`Anyone with the link will be able to view your resume.`}
-				confirmLabel={t`Remove`}
+				confirmLabel={t`Remove password`}
 				onCancel={() => setDialog(null)}
 				onConfirm={() => {
 					setDialog(null);

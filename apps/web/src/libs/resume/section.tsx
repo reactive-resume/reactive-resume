@@ -40,9 +40,10 @@ export const getSectionTitle = (type: SidebarSection | CustomOnlyType): string =
 			.with("publications", () => t`Publications`)
 			.with("volunteer", () => t`Volunteer`)
 			.with("references", () => t`References`)
-			.with("custom", () => t`Custom Sections`)
+			.with("custom", () => t`Custom sections`)
 
 			// Custom Section Types (not in main sidebar)
+			// Title case on purpose: this msgid is also the PDF section heading (tooling/locales/section-titles.ts).
 			.with("cover-letter", () => t`Cover Letter`)
 
 			// Right Sidebar Sections
@@ -50,7 +51,7 @@ export const getSectionTitle = (type: SidebarSection | CustomOnlyType): string =
 			.with("layout", () => t`Layout`)
 			.with("typography", () => t`Typography`)
 			.with("design", () => t`Design`)
-			.with("styles", () => t`Custom Styles`)
+			.with("styles", () => t`Custom styles`)
 			.with("page", () => t`Page`)
 			.with("notes", () => t`Notes`)
 			.with("sharing", () => t`Sharing`)

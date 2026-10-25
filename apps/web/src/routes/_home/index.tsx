@@ -1,3 +1,4 @@
+import { t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 import { createFileRoute, lazyRouteComponent, redirect } from "@tanstack/react-router";
 import { getResumeSocialMeta } from "@reactive-resume/resume/social-meta";
@@ -25,7 +26,7 @@ export const Route = createFileRoute("/_home/")({
 			if (root.status === "unavailable") {
 				return { meta: [{ title: "Reactive Resume" }, createNoindexFollowMeta()] };
 			}
-			const social = getResumeSocialMeta(root.resume.data, root.resume.name || "Resume");
+			const social = getResumeSocialMeta(root.resume.data, root.resume.name || t`Resume`);
 			return {
 				meta: [
 					{ title: `${social.name} - Reactive Resume` },

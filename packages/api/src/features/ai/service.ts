@@ -28,6 +28,7 @@ import { buildAiExtractionTemplate } from "@reactive-resume/ai/resume/extraction
 import { sanitizeAndParseResumeJson } from "@reactive-resume/ai/resume/sanitize";
 import { AI_PROVIDER_DEFAULT_BASE_URLS, AI_PROVIDER_DISPLAY_NAMES, aiProviderSchema } from "@reactive-resume/ai/types";
 import { ZipEntryTooLargeError, unzipEntries } from "@reactive-resume/import/zip";
+import { decodeEntities } from "../web-access/builtin";
 import { isDirectOpenAIProvider } from "./capabilities";
 import { aiDeadline } from "./generate-json";
 import { aiTransport, resolveAiBaseUrl } from "./url-policy";
@@ -210,7 +211,7 @@ function describeTestConnectionFailure(input: TestConnectionInput, error: unknow
 	const endpoint = input.baseURL.trim() || AI_PROVIDER_DEFAULT_BASE_URLS[input.provider];
 
 	if (isTimeout(error)) {
-		return `${provider} did not respond within ${TEST_CONNECTION_TIMEOUT_MS / 1000} seconds. The service may be unreachable, or the model may be too slow to load.`;
+		return `${provider} did not respond within ${TEST_CONNECTION_TIMEOUT_MS / 1000} seconds. The service may be unreachable, or the model may be too slow to load. Try again, or choose a faster model.`;
 	}
 
 	if (findNetworkErrorCode(error)) {
@@ -219,17 +220,20 @@ function describeTestConnectionFailure(input: TestConnectionInput, error: unknow
 			: `${provider} could not be reached. Check that the base URL is correct and the service is running.`;
 	}
 
-	if (LoadAPIKeyError.isInstance(error)) return `${provider} was configured without an API key.`;
-	if (NoSuchModelError.isInstance(error)) return `${provider} has no model named "${input.model}".`;
+	if (LoadAPIKeyError.isInstance(error))
+		return `${provider} was set up without an API key. Enter an API key and test again.`;
+	if (NoSuchModelError.isInstance(error))
+		return `${provider} has no model named "${input.model}". Check the model name and test again.`;
 
 	if (APICallError.isInstance(error)) {
 		const status = error.statusCode;
 
-		if (status === 401 || status === 403) return `${provider} rejected the API key.`;
-		if (status === 404) return `${provider} has no model named "${input.model}", or the base URL is wrong.`;
+		if (status === 401 || status === 403) return `${provider} rejected the API key. Check the key and test again.`;
+		if (status === 404)
+			return `${provider} has no model named "${input.model}", or the base URL is wrong. Check both and test again.`;
 		if (status === 429) return `${provider} rate-limited the test. Wait a moment and try again.`;
 		if (status !== undefined && status >= 500) {
-			return `${provider} reported a server error (${status}). This is a problem on the provider's side.`;
+			return `${provider} reported a server error (${status}). This is a problem on the provider's side. Try again later.`;
 		}
 
 		return `${provider} rejected the test request${status === undefined ? "" : ` (${status})`}: ${redactApiKey(error.message, input.apiKey)}`;
@@ -239,7 +243,7 @@ function describeTestConnectionFailure(input: TestConnectionInput, error: unknow
 		return `${provider} could not be tested: ${redactApiKey(error.message, input.apiKey)}`;
 	}
 
-	return `${provider} could not be tested, and reported no reason.`;
+	return `${provider} couldn't be tested and reported no reason. Try again.`;
 }
 
 export async function testConnection(input: TestConnectionInput): Promise<TestConnectionResult> {
@@ -276,7 +280,7 @@ export async function testConnection(input: TestConnectionInput): Promise<TestCo
 
 	return {
 		ok: false,
-		message: `${provider} is reachable, but the model replied with unexpected output instead of a simple confirmation.`,
+		message: `${provider} is reachable, but the model replied with unexpected output instead of a simple confirmation. Try another model.`,
 	};
 }
 
@@ -359,24 +363,10 @@ function readDocumentXml(data: string): string {
 	return new TextDecoder().decode(xml);
 }
 
-function decodeXmlEntities(value: string): string {
-	return value.replace(/&(#x[\da-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (entity, token: string) => {
-		if (token === "amp") return "&";
-		if (token === "lt") return "<";
-		if (token === "gt") return ">";
-		if (token === "quot") return '"';
-		if (token === "apos") return "'";
-		const code = token.toLowerCase().startsWith("#x")
-			? Number.parseInt(token.slice(2), 16)
-			: Number.parseInt(token.slice(1), 10);
-		return code <= 0x10ffff ? String.fromCodePoint(code) : entity;
-	});
-}
-
 function extractDocxText(file: z.infer<typeof fileInputSchema>): string {
 	const documentXml = readDocumentXml(file.data);
 	// ponytail: minimal OOXML body-text extraction; add a DOCX parser dependency if tracked changes matter.
-	const text = decodeXmlEntities(
+	const text = decodeEntities(
 		// `[^<>]` keeps each match from scanning past the next tag, so malformed markup costs linear time.
 		documentXml
 			.replace(/<w:tab\b[^<>]*\/>/g, "\t")

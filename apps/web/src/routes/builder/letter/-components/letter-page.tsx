@@ -3,8 +3,10 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
+import { isEqual } from "es-toolkit";
 import { useReducedMotion } from "motion/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
+import { useDebounceValue } from "usehooks-ts";
 import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
 import { getStateIn } from "@reactive-resume/resume/proposals";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
@@ -23,23 +25,19 @@ import { orpc } from "@/libs/orpc/client";
 
 const NONE: readonly never[] = [];
 
-/** The latest value, at most every `ms`: a streaming draft re-renders the page a few times a second, not per word. */
-function useThrottled<T>(value: T, ms: number) {
-	const [shown, setShown] = useState(value);
-	const last = useRef(0);
+// A streaming draft re-renders the page a few times a second, not per word: the first change at once, then at most
+// every 400ms. A module constant, so the debounce isn't rebuilt each render.
+const DRAFT_THROTTLE = { leading: true, maxWait: 400 };
 
-	useEffect(() => {
-		const timeout = window.setTimeout(
-			() => {
-				last.current = Date.now();
-				setShown(value);
-			},
-			Math.max(0, last.current + ms - Date.now()),
-		);
-		return () => window.clearTimeout(timeout);
-	}, [value, ms]);
-
-	return shown;
+/**
+ * `value`, kept as the same object while it stays deep-equal. Each save hands back a new but identical letter; without
+ * this the page's PDF would render again after every save.
+ */
+function useDeepStable<T>(value: T) {
+	const [stable, setStable] = useState(value);
+	if (stable === value || isEqual(stable, value)) return stable;
+	setStable(value);
+	return value;
 }
 
 /**
@@ -75,9 +73,9 @@ export function LetterPage() {
 	// Reduced motion puts the whole draft on the page at once.
 	const draftText =
 		draft.phase === "ready" || (draft.phase === "streaming" && !reducedMotion) ? draft.text || null : null;
-	const shownDraft = useThrottled(draftText, 400);
+	const [shownDraft] = useDebounceValue(draftText, 400, DRAFT_THROTTLE);
 
-	const data = useMemo(() => {
+	const pageData = useMemo(() => {
 		if (!letter) return undefined;
 		if (viewing) return letterPageData({ ...letter, ...viewing.data }, words);
 		// The assistant's pending edits show in the body: the old text struck through, the new highlighted.
@@ -92,6 +90,7 @@ export function LetterPage() {
 		const page = letterPageData({ ...letter, content }, words);
 		return previewTemplate ? { ...page, metadata: { ...page.metadata, template: previewTemplate } } : page;
 	}, [letter, viewing, shownDraft, previewTemplate, words, assistantProposals]);
+	const data = useDeepStable(pageData);
 
 	if (!letter || !data) return null;
 
@@ -186,8 +185,7 @@ function LetterOverlay({ pageIndex, pageMap, itemId, washed }: LetterOverlayProp
 
 	const reveal = (target: "from" | "body") => {
 		if (mode !== "write") setMode("write");
-		useEditorStore.getState().setMobileView("write");
-		useEditorStore.getState().setDrawerOpen(true);
+		useEditorStore.setState({ mobileView: "write", drawerOpen: true });
 		window.setTimeout(() => {
 			if (target === "body") {
 				const editor = document.getElementById("letter-body-editor");
@@ -208,7 +206,7 @@ function LetterOverlay({ pageIndex, pageMap, itemId, washed }: LetterOverlayProp
 					key={`${node.key}:${node.y}`}
 					onClick={() => reveal(node.kind === "header" ? "from" : "body")}
 					className={cn(
-						"absolute cursor-pointer rounded-[4px] outline-[1.5px] transition-[background-color,outline-color] duration-standard outline-solid",
+						"absolute cursor-pointer rounded-lg outline-[1.5px] transition-[background-color,outline-color] duration-standard outline-solid",
 						washed && node.kind === "item"
 							? "bg-[oklch(0.93_0.05_150/0.55)] mix-blend-multiply outline-[oklch(0.5_0.1_150)]"
 							: "outline-transparent hover:bg-[oklch(0.5_0.1_150/0.06)]",

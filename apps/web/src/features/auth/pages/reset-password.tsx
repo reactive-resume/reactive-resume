@@ -11,7 +11,10 @@ import { authClient } from "@/libs/auth/client";
 import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
-	password: z.string().min(8).max(64),
+	password: z
+		.string()
+		.min(8, { error: () => t`Use at least 8 characters.` })
+		.max(64, { error: () => t`Use 64 characters or fewer.` }),
 });
 
 type Props = {
@@ -36,7 +39,7 @@ export function ResetPasswordPage({ token }: Props) {
 						error.message ||
 						t({
 							comment: "Fallback toast when resetting password fails and no backend message is available",
-							message: "Failed to reset your password. Please try again.",
+							message: "Couldn't reset your password. Try again.",
 						}),
 					id: toastId,
 				});
@@ -45,7 +48,7 @@ export function ResetPasswordPage({ token }: Props) {
 
 			toast.add({
 				type: "success",
-				description: t`Your password has been reset. You can now sign in with your new password.`,
+				description: t`Password reset. Sign in with your new password.`,
 				id: toastId,
 			});
 
@@ -63,7 +66,7 @@ export function ResetPasswordPage({ token }: Props) {
 				</h1>
 
 				<div className="text-ink-3">
-					<Trans>Enter a new password for your account</Trans>
+					<Trans>Enter a new password for your account.</Trans>
 				</div>
 			</div>
 
@@ -79,7 +82,7 @@ export function ResetPasswordPage({ token }: Props) {
 					{(field) => (
 						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
 							<FormLabel>
-								<Trans comment="Label for new password input on reset-password form">New Password</Trans>
+								<Trans comment="Label for new password input on reset-password form">New password</Trans>
 							</FormLabel>
 							<FormControl
 								render={
@@ -100,7 +103,7 @@ export function ResetPasswordPage({ token }: Props) {
 				</form.Field>
 
 				<Button type="submit" className="w-full" disabled={isSubmitting}>
-					<Trans comment="Primary action button label on reset-password form">Reset Password</Trans>
+					<Trans comment="Primary action button label on reset-password form">Reset password</Trans>
 				</Button>
 			</form>
 		</>

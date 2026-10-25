@@ -213,7 +213,7 @@ function HorizontalBar({ label, value, fraction, colorOf, dot }: HorizontalBarPr
 			<View style={{ width: space.s12 * 2, flexDirection: "row", alignItems: "center", gap: space.s1 }}>
 				{dot ? (
 					<View
-						style={{ width: space.s2, height: space.s2, borderRadius: radius.rPill, backgroundColor: colorOf(colors) }}
+						style={{ width: space.s2, height: space.s2, borderRadius: radius.rLg, backgroundColor: colorOf(colors) }}
 					/>
 				) : null}
 				<Text variant="callout" color="ink2" numberOfLines={1} style={{ flexShrink: 1 }}>

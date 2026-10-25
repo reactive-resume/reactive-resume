@@ -7,6 +7,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
+import { formatList } from "@reactive-resume/utils/locale";
 import { refreshThreads, useThreads } from "./chat";
 import { ChatView, ContextChip } from "./chat-view";
 import { ModelButton, ModelSheet, ProviderGate, useConversationProvider } from "./provider";
@@ -65,7 +66,7 @@ type CoachScreenProps = {
 };
 
 export function CoachScreen({ offerIds }: CoachScreenProps) {
-	const { t } = useLingui();
+	const { t, i18n } = useLingui();
 	const { colors, space } = useTheme();
 	const queryClient = useQueryClient();
 	const providers = useHasAIProvider();
@@ -107,13 +108,14 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 				]
 			: []),
 	];
+	const list = formatList(i18n.locale, parts);
 	const connection = /connection$/i.test(label) ? label : t`${label} connection`;
 	const privacy = [
 		chips.memory && knowledge.isError
 			? t`Knowledge couldn't load. Try again or switch Knowledge off before sending.`
 			: chips.memory && knowledge.isPending
 				? t`Loading Knowledge before you send…`
-				: t`When you press send, ${parts.join(", ")} go to ${connection}.`,
+				: t`When you tap send, ${list} go to ${connection}.`,
 		...(chips.web ? [t`Search terms go to your web search service.`] : []),
 	].join(" ");
 
@@ -272,7 +274,7 @@ function Starters({ disabled, onPick }: { disabled: boolean; onPick: (text: stri
 			icon: "list-numbers",
 			text: t`Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story.`,
 		},
-		{ icon: "user-sound", text: t`What interview answers should I practise?` },
+		{ icon: "user-sound", text: t`What interview answers should I practice?` },
 	];
 	return (
 		<View style={{ gap: space.s4, paddingTop: space.s4 }}>
@@ -301,7 +303,7 @@ function Starters({ disabled, onPick }: { disabled: boolean; onPick: (text: stri
 						padding: space.s3,
 						borderWidth: 1,
 						borderColor: colors.line,
-						borderRadius: radius.rXl,
+						borderRadius: radius.rLg,
 						backgroundColor: pressed ? colors.press : colors.raised,
 						opacity: disabled ? 0.6 : 1,
 					})}
@@ -343,7 +345,7 @@ function ConversationsSheet(props: ConversationsSheetProps) {
 			await client.agent.threads.update({ id: target.id, title: next });
 			props.onRenamed();
 		} catch {
-			showToast({ message: t`Couldn't rename it.` });
+			showToast({ message: t`Couldn't rename the conversation. Try again.` });
 		}
 	};
 

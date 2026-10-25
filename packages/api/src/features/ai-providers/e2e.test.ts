@@ -127,9 +127,9 @@ describe("POST /ai-providers/{id}/test — end to end", () => {
 		const response = await client.test({ id: "provider-1" });
 
 		expect(response.testStatus).toBe("failure");
-		expect(response.testError).toBe("OpenAI rejected the API key.");
+		expect(response.testError).toBe("OpenAI rejected the API key. Check the key and test again.");
 		expect(response.enabled).toBe(false);
-		expect(dbState.rows[0]?.testError).toBe("OpenAI rejected the API key.");
+		expect(dbState.rows[0]?.testError).toBe("OpenAI rejected the API key. Check the key and test again.");
 	});
 
 	it("never leaks the decrypted API key into the persisted error", async () => {
@@ -148,7 +148,7 @@ describe("POST /ai-providers/{id}/test — end to end", () => {
 
 		await expect(client.test({ id: "provider-1" })).rejects.toMatchObject({
 			code: "BAD_REQUEST",
-			message: "Invalid AI provider configuration.",
+			message: "That provider setup isn't valid. Check the base URL and try again.",
 		});
 	});
 });

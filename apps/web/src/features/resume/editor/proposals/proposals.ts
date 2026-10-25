@@ -1,6 +1,6 @@
 import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { produce } from "immer";
 import {
 	applyProposal,
@@ -75,7 +75,7 @@ export function acceptResumeProposals(proposals: readonly Proposal[]) {
 		{ newStep: true },
 	);
 	toast.add({
-		description: proposals.length === 1 ? t`Edit applied` : t`${proposals.length} edits applied`,
+		description: plural(proposals.length, { 1: "Edit applied", other: "# edits applied" }),
 		actionProps: { children: t`Undo`, onClick: () => useResumeStore.getState().undo() },
 	});
 }

@@ -27,8 +27,8 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/sheet";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
-import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
+import { formatList } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import {
 	CoachThread,
@@ -45,7 +45,7 @@ import { transcriptOf, useConversationConnection } from "@/features/assistant/ch
 import { ProviderSetup } from "@/features/assistant/provider-setup";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
 type ThreadSummary = RouterOutput["agent"]["threads"]["list"][number];
@@ -207,10 +207,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 		try {
 			await client.agent.threads.update({ id: target, aiProviderId: id });
 		} catch (error) {
-			toast.add({
-				type: "error",
-				description: getOrpcErrorMessage(error, { fallback: t`Couldn't switch connections.` }),
-			});
+			toastError(error, t`Couldn't switch connections. Try again.`);
 		}
 		void queryClient.invalidateQueries({ queryKey: orpc.agent.threads.list.key() });
 	};
@@ -224,7 +221,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 		try {
 			await client.agent.threads.update({ id: thread.id, title: next });
 		} catch (error) {
-			toast.add({ type: "error", description: getOrpcErrorMessage(error, { fallback: t`Couldn't rename it.` }) });
+			toastError(error, t`Couldn't rename this conversation. Try again.`);
 		}
 		void queryClient.invalidateQueries({ queryKey: orpc.agent.threads.list.key() });
 	};
@@ -262,7 +259,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 				]
 			: []),
 	];
-	const shared = new Intl.ListFormat(i18n.locale, { type: "conjunction" }).format(parts);
+	const shared = formatList(i18n.locale, parts);
 	const privacy = (
 		<PrivacyLine>
 			{chips.memory && knowledge.isError
@@ -461,7 +458,7 @@ function EmptyState({ disabled, onPick }: EmptyStateProps) {
 			icon: "list-numbers",
 			text: t`Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story.`,
 		},
-		{ icon: "user-sound", text: t`What interview answers should I practise?` },
+		{ icon: "user-sound", text: t`What interview answers should I practice?` },
 	];
 	return (
 		<div className="grid gap-6 pt-[clamp(0px,6vh,48px)]">

@@ -6,7 +6,7 @@ import * as schema from "@reactive-resume/db/schema";
 import { applicationService } from "../applications/service";
 import { coverLetterService } from "../cover-letters/service";
 import { resumeService } from "../resume/service";
-import { lockDocumentOwner } from "./ownership";
+import { lockUser } from "./ownership";
 
 type DocumentType = DocumentSummary["type"];
 type DocumentRef = { userId: string; type: DocumentType; id: string };
@@ -38,7 +38,8 @@ async function assertOwnedApplication(userId: string, applicationId: string) {
 		.from(schema.application)
 		.where(and(eq(schema.application.id, applicationId), eq(schema.application.userId, userId)));
 
-	if (!application) throw new ORPCError("NOT_FOUND", { message: "Application not found." });
+	if (!application)
+		throw new ORPCError("NOT_FOUND", { message: "This application no longer exists. Choose another application." });
 	return application;
 }
 
@@ -54,7 +55,7 @@ type LetterChanges = Partial<typeof schema.coverLetter.$inferInsert>;
 /** The same change to either table; `letter` differs only where the columns do (the linked application). */
 async function update(ref: DocumentRef, resume: ResumeChanges, letter: LetterChanges = resume as LetterChanges) {
 	await db.transaction(async (tx) => {
-		await lockDocumentOwner(tx, ref.userId);
+		await lockUser(tx, ref.userId);
 		const rows =
 			ref.type === "resume"
 				? await tx.update(schema.resume).set(resume).where(owned(ref)).returning({ id: schema.resume.id })
@@ -99,7 +100,7 @@ async function deleteForGood(ref: DocumentRef, trashedBefore?: Date) {
 	if (ref.type === "resume")
 		return resumeService.delete({ id: ref.id, userId: ref.userId, ...(trashedBefore ? { trashedBefore } : {}) });
 	await db.transaction(async (tx) => {
-		await lockDocumentOwner(tx, ref.userId);
+		await lockUser(tx, ref.userId);
 		await tx
 			.delete(schema.coverLetter)
 			.where(and(owned(ref), trashedBefore ? lt(schema.coverLetter.trashedAt, trashedBefore) : undefined));

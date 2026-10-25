@@ -135,6 +135,51 @@
 			"creationDate": "Fri, 23 Oct 2026 10:50:45 GMT",
 			"ts": "Fri, 23 Oct 2026 10:50:45 GMT",
 			"publishState": "published"
+		},
+		"6.0.6": {
+			"manifest": {
+				"id": "me.rxresu.cloudronapp",
+				"title": "Reactive Resume",
+				"tagline": "Free and open-source resume builder",
+				"description": "Reactive Resume is a free and open-source resume builder for writing resumes and cover letters, checking your work, and tracking job applications.\n\n### Features\n\n- Real-time preview while you edit, with more than a dozen templates and full control over fonts, colors and layout\n- Export to PDF, DOCX and OpenDocument, or share a public link\n- Cover letters and a job application tracker alongside your resumes\n- Import from JSON Resume, LinkedIn and earlier Reactive Resume versions\n- Optional AI assistant with your own provider (OpenAI, Anthropic, Gemini, Ollama and more)\n- Passkeys, two-factor authentication and single sign-on with Cloudron\n- Translated into more than 50 languages\n- No tracking or ads; your data stays on your server\n",
+				"changelog": "* Refresh the visual design with the original colors, new typefaces and clearer interface copy.\n* Speed up browsing with cached thumbnails and on-demand PDF viewer loading.\n* Link the iOS and Android apps from the homepage.\n* Prevent edits to resumes in Trash.\n* Clean up read notifications older than 90 days. No migrations or configuration changes.\n* Complete web and mobile translations.\n",
+				"postInstallMessage": "Open the app and create an account. Anyone who can reach the app can sign up.\n\n<sso>\nCloudron users can also sign in with their Cloudron account.\n</sso>\n\nTo disable sign-ups, add other sign-in providers or set a shared AI provider, set the matching\n[environment variables](https://docs.rxresu.me/self-hosting/environment-variables) with the Cloudron CLI. The app restarts with the new settings:\n\n```\ncloudron env set --app $CLOUDRON-APP-FQDN FLAG_DISABLE_SIGNUPS=true\n```\n",
+				"version": "6.0.6",
+				"manifestVersion": 2,
+				"minBoxVersion": "10.0.0",
+				"httpPort": 3000,
+				"healthCheckPath": "/api/health",
+				"memoryLimit": 1073741824,
+				"optionalSso": true,
+				"addons": {
+					"localstorage": {},
+					"postgresql": {},
+					"redis": {},
+					"sendmail": {
+						"supportsDisplayName": true
+					},
+					"oidc": {
+						"loginRedirectUri": "/api/auth/callback/custom"
+					}
+				},
+				"website": "https://rxresu.me",
+				"documentationUrl": "https://docs.rxresu.me",
+				"forumUrl": "https://github.com/reactive-resume/reactive-resume/discussions",
+				"packageUrl": "https://github.com/reactive-resume/reactive-resume/tree/main/cloudron",
+				"packagerName": "Amruth Pillai",
+				"packagerUrl": "https://github.com/reactive-resume",
+				"iconUrl": "https://rxresu.me/pwa-512x512.png",
+				"tags": ["productivity", "resume", "career"],
+				"mediaLinks": [
+					"https://rxresu.me/screenshots/web/2-resume-dashboard.webp",
+					"https://rxresu.me/screenshots/web/3-builder-screen.webp",
+					"https://rxresu.me/screenshots/web/4-template-gallery.webp"
+				],
+				"dockerImage": "ghcr.io/reactive-resume/reactive-resume:v6.0.6"
+			},
+			"creationDate": "Sun, 25 Oct 2026 01:59:43 GMT",
+			"ts": "Sun, 25 Oct 2026 01:59:43 GMT",
+			"publishState": "published"
 		}
 	}
 }

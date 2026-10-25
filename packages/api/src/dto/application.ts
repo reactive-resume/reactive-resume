@@ -17,14 +17,14 @@ const MAX_APPLICATION_JOB_DESCRIPTION_CHARS = 20_000;
 const MAX_APPLICATION_DOCUMENT_BYTES = 10 * 1024 * 1024;
 
 const applicationDocumentKindSchema = z.enum(["resume", "cover-letter"]);
-const timelineDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must use YYYY-MM-DD format.");
+const timelineDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Enter the date as YYYY-MM-DD.");
 // Interviews carry a full timestamp (with offset) so the scheduled time survives timezones.
 const interviewAtSchema = z.iso.datetime({ offset: true }).describe("Scheduled start, as an ISO 8601 date-time.");
 
 const applicationDocumentFileSchema = z
 	.file()
 	.max(MAX_APPLICATION_DOCUMENT_BYTES, "File size must be less than 10MB")
-	.mime(["application/pdf"], "Application documents must be PDF files.");
+	.mime(["application/pdf"], "Attach a PDF file.");
 
 const documentFilesShape = {
 	resumeFile: applicationDocumentFileSchema.optional(),
@@ -112,6 +112,9 @@ const editableSchema = applicationSchema.pick({
 	requirements: true,
 	tags: true,
 });
+
+/** The editable fields, each optional; create and update share them. */
+export type EditableFields = z.infer<ReturnType<typeof editableSchema.partial>>;
 
 const createInputSchema = editableSchema.partial().extend({
 	company: applicationSchema.shape.company,

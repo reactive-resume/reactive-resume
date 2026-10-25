@@ -167,11 +167,11 @@ function ProposalItem(props: ProposalItemProps) {
 			<div className="flex items-center gap-2">
 				<span
 					aria-hidden="true"
-					className="grid size-5 shrink-0 place-items-center rounded-full bg-accent text-[11px] font-bold text-on-accent"
+					className="grid size-5 shrink-0 place-items-center rounded-sm bg-accent text-[11px] font-bold text-on-accent"
 				>
 					{number}
 				</span>
-				<span id={labelId} className="truncate font-mono text-[11px] text-ink-3 uppercase">
+				<span id={labelId} className="truncate font-mono text-xs text-ink-3">
 					<span className="sr-only">
 						<Trans>Edit {number}:</Trans>{" "}
 					</span>
@@ -181,7 +181,7 @@ function ProposalItem(props: ProposalItemProps) {
 
 			<div className="grid gap-1.5 text-[13px] leading-[19px]">
 				<del className="text-ink-3">{passageText(proposal.before)}</del>
-				<ins className="rounded-[3px] bg-accent-soft px-1 py-0.5 no-underline">{passageText(proposal.after)}</ins>
+				<ins className="rounded-md bg-accent-soft px-1 py-0.5 no-underline">{passageText(proposal.after)}</ins>
 				{proposal.why && <span className="text-xs text-ink-2">{proposal.why}</span>}
 			</div>
 

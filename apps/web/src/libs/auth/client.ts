@@ -2,7 +2,6 @@ import type { auth } from "@reactive-resume/auth/config";
 import { apiKeyClient } from "@better-auth/api-key/client";
 import { dashClient } from "@better-auth/infra/client";
 import { oauthProviderClient } from "@better-auth/oauth-provider/client";
-import { oauthProviderResourceClient } from "@better-auth/oauth-provider/resource-client";
 import { passkeyClient } from "@better-auth/passkey/client";
 import {
 	adminClient,
@@ -36,7 +35,6 @@ export const authClient = createAuthClient({
 			},
 		}),
 		oauthProviderClient(),
-		oauthProviderResourceClient(),
 		inferAdditionalFields<typeof auth>(),
 	],
 });

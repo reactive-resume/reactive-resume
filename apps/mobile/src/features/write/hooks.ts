@@ -92,7 +92,7 @@ export function useSortByDate() {
 			entries.splice(0, entries.length, ...result.items);
 		});
 		if (unresolved.length > 0)
-			showToast({ message: t`Could not sort these items; they stayed at the end: ${unresolved.join(", ")}.` });
+			showToast({ message: t`Couldn't sort these items, so they stayed at the end: ${unresolved.join(", ")}.` });
 	};
 }
 

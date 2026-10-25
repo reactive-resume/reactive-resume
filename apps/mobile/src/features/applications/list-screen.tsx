@@ -1,5 +1,6 @@
 import type { ApplicationSort } from "./list";
 import type { ApplicationClosedReason, ApplicationStatus } from "@reactive-resume/schema/applications/data";
+import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
@@ -115,7 +116,9 @@ function ApplicationsList() {
 								...(bulk === "close" ? { closedReason: reason } : {}),
 							})
 						).updated;
-			setResult(t`${count} of ${ids.length} applications changed.`);
+			setResult(
+				plural(ids.length, { one: `${count} of # application changed.`, other: `${count} of # applications changed.` }),
+			);
 			setBulk(null);
 			setSelected(new Set());
 			setSelecting(false);
@@ -151,9 +154,9 @@ function ApplicationsList() {
 			</View>
 			{(search || tag || showClosed) && (
 				<Text color="ink2">
-					{t`${filtered.length} matches`}
+					{plural(filtered.length, { one: "# match", other: "# matches" })}
 					{tag ? ` · ${tag}` : ""}
-					{showClosed ? t` · Including closed` : ""}
+					{showClosed ? ` · ${t`Including closed`}` : ""}
 				</Text>
 			)}
 			{failure && bulk === null && <Banner tone="danger" message={failure} onDismiss={() => setFailure(null)} />}
@@ -294,7 +297,10 @@ function ApplicationsList() {
 					renderSectionHeader={({ section }) => (
 						<Pressable
 							accessibilityRole="button"
-							accessibilityLabel={t`${getStageLabel(section.status)}, ${section.total} applications`}
+							accessibilityLabel={plural(section.total, {
+								one: `${getStageLabel(section.status)}, # application`,
+								other: `${getStageLabel(section.status)}, # applications`,
+							})}
 							accessibilityState={{ expanded: !collapsed.has(section.status) }}
 							disabled={busy}
 							onPress={() => {
@@ -318,7 +324,7 @@ function ApplicationsList() {
 								style={{
 									width: space.s2,
 									height: space.s2,
-									borderRadius: radius.rPill,
+									borderRadius: radius.rLg,
 									backgroundColor: getStageColor(section.status, colors),
 								}}
 							/>
@@ -410,7 +416,7 @@ function ApplicationsList() {
 					onClose={() => setBulk(null)}
 					title={
 						bulk === "delete"
-							? t`Delete selected applications?`
+							? plural(selectedIds.length, { one: "Delete # application?", other: "Delete # applications?" })
 							: bulk === "close"
 								? t`Close selected applications`
 								: bulk === "tag"
@@ -419,7 +425,9 @@ function ApplicationsList() {
 					}
 				>
 					<View style={{ padding: space.s4, gap: space.s3 }}>
-						<Text>{t`${selectedIds.length} applications selected.`}</Text>
+						<Text>
+							{plural(selectedIds.length, { one: "# application selected.", other: "# applications selected." })}
+						</Text>
 						{busy && (
 							<Banner tone="info" message={t`Applying changes. Closing this sheet does not cancel the request.`} />
 						)}
@@ -446,13 +454,13 @@ function ApplicationsList() {
 						{bulk === "delete" && (
 							<Banner
 								tone="warn"
-								message={t`Applications and their attachments will be deleted permanently. This cannot be undone.`}
+								message={t`Applications and their attachments will be deleted permanently. This can't be undone.`}
 							/>
 						)}
 						<Button
 							label={
 								bulk === "delete"
-									? t`Delete`
+									? plural(selectedIds.length, { one: "Delete # application", other: "Delete # applications" })
 									: bulk === "close"
 										? t`Close applications`
 										: bulk === "tag"

@@ -39,7 +39,7 @@ export async function createResumePdfDownload(input: CreateResumePdfDownloadInpu
 			throw new ORPCError("BAD_REQUEST", { message: error.message });
 		}
 		console.error("[PDF API] Failed to render resume PDF", { resumeId: input.id, error });
-		throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Failed to generate resume PDF" });
+		throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Couldn't generate the resume PDF. Try again." });
 	}
 }
 

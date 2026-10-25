@@ -22,7 +22,7 @@ describe("DatesField", () => {
 
 	it("saves and clears readable dates without committing invalid input or the review note", () => {
 		const onChange = renderField({ start: "2016-06", end: "2018", present: false, raw: "Summer 2016 - 2018" });
-		expect(screen.getByText(/We read "Summer 2016 - 2018"/)).toBeInTheDocument();
+		expect(screen.getByText(/Read as “Summer 2016 - 2018”/)).toBeInTheDocument();
 
 		fireEvent.change(screen.getByRole("textbox", { name: "Start" }), { target: { value: "Jul 2016" } });
 

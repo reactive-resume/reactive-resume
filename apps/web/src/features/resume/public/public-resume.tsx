@@ -3,13 +3,13 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { lazy, Suspense, useMemo } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
-import { PdfViewer } from "./pdf-viewer";
 import { ResumeReflow } from "./resume-reflow";
 import { LoadingScreen } from "@/components/layout/loading-screen";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
@@ -18,6 +18,9 @@ import { POP_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 
 const publicResumeRoute = getRouteApi("/$username/$slug");
+
+// pdf.js is only for wider screens: phones read the reflowed text and never download it.
+const PdfViewer = lazy(() => import("./pdf-viewer").then((module) => ({ default: module.PdfViewer })));
 
 export function PublicResumeRoute() {
 	const { username, slug } = publicResumeRoute.useParams();
@@ -132,7 +135,15 @@ export function PublicResumePage({ resume, username, slug, flags, isRoot = false
 						</header>
 						<main id="main-content" className="flex flex-1 justify-center px-6 pt-8 pb-5 print:block print:p-0">
 							<div className="w-full max-w-[860px] bg-white shadow-e2 print:max-w-full print:shadow-none">
-								<PdfViewer data={resume.data} className="block w-full" publicResume={publicResume} />
+								<Suspense
+									fallback={
+										<div className="flex aspect-[210/297] w-full items-center justify-center bg-bg">
+											<Spinner className="size-6" />
+										</div>
+									}
+								>
+									<PdfViewer data={resume.data} className="block w-full" publicResume={publicResume} />
+								</Suspense>
 							</div>
 						</main>
 						{credit}

@@ -1,3 +1,4 @@
+import { t } from "@lingui/core/macro";
 import { useRouter } from "@tanstack/react-router";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
@@ -17,7 +18,7 @@ export function LoadingScreen() {
 			)}
 		>
 			<BrandIcon variant="icon" className="size-12" />
-			<Spinner className="size-6" />
+			<Spinner aria-label={t`Loading`} className="size-6" />
 		</div>
 	);
 }

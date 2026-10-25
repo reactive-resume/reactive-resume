@@ -31,12 +31,11 @@ export function selectionFromPanelElement(element: Element): EditorSelection | n
  * closing), instantly with reduced motion.
  */
 export function revealSelectionInPanel(selection: EditorSelection) {
-	const editor = useEditorStore.getState();
-	editor.select(selection);
-	if (selection.kind === "header") editor.setBasicsOpen(true);
+	useEditorStore.setState({ selection });
+	if (selection.kind === "header") useEditorStore.setState({ basicsOpen: true });
 	else {
-		editor.setBasicsOpen(false);
-		editor.setSectionOpen(selection.sectionId, true);
+		useEditorStore.setState({ basicsOpen: false });
+		useEditorStore.getState().setSectionOpen(selection.sectionId, true);
 	}
 
 	const scroll = () => {

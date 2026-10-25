@@ -19,6 +19,7 @@ import {
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { formatList } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError } from "./load-state";
 import { defaultPair, formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
@@ -523,7 +524,7 @@ type OpenQuestionsProps = { offers: Offer[] };
 function OpenQuestions({ offers }: OpenQuestionsProps) {
 	const { locale } = useCareerTime();
 	const { data: profile } = useQuery(orpc.career.profile.queryOptions());
-	const names = (list: Offer[]) => new Intl.ListFormat(locale, { type: "conjunction" }).format(list.map(companyOf));
+	const names = (list: Offer[]) => formatList(locale, list.map(companyOf));
 
 	const checks: [string, (terms: Offer["data"]) => boolean][] = [
 		[t`What is the base salary, and is it negotiable?`, (terms) => terms.base === null],

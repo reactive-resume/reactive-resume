@@ -56,7 +56,7 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 		() => {
 			if (!useEditorStore.getState().selection) return;
 			if (isEditableElementFocused() && document.activeElement instanceof HTMLElement) document.activeElement.blur();
-			useEditorStore.getState().select(null);
+			useEditorStore.setState({ selection: null });
 		},
 		// Command palette binds Escape too. Both handlers should run.
 		{ preventDefault: false, stopPropagation: false, conflictBehavior: "allow" },

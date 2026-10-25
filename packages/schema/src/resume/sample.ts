@@ -1,4 +1,5 @@
 import type { ResumeData } from "./data";
+import { sectionDefaults } from "./default";
 
 export const sampleResumeData: ResumeData = {
 	picture: {
@@ -40,25 +41,13 @@ export const sampleResumeData: ResumeData = {
 		],
 	},
 	summary: {
-		title: "",
-		icon: "article",
-		columns: 1,
-		hidden: false,
-		showHeading: true,
-		keepTogether: false,
-		startOnNewPage: false,
+		...sectionDefaults("article"),
 		content:
 			"<p><strong>Passionate game developer with 5+ years of professional experience</strong> creating engaging gameplay systems and polished player experiences across multiple platforms. Specialized in Unity and Unreal Engine with strong expertise in C#, C++, and game design principles. Proven ability to collaborate effectively with cross-functional teams including designers, artists, and QA to deliver high-quality games on time and within scope.</p>",
 	},
 	sections: {
 		profiles: {
-			title: "",
-			icon: "messenger-logo",
-			columns: 1,
-			hidden: false,
-			showHeading: true,
-			keepTogether: false,
-			startOnNewPage: false,
+			...sectionDefaults("messenger-logo"),
 			items: [
 				{
 					id: "019bef5a-93e4-7746-ad39-3d42ddc9b4d8",
@@ -89,13 +78,7 @@ export const sampleResumeData: ResumeData = {
 			],
 		},
 		experience: {
-			title: "",
-			icon: "briefcase",
-			columns: 1,
-			hidden: false,
-			showHeading: true,
-			keepTogether: false,
-			startOnNewPage: false,
+			...sectionDefaults("briefcase"),
 			items: [
 				{
 					id: "019bef5a-93e4-7746-ad39-44d8cec98ca4",
@@ -116,13 +99,7 @@ export const sampleResumeData: ResumeData = {
 			],
 		},
 		education: {
-			title: "",
-			icon: "graduation-cap",
-			columns: 1,
-			hidden: false,
-			showHeading: true,
-			keepTogether: false,
-			startOnNewPage: false,
+			...sectionDefaults("graduation-cap"),
 			items: [
 				{
 					id: "019bef5a-93e4-7746-ad39-48455f6cef9e",
@@ -144,13 +121,7 @@ export const sampleResumeData: ResumeData = {
 			],
 		},
 		projects: {
-			title: "",
-			icon: "code-simple",
-			columns: 1,
-			hidden: false,
-			showHeading: true,
-			keepTogether: false,
-			startOnNewPage: false,
+			...sectionDefaults("code-simple"),
 			items: [
 				{
 					id: "019bef5a-93e4-7746-ad39-4d2603fe2801",
@@ -194,15 +165,9 @@ export const sampleResumeData: ResumeData = {
 			],
 		},
 		skills: {
-			title: "",
-			icon: "compass-tool",
-			columns: 1,
+			...sectionDefaults("compass-tool"),
 			layout: "default",
 			keywordLayout: "inline",
-			hidden: false,
-			showHeading: true,
-			keepTogether: false,
-			startOnNewPage: false,
 			items: [
 				{
 					id: "019bef5a-93e4-7746-ad39-5a52dcf50ed4",
@@ -267,13 +232,7 @@ export const sampleResumeData: ResumeData = {
 			],
 		},
 		languages: {
-			title: "",
-			icon: "translate",
-			columns: 1,
-			hidden: false,
-			showHeading: true,
-			keepTogether: false,
-			startOnNewPage: false,
+			...sectionDefaults("translate"),
 			items: [
 				{
 					id: "019bef5a-93e4-7746-ad39-73807ccc48b5",
@@ -292,13 +251,7 @@ export const sampleResumeData: ResumeData = {
 			],
 		},
 		interests: {
-			title: "",
-			icon: "football",
-			columns: 1,
-			hidden: false,
-			showHeading: true,
-			keepTogether: false,
-			startOnNewPage: false,
+			...sectionDefaults("football"),
 			items: [
 				{
 					id: "019bef5a-93e4-7746-ad39-7821b4de95f7",
@@ -335,13 +288,7 @@ export const sampleResumeData: ResumeData = {
 			],
 		},
 		awards: {
-			title: "",
-			icon: "trophy",
-			columns: 1,
-			hidden: false,
-			showHeading: true,
-			keepTogether: false,
-			startOnNewPage: false,
+			...sectionDefaults("trophy"),
 			items: [
 				{
 					id: "019bef5a-93e4-7746-ad39-8a8bb9fbe182",
@@ -374,13 +321,7 @@ export const sampleResumeData: ResumeData = {
 			],
 		},
 		certifications: {
-			title: "",
-			icon: "certificate",
-			columns: 1,
-			hidden: false,
-			showHeading: true,
-			keepTogether: false,
-			startOnNewPage: false,
+			...sectionDefaults("certificate"),
 			items: [
 				{
 					id: "019bef5a-93e4-7746-ad39-91fe8a4dfea6",
@@ -411,13 +352,7 @@ export const sampleResumeData: ResumeData = {
 			],
 		},
 		publications: {
-			title: "",
-			icon: "books",
-			columns: 1,
-			hidden: false,
-			showHeading: true,
-			keepTogether: false,
-			startOnNewPage: false,
+			...sectionDefaults("books"),
 			items: [
 				{
 					id: "019bef5a-93e4-7746-ad39-9816f0081895",
@@ -450,13 +385,8 @@ export const sampleResumeData: ResumeData = {
 			],
 		},
 		volunteer: {
-			title: "",
-			icon: "hand-heart",
+			...sectionDefaults("hand-heart"),
 			columns: 2,
-			hidden: false,
-			showHeading: true,
-			keepTogether: false,
-			startOnNewPage: false,
 			items: [
 				{
 					id: "019bef5a-93e4-7746-ad39-a02580473e05",
@@ -489,13 +419,7 @@ export const sampleResumeData: ResumeData = {
 			],
 		},
 		references: {
-			title: "",
-			icon: "phone",
-			columns: 1,
-			hidden: false,
-			showHeading: true,
-			keepTogether: false,
-			startOnNewPage: false,
+			...sectionDefaults("phone"),
 			items: [
 				{
 					id: "019bef5a-93e4-7746-ad39-a945c0f42dd5",
@@ -515,13 +439,8 @@ export const sampleResumeData: ResumeData = {
 	},
 	customSections: [
 		{
+			...sectionDefaults("briefcase"),
 			title: "Earlier experience",
-			icon: "briefcase",
-			columns: 1,
-			hidden: false,
-			showHeading: true,
-			keepTogether: false,
-			startOnNewPage: false,
 			id: "019becaf-0b87-769d-98a6-46ccf558c0e8",
 			type: "experience",
 			items: [

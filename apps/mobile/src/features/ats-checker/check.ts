@@ -46,7 +46,7 @@ export async function runAtsCheck(uri: string, name: string, posting: string, si
 		if (response.status === 413) throw new AtsCheckError(t`That file is too large to check. PDFs up to 25 MB work.`);
 		if (response.status === 429) throw new AtsCheckError(t`Too many requests. Try again later.`);
 		if (response.status === 400) throw new AtsCheckError(t`That file couldn't be read as a PDF.`);
-		throw new AtsCheckError(t`Something went wrong while reading that file. Try again.`);
+		throw new AtsCheckError(t`Couldn't read that file. Try again.`);
 	}
 	// The server sends the report itself with `fullText` beside its fields (`checkPdf` output), not nested.
 	const { fullText, ...report } = (await response.json()) as PdfAtsReport & { fullText: string };

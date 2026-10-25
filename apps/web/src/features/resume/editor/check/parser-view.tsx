@@ -49,7 +49,7 @@ const issueOnLine = (issues: readonly CheckIssue[], line: string) =>
 
 function IssueChip({ issue }: { issue: CheckIssue }) {
 	return (
-		<span className="h-[18px] shrink-0 rounded-full bg-warn-soft px-1.5 font-sans text-[10px] leading-[18px] font-semibold whitespace-nowrap text-warn-text">
+		<span className="h-[18px] shrink-0 rounded-sm bg-warn-soft px-1.5 font-sans text-[10px] leading-[18px] font-semibold whitespace-nowrap text-warn-text">
 			<Trans>issue {issue.number}</Trans>
 		</span>
 	);
@@ -141,7 +141,7 @@ function ParsedText({ parsed, issues }: { parsed: Parsed; issues: readonly Check
 
 	return (
 		<>
-			<div className="flex flex-wrap justify-between gap-2 text-[11px] font-medium text-ink-3 uppercase">
+			<div className="flex flex-wrap justify-between gap-2 text-xs font-medium text-ink-3">
 				<span>
 					<Trans>Extracted from the PDF on the page · reading order</Trans>
 				</span>
@@ -153,7 +153,7 @@ function ParsedText({ parsed, issues }: { parsed: Parsed; issues: readonly Check
 					const issue = issueFor(issues, FIELD_CODES[field.id] ?? []);
 					return (
 						<div key={field.id} className="contents">
-							<dt className="text-ink-3 uppercase">{field.label}</dt>
+							<dt className="text-ink-3">{field.label}</dt>
 							<dd className={cn("flex min-w-0 items-center gap-2", (issue || !field.value) && "text-warn-text")}>
 								<span className="min-w-0 break-words">{field.value || notFound}</span>
 								{issue && <IssueChip issue={issue} />}

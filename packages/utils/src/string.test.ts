@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vite-plus/test";
-import { filterOptions, slugify, toUsername } from "./string";
+import { slugify } from "./slug";
+import { filterOptions, toUsername } from "./string";
 
 describe("slugify", () => {
 	it("falls back to a non-empty slug for CJK input", () => {

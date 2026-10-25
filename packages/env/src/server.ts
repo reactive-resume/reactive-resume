@@ -23,6 +23,19 @@ if (workspaceRoot) {
 // --requirepass) need an empty username — "redis://:<pass>@<host>" — or the built-in ACL user,
 // "redis://default:<pass>@<host>". A named user with an explicitly empty password ("redis://user:@host") stays
 // valid: Redis accepts `AUTH <user> ""` for passwordless (`nopass`) ACL users.
+/** A comma-separated list, trimmed and without empty entries; each entry must match `item`. Empty when unset. */
+const commaList = (item: z.ZodType<string, string>) =>
+	z
+		.string()
+		.transform((value) =>
+			value
+				.split(",")
+				.map((entry) => entry.trim())
+				.filter(Boolean),
+		)
+		.pipe(z.array(item))
+		.default([]);
+
 const REDIS_URL_USERINFO_MESSAGE =
 	"REDIS_URL userinfo has no password field. For password-only auth (redis --requirepass) use " +
 	"redis://:<password>@<host>; for ACL users use redis://<user>:<password>@<host> (default is the built-in user; " +
@@ -70,28 +83,17 @@ export const env = createEnv({
 			.transform((value) => value || undefined)
 			.optional(),
 		SERVER_PORT: z.coerce.number().int().min(1).max(65535).default(3001),
-		TRUSTED_PROXIES: z
-			.string()
-			.transform((value) =>
-				value
-					.split(",")
-					.map((range) => range.trim())
-					.filter(Boolean),
-			)
-			.pipe(
-				z.array(
-					z.string().refine((range) => {
-						const [address, prefix, ...rest] = range.split("/");
-						const family = isIP(address ?? "");
-						return (
-							family > 0 &&
-							rest.length === 0 &&
-							(prefix === undefined || (/^\d+$/.test(prefix) && Number(prefix) <= (family === 4 ? 32 : 128)))
-						);
-					}, "TRUSTED_PROXIES must contain comma-separated IP addresses or CIDRs"),
-				),
-			)
-			.default([]),
+		TRUSTED_PROXIES: commaList(
+			z.string().refine((range) => {
+				const [address, prefix, ...rest] = range.split("/");
+				const family = isIP(address ?? "");
+				return (
+					family > 0 &&
+					rest.length === 0 &&
+					(prefix === undefined || (/^\d+$/.test(prefix) && Number(prefix) <= (family === 4 ? 32 : 128)))
+				);
+			}, "TRUSTED_PROXIES must contain comma-separated IP addresses or CIDRs"),
+		),
 
 		// Database
 		DATABASE_URL: z.url({ protocol: /postgres(ql)?/ }),
@@ -111,36 +113,9 @@ export const env = createEnv({
 		// Domain verification token from the OpenAI plugin portal, served at /.well-known/openai-apps-challenge.
 		OPENAI_APPS_CHALLENGE_TOKEN: z.string().trim().min(1).optional(),
 		// Native app association files (empty lists leave the endpoints disabled).
-		MOBILE_IOS_APP_IDS: z
-			.string()
-			.transform((value) =>
-				value
-					.split(",")
-					.map((id) => id.trim())
-					.filter(Boolean),
-			)
-			.pipe(z.array(z.string().regex(/^[A-Z0-9]{10}\.[A-Za-z0-9.-]+$/)))
-			.default([]),
-		MOBILE_ANDROID_PACKAGES: z
-			.string()
-			.transform((value) =>
-				value
-					.split(",")
-					.map((id) => id.trim())
-					.filter(Boolean),
-			)
-			.pipe(z.array(z.string().regex(/^[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)+$/)))
-			.default([]),
-		MOBILE_ANDROID_CERT_SHA256: z
-			.string()
-			.transform((value) =>
-				value
-					.split(",")
-					.map((hash) => hash.trim())
-					.filter(Boolean),
-			)
-			.pipe(z.array(z.string().regex(/^(?:[A-Fa-f0-9]{2}:){31}[A-Fa-f0-9]{2}$/)))
-			.default([]),
+		MOBILE_IOS_APP_IDS: commaList(z.string().regex(/^[A-Z0-9]{10}\.[A-Za-z0-9.-]+$/)),
+		MOBILE_ANDROID_PACKAGES: commaList(z.string().regex(/^[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)+$/)),
+		MOBILE_ANDROID_CERT_SHA256: commaList(z.string().regex(/^(?:[A-Fa-f0-9]{2}:){31}[A-Fa-f0-9]{2}$/)),
 
 		// Social Auth (Apple): client secret is a pre-signed Apple JWT.
 		APPLE_CLIENT_ID: z.string().min(1).optional(),

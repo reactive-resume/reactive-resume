@@ -13,6 +13,8 @@ const renderHeading = async (css: string, hideSectionIcons = false) => {
 	data.metadata.page.hideSectionIcons = hideSectionIcons;
 	data.metadata.layout.pages = [{ fullWidth: true, main: ["skills", "summary"], sidebar: [] }];
 	data.summary.content = "<p>Summary body</p>";
+	data.summary.title = "Heading";
+	data.sections.skills.title = "Heading";
 	data.metadata.stylesheet = { mode: "semantic", source: { languageVersion: 1, text: `@version 1; ${css}` } };
 	data.sections.skills.items = [
 		{ id: "skill", hidden: false, name: "Skill", proficiency: "", level: 0, keywords: [], icon: "", iconColor: "" },
@@ -20,7 +22,6 @@ const renderHeading = async (css: string, hideSectionIcons = false) => {
 	const element = createElement(ResumeDocument, {
 		data,
 		template: "scizor",
-		resolveSectionTitle: () => "Heading",
 	}) as unknown as Parameters<typeof renderToBuffer>[0];
 	let bytes: Uint8Array = new Uint8Array();
 	await act(async () => {

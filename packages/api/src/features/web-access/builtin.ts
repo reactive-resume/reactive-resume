@@ -103,6 +103,26 @@ export function readBuiltinPage(
 	});
 }
 
+/** Reads a response body, refusing it as too large past MAX_PAGE_BYTES. */
+export async function readCapped(body: ReadableStream<Uint8Array>, signal: AbortSignal): Promise<Buffer> {
+	const reader = body.getReader();
+	const chunks: Uint8Array[] = [];
+	let bytes = 0;
+	try {
+		for (;;) {
+			signal.throwIfAborted();
+			const { done, value } = await reader.read();
+			if (done) return Buffer.concat(chunks);
+			bytes += value.byteLength;
+			if (bytes > MAX_PAGE_BYTES) throw new WebAccessError("too-large");
+			chunks.push(value);
+		}
+	} finally {
+		await reader.cancel().catch(() => {});
+		reader.releaseLock();
+	}
+}
+
 async function readWorkerPage(url: URL, signal: AbortSignal): Promise<{ html: string; resolvedUrl: string }> {
 	try {
 		const response = await fetchWorkerPublicUrl(url, {
@@ -117,22 +137,9 @@ async function readWorkerPage(url: URL, signal: AbortSignal): Promise<{ html: st
 			await response.body?.cancel();
 			throw new WebAccessError("not-a-page");
 		}
-		const reader = response.body?.getReader();
-		if (!reader) throw new WebAccessError("not-a-page");
-		const chunks: Uint8Array[] = [];
-		let size = 0;
-		try {
-			for (;;) {
-				const { value, done } = await reader.read();
-				if (done) break;
-				size += value.byteLength;
-				if (size > MAX_PAGE_BYTES) throw new WebAccessError("too-large");
-				chunks.push(value);
-			}
-		} finally {
-			await reader.cancel();
-		}
-		return { html: Buffer.concat(chunks).toString("utf8"), resolvedUrl: response.url || url.href };
+		if (!response.body) throw new WebAccessError("not-a-page");
+		const html = (await readCapped(response.body, signal)).toString("utf8");
+		return { html, resolvedUrl: response.url || url.href };
 	} catch (error) {
 		signal.throwIfAborted();
 		if (error instanceof WebAccessError) throw error;
@@ -152,7 +159,7 @@ function numericEntityCharacter(name: string) {
 	const code = /^#x/i.test(name) ? Number.parseInt(name.slice(2), 16) : Number.parseInt(name.slice(1), 10);
 	return code > 0 && code <= 0x10ffff && !(code >= 0xd800 && code <= 0xdfff) ? String.fromCodePoint(code) : null;
 }
-const decodeEntities = (text: string) =>
+export const decodeEntities = (text: string) =>
 	text.replace(/&(#x[\da-f]+|#\d+|[a-z]+);/gi, (entity, name: string) => {
 		if (!name.startsWith("#")) return ENTITIES[name.toLowerCase()] ?? entity;
 		return numericEntityCharacter(name) ?? entity;

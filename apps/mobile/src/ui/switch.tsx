@@ -14,11 +14,11 @@ export type SwitchProps = {
 	disabled?: boolean | undefined;
 };
 
-// tokens.md §7: iOS 51×31 pill with a 27 pt thumb; Android Material 3 52×32 with a 16 pt thumb off, 24 pt on.
+// tokens.md §7: iOS 51×31 track with a 27 pt thumb; Android Material 3 52×32 with a 16 pt thumb off, 24 pt on.
 const track = android ? { width: 52, height: 32 } : { width: 51, height: 31 };
 
 export function Switch({ value, onValueChange, label, disabled }: SwitchProps) {
-	const { colors, motion, shadows, size } = useTheme();
+	const { colors, motion, radius, shadows, size } = useTheme();
 	const reduced = useReducedMotion();
 	const progress = useSharedValue(value ? 1 : 0);
 
@@ -56,7 +56,7 @@ export function Switch({ value, onValueChange, label, disabled }: SwitchProps) {
 		>
 			<Animated.View
 				style={[
-					{ ...track, borderRadius: track.height / 2, borderWidth: android ? 2 : 0, padding: android ? 0 : 2 },
+					{ ...track, borderRadius: radius.rLg, borderWidth: android ? 2 : 0, padding: android ? 0 : 2 },
 					trackStyle,
 				]}
 			>
@@ -65,7 +65,7 @@ export function Switch({ value, onValueChange, label, disabled }: SwitchProps) {
 						{
 							width: android ? 24 : 27,
 							height: android ? 24 : 27,
-							borderRadius: 999,
+							borderRadius: radius.rSm,
 							backgroundColor: colors.raised,
 						},
 						android ? { marginTop: 2 } : { boxShadow: shadows.e1.boxShadow },

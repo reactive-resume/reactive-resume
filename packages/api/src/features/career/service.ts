@@ -1,3 +1,4 @@
+import type { DbOrTx } from "@reactive-resume/db/client";
 import type { CareerSource } from "@reactive-resume/schema/career";
 import type z from "zod";
 import { createHash } from "node:crypto";
@@ -21,6 +22,7 @@ import { countryForTimeZone } from "@reactive-resume/utils/region";
 import { generateId } from "@reactive-resume/utils/string";
 import { requestRunCancellation } from "../agent/cancellation";
 import { applicationService, recordSentResume } from "../applications/service";
+import { lockUser } from "../documents/ownership";
 import { matchPosting } from "./matching";
 import { noticeText } from "./notices";
 
@@ -43,7 +45,7 @@ export function mergeCareerProfile(stored: CareerProfileData, input: CareerProfi
 
 export async function requireCareerApplication(input: Owned & { interviewId?: string | null | undefined }) {
 	if (!input.applicationId) {
-		if (input.interviewId) throw new ORPCError("BAD_REQUEST", { message: "An interview needs an application." });
+		if (input.interviewId) throw new ORPCError("BAD_REQUEST", { message: "Choose an application for this interview." });
 		return null;
 	}
 	const application = await applicationService.getById({ id: input.applicationId, userId: input.userId });
@@ -51,7 +53,9 @@ export async function requireCareerApplication(input: Owned & { interviewId?: st
 		input.interviewId &&
 		!application.activity.some((entry) => entry.type === "interview" && entry.id === input.interviewId)
 	)
-		throw new ORPCError("NOT_FOUND", { message: "This interview is no longer part of this application." });
+		throw new ORPCError("NOT_FOUND", {
+			message: "This interview is no longer part of this application. Choose another interview.",
+		});
 	return application;
 }
 
@@ -126,7 +130,7 @@ const factUsage = {
 	savedItems: sql<number>`(select count(*)::int from ${tables.careerArtifact} a where a.user_id = ${tables.careerFact.userId} and a.evidence->'factIds' ? ${tables.careerFact.id})`,
 };
 
-async function requireFacts(input: Owned, ids: string[], reader: typeof db | CareerTransaction = db) {
+async function requireFacts(input: Owned, ids: string[], reader: DbOrTx = db) {
 	if (!ids.length) return [];
 	const rows = await reader
 		.select()
@@ -140,7 +144,9 @@ async function requireFacts(input: Owned, ids: string[], reader: typeof db | Car
 			),
 		);
 	if (new Set(rows.map((row) => row.id)).size !== new Set(ids).size)
-		throw new ORPCError("BAD_REQUEST", { message: "Some supporting facts are unavailable in this context." });
+		throw new ORPCError("BAD_REQUEST", {
+			message: "Some supporting facts aren't available here. Remove them and try again.",
+		});
 	return rows;
 }
 
@@ -148,7 +154,7 @@ async function requireFacts(input: Owned, ids: string[], reader: typeof db | Car
  * The account's own facts among those workspace answers cite. Answers are a draft the client saves, so a saved item
  * records only facts that belong to the account (a deleted or foreign id is dropped).
  */
-async function ownedFactIds(reader: typeof db | CareerTransaction, userId: string, answers: { factIds: string[] }[]) {
+async function ownedFactIds(reader: DbOrTx, userId: string, answers: { factIds: string[] }[]) {
 	const ids = [...new Set(answers.flatMap((answer) => answer.factIds))];
 	if (!ids.length) return [];
 	const rows = await reader
@@ -168,17 +174,7 @@ export const modelFact = (fact: typeof tables.careerFact.$inferSelect) => ({
 	updatedAt: fact.updatedAt,
 });
 
-type CareerTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
-async function lockCareerUser(tx: CareerTransaction, userId: string) {
-	const [owner] = await tx
-		.select({ id: tables.user.id })
-		.from(tables.user)
-		.where(eq(tables.user.id, userId))
-		.for("no key update");
-	if (!owner) throw new ORPCError("NOT_FOUND");
-}
-
-async function memoryVersion(userId: string, reader: typeof db | CareerTransaction = db) {
+async function memoryVersion(userId: string, reader: DbOrTx = db) {
 	// New facts can be remembered within a turn; corrections/exclusions invalidate every in-flight draft.
 	const revisions = await reader
 		.select({
@@ -228,7 +224,7 @@ function knowledgeSignature(
 	);
 }
 
-async function knowledgeVersion(input: Owned, reader: typeof db | CareerTransaction = db) {
+async function knowledgeVersion(input: Owned, reader: DbOrTx = db) {
 	const [[profile], facts, stories, [owner]] = await Promise.all([
 		reader.select().from(tables.careerProfile).where(eq(tables.careerProfile.userId, input.userId)),
 		reader
@@ -266,7 +262,7 @@ async function knowledgeVersion(input: Owned, reader: typeof db | CareerTransact
  * A fact changed: stop in-flight coach replies that read the old text. A forgotten fact is also unlinked from
  * stories and saved items, so nothing keeps pointing at it.
  */
-async function invalidateMemory(userId: string, id: string, tx: CareerTransaction, forgotten = false) {
+async function invalidateMemory(userId: string, id: string, tx: DbOrTx, forgotten = false) {
 	if (forgotten) {
 		const unlink = (column: typeof tables.careerStory.data | typeof tables.careerArtifact.evidence) =>
 			sql`jsonb_set(${column}, '{factIds}', coalesce((select jsonb_agg(f) from jsonb_array_elements(${column}->'factIds') f where f <> to_jsonb(${id}::text)), '[]'::jsonb))`;
@@ -317,7 +313,7 @@ export const careerService = {
 	/** Only untouched UTC accounts adopt a device country. Share the save lock so explicit choices always win. */
 	initializeSearchRegions: (userId: string, deviceTimeZone: string) =>
 		db.transaction(async (tx) => {
-			await lockCareerUser(tx, userId);
+			await lockUser(tx, userId);
 			const [row] = await tx
 				.select({ data: tables.careerProfile.data, timezone: tables.user.timezone })
 				.from(tables.user)
@@ -335,7 +331,7 @@ export const careerService = {
 		}),
 	saveProfile: (userId: string, input: CareerProfileData) =>
 		db.transaction(async (tx) => {
-			await lockCareerUser(tx, userId);
+			await lockUser(tx, userId);
 			const [row] = await tx
 				.select({ data: tables.careerProfile.data })
 				.from(tables.careerProfile)
@@ -381,7 +377,7 @@ export const careerService = {
 			throw new ORPCError("BAD_REQUEST", { message: "The source does not contain that quotation." });
 		const sourceKey = hash(`${input.source.kind}:${input.source.id}:${input.source.quote.trim().toLocaleLowerCase()}`);
 		return db.transaction(async (tx) => {
-			await lockCareerUser(tx, userId);
+			await lockUser(tx, userId);
 			if (automatic) {
 				const [profile] = await tx.select().from(tables.careerProfile).where(eq(tables.careerProfile.userId, userId));
 				if (careerProfileDataSchema.parse(profile?.data ?? {}).memoryMode !== "auto") return null;
@@ -422,7 +418,7 @@ export const careerService = {
 		},
 	) => {
 		const updated = await db.transaction(async (tx) => {
-			await lockCareerUser(tx, userId);
+			await lockUser(tx, userId);
 			const [row] = await tx.select().from(tables.careerFact).where(ownedFact(input.id, userId)).for("update");
 			if (!row || row.status === "forgotten") throw new ORPCError("NOT_FOUND");
 			const [updated] = await tx
@@ -447,7 +443,7 @@ export const careerService = {
 	},
 	forgetFact: async (userId: string, id: string) => {
 		await db.transaction(async (tx) => {
-			await lockCareerUser(tx, userId);
+			await lockUser(tx, userId);
 			const [row] = await tx
 				.update(tables.careerFact)
 				.set({
@@ -480,7 +476,7 @@ export const careerService = {
 	saveStory: async (userId: string, input: StoryInput, id?: string, expectedMemoryVersion?: string) => {
 		await requireCareerApplication({ userId, applicationId: input.applicationId });
 		return db.transaction(async (tx) => {
-			await lockCareerUser(tx, userId);
+			await lockUser(tx, userId);
 			if (expectedMemoryVersion && expectedMemoryVersion !== (await memoryVersion(userId, tx)))
 				throw new ORPCError("CONFLICT", { message: "Career memory changed. Start a fresh reply." });
 			await requireFacts({ userId, applicationId: input.applicationId }, input.factIds, tx);
@@ -501,7 +497,7 @@ export const careerService = {
 	},
 	deleteStory: async (userId: string, id: string) => {
 		await db.transaction(async (tx) => {
-			await lockCareerUser(tx, userId);
+			await lockUser(tx, userId);
 			await tx
 				.delete(tables.careerStory)
 				.where(and(eq(tables.careerStory.id, id), eq(tables.careerStory.userId, userId)));
@@ -625,7 +621,7 @@ export const careerService = {
 				),
 		);
 		if (memoryRevision !== (await memoryVersion(input.userId)) || knowledgeRevision !== (await knowledgeVersion(input)))
-			throw new ORPCError("CONFLICT", { message: "Career memory changed while preparing context. Please retry." });
+			throw new ORPCError("CONFLICT", { message: "Career memory changed while preparing context. Try again." });
 		const version = hash(
 			JSON.stringify([
 				memoryRevision,
@@ -688,7 +684,7 @@ export const careerService = {
 		db.transaction(async (tx) => {
 			const { expectedMemoryVersion, expectedKnowledgeVersion, jobLease, ...values } = input;
 			// User → application → schedule → job. No key update permits unrelated FK inserts for this user.
-			await lockCareerUser(tx, input.userId);
+			await lockUser(tx, input.userId);
 			const [application] = await tx
 				.select()
 				.from(tables.application)
@@ -723,7 +719,7 @@ export const careerService = {
 				(expectedKnowledgeVersion !== undefined && expectedKnowledgeVersion !== (await knowledgeVersion(input, tx)))
 			)
 				throw new ORPCError("CONFLICT", {
-					message: "Career knowledge changed while generating this result. Please generate it again.",
+					message: "Career knowledge changed while generating this result. Generate it again.",
 				});
 			const [row] = await tx
 				.insert(tables.careerArtifact)
@@ -734,14 +730,14 @@ export const careerService = {
 		}),
 	assertMemoryVersion: (userId: string, expected: string, knowledge?: { applicationId: string; version: string }) =>
 		db.transaction(async (tx) => {
-			await lockCareerUser(tx, userId);
+			await lockUser(tx, userId);
 			if (
 				expected !== (await memoryVersion(userId, tx)) ||
 				(knowledge &&
 					knowledge.version !== (await knowledgeVersion({ userId, applicationId: knowledge.applicationId }, tx)))
 			)
 				throw new ORPCError("CONFLICT", {
-					message: "Career knowledge changed while generating this result. Please generate it again.",
+					message: "Career knowledge changed while generating this result. Generate it again.",
 				});
 		}),
 	deleteSavedItem: async (userId: string, id: string) => {
@@ -760,7 +756,7 @@ export const careerService = {
 		const applicationId = saved.applicationId;
 		const context = await careerService.context({ userId, applicationId });
 		await db.transaction(async (tx) => {
-			await lockCareerUser(tx, userId);
+			await lockUser(tx, userId);
 			const [application] = await tx
 				.select()
 				.from(tables.application)
@@ -892,7 +888,7 @@ export const careerService = {
 	) => {
 		const parsed = careerWorkspaceSchema.shape.answers.parse(answers);
 		await db.transaction(async (tx) => {
-			await lockCareerUser(tx, userId);
+			await lockUser(tx, userId);
 			const [application] = await tx
 				.select()
 				.from(tables.application)

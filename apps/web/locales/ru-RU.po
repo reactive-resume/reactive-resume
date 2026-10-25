@@ -49,12 +49,12 @@ msgid "“{value}” ends before it starts."
 msgstr "«{value}» заканчивается, не успев начаться."
 
 #: src/features/resume/editor/check/issues.ts
-msgid "“{value}” isn't a form systems recognise, such as Mar 2020 – Present."
-msgstr "«{value}» не является формой, распознаваемой системами, например, март 2020 г. – настоящее время."
+msgid "“{value}” isn't a form systems recognize, such as Mar 2020 – Present."
+msgstr "«{value}» — формат, который системы не распознают. Пример: март 2020 – настоящее время."
 
 #: src/features/resume/editor/check/issues.ts
-msgid "“{value}” isn't a form systems recognise, such as March 2022."
-msgstr "«{value}» не является формой, распознаваемой системами, например, март 2022 г."
+msgid "“{value}” isn't a form systems recognize, such as March 2022."
+msgstr "«{value}» — формат, который системы не распознают. Пример: март 2022."
 
 #: src/features/resume/editor/check/issues.ts
 msgid "“{value}” isn't a plain address like name@example.com."
@@ -76,6 +76,11 @@ msgstr "«Как вы измеряли результат редизайна о�
 msgid "(no header)"
 msgstr "(без заголовка)"
 
+#. placeholder {0}: proposals.length
+#: src/features/resume/editor/proposals/proposals.ts
+msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
+msgstr "{0, plural, =1 {Правка применена} one {Применена # правка} few {Применено # правки} many {Применено # правок} other {Применено # правки}}"
+
 #. placeholder {0}: open.jdCount
 #. placeholder {1}: open.label
 #. placeholder {2}: open.label
@@ -83,10 +88,25 @@ msgstr "(без заголовка)"
 msgid "{0, plural, one {“{1}” appears once in the posting.} other {“{2}” appears #× in the posting.}}"
 msgstr "{0, plural, one {«{1}» появляется один раз в объявлении о вакансии.} other {В объявлении о вакансии появляется «{2}» #×.}}"
 
+#. placeholder {0}: daysLeftInTrash(document.trashedAt)
+#: src/features/documents/document-card.tsx
+msgid "{0, plural, one {{type} · # day left} other {{type} · # days left}}"
+msgstr "{0, plural, one {{type} · остался # день} few {{type} · осталось # дня} many {{type} · осталось # дней} other {{type} · осталось # дня}}"
+
+#. placeholder {0}: insights.total
+#: src/features/applications/components/insights-view.tsx
+msgid "{0, plural, one {# active application} other {# active applications}}"
+msgstr "{0, plural, one {# активная заявка} few {# активные заявки} many {# активных заявок} other {# активной заявки}}"
+
 #. placeholder {0}: data.answers.length
 #: src/features/career/workspace/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {# ответ} few {# ответа} many {# ответов} other {# ответа}}"
+
+#. placeholder {0}: result.deleted
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {# application deleted} other {# applications deleted}}"
+msgstr "{0, plural, one {Удалена # заявка} few {Удалено # заявки} many {Удалено # заявок} other {Удалено # заявки}}"
 
 #. placeholder {0}: importable.length
 #: src/features/applications/components/import-applications-sheet.tsx
@@ -98,13 +118,18 @@ msgstr "{0, plural, one {Заявление о приеме на работу # 
 msgid "{0, plural, one {# application to export} other {# applications to export}}"
 msgstr "{0, plural, one {# заявка для экспорта} few {# заявки для экспорта} many {# заявок для экспорта} other {# заявки для экспорта}}"
 
+#. placeholder {0}: result.updated
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {# application updated} other {# applications updated}}"
+msgstr "{0, plural, one {Обновлена # заявка} few {Обновлено # заявки} many {Обновлено # заявок} other {Обновлено # заявки}}"
+
 #. placeholder {0}: applications.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {# application} other {# applications}}"
 msgstr "{0, plural, one {# заявка} few {# заявки} many {# заявок} other {# заявки}}"
 
 #. placeholder {0}: state?.characters ?? 0
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "{0, plural, one {# character} other {# characters}}"
 msgstr "{0, plural, one {# символ} other {# символы}}"
 
@@ -112,6 +137,11 @@ msgstr "{0, plural, one {# символ} other {# символы}}"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
 msgstr "{0, plural, one {Контакт # имеет неверный адрес электронной почты или не имеет имени; его заявление о приеме на работу все еще импортируется.} other {У контактов # неверный адрес электронной почты или нет имени; их заявления о приеме на работу все еще импортируются.}}"
+
+#. placeholder {0}: daysLeftInTrash(document.trashedAt)
+#: src/features/documents/document-card.tsx
+msgid "{0, plural, one {# day left} other {# days left}}"
+msgstr "{0, plural, one {Остался # день} few {Осталось # дня} many {Осталось # дней} other {Осталось # дня}}"
 
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
@@ -128,12 +158,22 @@ msgstr "{0, plural, one {# документ перемещён в корзину
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
 msgstr "{0, plural, one {Редактирование # не удалось разместить: его текст изменился. Попросите еще раз переделать.} other {Не удалось разместить изменения #: их текст изменился. Попросите еще раз переделать их.}}"
 
+#. placeholder {0}: step.entries
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0, plural, one {# entry} other {# entries}}"
+msgstr "{0, plural, one {# запись} few {# записи} many {# записей} other {# записи}}"
+
 #. placeholder {0}: knowledge.active.length
 #. placeholder {0}: used.facts.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# факт} few {# факта} many {# фактов} other {# факта}}"
+
+#. placeholder {0}: step.flagged
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0, plural, one {# field is flagged for a quick look in the editor.} other {# fields are flagged for a quick look in the editor.}}"
+msgstr "{0, plural, one {# поле отмечено для быстрой проверки в редакторе.} few {# поля отмечены для быстрой проверки в редакторе.} many {# полей отмечено для быстрой проверки в редакторе.} other {# поля отмечено для быстрой проверки в редакторе.}}"
 
 #. placeholder {0}: report.ignored.length
 #: src/features/resume/editor/check/check-panel.tsx
@@ -153,10 +193,16 @@ msgstr "{0, plural, one {Строка # не имеет компании или 
 
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: used.offers.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 msgid "{0, plural, one {# saved offer} other {# saved offers}}"
 msgstr "{0, plural, one {# сохраненное предложение} few {# сохраненных предложения} many {# сохраненных предложений} other {# сохраненного предложения}}"
+
+#. placeholder {0}: step.sections
+#. placeholder {0}: summary.sections
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0, plural, one {# section} other {# sections}}"
+msgstr "{0, plural, one {# раздел} few {# раздела} many {# разделов} other {# раздела}}"
 
 #. placeholder {0}: ids.length
 #: src/features/applications/components/list-view.tsx
@@ -164,12 +210,12 @@ msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {# выбрано} other {# выбрано}}"
 
 #. placeholder {0}: used.stories.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {# story} other {# stories}}"
 msgstr "{0, plural, one {# история} few {# истории} many {# историй} other {# истории}}"
 
 #. placeholder {0}: remembered.ids.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, one {В Знания добавлен # факт.} few {В Знания добавлено # факта.} many {В Знания добавлено # фактов.} other {В Знания добавлено # факта.}}"
 
@@ -182,6 +228,16 @@ msgstr "{0, plural, one {Отклик отправлен # день назад} 
 #: src/features/career/knowledge/facts.tsx
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, one {Подтверждает # историю} few {Подтверждает # истории} many {Подтверждает # историй} other {Подтверждает # истории}}"
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
+msgstr "{0, plural, one {Удалить # заявку?} few {Удалить # заявки?} many {Удалить # заявок?} other {Удалить # заявки?}}"
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
+msgstr "{0, plural, one {Удалить # заявку} few {Удалить # заявки} many {Удалить # заявок} other {Удалить # заявки}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -197,6 +253,11 @@ msgstr "{0, plural, one {Найдены должность, компания и 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{0, plural, one {Import # application} other {Import # applications}}"
 msgstr "{0, plural, one {Импортируйте заявку на работу #.} other {Импортируйте заявки на работу #.}}"
+
+#. placeholder {0}: response.imported
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, one {Импортирована # заявка.} few {Импортировано # заявки.} many {Импортировано # заявок.} other {Импортировано # заявки.}}"
 
 #. placeholder {0}: knowledge.active.length
 #: src/features/career/coach.tsx
@@ -214,7 +275,7 @@ msgid "{0, plural, one {Reading # passage of your resume…} other {Reading # bu
 msgstr "{0, plural, one {Читая # отрывок из вашего резюме…} other {Чтение записей списка # и абзацев вашего резюме…}}"
 
 #. placeholder {0}: items.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {Remember # fact?} other {Remember # facts?}}"
 msgstr "{0, plural, one {Запомнить # факт?} few {Запомнить # факта?} many {Запомнить # фактов?} other {Запомнить # факта?}}"
 
@@ -222,6 +283,11 @@ msgstr "{0, plural, one {Запомнить # факт?} few {Запомнить
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, one {Началось # минуту назад} few {Началось # минуты назад} many {Началось # минут назад} other {Началось # минуты назад}}"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/document-actions.tsx
+msgid "{0, plural, one {Tags for # document} other {Tags for # documents}}"
+msgstr "{0, plural, one {Теги для # документа} few {Теги для # документов} many {Теги для # документов} other {Теги для # документа}}"
 
 #. placeholder {0}: fact.usedBy.savedItems
 #: src/features/career/knowledge/facts.tsx
@@ -243,36 +309,15 @@ msgstr "{0} · {providerLabel}. Отправляет эту заявку и ва
 msgid "{0} (copy)"
 msgstr "{0} (копия)"
 
-#. placeholder {0}: insights.total
-#: src/features/applications/components/insights-view.tsx
-msgid "{0} active applications"
-msgstr "{0} активные заявки на работу"
-
 #. placeholder {0}: insights.closed
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} closed"
 msgstr "{0} закрыто"
 
-#. placeholder {0}: daysLeftInTrash(document.trashedAt)
-#: src/features/documents/document-card.tsx
-msgid "{0} days left"
-msgstr "{0} дней осталось"
-
 #. placeholder {0}: proposals.length
 #: src/features/assistant/document.ts
-#: src/features/resume/editor/proposals/proposals.ts
 msgid "{0} edits applied"
 msgstr "Применено изменений: {0}"
-
-#. placeholder {0}: step.entries
-#: src/features/documents/new-document-dialog.tsx
-msgid "{0} entries"
-msgstr "Записи {0}"
-
-#. placeholder {0}: step.flagged
-#: src/features/documents/new-document-dialog.tsx
-msgid "{0} fields are flagged for a quick look in the editor."
-msgstr "Поля {0} помечены для быстрого просмотра в редакторе."
 
 #. placeholder {0}: semantics.dates.length
 #: src/features/resume/editor/check/parser-view.tsx
@@ -370,18 +415,6 @@ msgstr "{0} объявление о вакансии"
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr "{0} вернул «{1}». Ваше сообщение сохранено."
 
-#. placeholder {0}: step.sections
-#. placeholder {0}: summary.sections
-#: src/features/documents/new-document-dialog.tsx
-msgid "{0} sections"
-msgstr "Разделы {0}"
-
-#. placeholder {0}: step.sections
-#. placeholder {1}: step.entries
-#: src/features/documents/new-document-dialog.tsx
-msgid "{0} sections and {1} entries found."
-msgstr "Обнаружены разделы {0} и записи {1}."
-
 #. placeholder {0}: report.skippedChecks
 #: src/features/ats-checker/report/score-header.tsx
 msgid "{0} skipped"
@@ -421,9 +454,13 @@ msgstr "{0}. Проблема решена."
 msgid "{accepted} of {0} applied"
 msgstr "Применено: {accepted} из {0}"
 
-#: src/features/settings/account/data.tsx
-msgid "{applicationCount, plural, one {# application} other {# applications}}"
-msgstr "{applicationCount, plural, one {# заявление о приеме на работу} other {# заявления о приеме на работу}}"
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
+msgstr "{authored, plural, =1 {Уместить на одной странице} other {Уместить на # стр.}}"
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Fits on one page: {details}} other {Fits on # pages: {details}}}"
+msgstr "{authored, plural, =1 {Помещается на одной странице: {details}} other {Помещается на # стр.: {details}}}"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "{base} (copy)"
@@ -441,17 +478,17 @@ msgstr "{column, plural, one {Столбец #} other {Столбцы #}}"
 msgid "{company} only"
 msgstr "Только {company}"
 
-#: src/routes/dashboard/applications/index.tsx
-msgid "{company}: no reply for {days} days. A short follow-up is usually fine now."
-msgstr "{company}: ответа нет в течение {days} дней. Короткое наблюдение сейчас обычно подходит."
-
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "{connection} didn't respond."
 msgstr "{connection} не отвечает."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# запись} other {Записи #}}"
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "{count, plural, one {# open issue} other {# open issues}}"
+msgstr "{count, plural, one {# нерешённая проблема} few {# нерешённые проблемы} many {# нерешённых проблем} other {# нерешённой проблемы}}"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
@@ -464,6 +501,10 @@ msgstr "{count} бесплатных шаблонов резюме. Выбери
 #: src/features/documents/documents-page.tsx
 msgid "{count} selected"
 msgstr "Выбрано: {count}"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, one {{company}: нет ответа # день. Сейчас обычно уместно коротко напомнить о себе.} few {{company}: нет ответа # дня. Сейчас обычно уместно коротко напомнить о себе.} many {{company}: нет ответа # дней. Сейчас обычно уместно коротко напомнить о себе.} other {{company}: нет ответа # дня. Сейчас обычно уместно коротко напомнить о себе.}}"
 
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day a week} other {# office days a week}}"
@@ -480,10 +521,6 @@ msgstr "{days, plural, one {# день в офисе, меньше вашего 
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day, your limit} other {# office days, your limit}}"
 msgstr "{days, plural, one {# день в офисе, ровно ваш лимит} few {# дня в офисе, ровно ваш лимит} many {# дней в офисе, ровно ваш лимит} other {# дня в офисе, ровно ваш лимит}}"
-
-#: src/features/settings/account/data.tsx
-msgid "{documents, plural, one {# document} other {# documents}}"
-msgstr "{documents, plural, one {Документ #} other {Документы #}}"
 
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
@@ -542,10 +579,6 @@ msgstr "{issues, plural, one {Проблема с # может стоить ва
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {У Чека есть вещь # для обзора. Вы все еще можете скачать.} other {У Чека есть вещи для обзора #. Вы все еще можете скачать.}}"
 
-#: src/features/settings/account/data.tsx
-msgid "{keyCount, plural, one {# API key} other {# API keys}}"
-msgstr "{keyCount, plural, one {# API ключ} other {# API ключи}}"
-
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -584,8 +617,8 @@ msgid "{minutes} min"
 msgstr "{minutes} мин"
 
 #: src/features/applications/components/calendar-view.tsx
-msgid "{monthCount} interviews"
-msgstr "{monthCount} интервью"
+msgid "{monthCount, plural, =0 {No interviews} one {# interview} other {# interviews}}"
+msgstr "{monthCount, plural, =0 {Нет собеседований} one {# собеседование} few {# собеседования} many {# собеседований} other {# собеседования}}"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "{name} added to page 1"
@@ -636,6 +669,10 @@ msgstr "{open, plural, one {# вещь для обзора.} other {#, что с
 msgid "{pageCount, plural, one {# page} other {# pages}}"
 msgstr "{pageCount, plural, one {Страница #} other {Страницы #}}"
 
+#: src/features/resume/editor/design/fit.ts
+msgid "{pages, plural, one {Still # page at 9 pt. Hide a section or shorten entries.} other {Still # pages at 9 pt. Hide a section or shorten entries.}}"
+msgstr "{pages, plural, one {По-прежнему # страница при 9 пт. Скройте раздел или сократите записи.} few {По-прежнему # страницы при 9 пт. Скройте раздел или сократите записи.} many {По-прежнему # страниц при 9 пт. Скройте раздел или сократите записи.} other {По-прежнему # страницы при 9 пт. Скройте раздел или сократите записи.}}"
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{pairing} type"
 msgstr "Тип {pairing}"
@@ -667,6 +704,18 @@ msgstr "{since, plural, =0 {с сегодняшнего дня} one {на # де
 #: src/features/resume/editor/design/fit.ts
 msgid "{size} pt"
 msgstr "{size} пт"
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, one {# строка без компании или должности пропущена.} few {# строки без компании или должности пропущены.} many {# строк без компании или должности пропущено.} other {# строки без компании или должности пропущено.}}"
+
+#: src/components/input/github-stars-button.tsx
+msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
+msgstr "{starCount, plural, one {Отметьте нас звездой на GitHub, сейчас # звезда (откроется в новой вкладке)} few {Отметьте нас звездой на GitHub, сейчас # звезды (откроется в новой вкладке)} many {Отметьте нас звездой на GitHub, сейчас # звёзд (откроется в новой вкладке)} other {Отметьте нас звездой на GitHub, сейчас # звезды (откроется в новой вкладке)}}"
+
+#: src/features/homepage/header.tsx
+msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
+msgstr "{stars, plural, one {Отметьте Reactive Resume звездой на GitHub, # звезда} few {Отметьте Reactive Resume звездой на GitHub, # звезды} many {Отметьте Reactive Resume звездой на GitHub, # звёзд} other {Отметьте Reactive Resume звездой на GitHub, # звезды}}"
 
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
@@ -712,11 +761,6 @@ msgstr "{toCheck, plural, one {Поле # нуждается в проверке
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# для проверки} other {# для проверки}}"
-
-#. placeholder {0}: daysLeftInTrash(document.trashedAt)
-#: src/features/documents/document-card.tsx
-msgid "{type} · {0} days left"
-msgstr "{type} · {0} осталось дней"
 
 #. placeholder {0}: formatRelativeTime(document.updatedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
@@ -782,10 +826,6 @@ msgstr "06/2017 – 2021"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "1 column, inline"
 msgstr "1 столбец, встроенный"
-
-#: src/features/applications/components/calendar-view.tsx
-msgid "1 interview"
-msgstr "1 интервью"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "10-minute briefing"
@@ -894,7 +934,7 @@ msgstr "Дата не будет прочитана"
 msgid "A fact changed. Review this story."
 msgstr "Факт изменился. Проверьте эту историю."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
 msgstr "Факт, который вы с тех пор попросили забыть"
 
@@ -914,7 +954,7 @@ msgstr "Шрифт указан, но не встроен."
 msgid "A free and open-source resume builder"
 msgstr "Бесплатный конструктор резюме с открытым исходным кодом."
 
-#. Hero headline, line 1 of 4: A free, open-source / resume builder / and career / manager.
+#. Hero headline, line 1 of 4: A free, open-source / resume builder / and / career manager.
 #: src/features/homepage/hero.tsx
 msgid "A free, open-source"
 msgstr "Бесплатный инструмент с открытым кодом"
@@ -944,8 +984,8 @@ msgid "A model's opinion, not a verdict. It can be wrong."
 msgstr "Мнение модели, а не приговор. Это может быть неправильно."
 
 #: src/features/settings/account/security.tsx
-msgid "A name helps you tell passkeys apart, like \"Work laptop\"."
-msgstr "Имя поможет вам отличить ключи доступа, например «Рабочий ноутбук»."
+msgid "A name helps you tell passkeys apart, like “Work laptop”."
+msgstr "Название поможет различать ключи доступа, например «Рабочий ноутбук»."
 
 #: src/features/ats-checker/messages.ts
 msgid "A numeric date reads differently in different countries."
@@ -967,7 +1007,7 @@ msgstr "Напоминание о необходимости зарегистр�
 msgid "A role has no description"
 msgstr "Роль не имеет описания"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "A saved offer"
 msgstr "Сохраненное предложение"
 
@@ -983,7 +1023,7 @@ msgstr "Взгляд со стороны."
 msgid "A short follow-up is usually fine now"
 msgstr "Короткое наблюдение сейчас обычно подходит."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "A story you've since deleted"
 msgstr "История, которую вы с тех пор удалили"
 
@@ -1008,7 +1048,7 @@ msgid "About 90 seconds when spoken"
 msgstr "Около 90 секунд вслух"
 
 #: src/features/resume/editor/design/style-groups.tsx
-msgid "Accent colour"
+msgid "Accent color"
 msgstr "Акцентный цвет"
 
 #: src/features/resume/editor/design/style-groups.tsx
@@ -1307,7 +1347,7 @@ msgid "Add one with its country code; some application forms require it before y
 msgstr "Добавьте номер с кодом страны; некоторые формы заявок требуют его перед отправкой."
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Add Page"
+msgid "Add page"
 msgstr "Добавить страницу"
 
 #: src/features/settings/account/security.tsx
@@ -1415,19 +1455,19 @@ msgstr "Добавлен {0} в {1}."
 msgid "Added by you"
 msgstr "Добавлено вами"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Added to Knowledge as a preference."
 msgstr "Добавлено в Знания как предпочтение."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Added to Knowledge as a skill."
 msgstr "Добавлено в Знания как навык."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Added to Knowledge as an accomplishment."
 msgstr "Добавлено в Знания как достижение."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Added to Knowledge as an experience."
 msgstr "Добавлено в Знания как опыт."
 
@@ -1548,15 +1588,15 @@ msgstr "Албанский"
 msgid "Alex Morgan"
 msgstr "Alex Morgan"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
-msgid "Align centre"
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Align center"
 msgstr "По центру"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Align left"
 msgstr "По левому краю"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Align right"
 msgstr "По правому краю"
 
@@ -1578,6 +1618,10 @@ msgstr "Все заявки на работу (в том числе закрыт
 #: src/features/settings/account/data.tsx
 msgid "All documents and applications as JSON, in one zip"
 msgstr "Все документы и заявления о приеме на работу в формате JSON в одном zip-архиве."
+
+#: src/features/settings/account/data.tsx
+msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
+msgstr "Все ваши документы, заявки на работу, ключи API и публичные ссылки будут удалены навсегда. Это действие нельзя отменить."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Allow access"
@@ -1646,30 +1690,31 @@ msgid "an error"
 msgstr "ошибка"
 
 #: src/components/layout/error-screen.tsx
-msgid "An unexpected error stopped this page from loading. You can try again or head back."
-msgstr "Из-за непредвиденной ошибки эта страница не загрузилась. Вы можете попробовать снова или вернуться назад."
+msgid "An unexpected error stopped this page from loading. Try again, or go to the dashboard."
+msgstr "Из-за непредвиденной ошибки эта страница не загрузилась. Попробуйте еще раз или перейдите на панель управления."
+
+#. Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.
+#: src/features/homepage/hero.tsx
+msgctxt "hero headline"
+msgid "and"
+msgstr "и"
 
 #. placeholder {0}: others.length
 #: src/features/applications/components/detail/contacts.tsx
 msgid "and {0} more"
 msgstr "и {0} еще"
 
-#. Hero headline, line 3 of 4: A free, open-source / resume builder / and career / manager.
-#: src/features/homepage/hero.tsx
-msgid "and career"
-msgstr "и управления"
-
 #: src/features/homepage/sections.tsx
 msgid "and counting"
 msgstr "и считать"
 
-#: src/features/settings/account/data.tsx
-msgid "and every public link are removed permanently. This can't be undone."
-msgstr "и все общедоступные ссылки удаляются навсегда. Это невозможно отменить."
-
 #: src/features/resume/share/link-tab.tsx
 msgid "Another of your resumes uses this address."
 msgstr "Этот адрес используется в другом из ваших резюме."
+
+#: src/libs/error-message.ts
+msgid "Another resume already uses this address. Choose a different one."
+msgstr "Этот адрес уже используется другим резюме. Выберите другой."
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/remember.tsx
@@ -1680,7 +1725,7 @@ msgstr "Ответ"
 msgid "Answer by"
 msgstr "Способ ответа"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Answer copied"
 msgstr "Ответ скопирован"
 
@@ -1730,13 +1775,10 @@ msgstr "Где угодно"
 msgid "API key"
 msgstr "Ключ API"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "API keys"
 msgstr "Ключи API"
-
-#: src/features/command-palette/pages/navigation.tsx
-msgid "API Keys"
-msgstr "API-ключи"
 
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "App"
@@ -1785,10 +1827,6 @@ msgstr "Появляется на странице, как только у не�
 msgid "Apple"
 msgstr "Apple"
 
-#: src/features/settings/account/data.tsx
-msgid "Apple revocation instructions"
-msgstr "Инструкции по отзыву Apple"
-
 #: src/features/ats-checker/checker.tsx
 msgid "Applicant tracking systems turn your PDF into plain text before anyone reads it. The checker does the same, with the PDF.js library in your browser, then scores how much of your resume survives: 0 to 100, from how reliably the text comes out, not from your chances of getting the job."
 msgstr "Системы отслеживания кандидатов преобразуют ваш PDF в обычный текст, прежде чем кто-либо его прочитает. Программа проверки делает то же самое, используя библиотеку PDF.js в вашем браузере, а затем оценивает, какая часть вашего резюме сохранилась: от 0 до 100, исходя из того, насколько достоверен текст, а не из ваших шансов получить работу."
@@ -1801,8 +1839,8 @@ msgid "Application"
 msgstr "Заявка"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Application added to your pipeline."
-msgstr "Заявка добавлена в вашу воронку."
+msgid "Application added"
+msgstr "Заявка добавлена"
 
 #: src/features/homepage/remember.tsx
 msgid "Application answer"
@@ -1845,15 +1883,12 @@ msgstr "сводки по заявкам"
 msgid "Application tabs"
 msgstr "Вкладки заявки"
 
+#: src/features/applications/components/application-form-sheet.tsx
 #: src/features/career/workspace/messages.tsx
 msgid "Application updated"
 msgstr "Заявка обновлена"
 
-#: src/features/applications/components/application-form-sheet.tsx
-msgid "Application updated."
-msgstr "Заявка обновлена."
-
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -1928,10 +1963,6 @@ msgstr "Арабский"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Archived (closes it)"
 msgstr "В архиве (закрывает)"
-
-#: src/hooks/use-form-blocker.tsx
-msgid "Are you sure you want to close this dialog?"
-msgstr "Вы уверены, что хотите закрыть этот диалог?"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Area of study"
@@ -2016,7 +2047,7 @@ msgid "Asks for an example of your onboarding work."
 msgstr "Просят пример вашей работы над онбордингом."
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Aspect Ratio"
+msgid "Aspect ratio"
 msgstr "Соотношение сторон"
 
 #: src/features/assistant/assistant-button.tsx
@@ -2047,14 +2078,11 @@ msgstr "В Northwind Labs на мне было исследование для �
 msgid "At Northwind Labs, most new teams stalled before they finished setup."
 msgstr "В Northwind Labs большинство новых команд застревали, не завершив настройку."
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
 msgstr "ATS шашка"
-
-#: src/features/command-palette/pages/navigation.tsx
-msgid "ATS Checker"
-msgstr "Проверка ATS"
 
 #: src/features/homepage/check.tsx
 msgid "ATS readability"
@@ -2086,13 +2114,9 @@ msgid "Attach a resume file (PDF)"
 msgstr "Прикрепить файл резюме (PDF)"
 
 #: src/features/assistant/conversation.tsx
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Attachment"
 msgstr "Вложение"
-
-#: src/features/applications/components/application-form-sheet.tsx
-msgid "Auto-fill failed."
-msgstr "Автозаполнение не удалось."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Automatically"
@@ -2114,7 +2138,6 @@ msgstr "Избегайте сильного межбуквенного инте�
 msgid "Awarder"
 msgstr "награжденный"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Awards"
 msgstr "Награды"
@@ -2173,7 +2196,7 @@ msgid "Backed by"
 msgstr "Подтверждается"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
-msgid "Background Color"
+msgid "Background color"
 msgstr "Цвет фона"
 
 #: src/features/auth/pages/verify-2fa.tsx
@@ -2181,8 +2204,8 @@ msgid "Backup code"
 msgstr "Резервный код"
 
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Backup codes copied to clipboard."
-msgstr "Резервные коды скопированы в буфер обмена."
+msgid "Backup codes copied"
+msgstr "Резервные коды скопированы"
 
 #: src/features/homepage/sheet.tsx
 msgid "Banner"
@@ -2230,7 +2253,7 @@ msgstr "Лучше всего подходит для подачи заявки"
 msgid "Blocker"
 msgstr "Блокер"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Blue"
 msgstr "Синий"
 
@@ -2251,7 +2274,7 @@ msgstr "Основной текст очень мелкий."
 msgid "Body text set to {minimum} pt"
 msgstr "Основной текст установлен на {minimum} pt."
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Bold"
 msgstr "Полужирный"
 
@@ -2260,15 +2283,15 @@ msgid "Bonus"
 msgstr "Бонус"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Border Color"
-msgstr "Цвет границы"
+msgid "Border color"
+msgstr "Цвет рамки"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Border Radius"
+msgid "Border radius"
 msgstr "Радиус скругления рамки"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Border Width"
+msgid "Border width"
 msgstr "Ширина рамки"
 
 #: src/features/career/offers.tsx
@@ -2318,11 +2341,6 @@ msgstr "Создайте профессиональное резюме, загр
 msgid "Build your resume"
 msgstr "Создайте свое резюме"
 
-#. Screen-reader dialog title for the command palette in the resume builder
-#: src/features/command-palette/content.tsx
-msgid "Builder Command Palette"
-msgstr "Командная палитра редактора"
-
 #: src/features/homepage/sheet.tsx
 msgid "Built a shared design system used by six product teams, cutting UI review time by 40%."
 msgstr "Создана общая система дизайна, используемая шестью продуктовыми командами, что позволило сократить время проверки пользовательского интерфейса на 40 %."
@@ -2348,7 +2366,7 @@ msgstr "Болгарский"
 msgid "bullet {n}"
 msgstr "запись в списке {n}"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Bulleted list"
 msgstr "Маркированный список"
@@ -2409,11 +2427,15 @@ msgstr "Карьера"
 msgid "Career coach (your key)"
 msgstr "Карьерный коуч (ваш ключ)"
 
+#. Hero headline, line 4 of 4: A free, open-source / resume builder / and / career manager. Lines 2 and 4 are highlighted: keep each a complete phrase.
+#: src/features/homepage/hero.tsx
+msgid "career manager."
+msgstr "для управления карьерой."
+
 #: src/libs/locale.ts
 msgid "Catalan"
 msgstr "Каталанский"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Certifications"
 msgstr "Сертификаты"
@@ -2425,7 +2447,7 @@ msgstr "Сертификаты"
 msgid "Change"
 msgstr "Изменять"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Change connection"
 msgstr "Изменить соединение"
@@ -2441,6 +2463,11 @@ msgstr "Изменить язык"
 #: src/features/command-palette/pages/preferences/index.tsx
 msgid "Change language to…"
 msgstr "Изменить язык на…"
+
+#. Primary action button to submit changed password
+#: src/dialogs/auth/change-password.tsx
+msgid "Change password"
+msgstr "Изменить пароль"
 
 #: src/features/settings/account/profile.tsx
 msgid "Change photo"
@@ -2466,6 +2493,10 @@ msgstr "Измените эту запись на временной шкале.
 msgid "Change timezone"
 msgstr "Изменить часовой пояс"
 
+#: src/dialogs/auth/change-password.tsx
+msgid "Change your password"
+msgstr "Измените пароль"
+
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Changed elsewhere"
 msgstr "Изменено в другом месте"
@@ -2490,6 +2521,11 @@ msgstr "Изменяет только названия разделов и сл�
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
 msgstr "При его изменении на новый адрес отправляется подтверждение. Ваше имя пользователя является частью каждой общедоступной ссылки."
 
+#: src/dialogs/auth/change-password.tsx
+msgid "Changing your password…"
+msgstr "Изменение пароля…"
+
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
@@ -2561,6 +2597,11 @@ msgid "Check your connection and try again."
 msgstr "Проверьте подключение и повторите попытку."
 
 #: src/features/auth/pages/forgot-password.tsx
+#: src/features/auth/pages/register.tsx
+msgid "Check your email"
+msgstr "Проверьте почту"
+
+#: src/features/auth/pages/forgot-password.tsx
 msgid "Check your email for a link to reset your password."
 msgstr "Проверьте свою электронную почту: в письме есть ссылка для сброса пароля."
 
@@ -2626,6 +2667,14 @@ msgstr "Выберите файл"
 msgid "Choose a file to import"
 msgstr "Выберите файл для импорта"
 
+#: src/dialogs/auth/change-password.tsx
+msgid "Choose a password that's different from your current one."
+msgstr "Выберите пароль, отличный от текущего."
+
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "Choose a PDF file."
+msgstr "Выберите PDF-файл."
+
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Выберите резюме в Write, чтобы оно соответствовало его дизайну. А пока письмо свое."
@@ -2672,7 +2721,7 @@ msgstr "Claude Desktop"
 msgid "Clear"
 msgstr "Очистить"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Clear formatting"
 msgstr "Очистить форматирование"
 
@@ -2705,15 +2754,20 @@ msgstr "Нажмите что-нибудь на странице, чтобы с�
 msgid "Client ID"
 msgstr "Идентификатор клиента"
 
+#: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/disable-two-factor.tsx
+#: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/career/workspace/prepare.tsx
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/settings/ai/api-keys.tsx
+#: src/features/settings/ai/providers.tsx
 msgid "Close"
 msgstr "Закрыть"
 
@@ -2729,6 +2783,10 @@ msgstr "Закройте заявку на работу"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Close application…"
 msgstr "Закройте заявку на работу…"
+
+#: src/routes/__root.tsx
+msgid "Close notification"
+msgstr "Закрыть уведомление"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Close the assistant"
@@ -2754,7 +2812,7 @@ msgstr "Закрыто"
 msgid "Coach"
 msgstr "Коуч"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Code"
 msgstr "Код"
 
@@ -2786,14 +2844,15 @@ msgstr "Скоро"
 
 #. Accessible label for command list region inside command palette
 #. Accessible label for the command palette dialog
+#. Screen-reader dialog title for the command palette
 #: src/features/command-palette/content.tsx
-msgid "Command Palette"
+msgid "Command palette"
 msgstr "Палитра команд"
 
 #. Accessible label for command palette dialog when browsing a nested command page
 #: src/features/command-palette/content.tsx
-msgid "Command Palette - {currentPage}"
-msgstr "Палитра команд - {currentPage}"
+msgid "Command palette: {currentPage}"
+msgstr "Палитра команд: {currentPage}"
 
 #: src/features/homepage/footer.tsx
 msgid "Community"
@@ -2855,7 +2914,7 @@ msgid "Confirm applied"
 msgstr "Подтвердить отправку отклика"
 
 #: src/features/resume/builder/password-dialog.tsx
-msgid "Confirm Password"
+msgid "Confirm password"
 msgstr "Подтвердите пароль"
 
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -2931,9 +2990,9 @@ msgstr "Подключено"
 msgid "Connected applications"
 msgstr "Подключенные приложения"
 
-#: src/features/career/shared.tsx
-msgid "Connecting the dots"
-msgstr "Соединяем точки"
+#: src/features/settings/account/auth-hooks.ts
+msgid "Connecting your {providerName} account…"
+msgstr "Подключение учетной записи {providerName}…"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Connection saved"
@@ -3024,7 +3083,7 @@ msgid "Contribution unclear"
 msgstr "Вклад неясен"
 
 #: src/features/assistant/conversation.tsx
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Conversation"
 msgstr "Беседа"
 
@@ -3050,10 +3109,6 @@ msgstr "Разговоры"
 msgid "Conversations about one job live in its workspace."
 msgstr "Разговоры об одной вакансии находятся в ее рабочем пространстве."
 
-#: src/features/career/shared.tsx
-msgid "Cooking"
-msgstr "Готовим"
-
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3061,9 +3116,7 @@ msgstr "Готовим"
 msgid "Copied"
 msgstr "Скопировано"
 
-#. Action button to copy two-factor backup codes to clipboard
-#: src/dialogs/auth/enable-two-factor.tsx
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/resume/share/link-tab.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
@@ -3074,17 +3127,14 @@ msgstr "Скопировать"
 msgid "Copy a resume for a job"
 msgstr "Скопируйте резюме на работу"
 
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Copy and store these backup codes in case you lose your device."
-msgstr "Скопируйте и сохраните эти резервные коды на случай, если вы потеряете устройство."
-
 #: src/features/career/workspace/apply.tsx
 msgid "Copy answers"
 msgstr "Скопировать ответы"
 
+#. Action button to copy two-factor backup codes to clipboard
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Copy Backup Codes"
-msgstr "Скопировать резервные коды"
+msgid "Copy codes"
+msgstr "Скопировать коды"
 
 #: src/features/career/coach.tsx
 msgid "Copy conversation"
@@ -3152,59 +3202,14 @@ msgstr "Исправить этот факт"
 msgid "Corrected {correctedOn} · original kept"
 msgstr "Исправлено {correctedOn} · оригинал сохранен"
 
-#: src/features/auth/pages/consent.tsx
-msgid "Could not complete this connection. Restart the connection from your client and try again."
-msgstr "Не удалось завершить это соединение. Перезапустите соединение с вашего клиента и повторите попытку."
-
-#: src/features/resume/export/use-resume-export.ts
-msgid "Could not generate the DOCX. Please try again."
-msgstr "Не удалось создать DOCX. Пожалуйста, попробуйте ещё раз."
-
-#: src/features/resume/export/use-resume-export.ts
-msgid "Could not generate the JSON. Please try again."
-msgstr "Не удалось создать JSON. Пожалуйста, попробуйте еще раз."
-
-#: src/features/resume/export/use-resume-export.ts
-msgid "Could not generate the Markdown. Please try again."
-msgstr "Не удалось создать Markdown. Пожалуйста, попробуйте еще раз."
-
-#: src/features/resume/export/use-resume-export.ts
-#: src/routes/builder/letter/-components/letter-bar.tsx
-msgid "Could not generate the PDF. Please try again."
-msgstr "Не удалось создать PDF. Пожалуйста, попробуйте ещё раз."
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Could not load connected applications."
-msgstr "Не удалось загрузить подключенные приложения."
-
-#: src/features/resume/export/use-resume-export.ts
-msgid "Could not prepare your resume for printing. Please try again."
-msgstr "Не удалось подготовить резюме к печати. Пожалуйста, попробуйте ещё раз."
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Could not revoke this connection. Try again."
-msgstr "Не удалось отменить это соединение. Попробуйте еще раз."
-
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Could not set up two-factor authentication."
-msgstr "Не удалось настроить двухфакторную аутентификацию."
-
-#. placeholder {0}: unresolved.join(", ")
-#: src/features/resume/editor/write/section-row.tsx
-msgid "Could not sort these items; they stayed at the end: {0}."
-msgstr "Не удалось отсортировать эти элементы; они остались в конце: {0}."
-
 #: src/features/career/knowledge/facts.tsx
-msgid "Couldn't add that fact."
-msgstr "Не удалось добавить факт."
+msgid "Couldn't add that fact. Try again."
+msgstr "Не удалось добавить факт. Попробуйте еще раз."
 
 #: src/features/applications/components/add-application-dialog.tsx
-msgid "Couldn't add the application."
-msgstr "Не удалось добавить заявление о приеме на работу."
-
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Couldn't add the application. Please try again."
-msgstr "Не удалось добавить заявку. Пожалуйста, попробуйте еще раз."
+msgid "Couldn't add the application. Try again."
+msgstr "Не удалось добавить заявку. Попробуйте еще раз."
 
 #: src/features/settings/account/security.tsx
 msgid "Couldn't add the passkey. Try again."
@@ -3212,12 +3217,8 @@ msgstr "Не удалось добавить ключ доступа. Попро
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
-msgid "Couldn't attach the file."
-msgstr "Не удалось прикрепить файл."
-
-#: src/features/settings/ai/providers.tsx
-msgid "Couldn't change it."
-msgstr "Не мог это изменить."
+msgid "Couldn't attach the file. Try again."
+msgstr "Не удалось прикрепить файл. Попробуйте еще раз."
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Couldn't change the design. Try again."
@@ -3228,96 +3229,138 @@ msgid "Couldn't change the email. Try again."
 msgstr "Не удалось изменить адрес электронной почты. Попробуйте еще раз."
 
 #: src/features/career/workspace/prepare.tsx
-msgid "Couldn't change the schedule."
-msgstr "Не удалось изменить расписание."
+msgid "Couldn't change the schedule. Try again."
+msgstr "Не удалось изменить расписание. Попробуйте еще раз."
 
 #: src/features/career/today.tsx
-msgid "Couldn't change this schedule."
-msgstr "Не удалось изменить это расписание."
+msgid "Couldn't change this schedule. Try again."
+msgstr "Не удалось изменить это расписание. Попробуйте еще раз."
+
+#. Fallback toast when changing account password fails
+#: src/dialogs/auth/change-password.tsx
+msgid "Couldn't change your password. Check your current password and try again."
+msgstr "Не удалось изменить пароль. Проверьте текущий пароль и попробуйте еще раз."
+
+#: src/features/auth/pages/consent.tsx
+msgid "Couldn't complete this connection. Restart the connection from your client and try again."
+msgstr "Не удалось завершить это подключение. Перезапустите подключение в своем клиенте и попробуйте еще раз."
+
+#. Fallback toast when linking a social authentication provider fails
+#: src/features/settings/account/auth-hooks.ts
+msgid "Couldn't connect your {providerName} account. Try again."
+msgstr "Не удалось подключить учетную запись {providerName}. Попробуйте еще раз."
 
 #: src/features/assistant/provider-setup.tsx
 msgid "Couldn't connect. Check the key and try again."
 msgstr "Не удалось подключиться. Проверьте ключ и повторите попытку."
 
 #: src/features/auth/pages/login.tsx
-msgid "Couldn't continue as a guest. Please try again."
-msgstr "Не удалось продолжить как гость. Попробуйте ещё раз."
+msgid "Couldn't continue as a guest. Try again."
+msgstr "Не удалось продолжить как гость. Попробуйте еще раз."
 
 #: src/features/career/offers.tsx
 msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "Не удалось скопировать вопросы. Выделите текст и скопируйте его вручную."
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Couldn't copy the resume."
-msgstr "Не удалось скопировать резюме."
+msgid "Couldn't copy the resume. Try again."
+msgstr "Не удалось скопировать резюме. Попробуйте еще раз."
 
 #: src/features/assistant/conversation.tsx
-msgid "Couldn't copy the transcript."
-msgstr "Не удалось скопировать стенограмму."
+msgid "Couldn't copy the transcript. Try again."
+msgstr "Не удалось скопировать стенограмму. Попробуйте еще раз."
 
 #: src/features/career/coach-thread.tsx
-msgid "Couldn't copy to the clipboard."
-msgstr "Не удалось скопировать в буфер обмена."
+msgid "Couldn't copy to the clipboard. Try again."
+msgstr "Не удалось скопировать в буфер обмена. Попробуйте еще раз."
 
-#: src/features/documents/new-document-dialog.tsx
-msgid "Couldn't create the document."
-msgstr "Не удалось создать документ."
+#: src/features/documents/use-start-document.ts
+msgid "Couldn't create the document. Try again."
+msgstr "Не удалось создать документ. Попробуйте еще раз."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't create the key. Try again."
 msgstr "Не удалось создать ключ. Попробуйте еще раз."
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Couldn't create the letter."
-msgstr "Не удалось создать письмо."
+msgid "Couldn't create the letter. Try again."
+msgstr "Не удалось создать письмо. Попробуйте еще раз."
 
-#: src/features/assistant/assistant-panel.tsx
-msgid "Couldn't delete it."
-msgstr "Не удалось удалить."
+#. Fallback toast when account registration fails without a server error message
+#: src/features/auth/pages/register.tsx
+msgid "Couldn't create your account. Try again."
+msgstr "Не удалось создать учетную запись. Попробуйте еще раз."
 
 #: src/features/career/knowledge/stories.tsx
-msgid "Couldn't delete that story."
-msgstr "Не удалось удалить историю."
+msgid "Couldn't delete that story. Try again."
+msgstr "Не удалось удалить историю. Попробуйте еще раз."
 
-#: src/features/settings/account/data.tsx
-msgid "Couldn't delete the account."
-msgstr "Не удалось удалить аккаунт."
+#: src/features/applications/use-application-actions.ts
+msgid "Couldn't delete the application. Try again."
+msgstr "Не удалось удалить заявку. Попробуйте еще раз."
 
 #: src/features/applications/components/list-view.tsx
 msgid "Couldn't delete the applications. Try again."
 msgstr "Не удалось удалить заявления о приеме на работу. Попробуйте еще раз."
 
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't delete the document. Try again."
+msgstr "Не удалось удалить документ. Попробуйте еще раз."
+
 #: src/features/applications/components/interview-dialog.tsx
-msgid "Couldn't delete the interview."
-msgstr "Не удалось удалить интервью."
+msgid "Couldn't delete the interview. Try again."
+msgstr "Не удалось удалить собеседование. Попробуйте еще раз."
 
 #: src/features/settings/ai/providers.tsx
-msgid "Couldn't delete the provider."
-msgstr "Не удалось удалить провайдера."
+msgid "Couldn't delete the provider. Try again."
+msgstr "Не удалось удалить провайдера. Попробуйте еще раз."
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
-msgid "Couldn't delete this conversation."
-msgstr "Не удалось удалить этот разговор."
+msgid "Couldn't delete this conversation. Try again."
+msgstr "Не удалось удалить этот разговор. Попробуйте еще раз."
 
 #: src/features/career/today.tsx
-msgid "Couldn't delete this schedule."
-msgstr "Не удалось удалить это расписание."
+msgid "Couldn't delete this schedule. Try again."
+msgstr "Не удалось удалить это расписание. Попробуйте еще раз."
 
 #: src/features/settings/account/data.tsx
-msgid "Couldn't export. Try again."
-msgstr "Не удалось экспортировать. Попробуйте еще раз."
+msgid "Couldn't delete your account. Try again."
+msgstr "Не удалось удалить учетную запись. Попробуйте еще раз."
+
+#. Fallback toast when unlinking a social authentication provider fails
+#: src/features/settings/account/auth-hooks.ts
+msgid "Couldn't disconnect your {providerName} account. Try again."
+msgstr "Не удалось отключить учетную запись {providerName}. Попробуйте еще раз."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't duplicate the document. Try again."
+msgstr "Не удалось создать копию документа. Попробуйте еще раз."
+
+#: src/features/settings/account/data.tsx
+msgid "Couldn't export your data. Try again."
+msgstr "Не удалось экспортировать данные. Попробуйте еще раз."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Couldn't fill in the fields. Try again, or fill them in yourself."
+msgstr "Не удалось заполнить поля. Попробуйте еще раз или заполните их вручную."
 
 #: src/features/career/knowledge/facts.tsx
-msgid "Couldn't forget that fact."
-msgstr "Не удалось забыть этот факт."
+msgid "Couldn't forget that fact. Try again."
+msgstr "Не удалось забыть этот факт. Попробуйте еще раз."
+
+#: src/features/resume/export/use-resume-export.ts
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Couldn't generate the PDF. Try again."
+msgstr "Не удалось создать PDF. Попробуйте еще раз."
 
 #: src/features/resume/editor/write/improve.tsx
 msgid "Couldn't get a suggestion. Nothing changed."
 msgstr "Не удалось получить предложение. Ничего не изменилось."
 
 #: src/features/career/today.tsx
-msgid "Couldn't hide this role."
-msgstr "Не удалось скрыть эту вакансию."
+msgid "Couldn't hide this role. Try again."
+msgstr "Не удалось скрыть эту вакансию. Попробуйте еще раз."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't import"
@@ -3327,9 +3370,18 @@ msgstr "Не удалось импортировать"
 msgid "Couldn't import the file. Try again from Documents."
 msgstr "Не удалось импортировать файл. Попробуйте еще раз из Документов."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Couldn't import the file. Try again, or start blank."
+msgstr "Не удалось импортировать файл. Попробуйте еще раз или начните с нуля."
+
+#: src/features/auth/pages/error.tsx
+msgid "Couldn't link that provider account. Try again."
+msgstr "Не удалось связать этот аккаунт провайдера. Попробуйте еще раз."
+
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Couldn't link the application."
-msgstr "Не удалось связать заявку на работу."
+msgid "Couldn't link the application. Try again."
+msgstr "Не удалось привязать заявку. Попробуйте еще раз."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't load AI connections. Try again before importing this file."
@@ -3343,6 +3395,10 @@ msgstr "Не удалось загрузить подключения ИИ. Ва
 msgid "Couldn't load applications. Try again."
 msgstr "Не удалось загрузить заявки. Попробуйте еще раз."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Couldn't load connected applications. Refresh the page to try again."
+msgstr "Не удалось загрузить подключенные приложения. Обновите страницу, чтобы попробовать еще раз."
+
 #: src/features/documents/library-error.tsx
 msgid "Couldn't load documents"
 msgstr "Не удалось загрузить документы"
@@ -3350,6 +3406,10 @@ msgstr "Не удалось загрузить документы"
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't load interviews. Retry"
 msgstr "Не удалось загрузить собеседования. Повторить"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Couldn't load or save web access settings. Try again."
+msgstr "Не удалось загрузить или сохранить настройки веб-доступа. Попробуйте еще раз."
 
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
@@ -3359,17 +3419,29 @@ msgstr "Не удалось загрузить файл примера. Попр
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "Не удалось загрузить. Ваши сохраненные данные не изменились."
 
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't lock the document. Try again."
+msgstr "Не удалось заблокировать документ. Попробуйте еще раз."
+
 #: src/features/settings/ai/providers.tsx
-msgid "Couldn't make it the default."
-msgstr "Не удалось сделать его используемым по умолчанию."
+msgid "Couldn't make this provider the default. Try again."
+msgstr "Не удалось сделать этого провайдера используемым по умолчанию. Попробуйте еще раз."
 
 #: src/features/career/workspace/apply.tsx
-msgid "Couldn't mark it as applied."
-msgstr "Не удалось отметить отклик отправленным."
+msgid "Couldn't mark it as applied. Try again."
+msgstr "Не удалось отметить отклик отправленным. Попробуйте еще раз."
 
 #: src/features/career/today.tsx
-msgid "Couldn't mark this as read."
-msgstr "Не удалось отметить как прочитанное."
+msgid "Couldn't mark this as read. Try again."
+msgstr "Не удалось отметить как прочитанное. Попробуйте еще раз."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't move the document to Trash. Try again."
+msgstr "Не удалось отправить документ в корзину. Попробуйте еще раз."
+
+#: src/features/resume/export/use-resume-export.ts
+msgid "Couldn't prepare the resume for printing. Try again."
+msgstr "Не удалось подготовить резюме к печати. Попробуйте еще раз."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
@@ -3384,106 +3456,139 @@ msgstr "Не удалось связаться с поставщиком ИИ. �
 msgid "Couldn't reach your AI provider. Its key may have expired."
 msgstr "Не удалось связаться с вашим провайдером искусственного интеллекта. Возможно, срок действия ключа истек."
 
+#. placeholder {0}: dates.raw
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Couldn't read “{0}”. Enter the dates so they sort and print consistently."
+msgstr "Не удалось распознать «{0}». Введите даты, чтобы они единообразно сортировались и печатались."
+
 #: src/features/applications/components/import-applications-sheet.tsx
-msgid "Couldn't read that file."
-msgstr "Не удалось прочитать этот файл."
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "Не удалось прочитать этот файл. Выберите файл .csv и попробуйте еще раз."
+
+#: src/features/ats-checker/checker.tsx
+msgid "Couldn't read that file. Try again."
+msgstr "Не удалось прочитать этот файл. Попробуйте еще раз."
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
+msgstr "Не удалось распознать даты в {entries}, поэтому они остаются в конце. Исправьте даты и отсортируйте снова."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
 msgstr "Не удалось прочитать эту страницу: {0}"
 
+#: src/features/auth/pages/error.tsx
+msgid "Couldn't read your profile from the provider. Try again."
+msgstr "Не удалось получить ваш профиль у провайдера. Попробуйте еще раз."
+
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Couldn't record submission. Try again."
 msgstr "Не удалось записать отправку. Попробуйте еще раз."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Couldn't remember that. Try again."
 msgstr "Не удалось запомнить. Попробуйте еще раз."
 
 #: src/features/career/today.tsx
-msgid "Couldn't remove it from Applications."
-msgstr "Не удалось удалить из заявок."
+msgid "Couldn't remove it from Applications. Try again."
+msgstr "Не удалось удалить из заявок. Попробуйте еще раз."
 
 #: src/features/settings/account/security.tsx
 msgid "Couldn't remove the passkey. Try again."
 msgstr "Не удалось удалить ключ доступа. Попробуйте еще раз."
 
-#: src/features/career/coach.tsx
-msgid "Couldn't rename it."
-msgstr "Не удалось переименовать."
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't rename the document. Try again."
+msgstr "Не удалось переименовать документ. Попробуйте еще раз."
 
 #: src/features/settings/account/security.tsx
-msgid "Couldn't rename the passkey."
-msgstr "Не удалось переименовать ключ доступа."
+msgid "Couldn't rename the passkey. Try again."
+msgstr "Не удалось переименовать ключ доступа. Попробуйте еще раз."
+
+#: src/features/career/coach.tsx
+msgid "Couldn't rename this conversation. Try again."
+msgstr "Не удалось переименовать этот разговор. Попробуйте еще раз."
+
+#. Fallback toast when resetting password fails and no backend message is available
+#: src/features/auth/pages/reset-password.tsx
+msgid "Couldn't reset your password. Try again."
+msgstr "Не удалось сбросить пароль. Попробуйте еще раз."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't restore the document. Try again."
+msgstr "Не удалось восстановить документ. Попробуйте еще раз."
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Couldn't revoke the key."
-msgstr "Не удалось отозвать ключ."
+msgid "Couldn't revoke the key. Try again."
+msgstr "Не удалось отозвать ключ. Попробуйте еще раз."
 
-#: src/features/career/knowledge/facts.tsx
-msgid "Couldn't save that change."
-msgstr "Не удалось сохранить изменение."
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "Не удалось отозвать это подключение. Попробуйте еще раз."
 
 #: src/features/career/hooks.ts
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Не удалось сохранить изменение. Проверьте подключение и попробуйте еще раз."
 
+#: src/features/career/knowledge/facts.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Не удалось сохранить изменение. Попробуйте еще раз."
 
-#: src/features/career/workspace/fit.tsx
-msgid "Couldn't save that to Knowledge."
-msgstr "Не удалось сохранить в Знания."
-
 #: src/features/career/workspace/debrief.tsx
+#: src/features/career/workspace/fit.tsx
 msgid "Couldn't save that to Knowledge. Try again."
 msgstr "Не удалось сохранить в Знания. Попробуйте еще раз."
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Couldn't save the application."
-msgstr "Не удалось сохранить заявку на работу."
-
-#: src/features/applications/components/detail/next-step-card.tsx
-msgid "Couldn't save the follow-up."
-msgstr "Не удалось сохранить продолжение."
-
-#: src/features/applications/components/application-notes.tsx
-msgid "Couldn't save the notes."
-msgstr "Не удалось сохранить заметки."
-
-#: src/features/resume/editor/check/job-match.tsx
-msgid "Couldn't save the posting."
-msgstr "Не удалось сохранить вакансию."
-
-#: src/features/settings/ai/providers.tsx
-msgid "Couldn't save the provider."
-msgstr "Не удалось сохранить провайдера."
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Couldn't save the story."
-msgstr "Не удалось сохранить историю."
+msgid "Couldn't save the application. Try again."
+msgstr "Не удалось сохранить заявку. Попробуйте еще раз."
 
 #: src/features/applications/components/application-detail-sheet.tsx
-msgid "Couldn't save the tags."
-msgstr "Не удалось сохранить теги."
+msgid "Couldn't save the change. Try again."
+msgstr "Не удалось сохранить изменение. Попробуйте еще раз."
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Couldn't save the documents. Try again."
+msgstr "Не удалось сохранить документы. Попробуйте еще раз."
+
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "Couldn't save the follow-up. Try again."
+msgstr "Не удалось сохранить напоминание. Попробуйте еще раз."
+
+#: src/features/applications/components/application-notes.tsx
+msgid "Couldn't save the notes. Try again."
+msgstr "Не удалось сохранить заметки. Попробуйте еще раз."
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Couldn't save the posting. Try again."
+msgstr "Не удалось сохранить вакансию. Попробуйте еще раз."
+
+#: src/features/settings/ai/providers.tsx
+msgid "Couldn't save the provider. Try again."
+msgstr "Не удалось сохранить провайдера. Попробуйте еще раз."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Couldn't save the story. Try again."
+msgstr "Не удалось сохранить историю. Попробуйте еще раз."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't save the tags. Try again."
+msgstr "Не удалось сохранить теги. Попробуйте еще раз."
 
 #: src/features/settings/preferences.tsx
-msgid "Couldn't save the timezone."
-msgstr "Не удалось сохранить часовой пояс."
+msgid "Couldn't save the timezone. Try again."
+msgstr "Не удалось сохранить часовой пояс. Попробуйте еще раз."
 
 #: src/features/career/today.tsx
-msgid "Couldn't save this role to Applications."
-msgstr "Не удалось сохранить эту вакансию в заявки."
+msgid "Couldn't save this role to Applications. Try again."
+msgstr "Не удалось сохранить эту вакансию в заявки. Попробуйте еще раз."
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Couldn't save this schedule."
-msgstr "Не удалось сохранить это расписание."
-
-#: src/features/applications/components/application-form-sheet.tsx
-msgid "Couldn't save your changes. Please try again."
-msgstr "Не удалось сохранить изменения. Пожалуйста, попробуйте еще раз."
+msgid "Couldn't save this schedule. Try again."
+msgstr "Не удалось сохранить это расписание. Попробуйте еще раз."
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
@@ -3493,26 +3598,58 @@ msgstr "Не удалось сохранить изменения. Пожалу�
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "Не удалось сохранить изменения. Прежде чем продолжить, попробуйте еще раз."
 
-#: src/features/career/knowledge/preferences.tsx
-msgid "Couldn't save your preferences."
-msgstr "Не удалось сохранить ваши предпочтения."
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Couldn't save your changes. Try again."
+msgstr "Не удалось сохранить изменения. Попробуйте еще раз."
 
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/detail/sent-documents.tsx
-msgid "Couldn't save."
-msgstr "Не удалось сохранить."
+#: src/features/career/knowledge/preferences.tsx
+msgid "Couldn't save your preferences. Try again."
+msgstr "Не удалось сохранить настройки. Попробуйте еще раз."
 
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't save. Try again."
 msgstr "Не удалось сохранить. Попробуйте еще раз."
 
 #: src/features/applications/components/interview-dialog.tsx
-msgid "Couldn't schedule the interview."
-msgstr "Не удалось назначить интервью."
+msgid "Couldn't schedule the interview. Try again."
+msgstr "Не удалось назначить собеседование. Попробуйте еще раз."
 
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't send the email. Try again."
 msgstr "Не удалось отправить письмо. Попробуйте еще раз."
+
+#. Fallback toast when requesting password reset email fails without backend message
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Couldn't send the password reset email. Try again."
+msgstr "Не удалось отправить письмо для сброса пароля. Попробуйте еще раз."
+
+#: src/features/resume/builder/password-dialog.tsx
+msgid "Couldn't set the password. Try again."
+msgstr "Не удалось установить пароль. Попробуйте еще раз."
+
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Couldn't set up two-step verification. Try again."
+msgstr "Не удалось настроить двухэтапную проверку. Попробуйте еще раз."
+
+#: src/features/resume/preview/preview.browser.tsx
+msgid "Couldn't show the preview."
+msgstr "Не удалось показать предпросмотр."
+
+#. Fallback toast when sign-in fails and no server error message is available
+#. Fallback toast when sign-in fails without an error message
+#: src/features/auth/components/social-auth.tsx
+#: src/features/auth/pages/login.tsx
+msgid "Couldn't sign in. Try again."
+msgstr "Не удалось войти. Попробуйте еще раз."
+
+#. Fallback toast when signing out fails
+#: src/features/user/dropdown-menu.tsx
+msgid "Couldn't sign out. Try again."
+msgstr "Не удалось выйти. Попробуйте еще раз."
+
+#: src/features/auth/pages/error.tsx
+msgid "Couldn't sign you in. Try again."
+msgstr "Не удалось выполнить вход. Попробуйте еще раз."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Couldn't start recording. Choose an audio file, or type your answer."
@@ -3524,40 +3661,108 @@ msgid "Couldn't start the conversation. Try again."
 msgstr "Не удалось начать разговор. Попробуйте еще раз."
 
 #: src/features/career/coach.tsx
-msgid "Couldn't switch connections."
-msgstr "Не удалось переключить подключение."
+msgid "Couldn't switch connections. Try again."
+msgstr "Не удалось переключить подключение. Попробуйте еще раз."
 
 #: src/features/assistant/assistant-panel.tsx
-msgid "Couldn't switch models."
-msgstr "Не удалось переключить модель."
+msgid "Couldn't switch models. Try again."
+msgstr "Не удалось переключить модель. Попробуйте еще раз."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Couldn't transcribe. Your recording is still here."
 msgstr "Не удалось расшифровать. Ваша запись по-прежнему здесь."
 
-#: src/features/career/coach-thread.tsx
-msgid "Couldn't undo that."
-msgstr "Не удалось отменить."
+#. Fallback toast when disabling two-factor authentication fails
+#: src/dialogs/auth/disable-two-factor.tsx
+msgid "Couldn't turn off two-step verification. Check your password and try again."
+msgstr "Не удалось отключить двухэтапную проверку. Проверьте пароль и попробуйте еще раз."
+
+#. Fallback toast when enabling two-factor authentication fails
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Couldn't turn on two-step verification. Check your password and try again."
+msgstr "Не удалось включить двухэтапную проверку. Проверьте пароль и попробуйте еще раз."
+
+#: src/features/settings/ai/providers.tsx
+msgid "Couldn't turn the provider on or off. Try again."
+msgstr "Не удалось включить или отключить провайдера. Попробуйте еще раз."
+
+#: src/features/career/coach-chat.tsx
+msgid "Couldn't undo that. Try again."
+msgstr "Не удалось отменить. Попробуйте еще раз."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't unlink the application. Try again."
+msgstr "Не удалось отвязать заявку. Попробуйте еще раз."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't unlock the document. Try again."
+msgstr "Не удалось разблокировать документ. Попробуйте еще раз."
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Couldn't update sharing. Try again."
+msgstr "Не удалось обновить настройки общего доступа. Попробуйте еще раз."
 
 #: src/features/career/workspace/messages.tsx
-msgid "Couldn't update the application. Nothing was changed."
-msgstr "Не удалось обновить заявку. Ничего не изменено."
+msgid "Couldn't update the application. Nothing was changed. Try again."
+msgstr "Не удалось обновить заявку. Ничего не изменено. Попробуйте еще раз."
+
+#: src/features/applications/use-application-actions.ts
+msgid "Couldn't update the application. Try again."
+msgstr "Не удалось обновить заявку. Попробуйте еще раз."
 
 #: src/features/applications/components/list-view.tsx
 msgid "Couldn't update the applications. Try again."
 msgstr "Не удалось обновить заявления о приеме на работу. Попробуйте еще раз."
 
 #: src/features/applications/components/interview-dialog.tsx
-msgid "Couldn't update the interview."
-msgstr "Не удалось обновить интервью."
+msgid "Couldn't update the interview. Try again."
+msgstr "Не удалось обновить собеседование. Попробуйте еще раз."
+
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Couldn't update the letter. Try again."
+msgstr "Не удалось обновить письмо. Попробуйте еще раз."
+
+#: src/features/resume/preview/preview.browser.tsx
+msgid "Couldn't update the preview. The last working version is still shown. Edit anything to try again."
+msgstr "Не удалось обновить предпросмотр. По-прежнему показана последняя рабочая версия. Измените что-нибудь, чтобы попробовать еще раз."
+
+#: src/libs/error-message.ts
+msgid "Couldn't update the resume. Try again."
+msgstr "Не удалось обновить резюме. Попробуйте еще раз."
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Couldn't update the timeline. Try again."
 msgstr "Не удалось обновить хронологию. Попробуйте еще раз."
 
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "Couldn't update this letter's versions. Try again."
+msgstr "Не удалось обновить версии этого письма. Попробуйте еще раз."
+
+#. Fallback toast when uploading profile picture for resume fails
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/settings/account/profile.tsx
-msgid "Couldn't upload the photo."
-msgstr "Не удалось загрузить фото."
+msgid "Couldn't upload the photo. Try again."
+msgstr "Не удалось загрузить фото. Попробуйте еще раз."
+
+#. Fallback toast when verifying two-factor setup code fails
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Couldn't verify the code. Enter the current code from your authenticator app."
+msgstr "Не удалось проверить код. Введите текущий код из приложения-аутентификатора."
+
+#. Fallback toast when resume password verification fails unexpectedly
+#: src/features/auth/pages/resume-password.tsx
+msgid "Couldn't verify the password. Try again."
+msgstr "Не удалось проверить пароль. Попробуйте еще раз."
+
+#. Fallback toast when verifying a backup two-factor authentication code fails
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Couldn't verify your backup code. Check the code and try again."
+msgstr "Не удалось проверить резервный код. Проверьте код и попробуйте еще раз."
+
+#. Fallback toast when verifying a two-factor authentication code fails
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Couldn't verify your code. Check the code and try again."
+msgstr "Не удалось проверить код. Проверьте код и попробуйте еще раз."
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Count by source"
@@ -3593,7 +3798,6 @@ msgstr "Заполнить"
 msgid "Cover letter"
 msgstr "Сопроводительное письмо"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Cover Letter"
 msgstr "Сопроводительное письмо"
@@ -3683,12 +3887,12 @@ msgid "Created and linked to {0}"
 msgstr "Создано и связано с {0}."
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Crop and Upload"
+msgid "Crop and upload"
 msgstr "Обрезать и загрузить"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Crop picture"
-msgstr "Обрезанное изображение"
+msgid "Crop photo"
+msgstr "Обрезать фото"
 
 #: src/features/homepage/sheet.tsx
 msgid "Cross-functional leadership"
@@ -3711,7 +3915,7 @@ msgid "Current focus, relevant experience, and why this role interests you."
 msgstr "Текущий фокус, релевантный опыт и почему вас интересует эта должность."
 
 #: src/dialogs/auth/change-password.tsx
-msgid "Current Password"
+msgid "Current password"
 msgstr "Текущий пароль"
 
 #: src/components/input/color-picker.tsx
@@ -3720,8 +3924,8 @@ msgid "Custom"
 msgstr "Пользовательский"
 
 #: src/features/resume/editor/design/style-groups.tsx
-msgid "Custom colour (hex)"
-msgstr "Пользовательский цвет (шестнадцатеричный)"
+msgid "Custom color (hex)"
+msgstr "Свой цвет (hex)"
 
 #. Authentication provider display name in account settings
 #: src/features/settings/account/auth-hooks.ts
@@ -3733,11 +3937,11 @@ msgid "Custom section"
 msgstr "Пользовательский раздел"
 
 #: src/libs/resume/section.tsx
-msgid "Custom Sections"
+msgid "Custom sections"
 msgstr "Пользовательские разделы"
 
 #: src/libs/resume/section.tsx
-msgid "Custom Styles"
+msgid "Custom styles"
 msgstr "Пользовательские стили"
 
 #: src/features/resume/stylesheet/editor.tsx
@@ -3828,7 +4032,7 @@ msgstr "Разбор"
 msgid "Deep breath."
 msgstr "Глубокий вдох."
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "По умолчанию"
@@ -3837,19 +4041,12 @@ msgstr "По умолчанию"
 msgid "Degree"
 msgstr "Степень"
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/interview-dialog.tsx
-#: src/features/applications/components/list-view.tsx
-#: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/share/history-tab.tsx
-#: src/features/settings/account/data.tsx
-#: src/features/settings/ai/providers.tsx
 msgid "Delete"
 msgstr "Удалить"
 
@@ -3857,6 +4054,11 @@ msgstr "Удалить"
 #: src/features/documents/document-actions.tsx
 msgid "Delete “{0}” now?"
 msgstr "Удалить «{0}» сейчас?"
+
+#. placeholder {0}: provider.label
+#: src/features/settings/ai/providers.tsx
+msgid "Delete “{0}”?"
+msgstr "Удалить «{0}»?"
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Delete “{title}”?"
@@ -3867,19 +4069,21 @@ msgstr "Удалить «{title}»?"
 msgid "Delete {0}"
 msgstr "Удалить {0}"
 
-#. placeholder {0}: ids.length
-#: src/features/applications/components/list-view.tsx
-msgid "Delete {0} applications?"
-msgstr "Удалить заявления о приеме на работу {0}?"
-
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/account/data.tsx
 msgid "Delete account"
 msgstr "Удалить аккаунт"
 
-#: src/features/command-palette/pages/navigation.tsx
-msgid "Delete Account"
-msgstr "Удалить аккаунт"
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Delete application"
+msgstr "Удалить заявку"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Delete conversation"
+msgstr "Удалить разговор"
+
+#: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
 msgstr "Удалить запись"
@@ -3889,20 +4093,12 @@ msgid "Delete it. Hidden keywords are treated as a deliberate attempt to game th
 msgstr "Удалите это. Скрытые ключевые слова расцениваются как намеренная попытка обмануть поиск."
 
 #: src/features/documents/document-actions.tsx
-msgid "Delete now"
-msgstr "Удалить сейчас"
-
-#: src/features/documents/document-actions.tsx
 msgid "Delete now…"
 msgstr "Удалить сейчас…"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Delete Page"
+msgid "Delete page"
 msgstr "Удалить страницу"
-
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Delete picture"
-msgstr "Удалить картинку"
 
 #: src/features/settings/ai/providers.tsx
 msgid "Delete provider"
@@ -3933,9 +4129,9 @@ msgstr "Удалить этот разговор?"
 msgid "Delete this entry?"
 msgstr "Удалить эту запись?"
 
-#: src/features/settings/ai/providers.tsx
-msgid "Delete this provider?"
-msgstr "Удалить этого провайдера?"
+#: src/features/resume/share/history-tab.tsx
+msgid "Delete version"
+msgstr "Удалить версию"
 
 #: src/features/settings/account/data.tsx
 msgid "Delete your account?"
@@ -3966,11 +4162,6 @@ msgstr "Удален «{0}»"
 msgid "Deleted “{title}”"
 msgstr "Удален «{title}»"
 
-#. placeholder {0}: result.deleted
-#: src/features/applications/components/list-view.tsx
-msgid "Deleted {0}"
-msgstr "Удален {0}"
-
 #: src/features/career/offers.tsx
 msgid "Deleted application"
 msgstr "Удаленная заявка"
@@ -3988,8 +4179,8 @@ msgid "Density"
 msgstr "Плотность"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Deny"
-msgstr "Отклонить"
+msgid "Deny access"
+msgstr "Запретить доступ"
 
 #: src/features/ats-checker/messages.ts
 msgid "Describe each role with short bullets. Solid paragraphs are harder to skim and to segment."
@@ -4072,31 +4263,30 @@ msgstr "Другая валюта, не сравнивается"
 msgid "Different pay period, not compared"
 msgstr "Другой период оплаты, не сравнивается"
 
-#. Destructive action button to turn off two-factor authentication
-#: src/dialogs/auth/disable-two-factor.tsx
-msgid "Disable 2FA"
-msgstr "Отключить 2FA"
-
-#: src/dialogs/auth/disable-two-factor.tsx
-msgid "Disable Two-Factor Authentication"
-msgstr "Отключить двухфакторную аутентификацию"
-
-#: src/dialogs/auth/disable-two-factor.tsx
-msgid "Disabling two-factor authentication..."
-msgstr "Отключение двухфакторной аутентификации..."
-
 #: src/features/career/schedule-sheet.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Discard"
 msgstr "Отбросить"
 
+#: src/hooks/use-form-blocker.tsx
+msgid "Discard changes"
+msgstr "Отменить изменения"
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Discard changes?"
 msgstr "Отменить изменения?"
 
+#: src/hooks/use-form-blocker.tsx
+msgid "Discard unsaved changes?"
+msgstr "Отменить несохраненные изменения?"
+
 #: src/features/settings/account/security.tsx
 msgid "Disconnect"
 msgstr "Отключить"
+
+#: src/features/settings/account/auth-hooks.ts
+msgid "Disconnecting your {providerName} account…"
+msgstr "Отключение учетной записи {providerName}…"
 
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -4126,10 +4316,18 @@ msgstr "Документация"
 msgid "Documents"
 msgstr "Документы"
 
+#: src/features/documents/trash-page.tsx
+msgid "Documents are deleted permanently after 30 days."
+msgstr "Документы удаляются безвозвратно через 30 дней."
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Documents for this job"
 msgstr "Документы на эту должность"
+
+#: src/features/documents/trash-page.tsx
+msgid "Documents you move here stay for 30 days."
+msgstr "Документы, перемещенные сюда, хранятся 30 дней."
 
 #: src/features/homepage/faq.tsx
 msgid "Does it use AI?"
@@ -4150,7 +4348,7 @@ msgstr "Не отправляйте {0}"
 msgid "Donate"
 msgstr "Пожертвовать"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Done"
 msgstr "Сделанный"
@@ -4164,13 +4362,10 @@ msgstr "Готово · {0}"
 msgid "Double-checking"
 msgstr "Перепроверяем"
 
-#. Action button to download two-factor backup codes as a text file
-#: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
 #: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Download"
 msgstr "Скачать"
@@ -4187,18 +4382,22 @@ msgstr "Скачать образец PDF для {name}"
 msgid "Download application details, contacts, notes, and timeline history as CSV."
 msgstr "Скачайте сведения о заявках, контакты, заметки и историю на временной шкале в формате CSV."
 
+#. Action button to download two-factor backup codes as a text file
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Download codes"
+msgstr "Скачать коды"
+
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download CSV"
 msgstr "Скачать CSV-файл"
 
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/share-sheet.tsx
-msgid "Download failed."
-msgstr "Загрузка не удалась."
+msgid "Download failed. Try again."
+msgstr "Не удалось скачать. Попробуйте еще раз."
 
+#: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/public/public-resume.tsx
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Download PDF"
 msgstr "Скачать PDF"
 
@@ -4350,17 +4549,17 @@ msgid "Duplicate"
 msgstr "Дублировать"
 
 #: src/dialogs/resume/index.tsx
-msgid "Duplicate Resume"
+msgid "Duplicate resume"
 msgstr "Дублировать резюме"
 
 #: src/dialogs/resume/index.tsx
 msgid "Duplicate your resume to create a new one, just like the original."
 msgstr "Дублируйте своё резюме, чтобы создать новое, полностью ему соответствующее."
 
+#. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
-msgid "Duplicated"
-msgstr "Дублированный"
+msgid "Duplicated “{0}”"
+msgstr "Создана копия «{0}»"
 
 #: src/dialogs/resume/index.tsx
 msgid "Duplicating your resume..."
@@ -4409,7 +4608,6 @@ msgid "Edit application"
 msgstr "Редактировать заявку"
 
 #: src/features/assistant/document.ts
-#: src/features/resume/editor/proposals/proposals.ts
 msgid "Edit applied"
 msgstr "Изменение применено"
 
@@ -4495,8 +4693,7 @@ msgstr "Сеанс редактирования"
 msgid "Editor mode"
 msgstr "Режим редактора"
 
-#: src/routes/builder/$resumeId/-components/editor-shell.tsx
-#: src/routes/builder/letter/-components/letter-shell.tsx
+#: src/features/resume/editor/chrome/shell.tsx
 msgid "Editor views"
 msgstr "Просмотры редактора"
 
@@ -4506,7 +4703,6 @@ msgstr "Редакционный"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Education"
 msgstr "Образование"
@@ -4527,11 +4723,11 @@ msgstr "Электронная почта (необязательно)"
 #: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
-msgid "Email Address"
+msgid "Email address"
 msgstr "Адрес электронной почты"
 
 #: src/features/resume/editor/check/issues.ts
-msgid "Email address won't be recognised"
+msgid "Email address won't be recognized"
 msgstr "Адрес электронной почты не будет распознан"
 
 #: src/features/settings/account/profile.tsx
@@ -4545,14 +4741,6 @@ msgstr "Напишите рекрутеру"
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "Встраивайте все шрифты при экспорте, чтобы символы отображались так, как задумано."
-
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Enable Two-Factor Authentication"
-msgstr "Включить двухфакторную аутентификацию"
-
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Enabling two-factor authentication…"
-msgstr "Включение двухфакторной аутентификации…"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -4587,6 +4775,10 @@ msgstr "Расширенное чтение было недоступно. Вс�
 msgid "Enjoying Reactive Resume?"
 msgstr "Нравится Reactive Resume?"
 
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Enter a backup code."
+msgstr "Введите резервный код."
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Введите полную сумму, например 95000. Предыдущая сумма не изменилась."
@@ -4596,10 +4788,12 @@ msgid "Enter a name, up to 64 characters."
 msgstr "Введите имя длиной до 64 символов."
 
 #: src/features/auth/pages/reset-password.tsx
-msgid "Enter a new password for your account"
-msgstr "Введите новый пароль для вашего аккаунта"
+msgid "Enter a new password for your account."
+msgstr "Введите новый пароль для своей учетной записи."
 
 #: src/features/applications/components/detail/contacts.tsx
+#: src/features/auth/pages/forgot-password.tsx
+#: src/features/auth/pages/register.tsx
 #: src/features/settings/account/profile.tsx
 msgid "Enter a valid email address."
 msgstr "Введите действительный адрес электронной почты."
@@ -4613,28 +4807,55 @@ msgid "Enter any model ID supported by your endpoint."
 msgstr "Введите любой идентификатор модели, поддерживаемый вашей конечной точкой."
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Enter one of your saved backup codes to access your account"
-msgstr "Введите один из сохраненных резервных кодов, чтобы получить доступ к своей учетной записи"
+msgid "Enter one of your saved backup codes to access your account."
+msgstr "Введите один из сохраненных резервных кодов, чтобы войти в учетную запись."
+
+#: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Enter the 6-digit code."
+msgstr "Введите 6-значный код."
 
 #: src/features/auth/pages/resume-password.tsx
 msgid "Enter the password the resume owner shared with you."
 msgstr "Введите пароль, которым с вами поделился владелец резюме."
 
+#: src/features/auth/pages/resume-password.tsx
+msgid "Enter the password."
+msgstr "Введите пароль."
+
+#: src/features/resume/builder/password-dialog.tsx
+msgid "Enter the same password in both fields."
+msgstr "Введите один и тот же пароль в оба поля."
+
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Enter the verification code from your authenticator app"
-msgstr "Введите код подтверждения из приложения-аутентификатора"
+msgid "Enter the verification code from your authenticator app."
+msgstr "Введите код подтверждения из приложения-аутентификатора."
 
 #: src/dialogs/auth/change-password.tsx
-msgid "Enter your current password and a new password to update your account."
-msgstr "Введите текущий пароль и новый пароль, чтобы обновить учетную запись."
+msgid "Enter your current password, then choose a new one."
+msgstr "Введите текущий пароль, затем выберите новый."
+
+#: src/dialogs/auth/change-password.tsx
+msgid "Enter your current password."
+msgstr "Введите текущий пароль."
+
+#: src/features/auth/pages/register.tsx
+msgid "Enter your name."
+msgstr "Введите имя."
 
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Enter your password to confirm setting up two-factor authentication. Once it is on, you need a code from your authenticator app every time you sign in."
-msgstr "Введите пароль, чтобы подтвердить настройку двухфакторной аутентификации. После включения при каждом входе понадобится код из приложения-аутентификатора."
+msgid "Enter your password to set up two-step verification. Once it's on, you need a code from your authenticator app every time you sign in."
+msgstr "Введите пароль, чтобы настроить двухэтапную проверку. После включения при каждом входе понадобится код из приложения-аутентификатора."
 
 #: src/dialogs/auth/disable-two-factor.tsx
-msgid "Enter your password to disable two-factor authentication. Your account will be less secure without 2FA enabled."
-msgstr "Введите пароль, чтобы отключить двухфакторную аутентификацию. Без 2FA ваша учетная запись будет менее защищена."
+msgid "Enter your password to turn off two-step verification. Without it, your password alone can sign in to your account."
+msgstr "Введите пароль, чтобы отключить двухэтапную проверку. Без нее для входа в учетную запись будет достаточно одного пароля."
+
+#: src/dialogs/auth/disable-two-factor.tsx
+#: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/login.tsx
+msgid "Enter your password."
+msgstr "Введите пароль."
 
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Entry deleted"
@@ -4697,7 +4918,6 @@ msgstr "Выйти из режима фокусировки"
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/write.tsx
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Experience"
 msgstr "Опыт"
@@ -4720,7 +4940,7 @@ msgid "Export applications"
 msgstr "Экспорт заявок"
 
 #: src/features/command-palette/pages/navigation.tsx
-msgid "Export Data"
+msgid "Export data"
 msgstr "Экспорт данных"
 
 #: src/features/settings/account/data.tsx
@@ -4784,7 +5004,7 @@ msgstr "Факт забыт"
 msgid "Fact type"
 msgstr "Тип факта"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "Факты"
@@ -4796,80 +5016,6 @@ msgstr "Факты, истории и предпочтения, включенн
 #: src/features/settings/ai/providers.tsx
 msgid "Failed"
 msgstr "Неуспешный"
-
-#. Fallback toast when account registration fails without a server error message
-#: src/features/auth/pages/register.tsx
-msgid "Failed to create your account. Please try again."
-msgstr "Не удалось создать Вашу учетную запись. Пожалуйста, попробуйте еще раз."
-
-#. Fallback toast when disabling two-factor authentication fails
-#: src/dialogs/auth/disable-two-factor.tsx
-msgid "Failed to disable two-factor authentication. Please try again."
-msgstr "Не удалось отключить двухфакторную аутентификацию. Пожалуйста, попробуйте еще раз."
-
-#. Fallback toast when enabling two-factor authentication fails
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Failed to enable two-factor authentication. Please try again."
-msgstr "Не удалось включить двухфакторную аутентификацию. Пожалуйста, попробуйте еще раз."
-
-#. Fallback toast when linking a social authentication provider fails
-#: src/features/settings/account/auth-hooks.ts
-msgid "Failed to link provider. Please try again."
-msgstr "Не удалось связать провайдера. Пожалуйста, попробуйте еще раз."
-
-#. Fallback toast when resetting password fails and no backend message is available
-#: src/features/auth/pages/reset-password.tsx
-msgid "Failed to reset your password. Please try again."
-msgstr "Не удалось сбросить Ваш пароль. Пожалуйста, попробуйте еще раз."
-
-#. Fallback toast when requesting password reset email fails without backend message
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Failed to send password reset email. Please try again."
-msgstr "Не удалось отправить письмо для сброса пароля. Пожалуйста, попробуйте еще раз."
-
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
-#: src/features/auth/components/social-auth.tsx
-#: src/features/auth/pages/login.tsx
-msgid "Failed to sign in. Please try again."
-msgstr "Не удалось войти. Пожалуйста, попробуйте еще раз."
-
-#. Fallback toast when signing out fails
-#: src/features/user/dropdown-menu.tsx
-msgid "Failed to sign out. Please try again."
-msgstr "Не удалось выйти из системы. Пожалуйста, попробуйте еще раз."
-
-#. Fallback toast when unlinking a social authentication provider fails
-#: src/features/settings/account/auth-hooks.ts
-msgid "Failed to unlink provider. Please try again."
-msgstr "Не удалось отвязать провайдера. Пожалуйста, попробуйте еще раз."
-
-#. Fallback toast when changing account password fails
-#: src/dialogs/auth/change-password.tsx
-msgid "Failed to update your password. Please try again."
-msgstr "Не удалось обновить Ваш пароль. Пожалуйста, попробуйте еще раз."
-
-#. Fallback toast when uploading profile picture for resume fails
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Failed to upload picture. Please try again."
-msgstr "Не удалось загрузить изображение. Пожалуйста, попробуйте еще раз."
-
-#. Fallback toast when resume password verification fails unexpectedly
-#: src/features/auth/pages/resume-password.tsx
-msgid "Failed to verify the password. Please try again."
-msgstr "Не удалось проверить пароль. Пожалуйста, попробуйте еще раз."
-
-#. Fallback toast when verifying a backup two-factor authentication code fails
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Failed to verify your backup code. Please try again."
-msgstr "Не удалось проверить Ваш код резервного копирования. Пожалуйста, попробуйте еще раз."
-
-#. Fallback toast when verifying a two-factor authentication code fails
-#. Fallback toast when verifying two-factor setup code fails
-#: src/dialogs/auth/enable-two-factor.tsx
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Failed to verify your code. Please try again."
-msgstr "Не удалось проверить Ваш код. Пожалуйста, попробуйте еще раз."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -4925,8 +5071,8 @@ msgid "Fill fields"
 msgstr "Заполнить поля"
 
 #: src/features/applications/components/add-application-dialog.tsx
-msgid "Fill in the role and company. Connect an AI provider in settings to read them from the posting."
-msgstr "Укажите роль и компанию. Подключите поставщика искусственного интеллекта в настройках, чтобы прочитать его из объявления о вакансии."
+msgid "Fill in the role and company. Connect an AI provider in Settings to read them from the posting."
+msgstr "Укажите должность и компанию. Подключите AI-провайдера в настройках, чтобы извлекать их из вакансии."
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Fill in the role and company. The posting is saved with the application."
@@ -4996,22 +5142,6 @@ msgstr "Проверки соответствия, брифинги, обрат�
 msgid "Fit page to width"
 msgstr "Подогнать страницу по ширине"
 
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
-msgid "Fit to {authored} pages"
-msgstr "Подходит для страниц {authored}"
-
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
-msgid "Fit to one page"
-msgstr "Уместиться на одной странице"
-
-#: src/features/resume/editor/design/fit.ts
-msgid "Fits on {authored} pages: {details}"
-msgstr "Подходит для страниц {authored}: {details}."
-
-#: src/features/resume/editor/design/fit.ts
-msgid "Fits on one page: {details}"
-msgstr "Помещается на одной странице: {details}"
-
 #: src/features/resume/editor/check/issues.ts
 msgid "Fix the date"
 msgstr "Исправить дату"
@@ -5074,7 +5204,7 @@ msgid "Follow-up reminder"
 msgstr "Напоминание о повторном контакте"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
-msgid "Font Family"
+msgid "Font family"
 msgstr "Семейство шрифтов"
 
 #: src/features/resume/editor/design/style-groups.tsx
@@ -5082,15 +5212,15 @@ msgid "Font pairing"
 msgstr "Сопряжение шрифтов"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
-msgid "Font Size"
+msgid "Font size"
 msgstr "Размер шрифта"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
-msgid "Font Weight"
+msgid "Font weight"
 msgstr "Толщина шрифта"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
-msgid "Font Weights"
+msgid "Font weights"
 msgstr "Начертания шрифта"
 
 #: src/libs/error-message.ts
@@ -5144,7 +5274,7 @@ msgstr "Забыть"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
-msgid "Forgot Password?"
+msgid "Forgot password?"
 msgstr "Забыли пароль?"
 
 #: src/features/auth/pages/forgot-password.tsx
@@ -5159,9 +5289,15 @@ msgstr "Формат"
 msgid "Format stylesheet"
 msgstr "Формат таблицы стилей"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Formatting"
 msgstr "Форматирование"
+
+#. placeholder {0}: step.sections
+#. placeholder {1}: step.entries
+#: src/features/documents/new-document-dialog.tsx
+msgid "Found {0, plural, one {# section} other {# sections}} and {1, plural, one {# entry} other {# entries}}."
+msgstr "Найдено: {0, plural, one {# раздел} few {# раздела} many {# разделов} other {# раздела}} и {1, plural, one {# запись} few {# записи} many {# записей} other {# записи}}."
 
 #. placeholder {0}: day(row.firstSeenAt)
 #: src/features/career/today.tsx
@@ -5185,11 +5321,11 @@ msgid "Free ATS resume checker"
 msgstr "Бесплатная программа проверки резюме ATS"
 
 #: src/libs/seo.ts
-msgid "Free Resume Builder with PDF & Word Downloads"
-msgstr "Бесплатный конструктор резюме с возможностью загрузки PDF и Microsoft Word"
+msgid "Free resume builder with PDF & Word downloads"
+msgstr "Бесплатный конструктор резюме со скачиванием в PDF и Microsoft Word"
 
 #: src/libs/seo.ts
-msgid "Free Resume Templates with PDF Examples"
+msgid "Free resume templates with PDF examples"
 msgstr "Бесплатные шаблоны резюме с примерами в формате PDF"
 
 #: src/features/resume/editor/design/style-groups.tsx
@@ -5249,7 +5385,7 @@ msgid "From your resume"
 msgstr "Из вашего резюме"
 
 #: src/features/career/knowledge/search-regions-field.tsx
-msgid "From your time zone"
+msgid "From your timezone"
 msgstr "В зависимости от вашего часового пояса"
 
 #: src/features/resume/editor/write/basics-card.tsx
@@ -5258,7 +5394,7 @@ msgstr "Полное имя"
 
 #. Layout editor toggle label that makes a page single-column
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Full Width"
+msgid "Full width"
 msgstr "На всю ширину"
 
 #: src/dialogs/resume/index.tsx
@@ -5267,8 +5403,8 @@ msgstr "Сгенерировать случайное название"
 
 #: src/features/resume/export/use-resume-export.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
-msgid "Generating your PDF..."
-msgstr "Создаём ваш PDF..."
+msgid "Generating PDF…"
+msgstr "Создание PDF…"
 
 #: src/libs/locale.ts
 msgid "German"
@@ -5280,7 +5416,7 @@ msgid "Get a key at <0>{0}</0>. It's stored encrypted and used only for your req
 msgstr "Получите ключ по адресу <0>{0}</0>. Он хранится в зашифрованном виде и используется только для ваших запросов."
 
 #: src/features/homepage/prepare.tsx
-msgid "Get a plan for the interview, built from the posting and your own stories. Practise out loud, then write down how it went."
+msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "Получите план к собеседованию на основе вакансии и ваших собственных историй. Потренируйтесь вслух, а потом запишите, как все прошло."
 
 #: src/features/career/workspace/practise.tsx
@@ -5332,7 +5468,7 @@ msgstr "Чтобы сохранить, дайте истории названи�
 
 #. Secondary navigation button on backup-code verification screen
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Go Back"
+msgid "Go back"
 msgstr "Назад"
 
 #: src/components/layout/not-found-screen.tsx
@@ -5364,21 +5500,21 @@ msgstr "Google"
 msgid "Grade"
 msgstr "Оценка"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Gray"
+msgstr "Серый"
+
 #: src/libs/locale.ts
 msgid "Greek"
 msgstr "Греческий"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Green"
 msgstr "Зелёный"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Greeting"
 msgstr "Приветствие"
-
-#: src/features/resume/editor/write/rich-text-editor.tsx
-msgid "Grey"
-msgstr "Серый"
 
 #: src/features/documents/documents-page.tsx
 msgid "Grid"
@@ -5406,15 +5542,15 @@ msgctxt "Headings or Titles (H1, H2, H3, H4, H5, H6)"
 msgid "Heading"
 msgstr "Заголовок"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Heading 1"
 msgstr "Заголовок 1"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Heading 2"
 msgstr "Заголовок 2"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Heading 3"
 msgstr "Заголовок 3"
 
@@ -5451,6 +5587,10 @@ msgstr "Помоги превратить достижение в историю
 msgid "Help translate"
 msgstr "Помогите перевести"
 
+#: src/features/homepage/sections.tsx
+msgid "Help translate it into yours."
+msgstr "Помогите перевести его на ваш язык."
+
 #: src/features/homepage/prepare.tsx
 msgid "Hi Alex, great to confirm: you’ll meet our design team today at {time}, by video. Could you bring an example of your onboarding work?"
 msgstr "Здравствуйте, Alex! Подтверждаем: сегодня в {time} у вас встреча с нашей командой дизайна по видео. Сможете принести пример вашей работы над онбордингом?"
@@ -5477,10 +5617,9 @@ msgstr "Скрытые разделы сохраняют свое содержи
 msgid "Hidden terms are back"
 msgstr "Скрытые условия вернулись"
 
-#. placeholder {0}: hiddenTerms.join(", ")
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Hidden: {0}"
-msgstr "Скрыто: {0}"
+msgid "Hidden: {hiddenList}"
+msgstr "Скрыто: {hiddenList}"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Hide {title} from the page"
@@ -5489,14 +5628,6 @@ msgstr "Скрыть {title} со страницы"
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Hide from page"
 msgstr "Скрыть со страницы"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Hide Icons"
-msgstr "Скрыть значки"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Hide Link Underline"
-msgstr "Скрыть подчеркивание ссылки"
 
 #: src/features/resume/editor/chrome.tsx
 msgid "Hide panel"
@@ -5508,12 +5639,8 @@ msgid "Hide password"
 msgstr "Скрыть пароль"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Hide picture"
-msgstr "Скрыть изображение"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Hide Section Icons"
-msgstr "Скрыть значки разделов"
+msgid "Hide photo"
+msgstr "Скрыть фото"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Hide the photo"
@@ -5523,7 +5650,7 @@ msgstr "Скрыть фото"
 msgid "High"
 msgstr "Высокий"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Highlight"
 msgstr "Выделение цветом"
 
@@ -5540,20 +5667,31 @@ msgstr "Менеджер по найму"
 msgid "Hiring team"
 msgstr "Найм команды"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
 #: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "History"
 msgstr "История"
+
+#: src/features/documents/document-actions.tsx
+msgid "Hold to delete"
+msgstr "Удерживайте для удаления"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Home"
 msgstr "Главная"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Horizontal line"
 msgstr "Горизонтальная линия"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Horizontal margin"
+msgstr "Горизонтальный отступ"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Horizontal spacing"
+msgstr "Горизонтальный интервал"
 
 #: src/features/homepage/sections.tsx
 msgid "Hosting and development are paid for by people like you. Optional tip:"
@@ -5631,7 +5769,7 @@ msgid "Icon"
 msgstr "Иконка"
 
 #: src/features/resume/editor/write/entries.tsx
-msgid "Icon colour"
+msgid "Icon color"
 msgstr "Цвет значка"
 
 #: src/features/resume/editor/write/section-row.tsx
@@ -5662,9 +5800,9 @@ msgstr "Если кто-то прислал вам эту ссылку, попр
 msgid "If the app did not open, try again on a device where it is installed."
 msgstr "Если приложение не открылось, повторите попытку на устройстве, на котором оно установлено."
 
-#: src/features/settings/account/data.tsx
-msgid "If you used Sign in with Apple and Reactive Resume is still listed in your Apple Account after deletion, remove its access there too."
-msgstr "Если вы использовали вход с помощью Apple, а Reactive Resume по-прежнему отображается в вашей учетной записи Apple после удаления, удалите и к ней доступ."
+#: src/hooks/use-form-blocker.tsx
+msgid "If you close this dialog, your changes are lost."
+msgstr "Если закрыть это окно, изменения будут потеряны."
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Ignore"
@@ -5732,16 +5870,6 @@ msgstr "Импортируйте свое текущее резюме, и мы �
 msgid "Imported"
 msgstr "Импортировано"
 
-#. placeholder {0}: response.imported
-#: src/features/applications/components/import-applications-sheet.tsx
-msgid "Imported {0} applications."
-msgstr "Импортированные заявления о приеме на работу {0}."
-
-#. placeholder {0}: response.imported
-#: src/features/applications/components/import-applications-sheet.tsx
-msgid "Imported {0} applications. {skipped} rows had no company or role and were skipped."
-msgstr "Импортированные заявления о приеме на работу {0}. Строки {skipped} не имели компании или роли и были пропущены."
-
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Imported from {imported}."
 msgstr "Импортировано из {imported}."
@@ -5754,7 +5882,7 @@ msgstr "Импорт"
 msgid "Importing it into your new resume…"
 msgstr "Импортируйте его в свое новое резюме…"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Improve"
 msgstr "Улучшать"
 
@@ -5774,7 +5902,7 @@ msgstr "В хорошей компании"
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "Увеличьте межстрочный интервал, чтобы две строки не сливались в одну."
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Indent"
 msgstr "Увеличить отступ"
 
@@ -5798,7 +5926,6 @@ msgstr "Информация"
 msgid "Integrations"
 msgstr "Интеграции"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Interests"
 msgstr "Интересы"
@@ -5957,10 +6084,6 @@ msgstr "Возможно, она была удалена. Выберите др�
 msgid "It will be deleted for good and can't be restored."
 msgstr "Он будет удален навсегда и не подлежит восстановлению."
 
-#: src/features/settings/account/security.tsx
-msgid "It will no longer sign you in."
-msgstr "Он больше не будет выполнять вход в систему."
-
 #: src/features/applications/components/interview-dialog.tsx
 msgid "It will show on the application's timeline and on the calendar."
 msgstr "Он будет отображаться на временной шкале заявления о приеме на работу и в календаре."
@@ -5977,17 +6100,9 @@ msgstr "Он удален из временной шкалы навсегда."
 msgid "Italian"
 msgstr "Итальянский"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Italic"
 msgstr "Курсив"
-
-#: src/features/documents/trash-page.tsx
-msgid "Items are deleted permanently after 30 days."
-msgstr "записи удаляются безвозвратно через 30 дней."
-
-#: src/features/documents/trash-page.tsx
-msgid "Items you move here stay for 30 days."
-msgstr "записи, которые вы перемещаете сюда, сохраняются в течение 30 дней."
 
 #. placeholder {0}: providers[0]?.label ?? ""
 #: src/features/career/schedule-sheet.tsx
@@ -6078,7 +6193,7 @@ msgstr "Присоединяйтесь к сообществу в Discord"
 msgid "JSON read"
 msgstr "JSON читать"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
 msgstr "По ширине"
 
@@ -6104,6 +6219,7 @@ msgid "Keep account"
 msgstr "Сохранить аккаунт"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/hooks/use-form-blocker.tsx
 msgid "Keep editing"
 msgstr "Продолжить редактирование"
 
@@ -6186,6 +6302,10 @@ msgstr "Оставлен ваш вариант"
 msgid "Key ends in {0}"
 msgstr "Ключ заканчивается на {0}."
 
+#: src/features/settings/ai/api-keys.tsx
+msgid "Key revoked. Apps using it stop working now."
+msgstr "Ключ отозван. Приложения, которые его используют, перестают работать."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Key stored encrypted"
 msgstr "Ключ хранится в зашифрованном виде"
@@ -6210,6 +6330,7 @@ msgstr "Кхмерский"
 msgid "Kind regards,"
 msgstr "С уважением,"
 
+#: src/features/homepage/remember.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Knowledge"
@@ -6218,6 +6339,10 @@ msgstr "Знания"
 #: src/features/career/coach.tsx
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
 msgstr "Не удалось загрузить Знания. Попробуйте еще раз или отключите Знания перед отправкой."
+
+#: src/features/homepage/prepare.tsx
+msgid "Knowledge doesn’t mention mentoring."
+msgstr "В Знаниях не упоминается наставничество."
 
 #: src/libs/locale.ts
 msgid "Korean"
@@ -6251,7 +6376,6 @@ msgstr "Язык"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Languages"
 msgstr "Языки"
@@ -6269,6 +6393,11 @@ msgstr "Последнее редактирование"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "Последнее использование"
+
+#: src/features/assistant/conversation.tsx
+#: src/features/career/coach-chat.tsx
+msgid "Latest"
+msgstr "Последнее"
 
 #: src/libs/locale.ts
 msgid "Latvian"
@@ -6308,7 +6437,6 @@ msgid "Learning budget"
 msgstr "Бюджет на обучение"
 
 #: src/features/career/offers.tsx
-#: src/hooks/use-form-blocker.tsx
 msgid "Leave"
 msgstr "Покинуть"
 
@@ -6320,13 +6448,13 @@ msgstr "Оставляйте не менее половины дюйма отс�
 msgid "Leave empty to keep the saved key"
 msgstr "Оставьте пустым, чтобы сохранить сохраненный ключ."
 
-#: src/features/resume/editor/write/section-row.tsx
-msgid "Leave empty to reset the title to the original."
-msgstr "Оставьте пустым, чтобы сбросить заголовок к исходному."
-
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Leave it empty to remove the link."
 msgstr "Оставьте поле пустым, чтобы удалить ссылку."
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Leave it empty to use the original title."
+msgstr "Оставьте пустым, чтобы использовать исходный заголовок."
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Leave out"
@@ -6414,6 +6542,10 @@ msgstr "Тело письма"
 msgid "Letter details"
 msgstr "Детали письма"
 
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Letter duplicated"
+msgstr "Копия письма создана"
+
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Letter page"
 msgstr "Страница письма"
@@ -6455,7 +6587,7 @@ msgid "Likely questions, from the posting and your resume"
 msgstr "Вероятные вопросы из объявления о вакансии и вашего резюме."
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
-msgid "Line Height"
+msgid "Line height"
 msgstr "Высота строки"
 
 #: src/features/resume/editor/check/issues.ts
@@ -6472,7 +6604,7 @@ msgstr "Столь близкие строки могут сливаться п�
 
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/write/fields.tsx
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Link"
 msgstr "Связь"
@@ -6486,7 +6618,7 @@ msgid "Link a Reactive Resume to use AI match scoring and tailoring."
 msgstr "Привяжите резюме из Reactive Resume, чтобы использовать ИИ-оценку соответствия и адаптацию."
 
 #: src/features/resume/editor/write/basics-card.tsx
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Link address"
 msgstr "Адрес ссылки"
 
@@ -6556,10 +6688,6 @@ msgstr "LinkedIn"
 msgid "LinkedIn, Referral…"
 msgstr "LinkedIn, рекомендация…"
 
-#: src/features/settings/account/auth-hooks.ts
-msgid "Linking your {providerName} account..."
-msgstr "Привязка учетной записи {providerName}..."
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Linking…"
 msgstr "Связывание…"
@@ -6606,6 +6734,10 @@ msgstr "В прямом эфире на {0}"
 #: src/features/homepage/sections.tsx
 msgid "Live totals, refreshed every 6 hours."
 msgstr "Текущие итоговые данные, обновляемые каждые 6 часов."
+
+#: src/components/layout/loading-screen.tsx
+msgid "Loading"
+msgstr "Загрузка"
 
 #: src/features/settings/integrations/ai-provider-load-state.tsx
 msgid "Loading AI connections…"
@@ -6660,6 +6792,10 @@ msgstr "Загрузка возобновляется…"
 msgid "Loading saved version…"
 msgstr "Загрузка сохраненной версии…"
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/custom-styles.tsx
+msgid "Loading stylesheet editor…"
+msgstr "Загрузка редактора стилей…"
+
 #: src/features/homepage/sections.tsx
 msgid "Loading the total"
 msgstr "Загрузка итоговой суммы"
@@ -6682,7 +6818,7 @@ msgstr "Загрузка…"
 msgid "Location"
 msgstr "Местоположение"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Locations"
 msgstr "Места"
 
@@ -6777,7 +6913,7 @@ msgid "Make the visible text and the destination match."
 msgstr "Сделайте так, чтобы видимый текст ссылки совпадал с адресом назначения."
 
 #: src/features/ats-checker/messages.ts
-msgid "Make them visibly larger, bolder or capitalised."
+msgid "Make them visibly larger, bolder or capitalized."
 msgstr "Сделайте их заметно крупнее, жирнее или заглавными."
 
 #: src/libs/locale.ts
@@ -6796,11 +6932,6 @@ msgstr "Управляется сервером"
 msgid "Managed by your server"
 msgstr "Управляется вашим сервером"
 
-#. Hero headline, line 4 of 4: A free, open-source / resume builder / and career / manager.
-#: src/features/homepage/hero.tsx
-msgid "manager."
-msgstr "карьерой."
-
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "Многие пункты начинаются с одной и той же фразы."
@@ -6812,14 +6943,6 @@ msgstr "март 2022 г."
 #: src/libs/locale.ts
 msgid "Marathi"
 msgstr "Маратхи"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Margin (Horizontal)"
-msgstr "Отступ (по горизонтали)"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Margin (Vertical)"
-msgstr "Отступ (по вертикали)"
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Margins"
@@ -6854,7 +6977,7 @@ msgstr "Отметьте отклик отправленным, чтобы со�
 msgid "Markdown (.md)"
 msgstr "Markdown (.md)"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Markdown shortcuts on"
 msgstr "Markdown ярлыки включены"
 
@@ -6986,8 +7109,7 @@ msgstr "Модель: {label}"
 msgid "Mono"
 msgstr "Мононуклеоз"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/features/resume/editor/chrome/bar.tsx
 msgid "More download formats"
 msgstr "Больше форматов загрузки"
 
@@ -6995,7 +7117,7 @@ msgstr "Больше форматов загрузки"
 msgid "More for {title}"
 msgstr "Другие действия: {title}"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "More formatting"
 msgstr "Другое форматирование"
 
@@ -7183,10 +7305,6 @@ msgstr "Назовите этот ключ доступа"
 msgid "Name this version"
 msgstr "Назовите эту версию"
 
-#: src/features/resume/share/history-tab.tsx
-msgid "Name this version, e.g. Sent to Lumen"
-msgstr "Назовите эту версию, например. Отправлено на Lumen."
-
 #: src/features/resume/editor/check/issues.ts
 msgid "Name, email, phone and location are found, and links are full addresses."
 msgstr "Находятся имя, адрес электронной почты, телефон и местоположение, а ссылки представляют собой полные адреса."
@@ -7237,17 +7355,13 @@ msgstr "Никогда"
 msgid "New"
 msgstr "Новый"
 
-#: src/features/auth/pages/error.tsx
-msgid "New account sign-ups are currently disabled on this server."
-msgstr "Регистрация новых аккаунтов на этом сервере сейчас отключена."
-
 #: src/features/settings/ai/api-keys.tsx
 msgid "New API key"
 msgstr "Новый ключ API"
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
-msgid "New Application"
+msgid "New application"
 msgstr "Новая заявка"
 
 #: src/features/assistant/assistant-panel.tsx
@@ -7275,17 +7389,14 @@ msgid "New key"
 msgstr "Новый ключ"
 
 #: src/features/resume/editor/write/entry-card.tsx
-msgid "New page"
-msgstr "Новая страница"
-
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "New Page"
+msgid "New page"
 msgstr "Новая страница"
 
 #. Label for new password input on reset-password form
 #: src/dialogs/auth/change-password.tsx
 #: src/features/auth/pages/reset-password.tsx
-msgid "New Password"
+msgid "New password"
 msgstr "Новый пароль"
 
 #: src/features/career/today.tsx
@@ -7376,8 +7487,8 @@ msgid "No commands match that search."
 msgstr "По этому запросу команд не найдено."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications."
-msgstr "Нет подключенных приложений."
+msgid "No connected applications yet. Apps you allow to access your account appear here."
+msgstr "Подключенных приложений пока нет. Здесь появятся приложения, которым вы разрешите доступ к учетной записи."
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -7436,10 +7547,6 @@ msgstr "Пока нет фактов для привязки. Добавьте �
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet. Add one above."
 msgstr "Фактов пока нет. Добавьте первый выше."
-
-#: src/features/applications/components/calendar-view.tsx
-msgid "No interviews"
-msgstr "Никаких интервью"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "No job yet"
@@ -7655,7 +7762,7 @@ msgstr "Пока не записано. Оставьте пустым, пока 
 msgid "Not saved"
 msgstr "Не сохранено"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Not saved — this fact was forgotten before."
 msgstr "Не сохранено — этот факт ранее был забыт."
 
@@ -7780,7 +7887,7 @@ msgstr "Срок уведомления"
 msgid "Now"
 msgstr "Сейчас"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Numbered list"
 msgstr "Нумерованный список"
 
@@ -7887,7 +7994,7 @@ msgid "Only if you want it to. Add your own key from OpenAI, Anthropic, Google G
 msgstr "Только если вы захотите. Добавьте свой ключ от OpenAI, Anthropic, Google Gemini, OpenRouter, Ollama или другого провайдера, чтобы получать более точные формулировки, адаптацию под вакансию, коучинг по заявкам и собеседованиям и чтение файлов Word. Без ключа ничего не отправляется в сервисы ИИ."
 
 #: src/features/ats-checker/messages.ts
-msgid "Only one recognisable section heading was found."
+msgid "Only one recognizable section heading was found."
 msgstr "Найден только один распознаваемый заголовок раздела."
 
 #: src/features/resume/share/history-tab.tsx
@@ -7950,8 +8057,8 @@ msgstr "Открыть брифинг"
 
 #. Button label to open the user's default email app
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Open Email Client"
-msgstr "Открыть почтовый клиент"
+msgid "Open email app"
+msgstr "Открыть почтовое приложение"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Open focus mode"
@@ -7970,13 +8077,9 @@ msgstr "Откройте редактор"
 msgid "Open in Offers"
 msgstr "Открыть в «Предложениях»"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-msgid "open issues"
-msgstr "открытые вопросы"
-
-#: src/features/career/coach-thread.tsx
-msgid "Open Preferences"
-msgstr "Открыть предпочтения"
+#: src/features/career/coach-chat.tsx
+msgid "Open preferences"
+msgstr "Открыть настройки"
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Open public page"
@@ -8079,7 +8182,7 @@ msgstr "Или своими словами…"
 msgid "Or upload a resume PDF"
 msgstr "Или загрузите PDF резюме"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Orange"
 msgstr "Оранжевый"
 
@@ -8091,6 +8194,7 @@ msgstr "Организация"
 msgid "Original page"
 msgstr "Исходная страница"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "Исходное форматирование таблицы сохраняется. Этот контент доступен только для чтения, поскольку его нельзя безопасно редактировать."
@@ -8120,7 +8224,7 @@ msgstr "из 100"
 msgid "Out of date: the text has changed since."
 msgstr "Устарело: текст с тех пор изменился."
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Outdent"
 msgstr "Уменьшить отступ"
 
@@ -8160,6 +8264,10 @@ msgstr "Страница 1"
 msgid "Page 1 · {formatLabel}"
 msgstr "Страница 1 · {formatLabel}"
 
+#: src/components/layout/not-found-screen.tsx
+msgid "Page not found"
+msgstr "Страница не найдена"
+
 #: src/features/assistant/conversation.tsx
 msgid "Page reading didn't finish."
 msgstr "Чтение страницы не завершилось."
@@ -8172,7 +8280,7 @@ msgstr "Просмотр страницы"
 msgid "Paper"
 msgstr "Бумага"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Paragraph"
 msgstr "Абзац"
 
@@ -8225,21 +8333,21 @@ msgstr "Passkeys"
 msgid "Password"
 msgstr "Пароль"
 
-#: src/features/resume/builder/password-dialog.tsx
-msgid "Password must be between 6 and 64 characters."
-msgstr "Длина пароля должна составлять от 6 до 64 символов."
+#: src/dialogs/auth/change-password.tsx
+msgid "Password changed"
+msgstr "Пароль изменен"
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Password removed"
 msgstr "Пароль удален"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Password reset. Sign in with your new password."
+msgstr "Пароль сброшен. Войдите с новым паролем."
+
 #: src/features/resume/share/link-tab.tsx
 msgid "Password set"
 msgstr "Пароль установлен"
-
-#: src/features/resume/builder/password-dialog.tsx
-msgid "Passwords do not match."
-msgstr "Пароли не совпадают."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Past conversations"
@@ -8437,10 +8545,6 @@ msgstr "Планируем вашу неделю"
 msgid "Play the list of languages"
 msgstr "Воспроизвести список языков"
 
-#: src/features/applications/components/file-attachment-field.tsx
-msgid "Please upload a PDF file."
-msgstr "Пожалуйста, загрузите PDF-файл."
-
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "Польский"
@@ -8495,8 +8599,28 @@ msgstr "Термины из вакансии в вашем резюме"
 
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/saved.tsx
+#: src/features/homepage/prepare.tsx
 msgid "Practice"
 msgstr "Тренировка"
+
+#: src/features/career/shared.tsx
+msgctxt "Application workspace tab: rehearse interview answers"
+msgid "Practice"
+msgstr "Тренировка"
+
+#: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/prepare.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice"
+msgstr "Потренироваться"
+
+#: src/features/homepage/remember.tsx
+msgid "Practice · Your opening, about 40 seconds aloud"
+msgstr "Тренировка · Ваше вступление, около 40 секунд вслух"
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice another question"
+msgstr "Потренировать другой вопрос"
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -8516,27 +8640,12 @@ msgstr "Приоритет для тренировки:"
 msgid "Practice questions are simulated, not from Fieldnote."
 msgstr "Тренировочные вопросы смоделированы, это не вопросы от Fieldnote."
 
-#: src/features/career/knowledge/stories.tsx
-#: src/features/career/shared.tsx
-#: src/features/career/workspace/prepare.tsx
 #: src/features/homepage/prepare.tsx
-msgid "Practise"
-msgstr "Тренировка"
-
-#: src/features/homepage/remember.tsx
-msgid "Practise · Your opening, about 40 seconds aloud"
-msgstr "Тренировка · Ваше вступление, около 40 секунд вслух"
-
-#: src/features/career/workspace/practise.tsx
-msgid "Practise another question"
-msgstr "Потренировать другой вопрос"
-
-#: src/features/homepage/prepare.tsx
-msgid "Practise your introduction once. Keep it to about 90 seconds."
+msgid "Practice your introduction once. Keep it to about 90 seconds."
 msgstr "Отрепетируйте самопрезентацию один раз. Уложитесь примерно в 90 секунд."
 
 #: src/features/career/workspace/practise.tsx
-msgid "Practising your story: {storyTitle}"
+msgid "Practicing your story: {storyTitle}"
 msgstr "Тренируем историю: {storyTitle}"
 
 #: src/features/ats-checker/messages.ts
@@ -8555,7 +8664,7 @@ msgstr "Предпочтение"
 msgid "Preferences"
 msgstr "Параметры"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgctxt "Career preferences: the roles, places, pay and ways of working you want"
 msgid "Preferences"
@@ -8563,6 +8672,7 @@ msgstr "Предпочтения"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/shared.tsx
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Prepare"
@@ -8589,11 +8699,10 @@ msgid "Preparing edits…"
 msgstr "Готовим правки…"
 
 #: src/features/resume/export/use-resume-export.ts
-msgid "Preparing your resume for printing..."
-msgstr "Подготовка резюме к печати..."
+msgid "Preparing resume for printing…"
+msgstr "Подготовка резюме к печати…"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/features/resume/editor/chrome/bar.tsx
 msgid "Preparing…"
 msgstr "Подготовка…"
 
@@ -8641,7 +8750,7 @@ msgid "Previous month"
 msgstr "Предыдущий месяц"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
-msgid "Primary Color"
+msgid "Primary color"
 msgstr "Основной цвет"
 
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -8706,16 +8815,14 @@ msgstr "Ссылка на профиль участника {0}"
 msgid "Profile links must be public HTTPS addresses."
 msgstr "Ссылки на профили должны быть публичными HTTPS-адресами."
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Profiles"
 msgstr "Профили"
 
 #: src/components/level/combobox.tsx
-msgid "Progress Bar"
+msgid "Progress bar"
 msgstr "Индикатор прогресса"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Projects"
 msgstr "Проекты"
@@ -8771,7 +8878,6 @@ msgstr "Ссылки на публичные профили необязател
 msgid "Public, with a password"
 msgstr "Публичный, с паролем"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Publications"
 msgstr "Публикации"
@@ -8780,7 +8886,7 @@ msgstr "Публикации"
 msgid "Publisher"
 msgstr "Издатель"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Purple"
 msgstr "Фиолетовый"
 
@@ -8792,7 +8898,7 @@ msgstr "Разместите обычный адрес электронной п
 msgid "Put it all on <0>one page.</0>"
 msgstr "Поместите все это на <0>одну страницу</0>."
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Put the caret in a line to improve it"
 msgstr "Поместите курсор в строку, чтобы улучшить его."
 
@@ -8803,6 +8909,11 @@ msgstr "QR-код"
 #: src/features/resume/share/link-tab.tsx
 msgid "QR code for {url}"
 msgstr "QR-код для {url}"
+
+#. Accessible title for QR code image shown during two-factor setup
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "QR code for two-step verification"
+msgstr "QR-код для двухэтапной проверки"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Question {position} of {total}"
@@ -8894,6 +9005,11 @@ msgstr "Читает вслух {0}; это может расходовать т
 msgid "Read aloud by your browser's voice."
 msgstr "Читает вслух голос вашего браузера."
 
+#. placeholder {0}: dates.raw
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Read as “{0}”. Pick a month so it sorts and prints consistently."
+msgstr "Распознано как «{0}». Выберите месяц, чтобы дата единообразно сортировалась и печаталась."
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Read briefing"
 msgstr "Читать брифинг"
@@ -8917,8 +9033,8 @@ msgid "Read questions with"
 msgstr "Читать вопросы голосом"
 
 #: src/features/resume/stylesheet/editor.tsx
-msgid "Read the Applying Custom Styles guide."
-msgstr "Ознакомьтесь с руководством по применению пользовательских стилей."
+msgid "Read the “Applying custom styles” guide."
+msgstr "Прочитайте руководство «Применение пользовательских стилей»."
 
 #: src/features/assistant/conversation.tsx
 msgid "Read the attachment"
@@ -9114,10 +9230,10 @@ msgid "Rectangle"
 msgstr "Прямоугольник"
 
 #: src/components/level/combobox.tsx
-msgid "Rectangle (Full Width)"
+msgid "Rectangle (full width)"
 msgstr "Прямоугольник (на всю ширину)"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Red"
 msgstr "Красный"
 
@@ -9125,7 +9241,6 @@ msgstr "Красный"
 msgid "Redo resume change"
 msgstr "Повторить изменение резюме"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "References"
 msgstr "Рекомендации"
@@ -9180,6 +9295,7 @@ msgid "Reload"
 msgstr "Перезагрузить"
 
 #: src/features/career/shared.tsx
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/remember.tsx
 msgid "Remember"
@@ -9189,12 +9305,12 @@ msgstr "Запомнить"
 msgid "Remember facts from my messages"
 msgstr "Запоминать факты из моих сообщений"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/debrief.tsx
 msgid "Remember for {company} only?"
 msgstr "Запомнить только для {company}?"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Remember this for future coaching?"
 msgstr "Запомнить это для будущего коучинга?"
 
@@ -9202,7 +9318,7 @@ msgstr "Запомнить это для будущего коучинга?"
 msgid "Remember your password? <0/>"
 msgstr "Вспомнили пароль? <0/>"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Remembered: “{text}”"
 msgstr "Запомнено: «{text}»"
 
@@ -9227,12 +9343,13 @@ msgstr "Удаленно"
 msgid "Remote, Hybrid, a city…"
 msgstr "Удаленно, гибридно, город…"
 
-#: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/resume/share/link-tab.tsx
-#: src/features/settings/account/profile.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "Удалять"
+
+#: src/features/settings/account/security.tsx
+msgid "Remove “{name}”?"
+msgstr "Удалить «{name}»?"
 
 #. placeholder {0}: attachment.filename
 #. placeholder {0}: contact.name
@@ -9270,10 +9387,23 @@ msgstr "Удалить поле"
 msgid "Remove file"
 msgstr "Удалить файл"
 
+#: src/features/settings/account/security.tsx
+msgid "Remove passkey"
+msgstr "Удалить ключ доступа"
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Remove password"
+msgstr "Удалить пароль"
+
 #. placeholder {0}: index + 1
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Remove person {0}"
 msgstr "Удалить участника {0}"
+
+#: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/settings/account/profile.tsx
+msgid "Remove photo"
+msgstr "Удалить фото"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Remove question"
@@ -9291,10 +9421,6 @@ msgstr "Удалить тег"
 msgid "Remove the password?"
 msgstr "Удалить пароль?"
 
-#: src/features/settings/account/security.tsx
-msgid "Remove this passkey?"
-msgstr "Удалить этот ключ доступа?"
-
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Remove this photo?"
 msgstr "Удалить это фото?"
@@ -9308,6 +9434,10 @@ msgstr "Переименовать"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Rename letter"
 msgstr "Переименовать букву"
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Rename section"
+msgstr "Переименовать раздел"
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Rename version"
@@ -9363,14 +9493,11 @@ msgstr "Ответ"
 msgid "Reply copied"
 msgstr "Ответ скопирован"
 
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/sections.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Report a bug"
 msgstr "Сообщить об ошибке"
-
-#: src/features/homepage/footer.tsx
-msgid "Report an issue"
-msgstr "Сообщить о проблеме"
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Require a password"
@@ -9398,7 +9525,7 @@ msgstr "Сбросить настройки дизайна по умолчани
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
-msgid "Reset Password"
+msgid "Reset password"
 msgstr "Сбросить пароль"
 
 #: src/features/auth/pages/reset-password.tsx
@@ -9463,6 +9590,8 @@ msgstr "резюме"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-card.tsx
+#: src/routes/_home/index.tsx
+#: src/routes/$username/$slug.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "Резюме"
@@ -9487,7 +9616,7 @@ msgstr "резюме + письмо"
 msgid "Resume attached"
 msgstr "Резюме прикреплено"
 
-#. Hero headline, line 2 of 4: A free, open-source / resume builder / and career / manager.
+#. Hero headline, line 2 of 4: A free, open-source / resume builder / and / career manager. Lines 2 and 4 are highlighted: keep each a complete phrase.
 #: src/features/homepage/hero.tsx
 msgid "resume builder"
 msgstr "для создания резюме"
@@ -9496,7 +9625,7 @@ msgstr "для создания резюме"
 msgid "Resume builder"
 msgstr "составитель резюме"
 
-#: src/features/resume/preview/resume-accessible-text.tsx
+#: src/features/resume/preview/preview.browser.tsx
 msgid "Resume content"
 msgstr "Содержание резюме"
 
@@ -9606,7 +9735,7 @@ msgstr "Для проверки нужно подключение ИИ. <0>До�
 msgid "Revoke"
 msgstr "Отозвать"
 
-#. placeholder {0}: key.name || key.start || ""
+#. placeholder {0}: key.name || key.start || t`unnamed key`
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "Отозвать {0}"
@@ -9661,7 +9790,7 @@ msgstr "Роль участника {0}"
 msgid "Role, company or location"
 msgstr "Роль, компания или местоположение"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Roles"
 msgstr "Должности"
 
@@ -9737,15 +9866,13 @@ msgstr "Sam, Fieldnote"
 msgid "Same you. Less starting over."
 msgstr "Вы — те же. Начинать с нуля — реже."
 
-#: src/features/documents/new-document-dialog.tsx
+#: src/features/documents/use-start-document.ts
 msgid "Sample resume added. Delete it anytime."
 msgstr "Образец резюме добавлен. Удалите его в любое время."
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
-#: src/features/documents/document-actions.tsx
 #: src/features/resume/share/history-tab.tsx
-#: src/features/settings/account/security.tsx
 msgid "Save"
 msgstr "Сохранить"
 
@@ -9777,12 +9904,9 @@ msgstr "Сохраните еще одно предложение для сра�
 msgid "Save as application…"
 msgstr "Сохранить как заявление о приеме на работу…"
 
+#: src/dialogs/resume/index.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Save changes"
-msgstr "Сохранить изменения"
-
-#: src/dialogs/resume/index.tsx
-msgid "Save Changes"
 msgstr "Сохранить изменения"
 
 #: src/features/settings/ai/web-access.tsx
@@ -9806,6 +9930,10 @@ msgstr "Сохранить собеседование"
 msgid "Save job"
 msgstr "Сохранить работу"
 
+#: src/features/settings/account/security.tsx
+msgid "Save name"
+msgstr "Сохранить название"
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Save schedule"
 msgstr "Сохранить расписание"
@@ -9813,6 +9941,10 @@ msgstr "Сохранить расписание"
 #: src/features/career/knowledge/stories.tsx
 msgid "Save story"
 msgstr "Сохранить историю"
+
+#: src/features/documents/document-actions.tsx
+msgid "Save tags"
+msgstr "Сохранить теги"
 
 #: src/features/ats-checker/messages.ts
 msgid "Save the file with every page upright."
@@ -9829,6 +9961,10 @@ msgstr "Сохранить в Знания"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save to the application"
 msgstr "Сохранить в заявку на работу"
+
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Save your backup codes"
+msgstr "Сохраните резервные коды"
 
 #: src/features/resume/share/format.ts
 msgid "saved"
@@ -9869,7 +10005,7 @@ msgid "Saved {0} to Applications"
 msgstr "Сохранено в заявки: {0}"
 
 #. placeholder {0}: story.data.title
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Saved a story: {0}"
 msgstr "Сохранена история: {0}"
 
@@ -9885,7 +10021,7 @@ msgstr "Сохраненное описание"
 msgid "Saved just now"
 msgstr "Сохранено только что"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Saved offers"
 msgstr "Сохраненные предложения"
 
@@ -9901,7 +10037,7 @@ msgstr "Сохранено в заявки вместе с вакансией"
 msgid "Saved to Knowledge as a fact"
 msgstr "Сохранено в Знания как факт"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/debrief.tsx
 msgid "Saved to Knowledge, private to this application."
 msgstr "Сохранено в Знания, доступно только для этой заявки."
@@ -9930,8 +10066,8 @@ msgid "Say it aloud"
 msgstr "Скажите это вслух"
 
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Scan the QR code below with your preferred authenticator app. You can also copy the secret below and paste it into your app."
-msgstr "Сканируйте QR-код ниже с помощью вашего приложения-аутентификатора. Вы также можете скопировать секрет ниже и вставить его в приложение."
+msgid "Scan the QR code with your authenticator app, or copy the secret and paste it into the app."
+msgstr "Отсканируйте QR-код в приложении-аутентификаторе или скопируйте секрет и вставьте его в приложение."
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Schedule an interview"
@@ -10019,7 +10155,7 @@ msgstr "Поиск не удался"
 
 #. Accessible label for icon picker search input
 #. Placeholder text in icon picker search input
-#: src/components/input/icon-picker.tsx
+#: src/components/input/icon-picker-grid.tsx
 msgid "Search for an icon"
 msgstr "Поиск иконки"
 
@@ -10092,7 +10228,7 @@ msgstr "Выполняет поиск с помощью поиска вашег�
 msgid "Searching job postings…"
 msgstr "Поиск вакансий…"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Searching the web"
 msgstr "Ищем в интернете"
 
@@ -10101,8 +10237,8 @@ msgid "Searching the web…"
 msgstr "Поиск в Интернете…"
 
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Secret copied to clipboard."
-msgstr "Секрет скопирован в буфер обмена."
+msgid "Secret copied"
+msgstr "Секрет скопирован"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Section headings"
@@ -10118,8 +10254,8 @@ msgid "Sections · print order"
 msgstr "Разделы · порядок печати"
 
 #: src/features/resume/editor/check/issues.ts
-msgid "Sections use headings systems recognise, and work experience shows."
-msgstr "В разделах используются заголовки, которые распознаются системами, и показывается опыт работы."
+msgid "Sections use headings systems recognize, and work experience shows."
+msgstr "Разделы используют заголовки, которые распознают системы, а опыт работы отображается."
 
 #: src/features/career/workspace/prepare.tsx
 msgid "See below"
@@ -10172,8 +10308,8 @@ msgstr "Отправлять"
 
 #. Primary action button label on forgot-password form
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Send Password Reset Email"
-msgstr "Отправить письмо для сброса пароля"
+msgid "Send reset link"
+msgstr "Отправить ссылку для сброса"
 
 #: src/features/ats-checker/messages.ts
 msgid "Send the resume itself rather than a portfolio wrapper."
@@ -10254,6 +10390,10 @@ msgstr "Отправил"
 msgid "Sent to {0}"
 msgstr "Отправлено на {0}."
 
+#: src/features/resume/share/history-tab.tsx
+msgid "Sent to Lumen"
+msgstr "Отправлено в Lumen"
+
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "Сербский"
@@ -10267,7 +10407,7 @@ msgid "Set a password"
 msgstr "Установить пароль"
 
 #: src/features/resume/builder/password-dialog.tsx
-msgid "Set Password"
+msgid "Set password"
 msgstr "Установить пароль"
 
 #: src/features/ats-checker/messages.ts
@@ -10282,6 +10422,10 @@ msgstr "Настроить поиск"
 msgid "Set up web search in Settings"
 msgstr "Настройте веб-поиск в настройках"
 
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Set up your authenticator app"
+msgstr "Настройте приложение-аутентификатор"
+
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
@@ -10290,22 +10434,19 @@ msgstr "Настройте веб-поиск в настройках"
 msgid "Settings"
 msgstr "Настройки"
 
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Setup Authenticator App"
-msgstr "Настроить приложение-аутентификатор"
-
 #: src/features/settings/ai/mcp.tsx
 msgid "Setup guide"
 msgstr "Руководство по настройке"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Shadow Color"
+msgid "Shadow color"
 msgstr "Цвет тени"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Shadow Width"
+msgid "Shadow width"
 msgstr "Ширина тени"
 
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/share.tsx
 #: src/features/resume/public/public-resume.tsx
@@ -10314,8 +10455,7 @@ msgstr "Ширина тени"
 msgid "Share"
 msgstr "Делиться"
 
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/features/resume/editor/chrome/share-sheet.tsx
 msgid "Share & export"
 msgstr "Поделиться и экспортировать"
 
@@ -10327,8 +10467,7 @@ msgstr "Поделитесь общедоступной ссылкой, доба
 msgid "Share public resume"
 msgstr "Поделиться общедоступным резюме"
 
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/features/resume/editor/chrome/share-sheet.tsx
 msgid "Share sections"
 msgstr "Поделиться разделами"
 
@@ -10410,6 +10549,10 @@ msgstr "Показать закрыто"
 msgid "Show heading"
 msgstr "Показать заголовок"
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Show icons"
+msgstr "Показывать значки"
+
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
 msgstr "Показать ссылку в заголовке"
@@ -10430,8 +10573,12 @@ msgid "Show password"
 msgstr "Показать пароль"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Show picture"
-msgstr "Показать картинку"
+msgid "Show photo"
+msgstr "Показать фото"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Show section icons"
+msgstr "Показывать значки разделов"
 
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Show templates"
@@ -10466,7 +10613,7 @@ msgid "Sidebar side"
 msgstr "Сторона боковой панели"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
-msgid "Sidebar Width"
+msgid "Sidebar width"
 msgstr "Ширина боковой панели"
 
 #: src/features/resume/editor/check/issues.ts
@@ -10502,7 +10649,7 @@ msgid "Sign out"
 msgstr "Выйти"
 
 #: src/dialogs/auth/change-password.tsx
-msgid "Sign out from all other devices"
+msgid "Sign out of all other devices"
 msgstr "Выйти на всех остальных устройствах"
 
 #. Primary action button label on registration form
@@ -10603,7 +10750,6 @@ msgstr "Навык"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Skills"
 msgstr "Навыки"
@@ -10613,7 +10759,7 @@ msgid "Skip"
 msgstr "Пропустить"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Skip and Upload"
+msgid "Skip and upload"
 msgstr "Пропустить и загрузить"
 
 #: src/features/homepage/page.tsx
@@ -10625,8 +10771,7 @@ msgstr "Перейти к содержимому"
 msgid "Skip to main content"
 msgstr "Перейти к основному содержимому"
 
-#: src/routes/builder/$resumeId/-components/editor-shell.tsx
-#: src/routes/builder/letter/-components/letter-shell.tsx
+#: src/features/resume/editor/chrome/shell.tsx
 msgid "Skip to the page"
 msgstr "Перейти на страницу"
 
@@ -10679,8 +10824,8 @@ msgid "Some systems mishandle images, and photos are discouraged in some countri
 msgstr "Некоторые системы неправильно обрабатывают изображения, а в некоторых странах фотографии не рекомендуются."
 
 #: src/features/resume/editor/check/issues.ts
-msgid "Some systems only recognise links that start with https://. This one reads as plain text: “{value}”."
-msgstr "Некоторые системы распознают только ссылки, начинающиеся с https://.. Эта ссылка читается как обычный текст: «{value}»."
+msgid "Some systems only recognize links that start with https://. This one reads as plain text: “{value}”."
+msgstr "Некоторые системы распознают только ссылки, начинающиеся с https://. Эта ссылка читается как обычный текст: «{value}»."
 
 #: src/features/ats-checker/messages.ts
 msgid "Some text falls outside the page."
@@ -10689,35 +10834,6 @@ msgstr "Часть текста выходит за пределы страни�
 #: src/features/ats-checker/messages.ts
 msgid "Some text is rotated."
 msgstr "Часть текста повёрнута."
-
-#: src/components/layout/error-screen.tsx
-#: src/features/resume/preview/preview.browser.tsx
-msgid "Something went wrong"
-msgstr "Что-то пошло не так."
-
-#: src/features/documents/new-document-dialog.tsx
-msgid "Something went wrong while importing. Try again, or start blank."
-msgstr "При импорте что-то пошло не так. Попробуйте еще раз или начните с нуля."
-
-#: src/features/ats-checker/checker.tsx
-msgid "Something went wrong while reading that file. Try again."
-msgstr "Что-то пошло не так при чтении этого файла. Попробуйте еще раз."
-
-#: src/features/auth/pages/error.tsx
-msgid "Something went wrong while signing you in. Please try again."
-msgstr "При входе что-то пошло не так. Попробуйте ещё раз."
-
-#: src/features/resume/builder/password-dialog.tsx
-#: src/features/resume/share/link-tab.tsx
-msgid "Something went wrong. Please try again."
-msgstr "Что-то пошло не так. Пожалуйста, попробуйте еще раз."
-
-#: src/features/applications/use-application-actions.ts
-#: src/features/documents/document-actions.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
-msgid "Something went wrong. Try again."
-msgstr "Что-то пошло не так. Попробуйте еще раз."
 
 #: src/features/documents/documents-page.tsx
 msgid "Sort"
@@ -10740,18 +10856,10 @@ msgid "Source code"
 msgstr "Исходный код"
 
 #: src/features/assistant/conversation.tsx
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 msgid "Sources"
 msgstr "Источники"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Spacing (Horizontal)"
-msgstr "Интервал (по горизонтали)"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Spacing (Vertical)"
-msgstr "Интервал (по вертикали)"
 
 #: src/libs/locale.ts
 msgid "Spanish"
@@ -10824,18 +10932,9 @@ msgstr "Стандартные заголовки разделов"
 msgid "Star Reactive Resume on GitHub"
 msgstr "Звезда Reactive Resume на GitHub"
 
-#: src/features/homepage/header.tsx
-msgid "Star Reactive Resume on GitHub, {count} stars"
-msgstr "Звезда Reactive Resume на звездах GitHub, {count}"
-
 #: src/components/input/github-stars-button.tsx
 msgid "Star us on GitHub (opens in new tab)"
 msgstr "Отметьте нас звездой на GitHub (откроется в новой вкладке)"
-
-#. placeholder {0}: starCount.toLocaleString()
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub, currently {0} stars (opens in new tab)"
-msgstr "Отметьте нас звездой на GitHub, сейчас {0} звезд (откроется в новой вкладке)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -10932,17 +11031,9 @@ msgstr "Статистика"
 msgid "Status"
 msgstr "Статус"
 
-#: src/hooks/use-form-blocker.tsx
-msgid "Stay"
-msgstr "Остаться"
-
 #: src/features/documents/new-document-dialog.tsx
 msgid "Stay here"
 msgstr "Оставайся здесь"
-
-#: src/features/resume/editor/design/fit.ts
-msgid "Still {pages} pages at 9 pt. Hide a section or shorten entries."
-msgstr "По-прежнему страницы {pages} в 9 пт. Скройте раздел или сократите записи."
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
@@ -10963,7 +11054,7 @@ msgstr "Остановить запись"
 msgid "Stop when you're done. Nothing is sent until then."
 msgstr "Остановите, когда закончите. До этого ничего не отправляется."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Stopped"
 msgstr "Остановлено"
 
@@ -10976,7 +11067,11 @@ msgstr "Остановлено на {0}"
 msgid "Stopped. No edits were proposed."
 msgstr "Остановился. Никаких правок предложено не было."
 
-#: src/features/career/coach-thread.tsx
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Store these backup codes somewhere safe. Each one signs you in once if you lose your device."
+msgstr "Сохраните эти резервные коды в надежном месте. Каждый позволяет войти один раз, если вы потеряете устройство."
+
+#: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Stories"
@@ -11006,7 +11101,7 @@ msgstr "История не найдена"
 msgid "Strengthen"
 msgstr "Усилить"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Strikethrough"
 msgstr "Зачёркнутый"
 
@@ -11069,7 +11164,6 @@ msgid "Summaries of your open applications"
 msgstr "Сводки по вашим открытым заявкам"
 
 #: src/features/resume/editor/write/summary-editor.tsx
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Summary"
 msgstr "Краткое содержание"
@@ -11104,6 +11198,7 @@ msgstr "Выключить его"
 msgid "Switch model"
 msgstr "Модель переключения"
 
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to dark mode"
 msgstr "Переключиться в темный режим"
@@ -11112,6 +11207,7 @@ msgstr "Переключиться в темный режим"
 msgid "Switch to dark theme"
 msgstr "Переключиться на темную тему"
 
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "Переключиться в светлый режим"
@@ -11167,11 +11263,6 @@ msgstr "Теги"
 #: src/dialogs/resume/index.tsx
 msgid "Tags can be used to categorize your resume by keywords."
 msgstr "Теги можно использовать для категоризации резюме по ключевым словам."
-
-#. placeholder {0}: documents.length
-#: src/features/documents/document-actions.tsx
-msgid "Tags for {0} documents"
-msgstr "Теги для документов: {0}"
 
 #: src/features/ats-checker/messages.ts
 msgid "Tags give software an explicit reading order. Enable them when exporting, if your tool offers it."
@@ -11315,16 +11406,13 @@ msgstr "Тестирование…"
 msgid "Text"
 msgstr "Текст"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Text alignment"
 msgstr "Выравнивание текста"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
-msgid "Text Color"
-msgstr "Цвет текста"
-
-#: src/features/resume/editor/write/rich-text-editor.tsx
-msgid "Text colour"
+msgid "Text color"
 msgstr "Цвет текста"
 
 #: src/features/resume/editor/check/issues.ts
@@ -11359,7 +11447,7 @@ msgstr "Текст расположен в области колонтитула
 msgid "Text size"
 msgstr "Размер текста"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Text style"
 msgstr "Стиль текста"
 
@@ -11384,8 +11472,8 @@ msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesig
 msgstr "Спасибо, Sam! Вот пример: в Northwind Labs на мне был редизайн онбординга — от 14 интервью с клиентами до более короткой настройки."
 
 #: src/features/ats-checker/checker.tsx
-msgid "That file couldn't be read as a PDF."
-msgstr "Этот файл не удалось прочитать как PDF."
+msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
+msgstr "Этот файл не удалось прочитать как PDF. Выберите PDF-файл и попробуйте еще раз."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file is too large to check. PDFs up to 25 MB work."
@@ -11395,13 +11483,17 @@ msgstr "Этот файл слишком велик, чтобы его можн�
 msgid "That link couldn't be read. Paste the posting text instead."
 msgstr "Эту ссылку невозможно прочитать. Вместо этого вставьте текст объявления о вакансии."
 
-#: src/features/auth/pages/error.tsx
-msgid "That provider account is already linked to a different user."
-msgstr "Этот аккаунт провайдера уже связан с другим пользователем."
+#: src/features/auth/pages/resume-password.tsx
+msgid "That password isn't correct. Check it with the resume owner and try again."
+msgstr "Неверный пароль. Уточните его у владельца резюме и попробуйте еще раз."
 
 #: src/features/auth/pages/error.tsx
-msgid "That provider account uses a different email address than your account."
-msgstr "Этот аккаунт провайдера использует другой адрес электронной почты, чем ваш аккаунт."
+msgid "That provider account is already linked to another account. Use a different provider account."
+msgstr "Этот аккаунт провайдера уже связан с другой учетной записью. Используйте другой аккаунт провайдера."
+
+#: src/features/auth/pages/error.tsx
+msgid "That provider account uses a different email address than your account. Use a provider account with the same email address."
+msgstr "Этот аккаунт провайдера использует другой адрес электронной почты, чем ваша учетная запись. Используйте аккаунт провайдера с тем же адресом."
 
 #: src/features/settings/ai/providers.tsx
 msgid "That provider setup isn't valid. Check the base URL."
@@ -11412,24 +11504,24 @@ msgid "That recording was empty or over 2 MB. Try a shorter answer."
 msgstr "Запись пустая или больше 2 МБ. Попробуйте ответить короче."
 
 #: src/features/auth/pages/error.tsx
-msgid "That sign-in provider is no longer available on this server."
-msgstr "Этот провайдер входа больше не доступен на этом сервере."
+msgid "That sign-in provider is no longer available on this server. Use another sign-in method."
+msgstr "Этот провайдер входа больше не доступен на этом сервере. Используйте другой способ входа."
 
 #: src/features/resume/share/download-tab.tsx
 msgid "The {label} file couldn't be generated. Try again, or download PDF instead."
 msgstr "Не удалось создать файл {label}. Попробуйте еще раз или вместо этого загрузите PDF."
 
 #: src/features/homepage/prepare.tsx
-msgid "The 13-point activation lift. Your Knowledge has the before and after."
-msgstr "Рост активации на 13 пунктов. В ваших Знаниях есть данные до и после."
+msgid "The 13-point activation lift. Knowledge has the before and after."
+msgstr "Рост активации на 13 пунктов. В Знаниях есть данные до и после."
 
 #: src/features/homepage/faq.tsx
 msgid "The app is translated into {languages} languages by volunteers, and a resume can be written in any language, including right-to-left scripts like Arabic and Hebrew."
 msgstr "Приложение переводится на языки {languages} волонтерами, а резюме можно написать на любом языке, включая письмо с письмом справа налево, например на арабском и иврите."
 
 #: src/features/auth/pages/error.tsx
-msgid "The application that sent you here made an invalid authorization request."
-msgstr "Приложение, которое направило вас сюда, отправило недопустимый запрос авторизации."
+msgid "The application that sent you here made an invalid authorization request. Return to the application and try again."
+msgstr "Приложение, которое направило вас сюда, отправило недопустимый запрос авторизации. Вернитесь в приложение и попробуйте еще раз."
 
 #: src/features/documents/document-actions.tsx
 msgid "The application this letter is for."
@@ -11495,10 +11587,6 @@ msgstr "Файл не удалось прочитать как резюме."
 msgid "The greeting follows the name."
 msgstr "Приветствие следует за именем."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "the key"
-msgstr "ключ"
-
 #: src/features/settings/ai/providers.tsx
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Ключ зашифрован на сервере и больше никогда не отображается. Сохранение проверяет соединение."
@@ -11563,10 +11651,6 @@ msgstr "Не удалось прочитать PDF страницы. Отред�
 msgid "The pages are pictures, with no text behind them."
 msgstr "Страницы — это изображения, без текста под ними."
 
-#: src/features/auth/pages/resume-password.tsx
-msgid "The password you entered is incorrect"
-msgstr "Введенный пароль неверен"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "The posting asks for “{label}”. If it's true for me, work it into my resume where it fits. Ask me first."
 msgstr "В объявлении о вакансии указано «{label}». Если это правда для меня, включите это в мое резюме там, где оно подходит. Сначала спроси меня."
@@ -11579,10 +11663,6 @@ msgstr "Не удалось прочитать объявление о вака�
 msgid "The posting saved with this application."
 msgstr "Объявление о вакансии сохранено вместе с этим заявлением о приеме на работу."
 
-#: src/features/settings/ai/providers.tsx
-msgid "The provider didn't answer."
-msgstr "Провайдер не ответил."
-
 #: src/features/assistant/provider-setup.tsx
 msgid "The provider didn't answer. Check the key and the model."
 msgstr "Провайдер не ответил. Проверьте ключ и модель."
@@ -11592,20 +11672,20 @@ msgid "The provider didn't answer. Check the key, the model and the base URL."
 msgstr "Провайдер не ответил. Проверьте ключ, модель и базу URL."
 
 #: src/features/auth/pages/error.tsx
-msgid "The provider didn't share an email address, which is required to sign in."
-msgstr "Провайдер не передал адрес электронной почты, который необходим для входа."
+msgid "The provider didn't share an email address, which is required. Allow email access when the provider asks, or use another sign-in method."
+msgstr "Провайдер не передал адрес электронной почты, а он обязателен. Разрешите доступ к почте, когда провайдер попросит, или используйте другой способ входа."
 
 #: src/features/auth/pages/error.tsx
-msgid "The provider rejected this sign-in attempt. Please start again."
-msgstr "Провайдер отклонил эту попытку входа. Начните заново."
+msgid "The provider rejected this sign-in attempt. Try again."
+msgstr "Провайдер отклонил эту попытку входа. Попробуйте еще раз."
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The provider returned a review that couldn't be read. Try again."
 msgstr "Поставщик вернул отзыв, который невозможно прочитать. Попробуйте еще раз."
 
 #: src/features/auth/pages/error.tsx
-msgid "The provider's response could not be verified. Please start again."
-msgstr "Не удалось проверить ответ провайдера. Начните заново."
+msgid "The provider's response couldn't be verified. Try again."
+msgstr "Не удалось проверить ответ провайдера. Попробуйте еще раз."
 
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
@@ -11619,10 +11699,6 @@ msgstr "резюме"
 #: src/features/resume/share/history-tab.tsx
 msgid "The resume as it is"
 msgstr "Резюме как оно есть"
-
-#: src/features/resume/preview/preview.browser.tsx
-msgid "The resume preview could not be updated. The last valid preview is still shown."
-msgstr "Не удалось обновить предварительный просмотр резюме. По-прежнему отображается последний корректный предварительный просмотр."
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The review couldn't finish. Try again."
@@ -11658,24 +11734,24 @@ msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "Оценка отражает надежность извлечения текста, а не ваши шансы."
 
 #: src/features/settings/ai/web-access.tsx
-msgid "The service did not respond in time."
-msgstr "Служба не ответила вовремя."
+msgid "The service didn't respond in time. Try again."
+msgstr "Служба не ответила вовремя. Попробуйте еще раз."
 
 #: src/features/settings/ai/web-access.tsx
-msgid "The service is unavailable or does not support this operation."
-msgstr "Сервис недоступен или не поддерживает данную операцию."
+msgid "The service is unavailable or doesn't support this. Try again later."
+msgstr "Служба недоступна или не поддерживает это. Попробуйте позже."
 
 #: src/features/settings/ai/web-access.tsx
-msgid "The service quota is exhausted."
-msgstr "Квота на обслуживание исчерпана."
+msgid "The service rejected the API key. Check the key and save it again."
+msgstr "Служба отклонила API-ключ. Проверьте ключ и сохраните его снова."
 
 #: src/features/settings/ai/web-access.tsx
-msgid "The service rejected the credentials."
-msgstr "Служба отклонила учетные данные."
+msgid "The service's quota is used up. Check your plan with the service, or try again later."
+msgstr "Квота службы исчерпана. Проверьте свой тариф в службе или попробуйте позже."
 
 #: src/features/settings/ai/providers.tsx
-msgid "The test didn't run."
-msgstr "Тест не запустился."
+msgid "The test didn't run. Try again."
+msgstr "Тест не запустился. Попробуйте еще раз."
 
 #: src/features/ats-checker/messages.ts
 msgid "The text comes out unreadable."
@@ -11694,8 +11770,8 @@ msgid "Theme"
 msgstr "Тема"
 
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Then, enter the 6 digit code that the app provides to continue."
-msgstr "Затем введите шестизначный код, предоставленный приложением, чтобы продолжить."
+msgid "Then enter the 6-digit code from the app."
+msgstr "Затем введите 6-значный код из приложения."
 
 #: src/features/ats-checker/messages.ts
 msgid "There is a gap between two dated roles."
@@ -11750,13 +11826,13 @@ msgid "This browser can't take dictation, and none of your AI connections can tr
 msgstr "Этот браузер не поддерживает диктовку, и ни одно из ваших подключений ИИ не умеет расшифровывать речь (это умеют OpenAI, Google Gemini, Mistral, xAI, Groq и Vercel AI Gateway). <0>Добавьте подключение в настройках</0> или введите ответ текстом."
 
 #: src/features/auth/pages/consent.tsx
-msgid "This connection request is invalid or has expired."
-msgstr "Этот запрос на подключение недействителен или срок его действия истек."
+msgid "This connection request is invalid or has expired. Start the connection again from your client."
+msgstr "Этот запрос на подключение недействителен или истек. Начните подключение заново в своем клиенте."
 
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
-msgid "This conversation couldn't be opened."
-msgstr "Этот разговор не удалось открыть."
+msgid "This conversation couldn't be opened. Refresh the page to try again."
+msgstr "Не удалось открыть этот разговор. Обновите страницу, чтобы попробовать еще раз."
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date."
@@ -11858,6 +11934,10 @@ msgstr "Здесь измеряется, насколько точно прог�
 msgid "This month"
 msgstr "В этом месяце"
 
+#: src/components/layout/error-screen.tsx
+msgid "This page didn't load"
+msgstr "Страница не загрузилась"
+
 #: src/features/assistant/conversation.tsx
 msgid "This page is clipped or incomplete. Check the original before using it."
 msgstr "Эта страница обрезана или неполная. Перед использованием проверьте оригинал."
@@ -11883,15 +11963,19 @@ msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Этот PDF защищён паролем. Сохраните незащищённую копию и попробуйте снова."
 
 #: src/features/resume/builder/draft.ts
-msgid "This resume is locked and cannot be updated."
-msgstr "Это резюме заблокировано и не может быть обновлено."
+msgid "This resume is locked. Unlock it from its menu to edit."
+msgstr "Это резюме заблокировано. Разблокируйте его в меню, чтобы редактировать."
+
+#: src/libs/error-message.ts
+msgid "This resume is locked. Unlock it to make changes."
+msgstr "Это резюме заблокировано. Разблокируйте его, чтобы вносить изменения."
 
 #: src/features/ats-checker/messages.ts
 msgid "This resume is long."
 msgstr "Это резюме длинное."
 
 #: src/features/auth/pages/resume-password.tsx
-msgid "This resume is password protected"
+msgid "This resume is password-protected"
 msgstr "Это резюме защищено паролем"
 
 #: src/features/resume/editor/check/job-match.tsx
@@ -11927,8 +12011,12 @@ msgid "This saved version is no longer available."
 msgstr "Эта сохраненная версия больше недоступна."
 
 #: src/features/auth/pages/error.tsx
-msgid "This sign-in attempt expired or was already used. Please start again."
-msgstr "Срок действия этой попытки входа истёк или она уже использована. Начните заново."
+msgid "This server isn't accepting new accounts. Sign in with an existing account."
+msgstr "Этот сервер не принимает новые учетные записи. Войдите с существующей учетной записью."
+
+#: src/features/auth/pages/error.tsx
+msgid "This sign-in attempt expired or was already used. Try again."
+msgstr "Срок действия этой попытки входа истек, или она уже использована. Попробуйте еще раз."
 
 #: src/features/auth/pages/register.tsx
 msgid "This step is optional, but recommended."
@@ -12079,8 +12167,8 @@ msgid "Translate the app"
 msgstr "Перевести приложение"
 
 #: src/features/homepage/sections.tsx
-msgid "Translated into {languageCount} languages. Help translate it into yours."
-msgstr "Переведено на {languageCount} язык. Помогите перевести приложение на ваш язык."
+msgid "Translated into {languageCount} languages."
+msgstr "Переведено на {languageCount} языков."
 
 #: src/features/homepage/footer.tsx
 msgid "Translations"
@@ -12114,7 +12202,7 @@ msgid "Try a sample"
 msgstr "Попробуйте образец"
 
 #: src/components/layout/error-screen.tsx
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/shell.tsx
@@ -12156,6 +12244,15 @@ msgstr "Турецкий"
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "Отключайте необязательные лигатуры при экспорте."
 
+#. Destructive action button to turn off two-factor authentication
+#: src/dialogs/auth/disable-two-factor.tsx
+msgid "Turn off two-step verification"
+msgstr "Отключить двухэтапную проверку"
+
+#: src/dialogs/auth/disable-two-factor.tsx
+msgid "Turn off two-step verification?"
+msgstr "Отключить двухэтапную проверку?"
+
 #: src/features/resume/share/link-tab.tsx
 msgid "Turn on the link to choose an address."
 msgstr "Включите ссылку, чтобы выбрать адрес."
@@ -12164,9 +12261,21 @@ msgstr "Включите ссылку, чтобы выбрать адрес."
 msgid "Turn on the public link to count views and downloads. Counts are anonymous."
 msgstr "Включите общедоступную ссылку, чтобы подсчитывать просмотры и загрузки. Подсчеты использования анонимны."
 
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Turn on two-step verification"
+msgstr "Включить двухэтапную проверку"
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "Включить это расписание"
+
+#: src/dialogs/auth/disable-two-factor.tsx
+msgid "Turning off two-step verification…"
+msgstr "Отключение двухэтапной проверки…"
+
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Turning on two-step verification…"
+msgstr "Включение двухэтапной проверки…"
 
 #: src/features/resume/editor/design/template-group.tsx
 #: src/features/templates/gallery.tsx
@@ -12214,26 +12323,18 @@ msgid "Two-column, minimal with light gray sidebar and subtle icons; professiona
 msgstr "Двухколоночный, минималистичный макет со светло-серой боковой панелью и ненавязчивыми иконками; профессиональный и сдержанный стиль для юридической, финансовой или руководящей сферы."
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Two-Factor Authentication"
-msgstr "Двухфакторная аутентификация"
-
-#: src/dialogs/auth/disable-two-factor.tsx
-msgid "Two-factor authentication is now disabled."
-msgstr "Двухфакторная аутентификация отключена."
-
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Two-factor authentication is now enabled."
-msgstr "Двухфакторная аутентификация включена."
-
-#. Accessible title for QR code image shown during two-factor setup
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Two-Factor Authentication QR Code"
-msgstr "Двухфакторная аутентификация QR-код"
-
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/account/security.tsx
 msgid "Two-step verification"
 msgstr "Двухэтапная проверка"
+
+#: src/dialogs/auth/disable-two-factor.tsx
+msgid "Two-step verification turned off"
+msgstr "Двухэтапная проверка отключена"
+
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Two-step verification turned on"
+msgstr "Двухэтапная проверка включена"
 
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/workspace/practise.tsx
@@ -12271,16 +12372,17 @@ msgstr "Типография"
 msgid "Ukrainian"
 msgstr "Украинский"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Underline"
 msgstr "Подчёркнутый"
 
 #: src/features/resume/editor/design/style-groups.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Underline links"
 msgstr "Подчеркнуть ссылки"
 
 #: src/features/assistant/document.ts
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
 #: src/features/career/today.tsx
 #: src/features/career/workspace/fit.tsx
@@ -12322,10 +12424,6 @@ msgstr "Отсоединить"
 msgid "Unlink this application"
 msgstr "Отвязать это заявление о приеме на работу"
 
-#: src/features/settings/account/auth-hooks.ts
-msgid "Unlinking your {providerName} account..."
-msgstr "Отвязка учетной записи {providerName}..."
-
 #. Primary action button label to unlock a password-protected resume
 #: src/features/auth/pages/resume-password.tsx
 #: src/features/documents/document-actions.tsx
@@ -12344,6 +12442,10 @@ msgstr "Разблокировать редактирование"
 msgid "Unlock it first"
 msgstr "Сначала разблокируй его"
 
+#: src/features/settings/ai/api-keys.tsx
+msgid "unnamed key"
+msgstr "ключ без названия"
+
 #: src/features/settings/account/security.tsx
 msgid "Unnamed passkey"
 msgstr "Безымянный ключ"
@@ -12353,11 +12455,11 @@ msgstr "Безымянный ключ"
 msgid "Untitled"
 msgstr "Без названия"
 
-#: src/features/documents/new-document-dialog.tsx
+#: src/features/documents/use-start-document.ts
 msgid "Untitled letter"
 msgstr "Безымянное письмо"
 
-#: src/features/documents/new-document-dialog.tsx
+#: src/features/documents/use-start-document.ts
 msgid "Untitled resume"
 msgstr "Резюме без названия"
 
@@ -12377,39 +12479,21 @@ msgstr "До 25 MB · проверено в браузере, никогда н�
 msgid "Upcoming interviews"
 msgstr "Ближайшие интервью"
 
-#. Primary action button to submit changed password
-#: src/dialogs/auth/change-password.tsx
-msgid "Update Password"
-msgstr "Изменить пароль"
-
 #: src/dialogs/resume/index.tsx
-msgid "Update Resume"
+msgid "Update resume"
 msgstr "Обновить резюме"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Update this application's details."
 msgstr "Обновите сведения об этой заявке."
 
-#: src/dialogs/auth/change-password.tsx
-msgid "Update your password"
-msgstr "Обновите пароль"
-
 #: src/features/applications/components/list-view.tsx
 msgid "Updated"
 msgstr "Обновлено"
 
-#. placeholder {0}: result.updated
-#: src/features/applications/components/list-view.tsx
-msgid "Updated {0}"
-msgstr "Обновлен {0}"
-
 #: src/features/documents/document-actions.tsx
 msgid "Updated {done} of {total}. Locked documents, and letters for public links, were skipped."
 msgstr "Обновлено: {done} из {total}. Пропущены заблокированные документы, а для публичных ссылок — письма."
-
-#: src/dialogs/auth/change-password.tsx
-msgid "Updating your password..."
-msgstr "Обновление пароля..."
 
 #: src/dialogs/resume/index.tsx
 msgid "Updating your resume..."
@@ -12424,12 +12508,12 @@ msgid "Upload a PDF and see the text an applicant tracking system extracts: what
 msgstr "Загрузите PDF и посмотрите текст, который извлекает система отслеживания кандидатов: чего не хватает, что не в порядке и как это исправить. Бесплатно, учетная запись не требуется."
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Upload picture"
-msgstr "Загрузите картинку"
+msgid "Upload photo"
+msgstr "Загрузить фото"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Uploading picture…"
-msgstr "Загрузка изображения…"
+msgid "Uploading photo…"
+msgstr "Загрузка фото…"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "URL"
@@ -12455,6 +12539,16 @@ msgstr "Используйте {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Используйте от 3 до 64 строчных букв, цифр, точек, дефисов и подчеркиваний."
 
+#: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/disable-two-factor.tsx
+#: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/login.tsx
+#: src/features/auth/pages/register.tsx
+#: src/features/auth/pages/reset-password.tsx
+#: src/features/auth/pages/resume-password.tsx
+msgid "Use 64 characters or fewer."
+msgstr "Используйте не более 64 символов."
+
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Use a darker shade"
 msgstr "Используйте более темный оттенок"
@@ -12464,7 +12558,7 @@ msgid "Use a plain international form, such as +1 555 010 1234."
 msgstr "Используйте простой международный формат, например +1 555 010 1234."
 
 #: src/features/ats-checker/messages.ts
-msgid "Use a recognised form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
+msgid "Use a recognized form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
 msgstr "Используйте распознаваемый формат, например «Jan 2020 - Mar 2022» или «2020 - 2022»."
 
 #: src/features/ats-checker/messages.ts
@@ -12475,6 +12569,16 @@ msgstr "Используйте одну колонку для всего, что
 msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "Используйте A4 или US Letter, чтобы макет сохранялся при повторной отрисовке."
 
+#: src/features/auth/pages/register.tsx
+msgid "Use at least 3 characters."
+msgstr "Используйте не менее 3 символов."
+
+#: src/dialogs/auth/change-password.tsx
+#: src/features/auth/pages/register.tsx
+#: src/features/auth/pages/reset-password.tsx
+msgid "Use at least 8 characters."
+msgstr "Используйте не менее 8 символов."
+
 #: src/features/ats-checker/messages.ts
 msgid "Use at least 9pt."
 msgstr "Используйте кегль не менее 9 пунктов."
@@ -12484,7 +12588,6 @@ msgid "Use between 6 and 64 characters."
 msgstr "Используйте от 6 до 64 символов."
 
 #: src/components/input/color-picker.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Use color {color}"
 msgstr "Используйте цвет {color}"
 
@@ -12510,12 +12613,16 @@ msgid "Use lowercase letters, numbers and single dashes."
 msgstr "Используйте строчные буквы, цифры и одиночные тире."
 
 #: src/features/career/knowledge/search-regions-field.tsx
-msgid "Use my time zone"
-msgstr "Используйте мой часовой пояс"
+msgid "Use my timezone"
+msgstr "Использовать мой часовой пояс"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use one column"
 msgstr "Используйте один столбец"
+
+#: src/features/auth/pages/register.tsx
+msgid "Use only lowercase letters, numbers, dots, hyphens and underscores."
+msgstr "Используйте только строчные буквы, цифры, точки, дефисы и подчеркивания."
 
 #: src/features/ats-checker/messages.ts
 msgid "Use plain headings such as \"Experience\", \"Education\" and \"Skills\"."
@@ -12549,7 +12656,7 @@ msgstr "Используйте этого провайдера"
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
 msgstr "Используйте обычный маркированный список редактора, чтобы посторонние глифы не попадали в середину предложения."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Used"
 msgstr "Использовано"
 
@@ -12634,7 +12741,7 @@ msgid "Verify"
 msgstr "Подтвердить"
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Verify with a Backup Code"
+msgid "Verify with a backup code"
 msgstr "Подтвердить с помощью резервного кода"
 
 #: src/features/career/schedule-sheet.tsx
@@ -12674,6 +12781,14 @@ msgstr "Версия отправлена ​​{date} · Проверьте {0}
 msgid "Versions"
 msgstr "Версии"
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Vertical margin"
+msgstr "Вертикальный отступ"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Vertical spacing"
+msgstr "Вертикальный интервал"
+
 #: src/features/ats-checker/messages.ts
 msgid "Very few words were recovered for a resume."
 msgstr "Для резюме удалось восстановить очень мало слов."
@@ -12690,7 +12805,7 @@ msgstr "Ссылка на видео, адрес офиса или номер т
 msgid "Vietnamese"
 msgstr "Вьетнамский"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "View"
@@ -12740,7 +12855,6 @@ msgstr "Посетители заходят в него до того, как у
 msgid "Voice settings"
 msgstr "Настройки голоса"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
 msgstr "Волонтерство"
@@ -12761,28 +12875,6 @@ msgstr "Предупреждение"
 msgid "WCAG 2.1 AA"
 msgstr "WCAG 2.1 AA"
 
-#: src/components/layout/not-found-screen.tsx
-msgid "We couldn't find that page"
-msgstr "Мы не смогли найти эту страницу."
-
-#: src/features/auth/pages/error.tsx
-msgid "We couldn't link that provider account. Please try again."
-msgstr "Не удалось связать этот аккаунт провайдера. Попробуйте ещё раз."
-
-#. placeholder {0}: dates.raw
-#: src/features/resume/editor/write/dates-field.tsx
-msgid "We couldn't read \"{0}\". Enter the dates so they sort and print consistently."
-msgstr "Мы не смогли прочитать «{0}». Введите даты, чтобы они сортировались и печатались последовательно."
-
-#: src/features/auth/pages/error.tsx
-msgid "We couldn't read your profile from the provider."
-msgstr "Не удалось прочитать ваш профиль у провайдера."
-
-#. placeholder {0}: dates.raw
-#: src/features/resume/editor/write/dates-field.tsx
-msgid "We read \"{0}\". Pick a month so it sorts and prints consistently."
-msgstr "Читаем «{0}». Выберите месяц, чтобы он сортировался и печатался последовательно."
-
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "We read the page and save the posting for Check, the assistant and your letter."
 msgstr "Читаем страницу и сохраняем объявление о вакансии для Чека, ассистента и вашего письма."
@@ -12792,8 +12884,8 @@ msgid "We sent a confirmation link to {email}. Open it to finish the change."
 msgstr "Мы отправили ссылку для подтверждения на {email}. Откройте его, чтобы завершить изменение."
 
 #: src/features/settings/account/profile.tsx
-msgid "We sent a link to {currentEmail} to approve the change. After that, confirm {email} from its own email."
-msgstr "Мы отправили ссылку на {currentEmail} для подтверждения изменения. Затем подтвердите {email} с помощью сообщения, отправленного на этот адрес электронной почты."
+msgid "We sent a link to {currentEmail} to approve the change. Then open the link we send to {email}."
+msgstr "Мы отправили ссылку на {currentEmail} для подтверждения изменения. Затем откройте ссылку, которую мы отправим на {email}."
 
 #. placeholder {0}: user.email
 #: src/features/settings/account/profile.tsx
@@ -12803,10 +12895,6 @@ msgstr "Мы отправили новую ссылку для подтверж�
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "Веб-доступ"
-
-#: src/features/settings/ai/web-access.tsx
-msgid "Web access settings couldn't be saved or loaded."
-msgstr "Не удалось сохранить или загрузить настройки веб-доступа."
 
 #: src/features/career/coach.tsx
 msgid "Web research"
@@ -12875,10 +12963,6 @@ msgstr "Что конкретно вы сделали?"
 msgid "What did you say, as close as you remember?"
 msgstr "Что вы ответили — как можно ближе к тому, что помните?"
 
-#: src/features/resume/editor/write/section-row.tsx
-msgid "What do you want to rename this section to?"
-msgstr "Как вы хотите переименовать этот раздел?"
-
 #: src/features/homepage/faq.tsx
 msgid "What formats can I download?"
 msgstr "Какие форматы я могу скачать?"
@@ -12888,7 +12972,7 @@ msgid "What goes in it?"
 msgstr "Что в нем происходит?"
 
 #: src/features/career/coach.tsx
-msgid "What interview answers should I practise?"
+msgid "What interview answers should I practice?"
 msgstr "Какие ответы на собеседовании мне стоит потренировать?"
 
 #: src/features/career/offers.tsx
@@ -12907,7 +12991,7 @@ msgstr "Что он просит"
 msgid "What it checks"
 msgstr "Что он проверяет"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "What matters"
 msgstr "Что важно"
 
@@ -13107,6 +13191,7 @@ msgstr "Стоит уточнить"
 msgid "Worth asking {0}"
 msgstr "Стоит уточнить у {0}"
 
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/write.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
@@ -13165,7 +13250,7 @@ msgid "Write one about something you did, in five parts. Leave a part blank unti
 msgstr "Напишите одну о том, что вы сделали, в пяти частях. Оставьте часть пустой, пока не сможете ее подтвердить."
 
 #: src/features/ats-checker/messages.ts
-msgid "Write the full address so it is recognised as a link."
+msgid "Write the full address so it is recognized as a link."
 msgstr "Пишите полный адрес, чтобы он распознавался как ссылка."
 
 #: src/features/career/workspace/fit.tsx
@@ -13186,7 +13271,7 @@ msgstr "Напишите свое профессиональное резюме"
 msgid "Writing"
 msgstr "Текст"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Writing an answer…"
 msgstr "Пишем ответ…"
 
@@ -13207,7 +13292,7 @@ msgid "Yes. Every feature is free: all {templates} templates, PDF and Word downl
 msgstr "Да. Все функции бесплатны: все шаблоны {templates}, загрузки PDF и Word, средство проверки ATS, сопроводительные письма и средство отслеживания вакансий. Здесь нет рекламы, отслеживания и платного уровня. Пожертвования идут на оплату хостинга и разработки."
 
 #: src/features/homepage/faq.tsx
-msgid "Yes. Every job you track gets its own workspace: check your fit against the posting, draft answers from stories you wrote once, get a short plan before the interview, practise out loud with feedback and debrief afterwards. When offers arrive, compare them side by side. The coaching uses your own AI key; the comparison doesn’t need one."
+msgid "Yes. Every job you track gets its own workspace: check your fit against the posting, draft answers from stories you wrote once, get a short plan before the interview, practice out loud with feedback and debrief afterwards. When offers arrive, compare them side by side. The coaching uses your own AI key; the comparison doesn’t need one."
 msgstr "Да. У каждой вакансии, которую вы отслеживаете, есть свое рабочее пространство: проверьте соответствие вакансии, составляйте ответы из историй, написанных один раз, получайте короткий план перед собеседованием, тренируйтесь вслух с обратной связью и делайте разбор после. Когда придут предложения, сравните их рядом. Коучинг использует ваш собственный ключ ИИ; для сравнения он не нужен."
 
 #: src/features/homepage/faq.tsx
@@ -13252,9 +13337,13 @@ msgstr "Вы можете продолжать редактирование. И�
 msgid "You can keep up to 30 application questions."
 msgstr "Можно хранить до 30 вопросов заявки."
 
+#: src/features/settings/account/security.tsx
+msgid "You can no longer sign in with this passkey."
+msgstr "Вы больше не сможете входить с этим ключом доступа."
+
 #: src/features/auth/pages/error.tsx
-msgid "You cancelled the sign-in before it finished."
-msgstr "Вы отменили вход до его завершения."
+msgid "You canceled the sign-in before it finished. Try again when you're ready."
+msgstr "Вы отменили вход до его завершения. Попробуйте еще раз, когда будете готовы."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "You don't have a resume to copy yet. Import or create a resume first, then return to copy it for this job."
@@ -13263,10 +13352,6 @@ msgstr "У вас пока нет резюме для копирования. С
 #: src/features/career/workspace/debrief.tsx
 msgid "You forgot this before, so it wasn't saved again."
 msgstr "Вы уже просили забыть это, поэтому повторно не сохранено."
-
-#: src/hooks/use-form-blocker.tsx
-msgid "You have unsaved changes that will be lost."
-msgstr "У вас есть несохранённые изменения, которые будут потеряны."
 
 #: src/features/homepage/prepare.tsx
 msgid "You partnered with engineering. How you led the work isn’t described yet."
@@ -13315,11 +13400,6 @@ msgstr "Все просмотрено"
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "Вы используете гостевой аккаунт"
-
-#: src/features/auth/pages/forgot-password.tsx
-#: src/features/auth/pages/register.tsx
-msgid "You've got mail!"
-msgstr "Вы получили письмо!"
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
@@ -13414,8 +13494,8 @@ msgid "Your email address is broken across pieces of text."
 msgstr "Ваш адрес электронной почты разбит на отдельные фрагменты текста."
 
 #: src/features/auth/pages/error.tsx
-msgid "Your email address isn't verified with the provider."
-msgstr "Ваш адрес электронной почты не подтверждён у провайдера."
+msgid "Your email address isn't verified with the provider. Verify it there, then try again."
+msgstr "Ваш адрес электронной почты не подтвержден у провайдера. Подтвердите его там и попробуйте еще раз."
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -13444,14 +13524,6 @@ msgstr "В резюме изменился заголовок. Письмо то
 #: src/features/career/workspace/debrief.tsx
 msgid "your Knowledge"
 msgstr "ваши Знания"
-
-#: src/features/homepage/remember.tsx
-msgid "Your Knowledge"
-msgstr "Ваши Знания"
-
-#: src/features/homepage/prepare.tsx
-msgid "Your Knowledge doesn’t mention mentoring."
-msgstr "В ваших Знаниях не упоминается наставничество."
 
 #: src/features/ats-checker/messages.ts
 msgid "Your lines are packed very tightly."
@@ -13485,10 +13557,6 @@ msgstr "Ваше имя в резюме изменилось. Письмо то�
 msgid "Your name is missing"
 msgstr "Ваше имя отсутствует"
 
-#: src/features/homepage/hero.tsx
-msgid "Your next chapter starts here"
-msgstr "Ваша следующая глава начинается здесь"
-
 #: src/features/career/workspace/saved.tsx
 msgid "your notes"
 msgstr "ваши заметки"
@@ -13504,14 +13572,6 @@ msgstr "Ваше вступление"
 #: src/features/career/workspace/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Ваше вступление, истории, которые стоит взять, и вопросы, которые стоит задать. За 10 минут до звонка все это станет вашим чек-листом."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Your password has been reset. You can now sign in with your new password."
-msgstr "Пароль сброшен. Теперь вы можете войти с новым паролем."
-
-#: src/dialogs/auth/change-password.tsx
-msgid "Your password has been updated."
-msgstr "Пароль обновлён."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your phone number changed on the resume. The letter updated too."

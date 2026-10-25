@@ -442,7 +442,7 @@ export function NewDocument() {
 											onPress={() => {
 												abort.current?.abort();
 												setProgress(null);
-												setError(t`Import cancelled. Refresh Documents before retrying if the upload had finished.`);
+												setError(t`Import canceled. Refresh Documents before retrying if the upload had finished.`);
 											}}
 										/>
 									)}

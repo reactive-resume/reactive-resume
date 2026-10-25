@@ -4,7 +4,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
-import { ButtonGroup } from "@reactive-resume/ui/components/button-group";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -20,10 +19,10 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
-import { AssistantButton } from "@/features/assistant/assistant-button";
 import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useLetterEditorStore } from "@/features/letters/store";
-import { BackLink, DocumentMenuTrigger, DrawerControls } from "@/features/resume/editor/chrome";
+import { DocumentMenuTrigger } from "@/features/resume/editor/chrome";
+import { DownloadButtons, EditorBarFrame } from "@/features/resume/editor/chrome/bar";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { usePrompt } from "@/hooks/use-confirm";
 import { getOrpcErrorMessage, getReadableErrorMessage } from "@/libs/error-message";
@@ -44,20 +43,14 @@ export function LetterBar({ layout, pinnable }: LetterBarProps) {
 	const setShareTab = useEditorStore((state) => state.setShareTab);
 	// Below 1280 the bar is too narrow for Share's label next to everything else.
 	const wide = useBreakpoint() === "wide";
+	const download = useDownloadLetter();
 
 	return (
-		<header className="grid h-(--editor-bar) grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-b border-line bg-surface px-3">
-			<div className="flex min-w-0 items-center gap-1.5">
-				<BackLink />
-				{layout === "tablet" && <DrawerControls pinnable={pinnable} />}
-				<div className="flex min-w-0 flex-col items-start">
-					<LetterMenu />
-				</div>
-			</div>
-
-			{layout === "mobile" ? (
-				<span />
-			) : (
+		<EditorBarFrame
+			layout={layout}
+			pinnable={pinnable}
+			menu={<LetterMenu />}
+			modes={
 				<TabsList aria-label={t`Editor mode`} className="h-9" data-mode-switch="">
 					<TabsTrigger value="write" className="px-4">
 						<Icon name="pencil-simple" size={18} />
@@ -68,32 +61,23 @@ export function LetterBar({ layout, pinnable }: LetterBarProps) {
 						<Trans>Design</Trans>
 					</TabsTrigger>
 				</TabsList>
+			}
+		>
+			{layout === "desktop" && wide ? (
+				<Button variant="secondary" className="gap-1.5" onClick={() => setShareTab("download")}>
+					<Icon name="export" />
+					<Trans>Share</Trans>
+				</Button>
+			) : (
+				<IconButton icon="export" label={t`Share`} onClick={() => setShareTab("download")} />
 			)}
-
-			<div className="flex items-center justify-end gap-1">
-				{layout === "desktop" && (
-					<IconButton
-						icon="clock-counter-clockwise"
-						label={t`History`}
-						className="text-ink-2"
-						onClick={() => setShareTab("history")}
-					/>
-				)}
-				{/* Every layout opens the assistant from the ✦: a column, a drawer, or full screen on phones. */}
-				<span className={layout === "desktop" ? "me-1.5" : undefined}>
-					<AssistantButton />
-				</span>
-				{layout === "desktop" && wide ? (
-					<Button variant="secondary" className="gap-1.5" onClick={() => setShareTab("download")}>
-						<Icon name="export" />
-						<Trans>Share</Trans>
-					</Button>
-				) : (
-					<IconButton icon="export" label={t`Share`} onClick={() => setShareTab("download")} />
-				)}
-				<DownloadButtons compact={layout === "mobile"} iconOnly={layout === "tablet"} />
-			</div>
-		</header>
+			<DownloadButtons
+				busy={download.busy}
+				onDownload={() => void download.run()}
+				compact={layout === "mobile"}
+				iconOnly={layout === "tablet"}
+			/>
+		</EditorBarFrame>
 	);
 }
 
@@ -105,14 +89,14 @@ export function useDownloadLetter() {
 		const letter = useLetterEditorStore.getState().letter;
 		if (!letter || busy) return;
 		setBusy(true);
-		const toastId = toast.add({ type: "loading", description: t`Generating your PDF...` });
+		const toastId = toast.add({ type: "loading", description: t`Generating PDF…` });
 		try {
 			const blob = await createLetterFile(letter, "pdf");
 			downloadWithAnchor(blob, `${letterFileName(letter)}.pdf`);
 		} catch (error) {
 			toast.add({
 				type: "error",
-				description: getReadableErrorMessage(error, t`Could not generate the PDF. Please try again.`),
+				description: getReadableErrorMessage(error, t`Couldn't generate the PDF. Try again.`),
 			});
 		}
 		setBusy(false);
@@ -122,52 +106,10 @@ export function useDownloadLetter() {
 	return { run, busy };
 }
 
-function DownloadButtons({ compact, iconOnly }: { compact: boolean; iconOnly: boolean }) {
-	const download = useDownloadLetter();
-	const setShareTab = useEditorStore((state) => state.setShareTab);
-
-	if (compact) {
-		return (
-			<IconButton
-				icon="download-simple"
-				label={t`Download PDF`}
-				shortcut="⌘P"
-				disabled={download.busy}
-				onClick={() => void download.run()}
-			/>
-		);
-	}
-
-	return (
-		<ButtonGroup aria-label={t`Download`}>
-			{/* Tablets drop the label so the bar fits beside the mode switch; the button keeps its name. */}
-			<Button
-				loading={download.busy}
-				size={iconOnly ? "icon" : "default"}
-				aria-label={iconOnly ? t`Download PDF` : undefined}
-				className="gap-1.5"
-				onClick={() => void download.run()}
-			>
-				{!download.busy && <Icon name="download-simple" />}
-				{iconOnly ? null : download.busy ? <Trans>Preparing…</Trans> : <Trans>Download PDF</Trans>}
-			</Button>
-			<Button
-				size="icon"
-				disabled={download.busy}
-				aria-label={t`More download formats`}
-				className="w-8 border-s border-s-[oklch(1_0_0/0.25)]"
-				onClick={() => setShareTab("download")}
-			>
-				<Icon name="caret-down" />
-			</Button>
-		</ButtonGroup>
-	);
-}
-
 const failed = (error: unknown) =>
 	toast.add({
 		type: "error",
-		description: getOrpcErrorMessage(error, { fallback: t`Something went wrong. Try again.` }),
+		description: getOrpcErrorMessage(error, { fallback: t`Couldn't update the letter. Try again.` }),
 	});
 
 /** The name opens the letter's menu: rename, duplicate, lock and Move to Trash. The save state sits under it. */
@@ -192,7 +134,7 @@ function LetterMenu() {
 				throw new Error(t`Couldn't save your changes. Try again before continuing.`);
 			const copy = await client.coverLetters.duplicate({ id });
 			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
-			toast.add({ description: t`Duplicated` });
+			toast.add({ description: t`Letter duplicated` });
 			void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: copy.id } });
 		} catch (error) {
 			failed(error);

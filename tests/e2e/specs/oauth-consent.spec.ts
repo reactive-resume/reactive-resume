@@ -41,7 +41,7 @@ test("requires explicit OAuth consent before denying or allowing access", async 
 		const before = await page.request.get("/api/auth/oauth2/get-consents");
 		expect(await before.json()).toEqual([]);
 		expect(new URL(page.url()).searchParams.getAll("resource")).toEqual([`${origin}/mcp`, origin]);
-		await page.getByRole("button", { name: accept ? "Allow access" : "Deny", exact: true }).click();
+		await page.getByRole("button", { name: accept ? "Allow access" : "Deny access", exact: true }).click();
 		await page.waitForURL(`${callback}**`);
 		const target = new URL(page.url());
 		expect(target.searchParams.get("state")).toBe("browser-consent-state");

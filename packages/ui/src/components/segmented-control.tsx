@@ -11,7 +11,7 @@ function SegmentedControl({ className, ...props }: RadioGroup.Props) {
 		<RadioGroup
 			data-slot="segmented-control"
 			className={cn(
-				"inline-flex h-9 items-stretch gap-0.5 rounded-[9px] bg-sunken p-[3px] pointer-coarse:h-12",
+				"inline-flex h-9 items-stretch gap-0.5 rounded-lg bg-sunken p-[3px] pointer-coarse:h-12",
 				className,
 			)}
 			{...props}

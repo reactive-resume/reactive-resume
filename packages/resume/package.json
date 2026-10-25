@@ -10,6 +10,7 @@
 		"./export-sections": "./src/export-sections.ts",
 		"./icons": "./src/icons.ts",
 		"./markdown": "./src/markdown.ts",
+		"./move-item": "./src/move-item.ts",
 		"./patch": "./src/patch.ts",
 		"./proposals": "./src/proposals.ts",
 		"./section-sort": "./src/section-sort.ts",
@@ -22,8 +23,7 @@
 		"typecheck": "tsrs --noEmit",
 		"test": "vp test run --passWithNoTests",
 		"test:coverage": "vp test run --coverage --passWithNoTests",
-		"test:ci": "vp test run --reporter=default --reporter=github-actions --reporter=json --reporter=junit --outputFile.json=reports/vitest-results.json --outputFile.junit=reports/vitest-junit.xml --passWithNoTests",
-		"test:agent": "vp test run --reporter=agent --reporter=json --outputFile.json=reports/vitest-results.json --passWithNoTests"
+		"test:ci": "vp test run --reporter=default --reporter=github-actions --reporter=json --reporter=junit --outputFile.json=reports/vitest-results.json --outputFile.junit=reports/vitest-junit.xml --passWithNoTests"
 	},
 	"dependencies": {
 		"@bramus/specificity": "^2.4.3",

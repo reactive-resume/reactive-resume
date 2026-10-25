@@ -11,7 +11,7 @@ import { useTemplateThumbnail } from "./thumbnails";
 const mocks = vi.hoisted(() => ({ pdf: vi.fn(), image: vi.fn() }));
 vi.mock("@/features/resume/export/pdf-document", () => ({ createResumePdfBlob: mocks.pdf }));
 vi.mock("@/features/resume/preview/pdf-thumbnail", () => ({
-	createPdfFirstPageImageUrl: mocks.image,
+	createPdfFirstPageImage: mocks.image,
 	releaseThumbnailUrls: vi.fn(),
 }));
 
@@ -23,7 +23,8 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 beforeEach(() => {
 	client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 	mocks.pdf.mockResolvedValue(new Blob(["%PDF"]));
-	mocks.image.mockResolvedValue("blob:personal-preview");
+	mocks.image.mockResolvedValue(new Blob(["png"]));
+	vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:personal-preview");
 	vi.stubGlobal("requestIdleCallback", (callback: () => void) => {
 		queueMicrotask(callback);
 		return 1;
@@ -35,6 +36,7 @@ afterEach(() => {
 	client.clear();
 	vi.clearAllMocks();
 	vi.unstubAllGlobals();
+	vi.restoreAllMocks();
 });
 
 it("keeps the sample image when only account details are filled, without queuing an empty-body PDF", async () => {

@@ -1,7 +1,7 @@
 import type { DocumentSummary } from "./filter";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import { plural, t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
@@ -30,17 +30,11 @@ import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
 type Ref = { type: DocumentSummary["type"]; id: string };
 const ref = (document: DocumentSummary): Ref => ({ type: document.type, id: document.id });
-
-const failed = (error: unknown) =>
-	toast.add({
-		type: "error",
-		description: getOrpcErrorMessage(error, { fallback: t`Something went wrong. Try again.` }),
-	});
 
 /** Everything the card menu does, shared by grid cards, list rows and Trash. */
 function useRefreshDocuments() {
@@ -58,8 +52,13 @@ export function useDocumentActions() {
 	const markNew = useNewDocumentsStore((state) => state.markNew);
 	const refresh = useRefreshDocuments();
 
-	const rename = useMutation(orpc.documents.rename.mutationOptions({ onSettled: refresh, onError: failed }));
-	const setLocked = useMutation(orpc.documents.setLocked.mutationOptions({ onSettled: refresh, onError: failed }));
+	const rename = useMutation(
+		orpc.documents.rename.mutationOptions({
+			onSettled: refresh,
+			onError: (error) => toastError(error, t`Couldn't rename the document. Try again.`),
+		}),
+	);
+	const setLocked = useMutation(orpc.documents.setLocked.mutationOptions({ onSettled: refresh }));
 	const trash = useMutation(orpc.documents.trash.mutationOptions({ onSettled: refresh }));
 	const restore = useMutation(orpc.documents.restore.mutationOptions({ onSettled: refresh }));
 	const purge = useMutation(orpc.documents.purge.mutationOptions({ onSettled: refresh }));
@@ -80,16 +79,26 @@ export function useDocumentActions() {
 					: duplicateLetter.mutateAsync({ id: document.id }).then((letter) => letter.id);
 			try {
 				markNew(await copied);
-				toast.add({ description: t`Duplicated` });
+				toast.add({ description: t`Duplicated “${document.name}”` });
 			} catch (error) {
-				failed(error);
+				toastError(error, t`Couldn't duplicate the document. Try again.`);
 			}
 		},
 
 		copyForJob: (document: DocumentSummary) =>
 			openDialog("document.new", { step: "copy", sourceResumeId: document.id }),
 
-		setLocked: (document: DocumentSummary, isLocked: boolean) => setLocked.mutate({ ...ref(document), isLocked }),
+		setLocked: (document: DocumentSummary, isLocked: boolean) =>
+			setLocked.mutate(
+				{ ...ref(document), isLocked },
+				{
+					onError: (error) =>
+						toastError(
+							error,
+							isLocked ? t`Couldn't lock the document. Try again.` : t`Couldn't unlock the document. Try again.`,
+						),
+				},
+			),
 
 		/** Undoable, so it doesn't ask first. */
 		trash: async (document: DocumentSummary) => {
@@ -99,11 +108,14 @@ export function useDocumentActions() {
 					description: t`“${document.name}” moved to Trash`,
 					actionProps: {
 						children: t`Undo`,
-						onClick: () => restore.mutate(ref(document), { onError: failed }),
+						onClick: () =>
+							restore.mutate(ref(document), {
+								onError: (error) => toastError(error, t`Couldn't restore the document. Try again.`),
+							}),
 					},
 				});
 			} catch (error) {
-				failed(error);
+				toastError(error, t`Couldn't move the document to Trash. Try again.`);
 			}
 		},
 
@@ -112,7 +124,7 @@ export function useDocumentActions() {
 				await restore.mutateAsync(ref(document));
 				toast.add({ description: t`Restored “${document.name}”` });
 			} catch (error) {
-				failed(error);
+				toastError(error, t`Couldn't restore the document. Try again.`);
 			}
 		},
 
@@ -120,15 +132,16 @@ export function useDocumentActions() {
 		purge: async (document: DocumentSummary) => {
 			const confirmed = await confirm(t`Delete “${document.name}” now?`, {
 				description: t`It will be deleted for good and can't be restored.`,
-				confirmText: t`Delete now`,
+				confirmText: t`Hold to delete`,
 				cancelText: t`Keep in Trash`,
+				hold: true,
 			});
 			if (!confirmed) return;
 			try {
 				await purge.mutateAsync(ref(document));
 				toast.add({ description: t`Deleted “${document.name}”` });
 			} catch (error) {
-				failed(error);
+				toastError(error, t`Couldn't delete the document. Try again.`);
 			}
 		},
 	};
@@ -339,7 +352,7 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 		);
 		await refresh();
 		const failure = results.find((result) => result.status === "rejected");
-		if (failure) failed(failure.reason);
+		if (failure) toastError(failure.reason, t`Couldn't save the tags. Try again.`);
 		else onClose();
 	};
 
@@ -357,7 +370,7 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 				<DialogHeader>
 					<DialogTitle>
 						{documents && documents.length > 1 ? (
-							<Trans>Tags for {documents.length} documents</Trans>
+							<Plural value={documents.length} one="Tags for # document" other="Tags for # documents" />
 						) : (
 							<Trans>Tags</Trans>
 						)}
@@ -376,7 +389,7 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 				<ChipInput value={tags ?? shared} onChange={setTags} />
 				<DialogFooter>
 					<Button onClick={() => void save()} disabled={setDocumentTags.isPending}>
-						<Trans>Save</Trans>
+						<Trans>Save tags</Trans>
 					</Button>
 				</DialogFooter>
 			</DialogContent>
@@ -401,7 +414,10 @@ export function LinkApplicationDialog({ document: requested, onClose }: LinkAppl
 			await queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 			onClose();
 		} catch (error) {
-			failed(error);
+			toastError(
+				error,
+				applicationId ? t`Couldn't link the application. Try again.` : t`Couldn't unlink the application. Try again.`,
+			);
 		}
 	};
 

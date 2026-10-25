@@ -16,14 +16,14 @@ import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { generateRandomName } from "@reactive-resume/utils/string";
+import { generateRandomName } from "@reactive-resume/utils/slug";
 import { useDialogStore } from "../store";
 import { ChipInput } from "@/components/input/chip-input";
 import { usePatchResume } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
-import { useAppForm, withForm } from "@/libs/tanstack-form";
+import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
 	id: z.string(),
@@ -31,114 +31,67 @@ const formSchema = z.object({
 	tags: z.array(z.string()),
 });
 
-type FormValues = z.infer<typeof formSchema>;
-
-const defaultValues: FormValues = {
-	id: "",
-	name: "",
-	tags: [],
+type ResumeDialogProps = {
+	mode: "update" | "duplicate";
+	data: DialogProps<"resume.update">["data"];
 };
 
-export function UpdateResumeDialog({ data }: DialogProps<"resume.update">) {
+export function ResumeDialog({ mode, data }: ResumeDialogProps) {
+	const isUpdate = mode === "update";
+	const navigate = useNavigate();
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const patchResume = usePatchResume();
 	const params = useParams({ strict: false }) as { resumeId?: string };
 
-	const { mutate: updateResume, isPending } = useMutation(orpc.resume.update.mutationOptions());
+	const update = useMutation(orpc.resume.update.mutationOptions());
+	const duplicate = useMutation(orpc.resume.duplicate.mutationOptions());
 
 	const form = useAppForm({
 		defaultValues: {
 			id: data.id,
-			name: data.name,
+			name: isUpdate ? data.name : `${data.name} (Copy)`,
 			tags: data.tags,
 		},
 		validators: { onSubmit: formSchema },
 		onSubmit: ({ value }) => {
-			const toastId = toast.add({ type: "loading", description: t`Updating your resume...` });
-
-			updateResume(value, {
-				onSuccess: (updated) => {
-					if (params.resumeId === updated.id) {
-						patchResume((draft) => {
-							draft.name = updated.name;
-							draft.slug = updated.slug;
-							draft.tags = updated.tags;
-							draft.isLocked = updated.isLocked;
-							draft.isPublic = updated.isPublic;
-							draft.hasPassword = updated.hasPassword;
-						});
-					}
-
-					toast.add({ type: "success", description: t`Your resume has been updated.`, id: toastId });
-					closeDialog();
-				},
-				onError: (error) => {
-					toast.add({ type: "error", description: getResumeErrorMessage(error), id: toastId });
-				},
+			const toastId = toast.add({
+				type: "loading",
+				description: isUpdate ? t`Updating your resume...` : t`Duplicating your resume...`,
 			});
-		},
-	});
+			const onError = (error: unknown) => {
+				toast.add({ type: "error", description: getResumeErrorMessage(error), id: toastId });
+			};
 
-	useFormBlocker(form);
+			if (isUpdate) {
+				update.mutate(value, {
+					onSuccess: (updated) => {
+						if (params.resumeId === updated.id) {
+							patchResume((draft) => {
+								draft.name = updated.name;
+								draft.slug = updated.slug;
+								draft.tags = updated.tags;
+								draft.isLocked = updated.isLocked;
+								draft.isPublic = updated.isPublic;
+								draft.hasPassword = updated.hasPassword;
+							});
+						}
 
-	return (
-		<DialogContent>
-			<DialogHeader>
-				<DialogTitle className="flex items-center gap-x-2">
-					<Icon name="pencil-simple" size={16} />
-					<Trans>Update Resume</Trans>
-				</DialogTitle>
-				<DialogDescription>
-					<Trans>Changed your mind? Rename your resume to something more descriptive.</Trans>
-				</DialogDescription>
-			</DialogHeader>
+						toast.add({ type: "success", description: t`Your resume has been updated.`, id: toastId });
+						closeDialog();
+					},
+					onError,
+				});
+				return;
+			}
 
-			<form
-				className="space-y-4"
-				onSubmit={(event) => {
-					event.preventDefault();
-					event.stopPropagation();
-					void form.handleSubmit();
-				}}
-			>
-				<ResumeForm form={form} />
-
-				<DialogFooter>
-					<Button type="submit" disabled={isPending}>
-						<Trans>Save Changes</Trans>
-					</Button>
-				</DialogFooter>
-			</form>
-		</DialogContent>
-	);
-}
-
-export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">) {
-	const navigate = useNavigate();
-	const closeDialog = useDialogStore((state) => state.closeDialog);
-
-	const { mutate: duplicateResume, isPending } = useMutation(orpc.resume.duplicate.mutationOptions());
-
-	const form = useAppForm({
-		defaultValues: {
-			id: data.id,
-			name: `${data.name} (Copy)`,
-			tags: data.tags,
-		},
-		validators: { onSubmit: formSchema },
-		onSubmit: ({ value }) => {
-			const toastId = toast.add({ type: "loading", description: t`Duplicating your resume...` });
-
-			duplicateResume(value, {
+			duplicate.mutate(value, {
 				onSuccess: (id) => {
 					toast.add({ type: "success", description: t`Your resume has been duplicated.`, id: toastId });
 					closeDialog();
 
 					void navigate({ to: "/builder/$resumeId", params: { resumeId: id } });
 				},
-				onError: (error) => {
-					toast.add({ type: "error", description: getResumeErrorMessage(error), id: toastId });
-				},
+				onError,
 			});
 		},
 	});
@@ -150,10 +103,14 @@ export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">)
 			<DialogHeader>
 				<DialogTitle className="flex items-center gap-x-2">
 					<Icon name="pencil-simple" size={16} />
-					<Trans>Duplicate Resume</Trans>
+					{isUpdate ? <Trans>Update resume</Trans> : <Trans>Duplicate resume</Trans>}
 				</DialogTitle>
 				<DialogDescription>
-					<Trans>Duplicate your resume to create a new one, just like the original.</Trans>
+					{isUpdate ? (
+						<Trans>Changed your mind? Rename your resume to something more descriptive.</Trans>
+					) : (
+						<Trans>Duplicate your resume to create a new one, just like the original.</Trans>
+					)}
 				</DialogDescription>
 			</DialogHeader>
 
@@ -165,27 +122,6 @@ export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">)
 					void form.handleSubmit();
 				}}
 			>
-				<ResumeForm form={form} />
-
-				<DialogFooter>
-					<Button type="submit" disabled={isPending}>
-						<Trans>Duplicate</Trans>
-					</Button>
-				</DialogFooter>
-			</form>
-		</DialogContent>
-	);
-}
-
-const ResumeForm = withForm({
-	defaultValues,
-	render: function ResumeFormRenderer({ form }) {
-		const onGenerateName = () => {
-			form.setFieldValue("name", generateRandomName());
-		};
-
-		return (
-			<>
 				<form.Field name="name">
 					{(field) => (
 						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
@@ -206,7 +142,12 @@ const ResumeForm = withForm({
 									}
 								/>
 
-								<Button size="icon" variant="secondary" title={t`Generate a random name`} onClick={onGenerateName}>
+								<Button
+									size="icon"
+									variant="secondary"
+									title={t`Generate a random name`}
+									onClick={() => form.setFieldValue("name", generateRandomName())}
+								>
 									<Icon name="magic-wand" size={16} />
 								</Button>
 							</div>
@@ -241,7 +182,13 @@ const ResumeForm = withForm({
 						</FormItem>
 					)}
 				</form.Field>
-			</>
-		);
-	},
-});
+
+				<DialogFooter>
+					<Button type="submit" disabled={update.isPending || duplicate.isPending}>
+						{isUpdate ? <Trans>Save changes</Trans> : <Trans>Duplicate</Trans>}
+					</Button>
+				</DialogFooter>
+			</form>
+		</DialogContent>
+	);
+}

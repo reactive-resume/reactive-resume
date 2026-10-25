@@ -221,7 +221,7 @@ export function Sheet({ template = sheetTemplates[0] as SheetTemplate }: SheetPr
 	return (
 		<div
 			aria-hidden="true"
-			className="@container absolute inset-0 overflow-hidden rounded-[2px] bg-paper text-start select-none"
+			className="@container absolute inset-0 overflow-hidden rounded-sm bg-paper text-start select-none"
 		>
 			<div className="absolute inset-0 flex flex-col leading-normal text-[oklch(0.3_0.01_95)]" style={template.root}>
 				<header
@@ -278,7 +278,7 @@ export function Sheet({ template = sheetTemplates[0] as SheetTemplate }: SheetPr
 										<b className="font-semibold">{t`Product Designer`}</b>
 										<span className="grid justify-items-end whitespace-nowrap">
 											<span className="col-start-1 row-start-1 opacity-[calc(.7*(1-var(--dw,0)))]">{t`2017 – 2021`}</span>
-											<span className="col-start-1 row-start-1 -mx-[.5cqw] rounded-[.4cqw] bg-[oklch(0.92_0.09_85)] px-[.5cqw] text-[oklch(0.4_0.09_70)] opacity-[var(--dw,0)] shadow-[0_0_0_.3cqw_oklch(0.75_0.13_80)]">
+											<span className="col-start-1 row-start-1 -mx-[.5cqw] rounded-sm bg-[oklch(0.92_0.09_85)] px-[.5cqw] text-[oklch(0.4_0.09_70)] opacity-[var(--dw,0)] shadow-[0_0_0_.3cqw_oklch(0.75_0.13_80)]">
 												{t`06/2017 – 2021`}
 											</span>
 										</span>

@@ -7,7 +7,7 @@ import { afterAll, beforeAll, expect, it } from "vite-plus/test";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const turbo = join(root, "node_modules", "turbo", "bin", "turbo");
-const tasks = ["build", "typecheck", "test", "test:coverage", "test:ci", "test:agent"];
+const tasks = ["build", "typecheck", "test", "test:coverage", "test:ci"];
 type DryTask = { taskId: string; task: string; hash: string };
 let directory: string;
 let baseline: Map<string, DryTask>;
@@ -132,7 +132,7 @@ it("hashes runtime secrets for tests without invalidating builds or typechecks",
 	}
 });
 
-it.each(["test:coverage", "test:ci", "test:agent"])("restores %s reports from cache", async (task) => {
+it.each(["test:coverage", "test:ci"])("restores %s reports from cache", async (task) => {
 	const output = task === "test:coverage" ? "coverage" : "reports";
 	const path = join(directory, "packages", "app", output, `${task.replace(":", "-")}.txt`);
 	const run = () =>

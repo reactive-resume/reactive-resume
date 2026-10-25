@@ -4,62 +4,16 @@ import { rethrowAsImportError } from "./error";
 
 const BUILT_IN_LAYOUT_SECTION_IDS = sectionTypeSchema.options.filter((section) => section !== "cover-letter");
 
+/** Recovers built-in sections missing from the layout (or a layout with no pages) without reordering it. */
 function normalizeBuiltInSectionsInLayout(data: ResumeData): ResumeData {
-	const pages = data.metadata.layout.pages;
+	const { pages } = data.metadata.layout;
+	const present = new Set(pages.flatMap((page) => [...page.main, ...page.sidebar]));
+	const missing = BUILT_IN_LAYOUT_SECTION_IDS.filter((sectionId) => !present.has(sectionId));
+	if (missing.length === 0) return data;
 
-	// Some exported resumes can arrive without any persisted layout pages.
-	if (pages.length === 0) {
-		return {
-			...data,
-			metadata: {
-				...data.metadata,
-				layout: {
-					...data.metadata.layout,
-					pages: [
-						{
-							fullWidth: false,
-							main: [...BUILT_IN_LAYOUT_SECTION_IDS],
-							sidebar: [],
-						},
-					],
-				},
-			},
-		};
-	}
-
-	const existingSectionIds = new Set<string>();
-
-	// Preserve the imported layout and only compute which built-in IDs are missing entirely.
-	for (const page of pages) {
-		for (const sectionId of page.main) existingSectionIds.add(sectionId);
-		for (const sectionId of page.sidebar) existingSectionIds.add(sectionId);
-	}
-
-	const missingSectionIds = BUILT_IN_LAYOUT_SECTION_IDS.filter((sectionId) => !existingSectionIds.has(sectionId));
-
-	if (missingSectionIds.length === 0) return data;
-
-	const [firstPage, ...restPages] = pages;
-	if (!firstPage) return data;
-
-	return {
-		...data,
-		metadata: {
-			...data.metadata,
-			layout: {
-				...data.metadata.layout,
-				pages: [
-					{
-						fullWidth: firstPage.fullWidth ?? false,
-						sidebar: firstPage.sidebar ?? [],
-						// Recover missing built-in sections without reordering the imported layout.
-						main: [...firstPage.main, ...missingSectionIds],
-					},
-					...restPages,
-				],
-			},
-		},
-	};
+	const [first = { fullWidth: false, main: [], sidebar: [] }, ...rest] = pages;
+	const layout = { ...data.metadata.layout, pages: [{ ...first, main: [...first.main, ...missing] }, ...rest] };
+	return { ...data, metadata: { ...data.metadata, layout } };
 }
 
 // ponytail: stateless single-method class → plain function

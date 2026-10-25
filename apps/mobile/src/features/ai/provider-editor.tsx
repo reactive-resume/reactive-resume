@@ -345,7 +345,7 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 				open={confirmDelete}
 				title={t`Delete this provider?`}
 				message={t`Its saved key is deleted. Conversations using it need another provider.`}
-				confirmLabel={t`Delete`}
+				confirmLabel={t`Delete provider`}
 				destructive
 				onConfirm={() => void remove()}
 				onCancel={() => setConfirmDelete(false)}

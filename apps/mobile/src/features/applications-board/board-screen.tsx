@@ -4,6 +4,7 @@ import type { ApplicationStatus } from "@reactive-resume/schema/applications/dat
 import type { ComponentRef } from "react";
 import type { ScrollView } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
+import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -374,7 +375,7 @@ function Board() {
 								left: drag.left,
 								top: drag.top,
 								width: drag.width,
-								borderRadius: radius.rXl,
+								borderRadius: radius.rLg,
 								boxShadow: shadows.e2.boxShadow,
 							},
 							overlayStyle,
@@ -440,7 +441,7 @@ function Column({
 			ref={register}
 			style={{
 				width,
-				borderRadius: radius.rXl,
+				borderRadius: radius.rLg,
 				borderWidth: 1,
 				borderColor: highlighted ? colors.accent : "transparent",
 				backgroundColor: highlighted ? colors.accentSoft : colors.sunken,
@@ -449,7 +450,10 @@ function Column({
 			<View
 				accessible
 				accessibilityRole="header"
-				accessibilityLabel={t`${getStageLabel(stage)}, ${applications.length} applications`}
+				accessibilityLabel={plural(applications.length, {
+					one: `${getStageLabel(stage)}, # application`,
+					other: `${getStageLabel(stage)}, # applications`,
+				})}
 				style={{
 					flexDirection: "row",
 					alignItems: "center",
@@ -462,7 +466,7 @@ function Column({
 					style={{
 						width: space.s2,
 						height: space.s2,
-						borderRadius: radius.rPill,
+						borderRadius: radius.rLg,
 						backgroundColor: getStageColor(stage, colors),
 					}}
 				/>

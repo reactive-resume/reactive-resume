@@ -65,7 +65,8 @@ export function LetterDesign({ id }: { id: string }) {
 	if (!letter) return null;
 
 	const resume = resumes.data?.find((item) => item.id === letter.sourceResumeId);
-	const resumeName = resume?.name ?? t`the resume`;
+	const resumeName = resume?.name;
+	const matchLabel = resumeName ? t`Match “${resumeName}”` : t`Match the resume`;
 	const disabled = letter.isLocked;
 
 	const setLinked = (designLinked: boolean) => {
@@ -83,19 +84,14 @@ export function LetterDesign({ id }: { id: string }) {
 				{letter.sourceResumeId ? (
 					<>
 						<ListRow
-							title={t`Match “${resumeName}”`}
+							title={matchLabel}
 							subtitle={
 								letter.designLinked
 									? t`Template, type and colors follow the resume, so the pair always matches.`
 									: t`The letter keeps a design of its own.`
 							}
 							trailing={
-								<Switch
-									label={t`Match “${resumeName}”`}
-									value={letter.designLinked}
-									disabled={disabled}
-									onValueChange={setLinked}
-								/>
+								<Switch label={matchLabel} value={letter.designLinked} disabled={disabled} onValueChange={setLinked} />
 							}
 						/>
 						{letter.designLinked ? (
@@ -195,14 +191,14 @@ function OwnDesign({ letter, disabled }: { letter: LetterDocument; disabled: boo
 								style={{
 									width: size.hit,
 									height: size.hit,
-									borderRadius: radius.rPill,
+									borderRadius: radius.rLg,
 									borderWidth: 2,
 									borderColor: selected ? colors.ink : "transparent",
 									padding: space.s0,
 								}}
 							>
 								{/* A document colour from the letter's own palette, so it isn't a theme token. */}
-								<View style={{ flex: 1, borderRadius: radius.rPill, backgroundColor: accent.hex }} />
+								<View style={{ flex: 1, borderRadius: radius.rLg, backgroundColor: accent.hex }} />
 							</Pressable>
 						);
 					})}

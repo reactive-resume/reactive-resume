@@ -162,13 +162,13 @@ function Column({ stage, applications, onOpen }: ColumnProps) {
 			)}
 		>
 			<h2 className="flex items-center gap-2 px-3 py-2.5 text-sm font-semibold">
-				<span aria-hidden="true" className="size-2 rounded-full" style={{ background: getStageColor(stage) }} />
+				<span aria-hidden="true" className="size-2 rounded-sm" style={{ background: getStageColor(stage) }} />
 				{getStageLabel(stage)}
 				<span className="font-mono text-xs font-normal text-ink-3">{applications.length}</span>
 			</h2>
 			<div ref={setNodeRef} className="flex min-h-24 flex-1 flex-col gap-2 overflow-y-auto px-2 pb-2">
 				{shown.map((application) => (
-					<DraggableCard key={application.id} application={application} onOpen={() => onOpen(application)} />
+					<DraggableCard key={application.id} application={application} onOpen={onOpen} />
 				))}
 				{remaining > 0 && (
 					<button
@@ -184,14 +184,15 @@ function Column({ stage, applications, onOpen }: ColumnProps) {
 	);
 }
 
-type DraggableCardProps = { application: Application; onOpen: () => void };
+type DraggableCardProps = { application: Application; onOpen: (application: Application) => void };
 
+// Re-renders with every drag context change; the closure here stays stable, so the card itself doesn't.
 function DraggableCard({ application, onOpen }: DraggableCardProps) {
 	const { setNodeRef, listeners, isDragging } = useDraggable({ id: application.id });
 
 	return (
 		<div ref={setNodeRef} {...listeners} className={cn(isDragging && "opacity-40")}>
-			<ApplicationCard application={application} onClick={onOpen} withMenu />
+			<ApplicationCard application={application} onClick={() => onOpen(application)} withMenu />
 		</div>
 	);
 }

@@ -9,19 +9,29 @@ import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
-import { useEffect, useEffectEvent, useId, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useEffectEvent, useId, useMemo, useRef, useState } from "react";
 import { agentWebSources, readPageOutputSchema } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
+import {
+	MessageScroller,
+	MessageScrollerButton,
+	MessageScrollerContent,
+	MessageScrollerItem,
+	MessageScrollerProvider,
+	MessageScrollerViewport,
+} from "@reactive-resume/ui/components/message-scroller";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { Trace, TraceIcon, TraceLine, TraceTitle } from "@reactive-resume/ui/components/trace";
 import { cn } from "@reactive-resume/utils/style";
-import { attachmentPart, fileToBase64, transcriptOf, useAssistantChat } from "./chat";
+import { attachmentPart, fileToBase64, transcriptOf } from "./chat";
 import { AssistantMarkdown } from "./markdown";
+import { useAssistantChat } from "./use-assistant-chat";
 import { ChangeSet } from "@/features/resume/editor/proposals/proposal-list";
 import { useEditorStore } from "@/features/resume/editor/store";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
 import { isImeComposing } from "@/libs/keyboard";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
@@ -56,11 +66,9 @@ type ConversationProps = {
 export function Conversation(props: ConversationProps) {
 	const { threadId, document, readOnly } = props;
 	const queryClient = useQueryClient();
-	const setAssistantProposals = useEditorStore((state) => state.setAssistantProposals);
 	const [context, setContext] = useState<MessageContext>(props.initialContext);
 	const [statuses, setStatuses] = useState<ReadonlyMap<string, EditStatus>>(new Map());
 	const [stopped, setStopped] = useState(false);
-	const scroller = useRef<HTMLDivElement>(null);
 	// Messages already in the thread when it opens are history; only new ones rise in.
 	const [initialIds] = useState(() => new Set(props.initialMessages.map((message) => message.id)));
 
@@ -123,9 +131,16 @@ export function Conversation(props: ConversationProps) {
 			),
 		[messages, statuses, document],
 	);
-	// oxlint-disable-next-line react/set-state-in-effect -- publishes to the editor store, which the page canvas reads
-	useEffect(() => setAssistantProposals(proposals), [proposals, setAssistantProposals]);
-	useEffect(() => () => setAssistantProposals([]), [setAssistantProposals]);
+	// Published only when they change: the page canvas and every section row re-render on each publish, and a
+	// streaming reply rebuilds this list on every chunk.
+	const published = useRef("[]");
+	useEffect(() => {
+		const key = JSON.stringify(proposals);
+		if (key === published.current) return;
+		published.current = key;
+		useEditorStore.setState({ assistantProposals: proposals });
+	}, [proposals]);
+	useEffect(() => () => useEditorStore.setState({ assistantProposals: [] }), []);
 
 	const record = (message: UIMessage, part: ToolPart, changed: readonly Proposal[], next: EditStatus) => {
 		setStatuses((current) => new Map([...current, ...changed.map((proposal) => [proposal.id, next] as const)]));
@@ -141,121 +156,132 @@ export function Conversation(props: ConversationProps) {
 			.catch(() => undefined);
 	};
 
-	const recordUndone = useEffectEvent(record);
-
-	// Undoing an accepted edit makes it pending again.
-	useEffect(() => {
+	// Undoing an accepted edit makes it pending again. Only an undo (the document) or a status change can cause
+	// one, so streamed chunks don't re-check every edit.
+	const recordUndone = useEffectEvent(() => {
 		for (const message of messages) {
 			for (const part of message.parts) {
 				if (!isProposeEdits(part)) continue;
 				const undone = toProposals(part, statuses, document).filter(
 					(proposal) => proposal.status === "accepted" && document.stateOf(proposal) === "pending",
 				);
-				// oxlint-disable-next-line react/set-state-in-effect -- an undo happens in the resume store; the new status is also saved to the thread
-				if (undone.length > 0) recordUndone(message, part, undone, "pending");
+				if (undone.length > 0) record(message, part, undone, "pending");
 			}
 		}
-	}, [messages, statuses, document]);
-
-	// Follows the reply while it streams, unless the user scrolled up to read.
-	useEffect(() => {
-		const element = scroller.current;
-		if (!element || !streaming) return;
-		if (element.scrollHeight - element.scrollTop - element.clientHeight < 120) element.scrollTop = element.scrollHeight;
 	});
-	useEffect(() => {
-		scroller.current?.scrollTo({ top: scroller.current.scrollHeight });
-	}, []);
+	// oxlint-disable-next-line react/set-state-in-effect -- an undo happens in the resume store; the new status is also saved to the thread
+	useEffect(() => recordUndone(), [statuses, document]);
+
+	const answer = (toolCallId: string, output: string) =>
+		addToolOutput({ tool: "ask_user_question", toolCallId, output });
 
 	const last = messages.at(-1);
 	const proposedInLast = last?.role === "assistant" && last.parts.some(isProposeEdits);
 
 	return (
 		<div className="flex min-h-0 flex-1 flex-col">
-			<div
-				ref={scroller}
-				role="log"
-				aria-live="polite"
-				aria-label={t`Conversation`}
-				className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4"
-			>
-				{messages.map((message, index) => (
-					<MessageView
-						key={message.id}
-						message={message}
-						streaming={streaming && index === messages.length - 1}
-						enter={!initialIds.has(message.id)}
-						readOnly={readOnly}
-						statuses={statuses}
-						document={document}
-						onAnswer={(toolCallId, answer) =>
-							addToolOutput({
-								tool: "ask_user_question",
-								toolCallId,
-								output: answer,
-							})
-						}
-						onRecord={record}
-					/>
-				))}
+			{/* Follows the reply only while the reader is at the latest message; a saved thread opens on its last question. */}
+			<MessageScrollerProvider autoScroll defaultScrollPosition="last-anchor">
+				<div className="relative min-h-0 flex-1">
+					<MessageScroller>
+						<MessageScrollerViewport aria-label={t`Conversation`}>
+							{/* Announced when the answer is complete, not token by token. */}
+							<MessageScrollerContent aria-busy={streaming} className="gap-4 p-4">
+								{messages.map((message, index) => (
+									<MessageScrollerItem key={message.id} messageId={message.id} scrollAnchor={message.role === "user"}>
+										<MessageView
+											message={message}
+											streaming={streaming && index === messages.length - 1}
+											enter={!initialIds.has(message.id)}
+											readOnly={readOnly}
+											statuses={statuses}
+											document={document}
+											onAnswer={answer}
+											onRecord={record}
+										/>
+									</MessageScrollerItem>
+								))}
 
-				{status === "submitted" && (
-					<p className={cn("flex items-center gap-2 text-sm text-ink-3", ENTER_CLASS)}>
-						<Spinner decorative className="size-3.5" />
-						<Trans>Thinking…</Trans>
-					</p>
-				)}
+								{status === "submitted" && (
+									<MessageScrollerItem>
+										<TraceLine status="running" className={ENTER_CLASS}>
+											<TraceIcon>
+												<Spinner decorative className="size-3" />
+											</TraceIcon>
+											<TraceTitle>
+												<Trans>Thinking…</Trans>
+											</TraceTitle>
+										</TraceLine>
+									</MessageScrollerItem>
+								)}
 
-				{stopped && !streaming && !proposedInLast && (
-					<p className="flex items-center gap-2 text-sm text-ink-2 transition-opacity duration-standard ease-enter starting:opacity-0">
-						<Icon name="stop-circle" size={18} className="text-ink-3" />
-						<Trans>Stopped. No edits were proposed.</Trans>
-						<button
-							type="button"
-							className="font-medium underline underline-offset-2"
-							onClick={() => send(t`Continue`)}
-						>
-							<Trans>Continue</Trans>
-						</button>
-					</p>
-				)}
+								{stopped && !streaming && !proposedInLast && (
+									<MessageScrollerItem>
+										<p className="flex items-center gap-2 text-sm text-ink-2 transition-opacity duration-standard ease-enter starting:opacity-0">
+											<Icon name="stop-circle" size={18} className="text-ink-3" />
+											<Trans>Stopped. No edits were proposed.</Trans>
+											<button
+												type="button"
+												className="font-medium underline underline-offset-2"
+												onClick={() => send(t`Continue`)}
+											>
+												<Trans>Continue</Trans>
+											</button>
+										</p>
+									</MessageScrollerItem>
+								)}
 
-				{error && !streaming && (
-					<div
-						role="alert"
-						className="grid gap-2 rounded-xl bg-danger-soft p-3 text-[13px] text-danger-text transition-opacity duration-standard ease-enter starting:opacity-0"
-					>
-						<span className="flex gap-2">
-							<Icon name="warning-circle" size={18} className="shrink-0" />
-							<Trans>
-								{props.providerLabel} returned “
-								{getOrpcErrorMessage(error, {
-									fallback: t`an error`,
-									allowServerMessage: true,
-								})}
-								”. Your message is kept.
-							</Trans>
-						</span>
-						<span className="flex gap-1.5">
-							<Button size="sm" variant="secondary" onClick={retry}>
-								<Trans>Retry</Trans>
-							</Button>
-							<Button size="sm" variant="ghost" onClick={props.onSwitchModel}>
-								<Trans>Switch model</Trans>
-							</Button>
-						</span>
-					</div>
-				)}
+								{error && !streaming && (
+									<MessageScrollerItem>
+										<div
+											role="alert"
+											className="grid gap-2 rounded-xl bg-danger-soft p-3 text-[13px] text-danger-text transition-opacity duration-standard ease-enter starting:opacity-0"
+										>
+											<span className="flex gap-2">
+												<Icon name="warning-circle" size={18} className="shrink-0" />
+												<Trans>
+													{props.providerLabel} returned “
+													{getOrpcErrorMessage(error, {
+														fallback: t`an error`,
+														allowServerMessage: true,
+													})}
+													”. Your message is kept.
+												</Trans>
+											</span>
+											<span className="flex gap-1.5">
+												<Button size="sm" variant="secondary" onClick={retry}>
+													<Trans>Retry</Trans>
+												</Button>
+												<Button size="sm" variant="ghost" onClick={props.onSwitchModel}>
+													<Trans>Switch model</Trans>
+												</Button>
+											</span>
+										</div>
+									</MessageScrollerItem>
+								)}
 
-				{!streaming && messages.length > 0 && (
-					<div className="flex justify-end transition-opacity duration-standard ease-enter starting:opacity-0">
-						<Button size="sm" variant="ghost" className="text-ink-3" onClick={() => void copyTranscript(messages)}>
-							<Icon name="copy" size={16} />
-							<Trans>Copy transcript</Trans>
-						</Button>
-					</div>
-				)}
-			</div>
+								{!streaming && messages.length > 0 && (
+									<MessageScrollerItem className="flex justify-end transition-opacity duration-standard ease-enter starting:opacity-0">
+										<Button
+											size="sm"
+											variant="ghost"
+											className="text-ink-3"
+											onClick={() => void copyTranscript(messages)}
+										>
+											<Icon name="copy" size={16} />
+											<Trans>Copy transcript</Trans>
+										</Button>
+									</MessageScrollerItem>
+								)}
+							</MessageScrollerContent>
+						</MessageScrollerViewport>
+						<MessageScrollerButton>
+							<Icon name="arrow-down" size={16} />
+							<Trans>Latest</Trans>
+						</MessageScrollerButton>
+					</MessageScroller>
+				</div>
+			</MessageScrollerProvider>
 
 			<Composer
 				document={document}
@@ -309,7 +335,8 @@ type MessageViewProps = {
 	onRecord: (message: UIMessage, part: ToolPart, proposals: readonly Proposal[], status: EditStatus) => void;
 };
 
-function MessageView({
+/** Memoized: while a reply streams, only its own message re-renders; the ones above keep their props. */
+const MessageView = memo(function MessageView({
 	message,
 	streaming,
 	enter,
@@ -324,7 +351,7 @@ function MessageView({
 		const files = message.parts.filter((part) => part.type === "file");
 		return (
 			<div className={cn("ms-8 grid justify-items-end gap-1", enter && ENTER_CLASS)}>
-				{text && <p className="rounded-[12px_12px_4px_12px] bg-sunken px-3 py-2 text-sm whitespace-pre-wrap">{text}</p>}
+				{text && <p className="rounded-lg bg-sunken px-3 py-2 text-sm whitespace-pre-wrap">{text}</p>}
 				{files.map((file) => (
 					<span key={file.url} className="flex items-center gap-1 rounded-md bg-sunken px-2 py-1 text-xs text-ink-2">
 						<Icon name="paperclip" size={14} />
@@ -385,7 +412,7 @@ function MessageView({
 			)}
 		</div>
 	);
-}
+});
 
 type ToolPartViewProps = Omit<MessageViewProps, "enter"> & { part: ToolPart };
 
@@ -422,23 +449,33 @@ function ToolPartView({
 			const reading = part.type === "tool-read_page";
 			if (working && !streaming)
 				return (
-					<p className="text-xs text-ink-3">
-						{reading ? <Trans>Page reading didn't finish.</Trans> : <Trans>Web search didn't finish.</Trans>}
-					</p>
+					<TraceLine status="pending">
+						<TraceIcon>
+							<Icon name="minus" size={14} />
+						</TraceIcon>
+						<TraceTitle>
+							{reading ? <Trans>Page reading didn't finish.</Trans> : <Trans>Web search didn't finish.</Trans>}
+						</TraceTitle>
+					</TraceLine>
 				);
 			if (part.state === "output-error")
 				return (
-					<p role="alert" className="text-xs text-danger-text">
-						{reading ? (
-							<Trans>Couldn't read this page: {part.errorText}</Trans>
-						) : (
-							<Trans>Web search failed: {part.errorText}</Trans>
-						)}
-					</p>
+					<TraceLine role="alert" status="error">
+						<TraceIcon>
+							<Icon name="warning-circle" size={14} />
+						</TraceIcon>
+						<TraceTitle>
+							{reading ? (
+								<Trans>Couldn't read this page: {part.errorText}</Trans>
+							) : (
+								<Trans>Web search failed: {part.errorText}</Trans>
+							)}
+						</TraceTitle>
+					</TraceLine>
 				);
 			const page = reading ? readPageOutputSchema.safeParse(part.output) : null;
 			return (
-				<div className="grid gap-1">
+				<Trace>
 					<Status working={working}>
 						{reading ? (
 							working ? (
@@ -462,7 +499,7 @@ function ToolPartView({
 							<Trans>Enhanced reading unavailable; used the built-in reader.</Trans>
 						</p>
 					)}
-				</div>
+				</Trace>
 			);
 		}
 		case "tool-apply_resume_patch":
@@ -477,9 +514,14 @@ function ToolPartView({
 		case "tool-propose_edits": {
 			if (part.state === "output-error")
 				return (
-					<p className="text-xs text-danger-text">
-						<Trans>Couldn't propose these edits: {part.errorText}</Trans>
-					</p>
+					<TraceLine status="error">
+						<TraceIcon>
+							<Icon name="warning-circle" size={14} />
+						</TraceIcon>
+						<TraceTitle>
+							<Trans>Couldn't propose these edits: {part.errorText}</Trans>
+						</TraceTitle>
+					</TraceLine>
 				);
 			if (part.state !== "output-available")
 				return (
@@ -532,15 +574,15 @@ function ToolPartView({
 	}
 }
 
+/** One step the assistant took: a spinner while it runs, a check once done. */
 function Status({ working, children }: { working: boolean; children: ReactNode }) {
 	return (
-		<p className="flex items-center gap-1.5 text-xs text-ink-3">
-			{/* A fixed 14px slot, so the label doesn't shift when the spinner turns into a check. */}
-			<span className="grid size-3.5 shrink-0 place-items-center">
+		<TraceLine status={working ? "running" : undefined}>
+			<TraceIcon>
 				{working ? <Spinner decorative className="size-3" /> : <Icon name="check" size={14} className={POP_CLASS} />}
-			</span>
-			{children}
-		</p>
+			</TraceIcon>
+			<TraceTitle>{children}</TraceTitle>
+		</TraceLine>
 	);
 }
 
@@ -668,12 +710,7 @@ export function Composer(props: ComposerProps) {
 			);
 			setAttachments((current) => [...current, ...uploaded]);
 		} catch (error) {
-			toast.add({
-				type: "error",
-				description: getOrpcErrorMessage(error, {
-					fallback: t`Couldn't attach the file.`,
-				}),
-			});
+			toastError(error, t`Couldn't attach the file. Try again.`);
 		} finally {
 			setUploading(false);
 			if (fileInput.current) fileInput.current.value = "";
@@ -845,6 +882,6 @@ async function copyTranscript(messages: readonly UIMessage[]) {
 		);
 		toast.add({ description: t`Transcript copied` });
 	} catch {
-		toast.add({ description: t`Couldn't copy the transcript.` });
+		toast.add({ description: t`Couldn't copy the transcript. Try again.` });
 	}
 }

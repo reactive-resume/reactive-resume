@@ -182,6 +182,26 @@ describe("web app fallback classification", () => {
 			expect(html).toContain("<title>Jane $&amp; $&#39; Doe - Reactive Resume</title>");
 			expect(html).toContain('<meta name="description" content="Costs $$ and $` nothing">');
 		});
+
+		it("preloads the PDF the app will fetch, only for resumes anyone may open", async () => {
+			vi.mocked(fs.readFile).mockResolvedValue(shell);
+			mocks.getPublicResumeSocialMeta.mockResolvedValue({
+				name: "Jane",
+				title: "Jane",
+				description: "",
+				template: "azurill",
+			});
+
+			const html = await (await handleWebApp(new Request("https://example.com/jane/my-resume"))).text();
+			expect(html).toContain(
+				'<link rel="preload" href="/api/resumes/jane/my-resume/pdf" as="fetch" crossorigin="use-credentials" media="(min-width: 640px)">',
+			);
+
+			// Private, password-protected and missing resumes have no card, and get no preload either.
+			mocks.getPublicResumeSocialMeta.mockResolvedValue(null);
+			const locked = await (await handleWebApp(new Request("https://example.com/jane/locked"))).text();
+			expect(locked).not.toContain('rel="preload"');
+		});
 	});
 
 	it.each(["/", "/alice/resume"])("sets framing and CSP security headers on %s", async (pathname) => {
@@ -205,7 +225,7 @@ describe("web app fallback classification", () => {
 		);
 	});
 
-	it.each(["/auth/login", "/dashboard", "/builder/resume-1", "/agent", "/templates", "/templates/azurill.pdf"])(
+	it.each(["/auth/login", "/dashboard", "/builder/resume-1", "/agent"])(
 		"serves noindex shell for known app prefix %s",
 		async (pathname) => {
 			const response = await handleWebApp(new Request(`https://example.com${pathname}`));
@@ -214,6 +234,18 @@ describe("web app fallback classification", () => {
 			expect(response.headers.get("Content-Type")).toBe("text/html; charset=UTF-8");
 			expect(response.headers.get("X-Robots-Tag")).toBe("noindex, follow");
 			expect(await response.text()).toBe("<html>app</html>");
+		},
+	);
+
+	it.each(["/templates", "/templates/azurill", "/templates/azurill.pdf"])(
+		"returns 404 for retired template preview %s",
+		async (pathname) => {
+			const response = await handleWebApp(new Request(`https://example.com${pathname}`));
+
+			expect(response.status).toBe(404);
+			expect(await response.text()).not.toContain("<html>app</html>");
+			expect(fs.readFile).not.toHaveBeenCalled();
+			expect(mocks.getPublicResumeSocialMeta).not.toHaveBeenCalled();
 		},
 	);
 });

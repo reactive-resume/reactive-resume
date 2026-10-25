@@ -1,7 +1,6 @@
 import { Toast as ToastPrimitive } from "@base-ui/react/toast";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
-import { cn } from "@reactive-resume/utils/style";
 
 /**
  * One toast at a time, bottom center, ink on the desk color. A new toast replaces the current one,
@@ -9,99 +8,7 @@ import { cn } from "@reactive-resume/utils/style";
  */
 const toast = ToastPrimitive.createToastManager();
 
-function ToastProvider({ limit = 1, timeout = 6000, ...props }: ToastPrimitive.Provider.Props) {
-	return <ToastPrimitive.Provider limit={limit} timeout={timeout} {...props} />;
-}
-
-function ToastPortal({ ...props }: ToastPrimitive.Portal.Props) {
-	return <ToastPrimitive.Portal data-slot="toast-portal" {...props} />;
-}
-
-function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {
-	return (
-		<ToastPrimitive.Viewport
-			data-slot="toast-viewport"
-			className={cn(
-				"pointer-events-none fixed inset-x-4 bottom-7 z-200 grid justify-items-center outline-none",
-				className,
-			)}
-			{...props}
-		/>
-	);
-}
-
-function Toast({ className, ...props }: ToastPrimitive.Root.Props) {
-	return (
-		<ToastPrimitive.Root
-			data-slot="toast"
-			className={cn(
-				"group/toast pointer-events-auto flex w-fit max-w-[min(560px,100%)] items-center rounded-lg bg-ink text-bg shadow-e3 transition-[opacity,translate,transform] duration-emphasized ease-enter select-none [grid-area:1/1] data-ending-style:translate-y-2.5 data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d3)*0.7)] data-limited:translate-y-2.5 data-limited:opacity-0 data-limited:duration-[calc(var(--d3)*0.7)] data-starting-style:translate-y-2.5 data-starting-style:opacity-0 data-[swipe-direction=down]:data-ending-style:translate-y-[calc(var(--toast-swipe-movement-y)+100%)] data-[swipe-direction=right]:data-ending-style:translate-x-[calc(var(--toast-swipe-movement-x)+100%)] data-[swipe-direction=right]:data-ending-style:translate-y-0",
-				className,
-			)}
-			{...props}
-		/>
-	);
-}
-
-function ToastContent({ className, ...props }: ToastPrimitive.Content.Props) {
-	return (
-		<ToastPrimitive.Content
-			data-slot="toast-content"
-			className={cn("flex min-h-11 items-center gap-3 px-4 py-2.5", className)}
-			{...props}
-		/>
-	);
-}
-
-function ToastTitle({ className, ...props }: ToastPrimitive.Title.Props) {
-	return (
-		<ToastPrimitive.Title
-			data-slot="toast-title"
-			className={cn("text-sm font-semibold empty:hidden", className)}
-			{...props}
-		/>
-	);
-}
-
-function ToastDescription({ className, ...props }: ToastPrimitive.Description.Props) {
-	return (
-		<ToastPrimitive.Description
-			data-slot="toast-description"
-			className={cn("text-sm font-medium empty:hidden", className)}
-			{...props}
-		/>
-	);
-}
-
-/** The optional action, usually Undo: underlined, semibold, in the toast's text color. */
-function ToastAction({ className, ...props }: ToastPrimitive.Action.Props) {
-	return (
-		<ToastPrimitive.Action
-			data-slot="toast-action"
-			className={cn(
-				"-my-1 shrink-0 rounded-sm px-1 py-1 text-sm font-semibold underline underline-offset-3 transition-opacity hover:opacity-80",
-				className,
-			)}
-			{...props}
-		/>
-	);
-}
-
-function ToastClose({ className, children, ...props }: ToastPrimitive.Close.Props) {
-	return (
-		<ToastPrimitive.Close
-			data-slot="toast-close"
-			aria-label="Close"
-			className={cn(
-				"-me-2 inline-flex size-7 shrink-0 items-center justify-center rounded-sm opacity-70 transition-opacity hover:opacity-100",
-				className,
-			)}
-			{...props}
-		>
-			{children ?? <Icon name="x" size={18} />}
-		</ToastPrimitive.Close>
-	);
-}
+const DEFAULT_TIMEOUT = 6000;
 
 function ToastIcon({ type }: { type: string | undefined }) {
 	if (type === "loading") return <Spinner decorative />;
@@ -112,52 +19,84 @@ function ToastIcon({ type }: { type: string | undefined }) {
 	return null;
 }
 
-function ToastList() {
-	const { toasts } = ToastPrimitive.useToastManager();
-
-	return toasts.map((toastItem) => (
-		<Toast key={toastItem.id} toast={toastItem}>
-			<ToastContent>
-				<ToastIcon type={toastItem.type} />
-				<div className="flex min-w-0 flex-col gap-0.5">
-					<ToastTitle />
-					<ToastDescription />
-				</div>
-				{toastItem.actionProps && <ToastAction />}
-				{toastItem.timeout === 0 && <ToastClose />}
-			</ToastContent>
-		</Toast>
-	));
-}
-
-function Toaster({ children, toastManager = toast, ...props }: ToastPrimitive.Provider.Props) {
+/**
+ * A toast with an action (usually Undo) burns a thin fuse along its bottom edge for the time it has left. The fuse
+ * pauses while the toast is hovered or focused, as its timer does, and is hidden under reduced motion.
+ */
+function ToastFuse({ timeout }: { timeout: number }) {
 	return (
-		<ToastProvider toastManager={toastManager} {...props}>
-			{children}
-			<ToastPortal>
-				<ToastViewport>
-					<ToastList />
-				</ToastViewport>
-			</ToastPortal>
-		</ToastProvider>
+		<span
+			aria-hidden="true"
+			className="absolute inset-x-0 bottom-0 h-0.5 animate-[toast-fuse_linear_forwards] bg-current opacity-40 group-data-expanded/toast:[animation-play-state:paused] motion-reduce:hidden ltr:origin-left rtl:origin-right"
+			style={{ animationDuration: `${timeout}ms` }}
+		/>
 	);
 }
 
-const createToastManager = ToastPrimitive.createToastManager;
-const useToastManager = ToastPrimitive.useToastManager;
+function ToastList({ closeLabel, timeout }: { closeLabel: string; timeout: number }) {
+	const { toasts } = ToastPrimitive.useToastManager();
 
-export {
-	createToastManager,
-	Toast,
-	ToastAction,
-	ToastClose,
-	ToastContent,
-	ToastDescription,
-	Toaster,
-	ToastPortal,
-	ToastProvider,
-	ToastTitle,
-	ToastViewport,
-	toast,
-	useToastManager,
+	return toasts.map((toastItem) => (
+		<ToastPrimitive.Root
+			key={toastItem.id}
+			toast={toastItem}
+			data-slot="toast"
+			className="group/toast pointer-events-auto relative flex w-fit max-w-[min(560px,100%)] items-center overflow-hidden rounded-lg bg-ink text-bg shadow-e3 transition-[opacity,translate,transform] duration-emphasized ease-enter select-none [grid-area:1/1] data-ending-style:translate-y-2.5 data-ending-style:opacity-0 data-ending-style:duration-[calc(var(--d3)*0.7)] data-limited:translate-y-2.5 data-limited:opacity-0 data-limited:duration-[calc(var(--d3)*0.7)] data-starting-style:translate-y-2.5 data-starting-style:opacity-0 data-[swipe-direction=down]:data-ending-style:translate-y-[calc(var(--toast-swipe-movement-y)+100%)] data-[swipe-direction=right]:data-ending-style:translate-x-[calc(var(--toast-swipe-movement-x)+100%)] data-[swipe-direction=right]:data-ending-style:translate-y-0"
+		>
+			<ToastPrimitive.Content data-slot="toast-content" className="flex min-h-11 items-center gap-3 px-4 py-2.5">
+				<ToastIcon type={toastItem.type} />
+				<div className="flex min-w-0 flex-col gap-0.5">
+					<ToastPrimitive.Title data-slot="toast-title" className="text-sm font-semibold empty:hidden" />
+					<ToastPrimitive.Description data-slot="toast-description" className="text-sm font-medium empty:hidden" />
+				</div>
+				{/* The optional action, usually Undo: underlined, semibold, in the toast's text color. */}
+				{toastItem.actionProps && (
+					<ToastPrimitive.Action
+						data-slot="toast-action"
+						className="-my-1 shrink-0 rounded-sm px-1 py-1 text-sm font-semibold underline underline-offset-3 transition-opacity hover:opacity-80"
+					/>
+				)}
+				{toastItem.timeout === 0 && (
+					<ToastPrimitive.Close
+						data-slot="toast-close"
+						aria-label={closeLabel}
+						className="-me-2 inline-flex size-7 shrink-0 items-center justify-center rounded-sm opacity-70 transition-opacity hover:opacity-100"
+					>
+						<Icon name="x" size={18} />
+					</ToastPrimitive.Close>
+				)}
+			</ToastPrimitive.Content>
+			{toastItem.actionProps && toastItem.timeout !== 0 && <ToastFuse timeout={toastItem.timeout ?? timeout} />}
+		</ToastPrimitive.Root>
+	));
+}
+
+type ToasterProps = ToastPrimitive.Provider.Props & {
+	/** Accessible name of the close button on toasts that stay until dismissed; pass a translated string. */
+	closeLabel?: string;
 };
+
+function Toaster({
+	children,
+	toastManager = toast,
+	closeLabel = "Close notification",
+	limit = 1,
+	timeout = DEFAULT_TIMEOUT,
+	...props
+}: ToasterProps) {
+	return (
+		<ToastPrimitive.Provider toastManager={toastManager} limit={limit} timeout={timeout} {...props}>
+			{children}
+			<ToastPrimitive.Portal data-slot="toast-portal">
+				<ToastPrimitive.Viewport
+					data-slot="toast-viewport"
+					className="pointer-events-none fixed inset-x-4 bottom-7 z-200 grid justify-items-center outline-none"
+				>
+					<ToastList closeLabel={closeLabel} timeout={timeout} />
+				</ToastPrimitive.Viewport>
+			</ToastPrimitive.Portal>
+		</ToastPrimitive.Provider>
+	);
+}
+
+export { Toaster, toast };

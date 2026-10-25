@@ -1,6 +1,6 @@
 import type { Proposal, ProposalState } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { useMemo } from "react";
 import { applyTo, getProposalState, getStateIn } from "@reactive-resume/resume/proposals";
 import { acceptResumeProposals } from "./proposals";
@@ -103,7 +103,7 @@ export function useLetterAssistantDocument(letterId: string, applicationId?: str
 				if (!accepted || accepted.content === before) return;
 				let eligible = true;
 				const toastId = showToast({
-					message: proposals.length === 1 ? t`Edit applied` : t`${proposals.length} edits applied`,
+					message: plural(proposals.length, { 1: "Edit applied", other: "# edits applied" }),
 					action: {
 						label: t`Undo`,
 						onPress: () => {

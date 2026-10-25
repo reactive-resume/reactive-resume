@@ -99,32 +99,6 @@ export const ACCENTS = [
 	"#3B3F45",
 ] as const;
 
-/** Advanced → Design quick colours (web `quickColorOptions`, Tailwind 600s). */
-export const QUICK_COLORS = [
-	"rgba(231, 0, 11, 1)",
-	"rgba(245, 73, 0, 1)",
-	"rgba(225, 113, 0, 1)",
-	"rgba(208, 135, 0, 1)",
-	"rgba(94, 165, 0, 1)",
-	"rgba(0, 166, 62, 1)",
-	"rgba(0, 153, 102, 1)",
-	"rgba(0, 150, 137, 1)",
-	"rgba(0, 146, 184, 1)",
-	"rgba(0, 132, 209, 1)",
-	"rgba(21, 93, 252, 1)",
-	"rgba(79, 57, 246, 1)",
-	"rgba(127, 34, 254, 1)",
-	"rgba(152, 16, 250, 1)",
-	"rgba(200, 0, 222, 1)",
-	"rgba(230, 0, 118, 1)",
-	"rgba(236, 0, 63, 1)",
-	"rgba(69, 85, 108, 1)",
-	"rgba(74, 85, 101, 1)",
-	"rgba(82, 82, 92, 1)",
-	"rgba(82, 82, 82, 1)",
-	"rgba(87, 83, 77, 1)",
-] as const;
-
 const HEX = /^#?([0-9a-f]{6})$/i;
 
 export const hexToRgba = (hex: string) => {

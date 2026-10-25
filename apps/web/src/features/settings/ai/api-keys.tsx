@@ -57,15 +57,17 @@ export function ApiKeysSection() {
 	const revoke = async (key: ApiKey) => {
 		const { error } = await authClient.apiKey.update({ keyId: key.id, enabled: false });
 		if (error) {
-			toast.add({ type: "error", description: getReadableErrorMessage(error, t`Couldn't revoke the key.`) });
+			toast.add({ type: "error", description: getReadableErrorMessage(error, t`Couldn't revoke the key. Try again.`) });
 			return;
 		}
 		await refresh();
 
 		let undone = false;
-		const name = key.name || key.start || t`the key`;
+		const name = key.name || key.start;
 		toast.add({
-			description: t`Revoked “${name}”. Apps using it stop working now.`,
+			description: name
+				? t`Revoked “${name}”. Apps using it stop working now.`
+				: t`Key revoked. Apps using it stop working now.`,
 			actionProps: {
 				children: t`Undo`,
 				onClick: async () => {
@@ -157,7 +159,7 @@ export function ApiKeysSection() {
 										size="sm"
 										variant="ghost"
 										className="text-danger-text hover:bg-danger-soft"
-										aria-label={t`Revoke ${key.name || key.start || ""}`}
+										aria-label={t`Revoke ${key.name || key.start || t`unnamed key`}`}
 										onClick={() => void revoke(key)}
 									>
 										<Trans>Revoke</Trans>
@@ -226,7 +228,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange} onOpenChangeComplete={(next) => !next && reset()}>
-			<DialogContent className="sm:max-w-[500px]">
+			<DialogContent closeLabel={t`Close`} className="sm:max-w-[500px]">
 				<DialogHeader>
 					<DialogTitle>
 						<Trans>New API key</Trans>
@@ -238,10 +240,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 
 				{key ? (
 					<div className={cn(ENTER_CLASS, "grid gap-3")}>
-						<p
-							role="status"
-							className="flex gap-2.5 rounded-[10px] bg-warn-soft px-3 py-2.5 text-[13px] text-warn-text"
-						>
+						<p role="status" className="flex gap-2.5 rounded-lg bg-warn-soft px-3 py-2.5 text-[13px] text-warn-text">
 							<Icon name="key" size={20} />
 							<Trans>Copy it now. For your security, it won't be shown again.</Trans>
 						</p>

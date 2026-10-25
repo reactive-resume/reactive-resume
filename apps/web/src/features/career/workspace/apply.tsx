@@ -27,7 +27,7 @@ import { latest, useDebouncedSave, useDefaultProvider, useGenerate, useSavedItem
 import { CollapseRow, Swap, useCareerTime, withUndo, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
 import { useInvalidateApplications } from "@/features/applications/use-application-actions";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
 type Answer = CareerWorkspace["answers"][number];
@@ -307,7 +307,7 @@ function AnswerCard({
 							<button
 								type="button"
 								onClick={onToggleUnit}
-								className="shrink-0 rounded-sm font-mono text-xs leading-[22px] font-medium tracking-[0.04em] text-ink-2 uppercase transition-colors duration-quick hover:text-ink"
+								className="shrink-0 rounded-sm font-mono text-xs leading-[22px] font-medium text-ink-2 transition-colors duration-quick hover:text-ink"
 							/>
 						}
 					>
@@ -353,7 +353,7 @@ function AnswerCard({
 									key={index}
 									className={cn(
 										part.type === "removed" && "text-ink-3 line-through",
-										part.type === "added" && "rounded-[3px] bg-accent-soft text-accent-text",
+										part.type === "added" && "rounded-md bg-accent-soft text-accent-text",
 									)}
 								>
 									{part.text}{" "}
@@ -565,13 +565,7 @@ function Checklist({
 			workspace.save({ checklist: [...new Set([...(current ?? ticked), items.length - 1])] });
 			toast.add({ description: t`Marked as applied. The versions you sent are kept.` });
 		} catch (error) {
-			toast.add({
-				type: "error",
-				description: getOrpcErrorMessage(error, {
-					fallback: t`Couldn't mark it as applied.`,
-					allowServerMessage: true,
-				}),
-			});
+			toastError(error, t`Couldn't mark it as applied. Try again.`, { allowServerMessage: true });
 		} finally {
 			onSubmittingChange(false);
 			invalidate(application.id);
@@ -585,9 +579,7 @@ function Checklist({
 				<h2 className="text-sm font-semibold">
 					<Trans>Before you submit</Trans>
 				</h2>
-				<span className="font-mono text-xs font-medium tracking-[0.04em] text-ink-2 uppercase">
-					{t`${done} of ${items.length}`}
-				</span>
+				<span className="font-mono text-xs font-medium text-ink-2">{t`${done} of ${items.length}`}</span>
 			</div>
 			<div
 				role="progressbar"
@@ -595,10 +587,10 @@ function Checklist({
 				aria-valuemin={0}
 				aria-valuemax={items.length}
 				aria-valuenow={done}
-				className="h-1.5 overflow-hidden rounded-full bg-line"
+				className="h-1.5 overflow-hidden rounded-sm bg-line"
 			>
 				<div
-					className="h-full rounded-full bg-accent transition-[width] duration-standard ease-enter"
+					className="h-full rounded-sm bg-accent transition-[width] duration-standard ease-enter"
 					style={{ width: `${(done / items.length) * 100}%` }}
 				/>
 			</div>

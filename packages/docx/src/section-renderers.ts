@@ -6,84 +6,79 @@ import { htmlToParagraphs } from "./html-to-docx";
 
 type Sections = ResumeData["sections"];
 
-/** Module-level typography/color config, set by the builder before rendering. */
-let headingFont: string | undefined;
-let headingSize: number | undefined;
-let bodyFont: string | undefined;
-let bodySize: number | undefined;
-let textColor: string | undefined;
-let primaryColor: string | undefined;
-
-/**
- * Configures the typography and colors used by all section renderers.
- * Must be called before any render functions.
- */
-export function setRenderConfig(config: {
+type RenderConfig = {
 	headingFont: string;
 	headingSizeHalfPt: number;
 	bodyFont: string;
 	bodySizeHalfPt: number;
 	textColorHex: string;
 	primaryColorHex: string;
-}): void {
-	headingFont = config.headingFont;
-	headingSize = config.headingSizeHalfPt;
-	bodyFont = config.bodyFont;
-	bodySize = config.bodySizeHalfPt;
-	textColor = config.textColorHex;
-	primaryColor = config.primaryColorHex;
+};
+
+/** Module-level typography/color config, set by the builder before rendering. */
+let config: RenderConfig = {
+	headingFont: "Calibri",
+	headingSizeHalfPt: 28,
+	bodyFont: "Calibri",
+	bodySizeHalfPt: 20,
+	textColorHex: "000000",
+	primaryColorHex: "0563C1",
+};
+
+/** Configures the typography and colors used by all section renderers. */
+export function setRenderConfig(next: RenderConfig): void {
+	config = next;
 }
 
-function getHtmlStyle(): HtmlStyleConfig {
-	return {
-		...(bodyFont ? { font: bodyFont } : {}),
-		...(bodySize ? { size: bodySize } : {}),
-		...(textColor ? { color: textColor } : {}),
-		...(primaryColor ? { linkColor: primaryColor } : {}),
-	};
-}
+const getHtmlStyle = (): HtmlStyleConfig => ({
+	font: config.bodyFont,
+	size: config.bodySizeHalfPt,
+	color: config.textColorHex,
+	linkColor: config.primaryColorHex,
+});
 
 /** Base TextRun properties (font, size, color) shared across all section renderers. */
-function getBaseRun() {
-	return {
-		...(bodyFont ? { font: bodyFont } : {}),
-		...(bodySize ? { size: bodySize } : {}),
-		...(textColor ? { color: textColor } : {}),
-	};
-}
+const getBaseRun = () => ({ font: config.bodyFont, size: config.bodySizeHalfPt, color: config.textColorHex });
 
-/**
- * Creates a section heading paragraph with primary color and bottom border.
- * Uses the heading typography set via `setRenderConfig`.
- */
+type BaseRun = ReturnType<typeof getBaseRun>;
+
+/** A section heading paragraph in the primary color with a bottom border, using the heading typography. */
 function sectionHeading(title: string, colorHex: string): Paragraph {
-	// Section headings use <h6> in templates: calc(var(--page-heading-font-size) * 0.75pt)
-	const h6Size = headingSize ? Math.round(headingSize * 0.75) : 16;
+	const color = colorHex.replace("#", "");
 
 	return new Paragraph({
 		heading: HeadingLevel.HEADING_6,
 		spacing: { before: 240, after: 120 },
-		border: {
-			bottom: { style: BorderStyle.SINGLE, size: 1, color: colorHex.replace("#", "") },
-		},
+		border: { bottom: { style: BorderStyle.SINGLE, size: 1, color } },
 		children: [
+			// Section headings use <h6> in templates: calc(var(--page-heading-font-size) * 0.75pt)
 			new TextRun({
 				text: title,
 				bold: true,
-				color: colorHex.replace("#", ""),
-				size: h6Size,
-				...(headingFont ? { font: headingFont } : {}),
+				color,
+				size: Math.round(config.headingSizeHalfPt * 0.75),
+				font: config.headingFont,
 			}),
 		],
 	});
 }
 
-function sectionHeadingParagraph<T extends { showHeading?: boolean | undefined }>(
-	section: T,
-	title: string,
+const headingOf = (section: { title: string; showHeading?: boolean | undefined }, colorHex: string) =>
+	section.showHeading !== false && section.title ? [sectionHeading(section.title, colorHex)] : [];
+
+type RenderableSection<T> = { hidden: boolean; title: string; showHeading?: boolean | undefined; items: T[] };
+
+/** Renders a section's visible items under its heading, or nothing when it is hidden or has no visible items. */
+function renderEntries<T extends { hidden: boolean }>(
+	section: RenderableSection<T>,
 	colorHex: string,
+	renderItem: (item: T, baseRun: BaseRun) => Paragraph[],
 ): Paragraph[] {
-	return section.showHeading !== false && title ? [sectionHeading(title, colorHex)] : [];
+	const items = section.items.filter((item) => !item.hidden);
+	if (section.hidden || items.length === 0) return [];
+
+	const baseRun = getBaseRun();
+	return [...headingOf(section, colorHex), ...items.flatMap((item) => renderItem(item, baseRun))];
 }
 
 function titleAndSubtitle(primary: string, secondary: string, rightText?: string, bold = true): Paragraph {
@@ -105,366 +100,183 @@ function titleAndSubtitle(primary: string, secondary: string, rightText?: string
 	});
 }
 
-function locationAndPeriod(location: string, period: string): Paragraph | null {
-	const parts = [location, period].filter(Boolean);
-	if (parts.length === 0) return null;
+function locationLine(location: string): Paragraph[] {
+	if (!location) return [];
 
-	return new Paragraph({
-		children: [
-			new TextRun({
-				text: parts.join(" | "),
-				italics: true,
-				color: textColor ?? "666666",
-				...(bodyFont ? { font: bodyFont } : {}),
-				...(bodySize ? { size: bodySize } : {}),
-			}),
-		],
-		spacing: { after: 60 },
-	});
+	return [
+		new Paragraph({
+			children: [
+				new TextRun({
+					text: location,
+					italics: true,
+					color: config.textColorHex,
+					font: config.bodyFont,
+					size: config.bodySizeHalfPt,
+				}),
+			],
+			spacing: { after: 60 },
+		}),
+	];
 }
 
-function websiteParagraph(url: string, label: string): Paragraph | null {
+function websiteParagraph(url: string, label: string): Paragraph[] {
 	const safeUrl = toSafeLink(url);
-	if (!safeUrl) return null;
+	if (!safeUrl) return [];
 
-	return new Paragraph({
-		children: [
-			new ExternalHyperlink({
-				link: safeUrl,
-				children: [
-					new TextRun({
-						text: label || safeUrl,
-						color: primaryColor ?? "0563C1",
-						underline: {},
-						...(bodyFont ? { font: bodyFont } : {}),
-						...(bodySize ? { size: bodySize } : {}),
-					}),
-				],
-			}),
-		],
-		spacing: { after: 60 },
-	});
+	return [
+		new Paragraph({
+			children: [
+				new ExternalHyperlink({
+					link: safeUrl,
+					children: [
+						new TextRun({
+							text: label || safeUrl,
+							color: config.primaryColorHex,
+							underline: {},
+							font: config.bodyFont,
+							size: config.bodySizeHalfPt,
+						}),
+					],
+				}),
+			],
+			spacing: { after: 60 },
+		}),
+	];
 }
+
+/** The description and website paragraphs most entries end with. */
+const itemTrailer = (item: { description: string; website: { url: string; label: string } }): Paragraph[] => [
+	...(item.description ? htmlToParagraphs(item.description, getHtmlStyle()) : []),
+	...websiteParagraph(item.website.url, item.website.label),
+];
 
 // --- Section-specific renderers ---
 
 export function renderSummary(summary: ResumeData["summary"], colorHex: string): Paragraph[] {
 	if (summary.hidden || !summary.content) return [];
 
-	const paragraphs: Paragraph[] = [];
-	paragraphs.push(...sectionHeadingParagraph(summary, summary.title, colorHex));
-	paragraphs.push(...htmlToParagraphs(summary.content, getHtmlStyle()));
-	return paragraphs;
+	return [...headingOf(summary, colorHex), ...htmlToParagraphs(summary.content, getHtmlStyle())];
 }
 
-function renderExperience(section: Sections["experience"], colorHex: string): Paragraph[] {
-	const items = section.items.filter((item) => !item.hidden);
-	if (section.hidden || items.length === 0) return [];
-
-	const paragraphs: Paragraph[] = sectionHeadingParagraph(section, section.title, colorHex);
-	const baseRun = getBaseRun();
-
-	for (const item of items) {
+const renderExperience = (section: Sections["experience"], colorHex: string) =>
+	renderEntries(section, colorHex, (item, baseRun) => {
 		const roles = item.roles.filter((role) => role.position.trim());
-		if (roles.length > 0) {
-			paragraphs.push(titleAndSubtitle(item.company, "", item.period));
+		if (roles.length === 0)
+			return [
+				titleAndSubtitle(item.company, item.position, item.period),
+				...locationLine(item.location),
+				...itemTrailer(item),
+			];
 
-			const loc = locationAndPeriod(item.location, "");
-			if (loc) paragraphs.push(loc);
-
-			for (const role of roles) {
-				paragraphs.push(
-					new Paragraph({
-						spacing: { before: 80 },
-						children: [
-							new TextRun({ text: role.position, bold: true, italics: true, ...baseRun }),
-							...(role.period ? [new TextRun({ text: ` — ${role.period}`, italics: true, ...baseRun })] : []),
-						],
-					}),
-				);
-				if (role.description) {
-					paragraphs.push(...htmlToParagraphs(role.description, getHtmlStyle()));
-				}
-			}
-		} else {
-			paragraphs.push(titleAndSubtitle(item.company, item.position, item.period));
-
-			const loc = locationAndPeriod(item.location, "");
-			if (loc) paragraphs.push(loc);
-		}
-		if (item.description) paragraphs.push(...htmlToParagraphs(item.description, getHtmlStyle()));
-
-		const ws = websiteParagraph(item.website.url, item.website.label);
-		if (ws) paragraphs.push(ws);
-	}
-
-	return paragraphs;
-}
-
-function renderEducation(section: Sections["education"], colorHex: string): Paragraph[] {
-	const items = section.items.filter((item) => !item.hidden);
-	if (section.hidden || items.length === 0) return [];
-
-	const paragraphs: Paragraph[] = sectionHeadingParagraph(section, section.title, colorHex);
-	const baseRun = getBaseRun();
-
-	for (const item of items) {
-		const degreeArea = [item.degree, item.area].filter(Boolean).join(", ");
-		paragraphs.push(titleAndSubtitle(item.school, degreeArea, item.period));
-
-		if (item.grade) {
-			paragraphs.push(
+		return [
+			titleAndSubtitle(item.company, "", item.period),
+			...locationLine(item.location),
+			...roles.flatMap((role) => [
 				new Paragraph({
-					children: [new TextRun({ text: `Grade: ${item.grade}`, italics: true, ...baseRun })],
+					spacing: { before: 80 },
+					children: [
+						new TextRun({ text: role.position, bold: true, italics: true, ...baseRun }),
+						...(role.period ? [new TextRun({ text: ` — ${role.period}`, italics: true, ...baseRun })] : []),
+					],
 				}),
-			);
-		}
+				...(role.description ? htmlToParagraphs(role.description, getHtmlStyle()) : []),
+			]),
+			...itemTrailer(item),
+		];
+	});
 
-		const loc = locationAndPeriod(item.location, "");
-		if (loc) paragraphs.push(loc);
+const renderEducation = (section: Sections["education"], colorHex: string) =>
+	renderEntries(section, colorHex, (item, baseRun) => [
+		titleAndSubtitle(item.school, [item.degree, item.area].filter(Boolean).join(", "), item.period),
+		...(item.grade
+			? [new Paragraph({ children: [new TextRun({ text: `Grade: ${item.grade}`, italics: true, ...baseRun })] })]
+			: []),
+		...locationLine(item.location),
+		...itemTrailer(item),
+	]);
 
-		if (item.description) {
-			paragraphs.push(...htmlToParagraphs(item.description, getHtmlStyle()));
-		}
+const renderProjects = (section: Sections["projects"], colorHex: string) =>
+	renderEntries(section, colorHex, (item) => [titleAndSubtitle(item.name, "", item.period), ...itemTrailer(item)]);
 
-		const ws = websiteParagraph(item.website.url, item.website.label);
-		if (ws) paragraphs.push(ws);
-	}
-
-	return paragraphs;
-}
-
-function renderProjects(section: Sections["projects"], colorHex: string): Paragraph[] {
-	const items = section.items.filter((item) => !item.hidden);
-	if (section.hidden || items.length === 0) return [];
-
-	const paragraphs: Paragraph[] = sectionHeadingParagraph(section, section.title, colorHex);
-
-	for (const item of items) {
-		paragraphs.push(titleAndSubtitle(item.name, "", item.period));
-
-		if (item.description) {
-			paragraphs.push(...htmlToParagraphs(item.description, getHtmlStyle()));
-		}
-
-		const ws = websiteParagraph(item.website.url, item.website.label);
-		if (ws) paragraphs.push(ws);
-	}
-
-	return paragraphs;
-}
-
-function renderSkills(section: Sections["skills"], colorHex: string): Paragraph[] {
-	const items = section.items.filter((item) => !item.hidden);
-	if (section.hidden || items.length === 0) return [];
-
-	const paragraphs: Paragraph[] = sectionHeadingParagraph(section, section.title, colorHex);
-	const baseRun = getBaseRun();
-
-	for (const item of items) {
+const renderSkills = (section: Sections["skills"], colorHex: string) =>
+	renderEntries(section, colorHex, (item, baseRun) => {
+		const asList = section.keywordLayout === "list";
 		const children: TextRun[] = [new TextRun({ text: item.name, bold: true, ...baseRun })];
-
-		if (item.proficiency) {
-			children.push(new TextRun({ text: ` — ${item.proficiency}`, ...baseRun }));
-		}
-
-		if (section.keywordLayout !== "list" && item.keywords.length > 0) {
+		if (item.proficiency) children.push(new TextRun({ text: ` — ${item.proficiency}`, ...baseRun }));
+		if (!asList && item.keywords.length > 0)
 			children.push(new TextRun({ text: `: ${item.keywords.join(", ")}`, ...baseRun }));
-		}
 
-		paragraphs.push(new Paragraph({ spacing: { before: 60 }, children }));
-		if (section.keywordLayout === "list") {
-			for (const keyword of item.keywords) {
-				paragraphs.push(
-					new Paragraph({ bullet: { level: 0 }, children: [new TextRun({ text: keyword, ...baseRun })] }),
-				);
-			}
-		}
-	}
+		return [
+			new Paragraph({ spacing: { before: 60 }, children }),
+			...(asList ? item.keywords : []).map(
+				(keyword) => new Paragraph({ bullet: { level: 0 }, children: [new TextRun({ text: keyword, ...baseRun })] }),
+			),
+		];
+	});
 
-	return paragraphs;
-}
+/** A bold name with an optional suffix, the shape of languages, interests and profiles. */
+const nameLine = (name: string, suffix: string, baseRun: BaseRun) =>
+	new Paragraph({
+		spacing: { before: 60 },
+		children: [
+			new TextRun({ text: name, bold: true, ...baseRun }),
+			...(suffix ? [new TextRun({ text: suffix, ...baseRun })] : []),
+		],
+	});
 
-function renderLanguages(section: Sections["languages"], colorHex: string): Paragraph[] {
-	const items = section.items.filter((item) => !item.hidden);
-	if (section.hidden || items.length === 0) return [];
+const renderLanguages = (section: Sections["languages"], colorHex: string) =>
+	renderEntries(section, colorHex, (item, baseRun) => [
+		nameLine(item.language, item.fluency ? ` — ${item.fluency}` : "", baseRun),
+	]);
 
-	const paragraphs: Paragraph[] = sectionHeadingParagraph(section, section.title, colorHex);
-	const baseRun = getBaseRun();
+const renderInterests = (section: Sections["interests"], colorHex: string) =>
+	renderEntries(section, colorHex, (item, baseRun) => [
+		nameLine(item.name, item.keywords.length > 0 ? `: ${item.keywords.join(", ")}` : "", baseRun),
+	]);
 
-	for (const item of items) {
-		const children: TextRun[] = [new TextRun({ text: item.language, bold: true, ...baseRun })];
+const renderAwards = (section: Sections["awards"], colorHex: string) =>
+	renderEntries(section, colorHex, (item) => [
+		titleAndSubtitle(item.title, item.awarder, item.date, false),
+		...itemTrailer(item),
+	]);
 
-		if (item.fluency) {
-			children.push(new TextRun({ text: ` — ${item.fluency}`, ...baseRun }));
-		}
+const renderCertifications = (section: Sections["certifications"], colorHex: string) =>
+	renderEntries(section, colorHex, (item) => [
+		titleAndSubtitle(item.title, item.issuer, item.date),
+		...itemTrailer(item),
+	]);
 
-		paragraphs.push(new Paragraph({ spacing: { before: 60 }, children }));
-	}
+const renderPublications = (section: Sections["publications"], colorHex: string) =>
+	renderEntries(section, colorHex, (item) => [
+		titleAndSubtitle(item.title, item.publisher, item.date),
+		...itemTrailer(item),
+	]);
 
-	return paragraphs;
-}
+const renderVolunteer = (section: Sections["volunteer"], colorHex: string) =>
+	renderEntries(section, colorHex, (item) => [
+		titleAndSubtitle(item.organization, "", item.period),
+		...locationLine(item.location),
+		...itemTrailer(item),
+	]);
 
-function renderInterests(section: Sections["interests"], colorHex: string): Paragraph[] {
-	const items = section.items.filter((item) => !item.hidden);
-	if (section.hidden || items.length === 0) return [];
+const renderReferences = (section: Sections["references"], colorHex: string) =>
+	renderEntries(section, colorHex, (item, baseRun) => [
+		new Paragraph({
+			spacing: { before: 120 },
+			children: [
+				new TextRun({ text: item.name, bold: true, ...baseRun }),
+				...(item.position ? [new TextRun({ text: ` — ${item.position}`, ...baseRun })] : []),
+			],
+		}),
+		...(item.phone ? [new Paragraph({ children: [new TextRun({ text: item.phone, ...baseRun })] })] : []),
+		...itemTrailer(item),
+	]);
 
-	const paragraphs: Paragraph[] = sectionHeadingParagraph(section, section.title, colorHex);
-	const baseRun = getBaseRun();
-
-	for (const item of items) {
-		const children: TextRun[] = [new TextRun({ text: item.name, bold: true, ...baseRun })];
-
-		if (item.keywords.length > 0) {
-			children.push(new TextRun({ text: `: ${item.keywords.join(", ")}`, ...baseRun }));
-		}
-
-		paragraphs.push(new Paragraph({ spacing: { before: 60 }, children }));
-	}
-
-	return paragraphs;
-}
-
-function renderAwards(section: Sections["awards"], colorHex: string): Paragraph[] {
-	const items = section.items.filter((item) => !item.hidden);
-	if (section.hidden || items.length === 0) return [];
-
-	const paragraphs: Paragraph[] = sectionHeadingParagraph(section, section.title, colorHex);
-
-	for (const item of items) {
-		paragraphs.push(titleAndSubtitle(item.title, item.awarder, item.date, false));
-
-		if (item.description) {
-			paragraphs.push(...htmlToParagraphs(item.description, getHtmlStyle()));
-		}
-
-		const ws = websiteParagraph(item.website.url, item.website.label);
-		if (ws) paragraphs.push(ws);
-	}
-
-	return paragraphs;
-}
-
-function renderCertifications(section: Sections["certifications"], colorHex: string): Paragraph[] {
-	const items = section.items.filter((item) => !item.hidden);
-	if (section.hidden || items.length === 0) return [];
-
-	const paragraphs: Paragraph[] = sectionHeadingParagraph(section, section.title, colorHex);
-
-	for (const item of items) {
-		paragraphs.push(titleAndSubtitle(item.title, item.issuer, item.date));
-
-		if (item.description) {
-			paragraphs.push(...htmlToParagraphs(item.description, getHtmlStyle()));
-		}
-
-		const ws = websiteParagraph(item.website.url, item.website.label);
-		if (ws) paragraphs.push(ws);
-	}
-
-	return paragraphs;
-}
-
-function renderPublications(section: Sections["publications"], colorHex: string): Paragraph[] {
-	const items = section.items.filter((item) => !item.hidden);
-	if (section.hidden || items.length === 0) return [];
-
-	const paragraphs: Paragraph[] = sectionHeadingParagraph(section, section.title, colorHex);
-
-	for (const item of items) {
-		paragraphs.push(titleAndSubtitle(item.title, item.publisher, item.date));
-
-		if (item.description) {
-			paragraphs.push(...htmlToParagraphs(item.description, getHtmlStyle()));
-		}
-
-		const ws = websiteParagraph(item.website.url, item.website.label);
-		if (ws) paragraphs.push(ws);
-	}
-
-	return paragraphs;
-}
-
-function renderVolunteer(section: Sections["volunteer"], colorHex: string): Paragraph[] {
-	const items = section.items.filter((item) => !item.hidden);
-	if (section.hidden || items.length === 0) return [];
-
-	const paragraphs: Paragraph[] = sectionHeadingParagraph(section, section.title, colorHex);
-
-	for (const item of items) {
-		paragraphs.push(titleAndSubtitle(item.organization, "", item.period));
-
-		const loc = locationAndPeriod(item.location, "");
-		if (loc) paragraphs.push(loc);
-
-		if (item.description) {
-			paragraphs.push(...htmlToParagraphs(item.description, getHtmlStyle()));
-		}
-
-		const ws = websiteParagraph(item.website.url, item.website.label);
-		if (ws) paragraphs.push(ws);
-	}
-
-	return paragraphs;
-}
-
-function renderReferences(section: Sections["references"], colorHex: string): Paragraph[] {
-	const items = section.items.filter((item) => !item.hidden);
-	if (section.hidden || items.length === 0) return [];
-
-	const paragraphs: Paragraph[] = sectionHeadingParagraph(section, section.title, colorHex);
-	const baseRun = getBaseRun();
-
-	for (const item of items) {
-		const children: TextRun[] = [new TextRun({ text: item.name, bold: true, ...baseRun })];
-
-		if (item.position) {
-			children.push(new TextRun({ text: ` — ${item.position}`, ...baseRun }));
-		}
-
-		paragraphs.push(new Paragraph({ spacing: { before: 120 }, children }));
-
-		if (item.phone) {
-			paragraphs.push(
-				new Paragraph({
-					children: [new TextRun({ text: item.phone, ...baseRun })],
-				}),
-			);
-		}
-
-		if (item.description) {
-			paragraphs.push(...htmlToParagraphs(item.description, getHtmlStyle()));
-		}
-
-		const ws = websiteParagraph(item.website.url, item.website.label);
-		if (ws) paragraphs.push(ws);
-	}
-
-	return paragraphs;
-}
-
-function renderProfiles(section: Sections["profiles"], colorHex: string): Paragraph[] {
-	const items = section.items.filter((item) => !item.hidden);
-	if (section.hidden || items.length === 0) return [];
-
-	const paragraphs: Paragraph[] = sectionHeadingParagraph(section, section.title, colorHex);
-	const baseRun = getBaseRun();
-
-	for (const item of items) {
-		const children: (TextRun | ExternalHyperlink)[] = [new TextRun({ text: item.network, bold: true, ...baseRun })];
-
-		if (item.username) {
-			children.push(new TextRun({ text: ` — ${item.username}`, ...baseRun }));
-		}
-
-		paragraphs.push(new Paragraph({ spacing: { before: 60 }, children }));
-
-		const ws = websiteParagraph(item.website.url, item.website.label);
-		if (ws) paragraphs.push(ws);
-	}
-
-	return paragraphs;
-}
+const renderProfiles = (section: Sections["profiles"], colorHex: string) =>
+	renderEntries(section, colorHex, (item, baseRun) => [
+		nameLine(item.network, item.username ? ` — ${item.username}` : "", baseRun),
+		...websiteParagraph(item.website.url, item.website.label),
+	]);
 
 /**
  * Mapping from built-in section type to its renderer.
@@ -506,7 +318,7 @@ export function renderCustomSection(section: CustomSection, colorHex: string): P
 
 	// Summary-type custom sections render HTML content
 	if (sectionType === "summary") {
-		const paragraphs: Paragraph[] = sectionHeadingParagraph(section, section.title, colorHex);
+		const paragraphs = headingOf(section, colorHex);
 		for (const item of visibleItems) {
 			if ("content" in item && item.content) {
 				paragraphs.push(...htmlToParagraphs(item.content, getHtmlStyle()));

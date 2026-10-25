@@ -34,10 +34,10 @@ it("sends revokeOtherSessions: true when user checks the option", async () => {
 		</I18nProvider>,
 	);
 
-	fireEvent.change(screen.getByLabelText("Current Password"), { target: { value: "oldPassword123" } });
-	fireEvent.change(screen.getByLabelText("New Password"), { target: { value: "newPassword456" } });
-	fireEvent.click(screen.getByRole("checkbox", { name: "Sign out from all other devices" }));
-	fireEvent.click(screen.getByRole("button", { name: "Update Password" }));
+	fireEvent.change(screen.getByLabelText("Current password"), { target: { value: "oldPassword123" } });
+	fireEvent.change(screen.getByLabelText("New password"), { target: { value: "newPassword456" } });
+	fireEvent.click(screen.getByRole("checkbox", { name: "Sign out of all other devices" }));
+	fireEvent.click(screen.getByRole("button", { name: "Change password" }));
 
 	await waitFor(() => {
 		expect(mocks.changePassword).toHaveBeenCalledWith({
@@ -58,9 +58,9 @@ it("preserves a legacy current password and keeps other sessions by default", as
 		</I18nProvider>,
 	);
 
-	fireEvent.change(screen.getByLabelText("Current Password"), { target: { value: "old123" } });
-	fireEvent.change(screen.getByLabelText("New Password"), { target: { value: "newPassword456" } });
-	fireEvent.click(screen.getByRole("button", { name: "Update Password" }));
+	fireEvent.change(screen.getByLabelText("Current password"), { target: { value: "old123" } });
+	fireEvent.change(screen.getByLabelText("New password"), { target: { value: "newPassword456" } });
+	fireEvent.click(screen.getByRole("button", { name: "Change password" }));
 
 	await waitFor(() => {
 		expect(mocks.changePassword).toHaveBeenCalledWith({

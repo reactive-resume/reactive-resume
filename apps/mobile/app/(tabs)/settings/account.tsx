@@ -64,7 +64,7 @@ export default function AccountScreen() {
 							onPress={browse}
 						/>
 						<ListRow
-							title={t`Two-factor authentication`}
+							title={t`Two-step verification`}
 							leading="shield-check"
 							trailing={<Icon name="arrow-square-out" />}
 							onPress={browse}

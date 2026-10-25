@@ -86,7 +86,7 @@ export function describeNextStep(
 				screening: t`Screening`,
 				technical: t`Technical`,
 				behavioral: t`Behavioral`,
-				onsite: t`On-site`,
+				onsite: t`Onsite`,
 				other: t`Other`,
 			}[step.interview.kind];
 			const where = step.interview.location ? ` · ${step.interview.location}` : "";

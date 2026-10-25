@@ -148,7 +148,7 @@ export function LayoutScreen({ data, write, disabled, onDragChange }: LayoutScre
 		const shown = sections.filter(visible);
 		const target = dragging?.target?.page === page && dragging.target.column === id ? dragging.target : null;
 		const marker = (
-			<View key="marker" style={{ height: space.s0, borderRadius: radius.rPill, backgroundColor: colors.accent }} />
+			<View key="marker" style={{ height: space.s0, borderRadius: radius.rLg, backgroundColor: colors.accent }} />
 		);
 		const items = shown.map((item) => sectionRow(item, { page, column: id }));
 		if (target) {
@@ -199,7 +199,7 @@ export function LayoutScreen({ data, write, disabled, onDragChange }: LayoutScre
 					style={{
 						gap: space.s3,
 						padding: space.s3,
-						borderRadius: radius.rXl,
+						borderRadius: radius.rLg,
 						borderWidth: 1,
 						borderColor: colors.line,
 					}}
@@ -210,7 +210,7 @@ export function LayoutScreen({ data, write, disabled, onDragChange }: LayoutScre
 						</Text>
 						{layout.pages.length > 1 ? (
 							<Button
-								label={t`Delete Page`}
+								label={t`Delete page`}
 								icon="trash"
 								variant="ghost"
 								size="sm"
@@ -220,7 +220,7 @@ export function LayoutScreen({ data, write, disabled, onDragChange }: LayoutScre
 						) : null}
 					</View>
 					<SwitchRow
-						label={t({ message: "Full Width", comment: "Layout editor toggle label that makes a page single-column" })}
+						label={t({ message: "Full width", comment: "Layout editor toggle label that makes a page single-column" })}
 						value={page.fullWidth}
 						disabled={disabled}
 						onChange={(value) =>
@@ -233,7 +233,7 @@ export function LayoutScreen({ data, write, disabled, onDragChange }: LayoutScre
 			))}
 			<View style={{ alignSelf: "flex-start" }}>
 				<Button
-					label={t`Add Page`}
+					label={t`Add page`}
 					icon="plus"
 					variant="secondary"
 					disabled={disabled}
@@ -241,7 +241,7 @@ export function LayoutScreen({ data, write, disabled, onDragChange }: LayoutScre
 				/>
 			</View>
 			<Stepper
-				label={t`Sidebar Width`}
+				label={t`Sidebar width`}
 				value={layout.sidebarWidth}
 				unit="%"
 				min={10}
@@ -284,7 +284,7 @@ export function LayoutScreen({ data, write, disabled, onDragChange }: LayoutScre
 							)),
 						)}
 						<ListRow
-							title={t`New Page`}
+							title={t`New page`}
 							leading="plus-circle"
 							disabled={disabled}
 							onPress={() => {

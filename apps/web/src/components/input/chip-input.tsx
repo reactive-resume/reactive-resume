@@ -8,7 +8,13 @@ import {
 	useSensor,
 	useSensors,
 } from "@dnd-kit/core";
-import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates, useSortable } from "@dnd-kit/sortable";
+import {
+	arrayMove,
+	rectSortingStrategy,
+	SortableContext,
+	sortableKeyboardCoordinates,
+	useSortable,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
@@ -145,7 +151,6 @@ type Props = Omit<React.ComponentProps<"div">, "value" | "onChange"> & {
 	value?: string[];
 	defaultValue?: string[];
 	onChange?: (value: string[]) => void;
-	hideDescription?: boolean;
 	allowCommas?: boolean;
 };
 
@@ -154,7 +159,6 @@ export function ChipInput({
 	defaultValue = EMPTY_CHIPS,
 	onChange,
 	className,
-	hideDescription = false,
 	allowCommas = false,
 	id: idProp,
 	"aria-describedby": ariaDescribedByProp,
@@ -181,82 +185,47 @@ export function ChipInput({
 	const isEditingKeyword = editingIndex !== null;
 	const hasChips = chips.length > 0;
 
-	const addChips = React.useCallback(
-		(values: string[]) => {
-			const nextValues = values.flatMap((chip) => {
-				const trimmed = chip.trim();
-				return trimmed ? [trimmed] : [];
-			});
-			if (nextValues.length === 0) return;
+	const addChips = (values: string[]) => {
+		const nextValues = values.flatMap((chip) => {
+			const trimmed = chip.trim();
+			return trimmed ? [trimmed] : [];
+		});
+		if (nextValues.length === 0) return;
 
-			const newChips = [...new Set([...chips, ...nextValues])];
-			setChips(newChips);
-		},
-		[chips, setChips],
-	);
+		setChips([...new Set([...chips, ...nextValues])]);
+	};
 
-	const addChip = React.useCallback(
-		(chip: string) => {
-			addChips([chip]);
-		},
-		[addChips],
-	);
+	const updateChip = (index: number, newValue: string) => {
+		const trimmed = newValue.trim();
+		if (!trimmed || index < 0 || index >= chips.length) return;
 
-	const updateChip = React.useCallback(
-		(index: number, newValue: string) => {
-			const trimmed = newValue.trim();
-			if (!trimmed || index < 0 || index >= chips.length) return;
+		const existingIndex = chips.findIndex((c, i) => c === trimmed && i !== index);
+		if (existingIndex !== -1) return;
 
-			const existingIndex = chips.findIndex((c, i) => c === trimmed && i !== index);
-			if (existingIndex !== -1) return;
+		const newChips = [...chips];
+		newChips[index] = trimmed;
+		setChips(newChips);
+	};
 
-			const newChips = [...chips];
-			newChips[index] = trimmed;
-			setChips(newChips);
-		},
-		[chips, setChips],
-	);
+	const removeChip = (index: number) => {
+		if (index < 0 || index >= chips.length) return;
+		setChips(chips.slice(0, index).concat(chips.slice(index + 1)));
 
-	const removeChip = React.useCallback(
-		(index: number) => {
-			if (index < 0 || index >= chips.length) return;
-			const newChips = chips.slice(0, index).concat(chips.slice(index + 1));
-			setChips(newChips);
+		if (editingIndex === index) {
+			setEditingIndex(null);
+			setInput("");
+		} else if (editingIndex !== null && editingIndex > index) {
+			setEditingIndex((current) => (current !== null && current > index ? current - 1 : current));
+		}
+	};
 
-			if (editingIndex === index) {
-				setEditingIndex(null);
-				setInput("");
-			} else if (editingIndex !== null && editingIndex > index) {
-				setEditingIndex((current) => (current !== null && current > index ? current - 1 : current));
-			}
-		},
-		[chips, setChips, editingIndex],
-	);
-
-	const handleEdit = React.useCallback(
-		(index: number) => {
-			const chip = chips[index];
-			if (chip === undefined) return;
-			setEditingIndex(index);
-			setInput(chip);
-			inputRef.current?.focus();
-		},
-		[chips],
-	);
-
-	const handleReorder = React.useCallback(
-		(newOrder: string[]) => {
-			if (editingIndex !== null) {
-				const editingChip = chips[editingIndex];
-				const newIndex = editingChip === undefined ? -1 : newOrder.indexOf(editingChip);
-				if (newIndex !== -1 && newIndex !== editingIndex) {
-					setEditingIndex(newIndex);
-				}
-			}
-			setChips(newOrder);
-		},
-		[chips, editingIndex, setChips],
-	);
+	const handleEdit = (index: number) => {
+		const chip = chips[index];
+		if (chip === undefined) return;
+		setEditingIndex(index);
+		setInput(chip);
+		inputRef.current?.focus();
+	};
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
@@ -267,82 +236,67 @@ export function ChipInput({
 		}),
 	);
 
-	const handleDragStart = React.useCallback((event: DragStartEvent) => {
-		setActiveChip(event.active.id as string);
-	}, []);
-
-	const handleDragCancel = React.useCallback(() => {
+	const handleDragEnd = (event: DragEndEvent) => {
 		setActiveChip(null);
-	}, []);
 
-	const handleDragEnd = React.useCallback(
-		(event: DragEndEvent) => {
-			setActiveChip(null);
+		const { active, over } = event;
+		if (!over || active.id === over.id) return;
+		const oldIndex = chips.indexOf(active.id as string);
+		const newIndex = chips.indexOf(over.id as string);
+		if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return;
 
-			const { active, over } = event;
-			if (!over || active.id === over.id) return;
-			const oldIndex = chips.indexOf(active.id as string);
-			const newIndex = chips.indexOf(over.id as string);
-			if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
-				const newOrder = [...chips];
-				const [removed] = newOrder.splice(oldIndex, 1);
-				if (removed === undefined) return;
-				newOrder.splice(newIndex, 0, removed);
-				handleReorder(newOrder);
-			}
-		},
-		[chips, handleReorder],
-	);
+		const newOrder = arrayMove(chips, oldIndex, newIndex);
+		if (editingIndex !== null) {
+			const editingChip = chips[editingIndex];
+			const movedIndex = editingChip === undefined ? -1 : newOrder.indexOf(editingChip);
+			if (movedIndex !== -1 && movedIndex !== editingIndex) setEditingIndex(movedIndex);
+		}
+		setChips(newOrder);
+	};
 
-	const handleInputChange = React.useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>) => {
-			const newValue = e.target.value;
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const newValue = e.target.value;
 
-			if (editingIndex !== null) {
-				if (!allowCommas && newValue.includes(",")) {
-					updateChip(editingIndex, newValue.replace(",", ""));
-					setEditingIndex(null);
-					setInput("");
-				} else {
-					setInput(newValue);
-				}
-				return;
-			}
-
+		if (editingIndex !== null) {
 			if (!allowCommas && newValue.includes(",")) {
-				const parts = newValue.split(",");
-				addChips(parts.slice(0, -1));
-				setInput(parts.at(-1) ?? "");
+				updateChip(editingIndex, newValue.replace(",", ""));
+				setEditingIndex(null);
+				setInput("");
 			} else {
 				setInput(newValue);
 			}
-		},
-		[addChips, allowCommas, editingIndex, updateChip],
-	);
+			return;
+		}
 
-	const handleKeyDown = React.useCallback(
-		(e: React.KeyboardEvent<HTMLInputElement>) => {
-			if (isImeComposing(e)) return;
-			if (e.key === "Enter" || (!allowCommas && e.key === ",")) {
-				e.preventDefault();
+		if (!allowCommas && newValue.includes(",")) {
+			const parts = newValue.split(",");
+			addChips(parts.slice(0, -1));
+			setInput(parts.at(-1) ?? "");
+		} else {
+			setInput(newValue);
+		}
+	};
 
-				if (editingIndex !== null) {
-					if (input.trim()) {
-						updateChip(editingIndex, input);
-					}
-					setEditingIndex(null);
-					setInput("");
-				} else if (input.trim()) {
-					addChip(input);
-					setInput("");
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (isImeComposing(e)) return;
+		if (e.key === "Enter" || (!allowCommas && e.key === ",")) {
+			e.preventDefault();
+
+			if (editingIndex !== null) {
+				if (input.trim()) {
+					updateChip(editingIndex, input);
 				}
-			} else if (e.key === "Escape" && editingIndex !== null) {
 				setEditingIndex(null);
 				setInput("");
+			} else if (input.trim()) {
+				addChips([input]);
+				setInput("");
 			}
-		},
-		[input, addChip, allowCommas, editingIndex, updateChip],
-	);
+		} else if (e.key === "Escape" && editingIndex !== null) {
+			setEditingIndex(null);
+			setInput("");
+		}
+	};
 
 	return (
 		<div className={cn("space-y-1.5", className)} {...props}>
@@ -350,9 +304,9 @@ export function ChipInput({
 				id={dndContextId}
 				sensors={sensors}
 				collisionDetection={closestCenter}
-				onDragStart={handleDragStart}
+				onDragStart={(event: DragStartEvent) => setActiveChip(event.active.id as string)}
 				onDragEnd={handleDragEnd}
-				onDragCancel={handleDragCancel}
+				onDragCancel={() => setActiveChip(null)}
 			>
 				<div
 					role="none"
@@ -416,19 +370,17 @@ export function ChipInput({
 				<ChipDragOverlay activeChip={activeChip} />
 			</DndContext>
 
-			{!hideDescription && (
-				<p className="text-xs text-ink-3">
-					{allowCommas ? (
-						<Trans>
-							Press <Kbd>{RETURN_KEY}</Kbd> to add or save the current keyword.
-						</Trans>
-					) : (
-						<Trans>
-							Press <Kbd>{RETURN_KEY}</Kbd> or <Kbd>{COMMA_KEY}</Kbd> to add or save the current keyword.
-						</Trans>
-					)}
-				</p>
-			)}
+			<p className="text-xs text-ink-3">
+				{allowCommas ? (
+					<Trans>
+						Press <Kbd>{RETURN_KEY}</Kbd> to add or save the current keyword.
+					</Trans>
+				) : (
+					<Trans>
+						Press <Kbd>{RETURN_KEY}</Kbd> or <Kbd>{COMMA_KEY}</Kbd> to add or save the current keyword.
+					</Trans>
+				)}
+			</p>
 		</div>
 	);
 }

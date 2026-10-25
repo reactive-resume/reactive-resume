@@ -198,8 +198,8 @@ export function DatesField({ dates, locale, format, single = false, disabled, au
 			) : dates.raw !== undefined ? (
 				<Note icon="warning" tone="warnText">
 					{dates.start
-						? t`We read "${dates.raw}". Pick a month so it sorts and prints consistently.`
-						: t`We couldn't read "${dates.raw}". Enter the dates so they sort and print consistently.`}
+						? t`We read “${dates.raw}”. Pick a month so it sorts and prints consistently.`
+						: t`Couldn't read “${dates.raw}”. Enter the dates so they sort and print consistently.`}
 				</Note>
 			) : isReversed(dates) ? (
 				<Note icon="warning" tone="warnText">

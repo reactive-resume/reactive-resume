@@ -22,13 +22,20 @@ beforeEach(() => {
 });
 
 describe("resolvePublicResumePdfBlob", () => {
-	it("fetches the server PDF only after browser rendering rejects", async () => {
-		mocks.createResumePdfBlob.mockRejectedValue(new Error("browser renderer failed"));
+	it("shows the server's PDF without starting the browser renderer", async () => {
+		const blob = await resolvePublicResumePdfBlob({ data: sampleResumeData, publicResume });
+
+		expect(mocks.fetch).toHaveBeenCalledWith("/api/resumes/amruth/sample/pdf", { credentials: "include" });
+		expect(await blob.text()).toBe("server");
+		expect(mocks.createResumePdfBlob).not.toHaveBeenCalled();
+	});
+
+	it("renders in the browser when the server can't serve the PDF", async () => {
+		mocks.fetch.mockResolvedValue(new Response("Too many requests", { status: 429 }));
 
 		const blob = await resolvePublicResumePdfBlob({ data: sampleResumeData, publicResume });
 
 		expect(mocks.createResumePdfBlob).toHaveBeenCalledWith(sampleResumeData);
-		expect(mocks.fetch).toHaveBeenCalledWith("/api/resumes/amruth/sample/pdf", { credentials: "include" });
-		expect(await blob.text()).toBe("server");
+		expect(await blob.text()).toBe("local");
 	});
 });

@@ -199,7 +199,7 @@ function ApplicationCalendar() {
 					onPress={schedule}
 				/>
 			</View>
-			<View style={{ borderWidth: 1, borderColor: colors.line, borderRadius: radius.rXl, overflow: "hidden" }}>
+			<View style={{ borderWidth: 1, borderColor: colors.line, borderRadius: radius.rLg, overflow: "hidden" }}>
 				<View style={{ flexDirection: "row" }} importantForAccessibility="no-hide-descendants">
 					{days.slice(0, 7).map((day) => (
 						<Text
@@ -257,7 +257,7 @@ function ApplicationCalendar() {
 											alignSelf: tablet ? "flex-end" : "center",
 											minWidth: space.s6,
 											minHeight: space.s6,
-											borderRadius: radius.rPill,
+											borderRadius: radius.rLg,
 											alignItems: "center",
 											justifyContent: "center",
 											backgroundColor: isToday ? colors.accent : "transparent",
@@ -292,7 +292,7 @@ function ApplicationCalendar() {
 													style={{
 														width: space.s1,
 														height: space.s1,
-														borderRadius: radius.rPill,
+														borderRadius: radius.rLg,
 														backgroundColor: event.kind === "interview" ? colors.accent : colors.warn,
 													}}
 												/>
@@ -389,7 +389,7 @@ function Legend({ color, label }: LegendProps) {
 	const { radius, space } = useTheme();
 	return (
 		<View style={{ flexDirection: "row", alignItems: "center", gap: space.s1 }}>
-			<View style={{ width: space.s2, height: space.s2, borderRadius: radius.rPill, backgroundColor: color }} />
+			<View style={{ width: space.s2, height: space.s2, borderRadius: radius.rLg, backgroundColor: color }} />
 			<Text variant="caption" color="ink3">
 				{label}
 			</Text>

@@ -5,10 +5,9 @@ import { useResumeStore } from "@/features/resume/builder/draft";
 
 /** Opens an entry: expands its section, selects it (outlining it on the page) and focuses a new draft. */
 export function openEntry(sectionId: string, entryId: string, options: { focus?: boolean } = {}) {
-	const editor = useEditorStore.getState();
-	editor.setSectionOpen(sectionId, true);
-	editor.select({ kind: "item", sectionId, itemId: entryId });
-	if (options.focus) editor.setFocusEntry(entryId);
+	useEditorStore.getState().setSectionOpen(sectionId, true);
+	useEditorStore.setState({ selection: { kind: "item", sectionId, itemId: entryId } });
+	if (options.focus) useEditorStore.setState({ focusEntryId: entryId });
 }
 
 /** "+ Add {type}": a draft entry at the end of the section, open and focused. */

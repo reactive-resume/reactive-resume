@@ -14,10 +14,10 @@ export function ErrorScreen({ reset }: ErrorComponentProps) {
 			<Alert>
 				<Icon name="warning" size={16} />
 				<AlertTitle>
-					<Trans>Something went wrong</Trans>
+					<Trans>This page didn't load</Trans>
 				</AlertTitle>
 				<AlertDescription>
-					<Trans>An unexpected error stopped this page from loading. You can try again or head back.</Trans>
+					<Trans>An unexpected error stopped this page from loading. Try again, or go to the dashboard.</Trans>
 				</AlertDescription>
 			</Alert>
 

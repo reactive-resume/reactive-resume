@@ -142,10 +142,10 @@ export function ResetPasswordEmail({ url }: ResetPasswordEmailProps) {
 	return (
 		<AuthEmailLayout
 			preview={`Reset your ${appName} password`}
-			heading="Password Reset"
+			heading="Reset your password"
 			intro={`We received a request to reset your ${appName} password.`}
 			details="If this was not you, you can ignore this message and your password will remain unchanged."
-			actionLabel="Create New Password"
+			actionLabel="Create new password"
 			actionUrl={url}
 			outro="For security, only use links from emails sent by Reactive Resume."
 		/>
@@ -160,10 +160,10 @@ export function VerifyEmail({ url }: VerifyEmailProps) {
 	return (
 		<AuthEmailLayout
 			preview={`Verify your email for ${appName}`}
-			heading="Verify Email"
-			intro={`Thanks for signing up for ${appName}. Please verify your email address to continue.`}
+			heading="Verify your email"
+			intro={`Thanks for signing up for ${appName}. Verify your email address to continue.`}
 			details="This confirms the address belongs to you, which keeps your account secure."
-			actionLabel="Verify Email"
+			actionLabel="Verify email"
 			actionUrl={url}
 			outro="If you did not create this account, you can safely ignore this email."
 		/>
@@ -180,10 +180,10 @@ export function VerifyEmailChange({ url, previousEmail, newEmail }: VerifyEmailC
 	return (
 		<AuthEmailLayout
 			preview={`Approve changing your ${appName} email address`}
-			heading="Approve Email Change"
+			heading="Approve email change"
 			intro={`Someone asked to change your ${appName} email from ${previousEmail} to ${newEmail}.`}
 			details={`If you approve, we'll send a link to ${newEmail} to finish the change.`}
-			actionLabel="Approve Change"
+			actionLabel="Approve change"
 			actionUrl={url}
 			outro="If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
 		/>

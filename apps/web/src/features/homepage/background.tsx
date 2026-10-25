@@ -23,7 +23,7 @@ const motes = Array.from({ length: 18 }, () => ({
 /**
  * The desk the page sits on. In light mode, warm window light breathes, the blurred shadow of the window's mullions
  * drifts and dust floats up through it. In dark mode, a neutral lamp follows the cursor. All of it is still under
- * reduced motion.
+ * reduced motion. A still paper grain lies over the whole page in both modes.
  */
 export function LandingBackground() {
 	return (
@@ -46,6 +46,11 @@ export function LandingBackground() {
 					/>
 				))}
 			</div>
+			{/* Above the header (z-70) and the theme cord (z-72), below the skip link (z-100); it never takes a click. */}
+			<div
+				aria-hidden="true"
+				className="paper-grain pointer-events-none fixed inset-0 z-80 opacity-[.07] dark:opacity-[.05] dark:invert"
+			/>
 		</>
 	);
 }

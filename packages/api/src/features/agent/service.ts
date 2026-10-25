@@ -15,7 +15,7 @@ import {
 	ToolLoopAgent,
 	wrapLanguageModel,
 } from "ai";
-import { and, asc, count, desc, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, getColumns, inArray, isNull, sql } from "drizzle-orm";
 import { agentWebSources } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
@@ -115,7 +115,7 @@ type SendMessageInput = {
 	deviceTimeZone?: string | undefined;
 	threadId: string;
 	message: UIMessage;
-	attachmentIds?: unknown;
+	attachmentIds?: string[] | undefined;
 	context?: MessageContext | undefined;
 };
 
@@ -365,41 +365,7 @@ function buildAttachmentModelParts(input: AttachmentModelInput[]): Array<TextPar
 	});
 }
 
-function uniqueAttachmentIds(ids: unknown) {
-	if (ids === undefined) return [];
-	if (!Array.isArray(ids)) {
-		throw new ORPCError("BAD_REQUEST", {
-			message: "Attachment IDs must be an array.",
-		});
-	}
-
-	if (ids.length > MAX_ATTACHMENTS_PER_MESSAGE) {
-		throw new ORPCError("BAD_REQUEST", {
-			message: "Too many attachments for one message.",
-		});
-	}
-
-	const unique = new Set<string>();
-	for (const id of ids) {
-		if (typeof id !== "string" || !id.trim()) {
-			throw new ORPCError("BAD_REQUEST", {
-				message: "Attachment IDs must be non-empty strings.",
-			});
-		}
-		unique.add(id.trim());
-	}
-
-	if (unique.size !== ids.length) {
-		throw new ORPCError("BAD_REQUEST", {
-			message: "Attachment IDs must be unique.",
-		});
-	}
-
-	return [...unique];
-}
-
-async function getUnlinkedMessageAttachments(input: { ids: unknown; threadId: string; userId: string }) {
-	const ids = uniqueAttachmentIds(input.ids);
+async function getUnlinkedMessageAttachments({ ids, ...input }: { ids: string[]; threadId: string; userId: string }) {
 	if (ids.length === 0) return [];
 
 	const attachments = await db
@@ -416,7 +382,7 @@ async function getUnlinkedMessageAttachments(input: { ids: unknown; threadId: st
 
 	if (attachments.length !== ids.length) {
 		throw new ORPCError("BAD_REQUEST", {
-			message: "One or more attachments are unavailable or already linked to a message.",
+			message: "One or more attachments are unavailable or already sent. Attach the files again.",
 		});
 	}
 
@@ -425,7 +391,7 @@ async function getUnlinkedMessageAttachments(input: { ids: unknown; threadId: st
 		const attachment = attachmentsById.get(id);
 		if (!attachment) {
 			throw new ORPCError("BAD_REQUEST", {
-				message: "One or more attachments are unavailable or already linked to a message.",
+				message: "One or more attachments are unavailable or already sent. Attach the files again.",
 			});
 		}
 
@@ -457,7 +423,7 @@ async function linkAttachmentsToMessage(input: {
 
 	if (linked.length !== ids.length) {
 		throw new ORPCError("CONFLICT", {
-			message: "One or more attachments were already linked to another message.",
+			message: "One or more attachments were already sent with another message. Attach the files again.",
 		});
 	}
 }
@@ -469,7 +435,7 @@ function readAttachmentModelInputs(attachments: AgentAttachmentRecord[]): Promis
 			const stored = await storage.read(attachment.storageKey);
 			if (!stored) {
 				throw new ORPCError("BAD_REQUEST", {
-					message: `Attachment ${attachment.filename} could not be read.`,
+					message: `Couldn't read ${attachment.filename}. Attach it again.`,
 				});
 			}
 
@@ -933,27 +899,7 @@ function createAgent(input: {
 }
 
 const threadSummarySelection = {
-	scope: schema.agentThread.scope,
-	applicationId: schema.agentThread.applicationId,
-	id: schema.agentThread.id,
-	userId: schema.agentThread.userId,
-	aiProviderId: schema.agentThread.aiProviderId,
-	sourceResumeId: schema.agentThread.sourceResumeId,
-	workingResumeId: schema.agentThread.workingResumeId,
-	coverLetterId: schema.agentThread.coverLetterId,
-	title: schema.agentThread.title,
-	status: schema.agentThread.status,
-	reviewPatches: schema.agentThread.reviewPatches,
-	editsProposed: schema.agentThread.editsProposed,
-	editsAccepted: schema.agentThread.editsAccepted,
-	activeRunId: schema.agentThread.activeRunId,
-	activeStreamId: schema.agentThread.activeStreamId,
-	activeRunStartedAt: schema.agentThread.activeRunStartedAt,
-	lastMessageAt: schema.agentThread.lastMessageAt,
-	archivedAt: schema.agentThread.archivedAt,
-	deletedAt: schema.agentThread.deletedAt,
-	createdAt: schema.agentThread.createdAt,
-	updatedAt: schema.agentThread.updatedAt,
+	...getColumns(schema.agentThread),
 	resumeName: schema.resume.name,
 	coverLetterName: schema.coverLetter.name,
 	providerLabel: schema.aiProvider.label,
@@ -1004,13 +950,9 @@ export const agentService = {
 				: input.resumeId
 					? { kind: "resume", id: input.resumeId }
 					: null;
+			// The router's input refine already pairs the scope with exactly one document or application.
 			const scope = input.scope ?? "document";
-			if (scope === "document" && !document)
-				throw new ORPCError("BAD_REQUEST", { message: "Choose a resume or a letter." });
-			if (scope !== "document") {
-				if (document || (scope === "application") !== Boolean(input.applicationId)) throw new ORPCError("BAD_REQUEST");
-				await requireCareerApplication(input);
-			}
+			if (scope !== "document") await requireCareerApplication(input);
 
 			// Confirms the caller owns the document (throws otherwise) and names it for the summary.
 			const described = !document
@@ -1033,7 +975,7 @@ export const agentService = {
 				: await aiProvidersService.getDefaultRunnable({ userId: input.userId });
 			if (!provider)
 				throw new ORPCError("BAD_REQUEST", {
-					message: "No tested AI provider is available.",
+					message: "Test and turn on an AI provider in Settings → AI & developer first.",
 				});
 
 			const [thread] = await db
@@ -1181,13 +1123,13 @@ export const agentService = {
 			});
 			if (thread.status === "archived") {
 				throw new ORPCError("CONFLICT", {
-					message: "This thread is archived.",
+					message: "This conversation is archived. Start a new conversation to continue.",
 				});
 			}
 			if (thread.activeRunId) {
 				if (!isStaleAgentRun(thread)) {
 					throw new ORPCError("CONFLICT", {
-						message: "This thread already has an active run.",
+						message: "This conversation is still replying. Wait for it to finish, or stop it.",
 					});
 				}
 				// Lazy reap: a dead run's claim heals on the next send instead of CONFLICTing forever.
@@ -1205,7 +1147,7 @@ export const agentService = {
 			}
 			if ((!document && !isCareer) || !thread.aiProviderId) {
 				throw new ORPCError("BAD_REQUEST", {
-					message: "This conversation is read-only.",
+					message: "This conversation is read-only. Start a new conversation to continue.",
 				});
 			}
 			if (input.message.role !== "user" && input.message.role !== "assistant") {
@@ -1272,7 +1214,7 @@ export const agentService = {
 			});
 			if (!claimed) {
 				throw new ORPCError("CONFLICT", {
-					message: "This thread already has an active run.",
+					message: "This conversation is still replying. Wait for it to finish, or stop it.",
 				});
 			}
 
@@ -1400,7 +1342,7 @@ export const agentService = {
 				}
 
 				if (careerContext && careerContext.memoryVersion !== (await careerService.memoryVersion(input.userId)))
-					throw new ORPCError("CONFLICT", { message: "Career memory changed. Please retry with current information." });
+					throw new ORPCError("CONFLICT", { message: "Career memory changed. Try again." });
 				const agent = createAgent({
 					deviceTimeZone: input.deviceTimeZone,
 					userId: input.userId,

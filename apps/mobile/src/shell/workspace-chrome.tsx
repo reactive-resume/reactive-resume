@@ -87,7 +87,7 @@ function Frame({ children }: { children: ReactNode }) {
 		fit: t({ message: "Fit", context: "Application workspace tab: how well a job fits your experience" }),
 		apply: t`Apply`,
 		prepare: t`Prepare`,
-		practise: t`Practise`,
+		practise: t({ message: "Practice", context: "Application workspace tab: rehearse interview answers" }),
 		debrief: t`Debrief`,
 		messages: t`Messages`,
 		saved: t({ message: "Saved", context: "Application workspace tab: earlier results kept for this job" }),

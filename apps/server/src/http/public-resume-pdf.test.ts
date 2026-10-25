@@ -19,6 +19,7 @@ describe("handlePublicResumePdf", () => {
 		mocks.createPublicResumePdf.mockResolvedValueOnce({
 			body,
 			filename: "Ada_Lovelace.pdf",
+			etag: '"abc"',
 		});
 		const request = new Request("https://example.com/api/resumes/jane/resume/pdf?ignored=true", {
 			headers: { "x-forwarded-for": "203.0.113.7" },
@@ -29,7 +30,9 @@ describe("handlePublicResumePdf", () => {
 		expect(response.status).toBe(200);
 		expect(response.headers.get("Content-Type")).toBe("application/pdf");
 		expect(response.headers.get("Content-Disposition")).toBe('inline; filename="Ada_Lovelace.pdf"');
-		expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+		expect(response.headers.get("Cache-Control")).toBe("private, no-cache");
+		expect(response.headers.get("ETag")).toBe('"abc"');
+		expect(response.headers.get("Vary")).toBe("Cookie, Authorization, X-Api-Key");
 		expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff");
 		expect(await response.text()).toBe("%PDF");
 		expect(mocks.createPublicResumePdf).toHaveBeenCalledWith({
@@ -38,5 +41,28 @@ describe("handlePublicResumePdf", () => {
 			requestHeaders: request.headers,
 			trustedClient,
 		});
+	});
+
+	it("answers a current copy with 304 and keeps refusals uncacheable", async () => {
+		mocks.createPublicResumePdf.mockResolvedValueOnce({ body: null, filename: "Ada_Lovelace.pdf", etag: '"abc"' });
+		const current = await handlePublicResumePdf(
+			new Request("https://example.com/api/resumes/jane/resume/pdf", { headers: { "if-none-match": '"abc"' } }),
+			"jane",
+			"resume",
+			trustedClient,
+		);
+		expect(current.status).toBe(304);
+		expect(current.headers.get("ETag")).toBe('"abc"');
+		expect(current.headers.get("Cache-Control")).toBe("private, no-cache");
+
+		mocks.createPublicResumePdf.mockRejectedValueOnce({ code: "NEED_PASSWORD" });
+		const locked = await handlePublicResumePdf(
+			new Request("https://example.com/api/resumes/jane/resume/pdf", { headers: { "if-none-match": '"abc"' } }),
+			"jane",
+			"resume",
+			trustedClient,
+		);
+		expect(locked.status).toBe(401);
+		expect(locked.headers.get("Cache-Control")).toBe("private, no-store");
 	});
 });

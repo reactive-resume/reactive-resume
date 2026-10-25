@@ -15,7 +15,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useWorkspace } from "../hooks";
 import { PrivacyLine, StatusPill, Swap, Working, workingSteps } from "../shared";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
 type FitItem = SavedItem & { data: SavedData<"fit"> };
@@ -139,7 +139,7 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 					<h2 className="font-display text-[22px] leading-7 font-medium">{item.data.headline}</h2>
 					<p className="max-w-[560px] text-sm leading-[19px] text-ink-2">{item.data.summary}</p>
 				</div>
-				<p className="flex flex-wrap items-baseline gap-x-2 font-mono text-xs font-medium tracking-[0.04em] text-ink-2 uppercase">
+				<p className="flex flex-wrap items-baseline gap-x-2 font-mono text-xs font-medium text-ink-2">
 					{t`${supported} supported · ${partial} partly · ${missing} missing`}
 					{item.outdated && !readOnly && provider && (
 						<Button
@@ -304,10 +304,7 @@ function EvidenceEditor({ requirement, onCancel, onSaved }: EvidenceEditorProps)
 			if (!fact) throw new Error("not saved");
 			onSaved(fact.id);
 		} catch (error) {
-			toast.add({
-				type: "error",
-				description: getOrpcErrorMessage(error, { fallback: t`Couldn't save that to Knowledge.` }),
-			});
+			toastError(error, t`Couldn't save that to Knowledge. Try again.`);
 		}
 	};
 

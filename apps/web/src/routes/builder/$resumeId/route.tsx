@@ -31,6 +31,11 @@ export const Route = createFileRoute("/builder/$resumeId")({
 		return { session: context.session };
 	},
 	loader: async ({ params, context }) => {
+		// The page canvas and the preview are chunks of their own, otherwise fetched one after another only once the editor
+		// has rendered: start them with the resume, so the first page can draw as soon as its PDF is ready.
+		void import("./-components/page-canvas");
+		void import("@/features/resume/preview/preview.browser");
+
 		const resume = await context.queryClient.ensureQueryData(
 			orpc.resume.getById.queryOptions({ input: { id: params.resumeId } }),
 		);

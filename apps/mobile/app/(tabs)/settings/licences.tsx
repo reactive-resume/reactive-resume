@@ -12,8 +12,8 @@ export default function LicencesScreen() {
 	const [expanded, setExpanded] = useState<string | null>(null);
 	return (
 		<Screen scroll={false}>
-			<Stack.Screen options={{ title: t`Licences` }} />
-			<Text color="ink2">{t`Third-party software notices. Select a dependency to read its licence.`}</Text>
+			<Stack.Screen options={{ title: t`Licenses` }} />
+			<Text color="ink2">{t`Third-party software notices. Tap a dependency to read its license.`}</Text>
 			<Segmented
 				label={t`Dependency type`}
 				value={kind}
@@ -36,7 +36,7 @@ export default function LicencesScreen() {
 						<ListRow
 							title={item.title}
 							selected={expanded === item.title}
-							accessibilityHint={expanded === item.title ? t`Hide licence` : t`Read licence`}
+							accessibilityHint={expanded === item.title ? t`Hide license` : t`Read license`}
 							onPress={() => setExpanded(expanded === item.title ? null : item.title)}
 						/>
 						{expanded === item.title && (

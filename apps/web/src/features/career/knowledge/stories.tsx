@@ -4,14 +4,13 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence } from "motion/react";
-import { useState } from "react";
+import { memo, useState } from "react";
 import * as z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
-import { toast } from "@reactive-resume/ui/components/toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { cn } from "@reactive-resume/utils/style";
 import { useSessionDraft } from "../hooks";
@@ -19,7 +18,7 @@ import { CareerLoadError, CareerLoading } from "../load-state";
 import { CollapseRow, Eyebrow, Swap, useNow, withUndo } from "../shared";
 import { collectInterviews, upcomingInterviews } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
 type PartKey = "situation" | "task" | "action" | "result" | "reflection";
@@ -93,10 +92,7 @@ export function StoriesPage({ storyId, edit }: StoriesPageProps) {
 					.deleteStory({ id: story.id })
 					.catch((error: unknown) => {
 						setHidden((current) => current.filter((id) => id !== story.id));
-						toast.add({
-							type: "error",
-							description: getOrpcErrorMessage(error, { fallback: t`Couldn't delete that story.` }),
-						});
+						toastError(error, t`Couldn't delete that story. Try again.`);
 					})
 					.finally(() => {
 						void queryClient.invalidateQueries({ queryKey: orpc.career.stories.key() });
@@ -110,9 +106,12 @@ export function StoriesPage({ storyId, edit }: StoriesPageProps) {
 			<div className="grid content-start gap-2">
 				<AnimatePresence initial={false}>
 					{list.map((story) => (
-						<CollapseRow key={story.id}>
-							<StoryCard story={story} selected={story.id === selected?.id} changed={factChanged(story, factsById)} />
-						</CollapseRow>
+						<StoryCard
+							key={story.id}
+							story={story}
+							selected={story.id === selected?.id}
+							changed={factChanged(story, factsById)}
+						/>
 					))}
 				</AnimatePresence>
 				<Link
@@ -184,34 +183,37 @@ export function StoriesPage({ storyId, edit }: StoriesPageProps) {
 
 type StoryCardProps = { story: Story; selected: boolean; changed: boolean };
 
-function StoryCard({ story, selected, changed }: StoryCardProps) {
+// Memoized with its motion wrapper: picking a story re-renders only the two cards whose selection changed.
+const StoryCard = memo(function StoryCard({ story, selected, changed }: StoryCardProps) {
 	const filled = parts().filter((part) => story.data[part.key].trim()).length;
 	const factCount = story.data.factIds.length;
 
 	return (
-		<Link
-			to="/dashboard/career/knowledge/stories/{-$storyId}"
-			params={{ storyId: story.id }}
-			aria-current={selected ? "page" : undefined}
-			className={cn(
-				"grid gap-2 rounded-xl border p-3.5 text-start transition-colors duration-quick",
-				selected ? "border-accent bg-surface" : "border-line hover:bg-hover",
-			)}
-		>
-			<span className="text-sm leading-5 font-semibold">{story.data.title}</span>
-			<span className="text-xs text-ink-3">
-				<Trans>{filled} of 5 parts</Trans> · {plural(factCount, { one: "# fact", other: "# facts" })}
-			</span>
-			<PartTiles story={story} />
-			{changed && (
-				<span className="flex items-center gap-1.5 text-xs text-warn-text">
-					<span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-warn" />
-					<Trans>A fact changed. Review this story.</Trans>
+		<CollapseRow>
+			<Link
+				to="/dashboard/career/knowledge/stories/{-$storyId}"
+				params={{ storyId: story.id }}
+				aria-current={selected ? "page" : undefined}
+				className={cn(
+					"grid gap-2 rounded-xl border p-3.5 text-start transition-colors duration-quick",
+					selected ? "border-accent bg-surface" : "border-line hover:bg-hover",
+				)}
+			>
+				<span className="text-sm leading-5 font-semibold">{story.data.title}</span>
+				<span className="text-xs text-ink-3">
+					<Trans>{filled} of 5 parts</Trans> · {plural(factCount, { one: "# fact", other: "# facts" })}
 				</span>
-			)}
-		</Link>
+				<PartTiles story={story} />
+				{changed && (
+					<span className="flex items-center gap-1.5 text-xs text-warn-text">
+						<span aria-hidden="true" className="size-2 shrink-0 rounded-sm bg-warn" />
+						<Trans>A fact changed. Review this story.</Trans>
+					</span>
+				)}
+			</Link>
+		</CollapseRow>
 	);
-}
+});
 
 function PartTiles({ story }: { story: Story }) {
 	return (
@@ -221,7 +223,7 @@ function PartTiles({ story }: { story: Story }) {
 					key={part.key}
 					title={part.label}
 					className={cn(
-						"h-5 w-[22px] rounded-[5px] text-center font-mono text-[11px] leading-5 font-semibold",
+						"h-5 w-[22px] rounded-md text-center font-mono text-[11px] leading-5 font-semibold",
 						story.data[part.key].trim() ? "bg-accent-soft text-accent-text" : "bg-sunken text-ink-3",
 					)}
 				>
@@ -236,7 +238,7 @@ function PartTiles({ story }: { story: Story }) {
 
 const partTile = (filled: boolean) =>
 	cn(
-		"size-7 rounded-[7px] text-center font-mono text-[13px] leading-7 font-semibold",
+		"size-7 rounded-lg text-center font-mono text-[13px] leading-7 font-semibold",
 		filled ? "bg-accent-soft text-accent-text" : "bg-sunken text-ink-3",
 	);
 
@@ -321,7 +323,7 @@ function PractiseButton({ storyId }: PractiseButtonProps) {
 	const label = (
 		<>
 			<Icon name="microphone" size={18} />
-			<Trans>Practise</Trans>
+			<Trans context="Button: rehearse interview answers">Practice</Trans>
 		</>
 	);
 	if (isError)
@@ -440,8 +442,7 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 			void queryClient.invalidateQueries({ queryKey: orpc.career.facts.key() });
 			onSaved(row.id);
 		},
-		onError: (error) =>
-			toast.add({ type: "error", description: getOrpcErrorMessage(error, { fallback: t`Couldn't save the story.` }) }),
+		onError: (error) => toastError(error, t`Couldn't save the story. Try again.`),
 	});
 
 	const missingPart = REQUIRED.some((key) => !draft[key].trim());
@@ -533,7 +534,7 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 			</div>
 
 			<fieldset className="grid gap-2 pt-1">
-				<legend className="mb-2 text-xs font-semibold tracking-[0.02em] text-ink-3 uppercase">
+				<legend className="mb-2 text-xs font-semibold text-ink-3">
 					<Trans>Backed by</Trans>
 				</legend>
 				{shared.map((fact) => {

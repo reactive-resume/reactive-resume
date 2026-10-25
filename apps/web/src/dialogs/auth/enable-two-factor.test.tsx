@@ -44,6 +44,6 @@ it("shows recoverable backup codes before the TOTP verification that activates t
 	expect(mocks.verify).not.toHaveBeenCalled();
 	expect(mocks.close).not.toHaveBeenCalled();
 	fireEvent.click(screen.getByRole("button", { name: "Continue" }));
-	await waitFor(() => expect(screen.getByText(/6 digit code/)).toBeDefined());
+	await waitFor(() => expect(screen.getByText(/6-digit code/)).toBeDefined());
 	expect(mocks.verify).not.toHaveBeenCalled();
 });

@@ -195,7 +195,7 @@ function IconAndColor({ entry, write, disabled }: FieldProps) {
 				onPress={() => setPicker("icon")}
 			/>
 			<ColorRow
-				label={t`Icon colour`}
+				label={t`Icon color`}
 				value={str(values.iconColor)}
 				disabled={disabled}
 				onPress={() => setPicker("color")}
@@ -213,7 +213,7 @@ function IconAndColor({ entry, write, disabled }: FieldProps) {
 			/>
 			<ColorPickerSheet
 				open={picker === "color"}
-				title={t`Icon colour`}
+				title={t`Icon color`}
 				value={str(values.iconColor)}
 				allowDefault
 				onClose={() => setPicker(null)}

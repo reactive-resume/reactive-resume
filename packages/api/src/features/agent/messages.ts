@@ -20,7 +20,11 @@ export const messagesRouter = {
 			z.object({
 				threadId: z.string(),
 				message: uiMessageSchema,
-				attachmentIds: z.array(z.string().trim().min(1)).max(10).optional(),
+				attachmentIds: z
+					.array(z.string().trim().min(1))
+					.max(10)
+					.refine((ids) => new Set(ids).size === ids.length, { message: "Attachment IDs must be unique." })
+					.optional(),
 				// The context chips: leaving one out keeps it out of what's sent.
 				context: z
 					.object({

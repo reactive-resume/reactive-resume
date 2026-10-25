@@ -6,17 +6,10 @@ import type {
 	RenderTask,
 } from "pdfjs-dist/legacy/build/pdf.mjs";
 import type { ReactNode } from "react";
-import {
-	AnnotationMode,
-	GlobalWorkerOptions,
-	getDocument,
-	RenderingCancelledException,
-} from "pdfjs-dist/legacy/build/pdf.mjs";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@reactive-resume/utils/style";
+import { AnnotationMode, getDocument, getPdfWorker, RenderingCancelledException } from "./pdfjs";
 import { DEFAULT_PDF_PAGE_SIZE, getPreviewCanvasScale, getScaledPreviewPageSize } from "./preview.shared.utils";
-
-GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString();
 
 type PdfCanvasDocumentProps = {
 	children: (document: PDFDocumentProxy) => ReactNode;
@@ -65,7 +58,7 @@ export function PdfCanvasDocument({ children, file, onLoadSuccess }: PdfCanvasDo
 			const arrayBuffer = await file.arrayBuffer();
 
 			if (!isCancelled) {
-				loadingTask = getDocument({ data: new Uint8Array(arrayBuffer) });
+				loadingTask = getDocument({ data: new Uint8Array(arrayBuffer), worker: getPdfWorker() });
 				const pdfDocument = await loadingTask.promise;
 
 				if (isCancelled) {

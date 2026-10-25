@@ -15,7 +15,7 @@ type OAuthConsentPageProps = {
 
 /** Resolves with an error message, or null when Better Auth's redirect plugin takes over. */
 async function requestConsent(accept: boolean, oauthQuery: string) {
-	const failure = t`Could not complete this connection. Restart the connection from your client and try again.`;
+	const failure = t`Couldn't complete this connection. Restart the connection from your client and try again.`;
 	try {
 		// This is the only point that grants access: an explicit button press.
 		// Better Auth validates the signed request, session, and request origin.
@@ -58,7 +58,10 @@ export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 		retry: false,
 		queryFn: async () => {
 			const { data, error } = await authClient.oauth2.publicClient({ query: { client_id: clientId } });
-			if (error || !data) throw new Error(t`This connection request is invalid or has expired.`);
+			if (error || !data)
+				throw new Error(
+					t`This connection request is invalid or has expired. Start the connection again from your client.`,
+				);
 			return data;
 		},
 	});
@@ -86,7 +89,7 @@ export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 			</div>
 			{!validRequest || isError ? (
 				<p key="invalid" role="alert" className={ENTER_CLASS}>
-					<Trans>This connection request is invalid or has expired.</Trans>
+					<Trans>This connection request is invalid or has expired. Start the connection again from your client.</Trans>
 				</p>
 			) : isPending ? (
 				<p role="status">
@@ -164,7 +167,7 @@ export function OAuthConsentPage({ oauthQuery, email }: OAuthConsentPageProps) {
 					)}
 					<div className="flex gap-2">
 						<Button className="flex-1" variant="secondary" disabled={pending} onClick={() => void submit(false)}>
-							<Trans>Deny</Trans>
+							<Trans>Deny access</Trans>
 						</Button>
 						<Button className="flex-1" disabled={pending} onClick={() => void submit(true)}>
 							<Trans>Allow access</Trans>

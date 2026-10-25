@@ -1,4 +1,5 @@
 import z from "zod";
+import { timezoneSchema } from "@reactive-resume/utils/timezone";
 
 // Pipeline stages are a fixed enum. If per-user custom stages are ever needed, promote this to a table.
 // `closed` is the terminal stage, with a reason; it replaced the old `rejected` stage and the `archived` flag.
@@ -124,15 +125,8 @@ export const interviewTimezoneSchema = z
 	.trim()
 	.min(1)
 	.max(100)
-	.refine((value) => {
-		if (/^[+-]/.test(value)) return false;
-		try {
-			new Intl.DateTimeFormat("en", { timeZone: value });
-			return true;
-		} catch {
-			return false;
-		}
-	}, "Choose a valid IANA timezone.");
+	// Modern Intl accepts offsets such as "+05:00"; interviews need a named zone.
+	.refine((value) => !/^[+-]/.test(value) && timezoneSchema.safeParse(value).success, "Choose a valid IANA timezone.");
 
 // Interview details editable by the user. `at` on the timeline entry is the scheduled start
 // (full timestamp, unlike stage/note entries which are day-granular).

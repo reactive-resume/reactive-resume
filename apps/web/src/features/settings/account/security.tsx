@@ -116,38 +116,39 @@ function Passkeys() {
 			if (error) return failed(error, t`Couldn't add the passkey. Try again.`);
 			await refresh();
 			const name = await prompt(t`Name this passkey`, {
-				description: t`A name helps you tell passkeys apart, like "Work laptop".`,
+				description: t`A name helps you tell passkeys apart, like “Work laptop”.`,
 				defaultValue: "",
-				confirmText: t`Save`,
+				confirmText: t`Save name`,
 			});
 			const id = typeof data?.id === "string" ? data.id : null;
 			if (!id || !name?.trim()) return;
 			const renamed = await authClient.passkey.updatePasskey({ id, name: name.trim() });
-			if (renamed.error) return failed(renamed.error, t`Couldn't rename the passkey.`);
+			if (renamed.error) return failed(renamed.error, t`Couldn't rename the passkey. Try again.`);
 			await refresh();
 		},
 	});
 
 	const remove = useMutation({
-		mutationFn: async (id: string) => {
+		mutationFn: async (passkey: (typeof passkeys)[number]) => {
+			const name = passkey.name || t`Unnamed passkey`;
 			if (
-				!(await confirm(t`Remove this passkey?`, {
-					description: t`It will no longer sign you in.`,
-					confirmText: t`Remove`,
+				!(await confirm(t`Remove “${name}”?`, {
+					description: t`You can no longer sign in with this passkey.`,
+					confirmText: t`Remove passkey`,
 				}))
 			)
 				return;
-			const { error } = await authClient.passkey.deletePasskey({ id });
+			const { error } = await authClient.passkey.deletePasskey({ id: passkey.id });
 			if (error) return failed(error, t`Couldn't remove the passkey. Try again.`);
 			await refresh();
 		},
 	});
 	const rename = useMutation({
 		mutationFn: async (passkey: (typeof passkeys)[number]) => {
-			const name = await prompt(t`Name this passkey`, { defaultValue: passkey.name ?? "", confirmText: t`Save` });
+			const name = await prompt(t`Name this passkey`, { defaultValue: passkey.name ?? "", confirmText: t`Save name` });
 			if (!name?.trim()) return;
 			const { error } = await authClient.passkey.updatePasskey({ id: passkey.id, name: name.trim() });
-			if (error) return failed(error, t`Couldn't rename the passkey.`);
+			if (error) return failed(error, t`Couldn't rename the passkey. Try again.`);
 			await refresh();
 		},
 	});
@@ -175,7 +176,7 @@ function Passkeys() {
 								variant="ghost"
 								disabled={remove.isPending}
 								aria-label={t`Remove ${passkey.name || t`Unnamed passkey`}`}
-								onClick={() => remove.mutate(passkey.id)}
+								onClick={() => remove.mutate(passkey)}
 							>
 								<Trans>Remove</Trans>
 							</Button>

@@ -16,36 +16,21 @@ function colorToRgba(color: string): string {
 // ponytail: inlined single-caller wrappers; compile-time constants (rotation=0, sidebarWidth=35, shadow=0) replaced with literals
 const clamp = (value: number, min: number, max: number): number => Math.max(min, Math.min(max, value));
 
-const isValidEmail = (email: string): boolean => {
-	if (!email) return false;
-	return z.email().safeParse(email).success;
-};
-
-const sanitizeEmail = (email: string | undefined): string => {
-	if (!email) return "";
-	return isValidEmail(email) ? email : "";
-};
+const sanitizeEmail = (email?: string) => (email && z.email().safeParse(email).success ? email : "");
 
 type FontWeight = "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900";
 
-const FONT_WEIGHT_MAP: Record<string, FontWeight> = {
+const NAMED_FONT_WEIGHTS: Record<string, FontWeight> = {
 	regular: "400",
 	italic: "400",
-	"100": "100",
-	"200": "200",
-	"300": "300",
-	"400": "400",
-	"500": "500",
-	"600": "600",
-	"700": "700",
-	"800": "800",
-	"900": "900",
 	bold: "700",
 	"bold-italic": "700",
 };
 
-const convertFontVariantToWeight = (variant: string, defaultWeight: FontWeight = "400"): FontWeight =>
-	FONT_WEIGHT_MAP[variant.toLowerCase()] ?? defaultWeight;
+const convertFontVariantToWeight = (variant: string, defaultWeight: FontWeight = "400"): FontWeight => {
+	const name = variant.toLowerCase();
+	return /^[1-9]00$/.test(name) ? (name as FontWeight) : (NAMED_FONT_WEIGHTS[name] ?? defaultWeight);
+};
 
 const convertFontVariants = (variants: string[] | undefined, defaultWeight: FontWeight = "400"): FontWeight[] => {
 	if (!variants || variants.length === 0) return [defaultWeight];
@@ -213,19 +198,9 @@ type V4ResumeData = {
 	};
 };
 
-// Transform layout section ID from V4 format to new format
-// V4 uses "custom.{id}" for custom sections, new format just uses "{id}"
-const transformLayoutSectionId = (id: string): string => {
-	if (id.startsWith("custom.")) return id.slice(7);
-	return id;
-};
-
-// Transform layout column by stripping "custom." prefix from section IDs
-const transformLayoutColumn = (column: string[]): string[] => {
-	return column
-		.filter((id) => id !== "summary") // Summary is handled separately
-		.map(transformLayoutSectionId);
-};
+// V4 lays custom sections out as "custom.{id}"; summary is placed separately below.
+const transformLayoutColumn = (column: string[]) =>
+	column.filter((id) => id !== "summary").map((id) => id.replace(/^custom\./, ""));
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null && !Array.isArray(value);
@@ -236,7 +211,8 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const hasV4Shape = (value: unknown): value is V4ResumeData =>
 	isRecord(value) && isRecord(value.basics) && isRecord(value.sections) && isRecord(value.metadata);
 
-const NOT_V4_MESSAGE = "This file doesn't look like a Reactive Resume v4 export.";
+const NOT_V4_MESSAGE =
+	"This file isn't a Reactive Resume v4 export. Choose a v4 JSON export, or pick the matching format.";
 
 type V4Item = { id?: string; visible?: boolean };
 type V4SectionHeader = { name?: string; columns?: number; visible?: boolean };
@@ -267,6 +243,7 @@ export function parseReactiveResumeV4JSON(json: string): ResumeData {
 		const parsed: unknown = JSON.parse(json);
 		if (!hasV4Shape(parsed)) throw new Error(NOT_V4_MESSAGE);
 		const v4Data = parsed;
+		const bodySize = clamp((v4Data.metadata.typography?.font?.size ?? 14.67) * 0.75, 6, 24);
 
 		const transformed: ResumeData = {
 			picture: {
@@ -541,13 +518,13 @@ export function parseReactiveResumeV4JSON(json: string): ResumeData {
 					body: {
 						fontFamily: v4Data.metadata.typography?.font?.family ?? "IBM Plex Serif",
 						fontWeights: convertFontVariants(v4Data.metadata.typography?.font?.variants),
-						fontSize: clamp((v4Data.metadata.typography?.font?.size ?? 14.67) * 0.75, 6, 24),
+						fontSize: bodySize,
 						lineHeight: clamp(v4Data.metadata.typography?.lineHeight ?? 1.5, 0.5, 4),
 					},
 					heading: {
 						fontFamily: v4Data.metadata.typography?.font?.family ?? "IBM Plex Serif",
 						fontWeights: convertFontVariantsForHeading(v4Data.metadata.typography?.font?.variants),
-						fontSize: clamp(clamp((v4Data.metadata.typography?.font?.size ?? 14.67) * 0.75, 6, 24) + 3, 6, 24),
+						fontSize: clamp(bodySize + 3, 6, 24),
 						lineHeight: clamp(v4Data.metadata.typography?.lineHeight ?? 1.5, 0.5, 4),
 					},
 				},
@@ -570,9 +547,6 @@ export function parseReactiveResumeV4JSON(json: string): ResumeData {
 		// mismatch that slipped past the guard) as "not a valid v4 export" rather
 		// than leaking a raw TypeError to the user.
 		if (error instanceof SyntaxError) throw error;
-		// The hasV4Shape guard above already throws NOT_V4_MESSAGE; reuse that
-		// instance instead of allocating a duplicate.
-		if (error instanceof Error && error.message === NOT_V4_MESSAGE) throw error;
-		throw new Error(NOT_V4_MESSAGE);
+		throw error instanceof Error && error.message === NOT_V4_MESSAGE ? error : new Error(NOT_V4_MESSAGE);
 	}
 }

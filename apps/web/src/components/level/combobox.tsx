@@ -15,8 +15,8 @@ const getLevelTypeName = (type: LevelType) => {
 		.with("circle", () => t`Circle`)
 		.with("square", () => t`Square`)
 		.with("rectangle", () => t`Rectangle`)
-		.with("rectangle-full", () => t`Rectangle (Full Width)`)
-		.with("progress-bar", () => t`Progress Bar`)
+		.with("rectangle-full", () => t`Rectangle (full width)`)
+		.with("progress-bar", () => t`Progress bar`)
 		.with("icon", () => t`Icon`)
 		.exhaustive();
 };

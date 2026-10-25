@@ -15,11 +15,11 @@ const sites = { firecrawl: "firecrawl.dev", tavily: "tavily.com", exa: "exa.ai" 
 type WebProvider = keyof typeof services;
 
 function webTestFailure(error: string | undefined) {
-	if (error === "auth") return t`The service rejected the credentials.`;
-	if (error === "quota") return t`The service quota is exhausted.`;
-	if (error === "timeout") return t`The service did not respond in time.`;
+	if (error === "auth") return t`The service rejected the credentials. Check the API key.`;
+	if (error === "quota") return t`The service quota is used up. Check your plan with the service.`;
+	if (error === "timeout") return t`The service didn't respond in time. Try again.`;
 	if (error === "rate-limit") return t`Too many requests. Try again later.`;
-	return t`The service is unavailable or does not support this operation.`;
+	return t`The service is unavailable or doesn't support this operation. Try again later or connect another service.`;
 }
 
 type TestCapabilityProps = { result: { success: boolean; error?: string | undefined }; label: string };

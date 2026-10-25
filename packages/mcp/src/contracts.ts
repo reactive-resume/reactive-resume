@@ -1,27 +1,8 @@
-import { toJsonSchemaCompat } from "@modelcontextprotocol/sdk/server/zod-json-schema-compat.js";
 import z from "zod";
 import { applicationTimelineEntrySchema, postingSourceSchema } from "@reactive-resume/schema/applications/data";
 import { coverLetterStyleSchema } from "@reactive-resume/schema/cover-letter/data";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { writableResumeDataSchema } from "@reactive-resume/schema/resume/write";
-
-type DiscoveryOptions = NonNullable<Parameters<typeof toJsonSchemaCompat>[1]>;
-const discoverySchemas = new WeakMap<z.ZodObject, Map<string, ReturnType<typeof toJsonSchemaCompat>>>();
-
-/** Static discovery only; validation continues to use the original Zod schemas. */
-export function discoveryJsonSchema(schema: z.ZodObject, options: DiscoveryOptions) {
-	const key = JSON.stringify([options.strictUnions ?? true, options.pipeStrategy ?? "input", options.target ?? null]);
-	let schemas = discoverySchemas.get(schema);
-	const cached = schemas?.get(key);
-	if (cached) return cached;
-	const converted = toJsonSchemaCompat(schema, options);
-	if (!schemas) {
-		schemas = new Map();
-		discoverySchemas.set(schema, schemas);
-	}
-	schemas.set(key, converted);
-	return converted;
-}
 
 export const fileInputSchema = z.union([
 	z.object({

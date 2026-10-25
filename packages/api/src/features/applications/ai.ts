@@ -4,7 +4,8 @@ import z from "zod";
 import { safetySystemPrompt } from "@reactive-resume/ai/prompts";
 import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
 import { postingSourceSchema } from "@reactive-resume/schema/applications/data";
-import { generateId, slugify } from "@reactive-resume/utils/string";
+import { slugify } from "@reactive-resume/utils/slug";
+import { generateId } from "@reactive-resume/utils/string";
 import { protectedProcedure } from "../../context";
 import { aiRequestRateLimit } from "../../middleware/rate-limit";
 import { aiProvidersService } from "../ai-providers/service";
@@ -33,7 +34,7 @@ async function resolveModel(userId: string) {
 	const provider = await aiProvidersService.getDefaultRunnable({ userId });
 	if (!provider) {
 		throw new ORPCError("BAD_REQUEST", {
-			message: "No AI provider is configured. Add one in Settings → Integrations to use AI features.",
+			message: "No AI provider is set up. Add one in Settings → AI & developer to use AI features.",
 		});
 	}
 	return getModel({
@@ -59,7 +60,10 @@ function isAiProviderGatewayError(error: unknown): boolean {
 
 /** Throws a BAD_GATEWAY ORPCError, preserving the original cause for upstream error reporters. */
 function throwAiProviderGatewayError(cause?: unknown): never {
-	throw new ORPCError("BAD_GATEWAY", { message: "Could not reach the AI provider.", cause });
+	throw new ORPCError("BAD_GATEWAY", {
+		message: "Couldn't reach the AI provider. Check its settings and try again.",
+		cause,
+	});
 }
 
 /**
@@ -159,8 +163,11 @@ const parsePostingOutput = z.object({
 });
 
 const aiErrors = {
-	BAD_GATEWAY: { message: "The AI provider returned an error or is unreachable.", status: 502 },
-	BAD_REQUEST: { message: "Invalid application or AI request.", status: 400 },
+	BAD_GATEWAY: {
+		message: "The AI provider returned an error or couldn't be reached. Try again, or check its settings.",
+		status: 502,
+	},
+	BAD_REQUEST: { message: "The application or AI request isn't valid. Check the details and try again.", status: 400 },
 };
 
 export const aiRouter = {

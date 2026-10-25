@@ -29,7 +29,7 @@ vi.mock("@reactive-resume/env/server", () => ({
 	env: { APP_URL: "https://resume.example", AUTH_SECRET: "link-test" },
 }));
 
-const { clearAccountLinkHooks, linkAnonymousAccount, registerAccountLinkHook } = await import("./config");
+const { linkAnonymousAccount, setAccountLinkHook } = await import("./config");
 
 beforeEach(() => {
 	mocks.update.mockClear();
@@ -38,13 +38,13 @@ beforeEach(() => {
 	mocks.delete.mockClear();
 	mocks.deleteWhere.mockClear();
 	mocks.transaction.mockClear();
-	clearAccountLinkHooks();
+	setAccountLinkHook();
 });
 
 describe("linkAnonymousAccount", () => {
 	it("copies before commit and cleans up only after commit", async () => {
 		const events: string[] = [];
-		registerAccountLinkHook(async () => {
+		setAccountLinkHook(async () => {
 			expect(mocks.updateWhere).toHaveBeenCalled();
 			events.push("copy");
 			return async () => {
@@ -52,8 +52,9 @@ describe("linkAnonymousAccount", () => {
 			};
 		});
 		mocks.transaction.mockImplementationOnce(async (cb) => {
-			await cb({ update: mocks.update, delete: mocks.delete });
+			const result = await cb({ update: mocks.update, delete: mocks.delete });
 			events.push("commit");
+			return result;
 		});
 
 		await linkAnonymousAccount({ fromUserId: "guest-123", toUserId: "user-456" });
@@ -62,7 +63,7 @@ describe("linkAnonymousAccount", () => {
 
 	it("preserves originals when the database transition fails", async () => {
 		const cleanup = vi.fn();
-		registerAccountLinkHook(async () => cleanup);
+		setAccountLinkHook(async () => cleanup);
 		mocks.transaction.mockRejectedValueOnce(new Error("Database unavailable"));
 
 		await expect(linkAnonymousAccount({ fromUserId: "guest-123", toUserId: "user-456" })).rejects.toThrow(
@@ -71,23 +72,20 @@ describe("linkAnonymousAccount", () => {
 		expect(cleanup).not.toHaveBeenCalled();
 	});
 
-	it("does not reject a committed link or skip remaining cleanup when one cleanup fails", async () => {
+	it("does not reject a committed link when its cleanup fails", async () => {
 		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-		const cleanup = vi.fn().mockResolvedValue(undefined);
-		registerAccountLinkHook(async () => async () => {
+		setAccountLinkHook(async () => async () => {
 			throw new Error("Cleanup unavailable");
 		});
-		registerAccountLinkHook(async () => cleanup);
 
 		await expect(linkAnonymousAccount({ fromUserId: "guest-123", toUserId: "user-456" })).resolves.toBeUndefined();
-		expect(cleanup).toHaveBeenCalledOnce();
 		expect(warn).toHaveBeenCalled();
 		warn.mockRestore();
 	});
 
 	it("updates document ownership, rewrites upload URLs in DB, and executes registered hooks", async () => {
 		const hook = vi.fn().mockResolvedValue(undefined);
-		registerAccountLinkHook(hook);
+		setAccountLinkHook(hook);
 
 		await linkAnonymousAccount({
 			fromUserId: "guest-123",
@@ -158,24 +156,9 @@ describe("linkAnonymousAccount", () => {
 		});
 	});
 
-	it("supports unsubscribing hooks and prevents duplicate executions", async () => {
-		const hook = vi.fn().mockResolvedValue(undefined);
-		const unregister = registerAccountLinkHook(hook);
-		registerAccountLinkHook(hook); // Duplicate registration of same reference
-
-		await linkAnonymousAccount({ fromUserId: "g1", toUserId: "u1" });
-		expect(hook).toHaveBeenCalledOnce();
-
-		hook.mockClear();
-		unregister();
-
-		await linkAnonymousAccount({ fromUserId: "g2", toUserId: "u2" });
-		expect(hook).not.toHaveBeenCalled();
-	});
-
 	it("does nothing when fromUserId equals toUserId", async () => {
 		const hook = vi.fn().mockResolvedValue(undefined);
-		registerAccountLinkHook(hook);
+		setAccountLinkHook(hook);
 
 		await linkAnonymousAccount({ fromUserId: "user-1", toUserId: "user-1" });
 

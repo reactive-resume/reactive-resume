@@ -22,7 +22,7 @@ import { FilterChip, MemoryProposal, PrivacyLine, useCareerTime, Working, workin
 import { buildIcs } from "@/features/applications/ics";
 import { isInterview } from "@/features/applications/interviews";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 
@@ -265,11 +265,7 @@ function ReviewCard({ application, review, readOnly }: ReviewCardProps) {
 				setDismissed(true);
 			}
 		},
-		onError: (error) =>
-			toast.add({
-				type: "error",
-				description: getOrpcErrorMessage(error, { fallback: t`Couldn't save that to Knowledge. Try again.` }),
-			}),
+		onError: (error) => toastError(error, t`Couldn't save that to Knowledge. Try again.`),
 	});
 	const remembered =
 		Boolean(save.data) ||
@@ -292,7 +288,7 @@ function ReviewCard({ application, review, readOnly }: ReviewCardProps) {
 						<li key={verdict.text} className="flex items-start gap-2.5">
 							<span
 								className={cn(
-									"inline-flex h-[22px] shrink-0 items-center rounded-sm px-1.5 text-[11px] font-semibold tracking-[0.02em] uppercase",
+									"inline-flex h-[22px] shrink-0 items-center rounded-sm px-1.5 text-xs font-semibold",
 									verdict.tag === "supported" ? "bg-accent-soft text-accent-text" : "bg-warn-soft text-warn-text",
 								)}
 							>
@@ -443,7 +439,7 @@ function WeekPlan({ application, review, now, readOnly }: WeekPlanProps) {
 									onCheckedChange={(on) => ticks.toggle(row.key, on)}
 									className="mt-px"
 								/>
-								<span className="font-mono text-[11px] leading-4 font-medium text-ink-3 uppercase">
+								<span className="font-mono text-xs leading-4 font-medium text-ink-3">
 									{weekday}
 									<br />
 									{t`${length}m`}

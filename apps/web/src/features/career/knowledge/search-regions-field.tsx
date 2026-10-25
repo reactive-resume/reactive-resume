@@ -78,14 +78,14 @@ export function SearchRegionsField({ value, accountTimeZone, onChange }: SearchR
 							{shown.automatic && (
 								<span className="flex items-center gap-0.5 text-xs font-normal text-ink-3">
 									<Icon name="clock" size={14} />
-									<Trans>From your time zone</Trans>
+									<Trans>From your timezone</Trans>
 								</span>
 							)}
 							<button
 								type="button"
 								aria-label={t`Remove ${country}`}
 								onClick={() => apply({ type: "remove", code })}
-								className="touch-target relative flex size-[22px] items-center justify-center rounded-[5px] text-ink-3 transition-colors duration-quick hover:bg-hover hover:text-ink"
+								className="touch-target relative flex size-[22px] items-center justify-center rounded-md text-ink-3 transition-colors duration-quick hover:bg-hover hover:text-ink"
 							>
 								<Icon name="x" size={16} />
 							</button>
@@ -144,7 +144,7 @@ export function SearchRegionsField({ value, accountTimeZone, onChange }: SearchR
 						onClick={() => apply({ type: "automatic" })}
 						className="text-ink-2 underline underline-offset-2 hover:text-ink"
 					>
-						<Trans>Use my time zone</Trans>
+						<Trans>Use my timezone</Trans>
 					</button>
 				)}
 			</p>

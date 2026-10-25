@@ -49,12 +49,12 @@ msgid "“{value}” ends before it starts."
 msgstr "\"{value}\" מסתיים לפני שהוא מתחיל."
 
 #: src/features/resume/editor/check/issues.ts
-msgid "“{value}” isn't a form systems recognise, such as Mar 2020 – Present."
-msgstr "\"{value}\" אינו טופס שמזהה מערכות, כגון מרץ 2020 – הווה."
+msgid "“{value}” isn't a form systems recognize, such as Mar 2020 – Present."
+msgstr "\"{value}\" אינו פורמט שמערכות מזהות, כגון מרץ 2020 – הווה."
 
 #: src/features/resume/editor/check/issues.ts
-msgid "“{value}” isn't a form systems recognise, such as March 2022."
-msgstr "\"{value}\" אינו טופס שמערכות מזהות, כמו מרץ 2022."
+msgid "“{value}” isn't a form systems recognize, such as March 2022."
+msgstr "\"{value}\" אינו פורמט שמערכות מזהות, כמו מרץ 2022."
 
 #: src/features/resume/editor/check/issues.ts
 msgid "“{value}” isn't a plain address like name@example.com."
@@ -76,6 +76,11 @@ msgstr "\"איך מדדת את העיצוב מחדש של תהליך הקליט�
 msgid "(no header)"
 msgstr "(ללא כותרת)"
 
+#. placeholder {0}: proposals.length
+#: src/features/resume/editor/proposals/proposals.ts
+msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
+msgstr "{0, plural, =1 {העריכה הוחלה} other {# עריכות הוחלו}}"
+
 #. placeholder {0}: open.jdCount
 #. placeholder {1}: open.label
 #. placeholder {2}: open.label
@@ -83,10 +88,25 @@ msgstr "(ללא כותרת)"
 msgid "{0, plural, one {“{1}” appears once in the posting.} other {“{2}” appears #× in the posting.}}"
 msgstr "{0, plural, one {\"{1}\" מופיע פעם אחת בפרסום המשרה.} other {\"{2}\" מופיע #× בפרסום המשרה.}}"
 
+#. placeholder {0}: daysLeftInTrash(document.trashedAt)
+#: src/features/documents/document-card.tsx
+msgid "{0, plural, one {{type} · # day left} other {{type} · # days left}}"
+msgstr "{0, plural, one {{type} · נותר יום #} other {{type} · נותרו # ימים}}"
+
+#. placeholder {0}: insights.total
+#: src/features/applications/components/insights-view.tsx
+msgid "{0, plural, one {# active application} other {# active applications}}"
+msgstr "{0, plural, one {# מועמדות פעילה} other {# מועמדויות פעילות}}"
+
 #. placeholder {0}: data.answers.length
 #: src/features/career/workspace/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {תשובה אחת} two {שתי תשובות} other {# תשובות}}"
+
+#. placeholder {0}: result.deleted
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {# application deleted} other {# applications deleted}}"
+msgstr "{0, plural, one {מועמדות # נמחקה} other {# מועמדויות נמחקו}}"
 
 #. placeholder {0}: importable.length
 #: src/features/applications/components/import-applications-sheet.tsx
@@ -98,13 +118,18 @@ msgstr "{0, plural, one {מועמדות אחת מוכנה לייבוא} other {#
 msgid "{0, plural, one {# application to export} other {# applications to export}}"
 msgstr "{0, plural, one {מועמדות אחת לייצוא} other {# מועמדויות לייצוא}}"
 
+#. placeholder {0}: result.updated
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {# application updated} other {# applications updated}}"
+msgstr "{0, plural, one {מועמדות # עודכנה} other {# מועמדויות עודכנו}}"
+
 #. placeholder {0}: applications.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {# application} other {# applications}}"
 msgstr "{0, plural, one {מועמדות אחת} two {שתי מועמדויות} other {# מועמדויות}}"
 
 #. placeholder {0}: state?.characters ?? 0
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "{0, plural, one {# character} other {# characters}}"
 msgstr "{0, plural, one {תו #} other {תווים #}}"
 
@@ -112,6 +137,11 @@ msgstr "{0, plural, one {תו #} other {תווים #}}"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
 msgstr "{0, plural, one {לאיש קשר # יש אימייל לא חוקי או ללא שם; בקשת העבודה שלו עדיין מיובאת.} other {לאנשי הקשר של # יש דוא\"ל לא חוקי או ללא שם; בקשות העבודה שלהם עדיין מייבאות.}}"
+
+#. placeholder {0}: daysLeftInTrash(document.trashedAt)
+#: src/features/documents/document-card.tsx
+msgid "{0, plural, one {# day left} other {# days left}}"
+msgstr "{0, plural, one {נותר יום #} other {נותרו # ימים}}"
 
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
@@ -128,12 +158,22 @@ msgstr "{0, plural, one {# מסמך הועבר לאשפה} other {# מסמכים
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
 msgstr "{0, plural, one {לא ניתן היה למקם את העריכה #: הטקסט שלה השתנה. בקש שוב לעשות זאת מחדש.} other {לא ניתן היה לבצע עריכות #: הטקסט שלהן השתנה. בקש שוב לעשות אותם מחדש.}}"
 
+#. placeholder {0}: step.entries
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0, plural, one {# entry} other {# entries}}"
+msgstr "{0, plural, one {# רשומה} other {# רשומות}}"
+
 #. placeholder {0}: knowledge.active.length
 #. placeholder {0}: used.facts.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {עובדה אחת} two {שתי עובדות} other {# עובדות}}"
+
+#. placeholder {0}: step.flagged
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0, plural, one {# field is flagged for a quick look in the editor.} other {# fields are flagged for a quick look in the editor.}}"
+msgstr "{0, plural, one {שדה # סומן לבדיקה מהירה בעורך.} other {# שדות סומנו לבדיקה מהירה בעורך.}}"
 
 #. placeholder {0}: report.ignored.length
 #: src/features/resume/editor/check/check-panel.tsx
@@ -153,10 +193,16 @@ msgstr "{0, plural, one {לשורה # אין חברה או תפקיד והיא �
 
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: used.offers.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 msgid "{0, plural, one {# saved offer} other {# saved offers}}"
 msgstr "{0, plural, one {הצעה שמורה אחת} two {שתי הצעות שמורות} other {# הצעות שמורות}}"
+
+#. placeholder {0}: step.sections
+#. placeholder {0}: summary.sections
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0, plural, one {# section} other {# sections}}"
+msgstr "{0, plural, one {# סעיף} other {# סעיפים}}"
 
 #. placeholder {0}: ids.length
 #: src/features/applications/components/list-view.tsx
@@ -164,12 +210,12 @@ msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {# נבחר} other {# נבחר}}"
 
 #. placeholder {0}: used.stories.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {# story} other {# stories}}"
 msgstr "{0, plural, one {סיפור אחד} two {שני סיפורים} other {# סיפורים}}"
 
 #. placeholder {0}: remembered.ids.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, one {נוספה עובדה אחת למאגר הידע.} two {נוספו שתי עובדות למאגר הידע.} other {נוספו # עובדות למאגר הידע.}}"
 
@@ -182,6 +228,16 @@ msgstr "{0, plural, one {הוגש לפני יום} two {הוגש לפני יומ
 #: src/features/career/knowledge/facts.tsx
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, one {מבססת סיפור אחד} two {מבססת שני סיפורים} other {מבססת # סיפורים}}"
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
+msgstr "{0, plural, one {למחוק מועמדות #?} other {למחוק # מועמדויות?}}"
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
+msgstr "{0, plural, one {מחיקת מועמדות #} other {מחיקת # מועמדויות}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -197,6 +253,11 @@ msgstr "{0, plural, one {נמצאו תפקיד, חברה ודרישה אחת. ב
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{0, plural, one {Import # application} other {Import # applications}}"
 msgstr "{0, plural, one {ייבוא מועמדות אחת} other {ייבוא # מועמדויות}}"
+
+#. placeholder {0}: response.imported
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, one {יובאה מועמדות #.} other {יובאו # מועמדויות.}}"
 
 #. placeholder {0}: knowledge.active.length
 #: src/features/career/coach.tsx
@@ -214,7 +275,7 @@ msgid "{0, plural, one {Reading # passage of your resume…} other {Reading # bu
 msgstr "{0, plural, one {קורא את הקטע # בקורות החיים שלך...} other {קורא ערכים ופסקאות ברשימת # בקורות החיים שלך...}}"
 
 #. placeholder {0}: items.length
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {Remember # fact?} other {Remember # facts?}}"
 msgstr "{0, plural, one {לזכור עובדה אחת?} two {לזכור שתי עובדות?} other {לזכור # עובדות?}}"
 
@@ -222,6 +283,11 @@ msgstr "{0, plural, one {לזכור עובדה אחת?} two {לזכור שתי �
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, one {התחיל לפני דקה} two {התחיל לפני שתי דקות} other {התחיל לפני # דקות}}"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/document-actions.tsx
+msgid "{0, plural, one {Tags for # document} other {Tags for # documents}}"
+msgstr "{0, plural, one {תגים עבור מסמך #} other {תגים עבור # מסמכים}}"
 
 #. placeholder {0}: fact.usedBy.savedItems
 #: src/features/career/knowledge/facts.tsx
@@ -243,36 +309,15 @@ msgstr "{0} · {providerLabel}. שולח את המועמדות הזו ואת מ�
 msgid "{0} (copy)"
 msgstr "{0} (עותק)"
 
-#. placeholder {0}: insights.total
-#: src/features/applications/components/insights-view.tsx
-msgid "{0} active applications"
-msgstr "{0} מועמדויות פעילות"
-
 #. placeholder {0}: insights.closed
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} closed"
 msgstr "{0} סגור"
 
-#. placeholder {0}: daysLeftInTrash(document.trashedAt)
-#: src/features/documents/document-card.tsx
-msgid "{0} days left"
-msgstr "נותרו {0} ימים"
-
 #. placeholder {0}: proposals.length
 #: src/features/assistant/document.ts
-#: src/features/resume/editor/proposals/proposals.ts
 msgid "{0} edits applied"
 msgstr "הוחלו {0} עריכות"
-
-#. placeholder {0}: step.entries
-#: src/features/documents/new-document-dialog.tsx
-msgid "{0} entries"
-msgstr "ערכי {0}"
-
-#. placeholder {0}: step.flagged
-#: src/features/documents/new-document-dialog.tsx
-msgid "{0} fields are flagged for a quick look in the editor."
-msgstr "שדות {0} מסומנים לצורך מבט מהיר בעורך."
 
 #. placeholder {0}: semantics.dates.length
 #: src/features/resume/editor/check/parser-view.tsx
@@ -370,18 +415,6 @@ msgstr "פרסום דרושים {0}"
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr "{0} החזיר את \"{1}\". ההודעה שלך נשמרת."
 
-#. placeholder {0}: step.sections
-#. placeholder {0}: summary.sections
-#: src/features/documents/new-document-dialog.tsx
-msgid "{0} sections"
-msgstr "קטעי {0}"
-
-#. placeholder {0}: step.sections
-#. placeholder {1}: step.entries
-#: src/features/documents/new-document-dialog.tsx
-msgid "{0} sections and {1} entries found."
-msgstr "נמצאו קטעי {0} וערכי {1}."
-
 #. placeholder {0}: report.skippedChecks
 #: src/features/ats-checker/report/score-header.tsx
 msgid "{0} skipped"
@@ -421,9 +454,13 @@ msgstr "{0}. הבעיה נפתרה."
 msgid "{accepted} of {0} applied"
 msgstr "הוחלו {accepted} מתוך {0}"
 
-#: src/features/settings/account/data.tsx
-msgid "{applicationCount, plural, one {# application} other {# applications}}"
-msgstr "{applicationCount, plural, one {מועמדות אחת} other {# מועמדויות}}"
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
+msgstr "{authored, plural, =1 {התאמה לעמוד אחד} other {התאמה ל-# עמודים}}"
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Fits on one page: {details}} other {Fits on # pages: {details}}}"
+msgstr "{authored, plural, =1 {נכנס בעמוד אחד: {details}} other {נכנס ב-# עמודים: {details}}}"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "{base} (copy)"
@@ -441,17 +478,17 @@ msgstr "{column, plural, one {עמודה #} other {# עמודות}}"
 msgid "{company} only"
 msgstr "רק {company}"
 
-#: src/routes/dashboard/applications/index.tsx
-msgid "{company}: no reply for {days} days. A short follow-up is usually fine now."
-msgstr "{company}: אין תשובה במשך ימים {days}. מעקב קצר זה בדרך כלל בסדר עכשיו."
-
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "{connection} didn't respond."
 msgstr "{connection} לא הגיב."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {ערך #} other {ערכי #}}"
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "{count, plural, one {# open issue} other {# open issues}}"
+msgstr "{count, plural, one {בעיה פתוחה #} other {# בעיות פתוחות}}"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
@@ -464,6 +501,10 @@ msgstr "{count} תבניות קורות חיים בחינם. בחר את התב�
 #: src/features/documents/documents-page.tsx
 msgid "{count} selected"
 msgstr "{count} נבחרו"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, one {{company}: אין תשובה כבר יום #. מעקב קצר בדרך כלל מתאים עכשיו.} other {{company}: אין תשובה כבר # ימים. מעקב קצר בדרך כלל מתאים עכשיו.}}"
 
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day a week} other {# office days a week}}"
@@ -480,10 +521,6 @@ msgstr "{days, plural, one {יום משרד אחד, מתחת למגבלה שלך
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day, your limit} other {# office days, your limit}}"
 msgstr "{days, plural, one {יום משרד אחד, בדיוק המגבלה שלך} two {יומיים במשרד, בדיוק המגבלה שלך} other {# ימי משרד, בדיוק המגבלה שלך}}"
-
-#: src/features/settings/account/data.tsx
-msgid "{documents, plural, one {# document} other {# documents}}"
-msgstr "{documents, plural, one {מסמך #} other {מסמכי #}}"
 
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
@@ -542,10 +579,6 @@ msgstr "{issues, plural, one {בעיית # עלולה לעלות לך התאמה
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {לצ'ק יש דבר # לסקור. אתה עדיין יכול להוריד.} other {לצ'ק יש דברים של # לסקור. אתה עדיין יכול להוריד.}}"
 
-#: src/features/settings/account/data.tsx
-msgid "{keyCount, plural, one {# API key} other {# API keys}}"
-msgstr "{keyCount, plural, one {מפתח # API} other {מפתחות # API}}"
-
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -584,8 +617,8 @@ msgid "{minutes} min"
 msgstr "{minutes} דק׳"
 
 #: src/features/applications/components/calendar-view.tsx
-msgid "{monthCount} interviews"
-msgstr "ראיונות {monthCount}"
+msgid "{monthCount, plural, =0 {No interviews} one {# interview} other {# interviews}}"
+msgstr "{monthCount, plural, =0 {אין ראיונות} one {# ראיון} other {# ראיונות}}"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "{name} added to page 1"
@@ -636,6 +669,10 @@ msgstr "{open, plural, one {דבר # לסקור.} other {# דברים לסקיר
 msgid "{pageCount, plural, one {# page} other {# pages}}"
 msgstr "{pageCount, plural, one {עמוד #} other {דפי #}}"
 
+#: src/features/resume/editor/design/fit.ts
+msgid "{pages, plural, one {Still # page at 9 pt. Hide a section or shorten entries.} other {Still # pages at 9 pt. Hide a section or shorten entries.}}"
+msgstr "{pages, plural, one {עדיין עמוד # בגודל 9 נק'. הסתר סעיף או קצר רשומות.} other {עדיין # עמודים בגודל 9 נק'. הסתר סעיף או קצר רשומות.}}"
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{pairing} type"
 msgstr "סוג {pairing}"
@@ -667,6 +704,18 @@ msgstr "{since, plural, =0 {מאז היום} one {ליום #} other {עבור # 
 #: src/features/resume/editor/design/fit.ts
 msgid "{size} pt"
 msgstr "{size} pt"
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, one {בשורה # לא הייתה חברה או תפקיד והיא דולגה.} other {ב-# שורות לא הייתה חברה או תפקיד והן דולגו.}}"
+
+#: src/components/input/github-stars-button.tsx
+msgid "{starCount, plural, one {Star us on GitHub, currently # star (opens in new tab)} other {Star us on GitHub, currently # stars (opens in new tab)}}"
+msgstr "{starCount, plural, one {תן לנו כוכב ב-GitHub, כרגע כוכב # (נפתח בכרטיסייה חדשה)} other {תן לנו כוכב ב-GitHub, כרגע # כוכבים (נפתח בכרטיסייה חדשה)}}"
+
+#: src/features/homepage/header.tsx
+msgid "{stars, plural, one {Star Reactive Resume on GitHub, # star} other {Star Reactive Resume on GitHub, # stars}}"
+msgstr "{stars, plural, one {תן כוכב ל-Reactive Resume ב-GitHub, כוכב #} other {תן כוכב ל-Reactive Resume ב-GitHub, # כוכבים}}"
 
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
@@ -712,11 +761,6 @@ msgstr "{toCheck, plural, one {שדה # צריך להסתכל.} other {שדות 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# לבדוק} other {# לבדוק}}"
-
-#. placeholder {0}: daysLeftInTrash(document.trashedAt)
-#: src/features/documents/document-card.tsx
-msgid "{type} · {0} days left"
-msgstr "{type} · {0} ימים נותרו"
 
 #. placeholder {0}: formatRelativeTime(document.updatedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
@@ -782,10 +826,6 @@ msgstr "06/2017 – 2021"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "1 column, inline"
 msgstr "עמודה אחת, בשורה"
-
-#: src/features/applications/components/calendar-view.tsx
-msgid "1 interview"
-msgstr "ראיון 1"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "10-minute briefing"
@@ -894,7 +934,7 @@ msgstr "תאריך לא ייקרא"
 msgid "A fact changed. Review this story."
 msgstr "עובדה השתנתה. בדוק את הסיפור הזה."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
 msgstr "עובדה שביקשת לשכוח"
 
@@ -914,7 +954,7 @@ msgstr "גופן מוזכר אך אינו מוטבע."
 msgid "A free and open-source resume builder"
 msgstr "בונה קורות חיים חינמי ובקוד פתוח"
 
-#. Hero headline, line 1 of 4: A free, open-source / resume builder / and career / manager.
+#. Hero headline, line 1 of 4: A free, open-source / resume builder / and / career manager.
 #: src/features/homepage/hero.tsx
 msgid "A free, open-source"
 msgstr "כלי חינמי בקוד פתוח"
@@ -944,8 +984,8 @@ msgid "A model's opinion, not a verdict. It can be wrong."
 msgstr "דעה של דוגמנית, לא פסק דין. זה יכול להיות לא בסדר."
 
 #: src/features/settings/account/security.tsx
-msgid "A name helps you tell passkeys apart, like \"Work laptop\"."
-msgstr "שם עוזר לך להבדיל בין מפתחות סיסמה, כמו \"מחשב נייד לעבודה\"."
+msgid "A name helps you tell passkeys apart, like “Work laptop”."
+msgstr "שם עוזר לך להבדיל בין מפתחות גישה, כמו \"מחשב נייד לעבודה\"."
 
 #: src/features/ats-checker/messages.ts
 msgid "A numeric date reads differently in different countries."
@@ -967,7 +1007,7 @@ msgstr "תזכורת לצ'ק-אין, מוצגת כשלב הבא עד שתעשה 
 msgid "A role has no description"
 msgstr "לתפקיד אין תיאור"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "A saved offer"
 msgstr "הצעה שמורה"
 
@@ -983,7 +1023,7 @@ msgstr "זוג עיניים נוסף."
 msgid "A short follow-up is usually fine now"
 msgstr "מעקב קצר זה בדרך כלל בסדר עכשיו"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "A story you've since deleted"
 msgstr "סיפור שמחקת מאז"
 
@@ -1008,7 +1048,7 @@ msgid "About 90 seconds when spoken"
 msgstr "כ-90 שניות בדיבור"
 
 #: src/features/resume/editor/design/style-groups.tsx
-msgid "Accent colour"
+msgid "Accent color"
 msgstr "צבע מבטא"
 
 #: src/features/resume/editor/design/style-groups.tsx
@@ -1307,7 +1347,7 @@ msgid "Add one with its country code; some application forms require it before y
 msgstr "הוסף מספר עם קידומת מדינה; חלק מטפסי ההגשה דורשים זאת לפני שאפשר לשלוח."
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Add Page"
+msgid "Add page"
 msgstr "הוספת עמוד"
 
 #: src/features/settings/account/security.tsx
@@ -1415,19 +1455,19 @@ msgstr "נוסף {0} ב-{1}"
 msgid "Added by you"
 msgstr "נוסף על ידך"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Added to Knowledge as a preference."
 msgstr "נוסף למאגר הידע כהעדפה."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Added to Knowledge as a skill."
 msgstr "נוסף למאגר הידע כמיומנות."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Added to Knowledge as an accomplishment."
 msgstr "נוסף למאגר הידע כהישג."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Added to Knowledge as an experience."
 msgstr "נוסף למאגר הידע כניסיון."
 
@@ -1548,15 +1588,15 @@ msgstr "אלבנית"
 msgid "Alex Morgan"
 msgstr "Alex Morgan"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
-msgid "Align centre"
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Align center"
 msgstr "יישור למרכז"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Align left"
 msgstr "יישור לשמאל"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Align right"
 msgstr "יישור לימין"
 
@@ -1578,6 +1618,10 @@ msgstr "כל הבקשות לעבודה (כולל סגורות)"
 #: src/features/settings/account/data.tsx
 msgid "All documents and applications as JSON, in one zip"
 msgstr "כל המסמכים והמועמדויות כ-JSON, ב-zip אחד"
+
+#: src/features/settings/account/data.tsx
+msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
+msgstr "כל המסמכים, המועמדויות לעבודה, מפתחות ה-API והקישורים הציבוריים שלך יימחקו לצמיתות. זה לא ניתן לביטול."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Allow access"
@@ -1646,30 +1690,31 @@ msgid "an error"
 msgstr "שגיאה"
 
 #: src/components/layout/error-screen.tsx
-msgid "An unexpected error stopped this page from loading. You can try again or head back."
-msgstr "שגיאה בלתי צפויה מנעה את טעינת הדף. באפשרותך לנסות שוב או לחזור לדף."
+msgid "An unexpected error stopped this page from loading. Try again, or go to the dashboard."
+msgstr "שגיאה בלתי צפויה מנעה את טעינת הדף. נסה שוב, או עבור ללוח הבקרה."
+
+#. Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.
+#: src/features/homepage/hero.tsx
+msgctxt "hero headline"
+msgid "and"
+msgstr "וגם"
 
 #. placeholder {0}: others.length
 #: src/features/applications/components/detail/contacts.tsx
 msgid "and {0} more"
 msgstr "ועוד {0}"
 
-#. Hero headline, line 3 of 4: A free, open-source / resume builder / and career / manager.
-#: src/features/homepage/hero.tsx
-msgid "and career"
-msgstr "ולניהול"
-
 #: src/features/homepage/sections.tsx
 msgid "and counting"
 msgstr "וסופרים"
 
-#: src/features/settings/account/data.tsx
-msgid "and every public link are removed permanently. This can't be undone."
-msgstr "וכל קישור ציבורי מוסר לצמיתות. זה לא ניתן לביטול."
-
 #: src/features/resume/share/link-tab.tsx
 msgid "Another of your resumes uses this address."
 msgstr "קורות חיים אחרים שלך משתמש בכתובת זו."
+
+#: src/libs/error-message.ts
+msgid "Another resume already uses this address. Choose a different one."
+msgstr "קורות חיים אחרים כבר משתמשים בכתובת הזו. בחר כתובת אחרת."
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/remember.tsx
@@ -1680,7 +1725,7 @@ msgstr "תשובה"
 msgid "Answer by"
 msgstr "ענה באמצעות"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Answer copied"
 msgstr "התשובה הועתקה"
 
@@ -1730,12 +1775,9 @@ msgstr "בְּכָל מָקוֹם"
 msgid "API key"
 msgstr "מפתח API"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "API keys"
-msgstr "מפתחות API"
-
-#: src/features/command-palette/pages/navigation.tsx
-msgid "API Keys"
 msgstr "מפתחות API"
 
 #: src/routes/dashboard/-components/app-shell.tsx
@@ -1785,10 +1827,6 @@ msgstr "מופיע בדף ברגע שיש לו ארגון."
 msgid "Apple"
 msgstr "Apple"
 
-#: src/features/settings/account/data.tsx
-msgid "Apple revocation instructions"
-msgstr "הוראות ביטול Apple"
-
 #: src/features/ats-checker/checker.tsx
 msgid "Applicant tracking systems turn your PDF into plain text before anyone reads it. The checker does the same, with the PDF.js library in your browser, then scores how much of your resume survives: 0 to 100, from how reliably the text comes out, not from your chances of getting the job."
 msgstr "מערכות מעקב של מועמדים הופכות את ה-PDF שלך לטקסט רגיל לפני שמישהו קורא אותו. הבודק עושה את אותו הדבר, עם ספריית PDF.js בדפדפן שלך, ואז קולע כמה מהקורות חיים שלך שורד: 0 עד 100, מכמה מהימנות הטקסט יוצא, לא מהסיכויים שלך לקבל את העבודה."
@@ -1801,8 +1839,8 @@ msgid "Application"
 msgstr "מועמדות"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Application added to your pipeline."
-msgstr "המועמדות נוספה לתהליך שלך."
+msgid "Application added"
+msgstr "המועמדות נוספה"
 
 #: src/features/homepage/remember.tsx
 msgid "Application answer"
@@ -1845,15 +1883,12 @@ msgstr "סיכומי מועמדויות"
 msgid "Application tabs"
 msgstr "לשוניות המועמדות"
 
+#: src/features/applications/components/application-form-sheet.tsx
 #: src/features/career/workspace/messages.tsx
 msgid "Application updated"
 msgstr "המועמדות עודכנה"
 
-#: src/features/applications/components/application-form-sheet.tsx
-msgid "Application updated."
-msgstr "המועמדות עודכנה."
-
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -1928,10 +1963,6 @@ msgstr "ערבית"
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Archived (closes it)"
 msgstr "הועבר לארכיון (סוגר אותו)"
-
-#: src/hooks/use-form-blocker.tsx
-msgid "Are you sure you want to close this dialog?"
-msgstr "האם אתה בטוח שברצונך לסגור את תיבת הדו-שיח הזו?"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Area of study"
@@ -2016,7 +2047,7 @@ msgid "Asks for an example of your onboarding work."
 msgstr "מבקשים דוגמה לעבודה שלך על תהליך הקליטה."
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Aspect Ratio"
+msgid "Aspect ratio"
 msgstr "יחס גובה־רוחב"
 
 #: src/features/assistant/assistant-button.tsx
@@ -2047,13 +2078,10 @@ msgstr "ב-Northwind Labs הובלתי את המחקר לעיצוב מחדש ש�
 msgid "At Northwind Labs, most new teams stalled before they finished setup."
 msgstr "ב-Northwind Labs, רוב הצוותים החדשים נתקעו לפני שסיימו את ההגדרה."
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/sections.tsx
 msgid "ATS checker"
-msgstr "בודק ATS"
-
-#: src/features/command-palette/pages/navigation.tsx
-msgid "ATS Checker"
 msgstr "בודק ATS"
 
 #: src/features/homepage/check.tsx
@@ -2086,13 +2114,9 @@ msgid "Attach a resume file (PDF)"
 msgstr "צרף קובץ קורות חיים (PDF)"
 
 #: src/features/assistant/conversation.tsx
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Attachment"
 msgstr "הִתקַשְׁרוּת"
-
-#: src/features/applications/components/application-form-sheet.tsx
-msgid "Auto-fill failed."
-msgstr "המילוי האוטומטי נכשל."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Automatically"
@@ -2114,7 +2138,6 @@ msgstr "הימנע מאפקטים כבדים של ריווח אותיות, ול�
 msgid "Awarder"
 msgstr "פרס"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Awards"
 msgstr "פרסים"
@@ -2173,7 +2196,7 @@ msgid "Backed by"
 msgstr "מבוסס על"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
-msgid "Background Color"
+msgid "Background color"
 msgstr "צבע הרקע"
 
 #: src/features/auth/pages/verify-2fa.tsx
@@ -2181,8 +2204,8 @@ msgid "Backup code"
 msgstr "קוד גיבוי"
 
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Backup codes copied to clipboard."
-msgstr "קודי הגיבוי הועתקו ללוח הגזירים."
+msgid "Backup codes copied"
+msgstr "קודי הגיבוי הועתקו"
 
 #: src/features/homepage/sheet.tsx
 msgid "Banner"
@@ -2230,7 +2253,7 @@ msgstr "הכי מתאים להגשת מועמדות"
 msgid "Blocker"
 msgstr "חוסם"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Blue"
 msgstr "כחול"
 
@@ -2251,7 +2274,7 @@ msgstr "טקסט גוף קטן מאוד"
 msgid "Body text set to {minimum} pt"
 msgstr "טקסט גוף מוגדר ל-{minimum} pt"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Bold"
 msgstr "מודגש"
 
@@ -2260,15 +2283,15 @@ msgid "Bonus"
 msgstr "בונוס"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Border Color"
+msgid "Border color"
 msgstr "צבע גבול"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Border Radius"
+msgid "Border radius"
 msgstr "רדיוס מסגרת"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Border Width"
+msgid "Border width"
 msgstr "רוחב מסגרת"
 
 #: src/features/career/offers.tsx
@@ -2318,11 +2341,6 @@ msgstr "בנו קורות חיים מקצועיים, הורידו אותו כ-PD
 msgid "Build your resume"
 msgstr "בנה את קורות החיים שלך"
 
-#. Screen-reader dialog title for the command palette in the resume builder
-#: src/features/command-palette/content.tsx
-msgid "Builder Command Palette"
-msgstr "לוח פקודות הבונה"
-
 #: src/features/homepage/sheet.tsx
 msgid "Built a shared design system used by six product teams, cutting UI review time by 40%."
 msgstr "בנתה מערכת עיצוב משותפת המשמשת שישה צוותי מוצר, וקיצצה את זמן סקירת ממשק המשתמש ב-40%."
@@ -2348,7 +2366,7 @@ msgstr "בולגרית"
 msgid "bullet {n}"
 msgstr "ערך רשימה {n}"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Bulleted list"
 msgstr "רשימת תבליטים"
@@ -2409,11 +2427,15 @@ msgstr "קריירה"
 msgid "Career coach (your key)"
 msgstr "מאמן קריירה (המפתח שלך)"
 
+#. Hero headline, line 4 of 4: A free, open-source / resume builder / and / career manager. Lines 2 and 4 are highlighted: keep each a complete phrase.
+#: src/features/homepage/hero.tsx
+msgid "career manager."
+msgstr "לניהול הקריירה שלך."
+
 #: src/libs/locale.ts
 msgid "Catalan"
 msgstr "קטלאנית"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Certifications"
 msgstr "הסמכות"
@@ -2425,7 +2447,7 @@ msgstr "הסמכות"
 msgid "Change"
 msgstr "לְשַׁנוֹת"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Change connection"
 msgstr "שנה חיבור"
@@ -2441,6 +2463,11 @@ msgstr "שינוי שפה"
 #: src/features/command-palette/pages/preferences/index.tsx
 msgid "Change language to…"
 msgstr "שנה שפה ל-…"
+
+#. Primary action button to submit changed password
+#: src/dialogs/auth/change-password.tsx
+msgid "Change password"
+msgstr "שינוי סיסמה"
 
 #: src/features/settings/account/profile.tsx
 msgid "Change photo"
@@ -2466,6 +2493,10 @@ msgstr "שנה את ערך ציר הזמן הזה."
 msgid "Change timezone"
 msgstr "שנה אזור זמן"
 
+#: src/dialogs/auth/change-password.tsx
+msgid "Change your password"
+msgstr "שינוי הסיסמה שלך"
+
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Changed elsewhere"
 msgstr "השתנה במקום אחר"
@@ -2490,6 +2521,11 @@ msgstr "משנה את כותרות המדור ומילות התאריך בלבד
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
 msgstr "שינוי זה שולח אישור לכתובת החדשה. שם המשתמש שלך הוא חלק מכל קישור ציבורי."
 
+#: src/dialogs/auth/change-password.tsx
+msgid "Changing your password…"
+msgstr "משנה את הסיסמה שלך…"
+
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
@@ -2561,6 +2597,11 @@ msgid "Check your connection and try again."
 msgstr "בדוק את החיבור שלך ונסה שוב."
 
 #: src/features/auth/pages/forgot-password.tsx
+#: src/features/auth/pages/register.tsx
+msgid "Check your email"
+msgstr "בדוק את הדוא\"ל שלך"
+
+#: src/features/auth/pages/forgot-password.tsx
 msgid "Check your email for a link to reset your password."
 msgstr "נא לבדוק את הדוא״ל שלך לקישור לאיפוס הסיסמה."
 
@@ -2626,6 +2667,14 @@ msgstr "בחר קובץ"
 msgid "Choose a file to import"
 msgstr "בחר קובץ לייבוא"
 
+#: src/dialogs/auth/change-password.tsx
+msgid "Choose a password that's different from your current one."
+msgstr "בחר סיסמה השונה מהסיסמה הנוכחית שלך."
+
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "Choose a PDF file."
+msgstr "בחר קובץ PDF."
+
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "בחרו קורות חיים ב-Write כדי להתאים לעיצוב שלו. עד אז, למכתב יש משלו."
@@ -2672,7 +2721,7 @@ msgstr "Claude Desktop"
 msgid "Clear"
 msgstr "נקה"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Clear formatting"
 msgstr "נקה עיצוב"
 
@@ -2705,15 +2754,20 @@ msgstr "לחץ על כל דבר בדף כדי לעצב אותו. הכלל שבו
 msgid "Client ID"
 msgstr "מזהה לקוח"
 
+#: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/disable-two-factor.tsx
+#: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/career/workspace/prepare.tsx
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/settings/ai/api-keys.tsx
+#: src/features/settings/ai/providers.tsx
 msgid "Close"
 msgstr "סגור"
 
@@ -2729,6 +2783,10 @@ msgstr "סגור את הבקשה לעבודה"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Close application…"
 msgstr "סגור את הבקשה לעבודה..."
+
+#: src/routes/__root.tsx
+msgid "Close notification"
+msgstr "סגירת ההתראה"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Close the assistant"
@@ -2754,7 +2812,7 @@ msgstr "סָגוּר"
 msgid "Coach"
 msgstr "מאמן"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Code"
 msgstr "קוד"
 
@@ -2786,14 +2844,15 @@ msgstr "בקרוב"
 
 #. Accessible label for command list region inside command palette
 #. Accessible label for the command palette dialog
+#. Screen-reader dialog title for the command palette
 #: src/features/command-palette/content.tsx
-msgid "Command Palette"
+msgid "Command palette"
 msgstr "לוח הפקודות"
 
 #. Accessible label for command palette dialog when browsing a nested command page
 #: src/features/command-palette/content.tsx
-msgid "Command Palette - {currentPage}"
-msgstr "לוח הפקודות - {currentPage}"
+msgid "Command palette: {currentPage}"
+msgstr "לוח הפקודות: {currentPage}"
 
 #: src/features/homepage/footer.tsx
 msgid "Community"
@@ -2855,7 +2914,7 @@ msgid "Confirm applied"
 msgstr "אשר הגשה"
 
 #: src/features/resume/builder/password-dialog.tsx
-msgid "Confirm Password"
+msgid "Confirm password"
 msgstr "אשר את הסיסמה"
 
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -2931,9 +2990,9 @@ msgstr "מְחוּבָּר"
 msgid "Connected applications"
 msgstr "אפליקציות מחוברות"
 
-#: src/features/career/shared.tsx
-msgid "Connecting the dots"
-msgstr "מחבר את הנקודות"
+#: src/features/settings/account/auth-hooks.ts
+msgid "Connecting your {providerName} account…"
+msgstr "מחבר את חשבון {providerName} שלך…"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Connection saved"
@@ -3024,7 +3083,7 @@ msgid "Contribution unclear"
 msgstr "התרומה לא ברורה"
 
 #: src/features/assistant/conversation.tsx
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Conversation"
 msgstr "שִׂיחָה"
 
@@ -3050,10 +3109,6 @@ msgstr "שיחות"
 msgid "Conversations about one job live in its workspace."
 msgstr "שיחות על משרה מסוימת נמצאות בסביבת העבודה שלה."
 
-#: src/features/career/shared.tsx
-msgid "Cooking"
-msgstr "מבשל"
-
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3061,9 +3116,7 @@ msgstr "מבשל"
 msgid "Copied"
 msgstr "מוּעֲתָק"
 
-#. Action button to copy two-factor backup codes to clipboard
-#: src/dialogs/auth/enable-two-factor.tsx
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/resume/share/link-tab.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
@@ -3074,17 +3127,14 @@ msgstr "העתקה"
 msgid "Copy a resume for a job"
 msgstr "העתק קורות חיים למשרה"
 
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Copy and store these backup codes in case you lose your device."
-msgstr "העתק ושמור את קודי הגיבוי האלה למקרה שתאבד את הגישה למכשיר שלך."
-
 #: src/features/career/workspace/apply.tsx
 msgid "Copy answers"
 msgstr "העתק תשובות"
 
+#. Action button to copy two-factor backup codes to clipboard
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Copy Backup Codes"
-msgstr "העתקת קודי גיבוי"
+msgid "Copy codes"
+msgstr "העתקת הקודים"
 
 #: src/features/career/coach.tsx
 msgid "Copy conversation"
@@ -3152,59 +3202,14 @@ msgstr "תקן את העובדה"
 msgid "Corrected {correctedOn} · original kept"
 msgstr "תוקן {correctedOn} · המקור נשמר"
 
-#: src/features/auth/pages/consent.tsx
-msgid "Could not complete this connection. Restart the connection from your client and try again."
-msgstr "לא ניתן היה להשלים את החיבור הזה. הפעל מחדש את החיבור מהלקוח שלך ונסה שוב."
-
-#: src/features/resume/export/use-resume-export.ts
-msgid "Could not generate the DOCX. Please try again."
-msgstr "לא ניתן היה ליצור את קובץ ה-DOCX. אנא נסה שוב."
-
-#: src/features/resume/export/use-resume-export.ts
-msgid "Could not generate the JSON. Please try again."
-msgstr "לא ניתן ליצור את ה-JSON. אנא נסה שוב."
-
-#: src/features/resume/export/use-resume-export.ts
-msgid "Could not generate the Markdown. Please try again."
-msgstr "לא ניתן ליצור את ה-Markdown. אנא נסה שוב."
-
-#: src/features/resume/export/use-resume-export.ts
-#: src/routes/builder/letter/-components/letter-bar.tsx
-msgid "Could not generate the PDF. Please try again."
-msgstr "לא ניתן היה ליצור את קובץ ה-PDF. אנא נסה שוב."
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Could not load connected applications."
-msgstr "לא ניתן לטעון אפליקציות מחוברות."
-
-#: src/features/resume/export/use-resume-export.ts
-msgid "Could not prepare your resume for printing. Please try again."
-msgstr "לא ניתן היה להכין את קורות החיים שלך להדפסה. אנא נסה שוב."
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Could not revoke this connection. Try again."
-msgstr "לא ניתן היה לבטל את החיבור הזה. נסה שוב."
-
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Could not set up two-factor authentication."
-msgstr "לא ניתן היה להגדיר אימות דו־שלבי."
-
-#. placeholder {0}: unresolved.join(", ")
-#: src/features/resume/editor/write/section-row.tsx
-msgid "Could not sort these items; they stayed at the end: {0}."
-msgstr "לא ניתן היה למיין את הפריטים האלה; הם נשארו בסוף: {0}."
-
 #: src/features/career/knowledge/facts.tsx
-msgid "Couldn't add that fact."
-msgstr "לא ניתן היה להוסיף את העובדה."
+msgid "Couldn't add that fact. Try again."
+msgstr "לא ניתן היה להוסיף את העובדה. נסה שוב."
 
 #: src/features/applications/components/add-application-dialog.tsx
-msgid "Couldn't add the application."
-msgstr "לא ניתן להוסיף את בקשת העבודה."
-
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Couldn't add the application. Please try again."
-msgstr "לא ניתן להוסיף את המועמדות. נסה שוב."
+msgid "Couldn't add the application. Try again."
+msgstr "לא ניתן היה להוסיף את המועמדות. נסה שוב."
 
 #: src/features/settings/account/security.tsx
 msgid "Couldn't add the passkey. Try again."
@@ -3212,12 +3217,8 @@ msgstr "לא ניתן להוסיף את המפתח. נסה שוב."
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
-msgid "Couldn't attach the file."
-msgstr "לא ניתן לצרף את הקובץ."
-
-#: src/features/settings/ai/providers.tsx
-msgid "Couldn't change it."
-msgstr "לא יכול היה לשנות את זה."
+msgid "Couldn't attach the file. Try again."
+msgstr "לא ניתן היה לצרף את הקובץ. נסה שוב."
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Couldn't change the design. Try again."
@@ -3228,96 +3229,138 @@ msgid "Couldn't change the email. Try again."
 msgstr "לא ניתן לשנות את האימייל. נסה שוב."
 
 #: src/features/career/workspace/prepare.tsx
-msgid "Couldn't change the schedule."
-msgstr "לא ניתן היה לשנות את התזמון."
+msgid "Couldn't change the schedule. Try again."
+msgstr "לא ניתן היה לשנות את התזמון. נסה שוב."
 
 #: src/features/career/today.tsx
-msgid "Couldn't change this schedule."
-msgstr "לא ניתן היה לשנות את התזמון הזה."
+msgid "Couldn't change this schedule. Try again."
+msgstr "לא ניתן היה לשנות את התזמון הזה. נסה שוב."
+
+#. Fallback toast when changing account password fails
+#: src/dialogs/auth/change-password.tsx
+msgid "Couldn't change your password. Check your current password and try again."
+msgstr "לא ניתן היה לשנות את הסיסמה שלך. בדוק את הסיסמה הנוכחית ונסה שוב."
+
+#: src/features/auth/pages/consent.tsx
+msgid "Couldn't complete this connection. Restart the connection from your client and try again."
+msgstr "לא ניתן היה להשלים את החיבור הזה. הפעל מחדש את החיבור מהלקוח שלך ונסה שוב."
+
+#. Fallback toast when linking a social authentication provider fails
+#: src/features/settings/account/auth-hooks.ts
+msgid "Couldn't connect your {providerName} account. Try again."
+msgstr "לא ניתן היה לחבר את חשבון {providerName} שלך. נסה שוב."
 
 #: src/features/assistant/provider-setup.tsx
 msgid "Couldn't connect. Check the key and try again."
 msgstr "לא ניתן להתחבר. בדוק את המפתח ונסה שוב."
 
 #: src/features/auth/pages/login.tsx
-msgid "Couldn't continue as a guest. Please try again."
-msgstr "לא ניתן היה להמשיך כאורח. נסו שוב."
+msgid "Couldn't continue as a guest. Try again."
+msgstr "לא ניתן היה להמשיך כאורח. נסה שוב."
 
 #: src/features/career/offers.tsx
 msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "לא ניתן היה להעתיק את השאלות. סמן את הטקסט והעתק אותו ידנית."
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Couldn't copy the resume."
-msgstr "לא ניתן היה להעתיק את קורות החיים."
+msgid "Couldn't copy the resume. Try again."
+msgstr "לא ניתן היה להעתיק את קורות החיים. נסה שוב."
 
 #: src/features/assistant/conversation.tsx
-msgid "Couldn't copy the transcript."
-msgstr "לא ניתן היה להעתיק את התמליל."
+msgid "Couldn't copy the transcript. Try again."
+msgstr "לא ניתן היה להעתיק את התמליל. נסה שוב."
 
 #: src/features/career/coach-thread.tsx
-msgid "Couldn't copy to the clipboard."
-msgstr "לא ניתן היה להעתיק ללוח."
+msgid "Couldn't copy to the clipboard. Try again."
+msgstr "לא ניתן היה להעתיק ללוח. נסה שוב."
 
-#: src/features/documents/new-document-dialog.tsx
-msgid "Couldn't create the document."
-msgstr "לא ניתן ליצור את המסמך."
+#: src/features/documents/use-start-document.ts
+msgid "Couldn't create the document. Try again."
+msgstr "לא ניתן היה ליצור את המסמך. נסה שוב."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't create the key. Try again."
 msgstr "לא ניתן היה ליצור את המפתח. נסה שוב."
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Couldn't create the letter."
-msgstr "לא ניתן היה ליצור את המכתב."
+msgid "Couldn't create the letter. Try again."
+msgstr "לא ניתן היה ליצור את המכתב. נסה שוב."
 
-#: src/features/assistant/assistant-panel.tsx
-msgid "Couldn't delete it."
-msgstr "לא ניתן היה למחוק אותו."
+#. Fallback toast when account registration fails without a server error message
+#: src/features/auth/pages/register.tsx
+msgid "Couldn't create your account. Try again."
+msgstr "לא ניתן היה ליצור את החשבון שלך. נסה שוב."
 
 #: src/features/career/knowledge/stories.tsx
-msgid "Couldn't delete that story."
-msgstr "לא ניתן היה למחוק את הסיפור."
+msgid "Couldn't delete that story. Try again."
+msgstr "לא ניתן היה למחוק את הסיפור. נסה שוב."
 
-#: src/features/settings/account/data.tsx
-msgid "Couldn't delete the account."
-msgstr "לא ניתן היה למחוק את החשבון."
+#: src/features/applications/use-application-actions.ts
+msgid "Couldn't delete the application. Try again."
+msgstr "לא ניתן היה למחוק את המועמדות. נסה שוב."
 
 #: src/features/applications/components/list-view.tsx
 msgid "Couldn't delete the applications. Try again."
 msgstr "לא ניתן היה למחוק את הבקשות לעבודה. נסה שוב."
 
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't delete the document. Try again."
+msgstr "לא ניתן היה למחוק את המסמך. נסה שוב."
+
 #: src/features/applications/components/interview-dialog.tsx
-msgid "Couldn't delete the interview."
-msgstr "לא ניתן למחוק את הראיון."
+msgid "Couldn't delete the interview. Try again."
+msgstr "לא ניתן היה למחוק את הראיון. נסה שוב."
 
 #: src/features/settings/ai/providers.tsx
-msgid "Couldn't delete the provider."
-msgstr "לא ניתן היה למחוק את הספק."
+msgid "Couldn't delete the provider. Try again."
+msgstr "לא ניתן היה למחוק את הספק. נסה שוב."
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
-msgid "Couldn't delete this conversation."
-msgstr "לא ניתן היה למחוק את השיחה."
+msgid "Couldn't delete this conversation. Try again."
+msgstr "לא ניתן היה למחוק את השיחה. נסה שוב."
 
 #: src/features/career/today.tsx
-msgid "Couldn't delete this schedule."
-msgstr "לא ניתן היה למחוק את התזמון."
+msgid "Couldn't delete this schedule. Try again."
+msgstr "לא ניתן היה למחוק את התזמון. נסה שוב."
 
 #: src/features/settings/account/data.tsx
-msgid "Couldn't export. Try again."
-msgstr "לא ניתן היה לייצא. נסה שוב."
+msgid "Couldn't delete your account. Try again."
+msgstr "לא ניתן היה למחוק את החשבון שלך. נסה שוב."
+
+#. Fallback toast when unlinking a social authentication provider fails
+#: src/features/settings/account/auth-hooks.ts
+msgid "Couldn't disconnect your {providerName} account. Try again."
+msgstr "לא ניתן היה לנתק את חשבון {providerName} שלך. נסה שוב."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't duplicate the document. Try again."
+msgstr "לא ניתן היה לשכפל את המסמך. נסה שוב."
+
+#: src/features/settings/account/data.tsx
+msgid "Couldn't export your data. Try again."
+msgstr "לא ניתן היה לייצא את הנתונים שלך. נסה שוב."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Couldn't fill in the fields. Try again, or fill them in yourself."
+msgstr "לא ניתן היה למלא את השדות. נסה שוב, או מלא אותם בעצמך."
 
 #: src/features/career/knowledge/facts.tsx
-msgid "Couldn't forget that fact."
-msgstr "לא ניתן היה לשכוח את העובדה."
+msgid "Couldn't forget that fact. Try again."
+msgstr "לא ניתן היה לשכוח את העובדה. נסה שוב."
+
+#: src/features/resume/export/use-resume-export.ts
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Couldn't generate the PDF. Try again."
+msgstr "לא ניתן היה ליצור את קובץ ה-PDF. נסה שוב."
 
 #: src/features/resume/editor/write/improve.tsx
 msgid "Couldn't get a suggestion. Nothing changed."
 msgstr "לא הצלחתי לקבל הצעה. שום דבר לא השתנה."
 
 #: src/features/career/today.tsx
-msgid "Couldn't hide this role."
-msgstr "לא ניתן היה להסתיר את התפקיד."
+msgid "Couldn't hide this role. Try again."
+msgstr "לא ניתן היה להסתיר את התפקיד. נסה שוב."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't import"
@@ -3327,9 +3370,18 @@ msgstr "לא ניתן לייבא"
 msgid "Couldn't import the file. Try again from Documents."
 msgstr "לא ניתן לייבא את הקובץ. נסה שוב ממסמכים."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Couldn't import the file. Try again, or start blank."
+msgstr "לא ניתן היה לייבא את הקובץ. נסה שוב, או התחל ממסמך ריק."
+
+#: src/features/auth/pages/error.tsx
+msgid "Couldn't link that provider account. Try again."
+msgstr "לא ניתן היה לקשר את חשבון הספק. נסה שוב."
+
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Couldn't link the application."
-msgstr "לא ניתן לקשר את בקשת העבודה."
+msgid "Couldn't link the application. Try again."
+msgstr "לא ניתן היה לקשר את המועמדות. נסה שוב."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't load AI connections. Try again before importing this file."
@@ -3343,6 +3395,10 @@ msgstr "לא ניתן היה לטעון את חיבורי ה-AI. החיבורי�
 msgid "Couldn't load applications. Try again."
 msgstr "לא ניתן היה לטעון את המועמדויות. נסה שוב."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Couldn't load connected applications. Refresh the page to try again."
+msgstr "לא ניתן היה לטעון את האפליקציות המחוברות. רענן את הדף כדי לנסות שוב."
+
 #: src/features/documents/library-error.tsx
 msgid "Couldn't load documents"
 msgstr "לא ניתן היה לטעון מסמכים"
@@ -3350,6 +3406,10 @@ msgstr "לא ניתן היה לטעון מסמכים"
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't load interviews. Retry"
 msgstr "לא ניתן היה לטעון את הראיונות. נסה שוב"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Couldn't load or save web access settings. Try again."
+msgstr "לא ניתן היה לטעון או לשמור את הגדרות הגישה לאינטרנט. נסה שוב."
 
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
@@ -3359,17 +3419,29 @@ msgstr "לא ניתן היה לטעון את הקובץ לדוגמה. נסה ש�
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "לא ניתן היה לטעון. הנתונים השמורים שלך לא השתנו."
 
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't lock the document. Try again."
+msgstr "לא ניתן היה לנעול את המסמך. נסה שוב."
+
 #: src/features/settings/ai/providers.tsx
-msgid "Couldn't make it the default."
-msgstr "לא ניתן היה להגדיר כברירת מחדל."
+msgid "Couldn't make this provider the default. Try again."
+msgstr "לא ניתן היה להגדיר את הספק הזה כברירת מחדל. נסה שוב."
 
 #: src/features/career/workspace/apply.tsx
-msgid "Couldn't mark it as applied."
-msgstr "לא ניתן היה לסמן כהוגש."
+msgid "Couldn't mark it as applied. Try again."
+msgstr "לא ניתן היה לסמן כהוגש. נסה שוב."
 
 #: src/features/career/today.tsx
-msgid "Couldn't mark this as read."
-msgstr "לא ניתן היה לסמן כנקרא."
+msgid "Couldn't mark this as read. Try again."
+msgstr "לא ניתן היה לסמן כנקרא. נסה שוב."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't move the document to Trash. Try again."
+msgstr "לא ניתן היה להעביר את המסמך לאשפה. נסה שוב."
+
+#: src/features/resume/export/use-resume-export.ts
+msgid "Couldn't prepare the resume for printing. Try again."
+msgstr "לא ניתן היה להכין את קורות החיים להדפסה. נסה שוב."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
@@ -3384,106 +3456,139 @@ msgstr "לא ניתן היה להגיע לספק הבינה המלאכותית. 
 msgid "Couldn't reach your AI provider. Its key may have expired."
 msgstr "לא הצלחתי להגיע לספק הבינה המלאכותית שלך. ייתכן שהמפתח שלו פג."
 
+#. placeholder {0}: dates.raw
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Couldn't read “{0}”. Enter the dates so they sort and print consistently."
+msgstr "לא ניתן היה לקרוא את \"{0}\". הזן את התאריכים כדי שימוינו ויודפסו באופן עקבי."
+
 #: src/features/applications/components/import-applications-sheet.tsx
-msgid "Couldn't read that file."
-msgstr "לא הצלחתי לקרוא את הקובץ הזה."
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "לא ניתן היה לקרוא את הקובץ. בחר קובץ ‎.csv ונסה שוב."
+
+#: src/features/ats-checker/checker.tsx
+msgid "Couldn't read that file. Try again."
+msgstr "לא ניתן היה לקרוא את הקובץ. נסה שוב."
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
+msgstr "לא ניתן היה לקרוא את התאריכים ב-{entries}, ולכן הם נשארים בסוף. תקן את התאריכים שלהם ומיין שוב."
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
 msgstr "לא ניתן היה לקרוא את הדף הזה: {0}"
 
+#: src/features/auth/pages/error.tsx
+msgid "Couldn't read your profile from the provider. Try again."
+msgstr "לא ניתן היה לקרוא את הפרופיל שלך מהספק. נסה שוב."
+
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Couldn't record submission. Try again."
 msgstr "לא ניתן היה להקליט את ההגשה. נסה שוב."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Couldn't remember that. Try again."
 msgstr "לא ניתן היה לזכור את זה. נסה שוב."
 
 #: src/features/career/today.tsx
-msgid "Couldn't remove it from Applications."
-msgstr "לא ניתן היה להסיר מהמועמדויות."
+msgid "Couldn't remove it from Applications. Try again."
+msgstr "לא ניתן היה להסיר מהמועמדויות. נסה שוב."
 
 #: src/features/settings/account/security.tsx
 msgid "Couldn't remove the passkey. Try again."
 msgstr "לא ניתן היה להסיר את המפתח. נסה שוב."
 
-#: src/features/career/coach.tsx
-msgid "Couldn't rename it."
-msgstr "לא ניתן היה לשנות את השם."
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't rename the document. Try again."
+msgstr "לא ניתן היה לשנות את שם המסמך. נסה שוב."
 
 #: src/features/settings/account/security.tsx
-msgid "Couldn't rename the passkey."
-msgstr "לא ניתן לשנות את שם המפתח."
+msgid "Couldn't rename the passkey. Try again."
+msgstr "לא ניתן היה לשנות את שם מפתח הגישה. נסה שוב."
+
+#: src/features/career/coach.tsx
+msgid "Couldn't rename this conversation. Try again."
+msgstr "לא ניתן היה לשנות את שם השיחה. נסה שוב."
+
+#. Fallback toast when resetting password fails and no backend message is available
+#: src/features/auth/pages/reset-password.tsx
+msgid "Couldn't reset your password. Try again."
+msgstr "לא ניתן היה לאפס את הסיסמה שלך. נסה שוב."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't restore the document. Try again."
+msgstr "לא ניתן היה לשחזר את המסמך. נסה שוב."
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Couldn't revoke the key."
-msgstr "לא ניתן היה לבטל את המפתח."
+msgid "Couldn't revoke the key. Try again."
+msgstr "לא ניתן היה לבטל את המפתח. נסה שוב."
 
-#: src/features/career/knowledge/facts.tsx
-msgid "Couldn't save that change."
-msgstr "לא ניתן היה לשמור את השינוי."
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "לא ניתן היה לבטל את החיבור הזה. נסה שוב."
 
 #: src/features/career/hooks.ts
 msgid "Couldn't save that change. Check your connection and try again."
 msgstr "לא ניתן היה לשמור את השינוי. בדוק את החיבור ונסה שוב."
 
+#: src/features/career/knowledge/facts.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "לא ניתן היה לשמור את השינוי הזה. נסה שוב."
 
-#: src/features/career/workspace/fit.tsx
-msgid "Couldn't save that to Knowledge."
-msgstr "לא ניתן היה לשמור במאגר הידע."
-
 #: src/features/career/workspace/debrief.tsx
+#: src/features/career/workspace/fit.tsx
 msgid "Couldn't save that to Knowledge. Try again."
 msgstr "לא ניתן היה לשמור במאגר הידע. נסה שוב."
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Couldn't save the application."
-msgstr "לא ניתן היה לשמור את בקשת העבודה."
-
-#: src/features/applications/components/detail/next-step-card.tsx
-msgid "Couldn't save the follow-up."
-msgstr "לא ניתן היה לשמור את המעקב."
-
-#: src/features/applications/components/application-notes.tsx
-msgid "Couldn't save the notes."
-msgstr "לא ניתן לשמור את ההערות."
-
-#: src/features/resume/editor/check/job-match.tsx
-msgid "Couldn't save the posting."
-msgstr "לא ניתן היה לשמור את פרסום המשרה."
-
-#: src/features/settings/ai/providers.tsx
-msgid "Couldn't save the provider."
-msgstr "לא ניתן היה לשמור את הספק."
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Couldn't save the story."
-msgstr "לא ניתן היה לשמור את הסיפור."
+msgid "Couldn't save the application. Try again."
+msgstr "לא ניתן היה לשמור את המועמדות. נסה שוב."
 
 #: src/features/applications/components/application-detail-sheet.tsx
-msgid "Couldn't save the tags."
-msgstr "לא ניתן לשמור את התגים."
+msgid "Couldn't save the change. Try again."
+msgstr "לא ניתן היה לשמור את השינוי. נסה שוב."
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Couldn't save the documents. Try again."
+msgstr "לא ניתן היה לשמור את המסמכים. נסה שוב."
+
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "Couldn't save the follow-up. Try again."
+msgstr "לא ניתן היה לשמור את המעקב. נסה שוב."
+
+#: src/features/applications/components/application-notes.tsx
+msgid "Couldn't save the notes. Try again."
+msgstr "לא ניתן היה לשמור את ההערות. נסה שוב."
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Couldn't save the posting. Try again."
+msgstr "לא ניתן היה לשמור את מודעת הדרושים. נסה שוב."
+
+#: src/features/settings/ai/providers.tsx
+msgid "Couldn't save the provider. Try again."
+msgstr "לא ניתן היה לשמור את הספק. נסה שוב."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Couldn't save the story. Try again."
+msgstr "לא ניתן היה לשמור את הסיפור. נסה שוב."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't save the tags. Try again."
+msgstr "לא ניתן היה לשמור את התגים. נסה שוב."
 
 #: src/features/settings/preferences.tsx
-msgid "Couldn't save the timezone."
-msgstr "לא ניתן היה לשמור את אזור הזמן."
+msgid "Couldn't save the timezone. Try again."
+msgstr "לא ניתן היה לשמור את אזור הזמן. נסה שוב."
 
 #: src/features/career/today.tsx
-msgid "Couldn't save this role to Applications."
-msgstr "לא ניתן היה לשמור את התפקיד במועמדויות."
+msgid "Couldn't save this role to Applications. Try again."
+msgstr "לא ניתן היה לשמור את התפקיד במועמדויות. נסה שוב."
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Couldn't save this schedule."
-msgstr "לא ניתן היה לשמור את התזמון."
-
-#: src/features/applications/components/application-form-sheet.tsx
-msgid "Couldn't save your changes. Please try again."
-msgstr "לא ניתן לשמור את השינויים. נסה שוב."
+msgid "Couldn't save this schedule. Try again."
+msgstr "לא ניתן היה לשמור את התזמון. נסה שוב."
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
@@ -3493,26 +3598,58 @@ msgstr "לא ניתן לשמור את השינויים. נסה שוב."
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "לא ניתן היה לשמור את השינויים שלך. נסה שוב לפני שתמשיך."
 
-#: src/features/career/knowledge/preferences.tsx
-msgid "Couldn't save your preferences."
-msgstr "לא ניתן היה לשמור את ההעדפות שלך."
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Couldn't save your changes. Try again."
+msgstr "לא ניתן היה לשמור את השינויים. נסה שוב."
 
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/detail/sent-documents.tsx
-msgid "Couldn't save."
-msgstr "לא ניתן היה לשמור."
+#: src/features/career/knowledge/preferences.tsx
+msgid "Couldn't save your preferences. Try again."
+msgstr "לא ניתן היה לשמור את ההעדפות שלך. נסה שוב."
 
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't save. Try again."
 msgstr "לא ניתן היה לשמור. נסה שוב."
 
 #: src/features/applications/components/interview-dialog.tsx
-msgid "Couldn't schedule the interview."
-msgstr "לא ניתן לתזמן את הראיון."
+msgid "Couldn't schedule the interview. Try again."
+msgstr "לא ניתן היה לתזמן את הראיון. נסה שוב."
 
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't send the email. Try again."
 msgstr "לא ניתן לשלוח את המייל. נסה שוב."
+
+#. Fallback toast when requesting password reset email fails without backend message
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Couldn't send the password reset email. Try again."
+msgstr "לא ניתן היה לשלוח את הודעת הדוא\"ל לאיפוס הסיסמה. נסה שוב."
+
+#: src/features/resume/builder/password-dialog.tsx
+msgid "Couldn't set the password. Try again."
+msgstr "לא ניתן היה להגדיר את הסיסמה. נסה שוב."
+
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Couldn't set up two-step verification. Try again."
+msgstr "לא ניתן היה להגדיר אימות דו-שלבי. נסה שוב."
+
+#: src/features/resume/preview/preview.browser.tsx
+msgid "Couldn't show the preview."
+msgstr "לא ניתן היה להציג את התצוגה המקדימה."
+
+#. Fallback toast when sign-in fails and no server error message is available
+#. Fallback toast when sign-in fails without an error message
+#: src/features/auth/components/social-auth.tsx
+#: src/features/auth/pages/login.tsx
+msgid "Couldn't sign in. Try again."
+msgstr "לא ניתן היה להיכנס. נסה שוב."
+
+#. Fallback toast when signing out fails
+#: src/features/user/dropdown-menu.tsx
+msgid "Couldn't sign out. Try again."
+msgstr "לא ניתן היה לצאת. נסה שוב."
+
+#: src/features/auth/pages/error.tsx
+msgid "Couldn't sign you in. Try again."
+msgstr "לא ניתן היה להכניס אותך לחשבון. נסה שוב."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Couldn't start recording. Choose an audio file, or type your answer."
@@ -3524,40 +3661,108 @@ msgid "Couldn't start the conversation. Try again."
 msgstr "לא ניתן היה להתחיל את השיחה. נסה שוב."
 
 #: src/features/career/coach.tsx
-msgid "Couldn't switch connections."
-msgstr "לא ניתן היה להחליף חיבור."
+msgid "Couldn't switch connections. Try again."
+msgstr "לא ניתן היה להחליף חיבור. נסה שוב."
 
 #: src/features/assistant/assistant-panel.tsx
-msgid "Couldn't switch models."
-msgstr "לא ניתן היה להחליף דגמים."
+msgid "Couldn't switch models. Try again."
+msgstr "לא ניתן היה להחליף מודל. נסה שוב."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Couldn't transcribe. Your recording is still here."
 msgstr "לא ניתן היה לתמלל. ההקלטה שלך עדיין כאן."
 
-#: src/features/career/coach-thread.tsx
-msgid "Couldn't undo that."
-msgstr "לא ניתן היה לבטל."
+#. Fallback toast when disabling two-factor authentication fails
+#: src/dialogs/auth/disable-two-factor.tsx
+msgid "Couldn't turn off two-step verification. Check your password and try again."
+msgstr "לא ניתן היה לכבות את האימות הדו-שלבי. בדוק את הסיסמה שלך ונסה שוב."
+
+#. Fallback toast when enabling two-factor authentication fails
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Couldn't turn on two-step verification. Check your password and try again."
+msgstr "לא ניתן היה להפעיל את האימות הדו-שלבי. בדוק את הסיסמה שלך ונסה שוב."
+
+#: src/features/settings/ai/providers.tsx
+msgid "Couldn't turn the provider on or off. Try again."
+msgstr "לא ניתן היה להפעיל או לכבות את הספק. נסה שוב."
+
+#: src/features/career/coach-chat.tsx
+msgid "Couldn't undo that. Try again."
+msgstr "לא ניתן היה לבטל את הפעולה. נסה שוב."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't unlink the application. Try again."
+msgstr "לא ניתן היה לבטל את הקישור של המועמדות. נסה שוב."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't unlock the document. Try again."
+msgstr "לא ניתן היה לבטל את נעילת המסמך. נסה שוב."
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Couldn't update sharing. Try again."
+msgstr "לא ניתן היה לעדכן את השיתוף. נסה שוב."
 
 #: src/features/career/workspace/messages.tsx
-msgid "Couldn't update the application. Nothing was changed."
-msgstr "לא ניתן היה לעדכן את המועמדות. שום דבר לא שונה."
+msgid "Couldn't update the application. Nothing was changed. Try again."
+msgstr "לא ניתן היה לעדכן את המועמדות. שום דבר לא שונה. נסה שוב."
+
+#: src/features/applications/use-application-actions.ts
+msgid "Couldn't update the application. Try again."
+msgstr "לא ניתן היה לעדכן את המועמדות. נסה שוב."
 
 #: src/features/applications/components/list-view.tsx
 msgid "Couldn't update the applications. Try again."
 msgstr "לא ניתן היה לעדכן את הבקשות לעבודה. נסה שוב."
 
 #: src/features/applications/components/interview-dialog.tsx
-msgid "Couldn't update the interview."
-msgstr "לא הצלחתי לעדכן את הראיון."
+msgid "Couldn't update the interview. Try again."
+msgstr "לא ניתן היה לעדכן את הראיון. נסה שוב."
+
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Couldn't update the letter. Try again."
+msgstr "לא ניתן היה לעדכן את המכתב. נסה שוב."
+
+#: src/features/resume/preview/preview.browser.tsx
+msgid "Couldn't update the preview. The last working version is still shown. Edit anything to try again."
+msgstr "לא ניתן היה לעדכן את התצוגה המקדימה. הגרסה התקינה האחרונה עדיין מוצגת. ערוך משהו כדי לנסות שוב."
+
+#: src/libs/error-message.ts
+msgid "Couldn't update the resume. Try again."
+msgstr "לא ניתן היה לעדכן את קורות החיים. נסה שוב."
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Couldn't update the timeline. Try again."
 msgstr "לא ניתן היה לעדכן את ציר הזמן. נסה שוב."
 
+#: src/routes/builder/letter/-components/share-sheet.tsx
+msgid "Couldn't update this letter's versions. Try again."
+msgstr "לא ניתן היה לעדכן את הגרסאות של המכתב. נסה שוב."
+
+#. Fallback toast when uploading profile picture for resume fails
+#: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/settings/account/profile.tsx
-msgid "Couldn't upload the photo."
-msgstr "לא ניתן להעלות את התמונה."
+msgid "Couldn't upload the photo. Try again."
+msgstr "לא ניתן היה להעלות את התמונה. נסה שוב."
+
+#. Fallback toast when verifying two-factor setup code fails
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Couldn't verify the code. Enter the current code from your authenticator app."
+msgstr "לא ניתן היה לאמת את הקוד. הזן את הקוד הנוכחי מאפליקציית המאמת שלך."
+
+#. Fallback toast when resume password verification fails unexpectedly
+#: src/features/auth/pages/resume-password.tsx
+msgid "Couldn't verify the password. Try again."
+msgstr "לא ניתן היה לאמת את הסיסמה. נסה שוב."
+
+#. Fallback toast when verifying a backup two-factor authentication code fails
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Couldn't verify your backup code. Check the code and try again."
+msgstr "לא ניתן היה לאמת את קוד הגיבוי שלך. בדוק את הקוד ונסה שוב."
+
+#. Fallback toast when verifying a two-factor authentication code fails
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Couldn't verify your code. Check the code and try again."
+msgstr "לא ניתן היה לאמת את הקוד שלך. בדוק את הקוד ונסה שוב."
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Count by source"
@@ -3593,7 +3798,6 @@ msgstr "כיסוי"
 msgid "Cover letter"
 msgstr "מכתב מקדים"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Cover Letter"
 msgstr "מכתב מקדים"
@@ -3683,11 +3887,11 @@ msgid "Created and linked to {0}"
 msgstr "נוצר ומקושר ל-{0}"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Crop and Upload"
+msgid "Crop and upload"
 msgstr "חיתוך והעלאה"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Crop picture"
+msgid "Crop photo"
 msgstr "חיתוך תמונה"
 
 #: src/features/homepage/sheet.tsx
@@ -3711,7 +3915,7 @@ msgid "Current focus, relevant experience, and why this role interests you."
 msgstr "המיקוד הנוכחי, ניסיון רלוונטי ולמה התפקיד הזה מעניין אותך."
 
 #: src/dialogs/auth/change-password.tsx
-msgid "Current Password"
+msgid "Current password"
 msgstr "סיסמה נוכחית"
 
 #: src/components/input/color-picker.tsx
@@ -3720,7 +3924,7 @@ msgid "Custom"
 msgstr "מותאם אישית"
 
 #: src/features/resume/editor/design/style-groups.tsx
-msgid "Custom colour (hex)"
+msgid "Custom color (hex)"
 msgstr "צבע מותאם אישית (hex)"
 
 #. Authentication provider display name in account settings
@@ -3733,11 +3937,11 @@ msgid "Custom section"
 msgstr "קטע מותאם אישית"
 
 #: src/libs/resume/section.tsx
-msgid "Custom Sections"
+msgid "Custom sections"
 msgstr "סעיפים מותאמים אישית"
 
 #: src/libs/resume/section.tsx
-msgid "Custom Styles"
+msgid "Custom styles"
 msgstr "סגנונות מותאמים אישית"
 
 #: src/features/resume/stylesheet/editor.tsx
@@ -3828,7 +4032,7 @@ msgstr "תחקיר"
 msgid "Deep breath."
 msgstr "נשימה עמוקה."
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "ברירת מחדל"
@@ -3837,19 +4041,12 @@ msgstr "ברירת מחדל"
 msgid "Degree"
 msgstr "תואר"
 
-#: src/features/applications/components/application-actions-menu.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/interview-dialog.tsx
-#: src/features/applications/components/list-view.tsx
-#: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/share/history-tab.tsx
-#: src/features/settings/account/data.tsx
-#: src/features/settings/ai/providers.tsx
 msgid "Delete"
 msgstr "מחיקה"
 
@@ -3857,6 +4054,11 @@ msgstr "מחיקה"
 #: src/features/documents/document-actions.tsx
 msgid "Delete “{0}” now?"
 msgstr "למחוק את \"{0}\" עכשיו?"
+
+#. placeholder {0}: provider.label
+#: src/features/settings/ai/providers.tsx
+msgid "Delete “{0}”?"
+msgstr "למחוק את \"{0}\"?"
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Delete “{title}”?"
@@ -3867,19 +4069,21 @@ msgstr "למחוק את \"{title}\"?"
 msgid "Delete {0}"
 msgstr "מחק את {0}"
 
-#. placeholder {0}: ids.length
-#: src/features/applications/components/list-view.tsx
-msgid "Delete {0} applications?"
-msgstr "למחוק בקשות עבודה של {0}?"
-
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/account/data.tsx
 msgid "Delete account"
 msgstr "מחק חשבון"
 
-#: src/features/command-palette/pages/navigation.tsx
-msgid "Delete Account"
-msgstr "מחיקת חשבון"
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Delete application"
+msgstr "מחיקת מועמדות"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Delete conversation"
+msgstr "מחיקת שיחה"
+
+#: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
 msgstr "מחק ערך"
@@ -3889,20 +4093,12 @@ msgid "Delete it. Hidden keywords are treated as a deliberate attempt to game th
 msgstr "מחק אותו. מילות מפתח מוסתרות נחשבות כניסיון מכוון לרמות את החיפוש."
 
 #: src/features/documents/document-actions.tsx
-msgid "Delete now"
-msgstr "מחק עכשיו"
-
-#: src/features/documents/document-actions.tsx
 msgid "Delete now…"
 msgstr "מחק עכשיו..."
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Delete Page"
+msgid "Delete page"
 msgstr "מחיקת עמוד"
-
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Delete picture"
-msgstr "מחק תמונה"
 
 #: src/features/settings/ai/providers.tsx
 msgid "Delete provider"
@@ -3933,9 +4129,9 @@ msgstr "למחוק את השיחה הזו?"
 msgid "Delete this entry?"
 msgstr "למחוק את הערך הזה?"
 
-#: src/features/settings/ai/providers.tsx
-msgid "Delete this provider?"
-msgstr "למחוק את הספק הזה?"
+#: src/features/resume/share/history-tab.tsx
+msgid "Delete version"
+msgstr "מחיקת גרסה"
 
 #: src/features/settings/account/data.tsx
 msgid "Delete your account?"
@@ -3966,11 +4162,6 @@ msgstr "\"{0}\" נמחק"
 msgid "Deleted “{title}”"
 msgstr "\"{title}\" נמחק"
 
-#. placeholder {0}: result.deleted
-#: src/features/applications/components/list-view.tsx
-msgid "Deleted {0}"
-msgstr "נמחק {0}"
-
 #: src/features/career/offers.tsx
 msgid "Deleted application"
 msgstr "מועמדות שנמחקה"
@@ -3988,8 +4179,8 @@ msgid "Density"
 msgstr "צְפִיפוּת"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Deny"
-msgstr "דחייה"
+msgid "Deny access"
+msgstr "דחיית גישה"
 
 #: src/features/ats-checker/messages.ts
 msgid "Describe each role with short bullets. Solid paragraphs are harder to skim and to segment."
@@ -4072,31 +4263,30 @@ msgstr "מטבע שונה, לא הושווה"
 msgid "Different pay period, not compared"
 msgstr "תקופת תשלום שונה, לא הושווה"
 
-#. Destructive action button to turn off two-factor authentication
-#: src/dialogs/auth/disable-two-factor.tsx
-msgid "Disable 2FA"
-msgstr "השבתת האימות הדו־שלבי"
-
-#: src/dialogs/auth/disable-two-factor.tsx
-msgid "Disable Two-Factor Authentication"
-msgstr "השבתת אימות דו־שלבי"
-
-#: src/dialogs/auth/disable-two-factor.tsx
-msgid "Disabling two-factor authentication..."
-msgstr "השבתת אימות דו־שלבי..."
-
 #: src/features/career/schedule-sheet.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Discard"
 msgstr "לזרוק"
 
+#: src/hooks/use-form-blocker.tsx
+msgid "Discard changes"
+msgstr "ביטול השינויים"
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Discard changes?"
 msgstr "לבטל את השינויים?"
 
+#: src/hooks/use-form-blocker.tsx
+msgid "Discard unsaved changes?"
+msgstr "לבטל שינויים שלא נשמרו?"
+
 #: src/features/settings/account/security.tsx
 msgid "Disconnect"
 msgstr "ניתוק"
+
+#: src/features/settings/account/auth-hooks.ts
+msgid "Disconnecting your {providerName} account…"
+msgstr "מנתק את חשבון {providerName} שלך…"
 
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -4126,10 +4316,18 @@ msgstr "תיעוד"
 msgid "Documents"
 msgstr "מסמכים"
 
+#: src/features/documents/trash-page.tsx
+msgid "Documents are deleted permanently after 30 days."
+msgstr "מסמכים נמחקים לצמיתות לאחר 30 יום."
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Documents for this job"
 msgstr "מסמכים לעבודה זו"
+
+#: src/features/documents/trash-page.tsx
+msgid "Documents you move here stay for 30 days."
+msgstr "מסמכים שתעביר לכאן נשמרים למשך 30 יום."
 
 #: src/features/homepage/faq.tsx
 msgid "Does it use AI?"
@@ -4150,7 +4348,7 @@ msgstr "אל תשלח {0}"
 msgid "Donate"
 msgstr "לִתְרוֹם"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Done"
 msgstr "נַעֲשָׂה"
@@ -4164,13 +4362,10 @@ msgstr "בוצע · {0}"
 msgid "Double-checking"
 msgstr "בודק שוב"
 
-#. Action button to download two-factor backup codes as a text file
-#: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
 #: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "Download"
 msgstr "הורדה"
@@ -4187,18 +4382,22 @@ msgstr "הורד את ה-PDF לדוגמה של {name}"
 msgid "Download application details, contacts, notes, and timeline history as CSV."
 msgstr "הורד פרטי מועמדויות, אנשי קשר, הערות והיסטוריית ציר זמן כ-CSV."
 
+#. Action button to download two-factor backup codes as a text file
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Download codes"
+msgstr "הורדת הקודים"
+
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download CSV"
 msgstr "הורד CSV"
 
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/share-sheet.tsx
-msgid "Download failed."
-msgstr "ההורדה נכשלה."
+msgid "Download failed. Try again."
+msgstr "ההורדה נכשלה. נסה שוב."
 
+#: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/public/public-resume.tsx
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Download PDF"
 msgstr "הורדת PDF"
 
@@ -4350,17 +4549,17 @@ msgid "Duplicate"
 msgstr "שכפול"
 
 #: src/dialogs/resume/index.tsx
-msgid "Duplicate Resume"
+msgid "Duplicate resume"
 msgstr "שכפול קורות חיים"
 
 #: src/dialogs/resume/index.tsx
 msgid "Duplicate your resume to create a new one, just like the original."
 msgstr "שכפל את קורות החיים שלך כדי ליצור סט חדש, זהה לחלוטין למקור."
 
+#. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
-msgid "Duplicated"
-msgstr "מוּעֲתָק"
+msgid "Duplicated “{0}”"
+msgstr "\"{0}\" שוכפל"
 
 #: src/dialogs/resume/index.tsx
 msgid "Duplicating your resume..."
@@ -4409,7 +4608,6 @@ msgid "Edit application"
 msgstr "ערוך מועמדות"
 
 #: src/features/assistant/document.ts
-#: src/features/resume/editor/proposals/proposals.ts
 msgid "Edit applied"
 msgstr "העריכה הוחלה"
 
@@ -4495,8 +4693,7 @@ msgstr "פגישת עריכה"
 msgid "Editor mode"
 msgstr "מצב עורך"
 
-#: src/routes/builder/$resumeId/-components/editor-shell.tsx
-#: src/routes/builder/letter/-components/letter-shell.tsx
+#: src/features/resume/editor/chrome/shell.tsx
 msgid "Editor views"
 msgstr "תצוגות עורך"
 
@@ -4506,7 +4703,6 @@ msgstr "מאמר מערכת"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Education"
 msgstr "השכלה"
@@ -4527,12 +4723,12 @@ msgstr "אימייל (אופציונלי)"
 #: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
-msgid "Email Address"
+msgid "Email address"
 msgstr "כתובת דוא\"ל"
 
 #: src/features/resume/editor/check/issues.ts
-msgid "Email address won't be recognised"
-msgstr "כתובת אימייל לא תזוהה"
+msgid "Email address won't be recognized"
+msgstr "כתובת הדוא\"ל לא תזוהה"
 
 #: src/features/settings/account/profile.tsx
 msgid "Email delivery isn't set up on this server, so the address isn't verified."
@@ -4545,14 +4741,6 @@ msgstr "דוא\"ל למגייס"
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "הטבע את כל הגופנים בעת הייצוא, כדי שהתווים יוצגו כפי שהתכוונת."
-
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Enable Two-Factor Authentication"
-msgstr "הפעלת אימות דו־שלבי"
-
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Enabling two-factor authentication…"
-msgstr "הפעלת אימות דו-שלבי…"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -4587,6 +4775,10 @@ msgstr "קריאה משופרת לא הייתה זמינה. הקורא המוב�
 msgid "Enjoying Reactive Resume?"
 msgstr "נהנה מ-Reactive Resume?"
 
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Enter a backup code."
+msgstr "הזן קוד גיבוי."
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "הזן סכום מלא, למשל 95000. הסכום הקודם שלך לא השתנה."
@@ -4596,10 +4788,12 @@ msgid "Enter a name, up to 64 characters."
 msgstr "הזן שם, עד 64 תווים."
 
 #: src/features/auth/pages/reset-password.tsx
-msgid "Enter a new password for your account"
-msgstr "הזן סיסמה חדשה לחשבון שלך"
+msgid "Enter a new password for your account."
+msgstr "הזן סיסמה חדשה לחשבון שלך."
 
 #: src/features/applications/components/detail/contacts.tsx
+#: src/features/auth/pages/forgot-password.tsx
+#: src/features/auth/pages/register.tsx
 #: src/features/settings/account/profile.tsx
 msgid "Enter a valid email address."
 msgstr "הזן כתובת אימייל חוקית."
@@ -4613,28 +4807,55 @@ msgid "Enter any model ID supported by your endpoint."
 msgstr "הזן כל מזהה דגם שנתמך על ידי נקודת הקצה שלך."
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Enter one of your saved backup codes to access your account"
-msgstr "הזן אחד מקודי הגיבוי השמורים שלך כדי לגשת לחשבון"
+msgid "Enter one of your saved backup codes to access your account."
+msgstr "הזן אחד מקודי הגיבוי השמורים שלך כדי לגשת לחשבון."
+
+#: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Enter the 6-digit code."
+msgstr "הזן את הקוד בן 6 הספרות."
 
 #: src/features/auth/pages/resume-password.tsx
 msgid "Enter the password the resume owner shared with you."
 msgstr "הזן את הסיסמה שבעל קורות החיים שיתף איתך."
 
+#: src/features/auth/pages/resume-password.tsx
+msgid "Enter the password."
+msgstr "הזן את הסיסמה."
+
+#: src/features/resume/builder/password-dialog.tsx
+msgid "Enter the same password in both fields."
+msgstr "הזן את אותה סיסמה בשני השדות."
+
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Enter the verification code from your authenticator app"
-msgstr "הזן את קוד האימות מאפליקציית המאמת שלך"
+msgid "Enter the verification code from your authenticator app."
+msgstr "הזן את קוד האימות מאפליקציית המאמת שלך."
 
 #: src/dialogs/auth/change-password.tsx
-msgid "Enter your current password and a new password to update your account."
-msgstr "הזן את הסיסמה הנוכחית שלך וסיסמה חדשה כדי לעדכן את החשבון."
+msgid "Enter your current password, then choose a new one."
+msgstr "הזן את הסיסמה הנוכחית שלך, ואז בחר סיסמה חדשה."
+
+#: src/dialogs/auth/change-password.tsx
+msgid "Enter your current password."
+msgstr "הזן את הסיסמה הנוכחית שלך."
+
+#: src/features/auth/pages/register.tsx
+msgid "Enter your name."
+msgstr "הזן את שמך."
 
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Enter your password to confirm setting up two-factor authentication. Once it is on, you need a code from your authenticator app every time you sign in."
-msgstr "הזן את הסיסמה שלך כדי לאשר הגדרת אימות דו־שלבי. לאחר ההפעלה, תזדקק לקוד מאפליקציית האימות בכל כניסה."
+msgid "Enter your password to set up two-step verification. Once it's on, you need a code from your authenticator app every time you sign in."
+msgstr "הזן את הסיסמה שלך כדי להגדיר אימות דו-שלבי. לאחר ההפעלה, תזדקק לקוד מאפליקציית המאמת בכל כניסה."
 
 #: src/dialogs/auth/disable-two-factor.tsx
-msgid "Enter your password to disable two-factor authentication. Your account will be less secure without 2FA enabled."
-msgstr "הזן את הסיסמה שלך כדי להשבית אימות דו־שלבי. החשבון שלך יהיה פחות מאובטח ללא אימות דו־שלבי."
+msgid "Enter your password to turn off two-step verification. Without it, your password alone can sign in to your account."
+msgstr "הזן את הסיסמה שלך כדי לכבות את האימות הדו-שלבי. בלעדיו, הסיסמה לבדה מספיקה כדי להיכנס לחשבון שלך."
+
+#: src/dialogs/auth/disable-two-factor.tsx
+#: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/login.tsx
+msgid "Enter your password."
+msgstr "הזן את הסיסמה שלך."
 
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Entry deleted"
@@ -4697,7 +4918,6 @@ msgstr "יציאה ממצב מיקוד"
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/write.tsx
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Experience"
 msgstr "ניסיון"
@@ -4720,7 +4940,7 @@ msgid "Export applications"
 msgstr "ייצוא יישומים"
 
 #: src/features/command-palette/pages/navigation.tsx
-msgid "Export Data"
+msgid "Export data"
 msgstr "ייצוא נתונים"
 
 #: src/features/settings/account/data.tsx
@@ -4784,7 +5004,7 @@ msgstr "העובדה נשכחה"
 msgid "Fact type"
 msgstr "סוג העובדה"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "עובדות"
@@ -4796,80 +5016,6 @@ msgstr "עובדות, סיפורים והעדפות שמופעלים במאגר 
 #: src/features/settings/ai/providers.tsx
 msgid "Failed"
 msgstr "נִכשָׁל"
-
-#. Fallback toast when account registration fails without a server error message
-#: src/features/auth/pages/register.tsx
-msgid "Failed to create your account. Please try again."
-msgstr "לא הצלחנו ליצור את החשבון שלך. אנא נסה שוב."
-
-#. Fallback toast when disabling two-factor authentication fails
-#: src/dialogs/auth/disable-two-factor.tsx
-msgid "Failed to disable two-factor authentication. Please try again."
-msgstr "לא הצלחת להשבית את האימות הדו-שלבי. אנא נסה שוב."
-
-#. Fallback toast when enabling two-factor authentication fails
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Failed to enable two-factor authentication. Please try again."
-msgstr "לא הצלחנו להפעיל את האימות הדו-שלבי. אנא נסה שוב."
-
-#. Fallback toast when linking a social authentication provider fails
-#: src/features/settings/account/auth-hooks.ts
-msgid "Failed to link provider. Please try again."
-msgstr "לא הצליח ליצור קשר עם הספק. אנא נסה שוב."
-
-#. Fallback toast when resetting password fails and no backend message is available
-#: src/features/auth/pages/reset-password.tsx
-msgid "Failed to reset your password. Please try again."
-msgstr "לא הצלחת לאפס את הסיסמה שלך. אנא נסה שוב."
-
-#. Fallback toast when requesting password reset email fails without backend message
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Failed to send password reset email. Please try again."
-msgstr "לא הצלחנו לשלוח את הודעת הדוא\"ל לאיפוס הסיסמה. אנא נסה שוב."
-
-#. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when sign-in fails without an error message
-#: src/features/auth/components/social-auth.tsx
-#: src/features/auth/pages/login.tsx
-msgid "Failed to sign in. Please try again."
-msgstr "ההתחברות נכשלה. נסה שוב."
-
-#. Fallback toast when signing out fails
-#: src/features/user/dropdown-menu.tsx
-msgid "Failed to sign out. Please try again."
-msgstr "לא הצלחת לצאת מהמערכת. אנא נסה שוב."
-
-#. Fallback toast when unlinking a social authentication provider fails
-#: src/features/settings/account/auth-hooks.ts
-msgid "Failed to unlink provider. Please try again."
-msgstr "לא הצליח לבטל את הקישור לספק. אנא נסה שוב."
-
-#. Fallback toast when changing account password fails
-#: src/dialogs/auth/change-password.tsx
-msgid "Failed to update your password. Please try again."
-msgstr "לא הצלחת לעדכן את הסיסמה שלך. אנא נסה שוב."
-
-#. Fallback toast when uploading profile picture for resume fails
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Failed to upload picture. Please try again."
-msgstr "לא הצליח להעלות את התמונה. אנא נסה שוב."
-
-#. Fallback toast when resume password verification fails unexpectedly
-#: src/features/auth/pages/resume-password.tsx
-msgid "Failed to verify the password. Please try again."
-msgstr "לא ניתן לאמת את הסיסמה. אנא נסה שוב."
-
-#. Fallback toast when verifying a backup two-factor authentication code fails
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Failed to verify your backup code. Please try again."
-msgstr "לא הצלחנו לאמת את קוד הגיבוי שלך. אנא נסה שוב."
-
-#. Fallback toast when verifying a two-factor authentication code fails
-#. Fallback toast when verifying two-factor setup code fails
-#: src/dialogs/auth/enable-two-factor.tsx
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Failed to verify your code. Please try again."
-msgstr "לא הצלחנו לאמת את הקוד שלך. אנא נסה שוב."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -4925,8 +5071,8 @@ msgid "Fill fields"
 msgstr "מילוי שדות"
 
 #: src/features/applications/components/add-application-dialog.tsx
-msgid "Fill in the role and company. Connect an AI provider in settings to read them from the posting."
-msgstr "למלא את התפקיד והחברה. חבר ספק AI בהגדרות כדי לקרוא אותם מפרסום המשרה."
+msgid "Fill in the role and company. Connect an AI provider in Settings to read them from the posting."
+msgstr "מלא את התפקיד והחברה. חבר ספק AI בהגדרות כדי לקרוא אותם ממודעת הדרושים."
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Fill in the role and company. The posting is saved with the application."
@@ -4996,22 +5142,6 @@ msgstr "בדיקות התאמה, תדריכים, משוב על תרגול, תח�
 msgid "Fit page to width"
 msgstr "התאם עמוד לרוחב"
 
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
-msgid "Fit to {authored} pages"
-msgstr "התאמה לדפי {authored}"
-
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
-msgid "Fit to one page"
-msgstr "התאמה לעמוד אחד"
-
-#: src/features/resume/editor/design/fit.ts
-msgid "Fits on {authored} pages: {details}"
-msgstr "מתאים לדפי {authored}: {details}"
-
-#: src/features/resume/editor/design/fit.ts
-msgid "Fits on one page: {details}"
-msgstr "מתאים לדף אחד: {details}"
-
 #: src/features/resume/editor/check/issues.ts
 msgid "Fix the date"
 msgstr "תקן את התאריך"
@@ -5074,7 +5204,7 @@ msgid "Follow-up reminder"
 msgstr "תזכורת למעקב"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
-msgid "Font Family"
+msgid "Font family"
 msgstr "משפחת גופנים"
 
 #: src/features/resume/editor/design/style-groups.tsx
@@ -5082,16 +5212,16 @@ msgid "Font pairing"
 msgstr "התאמה של גופנים"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
-msgid "Font Size"
-msgstr "גודל כתב"
+msgid "Font size"
+msgstr "גודל גופן"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
-msgid "Font Weight"
+msgid "Font weight"
 msgstr "משקל גופן"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
-msgid "Font Weights"
-msgstr "הגווני גופן"
+msgid "Font weights"
+msgstr "משקלי גופן"
 
 #: src/libs/error-message.ts
 msgid "Fonts could not be loaded. Try again."
@@ -5144,7 +5274,7 @@ msgstr "שכח"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
-msgid "Forgot Password?"
+msgid "Forgot password?"
 msgstr "שכחת סיסמה?"
 
 #: src/features/auth/pages/forgot-password.tsx
@@ -5159,9 +5289,15 @@ msgstr "פוּרמָט"
 msgid "Format stylesheet"
 msgstr "עיצוב גיליון סגנונות"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Formatting"
 msgstr "עיצוב"
+
+#. placeholder {0}: step.sections
+#. placeholder {1}: step.entries
+#: src/features/documents/new-document-dialog.tsx
+msgid "Found {0, plural, one {# section} other {# sections}} and {1, plural, one {# entry} other {# entries}}."
+msgstr "נמצאו {0, plural, one {סעיף #} other {# סעיפים}} ו-{1, plural, one {רשומה #} other {# רשומות}}."
 
 #. placeholder {0}: day(row.firstSeenAt)
 #: src/features/career/today.tsx
@@ -5185,11 +5321,11 @@ msgid "Free ATS resume checker"
 msgstr "בודק קורות חיים ATS בחינם"
 
 #: src/libs/seo.ts
-msgid "Free Resume Builder with PDF & Word Downloads"
-msgstr "בונה קורות חיים בחינם עם הורדות PDF ו- Microsoft Word"
+msgid "Free resume builder with PDF & Word downloads"
+msgstr "בונה קורות חיים בחינם עם הורדות PDF ו-Word"
 
 #: src/libs/seo.ts
-msgid "Free Resume Templates with PDF Examples"
+msgid "Free resume templates with PDF examples"
 msgstr "תבניות קורות חיים בחינם עם דוגמאות PDF"
 
 #: src/features/resume/editor/design/style-groups.tsx
@@ -5249,8 +5385,8 @@ msgid "From your resume"
 msgstr "מקורות החיים שלך"
 
 #: src/features/career/knowledge/search-regions-field.tsx
-msgid "From your time zone"
-msgstr "מבוסס על אזור הזמן שלך"
+msgid "From your timezone"
+msgstr "לפי אזור הזמן שלך"
 
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Full name"
@@ -5258,7 +5394,7 @@ msgstr "שם מלא"
 
 #. Layout editor toggle label that makes a page single-column
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Full Width"
+msgid "Full width"
 msgstr "רוחב מלא"
 
 #: src/dialogs/resume/index.tsx
@@ -5267,8 +5403,8 @@ msgstr "יצירת שם אקראי"
 
 #: src/features/resume/export/use-resume-export.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
-msgid "Generating your PDF..."
-msgstr "יוצר את קובץ ה-PDF שלך..."
+msgid "Generating PDF…"
+msgstr "יוצר PDF…"
 
 #: src/libs/locale.ts
 msgid "German"
@@ -5280,8 +5416,8 @@ msgid "Get a key at <0>{0}</0>. It's stored encrypted and used only for your req
 msgstr "קבל מפתח ב-<0>{0}</0>. זה מאוחסן מוצפן ומשמש רק לבקשות שלך."
 
 #: src/features/homepage/prepare.tsx
-msgid "Get a plan for the interview, built from the posting and your own stories. Practise out loud, then write down how it went."
-msgstr "קבל תוכנית לראיון, שנבנתה מהמודעה ומהסיפורים שלך. תרגל בקול, ואז רשום איך זה הלך."
+msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
+msgstr "קבל תוכנית לראיון, שנבנתה ממודעת הדרושים ומהסיפורים שלך. תרגל בקול, ואז רשום איך זה הלך."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -5332,7 +5468,7 @@ msgstr "תן לסיפור כותרת כדי שתוכל לשמור."
 
 #. Secondary navigation button on backup-code verification screen
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Go Back"
+msgid "Go back"
 msgstr "חזרה"
 
 #: src/components/layout/not-found-screen.tsx
@@ -5364,21 +5500,21 @@ msgstr "גוגל"
 msgid "Grade"
 msgstr "ציון"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Gray"
+msgstr "אפור"
+
 #: src/libs/locale.ts
 msgid "Greek"
 msgstr "יוונית"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Green"
 msgstr "ירוק"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Greeting"
 msgstr "פנייה"
-
-#: src/features/resume/editor/write/rich-text-editor.tsx
-msgid "Grey"
-msgstr "אפור"
 
 #: src/features/documents/documents-page.tsx
 msgid "Grid"
@@ -5406,15 +5542,15 @@ msgctxt "Headings or Titles (H1, H2, H3, H4, H5, H6)"
 msgid "Heading"
 msgstr "כותרת"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Heading 1"
 msgstr "כותרת 1"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Heading 2"
 msgstr "כותרת 2"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Heading 3"
 msgstr "כותרת 3"
 
@@ -5451,6 +5587,10 @@ msgstr "עזור לי להפוך הישג לסיפור של מצב, משימה, 
 msgid "Help translate"
 msgstr "עזרה בתרגום"
 
+#: src/features/homepage/sections.tsx
+msgid "Help translate it into yours."
+msgstr "עזרו לתרגם אותה לשפה שלכם."
+
 #: src/features/homepage/prepare.tsx
 msgid "Hi Alex, great to confirm: you’ll meet our design team today at {time}, by video. Could you bring an example of your onboarding work?"
 msgstr "היי Alex, שמחים לאשר: תיפגש עם צוות העיצוב שלנו היום ב-{time}, בשיחת וידאו. תוכל להביא דוגמה לעבודה שלך על תהליך קליטה?"
@@ -5477,10 +5617,9 @@ msgstr "קטעים מוסתרים שומרים על התוכן שלהם אך א�
 msgid "Hidden terms are back"
 msgstr "מונחים נסתרים חזרו"
 
-#. placeholder {0}: hiddenTerms.join(", ")
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Hidden: {0}"
-msgstr "מוסתר: {0}"
+msgid "Hidden: {hiddenList}"
+msgstr "מוסתר: {hiddenList}"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Hide {title} from the page"
@@ -5489,14 +5628,6 @@ msgstr "הסתר את {title} מהדף"
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Hide from page"
 msgstr "הסתר מהדף"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Hide Icons"
-msgstr "הסתר סמלים"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Hide Link Underline"
-msgstr "הסתר קו תחתון של קישור"
 
 #: src/features/resume/editor/chrome.tsx
 msgid "Hide panel"
@@ -5508,12 +5639,8 @@ msgid "Hide password"
 msgstr "הסתר סיסמה"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Hide picture"
-msgstr "הסתר תמונה"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Hide Section Icons"
-msgstr "הסתר סמלי מדור"
+msgid "Hide photo"
+msgstr "הסתרת תמונה"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Hide the photo"
@@ -5523,7 +5650,7 @@ msgstr "הסתר את התמונה"
 msgid "High"
 msgstr "גָבוֹהַ"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Highlight"
 msgstr "מרקר"
 
@@ -5540,20 +5667,31 @@ msgstr "מנהל גיוס עובדים"
 msgid "Hiring team"
 msgstr "צוות גיוס"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
 #: src/routes/builder/letter/-components/share-sheet.tsx
 msgid "History"
 msgstr "הִיסטוֹרִיָה"
+
+#: src/features/documents/document-actions.tsx
+msgid "Hold to delete"
+msgstr "החזק כדי למחוק"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Home"
 msgstr "דף הבית"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Horizontal line"
 msgstr "קו אופקי"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Horizontal margin"
+msgstr "שוליים אופקיים"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Horizontal spacing"
+msgstr "ריווח אופקי"
 
 #: src/features/homepage/sections.tsx
 msgid "Hosting and development are paid for by people like you. Optional tip:"
@@ -5631,7 +5769,7 @@ msgid "Icon"
 msgstr "סמל"
 
 #: src/features/resume/editor/write/entries.tsx
-msgid "Icon colour"
+msgid "Icon color"
 msgstr "צבע סמל"
 
 #: src/features/resume/editor/write/section-row.tsx
@@ -5662,9 +5800,9 @@ msgstr "אם מישהו שלח לך קישור זה, בקש ממנו קישור 
 msgid "If the app did not open, try again on a device where it is installed."
 msgstr "אם האפליקציה לא נפתחה, נסה שוב במכשיר שבו היא מותקנת."
 
-#: src/features/settings/account/data.tsx
-msgid "If you used Sign in with Apple and Reactive Resume is still listed in your Apple Account after deletion, remove its access there too."
-msgstr "אם השתמשת בהתחבר עם Apple ו-Reactive Resume עדיין מופיע בחשבון Apple שלך לאחר המחיקה, הסר את הגישה שלו גם לשם."
+#: src/hooks/use-form-blocker.tsx
+msgid "If you close this dialog, your changes are lost."
+msgstr "אם תסגור את תיבת הדו-שיח, השינויים שלך יאבדו."
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Ignore"
@@ -5732,16 +5870,6 @@ msgstr "ייבא את קורות החיים הנוכחיים שלך ואנחנו
 msgid "Imported"
 msgstr "מְיוֹבָּא"
 
-#. placeholder {0}: response.imported
-#: src/features/applications/components/import-applications-sheet.tsx
-msgid "Imported {0} applications."
-msgstr "יובאו {0} מועמדויות."
-
-#. placeholder {0}: response.imported
-#: src/features/applications/components/import-applications-sheet.tsx
-msgid "Imported {0} applications. {skipped} rows had no company or role and were skipped."
-msgstr "יובאו {0} מועמדויות. {skipped} שורות ללא חברה או תפקיד דולגו."
-
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Imported from {imported}."
 msgstr "מיובא מ-{imported}."
@@ -5754,7 +5882,7 @@ msgstr "מייבא"
 msgid "Importing it into your new resume…"
 msgstr "מייבא אותו לקורות החיים החדשים שלך..."
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Improve"
 msgstr "לְשַׁפֵּר"
 
@@ -5774,7 +5902,7 @@ msgstr "בחברה טובה"
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "הגדל את מרווח השורות כדי ששתי שורות לא יתמזגו לאחת."
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Indent"
 msgstr "הגדלת כניסה"
 
@@ -5798,7 +5926,6 @@ msgstr "תובנות"
 msgid "Integrations"
 msgstr "שילובים"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Interests"
 msgstr "תחביבים"
@@ -5957,10 +6084,6 @@ msgstr "ייתכן שהוא נמחק. בחר סיפור אחר או הוסף ס�
 msgid "It will be deleted for good and can't be restored."
 msgstr "זה יימחק סופית ולא ניתן לשחזר."
 
-#: src/features/settings/account/security.tsx
-msgid "It will no longer sign you in."
-msgstr "זה לא יכניס אותך יותר."
-
 #: src/features/applications/components/interview-dialog.tsx
 msgid "It will show on the application's timeline and on the calendar."
 msgstr "זה יופיע בציר הזמן של המועמדות ובלוח השנה."
@@ -5977,17 +6100,9 @@ msgstr "זה הוסר מציר הזמן לתמיד."
 msgid "Italian"
 msgstr "איטלקית"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Italic"
 msgstr "נטוי"
-
-#: src/features/documents/trash-page.tsx
-msgid "Items are deleted permanently after 30 days."
-msgstr "ערכים נמחקים לצמיתות לאחר 30 יום."
-
-#: src/features/documents/trash-page.tsx
-msgid "Items you move here stay for 30 days."
-msgstr "ערכים שאתה עובר לכאן נשארים למשך 30 יום."
 
 #. placeholder {0}: providers[0]?.label ?? ""
 #: src/features/career/schedule-sheet.tsx
@@ -6078,7 +6193,7 @@ msgstr "הצטרפו לקהילת Discord"
 msgid "JSON read"
 msgstr "JSON לקרוא"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Justify"
 msgstr "יישור לשני הצדדים"
 
@@ -6104,6 +6219,7 @@ msgid "Keep account"
 msgstr "שמור חשבון"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/hooks/use-form-blocker.tsx
 msgid "Keep editing"
 msgstr "המשך לערוך"
 
@@ -6186,6 +6302,10 @@ msgstr "הגרסה שלך נשמרה"
 msgid "Key ends in {0}"
 msgstr "המפתח מסתיים ב-{0}"
 
+#: src/features/settings/ai/api-keys.tsx
+msgid "Key revoked. Apps using it stop working now."
+msgstr "המפתח בוטל. אפליקציות המשתמשות בו מפסיקות לפעול כעת."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Key stored encrypted"
 msgstr "מפתח מאוחסן מוצפן"
@@ -6210,6 +6330,7 @@ msgstr "חמרית"
 msgid "Kind regards,"
 msgstr "בברכה,"
 
+#: src/features/homepage/remember.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Knowledge"
@@ -6218,6 +6339,10 @@ msgstr "מאגר הידע"
 #: src/features/career/coach.tsx
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
 msgstr "לא ניתן היה לטעון את מאגר הידע. נסה שוב או כבה את מאגר הידע לפני השליחה."
+
+#: src/features/homepage/prepare.tsx
+msgid "Knowledge doesn’t mention mentoring."
+msgstr "מאגר הידע לא מזכיר חניכה."
 
 #: src/libs/locale.ts
 msgid "Korean"
@@ -6251,7 +6376,6 @@ msgstr "שפה"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Languages"
 msgstr "שפות"
@@ -6269,6 +6393,11 @@ msgstr "נערך לאחרונה"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "בשימוש אחרון"
+
+#: src/features/assistant/conversation.tsx
+#: src/features/career/coach-chat.tsx
+msgid "Latest"
+msgstr "האחרון"
 
 #: src/libs/locale.ts
 msgid "Latvian"
@@ -6308,7 +6437,6 @@ msgid "Learning budget"
 msgstr "תקציב למידה"
 
 #: src/features/career/offers.tsx
-#: src/hooks/use-form-blocker.tsx
 msgid "Leave"
 msgstr "עזוב"
 
@@ -6320,13 +6448,13 @@ msgstr "השאר לפחות חצי אינץ׳ מסביב לעמוד."
 msgid "Leave empty to keep the saved key"
 msgstr "השאר ריק כדי לשמור את המפתח השמור"
 
-#: src/features/resume/editor/write/section-row.tsx
-msgid "Leave empty to reset the title to the original."
-msgstr "השאר ריק כדי לאפס את הכותרת למקורית."
-
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Leave it empty to remove the link."
 msgstr "השאר אותו ריק כדי להסיר את הקישור."
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Leave it empty to use the original title."
+msgstr "השאר ריק כדי להשתמש בכותרת המקורית."
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Leave out"
@@ -6414,6 +6542,10 @@ msgstr "גוף האות"
 msgid "Letter details"
 msgstr "פרטי מכתב"
 
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Letter duplicated"
+msgstr "המכתב שוכפל"
+
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Letter page"
 msgstr "דף מכתבים"
@@ -6455,7 +6587,7 @@ msgid "Likely questions, from the posting and your resume"
 msgstr "שאלות סבירות, מפרסום המשרה וקורות החיים שלך"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
-msgid "Line Height"
+msgid "Line height"
 msgstr "גובה שורה"
 
 #: src/features/resume/editor/check/issues.ts
@@ -6472,7 +6604,7 @@ msgstr "קווים קרובים כל כך יכולים לרוץ יחד בעת ק
 
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/write/fields.tsx
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Link"
 msgstr "לְקַשֵׁר"
@@ -6486,7 +6618,7 @@ msgid "Link a Reactive Resume to use AI match scoring and tailoring."
 msgstr "קשר קורות חיים מ-Reactive Resume כדי להשתמש בציון התאמה ובהתאמה אישית מבוססי בינה מלאכותית."
 
 #: src/features/resume/editor/write/basics-card.tsx
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Link address"
 msgstr "כתובת קישור"
 
@@ -6556,10 +6688,6 @@ msgstr "לינקדאין"
 msgid "LinkedIn, Referral…"
 msgstr "LinkedIn, הפניה…"
 
-#: src/features/settings/account/auth-hooks.ts
-msgid "Linking your {providerName} account..."
-msgstr "מקשר את חשבון {providerName} שלך..."
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Linking…"
 msgstr "מְקַשֵׁר…"
@@ -6606,6 +6734,10 @@ msgstr "בשידור חי ב-{0}"
 #: src/features/homepage/sections.tsx
 msgid "Live totals, refreshed every 6 hours."
 msgstr "סיכומים חיים, רענון כל 6 שעות."
+
+#: src/components/layout/loading-screen.tsx
+msgid "Loading"
+msgstr "טוען"
 
 #: src/features/settings/integrations/ai-provider-load-state.tsx
 msgid "Loading AI connections…"
@@ -6660,6 +6792,10 @@ msgstr "טוען קורות חיים…"
 msgid "Loading saved version…"
 msgstr "טוען גרסה שמורה…"
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/custom-styles.tsx
+msgid "Loading stylesheet editor…"
+msgstr "טוען את עורך גיליונות הסגנון…"
+
 #: src/features/homepage/sections.tsx
 msgid "Loading the total"
 msgstr "טוען את הסכום הכולל"
@@ -6682,7 +6818,7 @@ msgstr "טוען…"
 msgid "Location"
 msgstr "מקום"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Locations"
 msgstr "מיקומים"
 
@@ -6777,8 +6913,8 @@ msgid "Make the visible text and the destination match."
 msgstr "ודא שהטקסט הגלוי והיעד תואמים."
 
 #: src/features/ats-checker/messages.ts
-msgid "Make them visibly larger, bolder or capitalised."
-msgstr "הפוך אותן לגדולות, מודגשות או באותיות רישיות באופן ניכר."
+msgid "Make them visibly larger, bolder or capitalized."
+msgstr "הפוך אותן לגדולות יותר, מודגשות יותר או באותיות רישיות באופן ניכר."
 
 #: src/libs/locale.ts
 msgid "Malay"
@@ -6796,11 +6932,6 @@ msgstr "מנוהל על ידי שרת"
 msgid "Managed by your server"
 msgstr "מנוהל על ידי השרת שלך"
 
-#. Hero headline, line 4 of 4: A free, open-source / resume builder / and career / manager.
-#: src/features/homepage/hero.tsx
-msgid "manager."
-msgstr "הקריירה שלך."
-
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "תבליטים רבים מתחילים באותו ביטוי."
@@ -6812,14 +6943,6 @@ msgstr "מרץ 2022"
 #: src/libs/locale.ts
 msgid "Marathi"
 msgstr "מרטהית"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Margin (Horizontal)"
-msgstr "שוליים (אופקיים)"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Margin (Vertical)"
-msgstr "שוליים (אנכיים)"
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Margins"
@@ -6854,7 +6977,7 @@ msgstr "סמן את המועמדות כהוגשה כדי לשמור את הגר�
 msgid "Markdown (.md)"
 msgstr "Markdown (.md)"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Markdown shortcuts on"
 msgstr "קיצורי Markdown פועלים"
 
@@ -6986,8 +7109,7 @@ msgstr "דגם: {label}"
 msgid "Mono"
 msgstr "מונו"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/features/resume/editor/chrome/bar.tsx
 msgid "More download formats"
 msgstr "פורמטים נוספים להורדה"
 
@@ -6995,7 +7117,7 @@ msgstr "פורמטים נוספים להורדה"
 msgid "More for {title}"
 msgstr "עוד עבור {title}"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "More formatting"
 msgstr "עוד אפשרויות עיצוב"
 
@@ -7183,10 +7305,6 @@ msgstr "תן שם למפתח הסיסמה הזה"
 msgid "Name this version"
 msgstr "תן שם לגרסה זו"
 
-#: src/features/resume/share/history-tab.tsx
-msgid "Name this version, e.g. Sent to Lumen"
-msgstr "תן שם לגרסה זו, למשל. נשלח אל Lumen"
-
 #: src/features/resume/editor/check/issues.ts
 msgid "Name, email, phone and location are found, and links are full addresses."
 msgstr "נמצאו שם, דואר אלקטרוני, טלפון ומיקום, והקישורים הם כתובות מלאות."
@@ -7237,17 +7355,13 @@ msgstr "לְעוֹלָם לֹא"
 msgid "New"
 msgstr "חָדָשׁ"
 
-#: src/features/auth/pages/error.tsx
-msgid "New account sign-ups are currently disabled on this server."
-msgstr "הרשמת חשבונות חדשים מושבתת כרגע בשרת הזה."
-
 #: src/features/settings/ai/api-keys.tsx
 msgid "New API key"
 msgstr "מפתח API חדש"
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
-msgid "New Application"
+msgid "New application"
 msgstr "מועמדות חדשה"
 
 #: src/features/assistant/assistant-panel.tsx
@@ -7275,17 +7389,14 @@ msgid "New key"
 msgstr "מפתח חדש"
 
 #: src/features/resume/editor/write/entry-card.tsx
-msgid "New page"
-msgstr "עמוד חדש"
-
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "New Page"
+msgid "New page"
 msgstr "עמוד חדש"
 
 #. Label for new password input on reset-password form
 #: src/dialogs/auth/change-password.tsx
 #: src/features/auth/pages/reset-password.tsx
-msgid "New Password"
+msgid "New password"
 msgstr "סיסמה חדשה"
 
 #: src/features/career/today.tsx
@@ -7376,8 +7487,8 @@ msgid "No commands match that search."
 msgstr "אין פקודות שתואמות את החיפוש הזה."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications."
-msgstr "אין אפליקציות מחוברות."
+msgid "No connected applications yet. Apps you allow to access your account appear here."
+msgstr "אין עדיין אפליקציות מחוברות. אפליקציות שתאפשר להן גישה לחשבון שלך יופיעו כאן."
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -7436,10 +7547,6 @@ msgstr "אין עדיין עובדות לקישור. הוסף אותן ב\"עו�
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet. Add one above."
 msgstr "אין עדיין עובדות. הוסף אחת למעלה."
-
-#: src/features/applications/components/calendar-view.tsx
-msgid "No interviews"
-msgstr "אין ראיונות"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "No job yet"
@@ -7655,7 +7762,7 @@ msgstr "עדיין לא תועד. השאר ריק עד שתוכל לבסס את 
 msgid "Not saved"
 msgstr "לא נשמר"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Not saved — this fact was forgotten before."
 msgstr "לא נשמר — ביקשת לשכוח את העובדה הזו בעבר."
 
@@ -7780,7 +7887,7 @@ msgstr "תקופת הודעה מוקדמת"
 msgid "Now"
 msgstr "עַכשָׁיו"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Numbered list"
 msgstr "רשימה ממוספרת"
 
@@ -7887,8 +7994,8 @@ msgid "Only if you want it to. Add your own key from OpenAI, Anthropic, Google G
 msgstr "רק אם תרצה בכך. הוסף מפתח משלך מ-OpenAI, Anthropic, Google Gemini, OpenRouter, Ollama או ספק אחר לניסוחים חדים יותר, התאמה למודעת דרושים, אימון למועמדויות ולראיונות וקריאת קובצי Word. בלי מפתח, שום דבר לא נשלח לשירות AI."
 
 #: src/features/ats-checker/messages.ts
-msgid "Only one recognisable section heading was found."
-msgstr "נמצאה רק כותרת מקטע אחת מוכרת."
+msgid "Only one recognizable section heading was found."
+msgstr "נמצאה רק כותרת סעיף מוכרת אחת."
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Only one version so far. Every editing session adds one automatically."
@@ -7950,8 +8057,8 @@ msgstr "פתח תדריך"
 
 #. Button label to open the user's default email app
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Open Email Client"
-msgstr "פתיחת תוכנת הדוא\"ל"
+msgid "Open email app"
+msgstr "פתיחת אפליקציית הדוא\"ל"
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Open focus mode"
@@ -7970,13 +8077,9 @@ msgstr "פתח את העורך ב"
 msgid "Open in Offers"
 msgstr "פתח ב\"הצעות\""
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-msgid "open issues"
-msgstr "נושאים פתוחים"
-
-#: src/features/career/coach-thread.tsx
-msgid "Open Preferences"
-msgstr "פתח העדפות"
+#: src/features/career/coach-chat.tsx
+msgid "Open preferences"
+msgstr "פתיחת ההעדפות"
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Open public page"
@@ -8079,7 +8182,7 @@ msgstr "או במילים שלך..."
 msgid "Or upload a resume PDF"
 msgstr "או העלה PDF של קורות חיים"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Orange"
 msgstr "כתום"
 
@@ -8091,6 +8194,7 @@ msgstr "ארגון"
 msgid "Original page"
 msgstr "עמוד מקורי"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "עיצוב הטבלה המקורי נשמר. תוכן זה הוא לקריאה בלבד מכיוון שלא ניתן לערוך אותו בבטחה."
@@ -8120,7 +8224,7 @@ msgstr "מתוך 100"
 msgid "Out of date: the text has changed since."
 msgstr "לא מעודכן: הטקסט השתנה מאז."
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Outdent"
 msgstr "הקטנת כניסה"
 
@@ -8160,6 +8264,10 @@ msgstr "עמוד 1"
 msgid "Page 1 · {formatLabel}"
 msgstr "עמוד 1 · {formatLabel}"
 
+#: src/components/layout/not-found-screen.tsx
+msgid "Page not found"
+msgstr "הדף לא נמצא"
+
 #: src/features/assistant/conversation.tsx
 msgid "Page reading didn't finish."
 msgstr "קריאת העמוד לא הסתיימה."
@@ -8172,7 +8280,7 @@ msgstr "תצוגת עמוד"
 msgid "Paper"
 msgstr "נְיָר"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Paragraph"
 msgstr "פסקה"
 
@@ -8225,21 +8333,21 @@ msgstr "מפתחות גישה"
 msgid "Password"
 msgstr "סיסמה"
 
-#: src/features/resume/builder/password-dialog.tsx
-msgid "Password must be between 6 and 64 characters."
-msgstr "הסיסמה חייבת להכיל בין 6 ל-64 תווים."
+#: src/dialogs/auth/change-password.tsx
+msgid "Password changed"
+msgstr "הסיסמה שונתה"
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Password removed"
 msgstr "הסיסמה הוסרה"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Password reset. Sign in with your new password."
+msgstr "הסיסמה אופסה. היכנס עם הסיסמה החדשה שלך."
+
 #: src/features/resume/share/link-tab.tsx
 msgid "Password set"
 msgstr "סיסמה מוגדרת"
-
-#: src/features/resume/builder/password-dialog.tsx
-msgid "Passwords do not match."
-msgstr "הסיסמאות אינן תואמות."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Past conversations"
@@ -8437,10 +8545,6 @@ msgstr "מתכנן את השבוע שלך"
 msgid "Play the list of languages"
 msgstr "הפעל את רשימת השפות"
 
-#: src/features/applications/components/file-attachment-field.tsx
-msgid "Please upload a PDF file."
-msgstr "נא להעלות קובץ PDF."
-
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "פולנית"
@@ -8495,8 +8599,28 @@ msgstr "תנאי פרסום המשרה בקורות החיים שלך"
 
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/saved.tsx
+#: src/features/homepage/prepare.tsx
 msgid "Practice"
 msgstr "תרגול"
+
+#: src/features/career/shared.tsx
+msgctxt "Application workspace tab: rehearse interview answers"
+msgid "Practice"
+msgstr "תרגול"
+
+#: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/prepare.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice"
+msgstr "תרגול"
+
+#: src/features/homepage/remember.tsx
+msgid "Practice · Your opening, about 40 seconds aloud"
+msgstr "תרגול · הפתיחה שלך, כ-40 שניות בקול"
+
+#: src/features/career/workspace/practise.tsx
+msgid "Practice another question"
+msgstr "תרגל שאלה נוספת"
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
@@ -8516,27 +8640,12 @@ msgstr "עדיפות לתרגול:"
 msgid "Practice questions are simulated, not from Fieldnote."
 msgstr "שאלות התרגול מדומות, הן לא מגיעות מ-Fieldnote."
 
-#: src/features/career/knowledge/stories.tsx
-#: src/features/career/shared.tsx
-#: src/features/career/workspace/prepare.tsx
 #: src/features/homepage/prepare.tsx
-msgid "Practise"
-msgstr "תרגול"
-
-#: src/features/homepage/remember.tsx
-msgid "Practise · Your opening, about 40 seconds aloud"
-msgstr "תרגול · הפתיחה שלך, כ-40 שניות בקול"
-
-#: src/features/career/workspace/practise.tsx
-msgid "Practise another question"
-msgstr "תרגל שאלה נוספת"
-
-#: src/features/homepage/prepare.tsx
-msgid "Practise your introduction once. Keep it to about 90 seconds."
+msgid "Practice your introduction once. Keep it to about 90 seconds."
 msgstr "תרגל את הפתיח שלך פעם אחת. שמור אותו לכ-90 שניות."
 
 #: src/features/career/workspace/practise.tsx
-msgid "Practising your story: {storyTitle}"
+msgid "Practicing your story: {storyTitle}"
 msgstr "מתרגל את הסיפור שלך: {storyTitle}"
 
 #: src/features/ats-checker/messages.ts
@@ -8555,7 +8664,7 @@ msgstr "העדפה"
 msgid "Preferences"
 msgstr "העדפות"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgctxt "Career preferences: the roles, places, pay and ways of working you want"
 msgid "Preferences"
@@ -8563,6 +8672,7 @@ msgstr "העדפות"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/shared.tsx
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Prepare"
@@ -8589,11 +8699,10 @@ msgid "Preparing edits…"
 msgstr "מכין עריכות..."
 
 #: src/features/resume/export/use-resume-export.ts
-msgid "Preparing your resume for printing..."
-msgstr "מכינים את קורות החיים שלכם להדפסה..."
+msgid "Preparing resume for printing…"
+msgstr "מכין את קורות החיים להדפסה…"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
+#: src/features/resume/editor/chrome/bar.tsx
 msgid "Preparing…"
 msgstr "עֲרִיכָה…"
 
@@ -8641,7 +8750,7 @@ msgid "Previous month"
 msgstr "החודש הקודם"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
-msgid "Primary Color"
+msgid "Primary color"
 msgstr "צבע עיקרי"
 
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -8706,16 +8815,14 @@ msgstr "קישור לפרופיל של אדם {0}"
 msgid "Profile links must be public HTTPS addresses."
 msgstr "קישורי פרופיל חייבים להיות כתובות HTTPS ציבוריות."
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Profiles"
 msgstr "פרופילים"
 
 #: src/components/level/combobox.tsx
-msgid "Progress Bar"
+msgid "Progress bar"
 msgstr "פס התקדמות"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Projects"
 msgstr "פרויקטים"
@@ -8771,7 +8878,6 @@ msgstr "קישורי פרופיל ציבוריים הם אופציונליים �
 msgid "Public, with a password"
 msgstr "ציבורי, עם סיסמה"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Publications"
 msgstr "פרסומים"
@@ -8780,7 +8886,7 @@ msgstr "פרסומים"
 msgid "Publisher"
 msgstr "מוציא לאור"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Purple"
 msgstr "סגול"
 
@@ -8792,7 +8898,7 @@ msgstr "מקם כתובת דוא״ל פשוטה ליד ראש העמוד הרא�
 msgid "Put it all on <0>one page.</0>"
 msgstr "רכזו הכול ב<0>עמוד אחד.</0>"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Put the caret in a line to improve it"
 msgstr "שים את הקרט בשורה כדי לשפר אותו"
 
@@ -8803,6 +8909,11 @@ msgstr "קוד QR"
 #: src/features/resume/share/link-tab.tsx
 msgid "QR code for {url}"
 msgstr "קוד QR עבור {url}"
+
+#. Accessible title for QR code image shown during two-factor setup
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "QR code for two-step verification"
+msgstr "קוד QR לאימות דו-שלבי"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Question {position} of {total}"
@@ -8894,6 +9005,11 @@ msgstr "מוקרא על ידי {0}, מה שעשוי לצרוך טוקנים בח
 msgid "Read aloud by your browser's voice."
 msgstr "מוקרא בקול של הדפדפן שלך."
 
+#. placeholder {0}: dates.raw
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Read as “{0}”. Pick a month so it sorts and prints consistently."
+msgstr "נקרא כ-\"{0}\". בחר חודש כדי שימוין ויודפס באופן עקבי."
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Read briefing"
 msgstr "קרא את התדריך"
@@ -8917,8 +9033,8 @@ msgid "Read questions with"
 msgstr "הקרא שאלות באמצעות"
 
 #: src/features/resume/stylesheet/editor.tsx
-msgid "Read the Applying Custom Styles guide."
-msgstr "קרא את המדריך להחלת סגנונות מותאמים אישית."
+msgid "Read the “Applying custom styles” guide."
+msgstr "קרא את המדריך \"החלת סגנונות מותאמים אישית\"."
 
 #: src/features/assistant/conversation.tsx
 msgid "Read the attachment"
@@ -9114,10 +9230,10 @@ msgid "Rectangle"
 msgstr "מלבן"
 
 #: src/components/level/combobox.tsx
-msgid "Rectangle (Full Width)"
+msgid "Rectangle (full width)"
 msgstr "מלבן (רוחב מלא)"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Red"
 msgstr "אדום"
 
@@ -9125,7 +9241,6 @@ msgstr "אדום"
 msgid "Redo resume change"
 msgstr "בצע מחדש את שינוי קורות החיים"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "References"
 msgstr "ממליצים"
@@ -9180,6 +9295,7 @@ msgid "Reload"
 msgstr "לִטעוֹן מִחָדָשׁ"
 
 #: src/features/career/shared.tsx
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/remember.tsx
 msgid "Remember"
@@ -9189,12 +9305,12 @@ msgstr "זכור"
 msgid "Remember facts from my messages"
 msgstr "זכור עובדות מההודעות שלי"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/debrief.tsx
 msgid "Remember for {company} only?"
 msgstr "לזכור רק עבור {company}?"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Remember this for future coaching?"
 msgstr "לזכור את זה לאימון בעתיד?"
 
@@ -9202,7 +9318,7 @@ msgstr "לזכור את זה לאימון בעתיד?"
 msgid "Remember your password? <0/>"
 msgstr "זוכר את הסיסמה? <0/>"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Remembered: “{text}”"
 msgstr "נשמר בזיכרון: \"{text}\""
 
@@ -9227,12 +9343,13 @@ msgstr "מרחוק"
 msgid "Remote, Hybrid, a city…"
 msgstr "מרחוק, היברידי, עיר…"
 
-#: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/resume/share/link-tab.tsx
-#: src/features/settings/account/profile.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "לְהַסִיר"
+
+#: src/features/settings/account/security.tsx
+msgid "Remove “{name}”?"
+msgstr "להסיר את \"{name}\"?"
 
 #. placeholder {0}: attachment.filename
 #. placeholder {0}: contact.name
@@ -9270,10 +9387,23 @@ msgstr "הסר שדה"
 msgid "Remove file"
 msgstr "הסר קובץ"
 
+#: src/features/settings/account/security.tsx
+msgid "Remove passkey"
+msgstr "הסרת מפתח גישה"
+
+#: src/features/resume/share/link-tab.tsx
+msgid "Remove password"
+msgstr "הסרת סיסמה"
+
 #. placeholder {0}: index + 1
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Remove person {0}"
 msgstr "הסר את אדם {0}"
+
+#: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/settings/account/profile.tsx
+msgid "Remove photo"
+msgstr "הסרת תמונה"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Remove question"
@@ -9291,10 +9421,6 @@ msgstr "הסר תגית"
 msgid "Remove the password?"
 msgstr "להסיר את הסיסמה?"
 
-#: src/features/settings/account/security.tsx
-msgid "Remove this passkey?"
-msgstr "להסיר את המפתח הזה?"
-
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Remove this photo?"
 msgstr "להסיר את התמונה הזו?"
@@ -9308,6 +9434,10 @@ msgstr "שנה שם"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Rename letter"
 msgstr "שנה את שם האות"
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Rename section"
+msgstr "שינוי שם הסעיף"
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Rename version"
@@ -9363,14 +9493,11 @@ msgstr "תשובה"
 msgid "Reply copied"
 msgstr "התשובה הועתקה"
 
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/sections.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Report a bug"
 msgstr "דווח על תקלה"
-
-#: src/features/homepage/footer.tsx
-msgid "Report an issue"
-msgstr "דיווח על בעיה"
 
 #: src/features/resume/share/link-tab.tsx
 msgid "Require a password"
@@ -9398,7 +9525,7 @@ msgstr "אפס את ברירת המחדל של העיצוב"
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
-msgid "Reset Password"
+msgid "Reset password"
 msgstr "איפוס סיסמה"
 
 #: src/features/auth/pages/reset-password.tsx
@@ -9463,6 +9590,8 @@ msgstr "קוֹרוֹת חַיִים"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-card.tsx
+#: src/routes/_home/index.tsx
+#: src/routes/$username/$slug.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "קורות חיים"
@@ -9487,7 +9616,7 @@ msgstr "קורות חיים + מכתב"
 msgid "Resume attached"
 msgstr "קורות חיים מצורפים"
 
-#. Hero headline, line 2 of 4: A free, open-source / resume builder / and career / manager.
+#. Hero headline, line 2 of 4: A free, open-source / resume builder / and / career manager. Lines 2 and 4 are highlighted: keep each a complete phrase.
 #: src/features/homepage/hero.tsx
 msgid "resume builder"
 msgstr "ליצירת קורות חיים"
@@ -9496,7 +9625,7 @@ msgstr "ליצירת קורות חיים"
 msgid "Resume builder"
 msgstr "בונה קורות חיים"
 
-#: src/features/resume/preview/resume-accessible-text.tsx
+#: src/features/resume/preview/preview.browser.tsx
 msgid "Resume content"
 msgstr "תוכן קורות חיים"
 
@@ -9606,7 +9735,7 @@ msgstr "סקירה דורשת חיבור AI. <0>הוסף חיבור בהגדרו
 msgid "Revoke"
 msgstr "לְבַטֵל"
 
-#. placeholder {0}: key.name || key.start || ""
+#. placeholder {0}: key.name || key.start || t`unnamed key`
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "בטל את {0}"
@@ -9661,7 +9790,7 @@ msgstr "תפקיד של אדם {0}"
 msgid "Role, company or location"
 msgstr "תפקיד, חברה או מיקום"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Roles"
 msgstr "תפקידים"
 
@@ -9737,15 +9866,13 @@ msgstr "Sam, Fieldnote"
 msgid "Same you. Less starting over."
 msgstr "אותו אתה. פחות להתחיל מחדש."
 
-#: src/features/documents/new-document-dialog.tsx
+#: src/features/documents/use-start-document.ts
 msgid "Sample resume added. Delete it anytime."
 msgstr "נוספה קורות חיים לדוגמה. מחק אותו בכל עת."
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
-#: src/features/documents/document-actions.tsx
 #: src/features/resume/share/history-tab.tsx
-#: src/features/settings/account/security.tsx
 msgid "Save"
 msgstr "שמור"
 
@@ -9777,13 +9904,10 @@ msgstr "שמור הצעה נוספת להשוואה"
 msgid "Save as application…"
 msgstr "שמור כבקשת עבודה..."
 
+#: src/dialogs/resume/index.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Save changes"
 msgstr "שמור שינויים"
-
-#: src/dialogs/resume/index.tsx
-msgid "Save Changes"
-msgstr "שמירת שינויים"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Save connection"
@@ -9806,6 +9930,10 @@ msgstr "שמור ראיון"
 msgid "Save job"
 msgstr "שמור עבודה"
 
+#: src/features/settings/account/security.tsx
+msgid "Save name"
+msgstr "שמירת השם"
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Save schedule"
 msgstr "שמור תזמון"
@@ -9813,6 +9941,10 @@ msgstr "שמור תזמון"
 #: src/features/career/knowledge/stories.tsx
 msgid "Save story"
 msgstr "שמור סיפור"
+
+#: src/features/documents/document-actions.tsx
+msgid "Save tags"
+msgstr "שמירת התגים"
 
 #: src/features/ats-checker/messages.ts
 msgid "Save the file with every page upright."
@@ -9829,6 +9961,10 @@ msgstr "שמור במאגר הידע"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save to the application"
 msgstr "שמור לבקשת העבודה"
+
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Save your backup codes"
+msgstr "שמור את קודי הגיבוי שלך"
 
 #: src/features/resume/share/format.ts
 msgid "saved"
@@ -9869,7 +10005,7 @@ msgid "Saved {0} to Applications"
 msgstr "{0} נשמר במועמדויות"
 
 #. placeholder {0}: story.data.title
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Saved a story: {0}"
 msgstr "נשמר סיפור: {0}"
 
@@ -9885,7 +10021,7 @@ msgstr "תיאור שמור"
 msgid "Saved just now"
 msgstr "נשמר הרגע"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Saved offers"
 msgstr "הצעות שמורות"
 
@@ -9901,7 +10037,7 @@ msgstr "נשמר במועמדויות יחד עם המודעה"
 msgid "Saved to Knowledge as a fact"
 msgstr "נשמר במאגר הידע כעובדה"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/debrief.tsx
 msgid "Saved to Knowledge, private to this application."
 msgstr "נשמר במאגר הידע, פרטי למועמדות הזו."
@@ -9930,8 +10066,8 @@ msgid "Say it aloud"
 msgstr "אמור את זה בקול"
 
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Scan the QR code below with your preferred authenticator app. You can also copy the secret below and paste it into your app."
-msgstr "סרוק את קוד ה־QR הבא באמצעות אפליקציית המאמת המועדפת עליך. אפשר גם להעתיק את הסוד שלמטה ולהדביק אותו באפליקציה."
+msgid "Scan the QR code with your authenticator app, or copy the secret and paste it into the app."
+msgstr "סרוק את קוד ה-QR באמצעות אפליקציית המאמת שלך, או העתק את הסוד והדבק אותו באפליקציה."
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Schedule an interview"
@@ -10019,7 +10155,7 @@ msgstr "החיפוש נכשל"
 
 #. Accessible label for icon picker search input
 #. Placeholder text in icon picker search input
-#: src/components/input/icon-picker.tsx
+#: src/components/input/icon-picker-grid.tsx
 msgid "Search for an icon"
 msgstr "חיפוש סמל"
 
@@ -10092,7 +10228,7 @@ msgstr "מחפש עם החיפוש של השרת שלך וקורא דפים עם
 msgid "Searching job postings…"
 msgstr "מחפש מודעות דרושים..."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Searching the web"
 msgstr "מחפש ברשת"
 
@@ -10101,8 +10237,8 @@ msgid "Searching the web…"
 msgstr "מחפש באינטרנט..."
 
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Secret copied to clipboard."
-msgstr "הסוד הועתק ללוח הגזירים."
+msgid "Secret copied"
+msgstr "הסוד הועתק"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Section headings"
@@ -10118,8 +10254,8 @@ msgid "Sections · print order"
 msgstr "מדורים · סדר הדפסה"
 
 #: src/features/resume/editor/check/issues.ts
-msgid "Sections use headings systems recognise, and work experience shows."
-msgstr "מדורים משתמשים בכותרות שמערכות מזהות, וניסיון העבודה מראה."
+msgid "Sections use headings systems recognize, and work experience shows."
+msgstr "הסעיפים משתמשים בכותרות שמערכות מזהות, וניסיון התעסוקה מוצג."
 
 #: src/features/career/workspace/prepare.tsx
 msgid "See below"
@@ -10172,8 +10308,8 @@ msgstr "לִשְׁלוֹחַ"
 
 #. Primary action button label on forgot-password form
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Send Password Reset Email"
-msgstr "שליחת דוא\"ל לאיפוס סיסמה"
+msgid "Send reset link"
+msgstr "שליחת קישור לאיפוס"
 
 #: src/features/ats-checker/messages.ts
 msgid "Send the resume itself rather than a portfolio wrapper."
@@ -10254,6 +10390,10 @@ msgstr "נשלח"
 msgid "Sent to {0}"
 msgstr "נשלח אל {0}"
 
+#: src/features/resume/share/history-tab.tsx
+msgid "Sent to Lumen"
+msgstr "נשלח אל Lumen"
+
 #: src/libs/locale.ts
 msgid "Serbian"
 msgstr "סרבית"
@@ -10267,7 +10407,7 @@ msgid "Set a password"
 msgstr "הגדר סיסמה"
 
 #: src/features/resume/builder/password-dialog.tsx
-msgid "Set Password"
+msgid "Set password"
 msgstr "הגדרת סיסמה"
 
 #: src/features/ats-checker/messages.ts
@@ -10282,6 +10422,10 @@ msgstr "הגדר איתור"
 msgid "Set up web search in Settings"
 msgstr "הגדר חיפוש ברשת בהגדרות"
 
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Set up your authenticator app"
+msgstr "הגדר את אפליקציית המאמת שלך"
+
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
@@ -10290,22 +10434,19 @@ msgstr "הגדר חיפוש ברשת בהגדרות"
 msgid "Settings"
 msgstr "הגדרות"
 
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Setup Authenticator App"
-msgstr "הגדרת אפליקציית מאמת"
-
 #: src/features/settings/ai/mcp.tsx
 msgid "Setup guide"
 msgstr "מדריך התקנה"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Shadow Color"
+msgid "Shadow color"
 msgstr "צבע צל"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Shadow Width"
+msgid "Shadow width"
 msgstr "רוחב צל"
 
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/share.tsx
 #: src/features/resume/public/public-resume.tsx
@@ -10314,8 +10455,7 @@ msgstr "רוחב צל"
 msgid "Share"
 msgstr "לַחֲלוֹק"
 
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/features/resume/editor/chrome/share-sheet.tsx
 msgid "Share & export"
 msgstr "שתף וייצוא"
 
@@ -10327,8 +10467,7 @@ msgstr "שתף קישור ציבורי, הוסף סיסמה או השאר אות
 msgid "Share public resume"
 msgstr "שתף קורות חיים ציבוריים"
 
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/features/resume/editor/chrome/share-sheet.tsx
 msgid "Share sections"
 msgstr "שתף קטעים"
 
@@ -10410,6 +10549,10 @@ msgstr "המופע נסגר"
 msgid "Show heading"
 msgstr "הצג כותרת"
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Show icons"
+msgstr "הצגת סמלים"
+
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
 msgstr "הצג קישור בכותרת"
@@ -10430,8 +10573,12 @@ msgid "Show password"
 msgstr "הצג סיסמה"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Show picture"
-msgstr "הצג תמונה"
+msgid "Show photo"
+msgstr "הצגת תמונה"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Show section icons"
+msgstr "הצגת סמלי סעיפים"
 
 #: src/features/resume/editor/design/template-group.tsx
 msgid "Show templates"
@@ -10466,7 +10613,7 @@ msgid "Sidebar side"
 msgstr "צד סרגל הצד"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
-msgid "Sidebar Width"
+msgid "Sidebar width"
 msgstr "רוחב סרגל צד"
 
 #: src/features/resume/editor/check/issues.ts
@@ -10502,7 +10649,7 @@ msgid "Sign out"
 msgstr "התנתקות"
 
 #: src/dialogs/auth/change-password.tsx
-msgid "Sign out from all other devices"
+msgid "Sign out of all other devices"
 msgstr "התנתק מכל המכשירים האחרים"
 
 #. Primary action button label on registration form
@@ -10603,7 +10750,6 @@ msgstr "מיומנות"
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Skills"
 msgstr "מיומנויות"
@@ -10613,7 +10759,7 @@ msgid "Skip"
 msgstr "דלג"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Skip and Upload"
+msgid "Skip and upload"
 msgstr "דלג והעלה"
 
 #: src/features/homepage/page.tsx
@@ -10625,8 +10771,7 @@ msgstr "דלג לתוכן"
 msgid "Skip to main content"
 msgstr "דלג לתוכן העיקרי"
 
-#: src/routes/builder/$resumeId/-components/editor-shell.tsx
-#: src/routes/builder/letter/-components/letter-shell.tsx
+#: src/features/resume/editor/chrome/shell.tsx
 msgid "Skip to the page"
 msgstr "דלג לדף"
 
@@ -10679,8 +10824,8 @@ msgid "Some systems mishandle images, and photos are discouraged in some countri
 msgstr "מערכות מסוימות מטפלות בצורה לא נכונה בתמונות, ותמונות לא מעודדות במדינות מסוימות."
 
 #: src/features/resume/editor/check/issues.ts
-msgid "Some systems only recognise links that start with https://. This one reads as plain text: “{value}”."
-msgstr "חלק מהמערכות מזהות רק קישורים שמתחילים ב-https://. זה נקרא כטקסט פשוט: \"{value}\"."
+msgid "Some systems only recognize links that start with https://. This one reads as plain text: “{value}”."
+msgstr "חלק מהמערכות מזהות רק קישורים שמתחילים ב-https://. קישור זה נקרא כטקסט פשוט: \"{value}\"."
 
 #: src/features/ats-checker/messages.ts
 msgid "Some text falls outside the page."
@@ -10689,35 +10834,6 @@ msgstr "חלק מהטקסט נופל מחוץ לעמוד."
 #: src/features/ats-checker/messages.ts
 msgid "Some text is rotated."
 msgstr "חלק מהטקסט מסובב."
-
-#: src/components/layout/error-screen.tsx
-#: src/features/resume/preview/preview.browser.tsx
-msgid "Something went wrong"
-msgstr "משהו השתבש"
-
-#: src/features/documents/new-document-dialog.tsx
-msgid "Something went wrong while importing. Try again, or start blank."
-msgstr "משהו השתבש במהלך הייבוא. נסה שוב, או התחל ריק."
-
-#: src/features/ats-checker/checker.tsx
-msgid "Something went wrong while reading that file. Try again."
-msgstr "משהו השתבש במהלך קריאת הקובץ. נסה שוב."
-
-#: src/features/auth/pages/error.tsx
-msgid "Something went wrong while signing you in. Please try again."
-msgstr "משהו השתבש בזמן ההתחברות שלך. נסה שוב."
-
-#: src/features/resume/builder/password-dialog.tsx
-#: src/features/resume/share/link-tab.tsx
-msgid "Something went wrong. Please try again."
-msgstr "משהו השתבש. נא לנסות שוב."
-
-#: src/features/applications/use-application-actions.ts
-#: src/features/documents/document-actions.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
-msgid "Something went wrong. Try again."
-msgstr "משהו השתבש. נסה שוב."
 
 #: src/features/documents/documents-page.tsx
 msgid "Sort"
@@ -10740,18 +10856,10 @@ msgid "Source code"
 msgstr "קוד מקור"
 
 #: src/features/assistant/conversation.tsx
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 msgid "Sources"
 msgstr "מקורות"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Spacing (Horizontal)"
-msgstr "ריווח (אופקי)"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Spacing (Vertical)"
-msgstr "ריווח (אנכי)"
 
 #: src/libs/locale.ts
 msgid "Spanish"
@@ -10824,18 +10932,9 @@ msgstr "כותרות סעיפים סטנדרטיים"
 msgid "Star Reactive Resume on GitHub"
 msgstr "סמן את Reactive Resume ב-GitHub"
 
-#: src/features/homepage/header.tsx
-msgid "Star Reactive Resume on GitHub, {count} stars"
-msgstr "כוכב Reactive Resume על GitHub, {count} כוכבים"
-
 #: src/components/input/github-stars-button.tsx
 msgid "Star us on GitHub (opens in new tab)"
 msgstr "סמנו אותנו בכוכב ב־GitHub (נפתח בלשונית חדשה)"
-
-#. placeholder {0}: starCount.toLocaleString()
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub, currently {0} stars (opens in new tab)"
-msgstr "סמנו אותנו בכוכב ב־GitHub, כרגע {0} כוכבים (נפתח בלשונית חדשה)"
 
 #: src/features/homepage/sections.tsx
 msgid "Stars on GitHub"
@@ -10932,17 +11031,9 @@ msgstr "סטטיסטיקה"
 msgid "Status"
 msgstr "סטטוס"
 
-#: src/hooks/use-form-blocker.tsx
-msgid "Stay"
-msgstr "הישאר"
-
 #: src/features/documents/new-document-dialog.tsx
 msgid "Stay here"
 msgstr "הישאר כאן"
-
-#: src/features/resume/editor/design/fit.ts
-msgid "Still {pages} pages at 9 pt. Hide a section or shorten entries."
-msgstr "עדיין עמודי {pages} ב-9 נקודות. הסתר קטע או קצר ערכים."
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
@@ -10963,7 +11054,7 @@ msgstr "עצור הקלטה"
 msgid "Stop when you're done. Nothing is sent until then."
 msgstr "עצור כשתסיים. שום דבר לא נשלח עד אז."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Stopped"
 msgstr "נעצר"
 
@@ -10976,7 +11067,11 @@ msgstr "נעצר ב-{0}"
 msgid "Stopped. No edits were proposed."
 msgstr "נֶעצָר. לא הוצעו עריכות."
 
-#: src/features/career/coach-thread.tsx
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Store these backup codes somewhere safe. Each one signs you in once if you lose your device."
+msgstr "שמור את קודי הגיבוי האלה במקום בטוח. כל אחד מהם מאפשר כניסה אחת אם תאבד את המכשיר שלך."
+
+#: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Stories"
@@ -11006,7 +11101,7 @@ msgstr "הסיפור לא נמצא"
 msgid "Strengthen"
 msgstr "חזק"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Strikethrough"
 msgstr "קו חוצה"
 
@@ -11069,7 +11164,6 @@ msgid "Summaries of your open applications"
 msgstr "סיכומים של המועמדויות הפתוחות שלך"
 
 #: src/features/resume/editor/write/summary-editor.tsx
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Summary"
 msgstr "תקציר"
@@ -11104,6 +11198,7 @@ msgstr "כבה את זה"
 msgid "Switch model"
 msgstr "החלף דגם"
 
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to dark mode"
 msgstr "עבור למצב כהה"
@@ -11112,6 +11207,7 @@ msgstr "עבור למצב כהה"
 msgid "Switch to dark theme"
 msgstr "מעבר לערכת עיצוב כהה"
 
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 msgid "Switch to light mode"
 msgstr "עבור למצב אור"
@@ -11167,11 +11263,6 @@ msgstr "תגיות"
 #: src/dialogs/resume/index.tsx
 msgid "Tags can be used to categorize your resume by keywords."
 msgstr "אפשר להשתמש בתגיות כדי לסווג את קורות החיים שלך לפי מילות מפתח."
-
-#. placeholder {0}: documents.length
-#: src/features/documents/document-actions.tsx
-msgid "Tags for {0} documents"
-msgstr "תגיות עבור {0} מסמכים"
 
 #: src/features/ats-checker/messages.ts
 msgid "Tags give software an explicit reading order. Enable them when exporting, if your tool offers it."
@@ -11315,16 +11406,13 @@ msgstr "בדיקות…"
 msgid "Text"
 msgstr "טֶקסט"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Text alignment"
 msgstr "יישור טקסט"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
-msgid "Text Color"
-msgstr "צבע כתב"
-
-#: src/features/resume/editor/write/rich-text-editor.tsx
-msgid "Text colour"
+msgid "Text color"
 msgstr "צבע טקסט"
 
 #: src/features/resume/editor/check/issues.ts
@@ -11359,7 +11447,7 @@ msgstr "הטקסט נמצא באזור הכותרת העליונה או התחת
 msgid "Text size"
 msgstr "גודל טקסט"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Text style"
 msgstr "סגנון טקסט"
 
@@ -11384,8 +11472,8 @@ msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesig
 msgstr "תודה, Sam. הנה דוגמה: ב-Northwind Labs הובלתי את העיצוב מחדש של תהליך הקליטה, מ-14 ראיונות לקוחות ועד הגדרה קצרה יותר."
 
 #: src/features/ats-checker/checker.tsx
-msgid "That file couldn't be read as a PDF."
-msgstr "לא ניתן היה לקרוא את הקובץ הזה כ-PDF."
+msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
+msgstr "לא ניתן היה לקרוא את הקובץ כ-PDF. בחר קובץ PDF ונסה שוב."
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file is too large to check. PDFs up to 25 MB work."
@@ -11395,13 +11483,17 @@ msgstr "הקובץ הזה גדול מדי בשביל לבדוק. PDFs עד 25 ע
 msgid "That link couldn't be read. Paste the posting text instead."
 msgstr "לא ניתן היה לקרוא את הקישור הזה. הדבק את הטקסט של פרסום המשרה במקום זאת."
 
-#: src/features/auth/pages/error.tsx
-msgid "That provider account is already linked to a different user."
-msgstr "חשבון הספק הזה כבר מקושר למשתמש אחר."
+#: src/features/auth/pages/resume-password.tsx
+msgid "That password isn't correct. Check it with the resume owner and try again."
+msgstr "הסיסמה שגויה. בדוק אותה מול בעל קורות החיים ונסה שוב."
 
 #: src/features/auth/pages/error.tsx
-msgid "That provider account uses a different email address than your account."
-msgstr "חשבון הספק הזה משתמש בכתובת אימייל שונה מזו של החשבון שלך."
+msgid "That provider account is already linked to another account. Use a different provider account."
+msgstr "חשבון הספק הזה כבר מקושר לחשבון אחר. השתמש בחשבון ספק אחר."
+
+#: src/features/auth/pages/error.tsx
+msgid "That provider account uses a different email address than your account. Use a provider account with the same email address."
+msgstr "חשבון הספק הזה משתמש בכתובת דוא\"ל שונה מזו של החשבון שלך. השתמש בחשבון ספק עם אותה כתובת דוא\"ל."
 
 #: src/features/settings/ai/providers.tsx
 msgid "That provider setup isn't valid. Check the base URL."
@@ -11412,24 +11504,24 @@ msgid "That recording was empty or over 2 MB. Try a shorter answer."
 msgstr "ההקלטה הייתה ריקה או גדולה מ-2 MB. נסה תשובה קצרה יותר."
 
 #: src/features/auth/pages/error.tsx
-msgid "That sign-in provider is no longer available on this server."
-msgstr "ספק ההתחברות הזה כבר אינו זמין בשרת הזה."
+msgid "That sign-in provider is no longer available on this server. Use another sign-in method."
+msgstr "ספק ההתחברות הזה כבר אינו זמין בשרת הזה. השתמש בשיטת התחברות אחרת."
 
 #: src/features/resume/share/download-tab.tsx
 msgid "The {label} file couldn't be generated. Try again, or download PDF instead."
 msgstr "לא ניתן היה ליצור את הקובץ {label}. נסה שוב, או הורד את PDF במקום זאת."
 
 #: src/features/homepage/prepare.tsx
-msgid "The 13-point activation lift. Your Knowledge has the before and after."
-msgstr "העלייה של 13 נקודות בשיעור ההפעלה. במאגר הידע שלך יש את הנתונים של לפני ואחרי."
+msgid "The 13-point activation lift. Knowledge has the before and after."
+msgstr "העלייה של 13 נקודות בשיעור ההפעלה. במאגר הידע יש את הנתונים של לפני ואחרי."
 
 #: src/features/homepage/faq.tsx
 msgid "The app is translated into {languages} languages by volunteers, and a resume can be written in any language, including right-to-left scripts like Arabic and Hebrew."
 msgstr "האפליקציה מתורגמת לשפות {languages} על ידי מתנדבים, וניתן לכתוב קורות חיים בכל שפה, כולל סקריפטים מימין לשמאל כמו ערבית ועברית."
 
 #: src/features/auth/pages/error.tsx
-msgid "The application that sent you here made an invalid authorization request."
-msgstr "האפליקציה ששלחה אותך לכאן ביצעה בקשת הרשאה לא חוקית."
+msgid "The application that sent you here made an invalid authorization request. Return to the application and try again."
+msgstr "האפליקציה ששלחה אותך לכאן ביצעה בקשת הרשאה לא חוקית. חזור לאפליקציה ונסה שוב."
 
 #: src/features/documents/document-actions.tsx
 msgid "The application this letter is for."
@@ -11495,10 +11587,6 @@ msgstr "לא ניתן היה לקרוא את הקובץ כקורות חיים."
 msgid "The greeting follows the name."
 msgstr "הברכה מלווה את השם."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "the key"
-msgstr "המפתח"
-
 #: src/features/settings/ai/providers.tsx
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "המפתח מוצפן בשרת ולא מוצג שוב. שמירה בודקת את החיבור."
@@ -11563,10 +11651,6 @@ msgstr "לא ניתן היה לקרוא את PDF של הדף. ערוך כל דב
 msgid "The pages are pictures, with no text behind them."
 msgstr "העמודים הם תמונות, ללא טקסט מאחוריהן."
 
-#: src/features/auth/pages/resume-password.tsx
-msgid "The password you entered is incorrect"
-msgstr "הסיסמה שהזנת שגויה"
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "The posting asks for “{label}”. If it's true for me, work it into my resume where it fits. Ask me first."
 msgstr "פרסום המשרה מבקש \"{label}\". אם זה נכון עבורי, עבד את זה בקורות החיים שלי איפה שזה מתאים. תשאל אותי קודם."
@@ -11579,10 +11663,6 @@ msgstr "לא ניתן היה לקרוא את פרסום המשרה. למלא א�
 msgid "The posting saved with this application."
 msgstr "פרסום המשרה נשמר עם בקשת עבודה זו."
 
-#: src/features/settings/ai/providers.tsx
-msgid "The provider didn't answer."
-msgstr "הספק לא ענה."
-
 #: src/features/assistant/provider-setup.tsx
 msgid "The provider didn't answer. Check the key and the model."
 msgstr "הספק לא ענה. בדוק את המפתח ואת הדגם."
@@ -11592,20 +11672,20 @@ msgid "The provider didn't answer. Check the key, the model and the base URL."
 msgstr "הספק לא ענה. בדוק את המפתח, את הדגם ואת הבסיס URL."
 
 #: src/features/auth/pages/error.tsx
-msgid "The provider didn't share an email address, which is required to sign in."
-msgstr "הספק לא שיתף כתובת אימייל, שנדרשת כדי להתחבר."
+msgid "The provider didn't share an email address, which is required. Allow email access when the provider asks, or use another sign-in method."
+msgstr "הספק לא שיתף כתובת דוא\"ל, והיא נדרשת. אשר גישה לדוא\"ל כשהספק מבקש, או השתמש בשיטת התחברות אחרת."
 
 #: src/features/auth/pages/error.tsx
-msgid "The provider rejected this sign-in attempt. Please start again."
-msgstr "הספק דחה את ניסיון ההתחברות הזה. התחל מחדש."
+msgid "The provider rejected this sign-in attempt. Try again."
+msgstr "הספק דחה את ניסיון ההתחברות הזה. נסה שוב."
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The provider returned a review that couldn't be read. Try again."
 msgstr "הספק החזיר ביקורת שלא ניתן היה לקרוא. נסה שוב."
 
 #: src/features/auth/pages/error.tsx
-msgid "The provider's response could not be verified. Please start again."
-msgstr "לא ניתן היה לאמת את תגובת הספק. התחל מחדש."
+msgid "The provider's response couldn't be verified. Try again."
+msgstr "לא ניתן היה לאמת את תגובת הספק. נסה שוב."
 
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
@@ -11619,10 +11699,6 @@ msgstr "את קורות החיים"
 #: src/features/resume/share/history-tab.tsx
 msgid "The resume as it is"
 msgstr "קורות החיים כפי שהם"
-
-#: src/features/resume/preview/preview.browser.tsx
-msgid "The resume preview could not be updated. The last valid preview is still shown."
-msgstr "לא ניתן היה לעדכן את התצוגה המקדימה של קורות החיים. התצוגה המקדימה האחרונה התקפה עדיין מוצגת."
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The review couldn't finish. Try again."
@@ -11658,24 +11734,24 @@ msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "הציון משקף את מידת האמינות של חילוץ הטקסט, לא את הסיכויים שלך."
 
 #: src/features/settings/ai/web-access.tsx
-msgid "The service did not respond in time."
-msgstr "השירות לא הגיב בזמן."
+msgid "The service didn't respond in time. Try again."
+msgstr "השירות לא הגיב בזמן. נסה שוב."
 
 #: src/features/settings/ai/web-access.tsx
-msgid "The service is unavailable or does not support this operation."
-msgstr "השירות אינו זמין או אינו תומך בפעולה זו."
+msgid "The service is unavailable or doesn't support this. Try again later."
+msgstr "השירות אינו זמין או אינו תומך בכך. נסה שוב מאוחר יותר."
 
 #: src/features/settings/ai/web-access.tsx
-msgid "The service quota is exhausted."
-msgstr "מכסת השירות נגמרה."
+msgid "The service rejected the API key. Check the key and save it again."
+msgstr "השירות דחה את מפתח ה-API. בדוק את המפתח ושמור אותו שוב."
 
 #: src/features/settings/ai/web-access.tsx
-msgid "The service rejected the credentials."
-msgstr "השירות דחה את האישורים."
+msgid "The service's quota is used up. Check your plan with the service, or try again later."
+msgstr "מכסת השירות נוצלה. בדוק את התוכנית שלך מול השירות, או נסה שוב מאוחר יותר."
 
 #: src/features/settings/ai/providers.tsx
-msgid "The test didn't run."
-msgstr "הבדיקה לא רצה."
+msgid "The test didn't run. Try again."
+msgstr "הבדיקה לא רצה. נסה שוב."
 
 #: src/features/ats-checker/messages.ts
 msgid "The text comes out unreadable."
@@ -11694,8 +11770,8 @@ msgid "Theme"
 msgstr "ערכת עיצוב"
 
 #: src/dialogs/auth/enable-two-factor.tsx
-msgid "Then, enter the 6 digit code that the app provides to continue."
-msgstr "לאחר מכן, הזן את הקוד בן 6 הספרות שהאפליקציה מציגה כדי להמשיך."
+msgid "Then enter the 6-digit code from the app."
+msgstr "לאחר מכן הזן את הקוד בן 6 הספרות מהאפליקציה."
 
 #: src/features/ats-checker/messages.ts
 msgid "There is a gap between two dated roles."
@@ -11750,13 +11826,13 @@ msgid "This browser can't take dictation, and none of your AI connections can tr
 msgstr "הדפדפן הזה לא תומך בהכתבה, ואף אחד מחיבורי ה-AI שלך לא יכול לתמלל דיבור (OpenAI, Google Gemini, Mistral, xAI, Groq או Vercel AI Gateway יכולים). <0>הוסף חיבור בהגדרות</0>, או הקלד את התשובה."
 
 #: src/features/auth/pages/consent.tsx
-msgid "This connection request is invalid or has expired."
-msgstr "בקשת חיבור זו אינה חוקית או שפג תוקפו."
+msgid "This connection request is invalid or has expired. Start the connection again from your client."
+msgstr "בקשת החיבור הזו אינה חוקית או שפג תוקפה. התחל את החיבור מחדש מהלקוח שלך."
 
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
-msgid "This conversation couldn't be opened."
-msgstr "לא ניתן היה לפתוח את השיחה הזו."
+msgid "This conversation couldn't be opened. Refresh the page to try again."
+msgstr "לא ניתן היה לפתוח את השיחה הזו. רענן את הדף כדי לנסות שוב."
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date."
@@ -11858,6 +11934,10 @@ msgstr "זה מודד עד כמה נאמנה תוכנה יכולה לחלץ את
 msgid "This month"
 msgstr "החודש הזה"
 
+#: src/components/layout/error-screen.tsx
+msgid "This page didn't load"
+msgstr "הדף הזה לא נטען"
+
 #: src/features/assistant/conversation.tsx
 msgid "This page is clipped or incomplete. Check the original before using it."
 msgstr "דף זה קצוץ או לא שלם. בדוק את המקור לפני השימוש בו."
@@ -11883,15 +11963,19 @@ msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "ה־PDF הזה מוגן בסיסמה. שמור עותק לא מוגן ונסה שוב."
 
 #: src/features/resume/builder/draft.ts
-msgid "This resume is locked and cannot be updated."
-msgstr "קורות חיים אלה נעולים ולא ניתן לעדכן אותם."
+msgid "This resume is locked. Unlock it from its menu to edit."
+msgstr "קורות החיים האלה נעולים. בטל את הנעילה מהתפריט שלהם כדי לערוך."
+
+#: src/libs/error-message.ts
+msgid "This resume is locked. Unlock it to make changes."
+msgstr "קורות החיים האלה נעולים. בטל את הנעילה כדי לבצע שינויים."
 
 #: src/features/ats-checker/messages.ts
 msgid "This resume is long."
 msgstr "קורות החיים האלה ארוכים."
 
 #: src/features/auth/pages/resume-password.tsx
-msgid "This resume is password protected"
+msgid "This resume is password-protected"
 msgstr "קורות החיים האלה מוגנים בסיסמה"
 
 #: src/features/resume/editor/check/job-match.tsx
@@ -11927,8 +12011,12 @@ msgid "This saved version is no longer available."
 msgstr "הגרסה השמורה הזו כבר אינה זמינה."
 
 #: src/features/auth/pages/error.tsx
-msgid "This sign-in attempt expired or was already used. Please start again."
-msgstr "ניסיון ההתחברות הזה פג או שכבר נעשה בו שימוש. התחל מחדש."
+msgid "This server isn't accepting new accounts. Sign in with an existing account."
+msgstr "השרת הזה אינו מקבל חשבונות חדשים. היכנס עם חשבון קיים."
+
+#: src/features/auth/pages/error.tsx
+msgid "This sign-in attempt expired or was already used. Try again."
+msgstr "ניסיון ההתחברות הזה פג או שכבר נעשה בו שימוש. נסה שוב."
 
 #: src/features/auth/pages/register.tsx
 msgid "This step is optional, but recommended."
@@ -12079,8 +12167,8 @@ msgid "Translate the app"
 msgstr "תרגם את האפליקציה"
 
 #: src/features/homepage/sections.tsx
-msgid "Translated into {languageCount} languages. Help translate it into yours."
-msgstr "תורגם ל-{languageCount} שפות. עזור לתרגם את האפליקציה לשפה שלך."
+msgid "Translated into {languageCount} languages."
+msgstr "תורגמה ל־{languageCount} שפות."
 
 #: src/features/homepage/footer.tsx
 msgid "Translations"
@@ -12114,7 +12202,7 @@ msgid "Try a sample"
 msgstr "נסה דוגמה"
 
 #: src/components/layout/error-screen.tsx
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/shell.tsx
@@ -12156,6 +12244,15 @@ msgstr "טורקית"
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "כבה ליגטורות רשותיות בעת הייצוא."
 
+#. Destructive action button to turn off two-factor authentication
+#: src/dialogs/auth/disable-two-factor.tsx
+msgid "Turn off two-step verification"
+msgstr "כיבוי אימות דו-שלבי"
+
+#: src/dialogs/auth/disable-two-factor.tsx
+msgid "Turn off two-step verification?"
+msgstr "לכבות את האימות הדו-שלבי?"
+
 #: src/features/resume/share/link-tab.tsx
 msgid "Turn on the link to choose an address."
 msgstr "הפעל את הקישור כדי לבחור כתובת."
@@ -12164,9 +12261,21 @@ msgstr "הפעל את הקישור כדי לבחור כתובת."
 msgid "Turn on the public link to count views and downloads. Counts are anonymous."
 msgstr "הפעל את הקישור הציבורי כדי לספור צפיות והורדות. ספירת השימוש היא אנונימית."
 
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Turn on two-step verification"
+msgstr "הפעלת אימות דו-שלבי"
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "הפעל את התזמון הזה"
+
+#: src/dialogs/auth/disable-two-factor.tsx
+msgid "Turning off two-step verification…"
+msgstr "מכבה את האימות הדו-שלבי…"
+
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Turning on two-step verification…"
+msgstr "מפעיל את האימות הדו-שלבי…"
 
 #: src/features/resume/editor/design/template-group.tsx
 #: src/features/templates/gallery.tsx
@@ -12214,26 +12323,18 @@ msgid "Two-column, minimal with light gray sidebar and subtle icons; professiona
 msgstr "שתי עמודות, מינימלי עם סרגל צד אפור בהיר וסמלים עדינים; מקצועי ומאופק לתפקידי משפטים, פיננסים או הנהלה."
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Two-Factor Authentication"
-msgstr "אימות דו־שלבי"
-
-#: src/dialogs/auth/disable-two-factor.tsx
-msgid "Two-factor authentication is now disabled."
-msgstr "אימות דו־שלבי מושבת כעת."
-
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Two-factor authentication is now enabled."
-msgstr "אימות דו־שלבי מופעל כעת."
-
-#. Accessible title for QR code image shown during two-factor setup
-#: src/dialogs/auth/enable-two-factor.tsx
-msgid "Two-Factor Authentication QR Code"
-msgstr "קוד QR לאימות דו-שלבי"
-
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/account/security.tsx
 msgid "Two-step verification"
 msgstr "אימות דו-שלבי"
+
+#: src/dialogs/auth/disable-two-factor.tsx
+msgid "Two-step verification turned off"
+msgstr "האימות הדו-שלבי כובה"
+
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Two-step verification turned on"
+msgstr "האימות הדו-שלבי הופעל"
 
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/workspace/practise.tsx
@@ -12271,16 +12372,17 @@ msgstr "טיפוגרפיה"
 msgid "Ukrainian"
 msgstr "אוקראינית"
 
-#: src/features/resume/editor/write/rich-text-editor.tsx
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Underline"
 msgstr "קו תחתון"
 
 #: src/features/resume/editor/design/style-groups.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Underline links"
 msgstr "קו תחתון של קישורים"
 
 #: src/features/assistant/document.ts
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
 #: src/features/career/today.tsx
 #: src/features/career/workspace/fit.tsx
@@ -12322,10 +12424,6 @@ msgstr "בטל את הקישור"
 msgid "Unlink this application"
 msgstr "בטל את הקישור של בקשת עבודה זו"
 
-#: src/features/settings/account/auth-hooks.ts
-msgid "Unlinking your {providerName} account..."
-msgstr "מנתק את חשבון {providerName} שלך..."
-
 #. Primary action button label to unlock a password-protected resume
 #: src/features/auth/pages/resume-password.tsx
 #: src/features/documents/document-actions.tsx
@@ -12344,6 +12442,10 @@ msgstr "בטל נעילת עריכה"
 msgid "Unlock it first"
 msgstr "פתח אותו קודם"
 
+#: src/features/settings/ai/api-keys.tsx
+msgid "unnamed key"
+msgstr "מפתח ללא שם"
+
 #: src/features/settings/account/security.tsx
 msgid "Unnamed passkey"
 msgstr "מפתח גישה ללא שם"
@@ -12353,11 +12455,11 @@ msgstr "מפתח גישה ללא שם"
 msgid "Untitled"
 msgstr "ללא כותרת"
 
-#: src/features/documents/new-document-dialog.tsx
+#: src/features/documents/use-start-document.ts
 msgid "Untitled letter"
 msgstr "מכתב ללא כותרת"
 
-#: src/features/documents/new-document-dialog.tsx
+#: src/features/documents/use-start-document.ts
 msgid "Untitled resume"
 msgstr "קורות חיים ללא שם"
 
@@ -12377,39 +12479,21 @@ msgstr "עד 25 MB · מסומנים בדפדפן שלך, מעולם לא הוע
 msgid "Upcoming interviews"
 msgstr "ראיונות קרובים"
 
-#. Primary action button to submit changed password
-#: src/dialogs/auth/change-password.tsx
-msgid "Update Password"
-msgstr "עדכון סיסמה"
-
 #: src/dialogs/resume/index.tsx
-msgid "Update Resume"
+msgid "Update resume"
 msgstr "עדכון קורות חיים"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Update this application's details."
 msgstr "עדכן את פרטי המועמדות הזו."
 
-#: src/dialogs/auth/change-password.tsx
-msgid "Update your password"
-msgstr "עדכון הסיסמה שלך"
-
 #: src/features/applications/components/list-view.tsx
 msgid "Updated"
 msgstr "מְעוּדכָּן"
 
-#. placeholder {0}: result.updated
-#: src/features/applications/components/list-view.tsx
-msgid "Updated {0}"
-msgstr "מעודכן {0}"
-
 #: src/features/documents/document-actions.tsx
 msgid "Updated {done} of {total}. Locked documents, and letters for public links, were skipped."
 msgstr "{done} מתוך {total} עודכנו. מסמכים נעולים, ומכתבים מקדימים עבור קישורים ציבוריים, דולגו."
-
-#: src/dialogs/auth/change-password.tsx
-msgid "Updating your password..."
-msgstr "מעדכן את הסיסמה שלך..."
 
 #: src/dialogs/resume/index.tsx
 msgid "Updating your resume..."
@@ -12424,11 +12508,11 @@ msgid "Upload a PDF and see the text an applicant tracking system extracts: what
 msgstr "העלה PDF וראה את הטקסט שמערכת המעקב של המועמדים מחלצת: מה חסר, מה לא תקין ואיך לתקן את זה. חינם, אין צורך בחשבון."
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Upload picture"
-msgstr "העלה תמונה"
+msgid "Upload photo"
+msgstr "העלאת תמונה"
 
 #: src/features/resume/editor/write/picture-settings.tsx
-msgid "Uploading picture…"
+msgid "Uploading photo…"
 msgstr "מעלה תמונה…"
 
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -12455,6 +12539,16 @@ msgstr "השתמש ב-{url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "השתמש ב-3 עד 64 אותיות קטנות, מספרים, נקודות, מקפים וקווים תחתונים."
 
+#: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/disable-two-factor.tsx
+#: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/login.tsx
+#: src/features/auth/pages/register.tsx
+#: src/features/auth/pages/reset-password.tsx
+#: src/features/auth/pages/resume-password.tsx
+msgid "Use 64 characters or fewer."
+msgstr "השתמש ב-64 תווים לכל היותר."
+
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Use a darker shade"
 msgstr "השתמש בגוון כהה יותר"
@@ -12464,8 +12558,8 @@ msgid "Use a plain international form, such as +1 555 010 1234."
 msgstr "השתמש בתבנית בינלאומית פשוטה, כגון +1 555 010 1234."
 
 #: src/features/ats-checker/messages.ts
-msgid "Use a recognised form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
-msgstr "השתמש בתבנית מוכרת כגון ״Jan 2020 - Mar 2022״ או ״2020 - 2022״."
+msgid "Use a recognized form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
+msgstr "השתמש בתבנית מוכרת כגון \"Jan 2020 - Mar 2022\" או \"2020 - 2022\"."
 
 #: src/features/ats-checker/messages.ts
 msgid "Use a single column for anything that has to be read in sequence."
@@ -12474,6 +12568,16 @@ msgstr "השתמש בעמודה אחת לכל דבר שצריך להיקרא ב�
 #: src/features/ats-checker/messages.ts
 msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "השתמש ב־A4 או ב־US Letter כדי שהפריסה תישמר בעת עיבוד מחדש."
+
+#: src/features/auth/pages/register.tsx
+msgid "Use at least 3 characters."
+msgstr "השתמש ב-3 תווים לפחות."
+
+#: src/dialogs/auth/change-password.tsx
+#: src/features/auth/pages/register.tsx
+#: src/features/auth/pages/reset-password.tsx
+msgid "Use at least 8 characters."
+msgstr "השתמש ב-8 תווים לפחות."
 
 #: src/features/ats-checker/messages.ts
 msgid "Use at least 9pt."
@@ -12484,7 +12588,6 @@ msgid "Use between 6 and 64 characters."
 msgstr "יש להשתמש ב-6 עד 64 תווים."
 
 #: src/components/input/color-picker.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Use color {color}"
 msgstr "השתמש בצבע {color}"
 
@@ -12510,12 +12613,16 @@ msgid "Use lowercase letters, numbers and single dashes."
 msgstr "השתמש באותיות קטנות, מספרים ומקפים בודדים."
 
 #: src/features/career/knowledge/search-regions-field.tsx
-msgid "Use my time zone"
+msgid "Use my timezone"
 msgstr "השתמש באזור הזמן שלי"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use one column"
 msgstr "השתמש בעמודה אחת"
+
+#: src/features/auth/pages/register.tsx
+msgid "Use only lowercase letters, numbers, dots, hyphens and underscores."
+msgstr "השתמש רק באותיות לטיניות קטנות, ספרות, נקודות, מקפים וקווים תחתונים."
 
 #: src/features/ats-checker/messages.ts
 msgid "Use plain headings such as \"Experience\", \"Education\" and \"Skills\"."
@@ -12549,7 +12656,7 @@ msgstr "השתמש בספק זה"
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
 msgstr "השתמש ברשימת התבליטים הרגילה של העורך שלך, כדי שגליפים תועים לא ינחתו באמצע משפט."
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Used"
 msgstr "בשימוש"
 
@@ -12634,7 +12741,7 @@ msgid "Verify"
 msgstr "אימות"
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Verify with a Backup Code"
+msgid "Verify with a backup code"
 msgstr "אימות עם קוד גיבוי"
 
 #: src/features/career/schedule-sheet.tsx
@@ -12674,6 +12781,14 @@ msgstr "הגרסה נשלחה {date} · בדוק {0}"
 msgid "Versions"
 msgstr "גרסאות"
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Vertical margin"
+msgstr "שוליים אנכיים"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
+msgid "Vertical spacing"
+msgstr "ריווח אנכי"
+
 #: src/features/ats-checker/messages.ts
 msgid "Very few words were recovered for a resume."
 msgstr "שוחזרו מעט מאוד מילים עבור קורות חיים."
@@ -12690,7 +12805,7 @@ msgstr "קישור לסרטון, כתובת משרד או מספר טלפון"
 msgid "Vietnamese"
 msgstr "וייטנאמית"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "View"
@@ -12740,7 +12855,6 @@ msgstr "מבקרים נכנסים אליו לפני שהם רואים את קו�
 msgid "Voice settings"
 msgstr "הגדרות קול"
 
-#: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
 msgstr "התנדבות"
@@ -12761,28 +12875,6 @@ msgstr "אזהרה"
 msgid "WCAG 2.1 AA"
 msgstr "WCAG 2.1 AA"
 
-#: src/components/layout/not-found-screen.tsx
-msgid "We couldn't find that page"
-msgstr "לא הצלחנו למצוא את הדף הזה"
-
-#: src/features/auth/pages/error.tsx
-msgid "We couldn't link that provider account. Please try again."
-msgstr "לא הצלחנו לקשר את חשבון הספק הזה. נסה שוב."
-
-#. placeholder {0}: dates.raw
-#: src/features/resume/editor/write/dates-field.tsx
-msgid "We couldn't read \"{0}\". Enter the dates so they sort and print consistently."
-msgstr "לא יכולנו לקרוא את \"{0}\". הזינו את התאריכים כדי שימיינו ויודפסו באופן עקבי."
-
-#: src/features/auth/pages/error.tsx
-msgid "We couldn't read your profile from the provider."
-msgstr "לא הצלחנו לקרוא את הפרופיל שלך מהספק."
-
-#. placeholder {0}: dates.raw
-#: src/features/resume/editor/write/dates-field.tsx
-msgid "We read \"{0}\". Pick a month so it sorts and prints consistently."
-msgstr "קראנו \"{0}\". בחר חודש כך שהוא ממיין ומודפס באופן עקבי."
-
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "We read the page and save the posting for Check, the assistant and your letter."
 msgstr "אנו קוראים את העמוד ושומרים את מודעת הדרושים עבור צ'ק, הסייעת והמכתב שלך."
@@ -12792,8 +12884,8 @@ msgid "We sent a confirmation link to {email}. Open it to finish the change."
 msgstr "שלחנו קישור אישור אל {email}. פתח אותו כדי לסיים את השינוי."
 
 #: src/features/settings/account/profile.tsx
-msgid "We sent a link to {currentEmail} to approve the change. After that, confirm {email} from its own email."
-msgstr "שלחנו קישור אל {currentEmail} כדי לאשר את השינוי. לאחר מכן אשר את {email} באמצעות ההודעה שנשלחה לכתובת האימייל הזו."
+msgid "We sent a link to {currentEmail} to approve the change. Then open the link we send to {email}."
+msgstr "שלחנו קישור אל {currentEmail} כדי לאשר את השינוי. לאחר מכן פתח את הקישור שנשלח אל {email}."
 
 #. placeholder {0}: user.email
 #: src/features/settings/account/profile.tsx
@@ -12803,10 +12895,6 @@ msgstr "שלחנו קישור אימות חדש אל {0}."
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "גישה לאינטרנט"
-
-#: src/features/settings/ai/web-access.tsx
-msgid "Web access settings couldn't be saved or loaded."
-msgstr "לא ניתן היה לשמור או לטעון את הגדרות הגישה לאינטרנט."
 
 #: src/features/career/coach.tsx
 msgid "Web research"
@@ -12875,10 +12963,6 @@ msgstr "מה בדיוק עשית?"
 msgid "What did you say, as close as you remember?"
 msgstr "מה אמרת, הכי קרוב למה שאתה זוכר?"
 
-#: src/features/resume/editor/write/section-row.tsx
-msgid "What do you want to rename this section to?"
-msgstr "לאיזה שם ברצונך לשנות את הסעיף הזה?"
-
 #: src/features/homepage/faq.tsx
 msgid "What formats can I download?"
 msgstr "אילו פורמטים אני יכול להוריד?"
@@ -12888,7 +12972,7 @@ msgid "What goes in it?"
 msgstr "מה נכנס בו?"
 
 #: src/features/career/coach.tsx
-msgid "What interview answers should I practise?"
+msgid "What interview answers should I practice?"
 msgstr "אילו תשובות לראיון כדאי לי לתרגל?"
 
 #: src/features/career/offers.tsx
@@ -12907,7 +12991,7 @@ msgstr "מה זה מבקש"
 msgid "What it checks"
 msgstr "מה זה בודק"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "What matters"
 msgstr "מה חשוב"
 
@@ -13107,6 +13191,7 @@ msgstr "שווה לשאול"
 msgid "Worth asking {0}"
 msgstr "שווה לשאול את {0}"
 
+#: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/write.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
@@ -13165,8 +13250,8 @@ msgid "Write one about something you did, in five parts. Leave a part blank unti
 msgstr "כתוב סיפור על משהו שעשית, בחמישה חלקים. השאר חלק ריק עד שתוכל לבסס אותו."
 
 #: src/features/ats-checker/messages.ts
-msgid "Write the full address so it is recognised as a link."
-msgstr "כתוב את הכתובת המלאה כך שתזוהה כקישור."
+msgid "Write the full address so it is recognized as a link."
+msgstr "כתוב את הכתובת המלאה כדי שתזוהה כקישור."
 
 #: src/features/career/workspace/fit.tsx
 msgid "Write what you did."
@@ -13186,7 +13271,7 @@ msgstr "כתוב את קורות החיים המקצועיים שלך"
 msgid "Writing"
 msgstr "כתיבה"
 
-#: src/features/career/coach-thread.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Writing an answer…"
 msgstr "כותב תשובה…"
 
@@ -13207,7 +13292,7 @@ msgid "Yes. Every feature is free: all {templates} templates, PDF and Word downl
 msgstr "כן. כל התכונות בחינם: כל {templates} התבניות, הורדות PDF ו-Word, בודק ATS, מכתבי כיסוי ומעקב המשרות. אין מודעות, אין מעקב ואין רמה בתשלום. תרומות משלמות עבור אירוח ופיתוח."
 
 #: src/features/homepage/faq.tsx
-msgid "Yes. Every job you track gets its own workspace: check your fit against the posting, draft answers from stories you wrote once, get a short plan before the interview, practise out loud with feedback and debrief afterwards. When offers arrive, compare them side by side. The coaching uses your own AI key; the comparison doesn’t need one."
+msgid "Yes. Every job you track gets its own workspace: check your fit against the posting, draft answers from stories you wrote once, get a short plan before the interview, practice out loud with feedback and debrief afterwards. When offers arrive, compare them side by side. The coaching uses your own AI key; the comparison doesn’t need one."
 msgstr "כן. כל משרה שאתה עוקב אחריה מקבלת סביבת עבודה משלה: בדוק את ההתאמה שלך מול המודעה, נסח תשובות מסיפורים שכתבת פעם אחת, קבל תוכנית קצרה לפני הראיון, תרגל בקול עם משוב וערוך תחקיר אחר כך. כשמגיעות הצעות, השווה ביניהן זו לצד זו. האימון משתמש במפתח ה-AI שלך; ההשוואה לא צריכה מפתח."
 
 #: src/features/homepage/faq.tsx
@@ -13252,9 +13337,13 @@ msgstr "אתה יכול להמשיך לערוך. השינויים מסתנכרנ
 msgid "You can keep up to 30 application questions."
 msgstr "אפשר לשמור עד 30 שאלות מועמדות."
 
+#: src/features/settings/account/security.tsx
+msgid "You can no longer sign in with this passkey."
+msgstr "לא תוכל עוד להיכנס עם מפתח הגישה הזה."
+
 #: src/features/auth/pages/error.tsx
-msgid "You cancelled the sign-in before it finished."
-msgstr "ביטלת את ההתחברות לפני שהסתיימה."
+msgid "You canceled the sign-in before it finished. Try again when you're ready."
+msgstr "ביטלת את ההתחברות לפני שהסתיימה. נסה שוב כשתהיה מוכן."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "You don't have a resume to copy yet. Import or create a resume first, then return to copy it for this job."
@@ -13263,10 +13352,6 @@ msgstr "אין לך עדיין קורות חיים להעתיק. תחילה יי
 #: src/features/career/workspace/debrief.tsx
 msgid "You forgot this before, so it wasn't saved again."
 msgstr "ביקשת לשכוח את זה בעבר, ולכן זה לא נשמר שוב."
-
-#: src/hooks/use-form-blocker.tsx
-msgid "You have unsaved changes that will be lost."
-msgstr "יש לך שינויים שלא נשמרו ויאבדו."
 
 #: src/features/homepage/prepare.tsx
 msgid "You partnered with engineering. How you led the work isn’t described yet."
@@ -13315,11 +13400,6 @@ msgstr "הכול מעודכן"
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "אתם משתמשים בחשבון אורח"
-
-#: src/features/auth/pages/forgot-password.tsx
-#: src/features/auth/pages/register.tsx
-msgid "You've got mail!"
-msgstr "קיבלת הודעה!"
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
@@ -13414,8 +13494,8 @@ msgid "Your email address is broken across pieces of text."
 msgstr "כתובת הדוא״ל שלך מפוצלת בין קטעי טקסט."
 
 #: src/features/auth/pages/error.tsx
-msgid "Your email address isn't verified with the provider."
-msgstr "כתובת האימייל שלך לא מאומתת אצל הספק."
+msgid "Your email address isn't verified with the provider. Verify it there, then try again."
+msgstr "כתובת הדוא\"ל שלך לא מאומתת אצל הספק. אמת אותה שם, ואז נסה שוב."
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -13444,14 +13524,6 @@ msgstr "הכותרת שלך השתנתה בקורות החיים. גם המכת�
 #: src/features/career/workspace/debrief.tsx
 msgid "your Knowledge"
 msgstr "מאגר הידע שלך"
-
-#: src/features/homepage/remember.tsx
-msgid "Your Knowledge"
-msgstr "מאגר הידע שלך"
-
-#: src/features/homepage/prepare.tsx
-msgid "Your Knowledge doesn’t mention mentoring."
-msgstr "מאגר הידע שלך לא מזכיר חניכה."
 
 #: src/features/ats-checker/messages.ts
 msgid "Your lines are packed very tightly."
@@ -13485,10 +13557,6 @@ msgstr "שמך שונה בקורות החיים. גם המכתב עודכן."
 msgid "Your name is missing"
 msgstr "השם שלך חסר"
 
-#: src/features/homepage/hero.tsx
-msgid "Your next chapter starts here"
-msgstr "הפרק הבא שלך מתחיל כאן"
-
 #: src/features/career/workspace/saved.tsx
 msgid "your notes"
 msgstr "ההערות שלך"
@@ -13504,14 +13572,6 @@ msgstr "הפתיחה שלך"
 #: src/features/career/workspace/prepare.tsx
 msgid "Your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "הפתיחה שלך, הסיפורים שכדאי להביא והשאלות שכדאי לשאול. 10 דקות לפני השיחה זה הופך לרשימת המשימות שלך."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Your password has been reset. You can now sign in with your new password."
-msgstr "הסיסמה שלך אופסה. עכשיו אפשר להיכנס עם הסיסמה החדשה."
-
-#: src/dialogs/auth/change-password.tsx
-msgid "Your password has been updated."
-msgstr "הסיסמה שלך עודכנה."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your phone number changed on the resume. The letter updated too."

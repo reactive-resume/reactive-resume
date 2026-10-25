@@ -1,6 +1,6 @@
 // Layout pages: which sections sit in Main or Sidebar on each page. Ports the web Layout editor
 // (apps/web/src/routes/builder/$resumeId/-sidebar/right/sections/layout). Pure: no React.
-import type { CustomSectionType, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import type { ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
 
 type Layout = ResumeData["metadata"]["layout"];
@@ -9,42 +9,8 @@ export type Location = { page: number; column: ColumnId };
 /** Where a dragged section lands: a column on a page and the index among that column's visible sections. */
 export type Drop = Location & { index: number };
 
-// A section shows in the editor only when it has visible content (web visibility.ts).
-const primaryTitleFields: Record<SectionType, string> = {
-	profiles: "network",
-	experience: "company",
-	education: "school",
-	projects: "name",
-	skills: "name",
-	languages: "language",
-	interests: "name",
-	awards: "title",
-	certifications: "title",
-	publications: "title",
-	volunteer: "organization",
-	references: "name",
-};
-
-type ItemSection = { hidden: boolean; items: { hidden: boolean; [key: string]: unknown }[] };
-
-const hasVisibleItems = (section: ItemSection, type: CustomSectionType | SectionType) => {
-	const field = (primaryTitleFields as Record<string, string | undefined>)[type];
-	return (
-		!section.hidden &&
-		section.items.some((item) => {
-			if (item.hidden) return false;
-			const title = field ? item[field] : "x";
-			return typeof title === "string" && title.trim().length > 0;
-		})
-	);
-};
-
-export function isVisibleSection(id: string, data: ResumeData) {
-	if (id === "summary") return !data.summary.hidden && data.summary.content.trim().length > 0;
-	if (id in data.sections) return hasVisibleItems(data.sections[id as SectionType] as ItemSection, id as SectionType);
-	const custom = data.customSections.find((section) => section.id === id);
-	return custom ? hasVisibleItems(custom as ItemSection, custom.type) : false;
-}
+// A section shows in the editor only when it has visible content, as on the page.
+export { isSectionVisible as isVisibleSection } from "@reactive-resume/pdf/filtering";
 
 export function locate(layout: Layout, id: string): Location | null {
 	for (const [page, value] of layout.pages.entries()) {

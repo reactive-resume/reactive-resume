@@ -1,5 +1,4 @@
 import type { HarvestProgress, RawExtraction } from "@reactive-resume/resume/ats-pdf";
-import { HARVEST_DEFAULTS, harvestPdfDocument } from "@reactive-resume/resume/ats-pdf";
 
 /**
  * The only file in the app that talks to PDF.js for the ATS checker.
@@ -66,16 +65,18 @@ export async function extractPdf(file: File, options: ExtractOptions = {}): Prom
 
 	options.onProgress?.({ phase: "loading", page: 0, pageCount: 0 });
 
-	// Loaded lazily, and from the legacy build: the same entry point and worker configuration the
-	// builder's preview uses, because GlobalWorkerOptions is module-global and shared with it.
-	const { GlobalWorkerOptions, getDocument } = await import("pdfjs-dist/legacy/build/pdf.mjs");
-	GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString();
+	// PDF.js and the engine load only once there's a file. PDF.js comes through the preview's module so every
+	// document shares its one worker instead of starting (and parsing) a new one per check.
+	const [{ getDocument, getPdfWorker }, { HARVEST_DEFAULTS, harvestPdfDocument }] = await Promise.all([
+		import("@/features/resume/preview/pdfjs"),
+		import("@reactive-resume/resume/ats-pdf"),
+	]);
 
 	const data = new Uint8Array(await file.arrayBuffer());
 
 	// fontExtraProperties keeps the real font objects reachable through commonObjs, which is the
 	// only honest source for Type 3 / invalid / non-embedded font facts.
-	const loadingTask = getDocument({ data, fontExtraProperties: true });
+	const loadingTask = getDocument({ data, fontExtraProperties: true, worker: getPdfWorker() });
 
 	try {
 		const document = await loadingTask.promise;

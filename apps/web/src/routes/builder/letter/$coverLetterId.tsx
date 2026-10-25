@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import z from "zod";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { LetterShell } from "./-components/letter-shell";
-import { letterWordsQueryOptions } from "@/features/letters/compose";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { orpc } from "@/libs/orpc/client";
 import { createNoindexFollowMeta } from "@/libs/seo";
@@ -30,11 +29,18 @@ export const Route = createFileRoute("/builder/letter/$coverLetterId")({
 		return { session: context.session };
 	},
 	loader: async ({ params, context }) => {
+		// The preview is a chunk of its own, otherwise fetched only once the page has rendered: start it with the letter.
+		void import("@/features/resume/preview/preview.browser");
+
+		// Letter wording pulls in the composer; loaded here so every other page's startup skips it.
+		const compose = import("@/features/letters/compose");
+
 		// Always fetched fresh: linked details come from the resume as it reads now.
 		const letter = await context.queryClient.fetchQuery({
 			...orpc.coverLetters.getById.queryOptions({ input: { id: params.coverLetterId } }),
 			staleTime: 0,
 		});
+		const { letterWordsQueryOptions } = await compose;
 		await context.queryClient.ensureQueryData(letterWordsQueryOptions(letter.style.metadata.page.locale));
 		return { name: letter.name };
 	},

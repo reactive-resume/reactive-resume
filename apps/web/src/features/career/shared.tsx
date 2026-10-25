@@ -172,7 +172,7 @@ export const tabLabel = (tab: WorkspaceTab) =>
 		fit: t({ message: "Fit", context: "Application workspace tab: how well a job fits your experience" }),
 		apply: t`Apply`,
 		prepare: t`Prepare`,
-		practise: t`Practise`,
+		practise: t({ message: "Practice", context: "Application workspace tab: rehearse interview answers" }),
 		debrief: t`Debrief`,
 		messages: t`Messages`,
 		saved: t({ message: "Saved", context: "Application workspace tab: earlier results kept for this job" }),
@@ -201,7 +201,7 @@ type WorkingProps = { steps: string[] };
  * them share one grid cell, so a button keeps the width of the longest.
  */
 export function Working({ steps }: WorkingProps) {
-	const general = [t`Thinking`, t`Cooking`, t`Connecting the dots`, t`Double-checking`, t`Polishing`];
+	const general = [t`Thinking`, t`Double-checking`, t`Polishing`];
 	const phrases = [...steps, ...general];
 	const [tick, setTick] = useState(0);
 	useEffect(() => {
@@ -237,10 +237,10 @@ export function Working({ steps }: WorkingProps) {
 
 // ---- Small parts ----
 
-/** "NEXT STEP", "SCHEDULES": 12px semibold ink-3 uppercase. */
+/** "NEXT STEP", "SCHEDULES": 12px semibold ink-3. */
 type EyebrowProps = { children: ReactNode; className?: string };
 export function Eyebrow({ children, className }: EyebrowProps) {
-	return <h2 className={cn("text-xs font-semibold tracking-[0.02em] text-ink-3 uppercase", className)}>{children}</h2>;
+	return <h2 className={cn("text-xs font-semibold text-ink-3", className)}>{children}</h2>;
 }
 
 const statusPill = {
@@ -292,7 +292,7 @@ export function FilterChip({ pressed, onClick, children, className }: FilterChip
 			aria-pressed={pressed}
 			onClick={onClick}
 			className={cn(
-				"touch-target inline-flex h-[30px] items-center rounded-full border px-2.5 text-xs font-medium transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
+				"touch-target inline-flex h-[30px] items-center rounded-sm border px-2.5 text-xs font-medium transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
 				pressed ? "border-ink bg-ink text-bg" : "border-line-2 text-ink hover:bg-hover",
 				className,
 			)}

@@ -1,11 +1,6 @@
+import type { RenderInput, Rendered } from "./render";
 import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { Template } from "@reactive-resume/schema/templates";
-import { createSectionTitleResolverForLocale } from "@/libs/resume/section-title-locale";
-
-type ResumePdfRenderOptions = {
-	includeCoverLetterHeader?: boolean;
-};
 
 type CreateResumePdfBlobExtras = {
 	/** Receives the page map (header, section and item boxes) of this render; used by the editor canvas. */
@@ -14,38 +9,14 @@ type CreateResumePdfBlobExtras = {
 	onLostCharacters?: (characters: string[]) => void;
 };
 
-type RenderInput = { data: ResumeData; template?: Template | undefined; renderOptions?: ResumePdfRenderOptions };
-
 export type PdfWorkerRequest = RenderInput & { id: number };
 export type PdfWorkerResponse =
-	| { id: number; blob: Blob; pageMap: PageMap | undefined; lostCharacters: string[] | undefined }
+	| ({ id: number } & Rendered)
 	// `cause` survives the worker boundary so callers can still tell text loss apart (see `getReadableErrorMessage`).
 	| { id: number; error: string; cause: string | undefined };
 
-type Rendered = { blob: Blob; pageMap: PageMap | undefined; lostCharacters: string[] | undefined };
-
 /** The same render on the main thread: where workers aren't available, or the worker failed to start. */
-async function renderHere({ data, template, renderOptions }: RenderInput): Promise<Rendered> {
-	const [{ createResumePdfBlob }, resolveSectionTitle] = await Promise.all([
-		import("@reactive-resume/pdf/browser"),
-		createSectionTitleResolverForLocale(data.metadata.page.locale),
-	]);
-	let pageMap: PageMap | undefined;
-	let lostCharacters: string[] | undefined;
-	const blob = await createResumePdfBlob({
-		data,
-		template,
-		...(renderOptions ? { renderOptions } : {}),
-		resolveSectionTitle,
-		onPageMap: (map) => {
-			pageMap = map;
-		},
-		onLostCharacters: (characters) => {
-			lostCharacters = characters;
-		},
-	});
-	return { blob, pageMap, lostCharacters };
-}
+const renderHere = async (input: RenderInput) => (await import("./render")).renderResumePdf(input);
 
 type Pending = { input: RenderInput; resolve(value: Rendered): void; reject(error: Error): void };
 
@@ -69,7 +40,7 @@ function getWorker(): Worker | null {
 		if (!request) return;
 		pending.delete(response.id);
 		if ("error" in response) request.reject(new Error(response.error, { cause: response.cause }));
-		else request.resolve({ blob: response.blob, pageMap: response.pageMap, lostCharacters: response.lostCharacters });
+		else request.resolve(response);
 	});
 	// Every render is caught inside the worker, so an error here means it couldn't start: render here instead.
 	worker.addEventListener("error", () => {
@@ -93,15 +64,10 @@ function render(input: RenderInput): Promise<Rendered> {
 
 export const createResumePdfBlob = async (
 	data: ResumeData,
-	template?: Template,
-	renderOptions?: ResumePdfRenderOptions,
+	renderOptions?: RenderInput["renderOptions"],
 	{ onPageMap, onLostCharacters }: CreateResumePdfBlobExtras = {},
 ) => {
-	const { blob, pageMap, lostCharacters } = await render({
-		data,
-		template,
-		...(renderOptions ? { renderOptions } : {}),
-	});
+	const { blob, pageMap, lostCharacters } = await render({ data, renderOptions });
 	if (pageMap) onPageMap?.(pageMap);
 	if (lostCharacters) onLostCharacters?.(lostCharacters);
 	return blob;

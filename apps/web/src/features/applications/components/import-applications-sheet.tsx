@@ -1,5 +1,5 @@
 import type { CsvField } from "../csv";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
@@ -86,8 +86,8 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 			toast.add({
 				description:
 					skipped > 0
-						? t`Imported ${response.imported} applications. ${skipped} rows had no company or role and were skipped.`
-						: t`Imported ${response.imported} applications.`,
+						? `${plural(response.imported, { one: "Imported # application.", other: "Imported # applications." })} ${plural(skipped, { one: "# row had no company or role and was skipped.", other: "# rows had no company or role and were skipped." })}`
+						: plural(response.imported, { one: "Imported # application.", other: "Imported # applications." }),
 			});
 			onOpenChange(false);
 		},
@@ -145,7 +145,12 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 										setOverrides({});
 										setText(value);
 									})
-									.catch(() => toast.add({ type: "error", description: t`Couldn't read that file.` }))
+									.catch(() =>
+										toast.add({
+											type: "error",
+											description: t`Couldn't read that file. Choose a .csv file and try again.`,
+										}),
+									)
 							}
 						/>
 					</div>

@@ -83,7 +83,7 @@ export function DesignPanel() {
 						key={group.id}
 						type="button"
 						onClick={() => jumpTo(`design-${group.id}`, advanced)}
-						className="h-8 shrink-0 rounded-full px-3 text-[13px] text-ink-2 transition-colors duration-quick hover:bg-hover hover:text-ink"
+						className="h-8 shrink-0 rounded-sm px-3 text-[13px] text-ink-2 transition-colors duration-quick hover:bg-hover hover:text-ink"
 					>
 						{group.label()}
 					</button>
@@ -137,7 +137,7 @@ export function DesignSheet() {
 				onClick={() => setExpanded(!expanded)}
 				className="flex h-6 shrink-0 items-center justify-center"
 			>
-				<span className="h-1 w-9 rounded-full bg-line-2" />
+				<span className="h-1 w-9 rounded-sm bg-line-2" />
 			</button>
 
 			<Tabs value={tab} onValueChange={(value) => setTab(value as SheetTab)} className="min-h-0 flex-1 gap-0">

@@ -1,20 +1,18 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { PDFDocumentLoadingTask, PDFDocumentProxy } from "pdfjs-dist/legacy/build/pdf.mjs";
-import { AnnotationMode, GlobalWorkerOptions, getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
+// pdf.mjs must load before pdf_viewer.mjs, which reads `globalThis.pdfjsLib` as it loads.
+import { AnnotationMode } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { EventBus, LinkTarget, PDFLinkService, PDFViewer } from "pdfjs-dist/legacy/web/pdf_viewer.mjs";
 import { useEffect, useReducer, useRef } from "react";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 import { resolvePublicResumePdfBlob } from "./public-pdf";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
+import { getDocument, getPdfWorker } from "@/features/resume/preview/pdfjs";
 import "pdfjs-dist/legacy/web/pdf_viewer.css";
-import "./pdf-viewer.css";
-
-GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString();
 
 type PdfViewerProps = {
 	className?: string;
-	includeCoverLetterHeader?: boolean;
 	publicResume?: {
 		username: string;
 		slug: string;
@@ -73,13 +71,7 @@ function pdfViewerReducer(state: PdfViewerState, action: PdfViewerAction): PdfVi
 }
 
 /** Renders a resume's PDF from its data, or an existing PDF file (the ATS checker's upload). */
-export function PdfViewer({
-	className,
-	data,
-	file: givenFile,
-	publicResume,
-	includeCoverLetterHeader,
-}: PdfViewerProps) {
+export function PdfViewer({ className, data, file: givenFile, publicResume }: PdfViewerProps) {
 	const rootRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const viewerRef = useRef<HTMLDivElement>(null);
@@ -94,14 +86,14 @@ export function PdfViewer({
 
 		fileRef.current = null;
 		dispatch({ type: "resetForData" });
+		// The worker script downloads while the PDF is fetched or rendered, not after.
+		getPdfWorker();
 
 		const createPdf = (): Promise<Blob> => {
 			if (givenFile) return Promise.resolve(givenFile);
 			if (!data) return Promise.reject(new Error("PdfViewer needs data or a file."));
 			if (publicResume) return resolvePublicResumePdfBlob({ data, publicResume });
-			return includeCoverLetterHeader
-				? createResumePdfBlob(data, undefined, { includeCoverLetterHeader: true })
-				: createResumePdfBlob(data);
+			return createResumePdfBlob(data);
 		};
 
 		void createPdf()
@@ -121,7 +113,7 @@ export function PdfViewer({
 		return () => {
 			isCancelled = true;
 		};
-	}, [data, givenFile, publicResume, includeCoverLetterHeader]);
+	}, [data, givenFile, publicResume]);
 
 	useEffect(() => {
 		void fileVersion;
@@ -190,6 +182,7 @@ export function PdfViewer({
 				loadingTask = getDocument({
 					data: new Uint8Array(arrayBuffer),
 					docBaseUrl: window.location.href,
+					worker: getPdfWorker(),
 				});
 
 				const nextDocument = await loadingTask.promise;
@@ -243,7 +236,12 @@ export function PdfViewer({
 		<div
 			ref={rootRef}
 			// Until the real height is known, reserve an A4 page so the viewer doesn't grow from 192px.
-			className={cn("pdf-viewer relative bg-sunken", viewerHeight ? "min-h-0" : "aspect-[210/297]", className)}
+			// PDF.js's own stylesheet is unlayered, so the page spacing overrides need `!` to beat it.
+			className={cn(
+				"relative bg-sunken [&_.pdfViewer]:py-0! [&_.pdfViewer_.page]:mt-0! [&_.pdfViewer_.page]:mb-4! [&_.pdfViewer_.page:last-child]:mb-0!",
+				viewerHeight ? "min-h-0" : "aspect-[210/297]",
+				className,
+			)}
 			style={viewerHeight ? { height: viewerHeight } : undefined}
 		>
 			<div ref={containerRef} className="absolute inset-0 overflow-visible">

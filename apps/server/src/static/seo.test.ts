@@ -12,7 +12,6 @@ it("publishes Context7 Ask after the llms title and summary", async () => {
 	expect(text).toContain(
 		"It returns documentation that answers the question, with a source link for each part. No API key is needed. If nothing matches, it says so.\n\n## Product",
 	);
-	expect(await handleLlms({ head: true }).text()).toBe("");
 });
 
 describe("localized sitemap", () => {
@@ -49,9 +48,5 @@ describe("localized sitemap", () => {
 		}
 		expect(xml).not.toContain("zu-ZA");
 		expect(xml).not.toContain("/dashboard");
-	});
-
-	it("serves HEAD without a body", async () => {
-		expect(await handleSitemap({ head: true }).text()).toBe("");
 	});
 });

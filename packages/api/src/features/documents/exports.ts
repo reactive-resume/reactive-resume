@@ -51,7 +51,7 @@ async function fileResponse(
 		}
 	} catch (error) {
 		console.error("[document export] Rendering failed", error);
-		throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Could not generate the document." });
+		throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Couldn't generate the document. Try again." });
 	}
 	return { headers: { "content-disposition": `attachment; filename="${filename}"` }, body };
 }

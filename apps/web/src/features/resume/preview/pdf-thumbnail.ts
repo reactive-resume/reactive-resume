@@ -15,14 +15,14 @@ const canvasToBlob = (canvas: HTMLCanvasElement) =>
 		}, "image/png");
 	});
 
-export const createPdfFirstPageImageUrl = async (file: Blob, targetSize: ResumeThumbnailSize, signal?: AbortSignal) => {
+/** The PDF's first page as a PNG, drawn to fit `targetSize`. */
+export const createPdfFirstPageImage = async (file: Blob, targetSize: ResumeThumbnailSize, signal?: AbortSignal) => {
 	signal?.throwIfAborted();
-	const { AnnotationMode, GlobalWorkerOptions, getDocument } = await import("pdfjs-dist/legacy/build/pdf.mjs");
-	GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString();
+	const { AnnotationMode, getDocument, getPdfWorker } = await import("./pdfjs");
 
 	const arrayBuffer = await file.arrayBuffer();
 	signal?.throwIfAborted();
-	const loadingTask = getDocument({ data: new Uint8Array(arrayBuffer) });
+	const loadingTask = getDocument({ data: new Uint8Array(arrayBuffer), worker: getPdfWorker() });
 	let pdfDocument: Awaited<typeof loadingTask.promise> | undefined;
 	let renderTask: { cancel: () => void } | undefined;
 	let destruction: Promise<void> | undefined;
@@ -68,7 +68,7 @@ export const createPdfFirstPageImageUrl = async (file: Blob, targetSize: ResumeT
 
 			const image = await canvasToBlob(canvas);
 			signal?.throwIfAborted();
-			return URL.createObjectURL(image);
+			return image;
 		} finally {
 			page.cleanup();
 		}

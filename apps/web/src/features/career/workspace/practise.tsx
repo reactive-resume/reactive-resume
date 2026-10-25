@@ -39,7 +39,7 @@ import {
 } from "./recorder";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { D2, EASE, ENTER_CLASS } from "@/libs/motion";
 import { client } from "@/libs/orpc/client";
 
@@ -100,7 +100,7 @@ export function PractiseTab({ application, version, interview, speak, story, now
 					<Trans>This story is unavailable or uses facts that are switched off.</Trans>
 				</span>
 				<Button variant="secondary" onClick={() => go("practise")}>
-					<Trans>Practise another question</Trans>
+					<Trans>Practice another question</Trans>
 				</Button>
 			</Notice>
 		);
@@ -422,7 +422,7 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 		<div className="grid min-w-0 gap-4">
 			<section className="grid gap-3 rounded-xl border border-line bg-surface p-5">
 				<div className="flex flex-wrap items-center justify-between gap-2">
-					<p className="font-mono text-xs font-medium tracking-[0.06em] text-ink-2 uppercase">
+					<p className="font-mono text-xs font-medium text-ink-2">
 						{t`Question ${position} of ${total}`} · {question.origin === "recalled" ? t`Recalled` : t`Practice`}
 					</p>
 					{canHear && (
@@ -434,7 +434,7 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 					)}
 				</div>
 				<h2 className="font-display text-[22px] leading-[29px]">{question.text}</h2>
-				{storyTitle && <p className="text-sm text-ink-2">{t`Practising your story: ${storyTitle}`}</p>}
+				{storyTitle && <p className="text-sm text-ink-2">{t`Practicing your story: ${storyTitle}`}</p>}
 			</section>
 
 			{/* Space starts and stops recording while focus is in this card (the record button handles it natively). */}
@@ -530,7 +530,7 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 								type="button"
 								aria-label={recordingNow ? t`Stop recording` : t`Record your answer`}
 								onClick={toggleRecording}
-								className="touch-target relative grid size-[52px] shrink-0 place-items-center rounded-full bg-danger text-white transition-[filter,scale] duration-quick ease-enter hover:brightness-95 active:scale-[0.97]"
+								className="touch-target relative grid size-[52px] shrink-0 place-items-center rounded-sm bg-danger text-white transition-[filter,scale] duration-quick ease-enter hover:brightness-95 active:scale-[0.97]"
 							>
 								<Icon name={recordingNow ? "stop" : "microphone"} filled={recordingNow} size={24} />
 							</button>
@@ -581,10 +581,10 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 									aria-valuemax={MAX_SECONDS}
 									aria-valuenow={step.seconds}
 									aria-valuetext={clock(step.seconds)}
-									className="h-1.5 w-[180px] max-w-full overflow-hidden rounded-full bg-bg"
+									className="h-1.5 w-[180px] max-w-full overflow-hidden rounded-sm bg-bg"
 								>
 									<div
-										className="h-full rounded-full bg-danger-text transition-[width] duration-1000 ease-linear"
+										className="h-full rounded-sm bg-danger-text transition-[width] duration-1000 ease-linear"
 										style={{ width: `${(step.seconds / MAX_SECONDS) * 100}%` }}
 									/>
 								</div>
@@ -782,13 +782,7 @@ function HearIt({ text, voice }: { text: string; voice: VoiceSettings }) {
 		} catch (error) {
 			if (generation !== request.current) return;
 			stop();
-			toast.add({
-				type: "error",
-				description: getOrpcErrorMessage(error, {
-					fallback: t`Spoken audio is unavailable. Continue with the text question.`,
-					allowServerMessage: true,
-				}),
-			});
+			toastError(error, t`Spoken audio is unavailable. Continue with the text question.`, { allowServerMessage: true });
 		} finally {
 			if (generation === request.current) setBusy(false);
 		}
@@ -1019,14 +1013,14 @@ function FeedbackCard({ data, children }: FeedbackCardProps) {
 			<h2 className="text-base font-semibold">{data.title}</h2>
 			<div className="grid gap-2.5 sm:grid-cols-2">
 				<div className="grid content-start gap-1.5 rounded-lg bg-accent-soft p-3.5">
-					<p className="flex items-center gap-1.5 text-xs font-semibold text-accent-text uppercase">
+					<p className="flex items-center gap-1.5 text-xs font-semibold text-accent-text">
 						<Icon name="thumbs-up" size={16} />
 						<Trans>What works</Trans>
 					</p>
 					<p className="text-sm leading-[21px]">{data.works}</p>
 				</div>
 				<div className="grid content-start gap-1.5 rounded-lg bg-warn-soft p-3.5">
-					<p className="flex items-center gap-1.5 text-xs font-semibold text-warn-text uppercase">
+					<p className="flex items-center gap-1.5 text-xs font-semibold text-warn-text">
 						<Icon name="wrench" size={16} />
 						<Trans>Strengthen</Trans>
 					</p>
@@ -1034,7 +1028,7 @@ function FeedbackCard({ data, children }: FeedbackCardProps) {
 				</div>
 			</div>
 			<div className="grid gap-1.5 rounded-e-lg border-s-[3px] border-line-2 bg-bg py-3 ps-4 pe-4">
-				<p className="text-xs font-semibold tracking-[0.02em] text-ink-3 uppercase">
+				<p className="text-xs font-semibold text-ink-3">
 					<Trans>Try this opening</Trans>
 				</p>
 				<q className="font-display text-base leading-6 md:text-[17px] md:leading-[26px]">{data.opening}</q>
@@ -1049,7 +1043,7 @@ function SavedAttempt({ item }: { item: Attempt }) {
 	return (
 		<div className="grid min-w-0 gap-4">
 			<section className="grid gap-3 rounded-xl border border-line bg-surface p-5">
-				<p className="font-mono text-xs font-medium tracking-[0.06em] text-ink-2 uppercase">
+				<p className="font-mono text-xs font-medium text-ink-2">
 					{item.data.origin === "recalled" ? t`Recalled` : t`Practice`}
 				</p>
 				<h2 className="font-display text-[22px] leading-[29px]">{item.data.question}</h2>

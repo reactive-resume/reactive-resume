@@ -1,7 +1,7 @@
 import type { ResumeData } from "./data";
 
-// ponytail: 12 identical 7-field section blocks collapsed to a helper
-const section = (icon: string) => ({
+/** The shared fields every section starts with, minus its items or content. */
+export const sectionDefaults = (icon: string) => ({
 	title: "",
 	icon,
 	columns: 1,
@@ -9,8 +9,9 @@ const section = (icon: string) => ({
 	showHeading: true,
 	keepTogether: false,
 	startOnNewPage: false,
-	items: [] as never[],
 });
+
+const section = (icon: string) => ({ ...sectionDefaults(icon), items: [] as never[] });
 
 export const defaultResumeData: ResumeData = {
 	picture: {
@@ -35,16 +36,7 @@ export const defaultResumeData: ResumeData = {
 		website: { url: "", label: "" },
 		customFields: [],
 	},
-	summary: {
-		title: "",
-		icon: "article",
-		columns: 1,
-		hidden: false,
-		showHeading: true,
-		keepTogether: false,
-		startOnNewPage: false,
-		content: "",
-	},
+	summary: { ...sectionDefaults("article"), content: "" },
 	sections: {
 		profiles: section("messenger-logo"),
 		experience: section("briefcase"),

@@ -13,7 +13,7 @@ export function NotFoundScreen() {
 			<Alert>
 				<Icon name="warning" size={16} />
 				<AlertTitle>
-					<Trans>We couldn't find that page</Trans>
+					<Trans>Page not found</Trans>
 				</AlertTitle>
 				<AlertDescription>
 					<Trans>The page you're looking for may have been moved or no longer exists.</Trans>

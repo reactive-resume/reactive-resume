@@ -6,7 +6,7 @@ import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, m } from "motion/react";
-import { useEffect, useId, useRef, useState } from "react";
+import { memo, useDeferredValue, useEffect, useId, useRef, useState } from "react";
 import { factCategorySchema } from "@reactive-resume/schema/career";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -14,12 +14,11 @@ import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
-import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError, CareerLoading } from "../load-state";
 import { CollapseRow, FilterChip, flash, useCareerTime, withUndo } from "../shared";
 import { useProfile } from "./preferences";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { D2, EASE, EXIT } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 
@@ -57,13 +56,10 @@ export function FactsPage({ highlight }: FactsPageProps) {
 		queryClient.setQueryData<Fact[]>(queryKey, (list) =>
 			list?.map((fact) => (fact.id === id ? { ...fact, ...values } : fact)),
 		);
-	const update = useMutation({
+	// Only the stable `mutate`: the result object is new each render and would re-render every row.
+	const { mutate: updateFact } = useMutation({
 		...orpc.career.updateFact.mutationOptions(),
-		onError: (error) =>
-			toast.add({
-				type: "error",
-				description: getOrpcErrorMessage(error, { fallback: t`Couldn't save that change.` }),
-			}),
+		onError: (error) => toastError(error, t`Couldn't save that change. Try again.`),
 		onSettled: refresh,
 	});
 
@@ -75,13 +71,27 @@ export function FactsPage({ highlight }: FactsPageProps) {
 		flash(listRef.current?.querySelector(`[data-fact="${CSS.escape(highlight)}"]`) ?? null);
 	}, [highlight, facts]);
 
-	const query = search.trim().toLocaleLowerCase();
+	// The input updates at once; the list filters in a deferred render that typing can interrupt.
+	const query = useDeferredValue(search).trim().toLocaleLowerCase();
 	const visible = (facts ?? []).filter(
 		(fact) =>
 			!hidden.includes(fact.id) &&
 			(type === null || categoryOf(fact) === type) &&
 			(!query || `${fact.text} ${sourceLabel(fact)}`.toLocaleLowerCase().includes(query)),
 	);
+
+	const setStatus = (fact: Fact, status: "active" | "excluded") => {
+		patch(fact.id, { status });
+		updateFact({ id: fact.id, status });
+	};
+	const correct = (fact: Fact, text: string) => {
+		patch(fact.id, { text, revisions: [...fact.revisions, { text: fact.text, at: new Date().toISOString() }] });
+		updateFact({ id: fact.id, text });
+	};
+	const share = (fact: Fact) => {
+		patch(fact.id, { applicationId: null, company: null });
+		updateFact({ id: fact.id, share: true });
+	};
 
 	const forget = (fact: Fact) => {
 		setHidden((current) => [...current, fact.id]);
@@ -93,10 +103,7 @@ export function FactsPage({ highlight }: FactsPageProps) {
 					.forgetFact({ id: fact.id })
 					.catch((error: unknown) => {
 						setHidden((current) => current.filter((id) => id !== fact.id));
-						toast.add({
-							type: "error",
-							description: getOrpcErrorMessage(error, { fallback: t`Couldn't forget that fact.` }),
-						});
+						toastError(error, t`Couldn't forget that fact. Try again.`);
 					})
 					.finally(refresh),
 		});
@@ -143,27 +150,14 @@ export function FactsPage({ highlight }: FactsPageProps) {
 				<div ref={listRef} className="overflow-hidden rounded-xl border border-line bg-surface">
 					<AnimatePresence initial={false}>
 						{visible.map((fact) => (
-							<CollapseRow key={fact.id} className="border-b border-line last:border-b-0">
-								<FactRow
-									fact={fact}
-									onStatus={(status) => {
-										patch(fact.id, { status });
-										update.mutate({ id: fact.id, status });
-									}}
-									onCorrect={(text) => {
-										patch(fact.id, {
-											text,
-											revisions: [...fact.revisions, { text: fact.text, at: new Date().toISOString() }],
-										});
-										update.mutate({ id: fact.id, text });
-									}}
-									onShare={() => {
-										patch(fact.id, { applicationId: null, company: null });
-										update.mutate({ id: fact.id, share: true });
-									}}
-									onForget={() => forget(fact)}
-								/>
-							</CollapseRow>
+							<FactRow
+								key={fact.id}
+								fact={fact}
+								onStatus={setStatus}
+								onCorrect={correct}
+								onShare={share}
+								onForget={forget}
+							/>
 						))}
 					</AnimatePresence>
 					{visible.length === 0 && (
@@ -253,8 +247,7 @@ function AddFact({ onAdded }: AddFactProps) {
 			setText("");
 			if (fact) onAdded({ ...fact, company: null, usedBy: { stories: 0, savedItems: 0 } });
 		},
-		onError: (error) =>
-			toast.add({ type: "error", description: getOrpcErrorMessage(error, { fallback: t`Couldn't add that fact.` }) }),
+		onError: (error) => toastError(error, t`Couldn't add that fact. Try again.`),
 	});
 
 	const add = () => {
@@ -336,13 +329,14 @@ function sourceLabel(fact: Fact) {
 
 type FactRowProps = {
 	fact: Fact;
-	onStatus: (status: "active" | "excluded") => void;
-	onCorrect: (text: string) => void;
-	onShare: () => void;
-	onForget: () => void;
+	onStatus: (fact: Fact, status: "active" | "excluded") => void;
+	onCorrect: (fact: Fact, text: string) => void;
+	onShare: (fact: Fact) => void;
+	onForget: (fact: Fact) => void;
 };
 
-function FactRow({ fact, onStatus, onCorrect, onShare, onForget }: FactRowProps) {
+// Memoized with its motion wrapper: one fact's change re-renders (and re-measures) only its own row.
+const FactRow = memo(function FactRow({ fact, onStatus, onCorrect, onShare, onForget }: FactRowProps) {
 	const { format } = useCareerTime();
 	const [sourceOpen, setSourceOpen] = useState(false);
 	const [correcting, setCorrecting] = useState(false);
@@ -360,7 +354,9 @@ function FactRow({ fact, onStatus, onCorrect, onShare, onForget }: FactRowProps)
 
 	type Action = { icon: IconName; label: string; onClick: () => void; expanded?: boolean };
 	const share: Action[] =
-		company === null ? [] : [{ icon: "share-network", label: t`Use for all applications`, onClick: onShare }];
+		company === null
+			? []
+			: [{ icon: "share-network", label: t`Use for all applications`, onClick: () => onShare(fact) }];
 	const actions: Action[] = [
 		{
 			icon: "clock-counter-clockwise",
@@ -370,104 +366,110 @@ function FactRow({ fact, onStatus, onCorrect, onShare, onForget }: FactRowProps)
 		},
 		{ icon: "pencil-simple", label: t`Correct`, onClick: () => setCorrecting(true) },
 		...share,
-		{ icon: "trash", label: t`Forget`, onClick: onForget },
+		{ icon: "trash", label: t`Forget`, onClick: () => onForget(fact) },
 	];
 
 	return (
-		<div data-fact={fact.id} className="flex items-start gap-4 px-4 py-3.5">
-			<div className="grid min-w-0 flex-1 gap-1.5">
-				<p className="flex flex-wrap items-center gap-2 font-mono text-[11px] font-medium text-ink-3 uppercase">
-					{categoryLabel(categoryOf(fact))}
-					<span
-						className={cn(
-							"h-[18px] rounded-[4px] px-1.5 font-sans text-[11px] leading-[18px] normal-case",
-							company === null ? "bg-sunken text-ink-2" : "bg-info-soft text-info-text",
-						)}
-					>
-						{company === null ? t`All applications` : t`${company} only`}
-					</span>
-				</p>
-
-				{correcting ? (
-					<Correction
-						text={fact.text}
-						onCancel={() => setCorrecting(false)}
-						onSave={(text) => {
-							setCorrecting(false);
-							if (text !== fact.text) onCorrect(text);
-						}}
-					/>
-				) : (
-					<p
-						className={cn(
-							"text-sm leading-[21px] text-pretty transition-colors duration-quick",
-							on ? "text-ink" : "text-ink-3",
-						)}
-					>
-						{fact.text}
-					</p>
-				)}
-
-				<div className="-ms-2 flex flex-wrap gap-0.5">
-					{actions.map((action) => (
-						<button
-							key={action.label}
-							type="button"
-							onClick={action.onClick}
-							aria-expanded={action.expanded}
-							className="touch-target relative flex h-7 items-center gap-1 rounded-sm px-2 text-xs font-medium text-ink-2 transition-colors duration-quick hover:bg-hover hover:text-ink"
+		<CollapseRow className="border-b border-line last:border-b-0">
+			<div
+				data-fact={fact.id}
+				// Off-screen rows skip layout and paint; they stay findable and in the accessibility tree.
+				className="flex items-start gap-4 px-4 py-3.5 [contain-intrinsic-size:auto_112px] [content-visibility:auto]"
+			>
+				<div className="grid min-w-0 flex-1 gap-1.5">
+					<p className="flex flex-wrap items-center gap-2 font-mono text-xs font-medium text-ink-3">
+						{categoryLabel(categoryOf(fact))}
+						<span
+							className={cn(
+								"h-[18px] rounded-lg px-1.5 font-sans text-[11px] leading-[18px] normal-case",
+								company === null ? "bg-sunken text-ink-2" : "bg-info-soft text-info-text",
+							)}
 						>
-							<Icon name={action.icon} size={16} />
-							{action.label}
-						</button>
-					))}
+							{company === null ? t`All applications` : t`${company} only`}
+						</span>
+					</p>
+
+					{correcting ? (
+						<Correction
+							text={fact.text}
+							onCancel={() => setCorrecting(false)}
+							onSave={(text) => {
+								setCorrecting(false);
+								if (text !== fact.text) onCorrect(fact, text);
+							}}
+						/>
+					) : (
+						<p
+							className={cn(
+								"text-sm leading-[21px] text-pretty transition-colors duration-quick",
+								on ? "text-ink" : "text-ink-3",
+							)}
+						>
+							{fact.text}
+						</p>
+					)}
+
+					<div className="-ms-2 flex flex-wrap gap-0.5">
+						{actions.map((action) => (
+							<button
+								key={action.label}
+								type="button"
+								onClick={action.onClick}
+								aria-expanded={action.expanded}
+								className="touch-target relative flex h-7 items-center gap-1 rounded-sm px-2 text-xs font-medium text-ink-2 transition-colors duration-quick hover:bg-hover hover:text-ink"
+							>
+								<Icon name={action.icon} size={16} />
+								{action.label}
+							</button>
+						))}
+					</div>
+
+					<AnimatePresence initial={false}>
+						{sourceOpen && (
+							<m.div
+								initial={{ height: 0, opacity: 0 }}
+								animate={{ height: "auto", opacity: 1, transition: { duration: D2, ease: EASE } }}
+								exit={{ height: 0, opacity: 0, transition: { duration: D2 * EXIT, ease: EASE } }}
+								className="overflow-hidden"
+							>
+								<div className="grid gap-1 rounded-md bg-sunken px-3 py-2.5 text-xs leading-[17px] text-ink-2">
+									<p className="font-semibold text-ink">
+										{sourceLabel(fact)} · {date(fact.createdAt)}
+									</p>
+									<p>{usage}</p>
+									<p className="text-xs text-ink-3">
+										{correctedOn ? t`Corrected ${correctedOn} · original kept` : t`No corrections`}
+									</p>
+									{fact.source.quote && (
+										<blockquote className="border-s-2 border-line ps-2">{fact.source.quote}</blockquote>
+									)}
+									{fact.revisions.length > 0 && (
+										<ol className="mt-1 grid gap-1 border-t border-line pt-2">
+											{fact.revisions.toReversed().map((revision) => (
+												<li key={revision.at} className="text-ink-3">
+													<span className="font-mono text-[11px]">{date(revision.at)}</span> · {revision.text}
+												</li>
+											))}
+										</ol>
+									)}
+								</div>
+							</m.div>
+						)}
+					</AnimatePresence>
 				</div>
 
-				<AnimatePresence initial={false}>
-					{sourceOpen && (
-						<m.div
-							initial={{ height: 0, opacity: 0 }}
-							animate={{ height: "auto", opacity: 1, transition: { duration: D2, ease: EASE } }}
-							exit={{ height: 0, opacity: 0, transition: { duration: D2 * EXIT, ease: EASE } }}
-							className="overflow-hidden"
-						>
-							<div className="grid gap-1 rounded-md bg-sunken px-3 py-2.5 text-xs leading-[17px] text-ink-2">
-								<p className="font-semibold text-ink">
-									{sourceLabel(fact)} · {date(fact.createdAt)}
-								</p>
-								<p>{usage}</p>
-								<p className="text-xs text-ink-3">
-									{correctedOn ? t`Corrected ${correctedOn} · original kept` : t`No corrections`}
-								</p>
-								{fact.source.quote && (
-									<blockquote className="border-s-2 border-line ps-2">{fact.source.quote}</blockquote>
-								)}
-								{fact.revisions.length > 0 && (
-									<ol className="mt-1 grid gap-1 border-t border-line pt-2">
-										{fact.revisions.toReversed().map((revision) => (
-											<li key={revision.at} className="text-ink-3">
-												<span className="font-mono text-[11px]">{date(revision.at)}</span> · {revision.text}
-											</li>
-										))}
-									</ol>
-								)}
-							</div>
-						</m.div>
-					)}
-				</AnimatePresence>
+				<div className="flex w-[120px] flex-none flex-col items-end gap-1 max-sm:w-20">
+					<Switch
+						checked={on}
+						aria-label={t`Use in coaching: ${excerpt}`}
+						onCheckedChange={(checked) => onStatus(fact, checked ? "active" : "excluded")}
+					/>
+					<span className="text-end text-xs text-ink-3">{on ? t`Used in coaching` : t`Not used`}</span>
+				</div>
 			</div>
-
-			<div className="flex w-[120px] flex-none flex-col items-end gap-1 max-sm:w-20">
-				<Switch
-					checked={on}
-					aria-label={t`Use in coaching: ${excerpt}`}
-					onCheckedChange={(checked) => onStatus(checked ? "active" : "excluded")}
-				/>
-				<span className="text-end text-xs text-ink-3">{on ? t`Used in coaching` : t`Not used`}</span>
-			</div>
-		</div>
+		</CollapseRow>
 	);
-}
+});
 
 type CorrectionProps = { text: string; onSave: (text: string) => void; onCancel: () => void };
 

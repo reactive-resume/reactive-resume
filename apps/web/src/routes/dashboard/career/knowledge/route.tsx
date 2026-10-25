@@ -60,7 +60,7 @@ function KnowledgeLayout() {
 			<aside className="grid gap-5 [view-transition-name:knowledge-nav] md:sticky md:top-6">
 				<nav
 					aria-label={t`Knowledge`}
-					className="flex gap-0.5 rounded-[9px] bg-sunken p-[3px] md:grid md:bg-transparent md:p-0"
+					className="flex gap-0.5 rounded-lg bg-sunken p-[3px] md:grid md:bg-transparent md:p-0"
 				>
 					{sections.map((section) => {
 						const selected = Boolean(matchRoute({ to: section.match, fuzzy: true }));

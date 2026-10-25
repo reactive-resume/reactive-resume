@@ -48,7 +48,7 @@ beforeEach(() => {
 });
 
 it.each(["name", "restore"])("stops History %s after the save barrier fails", async (action) => {
-	if (action === "restore") useEditorStore.getState().setHistoryVersion("version");
+	if (action === "restore") useEditorStore.setState({ historyVersionId: "version" });
 	const client = new QueryClient();
 	render(
 		<QueryClientProvider client={client}>

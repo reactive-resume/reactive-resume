@@ -5,14 +5,11 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@reactive-resume/ui/components/sheet";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
-import { cn } from "@reactive-resume/utils/style";
 import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useLetterEditorStore } from "@/features/letters/store";
+import { ShareSheetFrame } from "@/features/resume/editor/chrome/share-sheet";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { createExportFile, getDefaultFileName, sanitizeFileName } from "@/features/resume/export/use-resume-export";
 import {
@@ -22,66 +19,21 @@ import {
 	getExportFormats,
 } from "@/features/resume/share/download-tab";
 import { HistoryTimeline } from "@/features/resume/share/history-tab";
-import { useClosingValue } from "@/hooks/use-closing-value";
 import { getOrpcErrorMessage, getReadableErrorMessage } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
-/**
- * Share & export for letters: Download and History. Letters have no public link, so Share opens Download.
- * 440px from the right; a full-height bottom sheet on phones.
- */
+/** Share & export for letters: Download and History. Letters have no public link, so Share opens Download. */
 export function LetterShareSheet() {
-	const tab = useEditorStore((state) => state.shareTab);
-	// Closing keeps the open tab on screen until the sheet has slid away.
-	const [shownTab, onOpenChangeComplete] = useClosingValue(tab);
-	const setTab = useEditorStore((state) => state.setShareTab);
-	const setHistoryVersion = useEditorStore((state) => state.setHistoryVersion);
-	const isPhone = useBreakpoint() === "mobile";
-	const history = useLetterHistory(tab === "history");
+	const history = useLetterHistory(useEditorStore((state) => state.shareTab) === "history");
 
 	return (
-		<Sheet
-			open={tab !== null}
-			onOpenChange={(open) => !open && setTab(null)}
-			onOpenChangeComplete={onOpenChangeComplete}
-		>
-			<SheetContent
-				side={isPhone ? "bottom" : "right"}
-				closeLabel={t`Close`}
-				className={cn("gap-0", isPhone && "h-[calc(100svh-1.5rem)]")}
-			>
-				<SheetHeader className="px-5 pt-3.5 pb-2.5">
-					<SheetTitle>
-						<Trans>Share & export</Trans>
-					</SheetTitle>
-				</SheetHeader>
-
-				<Tabs
-					value={shownTab === "history" ? "history" : "download"}
-					onValueChange={(value) => {
-						// The page shows a version only while History is open.
-						if (value !== "history") setHistoryVersion(null);
-						setTab(value as "download" | "history");
-					}}
-					className="min-h-0 flex-1 gap-0"
-				>
-					<TabsList variant="line" aria-label={t`Share sections`} className="w-full justify-start gap-5 px-5">
-						<TabsTrigger value="download">
-							<Trans>Download</Trans>
-						</TabsTrigger>
-						<TabsTrigger value="history">
-							<Trans>History</Trans>
-						</TabsTrigger>
-					</TabsList>
-					<TabsContent value="download" className="overflow-y-auto p-5">
-						<LetterDownloadTab />
-					</TabsContent>
-					<TabsContent value="history" className="overflow-y-auto p-5">
-						<HistoryTimeline source={history} />
-					</TabsContent>
-				</Tabs>
-			</SheetContent>
-		</Sheet>
+		<ShareSheetFrame
+			fallback="download"
+			tabs={[
+				{ value: "download", label: <Trans>Download</Trans>, content: <LetterDownloadTab /> },
+				{ value: "history", label: <Trans>History</Trans>, content: <HistoryTimeline source={history} /> },
+			]}
+		/>
 	);
 }
 
@@ -146,7 +98,7 @@ function LetterDownloadTab() {
 			setState("done");
 		} catch (error) {
 			setState("error");
-			toast.add({ type: "error", description: getReadableErrorMessage(error, t`Download failed.`) });
+			toast.add({ type: "error", description: getReadableErrorMessage(error, t`Download failed. Try again.`) });
 		}
 	};
 
@@ -198,7 +150,8 @@ function useLetterHistory(open: boolean): HistorySource {
 		loading,
 		locked,
 		nowDetail: t`The letter as it is`,
-		errorMessage: (error) => getOrpcErrorMessage(error, { fallback: t`Something went wrong. Try again.` }),
+		errorMessage: (error) =>
+			getOrpcErrorMessage(error, { fallback: t`Couldn't update this letter's versions. Try again.` }),
 		save: async (name) => {
 			if (!(await useLetterEditorStore.getState().flush()))
 				throw new Error(t`Couldn't save your changes. Try again before continuing.`);

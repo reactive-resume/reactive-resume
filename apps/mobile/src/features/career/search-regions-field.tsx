@@ -63,7 +63,7 @@ export function SearchRegionsField({ value, accountTimeZone, onChange }: SearchR
 				))}
 				{shown.automatic && shown.codes.length > 0 ? (
 					<Text variant="callout" color="ink3">
-						{t`From your time zone`}
+						{t`From your timezone`}
 					</Text>
 				) : null}
 				{shown.codes.length === 0 ? <Text color="ink3">{t`Anywhere`}</Text> : null}
@@ -81,7 +81,7 @@ export function SearchRegionsField({ value, accountTimeZone, onChange }: SearchR
 				{t`Web searches look for work here, up to three countries.`}
 			</Text>
 			{!shown.automatic ? (
-				<Button variant="ghost" size="sm" label={t`Use my time zone`} onPress={() => apply({ type: "automatic" })} />
+				<Button variant="ghost" size="sm" label={t`Use my timezone`} onPress={() => apply({ type: "automatic" })} />
 			) : null}
 		</View>
 	);

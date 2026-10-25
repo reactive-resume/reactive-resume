@@ -14,19 +14,16 @@ function fixture(locale: string) {
 }
 
 describe("default PDF section title locale", () => {
-	it("localizes default headings without an injected browser translator", () => {
+	it("localizes default headings", () => {
 		const data = fixture("es-ES");
 		expect(getResumeSectionTitle(data, "summary", "")).toBe("Resumen");
 		expect(getResumeSectionTitle(data, "experience", "")).toBe("Experiencia");
 		expect(getResumeSectionTitle(data, "education", "")).toBe("Formación académica");
 	});
-	it("preserves explicit titles and caller-provided translators", () => {
+	it("preserves explicit titles", () => {
 		const data = fixture("es-ES");
 		data.summary.title = "My custom title";
 		expect(getResumeSectionTitle(data, "summary", "")).toBe("My custom title");
-		expect(getResumeSectionTitle({ ...data, resolveSectionTitle: () => "Custom translation" }, "experience", "")).toBe(
-			"Custom translation",
-		);
 	});
 	it("resolves custom sections by their type and preserves unknown-section fallbacks", () => {
 		const data = fixture("es-ES");

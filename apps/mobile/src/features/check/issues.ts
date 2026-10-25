@@ -40,7 +40,7 @@ export const getCategoryDescription = (category: AtsCategory) =>
 		contact: t`Name, email, phone and location are found, and links are full addresses.`,
 		dates: t`Every entry has dates in a form systems read, in order, and none in the future.`,
 		layout: t`Text comes out in the order a person reads it, at a size and spacing that survive.`,
-		headings: t`Sections use headings systems recognise, and work experience shows.`,
+		headings: t`Sections use headings systems recognize, and work experience shows.`,
 		writing: t`Every role says what you did. Opinions on wording live in the Writing tab.`,
 	})[category];
 
@@ -131,7 +131,7 @@ function describeFinding(finding: AtsFinding, data: ResumeData, target: PageMapT
 			};
 		case "MALFORMED_EMAIL":
 			return {
-				title: t`Email address won't be recognised`,
+				title: t`Email address won't be recognized`,
 				body: t`“${value}” isn't a plain address like name@example.com.`,
 				fix: write(t`Edit the email`),
 			};
@@ -151,7 +151,7 @@ function describeFinding(finding: AtsFinding, data: ResumeData, target: PageMapT
 			const url = `https://${value}`;
 			return {
 				title: t`A link isn't a full address`,
-				body: t`Some systems only recognise links that start with https://. This one reads as plain text: “${value}”.`,
+				body: t`Some systems only recognize links that start with https://. This one reads as plain text: “${value}”.`,
 				fix: HAS_SCHEME.test(value)
 					? write(t`Edit the link`)
 					: {
@@ -186,13 +186,13 @@ function describeFinding(finding: AtsFinding, data: ResumeData, target: PageMapT
 		case "UNPARSEABLE_PERIOD":
 			return {
 				title: t`Dates won't be read`,
-				body: t`“${value}” isn't a form systems recognise, such as Mar 2020 – Present.`,
+				body: t`“${value}” isn't a form systems recognize, such as Mar 2020 – Present.`,
 				fix: write(t`Fix the dates`),
 			};
 		case "UNPARSEABLE_DATE":
 			return {
 				title: t`A date won't be read`,
-				body: t`“${value}” isn't a form systems recognise, such as March 2022.`,
+				body: t`“${value}” isn't a form systems recognize, such as March 2022.`,
 				fix: write(t`Fix the date`),
 			};
 		case "REVERSED_PERIOD":

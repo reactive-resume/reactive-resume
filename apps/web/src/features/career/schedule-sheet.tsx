@@ -26,7 +26,7 @@ import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { useClosingValue } from "@/hooks/use-closing-value";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { D2, EASE } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 
@@ -233,14 +233,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 					close();
 					toast.add({ description: t`Schedule saved` });
 				},
-				onError: (error) =>
-					toast.add({
-						type: "error",
-						description: getOrpcErrorMessage(error, {
-							fallback: t`Couldn't save this schedule.`,
-							allowServerMessage: true,
-						}),
-					}),
+				onError: (error) => toastError(error, t`Couldn't save this schedule. Try again.`, { allowServerMessage: true }),
 			},
 		);
 	};

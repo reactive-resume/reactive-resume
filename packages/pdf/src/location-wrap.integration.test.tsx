@@ -1,4 +1,3 @@
-import type { SectionTitleResolver } from "./section-title";
 import type { ElementInfo } from "@formepdf/core";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
@@ -7,8 +6,6 @@ import * as forme from "@formepdf/core";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { renderResume } from "./forme/render";
-
-const resolveSectionTitle: SectionTitleResolver = (input) => input.defaultEnglishTitle ?? input.sectionId;
 
 /**
  * Issue #3586: the work-experience location wrapped mid-word ("Mumbai" rendered as
@@ -71,7 +68,6 @@ describe("experience location wrapping (#3586)", () => {
 		const { layout } = await renderResume(forme, {
 			data: buildData("Mumbai"),
 			template: template as Template,
-			resolveSectionTitle,
 		});
 		expectSingleLine(layout, "Mumbai");
 	});
@@ -80,7 +76,6 @@ describe("experience location wrapping (#3586)", () => {
 		const { layout } = await renderResume(forme, {
 			data: buildData("Mumbai,"),
 			template: template as Template,
-			resolveSectionTitle,
 		});
 		expectSingleLine(layout, "Mumbai,");
 	});

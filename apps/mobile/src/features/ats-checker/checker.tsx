@@ -69,10 +69,7 @@ export function AtsChecker() {
 			if (!controller.signal.aborted)
 				setState({
 					name: "idle",
-					error:
-						error instanceof AtsCheckError
-							? error.message
-							: t`Something went wrong while reading that file. Try again.`,
+					error: error instanceof AtsCheckError ? error.message : t`Couldn't read that file. Try again.`,
 				});
 		} finally {
 			clearTimeout(analysing);
@@ -138,7 +135,7 @@ export function AtsChecker() {
 
 	return (
 		<SafeAreaView edges={["bottom", "left", "right"]} style={{ flex: 1 }}>
-			<Stack.Screen options={{ title: state.name === "done" ? t`Report` : t`ATS Checker` }} />
+			<Stack.Screen options={{ title: state.name === "done" ? t`Report` : t`ATS checker` }} />
 			{state.name === "importing" ? (
 				<Importing />
 			) : state.name === "busy" ? (
@@ -195,7 +192,7 @@ function Idle({ error, posting, onPosting, onChoose, onSample }: IdleProps) {
 					alignItems: "center",
 					gap: space.s2,
 					padding: space.s6,
-					borderRadius: radius.r2xl,
+					borderRadius: radius.rLg,
 					borderWidth: 1.5,
 					borderStyle: "dashed",
 					borderColor: colors.line2,
@@ -216,7 +213,7 @@ function Idle({ error, posting, onPosting, onChoose, onSample }: IdleProps) {
 				onChangeText={onPosting}
 				maxLength={MAX_POSTING}
 				minLines={3}
-				placeholder={t`Paste the posting to see which of its terms your resume already has.`}
+				helper={t`Paste the posting to see which of its terms your resume already has.`}
 			/>
 		</ScrollView>
 	);
@@ -226,7 +223,7 @@ type ProgressProps = { name: string; step: number; onCancel: () => void };
 
 function Progress({ name, step, onCancel }: ProgressProps) {
 	const { t } = useLingui();
-	const { colors, space } = useTheme();
+	const { colors, radius, space } = useTheme();
 	const steps = [t`Opening the file`, t`Reading the text`, t`Checking layout and content`];
 
 	return (
@@ -242,7 +239,15 @@ function Progress({ name, step, onCancel }: ProgressProps) {
 							) : index === step ? (
 								<ActivityIndicator color={colors.accent} />
 							) : (
-								<View style={{ width: 12, height: 12, borderRadius: 6, borderWidth: 1.5, borderColor: colors.ink3 }} />
+								<View
+									style={{
+										width: 12,
+										height: 12,
+										borderRadius: radius.rSm,
+										borderWidth: 1.5,
+										borderColor: colors.ink3,
+									}}
+								/>
 							)}
 						</View>
 						<Text color={index > step ? "ink3" : "ink"}>{label}</Text>
@@ -416,7 +421,7 @@ function Result({ result, uri, size, onFix, onReset, onBlank }: ResultProps) {
 					<>
 						<View
 							style={{
-								borderRadius: radius.rXl,
+								borderRadius: radius.rLg,
 								borderWidth: 1,
 								borderTopWidth: 0,
 								borderColor: colors.line,

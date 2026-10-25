@@ -1,11 +1,11 @@
 import type { Application } from "../types";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { AnimatePresence, m } from "motion/react";
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import {
@@ -36,11 +36,15 @@ const nextStepTime = (application: Application) => {
 	return step.kind === "interview" || step.kind === "follow-up" ? step.at.getTime() : Number.POSITIVE_INFINITY;
 };
 
-const compare: Record<SortKey, (a: Application, b: Application) => number> = {
-	role: (a, b) => a.role.localeCompare(b.role) || a.company.localeCompare(b.company),
-	next: (a, b) => nextStepTime(a) - nextStepTime(b),
-	updated: (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
+// Sort keys are computed once per row, not once per comparison.
+const sortValue: Record<SortKey, (application: Application) => string | number> = {
+	role: (application) => application.role,
+	next: nextStepTime,
+	updated: (application) => new Date(application.updatedAt).getTime(),
 };
+
+const compareValues = (a: string | number, b: string | number) =>
+	typeof a === "string" && typeof b === "string" ? a.localeCompare(b) : Number(a) - Number(b);
 
 type ListViewProps = {
 	applications: Application[];
@@ -74,12 +78,18 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 
 	const groups = useMemo(() => {
 		const sign = sort.direction === "asc" ? 1 : -1;
+		const keys = new Map(applications.map((application) => [application.id, sortValue[sort.key](application)]));
+		const key = (application: Application) => keys.get(application.id) ?? 0;
 		return LIST_ORDER.filter((status) => status !== "closed" || showClosed)
 			.map((status) => ({
 				status,
 				rows: applications
 					.filter((application) => application.status === status)
-					.sort((a, b) => sign * compare[sort.key](a, b)),
+					.sort(
+						(a, b) =>
+							sign * compareValues(key(a), key(b)) ||
+							(sort.key === "role" ? sign * a.company.localeCompare(b.company) : 0),
+					),
 			}))
 			.filter((group) => group.rows.length > 0);
 	}, [applications, showClosed, sort]);
@@ -173,7 +183,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 										/>
 										<span
 											aria-hidden="true"
-											className="size-2 rounded-full"
+											className="size-2 rounded-sm"
 											style={{ background: getStageColor(status) }}
 										/>
 										{getStageLabel(status)}
@@ -189,8 +199,8 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 										phone={phone}
 										selected={application.id === selectedId}
 										checked={checked.has(application.id)}
-										onCheck={() => toggleRow(application.id)}
-										onOpen={() => onOpen(application)}
+										onCheck={toggleRow}
+										onOpen={onOpen}
 									/>
 								))}
 						</tbody>
@@ -222,11 +232,19 @@ type ApplicationRowProps = {
 	phone: boolean;
 	selected: boolean;
 	checked: boolean;
-	onCheck: () => void;
-	onOpen: () => void;
+	onCheck: (id: string) => void;
+	onOpen: (application: Application) => void;
 };
 
-function ApplicationRow({ application, phone, selected, checked, onCheck, onOpen }: ApplicationRowProps) {
+// Memoized with id-taking callbacks, so one row's change doesn't re-render the other rows.
+const ApplicationRow = memo(function ApplicationRow({
+	application,
+	phone,
+	selected,
+	checked,
+	onCheck,
+	onOpen,
+}: ApplicationRowProps) {
 	const { i18n } = useLingui();
 	const next = describeNextStep(getNextStep(application), application, i18n.locale);
 	const sent = application.status !== "saved";
@@ -235,14 +253,18 @@ function ApplicationRow({ application, phone, selected, checked, onCheck, onOpen
 	const initial = (
 		<span
 			aria-hidden="true"
-			className="grid size-8 shrink-0 place-items-center rounded-[7px] bg-sunken text-[13px] font-semibold text-ink-2"
+			className="grid size-8 shrink-0 place-items-center rounded-lg bg-sunken text-[13px] font-semibold text-ink-2"
 		>
 			{application.company.slice(0, 1).toUpperCase()}
 		</span>
 	);
 
 	const openButton = (
-		<button type="button" onClick={onOpen} className="grid min-w-0 text-start after:absolute after:inset-0">
+		<button
+			type="button"
+			onClick={() => onOpen(application)}
+			className="grid min-w-0 text-start after:absolute after:inset-0"
+		>
 			<span className="truncate font-medium">{application.role}</span>
 			<span className="truncate text-xs text-ink-3">
 				{phone
@@ -276,7 +298,7 @@ function ApplicationRow({ application, phone, selected, checked, onCheck, onOpen
 			<td className="relative z-10 w-10 ps-3">
 				<Checkbox
 					checked={checked}
-					onCheckedChange={onCheck}
+					onCheckedChange={() => onCheck(application.id)}
 					aria-label={t`Select ${application.role} at ${application.company}`}
 				/>
 			</td>
@@ -296,7 +318,7 @@ function ApplicationRow({ application, phone, selected, checked, onCheck, onOpen
 				<span className="flex items-center gap-1.5 text-ink-2">
 					<span
 						aria-hidden="true"
-						className="size-2 rounded-full"
+						className="size-2 rounded-sm"
 						style={{ background: getStageColor(application.status) }}
 					/>
 					{getStageLabel(application.status)}
@@ -319,7 +341,7 @@ function ApplicationRow({ application, phone, selected, checked, onCheck, onOpen
 			</td>
 		</tr>
 	);
-}
+});
 
 type BulkBarProps = { ids: string[]; onDone: () => void };
 
@@ -334,7 +356,9 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 		onSuccess: (result) => {
 			invalidate();
 			onDone();
-			toast.add({ description: t`Updated ${result.updated}` });
+			toast.add({
+				description: plural(result.updated, { one: "# application updated", other: "# applications updated" }),
+			});
 		},
 		onError: () => toast.add({ type: "error", description: t`Couldn't update the applications. Try again.` }),
 	});
@@ -343,7 +367,9 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 		onSuccess: (result) => {
 			invalidate();
 			onDone();
-			toast.add({ description: t`Deleted ${result.deleted}` });
+			toast.add({
+				description: plural(result.deleted, { one: "# application deleted", other: "# applications deleted" }),
+			});
 		},
 		onError: () => toast.add({ type: "error", description: t`Couldn't delete the applications. Try again.` }),
 	});
@@ -362,7 +388,7 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 				<DropdownMenuContent align="start">
 					{PIPELINE.map((status) => (
 						<DropdownMenuItem key={status} onClick={() => bulkUpdate.mutate({ ids, status })}>
-							<span aria-hidden="true" className="size-2 rounded-full" style={{ background: getStageColor(status) }} />
+							<span aria-hidden="true" className="size-2 rounded-sm" style={{ background: getStageColor(status) }} />
 							{getStageLabel(status)}
 						</DropdownMenuItem>
 					))}
@@ -413,10 +439,13 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 				variant="secondary"
 				className="text-danger-text"
 				onClick={async () => {
-					const confirmed = await confirm(t`Delete ${ids.length} applications?`, {
-						description: t`They and their timelines are deleted permanently. This can't be undone.`,
-						confirmText: t`Delete`,
-					});
+					const confirmed = await confirm(
+						plural(ids.length, { one: "Delete # application?", other: "Delete # applications?" }),
+						{
+							description: t`They and their timelines are deleted permanently. This can't be undone.`,
+							confirmText: plural(ids.length, { one: "Delete # application", other: "Delete # applications" }),
+						},
+					);
 					if (confirmed) bulkDelete.mutate({ ids });
 				}}
 			>

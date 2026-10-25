@@ -16,8 +16,6 @@ import type {
 	ProjectItem,
 	PublicationItem,
 	ReferenceItem,
-	ResumeData,
-	SectionType,
 	SkillItem,
 	SummaryItem,
 	VolunteerItem,
@@ -27,7 +25,7 @@ import { Children, createContext, Fragment, isValidElement, use } from "react";
 import { View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
 import { getResumeSectionIcon } from "../../section-icon";
-import { getResumeSectionTitle } from "../../section-title";
+import { findSection, getResumeSectionTitle } from "../../section-title";
 import { resolvedPdfFlowProps, resolvedPdfTextProps } from "../../semantic/adapter";
 import {
 	projectRenderedChildren,
@@ -141,11 +139,6 @@ type ItemSectionProps<T> = {
 
 type CoverLetterSectionProps = {
 	section: CustomItemSection<CoverLetterItem>;
-};
-
-type CustomSectionProps = {
-	sectionId: string;
-	showHeading?: boolean;
 };
 
 type SectionProps = {
@@ -312,26 +305,6 @@ const getVisibleItems = <T extends { hidden: boolean }>(section: ItemSection<T>,
 	return filterItems(section.items, sectionType);
 };
 
-// Resolve the per-section page-break constraints the same way section title/icon are resolved:
-// standard sections live under data.sections[id], the summary under data.summary, and custom
-// sections are matched by id. Missing flags default to false (older stored resumes lack them).
-const getSectionBreaks = (data: ResumeData, sectionId: string): { keepTogether: boolean; startOnNewPage: boolean } => {
-	if (sectionId === "summary") {
-		return { keepTogether: data.summary.keepTogether, startOnNewPage: data.summary.startOnNewPage };
-	}
-
-	if (sectionId in data.sections) {
-		const section = data.sections[sectionId as SectionType];
-		return { keepTogether: section.keepTogether, startOnNewPage: section.startOnNewPage };
-	}
-
-	const customSection = data.customSections.find((section) => section.id === sectionId);
-	return {
-		keepTogether: customSection?.keepTogether ?? false,
-		startOnNewPage: customSection?.startOnNewPage ?? false,
-	};
-};
-
 const SectionShell = ({ sectionId, title, showHeading = true, children }: SectionShellProps) => {
 	const data = useRender();
 	const pageNodeKey = useTemplatePageNodeKey();
@@ -343,11 +316,8 @@ const SectionShell = ({ sectionId, title, showHeading = true, children }: Sectio
 	const sectionHeadingStyle = useTemplateStyle("sectionHeading");
 	const sectionHeadingContainerStyle = useTemplateStyle("sectionHeadingContainer");
 	const sectionTitle = getResumeSectionTitle(data, sectionId, title);
-	const sectionHeadingEnabled = (() => {
-		if (sectionId === "summary") return data.summary.showHeading !== false;
-		if (sectionId in data.sections) return data.sections[sectionId as SectionType].showHeading !== false;
-		return data.customSections.find((section) => section.id === sectionId)?.showHeading !== false;
-	})();
+	const section = findSection(data, sectionId);
+	const sectionHeadingEnabled = section?.showHeading !== false;
 	const sectionHeadingNodeKey = semanticNodeKeys.sectionHeading(sectionNodeKey);
 	const sectionHeadingResolved = useResolvedNode(sectionHeadingNodeKey);
 	const sectionHeadingVisible = useSemanticNodeVisible(sectionHeadingNodeKey);
@@ -362,15 +332,14 @@ const SectionShell = ({ sectionId, title, showHeading = true, children }: Sectio
 	const titleLineBox =
 		(parseStyleFontSize(titleFontSize) ?? data.metadata.typography.heading.fontSize) *
 		(typeof titleLineHeight === "number" ? titleLineHeight : data.metadata.typography.heading.lineHeight);
-	const { keepTogether, startOnNewPage } = getSectionBreaks(data, sectionId);
 	// wrap={false} keeps the whole section on one page; break forces it onto a fresh page.
 	// Only set the props when enabled so we never pass undefined (exactOptionalPropertyTypes).
 	const breakProps: { wrap?: false; break?: true } = {};
 	// ponytail: react-pdf ceiling — wrap={false} keeps a section together only if it fits on
 	// one page; a section taller than a full page is clipped, not split. No upgrade path in
 	// react-pdf, so the layout UI warns users this only works for sections that fit one page.
-	if (keepTogether) breakProps.wrap = false;
-	if (startOnNewPage) breakProps.break = true;
+	if (section?.keepTogether) breakProps.wrap = false;
+	if (section?.startOnNewPage) breakProps.break = true;
 	const flowProps = { ...breakProps, ...resolvedPdfFlowProps(resolved) };
 	const resolvedSectionStyle = composeStyles(sectionStyle, resolved.style);
 	if (!visible) return null;
@@ -1162,40 +1131,71 @@ const EducationSection = ({ sectionId = "education", sectionData }: ItemSectionP
 	);
 };
 
-const ProjectsSection = ({ sectionId = "projects", sectionData }: ItemSectionProps<ProjectItem> = {}) => {
+type DatedItemSectionProps = {
+	sectionId: string;
+	sectionData: ItemSection<ProjectItem | CertificationItem | PublicationItem> | undefined;
+	sectionType: "projects" | "certifications" | "publications";
+	titleField: string;
+	dateField: string;
+	subtitleField?: string;
+};
+
+// Projects, certifications and publications: a title and date row, an optional subtitle, a description and a link.
+const DatedItemSection = ({
+	sectionId,
+	sectionData,
+	sectionType,
+	titleField,
+	dateField,
+	subtitleField,
+}: DatedItemSectionProps) => {
 	const data = useRender();
-	const projects = sectionData ?? data.sections.projects;
-	const items = getVisibleItems(projects, "projects");
+	const section = sectionData ?? data.sections[sectionType];
+	const items = getVisibleItems<ProjectItem | CertificationItem | PublicationItem>(section, sectionType);
 	const splitRowStyle = useSectionSplitRowStyle();
 	const alignEndStyle = useTemplateStyle("alignEnd");
 
 	if (items.length === 0) return null;
 
 	return (
-		<SectionShell sectionId={sectionId} title={projects.title}>
-			<SectionItems columns={projects.columns}>
-				{items.map((item) => (
-					<SectionItem key={item.id} itemId={item.id}>
-						<SectionItemHeader>
-							<ItemHeaderRow style={composeStyles(splitRowStyle)}>
-								<ItemTitle field="name" website={item.website}>
-									{item.name}
-								</ItemTitle>
-								<Text semanticField="period" style={composeStyles(alignEndStyle)}>
-									{item.period}
-								</Text>
-							</ItemHeaderRow>
-						</SectionItemHeader>
+		<SectionShell sectionId={sectionId} title={section.title}>
+			<SectionItems columns={section.columns}>
+				{items.map((item) => {
+					const fields = item as unknown as Record<string, string>;
+					return (
+						<SectionItem key={item.id} itemId={item.id}>
+							<SectionItemHeader>
+								<ItemHeaderRow style={composeStyles(splitRowStyle)}>
+									<ItemTitle field={titleField} website={item.website}>
+										{fields[titleField]}
+									</ItemTitle>
+									<Text semanticField={dateField} style={composeStyles(alignEndStyle)}>
+										{fields[dateField]}
+									</Text>
+								</ItemHeaderRow>
+								{subtitleField && <Text semanticField={subtitleField}>{fields[subtitleField]}</Text>}
+							</SectionItemHeader>
 
-						<RichText semanticField="description">{item.description}</RichText>
+							<RichText semanticField="description">{item.description}</RichText>
 
-						<ItemWebsiteLink website={item.website} />
-					</SectionItem>
-				))}
+							<ItemWebsiteLink website={item.website} />
+						</SectionItem>
+					);
+				})}
 			</SectionItems>
 		</SectionShell>
 	);
 };
+
+const ProjectsSection = ({ sectionId = "projects", sectionData }: ItemSectionProps<ProjectItem> = {}) => (
+	<DatedItemSection
+		sectionId={sectionId}
+		sectionData={sectionData}
+		sectionType="projects"
+		titleField="name"
+		dateField="period"
+	/>
+);
 
 const inlineSkillsItemStyle = {
 	flexDirection: "row",
@@ -1353,78 +1353,27 @@ const AwardsSection = ({ sectionId = "awards", sectionData }: ItemSectionProps<A
 const CertificationsSection = ({
 	sectionId = "certifications",
 	sectionData,
-}: ItemSectionProps<CertificationItem> = {}) => {
-	const data = useRender();
-	const certifications = sectionData ?? data.sections.certifications;
-	const items = getVisibleItems(certifications, "certifications");
-	const splitRowStyle = useSectionSplitRowStyle();
-	const alignEndStyle = useTemplateStyle("alignEnd");
+}: ItemSectionProps<CertificationItem> = {}) => (
+	<DatedItemSection
+		sectionId={sectionId}
+		sectionData={sectionData}
+		sectionType="certifications"
+		titleField="title"
+		dateField="date"
+		subtitleField="issuer"
+	/>
+);
 
-	if (items.length === 0) return null;
-
-	return (
-		<SectionShell sectionId={sectionId} title={certifications.title}>
-			<SectionItems columns={certifications.columns}>
-				{items.map((item) => (
-					<SectionItem key={item.id} itemId={item.id}>
-						<SectionItemHeader>
-							<ItemHeaderRow style={composeStyles(splitRowStyle)}>
-								<ItemTitle field="title" website={item.website}>
-									{item.title}
-								</ItemTitle>
-								<Text semanticField="date" style={composeStyles(alignEndStyle)}>
-									{item.date}
-								</Text>
-							</ItemHeaderRow>
-							<Text semanticField="issuer">{item.issuer}</Text>
-						</SectionItemHeader>
-
-						<RichText semanticField="description">{item.description}</RichText>
-
-						<ItemWebsiteLink website={item.website} />
-					</SectionItem>
-				))}
-			</SectionItems>
-		</SectionShell>
-	);
-};
-
-const PublicationsSection = ({ sectionId = "publications", sectionData }: ItemSectionProps<PublicationItem> = {}) => {
-	const data = useRender();
-	const publications = sectionData ?? data.sections.publications;
-	const items = getVisibleItems(publications, "publications");
-	const splitRowStyle = useSectionSplitRowStyle();
-	const alignEndStyle = useTemplateStyle("alignEnd");
-
-	if (items.length === 0) return null;
-
-	return (
-		<SectionShell sectionId={sectionId} title={publications.title}>
-			<SectionItems columns={publications.columns}>
-				{items.map((item) => (
-					<SectionItem key={item.id} itemId={item.id}>
-						<SectionItemHeader>
-							<ItemHeaderRow style={composeStyles(splitRowStyle)}>
-								<ItemTitle field="title" website={item.website}>
-									{item.title}
-								</ItemTitle>
-								<Text semanticField="date" style={composeStyles(alignEndStyle)}>
-									{item.date}
-								</Text>
-							</ItemHeaderRow>
-
-							<Text semanticField="publisher">{item.publisher}</Text>
-						</SectionItemHeader>
-
-						<RichText semanticField="description">{item.description}</RichText>
-
-						<ItemWebsiteLink website={item.website} />
-					</SectionItem>
-				))}
-			</SectionItems>
-		</SectionShell>
-	);
-};
+const PublicationsSection = ({ sectionId = "publications", sectionData }: ItemSectionProps<PublicationItem> = {}) => (
+	<DatedItemSection
+		sectionId={sectionId}
+		sectionData={sectionData}
+		sectionType="publications"
+		titleField="title"
+		dateField="date"
+		subtitleField="publisher"
+	/>
+);
 
 const VolunteerSection = ({ sectionId = "volunteer", sectionData }: ItemSectionProps<VolunteerItem> = {}) => {
 	const data = useRender();
@@ -1535,85 +1484,49 @@ const CoverLetterSection = ({ section }: CoverLetterSectionProps) => {
 	);
 };
 
-const CustomSection = ({ sectionId, showHeading = true }: CustomSectionProps) => {
+export const Section = ({ section: sectionId, placement, showHeading = true }: SectionProps) => {
 	const data = useRender();
-	const customSection = data.customSections.find((section) => section.id === sectionId);
 
-	if (!customSection) return null;
+	if (!isSectionVisible(sectionId, data)) return null;
 
+	// A custom section renders from its own record; a built-in one falls back to data.sections[id].
+	const custom = data.customSections.find((section) => section.id === sectionId);
 	// ponytail: satisfies Record<CustomSectionType,...> gives compile-time exhaustiveness without ts-pattern
-	const customSectionMap = {
-		summary: () => (
-			<CustomSummarySection section={customSection as CustomItemSection<SummaryItem>} showHeading={showHeading} />
-		),
-		profiles: () => (
-			<ProfileSection sectionId={sectionId} sectionData={customSection as CustomItemSection<ProfileItem>} />
-		),
+	const sectionMap = {
+		summary: () =>
+			custom ? (
+				<CustomSummarySection section={custom as CustomItemSection<SummaryItem>} showHeading={showHeading} />
+			) : (
+				<SummarySection showHeading={showHeading} />
+			),
+		profiles: () => <ProfileSection sectionId={sectionId} sectionData={custom as CustomItemSection<ProfileItem>} />,
 		experience: () => (
-			<ExperienceSection sectionId={sectionId} sectionData={customSection as CustomItemSection<ExperienceItem>} />
+			<ExperienceSection sectionId={sectionId} sectionData={custom as CustomItemSection<ExperienceItem>} />
 		),
 		education: () => (
-			<EducationSection sectionId={sectionId} sectionData={customSection as CustomItemSection<EducationItem>} />
+			<EducationSection sectionId={sectionId} sectionData={custom as CustomItemSection<EducationItem>} />
 		),
-		projects: () => (
-			<ProjectsSection sectionId={sectionId} sectionData={customSection as CustomItemSection<ProjectItem>} />
-		),
-		skills: () => <SkillsSection sectionId={sectionId} sectionData={customSection as CustomItemSection<SkillItem>} />,
-		languages: () => (
-			<LanguagesSection sectionId={sectionId} sectionData={customSection as CustomItemSection<LanguageItem>} />
-		),
-		interests: () => (
-			<InterestsSection sectionId={sectionId} sectionData={customSection as CustomItemSection<InterestItem>} />
-		),
-		awards: () => <AwardsSection sectionId={sectionId} sectionData={customSection as CustomItemSection<AwardItem>} />,
+		projects: () => <ProjectsSection sectionId={sectionId} sectionData={custom as CustomItemSection<ProjectItem>} />,
+		skills: () => <SkillsSection sectionId={sectionId} sectionData={custom as CustomItemSection<SkillItem>} />,
+		languages: () => <LanguagesSection sectionId={sectionId} sectionData={custom as CustomItemSection<LanguageItem>} />,
+		interests: () => <InterestsSection sectionId={sectionId} sectionData={custom as CustomItemSection<InterestItem>} />,
+		awards: () => <AwardsSection sectionId={sectionId} sectionData={custom as CustomItemSection<AwardItem>} />,
 		certifications: () => (
-			<CertificationsSection
-				sectionId={sectionId}
-				sectionData={customSection as CustomItemSection<CertificationItem>}
-			/>
+			<CertificationsSection sectionId={sectionId} sectionData={custom as CustomItemSection<CertificationItem>} />
 		),
 		publications: () => (
-			<PublicationsSection sectionId={sectionId} sectionData={customSection as CustomItemSection<PublicationItem>} />
+			<PublicationsSection sectionId={sectionId} sectionData={custom as CustomItemSection<PublicationItem>} />
 		),
 		volunteer: () => (
-			<VolunteerSection sectionId={sectionId} sectionData={customSection as CustomItemSection<VolunteerItem>} />
+			<VolunteerSection sectionId={sectionId} sectionData={custom as CustomItemSection<VolunteerItem>} />
 		),
 		references: () => (
-			<ReferencesSection sectionId={sectionId} sectionData={customSection as CustomItemSection<ReferenceItem>} />
+			<ReferencesSection sectionId={sectionId} sectionData={custom as CustomItemSection<ReferenceItem>} />
 		),
-		"cover-letter": () => <CoverLetterSection section={customSection as CustomItemSection<CoverLetterItem>} />,
+		"cover-letter": () => custom && <CoverLetterSection section={custom as CustomItemSection<CoverLetterItem>} />,
 	} satisfies Record<CustomSectionType, () => ReactNode>;
 
-	return customSectionMap[customSection.type]();
-};
+	const render = (sectionMap as Record<string, (() => ReactNode) | undefined>)[custom?.type ?? sectionId];
 
-export const Section = ({ section, placement, showHeading = true }: SectionProps) => {
-	const data = useRender();
-
-	if (!isSectionVisible(section, data)) return null;
-
-	// ponytail: satisfies exhaustiveness over built-in types; custom IDs fall through to CustomSection
-	const builtInSectionMap = {
-		summary: () => <SummarySection showHeading={showHeading} />,
-		profiles: () => <ProfileSection />,
-		experience: () => <ExperienceSection />,
-		education: () => <EducationSection />,
-		projects: () => <ProjectsSection />,
-		skills: () => <SkillsSection />,
-		languages: () => <LanguagesSection />,
-		interests: () => <InterestsSection />,
-		awards: () => <AwardsSection />,
-		certifications: () => <CertificationsSection />,
-		publications: () => <PublicationsSection />,
-		volunteer: () => <VolunteerSection />,
-		references: () => <ReferencesSection />,
-	} satisfies Record<Exclude<CustomSectionType, "cover-letter">, () => ReactNode>;
-
-	const render = (builtInSectionMap as Record<string, (() => ReactNode) | undefined>)[section];
-
-	return (
-		<TemplatePlacementProvider placement={placement}>
-			{render ? render() : <CustomSection sectionId={section} showHeading={showHeading} />}
-		</TemplatePlacementProvider>
-	);
+	return <TemplatePlacementProvider placement={placement}>{render?.()}</TemplatePlacementProvider>;
 };

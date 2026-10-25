@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { applicationsListQueryKey } from "./queries";
 import { getStageLabel } from "./stages";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
 /** Refreshes everything that shows applications: the list, the open one, stats, tags and documents' job lines. */
@@ -20,12 +20,6 @@ export function useInvalidateApplications() {
 		if (id) void queryClient.invalidateQueries({ queryKey: orpc.applications.getById.queryKey({ input: { id } }) });
 	};
 }
-
-const failed = (error: unknown) =>
-	toast.add({
-		type: "error",
-		description: getOrpcErrorMessage(error, { fallback: t`Something went wrong. Try again.` }),
-	});
 
 /**
  * Stage changes, closing and deleting, shared by the list, board and detail sheet. A move shows at once (the list
@@ -57,7 +51,16 @@ export function useApplicationActions() {
 		},
 		onError: (error, _input, context) => {
 			if (context?.previous) queryClient.setQueryData(listKey, context.previous);
-			failed(error);
+			toastError(error, t`Couldn't update the application. Try again.`);
+		},
+		// Toasts live on the mutation, not on mutate(): a board card's menu unmounts when the card changes column, and
+		// mutate()'s own callbacks die with it.
+		onSuccess: (_data, input) => {
+			const status = input.status as ApplicationStatus | undefined;
+			if (!status) return;
+			toast.add({
+				description: status === "closed" ? t`Application closed` : t`Moved to ${getStageLabel(status)}`,
+			});
 		},
 		onSettled: (_data, _error, input) => invalidate(input.id),
 	});
@@ -68,21 +71,15 @@ export function useApplicationActions() {
 			invalidate(input.id);
 			toast.add({ description: t`Application deleted` });
 		},
-		onError: failed,
+		onError: (error) => toastError(error, t`Couldn't delete the application. Try again.`),
 	});
 
 	return {
 		update,
 		remove,
 		moveTo: (application: Pick<Application, "id">, status: ApplicationStatus) =>
-			update.mutate(
-				{ id: application.id, status },
-				{ onSuccess: () => toast.add({ description: t`Moved to ${getStageLabel(status)}` }) },
-			),
+			update.mutate({ id: application.id, status }),
 		close: (application: Pick<Application, "id">, closedReason: ApplicationClosedReason) =>
-			update.mutate(
-				{ id: application.id, status: "closed", closedReason },
-				{ onSuccess: () => toast.add({ description: t`Application closed` }) },
-			),
+			update.mutate({ id: application.id, status: "closed", closedReason }),
 	};
 }

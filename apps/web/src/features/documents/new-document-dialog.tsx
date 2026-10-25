@@ -1,8 +1,8 @@
 import type { ImportKind } from "@/features/resume/import/read-file";
 import type { CSSProperties, Dispatch, SetStateAction } from "react";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
@@ -12,15 +12,16 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { generateRandomName } from "@reactive-resume/utils/string";
+import { formatFileSize } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
 import { useNewDocumentsStore } from "./new-documents";
+import { useStartDocument } from "./use-start-document";
 import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { detectImportKind, ImportError, readResumeFile, summarizeImport } from "@/features/resume/import/read-file";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
 import { formatRelativeTime } from "@/libs/locale";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
@@ -46,9 +47,6 @@ type Step =
 type OpenResumeOptions = { withAssistant?: boolean; importedFrom?: string };
 
 const ACCEPT = ".pdf,.docx,.json,.zip,application/pdf,application/json,application/zip";
-
-const formatSize = (bytes: number) =>
-	bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 
 function requireImportKind(kind: ImportKind | null): ImportKind {
 	if (!kind) {
@@ -118,7 +116,7 @@ function useResumeImport(
 			if (!current()) return;
 			const summary = summarizeImport(resume);
 			advance(1, t`file read`);
-			advance(2, t`${summary.sections} sections`);
+			advance(2, plural(summary.sections, { one: "# section", other: "# sections" }));
 
 			const resumeId = await client.resume.import({ data: resume });
 			if (!current()) return;
@@ -137,7 +135,7 @@ function useResumeImport(
 								BAD_REQUEST: t`The file couldn't be read as a resume.`,
 								BAD_GATEWAY: t`Couldn't reach the AI provider. Try again in a moment.`,
 							},
-							fallback: t`Something went wrong while importing. Try again, or start blank.`,
+							fallback: t`Couldn't import the file. Try again, or start blank.`,
 						});
 			setStep({ name: "failed", file, message });
 		}
@@ -197,7 +195,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 	const chooseFile = () => inputRef.current?.click();
 
 	return (
-		<DialogContent className="sm:max-w-[640px]">
+		<DialogContent closeLabel={t`Close`} className="sm:max-w-[640px]">
 			<AiProviderLoadState state={providerState} />
 			<input
 				ref={inputRef}
@@ -258,7 +256,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 						}}
 						className="flex items-start gap-4 rounded-xl border-[1.5px] border-dashed border-line-2 p-5 text-start transition-[background-color,border-color,scale] duration-quick ease-enter hover:border-accent hover:bg-accent-soft active:scale-[0.98]"
 					>
-						<span className="grid size-11 shrink-0 place-items-center rounded-[10px] bg-sunken text-ink-2">
+						<span className="grid size-11 shrink-0 place-items-center rounded-lg bg-sunken text-ink-2">
 							<Icon name="file-arrow-up" size={24} />
 						</span>
 						<span className="grid gap-1">
@@ -326,6 +324,7 @@ type ImportStepProps = {
 
 /** The import's progress, then its outcome: found counts with Open in editor, or the error with a way forward. */
 function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onClose, onOpen }: ImportStepProps) {
+	const { i18n } = useLingui();
 	return (
 		<div className={cn(ENTER_CLASS, "grid gap-4")}>
 			<DialogHeader>
@@ -339,11 +338,11 @@ function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onCl
 					)}
 				</DialogTitle>
 			</DialogHeader>
-			<div className="flex items-center gap-3 rounded-[10px] border border-line p-3">
+			<div className="flex items-center gap-3 rounded-lg border border-line p-3">
 				<Icon name={step.file.name.toLowerCase().endsWith(".pdf") ? "file-pdf" : "file-text"} className="text-ink-2" />
 				<span className="grid min-w-0 flex-1">
 					<span className="truncate text-sm font-medium">{step.file.name}</span>
-					<span className="text-xs text-ink-3">{formatSize(step.file.size)}</span>
+					<span className="text-xs text-ink-3">{formatFileSize(step.file.size, i18n.locale)}</span>
 				</span>
 				{step.name === "importing" && (
 					<Button variant="ghost" size="sm" onClick={onCancel}>
@@ -358,7 +357,11 @@ function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onCl
 					stage={step.name === "imported" ? 3 : step.stage}
 					notes={
 						step.name === "imported"
-							? [t`file read`, t`${step.sections} sections`, t`${step.entries} entries`]
+							? [
+									t`file read`,
+									plural(step.sections, { one: "# section", other: "# sections" }),
+									plural(step.entries, { one: "# entry", other: "# entries" }),
+								]
 							: step.notes
 					}
 				/>
@@ -370,7 +373,7 @@ function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onCl
 						role="alert"
 						className={cn(
 							ENTER_CLASS,
-							"flex gap-2.5 rounded-[10px] bg-danger-soft p-3 text-[13px] leading-[19px] text-danger-text",
+							"flex gap-2.5 rounded-lg bg-danger-soft p-3 text-[13px] leading-[19px] text-danger-text",
 						)}
 					>
 						<Icon name="warning-circle" size={20} />
@@ -397,9 +400,16 @@ function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onCl
 						/>
 						<span>
 							<Trans>
-								{step.sections} sections and {step.entries} entries found.
+								Found <Plural value={step.sections} one="# section" other="# sections" /> and{" "}
+								<Plural value={step.entries} one="# entry" other="# entries" />.
 							</Trans>{" "}
-							{step.flagged > 0 && <Trans>{step.flagged} fields are flagged for a quick look in the editor.</Trans>}
+							{step.flagged > 0 && (
+								<Plural
+									value={step.flagged}
+									one="# field is flagged for a quick look in the editor."
+									other="# fields are flagged for a quick look in the editor."
+								/>
+							)}
 						</span>
 					</p>
 					<div className={cn(ENTER_CLASS, "flex flex-wrap justify-end gap-2")}>
@@ -414,77 +424,6 @@ function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onCl
 			)}
 		</div>
 	);
-}
-
-/** Start blank, try a sample, or a new letter: each creates the document at once and opens it. */
-export function useStartDocument(applicationId?: string) {
-	const navigate = useNavigate();
-	const queryClient = useQueryClient();
-	const closeDialog = useDialogStore((state) => state.closeDialog);
-	const markNew = useNewDocumentsStore((state) => state.markNew);
-	const { mutateAsync: createResume, isPending: creating } = useMutation(orpc.resume.create.mutationOptions());
-	const { mutateAsync: createLetter } = useMutation(orpc.coverLetters.create.mutationOptions());
-
-	const created = async (id: string, type: "resume" | "letter") => {
-		if (applicationId) await client.documents.linkApplication({ type, id, applicationId });
-		markNew(id);
-		void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
-		if (applicationId) void queryClient.invalidateQueries({ queryKey: orpc.applications.key() });
-		closeDialog();
-	};
-	const failed = (error: unknown) =>
-		toast.add({
-			type: "error",
-			description: getOrpcErrorMessage(error, { fallback: t`Couldn't create the document.` }),
-		});
-
-	return {
-		creating,
-		startBlank: async () => {
-			try {
-				const resumeId = await createResume({
-					name: t`Untitled resume`,
-					tags: [],
-					autoName: true,
-					withSampleData: false,
-				});
-				await created(resumeId, "resume");
-				void navigate({ to: "/builder/$resumeId", params: { resumeId } });
-			} catch (error) {
-				failed(error);
-			}
-		},
-		trySample: async () => {
-			try {
-				const resumeId = await createResume({ name: generateRandomName(), tags: [], withSampleData: true });
-				await created(resumeId, "resume");
-				toast.add({ description: t`Sample resume added. Delete it anytime.` });
-				void navigate({ to: "/builder/$resumeId", params: { resumeId } });
-			} catch (error) {
-				failed(error);
-			}
-		},
-		newLetter: async () => {
-			// A new letter takes its sender details and design from the resume edited most recently.
-			const documents = queryClient.getQueryData(orpc.documents.list.queryKey({ input: { trashed: false } }));
-			const resume = documents
-				?.filter((document) => document.type === "resume")
-				.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())[0];
-			const input = {
-				name: t`Untitled letter`,
-				recipient: "",
-				content: "",
-				...(resume ? { resumeId: resume.id } : {}),
-			};
-			try {
-				const letter = await createLetter(input);
-				await created(letter.id, "letter");
-				void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: letter.id } });
-			} catch (error) {
-				failed(error);
-			}
-		},
-	};
 }
 
 type ChoiceTileProps = {
@@ -546,7 +485,7 @@ function ImportProgress({ stage, notes }: { stage: number; notes: string[] }) {
 				aria-valuemin={0}
 				aria-valuemax={3}
 				aria-valuenow={stage}
-				className="h-1 overflow-hidden rounded-full bg-sunken"
+				className="h-1 overflow-hidden rounded-sm bg-sunken"
 			>
 				<div
 					className="h-full translate-x-(--fill) bg-accent transition-[translate] duration-standard ease-enter rtl:-translate-x-(--fill)"
@@ -597,7 +536,7 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 			toast.add({ description: message });
 			onCreated(resumeId, Boolean(job));
 		} catch (error) {
-			toast.add({ type: "error", description: getOrpcErrorMessage(error, { fallback: t`Couldn't copy the resume.` }) });
+			toastError(error, t`Couldn't copy the resume. Try again.`);
 		}
 	};
 
@@ -625,7 +564,7 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 						<label
 							key={resume.id}
 							className={cn(
-								"relative flex cursor-pointer items-center gap-3 rounded-[10px] border px-3 py-2.5 transition-colors duration-quick",
+								"relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 transition-colors duration-quick",
 								resume.id === source?.id ? "border-accent bg-accent-soft" : "border-line hover:bg-hover",
 							)}
 						>
@@ -667,7 +606,7 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 								setName(null);
 							}}
 							className={cn(
-								"flex h-8 items-center gap-1.5 rounded-full border px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
+								"flex h-8 items-center gap-1.5 rounded-sm border px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
 								jobId === option.id
 									? "border-accent bg-accent-soft text-accent-text"
 									: "border-line-2 text-ink-2 hover:bg-hover",

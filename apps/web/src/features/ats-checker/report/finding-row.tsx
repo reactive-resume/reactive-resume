@@ -23,7 +23,7 @@ export function FindingRow({ finding }: FindingRowProps) {
 	return (
 		<li className="space-y-2 rounded-md border bg-surface p-3">
 			<div className="flex items-start gap-2">
-				<span className={cn("mt-1.5 size-2 shrink-0 rounded-full", severityDotClass(finding.severity))} aria-hidden />
+				<span className={cn("mt-1.5 size-2 shrink-0 rounded-sm", severityDotClass(finding.severity))} aria-hidden />
 
 				<div className="min-w-0 flex-1 space-y-1">
 					<p className="text-sm leading-snug font-medium">{message.title}</p>

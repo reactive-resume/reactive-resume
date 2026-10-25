@@ -172,11 +172,11 @@ export function ColorGroup({ data, write, disabled }: GroupProps) {
 	return (
 		<View style={{ gap: space.s3 }}>
 			<Text variant="callout" style={{ fontFamily: fonts.ui[600] }}>
-				{t`Accent colour`}
+				{t`Accent color`}
 			</Text>
 			<View
 				accessibilityRole="radiogroup"
-				accessibilityLabel={t`Accent colour`}
+				accessibilityLabel={t`Accent color`}
 				style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", rowGap: space.s3 }}
 			>
 				{ACCENTS.map((hex) => {
@@ -195,7 +195,7 @@ export function ColorGroup({ data, write, disabled }: GroupProps) {
 							style={{
 								width: swatch,
 								height: swatch,
-								borderRadius: swatch / 2,
+								borderRadius: radius.rSm,
 								backgroundColor: hex,
 								alignItems: "center",
 								justifyContent: "center",
@@ -223,7 +223,7 @@ export function ColorGroup({ data, write, disabled }: GroupProps) {
 					}}
 				/>
 				<TextInput
-					accessibilityLabel={t`Custom colour (hex)`}
+					accessibilityLabel={t`Custom color (hex)`}
 					editable={!disabled}
 					value={hex}
 					autoCapitalize="characters"

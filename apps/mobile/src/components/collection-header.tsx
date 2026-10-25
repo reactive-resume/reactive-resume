@@ -58,7 +58,7 @@ export function CollectionHeader({
 						paddingStart: space.s3,
 						borderWidth: 1,
 						borderColor: colors.accent,
-						borderRadius: radius.rPill,
+						borderRadius: radius.rLg,
 						backgroundColor: colors.raised,
 					}}
 				>

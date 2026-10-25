@@ -90,7 +90,6 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 	const highlightTerm = useEditorStore((state) => state.highlightTerm);
 	const proposals = useEditorStore((state) => state.proposals);
 	const exportCheck = useEditorStore((state) => state.exportCheck);
-	const openExportReport = useEditorStore((state) => state.setExportReportOpen);
 	const breakpoint = useBreakpoint();
 	const page = pageMap?.pages[pageIndex];
 
@@ -99,11 +98,9 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 	if (!check || !pageMap || !page || page.width <= 0 || page.height <= 0) return null;
 
 	const pickIssue = (issue: CheckIssue) => {
-		const editor = useEditorStore.getState();
-		editor.setCheckIssue(issue.key);
-		editor.setCheckTab("issues");
+		useEditorStore.setState({ checkIssue: issue.key, checkTab: "issues" });
 		// Tablets: the drawer opens on the issue. Phones stay on the page, where the issue bar steps through them.
-		if (breakpoint === "tablet") editor.setDrawerOpen(true);
+		if (breakpoint === "tablet") useEditorStore.setState({ drawerOpen: true });
 		if (breakpoint !== "mobile") scrollToIssue(issue.key, "panel");
 	};
 
@@ -151,7 +148,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 				<div
 					key={`tint:${node.key}:${node.y}`}
 					aria-hidden="true"
-					className="absolute -m-[3px] rounded-[3px] bg-[#F2DE8C]/45 p-[3px] mix-blend-multiply"
+					className="absolute -m-[3px] rounded-md bg-[#F2DE8C]/45 p-[3px] mix-blend-multiply"
 					style={boxStyle(node, page)}
 				/>
 			))}
@@ -163,7 +160,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 						<div aria-hidden="true" className="absolute" style={boxStyle(node, page)}>
 							<div
 								className={cn(
-									"absolute -inset-x-1.5 -inset-y-[3px] rounded-[3px] outline-[1.5px] transition-[outline-color] duration-quick outline-solid",
+									"absolute -inset-x-1.5 -inset-y-[3px] rounded-md outline-[1.5px] transition-[outline-color] duration-quick outline-solid",
 									isSelected ? "outline-warn" : "outline-transparent",
 								)}
 							/>
@@ -177,7 +174,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 							onClick={() => pickIssue(issue)}
 							style={marginStyle(node, page, stack)}
 							className={cn(
-								"pointer-events-auto absolute grid size-[22px] place-items-center rounded-full border-2 border-white bg-warn text-[11px] font-bold text-[oklch(0.22_0.03_80)] shadow-[0_1px_3px_oklch(0_0_0/0.25)]",
+								"pointer-events-auto absolute grid size-[22px] place-items-center rounded-sm border-2 border-white bg-warn text-[11px] font-bold text-[oklch(0.22_0.03_80)] shadow-[0_1px_3px_oklch(0_0_0/0.25)]",
 								isSelected && "outline-2 outline-offset-1 outline-warn",
 							)}
 						>
@@ -191,7 +188,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 				<div key={key}>
 					<div
 						aria-hidden="true"
-						className="absolute -m-[3px] rounded-[3px] border-[1.5px] border-dashed border-info-text p-[3px]"
+						className="absolute -m-[3px] rounded-md border-[1.5px] border-dashed border-info-text p-[3px]"
 						style={boxStyle(box, page)}
 					/>
 					<button
@@ -199,9 +196,9 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 						data-export-pin={finding.code}
 						aria-label={t`Exported PDF: ${getPdfFindingMessage(finding.code).title}`}
 						title={getPdfFindingMessage(finding.code).title}
-						onClick={() => openExportReport(true)}
+						onClick={() => useEditorStore.setState({ exportReportOpen: true })}
 						style={marginStyle(box, page)}
-						className="pointer-events-auto absolute grid size-[22px] place-items-center rounded-full border-2 border-white bg-info-text text-bg shadow-[0_1px_3px_oklch(0_0_0/0.25)]"
+						className="pointer-events-auto absolute grid size-[22px] place-items-center rounded-sm border-2 border-white bg-info-text text-bg shadow-[0_1px_3px_oklch(0_0_0/0.25)]"
 					>
 						<Icon name="file-pdf" size={13} />
 					</button>
@@ -212,7 +209,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 				<span
 					key={`marker:${number}`}
 					aria-hidden="true"
-					className="absolute grid size-5 place-items-center rounded-full bg-accent text-[11px] font-bold text-on-accent"
+					className="absolute grid size-5 place-items-center rounded-sm bg-accent text-[11px] font-bold text-on-accent"
 					style={marginStyle(node, page)}
 				>
 					{number}
@@ -225,14 +222,13 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 /** "What a person sees / What a parser reads", floating over the canvas in Check. Switching is instant. */
 export function PageViewToggle() {
 	const view = useEditorStore((state) => state.pageView);
-	const setView = useEditorStore((state) => state.setPageView);
 	const options = [
 		{ value: "page", label: t`What a person sees`, icon: "file-text" },
 		{ value: "parser", label: t`What a parser reads`, icon: "brackets-curly" },
 	] as const;
 
 	return (
-		<fieldset className="absolute top-3.5 left-1/2 z-10 flex -translate-x-1/2 gap-0.5 rounded-[10px] border border-line bg-raised p-[3px] shadow-e1">
+		<fieldset className="absolute top-3.5 left-1/2 z-10 flex -translate-x-1/2 gap-0.5 rounded-lg border border-line bg-raised p-[3px] shadow-e1">
 			<legend className="sr-only">
 				<Trans>Page view</Trans>
 			</legend>
@@ -241,9 +237,9 @@ export function PageViewToggle() {
 					key={option.value}
 					type="button"
 					aria-pressed={view === option.value}
-					onClick={() => setView(option.value)}
+					onClick={() => useEditorStore.setState({ pageView: option.value })}
 					className={cn(
-						"flex h-[30px] items-center gap-1.5 rounded-[7px] px-3 text-[13px] font-medium whitespace-nowrap max-sm:px-2",
+						"flex h-[30px] items-center gap-1.5 rounded-lg px-3 text-[13px] font-medium whitespace-nowrap max-sm:px-2",
 						view === option.value ? "bg-ink text-bg" : "text-ink-2 hover:bg-hover",
 					)}
 				>
@@ -262,7 +258,6 @@ export function PageViewToggle() {
 export function IssueStepper() {
 	const check = useCheck();
 	const selected = useEditorStore((state) => state.checkIssue);
-	const setCheckIssue = useEditorStore((state) => state.setCheckIssue);
 	const { fix } = useCheckActions();
 
 	const issues = check?.issues ?? [];
@@ -273,7 +268,7 @@ export function IssueStepper() {
 	const go = (step: number) => {
 		const next = issues[(index + step + issues.length) % issues.length];
 		if (!next) return;
-		setCheckIssue(next.key);
+		useEditorStore.setState({ checkIssue: next.key });
 		scrollToIssue(next.key, "page");
 	};
 
@@ -283,7 +278,7 @@ export function IssueStepper() {
 				<button
 					type="button"
 					aria-label={t`Close`}
-					onClick={() => setCheckIssue(null)}
+					onClick={() => useEditorStore.setState({ checkIssue: null })}
 					className="grid size-9 place-items-center rounded-lg"
 				>
 					<Icon name="x" size={20} />

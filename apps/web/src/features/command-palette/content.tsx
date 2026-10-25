@@ -74,9 +74,7 @@ export default function CommandPaletteContent() {
 		<Dialog open={open} onOpenChange={handleOpenChange}>
 			<DialogHeader className="sr-only print:hidden">
 				<DialogTitle>
-					<Trans comment="Screen-reader dialog title for the command palette in the resume builder">
-						Builder Command Palette
-					</Trans>
+					<Trans comment="Screen-reader dialog title for the command palette">Command palette</Trans>
 				</DialogTitle>
 				<DialogDescription>
 					<Trans comment="Screen-reader dialog description instructing users how to use the command palette">
@@ -92,11 +90,11 @@ export default function CommandPaletteContent() {
 					isFirstPage
 						? t({
 								comment: "Accessible label for the command palette dialog",
-								message: "Command Palette",
+								message: "Command palette",
 							})
 						: t({
 								comment: "Accessible label for command palette dialog when browsing a nested command page",
-								message: `Command Palette - ${currentPage}`,
+								message: `Command palette: ${currentPage}`,
 							})
 				}
 			>
@@ -107,7 +105,7 @@ export default function CommandPaletteContent() {
 					onValueChange={setSelectedValue}
 					aria-label={t({
 						comment: "Accessible label for command list region inside command palette",
-						message: "Command Palette",
+						message: "Command palette",
 					})}
 					className="[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5 **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-ink-3 **:[[cmdk-group]]:px-2 **:[[cmdk-input]]:h-12 **:[[cmdk-item]]:px-2 **:[[cmdk-item]]:py-3"
 				>

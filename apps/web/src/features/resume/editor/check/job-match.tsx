@@ -2,6 +2,7 @@ import type { JdTermMatch } from "@reactive-resume/resume/ats-pdf";
 import type { ResumeData, SkillItem } from "@reactive-resume/schema/resume/data";
 import type { CSSProperties } from "react";
 import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useMemo, useState } from "react";
@@ -13,6 +14,7 @@ import { Label } from "@reactive-resume/ui/components/label";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { formatList } from "@reactive-resume/utils/locale";
 import { generateId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
@@ -20,7 +22,7 @@ import { checkStateOf, editWithUndo } from "./actions";
 import { applicationsListQueryKey, applicationsListQueryOptions } from "@/features/applications/queries";
 import { openAssistantFrom } from "@/features/assistant/open";
 import { useCurrentBuilderResumeSelector, useIsResumeLocked, usePatchResume } from "@/features/resume/builder/draft";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 
@@ -98,8 +100,9 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 	const { application, posting, result, hiddenTerms } = match;
 	const [openTerm, setOpenTerm] = useState<string | null>(null);
 	const highlightTerm = useEditorStore((state) => state.highlightTerm);
-	const setHighlightTerm = useEditorStore((state) => state.setHighlightTerm);
 	const locked = useIsResumeLocked();
+	const { i18n } = useLingui();
+	const hiddenList = formatList(i18n.locale, hiddenTerms);
 
 	if (!posting) return <NoPosting application={application} />;
 
@@ -114,7 +117,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 			t`“${written}” added to Skills`,
 		);
 		setOpenTerm(null);
-		setHighlightTerm(term.term);
+		useEditorStore.setState({ highlightTerm: term.term });
 	};
 
 	const hideTerm = (term: MatchedTerm) => {
@@ -159,10 +162,10 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 							aria-valuemin={0}
 							aria-valuemax={result.total}
 							aria-valuenow={result.found.length}
-							className="h-1.5 overflow-hidden rounded-full bg-sunken"
+							className="h-1.5 overflow-hidden rounded-sm bg-sunken"
 						>
 							<div
-								className="h-full translate-x-(--fill) rounded-full bg-accent transition-[translate] duration-standard ease-enter rtl:-translate-x-(--fill)"
+								className="h-full translate-x-(--fill) rounded-sm bg-accent transition-[translate] duration-standard ease-enter rtl:-translate-x-(--fill)"
 								style={{ "--fill": `${(result.found.length / result.total) * 100 - 100}%` } as CSSProperties}
 							/>
 						</div>
@@ -170,7 +173,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 
 					{result.missing.length > 0 && (
 						<section aria-labelledby="match-missing" className="grid gap-2">
-							<h3 id="match-missing" className="text-xs font-semibold text-ink-3 uppercase">
+							<h3 id="match-missing" className="text-xs font-semibold text-ink-3">
 								<Trans>Not in your resume · add only if true</Trans>
 							</h3>
 							<div className="flex flex-wrap gap-1.5">
@@ -181,7 +184,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 										aria-expanded={openTerm === term.term}
 										onClick={() => setOpenTerm(openTerm === term.term ? null : term.term)}
 										className={cn(
-											"flex h-[30px] items-center gap-1 rounded-[7px] border border-dashed px-2.5 text-[13px] font-medium transition-colors duration-quick",
+											"flex h-[30px] items-center gap-1 rounded-lg border border-dashed px-2.5 text-[13px] font-medium transition-colors duration-quick",
 											openTerm === term.term ? "border-accent bg-accent-soft" : "border-line-2 hover:bg-hover",
 										)}
 									>
@@ -225,7 +228,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 
 					{result.found.length > 0 && (
 						<section aria-labelledby="match-found" className="grid gap-2">
-							<h3 id="match-found" className="text-xs font-semibold text-ink-3 uppercase">
+							<h3 id="match-found" className="text-xs font-semibold text-ink-3">
 								<Trans>Already covered · pick one to find it on the page</Trans>
 							</h3>
 							<div className="flex flex-wrap gap-1.5">
@@ -236,7 +239,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 											key={term.term}
 											type="button"
 											aria-pressed={on}
-											onClick={() => setHighlightTerm(on ? null : term.term)}
+											onClick={() => useEditorStore.setState({ highlightTerm: on ? null : term.term })}
 											className={cn(
 												"flex h-7 items-center gap-1 rounded-md px-2 text-xs font-medium transition-colors duration-quick",
 												on ? "bg-[#F2DE8C] text-[oklch(0.3_0.05_80)]" : "bg-accent-soft text-accent-text",
@@ -255,7 +258,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 
 			{hiddenTerms.length > 0 && (
 				<p className="text-xs text-ink-3">
-					<Trans>Hidden: {hiddenTerms.join(", ")}</Trans> ·{" "}
+					<Trans>Hidden: {hiddenList}</Trans> ·{" "}
 					<button
 						type="button"
 						disabled={locked}
@@ -300,10 +303,7 @@ function useLinkApplication() {
 				resume.applicationId = applicationId;
 			});
 		} catch (error) {
-			toast.add({
-				type: "error",
-				description: getOrpcErrorMessage(error, { fallback: t`Couldn't link the application.` }),
-			});
+			toastError(error, t`Couldn't link the application. Try again.`);
 		}
 	};
 
@@ -313,14 +313,13 @@ function useLinkApplication() {
 /** Where the posting comes from, with Change (link another application or unlink) or Save as application. */
 function PostingSource({ application }: { application: JobMatch["application"] }) {
 	const [changing, setChanging] = useState(false);
-	const setPastedPosting = useEditorStore((state) => state.setPastedPosting);
 	const { link } = useLinkApplication();
 
 	if (!application) {
 		return (
-			<div className="grid gap-2 rounded-[10px] bg-bg p-3">
+			<div className="grid gap-2 rounded-lg bg-bg p-3">
 				<div className="flex items-center gap-2.5">
-					<span className="grid size-7 place-items-center rounded-[7px] bg-sunken text-ink-2">
+					<span className="grid size-7 place-items-center rounded-lg bg-sunken text-ink-2">
 						<Icon name="copy" size={16} />
 					</span>
 					<span className="grid min-w-0 flex-1">
@@ -331,7 +330,7 @@ function PostingSource({ application }: { application: JobMatch["application"] }
 							<Trans>For this visit only</Trans>
 						</span>
 					</span>
-					<Button size="sm" variant="secondary" onClick={() => setPastedPosting("")}>
+					<Button size="sm" variant="secondary" onClick={() => useEditorStore.setState({ pastedPosting: "" })}>
 						<Trans>Clear</Trans>
 					</Button>
 				</div>
@@ -341,9 +340,9 @@ function PostingSource({ application }: { application: JobMatch["application"] }
 	}
 
 	return (
-		<div className="grid gap-2 rounded-[10px] bg-bg p-3">
+		<div className="grid gap-2 rounded-lg bg-bg p-3">
 			<div className="flex items-center gap-2.5">
-				<span className="grid size-7 place-items-center rounded-[7px] bg-sunken text-[13px] font-semibold text-ink-2">
+				<span className="grid size-7 place-items-center rounded-lg bg-sunken text-[13px] font-semibold text-ink-2">
 					{application.company.slice(0, 1).toUpperCase()}
 				</span>
 				<span className="grid min-w-0 flex-1">
@@ -415,18 +414,13 @@ function ApplicationPicker({ value, onChange }: { value: string | null; onChange
  */
 function NoPosting({ application }: { application: JobMatch["application"] }) {
 	const pasted = useEditorStore((state) => state.pastedPosting);
-	const setPastedPosting = useEditorStore((state) => state.setPastedPosting);
 	const [draft, setDraft] = useState(pasted);
 	const { link, isPending } = useLinkApplication();
 	const queryClient = useQueryClient();
 	const { mutate: savePosting, isPending: saving } = useMutation({
 		...orpc.applications.update.mutationOptions(),
 		onSuccess: () => queryClient.invalidateQueries({ queryKey: applicationsListQueryKey() }),
-		onError: (error) =>
-			toast.add({
-				type: "error",
-				description: getOrpcErrorMessage(error, { fallback: t`Couldn't save the posting.` }),
-			}),
+		onError: (error) => toastError(error, t`Couldn't save the posting. Try again.`),
 	});
 
 	if (application) {
@@ -483,7 +477,12 @@ function NoPosting({ application }: { application: JobMatch["application"] }) {
 				placeholder={t`Paste a job posting…`}
 				onChange={(event) => setDraft(event.target.value)}
 			/>
-			<Button size="sm" className="w-fit" disabled={!draft.trim()} onClick={() => setPastedPosting(draft)}>
+			<Button
+				size="sm"
+				className="w-fit"
+				disabled={!draft.trim()}
+				onClick={() => useEditorStore.setState({ pastedPosting: draft })}
+			>
 				<Trans>Match this posting</Trans>
 			</Button>
 			<span className="text-xs leading-[17px] text-ink-3">
@@ -499,7 +498,6 @@ function SaveAsApplication() {
 	const [company, setCompany] = useState("");
 	const [role, setRole] = useState("");
 	const posting = useEditorStore((state) => state.pastedPosting);
-	const setPastedPosting = useEditorStore((state) => state.setPastedPosting);
 	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
 	const queryClient = useQueryClient();
 	const { link } = useLinkApplication();
@@ -525,13 +523,10 @@ function SaveAsApplication() {
 			});
 			await queryClient.invalidateQueries({ queryKey: applicationsListQueryKey() });
 			await link(id);
-			setPastedPosting("");
+			useEditorStore.setState({ pastedPosting: "" });
 			toast.add({ description: t`Saved as an application and linked` });
 		} catch (error) {
-			toast.add({
-				type: "error",
-				description: getOrpcErrorMessage(error, { fallback: t`Couldn't save the application.` }),
-			});
+			toastError(error, t`Couldn't save the application. Try again.`);
 		}
 	};
 

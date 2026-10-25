@@ -1,4 +1,3 @@
-import type { SectionTitleResolver } from "./section-title";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import type { ReactNode } from "react";
@@ -11,7 +10,6 @@ export type ResumeRenderOptions = {
 };
 
 type RenderContextValue = ResumeData & {
-	resolveSectionTitle?: SectionTitleResolver | undefined;
 	renderOptions: ResumeRenderOptions;
 	rtl: boolean;
 	/**
@@ -26,7 +24,6 @@ const defaultRenderOptions: ResumeRenderOptions = {};
 
 type RenderProviderProps = {
 	data: ResumeData;
-	resolveSectionTitle?: SectionTitleResolver | undefined;
 	renderOptions?: ResumeRenderOptions | undefined;
 	template?: Template | undefined;
 	children: ReactNode;
@@ -34,7 +31,6 @@ type RenderProviderProps = {
 
 export const RenderProvider = ({
 	data,
-	resolveSectionTitle,
 	renderOptions = defaultRenderOptions,
 	template,
 	children,
@@ -44,8 +40,8 @@ export const RenderProvider = ({
 	const ownSide = template ? templateLayouts[template].sidebarSide : null;
 	const columnsReversed = chosenSide && ownSide ? chosenSide !== ownSide : rtl;
 	const contextValue = useMemo<RenderContextValue>(
-		() => ({ ...data, resolveSectionTitle, renderOptions, rtl, columnsReversed }),
-		[data, resolveSectionTitle, renderOptions, rtl, columnsReversed],
+		() => ({ ...data, renderOptions, rtl, columnsReversed }),
+		[data, renderOptions, rtl, columnsReversed],
 	);
 
 	return <RenderContext.Provider value={contextValue}>{children}</RenderContext.Provider>;

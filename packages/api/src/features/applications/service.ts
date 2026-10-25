@@ -1,11 +1,10 @@
-import type { ApplicationDocumentKind } from "../../dto/application";
+import type { ApplicationDocumentKind, EditableFields } from "../../dto/application";
 import type { DbOrTx } from "@reactive-resume/db/client";
 import type {
 	AiMetadata,
 	ApplicationClosedReason,
 	ApplicationStatus,
 	ApplicationTimelineEntry,
-	Contact,
 	InterviewDetails,
 } from "@reactive-resume/schema/applications/data";
 import { ORPCError } from "@orpc/client";
@@ -20,6 +19,7 @@ import { requestRunCancellation } from "../agent/cancellation";
 import { prepareRunAt } from "../career/scheduling";
 import { coverLetterService } from "../cover-letters/service";
 import { writeLetterVersion } from "../cover-letters/versions";
+import { lockUser } from "../documents/ownership";
 import { resumeService } from "../resume/service";
 import { writeVersion } from "../resume/version-history";
 import { getStorageService, uploadFile } from "../storage/service";
@@ -30,7 +30,7 @@ function timelineDate(value: Date | string): Date {
 
 function atFromDateString(date: string, existing?: Date | string): Date {
 	const [year, month, day] = date.split("-").map(Number);
-	if (!year || !month || !day) throw new ORPCError("BAD_REQUEST", { message: "Date must use YYYY-MM-DD format." });
+	if (!year || !month || !day) throw new ORPCError("BAD_REQUEST", { message: "Enter the date as YYYY-MM-DD." });
 
 	const existingDate = existing ? timelineDate(existing) : undefined;
 
@@ -45,7 +45,7 @@ function atFromDateString(date: string, existing?: Date | string): Date {
 			existingDate?.getUTCMilliseconds() ?? 0,
 		),
 	);
-	if (timelineDay(parsed) !== date) throw new ORPCError("BAD_REQUEST", { message: "Date must use YYYY-MM-DD format." });
+	if (timelineDay(parsed) !== date) throw new ORPCError("BAD_REQUEST", { message: "Enter the date as YYYY-MM-DD." });
 
 	return parsed;
 }
@@ -60,7 +60,8 @@ function noteEntry(text: string, date?: string): ApplicationTimelineEntry {
 
 function interviewAt(value: string): Date {
 	const parsed = new Date(value);
-	if (Number.isNaN(parsed.getTime())) throw new ORPCError("BAD_REQUEST", { message: "Invalid interview date-time." });
+	if (Number.isNaN(parsed.getTime()))
+		throw new ORPCError("BAD_REQUEST", { message: "Enter a valid interview date and time." });
 	return parsed;
 }
 
@@ -83,13 +84,15 @@ function currentStageAnchor(activity: ApplicationTimelineEntry[], status: Applic
 function assertCurrentStageAnchorLatest(activity: ApplicationTimelineEntry[], status: ApplicationStatus) {
 	const anchor = currentStageAnchor(activity, status);
 	if (!anchor)
-		throw new ORPCError("BAD_REQUEST", { message: "Application timeline is missing its current stage entry." });
+		throw new ORPCError("BAD_REQUEST", {
+			message: "This application's timeline is missing its current stage. Reload the application and try again.",
+		});
 
 	const anchorDay = timelineDay(anchor.at);
 	const newerStage = activity.some((entry) => entry.type === "stage" && timelineDay(entry.at) > anchorDay);
 	if (newerStage) {
 		throw new ORPCError("BAD_REQUEST", {
-			message: "Current stage date cannot be older than another stage entry.",
+			message: "Choose a current stage date on or after the other stage dates.",
 		});
 	}
 }
@@ -101,33 +104,6 @@ function appliedAtFromTimeline(activity: ApplicationTimelineEntry[], fallback: D
 	return applied ? timelineDate(applied.at) : fallbackEntry ? timelineDate(fallbackEntry.at) : fallback;
 }
 
-// Editable fields shared by create/update. Kept explicit so Drizzle's typed insert/update
-// checks catch mistakes; `status`/`activity` are handled separately (auto-logging).
-// `| undefined` is explicit throughout because the DTO layer (zod `.partial()`) produces
-// `T | undefined` and the repo compiles with exactOptionalPropertyTypes.
-type EditableFields = {
-	company?: string | undefined;
-	role?: string | undefined;
-	location?: string | null | undefined;
-	salary?: string | null | undefined;
-	source?: string | null | undefined;
-	sourceUrl?: string | null | undefined;
-	jobDescription?: string | null | undefined;
-	postingSource?: import("@reactive-resume/schema/applications/data").PostingSource | null | undefined;
-	notes?: string | null | undefined;
-	resumeFileUrl?: string | null | undefined;
-	resumeFileName?: string | null | undefined;
-	coverLetterUrl?: string | null | undefined;
-	coverLetterName?: string | null | undefined;
-	followUpAt?: Date | null | undefined;
-	followUpNote?: string | null | undefined;
-	contacts?: Contact[] | undefined;
-	resumeId?: string | null | undefined;
-	coverLetterId?: string | null | undefined;
-	requirements?: string[] | undefined;
-	tags?: string[] | undefined;
-};
-
 // All reads/writes filter on userId — the single ownership guard every route funnels through.
 async function requireOwned(id: string, userId: string) {
 	const [row] = await db
@@ -136,16 +112,6 @@ async function requireOwned(id: string, userId: string) {
 		.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)));
 	if (!row) throw new ORPCError("NOT_FOUND");
 	return row;
-}
-
-/** Serialize snapshot writers without blocking foreign-key checks against this owner. */
-async function lockApplicationUser(client: DbOrTx, userId: string) {
-	const [owner] = await client
-		.select({ id: schema.user.id })
-		.from(schema.user)
-		.where(eq(schema.user.id, userId))
-		.for("no key update");
-	if (!owner) throw new ORPCError("NOT_FOUND");
 }
 
 async function assertOwnedResume(userId: string, resumeId: string | null | undefined) {
@@ -324,7 +290,7 @@ async function deleteApplicationCoaching(userId: string, applicationIds: string[
  * them and says so in Today. Either way, work already queued for the old time is canceled.
  */
 async function followInterviewSchedules(
-	tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
+	tx: DbOrTx,
 	userId: string,
 	applicationId: string,
 	interviewId: string,
@@ -413,7 +379,7 @@ async function withDocumentFiles<T>(
 			const file = files[fields.file];
 			if (!file) continue;
 			if (file.type !== "application/pdf") {
-				throw new ORPCError("BAD_REQUEST", { message: "Application documents must be PDF files." });
+				throw new ORPCError("BAD_REQUEST", { message: "Attach a PDF file." });
 			}
 			const uploaded = await uploadFile({
 				userId,
@@ -478,7 +444,7 @@ export const applicationService = {
 
 		return withDocumentFiles(userId, { resumeFile, coverLetterFile }, (uploadedFields) =>
 			db.transaction(async (tx) => {
-				await lockApplicationUser(tx, userId);
+				await lockUser(tx, userId);
 				const [row] = await tx
 					.insert(schema.application)
 					.values({
@@ -532,7 +498,7 @@ export const applicationService = {
 
 		// Rows imported as already sent keep what went out, as create does.
 		return db.transaction(async (tx) => {
-			await lockApplicationUser(tx, input.userId);
+			await lockUser(tx, input.userId);
 			const rows = await tx.insert(schema.application).values(values).returning();
 			for (const row of rows) await recordSentResume(row, tx);
 			return { imported: rows.length };
@@ -583,7 +549,7 @@ export const applicationService = {
 
 		return withDocumentFiles(userId, { resumeFile, coverLetterFile }, async (uploadedFields) => {
 			const result = await db.transaction(async (tx) => {
-				await lockApplicationUser(tx, userId);
+				await lockUser(tx, userId);
 				const [current] = await tx
 					.select()
 					.from(schema.application)
@@ -792,7 +758,7 @@ export const applicationService = {
 
 			const anchor = currentStageAnchor(existing.activity, existing.status);
 			if (entry.type === "stage" && anchor?.id === entry.id) {
-				throw new ORPCError("BAD_REQUEST", { message: "The current stage timeline entry cannot be deleted." });
+				throw new ORPCError("BAD_REQUEST", { message: "The current stage can't be deleted. Change the stage first." });
 			}
 
 			const activity = existing.activity.filter((item) => item.id !== input.entryId);
@@ -817,7 +783,7 @@ export const applicationService = {
 		const existing = await requireOwned(input.id, input.userId);
 		await deleteApplicationCoaching(input.userId, [input.id]);
 		const result = await db.transaction(async (tx) => {
-			await lockApplicationUser(tx, input.userId);
+			await lockUser(tx, input.userId);
 			return tx
 				.delete(schema.application)
 				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
@@ -864,7 +830,7 @@ export const applicationService = {
 				: undefined;
 
 		return db.transaction(async (tx) => {
-			await lockApplicationUser(tx, input.userId);
+			await lockUser(tx, input.userId);
 			const rows = await tx
 				.update(schema.application)
 				.set({
@@ -892,7 +858,7 @@ export const applicationService = {
 			existing.map((item) => item.id),
 		);
 		const rows = await db.transaction(async (tx) => {
-			await lockApplicationUser(tx, input.userId);
+			await lockUser(tx, input.userId);
 			return tx
 				.delete(schema.application)
 				.where(and(inArray(schema.application.id, input.ids), eq(schema.application.userId, input.userId)))

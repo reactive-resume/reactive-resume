@@ -114,7 +114,7 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 				}
 				setError(
 					action === "save"
-						? t`Could not confirm the save. Check Applications before retrying to avoid a duplicate.`
+						? t`Couldn't confirm the save. Check Applications before retrying to avoid a duplicate.`
 						: applicationError(cause),
 				);
 			}
@@ -287,7 +287,7 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 										tone="info"
 										message={
 											providers.error
-												? t`AI providers could not be loaded. Retry or fill the details manually.`
+												? t`AI providers couldn't be loaded. Retry or fill the details manually.`
 												: t`Connect an AI provider to read details from pasted text. Manual entry works without AI.`
 										}
 									/>
@@ -523,7 +523,7 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 				open={confirmSearchExit && !busy}
 				title={t`Discard changes?`}
 				message={t`Your unsaved job details will be discarded before opening web search settings.`}
-				confirmLabel={t`Discard`}
+				confirmLabel={t`Discard changes`}
 				cancelLabel={t`Keep editing`}
 				destructive
 				onConfirm={openSearchSettings}

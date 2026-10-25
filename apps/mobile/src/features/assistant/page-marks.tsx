@@ -28,7 +28,7 @@ export function ProposedEditsCaption({ resumeId, pending }: ProposedEditsCaption
 				paddingStart: space.s3,
 				paddingEnd: space.s1,
 				paddingVertical: space.s1,
-				borderRadius: radius.rXl,
+				borderRadius: radius.rLg,
 				backgroundColor: colors.accentSoft,
 			}}
 		>

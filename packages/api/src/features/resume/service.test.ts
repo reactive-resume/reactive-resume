@@ -87,21 +87,18 @@ const versionHistoryMock = vi.hoisted(() => ({
 }));
 vi.mock("./version-history", () => versionHistoryMock);
 const recordSlugChangeMock = vi.hoisted(() => vi.fn());
+// The lookup by username and slug; its query is tested against real SQL in public-pdf.test.ts.
+const findResumeBySlugMock = vi.hoisted(() => vi.fn());
 vi.mock("./slugs", () => ({
 	SLUG_PATTERN: /^[a-z0-9]+(-[a-z0-9]+)*$/,
 	checkSlug: vi.fn(),
 	findFreeSlug: vi.fn(async () => "generated-slug"),
-	matchesSlug: (slug: string) => ["slug", slug],
+	findResumeBySlug: findResumeBySlugMock,
 	recordSlugChange: recordSlugChangeMock,
 }));
 
 const { resumeService } = await import("./service");
 const { parseStoredResumeData } = await import("./resume-data-validation");
-
-// A lookup by username and slug: `select().from().innerJoin().where().orderBy().limit()` resolving to `rows`.
-const slugLookup = (rows: unknown[]) => ({
-	from: () => ({ innerJoin: () => ({ where: () => ({ orderBy: () => ({ limit: async () => rows }) }) }) }),
-});
 
 // A `db.update(...).set(...).where(...).returning(...)` chain that resolves to `rows`.
 const createUpdateChain = (rows: unknown[]) => {
@@ -182,6 +179,7 @@ beforeEach(() => {
 	versionHistoryMock.writeVersion.mockResolvedValue({ id: "v" });
 	versionHistoryMock.saveSessionVersion.mockResolvedValue(undefined);
 	recordSlugChangeMock.mockReset();
+	findResumeBySlugMock.mockReset();
 	publishResumeUpdatedMock.mockResolvedValue(undefined);
 });
 
@@ -419,7 +417,7 @@ describe("patch", () => {
 
 describe("verifyPassword", () => {
 	it("throws INVALID_PASSWORD when bcrypt.compare returns false", async () => {
-		dbMock.select.mockReturnValueOnce(slugLookup([{ id: "r1", password: "hash" }]));
+		findResumeBySlugMock.mockResolvedValueOnce({ id: "r1", password: "hash" });
 		compareMock.mockResolvedValueOnce(false);
 
 		await expect(
@@ -429,7 +427,6 @@ describe("verifyPassword", () => {
 	});
 
 	it("checks a password even when no shared resume matches, so timing doesn't reveal which exist", async () => {
-		dbMock.select.mockReturnValueOnce(slugLookup([]));
 		compareMock.mockResolvedValueOnce(true);
 
 		await expect(
@@ -519,17 +516,13 @@ describe.each([
 
 describe("getBySlug", () => {
 	it.each(["u1", "other-user"])("password gate exempts only the owner (%s)", async (currentUserId) => {
-		dbMock.select.mockReturnValueOnce(
-			slugLookup([
-				{
-					...createResumeRow(defaultResumeData),
-					userId: "u1",
-					isPublic: true,
-					hasPassword: true,
-					passwordHash: "hash",
-				},
-			]),
-		);
+		findResumeBySlugMock.mockResolvedValueOnce({
+			...createResumeRow(defaultResumeData),
+			userId: "u1",
+			isPublic: true,
+			hasPassword: true,
+			passwordHash: "hash",
+		});
 		const request = resumeService.getBySlug({
 			username: "owner",
 			slug: "resume",
@@ -548,7 +541,7 @@ describe("getBySlug", () => {
 			hasPassword: false,
 			passwordHash: null,
 		};
-		dbMock.select.mockReturnValue(slugLookup([row]));
+		findResumeBySlugMock.mockResolvedValue(row);
 		await expect(
 			resumeService.getBySlug({
 				username: "owner",
@@ -556,28 +549,12 @@ describe("getBySlug", () => {
 				requestHeaders: new Headers(),
 			}),
 		).rejects.toMatchObject({ code: "NOT_FOUND" });
-	});
-
-	it("does not look in Trash for the resume", async () => {
-		const limit = vi.fn(() => Promise.resolve([]));
-		const orderBy = vi.fn((_order: unknown) => ({ limit }));
-		const where = vi.fn((_condition: unknown) => ({ orderBy }));
-		dbMock.select.mockReturnValueOnce({ from: () => ({ innerJoin: () => ({ where }) }) });
-
-		await expect(
-			resumeService.getBySlug({
-				username: "owner",
-				slug: "resume",
-				requestHeaders: new Headers(),
-			}),
-		).rejects.toMatchObject({ code: "NOT_FOUND" });
-		expect(where.mock.calls[0]?.[0]).toContainEqual(["trashed_at"]);
 	});
 });
 
 describe("statistics.recordDownload", () => {
 	it("lets the owner download a password-protected resume without an unlock cookie", async () => {
-		dbMock.select.mockReturnValueOnce(slugLookup([{ id: "r1", userId: "u1", isPublic: true, passwordHash: "hash" }]));
+		findResumeBySlugMock.mockResolvedValueOnce({ id: "r1", userId: "u1", isPublic: true, passwordHash: "hash" });
 		await expect(
 			resumeService.statistics.recordDownload({
 				username: "owner",
@@ -587,37 +564,9 @@ describe("statistics.recordDownload", () => {
 			}),
 		).resolves.toBe(true);
 	});
-	it("does not look in Trash for the resume", async () => {
-		const where = vi.fn((_condition: unknown) => ({ orderBy: () => ({ limit: () => Promise.resolve([]) }) }));
-		dbMock.select.mockReturnValueOnce({ from: () => ({ innerJoin: () => ({ where }) }) });
-		await expect(
-			resumeService.statistics.recordDownload({ username: "owner", slug: "resume", requestHeaders: new Headers() }),
-		).rejects.toMatchObject({ code: "NOT_FOUND" });
-		expect(where.mock.calls[0]?.[0]).toContainEqual(["trashed_at"]);
-	});
-
-	it("matches renamed slugs via matchesSlug and orders by exact slug match", async () => {
-		const limit = vi.fn(() => Promise.resolve([{ id: "r1", userId: "u1", isPublic: true, passwordHash: null }]));
-		const orderBy = vi.fn((_order: unknown) => ({ limit }));
-		const where = vi.fn((_condition: unknown) => ({ orderBy }));
-		dbMock.select.mockReturnValueOnce({ from: () => ({ innerJoin: () => ({ where }) }) });
-
-		await expect(
-			resumeService.statistics.recordDownload({
-				username: "owner",
-				slug: "old-slug",
-				requestHeaders: new Headers(),
-			}),
-		).resolves.toBe(true);
-
-		expect(where.mock.calls[0]?.[0]).toContainEqual(["slug", "old-slug"]);
-		expect(orderBy).toHaveBeenCalledTimes(1);
-		expect(orderBy.mock.calls[0]?.[0]).toMatchObject({ values: ["slug", "old-slug"] });
-		expect(limit).toHaveBeenCalledWith(1);
-	});
 
 	it("requires password when downloading via renamed slug", async () => {
-		dbMock.select.mockReturnValueOnce(slugLookup([{ id: "r1", userId: "u1", isPublic: true, passwordHash: "hash" }]));
+		findResumeBySlugMock.mockResolvedValueOnce({ id: "r1", userId: "u1", isPublic: true, passwordHash: "hash" });
 		await expect(
 			resumeService.statistics.recordDownload({
 				username: "owner",
@@ -631,7 +580,6 @@ describe("statistics.recordDownload", () => {
 	});
 
 	it("throws NOT_FOUND when renamed slug redirect has expired or does not exist", async () => {
-		dbMock.select.mockReturnValueOnce(slugLookup([]));
 		await expect(
 			resumeService.statistics.recordDownload({
 				username: "owner",

@@ -1,17 +1,8 @@
 import type { ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
 import sectionTitleCatalog from "./section-title-catalog.json";
 
-type SectionTitleResolverInput = {
-	sectionId: string;
-	locale: string;
-	sectionKind: "summary" | "builtin" | "custom";
-	customSectionType?: string;
-	defaultEnglishTitle?: string | undefined;
-};
-
-export type SectionTitleResolver = (input: SectionTitleResolverInput) => string;
-
-const defaultEnglishSectionTitles: Record<"summary" | SectionType, string> = {
+// English headings by section id (builtin) or custom section type; the catalog translates them.
+const defaultEnglishTitles: Record<string, string> = {
 	summary: "Summary",
 	profiles: "Profiles",
 	experience: "Experience",
@@ -25,87 +16,26 @@ const defaultEnglishSectionTitles: Record<"summary" | SectionType, string> = {
 	publications: "Publications",
 	volunteer: "Volunteer",
 	references: "References",
-};
-
-const defaultEnglishCustomSectionTitles: Record<string, string> = {
-	summary: "Summary",
 	"cover-letter": "Cover Letter",
 };
 
 const catalogs: Record<string, Record<string, string>> = sectionTitleCatalog;
 
-const defaultSectionTitleResolver: SectionTitleResolver = ({ locale, defaultEnglishTitle }) => {
-	if (!defaultEnglishTitle) return "";
-	const translated = Object.hasOwn(catalogs, locale) ? catalogs[locale]?.[defaultEnglishTitle] : undefined;
-	return translated ?? defaultEnglishTitle;
+/** The summary, a built-in section or a custom section, by id. */
+export const findSection = (data: ResumeData, id: string) => {
+	if (id === "summary") return data.summary;
+	if (id in data.sections) return data.sections[id as SectionType];
+	return data.customSections.find((section) => section.id === id);
 };
 
-export const resolveSectionTitle = (
-	title: string,
-	input: SectionTitleResolverInput,
-	resolver?: SectionTitleResolver,
-	legacyFallback?: string,
-) => {
-	if (title.trim()) return title;
+/** The stored title, else the default heading translated into the resume's locale. */
+export const getResumeSectionTitle = (data: ResumeData, sectionId: string, legacyFallback?: string) => {
+	const section = findSection(data, sectionId);
+	if (!section) return legacyFallback ?? sectionId;
+	if (section.title.trim()) return section.title;
 
-	const resolvedTitle = resolver?.(input);
-	if (resolvedTitle?.trim()) return resolvedTitle;
-
-	if (legacyFallback !== undefined) return legacyFallback;
-
-	return input.defaultEnglishTitle ?? input.sectionId;
-};
-
-type RenderData = ResumeData & {
-	resolveSectionTitle?: SectionTitleResolver | undefined;
-};
-
-export const getResumeSectionTitle = (data: RenderData, sectionId: string, legacyFallback?: string) => {
+	const type = "type" in section ? section.type : sectionId;
+	const english = defaultEnglishTitles[type] ?? type;
 	const locale = data.metadata.page.locale;
-	const resolver = data.resolveSectionTitle ?? defaultSectionTitleResolver;
-
-	if (sectionId === "summary") {
-		const defaultEnglishTitle = defaultEnglishSectionTitles.summary;
-
-		return resolveSectionTitle(
-			data.summary.title,
-			{ sectionId, locale, sectionKind: "summary", defaultEnglishTitle },
-			resolver,
-			legacyFallback,
-		);
-	}
-
-	if (sectionId in data.sections) {
-		const sectionType = sectionId as SectionType;
-		const defaultEnglishTitle = defaultEnglishSectionTitles[sectionType];
-
-		return resolveSectionTitle(
-			data.sections[sectionType].title,
-			{ sectionId, locale, sectionKind: "builtin", defaultEnglishTitle },
-			resolver,
-			legacyFallback,
-		);
-	}
-
-	const customSection = data.customSections.find((section) => section.id === sectionId);
-
-	if (customSection) {
-		const defaultEnglishTitle =
-			customSection.type in data.sections
-				? defaultEnglishSectionTitles[customSection.type as SectionType]
-				: (defaultEnglishCustomSectionTitles[customSection.type] ?? customSection.type);
-
-		return resolveSectionTitle(
-			customSection.title,
-			{ sectionId, locale, sectionKind: "custom", customSectionType: customSection.type, defaultEnglishTitle },
-			resolver,
-			legacyFallback,
-		);
-	}
-
-	return (
-		data.resolveSectionTitle?.({ sectionId, locale, sectionKind: "custom", defaultEnglishTitle: sectionId }) ??
-		legacyFallback ??
-		sectionId
-	);
+	return (Object.hasOwn(catalogs, locale) ? catalogs[locale]?.[english] : undefined) ?? english;
 };

@@ -54,7 +54,7 @@ export default function SettingsScreen() {
 					title={t`Report an issue`}
 					leading="bug"
 					external
-					onPress={() => openLink("https://github.com/reactive-resume/reactive-resume/issues")}
+					onPress={() => openLink("https://github.com/reactive-resume/reactive-resume/issues/new/choose")}
 				/>
 				<ListRow
 					title={t`Join the Discord`}
@@ -98,7 +98,7 @@ export default function SettingsScreen() {
 					onPress={() => openLink("https://github.com/reactive-resume/reactive-resume/blob/main/LICENSE")}
 				/>
 				<ListRow
-					title={t`Open-source licences`}
+					title={t`Open-source licenses`}
 					leading="file-text"
 					chevron
 					onPress={() => router.push("/(tabs)/settings/licences")}

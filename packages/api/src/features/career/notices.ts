@@ -20,13 +20,13 @@ export function noticeText(notice: CareerNotice): { title: string; body: string 
 				title: "Career schedule needs attention",
 				body:
 					notice.reason === "stopped"
-						? "The worker stopped repeatedly. Review this schedule."
-						: "Career work failed. Check the selected provider and application, then review this schedule.",
+						? "This schedule stopped several times before finishing. Review it and try again."
+						: "This schedule failed. Check the selected provider and application, then review the schedule.",
 			};
 		case "email-failed":
 			return {
 				title: "Career email needs attention",
-				body: "Your update is available here. Email delivery could not be confirmed; check SMTP configuration.",
+				body: "Your update is available here, but the email may not have been sent. Ask the server administrator to check email delivery.",
 			};
 		case "briefing-paused":
 			return {

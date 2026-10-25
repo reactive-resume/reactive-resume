@@ -1,9 +1,9 @@
 import type { Application } from "@/features/applications/types";
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, stripSearchParams, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -103,12 +103,15 @@ function RouteComponent() {
 		});
 	}, [applicationId, applications, navigate]);
 
-	const text = query.trim().toLowerCase();
+	// The input updates at once; the list filters in a deferred render that typing can interrupt.
+	const text = useDeferredValue(query).trim().toLowerCase();
 	const filtered = (applications ?? []).filter((application) => matches(application, text));
 	const selected = applications?.find((application) => application.id === selectedId) ?? null;
 	// The board needs room to drag: phones get the list instead.
 	const shown: View = phone && (view === "board" || view === "calendar") ? "list" : view;
 	const empty = !!applications && applications.length === 0;
+	// Hoisted so the compiler keeps one function; inline, it changes with every keystroke and re-renders each row.
+	const openApplication = (application: Application) => setSelectedId(application.id);
 	const noMatches = !!applications && !empty && text && filtered.length === 0;
 
 	return (
@@ -249,16 +252,12 @@ function RouteComponent() {
 									applications={filtered}
 									showClosed={closed}
 									selectedId={selectedId}
-									onOpen={(application) => setSelectedId(application.id)}
+									onOpen={openApplication}
 								/>
 							)}
 							{shown === "board" && (
 								<div className="h-[calc(100svh-230px)] min-h-96">
-									<ApplicationBoard
-										applications={filtered}
-										showClosed={closed}
-										onOpen={(application) => setSelectedId(application.id)}
-									/>
+									<ApplicationBoard applications={filtered} showClosed={closed} onOpen={openApplication} />
 								</div>
 							)}
 							{shown === "insights" && <ApplicationInsights applications={applications ?? []} />}
@@ -266,7 +265,7 @@ function RouteComponent() {
 								<ApplicationCalendar
 									applications={filtered.filter((application) => closed || application.status !== "closed")}
 									allApplications={applications ?? []}
-									onOpen={(application) => setSelectedId(application.id)}
+									onOpen={openApplication}
 								/>
 							)}
 						</div>
@@ -350,9 +349,11 @@ function FollowUpNudge({ applications, onOpen }: { applications: Application[]; 
 		>
 			<Icon name="clock" size={20} />
 			<span className="min-w-0 flex-1">
-				<Trans>
-					{company}: no reply for {days} days. A short follow-up is usually fine now.
-				</Trans>
+				<Plural
+					value={days}
+					one={`${company}: no reply for # day. A short follow-up is usually fine now.`}
+					other={`${company}: no reply for # days. A short follow-up is usually fine now.`}
+				/>
 			</span>
 			<Button size="sm" variant="secondary" onClick={() => onOpen(waiting.application.id)}>
 				<Trans>Open</Trans>

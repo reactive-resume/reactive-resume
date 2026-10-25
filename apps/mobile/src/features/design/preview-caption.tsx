@@ -22,7 +22,7 @@ export function TemplatePreviewCaption() {
 				minHeight: size.hit - space.s2,
 				justifyContent: "center",
 				paddingHorizontal: space.s4,
-				borderRadius: radius.rPill,
+				borderRadius: radius.rLg,
 				backgroundColor: colors.ink,
 			}}
 		>

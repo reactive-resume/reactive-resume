@@ -15,8 +15,8 @@ export type TextProps = NativeTextProps & {
 	/** A colour token. Defaults to `ink`. */
 	color?: ColorToken | undefined;
 	/**
-	 * Hanken Grotesk weight for UI variants, where tokens.md names one (field labels 600, document names 600).
-	 * Ignored for the Newsreader and mono variants.
+	 * Figtree weight for UI variants, where tokens.md names one (field labels 600, document names 600).
+	 * Ignored for the Instrument Serif (single weight) and mono variants.
 	 */
 	weight?: 400 | 500 | 600 | 700 | undefined;
 	align?: "auto" | "left" | "center" | "right" | undefined;

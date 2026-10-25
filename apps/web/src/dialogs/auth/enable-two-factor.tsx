@@ -31,11 +31,14 @@ import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
 
 const enableFormSchema = z.object({
-	password: z.string().min(6).max(64),
+	password: z
+		.string()
+		.min(6, { error: () => t`Enter your password.` })
+		.max(64, { error: () => t`Use 64 characters or fewer.` }),
 });
 
 const verifyFormSchema = z.object({
-	code: z.string().length(6, "Code must be 6 digits"),
+	code: z.string().length(6, { error: () => t`Enter the 6-digit code.` }),
 });
 
 type TwoFactorSetupStep = "backup" | "enable" | "verify";
@@ -62,7 +65,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 		defaultValues: { password: "" },
 		validators: { onSubmit: enableFormSchema },
 		onSubmit: async ({ value }) => {
-			const toastId = toast.add({ type: "loading", description: t`Enabling two-factor authentication…` });
+			const toastId = toast.add({ type: "loading", description: t`Turning on two-step verification…` });
 
 			const { data, error } = await authClient.twoFactor.enable({
 				password: value.password,
@@ -76,7 +79,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 						error,
 						t({
 							comment: "Fallback toast when enabling two-factor authentication fails",
-							message: "Failed to enable two-factor authentication. Please try again.",
+							message: "Couldn't turn on two-step verification. Check your password and try again.",
 						}),
 					),
 					id: toastId,
@@ -90,7 +93,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 				setStep("backup");
 				toast.close(toastId);
 			} else {
-				toast.add({ type: "error", description: t`Could not set up two-factor authentication.`, id: toastId });
+				toast.add({ type: "error", description: t`Couldn't set up two-step verification. Try again.`, id: toastId });
 			}
 		},
 	});
@@ -110,7 +113,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 						error,
 						t({
 							comment: "Fallback toast when verifying two-factor setup code fails",
-							message: "Failed to verify your code. Please try again.",
+							message: "Couldn't verify the code. Enter the current code from your authenticator app.",
 						}),
 					),
 					id: toastId,
@@ -119,7 +122,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 			}
 
 			toast.close(toastId);
-			toast.add({ type: "success", description: t`Two-factor authentication is now enabled.` });
+			toast.add({ type: "success", description: t`Two-step verification turned on` });
 			void queryClient.invalidateQueries({ queryKey: sessionQueryKey }).then(() => router.invalidate());
 			closeDialog();
 			onReset();
@@ -156,13 +159,13 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 		const secret = extractSecretFromTotpUri(totpUri);
 		if (!secret) return;
 		await navigator.clipboard.writeText(secret);
-		toast.add({ type: "success", description: t`Secret copied to clipboard.` });
+		toast.add({ type: "success", description: t`Secret copied` });
 	};
 
 	const handleCopyBackupCodes = async () => {
 		if (!backupCodes) return;
 		await navigator.clipboard.writeText(backupCodes.join("\n"));
-		toast.add({ type: "success", description: t`Backup codes copied to clipboard.` });
+		toast.add({ type: "success", description: t`Backup codes copied` });
 	};
 
 	const handleDownloadBackupCodes = () => {
@@ -171,7 +174,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 	};
 
 	return (
-		<DialogContent>
+		<DialogContent closeLabel={t`Close`}>
 			<DialogHeader>
 				<DialogTitle>
 					<TwoFactorDialogTitle step={step} />
@@ -246,7 +249,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 							)}
 
 							<p>
-								<Trans>Then, enter the 6 digit code that the app provides to continue.</Trans>
+								<Trans>Then enter the 6-digit code from the app.</Trans>
 							</p>
 
 							<form
@@ -307,11 +310,13 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 								<div className="flex items-center gap-x-2">
 									<Button type="button" variant="secondary" onClick={handleDownloadBackupCodes} className="flex-1">
 										<Icon name="arrow-down" size={16} className="me-2" />
-										<Trans comment="Action button to download two-factor backup codes as a text file">Download</Trans>
+										<Trans comment="Action button to download two-factor backup codes as a text file">
+											Download codes
+										</Trans>
 									</Button>
 									<Button type="button" variant="ghost" onClick={handleCopyBackupCodes} className="flex-1">
 										<Icon name="copy" size={16} className="me-2" />
-										<Trans comment="Action button to copy two-factor backup codes to clipboard">Copy</Trans>
+										<Trans comment="Action button to copy two-factor backup codes to clipboard">Copy codes</Trans>
 									</Button>
 								</div>
 							</div>
@@ -340,9 +345,9 @@ function extractSecretFromTotpUri(totpUri: string): string | null {
 
 function TwoFactorDialogTitle({ step }: TwoFactorStepProps) {
 	return match(step)
-		.with("enable", () => <Trans>Enable Two-Factor Authentication</Trans>)
-		.with("verify", () => <Trans>Setup Authenticator App</Trans>)
-		.with("backup", () => <Trans>Copy Backup Codes</Trans>)
+		.with("enable", () => <Trans>Turn on two-step verification</Trans>)
+		.with("verify", () => <Trans>Set up your authenticator app</Trans>)
+		.with("backup", () => <Trans>Save your backup codes</Trans>)
 		.exhaustive();
 }
 
@@ -350,17 +355,16 @@ function TwoFactorDialogDescription({ step }: TwoFactorStepProps) {
 	return match(step)
 		.with("enable", () => (
 			<Trans>
-				Enter your password to confirm setting up two-factor authentication. Once it is on, you need a code from your
-				authenticator app every time you sign in.
+				Enter your password to set up two-step verification. Once it's on, you need a code from your authenticator app
+				every time you sign in.
 			</Trans>
 		))
 		.with("verify", () => (
-			<Trans>
-				Scan the QR code below with your preferred authenticator app. You can also copy the secret below and paste it
-				into your app.
-			</Trans>
+			<Trans>Scan the QR code with your authenticator app, or copy the secret and paste it into the app.</Trans>
 		))
-		.with("backup", () => <Trans>Copy and store these backup codes in case you lose your device.</Trans>)
+		.with("backup", () => (
+			<Trans>Store these backup codes somewhere safe. Each one signs you in once if you lose your device.</Trans>
+		))
 		.exhaustive();
 }
 
@@ -373,7 +377,7 @@ function TwoFactorQRCode({ totpUri }: TwoFactorQRCodeProps) {
 			className="rounded-md"
 			title={t({
 				comment: "Accessible title for QR code image shown during two-factor setup",
-				message: "Two-Factor Authentication QR Code",
+				message: "QR code for two-step verification",
 			})}
 		/>
 	);

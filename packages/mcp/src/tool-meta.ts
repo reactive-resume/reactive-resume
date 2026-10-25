@@ -9,14 +9,11 @@ import { applicationDto } from "@reactive-resume/api/dto/application";
 import { coverLetterDto } from "@reactive-resume/api/dto/cover-letter";
 import { resumeDto } from "@reactive-resume/api/dto/resume";
 import {
-	applicationClosedReasonSchema,
 	applicationStatusSchema,
-	contactSchema,
 	interviewDetailsSchema,
 	interviewKindSchema,
 } from "@reactive-resume/schema/applications/data";
 import { coverLetterDocumentSchema } from "@reactive-resume/schema/cover-letter/data";
-import { templateSchema } from "@reactive-resume/schema/templates";
 import { READ_IDEMPOTENT, WRITE_DESTRUCTIVE_EXTERNAL, WRITE_NON_IDEMPOTENT, WRITE_DESTRUCTIVE } from "./annotations";
 import { toWireObjectSchema, toWireSchema } from "./contracts";
 import { MCP_TOOL_NAME as T } from "./mcp-tool-names";
@@ -91,46 +88,7 @@ const expectedRevisionSchema = z
 	.int()
 	.min(1)
 	.describe("Revision returned by the latest cover-letter response.");
-const coverLetterEditableFieldsSchema = {
-	name: z.string().min(1).max(100).describe("Cover-letter name."),
-	recipient: z
-		.string()
-		.max(20_000)
-		.optional()
-		.describe("Freeform letters only: the recipient block as HTML. Structured letters use the fields below."),
-	content: z
-		.string()
-		.max(100_000)
-		.optional()
-		.describe("Body HTML. Structured letters add the greeting and sign-off around it, so leave those out."),
-	greeting: z
-		.string()
-		.max(2_000)
-		.nullable()
-		.optional()
-		.describe("Custom greeting; null restores the document language default, empty omits it."),
-	signOff: z
-		.string()
-		.max(2_000)
-		.nullable()
-		.optional()
-		.describe(
-			"Custom signature including name and optional contact details; null restores the document language default with the sender's name, empty omits it.",
-		),
-	recipientName: z
-		.string()
-		.max(200)
-		.optional()
-		.describe('Structured letters: who it\'s to, a person or a team. The greeting follows it ("Dear Dana,").'),
-	recipientCompany: z.string().max(200).optional().describe("Structured letters: the recipient's company."),
-	letterDate: z
-		.string()
-		.regex(/^\d{4}-\d{2}-\d{2}$/, "Date must use YYYY-MM-DD format.")
-		.nullable()
-		.optional()
-		.describe("Structured letters: the letter's date."),
-};
-const timelineDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must use YYYY-MM-DD format.");
+const timelineDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Enter the date as YYYY-MM-DD.");
 const interviewAtSchema = z.iso
 	.datetime({ offset: true })
 	.describe("Scheduled start as an ISO 8601 date-time with offset, e.g. 2026-10-01T10:30:00-04:00.");
@@ -155,58 +113,12 @@ const interviewAudienceSchema = interviewDetailsSchema.shape.audience
 const interviewTimezoneSchema = interviewDetailsSchema.shape.timezone
 	.unwrap()
 	.describe("IANA timezone for the interview, e.g. Europe/Berlin.");
-const httpUrlSchema = z
-	.string()
-	.trim()
-	.pipe(z.url({ protocol: /^https?$/, error: "URL must use http or https." }));
 const pdfBase64Schema = z
 	.base64()
 	.max(3 * 1024 * 1024)
 	.describe(
 		"Base64 PDF, maximum 3 MiB encoded (about 2.25 MiB decoded). For larger PDFs, supply an owned storagePath.",
 	);
-
-const applicationMutableFieldsSchema = {
-	company: z.string().min(1).optional().describe("Company name."),
-	role: z.string().min(1).optional().describe("Role or job title."),
-	status: applicationStatusSchema
-		.optional()
-		.describe("Pipeline stage. `closed` ends the application; say why in `closedReason`."),
-	closedReason: applicationClosedReasonSchema
-		.nullable()
-		.optional()
-		.describe("Why a closed application ended: accepted, not-selected, withdrew, accepted-other or no-response."),
-	location: z.string().nullable().optional(),
-	salary: z.string().nullable().optional(),
-	source: z.string().nullable().optional(),
-	sourceUrl: httpUrlSchema.nullable().optional(),
-	jobDescription: z.string().max(20_000).nullable().optional(),
-	notes: z.string().nullable().optional(),
-	resumeId: z.string().nullable().optional(),
-	coverLetterId: z.string().nullable().optional().describe("The saved cover letter sent with the application."),
-	resumeFileUrl: z.string().nullable().optional(),
-	resumeFileName: z.string().nullable().optional(),
-	coverLetterUrl: z.string().nullable().optional(),
-	coverLetterName: z.string().nullable().optional(),
-	followUpAt: z
-		.string()
-		.datetime({ offset: true })
-		.nullable()
-		.optional()
-		.describe("Follow-up timestamp in ISO 8601 format."),
-	followUpNote: z.string().nullable().optional(),
-	contacts: z.array(contactSchema).optional(),
-	tags: z.array(z.string()).optional(),
-} as const;
-
-const createApplicationSchema = z
-	.object({
-		...applicationMutableFieldsSchema,
-		company: z.string().min(1).describe("Company name."),
-		role: z.string().min(1).describe("Role or job title."),
-		stageEnteredAt: timelineDateSchema.optional().describe("Initial stage date in YYYY-MM-DD format."),
-	})
-	.strict();
 
 // SDK discovery requires pure JSON schemas; API handlers still validate native DTOs.
 function wireInput<T extends z.ZodObject>(schema: T): T {
@@ -218,7 +130,31 @@ function wireInput<T extends z.ZodObject>(schema: T): T {
 const messageOutput = z.object({ message: z.string() });
 const idOutput = z.object({ id: z.string() });
 
-const BASE_TOOL_META = {
+const pagination = {
+	limit: z.number().int().min(1).max(100).default(20).describe("Maximum rows per page; default 20."),
+	offset: z.number().int().min(0).default(0).describe("Rows to skip; default 0."),
+};
+const applicationDateFields = {
+	followUpAt: z.iso
+		.datetime({ offset: true })
+		.nullable()
+		.optional()
+		.describe("Follow-up timestamp with timezone offset."),
+};
+// Shared DTOs keep fields, validation and limits aligned with API contracts.
+// Directories show annotations.title as the tool's name, so every tool repeats its title there.
+function withAnnotationTitles<T extends Record<string, { title: string; annotations: BehaviorAnnotations }>>(
+	meta: T,
+): T {
+	return Object.fromEntries(
+		Object.entries(meta).map(([name, tool]) => [
+			name,
+			{ ...tool, annotations: { title: tool.title, ...tool.annotations } },
+		]),
+	) as T;
+}
+
+export const TOOL_META = withAnnotationTitles({
 	[T.listResumes]: {
 		title: "List Resumes",
 		description: [
@@ -231,7 +167,14 @@ const BASE_TOOL_META = {
 			`Call this before \`${T.getResume}\`, \`${T.patchResume}\`, prompts, or \`resources/read\` with \`resume://{id}\`.`,
 			"Results can be filtered by tags and sorted by last updated date, creation date, or name.",
 		].join("\n"),
-		outputSchema: toWireObjectSchema(resumeDto.list.output),
+		outputSchema: toWireObjectSchema(
+			z.object({
+				items: resumeDto.list.output,
+				limit: z.number(),
+				offset: z.number(),
+				nextOffset: z.number().nullable(),
+			}),
+		),
 		inputSchema: wireInput(
 			z.strictObject({
 				tags: z
@@ -246,6 +189,7 @@ const BASE_TOOL_META = {
 					.optional()
 					.default("lastUpdatedAt")
 					.describe("Sort order for results. Default: lastUpdatedAt."),
+				...pagination,
 			}),
 		),
 		annotations: READ_IDEMPOTENT,
@@ -262,16 +206,17 @@ const BASE_TOOL_META = {
 	},
 	[T.getResume]: {
 		title: "Read Resume",
-		description: [
-			"Get the full data of a specific resume by its ID.",
-			"",
-			"Returns the complete resume data as JSON, including: basics (name, headline, email, phone,",
-			"location, website), summary, picture settings, all sections (experience, education, skills,",
-			"projects, etc.), custom sections, and metadata (template, layout, typography, colors).",
-			"",
-			`Use \`${T.listResumes}\` first to find valid IDs.`,
-			"The `resume://_meta/schema` resource describes the full data structure for JSON Patch paths.",
-		].join("\n"),
+		description:
+			[
+				"Get the full data of a specific resume by its ID.",
+				"",
+				"Returns the complete resume data as JSON, including: basics (name, headline, email, phone,",
+				"location, website), summary, picture settings, all sections (experience, education, skills,",
+				"projects, etc.), custom sections, and metadata (template, layout, typography, colors).",
+				"",
+				`Use \`${T.listResumes}\` first to find valid IDs.`,
+				"The `resume://_meta/schema` resource describes the full data structure for JSON Patch paths.",
+			].join("\n") + " Structured output also includes record metadata and updatedAt for expectedUpdatedAt.",
 		outputSchema: toWireObjectSchema(resumeDto.getById.output),
 		inputSchema: wireInput(z.strictObject({ id: resumeIdSchema })),
 		annotations: READ_IDEMPOTENT,
@@ -307,21 +252,7 @@ const BASE_TOOL_META = {
 		].join("\n"),
 		outputSchema: idOutput,
 		inputSchema: wireInput(
-			z.strictObject({
-				name: z.string().min(1).max(64).describe("Display name for the resume (e.g. 'Software Engineer 2026')"),
-				slug: z
-					.string()
-					.min(1)
-					.max(64)
-					.optional()
-					.describe("Optional URL-friendly slug; generated from the name when omitted."),
-				tags: z
-					.array(z.string())
-					.optional()
-					.default([])
-					.describe("Tags to categorize the resume (e.g. ['tech', 'senior'])"),
-				withSampleData: z.boolean().optional().default(false).describe("Pre-fill with sample data. Default: false."),
-			}),
+			resumeDto.create.input.extend({ tags: resumeDto.create.input.shape.tags.default([]) }).strict(),
 		),
 		annotations: WRITE_NON_IDEMPOTENT,
 	},
@@ -353,14 +284,7 @@ const BASE_TOOL_META = {
 			"Useful for creating job-specific variants of a base resume.",
 		].join("\n"),
 		outputSchema: idOutput,
-		inputSchema: wireInput(
-			z.strictObject({
-				id: resumeIdSchema.describe("ID of the resume to duplicate"),
-				name: z.string().min(1).max(64).optional().describe("Name for the duplicate; defaults to the original"),
-				slug: z.string().min(1).max(64).optional().describe("Optional unique slug; generated when omitted"),
-				tags: z.array(z.string()).optional().describe("Tags for the duplicate; defaults to the original"),
-			}),
-		),
+		inputSchema: wireInput(resumeDto.duplicate.input.strict()),
 		annotations: WRITE_NON_IDEMPOTENT,
 	},
 	[T.patchResume]: {
@@ -394,10 +318,15 @@ const BASE_TOOL_META = {
 			`Locked resumes cannot be patched. Ask the user before unlocking with \`${T.unlockResume}\`.`,
 		].join("\n"),
 		outputSchema: toWireObjectSchema(resumeDto.patch.output),
+		// Converted twice: the published schema lists every JSON type for nested patch values too.
 		inputSchema: wireInput(
-			z.strictObject({
-				id: resumeIdSchema,
-				operations: resumePatchOperationsSchema,
+			wireInput(z.strictObject({ id: resumeIdSchema, operations: resumePatchOperationsSchema })).extend({
+				expectedUpdatedAt: z.iso
+					.datetime({ offset: true })
+					.optional()
+					.describe(
+						"updatedAt from the latest read_resume. Rejects changes when document has changed since that read.",
+					),
 			}),
 		),
 		annotations: { ...WRITE_NON_IDEMPOTENT, destructiveHint: true, openWorldHint: true },
@@ -417,27 +346,7 @@ const BASE_TOOL_META = {
 				.pick({ id: true, name: true, slug: true, tags: true, isPublic: true, hasPassword: true })
 				.extend({ shareUrl: z.string() }),
 		),
-		inputSchema: wireInput(
-			z.strictObject({
-				id: resumeIdSchema,
-				name: z.string().min(1).max(64).optional().describe("Display name for the resume."),
-				slug: z
-					.string()
-					.min(1)
-					.max(64)
-					.optional()
-					.describe(
-						"New URL slug: lowercase letters and numbers joined by single dashes (e.g. 'product-designer'), unique among your resumes. The old address keeps redirecting for 30 days.",
-					),
-				tags: z.array(z.string()).optional().describe("Replace the resume's tags (omit to leave unchanged)."),
-				isPublic: z
-					.boolean()
-					.optional()
-					.describe(
-						"When true, anyone with the link can view the public resume (subject to password if set in the app).",
-					),
-			}),
-		),
+		inputSchema: wireInput(resumeDto.update.input.strict()),
 		annotations: { ...WRITE_NON_IDEMPOTENT, destructiveHint: true, openWorldHint: true },
 	},
 	[T.deleteResume]: {
@@ -530,28 +439,7 @@ const BASE_TOOL_META = {
 			"Optionally link it to a resume (for its sender details and design) or an application.",
 		].join("\n"),
 		outputSchema: toWireObjectSchema(coverLetterDto.create.output),
-		inputSchema: wireInput(
-			z.strictObject({
-				...coverLetterEditableFieldsSchema,
-				recipient: z.string().max(20_000).optional().default(""),
-				content: z.string().max(100_000).optional().default(""),
-				resumeId: z
-					.string()
-					.min(1)
-					.optional()
-					.describe("Optional resume the letter goes with; its sender details and design are linked live."),
-				applicationId: z
-					.string()
-					.min(1)
-					.optional()
-					.describe("Optional application the letter is for; it fills the recipient and becomes its letter."),
-				template: templateSchema.optional().describe("Optional template of the letter's own (unlinks the design)."),
-				layout: z
-					.enum(["structured", "freeform"])
-					.optional()
-					.describe("Defaults to structured, or freeform when a recipient block is given."),
-			}),
-		),
+		inputSchema: wireInput(coverLetterDto.create.input.strict()),
 		annotations: WRITE_NON_IDEMPOTENT,
 	},
 	[T.updateCoverLetter]: {
@@ -561,21 +449,7 @@ const BASE_TOOL_META = {
 			"Pass the latest `revision` as `expectedRevision`; stale writes are rejected instead of overwriting newer edits.",
 		].join("\n"),
 		outputSchema: toWireObjectSchema(coverLetterDto.update.output),
-		inputSchema: wireInput(
-			z.strictObject({
-				id: coverLetterIdSchema,
-				expectedRevision: expectedRevisionSchema,
-				...coverLetterEditableFieldsSchema,
-				name: coverLetterEditableFieldsSchema.name.optional(),
-				template: templateSchema
-					.optional()
-					.describe("Replacement template, which unlinks the design. Omit to keep the current template."),
-				resumeId: z.string().min(1).nullable().optional().describe("The resume the letter goes with."),
-				applicationId: z.string().min(1).nullable().optional().describe("The application the letter is for."),
-				senderLinked: z.boolean().optional().describe("Take the sender's details live from the resume."),
-				designLinked: z.boolean().optional().describe("Take the design live from the resume."),
-			}),
-		),
+		inputSchema: wireInput(coverLetterDto.update.input.strict()),
 		annotations: { ...WRITE_NON_IDEMPOTENT, destructiveHint: true },
 	},
 	[T.refreshCoverLetterStyle]: {
@@ -641,11 +515,19 @@ const BASE_TOOL_META = {
 		title: "List Applications",
 		description:
 			"List job applications for the authenticated account, including contacts, notes, document URLs, and timeline. Use this before reading or updating existing applications.",
-		outputSchema: toWireObjectSchema(applicationDto.list.output),
+		outputSchema: toWireObjectSchema(
+			z.object({
+				items: applicationDto.list.output,
+				limit: z.number(),
+				offset: z.number(),
+				nextOffset: z.number().nullable(),
+			}),
+		),
 		inputSchema: wireInput(
 			z.strictObject({
 				status: applicationStatusSchema.optional(),
 				tags: z.array(z.string()).optional().default([]),
+				...pagination,
 			}),
 		),
 		annotations: READ_IDEMPOTENT,
@@ -675,7 +557,7 @@ const BASE_TOOL_META = {
 		title: "Create Application",
 		description: "Create a tracked job application. Company and role are required.",
 		outputSchema: idOutput,
-		inputSchema: wireInput(createApplicationSchema),
+		inputSchema: wireInput(applicationDto.create.input.extend(applicationDateFields).strict()),
 		annotations: WRITE_NON_IDEMPOTENT,
 	},
 	[T.updateApplication]: {
@@ -683,13 +565,8 @@ const BASE_TOOL_META = {
 		description:
 			"Update application fields, move stages (closing takes a reason), edit contacts, follow-up, tags, or the linked resume and letter. Provided fields replace existing values, including contact and tag lists. Once an application with a linked resume reaches Applied, the resume is saved as a sent version.",
 		outputSchema: toWireObjectSchema(applicationDto.update.output),
-		inputSchema: wireInput(
-			z.strictObject({
-				id: applicationIdSchema,
-				...applicationMutableFieldsSchema,
-			}),
-		),
-		annotations: WRITE_DESTRUCTIVE,
+		inputSchema: wireInput(applicationDto.update.input.extend(applicationDateFields).strict()),
+		annotations: { ...WRITE_NON_IDEMPOTENT, destructiveHint: true },
 	},
 	[T.addApplicationNote]: {
 		title: "Add Application Note",
@@ -781,29 +658,26 @@ const BASE_TOOL_META = {
 		title: "Bulk Update Applications",
 		description: "Move (closing takes a reason) or add tags to multiple applications.",
 		outputSchema: toWireObjectSchema(applicationDto.bulkUpdate.output),
-		inputSchema: wireInput(
-			z.strictObject({
-				ids: z.array(z.string()).min(1),
-				status: applicationStatusSchema.optional(),
-				closedReason: applicationClosedReasonSchema.nullable().optional(),
-				addTags: z.array(z.string()).optional(),
-			}),
-		),
-		annotations: WRITE_DESTRUCTIVE,
+		inputSchema: wireInput(applicationDto.bulkUpdate.input.strict()),
+		annotations: { ...WRITE_NON_IDEMPOTENT, destructiveHint: true },
 	},
 	[T.bulkDeleteApplications]: {
 		title: "Bulk Delete Applications",
 		description:
 			"Permanently delete multiple applications and their owned uploaded documents that no remaining application references, removing those authenticated file URLs.",
 		outputSchema: toWireObjectSchema(applicationDto.bulkDelete.output),
-		inputSchema: wireInput(z.strictObject({ ids: z.array(z.string()).min(1) })),
+		inputSchema: wireInput(applicationDto.bulkDelete.input.strict()),
 		annotations: WRITE_DESTRUCTIVE,
 	},
 	[T.importApplications]: {
 		title: "Import Applications",
 		description: "Bulk-create application rows parsed from CSV or another source. Maximum 500 items.",
 		outputSchema: toWireObjectSchema(applicationDto.import.output),
-		inputSchema: wireInput(z.strictObject({ items: z.array(createApplicationSchema).min(1).max(500) })),
+		inputSchema: wireInput(
+			z.strictObject({
+				items: z.array(applicationDto.create.input.extend(applicationDateFields).strict()).min(1).max(500),
+			}),
+		),
 		annotations: WRITE_NON_IDEMPOTENT,
 	},
 	[T.attachApplicationDocument]: {
@@ -875,145 +749,5 @@ const BASE_TOOL_META = {
 		outputSchema: z.object({ text: z.string(), coverLetterId: z.string().optional() }),
 		inputSchema: wireInput(z.strictObject({ id: applicationIdSchema, kind: z.enum(["cover-letter", "follow-up"]) })),
 		annotations: { ...WRITE_NON_IDEMPOTENT, openWorldHint: true },
-	},
-} as const;
-
-const pagination = {
-	limit: z.number().int().min(1).max(100).default(20).describe("Maximum rows per page; default 20."),
-	offset: z.number().int().min(0).default(0).describe("Rows to skip; default 0."),
-};
-const applicationDateFields = {
-	followUpAt: z.iso
-		.datetime({ offset: true })
-		.nullable()
-		.optional()
-		.describe("Follow-up timestamp with timezone offset."),
-};
-// Shared DTOs keep fields, validation and limits aligned with API contracts.
-// Directories show annotations.title as the tool's name, so every tool repeats its title there.
-function withAnnotationTitles<T extends Record<string, { title: string; annotations: BehaviorAnnotations }>>(
-	meta: T,
-): T {
-	return Object.fromEntries(
-		Object.entries(meta).map(([name, tool]) => [
-			name,
-			{ ...tool, annotations: { title: tool.title, ...tool.annotations } },
-		]),
-	) as T;
-}
-
-export const TOOL_META = withAnnotationTitles({
-	...BASE_TOOL_META,
-	[T.listResumes]: {
-		...BASE_TOOL_META[T.listResumes],
-		inputSchema: wireInput(BASE_TOOL_META[T.listResumes].inputSchema.extend(pagination)),
-		outputSchema: toWireObjectSchema(
-			z.object({
-				items: resumeDto.list.output,
-				limit: z.number(),
-				offset: z.number(),
-				nextOffset: z.number().nullable(),
-			}),
-		),
-	},
-	[T.getResume]: {
-		...BASE_TOOL_META[T.getResume],
-		description:
-			BASE_TOOL_META[T.getResume].description +
-			" Structured output also includes record metadata and updatedAt for expectedUpdatedAt.",
-		outputSchema: toWireObjectSchema(resumeDto.getById.output),
-	},
-	[T.createResume]: {
-		...BASE_TOOL_META[T.createResume],
-		inputSchema: wireInput(
-			resumeDto.create.input.extend({ tags: resumeDto.create.input.shape.tags.default([]) }).strict(),
-		),
-		outputSchema: idOutput,
-	},
-	[T.duplicateResume]: {
-		...BASE_TOOL_META[T.duplicateResume],
-		inputSchema: wireInput(resumeDto.duplicate.input.strict()),
-		outputSchema: idOutput,
-	},
-	[T.importResume]: { ...BASE_TOOL_META[T.importResume], outputSchema: idOutput },
-	[T.patchResume]: {
-		...BASE_TOOL_META[T.patchResume],
-		inputSchema: wireInput(
-			BASE_TOOL_META[T.patchResume].inputSchema
-				.extend({
-					expectedUpdatedAt: z.iso
-						.datetime({ offset: true })
-						.optional()
-						.describe(
-							"updatedAt from the latest read_resume. Rejects changes when document has changed since that read.",
-						),
-				})
-				.strict(),
-		),
-		outputSchema: toWireObjectSchema(resumeDto.patch.output),
-	},
-	[T.updateResume]: {
-		...BASE_TOOL_META[T.updateResume],
-		inputSchema: wireInput(resumeDto.update.input.strict()),
-		outputSchema: toWireObjectSchema(
-			resumeDto.update.output
-				.pick({ id: true, name: true, slug: true, tags: true, isPublic: true, hasPassword: true })
-				.extend({ shareUrl: z.string() }),
-		),
-	},
-	[T.createCoverLetter]: {
-		...BASE_TOOL_META[T.createCoverLetter],
-		inputSchema: wireInput(coverLetterDto.create.input.strict()),
-		outputSchema: toWireObjectSchema(coverLetterDto.create.output),
-	},
-	[T.updateCoverLetter]: {
-		...BASE_TOOL_META[T.updateCoverLetter],
-		inputSchema: wireInput(coverLetterDto.update.input.strict()),
-		outputSchema: toWireObjectSchema(coverLetterDto.update.output),
-	},
-	[T.listApplications]: {
-		...BASE_TOOL_META[T.listApplications],
-		inputSchema: wireInput(BASE_TOOL_META[T.listApplications].inputSchema.extend(pagination).strict()),
-		outputSchema: toWireObjectSchema(
-			z.object({
-				items: applicationDto.list.output,
-				limit: z.number(),
-				offset: z.number(),
-				nextOffset: z.number().nullable(),
-			}),
-		),
-	},
-	[T.createApplication]: {
-		...BASE_TOOL_META[T.createApplication],
-		inputSchema: wireInput(applicationDto.create.input.extend(applicationDateFields).strict()),
-		outputSchema: idOutput,
-	},
-	[T.updateApplication]: {
-		...BASE_TOOL_META[T.updateApplication],
-		inputSchema: wireInput(applicationDto.update.input.extend(applicationDateFields).strict()),
-		annotations: { ...WRITE_NON_IDEMPOTENT, destructiveHint: true },
-		outputSchema: toWireObjectSchema(applicationDto.update.output),
-	},
-	[T.importApplications]: {
-		...BASE_TOOL_META[T.importApplications],
-		inputSchema: wireInput(
-			z
-				.strictObject({
-					items: z.array(applicationDto.create.input.extend(applicationDateFields).strict()).min(1).max(500),
-				})
-				.strict(),
-		),
-		outputSchema: toWireObjectSchema(applicationDto.import.output),
-	},
-	[T.bulkUpdateApplications]: {
-		...BASE_TOOL_META[T.bulkUpdateApplications],
-		inputSchema: wireInput(applicationDto.bulkUpdate.input.strict()),
-		annotations: { ...WRITE_NON_IDEMPOTENT, destructiveHint: true },
-		outputSchema: toWireObjectSchema(applicationDto.bulkUpdate.output),
-	},
-	[T.bulkDeleteApplications]: {
-		...BASE_TOOL_META[T.bulkDeleteApplications],
-		inputSchema: wireInput(applicationDto.bulkDelete.input.strict()),
-		outputSchema: toWireObjectSchema(applicationDto.bulkDelete.output),
 	},
 } as const);

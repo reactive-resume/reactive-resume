@@ -7,7 +7,8 @@ const describeIssuePath = (path: ReadonlyArray<PropertyKey>): string =>
 
 /** Builds a short, human-readable summary from a ZodError instead of a raw JSON dump. */
 const summarizeZodError = (error: ZodError): string => {
-	if (error.issues.length === 0) return "The file could not be read as a valid resume.";
+	if (error.issues.length === 0)
+		return "This file isn't a valid resume. Check that it matches the selected format, then try again.";
 
 	const listed = error.issues
 		.slice(0, MAX_LISTED_ISSUES)
@@ -21,7 +22,7 @@ const summarizeZodError = (error: ZodError): string => {
 	// singular label for them so the sentence stays grammatical.
 	const allAtRoot = error.issues.slice(0, MAX_LISTED_ISSUES).every((issue) => issue.path.length === 0);
 	const prefix = allAtRoot ? "Problem" : "Problem fields";
-	return `The file could not be read as a valid resume. ${prefix}: ${listed}${suffix}.`;
+	return `This file isn't a valid resume. ${prefix}: ${listed}${suffix}. Fix these fields, or choose the matching format.`;
 };
 
 /** Rethrows a ZodError as a human-readable import error; re-throws other errors as-is. */

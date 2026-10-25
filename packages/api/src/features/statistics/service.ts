@@ -23,10 +23,6 @@ const getCached = (key: string) => {
 	return entry;
 };
 
-const setCached = (key: string, value: number) => {
-	memCache.set(key, { value, cachedAt: Date.now() });
-};
-
 const getCachedCount = async (
 	key: string,
 	lastKnown: number,
@@ -38,7 +34,7 @@ const getCachedCount = async (
 	try {
 		const value = await fetcher();
 		if (value !== null) {
-			setCached(key, value);
+			memCache.set(key, { value, cachedAt: Date.now() });
 			return value;
 		}
 	} catch {
@@ -53,35 +49,31 @@ const getCountFromDatabase = async (table: typeof schema.user | typeof schema.re
 	return result?.count ?? null;
 };
 
-const fetchGitHubStarsOnce = async (): Promise<number | null> => {
-	try {
-		const response = await fetch(GITHUB_API_URL, {
-			signal: AbortSignal.timeout(GITHUB_REQUEST_TIMEOUT_MS),
-			headers: {
-				Accept: "application/vnd.github+json",
-			},
-		});
-		if (!response.ok) return null;
+const fetchGitHubStars = async (): Promise<number | null> => {
+	for (let attempt = 0; attempt < GITHUB_REQUEST_MAX_ATTEMPTS; attempt++) {
+		try {
+			const response = await fetch(GITHUB_API_URL, {
+				signal: AbortSignal.timeout(GITHUB_REQUEST_TIMEOUT_MS),
+				headers: {
+					Accept: "application/vnd.github+json",
+				},
+			});
+			if (!response.ok) continue;
 
-		const data = z.object({ stargazers_count: z.number().int().nonnegative() }).safeParse(await response.json());
-		return data.success ? data.data.stargazers_count : null;
-	} catch {
-		return null;
+			const data = z.object({ stargazers_count: z.number().int().nonnegative() }).safeParse(await response.json());
+			if (data.success) return data.data.stargazers_count;
+		} catch {
+			// Try again, then fall back to the last known count.
+		}
 	}
-};
-
-const getGitHubStars = async (attempt = 1): Promise<number | null> => {
-	if (attempt > GITHUB_REQUEST_MAX_ATTEMPTS) return null;
-
-	const stars = await fetchGitHubStarsOnce();
-	return stars ?? getGitHubStars(attempt + 1);
+	return null;
 };
 
 export const statisticsService = {
 	getTotals: async () => {
 		const [users, resumes] = await Promise.all([
-			statisticsService.user.getCount(),
-			statisticsService.resume.getCount(),
+			getCachedCount("users", LAST_KNOWN.users, () => getCountFromDatabase(schema.user)),
+			getCachedCount("resumes", LAST_KNOWN.resumes, () => getCountFromDatabase(schema.resume)),
 		]);
 		const usersCache = getCached("users");
 		const resumesCache = getCached("resumes");
@@ -96,19 +88,5 @@ export const statisticsService = {
 					: null,
 		};
 	},
-	user: {
-		getCount: () => {
-			return getCachedCount("users", LAST_KNOWN.users, () => getCountFromDatabase(schema.user));
-		},
-	},
-	resume: {
-		getCount: () => {
-			return getCachedCount("resumes", LAST_KNOWN.resumes, () => getCountFromDatabase(schema.resume));
-		},
-	},
-	github: {
-		getStarCount: () => {
-			return getCachedCount("stars", LAST_KNOWN.stars, getGitHubStars);
-		},
-	},
+	getStarCount: () => getCachedCount("stars", LAST_KNOWN.stars, fetchGitHubStars),
 };

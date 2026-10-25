@@ -50,7 +50,11 @@ export const writableResumeDataSchema = z.transform<z.input<typeof resumeDataSch
 	}
 
 	if (JSON.stringify(canonical.data).length > MAX_DOCUMENT_CHARS) {
-		ctx.addIssue({ code: "custom", message: `Resume data must be at most ${MAX_DOCUMENT_CHARS} characters.`, input });
+		ctx.addIssue({
+			code: "custom",
+			message: `Shorten the resume to ${MAX_DOCUMENT_CHARS} characters or fewer.`,
+			input,
+		});
 		return z.NEVER;
 	}
 
@@ -58,7 +62,7 @@ export const writableResumeDataSchema = z.transform<z.input<typeof resumeDataSch
 	if (oversized) {
 		ctx.addIssue({
 			code: "custom",
-			message: `Text must be at most ${MAX_TEXT_CHARS} characters.`,
+			message: `Shorten this text to ${MAX_TEXT_CHARS} characters or fewer.`,
 			path: oversized,
 			input,
 		});

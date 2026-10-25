@@ -146,7 +146,7 @@ function ApplicationsPage({ page }: SearchPageProps) {
 		<BaseCommandGroup page={page} heading={<Trans>Applications</Trans>}>
 			<CommandItem value="applications.create" onSelect={onCreateApplication}>
 				<Icon name="plus" size={16} />
-				<Trans>New Application</Trans>
+				<Trans>New application</Trans>
 			</CommandItem>
 
 			{isLoading ? (

@@ -30,7 +30,7 @@ const router = { push: (href) => calls.push(href), back() {} };
 const theme = {
 	space: { s0: 2, s1: 4, s2: 8, s3: 12, s4: 16, s12: 48 },
 	size: { sheetShare: 440 },
-	radius: { rPill: 999 },
+	radius: { rLg: 4 },
 	colors: { ink: "#111", ink3: "#777", line: "#ddd" },
 };
 const ui = Object.fromEntries(

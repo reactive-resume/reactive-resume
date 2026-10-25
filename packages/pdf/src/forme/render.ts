@@ -1,6 +1,5 @@
 import type { ResumeRenderOptions } from "../context";
 import type { PageMap } from "../page-map";
-import type { SectionTitleResolver } from "../section-title";
 import type { ConvertedDocument } from "./to-forme";
 import type { ElementInfo, RenderWithLayoutResult } from "@formepdf/core";
 import type { FormeDocument } from "@formepdf/react";
@@ -10,15 +9,10 @@ import type { Locale } from "@reactive-resume/utils/locale";
 import type { ReactElement } from "react";
 import { createElement } from "react";
 import { ResumeDocument } from "../document";
-import {
-	resolvePdfFonts,
-	resumeContentContainsCJK,
-	resumeContentScripts,
-	resumeUsesItalic,
-} from "../hooks/use-register-fonts";
+import { resolvePdfFonts, resumeContentScripts, resumeUsesItalic } from "../hooks/use-register-fonts";
 import { extractPageMap, NODE_CONTENT_PREFIX, NODE_SOURCE_PREFIX, parseResumeNodeKey } from "../page-map";
 import { loadFonts } from "./fonts";
-import { loadIcons } from "./icons";
+import { loadRequestedIcons } from "./icons";
 import { imageSources, loadImages } from "./images";
 import { renderHostTree } from "./reconciler";
 import { FIXED_SOURCE, FREE_FORM_MEASURE_HEIGHT, LIST_ROLE, toFormeDocument } from "./to-forme";
@@ -35,7 +29,6 @@ export type RenderResumeInput = {
 	data: ResumeData;
 	template?: Template | undefined;
 	renderOptions?: ResumeRenderOptions | undefined;
-	resolveSectionTitle?: SectionTitleResolver | undefined;
 	readImage?: ((source: string) => Promise<Uint8Array>) | undefined;
 	/** Computer Modern mirror supplied by the server entry; browser callers leave it unset. */
 	webFontBaseUrl?: string | undefined;
@@ -194,7 +187,6 @@ export const resumeFontRequests = (data: ResumeData) =>
 	resolvePdfFonts(
 		data.metadata.typography,
 		data.metadata.page.locale as Locale,
-		resumeContentContainsCJK(data),
 		resumeContentScripts(data),
 		resumeUsesItalic(data),
 	).fonts;
@@ -211,7 +203,6 @@ export function renderResume(engine: FormeEngine, input: RenderResumeInput): Pro
 			data,
 			template: input.template ?? data.metadata.template,
 			...(input.renderOptions ? { renderOptions: input.renderOptions } : {}),
-			resolveSectionTitle: input.resolveSectionTitle,
 		}),
 		input.readImage,
 		input.webFontBaseUrl,
@@ -231,8 +222,9 @@ export async function renderResumeElement(
 	const data = (element.props as { data?: ResumeData }).data;
 	// Font downloads start first: they're the largest wait, and the tree needs only the icons.
 	const fontsLoaded = loadFonts(data ? resumeFontRequests(data) : [], webFontBaseUrl);
-	await loadIcons();
-	const tree = renderHostTree(element);
+	let tree = renderHostTree(element);
+	// Icons load on first use: a tree that asked for new ones is drawn again once they arrive.
+	if (await loadRequestedIcons()) tree = renderHostTree(element);
 	const [{ fonts, warnings: fontWarnings, missing }, { images, warnings: imageWarnings }] = await Promise.all([
 		fontsLoaded,
 		loadImages(imageSources(tree), readImage),

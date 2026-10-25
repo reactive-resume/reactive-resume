@@ -1,6 +1,6 @@
 import type { Application } from "../types";
 // @vitest-environment happy-dom
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -94,4 +94,34 @@ it("keeps automatic layout and single-cell rows on phones", () => {
 	expect(container.querySelector("table")?.className).not.toContain("table-fixed");
 	expect(container.querySelector("thead")).toBeNull();
 	expect(screen.getByText(`Globex · ${LONG_NOTE}`)).toBeTruthy();
+});
+
+it("sorts by role with company as the tiebreak, and by soonest next step with none last", () => {
+	const { container } = renderList([
+		application({ id: "a", role: "Designer", company: "Zeta", location: null }),
+		application({
+			id: "b",
+			role: "Designer",
+			company: "Acme",
+			location: null,
+			followUpAt: new Date("2099-01-02T00:00:00.000Z"),
+		}),
+		application({
+			id: "c",
+			role: "Analyst",
+			company: "Mid",
+			location: null,
+			followUpAt: new Date("2099-01-01T00:00:00.000Z"),
+		}),
+	]);
+	const order = () =>
+		Array.from(container.querySelectorAll("tbody td button span:last-child"), (span) => span.textContent);
+
+	fireEvent.click(screen.getByRole("button", { name: "Role" }));
+	expect(order()).toEqual(["Mid", "Acme", "Zeta"]);
+
+	fireEvent.click(screen.getByRole("button", { name: "Next step" }));
+	expect(order()).toEqual(["Mid", "Acme", "Zeta"]);
+	fireEvent.click(screen.getByRole("button", { name: "Next step" }));
+	expect(order()).toEqual(["Zeta", "Acme", "Mid"]);
 });

@@ -96,7 +96,7 @@ export async function authorizeAiRequest(
 			);
 		});
 		current();
-		if (!allowed) throw new DOMException(t`Data sharing cancelled. Nothing was sent to the AI provider.`, "AbortError");
+		if (!allowed) throw new DOMException(t`Data sharing canceled. Nothing was sent to the AI provider.`, "AbortError");
 		// The approval covers the provider shown. If its settings or the default changed while the dialog was open,
 		// nothing is sent.
 		const approved = await resolveProvider();

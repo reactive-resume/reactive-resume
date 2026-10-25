@@ -5,14 +5,15 @@ export function applicationError(error: unknown) {
 	if (error instanceof ORPCError) {
 		if (error.code === "POSTING_UNREADABLE") return t`That link couldn't be read. Paste the posting text instead.`;
 		if (error.code === "SEARCH_FAILED") return t`Job search couldn't be reached. Try again or paste a posting link.`;
-		if (error.code === "SEARCH_UNAVAILABLE") return t`Job search isn't configured on this server.`;
+		if (error.code === "SEARCH_UNAVAILABLE")
+			return t`Job search isn't configured on this server. Paste a posting link instead.`;
 		if (error.code === "UNAUTHORIZED") return t`Your session expired. Sign in again.`;
 		if (error.code === "TOO_MANY_REQUESTS" || error.code === "RATE_LIMIT_EXCEEDED")
 			return t`Too many requests. Try again later.`;
 		if (error.code === "BAD_GATEWAY")
-			return t`The service could not be reached. Try again or fill the details manually.`;
+			return t`The service couldn't be reached. Try again or fill the details manually.`;
 		if (error.code === "BAD_REQUEST")
 			return t`Check the fields and try again. For unreadable links, paste the posting text instead.`;
 	}
-	return t`Could not complete the request. Check your connection and try again.`;
+	return t`Couldn't complete the request. Check your connection and try again.`;
 }

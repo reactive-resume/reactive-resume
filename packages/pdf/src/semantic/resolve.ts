@@ -130,7 +130,3 @@ export function resolveResumeRuntime({
 		diagnostics: [...compiled.diagnostics, ...resolved.diagnostics],
 	};
 }
-
-export function resolveResumePresentation(input: ResolveResumePresentationInput): ResolvedResumePresentation {
-	return resolveResumeRuntime(input).presentation;
-}

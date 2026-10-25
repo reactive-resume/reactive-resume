@@ -47,7 +47,7 @@ export function ProviderList() {
 				<EmptyState
 					icon="sparkle"
 					title={t`No AI provider yet`}
-					message={t`Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practise need one. Editing, Design, the readability checks and downloads work without one.`}
+					message={t`Word import, Improve, the assistant, letter drafts, Career coaching and generation, and voice practice need one. Editing, Design, the readability checks and downloads work without one.`}
 				/>
 			)}
 			{state.providers.map((provider) => (
@@ -93,7 +93,7 @@ function ProviderRow({ provider, isDefault, onEdit }: ProviderRowProps) {
 				const tested = await client.aiProviders.test({ id: provider.id });
 				const milliseconds = Math.round(performance.now() - start);
 				if (tested.testStatus === "success") setResult(t`Connected · ${milliseconds} ms`);
-				else setFailure(tested.testError || t`The provider didn't answer.`);
+				else setFailure(tested.testError || t`The provider didn't answer. Check the key, the model and the base URL.`);
 			}
 		} catch (error) {
 			setFailure(aiSettingsError(error, action === "test"));

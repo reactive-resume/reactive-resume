@@ -155,23 +155,19 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 	// Chat (and Accept) mounts only after every check passes; each other state says what it waits for or offers a way on.
 	const body =
 		session.status !== "signed-in" ? (
-			notice("warn", t`Sign in to use the Assistant.`, {
+			notice("warn", t`Sign in to use the assistant.`, {
 				label: t`Sign in`,
 				onPress: () => router.push(routes.signIn()),
 			})
 		) : loadFailed ? (
-			notice(
-				"danger",
-				props.kind === "letter" ? t`Cover letter could not be loaded.` : t`Resume could not be loaded.`,
-				{
-					label: t`Retry`,
-					onPress: () =>
-						void store
-							.getState()
-							.open(props.documentId)
-							.catch(() => undefined),
-				},
-			)
+			notice("danger", props.kind === "letter" ? t`Couldn't load the cover letter.` : t`Couldn't load the resume.`, {
+				label: t`Retry`,
+				onPress: () =>
+					void store
+						.getState()
+						.open(props.documentId)
+						.catch(() => undefined),
+			})
 		) : !document ? (
 			waiting(props.kind === "letter" ? t`Opening the letter…` : t`Opening the resume…`, {
 				label: props.kind === "letter" ? t`Open letter` : t`Open resume`,
@@ -322,14 +318,14 @@ function disclosure(t: Translate, document: AssistantDocument, context: MessageC
 	const sends = context.document
 		? document.kind === "letter"
 			? posting
-				? t`Sends this letter and the posting to ${provider} with your key, only when you press send.`
-				: t`Sends this letter to ${provider} with your key, only when you press send.`
+				? t`Sends this letter and the posting to ${provider} with your key, only when you tap send.`
+				: t`Sends this letter to ${provider} with your key, only when you tap send.`
 			: posting
-				? t`Sends this resume and the posting to ${provider} with your key, only when you press send.`
-				: t`Sends this resume to ${provider} with your key, only when you press send.`
+				? t`Sends this resume and the posting to ${provider} with your key, only when you tap send.`
+				: t`Sends this resume to ${provider} with your key, only when you tap send.`
 		: posting
-			? t`Sends your message and the posting to ${provider} with your key, only when you press send.`
-			: t`Sends your message to ${provider} with your key, only when you press send.`;
+			? t`Sends your message and the posting to ${provider} with your key, only when you tap send.`
+			: t`Sends your message to ${provider} with your key, only when you tap send.`;
 	const history =
 		!context.document || !context.posting
 			? t`Each send starts fresh with this message and selected files. Previous conversation history stays here.`

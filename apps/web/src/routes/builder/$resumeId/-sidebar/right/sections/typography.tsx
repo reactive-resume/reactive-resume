@@ -29,13 +29,10 @@ type FormValues = z.infer<typeof formSchema>;
 type FontWeight = FormValues["body"]["fontWeights"][number];
 type TypographyPrefix = "body" | "heading";
 
-function useTypographyForm(typography: FormValues, persist: (data: FormValues) => void) {
+function useTypographyForm(typography: FormValues) {
 	const form = useAppForm({
 		defaultValues: typography,
 		validators: { onChange: formSchema },
-		onSubmit: ({ value }) => {
-			persist(value);
-		},
 	});
 	useSyncFormValues(form, typography);
 	return form;
@@ -56,21 +53,14 @@ function TypographySectionForm() {
 		});
 	};
 
-	const form = useTypographyForm(typography, persist);
+	const form = useTypographyForm(typography);
 
 	const handleAutoSave = () => {
 		persist(form.state.values);
 	};
 
 	return (
-		<form
-			className="grid grid-cols-1 gap-4 @md:grid-cols-2"
-			onSubmit={(event) => {
-				event.preventDefault();
-				event.stopPropagation();
-				void form.handleSubmit();
-			}}
-		>
+		<div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
 			<TypographyFieldGroup label={<Trans context="Body Text (paragraphs, lists, etc.)">Body</Trans>} />
 			<TypographyGroupFields form={form} prefix="body" handleAutoSave={handleAutoSave} />
 			<TypographyFieldGroup label={<Trans context="Headings or Titles (H1, H2, H3, H4, H5, H6)">Heading</Trans>} />
@@ -100,7 +90,7 @@ function TypographySectionForm() {
 					</FormItem>
 				)}
 			</form.Field>
-		</form>
+		</div>
 	);
 }
 
@@ -122,7 +112,7 @@ function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroup
 						hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
 					>
 						<FormLabel>
-							<Trans>Font Family</Trans>
+							<Trans>Font family</Trans>
 						</FormLabel>
 						<FormControl
 							render={
@@ -150,7 +140,7 @@ function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroup
 						className="col-span-full"
 						hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
 					>
-						<FormLabel>{prefix === "body" ? <Trans>Font Weights</Trans> : <Trans>Font Weight</Trans>}</FormLabel>
+						<FormLabel>{prefix === "body" ? <Trans>Font weights</Trans> : <Trans>Font weight</Trans>}</FormLabel>
 						<FormControl
 							render={
 								<FontWeightCombobox
@@ -174,7 +164,7 @@ function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroup
 				{(field) => (
 					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
 						<FormLabel>
-							<Trans>Font Size</Trans>
+							<Trans>Font size</Trans>
 						</FormLabel>
 						<InputGroup>
 							<FormControl
@@ -205,7 +195,7 @@ function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroup
 				{(field) => (
 					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
 						<FormLabel>
-							<Trans>Line Height</Trans>
+							<Trans>Line height</Trans>
 						</FormLabel>
 						<InputGroup>
 							<FormControl

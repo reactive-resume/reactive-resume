@@ -28,6 +28,7 @@ const history = createVersionHistory<CoverLetterVersionKind, CoverLetter>({
 });
 
 type Owned = { coverLetterId: string; userId: string };
+const ids = ({ coverLetterId, ...rest }: Owned) => ({ ...rest, documentId: coverLetterId });
 
 export const writeLetterVersion = (
 	client: DbOrTx,
@@ -56,25 +57,15 @@ export const saveLetterSessionVersion = (input: { letter: CoverLetter; userId: s
 		sessionId: input.sessionId,
 	});
 
-export const listLetterVersions = (input: Owned) =>
-	history.list({ documentId: input.coverLetterId, userId: input.userId });
+export const listLetterVersions = (input: Owned) => history.list(ids(input));
 
 export const getLetterVersion = async (input: Owned & { versionId: string }) => {
-	const version = await history.get({
-		documentId: input.coverLetterId,
-		userId: input.userId,
-		versionId: input.versionId,
-	});
+	const version = await history.get({ ...ids(input), versionId: input.versionId });
 	return { ...version, data: version.data as CoverLetterVersionData };
 };
 
 export const renameLetterVersion = (input: Owned & { versionId: string; name: string }) =>
-	history.rename({
-		documentId: input.coverLetterId,
-		userId: input.userId,
-		versionId: input.versionId,
-		name: input.name,
-	});
+	history.rename({ ...ids(input), versionId: input.versionId, name: input.name });
 
 export const deleteLetterVersion = (input: Owned & { versionId: string }) =>
-	history.remove({ documentId: input.coverLetterId, userId: input.userId, versionId: input.versionId });
+	history.remove({ ...ids(input), versionId: input.versionId });

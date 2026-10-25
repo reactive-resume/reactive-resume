@@ -68,7 +68,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 					error.message ||
 					t({
 						comment: "Fallback toast when sign-in fails without an error message",
-						message: "Failed to sign in. Please try again.",
+						message: "Couldn't sign in. Try again.",
 					}),
 				id: toastId,
 			});

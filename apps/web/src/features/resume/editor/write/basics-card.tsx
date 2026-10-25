@@ -30,7 +30,6 @@ function useBasicsWriter() {
 export function BasicsCard({ locked }: { locked: boolean }) {
 	const basics = useCurrentBuilderResumeSelector((resume) => resume.data.basics);
 	const open = useEditorStore((state) => state.basicsOpen);
-	const setOpen = useEditorStore((state) => state.setBasicsOpen);
 	const selected = useEditorStore((state) => state.selection?.kind === "header");
 	const write = useBasicsWriter();
 
@@ -54,12 +53,12 @@ export function BasicsCard({ locked }: { locked: boolean }) {
 			<button
 				type="button"
 				aria-expanded={open}
-				onClick={() => setOpen(!open)}
+				onClick={() => useEditorStore.setState({ basicsOpen: !open })}
 				className="flex w-full items-center gap-3 rounded-xl p-3 text-start"
 			>
 				<span
 					aria-hidden="true"
-					className="grid size-10 shrink-0 place-items-center rounded-full bg-accent-soft text-sm font-semibold text-accent-text"
+					className="grid size-10 shrink-0 place-items-center rounded-sm bg-accent-soft text-sm font-semibold text-accent-text"
 				>
 					{getInitials(basics.name || "?")}
 				</span>

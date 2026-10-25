@@ -6,21 +6,17 @@ const DOCS_URL = "https://docs.rxresu.me";
 export const CONTEXT7_ASK_URL = "https://context7.com/api/v2/ask?siteKey=ask_b3fd9335a63f1b21b1a814ac";
 export const CONTEXT7_ASK_DESCRIPTION = `This site has a search endpoint: ${CONTEXT7_ASK_URL}&query=<URL-encoded question>. It returns documentation that answers the question, with a source link for each part. No API key is needed. If nothing matches, it says so.`;
 
-type StaticSeoOptions = {
-	head?: boolean;
-};
-
 function appUrl() {
 	return env.APP_URL.replace(/\/+$/, "");
 }
 
-function textResponse(body: string, options: StaticSeoOptions = {}) {
-	return new Response(options.head ? null : body, {
+function textResponse(body: string) {
+	return new Response(body, {
 		headers: { "Content-Type": "text/plain; charset=UTF-8" },
 	});
 }
 
-export function handleRobots(options?: StaticSeoOptions) {
+export function handleRobots() {
 	const baseUrl = appUrl();
 	const body = [
 		"User-agent: *",
@@ -40,7 +36,7 @@ export function handleRobots(options?: StaticSeoOptions) {
 		"",
 	].join("\n");
 
-	return textResponse(body, options);
+	return textResponse(body);
 }
 
 // The indexable pages; everything else is the signed-in app or a public resume, both served noindex.
@@ -49,7 +45,7 @@ const sitemapPaths = ["/", "/ats-checker", "/resume-templates"];
 const escapeXml = (value: string) =>
 	value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 
-export function handleSitemap(options?: StaticSeoOptions) {
+export function handleSitemap() {
 	const baseUrl = appUrl();
 	const urls = sitemapPaths.flatMap((path) => {
 		const pageUrl = `${baseUrl}${path}`;
@@ -70,12 +66,12 @@ export function handleSitemap(options?: StaticSeoOptions) {
 		"",
 	].join("\n");
 
-	return new Response(options?.head ? null : body, {
+	return new Response(body, {
 		headers: { "Content-Type": "application/xml; charset=UTF-8" },
 	});
 }
 
-export function handleLlms(options?: StaticSeoOptions) {
+export function handleLlms() {
 	const baseUrl = appUrl();
 	const body = [
 		"# Reactive Resume",
@@ -125,5 +121,5 @@ export function handleLlms(options?: StaticSeoOptions) {
 		"",
 	].join("\n");
 
-	return textResponse(body, options);
+	return textResponse(body);
 }

@@ -43,8 +43,8 @@ export function DraftConflictSheet({ open, kind, name, locked, onResolve }: Draf
 					style={{
 						maxHeight: "90%",
 						backgroundColor: colors.raised,
-						borderTopStartRadius: radius.rSheetA,
-						borderTopEndRadius: radius.rSheetA,
+						borderTopStartRadius: radius.rLg,
+						borderTopEndRadius: radius.rLg,
 					}}
 				>
 					<ScrollView

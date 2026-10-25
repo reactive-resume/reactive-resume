@@ -141,7 +141,7 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 							})}
 						</Text>
 						<Text color="ink3">{t`Job match isn't part of the readability score.`}</Text>
-						{match.total === 0 && <Text>{t`No recognisable terms in this posting.`}</Text>}
+						{match.total === 0 && <Text>{t`No recognizable terms in this posting.`}</Text>}
 						<Text variant="label">{t`Not in your resume · add only if true`}</Text>
 						<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
 							{match.missing.map((entry) => (

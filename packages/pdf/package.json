@@ -4,17 +4,15 @@
 	"type": "module",
 	"private": true,
 	"exports": {
-		"./icons": "./src/forme/phosphor-icons.json",
+		"./icons": "./src/forme/phosphor-icons/all.ts",
 		"./browser": "./src/browser.tsx",
-		"./document": "./src/document.tsx",
 		"./native": "./src/native.tsx",
 		"./page-map": "./src/page-map.ts",
-		"./semantic": "./src/semantic/index.ts",
 		"./semantic-legacy": "./src/semantic/legacy-converter.ts",
 		"./semantic-tree": "./src/semantic/tree.ts",
+		"./filtering": "./src/templates/shared/filtering.ts",
 		"./section-title": "./src/section-title.ts",
-		"./server": "./src/server.tsx",
-		"./primitives": "./src/forme/primitives.tsx"
+		"./server": "./src/server.tsx"
 	},
 	"imports": {
 		"#react-pdf-renderer": "./src/forme/primitives.tsx"
@@ -23,8 +21,7 @@
 		"typecheck": "tsrs --noEmit",
 		"test": "vp test run --passWithNoTests",
 		"test:coverage": "vp test run --coverage --passWithNoTests",
-		"test:ci": "vp test run --reporter=default --reporter=github-actions --reporter=json --reporter=junit --outputFile.json=reports/vitest-results.json --outputFile.junit=reports/vitest-junit.xml --passWithNoTests",
-		"test:agent": "vp test run --reporter=agent --reporter=json --outputFile.json=reports/vitest-results.json --passWithNoTests"
+		"test:ci": "vp test run --reporter=default --reporter=github-actions --reporter=json --reporter=junit --outputFile.json=reports/vitest-results.json --outputFile.junit=reports/vitest-junit.xml --passWithNoTests"
 	},
 	"dependencies": {
 		"@formepdf/core": "0.29.0",
@@ -33,7 +30,6 @@
 		"@reactive-resume/resume": "workspace:*",
 		"@reactive-resume/schema": "workspace:*",
 		"@reactive-resume/utils": "workspace:*",
-		"cjk-regex": "^3.5.0",
 		"fast-png": "^8.0.0",
 		"fflate": "catalog:",
 		"harfbuzzjs": "1.6.4",
