@@ -74,6 +74,7 @@ vi.mock("../static/web", () => ({
 	serveWebDistStatic: mocks.serveWebDistStatic,
 	handleWebApp: mocks.handleWebApp,
 	isPublicResumePath: () => false,
+	isProfilePath: () => false,
 }));
 
 vi.mock("../mcp/handler", () => ({

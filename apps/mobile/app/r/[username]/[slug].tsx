@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { openBrowserAsync } from "expo-web-browser";
 import { useEffect } from "react";
+import { Linking } from "react-native";
 import { publicResumeUrl } from "@reactive-resume/resume/sharing";
 import { getServer } from "@/auth/session";
 
@@ -13,9 +14,12 @@ export default function PublicResumeScreen() {
 	const { username = "", slug = "" } = useLocalSearchParams<{ username: string; slug: string }>();
 
 	useEffect(() => {
-		void openBrowserAsync(publicResumeUrl(getServer(), { username, slug })).finally(() =>
-			router.canGoBack() ? router.back() : router.replace("/"),
-		);
+		const url = publicResumeUrl(getServer(), { username, slug });
+		// Without an in-app browser, the system browser opens it.
+		void openBrowserAsync(url)
+			.catch(() => Linking.openURL(url))
+			.catch(() => undefined)
+			.finally(() => (router.canGoBack() ? router.back() : router.replace("/")));
 	}, [router, slug, username]);
 
 	return null;

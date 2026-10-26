@@ -22,7 +22,10 @@ export function CopyLinkButton({ url, disabled, className }: CopyLinkButtonProps
 	const timer = useRef<number>(undefined);
 
 	const copy = async () => {
-		await copyToClipboard(url);
+		if (!(await copyToClipboard(url))) {
+			toast.add({ type: "error", description: t`Couldn't copy to the clipboard. Try again.` });
+			return;
+		}
 		setCopied(true);
 		window.clearTimeout(timer.current);
 		timer.current = window.setTimeout(() => setCopied(false), COPIED_MS);
