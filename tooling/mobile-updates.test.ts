@@ -56,9 +56,25 @@ const previous = { ...healthy, revision: "b".repeat(40) };
 it.each([
 	["matching healthy backend", [healthy], 0, 3],
 	["previous commit", [previous], 1, 60],
-	["unhealthy backend", [{ ...healthy, status: "unhealthy" }], 1, 60],
-	["unrelated service", [{ ...healthy, service: "other" }], 1, 60],
-	["rolling deployment", [previous, healthy, healthy, previous, healthy, healthy, healthy], 0, 7],
+	[
+		"rolling deployment resets stability for every rejected probe",
+		[
+			healthy,
+			healthy,
+			previous,
+			healthy,
+			healthy,
+			{ ...healthy, status: "unhealthy" },
+			healthy,
+			healthy,
+			{ ...healthy, service: "other" },
+			healthy,
+			healthy,
+			healthy,
+		],
+		0,
+		12,
+	],
 ] as const)("requires three consecutive matching production probes: %s", (_name, responses, status, probes) => {
 	const script = workflow.match(
 		/      - name: Wait for matching production backend[\s\S]*?        run: \|\n([\s\S]*?)(?=\n      - name:)/,

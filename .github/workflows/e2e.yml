@@ -23,12 +23,19 @@ env:
 
 jobs:
   e2e:
-    name: Unit and browser tests
+    name: ${{ matrix.suite }} tests
     if: ${{ !inputs.live_smoke }}
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [Unit, Browser]
     env:
       APP_URL: http://localhost:3000
       PORT: "3000"
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      # Public fixtures for disposable CI services. Random values invalidate every Turbo test key.
+      AUTH_SECRET: isolated-ci-auth-secret-32-characters
+      ENCRYPTION_SECRET: isolated-ci-encryption-secret-32-characters
       FLAG_DISABLE_SIGNUPS: "false"
       FLAG_DISABLE_EMAIL_AUTH: "false"
       FLAG_ENABLE_GUEST_LOGIN: "true"
@@ -65,14 +72,14 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-          fetch-depth: 0
+          fetch-depth: ${{ matrix.suite == 'Unit' && '0' || '1' }}
 
       - name: Checkout Repository (Blacksmith)
         if: ${{ vars.USE_BLACKSMITH == 'true' }}
         uses: useblacksmith/checkout@v1
         with:
           persist-credentials: false
-          fetch-depth: 0
+          fetch-depth: ${{ matrix.suite == 'Unit' && '0' || '1' }}
 
       - name: Install pnpm
         uses: pnpm/action-setup@v6
@@ -87,9 +94,9 @@ jobs:
         uses: actions/cache@v6
         with:
           path: .turbo/cache
-          key: ${{ runner.os }}-${{ runner.arch }}-turbo-${{ github.workflow }}-${{ github.job }}-${{ hashFiles('pnpm-lock.yaml', '.nvmrc') }}-${{ github.sha }}
+          key: ${{ runner.os }}-${{ runner.arch }}-turbo-${{ github.workflow }}-${{ github.job }}-${{ matrix.suite }}-${{ hashFiles('pnpm-lock.yaml', '.nvmrc') }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-${{ runner.arch }}-turbo-${{ github.workflow }}-${{ github.job }}-${{ hashFiles('pnpm-lock.yaml', '.nvmrc') }}-
+            ${{ runner.os }}-${{ runner.arch }}-turbo-${{ github.workflow }}-${{ github.job }}-${{ matrix.suite }}-${{ hashFiles('pnpm-lock.yaml', '.nvmrc') }}-
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
@@ -98,19 +105,17 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
 
       - name: Check Package Boundaries
+        if: matrix.suite == 'Unit'
         run: pnpm exec turbo boundaries
 
       - name: Typecheck Affected Packages
+        if: matrix.suite == 'Unit'
         run: pnpm exec turbo run typecheck --affected
 
       - name: Install Playwright Browser
+        if: matrix.suite == 'Browser'
         timeout-minutes: 10
         run: pnpm exec playwright install --with-deps chromium
-
-      - name: Generate Test Secrets
-        run: |
-          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
-          echo "ENCRYPTION_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
 
       - name: Prepare Storage
         run: mkdir -p "$LOCAL_STORAGE_PATH"
@@ -119,25 +124,27 @@ jobs:
         run: pnpm db:migrate
 
       - name: Prepare OAuth Test Database
+        if: matrix.suite == 'Unit'
         run: |
           psql "$DATABASE_URL" -c "CREATE DATABASE oauth_test"
           DATABASE_URL="$OAUTH_TEST_DATABASE_URL" pnpm db:migrate
 
-      # Runs every workspace package, not a hand-maintained filter list, so a package
-      # cannot silently lose coverage by being left out. Serial execution: the PDF
-      # rasterization and API rate-limit suites time out when several packages' Vitest
-      # thread pools oversubscribe the runner at once.
+      # Discover every package. Four pools of two workers fit the 32-vCPU runner;
+      # keep smaller GitHub runners serial to avoid PDF/rate-limit timeouts.
       - name: Run Unit Tests
-        run: pnpm exec turbo run test:ci --concurrency=1
+        if: matrix.suite == 'Unit'
+        run: pnpm exec turbo run test:ci --concurrency=${{ vars.USE_BLACKSMITH == 'true' && 4 || 1 }}
 
       - name: Build
+        if: matrix.suite == 'Browser'
         run: pnpm build
 
       - name: Run E2E Tests
-        run: pnpm exec playwright test
+        if: matrix.suite == 'Browser'
+        run: pnpm exec playwright test --workers=${{ vars.USE_BLACKSMITH == 'true' && 4 || 1 }}
 
       - name: Upload Playwright Report
-        if: always()
+        if: always() && matrix.suite == 'Browser'
         uses: actions/upload-artifact@v7
         with:
           name: playwright-report

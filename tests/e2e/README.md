@@ -28,6 +28,11 @@ Run tests:
 
 `APP_URL=http://localhost:3000 PORT=3000 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres FLAG_DISABLE_SIGNUPS=false FLAG_DISABLE_EMAIL_AUTH=false FLAG_ENABLE_GUEST_LOGIN=true FLAG_DISABLE_API_RATE_LIMIT=true FLAG_ALLOW_UNSAFE_AI_BASE_URL=true LOCAL_STORAGE_PATH=/workspace/data/e2e pnpm test:e2e`
 
+CI runs browser tests independently from unit tests, with four Playwright workers on 32-vCPU Blacksmith runners
+and one on GitHub runners. Each test owns its account and browser context; provider fixtures use ephemeral ports.
+To compare locally, append `--workers=1` or `--workers=4` to the test command against the same disposable database
+and production build. The runner still uses zero retries, so parallelism cannot hide a failed test.
+
 ## Coverage
 
 - Email/password sign-up, sign-out and sign-in through the UI.

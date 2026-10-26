@@ -181,7 +181,7 @@ pnpm exec turbo boundaries
 
 - Vitest tests live alongside source as `src/**/*.test.ts(x)` or `src/**/*.spec.ts(x)` (including integration tests). Paths under `pnpm --filter <package>` are package-relative. Pass paths directly after `test`: an extra `--` currently prevents Vitest from filtering the run. Shared settings live in `vitest.shared.mts` and setup in `vitest.setup.ts`; most packages use Node, while `packages/ui` uses `happy-dom`.
 - Coverage uses V8 and writes package-local `coverage/` reports. No shared minimum coverage threshold is configured. `test:ci` writes JSON/JUnit results under package-local `reports/`.
-- Root `pnpm test`, `pnpm test:coverage`, and `pnpm typecheck` run workspace checks through Turbo. CI checks boundaries and affected-package typechecks, then runs all unit suites with `pnpm exec turbo run test:ci --concurrency=1` to avoid CPU contention in PDF/rate-limit suites. Unit/browser and Vercel workflows persist `.turbo/cache`; cached coverage and test reports restore to package-local output directories.
+- Root `pnpm test`, `pnpm test:coverage`, and `pnpm typecheck` run workspace checks through Turbo. CI runs unit and browser jobs independently. Unit CI checks boundaries and affected-package typechecks, then discovers all unit suites with Turbo: four concurrent packages on 32-vCPU Blacksmith runners, one on GitHub runners, with two Vitest workers per package. Local test scripts remain serial. Unit/browser and Vercel jobs persist separate `.turbo/cache` namespaces; cached coverage and test reports restore to package-local output directories. Public, fixed CI secrets belong only to disposable services and keep unchanged test cache keys reusable; database and workflow integration suites retain their package-level cache opt-outs.
 - Real-database unit suites use `COVER_LETTER_TEST_DATABASE_URL` and `OAUTH_TEST_DATABASE_URL`; see `.github/workflows/e2e.yml` for isolated database setup. Never point test fixtures at production data.
 - After changing shared contracts, exports, or imports, check affected consumers and run `pnpm exec turbo boundaries`.
 
@@ -200,7 +200,7 @@ pnpm test:e2e:ui
 - `playwright.config.ts` starts `node apps/server/dist/index.mjs` in production mode and waits for `/api/health`; locally it can reuse an existing server. Build first. Keep the direct Node command: pnpm's script process groups can prevent Playwright from cleaning up a server started through `pnpm start`.
 - Export `APP_URL`, `PORT`, `DATABASE_URL`, `AUTH_SECRET`, and `ENCRYPTION_SECRET`, and choose an absolute writable `LOCAL_STORAGE_PATH`. Auth fixtures need signups/email auth enabled; `FLAG_DISABLE_API_RATE_LIMIT=true` is appropriate for this isolated test installation.
 - Assistant specs use a deterministic local AI stub and need `FLAG_ALLOW_UNSAFE_AI_BASE_URL=true`; otherwise those specs skip. See `tests/e2e/README.md` for the full environment recipe; adapt its example storage path to your machine.
-- Playwright runs Chromium with no retries. CI uses one worker and retains failure traces, screenshots, videos, and reports. PDF/DOCX rasterization and visual regression are outside this browser gate.
+- Playwright runs Chromium with no retries. CI selects four workers on Blacksmith and one on GitHub runners; the config default remains one in CI. Tests own separate accounts and browser contexts. CI retains failure traces, screenshots, videos, and reports. PDF/DOCX rasterization and visual regression are outside this browser gate.
 
 ## Code style
 
