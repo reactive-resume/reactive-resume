@@ -74,7 +74,7 @@ type PageOptions = {
 };
 
 /** Off, unknown or trashed resumes read the same, in the visitor's language. */
-export function unavailableResponse(request: Request) {
+function unavailableResponse(request: Request) {
 	const lang = localeFromAcceptLanguage(request.headers.get("accept-language"));
 	return html(renderUnavailableDocument({ lang, messages: webPageMessages(lang) }), 404);
 }
