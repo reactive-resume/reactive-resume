@@ -89,13 +89,16 @@ vi.mock("./version-history", () => versionHistoryMock);
 const recordSlugChangeMock = vi.hoisted(() => vi.fn());
 // The lookup by username and slug; its query is tested against real SQL in public-pdf.test.ts.
 const findResumeBySlugMock = vi.hoisted(() => vi.fn());
-vi.mock("./slugs", () => ({
-	SLUG_PATTERN: /^[a-z0-9]+(-[a-z0-9]+)*$/,
-	checkSlug: vi.fn(),
-	findFreeSlug: vi.fn(async () => "generated-slug"),
-	findResumeBySlug: findResumeBySlugMock,
-	recordSlugChange: recordSlugChangeMock,
-}));
+vi.mock("./slugs", async (importOriginal) => {
+	const actual = await importOriginal<typeof import("./slugs")>();
+	return {
+		...actual,
+		checkSlug: vi.fn(),
+		findFreeSlug: vi.fn(async () => "generated-slug"),
+		findResumeBySlug: findResumeBySlugMock,
+		recordSlugChange: recordSlugChangeMock,
+	};
+});
 
 const { resumeService } = await import("./service");
 const { parseStoredResumeData } = await import("./resume-data-validation");
@@ -201,6 +204,40 @@ describe("versions.restore", () => {
 	});
 });
 
+describe("create", () => {
+	it("rejects an explicit slug outside the pattern", async () => {
+		await expect(
+			resumeService.create({
+				userId: "u1",
+				name: "Resume",
+				slug: "Invalid Slug@123!",
+				tags: [],
+				locale: "en-US",
+			}),
+		).rejects.toMatchObject({
+			code: "INVALID_SLUG",
+			status: 400,
+		});
+		expect(dbMock.transaction).not.toHaveBeenCalled();
+	});
+
+	it("rejects an explicit slug exceeding 64 characters", async () => {
+		await expect(
+			resumeService.create({
+				userId: "u1",
+				name: "Resume",
+				slug: "a".repeat(65),
+				tags: [],
+				locale: "en-US",
+			}),
+		).rejects.toMatchObject({
+			code: "INVALID_SLUG",
+			status: 400,
+		});
+		expect(dbMock.transaction).not.toHaveBeenCalled();
+	});
+});
+
 describe("update", () => {
 	const updateHarness = (existing: { slug: string; updatedAt?: Date }) => {
 		const row = { ...createResumeRow(defaultResumeData, existing.updatedAt), slug: existing.slug };
@@ -258,6 +295,12 @@ describe("update", () => {
 	it("rejects a new slug outside the pattern, but accepts an unchanged legacy one", async () => {
 		updateHarness({ slug: "Legacy_Slug" });
 		await expect(resumeService.update({ id: "r1", userId: "u1", slug: "Not Valid" })).rejects.toMatchObject({
+			code: "INVALID_SLUG",
+			status: 400,
+		});
+
+		updateHarness({ slug: "old-slug" });
+		await expect(resumeService.update({ id: "r1", userId: "u1", slug: "a".repeat(65) })).rejects.toMatchObject({
 			code: "INVALID_SLUG",
 			status: 400,
 		});

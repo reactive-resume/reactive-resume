@@ -61,4 +61,32 @@ describe("resume DTO output validation", () => {
 			name: "Renamed",
 		});
 	});
+
+	it("does not fail output validation on existing legacy records with long slug", () => {
+		const legacyRecord = {
+			id: "r1",
+			name: "Legacy Resume",
+			slug: "a".repeat(70),
+			tags: [],
+			isPublic: false,
+			showDownloadButtons: true,
+			isLocked: false,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			hasPassword: false,
+			applicationId: null,
+			data: defaultResumeData,
+		};
+		expect(() => resumeDto.getById.output.parse(legacyRecord)).not.toThrow();
+	});
+
+	it("allows checking slugs longer than 64 characters so service can suggest truncations", () => {
+		const longSlug = "a".repeat(70);
+		expect(() => resumeDto.checkSlug.input.parse({ resumeId: "r1", slug: longSlug })).not.toThrow();
+	});
+
+	it("allows update inputs with slugs longer than 64 characters so service can check if unchanged", () => {
+		const longSlug = "a".repeat(70);
+		expect(() => resumeDto.update.input.parse({ id: "r1", slug: longSlug })).not.toThrow();
+	});
 });

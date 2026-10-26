@@ -1,6 +1,8 @@
+import { isValidSlug, MAX_SLUG_LENGTH, normalizeSlug } from "@reactive-resume/schema/resume/slug";
+
+export { MAX_SLUG_LENGTH, normalizeSlug };
 /** Same address grammar as the public-link API. */
-export const validSlug = (slug: string) => /^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug);
-export const normalizeSlug = (slug: string) => slug.toLowerCase().replace(/\s+/g, "-");
+export const validSlug = isValidSlug;
 
 const timeUnits = [
 	{ unit: "minute", ms: 60_000, below: 60 },

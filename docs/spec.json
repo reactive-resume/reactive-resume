@@ -1,7 +1,7 @@
 {
 	"info": {
 		"title": "Reactive Resume",
-		"version": "6.0.4",
+		"version": "6.0.6",
 		"description": "Reactive Resume API. Mutations do not support Idempotency-Key. Do not automatically retry POST, PUT, PATCH or DELETE requests after a timeout: first read the resource to determine whether the operation succeeded. Existing enum values and response shapes are retained for compatibility.",
 		"license": {
 			"name": "MIT",
@@ -414,7 +414,8 @@
 											},
 											"data": {
 												"type": "string",
-												"maxLength": 13981018
+												"maxLength": 13981018,
+												"contentEncoding": "base64"
 											}
 										},
 										"required": [
@@ -4685,7 +4686,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI returned an improperly formatted structure."
+													"default": "The AI response wasn't in the expected format. Try again, or choose another model."
 												},
 												"data": {}
 											},
@@ -4745,7 +4746,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -4863,7 +4864,8 @@
 											},
 											"data": {
 												"type": "string",
-												"maxLength": 13981018
+												"maxLength": 13981018,
+												"contentEncoding": "base64"
 											}
 										},
 										"required": [
@@ -9142,7 +9144,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI returned an improperly formatted structure."
+													"default": "The AI response wasn't in the expected format. Try again, or choose another model."
 												},
 												"data": {}
 											},
@@ -9202,7 +9204,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -9449,7 +9451,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI returned an improperly formatted structure."
+													"default": "The AI response wasn't in the expected format. Try again, or choose another model."
 												},
 												"data": {}
 											},
@@ -9509,7 +9511,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -9704,7 +9706,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI returned an improperly formatted structure."
+													"default": "The AI response wasn't in the expected format. Try again, or choose another model."
 												},
 												"data": {}
 											},
@@ -9764,7 +9766,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -10066,7 +10068,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI agent workspace is not configured."
+													"default": "AI providers aren't available on this server. Ask the server administrator to set ENCRYPTION_SECRET."
 												},
 												"data": {}
 											},
@@ -10370,7 +10372,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Invalid AI provider configuration."
+													"default": "That provider setup isn't valid. Check the base URL and try again."
 												},
 												"data": {}
 											},
@@ -10430,7 +10432,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI is managed by the server."
+													"default": "AI is set up by the server administrator and can't be changed here."
 												},
 												"data": {}
 											},
@@ -10490,7 +10492,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI agent workspace is not configured."
+													"default": "AI providers aren't available on this server. Ask the server administrator to set ENCRYPTION_SECRET."
 												},
 												"data": {}
 											},
@@ -10803,7 +10805,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Invalid AI provider configuration."
+													"default": "That provider setup isn't valid. Check the base URL and try again."
 												},
 												"data": {}
 											},
@@ -10863,7 +10865,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI is managed by the server."
+													"default": "AI is set up by the server administrator and can't be changed here."
 												},
 												"data": {}
 											},
@@ -10923,7 +10925,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI provider was not found."
+													"default": "This AI provider no longer exists. Reload and choose another provider."
 												},
 												"data": {}
 											},
@@ -10983,7 +10985,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI agent workspace is not configured."
+													"default": "AI providers aren't available on this server. Ask the server administrator to set ENCRYPTION_SECRET."
 												},
 												"data": {}
 											},
@@ -11115,7 +11117,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI is managed by the server."
+													"default": "AI is set up by the server administrator and can't be changed here."
 												},
 												"data": {}
 											},
@@ -11175,7 +11177,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI agent workspace is not configured."
+													"default": "AI providers aren't available on this server. Ask the server administrator to set ENCRYPTION_SECRET."
 												},
 												"data": {}
 											},
@@ -11438,7 +11440,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Test and switch on this connection before making it the default."
+													"default": "Test and turn on this provider before making it the default."
 												},
 												"data": {}
 											},
@@ -11498,7 +11500,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI is managed by the server."
+													"default": "AI is set up by the server administrator and can't be changed here."
 												},
 												"data": {}
 											},
@@ -11558,7 +11560,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI provider was not found."
+													"default": "This AI provider no longer exists. Reload and choose another provider."
 												},
 												"data": {}
 											},
@@ -11618,7 +11620,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI agent workspace is not configured."
+													"default": "AI providers aren't available on this server. Ask the server administrator to set ENCRYPTION_SECRET."
 												},
 												"data": {}
 											},
@@ -11881,7 +11883,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Invalid AI provider configuration."
+													"default": "That provider setup isn't valid. Check the base URL and try again."
 												},
 												"data": {}
 											},
@@ -11941,7 +11943,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI is managed by the server."
+													"default": "AI is set up by the server administrator and can't be changed here."
 												},
 												"data": {}
 											},
@@ -12001,7 +12003,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI provider was not found."
+													"default": "This AI provider no longer exists. Reload and choose another provider."
 												},
 												"data": {}
 											},
@@ -12061,7 +12063,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI agent workspace is not configured."
+													"default": "AI providers aren't available on this server. Ask the server administrator to set ENCRYPTION_SECRET."
 												},
 												"data": {}
 											},
@@ -12121,7 +12123,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -14186,11 +14188,13 @@
 									},
 									"filename": {
 										"type": "string",
-										"minLength": 1
+										"minLength": 1,
+										"maxLength": 255
 									},
 									"mediaType": {
 										"type": "string",
-										"minLength": 1
+										"maxLength": 255,
+										"pattern": "^[\\w.+-]+\\/[\\w.+-]+$"
 									},
 									"data": {
 										"type": "string",
@@ -27229,7 +27233,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Invalid application or AI request."
+													"default": "The application or AI request isn't valid. Check the details and try again."
 												},
 												"data": {}
 											},
@@ -27409,7 +27413,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -27579,7 +27583,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Invalid application or AI request."
+													"default": "The application or AI request isn't valid. Check the details and try again."
 												},
 												"data": {}
 											},
@@ -27639,7 +27643,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -27784,7 +27788,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Invalid application or AI request."
+													"default": "The application or AI request isn't valid. Check the details and try again."
 												},
 												"data": {}
 											},
@@ -27844,7 +27848,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -28017,7 +28021,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Invalid application or AI request."
+													"default": "The application or AI request isn't valid. Check the details and try again."
 												},
 												"data": {}
 											},
@@ -28077,7 +28081,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -28229,7 +28233,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Invalid application or AI request."
+													"default": "The application or AI request isn't valid. Check the details and try again."
 												},
 												"data": {}
 											},
@@ -28289,7 +28293,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -56554,6 +56558,7 @@
 									"slug": {
 										"type": "string",
 										"minLength": 1,
+										"maxLength": 64,
 										"description": "The slug of the resume. Generated from the name, and made unique, when omitted."
 									},
 									"withSampleData": {
@@ -56602,6 +56607,31 @@
 												"message": {
 													"type": "string",
 													"default": "A resume with this slug already exists."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "INVALID_SLUG"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "The slug must be at most 64 characters and contain only lowercase letters and numbers, separated by single dashes."
 												},
 												"data": {}
 											},
@@ -65480,6 +65510,31 @@
 											"type": "object",
 											"properties": {
 												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "INVALID_SLUG"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "The slug must be at most 64 characters and contain only lowercase letters and numbers, separated by single dashes."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
 													"const": false
 												},
 												"code": {
@@ -65585,7 +65640,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The resume changed after this patch was generated."
+													"default": "The resume changed after this patch was generated. Read the resume again and regenerate the patch."
 												},
 												"data": {}
 											},
@@ -70146,7 +70201,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The patch operations are invalid or produced an invalid resume."
+													"default": "The patch operations are invalid or would produce an invalid resume. Fix the operations and try again."
 												},
 												"data": {}
 											},
@@ -70266,7 +70321,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The resume changed after this patch was generated."
+													"default": "The resume changed after this patch was generated. Read the resume again and regenerate the patch."
 												},
 												"data": {}
 											},
@@ -74864,7 +74919,7 @@
 						"required": true,
 						"schema": {
 							"type": "string",
-							"maxLength": 64,
+							"maxLength": 255,
 							"description": "The slug to check."
 						},
 						"allowEmptyValue": true,
@@ -75726,6 +75781,7 @@
 									"slug": {
 										"type": "string",
 										"minLength": 1,
+										"maxLength": 64,
 										"description": "The slug of the copy. Generated from the name, and made unique, when omitted."
 									}
 								}
@@ -75741,6 +75797,151 @@
 								"schema": {
 									"type": "string",
 									"description": "The ID of the duplicated resume."
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "400",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "RESUME_SLUG_ALREADY_EXISTS"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "A resume with this slug already exists."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "INVALID_SLUG"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "The slug must be at most 64 characters and contain only lowercase letters and numbers, separated by single dashes."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "404",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "NOT_FOUND"
+												},
+												"status": {
+													"const": 404
+												},
+												"message": {
+													"type": "string",
+													"default": "The resume does not exist."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
 								}
 							}
 						}
@@ -85517,7 +85718,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Web access is managed by the server."
+													"default": "Web access is set by the server administrator and can't be changed here."
 												},
 												"data": {}
 											},
@@ -85577,7 +85778,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Credential encryption is not configured."
+													"default": "Web access can't be saved on this server. Ask the server administrator to set ENCRYPTION_SECRET."
 												},
 												"data": {}
 											},
@@ -85708,7 +85909,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Web access is managed by the server."
+													"default": "Web access is set by the server administrator and can't be changed here."
 												},
 												"data": {}
 											},
@@ -85768,7 +85969,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Credential encryption is not configured."
+													"default": "Web access can't be saved on this server. Ask the server administrator to set ENCRYPTION_SECRET."
 												},
 												"data": {}
 											},
@@ -85942,7 +86143,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "No external web connection is configured."
+													"default": "Set up web access in Settings → AI & developer first."
 												},
 												"data": {}
 											},
@@ -92338,6 +92539,31 @@
 											"type": "object",
 											"properties": {
 												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "INVALID_SLUG"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "The slug must be at most 64 characters and contain only lowercase letters and numbers, separated by single dashes."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
 													"const": false
 												},
 												"code": {
@@ -92443,7 +92669,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The resume changed after this patch was generated."
+													"default": "The resume changed after this patch was generated. Read the resume again and regenerate the patch."
 												},
 												"data": {}
 											},
@@ -92576,6 +92802,7 @@
 									"slug": {
 										"type": "string",
 										"minLength": 1,
+										"maxLength": 64,
 										"description": "The slug of the copy. Generated from the name, and made unique, when omitted."
 									}
 								}
@@ -92591,6 +92818,151 @@
 								"schema": {
 									"type": "string",
 									"description": "The ID of the duplicated resume."
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "400",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "RESUME_SLUG_ALREADY_EXISTS"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "A resume with this slug already exists."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "INVALID_SLUG"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "The slug must be at most 64 characters and contain only lowercase letters and numbers, separated by single dashes."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "404",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "NOT_FOUND"
+												},
+												"status": {
+													"const": 404
+												},
+												"message": {
+													"type": "string",
+													"default": "The resume does not exist."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
 								}
 							}
 						}
@@ -97306,7 +97678,7 @@
 						"required": true,
 						"schema": {
 							"type": "string",
-							"maxLength": 64,
+							"maxLength": 255,
 							"description": "The slug to check."
 						},
 						"allowEmptyValue": true,
@@ -102561,7 +102933,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Invalid application or AI request."
+													"default": "The application or AI request isn't valid. Check the details and try again."
 												},
 												"data": {}
 											},
@@ -102741,7 +103113,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -102911,7 +103283,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Invalid application or AI request."
+													"default": "The application or AI request isn't valid. Check the details and try again."
 												},
 												"data": {}
 											},
@@ -102971,7 +103343,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -103116,7 +103488,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Invalid application or AI request."
+													"default": "The application or AI request isn't valid. Check the details and try again."
 												},
 												"data": {}
 											},
@@ -103176,7 +103548,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -103349,7 +103721,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Invalid application or AI request."
+													"default": "The application or AI request isn't valid. Check the details and try again."
 												},
 												"data": {}
 											},
@@ -103409,7 +103781,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -103561,7 +103933,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Invalid application or AI request."
+													"default": "The application or AI request isn't valid. Check the details and try again."
 												},
 												"data": {}
 											},
@@ -103621,7 +103993,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -104301,7 +104673,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "Invalid AI provider configuration."
+													"default": "That provider setup isn't valid. Check the base URL and try again."
 												},
 												"data": {}
 											},
@@ -104361,7 +104733,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI is managed by the server."
+													"default": "AI is set up by the server administrator and can't be changed here."
 												},
 												"data": {}
 											},
@@ -104421,7 +104793,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI provider was not found."
+													"default": "This AI provider no longer exists. Reload and choose another provider."
 												},
 												"data": {}
 											},
@@ -104481,7 +104853,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "AI agent workspace is not configured."
+													"default": "AI providers aren't available on this server. Ask the server administrator to set ENCRYPTION_SECRET."
 												},
 												"data": {}
 											},
@@ -104541,7 +104913,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -104715,7 +105087,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "No external web connection is configured."
+													"default": "Set up web access in Settings → AI & developer first."
 												},
 												"data": {}
 											},
@@ -105548,7 +105920,8 @@
 											},
 											"data": {
 												"type": "string",
-												"maxLength": 13981018
+												"maxLength": 13981018,
+												"contentEncoding": "base64"
 											}
 										},
 										"required": [
@@ -109819,7 +110192,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI returned an improperly formatted structure."
+													"default": "The AI response wasn't in the expected format. Try again, or choose another model."
 												},
 												"data": {}
 											},
@@ -109879,7 +110252,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -109997,7 +110370,8 @@
 											},
 											"data": {
 												"type": "string",
-												"maxLength": 13981018
+												"maxLength": 13981018,
+												"contentEncoding": "base64"
 											}
 										},
 										"required": [
@@ -114276,7 +114650,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI returned an improperly formatted structure."
+													"default": "The AI response wasn't in the expected format. Try again, or choose another model."
 												},
 												"data": {}
 											},
@@ -114336,7 +114710,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -114583,7 +114957,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI returned an improperly formatted structure."
+													"default": "The AI response wasn't in the expected format. Try again, or choose another model."
 												},
 												"data": {}
 											},
@@ -114643,7 +115017,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},
@@ -114838,7 +115212,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI returned an improperly formatted structure."
+													"default": "The AI response wasn't in the expected format. Try again, or choose another model."
 												},
 												"data": {}
 											},
@@ -114898,7 +115272,7 @@
 												},
 												"message": {
 													"type": "string",
-													"default": "The AI provider returned an error or is unreachable."
+													"default": "The AI provider returned an error or couldn't be reached. Try again, or check its settings."
 												},
 												"data": {}
 											},

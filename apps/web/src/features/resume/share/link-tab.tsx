@@ -1,11 +1,11 @@
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useId, useRef, useState } from "react";
 import { useDebounceValue } from "usehooks-ts";
+import { isValidSlug, MAX_SLUG_LENGTH, normalizeSlug } from "@reactive-resume/schema/resume/slug";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
@@ -19,13 +19,9 @@ import { useCurrentResume, usePatchResume } from "@/features/resume/builder/draf
 import { ResumePasswordDialog } from "@/features/resume/builder/password-dialog";
 import { useConfirm } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
+import { getResumeErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
-
-const SLUG_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
-
-const errorMessage = (error: unknown) =>
-	error instanceof ORPCError ? error.message : t`Couldn't update sharing. Try again.`;
 
 /**
  * Link: the public switch, the address with its live check, copy, downloads for visitors, open, QR code and
@@ -48,7 +44,7 @@ export function LinkTab() {
 			});
 			toast.add({ description });
 		} catch (error) {
-			toast.add({ type: "error", description: errorMessage(error) });
+			toast.add({ type: "error", description: getResumeErrorMessage(error) });
 		}
 	};
 
@@ -59,7 +55,7 @@ export function LinkTab() {
 				draft.showDownloadButtons = updated.showDownloadButtons;
 			});
 		} catch (error) {
-			toast.add({ type: "error", description: errorMessage(error) });
+			toast.add({ type: "error", description: getResumeErrorMessage(error) });
 		}
 	};
 
@@ -122,7 +118,8 @@ function useSlugAvailability() {
 	const { mutateAsync: updateResume } = useMutation(orpc.resume.update.mutationOptions());
 
 	const changed = slug !== resume.slug;
-	const wellFormed = SLUG_PATTERN.test(slug);
+	const tooLong = slug.length > MAX_SLUG_LENGTH;
+	const wellFormed = isValidSlug(slug);
 	const check = useQuery({
 		...orpc.resume.checkSlug.queryOptions({ input: { resumeId: resume.id, slug: debouncedSlug } }),
 		enabled: (resume.isPublic ?? false) && changed && wellFormed && debouncedSlug === slug,
@@ -140,7 +137,7 @@ function useSlugAvailability() {
 					draft.slug = updated.slug;
 				}),
 			)
-			.catch((error: unknown) => toast.add({ type: "error", description: errorMessage(error) }))
+			.catch((error: unknown) => toast.add({ type: "error", description: getResumeErrorMessage(error) }))
 			.finally(() => {
 				saving.current = null;
 			});
@@ -153,13 +150,14 @@ function useSlugAvailability() {
 		if (slug === savedSlug) setSlug(resume.slug);
 	}
 
-	return { slug, setSlug, changed, wellFormed, result };
+	return { slug, setSlug, changed, wellFormed, tooLong, result };
 }
 
 type AddressMessageArgs = {
 	isPublic: boolean;
 	slug: string;
 	wellFormed: boolean;
+	tooLong: boolean;
 	changed: boolean;
 	status: string | undefined;
 	url: string;
@@ -167,11 +165,12 @@ type AddressMessageArgs = {
 };
 
 /** The hint under the field; null when the taken-address block renders its own text. */
-function addressMessage({ isPublic, slug, wellFormed, changed, status, url, username }: AddressMessageArgs) {
+function addressMessage({ isPublic, slug, wellFormed, tooLong, changed, status, url, username }: AddressMessageArgs) {
 	if (!isPublic) return t`Turn on the link to choose an address.`;
 	if (!slug) return t`Add an address.`;
-	if (!wellFormed) return t`Use lowercase letters, numbers and single dashes.`;
 	if (!changed) return t`Live at ${url.replace(/^https?:\/\//, "")}`;
+	if (tooLong) return t`Use at most 64 characters.`;
+	if (!wellFormed) return t`Use lowercase letters, numbers and single dashes.`;
 	if (status === "taken") return null;
 	if (status === "available")
 		return t`Saving ${window.location.host}/${username}/${slug}… Copy is available after saving.`;
@@ -183,10 +182,19 @@ function AddressField({ url, username }: AddressFieldProps) {
 	const resume = useCurrentResume();
 	const id = useId();
 	const isPublic = resume.isPublic ?? false;
-	const { slug, setSlug, changed, wellFormed, result } = useSlugAvailability();
+	const { slug, setSlug, changed, wellFormed, tooLong, result } = useSlugAvailability();
 
-	const invalid = isPublic && (!slug || !wellFormed || result?.status === "taken");
-	const message = addressMessage({ isPublic, slug, wellFormed, changed, status: result?.status, url, username });
+	const invalid = isPublic && (!slug || (changed && !wellFormed) || result?.status === "taken");
+	const message = addressMessage({
+		isPublic,
+		slug,
+		wellFormed,
+		tooLong,
+		changed,
+		status: result?.status,
+		url,
+		username,
+	});
 
 	const canShare = typeof navigator.share === "function";
 
@@ -215,7 +223,7 @@ function AddressField({ url, username }: AddressFieldProps) {
 						spellCheck={false}
 						aria-invalid={invalid}
 						aria-describedby={`${id}-message`}
-						onChange={(event) => setSlug(event.target.value.toLowerCase().replace(/\s+/g, "-"))}
+						onChange={(event) => setSlug(normalizeSlug(event.target.value))}
 						className="h-full min-w-0 flex-1 bg-transparent pe-1.5 font-mono text-[13px] font-medium text-ink outline-none"
 					/>
 					{isPublic && slug && (
@@ -296,7 +304,7 @@ function PasswordRow() {
 			});
 			toast.add({ description: t`Password removed` });
 		} catch (error) {
-			toast.add({ type: "error", description: errorMessage(error) });
+			toast.add({ type: "error", description: getResumeErrorMessage(error) });
 		}
 	};
 

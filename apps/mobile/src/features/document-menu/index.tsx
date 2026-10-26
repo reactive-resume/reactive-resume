@@ -11,7 +11,7 @@ import { useNewDocuments } from "@/features/documents/new-documents";
 import { useDocumentOperations } from "@/features/documents/queries";
 import { flushResume } from "@/features/share/document";
 import { printResume } from "@/features/share/files";
-import { normalizeSlug, validSlug } from "@/features/share/model";
+import { MAX_SLUG_LENGTH, normalizeSlug, validSlug } from "@/features/share/model";
 import { routes } from "@/routes";
 import { useBuilderChrome } from "@/shell/builder-chrome";
 import { useKeyCommands } from "@/shell/key-commands";
@@ -194,12 +194,19 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 									label={t`Slug`}
 									value={slug}
 									onChangeText={(value) => setSlug(normalizeSlug(value))}
-									maxLength={64}
 									editable={!operations.busy}
 									autoCapitalize="none"
 									autoCorrect={false}
 									helper={t`Leave empty to generate an available address from the name.`}
-									error={slug && !validSlug(slug) ? t`Use lowercase letters, numbers and single dashes.` : undefined}
+									error={
+										!slug
+											? undefined
+											: slug.length > MAX_SLUG_LENGTH
+												? t`Use at most 64 characters.`
+												: !validSlug(slug)
+													? t`Use lowercase letters, numbers and single dashes.`
+													: undefined
+									}
 								/>
 								<Button
 									label={t`Duplicate`}

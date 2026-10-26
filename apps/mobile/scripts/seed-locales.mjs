@@ -3,10 +3,11 @@
 // does both); only empty translations are filled, so translations made for the app itself are kept.
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { formatter } from "@lingui/format-po";
 
-const mobileDir = new URL("../locales/", import.meta.url).pathname;
-const webDir = new URL("../../web/locales/", import.meta.url).pathname;
+const mobileDir = fileURLToPath(new URL("../locales/", import.meta.url));
+const webDir = fileURLToPath(new URL("../../web/locales/", import.meta.url));
 const po = formatter({ lineNumbers: false });
 
 let filled = 0;

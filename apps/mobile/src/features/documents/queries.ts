@@ -23,6 +23,11 @@ export function documentError(error: unknown) {
 		if (error.code === "TOO_MANY_REQUESTS" || error.code === "RATE_LIMIT_EXCEEDED")
 			return t`Too many requests. Try again later.`;
 		if (error.code === "BAD_REQUEST") return t`Check the file or fields and try again.`;
+		if (error.code === "RESUME_SLUG_ALREADY_EXISTS")
+			return t`Another resume already uses this address. Choose a different one.`;
+		if (error.code === "RESUME_LOCKED") return t`This resume is locked. Unlock it to make changes.`;
+		if (error.code === "INVALID_SLUG")
+			return t`The address must contain only lowercase letters and numbers, separated by single dashes.`;
 	}
 	return t`Couldn't complete this action. Try again.`;
 }

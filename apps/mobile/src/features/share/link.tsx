@@ -7,7 +7,7 @@ import { Linking, Share, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import Svg, { Rect } from "react-native-svg";
 import { flushResume } from "./document";
-import { formatTimeSince, normalizeSlug, summarizeViews, validSlug } from "./model";
+import { formatTimeSince, MAX_SLUG_LENGTH, normalizeSlug, summarizeViews, validSlug } from "./model";
 import { client, orpc } from "@/api/client";
 import { getServer } from "@/auth/session";
 import { useResumeStore } from "@/draft";
@@ -118,15 +118,21 @@ export function LinkTab({ resume, offline }: LinkProps) {
 			setConfirmation("");
 		}
 	};
-	const addressError = !validSlug(slug)
-		? t`Use lowercase letters, numbers and single dashes.`
-		: slugState === "taken"
-			? takenBy
-				? t`You already use this for “${takenBy}”.`
-				: t`Another of your resumes uses this address.`
-			: slugState === "error"
-				? t`Couldn't check or save this address. Try again.`
-				: undefined;
+	const tooLong = slug.length > MAX_SLUG_LENGTH;
+	const addressError =
+		changed && !slug
+			? t`Add an address.`
+			: changed && tooLong
+				? t`Use at most 64 characters.`
+				: changed && !validSlug(slug)
+					? t`Use lowercase letters, numbers and single dashes.`
+					: slugState === "taken"
+						? takenBy
+							? t`You already use this for “${takenBy}”.`
+							: t`Another of your resumes uses this address.`
+						: slugState === "error"
+							? t`Couldn't check or save this address. Try again.`
+							: undefined;
 
 	return (
 		<View style={{ gap: space.s4 }}>

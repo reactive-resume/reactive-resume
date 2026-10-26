@@ -9,6 +9,18 @@ import { createResumeData } from "./initial-data";
 import { parseStoredResumeData } from "./resume-data-validation";
 import { resumeService } from "./service";
 
+const slugErrors = {
+	RESUME_SLUG_ALREADY_EXISTS: {
+		message: "A resume with this slug already exists.",
+		status: 400,
+	},
+	INVALID_SLUG: {
+		message:
+			"The slug must be at most 64 characters and contain only lowercase letters and numbers, separated by single dashes.",
+		status: 400,
+	},
+} as const;
+
 export const crudRouter = {
 	list: protectedProcedure
 		.route({
@@ -65,10 +77,7 @@ export const crudRouter = {
 		.use(resumeMutationRateLimit)
 		.output(resumeDto.create.output)
 		.errors({
-			RESUME_SLUG_ALREADY_EXISTS: {
-				message: "A resume with this slug already exists. Choose another slug.",
-				status: 400,
-			},
+			...slugErrors,
 		})
 		.handler(({ context, input }) =>
 			resumeService.create({
@@ -101,10 +110,7 @@ export const crudRouter = {
 		.use(resumeMutationRateLimit)
 		.output(resumeDto.import.output)
 		.errors({
-			RESUME_SLUG_ALREADY_EXISTS: {
-				message: "A resume with this slug already exists. Choose another slug.",
-				status: 400,
-			},
+			RESUME_SLUG_ALREADY_EXISTS: slugErrors.RESUME_SLUG_ALREADY_EXISTS,
 		})
 		.handler(async ({ context, input }) => {
 			const id = generateId();
@@ -144,10 +150,7 @@ export const crudRouter = {
 				status: 409,
 			},
 			RESUME_LOCKED: { status: 403, message: "Unlock the resume first." },
-			RESUME_SLUG_ALREADY_EXISTS: {
-				message: "A resume with this slug already exists. Choose another slug.",
-				status: 400,
-			},
+			...slugErrors,
 		})
 		.handler(({ context, input }) =>
 			resumeService.update({
@@ -235,6 +238,10 @@ export const crudRouter = {
 		.input(resumeDto.duplicate.input)
 		.use(resumeMutationRateLimit)
 		.output(resumeDto.duplicate.output)
+		.errors({
+			NOT_FOUND: { message: "The resume does not exist.", status: 404 },
+			...slugErrors,
+		})
 		.handler(async ({ context, input }) => {
 			const original = await resumeService.getById({ id: input.id, userId: context.user.id });
 			const data = parseStoredResumeData(original.data);

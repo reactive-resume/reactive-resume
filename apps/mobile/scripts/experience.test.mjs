@@ -73,6 +73,12 @@ const mocks = {
 		withTiming: (value) => value,
 		withSpring: (value) => value,
 	},
+	"@reactive-resume/schema/resume/slug": {
+		MAX_SLUG_LENGTH: 64,
+		SLUG_PATTERN: /^[a-z0-9]+(-[a-z0-9]+)*$/,
+		isValidSlug: (slug) => slug.length > 0 && slug.length <= 64 && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug),
+		normalizeSlug: (slug) => slug.toLowerCase().replace(/\s+/g, "-"),
+	},
 };
 function load(path, extra = {}) {
 	const module = { exports: {} };

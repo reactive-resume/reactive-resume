@@ -923,6 +923,10 @@ msgstr "AIプロバイダーの追加"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "name@example.com のように、@ とドメインを追加します。"
 
+#: src/features/share/link.tsx
+msgid "Add an address."
+msgstr "アドレスを追加してください。"
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Add an application first."
 msgstr "まず応募を追加します。"
@@ -1330,6 +1334,10 @@ msgstr "および {0} 詳細"
 #: src/features/share/link.tsx
 msgid "Another of your resumes uses this address."
 msgstr "あなたの別の履歴書がこのアドレスを使用しています。"
+
+#: src/features/documents/queries.ts
+msgid "Another resume already uses this address. Choose a different one."
+msgstr "別のレジュメがすでにこのアドレスを使用しています。別のアドレスを選んでください。"
 
 #: app/(auth)/server.tsx
 msgid "Another server"
@@ -9266,6 +9274,10 @@ msgstr "その思い出の時間はすでに過ぎています。"
 msgid "The account changed. Try again."
 msgstr "アカウントが変わりました。もう一度やり直してください。"
 
+#: src/features/documents/queries.ts
+msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
+msgstr "アドレスには小文字と数字のみを含め、単一のダッシュで区切る必要があります。"
+
 #: src/features/application-detail/sections.tsx
 msgid "The application keeps its other details."
 msgstr "応募にはその他の詳細が保持されます。"
@@ -9738,6 +9750,10 @@ msgstr "このレジュメはロックされています。検証は可能です
 #: src/features/design/design-pane.tsx
 msgid "This resume is locked. Unlock it first to make changes."
 msgstr "このレジュメはロックされています。変更を加えるには、まずロックを解除してください。"
+
+#: src/features/documents/queries.ts
+msgid "This resume is locked. Unlock it to make changes."
+msgstr "このレジュメはロックされています。変更するにはロックを解除してください。"
 
 #: src/features/ats-checker/messages.ts
 msgid "This resume is long."
@@ -10260,6 +10276,11 @@ msgstr "http または https リンクを使用します。"
 #: src/features/ats-checker/messages.ts
 msgid "Use at least 9pt."
 msgstr "最低9pt以上を使用してください。"
+
+#: src/features/document-menu/index.tsx
+#: src/features/share/link.tsx
+msgid "Use at most 64 characters."
+msgstr "最大 64 文字を使用してください。"
 
 #: src/features/letters/write.tsx
 msgid "Use default"
