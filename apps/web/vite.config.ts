@@ -96,7 +96,18 @@ const phosphorWeightsPlugin = (): Plugin => ({
 const linguiPlugin = () =>
 	lingui({ macroTransform: { parser: { syntax: "typescript", tsx: true, decorators: true } } });
 
-const serverPaths = ["/api", "/mcp", "/uploads", "/.well-known", "/schema.json", "/openapi.json"] as const;
+const serverPaths = [
+	"/api",
+	"/mcp",
+	"/uploads",
+	"/.well-known",
+	"/schema.json",
+	"/openapi.json",
+	"/cards",
+	// A resume's web page, `/<username>/<slug>`, is rendered by the server: any two-segment address outside the app's
+	// own sections, without a file extension.
+	"^/(?!(?:auth|dashboard|builder|agent|templates|ats-checker|resume-templates|assets|src|node_modules|@[a-z-]+)(?:/|$))[^/.]+/[^/.]+/?(?:\\?.*)?$",
+] as const;
 
 const serverProxy = serverPaths.reduce(
 	(acc, path) => {

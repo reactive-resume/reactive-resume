@@ -15,7 +15,7 @@ type ShareSheetFrameProps = {
 	fallback: ShareTab;
 };
 
-/** Share & export: one sheet, 440px from the right; a full-height bottom sheet on phones. */
+/** Download & history: one sheet, 440px from the right; a full-height bottom sheet on phones. */
 export function ShareSheetFrame({ tabs, fallback }: ShareSheetFrameProps) {
 	const tab = useEditorStore((state) => state.shareTab);
 	// Closing keeps the open tab on screen until the sheet has slid away.
@@ -36,7 +36,7 @@ export function ShareSheetFrame({ tabs, fallback }: ShareSheetFrameProps) {
 			>
 				<SheetHeader className="px-5 pt-3.5 pb-2.5">
 					<SheetTitle>
-						<Trans>Share & export</Trans>
+						<Trans>Download & history</Trans>
 					</SheetTitle>
 				</SheetHeader>
 

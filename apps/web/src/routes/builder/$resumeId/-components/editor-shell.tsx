@@ -25,7 +25,7 @@ import { whenIdle } from "@/features/resume/preview/resume-thumbnail.shared";
 /**
  * The editor: a 56px bar over a 400px panel and the page canvas (desktop). On tablets the panel is a 380px
  * drawer over the page, pinnable beside it in landscape; on phones one view shows at a time, switched by
- * Write · Page · Design · Check tabs.
+ * Write · Page · Design · Check · Share tabs.
  */
 export function EditorShell() {
 	const [mode, setMode] = useEditorMode();
@@ -109,7 +109,8 @@ function EditorHotkeys({ onModeChange }: { onModeChange: (mode: EditorMode) => v
 	return null;
 }
 
-const panelLabel = (mode: EditorMode) => ({ write: t`Content`, design: t`Design`, check: t`Check` })[mode];
+const panelLabel = (mode: EditorMode) =>
+	({ write: t`Content`, design: t`Design`, check: t`Check`, share: t`Share` })[mode];
 
 type MobileBodyProps = {
 	mode: EditorMode;
@@ -167,6 +168,7 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 					{ view: "page", icon: "file-text", label: t`Page` },
 					{ view: "design", icon: "palette", label: t`Design` },
 					{ view: "check", icon: "list-checks", label: t`Check` },
+					{ view: "share", icon: "globe-hemisphere-west", label: t`Share` },
 				]}
 				view={view}
 				onModeChange={onModeChange}

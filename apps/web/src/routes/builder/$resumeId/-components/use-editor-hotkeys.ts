@@ -8,7 +8,7 @@ import { useResumeExport } from "@/features/resume/export/use-resume-export";
 import { switchModeInstantly } from "@/libs/motion";
 
 /**
- * The editor's keyboard map: 1/2/3 switch modes outside fields, ⌘Z and ⇧⌘Z undo and redo outside fields
+ * The editor's keyboard map: 1/2/3/4 switch modes outside fields, ⌘Z and ⇧⌘Z undo and redo outside fields
  * (fields keep their own undo), ⌘P downloads the PDF, ⌘⇧S opens Share, ⌘⇧E opens Download, ⌘J toggles
  * the assistant, and Esc clears the page selection. Download and Share need a connection, so their keys do
  * nothing offline.
@@ -23,6 +23,7 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 	useHotkey("1", () => switchModeInstantly(() => setMode("write")));
 	useHotkey("2", () => switchModeInstantly(() => setMode("design")));
 	useHotkey("3", () => switchModeInstantly(() => setMode("check")));
+	useHotkey("4", () => switchModeInstantly(() => setMode("share")));
 
 	useHotkey("Mod+Z", () => {
 		if (!isEditableElementFocused()) undo();
@@ -40,7 +41,7 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 	useHotkey(
 		"Mod+Shift+S",
 		() => {
-			if (isOnline()) useEditorStore.getState().setShareTab("link");
+			switchModeInstantly(() => setMode("share"));
 		},
 		{ ignoreInputs: true },
 	);

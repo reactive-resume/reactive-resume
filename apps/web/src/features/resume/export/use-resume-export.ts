@@ -1,4 +1,3 @@
-import type { PublicResumePdfOptions } from "@/features/resume/public/public-pdf";
 import type { ResumeExportTarget } from "@reactive-resume/resume/export-sections";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
@@ -8,9 +7,7 @@ import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { createResumePdfBlob } from "./pdf-document";
-import { resolvePublicResumePdfBlob } from "@/features/resume/public/public-pdf";
 import { getLostCharactersMessage, getReadableErrorMessage } from "@/libs/error-message";
-import { client } from "@/libs/orpc/client";
 
 // DOCX and ODT are large and only some exports need them; they load when one starts.
 const loadDocx = () => import("@reactive-resume/docx");
@@ -23,16 +20,11 @@ export const preloadDocumentExport = () => {
 	void import("@reactive-resume/pdf/section-title");
 };
 
-// ponytail: loosened from Resume to Pick so public-resume (where name may be "" for non-owners) can reuse
 type ExportableResume = {
 	id?: string;
 	name: string;
 	slug: string;
 	data: ResumeData;
-};
-
-type UseResumeExportOptions = {
-	publicResumePdf?: PublicResumePdfOptions;
 };
 
 type DownloadPdfOptions = {
@@ -112,8 +104,8 @@ function printPdf(blob: Blob) {
 	document.body.appendChild(iframe);
 }
 
-/** One-click exports that report their own progress and failures in toasts (the bar, ⌘P, public pages). */
-export function useResumeExport(resume: ExportableResume | undefined, exportOptions: UseResumeExportOptions = {}) {
+/** One-click exports that report their own progress and failures in toasts (the bar, ⌘P). */
+export function useResumeExport(resume: ExportableResume | undefined) {
 	const [isExporting, setIsExporting] = useState(false);
 
 	const onDownloadPDF = useCallback(async () => {
@@ -123,17 +115,9 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 			description: t`Generating PDF…`,
 		});
 		setIsExporting(true);
-		const makeBlob = () =>
-			exportOptions.publicResumePdf
-				? resolvePublicResumePdfBlob({ data: resume.data, ...exportOptions.publicResumePdf })
-				: createExportFile(resume, "pdf");
 		try {
-			const blob = await makeBlob();
+			const blob = await createExportFile(resume, "pdf");
 			downloadWithAnchor(blob, `${getDefaultFileName(resume)}.pdf`);
-			if (exportOptions.publicResumePdf) {
-				// Statistics are best effort and must not delay or fail a completed browser download.
-				void client.resume.statistics.recordDownload(exportOptions.publicResumePdf.publicResume).catch(() => undefined);
-			}
 		} catch (error) {
 			toast.add({
 				type: "error",
@@ -142,18 +126,14 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 		}
 		setIsExporting(false);
 		toast.close(toastId);
-	}, [exportOptions.publicResumePdf, resume]);
+	}, [resume]);
 
 	const onPrint = useCallback(async () => {
 		if (!resume) return;
 		const toastId = toast.add({ type: "loading", description: t`Preparing resume for printing…` });
 		setIsExporting(true);
-		const makeBlob = () =>
-			exportOptions.publicResumePdf
-				? resolvePublicResumePdfBlob({ data: resume.data, ...exportOptions.publicResumePdf })
-				: createResumePdfBlob(resume.data, undefined, { onLostCharacters: warnLostCharacters });
 		try {
-			printPdf(await makeBlob());
+			printPdf(await createResumePdfBlob(resume.data, undefined, { onLostCharacters: warnLostCharacters }));
 		} catch (error) {
 			toast.add({
 				type: "error",
@@ -162,7 +142,7 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 		}
 		setIsExporting(false);
 		toast.close(toastId);
-	}, [exportOptions.publicResumePdf, resume]);
+	}, [resume]);
 
 	return { onDownloadPDF, onPrint, isExporting };
 }

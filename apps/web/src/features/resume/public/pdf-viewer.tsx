@@ -6,17 +6,12 @@ import { EventBus, LinkTarget, PDFLinkService, PDFViewer } from "pdfjs-dist/lega
 import { useEffect, useReducer, useRef } from "react";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
-import { resolvePublicResumePdfBlob } from "./public-pdf";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { getDocument, getPdfWorker } from "@/features/resume/preview/pdfjs";
 import "pdfjs-dist/legacy/web/pdf_viewer.css";
 
 type PdfViewerProps = {
 	className?: string;
-	publicResume?: {
-		username: string;
-		slug: string;
-	};
 } & ({ data: ResumeData; file?: never } | { file: Blob; data?: never });
 
 type PdfViewerOptions = ConstructorParameters<typeof PDFViewer>[0] & {
@@ -71,7 +66,7 @@ function pdfViewerReducer(state: PdfViewerState, action: PdfViewerAction): PdfVi
 }
 
 /** Renders a resume's PDF from its data, or an existing PDF file (the ATS checker's upload). */
-export function PdfViewer({ className, data, file: givenFile, publicResume }: PdfViewerProps) {
+export function PdfViewer({ className, data, file: givenFile }: PdfViewerProps) {
 	const rootRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const viewerRef = useRef<HTMLDivElement>(null);
@@ -92,7 +87,6 @@ export function PdfViewer({ className, data, file: givenFile, publicResume }: Pd
 		const createPdf = (): Promise<Blob> => {
 			if (givenFile) return Promise.resolve(givenFile);
 			if (!data) return Promise.reject(new Error("PdfViewer needs data or a file."));
-			if (publicResume) return resolvePublicResumePdfBlob({ data, publicResume });
 			return createResumePdfBlob(data);
 		};
 
@@ -105,7 +99,7 @@ export function PdfViewer({ className, data, file: givenFile, publicResume }: Pd
 			})
 			.catch((error: unknown) => {
 				if (!isCancelled) {
-					console.error("Failed to generate public resume PDF", error);
+					console.error("Failed to generate the PDF", error);
 					dispatch({ type: "error" });
 				}
 			});
@@ -113,7 +107,7 @@ export function PdfViewer({ className, data, file: givenFile, publicResume }: Pd
 		return () => {
 			isCancelled = true;
 		};
-	}, [data, givenFile, publicResume]);
+	}, [data, givenFile]);
 
 	useEffect(() => {
 		void fileVersion;

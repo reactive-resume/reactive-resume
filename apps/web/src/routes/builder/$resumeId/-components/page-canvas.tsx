@@ -5,7 +5,7 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
@@ -26,11 +26,26 @@ import { orpc } from "@/libs/orpc/client";
 
 const NONE: readonly never[] = [];
 
+const WebPagePreview = lazy(() =>
+	import("@/features/resume/share/web-page-preview").then((module) => ({ default: module.WebPagePreview })),
+);
+
+/** Share shows the web page; every other mode, the PDF's pages. */
+export function PageCanvas() {
+	const [mode] = useEditorMode();
+	if (mode !== "share") return <ResumePageCanvas />;
+	return (
+		<Suspense>
+			<WebPagePreview />
+		</Suspense>
+	);
+}
+
 /**
  * The page canvas: the live resume on the sunken desk, with a caption above the first page, a pointer layer
  * that links lines to entries, and the zoom bar.
  */
-export function PageCanvas() {
+function ResumePageCanvas() {
 	const data = useResumeData();
 	const format = useCurrentBuilderResumeSelector((resume) => resume.data.metadata.page.format);
 	const previewTemplate = useEditorStore((state) => state.previewTemplate);

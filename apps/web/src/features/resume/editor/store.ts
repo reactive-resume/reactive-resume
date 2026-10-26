@@ -5,11 +5,11 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { create } from "zustand/react";
 
-export const EDITOR_MODES = ["write", "design", "check"] as const;
+export const EDITOR_MODES = ["write", "design", "check", "share"] as const;
 export type EditorMode = (typeof EDITOR_MODES)[number];
 
-/** The Share & export sheet's tabs; each entry point opens its own. */
-export type ShareTab = "link" | "download" | "history";
+/** The Download & history sheet's tabs; each entry point opens its own. */
+export type ShareTab = "download" | "history";
 
 export type CheckTab = "issues" | "match" | "writing";
 

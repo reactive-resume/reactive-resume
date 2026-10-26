@@ -1,12 +1,12 @@
 import type { RouterOutput } from "@/libs/orpc/client";
 import { t } from "@lingui/core/macro";
 
-type DailyStat = { date: string; views: number; downloads: number };
+type DailyStat = { date: string; views: number; downloads: number; contactReveals?: number };
 export type VersionSummary = RouterOutput["resume"]["listVersions"][number];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** The Link tab's numbers: views and downloads over the last 30 days, and each day's views against the peak. */
+/** Share's numbers: views, downloads and contact reveals over the last 30 days, and each day's views against the peak. */
 export function summarizeViews(daily: readonly DailyStat[]) {
 	const days = daily.slice(-30);
 	const peak = Math.max(0, ...days.map((day) => day.views));
@@ -14,6 +14,7 @@ export function summarizeViews(daily: readonly DailyStat[]) {
 	return {
 		views: days.reduce((sum, day) => sum + day.views, 0),
 		downloads: days.reduce((sum, day) => sum + day.downloads, 0),
+		contactReveals: days.reduce((sum, day) => sum + (day.contactReveals ?? 0), 0),
 		peak,
 		bars: days.map((day) => ({ date: day.date, views: day.views, height: peak > 0 ? day.views / peak : 0 })),
 	};
