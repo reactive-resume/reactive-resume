@@ -8,7 +8,7 @@ import type {
 	InterviewDetails,
 } from "@reactive-resume/schema/applications/data";
 import { ORPCError } from "@orpc/client";
-import { and, arrayContains, desc, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, arrayContains, count, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { lintResumeForAts } from "@reactive-resume/resume/ats";
@@ -403,20 +403,26 @@ const stripUserId = <T extends { userId: string; activity?: ApplicationTimelineE
 };
 
 export const applicationService = {
-	list: async (input: { userId: string; status?: ApplicationStatus; tags?: string[] }) => {
-		const rows = await db
-			.select()
-			.from(schema.application)
-			.where(
-				and(
-					eq(schema.application.userId, input.userId),
-					input.status ? eq(schema.application.status, input.status) : undefined,
-					input.tags && input.tags.length > 0 ? arrayContains(schema.application.tags, input.tags) : undefined,
-				),
-			)
-			.orderBy(desc(schema.application.updatedAt));
+	list: async (input: {
+		userId: string;
+		status?: ApplicationStatus;
+		tags?: string[];
+		limit?: number;
+		offset?: number;
+	}) => {
+		const where = and(
+			eq(schema.application.userId, input.userId),
+			input.status ? eq(schema.application.status, input.status) : undefined,
+			input.tags && input.tags.length > 0 ? arrayContains(schema.application.tags, input.tags) : undefined,
+		);
+		const query = db.select().from(schema.application).where(where).orderBy(desc(schema.application.updatedAt));
+		const paged = input.limit !== undefined || input.offset !== undefined;
+		const [rows, totals] = await Promise.all([
+			paged ? query.limit(input.limit ?? 20).offset(input.offset ?? 0) : query,
+			paged ? db.select({ total: count() }).from(schema.application).where(where) : undefined,
+		]);
 
-		return rows.map(stripUserId);
+		return { items: rows.map(stripUserId), total: totals?.[0]?.total ?? rows.length };
 	},
 
 	getById: async (input: { id: string; userId: string }) => {

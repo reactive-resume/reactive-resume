@@ -19,17 +19,21 @@ export const crudRouter = {
 		})
 		.input(applicationDto.list.input)
 		.output(applicationDto.list.output)
-		.handler(async ({ input, context }) =>
-			paginate(
-				await applicationService.list({
-					userId: context.user.id,
-					...(input.status ? { status: input.status } : {}),
-					...(input.tags ? { tags: input.tags } : {}),
-				}),
-				input,
-				context.resHeaders,
-			),
-		),
+		.handler(async ({ input, context }) => {
+			const { items, total } = await applicationService.list({
+				userId: context.user.id,
+				...(input.status ? { status: input.status } : {}),
+				...(input.tags ? { tags: input.tags } : {}),
+				...(input.limit !== undefined ? { limit: input.limit } : {}),
+				...(input.offset !== undefined ? { offset: input.offset } : {}),
+			});
+			context.resHeaders?.set("X-Total-Count", String(total));
+			if (input.limit !== undefined || input.offset !== undefined) {
+				context.resHeaders?.set("X-Limit", String(input.limit ?? 20));
+				context.resHeaders?.set("X-Offset", String(input.offset ?? 0));
+			}
+			return items;
+		}),
 
 	getById: protectedProcedure
 		.route({
