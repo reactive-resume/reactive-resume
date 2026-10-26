@@ -4,7 +4,6 @@ import { fileURLToPath } from "node:url";
 import { initWasm, Resvg } from "@resvg/resvg-wasm";
 import { getPublicResumeCardData } from "@reactive-resume/api/features/resume/social-meta";
 import { env } from "@reactive-resume/env/server";
-import { loadResumeCardAssets } from "@reactive-resume/pdf/server";
 import { CARD_WIDTH, resumeCardSvg } from "@reactive-resume/pdf/web-page-card";
 
 let ready: Promise<void> | undefined;
@@ -34,6 +33,8 @@ export async function handleResumeCard(username: string, slug: string): Promise<
 	const { data } = card;
 
 	try {
+		// Loaded with the first card: the PDF engine and its fonts are heavy, and most requests never need them.
+		const { loadResumeCardAssets } = await import("@reactive-resume/pdf/server");
 		const assets = await loadResumeCardAssets(data, env.APP_URL);
 		const svg = resumeCardSvg({
 			name: data.basics.name || username,

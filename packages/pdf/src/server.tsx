@@ -7,7 +7,8 @@ import { loadFonts } from "./forme/fonts";
 import { readServerImage } from "./forme/images.node.ts";
 import { assertPdfFonts, renderResume, resumeFontRequests } from "./forme/render";
 
-export { configureOwnPictureReader } from "./forme/images.node";
+// The `.ts` matters: Node reads a bare `.node` ending as a native addon, so dev (tsx) can't resolve it without one.
+export { configureOwnPictureReader } from "./forme/images.node.ts";
 
 export type CreateResumePdfFileOptions = {
 	data: ResumeData;
