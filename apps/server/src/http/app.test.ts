@@ -73,6 +73,7 @@ vi.mock("../static/seo", () => ({
 vi.mock("../static/web", () => ({
 	serveWebDistStatic: mocks.serveWebDistStatic,
 	handleWebApp: mocks.handleWebApp,
+	isPublicResumePath: () => false,
 }));
 
 vi.mock("../mcp/handler", () => ({

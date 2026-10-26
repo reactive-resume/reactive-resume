@@ -61,7 +61,7 @@ function isNoindexShellPath(pathname: string): boolean {
 	return noindexShellPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
-function isPublicResumePath(pathname: string): boolean {
+export function isPublicResumePath(pathname: string): boolean {
 	const segments = getPathSegments(pathname);
 	const [firstSegment] = segments;
 
@@ -74,7 +74,7 @@ function isPublicResumePath(pathname: string): boolean {
  * picture URL, a sign-in provider's avatar) and the PDF engine fetches them, so images, fonts and connections stay open
  * to https. Recordings, previews and workers use blob: URLs.
  */
-function contentSecurityPolicy(html = "") {
+export function contentSecurityPolicy(html = "") {
 	const inlineScripts = html.matchAll(
 		/<script(?![^>]*\bsrc=)(?![^>]*application\/ld\+json)[^>]*>([\s\S]*?)<\/script>/g,
 	);
@@ -101,7 +101,7 @@ function contentSecurityPolicy(html = "") {
 	].join("; ");
 }
 
-const BASE_SECURITY_HEADERS = {
+export const BASE_SECURITY_HEADERS = {
 	Link: `<${CONTEXT7_ASK_URL}>; rel="search"; type="text/plain"; title="Search rxresu.me"`,
 	"X-Frame-Options": "DENY",
 	"X-Content-Type-Options": "nosniff",
@@ -280,49 +280,6 @@ const escapeAttribute = (value: string) =>
 		.replaceAll('"', "&quot;")
 		.replaceAll("'", "&#39;");
 
-async function createPublicResumeSeoMarkup(pathname: string, origin: string) {
-	const [username, slug] = getPathSegments(pathname);
-	if (!username || !slug) return null;
-
-	// A card render must never take down the page: any lookup failure falls back to the plain shell.
-	const meta = await import("@reactive-resume/api/features/resume/social-meta")
-		.then((module) => module.getPublicResumeSocialMeta({ username, slug }))
-		.catch(() => null);
-	if (!meta) return null;
-
-	const canonicalUrl = escapeAttribute(`${origin}/${username}/${slug}`);
-	// Wider screens show the server's PDF (apps/web public-pdf.ts): start it with the HTML, not after the app boots.
-	// The href is the one the app fetches, so the browser hands the app this response instead of asking again.
-	const pdfUrl = escapeAttribute(`/api/resumes/${reencode(username)}/${reencode(slug)}/pdf`);
-	const description = escapeAttribute(meta.description);
-	const social = socialTags({
-		type: "profile",
-		title: escapeAttribute(meta.title),
-		description,
-		url: canonicalUrl,
-		image: `${origin}/opengraph/banner.jpg`,
-	});
-
-	return {
-		pageTitle: escapeAttribute(`${meta.name} - Reactive Resume`),
-		description,
-		markup: `
-		<link rel="canonical" href="${canonicalUrl}">
-		${social}
-		<link rel="preload" href="${pdfUrl}" as="fetch" crossorigin="use-credentials" media="(min-width: 640px)">
-	`,
-	};
-}
-
-/** A path segment as the app's router decodes it and `encodeURIComponent` writes it back. */
-function reencode(segment: string) {
-	try {
-		return encodeURIComponent(decodeURIComponent(segment));
-	} catch {
-		return encodeURIComponent(segment);
-	}
-}
-
 export const serveWebDistStatic = env.CLOUDFLARE
 	? undefined
 	: serveStatic({
@@ -339,18 +296,10 @@ export const serveWebDistStatic = env.CLOUDFLARE
 		});
 
 function getFallbackResponseHeaders(pathname: string) {
-	if (pathname === "/" && env.ROOT_RESUME_ID) {
-		return {
-			"Content-Type": "text/html; charset=UTF-8",
-			"X-Robots-Tag": "noindex, follow",
-			"Cache-Control": "private, no-store",
-			...BASE_SECURITY_HEADERS,
-		};
-	}
 	if (pathname === "/" || indexableAppPaths.has(pathname)) {
 		return { "Content-Type": "text/html; charset=UTF-8", ...BASE_SECURITY_HEADERS };
 	}
-	if (isNoindexShellPath(pathname) || isPublicResumePath(pathname)) {
+	if (isNoindexShellPath(pathname)) {
 		return {
 			"Content-Type": "text/html; charset=UTF-8",
 			"X-Robots-Tag": "noindex, follow",
@@ -446,19 +395,6 @@ export async function handleWebApp(request: Request, readFile: ReadWebFile = (pa
 
 	const html = await readFile(indexHtmlPath);
 
-	if (pathname === "/" && env.ROOT_RESUME_ID) {
-		const canonicalUrl = new URL("/", env.APP_URL).toString();
-		// Root configuration never discloses a target in the HTML shell. The public API
-		// gates data and browser metadata; shell requests must not count extra views.
-		const shell = withMeta(html, { title: "Reactive Resume", description: "" });
-		const markup = `<link rel="canonical" href="${escapeAttribute(canonicalUrl)}" data-root-resume-shell><meta name="robots" content="noindex, follow" data-root-resume-shell>`;
-		return htmlResponse(
-			shell.replace("</head>", () => `${markup}</head>`),
-			headers,
-			html,
-		);
-	}
-
 	const prerendered = prerenderedPages[pathname];
 	if (prerendered) {
 		const { locale, requested } = getPageLocale(request);
@@ -482,21 +418,6 @@ export async function handleWebApp(request: Request, readFile: ReadWebFile = (pa
 			{ ...headers, Vary: "Cookie" },
 			page,
 		);
-	}
-
-	if (isPublicResumePath(pathname)) {
-		const resumeSeo = await createPublicResumeSeoMarkup(pathname, new URL(env.APP_URL).origin);
-		if (resumeSeo) {
-			// The shell's generic title/description are replaced so shares and previews show the resume,
-			// not the marketing copy baked into index.html.
-			const withTitle = withMeta(html, { title: resumeSeo.pageTitle, description: resumeSeo.description });
-
-			return htmlResponse(
-				withTitle.replace("</head>", () => `${resumeSeo.markup}</head>`),
-				headers,
-				html,
-			);
-		}
 	}
 
 	return htmlResponse(html, headers);

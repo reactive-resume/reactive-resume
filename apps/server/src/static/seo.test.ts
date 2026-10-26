@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vite-plus/test";
 
 vi.mock("@reactive-resume/env/server", () => ({ env: { APP_URL: "https://rxresu.me/" } }));
 
-const { handleSitemap, handleLlms } = await import("./seo");
+const { handlePagesSitemap, handleLlms } = await import("./seo");
 
 it("publishes Context7 Ask after the llms title and summary", async () => {
 	const text = await handleLlms().text();
@@ -16,7 +16,7 @@ it("publishes Context7 Ask after the llms title and summary", async () => {
 
 describe("localized sitemap", () => {
 	it("gives every localized public page its own entry with reciprocal alternates", async () => {
-		const response = handleSitemap();
+		const response = handlePagesSitemap();
 		const xml = await response.text();
 		const entries = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((match) => ({
 			loc: match[1]?.match(/<loc>(.*?)<\/loc>/)?.[1],
