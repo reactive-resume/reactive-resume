@@ -67,7 +67,8 @@ const mocks = {
 	"@lingui/core/macro": { t: tag },
 	"@tanstack/react-query": { useQuery: () => ({ data: undefined }) },
 	"./document": { flushResume: async () => ({}) },
-	"./model": null, // filled below
+	"./web-page": { WebPageSettings: "WebPageSettings" },
+	"@/api/flags": { useFlags: () => ({ data: {} }) },
 	"@/api/client": {
 		client: {},
 		orpc: {
@@ -89,16 +90,10 @@ const mocks = {
 	},
 	"@/ui": ui,
 	"@/ui/use-document-operations": { useDocumentOperations: () => ({ busy: false, run: async (fn) => fn() }) },
-	"@reactive-resume/schema/resume/slug": {
-		MAX_SLUG_LENGTH: 64,
-		SLUG_PATTERN: /^[a-z0-9]+(-[a-z0-9]+)*$/,
-		isValidSlug: (slug) => slug.length > 0 && slug.length <= 64 && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug),
-		normalizeSlug: (slug) => slug.toLowerCase().replace(/\s+/g, "-"),
-	},
+	"@reactive-resume/resume/sharing": createRequire(new URL("../package.json", import.meta.url))(
+		"@reactive-resume/resume/sharing",
+	),
 };
-
-const model = load("features/share/model.ts");
-mocks["./model"] = model;
 
 const nodes = (tree) =>
 	!tree || typeof tree !== "object"

@@ -28,6 +28,11 @@ msgstr "\"{0}\" versteek"
 msgid "“{0}” moved to Trash"
 msgstr "\"{0}\" na asblik geskuif"
 
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr "“{0}” is nie meer jou primêre CV nie."
+
 #. placeholder {0}: purge[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
@@ -609,6 +614,10 @@ msgstr "{skipped, plural, one {# wysiging kon nie geplaas word nie: die teks het
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# storie} other {# stories}}"
 
+#: src/features/share/web-page.tsx
+msgid "{suggestion} may be available. Get yours here →"
+msgstr "{suggestion} is dalk beskikbaar. Kry joune hier →"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
 msgstr "{summary}. Maak oop in Loopbaan → Aanbiedinge."
@@ -1076,6 +1085,10 @@ msgstr "Voeg die domein by na die @, soos {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Voeg die domeineinde by, soos {domain}.com"
 
+#: src/features/share/web-page.tsx
+msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
+msgstr "Voeg hierdie rekords by waar jy die domein bestuur, en kontroleer dan. Veranderinge kan 'n paar uur neem om almal te bereik."
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Add to calendar"
@@ -1371,7 +1384,7 @@ msgstr "Enige"
 msgid "Any font, in Advanced"
 msgstr "Enige lettertipe, in Gevorderd"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Enigiemand met die skakel sal jou CV kan sien."
 
@@ -1792,10 +1805,6 @@ msgstr "Onder jou minimum basissalaris."
 msgid "Bengali"
 msgstr "Bengaals"
 
-#: src/features/public/public-resume.tsx
-msgid "Block this author"
-msgstr "Blokkeer hierdie skrywer"
-
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Bord"
@@ -1988,7 +1997,7 @@ msgstr "Verander tydsone"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Het die CV direk verander ('n vroeëre gesprek)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Veranderinge kon nie gestoor word nie. Probeer weer voordat jy voortgaan."
 
@@ -2023,6 +2032,10 @@ msgstr "Kontroleer weer"
 #: src/features/ats-checker/checker.tsx
 msgid "Check another file"
 msgstr "Gaan 'n ander lêer na"
+
+#: src/features/share/web-page.tsx
+msgid "Check DNS"
+msgstr "Kontroleer DNS"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Check every claim, date and result against your experience."
@@ -2241,8 +2254,7 @@ msgstr "Vee sy inskrywings uit; die afdeling bly. Jy kan ongedaan maak."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/public/public-resume.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Maak toe"
 
@@ -2360,7 +2372,7 @@ msgstr "Kompakteer of verwyder groot beelde om oplaaie vinnig te hou."
 msgid "Confirm applied"
 msgstr "Bevestig aansoek gedoen"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Bevestig wagwoord"
 
@@ -2377,6 +2389,7 @@ msgid "Confirm the time with {contact} before adding a new interview."
 msgstr "Bevestig die tyd met {contact} voordat jy 'n nuwe onderhoud byvoeg."
 
 #: src/features/assistant/provider.tsx
+#: src/features/share/web-page.tsx
 msgid "Connect"
 msgstr "Koppel"
 
@@ -2419,6 +2432,10 @@ msgstr "Koppel die gereedskap wat jy gebruik vir skryf, werksoek en werk met jou
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "Gekoppel · {milliseconds} ms"
+
+#: src/features/share/web-page.tsx
+msgid "Connected. Your domain opens your primary resume."
+msgstr "Gekoppel. Jou domein maak jou primêre CV oop."
 
 #: src/features/workspace/parts.tsx
 msgid "Connecting the dots"
@@ -2620,10 +2637,6 @@ msgstr "Kon nie die gesprek uitvee nie. Probeer weer."
 msgid "Couldn't delete the interview. Try again."
 msgstr "Kon nie die onderhoud uitvee nie. Probeer weer."
 
-#: src/features/public/public-resume.tsx
-msgid "Couldn't download the PDF. Try again."
-msgstr "Kon nie die PDF aflaai nie. Probeer weer."
-
 #: src/features/settings/export.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't export. Try again."
@@ -2788,10 +2801,6 @@ msgstr "Kon nie die uitgevoerde PDF lees nie."
 msgid "Couldn't read this page: {0}"
 msgstr "Kon nie hierdie bladsy lees nie: {0}"
 
-#: src/features/public/public-resume.tsx
-msgid "Couldn't read your blocked-author settings."
-msgstr "Kon nie jou geblokkeerde outeur-instellings lees nie."
-
 #: src/features/application-detail/sheets.tsx
 msgid "Couldn't record submission. Try again."
 msgstr "Kon nie indiening opneem nie. Probeer weer."
@@ -2867,10 +2876,6 @@ msgstr "Kon nie die tema stoor nie. Probeer weer."
 #: app/(tabs)/settings/preferences.tsx
 msgid "Couldn't save the timezone. Try again."
 msgstr "Kon nie die tydsone bewaar nie. Probeer weer."
-
-#: src/features/public/public-resume.tsx
-msgid "Couldn't save your blocked-author setting. Try again."
-msgstr "Kon nie jou geblokkeerde outeur-instelling stoor nie. Probeer weer."
 
 #: src/features/letters/write.tsx
 msgid "Couldn't save your changes, so drafting didn't start. Nothing on the page changed."
@@ -2990,10 +2995,6 @@ msgstr "Kon nie die foto oplaai nie."
 #: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Kon nie die foto oplaai nie. Probeer weer."
-
-#: src/features/public/public-resume.tsx
-msgid "Couldn't verify the password. Try again."
-msgstr "Kon nie die wagwoord verifieer nie. Probeer weer."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -3475,6 +3476,10 @@ msgstr "Dokumente vir hierdie werk"
 msgid "Documents you move here stay for 30 days."
 msgstr "Dokumente wat jy hierheen skuif, bly vir 30 dae."
 
+#: src/features/share/web-page.tsx
+msgid "Domain connected"
+msgstr "Domein gekoppel"
+
 #. placeholder {0}: document.name
 #: src/features/assistant/assistant-screen.tsx
 msgid "Don't send {0}"
@@ -3513,8 +3518,9 @@ msgid "Double-checking"
 msgstr "Dubbelkontroleer"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/shell/builder-chrome.tsx
 msgid "Download"
 msgstr "Laai af"
 
@@ -3523,6 +3529,11 @@ msgstr "Laai af"
 #: src/features/share/download.tsx
 msgid "Download {0}"
 msgstr "Laai {0} af"
+
+#: src/features/share/export-screen.tsx
+#: src/shell/builder-chrome.tsx
+msgid "Download & history"
+msgstr "Aflaai en geskiedenis"
 
 #: src/features/letters/share.tsx
 msgid "Download both PDFs"
@@ -3540,10 +3551,6 @@ msgstr "Aflaai maak die stelsel se deelkieslys oop. Kies 'n bergingsverskaffer o
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "Aflaai maak die stelseldeelblad oop. Kies 'n bergingverskaffer om die lêer te stoor. 'n Gekoppelde dekbrief maak as 'n tweede lêer oop."
 
-#: src/features/public/public-resume.tsx
-msgid "Download PDF"
-msgstr "Laai PDF af"
-
 #: src/features/letters/share.tsx
 msgid "Download PDF instead"
 msgstr "Laai eerder PDF af"
@@ -3551,10 +3558,6 @@ msgstr "Laai eerder PDF af"
 #: src/features/share/link.tsx
 msgid "Download totals can include repeat clicks."
 msgstr "Aflaaitotale kan herhaalde klikke insluit."
-
-#: src/features/public/public-resume.tsx
-msgid "Downloading…"
-msgstr "Laai tans af …"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -3844,10 +3847,6 @@ msgstr "Voer enige model-ID in wat deur jou eindpunt ondersteun word."
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
 msgstr "Voer die adres in waar jy Reactive Resume in ’n blaaier oopmaak. Voor jy voortgaan, maak die toepassing seker dat dit ’n Reactive Resume-bediener is wat aanmelding deur die toepassing toelaat."
 
-#: src/features/public/public-resume.tsx
-msgid "Enter the password the resume owner shared with you."
-msgstr "Voer die wagwoord in wat die eienaar van die CV met jou gedeel het."
-
 #: src/features/write/entry-screen.tsx
 msgid "Entry"
 msgstr "Inskrywing"
@@ -4127,6 +4126,11 @@ msgstr "Lettertipegewigte"
 msgid "For"
 msgstr "Vir"
 
+#. placeholder {0}: current.target
+#: src/features/share/web-page.tsx
+msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
+msgstr "Vir 'n hoofdomein soos example.com, gebruik A- en AAAA-rekords met {0} se adresse in plaas van die CNAME."
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "For example, Sent to Lumen"
@@ -4369,6 +4373,10 @@ msgstr "Versteekte terme is terug"
 msgid "Hide {title} from the page"
 msgstr "Versteek {title} van die bladsy"
 
+#: src/features/share/web-page.tsx
+msgid "Hide contact details"
+msgstr "Versteek kontakbesonderhede"
+
 #: src/features/applications/add-sheet.tsx
 msgid "Hide details"
 msgstr "Versteek besonderhede"
@@ -4384,10 +4392,6 @@ msgstr "Versteek sleutel"
 #: app/(tabs)/settings/licences.tsx
 msgid "Hide license"
 msgstr "Versteek lisensie"
-
-#: src/features/public/public-resume.tsx
-msgid "Hide password"
-msgstr "Verberg wagwoord"
 
 #: src/features/career/today.tsx
 msgid "Hide read"
@@ -4412,7 +4416,7 @@ msgstr "Huur span"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Geskiedenis"
 
@@ -4515,10 +4519,6 @@ msgstr "Ikone in kontaklyn"
 #: src/features/ats-checker/messages.ts
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "As dit van 'n skandering af kom, is dit te wagte. Anders, verwyder dit; werwers lees dit as sleutelwoordopstopping."
-
-#: src/features/public/public-resume.tsx
-msgid "If someone sent you this link, ask them for a new one."
-msgstr "As iemand vir jou hierdie skakel gestuur het, vra hulle vir 'n nuwe een."
 
 #. placeholder {0}: reader ?? provider.provider
 #: src/api/ai-consent.ts
@@ -5117,7 +5117,6 @@ msgstr "Reëls so naby kan saam loop wanneer dit gelees word. Gebruik ten minste
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
-#: src/features/share/screen.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -5136,6 +5135,7 @@ msgid "Link an application or paste a posting to compare its terms."
 msgstr "Koppel 'n aansoek of plak 'n posplasing om die bepalings daarvan te vergelyk."
 
 #: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Link copied"
 msgstr "Skakel gekopieer"
 
@@ -5272,7 +5272,6 @@ msgstr "Laai tans jou publieke adres …"
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
 msgid "Loading…"
@@ -5334,10 +5333,6 @@ msgstr "Lyk presies soos die bladsy. Gebruik dit vir werksaansoeke en e-pos."
 msgid "Lower the design sheet"
 msgstr "Laat sak die ontwerpblad"
 
-#: src/features/public/public-resume.tsx
-msgid "Made with Reactive Resume, free and open source"
-msgstr "Gemaak met Reactive Resume, gratis en oopbron"
-
 #. Layout editor column label for the primary content area
 #: src/features/design/layout-screen.tsx
 msgid "Main"
@@ -5356,6 +5351,10 @@ msgstr "Maak dit meer spesifiek"
 msgid "Make it shorter"
 msgstr "Maak dit korter"
 
+#: src/features/share/web-page.tsx
+msgid "Make primary"
+msgstr "Maak primêr"
+
 #: src/features/career/today.tsx
 msgid "Make room for the next step."
 msgstr "Maak plek vir die volgende stap."
@@ -5371,6 +5370,10 @@ msgstr "Maak die sigbare teks en die bestemming ooreenstem."
 #: src/features/ats-checker/messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "Maak hulle sigbaar groter, vetter of met hoofletters."
+
+#: src/features/share/web-page.tsx
+msgid "Make this your primary resume?"
+msgstr "Maak dit jou primêre CV?"
 
 #: src/features/settings/locale-names.ts
 msgid "Malay"
@@ -6105,6 +6108,10 @@ msgstr "Nie toegepas nie"
 msgid "Not applied yet"
 msgstr "Nog nie aansoek gedoen nie"
 
+#: src/features/share/web-page.tsx
+msgid "Not available while the resume needs a password."
+msgstr "Nie beskikbaar terwyl die CV 'n wagwoord benodig nie."
+
 #: src/features/career/today.tsx
 msgid "Not for me"
 msgstr "Nie vir my nie"
@@ -6232,6 +6239,10 @@ msgstr "Odia"
 msgid "Off"
 msgstr "Af"
 
+#: src/features/share/web-page.tsx
+msgid "Off. Let recruiters find you on Google by turning this on."
+msgstr "Af. Skakel dit aan sodat werwers jou op Google kan vind."
+
 #: src/features/share/link.tsx
 msgid "Off. Only you can see this resume."
 msgstr "Af. Net jy kan hierdie CV sien."
@@ -6278,8 +6289,8 @@ msgid "On"
 msgstr "Aan"
 
 #: src/features/share/link.tsx
-msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
-msgstr "Aan. Enigiemand met die skakel kan bekyk. Dit word nie deur soekenjins gelys of geïndekseer nie."
+msgid "On. Anyone with the link can see your web page."
+msgstr "Aan. Enigiemand met die skakel kan jou webblad sien."
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Once a round is scheduled, Prepare builds a timed plan, your opening and the questions to ask."
@@ -6393,10 +6404,6 @@ msgstr "Maak oop in Aanbiedinge"
 msgid "Open letter"
 msgstr "Maak brief oop"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Maak die publieke bladsy oop"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Onbeantwoorde vrae"
@@ -6428,6 +6435,10 @@ msgstr "Maak die lys oop"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Maak die skedule oop"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Maak webblad oop"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6607,13 +6618,12 @@ msgid "Passkeys"
 msgstr "Pasleutels"
 
 #: app/(tabs)/settings/account.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Wagwoord"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Die wagwoorde stem nie ooreen nie."
 
@@ -6941,6 +6951,10 @@ msgstr "Druk en hou om dit op die bladsy te voorbeskou."
 msgid "Press and hold, then drag to another column or page."
 msgstr "Druk en hou en sleep dan na 'n ander kolom of bladsy."
 
+#: src/features/share/web-page.tsx
+msgid "Preview web page"
+msgstr "Voorskou webblad"
+
 #. placeholder {0}: templateName(template)
 #: src/features/design/preview-caption.tsx
 msgid "Previewing {0} · tap to apply"
@@ -6970,6 +6984,10 @@ msgstr "Vorige werkspasie-oortjies"
 msgid "Primary color"
 msgstr "Primêre kleur"
 
+#: src/features/share/web-page.tsx
+msgid "Primary resume"
+msgstr "Primêre CV"
+
 #: src/features/document-menu/index.tsx
 #: src/features/share/download.tsx
 msgid "Print"
@@ -6978,6 +6996,10 @@ msgstr "Druk"
 #: src/features/ats-checker/messages.ts
 msgid "Print or export the form to a flat PDF before sending it."
 msgstr "Druk of voer die vorm uit na 'n plat PDF voordat jy dit stuur."
+
+#: src/features/share/web-page.tsx
+msgid "Privacy"
+msgstr "Privaatheid"
 
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
@@ -7046,7 +7068,6 @@ msgstr "Verskafferbehoud en -gebruik volg sy privaatheidsbeleid. Weier verhoed h
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
-#: src/shell/builder-chrome.tsx
 msgid "Public"
 msgstr "Openbaar"
 
@@ -7073,6 +7094,18 @@ msgstr "Publiek, met 'n wagwoord"
 #: src/features/write/fields.ts
 msgid "Publications"
 msgstr "Publikasies"
+
+#: src/features/share/web-page.tsx
+msgid "Publish the web page first."
+msgstr "Publiseer eers die webblad."
+
+#: src/features/share/link.tsx
+msgid "Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted."
+msgstr "Publiseer die webblad om kyke en aflaaie te tel. Tellings is anoniem, en soekenjins word nie getel nie."
+
+#: src/features/share/web-page.tsx
+msgid "Publish this resume to open it at your short link and custom domain."
+msgstr "Publiseer hierdie CV om dit by jou kort skakel en eie domein oop te maak."
 
 #: src/features/write/fields.ts
 msgid "Publisher"
@@ -7408,6 +7441,7 @@ msgstr "Herinneringe verskyn hier. E-poskopieë is opsioneel en het 'n geverifie
 msgid "Remote"
 msgstr "Afstandwerk"
 
+#: src/features/share/web-page.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "Verwyder"
@@ -7437,7 +7471,7 @@ msgstr "Verwyder veld"
 msgid "Remove file"
 msgstr "Verwyder lêer"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Verwyder wagwoord"
 
@@ -7459,7 +7493,7 @@ msgstr "Verwyder vraag"
 msgid "Remove role"
 msgstr "Verwyder rol"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Verwyder die wagwoord?"
 
@@ -7559,11 +7593,7 @@ msgstr "Rapporteer 'n probleem"
 msgid "Report received by your server operator. Thank you."
 msgstr "Verslag ontvang deur jou bedieneroperateur. Dankie."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Rapporteer gedeelde CV"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Vereis 'n wagwoord"
 
@@ -7629,7 +7659,6 @@ msgstr "Resultaat"
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
-#: src/features/public/public-resume.tsx
 msgid "Resume"
 msgstr "CV"
 
@@ -7697,10 +7726,9 @@ msgstr "{0} herwin met behulp van {1}. Herwinningstyd bepaal nie die varsheid va
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8119,6 +8147,10 @@ msgstr "Soektog dek dokumente, aansoeke, assistentgesprekke en aksies."
 msgid "Search documents"
 msgstr "Soek dokumente"
 
+#: src/features/share/web-page.tsx
+msgid "Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off."
+msgstr "Soekenjins soos Google kan jou webblad lys. Dit kan weke neem om te verskyn, of om te verdwyn nadat jy dit afskakel."
+
 #: src/features/career/facts.tsx
 msgid "Search facts"
 msgstr "Soek feite"
@@ -8319,7 +8351,7 @@ msgstr "Bediener verander. Keer terug na Dokumente en probeer weer."
 msgid "Set a follow-up"
 msgstr "Stel 'n opvolg"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Stel wagwoord in"
 
@@ -8372,13 +8404,12 @@ msgstr "Skadukleur"
 msgid "Shadow width"
 msgstr "Skaduwydte"
 
-#: src/features/public/public-resume.tsx
-#: src/shell/builder-chrome.tsx
+#: app/builder/[id]/_layout.tsx
+#: app/builder/[id]/share.tsx
 msgid "Share"
 msgstr "Deel"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
 msgid "Share & export"
 msgstr "Deel en uitvoer"
 
@@ -8403,26 +8434,17 @@ msgstr "Deel eerder PDF"
 msgid "Share PNG"
 msgstr "Deel PNG"
 
-#: src/shell/builder-chrome.tsx
-msgid "Share public resume"
-msgstr "Deel publieke CV"
-
 #: src/features/workspace/tabs/practise.tsx
 msgid "Share recording"
 msgstr "Deel opname"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
 msgid "Share sections"
 msgstr "Deel afdelings"
 
 #: src/features/share/link.tsx
 msgid "Share via…"
 msgstr "Deel via..."
-
-#: src/features/public/public-resume.tsx
-msgid "Shared resumes stay hidden until your device settings allow them."
-msgstr "Gedeelde CV's bly versteek totdat jou toestelinstellings dit toelaat."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -8442,6 +8464,10 @@ msgstr "Kort en direk. Goed as die posplasing kortheid vra."
 msgid "Short and polite, for the recruiter"
 msgstr "Kort en beleefd, vir die werwer"
 
+#: src/features/share/web-page.tsx
+msgid "Short link and domain"
+msgstr "Kort skakel en domein"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "Verkort vrae tot 2 000 karakters en antwoorde tot 6 000 karakters voordat jy dit as aansoek gedoen merk."
@@ -8449,6 +8475,10 @@ msgstr "Verkort vrae tot 2 000 karakters en antwoorde tot 6 000 karakters voorda
 #: src/features/letters/write.tsx
 msgid "Shorter"
 msgstr "Korter"
+
+#: src/features/share/web-page.tsx
+msgid "Show “Made with Reactive Resume”"
+msgstr "Wys “Gemaak met Reactive Resume”"
 
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #: src/features/applications-board/board-screen.tsx
@@ -8491,6 +8521,10 @@ msgstr "Wys weer versteekte terme"
 msgid "Show icons"
 msgstr "Wys ikone"
 
+#: src/features/share/web-page.tsx
+msgid "Show in search engines"
+msgstr "Wys in soekenjins"
+
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Wys sleutel"
@@ -8510,10 +8544,6 @@ msgstr "Wys meer"
 #: src/features/write/section-sheet.tsx
 msgid "Show on page"
 msgstr "Wys op bladsy"
-
-#: src/features/public/public-resume.tsx
-msgid "Show password"
-msgstr "Wys wagwoord"
 
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
@@ -8597,7 +8627,8 @@ msgstr "Meld aan by {server} en gaan dan voort na die gekoppelde dokument."
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
+#: src/features/share/pane.tsx
 msgid "Sign in to continue."
 msgstr "Meld aan om voort te gaan."
 
@@ -9407,10 +9438,6 @@ msgstr "Die oorspronklike bly in die regstellinggeskiedenis. Verhale wat dit geb
 msgid "The pages are pictures, with no text behind them."
 msgstr "Die bladsye is prente, sonder teks daaragter."
 
-#: src/features/public/public-resume.tsx
-msgid "The password you entered is incorrect. Try again."
-msgstr "Die wagwoord wat jy ingevoer het, is verkeerd. Probeer weer."
-
 #: src/features/check/parser.tsx
 msgid "The PDF is checked on the server and not stored. Send this preview to see what software reads."
 msgstr "Die PDF word op die bediener nagegaan en nie gestoor nie. Stuur hierdie voorskou om te sien wat sagteware lees."
@@ -9423,6 +9450,10 @@ msgstr "Die verskaffer het nie geantwoord nie. Gaan die sleutel, die model en di
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Die rede word vir Insights gehou. Gekoppelde dokumente word nie aangeraak nie."
+
+#: src/features/share/web-page.tsx
+msgid "The records aren't visible yet. Check again later."
+msgstr "Die rekords is nog nie sigbaar nie. Kontroleer later weer."
 
 #: src/features/ats-checker/checker.tsx
 msgid "The rest of the file isn't in this report."
@@ -9550,10 +9581,6 @@ msgstr "Hierdie aansoek kon nie oopgemaak word nie."
 msgid "This application has no posting yet. Add one in Applications."
 msgstr "Hierdie aansoek het nog geen posplasing nie. Voeg een by aansoeke."
 
-#: src/features/public/public-resume.tsx
-msgid "This author is blocked."
-msgstr "Hierdie skrywer is geblokkeer."
-
 #: src/features/workspace/parts.tsx
 msgid "This changed somewhere else, so it wasn't saved. Your text is kept here; Retry saves it over the other copy."
 msgstr "Dit het iewers anders verander, so dit is nie gestoor nie. Jou teks word hier bewaar; Probeer weer stoor dit oor die ander kopie."
@@ -9591,7 +9618,7 @@ msgstr "Hierdie dokument is gesluit. Ontsluit dit voordat jy jou wysigings hier 
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Hierdie dokument is gesluit. Ontsluit dit om voorstelle te kry."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Hierdie dokument is gesluit. Jy kan steeds weergawes aflaai en benoem. Ontsluit om te wysig of terug te stel."
 
@@ -9758,14 +9785,6 @@ msgstr "Hierdie CV is gesluit. Ontsluit dit om veranderinge te maak."
 #: src/features/ats-checker/messages.ts
 msgid "This resume is long."
 msgstr "Hierdie CV is lank."
-
-#: src/features/public/public-resume.tsx
-msgid "This resume is password-protected"
-msgstr "Hierdie CV is wagwoordbeskerm"
-
-#: src/features/public/public-resume.tsx
-msgid "This resume isn't shared right now."
-msgstr "Hierdie CV word nie nou gedeel nie."
 
 #: src/features/application-detail/sheets.tsx
 msgid "This saved description is clipped or incomplete. Review before preparing documents."
@@ -9980,7 +9999,6 @@ msgstr "Probeer {suggestion}"
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/letters/write.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/shell.tsx
@@ -10035,10 +10053,6 @@ msgstr "Skakel diskresionêre ligature af wanneer jy uitvoer."
 msgid "Turn on the link to choose an address."
 msgstr "Skakel die skakel aan om 'n adres te kies."
 
-#: src/features/share/link.tsx
-msgid "Turn on the public link to count views and downloads. Counts are anonymous."
-msgstr "Skakel die publieke skakel aan om kyke en aflaaie te tel. Gebruikstellings is anoniem."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "Skakel hierdie skedule aan"
@@ -10089,10 +10103,6 @@ msgstr "Oekraïens"
 msgid "Unavailable"
 msgstr "Onbeskikbaar"
 
-#: src/features/public/public-resume.tsx
-msgid "Unblock author"
-msgstr "Deblokkeer outeur"
-
 #: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
@@ -10132,7 +10142,6 @@ msgstr "Ontkoppel"
 
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/write/outline.tsx
 msgid "Unlock"
 msgstr "Ontsluit"
@@ -10232,7 +10241,7 @@ msgstr "Gebruik {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Gebruik 3 tot 64 kleinletters, syfers, kolletjies, koppeltekens en onderstrepe."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Gebruik 6–64 karakters."
 
@@ -10278,6 +10287,7 @@ msgid "Use at least 9pt."
 msgstr "Gebruik ten minste 9pt."
 
 #: src/features/document-menu/index.tsx
+#: src/features/documents/queries.ts
 #: src/features/share/link.tsx
 msgid "Use at most 64 characters."
 msgstr "Gebruik hoogstens 64 karakters."
@@ -10402,6 +10412,10 @@ msgstr "Gebruik die websoekdiens wat in Instellings opgestel is. Soekresultate w
 msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
 msgstr "Gebruik websoektog wat in Instellings opgestel is. Resultate wag in Vandag. aansoeke en dokumente word nooit vir jou geskep nie."
 
+#: src/features/share/web-page.tsx
+msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
+msgstr "Gebruik jou CV se sjabloon en Ontwerp, en pas op enige skerm. Verander dit in Ontwerp."
+
 #: src/features/settings/locale-names.ts
 msgid "Uzbek"
 msgstr "Oezbeeks"
@@ -10413,10 +10427,6 @@ msgstr "Wissel die openinge sodat die afdeling nie soos standaardteks lees nie."
 #: src/features/career/offers.tsx
 msgid "Verbal offer"
 msgstr "Mondelinge aanbod"
-
-#: src/features/public/public-resume.tsx
-msgid "Verifying password…"
-msgstr "Verifieer tans wagwoord…"
 
 #: src/features/letters/share.tsx
 msgid "Version"
@@ -10496,21 +10506,21 @@ msgstr "Bekyk tans {0} · leesalleen"
 msgid "views · 30 days"
 msgstr "kyke · 30 dae"
 
-#: src/features/share/link.tsx
-msgid "Views and downloads"
-msgstr "Kyke en aflaaie"
-
 #: src/features/ai/report-content.tsx
 msgid "Violence or abuse"
 msgstr "Geweld of mishandeling"
 
 #: src/features/share/link.tsx
+msgid "Visitors"
+msgstr "Besoekers"
+
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Besoekers kan die PDF aflaai"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
-msgstr "Besoekers betree dit voordat hulle die CV sien. Deel dit net met mense wat jy vertrou."
+msgstr "Besoekers voer die wagwoord in voordat hulle die CV sien. Deel dit net met mense wat jy vertrou."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
@@ -10541,6 +10551,10 @@ msgstr "Web toegang"
 #: src/features/ai/web-access.tsx
 msgid "Web access settings couldn't be saved or loaded."
 msgstr "Webtoeganginstellings kon nie gestoor of gelaai word nie."
+
+#: src/features/share/web-page.tsx
+msgid "Web page"
+msgstr "Webblad"
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Web research"
@@ -10887,25 +10901,24 @@ msgstr "Jy is vanlyn. PDF word op hierdie toestel afgelaai. Ander formate benodi
 msgid "You're offline. History needs a connection."
 msgstr "Jy is vanlyn. Geskiedenis benodig ’n verbinding."
 
+#: src/features/share/export-screen.tsx
+msgid "You're offline. History needs a connection. Download PDF works on this device."
+msgstr "Jy is vanlyn. Geskiedenis benodig 'n verbinding. “Laai PDF af” werk op hierdie toestel."
+
 #: src/features/check/screen.tsx
 msgid "You're offline. Issues and Job match still work; reconnect for Writing and PDF checks."
 msgstr "Jy is vanlyn. Probleme en Werk passing werk steeds; koppel weer vir Skryfwerk- en PDF-kontroles."
 
-#: src/features/share/screen.tsx
-msgid "You're offline. Link and History need a connection. Download PDF works on this device."
-msgstr "Jy is vanlyn. Skakel en Geskiedenis het 'n verbinding nodig. Aflaai PDF werk op hierdie toestel."
+#: src/features/share/pane.tsx
+msgid "You're offline. Sharing needs a connection."
+msgstr "Jy is vanlyn. Deel benodig 'n verbinding."
 
 #: src/features/check/parser.tsx
 msgid "You're offline. The last PDF check stays here; connect to refresh it."
 msgstr "Jy is vanlyn. Die laaste PDF-kontrole bly hier; koppel om dit te verfris."
 
-#: src/features/public/public-resume.tsx
-msgid "You're offline. This resume opens when you reconnect."
-msgstr "Jy is vanlyn. Hierdie CV maak oop wanneer jy weer koppel."
-
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
-#: src/features/public/public-resume.tsx
 msgid "You're offline. Try again when you reconnect."
 msgstr "Jy is vanlyn. Probeer weer wanneer jy weer koppel."
 
@@ -10966,9 +10979,17 @@ msgstr "Jou datums word op verskeie verskillende maniere geskryf."
 msgid "Your document was saved. Review it in the editor."
 msgstr "Jou dokument is gestoor. Hersien dit in die redigeerder."
 
+#: src/features/share/web-page.tsx
+msgid "Your domain"
+msgstr "Jou domein"
+
 #: src/features/ats-checker/messages.ts
 msgid "Your email address is broken across pieces of text."
 msgstr "Jou e-posadres is oor stukke teks verbrokkel."
+
+#: src/features/share/web-page.tsx
+msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
+msgstr "Jou e-pos, telefoon, ligging en ander opskrifbesonderhede, en verwysings se telefoonnommers, word uit die webblad, sy PDF en soekresultate gelaat."
 
 #: src/features/career/knowledge.tsx
 msgid "Your facts, stories and preferences. Editing Knowledge sends nothing to an AI connection."
@@ -11102,6 +11123,19 @@ msgstr "Jou sessie het verval. Meld weer aan."
 #: src/auth/session-gate.tsx
 msgid "Your session on {0} ended"
 msgstr "Jou sessie op {0} het geëindig"
+
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "Your short link and custom domain open “{0}”."
+msgstr "Jou kort skakel en eie domein maak “{0}” oop."
+
+#: src/features/share/web-page.tsx
+msgid "Your short link and custom domain open this resume."
+msgstr "Jou kort skakel en eie domein maak hierdie CV oop."
+
+#: src/features/share/web-page.tsx
+msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
+msgstr "Jou kort skakel en eie domein sê dat hierdie CV nie gedeel word totdat jy dit weer publiseer nie."
 
 #: src/features/assistant/coach-screen.tsx
 msgid "your stories"

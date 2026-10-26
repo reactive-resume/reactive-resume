@@ -16,8 +16,8 @@ import { isEditableElementFocused, usePreviewPausedStore, useResumeData } from "
 import { PdfCanvasDocument, PdfCanvasPage } from "./pdf-canvas";
 import { ResumePreviewLoader } from "./preview.shared";
 import { getResumePreviewGapValue, getResumePreviewPageCount } from "./preview.shared.utils";
+import { ResumeReflow } from "./resume-reflow";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
-import { ResumeReflow } from "@/features/resume/public/resume-reflow";
 import { getLostCharactersMessage, getReadableErrorMessage } from "@/libs/error-message";
 import { EASE } from "@/libs/motion";
 

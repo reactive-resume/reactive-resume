@@ -82,6 +82,21 @@ export const env = createEnv({
 			.trim()
 			.transform((value) => value || undefined)
 			.optional(),
+		// A second domain serving the same public pages as APP_URL (resumes, /<username>, the home page), e.g.
+		// https://rx.cv. Sign-in and the editor stay on APP_URL. When set, it's the address shown and shared.
+		APP_ALIAS_URL: z.url({ protocol: /^https?$/ }).optional(),
+		// The host custom domains point a CNAME at, e.g. domains.rx.cv. Unset turns custom domains off.
+		CUSTOM_DOMAIN_TARGET: z
+			.string()
+			.trim()
+			.toLowerCase()
+			.regex(
+				/^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/,
+				"Use a host name such as domains.example.com",
+			)
+			.optional(),
+		// Sent by Traefik's HTTP provider to read the custom domains' routers; at least 32 characters.
+		CUSTOM_DOMAIN_PROVIDER_SECRET: z.string().min(32).optional(),
 		SERVER_PORT: z.coerce.number().int().min(1).max(65535).default(3001),
 		TRUSTED_PROXIES: commaList(
 			z.string().refine((range) => {
@@ -196,6 +211,7 @@ export const env = createEnv({
 		FLAG_DISABLE_API_RATE_LIMIT: z.stringbool().default(false),
 		FLAG_ALLOW_UNSAFE_AI_BASE_URL: z.stringbool().default(false),
 		FLAG_ALLOW_UNSAFE_OAUTH_REDIRECT_URI: z.stringbool().default(false),
+		FLAG_OLACV_SUGGESTION: z.stringbool().default(false),
 	},
 	runtimeEnv: deploymentEnvironment(process.env),
 	emptyStringAsUndefined: true,

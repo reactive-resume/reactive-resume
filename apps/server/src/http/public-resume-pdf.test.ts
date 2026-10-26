@@ -40,6 +40,7 @@ describe("handlePublicResumePdf", () => {
 			slug: "resume",
 			requestHeaders: request.headers,
 			trustedClient,
+			countDownload: false,
 		});
 	});
 

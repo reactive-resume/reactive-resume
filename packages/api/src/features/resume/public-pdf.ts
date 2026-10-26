@@ -2,42 +2,36 @@ import type { StorageService } from "../storage";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { createHash } from "node:crypto";
 import { ORPCError } from "@orpc/server";
+import { isbot } from "isbot";
+import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
 import { generateFilename } from "@reactive-resume/utils/file";
 import { matchesIfNoneMatch } from "@reactive-resume/utils/http";
-import { assertCanView, redactResumeForViewer, requiresPassword } from "./access-policy";
+import {
+	assertCanView,
+	isOwner,
+	publicResumeData,
+	requiresPassword,
+	resolveViewer,
+	shouldCountForStatistics,
+} from "./access-policy";
 import { publicRenderRateLimiter } from "./public-render-rate-limit";
-import { parseStoredResumeData } from "./resume-data-validation";
+import { findResume } from "./slugs";
+import { countVisit } from "./view-dedup";
 
 export type CreatePublicResumePdfInput = {
 	username: string;
 	slug: string;
 	requestHeaders: Headers;
 	trustedClient: string;
+	/** A visitor's download (the web page's Download PDF), counted once an hour per visitor. */
+	countDownload?: boolean;
 };
 
 // A cached file is re-rendered after a day, so template, font and engine fixes reach it without an edit.
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 // Renders in progress, so a burst of visitors to one resume waits for one render instead of starting many.
 const rendering = new Map<string, Promise<Uint8Array>>();
-
-const findResume = async (input: Pick<CreatePublicResumePdfInput, "username" | "slug">) => {
-	const [schema, { findResumeBySlug }] = await Promise.all([import("@reactive-resume/db/schema"), import("./slugs")]);
-	return findResumeBySlug(input, {
-		id: schema.resume.id,
-		userId: schema.resume.userId,
-		data: schema.resume.data,
-		isPublic: schema.resume.isPublic,
-		passwordHash: schema.resume.password,
-	});
-};
-
-const resolveCurrentUserId = async (requestHeaders: Headers) =>
-	(await import("../../context"))
-		.resolveAuthenticationFromRequestHeaders(requestHeaders)
-		.then((authentication) => (authentication?.permissions.includes("read") ? authentication.user.id : undefined))
-		// A cross-site session is refused (FORBIDDEN); fall back to the anonymous view, like /uploads.
-		.catch(() => undefined);
 
 /** `body` is null when the request's `If-None-Match` already names this version (answer 304). */
 export type PublicResumePdf = { body: File | null; filename: string; etag: string };
@@ -48,12 +42,24 @@ export type PublicResumePdf = { body: File | null; filename: string; etag: strin
  * cached copy is current.
  */
 export async function createPublicResumePdf(input: CreatePublicResumePdfInput): Promise<PublicResumePdf> {
-	const resume = await findResume(input);
+	const resume = await findResume(
+		{ username: input.username, slug: input.slug },
+		{
+			id: schema.resume.id,
+			userId: schema.resume.userId,
+			data: schema.resume.data,
+			isPublic: schema.resume.isPublic,
+			hideContactDetails: schema.resume.hideContactDetails,
+			showDownloadButtons: schema.resume.showDownloadButtons,
+			passwordHash: schema.resume.password,
+		},
+	);
 	if (!resume) throw new ORPCError("NOT_FOUND");
 
-	const currentUserId = await resolveCurrentUserId(input.requestHeaders);
-	const viewer = currentUserId ? { id: currentUserId } : null;
+	const viewer = await resolveViewer(input.requestHeaders);
 	assertCanView(resume, viewer);
+	// With downloads off, the PDF is the owner's alone; the web page is what everyone else sees.
+	if (!resume.showDownloadButtons && !isOwner(resume, viewer)) throw new ORPCError("NOT_FOUND");
 	if (
 		requiresPassword(resume, viewer) &&
 		!(await import("./access")).hasResumeAccess(input.requestHeaders, resume.id, resume.passwordHash)
@@ -64,8 +70,11 @@ export async function createPublicResumePdf(input: CreatePublicResumePdfInput): 
 		});
 	}
 
+	if (input.countDownload && shouldCountForStatistics(resume, viewer) && !isbot(input.requestHeaders.get("user-agent")))
+		await countVisit({ kind: "download", resumeId: resume.id, trustedClient: input.trustedClient });
+
 	// Every visitor gets the anonymous view, so one cached file serves them all (hidden content never prints anyway).
-	const { data } = redactResumeForViewer({ name: "", data: parseStoredResumeData(resume.data) }, false);
+	const data = publicResumeData(resume);
 	const filename = generateFilename(data.basics.name || "Resume", "pdf");
 	const hash = createHash("sha256").update(JSON.stringify(data)).digest("hex").slice(0, 32);
 	// Under the resume's pdfs/ folder: deleted with the resume or account, and /uploads serves it only to the owner.

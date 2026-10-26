@@ -20,6 +20,9 @@ it("paginates the owner's filtered list without changing legacy array responses"
 		isPublic: false,
 		isLocked: false,
 		showDownloadButtons: false,
+		showInSearchEngines: false,
+		hideContactDetails: false,
+		isPrimary: false,
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	}));

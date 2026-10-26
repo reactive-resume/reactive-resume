@@ -25,12 +25,15 @@ export async function handlePublicResumePdf(
 	slug: string,
 	trustedClient: string,
 ): Promise<Response> {
+	// `?download` is the web page's Download PDF: saved as a file, and counted.
+	const download = new URL(request.url).searchParams.has("download");
 	try {
 		const result = await createPublicResumePdf({
 			username,
 			slug,
 			requestHeaders: request.headers,
 			trustedClient,
+			countDownload: download,
 		});
 
 		if (!result.body) return new Response(null, { status: 304, headers: cacheHeaders(result.etag) });
@@ -38,7 +41,7 @@ export async function handlePublicResumePdf(
 		return new Response(result.body, {
 			headers: {
 				"Content-Type": "application/pdf",
-				"Content-Disposition": `inline; filename="${result.filename.replaceAll('"', "")}"`,
+				"Content-Disposition": `${download ? "attachment" : "inline"}; filename="${result.filename.replaceAll('"', "")}"`,
 				"X-Content-Type-Options": "nosniff",
 				...cacheHeaders(result.etag),
 			},

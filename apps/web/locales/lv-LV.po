@@ -35,6 +35,11 @@ msgstr "“{0}” ir paslēpts"
 msgid "“{0}” moved to Trash"
 msgstr "“{0}” pārvietots uz atkritni"
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr "“{0}” vairs nebūs jūsu primārais CV."
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "“{name}” moved to Trash"
@@ -721,6 +726,10 @@ msgstr "{stars, plural, zero {Novērtējiet Reactive Resume GitHub ar zvaigzni, 
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, zero {# stāsti} one {# stāsts} other {# stāsti}}"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "{suggestion} may be available. Get yours here →"
+msgstr "{suggestion} varētu būt pieejams. Iegūstiet savu šeit →"
+
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
 msgstr "{summary}. Atveras sadaļā Karjera → Piedāvājumi."
@@ -835,7 +844,7 @@ msgstr "10 minūšu atgādne"
 msgid "10–11 recommended"
 msgstr "Ieteicams 10–11"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 faili"
 
@@ -898,7 +907,7 @@ msgstr "D"
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "A pieņem un R noraida fokusēto labojumu. ↑ un ↓ pāriet starp labojumiem."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Šīs vēstules dublējums. Importē atpakaļ Reactive Resume kā vēstuli."
 
@@ -1243,7 +1252,7 @@ msgstr "Pievienojiet AI nodrošinātāju"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "Pievienojiet @ un domēnu, piemēram, name@example.com"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "Pievienojiet adresi."
 
@@ -1410,6 +1419,10 @@ msgstr "Pievienojiet domēnu aiz @, piemēram, {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Pievienojiet domēna galotni, piemēram, {domain}.com"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
+msgstr "Pievienojiet šos ierakstus vietā, kur pārvaldāt domēnu, un pēc tam pārbaudiet. Var paiet dažas stundas, līdz izmaiņas sasniedz visus."
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/career/workspace/shell.tsx
@@ -1475,7 +1488,7 @@ msgstr "Pievienots Zināšanām kā pieredze."
 msgid "Added to Prepare"
 msgstr "Pievienots sadaļai “Sagatavošanās”"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "Adrese"
 
@@ -1708,7 +1721,7 @@ msgstr "un {0} vairāk"
 msgid "and counting"
 msgstr "un skaitīšana"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "Šī adrese tiek izmantota citā jūsu CV."
 
@@ -1757,7 +1770,7 @@ msgstr "Jebkurš fonts sadaļā Advanced"
 msgid "Anyone who opens the public URL will need this password."
 msgstr "Ikvienam, kas atvērs publisko URL, būs nepieciešama šī parole."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Ikviens, kuram ir saite, varēs skatīt jūsu CV."
 
@@ -1888,6 +1901,7 @@ msgstr "Pieteikuma cilnes"
 msgid "Application updated"
 msgstr "Pieteikums atjaunināts"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
@@ -2552,6 +2566,10 @@ msgstr "Pārbaudiet citu failu"
 msgid "Check any PDF, no account needed"
 msgstr "Pārbaudiet jebkuru PDF — konts nav nepieciešams"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Check DNS"
+msgstr "Pārbaudīt DNS"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Check every claim, date and result against your experience."
 msgstr "Pārbaudiet katru apgalvojumu, datumu un rezultātu, salīdzinot ar savu pieredzi."
@@ -2635,7 +2653,7 @@ msgstr "Notiek eksportētā PDF pārbaude…"
 msgid "Checking your preferences"
 msgstr "Pārbauda jūsu preferences"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "Notiek pārbaude... Pēc saglabāšanas ir pieejama kopija."
 
@@ -2716,7 +2734,6 @@ msgid "Claude Desktop"
 msgstr "Claude Desktop"
 
 #: src/features/applications/components/detail/next-step-card.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
 msgstr "Notīrīt"
@@ -2738,6 +2755,7 @@ msgid "Clear section"
 msgstr "Notīrīt sadaļu"
 
 #: src/components/ui/combobox.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Clear selection"
 msgstr "Notīrīt atlasi"
@@ -2765,7 +2783,7 @@ msgstr "Klienta ID"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2905,6 +2923,10 @@ msgstr "Pilnīga datu dublēšana. Importē atpakaļ Reactive Resume vai JSON Re
 msgid "Compress or remove large images to keep uploads quick."
 msgstr "Saspiediet vai noņemiet lielus attēlus, lai augšupielāde būtu ātra."
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Computer"
+msgstr "Dators"
+
 #: src/hooks/use-confirm.tsx
 msgid "Confirm"
 msgstr "Apstiprināt"
@@ -2938,6 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "Apstiprina šodien {time}, video zvanā."
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "Savienot"
@@ -2989,6 +3012,10 @@ msgstr "Savienots"
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Saistītās lietojumprogrammas"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Connected. Your domain opens your primary resume."
+msgstr "Savienots. Jūsu domēns atver jūsu primāro CV."
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Connecting your {providerName} account…"
@@ -3117,7 +3144,7 @@ msgid "Copied"
 msgstr "Kopēts"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3149,7 +3176,6 @@ msgid "Copy it now. For your security, it won't be shown again."
 msgstr "Kopējiet to tūlīt. Jūsu drošībai tas vairs netiks rādīts."
 
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
 msgid "Copy link"
 msgstr "Kopēt saiti"
 
@@ -3271,6 +3297,7 @@ msgid "Couldn't copy the transcript. Try again."
 msgstr "Nevarēja nokopēt atšifrējumu. Mēģiniet vēlreiz."
 
 #: src/features/career/coach-thread.tsx
+#: src/features/resume/share/copy-link-button.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "Nevarēja nokopēt starpliktuvē. Mēģiniet vēlreiz."
 
@@ -3592,8 +3619,8 @@ msgstr "Nevarēja saglabāt šo grafiku. Mēģiniet vēlreiz."
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "Nevarēja saglabāt izmaiņas. Pirms turpināt, mēģiniet vēlreiz."
@@ -3698,6 +3725,11 @@ msgstr "Nevarēja atsaistīt pieteikumu. Mēģiniet vēlreiz."
 msgid "Couldn't unlock the document. Try again."
 msgstr "Nevarēja atbloķēt dokumentu. Mēģiniet vēlreiz."
 
+#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/share-panel.tsx
+msgid "Couldn't update sharing. Try again."
+msgstr "Nevarēja atjaunināt kopīgošanu. Mēģiniet vēlreiz."
+
 #: src/features/career/workspace/messages.tsx
 msgid "Couldn't update the application. Nothing was changed. Try again."
 msgstr "Nevarēja atjaunināt pieteikumu. Nekas netika mainīts. Mēģiniet vēlreiz."
@@ -3726,7 +3758,7 @@ msgstr "Nevarēja atjaunināt priekšskatījumu. Joprojām redzama pēdējā dar
 msgid "Couldn't update the timeline. Try again."
 msgstr "Nevarēja atjaunināt laika skalu. Mēģiniet vēlreiz."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "Nevarēja atjaunināt šīs vēstules versijas. Mēģiniet vēlreiz."
 
@@ -3740,11 +3772,6 @@ msgstr "Nevarēja augšupielādēt fotoattēlu. Mēģiniet vēlreiz."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Nevarēja pārbaudīt kodu. Ievadiet pašreizējo kodu no autentifikatora lietotnes."
-
-#. Fallback toast when resume password verification fails unexpectedly
-#: src/features/auth/pages/resume-password.tsx
-msgid "Couldn't verify the password. Try again."
-msgstr "Nevarēja pārbaudīt paroli. Mēģiniet vēlreiz."
 
 #. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
@@ -3949,7 +3976,7 @@ msgid "Daily at {clock} · next {next}"
 msgstr "Katru dienu {clock} · nākamais {next}"
 
 #. placeholder {0}: summary.peak
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "Ikdienas skatījumi 30 dienu laikā, maksimums {0}"
 
@@ -4325,6 +4352,10 @@ msgstr "Dokumenti, kurus pārvietojat šeit, paliek 30 dienas."
 msgid "Does it use AI?"
 msgstr "Vai tas izmanto AI?"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Domain connected"
+msgstr "Domēns savienots"
+
 #: src/features/auth/pages/login.tsx
 msgid "Don't have an account? <0/>"
 msgstr "Nav konta? <0/>"
@@ -4357,8 +4388,8 @@ msgstr "Pārbauda vēlreiz"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "Lejupielādēt"
 
@@ -4369,6 +4400,10 @@ msgstr "Lejupielādēt {label}"
 #: src/features/templates/gallery.tsx
 msgid "Download {name} sample PDF"
 msgstr "Lejupielādējiet {name} PDF paraugu"
+
+#: src/features/resume/editor/chrome/download-sheet.tsx
+msgid "Download & history"
+msgstr "Lejupielāde un vēsture"
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download application details, contacts, notes, and timeline history as CSV."
@@ -4384,12 +4419,12 @@ msgid "Download CSV"
 msgstr "Lejupielādēt CSV"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "Lejupielāde neizdevās. Mēģiniet vēlreiz."
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
 msgstr "Lejupielādēt PDF"
 
@@ -4405,12 +4440,12 @@ msgstr "Lejupielādējiet PDF paraugu"
 msgid "Download them"
 msgstr "Lejupielādējiet tos"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Download totals can include repeat clicks."
 msgstr "Lejupielādes kopsummas var ietvert atkārtotus klikšķus."
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "Lejupielādēts {file}"
 
@@ -4418,11 +4453,11 @@ msgstr "Lejupielādēts {file}"
 msgid "Downloaded {file} and the cover letter"
 msgstr "Lejupielādēts {file} un pavadvēstule"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
-msgstr "Lejupielādējis savu CV un šo vēstuli"
+msgstr "Jūsu CV un šī vēstule ir lejupielādēti"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "downloads"
 msgstr "lejupielādes"
 
@@ -4807,13 +4842,9 @@ msgstr "Ievadiet vienu no saglabātajiem rezerves kodiem, lai piekļūtu savam k
 msgid "Enter the 6-digit code."
 msgstr "Ievadiet 6 ciparu kodu."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Enter the password the resume owner shared with you."
 msgstr "Ievadiet paroli, ko jums ir izsniedzis CV īpašnieks."
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Enter the password."
-msgstr "Ievadiet paroli."
 
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Enter the same password in both fields."
@@ -5223,6 +5254,11 @@ msgstr "Fontus neizdevās ielādēt. Mēģiniet vēlreiz."
 msgid "For"
 msgstr "Priekš"
 
+#. placeholder {0}: domain.target
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
+msgstr "Saknes domēnam, piemēram, example.com, CNAME vietā izmantojiet A un AAAA ierakstus ar {0} adresēm."
+
 #: src/features/career/workspace/prepare.tsx
 msgid "For each: situation, task, your action, result, reflection. Leave out numbers you're unsure of."
 msgstr "Katram: situācija, uzdevums, jūsu darbība, rezultāts, refleksija. Neminiet skaitļus, par kuriem nav pārliecības."
@@ -5617,6 +5653,10 @@ msgstr "Paslēpts: {hiddenList}"
 msgid "Hide {title} from the page"
 msgstr "Paslēpt {title} no lapas"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Hide contact details"
+msgstr "Slēpt kontaktinformāciju"
+
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Hide from page"
 msgstr "Slēpt no lapas"
@@ -5660,8 +5700,9 @@ msgid "Hiring team"
 msgstr "Pieņemšanas komanda"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
 msgstr "Vēsture"
 
@@ -5784,7 +5825,7 @@ msgstr "Ja tas radies no skenējuma, tas ir sagaidāms. Citādi noņemiet to; pe
 msgid "If it's part of your experience, add it where it belongs."
 msgstr "Ja tā ir daļa no jūsu pieredzes, pievienojiet to vajadzīgajai vietai."
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "If someone sent you this link, ask them for a new one."
 msgstr "Ja kāds jums nosūtīja šo saiti, pieprasiet viņam jaunu."
 
@@ -6597,7 +6638,6 @@ msgstr "Lasot tik tuvu rindas, var iet kopā. Izmantojiet vismaz {minimum}."
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/write/fields.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Link"
 msgstr "Saite"
 
@@ -6624,14 +6664,10 @@ msgid "Link an application…"
 msgstr "Saite darba pieteikumu…"
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/public/public-resume.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "Saite nokopēta"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Link is live"
-msgstr "Saite ir tiešsaistē"
 
 #: src/features/documents/document-actions.tsx
 msgid "Link to application"
@@ -6641,7 +6677,7 @@ msgstr "Saite uz darba pieteikumu"
 msgid "Link to application…"
 msgstr "Saite uz darba pieteikumu…"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Link turned off. The address is kept"
 msgstr "Saite ir izslēgta. Adrese tiek saglabāta"
 
@@ -6719,7 +6755,7 @@ msgid "Live · updates as you edit"
 msgstr "Tiešraides · atjauninājumi, kad rediģējat"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "Tiešraide pie {0}"
 
@@ -6854,7 +6890,7 @@ msgstr "Zems"
 msgid "Lower the design sheet"
 msgstr "Nolaidiet dizaina lapu"
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Izgatavots ar Reactive Resume, bezmaksas un atvērtā koda"
 
@@ -6888,6 +6924,10 @@ msgstr "Padariet to īsāku"
 msgid "Make it yours, then take it with you."
 msgstr "Padariet to par savu, tad ņemiet to līdzi."
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Make primary"
+msgstr "Padarīt par primāro"
+
 #: src/features/documents/documents-page.tsx
 msgid "Make private"
 msgstr "Padarīt privātu"
@@ -6907,6 +6947,10 @@ msgstr "Panāciet, lai redzamais teksts un mērķa adrese sakristu."
 #: src/features/ats-checker/messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "Padariet tos manāmi lielākus, treknākus vai ar lielajiem burtiem."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Make this your primary resume?"
+msgstr "Vai padarīt šo par jūsu primāro CV?"
 
 #: src/libs/locale.ts
 msgid "Malay"
@@ -7102,6 +7146,7 @@ msgid "Mono"
 msgstr "Mono"
 
 #: src/features/resume/editor/chrome/bar.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "More download formats"
 msgstr "Vairāk lejupielādes formātu"
 
@@ -7707,6 +7752,10 @@ msgstr "Netika piemērots"
 msgid "Not applied yet"
 msgstr "Vēl nav pieteikts"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Not available while the resume needs a password."
+msgstr "Nav pieejams, kamēr CV nepieciešama parole."
+
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "Nav izveidots savienojums"
@@ -7900,9 +7949,9 @@ msgstr "Izslēgts"
 msgid "Off: the coach won’t see it or claim it."
 msgstr "Izslēgts: konsultants to neredzēs un neapgalvos."
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Off. Only you can see this resume."
-msgstr "Izslēgts. Tikai jūs varat redzēt šo CV."
+#: src/features/resume/share/share-panel.tsx
+msgid "Off. Let recruiters find you on Google by turning this on."
+msgstr "Izslēgts. Ieslēdziet, lai darbā pieņēmēji varētu jūs atrast Google."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Off. The letter keeps its own copy of your details."
@@ -7931,9 +7980,9 @@ msgstr "Dienas birojā nav norādītas"
 msgid "Offline · saved on this device"
 msgstr "Bezsaistē · saglabāts šajā ierīcē"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
-msgstr "Ieslēgts. Ikviens, kam ir saite, var skatīt. Meklētājprogrammas to nenorāda vai indeksē."
+#: src/features/resume/share/share-panel.tsx
+msgid "On. Anyone with the link can see your web page."
+msgstr "Ieslēgts. Ikviens, kam ir saite, var redzēt jūsu tīmekļa lapu."
 
 #: src/features/homepage/remember.tsx
 msgid "Onboarding story"
@@ -8015,7 +8064,7 @@ msgstr "Vienlaikus tiek importētas tikai pirmās {MAX_IMPORT} rindas, atstājot
 msgid "Only the first pages were checked."
 msgstr "Pārbaudītas tikai pirmās lapas."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "Tikai jūs tos redzat"
 
@@ -8073,10 +8122,6 @@ msgstr "Atvērt piedāvājumos"
 msgid "Open preferences"
 msgstr "Atvērt preferences"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Open public page"
-msgstr "Atveriet publisko lapu"
-
 #: src/features/career/workspace/prepare.tsx
 msgid "Open story"
 msgstr "Atvērt stāstu"
@@ -8092,6 +8137,10 @@ msgstr "Atveriet lietotni Reactive Resume"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Atvērt grafiku"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Open web page"
+msgstr "Atvērt tīmekļa lapu"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/today.tsx
@@ -8310,16 +8359,15 @@ msgstr "Piekļuves atslēgas"
 
 #. Authentication provider display name in account settings
 #. Label for password input on login form
-#. Label for password input on protected resume access form
 #. Label for password input on registration form
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/share.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/features/settings/account/auth-hooks.ts
 #: src/features/settings/account/security.tsx
 msgid "Password"
@@ -8329,7 +8377,7 @@ msgstr "Parole"
 msgid "Password changed"
 msgstr "Parole nomainīta"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "Parole noņemta"
 
@@ -8337,7 +8385,7 @@ msgstr "Parole noņemta"
 msgid "Password reset. Sign in with your new password."
 msgstr "Parole atiestatīta. Piesakieties ar jauno paroli."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "Parole iestatīta"
 
@@ -8454,6 +8502,7 @@ msgstr "Persiešu"
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
+#: src/features/resume/share/web-page-preview.tsx
 msgid "Phone"
 msgstr "Tālrunis"
 
@@ -8723,6 +8772,10 @@ msgstr "Nospiediet <0>Enter</0>, lai atvērtu"
 msgid "Preview {name} sample PDF"
 msgstr "Priekšskatiet {name} PDF paraugu"
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Preview size"
+msgstr "Priekšskatījuma izmērs"
+
 #. placeholder {0}: templates[previewTemplate].name
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
@@ -8745,6 +8798,10 @@ msgstr "Iepriekšējais mēnesis"
 msgid "Primary color"
 msgstr "Primārā krāsa"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Primary resume"
+msgstr "Primārais CV"
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Print"
 msgstr "Drukāt"
@@ -8753,9 +8810,9 @@ msgstr "Drukāt"
 msgid "Print or export the form to a flat PDF before sending it."
 msgstr "Pirms nosūtīšanas izdrukājiet vai eksportējiet veidlapu kā saplacinātu PDF."
 
-#: src/features/resume/public/public-resume.tsx
-msgid "Printing is turned off for this resume."
-msgstr "Šim CV drukāšana ir izslēgta."
+#: src/features/resume/share/share-panel.tsx
+msgid "Privacy"
+msgstr "Privātums"
 
 #: src/features/homepage/footer.tsx
 msgid "Privacy policy"
@@ -8858,7 +8915,7 @@ msgstr "Pakalpojumu sniedzējs"
 msgid "Public"
 msgstr "Publisks"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Public link"
 msgstr "Publiskā saite"
 
@@ -8873,6 +8930,26 @@ msgstr "Publisks, ar paroli"
 #: src/libs/resume/section.tsx
 msgid "Publications"
 msgstr "Publikācijas"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish"
+msgstr "Publicēt"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish it to share a link that opens on any screen. Only you can see it until then."
+msgstr "Publicējiet to, lai kopīgotu saiti, kas atveras jebkurā ekrānā. Līdz tam to redzat tikai jūs."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page first."
+msgstr "Vispirms publicējiet tīmekļa lapu."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted."
+msgstr "Publicējiet tīmekļa lapu, lai skaitītu skatījumus un lejupielādes. Skaitīšana ir anonīma, un meklētājprogrammas netiek skaitītas."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link and custom domain."
+msgstr "Publicējiet šo CV, lai to atvērtu ar savu īso saiti un pielāgoto domēnu."
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Publisher"
@@ -8894,11 +8971,11 @@ msgstr "Ievietojiet to visu <0>vienā lapā.</0>"
 msgid "Put the caret in a line to improve it"
 msgstr "Lai uzlabotu to, novietojiet to vienā rindā"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code"
 msgstr "QR kods"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code for {url}"
 msgstr "QR kods {url}"
 
@@ -9209,7 +9286,7 @@ msgstr "Vervētājs"
 msgid "Recruiter reply"
 msgstr "Atbilde personāla atlases speciālistam"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "Vervētāji redz šo vārdu. Jūsu vārds un pavadvēstule darbojas labi."
 
@@ -9335,6 +9412,7 @@ msgstr "Attālināti"
 msgid "Remote, Hybrid, a city…"
 msgstr "Attālināti, hibrīdi, pilsēta…"
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "Noņemt"
@@ -9383,7 +9461,7 @@ msgstr "Noņemt failu"
 msgid "Remove passkey"
 msgstr "Noņemt piekļuves atslēgu"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove password"
 msgstr "Noņemt paroli"
 
@@ -9409,7 +9487,7 @@ msgstr "Noņemt lomu"
 msgid "Remove tag"
 msgstr "Noņemt birku"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "Vai noņemt paroli?"
 
@@ -9491,7 +9569,7 @@ msgstr "Atbilde nokopēta"
 msgid "Report a bug"
 msgstr "Ziņot par kļūdu"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Require a password"
 msgstr "Pieprasīt paroli"
 
@@ -9582,8 +9660,6 @@ msgstr "CV"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-card.tsx
-#: src/routes/_home/index.tsx
-#: src/routes/$username/$slug.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "CV"
@@ -9600,7 +9676,7 @@ msgstr "CV · nosūtītā versija"
 msgid "Resume (optional)"
 msgstr "CV (pēc izvēles)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "CV + vēstule"
 
@@ -10038,8 +10114,8 @@ msgstr "Saglabāts Zināšanās, redzams tikai šim pieteikumam."
 msgid "Saved to Saved · Practice"
 msgstr "Saglabāts sadaļā “Saglabāts · Vingrināšanās”"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/link-tab.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "Saglabā {0}/{username}/{slug}… Pēc saglabāšanas ir pieejama kopija."
 
@@ -10136,6 +10212,10 @@ msgstr "Meklēšana aptver nosaukumus, atzīmes un saistītos darba pieteikumus.
 #: src/features/documents/documents-page.tsx
 msgid "Search documents"
 msgstr "Meklēt dokumentus"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off."
+msgstr "Meklētājprogrammas, piemēram, Google, var rādīt jūsu tīmekļa lapu meklēšanas rezultātos. Var paiet vairākas nedēļas, līdz tā parādās vai pazūd pēc šīs opcijas izslēgšanas."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Search facts"
@@ -10441,29 +10521,22 @@ msgstr "Ēnas platums"
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Share"
 msgstr "Dalīties"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
-msgid "Share & export"
-msgstr "Kopīgot un eksportēt"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "Kopīgojiet publisku saiti, pievienojiet paroli vai saglabājiet to privātu. Izvēlieties kādu no 3 redzamības opcijām. Eksportējiet uz PDF vai Word vai paņemiet visus savus datus līdzi kā JSON."
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-msgid "Share public resume"
-msgstr "Kopīgojiet publisko CV"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "Kopīgojiet sadaļas"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "Kopīgot, izmantojot…"
 
@@ -10497,6 +10570,10 @@ msgstr "Īsi un tieši. Labi, ja darba sludinājums prasa īsumu."
 msgid "Short and polite, for the recruiter"
 msgstr "Īss un pieklājīgs, attiecībā uz vervētāju"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link and domain"
+msgstr "Īsā saite un domēns"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "Pirms atzīmēšanas kā pieteiktu saīsiniet jautājumus līdz 2000 rakstzīmēm un atbildes līdz 6000 rakstzīmēm."
@@ -10508,6 +10585,10 @@ msgstr "Īsāks"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Show"
 msgstr "Rādīt"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show “Made with Reactive Resume”"
+msgstr "Rādīt “Izveidots ar Reactive Resume”"
 
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #. placeholder {0}: visible.length - shown.length
@@ -10544,6 +10625,10 @@ msgstr "Rādīt virsrakstu"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Show icons"
 msgstr "Rādīt ikonas"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show in search engines"
+msgstr "Rādīt meklētājprogrammās"
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -10679,7 +10764,7 @@ msgstr "Notiek atteikšanās..."
 msgid "Signing up..."
 msgstr "Notiek reģistrācija..."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "since last view"
 msgstr "kopš pēdējā skatījuma"
 
@@ -11479,7 +11564,7 @@ msgstr "Šis fails ir pārāk liels, lai to pārbaudītu. PDFs līdz 25 MB darbs
 msgid "That link couldn't be read. Paste the posting text instead."
 msgstr "Šo saiti nevarēja izlasīt. Tā vietā ielīmējiet darba sludinājuma tekstu."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "That password isn't correct. Check it with the resume owner and try again."
 msgstr "Parole nav pareiza. Pārbaudiet to pie CV īpašnieka un mēģiniet vēlreiz."
 
@@ -11591,7 +11676,7 @@ msgstr "Sveiciens seko vārdam."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Atslēga tiek šifrēta serverī un nekad vairs netiek rādīta. Saglabāšana pārbauda savienojumu."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "Vēstule tāda, kāda tā ir"
 
@@ -11690,6 +11775,10 @@ msgstr "Pakalpojumu sniedzēja atbildi nevarēja pārbaudīt. Mēģiniet vēlrei
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Iemesls tiek saglabāts Insights. Saistītie dokumenti netiek aiztikti."
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "The records aren't visible yet. Check again later."
+msgstr "Ieraksti vēl nav redzami. Pārbaudiet vēlreiz vēlāk."
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11914,9 +12003,9 @@ msgstr "Šī ir XFA forma, tāpēc lielākā daļa programmatūras nolasa tikai 
 msgid "This is not a common resume page size."
 msgstr "Šis nav ierasts CV lapas izmērs."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
-msgstr "Šis burts un “{resumeName}” kā divi PDFs, kas nosaukti atbilstoši."
+msgstr "Šī vēstule un “{resumeName}” kā divi PDF faili ar atbilstošiem nosaukumiem."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter is locked. Unlock it from its menu to edit."
@@ -11974,7 +12063,7 @@ msgstr "Šis CV ir bloķēts. Atbloķējiet to, lai veiktu izmaiņas."
 msgid "This resume is long."
 msgstr "Šis CV ir garš."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume is password-protected"
 msgstr "Šis CV ir aizsargāts ar paroli"
 
@@ -11982,7 +12071,7 @@ msgstr "Šis CV ir aizsargāts ar paroli"
 msgid "This resume isn't linked to an application yet."
 msgstr "Šis CV vēl nav saistīts ar darba pieteikumu."
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
 msgstr "Šis CV pašlaik netiek kopīgots."
 
@@ -12097,7 +12186,7 @@ msgid "To"
 msgstr "Uz"
 
 #: src/features/applications/components/calendar-view.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "Šodien"
@@ -12193,7 +12282,7 @@ msgid "Trust this device for 30 days"
 msgstr "Uzticēties šai ierīcei 30 dienas"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "Izmēģiniet {0}"
 
@@ -12253,13 +12342,9 @@ msgstr "Izslēgt divpakāpju verifikāciju"
 msgid "Turn off two-step verification?"
 msgstr "Vai izslēgt divpakāpju verifikāciju?"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "Ieslēdziet saiti, lai izvēlētos adresi."
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Turn on the public link to count views and downloads. Counts are anonymous."
-msgstr "Ieslēdziet publisko saiti, lai uzskaitītu skatījumus un lejupielādes. Lietojumu skaits ir anonīms."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Turn on two-step verification"
@@ -12424,11 +12509,10 @@ msgstr "Atsaistīt"
 msgid "Unlink this application"
 msgstr "Atsaistīt šo darba pieteikumu"
 
-#. Primary action button label to unlock a password-protected resume
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Unlock"
 msgstr "Atbloķēt"
 
@@ -12545,7 +12629,6 @@ msgstr "Izmantojiet 3–64 mazos burtus, ciparus, punktus, defises un pasvītras
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
-#: src/features/auth/pages/resume-password.tsx
 msgid "Use 64 characters or fewer."
 msgstr "Izmantojiet ne vairāk kā 64 rakstzīmes."
 
@@ -12583,7 +12666,8 @@ msgstr "Izmantojiet vismaz 8 rakstzīmes."
 msgid "Use at least 9pt."
 msgstr "Izmantojiet vismaz 9pt."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
+#: src/libs/error-message.ts
 msgid "Use at most 64 characters."
 msgstr "Izmantojiet ne vairāk kā 64 rakstzīmes."
 
@@ -12612,7 +12696,7 @@ msgstr "Izmantot visiem pieteikumiem"
 msgid "Use in coaching: {excerpt}"
 msgstr "Izmantot konsultēšanā: {excerpt}"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "Izmantojiet mazos burtus, ciparus un atsevišķas domuzīmes."
 
@@ -12705,6 +12789,11 @@ msgstr "Izmanto saistīto darba pieteikumu"
 msgid "Uses the web search service set up in Settings. Results wait in Today for your review; applications and documents are never created for you."
 msgstr "Izmanto iestatījumos konfigurēto tīmekļa meklēšanas pakalpojumu. Rezultāti gaida jūsu pārskatīšanu sadaļā “Šodien”; pieteikumi un dokumenti nekad netiek izveidoti jūsu vietā."
 
+#. placeholder {0}: templates[template].name
+#: src/features/resume/share/share-panel.tsx
+msgid "Uses your {0} template and Design, and fits any screen. Change them in Design."
+msgstr "Izmanto jūsu veidni {0} un dizainu un pielāgojas jebkuram ekrānam. Mainiet tos sadaļā Dizains."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Uses your AI provider's own web search where supported, and reads links with the built-in reader."
 msgstr "Izmanto jūsu AI nodrošinātāja tīmekļa meklēšanu, ja tas tiek atbalstīts, un nolasa saites, izmantojot iebūvēto lasītāju."
@@ -12763,10 +12852,6 @@ msgstr "Verificē kodu..."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Verifying code…"
 msgstr "Pārbaudes kods…"
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Verifying password..."
-msgstr "Verificē paroli..."
 
 #: src/features/auth/pages/register.tsx
 msgid "Verifying your email confirms that you own this address."
@@ -12835,23 +12920,23 @@ msgstr "Skatīt darba sludinājumu"
 msgid "Viewing {0} · {1} · read-only"
 msgstr "Skatās {0} · {1} · tikai lasāms"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "views · 30 days"
 msgstr "skatījumi · 30 dienas"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Views and downloads"
-msgstr "Skatījumi un lejupielādes"
 
 #: src/features/homepage/share.tsx
 msgid "Visibility"
 msgstr "Redzamība"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
+msgid "Visitors"
+msgstr "Apmeklētāji"
+
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors can download the PDF"
 msgstr "Apmeklētāji var lejupielādēt PDF"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Apmeklētāji to ievada, pirms viņi redz CV. Kopīgojiet to tikai ar cilvēkiem, kuriem uzticaties."
 
@@ -12899,6 +12984,14 @@ msgstr "Mēs nosūtījām jaunu verifikācijas saiti uz {0}."
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "Piekļuve tīmeklim"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Web page"
+msgstr "Tīmekļa lapa"
+
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Web page preview"
+msgstr "Tīmekļa lapas priekšskatījums"
 
 #: src/features/career/coach.tsx
 msgid "Web research"
@@ -13321,9 +13414,9 @@ msgid "You"
 msgstr "Tu"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
-msgstr "Jūs to jau izmantojat priekš “{0}”."
+msgstr "Šo adresi jūs jau izmantojat CV “{0}”."
 
 #: src/features/assistant/conversation.tsx
 msgid "You answered: {answer}"
@@ -13489,6 +13582,10 @@ msgstr "Jūsu datumi ir rakstīti vairākos dažādos veidos."
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "Jūsu informācija ir mainīta CV. Vēstule arī atjaunināta."
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain"
+msgstr "Jūsu domēns"
+
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your email address changed on the resume. The letter updated too."
 msgstr "Jūsu e-pasta adrese ir mainīta CV. Vēstule arī atjaunināta."
@@ -13500,6 +13597,10 @@ msgstr "Jūsu e-pasta adrese ir sadalīta pa vairākiem teksta fragmentiem."
 #: src/features/auth/pages/error.tsx
 msgid "Your email address isn't verified with the provider. Verify it there, then try again."
 msgstr "Jūsu e-pasta adrese nav apstiprināta pie pakalpojumu sniedzēja. Apstipriniet to tur un pēc tam mēģiniet vēlreiz."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
+msgstr "Jūsu e-pasts, tālrunis, atrašanās vieta un citas galvenes ziņas, kā arī atsauksmju sniedzēju tālruņa numuri netiek iekļauti tīmekļa lapā, tās PDF un meklēšanas rezultātos."
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -13602,9 +13703,13 @@ msgstr "Jūsu ieraksts tiek nosūtīts atšifrēšanai uz {0}, un tas var izmant
 msgid "Your requirements"
 msgstr "Jūsu prasības"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "jūsu CV"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your resume as a web page"
+msgstr "Jūsu CV kā tīmekļa lapa"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Your resume has a photo"
@@ -13634,6 +13739,19 @@ msgstr "Atlasītais fonts nevar attēlot dažas rakstzīmes. Tās tiek rādītas
 msgid "Your server provides search for Applications and the assistant. Connect a service to read pages the built-in reader can't."
 msgstr "Jūsu serveris nodrošina tīmekļa meklēšanu sadaļā Pieteikumi un palīgam. Pievienojiet pakalpojumu, lai lasītu tīmekļa lapas, kuras iebūvētais lasītājs nevar lasīt."
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open “{0}”."
+msgstr "Jūsu īsā saite un pielāgotais domēns atver “{0}”."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open this resume."
+msgstr "Jūsu īsā saite un pielāgotais domēns atver šo CV."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
+msgstr "Jūsu īsā saite un pielāgotais domēns rāda, ka šis CV nav kopīgots, līdz to atkal publicēsiet."
+
 #: src/features/career/coach.tsx
 msgid "your stories"
 msgstr "jūsu stāsti"
@@ -13649,6 +13767,10 @@ msgstr "Tava kārta"
 #: src/features/career/workspace/prepare.tsx
 msgid "Your two-minute introduction"
 msgstr "Jūsu divu minūšu prezentācija par sevi"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your web page is live"
+msgstr "Jūsu tīmekļa lapa ir publicēta"
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your work is lost when you sign out or the session ends. Create an account or sign in to keep your resumes, cover letters and applications."

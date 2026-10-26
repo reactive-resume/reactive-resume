@@ -28,6 +28,10 @@ export async function generatePresentLabels(catalogDirectory: string) {
 	return Object.fromEntries(Object.entries(catalog).map(([locale, messages]) => [locale, messages.Present]));
 }
 
+/** The web page's interface text per locale, declared for extraction in apps/web's `web-page-text.ts`. */
+export const generateWebPageCatalog = (catalogDirectory: string, messages: readonly string[]) =>
+	generateCatalog(catalogDirectory, messages);
+
 async function generateCatalog(catalogDirectory: string, titles: readonly string[]) {
 	const result: Record<string, Record<string, string>> = {};
 	for (const filename of (await readdir(catalogDirectory)).filter((file) => file.endsWith(".po")).sort()) {

@@ -88,17 +88,13 @@ const versionHistoryMock = vi.hoisted(() => ({
 vi.mock("./version-history", () => versionHistoryMock);
 const recordSlugChangeMock = vi.hoisted(() => vi.fn());
 // The lookup by username and slug; its query is tested against real SQL in public-pdf.test.ts.
-const findResumeBySlugMock = vi.hoisted(() => vi.fn());
-vi.mock("./slugs", async (importOriginal) => {
-	const actual = await importOriginal<typeof import("./slugs")>();
-	return {
-		...actual,
-		checkSlug: vi.fn(),
-		findFreeSlug: vi.fn(async () => "generated-slug"),
-		findResumeBySlug: findResumeBySlugMock,
-		recordSlugChange: recordSlugChangeMock,
-	};
-});
+const findResumeMock = vi.hoisted(() => vi.fn());
+vi.mock("./slugs", () => ({
+	checkSlug: vi.fn(),
+	findFreeSlug: vi.fn(async () => "generated-slug"),
+	findResume: findResumeMock,
+	recordSlugChange: recordSlugChangeMock,
+}));
 
 const { resumeService } = await import("./service");
 const { parseStoredResumeData } = await import("./resume-data-validation");
@@ -182,7 +178,7 @@ beforeEach(() => {
 	versionHistoryMock.writeVersion.mockResolvedValue({ id: "v" });
 	versionHistoryMock.saveSessionVersion.mockResolvedValue(undefined);
 	recordSlugChangeMock.mockReset();
-	findResumeBySlugMock.mockReset();
+	findResumeMock.mockReset();
 	publishResumeUpdatedMock.mockResolvedValue(undefined);
 });
 
@@ -205,37 +201,15 @@ describe("versions.restore", () => {
 });
 
 describe("create", () => {
-	it("rejects an explicit slug outside the pattern", async () => {
-		await expect(
-			resumeService.create({
-				userId: "u1",
-				name: "Resume",
-				slug: "Invalid Slug@123!",
-				tags: [],
-				locale: "en-US",
-			}),
-		).rejects.toMatchObject({
-			code: "INVALID_SLUG",
-			status: 400,
-		});
-		expect(dbMock.transaction).not.toHaveBeenCalled();
-	});
-
-	it("rejects an explicit slug exceeding 64 characters", async () => {
-		await expect(
-			resumeService.create({
-				userId: "u1",
-				name: "Resume",
-				slug: "a".repeat(65),
-				tags: [],
-				locale: "en-US",
-			}),
-		).rejects.toMatchObject({
-			code: "INVALID_SLUG",
-			status: 400,
-		});
-		expect(dbMock.transaction).not.toHaveBeenCalled();
-	});
+	it.each(["", "Invalid Slug@123!", "a".repeat(65)])(
+		"rejects invalid explicit slug %s before persistence",
+		async (slug) => {
+			await expect(
+				resumeService.create({ userId: "u1", name: "Resume", slug, tags: [], locale: "en-US" }),
+			).rejects.toMatchObject({ code: "INVALID_SLUG", status: 400 });
+			expect(dbMock.transaction).not.toHaveBeenCalled();
+		},
+	);
 });
 
 describe("update", () => {
@@ -292,25 +266,28 @@ describe("update", () => {
 		expect(update.set).toHaveBeenCalledWith({ slug: "new-address" });
 	});
 
-	it("rejects a new slug outside the pattern, but accepts an unchanged legacy one", async () => {
-		updateHarness({ slug: "Legacy_Slug" });
-		await expect(resumeService.update({ id: "r1", userId: "u1", slug: "Not Valid" })).rejects.toMatchObject({
-			code: "INVALID_SLUG",
-			status: 400,
-		});
+	it.each(["Legacy_Slug", "a".repeat(70)])(
+		"rejects invalid new addresses but accepts unchanged legacy %s",
+		async (legacySlug) => {
+			updateHarness({ slug: legacySlug });
+			await expect(resumeService.update({ id: "r1", userId: "u1", slug: "Not Valid" })).rejects.toMatchObject({
+				code: "INVALID_SLUG",
+				status: 400,
+			});
 
-		updateHarness({ slug: "old-slug" });
-		await expect(resumeService.update({ id: "r1", userId: "u1", slug: "a".repeat(65) })).rejects.toMatchObject({
-			code: "INVALID_SLUG",
-			status: 400,
-		});
+			updateHarness({ slug: "old-slug" });
+			await expect(resumeService.update({ id: "r1", userId: "u1", slug: "a".repeat(65) })).rejects.toMatchObject({
+				code: "INVALID_SLUG",
+				status: 400,
+			});
 
-		const { update } = updateHarness({ slug: "Legacy_Slug" });
-		await resumeService.update({ id: "r1", userId: "u1", name: "Renamed", slug: "Legacy_Slug" });
-		// A name typed by hand also ends automatic naming.
-		expect(update.set).toHaveBeenCalledWith({ name: "Renamed", autoName: false, slug: "Legacy_Slug" });
-		expect(recordSlugChangeMock).not.toHaveBeenCalled();
-	});
+			const { update } = updateHarness({ slug: legacySlug });
+			await resumeService.update({ id: "r1", userId: "u1", name: "Renamed", slug: legacySlug });
+			// A name typed by hand also ends automatic naming.
+			expect(update.set).toHaveBeenCalledWith({ name: "Renamed", autoName: false, slug: legacySlug });
+			expect(recordSlugChangeMock).not.toHaveBeenCalled();
+		},
+	);
 
 	it("throws RESUME_LOCKED when the pre-read reports the resume is locked", async () => {
 		const select = createLockedSelectChain([{ data: defaultResumeData, isLocked: true, updatedAt: new Date() }]);
@@ -460,7 +437,7 @@ describe("patch", () => {
 
 describe("verifyPassword", () => {
 	it("throws INVALID_PASSWORD when bcrypt.compare returns false", async () => {
-		findResumeBySlugMock.mockResolvedValueOnce({ id: "r1", password: "hash" });
+		findResumeMock.mockResolvedValueOnce({ id: "r1", password: "hash" });
 		compareMock.mockResolvedValueOnce(false);
 
 		await expect(
@@ -559,7 +536,7 @@ describe.each([
 
 describe("getBySlug", () => {
 	it.each(["u1", "other-user"])("password gate exempts only the owner (%s)", async (currentUserId) => {
-		findResumeBySlugMock.mockResolvedValueOnce({
+		findResumeMock.mockResolvedValueOnce({
 			...createResumeRow(defaultResumeData),
 			userId: "u1",
 			isPublic: true,
@@ -584,7 +561,7 @@ describe("getBySlug", () => {
 			hasPassword: false,
 			passwordHash: null,
 		};
-		findResumeBySlugMock.mockResolvedValue(row);
+		findResumeMock.mockResolvedValue(row);
 		await expect(
 			resumeService.getBySlug({
 				username: "owner",
@@ -597,7 +574,7 @@ describe("getBySlug", () => {
 
 describe("statistics.recordDownload", () => {
 	it("lets the owner download a password-protected resume without an unlock cookie", async () => {
-		findResumeBySlugMock.mockResolvedValueOnce({ id: "r1", userId: "u1", isPublic: true, passwordHash: "hash" });
+		findResumeMock.mockResolvedValueOnce({ id: "r1", userId: "u1", isPublic: true, passwordHash: "hash" });
 		await expect(
 			resumeService.statistics.recordDownload({
 				username: "owner",
@@ -609,7 +586,7 @@ describe("statistics.recordDownload", () => {
 	});
 
 	it("requires password when downloading via renamed slug", async () => {
-		findResumeBySlugMock.mockResolvedValueOnce({ id: "r1", userId: "u1", isPublic: true, passwordHash: "hash" });
+		findResumeMock.mockResolvedValueOnce({ id: "r1", userId: "u1", isPublic: true, passwordHash: "hash" });
 		await expect(
 			resumeService.statistics.recordDownload({
 				username: "owner",

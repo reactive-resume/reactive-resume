@@ -16,10 +16,5 @@ export function normalizeSlug(slug: string): string {
 	return slug.toLowerCase().replace(/\s+/g, "-");
 }
 
-/**
- * Zod schema for validated slug length and trimming at API boundary.
- *
- * Pattern validation is intentionally deferred to service layer (`isValidSlug`)
- * so clients receive a typed `INVALID_SLUG` domain error instead of generic `BAD_REQUEST`.
- */
-export const slugSchema = z.string().trim().min(1).max(MAX_SLUG_LENGTH).describe("The slug of the resume.");
+/** Keep boundary parsing structural so the service returns INVALID_SLUG and accepts unchanged legacy addresses. */
+export const slugSchema = z.string().trim().describe("The slug of the resume.");

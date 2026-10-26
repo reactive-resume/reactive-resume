@@ -18,7 +18,6 @@ export function handleAppleAppSiteAssociation() {
 					"NOT /.well-known/*",
 					"NOT /templates/*",
 					"NOT /agent/*",
-					"/*/*",
 				],
 			})),
 		},

@@ -35,6 +35,11 @@ msgstr "„{0}“ je skryto"
 msgid "“{0}” moved to Trash"
 msgstr "„{0}“ bylo přesunuto do koše"
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr "„{0}“ přestane být vaším primárním životopisem."
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "“{name}” moved to Trash"
@@ -721,6 +726,10 @@ msgstr "{stars, plural, one {Dejte Reactive Resume hvězdičku na GitHubu, # hv�
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# příběh} few {# příběhy} many {# příběhu} other {# příběhů}}"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "{suggestion} may be available. Get yours here →"
+msgstr "{suggestion} může být k dispozici. Získejte tu svou zde →"
+
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
 msgstr "{summary}. Otevře se v Kariéra → Nabídky."
@@ -835,7 +844,7 @@ msgstr "10minutový briefing"
 msgid "10–11 recommended"
 msgstr "Doporučeno 10–11"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 soubory"
 
@@ -898,7 +907,7 @@ msgstr "A"
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "A přijme a R odmítne zaměřenou úpravu. ↑ a ↓ se pohybují mezi úpravami."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Záloha tohoto dopisu. Importuje zpět do Reactive Resume jako dopis."
 
@@ -1243,7 +1252,7 @@ msgstr "Přidat poskytovatele AI"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "Přidejte @ a doménu, například name@example.com"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "Přidejte adresu."
 
@@ -1410,6 +1419,10 @@ msgstr "Přidejte doménu za znak @, například {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Přidejte koncovku domény, například {domain}.com"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
+msgstr "Přidejte tyto záznamy tam, kde spravujete doménu, a pak je zkontrolujte. Než se změny projeví všude, může to trvat několik hodin."
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/career/workspace/shell.tsx
@@ -1475,7 +1488,7 @@ msgstr "Přidáno do Znalostí jako zkušenost."
 msgid "Added to Prepare"
 msgstr "Přidáno do Přípravy"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "Adresa"
 
@@ -1708,7 +1721,7 @@ msgstr "a další {0}"
 msgid "and counting"
 msgstr "a počítání"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "Tuto adresu používá jiný váš životopis."
 
@@ -1757,7 +1770,7 @@ msgstr "Libovolné písmo v pokročilém nastavení"
 msgid "Anyone who opens the public URL will need this password."
 msgstr "Každý, kdo otevře veřejný odkaz, bude potřebovat toto heslo."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Každý, kdo má odkaz, bude moci zobrazit váš životopis."
 
@@ -1888,6 +1901,7 @@ msgstr "Karty žádosti"
 msgid "Application updated"
 msgstr "Žádost aktualizována"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
@@ -2552,6 +2566,10 @@ msgstr "Zkontrolujte jiný soubor"
 msgid "Check any PDF, no account needed"
 msgstr "Zkontrolujte jakékoli PDF, není potřeba žádný účet"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Check DNS"
+msgstr "Zkontrolovat DNS"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Check every claim, date and result against your experience."
 msgstr "Ověřte každé tvrzení, datum a výsledek podle svých skutečných zkušeností."
@@ -2635,7 +2653,7 @@ msgstr "Kontrola exportovaného PDF…"
 msgid "Checking your preferences"
 msgstr "Kontrola vašich předvoleb"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "Kontrola… Kopie je k dispozici po uložení."
 
@@ -2716,7 +2734,6 @@ msgid "Claude Desktop"
 msgstr "Claude Desktop"
 
 #: src/features/applications/components/detail/next-step-card.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
 msgstr "Vymazat"
@@ -2738,6 +2755,7 @@ msgid "Clear section"
 msgstr "Vymazat sekci"
 
 #: src/components/ui/combobox.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Clear selection"
 msgstr "Vymazat výběr"
@@ -2765,7 +2783,7 @@ msgstr "ID klienta"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2905,6 +2923,10 @@ msgstr "Kompletní záloha dat. Importuje zpět do nástrojů Reactive Resume ne
 msgid "Compress or remove large images to keep uploads quick."
 msgstr "Zkomprimujte nebo odstraňte velké obrázky, aby nahrávání zůstalo rychlé."
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Computer"
+msgstr "Počítač"
+
 #: src/hooks/use-confirm.tsx
 msgid "Confirm"
 msgstr "Potvrdit"
@@ -2938,6 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "Potvrzuje {time} dnes, přes video."
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "Připojit"
@@ -2989,6 +3012,10 @@ msgstr "Připojeno"
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Připojené aplikace"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Connected. Your domain opens your primary resume."
+msgstr "Připojeno. Vaše doména otevírá váš primární životopis."
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Connecting your {providerName} account…"
@@ -3117,7 +3144,7 @@ msgid "Copied"
 msgstr "Zkopírováno"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3149,7 +3176,6 @@ msgid "Copy it now. For your security, it won't be shown again."
 msgstr "Zkopírujte to hned. Kvůli vaší bezpečnosti se již nebude zobrazovat."
 
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
 msgid "Copy link"
 msgstr "Zkopírujte odkaz"
 
@@ -3271,6 +3297,7 @@ msgid "Couldn't copy the transcript. Try again."
 msgstr "Přepis se nepodařilo zkopírovat. Zkuste to znovu."
 
 #: src/features/career/coach-thread.tsx
+#: src/features/resume/share/copy-link-button.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "Kopírování do schránky se nezdařilo. Zkuste to znovu."
 
@@ -3592,8 +3619,8 @@ msgstr "Tento plán se nepodařilo uložit. Zkuste to znovu."
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "Změny se nepodařilo uložit. Zkuste to znovu, než budete pokračovat."
@@ -3698,6 +3725,11 @@ msgstr "Žádost se nepodařilo odpojit. Zkuste to znovu."
 msgid "Couldn't unlock the document. Try again."
 msgstr "Dokument se nepodařilo odemknout. Zkuste to znovu."
 
+#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/share-panel.tsx
+msgid "Couldn't update sharing. Try again."
+msgstr "Sdílení se nepodařilo aktualizovat. Zkuste to znovu."
+
 #: src/features/career/workspace/messages.tsx
 msgid "Couldn't update the application. Nothing was changed. Try again."
 msgstr "Žádost se nepodařilo aktualizovat. Nic nebylo změněno. Zkuste to znovu."
@@ -3726,7 +3758,7 @@ msgstr "Náhled se nepodařilo aktualizovat. Stále se zobrazuje poslední funk�
 msgid "Couldn't update the timeline. Try again."
 msgstr "Časovou osu se nepodařilo aktualizovat. Zkuste to znovu."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "Verze tohoto dopisu se nepodařilo aktualizovat. Zkuste to znovu."
 
@@ -3740,11 +3772,6 @@ msgstr "Fotografii se nepodařilo nahrát. Zkuste to znovu."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Kód se nepodařilo ověřit. Zadejte aktuální kód z ověřovací aplikace."
-
-#. Fallback toast when resume password verification fails unexpectedly
-#: src/features/auth/pages/resume-password.tsx
-msgid "Couldn't verify the password. Try again."
-msgstr "Heslo se nepodařilo ověřit. Zkuste to znovu."
 
 #. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
@@ -3949,9 +3976,9 @@ msgid "Daily at {clock} · next {next}"
 msgstr "Denně v {clock} · další {next}"
 
 #. placeholder {0}: summary.peak
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Daily views over 30 days, peak {0}"
-msgstr "Denní zhlédnutí za 30 dní, maximální {0}"
+msgstr "Denní zhlédnutí za 30 dní, maximum {0}"
 
 #: src/libs/locale.ts
 msgid "Danish"
@@ -4325,6 +4352,10 @@ msgstr "Dokumenty, které sem přesunete, tu zůstanou 30 dní."
 msgid "Does it use AI?"
 msgstr "Používá AI?"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Domain connected"
+msgstr "Doména připojena"
+
 #: src/features/auth/pages/login.tsx
 msgid "Don't have an account? <0/>"
 msgstr "Nemáte účet? <0/>"
@@ -4357,8 +4388,8 @@ msgstr "Dvojitá kontrola"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "Stáhnout"
 
@@ -4369,6 +4400,10 @@ msgstr "Stáhnout {label}"
 #: src/features/templates/gallery.tsx
 msgid "Download {name} sample PDF"
 msgstr "Stáhněte si {name} ukázkový soubor PDF"
+
+#: src/features/resume/editor/chrome/download-sheet.tsx
+msgid "Download & history"
+msgstr "Stažení a historie"
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download application details, contacts, notes, and timeline history as CSV."
@@ -4384,12 +4419,12 @@ msgid "Download CSV"
 msgstr "Stáhnout CSV"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "Stahování se nezdařilo. Zkuste to znovu."
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
 msgstr "Stáhnout PDF"
 
@@ -4405,12 +4440,12 @@ msgstr "Stáhněte si ukázku PDF"
 msgid "Download them"
 msgstr "Stáhněte si je"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Download totals can include repeat clicks."
 msgstr "Součty stahování mohou zahrnovat opakovaná kliknutí."
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "Staženo {file}"
 
@@ -4418,11 +4453,11 @@ msgstr "Staženo {file}"
 msgid "Downloaded {file} and the cover letter"
 msgstr "Staženo {file} a průvodní dopis"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "Stažen váš životopis a tento dopis"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "downloads"
 msgstr "stahování"
 
@@ -4807,13 +4842,9 @@ msgstr "Zadejte jeden z uložených záložních kódů pro přístup k účtu."
 msgid "Enter the 6-digit code."
 msgstr "Zadejte 6místný kód."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Enter the password the resume owner shared with you."
 msgstr "Zadejte heslo, které vám sdělil vlastník životopisu."
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Enter the password."
-msgstr "Zadejte heslo."
 
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Enter the same password in both fields."
@@ -5223,6 +5254,11 @@ msgstr "Písma se nepodařilo načíst. Zkuste to znovu."
 msgid "For"
 msgstr "Pro"
 
+#. placeholder {0}: domain.target
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
+msgstr "U kořenové domény, jako je example.com, použijte místo CNAME záznamy A a AAAA s adresami {0}."
+
 #: src/features/career/workspace/prepare.tsx
 msgid "For each: situation, task, your action, result, reflection. Leave out numbers you're unsure of."
 msgstr "U každého: situace, úkol, vaše akce, výsledek, reflexe. Čísla, kterými si nejste jistí, vynechte."
@@ -5617,6 +5653,10 @@ msgstr "Skryto: {hiddenList}"
 msgid "Hide {title} from the page"
 msgstr "Skrýt {title} ze stránky"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Hide contact details"
+msgstr "Skrýt kontaktní údaje"
+
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Hide from page"
 msgstr "Skrýt ze stránky"
@@ -5660,10 +5700,11 @@ msgid "Hiring team"
 msgstr "Najímání týmu"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
-msgstr "Dějiny"
+msgstr "Historie"
 
 #: src/features/documents/document-actions.tsx
 msgid "Hold to delete"
@@ -5784,7 +5825,7 @@ msgstr "Pokud to pochází ze skenu, je to očekávané. Jinak to odstraňte; n�
 msgid "If it's part of your experience, add it where it belongs."
 msgstr "Pokud je to součást vaší zkušenosti, přidejte ji tam, kam patří."
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "If someone sent you this link, ask them for a new one."
 msgstr "Pokud vám někdo poslal tento odkaz, požádejte ho o nový."
 
@@ -6597,7 +6638,6 @@ msgstr "Takto blízké řádky mohou při čtení běžet společně. Použijte 
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/write/fields.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Link"
 msgstr "Odkaz"
 
@@ -6624,14 +6664,10 @@ msgid "Link an application…"
 msgstr "Propojit žádost o zaměstnání…"
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/public/public-resume.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "Odkaz zkopírován"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Link is live"
-msgstr "Odkaz je aktivní"
 
 #: src/features/documents/document-actions.tsx
 msgid "Link to application"
@@ -6641,7 +6677,7 @@ msgstr "Odkaz na žádost o zaměstnání"
 msgid "Link to application…"
 msgstr "Odkaz na žádost o zaměstnání…"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Link turned off. The address is kept"
 msgstr "Odkaz je vypnutý. Adresa je zachována"
 
@@ -6719,7 +6755,7 @@ msgid "Live · updates as you edit"
 msgstr "Živě · aktualizace při úpravách"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "Živě na {0}"
 
@@ -6854,7 +6890,7 @@ msgstr "Nízký"
 msgid "Lower the design sheet"
 msgstr "Spusťte návrhový list"
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Vyrobeno z Reactive Resume, bezplatný a otevřený zdroj"
 
@@ -6888,6 +6924,10 @@ msgstr "Udělejte to kratší"
 msgid "Make it yours, then take it with you."
 msgstr "Udělejte si to po svém a pak si to vezměte s sebou."
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Make primary"
+msgstr "Nastavit jako primární"
+
 #: src/features/documents/documents-page.tsx
 msgid "Make private"
 msgstr "Nastavit jako soukromé"
@@ -6907,6 +6947,10 @@ msgstr "Zajistěte, aby se viditelný text a cíl odkazu shodovaly."
 #: src/features/ats-checker/messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "Udělejte je viditelně větší, tučnější nebo velkými písmeny."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Make this your primary resume?"
+msgstr "Nastavit tento životopis jako primární?"
 
 #: src/libs/locale.ts
 msgid "Malay"
@@ -7102,6 +7146,7 @@ msgid "Mono"
 msgstr "Mono"
 
 #: src/features/resume/editor/chrome/bar.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "More download formats"
 msgstr "Další formáty ke stažení"
 
@@ -7707,6 +7752,10 @@ msgstr "Nepoužito"
 msgid "Not applied yet"
 msgstr "Zatím nepodáno"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Not available while the resume needs a password."
+msgstr "Není k dispozici, dokud životopis vyžaduje heslo."
+
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "Nepřipojeno"
@@ -7900,9 +7949,9 @@ msgstr "Vypnuto"
 msgid "Off: the coach won’t see it or claim it."
 msgstr "Vypnuto: kouč to neuvidí ani to nebude tvrdit."
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Off. Only you can see this resume."
-msgstr "Vypnuto. Tento resumé můžete vidět pouze vy."
+#: src/features/resume/share/share-panel.tsx
+msgid "Off. Let recruiters find you on Google by turning this on."
+msgstr "Vypnuto. Zapněte, aby vás náboráři našli přes Google."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Off. The letter keeps its own copy of your details."
@@ -7931,9 +7980,9 @@ msgstr "Dny v kanceláři neuvedeny"
 msgid "Offline · saved on this device"
 msgstr "Offline · uloženo v tomto zařízení"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
-msgstr "Na. Kdokoli s odkazem může prohlížet. Není uveden ani indexován vyhledávači."
+#: src/features/resume/share/share-panel.tsx
+msgid "On. Anyone with the link can see your web page."
+msgstr "Zapnuto. Vaši webovou stránku uvidí každý, kdo má odkaz."
 
 #: src/features/homepage/remember.tsx
 msgid "Onboarding story"
@@ -8015,9 +8064,9 @@ msgstr "Najednou se importuje jen prvních {MAX_IMPORT} řádků, {overflow} zů
 msgid "Only the first pages were checked."
 msgstr "Zkontrolovány byly pouze první stránky."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
-msgstr "Ty vidíš jen ty"
+msgstr "Tyto statistiky vidíte jen vy"
 
 #: src/features/homepage/faq.tsx
 msgid "Only you, until you share it. A resume can stay private, go live at a public link, or be protected with a password, and you can change that at any time. Deleting your account deletes your resumes with it."
@@ -8073,10 +8122,6 @@ msgstr "Otevřít v Nabídkách"
 msgid "Open preferences"
 msgstr "Otevřít předvolby"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Open public page"
-msgstr "Otevřete veřejnou stránku"
-
 #: src/features/career/workspace/prepare.tsx
 msgid "Open story"
 msgstr "Otevřít příběh"
@@ -8092,6 +8137,10 @@ msgstr "Otevřete aplikaci Reactive Resume"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Otevřít plán"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Open web page"
+msgstr "Otevřít webovou stránku"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/today.tsx
@@ -8310,16 +8359,15 @@ msgstr "Passkeys"
 
 #. Authentication provider display name in account settings
 #. Label for password input on login form
-#. Label for password input on protected resume access form
 #. Label for password input on registration form
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/share.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/features/settings/account/auth-hooks.ts
 #: src/features/settings/account/security.tsx
 msgid "Password"
@@ -8329,7 +8377,7 @@ msgstr "Heslo"
 msgid "Password changed"
 msgstr "Heslo změněno"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "Heslo odstraněno"
 
@@ -8337,7 +8385,7 @@ msgstr "Heslo odstraněno"
 msgid "Password reset. Sign in with your new password."
 msgstr "Heslo bylo obnoveno. Přihlaste se novým heslem."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "Heslo nastaveno"
 
@@ -8454,6 +8502,7 @@ msgstr "Perština"
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
+#: src/features/resume/share/web-page-preview.tsx
 msgid "Phone"
 msgstr "Telefon"
 
@@ -8723,6 +8772,10 @@ msgstr "Stisknutím klávesy <0>Enter</0> otevřete"
 msgid "Preview {name} sample PDF"
 msgstr "Náhled ukázky {name} PDF"
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Preview size"
+msgstr "Velikost náhledu"
+
 #. placeholder {0}: templates[previewTemplate].name
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
@@ -8745,6 +8798,10 @@ msgstr "Předchozí měsíc"
 msgid "Primary color"
 msgstr "Primární barva"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Primary resume"
+msgstr "Primární životopis"
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Print"
 msgstr "Vytisknout"
@@ -8753,9 +8810,9 @@ msgstr "Vytisknout"
 msgid "Print or export the form to a flat PDF before sending it."
 msgstr "Před odesláním formulář vytiskněte nebo exportujte do plochého PDF."
 
-#: src/features/resume/public/public-resume.tsx
-msgid "Printing is turned off for this resume."
-msgstr "Tisk je pro tento životopis vypnutý."
+#: src/features/resume/share/share-panel.tsx
+msgid "Privacy"
+msgstr "Soukromí"
 
 #: src/features/homepage/footer.tsx
 msgid "Privacy policy"
@@ -8858,7 +8915,7 @@ msgstr "Poskytovatel"
 msgid "Public"
 msgstr "Veřejné"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Public link"
 msgstr "Veřejný odkaz"
 
@@ -8873,6 +8930,26 @@ msgstr "Veřejné, s heslem"
 #: src/libs/resume/section.tsx
 msgid "Publications"
 msgstr "Publikace"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish"
+msgstr "Zveřejnit"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish it to share a link that opens on any screen. Only you can see it until then."
+msgstr "Zveřejněte životopis a sdílejte odkaz, který se otevře na jakékoli obrazovce. Do té doby ho vidíte jen vy."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page first."
+msgstr "Nejprve zveřejněte webovou stránku."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted."
+msgstr "Zveřejněte webovou stránku, aby se počítala zobrazení a stažení. Počty jsou anonymní a vyhledávače se nezapočítávají."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link and custom domain."
+msgstr "Zveřejněte tento životopis, aby se otevíral na vašem krátkém odkazu a vlastní doméně."
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Publisher"
@@ -8894,11 +8971,11 @@ msgstr "Dejte to všechno na <0>jednu stránku.</0>"
 msgid "Put the caret in a line to improve it"
 msgstr "Dejte stříšku do řady, abyste ji vylepšili"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code"
 msgstr "QR kód"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code for {url}"
 msgstr "QR kód pro {url}"
 
@@ -9209,7 +9286,7 @@ msgstr "Náborář"
 msgid "Recruiter reply"
 msgstr "Odpověď náboráři"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "Náboráři toto jméno vidí. Vaše jméno a „průvodní dopis“ fungují dobře."
 
@@ -9335,6 +9412,7 @@ msgstr "Na dálku"
 msgid "Remote, Hybrid, a city…"
 msgstr "Vzdáleně, hybridně, město…"
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "Odstranit"
@@ -9383,7 +9461,7 @@ msgstr "Odebrat soubor"
 msgid "Remove passkey"
 msgstr "Odebrat passkey"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove password"
 msgstr "Odebrat heslo"
 
@@ -9409,7 +9487,7 @@ msgstr "Odebrat roli"
 msgid "Remove tag"
 msgstr "Odebrat štítek"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "Odstranit heslo?"
 
@@ -9491,7 +9569,7 @@ msgstr "Odpověď zkopírována"
 msgid "Report a bug"
 msgstr "Nahlásit chybu"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Require a password"
 msgstr "Vyžadovat heslo"
 
@@ -9582,8 +9660,6 @@ msgstr "životopis"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-card.tsx
-#: src/routes/_home/index.tsx
-#: src/routes/$username/$slug.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "Životopis"
@@ -9600,7 +9676,7 @@ msgstr "Životopis · odeslaná verze"
 msgid "Resume (optional)"
 msgstr "resumé (volitelné)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "resumé + dopis"
 
@@ -10038,8 +10114,8 @@ msgstr "Uloženo do Znalostí, jen pro tuto žádost."
 msgid "Saved to Saved · Practice"
 msgstr "Uloženo na kartu Uložené · Nácvik"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/link-tab.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "Ukládání {0}/{username}/{slug}… Po uložení je k dispozici kopie."
 
@@ -10136,6 +10212,10 @@ msgstr "Vyhledávání zahrnuje tituly, štítky a propojené žádosti o zaměs
 #: src/features/documents/documents-page.tsx
 msgid "Search documents"
 msgstr "Prohledávejte dokumenty"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off."
+msgstr "Vyhledávače, jako je Google, mohou vaši webovou stránku zařadit do výsledků. Než se objeví, nebo po vypnutí zmizí, může to trvat i týdny."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Search facts"
@@ -10441,29 +10521,22 @@ msgstr "Šířka stínu"
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Share"
-msgstr "Podíl"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
-msgid "Share & export"
-msgstr "Sdílejte a exportujte"
+msgstr "Sdílet"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "Sdílejte veřejný odkaz, přidejte heslo nebo jej ponechte soukromý. Vyberte si ze 3 možností viditelnosti. Exportujte do PDF nebo Word nebo si všechna data vezměte s sebou jako JSON."
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-msgid "Share public resume"
-msgstr "Sdílejte veřejný životopis"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "Sdílejte sekce"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "Sdílet přes…"
 
@@ -10497,6 +10570,10 @@ msgstr "Krátké a přímé. Dobře, pokud pracovní nabídka vyžaduje stručno
 msgid "Short and polite, for the recruiter"
 msgstr "Krátké a zdvořilé pro náboráře"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link and domain"
+msgstr "Krátký odkaz a doména"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "Před označením žádosti jako podané zkraťte otázky na 2 000 znaků a odpovědi na 6 000 znaků."
@@ -10508,6 +10585,10 @@ msgstr "Kratší"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Show"
 msgstr "Zobrazit"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show “Made with Reactive Resume”"
+msgstr "Zobrazit „Vytvořeno pomocí Reactive Resume“"
 
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #. placeholder {0}: visible.length - shown.length
@@ -10544,6 +10625,10 @@ msgstr "Zobrazit nadpis"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Show icons"
 msgstr "Zobrazit ikony"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show in search engines"
+msgstr "Zobrazovat ve vyhledávačích"
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -10679,7 +10764,7 @@ msgstr "Odhlašování…"
 msgid "Signing up..."
 msgstr "Registrace…"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "since last view"
 msgstr "od posledního pohledu"
 
@@ -11479,7 +11564,7 @@ msgstr "Tento soubor je příliš velký na kontrolu. PDFs až 25 MB práce."
 msgid "That link couldn't be read. Paste the posting text instead."
 msgstr "Ten odkaz se nedal přečíst. Místo toho vložte text nabídky práce."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "That password isn't correct. Check it with the resume owner and try again."
 msgstr "Heslo není správné. Ověřte si ho u vlastníka životopisu a zkuste to znovu."
 
@@ -11591,7 +11676,7 @@ msgstr "Za jménem následuje pozdrav."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Klíč je na serveru zašifrován a už se nikdy nezobrazí. Ukládání testuje připojení."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "Dopis tak, jak je"
 
@@ -11690,6 +11775,10 @@ msgstr "Odpověď poskytovatele se nepodařilo ověřit. Zkuste to znovu."
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Důvod je ponechán pro Insights. Propojené dokumenty se nedotknou."
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "The records aren't visible yet. Check again later."
+msgstr "Záznamy zatím nejsou vidět. Zkuste to znovu později."
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11914,7 +12003,7 @@ msgstr "Toto je formulář XFA, takže většina softwaru přečte pouze prázdn
 msgid "This is not a common resume page size."
 msgstr "Toto není běžná velikost stránky pro životopis."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Toto písmeno a „{resumeName}“ jako dva PDFs, pojmenované tak, aby odpovídaly."
 
@@ -11974,7 +12063,7 @@ msgstr "Tento životopis je zamčený. Odemkněte ho, abyste mohli provádět zm
 msgid "This resume is long."
 msgstr "Tento životopis je dlouhý."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume is password-protected"
 msgstr "Tento životopis je chráněn heslem"
 
@@ -11982,7 +12071,7 @@ msgstr "Tento životopis je chráněn heslem"
 msgid "This resume isn't linked to an application yet."
 msgstr "Tento životopis zatím není spojen se žádostí o zaměstnání."
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
 msgstr "Tento životopis se právě nesdílí."
 
@@ -12097,7 +12186,7 @@ msgid "To"
 msgstr "Na"
 
 #: src/features/applications/components/calendar-view.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "Dnes"
@@ -12193,7 +12282,7 @@ msgid "Trust this device for 30 days"
 msgstr "Důvěřovat tomuto zařízení po dobu 30 dnů"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "Zkuste {0}"
 
@@ -12253,13 +12342,9 @@ msgstr "Vypnout dvoufázové ověření"
 msgid "Turn off two-step verification?"
 msgstr "Vypnout dvoufázové ověření?"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "Zapněte odkaz a vyberte adresu."
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Turn on the public link to count views and downloads. Counts are anonymous."
-msgstr "Zapněte veřejný odkaz pro počítání zobrazení a stažení. Počty využití jsou anonymní."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Turn on two-step verification"
@@ -12424,11 +12509,10 @@ msgstr "Odpojit"
 msgid "Unlink this application"
 msgstr "Zrušte propojení této žádosti o zaměstnání"
 
-#. Primary action button label to unlock a password-protected resume
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Unlock"
 msgstr "Odemknout"
 
@@ -12545,7 +12629,6 @@ msgstr "Použijte 3 až 64 malých písmen, číslic, teček, pomlček a podtrž
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
-#: src/features/auth/pages/resume-password.tsx
 msgid "Use 64 characters or fewer."
 msgstr "Použijte nejvýše 64 znaků."
 
@@ -12583,7 +12666,8 @@ msgstr "Použijte alespoň 8 znaků."
 msgid "Use at least 9pt."
 msgstr "Použijte alespoň 9 bodů."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
+#: src/libs/error-message.ts
 msgid "Use at most 64 characters."
 msgstr "Použijte nejvýše 64 znaků."
 
@@ -12612,7 +12696,7 @@ msgstr "Použít pro všechny žádosti"
 msgid "Use in coaching: {excerpt}"
 msgstr "Použít při koučování: {excerpt}"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "Používejte malá písmena, číslice a jednotlivé pomlčky."
 
@@ -12705,6 +12789,11 @@ msgstr "Používá propojenou žádost"
 msgid "Uses the web search service set up in Settings. Results wait in Today for your review; applications and documents are never created for you."
 msgstr "Používá službu webového vyhledávání nastavenou v Nastavení. Výsledky čekají na vaši kontrolu v sekci Dnes; žádosti ani dokumenty se za vás nikdy nevytvářejí."
 
+#. placeholder {0}: templates[template].name
+#: src/features/resume/share/share-panel.tsx
+msgid "Uses your {0} template and Design, and fits any screen. Change them in Design."
+msgstr "Používá vaši šablonu {0} a Design a přizpůsobí se jakékoli obrazovce. Změňte je v Designu."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Uses your AI provider's own web search where supported, and reads links with the built-in reader."
 msgstr "Používá vlastní webové vyhledávání vašeho poskytovatele AI, pokud je podporováno, a čte odkazy pomocí vestavěné čtečky."
@@ -12763,10 +12852,6 @@ msgstr "Ověřování kódu…"
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Verifying code…"
 msgstr "Ověřovací kód…"
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Verifying password..."
-msgstr "Ověřování hesla…"
 
 #: src/features/auth/pages/register.tsx
 msgid "Verifying your email confirms that you own this address."
@@ -12835,25 +12920,25 @@ msgstr "Zobrazit nabídku práce"
 msgid "Viewing {0} · {1} · read-only"
 msgstr "Zobrazení {0} · {1} · pouze pro čtení"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "views · 30 days"
 msgstr "zobrazení · 30 dní"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Views and downloads"
-msgstr "Zobrazení a stahování"
 
 #: src/features/homepage/share.tsx
 msgid "Visibility"
 msgstr "Viditelnost"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
+msgid "Visitors"
+msgstr "Návštěvníci"
+
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors can download the PDF"
 msgstr "Návštěvníci si mohou stáhnout PDF"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
-msgstr "Návštěvníci do něj vstoupí dříve, než uvidí resumé. Sdílejte je pouze s lidmi, kterým důvěřujete."
+msgstr "Návštěvníci zadají heslo, než uvidí životopis. Sdílejte ho pouze s lidmi, kterým důvěřujete."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice settings"
@@ -12899,6 +12984,14 @@ msgstr "Odeslali jsme nový ověřovací odkaz na {0}."
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "Webový přístup"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Web page"
+msgstr "Webová stránka"
+
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Web page preview"
+msgstr "Náhled webové stránky"
 
 #: src/features/career/coach.tsx
 msgid "Web research"
@@ -13321,7 +13414,7 @@ msgid "You"
 msgstr "Vy"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "Toto již používáte pro „{0}“."
 
@@ -13489,6 +13582,10 @@ msgstr "Vaše data jsou zapsána několika různými způsoby."
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "Vaše údaje se v životopisu změnily. Dopis byl také aktualizován."
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain"
+msgstr "Vaše doména"
+
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your email address changed on the resume. The letter updated too."
 msgstr "Vaše e-mailová adresa se v životopisu změnila. Dopis byl také aktualizován."
@@ -13500,6 +13597,10 @@ msgstr "Vaše e-mailová adresa je rozdělena mezi kusy textu."
 #: src/features/auth/pages/error.tsx
 msgid "Your email address isn't verified with the provider. Verify it there, then try again."
 msgstr "Vaše e-mailová adresa není u poskytovatele ověřena. Ověřte ji tam a pak to zkuste znovu."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
+msgstr "Váš e-mail, telefon, místo a další údaje ze záhlaví i telefonní čísla referencí se na webové stránce, v jejím PDF ani ve výsledcích vyhledávání nezobrazí."
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -13602,9 +13703,13 @@ msgstr "Vaše nahrávka se k přepisu odešle poskytovateli {0}, což může če
 msgid "Your requirements"
 msgstr "Vaše požadavky"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "váš životopis"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your resume as a web page"
+msgstr "Váš životopis jako webová stránka"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Your resume has a photo"
@@ -13634,6 +13739,19 @@ msgstr "Vybrané písmo nedokáže zobrazit některé znaky. Zobrazují se jako 
 msgid "Your server provides search for Applications and the assistant. Connect a service to read pages the built-in reader can't."
 msgstr "Váš server poskytuje vyhledávání na webu v sekci Žádosti a pro asistenta. Připojte službu a čtěte webové stránky, které vestavěná čtečka nedokáže přečíst."
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open “{0}”."
+msgstr "Váš krátký odkaz a vlastní doména otevírají „{0}“."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open this resume."
+msgstr "Váš krátký odkaz a vlastní doména otevírají tento životopis."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
+msgstr "Váš krátký odkaz a vlastní doména hlásí, že tento životopis není sdílen, dokud ho znovu nezveřejníte."
+
 #: src/features/career/coach.tsx
 msgid "your stories"
 msgstr "vaše příběhy"
@@ -13649,6 +13767,10 @@ msgstr "Jste na řadě"
 #: src/features/career/workspace/prepare.tsx
 msgid "Your two-minute introduction"
 msgstr "Vaše dvouminutové představení"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your web page is live"
+msgstr "Vaše webová stránka je online"
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your work is lost when you sign out or the session ends. Create an account or sign in to keep your resumes, cover letters and applications."

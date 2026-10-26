@@ -8,9 +8,9 @@ import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { LetterDesignPanel } from "./design-panel";
+import { LetterDownloadSheet } from "./download-sheet";
 import { LetterBar, useDownloadLetter } from "./letter-bar";
 import { LetterPage } from "./letter-page";
-import { LetterShareSheet } from "./share-sheet";
 import { LetterWritePanel } from "./write-panel";
 import { LetterAssistant } from "@/features/assistant/dock";
 import { useLetterEditorStore } from "@/features/letters/store";
@@ -56,7 +56,7 @@ export function LetterShell() {
 				assistant={<LetterAssistant />}
 				mobile={<MobileBody mode={mode} onModeChange={setMode} />}
 			>
-				<LetterShareSheet />
+				<LetterDownloadSheet />
 				<LetterHotkeys onModeChange={setMode} />
 			</EditorFrame>
 		</Tabs>
@@ -116,12 +116,12 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 /** 1 and 2 switch modes outside fields, ⌘P downloads the PDF, ⌘⇧E opens Download. Saving is automatic. */
 function LetterHotkeys({ onModeChange }: { onModeChange: (mode: LetterMode) => void }) {
 	const download = useDownloadLetter();
-	const setShareTab = useEditorStore((state) => state.setShareTab);
+	const setSheetTab = useEditorStore((state) => state.setSheetTab);
 
 	useHotkey("1", () => switchModeInstantly(() => onModeChange("write")));
 	useHotkey("2", () => switchModeInstantly(() => onModeChange("design")));
 	useHotkey("Mod+P", () => void download.run());
-	useHotkey("Mod+Shift+E", () => setShareTab("download"));
+	useHotkey("Mod+Shift+E", () => setSheetTab("download"));
 	useHotkey("Mod+J", () => useEditorStore.getState().setAssistantOpen(!useEditorStore.getState().assistantOpen, true));
 	useHotkey("Mod+S", () => {
 		void useLetterEditorStore.getState().flush();

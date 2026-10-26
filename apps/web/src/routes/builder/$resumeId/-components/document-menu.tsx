@@ -16,9 +16,15 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { NotesSectionBuilder } from "../-sidebar/right/sections/notes";
 import { DocumentDetails } from "./document-details";
 import { useDialogStore } from "@/dialogs/store";
-import { useCurrentBuilderResumeSelector, useCurrentResume, usePatchResume } from "@/features/resume/builder/draft";
+import {
+	useCurrentBuilderResumeSelector,
+	useCurrentResume,
+	usePatchResume,
+	useResumeStore,
+} from "@/features/resume/builder/draft";
 import { DocumentMenuTrigger } from "@/features/resume/editor/chrome";
 import { SaveStatus } from "@/features/resume/editor/save-status";
+import { useEditorStore } from "@/features/resume/editor/store";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
 import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -73,6 +79,9 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 	const patchResume = usePatchResume();
 	const { onPrint } = useResumeExport(resume);
 	const { id, name, slug, tags, isLocked } = resume;
+	const setSheetTab = useEditorStore((state) => state.setSheetTab);
+	// Downloads need a connection, as in the bar.
+	const offline = useResumeStore((state) => state.saveStatus === "offline");
 
 	const { mutate: trashResume } = useMutation(orpc.documents.trash.mutationOptions());
 	const { mutate: restoreResume } = useMutation(orpc.documents.restore.mutationOptions());
@@ -147,6 +156,15 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 			<DropdownMenuItem onClick={() => void onPrint()}>
 				<Icon name="printer" />
 				<Trans>Print</Trans>
+			</DropdownMenuItem>
+			{/* Download & history, from every layout: phones have no ▾ beside Download PDF and no clock in the bar. */}
+			<DropdownMenuItem disabled={offline} onClick={() => setSheetTab("download")}>
+				<Icon name="download-simple" />
+				<Trans>More download formats</Trans>
+			</DropdownMenuItem>
+			<DropdownMenuItem onClick={() => setSheetTab("history")}>
+				<Icon name="clock-counter-clockwise" />
+				<Trans>History</Trans>
 			</DropdownMenuItem>
 			<DropdownMenuSeparator />
 			<DropdownMenuItem variant="destructive" disabled={isLocked} onClick={handleTrash}>

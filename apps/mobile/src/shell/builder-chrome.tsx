@@ -36,11 +36,9 @@ export type BuilderChromeSlots = {
 	save?: SaveStatusSlot | undefined;
 	/** Opens the document menu (rename, duplicate, lock, notes, history, trash). Makes the name a button with a caret. */
 	onMenu?: (() => void) | undefined;
-	/** Replaces what Share does (resumes default to the Share sheet route). */
-	onShare?: (() => void) | undefined;
-	/** Shows the "Public" badge on Share. */
-	shared?: boolean | undefined;
-	/** Buttons before Share: Assistant on phone; History, Assistant and Download PDF on tablet. */
+	/** Replaces what the Download button does (resumes default to the Download & history route). */
+	onExport?: (() => void) | undefined;
+	/** Buttons before Download: Assistant on phone; History, Assistant and Download PDF on tablet. */
 	actions?: ReactNode;
 	/** Under the top bar, full width: the locked banner. The offline strip shows by itself when `save.status` is offline. */
 	banner?: ReactNode;
@@ -53,7 +51,7 @@ const slot = createSlot<BuilderChromeSlots>();
 /**
  * Fills the editor chrome from a screen inside `app/builder/[id]` or `app/letter/[id]`.
  *
- * @example useBuilderChrome({ title: resume.name, save: { status, onRetry: retry }, shared: resume.isPublic })
+ * @example useBuilderChrome({ title: resume.name, save: { status, onRetry: retry } })
  */
 export const useBuilderChrome = slot.useFill;
 
@@ -68,9 +66,9 @@ type BuilderChromeProps<T extends string> = {
 	page?: ReactNode;
 	/** The top-bar name until a screen sets `title`. */
 	title: string;
-	/** What Share does unless a screen sets `onShare`. No Share button when neither is set. */
-	onShare?: (() => void) | undefined;
-	/** Child routes presented as modals (Share, the assistant). Every other child route pushes. */
+	/** What the Download button does unless a screen sets `onExport`. No Download button when neither is set. */
+	onExport?: (() => void) | undefined;
+	/** Child routes presented as modals (Download & history, the assistant). Every other child route pushes. */
 	modals?: string[] | undefined /**
 	 * Rendered inside the chrome, outside the Stack, so a layout can fill slots once for every pane, for example a
 	 * component that reads the draft store and calls `useBuilderChrome({ title, save })`.
@@ -80,7 +78,7 @@ type BuilderChromeProps<T extends string> = {
 
 type FrameValue = {
 	title: string;
-	onShare: (() => void) | undefined;
+	onExport: (() => void) | undefined;
 	leave: () => void;
 	/** The tablet Write / Design / Check switch. */
 	modes: ReactNode;
@@ -91,7 +89,7 @@ const FrameContext = createContext<FrameValue | null>(null);
 /**
  * The resume and letter editor shell (builder.html). It renders the editor's Stack itself.
  *
- * - Phone: the top bar (Back, name + save status, actions, Share) is the header of each pane screen, and the bottom
+ * - Phone: the top bar (Back, name + save status, actions, Download) is the header of each pane screen, and the bottom
  *   pane tabs show under pane screens. Pushed screens (entry, history) have their own stack header and full height.
  * - Tablet: one top bar over everything with the Write / Design / Check switch in the middle, the Stack in a 400 pt
  *   panel and `page` beside it. Opening the Page pane on tablet switches to the first tablet pane.
@@ -109,7 +107,7 @@ export function BuilderChrome<T extends string>(props: BuilderChromeProps<T>) {
 	);
 }
 
-function Frame<T extends string>({ panes, tabletPanes, page, title, onShare, modals = [] }: BuilderChromeProps<T>) {
+function Frame<T extends string>({ panes, tabletPanes, page, title, onExport, modals = [] }: BuilderChromeProps<T>) {
 	const router = useRouter();
 	const { t } = useLingui();
 	const tablet = useIsTablet();
@@ -160,7 +158,7 @@ function Frame<T extends string>({ panes, tabletPanes, page, title, onShare, mod
 
 	const frame: FrameValue = {
 		title,
-		onShare,
+		onExport,
 		// Back leaves the editor (the root stack), even with an entry open in the tablet panel.
 		leave: () => (navigation.canGoBack() ? navigation.goBack() : router.replace(routes.documents())),
 		modes: activePane ? (
@@ -233,7 +231,7 @@ function ChromeTopBar() {
 	const slots = slot.useSlot();
 	const frame = use(FrameContext);
 	if (!frame) return null;
-	const share = slots.onShare ?? frame.onShare;
+	const exportDocument = slots.onExport ?? frame.onExport;
 
 	return (
 		<>
@@ -248,7 +246,7 @@ function ChromeTopBar() {
 				actions={
 					<>
 						{slots.actions}
-						{share ? <ShareButton tablet={tablet} shared={!!slots.shared} onPress={share} /> : null}
+						{exportDocument ? <ExportButton tablet={tablet} onPress={exportDocument} /> : null}
 					</>
 				}
 			/>
@@ -290,54 +288,17 @@ function PaneBar<T extends string>({ panes, active, onSwitch }: PaneBarProps<T>)
 	);
 }
 
-type ShareButtonProps = {
+type ExportButtonProps = {
 	tablet: boolean;
-	shared: boolean;
 	onPress: () => void;
 };
 
-/** Phone: the export icon with a "Public" badge when the link is on. Tablet: an outlined Share button. */
-function ShareButton({ tablet, shared, onPress }: ShareButtonProps) {
+/** Opens Download & history. Sharing has its own pane. */
+function ExportButton({ tablet, onPress }: ExportButtonProps) {
 	const { t } = useLingui();
-	const { colors, radius, size, space } = useTheme();
-
-	if (tablet) return <Button variant="secondary" size="sm" icon="export" label={t`Share`} onPress={onPress} />;
-	if (!shared) return <IconButton icon="export" label={t`Share`} onPress={onPress} />;
-
-	return (
-		<Pressable
-			accessibilityRole="button"
-			accessibilityLabel={t`Share public resume`}
-			onPress={onPress}
-			style={({ pressed }) => ({
-				flexDirection: "row",
-				alignItems: "center",
-				gap: space.s1,
-				minHeight: size.hit,
-				paddingHorizontal: space.s2,
-				borderRadius: radius.rLg,
-				backgroundColor: pressed ? colors.press : "transparent",
-			})}
-		>
-			<Icon name="export" size={size.icon.toolbar} />
-			<View
-				style={{
-					flexDirection: "row",
-					alignItems: "center",
-					gap: space.s0,
-					paddingHorizontal: space.s2,
-					paddingVertical: space.s0,
-					borderRadius: radius.rLg,
-					backgroundColor: colors.accentSoft,
-				}}
-			>
-				<Icon name="globe" size={size.icon.meta - space.s1} color={colors.accentText} />
-				<Text variant="micro" color="accentText">
-					{t`Public`}
-				</Text>
-			</View>
-		</Pressable>
-	);
+	if (tablet)
+		return <Button variant="secondary" size="sm" icon="download-simple" label={t`Download`} onPress={onPress} />;
+	return <IconButton icon="download-simple" label={t`Download & history`} onPress={onPress} />;
 }
 
 type SaveStatusLineProps = SaveStatusSlot;

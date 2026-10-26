@@ -40,7 +40,7 @@ type LetterBarProps = {
  * switch stays centered through a `1fr auto 1fr` grid.
  */
 export function LetterBar({ layout, pinnable }: LetterBarProps) {
-	const setShareTab = useEditorStore((state) => state.setShareTab);
+	const setSheetTab = useEditorStore((state) => state.setSheetTab);
 	// Below 1280 the bar is too narrow for Share's label next to everything else.
 	const wide = useBreakpoint() === "wide";
 	const download = useDownloadLetter();
@@ -64,12 +64,12 @@ export function LetterBar({ layout, pinnable }: LetterBarProps) {
 			}
 		>
 			{layout === "desktop" && wide ? (
-				<Button variant="secondary" className="gap-1.5" onClick={() => setShareTab("download")}>
+				<Button variant="secondary" className="gap-1.5" onClick={() => setSheetTab("download")}>
 					<Icon name="export" />
 					<Trans>Share</Trans>
 				</Button>
 			) : (
-				<IconButton icon="export" label={t`Share`} onClick={() => setShareTab("download")} />
+				<IconButton icon="export" label={t`Share`} onClick={() => setSheetTab("download")} />
 			)}
 			<DownloadButtons
 				busy={download.busy}

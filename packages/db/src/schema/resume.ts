@@ -20,6 +20,12 @@ export const resume = pg.pgTable(
 		tags: pg.text("tags").array().notNull().default([]),
 		isPublic: pg.boolean("is_public").notNull().default(false),
 		showDownloadButtons: pg.boolean("show_download_buttons").notNull().default(true),
+		// Share settings that decide who sees what. They live here, not in `data`, so a JSON patch, an import or a
+		// version restore can never change them.
+		showInSearchEngines: pg.boolean("show_in_search_engines").notNull().default(false),
+		hideContactDetails: pg.boolean("hide_contact_details").notNull().default(false),
+		// The resume an account's short link and custom domain open; at most one per user.
+		isPrimary: pg.boolean("is_primary").notNull().default(false),
 		isLocked: pg.boolean("is_locked").notNull().default(false),
 		password: pg.text("password"),
 		// "Made for this application": Check's job match, the assistant and Copy for a job use its posting.
@@ -50,6 +56,10 @@ export const resume = pg.pgTable(
 		pg.index().on(t.createdAt.asc()),
 		pg.index().on(t.userId, t.updatedAt.desc()),
 		pg.index().on(t.isPublic, t.slug, t.userId),
+		pg
+			.uniqueIndex("resume_primary_unique")
+			.on(t.userId)
+			.where(sql`${t.isPrimary}`),
 		// Finds documents past Trash retention without scanning every resume.
 		pg
 			.index()

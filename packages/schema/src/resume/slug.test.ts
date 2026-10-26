@@ -1,16 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
-import { isValidSlug, MAX_SLUG_LENGTH, normalizeSlug, SLUG_PATTERN, slugSchema } from "./slug";
+import { isValidSlug, normalizeSlug, slugSchema } from "./slug";
 
 describe("slug schema and validator", () => {
-	it("exports 64 as MAX_SLUG_LENGTH", () => {
-		expect(MAX_SLUG_LENGTH).toBe(64);
-	});
-
-	it("exports SLUG_PATTERN regex", () => {
-		expect(SLUG_PATTERN.test("valid-slug-123")).toBe(true);
-		expect(SLUG_PATTERN.test("invalid_slug")).toBe(false);
-	});
-
 	it("validates valid slugs with isValidSlug", () => {
 		expect(isValidSlug("resume")).toBe(true);
 		expect(isValidSlug("my-resume-2026")).toBe(true);
@@ -27,15 +18,11 @@ describe("slug schema and validator", () => {
 		expect(isValidSlug("invalid_slug!")).toBe(false);
 	});
 
-	it("parses valid slugs with slugSchema", () => {
+	it("parses strings without rejecting values that need a domain error", () => {
+		expect(slugSchema.parse("")).toBe("");
+		expect(slugSchema.parse("a".repeat(65))).toBe("a".repeat(65));
 		expect(slugSchema.parse("valid-slug")).toBe("valid-slug");
 		expect(slugSchema.parse("  trimmed-slug  ")).toBe("trimmed-slug");
-	});
-
-	it("rejects overlong or empty slugs with slugSchema", () => {
-		expect(() => slugSchema.parse("")).toThrow();
-		expect(() => slugSchema.parse("   ")).toThrow();
-		expect(() => slugSchema.parse("a".repeat(65))).toThrow();
 	});
 
 	it("normalizes user input with normalizeSlug", () => {

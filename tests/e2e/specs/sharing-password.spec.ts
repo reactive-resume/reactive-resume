@@ -19,15 +19,15 @@ test("password-protects a public resume and unlocks it as a visitor", async ({ b
 
 	const anonymous = await browser.newPage();
 	try {
-		// Anonymous visitors hit the password gate first
+		// Anonymous visitors see the password form on the web page's own address first
 		await anonymous.goto(publicUrl);
-		await anonymous.waitForURL(/\/auth\/resume-password/);
+		await expect(anonymous.getByRole("heading", { name: "This resume is password-protected" })).toBeVisible();
 
 		await anonymous.getByLabel("Password", { exact: true }).fill(password);
 		await anonymous.getByRole("button", { name: "Unlock" }).click();
 
 		// The correct password reveals the actual resume
-		await expect(anonymous.getByRole("button", { name: "Download PDF" }).first()).toBeVisible();
+		await expect(anonymous.getByRole("link", { name: "Download PDF" })).toBeVisible();
 	} finally {
 		await anonymous.close();
 	}

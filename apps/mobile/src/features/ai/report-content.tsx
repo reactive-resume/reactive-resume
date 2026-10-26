@@ -7,16 +7,21 @@ import { getAccountScope, getServer } from "@/auth/session";
 import { Button, SelectSheet, Sheet, Text, TextArea, showToast, useTheme } from "@/ui";
 
 type Report = RouterInput["ai"]["reportContent"];
-type ReportAiContentProps = { source: Report["source"]; text?: string };
+type ReportAiContentProps = { source: Exclude<Report["source"], "public-resume">; text?: string };
 
 export function ReportAiContent({ source, text = "" }: ReportAiContentProps) {
 	const { t } = useLingui();
 	const [open, setOpen] = useState(false);
-	const title = source === "public-resume" ? t`Report shared resume` : t`Report AI content`;
 	return (
 		<>
-			<Button size="sm" variant="link" icon="warning-circle" label={title} onPress={() => setOpen(true)} />
-			<Sheet open={open} onClose={() => setOpen(false)} title={title}>
+			<Button
+				size="sm"
+				variant="link"
+				icon="warning-circle"
+				label={t`Report AI content`}
+				onPress={() => setOpen(true)}
+			/>
+			<Sheet open={open} onClose={() => setOpen(false)} title={t`Report AI content`}>
 				{open ? <AiReportForm source={source} initialContent={text} onSent={() => setOpen(false)} /> : null}
 			</Sheet>
 		</>

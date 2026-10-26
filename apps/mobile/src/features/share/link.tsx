@@ -6,26 +6,31 @@ import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { Linking, Share, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import Svg, { Rect } from "react-native-svg";
+import {
+	formatTimeSince,
+	normalizeSlug,
+	publicResumeUrl,
+	isValidSlug,
+	MAX_SLUG_LENGTH,
+	summarizeViews,
+} from "@reactive-resume/resume/sharing";
 import { flushResume } from "./document";
-import { formatTimeSince, MAX_SLUG_LENGTH, normalizeSlug, summarizeViews, validSlug } from "./model";
+import { WebPageSettings } from "./web-page";
 import { client, orpc } from "@/api/client";
+import { useFlags } from "@/api/flags";
 import { getServer } from "@/auth/session";
 import { useResumeStore } from "@/draft";
 import { resume as draftResume } from "@/draft/runtime";
 import { useDocumentOperations } from "@/features/documents/queries";
-import {
-	Banner,
-	Button,
-	ConfirmDialog,
-	ListRow,
-	Sheet,
-	Skeleton,
-	Switch,
-	Text,
-	TextField,
-	showToast,
-	useTheme,
-} from "@/ui";
+import { Banner, Button, ListRow, Sheet, Skeleton, Switch, Text, TextField, showToast, useTheme } from "@/ui";
+
+/** Sharing settings: saved beside the resume, not in its data. */
+export type ShareSettings = Partial<
+	Pick<
+		ResumeDocument,
+		"isPublic" | "slug" | "showDownloadButtons" | "showInSearchEngines" | "hideContactDetails" | "isPrimary"
+	>
+>;
 
 type LinkProps = { resume: ResumeDocument; offline: boolean };
 
@@ -39,12 +44,13 @@ export function LinkTab({ resume, offline }: LinkProps) {
 	const [suggestion, setSuggestion] = useState<string>();
 	const [takenBy, setTakenBy] = useState<string>();
 	const [retry, setRetry] = useState(0);
-	const [dialog, setDialog] = useState<"qr" | "password" | "remove-password" | null>(null);
-	const [password, setPassword] = useState("");
-	const [confirmation, setConfirmation] = useState("");
+	const [qrOpen, setQrOpen] = useState(false);
 	const profile = useQuery({ ...orpc.auth.getProfile.queryOptions(), enabled: !offline });
 	const username = profile.data?.username;
-	const url = username ? `${getServer()}/${encodeURIComponent(username)}/${encodeURIComponent(resume.slug)}` : "";
+	// Shared links use the app's alias (`APP_ALIAS_URL`) when the server has one; every public page works there too.
+	const flags = useFlags();
+	const origin = flags.data?.aliasUrl ?? getServer();
+	const url = username ? publicResumeUrl(origin, { username, slug: resume.slug }) : "";
 	const changed = slug !== resume.slug;
 	const saveStatus = useResumeStore((state) => state.status);
 	const shareable =
@@ -57,17 +63,19 @@ export function LinkTab({ resume, offline }: LinkProps) {
 		setSlug((value) => (value === previous ? resume.slug : value));
 	}, [resume.slug]);
 
-	const saveCheckedSlug = useEffectEvent((value: string, cancelled: () => boolean) =>
+	// Every sharing setting saves one way, like web: straight to the server and never through the draft's undo, after
+	// the draft's pending edits so the version check holds; then the draft reloads the server copy.
+	const save = (settings: ShareSettings, cancelled = () => false) =>
 		operations.run(async () => {
 			const current = await flushResume(resume.id);
 			if (cancelled()) return;
-			await client.resume.update({ id: resume.id, slug: value, expectedUpdatedAt: current.updatedAt });
+			await client.resume.update({ id: resume.id, ...settings, expectedUpdatedAt: current.updatedAt });
 			await draftResume.refresh();
-		}),
-	);
+		});
+	const saveCheckedSlug = useEffectEvent((value: string, cancelled: () => boolean) => save({ slug: value }, cancelled));
 
 	useEffect(() => {
-		if (!changed || !validSlug(slug) || !resume.isPublic || resume.isLocked || offline) return;
+		if (!changed || !isValidSlug(slug) || !resume.isPublic || resume.isLocked || offline) return;
 		let cancelled = false;
 		const timer = setTimeout(() => {
 			setSlugState("checking");
@@ -97,34 +105,12 @@ export function LinkTab({ resume, offline }: LinkProps) {
 		};
 	}, [slug, changed, resume.id, resume.isPublic, resume.isLocked, offline, retry]);
 
-	const update = async (recipe: (draft: ResumeDocument) => void) => {
-		await operations.run(async () => {
-			await flushResume(resume.id);
-			useResumeStore.getState().updateDocument(recipe);
-			await flushResume(resume.id);
-		});
-	};
-	const savePassword = async (remove = false) => {
-		if (!remove && (password.length < 6 || password.length > 64 || password !== confirmation)) return;
-		const success = await operations.run(async () => {
-			await flushResume(resume.id);
-			if (remove) await client.resume.removePassword({ id: resume.id });
-			else await client.resume.setPassword({ id: resume.id, password });
-			await draftResume.refresh();
-		});
-		if (success) {
-			setDialog(null);
-			setPassword("");
-			setConfirmation("");
-		}
-	};
-	const tooLong = slug.length > MAX_SLUG_LENGTH;
 	const addressError =
 		changed && !slug
 			? t`Add an address.`
-			: changed && tooLong
+			: changed && slug.length > MAX_SLUG_LENGTH
 				? t`Use at most 64 characters.`
-				: changed && !validSlug(slug)
+				: changed && !isValidSlug(slug)
 					? t`Use lowercase letters, numbers and single dashes.`
 					: slugState === "taken"
 						? takenBy
@@ -140,20 +126,14 @@ export function LinkTab({ resume, offline }: LinkProps) {
 			<ListRow
 				title={t`Public link`}
 				subtitle={
-					resume.isPublic
-						? t`On. Anyone with the link can view. It isn't listed or indexed by search engines.`
-						: t`Off. Only you can see this resume.`
+					resume.isPublic ? t`On. Anyone with the link can see your web page.` : t`Off. Only you can see this resume.`
 				}
 				trailing={
 					<Switch
 						label={t`Public link`}
 						value={resume.isPublic}
 						disabled={disabled}
-						onValueChange={(value) =>
-							void update((draft) => {
-								draft.isPublic = value;
-							})
-						}
+						onValueChange={(value) => void save({ isPublic: value })}
 					/>
 				}
 			/>
@@ -212,51 +192,25 @@ export function LinkTab({ resume, offline }: LinkProps) {
 			{resume.isPublic && (
 				<>
 					<ListRow
-						title={t`Visitors can download the PDF`}
-						trailing={
-							<Switch
-								label={t`Visitors can download the PDF`}
-								value={resume.showDownloadButtons}
-								disabled={disabled}
-								onValueChange={(value) =>
-									void update((draft) => {
-										draft.showDownloadButtons = value;
-									})
-								}
-							/>
-						}
-					/>
-					<ListRow
-						title={t`Require a password`}
-						subtitle={
-							resume.hasPassword
-								? t`Visitors enter it before they see the resume. Share it only with people you trust.`
-								: undefined
-						}
-						trailing={
-							<Switch
-								label={t`Require a password`}
-								value={resume.hasPassword}
-								disabled={disabled}
-								onValueChange={(value) => {
-									setPassword("");
-									setConfirmation("");
-									setDialog(value ? "password" : "remove-password");
-								}}
-							/>
-						}
-					/>
-					<ListRow
-						title={t`Open public page`}
+						title={t`Open web page`}
 						leading="arrow-square-out"
 						disabled={!shareable}
 						onPress={() => void operations.run(() => Linking.openURL(url))}
 					/>
-					<ListRow title={t`QR code`} leading="qr-code" disabled={!shareable} onPress={() => setDialog("qr")} />
+					<ListRow title={t`QR code`} leading="qr-code" disabled={!shareable} onPress={() => setQrOpen(true)} />
 				</>
 			)}
+			<WebPageSettings
+				resume={resume}
+				offline={offline}
+				username={username}
+				origin={origin}
+				flags={flags.data}
+				operations={operations}
+				save={save}
+			/>
 			<Statistics id={resume.id} isPublic={resume.isPublic} offline={offline} />
-			<Sheet open={dialog === "qr"} title={t`QR code`} onClose={() => setDialog(null)} detents={[0.5]}>
+			<Sheet open={qrOpen} title={t`QR code`} onClose={() => setQrOpen(false)} detents={[0.5]}>
 				<View
 					accessible
 					accessibilityLabel={t`QR code for ${url}`}
@@ -274,63 +228,6 @@ export function LinkTab({ resume, offline }: LinkProps) {
 					<Text selectable>{url}</Text>
 				</View>
 			</Sheet>
-			<Sheet
-				open={dialog === "password"}
-				title={t`Require a password`}
-				onClose={() => {
-					if (!operations.busy) {
-						setDialog(null);
-						setPassword("");
-						setConfirmation("");
-					}
-				}}
-				detents={[0.5, 0.9]}
-			>
-				<View style={{ padding: space.s4, gap: space.s3 }}>
-					<TextField
-						label={t`Password`}
-						value={password}
-						onChangeText={setPassword}
-						secureTextEntry
-						autoComplete="off"
-						autoCorrect={false}
-						autoCapitalize="none"
-						maxLength={64}
-						helper={t`Use 6–64 characters.`}
-						editable={!operations.busy}
-					/>
-					<TextField
-						label={t`Confirm password`}
-						value={confirmation}
-						onChangeText={setConfirmation}
-						secureTextEntry
-						autoComplete="off"
-						autoCorrect={false}
-						autoCapitalize="none"
-						maxLength={64}
-						editable={!operations.busy}
-						error={confirmation && confirmation !== password ? t`Passwords do not match.` : undefined}
-					/>
-					{operations.error && <Banner tone="danger" message={operations.error} />}
-					<Button
-						label={t`Set password`}
-						loading={operations.busy}
-						disabled={password.length < 6 || password !== confirmation || disabled}
-						onPress={() => void savePassword()}
-					/>
-				</View>
-			</Sheet>
-			<ConfirmDialog
-				open={dialog === "remove-password"}
-				title={t`Remove the password?`}
-				message={t`Anyone with the link will be able to view your resume.`}
-				confirmLabel={t`Remove password`}
-				onCancel={() => setDialog(null)}
-				onConfirm={() => {
-					setDialog(null);
-					void savePassword(true);
-				}}
-			/>
 		</View>
 	);
 }
@@ -350,10 +247,12 @@ function Statistics({ id, isPublic, offline }: StatisticsProps) {
 	const summary = summarizeViews(daily.data ?? []);
 	return (
 		<View style={{ gap: space.s3, paddingTop: space.s4, borderTopWidth: 1, borderColor: colors.line }}>
-			<Text variant="heading">{t`Views and downloads`}</Text>
+			<Text variant="heading">{t`Visitors`}</Text>
 			<Text variant="caption" color="ink3">{t`Only you see these`}</Text>
 			{!isPublic ? (
-				<Text color="ink2">{t`Turn on the public link to count views and downloads. Counts are anonymous.`}</Text>
+				<Text color="ink2">
+					{t`Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted.`}
+				</Text>
 			) : daily.isError || total.isError ? (
 				<Banner
 					tone="danger"

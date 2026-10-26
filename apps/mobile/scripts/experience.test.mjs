@@ -73,12 +73,6 @@ const mocks = {
 		withTiming: (value) => value,
 		withSpring: (value) => value,
 	},
-	"@reactive-resume/schema/resume/slug": {
-		MAX_SLUG_LENGTH: 64,
-		SLUG_PATTERN: /^[a-z0-9]+(-[a-z0-9]+)*$/,
-		isValidSlug: (slug) => slug.length > 0 && slug.length <= 64 && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug),
-		normalizeSlug: (slug) => slug.toLowerCase().replace(/\s+/g, "-"),
-	},
 };
 function load(path, extra = {}) {
 	const module = { exports: {} };
@@ -156,23 +150,22 @@ const { DownloadTab } = load("features/share/download.tsx", {
 	"@/draft": draftBoundary,
 	"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
 });
-const { ShareScreen } = load("features/share/screen.tsx", {
+const { ExportScreen } = load("features/share/export-screen.tsx", {
 	"expo-network": { useNetworkState: () => ({ isConnected: true }) },
 	"react-native-safe-area-context": { SafeAreaProvider: "SafeAreaProvider", SafeAreaView: "SafeAreaView" },
 	"./document": { useShareDocument: () => state },
 	"./download": { DownloadTab },
-	"./link": { LinkTab: "LinkTab" },
 	"@/auth/session": { useSession: () => ({ status: "signed-in" }) },
 	"@/features/document-menu": { DocumentMenu: "DocumentMenu" },
 	"@/features/history/history": { HistoryPanel: "HistoryPanel" },
 });
 reset();
-let tree = render(ShareScreen, { id: resume.id });
-assert.equal(control(tree, "Share sections").value, "download", "Ordinary sharing must start with the file action");
+let tree = render(ExportScreen, { id: resume.id });
+assert.equal(control(tree, "Download & history").value, "download", "Ordinary sharing must start with the file action");
 assert.ok(nodes(tree).some((node) => node.type === DownloadTab));
 reset();
-tree = render(ShareScreen, { id: resume.id, history: true });
-assert.equal(control(tree, "Share sections").value, "history", "Explicit version history keeps its destination");
+tree = render(ExportScreen, { id: resume.id, history: true });
+assert.equal(control(tree, "Download & history").value, "history", "Explicit version history keeps its destination");
 
 reset();
 tree = render(DownloadTab, { resume, offline: false });

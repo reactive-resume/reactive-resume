@@ -5,7 +5,8 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { lazyRouteComponent } from "@tanstack/react-router";
+import { Suspense, useState } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
@@ -26,11 +27,24 @@ import { orpc } from "@/libs/orpc/client";
 
 const NONE: readonly never[] = [];
 
+const WebPagePreview = lazyRouteComponent(() => import("@/features/resume/share/web-page-preview"), "WebPagePreview");
+
+/** Share shows the web page; every other mode, the PDF's pages. */
+export function PageCanvas() {
+	const [mode] = useEditorMode();
+	if (mode !== "share") return <ResumePageCanvas />;
+	return (
+		<Suspense>
+			<WebPagePreview />
+		</Suspense>
+	);
+}
+
 /**
  * The page canvas: the live resume on the sunken desk, with a caption above the first page, a pointer layer
  * that links lines to entries, and the zoom bar.
  */
-export function PageCanvas() {
+function ResumePageCanvas() {
 	const data = useResumeData();
 	const format = useCurrentBuilderResumeSelector((resume) => resume.data.metadata.page.format);
 	const previewTemplate = useEditorStore((state) => state.previewTemplate);
@@ -39,7 +53,7 @@ export function PageCanvas() {
 	const checkTab = useEditorStore((state) => state.checkTab);
 	const proposals = useEditorStore((state) => state.proposals);
 	const assistantProposals = useEditorStore((state) => (state.assistantOpen ? state.assistantProposals : NONE));
-	const sheetOpen = useEditorStore((state) => state.shareTab !== null);
+	const sheetOpen = useEditorStore((state) => state.sheetTab !== null);
 	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
 	const rendered = useEditorStore((state) => state.rendered);
 	const setRendered = useEditorStore((state) => state.setRendered);
@@ -71,7 +85,7 @@ export function PageCanvas() {
 				? markProposals(data, marked)
 				: undefined;
 	const overflow = data && !previewTemplate && !viewing ? measureOverflow(data, rendered) : null;
-	// Desktop: the page moves 120px aside so it stays visible beside the Share & export sheet.
+	// Desktop: the page moves 120px aside so it stays visible beside the Download & history sheet.
 	const shifted = sheetOpen && (breakpoint === "desktop" || breakpoint === "wide");
 
 	const onSelect = (selection: EditorSelection) => {

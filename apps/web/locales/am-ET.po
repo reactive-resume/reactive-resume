@@ -35,6 +35,11 @@ msgstr "\"{0}\" ተደብቋል"
 msgid "“{0}” moved to Trash"
 msgstr "\"{0}\" ወደ መጣያ ተወስዷል"
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr "“{0}” ከእንግዲህ ዋናው የስራ ልምድ ማስረጃዎ አይሆንም።"
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "“{name}” moved to Trash"
@@ -721,6 +726,10 @@ msgstr "{stars, plural, one {Reactive Resumeን በGitHub ላይ ኮከብ ስ�
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# ታሪክ} other {# ታሪኮች}}"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "{suggestion} may be available. Get yours here →"
+msgstr "{suggestion} ሊገኝ ይችላል። የእርስዎን እዚህ ያግኙ →"
+
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
 msgstr "{summary}። በሙያ → ቅናሾች ውስጥ ይከፈታል።"
@@ -835,7 +844,7 @@ msgstr "የ10 ደቂቃ አጭር መግለጫ"
 msgid "10–11 recommended"
 msgstr "10-11 ይመከራል"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 ፋይሎች"
 
@@ -898,7 +907,7 @@ msgstr "A"
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "ሀ ይቀበላል እና R ያተኮረ አርትዖትን ውድቅ ያደርጋል። ↑ እና ↓ በአርትዖቶች መካከል ይንቀሳቀሱ።"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "የዚህ ደብዳቤ ምትኬ። ወደ Reactive Resume እንደ ደብዳቤ ተመልሶ ይመጣል።"
 
@@ -1243,7 +1252,7 @@ msgstr "AI አቅራቢን ያክሉ"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "@ እና ጎራውን እንደ name@example.com ያክሉ"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "አድራሻ አክል"
 
@@ -1410,6 +1419,10 @@ msgstr "እንደ {name}@example.com ከ @ በኋላ ጎራውን ያክሉ"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "እንደ {domain}.com የመሳሰሉ የሚያልቅ ጎራዎችን ያክሉ"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
+msgstr "እነዚህን መዝገቦች ጎራውን በሚያስተዳድሩበት ቦታ ያክሉ፣ ከዚያ ያረጋግጡ። ለውጦቹ ሁሉም ጋር እስኪደርሱ ጥቂት ሰዓታት ሊወስድ ይችላል።"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/career/workspace/shell.tsx
@@ -1475,7 +1488,7 @@ msgstr "እንደ ልምድ ወደ እውቀት ታክሏል።"
 msgid "Added to Prepare"
 msgstr "ወደ ዝግጅት ታክሏል"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "አድራሻ"
 
@@ -1708,7 +1721,7 @@ msgstr "እና {0} ተጨማሪ"
 msgid "and counting"
 msgstr "እና በመቁጠር"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "ሌላው የርስዎ የስራ ስምሪት ይህንን አድራሻ ይጠቀማል።"
 
@@ -1757,7 +1770,7 @@ msgstr "ማንኛውም ቅርጸ-ቁምፊ፣ በላቁ"
 msgid "Anyone who opens the public URL will need this password."
 msgstr "የሕዝብ URL የሚከፍት ማንኛውም ሰው ይህ የይለፍ ቃል ያስፈልገዋል።"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "አገናኙ ያለው ማንኛውም ሰው የእርስዎን የትምህርት ማስረጃ ማየት ይችላል።"
 
@@ -1888,6 +1901,7 @@ msgstr "የማመልከቻ ትሮች"
 msgid "Application updated"
 msgstr "ማመልከቻው ተዘምኗል"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
@@ -2552,6 +2566,10 @@ msgstr "ሌላ ፋይል ይፈትሹ"
 msgid "Check any PDF, no account needed"
 msgstr "ማንኛውንም PDF ያረጋግጡ፣ ምንም መለያ አያስፈልግም"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Check DNS"
+msgstr "DNS አረጋግጥ"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Check every claim, date and result against your experience."
 msgstr "እያንዳንዱን አባባል፣ ቀን እና ውጤት ከልምድዎ ጋር ያረጋግጡ።"
@@ -2635,7 +2653,7 @@ msgstr "ወደ ውጭ የተላከውን PDF በመፈተሽ ላይ…"
 msgid "Checking your preferences"
 msgstr "ምርጫዎችዎን በማረጋገጥ ላይ"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "በመፈተሽ ላይ… ኮፒ ከተቀመጠ በኋላ ይገኛል።"
 
@@ -2716,7 +2734,6 @@ msgid "Claude Desktop"
 msgstr "Claude Desktop"
 
 #: src/features/applications/components/detail/next-step-card.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
 msgstr "አጽዳ"
@@ -2738,6 +2755,7 @@ msgid "Clear section"
 msgstr "ክፍል አጽዳ"
 
 #: src/components/ui/combobox.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Clear selection"
 msgstr "ምርጫን አጽዳ"
@@ -2765,7 +2783,7 @@ msgstr "የደንበኛ መታወቂያ"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2905,6 +2923,10 @@ msgstr "የተሟላ የውሂብ ምትኬ። ወደ Reactive Resume ወይም 
 msgid "Compress or remove large images to keep uploads quick."
 msgstr "ጭነቶች ፈጣን እንዲሆኑ ትላልቅ ምስሎችን ያሳንሱ ወይም ያስወግዱ።"
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Computer"
+msgstr "ኮምፒውተር"
+
 #: src/hooks/use-confirm.tsx
 msgid "Confirm"
 msgstr "አረጋግጥ"
@@ -2938,6 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "ዛሬ {time} በቪዲዮ መሆኑን ያረጋግጣል።"
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "አገናኝ"
@@ -2989,6 +3012,10 @@ msgstr "ተገናኝቷል"
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "የተገናኙ መተግበሪያዎች"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Connected. Your domain opens your primary resume."
+msgstr "ተገናኝቷል። ጎራዎ ዋናውን የስራ ልምድ ማስረጃዎን ይከፍታል።"
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Connecting your {providerName} account…"
@@ -3117,7 +3144,7 @@ msgid "Copied"
 msgstr "ተገልብጧል"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3149,7 +3176,6 @@ msgid "Copy it now. For your security, it won't be shown again."
 msgstr "አሁን ገልብጠው። ለእርስዎ ደህንነት፣ እንደገና አይታይም።"
 
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
 msgid "Copy link"
 msgstr "አገናኝ ቅዳ"
 
@@ -3271,6 +3297,7 @@ msgid "Couldn't copy the transcript. Try again."
 msgstr "ግልባጩን መቅዳት አልተቻለም። እንደገና ይሞክሩ።"
 
 #: src/features/career/coach-thread.tsx
+#: src/features/resume/share/copy-link-button.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "ወደ ቅንጥብ ሰሌዳ መቅዳት አልተቻለም። እንደገና ይሞክሩ።"
 
@@ -3592,8 +3619,8 @@ msgstr "ይህን መርሐ ግብር ማስቀመጥ አልተቻለም። እ�
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "ለውጦችዎን ማስቀመጥ አልተቻለም። ከመቀጠልዎ በፊት እንደገና ይሞክሩ።"
@@ -3698,6 +3725,11 @@ msgstr "ማመልከቻውን ማላቀቅ አልተቻለም። እንደገና
 msgid "Couldn't unlock the document. Try again."
 msgstr "ሰነዱን መክፈት አልተቻለም። እንደገና ይሞክሩ።"
 
+#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/share-panel.tsx
+msgid "Couldn't update sharing. Try again."
+msgstr "ማጋራትን ማዘመን አልተቻለም። እንደገና ይሞክሩ።"
+
 #: src/features/career/workspace/messages.tsx
 msgid "Couldn't update the application. Nothing was changed. Try again."
 msgstr "ማመልከቻውን ማዘመን አልተቻለም። ምንም አልተቀየረም። እንደገና ይሞክሩ።"
@@ -3726,7 +3758,7 @@ msgstr "ቅድመ እይታውን ማዘመን አልተቻለም። የመጨ�
 msgid "Couldn't update the timeline. Try again."
 msgstr "የጊዜ መስመሩን ማዘመን አልተቻለም። እንደገና ይሞክሩ።"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "የዚህን ደብዳቤ ስሪቶች ማዘመን አልተቻለም። እንደገና ይሞክሩ።"
 
@@ -3740,11 +3772,6 @@ msgstr "ፎቶውን መስቀል አልተቻለም። እንደገና ይሞ�
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "ኮዱን ማረጋገጥ አልተቻለም። ከማረጋገጫ መተግበሪያዎ የአሁኑን ኮድ ያስገቡ።"
-
-#. Fallback toast when resume password verification fails unexpectedly
-#: src/features/auth/pages/resume-password.tsx
-msgid "Couldn't verify the password. Try again."
-msgstr "የይለፍ ቃሉን ማረጋገጥ አልተቻለም። እንደገና ይሞክሩ።"
 
 #. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
@@ -3949,7 +3976,7 @@ msgid "Daily at {clock} · next {next}"
 msgstr "በየቀኑ በ{clock} · ቀጣይ {next}"
 
 #. placeholder {0}: summary.peak
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "ዕለታዊ እይታዎች ከ30 ቀናት በላይ፣ ከፍተኛው {0}"
 
@@ -4325,6 +4352,10 @@ msgstr "ወደዚህ የሚያዛውሯቸው ሰነዶች ለ30 ቀናት ይ�
 msgid "Does it use AI?"
 msgstr "AI ይጠቀማል?"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Domain connected"
+msgstr "ጎራ ተገናኝቷል"
+
 #: src/features/auth/pages/login.tsx
 msgid "Don't have an account? <0/>"
 msgstr "መለያ የለዎትም? <0/>"
@@ -4357,8 +4388,8 @@ msgstr "ደግሞ በማረጋገጥ ላይ"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "አውርድ"
 
@@ -4369,6 +4400,10 @@ msgstr "{label} አውርድ"
 #: src/features/templates/gallery.tsx
 msgid "Download {name} sample PDF"
 msgstr "የ{name} ናሙና PDF አውርድ"
+
+#: src/features/resume/editor/chrome/download-sheet.tsx
+msgid "Download & history"
+msgstr "ማውረድ እና ታሪክ"
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download application details, contacts, notes, and timeline history as CSV."
@@ -4384,12 +4419,12 @@ msgid "Download CSV"
 msgstr "CSV አውርድ"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "ማውረድ አልተሳካም። እንደገና ይሞክሩ።"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
 msgstr "PDF አውርድ"
 
@@ -4405,12 +4440,12 @@ msgstr "ናሙና PDF ያውርዱ"
 msgid "Download them"
 msgstr "አውርዳቸው"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Download totals can include repeat clicks."
 msgstr "የማውረድ ድምር ተደጋጋሚ ጠቅታዎችን ሊያካትት ይችላል።"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "{file} ወርዷል"
 
@@ -4418,11 +4453,11 @@ msgstr "{file} ወርዷል"
 msgid "Downloaded {file} and the cover letter"
 msgstr "የወረደ {file} እና የሽፋን ደብዳቤ"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "የስራ ልምድዎን እና ይህን ደብዳቤ አውርደዋል"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "downloads"
 msgstr "ውርዶች"
 
@@ -4807,13 +4842,9 @@ msgstr "ወደ መለያዎ ለመግባት ከተቀመጡት የመከላከ�
 msgid "Enter the 6-digit code."
 msgstr "ባለ 6 አሃዝ ኮዱን ያስገቡ።"
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Enter the password the resume owner shared with you."
 msgstr "የስራ ልምድ ማስረጃው ባለቤት ያጋራዎትን የይለፍ ቃል ያስገቡ።"
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Enter the password."
-msgstr "የይለፍ ቃሉን ያስገቡ።"
 
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Enter the same password in both fields."
@@ -5223,6 +5254,11 @@ msgstr "ፊደሎች ሊጫኑ አልቻሉም። እንደገና ይሞክሩ�
 msgid "For"
 msgstr "ለ"
 
+#. placeholder {0}: domain.target
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
+msgstr "እንደ example.com ላለ ስር ጎራ ከCNAME ይልቅ የ{0}ን አድራሻዎች የያዙ A እና AAAA መዝገቦችን ይጠቀሙ።"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "For each: situation, task, your action, result, reflection. Leave out numbers you're unsure of."
 msgstr "ለእያንዳንዳቸው፦ ሁኔታ፣ ተግባር፣ የእርስዎ እርምጃ፣ ውጤት፣ ትምህርት። እርግጠኛ ያልሆኑባቸውን ቁጥሮች ይተዉ።"
@@ -5617,6 +5653,10 @@ msgstr "የተደበቀ፦ {hiddenList}"
 msgid "Hide {title} from the page"
 msgstr "{title} ከገጹ ደብቅ"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Hide contact details"
+msgstr "የመገኛ ዝርዝሮችን ደብቅ"
+
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Hide from page"
 msgstr "ከገጽ ደብቅ"
@@ -5660,8 +5700,9 @@ msgid "Hiring team"
 msgstr "የቅጥር ቡድን"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
 msgstr "ታሪክ"
 
@@ -5784,7 +5825,7 @@ msgstr "ከስካን የመጣ ከሆነ የሚጠበቅ ነው። ካልሆነ 
 msgid "If it's part of your experience, add it where it belongs."
 msgstr "የልምድዎ አካል ከሆነ፣ በሚገኝበት ቦታ ያክሉት።"
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "If someone sent you this link, ask them for a new one."
 msgstr "አንድ ሰው ይህን ሊንክ የላከልዎት ከሆነ አዲስ እንዲሰጡዎት ይጠይቋቸው።"
 
@@ -6597,7 +6638,6 @@ msgstr "ይህ የተጠጋ መስመሮች ሲነበቡ አብረው ሊሄዱ 
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/write/fields.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Link"
 msgstr "አገናኝ"
 
@@ -6624,14 +6664,10 @@ msgid "Link an application…"
 msgstr "የስራ ማመልከቻ አገናኝ…"
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/public/public-resume.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "ማገናኛ ተቀድቷል።"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Link is live"
-msgstr "ሊንክ ቀጥታ ነው።"
 
 #: src/features/documents/document-actions.tsx
 msgid "Link to application"
@@ -6641,7 +6677,7 @@ msgstr "ወደ ሥራ ማመልከቻ አገናኝ"
 msgid "Link to application…"
 msgstr "ወደ ሥራ ማመልከቻ አገናኝ…"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Link turned off. The address is kept"
 msgstr "ማገናኛ ጠፍቷል። አድራሻው ተቀምጧል"
 
@@ -6719,7 +6755,7 @@ msgid "Live · updates as you edit"
 msgstr "ቀጥታ · ሲያርትዑ ይዘምናል።"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "በ{0} ቀጥታ ስርጭት"
 
@@ -6854,7 +6890,7 @@ msgstr "ዝቅተኛ"
 msgid "Lower the design sheet"
 msgstr "የንድፍ ሉህን ዝቅ አድርግ"
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Made with Reactive Resume, free and open source"
 msgstr "በReactive Resume፣ ነፃ እና ክፍት ምንጭ የተሰራ"
 
@@ -6888,6 +6924,10 @@ msgstr "አጭር ያድርጉት"
 msgid "Make it yours, then take it with you."
 msgstr "ያንተ ያድርጉት፣ ከዚያ ከእርስዎ ጋር ይውሰዱት።"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Make primary"
+msgstr "ዋና አድርግ"
+
 #: src/features/documents/documents-page.tsx
 msgid "Make private"
 msgstr "የግል አድርግ"
@@ -6907,6 +6947,10 @@ msgstr "የሚታየው ጽሁፍ ከመድረሻው ጋር እንዲዛመድ �
 #: src/features/ats-checker/messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "በእይታ ትልቅ፣ ወፍራም ወይም በአቢይ ሆሄ ያድርጓቸው።"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Make this your primary resume?"
+msgstr "ይህን ዋና የስራ ልምድ ማስረጃዎ ያድርጉት?"
 
 #: src/libs/locale.ts
 msgid "Malay"
@@ -7102,6 +7146,7 @@ msgid "Mono"
 msgstr "ሞኖ"
 
 #: src/features/resume/editor/chrome/bar.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "More download formats"
 msgstr "ተጨማሪ የማውረድ ቅርጸቶች"
 
@@ -7707,6 +7752,10 @@ msgstr "አልተተገበረም"
 msgid "Not applied yet"
 msgstr "እስካሁን ማመልከቻ አልቀረበም"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Not available while the resume needs a password."
+msgstr "የስራ ልምድ ማስረጃው የይለፍ ቃል በሚፈልግበት ጊዜ አይገኝም።"
+
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "አልተገናኘም"
@@ -7900,9 +7949,9 @@ msgstr "ጠፍቷል"
 msgid "Off: the coach won’t see it or claim it."
 msgstr "ጠፍቷል፦ አሰልጣኙ አያየውም፣ የእርስዎ እንደሆነም አይናገርም።"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Off. Only you can see this resume."
-msgstr "ጠፍቷል እርስዎ ብቻ ይህንን የትምህርት ማስረጃ ማየት ይችላሉ።"
+#: src/features/resume/share/share-panel.tsx
+msgid "Off. Let recruiters find you on Google by turning this on."
+msgstr "ጠፍቷል። ቀጣሪዎች በGoogle ላይ እንዲያገኙዎት ይህን ያብሩት።"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Off. The letter keeps its own copy of your details."
@@ -7931,9 +7980,9 @@ msgstr "የቢሮ ቀናት አልተገለጹም"
 msgid "Offline · saved on this device"
 msgstr "ከመስመር ውጭ · በዚህ መሳሪያ ላይ ተቀምጧል"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
-msgstr "በርቷል አገናኙ ያለው ማንኛውም ሰው ማየት ይችላል። በፍለጋ ሞተሮች አልተዘረዘረም ወይም አልተጠቆመም።"
+#: src/features/resume/share/share-panel.tsx
+msgid "On. Anyone with the link can see your web page."
+msgstr "በርቷል። አገናኙ ያለው ማንኛውም ሰው ድረ-ገጽዎን ማየት ይችላል።"
 
 #: src/features/homepage/remember.tsx
 msgid "Onboarding story"
@@ -8015,7 +8064,7 @@ msgstr "በአንድ ጊዜ የመጀመሪያዎቹ {MAX_IMPORT} ረድፎች �
 msgid "Only the first pages were checked."
 msgstr "የመጀመሪያዎቹ ገጾች ብቻ ተረጋግጠዋል።"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "አንተ ብቻ እነዚህን ታያለህ"
 
@@ -8073,10 +8122,6 @@ msgstr "በቅናሾች ውስጥ ክፈት"
 msgid "Open preferences"
 msgstr "ምርጫዎችን ክፈት"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Open public page"
-msgstr "ይፋዊ ገጹን ይክፈቱ"
-
 #: src/features/career/workspace/prepare.tsx
 msgid "Open story"
 msgstr "ታሪኩን ክፈት"
@@ -8092,6 +8137,10 @@ msgstr "የReactive Resume መተግበሪያን ይክፈቱ"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "መርሐ ግብሩን ክፈት"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Open web page"
+msgstr "ድረ-ገጹን ክፈት"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/today.tsx
@@ -8310,16 +8359,15 @@ msgstr "ፓስኪዎች"
 
 #. Authentication provider display name in account settings
 #. Label for password input on login form
-#. Label for password input on protected resume access form
 #. Label for password input on registration form
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/share.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/features/settings/account/auth-hooks.ts
 #: src/features/settings/account/security.tsx
 msgid "Password"
@@ -8329,7 +8377,7 @@ msgstr "የይለፍ ቃል"
 msgid "Password changed"
 msgstr "የይለፍ ቃል ተቀይሯል"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "የይለፍ ቃል ተወግዷል"
 
@@ -8337,7 +8385,7 @@ msgstr "የይለፍ ቃል ተወግዷል"
 msgid "Password reset. Sign in with your new password."
 msgstr "የይለፍ ቃል ዳግም ተጀምሯል። በአዲሱ የይለፍ ቃልዎ ይግቡ።"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "የይለፍ ቃል ተዘጋጅቷል"
 
@@ -8454,6 +8502,7 @@ msgstr "ፐርሲያንኛ"
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
+#: src/features/resume/share/web-page-preview.tsx
 msgid "Phone"
 msgstr "ስልክ"
 
@@ -8723,6 +8772,10 @@ msgstr "ለመክፈት <0>Enter</0>ን ይጫኑ"
 msgid "Preview {name} sample PDF"
 msgstr "ቅድመ ዕይታ {name} ናሙና PDF"
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Preview size"
+msgstr "የቅድመ እይታ መጠን"
+
 #. placeholder {0}: templates[previewTemplate].name
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
@@ -8745,6 +8798,10 @@ msgstr "ያለፈው ወር"
 msgid "Primary color"
 msgstr "ዋና ቀለም"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Primary resume"
+msgstr "ዋና የስራ ልምድ ማስረጃ"
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Print"
 msgstr "አትም"
@@ -8753,9 +8810,9 @@ msgstr "አትም"
 msgid "Print or export the form to a flat PDF before sending it."
 msgstr "ከመላክዎ በፊት ቅጹን ወደ ጠፍጣፋ PDF ያትሙ ወይም ወደ ውጭ ይላኩ።"
 
-#: src/features/resume/public/public-resume.tsx
-msgid "Printing is turned off for this resume."
-msgstr "ለዚህ የትምህርት ማስረጃ ማተም ጠፍቷል።"
+#: src/features/resume/share/share-panel.tsx
+msgid "Privacy"
+msgstr "ግላዊነት"
 
 #: src/features/homepage/footer.tsx
 msgid "Privacy policy"
@@ -8858,7 +8915,7 @@ msgstr "አቅራቢ"
 msgid "Public"
 msgstr "ይፋዊ"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Public link"
 msgstr "የህዝብ ግንኙነት"
 
@@ -8873,6 +8930,26 @@ msgstr "ይፋዊ፣ በይለፍ ቃል"
 #: src/libs/resume/section.tsx
 msgid "Publications"
 msgstr "ህትመቶች"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish"
+msgstr "ይፋ አድርግ"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish it to share a link that opens on any screen. Only you can see it until then."
+msgstr "በማንኛውም ስክሪን ላይ የሚከፈት አገናኝ ለማጋራት ይፋ ያድርጉት። እስከዚያ ድረስ ማየት የሚችሉት እርስዎ ብቻ ነዎት።"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page first."
+msgstr "መጀመሪያ ድረ-ገጹን ይፋ ያድርጉ።"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted."
+msgstr "እይታዎችንና ውርዶችን ለመቁጠር ድረ-ገጹን ይፋ ያድርጉ። ቆጠራዎቹ ስም-አልባ ናቸው፣ የፍለጋ ሞተሮችም አይቆጠሩም።"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link and custom domain."
+msgstr "ይህን የስራ ልምድ ማስረጃ በአጭር አገናኝዎ እና በራስዎ ጎራ ለመክፈት ይፋ ያድርጉት።"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Publisher"
@@ -8894,11 +8971,11 @@ msgstr "ሁሉንም በ<0>አንድ ገጽ ያስቀምጡ።</0>"
 msgid "Put the caret in a line to improve it"
 msgstr "ለማሻሻል እንክብካቤውን በመስመር ላይ ያድርጉት"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code"
 msgstr "QR ኮድ"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code for {url}"
 msgstr "የQR ኮድ ለ{url}"
 
@@ -9209,7 +9286,7 @@ msgstr "መልማይ"
 msgid "Recruiter reply"
 msgstr "የቀጣሪ ምላሽ"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "ቀጣሪዎች ይህን ስም ያያሉ። የእርስዎ ስም እና \"የሽፋን ደብዳቤ\" በደንብ ይሰራል።"
 
@@ -9335,6 +9412,7 @@ msgstr "ከርቀት"
 msgid "Remote, Hybrid, a city…"
 msgstr "ርቀት, ሃይብሪድ, ከተማ…"
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "አስወግድ"
@@ -9383,7 +9461,7 @@ msgstr "ፋይል አስወግድ"
 msgid "Remove passkey"
 msgstr "የይለፍ ቁልፉን አስወግድ"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove password"
 msgstr "የይለፍ ቃሉን አስወግድ"
 
@@ -9409,7 +9487,7 @@ msgstr "ሚናን ያስወግዱ"
 msgid "Remove tag"
 msgstr "መለያ አስወግድ"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "የይለፍ ቃሉ ይወገድ?"
 
@@ -9491,7 +9569,7 @@ msgstr "ምላሹ ተቀድቷል"
 msgid "Report a bug"
 msgstr "ስህተት ያሳውቁ"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Require a password"
 msgstr "የይለፍ ቃል ጠይቅ"
 
@@ -9582,8 +9660,6 @@ msgstr "የሥራ ልምድ ማስረጃ"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-card.tsx
-#: src/routes/_home/index.tsx
-#: src/routes/$username/$slug.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "የስራ ልምድ ማስረጃ"
@@ -9600,7 +9676,7 @@ msgstr "የሥራ ልምድ ማስረጃ · የተላከው ስሪት"
 msgid "Resume (optional)"
 msgstr "የትምህርት ታሪክ (አማራጭ)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "ሪሱሜ + ደብዳቤ"
 
@@ -10038,8 +10114,8 @@ msgstr "ወደ እውቀት ተቀምጧል፣ ለዚህ ማመልከቻ ብቻ 
 msgid "Saved to Saved · Practice"
 msgstr "ወደ «ተቀምጧል» ተቀምጧል · ልምምድ"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/link-tab.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "{0}/{username}/{slug} በማስቀመጥ ላይ… ኮፒ ከተቀመጠ በኋላ ይገኛል።"
 
@@ -10136,6 +10212,10 @@ msgstr "ፍለጋ ርዕሶችን፣ መለያዎችን እና የተገናኙ �
 #: src/features/documents/documents-page.tsx
 msgid "Search documents"
 msgstr "ሰነዶችን ይፈልጉ"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off."
+msgstr "እንደ Google ያሉ የፍለጋ ሞተሮች ድረ-ገጽዎን ሊዘረዝሩ ይችላሉ። ለመታየት፣ ወይም ይህን ካጠፉ በኋላ ለመጥፋት ሳምንታት ሊወስድ ይችላል።"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Search facts"
@@ -10441,29 +10521,22 @@ msgstr "የጥላ ወፍራምነት"
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Share"
 msgstr "አጋራ"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
-msgid "Share & export"
-msgstr "አጋራ እና ወደ ውጪ ላክ"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "ይፋዊ አገናኝ ያጋሩ፣ የይለፍ ቃል ያክሉ ወይም ግላዊ ያድርጉት። ከ 3 የታይነት አማራጮች ይምረጡ። ወደ PDF ወይም Word ይላኩ ወይም ሁሉንም ውሂብዎን እንደ JSON ከእርስዎ ጋር ይውሰዱት።"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-msgid "Share public resume"
-msgstr "ይፋዊ የትምህርት ታሪክ አጋራ"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "ክፍሎችን ያጋሩ"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "በ… አጋራ"
 
@@ -10497,6 +10570,10 @@ msgstr "አጭር እና ቀጥተኛ። የሥራ ማስታወቂያው አጭ�
 msgid "Short and polite, for the recruiter"
 msgstr "አጭር እና ጨዋ፣ ለቀጣሪው"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link and domain"
+msgstr "አጭር አገናኝ እና ጎራ"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "ይህን እንደቀረበ ምልክት ከማድረግዎ በፊት ጥያቄዎችን ወደ 2,000 ቁምፊዎች፣ መልሶችን ደግሞ ወደ 6,000 ቁምፊዎች ያሳጥሩ።"
@@ -10508,6 +10585,10 @@ msgstr "አጠር ያለ"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Show"
 msgstr "አሳይ"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show “Made with Reactive Resume”"
+msgstr "“በReactive Resume የተሰራ” አሳይ"
 
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #. placeholder {0}: visible.length - shown.length
@@ -10544,6 +10625,10 @@ msgstr "ርዕስ አሳይ"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Show icons"
 msgstr "አዶዎችን አሳይ"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show in search engines"
+msgstr "በፍለጋ ሞተሮች ውስጥ አሳይ"
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -10679,7 +10764,7 @@ msgstr "በመውጣት ላይ…"
 msgid "Signing up..."
 msgstr "በመመዝገብ ላይ…"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "since last view"
 msgstr "ካለፈው እይታ ጀምሮ"
 
@@ -11479,7 +11564,7 @@ msgstr "ያ ፋይል ለመፈተሽ በጣም ትልቅ ነው። PDFs እስ�
 msgid "That link couldn't be read. Paste the posting text instead."
 msgstr "ያ አገናኝ ሊነበብ አልቻለም። በምትኩ የሥራ ማስታወቂያውን ጽሑፍ ይለጥፉ።"
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "That password isn't correct. Check it with the resume owner and try again."
 msgstr "ያ የይለፍ ቃል ትክክል አይደለም። ከየስራ ልምድ ማስረጃው ባለቤት ጋር ያረጋግጡ እና እንደገና ይሞክሩ።"
 
@@ -11513,7 +11598,7 @@ msgstr "የ13 ነጥብ የአክቲቬሽን ጭማሪ። እውቀት በፊ�
 
 #: src/libs/error-message.ts
 msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "አድራሻው በነጠላ ሰረዞች የተለዩ የላቲን ትናንሽ ፊደላትን እና ቁጥሮችን ብቻ መያዝ አለበት።"
+msgstr "አድራሻው በነጠላ ሰረዞች (-) የተለዩ የላቲን ትናንሽ ፊደላትን እና ቁጥሮችን ብቻ መያዝ አለበት።"
 
 #: src/features/homepage/faq.tsx
 msgid "The app is translated into {languages} languages by volunteers, and a resume can be written in any language, including right-to-left scripts like Arabic and Hebrew."
@@ -11591,7 +11676,7 @@ msgstr "ሰላምታው ስሙን ይከተላል።"
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "ቁልፉ በአገልጋዩ ላይ ተመስጥሯል እና እንደገና አይታይም። ማስቀመጥ ግንኙነቱን ይፈትሻል።"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "ደብዳቤው እንዳለ"
 
@@ -11690,6 +11775,10 @@ msgstr "የአቅራቢው ምላሽ ሊረጋገጥ አልቻለም። እን�
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "ምክንያቱ ለግንዛቤዎች ተቀምጧል። የተገናኙ ሰነዶች አልተነኩም።"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "The records aren't visible yet. Check again later."
+msgstr "መዝገቦቹ ገና አይታዩም። ቆይተው እንደገና ያረጋግጡ።"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11914,7 +12003,7 @@ msgstr "ይህ XFA ቅጽ ነው፣ ስለዚህ አብዛኞቹ ሶፍትዌሮ
 msgid "This is not a common resume page size."
 msgstr "ይህ የተለመደ የስራ ልምድ ማስረጃ ገጽ መጠን አይደለም።"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "ይህ ደብዳቤ እና \"{resumeName}\" እንደ ሁለት PDFs, እንዲዛመድ የተሰየመ."
 
@@ -11974,7 +12063,7 @@ msgstr "ይህ የስራ ልምድ ማስረጃ ተቆልፏል። ለውጦች�
 msgid "This resume is long."
 msgstr "ይህ የስራ ልምድ ማስረጃ ረዥም ነው።"
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume is password-protected"
 msgstr "ይህ የስራ ልምድ ማስረጃ በይለፍ ቃል የተጠበቀ ነው"
 
@@ -11982,7 +12071,7 @@ msgstr "ይህ የስራ ልምድ ማስረጃ በይለፍ ቃል የተጠበ
 msgid "This resume isn't linked to an application yet."
 msgstr "ይህ የሥራ ልምድ ማስረጃ እስካሁን ከሥራ ማመልከቻ ጋር አልተገናኘም።"
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
 msgstr "ይህ የትምህርት ማስረጃ በአሁኑ ጊዜ አልተጋራም።"
 
@@ -12097,7 +12186,7 @@ msgid "To"
 msgstr "ለ"
 
 #: src/features/applications/components/calendar-view.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "ዛሬ"
@@ -12193,7 +12282,7 @@ msgid "Trust this device for 30 days"
 msgstr "ይህን መሣሪያ ለ30 ቀናት እመን"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "{0} ይሞክሩ"
 
@@ -12253,13 +12342,9 @@ msgstr "ባለ ሁለት ደረጃ ማረጋገጫን አጥፋ"
 msgid "Turn off two-step verification?"
 msgstr "ባለ ሁለት ደረጃ ማረጋገጫ ይጥፋ?"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "አድራሻ ለመምረጥ ሊንኩን ያብሩ።"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Turn on the public link to count views and downloads. Counts are anonymous."
-msgstr "እይታዎችን እና ማውረዶችን ለመቁጠር የህዝብ ማገናኛን ያብሩ። የአጠቃቀም ብዛት የማይታወቅ ነው።"
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Turn on two-step verification"
@@ -12424,11 +12509,10 @@ msgstr "ግንኙነት አቋርጥ"
 msgid "Unlink this application"
 msgstr "ይህን የስራ ማመልከቻ ግንኙነት አቋርጥ"
 
-#. Primary action button label to unlock a password-protected resume
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Unlock"
 msgstr "ቁልፍ ክፈት"
 
@@ -12545,7 +12629,6 @@ msgstr "ከ 3 እስከ 64 ንዑስ ሆሄያት፣ ቁጥሮች፣ ነጥቦ�
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
-#: src/features/auth/pages/resume-password.tsx
 msgid "Use 64 characters or fewer."
 msgstr "64 ወይም ከዚያ ያነሱ ቁምፊዎችን ይጠቀሙ።"
 
@@ -12583,7 +12666,8 @@ msgstr "ቢያንስ 8 ቁምፊዎችን ይጠቀሙ።"
 msgid "Use at least 9pt."
 msgstr "ቢያንስ 9pt ይጠቀሙ።"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
+#: src/libs/error-message.ts
 msgid "Use at most 64 characters."
 msgstr "ቢበዛ 64 ቁምፊዎችን ይጠቀሙ።"
 
@@ -12612,9 +12696,9 @@ msgstr "ለሁሉም ማመልከቻዎች ተጠቀም"
 msgid "Use in coaching: {excerpt}"
 msgstr "በስልጠና ተጠቀም፦ {excerpt}"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
-msgstr "ትንሽ ሆሄያትን፣ ቁጥሮችን እና ነጠላ ሰረዞችን ተጠቀም።"
+msgstr "ትንሽ ሆሄያትን፣ ቁጥሮችን እና ነጠላ ሰረዞች (-)ን ተጠቀም።"
 
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Use my timezone"
@@ -12705,6 +12789,11 @@ msgstr "የተገናኘውን የሥራ ማመልከቻ ይጠቀማል"
 msgid "Uses the web search service set up in Settings. Results wait in Today for your review; applications and documents are never created for you."
 msgstr "በቅንብሮች ውስጥ የተዋቀረውን የድር ፍለጋ አገልግሎት ይጠቀማል። ውጤቶች እንዲገመግሟቸው በዛሬ ውስጥ ይጠብቃሉ፤ ማመልከቻዎች እና ሰነዶች ፈጽሞ በእርስዎ ምትክ አይፈጠሩም።"
 
+#. placeholder {0}: templates[template].name
+#: src/features/resume/share/share-panel.tsx
+msgid "Uses your {0} template and Design, and fits any screen. Change them in Design."
+msgstr "የእርስዎን {0} ቴምፕሌት እና ዲዛይን ይጠቀማል፣ በማንኛውም ስክሪን ላይም ይስማማል። በዲዛይን ውስጥ ይቀይሯቸው።"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Uses your AI provider's own web search where supported, and reads links with the built-in reader."
 msgstr "በሚደገፍበት ጊዜ የእርስዎን AI አቅራቢ የራሱን የድር ፍለጋ ይጠቀማል፣ እና አብሮ ከተሰራው አንባቢ ጋር አገናኞችን ያነባል።"
@@ -12763,10 +12852,6 @@ msgstr "ኮድ በማረጋገጥ ላይ…"
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Verifying code…"
 msgstr "የማረጋገጫ ኮድ…"
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Verifying password..."
-msgstr "የይለፍ ቃል በማረጋገጥ ላይ…"
 
 #: src/features/auth/pages/register.tsx
 msgid "Verifying your email confirms that you own this address."
@@ -12835,25 +12920,25 @@ msgstr "የሥራ ማስታወቂያውን ይመልከቱ"
 msgid "Viewing {0} · {1} · read-only"
 msgstr "{0} በመመልከት ላይ · {1} · ተነባቢ-ብቻ"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "views · 30 days"
 msgstr "እይታዎች · 30 ቀናት"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Views and downloads"
-msgstr "እይታዎች እና ውርዶች"
 
 #: src/features/homepage/share.tsx
 msgid "Visibility"
 msgstr "ታይነት"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
+msgid "Visitors"
+msgstr "ጎብኚዎች"
+
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors can download the PDF"
 msgstr "ጎብኚዎች PDF ማውረድ ይችላሉ።"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
-msgstr "ጎብኚዎች የትምህርት ማስረጃውን ከማየታቸው በፊት ይገባሉ። ለምታምናቸው ሰዎች ብቻ አጋራ።"
+msgstr "ጎብኚዎች የትምህርት ማስረጃውን ከማየታቸው በፊት የይለፍ ቃሉን ያስገባሉ። ለምታምናቸው ሰዎች ብቻ አጋራ።"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice settings"
@@ -12899,6 +12984,14 @@ msgstr "አዲስ የማረጋገጫ አገናኝ ወደ {0} ልከናል።"
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "የድር መዳረሻ"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Web page"
+msgstr "ድረ-ገጽ"
+
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Web page preview"
+msgstr "የድረ-ገጽ ቅድመ እይታ"
 
 #: src/features/career/coach.tsx
 msgid "Web research"
@@ -13321,7 +13414,7 @@ msgid "You"
 msgstr "አንተ"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "ይህንን ለ\"{0}\" አስቀድመው ተጠቀሙበት።"
 
@@ -13489,6 +13582,10 @@ msgstr "ቀኖችዎ በተለያዩ መንገዶች ተጽፈዋል።"
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "ዝርዝሮችዎ በመመዝገቢያው ላይ ተቀይረዋል። ደብዳቤውም ተዘምኗል።"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain"
+msgstr "ጎራዎ"
+
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your email address changed on the resume. The letter updated too."
 msgstr "የኢሜል አድራሻዎ በሪሱሜው ላይ ተቀይሯል። ደብዳቤውም ተዘምኗል።"
@@ -13500,6 +13597,10 @@ msgstr "የኢሜል አድራሻዎ በተለያዩ የጽሁፍ ቁርጥራ�
 #: src/features/auth/pages/error.tsx
 msgid "Your email address isn't verified with the provider. Verify it there, then try again."
 msgstr "የኢሜይል አድራሻዎ በአቅራቢው አልተረጋገጠም። እዚያ ያረጋግጡት፣ ከዚያም እንደገና ይሞክሩ።"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
+msgstr "ኢሜልዎ፣ ስልክዎ፣ አካባቢዎ እና ሌሎች የራስጌ ዝርዝሮች እንዲሁም የዋቢዎች ስልክ ቁጥሮች በድረ-ገጹ፣ በPDFው እና በፍለጋ ውጤቶች ውስጥ አይካተቱም።"
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -13602,9 +13703,13 @@ msgstr "ቅጂዎ ወደ ጽሑፍ ለመገልበጥ ወደ {0} ይሄዳል፣
 msgid "Your requirements"
 msgstr "የእርስዎ መስፈርቶች"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "የትምህርት ማስረጃዎ"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your resume as a web page"
+msgstr "የስራ ልምድ ማስረጃዎ እንደ ድረ-ገጽ"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Your resume has a photo"
@@ -13634,6 +13739,19 @@ msgstr "የመረጡት ፊደል አንዳንድ ቁምፊዎችን ማሳየ�
 msgid "Your server provides search for Applications and the assistant. Connect a service to read pages the built-in reader can't."
 msgstr "አገልጋይዎ በማመልከቻዎች ክፍል እና በረዳት ውስጥ የድር ፍለጋን ያቀርባል። አብሮገነብ አንባቢ ማንበብ የማይችላቸውን ድረ-ገጾች ለማንበብ አገልግሎትን ያገናኙ።"
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open “{0}”."
+msgstr "አጭር አገናኝዎ እና የራስዎ ጎራ “{0}”ን ይከፍታሉ።"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open this resume."
+msgstr "አጭር አገናኝዎ እና የራስዎ ጎራ ይህን የስራ ልምድ ማስረጃ ይከፍታሉ።"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
+msgstr "አጭር አገናኝዎ እና የራስዎ ጎራ እንደገና ይፋ እስኪያደርጉት ድረስ ይህ የስራ ልምድ ማስረጃ እንዳልተጋራ ያሳያሉ።"
+
 #: src/features/career/coach.tsx
 msgid "your stories"
 msgstr "ታሪኮችዎ"
@@ -13649,6 +13767,10 @@ msgstr "ተራህ"
 #: src/features/career/workspace/prepare.tsx
 msgid "Your two-minute introduction"
 msgstr "የሁለት ደቂቃ መግቢያዎ"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your web page is live"
+msgstr "ድረ-ገጽዎ ይፋ ሆኗል"
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your work is lost when you sign out or the session ends. Create an account or sign in to keep your resumes, cover letters and applications."

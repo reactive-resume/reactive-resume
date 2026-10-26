@@ -5,11 +5,9 @@ import type { SelectResultFields } from "drizzle-orm/query-builders/select.types
 import { and, desc, eq, gt, inArray, isNull, like, or, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
-import { isValidSlug, MAX_SLUG_LENGTH, SLUG_PATTERN } from "@reactive-resume/schema/resume/slug";
+import { isValidSlug, MAX_SLUG_LENGTH } from "@reactive-resume/schema/resume/slug";
 import { slugify } from "@reactive-resume/utils/slug";
 import { ownerIsNotBanned } from "./access-policy";
-
-export { isValidSlug, MAX_SLUG_LENGTH, SLUG_PATTERN };
 
 // After a rename the old address keeps working this long.
 const REDIRECT_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000;
@@ -23,7 +21,7 @@ function pickFreeSlug(stem: string, taken: ReadonlySet<string>) {
 }
 
 // Slugs cannot exceed 64 chars. Keep base stem short enough so numerical suffixes stay within 64.
-export const MAX_STEM_LENGTH = 56;
+const MAX_STEM_LENGTH = 56;
 
 /** A slug made from `name` that none of the user's resumes uses yet. */
 export async function findFreeSlug(client: DbOrTx, userId: string, name: string) {
@@ -120,11 +118,17 @@ export function matchesSlug(slug: string) {
 }
 
 /**
- * The resume at `username`/`slug` (current slug or unexpired redirect), outside Trash, with an unbanned owner and
- * meeting any `extra` conditions. A resume's current slug wins over another's redirect.
+ * Which resume a public address names: a slug (current, or a previous one whose redirect hasn't expired), an account's
+ * primary resume, or an ID.
  */
-export async function findResumeBySlug<TColumns extends SelectedFields>(
-	input: { username: string; slug: string },
+export type ResumeMatch = { username: string; slug: string } | { username: string; primary: true } | { id: string };
+
+/**
+ * The resume `match` names, outside Trash, with an unbanned owner and meeting any `extra` conditions. A resume's
+ * current slug wins over another's redirect.
+ */
+export async function findResume<TColumns extends SelectedFields>(
+	match: ResumeMatch,
 	columns: TColumns,
 	...extra: (SQL | undefined)[]
 ): Promise<SelectResultFields<TColumns> | undefined> {
@@ -135,14 +139,16 @@ export async function findResumeBySlug<TColumns extends SelectedFields>(
 		.innerJoin(schema.user, eq(schema.resume.userId, schema.user.id))
 		.where(
 			and(
-				matchesSlug(input.slug),
-				eq(schema.user.username, input.username),
+				"slug" in match ? matchesSlug(match.slug) : undefined,
+				// Usernames are stored lowercase, so `/Jane` opens the same page as `/jane`.
+				"username" in match ? eq(schema.user.username, match.username.toLowerCase()) : eq(schema.resume.id, match.id),
+				"primary" in match ? eq(schema.resume.isPrimary, true) : undefined,
 				isNull(schema.resume.trashedAt),
 				ownerIsNotBanned(),
 				...extra,
 			),
 		)
-		.orderBy(desc(sql`${schema.resume.slug} = ${input.slug}`))
+		.orderBy(...("slug" in match ? [desc(sql`${schema.resume.slug} = ${match.slug}`)] : []))
 		.limit(1);
 	return resume as SelectResultFields<TColumns> | undefined;
 }

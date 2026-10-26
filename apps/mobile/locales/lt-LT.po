@@ -28,6 +28,11 @@ msgstr "„{0}“ paslėptas"
 msgid "“{0}” moved to Trash"
 msgstr "„{0}“ perkeltas į šiukšliadėžę"
 
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr "„{0}“ nebebus jūsų pagrindinis gyvenimo aprašymas."
+
 #. placeholder {0}: purge[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
@@ -609,6 +614,10 @@ msgstr "{skipped, plural, one {# pakeitimo nepavyko įterpti: tekstas pasikeitė
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# istorija} few {# istorijos} many {# istorijos} other {# istorijų}}"
 
+#: src/features/share/web-page.tsx
+msgid "{suggestion} may be available. Get yours here →"
+msgstr "{suggestion} gali būti laisvas. Įsigykite savo čia →"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
 msgstr "{summary}. Atidaroma skiltyje Karjera → Pasiūlymai."
@@ -1076,6 +1085,10 @@ msgstr "Pridėkite domeną po @, pvz., {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Pridėkite domeno pabaigą, pvz., {domain}.com"
 
+#: src/features/share/web-page.tsx
+msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
+msgstr "Pridėkite šiuos įrašus ten, kur valdote domeną, tada patikrinkite. Kol pakeitimai pasieks visus, gali praeiti kelios valandos."
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Add to calendar"
@@ -1371,7 +1384,7 @@ msgstr "Bet koks"
 msgid "Any font, in Advanced"
 msgstr "Bet koks šriftas, esantis Išplėstinėse"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Visi, turintys nuorodą, galės peržiūrėti jūsų gyvenimo aprašymą."
 
@@ -1792,10 +1805,6 @@ msgstr "Mažiau nei jūsų minimalus bazinis atlyginimas."
 msgid "Bengali"
 msgstr "Bengalų"
 
-#: src/features/public/public-resume.tsx
-msgid "Block this author"
-msgstr "Blokuoti šį autorių"
-
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Lenta"
@@ -1988,7 +1997,7 @@ msgstr "Keisti laiko juostą"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Tiesiogiai pakeitė gyvenimo aprašymą (ankstesnis pokalbis)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Pakeitimų išsaugoti nepavyko. Bandyti dar kartą prieš tęsdami."
 
@@ -2023,6 +2032,10 @@ msgstr "Tikrinti dar kartą"
 #: src/features/ats-checker/checker.tsx
 msgid "Check another file"
 msgstr "Patikrinkite kitą failą"
+
+#: src/features/share/web-page.tsx
+msgid "Check DNS"
+msgstr "Tikrinti DNS"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Check every claim, date and result against your experience."
@@ -2241,8 +2254,7 @@ msgstr "Išvalo jo įrašus; sekcija lieka. Galite anuliuoti."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/public/public-resume.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Uždaryti"
 
@@ -2360,7 +2372,7 @@ msgstr "Suspauskite arba pašalinkite didelius vaizdus, kad įkėlimas būtų gr
 msgid "Confirm applied"
 msgstr "Patvirtinti pateikimą"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Patvirtinkite slaptažodį"
 
@@ -2377,6 +2389,7 @@ msgid "Confirm the time with {contact} before adding a new interview."
 msgstr "Prieš pridėdami naują pokalbį, suderinkite laiką su kontaktiniu asmeniu {contact}."
 
 #: src/features/assistant/provider.tsx
+#: src/features/share/web-page.tsx
 msgid "Connect"
 msgstr "Prisijungti"
 
@@ -2419,6 +2432,10 @@ msgstr "Susiekite rašymo, darbo paieškos ir darbo įrankius su savo gyvenimo a
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "Prisijungta · {milliseconds} ms"
+
+#: src/features/share/web-page.tsx
+msgid "Connected. Your domain opens your primary resume."
+msgstr "Prijungtas. Jūsų domenas atveria pagrindinį gyvenimo aprašymą."
 
 #: src/features/workspace/parts.tsx
 msgid "Connecting the dots"
@@ -2620,10 +2637,6 @@ msgstr "Nepavyko ištrinti pokalbio. Bandykite dar kartą."
 msgid "Couldn't delete the interview. Try again."
 msgstr "Nepavyko ištrinti pokalbio. Bandykite dar kartą."
 
-#: src/features/public/public-resume.tsx
-msgid "Couldn't download the PDF. Try again."
-msgstr "Nepavyko atsisiųsti PDF. Bandykite dar kartą."
-
 #: src/features/settings/export.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't export. Try again."
@@ -2788,10 +2801,6 @@ msgstr "Nepavyko nuskaityti eksportuoto PDF."
 msgid "Couldn't read this page: {0}"
 msgstr "Nepavyko perskaityti šio puslapio: {0}"
 
-#: src/features/public/public-resume.tsx
-msgid "Couldn't read your blocked-author settings."
-msgstr "Nepavyko perskaityti užblokuoto autoriaus nustatymų."
-
 #: src/features/application-detail/sheets.tsx
 msgid "Couldn't record submission. Try again."
 msgstr "Nepavyko įrašyti pateikimo. Bandykite dar kartą."
@@ -2867,10 +2876,6 @@ msgstr "Nepavyko išsaugoti temos. Bandykite dar kartą."
 #: app/(tabs)/settings/preferences.tsx
 msgid "Couldn't save the timezone. Try again."
 msgstr "Nepavyko išsaugoti laiko juostos. Bandykite dar kartą."
-
-#: src/features/public/public-resume.tsx
-msgid "Couldn't save your blocked-author setting. Try again."
-msgstr "Nepavyko išsaugoti užblokuoto autoriaus nustatymo. Bandykite dar kartą."
 
 #: src/features/letters/write.tsx
 msgid "Couldn't save your changes, so drafting didn't start. Nothing on the page changed."
@@ -2990,10 +2995,6 @@ msgstr "Nepavyko įkelti nuotraukos."
 #: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Nepavyko įkelti nuotraukos. Bandykite dar kartą."
-
-#: src/features/public/public-resume.tsx
-msgid "Couldn't verify the password. Try again."
-msgstr "Nepavyko patikrinti slaptažodžio. Bandykite dar kartą."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -3475,6 +3476,10 @@ msgstr "Šio darbo dokumentai"
 msgid "Documents you move here stay for 30 days."
 msgstr "Čia perkelti dokumentai lieka 30 dienų."
 
+#: src/features/share/web-page.tsx
+msgid "Domain connected"
+msgstr "Domenas prijungtas"
+
 #. placeholder {0}: document.name
 #: src/features/assistant/assistant-screen.tsx
 msgid "Don't send {0}"
@@ -3513,8 +3518,9 @@ msgid "Double-checking"
 msgstr "Tikrinama dar kartą"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/shell/builder-chrome.tsx
 msgid "Download"
 msgstr "Atsisiųsti"
 
@@ -3523,6 +3529,11 @@ msgstr "Atsisiųsti"
 #: src/features/share/download.tsx
 msgid "Download {0}"
 msgstr "Atsisiųskite {0}"
+
+#: src/features/share/export-screen.tsx
+#: src/shell/builder-chrome.tsx
+msgid "Download & history"
+msgstr "Atsisiuntimai ir istorija"
 
 #: src/features/letters/share.tsx
 msgid "Download both PDFs"
@@ -3540,10 +3551,6 @@ msgstr "Atsisiuntimas atveria sistemos bendrinimo meniu. Pasirinkite saugyklos t
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "Atsisiuntimas atidaro sistemos bendrinimo lapą. Norėdami išsaugoti failą, pasirinkite saugyklos teikėją. Susietas motyvacinis laiškas atidaromas kaip antrasis failas."
 
-#: src/features/public/public-resume.tsx
-msgid "Download PDF"
-msgstr "Atsisiųsti PDF"
-
 #: src/features/letters/share.tsx
 msgid "Download PDF instead"
 msgstr "Vietoj to atsisiųskite PDF"
@@ -3551,10 +3558,6 @@ msgstr "Vietoj to atsisiųskite PDF"
 #: src/features/share/link.tsx
 msgid "Download totals can include repeat clicks."
 msgstr "Į bendrą atsisiuntimų skaičių gali būti įtraukti pakartotiniai paspaudimai."
-
-#: src/features/public/public-resume.tsx
-msgid "Downloading…"
-msgstr "Atsisiunčiama…"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -3844,10 +3847,6 @@ msgstr "Įveskite bet kokį modelio ID, kurį palaiko jūsų galutinis taškas."
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
 msgstr "Įveskite adresą, kuriuo atidarote Reactive Resume naršyklėje. Prieš tęsiant programa patikrina, ar tai Reactive Resume serveris, leidžiantis prisijungti prie programos."
 
-#: src/features/public/public-resume.tsx
-msgid "Enter the password the resume owner shared with you."
-msgstr "Įveskite slaptažodį, kurį jums pateikė gyvenimo aprašymo savininkas."
-
 #: src/features/write/entry-screen.tsx
 msgid "Entry"
 msgstr "Įrašas"
@@ -4127,6 +4126,11 @@ msgstr "Šrifto storiai"
 msgid "For"
 msgstr "Už"
 
+#. placeholder {0}: current.target
+#: src/features/share/web-page.tsx
+msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
+msgstr "Šakniniam domenui, pavyzdžiui, example.com, vietoj CNAME naudokite A ir AAAA įrašus su {0} adresais."
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "For example, Sent to Lumen"
@@ -4369,6 +4373,10 @@ msgstr "Paslėpti terminai grįžta"
 msgid "Hide {title} from the page"
 msgstr "Paslėpti {title} puslapyje"
 
+#: src/features/share/web-page.tsx
+msgid "Hide contact details"
+msgstr "Slėpti kontaktinius duomenis"
+
 #: src/features/applications/add-sheet.tsx
 msgid "Hide details"
 msgstr "Slėpti detales"
@@ -4384,10 +4392,6 @@ msgstr "Slėpti raktą"
 #: app/(tabs)/settings/licences.tsx
 msgid "Hide license"
 msgstr "Slėpti licenciją"
-
-#: src/features/public/public-resume.tsx
-msgid "Hide password"
-msgstr "Paslėpti slaptažodį"
 
 #: src/features/career/today.tsx
 msgid "Hide read"
@@ -4412,7 +4416,7 @@ msgstr "Darbo komanda"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Istorija"
 
@@ -4515,10 +4519,6 @@ msgstr "Piktogramos kontaktinėje linijoje"
 #: src/features/ats-checker/messages.ts
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "Jei tai atsirado iš skenuotos kopijos, tai natūralu. Priešingu atveju pašalinkite – darbdaviai tai vertina kaip raktažodžių prikimšimą."
-
-#: src/features/public/public-resume.tsx
-msgid "If someone sent you this link, ask them for a new one."
-msgstr "Jei kas nors jums atsiuntė šią nuorodą, paprašykite naujos."
 
 #. placeholder {0}: reader ?? provider.provider
 #: src/api/ai-consent.ts
@@ -5117,7 +5117,6 @@ msgstr "Skaitant taip arti eilutės gali eiti kartu. Naudokite bent {minimum}."
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
-#: src/features/share/screen.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -5136,6 +5135,7 @@ msgid "Link an application or paste a posting to compare its terms."
 msgstr "Susiekite darbo paraišką arba įklijuokite darbo skelbimą, kad palygintumėte jo sąlygas."
 
 #: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Link copied"
 msgstr "Nuoroda nukopijuota"
 
@@ -5272,7 +5272,6 @@ msgstr "Įkeliamas jūsų viešasis adresas…"
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
 msgid "Loading…"
@@ -5334,10 +5333,6 @@ msgstr "Atrodo lygiai kaip puslapis. Naudokite jį darbo prašymams ir el."
 msgid "Lower the design sheet"
 msgstr "Nuleiskite dizaino lapą"
 
-#: src/features/public/public-resume.tsx
-msgid "Made with Reactive Resume, free and open source"
-msgstr "Pagaminta su Reactive Resume, nemokama ir atviro kodo"
-
 #. Layout editor column label for the primary content area
 #: src/features/design/layout-screen.tsx
 msgid "Main"
@@ -5356,6 +5351,10 @@ msgstr "Padarykite tai konkrečiau"
 msgid "Make it shorter"
 msgstr "Sutrumpinkite"
 
+#: src/features/share/web-page.tsx
+msgid "Make primary"
+msgstr "Padaryti pagrindiniu"
+
 #: src/features/career/today.tsx
 msgid "Make room for the next step."
 msgstr "Padarykite vietos kitam žingsniui."
@@ -5371,6 +5370,10 @@ msgstr "Padarykite, kad matomas tekstas ir nuorodos adresas sutaptų."
 #: src/features/ats-checker/messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "Padarykite juos akivaizdžiai didesnius, paryškintus arba didžiosiomis raidėmis."
+
+#: src/features/share/web-page.tsx
+msgid "Make this your primary resume?"
+msgstr "Padaryti šį gyvenimo aprašymą pagrindiniu?"
 
 #: src/features/settings/locale-names.ts
 msgid "Malay"
@@ -6105,6 +6108,10 @@ msgstr "Nepritaikyta"
 msgid "Not applied yet"
 msgstr "Dar nepateikta"
 
+#: src/features/share/web-page.tsx
+msgid "Not available while the resume needs a password."
+msgstr "Nepasiekiama, kol gyvenimo aprašymui reikia slaptažodžio."
+
 #: src/features/career/today.tsx
 msgid "Not for me"
 msgstr "Ne man"
@@ -6232,6 +6239,10 @@ msgstr "Odijų"
 msgid "Off"
 msgstr "Išjungta"
 
+#: src/features/share/web-page.tsx
+msgid "Off. Let recruiters find you on Google by turning this on."
+msgstr "Išjungta. Įjunkite, kad atrankos specialistai galėtų jus rasti Google."
+
 #: src/features/share/link.tsx
 msgid "Off. Only you can see this resume."
 msgstr "Išjungta. Tik jūs galite matyti šį gyvenimo aprašymą."
@@ -6278,8 +6289,8 @@ msgid "On"
 msgstr "Įjungta"
 
 #: src/features/share/link.tsx
-msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
-msgstr "Įjungta. Visi, turintys nuorodą, gali peržiūrėti. Jis nėra įtrauktas į sąrašą arba neindeksuojamas paieškos sistemų."
+msgid "On. Anyone with the link can see your web page."
+msgstr "Įjungta. Jūsų tinklalapį gali matyti visi, kas turi nuorodą."
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Once a round is scheduled, Prepare builds a timed plan, your opening and the questions to ask."
@@ -6393,10 +6404,6 @@ msgstr "Atidaryti pasiūlymuose"
 msgid "Open letter"
 msgstr "Atverti laišką"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Atidarykite viešąjį puslapį"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Atviri klausimai"
@@ -6428,6 +6435,10 @@ msgstr "Atidarykite sąrašą"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Atidaryti tvarkaraštį"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Atidaryti tinklalapį"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6607,13 +6618,12 @@ msgid "Passkeys"
 msgstr "Passkeys"
 
 #: app/(tabs)/settings/account.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Slaptažodis"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Slaptažodžiai nesutampa."
 
@@ -6941,6 +6951,10 @@ msgstr "Paspauskite ir palaikykite, kad peržiūrėtumėte jį puslapyje."
 msgid "Press and hold, then drag to another column or page."
 msgstr "Paspauskite ir palaikykite, tada vilkite į kitą stulpelį arba puslapį."
 
+#: src/features/share/web-page.tsx
+msgid "Preview web page"
+msgstr "Peržiūrėti tinklalapį"
+
 #. placeholder {0}: templateName(template)
 #: src/features/design/preview-caption.tsx
 msgid "Previewing {0} · tap to apply"
@@ -6970,6 +6984,10 @@ msgstr "Ankstesni darbo srities skirtukai"
 msgid "Primary color"
 msgstr "Pagrindinė spalva"
 
+#: src/features/share/web-page.tsx
+msgid "Primary resume"
+msgstr "Pagrindinis gyvenimo aprašymas"
+
 #: src/features/document-menu/index.tsx
 #: src/features/share/download.tsx
 msgid "Print"
@@ -6978,6 +6996,10 @@ msgstr "Spausdinti"
 #: src/features/ats-checker/messages.ts
 msgid "Print or export the form to a flat PDF before sending it."
 msgstr "Prieš siųsdami formą, atspausdinkite arba eksportuokite ją kaip suploštintą PDF."
+
+#: src/features/share/web-page.tsx
+msgid "Privacy"
+msgstr "Privatumas"
 
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
@@ -7046,7 +7068,6 @@ msgstr "Teikėjo saugojimas ir naudojimas vadovaujasi jo privatumo politika. Ats
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
-#: src/shell/builder-chrome.tsx
 msgid "Public"
 msgstr "Viešas"
 
@@ -7073,6 +7094,18 @@ msgstr "Viešas, su slaptažodžiu"
 #: src/features/write/fields.ts
 msgid "Publications"
 msgstr "Publikacijos"
+
+#: src/features/share/web-page.tsx
+msgid "Publish the web page first."
+msgstr "Pirmiausia paskelbkite tinklalapį."
+
+#: src/features/share/link.tsx
+msgid "Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted."
+msgstr "Paskelbkite tinklalapį, kad būtų skaičiuojamos peržiūros ir atsisiuntimai. Skaičiai anonimiški, o paieškos sistemos neskaičiuojamos."
+
+#: src/features/share/web-page.tsx
+msgid "Publish this resume to open it at your short link and custom domain."
+msgstr "Paskelbkite šį gyvenimo aprašymą, kad jis atsidarytų jūsų trumpąja nuoroda ir savu domenu."
 
 #: src/features/write/fields.ts
 msgid "Publisher"
@@ -7408,6 +7441,7 @@ msgstr "Priminimai rodomi čia. El. pašto kopijos neprivalomos, joms reikia pat
 msgid "Remote"
 msgstr "Nuotoliniu būdu"
 
+#: src/features/share/web-page.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "Pašalinti"
@@ -7437,7 +7471,7 @@ msgstr "Pašalinti lauką"
 msgid "Remove file"
 msgstr "Pašalinti failą"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Pašalinti slaptažodį"
 
@@ -7459,7 +7493,7 @@ msgstr "Pašalinti klausimą"
 msgid "Remove role"
 msgstr "Pašalinti vaidmenį"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Pašalinti slaptažodį?"
 
@@ -7559,11 +7593,7 @@ msgstr "Pranešti apie problemą"
 msgid "Report received by your server operator. Thank you."
 msgstr "Pranešimą gavo jūsų serverio operatorius. ačiū."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Pranešti apie bendrą gyvenimo aprašymą"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Reikalauti slaptažodžio"
 
@@ -7629,7 +7659,6 @@ msgstr "Rezultatas"
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
-#: src/features/public/public-resume.tsx
 msgid "Resume"
 msgstr "Gyvenimo aprašymas"
 
@@ -7697,10 +7726,9 @@ msgstr "Gauta {0} naudojant {1}. Paėmimo laikas nenustato kilmės šviežumo."
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8119,6 +8147,10 @@ msgstr "Paieška apima dokumentus, darbo paraiškas, asistento pokalbius ir veik
 msgid "Search documents"
 msgstr "Ieškokite dokumentų"
 
+#: src/features/share/web-page.tsx
+msgid "Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off."
+msgstr "Paieškos sistemos, pavyzdžiui, Google, gali įtraukti jūsų tinklalapį į rezultatus. Gali praeiti kelios savaitės, kol jis pasirodys arba, išjungus šią parinktį, išnyks."
+
 #: src/features/career/facts.tsx
 msgid "Search facts"
 msgstr "Ieškoti faktų"
@@ -8319,7 +8351,7 @@ msgstr "Serveris pakeistas. Grįžkite į Dokumentai ir bandykite dar kartą."
 msgid "Set a follow-up"
 msgstr "Nustatykite tolesnę veiklą"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Nustatyti slaptažodį"
 
@@ -8372,13 +8404,12 @@ msgstr "Šešėlio spalva"
 msgid "Shadow width"
 msgstr "Šešėlio plotis"
 
-#: src/features/public/public-resume.tsx
-#: src/shell/builder-chrome.tsx
+#: app/builder/[id]/_layout.tsx
+#: app/builder/[id]/share.tsx
 msgid "Share"
 msgstr "Dalintis"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
 msgid "Share & export"
 msgstr "Bendrinti ir eksportuoti"
 
@@ -8403,26 +8434,17 @@ msgstr "Vietoj to bendrinkite PDF"
 msgid "Share PNG"
 msgstr "Bendrinti PNG"
 
-#: src/shell/builder-chrome.tsx
-msgid "Share public resume"
-msgstr "Pasidalinkite viešu gyvenimo aprašymu"
-
 #: src/features/workspace/tabs/practise.tsx
 msgid "Share recording"
 msgstr "Bendrinkite įrašą"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
 msgid "Share sections"
 msgstr "Bendrinti skiltis"
 
 #: src/features/share/link.tsx
 msgid "Share via…"
 msgstr "Bendrinti per…"
-
-#: src/features/public/public-resume.tsx
-msgid "Shared resumes stay hidden until your device settings allow them."
-msgstr "Bendrinami gyvenimo aprašymai bus paslėpti, kol įrenginio nustatymai juos leis."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -8442,6 +8464,10 @@ msgstr "Trumpas ir tiesioginis. Puiku, jei darbo skelbime prašoma trumpumo."
 msgid "Short and polite, for the recruiter"
 msgstr "Trumpas ir mandagus, skirtas verbuotojui"
 
+#: src/features/share/web-page.tsx
+msgid "Short link and domain"
+msgstr "Trumpoji nuoroda ir domenas"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "Prieš pažymėdami kaip pateiktą, sutrumpinkite klausimus iki 2 000 simbolių, o atsakymus – iki 6 000 simbolių."
@@ -8449,6 +8475,10 @@ msgstr "Prieš pažymėdami kaip pateiktą, sutrumpinkite klausimus iki 2 000 si
 #: src/features/letters/write.tsx
 msgid "Shorter"
 msgstr "Trumpesnis"
+
+#: src/features/share/web-page.tsx
+msgid "Show “Made with Reactive Resume”"
+msgstr "Rodyti „Sukurta su Reactive Resume“"
 
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #: src/features/applications-board/board-screen.tsx
@@ -8491,6 +8521,10 @@ msgstr "Dar kartą rodyti paslėptus terminus"
 msgid "Show icons"
 msgstr "Rodyti piktogramas"
 
+#: src/features/share/web-page.tsx
+msgid "Show in search engines"
+msgstr "Rodyti paieškos sistemose"
+
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Rodyti raktą"
@@ -8510,10 +8544,6 @@ msgstr "Rodyti daugiau"
 #: src/features/write/section-sheet.tsx
 msgid "Show on page"
 msgstr "Rodyti puslapyje"
-
-#: src/features/public/public-resume.tsx
-msgid "Show password"
-msgstr "Rodyti slaptažodį"
 
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
@@ -8597,7 +8627,8 @@ msgstr "Prisijunkite prie {server}, tada eikite į susietą dokumentą."
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
+#: src/features/share/pane.tsx
 msgid "Sign in to continue."
 msgstr "Jei norite tęsti, prisijunkite."
 
@@ -9407,10 +9438,6 @@ msgstr "Originalas lieka pataisymų istorijoje. Jį naudojančias istorijas reik
 msgid "The pages are pictures, with no text behind them."
 msgstr "Puslapiai yra paveikslėliai be jokio teksto po jais."
 
-#: src/features/public/public-resume.tsx
-msgid "The password you entered is incorrect. Try again."
-msgstr "Įvestas slaptažodis neteisingas. Bandykite dar kartą."
-
 #: src/features/check/parser.tsx
 msgid "The PDF is checked on the server and not stored. Send this preview to see what software reads."
 msgstr "PDF yra patikrintas serveryje ir nesaugomas. Išsiųskite šią peržiūrą, kad pamatytumėte, ką skaito programinė įranga."
@@ -9423,6 +9450,10 @@ msgstr "Teikėjas neatsakė. Patikrinkite raktą, modelį ir pagrindą URL."
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Priežastis saugoma „Insights“. Susieti dokumentai neliečiami."
+
+#: src/features/share/web-page.tsx
+msgid "The records aren't visible yet. Check again later."
+msgstr "Įrašų dar nematyti. Patikrinkite vėliau dar kartą."
 
 #: src/features/ats-checker/checker.tsx
 msgid "The rest of the file isn't in this report."
@@ -9550,10 +9581,6 @@ msgstr "Nepavyko atidaryti šios paraiškos."
 msgid "This application has no posting yet. Add one in Applications."
 msgstr "Šioje darbo paraiškoje dar nėra darbo skelbimo. Pridėkite vieną prie darbo paraiškų."
 
-#: src/features/public/public-resume.tsx
-msgid "This author is blocked."
-msgstr "Šis autorius užblokuotas."
-
 #: src/features/workspace/parts.tsx
 msgid "This changed somewhere else, so it wasn't saved. Your text is kept here; Retry saves it over the other copy."
 msgstr "Tai pasikeitė kitur, todėl nebuvo išsaugota. Jūsų tekstas saugomas čia; Bandyti dar kartą išsaugo jį virš kitos kopijos."
@@ -9591,7 +9618,7 @@ msgstr "Šis dokumentas užrakintas. Atrakinkite jį prieš palikdami pakeitimus
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Šis dokumentas užrakintas. Atrakinkite, kad gautumėte pasiūlymų."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Šis dokumentas užrakintas. Vis tiek galite atsisiųsti ir pavadinti versijas. Atrakinkite, kad galėtumėte redaguoti arba atkurti."
 
@@ -9758,14 +9785,6 @@ msgstr "Šis gyvenimo aprašymas užrakintas. Atrakinkite jį, kad galėtumėte 
 #: src/features/ats-checker/messages.ts
 msgid "This resume is long."
 msgstr "Šis gyvenimo aprašymas ilgas."
-
-#: src/features/public/public-resume.tsx
-msgid "This resume is password-protected"
-msgstr "Šis gyvenimo aprašymas apsaugotas slaptažodžiu"
-
-#: src/features/public/public-resume.tsx
-msgid "This resume isn't shared right now."
-msgstr "Šis gyvenimo aprašymas šiuo metu nėra bendrinamas."
 
 #: src/features/application-detail/sheets.tsx
 msgid "This saved description is clipped or incomplete. Review before preparing documents."
@@ -9980,7 +9999,6 @@ msgstr "Išbandykite {suggestion}"
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/letters/write.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/shell.tsx
@@ -10035,10 +10053,6 @@ msgstr "Eksportuodami išjunkite nebūtinas ligatūras."
 msgid "Turn on the link to choose an address."
 msgstr "Norėdami pasirinkti adresą, įjunkite nuorodą."
 
-#: src/features/share/link.tsx
-msgid "Turn on the public link to count views and downloads. Counts are anonymous."
-msgstr "Įjunkite viešą nuorodą, kad skaičiuotumėte peržiūras ir atsisiuntimus. Naudojimo skaičius yra anoniminis."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "Įjungti šį tvarkaraštį"
@@ -10089,10 +10103,6 @@ msgstr "Ukrainiečių"
 msgid "Unavailable"
 msgstr "Nepasiekiamas"
 
-#: src/features/public/public-resume.tsx
-msgid "Unblock author"
-msgstr "Atblokuoti autorių"
-
 #: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
@@ -10132,7 +10142,6 @@ msgstr "Atsieti"
 
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/write/outline.tsx
 msgid "Unlock"
 msgstr "Atrakinti"
@@ -10232,7 +10241,7 @@ msgstr "Naudokite {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Naudokite 3–64 mažąsias raides, skaičius, taškus, brūkšnelius ir apatinius brūkšnius."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Naudokite 6–64 simbolius."
 
@@ -10278,6 +10287,7 @@ msgid "Use at least 9pt."
 msgstr "Naudokite bent 9pt dydį."
 
 #: src/features/document-menu/index.tsx
+#: src/features/documents/queries.ts
 #: src/features/share/link.tsx
 msgid "Use at most 64 characters."
 msgstr "Naudokite ne daugiau kaip 64 simbolius."
@@ -10402,6 +10412,10 @@ msgstr "Naudoja žiniatinklio paieškos paslaugą, nustatytą Nustatymai. Paieš
 msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
 msgstr "Naudoja žiniatinklio paiešką, nustatytą Nustatymai. Rezultatai laukia Šiandien. Darbo paraiškos ir dokumentai niekada nėra kuriami jums."
 
+#: src/features/share/web-page.tsx
+msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
+msgstr "Naudoja jūsų gyvenimo aprašymo šabloną ir dizainą, prisitaiko prie bet kurio ekrano. Pakeiskite juos skiltyje Dizainas."
+
 #: src/features/settings/locale-names.ts
 msgid "Uzbek"
 msgstr "Uzbekų"
@@ -10413,10 +10427,6 @@ msgstr "Įvairinkite pradžias, kad skyrius neskambėtų kaip šablonas."
 #: src/features/career/offers.tsx
 msgid "Verbal offer"
 msgstr "Žodinis pasiūlymas"
-
-#: src/features/public/public-resume.tsx
-msgid "Verifying password…"
-msgstr "Tikrinamas slaptažodis…"
 
 #: src/features/letters/share.tsx
 msgid "Version"
@@ -10496,21 +10506,21 @@ msgstr "Rodoma {0} · tik skaitoma"
 msgid "views · 30 days"
 msgstr "peržiūros · 30 dienų"
 
-#: src/features/share/link.tsx
-msgid "Views and downloads"
-msgstr "Peržiūros ir atsisiuntimai"
-
 #: src/features/ai/report-content.tsx
 msgid "Violence or abuse"
 msgstr "Smurtas ar piktnaudžiavimas"
 
 #: src/features/share/link.tsx
+msgid "Visitors"
+msgstr "Lankytojai"
+
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Lankytojai gali atsisiųsti PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
-msgstr "Lankytojai į jį įeina prieš pamatydami gyvenimo aprašymą. Dalinkitės ja tik su žmonėmis, kuriais pasitikite."
+msgstr "Lankytojai įveda slaptažodį prieš pamatydami gyvenimo aprašymą. Dalinkitės juo tik su žmonėmis, kuriais pasitikite."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
@@ -10541,6 +10551,10 @@ msgstr "Prieiga prie interneto"
 #: src/features/ai/web-access.tsx
 msgid "Web access settings couldn't be saved or loaded."
 msgstr "Nepavyko išsaugoti arba įkelti žiniatinklio prieigos nustatymų."
+
+#: src/features/share/web-page.tsx
+msgid "Web page"
+msgstr "Tinklalapis"
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Web research"
@@ -10887,25 +10901,24 @@ msgstr "Esate neprisijungę. PDF atsisiunčiamas šiame įrenginyje. Kitiems for
 msgid "You're offline. History needs a connection."
 msgstr "Esate neprisijungęs. Istorijai reikia ryšio."
 
+#: src/features/share/export-screen.tsx
+msgid "You're offline. History needs a connection. Download PDF works on this device."
+msgstr "Esate neprisijungę. Istorijai reikia ryšio. PDF atsisiuntimas veikia šiame įrenginyje."
+
 #: src/features/check/screen.tsx
 msgid "You're offline. Issues and Job match still work; reconnect for Writing and PDF checks."
 msgstr "Esate neprisijungęs. Problemos ir Darbo rungtynės vis dar veikia; iš naujo prisijunkite, kad patikrintumėte Tekstas ir PDF."
 
-#: src/features/share/screen.tsx
-msgid "You're offline. Link and History need a connection. Download PDF works on this device."
-msgstr "Esate neprisijungęs. Nuoroda ir istorija turi susieti. Atsisiuntimas PDF veikia šiame įrenginyje."
+#: src/features/share/pane.tsx
+msgid "You're offline. Sharing needs a connection."
+msgstr "Esate neprisijungę. Bendrinimui reikia ryšio."
 
 #: src/features/check/parser.tsx
 msgid "You're offline. The last PDF check stays here; connect to refresh it."
 msgstr "Esate neprisijungę. Paskutinė PDF patikra lieka čia; prisijunkite, kad ją atnaujintumėte."
 
-#: src/features/public/public-resume.tsx
-msgid "You're offline. This resume opens when you reconnect."
-msgstr "Esate neprisijungę. Šis gyvenimo aprašymas atsidarys atkūrus ryšį."
-
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
-#: src/features/public/public-resume.tsx
 msgid "You're offline. Try again when you reconnect."
 msgstr "Esate neprisijungęs. Bandykite dar kartą, kai vėl prisijungsite."
 
@@ -10966,9 +10979,17 @@ msgstr "Jūsų datos užrašytos keliais skirtingais būdais."
 msgid "Your document was saved. Review it in the editor."
 msgstr "Jūsų dokumentas buvo išsaugotas. Peržiūrėkite jį redaktoriuje."
 
+#: src/features/share/web-page.tsx
+msgid "Your domain"
+msgstr "Jūsų domenas"
+
 #: src/features/ats-checker/messages.ts
 msgid "Your email address is broken across pieces of text."
 msgstr "Jūsų el. pašto adresas išskaidytas per kelis teksto fragmentus."
+
+#: src/features/share/web-page.tsx
+msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
+msgstr "Jūsų el. paštas, telefonas, vieta ir kiti antraštės duomenys bei rekomenduotojų telefono numeriai neįtraukiami į tinklalapį, jo PDF ir paieškos rezultatus."
 
 #: src/features/career/knowledge.tsx
 msgid "Your facts, stories and preferences. Editing Knowledge sends nothing to an AI connection."
@@ -11102,6 +11123,19 @@ msgstr "Jūsų sesija baigėsi. Prisijunkite dar kartą."
 #: src/auth/session-gate.tsx
 msgid "Your session on {0} ended"
 msgstr "Jūsų sesija {0} baigėsi"
+
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "Your short link and custom domain open “{0}”."
+msgstr "Jūsų trumpoji nuoroda ir savas domenas atveria „{0}“."
+
+#: src/features/share/web-page.tsx
+msgid "Your short link and custom domain open this resume."
+msgstr "Jūsų trumpoji nuoroda ir savas domenas atveria šį gyvenimo aprašymą."
+
+#: src/features/share/web-page.tsx
+msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
+msgstr "Jūsų trumpoji nuoroda ir savas domenas rodo, kad šis gyvenimo aprašymas nebendrinamas, kol vėl jo nepaskelbsite."
 
 #: src/features/assistant/coach-screen.tsx
 msgid "your stories"

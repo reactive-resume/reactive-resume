@@ -747,6 +747,18 @@ export const metadataSchema = z.object({
 		"Structured style rules that target semantic resume sections and slots for PDF rendering.",
 	),
 	stylesheet: semanticStylesheetSchema.optional(),
+	web: z
+		.object({
+			showCredit: z
+				.boolean()
+				.catch(true)
+				.describe("Whether the web page shows the small 'Made with Reactive Resume' footer."),
+		})
+		.optional()
+		.catch(undefined)
+		.describe(
+			"Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share.",
+		),
 	check: z
 		.object({
 			ignored: z

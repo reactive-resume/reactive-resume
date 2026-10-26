@@ -44,9 +44,3 @@ export function daysLeftInTrash(trashedAt: Date, now = Date.now()) {
 	const left = trashedAt.getTime() + 30 * 24 * 60 * 60 * 1000 - now;
 	return Math.max(0, Math.ceil(left / (24 * 60 * 60 * 1000)));
 }
-
-/** A resume's public address, or null while its link is off. */
-export const publicResumeUrl = (document: DocumentSummary, username: string | undefined) =>
-	document.type === "resume" && document.isPublic && document.slug && username
-		? `${window.location.origin}/${username}/${document.slug}`
-		: null;

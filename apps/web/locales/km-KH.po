@@ -35,6 +35,11 @@ msgstr "\"{0}\" លាក់"
 msgid "“{0}” moved to Trash"
 msgstr "“{0}” បានផ្លាស់ទីទៅធុងសំរាម"
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr "“{0}” លែងជាប្រវត្តិរូបសង្ខេបចម្បងរបស់អ្នកហើយ។"
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "“{name}” moved to Trash"
@@ -721,6 +726,10 @@ msgstr "{stars, plural, one {ដាក់ផ្កាយឱ្យ Reactive Resum
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, other {រឿង #}}"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "{suggestion} may be available. Get yours here →"
+msgstr "{suggestion} ប្រហែលជាអាចប្រើបាន។ ទទួលបានរបស់អ្នកនៅទីនេះ →"
+
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
 msgstr "{summary}។ បើកក្នុង អាជីព → ការផ្តល់ការងារ។"
@@ -835,7 +844,7 @@ msgstr "ឯកសារសង្ខេប 10 នាទី"
 msgid "10–11 recommended"
 msgstr "10-11 បានណែនាំ"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 ឯកសារ"
 
@@ -898,7 +907,7 @@ msgstr "A"
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "A ទទួលយក និង R បដិសេធការកែសម្រួលដែលផ្តោត។ ↑ និង ↓ ផ្លាស់ទីរវាងការកែសម្រួល។"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "ការបម្រុងទុកនៃលិខិតនេះ។ នាំចូលត្រឡប់ទៅ Reactive Resume ជាលិខិតមួយ។"
 
@@ -1243,7 +1252,7 @@ msgstr "បន្ថែមអ្នកផ្តល់សេវា AI"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "បន្ថែម @ និងដែន ដូចជា name@example.com"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "បន្ថែមអាសយដ្ឋាន។"
 
@@ -1410,6 +1419,10 @@ msgstr "បន្ថែមដែនបន្ទាប់ពី @ ដូចជា
 msgid "Add the domain ending, like {domain}.com"
 msgstr "បន្ថែមការបញ្ចប់ដែន ដូចជា {domain}.com"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
+msgstr "បន្ថែមកំណត់ត្រាទាំងនេះនៅកន្លែងដែលអ្នកគ្រប់គ្រងដែន រួចពិនិត្យ។ ការផ្លាស់ប្ដូរអាចចំណាយពេលពីរបីម៉ោងដើម្បីទៅដល់អ្នកទាំងអស់គ្នា។"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/career/workspace/shell.tsx
@@ -1475,7 +1488,7 @@ msgstr "បានបន្ថែមទៅចំណេះដឹងជាបទព
 msgid "Added to Prepare"
 msgstr "បានបន្ថែមទៅ “រៀបចំ”"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "អាស័យដ្ឋាន"
 
@@ -1708,7 +1721,7 @@ msgstr "និង {0} ច្រើនទៀត"
 msgid "and counting"
 msgstr "និងការរាប់"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "ប្រវត្តិរូបសង្ខេបរបស់អ្នកផ្សេងទៀតប្រើអាសយដ្ឋាននេះ។"
 
@@ -1757,7 +1770,7 @@ msgstr "ពុម្ពអក្សរណាមួយនៅក្នុងកម
 msgid "Anyone who opens the public URL will need this password."
 msgstr "អ្នកណាដែលបើក URL សាធារណៈនឹងត្រូវការពាក្យសម្ងាត់នេះ។"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "អ្នកដែលមានតំណនឹងអាចមើលប្រវត្តិរូបសង្ខេបរបស់អ្នក។"
 
@@ -1888,6 +1901,7 @@ msgstr "ផ្ទាំងពាក្យសុំ"
 msgid "Application updated"
 msgstr "បានធ្វើបច្ចុប្បន្នភាពពាក្យសុំ"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
@@ -2552,6 +2566,10 @@ msgstr "ពិនិត្យឯកសារផ្សេងទៀត។"
 msgid "Check any PDF, no account needed"
 msgstr "ពិនិត្យ PDF ណាមួយ មិនចាំបាច់មានគណនីទេ។"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Check DNS"
+msgstr "ពិនិត្យ DNS"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Check every claim, date and result against your experience."
 msgstr "ពិនិត្យរាល់ការអះអាង កាលបរិច្ឆេទ និងលទ្ធផល ធៀបនឹងបទពិសោធន៍របស់អ្នក។"
@@ -2635,7 +2653,7 @@ msgstr "កំពុងពិនិត្យមើល PDF ដែលបានន�
 msgid "Checking your preferences"
 msgstr "កំពុងពិនិត្យចំណង់ចំណូលចិត្តរបស់អ្នក"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "កំពុងពិនិត្យ... ច្បាប់ចម្លងគឺអាចប្រើបានបន្ទាប់ពីរក្សាទុក។"
 
@@ -2716,7 +2734,6 @@ msgid "Claude Desktop"
 msgstr "Claude Desktop"
 
 #: src/features/applications/components/detail/next-step-card.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
 msgstr "សម្អាត"
@@ -2738,6 +2755,7 @@ msgid "Clear section"
 msgstr "ជម្រះផ្នែក"
 
 #: src/components/ui/combobox.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Clear selection"
 msgstr "សម្អាតការជ្រើសរើស"
@@ -2765,7 +2783,7 @@ msgstr "លេខសម្គាល់អតិថិជន"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2905,6 +2923,10 @@ msgstr "ការបម្រុងទុកទិន្នន័យពេញល
 msgid "Compress or remove large images to keep uploads quick."
 msgstr "បង្រួម ឬលុបរូបភាពធំៗ ដើម្បីរក្សាការផ្ទុកឡើងឱ្យលឿន។"
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Computer"
+msgstr "កុំព្យូទ័រ"
+
 #: src/hooks/use-confirm.tsx
 msgid "Confirm"
 msgstr "អះអាង"
@@ -2938,6 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "បញ្ជាក់ម៉ោង {time} ថ្ងៃនេះ តាមវីដេអូ។"
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "តភ្ជាប់"
@@ -2989,6 +3012,10 @@ msgstr "បានភ្ជាប់"
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "កម្មវិធីដែលបានភ្ជាប់"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Connected. Your domain opens your primary resume."
+msgstr "បានភ្ជាប់។ ដែនរបស់អ្នកបើកប្រវត្តិរូបសង្ខេបចម្បងរបស់អ្នក។"
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Connecting your {providerName} account…"
@@ -3117,7 +3144,7 @@ msgid "Copied"
 msgstr "ចម្លង"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3149,7 +3176,6 @@ msgid "Copy it now. For your security, it won't be shown again."
 msgstr "ចម្លងវាឥឡូវនេះ។ ដើម្បីសុវត្ថិភាពរបស់អ្នក វានឹងមិនត្រូវបានបង្ហាញម្តងទៀតទេ។"
 
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
 msgid "Copy link"
 msgstr "ចម្លងតំណ"
 
@@ -3271,6 +3297,7 @@ msgid "Couldn't copy the transcript. Try again."
 msgstr "មិនអាចចម្លងប្រតិចារិកបានទេ។ ព្យាយាមម្តងទៀត។"
 
 #: src/features/career/coach-thread.tsx
+#: src/features/resume/share/copy-link-button.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "មិនអាចចម្លងទៅក្ដារតម្បៀតខ្ទាស់បានទេ។ ព្យាយាមម្តងទៀត។"
 
@@ -3592,8 +3619,8 @@ msgstr "មិនអាចរក្សាទុកកាលវិភាគនេ
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "មិនអាចរក្សាទុកការផ្លាស់ប្តូររបស់អ្នកបានទេ។ សូមព្យាយាមម្តងទៀតមុនពេលបន្ត។"
@@ -3698,6 +3725,11 @@ msgstr "មិនអាចផ្ដាច់ពាក្យសុំបានទ
 msgid "Couldn't unlock the document. Try again."
 msgstr "មិនអាចដោះសោឯកសារបានទេ។ ព្យាយាមម្តងទៀត។"
 
+#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/share-panel.tsx
+msgid "Couldn't update sharing. Try again."
+msgstr "មិនអាចធ្វើបច្ចុប្បន្នភាពការចែករំលែកបានទេ។ ព្យាយាមម្តងទៀត។"
+
 #: src/features/career/workspace/messages.tsx
 msgid "Couldn't update the application. Nothing was changed. Try again."
 msgstr "មិនអាចធ្វើបច្ចុប្បន្នភាពពាក្យសុំបានទេ។ គ្មានអ្វីត្រូវបានផ្លាស់ប្តូរទេ។ ព្យាយាមម្តងទៀត។"
@@ -3726,7 +3758,7 @@ msgstr "មិនអាចធ្វើបច្ចុប្បន្នភាព
 msgid "Couldn't update the timeline. Try again."
 msgstr "មិនអាចអាប់ដេតបន្ទាត់ពេលវេលាបានទេ។ ព្យាយាមម្តងទៀត។"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "មិនអាចធ្វើបច្ចុប្បន្នភាពកំណែនៃលិខិតនេះបានទេ។ ព្យាយាមម្តងទៀត។"
 
@@ -3740,11 +3772,6 @@ msgstr "មិនអាចអាប់ឡូដរូបថតបានទេ។
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "មិនអាចផ្ទៀងផ្ទាត់កូដបានទេ។ បញ្ចូលកូដបច្ចុប្បន្នពីកម្មវិធីផ្ទៀងផ្ទាត់អត្តសញ្ញាណរបស់អ្នក។"
-
-#. Fallback toast when resume password verification fails unexpectedly
-#: src/features/auth/pages/resume-password.tsx
-msgid "Couldn't verify the password. Try again."
-msgstr "មិនអាចផ្ទៀងផ្ទាត់ពាក្យសម្ងាត់បានទេ។ ព្យាយាមម្តងទៀត។"
 
 #. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
@@ -3949,7 +3976,7 @@ msgid "Daily at {clock} · next {next}"
 msgstr "រៀងរាល់ថ្ងៃ ម៉ោង {clock} · បន្ទាប់ {next}"
 
 #. placeholder {0}: summary.peak
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "ការមើលប្រចាំថ្ងៃលើសពី 30 ថ្ងៃ កំពូល {0}"
 
@@ -4325,6 +4352,10 @@ msgstr "ឯកសារដែលអ្នកផ្លាស់ទីមកទី
 msgid "Does it use AI?"
 msgstr "តើវាប្រើ AI ទេ?"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Domain connected"
+msgstr "បានភ្ជាប់ដែន"
+
 #: src/features/auth/pages/login.tsx
 msgid "Don't have an account? <0/>"
 msgstr "មិនមានគណនី? <0/>"
@@ -4357,8 +4388,8 @@ msgstr "កំពុងពិនិត្យម្តងទៀត"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "ទាញយក"
 
@@ -4369,6 +4400,10 @@ msgstr "ទាញយក {label}"
 #: src/features/templates/gallery.tsx
 msgid "Download {name} sample PDF"
 msgstr "ទាញយក PDF គំរូ {name}"
+
+#: src/features/resume/editor/chrome/download-sheet.tsx
+msgid "Download & history"
+msgstr "ទាញយក និងប្រវត្តិ"
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download application details, contacts, notes, and timeline history as CSV."
@@ -4384,12 +4419,12 @@ msgid "Download CSV"
 msgstr "ទាញយក CSV"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "ការទាញយកបរាជ័យ។ ព្យាយាមម្តងទៀត។"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
 msgstr "ទាញយក PDF"
 
@@ -4405,12 +4440,12 @@ msgstr "ទាញយកគំរូ PDF"
 msgid "Download them"
 msgstr "ទាញយកពួកវា"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Download totals can include repeat clicks."
 msgstr "ការទាញយកសរុបអាចរួមបញ្ចូលការចុចម្តងទៀត។"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "បានទាញយក {file}"
 
@@ -4418,11 +4453,11 @@ msgstr "បានទាញយក {file}"
 msgid "Downloaded {file} and the cover letter"
 msgstr "បានទាញយក {file} និងលិខិតគម្រប"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "បានទាញយកប្រវត្តិរូបសង្ខេបរបស់អ្នក និងសំបុត្រនេះ។"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "downloads"
 msgstr "ការទាញយក"
 
@@ -4807,13 +4842,9 @@ msgstr "បញ្ចូលកូដបម្រុងទុកមួយក្ន
 msgid "Enter the 6-digit code."
 msgstr "បញ្ចូលកូដ 6 ខ្ទង់។"
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Enter the password the resume owner shared with you."
 msgstr "បញ្ចូលពាក្យសម្ងាត់ដែលម្ចាស់ប្រវត្តិរូបសង្ខេបបានចែករំលែកជាមួយអ្នក។"
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Enter the password."
-msgstr "បញ្ចូលពាក្យសម្ងាត់។"
 
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Enter the same password in both fields."
@@ -5223,6 +5254,11 @@ msgstr "មិនអាចផ្ទុកពុម្ពអក្សរបាន
 msgid "For"
 msgstr "សម្រាប់"
 
+#. placeholder {0}: domain.target
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
+msgstr "សម្រាប់ដែនឫស ដូចជា example.com សូមប្រើកំណត់ត្រា A និង AAAA ជាមួយអាសយដ្ឋានរបស់ {0} ជំនួសឱ្យ CNAME។"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "For each: situation, task, your action, result, reflection. Leave out numbers you're unsure of."
 msgstr "សម្រាប់នីមួយៗ៖ ស្ថានការណ៍ ភារកិច្ច សកម្មភាពរបស់អ្នក លទ្ធផល ការឆ្លុះបញ្ចាំង។ កុំដាក់លេខដែលអ្នកមិនប្រាកដ។"
@@ -5617,6 +5653,10 @@ msgstr "បានលាក់៖ {hiddenList}"
 msgid "Hide {title} from the page"
 msgstr "លាក់ {title} ពីទំព័រ"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Hide contact details"
+msgstr "លាក់ព័ត៌មានទំនាក់ទំនង"
+
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Hide from page"
 msgstr "លាក់ពីទំព័រ"
@@ -5660,10 +5700,11 @@ msgid "Hiring team"
 msgstr "ក្រុមជួល"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
-msgstr "ប្រវត្តិសាស្ត្រ"
+msgstr "ប្រវត្តិ"
 
 #: src/features/documents/document-actions.tsx
 msgid "Hold to delete"
@@ -5784,7 +5825,7 @@ msgstr "ប្រសិនបើវាមកពីការស្កេន ន�
 msgid "If it's part of your experience, add it where it belongs."
 msgstr "ប្រសិនបើវាជាផ្នែកមួយនៃបទពិសោធន៍របស់អ្នក សូមបន្ថែមវានៅកន្លែងដែលវាជាកម្មសិទ្ធិ។"
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "If someone sent you this link, ask them for a new one."
 msgstr "ប្រសិនបើនរណាម្នាក់ផ្ញើតំណនេះទៅអ្នក សូមសួរពួកគេសម្រាប់តំណភ្ជាប់ថ្មី។"
 
@@ -6597,7 +6638,6 @@ msgstr "បន្ទាត់បិទនេះអាចដំណើរការ
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/write/fields.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Link"
 msgstr "តំណភ្ជាប់"
 
@@ -6624,14 +6664,10 @@ msgid "Link an application…"
 msgstr "ភ្ជាប់ពាក្យសុំការងារ…"
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/public/public-resume.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "បានចម្លងតំណ"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Link is live"
-msgstr "Link បានផ្សាយបន្តផ្ទាល់"
 
 #: src/features/documents/document-actions.tsx
 msgid "Link to application"
@@ -6641,7 +6677,7 @@ msgstr "ភ្ជាប់ទៅពាក្យសុំការងារ"
 msgid "Link to application…"
 msgstr "ភ្ជាប់ទៅពាក្យសុំការងារ…"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Link turned off. The address is kept"
 msgstr "តំណត្រូវបានបិទ។ អាសយដ្ឋានត្រូវបានរក្សាទុក"
 
@@ -6719,7 +6755,7 @@ msgid "Live · updates as you edit"
 msgstr "ផ្សាយផ្ទាល់ · ធ្វើបច្ចុប្បន្នភាពនៅពេលអ្នកកែសម្រួល"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "រស់នៅ {0}"
 
@@ -6854,7 +6890,7 @@ msgstr "ទាប"
 msgid "Lower the design sheet"
 msgstr "ទម្លាក់សន្លឹករចនា"
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Made with Reactive Resume, free and open source"
 msgstr "ផលិតជាមួយ Reactive Resume ឥតគិតថ្លៃ និងប្រភពបើកចំហ"
 
@@ -6888,6 +6924,10 @@ msgstr "ធ្វើឱ្យវាខ្លីជាង"
 msgid "Make it yours, then take it with you."
 msgstr "ធ្វើជារបស់អ្នក បន្ទាប់មកយកវាទៅជាមួយអ្នក។"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Make primary"
+msgstr "កំណត់ជាចម្បង"
+
 #: src/features/documents/documents-page.tsx
 msgid "Make private"
 msgstr "ធ្វើជាឯកជន"
@@ -6907,6 +6947,10 @@ msgstr "ធ្វើឱ្យអត្ថបទដែលមើលឃើញ ន�
 #: src/features/ats-checker/messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "ធ្វើឱ្យវាមើលឃើញធំជាង ដិតជាង ឬជាអក្សរធំ។"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Make this your primary resume?"
+msgstr "កំណត់ប្រវត្តិរូបសង្ខេបនេះជាប្រវត្តិរូបសង្ខេបចម្បងរបស់អ្នកឬ?"
 
 #: src/libs/locale.ts
 msgid "Malay"
@@ -7102,6 +7146,7 @@ msgid "Mono"
 msgstr "មនោ"
 
 #: src/features/resume/editor/chrome/bar.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "More download formats"
 msgstr "ទម្រង់ទាញយកច្រើនទៀត"
 
@@ -7707,6 +7752,10 @@ msgstr "មិនបានអនុវត្ត"
 msgid "Not applied yet"
 msgstr "មិនទាន់បានដាក់ពាក្យ"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Not available while the resume needs a password."
+msgstr "មិនអាចប្រើបានទេ ខណៈពេលដែលប្រវត្តិរូបសង្ខេបត្រូវការពាក្យសម្ងាត់។"
+
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "មិនបានភ្ជាប់"
@@ -7900,9 +7949,9 @@ msgstr "បិទ"
 msgid "Off: the coach won’t see it or claim it."
 msgstr "បិទ៖ គ្រូបង្វឹកនឹងមិនឃើញ ឬអះអាងវាទេ។"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Off. Only you can see this resume."
-msgstr "បិទ។ មានតែអ្នកទេដែលអាចឃើញប្រវត្តិរូបសង្ខេបនេះ។"
+#: src/features/resume/share/share-panel.tsx
+msgid "Off. Let recruiters find you on Google by turning this on."
+msgstr "បិទ។ បើកជម្រើសនេះ ដើម្បីឱ្យអ្នកជ្រើសរើសបុគ្គលិកអាចរកឃើញអ្នកនៅលើ Google។"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Off. The letter keeps its own copy of your details."
@@ -7931,9 +7980,9 @@ msgstr "មិនបានបញ្ជាក់ចំនួនថ្ងៃនៅ
 msgid "Offline · saved on this device"
 msgstr "គ្មានអ៊ីនធឺណិត · រក្សាទុកនៅលើឧបករណ៍នេះ។"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
-msgstr "បើក។ អ្នកដែលមានតំណអាចមើលបាន។ វាមិនត្រូវបានរាយបញ្ជី ឬធ្វើលិបិក្រមដោយម៉ាស៊ីនស្វែងរកទេ។"
+#: src/features/resume/share/share-panel.tsx
+msgid "On. Anyone with the link can see your web page."
+msgstr "បើក។ អ្នកណាដែលមានតំណអាចមើលទំព័រវេបរបស់អ្នកបាន។"
 
 #: src/features/homepage/remember.tsx
 msgid "Onboarding story"
@@ -8015,7 +8064,7 @@ msgstr "មានតែ {MAX_IMPORT} ជួរដេកដំបូងប៉ុ�
 msgid "Only the first pages were checked."
 msgstr "មានតែទំព័រដំបូងប៉ុណ្ណោះដែលត្រូវបានត្រួតពិនិត្យ។"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "មានតែអ្នកទេដែលឃើញទាំងនេះ"
 
@@ -8073,10 +8122,6 @@ msgstr "បើកក្នុង “ការផ្តល់ការងារ�
 msgid "Open preferences"
 msgstr "បើកចំណង់ចំណូលចិត្ត"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Open public page"
-msgstr "បើកទំព័រសាធារណៈ"
-
 #: src/features/career/workspace/prepare.tsx
 msgid "Open story"
 msgstr "បើករឿង"
@@ -8092,6 +8137,10 @@ msgstr "បើកកម្មវិធី Reactive Resume"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "បើកកាលវិភាគ"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Open web page"
+msgstr "បើកទំព័រវេប"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/today.tsx
@@ -8310,16 +8359,15 @@ msgstr "កូនសោកំណត់អត្តសញ្ញាណ"
 
 #. Authentication provider display name in account settings
 #. Label for password input on login form
-#. Label for password input on protected resume access form
 #. Label for password input on registration form
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/share.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/features/settings/account/auth-hooks.ts
 #: src/features/settings/account/security.tsx
 msgid "Password"
@@ -8329,7 +8377,7 @@ msgstr "ពាក្យសម្ងាត់"
 msgid "Password changed"
 msgstr "បានប្តូរពាក្យសម្ងាត់"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "ពាក្យសម្ងាត់ត្រូវបានដកចេញ"
 
@@ -8337,9 +8385,9 @@ msgstr "ពាក្យសម្ងាត់ត្រូវបានដកចេ
 msgid "Password reset. Sign in with your new password."
 msgstr "បានកំណត់ពាក្យសម្ងាត់ឡើងវិញ។ ចូលដោយប្រើពាក្យសម្ងាត់ថ្មីរបស់អ្នក។"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password set"
-msgstr "កំណត់ពាក្យសម្ងាត់"
+msgstr "បានកំណត់ពាក្យសម្ងាត់"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Past conversations"
@@ -8454,6 +8502,7 @@ msgstr "Persian"
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
+#: src/features/resume/share/web-page-preview.tsx
 msgid "Phone"
 msgstr "ទូរស័ព្ទ"
 
@@ -8723,6 +8772,10 @@ msgstr "ចុច <0>Enter</0> ដើម្បីបើក"
 msgid "Preview {name} sample PDF"
 msgstr "មើលគំរូ {name} ជា PDF"
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Preview size"
+msgstr "ទំហំមើលជាមុន"
+
 #. placeholder {0}: templates[previewTemplate].name
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
@@ -8745,6 +8798,10 @@ msgstr "ខែមុន។"
 msgid "Primary color"
 msgstr "ពណ៌មូលដ្ឋាន"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Primary resume"
+msgstr "ប្រវត្តិរូបសង្ខេបចម្បង"
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Print"
 msgstr "បោះពុម្ព"
@@ -8753,9 +8810,9 @@ msgstr "បោះពុម្ព"
 msgid "Print or export the form to a flat PDF before sending it."
 msgstr "បោះពុម្ព ឬនាំចេញទម្រង់ទៅជា PDF រាបស្មើមុនពេលផ្ញើវា។"
 
-#: src/features/resume/public/public-resume.tsx
-msgid "Printing is turned off for this resume."
-msgstr "ការបោះពុម្ពត្រូវបានបិទសម្រាប់ប្រវត្តិរូបសង្ខេបនេះ។"
+#: src/features/resume/share/share-panel.tsx
+msgid "Privacy"
+msgstr "ឯកជនភាព"
 
 #: src/features/homepage/footer.tsx
 msgid "Privacy policy"
@@ -8858,7 +8915,7 @@ msgstr "អ្នកផ្តល់សេវា"
 msgid "Public"
 msgstr "សាធារណៈ"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Public link"
 msgstr "តំណសាធារណៈ"
 
@@ -8873,6 +8930,26 @@ msgstr "សាធារណៈដោយមានពាក្យសម្ងាត
 #: src/libs/resume/section.tsx
 msgid "Publications"
 msgstr "អត្ថបទផ្សព្វផ្សាយ"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish"
+msgstr "បោះពុម្ពផ្សាយ"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish it to share a link that opens on any screen. Only you can see it until then."
+msgstr "បោះពុម្ពផ្សាយវា ដើម្បីចែករំលែកតំណដែលបើកបាននៅលើអេក្រង់ណាក៏ដោយ។ រហូតដល់ពេលនោះ មានតែអ្នកទេដែលអាចមើលវាបាន។"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page first."
+msgstr "សូមបោះពុម្ពផ្សាយទំព័រវេបជាមុនសិន។"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted."
+msgstr "បោះពុម្ពផ្សាយទំព័រវេប ដើម្បីរាប់ចំនួនការមើល និងការទាញយក។ ការរាប់គឺអនាមិក ហើយម៉ាស៊ីនស្វែងរកមិនត្រូវបានរាប់ទេ។"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link and custom domain."
+msgstr "បោះពុម្ពផ្សាយប្រវត្តិរូបសង្ខេបនេះ ដើម្បីបើកវានៅតំណខ្លី និងដែនផ្ទាល់ខ្លួនរបស់អ្នក។"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Publisher"
@@ -8894,11 +8971,11 @@ msgstr "ដាក់អ្វីៗទាំងអស់លើ<0>ទំព័រ
 msgid "Put the caret in a line to improve it"
 msgstr "ដាក់​ការ​ថែ​រក្សា​ក្នុង​ជួរ​មួយ​ដើម្បី​ធ្វើ​ឱ្យ​វា​ប្រសើរ​ឡើង"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code"
 msgstr "កូដ QR"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code for {url}"
 msgstr "លេខកូដ QR សម្រាប់ {url}"
 
@@ -9209,7 +9286,7 @@ msgstr "អ្នកជ្រើសរើសបុគ្គលិក"
 msgid "Recruiter reply"
 msgstr "ការឆ្លើយតបពីអ្នកជ្រើសរើសបុគ្គលិក"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "អ្នកជ្រើសរើសឃើញឈ្មោះនេះ។ ឈ្មោះរបស់អ្នកបូកនឹង “Cover Letter” ដំណើរការបានល្អ។"
 
@@ -9335,6 +9412,7 @@ msgstr "ពីចម្ងាយ"
 msgid "Remote, Hybrid, a city…"
 msgstr "ពីចម្ងាយ, កូនកាត់, ទីក្រុង…"
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "ដកចេញ"
@@ -9383,7 +9461,7 @@ msgstr "យកឯកសារចេញ"
 msgid "Remove passkey"
 msgstr "ដកកូនសោកំណត់អត្តសញ្ញាណចេញ"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove password"
 msgstr "ដកពាក្យសម្ងាត់ចេញ"
 
@@ -9409,7 +9487,7 @@ msgstr "ដកតួនាទីចេញ"
 msgid "Remove tag"
 msgstr "យកស្លាកចេញ"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "ដក​ពាក្យ​សម្ងាត់​ចេញ?"
 
@@ -9491,7 +9569,7 @@ msgstr "បានចម្លងការឆ្លើយតប"
 msgid "Report a bug"
 msgstr "រាយការណ៍កំហុស"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Require a password"
 msgstr "ទាមទារពាក្យសម្ងាត់"
 
@@ -9582,8 +9660,6 @@ msgstr "ប្រវត្តិរូបសង្ខេប"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-card.tsx
-#: src/routes/_home/index.tsx
-#: src/routes/$username/$slug.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "ប្រវត្តិរូបសង្ខេប"
@@ -9600,7 +9676,7 @@ msgstr "ប្រវត្តិរូបសង្ខេប · កំណែដ�
 msgid "Resume (optional)"
 msgstr "ប្រវត្តិរូបសង្ខេប (ជាជម្រើស)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "ប្រវត្តិរូបសង្ខេប + សំបុត្រ"
 
@@ -10038,8 +10114,8 @@ msgstr "បានរក្សាទុកទៅចំណេះដឹង ឯក�
 msgid "Saved to Saved · Practice"
 msgstr "បានរក្សាទុកទៅ “បានរក្សាទុក” · ការហាត់សម"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/link-tab.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "កំពុងរក្សាទុក {0}/{username}/{slug}… ច្បាប់ចម្លងអាចរកបានបន្ទាប់ពីរក្សាទុក។"
 
@@ -10136,6 +10212,10 @@ msgstr "ការស្វែងរកគ្របដណ្តប់ចំណង
 #: src/features/documents/documents-page.tsx
 msgid "Search documents"
 msgstr "ស្វែងរកឯកសារ"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off."
+msgstr "ម៉ាស៊ីនស្វែងរកដូចជា Google អាចដាក់បញ្ជីទំព័រវេបរបស់អ្នក។ វាអាចចំណាយពេលច្រើនសប្ដាហ៍ដើម្បីបង្ហាញ ឬដើម្បីបាត់វិញបន្ទាប់ពីអ្នកបិទជម្រើសនេះ។"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Search facts"
@@ -10441,29 +10521,22 @@ msgstr "ទទឹងស្រមោល"
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Share"
 msgstr "ចែករំលែក"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
-msgid "Share & export"
-msgstr "ចែករំលែក និងនាំចេញ"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "ចែករំលែកតំណសាធារណៈ បន្ថែមពាក្យសម្ងាត់ ឬរក្សាវាទុកជាឯកជន។ ជ្រើសរើសពីជម្រើសមើលឃើញចំនួន 3 ។ នាំចេញទៅ PDF ឬ Word ឬយកទិន្នន័យរបស់អ្នកទាំងអស់ជាមួយអ្នកជា JSON ។"
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-msgid "Share public resume"
-msgstr "ចែករំលែកប្រវត្តិរូបសង្ខេបជាសាធារណៈ"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "ចែករំលែកផ្នែក"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "ចែករំលែកតាមរយៈ…"
 
@@ -10497,6 +10570,10 @@ msgstr "ខ្លីនិងដោយផ្ទាល់។ ជាការប�
 msgid "Short and polite, for the recruiter"
 msgstr "ខ្លី និងគួរសមសម្រាប់អ្នកជ្រើសរើស"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link and domain"
+msgstr "តំណខ្លី និងដែន"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "បង្រួមសំណួរឱ្យនៅ 2,000 តួអក្សរ និងចម្លើយឱ្យនៅ 6,000 តួអក្សរ មុនពេលសម្គាល់ថាបានដាក់ពាក្យ។"
@@ -10508,6 +10585,10 @@ msgstr "ខ្លីជាង"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Show"
 msgstr "បង្ហាញ"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show “Made with Reactive Resume”"
+msgstr "បង្ហាញ “បង្កើតដោយ Reactive Resume”"
 
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #. placeholder {0}: visible.length - shown.length
@@ -10544,6 +10625,10 @@ msgstr "បង្ហាញចំណងជើង"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Show icons"
 msgstr "បង្ហាញរូបតំណាង"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show in search engines"
+msgstr "បង្ហាញក្នុងម៉ាស៊ីនស្វែងរក"
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -10679,7 +10764,7 @@ msgstr "កំពុង​ចេញ..."
 msgid "Signing up..."
 msgstr "កំពុង​ចុះឈ្មោះ..."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "since last view"
 msgstr "ចាប់តាំងពីការមើលចុងក្រោយ"
 
@@ -11479,7 +11564,7 @@ msgstr "ឯកសារនោះធំពេកមិនអាចពិនិត
 msgid "That link couldn't be read. Paste the posting text instead."
 msgstr "តំណនោះមិនអាចអានបានទេ។ បិទភ្ជាប់អត្ថបទប្រកាសការងារជំនួសវិញ។"
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "That password isn't correct. Check it with the resume owner and try again."
 msgstr "ពាក្យសម្ងាត់នោះមិនត្រឹមត្រូវទេ។ ពិនិត្យជាមួយម្ចាស់ប្រវត្តិរូបសង្ខេប ហើយព្យាយាមម្តងទៀត។"
 
@@ -11591,7 +11676,7 @@ msgstr "ការសួរសុខទុក្ខតាមឈ្មោះ។"
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "សោត្រូវបានអ៊ិនគ្រីបនៅលើម៉ាស៊ីនមេ ហើយមិនដែលបង្ហាញម្តងទៀតទេ។ ការរក្សាទុកសាកល្បងការតភ្ជាប់។"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "លិខិត​ដូច​ជា​"
 
@@ -11690,6 +11775,10 @@ msgstr "មិនអាចផ្ទៀងផ្ទាត់ការឆ្លើ
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "ហេតុផលត្រូវបានរក្សាទុកសម្រាប់ការយល់ដឹង។ ឯកសារដែលបានភ្ជាប់មិនត្រូវបានប៉ះពាល់ទេ។"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "The records aren't visible yet. Check again later."
+msgstr "កំណត់ត្រាមិនទាន់អាចមើលឃើញនៅឡើយទេ។ សូមពិនិត្យម្ដងទៀតនៅពេលក្រោយ។"
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11914,7 +12003,7 @@ msgstr "នេះជាទម្រង់ XFA ដូច្នេះកម្ម�
 msgid "This is not a common resume page size."
 msgstr "នេះមិនមែនជាទំហំទំព័រប្រវត្តិរូបសង្ខេបធម្មតាទេ។"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "សំបុត្រនេះ និង “{resumeName}” ជា PDFs ពីរ ដែលដាក់ឈ្មោះឱ្យត្រូវគ្នា។"
 
@@ -11974,7 +12063,7 @@ msgstr "ប្រវត្តិរូបសង្ខេបនេះត្រូ
 msgid "This resume is long."
 msgstr "ប្រវត្តិរូបសង្ខេបនេះវែង។"
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume is password-protected"
 msgstr "ប្រវត្តិរូបសង្ខេបនេះត្រូវបានការពារដោយពាក្យសម្ងាត់"
 
@@ -11982,7 +12071,7 @@ msgstr "ប្រវត្តិរូបសង្ខេបនេះត្រូ
 msgid "This resume isn't linked to an application yet."
 msgstr "ប្រវត្តិរូបសង្ខេបនេះមិនទាន់ភ្ជាប់ទៅពាក្យសុំការងារនៅឡើយទេ។"
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
 msgstr "ប្រវត្តិរូបសង្ខេបនេះមិនត្រូវបានចែករំលែកនៅពេលនេះទេ។"
 
@@ -12097,7 +12186,7 @@ msgid "To"
 msgstr "ទៅ"
 
 #: src/features/applications/components/calendar-view.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "ថ្ងៃនេះ"
@@ -12193,7 +12282,7 @@ msgid "Trust this device for 30 days"
 msgstr "ទុកចិត្តឧបករណ៍នេះរយៈពេល 30 ថ្ងៃ"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "សាកល្បង {0}"
 
@@ -12253,13 +12342,9 @@ msgstr "បិទការផ្ទៀងផ្ទាត់ពីរជំហា
 msgid "Turn off two-step verification?"
 msgstr "បិទការផ្ទៀងផ្ទាត់ពីរជំហាន?"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "បើកតំណដើម្បីជ្រើសរើសអាសយដ្ឋាន។"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Turn on the public link to count views and downloads. Counts are anonymous."
-msgstr "បើកតំណសាធារណៈដើម្បីរាប់ចំនួនមើល និងការទាញយក។ ចំនួននៃការប្រើប្រាស់គឺអនាមិក។"
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Turn on two-step verification"
@@ -12424,11 +12509,10 @@ msgstr "ផ្ដាច់"
 msgid "Unlink this application"
 msgstr "ផ្តាច់ពាក្យសុំការងារនេះ។"
 
-#. Primary action button label to unlock a password-protected resume
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Unlock"
 msgstr "ដោះ​សោ"
 
@@ -12545,7 +12629,6 @@ msgstr "ប្រើអក្សរតូចពី 3 ទៅ 64 អក្សរ�
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
-#: src/features/auth/pages/resume-password.tsx
 msgid "Use 64 characters or fewer."
 msgstr "ប្រើមិនលើសពី 64 តួអក្សរ។"
 
@@ -12583,7 +12666,8 @@ msgstr "ប្រើយ៉ាងហោចណាស់ 8 តួអក្សរ។
 msgid "Use at least 9pt."
 msgstr "ប្រើយ៉ាងតិច 9pt។"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
+#: src/libs/error-message.ts
 msgid "Use at most 64 characters."
 msgstr "ប្រើច្រើនបំផុត 64 តួអក្សរ។"
 
@@ -12612,7 +12696,7 @@ msgstr "ប្រើសម្រាប់ពាក្យសុំទាំងអ
 msgid "Use in coaching: {excerpt}"
 msgstr "ប្រើក្នុងការបង្វឹក៖ {excerpt}"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "ប្រើអក្សរតូច លេខ និងសញ្ញាដាច់ៗ។"
 
@@ -12705,6 +12789,11 @@ msgstr "ប្រើពាក្យសុំការងារដែលបាន
 msgid "Uses the web search service set up in Settings. Results wait in Today for your review; applications and documents are never created for you."
 msgstr "ប្រើសេវាស្វែងរកតាមអ៊ីនធឺណិតដែលបានរៀបចំក្នុងការកំណត់។ លទ្ធផលរង់ចាំនៅក្នុង “ថ្ងៃនេះ” សម្រាប់ការពិនិត្យរបស់អ្នក; ពាក្យសុំ និងឯកសារមិនដែលត្រូវបានបង្កើតជំនួសអ្នកទេ។"
 
+#. placeholder {0}: templates[template].name
+#: src/features/resume/share/share-panel.tsx
+msgid "Uses your {0} template and Design, and fits any screen. Change them in Design."
+msgstr "ប្រើគំរូ {0} និងការរចនារបស់អ្នក ហើយសមនឹងអេក្រង់ណាក៏ដោយ។ ផ្លាស់ប្ដូរវានៅក្នុង “រចនា”។"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Uses your AI provider's own web search where supported, and reads links with the built-in reader."
 msgstr "ប្រើការស្វែងរកគេហទំព័រផ្ទាល់ខ្លួនរបស់អ្នកផ្តល់សេវា AI ដែលជាកន្លែងដែលត្រូវបានគាំទ្រ និងអានតំណភ្ជាប់ជាមួយអ្នកអានដែលភ្ជាប់មកជាមួយ។"
@@ -12763,10 +12852,6 @@ msgstr "កំពុង​ផ្ទៀងផ្ទាត់​កូដ..."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Verifying code…"
 msgstr "កំពុងផ្ទៀងផ្ទាត់លេខកូដ…"
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Verifying password..."
-msgstr "កំពុង​ផ្ទៀងផ្ទាត់​ពាក្យសម្ងាត់..."
 
 #: src/features/auth/pages/register.tsx
 msgid "Verifying your email confirms that you own this address."
@@ -12835,23 +12920,23 @@ msgstr "មើលការប្រកាសការងារ"
 msgid "Viewing {0} · {1} · read-only"
 msgstr "កំពុងមើល {0} · {1} · បានតែអាន"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "views · 30 days"
 msgstr "ទិដ្ឋភាព · 30 ថ្ងៃ។"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Views and downloads"
-msgstr "ការមើល និងការទាញយក"
 
 #: src/features/homepage/share.tsx
 msgid "Visibility"
 msgstr "ភាពមើលឃើញ"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
+msgid "Visitors"
+msgstr "អ្នកទស្សនា"
+
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors can download the PDF"
 msgstr "អ្នកទស្សនាអាចទាញយក PDF"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "អ្នកទស្សនាបញ្ចូលវាមុនពេលពួកគេឃើញប្រវត្តិរូបសង្ខេប។ ចែករំលែកវាតែជាមួយមនុស្សដែលអ្នកទុកចិត្តប៉ុណ្ណោះ។"
 
@@ -12899,6 +12984,14 @@ msgstr "យើងបានផ្ញើតំណផ្ទៀងផ្ទាត់
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "ការចូលប្រើគេហទំព័រ"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Web page"
+msgstr "ទំព័រវេប"
+
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Web page preview"
+msgstr "ការមើលទំព័រវេបជាមុន"
 
 #: src/features/career/coach.tsx
 msgid "Web research"
@@ -13321,7 +13414,7 @@ msgid "You"
 msgstr "អ្នក"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "អ្នកបានប្រើវាសម្រាប់ \"{0}\" រួចហើយ។"
 
@@ -13489,6 +13582,10 @@ msgstr "កាលបរិច្ឆេទរបស់អ្នកត្រូវ
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "ព័ត៌មានលម្អិតរបស់អ្នកបានផ្លាស់ប្តូរនៅលើប្រវត្តិរូបសង្ខេប។ លិខិត​ក៏​បាន​ធ្វើ​បច្ចុប្បន្នភាព​ដែរ។"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain"
+msgstr "ដែនរបស់អ្នក"
+
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your email address changed on the resume. The letter updated too."
 msgstr "អាសយដ្ឋានអ៊ីមែលរបស់អ្នកបានផ្លាស់ប្តូរនៅលើប្រវត្តិរូបសង្ខេប។ លិខិត​ក៏​បាន​ធ្វើ​បច្ចុប្បន្នភាព​ដែរ។"
@@ -13500,6 +13597,10 @@ msgstr "អាសយដ្ឋានអ៊ីមែលរបស់អ្នកត
 #: src/features/auth/pages/error.tsx
 msgid "Your email address isn't verified with the provider. Verify it there, then try again."
 msgstr "អាសយដ្ឋានអ៊ីមែលរបស់អ្នកមិនត្រូវបានផ្ទៀងផ្ទាត់ជាមួយអ្នកផ្តល់សេវាទេ។ ផ្ទៀងផ្ទាត់វានៅទីនោះ បន្ទាប់មកព្យាយាមម្តងទៀត។"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
+msgstr "អ៊ីមែល ទូរស័ព្ទ ទីតាំង និងព័ត៌មានផ្សេងទៀតនៅក្នុងបឋមកថារបស់អ្នក ព្រមទាំងលេខទូរស័ព្ទរបស់អ្នកយោង មិនត្រូវបានដាក់បញ្ចូលក្នុងទំព័រវេប PDF របស់វា និងលទ្ធផលស្វែងរកទេ។"
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -13602,9 +13703,13 @@ msgstr "ការថតរបស់អ្នកត្រូវបានផ្ញ
 msgid "Your requirements"
 msgstr "លក្ខខណ្ឌតម្រូវរបស់អ្នក"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "ប្រវត្តិរូបសង្ខេបរបស់អ្នក។"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your resume as a web page"
+msgstr "ប្រវត្តិរូបសង្ខេបរបស់អ្នកជាទំព័រវេប"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Your resume has a photo"
@@ -13634,6 +13739,19 @@ msgstr "ពុម្ពអក្សរដែលអ្នកបានជ្រើ
 msgid "Your server provides search for Applications and the assistant. Connect a service to read pages the built-in reader can't."
 msgstr "ម៉ាស៊ីនមេរបស់អ្នកផ្តល់នូវការស្វែងរកតាមអ៊ីនធឺណិតនៅក្នុងផ្នែក ពាក្យសុំ និងសម្រាប់ជំនួយការ។ ភ្ជាប់សេវាកម្មដើម្បីអានគេហទំព័រដែលអ្នកអានដែលភ្ជាប់មកជាមួយមិនអាចអានបានទេ។"
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open “{0}”."
+msgstr "តំណខ្លី និងដែនផ្ទាល់ខ្លួនរបស់អ្នកបើក “{0}”។"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open this resume."
+msgstr "តំណខ្លី និងដែនផ្ទាល់ខ្លួនរបស់អ្នកបើកប្រវត្តិរូបសង្ខេបនេះ។"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
+msgstr "តំណខ្លី និងដែនផ្ទាល់ខ្លួនរបស់អ្នកបង្ហាញថា ប្រវត្តិរូបសង្ខេបនេះមិនត្រូវបានចែករំលែកទេ រហូតដល់អ្នកបោះពុម្ពផ្សាយវាម្ដងទៀត។"
+
 #: src/features/career/coach.tsx
 msgid "your stories"
 msgstr "រឿងរបស់អ្នក"
@@ -13649,6 +13767,10 @@ msgstr "វេនរបស់អ្នក។"
 #: src/features/career/workspace/prepare.tsx
 msgid "Your two-minute introduction"
 msgstr "ការណែនាំខ្លួនរយៈពេលពីរនាទីរបស់អ្នក"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your web page is live"
+msgstr "ទំព័រវេបរបស់អ្នកបានផ្សាយហើយ"
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your work is lost when you sign out or the session ends. Create an account or sign in to keep your resumes, cover letters and applications."

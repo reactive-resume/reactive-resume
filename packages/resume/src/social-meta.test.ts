@@ -2,22 +2,13 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { describe, expect, it } from "vite-plus/test";
 import { getResumeSocialMeta } from "./social-meta";
 
-const buildData = (overrides: { name?: string; headline?: string; summary?: string; template?: string }): ResumeData =>
+const buildData = (overrides: { name?: string; headline?: string; summary?: string }): ResumeData =>
 	({
 		basics: { name: overrides.name ?? "", headline: overrides.headline ?? "" },
 		summary: { content: overrides.summary ?? "" },
-		metadata: { template: overrides.template ?? "azurill" },
 	}) as ResumeData;
 
 describe("getResumeSocialMeta", () => {
-	it("falls back to the resume name when the basics name is blank", () => {
-		const meta = getResumeSocialMeta(buildData({}), "Untitled Resume");
-
-		expect(meta.name).toBe("Untitled Resume");
-		expect(meta.title).toBe("Untitled Resume");
-		expect(meta.description).toBe("Untitled Resume");
-	});
-
 	it("strips markup and collapses whitespace out of the summary", () => {
 		const meta = getResumeSocialMeta(
 			buildData({ name: "Jane", summary: "<p>Builds   <strong>systems</strong>\n\nat scale.</p>" }),

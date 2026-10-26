@@ -12,6 +12,12 @@ import type { ElementInfo, LayoutInfo } from "@formepdf/core";
 
 export const RESUME_NODE_PROP = "data-resume-node";
 
+/**
+ * A heading's node key, for the web page only: it makes the name an `h1` and section titles `h2`s. Kept apart from
+ * `RESUME_NODE_PROP` so the PDF's layout and page map stay as they are.
+ */
+export const HEADING_NODE_PROP = "data-resume-heading";
+
 export type PageMapTarget =
 	| { kind: "header" }
 	| { kind: "section"; sectionId: string }

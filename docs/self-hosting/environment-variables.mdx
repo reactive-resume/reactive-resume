@@ -47,6 +47,16 @@ turn on an optional feature.
 | `SERVER_PORT`    | `3001`                    | Port the server listens on when `NODE_ENV` is not `production`, which is the local development setup. Ignored by the image.                                       |
 | `ROOT_RESUME_ID` | unset                     | Shows one public resume at `/` instead of the home page. See [Show one resume at your root address](/self-hosting/examples#show-one-resume-at-your-root-address). |
 
+## Second domain and custom domains
+
+Both are off unless set. Every account's short link, `/<username>`, opens the resume its owner marked **Primary resume** in Share, with or without them.
+
+| Variable                        | Default | Description                                                                                                                                                                                                                                                                                                                      |
+| ------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `APP_ALIAS_URL`                 | unset   | A second domain, such as `https://rx.cv`, that serves the same public pages as `APP_URL`: resumes, short links, the home page. Sign-in and the editor redirect to `APP_URL`, and search engines are pointed there. When set, Share copies links on this domain. Point the domain at this server.                                 |
+| `CUSTOM_DOMAIN_TARGET`          | unset   | The host people point their own domain's CNAME record at, such as `domains.example.com`. It must resolve to this server.                                                                                                                                                                                                         |
+| `CUSTOM_DOMAIN_PROVIDER_SECRET` | unset   | At least 32 characters. Traefik's HTTP provider sends it in an `X-Provider-Secret` header to read `/api/internal/traefik?service=<service>&entryPoint=<entry point>&certResolver=<resolver>`, which returns a router, and so a certificate, for every verified domain. Custom domains need both this and `CUSTOM_DOMAIN_TARGET`. |
+
 ## Font mirror
 
 | Variable            | Default | Description                                                                                                                                                                                                        |
@@ -276,6 +286,7 @@ All flags default to `false`.
 | `FLAG_DISABLE_API_RATE_LIMIT`          | Turns off API and authentication rate limiting, including sign-in, sign-up, OAuth, requests made with API keys, PDF export and AI requests. Intended for test installations.                                                                                                                                |
 | `FLAG_ALLOW_UNSAFE_AI_BASE_URL`        | Lets AI providers use `http://` addresses and private or local network addresses, such as an Ollama server on your network. Without it, a provider's base URL must be public `https://`.                                                                                                                    |
 | `FLAG_ALLOW_UNSAFE_OAUTH_REDIRECT_URI` | Lets MCP and OAuth clients that register themselves use any redirect address, including custom schemes and private hosts. By default a redirect must go to your instance's own address, an `http://` loopback address (`localhost`, `127.0.0.1`, `::1`) or a public `https://` address.                     |
+| `FLAG_OLACV_SUGGESTION`                | Suggests registering `<username>.cv` at OlaCV to people who haven't connected a custom domain. Needs custom domains to be on.                                                                                                                                                                               |
 
 <Warning>
   Only turn on the two `FLAG_ALLOW_UNSAFE_*` flags on an instance where you trust every user. On a shared instance, an

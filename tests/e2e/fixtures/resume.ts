@@ -22,11 +22,10 @@ export async function createSampleResumeFromDashboard(page: Page, testInfo: Test
 }
 
 export async function openSidebarSection(page: Page, title: string) {
-	// The Share & export sheet hosts Sharing, without a heading of its own.
+	// Sharing is the Share mode, beside Write, Design and Check.
 	if (title === "Sharing") {
-		// "Share public resume" once the resume is public.
-		await page.getByRole("button", { name: /^Share\b/ }).click();
-		await expect(page.getByRole("dialog", { name: "Share & export" })).toBeVisible();
+		await page.getByRole("tab", { name: "Share", exact: true }).click();
+		await expect(page.getByRole("textbox", { name: "Address" })).toBeVisible();
 		return;
 	}
 
@@ -44,28 +43,25 @@ export async function openSidebarSection(page: Page, title: string) {
 	await expect(row).toHaveAttribute("aria-expanded", "true");
 }
 
-/** Opens Share & export on its Download tab, from the ▾ next to Download PDF. */
+/** Opens Download & history on its Download tab, from the ▾ next to Download PDF. */
 export async function openDownloadDialog(page: Page) {
 	await page.getByRole("button", { name: "More download formats", exact: true }).click();
-	const sheet = page.getByRole("dialog", { name: "Share & export" });
+	const sheet = page.getByRole("dialog", { name: "Download & history" });
 	await expect(sheet.getByRole("tab", { name: "Download", exact: true })).toHaveAttribute("aria-selected", "true");
 	return sheet;
 }
 
-/** Turns the public link on in Share → Link and returns the public address. */
+/** Publishes the web page in Share mode and returns its address. */
 export async function makeResumePublic(page: Page) {
 	await openSidebarSection(page, "Sharing");
-	const sheet = page.getByRole("dialog", { name: "Share & export" });
-	const publicLink = sheet.getByRole("switch", { name: "Public link" });
-	// On phones the sheet rises from below the screen: wait until it has arrived before pressing.
-	await expect(publicLink).toBeInViewport();
-	await publicLink.click();
+	await page.getByRole("button", { name: "Publish", exact: true }).click();
+	await expect(page.getByRole("switch", { name: "Public link" })).toBeChecked();
 	return getPublicUrl(page);
 }
 
-/** The public address, from Share → Link's "Open public page" (it fills in once the session has loaded). */
+/** The web page's address, from Share's "Open web page" (it fills in once the session has loaded). */
 export async function getPublicUrl(page: Page) {
-	const link = page.getByRole("dialog", { name: "Share & export" }).getByRole("link", { name: "Open public page" });
+	const link = page.getByRole("link", { name: "Open web page" });
 	await expect(link).toHaveAttribute("href", /\/e2e_/);
 	return (await link.getAttribute("href")) as string;
 }

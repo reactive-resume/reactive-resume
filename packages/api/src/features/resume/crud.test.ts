@@ -78,27 +78,6 @@ describe("resume write route validation", () => {
 		);
 	});
 
-	it.each(["create", "duplicate"] as const)(
-		"rejects slug longer than 64 characters on %s before calling persistence",
-		async (operation) => {
-			const client = createRouterClient(crudRouter, {
-				context: { locale: "en-US", reqHeaders: new Headers(), user: { id: "user-id", name: "Sam" } } as never,
-			});
-			const tooLongSlug = "a".repeat(65);
-
-			const result =
-				operation === "create"
-					? client.create({ name: "Resume", tags: [], slug: tooLongSlug })
-					: client.duplicate({ id: "resume-id", slug: tooLongSlug });
-
-			const error = await result.catch((caught: unknown) => caught);
-
-			expect(error).toMatchObject({ code: "BAD_REQUEST", status: 400 });
-			expect(error).toHaveProperty("cause.issues.0.path", ["slug"]);
-			expect(mocks.create).not.toHaveBeenCalled();
-		},
-	);
-
 	it("allows overlong slug on update to reach the service for change-sensitive check", async () => {
 		const client = createRouterClient(crudRouter, {
 			context: { locale: "en-US", reqHeaders: new Headers(), user: { id: "user-id", name: "Sam" } } as never,
@@ -111,6 +90,9 @@ describe("resume write route validation", () => {
 			tags: [],
 			isPublic: false,
 			showDownloadButtons: true,
+			showInSearchEngines: false,
+			hideContactDetails: false,
+			isPrimary: false,
 			isLocked: false,
 			data: defaultResumeData,
 			createdAt: new Date(),
@@ -122,26 +104,27 @@ describe("resume write route validation", () => {
 		expect(mocks.update).toHaveBeenCalledWith(expect.objectContaining({ id: "resume-id", slug: tooLongSlug }));
 	});
 
-	it.each(["create", "duplicate", "update"] as const)(
-		"propagates INVALID_SLUG when service rejects %s with invalid slug",
-		async (operation) => {
-			mocks.create.mockRejectedValueOnce(new ORPCError("INVALID_SLUG", { status: 400 }));
-			mocks.update.mockRejectedValueOnce(new ORPCError("INVALID_SLUG", { status: 400 }));
+	it.each(
+		["create", "duplicate", "update"].flatMap((operation) =>
+			["", "a".repeat(65), "Invalid Slug@123!"].map((slug) => ({ operation, slug })),
+		),
+	)("returns INVALID_SLUG for $operation with slug '$slug'", async ({ operation, slug }) => {
+		mocks.create.mockRejectedValueOnce(new ORPCError("INVALID_SLUG", { status: 400 }));
+		mocks.update.mockRejectedValueOnce(new ORPCError("INVALID_SLUG", { status: 400 }));
 
-			const client = createRouterClient(crudRouter, {
-				context: { locale: "en-US", reqHeaders: new Headers(), user: { id: "user-id", name: "Sam" } } as never,
-			});
+		const client = createRouterClient(crudRouter, {
+			context: { locale: "en-US", reqHeaders: new Headers(), user: { id: "user-id", name: "Sam" } } as never,
+		});
 
-			const result =
-				operation === "create"
-					? client.create({ name: "Resume", tags: [], slug: "Invalid Slug@123!" })
-					: operation === "duplicate"
-						? client.duplicate({ id: "resume-id", slug: "Invalid Slug@123!" })
-						: client.update({ id: "resume-id", slug: "Invalid Slug@123!" });
+		const result =
+			operation === "create"
+				? client.create({ name: "Resume", tags: [], slug })
+				: operation === "duplicate"
+					? client.duplicate({ id: "resume-id", slug })
+					: client.update({ id: "resume-id", slug });
 
-			await expect(result).rejects.toMatchObject({ code: "INVALID_SLUG", status: 400 });
-		},
-	);
+		await expect(result).rejects.toMatchObject({ code: "INVALID_SLUG", status: 400 });
+	});
 
 	it("propagates NOT_FOUND when duplicating a non-existent resume", async () => {
 		mocks.getById.mockRejectedValueOnce(new ORPCError("NOT_FOUND", { status: 404 }));

@@ -14,6 +14,17 @@ const resumeSchema = createSelectSchema(schema.resume, {
 	tags: z.array(z.string()).describe("The tags of the resume."),
 	isPublic: z.boolean().describe("Whether the resume is public."),
 	showDownloadButtons: z.boolean().describe("Whether download buttons are shown on the public resume page."),
+	showInSearchEngines: z
+		.boolean()
+		.describe("Whether search engines may list the resume's public web page. Off unless the owner turns it on."),
+	hideContactDetails: z
+		.boolean()
+		.describe(
+			"Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers.",
+		),
+	isPrimary: z
+		.boolean()
+		.describe("Whether this is the account's primary resume, opened by its short link and custom domain."),
 	isLocked: z.boolean().describe("Whether the resume is locked."),
 	password: z.string().trim().min(6).max(64).nullable().describe("The password of the resume, if any."),
 	data: resumeDataSchema,
@@ -92,10 +103,21 @@ export const resumeDto = {
 
 	update: {
 		input: resumeSchema
-			.pick({ name: true, slug: true, tags: true, data: true, isPublic: true, showDownloadButtons: true })
+			.pick({
+				name: true,
+				slug: true,
+				tags: true,
+				data: true,
+				isPublic: true,
+				showDownloadButtons: true,
+				showInSearchEngines: true,
+				hideContactDetails: true,
+				isPrimary: true,
+			})
 			.partial()
 			.extend({
 				id: z.string(),
+				slug: slugSchema.optional(),
 				data: writableResumeDataSchema.optional(),
 				expectedUpdatedAt: z.coerce
 					.date()
@@ -115,7 +137,7 @@ export const resumeDto = {
 	checkSlug: {
 		input: z.object({
 			resumeId: z.string().describe("The ID of the resume the slug is for."),
-			slug: z.string().max(255).describe("The slug to check."),
+			slug: z.string().describe("The slug to check."),
 		}),
 		output: z.object({
 			status: z

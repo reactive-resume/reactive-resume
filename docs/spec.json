@@ -4617,6 +4617,19 @@
 													],
 													"additionalProperties": false
 												},
+												"web": {
+													"type": "object",
+													"properties": {
+														"showCredit": {
+															"type": "boolean",
+															"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+														}
+													},
+													"required": [
+														"showCredit"
+													],
+													"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+												},
 												"check": {
 													"type": "object",
 													"properties": {
@@ -9074,6 +9087,19 @@
 														"source"
 													],
 													"additionalProperties": false
+												},
+												"web": {
+													"type": "object",
+													"properties": {
+														"showCredit": {
+															"type": "boolean",
+															"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+														}
+													},
+													"required": [
+														"showCredit"
+													],
+													"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
 												},
 												"check": {
 													"type": "object",
@@ -29199,6 +29225,18 @@
 														"type": "boolean",
 														"description": "Whether download buttons are shown on the public resume page."
 													},
+													"showInSearchEngines": {
+														"type": "boolean",
+														"description": "Whether search engines may list the resume's public web page. Off unless the owner turns it on."
+													},
+													"hideContactDetails": {
+														"type": "boolean",
+														"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
+													},
+													"isPrimary": {
+														"type": "boolean",
+														"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
+													},
 													"isLocked": {
 														"type": "boolean",
 														"description": "Whether the resume is locked."
@@ -33287,6 +33325,19 @@
 																		],
 																		"additionalProperties": false
 																	},
+																	"web": {
+																		"type": "object",
+																		"properties": {
+																			"showCredit": {
+																				"type": "boolean",
+																				"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																			}
+																		},
+																		"required": [
+																			"showCredit"
+																		],
+																		"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+																	},
 																	"check": {
 																		"type": "object",
 																		"properties": {
@@ -33353,6 +33404,9 @@
 													"tags",
 													"isPublic",
 													"showDownloadButtons",
+													"showInSearchEngines",
+													"hideContactDetails",
+													"isPrimary",
 													"isLocked",
 													"data",
 													"createdAt",
@@ -33869,6 +33923,19 @@
 																			"source"
 																		],
 																		"additionalProperties": false
+																	},
+																	"web": {
+																		"type": "object",
+																		"properties": {
+																			"showCredit": {
+																				"type": "boolean",
+																				"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																			}
+																		},
+																		"required": [
+																			"showCredit"
+																		],
+																		"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
 																	},
 																	"check": {
 																		"type": "object",
@@ -44596,6 +44663,19 @@
 																		],
 																		"additionalProperties": false
 																	},
+																	"web": {
+																		"type": "object",
+																		"properties": {
+																			"showCredit": {
+																				"type": "boolean",
+																				"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																			}
+																		},
+																		"required": [
+																			"showCredit"
+																		],
+																		"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+																	},
 																	"check": {
 																		"type": "object",
 																		"properties": {
@@ -45442,6 +45522,19 @@
 															],
 															"additionalProperties": false
 														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+														},
 														"check": {
 															"type": "object",
 															"properties": {
@@ -46177,6 +46270,19 @@
 																"source"
 															],
 															"additionalProperties": false
+														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
 														},
 														"check": {
 															"type": "object",
@@ -47291,6 +47397,19 @@
 																"source"
 															],
 															"additionalProperties": false
+														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
 														},
 														"check": {
 															"type": "object",
@@ -48499,6 +48618,19 @@
 															],
 															"additionalProperties": false
 														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+														},
 														"check": {
 															"type": "object",
 															"properties": {
@@ -49260,6 +49392,19 @@
 															],
 															"additionalProperties": false
 														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+														},
 														"check": {
 															"type": "object",
 															"properties": {
@@ -50013,6 +50158,19 @@
 															],
 															"additionalProperties": false
 														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+														},
 														"check": {
 															"type": "object",
 															"properties": {
@@ -50749,6 +50907,19 @@
 															],
 															"additionalProperties": false
 														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+														},
 														"check": {
 															"type": "object",
 															"properties": {
@@ -51427,6 +51598,19 @@
 																],
 																"additionalProperties": false
 															},
+															"web": {
+																"type": "object",
+																"properties": {
+																	"showCredit": {
+																		"type": "boolean",
+																		"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																	}
+																},
+																"required": [
+																	"showCredit"
+																],
+																"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+															},
 															"check": {
 																"type": "object",
 																"properties": {
@@ -52046,6 +52230,19 @@
 																"source"
 															],
 															"additionalProperties": false
+														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
 														},
 														"check": {
 															"type": "object",
@@ -53129,6 +53326,19 @@
 																	],
 																	"additionalProperties": false
 																},
+																"web": {
+																	"type": "object",
+																	"properties": {
+																		"showCredit": {
+																			"type": "boolean",
+																			"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																		}
+																	},
+																	"required": [
+																		"showCredit"
+																	],
+																	"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+																},
 																"check": {
 																	"type": "object",
 																	"properties": {
@@ -54049,6 +54259,19 @@
 															],
 															"additionalProperties": false
 														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+														},
 														"check": {
 															"type": "object",
 															"properties": {
@@ -54417,6 +54640,756 @@
 						"lang": "bash",
 						"label": "cURL",
 						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/<id>/draft\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
+				]
+			}
+		},
+		"/custom-domain": {
+			"get": {
+				"operationId": "getCustomDomain",
+				"summary": "Get the custom domain",
+				"description": "Returns the account's custom domain, the DNS records that connect it, and whether it's verified. A verified domain opens the account's primary resume. Null when none is set. Requires authentication.",
+				"tags": [
+					"Custom Domain"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"type": "object",
+											"properties": {
+												"hostname": {
+													"type": "string",
+													"description": "The domain, as DNS knows it (lowercase ASCII)."
+												},
+												"target": {
+													"type": "string",
+													"description": "The host the domain's CNAME record points at."
+												},
+												"txtName": {
+													"type": "string",
+													"description": "Where the TXT record that proves ownership goes."
+												},
+												"txtValue": {
+													"type": "string",
+													"description": "The TXT record's value."
+												},
+												"verified": {
+													"type": "boolean",
+													"description": "Whether DNS proved ownership and the domain opens the primary resume."
+												},
+												"lastCheckedAt": {
+													"anyOf": [
+														{
+															"type": "string",
+															"format": "date-time",
+															"x-native-type": "date"
+														},
+														{
+															"type": "null"
+														}
+													],
+													"description": "When DNS was last checked."
+												}
+											},
+											"required": [
+												"hostname",
+												"target",
+												"txtName",
+												"txtValue",
+												"verified",
+												"lastCheckedAt"
+											]
+										},
+										{
+											"type": "null"
+										}
+									]
+								}
+							}
+						}
+					},
+					"412": {
+						"description": "412",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "PRECONDITION_FAILED"
+												},
+												"status": {
+													"const": 412
+												},
+												"message": {
+													"type": "string",
+													"default": "Custom domains aren't set up on this server."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/custom-domain\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			},
+			"put": {
+				"operationId": "setCustomDomain",
+				"summary": "Set the custom domain",
+				"description": "Sets the account's custom domain, replacing any previous one, and returns the DNS records to add: a TXT record that proves ownership, and a CNAME (or, for a root domain, addresses) pointing at this server. Requires authentication.",
+				"tags": [
+					"Custom Domain"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"hostname": {
+										"type": "string",
+										"maxLength": 260,
+										"description": "A domain such as resume.example.com."
+									}
+								},
+								"required": [
+									"hostname"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"hostname": {
+											"type": "string",
+											"description": "The domain, as DNS knows it (lowercase ASCII)."
+										},
+										"target": {
+											"type": "string",
+											"description": "The host the domain's CNAME record points at."
+										},
+										"txtName": {
+											"type": "string",
+											"description": "Where the TXT record that proves ownership goes."
+										},
+										"txtValue": {
+											"type": "string",
+											"description": "The TXT record's value."
+										},
+										"verified": {
+											"type": "boolean",
+											"description": "Whether DNS proved ownership and the domain opens the primary resume."
+										},
+										"lastCheckedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											],
+											"description": "When DNS was last checked."
+										}
+									},
+									"required": [
+										"hostname",
+										"target",
+										"txtName",
+										"txtValue",
+										"verified",
+										"lastCheckedAt"
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "400",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "INVALID_DOMAIN"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "Enter a domain such as resume.example.com."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
+					"412": {
+						"description": "412",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "PRECONDITION_FAILED"
+												},
+												"status": {
+													"const": 412
+												},
+												"message": {
+													"type": "string",
+													"default": "Custom domains aren't set up on this server."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PUT \"https://rxresu.me/api/openapi/custom-domain\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"hostname\": \"<string>\"\n}'"
+					}
+				]
+			},
+			"delete": {
+				"operationId": "removeCustomDomain",
+				"summary": "Remove the custom domain",
+				"description": "Removes the account's custom domain; it stops opening the primary resume. Requires authentication.",
+				"tags": [
+					"Custom Domain"
+				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"412": {
+						"description": "412",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "PRECONDITION_FAILED"
+												},
+												"status": {
+													"const": 412
+												},
+												"message": {
+													"type": "string",
+													"default": "Custom domains aren't set up on this server."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/custom-domain\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
+				]
+			}
+		},
+		"/custom-domain/verify": {
+			"post": {
+				"operationId": "verifyCustomDomain",
+				"summary": "Check the custom domain's DNS",
+				"description": "Checks the custom domain's DNS records now. When they're right, the domain is verified and opens the primary resume, moving it from any other account that had it. Requires authentication.",
+				"tags": [
+					"Custom Domain"
+				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"hostname": {
+											"type": "string",
+											"description": "The domain, as DNS knows it (lowercase ASCII)."
+										},
+										"target": {
+											"type": "string",
+											"description": "The host the domain's CNAME record points at."
+										},
+										"txtName": {
+											"type": "string",
+											"description": "Where the TXT record that proves ownership goes."
+										},
+										"txtValue": {
+											"type": "string",
+											"description": "The TXT record's value."
+										},
+										"verified": {
+											"type": "boolean",
+											"description": "Whether DNS proved ownership and the domain opens the primary resume."
+										},
+										"lastCheckedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											],
+											"description": "When DNS was last checked."
+										}
+									},
+									"required": [
+										"hostname",
+										"target",
+										"txtName",
+										"txtValue",
+										"verified",
+										"lastCheckedAt"
+									]
+								}
+							}
+						}
+					},
+					"412": {
+						"description": "412",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "PRECONDITION_FAILED"
+												},
+												"status": {
+													"const": 412
+												},
+												"message": {
+													"type": "string",
+													"default": "Custom domains aren't set up on this server."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/custom-domain/verify\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}
@@ -55640,6 +56613,22 @@
 										"careerSchedulingEnabled": {
 											"type": "boolean",
 											"description": "Whether scheduled career work is configured on this deployment."
+										},
+										"appUrl": {
+											"type": "string",
+											"description": "The app's own address, where sign-in and the editor live."
+										},
+										"aliasUrl": {
+											"type": "string",
+											"description": "A second domain serving the same public pages, when configured. Shared resume links use it instead of appUrl."
+										},
+										"customDomains": {
+											"type": "boolean",
+											"description": "Whether accounts can open their primary resume at their own domain."
+										},
+										"olacvSuggestion": {
+											"type": "boolean",
+											"description": "Whether accounts without a custom domain see a suggestion to register one at OlaCV."
 										}
 									},
 									"required": [
@@ -55647,7 +56636,10 @@
 										"disableEmailAuth",
 										"allowGuestLogin",
 										"smtpEnabled",
-										"careerSchedulingEnabled"
+										"careerSchedulingEnabled",
+										"appUrl",
+										"customDomains",
+										"olacvSuggestion"
 									]
 								}
 							}
@@ -56421,6 +57413,18 @@
 												"type": "boolean",
 												"description": "Whether download buttons are shown on the public resume page."
 											},
+											"showInSearchEngines": {
+												"type": "boolean",
+												"description": "Whether search engines may list the resume's public web page. Off unless the owner turns it on."
+											},
+											"hideContactDetails": {
+												"type": "boolean",
+												"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
+											},
+											"isPrimary": {
+												"type": "boolean",
+												"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
+											},
 											"isLocked": {
 												"type": "boolean",
 												"description": "Whether the resume is locked."
@@ -56445,6 +57449,9 @@
 											"tags",
 											"isPublic",
 											"showDownloadButtons",
+											"showInSearchEngines",
+											"hideContactDetails",
+											"isPrimary",
 											"isLocked",
 											"createdAt",
 											"updatedAt"
@@ -56557,8 +57564,6 @@
 									},
 									"slug": {
 										"type": "string",
-										"minLength": 1,
-										"maxLength": 64,
 										"description": "The slug of the resume. Generated from the name, and made unique, when omitted."
 									},
 									"withSampleData": {
@@ -56779,6 +57784,18 @@
 											"type": "boolean",
 											"description": "Whether download buttons are shown on the public resume page."
 										},
+										"showInSearchEngines": {
+											"type": "boolean",
+											"description": "Whether search engines may list the resume's public web page. Off unless the owner turns it on."
+										},
+										"hideContactDetails": {
+											"type": "boolean",
+											"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
+										},
+										"isPrimary": {
+											"type": "boolean",
+											"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
+										},
 										"isLocked": {
 											"type": "boolean",
 											"description": "Whether the resume is locked."
@@ -60964,6 +61981,19 @@
 															],
 															"additionalProperties": false
 														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+														},
 														"check": {
 															"type": "object",
 															"properties": {
@@ -61044,6 +62074,9 @@
 										"tags",
 										"isPublic",
 										"showDownloadButtons",
+										"showInSearchEngines",
+										"hideContactDetails",
+										"isPrimary",
 										"isLocked",
 										"data",
 										"createdAt",
@@ -61137,7 +62170,6 @@
 									},
 									"slug": {
 										"type": "string",
-										"minLength": 1,
 										"description": "The slug of the resume."
 									},
 									"tags": {
@@ -61157,6 +62189,18 @@
 									"showDownloadButtons": {
 										"type": "boolean",
 										"description": "Whether download buttons are shown on the public resume page."
+									},
+									"showInSearchEngines": {
+										"type": "boolean",
+										"description": "Whether search engines may list the resume's public web page. Off unless the owner turns it on."
+									},
+									"hideContactDetails": {
+										"type": "boolean",
+										"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
+									},
+									"isPrimary": {
+										"type": "boolean",
+										"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
 									},
 									"expectedUpdatedAt": {
 										"type": "string",
@@ -61210,6 +62254,18 @@
 										"showDownloadButtons": {
 											"type": "boolean",
 											"description": "Whether download buttons are shown on the public resume page."
+										},
+										"showInSearchEngines": {
+											"type": "boolean",
+											"description": "Whether search engines may list the resume's public web page. Off unless the owner turns it on."
+										},
+										"hideContactDetails": {
+											"type": "boolean",
+											"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
+										},
+										"isPrimary": {
+											"type": "boolean",
+											"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
 										},
 										"isLocked": {
 											"type": "boolean",
@@ -65396,6 +66452,19 @@
 															],
 															"additionalProperties": false
 														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+														},
 														"check": {
 															"type": "object",
 															"properties": {
@@ -65465,6 +66534,9 @@
 										"tags",
 										"isPublic",
 										"showDownloadButtons",
+										"showInSearchEngines",
+										"hideContactDetails",
+										"isPrimary",
 										"isLocked",
 										"data",
 										"createdAt",
@@ -65521,6 +66593,31 @@
 												"message": {
 													"type": "string",
 													"default": "The slug must be at most 64 characters and contain only lowercase letters and numbers, separated by single dashes."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "RESUME_NOT_PUBLIC"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "Publish the resume before making it primary."
 												},
 												"data": {}
 											},
@@ -65917,6 +67014,18 @@
 											"type": "boolean",
 											"description": "Whether download buttons are shown on the public resume page."
 										},
+										"showInSearchEngines": {
+											"type": "boolean",
+											"description": "Whether search engines may list the resume's public web page. Off unless the owner turns it on."
+										},
+										"hideContactDetails": {
+											"type": "boolean",
+											"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
+										},
+										"isPrimary": {
+											"type": "boolean",
+											"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
+										},
 										"isLocked": {
 											"type": "boolean",
 											"description": "Whether the resume is locked."
@@ -70102,6 +71211,19 @@
 															],
 															"additionalProperties": false
 														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+														},
 														"check": {
 															"type": "object",
 															"properties": {
@@ -70171,6 +71293,9 @@
 										"tags",
 										"isPublic",
 										"showDownloadButtons",
+										"showInSearchEngines",
+										"hideContactDetails",
+										"isPrimary",
 										"isLocked",
 										"data",
 										"createdAt",
@@ -70604,6 +71729,18 @@
 											"type": "boolean",
 											"description": "Whether download buttons are shown on the public resume page."
 										},
+										"showInSearchEngines": {
+											"type": "boolean",
+											"description": "Whether search engines may list the resume's public web page. Off unless the owner turns it on."
+										},
+										"hideContactDetails": {
+											"type": "boolean",
+											"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
+										},
+										"isPrimary": {
+											"type": "boolean",
+											"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
+										},
 										"isLocked": {
 											"type": "boolean",
 											"description": "Whether the resume is locked."
@@ -74789,6 +75926,19 @@
 															],
 															"additionalProperties": false
 														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+														},
 														"check": {
 															"type": "object",
 															"properties": {
@@ -74845,6 +75995,9 @@
 										"tags",
 										"isPublic",
 										"showDownloadButtons",
+										"showInSearchEngines",
+										"hideContactDetails",
+										"isPrimary",
 										"isLocked",
 										"data",
 										"name"
@@ -74895,6 +76048,89 @@
 				]
 			}
 		},
+		"/resumes/{id}/web-page/preview": {
+			"get": {
+				"operationId": "getResumeWebPagePreviewUrl",
+				"summary": "Get a preview link for the web page",
+				"description": "Returns a link, valid for 15 minutes, that shows the resume's web page as visitors will see it, even before it's published. The page isn't counted or listed in search engines. Requires authentication and resume ownership.",
+				"tags": [
+					"Resume Sharing"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "The ID of the resume."
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "The preview link.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string",
+									"description": "The preview link."
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/resumes/<id>/web-page/preview\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			}
+		},
 		"/resumes/{resumeId}/slug-check": {
 			"get": {
 				"operationId": "checkResumeSlug",
@@ -74919,7 +76155,6 @@
 						"required": true,
 						"schema": {
 							"type": "string",
-							"maxLength": 255,
 							"description": "The slug to check."
 						},
 						"allowEmptyValue": true,
@@ -75780,8 +77015,6 @@
 									},
 									"slug": {
 										"type": "string",
-										"minLength": 1,
-										"maxLength": 64,
 										"description": "The slug of the copy. Generated from the name, and made unique, when omitted."
 									}
 								}
@@ -80566,6 +81799,19 @@
 															],
 															"additionalProperties": false
 														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+														},
 														"check": {
 															"type": "object",
 															"properties": {
@@ -80975,6 +82221,18 @@
 										"showDownloadButtons": {
 											"type": "boolean",
 											"description": "Whether download buttons are shown on the public resume page."
+										},
+										"showInSearchEngines": {
+											"type": "boolean",
+											"description": "Whether search engines may list the resume's public web page. Off unless the owner turns it on."
+										},
+										"hideContactDetails": {
+											"type": "boolean",
+											"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
+										},
+										"isPrimary": {
+											"type": "boolean",
+											"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
 										},
 										"isLocked": {
 											"type": "boolean",
@@ -85161,6 +86419,19 @@
 															],
 															"additionalProperties": false
 														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+														},
 														"check": {
 															"type": "object",
 															"properties": {
@@ -85230,6 +86501,9 @@
 										"tags",
 										"isPublic",
 										"showDownloadButtons",
+										"showInSearchEngines",
+										"hideContactDetails",
+										"isPrimary",
 										"isLocked",
 										"data",
 										"createdAt",
@@ -88166,7 +89440,6 @@
 									},
 									"slug": {
 										"type": "string",
-										"minLength": 1,
 										"description": "The slug of the resume."
 									},
 									"tags": {
@@ -88186,6 +89459,18 @@
 									"showDownloadButtons": {
 										"type": "boolean",
 										"description": "Whether download buttons are shown on the public resume page."
+									},
+									"showInSearchEngines": {
+										"type": "boolean",
+										"description": "Whether search engines may list the resume's public web page. Off unless the owner turns it on."
+									},
+									"hideContactDetails": {
+										"type": "boolean",
+										"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
+									},
+									"isPrimary": {
+										"type": "boolean",
+										"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
 									},
 									"expectedUpdatedAt": {
 										"type": "string",
@@ -88239,6 +89524,18 @@
 										"showDownloadButtons": {
 											"type": "boolean",
 											"description": "Whether download buttons are shown on the public resume page."
+										},
+										"showInSearchEngines": {
+											"type": "boolean",
+											"description": "Whether search engines may list the resume's public web page. Off unless the owner turns it on."
+										},
+										"hideContactDetails": {
+											"type": "boolean",
+											"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
+										},
+										"isPrimary": {
+											"type": "boolean",
+											"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
 										},
 										"isLocked": {
 											"type": "boolean",
@@ -92425,6 +93722,19 @@
 															],
 															"additionalProperties": false
 														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+														},
 														"check": {
 															"type": "object",
 															"properties": {
@@ -92494,6 +93804,9 @@
 										"tags",
 										"isPublic",
 										"showDownloadButtons",
+										"showInSearchEngines",
+										"hideContactDetails",
+										"isPrimary",
 										"isLocked",
 										"data",
 										"createdAt",
@@ -92550,6 +93863,31 @@
 												"message": {
 													"type": "string",
 													"default": "The slug must be at most 64 characters and contain only lowercase letters and numbers, separated by single dashes."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "RESUME_NOT_PUBLIC"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "Publish the resume before making it primary."
 												},
 												"data": {}
 											},
@@ -92801,8 +94139,6 @@
 									},
 									"slug": {
 										"type": "string",
-										"minLength": 1,
-										"maxLength": 64,
 										"description": "The slug of the copy. Generated from the name, and made unique, when omitted."
 									}
 								}
@@ -93234,6 +94570,18 @@
 											"type": "boolean",
 											"description": "Whether download buttons are shown on the public resume page."
 										},
+										"showInSearchEngines": {
+											"type": "boolean",
+											"description": "Whether search engines may list the resume's public web page. Off unless the owner turns it on."
+										},
+										"hideContactDetails": {
+											"type": "boolean",
+											"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
+										},
+										"isPrimary": {
+											"type": "boolean",
+											"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
+										},
 										"isLocked": {
 											"type": "boolean",
 											"description": "Whether the resume is locked."
@@ -97419,6 +98767,19 @@
 															],
 															"additionalProperties": false
 														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+														},
 														"check": {
 															"type": "object",
 															"properties": {
@@ -97488,6 +98849,9 @@
 										"tags",
 										"isPublic",
 										"showDownloadButtons",
+										"showInSearchEngines",
+										"hideContactDetails",
+										"isPrimary",
 										"isLocked",
 										"data",
 										"createdAt",
@@ -97678,7 +99042,6 @@
 						"required": true,
 						"schema": {
 							"type": "string",
-							"maxLength": 255,
 							"description": "The slug to check."
 						},
 						"allowEmptyValue": true,
@@ -98398,6 +99761,19 @@
 																"source"
 															],
 															"additionalProperties": false
+														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
 														},
 														"check": {
 															"type": "object",
@@ -99128,6 +100504,19 @@
 																],
 																"additionalProperties": false
 															},
+															"web": {
+																"type": "object",
+																"properties": {
+																	"showCredit": {
+																		"type": "boolean",
+																		"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																	}
+																},
+																"required": [
+																	"showCredit"
+																],
+																"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+															},
 															"check": {
 																"type": "object",
 																"properties": {
@@ -99747,6 +101136,19 @@
 																"source"
 															],
 															"additionalProperties": false
+														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
 														},
 														"check": {
 															"type": "object",
@@ -100508,6 +101910,19 @@
 																"source"
 															],
 															"additionalProperties": false
+														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
 														},
 														"check": {
 															"type": "object",
@@ -101421,6 +102836,19 @@
 																"source"
 															],
 															"additionalProperties": false
+														},
+														"web": {
+															"type": "object",
+															"properties": {
+																"showCredit": {
+																	"type": "boolean",
+																	"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+																}
+															},
+															"required": [
+																"showCredit"
+															],
+															"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
 														},
 														"check": {
 															"type": "object",
@@ -110123,6 +111551,19 @@
 													],
 													"additionalProperties": false
 												},
+												"web": {
+													"type": "object",
+													"properties": {
+														"showCredit": {
+															"type": "boolean",
+															"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+														}
+													},
+													"required": [
+														"showCredit"
+													],
+													"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
+												},
 												"check": {
 													"type": "object",
 													"properties": {
@@ -114580,6 +116021,19 @@
 														"source"
 													],
 													"additionalProperties": false
+												},
+												"web": {
+													"type": "object",
+													"properties": {
+														"showCredit": {
+															"type": "boolean",
+															"description": "Whether the web page shows the small 'Made with Reactive Resume' footer."
+														}
+													},
+													"required": [
+														"showCredit"
+													],
+													"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share."
 												},
 												"check": {
 													"type": "object",
@@ -120315,6 +121769,20 @@
 									"source"
 								],
 								"additionalProperties": false
+							},
+							"web": {
+								"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share.",
+								"type": "object",
+								"properties": {
+									"showCredit": {
+										"default": true,
+										"description": "Whether the web page shows the small 'Made with Reactive Resume' footer.",
+										"type": "boolean"
+									}
+								},
+								"required": [
+									"showCredit"
+								]
 							},
 							"check": {
 								"description": "The author's Check choices for this resume. Not printed; missing until a choice is made.",

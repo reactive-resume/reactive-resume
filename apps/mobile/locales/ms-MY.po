@@ -28,6 +28,11 @@ msgstr "\"{0}\" tersembunyi"
 msgid "“{0}” moved to Trash"
 msgstr "“{0}” dialihkan ke Sampah"
 
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr "“{0}” tidak lagi menjadi resume utama anda."
+
 #. placeholder {0}: purge[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
@@ -609,6 +614,10 @@ msgstr "{skipped, plural, one {# suntingan tidak dapat diterapkan: teksnya berub
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, other {# cerita}}"
 
+#: src/features/share/web-page.tsx
+msgid "{suggestion} may be available. Get yours here →"
+msgstr "{suggestion} mungkin tersedia. Dapatkan milik anda di sini →"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
 msgstr "{summary}. Dibuka dalam Kerjaya → Tawaran."
@@ -1076,6 +1085,10 @@ msgstr "Tambahkan domain selepas @, seperti {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Tambahkan pengakhiran domain, seperti {domain}.com"
 
+#: src/features/share/web-page.tsx
+msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
+msgstr "Tambahkan rekod ini di tempat anda mengurus domain, kemudian semak. Perubahan boleh mengambil masa beberapa jam untuk sampai kepada semua orang."
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Add to calendar"
@@ -1371,7 +1384,7 @@ msgstr "Mana-mana"
 msgid "Any font, in Advanced"
 msgstr "Sebarang fon, dalam Advanced"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Sesiapa sahaja yang mempunyai pautan akan dapat melihat resume anda."
 
@@ -1792,10 +1805,6 @@ msgstr "Di bawah gaji pokok minimum anda."
 msgid "Bengali"
 msgstr "Bengali"
 
-#: src/features/public/public-resume.tsx
-msgid "Block this author"
-msgstr "Sekat pengarang ini"
-
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Papan"
@@ -1988,7 +1997,7 @@ msgstr "Tukar zon waktu"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Mengubah resume secara langsung (perbualan terdahulu)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Perubahan tidak dapat disimpan. Cuba semula sebelum meneruskan."
 
@@ -2023,6 +2032,10 @@ msgstr "Semak semula"
 #: src/features/ats-checker/checker.tsx
 msgid "Check another file"
 msgstr "Semak fail lain"
+
+#: src/features/share/web-page.tsx
+msgid "Check DNS"
+msgstr "Semak DNS"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Check every claim, date and result against your experience."
@@ -2241,8 +2254,7 @@ msgstr "Membersihkan entrinya; bahagian tetap. Anda boleh buat asal."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/public/public-resume.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "tutup"
 
@@ -2360,7 +2372,7 @@ msgstr "Mampatkan atau buang imej besar untuk memastikan muat naik pantas."
 msgid "Confirm applied"
 msgstr "Sahkan sudah memohon"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Sahkan kata laluan"
 
@@ -2377,6 +2389,7 @@ msgid "Confirm the time with {contact} before adding a new interview."
 msgstr "Sahkan masa dengan {contact} sebelum menambah temu duga baharu."
 
 #: src/features/assistant/provider.tsx
+#: src/features/share/web-page.tsx
 msgid "Connect"
 msgstr "Sambung"
 
@@ -2419,6 +2432,10 @@ msgstr "Sambungkan alat yang anda gunakan untuk menulis, mencari pekerjaan dan b
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "Bersambung · {milliseconds} ms"
+
+#: src/features/share/web-page.tsx
+msgid "Connected. Your domain opens your primary resume."
+msgstr "Bersambung. Domain anda membuka resume utama anda."
 
 #: src/features/workspace/parts.tsx
 msgid "Connecting the dots"
@@ -2620,10 +2637,6 @@ msgstr "Tidak dapat memadam perbualan. Cuba lagi."
 msgid "Couldn't delete the interview. Try again."
 msgstr "Tidak dapat memadam temu duga. Cuba lagi."
 
-#: src/features/public/public-resume.tsx
-msgid "Couldn't download the PDF. Try again."
-msgstr "Tidak dapat memuat turun PDF. Cuba lagi."
-
 #: src/features/settings/export.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't export. Try again."
@@ -2788,10 +2801,6 @@ msgstr "Tidak dapat membaca PDF yang dieksport."
 msgid "Couldn't read this page: {0}"
 msgstr "Tidak dapat membaca halaman ini: {0}"
 
-#: src/features/public/public-resume.tsx
-msgid "Couldn't read your blocked-author settings."
-msgstr "Tidak dapat membaca tetapan pengarang yang disekat anda."
-
 #: src/features/application-detail/sheets.tsx
 msgid "Couldn't record submission. Try again."
 msgstr "Tidak dapat merekodkan penyerahan. Cuba lagi."
@@ -2867,10 +2876,6 @@ msgstr "Tidak dapat menyimpan tema. Cuba lagi."
 #: app/(tabs)/settings/preferences.tsx
 msgid "Couldn't save the timezone. Try again."
 msgstr "Tidak dapat menyimpan zon waktu. Cuba lagi."
-
-#: src/features/public/public-resume.tsx
-msgid "Couldn't save your blocked-author setting. Try again."
-msgstr "Tidak dapat menyimpan tetapan pengarang yang disekat anda. Cuba lagi."
 
 #: src/features/letters/write.tsx
 msgid "Couldn't save your changes, so drafting didn't start. Nothing on the page changed."
@@ -2990,10 +2995,6 @@ msgstr "Tidak dapat memuat naik foto."
 #: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Tidak dapat memuat naik foto. Cuba lagi."
-
-#: src/features/public/public-resume.tsx
-msgid "Couldn't verify the password. Try again."
-msgstr "Tidak dapat mengesahkan kata laluan. Cuba lagi."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -3475,6 +3476,10 @@ msgstr "Dokumen untuk kerja ini"
 msgid "Documents you move here stay for 30 days."
 msgstr "Dokumen yang anda alihkan ke sini kekal selama 30 hari."
 
+#: src/features/share/web-page.tsx
+msgid "Domain connected"
+msgstr "Domain bersambung"
+
 #. placeholder {0}: document.name
 #: src/features/assistant/assistant-screen.tsx
 msgid "Don't send {0}"
@@ -3513,8 +3518,9 @@ msgid "Double-checking"
 msgstr "Menyemak semula"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/shell/builder-chrome.tsx
 msgid "Download"
 msgstr "Muat turun"
 
@@ -3523,6 +3529,11 @@ msgstr "Muat turun"
 #: src/features/share/download.tsx
 msgid "Download {0}"
 msgstr "Muat turun {0}"
+
+#: src/features/share/export-screen.tsx
+#: src/shell/builder-chrome.tsx
+msgid "Download & history"
+msgstr "Muat turun & sejarah"
 
 #: src/features/letters/share.tsx
 msgid "Download both PDFs"
@@ -3540,10 +3551,6 @@ msgstr "Muat turun membuka panel perkongsian sistem. Pilih pembekal storan untuk
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "Muat turun membuka panel perkongsian sistem. Pilih pembekal storan untuk menyimpan fail. Surat yang dipautkan dibuka sebagai fail kedua."
 
-#: src/features/public/public-resume.tsx
-msgid "Download PDF"
-msgstr "Muat turun PDF"
-
 #: src/features/letters/share.tsx
 msgid "Download PDF instead"
 msgstr "Muat turun PDF sebaliknya"
@@ -3551,10 +3558,6 @@ msgstr "Muat turun PDF sebaliknya"
 #: src/features/share/link.tsx
 msgid "Download totals can include repeat clicks."
 msgstr "Jumlah muat turun boleh termasuk klik berulang."
-
-#: src/features/public/public-resume.tsx
-msgid "Downloading…"
-msgstr "Memuat turun…"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -3844,10 +3847,6 @@ msgstr "Masukkan sebarang ID model yang disokong oleh titik akhir anda."
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
 msgstr "Masukkan alamat yang anda buka Reactive Resume dalam penyemak imbas. Apl itu menyemak ia adalah pelayan Reactive Resume yang membenarkan log masuk apl sebelum anda meneruskan."
 
-#: src/features/public/public-resume.tsx
-msgid "Enter the password the resume owner shared with you."
-msgstr "Masukkan kata laluan yang dikongsi oleh pemilik resume dengan anda."
-
 #: src/features/write/entry-screen.tsx
 msgid "Entry"
 msgstr "Kemasukan"
@@ -4127,6 +4126,11 @@ msgstr "Berat fon"
 msgid "For"
 msgstr "Untuk"
 
+#. placeholder {0}: current.target
+#: src/features/share/web-page.tsx
+msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
+msgstr "Untuk domain akar seperti example.com, gunakan rekod A dan AAAA dengan alamat {0} dan bukannya CNAME."
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "For example, Sent to Lumen"
@@ -4369,6 +4373,10 @@ msgstr "Istilah tersembunyi telah kembali"
 msgid "Hide {title} from the page"
 msgstr "Sembunyikan {title} daripada halaman"
 
+#: src/features/share/web-page.tsx
+msgid "Hide contact details"
+msgstr "Sembunyikan butiran hubungan"
+
 #: src/features/applications/add-sheet.tsx
 msgid "Hide details"
 msgstr "Sembunyikan butiran"
@@ -4384,10 +4392,6 @@ msgstr "Sembunyikan kunci"
 #: app/(tabs)/settings/licences.tsx
 msgid "Hide license"
 msgstr "Sembunyikan lesen"
-
-#: src/features/public/public-resume.tsx
-msgid "Hide password"
-msgstr "Sembunyikan kata laluan"
 
 #: src/features/career/today.tsx
 msgid "Hide read"
@@ -4412,7 +4416,7 @@ msgstr "Mengupah pasukan"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Sejarah"
 
@@ -4515,10 +4519,6 @@ msgstr "Ikon dalam talian kenalan"
 #: src/features/ats-checker/messages.ts
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "Jika ia berasal daripada imbasan, itu dijangka. Jika tidak, buang ia; perekrut menganggapnya sebagai pengisian kata kunci."
-
-#: src/features/public/public-resume.tsx
-msgid "If someone sent you this link, ask them for a new one."
-msgstr "Jika seseorang menghantar pautan ini kepada anda, minta mereka yang baharu."
 
 #. placeholder {0}: reader ?? provider.provider
 #: src/api/ai-consent.ts
@@ -5117,7 +5117,6 @@ msgstr "Garis rapat ini boleh berjalan bersama apabila dibaca. Gunakan sekurang-
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
-#: src/features/share/screen.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -5136,6 +5135,7 @@ msgid "Link an application or paste a posting to compare its terms."
 msgstr "Pautkan permohonan atau tampal iklan jawatan untuk membandingkan syaratnya."
 
 #: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Link copied"
 msgstr "Pautan disalin"
 
@@ -5272,7 +5272,6 @@ msgstr "Memuatkan alamat awam anda…"
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
 msgid "Loading…"
@@ -5334,10 +5333,6 @@ msgstr "Kelihatan betul-betul seperti halaman. Gunakannya untuk permohonan kerja
 msgid "Lower the design sheet"
 msgstr "Turunkan helaian reka bentuk"
 
-#: src/features/public/public-resume.tsx
-msgid "Made with Reactive Resume, free and open source"
-msgstr "Dibuat dengan Reactive Resume, percuma dan sumber terbuka"
-
 #. Layout editor column label for the primary content area
 #: src/features/design/layout-screen.tsx
 msgid "Main"
@@ -5356,6 +5351,10 @@ msgstr "Jadikan ia lebih spesifik"
 msgid "Make it shorter"
 msgstr "Jadikan ia lebih pendek"
 
+#: src/features/share/web-page.tsx
+msgid "Make primary"
+msgstr "Jadikan utama"
+
 #: src/features/career/today.tsx
 msgid "Make room for the next step."
 msgstr "Beri ruang untuk langkah seterusnya."
@@ -5371,6 +5370,10 @@ msgstr "Padankan teks yang kelihatan dengan destinasi."
 #: src/features/ats-checker/messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "Jadikannya kelihatan lebih besar, lebih tebal atau berhuruf besar."
+
+#: src/features/share/web-page.tsx
+msgid "Make this your primary resume?"
+msgstr "Jadikan ini resume utama anda?"
 
 #: src/features/settings/locale-names.ts
 msgid "Malay"
@@ -6105,6 +6108,10 @@ msgstr "Tidak digunakan"
 msgid "Not applied yet"
 msgstr "Belum dimohon lagi"
 
+#: src/features/share/web-page.tsx
+msgid "Not available while the resume needs a password."
+msgstr "Tidak tersedia semasa resume memerlukan kata laluan."
+
 #: src/features/career/today.tsx
 msgid "Not for me"
 msgstr "Bukan untuk saya"
@@ -6232,6 +6239,10 @@ msgstr "Odia"
 msgid "Off"
 msgstr "Mati"
 
+#: src/features/share/web-page.tsx
+msgid "Off. Let recruiters find you on Google by turning this on."
+msgstr "Dimatikan. Hidupkan untuk membolehkan perekrut menemui anda di Google."
+
 #: src/features/share/link.tsx
 msgid "Off. Only you can see this resume."
 msgstr "Mati. Hanya anda yang boleh melihat resume ini."
@@ -6278,8 +6289,8 @@ msgid "On"
 msgstr "hidup"
 
 #: src/features/share/link.tsx
-msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
-msgstr "hidup. Sesiapa sahaja yang mempunyai pautan boleh melihat. Ia tidak disenaraikan atau diindeks oleh enjin carian."
+msgid "On. Anyone with the link can see your web page."
+msgstr "Dihidupkan. Sesiapa yang mempunyai pautan boleh melihat halaman web anda."
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Once a round is scheduled, Prepare builds a timed plan, your opening and the questions to ask."
@@ -6393,10 +6404,6 @@ msgstr "Buka dalam Tawaran"
 msgid "Open letter"
 msgstr "Buka surat"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Buka halaman awam"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Soalan belum terjawab"
@@ -6428,6 +6435,10 @@ msgstr "Buka senarai"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Buka jadual"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Buka halaman web"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6607,13 +6618,12 @@ msgid "Passkeys"
 msgstr "Passkey"
 
 #: app/(tabs)/settings/account.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Kata Laluan"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Kata laluan tidak sepadan."
 
@@ -6941,6 +6951,10 @@ msgstr "Tekan dan tahan untuk pratonton pada halaman."
 msgid "Press and hold, then drag to another column or page."
 msgstr "Tekan dan tahan, kemudian seret ke lajur atau halaman lain."
 
+#: src/features/share/web-page.tsx
+msgid "Preview web page"
+msgstr "Pratonton halaman web"
+
 #. placeholder {0}: templateName(template)
 #: src/features/design/preview-caption.tsx
 msgid "Previewing {0} · tap to apply"
@@ -6970,6 +6984,10 @@ msgstr "Tab ruang kerja sebelumnya"
 msgid "Primary color"
 msgstr "Warna utama"
 
+#: src/features/share/web-page.tsx
+msgid "Primary resume"
+msgstr "Resume utama"
+
 #: src/features/document-menu/index.tsx
 #: src/features/share/download.tsx
 msgid "Print"
@@ -6978,6 +6996,10 @@ msgstr "Cetak"
 #: src/features/ats-checker/messages.ts
 msgid "Print or export the form to a flat PDF before sending it."
 msgstr "Cetak atau eksport borang kepada PDF rata sebelum menghantarnya."
+
+#: src/features/share/web-page.tsx
+msgid "Privacy"
+msgstr "Privasi"
 
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
@@ -7046,7 +7068,6 @@ msgstr "Pengekalan dan penggunaan pembekal mematuhi dasar privasinya. Penolakan 
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
-#: src/shell/builder-chrome.tsx
 msgid "Public"
 msgstr "Awam"
 
@@ -7073,6 +7094,18 @@ msgstr "Awam, dengan kata laluan"
 #: src/features/write/fields.ts
 msgid "Publications"
 msgstr "Penerbitan"
+
+#: src/features/share/web-page.tsx
+msgid "Publish the web page first."
+msgstr "Terbitkan halaman web terlebih dahulu."
+
+#: src/features/share/link.tsx
+msgid "Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted."
+msgstr "Terbitkan halaman web untuk mengira tontonan dan muat turun. Kiraan adalah tanpa nama dan enjin carian tidak dikira."
+
+#: src/features/share/web-page.tsx
+msgid "Publish this resume to open it at your short link and custom domain."
+msgstr "Terbitkan resume ini untuk membukanya di pautan pendek dan domain tersuai anda."
 
 #: src/features/write/fields.ts
 msgid "Publisher"
@@ -7408,6 +7441,7 @@ msgstr "Peringatan muncul di sini. Salinan e-mel adalah pilihan dan memerlukan a
 msgid "Remote"
 msgstr "Jarak jauh"
 
+#: src/features/share/web-page.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "Alih keluar"
@@ -7437,7 +7471,7 @@ msgstr "Alih keluar medan"
 msgid "Remove file"
 msgstr "Alih keluar fail"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Alih keluar kata laluan"
 
@@ -7459,7 +7493,7 @@ msgstr "Alih keluar soalan"
 msgid "Remove role"
 msgstr "Alih keluar peranan"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Alih keluar kata laluan?"
 
@@ -7559,11 +7593,7 @@ msgstr "Laporkan Isu"
 msgid "Report received by your server operator. Thank you."
 msgstr "Laporan diterima oleh pengendali pelayan anda. terima kasih."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Laporkan resume yang dikongsi"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Memerlukan kata laluan"
 
@@ -7629,7 +7659,6 @@ msgstr "Hasil"
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
-#: src/features/public/public-resume.tsx
 msgid "Resume"
 msgstr "Resume"
 
@@ -7697,10 +7726,9 @@ msgstr "Diambil {0} menggunakan {1}. Masa perolehan tidak mewujudkan kesegaran a
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8119,6 +8147,10 @@ msgstr "Carian meliputi dokumen, permohonan, perbualan pembantu dan tindakan."
 msgid "Search documents"
 msgstr "Cari dokumen"
 
+#: src/features/share/web-page.tsx
+msgid "Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off."
+msgstr "Enjin carian seperti Google mungkin menyenaraikan halaman web anda. Ia boleh mengambil masa berminggu-minggu untuk muncul, atau untuk hilang selepas anda mematikan tetapan ini."
+
 #: src/features/career/facts.tsx
 msgid "Search facts"
 msgstr "Cari fakta"
@@ -8319,7 +8351,7 @@ msgstr "Pelayan berubah. Kembali ke Dokumen dan cuba lagi."
 msgid "Set a follow-up"
 msgstr "Tetapkan tindakan susulan"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Tetapkan kata laluan"
 
@@ -8372,13 +8404,12 @@ msgstr "Warna bayang"
 msgid "Shadow width"
 msgstr "Lebar bayang"
 
-#: src/features/public/public-resume.tsx
-#: src/shell/builder-chrome.tsx
+#: app/builder/[id]/_layout.tsx
+#: app/builder/[id]/share.tsx
 msgid "Share"
 msgstr "Kongsi"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
 msgid "Share & export"
 msgstr "Kongsi & eksport"
 
@@ -8403,26 +8434,17 @@ msgstr "Kongsi PDF sebaliknya"
 msgid "Share PNG"
 msgstr "Kongsi PNG"
 
-#: src/shell/builder-chrome.tsx
-msgid "Share public resume"
-msgstr "Kongsi resume awam"
-
 #: src/features/workspace/tabs/practise.tsx
 msgid "Share recording"
 msgstr "Kongsi rakaman"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
 msgid "Share sections"
 msgstr "Kongsi bahagian"
 
 #: src/features/share/link.tsx
 msgid "Share via…"
 msgstr "Kongsi melalui…"
-
-#: src/features/public/public-resume.tsx
-msgid "Shared resumes stay hidden until your device settings allow them."
-msgstr "Resume yang dikongsi kekal tersembunyi sehingga tetapan peranti anda membenarkannya."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -8442,6 +8464,10 @@ msgstr "Pendek dan langsung. Baik jika penyiaran kerja meminta ringkasan."
 msgid "Short and polite, for the recruiter"
 msgstr "Pendek dan sopan, untuk perekrut"
 
+#: src/features/share/web-page.tsx
+msgid "Short link and domain"
+msgstr "Pautan pendek dan domain"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "Pendekkan soalan kepada 2,000 aksara dan jawapan kepada 6,000 aksara sebelum menandakan ini sebagai dimohon."
@@ -8449,6 +8475,10 @@ msgstr "Pendekkan soalan kepada 2,000 aksara dan jawapan kepada 6,000 aksara seb
 #: src/features/letters/write.tsx
 msgid "Shorter"
 msgstr "Lebih pendek"
+
+#: src/features/share/web-page.tsx
+msgid "Show “Made with Reactive Resume”"
+msgstr "Tunjukkan “Dibuat dengan Reactive Resume”"
 
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #: src/features/applications-board/board-screen.tsx
@@ -8491,6 +8521,10 @@ msgstr "Tunjukkan istilah tersembunyi sekali lagi"
 msgid "Show icons"
 msgstr "Tunjukkan ikon"
 
+#: src/features/share/web-page.tsx
+msgid "Show in search engines"
+msgstr "Tunjukkan dalam enjin carian"
+
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Tunjukkan kunci"
@@ -8510,10 +8544,6 @@ msgstr "Tunjukkan lagi"
 #: src/features/write/section-sheet.tsx
 msgid "Show on page"
 msgstr "Tunjukkan pada halaman"
-
-#: src/features/public/public-resume.tsx
-msgid "Show password"
-msgstr "Tunjukkan kata laluan"
 
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
@@ -8597,7 +8627,8 @@ msgstr "Log masuk ke {server}, kemudian teruskan ke dokumen yang dipautkan."
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
+#: src/features/share/pane.tsx
 msgid "Sign in to continue."
 msgstr "Log masuk untuk meneruskan."
 
@@ -9407,10 +9438,6 @@ msgstr "Yang asal kekal dalam sejarah pembetulan. Cerita yang menggunakannya mem
 msgid "The pages are pictures, with no text behind them."
 msgstr "Halaman adalah gambar, tanpa teks di belakangnya."
 
-#: src/features/public/public-resume.tsx
-msgid "The password you entered is incorrect. Try again."
-msgstr "Kata laluan yang anda masukkan tidak betul. Cuba lagi."
-
 #: src/features/check/parser.tsx
 msgid "The PDF is checked on the server and not stored. Send this preview to see what software reads."
 msgstr "PDF disemak pada pelayan dan tidak disimpan. Hantar pratonton ini untuk melihat perisian yang dibaca."
@@ -9423,6 +9450,10 @@ msgstr "Pembekal tidak menjawab. Semak kunci, model dan pangkalan URL."
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Sebabnya disimpan untuk Insights. Dokumen yang dipautkan tidak disentuh."
+
+#: src/features/share/web-page.tsx
+msgid "The records aren't visible yet. Check again later."
+msgstr "Rekod belum kelihatan lagi. Semak semula kemudian."
 
 #: src/features/ats-checker/checker.tsx
 msgid "The rest of the file isn't in this report."
@@ -9550,10 +9581,6 @@ msgstr "Permohonan ini tidak dapat dibuka."
 msgid "This application has no posting yet. Add one in Applications."
 msgstr "Permohonan ini belum ada iklan jawatan. Tambah satu dalam Permohonan."
 
-#: src/features/public/public-resume.tsx
-msgid "This author is blocked."
-msgstr "Pengarang ini disekat."
-
 #: src/features/workspace/parts.tsx
 msgid "This changed somewhere else, so it wasn't saved. Your text is kept here; Retry saves it over the other copy."
 msgstr "Ini berubah di tempat lain, jadi ia tidak disimpan. Teks anda disimpan di sini; Cuba semula simpan di atas salinan lain."
@@ -9591,7 +9618,7 @@ msgstr "Dokumen ini dikunci. Buka kuncinya sebelum menyimpan suntingan anda di s
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Dokumen ini dikunci. Buka kuncinya untuk mendapatkan cadangan."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Dokumen ini dikunci. Anda masih boleh memuat turun dan menamakan versi. Buka kunci untuk mengedit atau memulihkan."
 
@@ -9758,14 +9785,6 @@ msgstr "Resume ini dikunci. Buka kuncinya untuk membuat perubahan."
 #: src/features/ats-checker/messages.ts
 msgid "This resume is long."
 msgstr "Resume ini panjang."
-
-#: src/features/public/public-resume.tsx
-msgid "This resume is password-protected"
-msgstr "Resume ini dilindungi kata laluan"
-
-#: src/features/public/public-resume.tsx
-msgid "This resume isn't shared right now."
-msgstr "Resume ini tidak dikongsi sekarang."
 
 #: src/features/application-detail/sheets.tsx
 msgid "This saved description is clipped or incomplete. Review before preparing documents."
@@ -9980,7 +9999,6 @@ msgstr "Cuba {suggestion}"
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/letters/write.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/shell.tsx
@@ -10035,10 +10053,6 @@ msgstr "Matikan ligatur pilihan semasa mengeksport."
 msgid "Turn on the link to choose an address."
 msgstr "Hidupkan pautan untuk memilih alamat."
 
-#: src/features/share/link.tsx
-msgid "Turn on the public link to count views and downloads. Counts are anonymous."
-msgstr "Hidupkan pautan awam untuk mengira paparan dan muat turun. Kiraan penggunaan adalah tanpa nama."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "Hidupkan jadual ini"
@@ -10089,10 +10103,6 @@ msgstr "Ukraine"
 msgid "Unavailable"
 msgstr "Tidak tersedia"
 
-#: src/features/public/public-resume.tsx
-msgid "Unblock author"
-msgstr "Nyahsekat pengarang"
-
 #: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
@@ -10132,7 +10142,6 @@ msgstr "Nyahpaut"
 
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/write/outline.tsx
 msgid "Unlock"
 msgstr "Buka Kunci"
@@ -10232,7 +10241,7 @@ msgstr "Gunakan {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Gunakan 3 hingga 64 huruf kecil, nombor, titik, sempang dan garis bawah."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Gunakan 6–64 aksara."
 
@@ -10278,6 +10287,7 @@ msgid "Use at least 9pt."
 msgstr "Gunakan sekurang-kurangnya 9pt."
 
 #: src/features/document-menu/index.tsx
+#: src/features/documents/queries.ts
 #: src/features/share/link.tsx
 msgid "Use at most 64 characters."
 msgstr "Gunakan paling banyak 64 aksara."
@@ -10402,6 +10412,10 @@ msgstr "Menggunakan perkhidmatan carian web yang disediakan dalam Tetapan. Hasil
 msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
 msgstr "Menggunakan carian web dalam Tetapan. Hasil menunggu dalam Hari ini. Permohonan dan dokumen tidak pernah dicipta bagi pihak anda."
 
+#: src/features/share/web-page.tsx
+msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
+msgstr "Menggunakan templat dan Reka Bentuk resume anda, serta muat pada sebarang skrin. Tukarnya dalam Reka Bentuk."
+
 #: src/features/settings/locale-names.ts
 msgid "Uzbek"
 msgstr "Uzbek"
@@ -10413,10 +10427,6 @@ msgstr "Pelbagaikan pembukaan supaya bahagian itu tidak dibaca seperti teks temp
 #: src/features/career/offers.tsx
 msgid "Verbal offer"
 msgstr "Tawaran lisan"
-
-#: src/features/public/public-resume.tsx
-msgid "Verifying password…"
-msgstr "Mengesahkan kata laluan…"
 
 #: src/features/letters/share.tsx
 msgid "Version"
@@ -10496,21 +10506,21 @@ msgstr "Melihat {0} · baca sahaja"
 msgid "views · 30 days"
 msgstr "paparan · 30 hari"
 
-#: src/features/share/link.tsx
-msgid "Views and downloads"
-msgstr "Tontonan dan muat turun"
-
 #: src/features/ai/report-content.tsx
 msgid "Violence or abuse"
 msgstr "Keganasan atau penderaan"
 
 #: src/features/share/link.tsx
+msgid "Visitors"
+msgstr "Pelawat"
+
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Pelawat boleh memuat turun PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
-msgstr "Pelawat memasukinya sebelum mereka melihat resume. Kongsi hanya dengan orang yang anda percayai."
+msgstr "Pelawat memasukkan kata laluan sebelum mereka melihat resume. Kongsi hanya dengan orang yang anda percayai."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
@@ -10541,6 +10551,10 @@ msgstr "Akses web"
 #: src/features/ai/web-access.tsx
 msgid "Web access settings couldn't be saved or loaded."
 msgstr "Tetapan akses web tidak dapat disimpan atau dimuatkan."
+
+#: src/features/share/web-page.tsx
+msgid "Web page"
+msgstr "Halaman web"
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Web research"
@@ -10887,25 +10901,24 @@ msgstr "Anda di luar talian. Muat turun PDF menggunakan peranti ini. Format lain
 msgid "You're offline. History needs a connection."
 msgstr "Anda di luar talian. Sejarah memerlukan sambungan."
 
+#: src/features/share/export-screen.tsx
+msgid "You're offline. History needs a connection. Download PDF works on this device."
+msgstr "Anda di luar talian. Sejarah memerlukan sambungan. Muat turun PDF berfungsi pada peranti ini."
+
 #: src/features/check/screen.tsx
 msgid "You're offline. Issues and Job match still work; reconnect for Writing and PDF checks."
 msgstr "Anda di luar talian. Isu dan Padanan kerja masih berfungsi; sambung semula untuk semakan Penulisan dan PDF."
 
-#: src/features/share/screen.tsx
-msgid "You're offline. Link and History need a connection. Download PDF works on this device."
-msgstr "Anda di luar talian. Pautan dan Sejarah memerlukan sambungan. Muat turun PDF berfungsi pada peranti ini."
+#: src/features/share/pane.tsx
+msgid "You're offline. Sharing needs a connection."
+msgstr "Anda di luar talian. Perkongsian memerlukan sambungan."
 
 #: src/features/check/parser.tsx
 msgid "You're offline. The last PDF check stays here; connect to refresh it."
 msgstr "Anda di luar talian. Cek PDF terakhir kekal di sini; sambung untuk menyegarkannya."
 
-#: src/features/public/public-resume.tsx
-msgid "You're offline. This resume opens when you reconnect."
-msgstr "Anda di luar talian. Resume ini dibuka apabila anda menyambung semula."
-
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
-#: src/features/public/public-resume.tsx
 msgid "You're offline. Try again when you reconnect."
 msgstr "Anda di luar talian. Cuba lagi apabila anda menyambung semula."
 
@@ -10966,9 +10979,17 @@ msgstr "Tarikh anda ditulis dalam beberapa cara berbeza."
 msgid "Your document was saved. Review it in the editor."
 msgstr "Dokumen anda telah disimpan. Semak ia dalam editor."
 
+#: src/features/share/web-page.tsx
+msgid "Your domain"
+msgstr "Domain anda"
+
 #: src/features/ats-checker/messages.ts
 msgid "Your email address is broken across pieces of text."
 msgstr "Alamat e-mel anda terpecah merentasi bahagian teks."
+
+#: src/features/share/web-page.tsx
+msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
+msgstr "E-mel, telefon, lokasi dan butiran pengepala lain anda, serta nombor telefon rujukan, tidak dimasukkan dalam halaman web, PDF dan hasil cariannya."
 
 #: src/features/career/knowledge.tsx
 msgid "Your facts, stories and preferences. Editing Knowledge sends nothing to an AI connection."
@@ -11102,6 +11123,19 @@ msgstr "Sesi anda telah tamat tempoh. Log masuk semula."
 #: src/auth/session-gate.tsx
 msgid "Your session on {0} ended"
 msgstr "Sesi anda pada {0} telah tamat"
+
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "Your short link and custom domain open “{0}”."
+msgstr "Pautan pendek dan domain tersuai anda membuka “{0}”."
+
+#: src/features/share/web-page.tsx
+msgid "Your short link and custom domain open this resume."
+msgstr "Pautan pendek dan domain tersuai anda membuka resume ini."
+
+#: src/features/share/web-page.tsx
+msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
+msgstr "Pautan pendek dan domain tersuai anda menyatakan resume ini tidak dikongsi sehingga anda menerbitkannya semula."
 
 #: src/features/assistant/coach-screen.tsx
 msgid "your stories"

@@ -1,17 +1,12 @@
 import type { EditorMode } from "@/features/resume/editor/store";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { Badge } from "@reactive-resume/ui/components/badge";
-import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
-import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { DocumentMenu } from "./document-menu";
 import { useCurrentBuilderResumeSelector, useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
 import { useOpenIssueCount } from "@/features/resume/editor/check/use-check";
 import { DownloadButtons, EditorBarFrame } from "@/features/resume/editor/chrome/bar";
-import { useEditorStore } from "@/features/resume/editor/store";
 import { preloadDocumentExport, useResumeExport } from "@/features/resume/export/use-resume-export";
 
 type EditorBarProps = {
@@ -21,20 +16,17 @@ type EditorBarProps = {
 };
 
 /**
- * The 56px editor bar. Desktop: back, name and save state · Write/Design/Check · history, assistant,
- * Share and Download PDF. The mode switch stays centered through a `1fr auto 1fr` grid.
+ * The 56px editor bar. Desktop: back, name and save state · Write/Design/Check/Share · history, assistant and
+ * Download PDF. The mode switch stays centered through a `1fr auto 1fr` grid.
  */
 export function EditorBar({ layout, pinnable }: EditorBarProps) {
-	// Download and Share need a connection.
+	// Download needs a connection.
 	const offline = useResumeStore((state) => state.saveStatus === "offline");
-	const wide = useBreakpoint() === "wide";
 	const resume = useCurrentResume();
 	const { onDownloadPDF, isExporting } = useResumeExport(resume);
 
 	return (
 		<EditorBarFrame layout={layout} pinnable={pinnable} menu={<DocumentMenu />} modes={<ModeTabs />}>
-			{/* Below 1280 the bar is too narrow for Share's label next to everything else. */}
-			<ShareButton compact={layout !== "desktop" || !wide} disabled={offline} />
 			<DownloadButtons
 				busy={isExporting}
 				onDownload={() => void onDownloadPDF()}
@@ -47,11 +39,17 @@ export function EditorBar({ layout, pinnable }: EditorBarProps) {
 	);
 }
 
-const MODE_ICONS = { write: "pencil-simple", design: "palette", check: "list-checks" } as const;
+const MODE_ICONS = {
+	write: "pencil-simple",
+	design: "palette",
+	check: "list-checks",
+	share: "globe-hemisphere-west",
+} as const;
 
 function ModeTabs() {
 	const issueCount = useOpenIssueCount();
-	const labels: Record<EditorMode, string> = { write: t`Write`, design: t`Design`, check: t`Check` };
+	const isPublic = useCurrentBuilderResumeSelector((resume) => resume.isPublic ?? false);
+	const labels: Record<EditorMode, string> = { write: t`Write`, design: t`Design`, check: t`Check`, share: t`Share` };
 
 	return (
 		<TabsList aria-label={t`Editor mode`} className="h-9" data-mode-switch="">
@@ -60,6 +58,9 @@ function ModeTabs() {
 					<Icon name={MODE_ICONS[mode]} size={18} />
 					{labels[mode]}
 					{mode === "check" && <CheckBadge count={issueCount} />}
+					{mode === "share" && isPublic && (
+						<span className="size-1.5 rounded-full bg-accent" aria-hidden="true" title={t`Public`} />
+					)}
 				</TabsTrigger>
 			))}
 		</TabsList>
@@ -85,50 +86,5 @@ function CheckBadge({ count }: { count: number }) {
 				<Plural value={count} one="# open issue" other="# open issues" />
 			</span>
 		</span>
-	);
-}
-
-type ToolbarActionProps = {
-	compact: boolean;
-	disabled: boolean;
-};
-
-function ShareButton({ compact, disabled }: ToolbarActionProps) {
-	const isPublic = useCurrentBuilderResumeSelector((resume) => resume.isPublic ?? false);
-	const setShareTab = useEditorStore((state) => state.setShareTab);
-	if (compact && !isPublic) {
-		return (
-			<IconButton
-				icon="export"
-				label={t`Share`}
-				shortcut="⌘⇧S"
-				className="me-2"
-				disabled={disabled}
-				onClick={() => setShareTab("link")}
-			/>
-		);
-	}
-
-	return (
-		<Button
-			variant="secondary"
-			className={compact ? "me-2 px-2" : "me-2"}
-			aria-label={isPublic ? t`Share public resume` : t`Share`}
-			disabled={disabled}
-			onClick={() => setShareTab("link")}
-		>
-			{!compact && (
-				<>
-					<Icon name="export" />
-					<Trans>Share</Trans>
-				</>
-			)}
-			{isPublic && (
-				<Badge variant="accent">
-					<Icon name="globe-hemisphere-west" />
-					<Trans>Public</Trans>
-				</Badge>
-			)}
-		</Button>
 	);
 }

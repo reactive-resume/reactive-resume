@@ -164,11 +164,6 @@ export function useSchedules() {
 	return useQuery({ ...options, queryKey: [...options.queryKey, server], enabled });
 }
 
-export function useFlags() {
-	const { server } = useSignedIn();
-	return useQuery({ ...orpc.flags.get.queryOptions(), queryKey: [...orpc.flags.get.key(), server] });
-}
-
 /** The newest saved item of one kind, optionally for one interview. */
 export function latest<K extends SavedItem["data"]["kind"]>(
 	items: SavedItem[] | undefined,
