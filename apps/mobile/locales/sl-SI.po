@@ -28,6 +28,11 @@ msgstr "»{0}« je skrit"
 msgid "“{0}” moved to Trash"
 msgstr "»{0}« premaknjen v smetnjak"
 
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr "„{0}“ ne bo več vaš glavni življenjepis."
+
 #. placeholder {0}: purge[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
@@ -609,6 +614,10 @@ msgstr "{skipped, plural, one {# spremembe ni bilo mogoče uporabiti: besedilo s
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# zgodba} two {# zgodbi} few {# zgodbe} other {# zgodb}}"
 
+#: src/features/share/web-page.tsx
+msgid "{suggestion} may be available. Get yours here →"
+msgstr "Domena {suggestion} je morda na voljo. Pridobite svojo tukaj →"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
 msgstr "{summary}. Odpre se v Kariera → Ponudbe."
@@ -686,6 +695,10 @@ msgstr "2–3 stavki se najbolje berejo"
 #: src/features/career/schedule-sheet.tsx
 msgid "24 hours before"
 msgstr "24 ur prej"
+
+#: src/features/share/web-page.tsx
+msgid "A “Show contact details” button reveals them to people, not to search engines."
+msgstr "Gumb „Pokaži kontaktne podatke“ jih razkrije ljudem, ne pa iskalnikom."
 
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
@@ -1071,6 +1084,10 @@ msgstr "Dodajte domeno za @, na primer {name}@example.com"
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Dodajte končnico domene, na primer {domain}.com"
+
+#: src/features/share/web-page.tsx
+msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
+msgstr "Dodajte te zapise tam, kjer upravljate domeno, nato preverite. Spremembe lahko do vseh pridejo šele čez nekaj ur."
 
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/tabs/debrief.tsx
@@ -1595,6 +1612,10 @@ msgstr "Prosite skrbnika strežnika, da omogoči šifriranje poverilnic ali konf
 msgid "Ask, or describe a change…"
 msgstr "Vprašajte ali opišite spremembo ..."
 
+#: src/features/share/link.tsx
+msgid "asked for contact details"
+msgstr "zahteve za kontaktne podatke"
+
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
 msgstr "Razmerje stranic"
@@ -1783,10 +1804,6 @@ msgstr "Pod vašo minimalno osnovno plačo."
 #: src/features/settings/locale-names.ts
 msgid "Bengali"
 msgstr "Bengalščina"
-
-#: src/features/public/public-resume.tsx
-msgid "Block this author"
-msgstr "Blokiraj tega avtorja"
 
 #: src/features/applications-board/views.tsx
 msgid "Board"
@@ -2016,6 +2033,10 @@ msgstr "Preveri znova"
 msgid "Check another file"
 msgstr "Preverite drugo datoteko"
 
+#: src/features/share/web-page.tsx
+msgid "Check DNS"
+msgstr "Preveri DNS"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Check every claim, date and result against your experience."
 msgstr "Vsako trditev, datum in rezultat preverite glede na svoje izkušnje."
@@ -2233,7 +2254,6 @@ msgstr "Počisti vnose; razdelek ostane. To lahko razveljavite."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/share/screen.tsx
 msgid "Close"
 msgstr "Zapri"
@@ -2369,6 +2389,7 @@ msgid "Confirm the time with {contact} before adding a new interview."
 msgstr "Pred dodajanjem novega intervjuja potrdite čas z osebo {contact}."
 
 #: src/features/assistant/provider.tsx
+#: src/features/share/web-page.tsx
 msgid "Connect"
 msgstr "Poveži"
 
@@ -2411,6 +2432,10 @@ msgstr "Povežite orodja, ki jih uporabljate za pisanje, iskanje zaposlitve in d
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "Povezan · {milliseconds} ms"
+
+#: src/features/share/web-page.tsx
+msgid "Connected. Your domain opens your primary resume."
+msgstr "Povezano. Vaša domena odpre vaš glavni življenjepis."
 
 #: src/features/workspace/parts.tsx
 msgid "Connecting the dots"
@@ -2612,10 +2637,6 @@ msgstr "Pogovora ni bilo mogoče izbrisati. Poskusite znova."
 msgid "Couldn't delete the interview. Try again."
 msgstr "Razgovora ni bilo mogoče izbrisati. Poskusite znova."
 
-#: src/features/public/public-resume.tsx
-msgid "Couldn't download the PDF. Try again."
-msgstr "PDF ni bilo mogoče prenesti. Poskusite znova."
-
 #: src/features/settings/export.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't export. Try again."
@@ -2780,10 +2801,6 @@ msgstr "Ni bilo mogoče prebrati izvoženega PDF."
 msgid "Couldn't read this page: {0}"
 msgstr "Te strani ni bilo mogoče prebrati: {0}"
 
-#: src/features/public/public-resume.tsx
-msgid "Couldn't read your blocked-author settings."
-msgstr "Ni bilo mogoče prebrati vaših nastavitev blokiranega avtorja."
-
 #: src/features/application-detail/sheets.tsx
 msgid "Couldn't record submission. Try again."
 msgstr "Oddaje ni bilo mogoče posneti. poskusi ponovno"
@@ -2859,10 +2876,6 @@ msgstr "Teme ni bilo mogoče shraniti. Poskusite znova."
 #: app/(tabs)/settings/preferences.tsx
 msgid "Couldn't save the timezone. Try again."
 msgstr "Časovnega pasu ni bilo mogoče shraniti. Poskusite znova."
-
-#: src/features/public/public-resume.tsx
-msgid "Couldn't save your blocked-author setting. Try again."
-msgstr "Vaše nastavitve blokiranega avtorja ni bilo mogoče shraniti. poskusi ponovno"
 
 #: src/features/letters/write.tsx
 msgid "Couldn't save your changes, so drafting didn't start. Nothing on the page changed."
@@ -2982,10 +2995,6 @@ msgstr "Fotografije ni bilo mogoče naložiti."
 #: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Fotografije ni bilo mogoče naložiti. Poskusite znova."
-
-#: src/features/public/public-resume.tsx
-msgid "Couldn't verify the password. Try again."
-msgstr "Gesla ni bilo mogoče preveriti. Poskusite znova."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -3467,6 +3476,10 @@ msgstr "Dokumenti za to delo"
 msgid "Documents you move here stay for 30 days."
 msgstr "Dokumenti, ki jih premaknete sem, ostanejo 30 dni."
 
+#: src/features/share/web-page.tsx
+msgid "Domain connected"
+msgstr "Domena je povezana"
+
 #. placeholder {0}: document.name
 #: src/features/assistant/assistant-screen.tsx
 msgid "Don't send {0}"
@@ -3507,6 +3520,7 @@ msgstr "Dvojno preverjanje"
 #: src/features/letters/share.tsx
 #: src/features/share/screen.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/shell/builder-chrome.tsx
 msgid "Download"
 msgstr "Prenesi"
 
@@ -3515,6 +3529,11 @@ msgstr "Prenesi"
 #: src/features/share/download.tsx
 msgid "Download {0}"
 msgstr "Prenos {0}"
+
+#: src/features/share/screen.tsx
+#: src/shell/builder-chrome.tsx
+msgid "Download & history"
+msgstr "Prenos in zgodovina"
 
 #: src/features/letters/share.tsx
 msgid "Download both PDFs"
@@ -3532,10 +3551,6 @@ msgstr "Prenos odpre sistemsko ploščo za deljenje. Izberite ponudnika shrambe,
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "Prenos odpre list za skupno rabo sistema. Izberite ponudnika pomnilnika, da shranite datoteko. Povezano spremno pismo se odpre kot druga datoteka."
 
-#: src/features/public/public-resume.tsx
-msgid "Download PDF"
-msgstr "Prenesi PDF"
-
 #: src/features/letters/share.tsx
 msgid "Download PDF instead"
 msgstr "Namesto tega prenesite PDF"
@@ -3543,10 +3558,6 @@ msgstr "Namesto tega prenesite PDF"
 #: src/features/share/link.tsx
 msgid "Download totals can include repeat clicks."
 msgstr "Skupno število prenosov lahko vključuje ponavljajoče se klike."
-
-#: src/features/public/public-resume.tsx
-msgid "Downloading…"
-msgstr "Prenašanje …"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -3836,10 +3847,6 @@ msgstr "Vnesite kateri koli ID modela, ki ga podpira vaša končna točka."
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
 msgstr "Vnesite naslov, na katerem odprete Reactive Resume v brskalniku. Aplikacija preveri, ali gre za strežnik Reactive Resume, ki omogoča prijavo v aplikacijo, preden nadaljujete."
 
-#: src/features/public/public-resume.tsx
-msgid "Enter the password the resume owner shared with you."
-msgstr "Vnesite geslo, ki ga je z vami delil lastnik življenjepisa."
-
 #: src/features/write/entry-screen.tsx
 msgid "Entry"
 msgstr "Vnos"
@@ -4119,6 +4126,11 @@ msgstr "Debeline pisave"
 msgid "For"
 msgstr "Za"
 
+#. placeholder {0}: current.target
+#: src/features/share/web-page.tsx
+msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
+msgstr "Za korensko domeno, kot je example.com, namesto zapisa CNAME uporabite zapise A in AAAA z naslovi {0}."
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "For example, Sent to Lumen"
@@ -4361,6 +4373,10 @@ msgstr "Skriti izrazi so nazaj"
 msgid "Hide {title} from the page"
 msgstr "Skrij {title} s strani"
 
+#: src/features/share/web-page.tsx
+msgid "Hide contact details"
+msgstr "Skrij kontaktne podatke"
+
 #: src/features/applications/add-sheet.tsx
 msgid "Hide details"
 msgstr "Skrij podrobnosti"
@@ -4376,10 +4392,6 @@ msgstr "Skrij ključ"
 #: app/(tabs)/settings/licences.tsx
 msgid "Hide license"
 msgstr "Skrij licenco"
-
-#: src/features/public/public-resume.tsx
-msgid "Hide password"
-msgstr "Skrijte geslo"
 
 #: src/features/career/today.tsx
 msgid "Hide read"
@@ -4507,10 +4519,6 @@ msgstr "Ikone v kontaktni vrstici"
 #: src/features/ats-checker/messages.ts
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "Če izvira iz skena, je to pričakovano. V nasprotnem primeru ga odstranite; kadroviki to razumejo kot nabijanje s ključnimi besedami."
-
-#: src/features/public/public-resume.tsx
-msgid "If someone sent you this link, ask them for a new one."
-msgstr "Če vam je nekdo poslal to povezavo, ga prosite za novo."
 
 #. placeholder {0}: reader ?? provider.provider
 #: src/api/ai-consent.ts
@@ -5028,6 +5036,10 @@ msgstr "Še manj kot 48 ur."
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Odjemalcem AI, kot sta Claude in Cursor, dovolite branje in urejanje življenjepisov s ključem API."
 
+#: src/features/share/web-page.tsx
+msgid "Let visitors ask to see them"
+msgstr "Obiskovalcem dovoli, da jih zaprosijo za ogled"
+
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
 msgstr "Začnimo s tem, kar imate"
@@ -5109,7 +5121,6 @@ msgstr "Vrstice tako blizu lahko tečejo skupaj, ko jih berete. Uporabite vsaj {
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
-#: src/features/share/screen.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -5128,6 +5139,7 @@ msgid "Link an application or paste a posting to compare its terms."
 msgstr "Povežite prijavo ali prilepite oglas za primerjavo njegovih ključnih besed."
 
 #: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Link copied"
 msgstr "Povezava je kopirana"
 
@@ -5264,7 +5276,6 @@ msgstr "Nalaganje vašega javnega naslova …"
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
 msgid "Loading…"
@@ -5326,10 +5337,6 @@ msgstr "Izgleda točno tako kot stran. Uporabite ga za prošnje za zaposlitev in
 msgid "Lower the design sheet"
 msgstr "Spustite oblikovalni list"
 
-#: src/features/public/public-resume.tsx
-msgid "Made with Reactive Resume, free and open source"
-msgstr "Izdelano z Reactive Resume, brezplačno in odprtokodno"
-
 #. Layout editor column label for the primary content area
 #: src/features/design/layout-screen.tsx
 msgid "Main"
@@ -5348,6 +5355,10 @@ msgstr "Naj bo bolj natančno"
 msgid "Make it shorter"
 msgstr "Naj bo krajši"
 
+#: src/features/share/web-page.tsx
+msgid "Make primary"
+msgstr "Nastavi kot glavnega"
+
 #: src/features/career/today.tsx
 msgid "Make room for the next step."
 msgstr "Naredite prostor za naslednji korak."
@@ -5363,6 +5374,10 @@ msgstr "Poskrbite, da se vidno besedilo povezave ujema s ciljnim naslovom."
 #: src/features/ats-checker/messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "Naredite jih vidno večje, krepkejše ali z velikimi črkami."
+
+#: src/features/share/web-page.tsx
+msgid "Make this your primary resume?"
+msgstr "Želite ta življenjepis nastaviti kot glavnega?"
 
 #: src/features/settings/locale-names.ts
 msgid "Malay"
@@ -6097,6 +6112,10 @@ msgstr "Ni uporabljeno"
 msgid "Not applied yet"
 msgstr "Še ni prijavljeno"
 
+#: src/features/share/web-page.tsx
+msgid "Not available while the resume needs a password."
+msgstr "Ni na voljo, dokler življenjepis zahteva geslo."
+
 #: src/features/career/today.tsx
 msgid "Not for me"
 msgstr "Ni zame"
@@ -6224,6 +6243,10 @@ msgstr "odijščina"
 msgid "Off"
 msgstr "Izključeno"
 
+#: src/features/share/web-page.tsx
+msgid "Off. Let recruiters find you on Google by turning this on."
+msgstr "Izklopljeno. Vklopite, da vas bodo kadroviki našli v iskalniku Google."
+
 #: src/features/share/link.tsx
 msgid "Off. Only you can see this resume."
 msgstr "Izključeno. Samo vi lahko vidite ta življenjepis."
@@ -6270,8 +6293,8 @@ msgid "On"
 msgstr "Vklopljeno"
 
 #: src/features/share/link.tsx
-msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
-msgstr "Vklopljeno. Vsakdo s povezavo si lahko ogleda. Iskalniki ga ne navajajo ali indeksirajo."
+msgid "On. Anyone with the link can see your web page."
+msgstr "Vklopljeno. Vsakdo s povezavo si lahko ogleda vašo spletno stran."
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Once a round is scheduled, Prepare builds a timed plan, your opening and the questions to ask."
@@ -6599,7 +6622,6 @@ msgid "Passkeys"
 msgstr "Passkeys"
 
 #: app/(tabs)/settings/account.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Password"
@@ -6933,6 +6955,10 @@ msgstr "Pritisnite in držite za predogled na strani."
 msgid "Press and hold, then drag to another column or page."
 msgstr "Pritisnite in držite, nato povlecite v drug stolpec ali stran."
 
+#: src/features/share/web-page.tsx
+msgid "Preview web page"
+msgstr "Prikaži predogled spletne strani"
+
 #. placeholder {0}: templateName(template)
 #: src/features/design/preview-caption.tsx
 msgid "Previewing {0} · tap to apply"
@@ -6962,6 +6988,10 @@ msgstr "Prejšnji zavihki delovnega prostora"
 msgid "Primary color"
 msgstr "Primarna barva"
 
+#: src/features/share/web-page.tsx
+msgid "Primary resume"
+msgstr "Glavni življenjepis"
+
 #: src/features/document-menu/index.tsx
 #: src/features/share/download.tsx
 msgid "Print"
@@ -6970,6 +7000,10 @@ msgstr "Tiskanje"
 #: src/features/ats-checker/messages.ts
 msgid "Print or export the form to a flat PDF before sending it."
 msgstr "Pred pošiljanjem obrazec natisnite ali izvozite v ploski PDF."
+
+#: src/features/share/web-page.tsx
+msgid "Privacy"
+msgstr "Zasebnost"
 
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
@@ -7038,7 +7072,6 @@ msgstr "Zadrževanje in uporaba ponudnika sledita njegovi politiki zasebnosti. �
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
-#: src/shell/builder-chrome.tsx
 msgid "Public"
 msgstr "Javno"
 
@@ -7065,6 +7098,18 @@ msgstr "Javno, z geslom"
 #: src/features/write/fields.ts
 msgid "Publications"
 msgstr "Publikacije"
+
+#: src/features/share/web-page.tsx
+msgid "Publish the web page first."
+msgstr "Najprej objavite spletno stran."
+
+#: src/features/share/link.tsx
+msgid "Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted."
+msgstr "Objavite spletno stran, da se štejejo ogledi in prenosi. Štetje je anonimno, iskalniki pa se ne štejejo."
+
+#: src/features/share/web-page.tsx
+msgid "Publish this resume to open it at your short link and custom domain."
+msgstr "Objavite ta življenjepis, da se bo odprl na vaši kratki povezavi in lastni domeni."
 
 #: src/features/write/fields.ts
 msgid "Publisher"
@@ -7400,6 +7445,7 @@ msgstr "Opomniki se prikažejo tukaj. Kopije po e-pošti so neobvezne in zahteva
 msgid "Remote"
 msgstr "Na daljavo"
 
+#: src/features/share/web-page.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "Odstrani"
@@ -7621,7 +7667,6 @@ msgstr "Rezultat"
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
-#: src/features/public/public-resume.tsx
 msgid "Resume"
 msgstr "Življenjepis"
 
@@ -7689,7 +7734,6 @@ msgstr "Pridobljeno {0} z uporabo {1}. Čas pridobivanja ne določa svežine izv
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/share/download.tsx
 #: src/features/share/link.tsx
 #: src/features/share/screen.tsx
@@ -8111,6 +8155,10 @@ msgstr "Iskanje zajema dokumente, prijave, pogovore s pomočniki in akcije."
 msgid "Search documents"
 msgstr "Iskanje dokumentov"
 
+#: src/features/share/web-page.tsx
+msgid "Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off."
+msgstr "Iskalniki, kot je Google, lahko prikažejo vašo spletno stran. Lahko traja več tednov, da se prikaže ali da izgine, ko to izklopite."
+
 #: src/features/career/facts.tsx
 msgid "Search facts"
 msgstr "Išči dejstva"
@@ -8364,13 +8412,12 @@ msgstr "Barva sence"
 msgid "Shadow width"
 msgstr "Širina sence"
 
-#: src/features/public/public-resume.tsx
-#: src/shell/builder-chrome.tsx
+#: app/builder/[id]/_layout.tsx
+#: app/builder/[id]/share.tsx
 msgid "Share"
 msgstr "Delite"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
 msgid "Share & export"
 msgstr "Delite in izvozite"
 
@@ -8395,26 +8442,17 @@ msgstr "Namesto tega delite PDF"
 msgid "Share PNG"
 msgstr "Delite PNG"
 
-#: src/shell/builder-chrome.tsx
-msgid "Share public resume"
-msgstr "Delite javni življenjepis"
-
 #: src/features/workspace/tabs/practise.tsx
 msgid "Share recording"
 msgstr "Delite posnetek"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
 msgid "Share sections"
 msgstr "Delite razdelke"
 
 #: src/features/share/link.tsx
 msgid "Share via…"
 msgstr "Delite prek ..."
-
-#: src/features/public/public-resume.tsx
-msgid "Shared resumes stay hidden until your device settings allow them."
-msgstr "Skupni življenjepisi ostanejo skriti, dokler nastavitve naprave tega ne dovolijo."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -8434,6 +8472,10 @@ msgstr "Kratko in direktno. V redu, če objava za delo zahteva kratkost."
 msgid "Short and polite, for the recruiter"
 msgstr "Kratko in vljudno, za zaposlovalca"
 
+#: src/features/share/web-page.tsx
+msgid "Short link and domain"
+msgstr "Kratka povezava in domena"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "Preden to označite kot prijavljeno, skrajšajte vprašanja na 2.000 znakov in odgovore na 6.000 znakov."
@@ -8441,6 +8483,10 @@ msgstr "Preden to označite kot prijavljeno, skrajšajte vprašanja na 2.000 zna
 #: src/features/letters/write.tsx
 msgid "Shorter"
 msgstr "Krajši"
+
+#: src/features/share/web-page.tsx
+msgid "Show “Made with Reactive Resume”"
+msgstr "Prikaži „Narejeno z Reactive Resume“"
 
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #: src/features/applications-board/board-screen.tsx
@@ -8483,6 +8529,10 @@ msgstr "Ponovno prikaži skrite izraze"
 msgid "Show icons"
 msgstr "Prikaži ikone"
 
+#: src/features/share/web-page.tsx
+msgid "Show in search engines"
+msgstr "Prikaži v iskalnikih"
+
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Pokaži ključ"
@@ -8502,10 +8552,6 @@ msgstr "Pokaži več"
 #: src/features/write/section-sheet.tsx
 msgid "Show on page"
 msgstr "Prikaži na strani"
-
-#: src/features/public/public-resume.tsx
-msgid "Show password"
-msgstr "Prikaži geslo"
 
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
@@ -8589,6 +8635,7 @@ msgstr "Prijavite se v {server}, nato nadaljujte na povezani dokument."
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/pane.tsx
 #: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Za nadaljevanje se prijavite."
@@ -9395,10 +9442,6 @@ msgstr "Izvirnik ostane v zgodovini popravkov. Zgodbe, ki ga uporabljajo, bo tre
 msgid "The pages are pictures, with no text behind them."
 msgstr "Strani so slike, brez besedila v ozadju."
 
-#: src/features/public/public-resume.tsx
-msgid "The password you entered is incorrect. Try again."
-msgstr "Vneseno geslo ni pravilno. Poskusite znova."
-
 #: src/features/check/parser.tsx
 msgid "The PDF is checked on the server and not stored. Send this preview to see what software reads."
 msgstr "PDF se preveri na strežniku in se ne shrani. Pošljite ta predogled, da vidite, kaj bere programska oprema."
@@ -9411,6 +9454,10 @@ msgstr "Ponudnik ni odgovoril. Preverite ključ, model in podstavek URL."
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Razlog se hrani za Insights. Povezani dokumenti se ne dotikajo."
+
+#: src/features/share/web-page.tsx
+msgid "The records aren't visible yet. Check again later."
+msgstr "Zapisi še niso vidni. Preverite znova pozneje."
 
 #: src/features/ats-checker/checker.tsx
 msgid "The rest of the file isn't in this report."
@@ -9537,10 +9584,6 @@ msgstr "Te prijave ni bilo mogoče odpreti."
 #: src/features/check/job-match.tsx
 msgid "This application has no posting yet. Add one in Applications."
 msgstr "Ta prijava še nima oglasa. Dodajte ga v Prijavah."
-
-#: src/features/public/public-resume.tsx
-msgid "This author is blocked."
-msgstr "Ta avtor je blokiran."
 
 #: src/features/workspace/parts.tsx
 msgid "This changed somewhere else, so it wasn't saved. Your text is kept here; Retry saves it over the other copy."
@@ -9742,14 +9785,6 @@ msgstr "Ta življenjepis je zaklenjen. Za spremembe ga najprej odklenite."
 #: src/features/ats-checker/messages.ts
 msgid "This resume is long."
 msgstr "Ta življenjepis je dolg."
-
-#: src/features/public/public-resume.tsx
-msgid "This resume is password-protected"
-msgstr "Ta življenjepis je zaščiten z geslom"
-
-#: src/features/public/public-resume.tsx
-msgid "This resume isn't shared right now."
-msgstr "Ta življenjepis trenutno ni v skupni rabi."
 
 #: src/features/application-detail/sheets.tsx
 msgid "This saved description is clipped or incomplete. Review before preparing documents."
@@ -9964,7 +9999,6 @@ msgstr "Poskusite {suggestion}"
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/letters/write.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/shell.tsx
@@ -10019,10 +10053,6 @@ msgstr "Pri izvozu izklopite neobvezne ligature."
 msgid "Turn on the link to choose an address."
 msgstr "Vklopite povezavo, da izberete naslov."
 
-#: src/features/share/link.tsx
-msgid "Turn on the public link to count views and downloads. Counts are anonymous."
-msgstr "Vklopite javno povezavo za štetje ogledov in prenosov. Štetje uporabe je anonimno."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "Vklopi ta urnik"
@@ -10073,10 +10103,6 @@ msgstr "ukrajinščina"
 msgid "Unavailable"
 msgstr "Ni na voljo"
 
-#: src/features/public/public-resume.tsx
-msgid "Unblock author"
-msgstr "Odblokiraj avtorja"
-
 #: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
@@ -10116,7 +10142,6 @@ msgstr "Prekini povezavo"
 
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/write/outline.tsx
 msgid "Unlock"
 msgstr "Odkleni"
@@ -10381,6 +10406,10 @@ msgstr "Uporablja storitev spletnega iskanja, nastavljeno v nastavitvah. Rezulta
 msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
 msgstr "Uporablja spletno iskanje iz Nastavitev. Rezultati čakajo v Danes. Prijave in dokumenti se nikoli ne ustvarijo namesto vas."
 
+#: src/features/share/web-page.tsx
+msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
+msgstr "Uporablja predlogo in oblikovanje vašega življenjepisa ter se prilagodi vsakemu zaslonu. Spremenite ju v načinu Oblikovanje."
+
 #: src/features/settings/locale-names.ts
 msgid "Uzbek"
 msgstr "uzbeščina"
@@ -10392,10 +10421,6 @@ msgstr "Menjajte začetke stavkov, da se razdelek ne bere kot predloga."
 #: src/features/career/offers.tsx
 msgid "Verbal offer"
 msgstr "Ustna ponudba"
-
-#: src/features/public/public-resume.tsx
-msgid "Verifying password…"
-msgstr "Preverjanje gesla…"
 
 #: src/features/letters/share.tsx
 msgid "Version"
@@ -10475,13 +10500,13 @@ msgstr "Ogled {0} · samo za branje"
 msgid "views · 30 days"
 msgstr "ogledov · 30 dni"
 
-#: src/features/share/link.tsx
-msgid "Views and downloads"
-msgstr "Ogledi in prenosi"
-
 #: src/features/ai/report-content.tsx
 msgid "Violence or abuse"
 msgstr "Nasilje ali zloraba"
+
+#: src/features/share/link.tsx
+msgid "Visitors"
+msgstr "Obiskovalci"
 
 #: src/features/share/link.tsx
 msgid "Visitors can download the PDF"
@@ -10520,6 +10545,10 @@ msgstr "Spletni dostop"
 #: src/features/ai/web-access.tsx
 msgid "Web access settings couldn't be saved or loaded."
 msgstr "Nastavitev spletnega dostopa ni bilo mogoče shraniti ali naložiti."
+
+#: src/features/share/web-page.tsx
+msgid "Web page"
+msgstr "Spletna stran"
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Web research"
@@ -10866,25 +10895,24 @@ msgstr "Niste povezani. Prenos PDF uporablja to napravo. Druge oblike potrebujej
 msgid "You're offline. History needs a connection."
 msgstr "Brez povezave ste. Zgodovina potrebuje povezavo."
 
+#: src/features/share/screen.tsx
+msgid "You're offline. History needs a connection. Download PDF works on this device."
+msgstr "Brez povezave ste. Zgodovina potrebuje povezavo. „Prenesi PDF“ deluje v tej napravi."
+
 #: src/features/check/screen.tsx
 msgid "You're offline. Issues and Job match still work; reconnect for Writing and PDF checks."
 msgstr "Brez povezave ste. Težave in Ujemanje z delovnim mestom še delujejo; za Pisanje in preverjanja PDF se znova povežite."
 
-#: src/features/share/screen.tsx
-msgid "You're offline. Link and History need a connection. Download PDF works on this device."
-msgstr "Brez povezave ste. Povezava in zgodovina potrebujeta povezavo. Prenos PDF deluje na tej napravi."
+#: src/features/share/pane.tsx
+msgid "You're offline. Sharing needs a connection."
+msgstr "Brez povezave ste. Deljenje potrebuje povezavo."
 
 #: src/features/check/parser.tsx
 msgid "You're offline. The last PDF check stays here; connect to refresh it."
 msgstr "Brez povezave ste. Zadnje preverjanje PDF ostane tukaj; za osvežitev se povežite."
 
-#: src/features/public/public-resume.tsx
-msgid "You're offline. This resume opens when you reconnect."
-msgstr "Brez povezave ste. Ta življenjepis se odpre, ko se ponovno povežete."
-
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
-#: src/features/public/public-resume.tsx
 msgid "You're offline. Try again when you reconnect."
 msgstr "Brez povezave ste. Poskusite znova, ko se znova povežete."
 
@@ -10945,9 +10973,17 @@ msgstr "Vaši datumi so zapisani na več različnih načinov."
 msgid "Your document was saved. Review it in the editor."
 msgstr "Vaš dokument je bil shranjen. Preglejte ga v urejevalniku."
 
+#: src/features/share/web-page.tsx
+msgid "Your domain"
+msgstr "Vaša domena"
+
 #: src/features/ats-checker/messages.ts
 msgid "Your email address is broken across pieces of text."
 msgstr "Vaš e-poštni naslov je razdeljen na več delov besedila."
+
+#: src/features/share/web-page.tsx
+msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
+msgstr "Vaš e-poštni naslov, telefon, lokacija in drugi podatki v glavi ter telefonske številke referenc niso vključeni v spletno stran, njen PDF in rezultate iskanja."
 
 #: src/features/career/knowledge.tsx
 msgid "Your facts, stories and preferences. Editing Knowledge sends nothing to an AI connection."
@@ -11081,6 +11117,19 @@ msgstr "Vaša seja je potekla. Ponovno se prijavite."
 #: src/auth/session-gate.tsx
 msgid "Your session on {0} ended"
 msgstr "Vaša seja na {0} se je končala"
+
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "Your short link and custom domain open “{0}”."
+msgstr "Vaša kratka povezava in lastna domena odpreta „{0}“."
+
+#: src/features/share/web-page.tsx
+msgid "Your short link and custom domain open this resume."
+msgstr "Vaša kratka povezava in lastna domena odpreta ta življenjepis."
+
+#: src/features/share/web-page.tsx
+msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
+msgstr "Vaša kratka povezava in lastna domena prikazujeta, da ta življenjepis ni deljen, dokler ga znova ne objavite."
 
 #: src/features/assistant/coach-screen.tsx
 msgid "your stories"

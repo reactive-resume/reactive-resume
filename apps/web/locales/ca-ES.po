@@ -35,6 +35,11 @@ msgstr "\"{0}\" amagat"
 msgid "“{0}” moved to Trash"
 msgstr "\"{0}\" s'ha mogut a la paperera"
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr "«{0}» deixarà de ser el vostre currículum principal."
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "“{name}” moved to Trash"
@@ -721,6 +726,10 @@ msgstr "{stars, plural, one {Doneu una estrella a Reactive Resume a GitHub, # es
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# història} other {# històries}}"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "{suggestion} may be available. Get yours here →"
+msgstr "{suggestion} podria estar disponible. Aconseguiu el vostre aquí →"
+
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
 msgstr "{summary}. S'obre a Carrera → Ofertes."
@@ -893,6 +902,10 @@ msgstr "90 dies"
 #: src/features/homepage/remember.tsx
 msgid "A"
 msgstr "A"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "A “Show contact details” button reveals them to people, not to search engines."
+msgstr "Un botó «Mostra les dades de contacte» les mostra a les persones, però no als cercadors."
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
@@ -1243,7 +1256,7 @@ msgstr "Afegeix un proveïdor d'IA"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "Afegiu una @ i el domini, com ara name@example.com"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Add an address."
 msgstr "Afegeix una adreça."
 
@@ -1410,6 +1423,10 @@ msgstr "Afegiu el domini després de @, com ara {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Afegeix el final del domini, com ara {domain}.com"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
+msgstr "Afegiu aquests registres on gestioneu el domini i, després, comproveu-ho. Els canvis poden trigar unes hores a arribar a tothom."
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/career/workspace/shell.tsx
@@ -1475,7 +1492,7 @@ msgstr "S'ha afegit a Coneixements com a experiència."
 msgid "Added to Prepare"
 msgstr "S'ha afegit a Preparació"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Address"
 msgstr "Adreça"
 
@@ -1708,7 +1725,7 @@ msgstr "i {0} més"
 msgid "and counting"
 msgstr "i comptant"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Another of your resumes uses this address."
 msgstr "Un altre dels teus currículums utilitza aquesta adreça."
 
@@ -1757,7 +1774,7 @@ msgstr "Qualsevol tipus de lletra, en avançat"
 msgid "Anyone who opens the public URL will need this password."
 msgstr "Qualsevol que obri l'URL públic necessitarà aquesta contrasenya."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Qualsevol persona que tingui l'enllaç podrà veure el vostre currículum."
 
@@ -1888,6 +1905,7 @@ msgstr "Pestanyes de la candidatura"
 msgid "Application updated"
 msgstr "S'ha actualitzat la candidatura"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
@@ -2041,6 +2059,10 @@ msgstr "Pregunta o descriu un canvi..."
 #: src/features/homepage/faq.tsx
 msgid "Asked and <0>answered.</0>"
 msgstr "Preguntes i <0>respostes.</0>"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "asked for contact details"
+msgstr "han demanat les dades de contacte"
 
 #: src/features/homepage/prepare.tsx
 msgid "Asks for an example of your onboarding work."
@@ -2552,6 +2574,10 @@ msgstr "Comproveu un altre fitxer"
 msgid "Check any PDF, no account needed"
 msgstr "Comproveu qualsevol PDF, no cal cap compte"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Check DNS"
+msgstr "Comprova el DNS"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Check every claim, date and result against your experience."
 msgstr "Contrasteu cada afirmació, data i resultat amb la vostra experiència."
@@ -2635,7 +2661,7 @@ msgstr "S'està comprovant el PDF exportat..."
 msgid "Checking your preferences"
 msgstr "Comprovant les vostres preferències"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "S'està comprovant... La còpia està disponible després de desar."
 
@@ -2716,7 +2742,6 @@ msgid "Claude Desktop"
 msgstr "Claude Desktop"
 
 #: src/features/applications/components/detail/next-step-card.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
 msgstr "Esborra"
@@ -2738,6 +2763,7 @@ msgid "Clear section"
 msgstr "Esborra la secció"
 
 #: src/components/ui/combobox.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Clear selection"
 msgstr "Esborra la selecció"
@@ -2905,6 +2931,10 @@ msgstr "Còpia de seguretat de dades completa. Torna a importar a les eines Reac
 msgid "Compress or remove large images to keep uploads quick."
 msgstr "Comprimeix o elimina imatges grans per mantenir les càrregues ràpides."
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Computer"
+msgstr "Ordinador"
+
 #: src/hooks/use-confirm.tsx
 msgid "Confirm"
 msgstr "Confirma"
@@ -2938,6 +2968,7 @@ msgid "Confirms {time} today, by video."
 msgstr "Confirma {time} avui, per vídeo."
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/resume/share/share-panel.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "Connecta"
@@ -2989,6 +3020,10 @@ msgstr "Connectat"
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Aplicacions connectades"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Connected. Your domain opens your primary resume."
+msgstr "Connectat. El vostre domini obre el vostre currículum principal."
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Connecting your {providerName} account…"
@@ -3117,7 +3152,7 @@ msgid "Copied"
 msgstr "Copiat"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3149,7 +3184,6 @@ msgid "Copy it now. For your security, it won't be shown again."
 msgstr "Copia-ho ara. Per la vostra seguretat, no es tornarà a mostrar."
 
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
 msgid "Copy link"
 msgstr "Copia l'enllaç"
 
@@ -3698,7 +3732,7 @@ msgstr "No s'ha pogut desvincular la candidatura. Torneu-ho a provar."
 msgid "Couldn't unlock the document. Try again."
 msgstr "No s'ha pogut desbloquejar el document. Torneu-ho a provar."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "No s'ha pogut actualitzar la compartició. Torneu-ho a provar."
 
@@ -3748,11 +3782,6 @@ msgstr "No s'ha pogut pujar la fotografia. Torneu-ho a provar."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "No s'ha pogut verificar el codi. Introduïu el codi actual de l'aplicació d'autenticació."
-
-#. Fallback toast when resume password verification fails unexpectedly
-#: src/features/auth/pages/resume-password.tsx
-msgid "Couldn't verify the password. Try again."
-msgstr "No s'ha pogut verificar la contrasenya. Torneu-ho a provar."
 
 #. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
@@ -3957,7 +3986,7 @@ msgid "Daily at {clock} · next {next}"
 msgstr "Cada dia a les {clock} · propera {next}"
 
 #. placeholder {0}: summary.peak
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "Visualitzacions diàries durant 30 dies, màxim {0}"
 
@@ -4333,6 +4362,10 @@ msgstr "Els documents que moveu aquí s'hi queden 30 dies."
 msgid "Does it use AI?"
 msgstr "Fa servir IA?"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Domain connected"
+msgstr "Domini connectat"
+
 #: src/features/auth/pages/login.tsx
 msgid "Don't have an account? <0/>"
 msgstr "No teniu compte? <0/>"
@@ -4378,6 +4411,10 @@ msgstr "Descarrega {label}"
 msgid "Download {name} sample PDF"
 msgstr "Baixeu el PDF de mostra de {name}"
 
+#: src/features/resume/editor/chrome/share-sheet.tsx
+msgid "Download & history"
+msgstr "Baixades i historial"
+
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download application details, contacts, notes, and timeline history as CSV."
 msgstr "Baixa els detalls de les candidatures, els contactes, les notes i l'historial de la cronologia en CSV."
@@ -4397,7 +4434,7 @@ msgid "Download failed. Try again."
 msgstr "La baixada ha fallat. Torneu-ho a provar."
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
 msgstr "Baixa el PDF"
 
@@ -4413,7 +4450,7 @@ msgstr "Descarregar PDF de mostra"
 msgid "Download them"
 msgstr "Descarrega'ls"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Download totals can include repeat clicks."
 msgstr "Els totals de baixades poden incloure clics repetits."
 
@@ -4430,7 +4467,7 @@ msgstr "S'han descarregat {file} i la carta de presentació"
 msgid "Downloaded your resume and this letter"
 msgstr "Heu descarregat el vostre currículum i aquesta carta"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "downloads"
 msgstr "descàrregues"
 
@@ -4815,13 +4852,9 @@ msgstr "Introduïu un dels codis de seguretat desats per accedir al vostre compt
 msgid "Enter the 6-digit code."
 msgstr "Introduïu el codi de 6 dígits."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Enter the password the resume owner shared with you."
 msgstr "Introdueix la contrasenya que t'ha compartit el propietari del currículum."
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Enter the password."
-msgstr "Introduïu la contrasenya."
 
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Enter the same password in both fields."
@@ -5231,6 +5264,11 @@ msgstr "No s'han pogut carregar les fonts. Torneu-ho a provar."
 msgid "For"
 msgstr "Per"
 
+#. placeholder {0}: domain.target
+#: src/features/resume/share/share-panel.tsx
+msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
+msgstr "Per a un domini arrel com example.com, utilitzeu registres A i AAAA amb les adreces de {0} en lloc del CNAME."
+
 #: src/features/career/workspace/prepare.tsx
 msgid "For each: situation, task, your action, result, reflection. Leave out numbers you're unsure of."
 msgstr "Per a cadascuna: situació, tasca, la vostra acció, resultat, reflexió. Deixeu fora les xifres que no tingueu clares."
@@ -5625,6 +5663,10 @@ msgstr "Amagats: {hiddenList}"
 msgid "Hide {title} from the page"
 msgstr "Amaga {title} de la pàgina"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Hide contact details"
+msgstr "Amaga les dades de contacte"
+
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Hide from page"
 msgstr "Amaga de la pàgina"
@@ -5792,7 +5834,7 @@ msgstr "Si prové d'un escaneig, és normal. Si no, elimina-ho; els reclutadors 
 msgid "If it's part of your experience, add it where it belongs."
 msgstr "Si forma part de la vostra experiència, afegiu-la on correspongui."
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "If someone sent you this link, ask them for a new one."
 msgstr "Si algú us ha enviat aquest enllaç, demaneu-li un de nou."
 
@@ -6501,6 +6543,10 @@ msgstr "La longitud no és cap defecte, i no hi ha cap regla universal d'una sol
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "Permeteu que clients d'IA com Claude o Cursor llegeixin i editin els vostres currículums, utilitzant una clau API anterior."
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Let visitors ask to see them"
+msgstr "Permet que els visitants demanin veure-les"
+
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "Comencem pel que tens"
@@ -6605,7 +6651,6 @@ msgstr "Les línies tan properes poden córrer juntes quan es llegeixen. Utilitz
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/write/fields.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Link"
 msgstr "Enllaç"
 
@@ -6632,14 +6677,10 @@ msgid "Link an application…"
 msgstr "Enllaça una sol·licitud de feina..."
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/public/public-resume.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "S'ha copiat l'enllaç"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Link is live"
-msgstr "L'enllaç està en directe"
 
 #: src/features/documents/document-actions.tsx
 msgid "Link to application"
@@ -6649,7 +6690,7 @@ msgstr "Enllaç a la sol·licitud de feina"
 msgid "Link to application…"
 msgstr "Enllaç a la sol·licitud de feina..."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Link turned off. The address is kept"
 msgstr "Enllaç desactivat. L'adreça es manté"
 
@@ -6727,7 +6768,7 @@ msgid "Live · updates as you edit"
 msgstr "· Actualitzacions en directe mentre editeu"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Live at {0}"
 msgstr "En directe a {0}"
 
@@ -6862,7 +6903,7 @@ msgstr "Baixa"
 msgid "Lower the design sheet"
 msgstr "Baixeu el full de disseny"
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Fet amb Reactive Resume, de codi obert i gratuït"
 
@@ -6896,6 +6937,10 @@ msgstr "Fes-ho més curt"
 msgid "Make it yours, then take it with you."
 msgstr "Fes-ho teu i després emporta'l amb tu."
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Make primary"
+msgstr "Fes-lo principal"
+
 #: src/features/documents/documents-page.tsx
 msgid "Make private"
 msgstr "Fes privat"
@@ -6915,6 +6960,10 @@ msgstr "Fes que el text visible i la destinació coincideixin."
 #: src/features/ats-checker/messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "Feu-los visiblement més grans, més negretes o en majúscules."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Make this your primary resume?"
+msgstr "Voleu que aquest sigui el vostre currículum principal?"
 
 #: src/libs/locale.ts
 msgid "Malay"
@@ -7715,6 +7764,10 @@ msgstr "No aplicat"
 msgid "Not applied yet"
 msgstr "Encara no enviada"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Not available while the resume needs a password."
+msgstr "No està disponible mentre el currículum requereixi una contrasenya."
+
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "No connectat"
@@ -7908,9 +7961,9 @@ msgstr "Apagat"
 msgid "Off: the coach won’t see it or claim it."
 msgstr "Desactivat: l'orientador no ho veurà ni ho afirmarà."
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Off. Only you can see this resume."
-msgstr "Apagat. Només tu pots veure aquest currículum."
+#: src/features/resume/share/share-panel.tsx
+msgid "Off. Let recruiters find you on Google by turning this on."
+msgstr "Desactivat. Activeu-ho perquè els reclutadors us trobin a Google."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Off. The letter keeps its own copy of your details."
@@ -7939,9 +7992,9 @@ msgstr "Dies d'oficina no indicats"
 msgid "Offline · saved on this device"
 msgstr "Sense connexió · desat en aquest dispositiu"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
-msgstr "Encès. Qualsevol persona amb l'enllaç pot veure'l. No està llistat ni indexat pels motors de cerca."
+#: src/features/resume/share/share-panel.tsx
+msgid "On. Anyone with the link can see your web page."
+msgstr "Activat. Qualsevol persona amb l'enllaç pot veure la vostra pàgina web."
 
 #: src/features/homepage/remember.tsx
 msgid "Onboarding story"
@@ -8023,7 +8076,7 @@ msgstr "Només s'importen les primeres {MAX_IMPORT} files de cop, i en queden fo
 msgid "Only the first pages were checked."
 msgstr "Només s'han comprovat les primeres pàgines."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "Només tu veus aquests"
 
@@ -8081,10 +8134,6 @@ msgstr "Obre a Ofertes"
 msgid "Open preferences"
 msgstr "Obre les preferències"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Open public page"
-msgstr "Obriu la pàgina pública"
-
 #: src/features/career/workspace/prepare.tsx
 msgid "Open story"
 msgstr "Obre la història"
@@ -8100,6 +8149,10 @@ msgstr "Obriu l'aplicació Reactive Resume"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Obre la programació"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Open web page"
+msgstr "Obre la pàgina web"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/today.tsx
@@ -8318,16 +8371,15 @@ msgstr "Claus d'accés"
 
 #. Authentication provider display name in account settings
 #. Label for password input on login form
-#. Label for password input on protected resume access form
 #. Label for password input on registration form
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/share.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/features/settings/account/auth-hooks.ts
 #: src/features/settings/account/security.tsx
 msgid "Password"
@@ -8337,7 +8389,7 @@ msgstr "Contrasenya"
 msgid "Password changed"
 msgstr "S'ha canviat la contrasenya"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "S'ha eliminat la contrasenya"
 
@@ -8345,7 +8397,7 @@ msgstr "S'ha eliminat la contrasenya"
 msgid "Password reset. Sign in with your new password."
 msgstr "S'ha restablert la contrasenya. Inicieu la sessió amb la contrasenya nova."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "Contrasenya establerta"
 
@@ -8462,6 +8514,7 @@ msgstr "Persa"
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
+#: src/features/resume/share/web-page-preview.tsx
 msgid "Phone"
 msgstr "Telèfon"
 
@@ -8731,6 +8784,10 @@ msgstr "Premeu <0>Intro</0> per obrir"
 msgid "Preview {name} sample PDF"
 msgstr "Previsualitza el PDF de mostra de {name}"
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Preview size"
+msgstr "Mida de la previsualització"
+
 #. placeholder {0}: templates[previewTemplate].name
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
@@ -8753,6 +8810,10 @@ msgstr "Mes anterior"
 msgid "Primary color"
 msgstr "Color principal"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Primary resume"
+msgstr "Currículum principal"
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Print"
 msgstr "Imprimeix"
@@ -8761,9 +8822,9 @@ msgstr "Imprimeix"
 msgid "Print or export the form to a flat PDF before sending it."
 msgstr "Imprimeix o exporta el formulari a un PDF pla abans d'enviar-lo."
 
-#: src/features/resume/public/public-resume.tsx
-msgid "Printing is turned off for this resume."
-msgstr "La impressió està desactivada per a aquest currículum."
+#: src/features/resume/share/share-panel.tsx
+msgid "Privacy"
+msgstr "Privadesa"
 
 #: src/features/homepage/footer.tsx
 msgid "Privacy policy"
@@ -8866,7 +8927,7 @@ msgstr "Proveïdor"
 msgid "Public"
 msgstr "Públic"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Public link"
 msgstr "Enllaç públic"
 
@@ -8881,6 +8942,26 @@ msgstr "Públic, amb contrasenya"
 #: src/libs/resume/section.tsx
 msgid "Publications"
 msgstr "Publicacions"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish"
+msgstr "Publica"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish it to share a link that opens on any screen. Only you can see it until then."
+msgstr "Publiqueu-la per compartir un enllaç que s'obre en qualsevol pantalla. Fins aleshores, ningú més la pot veure."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page first."
+msgstr "Primer publiqueu la pàgina web."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted."
+msgstr "Publiqueu la pàgina web per comptar les visualitzacions i les baixades. Els recomptes són anònims i no es compten els cercadors."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link and custom domain."
+msgstr "Publiqueu aquest currículum per obrir-lo amb el vostre enllaç curt i el domini personalitzat."
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Publisher"
@@ -8902,11 +8983,11 @@ msgstr "Poseu-ho tot en <0>una pàgina.</0>"
 msgid "Put the caret in a line to improve it"
 msgstr "Posa el cursor en una línia per millorar-lo"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code"
 msgstr "codi QR"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code for {url}"
 msgstr "Codi QR per a {url}"
 
@@ -9343,6 +9424,7 @@ msgstr "En remot"
 msgid "Remote, Hybrid, a city…"
 msgstr "Remot, híbrid, una ciutat…"
 
+#: src/features/resume/share/share-panel.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "Eliminar"
@@ -9391,7 +9473,7 @@ msgstr "Elimina el fitxer"
 msgid "Remove passkey"
 msgstr "Elimina la clau d'accés"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove password"
 msgstr "Elimina la contrasenya"
 
@@ -9417,7 +9499,7 @@ msgstr "Elimina el rol"
 msgid "Remove tag"
 msgstr "Elimina l’etiqueta"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "Eliminar la contrasenya?"
 
@@ -9499,7 +9581,7 @@ msgstr "S'ha copiat la resposta"
 msgid "Report a bug"
 msgstr "Informa d'un error"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Require a password"
 msgstr "Requereix una contrasenya"
 
@@ -9590,8 +9672,6 @@ msgstr "currículum"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-card.tsx
-#: src/routes/_home/index.tsx
-#: src/routes/$username/$slug.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "Currículum vitae"
@@ -10047,7 +10127,7 @@ msgid "Saved to Saved · Practice"
 msgstr "S'ha desat a Desats · Assaig"
 
 #. placeholder {0}: window.location.host
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "S'està desant {0}/{username}/{slug}... La còpia està disponible després de desar-la."
 
@@ -10144,6 +10224,10 @@ msgstr "La cerca inclou títols, etiquetes i sol·licituds de feina enllaçades.
 #: src/features/documents/documents-page.tsx
 msgid "Search documents"
 msgstr "Cerca documents"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off."
+msgstr "Els cercadors com Google poden incloure la vostra pàgina web. Pot trigar setmanes a aparèixer, o a desaparèixer després de desactivar-ho."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Search facts"
@@ -10449,29 +10533,22 @@ msgstr "Amplada de l'ombra"
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Share"
 msgstr "Comparteix"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
-msgid "Share & export"
-msgstr "Comparteix i exporta"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "Comparteix un enllaç públic, afegeix una contrasenya o manté-la privada. Trieu entre 3 opcions de visibilitat. Exporteu a PDF o Word, o emporteu totes les vostres dades com a JSON."
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-msgid "Share public resume"
-msgstr "Comparteix el currículum públic"
-
 #: src/features/resume/editor/chrome/share-sheet.tsx
 msgid "Share sections"
 msgstr "Comparteix seccions"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Share via…"
 msgstr "Comparteix a través de…"
 
@@ -10505,6 +10582,10 @@ msgstr "Breu i directe. Està bé si l'oferta de feina demana brevetat."
 msgid "Short and polite, for the recruiter"
 msgstr "Curt i educat, per al reclutador"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link and domain"
+msgstr "Enllaç curt i domini"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "Escurceu les preguntes a 2.000 caràcters i les respostes a 6.000 caràcters abans de marcar-la com a enviada."
@@ -10516,6 +10597,10 @@ msgstr "Més curt"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Show"
 msgstr "Mostra"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show “Made with Reactive Resume”"
+msgstr "Mostra «Fet amb Reactive Resume»"
 
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #. placeholder {0}: visible.length - shown.length
@@ -10545,6 +10630,10 @@ msgstr "Mostra tots els tipus"
 msgid "Show closed"
 msgstr "Espectacle tancat"
 
+#: src/features/resume/share/web-page-text.ts
+msgid "Show contact details"
+msgstr "Mostra les dades de contacte"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Mostra l'encapçalament"
@@ -10552,6 +10641,10 @@ msgstr "Mostra l'encapçalament"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Show icons"
 msgstr "Mostra les icones"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show in search engines"
+msgstr "Mostra als cercadors"
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -10687,7 +10780,7 @@ msgstr "S’està tancant la sessió..."
 msgid "Signing up..."
 msgstr "S’està creant el compte..."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "since last view"
 msgstr "des de l'última vista"
 
@@ -11483,7 +11576,7 @@ msgstr "Aquest fitxer és massa gran per comprovar-ho. PDFs fins a 25 MB funcion
 msgid "That link couldn't be read. Paste the posting text instead."
 msgstr "Aquest enllaç no es va poder llegir. Enganxeu el text de la publicació de feina."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "That password isn't correct. Check it with the resume owner and try again."
 msgstr "Aquesta contrasenya no és correcta. Comproveu-la amb el propietari del currículum i torneu-ho a provar."
 
@@ -11690,6 +11783,10 @@ msgstr "No s'ha pogut verificar la resposta del proveïdor. Torneu-ho a provar."
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Es manté el motiu d'Insights. Els documents enllaçats no es toquen."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "The records aren't visible yet. Check again later."
+msgstr "Els registres encara no són visibles. Torneu-ho a comprovar més tard."
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11974,7 +12071,7 @@ msgstr "Aquest currículum està bloquejat. Desbloquegeu-lo per fer-hi canvis."
 msgid "This resume is long."
 msgstr "Aquest currículum és llarg."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume is password-protected"
 msgstr "Aquest currículum està protegit amb contrasenya"
 
@@ -11982,7 +12079,7 @@ msgstr "Aquest currículum està protegit amb contrasenya"
 msgid "This resume isn't linked to an application yet."
 msgstr "Aquest currículum encara no està vinculat a una sol·licitud de feina."
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
 msgstr "Aquest currículum no es comparteix ara mateix."
 
@@ -12097,7 +12194,7 @@ msgid "To"
 msgstr "A"
 
 #: src/features/applications/components/calendar-view.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "Avui"
@@ -12193,7 +12290,7 @@ msgid "Trust this device for 30 days"
 msgstr "Confia en aquest dispositiu durant 30 dies"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Try {0}"
 msgstr "Proveu {0}"
 
@@ -12253,13 +12350,9 @@ msgstr "Desactiva la verificació en dos passos"
 msgid "Turn off two-step verification?"
 msgstr "Voleu desactivar la verificació en dos passos?"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Turn on the link to choose an address."
 msgstr "Activa l'enllaç per triar una adreça."
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Turn on the public link to count views and downloads. Counts are anonymous."
-msgstr "Activa l'enllaç públic per comptar les visualitzacions i les baixades. Els recomptes d'ús són anònims."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Turn on two-step verification"
@@ -12424,11 +12517,10 @@ msgstr "Desenllaça"
 msgid "Unlink this application"
 msgstr "Desenllaça aquesta sol·licitud de feina"
 
-#. Primary action button label to unlock a password-protected resume
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Unlock"
 msgstr "Desbloqueja"
 
@@ -12545,7 +12637,6 @@ msgstr "Utilitzeu de 3 a 64 lletres minúscules, números, punts, guions i guion
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
-#: src/features/auth/pages/resume-password.tsx
 msgid "Use 64 characters or fewer."
 msgstr "Feu servir 64 caràcters o menys."
 
@@ -12608,7 +12699,7 @@ msgstr "Utilitza per a totes les candidatures"
 msgid "Use in coaching: {excerpt}"
 msgstr "Utilitza a l'orientació: {excerpt}"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "Utilitzeu lletres minúscules, números i guions senzills."
 
@@ -12701,6 +12792,11 @@ msgstr "Utilitza la sol·licitud de feina enllaçada"
 msgid "Uses the web search service set up in Settings. Results wait in Today for your review; applications and documents are never created for you."
 msgstr "Fa servir el servei de cerca web configurat a Configuració. Els resultats esperen a Avui que els reviseu; mai es creen candidatures ni documents per vós."
 
+#. placeholder {0}: templates[template].name
+#: src/features/resume/share/share-panel.tsx
+msgid "Uses your {0} template and Design, and fits any screen. Change them in Design."
+msgstr "Fa servir la plantilla {0} i el Disseny, i s'adapta a qualsevol pantalla. Canvieu-los a Disseny."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Uses your AI provider's own web search where supported, and reads links with the built-in reader."
 msgstr "Utilitza la cerca web del vostre proveïdor d'IA quan sigui compatible i llegeix enllaços amb el lector integrat."
@@ -12759,10 +12855,6 @@ msgstr "S’està verificant el codi..."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Verifying code…"
 msgstr "Verificació del codi…"
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Verifying password..."
-msgstr "S’està verificant la contrasenya..."
 
 #: src/features/auth/pages/register.tsx
 msgid "Verifying your email confirms that you own this address."
@@ -12831,23 +12923,23 @@ msgstr "Veure la publicació de feina"
 msgid "Viewing {0} · {1} · read-only"
 msgstr "Visualització de {0} · {1} · només de lectura"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "views · 30 days"
 msgstr "visualitzacions · 30 dies"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Views and downloads"
-msgstr "Visualitzacions i descàrregues"
 
 #: src/features/homepage/share.tsx
 msgid "Visibility"
 msgstr "Visibilitat"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
+msgid "Visitors"
+msgstr "Visitants"
+
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors can download the PDF"
 msgstr "Els visitants poden descarregar el PDF"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Els visitants hi entren abans de veure el currículum. Comparteix-ho només amb persones de confiança."
 
@@ -12895,6 +12987,14 @@ msgstr "Hem enviat un enllaç de verificació nou a {0}."
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "Accés web"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Web page"
+msgstr "Pàgina web"
+
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Web page preview"
+msgstr "Previsualització de la pàgina web"
 
 #: src/features/career/coach.tsx
 msgid "Web research"
@@ -13317,7 +13417,7 @@ msgid "You"
 msgstr "tu"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "You already use this for “{0}”."
 msgstr "Ja ho feu servir per a \"{0}\"."
 
@@ -13485,6 +13585,10 @@ msgstr "Les teves dates estan escrites de diverses maneres diferents."
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "Les teves dades han canviat al currículum. La carta també s'ha actualitzat."
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Your domain"
+msgstr "El vostre domini"
+
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your email address changed on the resume. The letter updated too."
 msgstr "La teva adreça de correu electrònic ha canviat al currículum. La carta també s'ha actualitzat."
@@ -13496,6 +13600,10 @@ msgstr "La teva adreça de correu electrònic està trencada entre fragments de 
 #: src/features/auth/pages/error.tsx
 msgid "Your email address isn't verified with the provider. Verify it there, then try again."
 msgstr "La vostra adreça electrònica no està verificada amb el proveïdor. Verifiqueu-la allà i després torneu-ho a provar."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
+msgstr "El correu electrònic, el telèfon, la ubicació i altres dades de la capçalera, així com els telèfons de les referències, no s'inclouen a la pàgina web, al seu PDF ni als resultats de cerca."
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -13602,6 +13710,10 @@ msgstr "Els vostres requisits"
 msgid "your resume"
 msgstr "el teu currículum"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Your resume as a web page"
+msgstr "El vostre currículum com a pàgina web"
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Your resume has a photo"
 msgstr "El teu currículum té una foto"
@@ -13630,6 +13742,19 @@ msgstr "La font seleccionada no pot mostrar alguns caràcters. Es mostren com a 
 msgid "Your server provides search for Applications and the assistant. Connect a service to read pages the built-in reader can't."
 msgstr "El vostre servidor proporciona cerca web a la secció Candidatures i per a l'assistent. Connecteu un servei per llegir pàgines web que el lector integrat no pot llegir."
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open “{0}”."
+msgstr "El vostre enllaç curt i el domini personalitzat obren «{0}»."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open this resume."
+msgstr "El vostre enllaç curt i el domini personalitzat obren aquest currículum."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
+msgstr "El vostre enllaç curt i el domini personalitzat indiquen que aquest currículum no es comparteix fins que el torneu a publicar."
+
 #: src/features/career/coach.tsx
 msgid "your stories"
 msgstr "les vostres històries"
@@ -13645,6 +13770,10 @@ msgstr "El teu torn"
 #: src/features/career/workspace/prepare.tsx
 msgid "Your two-minute introduction"
 msgstr "La vostra presentació de dos minuts"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your web page is live"
+msgstr "La vostra pàgina web està publicada"
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your work is lost when you sign out or the session ends. Create an account or sign in to keep your resumes, cover letters and applications."

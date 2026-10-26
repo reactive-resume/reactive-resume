@@ -35,6 +35,11 @@ msgstr "\"{0}\" 숨김"
 msgid "“{0}” moved to Trash"
 msgstr "“{0}”가 휴지통으로 이동되었습니다."
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr "“{0}” 이력서가 더 이상 대표 이력서가 아니게 됩니다."
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "“{name}” moved to Trash"
@@ -721,6 +726,10 @@ msgstr "{stars, plural, one {GitHub에서 Reactive Resume에 별표 주기, 별 
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, other {스토리 #개}}"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "{suggestion} may be available. Get yours here →"
+msgstr "{suggestion} 도메인을 사용할 수 있을지도 모릅니다. 여기서 등록하세요 →"
+
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
 msgstr "{summary}. 커리어 → 오퍼에서 열립니다."
@@ -893,6 +902,10 @@ msgstr "90일"
 #: src/features/homepage/remember.tsx
 msgid "A"
 msgstr "A"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "A “Show contact details” button reveals them to people, not to search engines."
+msgstr "“연락처 정보 보기” 버튼은 검색 엔진이 아닌 사람에게만 연락처를 보여 줍니다."
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
@@ -1243,7 +1256,7 @@ msgstr "AI 공급자 추가"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "@ 및 name@example.com와 같은 도메인을 추가하세요."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Add an address."
 msgstr "주소를 추가하세요."
 
@@ -1410,6 +1423,10 @@ msgstr "{name}@example.com처럼 @ 뒤에 도메인을 추가하세요."
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com와 같은 도메인 끝자리를 추가하세요."
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
+msgstr "도메인을 관리하는 곳에 이 레코드를 추가한 다음 확인하세요. 변경 사항이 모두에게 반영되기까지 몇 시간이 걸릴 수 있습니다."
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/career/workspace/shell.tsx
@@ -1475,7 +1492,7 @@ msgstr "경력으로 지식에 추가했습니다."
 msgid "Added to Prepare"
 msgstr "준비에 추가됨"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Address"
 msgstr "주소"
 
@@ -1708,7 +1725,7 @@ msgstr "그리고 {0} 더보기"
 msgid "and counting"
 msgstr "그리고 계산"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Another of your resumes uses this address."
 msgstr "귀하의 다른 이력서에서 이 주소를 사용하고 있습니다."
 
@@ -1757,7 +1774,7 @@ msgstr "고급의 모든 글꼴"
 msgid "Anyone who opens the public URL will need this password."
 msgstr "공개 URL을 여는 사람은 이 비밀번호가 필요합니다."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "링크가 있는 사람은 누구나 귀하의 이력서를 볼 수 있습니다."
 
@@ -1888,6 +1905,7 @@ msgstr "지원 탭"
 msgid "Application updated"
 msgstr "지원 내역이 업데이트되었습니다"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
@@ -2041,6 +2059,10 @@ msgstr "변화를 묻거나 설명하세요…"
 #: src/features/homepage/faq.tsx
 msgid "Asked and <0>answered.</0>"
 msgstr "질문하고 <0>답변했습니다.</0>"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "asked for contact details"
+msgstr "연락처 정보 요청"
 
 #: src/features/homepage/prepare.tsx
 msgid "Asks for an example of your onboarding work."
@@ -2552,6 +2574,10 @@ msgstr "다른 파일 확인"
 msgid "Check any PDF, no account needed"
 msgstr "PDF를 확인하세요. 계정이 필요하지 않습니다."
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Check DNS"
+msgstr "DNS 확인"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Check every claim, date and result against your experience."
 msgstr "모든 주장, 날짜, 결과를 실제 경험과 대조해 확인하세요."
@@ -2635,7 +2661,7 @@ msgstr "내보낸 PDF를 확인하는 중…"
 msgid "Checking your preferences"
 msgstr "선호 사항 확인 중"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "확인 중... 저장 후 복사가 가능합니다."
 
@@ -2716,7 +2742,6 @@ msgid "Claude Desktop"
 msgstr "Claude Desktop"
 
 #: src/features/applications/components/detail/next-step-card.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
 msgstr "지우기"
@@ -2738,6 +2763,7 @@ msgid "Clear section"
 msgstr "섹션 지우기"
 
 #: src/components/ui/combobox.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Clear selection"
 msgstr "선택 해제"
@@ -2905,6 +2931,10 @@ msgstr "데이터 백업을 완료하세요. Reactive Resume 또는 JSON Resume 
 msgid "Compress or remove large images to keep uploads quick."
 msgstr "업로드 속도를 위해 큰 이미지를 압축하거나 제거하세요."
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Computer"
+msgstr "컴퓨터"
+
 #: src/hooks/use-confirm.tsx
 msgid "Confirm"
 msgstr "확인"
@@ -2938,6 +2968,7 @@ msgid "Confirms {time} today, by video."
 msgstr "오늘 {time} 화상 면접을 확정합니다."
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/resume/share/share-panel.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "연결"
@@ -2989,6 +3020,10 @@ msgstr "연결됨"
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "연결된 애플리케이션"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Connected. Your domain opens your primary resume."
+msgstr "연결되었습니다. 도메인에서 대표 이력서가 열립니다."
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Connecting your {providerName} account…"
@@ -3117,7 +3152,7 @@ msgid "Copied"
 msgstr "복사됨"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3149,7 +3184,6 @@ msgid "Copy it now. For your security, it won't be shown again."
 msgstr "지금 복사하세요. 보안을 위해 다시 표시되지 않습니다."
 
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
 msgid "Copy link"
 msgstr "링크 복사"
 
@@ -3698,7 +3732,7 @@ msgstr "지원 연결을 해제할 수 없습니다. 다시 시도해 보세요.
 msgid "Couldn't unlock the document. Try again."
 msgstr "서류 잠금을 해제할 수 없습니다. 다시 시도해 보세요."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "공유 설정을 업데이트할 수 없습니다. 다시 시도해 보세요."
 
@@ -3748,11 +3782,6 @@ msgstr "사진을 업로드할 수 없습니다. 다시 시도해 보세요."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "코드를 확인할 수 없습니다. 인증 앱에 표시된 현재 코드를 입력하세요."
-
-#. Fallback toast when resume password verification fails unexpectedly
-#: src/features/auth/pages/resume-password.tsx
-msgid "Couldn't verify the password. Try again."
-msgstr "비밀번호를 확인할 수 없습니다. 다시 시도해 보세요."
 
 #. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
@@ -3957,7 +3986,7 @@ msgid "Daily at {clock} · next {next}"
 msgstr "매일 {clock} · 다음 {next}"
 
 #. placeholder {0}: summary.peak
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "30일 동안의 일일 조회수, 최대 {0}"
 
@@ -4333,6 +4362,10 @@ msgstr "여기로 옮긴 서류는 30일 동안 보관됩니다."
 msgid "Does it use AI?"
 msgstr "AI를 사용하나요?"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Domain connected"
+msgstr "도메인 연결됨"
+
 #: src/features/auth/pages/login.tsx
 msgid "Don't have an account? <0/>"
 msgstr "계정이 없으신가요? <0/>"
@@ -4378,6 +4411,10 @@ msgstr "{label} 다운로드"
 msgid "Download {name} sample PDF"
 msgstr "{name} 샘플 PDF 다운로드"
 
+#: src/features/resume/editor/chrome/share-sheet.tsx
+msgid "Download & history"
+msgstr "다운로드 및 기록"
+
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download application details, contacts, notes, and timeline history as CSV."
 msgstr "지원 상세 정보, 연락처, 메모, 타임라인 기록을 CSV로 다운로드합니다."
@@ -4397,7 +4434,7 @@ msgid "Download failed. Try again."
 msgstr "다운로드에 실패했습니다. 다시 시도해 보세요."
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
 msgstr "PDF 다운로드"
 
@@ -4413,7 +4450,7 @@ msgstr "샘플 PDF 다운로드"
 msgid "Download them"
 msgstr "다운로드하세요"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Download totals can include repeat clicks."
 msgstr "다운로드 총계에는 반복 클릭이 포함될 수 있습니다."
 
@@ -4430,7 +4467,7 @@ msgstr "{file} 및 자기 소개서 다운로드"
 msgid "Downloaded your resume and this letter"
 msgstr "이력서와 이 편지를 다운로드했습니다."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "downloads"
 msgstr "다운로드"
 
@@ -4815,13 +4852,9 @@ msgstr "저장해 둔 백업 코드 중 하나를 입력하여 계정에 접근�
 msgid "Enter the 6-digit code."
 msgstr "6자리 코드를 입력하세요."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Enter the password the resume owner shared with you."
 msgstr "이력서 소유자가 알려준 비밀번호를 입력하세요."
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Enter the password."
-msgstr "비밀번호를 입력하세요."
 
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Enter the same password in both fields."
@@ -5231,6 +5264,11 @@ msgstr "글꼴을 불러오지 못했습니다. 다시 시도하세요."
 msgid "For"
 msgstr "을 위한"
 
+#. placeholder {0}: domain.target
+#: src/features/resume/share/share-panel.tsx
+msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
+msgstr "example.com 같은 루트 도메인에는 CNAME 대신 {0}의 주소로 A 및 AAAA 레코드를 사용하세요."
+
 #: src/features/career/workspace/prepare.tsx
 msgid "For each: situation, task, your action, result, reflection. Leave out numbers you're unsure of."
 msgstr "각각: 상황, 과제, 나의 행동, 결과, 성찰. 확실하지 않은 수치는 빼세요."
@@ -5625,6 +5663,10 @@ msgstr "숨김: {hiddenList}"
 msgid "Hide {title} from the page"
 msgstr "페이지에서 {title} 숨기기"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Hide contact details"
+msgstr "연락처 정보 숨기기"
+
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Hide from page"
 msgstr "페이지에서 숨기기"
@@ -5792,7 +5834,7 @@ msgstr "스캔본이라면 자연스러운 현상입니다. 그렇지 않다면 
 msgid "If it's part of your experience, add it where it belongs."
 msgstr "그것이 당신의 경험의 일부라면, 그것이 속한 곳에 추가하십시오."
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "If someone sent you this link, ask them for a new one."
 msgstr "누군가가 이 링크를 보낸 경우 새 링크를 요청하세요."
 
@@ -6501,6 +6543,10 @@ msgstr "길이 자체는 결함이 아니며, 보편적인 한 페이지 규칙�
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "위의 API 키를 사용하여 Claude 또는 Cursor와 같은 AI 클라이언트가 이력서를 읽고 편집할 수 있도록 하세요."
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Let visitors ask to see them"
+msgstr "방문자가 보기를 요청할 수 있도록 허용"
+
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "당신이 가지고 있는 것부터 시작해보자"
@@ -6605,7 +6651,6 @@ msgstr "이렇게 가까운 줄은 읽을 때 함께 실행될 수 있습니다.
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/write/fields.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Link"
 msgstr "링크"
 
@@ -6632,14 +6677,10 @@ msgid "Link an application…"
 msgstr "입사 지원서 연결…"
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/public/public-resume.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "링크가 복사되었습니다"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Link is live"
-msgstr "링크가 활성화되었습니다"
 
 #: src/features/documents/document-actions.tsx
 msgid "Link to application"
@@ -6649,7 +6690,7 @@ msgstr "입사지원 바로가기"
 msgid "Link to application…"
 msgstr "입사지원서 링크…"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Link turned off. The address is kept"
 msgstr "링크가 사용 중지되었습니다. 주소는 유지됩니다"
 
@@ -6727,7 +6768,7 @@ msgid "Live · updates as you edit"
 msgstr "실시간 · 편집 시 업데이트"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Live at {0}"
 msgstr "{0}에서 라이브"
 
@@ -6862,7 +6903,7 @@ msgstr "낮은"
 msgid "Lower the design sheet"
 msgstr "디자인 시트를 내리세요"
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Reactive Resume로 제작되었으며 무료 오픈 소스입니다."
 
@@ -6896,6 +6937,10 @@ msgstr "더 짧게 만드세요"
 msgid "Make it yours, then take it with you."
 msgstr "그것을 당신의 것으로 만든 다음 가지고 가십시오."
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Make primary"
+msgstr "대표로 설정"
+
 #: src/features/documents/documents-page.tsx
 msgid "Make private"
 msgstr "비공개로 전환"
@@ -6915,6 +6960,10 @@ msgstr "표시되는 텍스트와 실제 대상 주소를 일치시키세요."
 #: src/features/ats-checker/messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "눈에 띄게 더 크게, 더 굵게 또는 대문자로 만드세요."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Make this your primary resume?"
+msgstr "이 이력서를 대표 이력서로 설정할까요?"
 
 #: src/libs/locale.ts
 msgid "Malay"
@@ -7715,6 +7764,10 @@ msgstr "적용 안 됨"
 msgid "Not applied yet"
 msgstr "아직 지원하지 않음"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Not available while the resume needs a password."
+msgstr "이력서에 비밀번호가 필요한 동안에는 사용할 수 없습니다."
+
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "연결되지 않음"
@@ -7908,9 +7961,9 @@ msgstr "끄다"
 msgid "Off: the coach won’t see it or claim it."
 msgstr "꺼짐: 코치가 이 내용을 보지 않으며 주장하지도 않습니다."
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Off. Only you can see this resume."
-msgstr "끄다. 이 이력서는 나만 볼 수 있습니다."
+#: src/features/resume/share/share-panel.tsx
+msgid "Off. Let recruiters find you on Google by turning this on."
+msgstr "꺼짐. 켜면 채용 담당자가 Google에서 찾을 수 있습니다."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Off. The letter keeps its own copy of your details."
@@ -7939,9 +7992,9 @@ msgstr "출근일 명시 안 됨"
 msgid "Offline · saved on this device"
 msgstr "오프라인 · 이 기기에 저장됨"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
-msgstr "에. 링크가 있는 사람은 누구나 볼 수 있습니다. 검색 엔진에 나열되거나 색인이 생성되지 않습니다."
+#: src/features/resume/share/share-panel.tsx
+msgid "On. Anyone with the link can see your web page."
+msgstr "켜짐. 링크가 있는 사람은 누구나 웹 페이지를 볼 수 있습니다."
 
 #: src/features/homepage/remember.tsx
 msgid "Onboarding story"
@@ -8023,7 +8076,7 @@ msgstr "한 번에 처음 {MAX_IMPORT}개 행만 가져오며 {overflow}개는 �
 msgid "Only the first pages were checked."
 msgstr "처음 몇 페이지만 점검했습니다."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "이 내용은 나만 볼 수 있습니다."
 
@@ -8081,10 +8134,6 @@ msgstr "오퍼에서 열기"
 msgid "Open preferences"
 msgstr "환경설정 열기"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Open public page"
-msgstr "공개 페이지 열기"
-
 #: src/features/career/workspace/prepare.tsx
 msgid "Open story"
 msgstr "스토리 열기"
@@ -8100,6 +8149,10 @@ msgstr "Reactive Resume 앱을 엽니다."
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "스케줄 열기"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Open web page"
+msgstr "웹 페이지 열기"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/today.tsx
@@ -8318,16 +8371,15 @@ msgstr "패스키"
 
 #. Authentication provider display name in account settings
 #. Label for password input on login form
-#. Label for password input on protected resume access form
 #. Label for password input on registration form
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/share.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/features/settings/account/auth-hooks.ts
 #: src/features/settings/account/security.tsx
 msgid "Password"
@@ -8337,7 +8389,7 @@ msgstr "비밀번호"
 msgid "Password changed"
 msgstr "비밀번호가 변경되었습니다"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "비밀번호가 삭제되었습니다."
 
@@ -8345,7 +8397,7 @@ msgstr "비밀번호가 삭제되었습니다."
 msgid "Password reset. Sign in with your new password."
 msgstr "비밀번호가 재설정되었습니다. 새 비밀번호로 로그인하세요."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "비밀번호 설정"
 
@@ -8462,6 +8514,7 @@ msgstr "페르시아어"
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
+#: src/features/resume/share/web-page-preview.tsx
 msgid "Phone"
 msgstr "전화"
 
@@ -8731,6 +8784,10 @@ msgstr "<0>Enter</0> 키를 눌러 열기"
 msgid "Preview {name} sample PDF"
 msgstr "{name} 샘플 PDF 미리보기"
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Preview size"
+msgstr "미리보기 크기"
+
 #. placeholder {0}: templates[previewTemplate].name
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
@@ -8753,6 +8810,10 @@ msgstr "지난달"
 msgid "Primary color"
 msgstr "기본 색상"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Primary resume"
+msgstr "대표 이력서"
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Print"
 msgstr "인쇄"
@@ -8761,9 +8822,9 @@ msgstr "인쇄"
 msgid "Print or export the form to a flat PDF before sending it."
 msgstr "보내기 전에 양식을 일반 PDF로 인쇄하거나 내보내세요."
 
-#: src/features/resume/public/public-resume.tsx
-msgid "Printing is turned off for this resume."
-msgstr "이 이력서의 인쇄가 꺼졌습니다."
+#: src/features/resume/share/share-panel.tsx
+msgid "Privacy"
+msgstr "개인정보 보호"
 
 #: src/features/homepage/footer.tsx
 msgid "Privacy policy"
@@ -8866,7 +8927,7 @@ msgstr "제공자"
 msgid "Public"
 msgstr "공개"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Public link"
 msgstr "공개 링크"
 
@@ -8881,6 +8942,26 @@ msgstr "공개, 비밀번호 포함"
 #: src/libs/resume/section.tsx
 msgid "Publications"
 msgstr "출판물"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish"
+msgstr "게시"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish it to share a link that opens on any screen. Only you can see it until then."
+msgstr "게시하면 어떤 화면에서도 열리는 링크를 공유할 수 있습니다. 그 전까지는 나만 볼 수 있습니다."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page first."
+msgstr "먼저 웹 페이지를 게시하세요."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted."
+msgstr "웹 페이지를 게시하면 조회수와 다운로드 수를 집계합니다. 집계는 익명으로 이루어지며 검색 엔진은 집계하지 않습니다."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link and custom domain."
+msgstr "이 이력서를 게시하면 짧은 링크와 사용자 지정 도메인에서 열 수 있습니다."
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Publisher"
@@ -8902,11 +8983,11 @@ msgstr "모든 내용을 <0>한 페이지에</0> 담으세요."
 msgid "Put the caret in a line to improve it"
 msgstr "개선하려면 캐럿을 한 줄에 넣으십시오."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code"
 msgstr "QR 코드"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code for {url}"
 msgstr "{url}의 QR 코드"
 
@@ -9343,6 +9424,7 @@ msgstr "원격"
 msgid "Remote, Hybrid, a city…"
 msgstr "원격, 하이브리드, 도시…"
 
+#: src/features/resume/share/share-panel.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "제거하다"
@@ -9391,7 +9473,7 @@ msgstr "파일 제거"
 msgid "Remove passkey"
 msgstr "패스키 제거"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove password"
 msgstr "비밀번호 제거"
 
@@ -9417,7 +9499,7 @@ msgstr "역할 삭제"
 msgid "Remove tag"
 msgstr "태그 제거"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "비밀번호를 삭제하시겠습니까?"
 
@@ -9499,7 +9581,7 @@ msgstr "답장이 복사되었습니다"
 msgid "Report a bug"
 msgstr "버그 신고하기"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Require a password"
 msgstr "비밀번호 필요"
 
@@ -9590,8 +9672,6 @@ msgstr "재개하다"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-card.tsx
-#: src/routes/_home/index.tsx
-#: src/routes/$username/$slug.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "이력서"
@@ -10047,7 +10127,7 @@ msgid "Saved to Saved · Practice"
 msgstr "저장됨 · 연습에 저장됨"
 
 #. placeholder {0}: window.location.host
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "{0}/{username}/{slug}… 저장 저장 후 복사가 가능합니다."
 
@@ -10144,6 +10224,10 @@ msgstr "검색에는 제목, 태그 및 연결된 채용 지원서가 포함됩�
 #: src/features/documents/documents-page.tsx
 msgid "Search documents"
 msgstr "문서 검색"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off."
+msgstr "Google 같은 검색 엔진에 웹 페이지가 표시될 수 있습니다. 표시되기까지, 또는 끈 뒤 사라지기까지 몇 주가 걸릴 수 있습니다."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Search facts"
@@ -10449,29 +10533,22 @@ msgstr "그림자 너비"
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Share"
 msgstr "공유하다"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
-msgid "Share & export"
-msgstr "공유 및 내보내기"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "공개 링크를 공유하고 비밀번호를 추가하거나 비공개로 유지하세요. 3가지 공개 옵션 중에서 선택하세요. PDF 또는 Word로 내보내거나 모든 데이터를 JSON로 가져가세요."
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-msgid "Share public resume"
-msgstr "공개 이력서 공유"
-
 #: src/features/resume/editor/chrome/share-sheet.tsx
 msgid "Share sections"
 msgstr "섹션 공유"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Share via…"
 msgstr "다음을 통해 공유…"
 
@@ -10505,6 +10582,10 @@ msgstr "짧고 직접적입니다. 채용 공고에서 간결성을 요구하는
 msgid "Short and polite, for the recruiter"
 msgstr "채용 담당자를 위한 짧고 정중한 표현"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link and domain"
+msgstr "짧은 링크 및 도메인"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "지원 완료로 표시하기 전에 질문은 2,000자, 답변은 6,000자 이내로 줄이세요."
@@ -10516,6 +10597,10 @@ msgstr "더 짧게"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Show"
 msgstr "보여주다"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show “Made with Reactive Resume”"
+msgstr "“Reactive Resume로 제작” 표시"
 
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #. placeholder {0}: visible.length - shown.length
@@ -10545,6 +10630,10 @@ msgstr "모든 유형 표시"
 msgid "Show closed"
 msgstr "쇼 종료됨"
 
+#: src/features/resume/share/web-page-text.ts
+msgid "Show contact details"
+msgstr "연락처 정보 보기"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "제목 표시"
@@ -10552,6 +10641,10 @@ msgstr "제목 표시"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Show icons"
 msgstr "아이콘 표시"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show in search engines"
+msgstr "검색 엔진에 표시"
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -10687,7 +10780,7 @@ msgstr "로그아웃 중..."
 msgid "Signing up..."
 msgstr "가입 중..."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "since last view"
 msgstr "마지막으로 본 이후"
 
@@ -11483,7 +11576,7 @@ msgstr "파일이 너무 커서 확인할 수 없습니다. PDFs 최대 25개의
 msgid "That link couldn't be read. Paste the posting text instead."
 msgstr "링크를 읽을 수 없습니다. 대신 채용 공고 텍스트를 붙여넣으세요."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "That password isn't correct. Check it with the resume owner and try again."
 msgstr "비밀번호가 올바르지 않습니다. 이력서 소유자에게 확인한 후 다시 시도해 보세요."
 
@@ -11690,6 +11783,10 @@ msgstr "제공자의 응답을 확인할 수 없습니다. 다시 시도해 보�
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "이유는 Insights에 보관됩니다. 연결된 문서는 건드리지 않습니다."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "The records aren't visible yet. Check again later."
+msgstr "아직 레코드가 확인되지 않습니다. 나중에 다시 확인하세요."
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11974,7 +12071,7 @@ msgstr "이 이력서는 잠겨 있습니다. 변경하려면 잠금을 해제�
 msgid "This resume is long."
 msgstr "이 이력서는 길이가 깁니다."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume is password-protected"
 msgstr "이 이력서는 비밀번호로 보호되어 있습니다"
 
@@ -11982,7 +12079,7 @@ msgstr "이 이력서는 비밀번호로 보호되어 있습니다"
 msgid "This resume isn't linked to an application yet."
 msgstr "이 이력서는 아직 입사 지원서에 연결되어 있지 않습니다."
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
 msgstr "이 이력서는 현재 공유되지 않습니다."
 
@@ -12097,7 +12194,7 @@ msgid "To"
 msgstr "에게"
 
 #: src/features/applications/components/calendar-view.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "오늘"
@@ -12193,7 +12290,7 @@ msgid "Trust this device for 30 days"
 msgstr "이 기기를 30일 동안 신뢰"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Try {0}"
 msgstr "{0}를 사용해 보세요"
 
@@ -12253,13 +12350,9 @@ msgstr "2단계 인증 끄기"
 msgid "Turn off two-step verification?"
 msgstr "2단계 인증을 끌까요?"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Turn on the link to choose an address."
 msgstr "주소를 선택하려면 링크를 켜세요."
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Turn on the public link to count views and downloads. Counts are anonymous."
-msgstr "조회수와 다운로드 수를 계산하려면 공개 링크를 켜세요. 사용 횟수는 익명으로 처리됩니다."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Turn on two-step verification"
@@ -12424,11 +12517,10 @@ msgstr "풀리다"
 msgid "Unlink this application"
 msgstr "이 채용 지원서 연결 해제"
 
-#. Primary action button label to unlock a password-protected resume
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Unlock"
 msgstr "잠금 해제"
 
@@ -12545,7 +12637,6 @@ msgstr "3~64자의 소문자, 숫자, 점, 하이픈, 밑줄을 사용하세요.
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
-#: src/features/auth/pages/resume-password.tsx
 msgid "Use 64 characters or fewer."
 msgstr "64자 이하로 입력하세요."
 
@@ -12608,7 +12699,7 @@ msgstr "모든 지원에 사용"
 msgid "Use in coaching: {excerpt}"
 msgstr "코칭에 사용: {excerpt}"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "소문자, 숫자, 단일 대시를 사용하세요."
 
@@ -12701,6 +12792,11 @@ msgstr "연계된 입사 지원서를 사용합니다."
 msgid "Uses the web search service set up in Settings. Results wait in Today for your review; applications and documents are never created for you."
 msgstr "설정에서 구성한 웹 검색 서비스를 사용합니다. 결과는 오늘에서 검토를 기다리며, 지원 내역이나 문서가 자동으로 생성되는 일은 없습니다."
 
+#. placeholder {0}: templates[template].name
+#: src/features/resume/share/share-panel.tsx
+msgid "Uses your {0} template and Design, and fits any screen. Change them in Design."
+msgstr "{0} 템플릿과 디자인을 사용하며 어떤 화면에도 맞춰집니다. 디자인에서 변경하세요."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Uses your AI provider's own web search where supported, and reads links with the built-in reader."
 msgstr "지원되는 경우 AI 제공업체의 자체 웹 검색을 사용하고 내장 리더로 링크를 읽습니다."
@@ -12759,10 +12855,6 @@ msgstr "코드를 확인하는 중입니다..."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Verifying code…"
 msgstr "코드… 확인 중"
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Verifying password..."
-msgstr "비밀번호를 확인하는 중입니다..."
 
 #: src/features/auth/pages/register.tsx
 msgid "Verifying your email confirms that you own this address."
@@ -12831,23 +12923,23 @@ msgstr "채용 공고 보기"
 msgid "Viewing {0} · {1} · read-only"
 msgstr "{0} · {1} · 읽기 전용 보기"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "views · 30 days"
 msgstr "조회수 · 30일"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Views and downloads"
-msgstr "조회수 및 다운로드"
 
 #: src/features/homepage/share.tsx
 msgid "Visibility"
 msgstr "시계"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
+msgid "Visitors"
+msgstr "방문자"
+
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors can download the PDF"
 msgstr "방문자는 PDF를 다운로드할 수 있습니다"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "방문자는 이력서를 보기 전에 이력서를 입력합니다. 믿을 수 있는 사람들에게만 공유하세요."
 
@@ -12895,6 +12987,14 @@ msgstr "{0}로 새로운 확인 링크를 보냈습니다."
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "웹 접속"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Web page"
+msgstr "웹 페이지"
+
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Web page preview"
+msgstr "웹 페이지 미리보기"
 
 #: src/features/career/coach.tsx
 msgid "Web research"
@@ -13317,7 +13417,7 @@ msgid "You"
 msgstr "너"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "You already use this for “{0}”."
 msgstr "이미 “{0}”에 이것을 사용하고 있습니다."
 
@@ -13485,6 +13585,10 @@ msgstr "날짜가 여러 다른 형식으로 작성되어 있습니다."
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "이력서의 세부정보가 변경되었습니다. 편지도 업데이트되었습니다."
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Your domain"
+msgstr "내 도메인"
+
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your email address changed on the resume. The letter updated too."
 msgstr "이력서의 이메일 주소가 변경되었습니다. 편지도 업데이트되었습니다."
@@ -13496,6 +13600,10 @@ msgstr "이메일 주소가 여러 텍스트 조각으로 나뉘어 있습니다
 #: src/features/auth/pages/error.tsx
 msgid "Your email address isn't verified with the provider. Verify it there, then try again."
 msgstr "이메일 주소가 제공자에서 인증되지 않았습니다. 제공자에서 인증한 후 다시 시도해 보세요."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
+msgstr "이메일, 전화번호, 위치 및 기타 헤더 정보와 추천인의 전화번호는 웹 페이지, PDF, 검색 결과에서 제외됩니다."
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -13602,6 +13710,10 @@ msgstr "내 요건"
 msgid "your resume"
 msgstr "당신의 이력서"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Your resume as a web page"
+msgstr "웹 페이지로 만든 이력서"
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Your resume has a photo"
 msgstr "이력서에 사진이 있습니다"
@@ -13630,6 +13742,19 @@ msgstr "선택한 글꼴로는 일부 문자를 표시할 수 없어 “?”로 
 msgid "Your server provides search for Applications and the assistant. Connect a service to read pages the built-in reader can't."
 msgstr "서버는 지원 목록 섹션과 보조자에 대한 웹 검색을 제공합니다. 내장 리더가 읽을 수 없는 웹페이지를 읽으려면 서비스를 연결하세요."
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open “{0}”."
+msgstr "짧은 링크와 사용자 지정 도메인에서 “{0}” 이력서가 열립니다."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open this resume."
+msgstr "짧은 링크와 사용자 지정 도메인에서 이 이력서가 열립니다."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
+msgstr "다시 게시할 때까지 짧은 링크와 사용자 지정 도메인에는 이 이력서가 공유되지 않았다고 표시됩니다."
+
 #: src/features/career/coach.tsx
 msgid "your stories"
 msgstr "내 스토리"
@@ -13645,6 +13770,10 @@ msgstr "당신의 차례"
 #: src/features/career/workspace/prepare.tsx
 msgid "Your two-minute introduction"
 msgstr "2분 자기소개"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your web page is live"
+msgstr "웹 페이지가 게시되었습니다"
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your work is lost when you sign out or the session ends. Create an account or sign in to keep your resumes, cover letters and applications."
