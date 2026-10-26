@@ -28,8 +28,9 @@ function DraftChrome() {
 }
 
 /**
- * Resume builder. Phone: Write, Page, Design and Check as bottom tabs. Tablet: the Write / Design / Check panel with
- * the Page screen beside it. Entry and history push inside the editor; Share and the assistant open as modals.
+ * Resume builder. Phone: Write, Page, Design, Check and Share as bottom tabs. Tablet: the Write / Design / Check /
+ * Share panel with the Page screen beside it. Entry and history push inside the editor; Download & history and the
+ * assistant open as modals.
  */
 export default function BuilderLayout() {
 	const router = useRouter();
@@ -44,16 +45,17 @@ export default function BuilderLayout() {
 		{ pane: "page", label: t`Page`, icon: "file-text", href: routes.builder(id, "page") },
 		{ pane: "design", label: t`Design`, icon: "palette", href: routes.builder(id, "design") },
 		{ pane: "check", label: t`Check`, icon: "list-checks", href: routes.builder(id, "check") },
+		{ pane: "share", label: t`Share`, icon: "globe", href: routes.builder(id, "share") },
 	];
 
 	return (
 		<BuilderChrome
 			panes={panes}
-			tabletPanes={["write", "design", "check"]}
+			tabletPanes={["write", "design", "check", "share"]}
 			page={<PageScreen />}
 			title={t`Resume`}
-			onShare={() => router.push(routes.share(id))}
-			modals={["share", "assistant"]}
+			onShare={() => router.push(routes.export(id))}
+			modals={["export", "assistant"]}
 		>
 			<DraftChrome />
 			<DocumentMenu id={id} inChrome />

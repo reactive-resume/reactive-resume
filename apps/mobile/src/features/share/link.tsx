@@ -8,6 +8,7 @@ import QRCode from "react-native-qrcode-svg";
 import Svg, { Rect } from "react-native-svg";
 import { flushResume } from "./document";
 import { formatTimeSince, normalizeSlug, summarizeViews, validSlug } from "./model";
+import { WebPageSettings } from "./web-page";
 import { client, orpc } from "@/api/client";
 import { getServer } from "@/auth/session";
 import { useResumeStore } from "@/draft";
@@ -134,9 +135,7 @@ export function LinkTab({ resume, offline }: LinkProps) {
 			<ListRow
 				title={t`Public link`}
 				subtitle={
-					resume.isPublic
-						? t`On. Anyone with the link can view. It isn't listed or indexed by search engines.`
-						: t`Off. Only you can see this resume.`
+					resume.isPublic ? t`On. Anyone with the link can see your web page.` : t`Off. Only you can see this resume.`
 				}
 				trailing={
 					<Switch
@@ -249,7 +248,13 @@ export function LinkTab({ resume, offline }: LinkProps) {
 					<ListRow title={t`QR code`} leading="qr-code" disabled={!shareable} onPress={() => setDialog("qr")} />
 				</>
 			)}
-			<Statistics id={resume.id} isPublic={resume.isPublic} offline={offline} />
+			<WebPageSettings resume={resume} offline={offline} username={username} />
+			<Statistics
+				id={resume.id}
+				isPublic={resume.isPublic}
+				offline={offline}
+				contactHidden={resume.hideContactDetails}
+			/>
 			<Sheet open={dialog === "qr"} title={t`QR code`} onClose={() => setDialog(null)} detents={[0.5]}>
 				<View
 					accessible
@@ -329,8 +334,8 @@ export function LinkTab({ resume, offline }: LinkProps) {
 	);
 }
 
-type StatisticsProps = { id: string; isPublic: boolean; offline: boolean };
-function Statistics({ id, isPublic, offline }: StatisticsProps) {
+type StatisticsProps = { id: string; isPublic: boolean; offline: boolean; contactHidden: boolean };
+function Statistics({ id, isPublic, offline, contactHidden }: StatisticsProps) {
 	const { t, i18n } = useLingui();
 	const { colors, space, size } = useTheme();
 	const daily = useQuery({
@@ -344,10 +349,12 @@ function Statistics({ id, isPublic, offline }: StatisticsProps) {
 	const summary = summarizeViews(daily.data ?? []);
 	return (
 		<View style={{ gap: space.s3, paddingTop: space.s4, borderTopWidth: 1, borderColor: colors.line }}>
-			<Text variant="heading">{t`Views and downloads`}</Text>
+			<Text variant="heading">{t`Visitors`}</Text>
 			<Text variant="caption" color="ink3">{t`Only you see these`}</Text>
 			{!isPublic ? (
-				<Text color="ink2">{t`Turn on the public link to count views and downloads. Counts are anonymous.`}</Text>
+				<Text color="ink2">
+					{t`Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted.`}
+				</Text>
 			) : daily.isError || total.isError ? (
 				<Banner
 					tone="danger"
@@ -373,6 +380,12 @@ function Statistics({ id, isPublic, offline }: StatisticsProps) {
 							<Text variant="title">{i18n.number(summary.downloads)}</Text>
 							<Text variant="caption">{t`downloads`}</Text>
 						</View>
+						{contactHidden && (
+							<View>
+								<Text variant="title">{i18n.number(summary.contactReveals)}</Text>
+								<Text variant="caption">{t`asked for contact details`}</Text>
+							</View>
+						)}
 						<View>
 							<Text variant="title">
 								{total.data?.lastViewedAt ? formatTimeSince(total.data.lastViewedAt, i18n.locale) : "—"}

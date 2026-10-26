@@ -6,7 +6,6 @@ import { ScrollView, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useShareDocument } from "./document";
 import { DownloadTab } from "./download";
-import { LinkTab } from "./link";
 import { useSession } from "@/auth/session";
 import { DocumentMenu } from "@/features/document-menu";
 import { HistoryPanel } from "@/features/history/history";
@@ -21,26 +20,25 @@ export function ShareScreen({ id, history = false }: ShareScreenProps) {
 	const session = useSession();
 	const network = useNetworkState();
 	const offline = network.isConnected === false || network.isInternetReachable === false;
-	const [tab, setTab] = useState<"link" | "download" | "history">(history ? "history" : "download");
+	const [tab, setTab] = useState<"download" | "history">(history ? "history" : "download");
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView edges={["bottom", "left", "right"]} style={{ flex: 1, backgroundColor: colors.bg }}>
-				<Stack.Screen options={{ title: t`Share & export`, headerRight: () => <DocumentMenu id={id} /> }} />
+				<Stack.Screen options={{ title: t`Download & history`, headerRight: () => <DocumentMenu id={id} /> }} />
 				<View style={{ padding: space.s4, gap: space.s3 }}>
 					<Segmented
-						label={t`Share sections`}
+						label={t`Download & history`}
 						value={tab}
 						onChange={setTab}
 						options={[
 							{ value: "download", label: t`Download` },
-							{ value: "link", label: t`Link` },
 							{ value: "history", label: t`History` },
 						]}
 					/>
 					{offline && tab !== "download" && (
 						<Banner
 							tone="info"
-							message={t`You're offline. Link and History need a connection. Download PDF works on this device.`}
+							message={t`You're offline. History needs a connection. Download PDF works on this device.`}
 						/>
 					)}
 					{draft.document?.isLocked && (
@@ -76,11 +74,7 @@ export function ShareScreen({ id, history = false }: ShareScreenProps) {
 								alignSelf: "center",
 							}}
 						>
-							{tab === "link" ? (
-								<LinkTab key={id} resume={draft.document} offline={offline} />
-							) : (
-								<DownloadTab key={id} resume={draft.document} offline={offline} />
-							)}
+							<DownloadTab key={id} resume={draft.document} offline={offline} />
 						</ScrollView>
 					)
 				) : (

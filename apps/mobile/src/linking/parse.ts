@@ -33,7 +33,7 @@ const nativeReserved = new Set([
 	"letter",
 	"r",
 ]);
-const panes = new Set<string>(["write", "page", "design", "check"]);
+const panes = new Set<string>(["write", "page", "design", "check", "share"]);
 
 /** Only known screens, with decoded segments checked before WHATWG URL can erase traversal. */
 export function parseDeepLink(input: string, currentServer: string): DeepLink | null {
@@ -120,7 +120,7 @@ export function parseDeepLink(input: string, currentServer: string): DeepLink | 
 		if (segments.length === 2) return target(routes.builder(second, mode));
 		if (segments.length === 3) {
 			if (third && panes.has(third)) return target(routes.builder(second, third as BuilderPane));
-			if (third === "share") return target(routes.share(second));
+			if (third === "export") return target(routes.export(second));
 			if (third === "history") return target(routes.history(second));
 			if (third === "assistant") return target(routes.assistant(second));
 		}

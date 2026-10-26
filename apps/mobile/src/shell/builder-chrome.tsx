@@ -248,7 +248,7 @@ function ChromeTopBar() {
 				actions={
 					<>
 						{slots.actions}
-						{share ? <ShareButton tablet={tablet} shared={!!slots.shared} onPress={share} /> : null}
+						{share ? <ShareButton tablet={tablet} onPress={share} /> : null}
 					</>
 				}
 			/>
@@ -292,52 +292,16 @@ function PaneBar<T extends string>({ panes, active, onSwitch }: PaneBarProps<T>)
 
 type ShareButtonProps = {
 	tablet: boolean;
-	shared: boolean;
 	onPress: () => void;
 };
 
 /** Phone: the export icon with a "Public" badge when the link is on. Tablet: an outlined Share button. */
-function ShareButton({ tablet, shared, onPress }: ShareButtonProps) {
+/** Opens Download & history. Sharing has its own pane. */
+function ShareButton({ tablet, onPress }: ShareButtonProps) {
 	const { t } = useLingui();
-	const { colors, radius, size, space } = useTheme();
-
-	if (tablet) return <Button variant="secondary" size="sm" icon="export" label={t`Share`} onPress={onPress} />;
-	if (!shared) return <IconButton icon="export" label={t`Share`} onPress={onPress} />;
-
-	return (
-		<Pressable
-			accessibilityRole="button"
-			accessibilityLabel={t`Share public resume`}
-			onPress={onPress}
-			style={({ pressed }) => ({
-				flexDirection: "row",
-				alignItems: "center",
-				gap: space.s1,
-				minHeight: size.hit,
-				paddingHorizontal: space.s2,
-				borderRadius: radius.rLg,
-				backgroundColor: pressed ? colors.press : "transparent",
-			})}
-		>
-			<Icon name="export" size={size.icon.toolbar} />
-			<View
-				style={{
-					flexDirection: "row",
-					alignItems: "center",
-					gap: space.s0,
-					paddingHorizontal: space.s2,
-					paddingVertical: space.s0,
-					borderRadius: radius.rLg,
-					backgroundColor: colors.accentSoft,
-				}}
-			>
-				<Icon name="globe" size={size.icon.meta - space.s1} color={colors.accentText} />
-				<Text variant="micro" color="accentText">
-					{t`Public`}
-				</Text>
-			</View>
-		</Pressable>
-	);
+	if (tablet)
+		return <Button variant="secondary" size="sm" icon="download-simple" label={t`Download`} onPress={onPress} />;
+	return <IconButton icon="download-simple" label={t`Download & history`} onPress={onPress} />;
 }
 
 type SaveStatusLineProps = SaveStatusSlot;

@@ -16,7 +16,7 @@ export function formatTimeSince(date: Date, locale: string, now = Date.now()) {
 	return new Intl.NumberFormat(locale, { style: "unit", unit, unitDisplay: "narrow" }).format(Math.floor(elapsed / ms));
 }
 
-type DailyStat = { date: string; views: number; downloads: number };
+type DailyStat = { date: string; views: number; downloads: number; contactReveals?: number };
 
 export function summarizeViews(daily: readonly DailyStat[]) {
 	const days = daily.slice(-30);
@@ -24,6 +24,7 @@ export function summarizeViews(daily: readonly DailyStat[]) {
 	return {
 		views: days.reduce((sum, day) => sum + day.views, 0),
 		downloads: days.reduce((sum, day) => sum + day.downloads, 0),
+		contactReveals: days.reduce((sum, day) => sum + (day.contactReveals ?? 0), 0),
 		peak,
 		bars: days.map((day) => ({ date: day.date, height: peak > 0 ? day.views / peak : 0 })),
 	};
