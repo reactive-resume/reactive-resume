@@ -122,14 +122,14 @@ beforeEach(() => {
 });
 
 describe("createApp", () => {
+	// The first case pays for the cold import of the whole app, which takes seconds under a parallel run.
 	it("serves /index.html through the shared HTML response before static files", async () => {
 		const { createApp } = await import("./app");
 		const response = await createApp().request("/index.html");
 		expect(await response.text()).toBe("web");
 		expect(mocks.serveWebDistStatic).not.toHaveBeenCalled();
-	});
+	}, 15_000);
 
-	// The first case pays for the cold import of the whole app, which takes seconds under a parallel run.
 	it.each([
 		["127.0.0.1", "127.0.0.1", "198.51.100.1", "198.51.100.1"],
 		["127.0.0.1", "::ffff:127.0.0.1", "198.51.100.1", "198.51.100.1"],
