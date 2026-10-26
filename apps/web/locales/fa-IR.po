@@ -726,7 +726,7 @@ msgstr "{stars, plural, one {به Reactive Resume در GitHub ستاره بده�
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# داستان} other {# داستان}}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "{suggestion} may be available. Get yours here →"
 msgstr "ممکن است {suggestion} در دسترس باشد. مال خودتان را از اینجا بگیرید →"
 
@@ -844,7 +844,7 @@ msgstr "گزارش توجیهی ۱۰ دقیقه‌ای"
 msgid "10–11 recommended"
 msgstr "10-11 توصیه می شود"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 فایل"
 
@@ -903,15 +903,11 @@ msgstr "90 روز"
 msgid "A"
 msgstr "A"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "دکمه «نمایش اطلاعات تماس» آن‌ها را به افراد نشان می‌دهد، نه به موتورهای جستجو."
-
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "A می پذیرد و R ویرایش متمرکز را رد می کند. ↑ و ↓ بین ویرایش ها حرکت کنید."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "یک نسخه پشتیبان از این نامه به صورت نامه ای به Reactive Resume باز می گردد."
 
@@ -1256,7 +1252,7 @@ msgstr "ارائه دهنده هوش مصنوعی را اضافه کنید"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "یک @ و دامنه مانند name@example.com اضافه کنید"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "یک آدرس اضافه کنید."
 
@@ -1423,7 +1419,7 @@ msgstr "دامنه را بعد از @ اضافه کنید، مانند {name}@ex
 msgid "Add the domain ending, like {domain}.com"
 msgstr "پایان دامنه را اضافه کنید، مانند {domain}.com"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "این رکوردها را جایی که دامنه را مدیریت می‌کنید اضافه کنید، سپس بررسی کنید. ممکن است چند ساعت طول بکشد تا تغییرات به دست همه برسد."
 
@@ -1492,7 +1488,7 @@ msgstr "به‌عنوان تجربه به دانسته‌ها اضافه شد."
 msgid "Added to Prepare"
 msgstr "به «آماده‌سازی» اضافه شد"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "آدرس"
 
@@ -1725,7 +1721,7 @@ msgstr "و {0} بیشتر"
 msgid "and counting"
 msgstr "و شمارش"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "یکی دیگر از رزومه های شما از این آدرس استفاده می کند."
 
@@ -2059,10 +2055,6 @@ msgstr "بپرسید یا تغییری را توضیح دهید…"
 #: src/features/homepage/faq.tsx
 msgid "Asked and <0>answered.</0>"
 msgstr "پرسیده شد و <0>پاسخ داده شد.</0>"
-
-#: src/features/resume/share/share-panel.tsx
-msgid "asked for contact details"
-msgstr "اطلاعات تماس را درخواست کردند"
 
 #: src/features/homepage/prepare.tsx
 msgid "Asks for an example of your onboarding work."
@@ -2574,7 +2566,7 @@ msgstr "فایل دیگری را بررسی کنید"
 msgid "Check any PDF, no account needed"
 msgstr "هر PDF را بررسی کنید، بدون نیاز به حساب"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Check DNS"
 msgstr "بررسی DNS"
 
@@ -2661,7 +2653,7 @@ msgstr "در حال بررسی PDF صادر شده…"
 msgid "Checking your preferences"
 msgstr "در حال بررسی ترجیحات شما"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "در حال بررسی… کپی پس از ذخیره در دسترس است."
 
@@ -2791,7 +2783,7 @@ msgstr "شناسه مشتری"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2968,7 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "ساعت {time} امروز را به‌صورت تصویری تأیید می‌کند."
 
 #: src/features/assistant/provider-setup.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "اتصال"
@@ -3021,7 +3013,7 @@ msgstr "متصل"
 msgid "Connected applications"
 msgstr "برنامه های متصل"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "متصل شد. دامنه شما رزومه اصلی‌تان را باز می‌کند."
 
@@ -3152,7 +3144,7 @@ msgid "Copied"
 msgstr "کپی شده است"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3626,8 +3618,8 @@ msgstr "ذخیرهٔ این زمان‌بندی ممکن نشد. دوباره ا
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "تغییرات شما ذخیره نشد. قبل از ادامه دوباره سعی کنید."
@@ -3732,6 +3724,7 @@ msgstr "لغو پیوند درخواست ممکن نشد. دوباره امتح�
 msgid "Couldn't unlock the document. Try again."
 msgstr "باز کردن قفل سند ممکن نشد. دوباره امتحان کنید."
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "به‌روزرسانی اشتراک‌گذاری ممکن نشد. دوباره امتحان کنید."
@@ -3768,7 +3761,7 @@ msgstr "به‌روزرسانی رزومه ممکن نشد. دوباره امت�
 msgid "Couldn't update the timeline. Try again."
 msgstr "جدول زمانی به‌روزرسانی نشد. دوباره امتحان کنید."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "به‌روزرسانی نسخه‌های این نامه ممکن نشد. دوباره امتحان کنید."
 
@@ -4362,7 +4355,7 @@ msgstr "اسنادی که به اینجا منتقل می‌کنید ۳۰ روز
 msgid "Does it use AI?"
 msgstr "آیا از هوش مصنوعی استفاده می کند؟"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Domain connected"
 msgstr "دامنه متصل شد"
 
@@ -4398,8 +4391,8 @@ msgstr "در حال بررسی دوباره"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "دانلود"
 
@@ -4411,7 +4404,7 @@ msgstr "دانلود {label}"
 msgid "Download {name} sample PDF"
 msgstr "PDF نمونه {name} را دانلود کنید"
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Download & history"
 msgstr "دانلود و تاریخچه"
 
@@ -4429,7 +4422,7 @@ msgid "Download CSV"
 msgstr "CSV را دانلود کنید"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "دانلود انجام نشد. دوباره امتحان کنید."
 
@@ -4455,7 +4448,7 @@ msgid "Download totals can include repeat clicks."
 msgstr "مجموع دانلود می تواند شامل کلیک های تکراری باشد."
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "دانلود {file}"
 
@@ -4463,7 +4456,7 @@ msgstr "دانلود {file}"
 msgid "Downloaded {file} and the cover letter"
 msgstr "دانلود {file} و نامه پوشش"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "رزومه و این نامه را دانلود کردم"
 
@@ -5265,7 +5258,7 @@ msgid "For"
 msgstr "برای"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "برای دامنه ریشه مانند example.com، به‌جای CNAME از رکوردهای A و AAAA با نشانی‌های {0} استفاده کنید."
 
@@ -5710,8 +5703,8 @@ msgid "Hiring team"
 msgstr "تیم استخدام"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
 msgstr "تاریخچه"
 
@@ -6543,10 +6536,6 @@ msgstr "طول رزومه نقص نیست و هیچ قانون همگانی تک
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "به مشتریان هوش مصنوعی مانند Claude یا Cursor اجازه دهید رزومه شما را با استفاده از کلید API در بالا بخوانند و ویرایش کنند."
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Let visitors ask to see them"
-msgstr "اجازه به بازدیدکنندگان برای درخواست دیدن آن‌ها"
-
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "بیایید با آنچه دارید شروع کنیم"
@@ -6677,7 +6666,7 @@ msgid "Link an application…"
 msgstr "پیوند درخواست شغل…"
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "لینک کپی شد"
@@ -6768,7 +6757,7 @@ msgid "Live · updates as you edit"
 msgstr "زنده · به روز رسانی در هنگام ویرایش"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "زنده در {0}"
 
@@ -9298,7 +9287,7 @@ msgstr "استخدام کننده"
 msgid "Recruiter reply"
 msgstr "پاسخ به استخدام‌کننده"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "استخدام کنندگان این نام را می بینند. نام شما به اضافه «نامه جلد» به خوبی کار می کند."
 
@@ -9424,7 +9413,7 @@ msgstr "دورکاری"
 msgid "Remote, Hybrid, a city…"
 msgstr "دورکاری، هیبرید، یک شهر…"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "حذف کنید"
@@ -9688,7 +9677,7 @@ msgstr "رزومه · نسخهٔ ارسال‌شده"
 msgid "Resume (optional)"
 msgstr "رزومه (اختیاری)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "رزومه + نامه"
 
@@ -10126,8 +10115,8 @@ msgstr "در دانسته‌ها ذخیره شد، فقط برای این درخ
 msgid "Saved to Saved · Practice"
 msgstr "در «ذخیره شده» · تمرین ذخیره شد"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/share-panel.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "ذخیره {0}/{username}/{slug}… کپی پس از ذخیره در دسترس است."
 
@@ -10544,11 +10533,11 @@ msgstr "به اشتراک بگذارید"
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "یک پیوند عمومی را به اشتراک بگذارید، یک رمز عبور اضافه کنید یا آن را خصوصی نگه دارید. از 3 گزینه دید انتخاب کنید. به PDF یا Word صادر کنید یا تمام داده های خود را به عنوان JSON با خود ببرید."
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "بخش ها را به اشتراک بگذارید"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "اشتراک گذاری از طریق…"
 
@@ -10629,10 +10618,6 @@ msgstr "نمایش همهٔ انواع"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "نمایش بسته شده"
-
-#: src/features/resume/share/web-page-text.ts
-msgid "Show contact details"
-msgstr "نمایش اطلاعات تماس"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -11684,7 +11669,7 @@ msgstr "سلام به دنبال نام است."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "کلید روی سرور رمزگذاری شده است و دیگر هرگز نشان داده نمی شود. ذخیره اتصال را آزمایش می کند."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "نامه همانطور که هست"
 
@@ -11784,7 +11769,7 @@ msgstr "پاسخ ارائه‌دهنده قابل تأیید نبود. دوبا�
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "دلیل برای Insights حفظ شده است. اسناد پیوند داده شده لمس نمی شوند."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "رکوردها هنوز قابل مشاهده نیستند. بعداً دوباره بررسی کنید."
 
@@ -12011,7 +11996,7 @@ msgstr "این یک فرم XFA است، پس بیشتر نرم‌افزارها 
 msgid "This is not a common resume page size."
 msgstr "این اندازهٔ صفحهٔ رایجی برای رزومه نیست."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "این حرف و \"{resumeName}\" به عنوان دو PDFs نامگذاری شده است."
 
@@ -12290,7 +12275,7 @@ msgid "Trust this device for 30 days"
 msgstr "به این دستگاه به مدت ۳۰ روز اعتماد شود"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "{0} را امتحان کنید"
 
@@ -12350,7 +12335,7 @@ msgstr "غیرفعال کردن تایید دو مرحله ای"
 msgid "Turn off two-step verification?"
 msgstr "تایید دو مرحله ای غیرفعال شود؟"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "برای انتخاب آدرس، پیوند را روشن کنید."
 
@@ -12699,7 +12684,7 @@ msgstr "استفاده برای همهٔ درخواست‌ها"
 msgid "Use in coaching: {excerpt}"
 msgstr "استفاده در مربیگری: {excerpt}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "از حروف کوچک، اعداد و خط تیره استفاده کنید."
 
@@ -13417,7 +13402,7 @@ msgid "You"
 msgstr "شما"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "شما قبلاً از این برای \"{0}\" استفاده می کنید."
 
@@ -13585,7 +13570,7 @@ msgstr "تاریخ‌های شما به چند شکل مختلف نوشته شد
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "مشخصات شما در رزومه تغییر کرد. نامه هم به روز شد"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "دامنه شما"
 
@@ -13706,7 +13691,7 @@ msgstr "ضبط شما برای رونویسی به {0} فرستاده می‌ش�
 msgid "Your requirements"
 msgstr "الزامات شما"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "رزومه شما"
 

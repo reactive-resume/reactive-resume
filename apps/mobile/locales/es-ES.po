@@ -696,10 +696,6 @@ msgstr "2 o 3 oraciones se leen mejor"
 msgid "24 hours before"
 msgstr "24 horas antes"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Un botón «Mostrar datos de contacto» los muestra a las personas, no a los buscadores."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Una copia de seguridad de esta carta. Se vuelve a importar a Reactive Resume como una carta."
@@ -1380,7 +1376,7 @@ msgstr "Cualquiera"
 msgid "Any font, in Advanced"
 msgstr "Cualquier fuente, en Avanzado"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Cualquiera que tenga el enlace podrá ver su currículum."
 
@@ -1611,10 +1607,6 @@ msgstr "Pídale al administrador de su servidor que habilite el cifrado de crede
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Pregunte o describa un cambio..."
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "pidieron los datos de contacto"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Cambiar zona horaria"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Cambió el currículum directamente (una conversación anterior)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "No se pudieron guardar los cambios. Reintentar antes de continuar."
 
@@ -2254,7 +2246,7 @@ msgstr "Borra sus entradas; la sección se queda. Puedes deshacer."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Cerrar"
 
@@ -2372,7 +2364,7 @@ msgstr "Comprima o elimine las imágenes grandes para que la subida sea rápida.
 msgid "Confirm applied"
 msgstr "Confirmar envío"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Confirme la contraseña"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "Verificando"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Descargar"
 msgid "Download {0}"
 msgstr "Descargar {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Descargas e historial"
@@ -4416,7 +4408,7 @@ msgstr "equipo de contratación"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Historia"
 
@@ -5035,10 +5027,6 @@ msgstr "Quedan menos de 48 horas."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Permita que clientes de IA como Claude o Cursor lean y editen sus currículums mediante una clave API."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Permitir que los visitantes pidan verlos"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Abrir en Ofertas"
 msgid "Open letter"
 msgstr "Abrir carta"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Abrir la página pública"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Preguntas pendientes"
@@ -6443,6 +6427,10 @@ msgstr "Abrir la lista"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Abrir la programación"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Abrir página web"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Passkeys"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Contraseña"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Las contraseñas no coinciden."
 
@@ -7475,7 +7463,7 @@ msgstr "Eliminar campo"
 msgid "Remove file"
 msgstr "Eliminar archivo"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Quitar contraseña"
 
@@ -7497,7 +7485,7 @@ msgstr "Quitar pregunta"
 msgid "Remove role"
 msgstr "Quitar rol"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "¿Quitar la contraseña?"
 
@@ -7597,11 +7585,7 @@ msgstr "Informar de un problema"
 msgid "Report received by your server operator. Thank you."
 msgstr "Informe recibido por el operador de su servidor. Gracias."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Informar currículum compartido"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Requerir una contraseña"
 
@@ -7735,8 +7719,8 @@ msgstr "Recuperado {0} usando {1}. El tiempo de recuperación no establece la fr
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "El servidor cambió. Vuelve a Documentos e inténtalo de nuevo."
 msgid "Set a follow-up"
 msgstr "Establecer un seguimiento"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Establecer contraseña"
 
@@ -8635,8 +8619,8 @@ msgstr "Inicie sesión en {server} y luego continúe con el documento vinculado.
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Inicia sesión para continuar."
 
@@ -9622,7 +9606,7 @@ msgstr "Este documento está bloqueado. Desbloquéelo antes de guardar sus edici
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Este documento está bloqueado. Desbloquéalo para recibir sugerencias."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Este documento está bloqueado. Aún puedes descargar y nombrar versiones. Desbloquear para editar o restaurar."
 
@@ -10241,7 +10225,7 @@ msgstr "Utilice {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Utilice de 3 a 64 letras minúsculas, números, puntos, guiones y guiones bajos."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Utilice entre 6 y 64 caracteres."
 
@@ -10508,11 +10492,11 @@ msgstr "Violencia o abuso"
 msgid "Visitors"
 msgstr "Visitantes"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Los visitantes pueden descargar el PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Los visitantes entran antes de ver el currículum. Compártelo sólo con personas de tu confianza."
 
@@ -10895,7 +10879,7 @@ msgstr "Está sin conexión. La descarga de PDF se realiza en este dispositivo. 
 msgid "You're offline. History needs a connection."
 msgstr "No tienes conexión. El Historial necesita conexión."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "No tienes conexión. El historial necesita conexión. «Descargar PDF» funciona en este dispositivo."
 

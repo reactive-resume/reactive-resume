@@ -1,22 +1,11 @@
+import type { PageSize } from "../forme/primitives";
 import type { HostElement, HostNode } from "../forme/reconciler";
 import type { Style, StyleProp } from "../forme/style-types";
 import { toSafeLink } from "@reactive-resume/utils/link";
+import { escapeHtml } from "@reactive-resume/utils/string";
 import { HOST } from "../forme/primitives";
-import {
-	COLOR_KEYS,
-	CSS_WIDE,
-	flattenStyle,
-	KEYWORD_ALIASES,
-	KEYWORD_KEYS,
-	LENGTH_KEYS,
-	NUMBER_KEYS,
-	PERCENT_KEYS,
-	TEXT_DECORATIONS,
-	TEXT_TRANSFORMS,
-	toColor,
-	toFontWeight,
-	toPoints,
-} from "../forme/style";
+import { COLOR_KEYS, flattenStyle, LENGTH_KEYS, toColor, toFormeStyle, toPoints } from "../forme/style";
+import { DEFAULT_PAGE, pageDimensions } from "../forme/to-forme";
 import { RESUME_NODE_PROP } from "../page-map";
 
 /**
@@ -38,10 +27,6 @@ export type ToHtmlOptions = {
 	imageUrl?: ((source: string) => string | undefined) | undefined;
 };
 
-// A4 in points, as `to-forme.tsx` assumes until a page says otherwise.
-const DEFAULT_PAGE = { width: 595.28, height: 841.89 };
-const LETTER_PAGE = { width: 612, height: 792 };
-
 type Context = {
 	fontSize: number;
 	pageWidth: number;
@@ -53,11 +38,6 @@ type Context = {
 	classes: Map<string, string>;
 };
 
-export const escapeHtml = (value: string) =>
-	value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-
-export const escapeAttribute = (value: string) => escapeHtml(value).replaceAll('"', "&quot;").replaceAll("'", "&#39;");
-
 const kebab = (property: string) => property.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
 
 const round = (value: number) => Math.round(value * 1000) / 1000;
@@ -66,13 +46,6 @@ const length = (value: number | string) => (typeof value === "number" ? `${round
 
 const PERCENT = /^-?\d*\.?\d+%$/;
 const SAFE_COLOR = /^(?:#[0-9a-f]{3,8}|rgba?\([\d.\s,]+\))$/i;
-
-/** A length as CSS, or `undefined`. `toPoints` passes percentages through unchecked; a stylesheet can't take that. */
-function cssLength(value: unknown, context: { fontSize: number; pageWidth?: number; pageHeight?: number }) {
-	const points = toPoints(value, context);
-	if (typeof points === "number") return Number.isFinite(points) ? length(points) : undefined;
-	return typeof points === "string" && PERCENT.test(points) ? points : undefined;
-}
 
 /** A colour as CSS, or `undefined`: only the hex and rgb forms `toColor` writes, checked character by character. */
 function cssColor(value: unknown) {
@@ -91,6 +64,9 @@ const EXPANDED: Record<string, readonly string[]> = {
 const BORDER_STYLES = new Set(["solid", "dashed", "dotted"]);
 const OBJECT_FITS = new Set(["contain", "cover", "fill", "none", "scale-down"]);
 const BORDER_SHORTHANDS = new Set(["border", "borderTop", "borderRight", "borderBottom", "borderLeft"]);
+// What Forme reads that a browser does without: widow and orphan control, line breaking, transforms (rotation is
+// already left out of the PDF), and `lang`, which the document sets.
+const FORME_ONLY = new Set(["minWidowLines", "minOrphanLines", "lineBreaking", "transform", "transformOrigin", "lang"]);
 
 /** `"1 solid #ccc"` → `1pt solid #ccc`, keeping only widths, solid styles and colours. */
 function borderShorthand(value: unknown, context: { fontSize: number }): string | undefined {
@@ -112,121 +88,55 @@ function borderShorthand(value: unknown, context: { fontSize: number }): string 
 	return parts.join(" ");
 }
 
+/** One value `toFormeStyle` produced, as CSS; `undefined` when CSS can't take it. */
+function cssValue(key: string, value: unknown, fontSize: number): string | undefined {
+	if (BORDER_SHORTHANDS.has(key)) return borderShorthand(value, { fontSize });
+	if (FORME_ONLY.has(key)) return undefined;
+	if (typeof value === "number") {
+		if (!Number.isFinite(value)) return undefined;
+		return key === "fontSize" || LENGTH_KEYS.has(key) ? length(value) : String(round(value));
+	}
+	if (typeof value !== "string") return undefined;
+	if (key === "fontFamily")
+		return value
+			.split(",")
+			.map((family) => `"${family.trim().replace(/["\\<>{};]/g, "")}"`)
+			.join(", ");
+	if (COLOR_KEYS.has(key)) return SAFE_COLOR.test(value) ? value : undefined;
+	if (LENGTH_KEYS.has(key)) {
+		if (value === "auto") return value;
+		// Percentages and shorthands with several values ("4 8") stay strings in Forme; every part must be a length.
+		const parts = value
+			.split(" ")
+			.map((part) => (PERCENT.test(part) ? part : part && Number.isFinite(Number(part)) ? length(Number(part)) : ""));
+		return parts.every(Boolean) ? parts.join(" ") : undefined;
+	}
+	if (key === "objectFit") return OBJECT_FITS.has(value) ? value : undefined;
+	if (key === "textOverflow") return value === "ellipsis" ? value : undefined;
+	// The rest are keywords `toFormeStyle` checked against what the PDF reads.
+	return /^[a-z-]+$/.test(value) ? value : undefined;
+}
+
 /**
- * One flattened style as CSS declarations, following `toFormeStyle`: what the PDF draws, the web page draws; what it
+ * One flattened style as CSS declarations, through `toFormeStyle`: what the PDF draws, the web page draws; what it
  * drops (rotation, grid templates, unknown keys), the web page drops too.
  */
-export function toCssDeclarations(input: Style, context: { fontSize: number; pageWidth: number; pageHeight: number }) {
+function toCssDeclarations(input: Style, context: Context) {
 	const source = input as Record<string, unknown>;
+	const { style, hidden } = toFormeStyle(input, context);
+	const converted = style as Record<string, unknown>;
+	const fontSize = typeof converted.fontSize === "number" ? converted.fontSize : context.fontSize;
 	const declarations: [string, string][] = [];
-	const fontSize = toPoints(source.fontSize, context);
-	const ownFontSize = typeof fontSize === "number" ? fontSize : context.fontSize;
-	const local = { ...context, fontSize: ownFontSize };
-
-	const push = (key: string, value: string) => declarations.push([kebab(key), value]);
-
-	for (const [key, value] of Object.entries(source)) {
-		if (value === undefined || value === null || value === "" || key.startsWith("@media")) continue;
-		if (typeof value === "string" && CSS_WIDE.has(value.trim())) continue;
-		if (key === "display" && value === "none") continue;
-
-		if (key === "fontSize") {
-			if (typeof fontSize === "number") push(key, length(fontSize));
-			continue;
-		}
-		if (key === "fontFamily") {
-			const families = (Array.isArray(value) ? value : [value]).filter(
-				(family): family is string => typeof family === "string" && family.length > 0,
-			);
-			if (families.length > 0) push(key, families.map((family) => `"${family.replace(/["\\<>{};]/g, "")}"`).join(", "));
-			continue;
-		}
-		if (key === "fontWeight") {
-			const weight = toFontWeight(value);
-			if (weight !== undefined) push(key, String(weight));
-			continue;
-		}
-		if (key === "lineHeight") {
-			if (typeof value === "number" || (typeof value === "string" && /^-?\d*\.?\d+$/.test(value.trim()))) {
-				push(key, String(Number(value)));
-			} else if (typeof value === "string" && value.trim().endsWith("%")) {
-				push(key, String(Number(value.trim().slice(0, -1)) / 100));
-			} else {
-				const points = toPoints(value, local);
-				if (typeof points === "number" && ownFontSize > 0) push(key, String(round(points / ownFontSize)));
-			}
-			continue;
-		}
-		if (COLOR_KEYS.has(key)) {
-			const color = cssColor(value);
-			if (color) push(key, color);
-			continue;
-		}
-		if (LENGTH_KEYS.has(key)) {
-			const targets = EXPANDED[key] ?? [key];
-			if (value === "auto") {
-				if (key.startsWith("margin")) for (const target of targets) push(target, "auto");
-				continue;
-			}
-			let css: string | undefined;
-			if (typeof value === "string" && /\s/.test(value.trim())) {
-				const parts = value
-					.trim()
-					.split(/\s+/)
-					.map((part) => cssLength(part, local));
-				if (parts.every((part) => part !== undefined)) css = parts.join(" ");
-			} else {
-				css = cssLength(value, local);
-				// The PDF takes percentages for box sizes and corner radii only.
-				if (css?.endsWith("%") && !PERCENT_KEYS.has(key) && !key.endsWith("Radius")) css = undefined;
-			}
-			if (css === undefined) continue;
-			for (const target of targets) push(target, css);
-			continue;
-		}
-		if (BORDER_SHORTHANDS.has(key)) {
-			const border = borderShorthand(value, local);
-			if (border) push(key, border);
-			continue;
-		}
-		// Only solid borders are drawn in the PDF, and the base rules make every border solid.
-		if (/^border(?:Top|Right|Bottom|Left)?Style$/.test(key)) continue;
-		if (key === "textDecoration") {
-			const decoration = String(value)
-				.split(/\s+/)
-				.find((part) => TEXT_DECORATIONS.has(part));
-			if (decoration) push(key, decoration);
-			continue;
-		}
-		if (key === "textTransform") {
-			const transform = value === "upperfirst" ? "capitalize" : String(value);
-			if (TEXT_TRANSFORMS.has(transform)) push(key, transform);
-			continue;
-		}
-		if (NUMBER_KEYS.has(key)) {
-			const number = Number(value);
-			if (!Number.isFinite(number) || key === "minWidowLines" || key === "minOrphanLines") continue;
-			push(key, String(number));
-			continue;
-		}
-		if (key === "alignSelf" && value === "auto") continue;
-		const keywords = KEYWORD_KEYS[key];
-		if (keywords) {
-			const keyword = String(value).trim();
-			const spelled = KEYWORD_ALIASES[keyword] ?? keyword;
-			if (!keywords.has(spelled) || key === "lineBreaking") continue;
-			if (key === "textOverflow") {
-				if (spelled === "ellipsis") push(key, "ellipsis");
-				continue;
-			}
-			push(key, spelled);
-			continue;
-		}
-		if (key === "objectFit" && OBJECT_FITS.has(String(value))) push(key, String(value));
-		// Rotation, transform origins, grid templates and anything unknown are left out, as in the PDF.
+	for (const key of Object.keys(source)) {
+		const raw = source[key];
+		// A browser draws percentage corners itself; Forme resolves them against the box's size, or drops them.
+		const percentCorner =
+			LENGTH_KEYS.has(key) && key.endsWith("Radius") && typeof raw === "string" && PERCENT.test(raw.trim());
+		const css = percentCorner ? raw.trim() : cssValue(key, converted[key], fontSize);
+		if (css === undefined) continue;
+		for (const target of EXPANDED[key] ?? [key]) declarations.push([kebab(target), css]);
 	}
-
-	return { declarations, fontSize: ownFontSize, hidden: source.display === "none" };
+	return { declarations, fontSize, hidden };
 }
 
 function className(declarations: [string, string][], context: Context): string | undefined {
@@ -293,10 +203,6 @@ const attributes = (classes: (string | undefined)[], extra = "") => {
 	return `${list ? ` class="${list}"` : ""}${extra}`;
 };
 
-function convertChildren(children: HostNode[], context: Context): string {
-	return children.map((child) => convertNode(child, context)).join("");
-}
-
 /** The regions a box holds, itself included. */
 const regionsCache = new WeakMap<HostElement, ReadonlySet<string>>();
 function regionsIn(element: HostElement): ReadonlySet<string> {
@@ -341,25 +247,19 @@ function splitParts(element: HostElement): Map<HostNode, Part> | undefined {
 }
 
 function convertSplitChildren(children: HostNode[], parts: Map<HostNode, Part> | undefined, context: Context) {
-	if (!parts) return convertChildren(children, context);
 	return children
 		.map((child) => {
 			const html = convertNode(child, context);
-			const part = parts.get(child);
+			const part = parts?.get(child);
 			// The part rides on the child's opening tag.
 			return part ? html.replace(/^<([a-z0-9]+)/, `<$1 data-part="${part}"`) : html;
 		})
 		.join("");
 }
 
-function textRuns(node: HostNode, context: Context): string {
-	if ("text" in node) return escapeHtml(node.text).replaceAll("\n", "<br>");
-	return convertNode(node, context);
-}
-
 function styleOf(element: HostElement, context: Context) {
 	const flat = flattenStyle(element.props.style as StyleProp);
-	return toCssDeclarations(flat, context);
+	return { ...toCssDeclarations(flat, context), flat: flat as Record<string, unknown> };
 }
 
 function convertNode(node: HostNode, parent: Context): string {
@@ -368,7 +268,7 @@ function convertNode(node: HostNode, parent: Context): string {
 
 	switch (node.type) {
 		case HOST.view: {
-			const { declarations, fontSize, hidden } = styleOf(node, parent);
+			const { declarations, fontSize, hidden, flat } = styleOf(node, parent);
 			if (hidden) return "";
 			const context = { ...parent, fontSize };
 			const region = regionOf(node);
@@ -378,7 +278,7 @@ function convertNode(node: HostNode, parent: Context): string {
 			// A row in the header that holds the picture or a section (picture beside the name and summary), or a section
 			// laid out as a row (a label gutter beside the entries), is too narrow on a phone: it stacks there instead.
 			// Small rows, such as an icon beside a contact detail, stay rows.
-			const direction = (flattenStyle(props.style as StyleProp) as Record<string, unknown>).flexDirection;
+			const direction = flat.flexDirection;
 			const isRow = direction === "row" || direction === "row-reverse";
 			const inHeader = region === "header" || parent.inHeader === true;
 			const fold = isRow && !split && (tag === "section" || (inHeader && holdsBlocks(node)));
@@ -400,12 +300,12 @@ function convertNode(node: HostNode, parent: Context): string {
 			const href =
 				node.type === HOST.link && typeof props.src === "string" ? (toSafeLink(props.src) ?? undefined) : undefined;
 			const external = href && /^https?:/i.test(href) ? ' rel="noopener ugc" target="_blank"' : "";
-			const link = href ? ` href="${escapeAttribute(href)}"${external}` : "";
+			const link = href ? ` href="${escapeHtml(href)}"${external}` : "";
 			const own = className(declarations, context);
 
 			if (parent.inText) {
 				const tag = href ? "a" : "span";
-				return `<${tag}${attributes([own], link)}>${node.children.map((child) => textRuns(child, context)).join("")}</${tag}>`;
+				return `<${tag}${attributes([own], link)}>${node.children.map((child) => convertNode(child, context)).join("")}</${tag}>`;
 			}
 			if (node.children.every(isEmptyText)) return `<div${attributes(["t", own])}></div>`;
 
@@ -418,7 +318,7 @@ function convertNode(node: HostNode, parent: Context): string {
 					const runs = withoutTrailingBreaks(inline);
 					if (runs.length > 0)
 						parts.push(
-							`<div class="t">${runs.map((child) => textRuns(child, { ...context, inText: true })).join("")}</div>`,
+							`<div class="t">${runs.map((child) => convertNode(child, { ...context, inText: true })).join("")}</div>`,
 						);
 					inline = [];
 				};
@@ -437,7 +337,7 @@ function convertNode(node: HostNode, parent: Context): string {
 			const semantic = semanticTag(node, true);
 			const tag = href ? "a" : (semantic?.tag ?? "div");
 			const inner = withoutTrailingBreaks(node.children)
-				.map((child) => textRuns(child, { ...context, inText: true }))
+				.map((child) => convertNode(child, { ...context, inText: true }))
 				.join("");
 			return `<${tag}${attributes(["t", own], link || (semantic?.attributes ?? ""))}>${inner}</${tag}>`;
 		}
@@ -447,7 +347,7 @@ function convertNode(node: HostNode, parent: Context): string {
 			if (!url) return "";
 			const { declarations, hidden } = styleOf(node, parent);
 			if (hidden) return "";
-			return `<img${attributes(["i", className(declarations, parent)], ` src="${escapeAttribute(url)}" alt="" loading="lazy" decoding="async"`)}>`;
+			return `<img${attributes(["i", className(declarations, parent)], ` src="${escapeHtml(url)}" alt="" loading="lazy" decoding="async"`)}>`;
 		}
 		case HOST.svg: {
 			const { declarations, hidden } = styleOf(node, parent);
@@ -460,7 +360,7 @@ function convertNode(node: HostNode, parent: Context): string {
 			const height = size(props.height, width);
 			const opacity: [string, string][] =
 				typeof props.opacity === "number" && Number.isFinite(props.opacity) ? [["opacity", String(props.opacity)]] : [];
-			const viewBox = typeof props.viewBox === "string" ? ` viewBox="${escapeAttribute(props.viewBox)}"` : "";
+			const viewBox = typeof props.viewBox === "string" ? ` viewBox="${escapeHtml(props.viewBox)}"` : "";
 			const own = className(
 				[...declarations, ["width", length(width)], ["height", length(height)], ...opacity],
 				parent,
@@ -472,15 +372,6 @@ function convertNode(node: HostNode, parent: Context): string {
 			return "";
 	}
 }
-
-const pageDimensions = (size: unknown) => {
-	if (size === "LETTER") return LETTER_PAGE;
-	if (typeof size === "object" && size !== null && "width" in size) {
-		const { width, height } = size as { width: number; height?: number };
-		return { width, height: height ?? DEFAULT_PAGE.height };
-	}
-	return DEFAULT_PAGE;
-};
 
 /** The colour of a page's sidebar band, drawn behind the sidebar when it folds under the main column on phones. */
 function bandColor(page: HostElement): string | undefined {
@@ -536,7 +427,8 @@ export function toHtml(tree: HostNode[], options: ToHtmlOptions = {}): HtmlOutpu
 	const pages = root.children
 		.filter((child): child is HostElement => !("text" in child) && child.type === HOST.page)
 		.map((page) => {
-			const dimensions = pageDimensions(page.props.size);
+			// `toWebLayout` asks for A4 or Letter; a free-form page would take A4's height as its minimum.
+			const dimensions = pageDimensions(page.props.size as PageSize | undefined, DEFAULT_PAGE.height);
 			const pageContext = { ...context, pageWidth: dimensions.width, pageHeight: dimensions.height };
 			const { declarations, fontSize } = styleOf(page, pageContext);
 			const band = bandColor(page);

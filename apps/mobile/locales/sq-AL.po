@@ -696,10 +696,6 @@ msgstr "2-3 fjali lexohen më mirë"
 msgid "24 hours before"
 msgstr "24 orë përpara"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Butoni “Shfaq detajet e kontaktit” ua zbulon ato njerëzve, jo motorëve të kërkimit."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Një kopje rezervë e kësaj letre. Importon përsëri në Reactive Resume si një letër."
@@ -1380,7 +1376,7 @@ msgstr "Pa kufi"
 msgid "Any font, in Advanced"
 msgstr "Çdo font, në Advanced"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Kushdo që ka lidhjen do të mund të shikojë CV-në tuaj."
 
@@ -1611,10 +1607,6 @@ msgstr "Kërkojini administratorit të serverit tuaj të aktivizojë enkriptimin
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Pyetni ose përshkruani një ndryshim…"
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "kërkuan detajet e kontaktit"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Ndrysho zonën kohore"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Ndryshoi rezymenë drejtpërdrejt (një bisedë e mëparshme)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Ndryshimet nuk mund të ruheshin. Provo sërish përpara se të vazhdosh."
 
@@ -2254,7 +2246,7 @@ msgstr "Pastron hyrjet e tij; seksioni qëndron. Mund ta zhbësh."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Mbylle"
 
@@ -2372,7 +2364,7 @@ msgstr "Kompresoni ose hiqni imazhet e mëdha për t'i mbajtur ngarkimet të shp
 msgid "Confirm applied"
 msgstr "Konfirmo aplikimin"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Konfirmo fjalëkalimin"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "Po kontrollohet dy herë"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Shkarko"
 msgid "Download {0}"
 msgstr "Shkarko {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Shkarkime dhe historik"
@@ -4416,7 +4408,7 @@ msgstr "Ekipi i punësimit"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Historia"
 
@@ -5035,10 +5027,6 @@ msgstr "Kanë mbetur më pak se 48 orë."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Lërini klientët AI si Claude ose Cursor të lexojnë dhe modifikojnë CV-të tuaj, duke përdorur një çelës API."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Lejo vizitorët të kërkojnë t'i shohin"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Hape te Ofertat"
 msgid "Open letter"
 msgstr "Hap letrën"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Hapni faqen publike"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Pyetje pa përgjigje"
@@ -6443,6 +6427,10 @@ msgstr "Hapni listën"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Hap orarin"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Hap faqen e internetit"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Çelësa të kalimit"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Fjalëkalimi"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Fjalëkalimet nuk përputhen."
 
@@ -7475,7 +7463,7 @@ msgstr "Hiq fushën"
 msgid "Remove file"
 msgstr "Hiq skedarin"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Hiq fjalëkalimin"
 
@@ -7497,7 +7485,7 @@ msgstr "Hiq pyetjen"
 msgid "Remove role"
 msgstr "Hiq rolin"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Të hiqet fjalëkalimi?"
 
@@ -7597,11 +7585,7 @@ msgstr "Raporto një problem"
 msgid "Report received by your server operator. Thank you."
 msgstr "Raporti i marrë nga operatori i serverit tuaj. faleminderit."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Raportoni një rezyme të përbashkët"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Kërkoni një fjalëkalim"
 
@@ -7735,8 +7719,8 @@ msgstr "{0} është marrë duke përdorur {1}. Koha e marrjes nuk përcakton fre
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "Serveri ndryshoi. Kthehu te Dokumentet dhe provo sërish."
 msgid "Set a follow-up"
 msgstr "Vendosni një vazhdimësi"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Vendos fjalëkalimin"
 
@@ -8635,8 +8619,8 @@ msgstr "Identifikohu në {server}, më pas vazhdo te dokumenti i lidhur."
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Identifikohu për të vazhduar."
 
@@ -9622,7 +9606,7 @@ msgstr "Ky dokument është i kyçur. Zhbllokoni atë përpara se të mbani modi
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Ky dokument është i kyçur. Zhbllokoje për të marrë sugjerime."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Ky dokument është i kyçur. Ju ende mund të shkarkoni dhe emërtoni versionet. Zhbllokoni për të modifikuar ose rivendosur."
 
@@ -10241,7 +10225,7 @@ msgstr "Përdorni {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Përdorni 3 deri në 64 shkronja të vogla, numra, pika, viza dhe nënvizime."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Përdorni 6-64 karaktere."
 
@@ -10508,11 +10492,11 @@ msgstr "Dhuna apo abuzimi"
 msgid "Visitors"
 msgstr "Vizitorët"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Vizitorët mund të shkarkojnë PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Vizitorët hyjnë në të përpara se të shohin CV. Ndani atë vetëm me njerëzit që ju besoni."
 
@@ -10895,7 +10879,7 @@ msgstr "Jeni jashtë linje. Shkarkimi i PDF-së përdor këtë pajisje. Formatet
 msgid "You're offline. History needs a connection."
 msgstr "Je jashtë linje. Historia ka nevojë për një lidhje."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "Je jashtë linje. Historia ka nevojë për një lidhje. Shkarko PDF funksionon në këtë pajisje."
 

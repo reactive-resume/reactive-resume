@@ -696,10 +696,6 @@ msgstr "2-3 句話閱讀效果最佳"
 msgid "24 hours before"
 msgstr "提前 24 小時"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "「顯示聯絡資訊」按鈕只會向訪客顯示這些資訊，不會讓搜尋引擎看到。"
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "這封信的備份。作為信件導入回 Reactive Resume。"
@@ -1380,7 +1376,7 @@ msgstr "不限"
 msgid "Any font, in Advanced"
 msgstr "任何字體，高級"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "知道該連結的任何人都可以查看您的簡歷。"
 
@@ -1611,10 +1607,6 @@ msgstr "請您的伺服器管理員啟用憑證加密或設定共用 Web 連線�
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "詢問或描述更改..."
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "要求查看聯絡資訊"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "變更時區"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "直接改了履歷（之前的對話）"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "無法儲存更改。繼續之前重試。"
 
@@ -2254,7 +2246,7 @@ msgstr "清除其項目；該部分保留。您可以撤銷。"
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "關閉"
 
@@ -2372,7 +2364,7 @@ msgstr "壓縮或移除較大的圖片，以保持上傳速度。"
 msgid "Confirm applied"
 msgstr "確認已申請"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "確認密碼"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "正在複查"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "下載"
 msgid "Download {0}"
 msgstr "下載{0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "下載與歷史記錄"
@@ -4416,7 +4408,7 @@ msgstr "招募團隊"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "歷史"
 
@@ -5035,10 +5027,6 @@ msgstr "還剩不到48小時。"
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "讓 AI 使用者端（如 Claude 或 Cursor）使用 API 金鑰來讀取和編輯您的履歷。"
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "允許訪客要求查看"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "在「錄取通知」中開啟"
 msgid "Open letter"
 msgstr "開啟求職信"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "開啟公共頁面"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "待釐清的問題"
@@ -6443,6 +6427,10 @@ msgstr "開啟清單"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "開啟排程"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "開啟網頁"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "通行金鑰"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "密碼"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "密碼不符。"
 
@@ -7475,7 +7463,7 @@ msgstr "刪除字段"
 msgid "Remove file"
 msgstr "移除檔案"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "移除密碼"
 
@@ -7497,7 +7485,7 @@ msgstr "移除問題"
 msgid "Remove role"
 msgstr "刪除角色"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "刪除密碼？"
 
@@ -7597,11 +7585,7 @@ msgstr "回報問題"
 msgid "Report received by your server operator. Thank you."
 msgstr "您的伺服器運營商收到的報告。謝謝。"
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "檢舉分享的履歷"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "需要密碼"
 
@@ -7735,8 +7719,8 @@ msgstr "使用 {1} 檢索 {0}。檢索時間並不能確定來源的新鮮度。
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "伺服器已變更。請返回文件並重試。"
 msgid "Set a follow-up"
 msgstr "設定後續聯繫"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "設定密碼"
 
@@ -8635,8 +8619,8 @@ msgstr "登入 {server}，再繼續前往連結的文件。"
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "請登入以繼續。"
 
@@ -9622,7 +9606,7 @@ msgstr "此文件已鎖定。若要保留此處的修改，請先解鎖，或保
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "該文件已被鎖定。解鎖它以獲得建議。"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "此文件已鎖定。仍可下載版本及為其命名。請解鎖以編輯或還原。"
 
@@ -10241,7 +10225,7 @@ msgstr "使用{url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "使用 3 到 64 個小寫字母、數字、點、連字號和底線。"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "請使用 6–64 個字元。"
 
@@ -10508,11 +10492,11 @@ msgstr "暴力或虐待"
 msgid "Visitors"
 msgstr "訪客"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "訪客可下載PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "訪客在看到簡歷之前就進入了它。僅與您信任的人分享。"
 
@@ -10895,7 +10879,7 @@ msgstr "您目前離線。下載 PDF 會使用此裝置完成。其他格式需�
 msgid "You're offline. History needs a connection."
 msgstr "您目前離線。歷史紀錄需要連線。"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "您目前離線。歷史記錄需要網路連線。「下載 PDF」可在此裝置上使用。"
 

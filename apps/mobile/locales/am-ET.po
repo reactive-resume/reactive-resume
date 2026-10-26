@@ -696,10 +696,6 @@ msgstr "2-3 አረፍተ ነገሮች በተሻለ ሁኔታ ይነበባሉ"
 msgid "24 hours before"
 msgstr "ከ24 ሰዓት በፊት"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "“የመገኛ ዝርዝሮችን አሳይ” የሚለው አዝራር ዝርዝሮቹን ለሰዎች ያሳያል እንጂ ለፍለጋ ሞተሮች አይደለም።"
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "የዚህ ደብዳቤ ምትኬ። ወደ Reactive Resume እንደ ደብዳቤ ተመልሶ ይመጣል።"
@@ -1380,7 +1376,7 @@ msgstr "ማንኛውም"
 msgid "Any font, in Advanced"
 msgstr "ማንኛውም ቅርጸ-ቁምፊ፣ በላቁ"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "አገናኙ ያለው ማንኛውም ሰው የእርስዎን የትምህርት ማስረጃ ማየት ይችላል።"
 
@@ -1611,10 +1607,6 @@ msgstr "የምስክርነት ምስጠራን እንዲያነቃ ወይም የ�
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "ለውጡን ይጠይቁ ወይም ይግለጹ…"
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "የመገኛ ዝርዝሮችን ጠይቀዋል"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "የሰዓት ሰቅ ቀይር"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "የትምህርት ማስረጃውን በቀጥታ ቀይሯል (የቀድሞ ውይይት)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "ለውጦች ሊቀመጡ አልቻሉም። ከመቀጠልዎ በፊት እንደገና ሞክር።"
 
@@ -2254,7 +2246,7 @@ msgstr "ግቦቹን ያጸዳል; ክፍሉ ይቆያል. መቀልበስ ይ�
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "ዝጋ"
 
@@ -2372,7 +2364,7 @@ msgstr "ጭነቶች ፈጣን እንዲሆኑ ትላልቅ ምስሎችን ያ�
 msgid "Confirm applied"
 msgstr "ማመልከቻ መቅረቡን ያረጋግጡ"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "የይለፍ ቃል ያረጋግጡ"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "ደግሞ በማረጋገጥ ላይ"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "አውርድ"
 msgid "Download {0}"
 msgstr "አውርድ {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "ማውረድ እና ታሪክ"
@@ -4416,7 +4408,7 @@ msgstr "የቅጥር ቡድን"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "ታሪክ"
 
@@ -5035,10 +5027,6 @@ msgstr "ከ48 ሰአታት ያነሰ ጊዜ ቀርቷል።"
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "እንደ Claude ወይም Cursor ያሉ AI ደንበኞች የAPI ቁልፍ ተጠቅመው የስራ ልምድ ማስረጃዎችን እንዲያነቡ እና እንዲያርትዑ ያድርጉ።"
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "ጎብኚዎች እንዲያዩዋቸው እንዲጠይቁ ፍቀድ"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "በቅናሾች ውስጥ ክፈት"
 msgid "Open letter"
 msgstr "ደብዳቤውን ክፈት"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "ይፋዊ ገጹን ይክፈቱ"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "ጥያቄዎችን ይክፈቱ"
@@ -6443,6 +6427,10 @@ msgstr "ዝርዝሩን ይክፈቱ"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "መርሐ ግብሩን ክፈት"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "ድረ-ገጹን ክፈት"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "ፓስኪዎች"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "የይለፍ ቃል"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "የይለፍ ቃሎች አይዛመዱም።"
 
@@ -7475,7 +7463,7 @@ msgstr "መስክ አስወግድ"
 msgid "Remove file"
 msgstr "ፋይል አስወግድ"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "የይለፍ ቃሉን አስወግድ"
 
@@ -7497,7 +7485,7 @@ msgstr "ጥያቄውን አስወግድ"
 msgid "Remove role"
 msgstr "ሚናን ያስወግዱ"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "የይለፍ ቃሉ ይወገድ?"
 
@@ -7597,11 +7585,7 @@ msgstr "ችግኝት ሪፖርት አድርግ"
 msgid "Report received by your server operator. Thank you."
 msgstr "በአገልጋይ ኦፕሬተርዎ የደረሰ ሪፖርት። አመሰግናለሁ።"
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "የጋራ የሥራ ልምድ ሪፖርት አድርግ"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "የይለፍ ቃል ጠይቅ"
 
@@ -7735,8 +7719,8 @@ msgstr "{1} በመጠቀም የተገኘ {0}። የመልሶ ማግኛ ጊዜ �
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "አገልጋይ ተቀይሯል። ወደ ሰነዶች ይመለሱ እ�
 msgid "Set a follow-up"
 msgstr "ክትትልን ያዘጋጁ"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "የይለፍ ቃል አዘጋጅ"
 
@@ -8635,8 +8619,8 @@ msgstr "ወደ {server} ይግቡ፣ ከዚያ ወደ የተገናኘው ሰነ�
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "ለመቀጠል ይግቡ።"
 
@@ -9622,7 +9606,7 @@ msgstr "ይህ ሰነድ ተቆልፏል። አርትዖቶችዎን እዚህ �
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "ይህ ሰነድ ተቆልፏል። የአስተያየት ጥቆማዎችን ለማግኘት ይክፈቱት።"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "ይህ ሰነድ ተቆልፏል። አሁንም ማውረድ እና ስሪቶችን መሰየም ይችላሉ። ለማርትዕ ወይም ወደነበረበት ለመመለስ ይክፈቱ።"
 
@@ -10241,7 +10225,7 @@ msgstr "{url} ይጠቀሙ"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "ከ 3 እስከ 64 ንዑስ ሆሄያት፣ ቁጥሮች፣ ነጥቦች፣ ሰረዞች እና የስር ምልክቶች ተጠቀም።"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "ከ6-64 ቁምፊዎችን ይጠቀሙ።"
 
@@ -10508,11 +10492,11 @@ msgstr "ጥቃት ወይም ጥቃት"
 msgid "Visitors"
 msgstr "ጎብኚዎች"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "ጎብኚዎች PDF ማውረድ ይችላሉ።"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "ጎብኚዎች የትምህርት ማስረጃውን ከማየታቸው በፊት ይገባሉ። ለምታምናቸው ሰዎች ብቻ አጋራ።"
 
@@ -10895,7 +10879,7 @@ msgstr "ከመስመር ውጭ ነዎት። PDF ማውረድ ይህን መሳሪ
 msgid "You're offline. History needs a connection."
 msgstr "ከመስመር ውጭ ነዎት። ታሪክ ግንኙነት ያስፈልገዋል።"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "ከመስመር ውጭ ነዎት። ታሪክ ግንኙነት ያስፈልገዋል። PDF ማውረድ በዚህ መሳሪያ ላይ ይሰራል።"
 

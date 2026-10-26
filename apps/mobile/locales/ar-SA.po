@@ -696,10 +696,6 @@ msgstr "2-3 جمل تقرأ بشكل أفضل"
 msgid "24 hours before"
 msgstr "قبل 24 ساعة"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "يكشف زر “إظهار بيانات التواصل” عنها للأشخاص، لا لمحركات البحث."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "نسخة احتياطية من هذه الرسالة. يتم الاستيراد مرة أخرى إلى Reactive Resume كحرف."
@@ -1380,7 +1376,7 @@ msgstr "أي"
 msgid "Any font, in Advanced"
 msgstr "أي خط، في المتقدم"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "سيتمكن أي شخص لديه الرابط من عرض سيرتك الذاتية."
 
@@ -1611,10 +1607,6 @@ msgstr "اطلب من مسؤول الخادم الخاص بك تمكين تشف�
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "اسأل أو قم بوصف التغيير..."
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "طلبوا بيانات التواصل"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "تغيير المنطقة الزمنية"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "تم تغيير السيرة الذاتية مباشرة (محادثة سابقة)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "لا يمكن حفظ التغييرات. أعد المحاولة قبل المتابعة."
 
@@ -2254,7 +2246,7 @@ msgstr "يمسح الإدخالات لكنه يحتفظ بالقسم. يمكنك
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "إغلاق"
 
@@ -2372,7 +2364,7 @@ msgstr "اضغط الصور الكبيرة أو احذفها لإبقاء عمل
 msgid "Confirm applied"
 msgstr "تأكيد التقديم"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "تأكيد كلمة المرور"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "جارٍ التحقق المزدوج"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "تنزيل"
 msgid "Download {0}"
 msgstr "تنزيل {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "التنزيل والسجلّ"
@@ -4416,7 +4408,7 @@ msgstr "فريق التوظيف"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "تاريخ"
 
@@ -5035,10 +5027,6 @@ msgstr "متبقي أقل من 48 ساعة."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "اسمح لعملاء AI مثل Claude أو Cursor بقراءة وتحرير سيرتك الذاتية، باستخدام مفتاح API."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "السماح للزوار بطلب رؤيتها"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "افتح في العروض"
 msgid "Open letter"
 msgstr "فتح الرسالة"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "افتح الصفحة العامة"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "أسئلة مفتوحة"
@@ -6443,6 +6427,10 @@ msgstr "افتح القائمة"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "افتح الجدول"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "فتح صفحة الويب"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "مفاتيح المرور"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "كلمة المرور"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "كلمات المرور غير متطابقة."
 
@@ -7475,7 +7463,7 @@ msgstr "إزالة الحقل"
 msgid "Remove file"
 msgstr "إزالة الملف"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "إزالة كلمة المرور"
 
@@ -7497,7 +7485,7 @@ msgstr "أزل السؤال"
 msgid "Remove role"
 msgstr "إزالة الدور"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "هل تريد إزالة كلمة المرور؟"
 
@@ -7597,11 +7585,7 @@ msgstr "الإبلاغ عن مشكلة"
 msgid "Report received by your server operator. Thank you."
 msgstr "تم استلام التقرير من قبل مشغل الخادم الخاص بك. شكرًا لك."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "الإبلاغ عن السيرة الذاتية المشتركة"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "تتطلب كلمة مرور"
 
@@ -7735,8 +7719,8 @@ msgstr "تم استرجاع {0} باستخدام {1}. وقت الاسترجاع 
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "تم تغيير خادم . ارجع إلى وثائق وحاول مرة 
 msgid "Set a follow-up"
 msgstr "قم بتعيين تذكير للمتابعة"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "تعيين كلمة المرور"
 
@@ -8635,8 +8619,8 @@ msgstr "قم بتسجيل الدخول إلى {server}، ثم تابع إلى ا
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "قم بتسجيل الدخول للمتابعة."
 
@@ -9622,7 +9606,7 @@ msgstr "هذا المستند مقفل. افتحه قبل الاحتفاظ بت�
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "تم تأمين هذا المستند. فتحه للحصول على اقتراحات."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "هذا المستند مقفل. لا يزال بإمكانك تنزيل الإصدارات وتسميتها. فتح للتحرير أو الاستعادة."
 
@@ -10241,7 +10225,7 @@ msgstr "استخدم {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "استخدم من 3 إلى 64 حرفًا صغيرًا وأرقامًا ونقاطًا وواصلات وشرطات سفلية."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "استخدم 6-64 حرفًا."
 
@@ -10508,11 +10492,11 @@ msgstr "العنف أو سوء المعاملة"
 msgid "Visitors"
 msgstr "الزوار"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "يمكن للزوار تنزيل PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "يدخلها الزوار قبل أن يروا السيرة الذاتية. شاركها فقط مع الأشخاص الذين تثق بهم."
 
@@ -10895,7 +10879,7 @@ msgstr "أنت غير متصل. يمكنك تنزيل PDF باستخدام هذ�
 msgid "You're offline. History needs a connection."
 msgstr "أنت غير متصل. يتطلب السجل اتصالًا."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "أنت غير متصل. يتطلب السجل اتصالًا. يعمل تنزيل PDF على هذا الجهاز."
 

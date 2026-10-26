@@ -79,7 +79,6 @@ export const authService = {
 				showDownloadButtons: schema.resume.showDownloadButtons,
 				showInSearchEngines: schema.resume.showInSearchEngines,
 				hideContactDetails: schema.resume.hideContactDetails,
-				showContactButton: schema.resume.showContactButton,
 				isPrimary: schema.resume.isPrimary,
 				isLocked: schema.resume.isLocked,
 				createdAt: schema.resume.createdAt,

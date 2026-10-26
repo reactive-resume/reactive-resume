@@ -1,4 +1,3 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { PDFDocumentLoadingTask, PDFDocumentProxy } from "pdfjs-dist/legacy/build/pdf.mjs";
 // pdf.mjs must load before pdf_viewer.mjs, which reads `globalThis.pdfjsLib` as it loads.
 import { AnnotationMode } from "pdfjs-dist/legacy/build/pdf.mjs";
@@ -6,13 +5,13 @@ import { EventBus, LinkTarget, PDFLinkService, PDFViewer } from "pdfjs-dist/lega
 import { useEffect, useReducer, useRef } from "react";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
-import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { getDocument, getPdfWorker } from "@/features/resume/preview/pdfjs";
 import "pdfjs-dist/legacy/web/pdf_viewer.css";
 
 type PdfViewerProps = {
 	className?: string;
-} & ({ data: ResumeData; file?: never } | { file: Blob; data?: never });
+	file: Blob;
+};
 
 type PdfViewerOptions = ConstructorParameters<typeof PDFViewer>[0] & {
 	abortSignal: AbortSignal;
@@ -20,22 +19,18 @@ type PdfViewerOptions = ConstructorParameters<typeof PDFViewer>[0] & {
 
 type PdfViewerState = {
 	error: boolean;
-	fileVersion: number;
 	isReady: boolean;
 	viewerHeight: number | null;
 };
 
 type PdfViewerAction =
 	| { type: "error" }
-	| { type: "fileLoaded" }
 	| { type: "height"; height: number }
 	| { type: "ready" }
-	| { type: "resetForData" }
 	| { type: "viewerLoading" };
 
 const INITIAL_PDF_VIEWER_STATE: PdfViewerState = {
 	error: false,
-	fileVersion: 0,
 	isReady: false,
 	viewerHeight: null,
 };
@@ -46,12 +41,6 @@ const clearPdfViewerDocument = (pdfViewer: PDFViewer) => {
 
 function pdfViewerReducer(state: PdfViewerState, action: PdfViewerAction): PdfViewerState {
 	switch (action.type) {
-		case "resetForData":
-		case "fileLoaded":
-			return {
-				...INITIAL_PDF_VIEWER_STATE,
-				fileVersion: state.fileVersion + 1,
-			};
 		case "viewerLoading":
 			return { ...state, error: false, isReady: false, viewerHeight: null };
 		case "height":
@@ -65,59 +54,19 @@ function pdfViewerReducer(state: PdfViewerState, action: PdfViewerAction): PdfVi
 	}
 }
 
-/** Renders a resume's PDF from its data, or an existing PDF file (the ATS checker's upload). */
-export function PdfViewer({ className, data, file: givenFile }: PdfViewerProps) {
+/** Renders a PDF file with PDF.js (the ATS checker's upload). */
+export function PdfViewer({ className, file }: PdfViewerProps) {
 	const rootRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const viewerRef = useRef<HTMLDivElement>(null);
-	const fileRef = useRef<Blob | null>(null);
-	const [{ error, fileVersion, isReady, viewerHeight }, dispatch] = useReducer(
-		pdfViewerReducer,
-		INITIAL_PDF_VIEWER_STATE,
-	);
+	const [{ error, isReady, viewerHeight }, dispatch] = useReducer(pdfViewerReducer, INITIAL_PDF_VIEWER_STATE);
 
 	useEffect(() => {
-		let isCancelled = false;
-
-		fileRef.current = null;
-		dispatch({ type: "resetForData" });
-		// The worker script downloads while the PDF is fetched or rendered, not after.
-		getPdfWorker();
-
-		const createPdf = (): Promise<Blob> => {
-			if (givenFile) return Promise.resolve(givenFile);
-			if (!data) return Promise.reject(new Error("PdfViewer needs data or a file."));
-			return createResumePdfBlob(data);
-		};
-
-		void createPdf()
-			.then((blob) => {
-				if (isCancelled) return;
-
-				fileRef.current = blob;
-				dispatch({ type: "fileLoaded" });
-			})
-			.catch((error: unknown) => {
-				if (!isCancelled) {
-					console.error("Failed to generate the PDF", error);
-					dispatch({ type: "error" });
-				}
-			});
-
-		return () => {
-			isCancelled = true;
-		};
-	}, [data, givenFile]);
-
-	useEffect(() => {
-		void fileVersion;
-
 		const root = rootRef.current;
 		const container = containerRef.current;
 		const viewer = viewerRef.current;
-		const file = fileRef.current;
 
-		if (!file || !root || !container || !viewer) return;
+		if (!root || !container || !viewer) return;
 
 		let isCancelled = false;
 		let animationFrameId = 0;
@@ -207,7 +156,7 @@ export function PdfViewer({ className, data, file: givenFile }: PdfViewerProps) 
 
 		void loadDocument().catch((error: unknown) => {
 			if (!isCancelled) {
-				console.error("Failed to render public resume PDF with PDF.js", error);
+				console.error("Failed to render the PDF with PDF.js", error);
 				dispatch({ type: "error" });
 			}
 		});
@@ -224,7 +173,7 @@ export function PdfViewer({ className, data, file: givenFile }: PdfViewerProps) 
 			void loadingTask?.destroy();
 			viewer.replaceChildren();
 		};
-	}, [fileVersion]);
+	}, [file]);
 
 	return (
 		<div

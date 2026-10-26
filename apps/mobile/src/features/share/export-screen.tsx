@@ -11,8 +11,9 @@ import { DocumentMenu } from "@/features/document-menu";
 import { HistoryPanel } from "@/features/history/history";
 import { Banner, Button, Segmented, Skeleton, useTheme } from "@/ui";
 
-type ShareScreenProps = { id: string; history?: boolean };
-export function ShareScreen({ id, history = false }: ShareScreenProps) {
+type ExportScreenProps = { id: string; history?: boolean };
+/** Download & history, over the builder. */
+export function ExportScreen({ id, history = false }: ExportScreenProps) {
 	const router = useRouter();
 	const { t } = useLingui();
 	const { space, colors, size } = useTheme();

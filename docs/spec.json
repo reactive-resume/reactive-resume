@@ -29233,10 +29233,6 @@
 														"type": "boolean",
 														"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
 													},
-													"showContactButton": {
-														"type": "boolean",
-														"description": "Whether visitors can ask to see hidden contact details with a button on the web page."
-													},
 													"isPrimary": {
 														"type": "boolean",
 														"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
@@ -33410,7 +33406,6 @@
 													"showDownloadButtons",
 													"showInSearchEngines",
 													"hideContactDetails",
-													"showContactButton",
 													"isPrimary",
 													"isLocked",
 													"data",
@@ -56619,9 +56614,13 @@
 											"type": "boolean",
 											"description": "Whether scheduled career work is configured on this deployment."
 										},
-										"shortLinkUrl": {
+										"appUrl": {
 											"type": "string",
-											"description": "The short domain whose /<username> opens an account's primary resume, when configured."
+											"description": "The app's own address, where sign-in and the editor live."
+										},
+										"aliasUrl": {
+											"type": "string",
+											"description": "A second domain serving the same public pages, when configured. Shared resume links use it instead of appUrl."
 										},
 										"customDomains": {
 											"type": "boolean",
@@ -56638,6 +56637,7 @@
 										"allowGuestLogin",
 										"smtpEnabled",
 										"careerSchedulingEnabled",
+										"appUrl",
 										"customDomains",
 										"olacvSuggestion"
 									]
@@ -56890,7 +56890,7 @@
 			"get": {
 				"operationId": "getResumeStatistics",
 				"summary": "Get resume statistics",
-				"description": "Returns view, download and contact reveal statistics for the specified resume, including total counts and the timestamps of the last view and download. Requires authentication.",
+				"description": "Returns view and download statistics for the specified resume, including total counts and the timestamps of the last view and download. Requires authentication.",
 				"tags": [
 					"Resume Statistics"
 				],
@@ -56925,10 +56925,6 @@
 											"type": "number",
 											"description": "Total number of times the resume has been downloaded."
 										},
-										"contactReveals": {
-											"type": "number",
-											"description": "Total number of times visitors asked to see the resume's hidden contact details."
-										},
 										"lastViewedAt": {
 											"anyOf": [
 												{
@@ -56960,7 +56956,6 @@
 										"isPublic",
 										"views",
 										"downloads",
-										"contactReveals",
 										"lastViewedAt",
 										"lastDownloadedAt"
 									]
@@ -57073,17 +57068,12 @@
 											"downloads": {
 												"type": "number",
 												"description": "Number of downloads recorded on this day."
-											},
-											"contactReveals": {
-												"type": "number",
-												"description": "Number of contact detail reveals recorded on this day."
 											}
 										},
 										"required": [
 											"date",
 											"views",
-											"downloads",
-											"contactReveals"
+											"downloads"
 										]
 									}
 								}
@@ -57431,10 +57421,6 @@
 												"type": "boolean",
 												"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
 											},
-											"showContactButton": {
-												"type": "boolean",
-												"description": "Whether visitors can ask to see hidden contact details with a button on the web page."
-											},
 											"isPrimary": {
 												"type": "boolean",
 												"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
@@ -57465,7 +57451,6 @@
 											"showDownloadButtons",
 											"showInSearchEngines",
 											"hideContactDetails",
-											"showContactButton",
 											"isPrimary",
 											"isLocked",
 											"createdAt",
@@ -57782,10 +57767,6 @@
 										"hideContactDetails": {
 											"type": "boolean",
 											"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
-										},
-										"showContactButton": {
-											"type": "boolean",
-											"description": "Whether visitors can ask to see hidden contact details with a button on the web page."
 										},
 										"isPrimary": {
 											"type": "boolean",
@@ -62071,7 +62052,6 @@
 										"showDownloadButtons",
 										"showInSearchEngines",
 										"hideContactDetails",
-										"showContactButton",
 										"isPrimary",
 										"isLocked",
 										"data",
@@ -62195,10 +62175,6 @@
 										"type": "boolean",
 										"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
 									},
-									"showContactButton": {
-										"type": "boolean",
-										"description": "Whether visitors can ask to see hidden contact details with a button on the web page."
-									},
 									"isPrimary": {
 										"type": "boolean",
 										"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
@@ -62263,10 +62239,6 @@
 										"hideContactDetails": {
 											"type": "boolean",
 											"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
-										},
-										"showContactButton": {
-											"type": "boolean",
-											"description": "Whether visitors can ask to see hidden contact details with a button on the web page."
 										},
 										"isPrimary": {
 											"type": "boolean",
@@ -66541,7 +66513,6 @@
 										"showDownloadButtons",
 										"showInSearchEngines",
 										"hideContactDetails",
-										"showContactButton",
 										"isPrimary",
 										"isLocked",
 										"data",
@@ -67003,10 +66974,6 @@
 											"type": "boolean",
 											"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
 										},
-										"showContactButton": {
-											"type": "boolean",
-											"description": "Whether visitors can ask to see hidden contact details with a button on the web page."
-										},
 										"isPrimary": {
 											"type": "boolean",
 											"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
@@ -71280,7 +71247,6 @@
 										"showDownloadButtons",
 										"showInSearchEngines",
 										"hideContactDetails",
-										"showContactButton",
 										"isPrimary",
 										"isLocked",
 										"data",
@@ -71722,10 +71688,6 @@
 										"hideContactDetails": {
 											"type": "boolean",
 											"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
-										},
-										"showContactButton": {
-											"type": "boolean",
-											"description": "Whether visitors can ask to see hidden contact details with a button on the web page."
 										},
 										"isPrimary": {
 											"type": "boolean",
@@ -75987,7 +75949,6 @@
 										"showDownloadButtons",
 										"showInSearchEngines",
 										"hideContactDetails",
-										"showContactButton",
 										"isPrimary",
 										"isLocked",
 										"data",
@@ -82078,10 +82039,6 @@
 											"type": "boolean",
 											"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
 										},
-										"showContactButton": {
-											"type": "boolean",
-											"description": "Whether visitors can ask to see hidden contact details with a button on the web page."
-										},
 										"isPrimary": {
 											"type": "boolean",
 											"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
@@ -86355,7 +86312,6 @@
 										"showDownloadButtons",
 										"showInSearchEngines",
 										"hideContactDetails",
-										"showContactButton",
 										"isPrimary",
 										"isLocked",
 										"data",
@@ -89322,10 +89278,6 @@
 										"type": "boolean",
 										"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
 									},
-									"showContactButton": {
-										"type": "boolean",
-										"description": "Whether visitors can ask to see hidden contact details with a button on the web page."
-									},
 									"isPrimary": {
 										"type": "boolean",
 										"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
@@ -89390,10 +89342,6 @@
 										"hideContactDetails": {
 											"type": "boolean",
 											"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
-										},
-										"showContactButton": {
-											"type": "boolean",
-											"description": "Whether visitors can ask to see hidden contact details with a button on the web page."
 										},
 										"isPrimary": {
 											"type": "boolean",
@@ -93668,7 +93616,6 @@
 										"showDownloadButtons",
 										"showInSearchEngines",
 										"hideContactDetails",
-										"showContactButton",
 										"isPrimary",
 										"isLocked",
 										"data",
@@ -94272,10 +94219,6 @@
 											"type": "boolean",
 											"description": "Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers."
 										},
-										"showContactButton": {
-											"type": "boolean",
-											"description": "Whether visitors can ask to see hidden contact details with a button on the web page."
-										},
 										"isPrimary": {
 											"type": "boolean",
 											"description": "Whether this is the account's primary resume, opened by its short link and custom domain."
@@ -98549,7 +98492,6 @@
 										"showDownloadButtons",
 										"showInSearchEngines",
 										"hideContactDetails",
-										"showContactButton",
 										"isPrimary",
 										"isLocked",
 										"data",

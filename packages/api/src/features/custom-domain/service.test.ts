@@ -4,7 +4,7 @@ vi.mock("@reactive-resume/db/client", () => ({ db: {} }));
 vi.mock("@reactive-resume/env/server", () => ({
 	env: {
 		APP_URL: "https://rxresu.me",
-		SHORT_LINK_URL: "https://rx.cv",
+		APP_ALIAS_URL: "https://rx.cv",
 		CUSTOM_DOMAIN_TARGET: "domains.rx.cv",
 		CUSTOM_DOMAIN_PROVIDER_SECRET: "x".repeat(32),
 	},

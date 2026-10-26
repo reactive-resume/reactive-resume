@@ -21,9 +21,6 @@ const resumeSchema = createSelectSchema(schema.resume, {
 		.describe(
 			"Whether the public web page, its PDF and this API leave out the email, phone, location, custom header fields and references' phone numbers.",
 		),
-	showContactButton: z
-		.boolean()
-		.describe("Whether visitors can ask to see hidden contact details with a button on the web page."),
 	isPrimary: z
 		.boolean()
 		.describe("Whether this is the account's primary resume, opened by its short link and custom domain."),
@@ -114,7 +111,6 @@ export const resumeDto = {
 				showDownloadButtons: true,
 				showInSearchEngines: true,
 				hideContactDetails: true,
-				showContactButton: true,
 				isPrimary: true,
 			})
 			.partial()

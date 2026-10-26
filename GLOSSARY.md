@@ -272,8 +272,8 @@ the **Profiles** section), and not the PDF.
 **Primary resume** — the one resume an account's short link and custom domain open. Not the "main"
 or "default" resume.
 
-**Short link** — the short address (`rx.cv/<username>`) that opens the **Primary resume**. Not a
-link-shortening service.
+**Short link** — the short address (`/<username>`, such as `rx.cv/dkowalski`) that opens the **Primary
+resume**. It works on every domain the app answers on. Not a link-shortening service.
 
 **Custom domain** — the owner's own web address, such as `john.dev`, that opens their **Primary
 resume**. "Domain" as in web address, not a field of knowledge.
@@ -284,9 +284,6 @@ Off unless the owner turns it on.
 **Contact details** — the email, phone, location and custom fields in the resume's header, and the
 contact information inside **References**. The owner can hide them from everyone viewing the web
 page or downloading its PDF.
-
-**Show contact details** — the button on a web page that reveals hidden **Contact details** to a
-visitor who asks. A verb phrase on a button.
 
 **Assistant** — the AI panel beside the page. It replaces both the "AI agent" page and the "AI
 assistant" sheet, so there is now only one AI term.

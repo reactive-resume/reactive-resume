@@ -1,62 +1,70 @@
-import type { Ratelimiter } from "@orpc/experimental-ratelimit";
+import type { ResumeMatch } from "./slugs";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { and, asc, count, eq, isNull, sql } from "drizzle-orm";
 import { isbot } from "isbot";
-import { contactDetailsOf } from "@reactive-resume/resume/contact-details";
-import { redactResumeForViewer, requiresPassword, shouldCountForStatistics } from "./access-policy";
+import { db } from "@reactive-resume/db/client";
+import * as schema from "@reactive-resume/db/schema";
+import { env } from "@reactive-resume/env/server";
+import { publicResumePath } from "@reactive-resume/resume/sharing";
+import { consumeResumePasswordLimit } from "../../middleware/rate-limit";
+import { verifiedDomainColumn } from "../custom-domain/service";
+import { createPreviewToken, hasResumeAccess, isValidPreviewToken } from "./access";
+import {
+	ownerIsNotBanned,
+	publicResumeData,
+	requiresPassword,
+	resolveViewer,
+	shouldCountForStatistics,
+} from "./access-policy";
 import { parseStoredResumeData } from "./resume-data-validation";
-import { clientKeyFromHeaders, shouldCountView } from "./view-dedup";
+import { resumeService } from "./service";
+import { findResume } from "./slugs";
+import { countVisit } from "./view-dedup";
 
-type PublicResumeInput = { username: string; slug: string; requestHeaders: Headers; trustedClient: string };
-
-/** What a web page needs to know about its resume, beyond the content. */
-export type WebPageSettings = {
-	showDownloadButtons: boolean;
-	showInSearchEngines: boolean;
-	hideContactDetails: boolean;
-	showContactButton: boolean;
-	hasPassword: boolean;
-};
+export type { ResumeMatch } from "./slugs";
 
 export type PublicWebPage =
 	| { status: "unavailable" }
 	/** Locked behind a password; `locale` is the resume's language, for the form. */
 	| { status: "password"; locale: string }
-	/** A previous slug: the page lives at `slug` now. */
-	| { status: "moved"; slug: string }
+	/** A previous slug: the page lives at `username`/`slug` now. */
+	| { status: "moved"; username: string; slug: string }
 	| {
 			status: "ok";
-			id: string;
+			username: string;
 			slug: string;
 			updatedAt: Date;
+			/** What every visitor sees: hidden content and, when the owner hid them, contact details left out. */
 			data: ResumeData;
-			settings: WebPageSettings;
+			/** The account's primary resume: its own address is `/<username>`. */
+			isPrimary: boolean;
 			/** The verified custom domain this primary resume opens at, which search engines are pointed to. */
 			customDomain: string | null;
+			showDownloadButtons: boolean;
+			hasPassword: boolean;
+			/** Listed in search engines: the owner allows it, no password guards it, and it isn't a preview. */
+			indexable: boolean;
 	  };
 
 const isCrawler = (headers: Headers) => isbot(headers.get("user-agent") ?? "");
 
-// Created on first use, once the deployment's Redis (if any) is known.
-let passwordLimiter: Ratelimiter | undefined;
-let revealLimiter: Ratelimiter | undefined;
-
-const resolveCurrentUserId = async (requestHeaders: Headers) =>
-	(await import("../../context"))
-		.resolveAuthenticationFromRequestHeaders(requestHeaders)
-		.then((authentication) => (authentication?.permissions.includes("read") ? authentication.user.id : undefined))
-		.catch(() => undefined);
-
-const findPublicResume = async (input: { username: string; slug: string }, includePrivate = false) => {
-	const [schema, { eq }, { findResumeBySlug }] = await Promise.all([
-		import("@reactive-resume/db/schema"),
-		import("drizzle-orm"),
-		import("./slugs"),
-	]);
-	return findResumeBySlug(
-		input,
+/**
+ * A public resume as its web page shows it, in one lookup. Every visitor, the owner included, gets the public view, so
+ * the page is what the owner shares. Views count once an hour per visitor, never for the owner or for crawlers.
+ */
+export async function loadPublicWebPage(input: {
+	match: ResumeMatch;
+	requestHeaders: Headers;
+	trustedClient: string;
+	previewToken?: string | undefined;
+}): Promise<PublicWebPage> {
+	const { match, previewToken } = input;
+	const resume = await findResume(
+		match,
 		{
 			id: schema.resume.id,
 			userId: schema.resume.userId,
+			username: schema.user.username,
 			slug: schema.resume.slug,
 			data: schema.resume.data,
 			updatedAt: schema.resume.updatedAt,
@@ -65,166 +73,82 @@ const findPublicResume = async (input: { username: string; slug: string }, inclu
 			showDownloadButtons: schema.resume.showDownloadButtons,
 			showInSearchEngines: schema.resume.showInSearchEngines,
 			hideContactDetails: schema.resume.hideContactDetails,
-			showContactButton: schema.resume.showContactButton,
+			customDomain: verifiedDomainColumn(),
 		},
-		includePrivate ? undefined : eq(schema.resume.isPublic, true),
+		previewToken ? undefined : eq(schema.resume.isPublic, true),
 	);
-};
-
-/**
- * A public resume as its web page shows it. Every visitor, the owner included, gets the public view, so the page is
- * what the owner shares. Views count once an hour per visitor, never for the owner or for crawlers.
- */
-export async function loadPublicWebPage(
-	input: PublicResumeInput & { previewToken?: string | undefined },
-): Promise<PublicWebPage> {
-	const resume = await findPublicResume(input, Boolean(input.previewToken));
 	if (!resume) return { status: "unavailable" };
 
-	// The owner's preview link: the page as visitors will see it, published or not, without counting or indexing.
-	if (input.previewToken) {
-		const { isValidPreviewToken } = await import("./access");
-		if (!isValidPreviewToken(input.previewToken, resume.id)) return { status: "unavailable" };
-		return toPage(resume, { preview: true });
-	}
-	if (resume.slug !== input.slug) return { status: "moved", slug: resume.slug };
-
-	const currentUserId = await resolveCurrentUserId(input.requestHeaders);
-	const viewer = currentUserId ? { id: currentUserId } : null;
-	if (requiresPassword(resume, viewer)) {
-		const { hasResumeAccess } = await import("./access");
-		if (!hasResumeAccess(input.requestHeaders, resume.id, resume.passwordHash))
-			return { status: "password", locale: parseStoredResumeData(resume.data).metadata.page.locale };
-	}
-
-	if (shouldCountForStatistics({ ...resume, isPublic: true }, viewer) && !isCrawler(input.requestHeaders)) {
-		const key = `${resume.id}:${clientKeyFromHeaders(input.trustedClient)}`;
-		if (await shouldCountView(key, Date.now())) {
-			const { resumeService } = await import("./service");
-			await resumeService.statistics.increment({ id: resume.id, views: true });
-		}
-	}
-
-	return toPage(resume, { preview: false });
-}
-
-async function toPage(
-	resume: NonNullable<Awaited<ReturnType<typeof findPublicResume>>>,
-	{ preview }: { preview: boolean },
-): Promise<PublicWebPage> {
-	const { data } = redactResumeForViewer(
-		{ name: "", data: parseStoredResumeData(resume.data), hideContactDetails: resume.hideContactDetails },
-		false,
-	);
-	const customDomain = resume.isPrimary
-		? await import("../custom-domain/service").then(({ verifiedDomainOf }) => verifiedDomainOf(resume.userId))
-		: null;
-	return {
+	const hasPassword = resume.passwordHash !== null;
+	const page = ({ preview }: { preview: boolean }): PublicWebPage => ({
 		status: "ok",
-		customDomain,
-		id: resume.id,
+		username: resume.username,
 		slug: resume.slug,
 		updatedAt: resume.updatedAt,
-		data,
-		settings: {
-			showDownloadButtons: resume.showDownloadButtons,
-			// A preview is never listed, whatever the switch says.
-			showInSearchEngines: resume.showInSearchEngines && !preview,
-			hideContactDetails: resume.hideContactDetails,
-			showContactButton: resume.showContactButton,
-			hasPassword: resume.passwordHash !== null,
-		},
-	};
-}
+		data: publicResumeData(resume),
+		isPrimary: resume.isPrimary,
+		customDomain: resume.isPrimary ? resume.customDomain : null,
+		showDownloadButtons: resume.showDownloadButtons,
+		hasPassword,
+		// A preview is never listed, whatever the switch says.
+		indexable: resume.showInSearchEngines && !hasPassword && !preview,
+	});
 
-/**
- * The contact details a resume hides, for a visitor who asks with the page's button. Only when the owner left the
- * button on, behind the same password gate as the page. Each visitor's reveal counts once an hour.
- */
-export async function revealContactDetails(input: PublicResumeInput) {
-	const { createRateLimiter } = await import("../../redis");
-	revealLimiter ??= createRateLimiter("contact-reveal", { maxRequests: 20, window: 60_000 });
-	if (!(await revealLimiter.limit(input.trustedClient || "unknown")).success) return null;
+	// The owner's preview link: the page as visitors will see it, published or not, without counting or indexing.
+	if (previewToken)
+		return isValidPreviewToken(previewToken, resume.id) ? page({ preview: true }) : { status: "unavailable" };
+	if ("slug" in match && resume.slug !== match.slug)
+		return { status: "moved", username: resume.username, slug: resume.slug };
 
-	const resume = await findPublicResume(input);
-	if (!resume || !resume.hideContactDetails || !resume.showContactButton) return null;
+	const viewer = await resolveViewer(input.requestHeaders);
+	if (requiresPassword(resume, viewer) && !hasResumeAccess(input.requestHeaders, resume.id, resume.passwordHash))
+		return { status: "password", locale: parseStoredResumeData(resume.data).metadata.page.locale };
 
-	const currentUserId = await resolveCurrentUserId(input.requestHeaders);
-	const viewer = currentUserId ? { id: currentUserId } : null;
-	if (requiresPassword(resume, viewer)) {
-		const { hasResumeAccess } = await import("./access");
-		if (!hasResumeAccess(input.requestHeaders, resume.id, resume.passwordHash)) return null;
-	}
+	if (shouldCountForStatistics({ ...resume, isPublic: true }, viewer) && !isCrawler(input.requestHeaders))
+		await countVisit({ kind: "view", resumeId: resume.id, trustedClient: input.trustedClient });
 
-	const key = `contact:${resume.id}:${clientKeyFromHeaders(input.trustedClient)}`;
-	if (
-		shouldCountForStatistics({ ...resume, isPublic: true }, viewer) &&
-		!isCrawler(input.requestHeaders) &&
-		(await shouldCountView(key, Date.now()))
-	) {
-		const { resumeService } = await import("./service");
-		await resumeService.statistics.increment({ id: resume.id, contactReveals: true });
-	}
-
-	// Hidden sections and items stay hidden: the reveal reads the same redacted resume, minus the contact removal.
-	const { data } = redactResumeForViewer({ name: "", data: parseStoredResumeData(resume.data) }, false);
-	return contactDetailsOf(data);
+	return page({ preview: false });
 }
 
 /**
  * Checks a password typed into a web page's form. On success the response carries the resume's access cookie, as the
- * API's verify call does. Ten tries a minute per visitor and resume keep guessing slow.
+ * API's verify call does, and both spend the same budget of tries per visitor and resume.
  */
 export async function verifyWebPagePassword(input: {
-	username: string;
-	slug: string;
+	match: ResumeMatch;
 	password: string;
 	trustedClient: string;
 	responseHeaders: Headers;
 }): Promise<boolean> {
 	if (input.password.length < 6 || input.password.length > 64) return false;
-	const { createRateLimiter } = await import("../../redis");
-	passwordLimiter ??= createRateLimiter("resume-page-password", { maxRequests: 10, window: 60_000 });
-	const { success } = await passwordLimiter.limit(
-		`${input.trustedClient || "unknown"}:${input.username}:${input.slug}`,
-	);
-	if (!success) return false;
-	const { resumeService } = await import("./service");
+	// The verify call names a resume by username and slug; a page at `/<username>` or the root looks its slug up.
+	const address =
+		"slug" in input.match
+			? input.match
+			: await findResume(input.match, { username: schema.user.username, slug: schema.resume.slug });
+	if (!address) return false;
+	if (!(await consumeResumePasswordLimit({ ...address, trustedClient: input.trustedClient }))) return false;
 	return resumeService
 		.verifyPassword({
-			username: input.username,
-			slug: input.slug,
+			username: address.username,
+			slug: address.slug,
 			password: input.password,
 			responseHeaders: input.responseHeaders,
 		})
 		.catch(() => false);
 }
 
-/**
- * The address of an account's primary resume, for its short link. `null` when the account has none, or it's in
- * Trash, or the owner is banned; `isPublic` false when it exists but isn't published right now.
- */
-export async function findPrimaryResume(username: string): Promise<{ slug: string; isPublic: boolean } | null> {
-	const [{ db }, schema, { and, eq, isNull }, { ownerIsNotBanned }] = await Promise.all([
-		import("@reactive-resume/db/client"),
-		import("@reactive-resume/db/schema"),
-		import("drizzle-orm"),
-		import("./access-policy"),
-	]);
-	const [resume] = await db
-		.select({ slug: schema.resume.slug, isPublic: schema.resume.isPublic })
-		.from(schema.resume)
-		.innerJoin(schema.user, eq(schema.resume.userId, schema.user.id))
-		.where(
-			and(
-				eq(schema.user.username, username.trim().toLowerCase()),
-				eq(schema.resume.isPrimary, true),
-				isNull(schema.resume.trashedAt),
-				ownerIsNotBanned(),
-			),
-		)
-		.limit(1);
-	return resume ?? null;
+/** The owner's link to a resume's web page as visitors will see it, valid for 15 minutes; `null` when it isn't theirs. */
+export async function webPagePreviewUrl(id: string, userId: string): Promise<string | null> {
+	const resume = await findResume(
+		{ id },
+		{ username: schema.user.username, slug: schema.resume.slug },
+		eq(schema.resume.userId, userId),
+	);
+	if (!resume) return null;
+	const url = new URL(publicResumePath(resume), env.APP_URL);
+	url.searchParams.set("preview", createPreviewToken(id));
+	return url.href;
 }
 
 /** A page of the sitemap holds at most this many addresses, the protocol's limit. */
@@ -232,30 +156,30 @@ export const SITEMAP_PAGE_SIZE = 50_000;
 
 /**
  * Resumes whose owners let search engines list them: public, no password, outside Trash, owner not banned. A primary
- * resume with a verified custom domain is left out; its own domain is its address.
+ * resume with a verified custom domain is left out; its own domain is its address. Needs the `user` join.
  */
-export async function listIndexableResumes(page: number) {
-	const [{ db }, schema, { and, asc, eq, isNull, sql }, { ownerIsNotBanned }] = await Promise.all([
-		import("@reactive-resume/db/client"),
-		import("@reactive-resume/db/schema"),
-		import("drizzle-orm"),
-		import("./access-policy"),
-	]);
+const indexableResumeWhere = () =>
+	and(
+		eq(schema.resume.isPublic, true),
+		eq(schema.resume.showInSearchEngines, true),
+		isNull(schema.resume.password),
+		isNull(schema.resume.trashedAt),
+		ownerIsNotBanned(),
+		sql`not (${schema.resume.isPrimary} and ${verifiedDomainColumn()} is not null)`,
+	);
+
+export function listIndexableResumes(page: number) {
 	return (
 		db
-			.select({ username: schema.user.username, slug: schema.resume.slug, updatedAt: schema.resume.updatedAt })
+			.select({
+				username: schema.user.username,
+				slug: schema.resume.slug,
+				isPrimary: schema.resume.isPrimary,
+				updatedAt: schema.resume.updatedAt,
+			})
 			.from(schema.resume)
 			.innerJoin(schema.user, eq(schema.resume.userId, schema.user.id))
-			.where(
-				and(
-					eq(schema.resume.isPublic, true),
-					eq(schema.resume.showInSearchEngines, true),
-					isNull(schema.resume.password),
-					isNull(schema.resume.trashedAt),
-					ownerIsNotBanned(),
-					sql`not (${schema.resume.isPrimary} and exists (select 1 from ${schema.customDomain} where ${schema.customDomain.userId} = ${schema.resume.userId} and ${schema.customDomain.verifiedAt} is not null))`,
-				),
-			)
+			.where(indexableResumeWhere())
 			// ponytail: offset paging; switch to keyset ranges if sitemap pages get slow.
 			.orderBy(asc(schema.resume.id))
 			.limit(SITEMAP_PAGE_SIZE)
@@ -264,36 +188,10 @@ export async function listIndexableResumes(page: number) {
 }
 
 export async function countIndexableResumes(): Promise<number> {
-	const [{ db }, schema, { and, count, eq, isNull }] = await Promise.all([
-		import("@reactive-resume/db/client"),
-		import("@reactive-resume/db/schema"),
-		import("drizzle-orm"),
-	]);
 	const [row] = await db
 		.select({ total: count() })
 		.from(schema.resume)
-		.where(
-			and(
-				eq(schema.resume.isPublic, true),
-				eq(schema.resume.showInSearchEngines, true),
-				isNull(schema.resume.password),
-				isNull(schema.resume.trashedAt),
-			),
-		);
-	return row?.total ?? 0;
-}
-
-/** The address of the resume `ROOT_RESUME_ID` names, for the instance's root page. */
-export async function findResumeAddress(id: string): Promise<{ username: string; slug: string } | null> {
-	const [{ db }, schema, { eq }] = await Promise.all([
-		import("@reactive-resume/db/client"),
-		import("@reactive-resume/db/schema"),
-		import("drizzle-orm"),
-	]);
-	const [target] = await db
-		.select({ username: schema.user.username, slug: schema.resume.slug })
-		.from(schema.resume)
 		.innerJoin(schema.user, eq(schema.resume.userId, schema.user.id))
-		.where(eq(schema.resume.id, id));
-	return target ?? null;
+		.where(indexableResumeWhere());
+	return row?.total ?? 0;
 }

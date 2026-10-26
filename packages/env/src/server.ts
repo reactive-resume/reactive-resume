@@ -82,8 +82,9 @@ export const env = createEnv({
 			.trim()
 			.transform((value) => value || undefined)
 			.optional(),
-		// A short domain whose `/<username>` opens that account's primary resume, e.g. https://rx.cv. Unset turns it off.
-		SHORT_LINK_URL: z.url({ protocol: /^https?$/ }).optional(),
+		// A second domain serving the same public pages as APP_URL (resumes, /<username>, the home page), e.g.
+		// https://rx.cv. Sign-in and the editor stay on APP_URL. When set, it's the address shown and shared.
+		APP_ALIAS_URL: z.url({ protocol: /^https?$/ }).optional(),
 		// The host custom domains point a CNAME at, e.g. domains.rx.cv. Unset turns custom domains off.
 		CUSTOM_DOMAIN_TARGET: z
 			.string()

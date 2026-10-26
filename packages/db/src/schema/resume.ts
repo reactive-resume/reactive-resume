@@ -24,7 +24,6 @@ export const resume = pg.pgTable(
 		// version restore can never change them.
 		showInSearchEngines: pg.boolean("show_in_search_engines").notNull().default(false),
 		hideContactDetails: pg.boolean("hide_contact_details").notNull().default(false),
-		showContactButton: pg.boolean("show_contact_button").notNull().default(true),
 		// The resume an account's short link and custom domain open; at most one per user.
 		isPrimary: pg.boolean("is_primary").notNull().default(false),
 		isLocked: pg.boolean("is_locked").notNull().default(false),
@@ -153,8 +152,6 @@ export const resumeStatistics = pg.pgTable("resume_statistics", {
 		.$defaultFn(() => generateId()),
 	views: pg.integer("views").notNull().default(0),
 	downloads: pg.integer("downloads").notNull().default(0),
-	// Visitors who asked to see hidden contact details.
-	contactReveals: pg.integer("contact_reveals").notNull().default(0),
 	lastViewedAt: pg.timestamp("last_viewed_at", { withTimezone: true }),
 	lastDownloadedAt: pg.timestamp("last_downloaded_at", { withTimezone: true }),
 	resumeId: pg
@@ -181,7 +178,6 @@ export const resumeStatisticsDaily = pg.pgTable(
 		date: pg.date("date", { mode: "string" }).notNull(),
 		views: pg.integer("views").notNull().default(0),
 		downloads: pg.integer("downloads").notNull().default(0),
-		contactReveals: pg.integer("contact_reveals").notNull().default(0),
 		resumeId: pg
 			.text("resume_id")
 			.notNull()

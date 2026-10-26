@@ -726,7 +726,7 @@ msgstr "{stars, plural, other {กดดาวให้ Reactive Resume บน G
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, other {# เรื่องราว}}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "{suggestion} may be available. Get yours here →"
 msgstr "{suggestion} อาจยังว่างอยู่ รับของคุณได้ที่นี่ →"
 
@@ -844,7 +844,7 @@ msgstr "สรุปย่อ 10 นาที"
 msgid "10–11 recommended"
 msgstr "แนะนำ 10–11"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 ไฟล์"
 
@@ -903,15 +903,11 @@ msgstr "90 วัน"
 msgid "A"
 msgstr "A"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "ปุ่ม “แสดงข้อมูลการติดต่อ” จะเปิดเผยข้อมูลเหล่านี้ให้ผู้คนเห็น แต่ไม่ให้เครื่องมือค้นหาเห็น"
-
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "A ยอมรับและ R ปฏิเสธการแก้ไขที่เน้น ↑ และ ↓ ย้ายไปมาระหว่างการแก้ไข"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "ข้อมูลสำรองของจดหมายฉบับนี้ นำเข้ากลับเข้าไปใน Reactive Resume ในรูปแบบตัวอักษร"
 
@@ -1256,7 +1252,7 @@ msgstr "เพิ่มผู้ให้บริการ AI"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "เพิ่ม @ และโดเมน เช่น name@example.com"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "เพิ่มที่อยู่"
 
@@ -1423,7 +1419,7 @@ msgstr "เพิ่มโดเมนหลัง @ เช่น {name}@example
 msgid "Add the domain ending, like {domain}.com"
 msgstr "เพิ่มนามสกุลโดเมน เช่น {domain}.com"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "เพิ่มเรกคอร์ดเหล่านี้ในที่ที่คุณจัดการโดเมน แล้วตรวจสอบ การเปลี่ยนแปลงอาจใช้เวลาสองสามชั่วโมงกว่าจะมีผลกับทุกคน"
 
@@ -1492,7 +1488,7 @@ msgstr "เพิ่มในคลังความรู้เป็นปร
 msgid "Added to Prepare"
 msgstr "เพิ่มในแท็บเตรียมตัวแล้ว"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "ที่อยู่"
 
@@ -1725,7 +1721,7 @@ msgstr "และ {0} มากขึ้น"
 msgid "and counting"
 msgstr "และการนับ"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "ประวัติย่ออีกฉบับของคุณใช้ที่อยู่นี้"
 
@@ -2059,10 +2055,6 @@ msgstr "ถามหรืออธิบายการเปลี่ยนแ
 #: src/features/homepage/faq.tsx
 msgid "Asked and <0>answered.</0>"
 msgstr "ถามแล้วและ<0>ตอบแล้ว</0>"
-
-#: src/features/resume/share/share-panel.tsx
-msgid "asked for contact details"
-msgstr "ขอข้อมูลการติดต่อ"
 
 #: src/features/homepage/prepare.tsx
 msgid "Asks for an example of your onboarding work."
@@ -2574,7 +2566,7 @@ msgstr "ตรวจสอบไฟล์อื่น"
 msgid "Check any PDF, no account needed"
 msgstr "ตรวจสอบ PDF ใด ๆ โดยไม่ต้องใช้บัญชี"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Check DNS"
 msgstr "ตรวจสอบ DNS"
 
@@ -2661,7 +2653,7 @@ msgstr "กำลังตรวจสอบ PDF ที่ส่งออก..."
 msgid "Checking your preferences"
 msgstr "กำลังตรวจสอบการตั้งค่าที่ต้องการของคุณ"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "กำลังตรวจสอบ... การคัดลอกจะพร้อมใช้งานหลังจากบันทึก"
 
@@ -2791,7 +2783,7 @@ msgstr "รหัสลูกค้า"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2968,7 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "ยืนยันวันนี้เวลา {time} ผ่านวิดีโอ"
 
 #: src/features/assistant/provider-setup.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "เชื่อมต่อ"
@@ -3021,7 +3013,7 @@ msgstr "เชื่อมต่อแล้ว"
 msgid "Connected applications"
 msgstr "แอพพลิเคชั่นที่เชื่อมต่อ"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "เชื่อมต่อแล้ว โดเมนของคุณจะเปิดประวัติย่อหลักของคุณ"
 
@@ -3152,7 +3144,7 @@ msgid "Copied"
 msgstr "คัดลอกแล้ว"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3626,8 +3618,8 @@ msgstr "บันทึกกำหนดการนี้ไม่ได้ �
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "ไม่สามารถบันทึกการเปลี่ยนแปลงของคุณได้ ลองอีกครั้งก่อนดำเนินการต่อ"
@@ -3732,6 +3724,7 @@ msgstr "ยกเลิกการเชื่อมโยงใบสมัค
 msgid "Couldn't unlock the document. Try again."
 msgstr "ปลดล็อกเอกสารไม่ได้ ลองอีกครั้ง"
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "อัปเดตการแชร์ไม่ได้ ลองอีกครั้ง"
@@ -3768,7 +3761,7 @@ msgstr "อัปเดตประวัติย่อไม่ได้ ล�
 msgid "Couldn't update the timeline. Try again."
 msgstr "ไม่สามารถอัปเดตไทม์ไลน์ได้ ลองอีกครั้ง"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "อัปเดตเวอร์ชันของจดหมายนี้ไม่ได้ ลองอีกครั้ง"
 
@@ -4362,7 +4355,7 @@ msgstr "เอกสารที่คุณย้ายมาที่นี่
 msgid "Does it use AI?"
 msgstr "มันใช้เอไอเหรอ?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Domain connected"
 msgstr "เชื่อมต่อโดเมนแล้ว"
 
@@ -4398,8 +4391,8 @@ msgstr "กำลังตรวจสอบซ้ำ"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "ดาวน์โหลด"
 
@@ -4411,7 +4404,7 @@ msgstr "ดาวน์โหลด {label}.dll"
 msgid "Download {name} sample PDF"
 msgstr "ดาวน์โหลดตัวอย่าง PDF ของ {name}"
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Download & history"
 msgstr "ดาวน์โหลดและประวัติ"
 
@@ -4429,7 +4422,7 @@ msgid "Download CSV"
 msgstr "ดาวน์โหลด CSV"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "ดาวน์โหลดไม่สำเร็จ ลองอีกครั้ง"
 
@@ -4455,7 +4448,7 @@ msgid "Download totals can include repeat clicks."
 msgstr "ยอดดาวน์โหลดทั้งหมดอาจรวมการคลิกซ้ำด้วย"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "ดาวน์โหลด {file} แล้ว"
 
@@ -4463,7 +4456,7 @@ msgstr "ดาวน์โหลด {file} แล้ว"
 msgid "Downloaded {file} and the cover letter"
 msgstr "ดาวน์โหลด {file} และจดหมายปะหน้าแล้ว"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "ดาวน์โหลดประวัติย่อของคุณและจดหมายฉบับนี้แล้ว"
 
@@ -5265,7 +5258,7 @@ msgid "For"
 msgstr "สำหรับ"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "สำหรับโดเมนราก เช่น example.com ให้ใช้เรกคอร์ด A และ AAAA ที่มีที่อยู่ของ {0} แทน CNAME"
 
@@ -5710,8 +5703,8 @@ msgid "Hiring team"
 msgstr "ทีมงานรับสมัคร"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
 msgstr "ประวัติศาสตร์"
 
@@ -6543,10 +6536,6 @@ msgstr "ความยาวไม่ใช่ข้อบกพร่อง �
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "ให้ไคลเอนต์ AI เช่น Claude หรือ Cursor อ่านและแก้ไขเรซูเม่ของคุณ โดยใช้คีย์ API ด้านบน"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Let visitors ask to see them"
-msgstr "ให้ผู้เยี่ยมชมขอดูข้อมูลได้"
-
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "เริ่มจากสิ่งที่คุณมี"
@@ -6677,7 +6666,7 @@ msgid "Link an application…"
 msgstr "ลิงค์สมัครงาน..."
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "คัดลอกลิงก์แล้ว"
@@ -6768,7 +6757,7 @@ msgid "Live · updates as you edit"
 msgstr "Live · อัปเดตตามที่คุณแก้ไข"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "ถ่ายทอดสดที่ {0}"
 
@@ -9298,7 +9287,7 @@ msgstr "นายหน้า"
 msgid "Recruiter reply"
 msgstr "ตอบกลับผู้สรรหา"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "นายหน้าเห็นชื่อนี้ ชื่อของคุณบวกกับ “จดหมายปะหน้า” ใช้ได้ผลดี"
 
@@ -9424,7 +9413,7 @@ msgstr "ทำงานระยะไกล"
 msgid "Remote, Hybrid, a city…"
 msgstr "รีโมต, ไฮบริด, เมือง…"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "ลบ"
@@ -9688,7 +9677,7 @@ msgstr "เรซูเม่ · เวอร์ชันที่ส่งแ�
 msgid "Resume (optional)"
 msgstr "ประวัติย่อ (ไม่จำเป็น)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "ประวัติย่อ + จดหมาย"
 
@@ -10126,8 +10115,8 @@ msgstr "บันทึกลงคลังความรู้แล้ว �
 msgid "Saved to Saved · Practice"
 msgstr "บันทึกไว้ใน “บันทึกแล้ว” · ฝึกซ้อม"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/share-panel.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "กำลังบันทึก {0}/{username}/{slug}… การคัดลอกสามารถใช้ได้หลังจากบันทึก"
 
@@ -10544,11 +10533,11 @@ msgstr "แบ่งปัน"
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "แชร์ลิงก์สาธารณะ เพิ่มรหัสผ่าน หรือเก็บไว้เป็นส่วนตัว เลือกจาก 3 ตัวเลือกการมองเห็น ส่งออกไปยัง PDF หรือ Word หรือนำข้อมูลทั้งหมดของคุณติดตัวไปด้วยในชื่อ JSON"
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "แบ่งปันส่วนต่างๆ"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "แบ่งปันผ่าน..."
 
@@ -10629,10 +10618,6 @@ msgstr "แสดงทุกประเภท"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "ปิดการแสดง"
-
-#: src/features/resume/share/web-page-text.ts
-msgid "Show contact details"
-msgstr "แสดงข้อมูลการติดต่อ"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -11684,7 +11669,7 @@ msgstr "คำทักทายตามชื่อ"
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "คีย์ถูกเข้ารหัสบนเซิร์ฟเวอร์และจะไม่แสดงอีก กำลังบันทึกการทดสอบการเชื่อมต่อ"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "จดหมายอย่างที่มันเป็น"
 
@@ -11784,7 +11769,7 @@ msgstr "ยืนยันการตอบกลับของผู้ให
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "เหตุผลถูกเก็บไว้สำหรับ Insights เอกสารที่เชื่อมโยงจะไม่ถูกแตะต้อง"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "ยังไม่เห็นเรกคอร์ด โปรดตรวจสอบอีกครั้งภายหลัง"
 
@@ -12011,7 +11996,7 @@ msgstr "นี่คือแบบฟอร์ม XFA ซอฟต์แวร�
 msgid "This is not a common resume page size."
 msgstr "นี่ไม่ใช่ขนาดหน้ากระดาษที่ใช้กันทั่วไปสำหรับเรซูเม่"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "ตัวอักษรนี้และ \"{resumeName}\" เป็น PDFs สองตัวที่ตั้งชื่อให้ตรงกัน"
 
@@ -12290,7 +12275,7 @@ msgid "Trust this device for 30 days"
 msgstr "เชื่อถืออุปกรณ์นี้เป็นเวลา 30 วัน"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "ลอง {0} ดูครับ"
 
@@ -12350,7 +12335,7 @@ msgstr "ปิดการยืนยันแบบสองขั้นตอ
 msgid "Turn off two-step verification?"
 msgstr "ปิดการยืนยันแบบสองขั้นตอนไหม"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "เปิดลิงก์เพื่อเลือกที่อยู่"
 
@@ -12699,7 +12684,7 @@ msgstr "ใช้กับใบสมัครทั้งหมด"
 msgid "Use in coaching: {excerpt}"
 msgstr "ใช้ในการโค้ช: {excerpt}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "ใช้ตัวอักษรพิมพ์เล็ก ตัวเลข และขีดกลางเดี่ยว"
 
@@ -13417,7 +13402,7 @@ msgid "You"
 msgstr "คุณ"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "คุณได้ใช้สิ่งนี้กับ “{0}” แล้ว"
 
@@ -13585,7 +13570,7 @@ msgstr "วันที่ของคุณเขียนในหลายร
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "รายละเอียดของคุณมีการเปลี่ยนแปลงในเรซูเม่ จดหมายได้รับการอัปเดตด้วย"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "โดเมนของคุณ"
 
@@ -13706,7 +13691,7 @@ msgstr "ไฟล์บันทึกเสียงของคุณจะถ
 msgid "Your requirements"
 msgstr "ข้อกำหนดของคุณ"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "ประวัติย่อของคุณ"
 

@@ -88,12 +88,12 @@ const versionHistoryMock = vi.hoisted(() => ({
 vi.mock("./version-history", () => versionHistoryMock);
 const recordSlugChangeMock = vi.hoisted(() => vi.fn());
 // The lookup by username and slug; its query is tested against real SQL in public-pdf.test.ts.
-const findResumeBySlugMock = vi.hoisted(() => vi.fn());
+const findResumeMock = vi.hoisted(() => vi.fn());
 vi.mock("./slugs", () => ({
 	SLUG_PATTERN: /^[a-z0-9]+(-[a-z0-9]+)*$/,
 	checkSlug: vi.fn(),
 	findFreeSlug: vi.fn(async () => "generated-slug"),
-	findResumeBySlug: findResumeBySlugMock,
+	findResume: findResumeMock,
 	recordSlugChange: recordSlugChangeMock,
 }));
 
@@ -179,7 +179,7 @@ beforeEach(() => {
 	versionHistoryMock.writeVersion.mockResolvedValue({ id: "v" });
 	versionHistoryMock.saveSessionVersion.mockResolvedValue(undefined);
 	recordSlugChangeMock.mockReset();
-	findResumeBySlugMock.mockReset();
+	findResumeMock.mockReset();
 	publishResumeUpdatedMock.mockResolvedValue(undefined);
 });
 
@@ -417,7 +417,7 @@ describe("patch", () => {
 
 describe("verifyPassword", () => {
 	it("throws INVALID_PASSWORD when bcrypt.compare returns false", async () => {
-		findResumeBySlugMock.mockResolvedValueOnce({ id: "r1", password: "hash" });
+		findResumeMock.mockResolvedValueOnce({ id: "r1", password: "hash" });
 		compareMock.mockResolvedValueOnce(false);
 
 		await expect(
@@ -516,7 +516,7 @@ describe.each([
 
 describe("getBySlug", () => {
 	it.each(["u1", "other-user"])("password gate exempts only the owner (%s)", async (currentUserId) => {
-		findResumeBySlugMock.mockResolvedValueOnce({
+		findResumeMock.mockResolvedValueOnce({
 			...createResumeRow(defaultResumeData),
 			userId: "u1",
 			isPublic: true,
@@ -541,7 +541,7 @@ describe("getBySlug", () => {
 			hasPassword: false,
 			passwordHash: null,
 		};
-		findResumeBySlugMock.mockResolvedValue(row);
+		findResumeMock.mockResolvedValue(row);
 		await expect(
 			resumeService.getBySlug({
 				username: "owner",
@@ -554,7 +554,7 @@ describe("getBySlug", () => {
 
 describe("statistics.recordDownload", () => {
 	it("lets the owner download a password-protected resume without an unlock cookie", async () => {
-		findResumeBySlugMock.mockResolvedValueOnce({ id: "r1", userId: "u1", isPublic: true, passwordHash: "hash" });
+		findResumeMock.mockResolvedValueOnce({ id: "r1", userId: "u1", isPublic: true, passwordHash: "hash" });
 		await expect(
 			resumeService.statistics.recordDownload({
 				username: "owner",
@@ -566,7 +566,7 @@ describe("statistics.recordDownload", () => {
 	});
 
 	it("requires password when downloading via renamed slug", async () => {
-		findResumeBySlugMock.mockResolvedValueOnce({ id: "r1", userId: "u1", isPublic: true, passwordHash: "hash" });
+		findResumeMock.mockResolvedValueOnce({ id: "r1", userId: "u1", isPublic: true, passwordHash: "hash" });
 		await expect(
 			resumeService.statistics.recordDownload({
 				username: "owner",

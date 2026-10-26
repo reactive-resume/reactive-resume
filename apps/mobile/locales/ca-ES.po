@@ -696,10 +696,6 @@ msgstr "2-3 frases es llegeixen millor"
 msgid "24 hours before"
 msgstr "24 hores abans"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Un botó «Mostra les dades de contacte» les mostra a les persones, però no als cercadors."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Una còpia de seguretat d'aquesta carta. Torna a importar a Reactive Resume com a carta."
@@ -1380,7 +1376,7 @@ msgstr "Qualsevol"
 msgid "Any font, in Advanced"
 msgstr "Qualsevol tipus de lletra, en avançat"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Qualsevol persona que tingui l'enllaç podrà veure el vostre currículum."
 
@@ -1611,10 +1607,6 @@ msgstr "Demaneu al vostre administrador del servidor que habiliti el xifratge de
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Pregunta o descriu un canvi..."
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "han demanat les dades de contacte"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Canvia el fus horari"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "S'ha canviat el currículum directament (una conversa anterior)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "No s'han pogut desar els canvis. Torna-ho a intentar abans de continuar."
 
@@ -2254,7 +2246,7 @@ msgstr "Esborra les seves entrades; la secció es queda. Podeu desfer."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Tanca"
 
@@ -2372,7 +2364,7 @@ msgstr "Comprimeix o elimina imatges grans per mantenir les càrregues ràpides.
 msgid "Confirm applied"
 msgstr "Confirma l'enviament"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Confirmeu la contrasenya"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "Comprovant-ho de nou"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Baixa"
 msgid "Download {0}"
 msgstr "Baixa {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Baixades i historial"
@@ -4416,7 +4408,7 @@ msgstr "Equip de contractació"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Història"
 
@@ -5035,10 +5027,6 @@ msgstr "Queden menys de 48 hores."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Permeteu que clients d'IA com Claude o Cursor llegeixin i editin els vostres currículums vitae mitjançant una clau API."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Permet que els visitants demanin veure-les"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Obre a Ofertes"
 msgid "Open letter"
 msgstr "Obre la carta"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Obriu la pàgina pública"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Preguntes pendents"
@@ -6443,6 +6427,10 @@ msgstr "Obriu la llista"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Obre la programació"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Obre la pàgina web"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Claus d'accés"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Contrasenya"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Les contrasenyes no coincideixen."
 
@@ -7475,7 +7463,7 @@ msgstr "Elimina el camp"
 msgid "Remove file"
 msgstr "Elimina el fitxer"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Elimina la contrasenya"
 
@@ -7497,7 +7485,7 @@ msgstr "Elimina la pregunta"
 msgid "Remove role"
 msgstr "Elimina el rol"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Eliminar la contrasenya?"
 
@@ -7597,11 +7585,7 @@ msgstr "Informa d’un problema"
 msgid "Report received by your server operator. Thank you."
 msgstr "Informe rebut pel vostre operador de servidor. Gràcies."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Informa del currículum compartit"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Requereix una contrasenya"
 
@@ -7735,8 +7719,8 @@ msgstr "S'ha recuperat {0} mitjançant {1}. El temps de recuperació no establei
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "El servidor ha canviat. Torna a Documents i torna-ho a provar."
 msgid "Set a follow-up"
 msgstr "Establir un seguiment"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Estableix la contrasenya"
 
@@ -8635,8 +8619,8 @@ msgstr "Inicieu la sessió a {server} i, a continuació, aneu al document enlla�
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Inicia la sessió per continuar."
 
@@ -9622,7 +9606,7 @@ msgstr "Aquest document està bloquejat. Desbloquegeu-lo abans de mantenir les v
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Aquest document està bloquejat. Desbloqueja'l per rebre suggeriments."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Aquest document està bloquejat. Encara podeu baixar i anomenar versions. Desbloqueja per editar o restaurar."
 
@@ -10241,7 +10225,7 @@ msgstr "Utilitzeu {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Utilitzeu de 3 a 64 lletres minúscules, números, punts, guions i guions baixos."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Utilitzeu de 6 a 64 caràcters."
 
@@ -10508,11 +10492,11 @@ msgstr "Violència o maltractament"
 msgid "Visitors"
 msgstr "Visitants"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Els visitants poden descarregar el PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Els visitants hi entren abans de veure el currículum. Comparteix-ho només amb persones de confiança."
 
@@ -10895,7 +10879,7 @@ msgstr "Esteu fora de línia. La baixada de PDF es fa en aquest dispositiu. Els 
 msgid "You're offline. History needs a connection."
 msgstr "No tens connexió. L’Historial necessita connexió."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "No teniu connexió. L'historial necessita connexió. «Baixa el PDF» funciona en aquest dispositiu."
 

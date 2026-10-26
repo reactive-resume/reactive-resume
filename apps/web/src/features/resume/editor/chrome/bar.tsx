@@ -26,7 +26,7 @@ type EditorBarFrameProps = {
  * Download. The mode switch stays centered through a `1fr auto 1fr` grid.
  */
 export function EditorBarFrame({ layout, pinnable, menu, modes, children }: EditorBarFrameProps) {
-	const setShareTab = useEditorStore((state) => state.setShareTab);
+	const setSheetTab = useEditorStore((state) => state.setSheetTab);
 
 	return (
 		<header className="grid h-(--editor-bar) grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-b border-line bg-surface px-3">
@@ -39,13 +39,13 @@ export function EditorBarFrame({ layout, pinnable, menu, modes, children }: Edit
 			{layout === "mobile" ? <span /> : modes}
 
 			<div className="flex items-center justify-end gap-1">
-				{/* History lives in the Share & export sheet; the clock opens it there. */}
+				{/* History lives in the Download & history sheet; the clock opens it there. */}
 				{layout === "desktop" && (
 					<IconButton
 						icon="clock-counter-clockwise"
 						label={t`History`}
 						className="text-ink-2"
-						onClick={() => setShareTab("history")}
+						onClick={() => setSheetTab("history")}
 					/>
 				)}
 				{/* Every layout opens the assistant from the ✦: a column, a drawer, or full screen on phones. */}
@@ -79,7 +79,7 @@ export function DownloadButtons({
 	disabled = false,
 	onPreload,
 }: DownloadButtonsProps) {
-	const setShareTab = useEditorStore((state) => state.setShareTab);
+	const setSheetTab = useEditorStore((state) => state.setSheetTab);
 
 	if (compact) {
 		return (
@@ -113,7 +113,7 @@ export function DownloadButtons({
 				className="w-8 border-s border-s-[oklch(1_0_0/0.25)]"
 				onPointerEnter={onPreload}
 				onFocus={onPreload}
-				onClick={() => setShareTab("download")}
+				onClick={() => setSheetTab("download")}
 			>
 				<Icon name="caret-down" />
 			</Button>

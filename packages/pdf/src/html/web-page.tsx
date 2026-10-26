@@ -1,21 +1,16 @@
 import type { PdfFontRequest } from "../hooks/use-register-fonts";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { Locale } from "@reactive-resume/utils/locale";
 import { createElement } from "react";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";
-import { isRTL } from "@reactive-resume/utils/locale";
 import { ResumeDocument } from "../document";
 import { loadRequestedIcons } from "../forme/icons";
 import { renderHostTree } from "../forme/reconciler";
 import { resumeFontRequests } from "../forme/render";
-import { escapeAttribute, toHtml } from "./to-html";
-
-export { escapeAttribute, escapeHtml } from "./to-html";
+import { toHtml } from "./to-html";
 
 export type ResumeWebPage = {
-	/** The resume's language and writing direction, for the document's `lang` and `dir`. */
+	/** The resume's language, for the document's `lang` (and from it, `dir`). */
 	lang: string;
-	dir: "ltr" | "rtl";
 	/** The sheet, to place inside an element with class `rr`. */
 	html: string;
 	/** Font faces and the sheet's rules. */
@@ -57,6 +52,14 @@ const fontFaces = (requests: readonly PdfFontRequest[]) =>
 		)
 		.join("\n");
 
+/** A picture on the page: uploads load from `origin` (the app), wherever the page is served; other pictures as given. */
+export const webPageImageUrl =
+	(origin: string) =>
+	(source: string): string | undefined => {
+		if (source.startsWith("/")) return `${origin}${source}`;
+		return /^(https?:|data:image\/)/i.test(source) ? source : undefined;
+	};
+
 /** Renders a resume as the markup of its web page. Runs on the server and in the browser (the Share preview). */
 export async function renderResumeWebPage(input: RenderResumeWebPageInput): Promise<ResumeWebPage> {
 	const data = toWebLayout(parseResumeData(input.data));
@@ -65,10 +68,8 @@ export async function renderResumeWebPage(input: RenderResumeWebPageInput): Prom
 	// Icons load on first use: a tree that asked for new ones is drawn again once they arrive.
 	if (await loadRequestedIcons()) tree = renderHostTree(element);
 	const { html, css } = toHtml(tree, { imageUrl: input.imageUrl });
-	const locale = data.metadata.page.locale as Locale;
 	return {
-		lang: escapeAttribute(locale),
-		dir: isRTL(locale) ? "rtl" : "ltr",
+		lang: data.metadata.page.locale,
 		html,
 		css: `${fontFaces(resumeFontRequests(data))}\n${css}`,
 	};

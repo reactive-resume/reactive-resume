@@ -9,7 +9,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useLetterEditorStore } from "@/features/letters/store";
-import { ShareSheetFrame } from "@/features/resume/editor/chrome/share-sheet";
+import { DownloadSheetFrame } from "@/features/resume/editor/chrome/download-sheet";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { createExportFile, getDefaultFileName, sanitizeFileName } from "@/features/resume/export/use-resume-export";
 import {
@@ -22,12 +22,12 @@ import { HistoryTimeline } from "@/features/resume/share/history-tab";
 import { getOrpcErrorMessage, getReadableErrorMessage } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
-/** Share & export for letters: Download and History. Letters have no public link, so Share opens Download. */
-export function LetterShareSheet() {
-	const history = useLetterHistory(useEditorStore((state) => state.shareTab) === "history");
+/** Download & history for letters. Letters have no public link, so Share opens Download. */
+export function LetterDownloadSheet() {
+	const history = useLetterHistory(useEditorStore((state) => state.sheetTab) === "history");
 
 	return (
-		<ShareSheetFrame
+		<DownloadSheetFrame
 			fallback="download"
 			tabs={[
 				{ value: "download", label: <Trans>Download</Trans>, content: <LetterDownloadTab /> },

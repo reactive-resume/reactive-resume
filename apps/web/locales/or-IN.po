@@ -726,7 +726,7 @@ msgstr "{stars, plural, one {GitHub ରେ Reactive Resume କୁ ଷ୍ଟା�
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {#ଟି କାହାଣୀ} other {#ଟି କାହାଣୀ}}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "{suggestion} may be available. Get yours here →"
 msgstr "{suggestion} ଉପଲବ୍ଧ ହୋଇପାରେ। ଆପଣଙ୍କର ଏଠାରେ ପାଆନ୍ତୁ →"
 
@@ -844,7 +844,7 @@ msgstr "10 ମିନିଟ୍‌ର ବ୍ରିଫିଂ"
 msgid "10–11 recommended"
 msgstr "10–11 ପରାମର୍ଶିତ |"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 ଫାଇଲ୍ |"
 
@@ -903,15 +903,11 @@ msgstr "90 ଦିନ"
 msgid "A"
 msgstr "A"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "“ଯୋଗାଯୋଗ ବିବରଣୀ ଦେଖାନ୍ତୁ” ବଟନ୍ ସେଗୁଡ଼ିକୁ ସନ୍ଧାନ ଇଞ୍ଜିନ୍‌କୁ ନୁହେଁ, ଲୋକଙ୍କୁ ଦେଖାଏ।"
-
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "ଏକ ଗ୍ରହଣ ଏବଂ R ଫୋକସ୍ ହୋଇଥିବା ସମ୍ପାଦନାକୁ ପ୍ରତ୍ୟାଖ୍ୟାନ କରେ | Ed ଏବଂ ed ସମ୍ପାଦନା ମଧ୍ୟରେ ଗତି କର |"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "ଏହି ଚିଠିର ଏକ ନକଲ ସଂରକ୍ଷଣ | ଏକ ଅକ୍ଷର ଭାବରେ Reactive Resume କୁ ପୁନର୍ବାର ଆମଦାନୀ କରନ୍ତୁ |"
 
@@ -1256,7 +1252,7 @@ msgstr "AI ପ୍ରଦାନକାରୀ ଯୋଗକର |"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "name@example.com ପରି ଏକ @ ଏବଂ ଡୋମେନ୍ ଯୋଡନ୍ତୁ |"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "ଏକ ଠିକଣା ଯୋଡନ୍ତୁ |"
 
@@ -1423,7 +1419,7 @@ msgstr "@ ପରେ ଡୋମେନ୍ ଯୋଡନ୍ତୁ, ଯେପରିକ
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com ପରି ଡୋମେନ୍ ଶେଷକୁ ଯୋଡନ୍ତୁ |"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "ଆପଣ ଯେଉଁଠି ଡୋମେନ୍ ପରିଚାଳନା କରନ୍ତି ସେଠାରେ ଏହି ରେକର୍ଡଗୁଡ଼ିକ ଯୋଡନ୍ତୁ, ତାପରେ ଯାଞ୍ଚ କରନ୍ତୁ। ପରିବର୍ତ୍ତନଗୁଡ଼ିକ ସମସ୍ତଙ୍କ ପାଖରେ ପହଞ୍ଚିବାକୁ କିଛି ଘଣ୍ଟା ଲାଗିପାରେ।"
 
@@ -1492,7 +1488,7 @@ msgstr "ଅନୁଭବ ଭାବେ ଜ୍ଞାନରେ ଯୋଡ଼ାଗଲ
 msgid "Added to Prepare"
 msgstr "ପ୍ରସ୍ତୁତିରେ ଯୋଡ଼ାଗଲା"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "ଠିକଣା"
 
@@ -1725,7 +1721,7 @@ msgstr "ଏବଂ {0} ଅଧିକ |"
 msgid "and counting"
 msgstr "ଏବଂ ଗଣନା"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "ଆପଣଙ୍କର ଅନ୍ୟ ଏକ ରେଜୁମ୍ ଏହି ଠିକଣା ବ୍ୟବହାର କରେ |"
 
@@ -2059,10 +2055,6 @@ msgstr "ଏକ ପରିବର୍ତ୍ତନ ପଚାର, କିମ୍ବା �
 #: src/features/homepage/faq.tsx
 msgid "Asked and <0>answered.</0>"
 msgstr "ପ୍ରଶ୍ନ ପଚାରିଲେ, <0>ଉତ୍ତର ମିଳିଲା।</0>"
-
-#: src/features/resume/share/share-panel.tsx
-msgid "asked for contact details"
-msgstr "ଯୋଗାଯୋଗ ବିବରଣୀ ମାଗିଲେ"
 
 #: src/features/homepage/prepare.tsx
 msgid "Asks for an example of your onboarding work."
@@ -2574,7 +2566,7 @@ msgstr "ଅନ୍ୟ ଏକ ଫାଇଲ୍ ଯାଞ୍ଚ କରନ୍ତୁ |
 msgid "Check any PDF, no account needed"
 msgstr "କ any ଣସି PDF ଯାଞ୍ଚ କରନ୍ତୁ, କ account ଣସି ଖାତା ଆବଶ୍ୟକ ନାହିଁ |"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Check DNS"
 msgstr "DNS ଯାଞ୍ଚ କରନ୍ତୁ"
 
@@ -2661,7 +2653,7 @@ msgstr "ରପ୍ତାନି ହୋଇଥିବା PDF ଯାଞ୍ଚ କର�
 msgid "Checking your preferences"
 msgstr "ଆପଣଙ୍କ ପସନ୍ଦ ଯାଞ୍ଚ କରୁଛି"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "ଯାଞ୍ଚ… ସଞ୍ଚୟ ପରେ କପି ଉପଲବ୍ଧ |"
 
@@ -2791,7 +2783,7 @@ msgstr "କ୍ଲାଏଣ୍ଟ ID"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2968,7 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "ଆଜି {time}ରେ ଭିଡିଓ ମାଧ୍ୟମରେ ନିଶ୍ଚିତ କରୁଛନ୍ତି।"
 
 #: src/features/assistant/provider-setup.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "ଯୋଡନ୍ତୁ"
@@ -3021,7 +3013,7 @@ msgstr "ସଂଯୁକ୍ତ"
 msgid "Connected applications"
 msgstr "ସଂଯୁକ୍ତ ଆପ୍ଲିକେସନ୍"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "ସଂଯୁକ୍ତ। ଆପଣଙ୍କ ଡୋମେନ୍ ଆପଣଙ୍କ ପ୍ରାଥମିକ ରେଜ୍ୟୁମେ ଖୋଲେ।"
 
@@ -3152,7 +3144,7 @@ msgid "Copied"
 msgstr "କପି କରାଯାଇଛି |"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3626,8 +3618,8 @@ msgstr "ଏହି ସମୟସୂଚୀ ସେଭ୍ କରିହେଲା ନ�
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "ଆପଣଙ୍କର ପରିବର୍ତ୍ତନଗୁଡିକ ସଞ୍ଚୟ କରିପାରିଲା ନାହିଁ | ଜାରି ରଖିବା ପୂର୍ବରୁ ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ |"
@@ -3732,6 +3724,7 @@ msgstr "ଆବେଦନର ଲିଙ୍କ୍ ହଟାଇହେଲା ନାହ
 msgid "Couldn't unlock the document. Try again."
 msgstr "ଡକ୍ୟୁମେଣ୍ଟ୍ ଅନଲକ୍ କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "ସେୟାରିଂ ଅଦ୍ୟତନ କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
@@ -3768,7 +3761,7 @@ msgstr "ରେଜ୍ୟୁମେ ଅଦ୍ୟତନ କରିହେଲା ନା
 msgid "Couldn't update the timeline. Try again."
 msgstr "ସମୟସୀମା ଅଦ୍ୟତନ କରିପାରିଲା ନାହିଁ | ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ |"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "ଏହି ଚିଠିର ସଂସ୍କରଣଗୁଡ଼ିକ ଅଦ୍ୟତନ କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
@@ -4362,7 +4355,7 @@ msgstr "ଆପଣ ଏଠାକୁ ନେଉଥିବା ଡକ୍ୟୁମେଣ
 msgid "Does it use AI?"
 msgstr "ଏହା AI ବ୍ୟବହାର କରେ କି?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Domain connected"
 msgstr "ଡୋମେନ୍ ସଂଯୁକ୍ତ ହେଲା"
 
@@ -4398,8 +4391,8 @@ msgstr "ପୁଣି ଯାଞ୍ଚ କରୁଛି"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "ଡାଉନଲୋଡ୍"
 
@@ -4411,7 +4404,7 @@ msgstr "{label} ଡାଉନଲୋଡ୍ କରନ୍ତୁ |"
 msgid "Download {name} sample PDF"
 msgstr "{name} ନମୁନା PDF ଡାଉନଲୋଡ୍ କରନ୍ତୁ |"
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Download & history"
 msgstr "ଡାଉନଲୋଡ୍ ଓ ଇତିହାସ"
 
@@ -4429,7 +4422,7 @@ msgid "Download CSV"
 msgstr "CSV ଡାଉନଲୋଡ୍ କରନ୍ତୁ |"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "ଡାଉନଲୋଡ୍ ବିଫଳ ହେଲା। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
@@ -4455,7 +4448,7 @@ msgid "Download totals can include repeat clicks."
 msgstr "ଡାଉନଲୋଡ୍ ଟୋଟାଲ୍ ପୁନରାବୃତ୍ତି କ୍ଲିକ୍ ଅନ୍ତର୍ଭୂକ୍ତ କରିପାରିବ |"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "{file} ଡାଉନଲୋଡ୍ ହୋଇଛି |"
 
@@ -4463,7 +4456,7 @@ msgstr "{file} ଡାଉନଲୋଡ୍ ହୋଇଛି |"
 msgid "Downloaded {file} and the cover letter"
 msgstr "{file} ଏବଂ କଭର ଅକ୍ଷର ଡାଉନଲୋଡ୍ ହୋଇଛି |"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "ତୁମର ରେଜୁମ୍ ଏବଂ ଏହି ଚିଠିକୁ ଡାଉନଲୋଡ୍ କର |"
 
@@ -5265,7 +5258,7 @@ msgid "For"
 msgstr "ପାଇଁ"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com ପରି ମୂଳ ଡୋମେନ୍ ପାଇଁ, CNAME ବଦଳରେ {0}ର ଠିକଣା ସହିତ A ଏବଂ AAAA ରେକର୍ଡ ବ୍ୟବହାର କରନ୍ତୁ।"
 
@@ -5710,8 +5703,8 @@ msgid "Hiring team"
 msgstr "ନିଯୁକ୍ତି ଦଳ"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
 msgstr "ଇତିହାସ"
 
@@ -6544,10 +6537,6 @@ msgstr "ଲମ୍ବ ଏକ ତ୍ରୁଟି ନୁହେଁ, ଏବଂ କୌ
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "ଉପରୋକ୍ତ API କି ବ୍ୟବହାର କରି Claude କିମ୍ବା Cursor ପରି AI କ୍ଲାଏଣ୍ଟମାନଙ୍କୁ ତୁମର ରେଜୁମ୍ ପ read ଼ିବା ଏବଂ ସଂପାଦନ କରିବାକୁ ଦିଅ |"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Let visitors ask to see them"
-msgstr "ପରିଦର୍ଶକମାନଙ୍କୁ ସେଗୁଡ଼ିକ ଦେଖିବାକୁ ଅନୁରୋଧ କରିବାକୁ ଦିଅନ୍ତୁ"
-
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "ତୁମର ଯାହା ଅଛି ତାହାଠାରୁ ଆରମ୍ଭ କରିବା |"
@@ -6678,7 +6667,7 @@ msgid "Link an application…"
 msgstr "ଏକ ଚାକିରି ଆବେଦନକୁ ଲିଙ୍କ୍ କରନ୍ତୁ…"
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "ଲିଙ୍କ୍ କପି ହୋଇଛି |"
@@ -6769,7 +6758,7 @@ msgid "Live · updates as you edit"
 msgstr "ଲାଇଭ୍ · ଅପଡେଟ୍ ତୁମେ ଏଡିଟ୍ କର |"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "{0} ରେ ଲାଇଭ୍ କରନ୍ତୁ |"
 
@@ -9300,7 +9289,7 @@ msgstr "ନିଯୁକ୍ତିକାରୀ |"
 msgid "Recruiter reply"
 msgstr "ରିକ୍ରୁଟରଙ୍କୁ ଉତ୍ତର"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "ନିଯୁକ୍ତିକାରୀମାନେ ଏହି ନାମ ଦେଖନ୍ତି | ତୁମର ନାମ ପ୍ଲସ୍ “କଭର୍ ଲେଟର୍” ଭଲ କାମ କରେ |"
 
@@ -9426,7 +9415,7 @@ msgstr "ରିମୋଟ୍"
 msgid "Remote, Hybrid, a city…"
 msgstr "ରିମୋଟ୍, ହାଇବ୍ରିଡ୍, ଏକ ସହର…"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "ଅପସାରଣ କରନ୍ତୁ |"
@@ -9690,7 +9679,7 @@ msgstr "ରେଜ୍ୟୁମେ · ପଠାଯାଇଥିବା ସଂସ୍�
 msgid "Resume (optional)"
 msgstr "ରେଜୁମ୍ (ବ al କଳ୍ପିକ)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "ରେଜୁମ୍ + ଅକ୍ଷର"
 
@@ -10128,8 +10117,8 @@ msgstr "ଜ୍ଞାନରେ ସେଭ୍ ହେଲା, କେବଳ ଏହି 
 msgid "Saved to Saved · Practice"
 msgstr "“ସେଭ୍‍ କରାଯାଇଛି”ରେ ସେଭ୍ ହେଲା · ଅଭ୍ୟାସ"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/share-panel.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "{0} / {username} / {slug} ସଞ୍ଚୟ କରିବା… ସଂରକ୍ଷଣ ପରେ କପି ଉପଲବ୍ଧ |"
 
@@ -10546,11 +10535,11 @@ msgstr "ଅଂଶୀଦାର କରନ୍ତୁ |"
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "ସାର୍ବଜନୀନ ଲିଙ୍କ୍ ସେୟାର୍ କରନ୍ତୁ, ପାସୱାର୍ଡ ଦିଅନ୍ତୁ କିମ୍ବା ବ୍ୟକ୍ତିଗତ ରଖନ୍ତୁ। 3ଟି ଦୃଶ୍ୟତା ବିକଳ୍ପରୁ ବାଛନ୍ତୁ। PDF କିମ୍ବା Word ଭାବେ ରପ୍ତାନି କରନ୍ତୁ, କିମ୍ବା JSON ଭାବେ ସମସ୍ତ ତଥ୍ୟ ନିଅନ୍ତୁ।"
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "ବିଭାଗଗୁଡିକ ଅଂଶୀଦାର କରନ୍ତୁ |"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "ମାଧ୍ୟମରେ ସେୟାର କରନ୍ତୁ…"
 
@@ -10631,10 +10620,6 @@ msgstr "ସମସ୍ତ ପ୍ରକାର ଦେଖାନ୍ତୁ"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "ବନ୍ଦ ବନ୍ଦ ଦେଖାନ୍ତୁ |"
-
-#: src/features/resume/share/web-page-text.ts
-msgid "Show contact details"
-msgstr "ଯୋଗାଯୋଗ ବିବରଣୀ ଦେଖାନ୍ତୁ"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -11686,7 +11671,7 @@ msgstr "ଅଭିବାଦନ ନାମ ଅନୁସରଣ କରେ |"
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "ଚାବି ସର୍ଭରରେ ଏନକ୍ରିପ୍ଟ ହୋଇଛି ଏବଂ ଆଉ ଦେଖାଯିବ ନାହିଁ | ସଞ୍ଚୟ ସଂଯୋଗକୁ ପରୀକ୍ଷା କରେ |"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "ଅକ୍ଷରଟି ଯେପରି ଅଛି"
 
@@ -11786,7 +11771,7 @@ msgstr "ପ୍ରଦାନକାରୀଙ୍କ ପ୍ରତିକ୍ରିୟ�
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "ଇନ୍ସାଇଟ୍ସ ପାଇଁ ଏହାର କାରଣ ରଖାଯାଇଛି | ଲିଙ୍କ୍ ହୋଇଥିବା ଡକ୍ୟୁମେଣ୍ଟଗୁଡିକ ସ୍ପର୍ଶ କରାଯାଏ ନାହିଁ |"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "ରେକର୍ଡଗୁଡ଼ିକ ଏପର୍ଯ୍ୟନ୍ତ ଦୃଶ୍ୟମାନ ନୁହେଁ। ପରେ ପୁଣି ଯାଞ୍ଚ କରନ୍ତୁ।"
 
@@ -12013,7 +11998,7 @@ msgstr "ଏହା ଏକ XFA ଫର୍ମ, ତେଣୁ ଅଧିକାଂଶ �
 msgid "This is not a common resume page size."
 msgstr "ଏହା ଏକ ସାଧାରଣ ରେଜ୍ୟୁମେ ପୃଷ୍ଠା ଆକାର ନୁହେଁ।"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "ଏହି ଅକ୍ଷର ଏବଂ “{resumeName}” ଦୁଇଟି PDFs ଭାବରେ ମେଳ ହେବା ପାଇଁ ନାମିତ |"
 
@@ -12292,7 +12277,7 @@ msgid "Trust this device for 30 days"
 msgstr "ଏହି ଡିଭାଇସକୁ 30 ଦିନ ପାଇଁ ବିଶ୍ୱାସ କରନ୍ତୁ"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "{0} ଚେଷ୍ଟା କରନ୍ତୁ |"
 
@@ -12353,7 +12338,7 @@ msgstr "ଦୁଇ ସୋପାନ ଯାଞ୍ଚ ବନ୍ଦ କରନ୍ତ�
 msgid "Turn off two-step verification?"
 msgstr "ଦୁଇ ସୋପାନ ଯାଞ୍ଚ ବନ୍ଦ କରିବେ?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "ଏକ ଠିକଣା ବାଛିବା ପାଇଁ ଲିଙ୍କ୍ ଟର୍ନ୍ ଅନ୍ କରନ୍ତୁ |"
 
@@ -12702,7 +12687,7 @@ msgstr "ସମସ୍ତ ଆବେଦନ ପାଇଁ ବ୍ୟବହାର କ�
 msgid "Use in coaching: {excerpt}"
 msgstr "କୋଚିଂରେ ବ୍ୟବହାର କରନ୍ତୁ: {excerpt}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "ଲୋୟର କେସ୍ ଅକ୍ଷର, ସଂଖ୍ୟା ଏବଂ ଏକକ ଡ୍ୟାସ୍ ବ୍ୟବହାର କରନ୍ତୁ |"
 
@@ -13420,7 +13405,7 @@ msgid "You"
 msgstr "ତୁମେ"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "ଆପଣ ଏହାକୁ “{0}” ପାଇଁ ବ୍ୟବହାର କରିସାରିଛନ୍ତି |"
 
@@ -13588,7 +13573,7 @@ msgstr "ଆପଣଙ୍କ ତାରିଖଗୁଡ଼ିକ ଅନେକ ଭି
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "ରେଜୁମାରେ ତୁମର ବିବରଣୀ ବଦଳିଗଲା | ଚିଠି ମଧ୍ୟ ଅପଡେଟ୍ ହୋଇଛି |"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "ଆପଣଙ୍କ ଡୋମେନ୍"
 
@@ -13709,7 +13694,7 @@ msgstr "ଟ୍ରାନ୍ସକ୍ରାଇବ୍ ପାଇଁ ଆପଣଙ୍�
 msgid "Your requirements"
 msgstr "ଆପଣଙ୍କ ଆବଶ୍ୟକତା"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "ତୁମର ରେଜୁମ୍"
 

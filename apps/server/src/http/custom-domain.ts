@@ -1,55 +1,45 @@
 import { timingSafeEqual } from "node:crypto";
 import {
+	customDomainUsername,
 	isCustomDomainsEnabled,
-	resumeForCustomDomain,
+	ownHosts,
 	traefikConfiguration,
 } from "@reactive-resume/api/features/custom-domain";
 import { env } from "@reactive-resume/env/server";
-import { handleResumeWebPage, handleResumeWebPagePassword, unavailableResponse } from "../static/resume-page";
+import { serveResumePage } from "../static/resume-page";
 
-type Target = Awaited<ReturnType<typeof resumeForCustomDomain>>;
-
-// Hosts seen recently and what they open; a minute is how long a new verification or primary takes to show.
-const cache = new Map<string, { target: Target; expires: number }>();
+// Hosts seen recently and whose primary resume they open; a minute is how long a new verification takes to show.
+const cache = new Map<string, { username: string | null; expires: number }>();
 const CACHE_MS = 60_000;
 const CACHE_LIMIT = 5_000;
 
-async function targetOf(hostname: string): Promise<Target> {
+async function usernameOf(hostname: string): Promise<string | null> {
 	const hit = cache.get(hostname);
-	if (hit && hit.expires > Date.now()) return hit.target;
-	const target = await resumeForCustomDomain(hostname);
+	if (hit && hit.expires > Date.now()) return hit.username;
+	const username = await customDomainUsername(hostname);
 	if (cache.size >= CACHE_LIMIT) cache.clear();
-	cache.set(hostname, { target, expires: Date.now() + CACHE_MS });
-	return target;
+	cache.set(hostname, { username, expires: Date.now() + CACHE_MS });
+	return username;
 }
 
-const appHosts = new Set(
-	[env.APP_URL, env.SHORT_LINK_URL].filter(Boolean).map((url) => new URL(url as string).hostname.toLowerCase()),
-);
-
 /**
- * A verified custom domain shows the account's primary resume at `/` and nothing else of the app: the page's PDF and
- * contact requests pass through, and any other address goes to the app's own domain. Unknown hosts are left alone.
+ * A verified custom domain shows the account's primary resume at `/` and nothing else of the app: the page's PDF
+ * downloads pass through, and any other address goes to the app's own domain. Unknown hosts are left alone.
  */
 export async function handleCustomDomain(request: Request, trustedClient: string): Promise<Response | null> {
 	if (!isCustomDomainsEnabled()) return null;
 	const url = new URL(request.url);
-	const hostname = url.hostname.toLowerCase();
-	if (appHosts.has(hostname)) return null;
-	const target = await targetOf(hostname);
-	if (!target) return null;
+	if (ownHosts().has(url.hostname)) return null;
+	const username = await usernameOf(url.hostname);
+	if (!username) return null;
 
 	if (url.pathname.startsWith("/api/resumes/") || /^\/favicon\.(ico|svg)$/.test(url.pathname)) return null;
 	if (url.pathname === "/robots.txt")
 		return new Response("User-agent: *\nAllow: /\n", { headers: { "Content-Type": "text/plain; charset=UTF-8" } });
 	if (url.pathname !== "/") return Response.redirect(new URL(`${url.pathname}${url.search}`, env.APP_URL), 301);
 
-	// No primary resume: the page says it isn't shared, as for any address that isn't.
-	if (!target.slug) return unavailableResponse(request);
-	const address = { username: target.username, slug: target.slug };
-	const options = { customDomain: hostname };
-	if (request.method === "POST") return handleResumeWebPagePassword(request, address, trustedClient, options);
-	return handleResumeWebPage(request, address, trustedClient, options);
+	// Without a primary resume, the page says it isn't shared, as for any address that isn't.
+	return serveResumePage(request, { username, primary: true }, trustedClient, { customDomain: url.hostname });
 }
 
 const NAME = /^[\w@.-]{1,100}$/;

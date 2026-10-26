@@ -27,7 +27,6 @@ async function prepare(id: string, origin: string, fullParity: boolean) {
 		showDownloadButtons: true,
 		showInSearchEngines: false,
 		hideContactDetails: false,
-		showContactButton: true,
 		isPrimary: false,
 		hasPassword: false,
 		applicationId: null,

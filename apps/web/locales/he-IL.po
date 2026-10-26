@@ -726,7 +726,7 @@ msgstr "{stars, plural, one {תן כוכב ל-Reactive Resume ב-GitHub, כוכ�
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {סיפור אחד} two {שני סיפורים} other {# סיפורים}}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "{suggestion} may be available. Get yours here →"
 msgstr "ייתכן ש-{suggestion} זמין. אפשר להשיג את שלך כאן →"
 
@@ -844,7 +844,7 @@ msgstr "תדריך של 10 דקות"
 msgid "10–11 recommended"
 msgstr "10-11 מומלץ"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 קבצים"
 
@@ -903,15 +903,11 @@ msgstr "90 ימים"
 msgid "A"
 msgstr "A"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "כפתור “הצגת פרטי יצירת קשר” חושף אותם לאנשים, לא למנועי חיפוש."
-
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "A מקבל ו-R דוחה את העריכה הממוקדת. ↑ ו-↓ מעבר בין עריכות."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "גיבוי למכתב זה. מייבא חזרה אל Reactive Resume כמכתב."
 
@@ -1256,7 +1252,7 @@ msgstr "הוסף ספק AI"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "הוסף @ ואת הדומיין, כמו name@example.com"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "הוסף כתובת."
 
@@ -1423,7 +1419,7 @@ msgstr "הוסף את הדומיין אחרי ה-@, כמו {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "הוסף את סיומת הדומיין, כמו {domain}.com"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "יש להוסיף את הרשומות האלה במקום שבו מנהלים את הדומיין, ואז לבדוק. ייתכן שיחלפו כמה שעות עד שהשינויים יגיעו לכולם."
 
@@ -1492,7 +1488,7 @@ msgstr "נוסף למאגר הידע כניסיון."
 msgid "Added to Prepare"
 msgstr "נוסף להכנה"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "כְּתוֹבֶת"
 
@@ -1725,7 +1721,7 @@ msgstr "ועוד {0}"
 msgid "and counting"
 msgstr "וסופרים"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "קורות חיים אחרים שלך משתמש בכתובת זו."
 
@@ -2059,10 +2055,6 @@ msgstr "שאל, או תאר שינוי..."
 #: src/features/homepage/faq.tsx
 msgid "Asked and <0>answered.</0>"
 msgstr "נשאלו ו<0>נענו.</0>"
-
-#: src/features/resume/share/share-panel.tsx
-msgid "asked for contact details"
-msgstr "ביקשו פרטי יצירת קשר"
 
 #: src/features/homepage/prepare.tsx
 msgid "Asks for an example of your onboarding work."
@@ -2574,7 +2566,7 @@ msgstr "בדוק קובץ אחר"
 msgid "Check any PDF, no account needed"
 msgstr "בדוק כל PDF, אין צורך בחשבון"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Check DNS"
 msgstr "בדיקת DNS"
 
@@ -2661,7 +2653,7 @@ msgstr "בודק את ה-PDF המיוצא..."
 msgid "Checking your preferences"
 msgstr "בודק את ההעדפות שלך"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "בודק... העתקה זמינה לאחר השמירה."
 
@@ -2791,7 +2783,7 @@ msgstr "מזהה לקוח"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2968,7 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "מאשר את {time} היום, בשיחת וידאו."
 
 #: src/features/assistant/provider-setup.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "חיבור"
@@ -3021,7 +3013,7 @@ msgstr "מְחוּבָּר"
 msgid "Connected applications"
 msgstr "אפליקציות מחוברות"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "מחובר. הדומיין שלך פותח את קורות החיים הראשיים שלך."
 
@@ -3152,7 +3144,7 @@ msgid "Copied"
 msgstr "מוּעֲתָק"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3626,8 +3618,8 @@ msgstr "לא ניתן היה לשמור את התזמון. נסה שוב."
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "לא ניתן היה לשמור את השינויים שלך. נסה שוב לפני שתמשיך."
@@ -3732,6 +3724,7 @@ msgstr "לא ניתן היה לבטל את הקישור של המועמדות. �
 msgid "Couldn't unlock the document. Try again."
 msgstr "לא ניתן היה לבטל את נעילת המסמך. נסה שוב."
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "לא ניתן היה לעדכן את השיתוף. נסה שוב."
@@ -3768,7 +3761,7 @@ msgstr "לא ניתן היה לעדכן את קורות החיים. נסה שו�
 msgid "Couldn't update the timeline. Try again."
 msgstr "לא ניתן היה לעדכן את ציר הזמן. נסה שוב."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "לא ניתן היה לעדכן את הגרסאות של המכתב. נסה שוב."
 
@@ -4362,7 +4355,7 @@ msgstr "מסמכים שתעביר לכאן נשמרים למשך 30 יום."
 msgid "Does it use AI?"
 msgstr "האם הוא משתמש ב-AI?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Domain connected"
 msgstr "הדומיין מחובר"
 
@@ -4398,8 +4391,8 @@ msgstr "בודק שוב"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "הורדה"
 
@@ -4411,7 +4404,7 @@ msgstr "הורד את {label}"
 msgid "Download {name} sample PDF"
 msgstr "הורד את ה-PDF לדוגמה של {name}"
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Download & history"
 msgstr "הורדה והיסטוריה"
 
@@ -4429,7 +4422,7 @@ msgid "Download CSV"
 msgstr "הורד CSV"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "ההורדה נכשלה. נסה שוב."
 
@@ -4455,7 +4448,7 @@ msgid "Download totals can include repeat clicks."
 msgstr "סכומי הורדה יכולים לכלול קליקים חוזרים."
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "הורד את {file}"
 
@@ -4463,7 +4456,7 @@ msgstr "הורד את {file}"
 msgid "Downloaded {file} and the cover letter"
 msgstr "הורד את {file} ואת המכתב המקדים"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "הורדתי את קורות החיים שלך ואת המכתב הזה"
 
@@ -5265,7 +5258,7 @@ msgid "For"
 msgstr "עֲבוּר"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "לדומיין ראשי כמו example.com, יש להשתמש ברשומות A ו-AAAA עם הכתובות של {0} במקום ב-CNAME."
 
@@ -5710,8 +5703,8 @@ msgid "Hiring team"
 msgstr "צוות גיוס"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
 msgstr "הִיסטוֹרִיָה"
 
@@ -6543,10 +6536,6 @@ msgstr "אורך אינו פגם, ואין כלל אוניברסלי של עמו
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "תן ללקוחות AI כמו Claude או Cursor לקרוא ולערוך את קורות החיים שלך, באמצעות מקש API למעלה."
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Let visitors ask to see them"
-msgstr "לאפשר למבקרים לבקש לראות אותם"
-
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "בוא נתחיל ממה שיש לך"
@@ -6677,7 +6666,7 @@ msgid "Link an application…"
 msgstr "קישור להגשת מועמדות לעבודה..."
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "הקישור הועתק"
@@ -6768,7 +6757,7 @@ msgid "Live · updates as you edit"
 msgstr "עדכונים בזמן אמת בזמן עריכה"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "בשידור חי ב-{0}"
 
@@ -9298,7 +9287,7 @@ msgstr "מגייסת"
 msgid "Recruiter reply"
 msgstr "תשובת המגייס"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "מגייסים רואים את השם הזה. השם שלך בתוספת \"מכתב כיסוי\" עובד היטב."
 
@@ -9424,7 +9413,7 @@ msgstr "מרחוק"
 msgid "Remote, Hybrid, a city…"
 msgstr "מרחוק, היברידי, עיר…"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "לְהַסִיר"
@@ -9688,7 +9677,7 @@ msgstr "קורות חיים · הגרסה שנשלחה"
 msgid "Resume (optional)"
 msgstr "קורות חיים (לא חובה)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "קורות חיים + מכתב"
 
@@ -10126,8 +10115,8 @@ msgstr "נשמר במאגר הידע, פרטי למועמדות הזו."
 msgid "Saved to Saved · Practice"
 msgstr "נשמר ב\"שמורים\" · תרגול"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/share-panel.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "שומר את {0}/{username}/{slug}... העתק זמין לאחר השמירה."
 
@@ -10544,11 +10533,11 @@ msgstr "שיתוף"
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "שתף קישור ציבורי, הוסף סיסמה או השאר אותה פרטית. בחר מתוך 3 אפשרויות נראות. ייצא ל-PDF או Word, או קח איתך את כל הנתונים שלך בתור JSON."
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "שתף קטעים"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "שתפו באמצעות…"
 
@@ -10629,10 +10618,6 @@ msgstr "הצג את כל הסוגים"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "המופע נסגר"
-
-#: src/features/resume/share/web-page-text.ts
-msgid "Show contact details"
-msgstr "הצגת פרטי יצירת קשר"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -11684,7 +11669,7 @@ msgstr "הברכה מלווה את השם."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "המפתח מוצפן בשרת ולא מוצג שוב. שמירה בודקת את החיבור."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "המכתב כפי שהוא"
 
@@ -11784,7 +11769,7 @@ msgstr "לא ניתן היה לאמת את תגובת הספק. נסה שוב."
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "הסיבה נשמרת לתובנות. לא נוגעים במסמכים מקושרים."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "הרשומות עדיין לא גלויות. כדאי לבדוק שוב מאוחר יותר."
 
@@ -12011,7 +11996,7 @@ msgstr "זהו טופס XFA, כך שרוב התוכנות קוראות רק את
 msgid "This is not a common resume page size."
 msgstr "זהו לא גודל עמוד נפוץ לקורות חיים."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "האות הזו ו-\"{resumeName}\" כשתי PDFs, בשם להתאים."
 
@@ -12290,7 +12275,7 @@ msgid "Trust this device for 30 days"
 msgstr "לסמוך על מכשיר זה למשך 30 יום"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "נסה את {0}"
 
@@ -12350,7 +12335,7 @@ msgstr "כיבוי אימות דו-שלבי"
 msgid "Turn off two-step verification?"
 msgstr "לכבות את האימות הדו-שלבי?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "הפעל את הקישור כדי לבחור כתובת."
 
@@ -12699,7 +12684,7 @@ msgstr "השתמש לכל המועמדויות"
 msgid "Use in coaching: {excerpt}"
 msgstr "שימוש באימון: {excerpt}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "השתמש באותיות קטנות, מספרים ומקפים בודדים."
 
@@ -13417,7 +13402,7 @@ msgid "You"
 msgstr "אַתָה"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "אתה כבר משתמש בזה עבור \"{0}\"."
 
@@ -13585,7 +13570,7 @@ msgstr "התאריכים שלך כתובים במספר דרכים שונות."
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "הפרטים שלך השתנו בקורות החיים. גם המכתב עודכן."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "הדומיין שלך"
 
@@ -13706,7 +13691,7 @@ msgstr "ההקלטה שלך נשלחת אל {0} לתמלול, מה שעשוי ל
 msgid "Your requirements"
 msgstr "הדרישות שלך"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "קורות החיים שלך"
 

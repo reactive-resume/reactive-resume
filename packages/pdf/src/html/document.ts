@@ -1,7 +1,7 @@
 import type { WebPageMessages } from "./messages";
 import type { ResumeWebPage } from "./web-page";
 import { isRTL } from "@reactive-resume/utils/locale";
-import { escapeAttribute, escapeHtml } from "./to-html";
+import { escapeHtml } from "@reactive-resume/utils/string";
 
 export { localeFromAcceptLanguage, webPageMessages } from "./messages";
 export type { WebPageMessages } from "./messages";
@@ -18,12 +18,11 @@ export type WebPageHead = {
 
 export type WebPageDocumentOptions = {
 	page: ResumeWebPage;
-	head: WebPageHead;
+	/** Absent in the editor's preview, which nothing indexes or shares. */
+	head?: WebPageHead | undefined;
 	messages: WebPageMessages;
 	/** The PDF's address, when the owner allows downloads. */
 	downloadUrl?: string | undefined;
-	/** Where the Show contact details button asks; absent when the owner turned the button off. */
-	contactUrl?: string | undefined;
 	/** Where the footer credit links; absent when the owner turned it off. */
 	creditUrl?: string | undefined;
 };
@@ -37,11 +36,10 @@ html{-webkit-text-size-adjust:100%}
 body{margin:0;background:#ececef;color:#111;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
 .rr.rr-desk{padding:40px 16px 112px}
 .rr-page{box-shadow:0 1px 2px rgb(0 0 0/.06),0 8px 32px rgb(0 0 0/.08)}
-.rr-reveal{all:unset;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
-.rr-reveal:focus-visible,.rr-actions a:focus-visible,.rr-actions button:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
-.rr-revealed{display:inline-flex;flex-wrap:wrap;gap:4px 12px}
-.rr-credit{display:block;text-align:center;font-size:13px;color:#6b6b73;margin:24px 0 0;text-decoration:none}
-.rr-credit:hover{color:#111;text-decoration:underline}
+.rr-actions a:focus-visible,.rr-actions button:focus-visible,.rr .rr-credit:focus-visible{outline:2px solid #2563eb;outline-offset:4px}
+.rr .rr-credit{display:flex;flex-direction:column;align-items:center;gap:6px;width:max-content;margin:36px auto 0;color:#8e8e96;opacity:.7;text-decoration:none;font:500 11px/1 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.02em;border-radius:6px;transition:opacity .2s,color .2s}
+.rr .rr-credit svg{width:18px;height:18px}
+.rr .rr-credit:hover{opacity:1;color:#3f3f46}
 .rr-actions{position:fixed;right:24px;bottom:24px;display:flex;gap:8px;z-index:10}
 .rr-actions a,.rr-actions button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:999px;font:500 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif;background:#fff;color:#111;box-shadow:0 1px 2px rgb(0 0 0/.08),0 4px 16px rgb(0 0 0/.12)}
 .rr-actions .rr-primary{background:#111;color:#fff}
@@ -71,57 +69,64 @@ button{font:inherit;font-weight:600;height:44px;border:0;border-radius:8px;backg
 `;
 
 /**
- * The page's one script: Share opens the system share sheet or copies the link, and Show contact details fetches the
- * hidden details into place. Its text is fixed, so the server's policy can allow it by hash.
+ * The page's one script: Share opens the system share sheet or copies the link. Its text is fixed, so the server's
+ * policy can allow it by hash.
  */
-const SCRIPT = `(()=>{const d=document,t=d.querySelector(".rr-toast");const toast=()=>{if(!t)return;t.setAttribute("data-on","");setTimeout(()=>t.removeAttribute("data-on"),1600)};d.querySelector("[data-share]")?.addEventListener("click",async()=>{const url=location.href;if(navigator.share){try{await navigator.share({title:d.title,url})}catch{}return}try{await navigator.clipboard.writeText(url);toast()}catch{}});d.querySelectorAll("[data-reveal]").forEach(b=>b.addEventListener("click",async()=>{b.setAttribute("aria-busy","true");try{const r=await fetch(b.getAttribute("data-reveal"),{credentials:"include"});if(!r.ok)throw 0;const c=await r.json();const s=d.createElement("span");s.className="rr-revealed";const add=(text,href)=>{if(!text)return;const e=d.createElement(href?"a":"span");e.textContent=text;if(href)e.href=href;s.append(e)};add(c.email,c.email&&"mailto:"+c.email);add(c.phone,c.phone&&"tel:"+c.phone.replace(/[^+\\d]/g,""));add(c.location);for(const f of c.customFields||[])add(f.text,/^https?:\\/\\//i.test(f.link)?f.link:"");b.replaceWith(s)}catch{b.removeAttribute("aria-busy")}}))})();`;
+const SCRIPT = `(()=>{const d=document,t=d.querySelector(".rr-toast");const toast=()=>{if(!t)return;t.setAttribute("data-on","");setTimeout(()=>t.removeAttribute("data-on"),1600)};d.querySelector("[data-share]")?.addEventListener("click",async()=>{const url=location.href;if(navigator.share){try{await navigator.share({title:d.title,url})}catch{}return}try{await navigator.clipboard.writeText(url);toast()}catch{}})})();`;
 
-/** The Show contact details button, placed where the header lists contact details (or after the header). */
-function withContactButton(html: string, contactUrl: string, label: string): string {
-	const button = `<button type="button" class="rr-reveal" data-reveal="${escapeAttribute(contactUrl)}">${escapeHtml(label)}</button>`;
-	const header = html.indexOf('data-region="header"');
-	if (header < 0) return html.replace(/(<div[^>]*class="[^"]*rr-page[^"]*"[^>]*>)/, `$1${button}`);
-	// The header region's own closing tag: count nesting from its opening tag.
-	const open = html.lastIndexOf("<", header);
-	const tag = /^<([a-z0-9]+)/.exec(html.slice(open))?.[1] ?? "div";
-	let depth = 0;
-	const pattern = new RegExp(`<(/?)${tag}\\b[^>]*>`, "g");
-	pattern.lastIndex = open;
-	for (let match = pattern.exec(html); match; match = pattern.exec(html)) {
-		depth += match[1] ? -1 : 1;
-		if (depth === 0) return `${html.slice(0, match.index)}${button}${html.slice(match.index)}`;
-	}
-	return html;
+/** The Reactive Resume mark, drawn in the credit's colour. */
+const LOGO =
+	'<svg viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M173.611 166.311L132.877 219.804H173.524L193.973 191.813L213.183 219.804H256L215.673 165.707L215.15 165.046L207.461 155.332L195.329 140.004L195.258 139.915L193.813 138.089L193.923 138.001L176.286 112.861H134.061L173.611 166.311ZM199.89 133.554L214.959 112.861H254.619L219.874 158.8L199.89 133.554Z"/><path fill="currentColor" fill-rule="evenodd" d="M0 36.1959V174.314H39.0678V137.614H60.3938L60.4323 137.671C60.8436 137.653 61.2517 137.634 61.6567 137.614C75.0665 136.968 85.1471 135.549 96.385 131.385C96.7596 131.246 97.1355 131.104 97.5128 130.959L97.4591 130.881C105.816 126.86 112.331 121.344 117.006 114.331C122.005 106.702 124.504 97.6915 124.504 87.2997C124.504 76.7764 122.005 67.7 117.006 60.0706C112.007 52.3097 104.904 46.3903 95.6964 42.3125C86.62 38.2347 75.7679 36.1959 63.1399 36.1959H0ZM102.156 137.725L64.8705 144.175L85.4361 174.314H127.266L102.156 137.725ZM39.0678 107.426H60.7721C68.9277 107.426 74.9786 105.65 78.9248 102.098C83.0026 98.5465 85.0415 93.6137 85.0415 87.2997C85.0415 80.8542 83.0026 75.8556 78.9248 72.304C74.9786 68.7523 68.9277 66.9765 60.7721 66.9765H39.0678V107.426Z"/></svg>';
+
+/** OpenGraph and Twitter card tags, for the web pages and the app's own pages. Every value must already be HTML-escaped. */
+export function socialMetaTags(tags: {
+	type: string;
+	title: string;
+	description: string;
+	url: string;
+	image?: string | undefined;
+}) {
+	return [
+		`<meta property="og:type" content="${tags.type}">`,
+		`<meta property="og:site_name" content="Reactive Resume">`,
+		`<meta property="og:title" content="${tags.title}">`,
+		`<meta property="og:description" content="${tags.description}">`,
+		`<meta property="og:url" content="${tags.url}">`,
+		tags.image ? `<meta property="og:image" content="${tags.image}">` : "",
+		`<meta name="twitter:card" content="${tags.image ? "summary_large_image" : "summary"}">`,
+		`<meta name="twitter:title" content="${tags.title}">`,
+		`<meta name="twitter:description" content="${tags.description}">`,
+		tags.image ? `<meta name="twitter:image" content="${tags.image}">` : "",
+	].join("");
 }
 
-const metaTags = (head: WebPageHead) => {
-	const title = escapeAttribute(head.title);
-	const description = escapeAttribute(head.description);
-	const url = escapeAttribute(head.canonicalUrl);
-	const image = head.imageUrl ? escapeAttribute(head.imageUrl) : undefined;
+/** Structured data for search engines, safe inside a `<script>`. */
+export const jsonLdScript = (data: unknown) =>
+	`<script type="application/ld+json">${JSON.stringify(data).replaceAll("<", "\\u003c")}</script>`;
+
+const metaTags = (head: WebPageHead | undefined) => {
+	if (!head) return "";
+	const title = escapeHtml(head.title);
+	const description = escapeHtml(head.description);
+	const url = escapeHtml(head.canonicalUrl);
 	return [
-		`<title>${escapeHtml(head.title)}</title>`,
+		`<title>${title}</title>`,
 		`<meta name="description" content="${description}">`,
 		`<link rel="canonical" href="${url}">`,
 		head.indexable ? "" : `<meta name="robots" content="noindex, follow">`,
-		`<meta property="og:type" content="profile">`,
-		`<meta property="og:site_name" content="Reactive Resume">`,
-		`<meta property="og:title" content="${title}">`,
-		`<meta property="og:description" content="${description}">`,
-		`<meta property="og:url" content="${url}">`,
-		image ? `<meta property="og:image" content="${image}">` : "",
-		`<meta name="twitter:card" content="${image ? "summary_large_image" : "summary"}">`,
-		`<meta name="twitter:title" content="${title}">`,
-		`<meta name="twitter:description" content="${description}">`,
-		image ? `<meta name="twitter:image" content="${image}">` : "",
-		head.structuredData
-			? `<script type="application/ld+json">${JSON.stringify(head.structuredData).replaceAll("<", "\\u003c")}</script>`
-			: "",
+		socialMetaTags({
+			type: "profile",
+			title,
+			description,
+			url,
+			image: head.imageUrl ? escapeHtml(head.imageUrl) : undefined,
+		}),
+		head.structuredData ? jsonLdScript(head.structuredData) : "",
 	].join("");
 };
 
-const shell = (lang: string, dir: string, head: string, css: string, body: string) =>
-	`<!doctype html><html lang="${escapeAttribute(lang)}" dir="${dir}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml">${head}<style>${css}</style></head><body>${body}</body></html>`;
+const shell = (lang: string, head: string, css: string, body: string) =>
+	`<!doctype html><html lang="${escapeHtml(lang)}" dir="${isRTL(lang) ? "rtl" : "ltr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml">${head}<style>${css}</style></head><body>${body}</body></html>`;
 
 /** A resume's whole web page, ready to send. */
 export function renderWebPageDocument({
@@ -129,28 +134,27 @@ export function renderWebPageDocument({
 	head,
 	messages,
 	downloadUrl,
-	contactUrl,
 	creditUrl,
 }: WebPageDocumentOptions): string {
-	const sheet = contactUrl ? withContactButton(page.html, contactUrl, messages.showContactDetails) : page.html;
 	const download = downloadUrl
-		? `<a class="rr-primary" href="${escapeAttribute(downloadUrl)}" download>${escapeHtml(messages.downloadPdf)}</a>`
+		? `<a class="rr-primary" href="${escapeHtml(downloadUrl)}" download>${escapeHtml(messages.downloadPdf)}</a>`
 		: "";
 	const body = [
-		`<main id="main-content" class="rr rr-desk">${sheet}`,
-		creditUrl ? `<a class="rr-credit" href="${escapeAttribute(creditUrl)}">${escapeHtml(messages.credit)}</a>` : "",
+		`<main id="main-content" class="rr rr-desk">${page.html}`,
+		creditUrl
+			? `<a class="rr-credit" href="${escapeHtml(creditUrl)}" aria-label="${escapeHtml(messages.credit)}" title="${escapeHtml(messages.credit)}">${LOGO}<span aria-hidden="true">Reactive Resume</span></a>`
+			: "",
 		"</main>",
 		`<div class="rr-actions">${download}<button type="button" data-share>${escapeHtml(messages.share)}</button></div>`,
 		`<div class="rr-toast" role="status" aria-live="polite">${escapeHtml(messages.linkCopied)}</div>`,
 		`<script>${SCRIPT}</script>`,
 	].join("");
-	return shell(page.lang, page.dir, metaTags(head), `${SHELL_CSS}${page.css}`, body);
+	return shell(page.lang, metaTags(head), `${SHELL_CSS}${page.css}`, body);
 }
 
 /** The page a password-protected resume shows until the visitor unlocks it. */
 export function renderPasswordDocument(options: {
 	lang: string;
-	dir: "ltr" | "rtl";
 	messages: WebPageMessages;
 	wrongPassword: boolean;
 }): string {
@@ -159,7 +163,6 @@ export function renderPasswordDocument(options: {
 	const body = `<main><h1>${escapeHtml(messages.passwordTitle)}</h1><p>${escapeHtml(messages.passwordHint)}</p><form method="post"><label for="password">${escapeHtml(messages.password)}</label><input id="password" name="password" type="password" autocomplete="current-password" minlength="6" maxlength="64" required autofocus${options.wrongPassword ? ' aria-invalid="true" aria-describedby="error"' : ""}>${error}<button type="submit">${escapeHtml(messages.unlock)}</button></form></main>`;
 	return shell(
 		options.lang,
-		options.dir,
 		`<title>${escapeHtml(messages.passwordTitle)}</title><meta name="robots" content="noindex, nofollow">`,
 		MESSAGE_CSS,
 		body,
@@ -171,7 +174,6 @@ export function renderUnavailableDocument(options: { lang: string; messages: Web
 	const { messages } = options;
 	return shell(
 		options.lang,
-		isRTL(options.lang as Parameters<typeof isRTL>[0]) ? "rtl" : "ltr",
 		`<title>${escapeHtml(messages.unavailableTitle)}</title><meta name="robots" content="noindex, nofollow">`,
 		MESSAGE_CSS,
 		`<main><h1>${escapeHtml(messages.unavailableTitle)}</h1><p>${escapeHtml(messages.unavailableHint)}</p></main>`,

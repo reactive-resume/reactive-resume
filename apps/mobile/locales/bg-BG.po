@@ -696,10 +696,6 @@ msgstr "2-3 изречения се четат най-добре"
 msgid "24 hours before"
 msgstr "24 часа преди това"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Бутонът „Показване на данните за контакт“ ги разкрива на хората, но не и на търсачките."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Резервно копие на това писмо. Импортира обратно в Reactive Resume като писмо."
@@ -1380,7 +1376,7 @@ msgstr "Без значение"
 msgid "Any font, in Advanced"
 msgstr "Всеки шрифт, в Разширени"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Всеки с връзката ще може да види вашето резюме."
 
@@ -1611,10 +1607,6 @@ msgstr "Помолете вашия администратор на сървър
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Попитайте или опишете промяна..."
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "поискаха данни за контакт"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Смяна на часовата зона"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Промени директно резюмето (предишен разговор)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Промените не можаха да бъдат запазени. Опитайте отново, преди да продължите."
 
@@ -2254,7 +2246,7 @@ msgstr "Изчиства своите записи; секцията остав�
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "затвори"
 
@@ -2372,7 +2364,7 @@ msgstr "Компресирайте или премахнете големи из
 msgid "Confirm applied"
 msgstr "Потвърдете подаването"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Потвърди паролата"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "Двойна проверка"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Изтегляне"
 msgid "Download {0}"
 msgstr "Изтегляне на {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Изтегляне и история"
@@ -4416,7 +4408,7 @@ msgstr "Екип за наемане"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "История"
 
@@ -5035,10 +5027,6 @@ msgstr "Остават по-малко от 48 часа."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Позволете на AI клиенти като Claude или Cursor да четат и редактират вашите автобиографии, като използват API ключ."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Посетителите могат да поискат да ги видят"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Отваряне в Оферти"
 msgid "Open letter"
 msgstr "Отваряне на писмото"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Отворете публичната страница"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Отворени въпроси"
@@ -6443,6 +6427,10 @@ msgstr "Отворете списъка"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Отваряне на графика"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Отваряне на уеб страницата"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Ключове за достъп"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Парола"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Паролите не съвпадат."
 
@@ -7475,7 +7463,7 @@ msgstr "Премахване на полето"
 msgid "Remove file"
 msgstr "Премахване на файл"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Премахване на паролата"
 
@@ -7497,7 +7485,7 @@ msgstr "Премахване на въпроса"
 msgid "Remove role"
 msgstr "Премахване на ролята"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Премахване на паролата?"
 
@@ -7597,11 +7585,7 @@ msgstr "Докладване на проблем"
 msgid "Report received by your server operator. Thank you."
 msgstr "Докладът е получен от оператора на вашия сървър. благодаря"
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Подайте сигнал за споделена автобиография"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Изискване на парола"
 
@@ -7735,8 +7719,8 @@ msgstr "Извлечено {0} с помощта на {1}. Времето за �
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "Сървърът е променен. Върнете се в Докум�
 msgid "Set a follow-up"
 msgstr "Задаване на последващ контакт"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Задайте парола"
 
@@ -8635,8 +8619,8 @@ msgstr "Влезте в {server}, след което продължете къ�
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Влезте, за да продължите."
 
@@ -9622,7 +9606,7 @@ msgstr "Този документ е заключен. Отключете го, 
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Този документ е заключен. Отключете го, за да получите предложения."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Този документ е заключен. Все още можете да изтегляте и наименувате версии. Отключете, за да редактирате или възстановите."
 
@@ -10241,7 +10225,7 @@ msgstr "Използвайте {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Използвайте от 3 до 64 малки букви, цифри, точки, тирета и долни черти."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Използвайте 6–64 знака."
 
@@ -10508,11 +10492,11 @@ msgstr "Насилие или малтретиране"
 msgid "Visitors"
 msgstr "Посетители"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Посетителите могат да изтеглят PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Посетителите влизат в него, преди да видят резюмето. Споделяйте го само с хора, на които имате доверие."
 
@@ -10895,7 +10879,7 @@ msgstr "Вие сте офлайн. Изтеглянето на PDF се изв�
 msgid "You're offline. History needs a connection."
 msgstr "Вие сте офлайн. Историята има нужда от връзка."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "Офлайн сте. Историята изисква връзка. „Изтегляне на PDF“ работи на това устройство."
 

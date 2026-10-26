@@ -696,10 +696,6 @@ msgstr "2–3 ayat paling sesuai dibaca"
 msgid "24 hours before"
 msgstr "24 jam sebelum"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Butang “Tunjukkan butiran hubungan” mendedahkannya kepada orang, bukan kepada enjin carian."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Sandaran surat ini. Import semula ke Reactive Resume sebagai surat."
@@ -1380,7 +1376,7 @@ msgstr "Mana-mana"
 msgid "Any font, in Advanced"
 msgstr "Sebarang fon, dalam Advanced"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Sesiapa sahaja yang mempunyai pautan akan dapat melihat resume anda."
 
@@ -1611,10 +1607,6 @@ msgstr "Minta pentadbir pelayan anda untuk mendayakan penyulitan kelayakan atau 
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Tanya atau huraikan perubahan…"
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "meminta butiran hubungan"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Tukar zon waktu"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Mengubah resume secara langsung (perbualan terdahulu)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Perubahan tidak dapat disimpan. Cuba semula sebelum meneruskan."
 
@@ -2254,7 +2246,7 @@ msgstr "Membersihkan entrinya; bahagian tetap. Anda boleh buat asal."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "tutup"
 
@@ -2372,7 +2364,7 @@ msgstr "Mampatkan atau buang imej besar untuk memastikan muat naik pantas."
 msgid "Confirm applied"
 msgstr "Sahkan sudah memohon"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Sahkan kata laluan"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "Menyemak semula"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Muat turun"
 msgid "Download {0}"
 msgstr "Muat turun {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Muat turun & sejarah"
@@ -4416,7 +4408,7 @@ msgstr "Mengupah pasukan"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Sejarah"
 
@@ -5035,10 +5027,6 @@ msgstr "Kurang daripada 48 jam lagi."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Benarkan klien AI seperti Claude atau Cursor membaca dan mengedit resume anda dengan kunci API."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Benarkan pelawat meminta untuk melihatnya"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Buka dalam Tawaran"
 msgid "Open letter"
 msgstr "Buka surat"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Buka halaman awam"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Soalan belum terjawab"
@@ -6443,6 +6427,10 @@ msgstr "Buka senarai"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Buka jadual"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Buka halaman web"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Passkey"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Kata Laluan"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Kata laluan tidak sepadan."
 
@@ -7475,7 +7463,7 @@ msgstr "Alih keluar medan"
 msgid "Remove file"
 msgstr "Alih keluar fail"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Alih keluar kata laluan"
 
@@ -7497,7 +7485,7 @@ msgstr "Alih keluar soalan"
 msgid "Remove role"
 msgstr "Alih keluar peranan"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Alih keluar kata laluan?"
 
@@ -7597,11 +7585,7 @@ msgstr "Laporkan Isu"
 msgid "Report received by your server operator. Thank you."
 msgstr "Laporan diterima oleh pengendali pelayan anda. terima kasih."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Laporkan resume yang dikongsi"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Memerlukan kata laluan"
 
@@ -7735,8 +7719,8 @@ msgstr "Diambil {0} menggunakan {1}. Masa perolehan tidak mewujudkan kesegaran a
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "Pelayan berubah. Kembali ke Dokumen dan cuba lagi."
 msgid "Set a follow-up"
 msgstr "Tetapkan tindakan susulan"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Tetapkan kata laluan"
 
@@ -8635,8 +8619,8 @@ msgstr "Log masuk ke {server}, kemudian teruskan ke dokumen yang dipautkan."
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Log masuk untuk meneruskan."
 
@@ -9622,7 +9606,7 @@ msgstr "Dokumen ini dikunci. Buka kuncinya sebelum menyimpan suntingan anda di s
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Dokumen ini dikunci. Buka kuncinya untuk mendapatkan cadangan."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Dokumen ini dikunci. Anda masih boleh memuat turun dan menamakan versi. Buka kunci untuk mengedit atau memulihkan."
 
@@ -10241,7 +10225,7 @@ msgstr "Gunakan {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Gunakan 3 hingga 64 huruf kecil, nombor, titik, sempang dan garis bawah."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Gunakan 6–64 aksara."
 
@@ -10508,11 +10492,11 @@ msgstr "Keganasan atau penderaan"
 msgid "Visitors"
 msgstr "Pelawat"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Pelawat boleh memuat turun PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Pelawat memasukinya sebelum mereka melihat resume. Kongsi hanya dengan orang yang anda percayai."
 
@@ -10895,7 +10879,7 @@ msgstr "Anda di luar talian. Muat turun PDF menggunakan peranti ini. Format lain
 msgid "You're offline. History needs a connection."
 msgstr "Anda di luar talian. Sejarah memerlukan sambungan."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "Anda di luar talian. Sejarah memerlukan sambungan. Muat turun PDF berfungsi pada peranti ini."
 

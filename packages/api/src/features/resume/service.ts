@@ -26,7 +26,7 @@ import {
 } from "./access-policy";
 import { publishResumeUpdated } from "./events";
 import { parseStoredResumeData, parseWritableResumeData } from "./resume-data-validation";
-import { checkSlug, findFreeSlug, findResumeBySlug, recordSlugChange, SLUG_PATTERN } from "./slugs";
+import { checkSlug, findFreeSlug, findResume, recordSlugChange, SLUG_PATTERN } from "./slugs";
 import {
 	deleteVersion,
 	getVersion,
@@ -35,7 +35,7 @@ import {
 	saveSessionVersion,
 	writeVersion,
 } from "./version-history";
-import { clientKeyFromHeaders, shouldCountView } from "./view-dedup";
+import { countVisit } from "./view-dedup";
 
 function resumeVersionConflict(updatedAt: Date) {
 	return new ORPCError("RESUME_VERSION_CONFLICT", {
@@ -100,7 +100,6 @@ const activeUnlockedResumeWhere = (id: string, userId: string) =>
 const shareColumns = {
 	showInSearchEngines: schema.resume.showInSearchEngines,
 	hideContactDetails: schema.resume.hideContactDetails,
-	showContactButton: schema.resume.showContactButton,
 	isPrimary: schema.resume.isPrimary,
 };
 
@@ -218,7 +217,7 @@ const statistics = {
 		trustedClient?: string;
 		currentUserId?: string;
 	}): Promise<boolean> => {
-		const resume = await findResumeBySlug(input, {
+		const resume = await findResume(input, {
 			id: schema.resume.id,
 			userId: schema.resume.userId,
 			isPublic: schema.resume.isPublic,
@@ -236,10 +235,8 @@ const statistics = {
 		}
 
 		// Like views, a visitor's downloads count once an hour, so repeated calls can't inflate the number.
-		const key = `download:${resume.id}:${clientKeyFromHeaders(input.trustedClient)}`;
-		if (shouldCountForStatistics(resume, viewer) && (await shouldCountView(key, Date.now()))) {
-			await statistics.increment({ id: resume.id, downloads: true });
-		}
+		if (shouldCountForStatistics(resume, viewer))
+			await countVisit({ kind: "download", resumeId: resume.id, trustedClient: input.trustedClient });
 		return true;
 	},
 
@@ -249,7 +246,6 @@ const statistics = {
 				isPublic: schema.resume.isPublic,
 				views: schema.resumeStatistics.views,
 				downloads: schema.resumeStatistics.downloads,
-				contactReveals: schema.resumeStatistics.contactReveals,
 				lastViewedAt: schema.resumeStatistics.lastViewedAt,
 				lastDownloadedAt: schema.resumeStatistics.lastDownloadedAt,
 			})
@@ -263,16 +259,14 @@ const statistics = {
 			isPublic: statistics.isPublic,
 			views: statistics.views ?? 0,
 			downloads: statistics.downloads ?? 0,
-			contactReveals: statistics.contactReveals ?? 0,
 			lastViewedAt: statistics.lastViewedAt,
 			lastDownloadedAt: statistics.lastDownloadedAt,
 		};
 	},
 
-	increment: async (input: { id: string; views?: boolean; downloads?: boolean; contactReveals?: boolean }) => {
+	increment: async (input: { id: string; views?: boolean; downloads?: boolean }) => {
 		const views = input.views ? 1 : 0;
 		const downloads = input.downloads ? 1 : 0;
-		const contactReveals = input.contactReveals ? 1 : 0;
 		const lastViewedAt = input.views ? sql`now()` : undefined;
 		const lastDownloadedAt = input.downloads ? sql`now()` : undefined;
 		const today = new Date().toISOString().slice(0, 10);
@@ -284,7 +278,6 @@ const statistics = {
 					resumeId: input.id,
 					views,
 					downloads,
-					contactReveals,
 					lastViewedAt,
 					lastDownloadedAt,
 				})
@@ -293,7 +286,6 @@ const statistics = {
 					set: {
 						views: sql`${schema.resumeStatistics.views} + ${views}`,
 						downloads: sql`${schema.resumeStatistics.downloads} + ${downloads}`,
-						contactReveals: sql`${schema.resumeStatistics.contactReveals} + ${contactReveals}`,
 						lastViewedAt,
 						lastDownloadedAt,
 					},
@@ -301,13 +293,12 @@ const statistics = {
 
 			await tx
 				.insert(schema.resumeStatisticsDaily)
-				.values({ resumeId: input.id, date: today, views, downloads, contactReveals })
+				.values({ resumeId: input.id, date: today, views, downloads })
 				.onConflictDoUpdate({
 					target: [schema.resumeStatisticsDaily.resumeId, schema.resumeStatisticsDaily.date],
 					set: {
 						views: sql`${schema.resumeStatisticsDaily.views} + ${views}`,
 						downloads: sql`${schema.resumeStatisticsDaily.downloads} + ${downloads}`,
-						contactReveals: sql`${schema.resumeStatisticsDaily.contactReveals} + ${contactReveals}`,
 					},
 				});
 		});
@@ -335,7 +326,6 @@ const statistics = {
 				date: schema.resumeStatisticsDaily.date,
 				views: schema.resumeStatisticsDaily.views,
 				downloads: schema.resumeStatisticsDaily.downloads,
-				contactReveals: schema.resumeStatisticsDaily.contactReveals,
 			})
 			.from(schema.resumeStatisticsDaily)
 			.where(and(eq(schema.resumeStatisticsDaily.resumeId, input.id), gte(schema.resumeStatisticsDaily.date, start)));
@@ -346,7 +336,6 @@ const statistics = {
 			date,
 			views: byDate.get(date)?.views ?? 0,
 			downloads: byDate.get(date)?.downloads ?? 0,
-			contactReveals: byDate.get(date)?.contactReveals ?? 0,
 		}));
 	},
 };
@@ -363,7 +352,6 @@ function toSharedResumeResponse(
 		showDownloadButtons: boolean;
 		showInSearchEngines: boolean;
 		hideContactDetails: boolean;
-		showContactButton: boolean;
 		isPrimary: boolean;
 	},
 	hasPassword: boolean,
@@ -371,7 +359,6 @@ function toSharedResumeResponse(
 	return {
 		showInSearchEngines: resume.showInSearchEngines,
 		hideContactDetails: resume.hideContactDetails,
-		showContactButton: resume.showContactButton,
 		isPrimary: resume.isPrimary,
 		id: resume.id,
 		name: resume.name,
@@ -531,7 +518,7 @@ export const resumeService = {
 		requirePublic?: boolean;
 		expectedResumeId?: string;
 	}) => {
-		const resume = await findResumeBySlug(input, {
+		const resume = await findResume(input, {
 			id: schema.resume.id,
 			userId: schema.resume.userId,
 			name: schema.resume.name,
@@ -563,12 +550,8 @@ export const resumeService = {
 			});
 		}
 
-		if (shouldCountForStatistics(resume, viewer)) {
-			const key = `${resume.id}:${clientKeyFromHeaders(input.trustedClient)}`;
-			if (await shouldCountView(key, Date.now())) {
-				await resumeService.statistics.increment({ id: resume.id, views: true });
-			}
-		}
+		if (shouldCountForStatistics(resume, viewer))
+			await countVisit({ kind: "view", resumeId: resume.id, trustedClient: input.trustedClient });
 
 		const current = { ...resume, data: parseStoredResumeData(resume.data) };
 		return toSharedResumeResponse(redactResumeForViewer(current, isOwner(current, viewer)), resume.hasPassword);
@@ -647,7 +630,6 @@ export const resumeService = {
 		showDownloadButtons?: boolean;
 		showInSearchEngines?: boolean;
 		hideContactDetails?: boolean;
-		showContactButton?: boolean;
 		isPrimary?: boolean;
 		expectedUpdatedAt?: Date;
 		skipAutoSnapshot?: boolean;
@@ -711,7 +693,6 @@ export const resumeService = {
 					...(input.showDownloadButtons !== undefined ? { showDownloadButtons: input.showDownloadButtons } : {}),
 					...(input.showInSearchEngines !== undefined ? { showInSearchEngines: input.showInSearchEngines } : {}),
 					...(input.hideContactDetails !== undefined ? { hideContactDetails: input.hideContactDetails } : {}),
-					...(input.showContactButton !== undefined ? { showContactButton: input.showContactButton } : {}),
 					...(input.isPrimary !== undefined ? { isPrimary: input.isPrimary } : {}),
 				};
 
@@ -813,7 +794,7 @@ export const resumeService = {
 		updateResumePassword({ ...input, password: await hash(input.password, 10) }),
 
 	verifyPassword: async (input: { slug: string; username: string; password: string; responseHeaders?: Headers }) => {
-		const resume = await findResumeBySlug(
+		const resume = await findResume(
 			input,
 			{ id: schema.resume.id, password: schema.resume.password },
 			isNotNull(schema.resume.password),

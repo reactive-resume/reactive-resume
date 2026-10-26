@@ -1,4 +1,4 @@
-import { escapeHtml } from "./to-html";
+import { escapeHtml } from "@reactive-resume/utils/string";
 
 export type ResumeCardInput = {
 	name: string;
@@ -41,8 +41,6 @@ function wrap(text: string, width: number, lines: number): string[] {
 	return fitted;
 }
 
-const family = (name: string) => escapeHtml(name).replaceAll('"', "'");
-
 /** The link preview of a resume's web page: name, headline, picture and address, in the resume's fonts and colour. */
 export function resumeCardSvg(card: ResumeCardInput): string {
 	const nameLines = wrap(card.name, card.picture ? 18 : 26, 2);
@@ -55,7 +53,7 @@ export function resumeCardSvg(card: ResumeCardInput): string {
 		lines
 			.map(
 				(line, index) =>
-					`<text x="96" y="${Math.round(top + index * size * 1.15)}" font-family="${family(font)}" font-size="${size}" font-weight="${weight}" fill="${fill}">${escapeHtml(line)}</text>`,
+					`<text x="96" y="${Math.round(top + index * size * 1.15)}" font-family="${escapeHtml(font)}" font-size="${size}" font-weight="${weight}" fill="${fill}">${escapeHtml(line)}</text>`,
 			)
 			.join("");
 
@@ -68,7 +66,7 @@ export function resumeCardSvg(card: ResumeCardInput): string {
 			: "",
 		text(nameLines, nameTop, nameSize, card.headingFamily, 700, "#111111"),
 		text(headlineLines, headlineTop, headlineSize, card.bodyFamily, 400, "#4b4b52"),
-		`<text x="96" y="${CARD_HEIGHT - 72}" font-family="${family(card.bodyFamily)}" font-size="28" font-weight="600" fill="${escapeHtml(card.color)}">${escapeHtml(card.address)}</text>`,
+		`<text x="96" y="${CARD_HEIGHT - 72}" font-family="${escapeHtml(card.bodyFamily)}" font-size="28" font-weight="600" fill="${escapeHtml(card.color)}">${escapeHtml(card.address)}</text>`,
 		"</svg>",
 	].join("");
 }

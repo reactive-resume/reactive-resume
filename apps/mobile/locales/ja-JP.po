@@ -696,10 +696,6 @@ msgstr "2 ～ 3 文が最もよく読まれます"
 msgid "24 hours before"
 msgstr "24時間前"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "「連絡先情報を表示」ボタンで、検索エンジンではなく閲覧者にだけ表示されます。"
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "この手紙のバックアップ。 Reactive Resume にレターとしてインポートし直します。"
@@ -1380,7 +1376,7 @@ msgstr "指定なし"
 msgid "Any font, in Advanced"
 msgstr "任意のフォント（詳細設定）"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "リンクを知っている人は誰でもあなたの履歴書を閲覧できるようになります。"
 
@@ -1611,10 +1607,6 @@ msgstr "サーバー管理者に、資格情報の暗号化を有効にするか
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "変更について尋ねたり、説明したりしてください…"
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "連絡先情報のリクエスト"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "タイムゾーンを変更"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "履歴書を直接変更しました (以前の会話)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "変更を保存できませんでした。続行する前に リトライ を押してください。"
 
@@ -2254,7 +2246,7 @@ msgstr "エントリをクリアします。セクションは残ります。元
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "閉じる"
 
@@ -2372,7 +2364,7 @@ msgstr "アップロードを速く保つため、大きな画像を圧縮する
 msgid "Confirm applied"
 msgstr "応募済みとして確定"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "パスワードの確認"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "再確認中"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "ダウンロード"
 msgid "Download {0}"
 msgstr "{0}をダウンロード"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "ダウンロードと履歴"
@@ -4416,7 +4408,7 @@ msgstr "採用チーム"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "歴史"
 
@@ -5035,10 +5027,6 @@ msgstr "残りは 48 時間未満です。"
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Claude や Cursor などの AI クライアントが API キーを使用してレジュメを読み取り、編集できるようにします。"
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "閲覧者が表示をリクエストできるようにする"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "「オファー」で開く"
 msgid "Open letter"
 msgstr "カバーレターを開く"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "公開ページを開く"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "未解決の質問"
@@ -6443,6 +6427,10 @@ msgstr "リストを開く"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "スケジュールを開く"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Web ページを開く"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "パスキー"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "パスワード"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "パスワードが一致しません。"
 
@@ -7475,7 +7463,7 @@ msgstr "フィールドを削除"
 msgid "Remove file"
 msgstr "ファイルを削除"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "パスワードを削除"
 
@@ -7497,7 +7485,7 @@ msgstr "質問を削除"
 msgid "Remove role"
 msgstr "役割の削除"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "パスワードを削除しますか?"
 
@@ -7597,11 +7585,7 @@ msgstr "問題を報告"
 msgid "Report received by your server operator. Thank you."
 msgstr "サーバーオペレーターが受け取ったレポート。ありがとう。"
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "共有された履歴書を報告する"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "パスワードを要求する"
 
@@ -7735,8 +7719,8 @@ msgstr "{1} を使用して {0} を取得しました。取得時間は、オリ
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "サーバーが変わりました。 書類 に戻って再試行して�
 msgid "Set a follow-up"
 msgstr "フォローアップを設定する"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "パスワードを設定する"
 
@@ -8635,8 +8619,8 @@ msgstr "{server} にサインインし、リンクされた書類に進みます
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "続行するにはサインインしてください。"
 
@@ -9622,7 +9606,7 @@ msgstr "この文書はロックされています。編集内容をここに保
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "この文書はロックされています。ロックを解除すると提案が表示されます。"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "この文書はロックされています。引き続き、バージョンをダウンロードして名前を付けることができます。編集または復元するにはロックを解除します。"
 
@@ -10241,7 +10225,7 @@ msgstr "{url}を使用"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "3 ～ 64 文字の小文字、数字、ドット、ハイフン、アンダースコアを使用します。"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "6 ～ 64 文字を使用してください。"
 
@@ -10508,11 +10492,11 @@ msgstr "暴力や虐待"
 msgid "Visitors"
 msgstr "訪問者"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "訪問者は PDF をダウンロードできます。"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "訪問者は履歴書を見る前に入力します。信頼できる人とのみ共有してください。"
 
@@ -10895,7 +10879,7 @@ msgstr "オフラインです。PDFのダウンロードはこのデバイスで
 msgid "You're offline. History needs a connection."
 msgstr "あなたはオフラインです。バージョン履歴を表示するには接続が必要です。"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "オフラインです。バージョン履歴を表示するには接続が必要です。「PDF をダウンロード」はこのデバイスで使用できます。"
 

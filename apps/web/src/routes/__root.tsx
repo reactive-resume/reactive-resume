@@ -14,12 +14,13 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { HotkeysProvider } from "@tanstack/react-hotkeys";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
-import { createRootRouteWithContext, HeadContent, Outlet, useRouterState } from "@tanstack/react-router";
+import { createRootRouteWithContext, HeadContent, Outlet, redirect, useRouterState } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { LazyMotion, MotionConfig } from "motion/react";
 import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "@reactive-resume/ui/components/toast";
 import { TooltipProvider } from "@reactive-resume/ui/components/tooltip";
+import { isAppSectionPath } from "@reactive-resume/utils/app-paths";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { BreakpointIndicator } from "@/components/layout/breakpoint-indicator";
 import { DialogManager } from "@/dialogs/manager";
@@ -58,7 +59,15 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 		const { title, description } = getHomepageMeta();
 		return { meta: [{ title }, { name: "description", content: description }] };
 	},
-	beforeLoad: ({ context }) => loadRootContext(context.queryClient),
+	beforeLoad: async ({ context, location, preload }) => {
+		const root = await loadRootContext(context.queryClient);
+		const { aliasUrl, appUrl } = root.flags;
+		// Sign-in and the editor live on APP_URL; the alias (APP_ALIAS_URL) only serves the public pages. The server
+		// redirects full page loads; this catches links followed inside the app.
+		if (!preload && appUrl && aliasUrl === window.location.origin && isAppSectionPath(location.pathname))
+			throw redirect({ href: `${appUrl}${location.href}` });
+		return root;
+	},
 });
 
 function RootComponent() {

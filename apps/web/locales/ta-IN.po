@@ -726,7 +726,7 @@ msgstr "{stars, plural, one {GitHub-இல் Reactive Resume-க்கு ந�
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# கதை} other {# கதைகள்}}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "{suggestion} may be available. Get yours here →"
 msgstr "{suggestion} கிடைக்கக்கூடும். உங்களுடையதை இங்கே பெறுங்கள் →"
 
@@ -844,7 +844,7 @@ msgstr "10 நிமிடச் சுருக்கக் குறிப்�
 msgid "10–11 recommended"
 msgstr "10-11 பரிந்துரைக்கப்படுகிறது"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 கோப்புகள்"
 
@@ -903,15 +903,11 @@ msgstr "90 நாட்கள்"
 msgid "A"
 msgstr "A"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "“தொடர்பு விவரங்களைக் காட்டு” பொத்தான் அவற்றை மனிதர்களுக்குக் காட்டும், தேடுபொறிகளுக்கு அல்ல."
-
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "மையப்படுத்தப்பட்ட திருத்தத்தை A ஏற்றுக்கொள்கிறது மற்றும் R நிராகரிக்கிறது. ↑ மற்றும் ↓ திருத்தங்களுக்கு இடையே நகர்த்தவும்."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "இந்த கடிதத்தின் காப்புப்பிரதி. கடிதமாக Reactive Resume க்கு மீண்டும் இறக்குமதி செய்கிறது."
 
@@ -1256,7 +1252,7 @@ msgstr "AI வழங்குநரைச் சேர்க்கவும்"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "@ மற்றும் name@example.com போன்ற டொமைனைச் சேர்க்கவும்"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "முகவரியைச் சேர்க்கவும்."
 
@@ -1423,7 +1419,7 @@ msgstr "{name}@example.com போன்ற @க்குப் பிறகு �
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com போன்ற டொமைன் முடிவைச் சேர்க்கவும்"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "டொமைனை நீங்கள் நிர்வகிக்கும் இடத்தில் இந்தப் பதிவுகளைச் சேர்த்து, பின்னர் சரிபார்க்கவும். மாற்றங்கள் அனைவரையும் சென்றடைய சில மணிநேரம் ஆகலாம்."
 
@@ -1492,7 +1488,7 @@ msgstr "அறிவுத் தளத்தில் அனுபவமாக�
 msgid "Added to Prepare"
 msgstr "தயாரிப்பில் சேர்க்கப்பட்டது"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "முகவரி"
 
@@ -1725,7 +1721,7 @@ msgstr "மற்றும் {0} மேலும்"
 msgid "and counting"
 msgstr "மற்றும் எண்ணுதல்"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "உங்களின் மற்றொரு ரெஸ்யூம் இந்த முகவரியைப் பயன்படுத்துகிறது."
 
@@ -2059,10 +2055,6 @@ msgstr "ஒரு மாற்றத்தைக் கேளுங்கள் 
 #: src/features/homepage/faq.tsx
 msgid "Asked and <0>answered.</0>"
 msgstr "கேட்கப்பட்டது மற்றும் <0> பதில்கள்.</0>"
-
-#: src/features/resume/share/share-panel.tsx
-msgid "asked for contact details"
-msgstr "தொடர்பு விவரங்களைக் கேட்டனர்"
 
 #: src/features/homepage/prepare.tsx
 msgid "Asks for an example of your onboarding work."
@@ -2574,7 +2566,7 @@ msgstr "மற்றொரு கோப்பை சரிபார்க்க�
 msgid "Check any PDF, no account needed"
 msgstr "எந்த PDF கோப்பையும் சரிபார்க்கலாம், கணக்கு தேவையில்லை"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Check DNS"
 msgstr "DNS-ஐச் சரிபார்"
 
@@ -2661,7 +2653,7 @@ msgstr "ஏற்றுமதி செய்யப்பட்ட PDF ஐச்
 msgid "Checking your preferences"
 msgstr "உங்கள் விருப்பங்களைச் சரிபார்க்கிறது"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "சரிபார்க்கிறது... சேமித்த பிறகு நகல் கிடைக்கும்."
 
@@ -2791,7 +2783,7 @@ msgstr "வாடிக்கையாளர் ஐடி"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2968,7 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "இன்று {time}-க்கு வீடியோ மூலம் என உறுதிப்படுத்துகிறார்."
 
 #: src/features/assistant/provider-setup.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "இணைக்கவும்"
@@ -3021,7 +3013,7 @@ msgstr "இணைக்கப்பட்டது"
 msgid "Connected applications"
 msgstr "இணைக்கப்பட்ட பயன்பாடுகள்"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "இணைக்கப்பட்டது. உங்கள் டொமைன் உங்கள் முதன்மை ரெஸ்யூமைத் திறக்கும்."
 
@@ -3152,7 +3144,7 @@ msgid "Copied"
 msgstr "நகலெடுக்கப்பட்டது"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3626,8 +3618,8 @@ msgstr "இந்த அட்டவணையைச் சேமிக்க ம
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "உங்கள் மாற்றங்களைச் சேமிக்க முடியவில்லை. தொடர்வதற்கு முன் மீண்டும் முயற்சிக்கவும்."
@@ -3732,6 +3724,7 @@ msgstr "விண்ணப்பத்தின் இணைப்பை நீ�
 msgid "Couldn't unlock the document. Try again."
 msgstr "ஆவணத்தைத் திறக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "பகிர்வைப் புதுப்பிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
@@ -3768,7 +3761,7 @@ msgstr "ரெஸ்யூமைப் புதுப்பிக்க மு�
 msgid "Couldn't update the timeline. Try again."
 msgstr "காலவரிசையைப் புதுப்பிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "இந்தக் கடிதத்தின் பதிப்புகளைப் புதுப்பிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
@@ -4362,7 +4355,7 @@ msgstr "நீங்கள் இங்கு நகர்த்தும் ஆ
 msgid "Does it use AI?"
 msgstr "இது AI ஐப் பயன்படுத்துகிறதா?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Domain connected"
 msgstr "டொமைன் இணைக்கப்பட்டது"
 
@@ -4398,8 +4391,8 @@ msgstr "மீண்டும் சரிபார்க்கிறது"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "பதிவிறக்கு"
 
@@ -4411,7 +4404,7 @@ msgstr "{label} ஐப் பதிவிறக்கவும்"
 msgid "Download {name} sample PDF"
 msgstr "{name} மாதிரி PDF ஐப் பதிவிறக்கவும்"
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Download & history"
 msgstr "பதிவிறக்கம் & வரலாறு"
 
@@ -4429,7 +4422,7 @@ msgid "Download CSV"
 msgstr "CSV ஐப் பதிவிறக்கவும்"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "பதிவிறக்கம் தோல்வியடைந்தது. மீண்டும் முயற்சிக்கவும்."
 
@@ -4455,7 +4448,7 @@ msgid "Download totals can include repeat clicks."
 msgstr "பதிவிறக்கம் மொத்தத்தில் மீண்டும் மீண்டும் கிளிக் செய்யலாம்."
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "{file} பதிவிறக்கப்பட்டது"
 
@@ -4463,7 +4456,7 @@ msgstr "{file} பதிவிறக்கப்பட்டது"
 msgid "Downloaded {file} and the cover letter"
 msgstr "{file} மற்றும் கவர் கடிதம் பதிவிறக்கப்பட்டது"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "உங்கள் ரெஸ்யூம் மற்றும் இந்த கடிதம் பதிவிறக்கம் செய்யப்பட்டது"
 
@@ -5265,7 +5258,7 @@ msgid "For"
 msgstr "க்கு"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com போன்ற ரூட் டொமைனுக்கு, CNAME-க்குப் பதிலாக {0} முகவரிகளுடன் A மற்றும் AAAA பதிவுகளைப் பயன்படுத்தவும்."
 
@@ -5710,8 +5703,8 @@ msgid "Hiring team"
 msgstr "பணியமர்த்தல் குழு"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
 msgstr "வரலாறு"
 
@@ -6543,10 +6536,6 @@ msgstr "நீளம் ஒரு குறை அல்ல, ஒரு-பக்
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "Claude அல்லது Cursor போன்ற AI கிளையன்ட்கள் மேலே உள்ள API விசையைப் பயன்படுத்தி உங்கள் ரெஸ்யூம்களைப் படிக்கவும் திருத்தவும் அனுமதிக்கவும்."
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Let visitors ask to see them"
-msgstr "அவற்றைப் பார்க்கக் கேட்க பார்வையாளர்களை அனுமதி"
-
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "உங்களிடம் உள்ளதைத் தொடங்குவோம்"
@@ -6677,7 +6666,7 @@ msgid "Link an application…"
 msgstr "வேலை விண்ணப்பத்தை இணைக்கவும்..."
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "இணைப்பு நகலெடுக்கப்பட்டது"
@@ -6768,7 +6757,7 @@ msgid "Live · updates as you edit"
 msgstr "நேரலை · நீங்கள் திருத்தும்போது புதுப்பிப்புகள்"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "{0} இல் நேரலை"
 
@@ -9298,7 +9287,7 @@ msgstr "பணியமர்த்துபவர்"
 msgid "Recruiter reply"
 msgstr "தேர்வாளருக்கு மறுமொழி"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "பணியமர்த்துபவர்கள் இந்தப் பெயரைப் பார்க்கிறார்கள். உங்கள் பெயர் மற்றும் \"கவர் லெட்டர்\" நன்றாக வேலை செய்கிறது."
 
@@ -9424,7 +9413,7 @@ msgstr "தொலைதூரப் பணி"
 msgid "Remote, Hybrid, a city…"
 msgstr "தொலைநிலை, ஹைபிரிட், ஒரு நகரம்…"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "அகற்று"
@@ -9688,7 +9677,7 @@ msgstr "ரெஸ்யூம் · அனுப்பிய பதிப்ப�
 msgid "Resume (optional)"
 msgstr "ரெஸ்யூம் (விரும்பினால்)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "ரெஸ்யூம் + கடிதம்"
 
@@ -10126,8 +10115,8 @@ msgstr "அறிவுத் தளத்தில் சேமிக்கப�
 msgid "Saved to Saved · Practice"
 msgstr "‘சேமிக்கப்பட்டது’ · பயிற்சி பகுதியில் சேமிக்கப்பட்டது"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/share-panel.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "சேமித்தல் {0}/{username}/{slug}... சேமித்த பிறகு நகல் கிடைக்கும்."
 
@@ -10544,11 +10533,11 @@ msgstr "பகிரவும்"
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "பொது இணைப்பைப் பகிரவும், கடவுச்சொல்லைச் சேர்க்கவும் அல்லது தனிப்பட்டதாக வைக்கவும். 3 தெரிவுநிலை விருப்பங்களிலிருந்து தேர்வு செய்யவும். PDF அல்லது Word க்கு ஏற்றுமதி செய்யவும் அல்லது உங்கள் எல்லா தரவையும் JSON ஆக எடுத்துச் செல்லவும்."
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "பிரிவுகளைப் பகிரவும்"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "இதன் மூலம் பகிரவும்…"
 
@@ -10629,10 +10618,6 @@ msgstr "எல்லா வகைகளையும் காட்டு"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "காட்சி மூடப்பட்டது"
-
-#: src/features/resume/share/web-page-text.ts
-msgid "Show contact details"
-msgstr "தொடர்பு விவரங்களைக் காட்டு"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -11684,7 +11669,7 @@ msgstr "வாழ்த்து பெயரைப் பின்பற்ற�
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "விசை சேவையகத்தில் குறியாக்கம் செய்யப்பட்டு மீண்டும் காட்டப்படாது. சேமித்தல் இணைப்பைச் சோதிக்கிறது."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "கடிதம் அப்படியே"
 
@@ -11784,7 +11769,7 @@ msgstr "வழங்குநரின் பதிலைச் சரிபா�
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "காரணம் நுண்ணறிவுக்காக வைக்கப்பட்டுள்ளது. இணைக்கப்பட்ட ஆவணங்கள் தொடப்படவில்லை."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "பதிவுகள் இன்னும் தெரியவில்லை. பின்னர் மீண்டும் சரிபார்க்கவும்."
 
@@ -12011,7 +11996,7 @@ msgstr "இது ஒரு XFA படிவம், எனவே பெரும
 msgid "This is not a common resume page size."
 msgstr "இது ஒரு பொதுவான ரெஸ்யூம் பக்க அளவு அல்ல."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "இந்த கடிதம் மற்றும் \"{resumeName}\" என இரண்டு PDFs, பொருந்துமாறு பெயரிடப்பட்டது."
 
@@ -12290,7 +12275,7 @@ msgid "Trust this device for 30 days"
 msgstr "இந்தச் சாதனத்தை 30 நாட்களுக்கு நம்பு"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "{0} முயற்சிக்கவும்"
 
@@ -12350,7 +12335,7 @@ msgstr "இரண்டு-படி சரிபார்ப்பை முட
 msgid "Turn off two-step verification?"
 msgstr "இரண்டு-படி சரிபார்ப்பை முடக்கவா?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "முகவரியைத் தேர்வுசெய்ய இணைப்பை இயக்கவும்."
 
@@ -12699,7 +12684,7 @@ msgstr "எல்லா விண்ணப்பங்களுக்கும�
 msgid "Use in coaching: {excerpt}"
 msgstr "ஆலோசனையில் பயன்படுத்து: {excerpt}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "சிறிய எழுத்துக்கள், எண்கள் மற்றும் ஒற்றை கோடுகளைப் பயன்படுத்தவும்."
 
@@ -13417,7 +13402,7 @@ msgid "You"
 msgstr "நீங்கள்"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "நீங்கள் இதை ஏற்கனவே \"{0}\" க்கு பயன்படுத்துகிறீர்கள்."
 
@@ -13585,7 +13570,7 @@ msgstr "உங்கள் தேதிகள் பல வெவ்வேறு
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "ரெஸ்யூமில் உங்கள் விவரங்கள் மாற்றப்பட்டுள்ளன. கடிதமும் புதுப்பிக்கப்பட்டது."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "உங்கள் டொமைன்"
 
@@ -13706,7 +13691,7 @@ msgstr "எழுத்தாக்கத்திற்காக உங்க�
 msgid "Your requirements"
 msgstr "உங்கள் தேவைகள்"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "உங்கள் ரெஸ்யூம்"
 

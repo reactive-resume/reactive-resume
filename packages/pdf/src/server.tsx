@@ -4,6 +4,7 @@ import type { Template } from "@reactive-resume/schema/templates";
 import * as forme from "@formepdf/core";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { loadFonts } from "./forme/fonts";
+import { loadImages } from "./forme/images";
 import { readServerImage } from "./forme/images.node.ts";
 import { assertPdfFonts, renderResume, resumeFontRequests } from "./forme/render";
 
@@ -40,31 +41,17 @@ export const createResumePdfFile = async ({
  * What a resume's link preview card draws with: the font files its typography and scripts need, and its picture as a
  * data URI (only a picture the server may read; a failed one is left out).
  */
-export async function loadResumeCardAssets(data: ResumeData, uploadOrigin?: string) {
-	const parsed = parseResumeData(data);
-	const { fonts } = await loadFonts(resumeFontRequests(parsed), process.env.WEB_FONT_BASE_URL);
-	let picture: string | undefined;
-	if (parsed.picture.url && !parsed.picture.hidden) {
-		// A relative picture is one of the app's own files; a bad address leaves the card without a picture.
-		const source = uploadOrigin ? new URL(parsed.picture.url, uploadOrigin).href : parsed.picture.url;
-		const bytes = await Promise.resolve()
-			.then(() => readServerImage(source, uploadOrigin))
-			.catch(() => null);
-		const type = bytes && imageType(bytes);
-		if (bytes && type) picture = `data:${type};base64,${Buffer.from(bytes).toString("base64")}`;
-	}
-	const family = (value: string | string[]) => (Array.isArray(value) ? (value[0] ?? "") : value);
+export async function loadResumeCardAssets(data: ResumeData, uploadOrigin: string) {
+	const { fonts } = await loadFonts(resumeFontRequests(data), process.env.WEB_FONT_BASE_URL);
+	const source = data.picture.url && !data.picture.hidden ? data.picture.url : undefined;
+	// A relative picture is one of the app's own files.
+	const { images } = await loadImages(source ? [source] : [], (url) =>
+		readServerImage(new URL(url, uploadOrigin).href, uploadOrigin),
+	);
 	return {
 		fonts: fonts.map((font) => font.src as Uint8Array),
-		headingFamily: family(parsed.metadata.typography.heading.fontFamily),
-		bodyFamily: family(parsed.metadata.typography.body.fontFamily),
-		picture,
+		headingFamily: data.metadata.typography.heading.fontFamily,
+		bodyFamily: data.metadata.typography.body.fontFamily,
+		picture: source ? images.get(source)?.src : undefined,
 	};
 }
-
-const imageType = (bytes: Uint8Array) => {
-	if (bytes[0] === 0xff && bytes[1] === 0xd8) return "image/jpeg";
-	if (bytes[0] === 0x89 && bytes[1] === 0x50) return "image/png";
-	if (bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) return "image/webp";
-	return undefined;
-};

@@ -696,10 +696,6 @@ msgstr "2–3 lausetta luetaan parhaiten"
 msgid "24 hours before"
 msgstr "24 tuntia ennen"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "”Näytä yhteystiedot” -painike paljastaa ne ihmisille, ei hakukoneille."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Varmuuskopio tästä kirjeestä. Tuodaan takaisin Reactive Resume:hen kirjeenä."
@@ -1380,7 +1376,7 @@ msgstr "Ei väliä"
 msgid "Any font, in Advanced"
 msgstr "Mikä tahansa fontti Lisäasetukset-tilassa"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Jokainen, jolla on linkki, voi nähdä ansioluettelosi."
 
@@ -1611,10 +1607,6 @@ msgstr "Pyydä palvelimen järjestelmänvalvojaa ottamaan käyttöön tunnisteti
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Kysy tai kuvaile muutosta…"
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "pyysi yhteystietoja"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Vaihda aikavyöhyke"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Muutin ansioluetteloa suoraan (aiempi keskustelu)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Muutoksia ei voitu tallentaa. Yritä uudelleen ennen kuin jatkat."
 
@@ -2254,7 +2246,7 @@ msgstr "Tyhjentää merkinnät, mutta säilyttää osion. Voit kumota tämän."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Sulje"
 
@@ -2372,7 +2364,7 @@ msgstr "Pakkaa tai poista suuria kuvia, jotta lataukset pysyvät nopeina."
 msgid "Confirm applied"
 msgstr "Vahvista haetuksi"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Vahvista salasana"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "Tarkistetaan uudelleen"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Lataa"
 msgid "Download {0}"
 msgstr "Lataa {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Lataukset ja historia"
@@ -4416,7 +4408,7 @@ msgstr "Palkkaava tiimi"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Historia"
 
@@ -5035,10 +5027,6 @@ msgstr "Alle 48 tuntia jäljellä."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Anna AI-asiakkaiden, kuten Claude tai Cursor, lukea ja muokata ansioluettelosi API-avaimen avulla."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Anna vierailijoiden pyytää niitä"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Avaa Tarjoukset-näkymässä"
 msgid "Open letter"
 msgstr "Avaa kirje"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Avaa julkinen sivu"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Avoimet kysymykset"
@@ -6443,6 +6427,10 @@ msgstr "Avaa luettelo"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Avaa ajastus"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Avaa verkkosivu"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Passkeys"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Salasana"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Salasanat eivät täsmää."
 
@@ -7475,7 +7463,7 @@ msgstr "Poista kenttä"
 msgid "Remove file"
 msgstr "Poista tiedosto"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Poista salasana"
 
@@ -7497,7 +7485,7 @@ msgstr "Poista kysymys"
 msgid "Remove role"
 msgstr "Poista rooli"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Poista salasana?"
 
@@ -7597,11 +7585,7 @@ msgstr "Ilmoita ongelmasta"
 msgid "Report received by your server operator. Thank you."
 msgstr "Palvelinoperaattorisi vastaanottama raportti. Kiitos."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Ilmoita jaettu ansioluettelo"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Vaadi salasana"
 
@@ -7735,8 +7719,8 @@ msgstr "Haettu {0} käyttämällä {1}:ta. Hakuaika ei vahvista alkuperän tuore
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "Palvelin vaihdettu. Palaa kohtaan Asiakirjat ja yritä uudelleen."
 msgid "Set a follow-up"
 msgstr "Aseta seurantamuistutus"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Aseta salasana"
 
@@ -8635,8 +8619,8 @@ msgstr "Kirjaudu sisään {server}:ään ja jatka sitten linkitettyyn asiakirjaa
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Kirjaudu sisään jatkaaksesi."
 
@@ -9622,7 +9606,7 @@ msgstr "Tämä asiakirja on lukittu. Avaa se, ennen kuin pidät muokkaukset tä�
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Tämä asiakirja on lukittu. Avaa se saadaksesi ehdotuksia."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Tämä asiakirja on lukittu. Voit silti ladata ja nimetä versioita. Avaa lukitus muokataksesi tai palauttaaksesi."
 
@@ -10241,7 +10225,7 @@ msgstr "Käytä {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Käytä 3–64 pientä kirjainta, numeroita, pisteitä, tavuviivoja ja alaviivoja."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Käytä 6–64 merkkiä."
 
@@ -10508,11 +10492,11 @@ msgstr "Väkivalta tai hyväksikäyttö"
 msgid "Visitors"
 msgstr "Vierailijat"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Vierailijat voivat ladata PDF:n"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Vierailijat syöttävät sen ennen kuin he näkevät ansioluettelon. Jaa se vain luotettavien ihmisten kanssa."
 
@@ -10895,7 +10879,7 @@ msgstr "Olet offline-tilassa. PDF:n voi ladata tällä laitteella. Muut muodot v
 msgid "You're offline. History needs a connection."
 msgstr "Olet offline-tilassa. Historia vaatii yhteyden."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "Olet offline-tilassa. Historia vaatii yhteyden. Lataa PDF toimii tällä laitteella."
 

@@ -8,7 +8,7 @@ The **Share** mode publishes your resume as a web page that anyone you send the 
 ## Before you start
 
 - Open the resume in the editor. Web pages belong to resumes; cover letters don't have one.
-- Check your username in **Settings** → **Account**. It's part of every public address, for example `https://rxresu.me/dkowalski/game-developer`. If you host Reactive Resume yourself, your own address replaces `rxresu.me`.
+- Check your username in **Settings** → **Account**. It's part of every public address, for example `https://rx.cv/dkowalski/game-developer`. The same address works on `rxresu.me`. If you host Reactive Resume yourself, your own address replaces both.
 
 ## Publish your web page
 
@@ -39,7 +39,7 @@ The **Share** mode publishes your resume as a web page that anyone you send the 
 
 When someone pastes your link into LinkedIn, Slack or a chat, the preview shows your name, headline and photo in your resume's colours.
 
-Visitors never see your private notes, or any section or entry you've hidden. A small **Made with Reactive Resume, free and open source** line sits under the page; you can turn it off under **Web page**.
+Visitors never see your private notes, or any section or entry you've hidden. A small Reactive Resume mark sits under the page; you can turn it off under **Web page**.
 
 ## Change the address
 
@@ -66,7 +66,6 @@ Everything under **Privacy** applies to the web page, its PDF, link previews and
 | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Require a password**            | Visitors enter a password you share separately before they see anything.                                                                                                                                    |
 | **Hide contact details**          | Leaves out your email, phone, location and other header details, and references' phone numbers.                                                                                                             |
-| **Let visitors ask to see them**  | With contact details hidden, a **Show contact details** button reveals them to a visitor who selects it. Search engines never see them.                                                                     |
 | **Show in search engines**        | Off by default. Turn it on to let search engines such as Google list your page. It can take weeks to appear, and weeks to disappear after you turn it off. Not available while the resume needs a password. |
 | **Visitors can download the PDF** | On by default. Turn it off and the page has no Download PDF button.                                                                                                                                         |
 
@@ -77,10 +76,11 @@ Everything under **Privacy** applies to the web page, its PDF, link previews and
 
 ## Short link and your own domain
 
-On rxresu.me, one resume can be your **Primary resume**. It opens at your short link, `rx.cv/<username>`, and at your own domain if you connect one.
+One resume can be your **Primary resume**. It opens at your short link, such as `rx.cv/dkowalski`, and at your own domain if you connect one.
 
 - Turn on **Primary resume** in Share. The resume must be published first. If another resume was primary, Reactive Resume asks before moving the role.
 - **Copy** next to your short link to paste it anywhere. It always leads to your current primary resume.
+- On rxresu.me, every public address works on both `rx.cv` and `rxresu.me`, so `rxresu.me/dkowalski` opens the same page. Share copies the shorter `rx.cv` one.
 - To use your own domain, type it under **Your domain** and select **Connect**. Add the two DNS records shown where you manage the domain, then select **Check DNS**. A subdomain such as `resume.example.com` uses a CNAME record; a root domain such as `example.com` uses A and AAAA records instead. Changes can take a few hours to reach everyone.
 
 Once connected, your domain shows your primary resume, and search engines are pointed to your domain rather than the rxresu.me address. If your domain's records stop pointing at Reactive Resume for a week, it's disconnected.
@@ -89,12 +89,11 @@ Once connected, your domain shows your primary resume, and search engines are po
 
 The bottom of Share shows **Visitors**. Only you see these numbers.
 
-| Number                        | What it counts                                                               |
-| ----------------------------- | ---------------------------------------------------------------------------- |
-| **views · 30 days**           | Visits to your web page in the last 30 days                                  |
-| **downloads**                 | PDFs visitors downloaded from the page in the last 30 days                   |
-| **asked for contact details** | Visitors who selected **Show contact details**, when your details are hidden |
-| **since last view**           | How long ago someone last opened the page, such as `5m`, `2h` or `3d`        |
+| Number              | What it counts                                                        |
+| ------------------- | --------------------------------------------------------------------- |
+| **views · 30 days** | Visits to your web page in the last 30 days                           |
+| **downloads**       | PDFs visitors downloaded from the page in the last 30 days            |
+| **since last view** | How long ago someone last opened the page, such as `5m`, `2h` or `3d` |
 
 - Your own visits and downloads don't count while you're signed in, and search engines and other bots never count.
 - Repeat visits from the same visitor within an hour count once.

@@ -1,7 +1,7 @@
 import type { ResumeExportTarget } from "@reactive-resume/resume/export-sections";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { getResumeExportData } from "@reactive-resume/resume/export-sections";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -21,7 +21,6 @@ export const preloadDocumentExport = () => {
 };
 
 type ExportableResume = {
-	id?: string;
 	name: string;
 	slug: string;
 	data: ResumeData;
@@ -105,11 +104,10 @@ function printPdf(blob: Blob) {
 }
 
 /** One-click exports that report their own progress and failures in toasts (the bar, ⌘P). */
-export function useResumeExport(resume: ExportableResume | undefined) {
+export function useResumeExport(resume: ExportableResume) {
 	const [isExporting, setIsExporting] = useState(false);
 
-	const onDownloadPDF = useCallback(async () => {
-		if (!resume) return;
+	const onDownloadPDF = async () => {
 		const toastId = toast.add({
 			type: "loading",
 			description: t`Generating PDF…`,
@@ -126,10 +124,9 @@ export function useResumeExport(resume: ExportableResume | undefined) {
 		}
 		setIsExporting(false);
 		toast.close(toastId);
-	}, [resume]);
+	};
 
-	const onPrint = useCallback(async () => {
-		if (!resume) return;
+	const onPrint = async () => {
 		const toastId = toast.add({ type: "loading", description: t`Preparing resume for printing…` });
 		setIsExporting(true);
 		try {
@@ -142,7 +139,7 @@ export function useResumeExport(resume: ExportableResume | undefined) {
 		}
 		setIsExporting(false);
 		toast.close(toastId);
-	}, [resume]);
+	};
 
 	return { onDownloadPDF, onPrint, isExporting };
 }

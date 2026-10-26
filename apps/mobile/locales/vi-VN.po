@@ -696,10 +696,6 @@ msgstr "2–3 câu đọc tốt nhất"
 msgid "24 hours before"
 msgstr "Trước 24 giờ"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Nút “Hiện thông tin liên hệ” hiển thị chúng cho mọi người, không cho công cụ tìm kiếm."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Bản sao lưu của bức thư này. Nhập lại vào Reactive Resume dưới dạng một lá thư."
@@ -1380,7 +1376,7 @@ msgstr "Không giới hạn"
 msgid "Any font, in Advanced"
 msgstr "Bất kỳ phông chữ nào, trong Nâng cao"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Bất kỳ ai có liên kết đều có thể xem sơ yếu lý lịch của bạn."
 
@@ -1611,10 +1607,6 @@ msgstr "Yêu cầu quản trị viên máy chủ của bạn bật mã hóa thô
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Hỏi hoặc mô tả một sự thay đổi…"
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "đã yêu cầu thông tin liên hệ"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Đổi múi giờ"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Đã trực tiếp thay đổi sơ yếu lý lịch (cuộc trò chuyện trước đó)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Không thể lưu các thay đổi. Hãy thử lại trước khi tiếp tục."
 
@@ -2254,7 +2246,7 @@ msgstr "Xóa các mục nhưng giữ lại phần. Bạn có thể hoàn tác vi
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Đóng"
 
@@ -2372,7 +2364,7 @@ msgstr "Nén hoặc xóa các hình ảnh lớn để việc tải lên được
 msgid "Confirm applied"
 msgstr "Xác nhận đã ứng tuyển"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Xác nhận mật khẩu"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "Đang kiểm tra lại"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Tải về"
 msgid "Download {0}"
 msgstr "Tải xuống {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Tải xuống & lịch sử"
@@ -4416,7 +4408,7 @@ msgstr "Đội ngũ tuyển dụng"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Lịch sử"
 
@@ -5035,10 +5027,6 @@ msgstr "Còn chưa đầy 48 giờ."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Cho phép các máy khách AI như Claude hoặc Cursor đọc và chỉnh sửa sơ yếu lý lịch của bạn bằng cách sử dụng khóa API."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Cho phép khách truy cập yêu cầu xem"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Mở trong Lời đề nghị"
 msgid "Open letter"
 msgstr "Mở thư"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Mở trang công khai"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Câu hỏi còn bỏ ngỏ"
@@ -6443,6 +6427,10 @@ msgstr "Mở danh sách"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Mở lịch trình"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Mở trang web"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Khóa truy cập"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Mật khẩu"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Mật khẩu không khớp."
 
@@ -7475,7 +7463,7 @@ msgstr "Xóa trường"
 msgid "Remove file"
 msgstr "Xóa tệp"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Xóa mật khẩu"
 
@@ -7497,7 +7485,7 @@ msgstr "Xóa câu hỏi"
 msgid "Remove role"
 msgstr "Xóa vai trò"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Xóa mật khẩu?"
 
@@ -7597,11 +7585,7 @@ msgstr "Báo cáo sự cố"
 msgid "Report received by your server operator. Thank you."
 msgstr "Nhà điều hành máy chủ của bạn đã nhận được báo cáo. Cảm ơn."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Báo cáo sơ yếu lý lịch được chia sẻ"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Yêu cầu mật khẩu"
 
@@ -7735,8 +7719,8 @@ msgstr "Đã truy xuất {0} bằng {1}. Thời gian truy xuất không quyết 
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "Máy chủ đã thay đổi. Quay lại Tài liệu và thử lại."
 msgid "Set a follow-up"
 msgstr "Đặt lời nhắc theo dõi"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Đặt mật khẩu"
 
@@ -8635,8 +8619,8 @@ msgstr "Đăng nhập vào {server}, sau đó tiếp tục tới tài liệu đ�
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Đăng nhập để tiếp tục."
 
@@ -9622,7 +9606,7 @@ msgstr "Tài liệu này đã bị khóa. Mở khóa nó trước khi giữ các
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Tài liệu này đã bị khóa. Mở khóa nó để nhận được đề xuất."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Tài liệu này đã bị khóa. Bạn vẫn có thể tải xuống và đặt tên cho các phiên bản. Mở khóa để chỉnh sửa hoặc khôi phục."
 
@@ -10241,7 +10225,7 @@ msgstr "Sử dụng {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Sử dụng từ 3 đến 64 chữ cái viết thường, số, dấu chấm, dấu gạch nối và dấu gạch dưới."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Sử dụng 6–64 ký tự."
 
@@ -10508,11 +10492,11 @@ msgstr "Bạo lực hoặc lạm dụng"
 msgid "Visitors"
 msgstr "Khách truy cập"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Khách truy cập có thể tải xuống PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Khách truy cập vào đó trước khi họ xem sơ yếu lý lịch. Chỉ chia sẻ nó với những người bạn tin tưởng."
 
@@ -10895,7 +10879,7 @@ msgstr "Bạn đang ngoại tuyến. Việc tải PDF dùng thiết bị này. C
 msgid "You're offline. History needs a connection."
 msgstr "Bạn đang ngoại tuyến. Lịch sử cần kết nối."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "Bạn đang ngoại tuyến. Lịch sử cần kết nối. Tải xuống PDF vẫn hoạt động trên thiết bị này."
 

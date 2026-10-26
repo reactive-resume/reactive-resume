@@ -726,7 +726,7 @@ msgstr "{stars, plural, one {Δώστε αστέρι στο Reactive Resume στ
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# ιστορία} other {# ιστορίες}}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "{suggestion} may be available. Get yours here →"
 msgstr "Το {suggestion} ίσως είναι διαθέσιμο. Αποκτήστε το δικό σας εδώ →"
 
@@ -844,7 +844,7 @@ msgstr "Ενημερωτικό 10 λεπτών"
 msgid "10–11 recommended"
 msgstr "10–11 συνιστάται"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 αρχεία"
 
@@ -903,15 +903,11 @@ msgstr "90 ημέρες"
 msgid "A"
 msgstr "Δ"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Ένα κουμπί «Εμφάνιση στοιχείων επικοινωνίας» τα αποκαλύπτει στους ανθρώπους, όχι στις μηχανές αναζήτησης."
-
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "Ο A αποδέχεται και ο R απορρίπτει την εστιασμένη επεξεργασία. ↑ και ↓ μετακινηθείτε μεταξύ των επεξεργασιών."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Ένα αντίγραφο ασφαλείας αυτής της επιστολής. Εισάγει ξανά στο Reactive Resume ως γράμμα."
 
@@ -1256,7 +1252,7 @@ msgstr "Προσθήκη παρόχου AI"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "Προσθέστε ένα @ και τον τομέα, όπως name@example.com"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "Προσθέστε μια διεύθυνση."
 
@@ -1423,7 +1419,7 @@ msgstr "Προσθέστε τον τομέα μετά το @, όπως {name}@ex
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Προσθέστε την κατάληξη τομέα, όπως {domain}.com"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Προσθέστε αυτές τις εγγραφές εκεί όπου διαχειρίζεστε τον τομέα και μετά κάντε έλεγχο. Οι αλλαγές μπορεί να χρειαστούν μερικές ώρες για να φτάσουν σε όλους."
 
@@ -1492,7 +1488,7 @@ msgstr "Προστέθηκε στη Γνώση ως εμπειρία."
 msgid "Added to Prepare"
 msgstr "Προστέθηκε στην Προετοιμασία"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "Διεύθυνση"
 
@@ -1725,7 +1721,7 @@ msgstr "και {0} περισσότερα"
 msgid "and counting"
 msgstr "και μετρώντας"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "Ένα άλλο βιογραφικό σας χρησιμοποιεί αυτή τη διεύθυνση."
 
@@ -2059,10 +2055,6 @@ msgstr "Ρωτήστε ή περιγράψτε μια αλλαγή…"
 #: src/features/homepage/faq.tsx
 msgid "Asked and <0>answered.</0>"
 msgstr "Ρωτήθηκε και <0>απάντησε.</0>"
-
-#: src/features/resume/share/share-panel.tsx
-msgid "asked for contact details"
-msgstr "ζήτησαν τα στοιχεία επικοινωνίας"
 
 #: src/features/homepage/prepare.tsx
 msgid "Asks for an example of your onboarding work."
@@ -2574,7 +2566,7 @@ msgstr "Ελέγξτε ένα άλλο αρχείο"
 msgid "Check any PDF, no account needed"
 msgstr "Ελέγξτε οποιοδήποτε PDF, δεν χρειάζεται λογαριασμός"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Check DNS"
 msgstr "Έλεγχος DNS"
 
@@ -2661,7 +2653,7 @@ msgstr "Έλεγχος του εξαγόμενου PDF…"
 msgid "Checking your preferences"
 msgstr "Έλεγχος των προτιμήσεών σας"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "Έλεγχος… Η αντιγραφή είναι διαθέσιμη μετά την αποθήκευση."
 
@@ -2791,7 +2783,7 @@ msgstr "Αναγνωριστικό πελάτη"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2968,7 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "Επιβεβαιώνει σήμερα στις {time}, μέσω βίντεο."
 
 #: src/features/assistant/provider-setup.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "Σύνδεση"
@@ -3021,7 +3013,7 @@ msgstr "Συνδεδεμένος"
 msgid "Connected applications"
 msgstr "Συνδεδεμένες εφαρμογές"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "Συνδέθηκε. Ο τομέας σας ανοίγει το κύριο βιογραφικό σας."
 
@@ -3152,7 +3144,7 @@ msgid "Copied"
 msgstr "Αντιγράφηκε"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3626,8 +3618,8 @@ msgstr "Δεν ήταν δυνατή η αποθήκευση αυτού του �
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "Δεν ήταν δυνατή η αποθήκευση των αλλαγών σας. Δοκιμάστε ξανά πριν συνεχίσετε."
@@ -3732,6 +3724,7 @@ msgstr "Δεν ήταν δυνατή η αποσύνδεση της αίτηση
 msgid "Couldn't unlock the document. Try again."
 msgstr "Δεν ήταν δυνατό το ξεκλείδωμα του εγγράφου. Προσπαθήστε ξανά."
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "Δεν ήταν δυνατή η ενημέρωση της κοινοποίησης. Προσπαθήστε ξανά."
@@ -3768,7 +3761,7 @@ msgstr "Δεν ήταν δυνατή η ενημέρωση του βιογραφ
 msgid "Couldn't update the timeline. Try again."
 msgstr "Δεν ήταν δυνατή η ενημέρωση του χρονολογίου. Προσπαθήστε ξανά."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "Δεν ήταν δυνατή η ενημέρωση των εκδόσεων αυτού του γράμματος. Προσπαθήστε ξανά."
 
@@ -4362,7 +4355,7 @@ msgstr "Τα έγγραφα που μετακινείτε εδώ παραμέν�
 msgid "Does it use AI?"
 msgstr "Χρησιμοποιεί AI;"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Domain connected"
 msgstr "Ο τομέας συνδέθηκε"
 
@@ -4398,8 +4391,8 @@ msgstr "Διπλός έλεγχος"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "Λήψη"
 
@@ -4411,7 +4404,7 @@ msgstr "Κατεβάστε το {label}"
 msgid "Download {name} sample PDF"
 msgstr "Λήψη δείγματος PDF {name}"
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Download & history"
 msgstr "Λήψη και ιστορικό"
 
@@ -4429,7 +4422,7 @@ msgid "Download CSV"
 msgstr "Λήψη CSV"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "Η λήψη απέτυχε. Προσπαθήστε ξανά."
 
@@ -4455,7 +4448,7 @@ msgid "Download totals can include repeat clicks."
 msgstr "Τα σύνολα λήψης μπορούν να περιλαμβάνουν επαναλαμβανόμενα κλικ."
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "Έγινε λήψη του {file}"
 
@@ -4463,7 +4456,7 @@ msgstr "Έγινε λήψη του {file}"
 msgid "Downloaded {file} and the cover letter"
 msgstr "Κατέβασε το {file} και τη συνοδευτική επιστολή"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "Κατέβασα το βιογραφικό σας και αυτήν την επιστολή"
 
@@ -5265,7 +5258,7 @@ msgid "For"
 msgstr "Για"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "Για έναν βασικό τομέα όπως το example.com, χρησιμοποιήστε εγγραφές A και AAAA με τις διευθύνσεις του {0} αντί για το CNAME."
 
@@ -5710,8 +5703,8 @@ msgid "Hiring team"
 msgstr "Ομάδα πρόσληψης"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
 msgstr "Ιστορία"
 
@@ -6543,10 +6536,6 @@ msgstr "Το μήκος δεν είναι ελάττωμα και δεν υπά�
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "Επιτρέψτε σε πελάτες τεχνητής νοημοσύνης όπως το Claude ή το Cursor να διαβάσουν και να επεξεργαστούν τα βιογραφικά σας, χρησιμοποιώντας ένα κλειδί API παραπάνω."
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Let visitors ask to see them"
-msgstr "Οι επισκέπτες μπορούν να ζητήσουν να τα δουν"
-
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "Ας ξεκινήσουμε με αυτό που έχετε"
@@ -6677,7 +6666,7 @@ msgid "Link an application…"
 msgstr "Συνδέστε μια αίτηση εργασίας…"
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "Ο σύνδεσμος αντιγράφηκε"
@@ -6768,7 +6757,7 @@ msgid "Live · updates as you edit"
 msgstr "Ζωντανά · ενημερώσεις καθώς επεξεργάζεστε"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "Ζωντανά στο {0}"
 
@@ -9298,7 +9287,7 @@ msgstr "Στρατολογών"
 msgid "Recruiter reply"
 msgstr "Απάντηση υπεύθυνου προσλήψεων"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "Οι υπεύθυνοι προσλήψεων βλέπουν αυτό το όνομα. Το όνομά σας συν το \"Συνοδευτική επιστολή\" λειτουργεί καλά."
 
@@ -9424,7 +9413,7 @@ msgstr "Εξ αποστάσεως"
 msgid "Remote, Hybrid, a city…"
 msgstr "Απομακρυσμένα, Υβριδικά, μια πόλη…"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "Αφαιρώ"
@@ -9688,7 +9677,7 @@ msgstr "Βιογραφικό · έκδοση που στάλθηκε"
 msgid "Resume (optional)"
 msgstr "βιογραφικό (προαιρετικό)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "βιογραφικό + επιστολή"
 
@@ -10126,8 +10115,8 @@ msgstr "Αποθηκεύτηκε στη Γνώση, ιδιωτικά για αυ
 msgid "Saved to Saved · Practice"
 msgstr "Αποθηκεύτηκε στην καρτέλα \"Αποθηκευμένα\" · Εξάσκηση"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/share-panel.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "Αποθήκευση {0}/{username}/{slug}… Η αντιγραφή είναι διαθέσιμη μετά την αποθήκευση."
 
@@ -10544,11 +10533,11 @@ msgstr "Κοινοποίηση"
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "Μοιραστείτε έναν δημόσιο σύνδεσμο, προσθέστε έναν κωδικό πρόσβασης ή διατηρήστε τον ιδιωτικό. Επιλέξτε από 3 επιλογές ορατότητας. Κάντε εξαγωγή σε PDF ή Word ή πάρτε όλα τα δεδομένα σας μαζί σας ως JSON."
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "Κοινή χρήση ενοτήτων"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "Κοινοποίηση μέσω…"
 
@@ -10629,10 +10618,6 @@ msgstr "Εμφάνιση όλων των τύπων"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "Εμφάνιση κλειστή"
-
-#: src/features/resume/share/web-page-text.ts
-msgid "Show contact details"
-msgstr "Εμφάνιση στοιχείων επικοινωνίας"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -11684,7 +11669,7 @@ msgstr "Ο χαιρετισμός ακολουθεί το όνομα."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Το κλειδί είναι κρυπτογραφημένο στον διακομιστή και δεν εμφανίζεται ποτέ ξανά. Η αποθήκευση ελέγχει τη σύνδεση."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "Το γράμμα όπως είναι"
 
@@ -11784,7 +11769,7 @@ msgstr "Δεν ήταν δυνατή η επαλήθευση της απάντη
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Ο λόγος διατηρείται για το Insights. Τα συνδεδεμένα έγγραφα δεν αγγίζονται."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "Οι εγγραφές δεν είναι ακόμη ορατές. Ελέγξτε ξανά αργότερα."
 
@@ -12011,7 +11996,7 @@ msgstr "Αυτή είναι μια φόρμα XFA, οπότε τα περισσ�
 msgid "This is not a common resume page size."
 msgstr "Αυτό δεν είναι ένα συνηθισμένο μέγεθος σελίδας βιογραφικού."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Αυτό το γράμμα και το \"{resumeName}\" ως δύο PDFs, που ονομάζονται για να ταιριάζουν."
 
@@ -12290,7 +12275,7 @@ msgid "Trust this device for 30 days"
 msgstr "Εμπιστοσύνη σε αυτή τη συσκευή για 30 ημέρες"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "Δοκιμάστε το {0}"
 
@@ -12350,7 +12335,7 @@ msgstr "Απενεργοποίηση επαλήθευσης δύο βημάτω�
 msgid "Turn off two-step verification?"
 msgstr "Απενεργοποίηση επαλήθευσης δύο βημάτων;"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "Ενεργοποιήστε τον σύνδεσμο για να επιλέξετε μια διεύθυνση."
 
@@ -12699,7 +12684,7 @@ msgstr "Χρήση για όλες τις αιτήσεις"
 msgid "Use in coaching: {excerpt}"
 msgstr "Χρήση στη συμβουλευτική: {excerpt}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "Χρησιμοποιήστε πεζά γράμματα, αριθμούς και μεμονωμένες παύλες."
 
@@ -13417,7 +13402,7 @@ msgid "You"
 msgstr "Εσείς"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "Το χρησιμοποιείτε ήδη για το \"{0}\"."
 
@@ -13585,7 +13570,7 @@ msgstr "Οι ημερομηνίες σας είναι γραμμένες με π
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "Τα στοιχεία σας άλλαξαν στο βιογραφικό. Η επιστολή ενημερώθηκε επίσης."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "Ο τομέας σας"
 
@@ -13706,7 +13691,7 @@ msgstr "Η ηχογράφησή σας αποστέλλεται στο {0} γι�
 msgid "Your requirements"
 msgstr "Οι απαιτήσεις σας"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "το βιογραφικό σας"
 

@@ -696,10 +696,6 @@ msgstr "2-3 cümle en iyi şekilde okunur"
 msgid "24 hours before"
 msgstr "24 saat önce"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "“İletişim bilgilerini göster” düğmesi bunları arama motorlarına değil, insanlara gösterir."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Bu mektubun bir yedeği. Reactive Resume'ya harf olarak geri aktarılır."
@@ -1380,7 +1376,7 @@ msgstr "Fark etmez"
 msgid "Any font, in Advanced"
 msgstr "Gelişmiş'te herhangi bir yazı tipi"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Bağlantıya sahip olan herkes özgeçmişinizi görebilir."
 
@@ -1611,10 +1607,6 @@ msgstr "Sunucu yöneticinizden kimlik bilgileri şifrelemesini etkinleştirmesin
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Bir değişikliği sorun veya açıklayın…"
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "iletişim bilgilerini istedi"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Saat dilimini değiştir"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Özgeçmişi doğrudan değiştirdi (daha önceki bir görüşme)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Değişiklikler kaydedilemedi. Devam etmeden önce yeniden deneyin."
 
@@ -2254,7 +2246,7 @@ msgstr "Girişlerini temizler; bölüm kalıyor. Geri alabilirsiniz."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Kapat"
 
@@ -2372,7 +2364,7 @@ msgstr "Yüklemelerin hızlı kalması için büyük görselleri sıkıştırın
 msgid "Confirm applied"
 msgstr "Başvurulduğunu onayla"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Şifreyi onayla"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "İki kez kontrol ediliyor"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "İndir"
 msgid "Download {0}"
 msgstr "{0}'ı indirin"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "İndirme ve geçmiş"
@@ -4416,7 +4408,7 @@ msgstr "İşe alma ekibi"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Tarih"
 
@@ -5035,10 +5027,6 @@ msgstr "48 saatten az kaldı."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Claude veya Cursor gibi AI istemcilerinin API anahtarıyla özgeçmişlerinizi okuyup düzenlemesine izin verin."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Ziyaretçilerin görmek istemesine izin ver"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Teklifler'de aç"
 msgid "Open letter"
 msgstr "Mektubu aç"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Genel sayfayı aç"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Yanıt bekleyen sorular"
@@ -6443,6 +6427,10 @@ msgstr "Listeyi aç"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Zamanlamayı aç"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Web sayfasını aç"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Geçiş anahtarları"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Şifre"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Şifreler birbiriyle uyuşmuyor."
 
@@ -7475,7 +7463,7 @@ msgstr "Alanı kaldır"
 msgid "Remove file"
 msgstr "Dosyayı kaldır"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Şifreyi kaldır"
 
@@ -7497,7 +7485,7 @@ msgstr "Soruyu kaldır"
 msgid "Remove role"
 msgstr "Rolü kaldır"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Şifre kaldırılsın mı?"
 
@@ -7597,11 +7585,7 @@ msgstr "Bir sorunu bildirin"
 msgid "Report received by your server operator. Thank you."
 msgstr "Rapor sunucu operatörünüz tarafından alındı. Teşekkür ederim."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Paylaşılan özgeçmişi bildir"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Şifre gerektir"
 
@@ -7735,8 +7719,8 @@ msgstr "{1} kullanılarak {0} alındı. Geri alma süresi menşe tazeliğini sa�
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "Sunucu değişti. Belgeler'e dönüp tekrar deneyin."
 msgid "Set a follow-up"
 msgstr "Bir takip ayarlayın"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Şifreyi ayarla"
 
@@ -8635,8 +8619,8 @@ msgstr "{server}'da oturum açın, ardından bağlantılı belgeye geçin."
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Devam etmek için oturum açın."
 
@@ -9622,7 +9606,7 @@ msgstr "Bu belge kilitli. Düzenlemelerinizi burada saklamadan önce kilidini a�
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Bu belge kilitli. Öneri almak için kilidini açın."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Bu belge kilitli. Sürümleri hâlâ indirebilir ve adlandırabilirsiniz. Düzenlemek veya geri yüklemek için kilidi açın."
 
@@ -10241,7 +10225,7 @@ msgstr "{url}'yu kullanın"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "3 ile 64 arasında küçük harf, rakam, nokta, tire ve alt çizgi kullanın."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "6-64 karakter kullanın."
 
@@ -10508,11 +10492,11 @@ msgstr "Şiddet veya istismar"
 msgid "Visitors"
 msgstr "Ziyaretçiler"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Ziyaretçiler PDF'yu indirebilir"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Ziyaretçiler özgeçmişi görmeden giriyorlar. Bunu yalnızca güvendiğiniz kişilerle paylaşın."
 
@@ -10895,7 +10879,7 @@ msgstr "Çevrimdışısınız. PDF indirme bu cihazı kullanır. Diğer biçimle
 msgid "You're offline. History needs a connection."
 msgstr "Çevrimdışısınız. Geçmiş için bağlantı gerekir."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "Çevrimdışısınız. Geçmiş için bağlantı gerekir. PDF indirme bu cihazda çalışır."
 

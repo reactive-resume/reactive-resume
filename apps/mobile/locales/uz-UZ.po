@@ -696,10 +696,6 @@ msgstr "2-3 jumla eng yaxshi o'qiladi"
 msgid "24 hours before"
 msgstr "24 soat oldin"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "“Kontakt ma'lumotlarini ko'rsatish” tugmasi ularni odamlarga ochadi, qidiruv tizimlariga emas."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Ushbu xatning zaxira nusxasi. Reactive Resume ga xat sifatida qayta import qilinadi."
@@ -1380,7 +1376,7 @@ msgstr "Farqi yo'q"
 msgid "Any font, in Advanced"
 msgstr "Har qanday shrift, Kengaytirilgan"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Havolaga ega bo'lgan har bir kishi rezyumeingizni ko'rishi mumkin."
 
@@ -1611,10 +1607,6 @@ msgstr "Server administratoringizdan hisob maʼlumotlarini shifrlashni yoqish yo
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Oʻzgarishlarni soʻrang yoki tavsiflang…"
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "kontakt ma'lumotlarini so'radi"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Vaqt mintaqasini o'zgartirish"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Rezyume to'g'ridan-to'g'ri o'zgartirildi (oldingi suhbat)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Oʻzgarishlarni saqlab boʻlmadi. Davom etishdan oldin Qayta urinish."
 
@@ -2254,7 +2246,7 @@ msgstr "Uning yozuvlarini tozalaydi; bo'lim qoladi. Siz bekor qilishingiz mumkin
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Yopish"
 
@@ -2372,7 +2364,7 @@ msgstr "Yuklashni tez saqlash uchun katta rasmlarni siqing yoki olib tashlang."
 msgid "Confirm applied"
 msgstr "Topshirilganini tasdiqlang"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Parolni tasdiqlang"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "Qayta tekshirilmoqda"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Yuklab olish"
 msgid "Download {0}"
 msgstr "Yuklab olish {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Yuklab olish va tarix"
@@ -4416,7 +4408,7 @@ msgstr "Ishga qabul qilish jamoasi"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Tarix"
 
@@ -5035,10 +5027,6 @@ msgstr "48 soatdan kam vaqt qoldi."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Claude yoki Cursor kabi AI mijozlariga API kaliti yordamida rezyumelaringizni oʻqish va tahrirlashiga ruxsat bering."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Tashrif buyuruvchilarga ularni ko'rishni so'rashga ruxsat berish"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Takliflarda ochish"
 msgid "Open letter"
 msgstr "Xatni ochish"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Umumiy sahifani oching"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Ochiq savollar"
@@ -6443,6 +6427,10 @@ msgstr "Ro'yxatni oching"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Jadvalni ochish"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Veb-sahifani ochish"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Kirish kalitlari"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Parol"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Parollar mos kelmaydi."
 
@@ -7475,7 +7463,7 @@ msgstr "Maydonni olib tashlash"
 msgid "Remove file"
 msgstr "Faylni olib tashlash"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Parolni olib tashlash"
 
@@ -7497,7 +7485,7 @@ msgstr "Savolni olib tashlash"
 msgid "Remove role"
 msgstr "Rolni olib tashlash"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Parol olib tashlansinmi?"
 
@@ -7597,11 +7585,7 @@ msgstr "Muammoni xabar qiling"
 msgid "Report received by your server operator. Thank you."
 msgstr "Server operatoringiz tomonidan olingan hisobot. Rahmat."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Umumiy rezyume haqida xabar bering"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Parol talab qiling"
 
@@ -7735,8 +7719,8 @@ msgstr "{1} yordamida {0} olindi. Qabul qilish vaqti kelib chiqishining yangilig
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "Server o'zgartirildi. Hujjatlar sahifasiga qayting va qaytadan urining."
 msgid "Set a follow-up"
 msgstr "Kuzatuvni o'rnating"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Parolni o'rnating"
 
@@ -8635,8 +8619,8 @@ msgstr "{server} hisobiga kiring, soʻngra bogʻlangan hujjatga oʻting."
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Davom etish uchun tizimga kiring."
 
@@ -9622,7 +9606,7 @@ msgstr "Ushbu hujjat qulflangan. Tahrirlaringizni shu yerda saqlashdan oldin uni
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Ushbu hujjat qulflangan. Takliflar olish uchun uni qulfdan chiqaring."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Ushbu hujjat qulflangan. Siz hali ham versiyalarni yuklab olishingiz va nomlashingiz mumkin. Tahrirlash yoki tiklash uchun qulfni oching."
 
@@ -10241,7 +10225,7 @@ msgstr "{url} dan foydalaning"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "3 dan 64 gacha kichik harflar, raqamlar, nuqtalar, defis va pastki chiziqdan foydalaning."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "6–64 belgidan foydalaning."
 
@@ -10508,11 +10492,11 @@ msgstr "Zo'ravonlik yoki zo'ravonlik"
 msgid "Visitors"
 msgstr "Tashrif buyuruvchilar"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Tashrif buyuruvchilar PDF ni yuklab olishlari mumkin"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Tashrifchilar rezyumeni ko'rishdan oldin unga kirishadi. Uni faqat o'zingiz ishonadigan odamlar bilan baham ko'ring."
 
@@ -10895,7 +10879,7 @@ msgstr "Siz oflaynsiz. PDF yuklab olish shu qurilmadan foydalanadi. Boshqa forma
 msgid "You're offline. History needs a connection."
 msgstr "Siz oflaynsiz. Tarix aloqaga muhtoj."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "Siz oflaynsiz. Tarix uchun internet aloqasi kerak. PDF yuklab olish shu qurilmada ishlaydi."
 

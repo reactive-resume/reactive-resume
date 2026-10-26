@@ -696,10 +696,6 @@ msgstr "2~3개의 문장이 가장 잘 읽힙니다."
 msgid "24 hours before"
 msgstr "24시간 전"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "“연락처 정보 보기” 버튼은 검색 엔진이 아닌 사람에게만 연락처를 보여 줍니다."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "이 편지의 백업본입니다. 문자로 Reactive Resume에 다시 가져옵니다."
@@ -1380,7 +1376,7 @@ msgstr "상관없음"
 msgid "Any font, in Advanced"
 msgstr "고급의 모든 글꼴"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "링크가 있는 사람은 누구나 귀하의 이력서를 볼 수 있습니다."
 
@@ -1611,10 +1607,6 @@ msgstr "자격 증명 암호화를 활성화하거나 공유 웹 연결을 구�
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "변화를 묻거나 설명하세요…"
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "연락처 정보 요청"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "시간대 변경"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "이력서를 직접 변경함(이전 대화)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "변경 사항을 저장하지 못했습니다. 계속하기 전에 다시 시도하세요."
 
@@ -2254,7 +2246,7 @@ msgstr "항목을 지웁니다. 섹션이 유지됩니다. 실행 취소할 수 
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "닫기"
 
@@ -2372,7 +2364,7 @@ msgstr "업로드 속도를 위해 큰 이미지를 압축하거나 제거하세
 msgid "Confirm applied"
 msgstr "지원 완료 확인"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "비밀번호 확인"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "다시 확인하는 중"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "다운로드"
 msgid "Download {0}"
 msgstr "{0} 다운로드"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "다운로드 및 기록"
@@ -4416,7 +4408,7 @@ msgstr "채용팀"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "역사"
 
@@ -5035,10 +5027,6 @@ msgstr "48시간도 채 남지 않았습니다."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "API 키를 사용하여 Claude 또는 Cursor와 같은 AI 클라이언트가 이력서를 읽고 편집할 수 있도록 하세요."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "방문자가 보기를 요청할 수 있도록 허용"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "오퍼에서 열기"
 msgid "Open letter"
 msgstr "자기소개서 열기"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "공개 페이지 열기"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "미해결 질문"
@@ -6443,6 +6427,10 @@ msgstr "목록 열기"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "스케줄 열기"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "웹 페이지 열기"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "패스키"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "비밀번호"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "비밀번호가 일치하지 않습니다."
 
@@ -7475,7 +7463,7 @@ msgstr "필드 삭제"
 msgid "Remove file"
 msgstr "파일 제거"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "비밀번호 제거"
 
@@ -7497,7 +7485,7 @@ msgstr "질문 제거"
 msgid "Remove role"
 msgstr "역할 삭제"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "비밀번호를 삭제하시겠습니까?"
 
@@ -7597,11 +7585,7 @@ msgstr "문제 신고"
 msgid "Report received by your server operator. Thank you."
 msgstr "귀하의 서버 운영자로부터 보고를 받았습니다. 감사합니다."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "공유 이력서 신고"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "비밀번호 필요"
 
@@ -7735,8 +7719,8 @@ msgstr "{1}를 사용하여 {0}를 검색했습니다. 검색 시간은 원본 �
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "서버가 변경되었습니다. 서류로 돌아가서 다시 시도하
 msgid "Set a follow-up"
 msgstr "후속 조치 설정"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "비밀번호 설정"
 
@@ -8635,8 +8619,8 @@ msgstr "{server}에 로그인한 다음 연결된 문서로 이동하세요."
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "계속하려면 로그인하세요."
 
@@ -9622,7 +9606,7 @@ msgstr "이 문서는 잠겨 있습니다. 여기에 편집 내용을 유지하�
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "이 문서는 잠겨 있습니다. 제안을 받으려면 잠금을 해제하세요."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "이 문서는 잠겨 있습니다. 계속해서 버전을 다운로드하고 이름을 지정할 수 있습니다. 편집하거나 복원하려면 잠금을 해제하세요."
 
@@ -10241,7 +10225,7 @@ msgstr "{url} 사용"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "3~64자의 소문자, 숫자, 점, 하이픈, 밑줄을 사용하세요."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "6~64자를 사용하세요."
 
@@ -10508,11 +10492,11 @@ msgstr "폭력 또는 학대"
 msgid "Visitors"
 msgstr "방문자"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "방문자는 PDF를 다운로드할 수 있습니다"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "방문자는 이력서를 보기 전에 이력서를 입력합니다. 믿을 수 있는 사람들에게만 공유하세요."
 
@@ -10895,7 +10879,7 @@ msgstr "오프라인 상태입니다. PDF 다운로드는 이 기기에서 처�
 msgid "You're offline. History needs a connection."
 msgstr "오프라인 상태입니다. 기록을 보려면 연결이 필요합니다."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "오프라인 상태입니다. 기록을 보려면 연결이 필요합니다. PDF 다운로드는 이 기기에서 사용할 수 있습니다."
 

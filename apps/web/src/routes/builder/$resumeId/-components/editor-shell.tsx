@@ -6,9 +6,9 @@ import { Suspense, useEffect } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { cn } from "@reactive-resume/utils/style";
+import { DownloadSheet } from "./download-sheet";
 import { EditorBar } from "./editor-bar";
 import { DesignPanel, DesignSheet, ModePanel } from "./mode-panels";
-import { ShareSheet } from "./share-sheet";
 import { useEditorHotkeys } from "./use-editor-hotkeys";
 import { ResumeAssistant } from "@/features/assistant/dock";
 import { openAssistantFrom } from "@/features/assistant/open";
@@ -57,7 +57,7 @@ export function EditorShell() {
 				assistant={<ResumeAssistant />}
 				mobile={<MobileBody mode={mode} onModeChange={setMode} />}
 			>
-				<ShareSheet />
+				<DownloadSheet />
 				<EditorHotkeys onModeChange={setMode} />
 			</EditorFrame>
 		</Tabs>
@@ -73,7 +73,7 @@ function useOpenVersionFromUrl() {
 
 	useEffect(() => {
 		if (!version) return;
-		useEditorStore.getState().setShareTab("history");
+		useEditorStore.getState().setSheetTab("history");
 		useEditorStore.setState({ historyVersionId: version });
 		void navigate({
 			to: ".",

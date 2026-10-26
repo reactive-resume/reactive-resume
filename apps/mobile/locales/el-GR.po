@@ -696,10 +696,6 @@ msgstr "2-3 προτάσεις διαβάζονται καλύτερα"
 msgid "24 hours before"
 msgstr "24 ώρες πριν"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Ένα κουμπί «Εμφάνιση στοιχείων επικοινωνίας» τα αποκαλύπτει στους ανθρώπους, όχι στις μηχανές αναζήτησης."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Ένα αντίγραφο ασφαλείας αυτής της επιστολής. Εισάγει ξανά στο Reactive Resume ως γράμμα."
@@ -1380,7 +1376,7 @@ msgstr "Χωρίς όριο"
 msgid "Any font, in Advanced"
 msgstr "Οποιαδήποτε γραμματοσειρά, σε Advanced"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Οποιοσδήποτε διαθέτει τον σύνδεσμο θα μπορεί να δει το βιογραφικό σας."
 
@@ -1611,10 +1607,6 @@ msgstr "Ζητήστε από τον διαχειριστή του διακομ�
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Ρωτήστε ή περιγράψτε μια αλλαγή…"
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "ζήτησαν τα στοιχεία επικοινωνίας"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Αλλαγή ζώνης ώρας"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Άλλαξε απευθείας το βιογραφικό (μια προηγούμενη συνομιλία)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Δεν ήταν δυνατή η αποθήκευση των αλλαγών. Δοκιμάστε ξανά πριν συνεχίσετε."
 
@@ -2254,7 +2246,7 @@ msgstr "Διαγράφει τις καταχωρίσεις· η ενότητα �
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Κλείσιμο"
 
@@ -2372,7 +2364,7 @@ msgstr "Συμπιέστε ή αφαιρέστε μεγάλες εικόνες �
 msgid "Confirm applied"
 msgstr "Επιβεβαίωση υποβολής"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Επιβεβαίωση κωδικού πρόσβασης"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "Διπλός έλεγχος"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Λήψη"
 msgid "Download {0}"
 msgstr "Λήψη {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Λήψη και ιστορικό"
@@ -4416,7 +4408,7 @@ msgstr "Ομάδα πρόσληψης"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Ιστορία"
 
@@ -5035,10 +5027,6 @@ msgstr "Απομένουν λιγότερο από 48 ώρες."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Επιτρέψτε σε πελάτες AI όπως οι Claude ή Cursor να διαβάσουν και να επεξεργαστούν τα βιογραφικά σας, χρησιμοποιώντας ένα κλειδί API."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Οι επισκέπτες μπορούν να ζητήσουν να τα δουν"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Άνοιγμα στις Προσφορές"
 msgid "Open letter"
 msgstr "Άνοιγμα επιστολής"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Ανοίξτε τη δημόσια σελίδα"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Ανοιχτές ερωτήσεις"
@@ -6443,6 +6427,10 @@ msgstr "Ανοίξτε τη λίστα"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Άνοιγμα του προγράμματος"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Άνοιγμα ιστοσελίδας"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Passkeys"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Κωδικός"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Οι κωδικοί πρόσβασης δεν ταιριάζουν."
 
@@ -7475,7 +7463,7 @@ msgstr "Αφαίρεση πεδίου"
 msgid "Remove file"
 msgstr "Αφαίρεση αρχείου"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Κατάργηση κωδικού πρόσβασης"
 
@@ -7497,7 +7485,7 @@ msgstr "Αφαίρεση ερώτησης"
 msgid "Remove role"
 msgstr "Κατάργηση ρόλου"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Κατάργηση του κωδικού πρόσβασης;"
 
@@ -7597,11 +7585,7 @@ msgstr "Αναφορά προβλήματος"
 msgid "Report received by your server operator. Thank you."
 msgstr "Η αναφορά ελήφθη από τον χειριστή του διακομιστή σας. Σας ευχαριστώ."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Αναφορά κοινόχρηστου βιογραφικού"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Απαιτείται κωδικός πρόσβασης"
 
@@ -7735,8 +7719,8 @@ msgstr "Ανακτήθηκε το {0} χρησιμοποιώντας το {1}. �
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "Ο διακομιστής άλλαξε. Επιστρέψτε στα Έγ
 msgid "Set a follow-up"
 msgstr "Ορισμός επανεπικοινωνίας"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Ορισμός κωδικού πρόσβασης"
 
@@ -8635,8 +8619,8 @@ msgstr "Συνδεθείτε στο {server} και μετά συνεχίστε 
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Συνδεθείτε για να συνεχίσετε."
 
@@ -9622,7 +9606,7 @@ msgstr "Αυτό το έγγραφο είναι κλειδωμένο. Ξεκλε
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Αυτό το έγγραφο είναι κλειδωμένο. Ξεκλειδώστε το για να λάβετε προτάσεις."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Αυτό το έγγραφο είναι κλειδωμένο. Μπορείτε ακόμα να κάνετε λήψη και να ονομάσετε εκδόσεις. Ξεκλείδωμα για επεξεργασία ή επαναφορά."
 
@@ -10241,7 +10225,7 @@ msgstr "Χρησιμοποιήστε το {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Χρησιμοποιήστε 3 έως 64 πεζά γράμματα, αριθμούς, τελείες, παύλες και κάτω παύλες."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Χρησιμοποιήστε 6–64 χαρακτήρες."
 
@@ -10508,11 +10492,11 @@ msgstr "Βία ή κακοποίηση"
 msgid "Visitors"
 msgstr "Επισκέπτες"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Οι επισκέπτες μπορούν να κατεβάσουν το PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Οι επισκέπτες μπαίνουν σε αυτό πριν δουν το βιογραφικό. Μοιραστείτε το μόνο με άτομα που εμπιστεύεστε."
 
@@ -10895,7 +10879,7 @@ msgstr "Είστε εκτός σύνδεσης. Η λήψη PDF γίνεται �
 msgid "You're offline. History needs a connection."
 msgstr "Είστε εκτός σύνδεσης. Το Ιστορικό απαιτεί σύνδεση."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "Είστε εκτός σύνδεσης. Το ιστορικό χρειάζεται σύνδεση. Η «Λήψη PDF» λειτουργεί σε αυτήν τη συσκευή."
 

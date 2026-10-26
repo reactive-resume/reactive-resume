@@ -696,10 +696,6 @@ msgstr "2–3 sinne lees die beste"
 msgid "24 hours before"
 msgstr "24 uur vooraf"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "'n “Wys kontakbesonderhede”-knoppie wys dit vir mense, nie vir soekenjins nie."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "'n Rugsteun van hierdie brief. Voer terug in Reactive Resume as 'n brief."
@@ -1380,7 +1376,7 @@ msgstr "Enige"
 msgid "Any font, in Advanced"
 msgstr "Enige lettertipe, in Gevorderd"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Enigiemand met die skakel sal jou CV kan sien."
 
@@ -1611,10 +1607,6 @@ msgstr "Vra jou bedieneradministrateur om geloofsbriewe enkripsie te aktiveer of
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Vra, of beskryf 'n verandering..."
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "het vir kontakbesonderhede gevra"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Verander tydsone"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Het die CV direk verander ('n vroeëre gesprek)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Veranderinge kon nie gestoor word nie. Probeer weer voordat jy voortgaan."
 
@@ -2254,7 +2246,7 @@ msgstr "Vee sy inskrywings uit; die afdeling bly. Jy kan ongedaan maak."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Maak toe"
 
@@ -2372,7 +2364,7 @@ msgstr "Kompakteer of verwyder groot beelde om oplaaie vinnig te hou."
 msgid "Confirm applied"
 msgstr "Bevestig aansoek gedoen"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Bevestig wagwoord"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "Dubbelkontroleer"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Laai af"
 msgid "Download {0}"
 msgstr "Laai {0} af"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Aflaai en geskiedenis"
@@ -4416,7 +4408,7 @@ msgstr "Huur span"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Geskiedenis"
 
@@ -5035,10 +5027,6 @@ msgstr "Minder as 48 uur oor."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Laat KI-kliënte soos Claude of Cursor jou CV's lees en redigeer met 'n API-sleutel."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Laat besoekers vra om dit te sien"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Maak oop in Aanbiedinge"
 msgid "Open letter"
 msgstr "Maak brief oop"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Maak die publieke bladsy oop"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Onbeantwoorde vrae"
@@ -6443,6 +6427,10 @@ msgstr "Maak die lys oop"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Maak die skedule oop"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Maak webblad oop"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Pasleutels"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Wagwoord"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Die wagwoorde stem nie ooreen nie."
 
@@ -7475,7 +7463,7 @@ msgstr "Verwyder veld"
 msgid "Remove file"
 msgstr "Verwyder lêer"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Verwyder wagwoord"
 
@@ -7497,7 +7485,7 @@ msgstr "Verwyder vraag"
 msgid "Remove role"
 msgstr "Verwyder rol"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Verwyder die wagwoord?"
 
@@ -7597,11 +7585,7 @@ msgstr "Rapporteer 'n probleem"
 msgid "Report received by your server operator. Thank you."
 msgstr "Verslag ontvang deur jou bedieneroperateur. Dankie."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Rapporteer gedeelde CV"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Vereis 'n wagwoord"
 
@@ -7735,8 +7719,8 @@ msgstr "{0} herwin met behulp van {1}. Herwinningstyd bepaal nie die varsheid va
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "Bediener verander. Keer terug na Dokumente en probeer weer."
 msgid "Set a follow-up"
 msgstr "Stel 'n opvolg"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Stel wagwoord in"
 
@@ -8635,8 +8619,8 @@ msgstr "Meld aan by {server} en gaan dan voort na die gekoppelde dokument."
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Meld aan om voort te gaan."
 
@@ -9622,7 +9606,7 @@ msgstr "Hierdie dokument is gesluit. Ontsluit dit voordat jy jou wysigings hier 
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Hierdie dokument is gesluit. Ontsluit dit om voorstelle te kry."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Hierdie dokument is gesluit. Jy kan steeds weergawes aflaai en benoem. Ontsluit om te wysig of terug te stel."
 
@@ -10241,7 +10225,7 @@ msgstr "Gebruik {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Gebruik 3 tot 64 kleinletters, syfers, kolletjies, koppeltekens en onderstrepe."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Gebruik 6–64 karakters."
 
@@ -10508,11 +10492,11 @@ msgstr "Geweld of mishandeling"
 msgid "Visitors"
 msgstr "Besoekers"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Besoekers kan die PDF aflaai"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Besoekers betree dit voordat hulle die CV sien. Deel dit net met mense wat jy vertrou."
 
@@ -10895,7 +10879,7 @@ msgstr "Jy is vanlyn. PDF word op hierdie toestel afgelaai. Ander formate benodi
 msgid "You're offline. History needs a connection."
 msgstr "Jy is vanlyn. Geskiedenis benodig ’n verbinding."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "Jy is vanlyn. Geskiedenis benodig 'n verbinding. “Laai PDF af” werk op hierdie toestel."
 

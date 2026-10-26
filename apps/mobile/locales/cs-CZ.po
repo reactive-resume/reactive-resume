@@ -696,10 +696,6 @@ msgstr "Nejlépe se čtou 2–3 věty"
 msgid "24 hours before"
 msgstr "24 hodin předem"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Tlačítko „Zobrazit kontaktní údaje“ je odhalí lidem, ne vyhledávačům."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Záloha tohoto dopisu. Importuje zpět do Reactive Resume jako dopis."
@@ -1380,7 +1376,7 @@ msgstr "Libovolné"
 msgid "Any font, in Advanced"
 msgstr "Libovolné písmo v pokročilém nastavení"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Každý, kdo má odkaz, bude moci zobrazit váš životopis."
 
@@ -1611,10 +1607,6 @@ msgstr "Požádejte správce serveru, aby povolil šifrování pověření nebo 
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Zeptejte se nebo popište změnu…"
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "požádali o kontaktní údaje"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Změnit časové pásmo"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Přímo změnil životopis (dřívější konverzace)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Změny se nepodařilo uložit. Zkusit znovu, než budete pokračovat."
 
@@ -2254,7 +2246,7 @@ msgstr "Vymaže své položky; oddíl zůstává. Můžete vrátit zpět."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Zavřít"
 
@@ -2372,7 +2364,7 @@ msgstr "Zkomprimujte nebo odstraňte velké obrázky, aby nahrávání zůstalo 
 msgid "Confirm applied"
 msgstr "Potvrdit podání"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Potvrďte heslo"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "Dvojitá kontrola"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Stáhnout"
 msgid "Download {0}"
 msgstr "Stáhnout {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Stažení a historie"
@@ -4416,7 +4408,7 @@ msgstr "Najímání týmu"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Dějiny"
 
@@ -5035,10 +5027,6 @@ msgstr "Zbývá méně než 48 hodin."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Nechte AI klienty jako Claude nebo Cursor číst a upravovat vaše životopisy pomocí klíče API."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Umožnit návštěvníkům požádat o jejich zobrazení"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Otevřít v Nabídkách"
 msgid "Open letter"
 msgstr "Otevřít dopis"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Otevřete veřejnou stránku"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Otevřené otázky"
@@ -6443,6 +6427,10 @@ msgstr "Otevřete seznam"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Otevřít plán"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Otevřít webovou stránku"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Passkeys"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Heslo"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Hesla se neshodují."
 
@@ -7475,7 +7463,7 @@ msgstr "Odebrat pole"
 msgid "Remove file"
 msgstr "Odebrat soubor"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Odebrat heslo"
 
@@ -7497,7 +7485,7 @@ msgstr "Odebrat otázku"
 msgid "Remove role"
 msgstr "Odebrat roli"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Odstranit heslo?"
 
@@ -7597,11 +7585,7 @@ msgstr "Nahlásit problém"
 msgid "Report received by your server operator. Thank you."
 msgstr "Hlášení přijaté operátorem vašeho serveru. Děkuju."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Nahlásit sdílený životopis"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Vyžadovat heslo"
 
@@ -7735,8 +7719,8 @@ msgstr "Načteno {0} pomocí {1}. Čas načtení neurčuje čerstvost původu."
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "Server se změnil. Vraťte se na Dokumenty a zkuste to znovu."
 msgid "Set a follow-up"
 msgstr "Nastavte pokračování"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Nastavte heslo"
 
@@ -8635,8 +8619,8 @@ msgstr "Přihlaste se do {server} a poté pokračujte na propojený dokument."
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Chcete-li pokračovat, přihlaste se."
 
@@ -9622,7 +9606,7 @@ msgstr "Tento dokument je uzamčen. Před uložením úprav zde jej odemkněte, 
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Tento dokument je uzamčen. Chcete-li získat návrhy, odemkněte jej."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Tento dokument je uzamčen. Stále si můžete stáhnout a pojmenovat verze. Chcete-li upravit nebo obnovit, odemkněte."
 
@@ -10241,7 +10225,7 @@ msgstr "Použijte {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Použijte 3 až 64 malých písmen, číslic, teček, pomlček a podtržítek."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Použijte 6–64 znaků."
 
@@ -10508,11 +10492,11 @@ msgstr "Násilí nebo zneužívání"
 msgid "Visitors"
 msgstr "Návštěvníci"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Návštěvníci si mohou stáhnout PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Návštěvníci do něj vstoupí dříve, než uvidí resumé. Sdílejte je pouze s lidmi, kterým důvěřujete."
 
@@ -10895,7 +10879,7 @@ msgstr "Jste offline. Stažení PDF probíhá na tomto zařízení. Ostatní for
 msgid "You're offline. History needs a connection."
 msgstr "Jste offline. Historie potřebuje spojení."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "Jste offline. Historie potřebuje připojení. Stažení PDF funguje v tomto zařízení."
 

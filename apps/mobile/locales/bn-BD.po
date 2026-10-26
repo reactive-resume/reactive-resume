@@ -696,10 +696,6 @@ msgstr "2-3 বাক্য সবচেয়ে ভাল পড়া"
 msgid "24 hours before"
 msgstr "24 ঘণ্টা আগে"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "“যোগাযোগের বিবরণ দেখান” বোতামটি এগুলো মানুষের কাছে প্রকাশ করে, সার্চ ইঞ্জিনের কাছে নয়।"
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "এই চিঠির একটি ব্যাকআপ. একটি চিঠি হিসাবে Reactive Resume এ আবার আমদানি করে।"
@@ -1380,7 +1376,7 @@ msgstr "যেকোনো"
 msgid "Any font, in Advanced"
 msgstr "যেকোন ফন্ট, অ্যাডভান্সড"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "লিঙ্ক সহ যে কেউ আপনার জীবনবৃত্তান্ত দেখতে সক্ষম হবে."
 
@@ -1611,10 +1607,6 @@ msgstr "আপনার সার্ভার প্রশাসককে শং
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "জিজ্ঞাসা করুন, বা একটি পরিবর্তন বর্ণনা করুন..."
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "যোগাযোগের বিবরণ চেয়েছেন"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "টাইমজোন পরিবর্তন করুন"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "সরাসরি জীবনবৃত্তান্ত পরিবর্তন করেছেন (আগের কথোপকথন)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "পরিবর্তনগুলি সংরক্ষণ করা যায়নি৷ চালিয়ে যাওয়ার আগে আবার চেষ্টা করুন।"
 
@@ -2254,7 +2246,7 @@ msgstr "এর এন্ট্রি সাফ করে; বিভাগ থে
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "বন্ধ"
 
@@ -2372,7 +2364,7 @@ msgstr "আপলোড দ্রুত রাখতে বড় ছবি ক�
 msgid "Confirm applied"
 msgstr "আবেদন নিশ্চিত করুন"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "পাসওয়ার্ড নিশ্চিত করুন"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "আবার যাচাই করা হচ্ছে"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "ডাউনলোড"
 msgid "Download {0}"
 msgstr "ডাউনলোড করুন {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "ডাউনলোড ও ইতিহাস"
@@ -4416,7 +4408,7 @@ msgstr "নিয়োগকারী দল"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "ইতিহাস"
 
@@ -5035,10 +5027,6 @@ msgstr "৪৮ ঘণ্টারও কম বাকি।"
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "একটি API কী ব্যবহার করে AI ক্লায়েন্টদের যেমন Claude বা Cursor আপনার জীবনবৃত্তান্তগুলি পড়তে এবং সম্পাদনা করতে দিন৷"
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "দর্শকদের এগুলো দেখার অনুরোধ করতে দিন"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "অফারসমূহে খুলুন"
 msgid "Open letter"
 msgstr "চিঠি খুলুন"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "সর্বজনীন পৃষ্ঠা খুলুন"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "অমীমাংসিত প্রশ্ন"
@@ -6443,6 +6427,10 @@ msgstr "তালিকা খুলুন"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "সময়সূচি খুলুন"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "ওয়েব পেজ খুলুন"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "পাসকি"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "পাসওয়ার্ড"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "পাসওয়ার্ডগুলো মিলছে না।"
 
@@ -7475,7 +7463,7 @@ msgstr "ক্ষেত্র সরান"
 msgid "Remove file"
 msgstr "ফাইল সরান"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "পাসওয়ার্ড সরান"
 
@@ -7497,7 +7485,7 @@ msgstr "প্রশ্ন সরান"
 msgid "Remove role"
 msgstr "ভূমিকা সরান"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "পাসওয়ার্ড সরান?"
 
@@ -7597,11 +7585,7 @@ msgstr "সমস্যা রিপোর্ট করুন"
 msgid "Report received by your server operator. Thank you."
 msgstr "আপনার সার্ভার অপারেটর দ্বারা প্রাপ্ত রিপোর্ট. ধন্যবাদ"
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "শেয়ার করা জীবনবৃত্তান্ত রিপোর্ট করুন"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "একটি পাসওয়ার্ড প্রয়োজন"
 
@@ -7735,8 +7719,8 @@ msgstr "{1} ব্যবহার করে {0} পুনরুদ্ধার �
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "সার্ভার পরিবর্তন করা হয়েছ
 msgid "Set a follow-up"
 msgstr "একটি ফলো-আপ সেট করুন"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "পাসওয়ার্ড সেট করুন"
 
@@ -8635,8 +8619,8 @@ msgstr "{server}-এ সাইন ইন করুন, তারপর লিঙ
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "চালিয়ে যেতে সাইন ইন করুন।"
 
@@ -9622,7 +9606,7 @@ msgstr "এই নথি লক করা আছে. আপনার সম্�
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "এই নথি লক করা আছে. পরামর্শ পেতে এটি আনলক করুন।"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "এই নথি লক করা আছে। সংস্করণ ডাউনলোড ও নামকরণ করতে পারবেন। সম্পাদনা বা পুনরুদ্ধার করতে আনলক করুন।"
 
@@ -10241,7 +10225,7 @@ msgstr "{url} ব্যবহার করুন"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "3 থেকে 64 ছোট হাতের অক্ষর, সংখ্যা, বিন্দু, হাইফেন এবং আন্ডারস্কোর ব্যবহার করুন।"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "6-64 অক্ষর ব্যবহার করুন।"
 
@@ -10508,11 +10492,11 @@ msgstr "সহিংসতা বা অপব্যবহার"
 msgid "Visitors"
 msgstr "দর্শক"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "দর্শকরা PDF ডাউনলোড করতে পারেন"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "দর্শকরা জীবনবৃত্তান্ত দেখার আগে এটিতে প্রবেশ করে। এটি শুধুমাত্র আপনার বিশ্বাসযোগ্য ব্যক্তিদের সাথে ভাগ করুন৷"
 
@@ -10895,7 +10879,7 @@ msgstr "আপনি অফলাইনে আছেন। PDF ডাউনল�
 msgid "You're offline. History needs a connection."
 msgstr "আপনি অফলাইনে আছেন। ইতিহাস একটি সংযোগ প্রয়োজন."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "আপনি অফলাইনে আছেন। ইতিহাসের জন্য সংযোগ প্রয়োজন। PDF ডাউনলোড এই ডিভাইসে কাজ করে।"
 

@@ -39,8 +39,6 @@ export const routes = {
 	/** `section` is a built-in section key or a custom section id; `item` is the entry id. */
 	entry: (id: string, section: string, item: string) =>
 		`/builder/${segment(id)}/entry/${segment(section)}/${segment(item)}` as const,
-	/** Share: the web page and who sees what; a builder pane. */
-	share: (id: string) => `/builder/${segment(id)}/share` as const,
 	/** Download & history, over the builder. */
 	export: (id: string) => `/builder/${segment(id)}/export` as const,
 	/** `version` opens History on that version, read-only (Applications' "What you sent"). */

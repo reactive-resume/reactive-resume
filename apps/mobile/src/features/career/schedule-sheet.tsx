@@ -12,6 +12,7 @@ import { client, useCareerAction, useCareerQueries, useCareerTime, useNow } from
 import { collectInterviews, nextCareerRun, prepareRunAt, rollForward, toZoned } from "./scheduling";
 import { EditorSheet, LoadState, SwitchRow } from "./shared";
 import { orpc } from "@/api/client";
+import { useFlags } from "@/api/flags";
 import { useSession } from "@/auth/session";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { useApplications } from "@/features/applications/queries";
@@ -42,7 +43,7 @@ export function ScheduleSheet(props: ScheduleSheetProps) {
 		enabled: session.status === "signed-in",
 		queryKey: [...orpc.webAccess.status.key(), session.server],
 	});
-	const flags = useQuery({ ...orpc.flags.get.queryOptions(), queryKey: [...orpc.flags.get.key(), session.server] });
+	const flags = useFlags();
 	const queries = [account.profile, career.profile, applications, web, flags];
 	const unavailable = queries.find((query) => query.isError || query.isPending);
 	return unavailable ? (

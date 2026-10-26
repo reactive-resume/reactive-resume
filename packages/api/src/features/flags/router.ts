@@ -2,6 +2,7 @@ import z from "zod";
 import { env } from "@reactive-resume/env/server";
 import { publicProcedure } from "../../context";
 import { isCareerSchedulingEnabled } from "../career/runner";
+import { isCustomDomainsEnabled } from "../custom-domain/service";
 
 export type FeatureFlags = {
 	disableSignups: boolean;
@@ -9,7 +10,8 @@ export type FeatureFlags = {
 	allowGuestLogin: boolean;
 	smtpEnabled: boolean;
 	careerSchedulingEnabled?: boolean;
-	shortLinkUrl?: string | undefined;
+	appUrl?: string;
+	aliasUrl?: string | undefined;
 	customDomains?: boolean;
 	olacvSuggestion?: boolean;
 };
@@ -39,10 +41,13 @@ export const flagsRouter = {
 				careerSchedulingEnabled: z
 					.boolean()
 					.describe("Whether scheduled career work is configured on this deployment."),
-				shortLinkUrl: z
+				appUrl: z.string().describe("The app's own address, where sign-in and the editor live."),
+				aliasUrl: z
 					.string()
 					.optional()
-					.describe("The short domain whose /<username> opens an account's primary resume, when configured."),
+					.describe(
+						"A second domain serving the same public pages, when configured. Shared resume links use it instead of appUrl.",
+					),
 				customDomains: z.boolean().describe("Whether accounts can open their primary resume at their own domain."),
 				olacvSuggestion: z
 					.boolean()
@@ -55,8 +60,9 @@ export const flagsRouter = {
 			allowGuestLogin: env.FLAG_ENABLE_GUEST_LOGIN && !env.FLAG_DISABLE_SIGNUPS,
 			smtpEnabled: isSmtpEnabled(),
 			careerSchedulingEnabled: isCareerSchedulingEnabled(),
-			...(env.SHORT_LINK_URL ? { shortLinkUrl: new URL(env.SHORT_LINK_URL).origin } : {}),
-			customDomains: Boolean(env.CUSTOM_DOMAIN_TARGET && env.CUSTOM_DOMAIN_PROVIDER_SECRET),
+			appUrl: new URL(env.APP_URL).origin,
+			...(env.APP_ALIAS_URL ? { aliasUrl: new URL(env.APP_ALIAS_URL).origin } : {}),
+			customDomains: isCustomDomainsEnabled(),
 			olacvSuggestion: env.FLAG_OLACV_SUGGESTION,
 		})),
 };

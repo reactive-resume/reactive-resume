@@ -696,10 +696,6 @@ msgstr "2–3 stavki se najbolje berejo"
 msgid "24 hours before"
 msgstr "24 ur prej"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Gumb „Pokaži kontaktne podatke“ jih razkrije ljudem, ne pa iskalnikom."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Varnostna kopija tega pisma. Uvozi nazaj v Reactive Resume kot pismo."
@@ -1380,7 +1376,7 @@ msgstr "Poljubno"
 msgid "Any font, in Advanced"
 msgstr "Katera koli pisava v naprednem načinu"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Vsakdo s povezavo si bo lahko ogledal vaš življenjepis."
 
@@ -1611,10 +1607,6 @@ msgstr "Prosite skrbnika strežnika, da omogoči šifriranje poverilnic ali konf
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Vprašajte ali opišite spremembo ..."
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "zahteve za kontaktne podatke"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Spremeni časovni pas"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Neposredno spremenil življenjepis (prejšnji pogovor)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Sprememb ni bilo mogoče shraniti. Poskusite znova, preden nadaljujete."
 
@@ -2254,7 +2246,7 @@ msgstr "Počisti vnose; razdelek ostane. To lahko razveljavite."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Zapri"
 
@@ -2372,7 +2364,7 @@ msgstr "Stisnite ali odstranite velike slike, da bo nalaganje hitro."
 msgid "Confirm applied"
 msgstr "Potrdi oddano prijavo"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Potrdi geslo"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "Dvojno preverjanje"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Prenesi"
 msgid "Download {0}"
 msgstr "Prenos {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Prenos in zgodovina"
@@ -4416,7 +4408,7 @@ msgstr "Najemna ekipa"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Zgodovina"
 
@@ -5035,10 +5027,6 @@ msgstr "Še manj kot 48 ur."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Odjemalcem AI, kot sta Claude in Cursor, dovolite branje in urejanje življenjepisov s ključem API."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Obiskovalcem dovoli, da jih zaprosijo za ogled"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Odpri v Ponudbah"
 msgid "Open letter"
 msgstr "Odpri pismo"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Odprite javno stran"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Odprta vprašanja"
@@ -6443,6 +6427,10 @@ msgstr "Odprite seznam"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Odpri urnik"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Odpri spletno stran"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Passkeys"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Geslo"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Gesla se ne ujemajo."
 
@@ -7475,7 +7463,7 @@ msgstr "Odstrani polje"
 msgid "Remove file"
 msgstr "Odstrani datoteko"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Odstrani geslo"
 
@@ -7497,7 +7485,7 @@ msgstr "Odstrani vprašanje"
 msgid "Remove role"
 msgstr "Odstrani vlogo"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Odstraniti geslo?"
 
@@ -7597,11 +7585,7 @@ msgstr "Prijavi težavo"
 msgid "Report received by your server operator. Thank you."
 msgstr "Poročilo je prejel vaš operater strežnika. Hvala."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Prijavite skupni življenjepis"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Zahtevaj geslo"
 
@@ -7735,8 +7719,8 @@ msgstr "Pridobljeno {0} z uporabo {1}. Čas pridobivanja ne določa svežine izv
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "Spremenjen strežnik. Vrnite se v dokumente in poskusite znova."
 msgid "Set a follow-up"
 msgstr "Nastavi ponovni stik"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Nastavi geslo"
 
@@ -8635,8 +8619,8 @@ msgstr "Prijavite se v {server}, nato nadaljujte na povezani dokument."
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Za nadaljevanje se prijavite."
 
@@ -9622,7 +9606,7 @@ msgstr "Ta dokument je zaklenjen. Odklenite ga, preden tukaj obdržite svoja ure
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Ta dokument je zaklenjen. Odklenite ga, če želite prejeti predloge."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Ta dokument je zaklenjen. Še vedno lahko prenesete in poimenujete različice. Odklenite za urejanje ali obnovitev."
 
@@ -10241,7 +10225,7 @@ msgstr "Uporabite {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Uporabite od 3 do 64 malih črk, številk, pik, vezajev in podčrtajev."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Uporabite 6–64 znakov."
 
@@ -10508,11 +10492,11 @@ msgstr "Nasilje ali zloraba"
 msgid "Visitors"
 msgstr "Obiskovalci"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Obiskovalci lahko prenesejo PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Obiskovalci vstopijo vanj, preden vidijo življenjepis. Delite le z ljudmi, ki jim zaupate."
 
@@ -10895,7 +10879,7 @@ msgstr "Niste povezani. Prenos PDF uporablja to napravo. Druge oblike potrebujej
 msgid "You're offline. History needs a connection."
 msgstr "Brez povezave ste. Zgodovina potrebuje povezavo."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "Brez povezave ste. Zgodovina potrebuje povezavo. „Prenesi PDF“ deluje v tej napravi."
 

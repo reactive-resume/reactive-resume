@@ -1,8 +1,22 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 
 vi.mock("@reactive-resume/env/server", () => ({ env: { APP_URL: "https://rxresu.me/" } }));
+vi.mock("@reactive-resume/api/features/resume/web-page", () => ({
+	listIndexableResumes: async () => [
+		{ username: "tess", slug: "game-dev", isPrimary: true, updatedAt: new Date("2026-10-01T00:00:00Z") },
+		{ username: "tess", slug: "level-design", isPrimary: false, updatedAt: new Date("2026-10-02T00:00:00Z") },
+	],
+}));
 
-const { handlePagesSitemap, handleLlms } = await import("./seo");
+const { handlePagesSitemap, handleResumesSitemap, handleLlms } = await import("./seo");
+
+it("lists each indexed resume at its canonical address: the primary at /<username>", async () => {
+	const xml = await (await handleResumesSitemap(1)).text();
+	expect([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1])).toEqual([
+		"https://rxresu.me/tess",
+		"https://rxresu.me/tess/level-design",
+	]);
+});
 
 it("publishes Context7 Ask after the llms title and summary", async () => {
 	const text = await handleLlms().text();

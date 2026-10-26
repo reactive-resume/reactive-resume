@@ -28,7 +28,6 @@ export type Resume = {
 	showDownloadButtons?: boolean | undefined;
 	showInSearchEngines?: boolean | undefined;
 	hideContactDetails?: boolean | undefined;
-	showContactButton?: boolean | undefined;
 	isPrimary?: boolean | undefined;
 	/** The job application this resume was made for; Check's Job match reads its posting. */
 	applicationId?: string | null;

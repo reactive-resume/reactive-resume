@@ -696,10 +696,6 @@ msgstr "2-3 वाक्य सबसे अच्छे से पढ़े ज
 msgid "24 hours before"
 msgstr "24 घंटे पहले"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "“संपर्क विवरण दिखाएँ” बटन उन्हें लोगों को दिखाता है, सर्च इंजन को नहीं।"
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "इस पत्र का बैकअप. एक पत्र के रूप में Reactive Resume में वापस आयात करता है।"
@@ -1380,7 +1376,7 @@ msgstr "कोई भी"
 msgid "Any font, in Advanced"
 msgstr "कोई भी फ़ॉन्ट, उन्नत में"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "लिंक वाला कोई भी व्यक्ति आपका बायोडाटा देख सकेगा।"
 
@@ -1611,10 +1607,6 @@ msgstr "अपने सर्वर व्यवस्थापक से क�
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "पूछें, या परिवर्तन का वर्णन करें..."
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "संपर्क विवरण माँगे गए"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "समय क्षेत्र बदलें"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "सीधे बायोडाटा बदला (पहले की बातचीत)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "परिवर्तन सहेजे नहीं जा सके. जारी रखने से पहले पुनः प्रयास करें."
 
@@ -2254,7 +2246,7 @@ msgstr "इसकी प्रविष्टियाँ साफ़ करत
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "बंद करें"
 
@@ -2372,7 +2364,7 @@ msgstr "अपलोड तेज़ रखने के लिए बड़ी 
 msgid "Confirm applied"
 msgstr "आवेदन की पुष्टि करें"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "पासवर्ड की पुष्टि करें"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "दोबारा जाँच रहा है"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "डाउनलोड"
 msgid "Download {0}"
 msgstr "डाउनलोड करें {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "डाउनलोड और इतिहास"
@@ -4416,7 +4408,7 @@ msgstr "नियुक्ति दल"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "इतिहास"
 
@@ -5035,10 +5027,6 @@ msgstr "48 घंटे से भी कम समय बचा है."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "API कुंजी का उपयोग करके, Claude या Cursor जैसे AI क्लाइंट को अपना रेज़्यूमे पढ़ने और संपादित करने दें।"
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "आगंतुकों को उन्हें देखने का अनुरोध करने दें"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "\"ऑफ़र\" में खोलें"
 msgid "Open letter"
 msgstr "पत्र खोलें"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "सार्वजनिक पृष्ठ खोलें"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "अनसुलझे प्रश्न"
@@ -6443,6 +6427,10 @@ msgstr "सूची खोलें"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "शेड्यूल खोलें"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "वेब पेज खोलें"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "पासकीज़"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "पासवर्ड"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "पासवर्ड मेल नहीं खाते।"
 
@@ -7475,7 +7463,7 @@ msgstr "फ़ील्ड हटाएँ"
 msgid "Remove file"
 msgstr "फ़ाइल हटाएँ"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "पासवर्ड हटाएँ"
 
@@ -7497,7 +7485,7 @@ msgstr "सवाल हटाएँ"
 msgid "Remove role"
 msgstr "भूमिका हटाएँ"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "पासवर्ड हटाएँ?"
 
@@ -7597,11 +7585,7 @@ msgstr "समस्या रिपोर्ट करें"
 msgid "Report received by your server operator. Thank you."
 msgstr "आपके सर्वर ऑपरेटर द्वारा प्राप्त रिपोर्ट. धन्यवाद।"
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "साझा बायोडाटा की रिपोर्ट करें"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "पासवर्ड की आवश्यकता है"
 
@@ -7735,8 +7719,8 @@ msgstr "{1} का उपयोग करके {0} को पुनः प्�
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "सर्वर बदल गया। दस्तावेज़ प�
 msgid "Set a follow-up"
 msgstr "अनुवर्ती कार्रवाई सेट करें"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "सांकेतिक शब्द लगना"
 
@@ -8635,8 +8619,8 @@ msgstr "{server} में साइन इन करें, फिर लिं
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "जारी रखने के लिए साइन इन करें."
 
@@ -9622,7 +9606,7 @@ msgstr "यह दस्तावेज़ लॉक है. अपने सं
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "यह दस्तावेज़ लॉक है. सुझाव प्राप्त करने के लिए इसे अनलॉक करें."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "यह दस्तावेज़ लॉक है. आप अभी भी संस्करणों को डाउनलोड और नाम दे सकते हैं। संपादित करने या पुनर्स्थापित करने के लिए अनलॉक करें।"
 
@@ -10241,7 +10225,7 @@ msgstr "{url} का प्रयोग करें"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "3 से 64 छोटे अक्षरों, संख्याओं, बिंदुओं, हाइफ़न और अंडरस्कोर का उपयोग करें।"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "6-64 वर्णों का प्रयोग करें।"
 
@@ -10508,11 +10492,11 @@ msgstr "हिंसा या दुर्व्यवहार"
 msgid "Visitors"
 msgstr "आगंतुक"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "आगंतुक PDF डाउनलोड कर सकते हैं"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "आगंतुक बायोडाटा देखने से पहले इसमें प्रवेश करते हैं। इसे केवल उन लोगों के साथ साझा करें जिन पर आप भरोसा करते हैं।"
 
@@ -10895,7 +10879,7 @@ msgstr "आप ऑफ़लाइन हैं। PDF डाउनलोड इ�
 msgid "You're offline. History needs a connection."
 msgstr "आप ऑफ़लाइन हैं. इतिहास को एक कनेक्शन की आवश्यकता है."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "आप ऑफ़लाइन हैं। इतिहास के लिए कनेक्शन ज़रूरी है। PDF डाउनलोड इस डिवाइस पर काम करता है।"
 

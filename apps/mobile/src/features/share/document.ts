@@ -2,8 +2,8 @@ import { t } from "@lingui/core/macro";
 import { useResumeStore } from "@/draft";
 
 /**
- * Share and History are builder routes: `app/builder/[id]/_layout.tsx` owns the draft (open, close, conflict sheet).
- * They only subscribe, and see no document until the owner has loaded this resume.
+ * The Share pane and Download & history are builder routes: `app/builder/[id]/_layout.tsx` owns the draft (open,
+ * close, conflict sheet). They only subscribe, and see no document until the owner has loaded this resume.
  */
 export function useShareDocument(id: string) {
 	const draft = useResumeStore();

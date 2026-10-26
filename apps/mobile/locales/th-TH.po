@@ -696,10 +696,6 @@ msgstr "2–3 ประโยคอ่านได้ดีที่สุด"
 msgid "24 hours before"
 msgstr "24 ชั่วโมงก่อน"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "ปุ่ม “แสดงข้อมูลการติดต่อ” จะเปิดเผยข้อมูลเหล่านี้ให้ผู้คนเห็น แต่ไม่ให้เครื่องมือค้นหาเห็น"
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "ข้อมูลสำรองของจดหมายฉบับนี้ นำเข้ากลับเข้าไปใน Reactive Resume ในรูปแบบตัวอักษร"
@@ -1380,7 +1376,7 @@ msgstr "ไม่จำกัด"
 msgid "Any font, in Advanced"
 msgstr "แบบอักษรใดก็ได้ในขั้นสูง"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "ทุกคนที่มีลิงก์จะสามารถดูประวัติย่อของคุณได้"
 
@@ -1611,10 +1607,6 @@ msgstr "ขอให้ผู้ดูแลระบบเซิร์ฟเว
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "ถามหรืออธิบายการเปลี่ยนแปลง..."
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "ขอข้อมูลการติดต่อ"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "เปลี่ยนเขตเวลา"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "เปลี่ยนประวัติโดยตรง (บทสนทนาก่อนหน้านี้)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "ไม่สามารถบันทึกการเปลี่ยนแปลงได้ ลองอีกครั้งก่อนดำเนินการต่อ"
 
@@ -2254,7 +2246,7 @@ msgstr "ล้างรายการ; ส่วนยังคงอยู่ 
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "ปิด"
 
@@ -2372,7 +2364,7 @@ msgstr "บีบอัดหรือลบรูปภาพขนาดให
 msgid "Confirm applied"
 msgstr "ยืนยันการสมัคร"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "ยืนยันรหัสผ่าน"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "กำลังตรวจสอบซ้ำ"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "ดาวน์โหลด"
 msgid "Download {0}"
 msgstr "ดาวน์โหลด {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "ดาวน์โหลดและประวัติ"
@@ -4416,7 +4408,7 @@ msgstr "ทีมงานรับสมัคร"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "ประวัติศาสตร์"
 
@@ -5035,10 +5027,6 @@ msgstr "เหลือเวลาไม่ถึง 48 ชั่วโมง"
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "ให้ไคลเอ็นต์ AI เช่น Claude หรือ Cursor อ่านและแก้ไข ประวัติย่อ ของคุณ โดยใช้คีย์ API"
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "ให้ผู้เยี่ยมชมขอดูข้อมูลได้"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "เปิดในข้อเสนองาน"
 msgid "Open letter"
 msgstr "เปิดจดหมาย"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "เปิดหน้าสาธารณะ"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "คำถามที่ยังไม่มีคำตอบ"
@@ -6443,6 +6427,10 @@ msgstr "เปิดรายการ"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "เปิดกำหนดการ"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "เปิดหน้าเว็บ"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "พาสคีย์"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "รหัสผ่าน"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "รหัสผ่านไม่ตรงกัน"
 
@@ -7475,7 +7463,7 @@ msgstr "ลบฟิลด์"
 msgid "Remove file"
 msgstr "ลบไฟล์"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "นำรหัสผ่านออก"
 
@@ -7497,7 +7485,7 @@ msgstr "นำคำถามออก"
 msgid "Remove role"
 msgstr "ลบบทบาท"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "ลบรหัสผ่าน?"
 
@@ -7597,11 +7585,7 @@ msgstr "แจ้งปัญหา"
 msgid "Report received by your server operator. Thank you."
 msgstr "รายงานที่ได้รับจากผู้ให้บริการเซิร์ฟเวอร์ของคุณ ขอบคุณ"
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "รายงานเรซูเม่ที่แชร์"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "ต้องใช้รหัสผ่าน"
 
@@ -7735,8 +7719,8 @@ msgstr "ดึงข้อมูล {0} โดยใช้ {1} เวลาใ�
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "เซิร์ฟเวอร์มีการเปลี่ยนแ
 msgid "Set a follow-up"
 msgstr "ตั้งค่าการติดตามผล"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "ตั้งรหัสผ่าน"
 
@@ -8635,8 +8619,8 @@ msgstr "ลงชื่อเข้าใช้ {server} จากนั้น�
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "ลงชื่อเข้าใช้เพื่อดำเนินการต่อ"
 
@@ -9622,7 +9606,7 @@ msgstr "เอกสารนี้ถูกล็อค ปลดล็อก�
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "เอกสารนี้ถูกล็อค ปลดล็อกเพื่อรับคำแนะนำ"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "เอกสารนี้ถูกล็อค คุณยังคงสามารถดาวน์โหลดและตั้งชื่อเวอร์ชันได้ ปลดล็อคเพื่อแก้ไขหรือกู้คืน"
 
@@ -10241,7 +10225,7 @@ msgstr "ใช้ {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "ใช้ตัวอักษรพิมพ์เล็ก ตัวเลข จุด ขีดกลาง และขีดล่างตั้งแต่ 3 ถึง 64 ตัว"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "ใช้อักขระ 6–64 ตัว"
 
@@ -10508,11 +10492,11 @@ msgstr "ความรุนแรงหรือการละเมิด"
 msgid "Visitors"
 msgstr "ผู้เยี่ยมชม"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "ผู้เยี่ยมชมสามารถดาวน์โหลด PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "ผู้เยี่ยมชมเข้ามาก่อนที่จะเห็นประวัติย่อ แบ่งปันเฉพาะกับคนที่คุณไว้วางใจเท่านั้น"
 
@@ -10895,7 +10879,7 @@ msgstr "คุณออฟไลน์อยู่ การดาวน์โ�
 msgid "You're offline. History needs a connection."
 msgstr "คุณออฟไลน์อยู่ ประวัติต้องใช้การเชื่อมต่อ"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "คุณออฟไลน์อยู่ ประวัติต้องใช้การเชื่อมต่อ “ดาวน์โหลด PDF” ใช้ได้บนอุปกรณ์นี้"
 

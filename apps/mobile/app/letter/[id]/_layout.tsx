@@ -67,7 +67,7 @@ export default function LetterLayout() {
 			tabletPanes={["write", "design"]}
 			page={<PageScreen />}
 			title={t`Cover letter`}
-			onShare={() => setSharing(true)}
+			onExport={() => setSharing(true)}
 			modals={["assistant"]}
 		>
 			<DraftChrome id={id} />

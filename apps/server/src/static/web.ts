@@ -5,8 +5,11 @@ import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { env } from "@reactive-resume/env/server";
+import { jsonLdScript, socialMetaTags } from "@reactive-resume/pdf/web-page-document";
 import { templateSchema } from "@reactive-resume/schema/templates";
+import { isAppSectionPath, RESERVED_SEGMENTS } from "@reactive-resume/utils/app-paths";
 import { defaultLocale, getLocaleAlternates, isLocale, localizedUrl } from "@reactive-resume/utils/locale";
+import { escapeHtml } from "@reactive-resume/utils/string";
 import { CONTEXT7_ASK_DESCRIPTION, CONTEXT7_ASK_URL } from "./seo";
 
 function resolveWebDistPath() {
@@ -27,7 +30,6 @@ const indexHtmlPath = `${staticRoot}/index.html`;
 // The marketing pages prerendered per locale by the web build (apps/web/vite.config.ts), as <page>/<locale>.html, kept
 // beside dist/ so they're never served at an address of their own.
 const prerenderRoot = `${staticRoot}-prerender`;
-const noindexShellPrefixes = ["/auth", "/dashboard", "/builder", "/agent"];
 /**
  * Marketing pages the SPA owns that search engines should index.
  *
@@ -35,19 +37,7 @@ const noindexShellPrefixes = ["/auth", "/dashboard", "/builder", "/agent"];
  * server serves the shell for anything, so this failure only ever shows up once deployed.
  */
 const indexableAppPaths = new Set(["/ats-checker", "/resume-templates"]);
-const reservedPublicResumeSegments = new Set([
-	"api",
-	"mcp",
-	".well-known",
-	"uploads",
-	"auth",
-	"dashboard",
-	"builder",
-	"agent",
-	"templates",
-	"ats-checker",
-	"resume-templates",
-]);
+const reservedPublicResumeSegments = new Set<string>(RESERVED_SEGMENTS);
 
 function isAssetPath(pathname: string): boolean {
 	return pathname.split("/").pop()?.includes(".") ?? false;
@@ -57,15 +47,21 @@ function getPathSegments(pathname: string) {
 	return pathname.split("/").filter(Boolean);
 }
 
-function isNoindexShellPath(pathname: string): boolean {
-	return noindexShellPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
-}
-
 export function isPublicResumePath(pathname: string): boolean {
 	const segments = getPathSegments(pathname);
 	const [firstSegment] = segments;
 
 	return segments.length === 2 && firstSegment !== undefined && !reservedPublicResumeSegments.has(firstSegment);
+}
+
+// Single-segment addresses the app or the server answer themselves, so they can never be a username's page.
+const reservedProfileSegments = new Set([...reservedPublicResumeSegments, "cards", "sitemaps", "index.html"]);
+
+/** `/<username>`: an account's primary resume. */
+export function isProfilePath(pathname: string): boolean {
+	const segments = getPathSegments(pathname);
+	const [segment] = segments;
+	return segments.length === 1 && segment !== undefined && !reservedProfileSegments.has(segment);
 }
 
 /**
@@ -115,7 +111,7 @@ export const BASE_SECURITY_HEADERS = {
  */
 function htmlResponse(html: string, headers: Record<string, string>, template = html) {
 	const verification = new URL(CONTEXT7_ASK_URL).searchParams.get("siteKey") ?? "";
-	const note = `<blockquote data-context7-ask="true" aria-hidden="true" class="sr-only"><h2>Search</h2><p>Page index: https://rxresu.me/llms.txt.</p><p>${escapeAttribute(CONTEXT7_ASK_DESCRIPTION)}</p></blockquote>`;
+	const note = `<blockquote data-context7-ask="true" aria-hidden="true" class="sr-only"><h2>Search</h2><p>Page index: https://rxresu.me/llms.txt.</p><p>${escapeHtml(CONTEXT7_ASK_DESCRIPTION)}</p></blockquote>`;
 	const body = html
 		.replace("</head>", () => `<meta name="context7-site-verification" content="${verification}"></head>`)
 		.replace(/<body\b[^>]*>/i, (tag) => `${tag}${note}`);
@@ -234,32 +230,18 @@ type PageSeoOptions = {
 function createPageSeoMarkup(options: PageSeoOptions) {
 	const pageUrl = options.requested ? localizedUrl(options.canonicalUrl, options.locale) : options.canonicalUrl;
 	const alternates = getLocaleAlternates(options.canonicalUrl)
-		.map(({ hreflang, href }) => `<link rel="alternate" hreflang="${hreflang}" href="${escapeAttribute(href)}">`)
+		.map(({ hreflang, href }) => `<link rel="alternate" hreflang="${hreflang}" href="${escapeHtml(href)}">`)
 		.join("");
 
-	const url = escapeAttribute(pageUrl);
+	const url = escapeHtml(pageUrl);
 
 	return `
 		<link rel="canonical" href="${url}">
 		${alternates}
 		<meta property="og:locale" content="${options.locale.replace("-", "_")}">
-		${socialTags({ type: "website", title: options.title, description: options.description, url, image: options.imageUrl })}
-		<script type="application/ld+json">${JSON.stringify(options.structuredData).replaceAll("<", "\\u003c")}</script>
+		${socialMetaTags({ type: "website", title: options.title, description: options.description, url, image: options.imageUrl })}
+		${jsonLdScript(options.structuredData)}
 	`;
-}
-
-/** OpenGraph and Twitter card tags. Every value must already be HTML-escaped. */
-function socialTags(tags: { type: string; title: string; description: string; url: string; image: string }) {
-	return `<meta property="og:type" content="${tags.type}">
-		<meta property="og:site_name" content="Reactive Resume">
-		<meta property="og:title" content="${tags.title}">
-		<meta property="og:description" content="${tags.description}">
-		<meta property="og:url" content="${tags.url}">
-		<meta property="og:image" content="${tags.image}">
-		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:title" content="${tags.title}">
-		<meta name="twitter:description" content="${tags.description}">
-		<meta name="twitter:image" content="${tags.image}">`;
 }
 
 /** The title and description a page was built with, still HTML-escaped. */
@@ -269,16 +251,6 @@ function readPageMeta(html: string, fallback: { title: string; description: stri
 		description: html.match(/<meta\s+name="description"\s+content="([^"]*)"/)?.[1] ?? fallback.description,
 	};
 }
-
-// Resume names, headlines, and summaries are user-authored, so they must never reach the served
-// HTML unescaped.
-const escapeAttribute = (value: string) =>
-	value
-		.replaceAll("&", "&amp;")
-		.replaceAll("<", "&lt;")
-		.replaceAll(">", "&gt;")
-		.replaceAll('"', "&quot;")
-		.replaceAll("'", "&#39;");
 
 export const serveWebDistStatic = env.CLOUDFLARE
 	? undefined
@@ -299,7 +271,7 @@ function getFallbackResponseHeaders(pathname: string) {
 	if (pathname === "/" || indexableAppPaths.has(pathname)) {
 		return { "Content-Type": "text/html; charset=UTF-8", ...BASE_SECURITY_HEADERS };
 	}
-	if (isNoindexShellPath(pathname)) {
+	if (isAppSectionPath(pathname)) {
 		return {
 			"Content-Type": "text/html; charset=UTF-8",
 			"X-Robots-Tag": "noindex, follow",
@@ -379,7 +351,7 @@ export async function handleWebApp(request: Request, readFile: ReadWebFile = (pa
 	const requestedPath = new URL(request.url).pathname;
 	const pathname = requestedPath === "/index.html" ? "/" : requestedPath;
 
-	if (!isNoindexShellPath(pathname) && isAssetPath(pathname)) {
+	if (!isAppSectionPath(pathname) && isAssetPath(pathname)) {
 		return new Response("Not Found", { status: 404 });
 	}
 

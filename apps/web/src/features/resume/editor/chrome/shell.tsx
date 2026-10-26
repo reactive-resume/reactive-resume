@@ -44,7 +44,7 @@ type EditorFrameProps = {
 	assistant: ReactNode;
 	/** Phones show one view at a time; each editor brings its own. */
 	mobile: ReactNode;
-	/** The share sheet and hotkeys. */
+	/** The Download & history sheet and hotkeys. */
 	children: ReactNode;
 };
 

@@ -37,7 +37,7 @@ export const resumeStatisticsRouter = {
 			operationId: "getResumeStatistics",
 			summary: "Get resume statistics",
 			description:
-				"Returns view, download and contact reveal statistics for the specified resume, including total counts and the timestamps of the last view and download. Requires authentication.",
+				"Returns view and download statistics for the specified resume, including total counts and the timestamps of the last view and download. Requires authentication.",
 			successDescription: "The resume's view and download statistics.",
 		})
 		.input(z.object({ id: z.string().describe("The unique identifier of the resume.") }))
@@ -46,9 +46,6 @@ export const resumeStatisticsRouter = {
 				isPublic: z.boolean().describe("Whether the resume is currently public."),
 				views: z.number().describe("Total number of times the resume has been viewed."),
 				downloads: z.number().describe("Total number of times the resume has been downloaded."),
-				contactReveals: z
-					.number()
-					.describe("Total number of times visitors asked to see the resume's hidden contact details."),
 				lastViewedAt: z.date().nullable().describe("Timestamp of the last view, or null if never viewed."),
 				lastDownloadedAt: z.date().nullable().describe("Timestamp of the last download, or null if never downloaded."),
 			}),
@@ -78,7 +75,6 @@ export const resumeStatisticsRouter = {
 					date: z.string().describe("The UTC day in YYYY-MM-DD format."),
 					views: z.number().describe("Number of views recorded on this day."),
 					downloads: z.number().describe("Number of downloads recorded on this day."),
-					contactReveals: z.number().describe("Number of contact detail reveals recorded on this day."),
 				}),
 			),
 		)

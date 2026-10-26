@@ -10,15 +10,14 @@ import { routes } from "@/routes";
 import { BuilderChrome, useBuilderChrome } from "@/shell/builder-chrome";
 import { useKeyCommands } from "@/shell/key-commands";
 
-/** Fills the chrome from the draft once for every pane: name, save status, Public badge. ⌘Z / ⇧⌘Z undo and redo. */
+/** Fills the chrome from the draft once for every pane: name and save status. ⌘Z / ⇧⌘Z undo and redo. */
 function DraftChrome() {
 	const { t } = useLingui();
 	const name = useResumeStore((state) => state.document?.name);
-	const shared = useResumeStore((state) => state.document?.isPublic);
 	const status = useResumeStore((state) => state.status);
 	const locked = useResumeStore((state) => state.locked);
 	const retry = useResumeStore((state) => state.retry);
-	useBuilderChrome({ title: name, save: name ? { status, locked, onRetry: retry } : undefined, shared });
+	useBuilderChrome({ title: name, save: name ? { status, locked, onRetry: retry } : undefined });
 	useKeyCommands([
 		{ id: "undo", input: "z", title: t`Undo`, run: () => useResumeStore.getState().undo() },
 		{ id: "redo", input: "z", shift: true, title: t`Redo`, run: () => useResumeStore.getState().redo() },
@@ -54,7 +53,7 @@ export default function BuilderLayout() {
 			tabletPanes={["write", "design", "check", "share"]}
 			page={<PageScreen />}
 			title={t`Resume`}
-			onShare={() => router.push(routes.export(id))}
+			onExport={() => router.push(routes.export(id))}
 			modals={["export", "assistant"]}
 		>
 			<DraftChrome />

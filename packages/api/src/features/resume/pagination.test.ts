@@ -22,7 +22,6 @@ it("paginates the owner's filtered list without changing legacy array responses"
 		showDownloadButtons: false,
 		showInSearchEngines: false,
 		hideContactDetails: false,
-		showContactButton: true,
 		isPrimary: false,
 		createdAt: new Date(),
 		updatedAt: new Date(),

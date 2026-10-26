@@ -1,10 +1,12 @@
 import type { ReactNode } from "react";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
+import { publicResumeUrl } from "@reactive-resume/resume/sharing";
 import { DialogDescription, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
 import { templates } from "@/dialogs/resume/template/data";
 import { useCurrentResume } from "@/features/resume/builder/draft";
 import { useEditorStore } from "@/features/resume/editor/store";
+import { useShareOrigin } from "@/features/resume/share/use-share-origin";
 import { authClient } from "@/libs/auth/client";
 import { formatRelativeTime, localeMap, resolveLocale } from "@/libs/locale";
 
@@ -29,7 +31,8 @@ export function DocumentDetails() {
 	const pageCount = useEditorStore((state) => state.rendered.pageCount);
 	const { data: session } = authClient.useSession();
 	const { template, page } = resume.data.metadata;
-	const address = `${window.location.host}/${session?.user.username ?? ""}/${resume.slug}`;
+	const origin = useShareOrigin();
+	const url = publicResumeUrl(origin, { username: session?.user.username ?? "", slug: resume.slug });
 
 	return (
 		<>
@@ -64,12 +67,12 @@ export function DocumentDetails() {
 						<>
 							{resume.hasPassword ? <Trans>Public, with a password</Trans> : <Trans>Public</Trans>}
 							<a
-								href={`${window.location.protocol}//${address}`}
+								href={url}
 								target="_blank"
 								rel="noopener noreferrer"
 								className="mt-0.5 block truncate font-mono text-[13px] text-accent-text underline-offset-2 hover:underline"
 							>
-								{address}
+								{url.replace(/^https?:\/\//, "")}
 							</a>
 						</>
 					) : (

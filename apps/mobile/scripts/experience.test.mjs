@@ -150,7 +150,7 @@ const { DownloadTab } = load("features/share/download.tsx", {
 	"@/draft": draftBoundary,
 	"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
 });
-const { ShareScreen } = load("features/share/screen.tsx", {
+const { ExportScreen } = load("features/share/export-screen.tsx", {
 	"expo-network": { useNetworkState: () => ({ isConnected: true }) },
 	"react-native-safe-area-context": { SafeAreaProvider: "SafeAreaProvider", SafeAreaView: "SafeAreaView" },
 	"./document": { useShareDocument: () => state },
@@ -160,11 +160,11 @@ const { ShareScreen } = load("features/share/screen.tsx", {
 	"@/features/history/history": { HistoryPanel: "HistoryPanel" },
 });
 reset();
-let tree = render(ShareScreen, { id: resume.id });
+let tree = render(ExportScreen, { id: resume.id });
 assert.equal(control(tree, "Download & history").value, "download", "Ordinary sharing must start with the file action");
 assert.ok(nodes(tree).some((node) => node.type === DownloadTab));
 reset();
-tree = render(ShareScreen, { id: resume.id, history: true });
+tree = render(ExportScreen, { id: resume.id, history: true });
 assert.equal(control(tree, "Download & history").value, "history", "Explicit version history keeps its destination");
 
 reset();

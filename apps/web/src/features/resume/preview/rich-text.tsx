@@ -58,7 +58,7 @@ function toReact(node: Node, key: number): ReactNode {
 type RichTextProps = { html: string; className?: string };
 
 /**
- * A resume's rich text on the public page. The owner's HTML is never injected: it's parsed, and only formatting tags
+ * A resume's rich text in the reflowed view. The owner's HTML is never injected: it's parsed, and only formatting tags
  * and plain links become elements, so whatever else it holds stays inert text.
  */
 export function RichText({ html, className }: RichTextProps) {

@@ -6,7 +6,7 @@ import { referenceItemSchema } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { ResumeReflow } from "./resume-reflow";
 
-it("shows the built-in Summary content in public readable view", () => {
+it("shows the built-in Summary content in the reflowed view", () => {
 	i18n.load("en", {});
 	i18n.activate("en");
 	const data = structuredClone(defaultResumeData);

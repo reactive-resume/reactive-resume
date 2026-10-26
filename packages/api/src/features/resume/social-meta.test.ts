@@ -25,7 +25,8 @@ describe("getPublicResumeCardData", () => {
 		const data = structuredClone(sampleResumeData);
 		data.basics.name = "";
 		data.summary.hidden = true;
-		pg.rows = [["Senior Eng @ Foo — final draft", data, false, "u1", false]];
+		// Columns in select order: data, hideContactDetails, isPrimary, customDomain.
+		pg.rows = [[data, false, false, null]];
 
 		const card = await getPublicResumeCardData({ username: "jane", slug: "resume" });
 
@@ -41,7 +42,7 @@ describe("getPublicResumeCardData", () => {
 	it("matches renamed slugs via resumeSlugRedirect when redirect is active", async () => {
 		const data = structuredClone(sampleResumeData);
 		data.basics.name = "Jane Doe";
-		pg.rows = [["Resume", data, false, "u1", false]];
+		pg.rows = [[data, false, false, null]];
 
 		const card = await getPublicResumeCardData({ username: "jane", slug: "old-slug" });
 

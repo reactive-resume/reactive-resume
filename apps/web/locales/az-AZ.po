@@ -726,7 +726,7 @@ msgstr "{stars, plural, one {GitHub‑da Reactive Resume-a ulduz verin, # ulduz}
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# hekayə} other {# hekayə}}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "{suggestion} may be available. Get yours here →"
 msgstr "{suggestion} mövcud ola bilər. Özünüzünkünü burada əldə edin →"
 
@@ -844,7 +844,7 @@ msgstr "10 dəqiqəlik brifinq"
 msgid "10–11 recommended"
 msgstr "10-11 tövsiyə olunur"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 fayl"
 
@@ -903,15 +903,11 @@ msgstr "90 gün"
 msgid "A"
 msgstr "A"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "“Əlaqə məlumatlarını göstər” düyməsi onları axtarış sistemlərinə deyil, insanlara göstərir."
-
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "Fokuslanmış redaktəni A qəbul edir, R isə rədd edir. ↑ və ↓ redaktələr arasında hərəkət edin."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Bu məktubun ehtiyat nüsxəsi. Reactive Resume-yə məktub kimi yenidən idxal edir."
 
@@ -1256,7 +1252,7 @@ msgstr "AI provayderi əlavə edin"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "@ və name@example.com kimi domen əlavə edin"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "Ünvan əlavə edin."
 
@@ -1423,7 +1419,7 @@ msgstr "{name}@example.com kimi @-dan sonra domen əlavə edin"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com kimi domen sonunu əlavə edin"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Bu qeydləri domeni idarə etdiyiniz yerdə əlavə edin, sonra yoxlayın. Dəyişikliklərin hamıya çatması bir neçə saat çəkə bilər."
 
@@ -1492,7 +1488,7 @@ msgstr "Biliklərə təcrübə kimi əlavə edildi."
 msgid "Added to Prepare"
 msgstr "Hazırlığa əlavə edildi"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "Ünvan"
 
@@ -1725,7 +1721,7 @@ msgstr "və daha çox {0}"
 msgid "and counting"
 msgstr "və saymaq"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "CV-lərinizdən digəri bu ünvandan istifadə edir."
 
@@ -2059,10 +2055,6 @@ msgstr "Soruşun və ya dəyişikliyi təsvir edin..."
 #: src/features/homepage/faq.tsx
 msgid "Asked and <0>answered.</0>"
 msgstr "Soruşuldu və <0>cavablandırıldı.</0>"
-
-#: src/features/resume/share/share-panel.tsx
-msgid "asked for contact details"
-msgstr "əlaqə məlumatlarını istədi"
 
 #: src/features/homepage/prepare.tsx
 msgid "Asks for an example of your onboarding work."
@@ -2574,7 +2566,7 @@ msgstr "Başqa bir faylı yoxlayın"
 msgid "Check any PDF, no account needed"
 msgstr "Hər hansı PDF yoxlayın, hesaba ehtiyac yoxdur"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Check DNS"
 msgstr "DNS-i yoxla"
 
@@ -2661,7 +2653,7 @@ msgstr "Eksport edilmiş PDF yoxlanılır..."
 msgid "Checking your preferences"
 msgstr "Tərcihləriniz yoxlanılır"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "Yoxlanılır... Kopya saxladıqdan sonra əlçatandır."
 
@@ -2791,7 +2783,7 @@ msgstr "Müştəri ID"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2968,7 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "Bu gün saat {time} üçün video görüşü təsdiqləyir."
 
 #: src/features/assistant/provider-setup.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "Qoşul"
@@ -3021,7 +3013,7 @@ msgstr "Qoşuldu"
 msgid "Connected applications"
 msgstr "Qoşulmuş proqramlar"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "Qoşuldu. Domeniniz əsas CV-nizi açır."
 
@@ -3152,7 +3144,7 @@ msgid "Copied"
 msgstr "Kopyalandı"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3626,8 +3618,8 @@ msgstr "Bu cədvəli saxlamaq mümkün olmadı. Yenidən cəhd edin."
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "Dəyişikliklərinizi saxlamaq mümkün olmadı. Davam etməzdən əvvəl yenidən cəhd edin."
@@ -3732,6 +3724,7 @@ msgstr "Müraciətin əlaqəsini kəsmək mümkün olmadı. Yenidən cəhd edin.
 msgid "Couldn't unlock the document. Try again."
 msgstr "Sənədin kilidini açmaq mümkün olmadı. Yenidən cəhd edin."
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "Paylaşımı yeniləmək mümkün olmadı. Yenidən cəhd edin."
@@ -3768,7 +3761,7 @@ msgstr "CV-ni yeniləmək mümkün olmadı. Yenidən cəhd edin."
 msgid "Couldn't update the timeline. Try again."
 msgstr "Taymlaynı güncəlləmək mümkün olmadı. Yenidən cəhd edin."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "Bu məktubun versiyalarını yeniləmək mümkün olmadı. Yenidən cəhd edin."
 
@@ -4362,7 +4355,7 @@ msgstr "Buraya köçürdüyünüz sənədlər 30 gün qalır."
 msgid "Does it use AI?"
 msgstr "AI istifadə edirmi?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Domain connected"
 msgstr "Domen qoşuldu"
 
@@ -4398,8 +4391,8 @@ msgstr "İkiqat yoxlanılır"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "Endir"
 
@@ -4411,7 +4404,7 @@ msgstr "{label} yükləyin"
 msgid "Download {name} sample PDF"
 msgstr "{name} PDF nümunəsini endirin"
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Download & history"
 msgstr "Yükləmə və tarixçə"
 
@@ -4429,7 +4422,7 @@ msgid "Download CSV"
 msgstr "CSV yükləyin"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "Endirmə uğursuz oldu. Yenidən cəhd edin."
 
@@ -4455,7 +4448,7 @@ msgid "Download totals can include repeat clicks."
 msgstr "Yükləmələrin yekunlarına təkrar kliklər daxil ola bilər."
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "{file} endirildi"
 
@@ -4463,7 +4456,7 @@ msgstr "{file} endirildi"
 msgid "Downloaded {file} and the cover letter"
 msgstr "{file} və örtük məktubu endirildi"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "CV-nizi və bu məktubu endirdiniz"
 
@@ -5265,7 +5258,7 @@ msgid "For"
 msgstr "üçün"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com kimi kök domen üçün CNAME əvəzinə {0} ünvanları ilə A və AAAA qeydlərindən istifadə edin."
 
@@ -5710,8 +5703,8 @@ msgid "Hiring team"
 msgstr "İşə götürmə komandası"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
 msgstr "Tarix"
 
@@ -6543,10 +6536,6 @@ msgstr "Uzunluq qüsur deyil və hamılıqla qəbul edilmiş bir səhifə qaydas
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "Claude və ya Cursor kimi süni intellekt müştərilərinə yuxarıdakı API açarından istifadə edərək CV-lərinizi oxumağa və redaktə etməyə icazə verin."
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Let visitors ask to see them"
-msgstr "Ziyarətçilərə onları istəməyə icazə ver"
-
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "Əlinizdə olanlardan başlayaq"
@@ -6677,7 +6666,7 @@ msgid "Link an application…"
 msgstr "İş ərizəsini əlaqələndirin..."
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "Link kopyalandı"
@@ -6768,7 +6757,7 @@ msgid "Live · updates as you edit"
 msgstr "Canlı · redaktə etdikcə yenilənir"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "{0}-da canlı"
 
@@ -9298,7 +9287,7 @@ msgstr "İşə götürən"
 msgid "Recruiter reply"
 msgstr "Rekruterin cavabı"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "İşə götürənlər bu adı görürlər. Adınız üstəgəl “Cover Letter” yaxşı işləyir."
 
@@ -9424,7 +9413,7 @@ msgstr "Uzaqdan"
 msgid "Remote, Hybrid, a city…"
 msgstr "Uzaqdan, Hibrid, şəhər…"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "Sil"
@@ -9688,7 +9677,7 @@ msgstr "CV · göndərilmiş versiya"
 msgid "Resume (optional)"
 msgstr "rezyume (isteğe bağlı)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "rezyume + məktub"
 
@@ -10126,8 +10115,8 @@ msgstr "Biliklərə saxlanıldı, yalnız bu müraciət üçün."
 msgid "Saved to Saved · Practice"
 msgstr "Saxlanılanlara əlavə edildi · Məşq"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/share-panel.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "{0}/{username}/{slug} yadda saxlanılır… Kopya saxladıqdan sonra əlçatandır."
 
@@ -10544,11 +10533,11 @@ msgstr "Paylaşın"
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "İctimai bir keçid paylaşın, parol əlavə edin və ya gizli saxlayın. 3 görünmə variantından birini seçin. PDF və ya Word-ə ixrac edin və ya JSON kimi bütün məlumatlarınızı özünüzlə aparın."
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "Bölmələri paylaşın"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "Paylaş..."
 
@@ -10629,10 +10618,6 @@ msgstr "Bütün növləri göstər"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "Şou bağlandı"
-
-#: src/features/resume/share/web-page-text.ts
-msgid "Show contact details"
-msgstr "Əlaqə məlumatlarını göstər"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -11684,7 +11669,7 @@ msgstr "Salamlama addan sonra gəlir."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Açar serverdə şifrələnir və bir daha göstərilmir. Yadda saxlamaq əlaqəni yoxlayır."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "Məktub olduğu kimi"
 
@@ -11784,7 +11769,7 @@ msgstr "Provayderin cavabı doğrulana bilmədi. Yenidən cəhd edin."
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Səbəb Insights üçün saxlanılır. Əlaqədar sənədlərə toxunulmur."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "Qeydlər hələ görünmür. Sonra yenidən yoxlayın."
 
@@ -12011,7 +11996,7 @@ msgstr "Bu bir XFA formudur, ona görə əksər proqramlar yalnız boş qabığ�
 msgid "This is not a common resume page size."
 msgstr "Bu adi bir CV səhifə ölçüsü deyil."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Bu məktub və “{resumeName}” iki PDFs olaraq, uyğun olaraq adlandırılmışdır."
 
@@ -12290,7 +12275,7 @@ msgid "Trust this device for 30 days"
 msgstr "Bu cihaza 30 gün etibar et"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "{0} cəhd edin"
 
@@ -12350,7 +12335,7 @@ msgstr "İki addımlı doğrulamanı söndür"
 msgid "Turn off two-step verification?"
 msgstr "İki addımlı doğrulama söndürülsün?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "Ünvan seçmək üçün linki aktiv edin."
 
@@ -12699,7 +12684,7 @@ msgstr "Bütün müraciətlər üçün istifadə et"
 msgid "Use in coaching: {excerpt}"
 msgstr "Kouçinqdə istifadə et: {excerpt}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "Kiçik hərflərdən, rəqəmlərdən və tək tirelərdən istifadə edin."
 
@@ -13417,7 +13402,7 @@ msgid "You"
 msgstr "sən"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "Bunu artıq “{0}” üçün istifadə edirsiniz."
 
@@ -13585,7 +13570,7 @@ msgstr "Tarixləriniz bir neçə fərqli şəkildə yazılıb."
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "Təfərrüatlarınız CV-də dəyişdi. Məktub da yeniləndi."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "Domeniniz"
 
@@ -13706,7 +13691,7 @@ msgstr "Səs yazınız transkripsiya üçün {0} provayderinə göndərilir, bu 
 msgid "Your requirements"
 msgstr "Tələbləriniz"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "sizin rezyumeniz"
 

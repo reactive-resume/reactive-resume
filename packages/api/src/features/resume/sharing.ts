@@ -5,6 +5,7 @@ import { protectedProcedure, publicProcedure } from "../../context";
 import { resumeDto } from "../../dto/resume";
 import { resumeMutationRateLimit, resumePasswordRateLimit } from "../../middleware/rate-limit";
 import { resumeService } from "./service";
+import { webPagePreviewUrl } from "./web-page";
 
 /** Only a credential that may read the owner's resumes sees the owner's view: private, unredacted, no password. */
 export function ownerViewer(context: { user?: { id: string } | null; authentication?: RequestAuthentication | null }) {
@@ -28,22 +29,9 @@ export const sharingRouter = {
 		.input(z.object({ id: z.string().describe("The ID of the resume.") }))
 		.output(z.string().describe("The preview link."))
 		.handler(async ({ context, input }) => {
-			const [{ db }, schema, { and, eq }, { createPreviewToken }, { env }] = await Promise.all([
-				import("@reactive-resume/db/client"),
-				import("@reactive-resume/db/schema"),
-				import("drizzle-orm"),
-				import("./access"),
-				import("@reactive-resume/env/server"),
-			]);
-			const [resume] = await db
-				.select({ slug: schema.resume.slug, username: schema.user.username })
-				.from(schema.resume)
-				.innerJoin(schema.user, eq(schema.resume.userId, schema.user.id))
-				.where(and(eq(schema.resume.id, input.id), eq(schema.resume.userId, context.user.id)));
-			if (!resume) throw new ORPCError("NOT_FOUND");
-			const url = new URL(`/${encodeURIComponent(resume.username)}/${encodeURIComponent(resume.slug)}`, env.APP_URL);
-			url.searchParams.set("preview", createPreviewToken(input.id));
-			return url.href;
+			const url = await webPagePreviewUrl(input.id, context.user.id);
+			if (!url) throw new ORPCError("NOT_FOUND");
+			return url;
 		}),
 
 	getBySlug: publicProcedure

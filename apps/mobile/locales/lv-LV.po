@@ -696,10 +696,6 @@ msgstr "Vislabāk izlasāmi 2–3 teikumi"
 msgid "24 hours before"
 msgstr "24 stundas iepriekš"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Poga “Rādīt kontaktinformāciju” atklāj to cilvēkiem, nevis meklētājprogrammām."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Šīs vēstules dublējums. Importē atpakaļ Reactive Resume kā vēstuli."
@@ -1380,7 +1376,7 @@ msgstr "Jebkura"
 msgid "Any font, in Advanced"
 msgstr "Jebkurš fonts sadaļā Advanced"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Ikviens, kuram ir saite, varēs skatīt jūsu CV."
 
@@ -1611,10 +1607,6 @@ msgstr "Lūdziet savam servera administratoram iespējot akreditācijas datu ši
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Jautājiet vai aprakstiet izmaiņas…"
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "lūdza kontaktinformāciju"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Mainīt laika joslu"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Tieši mainīja CV (iepriekšējā saruna)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Izmaiņas nevarēja saglabāt. Pirms turpināt, mēģiniet vēlreiz."
 
@@ -2254,7 +2246,7 @@ msgstr "Notīra ierakstus, bet saglabā sadaļu. Varat to atsaukt."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Aizvērt"
 
@@ -2372,7 +2364,7 @@ msgstr "Saspiediet vai noņemiet lielus attēlus, lai augšupielāde būtu ātra
 msgid "Confirm applied"
 msgstr "Apstiprināt pieteikšanos"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Apstiprināt paroli"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "Pārbauda vēlreiz"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Lejupielādēt"
 msgid "Download {0}"
 msgstr "Lejupielādēt {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Lejupielāde un vēsture"
@@ -4416,7 +4408,7 @@ msgstr "Pieņemšanas komanda"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Vēsture"
 
@@ -5035,10 +5027,6 @@ msgstr "Atlikušas mazāk nekā 48 stundas."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Ļaujiet AI klientiem, piemēram, Claude vai Cursor, lasīt un rediģēt jūsu CV ar API atslēgu."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Ļaut apmeklētājiem lūgt to parādīt"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Atvērt piedāvājumos"
 msgid "Open letter"
 msgstr "Atvērt vēstuli"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Atveriet publisko lapu"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Atvērtie jautājumi"
@@ -6443,6 +6427,10 @@ msgstr "Atveriet sarakstu"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Atvērt grafiku"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Atvērt tīmekļa lapu"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Piekļuves atslēgas"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Parole"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Paroles nesakrīt."
 
@@ -7475,7 +7463,7 @@ msgstr "Noņemt lauku"
 msgid "Remove file"
 msgstr "Noņemt failu"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Noņemt paroli"
 
@@ -7497,7 +7485,7 @@ msgstr "Noņemt jautājumu"
 msgid "Remove role"
 msgstr "Noņemt lomu"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Vai noņemt paroli?"
 
@@ -7597,11 +7585,7 @@ msgstr "Ziņot par problēmu"
 msgid "Report received by your server operator. Thank you."
 msgstr "Jūsu servera operators saņēmis ziņojumu. Paldies."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Ziņot par koplietotu CV"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Pieprasīt paroli"
 
@@ -7735,8 +7719,8 @@ msgstr "Izgūts {0}, izmantojot {1}. Izgūšanas laiks nenosaka izcelsmes svaigu
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "Serveris ir mainīts. Atgriezieties sadaļā Dokumenti un mēģiniet vē
 msgid "Set a follow-up"
 msgstr "Iestatiet turpmāku atgādinājumu"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Iestatiet paroli"
 
@@ -8635,8 +8619,8 @@ msgstr "Pierakstieties {server}, pēc tam pārejiet uz saistīto dokumentu."
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Pierakstieties, lai turpinātu."
 
@@ -9622,7 +9606,7 @@ msgstr "Šis dokuments ir bloķēts. Atbloķējiet to, pirms saglabājat savus l
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Šis dokuments ir bloķēts. Atbloķējiet to, lai saņemtu ieteikumus."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Šis dokuments ir bloķēts. Jūs joprojām varat lejupielādēt un nosaukt versijas. Atbloķējiet, lai rediģētu vai atjaunotu."
 
@@ -10241,7 +10225,7 @@ msgstr "Izmantojiet {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Izmantojiet 3–64 mazos burtus, ciparus, punktus, defises un pasvītras."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Izmantojiet 6–64 rakstzīmes."
 
@@ -10508,11 +10492,11 @@ msgstr "Vardarbība vai ļaunprātīga izmantošana"
 msgid "Visitors"
 msgstr "Apmeklētāji"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Apmeklētāji var lejupielādēt PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Apmeklētāji to ievada, pirms viņi redz CV. Kopīgojiet to tikai ar cilvēkiem, kuriem uzticaties."
 
@@ -10895,7 +10879,7 @@ msgstr "Jūs esat bezsaistē. PDF var lejupielādēt šajā ierīcē. Citiem for
 msgid "You're offline. History needs a connection."
 msgstr "Jūs esat bezsaistē. Vēsturei nepieciešams savienojums."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "Jūs esat bezsaistē. Vēsturei nepieciešams savienojums. “Lejupielādēt PDF” darbojas šajā ierīcē."
 

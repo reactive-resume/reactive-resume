@@ -23,9 +23,7 @@ import { ENTER_CLASS, POP_CLASS, stagger } from "@/libs/motion";
 import { client } from "@/libs/orpc/client";
 
 // PDF.js and the importers load only once there is a file, so the page's first screen stays light and prerenderable.
-const PdfViewer = lazy(() =>
-	import("@/features/resume/public/pdf-viewer").then((module) => ({ default: module.PdfViewer })),
-);
+const PdfViewer = lazy(() => import("./pdf-viewer").then((module) => ({ default: module.PdfViewer })));
 const loadReadFile = () => import("@/features/resume/import/read-file");
 
 const MAX_POSTING = 20_000;

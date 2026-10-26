@@ -1,4 +1,5 @@
 import { env } from "@reactive-resume/env/server";
+import { publicResumeUrl } from "@reactive-resume/resume/sharing";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { getLocaleAlternates } from "@reactive-resume/utils/locale";
 
@@ -47,10 +48,14 @@ const sitemapPaths = ["/", "/ats-checker", "/resume-templates"];
 const escapeXml = (value: string) =>
 	value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 
-const xmlResponse = (body: string) =>
-	new Response(body, {
-		headers: { "Content-Type": "application/xml; charset=UTF-8", "Cache-Control": "public, max-age=3600" },
-	});
+/** An XML document: the prologue, then `lines` inside the `<root …>` element. */
+const xmlResponse = (root: string, lines: string[]) =>
+	new Response(
+		['<?xml version="1.0" encoding="UTF-8"?>', `<${root}>`, ...lines, `</${root.split(" ", 1)[0]}>`, ""].join("\n"),
+		{
+			headers: { "Content-Type": "application/xml; charset=UTF-8", "Cache-Control": "public, max-age=3600" },
+		},
+	);
 
 /** The sitemap index: the marketing pages, then resumes listed in search engines, 50,000 to a page. */
 export async function handleSitemap() {
@@ -62,13 +67,8 @@ export async function handleSitemap() {
 		...Array.from({ length: pages }, (_, page) => `${baseUrl}/sitemaps/resumes-${page + 1}.xml`),
 	];
 	return xmlResponse(
-		[
-			'<?xml version="1.0" encoding="UTF-8"?>',
-			'<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-			...sitemaps.map((loc) => `  <sitemap><loc>${escapeXml(loc)}</loc></sitemap>`),
-			"</sitemapindex>",
-			"",
-		].join("\n"),
+		'sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
+		sitemaps.map((loc) => `  <sitemap><loc>${escapeXml(loc)}</loc></sitemap>`),
 	);
 }
 
@@ -86,13 +86,8 @@ export function handlePagesSitemap() {
 		);
 	});
 	return xmlResponse(
-		[
-			'<?xml version="1.0" encoding="UTF-8"?>',
-			'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
-			...urls,
-			"</urlset>",
-			"",
-		].join("\n"),
+		'urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"',
+		urls,
 	);
 }
 
@@ -103,16 +98,12 @@ export async function handleResumesSitemap(page: number) {
 	const resumes = Number.isInteger(page) && page >= 1 ? await listIndexableResumes(page - 1) : [];
 	if (resumes.length === 0) return new Response("Not Found", { status: 404 });
 	return xmlResponse(
-		[
-			'<?xml version="1.0" encoding="UTF-8"?>',
-			'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-			...resumes.map(
-				({ username, slug, updatedAt }) =>
-					`  <url><loc>${escapeXml(`${baseUrl}/${encodeURIComponent(username)}/${encodeURIComponent(slug)}`)}</loc><lastmod>${updatedAt.toISOString()}</lastmod></url>`,
-			),
-			"</urlset>",
-			"",
-		].join("\n"),
+		'urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
+		resumes.map(
+			(resume) =>
+				// A primary resume's address is /<username>, as its page's canonical says.
+				`  <url><loc>${escapeXml(publicResumeUrl(baseUrl, resume))}</loc><lastmod>${resume.updatedAt.toISOString()}</lastmod></url>`,
+		),
 	);
 }
 

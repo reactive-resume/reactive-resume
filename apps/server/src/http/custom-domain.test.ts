@@ -8,7 +8,8 @@ vi.mock("@reactive-resume/env/server", () => ({
 }));
 vi.mock("@reactive-resume/api/features/custom-domain", () => ({
 	isCustomDomainsEnabled: () => true,
-	resumeForCustomDomain: vi.fn(),
+	customDomainUsername: vi.fn(),
+	ownHosts: () => new Set(["rxresu.me"]),
 	traefikConfiguration: mocks.traefikConfiguration,
 }));
 

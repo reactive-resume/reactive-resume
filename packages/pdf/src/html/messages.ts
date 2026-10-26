@@ -5,7 +5,6 @@ const ENGLISH = {
 	downloadPdf: "Download PDF",
 	share: "Share",
 	linkCopied: "Link copied",
-	showContactDetails: "Show contact details",
 	credit: "Made with Reactive Resume, free and open source",
 	passwordTitle: "This resume is password-protected",
 	passwordHint: "Enter the password the resume owner shared with you.",

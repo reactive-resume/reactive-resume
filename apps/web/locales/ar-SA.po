@@ -726,7 +726,7 @@ msgstr "{stars, plural, one {امنح Reactive Resume نجمة على GitHub، �
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, zero {لا قصص} one {قصة واحدة} two {قصتان} few {# قصص} many {# قصة} other {# قصة}}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "{suggestion} may be available. Get yours here →"
 msgstr "قد يكون {suggestion} متاحًا. احصل على نطاقك من هنا →"
 
@@ -844,7 +844,7 @@ msgstr "إحاطة في 10 دقائق"
 msgid "10–11 recommended"
 msgstr "10-11 موصى به"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 ملفات"
 
@@ -903,15 +903,11 @@ msgstr "90 يوما"
 msgid "A"
 msgstr "A"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "يكشف زر “إظهار بيانات التواصل” عنها للأشخاص، لا لمحركات البحث."
-
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "يقبل A ويرفض R التعديل المركز. ↑ و ↓ التنقل بين التعديلات."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "نسخة احتياطية من هذه الرسالة. يتم الاستيراد مرة أخرى إلى Reactive Resume كحرف."
 
@@ -1256,7 +1252,7 @@ msgstr "إضافة مزود الذكاء الاصطناعي"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "أضف @ والمجال، مثل name@example.com"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "أضف عنوانا."
 
@@ -1423,7 +1419,7 @@ msgstr "أضف المجال بعد @، مثل {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "أضف نهاية النطاق، مثل {domain}.com"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "أضف هذه السجلات حيث تدير النطاق، ثم تحقّق. قد يستغرق وصول التغييرات إلى الجميع بضع ساعات."
 
@@ -1492,7 +1488,7 @@ msgstr "أُضيفت إلى المعرفة كخبرة."
 msgid "Added to Prepare"
 msgstr "أُضيف إلى التحضير"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "عنوان"
 
@@ -1725,7 +1721,7 @@ msgstr "و{0} أكثر"
 msgid "and counting"
 msgstr "والعد"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "آخر من سيرتك الذاتية يستخدم هذا العنوان."
 
@@ -2059,10 +2055,6 @@ msgstr "اسأل أو قم بوصف التغيير..."
 #: src/features/homepage/faq.tsx
 msgid "Asked and <0>answered.</0>"
 msgstr "أسئلة طُرحت و<0>أُجيب عنها.</0>"
-
-#: src/features/resume/share/share-panel.tsx
-msgid "asked for contact details"
-msgstr "طلبوا بيانات التواصل"
 
 #: src/features/homepage/prepare.tsx
 msgid "Asks for an example of your onboarding work."
@@ -2574,7 +2566,7 @@ msgstr "التحقق من ملف آخر"
 msgid "Check any PDF, no account needed"
 msgstr "تحقق من أي PDF، لا حاجة لحساب"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Check DNS"
 msgstr "التحقق من DNS"
 
@@ -2661,7 +2653,7 @@ msgstr "جارٍ التحقق من PDF المُصدَّر..."
 msgid "Checking your preferences"
 msgstr "جارٍ التحقق من تفضيلاتك"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "جارٍ التحقق... النسخة متاحة بعد الحفظ."
 
@@ -2791,7 +2783,7 @@ msgstr "معرف العميل"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2968,7 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "تؤكّد الساعة {time} اليوم، عبر الفيديو."
 
 #: src/features/assistant/provider-setup.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "اتصال"
@@ -3021,7 +3013,7 @@ msgstr "متصل"
 msgid "Connected applications"
 msgstr "التطبيقات المتصلة"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "متصل. يفتح نطاقك سيرتك الذاتية الأساسية."
 
@@ -3152,7 +3144,7 @@ msgid "Copied"
 msgstr "منقول"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3626,8 +3618,8 @@ msgstr "تعذّر حفظ هذا الجدول. حاول مرة أخرى."
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "تعذر حفظ تغييراتك. حاول مرة أخرى قبل المتابعة."
@@ -3732,6 +3724,7 @@ msgstr "تعذّر إلغاء ربط الطلب. حاول مرة أخرى."
 msgid "Couldn't unlock the document. Try again."
 msgstr "تعذّر إلغاء قفل المستند. حاول مرة أخرى."
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "تعذّر تحديث المشاركة. حاول مرة أخرى."
@@ -3768,7 +3761,7 @@ msgstr "تعذّر تحديث السيرة الذاتية. حاول مرة أخ�
 msgid "Couldn't update the timeline. Try again."
 msgstr "تعذر تحديث المخطط الزمني. حاول ثانية."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "تعذّر تحديث إصدارات هذه الرسالة. حاول مرة أخرى."
 
@@ -4362,7 +4355,7 @@ msgstr "تبقى المستندات التي تنقلها إلى هنا لمدة
 msgid "Does it use AI?"
 msgstr "هل يستخدم الذكاء الاصطناعي؟"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Domain connected"
 msgstr "تم ربط النطاق"
 
@@ -4398,8 +4391,8 @@ msgstr "جارٍ التحقق المزدوج"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "تنزيل"
 
@@ -4411,7 +4404,7 @@ msgstr "تحميل {label}"
 msgid "Download {name} sample PDF"
 msgstr "قم بتنزيل نموذج PDF من {name}."
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Download & history"
 msgstr "التنزيل والسجلّ"
 
@@ -4429,7 +4422,7 @@ msgid "Download CSV"
 msgstr "قم بتنزيل ملف CSV"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "فشل التنزيل. حاول مرة أخرى."
 
@@ -4455,7 +4448,7 @@ msgid "Download totals can include repeat clicks."
 msgstr "يمكن أن تتضمن إجماليات التنزيل نقرات متكررة."
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "تم تحميل {file}"
 
@@ -4463,7 +4456,7 @@ msgstr "تم تحميل {file}"
 msgid "Downloaded {file} and the cover letter"
 msgstr "تم تنزيل {file} وخطاب التقديم"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "لقد قمت بتنزيل سيرتك الذاتية وهذه الرسالة"
 
@@ -5265,7 +5258,7 @@ msgid "For"
 msgstr "ل"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "للنطاق الجذري مثل example.com، استخدم سجلات A وAAAA بعناوين {0} بدلًا من CNAME."
 
@@ -5710,8 +5703,8 @@ msgid "Hiring team"
 msgstr "فريق التوظيف"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
 msgstr "تاريخ"
 
@@ -6543,10 +6536,6 @@ msgstr "الطول ليس عيبًا، ولا توجد قاعدة عالمية �
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "اسمح لعملاء الذكاء الاصطناعي مثل Claude أو Cursor بقراءة سيرتك الذاتية وتحريرها، باستخدام مفتاح API أعلاه."
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Let visitors ask to see them"
-msgstr "السماح للزوار بطلب رؤيتها"
-
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "لنبدأ بما لديك"
@@ -6677,7 +6666,7 @@ msgid "Link an application…"
 msgstr "ربط طلب التوظيف..."
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "تم نسخ الرابط"
@@ -6768,7 +6757,7 @@ msgid "Live · updates as you edit"
 msgstr "مباشر · التحديثات أثناء التحرير"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "العيش في {0}"
 
@@ -9298,7 +9287,7 @@ msgstr "المجند"
 msgid "Recruiter reply"
 msgstr "رد مسؤول التوظيف"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "يرى المجندون هذا الاسم. اسمك بالإضافة إلى \"خطاب التقديم\" يعمل بشكل جيد."
 
@@ -9424,7 +9413,7 @@ msgstr "عن بُعد"
 msgid "Remote, Hybrid, a city…"
 msgstr "عن بُعد، هجين، مدينة…"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "يزيل"
@@ -9688,7 +9677,7 @@ msgstr "السيرة الذاتية · النسخة المرسلة"
 msgid "Resume (optional)"
 msgstr "السيرة الذاتية (اختياري)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "السيرة الذاتية + الرسالة"
 
@@ -10126,8 +10115,8 @@ msgstr "تم الحفظ في المعرفة، خاصة بهذا الطلب."
 msgid "Saved to Saved · Practice"
 msgstr "تم الحفظ في المحفوظات · تمرين"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/share-panel.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "حفظ {0}/{username}/{slug}... النسخة متاحة بعد الحفظ."
 
@@ -10544,11 +10533,11 @@ msgstr "يشارك"
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "شارك رابطًا عامًا أو أضف كلمة مرور أو احتفظ به خاصًا. اختر من بين 3 خيارات للرؤية. قم بالتصدير إلى PDF أو Word، أو اصطحب جميع بياناتك معك باسم JSON."
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "مشاركة الأقسام"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "شارك عبر…"
 
@@ -10629,10 +10618,6 @@ msgstr "اعرض كل الأنواع"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "عرض مغلق"
-
-#: src/features/resume/share/web-page-text.ts
-msgid "Show contact details"
-msgstr "إظهار بيانات التواصل"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -11684,7 +11669,7 @@ msgstr "التحية تتبع الاسم."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "يتم تشفير المفتاح على الخادم ولن يتم عرضه مرة أخرى. حفظ اختبارات الاتصال."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "الرسالة كما هي"
 
@@ -11784,7 +11769,7 @@ msgstr "تعذّر التحقق من استجابة المزوّد. حاول م�
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "يتم الاحتفاظ بالسبب للرؤى. لا يتم لمس المستندات المرتبطة."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "السجلات غير ظاهرة بعد. تحقّق مرة أخرى لاحقًا."
 
@@ -12011,7 +11996,7 @@ msgstr "هذا نموذج XFA، لذا تقرأ معظم البرامج القا
 msgid "This is not a common resume page size."
 msgstr "هذا ليس حجم صفحة شائعًا للسيرة الذاتية."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "هذه الرسالة و\"{resumeName}\" هما PDFs، تم تسميتهما للمطابقة."
 
@@ -12290,7 +12275,7 @@ msgid "Trust this device for 30 days"
 msgstr "الوثوق بهذا الجهاز لمدة 30 يومًا"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "جرب {0}"
 
@@ -12350,7 +12335,7 @@ msgstr "إيقاف التحقق من خطوتين"
 msgid "Turn off two-step verification?"
 msgstr "إيقاف التحقق من خطوتين؟"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "قم بتشغيل الرابط لاختيار عنوان."
 
@@ -12699,7 +12684,7 @@ msgstr "استخدمها لكل الطلبات"
 msgid "Use in coaching: {excerpt}"
 msgstr "استخدمها في التدريب: {excerpt}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "استخدم الحروف الصغيرة والأرقام والشرطات المفردة."
 
@@ -13417,7 +13402,7 @@ msgid "You"
 msgstr "أنت"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "أنت تستخدم هذا بالفعل لـ \"{0}\"."
 
@@ -13585,7 +13570,7 @@ msgstr "تواريخك مكتوبة بعدة طرق مختلفة."
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "تغيرت التفاصيل الخاصة بك في السيرة الذاتية. تم تحديث الرسالة أيضًا."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "نطاقك"
 
@@ -13706,7 +13691,7 @@ msgstr "يذهب تسجيلك إلى {0} لتفريغه نصيًا، وقد يس
 msgid "Your requirements"
 msgstr "متطلباتك"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "سيرتك الذاتية"
 

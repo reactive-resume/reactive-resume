@@ -696,10 +696,6 @@ msgstr "2-3 வாக்கியங்கள் சிறப்பாகப் 
 msgid "24 hours before"
 msgstr "24 மணி நேரத்திற்கு முன்"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "“தொடர்பு விவரங்களைக் காட்டு” பொத்தான் அவற்றை மனிதர்களுக்குக் காட்டும், தேடுபொறிகளுக்கு அல்ல."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "இந்த கடிதத்தின் காப்புப்பிரதி. கடிதமாக Reactive Resume க்கு மீண்டும் இறக்குமதி செய்கிறது."
@@ -1380,7 +1376,7 @@ msgstr "எதுவானாலும்"
 msgid "Any font, in Advanced"
 msgstr "எந்த எழுத்துருவும் மேம்பட்டதாக இருக்கும்"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "இணைப்பைக் கொண்டுள்ள எவரும் உங்கள் ரெஸ்யூமைப் பார்க்க முடியும்."
 
@@ -1611,10 +1607,6 @@ msgstr "நற்சான்றிதழ் குறியாக்கத்�
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "ஒரு மாற்றத்தைக் கேளுங்கள் அல்லது விவரிக்கவும்..."
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "தொடர்பு விவரங்களைக் கேட்டனர்"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "நேர மண்டலத்தை மாற்று"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "ரெஸ்யூமே நேரடியாக மாற்றப்பட்டது (முந்தைய உரையாடல்)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "மாற்றங்களைச் சேமிக்க முடியவில்லை. தொடர்வதற்கு முன் மீண்டும் முயற்சிக்கவும்."
 
@@ -2254,7 +2246,7 @@ msgstr "உள்ளீடுகளை அழிக்கிறது ஆனா�
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "மூடு"
 
@@ -2372,7 +2364,7 @@ msgstr "பதிவேற்றங்களை விரைவாக வைத�
 msgid "Confirm applied"
 msgstr "விண்ணப்பித்ததை உறுதிப்படுத்தவும்"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "கடவுச்சொல்லை உறுதிப்படுத்துங்கள்"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "மீண்டும் சரிபார்க்கிறது"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "பதிவிறக்கு"
 msgid "Download {0}"
 msgstr "பதிவிறக்கம் {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "பதிவிறக்கம் & வரலாறு"
@@ -4416,7 +4408,7 @@ msgstr "பணியமர்த்தல் குழு"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "வரலாறு"
 
@@ -5035,10 +5027,6 @@ msgstr "இன்னும் 48 மணிநேரம் உள்ளது."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Claude அல்லது Cursor போன்ற AI கிளையன்ட்கள் API விசையைப் பயன்படுத்தி உங்கள் ரெஸ்யூமைப் படிக்கவும் திருத்தவும் அனுமதிக்கவும்."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "அவற்றைப் பார்க்கக் கேட்க பார்வையாளர்களை அனுமதி"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "சலுகைகளில் திற"
 msgid "Open letter"
 msgstr "கடிதத்தைத் திற"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "பொதுப் பக்கத்தைத் திறக்கவும்"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "பதிலளிக்காத கேள்விகள்"
@@ -6443,6 +6427,10 @@ msgstr "பட்டியலைத் திறக்கவும்"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "அட்டவணையைத் திற"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "வலைப்பக்கத்தைத் திற"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "பாஸ் கீகள்"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "கடவுச்சொல்"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "கடவுச்சொற்கள் பொருந்தவில்லை."
 
@@ -7475,7 +7463,7 @@ msgstr "புலத்தை அகற்று"
 msgid "Remove file"
 msgstr "கோப்பை அகற்று"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "கடவுச்சொல்லை அகற்று"
 
@@ -7497,7 +7485,7 @@ msgstr "கேள்வியை அகற்று"
 msgid "Remove role"
 msgstr "பாத்திரத்தை அகற்று"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "கடவுச்சொல்லை அகற்றவா?"
 
@@ -7597,11 +7585,7 @@ msgstr "ஒரு பிரச்சினையை அறிக்கையி�
 msgid "Report received by your server operator. Thank you."
 msgstr "உங்கள் சர்வர் ஆபரேட்டரால் அறிக்கை பெறப்பட்டது. நன்றி."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "அறிக்கை பகிரப்பட்ட ரெஸ்யூம்"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "கடவுச்சொல் தேவை"
 
@@ -7735,8 +7719,8 @@ msgstr "{1} ஐப் பயன்படுத்தி {0} மீட்டெ�
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "சேவையகம் மாற்றப்பட்டது. ஆவ
 msgid "Set a follow-up"
 msgstr "பின்தொடர்தல் நினைவூட்டலை அமைக்கவும்"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "கடவுச்சொல்லை அமைக்கவும்"
 
@@ -8635,8 +8619,8 @@ msgstr "{server} இல் உள்நுழைந்து, இணைக்க
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "தொடர உள்நுழைக."
 
@@ -9622,7 +9606,7 @@ msgstr "இந்த ஆவணம் பூட்டப்பட்டுள்�
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "இந்த ஆவணம் பூட்டப்பட்டுள்ளது. பரிந்துரைகளைப் பெற அதைத் திறக்கவும்."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "இந்த ஆவணம் பூட்டப்பட்டுள்ளது. நீங்கள் இன்னும் பதிப்புகளைப் பதிவிறக்கி பெயரிடலாம். திருத்த அல்லது மீட்டமைக்க திறக்கவும்."
 
@@ -10241,7 +10225,7 @@ msgstr "{url} ஐப் பயன்படுத்தவும்"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "3 முதல் 64 வரையிலான சிறிய எழுத்துக்கள், எண்கள், புள்ளிகள், ஹைபன்கள் மற்றும் அடிக்கோடுகளைப் பயன்படுத்தவும்."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "6–64 எழுத்துகளைப் பயன்படுத்தவும்."
 
@@ -10508,11 +10492,11 @@ msgstr "வன்முறை அல்லது துஷ்பிரயோக�
 msgid "Visitors"
 msgstr "பார்வையாளர்கள்"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "பார்வையாளர்கள் PDF ஐ பதிவிறக்கம் செய்யலாம்"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "பார்வையாளர்கள் ரெஸ்யூமைப் பார்ப்பதற்கு முன்பாகவே உள்ளே நுழைகிறார்கள். நீங்கள் நம்பும் நபர்களுடன் மட்டும் பகிரவும்."
 
@@ -10895,7 +10879,7 @@ msgstr "நீங்கள் ஆஃப்லைனில் உள்ளீர�
 msgid "You're offline. History needs a connection."
 msgstr "ஆஃப்லைனில் உள்ளீர்கள். வரலாற்றுக்கு இணைப்பு தேவை."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "நீங்கள் ஆஃப்லைனில் உள்ளீர்கள். வரலாற்றுக்கு இணைப்பு தேவை. PDF பதிவிறக்கம் இந்தச் சாதனத்தில் வேலை செய்யும்."
 

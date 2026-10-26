@@ -726,7 +726,7 @@ msgstr "{stars, plural, one {GitHub에서 Reactive Resume에 별표 주기, 별 
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, other {스토리 #개}}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "{suggestion} may be available. Get yours here →"
 msgstr "{suggestion} 도메인을 사용할 수 있을지도 모릅니다. 여기서 등록하세요 →"
 
@@ -844,7 +844,7 @@ msgstr "10분 브리핑"
 msgid "10–11 recommended"
 msgstr "10~11 권장"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "파일 2개"
 
@@ -903,15 +903,11 @@ msgstr "90일"
 msgid "A"
 msgstr "A"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "“연락처 정보 보기” 버튼은 검색 엔진이 아닌 사람에게만 연락처를 보여 줍니다."
-
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "A는 수락하고 R은 집중된 편집을 거부합니다. ↑ 및 ↓는 편집 사이를 이동합니다."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "이 편지의 백업본입니다. 문자로 Reactive Resume에 다시 가져옵니다."
 
@@ -1256,7 +1252,7 @@ msgstr "AI 공급자 추가"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "@ 및 name@example.com와 같은 도메인을 추가하세요."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "주소를 추가하세요."
 
@@ -1423,7 +1419,7 @@ msgstr "{name}@example.com처럼 @ 뒤에 도메인을 추가하세요."
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com와 같은 도메인 끝자리를 추가하세요."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "도메인을 관리하는 곳에 이 레코드를 추가한 다음 확인하세요. 변경 사항이 모두에게 반영되기까지 몇 시간이 걸릴 수 있습니다."
 
@@ -1492,7 +1488,7 @@ msgstr "경력으로 지식에 추가했습니다."
 msgid "Added to Prepare"
 msgstr "준비에 추가됨"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "주소"
 
@@ -1725,7 +1721,7 @@ msgstr "그리고 {0} 더보기"
 msgid "and counting"
 msgstr "그리고 계산"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "귀하의 다른 이력서에서 이 주소를 사용하고 있습니다."
 
@@ -2059,10 +2055,6 @@ msgstr "변화를 묻거나 설명하세요…"
 #: src/features/homepage/faq.tsx
 msgid "Asked and <0>answered.</0>"
 msgstr "질문하고 <0>답변했습니다.</0>"
-
-#: src/features/resume/share/share-panel.tsx
-msgid "asked for contact details"
-msgstr "연락처 정보 요청"
 
 #: src/features/homepage/prepare.tsx
 msgid "Asks for an example of your onboarding work."
@@ -2574,7 +2566,7 @@ msgstr "다른 파일 확인"
 msgid "Check any PDF, no account needed"
 msgstr "PDF를 확인하세요. 계정이 필요하지 않습니다."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Check DNS"
 msgstr "DNS 확인"
 
@@ -2661,7 +2653,7 @@ msgstr "내보낸 PDF를 확인하는 중…"
 msgid "Checking your preferences"
 msgstr "선호 사항 확인 중"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "확인 중... 저장 후 복사가 가능합니다."
 
@@ -2791,7 +2783,7 @@ msgstr "클라이언트 ID"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2968,7 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "오늘 {time} 화상 면접을 확정합니다."
 
 #: src/features/assistant/provider-setup.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "연결"
@@ -3021,7 +3013,7 @@ msgstr "연결됨"
 msgid "Connected applications"
 msgstr "연결된 애플리케이션"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "연결되었습니다. 도메인에서 대표 이력서가 열립니다."
 
@@ -3152,7 +3144,7 @@ msgid "Copied"
 msgstr "복사됨"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3626,8 +3618,8 @@ msgstr "이 일정을 저장할 수 없습니다. 다시 시도해 보세요."
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "변경사항을 저장할 수 없습니다. 계속하기 전에 다시 시도해 보세요."
@@ -3732,6 +3724,7 @@ msgstr "지원 연결을 해제할 수 없습니다. 다시 시도해 보세요.
 msgid "Couldn't unlock the document. Try again."
 msgstr "서류 잠금을 해제할 수 없습니다. 다시 시도해 보세요."
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "공유 설정을 업데이트할 수 없습니다. 다시 시도해 보세요."
@@ -3768,7 +3761,7 @@ msgstr "이력서를 업데이트할 수 없습니다. 다시 시도해 보세�
 msgid "Couldn't update the timeline. Try again."
 msgstr "타임라인을 업데이트할 수 없습니다. 다시 시도해 보세요."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "이 레터의 버전을 업데이트할 수 없습니다. 다시 시도해 보세요."
 
@@ -4362,7 +4355,7 @@ msgstr "여기로 옮긴 서류는 30일 동안 보관됩니다."
 msgid "Does it use AI?"
 msgstr "AI를 사용하나요?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Domain connected"
 msgstr "도메인 연결됨"
 
@@ -4398,8 +4391,8 @@ msgstr "다시 확인하는 중"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "다운로드"
 
@@ -4411,7 +4404,7 @@ msgstr "{label} 다운로드"
 msgid "Download {name} sample PDF"
 msgstr "{name} 샘플 PDF 다운로드"
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Download & history"
 msgstr "다운로드 및 기록"
 
@@ -4429,7 +4422,7 @@ msgid "Download CSV"
 msgstr "CSV 다운로드"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "다운로드에 실패했습니다. 다시 시도해 보세요."
 
@@ -4455,7 +4448,7 @@ msgid "Download totals can include repeat clicks."
 msgstr "다운로드 총계에는 반복 클릭이 포함될 수 있습니다."
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "{file}를 다운로드했습니다."
 
@@ -4463,7 +4456,7 @@ msgstr "{file}를 다운로드했습니다."
 msgid "Downloaded {file} and the cover letter"
 msgstr "{file} 및 자기 소개서 다운로드"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "이력서와 이 편지를 다운로드했습니다."
 
@@ -5265,7 +5258,7 @@ msgid "For"
 msgstr "을 위한"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com 같은 루트 도메인에는 CNAME 대신 {0}의 주소로 A 및 AAAA 레코드를 사용하세요."
 
@@ -5710,8 +5703,8 @@ msgid "Hiring team"
 msgstr "채용팀"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
 msgstr "역사"
 
@@ -6543,10 +6536,6 @@ msgstr "길이 자체는 결함이 아니며, 보편적인 한 페이지 규칙�
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "위의 API 키를 사용하여 Claude 또는 Cursor와 같은 AI 클라이언트가 이력서를 읽고 편집할 수 있도록 하세요."
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Let visitors ask to see them"
-msgstr "방문자가 보기를 요청할 수 있도록 허용"
-
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "당신이 가지고 있는 것부터 시작해보자"
@@ -6677,7 +6666,7 @@ msgid "Link an application…"
 msgstr "입사 지원서 연결…"
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "링크가 복사되었습니다"
@@ -6768,7 +6757,7 @@ msgid "Live · updates as you edit"
 msgstr "실시간 · 편집 시 업데이트"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "{0}에서 라이브"
 
@@ -9298,7 +9287,7 @@ msgstr "모집자"
 msgid "Recruiter reply"
 msgstr "채용 담당자 답장"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "채용 담당자는 이 이름을 볼 수 있습니다. 귀하의 이름과 “Cover Letter”가 잘 어울립니다."
 
@@ -9424,7 +9413,7 @@ msgstr "원격"
 msgid "Remote, Hybrid, a city…"
 msgstr "원격, 하이브리드, 도시…"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "제거하다"
@@ -9688,7 +9677,7 @@ msgstr "이력서 · 보낸 버전"
 msgid "Resume (optional)"
 msgstr "이력서(선택사항)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "이력서 + 편지"
 
@@ -10126,8 +10115,8 @@ msgstr "이 지원 건 전용으로 지식에 저장했습니다."
 msgid "Saved to Saved · Practice"
 msgstr "저장됨 · 연습에 저장됨"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/share-panel.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "{0}/{username}/{slug}… 저장 저장 후 복사가 가능합니다."
 
@@ -10544,11 +10533,11 @@ msgstr "공유하다"
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "공개 링크를 공유하고 비밀번호를 추가하거나 비공개로 유지하세요. 3가지 공개 옵션 중에서 선택하세요. PDF 또는 Word로 내보내거나 모든 데이터를 JSON로 가져가세요."
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "섹션 공유"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "다음을 통해 공유…"
 
@@ -10629,10 +10618,6 @@ msgstr "모든 유형 표시"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "쇼 종료됨"
-
-#: src/features/resume/share/web-page-text.ts
-msgid "Show contact details"
-msgstr "연락처 정보 보기"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -11684,7 +11669,7 @@ msgstr "인사말은 이름을 따릅니다."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "키는 서버에서 암호화되어 다시 표시되지 않습니다. 저장하면 연결이 테스트됩니다."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "편지는 그대로"
 
@@ -11784,7 +11769,7 @@ msgstr "제공자의 응답을 확인할 수 없습니다. 다시 시도해 보�
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "이유는 Insights에 보관됩니다. 연결된 문서는 건드리지 않습니다."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "아직 레코드가 확인되지 않습니다. 나중에 다시 확인하세요."
 
@@ -12011,7 +11996,7 @@ msgstr "이 파일은 XFA 양식이므로 대부분의 소프트웨어는 빈 �
 msgid "This is not a common resume page size."
 msgstr "일반적인 이력서 페이지 크기가 아닙니다."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "이 문자와 \"{resumeName}\"는 두 개의 PDFs로 일치하도록 명명되었습니다."
 
@@ -12290,7 +12275,7 @@ msgid "Trust this device for 30 days"
 msgstr "이 기기를 30일 동안 신뢰"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "{0}를 사용해 보세요"
 
@@ -12350,7 +12335,7 @@ msgstr "2단계 인증 끄기"
 msgid "Turn off two-step verification?"
 msgstr "2단계 인증을 끌까요?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "주소를 선택하려면 링크를 켜세요."
 
@@ -12699,7 +12684,7 @@ msgstr "모든 지원에 사용"
 msgid "Use in coaching: {excerpt}"
 msgstr "코칭에 사용: {excerpt}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "소문자, 숫자, 단일 대시를 사용하세요."
 
@@ -13417,7 +13402,7 @@ msgid "You"
 msgstr "너"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "이미 “{0}”에 이것을 사용하고 있습니다."
 
@@ -13585,7 +13570,7 @@ msgstr "날짜가 여러 다른 형식으로 작성되어 있습니다."
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "이력서의 세부정보가 변경되었습니다. 편지도 업데이트되었습니다."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "내 도메인"
 
@@ -13706,7 +13691,7 @@ msgstr "녹음은 텍스트 변환을 위해 {0}에 전송되며, 해당 계정�
 msgid "Your requirements"
 msgstr "내 요건"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "당신의 이력서"
 

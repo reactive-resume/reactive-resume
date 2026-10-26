@@ -33,7 +33,6 @@ it.each(["write", "read"] as RequestPermission[])(
 			showDownloadButtons: true,
 			showInSearchEngines: false,
 			hideContactDetails: false,
-			showContactButton: true,
 			isPrimary: false,
 			hasPassword: false,
 			passwordHash: null,

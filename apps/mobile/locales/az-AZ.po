@@ -696,10 +696,6 @@ msgstr "2-3 cümlə ən yaxşı oxuyur"
 msgid "24 hours before"
 msgstr "24 saat əvvəl"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "“Əlaqə məlumatlarını göstər” düyməsi onları axtarış sistemlərinə deyil, insanlara göstərir."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Bu məktubun ehtiyat nüsxəsi. Reactive Resume-yə məktub kimi yenidən idxal edir."
@@ -1380,7 +1376,7 @@ msgstr "İstənilən"
 msgid "Any font, in Advanced"
 msgstr "İstənilən şrift, Advanced"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Linki olan hər kəs rezyumenizə baxa biləcək."
 
@@ -1611,10 +1607,6 @@ msgstr "Server administratorunuzdan etimadnamə şifrələməsini aktivləşdirm
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Soruşun və ya dəyişikliyi təsvir edin..."
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "əlaqə məlumatlarını istədi"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Saat qurşağını dəyiş"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "CV-ni birbaşa dəyişdi (əvvəlki söhbət)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Dəyişiklikləri yadda saxlamaq mümkün olmadı. Davam etməzdən əvvəl Təkrar cəhd edin."
 
@@ -2254,7 +2246,7 @@ msgstr "Girişlərini təmizləyir; bölmə qalır. Geri qaytara bilərsiniz."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Bağlayın"
 
@@ -2372,7 +2364,7 @@ msgstr "Yükləmələri sürətli saxlamaq üçün böyük şəkilləri sıxın 
 msgid "Confirm applied"
 msgstr "Müraciəti təsdiqləyin"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Şifrəni təsdiqləyin"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "İkiqat yoxlanılır"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Endir"
 msgid "Download {0}"
 msgstr "{0} yükləyin"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Yükləmə və tarixçə"
@@ -4416,7 +4408,7 @@ msgstr "İşə götürmə komandası"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Tarix"
 
@@ -5035,10 +5027,6 @@ msgstr "48 saatdan az vaxt qalıb."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Claude və ya Cursor kimi AI müştərilərinə API açarından istifadə edərək CV-lərinizi oxumağa və redaktə etməyə icazə verin."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Ziyarətçilərə onları istəməyə icazə ver"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Təkliflərdə aç"
 msgid "Open letter"
 msgstr "Məktubu aç"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Ümumi səhifəni açın"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Cavab gözləyən suallar"
@@ -6443,6 +6427,10 @@ msgstr "Siyahını açın"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Cədvəli aç"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Veb səhifəni aç"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Keçid açarları"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Parol"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Şifrələr uyğun gəlmir."
 
@@ -7475,7 +7463,7 @@ msgstr "Sahəni silin"
 msgid "Remove file"
 msgstr "Faylı sil"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Parolu sil"
 
@@ -7497,7 +7485,7 @@ msgstr "Sualı sil"
 msgid "Remove role"
 msgstr "Rolu silin"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Parol silinsin?"
 
@@ -7597,11 +7585,7 @@ msgstr "Problem bildir"
 msgid "Report received by your server operator. Thank you."
 msgstr "Server operatorunuz tərəfindən qəbul edilmiş hesabat. təşəkkür edirəm."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Paylaşılan CV-ni bildirin"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Parol tələb edin"
 
@@ -7735,8 +7719,8 @@ msgstr "{1} istifadə edərək {0} əldə edildi. Alma vaxtı mənşənin təzə
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "Server dəyişdirildi. Sənədlər səhifəsinə qayıdın və yenidən 
 msgid "Set a follow-up"
 msgstr "Təqib təyin edin"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Parol təyin edin"
 
@@ -8635,8 +8619,8 @@ msgstr "{server} hesabına daxil olun, sonra əlaqələndirilmiş sənədə dava
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Davam etmək üçün daxil olun."
 
@@ -9622,7 +9606,7 @@ msgstr "Bu sənəd kilidlidir. Redaktələrinizi burada saxlamazdan əvvəl onu 
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Bu sənəd kilidlidir. Təkliflər almaq üçün kilidini açın."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Bu sənəd kilidlidir. Siz hələ də yükləyə və versiyaları adlandıra bilərsiniz. Redaktə etmək və ya bərpa etmək üçün kilidi açın."
 
@@ -10241,7 +10225,7 @@ msgstr "{url} istifadə edin"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "3-dən 64-ə qədər kiçik hərf, rəqəm, nöqtə, defis və alt xəttdən istifadə edin."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "6–64 simvoldan istifadə edin."
 
@@ -10508,11 +10492,11 @@ msgstr "Zorakılıq və ya sui-istifadə"
 msgid "Visitors"
 msgstr "Ziyarətçilər"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Ziyarətçilər PDF yükləyə bilərlər"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Ziyarətçilər rezyumeni görməzdən əvvəl oraya daxil olurlar. Yalnız etibar etdiyiniz insanlarla paylaşın."
 
@@ -10895,7 +10879,7 @@ msgstr "Siz oflaynsınız. PDF endirmə bu cihazdan istifadə edir. Digər forma
 msgid "You're offline. History needs a connection."
 msgstr "Siz oflaynsınız. Versiya tarixçəsinə baxmaq üçün əlaqə lazımdır."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "Siz oflaynsınız. Versiya tarixçəsinə baxmaq üçün əlaqə lazımdır. “PDF‑i endir” bu cihazda işləyir."
 

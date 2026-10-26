@@ -696,10 +696,6 @@ msgstr "2–3 kalimat paling baik dibaca"
 msgid "24 hours before"
 msgstr "24 jam sebelumnya"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Tombol “Tampilkan detail kontak” menampilkannya kepada orang, bukan kepada mesin pencari."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Cadangan surat ini. Impor kembali ke Reactive Resume sebagai surat."
@@ -1380,7 +1376,7 @@ msgstr "Apa saja"
 msgid "Any font, in Advanced"
 msgstr "Font apa pun, dalam Tingkatan Lanjut"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Siapa pun yang memiliki tautan tersebut akan dapat melihat resume Anda."
 
@@ -1611,10 +1607,6 @@ msgstr "Minta administrator server Anda untuk mengaktifkan enkripsi kredensial a
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Tanyakan, atau jelaskan perubahan…"
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "meminta detail kontak"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Ubah zona waktu"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Mengubah resume secara langsung (percakapan sebelumnya)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Perubahan tidak dapat disimpan. Mencoba kembali sebelum melanjutkan."
 
@@ -2254,7 +2246,7 @@ msgstr "Menghapus entri-entrinya; bagian itu tetap ada. Anda dapat membatalkan."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Tutup"
 
@@ -2372,7 +2364,7 @@ msgstr "Kompres atau hapus gambar besar agar pengunggahan tetap cepat."
 msgid "Confirm applied"
 msgstr "Konfirmasi sudah melamar"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Konfirmasi kata sandi"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "Memeriksa ulang"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Unduh"
 msgid "Download {0}"
 msgstr "Unduh {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Unduhan & riwayat"
@@ -4416,7 +4408,7 @@ msgstr "Mempekerjakan tim"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Sejarah"
 
@@ -5035,10 +5027,6 @@ msgstr "Kurang dari 48 jam lagi."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Izinkan klien AI seperti Claude atau Cursor membaca dan mengedit CV Anda, menggunakan kunci API."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Izinkan pengunjung meminta untuk melihatnya"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Buka di Penawaran"
 msgid "Open letter"
 msgstr "Buka surat"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Buka halaman publik"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Pertanyaan terbuka"
@@ -6443,6 +6427,10 @@ msgstr "Buka daftarnya"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Buka jadwal"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Buka halaman web"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Passkeys"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Kata Sandi"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Kata sandi tidak cocok."
 
@@ -7475,7 +7463,7 @@ msgstr "Hapus bidang"
 msgid "Remove file"
 msgstr "Hapus file"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Hapus kata sandi"
 
@@ -7497,7 +7485,7 @@ msgstr "Hapus pertanyaan"
 msgid "Remove role"
 msgstr "Hapus peran"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Hapus kata sandi?"
 
@@ -7597,11 +7585,7 @@ msgstr "Laporkan masalah"
 msgid "Report received by your server operator. Thank you."
 msgstr "Laporan diterima oleh operator server Anda. Terima kasih."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Laporkan resume yang dibagikan"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Memerlukan kata sandi"
 
@@ -7735,8 +7719,8 @@ msgstr "Mengambil {0} menggunakan {1}. Waktu pengambilan tidak menentukan kesega
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "Server berubah. Kembali ke Dokumen dan coba lagi."
 msgid "Set a follow-up"
 msgstr "Tetapkan tindak lanjut"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Tetapkan kata sandi"
 
@@ -8635,8 +8619,8 @@ msgstr "Masuk ke {server}, lalu lanjutkan ke dokumen tertaut."
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Masuk untuk melanjutkan."
 
@@ -9622,7 +9606,7 @@ msgstr "Dokumen ini terkunci. Buka kuncinya sebelum menyimpan hasil edit Anda di
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Dokumen ini terkunci. Buka kuncinya untuk mendapatkan saran."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Dokumen ini terkunci. Anda masih dapat mengunduh dan memberi nama versinya. Buka kunci untuk mengedit atau memulihkan."
 
@@ -10241,7 +10225,7 @@ msgstr "Gunakan {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Gunakan 3 hingga 64 huruf kecil, angka, titik, tanda hubung, dan garis bawah."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Gunakan 6–64 karakter."
 
@@ -10508,11 +10492,11 @@ msgstr "Kekerasan atau pelecehan"
 msgid "Visitors"
 msgstr "Pengunjung"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Pengunjung dapat mengunduh PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Pengunjung memasukkannya sebelum mereka melihat resume. Bagikan hanya dengan orang yang Anda percayai."
 
@@ -10895,7 +10879,7 @@ msgstr "Anda sedang luring. Unduh PDF menggunakan perangkat ini. Format lain mem
 msgid "You're offline. History needs a connection."
 msgstr "Anda sedang luring. Sejarah membutuhkan koneksi."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "Anda sedang luring. Riwayat memerlukan koneksi. Unduh PDF berfungsi di perangkat ini."
 

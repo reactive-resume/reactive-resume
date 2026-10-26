@@ -1,46 +1,60 @@
+import type { ShareSettings } from "./link";
+import type { RouterOutput } from "@/api/client";
 import type { ResumeDocument } from "@/draft/types";
+import type { useDocumentOperations } from "@/features/documents/queries";
 import { useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as Clipboard from "expo-clipboard";
 import { openBrowserAsync } from "expo-web-browser";
 import { useState } from "react";
 import { Linking, View } from "react-native";
+import { cvDomainFor, cvDomainRegistrationUrl, publicResumeUrl } from "@reactive-resume/resume/sharing";
+import { flushResume } from "./document";
 import { client, orpc } from "@/api/client";
 import { useResumeStore } from "@/draft";
 import { resume as draftResume } from "@/draft/runtime";
-import { useDocumentOperations } from "@/features/documents/queries";
-import { Banner, Button, ConfirmDialog, ListRow, Switch, Text, TextField, showToast, useTheme } from "@/ui";
+import {
+	Banner,
+	Button,
+	ConfirmDialog,
+	ListGroup,
+	ListRow,
+	Sheet,
+	Switch,
+	Text,
+	TextField,
+	showToast,
+	useTheme,
+} from "@/ui";
 
-type WebPageSettingsProps = { resume: ResumeDocument; offline: boolean; username: string | undefined };
-
-type Settings = Partial<
-	Pick<ResumeDocument, "showInSearchEngines" | "hideContactDetails" | "showContactButton" | "isPrimary">
->;
-
-// A DNS label: what a username must look like to be a domain of its own.
-const DNS_LABEL = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+type WebPageSettingsProps = {
+	resume: ResumeDocument;
+	offline: boolean;
+	username: string | undefined;
+	/** Where shared links point: the app's alias (`APP_ALIAS_URL`) when the server has one. */
+	origin: string;
+	flags: RouterOutput["flags"]["get"] | undefined;
+	/** Share's one queue: actions run one at a time and report into its banner. */
+	operations: ReturnType<typeof useDocumentOperations>;
+	save: (settings: ShareSettings) => Promise<boolean>;
+};
 
 /**
  * Share's web page settings: preview, the short link and custom domain, the footer credit and privacy. Switches
  * that decide who sees what save straight to the server, never through the draft's undo.
  */
-export function WebPageSettings({ resume, offline, username }: WebPageSettingsProps) {
+export function WebPageSettings({ resume, offline, username, origin, flags, operations, save }: WebPageSettingsProps) {
 	const { t } = useLingui();
-	const { space, colors } = useTheme();
-	const operations = useDocumentOperations();
+	const { space } = useTheme();
 	const updateData = useResumeStore((state) => state.update);
-	const flags = useQuery({ ...orpc.flags.get.queryOptions(), enabled: !offline });
 	const list = useQuery({ ...orpc.resume.list.queryOptions(), enabled: !offline });
-	const [confirmPrimary, setConfirmPrimary] = useState(false);
+	const [dialog, setDialog] = useState<"primary" | "password" | "remove-password" | null>(null);
+	const [password, setPassword] = useState("");
+	const [confirmation, setConfirmation] = useState("");
 	const disabled = resume.isLocked || offline || operations.busy;
 	const otherPrimary = list.data?.find((item) => item.isPrimary && item.id !== resume.id);
 	const searchBlocked = !resume.isPublic || resume.hasPassword;
-
-	const save = (settings: Settings) =>
-		operations.run(async () => {
-			await client.resume.update({ id: resume.id, ...settings });
-			await draftResume.refresh();
-		});
+	const shortLink = username ? publicResumeUrl(origin, { username, slug: resume.slug, isPrimary: true }) : undefined;
 
 	const preview = () =>
 		operations.run(async () => {
@@ -48,8 +62,22 @@ export function WebPageSettings({ resume, offline, username }: WebPageSettingsPr
 			await openBrowserAsync(url);
 		});
 
-	const shortLink = flags.data?.shortLinkUrl && username ? `${flags.data.shortLinkUrl}/${username}` : undefined;
-	const addresses = Boolean(flags.data?.shortLinkUrl || flags.data?.customDomains);
+	const closePassword = () => {
+		setDialog(null);
+		setPassword("");
+		setConfirmation("");
+	};
+	// The password has endpoints of its own, but saves like the switches: after the draft's pending edits, then a reload.
+	const savePassword = async (remove = false) => {
+		if (!remove && (password.length < 6 || password.length > 64 || password !== confirmation)) return;
+		const success = await operations.run(async () => {
+			await flushResume(resume.id);
+			if (remove) await client.resume.removePassword({ id: resume.id });
+			else await client.resume.setPassword({ id: resume.id, password });
+			await draftResume.refresh();
+		});
+		if (success) closePassword();
+	};
 
 	return (
 		<View style={{ gap: space.s4 }}>
@@ -61,60 +89,54 @@ export function WebPageSettings({ resume, offline, username }: WebPageSettingsPr
 				onPress={() => void preview()}
 			/>
 
-			{addresses && (
-				<View style={{ gap: space.s3, paddingTop: space.s4, borderTopWidth: 1, borderColor: colors.line }}>
-					<Text variant="heading">{t`Short link and domain`}</Text>
+			<ListGroup title={t`Short link and domain`}>
+				<ListRow
+					title={t`Primary resume`}
+					subtitle={
+						resume.isPrimary
+							? resume.isPublic
+								? t`Your short link and custom domain open this resume.`
+								: t`Your short link and custom domain say this resume isn't shared until you publish it again.`
+							: otherPrimary
+								? t`Your short link and custom domain open “${otherPrimary.name}”.`
+								: t`Publish this resume to open it at your short link and custom domain.`
+					}
+					trailing={
+						<Switch
+							label={t`Primary resume`}
+							value={resume.isPrimary}
+							disabled={disabled || (!resume.isPublic && !resume.isPrimary)}
+							onValueChange={(value) =>
+								value && otherPrimary ? setDialog("primary") : void save({ isPrimary: value })
+							}
+						/>
+					}
+				/>
+				{shortLink && (
 					<ListRow
-						title={t`Primary resume`}
-						subtitle={
-							resume.isPrimary
-								? resume.isPublic
-									? t`Your short link and custom domain open this resume.`
-									: t`Your short link and custom domain say this resume isn't shared until you publish it again.`
-								: otherPrimary
-									? t`Your short link and custom domain open “${otherPrimary.name}”.`
-									: t`Publish this resume to open it at your short link and custom domain.`
-						}
-						trailing={
-							<Switch
-								label={t`Primary resume`}
-								value={resume.isPrimary}
-								disabled={disabled || (!resume.isPublic && !resume.isPrimary)}
-								onValueChange={(value) =>
-									value && otherPrimary ? setConfirmPrimary(true) : void save({ isPrimary: value })
-								}
-							/>
+						title={shortLink.replace(/^https?:\/\//, "")}
+						leading="link"
+						disabled={offline}
+						onPress={() =>
+							void operations.run(async () => {
+								await Clipboard.setStringAsync(shortLink);
+								showToast({ message: t`Link copied` });
+							})
 						}
 					/>
-					{shortLink && (
-						<ListRow
-							title={shortLink.replace(/^https?:\/\//, "")}
-							leading="link"
-							disabled={offline}
-							onPress={() =>
-								void operations.run(async () => {
-									await Clipboard.setStringAsync(shortLink);
-									showToast({ message: t`Link copied` });
-								})
-							}
-						/>
-					)}
-					{flags.data?.customDomains && (
-						<CustomDomain
-							offline={offline}
-							suggestion={
-								flags.data.olacvSuggestion && username && DNS_LABEL.test(username) ? `${username}.cv` : undefined
-							}
-						/>
-					)}
-				</View>
+				)}
+			</ListGroup>
+			{flags?.customDomains && (
+				<CustomDomain
+					offline={offline}
+					suggestion={flags.olacvSuggestion && username ? cvDomainFor(username) : undefined}
+				/>
 			)}
 
-			<View style={{ gap: space.s3, paddingTop: space.s4, borderTopWidth: 1, borderColor: colors.line }}>
-				<Text variant="heading">{t`Web page`}</Text>
-				<Text variant="caption" color="ink3">
-					{t`Uses your resume's template and Design, and fits any screen. Change them in Design.`}
-				</Text>
+			<ListGroup
+				title={t`Web page`}
+				footer={t`Uses your resume's template and Design, and fits any screen. Change them in Design.`}
+			>
 				<ListRow
 					title={t`Show “Made with Reactive Resume”`}
 					trailing={
@@ -130,10 +152,29 @@ export function WebPageSettings({ resume, offline, username }: WebPageSettingsPr
 						/>
 					}
 				/>
-			</View>
+			</ListGroup>
 
-			<View style={{ gap: space.s3, paddingTop: space.s4, borderTopWidth: 1, borderColor: colors.line }}>
-				<Text variant="heading">{t`Privacy`}</Text>
+			<ListGroup title={t`Privacy`}>
+				<ListRow
+					title={t`Require a password`}
+					subtitle={
+						resume.hasPassword
+							? t`Visitors enter it before they see the resume. Share it only with people you trust.`
+							: undefined
+					}
+					trailing={
+						<Switch
+							label={t`Require a password`}
+							value={resume.hasPassword}
+							disabled={disabled}
+							onValueChange={(value) => {
+								setPassword("");
+								setConfirmation("");
+								setDialog(value ? "password" : "remove-password");
+							}}
+						/>
+					}
+				/>
 				<ListRow
 					title={t`Hide contact details`}
 					subtitle={t`Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results.`}
@@ -146,20 +187,6 @@ export function WebPageSettings({ resume, offline, username }: WebPageSettingsPr
 						/>
 					}
 				/>
-				{resume.hideContactDetails && (
-					<ListRow
-						title={t`Let visitors ask to see them`}
-						subtitle={t`A “Show contact details” button reveals them to people, not to search engines.`}
-						trailing={
-							<Switch
-								label={t`Let visitors ask to see them`}
-								value={resume.showContactButton}
-								disabled={disabled}
-								onValueChange={(value) => void save({ showContactButton: value })}
-							/>
-						}
-					/>
-				)}
 				<ListRow
 					title={t`Show in search engines`}
 					subtitle={
@@ -180,35 +207,99 @@ export function WebPageSettings({ resume, offline, username }: WebPageSettingsPr
 						/>
 					}
 				/>
-			</View>
+				<ListRow
+					title={t`Visitors can download the PDF`}
+					trailing={
+						<Switch
+							label={t`Visitors can download the PDF`}
+							value={resume.showDownloadButtons}
+							disabled={disabled}
+							onValueChange={(value) => void save({ showDownloadButtons: value })}
+						/>
+					}
+				/>
+			</ListGroup>
 
 			<ConfirmDialog
-				open={confirmPrimary}
+				open={dialog === "primary"}
 				title={t`Make this your primary resume?`}
 				message={otherPrimary ? t`“${otherPrimary.name}” stops being your primary resume.` : ""}
 				confirmLabel={t`Make primary`}
-				onCancel={() => setConfirmPrimary(false)}
+				onCancel={() => setDialog(null)}
 				onConfirm={() => {
-					setConfirmPrimary(false);
+					setDialog(null);
 					void save({ isPrimary: true });
+				}}
+			/>
+			<Sheet
+				open={dialog === "password"}
+				title={t`Require a password`}
+				onClose={() => {
+					if (!operations.busy) closePassword();
+				}}
+				detents={[0.5, 0.9]}
+			>
+				<View style={{ padding: space.s4, gap: space.s3 }}>
+					<TextField
+						label={t`Password`}
+						value={password}
+						onChangeText={setPassword}
+						secureTextEntry
+						autoComplete="off"
+						autoCorrect={false}
+						autoCapitalize="none"
+						maxLength={64}
+						helper={t`Use 6–64 characters.`}
+						editable={!operations.busy}
+					/>
+					<TextField
+						label={t`Confirm password`}
+						value={confirmation}
+						onChangeText={setConfirmation}
+						secureTextEntry
+						autoComplete="off"
+						autoCorrect={false}
+						autoCapitalize="none"
+						maxLength={64}
+						editable={!operations.busy}
+						error={confirmation && confirmation !== password ? t`Passwords do not match.` : undefined}
+					/>
+					{operations.error && <Banner tone="danger" message={operations.error} />}
+					<Button
+						label={t`Set password`}
+						loading={operations.busy}
+						disabled={password.length < 6 || password !== confirmation || disabled}
+						onPress={() => void savePassword()}
+					/>
+				</View>
+			</Sheet>
+			<ConfirmDialog
+				open={dialog === "remove-password"}
+				title={t`Remove the password?`}
+				message={t`Anyone with the link will be able to view your resume.`}
+				confirmLabel={t`Remove password`}
+				onCancel={() => setDialog(null)}
+				onConfirm={() => {
+					setDialog(null);
+					void savePassword(true);
 				}}
 			/>
 		</View>
 	);
 }
 
+type CustomDomainProps = { offline: boolean; suggestion: string | undefined };
+
 /** Connects the account's own domain: the DNS records to add, a check, and the result. */
-function CustomDomain({ offline, suggestion }: { offline: boolean; suggestion: string | undefined }) {
+function CustomDomain({ offline, suggestion }: CustomDomainProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const queryClient = useQueryClient();
 	const domain = useQuery({ ...orpc.customDomain.get.queryOptions(), enabled: !offline });
 	const [hostname, setHostname] = useState("");
-	const [error, setError] = useState<string>();
-	const store = (next: unknown) =>
-		queryClient.setQueryData(orpc.customDomain.get.queryKey(), next as typeof domain.data);
-	const onError = (failure: Error) => setError(failure.message);
-	const set = useMutation({ ...orpc.customDomain.set.mutationOptions(), onSuccess: store, onError });
+	const store = (next: RouterOutput["customDomain"]["get"]) =>
+		queryClient.setQueryData(orpc.customDomain.get.queryKey(), next);
+	const set = useMutation({ ...orpc.customDomain.set.mutationOptions(), onSuccess: store });
 	const verify = useMutation({
 		...orpc.customDomain.verify.mutationOptions(),
 		onSuccess: (next) => {
@@ -217,16 +308,16 @@ function CustomDomain({ offline, suggestion }: { offline: boolean; suggestion: s
 				message: next.verified ? t`Domain connected` : t`The records aren't visible yet. Check again later.`,
 			});
 		},
-		onError,
 	});
-	const remove = useMutation({ ...orpc.customDomain.remove.mutationOptions(), onSuccess: () => store(null), onError });
+	const remove = useMutation({ ...orpc.customDomain.remove.mutationOptions(), onSuccess: () => store(null) });
+	const error = set.error ?? verify.error ?? remove.error;
 
 	if (domain.isPending) return null;
 	const current = domain.data;
 
 	return (
 		<View style={{ gap: space.s3 }}>
-			{error && <Banner tone="danger" message={error} />}
+			{error && <Banner tone="danger" message={error.message} />}
 			{!current ? (
 				<>
 					<TextField
@@ -249,7 +340,7 @@ function CustomDomain({ offline, suggestion }: { offline: boolean; suggestion: s
 						<Button
 							variant="link"
 							label={t`${suggestion} may be available. Get yours here →`}
-							onPress={() => void Linking.openURL(`https://ola.cv/?domain=${encodeURIComponent(suggestion)}`)}
+							onPress={() => void Linking.openURL(cvDomainRegistrationUrl(suggestion))}
 						/>
 					)}
 				</>

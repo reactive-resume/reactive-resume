@@ -1,9 +1,8 @@
 import { randomBytes } from "node:crypto";
 import { resolve4, resolve6, resolveCname, resolveTxt } from "node:dns/promises";
 import { isIP } from "node:net";
-import { domainToASCII } from "node:url";
 import { ORPCError } from "@orpc/server";
-import { and, eq, isNotNull, isNull, lt, ne, or } from "drizzle-orm";
+import { and, eq, isNotNull, isNull, lt, ne, or, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
@@ -17,24 +16,28 @@ const LABEL = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
 
 export const isCustomDomainsEnabled = () => Boolean(env.CUSTOM_DOMAIN_TARGET && env.CUSTOM_DOMAIN_PROVIDER_SECRET);
 
-/** The hosts the app owns; none of them, or anything under them, can be someone's custom domain. */
-const ownHosts = () =>
-	[env.APP_URL, env.SHORT_LINK_URL, env.CUSTOM_DOMAIN_TARGET && `https://${env.CUSTOM_DOMAIN_TARGET}`]
-		.filter((value): value is string => Boolean(value))
-		.map((value) => new URL(value).hostname.toLowerCase());
+let hosts: ReadonlySet<string> | undefined;
+/** The app's own hostnames (APP_URL, APP_ALIAS_URL, the CNAME target): none of them, or anything under them, is a custom domain. */
+export const ownHosts = (): ReadonlySet<string> =>
+	(hosts ??= new Set(
+		[env.APP_URL, env.APP_ALIAS_URL, env.CUSTOM_DOMAIN_TARGET && `https://${env.CUSTOM_DOMAIN_TARGET}`]
+			.filter((value): value is string => Boolean(value))
+			.map((value) => new URL(value).hostname),
+	));
 
 /**
  * A typed domain as the host DNS knows: lowercase ASCII, no scheme, path, port or trailing dot. `null` when it can't be
  * a public domain (an IP address, a single label, the app's own hosts).
  */
 export function normalizeHostname(input: string): string | null {
-	let value = input.trim().toLowerCase();
-	value = value
-		.replace(/^[a-z][a-z0-9+.-]*:\/\//, "")
-		.replace(/[/?#].*$/, "")
-		.replace(/:\d+$/, "")
-		.replace(/\.$/, "");
-	const ascii = domainToASCII(value);
+	const value = input.trim();
+	let ascii: string;
+	try {
+		// The URL parser lowercases, converts to punycode and drops the port, path, query and fragment.
+		ascii = new URL(/^[a-z][a-z0-9+.-]*:\/\//i.test(value) ? value : `http://${value}`).hostname.replace(/\.$/, "");
+	} catch {
+		return null;
+	}
 	if (!ascii || ascii.length > 253 || isIP(ascii)) return null;
 	const labels = ascii.split(".");
 	if (labels.length < 2 || !labels.every((label) => LABEL.test(label))) return null;
@@ -155,21 +158,22 @@ export const customDomainService = {
 	},
 };
 
-/** The verified domain an account's primary resume opens at, for its canonical address. */
-export async function verifiedDomainOf(userId: string): Promise<string | null> {
-	if (!isCustomDomainsEnabled()) return null;
-	const [domain] = await db
-		.select({ hostname: schema.customDomain.hostname })
-		.from(schema.customDomain)
-		.where(and(eq(schema.customDomain.userId, userId), isNotNull(schema.customDomain.verifiedAt)));
-	return domain?.hostname ?? null;
-}
+/**
+ * The resume owner's verified custom domain, as a column of a query on `resume`: where its primary resume lives for
+ * search engines. Null when custom domains are off.
+ */
+export const verifiedDomainColumn = () =>
+	isCustomDomainsEnabled()
+		? sql<
+				string | null
+			>`(select ${schema.customDomain.hostname} from ${schema.customDomain} where ${schema.customDomain.userId} = ${schema.resume.userId} and ${schema.customDomain.verifiedAt} is not null)`
+		: sql<string | null>`null`;
 
-/** The primary resume a verified custom domain opens: `null` for an unknown host. */
-export async function resumeForCustomDomain(hostname: string) {
+/** The username whose primary resume a verified custom domain opens: `null` for an unknown host. */
+export async function customDomainUsername(hostname: string): Promise<string | null> {
 	if (!isCustomDomainsEnabled()) return null;
 	const [owner] = await db
-		.select({ username: schema.user.username, userId: schema.user.id })
+		.select({ username: schema.user.username })
 		.from(schema.customDomain)
 		.innerJoin(schema.user, eq(schema.customDomain.userId, schema.user.id))
 		.where(
@@ -179,14 +183,7 @@ export async function resumeForCustomDomain(hostname: string) {
 				ownerIsNotBanned(),
 			),
 		);
-	if (!owner) return null;
-	const [primary] = await db
-		.select({ slug: schema.resume.slug })
-		.from(schema.resume)
-		.where(
-			and(eq(schema.resume.userId, owner.userId), eq(schema.resume.isPrimary, true), isNull(schema.resume.trashedAt)),
-		);
-	return { username: owner.username, slug: primary?.slug ?? null };
+	return owner?.username ?? null;
 }
 
 /**

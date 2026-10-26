@@ -8,10 +8,9 @@ import { useResumeExport } from "@/features/resume/export/use-resume-export";
 import { switchModeInstantly } from "@/libs/motion";
 
 /**
- * The editor's keyboard map: 1/2/3/4 switch modes outside fields, ⌘Z and ⇧⌘Z undo and redo outside fields
- * (fields keep their own undo), ⌘P downloads the PDF, ⌘⇧S opens Share, ⌘⇧E opens Download, ⌘J toggles
- * the assistant, and Esc clears the page selection. Download and Share need a connection, so their keys do
- * nothing offline.
+ * The editor's keyboard map: 1/2/3/4 switch modes (4 is Share) outside fields, ⌘Z and ⇧⌘Z undo and redo outside
+ * fields (fields keep their own undo), ⌘P downloads the PDF, ⌘⇧E opens Download, ⌘J toggles the assistant, and Esc
+ * clears the page selection. Downloads need a connection, so ⌘P and ⌘⇧E do nothing offline.
  */
 export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 	const undo = useResumeStore((state) => state.undo);
@@ -38,15 +37,8 @@ export function useEditorHotkeys(setMode: (mode: EditorMode) => void) {
 	useHotkey("Mod+P", () => {
 		if (isOnline()) void onDownloadPDF();
 	});
-	useHotkey(
-		"Mod+Shift+S",
-		() => {
-			switchModeInstantly(() => setMode("share"));
-		},
-		{ ignoreInputs: true },
-	);
 	useHotkey("Mod+Shift+E", () => {
-		if (isOnline()) useEditorStore.getState().setShareTab("download");
+		if (isOnline()) useEditorStore.getState().setSheetTab("download");
 	});
 	useHotkey("Mod+J", () => {
 		const { assistantOpen, setAssistantOpen } = useEditorStore.getState();

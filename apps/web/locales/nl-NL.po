@@ -726,7 +726,7 @@ msgstr "{stars, plural, one {Geef Reactive Resume een ster op GitHub, # ster} ot
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# verhaal} other {# verhalen}}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "{suggestion} may be available. Get yours here →"
 msgstr "{suggestion} is misschien beschikbaar. Haal de jouwe hier →"
 
@@ -844,7 +844,7 @@ msgstr "Briefing van 10 minuten"
 msgid "10–11 recommended"
 msgstr "10–11 aanbevolen"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 bestanden"
 
@@ -903,15 +903,11 @@ msgstr "90 dagen"
 msgid "A"
 msgstr "A"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Een knop “Contactgegevens tonen” laat ze zien aan mensen, niet aan zoekmachines."
-
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "A accepteert en R wijst de gerichte bewerking af. ↑ en ↓ bewegen tussen bewerkingen."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Een back-up van deze brief. Importeert terug naar Reactive Resume als een brief."
 
@@ -1256,7 +1252,7 @@ msgstr "Voeg AI-provider toe"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "Voeg een @ en het domein toe, zoals name@example.com"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "Voeg een adres toe."
 
@@ -1423,7 +1419,7 @@ msgstr "Voeg het domein toe na de @, zoals {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Voeg de domeinextensie toe, zoals {domain}.com"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Voeg deze records toe waar je het domein beheert en controleer daarna. Het kan een paar uur duren voordat wijzigingen overal zichtbaar zijn."
 
@@ -1492,7 +1488,7 @@ msgstr "Als ervaring aan Kennis toegevoegd."
 msgid "Added to Prepare"
 msgstr "Toegevoegd aan Voorbereiden"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "Adres"
 
@@ -1725,7 +1721,7 @@ msgstr "en {0} meer"
 msgid "and counting"
 msgstr "en tellen"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "Een ander cv van u gebruikt dit adres."
 
@@ -2059,10 +2055,6 @@ msgstr "Vraag of beschrijf een verandering…"
 #: src/features/homepage/faq.tsx
 msgid "Asked and <0>answered.</0>"
 msgstr "Vragen en <0>antwoorden.</0>"
-
-#: src/features/resume/share/share-panel.tsx
-msgid "asked for contact details"
-msgstr "vroegen om contactgegevens"
 
 #: src/features/homepage/prepare.tsx
 msgid "Asks for an example of your onboarding work."
@@ -2574,7 +2566,7 @@ msgstr "Controleer een ander bestand"
 msgid "Check any PDF, no account needed"
 msgstr "Controleer elke PDF, geen account nodig"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Check DNS"
 msgstr "DNS controleren"
 
@@ -2661,7 +2653,7 @@ msgstr "De geëxporteerde PDF controleren…"
 msgid "Checking your preferences"
 msgstr "Uw voorkeuren controleren"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "Controleren… Kopiëren is beschikbaar na opslaan."
 
@@ -2791,7 +2783,7 @@ msgstr "Client-ID"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2968,7 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "Bevestigt {time} vandaag, via video."
 
 #: src/features/assistant/provider-setup.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "Verbinden"
@@ -3021,7 +3013,7 @@ msgstr "Aangesloten"
 msgid "Connected applications"
 msgstr "Verbonden applicaties"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "Verbonden. Je domein opent je primaire cv."
 
@@ -3152,7 +3144,7 @@ msgid "Copied"
 msgstr "Gekopieerd"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3626,8 +3618,8 @@ msgstr "Kan deze planning niet opslaan. Probeer het opnieuw."
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "Kan uw wijzigingen niet opslaan. Probeer het opnieuw voordat u doorgaat."
@@ -3732,6 +3724,7 @@ msgstr "Kan de koppeling met de sollicitatie niet verwijderen. Probeer het opnie
 msgid "Couldn't unlock the document. Try again."
 msgstr "Kan het document niet ontgrendelen. Probeer het opnieuw."
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "Kan het delen niet bijwerken. Probeer het opnieuw."
@@ -3768,7 +3761,7 @@ msgstr "Kan het cv niet bijwerken. Probeer het opnieuw."
 msgid "Couldn't update the timeline. Try again."
 msgstr "Kan de tijdlijn niet updaten. Probeer het opnieuw."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "Kan de versies van deze brief niet bijwerken. Probeer het opnieuw."
 
@@ -4362,7 +4355,7 @@ msgstr "Documenten die u hierheen verplaatst, blijven 30 dagen bewaard."
 msgid "Does it use AI?"
 msgstr "Maakt het gebruik van AI?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Domain connected"
 msgstr "Domein verbonden"
 
@@ -4398,8 +4391,8 @@ msgstr "Dubbelchecken"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "Downloaden"
 
@@ -4411,7 +4404,7 @@ msgstr "{label} downloaden"
 msgid "Download {name} sample PDF"
 msgstr "Download de voorbeeld-PDF van {name}"
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Download & history"
 msgstr "Downloads en geschiedenis"
 
@@ -4429,7 +4422,7 @@ msgid "Download CSV"
 msgstr "CSV downloaden"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "Downloaden mislukt. Probeer het opnieuw."
 
@@ -4455,7 +4448,7 @@ msgid "Download totals can include repeat clicks."
 msgstr "Downloadtotalen kunnen herhaalde klikken omvatten."
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "{file} gedownload"
 
@@ -4463,7 +4456,7 @@ msgstr "{file} gedownload"
 msgid "Downloaded {file} and the cover letter"
 msgstr "{file} en de begeleidende brief gedownload"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "Ik heb je CV en deze brief gedownload"
 
@@ -5265,7 +5258,7 @@ msgid "For"
 msgstr "Voor"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "Gebruik voor een hoofddomein zoals example.com A- en AAAA-records met de adressen van {0} in plaats van de CNAME."
 
@@ -5710,8 +5703,8 @@ msgid "Hiring team"
 msgstr "Inhuurteam"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
 msgstr "Geschiedenis"
 
@@ -6543,10 +6536,6 @@ msgstr "Lengte is geen gebrek, en er is geen universele regel van één pagina. 
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "Laat AI-clients zoals Claude of Cursor uw cv's lezen en bewerken met behulp van een API-sleutel hierboven."
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Let visitors ask to see them"
-msgstr "Bezoekers laten vragen om ze te zien"
-
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "Laten we beginnen met wat je hebt"
@@ -6677,7 +6666,7 @@ msgid "Link an application…"
 msgstr "Een sollicitatie koppelen…"
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "Link gekopieerd"
@@ -6768,7 +6757,7 @@ msgid "Live · updates as you edit"
 msgstr "Live · updates terwijl u bewerkt"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "Live op {0}"
 
@@ -9298,7 +9287,7 @@ msgstr "Recruiter"
 msgid "Recruiter reply"
 msgstr "Antwoord aan recruiter"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "Recruiters zien deze naam. Uw naam plus 'Cover Letter' werken goed."
 
@@ -9424,7 +9413,7 @@ msgstr "Op afstand"
 msgid "Remote, Hybrid, a city…"
 msgstr "Remote, hybride, een stad…"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "Verwijderen"
@@ -9688,7 +9677,7 @@ msgstr "Cv · verstuurde versie"
 msgid "Resume (optional)"
 msgstr "CV (optioneel)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "CV + brief"
 
@@ -10126,8 +10115,8 @@ msgstr "Opgeslagen in Kennis, privé voor deze sollicitatie."
 msgid "Saved to Saved · Practice"
 msgstr "Opgeslagen in Opgeslagen · Oefening"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/share-panel.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "{0}/{username}/{slug} opslaan… Kopiëren is mogelijk na het opslaan."
 
@@ -10544,11 +10533,11 @@ msgstr "Deel"
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "Deel een openbare link, voeg een wachtwoord toe of houd deze privé. Kies uit 3 zichtbaarheidsopties. Exporteer naar PDF of Word, of neem al uw gegevens mee als JSON."
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "Deel secties"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "Deel via..."
 
@@ -10629,10 +10618,6 @@ msgstr "Alle soorten tonen"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "Toon gesloten"
-
-#: src/features/resume/share/web-page-text.ts
-msgid "Show contact details"
-msgstr "Contactgegevens tonen"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -11684,7 +11669,7 @@ msgstr "De begroeting volgt de naam."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "De sleutel wordt gecodeerd op de server en nooit meer getoond. Opslaan test de verbinding."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "De brief zoals hij is"
 
@@ -11784,7 +11769,7 @@ msgstr "Het antwoord van de provider kan niet worden geverifieerd. Probeer het o
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "De reden wordt bewaard voor Insights. Gekoppelde documenten worden niet gewijzigd."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "De records zijn nog niet zichtbaar. Controleer later opnieuw."
 
@@ -12011,7 +11996,7 @@ msgstr "Dit is een XFA-formulier, dus de meeste software leest alleen de lege om
 msgid "This is not a common resume page size."
 msgstr "Dit is geen gebruikelijk paginaformaat voor een cv."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Deze letter en “{resumeName}” als twee PDFs, genoemd om overeen te komen."
 
@@ -12290,7 +12275,7 @@ msgid "Trust this device for 30 days"
 msgstr "Dit apparaat 30 dagen vertrouwen"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "Probeer {0}"
 
@@ -12350,7 +12335,7 @@ msgstr "Tweestapsverificatie uitschakelen"
 msgid "Turn off two-step verification?"
 msgstr "Tweestapsverificatie uitschakelen?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "Schakel de link in om een ​​adres te kiezen."
 
@@ -12699,7 +12684,7 @@ msgstr "Gebruiken voor alle sollicitaties"
 msgid "Use in coaching: {excerpt}"
 msgstr "Gebruiken bij coaching: {excerpt}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "Gebruik kleine letters, cijfers en enkele streepjes."
 
@@ -13417,7 +13402,7 @@ msgid "You"
 msgstr "Jij"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "U gebruikt dit al voor “{0}”."
 
@@ -13585,7 +13570,7 @@ msgstr "Je data zijn op meerdere verschillende manieren geschreven."
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "Uw gegevens op het cv zijn gewijzigd. De brief is ook bijgewerkt."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "Je domein"
 
@@ -13706,7 +13691,7 @@ msgstr "Uw opname gaat naar {0} om te worden getranscribeerd, wat tokens van dat
 msgid "Your requirements"
 msgstr "Uw eisen"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "je CV"
 

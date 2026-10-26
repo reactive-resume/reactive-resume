@@ -9,11 +9,3 @@ export function removeContactDetails(data: ResumeData): void {
 	Object.assign(data.basics, { email: "", phone: "", location: "", customFields: [] });
 	for (const item of data.sections.references.items) item.phone = "";
 }
-
-/** The contact details `removeContactDetails` clears, for a visitor who asks to see them. */
-export const contactDetailsOf = (data: ResumeData) => ({
-	email: data.basics.email,
-	phone: data.basics.phone,
-	location: data.basics.location,
-	customFields: data.basics.customFields.map(({ icon, text, link }) => ({ icon, text, link })),
-});

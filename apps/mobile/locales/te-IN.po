@@ -696,10 +696,6 @@ msgstr "2-3 వాక్యాలు ఉత్తమంగా చదవబడత
 msgid "24 hours before"
 msgstr "24 గంటల ముందు"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "“సంప్రదింపు వివరాలను చూపించు” బటన్ వాటిని శోధన ఇంజిన్‌లకు కాకుండా వ్యక్తులకు చూపిస్తుంది."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "ఈ లేఖ యొక్క బ్యాకప్. అక్షరం వలె Reactive Resumeకి తిరిగి దిగుమతి అవుతుంది."
@@ -1380,7 +1376,7 @@ msgstr "ఏదైనా"
 msgid "Any font, in Advanced"
 msgstr "ఏదైనా ఫాంట్, అడ్వాన్స్‌డ్‌లో"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "లింక్‌ని కలిగి ఉన్న ఎవరైనా మీ రెజ్యూమేని వీక్షించగలరు."
 
@@ -1611,10 +1607,6 @@ msgstr "క్రెడెన్షియల్ ఎన్‌క్రిప్�
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "మార్పుని అడగండి లేదా వివరించండి..."
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "సంప్రదింపు వివరాలు అడిగారు"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "టైమ్ జోన్ మార్చు"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "రెజ్యూమే నేరుగా మార్చబడింది (మునుపటి సంభాషణ)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "మార్పులను సేవ్ చేయడం సాధ్యపడలేదు. కొనసాగడానికి ముందు మళ్ళీ ప్రయత్నించండి."
 
@@ -2254,7 +2246,7 @@ msgstr "దాని ఎంట్రీలను క్లియర్ చేస
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "మూసివేయి"
 
@@ -2372,7 +2364,7 @@ msgstr "అప్‌లోడ్‌లను వేగంగా ఉంచడా�
 msgid "Confirm applied"
 msgstr "దరఖాస్తు చేసినట్లు నిర్ధారించండి"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "పాస్‌వర్డ్‌ను నిర్ధారించండి"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "మళ్లీ సరిచూస్తోంది"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "డౌన్‌లోడ్ చేయండి"
 msgid "Download {0}"
 msgstr "డౌన్‌లోడ్ {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "డౌన్‌లోడ్ & చరిత్ర"
@@ -4416,7 +4408,7 @@ msgstr "నియామక బృందం"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "చరిత్ర"
 
@@ -5035,10 +5027,6 @@ msgstr "48 గంటల కంటే తక్కువ సమయం మిగ�
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "API కీని ఉపయోగించి Claude లేదా Cursor వంటి AI క్లయింట్‌లు మీ రెజ్యూమ్‌లను చదవడానికి మరియు సవరించడానికి అనుమతించండి."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "వాటిని చూడమని అడగడానికి సందర్శకులను అనుమతించండి"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "ఆఫర్‌లలో తెరువు"
 msgid "Open letter"
 msgstr "లేఖను తెరవండి"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "పబ్లిక్ పేజీని తెరవండి"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "సమాధానం కావాల్సిన ప్రశ్నలు"
@@ -6443,6 +6427,10 @@ msgstr "జాబితాను తెరవండి"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "షెడ్యూల్‌ను తెరువు"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "వెబ్ పేజీని తెరవండి"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "పాస్‌కీలు"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "పాస్‌వర్డ్"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "పాస్‌వర్డ్‌లు సరిపోలడం లేదు."
 
@@ -7475,7 +7463,7 @@ msgstr "ఫీల్డ్‌ను తీసివేయండి"
 msgid "Remove file"
 msgstr "ఫైల్‌ను తీసివేయండి"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "పాస్‌వర్డ్‌ను తీసివేయండి"
 
@@ -7497,7 +7485,7 @@ msgstr "ప్రశ్నను తీసివేయి"
 msgid "Remove role"
 msgstr "పాత్రను తీసివేయండి"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "పాస్‌వర్డ్‌ని తీసివేయాలా?"
 
@@ -7597,11 +7585,7 @@ msgstr "ఇష్యూ నివేదించండి"
 msgid "Report received by your server operator. Thank you."
 msgstr "మీ సర్వర్ ఆపరేటర్ ద్వారా నివేదిక స్వీకరించబడింది. ధన్యవాదాలు."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "భాగస్వామ్య రెజ్యూమ్‌ని నివేదించండి"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "పాస్‌వర్డ్ అవసరం"
 
@@ -7735,8 +7719,8 @@ msgstr "{1}ని ఉపయోగించి {0} తిరిగి పొం�
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "సర్వర్ మార్చబడింది. పత్రాల
 msgid "Set a follow-up"
 msgstr "ఫాలో-అప్‌ని సెట్ చేయండి"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "పాస్వర్డ్ను సెట్ చేయండి"
 
@@ -8635,8 +8619,8 @@ msgstr "{server}కి సైన్ ఇన్ చేసి, ఆపై లిం�
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "కొనసాగడానికి సైన్ ఇన్ చేయండి."
 
@@ -9622,7 +9606,7 @@ msgstr "ఈ పత్రం లాక్ చేయబడింది. మీ స
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "ఈ పత్రం లాక్ చేయబడింది. సూచనలను పొందడానికి దాన్ని అన్‌లాక్ చేయండి."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "ఈ పత్రం లాక్ చేయబడింది. మీరు ఇప్పటికీ డౌన్‌లోడ్ చేసుకోవచ్చు మరియు సంస్కరణలకు పేరు పెట్టవచ్చు. సవరించడానికి లేదా పునరుద్ధరించడానికి అన్‌లాక్ చేయండి."
 
@@ -10241,7 +10225,7 @@ msgstr "{url}ని ఉపయోగించండి"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "3 నుండి 64 చిన్న అక్షరాలు, సంఖ్యలు, చుక్కలు, హైఫన్‌లు మరియు అండర్‌స్కోర్‌లను ఉపయోగించండి."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "6–64 అక్షరాలను ఉపయోగించండి."
 
@@ -10508,11 +10492,11 @@ msgstr "హింస లేదా దుర్వినియోగం"
 msgid "Visitors"
 msgstr "సందర్శకులు"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "సందర్శకులు PDFని డౌన్‌లోడ్ చేసుకోవచ్చు"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "సందర్శకులు రెజ్యూమ్‌ని చూసే ముందు దానిలోకి ప్రవేశిస్తారు. మీరు విశ్వసించే వ్యక్తులతో మాత్రమే దీన్ని భాగస్వామ్యం చేయండి."
 
@@ -10895,7 +10879,7 @@ msgstr "మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. PD
 msgid "You're offline. History needs a connection."
 msgstr "మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. చరిత్రను చూడటానికి కనెక్షన్ అవసరం."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. చరిత్రను చూడటానికి కనెక్షన్ అవసరం. “PDF ను డౌన్‌లోడ్ చేయండి” ఈ పరికరంలో పని చేస్తుంది."
 

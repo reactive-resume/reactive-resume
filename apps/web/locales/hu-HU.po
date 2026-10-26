@@ -726,7 +726,7 @@ msgstr "{stars, plural, one {Csillagozd a Reactive Resume-ot a GitHubon, # csill
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# történet} other {# történet}}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "{suggestion} may be available. Get yours here →"
 msgstr "{suggestion} elérhető lehet. Szerezd meg a sajátodat itt →"
 
@@ -844,7 +844,7 @@ msgstr "10 perces eligazítás"
 msgid "10–11 recommended"
 msgstr "10-11 ajánlott"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 fájl"
 
@@ -903,15 +903,11 @@ msgstr "90 nap"
 msgid "A"
 msgstr "A"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Az „Elérhetőségek megjelenítése” gomb az embereknek mutatja meg őket, a keresőmotoroknak nem."
-
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "A elfogadja és R elutasítja a fókuszált szerkesztést. ↑ és ↓ válthat a szerkesztések között."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "A levél biztonsági másolata. Levélként importálja vissza a Reactive Resume-ba."
 
@@ -1256,7 +1252,7 @@ msgstr "AI szolgáltató hozzáadása"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "Adjon hozzá egy @ jelet és a domaint, például name@example.com"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "Adjon hozzá egy címet."
 
@@ -1423,7 +1419,7 @@ msgstr "Adja hozzá a domaint a @ után, például {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Adja hozzá a tartományvégződést, például {domain}.com"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Add hozzá ezeket a rekordokat ott, ahol a domaint kezeled, majd ellenőrizd. A változások terjedése néhány órát is igénybe vehet."
 
@@ -1492,7 +1488,7 @@ msgstr "Tapasztalatként hozzáadva a Tudástárhoz."
 msgid "Added to Prepare"
 msgstr "Hozzáadva a Felkészüléshez"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "Cím"
 
@@ -1725,7 +1721,7 @@ msgstr "és {0} több"
 msgid "and counting"
 msgstr "és számolás"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "Egy másik önéletrajza ezt a címet használja."
 
@@ -2059,10 +2055,6 @@ msgstr "Kérdezz, vagy írj le egy változást…"
 #: src/features/homepage/faq.tsx
 msgid "Asked and <0>answered.</0>"
 msgstr "Kérdezett és <0>válaszolt.</0>"
-
-#: src/features/resume/share/share-panel.tsx
-msgid "asked for contact details"
-msgstr "kérte az elérhetőségeket"
 
 #: src/features/homepage/prepare.tsx
 msgid "Asks for an example of your onboarding work."
@@ -2574,7 +2566,7 @@ msgstr "Ellenőrizze egy másik fájlt"
 msgid "Check any PDF, no account needed"
 msgstr "Ellenőrizze bármelyik PDF-t, nincs szükség fiókra"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Check DNS"
 msgstr "DNS ellenőrzése"
 
@@ -2661,7 +2653,7 @@ msgstr "Az exportált PDF ellenőrzése…"
 msgid "Checking your preferences"
 msgstr "Preferenciáid ellenőrzése"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "Ellenőrzés… Mentés után elérhető a másolás."
 
@@ -2791,7 +2783,7 @@ msgstr "Ügyfél-azonosító"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2968,7 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "Megerősíti: ma {time}, videóhívásban."
 
 #: src/features/assistant/provider-setup.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "Csatlakozás"
@@ -3021,7 +3013,7 @@ msgstr "Csatlakoztatva"
 msgid "Connected applications"
 msgstr "Csatlakoztatott alkalmazások"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "Csatlakoztatva. A domained az elsődleges önéletrajzodat nyitja meg."
 
@@ -3152,7 +3144,7 @@ msgid "Copied"
 msgstr "Másolva"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3626,8 +3618,8 @@ msgstr "Nem sikerült menteni ezt az ütemezést. Próbáld újra."
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "Nem sikerült menteni a módosításokat. Próbálja újra, mielőtt folytatná."
@@ -3732,6 +3724,7 @@ msgstr "Nem sikerült leválasztani a jelentkezést. Próbáld újra."
 msgid "Couldn't unlock the document. Try again."
 msgstr "Nem sikerült feloldani a dokumentum zárolását. Próbáld újra."
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "Nem sikerült frissíteni a megosztást. Próbáld újra."
@@ -3768,7 +3761,7 @@ msgstr "Nem sikerült frissíteni az önéletrajzot. Próbáld újra."
 msgid "Couldn't update the timeline. Try again."
 msgstr "Nem sikerült frissíteni az idővonalat. Próbáld újra."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "Nem sikerült frissíteni a levél verzióit. Próbáld újra."
 
@@ -4362,7 +4355,7 @@ msgstr "Az ide áthelyezett dokumentumok 30 napig maradnak itt."
 msgid "Does it use AI?"
 msgstr "AI-t használ?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Domain connected"
 msgstr "Domain csatlakoztatva"
 
@@ -4398,8 +4391,8 @@ msgstr "Dupla ellenőrzés"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "Letöltés"
 
@@ -4411,7 +4404,7 @@ msgstr "Töltse le a {label}-t"
 msgid "Download {name} sample PDF"
 msgstr "Töltse le a(z) {name} PDF-mintát"
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Download & history"
 msgstr "Letöltés és előzmények"
 
@@ -4429,7 +4422,7 @@ msgid "Download CSV"
 msgstr "CSV letöltése"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "A letöltés nem sikerült. Próbáld újra."
 
@@ -4455,7 +4448,7 @@ msgid "Download totals can include repeat clicks."
 msgstr "A letöltések összege tartalmazhatja az ismétlődő kattintásokat."
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "Letöltött {file}"
 
@@ -4463,7 +4456,7 @@ msgstr "Letöltött {file}"
 msgid "Downloaded {file} and the cover letter"
 msgstr "Letöltötte a {file}-t és a kísérőlevelet"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "Letöltötte önéletrajzát és ezt a levelet"
 
@@ -5265,7 +5258,7 @@ msgid "For"
 msgstr "Mert"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "Gyökérdomainhez (például example.com) a CNAME helyett A és AAAA rekordokat használj {0} címeivel."
 
@@ -5710,8 +5703,8 @@ msgid "Hiring team"
 msgstr "Bérbeadó csapat"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
 msgstr "Történelem"
 
@@ -6543,10 +6536,6 @@ msgstr "A hossz önmagában nem hiba, és nincs egyetemes egyoldalas szabály. T
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "Hagyja, hogy az AI kliensek, például a Claude vagy a Cursor elolvassák és szerkeszthessék önéletrajzát a fenti API billentyű használatával."
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Let visitors ask to see them"
-msgstr "A látogatók kérhetik a megtekintésüket"
-
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "Kezdjük azzal, ami van"
@@ -6677,7 +6666,7 @@ msgid "Link an application…"
 msgstr "Linkelj egy álláspályázatot…"
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "Link másolva"
@@ -6768,7 +6757,7 @@ msgid "Live · updates as you edit"
 msgstr "Élő · frissítések szerkesztés közben"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "Élő: {0}"
 
@@ -9298,7 +9287,7 @@ msgstr "Toborzó"
 msgid "Recruiter reply"
 msgstr "Toborzói válasz"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "A toborzók ezt a nevet látják. Az Ön neve és a „kísérőlevél” jól működik."
 
@@ -9424,7 +9413,7 @@ msgstr "Távmunka"
 msgid "Remote, Hybrid, a city…"
 msgstr "Távoli, hibrid, város…"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "Távolítsa el"
@@ -9688,7 +9677,7 @@ msgstr "Önéletrajz · elküldött verzió"
 msgid "Resume (optional)"
 msgstr "önéletrajz (nem kötelező)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "önéletrajz + levél"
 
@@ -10126,8 +10115,8 @@ msgstr "Mentve a Tudástárba, csak ehhez a jelentkezéshez."
 msgid "Saved to Saved · Practice"
 msgstr "Mentve a Mentett lapra · Gyakorlás"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/share-panel.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "Mentés {0}/{username}/{slug}… Mentés után elérhető a másolás."
 
@@ -10544,11 +10533,11 @@ msgstr "Megosztás"
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "Ossza meg nyilvános linkjét, adjon hozzá jelszót, vagy tartsa privátban. Válasszon a 3 láthatósági lehetőség közül. Exportáljon PDF vagy Word formátumba, vagy vigye magával az összes adatot JSON néven."
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "Ossza meg a szakaszokat"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "Megosztás ezen keresztül…"
 
@@ -10629,10 +10618,6 @@ msgstr "Minden típus megjelenítése"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "A műsor lezárva"
-
-#: src/features/resume/share/web-page-text.ts
-msgid "Show contact details"
-msgstr "Elérhetőségek megjelenítése"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -11684,7 +11669,7 @@ msgstr "Az üdvözlés a név után következik."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "A kulcs titkosítva van a szerveren, és soha többé nem jelenik meg. A mentés teszteli a kapcsolatot."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "A levél úgy ahogy van"
 
@@ -11784,7 +11769,7 @@ msgstr "A szolgáltató válaszát nem sikerült ellenőrizni. Próbáld újra."
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Az ok az Insights számára megmarad. A linkelt dokumentumokhoz nem nyúlnak hozzá."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "A rekordok még nem láthatók. Ellenőrizd később újra."
 
@@ -12011,7 +11996,7 @@ msgstr "Ez egy XFA űrlap, így a legtöbb szoftver csak az üres vázat olvassa
 msgid "This is not a common resume page size."
 msgstr "Ez nem egy megszokott önéletrajz-oldalméret."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Ez a betű és a „{resumeName}” két PDFs néven szerepel, amelyek elnevezése megegyezik."
 
@@ -12290,7 +12275,7 @@ msgid "Trust this device for 30 days"
 msgstr "Az eszköz megjegyzése 30 napig"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "Próbáld ki a {0}-t"
 
@@ -12350,7 +12335,7 @@ msgstr "Kétlépcsős ellenőrzés kikapcsolása"
 msgid "Turn off two-step verification?"
 msgstr "Kikapcsolod a kétlépcsős ellenőrzést?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "Kapcsolja be a linket a cím kiválasztásához."
 
@@ -12699,7 +12684,7 @@ msgstr "Használat minden jelentkezéshez"
 msgid "Use in coaching: {excerpt}"
 msgstr "Használat a coachingban: {excerpt}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "Használjon kisbetűket, számokat és kötőjeleket."
 
@@ -13417,7 +13402,7 @@ msgid "You"
 msgstr "Te"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "Ezt már használja a „{0}” típushoz."
 
@@ -13585,7 +13570,7 @@ msgstr "A dátumaid többféleképpen vannak megírva."
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "Adataid megváltoztak az önéletrajzon. A levél is frissült."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "A domained"
 
@@ -13706,7 +13691,7 @@ msgstr "A felvételed átírásra ide kerül: {0}, ami tokeneket használhat azo
 msgid "Your requirements"
 msgstr "Az elvárásaid"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "az önéletrajzát"
 

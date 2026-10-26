@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { EnrichedTextInput } from "react-native-enriched-html";
+import { normalizeSlug, SLUG_PATTERN } from "@reactive-resume/resume/sharing";
 import { client } from "@/api/client";
 import { resumeFieldFocus, useResumeStore } from "@/draft";
 import { resume as draftResume } from "@/draft/runtime";
@@ -11,7 +12,6 @@ import { useNewDocuments } from "@/features/documents/new-documents";
 import { useDocumentOperations } from "@/features/documents/queries";
 import { flushResume } from "@/features/share/document";
 import { printResume } from "@/features/share/files";
-import { normalizeSlug, validSlug } from "@/features/share/model";
 import { routes } from "@/routes";
 import { useBuilderChrome } from "@/shell/builder-chrome";
 import { useKeyCommands } from "@/shell/key-commands";
@@ -199,12 +199,14 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 									autoCapitalize="none"
 									autoCorrect={false}
 									helper={t`Leave empty to generate an available address from the name.`}
-									error={slug && !validSlug(slug) ? t`Use lowercase letters, numbers and single dashes.` : undefined}
+									error={
+										slug && !SLUG_PATTERN.test(slug) ? t`Use lowercase letters, numbers and single dashes.` : undefined
+									}
 								/>
 								<Button
 									label={t`Duplicate`}
 									loading={operations.busy}
-									disabled={!name.trim() || (!!slug && !validSlug(slug))}
+									disabled={!name.trim() || (!!slug && !SLUG_PATTERN.test(slug))}
 									onPress={() =>
 										void run(async () => {
 											const current = await flushResume(id);

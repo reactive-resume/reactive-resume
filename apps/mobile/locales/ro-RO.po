@@ -696,10 +696,6 @@ msgstr "2-3 propoziții se citesc cel mai bine"
 msgid "24 hours before"
 msgstr "Cu 24 de ore înainte"
 
-#: src/features/share/web-page.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Un buton „Arată datele de contact” le dezvăluie oamenilor, nu motoarelor de căutare."
-
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "O copie de rezervă a acestei scrisori. Se importă înapoi în Reactive Resume sub formă de scrisoare."
@@ -1380,7 +1376,7 @@ msgstr "Oricare"
 msgid "Any font, in Advanced"
 msgstr "Orice font, în Avansat"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Oricine are linkul va putea vizualiza CV-ul dvs."
 
@@ -1611,10 +1607,6 @@ msgstr "Solicitați administratorului serverului să activeze criptarea acredit�
 #: src/features/assistant/assistant-screen.tsx
 msgid "Ask, or describe a change…"
 msgstr "Întrebați sau descrieți o schimbare..."
-
-#: src/features/share/link.tsx
-msgid "asked for contact details"
-msgstr "au cerut datele de contact"
 
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
@@ -1997,7 +1989,7 @@ msgstr "Schimbați fusul orar"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "S-a schimbat direct CV-ul (o conversație anterioară)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Modificările nu au putut fi salvate. Reîncercați înainte de a continua."
 
@@ -2254,7 +2246,7 @@ msgstr "Șterge intrările sale; secțiunea rămâne. Puteți anula."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Închide"
 
@@ -2372,7 +2364,7 @@ msgstr "Comprimați sau eliminați imaginile mari pentru a menține încărcări
 msgid "Confirm applied"
 msgstr "Confirmați trimiterea candidaturii"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Confirmă parola"
 
@@ -3518,7 +3510,7 @@ msgid "Double-checking"
 msgstr "Se verifică din nou"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download"
@@ -3530,7 +3522,7 @@ msgstr "Descarcă"
 msgid "Download {0}"
 msgstr "Descărcați {0}"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Download & history"
 msgstr "Descărcare și istoric"
@@ -4416,7 +4408,7 @@ msgstr "Echipa de angajare"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
 msgstr "Istorie"
 
@@ -5035,10 +5027,6 @@ msgstr "Au mai rămas mai puțin de 48 de ore."
 #: app/(tabs)/settings/ai-mcp.tsx
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
 msgstr "Permiteți clienților AI precum Claude sau Cursor să vă citească și să vă editeze CV-urile, folosind o cheie API."
-
-#: src/features/share/web-page.tsx
-msgid "Let visitors ask to see them"
-msgstr "Permite vizitatorilor să ceară să le vadă"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6408,10 +6396,6 @@ msgstr "Deschideți în Oferte"
 msgid "Open letter"
 msgstr "Deschide scrisoarea"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Deschide pagina publică"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Întrebări deschise"
@@ -6443,6 +6427,10 @@ msgstr "Deschide lista"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Deschideți programarea"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Deschide pagina web"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6623,11 +6611,11 @@ msgstr "Chei de acces"
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Parolă"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "Parolele nu se potrivesc."
 
@@ -7475,7 +7463,7 @@ msgstr "Eliminați câmpul"
 msgid "Remove file"
 msgstr "Elimină fișierul"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Elimină parola"
 
@@ -7497,7 +7485,7 @@ msgstr "Eliminați întrebarea"
 msgid "Remove role"
 msgstr "Eliminați rolul"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Eliminați parola?"
 
@@ -7597,11 +7585,7 @@ msgstr "Raportați o problemă"
 msgid "Report received by your server operator. Thank you."
 msgstr "Raport primit de operatorul serverului dvs. Multumesc."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Raportați CV-ul partajat"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Solicitați o parolă"
 
@@ -7735,8 +7719,8 @@ msgstr "{0} a fost preluat folosind {1}. Timpul de recuperare nu stabilește pro
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8359,7 +8343,7 @@ msgstr "Serverul s-a schimbat. Reveniți la Documente și încercați din nou."
 msgid "Set a follow-up"
 msgstr "Stabiliți o urmărire"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Setați parola"
 
@@ -8635,8 +8619,8 @@ msgstr "Conectați-vă la {server}, apoi continuați la documentul conectat."
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
+#: src/features/share/export-screen.tsx
 #: src/features/share/pane.tsx
-#: src/features/share/screen.tsx
 msgid "Sign in to continue."
 msgstr "Conectați-vă pentru a continua."
 
@@ -9622,7 +9606,7 @@ msgstr "Acest document este blocat. Deblocați-l înainte de a vă păstra edit�
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Acest document este blocat. Deblocați-l pentru a primi sugestii."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Acest document este blocat. Puteți încă descărca și numi versiuni. Deblocați pentru a edita sau a restabili."
 
@@ -10241,7 +10225,7 @@ msgstr "Utilizați {url}"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Utilizați 3 până la 64 de litere mici, cifre, puncte, cratime și liniuțe de subliniere."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Folosiți 6-64 de caractere."
 
@@ -10508,11 +10492,11 @@ msgstr "Violență sau abuz"
 msgid "Visitors"
 msgstr "Vizitatori"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "Vizitatorii pot descărca PDF"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Vizitatorii intră în el înainte de a vedea CV-ul. Împărtășește-l doar cu oamenii în care ai încredere."
 
@@ -10895,7 +10879,7 @@ msgstr "Sunteți offline. Descărcarea PDF folosește acest dispozitiv. Alte for
 msgid "You're offline. History needs a connection."
 msgstr "Ești offline. Istoria are nevoie de o conexiune."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "You're offline. History needs a connection. Download PDF works on this device."
 msgstr "Ești offline. Istoricul are nevoie de conexiune. Descărcarea PDF funcționează pe acest dispozitiv."
 

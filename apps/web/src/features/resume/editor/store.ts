@@ -9,7 +9,7 @@ export const EDITOR_MODES = ["write", "design", "check", "share"] as const;
 export type EditorMode = (typeof EDITOR_MODES)[number];
 
 /** The Download & history sheet's tabs; each entry point opens its own. */
-export type ShareTab = "download" | "history";
+export type SheetTab = "download" | "history";
 
 export type CheckTab = "issues" | "match" | "writing";
 
@@ -45,8 +45,8 @@ type EditorStore = {
 	drawerOpen: boolean;
 	/** Tablet in landscape: the panel sits beside the page instead of over it. */
 	drawerPinned: boolean;
-	/** The open tab of the Share & export sheet, or null while it's closed. */
-	shareTab: ShareTab | null;
+	/** The open tab of the Download & history sheet, or null while it's closed. */
+	sheetTab: SheetTab | null;
 	/** History: the version shown on the page, read-only, instead of the current resume. */
 	historyVersionId: string | null;
 	assistantOpen: boolean;
@@ -101,7 +101,7 @@ type EditorStore = {
 	exportReportOpen: boolean;
 	setZoom: (zoom: number | "fit") => void;
 	/** Opens the sheet on a tab, or closes it (which also returns the page to now). */
-	setShareTab: (tab: ShareTab | null) => void;
+	setSheetTab: (tab: SheetTab | null) => void;
 	setAssistantOpen: (open: boolean, instant?: boolean) => void;
 	setSectionOpen: (sectionId: string, open: boolean) => void;
 	markSectionAdded: (sectionId: string) => void;
@@ -127,7 +127,7 @@ const initialState = {
 	zoom: "fit",
 	drawerOpen: false,
 	drawerPinned: false,
-	shareTab: null,
+	sheetTab: null,
 	historyVersionId: null,
 	assistantOpen: false,
 	assistantInstant: false,
@@ -158,7 +158,7 @@ const initialState = {
 export const useEditorStore = create<EditorStore>()((set) => ({
 	...initialState,
 	setZoom: (zoom) => set({ zoom: zoom === "fit" ? "fit" : clampZoom(zoom) }),
-	setShareTab: (shareTab) => set(shareTab ? { shareTab } : { shareTab, historyVersionId: null }),
+	setSheetTab: (sheetTab) => set(sheetTab ? { sheetTab } : { sheetTab, historyVersionId: null }),
 	setAssistantOpen: (assistantOpen, instant = false) => set({ assistantOpen, assistantInstant: instant }),
 	setSectionOpen: (sectionId, open) =>
 		set((state) => {

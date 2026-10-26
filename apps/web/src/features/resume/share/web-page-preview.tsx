@@ -2,10 +2,10 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useEffect, useState } from "react";
-import { renderResumeWebPage } from "@reactive-resume/pdf/web-page";
+import { useDebounceValue } from "usehooks-ts";
+import { renderResumeWebPage, webPageImageUrl } from "@reactive-resume/pdf/web-page";
 import { renderWebPageDocument, webPageMessages } from "@reactive-resume/pdf/web-page-document";
 import { removeContactDetails } from "@reactive-resume/resume/contact-details";
-import { getResumeSocialMeta } from "@reactive-resume/resume/social-meta";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
@@ -18,36 +18,22 @@ type Device = "desktop" | "phone";
 
 type PreviewSettings = {
 	hideContactDetails: boolean;
-	showContactButton: boolean;
 	showDownloadButtons: boolean;
 };
 
 /** The page a visitor gets, from the draft: same renderer as the server, contact details hidden as they'd be. */
 async function renderPreview(data: ResumeData, settings: PreviewSettings) {
-	const visible = structuredClone(data);
-	if (settings.hideContactDetails) removeContactDetails(visible);
-	const page = await renderResumeWebPage({
-		data: visible,
-		imageUrl: (source) =>
-			source.startsWith("/")
-				? `${window.location.origin}${source}`
-				: /^(https?:|data:image\/)/i.test(source)
-					? source
-					: undefined,
-	});
-	const social = getResumeSocialMeta(visible);
+	let visible = data;
+	if (settings.hideContactDetails) {
+		visible = structuredClone(data);
+		removeContactDetails(visible);
+	}
+	const page = await renderResumeWebPage({ data: visible, imageUrl: webPageImageUrl(window.location.origin) });
 	return renderWebPageDocument({
 		page,
 		messages: webPageMessages(visible.metadata.page.locale),
-		head: {
-			title: social.title,
-			description: social.description,
-			canonicalUrl: window.location.href,
-			indexable: false,
-		},
 		// The preview is inert (no scripts, no requests); these only decide which controls show.
 		downloadUrl: settings.showDownloadButtons ? "#" : undefined,
-		contactUrl: settings.hideContactDetails && settings.showContactButton ? "#" : undefined,
 		creditUrl: data.metadata.web?.showCredit === false ? undefined : window.location.origin,
 	});
 }
@@ -63,25 +49,23 @@ export function WebPagePreview() {
 	const [document, setDocument] = useState<string>();
 
 	const hideContactDetails = resume.hideContactDetails ?? false;
-	const showContactButton = resume.showContactButton !== false;
 	const showDownloadButtons = resume.showDownloadButtons !== false;
 
+	// Typing renders once it pauses, not on every keystroke.
+	const [debouncedData] = useDebounceValue(data, 200);
+
 	useEffect(() => {
-		if (!data) return;
+		if (!debouncedData) return;
 		let current = true;
-		// Typing renders once it pauses, not on every keystroke.
-		const timer = setTimeout(() => {
-			void renderPreview(data, { hideContactDetails, showContactButton, showDownloadButtons })
-				.then((html) => {
-					if (current) setDocument(html);
-				})
-				.catch(() => undefined);
-		}, 200);
+		void renderPreview(debouncedData, { hideContactDetails, showDownloadButtons })
+			.then((html) => {
+				if (current) setDocument(html);
+			})
+			.catch(() => undefined);
 		return () => {
 			current = false;
-			clearTimeout(timer);
 		};
-	}, [data, hideContactDetails, showContactButton, showDownloadButtons]);
+	}, [debouncedData, hideContactDetails, showDownloadButtons]);
 
 	return (
 		<div className="flex h-full min-h-0 flex-col items-center gap-3 bg-sunken p-4">

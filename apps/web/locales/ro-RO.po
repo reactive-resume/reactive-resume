@@ -726,7 +726,7 @@ msgstr "{stars, plural, one {Dă o stea pentru Reactive Resume pe GitHub, # stea
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# poveste} few {# povești} other {# de povești}}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "{suggestion} may be available. Get yours here →"
 msgstr "{suggestion} ar putea fi disponibil. Obține-l pe al tău aici →"
 
@@ -844,7 +844,7 @@ msgstr "Briefing de 10 minute"
 msgid "10–11 recommended"
 msgstr "10-11 recomandat"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 dosare"
 
@@ -903,15 +903,11 @@ msgstr "90 de zile"
 msgid "A"
 msgstr "A"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "A “Show contact details” button reveals them to people, not to search engines."
-msgstr "Un buton „Arată datele de contact” le dezvăluie oamenilor, nu motoarelor de căutare."
-
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "A acceptă și R respinge editarea focalizată. ↑ și ↓ se deplasează între editări."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "O copie de rezervă a acestei scrisori. Se importă înapoi în Reactive Resume sub formă de scrisoare."
 
@@ -1256,7 +1252,7 @@ msgstr "Adăugați furnizorul AI"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "Adăugați un @ și domeniul, cum ar fi name@example.com"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "Adăugați o adresă."
 
@@ -1423,7 +1419,7 @@ msgstr "Adăugați domeniul după @, cum ar fi {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Adăugați sfârșitul domeniului, cum ar fi {domain}.com"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Adaugă aceste înregistrări acolo unde gestionezi domeniul, apoi verifică. Modificările pot avea nevoie de câteva ore ca să ajungă la toată lumea."
 
@@ -1492,7 +1488,7 @@ msgstr "Adăugat în Cunoștințe ca experiență."
 msgid "Added to Prepare"
 msgstr "Adăugat în Pregătire"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "Adresa"
 
@@ -1725,7 +1721,7 @@ msgstr "și {0} mai mult"
 msgid "and counting"
 msgstr "și numărând"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "Un alt CV folosește această adresă."
 
@@ -2059,10 +2055,6 @@ msgstr "Întrebați sau descrieți o schimbare..."
 #: src/features/homepage/faq.tsx
 msgid "Asked and <0>answered.</0>"
 msgstr "Întrebat și <0>răspuns.</0>"
-
-#: src/features/resume/share/share-panel.tsx
-msgid "asked for contact details"
-msgstr "au cerut datele de contact"
 
 #: src/features/homepage/prepare.tsx
 msgid "Asks for an example of your onboarding work."
@@ -2574,7 +2566,7 @@ msgstr "Verificați alt fișier"
 msgid "Check any PDF, no account needed"
 msgstr "Verificați orice PDF, nu este nevoie de cont"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Check DNS"
 msgstr "Verifică DNS"
 
@@ -2661,7 +2653,7 @@ msgstr "Se verifică PDF exportat..."
 msgid "Checking your preferences"
 msgstr "Se verifică preferințele dvs."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "Se verifică... Copierea este disponibilă după salvare."
 
@@ -2791,7 +2783,7 @@ msgstr "ID client"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2968,7 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "Confirmă astăzi la {time}, prin video."
 
 #: src/features/assistant/provider-setup.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "Conectează"
@@ -3021,7 +3013,7 @@ msgstr "Conectat"
 msgid "Connected applications"
 msgstr "Aplicații conectate"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "Conectat. Domeniul tău deschide CV-ul principal."
 
@@ -3152,7 +3144,7 @@ msgid "Copied"
 msgstr "Copiat"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3626,8 +3618,8 @@ msgstr "Nu s-a putut salva această programare. Încearcă din nou."
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "Modificările nu au putut fi salvate. Încercați din nou înainte de a continua."
@@ -3732,6 +3724,7 @@ msgstr "Nu s-a putut dezasocia candidatura. Încearcă din nou."
 msgid "Couldn't unlock the document. Try again."
 msgstr "Documentul nu a putut fi deblocat. Încearcă din nou."
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "Nu s-a putut actualiza partajarea. Încearcă din nou."
@@ -3768,7 +3761,7 @@ msgstr "Nu s-a putut actualiza CV-ul. Încearcă din nou."
 msgid "Couldn't update the timeline. Try again."
 msgstr "Nu s-a putut actualiza cronologia. Încearcă din nou."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "Nu s-au putut actualiza versiunile acestei scrisori. Încearcă din nou."
 
@@ -4362,7 +4355,7 @@ msgstr "Documentele pe care le muți aici rămân timp de 30 de zile."
 msgid "Does it use AI?"
 msgstr "Folosește AI?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Domain connected"
 msgstr "Domeniu conectat"
 
@@ -4398,8 +4391,8 @@ msgstr "Se verifică din nou"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "Descarcă"
 
@@ -4411,7 +4404,7 @@ msgstr "Descărcați {label}"
 msgid "Download {name} sample PDF"
 msgstr "Descărcați PDF exemplu de {name}"
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Download & history"
 msgstr "Descărcare și istoric"
 
@@ -4429,7 +4422,7 @@ msgid "Download CSV"
 msgstr "Descarcă CSV"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "Descărcarea a eșuat. Încearcă din nou."
 
@@ -4455,7 +4448,7 @@ msgid "Download totals can include repeat clicks."
 msgstr "Descărcările totale pot include clicuri repetate."
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "{file} descărcat"
 
@@ -4463,7 +4456,7 @@ msgstr "{file} descărcat"
 msgid "Downloaded {file} and the cover letter"
 msgstr "S-au descărcat {file} și scrisoarea de intenție"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "Ți-am descărcat CV-ul și această scrisoare"
 
@@ -5265,7 +5258,7 @@ msgid "For"
 msgstr "Pentru"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "Pentru un domeniu rădăcină, cum ar fi example.com, folosește înregistrări A și AAAA cu adresele {0} în loc de CNAME."
 
@@ -5710,8 +5703,8 @@ msgid "Hiring team"
 msgstr "Echipa de angajare"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
 msgstr "Istorie"
 
@@ -6543,10 +6536,6 @@ msgstr "Lungimea nu este un defect, iar nu există o regulă universală a unei 
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "Permiteți clienților AI precum Claude sau Cursor să vă citească și să vă editeze CV-urile, folosind o cheie API de mai sus."
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Let visitors ask to see them"
-msgstr "Permite vizitatorilor să ceară să le vadă"
-
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "Să începem cu ceea ce ai"
@@ -6677,7 +6666,7 @@ msgid "Link an application…"
 msgstr "Conectați o cerere de angajare..."
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "Link copiat"
@@ -6768,7 +6757,7 @@ msgid "Live · updates as you edit"
 msgstr "Actualizări live · pe măsură ce editați"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "Live la {0}"
 
@@ -9298,7 +9287,7 @@ msgstr "Recruter"
 msgid "Recruiter reply"
 msgstr "Răspuns către recrutor"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "Recrutorii văd acest nume. Numele tău plus „Scrisoarea de intenție” funcționează bine."
 
@@ -9424,7 +9413,7 @@ msgstr "La distanță"
 msgid "Remote, Hybrid, a city…"
 msgstr "Remote, hibrid, un oraș…"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "Elimina"
@@ -9688,7 +9677,7 @@ msgstr "CV · versiunea trimisă"
 msgid "Resume (optional)"
 msgstr "CV (opțional)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "CV + scrisoare"
 
@@ -10126,8 +10115,8 @@ msgstr "Salvat în Cunoștințe, privat pentru această candidatură."
 msgid "Saved to Saved · Practice"
 msgstr "Salvat în Salvat · Exersare"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/share-panel.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "Se salvează {0}/{username}/{slug}... Copierea este disponibilă după salvare."
 
@@ -10544,11 +10533,11 @@ msgstr "Distribuie"
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "Partajați un link public, adăugați o parolă sau păstrați-l privat. Alegeți dintre 3 opțiuni de vizibilitate. Exportați în PDF sau Word sau luați toate datele cu dvs. ca JSON."
 
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "Partajați secțiuni"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "Distribuie prin..."
 
@@ -10629,10 +10618,6 @@ msgstr "Afișați toate tipurile"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "Emisiune închisă"
-
-#: src/features/resume/share/web-page-text.ts
-msgid "Show contact details"
-msgstr "Arată datele de contact"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -11684,7 +11669,7 @@ msgstr "Salutul urmează după nume."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Cheia este criptată pe server și nu se mai afișează niciodată. Salvarea testează conexiunea."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "Scrisoarea așa cum este"
 
@@ -11784,7 +11769,7 @@ msgstr "Răspunsul furnizorului nu a putut fi verificat. Încearcă din nou."
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Motivul este păstrat pentru Insights. Documentele conectate nu sunt atinse."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "Înregistrările nu sunt vizibile încă. Verifică din nou mai târziu."
 
@@ -12011,7 +11996,7 @@ msgstr "Acesta este un formular XFA, astfel încât majoritatea programelor cite
 msgid "This is not a common resume page size."
 msgstr "Aceasta nu este o dimensiune de pagină obișnuită pentru un CV."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Această literă și „{resumeName}” ca două PDFs, numite pentru a se potrivi."
 
@@ -12290,7 +12275,7 @@ msgid "Trust this device for 30 days"
 msgstr "Consideră acest dispozitiv de încredere timp de 30 de zile"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "Încercați {0}"
 
@@ -12350,7 +12335,7 @@ msgstr "Dezactivează verificarea în doi pași"
 msgid "Turn off two-step verification?"
 msgstr "Dezactivezi verificarea în doi pași?"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "Activați linkul pentru a alege o adresă."
 
@@ -12699,7 +12684,7 @@ msgstr "Folosiți pentru toate candidaturile"
 msgid "Use in coaching: {excerpt}"
 msgstr "Folosiți în coaching: {excerpt}"
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "Folosiți litere mici, cifre și liniuțe simple."
 
@@ -13417,7 +13402,7 @@ msgid "You"
 msgstr "Tu"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "Utilizați deja acest lucru pentru „{0}”."
 
@@ -13585,7 +13570,7 @@ msgstr "Datele dvs. sunt scrise în mai multe moduri diferite."
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "Detaliile tale s-au schimbat în CV. Scrisoarea a fost actualizată și ea."
 
-#: src/features/resume/share/share-panel.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "Domeniul tău"
 
@@ -13706,7 +13691,7 @@ msgstr "Înregistrarea ajunge la {0} pentru transcriere, ceea ce poate folosi to
 msgid "Your requirements"
 msgstr "Cerințele dvs."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "CV-ul tău"
 

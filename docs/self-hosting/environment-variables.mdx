@@ -47,13 +47,13 @@ turn on an optional feature.
 | `SERVER_PORT`    | `3001`                    | Port the server listens on when `NODE_ENV` is not `production`, which is the local development setup. Ignored by the image.                                       |
 | `ROOT_RESUME_ID` | unset                     | Shows one public resume at `/` instead of the home page. See [Show one resume at your root address](/self-hosting/examples#show-one-resume-at-your-root-address). |
 
-## Short links and custom domains
+## Second domain and custom domains
 
-Both are off unless set. Each points people at a resume its owner marked **Primary resume** in Share.
+Both are off unless set. Every account's short link, `/<username>`, opens the resume its owner marked **Primary resume** in Share, with or without them.
 
 | Variable                        | Default | Description                                                                                                                                                                                                                                                                                                                      |
 | ------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SHORT_LINK_URL`                | unset   | A second domain, such as `https://rx.cv`, whose `/<username>` redirects to that account's primary resume. Every other address on it redirects to `APP_URL`. Point the domain at this server.                                                                                                                                     |
+| `APP_ALIAS_URL`                 | unset   | A second domain, such as `https://rx.cv`, that serves the same public pages as `APP_URL`: resumes, short links, the home page. Sign-in and the editor redirect to `APP_URL`, and search engines are pointed there. When set, Share copies links on this domain. Point the domain at this server.                                 |
 | `CUSTOM_DOMAIN_TARGET`          | unset   | The host people point their own domain's CNAME record at, such as `domains.example.com`. It must resolve to this server.                                                                                                                                                                                                         |
 | `CUSTOM_DOMAIN_PROVIDER_SECRET` | unset   | At least 32 characters. Traefik's HTTP provider sends it in an `X-Provider-Secret` header to read `/api/internal/traefik?service=<service>&entryPoint=<entry point>&certResolver=<resolver>`, which returns a router, and so a certificate, for every verified domain. Custom domains need both this and `CUSTOM_DOMAIN_TARGET`. |
 
