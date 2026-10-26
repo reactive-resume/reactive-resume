@@ -7,6 +7,7 @@ import {
 } from "@reactive-resume/api/features/custom-domain";
 import { env } from "@reactive-resume/env/server";
 import { serveResumePage } from "../static/resume-page";
+import { onAppDomain } from "./alias";
 
 // Hosts seen recently and whose primary resume they open; a minute is how long a new verification takes to show.
 const cache = new Map<string, { username: string | null; expires: number }>();
@@ -36,7 +37,7 @@ export async function handleCustomDomain(request: Request, trustedClient: string
 	if (url.pathname.startsWith("/api/resumes/") || /^\/favicon\.(ico|svg)$/.test(url.pathname)) return null;
 	if (url.pathname === "/robots.txt")
 		return new Response("User-agent: *\nAllow: /\n", { headers: { "Content-Type": "text/plain; charset=UTF-8" } });
-	if (url.pathname !== "/") return Response.redirect(new URL(`${url.pathname}${url.search}`, env.APP_URL), 301);
+	if (url.pathname !== "/") return Response.redirect(onAppDomain(url), 301);
 
 	// Without a primary resume, the page says it isn't shared, as for any address that isn't.
 	return serveResumePage(request, { username, primary: true }, trustedClient, { customDomain: url.hostname });
@@ -50,13 +51,10 @@ const NAME = /^[\w@.-]{1,100}$/;
  */
 export async function handleTraefikProvider(request: Request): Promise<Response> {
 	const secret = env.CUSTOM_DOMAIN_PROVIDER_SECRET;
-	const given = request.headers.get("x-provider-secret") ?? "";
-	if (
-		!secret ||
-		!isCustomDomainsEnabled() ||
-		given.length !== secret.length ||
-		!timingSafeEqual(Buffer.from(given), Buffer.from(secret))
-	)
+	// Compared as bytes: a header with non-ASCII characters can match the secret's length in characters but not bytes.
+	const given = Buffer.from(request.headers.get("x-provider-secret") ?? "");
+	const expected = Buffer.from(secret ?? "");
+	if (!secret || !isCustomDomainsEnabled() || given.length !== expected.length || !timingSafeEqual(given, expected))
 		return new Response("Not Found", { status: 404 });
 
 	const params = new URL(request.url).searchParams;

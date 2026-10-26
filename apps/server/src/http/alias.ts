@@ -3,6 +3,13 @@ import { isAppSectionPath } from "@reactive-resume/utils/app-paths";
 
 // Host and port: in development both domains can be localhost on different ports.
 const aliasHost = env.APP_ALIAS_URL ? new URL(env.APP_ALIAS_URL).host : undefined;
+const appOrigin = new URL(env.APP_URL).origin;
+
+/**
+ * The same path and query on `APP_URL`. Joined as text, not resolved as a URL: a path such as `//evil.example` would
+ * otherwise replace the host and make the redirect an open one.
+ */
+export const onAppDomain = (url: URL) => `${appOrigin}${url.pathname}${url.search}`;
 
 /**
  * The alias domain (`APP_ALIAS_URL`) serves the same public pages as `APP_URL`: resumes, `/<username>`, the home and
@@ -14,5 +21,5 @@ export function handleAlias(request: Request): Response | null {
 	if (!aliasHost) return null;
 	const url = new URL(request.url);
 	if (url.host !== aliasHost || !isAppSectionPath(url.pathname)) return null;
-	return Response.redirect(new URL(`${url.pathname}${url.search}`, env.APP_URL), 301);
+	return Response.redirect(onAppDomain(url), 301);
 }

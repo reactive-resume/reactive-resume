@@ -146,7 +146,14 @@ async function showPage(request: Request, match: ResumeMatch, trustedClient: str
 	);
 }
 
+// The password form is one short field. Checked here, not by the route, because a custom domain's page is served by
+// middleware that runs before any route's body limit.
+const MAX_FORM_BYTES = 16 * 1024;
+
 async function submitPassword(request: Request, match: ResumeMatch, trustedClient: string, options: PageOptions) {
+	const length = request.headers.get("content-length");
+	if (length === null || !(Number(length) <= MAX_FORM_BYTES))
+		return new Response("Payload Too Large", { status: 413, headers: { "Cache-Control": "no-store" } });
 	const form = await request.formData().catch(() => null);
 	const password = form?.get("password");
 	const responseHeaders = new Headers();

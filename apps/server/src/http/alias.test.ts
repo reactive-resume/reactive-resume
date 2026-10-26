@@ -4,7 +4,7 @@ vi.mock("@reactive-resume/env/server", () => ({
 	env: { APP_URL: "https://rxresu.me", APP_ALIAS_URL: "https://rx.cv" },
 }));
 
-const { handleAlias } = await import("./alias");
+const { handleAlias, onAppDomain } = await import("./alias");
 
 const visit = (path: string) => handleAlias(new Request(`https://rx.cv${path}`));
 
@@ -24,4 +24,10 @@ describe("the app's alias domain", () => {
 			expect(visit(path)).toBeNull();
 		},
 	);
+
+	it("keeps a path that looks like another host on the app's own address", () => {
+		expect(onAppDomain(new URL("https://rx.cv//evil.example/login?next=1"))).toBe(
+			"https://rxresu.me//evil.example/login?next=1",
+		);
+	});
 });
