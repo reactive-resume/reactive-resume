@@ -256,12 +256,34 @@ verb "to document".
 **Trash** — where deleted documents wait 30 days before they're removed for good. A place (noun),
 like a recycle bin. Not the verb "to trash".
 
-**Write · Design · Check** — the three modes of the editor, shown side by side as a switch. Each is
-the name of a mode, so translate them as short, parallel labels. **Write** is editing the content,
-**Design** is choosing how the resume looks (a noun here), and **Check** is reviewing whether
-software can read it (a noun here, like "review"), not a bank cheque or a checkmark.
+**Write · Design · Check · Share** — the four modes of the editor, shown side by side as a switch.
+Each is the name of a mode, so translate them as short, parallel labels. **Write** is editing the
+content, **Design** is choosing how the resume looks (a noun here), **Check** is reviewing whether
+software can read it (a noun here, like "review"), not a bank cheque or a checkmark, and **Share**
+is publishing the resume as a web page and controlling who sees what (a noun here, the mode's name).
 
-**Share & export** — the sheet with the public link, downloads and version history.
+**Download & history** — the sheet with downloads and version history. It replaces **Share &
+export**; the public link moved to the **Share** mode.
+
+**Web page** — the published, browser version of a resume that opens at its **Public URL**, drawn in
+the resume's own **Template**. Not a "website" (it is one page), not a "profile" (that word means
+the **Profiles** section), and not the PDF.
+
+**Primary resume** — the one resume an account's short link and custom domain open. Not the "main"
+or "default" resume.
+
+**Short link** — the short address (`/<username>`, such as `rx.cv/dkowalski`) that opens the **Primary
+resume**. It works on every domain the app answers on. Not a link-shortening service.
+
+**Custom domain** — the owner's own web address, such as `john.dev`, that opens their **Primary
+resume**. "Domain" as in web address, not a field of knowledge.
+
+**Show in search engines** — whether search engines such as Google may list a resume's web page.
+Off unless the owner turns it on.
+
+**Contact details** — the email, phone, location and custom fields in the resume's header, and the
+contact information inside **References**. The owner can hide them from everyone viewing the web
+page or downloading its PDF.
 
 **Assistant** — the AI panel beside the page. It replaces both the "AI agent" page and the "AI
 assistant" sheet, so there is now only one AI term.

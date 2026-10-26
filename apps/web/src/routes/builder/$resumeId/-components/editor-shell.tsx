@@ -6,9 +6,9 @@ import { Suspense, useEffect } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { cn } from "@reactive-resume/utils/style";
+import { DownloadSheet } from "./download-sheet";
 import { EditorBar } from "./editor-bar";
 import { DesignPanel, DesignSheet, ModePanel } from "./mode-panels";
-import { ShareSheet } from "./share-sheet";
 import { useEditorHotkeys } from "./use-editor-hotkeys";
 import { ResumeAssistant } from "@/features/assistant/dock";
 import { openAssistantFrom } from "@/features/assistant/open";
@@ -25,7 +25,7 @@ import { whenIdle } from "@/features/resume/preview/resume-thumbnail.shared";
 /**
  * The editor: a 56px bar over a 400px panel and the page canvas (desktop). On tablets the panel is a 380px
  * drawer over the page, pinnable beside it in landscape; on phones one view shows at a time, switched by
- * Write · Page · Design · Check tabs.
+ * Write · Page · Design · Check · Share tabs.
  */
 export function EditorShell() {
 	const [mode, setMode] = useEditorMode();
@@ -57,7 +57,7 @@ export function EditorShell() {
 				assistant={<ResumeAssistant />}
 				mobile={<MobileBody mode={mode} onModeChange={setMode} />}
 			>
-				<ShareSheet />
+				<DownloadSheet />
 				<EditorHotkeys onModeChange={setMode} />
 			</EditorFrame>
 		</Tabs>
@@ -73,7 +73,7 @@ function useOpenVersionFromUrl() {
 
 	useEffect(() => {
 		if (!version) return;
-		useEditorStore.getState().setShareTab("history");
+		useEditorStore.getState().setSheetTab("history");
 		useEditorStore.setState({ historyVersionId: version });
 		void navigate({
 			to: ".",
@@ -109,7 +109,8 @@ function EditorHotkeys({ onModeChange }: { onModeChange: (mode: EditorMode) => v
 	return null;
 }
 
-const panelLabel = (mode: EditorMode) => ({ write: t`Content`, design: t`Design`, check: t`Check` })[mode];
+const panelLabel = (mode: EditorMode) =>
+	({ write: t`Content`, design: t`Design`, check: t`Check`, share: t`Share` })[mode];
 
 type MobileBodyProps = {
 	mode: EditorMode;
@@ -167,6 +168,7 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 					{ view: "page", icon: "file-text", label: t`Page` },
 					{ view: "design", icon: "palette", label: t`Design` },
 					{ view: "check", icon: "list-checks", label: t`Check` },
+					{ view: "share", icon: "globe-hemisphere-west", label: t`Share` },
 				]}
 				view={view}
 				onModeChange={onModeChange}

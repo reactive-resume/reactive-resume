@@ -35,6 +35,11 @@ msgstr "\"{0}\" skjult"
 msgid "“{0}” moved to Trash"
 msgstr "\"{0}\" flyttet til papirkurven"
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr "“{0}” er ikke længere dit primære CV."
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "“{name}” moved to Trash"
@@ -721,6 +726,10 @@ msgstr "{stars, plural, one {Giv Reactive Resume en stjerne på GitHub, # stjern
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# historie} other {# historier}}"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "{suggestion} may be available. Get yours here →"
+msgstr "{suggestion} er måske ledigt. Få dit her →"
+
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
 msgstr "{summary}. Åbner i Karriere → Tilbud."
@@ -835,7 +844,7 @@ msgstr "10-minutters briefing"
 msgid "10–11 recommended"
 msgstr "10-11 anbefales"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 filer"
 
@@ -898,7 +907,7 @@ msgstr "H"
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "A accepterer, og R afviser den fokuserede redigering. ↑ og ↓ flytter mellem redigeringer."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "En backup af dette brev. Importerer tilbage til Reactive Resume som et brev."
 
@@ -1243,7 +1252,7 @@ msgstr "Tilføj AI-udbyder"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "Tilføj et @ og domænet, som name@example.com"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "Tilføj en adresse."
 
@@ -1410,6 +1419,10 @@ msgstr "Tilføj domænet efter @, som {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Tilføj domæneendelsen, som {domain}.com"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
+msgstr "Tilføj disse poster der, hvor du administrerer domænet, og tjek derefter. Det kan tage et par timer, før ændringerne når ud til alle."
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/career/workspace/shell.tsx
@@ -1475,7 +1488,7 @@ msgstr "Føjet til Viden som en erfaring."
 msgid "Added to Prepare"
 msgstr "Føjet til Forbered"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "Adresse"
 
@@ -1708,7 +1721,7 @@ msgstr "og {0} mere"
 msgid "and counting"
 msgstr "og tæller"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "Et andet af dine CV'er bruger denne adresse."
 
@@ -1757,7 +1770,7 @@ msgstr "Enhver skrifttype, i Avanceret"
 msgid "Anyone who opens the public URL will need this password."
 msgstr "Alle, der åbner den offentlige URL, skal bruge denne adgangskode."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Alle med linket vil kunne se dit CV."
 
@@ -1888,6 +1901,7 @@ msgstr "Ansøgningsfaner"
 msgid "Application updated"
 msgstr "Ansøgningen er opdateret"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
@@ -2552,6 +2566,10 @@ msgstr "Tjek en anden fil"
 msgid "Check any PDF, no account needed"
 msgstr "Tjek enhver PDF, ingen konto nødvendig"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Check DNS"
+msgstr "Tjek DNS"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Check every claim, date and result against your experience."
 msgstr "Tjek hver påstand, dato og hvert resultat op mod din erfaring."
@@ -2635,7 +2653,7 @@ msgstr "Kontrollerer den eksporterede PDF..."
 msgid "Checking your preferences"
 msgstr "Tjekker dine præferencer"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "Kontrollerer... Kopi er tilgængelig efter lagring."
 
@@ -2716,7 +2734,6 @@ msgid "Claude Desktop"
 msgstr "Claude Desktop"
 
 #: src/features/applications/components/detail/next-step-card.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
 msgstr "Ryd"
@@ -2738,6 +2755,7 @@ msgid "Clear section"
 msgstr "Ryd sektion"
 
 #: src/components/ui/combobox.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Clear selection"
 msgstr "Ryd valg"
@@ -2765,7 +2783,7 @@ msgstr "Klient-ID"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2905,6 +2923,10 @@ msgstr "Komplet sikkerhedskopiering af data. Importerer tilbage til Reactive Res
 msgid "Compress or remove large images to keep uploads quick."
 msgstr "Komprimer eller fjern store billeder for at holde uploads hurtige."
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Computer"
+msgstr "Computer"
+
 #: src/hooks/use-confirm.tsx
 msgid "Confirm"
 msgstr "Bekræft"
@@ -2938,6 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "Bekræfter {time} i dag, via video."
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "Forbind"
@@ -2989,6 +3012,10 @@ msgstr "Forbundet"
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Forbundne applikationer"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Connected. Your domain opens your primary resume."
+msgstr "Forbundet. Dit domæne åbner dit primære CV."
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Connecting your {providerName} account…"
@@ -3117,7 +3144,7 @@ msgid "Copied"
 msgstr "Kopieret"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3149,7 +3176,6 @@ msgid "Copy it now. For your security, it won't be shown again."
 msgstr "Kopier det nu. For din sikkerhed vil den ikke blive vist igen."
 
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
 msgid "Copy link"
 msgstr "Kopiér link"
 
@@ -3271,6 +3297,7 @@ msgid "Couldn't copy the transcript. Try again."
 msgstr "Kunne ikke kopiere transskriptionen. Prøv igen."
 
 #: src/features/career/coach-thread.tsx
+#: src/features/resume/share/copy-link-button.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "Kunne ikke kopiere til udklipsholderen. Prøv igen."
 
@@ -3592,8 +3619,8 @@ msgstr "Kunne ikke gemme denne tidsplan. Prøv igen."
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "Kunne ikke gemme dine ændringer. Prøv igen, før du fortsætter."
@@ -3698,7 +3725,8 @@ msgstr "Kunne ikke fjerne tilknytningen til ansøgningen. Prøv igen."
 msgid "Couldn't unlock the document. Try again."
 msgstr "Kunne ikke låse dokumentet op. Prøv igen."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "Kunne ikke opdatere deling. Prøv igen."
 
@@ -3734,7 +3762,7 @@ msgstr "Kunne ikke opdatere CV'et. Prøv igen."
 msgid "Couldn't update the timeline. Try again."
 msgstr "Tidslinjen kunne ikke opdateres. Prøv igen."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "Kunne ikke opdatere dette brevs versioner. Prøv igen."
 
@@ -3748,11 +3776,6 @@ msgstr "Kunne ikke uploade billedet. Prøv igen."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Kunne ikke bekræfte koden. Indtast den aktuelle kode fra din autentificeringsapp."
-
-#. Fallback toast when resume password verification fails unexpectedly
-#: src/features/auth/pages/resume-password.tsx
-msgid "Couldn't verify the password. Try again."
-msgstr "Kunne ikke bekræfte adgangskoden. Prøv igen."
 
 #. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
@@ -3957,7 +3980,7 @@ msgid "Daily at {clock} · next {next}"
 msgstr "Dagligt kl. {clock} · næste {next}"
 
 #. placeholder {0}: summary.peak
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "Daglige visninger over 30 dage, peak {0}"
 
@@ -4333,6 +4356,10 @@ msgstr "Dokumenter, du flytter hertil, bliver her i 30 dage."
 msgid "Does it use AI?"
 msgstr "Bruger den AI?"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Domain connected"
+msgstr "Domæne forbundet"
+
 #: src/features/auth/pages/login.tsx
 msgid "Don't have an account? <0/>"
 msgstr "Har du ikke en konto? <0/>"
@@ -4365,8 +4392,8 @@ msgstr "Dobbelttjekker"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "Download"
 
@@ -4377,6 +4404,10 @@ msgstr "Hent {label}"
 #: src/features/templates/gallery.tsx
 msgid "Download {name} sample PDF"
 msgstr "Download {name} eksempel PDF"
+
+#: src/features/resume/editor/chrome/download-sheet.tsx
+msgid "Download & history"
+msgstr "Download og historik"
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download application details, contacts, notes, and timeline history as CSV."
@@ -4392,12 +4423,12 @@ msgid "Download CSV"
 msgstr "Download CSV-fil"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "Download mislykkedes. Prøv igen."
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
 msgstr "Download PDF"
 
@@ -4413,12 +4444,12 @@ msgstr "Download eksempel PDF"
 msgid "Download them"
 msgstr "Download dem"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Download totals can include repeat clicks."
 msgstr "Downloadtotaler kan omfatte gentagne klik."
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "Downloadet {file}"
 
@@ -4426,11 +4457,11 @@ msgstr "Downloadet {file}"
 msgid "Downloaded {file} and the cover letter"
 msgstr "Downloadede {file} og følgebrevet"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "Downloadede dit CV og dette brev"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "downloads"
 msgstr "downloads"
 
@@ -4815,13 +4846,9 @@ msgstr "Indtast en af dine gemte backup-koder for at få adgang til din konto."
 msgid "Enter the 6-digit code."
 msgstr "Indtast den 6-cifrede kode."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Enter the password the resume owner shared with you."
 msgstr "Indtast den adgangskode, som ejeren af CV'et har delt med dig."
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Enter the password."
-msgstr "Indtast adgangskoden."
 
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Enter the same password in both fields."
@@ -5231,6 +5258,11 @@ msgstr "Skrifttyperne kunne ikke indlæses. Prøv igen."
 msgid "For"
 msgstr "For"
 
+#. placeholder {0}: domain.target
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
+msgstr "For et roddomæne som example.com skal du bruge A- og AAAA-poster med adresserne for {0} i stedet for CNAME-posten."
+
 #: src/features/career/workspace/prepare.tsx
 msgid "For each: situation, task, your action, result, reflection. Leave out numbers you're unsure of."
 msgstr "For hver: situation, opgave, din handling, resultat, refleksion. Udelad tal, du er usikker på."
@@ -5625,6 +5657,10 @@ msgstr "Skjult: {hiddenList}"
 msgid "Hide {title} from the page"
 msgstr "Skjul {title} fra siden"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Hide contact details"
+msgstr "Skjul kontaktoplysninger"
+
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Hide from page"
 msgstr "Skjul fra siden"
@@ -5668,10 +5704,11 @@ msgid "Hiring team"
 msgstr "Ansættelsesteam"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
-msgstr "Historie"
+msgstr "Historik"
 
 #: src/features/documents/document-actions.tsx
 msgid "Hold to delete"
@@ -5792,7 +5829,7 @@ msgstr "Hvis det kommer fra en scanning, er det forventet. Ellers bør du fjerne
 msgid "If it's part of your experience, add it where it belongs."
 msgstr "Hvis det er en del af din oplevelse, skal du tilføje det, hvor det hører hjemme."
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "If someone sent you this link, ask them for a new one."
 msgstr "Hvis nogen har sendt dig dette link, så bed dem om et nyt."
 
@@ -6605,7 +6642,6 @@ msgstr "Linjer så tæt på kan løbe sammen, når de læses. Brug mindst {minim
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/write/fields.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Link"
 msgstr "Forbindelse"
 
@@ -6632,14 +6668,10 @@ msgid "Link an application…"
 msgstr "Link en jobansøgning..."
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/public/public-resume.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "Linket er kopieret"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Link is live"
-msgstr "Linket er live"
 
 #: src/features/documents/document-actions.tsx
 msgid "Link to application"
@@ -6649,7 +6681,7 @@ msgstr "Link til jobansøgning"
 msgid "Link to application…"
 msgstr "Link til jobansøgning..."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Link turned off. The address is kept"
 msgstr "Link slået fra. Adressen opbevares"
 
@@ -6727,7 +6759,7 @@ msgid "Live · updates as you edit"
 msgstr "Live · opdateringer, mens du redigerer"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "Live på {0}"
 
@@ -6862,7 +6894,7 @@ msgstr "Lav"
 msgid "Lower the design sheet"
 msgstr "Sænk designarket"
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Lavet med Reactive Resume, gratis og open source"
 
@@ -6896,6 +6928,10 @@ msgstr "Gør det kortere"
 msgid "Make it yours, then take it with you."
 msgstr "Gør det til dit, og tag det så med dig."
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Make primary"
+msgstr "Gør til primært"
+
 #: src/features/documents/documents-page.tsx
 msgid "Make private"
 msgstr "Gør privat"
@@ -6915,6 +6951,10 @@ msgstr "Sørg for, at den synlige tekst og destinationen stemmer overens."
 #: src/features/ats-checker/messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "Gør dem synligt større, federe eller med store bogstaver."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Make this your primary resume?"
+msgstr "Skal dette være dit primære CV?"
 
 #: src/libs/locale.ts
 msgid "Malay"
@@ -7110,6 +7150,7 @@ msgid "Mono"
 msgstr "Mono"
 
 #: src/features/resume/editor/chrome/bar.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "More download formats"
 msgstr "Flere download-formater"
 
@@ -7715,6 +7756,10 @@ msgstr "Ikke gennemført"
 msgid "Not applied yet"
 msgstr "Ikke ansøgt endnu"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Not available while the resume needs a password."
+msgstr "Ikke tilgængelig, mens CV'et kræver en adgangskode."
+
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "Ikke forbundet"
@@ -7908,9 +7953,9 @@ msgstr "Slukket"
 msgid "Off: the coach won’t see it or claim it."
 msgstr "Slået fra: coachen ser det ikke og påstår det ikke."
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Off. Only you can see this resume."
-msgstr "Slukket. Kun du kan se dette CV."
+#: src/features/resume/share/share-panel.tsx
+msgid "Off. Let recruiters find you on Google by turning this on."
+msgstr "Fra. Slå dette til, så rekrutterere kan finde dig på Google."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Off. The letter keeps its own copy of your details."
@@ -7939,9 +7984,9 @@ msgstr "Kontordage ikke oplyst"
 msgid "Offline · saved on this device"
 msgstr "Offline · gemt på denne enhed"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
-msgstr "På. Alle med linket kan se. Det er ikke opført eller indekseret af søgemaskiner."
+#: src/features/resume/share/share-panel.tsx
+msgid "On. Anyone with the link can see your web page."
+msgstr "Til. Alle med linket kan se din webside."
 
 #: src/features/homepage/remember.tsx
 msgid "Onboarding story"
@@ -8023,7 +8068,7 @@ msgstr "Kun de første {MAX_IMPORT} rækker importeres ad gangen, så {overflow}
 msgid "Only the first pages were checked."
 msgstr "Kun de første sider blev tjekket."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "Kun du ser disse"
 
@@ -8081,10 +8126,6 @@ msgstr "Åbn i Tilbud"
 msgid "Open preferences"
 msgstr "Åbn præferencer"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Open public page"
-msgstr "Åbn den offentlige side"
-
 #: src/features/career/workspace/prepare.tsx
 msgid "Open story"
 msgstr "Åbn historie"
@@ -8100,6 +8141,10 @@ msgstr "Åbn Reactive Resume-appen"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Åbn tidsplanen"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Open web page"
+msgstr "Åbn webside"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/today.tsx
@@ -8318,16 +8363,15 @@ msgstr "Nøgler"
 
 #. Authentication provider display name in account settings
 #. Label for password input on login form
-#. Label for password input on protected resume access form
 #. Label for password input on registration form
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/share.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/features/settings/account/auth-hooks.ts
 #: src/features/settings/account/security.tsx
 msgid "Password"
@@ -8337,7 +8381,7 @@ msgstr "Adgangskode"
 msgid "Password changed"
 msgstr "Adgangskode ændret"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "Adgangskode fjernet"
 
@@ -8345,7 +8389,7 @@ msgstr "Adgangskode fjernet"
 msgid "Password reset. Sign in with your new password."
 msgstr "Adgangskoden er nulstillet. Log ind med din nye adgangskode."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "Adgangskode indstillet"
 
@@ -8462,6 +8506,7 @@ msgstr "Persisk"
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
+#: src/features/resume/share/web-page-preview.tsx
 msgid "Phone"
 msgstr "Telefon"
 
@@ -8731,6 +8776,10 @@ msgstr "Tryk på <0>Enter</0> for at åbne"
 msgid "Preview {name} sample PDF"
 msgstr "Se eksempel på {name}-eksempel-PDF"
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Preview size"
+msgstr "Størrelse på forhåndsvisning"
+
 #. placeholder {0}: templates[previewTemplate].name
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
@@ -8753,6 +8802,10 @@ msgstr "Forrige måned"
 msgid "Primary color"
 msgstr "Primær farve"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Primary resume"
+msgstr "Primært CV"
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Print"
 msgstr "Trykke"
@@ -8761,9 +8814,9 @@ msgstr "Trykke"
 msgid "Print or export the form to a flat PDF before sending it."
 msgstr "Udskriv eller eksporter formularen til en flad PDF, før du sender den."
 
-#: src/features/resume/public/public-resume.tsx
-msgid "Printing is turned off for this resume."
-msgstr "Udskrivning er slået fra for dette CV."
+#: src/features/resume/share/share-panel.tsx
+msgid "Privacy"
+msgstr "Privatliv"
 
 #: src/features/homepage/footer.tsx
 msgid "Privacy policy"
@@ -8866,7 +8919,7 @@ msgstr "Udbyder"
 msgid "Public"
 msgstr "Offentlig"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Public link"
 msgstr "Offentligt link"
 
@@ -8881,6 +8934,26 @@ msgstr "Offentlig, med en adgangskode"
 #: src/libs/resume/section.tsx
 msgid "Publications"
 msgstr "Publikationer"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish"
+msgstr "Udgiv"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish it to share a link that opens on any screen. Only you can see it until then."
+msgstr "Udgiv det for at dele et link, der kan åbnes på enhver skærm. Indtil da er det kun dig, der kan se det."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page first."
+msgstr "Udgiv websiden først."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted."
+msgstr "Udgiv websiden for at tælle visninger og downloads. Tællingerne er anonyme, og søgemaskiner tælles ikke med."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link and custom domain."
+msgstr "Udgiv dette CV for at åbne det via dit korte link og dit eget domæne."
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Publisher"
@@ -8902,11 +8975,11 @@ msgstr "Saml det hele på <0>én side.</0>"
 msgid "Put the caret in a line to improve it"
 msgstr "Sæt karet i en linje for at forbedre det"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code"
 msgstr "QR-kode"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code for {url}"
 msgstr "QR-kode til {url}"
 
@@ -9217,7 +9290,7 @@ msgstr "Rekrutterer"
 msgid "Recruiter reply"
 msgstr "Svar fra rekrutterer"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "Rekrutterere ser dette navn. Dit navn plus \"omslagsbrev\" fungerer godt."
 
@@ -9343,6 +9416,7 @@ msgstr "Fjernarbejde"
 msgid "Remote, Hybrid, a city…"
 msgstr "Remote, hybrid, en by…"
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "Fjerne"
@@ -9391,7 +9465,7 @@ msgstr "Fjern fil"
 msgid "Remove passkey"
 msgstr "Fjern passkey"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove password"
 msgstr "Fjern adgangskode"
 
@@ -9417,7 +9491,7 @@ msgstr "Fjern rolle"
 msgid "Remove tag"
 msgstr "Fjern tag"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "Vil du fjerne adgangskoden?"
 
@@ -9499,7 +9573,7 @@ msgstr "Svaret er kopieret"
 msgid "Report a bug"
 msgstr "Rapportér en fejl"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Require a password"
 msgstr "Kræv en adgangskode"
 
@@ -9590,8 +9664,6 @@ msgstr "CV"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-card.tsx
-#: src/routes/_home/index.tsx
-#: src/routes/$username/$slug.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "CV"
@@ -9608,7 +9680,7 @@ msgstr "CV · sendt version"
 msgid "Resume (optional)"
 msgstr "CV (valgfrit)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "CV + brev"
 
@@ -10046,8 +10118,8 @@ msgstr "Gemt i Viden, privat for denne ansøgning."
 msgid "Saved to Saved · Practice"
 msgstr "Gemt under Gemt · Øvelse"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/link-tab.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "Gemmer {0}/{username}/{slug}... Kopi er tilgængelig efter lagring."
 
@@ -10144,6 +10216,10 @@ msgstr "Søgning dækker over titler, tags og linkede jobansøgninger."
 #: src/features/documents/documents-page.tsx
 msgid "Search documents"
 msgstr "Søg i dokumenter"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off."
+msgstr "Søgemaskiner som Google kan vise din webside i søgeresultater. Det kan tage uger, før den dukker op – eller forsvinder, når du slår dette fra."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Search facts"
@@ -10449,29 +10525,22 @@ msgstr "Skyggebredde"
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Share"
 msgstr "Dele"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
-msgid "Share & export"
-msgstr "Del & eksporter"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "Del et offentligt link, tilføj en adgangskode, eller hold det privat. Vælg mellem 3 synlighedsmuligheder. Eksporter til PDF eller Word, eller tag alle dine data med dig som JSON."
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-msgid "Share public resume"
-msgstr "Del offentligt CV"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "Del sektioner"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "Del via…"
 
@@ -10505,6 +10574,10 @@ msgstr "Kort og direkte. Fint, hvis stillingsopslaget beder om korthed."
 msgid "Short and polite, for the recruiter"
 msgstr "Kort og høflig, for rekruttereren"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link and domain"
+msgstr "Kort link og domæne"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "Forkort spørgsmål til 2.000 tegn og svar til 6.000 tegn, før du markerer dette som ansøgt."
@@ -10516,6 +10589,10 @@ msgstr "Kortere"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Show"
 msgstr "Vise"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show “Made with Reactive Resume”"
+msgstr "Vis “Lavet med Reactive Resume”"
 
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #. placeholder {0}: visible.length - shown.length
@@ -10552,6 +10629,10 @@ msgstr "Vis overskrift"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Show icons"
 msgstr "Vis ikoner"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show in search engines"
+msgstr "Vis i søgemaskiner"
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -10687,7 +10768,7 @@ msgstr "Logger ud..."
 msgid "Signing up..."
 msgstr "Tilmeld dig..."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "since last view"
 msgstr "siden sidste visning"
 
@@ -11483,7 +11564,7 @@ msgstr "Den fil er for stor til at kontrollere. PDFs op til 25 MB arbejde."
 msgid "That link couldn't be read. Paste the posting text instead."
 msgstr "Det link kunne ikke læses. Indsæt jobopslagets tekst i stedet."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "That password isn't correct. Check it with the resume owner and try again."
 msgstr "Adgangskoden er forkert. Tjek den med CV'ets ejer, og prøv igen."
 
@@ -11591,7 +11672,7 @@ msgstr "Hilsenen følger navnet."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Nøglen er krypteret på serveren og vises aldrig igen. Gem tester forbindelsen."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "Brevet som det er"
 
@@ -11690,6 +11771,10 @@ msgstr "Udbyderens svar kunne ikke bekræftes. Prøv igen."
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Årsagen er gemt til Insights. Linkede dokumenter berøres ikke."
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "The records aren't visible yet. Check again later."
+msgstr "Posterne er ikke synlige endnu. Tjek igen senere."
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11914,7 +11999,7 @@ msgstr "Dette er en XFA-formular, så de fleste programmer læser kun den tomme 
 msgid "This is not a common resume page size."
 msgstr "Dette er ikke en almindelig sidestørrelse for et CV."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Dette bogstav og \"{resumeName}\" som to PDFs, navngivet til at matche."
 
@@ -11974,7 +12059,7 @@ msgstr "Dette CV er låst. Lås det op for at foretage ændringer."
 msgid "This resume is long."
 msgstr "Dette CV er langt."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume is password-protected"
 msgstr "Dette CV er beskyttet med adgangskode"
 
@@ -11982,7 +12067,7 @@ msgstr "Dette CV er beskyttet med adgangskode"
 msgid "This resume isn't linked to an application yet."
 msgstr "Dette CV er endnu ikke knyttet til en jobansøgning."
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
 msgstr "Dette CV deles ikke lige nu."
 
@@ -12097,7 +12182,7 @@ msgid "To"
 msgstr "Til"
 
 #: src/features/applications/components/calendar-view.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "I dag"
@@ -12193,7 +12278,7 @@ msgid "Trust this device for 30 days"
 msgstr "Husk denne enhed i 30 dage"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "Prøv {0}"
 
@@ -12253,13 +12338,9 @@ msgstr "Slå to-trins verifikation fra"
 msgid "Turn off two-step verification?"
 msgstr "Slå to-trins verifikation fra?"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "Slå linket til for at vælge en adresse."
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Turn on the public link to count views and downloads. Counts are anonymous."
-msgstr "Slå det offentlige link til for at tælle visninger og downloads. Brugstællinger er anonyme."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Turn on two-step verification"
@@ -12424,11 +12505,10 @@ msgstr "Fjern linket"
 msgid "Unlink this application"
 msgstr "Fjern linket til denne jobansøgning"
 
-#. Primary action button label to unlock a password-protected resume
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Unlock"
 msgstr "Lås op"
 
@@ -12545,7 +12625,6 @@ msgstr "Brug 3 til 64 små bogstaver, tal, prikker, bindestreger og understregni
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
-#: src/features/auth/pages/resume-password.tsx
 msgid "Use 64 characters or fewer."
 msgstr "Brug højst 64 tegn."
 
@@ -12608,7 +12687,7 @@ msgstr "Brug til alle ansøgninger"
 msgid "Use in coaching: {excerpt}"
 msgstr "Brug i coaching: {excerpt}"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "Brug små bogstaver, tal og enkelte bindestreger."
 
@@ -12701,6 +12780,11 @@ msgstr "Bruger den linkede jobansøgning"
 msgid "Uses the web search service set up in Settings. Results wait in Today for your review; applications and documents are never created for you."
 msgstr "Bruger den websøgningstjeneste, der er sat op i Indstillinger. Resultaterne venter under I dag på din gennemgang; ansøgninger og dokumenter oprettes aldrig for dig."
 
+#. placeholder {0}: templates[template].name
+#: src/features/resume/share/share-panel.tsx
+msgid "Uses your {0} template and Design, and fits any screen. Change them in Design."
+msgstr "Bruger din skabelon {0} og dit design og passer til enhver skærm. Skift dem under Design."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Uses your AI provider's own web search where supported, and reads links with the built-in reader."
 msgstr "Bruger din AI-udbyders egen websøgning, hvor understøttet, og læser links med den indbyggede læser."
@@ -12759,10 +12843,6 @@ msgstr "Verificerer kode..."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Verifying code…"
 msgstr "Bekræfter kode…"
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Verifying password..."
-msgstr "Verificerer adgangskode..."
 
 #: src/features/auth/pages/register.tsx
 msgid "Verifying your email confirms that you own this address."
@@ -12831,23 +12911,23 @@ msgstr "Se stillingsopslaget"
 msgid "Viewing {0} · {1} · read-only"
 msgstr "Viser {0} · {1} · skrivebeskyttet"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "views · 30 days"
 msgstr "visninger · 30 dage"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Views and downloads"
-msgstr "Visninger og downloads"
 
 #: src/features/homepage/share.tsx
 msgid "Visibility"
 msgstr "Sigtbarhed"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
+msgid "Visitors"
+msgstr "Besøgende"
+
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors can download the PDF"
 msgstr "Besøgende kan downloade PDF"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Besøgende indtaster det, før de ser cv'et. Del det kun med personer, du stoler på."
 
@@ -12895,6 +12975,14 @@ msgstr "Vi sendte et nyt bekræftelseslink til {0}."
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "Webadgang"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Web page"
+msgstr "Webside"
+
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Web page preview"
+msgstr "Forhåndsvisning af webside"
 
 #: src/features/career/coach.tsx
 msgid "Web research"
@@ -13317,7 +13405,7 @@ msgid "You"
 msgstr "Du"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "Du bruger allerede dette til \"{0}\"."
 
@@ -13485,6 +13573,10 @@ msgstr "Dine datoer er skrevet på flere forskellige måder."
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "Dine oplysninger er ændret på CV'et. Brevet er også opdateret."
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain"
+msgstr "Dit domæne"
+
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your email address changed on the resume. The letter updated too."
 msgstr "Din e-mailadresse er ændret på cv'et. Brevet er også opdateret."
@@ -13496,6 +13588,10 @@ msgstr "Din e-mailadresse er brudt op over flere tekststykker."
 #: src/features/auth/pages/error.tsx
 msgid "Your email address isn't verified with the provider. Verify it there, then try again."
 msgstr "Din e-mailadresse er ikke bekræftet hos udbyderen. Bekræft den der, og prøv derefter igen."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
+msgstr "Din e-mail, telefon, placering og andre oplysninger i sidehovedet samt referencers telefonnumre udelades fra websiden, dens PDF og søgeresultater."
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -13598,9 +13694,13 @@ msgstr "Din optagelse sendes til {0} for at blive transskriberet, hvilket kan br
 msgid "Your requirements"
 msgstr "Dine krav"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "dit CV"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your resume as a web page"
+msgstr "Dit CV som webside"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Your resume has a photo"
@@ -13630,6 +13730,19 @@ msgstr "Din valgte skrifttype kan ikke vise nogle tegn. De vises som “?”. Un
 msgid "Your server provides search for Applications and the assistant. Connect a service to read pages the built-in reader can't."
 msgstr "Din server tilbyder websøgning i Ansøgninger sektionen og for assistenten. Tilslut en tjeneste for at læse websider, som den indbyggede læser ikke kan læse."
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open “{0}”."
+msgstr "Dit korte link og dit eget domæne åbner “{0}”."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open this resume."
+msgstr "Dit korte link og dit eget domæne åbner dette CV."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
+msgstr "Dit korte link og dit eget domæne viser, at dette CV ikke er delt, indtil du udgiver det igen."
+
 #: src/features/career/coach.tsx
 msgid "your stories"
 msgstr "dine historier"
@@ -13645,6 +13758,10 @@ msgstr "Din tur"
 #: src/features/career/workspace/prepare.tsx
 msgid "Your two-minute introduction"
 msgstr "Din præsentation på to minutter"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your web page is live"
+msgstr "Din webside er online"
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your work is lost when you sign out or the session ends. Create an account or sign in to keep your resumes, cover letters and applications."

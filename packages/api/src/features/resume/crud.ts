@@ -148,6 +148,7 @@ export const crudRouter = {
 				message: "A resume with this slug already exists. Choose another slug.",
 				status: 400,
 			},
+			RESUME_NOT_PUBLIC: { status: 400, message: "Publish the resume before making it primary." },
 		})
 		.handler(({ context, input }) =>
 			resumeService.update({
@@ -161,6 +162,9 @@ export const crudRouter = {
 				...(input.data !== undefined ? { data: input.data } : {}),
 				...(input.isPublic !== undefined ? { isPublic: input.isPublic } : {}),
 				...(input.showDownloadButtons !== undefined ? { showDownloadButtons: input.showDownloadButtons } : {}),
+				...(input.showInSearchEngines !== undefined ? { showInSearchEngines: input.showInSearchEngines } : {}),
+				...(input.hideContactDetails !== undefined ? { hideContactDetails: input.hideContactDetails } : {}),
+				...(input.isPrimary !== undefined ? { isPrimary: input.isPrimary } : {}),
 			}),
 		),
 

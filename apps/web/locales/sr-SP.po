@@ -35,6 +35,11 @@ msgstr "„{0}“ је скривено"
 msgid "“{0}” moved to Trash"
 msgstr "„{0}“ је премештен у Отпад"
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr "„{0}“ више неће бити ваш примарни резиме."
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "“{name}” moved to Trash"
@@ -721,6 +726,10 @@ msgstr "{stars, plural, one {Дајте звездицу Reactive Resume-у на
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# прича} few {# приче} other {# прича}}"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "{suggestion} may be available. Get yours here →"
+msgstr "{suggestion} је можда доступан. Набавите свој овде →"
+
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
 msgstr "{summary}. Отвара се у Каријера → Понуде."
@@ -835,7 +844,7 @@ msgstr "Брифинг од 10 минута"
 msgid "10–11 recommended"
 msgstr "10–11 препоручено"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 фајла"
 
@@ -898,7 +907,7 @@ msgstr "А"
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "А прихвата, а Р одбија фокусирану измену. ↑ и ↓ крећу се између уређивања."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Резервна копија овог писма. Увози се назад у Reactive Resume као писмо."
 
@@ -1243,7 +1252,7 @@ msgstr "Додајте АИ провајдера"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "Додајте @ и домен, као што је name@example.com"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "Додајте адресу."
 
@@ -1410,6 +1419,10 @@ msgstr "Додајте домен после @, на пример {name}@ека�
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Додајте завршетак домена, на пример {domain}.com"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
+msgstr "Додајте ове записе тамо где управљате доменом, па проверите. Може да прође неколико сати док измене не стигну до свих."
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/career/workspace/shell.tsx
@@ -1475,7 +1488,7 @@ msgstr "Додато у Знање као искуство."
 msgid "Added to Prepare"
 msgstr "Додато у Припрему"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "Адреса"
 
@@ -1708,7 +1721,7 @@ msgstr "и {0} више"
 msgid "and counting"
 msgstr "и бројање"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "Још један ваш животопис користи ову адресу."
 
@@ -1757,7 +1770,7 @@ msgstr "Било који фонт, у напредном"
 msgid "Anyone who opens the public URL will need this password."
 msgstr "Свако ко отвори јавни URL мораће да зна ову лозинку."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Свако ко има везу моћи ће да види ваш резиме."
 
@@ -1888,6 +1901,7 @@ msgstr "Картице пријаве"
 msgid "Application updated"
 msgstr "Пријава ажурирана"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
@@ -2552,6 +2566,10 @@ msgstr "Проверите другу датотеку"
 msgid "Check any PDF, no account needed"
 msgstr "Проверите било који PDF, налог није потребан"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Check DNS"
+msgstr "Провери DNS"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Check every claim, date and result against your experience."
 msgstr "Проверите сваку тврдњу, датум и резултат у односу на своје искуство."
@@ -2635,7 +2653,7 @@ msgstr "Провера извезеног PDF…"
 msgid "Checking your preferences"
 msgstr "Провера ваших преференција"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "Проверавам... Копија је доступна након чувања."
 
@@ -2716,7 +2734,6 @@ msgid "Claude Desktop"
 msgstr "Claude Desktop"
 
 #: src/features/applications/components/detail/next-step-card.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
 msgstr "Обриши"
@@ -2738,6 +2755,7 @@ msgid "Clear section"
 msgstr "Очистите одељак"
 
 #: src/components/ui/combobox.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Clear selection"
 msgstr "Обриши избор"
@@ -2765,7 +2783,7 @@ msgstr "ИД клијента"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2905,6 +2923,10 @@ msgstr "Комплетна резервна копија података. По�
 msgid "Compress or remove large images to keep uploads quick."
 msgstr "Компресујте или уклоните велике слике како би отпремање било брзо."
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Computer"
+msgstr "Рачунар"
+
 #: src/hooks/use-confirm.tsx
 msgid "Confirm"
 msgstr "Потврди"
@@ -2938,6 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "Потврђује {time} данас, видео-позивом."
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "Повежи"
@@ -2989,6 +3012,10 @@ msgstr "Повезано"
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Повезане апликације"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Connected. Your domain opens your primary resume."
+msgstr "Повезано. Ваш домен отвара ваш примарни резиме."
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Connecting your {providerName} account…"
@@ -3117,7 +3144,7 @@ msgid "Copied"
 msgstr "Копирано"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3149,7 +3176,6 @@ msgid "Copy it now. For your security, it won't be shown again."
 msgstr "Копирајте га сада. Због ваше безбедности, неће се поново приказивати."
 
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
 msgid "Copy link"
 msgstr "Копирај везу"
 
@@ -3271,6 +3297,7 @@ msgid "Couldn't copy the transcript. Try again."
 msgstr "Није могуће копирати транскрипт. Покушајте поново."
 
 #: src/features/career/coach-thread.tsx
+#: src/features/resume/share/copy-link-button.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "Није могуће копирати у привремену меморију. Покушајте поново."
 
@@ -3592,8 +3619,8 @@ msgstr "Није могуће сачувати овај распоред. Пок
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "Није могуће сачувати промене. Покушајте поново пре него што наставите."
@@ -3698,7 +3725,8 @@ msgstr "Није могуће уклонити везу са пријавом. �
 msgid "Couldn't unlock the document. Try again."
 msgstr "Није могуће откључати документ. Покушајте поново."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "Није могуће ажурирати дељење. Покушајте поново."
 
@@ -3734,7 +3762,7 @@ msgstr "Није могуће ажурирати резиме. Покушајт�
 msgid "Couldn't update the timeline. Try again."
 msgstr "Ажурирање временске линије није успело. Покушајте поново."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "Није могуће ажурирати верзије овог писма. Покушајте поново."
 
@@ -3748,11 +3776,6 @@ msgstr "Није могуће отпремити фотографију. Пок�
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Није могуће потврдити кôд. Унесите тренутни кôд из апликације за аутентификацију."
-
-#. Fallback toast when resume password verification fails unexpectedly
-#: src/features/auth/pages/resume-password.tsx
-msgid "Couldn't verify the password. Try again."
-msgstr "Није могуће проверити лозинку. Покушајте поново."
 
 #. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
@@ -3957,7 +3980,7 @@ msgid "Daily at {clock} · next {next}"
 msgstr "Сваког дана у {clock} · следеће {next}"
 
 #. placeholder {0}: summary.peak
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "Дневни прегледи током 30 дана, врхунац {0}"
 
@@ -4333,6 +4356,10 @@ msgstr "Документи које овде преместите остају 3
 msgid "Does it use AI?"
 msgstr "Да ли користи АИ?"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Domain connected"
+msgstr "Домен је повезан"
+
 #: src/features/auth/pages/login.tsx
 msgid "Don't have an account? <0/>"
 msgstr "Немате налог? <0/>"
@@ -4365,8 +4392,8 @@ msgstr "Двострука провера"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "Преузми"
 
@@ -4377,6 +4404,10 @@ msgstr "Преузмите {label}"
 #: src/features/templates/gallery.tsx
 msgid "Download {name} sample PDF"
 msgstr "Преузмите пример PDF-а за {name}"
+
+#: src/features/resume/editor/chrome/download-sheet.tsx
+msgid "Download & history"
+msgstr "Преузимање и историја"
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download application details, contacts, notes, and timeline history as CSV."
@@ -4392,12 +4423,12 @@ msgid "Download CSV"
 msgstr "Преузмите ЦСВ"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "Преузимање није успело. Покушајте поново."
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
 msgstr "Преузми PDF"
 
@@ -4413,12 +4444,12 @@ msgstr "Преузмите узорак PDF-а"
 msgid "Download them"
 msgstr "Преузмите их"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Download totals can include repeat clicks."
 msgstr "Укупни број преузимања може укључивати поновљене кликове."
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "Преузето {file}"
 
@@ -4426,11 +4457,11 @@ msgstr "Преузето {file}"
 msgid "Downloaded {file} and the cover letter"
 msgstr "Преузето {file} и пропратно писмо"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "Преузео сам ваш животопис и ово писмо"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "downloads"
 msgstr "преузимања"
 
@@ -4815,13 +4846,9 @@ msgstr "Унесите један од сачуваних резервних к�
 msgid "Enter the 6-digit code."
 msgstr "Унесите шестоцифрени кôд."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Enter the password the resume owner shared with you."
 msgstr "Унесите лозинку коју је власник резимеа поделио са вама."
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Enter the password."
-msgstr "Унесите лозинку."
 
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Enter the same password in both fields."
@@ -5231,6 +5258,11 @@ msgstr "Фонтови нису могли да се учитају. Покуш�
 msgid "For"
 msgstr "За"
 
+#. placeholder {0}: domain.target
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
+msgstr "За основни домен као што је example.com, уместо CNAME записа користите A и AAAA записе са адресама за {0}."
+
 #: src/features/career/workspace/prepare.tsx
 msgid "For each: situation, task, your action, result, reflection. Leave out numbers you're unsure of."
 msgstr "За сваку: ситуација, задатак, ваша акција, резултат, рефлексија. Изоставите бројеве у које нисте сигурни."
@@ -5625,6 +5657,10 @@ msgstr "Скривено: {hiddenList}"
 msgid "Hide {title} from the page"
 msgstr "Сакриј {title} са странице"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Hide contact details"
+msgstr "Сакриј контакт податке"
+
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Hide from page"
 msgstr "Сакриј са странице"
@@ -5668,8 +5704,9 @@ msgid "Hiring team"
 msgstr "Тим за запошљавање"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
 msgstr "Историја"
 
@@ -5792,7 +5829,7 @@ msgstr "Ако потиче од скенирања, то је очекиван�
 msgid "If it's part of your experience, add it where it belongs."
 msgstr "Ако је то део вашег искуства, додајте га тамо где припада."
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "If someone sent you this link, ask them for a new one."
 msgstr "Ако вам је неко послао овај линк, тражите нови."
 
@@ -6605,7 +6642,6 @@ msgstr "Овако блиски редови могу да иду заједно
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/write/fields.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Link"
 msgstr "Линк"
 
@@ -6632,14 +6668,10 @@ msgid "Link an application…"
 msgstr "Повежите пријаву за посао…"
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/public/public-resume.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "Линк је копиран"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Link is live"
-msgstr "Линк је уживо"
 
 #: src/features/documents/document-actions.tsx
 msgid "Link to application"
@@ -6649,7 +6681,7 @@ msgstr "Линк до пријаве за посао"
 msgid "Link to application…"
 msgstr "Линк до пријаве за посао…"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Link turned off. The address is kept"
 msgstr "Веза је искључена. Адреса се чува"
 
@@ -6727,7 +6759,7 @@ msgid "Live · updates as you edit"
 msgstr "Уживо · ажурирања док уређујете"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "Уживо на {0}"
 
@@ -6862,7 +6894,7 @@ msgstr "Ниско"
 msgid "Lower the design sheet"
 msgstr "Спустите лист дизајна"
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Направљено са Reactive Resume, бесплатно и отвореног кода"
 
@@ -6896,6 +6928,10 @@ msgstr "Нека буде краће"
 msgid "Make it yours, then take it with you."
 msgstr "Нека буде ваш, па га понесите са собом."
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Make primary"
+msgstr "Постави као примарни"
+
 #: src/features/documents/documents-page.tsx
 msgid "Make private"
 msgstr "Учини приватним"
@@ -6915,6 +6951,10 @@ msgstr "Учините да се видљиви текст и одредиште
 #: src/features/ats-checker/messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "Учините их видљиво већим, подебљаним или писаним великим словима."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Make this your primary resume?"
+msgstr "Поставити овај резиме као примарни?"
 
 #: src/libs/locale.ts
 msgid "Malay"
@@ -7110,6 +7150,7 @@ msgid "Mono"
 msgstr "Моно"
 
 #: src/features/resume/editor/chrome/bar.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "More download formats"
 msgstr "Више формата за преузимање"
 
@@ -7715,6 +7756,10 @@ msgstr "Није примењено"
 msgid "Not applied yet"
 msgstr "Још није пријављено"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Not available while the resume needs a password."
+msgstr "Није доступно док резиме захтева лозинку."
+
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "Није повезано"
@@ -7908,9 +7953,9 @@ msgstr "Офф"
 msgid "Off: the coach won’t see it or claim it."
 msgstr "Искључено: саветник то неће видети нити тврдити."
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Off. Only you can see this resume."
-msgstr "Офф. Само ви можете да видите овај резиме."
+#: src/features/resume/share/share-panel.tsx
+msgid "Off. Let recruiters find you on Google by turning this on."
+msgstr "Искључено. Укључите ово да би вас регрутери пронашли на Google-у."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Off. The letter keeps its own copy of your details."
@@ -7939,9 +7984,9 @@ msgstr "Дани у канцеларији нису наведени"
 msgid "Offline · saved on this device"
 msgstr "Офлајн · сачувано на овом уређају"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
-msgstr "Он. Свако са везом може да види. Није наведена нити индексирана од стране претраживача."
+#: src/features/resume/share/share-panel.tsx
+msgid "On. Anyone with the link can see your web page."
+msgstr "Укључено. Свако ко има везу може да види вашу веб-страницу."
 
 #: src/features/homepage/remember.tsx
 msgid "Onboarding story"
@@ -8023,7 +8068,7 @@ msgstr "Одједном се увози само првих {MAX_IMPORT} ред
 msgid "Only the first pages were checked."
 msgstr "Проверене су само прве странице."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "Само ти видиш ове"
 
@@ -8081,10 +8126,6 @@ msgstr "Отвори у Понудама"
 msgid "Open preferences"
 msgstr "Отвори подешавања"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Open public page"
-msgstr "Отворите јавну страницу"
-
 #: src/features/career/workspace/prepare.tsx
 msgid "Open story"
 msgstr "Отвори причу"
@@ -8100,6 +8141,10 @@ msgstr "Отворите апликацију Reactive Resume"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Отвори распоред"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Open web page"
+msgstr "Отвори веб-страницу"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/today.tsx
@@ -8318,16 +8363,15 @@ msgstr "Кључеви за приступ"
 
 #. Authentication provider display name in account settings
 #. Label for password input on login form
-#. Label for password input on protected resume access form
 #. Label for password input on registration form
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/share.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/features/settings/account/auth-hooks.ts
 #: src/features/settings/account/security.tsx
 msgid "Password"
@@ -8337,7 +8381,7 @@ msgstr "Лозинка"
 msgid "Password changed"
 msgstr "Лозинка је промењена"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "Лозинка је уклоњена"
 
@@ -8345,7 +8389,7 @@ msgstr "Лозинка је уклоњена"
 msgid "Password reset. Sign in with your new password."
 msgstr "Лозинка је ресетована. Пријавите се новом лозинком."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "Лозинка је постављена"
 
@@ -8462,6 +8506,7 @@ msgstr "Персијски"
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
+#: src/features/resume/share/web-page-preview.tsx
 msgid "Phone"
 msgstr "Телефон"
 
@@ -8731,6 +8776,10 @@ msgstr "Притисните <0>Enter</0> да бисте отворили"
 msgid "Preview {name} sample PDF"
 msgstr "Прегледајте {name} пример PDF-а"
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Preview size"
+msgstr "Величина прегледа"
+
 #. placeholder {0}: templates[previewTemplate].name
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
@@ -8753,6 +8802,10 @@ msgstr "Претходни месец"
 msgid "Primary color"
 msgstr "Примарна боја"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Primary resume"
+msgstr "Примарни резиме"
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Print"
 msgstr "Принт"
@@ -8761,9 +8814,9 @@ msgstr "Принт"
 msgid "Print or export the form to a flat PDF before sending it."
 msgstr "Одштампајте или извезите формулар у равни PDF пре него што га пошаљете."
 
-#: src/features/resume/public/public-resume.tsx
-msgid "Printing is turned off for this resume."
-msgstr "Штампање је искључено за овај резиме."
+#: src/features/resume/share/share-panel.tsx
+msgid "Privacy"
+msgstr "Приватност"
 
 #: src/features/homepage/footer.tsx
 msgid "Privacy policy"
@@ -8866,7 +8919,7 @@ msgstr "Провајдер"
 msgid "Public"
 msgstr "Јавно"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Public link"
 msgstr "Јавна веза"
 
@@ -8881,6 +8934,26 @@ msgstr "Јавно, са лозинком"
 #: src/libs/resume/section.tsx
 msgid "Publications"
 msgstr "Публикације"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish"
+msgstr "Објави"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish it to share a link that opens on any screen. Only you can see it until then."
+msgstr "Објавите је да бисте делили везу која се отвара на сваком екрану. Дотле је видите само ви."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page first."
+msgstr "Прво објавите веб-страницу."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted."
+msgstr "Објавите веб-страницу да бисте бројали прегледе и преузимања. Бројање је анонимно, а посете претраживача се не броје."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link and custom domain."
+msgstr "Објавите овај резиме да би се отварао на вашој краткој вези и сопственом домену."
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Publisher"
@@ -8902,11 +8975,11 @@ msgstr "Ставите све на <0>једну страницу.</0>"
 msgid "Put the caret in a line to improve it"
 msgstr "Ставите карет у линију да бисте га побољшали"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code"
 msgstr "КР код"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code for {url}"
 msgstr "КР код за {url}"
 
@@ -9217,7 +9290,7 @@ msgstr "Регрутер"
 msgid "Recruiter reply"
 msgstr "Одговор регрутеру"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "Регрутери виде ово име. Ваше име плус „Пропратно писмо“ добро функционише."
 
@@ -9343,6 +9416,7 @@ msgstr "Удаљено"
 msgid "Remote, Hybrid, a city…"
 msgstr "На даљину, хибридно, град…"
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "Уклони"
@@ -9391,7 +9465,7 @@ msgstr "Уклони датотеку"
 msgid "Remove passkey"
 msgstr "Уклони кључ за приступ"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove password"
 msgstr "Уклони лозинку"
 
@@ -9417,7 +9491,7 @@ msgstr "Уклони улогу"
 msgid "Remove tag"
 msgstr "Уклони ознаку"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "Уклоните лозинку?"
 
@@ -9499,7 +9573,7 @@ msgstr "Одговор копиран"
 msgid "Report a bug"
 msgstr "Пријавите грешку"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Require a password"
 msgstr "Захтевај лозинку"
 
@@ -9590,8 +9664,6 @@ msgstr "резиме"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-card.tsx
-#: src/routes/_home/index.tsx
-#: src/routes/$username/$slug.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "Резиме"
@@ -9608,7 +9680,7 @@ msgstr "Резиме · послата верзија"
 msgid "Resume (optional)"
 msgstr "резиме (опционо)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "резиме + писмо"
 
@@ -10046,8 +10118,8 @@ msgstr "Сачувано у Знање, приватно за ову прија�
 msgid "Saved to Saved · Practice"
 msgstr "Сачувано у картицу Сачувано · Вежба"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/link-tab.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "Чување {0}/{username}/{slug}… Копија је доступна након чувања."
 
@@ -10144,6 +10216,10 @@ msgstr "Претрага покрива наслове, ознаке и пове
 #: src/features/documents/documents-page.tsx
 msgid "Search documents"
 msgstr "Претражите документе"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off."
+msgstr "Претраживачи као што је Google могу да прикажу вашу веб-страницу. Може да прође више недеља док се не појави, или док не нестане када ово искључите."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Search facts"
@@ -10449,29 +10525,22 @@ msgstr "Ширина сенке"
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Share"
-msgstr "Схаре"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
-msgid "Share & export"
-msgstr "Делите и извезите"
+msgstr "Дели"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "Делите јавну везу, додајте лозинку или је чувајте приватном. Изаберите неку од 3 опције видљивости. Извезите на PDF или Word или понесите све своје податке са собом као JSON."
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-msgid "Share public resume"
-msgstr "Поделите јавни резиме"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "Делите секције"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "Подели путем…"
 
@@ -10505,6 +10574,10 @@ msgstr "Кратко и директно. Добро ако оглас за по
 msgid "Short and polite, for the recruiter"
 msgstr "Кратко и пристојно, за регрутатора"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link and domain"
+msgstr "Кратка веза и домен"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "Скратите питања на 2.000 знакова и одговоре на 6.000 знакова пре него што ово означите као пријављено."
@@ -10516,6 +10589,10 @@ msgstr "Краће"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Show"
 msgstr "Схов"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show “Made with Reactive Resume”"
+msgstr "Прикажи „Направљено помоћу Reactive Resume“"
 
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #. placeholder {0}: visible.length - shown.length
@@ -10552,6 +10629,10 @@ msgstr "Прикажи наслов"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Show icons"
 msgstr "Прикажи иконе"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show in search engines"
+msgstr "Прикажи у претраживачима"
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -10687,7 +10768,7 @@ msgstr "Одјављивање..."
 msgid "Signing up..."
 msgstr "Регистрација..."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "since last view"
 msgstr "од последњег прегледа"
 
@@ -11483,7 +11564,7 @@ msgstr "Тај фајл је превелик за проверу. PDFs до 25 
 msgid "That link couldn't be read. Paste the posting text instead."
 msgstr "Тај линк није могао да се прочита. Уместо тога налепите текст огласа за посао."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "That password isn't correct. Check it with the resume owner and try again."
 msgstr "Та лозинка није тачна. Проверите је са власником резимеа и покушајте поново."
 
@@ -11591,7 +11672,7 @@ msgstr "Поздрав прати име."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Кључ је шифрован на серверу и никада се више не приказује. Чување тестира везу."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "Писмо какво јесте"
 
@@ -11690,6 +11771,10 @@ msgstr "Одговор добављача није могуће потврдит
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Разлог се чува за Увиде. Повезани документи се не дирају."
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "The records aren't visible yet. Check again later."
+msgstr "Записи још нису видљиви. Проверите поново касније."
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11914,7 +11999,7 @@ msgstr "Ово је XFA формулар, тако да већина софтв�
 msgid "This is not a common resume page size."
 msgstr "Ово није уобичајена величина странице за биографију."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Ово писмо и „{resumeName}“ као два PDFs, именована да се подударају."
 
@@ -11974,7 +12059,7 @@ msgstr "Овај резиме је закључан. Откључајте га �
 msgid "This resume is long."
 msgstr "Ова биографија је дугачка."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume is password-protected"
 msgstr "Овај резиме је заштићен лозинком"
 
@@ -11982,7 +12067,7 @@ msgstr "Овај резиме је заштићен лозинком"
 msgid "This resume isn't linked to an application yet."
 msgstr "Овај резиме још увек није повезан са молбом за посао."
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
 msgstr "Овај резиме се тренутно не дели."
 
@@ -12097,7 +12182,7 @@ msgid "To"
 msgstr "То"
 
 #: src/features/applications/components/calendar-view.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "данас"
@@ -12193,7 +12278,7 @@ msgid "Trust this device for 30 days"
 msgstr "Веруј овом уређају 30 дана"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "Пробајте {0}"
 
@@ -12253,13 +12338,9 @@ msgstr "Искључи верификацију у два корака"
 msgid "Turn off two-step verification?"
 msgstr "Искључити верификацију у два корака?"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "Укључите везу да бисте изабрали адресу."
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Turn on the public link to count views and downloads. Counts are anonymous."
-msgstr "Укључите јавну везу да бисте бројали прегледе и преузимања. Бројеви коришћења су анонимни."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Turn on two-step verification"
@@ -12424,11 +12505,10 @@ msgstr "Прекини везу"
 msgid "Unlink this application"
 msgstr "Прекините везу са овом пријавом за посао"
 
-#. Primary action button label to unlock a password-protected resume
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Unlock"
 msgstr "Откључај"
 
@@ -12545,7 +12625,6 @@ msgstr "Користите 3 до 64 мала слова, бројеве, тач
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
-#: src/features/auth/pages/resume-password.tsx
 msgid "Use 64 characters or fewer."
 msgstr "Користите највише 64 знака."
 
@@ -12608,7 +12687,7 @@ msgstr "Користи за све пријаве"
 msgid "Use in coaching: {excerpt}"
 msgstr "Користи у саветовању: {excerpt}"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "Користите мала слова, бројеве и појединачне цртице."
 
@@ -12701,6 +12780,11 @@ msgstr "Користи повезану пријаву за посао"
 msgid "Uses the web search service set up in Settings. Results wait in Today for your review; applications and documents are never created for you."
 msgstr "Користи услугу за веб претрагу подешену у Подешавањима. Резултати чекају у Данас на ваш преглед; пријаве и документи се никада не праве уместо вас."
 
+#. placeholder {0}: templates[template].name
+#: src/features/resume/share/share-panel.tsx
+msgid "Uses your {0} template and Design, and fits any screen. Change them in Design."
+msgstr "Користи ваш шаблон {0} и Дизајн и прилагођава се сваком екрану. Промените их у Дизајну."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Uses your AI provider's own web search where supported, and reads links with the built-in reader."
 msgstr "Користи сопствену веб претрагу вашег АИ провајдера где је то подржано и чита везе са уграђеним читачем."
@@ -12759,10 +12843,6 @@ msgstr "Верификовање кôда..."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Verifying code…"
 msgstr "Верификациони код…"
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Verifying password..."
-msgstr "Провера лозинке..."
 
 #: src/features/auth/pages/register.tsx
 msgid "Verifying your email confirms that you own this address."
@@ -12831,23 +12911,23 @@ msgstr "Погледајте оглас за посао"
 msgid "Viewing {0} · {1} · read-only"
 msgstr "Прегледање {0} · {1} · само за читање"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "views · 30 days"
 msgstr "прегледа · 30 дана"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Views and downloads"
-msgstr "Прегледи и преузимања"
 
 #: src/features/homepage/share.tsx
 msgid "Visibility"
 msgstr "Видљивост"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
+msgid "Visitors"
+msgstr "Посетиоци"
+
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors can download the PDF"
 msgstr "Посетиоци могу да преузму PDF"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
 msgstr "Посетиоци га уносе пре него што виде биографију. Делите га само са људима којима верујете."
 
@@ -12895,6 +12975,14 @@ msgstr "Послали смо нову везу за верификацију н
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "Веб приступ"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Web page"
+msgstr "Веб-страница"
+
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Web page preview"
+msgstr "Преглед веб-странице"
 
 #: src/features/career/coach.tsx
 msgid "Web research"
@@ -13317,7 +13405,7 @@ msgid "You"
 msgstr "Ви"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "Ово већ користите за „{0}“."
 
@@ -13485,6 +13573,10 @@ msgstr "Ваши датуми су написани на неколико раз
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "Ваши подаци су промењени у резимеу. Писмо је такође ажурирано."
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain"
+msgstr "Ваш домен"
+
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your email address changed on the resume. The letter updated too."
 msgstr "Ваша имејл адреса је промењена у резимеу. Писмо је такође ажурирано."
@@ -13496,6 +13588,10 @@ msgstr "Ваша имејл адреса је подељена кроз дело
 #: src/features/auth/pages/error.tsx
 msgid "Your email address isn't verified with the provider. Verify it there, then try again."
 msgstr "Ваша адреса е-поште није потврђена код добављача. Потврдите је тамо, па покушајте поново."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
+msgstr "Ваша е-пошта, телефон, локација и остали подаци из заглавља, као и бројеви телефона из референци, изостављени су са веб-странице, из њеног PDF-а и из резултата претраге."
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -13598,9 +13694,13 @@ msgstr "Ваш снимак иде провајдеру {0} на транскр�
 msgid "Your requirements"
 msgstr "Ваши захтеви"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "ваш резиме"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your resume as a web page"
+msgstr "Ваш резиме као веб-страница"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Your resume has a photo"
@@ -13630,6 +13730,19 @@ msgstr "Изабрани фонт не може да прикаже неке з�
 msgid "Your server provides search for Applications and the assistant. Connect a service to read pages the built-in reader can't."
 msgstr "Ваш сервер обезбеђује веб претрагу у одељку Пријаве и за помоћника. Повежите услугу за читање веб страница које уграђени читач не може да чита."
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open “{0}”."
+msgstr "Ваша кратка веза и сопствени домен отварају „{0}“."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open this resume."
+msgstr "Ваша кратка веза и сопствени домен отварају овај резиме."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
+msgstr "Ваша кратка веза и сопствени домен показују да овај резиме није дељен док га поново не објавите."
+
 #: src/features/career/coach.tsx
 msgid "your stories"
 msgstr "ваше приче"
@@ -13645,6 +13758,10 @@ msgstr "Твој ред"
 #: src/features/career/workspace/prepare.tsx
 msgid "Your two-minute introduction"
 msgstr "Ваше представљање од два минута"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your web page is live"
+msgstr "Ваша веб-страница је објављена"
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your work is lost when you sign out or the session ends. Create an account or sign in to keep your resumes, cover letters and applications."

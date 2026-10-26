@@ -1,38 +1,9 @@
 import type { RouterOutput } from "@/libs/orpc/client";
 import { t } from "@lingui/core/macro";
 
-type DailyStat = { date: string; views: number; downloads: number };
 export type VersionSummary = RouterOutput["resume"]["listVersions"][number];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-
-/** The Link tab's numbers: views and downloads over the last 30 days, and each day's views against the peak. */
-export function summarizeViews(daily: readonly DailyStat[]) {
-	const days = daily.slice(-30);
-	const peak = Math.max(0, ...days.map((day) => day.views));
-
-	return {
-		views: days.reduce((sum, day) => sum + day.views, 0),
-		downloads: days.reduce((sum, day) => sum + day.downloads, 0),
-		peak,
-		bars: days.map((day) => ({ date: day.date, views: day.views, height: peak > 0 ? day.views / peak : 0 })),
-	};
-}
-
-const UNITS = [
-	{ unit: "minute", ms: 60 * 1000, below: 60 },
-	{ unit: "hour", ms: 60 * 60 * 1000, below: 24 },
-	{ unit: "day", ms: DAY_MS, below: 7 },
-	{ unit: "week", ms: 7 * DAY_MS, below: 52 },
-	{ unit: "year", ms: 365 * DAY_MS, below: Number.POSITIVE_INFINITY },
-] as const;
-
-/** Time since a moment in the largest whole unit, written short: "5m", "2h", "3d", "6w", "1y". */
-export function formatTimeSince(date: Date, locale: string, now = Date.now()) {
-	const elapsed = Math.max(0, now - date.getTime());
-	const { unit, ms } = UNITS.find(({ ms, below }) => elapsed / ms < below) ?? UNITS[4];
-	return new Intl.NumberFormat(locale, { style: "unit", unit, unitDisplay: "narrow" }).format(Math.floor(elapsed / ms));
-}
 
 /** "Today 14:02", "Yesterday 09:15", "Sep 16", or "Sep 16, 2025" for another year. */
 export function formatVersionTime(date: Date, locale: string, now = new Date()) {

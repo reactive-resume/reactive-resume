@@ -4748,6 +4748,20 @@ The complete schema, generated from the source code of this version.
 					],
 					"additionalProperties": false
 				},
+				"web": {
+					"description": "Settings for the resume's public web page, which uses the resume's template. Missing until the author changes them in Share.",
+					"type": "object",
+					"properties": {
+						"showCredit": {
+							"default": true,
+							"description": "Whether the web page shows the small 'Made with Reactive Resume' footer.",
+							"type": "boolean"
+						}
+					},
+					"required": [
+						"showCredit"
+					]
+				},
 				"check": {
 					"description": "The author's Check choices for this resume. Not printed; missing until a choice is made.",
 					"type": "object",

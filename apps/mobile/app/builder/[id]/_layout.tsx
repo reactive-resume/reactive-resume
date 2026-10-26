@@ -10,15 +10,14 @@ import { routes } from "@/routes";
 import { BuilderChrome, useBuilderChrome } from "@/shell/builder-chrome";
 import { useKeyCommands } from "@/shell/key-commands";
 
-/** Fills the chrome from the draft once for every pane: name, save status, Public badge. ⌘Z / ⇧⌘Z undo and redo. */
+/** Fills the chrome from the draft once for every pane: name and save status. ⌘Z / ⇧⌘Z undo and redo. */
 function DraftChrome() {
 	const { t } = useLingui();
 	const name = useResumeStore((state) => state.document?.name);
-	const shared = useResumeStore((state) => state.document?.isPublic);
 	const status = useResumeStore((state) => state.status);
 	const locked = useResumeStore((state) => state.locked);
 	const retry = useResumeStore((state) => state.retry);
-	useBuilderChrome({ title: name, save: name ? { status, locked, onRetry: retry } : undefined, shared });
+	useBuilderChrome({ title: name, save: name ? { status, locked, onRetry: retry } : undefined });
 	useKeyCommands([
 		{ id: "undo", input: "z", title: t`Undo`, run: () => useResumeStore.getState().undo() },
 		{ id: "redo", input: "z", shift: true, title: t`Redo`, run: () => useResumeStore.getState().redo() },
@@ -28,8 +27,9 @@ function DraftChrome() {
 }
 
 /**
- * Resume builder. Phone: Write, Page, Design and Check as bottom tabs. Tablet: the Write / Design / Check panel with
- * the Page screen beside it. Entry and history push inside the editor; Share and the assistant open as modals.
+ * Resume builder. Phone: Write, Page, Design, Check and Share as bottom tabs. Tablet: the Write / Design / Check /
+ * Share panel with the Page screen beside it. Entry and history push inside the editor; Download & history and the
+ * assistant open as modals.
  */
 export default function BuilderLayout() {
 	const router = useRouter();
@@ -44,16 +44,17 @@ export default function BuilderLayout() {
 		{ pane: "page", label: t`Page`, icon: "file-text", href: routes.builder(id, "page") },
 		{ pane: "design", label: t`Design`, icon: "palette", href: routes.builder(id, "design") },
 		{ pane: "check", label: t`Check`, icon: "list-checks", href: routes.builder(id, "check") },
+		{ pane: "share", label: t`Share`, icon: "globe", href: routes.builder(id, "share") },
 	];
 
 	return (
 		<BuilderChrome
 			panes={panes}
-			tabletPanes={["write", "design", "check"]}
+			tabletPanes={["write", "design", "check", "share"]}
 			page={<PageScreen />}
 			title={t`Resume`}
-			onShare={() => router.push(routes.share(id))}
-			modals={["share", "assistant"]}
+			onExport={() => router.push(routes.export(id))}
+			modals={["export", "assistant"]}
 		>
 			<DraftChrome />
 			<DocumentMenu id={id} inChrome />

@@ -35,6 +35,11 @@ msgstr "\"{0}\" приховано"
 msgid "“{0}” moved to Trash"
 msgstr "«{0}» переміщено в кошик"
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr "«{0}» більше не буде вашим основним резюме."
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "“{name}” moved to Trash"
@@ -721,6 +726,10 @@ msgstr "{stars, plural, one {Поставте зірку Reactive Resume на Gi
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# розповідь} few {# розповіді} many {# розповідей} other {# розповіді}}"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "{suggestion} may be available. Get yours here →"
+msgstr "{suggestion} може бути доступний. Отримайте свій тут →"
+
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
 msgstr "{summary}. Відкривається в Кар’єра → Пропозиції."
@@ -835,7 +844,7 @@ msgstr "10-хвилинний брифінг"
 msgid "10–11 recommended"
 msgstr "10–11 рекомендовано"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "2 files"
 msgstr "2 файли"
 
@@ -898,7 +907,7 @@ msgstr "Д"
 msgid "A accepts and R rejects the focused edit. ↑ and ↓ move between edits."
 msgstr "A приймає, а R відхиляє виділене редагування. ↑ і ↓ переходити між редагуваннями."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
 msgstr "Резервна копія цього листа. Імпортується назад у Reactive Resume як лист."
 
@@ -1243,7 +1252,7 @@ msgstr "Додайте постачальника AI"
 msgid "Add an @ and the domain, like name@example.com"
 msgstr "Додайте @ та домен, наприклад name@example.com"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Add an address."
 msgstr "Додайте адресу."
 
@@ -1410,6 +1419,10 @@ msgstr "Додайте домен після @, наприклад {name}@exampl
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Додайте закінчення домену, наприклад {domain}.com"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
+msgstr "Додайте ці записи там, де керуєте доменом, а потім перевірте. Зміни можуть поширюватися кілька годин."
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/career/workspace/shell.tsx
@@ -1475,7 +1488,7 @@ msgstr "Додано до Знань як досвід."
 msgid "Added to Prepare"
 msgstr "Додано до Підготовки"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Address"
 msgstr "Адреса"
 
@@ -1708,7 +1721,7 @@ msgstr "і {0} більше"
 msgid "and counting"
 msgstr "і підрахунок"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Another of your resumes uses this address."
 msgstr "Інше ваше резюме використовує цю адресу."
 
@@ -1757,7 +1770,7 @@ msgstr "Будь-який шрифт, розширений"
 msgid "Anyone who opens the public URL will need this password."
 msgstr "Усім, хто відкриє публічне посилання, знадобиться цей пароль."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "Кожен, хто має посилання, зможе переглянути ваше резюме."
 
@@ -1888,6 +1901,7 @@ msgstr "Вкладки заявки"
 msgid "Application updated"
 msgstr "Заявку оновлено"
 
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/shell.tsx
@@ -2552,6 +2566,10 @@ msgstr "Перевірте інший файл"
 msgid "Check any PDF, no account needed"
 msgstr "Перевірте будь-який PDF, обліковий запис не потрібен"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Check DNS"
+msgstr "Перевірити DNS"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Check every claim, date and result against your experience."
 msgstr "Звірте кожне твердження, дату й результат зі своїм досвідом."
@@ -2635,7 +2653,7 @@ msgstr "Перевірка експортованого PDF…"
 msgid "Checking your preferences"
 msgstr "Перевіряю ваші побажання"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Checking… Copy is available after saving."
 msgstr "Перевірка… Копія доступна після збереження."
 
@@ -2716,7 +2734,6 @@ msgid "Claude Desktop"
 msgstr "Claude Desktop"
 
 #: src/features/applications/components/detail/next-step-card.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Clear"
 msgstr "Очистити"
@@ -2738,6 +2755,7 @@ msgid "Clear section"
 msgstr "Очистити розділ"
 
 #: src/components/ui/combobox.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Clear selection"
 msgstr "Очистити вибір"
@@ -2765,7 +2783,7 @@ msgstr "ID клієнта"
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2905,6 +2923,10 @@ msgstr "Повне резервне копіювання даних. Імпор�
 msgid "Compress or remove large images to keep uploads quick."
 msgstr "Стисніть або видаліть великі зображення, щоб завантаження було швидким."
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Computer"
+msgstr "Комп’ютер"
+
 #: src/hooks/use-confirm.tsx
 msgid "Confirm"
 msgstr "Підтвердити"
@@ -2938,6 +2960,7 @@ msgid "Confirms {time} today, by video."
 msgstr "Підтверджує відеозустріч сьогодні о {time}."
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Connect"
 msgstr "Підключити"
@@ -2989,6 +3012,10 @@ msgstr "Підключено"
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Підключені програми"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Connected. Your domain opens your primary resume."
+msgstr "Підключено. Ваш домен відкриває ваше основне резюме."
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Connecting your {providerName} account…"
@@ -3117,7 +3144,7 @@ msgid "Copied"
 msgstr "Скопійовано"
 
 #: src/features/career/coach-chat.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/copy-link-button.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
@@ -3149,7 +3176,6 @@ msgid "Copy it now. For your security, it won't be shown again."
 msgstr "Скопіюйте зараз. З міркувань безпеки він більше не відображатиметься."
 
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
 msgid "Copy link"
 msgstr "Копіювати посилання"
 
@@ -3271,6 +3297,7 @@ msgid "Couldn't copy the transcript. Try again."
 msgstr "Не вдалося скопіювати стенограму. Спробуйте ще раз."
 
 #: src/features/career/coach-thread.tsx
+#: src/features/resume/share/copy-link-button.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "Не вдалося скопіювати в буфер обміну. Спробуйте ще раз."
 
@@ -3592,8 +3619,8 @@ msgstr "Не вдалося зберегти цей розклад. Спробу
 
 #: src/features/letters/store.ts
 #: src/features/resume/share/history-tab.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
 #: src/routes/builder/letter/$coverLetterId.tsx
 msgid "Couldn't save your changes. Try again before continuing."
 msgstr "Не вдалося зберегти зміни. Спробуйте ще раз, перш ніж продовжити."
@@ -3698,7 +3725,8 @@ msgstr "Не вдалося від'єднати заявку. Спробуйте
 msgid "Couldn't unlock the document. Try again."
 msgstr "Не вдалося розблокувати документ. Спробуйте ще раз."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
 msgstr "Не вдалося оновити доступ. Спробуйте ще раз."
 
@@ -3734,7 +3762,7 @@ msgstr "Не вдалося оновити резюме. Спробуйте ще
 msgid "Couldn't update the timeline. Try again."
 msgstr "Не вдалося оновити хронологію. Спробуйте знову."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "Не вдалося оновити версії цього листа. Спробуйте ще раз."
 
@@ -3748,11 +3776,6 @@ msgstr "Не вдалося завантажити фото. Спробуйте 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Couldn't verify the code. Enter the current code from your authenticator app."
 msgstr "Не вдалося перевірити код. Введіть поточний код із застосунку автентифікатора."
-
-#. Fallback toast when resume password verification fails unexpectedly
-#: src/features/auth/pages/resume-password.tsx
-msgid "Couldn't verify the password. Try again."
-msgstr "Не вдалося підтвердити пароль. Спробуйте ще раз."
 
 #. Fallback toast when verifying a backup two-factor authentication code fails
 #: src/features/auth/pages/verify-2fa.tsx
@@ -3957,7 +3980,7 @@ msgid "Daily at {clock} · next {next}"
 msgstr "Щодня о {clock} · наступний запуск: {next}"
 
 #. placeholder {0}: summary.peak
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Daily views over 30 days, peak {0}"
 msgstr "Щоденні перегляди протягом 30 днів, пік {0}"
 
@@ -4333,6 +4356,10 @@ msgstr "Документи, які ви переміщуєте сюди, збе�
 msgid "Does it use AI?"
 msgstr "Чи використовує він AI?"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Domain connected"
+msgstr "Домен підключено"
+
 #: src/features/auth/pages/login.tsx
 msgid "Don't have an account? <0/>"
 msgstr "Немає облікового запису? <0/>"
@@ -4365,8 +4392,8 @@ msgstr "Перевіряю ще раз"
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download"
 msgstr "Завантажити"
 
@@ -4377,6 +4404,10 @@ msgstr "Завантажити {label}"
 #: src/features/templates/gallery.tsx
 msgid "Download {name} sample PDF"
 msgstr "Завантажте {name} зразок PDF"
+
+#: src/features/resume/editor/chrome/download-sheet.tsx
+msgid "Download & history"
+msgstr "Завантаження та історія"
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download application details, contacts, notes, and timeline history as CSV."
@@ -4392,12 +4423,12 @@ msgid "Download CSV"
 msgstr "Завантажити CSV"
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "Помилка завантаження. Спробуйте ще раз."
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
 msgstr "Завантажити в PDF"
 
@@ -4413,12 +4444,12 @@ msgstr "Завантажте зразок PDF"
 msgid "Download them"
 msgstr "Завантажте їх"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Download totals can include repeat clicks."
 msgstr "Підсумки завантажень можуть включати повторні кліки."
 
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
 msgstr "Завантажено {file}"
 
@@ -4426,11 +4457,11 @@ msgstr "Завантажено {file}"
 msgid "Downloaded {file} and the cover letter"
 msgstr "Завантажив {file} і супровідний лист"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded your resume and this letter"
 msgstr "Завантажив ваше резюме та цей лист"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "downloads"
 msgstr "завантаження"
 
@@ -4815,13 +4846,9 @@ msgstr "Введіть один зі збережених резервних к�
 msgid "Enter the 6-digit code."
 msgstr "Введіть шестизначний код."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Enter the password the resume owner shared with you."
 msgstr "Введіть пароль, яким з вами поділився власник резюме."
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Enter the password."
-msgstr "Введіть пароль."
 
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Enter the same password in both fields."
@@ -5231,6 +5258,11 @@ msgstr "Не вдалося завантажити шрифти. Спробуй�
 msgid "For"
 msgstr "для"
 
+#. placeholder {0}: domain.target
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
+msgstr "Для кореневого домену, як-от example.com, замість CNAME використовуйте записи A та AAAA з адресами {0}."
+
 #: src/features/career/workspace/prepare.tsx
 msgid "For each: situation, task, your action, result, reflection. Leave out numbers you're unsure of."
 msgstr "Для кожної: ситуація, завдання, ваша дія, результат, рефлексія. Не вказуйте цифр, у яких не впевнені."
@@ -5625,6 +5657,10 @@ msgstr "Приховано: {hiddenList}"
 msgid "Hide {title} from the page"
 msgstr "Приховати {title} на сторінці"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Hide contact details"
+msgstr "Приховати контактні дані"
+
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Hide from page"
 msgstr "Сховати зі сторінки"
@@ -5668,10 +5704,11 @@ msgid "Hiring team"
 msgstr "Команда найму"
 
 #: src/features/resume/editor/chrome/bar.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/$resumeId/-components/download-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "History"
-msgstr "історія"
+msgstr "Історія"
 
 #: src/features/documents/document-actions.tsx
 msgid "Hold to delete"
@@ -5792,7 +5829,7 @@ msgstr "Якщо це результат сканування, це очікув
 msgid "If it's part of your experience, add it where it belongs."
 msgstr "Якщо це частина вашого досвіду, додайте його там, де йому місце."
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "If someone sent you this link, ask them for a new one."
 msgstr "Якщо хтось надіслав вам це посилання, попросіть у нього нове."
 
@@ -6605,7 +6642,6 @@ msgstr "Рядки так близько можуть збігатися під 
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/resume/editor/write/fields.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
-#: src/routes/builder/$resumeId/-components/share-sheet.tsx
 msgid "Link"
 msgstr "Посилання"
 
@@ -6632,14 +6668,10 @@ msgid "Link an application…"
 msgstr "Посилання на заявку на роботу…"
 
 #: src/features/documents/document-actions.tsx
-#: src/features/resume/public/public-resume.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Link copied"
 msgstr "Посилання скопійовано"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Link is live"
-msgstr "Посилання живе"
 
 #: src/features/documents/document-actions.tsx
 msgid "Link to application"
@@ -6649,7 +6681,7 @@ msgstr "Посилання на заявку на роботу"
 msgid "Link to application…"
 msgstr "Посилання на заявку на роботу…"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Link turned off. The address is kept"
 msgstr "Посилання вимкнено. Адреса зберігається"
 
@@ -6727,7 +6759,7 @@ msgid "Live · updates as you edit"
 msgstr "Живі · оновлення під час редагування"
 
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
 msgstr "Наживо за адресою {0}"
 
@@ -6862,7 +6894,7 @@ msgstr "Низький"
 msgid "Lower the design sheet"
 msgstr "Опустіть лист дизайну"
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Made with Reactive Resume, free and open source"
 msgstr "Зроблено за допомогою Reactive Resume, безкоштовно та з відкритим кодом"
 
@@ -6896,6 +6928,10 @@ msgstr "Зробіть його коротшим"
 msgid "Make it yours, then take it with you."
 msgstr "Зробіть це своїм, а потім візьміть із собою."
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Make primary"
+msgstr "Зробити основним"
+
 #: src/features/documents/documents-page.tsx
 msgid "Make private"
 msgstr "Зробити приватним"
@@ -6915,6 +6951,10 @@ msgstr "Зробіть так, щоб видимий текст і адреса 
 #: src/features/ats-checker/messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "Зробіть їх помітно більшими, жирнішими або написаними великими літерами."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Make this your primary resume?"
+msgstr "Зробити це резюме основним?"
 
 #: src/libs/locale.ts
 msgid "Malay"
@@ -7110,6 +7150,7 @@ msgid "Mono"
 msgstr "Мононуклеоз"
 
 #: src/features/resume/editor/chrome/bar.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "More download formats"
 msgstr "Більше форматів завантаження"
 
@@ -7715,6 +7756,10 @@ msgstr "Не застосовано"
 msgid "Not applied yet"
 msgstr "Ще не подано"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Not available while the resume needs a password."
+msgstr "Недоступно, поки резюме потребує пароля."
+
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "Не підключено"
@@ -7908,9 +7953,9 @@ msgstr "Вимкнено"
 msgid "Off: the coach won’t see it or claim it."
 msgstr "Вимкнено: коуч не бачить цього й не подає як твердження."
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Off. Only you can see this resume."
-msgstr "Вимкнено. Тільки ви можете бачити це резюме."
+#: src/features/resume/share/share-panel.tsx
+msgid "Off. Let recruiters find you on Google by turning this on."
+msgstr "Вимкнено. Увімкніть, щоб рекрутери могли знайти вас у Google."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Off. The letter keeps its own copy of your details."
@@ -7939,9 +7984,9 @@ msgstr "Дні в офісі не вказано"
 msgid "Offline · saved on this device"
 msgstr "Офлайн · збережено на цьому пристрої"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
-msgstr "Увімкнено. Переглядати можуть усі, хто має посилання. Його немає в списку та не індексують пошукові системи."
+#: src/features/resume/share/share-panel.tsx
+msgid "On. Anyone with the link can see your web page."
+msgstr "Увімкнено. Будь-хто з посиланням може переглянути вашу вебсторінку."
 
 #: src/features/homepage/remember.tsx
 msgid "Onboarding story"
@@ -8023,7 +8068,7 @@ msgstr "За один раз імпортуються лише перші {MAX_I
 msgid "Only the first pages were checked."
 msgstr "Перевірено лише перші сторінки."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "Тільки ви бачите їх"
 
@@ -8081,10 +8126,6 @@ msgstr "Відкрити в Пропозиціях"
 msgid "Open preferences"
 msgstr "Відкрити побажання"
 
-#: src/features/resume/share/link-tab.tsx
-msgid "Open public page"
-msgstr "Відкрийте публічну сторінку"
-
 #: src/features/career/workspace/prepare.tsx
 msgid "Open story"
 msgstr "Відкрити розповідь"
@@ -8100,6 +8141,10 @@ msgstr "Відкрийте програму Reactive Resume"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Відкрити розклад"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Open web page"
+msgstr "Відкрити вебсторінку"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/today.tsx
@@ -8318,16 +8363,15 @@ msgstr "Ключі доступу"
 
 #. Authentication provider display name in account settings
 #. Label for password input on login form
-#. Label for password input on protected resume access form
 #. Label for password input on registration form
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/share.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/features/settings/account/auth-hooks.ts
 #: src/features/settings/account/security.tsx
 msgid "Password"
@@ -8337,7 +8381,7 @@ msgstr "Пароль"
 msgid "Password changed"
 msgstr "Пароль змінено"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "Пароль видалено"
 
@@ -8345,7 +8389,7 @@ msgstr "Пароль видалено"
 msgid "Password reset. Sign in with your new password."
 msgstr "Пароль скинуто. Увійдіть із новим паролем."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "Встановлено пароль"
 
@@ -8462,6 +8506,7 @@ msgstr "Перська"
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
+#: src/features/resume/share/web-page-preview.tsx
 msgid "Phone"
 msgstr "Номер телефону"
 
@@ -8731,6 +8776,10 @@ msgstr "Натисніть <0>Enter</0>, щоб відкрити"
 msgid "Preview {name} sample PDF"
 msgstr "Попередній перегляд зразка PDF {name}"
 
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Preview size"
+msgstr "Розмір попереднього перегляду"
+
 #. placeholder {0}: templates[previewTemplate].name
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
@@ -8753,6 +8802,10 @@ msgstr "Попередній місяць"
 msgid "Primary color"
 msgstr "Основний колір"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Primary resume"
+msgstr "Основне резюме"
+
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Print"
 msgstr "Роздрукувати"
@@ -8761,9 +8814,9 @@ msgstr "Роздрукувати"
 msgid "Print or export the form to a flat PDF before sending it."
 msgstr "Роздрукуйте або експортуйте форму у плаский PDF перед відправленням."
 
-#: src/features/resume/public/public-resume.tsx
-msgid "Printing is turned off for this resume."
-msgstr "Для цього резюме друк вимкнено."
+#: src/features/resume/share/share-panel.tsx
+msgid "Privacy"
+msgstr "Конфіденційність"
 
 #: src/features/homepage/footer.tsx
 msgid "Privacy policy"
@@ -8866,7 +8919,7 @@ msgstr "Провайдер"
 msgid "Public"
 msgstr "Публічне"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Public link"
 msgstr "Публічне посилання"
 
@@ -8881,6 +8934,26 @@ msgstr "Публічний, з паролем"
 #: src/libs/resume/section.tsx
 msgid "Publications"
 msgstr "Публікації"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish"
+msgstr "Опублікувати"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish it to share a link that opens on any screen. Only you can see it until then."
+msgstr "Опублікуйте його, щоб поділитися посиланням, яке відкривається на будь-якому екрані. Доти його бачите лише ви."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page first."
+msgstr "Спершу опублікуйте вебсторінку."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted."
+msgstr "Опублікуйте вебсторінку, щоб рахувати перегляди та завантаження. Підрахунок анонімний, а пошукові системи не враховуються."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link and custom domain."
+msgstr "Опублікуйте це резюме, щоб відкривати його за коротким посиланням і на власному домені."
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Publisher"
@@ -8902,11 +8975,11 @@ msgstr "Розмістіть усе на <0>одній сторінці.</0>"
 msgid "Put the caret in a line to improve it"
 msgstr "Помістіть курсор у рядок, щоб покращити його"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code"
 msgstr "QR код"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "QR code for {url}"
 msgstr "QR-код для {url}"
 
@@ -9217,7 +9290,7 @@ msgstr "Вербувальник"
 msgid "Recruiter reply"
 msgstr "Відповідь рекрутеру"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Recruiters see this name. Your name plus “Cover Letter” works well."
 msgstr "Рекрутери бачать це ім'я. Ваше ім’я та «Супровідний лист» добре працюють."
 
@@ -9343,6 +9416,7 @@ msgstr "Віддалено"
 msgid "Remote, Hybrid, a city…"
 msgstr "Віддалено, гібридно, місто…"
 
+#: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
 msgstr "видалити"
@@ -9391,7 +9465,7 @@ msgstr "Видалити файл"
 msgid "Remove passkey"
 msgstr "Видалити ключ доступу"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove password"
 msgstr "Видалити пароль"
 
@@ -9417,7 +9491,7 @@ msgstr "Видалити роль"
 msgid "Remove tag"
 msgstr "Видалити тег"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "Видалити пароль?"
 
@@ -9499,7 +9573,7 @@ msgstr "Відповідь скопійовано"
 msgid "Report a bug"
 msgstr "Повідомити про помилку"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Require a password"
 msgstr "Вимагати пароль"
 
@@ -9590,8 +9664,6 @@ msgstr "резюме"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-card.tsx
-#: src/routes/_home/index.tsx
-#: src/routes/$username/$slug.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "Резюме"
@@ -9608,7 +9680,7 @@ msgstr "Резюме · надіслана версія"
 msgid "Resume (optional)"
 msgstr "резюме (необов'язково)"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Resume + letter"
 msgstr "резюме + лист"
 
@@ -10046,8 +10118,8 @@ msgstr "Збережено в Знаннях, лише для цієї заяв�
 msgid "Saved to Saved · Practice"
 msgstr "Додано до збереженого · Тренування"
 
-#. placeholder {0}: window.location.host
-#: src/features/resume/share/link-tab.tsx
+#. placeholder {0}: new URL(url).host
+#: src/features/resume/share/address-field.tsx
 msgid "Saving {0}/{username}/{slug}… Copy is available after saving."
 msgstr "Збереження {0}/{username}/{slug}… Копія доступна після збереження."
 
@@ -10144,6 +10216,10 @@ msgstr "Пошук охоплює заголовки, теги та пов’я�
 #: src/features/documents/documents-page.tsx
 msgid "Search documents"
 msgstr "Пошук документів"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off."
+msgstr "Пошукові системи, як-от Google, можуть показувати вашу вебсторінку. Щоб вона з’явилася або зникла після вимкнення, може минути кілька тижнів."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Search facts"
@@ -10449,29 +10525,22 @@ msgstr "Ширина тіні"
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/share.tsx
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/editor-shell.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Share"
-msgstr "Поділіться"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
-msgid "Share & export"
-msgstr "Поділіться та експортуйте"
+msgstr "Поділитися"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "Поділіться загальнодоступним посиланням, додайте пароль або збережіть його приватним. Виберіть один із 3 варіантів видимості. Експортуйте в PDF або Word або візьміть усі свої дані з собою як JSON."
 
-#: src/routes/builder/$resumeId/-components/editor-bar.tsx
-msgid "Share public resume"
-msgstr "Поділіться публічним резюме"
-
-#: src/features/resume/editor/chrome/share-sheet.tsx
+#: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
 msgstr "Поділіться розділами"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "Поділіться через…"
 
@@ -10505,6 +10574,10 @@ msgstr "Коротко і прямо. Добре, якщо оголошення 
 msgid "Short and polite, for the recruiter"
 msgstr "Коротко і ввічливо, для рекрутера"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link and domain"
+msgstr "Коротке посилання і домен"
+
 #: src/features/career/workspace/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "Перш ніж позначити заявку як подану, скоротіть запитання до 2000 символів, а відповіді — до 6000."
@@ -10516,6 +10589,10 @@ msgstr "Коротше"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Show"
 msgstr "Показати"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show “Made with Reactive Resume”"
+msgstr "Показувати «Зроблено за допомогою Reactive Resume»"
 
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #. placeholder {0}: visible.length - shown.length
@@ -10552,6 +10629,10 @@ msgstr "Показати заголовок"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Show icons"
 msgstr "Показати значки"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Show in search engines"
+msgstr "Показувати в пошукових системах"
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -10687,7 +10768,7 @@ msgstr "Вихід..."
 msgid "Signing up..."
 msgstr "Реєстрація..."
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "since last view"
 msgstr "з моменту останнього перегляду"
 
@@ -11483,7 +11564,7 @@ msgstr "Цей файл завеликий для перевірки. PDFs до 
 msgid "That link couldn't be read. Paste the posting text instead."
 msgstr "Це посилання не вдалося прочитати. Натомість вставте текст оголошення про роботу."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "That password isn't correct. Check it with the resume owner and try again."
 msgstr "Пароль неправильний. Уточніть його у власника резюме та спробуйте ще раз."
 
@@ -11591,7 +11672,7 @@ msgstr "Привітання йде після імені."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Ключ зашифровано на сервері та більше ніколи не відображається. Збереження перевіряє підключення."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "Лист як є"
 
@@ -11690,6 +11771,10 @@ msgstr "Не вдалося перевірити відповідь постач
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Причина зберігається для Insights. Пов’язані документи не чіпаються."
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "The records aren't visible yet. Check again later."
+msgstr "Записи ще не видно. Перевірте пізніше."
 
 #: src/routes/builder/letter/-components/design-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -11914,7 +11999,7 @@ msgstr "Це форма XFA, тому більшість програм чита
 msgid "This is not a common resume page size."
 msgstr "Це нетиповий розмір сторінки для резюме."
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Ця літера та «{resumeName}» як два PDFs, названі відповідно."
 
@@ -11974,7 +12059,7 @@ msgstr "Це резюме заблоковано. Розблокуйте йог�
 msgid "This resume is long."
 msgstr "Це резюме довге."
 
-#: src/features/auth/pages/resume-password.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume is password-protected"
 msgstr "Це резюме захищене паролем"
 
@@ -11982,7 +12067,7 @@ msgstr "Це резюме захищене паролем"
 msgid "This resume isn't linked to an application yet."
 msgstr "Це резюме ще не прив’язане до заявки на роботу."
 
-#: src/features/resume/public/public-resume.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
 msgstr "Це резюме зараз не публікується."
 
@@ -12097,7 +12182,7 @@ msgid "To"
 msgstr "до"
 
 #: src/features/applications/components/calendar-view.tsx
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "Сьогодні"
@@ -12193,7 +12278,7 @@ msgid "Trust this device for 30 days"
 msgstr "Довіряти цьому пристрою 30 днів"
 
 #. placeholder {0}: result.suggestion
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Try {0}"
 msgstr "Спробуйте {0}"
 
@@ -12253,13 +12338,9 @@ msgstr "Вимкнути двохетапну перевірку"
 msgid "Turn off two-step verification?"
 msgstr "Вимкнути двохетапну перевірку?"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Turn on the link to choose an address."
 msgstr "Увімкніть посилання, щоб вибрати адресу."
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Turn on the public link to count views and downloads. Counts are anonymous."
-msgstr "Увімкніть публічне посилання для підрахунку переглядів і завантажень. Підрахунок використання анонімний."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Turn on two-step verification"
@@ -12424,11 +12505,10 @@ msgstr "Від’єднати"
 msgid "Unlink this application"
 msgstr "Від’єднайте цю заявку на роботу"
 
-#. Primary action button label to unlock a password-protected resume
-#: src/features/auth/pages/resume-password.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
+#: src/features/resume/share/web-page-text.ts
 msgid "Unlock"
 msgstr "Розблокувати"
 
@@ -12545,7 +12625,6 @@ msgstr "Використовуйте від 3 до 64 малих літер, ц�
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
-#: src/features/auth/pages/resume-password.tsx
 msgid "Use 64 characters or fewer."
 msgstr "Використовуйте не більше 64 символів."
 
@@ -12608,7 +12687,7 @@ msgstr "Використовувати для всіх заявок"
 msgid "Use in coaching: {excerpt}"
 msgstr "Використовувати в коучингу: {excerpt}"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "Використовуйте малі літери, цифри та одинарні тире."
 
@@ -12701,6 +12780,11 @@ msgstr "Використовує пов’язану заявку"
 msgid "Uses the web search service set up in Settings. Results wait in Today for your review; applications and documents are never created for you."
 msgstr "Використовує сервіс вебпошуку, налаштований у Налаштуваннях. Результати чекають на ваш перегляд у «Сьогодні»; заявки й документи ніколи не створюються за вас."
 
+#. placeholder {0}: templates[template].name
+#: src/features/resume/share/share-panel.tsx
+msgid "Uses your {0} template and Design, and fits any screen. Change them in Design."
+msgstr "Використовує ваш шаблон {0} і Дизайн та підлаштовується під будь-який екран. Змінити їх можна в Дизайні."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Uses your AI provider's own web search where supported, and reads links with the built-in reader."
 msgstr "Використовує власний веб-пошук вашого постачальника штучного інтелекту, якщо він підтримується, і читає посилання за допомогою вбудованого зчитувача."
@@ -12759,10 +12843,6 @@ msgstr "Перевірка коду..."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Verifying code…"
 msgstr "Перевірка коду…"
-
-#: src/features/auth/pages/resume-password.tsx
-msgid "Verifying password..."
-msgstr "Перевірка пароля..."
 
 #: src/features/auth/pages/register.tsx
 msgid "Verifying your email confirms that you own this address."
@@ -12831,25 +12911,25 @@ msgstr "Переглянути оголошення про роботу"
 msgid "Viewing {0} · {1} · read-only"
 msgstr "Перегляд {0} · {1} · лише читання"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "views · 30 days"
 msgstr "переглядів · 30 днів"
-
-#: src/features/resume/share/link-tab.tsx
-msgid "Views and downloads"
-msgstr "Перегляди та завантаження"
 
 #: src/features/homepage/share.tsx
 msgid "Visibility"
 msgstr "Видимість"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
+msgid "Visitors"
+msgstr "Відвідувачі"
+
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors can download the PDF"
 msgstr "Відвідувачі можуть завантажити PDF"
 
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/share-panel.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
-msgstr "Відвідувачі заходять у нього ще до того, як побачать резюме. Поділіться ним лише з людьми, яким довіряєте."
+msgstr "Відвідувачі вводять пароль, перш ніж побачать резюме. Діліться ним лише з людьми, яким довіряєте."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Voice settings"
@@ -12895,6 +12975,14 @@ msgstr "Ми надіслали нове посилання для підтве�
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "Доступ до Інтернету"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Web page"
+msgstr "Вебсторінка"
+
+#: src/features/resume/share/web-page-preview.tsx
+msgid "Web page preview"
+msgstr "Попередній перегляд вебсторінки"
 
 #: src/features/career/coach.tsx
 msgid "Web research"
@@ -13317,7 +13405,7 @@ msgid "You"
 msgstr "Ви"
 
 #. placeholder {0}: result.takenBy
-#: src/features/resume/share/link-tab.tsx
+#: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
 msgstr "Ви вже використовуєте це для «{0}»."
 
@@ -13485,6 +13573,10 @@ msgstr "Ваші дати записані кількома різними сп�
 msgid "Your details changed on the resume. The letter updated too."
 msgstr "Ваші дані в резюме змінені. Лист також оновлено."
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain"
+msgstr "Ваш домен"
+
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your email address changed on the resume. The letter updated too."
 msgstr "У резюме змінено адресу електронної пошти. Лист також оновлено."
@@ -13496,6 +13588,10 @@ msgstr "Ваша електронна адреса розбита на кіль�
 #: src/features/auth/pages/error.tsx
 msgid "Your email address isn't verified with the provider. Verify it there, then try again."
 msgstr "Вашу адресу електронної пошти не підтверджено в постачальника. Підтвердьте її там і спробуйте ще раз."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
+msgstr "Ваша електронна пошта, телефон, місцезнаходження та інші дані із заголовка, а також номери телефонів у рекомендаціях не потрапляють на вебсторінку, у її PDF і в результати пошуку."
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -13598,9 +13694,13 @@ msgstr "Ваш запис надсилається до {0} для розшиф�
 msgid "Your requirements"
 msgstr "Ваші вимоги"
 
-#: src/routes/builder/letter/-components/share-sheet.tsx
+#: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "your resume"
 msgstr "ваше резюме"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your resume as a web page"
+msgstr "Ваше резюме як вебсторінка"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Your resume has a photo"
@@ -13630,6 +13730,19 @@ msgstr "Вибраний шрифт не може відобразити дея�
 msgid "Your server provides search for Applications and the assistant. Connect a service to read pages the built-in reader can't."
 msgstr "Ваш сервер забезпечує веб-пошук у розділі Заявки і для помічника. Підключіть службу для читання веб-сторінок, які не може читати вбудований рідер."
 
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open “{0}”."
+msgstr "Ваше коротке посилання і власний домен відкривають «{0}»."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain open this resume."
+msgstr "Ваше коротке посилання і власний домен відкривають це резюме."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
+msgstr "Ваше коротке посилання і власний домен повідомляють, що це резюме не поширюється, доки ви не опублікуєте його знову."
+
 #: src/features/career/coach.tsx
 msgid "your stories"
 msgstr "ваші розповіді"
@@ -13645,6 +13758,10 @@ msgstr "Ваша черга"
 #: src/features/career/workspace/prepare.tsx
 msgid "Your two-minute introduction"
 msgstr "Ваша двохвилинна самопрезентація"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your web page is live"
+msgstr "Ваша вебсторінка опублікована"
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your work is lost when you sign out or the session ends. Create an account or sign in to keep your resumes, cover letters and applications."

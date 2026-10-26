@@ -5,7 +5,7 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Locale } from "@reactive-resume/utils/locale";
 import { ORPCError } from "@orpc/client";
 import { compare, hash } from "bcryptjs";
-import { and, arrayContains, asc, desc, eq, gte, isNotNull, isNull, lt, sql } from "drizzle-orm";
+import { and, arrayContains, asc, desc, eq, gte, isNotNull, isNull, lt, ne, sql } from "drizzle-orm";
 import { match } from "ts-pattern";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
@@ -26,7 +26,7 @@ import {
 } from "./access-policy";
 import { publishResumeUpdated } from "./events";
 import { parseStoredResumeData, parseWritableResumeData } from "./resume-data-validation";
-import { checkSlug, findFreeSlug, findResumeBySlug, recordSlugChange, SLUG_PATTERN } from "./slugs";
+import { checkSlug, findFreeSlug, findResume, recordSlugChange, SLUG_PATTERN } from "./slugs";
 import {
 	deleteVersion,
 	getVersion,
@@ -35,7 +35,7 @@ import {
 	saveSessionVersion,
 	writeVersion,
 } from "./version-history";
-import { clientKeyFromHeaders, shouldCountView } from "./view-dedup";
+import { countVisit } from "./view-dedup";
 
 function resumeVersionConflict(updatedAt: Date) {
 	return new ORPCError("RESUME_VERSION_CONFLICT", {
@@ -96,7 +96,15 @@ const activeUnlockedResumeWhere = (id: string, userId: string) =>
 	and(...activeResumeConditions(id, userId), eq(schema.resume.isLocked, false));
 
 /** The fields a resume read or write returns to its owner. */
+/** The Share settings every read of a resume carries. */
+const shareColumns = {
+	showInSearchEngines: schema.resume.showInSearchEngines,
+	hideContactDetails: schema.resume.hideContactDetails,
+	isPrimary: schema.resume.isPrimary,
+};
+
 const resumeColumns = {
+	...shareColumns,
 	id: schema.resume.id,
 	name: schema.resume.name,
 	slug: schema.resume.slug,
@@ -209,7 +217,7 @@ const statistics = {
 		trustedClient?: string;
 		currentUserId?: string;
 	}): Promise<boolean> => {
-		const resume = await findResumeBySlug(input, {
+		const resume = await findResume(input, {
 			id: schema.resume.id,
 			userId: schema.resume.userId,
 			isPublic: schema.resume.isPublic,
@@ -227,10 +235,8 @@ const statistics = {
 		}
 
 		// Like views, a visitor's downloads count once an hour, so repeated calls can't inflate the number.
-		const key = `download:${resume.id}:${clientKeyFromHeaders(input.trustedClient)}`;
-		if (shouldCountForStatistics(resume, viewer) && (await shouldCountView(key, Date.now()))) {
-			await statistics.increment({ id: resume.id, downloads: true });
-		}
+		if (shouldCountForStatistics(resume, viewer))
+			await countVisit({ kind: "download", resumeId: resume.id, trustedClient: input.trustedClient });
 		return true;
 	},
 
@@ -344,10 +350,16 @@ function toSharedResumeResponse(
 		isPublic: boolean;
 		isLocked: boolean;
 		showDownloadButtons: boolean;
+		showInSearchEngines: boolean;
+		hideContactDetails: boolean;
+		isPrimary: boolean;
 	},
 	hasPassword: boolean,
 ) {
 	return {
+		showInSearchEngines: resume.showInSearchEngines,
+		hideContactDetails: resume.hideContactDetails,
+		isPrimary: resume.isPrimary,
 		id: resume.id,
 		name: resume.name,
 		slug: resume.slug,
@@ -464,6 +476,7 @@ export const resumeService = {
 				isPublic: schema.resume.isPublic,
 				isLocked: schema.resume.isLocked,
 				showDownloadButtons: schema.resume.showDownloadButtons,
+				...shareColumns,
 				createdAt: schema.resume.createdAt,
 				updatedAt: schema.resume.updatedAt,
 			})
@@ -505,7 +518,7 @@ export const resumeService = {
 		requirePublic?: boolean;
 		expectedResumeId?: string;
 	}) => {
-		const resume = await findResumeBySlug(input, {
+		const resume = await findResume(input, {
 			id: schema.resume.id,
 			userId: schema.resume.userId,
 			name: schema.resume.name,
@@ -515,6 +528,7 @@ export const resumeService = {
 			isPublic: schema.resume.isPublic,
 			isLocked: schema.resume.isLocked,
 			showDownloadButtons: schema.resume.showDownloadButtons,
+			...shareColumns,
 			passwordHash: schema.resume.password,
 			hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
 		});
@@ -536,12 +550,8 @@ export const resumeService = {
 			});
 		}
 
-		if (shouldCountForStatistics(resume, viewer)) {
-			const key = `${resume.id}:${clientKeyFromHeaders(input.trustedClient)}`;
-			if (await shouldCountView(key, Date.now())) {
-				await resumeService.statistics.increment({ id: resume.id, views: true });
-			}
-		}
+		if (shouldCountForStatistics(resume, viewer))
+			await countVisit({ kind: "view", resumeId: resume.id, trustedClient: input.trustedClient });
 
 		const current = { ...resume, data: parseStoredResumeData(resume.data) };
 		return toSharedResumeResponse(redactResumeForViewer(current, isOwner(current, viewer)), resume.hasPassword);
@@ -618,6 +628,9 @@ export const resumeService = {
 		data?: ResumeData;
 		isPublic?: boolean;
 		showDownloadButtons?: boolean;
+		showInSearchEngines?: boolean;
+		hideContactDetails?: boolean;
+		isPrimary?: boolean;
 		expectedUpdatedAt?: Date;
 		skipAutoSnapshot?: boolean;
 		/** The editor visit this save belongs to; its autosaves share one version. */
@@ -631,6 +644,7 @@ export const resumeService = {
 						data: schema.resume.data,
 						slug: schema.resume.slug,
 						isLocked: schema.resume.isLocked,
+						isPublic: schema.resume.isPublic,
 						autoName: schema.resume.autoName,
 						updatedAt: schema.resume.updatedAt,
 					})
@@ -677,7 +691,29 @@ export const resumeService = {
 					...(normalizedData ? { data: normalizedData } : {}),
 					...(input.isPublic !== undefined ? { isPublic: input.isPublic } : {}),
 					...(input.showDownloadButtons !== undefined ? { showDownloadButtons: input.showDownloadButtons } : {}),
+					...(input.showInSearchEngines !== undefined ? { showInSearchEngines: input.showInSearchEngines } : {}),
+					...(input.hideContactDetails !== undefined ? { hideContactDetails: input.hideContactDetails } : {}),
+					...(input.isPrimary !== undefined ? { isPrimary: input.isPrimary } : {}),
 				};
+
+				// Only a published resume can become the primary one; it takes the role from the account's previous primary.
+				if (input.isPrimary === true) {
+					if (!(input.isPublic ?? existing.isPublic))
+						throw new ORPCError("RESUME_NOT_PUBLIC", {
+							status: 400,
+							message: "Publish the resume before making it primary.",
+						});
+					await tx
+						.update(schema.resume)
+						.set({ isPrimary: false })
+						.where(
+							and(
+								eq(schema.resume.userId, input.userId),
+								eq(schema.resume.isPrimary, true),
+								ne(schema.resume.id, input.id),
+							),
+						);
+				}
 
 				const [updated] = await tx
 					.update(schema.resume)
@@ -758,7 +794,7 @@ export const resumeService = {
 		updateResumePassword({ ...input, password: await hash(input.password, 10) }),
 
 	verifyPassword: async (input: { slug: string; username: string; password: string; responseHeaders?: Headers }) => {
-		const resume = await findResumeBySlug(
+		const resume = await findResume(
 			input,
 			{ id: schema.resume.id, password: schema.resume.password },
 			isNotNull(schema.resume.password),

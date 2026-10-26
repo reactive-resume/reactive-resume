@@ -23,13 +23,17 @@ import {
 } from "../openapi/metadata";
 import { handleRpc } from "../rpc/handler";
 import { handleAgentSkillArchive, handleAgentSkillsIndex } from "../static/agent-skills";
+import { handleResumeCard } from "../static/resume-card";
+import { serveResumePage } from "../static/resume-page";
 import { handleSchemaJson } from "../static/schema";
-import { handleLlms, handleRobots, handleSitemap } from "../static/seo";
+import { handleLlms, handlePagesSitemap, handleResumesSitemap, handleRobots, handleSitemap } from "../static/seo";
 import { handleUpload } from "../static/uploads";
-import { handleWebApp, serveWebDistStatic } from "../static/web";
+import { handleWebApp, isProfilePath, isPublicResumePath, serveWebDistStatic } from "../static/web";
+import { handleAlias } from "./alias";
 import { handleAppleAppSiteAssociation, handleAndroidAssetLinks } from "./app-links";
 import { handleAuth, handleOAuth } from "./auth";
 import { handleCareerJobs } from "./career-jobs";
+import { handleCustomDomain, handleTraefikProvider } from "./custom-domain";
 import { handleHealth } from "./health";
 import { handlePublicResumePdf } from "./public-resume-pdf";
 import { handleResumePdfDownload } from "./resume-pdf";
@@ -76,6 +80,11 @@ export function createApp(options: AppOptions = {}) {
 	}
 	const client = (c: Context<ServerEnvironment>) => options.trustedClient?.(c.req.raw) ?? getTrustedClient(c, proxies);
 
+	// The alias domain serves the same public pages; only the signed-in app's sections move to APP_URL.
+	app.use("*", async (c, next) => handleAlias(c.req.raw) ?? (await next()));
+	// A verified custom domain shows its primary resume; other hosts fall through.
+	app.use("*", async (c, next) => (await handleCustomDomain(c.req.raw, client(c))) ?? next());
+
 	app.use("/auth/*", async (c, next) => {
 		await next();
 		// The app shell already carries a full policy that forbids framing; only add one where it's missing.
@@ -115,11 +124,16 @@ export function createApp(options: AppOptions = {}) {
 	app.get("/api/auth/oauth", (c) => handleOAuth(c.req.raw));
 	app.all("/api/auth/*", (c) => handleAuth(c.req.raw, client(c)));
 	app.get("/api/health", () => handleHealth());
+	app.get("/api/internal/traefik", (c) => handleTraefikProvider(c.req.raw));
 	app.on(["GET", "POST"], "/api/career/run", (c) => handleCareerJobs(c.req.raw));
 	app.get("/api/resumes/:username/:slug/pdf", (c) =>
 		handlePublicResumePdf(c.req.raw, c.req.param("username"), c.req.param("slug"), client(c)),
 	);
 	app.get("/api/resumes/:id/pdf", (c) => handleResumePdfDownload(c.req.raw, c.req.param("id")));
+	// Outside /api/resumes, which robots.txt keeps crawlers out of: link previews need to fetch these.
+	app.get("/cards/:username/:file{.+\\.png}", (c) =>
+		handleResumeCard(c.req.raw, c.req.param("username"), c.req.param("file").slice(0, -".png".length)),
+	);
 	app.get("/api/uploads/*", (c) => handleUpload(c.req.raw));
 	app.get("/uploads/*", (c) => handleUpload(c.req.raw));
 	app.get("/schema.json", () => handleSchemaJson());
@@ -142,6 +156,10 @@ export function createApp(options: AppOptions = {}) {
 
 	app.get("/robots.txt", () => handleRobots());
 	app.get("/sitemap.xml", () => handleSitemap());
+	app.get("/sitemaps/pages.xml", () => handlePagesSitemap());
+	app.get("/sitemaps/:page{resumes-[0-9]+\\.xml}", (c) =>
+		handleResumesSitemap(Number(c.req.param("page").slice("resumes-".length, -".xml".length))),
+	);
 	app.get("/llms.txt", () => handleLlms());
 
 	// Compresses only the web app's files and HTML shells: every route registered above answers before reaching
@@ -151,8 +169,28 @@ export function createApp(options: AppOptions = {}) {
 
 	// Must precede the static middleware: serveStatic resolves "/" to dist/index.html and would
 	// return it verbatim, skipping the OpenGraph/Twitter/canonical/JSON-LD injection in handleWebApp.
-	app.on("GET", ["/", "/index.html"], (c) => handleWebApp(c.req.raw, options.readWebFile));
+	// An instance can show one resume at its root instead of the marketing home; the configuration alone picks it.
+	const rootResumeId = env.ROOT_RESUME_ID;
+	app.on("GET", ["/", "/index.html"], (c) =>
+		rootResumeId
+			? serveResumePage(c.req.raw, { id: rootResumeId }, client(c))
+			: handleWebApp(c.req.raw, options.readWebFile),
+	);
+	if (rootResumeId)
+		app.post("/", limitBody(16 * 1024), (c) => serveResumePage(c.req.raw, { id: rootResumeId }, client(c)));
 	if (options.serveStatic !== false && serveWebDistStatic) app.use("/*", serveWebDistStatic);
+	// A resume's web page, rendered here, and its password form; files with the same shape of address were served
+	// just above. `/<username>` is the account's primary resume, on every domain the app answers.
+	app.on(["GET", "POST"], "/:username/:slug", limitBody(16 * 1024), (c, next) =>
+		isPublicResumePath(c.req.path)
+			? serveResumePage(c.req.raw, { username: c.req.param("username"), slug: c.req.param("slug") }, client(c))
+			: next(),
+	);
+	app.on(["GET", "POST"], "/:username", limitBody(16 * 1024), (c, next) =>
+		isProfilePath(c.req.path)
+			? serveResumePage(c.req.raw, { username: c.req.param("username"), primary: true }, client(c))
+			: next(),
+	);
 	app.get("/*", (c) => handleWebApp(c.req.raw, options.readWebFile));
 
 	return app;

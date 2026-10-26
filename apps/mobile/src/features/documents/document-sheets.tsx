@@ -144,7 +144,7 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 								disabled={operations.busy}
 								onPress={() => {
 									onClose();
-									router.push(routes.share(first.id));
+									router.push(routes.builder(first.id, "share"));
 								}}
 							/>
 						)}

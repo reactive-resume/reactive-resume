@@ -3,13 +3,8 @@ import fs from "node:fs/promises";
 import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
 const mocks = vi.hoisted(() => ({
-	env: { APP_URL: "https://rxresu.me", ROOT_RESUME_ID: undefined as string | undefined },
+	env: { APP_URL: "https://rxresu.me" },
 	serveStatic: vi.fn(() => vi.fn()),
-	getPublicResumeSocialMeta: vi.fn(),
-}));
-
-vi.mock("@reactive-resume/api/features/resume/social-meta", () => ({
-	getPublicResumeSocialMeta: mocks.getPublicResumeSocialMeta,
 }));
 
 vi.mock("node:fs", () => ({
@@ -35,12 +30,10 @@ const { handleWebApp } = await import("./web");
 describe("web app fallback classification", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mocks.env.ROOT_RESUME_ID = undefined;
 		vi.mocked(fs.readFile).mockResolvedValue("<html>app</html>");
-		mocks.getPublicResumeSocialMeta.mockResolvedValue(null);
 	});
 
-	it.each(["/", "/?locale=de-DE", "/ats-checker", "/resume-templates", "/dashboard", "/alice/resume", "/index.html"])(
+	it.each(["/", "/?locale=de-DE", "/ats-checker", "/resume-templates", "/dashboard", "/index.html"])(
 		"advertises Context7 Ask in server-rendered %s and its HEAD response",
 		async (path) => {
 			vi.mocked(fs.readFile).mockResolvedValue('<html><head></head><body><div id="app"></div></body></html>');
@@ -148,63 +141,7 @@ describe("web app fallback classification", () => {
 		});
 	});
 
-	describe("public resume social cards", () => {
-		const shell = `<html><head><title>Reactive Resume — A free and open-source resume builder</title><meta name="description" content="Marketing copy."></head><body></body></html>`;
-
-		it("escapes user-authored values so resume content cannot break out of the attribute", async () => {
-			vi.mocked(fs.readFile).mockResolvedValue(shell);
-			mocks.getPublicResumeSocialMeta.mockResolvedValue({
-				name: 'Jane" onload="alert(1)',
-				title: "<script>alert(1)</script>",
-				description: 'Ends with " and & ampersand',
-				template: "azurill",
-			});
-
-			const html = await (await handleWebApp(new Request("https://example.com/jane/resume"))).text();
-
-			expect(html).not.toContain("<script>alert(1)</script>");
-			expect(html).not.toContain('onload="alert(1)');
-			expect(html).toContain('<meta property="og:title" content="&lt;script&gt;alert(1)&lt;/script&gt;">');
-			expect(html).toContain('content="Ends with &quot; and &amp; ampersand"');
-		});
-
-		it("keeps replacement patterns in resume text literal", async () => {
-			vi.mocked(fs.readFile).mockResolvedValue(shell);
-			mocks.getPublicResumeSocialMeta.mockResolvedValue({
-				name: "Jane $& $' Doe",
-				title: "Jane Doe",
-				description: "Costs $$ and $` nothing",
-				template: "azurill",
-			});
-
-			const html = await (await handleWebApp(new Request("https://example.com/jane/resume"))).text();
-
-			expect(html).toContain("<title>Jane $&amp; $&#39; Doe - Reactive Resume</title>");
-			expect(html).toContain('<meta name="description" content="Costs $$ and $` nothing">');
-		});
-
-		it("preloads the PDF the app will fetch, only for resumes anyone may open", async () => {
-			vi.mocked(fs.readFile).mockResolvedValue(shell);
-			mocks.getPublicResumeSocialMeta.mockResolvedValue({
-				name: "Jane",
-				title: "Jane",
-				description: "",
-				template: "azurill",
-			});
-
-			const html = await (await handleWebApp(new Request("https://example.com/jane/my-resume"))).text();
-			expect(html).toContain(
-				'<link rel="preload" href="/api/resumes/jane/my-resume/pdf" as="fetch" crossorigin="use-credentials" media="(min-width: 640px)">',
-			);
-
-			// Private, password-protected and missing resumes have no card, and get no preload either.
-			mocks.getPublicResumeSocialMeta.mockResolvedValue(null);
-			const locked = await (await handleWebApp(new Request("https://example.com/jane/locked"))).text();
-			expect(locked).not.toContain('rel="preload"');
-		});
-	});
-
-	it.each(["/", "/alice/resume"])("sets framing and CSP security headers on %s", async (pathname) => {
+	it.each(["/", "/dashboard"])("sets framing and CSP security headers on %s", async (pathname) => {
 		const response = await handleWebApp(new Request(`https://example.com${pathname}`));
 
 		expect(response.status).toBe(200);
@@ -245,26 +182,6 @@ describe("web app fallback classification", () => {
 			expect(response.status).toBe(404);
 			expect(await response.text()).not.toContain("<html>app</html>");
 			expect(fs.readFile).not.toHaveBeenCalled();
-			expect(mocks.getPublicResumeSocialMeta).not.toHaveBeenCalled();
 		},
 	);
-});
-
-describe("configured root shell", () => {
-	it("uses configured canonical root without leaking ID or marketing metadata", async () => {
-		mocks.env.ROOT_RESUME_ID = "private-or-missing-id";
-		vi.mocked(fs.readFile).mockResolvedValue(
-			'<html><head><title>Marketing title</title><meta name="description" content="Marketing copy."></head><body></body></html>',
-		);
-		const html = await (
-			await handleWebApp(
-				new Request("https://attacker.example/?id=other", {
-					headers: { host: "attacker.example", "x-forwarded-host": "evil.example" },
-				}),
-			)
-		).text();
-		expect(html).toContain('<link rel="canonical" href="https://rxresu.me/" data-root-resume-shell>');
-		expect(html).toContain('<meta name="robots" content="noindex, follow" data-root-resume-shell>');
-		expect(html).not.toMatch(/private-or-missing-id|attacker|evil|Marketing|application\/ld\+json|timelapse/);
-	});
 });

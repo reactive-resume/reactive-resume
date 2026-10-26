@@ -24,6 +24,7 @@ import type { ReactNode } from "react";
 import { Children, createContext, Fragment, isValidElement, use } from "react";
 import { View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
+import { HEADING_NODE_PROP } from "../../page-map";
 import { getResumeSectionIcon } from "../../section-icon";
 import { findSection, getResumeSectionTitle } from "../../section-title";
 import { resolvedPdfFlowProps, resolvedPdfTextProps } from "../../semantic/adapter";
@@ -365,6 +366,7 @@ const SectionShell = ({ sectionId, title, showHeading = true, children }: Sectio
 				{showHeading && sectionHeadingEnabled && sectionHeadingVisible && (
 					<View
 						{...resolvedPdfFlowProps(sectionHeadingResolved)}
+						{...{ [HEADING_NODE_PROP]: sectionHeadingNodeKey }}
 						style={composeStyles(
 							sectionHeadingStyle,
 							{ ...defaultSectionHeadingContainerStyle, flexDirection: createRtlStyleHelpers(data.rtl).row },

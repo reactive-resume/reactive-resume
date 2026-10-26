@@ -52,7 +52,7 @@ export function LetterPage() {
 	const reducedMotion = useReducedMotion();
 	const previewTemplate = useEditorStore((state) => state.previewTemplate);
 	const historyVersionId = useEditorStore((state) => state.historyVersionId);
-	const sheetOpen = useEditorStore((state) => state.shareTab !== null);
+	const sheetOpen = useEditorStore((state) => state.sheetTab !== null);
 	const rendered = useEditorStore((state) => state.rendered);
 	const setRendered = useEditorStore((state) => state.setRendered);
 	const breakpoint = useBreakpoint();
@@ -101,7 +101,7 @@ export function LetterPage() {
 		letter: t({ message: "Letter", context: "US Letter paper size (8.5 × 11 in), shown beside A4" }),
 		"free-form": t`Free-form`,
 	}[format];
-	// Desktop: the page moves aside so it stays visible beside the Share & export sheet.
+	// Desktop: the page moves aside so it stays visible beside the Download & history sheet.
 	const shifted = sheetOpen && (breakpoint === "desktop" || breakpoint === "wide");
 
 	return (

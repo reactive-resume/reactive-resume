@@ -5,6 +5,7 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
+import { publicResumeUrl } from "@reactive-resume/resume/sharing";
 import { Button } from "@reactive-resume/ui/components/button";
 import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from "@reactive-resume/ui/components/context-menu";
 import {
@@ -22,11 +23,11 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { publicResumeUrl } from "./filter";
 import { useNewDocumentsStore } from "./new-documents";
 import { ChipInput } from "@/components/input/chip-input";
 import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { useShareOrigin } from "@/features/resume/share/use-share-origin";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
@@ -252,7 +253,13 @@ export function DocumentMenuContent({
 	const actions = useDocumentActions();
 	const { data: session } = authClient.useSession();
 	const [, copy] = useCopyToClipboard();
-	const url = publicResumeUrl(document, session?.user.username);
+	const origin = useShareOrigin();
+	const username = session?.user.username;
+	// A resume's public address, or null while its link is off.
+	const url =
+		document.type === "resume" && document.isPublic && document.slug && username
+			? publicResumeUrl(origin, { username, slug: document.slug })
+			: null;
 
 	const trashEntries: MenuEntry[] = [
 		{ icon: "arrow-counter-clockwise", label: t`Restore`, onSelect: () => void actions.restore(document) },

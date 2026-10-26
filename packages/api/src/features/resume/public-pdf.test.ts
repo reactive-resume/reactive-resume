@@ -57,7 +57,8 @@ const buildResume = (overrides: Partial<{ isPublic: boolean; passwordHash: strin
 
 /** Makes the lookup query return `resume`. */
 const found = (resume: ReturnType<typeof buildResume>) => {
-	pg.rows = [[resume.id, resume.userId, resume.data, resume.isPublic, resume.passwordHash]];
+	// Columns in select order: id, userId, data, isPublic, hideContactDetails, showDownloadButtons, password.
+	pg.rows = [[resume.id, resume.userId, resume.data, resume.isPublic, false, true, resume.passwordHash]];
 	return resume;
 };
 

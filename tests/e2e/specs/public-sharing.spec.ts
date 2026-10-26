@@ -17,11 +17,11 @@ test("counts a visitor's PDF download without counting the preview", async ({ br
 	const anonymous = await browser.newPage();
 	try {
 		await anonymous.goto(publicUrl);
-		await expect(anonymous.getByRole("button", { name: "Download PDF" }).first()).toBeVisible();
+		await expect(anonymous.getByRole("link", { name: "Download PDF" })).toBeVisible();
 		await expect.poll(readStatistics).toMatchObject({ views: 1, downloads: 0, lastDownloadedAt: null });
 
 		const downloaded = anonymous.waitForEvent("download");
-		await anonymous.getByRole("button", { name: "Download PDF" }).first().click();
+		await anonymous.getByRole("link", { name: "Download PDF" }).click();
 		const download = await downloaded;
 		expect(await download.failure()).toBeNull();
 		const downloadPath = await download.path();

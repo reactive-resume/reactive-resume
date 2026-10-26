@@ -2,7 +2,7 @@
 // is one change here. Ids and slugs are URL-encoded.
 import type { WorkspaceTab } from "@reactive-resume/schema/career";
 
-export type BuilderPane = "write" | "page" | "design" | "check";
+export type BuilderPane = "write" | "page" | "design" | "check" | "share";
 export type LetterPane = "write" | "page" | "design";
 export type CareerPane = "today" | "coach" | "knowledge" | "offers";
 export type SettingsPane = "account" | "preferences" | "ai";
@@ -39,7 +39,8 @@ export const routes = {
 	/** `section` is a built-in section key or a custom section id; `item` is the entry id. */
 	entry: (id: string, section: string, item: string) =>
 		`/builder/${segment(id)}/entry/${segment(section)}/${segment(item)}` as const,
-	share: (id: string) => `/builder/${segment(id)}/share` as const,
+	/** Download & history, over the builder. */
+	export: (id: string) => `/builder/${segment(id)}/export` as const,
 	/** `version` opens History on that version, read-only (Applications' "What you sent"). */
 	history: (id: string, version?: string) =>
 		version

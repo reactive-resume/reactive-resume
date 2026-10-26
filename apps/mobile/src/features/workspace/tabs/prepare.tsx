@@ -13,7 +13,6 @@ import { View } from "react-native";
 import { formatList } from "@reactive-resume/utils/locale";
 import {
 	latest,
-	useFlags,
 	useGenerate,
 	useSavedItems,
 	useSchedules,
@@ -26,6 +25,7 @@ import { minutesUntil, preparePhase } from "../logic";
 import { Actions, AiNotice, Block, CheckRow, EmptyNotice, Pill, PrivacyLine, useWorking, workingSteps } from "../parts";
 import { WorkspaceScreen } from "../shell";
 import { orpc } from "@/api/client";
+import { useFlags } from "@/api/flags";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { interviewTypeLabel, useUserTime } from "@/features/application-detail/hooks";
 import { routes } from "@/routes";

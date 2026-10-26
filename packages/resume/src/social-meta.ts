@@ -1,11 +1,6 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 
-export type ResumeSocialMeta = {
-	name: string;
-	title: string;
-	description: string;
-	template: string;
-};
+export type ResumeSocialMeta = { title: string; description: string };
 
 // Social cards truncate around this length; trimming here keeps the ellipsis on a word boundary
 // instead of letting the crawler cut mid-word.
@@ -20,12 +15,9 @@ const truncate = (text: string) => {
 	return `${(lastSpace > 0 ? clipped.slice(0, lastSpace) : clipped).trimEnd()}…`;
 };
 
-/**
- * Derives the title/description/template used for OpenGraph and Twitter cards on a public resume.
- * Shared by the client route head and the server-side HTML injection so the two never drift.
- */
-export const getResumeSocialMeta = (data: ResumeData, fallbackName = "Resume"): ResumeSocialMeta => {
-	const name = data.basics.name || fallbackName;
+/** The title and description a resume's web page gives search engines and link previews. */
+export const getResumeSocialMeta = (data: ResumeData): ResumeSocialMeta => {
+	const name = data.basics.name || "Resume";
 	const summary = data.summary.content
 		// `[^<>]` keeps a run of unclosed `<` linear; Tiptap escapes literal brackets, so tags match as before.
 		.replace(/<[^<>]+>/g, " ")
@@ -33,9 +25,7 @@ export const getResumeSocialMeta = (data: ResumeData, fallbackName = "Resume"): 
 		.trim();
 
 	return {
-		name,
 		title: data.basics.headline ? `${name} — ${data.basics.headline}` : name,
 		description: truncate(summary || data.basics.headline || name),
-		template: data.metadata.template,
 	};
 };

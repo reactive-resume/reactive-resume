@@ -14,6 +14,9 @@ const fixture = () => ({
 		isPublic: true,
 		isLocked: false,
 		showDownloadButtons: false,
+		showInSearchEngines: false,
+		hideContactDetails: false,
+		isPrimary: false,
 		hasPassword: false,
 	})),
 });

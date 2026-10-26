@@ -22,7 +22,7 @@ import { HOST } from "./primitives";
 import { flattenAlpha, flattenStyle, toFormeStyle, toPoints, WHITE } from "./style";
 
 // A4 in points, the size used for `vw`/`vh` until a page says otherwise.
-const DEFAULT_PAGE = { width: 595.28, height: 841.89 };
+export const DEFAULT_PAGE = { width: 595.28, height: 841.89 };
 /** Free-form pages start this tall; `renderResume` measures the content and converts again at its height. */
 export const FREE_FORM_MEASURE_HEIGHT = 14_400;
 
@@ -82,7 +82,7 @@ const PADDING_KEYS = [
 	"paddingVertical",
 ] as const;
 
-const pageDimensions = (size: PageSize | undefined, freeFormHeight = FREE_FORM_MEASURE_HEIGHT) => {
+export const pageDimensions = (size: PageSize | undefined, freeFormHeight = FREE_FORM_MEASURE_HEIGHT) => {
 	if (size === "LETTER") return { width: 612, height: 792 };
 	if (size && typeof size === "object") return { width: size.width, height: size.height ?? freeFormHeight };
 	return DEFAULT_PAGE;

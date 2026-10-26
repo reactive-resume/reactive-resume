@@ -4,7 +4,7 @@ const envMock = vi.hoisted(() => ({ APP_URL: "https://example.com", AUTH_SECRET:
 
 vi.mock("@reactive-resume/env/server", () => ({ env: envMock }));
 
-const { hasResumeAccess, grantResumeAccess } = await import("./access");
+const { createPreviewToken, hasResumeAccess, grantResumeAccess, isValidPreviewToken } = await import("./access");
 
 const grantedCookie = (resumeId = "resume-42", passwordHash = "hash") => {
 	const headers = new Headers();
@@ -66,5 +66,18 @@ describe("grantResumeAccess", () => {
 		const productionHeaders = new Headers();
 		grantResumeAccess(productionHeaders, "r", "h");
 		expect(productionHeaders.get("Set-Cookie")).toContain("Secure");
+	});
+});
+
+describe("web page preview tokens", () => {
+	it("open only their own resume, only until they expire", () => {
+		const now = 1_800_000_000_000;
+		const token = createPreviewToken("resume-42", now);
+		expect(isValidPreviewToken(token, "resume-42", now + 60_000)).toBe(true);
+		expect(isValidPreviewToken(token, "resume-43", now + 60_000)).toBe(false);
+		expect(isValidPreviewToken(token, "resume-42", now + 15 * 60_000 + 1)).toBe(false);
+		const [expires] = token.split(".");
+		expect(isValidPreviewToken(`${Number(expires) + 60_000}.${token.split(".")[1]}`, "resume-42", now)).toBe(false);
+		expect(isValidPreviewToken("garbage", "resume-42", now)).toBe(false);
 	});
 });

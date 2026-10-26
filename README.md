@@ -50,6 +50,14 @@
         </a>
       </td>
       <td align="center" valign="middle">
+        <a href="https://ola.cv">
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="https://ola.cv/assets/ola-logo-white.png" />
+            <img src="https://ola.cv/assets/ola-logo.png" alt=".cv domains" height="24" />
+          </picture>
+        </a>
+      </td>
+      <td align="center" valign="middle">
         <a href="https://vercel.com/open-source-program">
           <img src="https://vercel.com/oss/program-badge-2026.svg" alt="Vercel OSS Program" height="24" />
         </a>

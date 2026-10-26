@@ -15,6 +15,7 @@ import {
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -217,7 +218,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 						animate={{ opacity: 1, transform: "translateY(0%)" }}
 						exit={{ opacity: 0, transform: "translateY(100%)", transition: { duration: D2 * EXIT, ease: EASE } }}
 						transition={{ duration: D2, ease: EASE }}
-						className="sticky bottom-4 z-20 justify-self-center max-sm:bottom-[calc(69px+env(safe-area-inset-bottom))]"
+						className="fixed inset-x-0 bottom-6 z-30 mx-auto w-fit max-w-[calc(100vw-32px)] max-sm:bottom-[calc(69px+env(safe-area-inset-bottom))]"
 					>
 						<BulkBar ids={checkedIds} onDone={() => setChecked(new Set())} />
 					</m.div>
@@ -375,14 +376,18 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 	});
 
 	return (
-		<div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-ink px-3 py-2 text-bg shadow-e3">
-			<span className="me-1 text-sm font-semibold">
+		<div
+			role="toolbar"
+			aria-label={t`Applications`}
+			className="flex flex-wrap items-center gap-1 rounded-xl border border-line bg-raised p-1.5 text-ink shadow-e3"
+		>
+			<span className="px-2 text-sm font-semibold whitespace-nowrap" aria-live="polite">
 				<Plural value={ids.length} one="# selected" other="# selected" />
 			</span>
 
 			<DropdownMenu>
-				<DropdownMenuTrigger render={<Button size="sm" variant="secondary" />}>
-					<Icon name="arrow-right" size={16} />
+				<DropdownMenuTrigger render={<Button size="sm" variant="ghost" />}>
+					<Icon name="arrow-right" />
 					<Trans>Move to…</Trans>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="start">
@@ -396,8 +401,8 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 			</DropdownMenu>
 
 			<Popover>
-				<PopoverTrigger render={<Button size="sm" variant="secondary" />}>
-					<Icon name="tag" size={16} />
+				<PopoverTrigger render={<Button size="sm" variant="ghost" />}>
+					<Icon name="tag" />
 					<Trans>Add tag</Trans>
 				</PopoverTrigger>
 				<PopoverContent align="start" className="w-60 p-2">
@@ -419,7 +424,7 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 			</Popover>
 
 			<DropdownMenu>
-				<DropdownMenuTrigger render={<Button size="sm" variant="secondary" />}>
+				<DropdownMenuTrigger render={<Button size="sm" variant="ghost" />}>
 					<Trans>Close…</Trans>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="start">
@@ -436,8 +441,8 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 
 			<Button
 				size="sm"
-				variant="secondary"
-				className="text-danger-text"
+				variant="ghost"
+				className="text-danger-text hover:bg-danger-soft"
 				onClick={async () => {
 					const confirmed = await confirm(
 						plural(ids.length, { one: "Delete # application?", other: "Delete # applications?" }),
@@ -449,12 +454,11 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 					if (confirmed) bulkDelete.mutate({ ids });
 				}}
 			>
+				<Icon name="trash" />
 				<Trans>Delete…</Trans>
 			</Button>
 
-			<Button size="sm" variant="ghost" className="ms-auto text-bg hover:bg-bg/15" onClick={onDone}>
-				<Trans>Clear</Trans>
-			</Button>
+			<IconButton icon="x" size="icon-sm" label={t`Clear selection`} className="text-ink-2" onClick={onDone} />
 		</div>
 	);
 }

@@ -28,6 +28,11 @@ msgstr "„{0}” elrejtve"
 msgid "“{0}” moved to Trash"
 msgstr "A „{0}” a kukába került"
 
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "“{0}” stops being your primary resume."
+msgstr "„{0}” már nem lesz az elsődleges önéletrajzod."
+
 #. placeholder {0}: purge[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
@@ -609,6 +614,10 @@ msgstr "{skipped, plural, one {# módosítást nem sikerült elhelyezni: megvál
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# történet} other {# történet}}"
 
+#: src/features/share/web-page.tsx
+msgid "{suggestion} may be available. Get yours here →"
+msgstr "{suggestion} elérhető lehet. Szerezd meg a sajátodat itt →"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
 msgstr "{summary}. A Karrier → Ajánlatok részben nyílik meg."
@@ -1072,6 +1081,10 @@ msgstr "Adja hozzá a domaint a @ után, például {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Adja hozzá a tartományvégződést, például {domain}.com"
 
+#: src/features/share/web-page.tsx
+msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
+msgstr "Add hozzá ezeket a rekordokat ott, ahol a domaint kezeled, majd ellenőrizd. A változások terjedése néhány órát is igénybe vehet."
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Add to calendar"
@@ -1363,7 +1376,7 @@ msgstr "Bármelyik"
 msgid "Any font, in Advanced"
 msgstr "Bármilyen betűtípus, a Speciális menüben"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Anyone with the link will be able to view your resume."
 msgstr "A link birtokában bárki megtekintheti az önéletrajzát."
 
@@ -1784,10 +1797,6 @@ msgstr "A minimális alapbére alatt."
 msgid "Bengali"
 msgstr "bangla"
 
-#: src/features/public/public-resume.tsx
-msgid "Block this author"
-msgstr "A szerző letiltása"
-
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Tábla"
@@ -1980,7 +1989,7 @@ msgstr "Időzóna módosítása"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Közvetlenül megváltoztatta az önéletrajzot (egy korábbi beszélgetés)"
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "A módosításokat nem sikerült menteni. Újrapróbálkozás, mielőtt folytatná."
 
@@ -2015,6 +2024,10 @@ msgstr "Újraellenőrzés"
 #: src/features/ats-checker/checker.tsx
 msgid "Check another file"
 msgstr "Ellenőrizze egy másik fájlt"
+
+#: src/features/share/web-page.tsx
+msgid "Check DNS"
+msgstr "DNS ellenőrzése"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Check every claim, date and result against your experience."
@@ -2233,8 +2246,7 @@ msgstr "Törli a bejegyzéseit; a szakasz marad. Visszavonhatja."
 #: src/features/check/page.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
-#: src/features/public/public-resume.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "Close"
 msgstr "Bezárás"
 
@@ -2352,7 +2364,7 @@ msgstr "Tömörítsd vagy távolítsd el a nagy képeket, hogy a feltöltés gyo
 msgid "Confirm applied"
 msgstr "Jelentkezés megerősítése"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Confirm password"
 msgstr "Jelszó megerősítése"
 
@@ -2369,6 +2381,7 @@ msgid "Confirm the time with {contact} before adding a new interview."
 msgstr "Új interjú hozzáadása előtt egyeztesd az időpontot vele: {contact}."
 
 #: src/features/assistant/provider.tsx
+#: src/features/share/web-page.tsx
 msgid "Connect"
 msgstr "Csatlakozás"
 
@@ -2411,6 +2424,10 @@ msgstr "Csatlakoztassa az íráshoz, álláskereséshez és munkához használt 
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "Csatlakoztatva · {milliseconds} ms"
+
+#: src/features/share/web-page.tsx
+msgid "Connected. Your domain opens your primary resume."
+msgstr "Csatlakoztatva. A domained az elsődleges önéletrajzodat nyitja meg."
 
 #: src/features/workspace/parts.tsx
 msgid "Connecting the dots"
@@ -2612,10 +2629,6 @@ msgstr "Nem sikerült törölni a beszélgetést. Próbáld újra."
 msgid "Couldn't delete the interview. Try again."
 msgstr "Nem sikerült törölni az interjút. Próbáld újra."
 
-#: src/features/public/public-resume.tsx
-msgid "Couldn't download the PDF. Try again."
-msgstr "Nem sikerült letölteni a következőt: PDF. Próbáld újra."
-
 #: src/features/settings/export.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't export. Try again."
@@ -2780,10 +2793,6 @@ msgstr "Nem sikerült beolvasni az exportált PDF fájlt."
 msgid "Couldn't read this page: {0}"
 msgstr "Nem sikerült elolvasni ezt az oldalt: {0}"
 
-#: src/features/public/public-resume.tsx
-msgid "Couldn't read your blocked-author settings."
-msgstr "Nem sikerült beolvasni a letiltott szerző beállításait."
-
 #: src/features/application-detail/sheets.tsx
 msgid "Couldn't record submission. Try again."
 msgstr "Nem sikerült rögzíteni a beküldést. Próbáld újra."
@@ -2859,10 +2868,6 @@ msgstr "Nem sikerült menteni a témát. Próbáld újra."
 #: app/(tabs)/settings/preferences.tsx
 msgid "Couldn't save the timezone. Try again."
 msgstr "Nem sikerült menteni az időzónát. Próbáld újra."
-
-#: src/features/public/public-resume.tsx
-msgid "Couldn't save your blocked-author setting. Try again."
-msgstr "Nem sikerült menteni a letiltott szerző beállítását. Próbáld újra."
 
 #: src/features/letters/write.tsx
 msgid "Couldn't save your changes, so drafting didn't start. Nothing on the page changed."
@@ -2982,10 +2987,6 @@ msgstr "Nem sikerült feltölteni a fényképet."
 #: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Nem sikerült feltölteni a fotót. Próbáld újra."
-
-#: src/features/public/public-resume.tsx
-msgid "Couldn't verify the password. Try again."
-msgstr "Nem sikerült ellenőrizni a jelszót. Próbáld újra."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -3467,6 +3468,10 @@ msgstr "Dokumentumok ehhez a munkához"
 msgid "Documents you move here stay for 30 days."
 msgstr "Az ide áthelyezett dokumentumok 30 napig maradnak itt."
 
+#: src/features/share/web-page.tsx
+msgid "Domain connected"
+msgstr "Domain csatlakoztatva"
+
 #. placeholder {0}: document.name
 #: src/features/assistant/assistant-screen.tsx
 msgid "Don't send {0}"
@@ -3505,8 +3510,9 @@ msgid "Double-checking"
 msgstr "Dupla ellenőrzés"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
+#: src/shell/builder-chrome.tsx
 msgid "Download"
 msgstr "Letöltés"
 
@@ -3515,6 +3521,11 @@ msgstr "Letöltés"
 #: src/features/share/download.tsx
 msgid "Download {0}"
 msgstr "Letöltés {0}"
+
+#: src/features/share/export-screen.tsx
+#: src/shell/builder-chrome.tsx
+msgid "Download & history"
+msgstr "Letöltés és előzmények"
 
 #: src/features/letters/share.tsx
 msgid "Download both PDFs"
@@ -3532,10 +3543,6 @@ msgstr "A letöltés megnyitja a rendszer megosztási menüjét. A fájl mentés
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "A letöltés megnyitja a rendszermegosztási lapot. Válasszon tárhelyszolgáltatót a fájl mentéséhez. A hivatkozott motivációs levél második fájlként nyílik meg."
 
-#: src/features/public/public-resume.tsx
-msgid "Download PDF"
-msgstr "PDF letöltése"
-
 #: src/features/letters/share.tsx
 msgid "Download PDF instead"
 msgstr "Ehelyett töltse le a PDF-t"
@@ -3543,10 +3550,6 @@ msgstr "Ehelyett töltse le a PDF-t"
 #: src/features/share/link.tsx
 msgid "Download totals can include repeat clicks."
 msgstr "A letöltések összege tartalmazhatja az ismétlődő kattintásokat."
-
-#: src/features/public/public-resume.tsx
-msgid "Downloading…"
-msgstr "Letöltés…"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -3836,10 +3839,6 @@ msgstr "Adja meg a végpontja által támogatott bármely modellazonosítót."
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
 msgstr "Adja meg a címet, ahol a Reactive Resume-ot böngészőben megnyitja. Folytatás előtt az alkalmazás ellenőrzi, hogy ez egy Reactive Resume-szerver, amely engedi az alkalmazásból történő bejelentkezést."
 
-#: src/features/public/public-resume.tsx
-msgid "Enter the password the resume owner shared with you."
-msgstr "Adja meg a jelszót, amelyet az önéletrajz tulajdonosa megosztott Önnel."
-
 #: src/features/write/entry-screen.tsx
 msgid "Entry"
 msgstr "Belépés"
@@ -4119,6 +4118,11 @@ msgstr "Betűvastagságok"
 msgid "For"
 msgstr "Mert"
 
+#. placeholder {0}: current.target
+#: src/features/share/web-page.tsx
+msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
+msgstr "Gyökérdomainhez (például example.com) a CNAME helyett A és AAAA rekordokat használj {0} címeivel."
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "For example, Sent to Lumen"
@@ -4361,6 +4365,10 @@ msgstr "A rejtett kifejezések visszatértek"
 msgid "Hide {title} from the page"
 msgstr "{title} elrejtése az oldalról"
 
+#: src/features/share/web-page.tsx
+msgid "Hide contact details"
+msgstr "Elérhetőségek elrejtése"
+
 #: src/features/applications/add-sheet.tsx
 msgid "Hide details"
 msgstr "Részletek elrejtése"
@@ -4376,10 +4384,6 @@ msgstr "Kulcs elrejtése"
 #: app/(tabs)/settings/licences.tsx
 msgid "Hide license"
 msgstr "Licenc elrejtése"
-
-#: src/features/public/public-resume.tsx
-msgid "Hide password"
-msgstr "Jelszó elrejtése"
 
 #: src/features/career/today.tsx
 msgid "Hide read"
@@ -4404,9 +4408,9 @@ msgstr "Bérbeadó csapat"
 
 #: src/features/document-menu/index.tsx
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "History"
-msgstr "Történelem"
+msgstr "Előzmények"
 
 #: src/features/write/outline.tsx
 msgid "hold ⋮⋮ to move"
@@ -4507,10 +4511,6 @@ msgstr "Ikonok a kapcsolati vonalon"
 #: src/features/ats-checker/messages.ts
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "Ha szkennelésből származik, ez elvárható. Egyébként távolítsd el; a toborzók kulcsszó-tömésnek tekintik."
-
-#: src/features/public/public-resume.tsx
-msgid "If someone sent you this link, ask them for a new one."
-msgstr "Ha valaki küldte neked ezt a linket, kérj tőle egy újat."
 
 #. placeholder {0}: reader ?? provider.provider
 #: src/api/ai-consent.ts
@@ -5109,7 +5109,6 @@ msgstr "Az ilyen közeli sorok olvasás közben összefuthatnak. Használjon leg
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
-#: src/features/share/screen.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -5128,6 +5127,7 @@ msgid "Link an application or paste a posting to compare its terms."
 msgstr "Linkeljen egy jelentkezést, vagy illesszen be egy álláshirdetést a feltételek összehasonlításához."
 
 #: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Link copied"
 msgstr "Link másolva"
 
@@ -5264,7 +5264,6 @@ msgstr "Nyilvános cím betöltése…"
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
 msgid "Loading…"
@@ -5326,10 +5325,6 @@ msgstr "Pontosan úgy néz ki, mint az oldal. Használja álláspályázatokhoz 
 msgid "Lower the design sheet"
 msgstr "Engedje le a tervezőlapot"
 
-#: src/features/public/public-resume.tsx
-msgid "Made with Reactive Resume, free and open source"
-msgstr "Reactive Resume-val készült, ingyenes és nyílt forráskódú"
-
 #. Layout editor column label for the primary content area
 #: src/features/design/layout-screen.tsx
 msgid "Main"
@@ -5348,6 +5343,10 @@ msgstr "Tedd pontosabbá"
 msgid "Make it shorter"
 msgstr "Legyen rövidebb"
 
+#: src/features/share/web-page.tsx
+msgid "Make primary"
+msgstr "Beállítás elsődlegesként"
+
 #: src/features/career/today.tsx
 msgid "Make room for the next step."
 msgstr "Adjon helyet a következő lépésnek."
@@ -5363,6 +5362,10 @@ msgstr "A látható szöveg és a célcím egyezzen meg."
 #: src/features/ats-checker/messages.ts
 msgid "Make them visibly larger, bolder or capitalized."
 msgstr "Tedd őket láthatóan nagyobbá, félkövérré vagy nagybetűssé."
+
+#: src/features/share/web-page.tsx
+msgid "Make this your primary resume?"
+msgstr "Ez legyen az elsődleges önéletrajzod?"
 
 #: src/features/settings/locale-names.ts
 msgid "Malay"
@@ -6097,6 +6100,10 @@ msgstr "Nincs alkalmazva"
 msgid "Not applied yet"
 msgstr "Még nem jelentkezett"
 
+#: src/features/share/web-page.tsx
+msgid "Not available while the resume needs a password."
+msgstr "Nem érhető el, amíg az önéletrajzhoz jelszó szükséges."
+
 #: src/features/career/today.tsx
 msgid "Not for me"
 msgstr "Nem nekem való"
@@ -6224,6 +6231,10 @@ msgstr "odija"
 msgid "Off"
 msgstr "Le"
 
+#: src/features/share/web-page.tsx
+msgid "Off. Let recruiters find you on Google by turning this on."
+msgstr "Ki. Kapcsold be, hogy a toborzók megtaláljanak a Google-ön."
+
 #: src/features/share/link.tsx
 msgid "Off. Only you can see this resume."
 msgstr "Le. Ezt az önéletrajzot csak Ön láthatja."
@@ -6270,8 +6281,8 @@ msgid "On"
 msgstr "Bekapcsolva"
 
 #: src/features/share/link.tsx
-msgid "On. Anyone with the link can view. It isn't listed or indexed by search engines."
-msgstr "On. A link birtokában bárki megtekintheti. A keresőmotorok nem listázzák vagy indexelték."
+msgid "On. Anyone with the link can see your web page."
+msgstr "Be. Bárki, akinek megvan a link, láthatja a weboldaladat."
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Once a round is scheduled, Prepare builds a timed plan, your opening and the questions to ask."
@@ -6385,10 +6396,6 @@ msgstr "Megnyitás az Ajánlatokban"
 msgid "Open letter"
 msgstr "Levél megnyitása"
 
-#: src/features/share/link.tsx
-msgid "Open public page"
-msgstr "Nyissa meg a nyilvános oldalt"
-
 #: src/features/career/offers.tsx
 msgid "Open questions"
 msgstr "Nyitott kérdések"
@@ -6420,6 +6427,10 @@ msgstr "Nyissa meg a listát"
 #: src/features/career/today.tsx
 msgid "Open the schedule"
 msgstr "Ütemezés megnyitása"
+
+#: src/features/share/link.tsx
+msgid "Open web page"
+msgstr "Weboldal megnyitása"
 
 #: src/features/career/today.tsx
 msgid "Open workspace"
@@ -6599,13 +6610,12 @@ msgid "Passkeys"
 msgstr "Passkeys"
 
 #: app/(tabs)/settings/account.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/search/search-screen.tsx
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Password"
 msgstr "Jelszó"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Passwords do not match."
 msgstr "A jelszavak nem egyeznek."
 
@@ -6933,6 +6943,10 @@ msgstr "Nyomja meg és tartsa lenyomva az előnézet megtekintéséhez az oldalo
 msgid "Press and hold, then drag to another column or page."
 msgstr "Nyomja meg és tartsa lenyomva, majd húzza át egy másik oszlopra vagy oldalra."
 
+#: src/features/share/web-page.tsx
+msgid "Preview web page"
+msgstr "Weboldal előnézete"
+
 #. placeholder {0}: templateName(template)
 #: src/features/design/preview-caption.tsx
 msgid "Previewing {0} · tap to apply"
@@ -6962,6 +6976,10 @@ msgstr "A munkaterület korábbi lapjai"
 msgid "Primary color"
 msgstr "Elsődleges szín"
 
+#: src/features/share/web-page.tsx
+msgid "Primary resume"
+msgstr "Elsődleges önéletrajz"
+
 #: src/features/document-menu/index.tsx
 #: src/features/share/download.tsx
 msgid "Print"
@@ -6970,6 +6988,10 @@ msgstr "Nyomtatás"
 #: src/features/ats-checker/messages.ts
 msgid "Print or export the form to a flat PDF before sending it."
 msgstr "Nyomtasd ki vagy exportáld az űrlapot lapos PDF-ként, mielőtt elküldöd."
+
+#: src/features/share/web-page.tsx
+msgid "Privacy"
+msgstr "Adatvédelem"
 
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
@@ -7038,7 +7060,6 @@ msgstr "A szolgáltató megőrzése és felhasználása követi adatvédelmi sza
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
-#: src/shell/builder-chrome.tsx
 msgid "Public"
 msgstr "Nyilvános"
 
@@ -7065,6 +7086,18 @@ msgstr "Nyilvános, jelszóval"
 #: src/features/write/fields.ts
 msgid "Publications"
 msgstr "Publikációk"
+
+#: src/features/share/web-page.tsx
+msgid "Publish the web page first."
+msgstr "Előbb tedd közzé a weboldalt."
+
+#: src/features/share/link.tsx
+msgid "Publish the web page to count views and downloads. Counts are anonymous, and search engines aren't counted."
+msgstr "Tedd közzé a weboldalt a megtekintések és letöltések számlálásához. A számlálás névtelen, és a keresőmotorok nem számítanak bele."
+
+#: src/features/share/web-page.tsx
+msgid "Publish this resume to open it at your short link and custom domain."
+msgstr "Tedd közzé ezt az önéletrajzot, hogy a rövid linkeden és a saját domaineden megnyíljon."
 
 #: src/features/write/fields.ts
 msgid "Publisher"
@@ -7400,6 +7433,7 @@ msgstr "Az emlékeztetők itt jelennek meg. Az e-mail-másolat nem kötelező, �
 msgid "Remote"
 msgstr "Távmunka"
 
+#: src/features/share/web-page.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "Távolítsa el"
@@ -7429,7 +7463,7 @@ msgstr "Távolítsa el a mezőt"
 msgid "Remove file"
 msgstr "Fájl eltávolítása"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove password"
 msgstr "Jelszó eltávolítása"
 
@@ -7451,7 +7485,7 @@ msgstr "Kérdés eltávolítása"
 msgid "Remove role"
 msgstr "Szerep eltávolítása"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Remove the password?"
 msgstr "Eltávolítja a jelszót?"
 
@@ -7551,11 +7585,7 @@ msgstr "Hiba jelentése"
 msgid "Report received by your server operator. Thank you."
 msgstr "A szerver üzemeltetője kapott jelentést. Köszönöm."
 
-#: src/features/ai/report-content.tsx
-msgid "Report shared resume"
-msgstr "Közös önéletrajz bejelentése"
-
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Require a password"
 msgstr "Jelszó kérése"
 
@@ -7621,7 +7651,6 @@ msgstr "Eredmény"
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
-#: src/features/public/public-resume.tsx
 msgid "Resume"
 msgstr "Önéletrajz"
 
@@ -7689,10 +7718,9 @@ msgstr "A {0} letöltve a {1} használatával. A visszakeresési idő nem határ
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/share/download.tsx
+#: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
-#: src/features/share/screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8111,6 +8139,10 @@ msgstr "A keresés dokumentumokra, jelentkezésekre, asszisztensi beszélgetése
 msgid "Search documents"
 msgstr "Dokumentumok keresése"
 
+#: src/features/share/web-page.tsx
+msgid "Search engines such as Google may list your web page. It can take weeks to appear, or to disappear after you turn this off."
+msgstr "A keresőmotorok, például a Google, listázhatják a weboldaladat. Hetekbe telhet, mire megjelenik, vagy mire eltűnik, miután kikapcsolod."
+
 #: src/features/career/facts.tsx
 msgid "Search facts"
 msgstr "Tények keresése"
@@ -8311,7 +8343,7 @@ msgstr "Szerver megváltozott. Térjen vissza a(z) Dokumentumok oldalra, és pr�
 msgid "Set a follow-up"
 msgstr "Nyomon követés beállítása"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Set password"
 msgstr "Jelszó beállítása"
 
@@ -8364,13 +8396,12 @@ msgstr "Árnyék színe"
 msgid "Shadow width"
 msgstr "Árnyék vastagsága"
 
-#: src/features/public/public-resume.tsx
-#: src/shell/builder-chrome.tsx
+#: app/builder/[id]/_layout.tsx
+#: app/builder/[id]/share.tsx
 msgid "Share"
-msgstr "Részesedés"
+msgstr "Megosztás"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
 msgid "Share & export"
 msgstr "Megosztás és exportálás"
 
@@ -8395,26 +8426,17 @@ msgstr "Ossza meg inkább PDF-et"
 msgid "Share PNG"
 msgstr "Megosztás PNG"
 
-#: src/shell/builder-chrome.tsx
-msgid "Share public resume"
-msgstr "Ossza meg nyilvános önéletrajzát"
-
 #: src/features/workspace/tabs/practise.tsx
 msgid "Share recording"
 msgstr "Felvétel megosztása"
 
 #: src/features/letters/share.tsx
-#: src/features/share/screen.tsx
 msgid "Share sections"
 msgstr "Ossza meg a szakaszokat"
 
 #: src/features/share/link.tsx
 msgid "Share via…"
 msgstr "Megosztás ezen keresztül…"
-
-#: src/features/public/public-resume.tsx
-msgid "Shared resumes stay hidden until your device settings allow them."
-msgstr "A megosztott önéletrajzok mindaddig rejtve maradnak, amíg az eszközbeállítások lehetővé teszik."
 
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -8434,6 +8456,10 @@ msgstr "Rövid és közvetlen. Rendben, ha az álláshirdetés rövidséget kér
 msgid "Short and polite, for the recruiter"
 msgstr "Rövid és udvarias, a toborzó számára"
 
+#: src/features/share/web-page.tsx
+msgid "Short link and domain"
+msgstr "Rövid link és domain"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "Rövidítsd a kérdéseket 2000, a válaszokat 6000 karakterre, mielőtt beadottként jelölöd."
@@ -8441,6 +8467,10 @@ msgstr "Rövidítsd a kérdéseket 2000, a válaszokat 6000 karakterre, mielőtt
 #: src/features/letters/write.tsx
 msgid "Shorter"
 msgstr "Rövidebb"
+
+#: src/features/share/web-page.tsx
+msgid "Show “Made with Reactive Resume”"
+msgstr "„Reactive Resume-val készült” megjelenítése"
 
 #. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
 #: src/features/applications-board/board-screen.tsx
@@ -8483,6 +8513,10 @@ msgstr "Rejtett kifejezések ismételt megjelenítése"
 msgid "Show icons"
 msgstr "Ikonok megjelenítése"
 
+#: src/features/share/web-page.tsx
+msgid "Show in search engines"
+msgstr "Megjelenítés a keresőmotorokban"
+
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Kulcs megjelenítése"
@@ -8502,10 +8536,6 @@ msgstr "Mutass többet"
 #: src/features/write/section-sheet.tsx
 msgid "Show on page"
 msgstr "Megjelenítés az oldalon"
-
-#: src/features/public/public-resume.tsx
-msgid "Show password"
-msgstr "Jelszó megjelenítése"
 
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
@@ -8589,7 +8619,8 @@ msgstr "Jelentkezzen be a(z) {server} fiókba, majd folytassa a hivatkozott doku
 
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
+#: src/features/share/pane.tsx
 msgid "Sign in to continue."
 msgstr "A folytatáshoz jelentkezzen be."
 
@@ -9395,10 +9426,6 @@ msgstr "Az eredeti a javítási előzményekben marad. Az ezt használó törté
 msgid "The pages are pictures, with no text behind them."
 msgstr "Az oldalak képek, mögöttük nincs szöveg."
 
-#: src/features/public/public-resume.tsx
-msgid "The password you entered is incorrect. Try again."
-msgstr "A megadott jelszó helytelen. Próbáld újra."
-
 #: src/features/check/parser.tsx
 msgid "The PDF is checked on the server and not stored. Send this preview to see what software reads."
 msgstr "A(z) PDF ellenőrzött a szerveren, és nincs tárolva. Küldje el ezt az előnézetet, hogy megtudja, mit olvas a szoftver."
@@ -9411,6 +9438,10 @@ msgstr "A szolgáltató nem válaszolt. Ellenőrizze a kulcsot, a modellt és a 
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Az ok az Insights számára megmarad. A linkelt dokumentumokhoz nem nyúlnak hozzá."
+
+#: src/features/share/web-page.tsx
+msgid "The records aren't visible yet. Check again later."
+msgstr "A rekordok még nem láthatók. Ellenőrizd később újra."
 
 #: src/features/ats-checker/checker.tsx
 msgid "The rest of the file isn't in this report."
@@ -9538,10 +9569,6 @@ msgstr "Ezt a jelentkezést nem sikerült megnyitni."
 msgid "This application has no posting yet. Add one in Applications."
 msgstr "Ennek az jelentkezésnek még nincs álláshirdetése. Adjon hozzá egyet az jelentkezésekhez."
 
-#: src/features/public/public-resume.tsx
-msgid "This author is blocked."
-msgstr "Ez a szerző le van tiltva."
-
 #: src/features/workspace/parts.tsx
 msgid "This changed somewhere else, so it wasn't saved. Your text is kept here; Retry saves it over the other copy."
 msgstr "Ez valahol máshol megváltozott, így nem lett elmentve. Szövege itt őrződik; A Újrapróbálkozás a másik példány fölé menti."
@@ -9579,7 +9606,7 @@ msgstr "Ez a dokumentum zárolva van. Oldja fel a zárolást, mielőtt itt tarta
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Ez a dokumentum zárolva van. Oldja fel, hogy javaslatokat kapjon."
 
-#: src/features/share/screen.tsx
+#: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Ez a dokumentum zárolva van. Továbbra is letöltheti és elnevezheti a verziókat. Oldja fel a zárolást a szerkesztéshez vagy visszaállításhoz."
 
@@ -9742,14 +9769,6 @@ msgstr "Ez az önéletrajz zárolva van. Először oldja fel a zárolást a mód
 #: src/features/ats-checker/messages.ts
 msgid "This resume is long."
 msgstr "Ez az önéletrajz hosszú."
-
-#: src/features/public/public-resume.tsx
-msgid "This resume is password-protected"
-msgstr "Ez az önéletrajz jelszóval védett"
-
-#: src/features/public/public-resume.tsx
-msgid "This resume isn't shared right now."
-msgstr "Ez az önéletrajz jelenleg nincs megosztva."
 
 #: src/features/application-detail/sheets.tsx
 msgid "This saved description is clipped or incomplete. Review before preparing documents."
@@ -9964,7 +9983,6 @@ msgstr "Próbálja ki a következőt: {suggestion}"
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/letters/write.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/shell.tsx
@@ -10019,10 +10037,6 @@ msgstr "Kapcsold ki a diszkrecionális ligatúrákat exportáláskor."
 msgid "Turn on the link to choose an address."
 msgstr "Kapcsolja be a linket a cím kiválasztásához."
 
-#: src/features/share/link.tsx
-msgid "Turn on the public link to count views and downloads. Counts are anonymous."
-msgstr "Kapcsolja be a nyilvános linket a megtekintések és letöltések számlálásához. A felhasználási számok névtelenek."
-
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "Ütemezés bekapcsolása"
@@ -10073,10 +10087,6 @@ msgstr "ukrán"
 msgid "Unavailable"
 msgstr "Nem elérhető"
 
-#: src/features/public/public-resume.tsx
-msgid "Unblock author"
-msgstr "A szerző letiltásának feloldása"
-
 #: src/features/letters/rich-text-field.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Underline"
@@ -10116,7 +10126,6 @@ msgstr "Leválasztás"
 
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
-#: src/features/public/public-resume.tsx
 #: src/features/write/outline.tsx
 msgid "Unlock"
 msgstr "Feloldás"
@@ -10216,7 +10225,7 @@ msgstr "Használja a {url}-t"
 msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Használjon 3–64 kisbetűt, számokat, pontokat, kötőjeleket és aláhúzásjeleket."
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
 msgstr "Használjon 6–64 karaktert."
 
@@ -10381,6 +10390,10 @@ msgstr "A Beállítások helyen beállított internetes keresőszolgáltatást h
 msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
 msgstr "A Beállításokban beállított webes keresést használja. Az eredmények a Ma lapon várnak. Jelentkezéseket és dokumentumokat nem hoz létre Ön helyett."
 
+#: src/features/share/web-page.tsx
+msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
+msgstr "Az önéletrajzod sablonja és Dizájnja alapján készül, és bármilyen képernyőhöz igazodik. A Dizájnban módosíthatod őket."
+
 #: src/features/settings/locale-names.ts
 msgid "Uzbek"
 msgstr "üzbég"
@@ -10392,10 +10405,6 @@ msgstr "Változtasd a mondatkezdéseket, hogy a szakasz ne hasson sablonosnak."
 #: src/features/career/offers.tsx
 msgid "Verbal offer"
 msgstr "Szóbeli ajánlat"
-
-#: src/features/public/public-resume.tsx
-msgid "Verifying password…"
-msgstr "Jelszó ellenőrzése…"
 
 #: src/features/letters/share.tsx
 msgid "Version"
@@ -10475,21 +10484,21 @@ msgstr "Megtekintés {0} · csak olvasható"
 msgid "views · 30 days"
 msgstr "megtekintés · 30 nap"
 
-#: src/features/share/link.tsx
-msgid "Views and downloads"
-msgstr "Megtekintések és letöltések"
-
 #: src/features/ai/report-content.tsx
 msgid "Violence or abuse"
 msgstr "Erőszak vagy visszaélés"
 
 #: src/features/share/link.tsx
+msgid "Visitors"
+msgstr "Látogatók"
+
+#: src/features/share/web-page.tsx
 msgid "Visitors can download the PDF"
 msgstr "A látogatók letölthetik a PDF-t"
 
-#: src/features/share/link.tsx
+#: src/features/share/web-page.tsx
 msgid "Visitors enter it before they see the resume. Share it only with people you trust."
-msgstr "A látogatók az önéletrajz megtekintése előtt lépnek be. Csak olyanokkal ossza meg, akikben megbízik."
+msgstr "A látogatók az önéletrajz megtekintése előtt megadják a jelszót. Csak olyanokkal ossza meg, akikben megbízik."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Voice settings"
@@ -10520,6 +10529,10 @@ msgstr "Web hozzáférés"
 #: src/features/ai/web-access.tsx
 msgid "Web access settings couldn't be saved or loaded."
 msgstr "A webhozzáférési beállításokat nem sikerült menteni vagy betölteni."
+
+#: src/features/share/web-page.tsx
+msgid "Web page"
+msgstr "Weboldal"
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Web research"
@@ -10866,25 +10879,24 @@ msgstr "Ön offline állapotban van. A PDF letöltése ezen az eszközön tört�
 msgid "You're offline. History needs a connection."
 msgstr "Offline állapotban van. Az Előzményekhez internetkapcsolat szükséges."
 
+#: src/features/share/export-screen.tsx
+msgid "You're offline. History needs a connection. Download PDF works on this device."
+msgstr "Offline vagy. Az előzményekhez kapcsolat kell. A „PDF letöltése” ezen az eszközön is működik."
+
 #: src/features/check/screen.tsx
 msgid "You're offline. Issues and Job match still work; reconnect for Writing and PDF checks."
 msgstr "Offline állapotban van. A Problémák és az Állásmeccs továbbra is működik; a Szövegezéshez és a PDF-ellenőrzésekhez csatlakozzon újra."
 
-#: src/features/share/screen.tsx
-msgid "You're offline. Link and History need a connection. Download PDF works on this device."
-msgstr "Ön offline állapotban van. A hivatkozás és az előzmények kapcsolatra szorulnak. A(z) PDF letöltése működik ezen az eszközön."
+#: src/features/share/pane.tsx
+msgid "You're offline. Sharing needs a connection."
+msgstr "Offline vagy. A megosztáshoz kapcsolat kell."
 
 #: src/features/check/parser.tsx
 msgid "You're offline. The last PDF check stays here; connect to refresh it."
 msgstr "Offline állapotban van. Az utolsó PDF-ellenőrzés megmarad; a frissítéshez csatlakozzon."
 
-#: src/features/public/public-resume.tsx
-msgid "You're offline. This resume opens when you reconnect."
-msgstr "Ön offline állapotban van. Ez az önéletrajz akkor nyílik meg, amikor újracsatlakozik."
-
 #: src/features/documents/new-document.tsx
 #: src/features/documents/queries.ts
-#: src/features/public/public-resume.tsx
 msgid "You're offline. Try again when you reconnect."
 msgstr "Ön offline állapotban van. Próbálja újra, amikor újracsatlakozik."
 
@@ -10945,9 +10957,17 @@ msgstr "A dátumaid többféleképpen vannak megírva."
 msgid "Your document was saved. Review it in the editor."
 msgstr "A dokumentumot elmentettük. Tekintse át a szerkesztőben."
 
+#: src/features/share/web-page.tsx
+msgid "Your domain"
+msgstr "A domained"
+
 #: src/features/ats-checker/messages.ts
 msgid "Your email address is broken across pieces of text."
 msgstr "Az e-mail címed szövegdarabokra van törve."
+
+#: src/features/share/web-page.tsx
+msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
+msgstr "Az e-mail-címed, telefonszámod, helyszíned és a fejléc többi adata, valamint a referenciák telefonszámai kimaradnak a weboldalból, annak PDF-jéből és a keresési találatokból."
 
 #: src/features/career/knowledge.tsx
 msgid "Your facts, stories and preferences. Editing Knowledge sends nothing to an AI connection."
@@ -11081,6 +11101,19 @@ msgstr "A munkamenet lejárt. Jelentkezzen be újra."
 #: src/auth/session-gate.tsx
 msgid "Your session on {0} ended"
 msgstr "A {0} munkamenete véget ért"
+
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "Your short link and custom domain open “{0}”."
+msgstr "A rövid linked és a saját domained ezt nyitja meg: „{0}”."
+
+#: src/features/share/web-page.tsx
+msgid "Your short link and custom domain open this resume."
+msgstr "A rövid linked és a saját domained ezt az önéletrajzot nyitja meg."
+
+#: src/features/share/web-page.tsx
+msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
+msgstr "A rövid linked és a saját domained azt jelzi, hogy ez az önéletrajz nincs megosztva, amíg újra közzé nem teszed."
 
 #: src/features/assistant/coach-screen.tsx
 msgid "your stories"
