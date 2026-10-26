@@ -135,6 +135,13 @@ describe("application list pagination", () => {
 		expect(resHeaders.get("X-Total-Count")).toBe("0");
 	});
 
+	it.each([{}, { limit: 20 }])("uses indexed ordering with a unique tie-breaker: %s", async (input) => {
+		const { api } = client();
+		await api.list(input);
+		const page = queries().find((query) => !query.sql.includes("count("));
+		expect(page?.sql).toContain('order by "application"."updated_at" desc nulls last, "application"."id" desc');
+	});
+
 	it("rejects invalid pagination before querying", async () => {
 		const { api } = client();
 		await expect(api.list({ limit: 101 })).rejects.toMatchObject({ code: "BAD_REQUEST" });

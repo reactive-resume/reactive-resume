@@ -415,7 +415,12 @@ export const applicationService = {
 			input.status ? eq(schema.application.status, input.status) : undefined,
 			input.tags && input.tags.length > 0 ? arrayContains(schema.application.tags, input.tags) : undefined,
 		);
-		const query = db.select().from(schema.application).where(where).orderBy(desc(schema.application.updatedAt));
+		// Bulk imports share an update timestamp; the ID keeps their pages stable.
+		const query = db
+			.select()
+			.from(schema.application)
+			.where(where)
+			.orderBy(sql`${schema.application.updatedAt} desc nulls last`, desc(schema.application.id));
 		const paged = input.limit !== undefined || input.offset !== undefined;
 		const [rows, totals] = await Promise.all([
 			paged ? query.limit(input.limit ?? 20).offset(input.offset ?? 0) : query,
