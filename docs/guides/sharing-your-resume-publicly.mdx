@@ -41,6 +41,10 @@ When someone pastes your link into LinkedIn, Slack or a chat, the preview shows 
 
 Visitors never see your private notes, or any section or entry you've hidden. A small Reactive Resume mark sits under the page; you can turn it off under **Web page**.
 
+To change the page's template, colours or typography, use **Design**; the web page reuses those settings. Under
+**Web page**, **Show “Made with Reactive Resume”** controls only the footer credit. Preview links let you review an
+unpublished page for 15 minutes; keep them private, since anyone with that preview link can open it while it's valid.
+
 ## Change the address
 
 The last part of the address is yours to choose. It starts out based on the resume's name.
@@ -48,7 +52,7 @@ The last part of the address is yours to choose. It starts out based on the resu
 <Steps>
   <Step title="Edit the Address field">
     With the page published, type a new ending in the **Address** field. Use lowercase letters, numbers and single
-    dashes; spaces turn into dashes as you type.
+    dashes, up to 64 characters; spaces turn into dashes as you type. Don't start or end with a dash.
   </Step>
   <Step title="Wait for the check">
     Reactive Resume checks the address as you type and saves it once it's free. Until then, the old address keeps
@@ -57,6 +61,9 @@ The last part of the address is yours to choose. It starts out based on the resu
 </Steps>
 
 If another of your resumes already uses that address, the message names it and suggests a free one. After a change, the old address still leads to your resume for 30 days. Changing your username is different: every public address and your short link change at once, and old links stop working.
+
+An older address that exceeds today's limit keeps working. You can keep it while editing the resume; choosing a new
+address requires the current format and length limit.
 
 ## Decide who can find it and what they see
 
@@ -74,6 +81,14 @@ Everything under **Privacy** applies to the web page, its PDF, link previews and
   or address ending up in search results.
 </Tip>
 
+These controls apply to what visitors receive. **Hide contact details** removes the dedicated email, phone,
+location and custom header fields, plus references' phone numbers. It doesn't find personal details you've typed
+inside summaries, descriptions or other free text. Review the web page before publishing it.
+
+Turning off PDF downloads also blocks visitors from fetching the public PDF directly. It doesn't prevent copying,
+screenshots or printing the visible web page, and it can't recall files someone already downloaded. Files you export
+from your editor are separate from the public page and can still include your contact details.
+
 ## Short link and your own domain
 
 One resume can be your **Primary resume**. It opens at your short link, such as `rx.cv/dkowalski`, and at your own domain if you connect one.
@@ -84,6 +99,13 @@ One resume can be your **Primary resume**. It opens at your short link, such as 
 - To use your own domain, type it under **Your domain** and select **Connect**. Add the two DNS records shown where you manage the domain, then select **Check DNS**. A subdomain such as `resume.example.com` uses a CNAME record; a root domain such as `example.com` uses A and AAAA records instead. Changes can take a few hours to reach everyone.
 
 Once connected, your domain shows your primary resume, and search engines are pointed to your domain rather than the rxresu.me address. If your domain's records stop pointing at Reactive Resume for a week, it's disconnected.
+
+Each account connects one domain. Keep the ownership TXT record as well as the routing records after verification.
+Your domain opens the primary resume at `/`; it doesn't move your account or editor there. To change domains,
+select **Remove**, then connect the replacement. Removing a domain doesn't unpublish the resume at its normal address.
+
+On a self-hosted instance, **Your domain** appears only when the operator enables custom domains. See
+[Sharing domains for self-hosters](/self-hosting/sharing-domains) for setup and troubleshooting.
 
 ## See who visited
 
@@ -98,6 +120,9 @@ The bottom of Share shows **Visitors**. Only you see these numbers.
 - Your own visits and downloads don't count while you're signed in, and search engines and other bots never count.
 - Repeat visits from the same visitor within an hour count once.
 - Counts are anonymous. Reactive Resume doesn't record who viewed your resume.
+
+Visits and downloads made on a different domain may count as visitor activity if that domain doesn't have your
+signed-in session. The numbers aren't a list of readers or proof that a recruiter read the resume.
 
 ## Stop sharing
 

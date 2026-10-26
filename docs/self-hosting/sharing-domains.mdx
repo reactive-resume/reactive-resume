@@ -1,0 +1,151 @@
+---
+title: "Sharing domains"
+description: "Serve public resume pages on an alias domain, enable users' own domains with DNS verification and HTTPS, and troubleshoot sharing after an upgrade."
+---
+
+Use this guide when you operate a Reactive Resume server and want a shorter public address or want users to connect
+their own domains. Ordinary public resume links work with `APP_URL` alone. Domain settings are optional.
+
+## Choose which address you need
+
+| Address                                                      | Purpose                                       | What it serves                                                                  |
+| ------------------------------------------------------------ | --------------------------------------------- | ------------------------------------------------------------------------------- |
+| `APP_URL`, such as `https://resume.example.com`              | Your main application address                 | Sign-in, editor, public pages and API                                           |
+| `APP_ALIAS_URL`, such as `https://cv.example.com`            | One shorter address for everyone              | The same public pages; sign-in and editor redirect to `APP_URL`                 |
+| A user's verified domain, such as `https://jane.example.net` | One account's personal resume site            | That account's primary resume at `/`                                            |
+| `ROOT_RESUME_ID`                                             | Turn your instance's homepage into one resume | The selected public resume at `/`, while the application keeps its usual routes |
+
+An alias doesn't move accounts or create another database. A custom domain doesn't host the editor. Choose
+`ROOT_RESUME_ID` for a personal instance that only needs its own homepage; see
+[Show one resume at your root address](/self-hosting/examples#show-one-resume-at-your-root-address).
+
+## Add an alias domain
+
+1. Point the alias domain's DNS to the same server as your main domain.
+2. Configure your reverse proxy to accept both hostnames, send both to Reactive Resume, and provide valid HTTPS
+   certificates for both. Preserve the incoming hostname so the app can distinguish them.
+3. Add the alias to the app's environment and recreate or redeploy the app:
+
+   ```dotenv
+   APP_URL=https://resume.example.com
+   APP_ALIAS_URL=https://cv.example.com
+   ```
+
+4. Open a published resume at `https://cv.example.com/<username>/<slug>`. It should show the same page as the main
+   address. Open `/auth/login` on the alias; it should redirect to your main domain.
+
+The **Share** mode copies the alias when configured. Public pages, the homepage and marketing pages remain available
+on both domains. Canonical metadata points search engines to `APP_URL`, except when a primary resume has its own
+verified custom domain. Keep `APP_URL` as the sign-in origin; cookies, passkeys and OAuth callbacks belong there.
+
+## Enable users' custom domains
+
+### Before you start
+
+- Control a public DNS hostname such as `domains.example.com`, pointing to your server. This is the CNAME target
+  users will see; it isn't itself a user's custom domain.
+- Have a reverse proxy capable of routing verified hostnames and issuing a certificate for each. The app supplies
+  router configuration for Traefik's HTTP provider; environment variables alone don't configure DNS or TLS.
+- Start from a working HTTPS deployment, such as the [Traefik example](/self-hosting/examples#traefik), with a named
+  backend service, HTTPS entry point and certificate resolver.
+
+### Set the app's environment
+
+```dotenv
+CUSTOM_DOMAIN_TARGET=domains.example.com
+CUSTOM_DOMAIN_PROVIDER_SECRET=<a-generated-secret-of-at-least-32-characters>
+```
+
+Use a hostname for `CUSTOM_DOMAIN_TARGET`, without a scheme, path or port. Generate the provider secret in your
+secret manager, pass it to both the app and proxy, and recreate the app. Both variables must be set before the
+custom-domain controls become available on web and mobile. Keep the secret out of URLs, public configuration and logs.
+
+### Connect the reverse proxy
+
+Configure Traefik's HTTP provider to poll the app's endpoint, passing your deployment's own names:
+
+```text
+GET /api/internal/traefik?service=reactive-resume%40docker&entryPoint=websecure&certResolver=letsencrypt
+X-Provider-Secret: <the-same-provider-secret>
+```
+
+The example refers to the `reactive-resume` service from the Docker provider. Replace the service, entry point and
+resolver with your actual names. Use an app URL reachable from the proxy, and set the header in the provider's
+configuration. The endpoint returns only routers; the backend service, entry point, certificate resolver and
+HTTP-to-HTTPS redirect must already exist in your proxy configuration.
+
+An authenticated request returns JSON with `http.routers`. Before any user verifies a domain, an empty router map
+is expected. Missing or incorrect provider credentials return `404`. Invalid deployment names return `400`.
+Allow the proxy to reach the endpoint while keeping its credentials private. Continue following your deployment's
+[trusted-proxy configuration](/self-hosting/environment-variables) for client IP handling.
+
+### Verify one domain end to end
+
+1. Publish a test resume and turn on **Primary resume** in **Share**.
+2. Under **Your domain**, enter a domain you control and select **Connect**.
+3. At the domain's DNS provider, add the exact ownership TXT record shown in Share, plus its routing record:
+
+   | Record | Name                                                    | Value                                                   |
+   | ------ | ------------------------------------------------------- | ------------------------------------------------------- |
+   | CNAME  | The chosen subdomain, such as `resume.jane.example.net` | Your `CUSTOM_DOMAIN_TARGET`                             |
+   | TXT    | `_rx-verify.resume.jane.example.net`                    | The account-specific `rx-verify=…` value shown in Share |
+
+   For a root domain, use A and/or AAAA records instead of CNAME. Every address returned for the custom domain must
+   be among the target hostname's current addresses. Keep the TXT record too. If a DNS service proxies the record
+   and hides the target addresses, use DNS-only records for this check.
+
+4. Select **Check DNS**. Wait for DNS propagation and try again if the records aren't visible yet.
+5. After verification, allow the app's hostname cache (up to a minute), your proxy's next provider poll and certificate
+   issuance to complete. Open `https://<custom-domain>/` from a signed-out browser.
+6. Check that the primary resume appears, its password and contact settings apply, and its PDF downloads follow
+   **Visitors can download the PDF**. Check HTTPS separately: successful DNS verification doesn't prove a certificate
+   was issued.
+
+Each account stores one domain. Verification proves ownership using the TXT record and routing using CNAME or
+addresses. A verified domain can move to another account only after that account supplies its own valid DNS proof.
+Paths other than `/`, public PDF routes and favicons redirect to the main application, except `/robots.txt`.
+
+### Keep domains working
+
+Leave the ownership TXT and routing records in place. Provider polling triggers background rechecks for verified
+domains not checked within a day. After a domain's DNS fails verification continuously for seven days, its verification
+and router are removed. Restoring DNS and choosing **Check DNS** reconnects it. Without provider polling, those
+background rechecks don't run.
+
+Turning off a resume's public link keeps the domain connected but shows an unavailable page. Changing the primary
+resume moves the domain's homepage to that resume. Removing the domain in Share removes the connection; normal
+public resume addresses keep working. A hostname may remain in the app's cache for up to a minute.
+
+## Upgrade an existing installation
+
+v6.0.7 adds a `custom_domain` table and the `show_in_search_engines`, `hide_contact_details` and `is_primary` resume
+columns. Back up your database, then start the new server so startup migrations run. Deploy the backend before
+mobile updates that use the new sharing controls.
+
+Existing resumes retain public/private status and download settings. Search indexing and contact hiding default
+to off, and no resume becomes primary automatically. Existing public addresses stay valid, including older
+addresses longer than 64 characters. New or changed addresses use lowercase letters and numbers separated by
+single dashes, up to 64 characters. A renamed address redirects for 30 days.
+
+No new domain variables are required if you keep using your main address. Existing public links now show responsive
+HTML resume pages; the public PDF remains a separate download. Review your proxy rules so both resume paths and
+their `/api/resumes/…` requests reach the app. If you maintain an API client, see
+[sharing API behavior](/guides/using-the-api#public-sharing-settings).
+
+## Troubleshoot
+
+| Symptom                                   | Check                                                                                                                                                    |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Your domain** is missing                | Set both custom-domain variables and restart the app.                                                                                                    |
+| **Check DNS** says records aren't visible | Verify the exact TXT name/value, the CNAME target or all A/AAAA addresses, and DNS propagation. Keep DNS-only routing where a proxy hides those records. |
+| Domain is connected but HTTPS fails       | Check the HTTP provider's response, service name, polling, certificate resolver and certificate challenge reachability.                                  |
+| Domain opens an unavailable page          | Publish a resume and make it primary; also check whether it is in Trash.                                                                                 |
+| Alias opens the wrong site                | Route the alias to the same backend, preserve its hostname and issue its certificate.                                                                    |
+| Owner visit is counted                    | Sign-in cookies belong to the main origin; an alias or custom domain can see an anonymous visitor.                                                       |
+
+## Related pages
+
+- [Sharing your resume as a web page](/guides/sharing-your-resume-publicly): the user's publishing and privacy controls.
+- [Environment variables](/self-hosting/environment-variables): domain and proxy settings.
+- [Deployment examples](/self-hosting/examples): working HTTPS baselines.
+- [Self-hosting with Docker](/self-hosting/docker): upgrades and backups.

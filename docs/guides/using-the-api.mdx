@@ -50,6 +50,37 @@ Your keys are listed in the **API keys** table with the date each was created, t
   />
 </Frame>
 
+## Public sharing settings
+
+Sharing controls belong to resume metadata, outside the resume's `data` object:
+
+| Field                 | Meaning                                                                                                             |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `isPublic`            | Publishes or unpublishes the web page.                                                                              |
+| `showDownloadButtons` | Allows visitors to download the public PDF. The owner keeps download access.                                        |
+| `showInSearchEngines` | Opts a published, non-password-protected resume into search indexing. Defaults to `false`.                          |
+| `hideContactDetails`  | Redacts dedicated contact fields from public representations. Defaults to `false`.                                  |
+| `isPrimary`           | Selects the account's resume for `/<username>` and its verified domain. Only a published resume can become primary. |
+
+New or changed `slug` values must be 1–64 characters: lowercase letters and numbers separated by single dashes.
+An invalid value returns `INVALID_SLUG` (HTTP 400). Reads and updates that retain an unchanged legacy slug remain
+supported. Renames preserve an old address for 30 days.
+
+Authenticated custom-domain operations live under `/api/openapi`: `GET /custom-domain`, `PUT /custom-domain` with
+`{ "hostname": "resume.example.com" }`, `POST /custom-domain/verify`, and `DELETE /custom-domain`.
+The status includes the DNS target, ownership TXT name/value, verification status and last check time. These routes
+return `PRECONDITION_FAILED` (HTTP 412) when the operator hasn't enabled custom domains. Use the
+API Reference tab for full request and response schemas, and
+[Sharing domains](/self-hosting/sharing-domains) for server prerequisites.
+
+Public resume reads, pages and PDFs enforce visibility and password access and omit hidden content and
+private notes. The signed-in owner is exempt from their own public password challenge. Visitor PDFs also enforce
+the download setting. Downloading the file and recording an explicit visitor download are separate operations;
+fetching a PDF alone doesn't record a download event.
+
+Owner-generated preview links are a separate, temporary way to review the public rendering before publication.
+Anyone holding that preview link can open it during its 15-minute lifetime, so keep it private.
+
 ## Make your first request
 
 The REST API lives under `/api/openapi` on your instance. Send your key in the `x-api-key` header.

@@ -4,6 +4,41 @@ description: "Release notes for Reactive Resume covering new features, resume bu
 rss: true
 ---
 
+<Update label="v6.0.7" description="27th October 2026">
+
+## Highlights
+
+- **Share your resume as a web page.** The new Share mode publishes a page that uses your template and design, adapts to phones and computers, and stays up to date as you edit. Preview it before publishing, then copy its address or share a QR code. Downloads and version history now have their own **Download & history** sheet on web and mobile. [63539ef20](https://github.com/reactive-resume/reactive-resume/commit/63539ef20)
+- **Choose where your resume lives and what visitors see.** Make one resume primary for your short link, connect your own domain on supported servers, hide contact details, and choose whether search engines can list your page. Password protection and PDF download controls apply to the public page and its downloads. [63539ef20](https://github.com/reactive-resume/reactive-resume/commit/63539ef20)
+
+## Resume Builder & Sharing
+
+- Added matching Share controls to the native apps, with public resume pages opening in a browser and local PDF exports remaining separate. The hosted Share panel copies `rx.cv` links; existing `rxresu.me` public addresses continue to work. [63539ef20](https://github.com/reactive-resume/reactive-resume/commit/63539ef20)
+- Added resume link previews in your design's colours, explicit search-engine opt-in, and contact redaction across public pages, PDFs and previews. Private notes and hidden entries stay out of public content. [63539ef20](https://github.com/reactive-resume/reactive-resume/commit/63539ef20)
+- Limited new resume addresses to 64 characters while preserving existing longer addresses and updates that keep them unchanged. Improved address validation, conflict messages and suggestions on web and mobile. Thanks to @iwmywn. [f77121efe](https://github.com/reactive-resume/reactive-resume/commit/f77121efe)
+- Fixed password-protected PDF downloads asking signed-in resume owners for their own share password. Visitors still need the password. Thanks to @iwmywn. [520fdf59d](https://github.com/reactive-resume/reactive-resume/commit/520fdf59d)
+
+## Applications & Everyday Use
+
+- Fixed application list rows capturing unrelated clicks across the page in Safari. Thanks to @albanofazzito. [5d247c59d](https://github.com/reactive-resume/reactive-resume/commit/5d247c59d)
+- Kept bulk application actions visible in a floating bar and improved sign-in query handling. [b8710f43a](https://github.com/reactive-resume/reactive-resume/commit/b8710f43a)
+- Improved application list pagination on installations with multiple users. Thanks to @GoldenSection0618. [780596673](https://github.com/reactive-resume/reactive-resume/commit/780596673)
+
+## Documentation & Translations
+
+- Updated the editor, sharing and export guides for Share mode, and clarified skill fields and shared fields in the resume schema reference. [5adc33876](https://github.com/reactive-resume/reactive-resume/commit/5adc33876), [50daf7108](https://github.com/reactive-resume/reactive-resume/commit/50daf7108)
+- Updated translations for the sharing controls and address validation across web and mobile. [63539ef20](https://github.com/reactive-resume/reactive-resume/commit/63539ef20), [f77121efe](https://github.com/reactive-resume/reactive-resume/commit/f77121efe)
+
+## Self-Hosting & Maintenance
+
+- Added optional `APP_ALIAS_URL` support for a second public address, plus DNS-verified custom domains backed by a Traefik HTTP provider. **Back up your database before upgrading:** startup adds a custom-domain table and three resume sharing columns. Existing public/private and download settings remain; search indexing, contact hiding and primary-resume status default to off. Domain support needs additional proxy and HTTPS setup; ordinary sharing needs no new variables. See [Sharing domains](https://docs.rxresu.me/self-hosting/sharing-domains). [63539ef20](https://github.com/reactive-resume/reactive-resume/commit/63539ef20)
+- Changed the manual mobile store-release workflow to upload Android builds to production and submit iOS builds for App Store review. Store approval and publication remain separate from this release; no native store build is created by a Docker release. [a080009d9](https://github.com/reactive-resume/reactive-resume/commit/a080009d9)
+- Updated dependencies. [28fbcb3ea](https://github.com/reactive-resume/reactive-resume/commit/28fbcb3ea)
+
+**Full Changelog**: [v6.0.6...v6.0.7](https://github.com/reactive-resume/reactive-resume/compare/v6.0.6...v6.0.7)
+
+</Update>
+
 <Update label="v6.0.6" description="25th October 2026">
 
 ## Highlights

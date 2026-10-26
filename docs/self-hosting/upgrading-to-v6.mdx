@@ -143,6 +143,19 @@ Existing v5 migrations stay unchanged. The v6 changes are consolidated in `20261
 | Assistant       | Adds conversations about letters and counts of proposed and accepted edits.                                                                                                                                                                   |
 | Web access      | Creates `web_access_credentials` directly for encrypted per-user connections.                                                                                                                                                                 |
 
+### Sharing updates in v6.0.7
+
+Upgrading from an earlier v6 release adds the `custom_domain` table and the resume columns
+`show_in_search_engines`, `hide_contact_details` and `is_primary`. Startup applies this additional migration;
+take a fresh database backup before upgrading. Existing public links and download settings remain, while search
+indexing, contact hiding and primary status default to off.
+
+Public links now open responsive web pages, with PDF as a separate download. New addresses have a 64-character
+limit; unchanged legacy addresses keep working. `APP_ALIAS_URL` is optional, and users' custom domains require
+both domain variables plus a configured reverse proxy and certificates. See
+[Sharing domains](/self-hosting/sharing-domains) for the upgrade checks and setup. Deploy the backend before
+updating mobile clients that depend on these controls.
+
 ### Cover letters leaving resumes
 
 In v5, a resume could hold cover letters as a section. The v6 migration moves each of them, hidden ones included, into a saved letter:

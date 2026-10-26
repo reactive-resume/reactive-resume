@@ -57,6 +57,9 @@ Both are off unless set. Every account's short link, `/<username>`, opens the re
 | `CUSTOM_DOMAIN_TARGET`          | unset   | The host people point their own domain's CNAME record at, such as `domains.example.com`. It must resolve to this server.                                                                                                                                                                                                         |
 | `CUSTOM_DOMAIN_PROVIDER_SECRET` | unset   | At least 32 characters. Traefik's HTTP provider sends it in an `X-Provider-Secret` header to read `/api/internal/traefik?service=<service>&entryPoint=<entry point>&certResolver=<resolver>`, which returns a router, and so a certificate, for every verified domain. Custom domains need both this and `CUSTOM_DOMAIN_TARGET`. |
 
+For DNS, HTTPS, alias routing and the custom-domain provider endpoint, see
+[Sharing domains](/self-hosting/sharing-domains). Setting domain variables doesn't create proxy routes or certificates.
+
 ## Font mirror
 
 | Variable            | Default | Description                                                                                                                                                                                                        |

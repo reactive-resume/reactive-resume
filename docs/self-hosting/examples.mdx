@@ -166,6 +166,9 @@ volumes:
 Add `ACME_EMAIL="you@example.com"` to `.env` for Let's Encrypt notices. Traefik skips containers whose health check
 fails, so it only routes to the app once `/api/health` answers `200`.
 
+This example serves one application hostname. To add a short alias or let users connect their own domains, follow
+[Sharing domains](/self-hosting/sharing-domains); custom domains also need DNS verification and the HTTP provider.
+
 ## nginx
 
 With [nginx](https://nginx.org/) you manage certificates yourself, for example with
