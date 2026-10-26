@@ -3,7 +3,7 @@ import type { GenericOAuthConfig, GenericOAuthUserInfo } from "better-auth/plugi
 import type { JWTPayload } from "jose";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { apiKey } from "@better-auth/api-key";
-import { drizzleAdapter } from "@better-auth/drizzle-adapter";
+import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import { dash } from "@better-auth/infra";
 import { oauthProvider } from "@better-auth/oauth-provider";
 import { passkey } from "@better-auth/passkey";
@@ -458,7 +458,7 @@ const getAuthConfig = () => {
 		onAPIError: { errorURL: "/auth/error" },
 
 		advanced: {
-			database: { generateId },
+			database: { generateId, joins: true },
 			useSecureCookies: authBaseUrl.startsWith("https://"),
 			ipAddress: { ipAddressHeaders: ["X-Real-IP"] },
 		},
@@ -604,6 +604,7 @@ const getAuthConfig = () => {
 		},
 
 		plugins: [
+			// JSON schema only; no reference-page inline scripts need a CSP nonce.
 			openAPI({ disableDefaultReference: true }),
 			jwt({ disableSettingJwtHeader: true }),
 			admin(),

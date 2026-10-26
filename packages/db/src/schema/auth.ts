@@ -1,6 +1,6 @@
 import type { SQL } from "drizzle-orm";
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
+import { defineRelations, sql } from "drizzle-orm";
 import * as pg from "drizzle-orm/pg-core";
 import { generateId } from "@reactive-resume/utils/string";
 
@@ -124,6 +124,20 @@ export const account = pg.pgTable(
 		pg.uniqueIndex("account_provider_id_account_id_unique").on(t.providerId, t.accountId),
 	],
 );
+
+// Better Auth joins sessions to users, users to accounts, and provider accounts to their owners.
+export const authRelations = defineRelations({ user, session, account }, (r) => ({
+	user: {
+		accounts: r.many.account({ from: r.user.id, to: r.account.userId }),
+		sessions: r.many.session({ from: r.user.id, to: r.session.userId }),
+	},
+	session: {
+		user: r.one.user({ from: r.session.userId, to: r.user.id }),
+	},
+	account: {
+		user: r.one.user({ from: r.account.userId, to: r.user.id }),
+	},
+}));
 
 export const verification = pg.pgTable(
 	"verification",

@@ -2,12 +2,14 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { env } from "@reactive-resume/env/server";
+import { authRelations } from "./schema/auth";
 
-const requestDatabase = new AsyncLocalStorage<{ pool: Pool; database: ReturnType<typeof drizzle> }>();
+const createDatabase = (pool: Pool) => drizzle({ client: pool, relations: authRelations });
+const requestDatabase = new AsyncLocalStorage<{ pool: Pool; database: ReturnType<typeof createDatabase> }>();
 
 declare global {
 	var __pool: Pool | undefined;
-	var __drizzle: ReturnType<typeof drizzle> | undefined;
+	var __drizzle: ReturnType<typeof createDatabase> | undefined;
 }
 
 export function getPool() {
@@ -39,11 +41,11 @@ export function getPool() {
 }
 
 // ponytail: two private fns collapsed; getPool() is already a singleton, global cache preserved
-globalThis.__drizzle ??= drizzle({ client: getPool() });
+globalThis.__drizzle ??= createDatabase(getPool());
 
 /** Workers must create sockets inside a request and cannot reuse them in another request. */
 export function withDatabasePool<T>(pool: Pool, callback: () => T): T {
-	return requestDatabase.run({ pool, database: drizzle({ client: pool }) }, callback);
+	return requestDatabase.run({ pool, database: createDatabase(pool) }, callback);
 }
 
 export const db = new Proxy(globalThis.__drizzle, {

@@ -23,6 +23,7 @@ describe("session freshness", () => {
 });
 
 it.each([
+	["GET", "/reference"],
 	["GET", "/token"],
 	["POST", "/delete-anonymous-user"],
 ])("does not serve %s %s", async (method, path) => {
