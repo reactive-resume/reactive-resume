@@ -6,7 +6,7 @@ import { escapeHtml } from "@reactive-resume/utils/string";
 import { HOST } from "../forme/primitives";
 import { COLOR_KEYS, flattenStyle, LENGTH_KEYS, toColor, toFormeStyle, toPoints } from "../forme/style";
 import { DEFAULT_PAGE, pageDimensions } from "../forme/to-forme";
-import { RESUME_NODE_PROP } from "../page-map";
+import { HEADING_NODE_PROP, RESUME_NODE_PROP } from "../page-map";
 
 /**
  * Host tree → HTML and CSS, the web page's counterpart of `to-forme.tsx`. Templates draw with react-pdf-style
@@ -188,7 +188,8 @@ const regionOf = (element: HostElement) => {
 
 /** The element a semantic node is best written as: the name is the page's heading, section titles its subheadings. */
 function semanticTag(element: HostElement, block: boolean): { tag: string; attributes: string } | undefined {
-	const key = nodeKey(element) ?? "";
+	const heading = element.props[HEADING_NODE_PROP];
+	const key = (typeof heading === "string" ? heading : nodeKey(element)) ?? "";
 	if (key.endsWith("/header/name")) return block ? { tag: "h1", attributes: "" } : undefined;
 	if (key.endsWith("/section-heading"))
 		return block && element.children.every(isText)

@@ -5,6 +5,7 @@ import { Children, isValidElement } from "react";
 import { Image, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
 import { PhosphorIcon } from "../../forme/icons";
+import { HEADING_NODE_PROP } from "../../page-map";
 import { resolvedPdfFlowProps, resolvedPdfTextProps } from "../../semantic/adapter";
 import {
 	projectRenderedChildren,
@@ -179,6 +180,7 @@ export const Heading = ({
 	return (
 		<PdfText
 			{...props}
+			{...{ [HEADING_NODE_PROP]: resolvedNodeKey }}
 			{...resolvedPdfTextProps(resolved)}
 			style={composeStyles(headingStyle, asStyleInput(style), resolved.style, safeTextStyle)}
 		/>

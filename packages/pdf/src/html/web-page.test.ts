@@ -49,4 +49,13 @@ describe("renderResumeWebPage", () => {
 		expect(html).toMatch(/data-split[\s\S]*data-part="(?:header-sidebar|sidebar)"[\s\S]*data-part="main"/);
 		expect(css).toMatch(/@media \(max-width:640px\)\{[\s\S]*\[data-part=main\]\{order:1\}/);
 	});
+
+	it("makes the name the page's heading and section titles its subheadings", async () => {
+		const data = structuredClone(sampleResumeData);
+		const { html } = await renderResumeWebPage({ data });
+
+		expect(html.match(/<h1[ >]/g)).toHaveLength(1);
+		expect(html).toMatch(new RegExp(`<h1[^>]*>${data.basics.name}</h1>`));
+		expect(html).toMatch(/<h2[ >]|role="heading" aria-level="2"/);
+	});
 });
