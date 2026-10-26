@@ -59,7 +59,7 @@ export function toPoints(value: unknown, context: Context): number | string | un
 	}
 }
 
-const FONT_WEIGHTS: Record<string, number> = {
+export const FONT_WEIGHTS: Record<string, number> = {
 	thin: 100,
 	hairline: 100,
 	ultralight: 200,
@@ -77,7 +77,7 @@ const FONT_WEIGHTS: Record<string, number> = {
 	black: 900,
 };
 
-const toFontWeight = (value: unknown): number | undefined => {
+export const toFontWeight = (value: unknown): number | undefined => {
 	if (typeof value === "number") return value;
 	if (typeof value !== "string") return undefined;
 	const numeric = Number(value);
@@ -233,7 +233,7 @@ export function flattenAlpha(style: FormeStyle, backdrop: Rgb): { style: FormeSt
 	return { style: next as FormeStyle, backdrop: own };
 }
 
-const COLOR_KEYS = new Set([
+export const COLOR_KEYS = new Set([
 	"color",
 	"backgroundColor",
 	"borderColor",
@@ -243,7 +243,7 @@ const COLOR_KEYS = new Set([
 	"borderLeftColor",
 ]);
 
-const LENGTH_KEYS = new Set([
+export const LENGTH_KEYS = new Set([
 	"width",
 	"height",
 	"minWidth",
@@ -286,7 +286,7 @@ const LENGTH_KEYS = new Set([
 	"wordSpacing",
 ]);
 
-const RADIUS_KEYS = new Set([
+export const RADIUS_KEYS = new Set([
 	"borderRadius",
 	"borderTopLeftRadius",
 	"borderTopRightRadius",
@@ -295,7 +295,7 @@ const RADIUS_KEYS = new Set([
 ]);
 
 // Offsets in percent are placed by `to-forme.tsx`, which knows the element's parent.
-const PERCENT_KEYS = new Set([
+export const PERCENT_KEYS = new Set([
 	"width",
 	"height",
 	"minWidth",
@@ -309,7 +309,7 @@ const PERCENT_KEYS = new Set([
 
 // Numbers Forme reads as react-pdf does.
 // `aspectRatio` is read by `to-forme.tsx` for pictures, like `objectFit`.
-const NUMBER_KEYS = new Set([
+export const NUMBER_KEYS = new Set([
 	"flex",
 	"flexGrow",
 	"flexShrink",
@@ -320,7 +320,7 @@ const NUMBER_KEYS = new Set([
 ]);
 
 // Keywords Forme reads as react-pdf does; anything else is reported.
-const KEYWORD_KEYS: Record<string, ReadonlySet<string>> = {
+export const KEYWORD_KEYS: Record<string, ReadonlySet<string>> = {
 	display: new Set(["flex", "grid"]),
 	flexDirection: new Set(["row", "column", "row-reverse", "column-reverse"]),
 	flexWrap: new Set(["nowrap", "wrap", "wrap-reverse"]),
@@ -350,10 +350,10 @@ const KEYWORD_KEYS: Record<string, ReadonlySet<string>> = {
 const STRING_KEYS = new Set(["transform", "transformOrigin", "lang", "objectFit"]);
 
 // CSS-wide keywords: each asks for the default, which is what leaving the property out gives.
-const CSS_WIDE = new Set(["initial", "inherit", "unset", "revert", "revert-layer"]);
+export const CSS_WIDE = new Set(["initial", "inherit", "unset", "revert", "revert-layer"]);
 
 // Keywords CSS allows that Forme spells differently.
-const KEYWORD_ALIASES: Record<string, string> = { start: "flex-start", end: "flex-end", block: "flex" };
+export const KEYWORD_ALIASES: Record<string, string> = { start: "flex-start", end: "flex-end", block: "flex" };
 
 // Accepted without effect; they're layout hints Forme handles its own way.
 const IGNORED = new Set([
@@ -366,8 +366,8 @@ const IGNORED = new Set([
 	"borderLeftStyle",
 ]);
 
-const TEXT_DECORATIONS = new Set(["none", "underline", "line-through"]);
-const TEXT_TRANSFORMS = new Set(["none", "uppercase", "lowercase", "capitalize"]);
+export const TEXT_DECORATIONS = new Set(["none", "underline", "line-through"]);
+export const TEXT_TRANSFORMS = new Set(["none", "uppercase", "lowercase", "capitalize"]);
 
 /** Converts one flattened react-pdf style for Forme. `context.fontSize` is the inherited size, for em and line height. */
 export function toFormeStyle(input: Style, context: Context): ConvertedStyle {

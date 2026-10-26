@@ -283,6 +283,7 @@ export const SemanticHeaderView = ({ style, ...props }: ComponentProps<typeof Vi
 			<View
 				{...props}
 				data-resume-node={nodeKey}
+				data-region="header"
 				{...resolvedPdfFlowProps(regionResolved)}
 				{...resolvedPdfFlowProps(resolved)}
 				style={composeStyles(asStyleInput(style), regionResolved.style, resolved.style)}
@@ -299,8 +300,14 @@ export const SemanticRegionView = ({ region, style, ...props }: ComponentProps<t
 	const visible = useSemanticNodeVisible(nodeKey);
 	if (exists && !visible) return null;
 
+	// `data-region` lets the web page fold the columns on narrow screens; the PDF ignores it.
 	return (
-		<View {...props} {...resolvedPdfFlowProps(resolved)} style={composeStyles(asStyleInput(style), resolved.style)} />
+		<View
+			{...props}
+			data-region={region}
+			{...resolvedPdfFlowProps(resolved)}
+			style={composeStyles(asStyleInput(style), resolved.style)}
+		/>
 	);
 };
 
