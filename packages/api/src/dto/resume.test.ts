@@ -66,7 +66,7 @@ describe("resume DTO output validation", () => {
 		const legacyRecord = {
 			id: "r1",
 			name: "Legacy Resume",
-			slug: "a".repeat(70),
+			slug: "a".repeat(300),
 			tags: [],
 			isPublic: false,
 			showDownloadButtons: true,
@@ -84,12 +84,12 @@ describe("resume DTO output validation", () => {
 	});
 
 	it("allows checking slugs longer than 64 characters so service can suggest truncations", () => {
-		const longSlug = "a".repeat(70);
+		const longSlug = "a".repeat(300);
 		expect(() => resumeDto.checkSlug.input.parse({ resumeId: "r1", slug: longSlug })).not.toThrow();
 	});
 
 	it("allows update inputs with slugs longer than 64 characters so service can check if unchanged", () => {
-		const longSlug = "a".repeat(70);
+		const longSlug = "a".repeat(300);
 		expect(() => resumeDto.update.input.parse({ id: "r1", slug: longSlug })).not.toThrow();
 	});
 });
