@@ -2,10 +2,17 @@ import type { StorageService } from "../storage";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { createHash } from "node:crypto";
 import { ORPCError } from "@orpc/server";
+import { isbot } from "isbot";
 import { env } from "@reactive-resume/env/server";
 import { generateFilename } from "@reactive-resume/utils/file";
 import { matchesIfNoneMatch } from "@reactive-resume/utils/http";
-import { assertCanView, redactResumeForViewer, requiresPassword } from "./access-policy";
+import {
+	assertCanView,
+	isOwner,
+	redactResumeForViewer,
+	requiresPassword,
+	shouldCountForStatistics,
+} from "./access-policy";
 import { publicRenderRateLimiter } from "./public-render-rate-limit";
 import { parseStoredResumeData } from "./resume-data-validation";
 
@@ -14,6 +21,8 @@ export type CreatePublicResumePdfInput = {
 	slug: string;
 	requestHeaders: Headers;
 	trustedClient: string;
+	/** A visitor's download (the web page's Download PDF), counted once an hour per visitor. */
+	countDownload?: boolean;
 };
 
 // A cached file is re-rendered after a day, so template, font and engine fixes reach it without an edit.
@@ -28,6 +37,8 @@ const findResume = async (input: Pick<CreatePublicResumePdfInput, "username" | "
 		userId: schema.resume.userId,
 		data: schema.resume.data,
 		isPublic: schema.resume.isPublic,
+		hideContactDetails: schema.resume.hideContactDetails,
+		showDownloadButtons: schema.resume.showDownloadButtons,
 		passwordHash: schema.resume.password,
 	});
 };
@@ -54,6 +65,8 @@ export async function createPublicResumePdf(input: CreatePublicResumePdfInput): 
 	const currentUserId = await resolveCurrentUserId(input.requestHeaders);
 	const viewer = currentUserId ? { id: currentUserId } : null;
 	assertCanView(resume, viewer);
+	// With downloads off, the PDF is the owner's alone; the web page is what everyone else sees.
+	if (!resume.showDownloadButtons && !isOwner(resume, viewer)) throw new ORPCError("NOT_FOUND");
 	if (
 		requiresPassword(resume, viewer) &&
 		!(await import("./access")).hasResumeAccess(input.requestHeaders, resume.id, resume.passwordHash)
@@ -64,8 +77,23 @@ export async function createPublicResumePdf(input: CreatePublicResumePdfInput): 
 		});
 	}
 
+	if (
+		input.countDownload &&
+		shouldCountForStatistics(resume, viewer) &&
+		!isbot(input.requestHeaders.get("user-agent"))
+	) {
+		const { clientKeyFromHeaders, shouldCountView } = await import("./view-dedup");
+		if (await shouldCountView(`download:${resume.id}:${clientKeyFromHeaders(input.trustedClient)}`, Date.now())) {
+			const { resumeService } = await import("./service");
+			await resumeService.statistics.increment({ id: resume.id, downloads: true });
+		}
+	}
+
 	// Every visitor gets the anonymous view, so one cached file serves them all (hidden content never prints anyway).
-	const { data } = redactResumeForViewer({ name: "", data: parseStoredResumeData(resume.data) }, false);
+	const { data } = redactResumeForViewer(
+		{ name: "", data: parseStoredResumeData(resume.data), hideContactDetails: resume.hideContactDetails },
+		false,
+	);
 	const filename = generateFilename(data.basics.name || "Resume", "pdf");
 	const hash = createHash("sha256").update(JSON.stringify(data)).digest("hex").slice(0, 32);
 	// Under the resume's pdfs/ folder: deleted with the resume or account, and /uploads serves it only to the owner.

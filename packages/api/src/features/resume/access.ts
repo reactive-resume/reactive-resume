@@ -44,3 +44,24 @@ export const grantResumeAccess = (responseHeaders: Headers, resumeId: string, pa
 		`${value}; Path=/; Max-Age=${RESUME_ACCESS_TTL_SECONDS}; SameSite=Lax; HttpOnly${secure}`,
 	);
 };
+
+const PREVIEW_TTL_MS = 15 * 60 * 1000;
+// Its own key too: a preview link can't be forged from, or stand in for, an access cookie.
+const previewKey = () => createHmac("sha256", env.AUTH_SECRET).update("reactive-resume:web-page-preview:v1").digest();
+const signPreview = (resumeId: string, expires: number) =>
+	createHmac("sha256", previewKey())
+		.update(JSON.stringify([resumeId, expires]))
+		.digest("hex");
+
+/** A short-lived token that shows the owner's web page as visitors will see it, even before it's published. */
+export const createPreviewToken = (resumeId: string, now = Date.now()) => {
+	const expires = now + PREVIEW_TTL_MS;
+	return `${expires}.${signPreview(resumeId, expires)}`;
+};
+
+export const isValidPreviewToken = (token: string, resumeId: string, now = Date.now()) => {
+	const [expires, signature] = token.split(".");
+	const time = Number(expires);
+	if (!signature || !Number.isSafeInteger(time) || time < now) return false;
+	return safeEquals(signature, signPreview(resumeId, time));
+};

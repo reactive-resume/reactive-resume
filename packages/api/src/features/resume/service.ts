@@ -5,7 +5,7 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Locale } from "@reactive-resume/utils/locale";
 import { ORPCError } from "@orpc/client";
 import { compare, hash } from "bcryptjs";
-import { and, arrayContains, asc, desc, eq, gte, isNotNull, isNull, lt, sql } from "drizzle-orm";
+import { and, arrayContains, asc, desc, eq, gte, isNotNull, isNull, lt, ne, sql } from "drizzle-orm";
 import { match } from "ts-pattern";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
@@ -96,7 +96,16 @@ const activeUnlockedResumeWhere = (id: string, userId: string) =>
 	and(...activeResumeConditions(id, userId), eq(schema.resume.isLocked, false));
 
 /** The fields a resume read or write returns to its owner. */
+/** The Share settings every read of a resume carries. */
+const shareColumns = {
+	showInSearchEngines: schema.resume.showInSearchEngines,
+	hideContactDetails: schema.resume.hideContactDetails,
+	showContactButton: schema.resume.showContactButton,
+	isPrimary: schema.resume.isPrimary,
+};
+
 const resumeColumns = {
+	...shareColumns,
 	id: schema.resume.id,
 	name: schema.resume.name,
 	slug: schema.resume.slug,
@@ -240,6 +249,7 @@ const statistics = {
 				isPublic: schema.resume.isPublic,
 				views: schema.resumeStatistics.views,
 				downloads: schema.resumeStatistics.downloads,
+				contactReveals: schema.resumeStatistics.contactReveals,
 				lastViewedAt: schema.resumeStatistics.lastViewedAt,
 				lastDownloadedAt: schema.resumeStatistics.lastDownloadedAt,
 			})
@@ -253,14 +263,16 @@ const statistics = {
 			isPublic: statistics.isPublic,
 			views: statistics.views ?? 0,
 			downloads: statistics.downloads ?? 0,
+			contactReveals: statistics.contactReveals ?? 0,
 			lastViewedAt: statistics.lastViewedAt,
 			lastDownloadedAt: statistics.lastDownloadedAt,
 		};
 	},
 
-	increment: async (input: { id: string; views?: boolean; downloads?: boolean }) => {
+	increment: async (input: { id: string; views?: boolean; downloads?: boolean; contactReveals?: boolean }) => {
 		const views = input.views ? 1 : 0;
 		const downloads = input.downloads ? 1 : 0;
+		const contactReveals = input.contactReveals ? 1 : 0;
 		const lastViewedAt = input.views ? sql`now()` : undefined;
 		const lastDownloadedAt = input.downloads ? sql`now()` : undefined;
 		const today = new Date().toISOString().slice(0, 10);
@@ -272,6 +284,7 @@ const statistics = {
 					resumeId: input.id,
 					views,
 					downloads,
+					contactReveals,
 					lastViewedAt,
 					lastDownloadedAt,
 				})
@@ -280,6 +293,7 @@ const statistics = {
 					set: {
 						views: sql`${schema.resumeStatistics.views} + ${views}`,
 						downloads: sql`${schema.resumeStatistics.downloads} + ${downloads}`,
+						contactReveals: sql`${schema.resumeStatistics.contactReveals} + ${contactReveals}`,
 						lastViewedAt,
 						lastDownloadedAt,
 					},
@@ -287,12 +301,13 @@ const statistics = {
 
 			await tx
 				.insert(schema.resumeStatisticsDaily)
-				.values({ resumeId: input.id, date: today, views, downloads })
+				.values({ resumeId: input.id, date: today, views, downloads, contactReveals })
 				.onConflictDoUpdate({
 					target: [schema.resumeStatisticsDaily.resumeId, schema.resumeStatisticsDaily.date],
 					set: {
 						views: sql`${schema.resumeStatisticsDaily.views} + ${views}`,
 						downloads: sql`${schema.resumeStatisticsDaily.downloads} + ${downloads}`,
+						contactReveals: sql`${schema.resumeStatisticsDaily.contactReveals} + ${contactReveals}`,
 					},
 				});
 		});
@@ -320,6 +335,7 @@ const statistics = {
 				date: schema.resumeStatisticsDaily.date,
 				views: schema.resumeStatisticsDaily.views,
 				downloads: schema.resumeStatisticsDaily.downloads,
+				contactReveals: schema.resumeStatisticsDaily.contactReveals,
 			})
 			.from(schema.resumeStatisticsDaily)
 			.where(and(eq(schema.resumeStatisticsDaily.resumeId, input.id), gte(schema.resumeStatisticsDaily.date, start)));
@@ -330,6 +346,7 @@ const statistics = {
 			date,
 			views: byDate.get(date)?.views ?? 0,
 			downloads: byDate.get(date)?.downloads ?? 0,
+			contactReveals: byDate.get(date)?.contactReveals ?? 0,
 		}));
 	},
 };
@@ -344,10 +361,18 @@ function toSharedResumeResponse(
 		isPublic: boolean;
 		isLocked: boolean;
 		showDownloadButtons: boolean;
+		showInSearchEngines: boolean;
+		hideContactDetails: boolean;
+		showContactButton: boolean;
+		isPrimary: boolean;
 	},
 	hasPassword: boolean,
 ) {
 	return {
+		showInSearchEngines: resume.showInSearchEngines,
+		hideContactDetails: resume.hideContactDetails,
+		showContactButton: resume.showContactButton,
+		isPrimary: resume.isPrimary,
 		id: resume.id,
 		name: resume.name,
 		slug: resume.slug,
@@ -464,6 +489,7 @@ export const resumeService = {
 				isPublic: schema.resume.isPublic,
 				isLocked: schema.resume.isLocked,
 				showDownloadButtons: schema.resume.showDownloadButtons,
+				...shareColumns,
 				createdAt: schema.resume.createdAt,
 				updatedAt: schema.resume.updatedAt,
 			})
@@ -515,6 +541,7 @@ export const resumeService = {
 			isPublic: schema.resume.isPublic,
 			isLocked: schema.resume.isLocked,
 			showDownloadButtons: schema.resume.showDownloadButtons,
+			...shareColumns,
 			passwordHash: schema.resume.password,
 			hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
 		});
@@ -618,6 +645,10 @@ export const resumeService = {
 		data?: ResumeData;
 		isPublic?: boolean;
 		showDownloadButtons?: boolean;
+		showInSearchEngines?: boolean;
+		hideContactDetails?: boolean;
+		showContactButton?: boolean;
+		isPrimary?: boolean;
 		expectedUpdatedAt?: Date;
 		skipAutoSnapshot?: boolean;
 		/** The editor visit this save belongs to; its autosaves share one version. */
@@ -631,6 +662,7 @@ export const resumeService = {
 						data: schema.resume.data,
 						slug: schema.resume.slug,
 						isLocked: schema.resume.isLocked,
+						isPublic: schema.resume.isPublic,
 						autoName: schema.resume.autoName,
 						updatedAt: schema.resume.updatedAt,
 					})
@@ -677,7 +709,30 @@ export const resumeService = {
 					...(normalizedData ? { data: normalizedData } : {}),
 					...(input.isPublic !== undefined ? { isPublic: input.isPublic } : {}),
 					...(input.showDownloadButtons !== undefined ? { showDownloadButtons: input.showDownloadButtons } : {}),
+					...(input.showInSearchEngines !== undefined ? { showInSearchEngines: input.showInSearchEngines } : {}),
+					...(input.hideContactDetails !== undefined ? { hideContactDetails: input.hideContactDetails } : {}),
+					...(input.showContactButton !== undefined ? { showContactButton: input.showContactButton } : {}),
+					...(input.isPrimary !== undefined ? { isPrimary: input.isPrimary } : {}),
 				};
+
+				// Only a published resume can become the primary one; it takes the role from the account's previous primary.
+				if (input.isPrimary === true) {
+					if (!(input.isPublic ?? existing.isPublic))
+						throw new ORPCError("RESUME_NOT_PUBLIC", {
+							status: 400,
+							message: "Publish the resume before making it primary.",
+						});
+					await tx
+						.update(schema.resume)
+						.set({ isPrimary: false })
+						.where(
+							and(
+								eq(schema.resume.userId, input.userId),
+								eq(schema.resume.isPrimary, true),
+								ne(schema.resume.id, input.id),
+							),
+						);
+				}
 
 				const [updated] = await tx
 					.update(schema.resume)

@@ -218,6 +218,9 @@ catalogs:
     '@radix-ui/react-presence':
       specifier: ^1.1.11
       version: 1.1.11
+    '@resvg/resvg-wasm':
+      specifier: ^2.6.2
+      version: 2.6.2
     '@shadcn/react':
       specifier: ^0.3.1
       version: 0.3.1
@@ -272,6 +275,9 @@ catalogs:
     ioredis:
       specifier: ^6.0.0
       version: 6.0.0
+    isbot:
+      specifier: ^5.2.2
+      version: 5.2.2
     jsonrepair:
       specifier: ^3.15.0
       version: 3.15.0
@@ -769,12 +775,18 @@ importers:
       '@reactive-resume/pdf':
         specifier: workspace:*
         version: link:../../packages/pdf
+      '@reactive-resume/resume':
+        specifier: workspace:*
+        version: link:../../packages/resume
       '@reactive-resume/schema':
         specifier: workspace:*
         version: link:../../packages/schema
       '@reactive-resume/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@resvg/resvg-wasm':
+        specifier: 'catalog:'
+        version: 2.6.2
       '@sindresorhus/slugify':
         specifier: ^3.0.1
         version: 3.0.1
@@ -829,6 +841,9 @@ importers:
       ioredis:
         specifier: 'catalog:'
         version: 6.0.0(supports-color@7.2.0)
+      isbot:
+        specifier: 'catalog:'
+        version: 5.2.2
       jose:
         specifier: ^6.2.13
         version: 6.2.13
@@ -1351,6 +1366,9 @@ importers:
       ioredis:
         specifier: 'catalog:'
         version: 6.0.0(supports-color@7.2.0)
+      isbot:
+        specifier: 'catalog:'
+        version: 5.2.2
       jsonrepair:
         specifier: 'catalog:'
         version: 3.15.0
@@ -2017,6 +2035,9 @@ importers:
 
   tooling:
     dependencies:
+      '@reactive-resume/pdf':
+        specifier: workspace:*
+        version: link:../packages/pdf
       '@reactive-resume/schema':
         specifier: workspace:*
         version: link:../packages/schema
@@ -5600,6 +5621,10 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  '@resvg/resvg-wasm@2.6.2':
+    resolution: {integrity: sha512-FqALmHI8D4o6lk/LRWDnhw95z5eO+eAa6ORjVg09YRR7BkcM6oPHU9uyC0gtQG5vpFLvgpeU4+zEAz2H8APHNw==}
+    engines: {node: '>= 10'}
 
   '@rolldown/binding-android-arm-eabi@1.2.15':
     resolution: {integrity: sha512-aLcgK9gIJ3YRvrrtfSBbRa27F5WrpiTaPulnFpsHPxpUHgFlSgnU4854MHwoRGEBhfRJDWCS2WQ7lIjskE9Olw==}
@@ -15500,6 +15525,8 @@ snapshots:
       react-native: 0.88.0(@babel/core@7.29.7(supports-color@7.2.0))(@react-native/metro-config@0.88.0(@babel/core@7.29.7(supports-color@7.2.0))(supports-color@7.2.0))(@types/react@19.3.0)(react@19.3.1)(supports-color@7.2.0)
     optionalDependencies:
       '@types/react': 19.3.0
+
+  '@resvg/resvg-wasm@2.6.2': {}
 
   '@rolldown/binding-android-arm-eabi@1.2.15':
     optional: true

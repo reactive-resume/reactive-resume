@@ -31,6 +31,10 @@ it.each(["write", "read"] as RequestPermission[])(
 			isPublic: false,
 			isLocked: false,
 			showDownloadButtons: true,
+			showInSearchEngines: false,
+			hideContactDetails: false,
+			showContactButton: true,
+			isPrimary: false,
 			hasPassword: false,
 			passwordHash: null,
 		};

@@ -9,6 +9,9 @@ export type FeatureFlags = {
 	allowGuestLogin: boolean;
 	smtpEnabled: boolean;
 	careerSchedulingEnabled?: boolean;
+	shortLinkUrl?: string | undefined;
+	customDomains?: boolean;
+	olacvSuggestion?: boolean;
 };
 
 // Mirrors isSmtpEnabled() in packages/email/src/transport.ts (kept local to avoid an api -> email dependency).
@@ -36,6 +39,14 @@ export const flagsRouter = {
 				careerSchedulingEnabled: z
 					.boolean()
 					.describe("Whether scheduled career work is configured on this deployment."),
+				shortLinkUrl: z
+					.string()
+					.optional()
+					.describe("The short domain whose /<username> opens an account's primary resume, when configured."),
+				customDomains: z.boolean().describe("Whether accounts can open their primary resume at their own domain."),
+				olacvSuggestion: z
+					.boolean()
+					.describe("Whether accounts without a custom domain see a suggestion to register one at OlaCV."),
 			}),
 		)
 		.handler(() => ({
@@ -44,5 +55,8 @@ export const flagsRouter = {
 			allowGuestLogin: env.FLAG_ENABLE_GUEST_LOGIN && !env.FLAG_DISABLE_SIGNUPS,
 			smtpEnabled: isSmtpEnabled(),
 			careerSchedulingEnabled: isCareerSchedulingEnabled(),
+			...(env.SHORT_LINK_URL ? { shortLinkUrl: new URL(env.SHORT_LINK_URL).origin } : {}),
+			customDomains: Boolean(env.CUSTOM_DOMAIN_TARGET && env.CUSTOM_DOMAIN_PROVIDER_SECRET),
+			olacvSuggestion: env.FLAG_OLACV_SUGGESTION,
 		})),
 };

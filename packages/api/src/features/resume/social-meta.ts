@@ -1,14 +1,13 @@
-import type { ResumeSocialMeta } from "@reactive-resume/resume/social-meta";
-import { getResumeSocialMeta } from "@reactive-resume/resume/social-meta";
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { redactResumeForViewer } from "./access-policy";
 import { parseStoredResumeData } from "./resume-data-validation";
 
-export type PublicResumeSocialMetaInput = { username: string; slug: string };
+export type PublicResumeCardInput = { username: string; slug: string };
 
 // Only public, password-free resumes outside Trash with an unbanned owner are matched. Password-protected
 // resumes must not leak their summary to an unauthenticated crawler, and this read deliberately skips the view
-// counting and access gating in resumeService.getBySlug — a card render is not a visit.
-const findResume = async (input: PublicResumeSocialMetaInput) => {
+// counting and access gating of a visit — a card render is not a visit.
+const findResume = async (input: PublicResumeCardInput) => {
 	const [schema, { eq, isNull }, { findResumeBySlug }] = await Promise.all([
 		import("@reactive-resume/db/schema"),
 		import("drizzle-orm"),
@@ -16,7 +15,13 @@ const findResume = async (input: PublicResumeSocialMetaInput) => {
 	]);
 	const resume = await findResumeBySlug(
 		input,
-		{ name: schema.resume.name, data: schema.resume.data },
+		{
+			name: schema.resume.name,
+			data: schema.resume.data,
+			hideContactDetails: schema.resume.hideContactDetails,
+			userId: schema.resume.userId,
+			isPrimary: schema.resume.isPrimary,
+		},
 		eq(schema.resume.isPublic, true),
 		isNull(schema.resume.password),
 	);
@@ -24,14 +29,20 @@ const findResume = async (input: PublicResumeSocialMetaInput) => {
 };
 
 /**
- * Loads metadata (title, description, image) for social card previews of a public resume.
- * Redacts hidden sections and respects password gating and trashed state.
+ * What a public resume's link preview card shows: the resume as an anonymous visitor sees it, with hidden sections
+ * and (when the owner hid them) contact details removed. `null` when it isn't public or needs a password.
  */
-export async function getPublicResumeSocialMeta(input: PublicResumeSocialMetaInput): Promise<ResumeSocialMeta | null> {
+export async function getPublicResumeCardData(
+	input: PublicResumeCardInput,
+): Promise<{ data: ResumeData; isPrimary: boolean; customDomain: string | null } | null> {
 	const resume = await findResume(input);
 	if (!resume) return null;
-
-	// The card shows what an anonymous visitor gets: no dashboard title, nothing the author hid.
-	const visible = redactResumeForViewer({ name: resume.name, data: parseStoredResumeData(resume.data) }, false);
-	return getResumeSocialMeta(visible.data, visible.name);
+	const { data } = redactResumeForViewer(
+		{ name: resume.name, data: parseStoredResumeData(resume.data), hideContactDetails: resume.hideContactDetails },
+		false,
+	);
+	const customDomain = resume.isPrimary
+		? await import("../custom-domain/service").then(({ verifiedDomainOf }) => verifiedDomainOf(resume.userId))
+		: null;
+	return { data, isPrimary: resume.isPrimary, customDomain };
 }

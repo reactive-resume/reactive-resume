@@ -334,7 +334,8 @@ export const TOOL_META = withAnnotationTitles({
 	[T.updateResume]: {
 		title: "Update Resume",
 		description: [
-			"Update a resume's settings (display name, URL slug, tags, public visibility, download buttons), or replace its whole content with `data`.",
+			"Update a resume's settings (display name, URL slug, tags, public visibility, download buttons), its web page's Share settings (showInSearchEngines, hideContactDetails, showContactButton, isPrimary), or replace its whole content with `data`.",
+			"Ask the user before turning on showInSearchEngines or turning off hideContactDetails: both make personal details easier for strangers to find.",
 			`For content edits prefer \`${T.patchResume}\` with expectedUpdatedAt, which changes only what it targets and avoids overwriting concurrent changes.`,
 			`Locked resumes cannot be updated. Ask the user before unlocking with \`${T.unlockResume}\`.`,
 			"To set a share password, `api_resume_set_password` opens the resume in the app.",

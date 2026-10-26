@@ -19,6 +19,23 @@ describe("assertCanView", () => {
 });
 
 describe("redactResumeForViewer", () => {
+	it("leaves hidden contact details out for visitors but not for the owner", () => {
+		const data = structuredClone(sampleResumeData);
+		const [reference] = data.sections.references.items;
+		if (!reference) throw new Error("The sample resume needs a reference.");
+		data.sections.references.items = [{ ...reference, id: "ref", name: "Jo", phone: "+1 555 0100" }];
+		const resume = { name: "Title", data, hideContactDetails: true };
+
+		const visitor = redactResumeForViewer(resume, false).data;
+		expect(visitor.basics).toMatchObject({ email: "", phone: "", location: "", customFields: [] });
+		expect(visitor.sections.references.items[0]?.phone).toBe("");
+		expect(visitor.basics.name).toBe(data.basics.name);
+
+		const owner = redactResumeForViewer(resume, true).data;
+		expect(owner.basics.email).toBe(data.basics.email);
+		expect(owner.sections.references.items[0]?.phone).toBe("+1 555 0100");
+	});
+
 	it("replaces name with placeholder for non-owner", () => {
 		const resume = {
 			name: "Senior Eng @ Foo — final draft",

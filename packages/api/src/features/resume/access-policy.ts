@@ -2,6 +2,7 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { ORPCError } from "@orpc/client";
 import { sql } from "drizzle-orm";
 import * as schema from "@reactive-resume/db/schema";
+import { removeContactDetails } from "@reactive-resume/resume/contact-details";
 
 /**
  * Single source of truth for "who can view/edit a resume" and "what fields
@@ -72,19 +73,21 @@ export function requiresPassword(resume: PasswordProtectedResume, viewer: Viewer
  *   - Everything the author hid: hidden sections, summary, picture and items
  *     "aren't printed or shared". Hidden custom sections are dropped; built-in
  *     ones keep their (now empty, untitled) slot because the schema requires it.
+ *   - Contact details, when the author hid them in Share (`hideContactDetails`).
  *
  * Everything else (including `data.basics.name`, the person's name on the
  * resume itself) is part of the public payload and is returned unchanged.
  *
  * Owner views pass through untouched.
  */
-export function redactResumeForViewer<T extends { name: string; data: ResumeData }>(
+export function redactResumeForViewer<T extends { name: string; data: ResumeData; hideContactDetails?: boolean }>(
 	resume: T,
 	viewerIsOwner: boolean,
 ): T {
 	if (viewerIsOwner) return resume;
 
 	const data = structuredClone(resume.data);
+	if (resume.hideContactDetails) removeContactDetails(data);
 	data.metadata.notes = "";
 	data.metadata.check = undefined;
 	if (data.picture.hidden) data.picture.url = "";

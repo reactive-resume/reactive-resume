@@ -1,4 +1,5 @@
 import type { RequestAuthentication } from "../../context";
+import { ORPCError } from "@orpc/server";
 import z from "zod";
 import { protectedProcedure, publicProcedure } from "../../context";
 import { resumeDto } from "../../dto/resume";
@@ -13,6 +14,38 @@ export function ownerViewer(context: { user?: { id: string } | null; authenticat
 }
 
 export const sharingRouter = {
+	previewUrl: protectedProcedure
+		.route({
+			method: "GET",
+			path: "/resumes/{id}/web-page/preview",
+			tags: ["Resume Sharing"],
+			operationId: "getResumeWebPagePreviewUrl",
+			summary: "Get a preview link for the web page",
+			description:
+				"Returns a link, valid for 15 minutes, that shows the resume's web page as visitors will see it, even before it's published. The page isn't counted or listed in search engines. Requires authentication and resume ownership.",
+			successDescription: "The preview link.",
+		})
+		.input(z.object({ id: z.string().describe("The ID of the resume.") }))
+		.output(z.string().describe("The preview link."))
+		.handler(async ({ context, input }) => {
+			const [{ db }, schema, { and, eq }, { createPreviewToken }, { env }] = await Promise.all([
+				import("@reactive-resume/db/client"),
+				import("@reactive-resume/db/schema"),
+				import("drizzle-orm"),
+				import("./access"),
+				import("@reactive-resume/env/server"),
+			]);
+			const [resume] = await db
+				.select({ slug: schema.resume.slug, username: schema.user.username })
+				.from(schema.resume)
+				.innerJoin(schema.user, eq(schema.resume.userId, schema.user.id))
+				.where(and(eq(schema.resume.id, input.id), eq(schema.resume.userId, context.user.id)));
+			if (!resume) throw new ORPCError("NOT_FOUND");
+			const url = new URL(`/${encodeURIComponent(resume.username)}/${encodeURIComponent(resume.slug)}`, env.APP_URL);
+			url.searchParams.set("preview", createPreviewToken(input.id));
+			return url.href;
+		}),
+
 	getBySlug: publicProcedure
 		.route({
 			method: "GET",
