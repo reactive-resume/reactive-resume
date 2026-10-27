@@ -87,6 +87,34 @@ const applicationSchema = createSelectSchema(schema.application, {
 	updatedAt: z.date(),
 });
 
+const applicationSummarySchema = applicationSchema.pick({
+	id: true,
+	company: true,
+	role: true,
+	location: true,
+	salary: true,
+	status: true,
+	closedReason: true,
+	resumeId: true,
+	coverLetterId: true,
+	source: true,
+	tags: true,
+	sourceUrl: true,
+	matchScore: true,
+	followUpAt: true,
+	followUpNote: true,
+	contacts: true,
+	activity: true,
+	appliedAt: true,
+	createdAt: true,
+	updatedAt: true,
+});
+
+const applicationSummaryWithInitialDetailSchema = applicationSummarySchema.extend({
+	/** A small number of full rows can be attached to the initial list response for eager detail rendering. */
+	initialDetail: applicationSchema.omit({ userId: true }).optional(),
+});
+
 // Fields a client is allowed to set/change. `status`, `activity` and AI-owned fields are
 // excluded here — status changes go through the auto-logging update path, activity through
 // addNote, and AI fields are written only by the (reserved) AI procedures.
@@ -135,6 +163,19 @@ export const applicationDto = {
 			.optional()
 			.default({}),
 		output: z.array(applicationSchema.omit({ userId: true })),
+	},
+
+	listSummary: {
+		input: z
+			.object({
+				...paginationShape,
+				status: applicationStatusSchema.optional(),
+				tags: z.array(z.string()).optional(),
+				includeInitialDetails: z.number().int().min(0).max(6).optional(),
+			})
+			.optional()
+			.default({}),
+		output: z.array(applicationSummaryWithInitialDetailSchema),
 	},
 
 	getById: {

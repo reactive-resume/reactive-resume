@@ -35,6 +35,36 @@ export const crudRouter = {
 			return items;
 		}),
 
+	listSummary: protectedProcedure
+		.route({
+			method: "GET",
+			path: "/applications/summary",
+			tags: ["Applications"],
+			operationId: "listApplicationSummaries",
+			summary: "List application summaries",
+			description:
+				"Returns lightweight application summaries for list views. Full descriptions, notes, documents and timeline notes are omitted; use the application endpoint for full detail. When includeInitialDetails is N, up to 2N full details may be attached as initialDetail: the union of the first N candidates under web and mobile ordering, with closed applications excluded unless status is provided.",
+			successDescription: "A list of lightweight application summaries.",
+		})
+		.input(applicationDto.listSummary.input)
+		.output(applicationDto.listSummary.output)
+		.handler(async ({ input, context }) => {
+			const { items, total } = await applicationService.listSummary({
+				userId: context.user.id,
+				...(input.status ? { status: input.status } : {}),
+				...(input.tags ? { tags: input.tags } : {}),
+				...(input.limit !== undefined ? { limit: input.limit } : {}),
+				...(input.offset !== undefined ? { offset: input.offset } : {}),
+				...(input.includeInitialDetails !== undefined ? { includeInitialDetails: input.includeInitialDetails } : {}),
+			});
+			context.resHeaders?.set("X-Total-Count", String(total));
+			if (input.limit !== undefined || input.offset !== undefined) {
+				context.resHeaders?.set("X-Limit", String(input.limit ?? 20));
+				context.resHeaders?.set("X-Offset", String(input.offset ?? 0));
+			}
+			return items;
+		}),
+
 	getById: protectedProcedure
 		.route({
 			method: "GET",

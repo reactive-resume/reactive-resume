@@ -16113,6 +16113,1136 @@
 				]
 			}
 		},
+		"/applications/summary": {
+			"get": {
+				"operationId": "listApplicationSummaries",
+				"summary": "List application summaries",
+				"description": "Returns lightweight application summaries for list views. Full descriptions, notes, documents and timeline notes are omitted; use the application endpoint for full detail. When includeInitialDetails is N, up to 2N full details may be attached as initialDetail: the union of the first N candidates under web and mobile ordering, with closed applications excluded unless status is provided.",
+				"tags": [
+					"Applications"
+				],
+				"parameters": [
+					{
+						"name": "limit",
+						"in": "query",
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"maximum": 100,
+							"description": "Maximum results (1–100). Omit both pagination fields for the legacy complete list."
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991,
+							"description": "Zero-based offset. Defaults to 0; limit defaults to 20 when only offset is given."
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "status",
+						"in": "query",
+						"schema": {
+							"enum": [
+								"saved",
+								"applied",
+								"screening",
+								"interview",
+								"offer",
+								"closed"
+							],
+							"type": "string"
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "tags",
+						"in": "query",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"style": "deepObject",
+						"explode": true,
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "includeInitialDetails",
+						"in": "query",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 6
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "A list of lightweight application summaries.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"id": {
+												"type": "string",
+												"description": "The ID of the application."
+											},
+											"company": {
+												"type": "string",
+												"minLength": 1,
+												"description": "The company applied to."
+											},
+											"role": {
+												"type": "string",
+												"minLength": 1,
+												"description": "The role / job title."
+											},
+											"location": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"salary": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"status": {
+												"enum": [
+													"saved",
+													"applied",
+													"screening",
+													"interview",
+													"offer",
+													"closed"
+												],
+												"type": "string",
+												"description": "The current pipeline stage. `closed` ends it, with a reason."
+											},
+											"closedReason": {
+												"anyOf": [
+													{
+														"enum": [
+															"accepted",
+															"not-selected",
+															"withdrew",
+															"accepted-other",
+															"no-response"
+														],
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												],
+												"description": "Why a closed application ended: accepted, not-selected, withdrew, accepted-other or no-response."
+											},
+											"resumeId": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												],
+												"description": "The linked Reactive Resume, if any."
+											},
+											"coverLetterId": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												],
+												"description": "The linked saved cover letter, if any."
+											},
+											"source": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"tags": {
+												"type": "array",
+												"items": {
+													"type": "string"
+												}
+											},
+											"sourceUrl": {
+												"anyOf": [
+													{
+														"type": "string",
+														"format": "uri"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"matchScore": {
+												"anyOf": [
+													{
+														"type": "integer",
+														"minimum": 0,
+														"maximum": 100
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"followUpAt": {
+												"anyOf": [
+													{
+														"type": "string",
+														"format": "date-time",
+														"x-native-type": "date"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"followUpNote": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"contacts": {
+												"type": "array",
+												"items": {
+													"type": "object",
+													"properties": {
+														"name": {
+															"type": "string",
+															"minLength": 1
+														},
+														"role": {
+															"type": "string",
+															"default": ""
+														},
+														"type": {
+															"type": "string",
+															"default": ""
+														},
+														"email": {
+															"type": "string",
+															"default": ""
+														},
+														"phone": {
+															"type": "string",
+															"default": ""
+														}
+													},
+													"required": [
+														"name"
+													]
+												}
+											},
+											"activity": {
+												"type": "array",
+												"items": {
+													"anyOf": [
+														{
+															"type": "object",
+															"properties": {
+																"id": {
+																	"type": "string",
+																	"minLength": 1
+																},
+																"at": {
+																	"type": "string",
+																	"format": "date-time",
+																	"x-native-type": "date"
+																},
+																"type": {
+																	"const": "stage"
+																},
+																"stage": {
+																	"enum": [
+																		"saved",
+																		"applied",
+																		"screening",
+																		"interview",
+																		"offer",
+																		"closed"
+																	],
+																	"type": "string"
+																}
+															},
+															"required": [
+																"id",
+																"at",
+																"type",
+																"stage"
+															]
+														},
+														{
+															"type": "object",
+															"properties": {
+																"id": {
+																	"type": "string",
+																	"minLength": 1
+																},
+																"at": {
+																	"type": "string",
+																	"format": "date-time",
+																	"x-native-type": "date"
+																},
+																"type": {
+																	"const": "note"
+																},
+																"text": {
+																	"type": "string",
+																	"minLength": 1
+																}
+															},
+															"required": [
+																"id",
+																"at",
+																"type",
+																"text"
+															]
+														},
+														{
+															"type": "object",
+															"properties": {
+																"id": {
+																	"type": "string",
+																	"minLength": 1
+																},
+																"at": {
+																	"type": "string",
+																	"format": "date-time",
+																	"x-native-type": "date"
+																},
+																"type": {
+																	"const": "interview"
+																},
+																"kind": {
+																	"enum": [
+																		"screening",
+																		"technical",
+																		"behavioral",
+																		"onsite",
+																		"other"
+																	],
+																	"type": "string"
+																},
+																"durationMinutes": {
+																	"type": "integer",
+																	"minimum": 5,
+																	"maximum": 1440,
+																	"default": 60
+																},
+																"location": {
+																	"type": "string",
+																	"maxLength": 500,
+																	"default": ""
+																},
+																"notes": {
+																	"type": "string",
+																	"maxLength": 5000,
+																	"default": ""
+																},
+																"participants": {
+																	"type": "array",
+																	"maxItems": 20,
+																	"items": {
+																		"type": "object",
+																		"properties": {
+																			"name": {
+																				"type": "string",
+																				"minLength": 1,
+																				"maxLength": 200
+																			},
+																			"role": {
+																				"type": "string",
+																				"maxLength": 200,
+																				"default": ""
+																			},
+																			"profileUrl": {
+																				"type": "string",
+																				"maxLength": 2048,
+																				"format": "uri"
+																			}
+																		},
+																		"required": [
+																			"name"
+																		]
+																	},
+																	"default": []
+																},
+																"audience": {
+																	"enum": [
+																		"recruiter",
+																		"hiring-manager",
+																		"practitioner",
+																		"panel",
+																		"other"
+																	],
+																	"type": "string",
+																	"default": "other"
+																},
+																"timezone": {
+																	"type": "string",
+																	"minLength": 1,
+																	"maxLength": 100,
+																	"default": "UTC"
+																}
+															},
+															"required": [
+																"id",
+																"at",
+																"type",
+																"kind"
+															]
+														}
+													]
+												}
+											},
+											"appliedAt": {
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											},
+											"createdAt": {
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											},
+											"updatedAt": {
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											},
+											"initialDetail": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string",
+														"description": "The ID of the application."
+													},
+													"company": {
+														"type": "string",
+														"minLength": 1,
+														"description": "The company applied to."
+													},
+													"role": {
+														"type": "string",
+														"minLength": 1,
+														"description": "The role / job title."
+													},
+													"location": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"salary": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"status": {
+														"enum": [
+															"saved",
+															"applied",
+															"screening",
+															"interview",
+															"offer",
+															"closed"
+														],
+														"type": "string",
+														"description": "The current pipeline stage. `closed` ends it, with a reason."
+													},
+													"closedReason": {
+														"anyOf": [
+															{
+																"enum": [
+																	"accepted",
+																	"not-selected",
+																	"withdrew",
+																	"accepted-other",
+																	"no-response"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														],
+														"description": "Why a closed application ended: accepted, not-selected, withdrew, accepted-other or no-response."
+													},
+													"resumeId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														],
+														"description": "The linked Reactive Resume, if any."
+													},
+													"coverLetterId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														],
+														"description": "The linked saved cover letter, if any."
+													},
+													"sentResumeVersionId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														],
+														"description": "The version of the linked resume saved when the application was sent (reached Applied)."
+													},
+													"sentCheckScore": {
+														"anyOf": [
+															{
+																"type": "integer",
+																"minimum": -9007199254740991,
+																"maximum": 9007199254740991
+															},
+															{
+																"type": "null"
+															}
+														],
+														"description": "The resume's Check score when it was sent, out of 100."
+													},
+													"sentCoverLetterVersionId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														],
+														"description": "The version of the linked letter saved when the application was sent."
+													},
+													"source": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"tags": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														}
+													},
+													"sourceUrl": {
+														"anyOf": [
+															{
+																"type": "string",
+																"format": "uri"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"jobDescription": {
+														"anyOf": [
+															{
+																"type": "string",
+																"maxLength": 20000
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"postingSource": {
+														"anyOf": [
+															{
+																"type": "object",
+																"properties": {
+																	"method": {
+																		"enum": [
+																			"paste",
+																			"builtin",
+																			"firecrawl",
+																			"tavily",
+																			"exa"
+																		],
+																		"type": "string"
+																	},
+																	"format": {
+																		"enum": [
+																			"text",
+																			"markdown"
+																		],
+																		"type": "string"
+																	},
+																	"requestedUrl": {
+																		"type": "string",
+																		"format": "uri"
+																	},
+																	"resolvedUrl": {
+																		"type": "string",
+																		"format": "uri"
+																	},
+																	"retrievedAt": {
+																		"type": "string",
+																		"format": "date-time"
+																	},
+																	"providerFetchedAt": {
+																		"type": "string",
+																		"format": "date-time"
+																	},
+																	"truncated": {
+																		"type": "boolean"
+																	},
+																	"completeness": {
+																		"enum": [
+																			"unknown",
+																			"incomplete"
+																		],
+																		"type": "string"
+																	},
+																	"fallbackReason": {
+																		"enum": [
+																			"unsafe-url",
+																			"unreachable",
+																			"not-a-page",
+																			"too-large",
+																			"auth",
+																			"quota",
+																			"malformed",
+																			"empty",
+																			"challenge",
+																			"timeout",
+																			"unavailable",
+																			"rate-limit"
+																		],
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"method",
+																	"format",
+																	"truncated",
+																	"completeness"
+																]
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"requirements": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														},
+														"description": "What the posting asks for, as read when the application was added."
+													},
+													"matchScore": {
+														"anyOf": [
+															{
+																"type": "integer",
+																"minimum": 0,
+																"maximum": 100
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"aiMetadata": {
+														"anyOf": [
+															{
+																"type": "object",
+																"propertyNames": {
+																	"type": "string"
+																},
+																"additionalProperties": {}
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"notes": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"resumeFileUrl": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"resumeFileName": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"coverLetterUrl": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"coverLetterName": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"followUpAt": {
+														"anyOf": [
+															{
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"followUpNote": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"contacts": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"name": {
+																	"type": "string",
+																	"minLength": 1
+																},
+																"role": {
+																	"type": "string",
+																	"default": ""
+																},
+																"type": {
+																	"type": "string",
+																	"default": ""
+																},
+																"email": {
+																	"type": "string",
+																	"default": ""
+																},
+																"phone": {
+																	"type": "string",
+																	"default": ""
+																}
+															},
+															"required": [
+																"name"
+															]
+														}
+													},
+													"activity": {
+														"type": "array",
+														"items": {
+															"anyOf": [
+																{
+																	"type": "object",
+																	"properties": {
+																		"id": {
+																			"type": "string",
+																			"minLength": 1
+																		},
+																		"at": {
+																			"type": "string",
+																			"format": "date-time",
+																			"x-native-type": "date"
+																		},
+																		"type": {
+																			"const": "stage"
+																		},
+																		"stage": {
+																			"enum": [
+																				"saved",
+																				"applied",
+																				"screening",
+																				"interview",
+																				"offer",
+																				"closed"
+																			],
+																			"type": "string"
+																		}
+																	},
+																	"required": [
+																		"id",
+																		"at",
+																		"type",
+																		"stage"
+																	]
+																},
+																{
+																	"type": "object",
+																	"properties": {
+																		"id": {
+																			"type": "string",
+																			"minLength": 1
+																		},
+																		"at": {
+																			"type": "string",
+																			"format": "date-time",
+																			"x-native-type": "date"
+																		},
+																		"type": {
+																			"const": "note"
+																		},
+																		"text": {
+																			"type": "string",
+																			"minLength": 1
+																		}
+																	},
+																	"required": [
+																		"id",
+																		"at",
+																		"type",
+																		"text"
+																	]
+																},
+																{
+																	"type": "object",
+																	"properties": {
+																		"id": {
+																			"type": "string",
+																			"minLength": 1
+																		},
+																		"at": {
+																			"type": "string",
+																			"format": "date-time",
+																			"x-native-type": "date"
+																		},
+																		"type": {
+																			"const": "interview"
+																		},
+																		"kind": {
+																			"enum": [
+																				"screening",
+																				"technical",
+																				"behavioral",
+																				"onsite",
+																				"other"
+																			],
+																			"type": "string"
+																		},
+																		"durationMinutes": {
+																			"type": "integer",
+																			"minimum": 5,
+																			"maximum": 1440,
+																			"default": 60
+																		},
+																		"location": {
+																			"type": "string",
+																			"maxLength": 500,
+																			"default": ""
+																		},
+																		"notes": {
+																			"type": "string",
+																			"maxLength": 5000,
+																			"default": ""
+																		},
+																		"participants": {
+																			"type": "array",
+																			"maxItems": 20,
+																			"items": {
+																				"type": "object",
+																				"properties": {
+																					"name": {
+																						"type": "string",
+																						"minLength": 1,
+																						"maxLength": 200
+																					},
+																					"role": {
+																						"type": "string",
+																						"maxLength": 200,
+																						"default": ""
+																					},
+																					"profileUrl": {
+																						"type": "string",
+																						"maxLength": 2048,
+																						"format": "uri"
+																					}
+																				},
+																				"required": [
+																					"name"
+																				]
+																			},
+																			"default": []
+																		},
+																		"audience": {
+																			"enum": [
+																				"recruiter",
+																				"hiring-manager",
+																				"practitioner",
+																				"panel",
+																				"other"
+																			],
+																			"type": "string",
+																			"default": "other"
+																		},
+																		"timezone": {
+																			"type": "string",
+																			"minLength": 1,
+																			"maxLength": 100,
+																			"default": "UTC"
+																		}
+																	},
+																	"required": [
+																		"id",
+																		"at",
+																		"type",
+																		"kind"
+																	]
+																}
+															]
+														}
+													},
+													"appliedAt": {
+														"type": "string",
+														"format": "date-time",
+														"x-native-type": "date"
+													},
+													"createdAt": {
+														"type": "string",
+														"format": "date-time",
+														"x-native-type": "date"
+													},
+													"updatedAt": {
+														"type": "string",
+														"format": "date-time",
+														"x-native-type": "date"
+													}
+												},
+												"required": [
+													"id",
+													"company",
+													"role",
+													"location",
+													"salary",
+													"status",
+													"closedReason",
+													"resumeId",
+													"coverLetterId",
+													"sentResumeVersionId",
+													"sentCheckScore",
+													"sentCoverLetterVersionId",
+													"source",
+													"tags",
+													"sourceUrl",
+													"jobDescription",
+													"postingSource",
+													"requirements",
+													"matchScore",
+													"aiMetadata",
+													"notes",
+													"resumeFileUrl",
+													"resumeFileName",
+													"coverLetterUrl",
+													"coverLetterName",
+													"followUpAt",
+													"followUpNote",
+													"contacts",
+													"activity",
+													"appliedAt",
+													"createdAt",
+													"updatedAt"
+												]
+											}
+										},
+										"required": [
+											"id",
+											"company",
+											"role",
+											"location",
+											"salary",
+											"status",
+											"closedReason",
+											"resumeId",
+											"coverLetterId",
+											"source",
+											"tags",
+											"sourceUrl",
+											"matchScore",
+											"followUpAt",
+											"followUpNote",
+											"contacts",
+											"activity",
+											"appliedAt",
+											"createdAt",
+											"updatedAt"
+										]
+									}
+								}
+							}
+						},
+						"headers": {
+							"X-Total-Count": {
+								"description": "Total matching results before pagination.",
+								"schema": {
+									"type": "integer"
+								}
+							},
+							"X-Limit": {
+								"description": "Page size, when pagination is requested.",
+								"schema": {
+									"type": "integer"
+								}
+							},
+							"X-Offset": {
+								"description": "Zero-based offset, when pagination is requested.",
+								"schema": {
+									"type": "integer"
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/applications/summary\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			}
+		},
 		"/applications/{id}": {
 			"get": {
 				"operationId": "getApplication",

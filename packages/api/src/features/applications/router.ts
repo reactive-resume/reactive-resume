@@ -3,6 +3,7 @@ import { crudRouter } from "./crud";
 
 export const applicationsRouter = {
 	list: crudRouter.list,
+	listSummary: crudRouter.listSummary,
 	getById: crudRouter.getById,
 	create: crudRouter.create,
 	import: crudRouter.import,

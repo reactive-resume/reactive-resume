@@ -178,6 +178,10 @@ Exports accept `pdf`, `docx`, `md` or `json` and return a downloadable file. The
 
 Collection endpoints support `limit` (1–100) and `offset` (zero-based). For existing array responses, omitting both preserves the complete array for compatibility. Supplying only `offset` selects a page size of 20. The `X-Total-Count` header reports the total before slicing; paginated responses also include `X-Limit` and `X-Offset`. The cover-letter list retains its existing `{ items, total }` response and default pagination.
 
+Applications also expose `GET /applications/summary` for list views. It accepts the same `status`, `tags`, `limit` and `offset` parameters as `GET /applications`, but returns only lightweight list fields and stage/interview activity; job descriptions, notes, requirements, AI metadata and uploaded document fields are omitted. Use `GET /applications/{id}` when you need one application's full details. The original `/applications` response remains unchanged for integrations that need the complete application object.
+
+Set `includeInitialDetails` (0–6) to attach full `initialDetail` objects for the first few applications in the web and mobile default list orders. A value of N includes the union of each client's first N rows, so at most 2N rows receive full details; closed applications are excluded unless explicitly selected with `status`. Omit the parameter to keep the response entirely lightweight.
+
 ```bash
 curl "https://rxresu.me/api/openapi/resumes?limit=20&offset=20" \
   -H "x-api-key: YOUR_API_KEY" -i
