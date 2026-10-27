@@ -28,7 +28,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { daysInStage } from "../next-step";
-import { applicationDetailQueryOptions } from "../queries";
+import { applicationDetailQueryOptions, getInitialApplicationDetail } from "../queries";
 import { getClosedReasonLabel, getNextStage, getStageColor, getStageLabel, PIPELINE } from "../stages";
 import { useApplicationActions, useInvalidateApplications } from "../use-application-actions";
 import { ApplicationNotes } from "./application-notes";
@@ -58,17 +58,13 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEditDetail
 	const phone = useBreakpoint() === "mobile";
 	// Closing keeps the last application on screen until the sheet has slid away.
 	const [shown, onOpenChangeComplete] = useClosingValue(application);
-	const initialDetail = shown?.initialDetail;
-	const validInitialDetail =
-		initialDetail && initialDetail.status === shown?.status && initialDetail.closedReason === shown?.closedReason
-			? initialDetail
-			: undefined;
+	const initialDetail = getInitialApplicationDetail(shown);
 	const { data, isError, isFetching, isPending, refetch } = useQuery({
 		...applicationDetailQueryOptions(shown?.id ?? ""),
 		// Fetch only while open; while closing, the cached copy keeps showing.
 		enabled: Boolean(application),
-		initialData: validInitialDetail,
-		...(validInitialDetail ? { initialDataUpdatedAt: 0 } : {}),
+		initialData: initialDetail,
+		initialDataUpdatedAt: 0,
 	});
 	const current = data;
 
@@ -88,7 +84,7 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEditDetail
 					/>
 				) : (
 					<div className="grid gap-2 p-5">
-						<SheetTitle>{shown?.role ?? shown?.company}</SheetTitle>
+						<SheetTitle>{shown?.role}</SheetTitle>
 						<SheetDescription aria-live="polite">
 							{isError ? t`Couldn't load this. Your saved data hasn't changed.` : t`Loading…`}
 						</SheetDescription>

@@ -122,13 +122,13 @@ beforeEach(() => {
 	fixture.fullRowsActive = false;
 	fixture.total = 42;
 	fixture.query.mockReset();
-	fixture.query.mockImplementation(async ({ text }: { text: string }) => ({
+	fixture.query.mockImplementation(async ({ text }: { text: string }, params) => ({
 		rows: text.includes("count(")
 			? [[fixture.total]]
 			: text.includes("jsonb_path_query_array")
 				? fixture.rows
 				: fixture.fullRowsActive
-					? fixture.fullRows
+					? fixture.fullRows.filter((values) => params.includes(values[0]))
 					: fixture.rows,
 	}));
 });
@@ -224,6 +224,55 @@ describe("application list summary completeness", () => {
 		expect(queries()).toHaveLength(2);
 		expect(queries()[1]?.sql).toMatch(/ in /);
 		expect(queries()[1]?.params).toContain("owner");
+	});
+
+	it.each([
+		{
+			name: "a later timestamp group in one stage",
+			rows: [
+				["interview-new", "interview", "2026-07-04T00:00:00Z"],
+				["interview-c", "interview", "2026-07-03T00:00:00Z"],
+				["interview-b", "interview", "2026-07-03T00:00:00Z"],
+				["interview-a", "interview", "2026-07-03T00:00:00Z"],
+				["offer-a", "offer", "2026-07-02T00:00:00Z"],
+			],
+			expected: ["interview-a", "interview-b", "interview-c", "interview-new"],
+		},
+		{
+			name: "a cutoff in the next stage",
+			rows: [
+				["offer-c", "offer", "2026-07-04T00:00:00Z"],
+				["offer-b", "offer", "2026-07-04T00:00:00Z"],
+				["offer-a", "offer", "2026-07-04T00:00:00Z"],
+				["interview-a", "interview", "2026-07-03T00:00:00Z"],
+				["saved-a", "saved", "2026-07-02T00:00:00Z"],
+			],
+			expected: ["interview-a", "offer-a", "offer-b", "offer-c"],
+		},
+	] as const)("preloads both clients' first rows across $name", async ({ rows, expected }) => {
+		fixture.rows = rows.map(([id, status, at]) => candidateSummary(id, status, at));
+		fixture.fullRows = rows.map(([id]) => row(id));
+		fixture.fullRowsActive = true;
+		const { api } = client();
+		const items = await api.listSummary({ includeInitialDetails: 3 });
+		expect(
+			items
+				.filter((item) => item.initialDetail)
+				.map((item) => item.id)
+				.sort(),
+		).toEqual(expected);
+		expect(queries()[1]?.params).toHaveLength(expected.length + 1);
+		expect(queries()[1]?.params).toEqual(expect.arrayContaining(["owner", ...expected]));
+		expect(queries()).toHaveLength(2);
+	});
+
+	it("can preload closed rows when the caller explicitly filters for them", async () => {
+		fixture.rows = [summaryRow("closed-a")];
+		fixture.fullRows = [row("closed-a")];
+		fixture.fullRowsActive = true;
+		const { api } = client();
+		const items = await api.listSummary({ status: "closed", includeInitialDetails: 1 });
+		expect(items[0]?.initialDetail?.id).toBe("closed-a");
 	});
 
 	it("keeps summary response unchanged when initial details are omitted or zero", async () => {

@@ -1,6 +1,7 @@
 import type { Application, ApplicationSummary } from "./types";
+import type { ListViewToken } from "react-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
 import { syncReminders } from "@/features/reminders";
@@ -18,6 +19,13 @@ export const applicationDetailQueryOptions = (id: string, server = getServer()) 
 export const applicationDetailQueryKey = (id: string, server = getServer()) =>
 	applicationDetailQueryOptions(id, server).queryKey;
 
+function getInitialApplicationDetail(summary: ApplicationSummary | undefined) {
+	const detail = summary?.initialDetail;
+	return detail && detail.status === summary.status && detail.closedReason === summary.closedReason
+		? detail
+		: undefined;
+}
+
 export function useApplications() {
 	const session = useSession();
 	const queryClient = useQueryClient();
@@ -27,21 +35,13 @@ export function useApplications() {
 		if (!query.data || session.status !== "signed-in") return;
 		const listUpdatedAt = query.dataUpdatedAt;
 		for (const application of query.data) {
-			const initialDetail = application.initialDetail;
-			if (
-				!initialDetail ||
-				initialDetail.status !== application.status ||
-				initialDetail.closedReason !== application.closedReason
-			)
-				continue;
+			const initialDetail = getInitialApplicationDetail(application);
+			if (!initialDetail) continue;
 			const detailKey = applicationDetailQueryOptions(application.id, session.server).queryKey;
-			const existing = queryClient.getQueryState<Application>(detailKey)?.data;
-			if (existing && new Date(existing.updatedAt).getTime() >= new Date(initialDetail.updatedAt).getTime()) continue;
-			void queryClient.cancelQueries({ queryKey: detailKey }).then(() => {
-				const current = queryClient.getQueryState<Application>(detailKey)?.data;
-				if (current && new Date(current.updatedAt).getTime() >= new Date(initialDetail.updatedAt).getTime()) return;
-				queryClient.setQueryData(detailKey, initialDetail, { updatedAt: listUpdatedAt });
-			});
+			const existing = queryClient.getQueryData<Application>(detailKey);
+			if (existing && existing.updatedAt.getTime() >= initialDetail.updatedAt.getTime()) continue;
+			void queryClient.cancelQueries({ queryKey: detailKey }, { revert: false });
+			queryClient.setQueryData(detailKey, initialDetail, { updatedAt: listUpdatedAt });
 		}
 	}, [query.data, query.dataUpdatedAt, queryClient, session.server, session.status]);
 
@@ -53,20 +53,53 @@ export function useApplication(id: string) {
 	const listKey = applicationsListQueryKey(session.server);
 	const summary = queryClient.getQueryData<ApplicationSummary[]>(listKey)?.find((application) => application.id === id);
 	const listUpdatedAt = queryClient.getQueryState(listKey)?.dataUpdatedAt;
-	const initialDetail =
-		summary?.initialDetail &&
-		summary.initialDetail.status === summary.status &&
-		summary.initialDetail.closedReason === summary.closedReason
-			? summary.initialDetail
-			: undefined;
+	const initialDetail = getInitialApplicationDetail(summary);
 
 	return useQuery({
 		...applicationDetailQueryOptions(id, session.server),
 		enabled: session.status === "signed-in" && !!id,
-		...(initialDetail
-			? { initialData: initialDetail, ...(listUpdatedAt ? { initialDataUpdatedAt: listUpdatedAt } : {}) }
-			: {}),
+		initialData: initialDetail,
+		...(listUpdatedAt !== undefined ? { initialDataUpdatedAt: listUpdatedAt } : {}),
 	});
+}
+
+export function useApplicationDetailPrefetch() {
+	const queryClient = useQueryClient();
+	const prefetchedIds = useRef(new Set<string>());
+	const prefetchInFlight = useRef(0);
+	const prefetchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+	const onViewableItemsChanged = useCallback(
+		({ viewableItems }: { viewableItems: ListViewToken[] }) => {
+			clearTimeout(prefetchTimer.current);
+			// Section headers also appear in viewability callbacks, without an application ID.
+			const ids = viewableItems.flatMap(({ item }) => (typeof item.id === "string" ? [item.id] : [])).slice(0, 2);
+			prefetchTimer.current = setTimeout(() => {
+				for (const id of ids) {
+					const options = applicationDetailQueryOptions(id);
+					if (
+						prefetchedIds.current.has(id) ||
+						queryClient.getQueryData(options.queryKey) ||
+						queryClient.getQueryState(options.queryKey)?.fetchStatus === "fetching"
+					)
+						continue;
+					if (prefetchedIds.current.size >= 8 || prefetchInFlight.current >= 2) break;
+					prefetchedIds.current.add(id);
+					prefetchInFlight.current += 1;
+					void queryClient
+						.fetchQuery(options)
+						.catch(() => {
+							prefetchedIds.current.delete(id);
+						})
+						.finally(() => {
+							prefetchInFlight.current -= 1;
+						});
+				}
+			}, 120);
+		},
+		[queryClient],
+	);
+	useEffect(() => () => clearTimeout(prefetchTimer.current), []);
+	return onViewableItemsChanged;
 }
 
 /** Invalidates all application views, tags, stats and linked document summaries after writes. */

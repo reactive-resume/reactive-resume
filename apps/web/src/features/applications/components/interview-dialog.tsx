@@ -265,18 +265,14 @@ export function InterviewDialog({
 	const deleteInterview = () => {
 		if (!editing) return;
 		const applicationId = draft.applicationId;
-		const drop = (item: ApplicationSummary) =>
+		const drop = <T extends Pick<ApplicationSummary, "id" | "activity">>(item: T) =>
 			item.id === applicationId
 				? { ...item, activity: item.activity.filter((entry) => entry.id !== editing.id) }
 				: item;
 		queryClient.setQueryData(applicationsListQueryKey(), (list) => list?.map(drop));
 		queryClient.setQueryData(
 			orpc.applications.getById.queryKey({ input: { id: applicationId } }),
-			(item) =>
-				item &&
-				(item.id === applicationId
-					? { ...item, activity: item.activity.filter((entry) => entry.id !== editing.id) }
-					: item),
+			(item) => item && drop(item),
 		);
 		onOpenChange(false);
 		withUndo({

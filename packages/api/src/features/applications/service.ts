@@ -486,60 +486,39 @@ export const applicationService = {
 			return { items, total: totals?.[0]?.total ?? rows.length };
 		}
 
-		// SQL already returns updated_at desc, id desc. Bucket once by stage to match the
-		// web's stable input order, then only sort the mobile boundary timestamp group.
-		const stageOrder: readonly ApplicationStatus[] = ["interview", "offer", "screening", "applied", "saved"];
-		const active = items.filter((item) => input.status !== undefined || item.status !== "closed");
+		// Web keeps SQL order within each stage. Mobile differs only when the cutoff
+		// falls inside a timestamp tie, so only that group needs an ID sort.
+		const stageOrder: readonly ApplicationStatus[] = ["interview", "offer", "screening", "applied", "saved", "closed"];
 		const buckets = new Map<ApplicationStatus, typeof items>();
-		for (const item of active) {
+		for (const item of items) {
+			if (item.status === "closed" && input.status === undefined) continue;
 			const bucket = buckets.get(item.status);
 			if (bucket) bucket.push(item);
 			else buckets.set(item.status, [item]);
 		}
 		const webCandidates = stageOrder.flatMap((status) => buckets.get(status) ?? []).slice(0, initialDetailCount);
-		const updatedTime = (value: Date | string | null | undefined) =>
-			value instanceof Date ? value.getTime() : Date.parse(String(value ?? ""));
-		const mobileCandidates: typeof items = [];
-		let remaining = initialDetailCount;
-		for (const status of stageOrder) {
-			if (remaining === 0) break;
-			const bucket = buckets.get(status) ?? [];
-			let offset = 0;
-			while (offset < bucket.length && remaining > 0) {
-				const groupStart = bucket[offset];
-				if (!groupStart) break;
-				const groupTime = updatedTime(groupStart.updatedAt);
-				let end = offset + 1;
-				while (end < bucket.length) {
-					const value = bucket[end]?.updatedAt;
-					const time = updatedTime(value);
-					if (time !== groupTime) break;
-					end++;
-				}
-				const group = bucket.slice(offset, end);
-				if (group.length <= remaining) {
-					mobileCandidates.push(...group);
-					remaining -= group.length;
-				} else {
-					mobileCandidates.push(...group.toSorted((a, b) => a.id.localeCompare(b.id)).slice(0, remaining));
-					remaining = 0;
-				}
-				offset = end;
+		const candidateIds = new Set(webCandidates.map((item) => item.id));
+		const boundary = webCandidates.at(-1);
+		if (boundary) {
+			const sameGroup = (item: (typeof items)[number]) =>
+				item.status === boundary.status && item.updatedAt.getTime() === boundary.updatedAt.getTime();
+			const mobileCount = webCandidates.filter(sameGroup).length;
+			const tied = items.filter(sameGroup);
+			for (const item of tied.toSorted((a, b) => a.id.localeCompare(b.id)).slice(0, mobileCount)) {
+				candidateIds.add(item.id);
 			}
 		}
-		const candidateIds = [...new Set([...webCandidates, ...mobileCandidates].map((row) => row.id))];
-		if (candidateIds.length === 0) return { items, total: totals?.[0]?.total ?? rows.length };
+		if (candidateIds.size === 0) return { items, total: totals?.[0]?.total ?? rows.length };
 
 		// Fetch candidates together so the initial response adds one bounded query, never one query per row.
 		const fullRows = await db
 			.select()
 			.from(schema.application)
-			.where(and(eq(schema.application.userId, input.userId), inArray(schema.application.id, candidateIds)));
+			.where(and(eq(schema.application.userId, input.userId), inArray(schema.application.id, [...candidateIds])));
 		const details = new Map(fullRows.map((row) => [row.id, stripUserId(row)]));
-		const candidateSet = new Set(candidateIds);
 		return {
 			items: items.map((item) => {
-				const initialDetail = candidateSet.has(item.id) ? details.get(item.id) : undefined;
+				const initialDetail = details.get(item.id);
 				return initialDetail ? { ...item, initialDetail } : item;
 			}),
 			total: totals?.[0]?.total ?? rows.length,

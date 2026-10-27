@@ -207,6 +207,7 @@ const orpc = {
 let capturedQuery;
 let listRows = [{ ...summary[0], initialDetail: full[0] }];
 const invalidations = [];
+const cleanups = [];
 const detailKey = ["applications", "detail", { id: "app-a" }, "server-a"];
 const queryClient = new QueryClient();
 const originalInvalidateQueries = queryClient.invalidateQueries.bind(queryClient);
@@ -215,7 +216,14 @@ queryClient.invalidateQueries = async (filters) => {
 	return originalInvalidateQueries(filters);
 };
 const queries = load("features/applications/queries.ts", {
-	react: { useEffect: (effect) => effect() },
+	react: {
+		useEffect: (effect) => {
+			const cleanup = effect();
+			if (cleanup) cleanups.push(cleanup);
+		},
+		useCallback: (callback) => callback,
+		useRef: (value) => ({ current: value }),
+	},
 	"@tanstack/react-query": {
 		useMutation: (options) => options,
 		useQuery: (options) => {
@@ -268,6 +276,19 @@ syncListRows();
 queries.useApplications();
 await new Promise((resolve) => setImmediate(resolve));
 assert.equal(queryClient.getQueryData(detailKey).notes, "newer");
+queryClient.setQueryData(detailKey, oldDetail);
+let resolveOld;
+const oldRequest = queryClient.fetchQuery({
+	queryKey: detailKey,
+	queryFn: () =>
+		new Promise((resolve) => {
+			resolveOld = resolve;
+		}),
+});
+queries.useApplications();
+resolveOld(oldDetail);
+await oldRequest.catch(() => undefined);
+assert.equal(queryClient.getQueryData(detailKey).notes, "newer");
 const mutations = queries.useApplicationMutations();
 mutations.update.onSettled(undefined, undefined, { id: "app-a" });
 assert.ok(invalidations.some((key) => key[0] === "applications"));
@@ -316,6 +337,56 @@ await refreshRequest;
 assert.equal(queryClient.getQueryData(detailKey).notes, "refreshed latest");
 unsubscribeRefresh();
 refreshObserver.destroy();
+queryClient.clear();
+const prefetchCalls = [];
+const pendingPrefetches = new Map();
+orpc.applications.getById.queryOptions = ({ input }) => ({
+	queryKey: ["applications", "detail", input],
+	queryFn: () => {
+		prefetchCalls.push(input.id);
+		return new Promise((resolve, reject) => pendingPrefetches.set(input.id, { resolve, reject }));
+	},
+});
+queryClient.setDefaultOptions({ queries: { retry: false } });
+const onVisible = queries.useApplicationDetailPrefetch();
+const visible = (...ids) =>
+	onVisible({ viewableItems: [{ item: { title: "Interview" } }, ...ids.map((id) => ({ item: { id } }))] });
+const waitForPrefetch = () => new Promise((resolve) => setTimeout(resolve, 150));
+const finishPrefetches = async () => {
+	for (const [id, pending] of pendingPrefetches) pending.resolve({ ...full[0], id });
+	pendingPrefetches.clear();
+	await new Promise((resolve) => setImmediate(resolve));
+};
+visible("skipped");
+visible("visible-a", "visible-b", "not-in-first-two");
+await waitForPrefetch();
+assert.deepEqual(prefetchCalls, ["visible-a", "visible-b"]);
+visible("visible-c", "visible-d");
+await waitForPrefetch();
+assert.equal(prefetchCalls.length, 2, "only two detail requests may run concurrently");
+await finishPrefetches();
+for (let offset = 2; offset < 10; offset += 2) {
+	visible("visible-" + offset, "visible-" + (offset + 1));
+	await waitForPrefetch();
+	await finishPrefetches();
+}
+assert.equal(prefetchCalls.length, 8, "one screen prefetches at most eight details");
+queryClient.clear();
+const onRetryVisible = queries.useApplicationDetailPrefetch();
+const retryVisible = () => onRetryVisible({ viewableItems: [{ item: { id: "retry" } }] });
+retryVisible();
+await waitForPrefetch();
+pendingPrefetches.get("retry").reject(new Error("temporary failure"));
+pendingPrefetches.clear();
+await new Promise((resolve) => setImmediate(resolve));
+retryVisible();
+await waitForPrefetch();
+assert.equal(prefetchCalls.filter((id) => id === "retry").length, 2, "failed prefetch does not block retry");
+await finishPrefetches();
+onRetryVisible({ viewableItems: [{ item: { id: "unmounted" } }] });
+for (const cleanup of cleanups) cleanup();
+await waitForPrefetch();
+assert.ok(!prefetchCalls.includes("unmounted"), "unmount cancels the pending prefetch timer");
 queryClient.clear();
 console.log(
 	"PASS summary preserves filtered/grouped/calendar/insights results, detail lookup, and server-isolated query keys",

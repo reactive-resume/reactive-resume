@@ -14,29 +14,20 @@ export const applicationsFullListQueryOptions = () => orpc.applications.list.que
 export const applicationDetailQueryOptions = (id: string) => orpc.applications.getById.queryOptions({ input: { id } });
 export const applicationDetailQueryKey = (id: string) => applicationDetailQueryOptions(id).queryKey;
 
+export function getInitialApplicationDetail(summary: ApplicationSummary | null | undefined) {
+	const detail = summary?.initialDetail;
+	return detail && detail.status === summary.status && detail.closedReason === summary.closedReason
+		? detail
+		: undefined;
+}
+
 export function hydrateApplicationDetail(queryClient: QueryClient, summary: ApplicationSummary) {
-	const detail = summary.initialDetail;
-	if (!detail || !initialDetailMatchesSummary(summary, detail)) return false;
+	const detail = getInitialApplicationDetail(summary);
+	if (!detail) return;
 	const detailKey = applicationDetailQueryOptions(summary.id).queryKey;
 	const existing = queryClient.getQueryData<Application>(detailKey);
-	const detailVersion = new Date(detail.updatedAt).getTime();
-	const existingVersion = existing ? new Date(existing.updatedAt).getTime() : -Infinity;
-	if (queryClient.getQueryState(detailKey)?.fetchStatus === "fetching")
-		void queryClient.cancelQueries({ queryKey: detailKey }, { revert: false });
-	if (existingVersion >= detailVersion) return true;
+	if (existing && existing.updatedAt.getTime() >= detail.updatedAt.getTime()) return;
+	void queryClient.cancelQueries({ queryKey: detailKey }, { revert: false });
+	// List snapshots render immediately, then refresh on the first detail open.
 	queryClient.setQueryData(detailKey, detail, { updatedAt: 0 });
-	void queryClient.invalidateQueries({ queryKey: detailKey, refetchType: "none" });
-	return true;
 }
-
-export function initialDetailMatchesSummary(
-	summary: Pick<ApplicationSummaryForPrefetch, "status" | "closedReason">,
-	detail: Pick<ApplicationSummaryForPrefetch, "status" | "closedReason">,
-) {
-	return summary.status === detail.status && summary.closedReason === detail.closedReason;
-}
-
-export type ApplicationSummaryForPrefetch = {
-	status: string;
-	closedReason: string | null;
-};

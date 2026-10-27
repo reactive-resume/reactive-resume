@@ -88,20 +88,11 @@ function RouteComponent() {
 	// Views animate in only after a switch, never on the page's first render.
 	const [viewSwitched, setViewSwitched] = useState(false);
 
-	const {
-		data: applications,
-		dataUpdatedAt,
-		isPending,
-		isError,
-		isFetching,
-		isStale,
-		refetch,
-	} = useQuery(applicationsListQueryOptions());
+	const { data: applications, isPending, isError, isFetching, refetch } = useQuery(applicationsListQueryOptions());
 	const queryClient = useQueryClient();
 	const { data: fullApplications } = useQuery({ ...applicationsFullListQueryOptions(), enabled: exporting });
 
 	const PREFETCH_LIMIT = 12;
-	const prefetchTimers = useRef(new Map<string, number>());
 	const prefetchedIds = useRef(new Set<string>());
 	const prefetch = useCallback(
 		(id: string) => {
@@ -123,45 +114,31 @@ function RouteComponent() {
 
 	useEffect(() => {
 		if (!applications) return;
-		for (const application of applications) {
-			if (hydrateApplicationDetail(queryClient, application)) prefetchedIds.current.add(application.id);
-		}
-	}, [applications, dataUpdatedAt, isStale, queryClient]);
+		for (const application of applications) hydrateApplicationDetail(queryClient, application);
+	}, [applications, queryClient]);
 
 	useEffect(() => {
-		const timers = prefetchTimers.current;
+		let timer: number | undefined;
+		const openControl = (target: EventTarget | null) =>
+			target instanceof Element ? target.closest<HTMLElement>("[data-application-open]") : null;
 		const onPointerOver = (event: PointerEvent) => {
-			const open =
-				event.target instanceof Element ? event.target.closest<HTMLElement>("[data-application-open]") : null;
-			const target = open?.closest<HTMLElement>("[data-application-id]");
-			if (!target || open?.contains(event.relatedTarget as Node | null)) return;
-			const id = target.dataset.applicationId;
-			if (!id || timers.has(id)) return;
-			timers.set(
-				id,
-				window.setTimeout(() => {
-					timers.delete(id);
-					prefetch(id);
-				}, 120),
-			);
+			const open = openControl(event.target);
+			if (!open || open.contains(event.relatedTarget as Node | null)) return;
+			const id = open.closest<HTMLElement>("[data-application-id]")?.dataset.applicationId;
+			if (!id) return;
+			window.clearTimeout(timer);
+			timer = window.setTimeout(() => prefetch(id), 120);
 		};
 		const onPointerOut = (event: PointerEvent) => {
-			const open =
-				event.target instanceof Element ? event.target.closest<HTMLElement>("[data-application-open]") : null;
-			const target = open?.closest<HTMLElement>("[data-application-id]");
-			if (!target || open?.contains(event.relatedTarget as Node | null)) return;
-			const id = target.dataset.applicationId;
-			const timer = id ? timers.get(id) : undefined;
-			if (id && timer !== undefined) {
-				window.clearTimeout(timer);
-				timers.delete(id);
-			}
+			const open = openControl(event.target);
+			if (open && !open.contains(event.relatedTarget as Node | null)) window.clearTimeout(timer);
 		};
 		const onFocusIn = (event: FocusEvent) => {
-			const open =
-				event.target instanceof Element ? event.target.closest<HTMLElement>("[data-application-open]") : null;
-			const id = open?.closest<HTMLElement>("[data-application-id]")?.dataset.applicationId;
-			if (id) prefetch(id);
+			const id = openControl(event.target)?.closest<HTMLElement>("[data-application-id]")?.dataset.applicationId;
+			if (id) {
+				window.clearTimeout(timer);
+				prefetch(id);
+			}
 		};
 		document.addEventListener("pointerover", onPointerOver);
 		document.addEventListener("pointerout", onPointerOut);
@@ -170,8 +147,7 @@ function RouteComponent() {
 			document.removeEventListener("pointerover", onPointerOver);
 			document.removeEventListener("pointerout", onPointerOut);
 			document.removeEventListener("focusin", onFocusIn);
-			for (const timer of timers.values()) window.clearTimeout(timer);
-			timers.clear();
+			window.clearTimeout(timer);
 		};
 	}, [prefetch]);
 	const setSearch = (patch: Partial<Search>) =>

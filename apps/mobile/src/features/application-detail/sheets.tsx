@@ -111,14 +111,6 @@ function MarkAppliedForm({ application, onClose }: Omit<ApplicationActionSheetPr
 	const [resumeFileSent, setResumeFileSent] = useState(true);
 	const [letterFileSent, setLetterFileSent] = useState(true);
 	const none = { value: "", label: t`None` };
-	// Cached full details remain usable while a background refresh reports an error.
-	const detailsReady = Boolean(detail.data);
-	const resumeAttachment = detail.data?.resumeFileUrl
-		? { url: detail.data.resumeFileUrl, name: detail.data.resumeFileName ?? "PDF" }
-		: null;
-	const coverLetterAttachment = detail.data?.coverLetterUrl
-		? { url: detail.data.coverLetterUrl, name: detail.data.coverLetterName ?? "PDF" }
-		: null;
 	const options = (type: "resume" | "letter") => [
 		none,
 		...(documents.data ?? [])
@@ -144,17 +136,17 @@ function MarkAppliedForm({ application, onClose }: Omit<ApplicationActionSheetPr
 				options={options("letter")}
 				onChange={setLetterId}
 			/>
-			{resumeAttachment ? (
+			{detail.data?.resumeFileUrl ? (
 				<ListRow
-					title={t`Submitted attached resume: ${resumeAttachment.name}`}
+					title={t`Submitted attached resume: ${detail.data.resumeFileName ?? "PDF"}`}
 					trailing={
 						<Switch label={t`Submitted attached resume`} value={resumeFileSent} onValueChange={setResumeFileSent} />
 					}
 				/>
 			) : null}
-			{coverLetterAttachment ? (
+			{detail.data?.coverLetterUrl ? (
 				<ListRow
-					title={t`Submitted attached cover letter: ${coverLetterAttachment.name}`}
+					title={t`Submitted attached cover letter: ${detail.data.coverLetterName ?? "PDF"}`}
 					trailing={
 						<Switch
 							label={t`Submitted attached cover letter`}
@@ -177,7 +169,7 @@ function MarkAppliedForm({ application, onClose }: Omit<ApplicationActionSheetPr
 				size="lg"
 				label={t`Confirm applied`}
 				loading={update.isPending}
-				disabled={!date || !detailsReady}
+				disabled={!date || !detail.data}
 				onPress={() =>
 					update.mutate(
 						{

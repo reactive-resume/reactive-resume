@@ -2,16 +2,15 @@ import type { ApplicationSort } from "./list";
 import type { ApplicationClosedReason, ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
-import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { RefreshControl, Pressable, SectionList, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { AddApplicationSheet } from "./add-sheet";
 import { applicationError } from "./error";
 import { filterApplications, groupApplications, visibleSelection } from "./list";
 import { describeNextStep, getNextStep } from "./next-step";
-import { applicationDetailQueryOptions, useApplicationMutations, useApplications } from "./queries";
+import { useApplicationDetailPrefetch, useApplicationMutations, useApplications } from "./queries";
 import { CLOSED_REASONS, getClosedReasonLabel, getStageColor, getStageLabel, PIPELINE } from "./stages";
 import { useSession } from "@/auth/session";
 import { useUserTime } from "@/features/application-detail/hooks";
@@ -87,52 +86,7 @@ function ApplicationsList() {
 	const filtersActive = Boolean(search.trim() || tag || showClosed);
 	const groups = groupApplications(filtered, sort, direction);
 	const selectedIds = visibleSelection(groups, collapsed, selected);
-	const queryClient = useQueryClient();
-	const [visibleIds, setVisibleIds] = useState<string[]>([]);
-	const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: { item?: unknown }[] }) => {
-		const next = viewableItems.flatMap(({ item }) => {
-			if (!item || typeof item !== "object" || !("id" in item) || typeof item.id !== "string") return [];
-			return [item.id];
-		});
-		setVisibleIds((current) =>
-			current.length === next.length && current.every((id, index) => id === next[index]) ? current : next,
-		);
-	}, []);
-	const prefetchedIds = useRef(new Set<string>());
-	const prefetchInFlight = useRef(0);
-	useEffect(() => {
-		if (visibleIds.length === 0 || query.isPending || query.isError) return;
-		const timer = setTimeout(() => {
-			const byId = new Map((query.data ?? []).map((application) => [application.id, application]));
-			for (const id of visibleIds.slice(0, 2)) {
-				const application = byId.get(id);
-				if (!application || prefetchedIds.current.has(id)) continue;
-				const initialDetailMatches =
-					application.initialDetail &&
-					application.initialDetail.status === application.status &&
-					application.initialDetail.closedReason === application.closedReason;
-				if (initialDetailMatches) {
-					prefetchedIds.current.add(id);
-					continue;
-				}
-				if (prefetchedIds.current.size >= 8 || prefetchInFlight.current >= 2) break;
-				const options = applicationDetailQueryOptions(id);
-				if (queryClient.getQueryData(options.queryKey)) {
-					prefetchedIds.current.add(id);
-					continue;
-				}
-				prefetchedIds.current.add(id);
-				prefetchInFlight.current += 1;
-				void queryClient
-					.prefetchQuery(options)
-					.catch(() => undefined)
-					.finally(() => {
-						prefetchInFlight.current -= 1;
-					});
-			}
-		}, 120);
-		return () => clearTimeout(timer);
-	}, [query.data, query.isError, query.isPending, queryClient, visibleIds]);
+	const onViewableItemsChanged = useApplicationDetailPrefetch();
 	const tags = [...new Set(applications.flatMap((item) => item.tags))].sort();
 	const changeFilters = (change: () => void) => {
 		change();

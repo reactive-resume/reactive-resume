@@ -38,13 +38,13 @@ const summary = (initialDetail: Application): ApplicationSummary =>
 	}) as ApplicationSummary;
 
 describe("application detail cache hydration", () => {
-	it("replaces older cache with newer server detail and keeps list freshness timestamp", () => {
+	it("replaces older cache with newer server detail and refreshes it on first open", () => {
 		const client = new QueryClient();
 		const key = applicationDetailQueryKey("a");
 		client.setQueryData(key, detail("2026-10-01T00:00:00Z", "old"));
 		const current = detail("2026-10-02T00:00:00Z", "new");
 
-		expect(hydrateApplicationDetail(client, summary(current))).toBe(true);
+		hydrateApplicationDetail(client, summary(current));
 		expect(client.getQueryData<Application>(key)?.notes).toBe("new");
 		expect(client.getQueryState(key)?.dataUpdatedAt).toBe(0);
 	});
@@ -55,9 +55,10 @@ describe("application detail cache hydration", () => {
 		client.setQueryData(key, detail("2026-10-02T00:00:00Z", "new"));
 		const old = detail("2026-10-01T00:00:00Z", "old");
 
-		expect(hydrateApplicationDetail(client, summary(old))).toBe(true);
+		const updatedAt = client.getQueryState(key)?.dataUpdatedAt;
+		hydrateApplicationDetail(client, summary(old));
 		expect(client.getQueryData<Application>(key)?.notes).toBe("new");
-		expect(client.getQueryState(key)?.dataUpdatedAt).not.toBe(5678);
+		expect(client.getQueryState(key)?.dataUpdatedAt).toBe(updatedAt);
 	});
 
 	it("does not hydrate a detail whose stage no longer matches optimistic list state", () => {
@@ -65,7 +66,7 @@ describe("application detail cache hydration", () => {
 		const old = detail("2026-10-01T00:00:00Z", "old");
 		const closed = { ...summary(old), status: "closed" } as ApplicationSummary;
 
-		expect(hydrateApplicationDetail(client, closed)).toBe(false);
+		hydrateApplicationDetail(client, closed);
 		expect(client.getQueryData<Application>(applicationDetailQueryKey("a"))).toBeUndefined();
 	});
 
@@ -86,6 +87,25 @@ describe("application detail cache hydration", () => {
 		resolveOld(detail("2026-10-01T00:00:00Z", "old"));
 		await oldFetch.catch(() => undefined);
 		expect(client.getQueryData<Application>(key)?.notes).toBe("new");
+	});
+
+	it("keeps a newer detail refresh running when an older list arrives", async () => {
+		const client = new QueryClient();
+		const key = applicationDetailQueryKey("a");
+		client.setQueryData(key, detail("2026-10-02T00:00:00Z", "cached"));
+		let resolveRefresh!: (value: Application) => void;
+		const refresh = client.fetchQuery({
+			queryKey: key,
+			queryFn: () =>
+				new Promise<Application>((resolve) => {
+					resolveRefresh = resolve;
+				}),
+		});
+		hydrateApplicationDetail(client, summary(detail("2026-10-01T00:00:00Z", "old")));
+		expect(client.getQueryState(key)?.fetchStatus).toBe("fetching");
+		resolveRefresh(detail("2026-10-03T00:00:00Z", "refreshed"));
+		await refresh;
+		expect(client.getQueryData<Application>(key)?.notes).toBe("refreshed");
 	});
 
 	it("shows stale initial detail immediately, refreshes once, then reuses fetched cache", async () => {
