@@ -1,4 +1,4 @@
-import type { Application } from "@/features/applications/types";
+import type { Application, ApplicationSummary } from "@/features/applications/types";
 import type { ReminderTarget } from "@/features/reminders";
 import type {
 	ApplicationClosedReason,
@@ -14,7 +14,7 @@ import { WallClockField } from "./date-field";
 import { followUpReminder, leadLabel, useDocuments, useUserTime } from "./hooks";
 import { followUpDay } from "@/features/applications-board/calendar";
 import { applicationError } from "@/features/applications/error";
-import { useApplicationMutations } from "@/features/applications/queries";
+import { useApplication, useApplicationMutations } from "@/features/applications/queries";
 import { CLOSED_REASONS, getClosedReasonLabel } from "@/features/applications/stages";
 import { DEFAULT_LEAD, followUpStart, REMINDER_LEADS, useReminders } from "@/features/reminders";
 import {
@@ -35,12 +35,13 @@ import {
 } from "@/ui";
 
 type SheetBaseProps = { open: boolean; onClose: () => void };
-type ApplicationSheetProps = SheetBaseProps & { application: Application };
+type ApplicationActionSheetProps = SheetBaseProps & { application: ApplicationSummary };
+type ApplicationContentSheetProps = SheetBaseProps & { application: Application };
 
 const today = () => new Date().toLocaleDateString("en-CA");
 
 /** "Close this application": one reason, kept for Insights. */
-export function CloseSheet({ application, open, onClose }: ApplicationSheetProps) {
+export function CloseSheet({ application, open, onClose }: ApplicationActionSheetProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const { update } = useApplicationMutations();
@@ -89,7 +90,7 @@ export function CloseSheet({ application, open, onClose }: ApplicationSheetProps
 }
 
 /** Saved → Applied: the date and the documents actually sent; their current versions are kept. */
-export function MarkAppliedSheet({ application, open, onClose }: ApplicationSheetProps) {
+export function MarkAppliedSheet({ application, open, onClose }: ApplicationActionSheetProps) {
 	const { t } = useLingui();
 	return (
 		<Sheet open={open} onClose={onClose} title={t`Mark as applied`}>
@@ -98,10 +99,11 @@ export function MarkAppliedSheet({ application, open, onClose }: ApplicationShee
 	);
 }
 
-function MarkAppliedForm({ application, onClose }: Omit<ApplicationSheetProps, "open">) {
+function MarkAppliedForm({ application, onClose }: Omit<ApplicationActionSheetProps, "open">) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const { update } = useApplicationMutations();
+	const detail = useApplication(application.id);
 	const documents = useDocuments();
 	const [date, setDate] = useState(today);
 	const [resumeId, setResumeId] = useState(application.resumeId ?? "");
@@ -109,6 +111,14 @@ function MarkAppliedForm({ application, onClose }: Omit<ApplicationSheetProps, "
 	const [resumeFileSent, setResumeFileSent] = useState(true);
 	const [letterFileSent, setLetterFileSent] = useState(true);
 	const none = { value: "", label: t`None` };
+	// Cached full details remain usable while a background refresh reports an error.
+	const detailsReady = Boolean(detail.data);
+	const resumeAttachment = detail.data?.resumeFileUrl
+		? { url: detail.data.resumeFileUrl, name: detail.data.resumeFileName ?? "PDF" }
+		: null;
+	const coverLetterAttachment = detail.data?.coverLetterUrl
+		? { url: detail.data.coverLetterUrl, name: detail.data.coverLetterName ?? "PDF" }
+		: null;
 	const options = (type: "resume" | "letter") => [
 		none,
 		...(documents.data ?? [])
@@ -134,17 +144,17 @@ function MarkAppliedForm({ application, onClose }: Omit<ApplicationSheetProps, "
 				options={options("letter")}
 				onChange={setLetterId}
 			/>
-			{application.resumeFileUrl ? (
+			{resumeAttachment ? (
 				<ListRow
-					title={t`Submitted attached resume: ${application.resumeFileName ?? "PDF"}`}
+					title={t`Submitted attached resume: ${resumeAttachment.name}`}
 					trailing={
 						<Switch label={t`Submitted attached resume`} value={resumeFileSent} onValueChange={setResumeFileSent} />
 					}
 				/>
 			) : null}
-			{application.coverLetterUrl ? (
+			{coverLetterAttachment ? (
 				<ListRow
-					title={t`Submitted attached cover letter: ${application.coverLetterName ?? "PDF"}`}
+					title={t`Submitted attached cover letter: ${coverLetterAttachment.name}`}
 					trailing={
 						<Switch
 							label={t`Submitted attached cover letter`}
@@ -154,13 +164,20 @@ function MarkAppliedForm({ application, onClose }: Omit<ApplicationSheetProps, "
 					}
 				/>
 			) : null}
+			{detail.isError ? (
+				<Banner
+					tone="danger"
+					message={t`Couldn't load this. Check your connection and try again.`}
+					action={{ label: t`Retry loading applications`, onPress: () => void detail.refetch() }}
+				/>
+			) : null}
 			{update.error ? <Banner tone="danger" message={t`Couldn't record submission. Try again.`} /> : null}
 			<Button
 				fullWidth
 				size="lg"
 				label={t`Confirm applied`}
 				loading={update.isPending}
-				disabled={!date}
+				disabled={!date || !detailsReady}
 				onPress={() =>
 					update.mutate(
 						{
@@ -182,7 +199,7 @@ function MarkAppliedForm({ application, onClose }: Omit<ApplicationSheetProps, "
 }
 
 /** The follow-up: a day and what to do, shown as the next step until done, with an optional local reminder. */
-export function FollowUpSheet({ application, open, onClose }: ApplicationSheetProps) {
+export function FollowUpSheet({ application, open, onClose }: ApplicationActionSheetProps) {
 	const { t } = useLingui();
 	return (
 		<Sheet open={open} onClose={onClose} title={t`Follow-up`}>
@@ -191,7 +208,7 @@ export function FollowUpSheet({ application, open, onClose }: ApplicationSheetPr
 	);
 }
 
-function FollowUpForm({ application, onClose }: Omit<ApplicationSheetProps, "open">) {
+function FollowUpForm({ application, onClose }: Omit<ApplicationActionSheetProps, "open">) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const { timeZone } = useUserTime();
@@ -333,7 +350,7 @@ export function ReminderSheet({ target, subtitle, open, onClose, onShareIcs }: R
 }
 
 /** The saved posting: its link, provenance, what it asks for, and its editable text. */
-export function PostingSheet({ application, open, onClose }: ApplicationSheetProps) {
+export function PostingSheet({ application, open, onClose }: ApplicationContentSheetProps) {
 	return (
 		<Sheet open={open} onClose={onClose} detents={[0.9]} title={`${application.role} · ${application.company}`}>
 			{open ? <PostingBody application={application} onClose={onClose} /> : null}
@@ -341,7 +358,7 @@ export function PostingSheet({ application, open, onClose }: ApplicationSheetPro
 	);
 }
 
-function PostingBody({ application, onClose }: Omit<ApplicationSheetProps, "open">) {
+function PostingBody({ application, onClose }: Omit<ApplicationContentSheetProps, "open">) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const { update } = useApplicationMutations();
@@ -399,7 +416,7 @@ function PostingBody({ application, onClose }: Omit<ApplicationSheetProps, "open
 const EMPTY_CONTACT = { name: "", role: "", type: "", email: "", phone: "" };
 
 /** Contacts: the list with remove, and a form to add one, checked with the API's schema before saving. */
-export function ContactsSheet({ application, open, onClose }: ApplicationSheetProps) {
+export function ContactsSheet({ application, open, onClose }: ApplicationContentSheetProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const { update } = useApplicationMutations();

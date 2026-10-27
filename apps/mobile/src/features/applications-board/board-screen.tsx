@@ -1,5 +1,5 @@
 import type { ColumnRect, PendingMove } from "./board";
-import type { Application } from "@/features/applications/types";
+import type { ApplicationSummary as Application } from "@/features/applications/types";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { ComponentRef } from "react";
 import type { ScrollView } from "react-native";
@@ -562,6 +562,7 @@ function BoardCard({ application, onMove }: BoardCardProps) {
 	const { space } = useTheme();
 	const { timeZone } = useUserTime();
 	const next = describeNextStep(getNextStep(application), application, i18n.locale, timeZone);
+
 	return (
 		<Card>
 			<Pressable

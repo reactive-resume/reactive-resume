@@ -1,4 +1,4 @@
-import type { Application } from "../types";
+import type { ApplicationSummary } from "../types";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -22,7 +22,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 // bubble synthetic events through the React tree, so a menu item's click would otherwise reach the card.
 const stop = (event: React.SyntheticEvent) => event.stopPropagation();
 
-type ApplicationActionsMenuProps = { application: Application; className?: string };
+type ApplicationActionsMenuProps = { application: ApplicationSummary; className?: string };
 
 /** A card's ⋯ menu, the keyboard alternative to dragging: Move to…, Close…, and Delete after asking. */
 export function ApplicationActionsMenu({ application, className }: ApplicationActionsMenuProps) {

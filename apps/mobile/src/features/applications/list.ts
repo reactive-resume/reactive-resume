@@ -1,4 +1,4 @@
-import type { Application } from "./types";
+import type { ApplicationSummary as Application } from "./types";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { getNextStep } from "./next-step";
 import { LIST_ORDER } from "./stages";

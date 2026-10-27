@@ -1,7 +1,7 @@
 // Calendar maths for interviews and follow-ups. Days are calendar dates ("2026-10-19") on the user's clock (their
 // profile timezone), not the device's, so an interview lands on the same day as the detail screen shows it.
 // Pure: Node runs it in the M5-T3 scenarios.
-import type { Application } from "../applications/types";
+import type { ApplicationSummary as Application } from "../applications/types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { zonedParts } from "../reminders/schedule.ts";
 

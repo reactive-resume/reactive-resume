@@ -1,4 +1,4 @@
-import type { Application } from "./types";
+import type { ApplicationSummary as Application } from "./types";
 import type { IconName } from "@/ui";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { plural, t } from "@lingui/core/macro";

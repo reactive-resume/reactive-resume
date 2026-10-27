@@ -16,7 +16,6 @@ import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { MobileTabIndicator } from "@/components/layout/mobile-tab-indicator";
 import { useDialogStore } from "@/dialogs/store";
-import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { GuestBanner } from "@/features/auth/components/guest-banner";
 import { useCommandPaletteStore } from "@/features/command-palette/store";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
@@ -32,7 +31,7 @@ type NavItem = {
 
 function useNavItems() {
 	const { data: counts } = useQuery(orpc.documents.counts.queryOptions());
-	const { data: applications } = useQuery(applicationsListQueryOptions());
+	const { data: applicationStats } = useQuery(orpc.applications.stats.queryOptions({}));
 	const { data: notifications } = useQuery(orpc.career.notifications.queryOptions({ input: {} }));
 
 	const items: NavItem[] = [
@@ -46,7 +45,13 @@ function useNavItems() {
 			to: "/dashboard/applications",
 			icon: "briefcase",
 			label: t`Applications`,
-			...(applications ? { count: applications.filter((application) => application.status !== "closed").length } : {}),
+			...(applicationStats
+				? {
+						count: applicationStats.byStage
+							.filter((row) => row.status !== "closed")
+							.reduce((total, row) => total + row.count, 0),
+					}
+				: {}),
 		},
 	];
 	const unread = notifications?.filter((notification) => !notification.readAt).length ?? 0;

@@ -13,7 +13,7 @@ import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { orpc } from "@/libs/orpc/client";
 
-type Application = RouterOutput["applications"]["list"][number];
+type Application = RouterOutput["applications"]["listSummary"][number];
 type Thread = RouterOutput["agent"]["threads"]["list"][number];
 type SearchPage = "resumes" | "applications" | "threads";
 type SearchPageProps = { page: SearchPage };

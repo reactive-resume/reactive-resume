@@ -1,4 +1,4 @@
-import type { Application } from "@/features/applications/types";
+import type { Application, ApplicationSummary } from "@/features/applications/types";
 import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
@@ -104,7 +104,7 @@ function draftFrom(interview: InterviewTimelineEntry, fallbackZone: string): Dra
 }
 
 type InterviewSheetProps = {
-	application: Application;
+	application: ApplicationSummary;
 	/** The interview to edit, or null to schedule a new one. */
 	interview: InterviewTimelineEntry | null;
 	open: boolean;

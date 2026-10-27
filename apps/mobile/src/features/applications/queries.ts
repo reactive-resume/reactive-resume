@@ -1,12 +1,13 @@
-import type { Application } from "./types";
+import type { Application, ApplicationSummary } from "./types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
 import { syncReminders } from "@/features/reminders";
 
 /** Same unfiltered list for list, board, calendar and detail; isolated by server. */
 export const applicationsListQueryOptions = (server = getServer()) => {
-	const options = orpc.applications.list.queryOptions({ input: {} });
+	const options = orpc.applications.listSummary.queryOptions({ input: { includeInitialDetails: 3 } });
 	return { ...options, queryKey: [...options.queryKey, server] };
 };
 export const applicationsListQueryKey = (server = getServer()) => applicationsListQueryOptions(server).queryKey;
@@ -19,13 +20,52 @@ export const applicationDetailQueryKey = (id: string, server = getServer()) =>
 
 export function useApplications() {
 	const session = useSession();
-	return useQuery({ ...applicationsListQueryOptions(session.server), enabled: session.status === "signed-in" });
+	const queryClient = useQueryClient();
+	const query = useQuery({ ...applicationsListQueryOptions(session.server), enabled: session.status === "signed-in" });
+
+	useEffect(() => {
+		if (!query.data || session.status !== "signed-in") return;
+		const listUpdatedAt = query.dataUpdatedAt;
+		for (const application of query.data) {
+			const initialDetail = application.initialDetail;
+			if (
+				!initialDetail ||
+				initialDetail.status !== application.status ||
+				initialDetail.closedReason !== application.closedReason
+			)
+				continue;
+			const detailKey = applicationDetailQueryOptions(application.id, session.server).queryKey;
+			const existing = queryClient.getQueryState<Application>(detailKey)?.data;
+			if (existing && new Date(existing.updatedAt).getTime() >= new Date(initialDetail.updatedAt).getTime()) continue;
+			void queryClient.cancelQueries({ queryKey: detailKey }).then(() => {
+				const current = queryClient.getQueryState<Application>(detailKey)?.data;
+				if (current && new Date(current.updatedAt).getTime() >= new Date(initialDetail.updatedAt).getTime()) return;
+				queryClient.setQueryData(detailKey, initialDetail, { updatedAt: listUpdatedAt });
+			});
+		}
+	}, [query.data, query.dataUpdatedAt, queryClient, session.server, session.status]);
+
+	return query;
 }
 export function useApplication(id: string) {
 	const session = useSession();
+	const queryClient = useQueryClient();
+	const listKey = applicationsListQueryKey(session.server);
+	const summary = queryClient.getQueryData<ApplicationSummary[]>(listKey)?.find((application) => application.id === id);
+	const listUpdatedAt = queryClient.getQueryState(listKey)?.dataUpdatedAt;
+	const initialDetail =
+		summary?.initialDetail &&
+		summary.initialDetail.status === summary.status &&
+		summary.initialDetail.closedReason === summary.closedReason
+			? summary.initialDetail
+			: undefined;
+
 	return useQuery({
 		...applicationDetailQueryOptions(id, session.server),
 		enabled: session.status === "signed-in" && !!id,
+		...(initialDetail
+			? { initialData: initialDetail, ...(listUpdatedAt ? { initialDataUpdatedAt: listUpdatedAt } : {}) }
+			: {}),
 	});
 }
 
@@ -57,8 +97,8 @@ export function useApplicationMutations() {
 		onMutate: async (input) => {
 			const listKey = applicationsListQueryKey();
 			await queryClient.cancelQueries({ queryKey: listKey });
-			const previous = queryClient.getQueryData<Application[]>(listKey);
-			queryClient.setQueryData<Application[]>(listKey, (rows) =>
+			const previous = queryClient.getQueryData<ApplicationSummary[]>(listKey);
+			queryClient.setQueryData<ApplicationSummary[]>(listKey, (rows) =>
 				rows?.map((row) =>
 					row.id === input.id
 						? {

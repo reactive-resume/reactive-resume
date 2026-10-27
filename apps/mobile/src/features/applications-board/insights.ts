@@ -1,7 +1,7 @@
 // Insights maths, ported from apps/web/src/features/applications/insights.ts. Everything derives from the shared
 // applications list (it holds every application, closed ones included), so the figures match the server's stats
 // without a second query. Weeks are bucketed on the user's clock. Pure: Node runs it in the M5-T3 scenarios.
-import type { Application } from "../applications/types";
+import type { ApplicationSummary as Application } from "../applications/types";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { zonedParts } from "../reminders/schedule.ts";
 

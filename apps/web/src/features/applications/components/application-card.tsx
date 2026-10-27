@@ -1,4 +1,4 @@
-import type { Application } from "../types";
+import type { ApplicationSummary } from "../types";
 import { useLingui } from "@lingui/react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
@@ -6,7 +6,7 @@ import { describeNextStep, getNextStep } from "../next-step";
 import { ApplicationActionsMenu } from "./application-actions-menu";
 
 type ApplicationCardProps = {
-	application: Application;
+	application: ApplicationSummary;
 	onClick?: () => void;
 	/** The ⋯ menu (Move to…, Close…, Delete); cards dragged in the overlay go without. */
 	withMenu?: boolean;
@@ -20,6 +20,7 @@ export function ApplicationCard({ application, onClick, withMenu = false, draggi
 
 	return (
 		<div
+			data-application-id={application.id}
 			className={cn(
 				"group relative grid gap-2 rounded-lg border border-line bg-surface p-3 shadow-e1 transition-[border-color,scale] duration-quick ease-enter hover:border-line-2 active:not-has-[[data-slot=button]:active]:scale-[0.98]",
 				// The overlay card lifts as it's picked up and settles flat again while the drop animation flies it home.
@@ -36,6 +37,7 @@ export function ApplicationCard({ application, onClick, withMenu = false, draggi
 				</span>
 				<button
 					type="button"
+					data-application-open
 					onClick={onClick}
 					className="grid min-w-0 flex-1 text-start after:absolute after:inset-0 after:rounded-lg"
 				>

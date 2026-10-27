@@ -1,4 +1,4 @@
-import type { Application } from "../types";
+import type { ApplicationSummary } from "../types";
 import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
@@ -26,7 +26,7 @@ export function InsightsSkeleton() {
 	);
 }
 
-export function ApplicationInsights({ applications }: { applications: Application[] }) {
+export function ApplicationInsights({ applications }: { applications: ApplicationSummary[] }) {
 	const { data } = useQuery(orpc.applications.stats.queryOptions({}));
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 
@@ -35,7 +35,7 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 		(documents ?? []).flatMap((document) => (document.application ? [[document.id, document.application.id]] : [])),
 	);
 	const outcomes = computeOutcomes(applications, (application) =>
-		Boolean(application.resumeId && madeFor.get(application.resumeId) === (application as Application).id),
+		Boolean(application.resumeId && madeFor.get(application.resumeId) === (application as ApplicationSummary).id),
 	);
 
 	// Sending history includes applications that later closed, and excludes jobs never sent.

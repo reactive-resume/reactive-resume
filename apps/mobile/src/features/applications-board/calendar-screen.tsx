@@ -1,5 +1,5 @@
 import type { CalendarEvent } from "./calendar";
-import type { Application } from "@/features/applications/types";
+import type { ApplicationSummary as Application } from "@/features/applications/types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";

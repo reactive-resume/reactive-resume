@@ -53,7 +53,10 @@ export function useDetailMutations(applicationId: string) {
 }
 
 /** The notification for one interview. The body has no time in it, so a timezone change needs no reschedule. */
-export const interviewReminder = (application: Application, entry: InterviewTimelineEntry): ReminderTarget => ({
+export const interviewReminder = (
+	application: Pick<Application, "id" | "company" | "role">,
+	entry: InterviewTimelineEntry,
+): ReminderTarget => ({
 	kind: "interview",
 	applicationId: application.id,
 	entryId: entry.id,
@@ -63,7 +66,9 @@ export const interviewReminder = (application: Application, entry: InterviewTime
 });
 
 /** The notification for the follow-up; it fires at the follow-up itself (09:00 that day). */
-export const followUpReminder = (application: Application): ReminderTarget | null =>
+export const followUpReminder = (
+	application: Pick<Application, "id" | "company" | "role" | "followUpAt" | "followUpNote">,
+): ReminderTarget | null =>
 	application.followUpAt
 		? {
 				kind: "follow-up",
@@ -75,7 +80,9 @@ export const followUpReminder = (application: Application): ReminderTarget | nul
 		: null;
 
 /** Everything that may have a reminder; a closed application has none. */
-export function reminderTargets(application: Application): ReminderTarget[] {
+export function reminderTargets(
+	application: Pick<Application, "id" | "status" | "activity" | "company" | "role" | "followUpAt" | "followUpNote">,
+): ReminderTarget[] {
 	if (application.status === "closed") return [];
 	const followUp = followUpReminder(application);
 	return [

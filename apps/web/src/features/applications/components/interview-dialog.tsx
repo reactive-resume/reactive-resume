@@ -1,4 +1,4 @@
-import type { Application } from "../types";
+import type { ApplicationSummary } from "../types";
 import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
@@ -129,9 +129,9 @@ type InterviewDialogProps = {
 	onOpenChange: (open: boolean) => void;
 	// The application the interview belongs to. When omitted, an application picker is shown
 	// (used by the calendar, where no application is selected yet).
-	application?: Application | null;
+	application?: ApplicationSummary | null;
 	// Applications offered by the picker when `application` is omitted.
-	applications?: Application[];
+	applications?: ApplicationSummary[];
 	// Set when editing an existing interview.
 	interview?: InterviewTimelineEntry | null;
 	// Pre-selects this day when scheduling (e.g. a day clicked on the calendar).
@@ -265,14 +265,18 @@ export function InterviewDialog({
 	const deleteInterview = () => {
 		if (!editing) return;
 		const applicationId = draft.applicationId;
-		const drop = (item: Application) =>
+		const drop = (item: ApplicationSummary) =>
 			item.id === applicationId
 				? { ...item, activity: item.activity.filter((entry) => entry.id !== editing.id) }
 				: item;
 		queryClient.setQueryData(applicationsListQueryKey(), (list) => list?.map(drop));
 		queryClient.setQueryData(
 			orpc.applications.getById.queryKey({ input: { id: applicationId } }),
-			(item) => item && drop(item),
+			(item) =>
+				item &&
+				(item.id === applicationId
+					? { ...item, activity: item.activity.filter((entry) => entry.id !== editing.id) }
+					: item),
 		);
 		onOpenChange(false);
 		withUndo({

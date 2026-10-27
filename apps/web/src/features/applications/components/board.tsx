@@ -1,4 +1,4 @@
-import type { Application } from "../types";
+import type { ApplicationSummary } from "../types";
 import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import {
@@ -31,9 +31,9 @@ import { ApplicationCard } from "./application-card";
 import { DRAG_SETTLE } from "@/libs/motion";
 
 type BoardProps = {
-	applications: Application[];
+	applications: ApplicationSummary[];
 	showClosed: boolean;
-	onOpen: (application: Application) => void;
+	onOpen: (application: ApplicationSummary) => void;
 };
 
 // While the overlay settles, the real card waits hidden in its new slot and the overlay's tilt eases off.
@@ -50,7 +50,7 @@ export function ApplicationBoard({ applications, showClosed, onOpen }: BoardProp
 	const { moveTo, close } = useApplicationActions();
 	const reduceMotion = useReducedMotion();
 	const [activeId, setActiveId] = useState<string | null>(null);
-	const [closing, setClosing] = useState<Application | null>(null);
+	const [closing, setClosing] = useState<ApplicationSummary | null>(null);
 	// The list query publishes the optimistic move a task after the drop (TanStack Query notifies on a timeout), so
 	// until it does the board shows the dropped card in its new column itself. Otherwise the card blinks back to its
 	// old column for a frame, and the drop animation would fly there.
@@ -65,14 +65,14 @@ export function ApplicationBoard({ applications, showClosed, onOpen }: BoardProp
 	) {
 		setPendingMove(null);
 	}
-	const statusOf = (application: Application) =>
+	const statusOf = (application: ApplicationSummary) =>
 		pendingMove?.id === application.id ? pendingMove.to : application.status;
 
 	// A small activation distance so a click still opens the detail sheet instead of starting a drag.
 	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 	const stages: ApplicationStatus[] = showClosed ? [...PIPELINE, "closed"] : [...PIPELINE];
 
-	const byStage = new Map<ApplicationStatus, Application[]>(stages.map((stage) => [stage, []]));
+	const byStage = new Map<ApplicationStatus, ApplicationSummary[]>(stages.map((stage) => [stage, []]));
 	for (const application of applications) byStage.get(statusOf(application))?.push(application);
 
 	const active = activeId ? applications.find((application) => application.id === activeId) : null;
@@ -143,8 +143,8 @@ const COLUMN_PAGE_SIZE = 50;
 
 type ColumnProps = {
 	stage: ApplicationStatus;
-	applications: Application[];
-	onOpen: (application: Application) => void;
+	applications: ApplicationSummary[];
+	onOpen: (application: ApplicationSummary) => void;
 };
 
 function Column({ stage, applications, onOpen }: ColumnProps) {
@@ -184,7 +184,7 @@ function Column({ stage, applications, onOpen }: ColumnProps) {
 	);
 }
 
-type DraggableCardProps = { application: Application; onOpen: (application: Application) => void };
+type DraggableCardProps = { application: ApplicationSummary; onOpen: (application: ApplicationSummary) => void };
 
 // Re-renders with every drag context change; the closure here stays stable, so the card itself doesn't.
 function DraggableCard({ application, onOpen }: DraggableCardProps) {

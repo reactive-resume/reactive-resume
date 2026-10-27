@@ -1,4 +1,4 @@
-import type { Application } from "@/features/applications/types";
+import type { ApplicationSummary } from "@/features/applications/types";
 import type { LetterDraft } from "@/features/letters/store";
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
@@ -112,8 +112,8 @@ export function LetterWritePanel() {
 
 type ForSectionProps = {
 	letter: CoverLetter;
-	application: Application | null;
-	applications: Application[];
+	application: ApplicationSummary | null;
+	applications: ApplicationSummary[];
 	disabled: boolean;
 };
 
@@ -121,7 +121,7 @@ type ForSectionProps = {
 function ForSection({ letter, application, applications, disabled }: ForSectionProps) {
 	const choices = applications.filter((item) => item.status !== "closed" || item.id === application?.id);
 
-	const choose = (next: Application | null) =>
+	const choose = (next: ApplicationSummary | null) =>
 		void updateLetter({
 			applicationId: next?.id ?? null,
 			// The recipient comes from the application: its company, and its first contact when it has one.
@@ -208,7 +208,7 @@ function ForSection({ letter, application, applications, disabled }: ForSectionP
 	);
 }
 
-type LetterSectionProps = { letter: CoverLetter; application: Application | null; disabled: boolean };
+type LetterSectionProps = { letter: CoverLetter; application: ApplicationSummary | null; disabled: boolean };
 
 /** TO: name or team, company and date for structured letters; older (freeform) letters keep their recipient block. */
 function ToSection({ letter, application, disabled }: LetterSectionProps) {
@@ -455,7 +455,12 @@ function LetterFramingField({ letter, field, defaultValue, disabled }: LetterFra
 	);
 }
 
-type EmptyBodyProps = { letter: CoverLetter; application: Application | null; disabled: boolean; onWrite: () => void };
+type EmptyBodyProps = {
+	letter: CoverLetter;
+	application: ApplicationSummary | null;
+	disabled: boolean;
+	onWrite: () => void;
+};
 
 function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 	const providerState = useHasUsableAiProvider();
@@ -509,7 +514,7 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 type DraftBoxProps = {
 	draft: Exclude<LetterDraft, { phase: "idle" }>;
 	letter: CoverLetter;
-	application: Application | null;
+	application: ApplicationSummary | null;
 	onKeep: (text: string) => void;
 };
 

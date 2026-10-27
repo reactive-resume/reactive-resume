@@ -1,4 +1,4 @@
-import type { Application } from "../types";
+import type { Application, ApplicationSummary } from "../types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
@@ -28,6 +28,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { daysInStage } from "../next-step";
+import { applicationDetailQueryOptions } from "../queries";
 import { getClosedReasonLabel, getNextStage, getStageColor, getStageLabel, PIPELINE } from "../stages";
 import { useApplicationActions, useInvalidateApplications } from "../use-application-actions";
 import { ApplicationNotes } from "./application-notes";
@@ -44,7 +45,7 @@ import { isImeComposing } from "@/libs/keyboard";
 import { orpc } from "@/libs/orpc/client";
 
 type DetailSheetProps = {
-	application: Application | null;
+	application: ApplicationSummary | null;
 	onOpenChange: (open: boolean) => void;
 	onEditDetails: (application: Application) => void;
 };
@@ -57,13 +58,19 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEditDetail
 	const phone = useBreakpoint() === "mobile";
 	// Closing keeps the last application on screen until the sheet has slid away.
 	const [shown, onOpenChangeComplete] = useClosingValue(application);
-	const { data } = useQuery({
-		...orpc.applications.getById.queryOptions({ input: { id: shown?.id ?? "" } }),
+	const initialDetail = shown?.initialDetail;
+	const validInitialDetail =
+		initialDetail && initialDetail.status === shown?.status && initialDetail.closedReason === shown?.closedReason
+			? initialDetail
+			: undefined;
+	const { data, isError, isFetching, isPending, refetch } = useQuery({
+		...applicationDetailQueryOptions(shown?.id ?? ""),
 		// Fetch only while open; while closing, the cached copy keeps showing.
 		enabled: Boolean(application),
-		...(shown ? { placeholderData: shown } : {}),
+		initialData: validInitialDetail,
+		...(validInitialDetail ? { initialDataUpdatedAt: 0 } : {}),
 	});
-	const current = data ?? shown;
+	const current = data;
 
 	return (
 		<Sheet open={Boolean(application)} onOpenChange={onOpenChange} onOpenChangeComplete={onOpenChangeComplete}>
@@ -72,13 +79,25 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEditDetail
 				closeLabel={t`Close`}
 				className={cn("gap-0", phone ? "h-svh" : "data-[side=right]:sm:max-w-[480px]")}
 			>
-				{current && (
+				{current ? (
 					<Detail
 						key={current.id}
 						application={current}
 						onEditDetails={onEditDetails}
 						onDeleted={() => onOpenChange(false)}
 					/>
+				) : (
+					<div className="grid gap-2 p-5">
+						<SheetTitle>{shown?.role ?? shown?.company}</SheetTitle>
+						<SheetDescription aria-live="polite">
+							{isError ? t`Couldn't load this. Your saved data hasn't changed.` : t`Loading…`}
+						</SheetDescription>
+						{isError && (
+							<Button variant="secondary" disabled={isFetching || isPending} onClick={() => void refetch()}>
+								<Trans>Try again</Trans>
+							</Button>
+						)}
+					</div>
 				)}
 			</SheetContent>
 		</Sheet>

@@ -1,4 +1,4 @@
-import type { Application } from "./types";
+import type { ApplicationSummary } from "./types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import { plural, t } from "@lingui/core/macro";
@@ -10,7 +10,7 @@ const DAY_MS = 86_400_000;
 /** Days without a reply after applying before a follow-up is suggested. */
 const FOLLOW_UP_AFTER_DAYS = 10;
 
-type NextStepSource = Pick<Application, "status" | "activity" | "followUpAt" | "followUpNote" | "appliedAt">;
+type NextStepSource = Pick<ApplicationSummary, "status" | "activity" | "followUpAt" | "followUpNote" | "appliedAt">;
 
 /**
  * What an application needs next, derived rather than stored: the earliest interview still to come, else the
@@ -25,7 +25,7 @@ export type NextStep =
 	| { kind: "closed" };
 
 /** When the application entered its current stage (its latest entry for that stage), or when it was added. */
-function stageSince(application: Pick<Application, "status" | "activity" | "appliedAt">): Date {
+function stageSince(application: Pick<ApplicationSummary, "status" | "activity" | "appliedAt">): Date {
 	const entries = application.activity
 		.filter((entry) => entry.type === "stage" && entry.stage === application.status)
 		.map((entry) => new Date(entry.at).getTime());
@@ -35,8 +35,10 @@ function stageSince(application: Pick<Application, "status" | "activity" | "appl
 const daysBetween = (from: Date, to: Date) => Math.max(0, Math.floor((to.getTime() - from.getTime()) / DAY_MS));
 
 /** Whole days the application has spent in its current stage. */
-export const daysInStage = (application: Pick<Application, "status" | "activity" | "appliedAt">, now = new Date()) =>
-	daysBetween(stageSince(application), now);
+export const daysInStage = (
+	application: Pick<ApplicationSummary, "status" | "activity" | "appliedAt">,
+	now = new Date(),
+) => daysBetween(stageSince(application), now);
 
 export function getNextStep(application: NextStepSource, now = new Date()): NextStep {
 	if (application.status === "closed") return { kind: "closed" };
@@ -73,7 +75,7 @@ const formatWhen = (date: Date, locale: string, withTime: boolean) =>
 /** How a next step reads in the list, on cards and in the detail sheet. */
 export function describeNextStep(
 	step: NextStep,
-	application: Pick<Application, "status" | "closedReason">,
+	application: Pick<ApplicationSummary, "status" | "closedReason">,
 	locale: string,
 ): NextStepText {
 	switch (step.kind) {

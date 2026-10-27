@@ -1,9 +1,9 @@
-import type { Application } from "./types";
+import type { ApplicationSummary } from "./types";
 import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { INTERVIEW_KINDS } from "@reactive-resume/schema/applications/data";
 
 export type ScheduledInterview = {
-	application: Application;
+	application: ApplicationSummary;
 	interview: InterviewTimelineEntry;
 	start: Date;
 	end: Date;
@@ -11,11 +11,11 @@ export type ScheduledInterview = {
 
 export const interviewKindOf = (kind: InterviewKind) => INTERVIEW_KINDS.find((item) => item.value === kind);
 
-export const isInterview = (entry: Application["activity"][number]): entry is InterviewTimelineEntry =>
+export const isInterview = (entry: ApplicationSummary["activity"][number]): entry is InterviewTimelineEntry =>
 	entry.type === "interview";
 
 // Every interview across the given applications, soonest first.
-export function collectInterviews(applications: Application[]): ScheduledInterview[] {
+export function collectInterviews(applications: ApplicationSummary[]): ScheduledInterview[] {
 	return applications
 		.flatMap((application) =>
 			application.activity.filter(isInterview).map((interview) => {

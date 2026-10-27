@@ -1,4 +1,4 @@
-import type { Application } from "./types";
+import type { ApplicationSummary } from "./types";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { STAGES } from "@reactive-resume/schema/applications/data";
 import { PIPELINE } from "./stages";
@@ -85,7 +85,7 @@ export function computeTimeline(applications: readonly OutcomeSource[], weeks = 
 	return buckets.map(({ label, count }) => ({ label, count }));
 }
 
-type OutcomeSource = Pick<Application, "status" | "closedReason" | "activity" | "appliedAt" | "resumeId">;
+type OutcomeSource = Pick<ApplicationSummary, "status" | "closedReason" | "activity" | "appliedAt" | "resumeId">;
 
 const DAY_MS = 86_400_000;
 const REPLY_STAGES = new Set<ApplicationStatus>(["screening", "interview", "offer"]);

@@ -47,7 +47,7 @@ export function NewDocument() {
 	const mounted = useRef(true);
 	const abort = useRef<AbortController | null>(null);
 	const cached = useRef<File | null>(null);
-	const options = orpc.applications.list.queryOptions({ input: {} });
+	const options = orpc.applications.listSummary.queryOptions({ input: {} });
 	const applications = useQuery({
 		...options,
 		queryKey: [...options.queryKey, session.server],

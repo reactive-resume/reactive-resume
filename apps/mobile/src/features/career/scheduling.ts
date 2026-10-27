@@ -1,4 +1,4 @@
-import type { Application } from "@/features/applications/types";
+import type { ApplicationSummary as Application } from "@/features/applications/types";
 import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 
 export function toZoned(at: Date, timeZone: string) {

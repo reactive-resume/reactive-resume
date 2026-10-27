@@ -1,4 +1,4 @@
-import type { Application } from "../types";
+import type { ApplicationSummary } from "../types";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
@@ -32,13 +32,13 @@ import { orpc } from "@/libs/orpc/client";
 type SortKey = "role" | "next" | "updated";
 type Sort = { key: SortKey; direction: "asc" | "desc" };
 
-const nextStepTime = (application: Application) => {
+const nextStepTime = (application: ApplicationSummary) => {
 	const step = getNextStep(application);
 	return step.kind === "interview" || step.kind === "follow-up" ? step.at.getTime() : Number.POSITIVE_INFINITY;
 };
 
 // Sort keys are computed once per row, not once per comparison.
-const sortValue: Record<SortKey, (application: Application) => string | number> = {
+const sortValue: Record<SortKey, (application: ApplicationSummary) => string | number> = {
 	role: (application) => application.role,
 	next: nextStepTime,
 	updated: (application) => new Date(application.updatedAt).getTime(),
@@ -48,10 +48,10 @@ const compareValues = (a: string | number, b: string | number) =>
 	typeof a === "string" && typeof b === "string" ? a.localeCompare(b) : Number(a) - Number(b);
 
 type ListViewProps = {
-	applications: Application[];
+	applications: ApplicationSummary[];
 	showClosed: boolean;
 	selectedId: string | null;
-	onOpen: (application: Application) => void;
+	onOpen: (application: ApplicationSummary) => void;
 };
 
 /**
@@ -80,7 +80,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 	const groups = useMemo(() => {
 		const sign = sort.direction === "asc" ? 1 : -1;
 		const keys = new Map(applications.map((application) => [application.id, sortValue[sort.key](application)]));
-		const key = (application: Application) => keys.get(application.id) ?? 0;
+		const key = (application: ApplicationSummary) => keys.get(application.id) ?? 0;
 		return LIST_ORDER.filter((status) => status !== "closed" || showClosed)
 			.map((status) => ({
 				status,
@@ -229,12 +229,12 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 }
 
 type ApplicationRowProps = {
-	application: Application;
+	application: ApplicationSummary;
 	phone: boolean;
 	selected: boolean;
 	checked: boolean;
 	onCheck: (id: string) => void;
-	onOpen: (application: Application) => void;
+	onOpen: (application: ApplicationSummary) => void;
 };
 
 // Memoized with id-taking callbacks, so one row's change doesn't re-render the other rows.
@@ -261,7 +261,7 @@ const ApplicationRow = memo(function ApplicationRow({
 	);
 
 	const openButton = (
-		<button type="button" className="grid min-w-0 cursor-pointer text-start">
+		<button type="button" data-application-open className="grid min-w-0 cursor-pointer text-start">
 			<span className="truncate font-medium">{application.role}</span>
 			<span className="truncate text-xs text-ink-3">
 				{phone
@@ -274,6 +274,7 @@ const ApplicationRow = memo(function ApplicationRow({
 	if (phone) {
 		return (
 			<tr
+				data-application-id={application.id}
 				onClick={() => onOpen(application)}
 				className={cn("cursor-pointer border-b border-line", selected && "bg-accent-soft/50")}
 			>
@@ -290,6 +291,7 @@ const ApplicationRow = memo(function ApplicationRow({
 
 	return (
 		<tr
+			data-application-id={application.id}
 			onClick={() => onOpen(application)}
 			className={cn(
 				"cursor-pointer border-b border-line transition-colors duration-quick hover:bg-hover",

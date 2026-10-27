@@ -1,5 +1,5 @@
 import type { ScheduledInterview } from "../interviews";
-import type { Application } from "../types";
+import type { ApplicationSummary } from "../types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
@@ -25,14 +25,14 @@ const MAX_CHIPS_PER_DAY = 3;
 
 type DialogState =
 	| { open: false }
-	| { open: true; application: Application | null; interview: InterviewTimelineEntry | null; day: Date | null };
+	| { open: true; application: ApplicationSummary | null; interview: InterviewTimelineEntry | null; day: Date | null };
 
 type ApplicationCalendarProps = {
 	// Applications matching the page filters; their interviews are shown.
-	applications: Application[];
+	applications: ApplicationSummary[];
 	// Every application, offered by the "schedule interview" picker.
-	allApplications: Application[];
-	onOpen: (application: Application) => void;
+	allApplications: ApplicationSummary[];
+	onOpen: (application: ApplicationSummary) => void;
 };
 
 export function ApplicationCalendar({ applications, allApplications, onOpen }: ApplicationCalendarProps) {

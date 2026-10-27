@@ -1,6 +1,6 @@
 import type { RelinkResult } from "./save";
 import type { LetterDocument } from "@/draft/types";
-import type { Application } from "@/features/applications/types";
+import type { ApplicationSummary as Application } from "@/features/applications/types";
 import type { WritableDraft } from "immer";
 import type { ReactNode } from "react";
 import { plural, t } from "@lingui/core/macro";
