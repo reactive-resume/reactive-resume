@@ -394,11 +394,13 @@ function readDismissed(): string[] {
 	}
 }
 
+type FollowUpNudgeProps = { applications: ApplicationSummary[]; onOpen: (id: string) => void };
+
 /**
  * The follow-up nudge: the application waiting longest without a reply (10+ days since applying). Dismissing it is
  * remembered on this device; it doesn't come back for that application.
  */
-function FollowUpNudge({ applications, onOpen }: { applications: ApplicationSummary[]; onOpen: (id: string) => void }) {
+function FollowUpNudge({ applications, onOpen }: FollowUpNudgeProps) {
 	const [dismissed, setDismissed] = useState(readDismissed);
 
 	const dismissedIds = new Set(dismissed);
@@ -427,6 +429,7 @@ function FollowUpNudge({ applications, onOpen }: { applications: ApplicationSumm
 	return (
 		<div
 			key={waiting.application.id}
+			data-application-id={waiting.application.id}
 			role="status"
 			className={cn(
 				ENTER_CLASS,
@@ -441,7 +444,7 @@ function FollowUpNudge({ applications, onOpen }: { applications: ApplicationSumm
 					other={`${company}: no reply for # days. A short follow-up is usually fine now.`}
 				/>
 			</span>
-			<Button size="sm" variant="secondary" onClick={() => onOpen(waiting.application.id)}>
+			<Button size="sm" variant="secondary" data-application-open onClick={() => onOpen(waiting.application.id)}>
 				<Trans>Open</Trans>
 			</Button>
 			<Button size="icon-sm" variant="ghost" aria-label={t`Dismiss`} onClick={dismiss} className="text-warn-text">

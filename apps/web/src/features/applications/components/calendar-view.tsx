@@ -294,6 +294,7 @@ function UpcomingCard({ item, timeRange, locale, onEdit, onOpenApplication }: Up
 	return (
 		<div
 			data-upcoming-interview={item.interview.id}
+			data-application-id={item.application.id}
 			className="relative overflow-hidden rounded-xl border border-line bg-surface ps-4 text-sm"
 		>
 			<span className="absolute inset-y-0 start-0 w-1" style={{ background: kind?.color }} />
@@ -313,7 +314,12 @@ function UpcomingCard({ item, timeRange, locale, onEdit, onOpenApplication }: Up
 					</span>
 				)}
 			</button>
-			<button type="button" className="mb-2 text-xs text-accent-text hover:underline" onClick={onOpenApplication}>
+			<button
+				type="button"
+				data-application-open
+				className="mb-2 text-xs text-accent-text hover:underline"
+				onClick={onOpenApplication}
+			>
 				<Trans>View application</Trans>
 			</button>
 		</div>
