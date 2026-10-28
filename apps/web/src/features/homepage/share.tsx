@@ -8,9 +8,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { SCENE, useLanding } from "./scroll";
 import { Sheet } from "./sheet";
 import { Doodle, labelClass, TypedText } from "./ui";
-
-const ADDRESS = "rxresu.me/alex-morgan";
-const SLUG_START = ADDRESS.indexOf("/") + 1;
+import { useShareOrigin } from "@/features/resume/share/use-share-origin";
 
 /**
  * Colours that switch from the day palette to the night sky's once the sky is half dark (--nts), rather than passing
@@ -51,6 +49,9 @@ const visibilityIcons: IconName[] = ["globe-hemisphere-west", "lock", "eye-slash
  * and the visibility and copy controls and the export formats appear.
  */
 export function Share() {
+	const origin = useShareOrigin();
+	const host = origin ? new URL(origin).host : "rxresu.me";
+	const address = `${host}/alex-morgan`;
 	const active = useLanding((state) => state.activeScene === SCENE.share);
 	const ready = useLanding((state) => state.shareReady);
 	const [visibility, setVisibility] = useState(0);
@@ -135,7 +136,7 @@ export function Share() {
 				</div>
 
 				<div className="absolute inset-x-(--gutter) top-1/2 flex -translate-y-1/2 flex-col items-center gap-[26px] text-center">
-					{/* The heading reads "Your resume, live at rxresu.me/…"; this label is its visible first half. */}
+					{/* This label is the visible first half of the heading. */}
 					<span
 						aria-hidden="true"
 						className={cn(labelClass, "tracking-[.1em] text-(--night-label) opacity-[clamp(0,var(--tu)*20,1)]")}
@@ -158,12 +159,12 @@ export function Share() {
 						/>
 						{/* The caret rides on the last character typed. */}
 						<TypedText
-							text={ADDRESS}
+							text={address}
 							progress="--tu"
 							rate={60}
 							className={cn("[overflow-wrap:anywhere] [--caret:var(--night-accent)]", isPrivate && "line-through")}
 							charClassName="typed-caret"
-							charStyle={(index) => (index >= SLUG_START ? { color: "var(--night-accent)" } : undefined)}
+							charStyle={(index) => (index > host.length ? { color: "var(--night-accent)" } : undefined)}
 						/>
 					</h2>
 

@@ -79,7 +79,7 @@ export function CustomDomainField({ suggest }: CustomDomainFieldProps) {
 							spellCheck={false}
 							autoCapitalize="none"
 							onChange={(event) => setHostname(event.target.value)}
-							className="h-[38px] font-mono text-[13px]"
+							className="h-[38px] font-mono text-[13px] pointer-coarse:h-[38px]"
 						/>
 						<Button
 							type="submit"
