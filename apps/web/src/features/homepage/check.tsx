@@ -227,6 +227,7 @@ export function Check() {
 					<Doodle
 						name="magnifier"
 						wipe="1"
+						sizes="(min-width: 900px) 14vw, 31vw"
 						className="top-[calc(var(--ly,16%)-15.9cqw)] left-[calc(var(--lx,50%)-17.4cqw)] w-[48.3cqw] max-w-none [mask-image:radial-gradient(circle_11cqw_at_36.1%_32.9%,transparent_97%,#000_100%)]! [mask-size:100%_100%]! [mask-position:0_0]! opacity-(--lo)!"
 					/>
 					<span

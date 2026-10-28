@@ -24,8 +24,43 @@ export function handleOpenAiAppsChallenge() {
 	});
 }
 
+/** Nothing else is published under /.well-known, and a 404 says so; a 200 body would be parsed as the document asked for. */
 export function handleWellKnownFallback() {
-	return new Response("OK", { status: 200 });
+	return new Response("Not Found", { status: 404, headers: { "Content-Type": "text/plain; charset=utf-8" } });
+}
+
+/**
+ * Agentic Resource Discovery catalog (https://agenticresourcediscovery.org/spec/), so agent registries can find the MCP
+ * server by what it does. Served at /.well-known/ard.json and at the spec's earlier path, /.well-known/ai-catalog.json,
+ * which Lighthouse's agentic browsing audit reads; `specVersion` and `host` belong to that earlier format.
+ */
+export function handleAgentCatalog() {
+	const baseUrl = appUrl();
+	const catalog = {
+		specVersion: "1.0",
+		host: { displayName: "Reactive Resume", documentationUrl: DOCS_URL, logoUrl: `${baseUrl}/pwa-512x512.png` },
+		entries: [
+			{
+				identifier: `urn:air:${new URL(baseUrl).hostname}:mcp:reactive-resume`,
+				displayName: "Reactive Resume MCP server",
+				type: "application/mcp-server-card+json",
+				url: `${baseUrl}/.well-known/mcp/server-card.json`,
+				description:
+					"Reads and edits the user's resumes, cover letters and job applications in Reactive Resume, a free and open-source resume builder.",
+				tags: ["resume", "cover letter", "job applications", "careers"],
+				representativeQueries: [
+					"update my resume with my new job",
+					"tailor my resume to this job description",
+					"write a cover letter for this application",
+					"track the jobs I have applied to",
+				],
+			},
+		],
+	};
+
+	return Response.json(catalog, {
+		headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=3600" },
+	});
 }
 
 export function handleMcpServerCard() {

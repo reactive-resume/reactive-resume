@@ -68,7 +68,8 @@ export function isProfilePath(pathname: string): boolean {
  * Scripts run only from the app's own files and the inline scripts of the page served, allowed by hash; `wasm-unsafe-eval`
  * lets the PDF engine (Forme, WebAssembly) start. Pictures, avatars and fonts can live on any https host (a resume's
  * picture URL, a sign-in provider's avatar) and the PDF engine fetches them, so images, fonts and connections stay open
- * to https. Recordings, previews and workers use blob: URLs.
+ * to https. Recordings, previews and workers use blob: URLs. Cloudflare Web Analytics, when turned on for the zone, injects
+ * its real-user metrics beacon from static.cloudflareinsights.com.
  */
 export function contentSecurityPolicy(html = "") {
 	const inlineScripts = html.matchAll(
@@ -82,7 +83,7 @@ export function contentSecurityPolicy(html = "") {
 	);
 	return [
 		"default-src 'self'",
-		["script-src 'self' 'wasm-unsafe-eval'", ...hashes].join(" "),
+		["script-src 'self' 'wasm-unsafe-eval' https://static.cloudflareinsights.com", ...hashes].join(" "),
 		"style-src 'self' 'unsafe-inline'",
 		"img-src 'self' data: blob: https:",
 		"font-src 'self' data: https:",
@@ -106,6 +107,24 @@ export const BASE_SECURITY_HEADERS = {
 };
 
 /**
+ * Preload links for the stylesheet and fonts a page's <head> loads. Cloudflare sends them ahead of the page as 103 Early
+ * Hints, so they download while the origin is still answering.
+ */
+function preloadLinks(html: string) {
+	const end = html.indexOf("</head>");
+	const head = end === -1 ? html : html.slice(0, end);
+	return [...head.matchAll(/<link\b[^>]*>/g)].flatMap(([tag]) => {
+		const href = tag.match(/\bhref="(\/assets\/[^"]+)"/)?.[1];
+		// The preload must share the tag's CORS mode, or the browser downloads the file twice.
+		const cors = /\scrossorigin\b/.test(tag) ? "; crossorigin" : "";
+		if (href && /\brel="stylesheet"/.test(tag)) return [`<${href}>; rel=preload; as=style${cors}`];
+		if (href && /\brel="preload"/.test(tag) && /\bas="font"/.test(tag))
+			return [`<${href}>; rel=preload; as=font${cors}`];
+		return [];
+	});
+}
+
+/**
  * An HTML page whose policy allows exactly the inline scripts of its template. Hashes come from the template before
  * any resume-derived markup goes in, so text that slipped past escaping could never allow itself.
  */
@@ -115,7 +134,16 @@ function htmlResponse(html: string, headers: Record<string, string>, template = 
 	const body = html
 		.replace("</head>", () => `<meta name="context7-site-verification" content="${verification}"></head>`)
 		.replace(/<body\b[^>]*>/i, (tag) => `${tag}${note}`);
-	return new Response(body, { headers: { ...headers, "Content-Security-Policy": contentSecurityPolicy(template) } });
+	return new Response(body, {
+		headers: {
+			...headers,
+			Link: [headers.Link, ...preloadLinks(template)].filter(Boolean).join(", "),
+			// Pages name the current build's assets, so a release purges this tag from Cloudflare's cache
+			// (.github/workflows/docker-publish.yml).
+			"Cache-Tag": "html",
+			"Content-Security-Policy": contentSecurityPolicy(template),
+		},
+	});
 }
 
 const githubUrl = "https://github.com/reactive-resume/reactive-resume";
@@ -252,14 +280,24 @@ function readPageMeta(html: string, fallback: { title: string; description: stri
 	};
 }
 
+const mediaFile = /\.(?:avif|gif|ico|jpe?g|mp3|png|svg|ttf|webp|woff2?)$/i;
+
 export const serveWebDistStatic = env.CLOUDFLARE
 	? undefined
 	: serveStatic({
 			root: staticRoot,
+			// The Docker build writes brotli copies beside the text files and WASM (tooling/docker/precompress.mjs).
+			precompressed: true,
 			onFound: (_path, context) => {
 				// Vite fingerprints everything under /assets, so a file there never changes.
-				if (context.req.path.startsWith("/assets/") || /^\/videos\/.*-v\d+\.(?:mp4|webp)$/.test(context.req.path)) {
+				if (context.req.path.startsWith("/assets/")) {
 					context.header("Cache-Control", "public, max-age=31536000, immutable");
+				} else {
+					// Other files keep their names when their content changes, so a release purges them from Cloudflare's
+					// cache by this tag. Browsers keep pictures, fonts and sounds for 30 days, the shortest lifetime Lighthouse
+					// doesn't count as waste; one replaced under the same name reaches every visitor within that month.
+					context.header("Cache-Tag", "public");
+					if (mediaFile.test(context.req.path)) context.header("Cache-Control", "public, max-age=2592000");
 				}
 				// `/index.html` is the app shell too; it must not be frameable either.
 				if (context.req.path.endsWith(".html"))

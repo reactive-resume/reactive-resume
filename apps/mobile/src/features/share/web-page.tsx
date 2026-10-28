@@ -3,29 +3,18 @@ import type { RouterOutput } from "@/api/client";
 import type { ResumeDocument } from "@/draft/types";
 import type { useDocumentOperations } from "@/features/documents/queries";
 import { useLingui } from "@lingui/react/macro";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import * as Clipboard from "expo-clipboard";
 import { openBrowserAsync } from "expo-web-browser";
 import { useState } from "react";
-import { Linking, View } from "react-native";
-import { cvDomainFor, cvDomainRegistrationUrl, publicResumeUrl } from "@reactive-resume/resume/sharing";
+import { View } from "react-native";
+import { publicResumeUrl } from "@reactive-resume/resume/sharing";
+import { CustomDomain } from "./custom-domain";
 import { flushResume } from "./document";
 import { client, orpc } from "@/api/client";
 import { useResumeStore } from "@/draft";
 import { resume as draftResume } from "@/draft/runtime";
-import {
-	Banner,
-	Button,
-	ConfirmDialog,
-	ListGroup,
-	ListRow,
-	Sheet,
-	Switch,
-	Text,
-	TextField,
-	showToast,
-	useTheme,
-} from "@/ui";
+import { Banner, Button, ConfirmDialog, ListGroup, ListRow, Sheet, Switch, TextField, showToast, useTheme } from "@/ui";
 
 type WebPageSettingsProps = {
 	resume: ResumeDocument;
@@ -126,12 +115,7 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 					/>
 				)}
 			</ListGroup>
-			{flags?.customDomains && (
-				<CustomDomain
-					offline={offline}
-					suggestion={flags.olacvSuggestion && username ? cvDomainFor(username) : undefined}
-				/>
-			)}
+			{flags?.customDomains && <CustomDomain offline={offline} suggest={flags.olacvSuggestion ?? false} />}
 
 			<ListGroup
 				title={t`Web page`}
@@ -284,101 +268,6 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 					void savePassword(true);
 				}}
 			/>
-		</View>
-	);
-}
-
-type CustomDomainProps = { offline: boolean; suggestion: string | undefined };
-
-/** Connects the account's own domain: the DNS records to add, a check, and the result. */
-function CustomDomain({ offline, suggestion }: CustomDomainProps) {
-	const { t } = useLingui();
-	const { space } = useTheme();
-	const queryClient = useQueryClient();
-	const domain = useQuery({ ...orpc.customDomain.get.queryOptions(), enabled: !offline });
-	const [hostname, setHostname] = useState("");
-	const store = (next: RouterOutput["customDomain"]["get"]) =>
-		queryClient.setQueryData(orpc.customDomain.get.queryKey(), next);
-	const set = useMutation({ ...orpc.customDomain.set.mutationOptions(), onSuccess: store });
-	const verify = useMutation({
-		...orpc.customDomain.verify.mutationOptions(),
-		onSuccess: (next) => {
-			store(next);
-			showToast({
-				message: next.verified ? t`Domain connected` : t`The records aren't visible yet. Check again later.`,
-			});
-		},
-	});
-	const remove = useMutation({ ...orpc.customDomain.remove.mutationOptions(), onSuccess: () => store(null) });
-	const error = set.error ?? verify.error ?? remove.error;
-
-	if (domain.isPending) return null;
-	const current = domain.data;
-
-	return (
-		<View style={{ gap: space.s3 }}>
-			{error && <Banner tone="danger" message={error.message} />}
-			{!current ? (
-				<>
-					<TextField
-						label={t`Your domain`}
-						value={hostname}
-						onChangeText={setHostname}
-						placeholder="resume.example.com"
-						autoCapitalize="none"
-						autoCorrect={false}
-						keyboardType="url"
-					/>
-					<Button
-						variant="secondary"
-						label={t`Connect`}
-						loading={set.isPending}
-						disabled={offline || !hostname.trim()}
-						onPress={() => set.mutate({ hostname })}
-					/>
-					{suggestion && (
-						<Button
-							variant="link"
-							label={t`${suggestion} may be available. Get yours here →`}
-							onPress={() => void Linking.openURL(cvDomainRegistrationUrl(suggestion))}
-						/>
-					)}
-				</>
-			) : (
-				<>
-					<ListRow
-						title={current.hostname}
-						subtitle={current.verified ? t`Connected. Your domain opens your primary resume.` : undefined}
-						leading={current.verified ? "check-circle" : "warning-circle"}
-					/>
-					{!current.verified && (
-						<>
-							<Text color="ink2">
-								{t`Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone.`}
-							</Text>
-							<Text selectable variant="mono">{`CNAME ${current.hostname} → ${current.target}`}</Text>
-							<Text selectable variant="mono">{`TXT ${current.txtName} = ${current.txtValue}`}</Text>
-							<Text variant="caption" color="ink3">
-								{t`For a root domain such as example.com, use A and AAAA records with ${current.target}'s addresses instead of the CNAME.`}
-							</Text>
-							<Button
-								variant="secondary"
-								label={t`Check DNS`}
-								loading={verify.isPending}
-								disabled={offline}
-								onPress={() => verify.mutate({})}
-							/>
-						</>
-					)}
-					<Button
-						variant="ghost"
-						label={t`Remove`}
-						loading={remove.isPending}
-						disabled={offline}
-						onPress={() => remove.mutate({})}
-					/>
-				</>
-			)}
 		</View>
 	);
 }

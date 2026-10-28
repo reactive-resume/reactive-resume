@@ -487,6 +487,14 @@ msgstr "Лише {company}"
 msgid "{connection} didn't respond."
 msgstr "{connection} не відповідає."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr "{cost} на рік"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr "{cost} за перший рік"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {Запис #} other {Записи #}}"
@@ -725,10 +733,6 @@ msgstr "{stars, plural, one {Поставте зірку Reactive Resume на Gi
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# розповідь} few {# розповіді} many {# розповідей} other {# розповіді}}"
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} може бути доступний. Отримайте свій тут →"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1419,7 +1423,7 @@ msgstr "Додайте домен після @, наприклад {name}@exampl
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Додайте закінчення домену, наприклад {domain}.com"
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Додайте ці записи там, де керуєте доменом, а потім перевірте. Зміни можуть поширюватися кілька годин."
 
@@ -2144,6 +2148,10 @@ msgstr "автозбережено"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "Автозбереження групуються за сеансами та зберігаються 90 днів. Іменовані версії зберігаються, доки ви їх не видалите. Відновлення спочатку зберігає поточний стан."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr "Вільний"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "Уникайте сильних ефектів міжлітерного інтервалу, потім експортуйте знову."
@@ -2567,6 +2575,7 @@ msgid "Check any PDF, no account needed"
 msgstr "Перевірте будь-який PDF, обліковий запис не потрібен"
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr "Перевірити DNS"
 
@@ -2784,6 +2793,7 @@ msgstr "ID клієнта"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2965,6 +2975,15 @@ msgstr "Підтверджує відеозустріч сьогодні о {tim
 msgid "Connect"
 msgstr "Підключити"
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr "Підключити {0}"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr "Підключити {domain}"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "Підключіть послугу"
@@ -3138,6 +3157,7 @@ msgstr "Розмови про конкретну вакансію зберіга
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3145,10 +3165,15 @@ msgstr "Скопійовано"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
 msgstr "Скопіювати"
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
+msgstr "Скопіювати {value}"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
@@ -3298,6 +3323,7 @@ msgstr "Не вдалося скопіювати стенограму. Спро�
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "Не вдалося скопіювати в буфер обміну. Спробуйте ще раз."
 
@@ -5255,7 +5281,7 @@ msgid "For"
 msgstr "для"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "Для кореневого домену, як-от example.com, замість CNAME використовуйте записи A та AAAA з адресами {0}."
 
@@ -6418,6 +6444,10 @@ msgstr "Мови"
 msgid "Last changed in {0}"
 msgstr "Востаннє змінено в {0}"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "Востаннє перевірено {lastChecked} тому"
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7054,6 +7084,10 @@ msgstr "Відповідність резюме"
 msgid "Matching your facts"
 msgstr "Зіставляю ваші факти"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr "Можливо, вільний"
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr "Можливо, пізніше"
@@ -7312,6 +7346,11 @@ msgstr "Моїм завданням було з’ясувати причину,
 #: src/features/settings/ai/providers.tsx
 msgid "Name"
 msgstr "Назва"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Name"
+msgstr "Ім’я"
 
 #. placeholder {0}: index + 1
 #: src/features/applications/components/interview-dialog.tsx
@@ -7759,6 +7798,10 @@ msgstr "Недоступно, поки резюме потребує парол�
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "Не підключено"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "Ще не підключено. Додайте його DNS-записи там, де керуєте доменом, а потім перевірте."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -9339,6 +9382,10 @@ msgstr "Оновити брифінг за 24 години"
 msgid "Refresh the briefing on the morning of"
 msgstr "Оновити брифінг зранку того дня"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr "Зареєструвати на OlaCV"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "Відрепетирувати вголос"
@@ -10617,6 +10664,10 @@ msgstr "Показати всі типи"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "Шоу закрито"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
+msgstr "Показати DNS-записи"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -12431,6 +12482,11 @@ msgstr "Двохетапну перевірку увімкнено"
 msgid "Type"
 msgstr "Тип"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr "Тип"
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr "Введіть <0>{CONFIRMATION}</0> для підтвердження"
@@ -12809,6 +12865,10 @@ msgstr "Узбецька"
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
 msgstr "Оцінка й розмивання невизначені"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
+msgstr "Значення"
 
 #: src/features/career/offers.tsx
 msgid "Value uncertain"
@@ -13653,6 +13713,10 @@ msgstr "Ваше ім’я"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "Ваше ім'я та контактна інформація взяті з резюме."
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
+msgstr "Ваше ім'я як ваша адреса — від OlaCV, реєстру домену .cv. Код <0/> дає знижку 50% на перший рік."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."

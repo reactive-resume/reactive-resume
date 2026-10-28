@@ -487,6 +487,14 @@ msgstr "Jen {company}"
 msgid "{connection} didn't respond."
 msgstr "{connection} neodpovídá."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr "{cost} ročně"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr "{cost} za první rok"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {Vstup #} other {Záznamy #}}"
@@ -725,10 +733,6 @@ msgstr "{stars, plural, one {Dejte Reactive Resume hvězdičku na GitHubu, # hv�
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# příběh} few {# příběhy} many {# příběhu} other {# příběhů}}"
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} může být k dispozici. Získejte tu svou zde →"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1419,7 +1423,7 @@ msgstr "Přidejte doménu za znak @, například {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Přidejte koncovku domény, například {domain}.com"
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Přidejte tyto záznamy tam, kde spravujete doménu, a pak je zkontrolujte. Než se změny projeví všude, může to trvat několik hodin."
 
@@ -2144,6 +2148,10 @@ msgstr "automaticky uloženo"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "Automatická ukládání jsou seskupena podle relace a uchovávána po dobu 90 dnů. Pojmenované verze jsou uchovány, dokud je nesmažete. Obnovení nejprve uloží aktuální stav."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr "Volná"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "Vyhněte se výrazným efektům prostrkání písma a poté znovu exportujte."
@@ -2567,6 +2575,7 @@ msgid "Check any PDF, no account needed"
 msgstr "Zkontrolujte jakékoli PDF, není potřeba žádný účet"
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr "Zkontrolovat DNS"
 
@@ -2784,6 +2793,7 @@ msgstr "ID klienta"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2965,6 +2975,15 @@ msgstr "Potvrzuje {time} dnes, přes video."
 msgid "Connect"
 msgstr "Připojit"
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr "Připojit {0}"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr "Připojit {domain}"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "Připojte službu"
@@ -3138,6 +3157,7 @@ msgstr "Konverzace o jedné pozici najdete v jejím pracovním prostoru."
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3145,10 +3165,15 @@ msgstr "Zkopírováno"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
 msgstr "Kopírovat"
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
+msgstr "Kopírovat {value}"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
@@ -3298,6 +3323,7 @@ msgstr "Přepis se nepodařilo zkopírovat. Zkuste to znovu."
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "Kopírování do schránky se nezdařilo. Zkuste to znovu."
 
@@ -5255,7 +5281,7 @@ msgid "For"
 msgstr "Pro"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "U kořenové domény, jako je example.com, použijte místo CNAME záznamy A a AAAA s adresami {0}."
 
@@ -6418,6 +6444,10 @@ msgstr "Jazyky"
 msgid "Last changed in {0}"
 msgstr "Naposledy změněno v {0}"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "Naposledy zkontrolováno před {lastChecked}"
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7054,6 +7084,10 @@ msgstr "Odpovídající resumé"
 msgid "Matching your facts"
 msgstr "Porovnávání s vašimi fakty"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr "Možná volná"
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr "Možná později"
@@ -7310,6 +7344,11 @@ msgstr "Mým úkolem bylo zjistit proč, aniž by přibyla práce podpoře."
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+msgid "Name"
+msgstr "Název"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "Název"
 
@@ -7759,6 +7798,10 @@ msgstr "Není k dispozici, dokud životopis vyžaduje heslo."
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "Nepřipojeno"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "Zatím nepřipojeno. Přidejte záznamy DNS tam, kde spravujete doménu, a pak je zkontrolujte."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -9339,6 +9382,10 @@ msgstr "Obnovit briefing 24 hodin předem"
 msgid "Refresh the briefing on the morning of"
 msgstr "Obnovit briefing ráno v den pohovoru"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr "Zaregistrovat u OlaCV"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "Nacvičte si to nahlas"
@@ -10617,6 +10664,10 @@ msgstr "Zobrazit všechny typy"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "Show uzavřena"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
+msgstr "Zobrazit záznamy DNS"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -12431,6 +12482,11 @@ msgstr "Dvoufázové ověření zapnuto"
 msgid "Type"
 msgstr "Typ"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr "Typ"
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr "Potvrďte zadáním <0>{CONFIRMATION}</0>"
@@ -12809,6 +12865,10 @@ msgstr "Uzbečtina"
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
 msgstr "Ocenění a ředění nejisté"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
+msgstr "Hodnota"
 
 #: src/features/career/offers.tsx
 msgid "Value uncertain"
@@ -13653,6 +13713,10 @@ msgstr "Vaše jméno"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "Vaše jméno a kontaktní údaje pocházejí ze životopisu."
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
+msgstr "Vaše jméno jako vaše adresa, od OlaCV, registru domény .cv. Kód <0/> dává slevu 50 % na první rok."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."

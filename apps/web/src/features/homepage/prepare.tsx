@@ -705,6 +705,7 @@ export function Prepare() {
 				<Doodle
 					name="plane"
 					wipe="1"
+					sizes="9vw"
 					className="end-[21vw] top-[6vh] z-4 w-[9vw] [transform:translate(calc(var(--dir)*(1-var(--pl))*30vw),calc((1-var(--pl))*-30vh))_scaleX(calc(var(--dir)*-1))_rotate(calc(-18deg+var(--pl)*14deg))] opacity-[calc(.8*(1-clamp(0,(var(--p)-.12)*12,1)))]! [transition:transform_.4s_var(--ease)] max-[900px]:hidden"
 				/>
 

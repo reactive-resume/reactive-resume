@@ -38,6 +38,9 @@ COPY --from=pruner /app/package.json /app/.gitignore /app/vite.config.ts /app/vi
 ARG TURBO_TEAM
 RUN --mount=type=secret,id=TURBO_TOKEN,env=TURBO_TOKEN \
     TURBO_TEAM=${TURBO_TEAM} pnpm turbo run build --filter=web --filter=server
+# Brotli copies of the web app's text files and WASM, which the server sends to browsers that accept brotli.
+COPY --from=pruner /app/tooling/docker/precompress.mjs ./tooling/docker/precompress.mjs
+RUN node tooling/docker/precompress.mjs apps/web/dist
 
 FROM base AS runtime-pruner
 COPY . .

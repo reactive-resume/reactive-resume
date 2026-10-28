@@ -108,6 +108,7 @@ export function Share() {
 				<Doodle
 					name="plane"
 					wipe="clamp(0, (var(--p) - .12) / .2, 1)"
+					sizes="14vw"
 					className="start-[7vw] top-[max(13vh,120px)] w-[14vw] translate-y-[calc(var(--p)*-30px)] rotate-[-8deg] opacity-[calc(var(--nt)*.85)]!"
 				/>
 

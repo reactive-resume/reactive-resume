@@ -460,6 +460,14 @@ msgstr "{company} · {tabName}"
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# పత్రం నవీకరించబడింది} other {# పత్రాలు నవీకరించబడ్డాయి}}"
 
+#: src/features/share/custom-domain.tsx
+msgid "{cost} a year"
+msgstr "సంవత్సరానికి {cost}"
+
+#: src/features/share/custom-domain.tsx
+msgid "{cost} the first year"
+msgstr "మొదటి సంవత్సరానికి {cost}"
+
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# నిలువు వరుస} other {# నిలువు వరుసలు}}"
@@ -613,10 +621,6 @@ msgstr "{skipped, plural, one {# సవరణను ఉంచడం సాధ్
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# కథ} other {# కథలు}}"
-
-#: src/features/share/web-page.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} అందుబాటులో ఉండవచ్చు. మీది ఇక్కడ పొందండి →"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1085,7 +1089,7 @@ msgstr "{name}@example.com వంటి @ తర్వాత డొమైన్�
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com వంటి డొమైన్ ముగింపుని జోడించండి"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "మీరు డొమైన్‌ను నిర్వహించే చోట ఈ రికార్డ్‌లను జోడించి, ఆపై తనిఖీ చేయండి. మార్పులు అందరికీ చేరడానికి కొన్ని గంటలు పట్టవచ్చు."
 
@@ -1684,6 +1688,10 @@ msgstr "ఆటోమేటిక్‌గా"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "ఆటోసేవ్‌లు సెషన్‌ల వారీగా సమూహం చేయబడతాయి మరియు 90 రోజుల పాటు ఉంచబడతాయి. పేరు పెట్టబడిన సంస్కరణలు మీరు వాటిని తొలగించే వరకు ఉంచబడతాయి. పునరుద్ధరించడం ప్రస్తుత స్థితిని ముందుగా సేవ్ చేస్తుంది."
 
+#: src/features/share/custom-domain.tsx
+msgid "Available"
+msgstr "అందుబాటులో ఉంది"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "భారీ లెటర్-స్పేసింగ్ ఎఫెక్ట్‌లను నివారించి, తిరిగి ఎగుమతి చేయండి."
@@ -2033,7 +2041,7 @@ msgstr "మళ్లీ తనిఖీ చేయి"
 msgid "Check another file"
 msgstr "మరొక ఫైల్‌ని తనిఖీ చేయండి"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Check DNS"
 msgstr "DNSను తనిఖీ చేయండి"
 
@@ -2307,6 +2315,10 @@ msgstr "మూసివేయబడింది: {closed}"
 msgid "Coach"
 msgstr "కోచ్"
 
+#: src/features/share/custom-domain.tsx
+msgid "Code copied"
+msgstr "కోడ్ కాపీ చేయబడింది"
+
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx
 msgid "Color"
@@ -2389,9 +2401,18 @@ msgid "Confirm the time with {contact} before adding a new interview."
 msgstr "కొత్త ఇంటర్వ్యూను జోడించే ముందు {contact}తో సమయాన్ని నిర్ధారించండి."
 
 #: src/features/assistant/provider.tsx
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connect"
 msgstr "కనెక్ట్ చేయండి"
+
+#. placeholder {0}: domain.hostname
+#: src/features/share/custom-domain.tsx
+msgid "Connect {0}"
+msgstr "{0}ను కనెక్ట్ చేయండి"
+
+#: src/features/share/custom-domain.tsx
+msgid "Connect {domain}"
+msgstr "{domain}ను కనెక్ట్ చేయండి"
 
 #: src/features/ai/web-access.tsx
 msgid "Connect a service"
@@ -2433,7 +2454,7 @@ msgstr "మీ రెజ్యూమ్‌లతో రాయడం, ఉద్�
 msgid "Connected · {milliseconds} ms"
 msgstr "కనెక్ట్ చేయబడింది · {milliseconds} ms"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "కనెక్ట్ అయింది. మీ డొమైన్ మీ ప్రాథమిక రెజ్యూమ్‌ను తెరుస్తుంది."
 
@@ -2520,9 +2541,17 @@ msgstr "సంభాషణలు లోడ్ కాలేదు."
 msgid "Cooking"
 msgstr "సిద్ధం చేస్తోంది"
 
+#: src/features/share/custom-domain.tsx
+msgid "Copied"
+msgstr "కాపీ చేయబడింది"
+
 #: src/features/design/advanced.tsx
 msgid "Copied to clipboard"
 msgstr "క్లిప్‌బోర్డ్‌కి కాపీ చేయబడింది"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copies it"
+msgstr "వచనాన్ని కాపీ చేస్తుంది"
 
 #: src/features/share/link.tsx
 msgid "Copy"
@@ -2535,6 +2564,10 @@ msgstr "ఉద్యోగం కోసం రెజ్యూమేని కా
 #: src/features/workspace/tabs/apply.tsx
 msgid "Copy answers"
 msgstr "సమాధానాలను కాపీ చేయి"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copy code"
+msgstr "కోడ్‌ను కాపీ చేయండి"
 
 #: src/features/document-menu/index.tsx
 msgid "Copy created"
@@ -3476,7 +3509,7 @@ msgstr "ఈ ఉద్యోగం కోసం పత్రాలు"
 msgid "Documents you move here stay for 30 days."
 msgstr "మీరు ఇక్కడికి తరలించే పత్రాలు 30 రోజులు ఉంటాయి."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "డొమైన్ కనెక్ట్ అయింది"
 
@@ -4126,8 +4159,8 @@ msgstr "ఫాంట్ బరువులు"
 msgid "For"
 msgstr "కోసం"
 
-#. placeholder {0}: current.target
-#: src/features/share/web-page.tsx
+#. placeholder {0}: domain.target
+#: src/features/share/custom-domain.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com వంటి రూట్ డొమైన్ కోసం, CNAMEకి బదులుగా {0} చిరునామాలతో A మరియు AAAA రికార్డ్‌లను ఉపయోగించండి."
 
@@ -4939,6 +4972,10 @@ msgstr "భాషలు"
 msgid "Larger text"
 msgstr "పెద్ద అక్షరాలు"
 
+#: src/features/share/custom-domain.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "చివరిగా {lastChecked} క్రితం తనిఖీ చేయబడింది"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Last edited"
@@ -5483,6 +5520,10 @@ msgstr "రెజ్యూమేతో సరిపోలుతోంది"
 msgid "Matching your facts"
 msgstr "మీ వాస్తవాలను సరిపోలుస్తోంది"
 
+#: src/features/share/custom-domain.tsx
+msgid "May be available"
+msgstr "అందుబాటులో ఉండవచ్చు"
+
 #: src/features/search/search-screen.tsx
 msgid "MCP"
 msgstr "MCP"
@@ -5712,6 +5753,11 @@ msgstr "“దరఖాస్తు చేశారు” దశకు మార
 #: src/features/letters/share.tsx
 #: src/features/settings/profile.tsx
 #: src/features/write/fields.ts
+msgid "Name"
+msgstr "పేరు"
+
+#: src/features/share/custom-domain.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "పేరు"
 
@@ -6111,6 +6157,10 @@ msgstr "ఇంకా దరఖాస్తు చేయలేదు"
 #: src/features/share/web-page.tsx
 msgid "Not available while the resume needs a password."
 msgstr "రెజ్యూమ్‌కు పాస్‌వర్డ్ అవసరమైనప్పుడు అందుబాటులో ఉండదు."
+
+#: src/features/share/custom-domain.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "ఇంకా కనెక్ట్ కాలేదు. మీరు డొమైన్‌ను నిర్వహించే చోట దాని DNS రికార్డ్‌లను జోడించి, ఆపై తనిఖీ చేయండి."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -7372,6 +7422,10 @@ msgstr "24 గంటల ముందు బ్రీఫింగ్‌ను ర
 msgid "Refresh the briefing on the morning of"
 msgstr "ఇంటర్వ్యూ రోజు ఉదయం బ్రీఫింగ్‌ను రిఫ్రెష్ చేయి"
 
+#: src/features/share/custom-domain.tsx
+msgid "Register at OlaCV"
+msgstr "OlaCVలో రిజిస్టర్ చేయండి"
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "బిగ్గరగా రిహార్సల్ చేయి"
@@ -7441,7 +7495,7 @@ msgstr "రిమైండర్‌లు ఇక్కడ కనిపిస్�
 msgid "Remote"
 msgstr "రిమోట్"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "తొలగించు"
@@ -8509,6 +8563,10 @@ msgstr "మీ గత ఉద్యోగ అన్వేషణలను చూ�
 msgid "Show details"
 msgstr "వివరాలను చూపించు"
 
+#: src/features/share/custom-domain.tsx
+msgid "Show DNS records"
+msgstr "DNS రికార్డ్‌లను చూపించు"
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "శీర్షికను చూపు"
@@ -9451,7 +9509,7 @@ msgstr "ప్రొవైడర్ సమాధానం ఇవ్వలేద�
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "కారణం అంతర్దృష్టుల కోసం ఉంచబడింది. లింక్ చేసిన పత్రాలు తాకబడవు."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "రికార్డ్‌లు ఇంకా కనిపించడం లేదు. తర్వాత మళ్లీ తనిఖీ చేయండి."
 
@@ -10420,6 +10478,10 @@ msgstr "మీ రెజ్యూమ్ టెంప్లేట్ మరియ
 msgid "Uzbek"
 msgstr "ఉజ్‌బెక్"
 
+#: src/features/share/custom-domain.tsx
+msgid "Value"
+msgstr "విలువ"
+
 #: src/features/ats-checker/messages.ts
 msgid "Vary the openings so the section does not read as boilerplate."
 msgstr "విభాగం బాయిలర్‌ప్లేట్‌గా చదవబడకుండా ఉండేలా ప్రారంభాలను మార్చండి."
@@ -10979,7 +11041,7 @@ msgstr "మీ తేదీలు అనేక వేర్వేరు రూ�
 msgid "Your document was saved. Review it in the editor."
 msgstr "మీ పత్రం సేవ్ చేయబడింది. ఎడిటర్‌లో రివ్యూ చేయండి."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Your domain"
 msgstr "మీ డొమైన్"
 
@@ -11035,6 +11097,10 @@ msgstr "మీ పేరు"
 #: src/features/letters/write.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "మీ పేరు మరియు సంప్రదింపు వివరాలు రెజ్యూమ్ నుండి వచ్చాయి."
+
+#: src/features/share/custom-domain.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code {CODE} takes 50% off the first year."
+msgstr "మీ పేరే మీ చిరునామా, .cv రిజిస్ట్రీ అయిన OlaCV నుండి. {CODE} కోడ్ మొదటి సంవత్సరానికి 50% తగ్గింపు ఇస్తుంది."
 
 #: src/features/check/issues.ts
 msgid "Your name is missing"

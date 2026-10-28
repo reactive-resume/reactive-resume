@@ -487,6 +487,14 @@ msgstr "Yalnız {company}"
 msgid "{connection} didn't respond."
 msgstr "{connection} cavab vermədi."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr "İldə {cost}"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr "İlk il {cost}"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# girişi} other {# girişləri}}"
@@ -725,10 +733,6 @@ msgstr "{stars, plural, one {GitHub‑da Reactive Resume-a ulduz verin, # ulduz}
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# hekayə} other {# hekayə}}"
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} mövcud ola bilər. Özünüzünkünü burada əldə edin →"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1419,7 +1423,7 @@ msgstr "{name}@example.com kimi @-dan sonra domen əlavə edin"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com kimi domen sonunu əlavə edin"
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Bu qeydləri domeni idarə etdiyiniz yerdə əlavə edin, sonra yoxlayın. Dəyişikliklərin hamıya çatması bir neçə saat çəkə bilər."
 
@@ -2144,6 +2148,10 @@ msgstr "avtomatik saxlanıldı"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "Avtomatik saxlamalar sessiyaya görə qruplaşdırılır və 90 gün saxlanılır. Adlandırılmış versiyalar siz onları silənə qədər saxlanılır. Bərpa ilk növbədə cari vəziyyəti saxlayır."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr "Boşdur"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "Ağır hərflərarası boşluq effektlərindən çəkinin, sonra yenidən ixrac edin."
@@ -2567,6 +2575,7 @@ msgid "Check any PDF, no account needed"
 msgstr "Hər hansı PDF yoxlayın, hesaba ehtiyac yoxdur"
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr "DNS-i yoxla"
 
@@ -2784,6 +2793,7 @@ msgstr "Müştəri ID"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2965,6 +2975,15 @@ msgstr "Bu gün saat {time} üçün video görüşü təsdiqləyir."
 msgid "Connect"
 msgstr "Qoşul"
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr "{0} domenini qoşun"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr "{domain} domenini qoşun"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "Xidmətə qoşulun"
@@ -3138,6 +3157,7 @@ msgstr "Bir işlə bağlı söhbətlər onun iş sahəsində saxlanılır."
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3145,10 +3165,15 @@ msgstr "Kopyalandı"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
 msgstr "Kopyala"
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
+msgstr "Kopyala: {value}"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
@@ -3298,6 +3323,7 @@ msgstr "Transkripti kopyalamaq mümkün olmadı. Yenidən cəhd edin."
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "Mübadilə buferinə kopyalamaq mümkün olmadı. Yenidən cəhd edin."
 
@@ -5255,7 +5281,7 @@ msgid "For"
 msgstr "üçün"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com kimi kök domen üçün CNAME əvəzinə {0} ünvanları ilə A və AAAA qeydlərindən istifadə edin."
 
@@ -6418,6 +6444,10 @@ msgstr "Dillər"
 msgid "Last changed in {0}"
 msgstr "Sonuncu dəfə {0}-da dəyişdirildi"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "Son yoxlama: {lastChecked} əvvəl"
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7054,6 +7084,10 @@ msgstr "Resume uyğunluğu"
 msgid "Matching your facts"
 msgstr "Faktlarınız uyğunlaşdırılır"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr "Boş ola bilər"
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr "Bəlkə sonra"
@@ -7310,6 +7344,11 @@ msgstr "Mənim vəzifəm dəstək işini artırmadan səbəbini tapmaq idi."
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+msgid "Name"
+msgstr "Ad"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "Ad"
 
@@ -7759,6 +7798,10 @@ msgstr "CV parol tələb etdiyi müddətdə əlçatan deyil."
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "Qoşulmamışdır"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "Hələ qoşulmayıb. Domeni idarə etdiyiniz yerdə onun DNS qeydlərini əlavə edin, sonra yoxlayın."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -9339,6 +9382,10 @@ msgstr "Brifinqi 24 saat əvvəl yenilə"
 msgid "Refresh the briefing on the morning of"
 msgstr "Brifinqi həmin günün səhəri yenilə"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr "OlaCV-də qeydiyyata alın"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "Səsli məşq et"
@@ -10617,6 +10664,10 @@ msgstr "Bütün növləri göstər"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "Şou bağlandı"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
+msgstr "DNS qeydlərini göstərin"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -12431,6 +12482,11 @@ msgstr "İki addımlı doğrulama yandırıldı"
 msgid "Type"
 msgstr "Növ"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr "Növ"
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr "Təsdiq etmək üçün <0>{CONFIRMATION}</0> yazın"
@@ -12809,6 +12865,10 @@ msgstr "Özbək"
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
 msgstr "Qiymətləndirmə və payın sulandırılması qeyri-müəyyəndir"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
+msgstr "Dəyər"
 
 #: src/features/career/offers.tsx
 msgid "Value uncertain"
@@ -13653,6 +13713,10 @@ msgstr "Adınız"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "Adınız və əlaqə məlumatlarınız rezyumedən gəlir."
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
+msgstr "Adınız ünvanınız kimi, .cv reyestri olan OlaCV-dən. <0/> kodu ilk il üçün 50% endirim verir."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."

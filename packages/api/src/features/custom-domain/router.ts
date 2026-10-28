@@ -2,6 +2,7 @@ import z from "zod";
 import { protectedProcedure } from "../../context";
 import { accountRateLimit } from "../../middleware/rate-limit";
 import { customDomainService } from "./service";
+import { suggestCvDomain } from "./suggestion";
 
 const route = { tags: ["Custom Domain"] };
 const errors = {
@@ -13,11 +14,43 @@ const status = z.object({
 	target: z.string().describe("The host the domain's CNAME record points at."),
 	txtName: z.string().describe("Where the TXT record that proves ownership goes."),
 	txtValue: z.string().describe("The TXT record's value."),
+	records: z
+		.array(
+			z.object({
+				type: z.enum(["A", "AAAA", "CNAME", "TXT"]),
+				name: z.string().describe("The record's full host name."),
+				value: z.string(),
+			}),
+		)
+		.describe(
+			"Every record to add: the TXT record, and a CNAME to the target, or for a root domain A and AAAA records with its addresses.",
+		),
 	verified: z.boolean().describe("Whether DNS proved ownership and the domain opens the primary resume."),
 	lastCheckedAt: z.date().nullable().describe("When DNS was last checked."),
 });
 
 export const customDomainRouter = {
+	suggestion: protectedProcedure
+		.route({ ...route, tags: ["Internal"], method: "GET", path: "/custom-domain/suggestion" })
+		.input(z.object({}).optional())
+		.use(accountRateLimit)
+		.output(
+			z
+				.object({
+					domain: z.string(),
+					checked: z.boolean().describe("Whether OlaCV confirmed the domain is free to register."),
+					price: z
+						.object({
+							amount: z.number().describe("The registration fee, for the first year."),
+							renewal: z.number().nullable().describe("Each later year's fee, when OlaCV says."),
+							currency: z.string(),
+						})
+						.nullable(),
+				})
+				.nullable(),
+		)
+		.handler(({ context }) => suggestCvDomain(context.user.id)),
+
 	get: protectedProcedure
 		.route({
 			...route,

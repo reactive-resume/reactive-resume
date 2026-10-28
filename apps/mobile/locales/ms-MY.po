@@ -460,6 +460,14 @@ msgstr "{company} · {tabName}"
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# dokumen dikemas kini} other {# dokumen dikemas kini}}"
 
+#: src/features/share/custom-domain.tsx
+msgid "{cost} a year"
+msgstr "{cost} setahun"
+
+#: src/features/share/custom-domain.tsx
+msgid "{cost} the first year"
+msgstr "{cost} untuk tahun pertama"
+
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# lajur} other {# lajur}}"
@@ -613,10 +621,6 @@ msgstr "{skipped, plural, one {# suntingan tidak dapat diterapkan: teksnya berub
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, other {# cerita}}"
-
-#: src/features/share/web-page.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} mungkin tersedia. Dapatkan milik anda di sini →"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1085,7 +1089,7 @@ msgstr "Tambahkan domain selepas @, seperti {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Tambahkan pengakhiran domain, seperti {domain}.com"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Tambahkan rekod ini di tempat anda mengurus domain, kemudian semak. Perubahan boleh mengambil masa beberapa jam untuk sampai kepada semua orang."
 
@@ -1684,6 +1688,10 @@ msgstr "Secara automatik"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "Autosimpan dikumpulkan mengikut sesi dan disimpan selama 90 hari. Versi bernama disimpan sehingga anda memadamkannya. Pemulihan menyimpan keadaan semasa terlebih dahulu."
 
+#: src/features/share/custom-domain.tsx
+msgid "Available"
+msgstr "Tersedia"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "Elakkan kesan jarak huruf yang berat, kemudian eksport semula."
@@ -2033,7 +2041,7 @@ msgstr "Semak semula"
 msgid "Check another file"
 msgstr "Semak fail lain"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Check DNS"
 msgstr "Semak DNS"
 
@@ -2307,6 +2315,10 @@ msgstr "Ditutup: {closed}"
 msgid "Coach"
 msgstr "Jurulatih"
 
+#: src/features/share/custom-domain.tsx
+msgid "Code copied"
+msgstr "Kod disalin"
+
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx
 msgid "Color"
@@ -2389,9 +2401,18 @@ msgid "Confirm the time with {contact} before adding a new interview."
 msgstr "Sahkan masa dengan {contact} sebelum menambah temu duga baharu."
 
 #: src/features/assistant/provider.tsx
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connect"
 msgstr "Sambung"
+
+#. placeholder {0}: domain.hostname
+#: src/features/share/custom-domain.tsx
+msgid "Connect {0}"
+msgstr "Sambung {0}"
+
+#: src/features/share/custom-domain.tsx
+msgid "Connect {domain}"
+msgstr "Sambung {domain}"
 
 #: src/features/ai/web-access.tsx
 msgid "Connect a service"
@@ -2433,7 +2454,7 @@ msgstr "Sambungkan alat yang anda gunakan untuk menulis, mencari pekerjaan dan b
 msgid "Connected · {milliseconds} ms"
 msgstr "Bersambung · {milliseconds} ms"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "Bersambung. Domain anda membuka resume utama anda."
 
@@ -2520,9 +2541,17 @@ msgstr "Perbualan tidak dapat dimuatkan."
 msgid "Cooking"
 msgstr "Memasak"
 
+#: src/features/share/custom-domain.tsx
+msgid "Copied"
+msgstr "disalin"
+
 #: src/features/design/advanced.tsx
 msgid "Copied to clipboard"
 msgstr "Disalin ke papan keratan"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copies it"
+msgstr "Menyalin teks"
 
 #: src/features/share/link.tsx
 msgid "Copy"
@@ -2535,6 +2564,10 @@ msgstr "Salin resume untuk kerja"
 #: src/features/workspace/tabs/apply.tsx
 msgid "Copy answers"
 msgstr "Salin jawapan"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copy code"
+msgstr "Salin kod"
 
 #: src/features/document-menu/index.tsx
 msgid "Copy created"
@@ -3476,7 +3509,7 @@ msgstr "Dokumen untuk kerja ini"
 msgid "Documents you move here stay for 30 days."
 msgstr "Dokumen yang anda alihkan ke sini kekal selama 30 hari."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "Domain bersambung"
 
@@ -4126,8 +4159,8 @@ msgstr "Berat fon"
 msgid "For"
 msgstr "Untuk"
 
-#. placeholder {0}: current.target
-#: src/features/share/web-page.tsx
+#. placeholder {0}: domain.target
+#: src/features/share/custom-domain.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "Untuk domain akar seperti example.com, gunakan rekod A dan AAAA dengan alamat {0} dan bukannya CNAME."
 
@@ -4939,6 +4972,10 @@ msgstr "Bahasa"
 msgid "Larger text"
 msgstr "Teks lebih besar"
 
+#: src/features/share/custom-domain.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "Kali terakhir disemak {lastChecked} lalu"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Last edited"
@@ -5483,6 +5520,10 @@ msgstr "Memadankan resume"
 msgid "Matching your facts"
 msgstr "Memadankan fakta anda"
 
+#: src/features/share/custom-domain.tsx
+msgid "May be available"
+msgstr "Mungkin tersedia"
+
 #: src/features/search/search-screen.tsx
 msgid "MCP"
 msgstr "MCP"
@@ -5712,6 +5753,11 @@ msgstr "Beralih ke peringkat Sudah memohon akan meminta butiran yang anda hantar
 #: src/features/letters/share.tsx
 #: src/features/settings/profile.tsx
 #: src/features/write/fields.ts
+msgid "Name"
+msgstr "Nama"
+
+#: src/features/share/custom-domain.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "Nama"
 
@@ -6111,6 +6157,10 @@ msgstr "Belum dimohon lagi"
 #: src/features/share/web-page.tsx
 msgid "Not available while the resume needs a password."
 msgstr "Tidak tersedia semasa resume memerlukan kata laluan."
+
+#: src/features/share/custom-domain.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "Belum bersambung. Tambahkan rekod DNSnya di tempat anda mengurus domain, kemudian semak."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -7372,6 +7422,10 @@ msgstr "Segarkan taklimat 24 jam sebelum"
 msgid "Refresh the briefing on the morning of"
 msgstr "Segarkan taklimat pada pagi hari itu"
 
+#: src/features/share/custom-domain.tsx
+msgid "Register at OlaCV"
+msgstr "Daftar di OlaCV"
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "Raptai dengan suara"
@@ -7441,7 +7495,7 @@ msgstr "Peringatan muncul di sini. Salinan e-mel adalah pilihan dan memerlukan a
 msgid "Remote"
 msgstr "Jarak jauh"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "Alih keluar"
@@ -8509,6 +8563,10 @@ msgstr "Tunjukkan permohonan tertutup untuk melihat carian kerja anda yang lalu.
 msgid "Show details"
 msgstr "Tunjukkan butiran"
 
+#: src/features/share/custom-domain.tsx
+msgid "Show DNS records"
+msgstr "Tunjukkan rekod DNS"
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Tunjukkan tajuk"
@@ -9451,7 +9509,7 @@ msgstr "Pembekal tidak menjawab. Semak kunci, model dan pangkalan URL."
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Sebabnya disimpan untuk Insights. Dokumen yang dipautkan tidak disentuh."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "Rekod belum kelihatan lagi. Semak semula kemudian."
 
@@ -10420,6 +10478,10 @@ msgstr "Menggunakan templat dan Reka Bentuk resume anda, serta muat pada sebaran
 msgid "Uzbek"
 msgstr "Uzbek"
 
+#: src/features/share/custom-domain.tsx
+msgid "Value"
+msgstr "Nilai"
+
 #: src/features/ats-checker/messages.ts
 msgid "Vary the openings so the section does not read as boilerplate."
 msgstr "Pelbagaikan pembukaan supaya bahagian itu tidak dibaca seperti teks templat."
@@ -10979,7 +11041,7 @@ msgstr "Tarikh anda ditulis dalam beberapa cara berbeza."
 msgid "Your document was saved. Review it in the editor."
 msgstr "Dokumen anda telah disimpan. Semak ia dalam editor."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Your domain"
 msgstr "Domain anda"
 
@@ -11035,6 +11097,10 @@ msgstr "Nama anda"
 #: src/features/letters/write.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "Nama dan butiran hubungan anda datang daripada resume."
+
+#: src/features/share/custom-domain.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code {CODE} takes 50% off the first year."
+msgstr "Nama anda sebagai alamat anda, daripada OlaCV, pengendali domain .cv. Kod {CODE} memberikan diskaun 50% untuk tahun pertama."
 
 #: src/features/check/issues.ts
 msgid "Your name is missing"

@@ -199,12 +199,14 @@ export function Hero() {
 					name="pencil"
 					eager
 					wipe="var(--ld, 0)"
+					sizes="12vw"
 					className="start-[74vw] top-[max(15vh,110px)] w-[12vw] [transform:translate(calc(var(--mx,0)*-22px),calc(var(--my,0)*-14px))_rotate(calc(-22deg+var(--mx,0)*3deg))_translateY(calc(var(--p)*-20px))] [transition:mask-position_1.8s_var(--ease)_.9s,transform_.9s_var(--ease)]"
 				/>
 				<Doodle
 					name="paperclip"
 					eager
 					wipe="var(--ld, 0)"
+					sizes="(min-width: 900px) 6vw, 1px"
 					className="start-[4vw] top-[61%] w-[6vw] [transform:translate(calc(var(--mx,0)*22px),calc(var(--my,0)*16px))_rotate(calc(16deg+var(--mx,0)*-4deg))_translateY(calc(var(--p)*-30px))] [transition:mask-position_1.4s_var(--ease)_1.3s,transform_1.1s_var(--ease)] max-[900px]:hidden"
 				/>
 

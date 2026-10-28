@@ -199,6 +199,7 @@ export function Remember() {
 						<Doodle
 							name="paperclip"
 							wipe="clamp(0, (var(--p) - .3) / .2, 1)"
+							sizes="64px"
 							className="end-[10%] -top-[46px] z-2 w-[64px] rotate-[78deg]"
 						/>
 						<div

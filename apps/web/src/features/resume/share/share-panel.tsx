@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouteContext } from "@tanstack/react-router";
 import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";
-import { cvDomainFor, formatTimeSince, publicResumeUrl, summarizeViews } from "@reactive-resume/resume/sharing";
+import { formatTimeSince, publicResumeUrl, summarizeViews } from "@reactive-resume/resume/sharing";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
@@ -179,9 +179,7 @@ function AddressesSection({ origin, username, setting }: AddressesSectionProps) 
 					</span>
 					<CopyLinkButton url={shortLink} className="h-8 gap-1.5" />
 				</div>
-				{flags?.customDomains && (
-					<CustomDomainField suggestion={flags.olacvSuggestion ? cvDomainFor(username) : undefined} />
-				)}
+				{flags?.customDomains && <CustomDomainField suggest={flags.olacvSuggestion ?? false} />}
 			</section>
 		</>
 	);

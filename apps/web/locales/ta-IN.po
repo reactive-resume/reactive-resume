@@ -487,6 +487,14 @@ msgstr "{company} மட்டும்"
 msgid "{connection} didn't respond."
 msgstr "{connection} பதிலளிக்கவில்லை."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr "ஆண்டுக்கு {cost}"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr "முதல் ஆண்டுக்கு {cost}"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# நுழைவு} other {# உள்ளீடுகள்}}"
@@ -725,10 +733,6 @@ msgstr "{stars, plural, one {GitHub-இல் Reactive Resume-க்கு ந�
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# கதை} other {# கதைகள்}}"
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} கிடைக்கக்கூடும். உங்களுடையதை இங்கே பெறுங்கள் →"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1419,7 +1423,7 @@ msgstr "{name}@example.com போன்ற @க்குப் பிறகு �
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com போன்ற டொமைன் முடிவைச் சேர்க்கவும்"
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "டொமைனை நீங்கள் நிர்வகிக்கும் இடத்தில் இந்தப் பதிவுகளைச் சேர்த்து, பின்னர் சரிபார்க்கவும். மாற்றங்கள் அனைவரையும் சென்றடைய சில மணிநேரம் ஆகலாம்."
 
@@ -2144,6 +2148,10 @@ msgstr "தானாக சேமிக்கப்பட்டது"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "தானியங்கு சேமிப்புகள் அமர்வு வாரியாக தொகுக்கப்பட்டு 90 நாட்களுக்கு வைக்கப்படும். பெயரிடப்பட்ட பதிப்புகள் அவற்றை நீக்கும் வரை வைக்கப்படும். மீட்டமைப்பது தற்போதைய நிலையை முதலில் சேமிக்கிறது."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr "கிடைக்கிறது"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "கனமான எழுத்திடைவெளி விளைவுகளைத் தவிர்த்து, மீண்டும் ஏற்றுமதி செய்யவும்."
@@ -2567,6 +2575,7 @@ msgid "Check any PDF, no account needed"
 msgstr "எந்த PDF கோப்பையும் சரிபார்க்கலாம், கணக்கு தேவையில்லை"
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr "DNS-ஐச் சரிபார்"
 
@@ -2784,6 +2793,7 @@ msgstr "வாடிக்கையாளர் ஐடி"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2965,6 +2975,15 @@ msgstr "இன்று {time}-க்கு வீடியோ மூலம் �
 msgid "Connect"
 msgstr "இணைக்கவும்"
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr "{0}-ஐ இணைக்கவும்"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr "{domain}-ஐ இணைக்கவும்"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "ஒரு சேவையை இணைக்கவும்"
@@ -3138,6 +3157,7 @@ msgstr "ஒரு வேலை பற்றிய உரையாடல்கள
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3145,10 +3165,15 @@ msgstr "நகலெடுக்கப்பட்டது"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
 msgstr "நகலெடு"
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
+msgstr "{value}-ஐ நகலெடு"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
@@ -3298,6 +3323,7 @@ msgstr "டிரான்ஸ்கிரிப்டை நகலெடுக�
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "கிளிப்போர்டுக்கு நகலெடுக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
@@ -5255,7 +5281,7 @@ msgid "For"
 msgstr "க்கு"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com போன்ற ரூட் டொமைனுக்கு, CNAME-க்குப் பதிலாக {0} முகவரிகளுடன் A மற்றும் AAAA பதிவுகளைப் பயன்படுத்தவும்."
 
@@ -6418,6 +6444,10 @@ msgstr "மொழிகள்"
 msgid "Last changed in {0}"
 msgstr "கடைசியாக {0} இல் மாற்றப்பட்டது"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "கடைசியாக {lastChecked} முன்பு சரிபார்க்கப்பட்டது"
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7054,6 +7084,10 @@ msgstr "ரெஸ்யூமே பொருத்துதல்"
 msgid "Matching your facts"
 msgstr "உங்கள் உண்மைகளைப் பொருத்துகிறது"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr "கிடைக்கக்கூடும்"
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr "பிறகு பார்க்கலாம்"
@@ -7310,6 +7344,11 @@ msgstr "ஆதரவுப் பணியைக் கூட்டாமல்,
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+msgid "Name"
+msgstr "பெயர்"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "பெயர்"
 
@@ -7759,6 +7798,10 @@ msgstr "ரெஸ்யூமுக்குக் கடவுச்சொல�
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "இணைப்பு இல்லை"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "இன்னும் இணைக்கப்படவில்லை. டொமைனை நீங்கள் நிர்வகிக்கும் இடத்தில் அதன் DNS பதிவுகளைச் சேர்த்து, பின்னர் சரிபார்க்கவும்."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -9339,6 +9382,10 @@ msgstr "24 மணி நேரத்திற்கு முன் சுரு
 msgid "Refresh the briefing on the morning of"
 msgstr "நேர்காணல் நாளன்று காலை சுருக்கக் குறிப்பைப் புதுப்பி"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr "OlaCV-இல் பதிவுசெய்"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "சத்தமாக ஒத்திகை பார்"
@@ -10617,6 +10664,10 @@ msgstr "எல்லா வகைகளையும் காட்டு"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "காட்சி மூடப்பட்டது"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
+msgstr "DNS பதிவுகளைக் காட்டு"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -12431,6 +12482,11 @@ msgstr "இரண்டு-படி சரிபார்ப்பு இயக
 msgid "Type"
 msgstr "வகை"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr "வகை"
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr "உறுதிப்படுத்த <0>{CONFIRMATION}</0> என உள்ளிடவும்"
@@ -12809,6 +12865,10 @@ msgstr "உஸ்பெக்"
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
 msgstr "மதிப்பீடும் நீர்த்தலும் உறுதியற்றவை"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
+msgstr "மதிப்பு"
 
 #: src/features/career/offers.tsx
 msgid "Value uncertain"
@@ -13653,6 +13713,10 @@ msgstr "உங்கள் பெயர்"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "உங்கள் பெயர் மற்றும் தொடர்பு விவரங்கள் ரெஸ்யூமில் இருந்து வருகிறது."
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
+msgstr "உங்கள் பெயரே உங்கள் முகவரி, .cv பதிவகமான OlaCV-இலிருந்து. <0/> குறியீடு முதல் ஆண்டுக்கு 50% தள்ளுபடி தரும்."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."

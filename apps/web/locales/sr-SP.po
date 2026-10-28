@@ -487,6 +487,14 @@ msgstr "Само {company}"
 msgid "{connection} didn't respond."
 msgstr "Нема одговора: {connection}."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr "{cost} годишње"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr "{cost} за прву годину"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# унос} other {# уноси}}"
@@ -725,10 +733,6 @@ msgstr "{stars, plural, one {Дајте звездицу Reactive Resume-у на
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# прича} few {# приче} other {# прича}}"
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} је можда доступан. Набавите свој овде →"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1419,7 +1423,7 @@ msgstr "Додајте домен после @, на пример {name}@ека�
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Додајте завршетак домена, на пример {domain}.com"
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Додајте ове записе тамо где управљате доменом, па проверите. Може да прође неколико сати док измене не стигну до свих."
 
@@ -2144,6 +2148,10 @@ msgstr "аутоматски сачувана"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "Аутосаве су груписане по сесији и чувају се 90 дана. Именоване верзије се чувају док их не избришете. Враћање прво чува тренутно стање."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr "Слободан"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "Избегавајте изражене ефекте размака између слова, па поново извезите."
@@ -2567,6 +2575,7 @@ msgid "Check any PDF, no account needed"
 msgstr "Проверите било који PDF, налог није потребан"
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr "Провери DNS"
 
@@ -2784,6 +2793,7 @@ msgstr "ИД клијента"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2965,6 +2975,15 @@ msgstr "Потврђује {time} данас, видео-позивом."
 msgid "Connect"
 msgstr "Повежи"
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr "Повежи {0}"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr "Повежи {domain}"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "Повежите услугу"
@@ -3138,6 +3157,7 @@ msgstr "Разговори о једном послу налазе се у ње�
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3145,10 +3165,15 @@ msgstr "Копирано"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
 msgstr "Копирај"
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
+msgstr "Копирај {value}"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
@@ -3298,6 +3323,7 @@ msgstr "Није могуће копирати транскрипт. Покуш�
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "Није могуће копирати у привремену меморију. Покушајте поново."
 
@@ -5255,7 +5281,7 @@ msgid "For"
 msgstr "За"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "За основни домен као што је example.com, уместо CNAME записа користите A и AAAA записе са адресама за {0}."
 
@@ -6418,6 +6444,10 @@ msgstr "Језици"
 msgid "Last changed in {0}"
 msgstr "Последња измена у {0}"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "Последња провера пре {lastChecked}"
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7054,6 +7084,10 @@ msgstr "Усклађивање са резимеом"
 msgid "Matching your facts"
 msgstr "Поклапање ваших чињеница"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr "Можда је слободан"
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr "Можда касније"
@@ -7312,6 +7346,11 @@ msgstr "Мој задатак је био да откријем зашто, бе
 #: src/features/settings/ai/providers.tsx
 msgid "Name"
 msgstr "Име"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Name"
+msgstr "Назив"
 
 #. placeholder {0}: index + 1
 #: src/features/applications/components/interview-dialog.tsx
@@ -7759,6 +7798,10 @@ msgstr "Није доступно док резиме захтева лозин�
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "Није повезано"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "Још није повезан. Додајте његове DNS записе тамо где управљате доменом, па проверите."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -9339,6 +9382,10 @@ msgstr "Освежи брифинг 24 сата пре"
 msgid "Refresh the briefing on the morning of"
 msgstr "Освежи брифинг ујутру тог дана"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr "Региструј на OlaCV"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "Увежбајте наглас"
@@ -10617,6 +10664,10 @@ msgstr "Прикажи све врсте"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "Емисија затворена"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
+msgstr "Прикажи DNS записе"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -12431,6 +12482,11 @@ msgstr "Верификација у два корака је укључена"
 msgid "Type"
 msgstr "Тип"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr "Тип"
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr "Унесите <0>{CONFIRMATION}</0> да бисте потврдили"
@@ -12809,6 +12865,10 @@ msgstr "Узбечки"
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
 msgstr "Процена вредности и разводњавање су неизвесни"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
+msgstr "Вредност"
 
 #: src/features/career/offers.tsx
 msgid "Value uncertain"
@@ -13653,6 +13713,10 @@ msgstr "Ваше име"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "Ваше име и контакт подаци потичу из резимеа."
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
+msgstr "Ваше име као ваша адреса, преко OlaCV, регистра .cv домена. Са кодом <0/> добијате 50% попуста на прву годину."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."

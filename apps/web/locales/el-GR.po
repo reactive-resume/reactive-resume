@@ -487,6 +487,14 @@ msgstr "Μόνο {company}"
 msgid "{connection} didn't respond."
 msgstr "Η {connection} δεν απάντησε."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr "{cost} τον χρόνο"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr "{cost} τον πρώτο χρόνο"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {Εισαγωγή #} other {Εγγραφές #}}"
@@ -725,10 +733,6 @@ msgstr "{stars, plural, one {Δώστε αστέρι στο Reactive Resume στ
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# ιστορία} other {# ιστορίες}}"
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "Το {suggestion} ίσως είναι διαθέσιμο. Αποκτήστε το δικό σας εδώ →"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1419,7 +1423,7 @@ msgstr "Προσθέστε τον τομέα μετά το @, όπως {name}@ex
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Προσθέστε την κατάληξη τομέα, όπως {domain}.com"
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Προσθέστε αυτές τις εγγραφές εκεί όπου διαχειρίζεστε τον τομέα και μετά κάντε έλεγχο. Οι αλλαγές μπορεί να χρειαστούν μερικές ώρες για να φτάσουν σε όλους."
 
@@ -2144,6 +2148,10 @@ msgstr "αυτόματη αποθήκευση"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "Οι αυτόματες αποθηκεύσεις ομαδοποιούνται ανά περίοδο λειτουργίας και διατηρούνται για 90 ημέρες. Οι επώνυμες εκδόσεις διατηρούνται μέχρι να τις διαγράψετε. Η επαναφορά αποθηκεύει πρώτα την τρέχουσα κατάσταση."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr "Διαθέσιμο"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "Αποφύγετε έντονα εφέ απόστασης γραμμάτων και μετά επανεξαγάγετε."
@@ -2567,6 +2575,7 @@ msgid "Check any PDF, no account needed"
 msgstr "Ελέγξτε οποιοδήποτε PDF, δεν χρειάζεται λογαριασμός"
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr "Έλεγχος DNS"
 
@@ -2784,6 +2793,7 @@ msgstr "Αναγνωριστικό πελάτη"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2965,6 +2975,15 @@ msgstr "Επιβεβαιώνει σήμερα στις {time}, μέσω βίντ
 msgid "Connect"
 msgstr "Σύνδεση"
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr "Σύνδεση του {0}"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr "Σύνδεση του {domain}"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "Συνδέστε μια υπηρεσία"
@@ -3138,6 +3157,7 @@ msgstr "Οι συνομιλίες για μια συγκεκριμένη θέσ�
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3145,10 +3165,15 @@ msgstr "Αντιγράφηκε"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
 msgstr "Αντιγραφή"
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
+msgstr "Αντιγραφή {value}"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
@@ -3298,6 +3323,7 @@ msgstr "Δεν ήταν δυνατή η αντιγραφή της μεταγρα
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "Δεν ήταν δυνατή η αντιγραφή στο πρόχειρο. Προσπαθήστε ξανά."
 
@@ -5255,7 +5281,7 @@ msgid "For"
 msgstr "Για"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "Για έναν βασικό τομέα όπως το example.com, χρησιμοποιήστε εγγραφές A και AAAA με τις διευθύνσεις του {0} αντί για το CNAME."
 
@@ -6418,6 +6444,10 @@ msgstr "Γλώσσες"
 msgid "Last changed in {0}"
 msgstr "Τελευταία αλλαγή στο {0}"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "Τελευταίος έλεγχος πριν από {lastChecked}"
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7054,6 +7084,10 @@ msgstr "Ταίριασμα με το βιογραφικό"
 msgid "Matching your facts"
 msgstr "Αντιστοίχιση των γεγονότων σας"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr "Ίσως διαθέσιμο"
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr "Ίσως αργότερα"
@@ -7310,6 +7344,11 @@ msgstr "Η δουλειά μου ήταν να βρω το γιατί, χωρί�
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+msgid "Name"
+msgstr "Όνομα"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "Όνομα"
 
@@ -7759,6 +7798,10 @@ msgstr "Δεν είναι διαθέσιμο όσο το βιογραφικό α
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "Δεν είναι συνδεδεμένο"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "Δεν έχει συνδεθεί ακόμη. Προσθέστε τις εγγραφές DNS του εκεί όπου διαχειρίζεστε τον τομέα και μετά κάντε έλεγχο."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -9339,6 +9382,10 @@ msgstr "Ανανέωση του ενημερωτικού 24 ώρες πριν"
 msgid "Refresh the briefing on the morning of"
 msgstr "Ανανέωση του ενημερωτικού το πρωί της ημέρας"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr "Καταχώριση στο OlaCV"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "Πρόβα φωναχτά"
@@ -10617,6 +10664,10 @@ msgstr "Εμφάνιση όλων των τύπων"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "Εμφάνιση κλειστή"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
+msgstr "Εμφάνιση εγγραφών DNS"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -12431,6 +12482,11 @@ msgstr "Η επαλήθευση δύο βημάτων ενεργοποιήθηκ
 msgid "Type"
 msgstr "Τύπος"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr "Τύπος"
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr "Πληκτρολογήστε <0>{CONFIRMATION}</0> για επιβεβαίωση"
@@ -12809,6 +12865,10 @@ msgstr "Ουζμπεκικά"
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
 msgstr "Αβέβαιη αποτίμηση και διάχυση"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
+msgstr "Τιμή"
 
 #: src/features/career/offers.tsx
 msgid "Value uncertain"
@@ -13653,6 +13713,10 @@ msgstr "Το όνομά σας"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "Το όνομα και τα στοιχεία επικοινωνίας σας προέρχονται από ένα βιογραφικό."
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
+msgstr "Το όνομά σας ως διεύθυνσή σας, από το OlaCV, το μητρώο του .cv. Ο κωδικός <0/> δίνει έκπτωση 50% τον πρώτο χρόνο."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."

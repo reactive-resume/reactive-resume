@@ -487,6 +487,14 @@ msgstr "{company} 전용"
 msgid "{connection} didn't respond."
 msgstr "{connection}에서 응답이 없습니다."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr "연 {cost}"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr "첫해 {cost}"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# 항목} other {# 항목}}"
@@ -725,10 +733,6 @@ msgstr "{stars, plural, one {GitHub에서 Reactive Resume에 별표 주기, 별 
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, other {스토리 #개}}"
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} 도메인을 사용할 수 있을지도 모릅니다. 여기서 등록하세요 →"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1419,7 +1423,7 @@ msgstr "{name}@example.com처럼 @ 뒤에 도메인을 추가하세요."
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com와 같은 도메인 끝자리를 추가하세요."
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "도메인을 관리하는 곳에 이 레코드를 추가한 다음 확인하세요. 변경 사항이 모두에게 반영되기까지 몇 시간이 걸릴 수 있습니다."
 
@@ -2144,6 +2148,10 @@ msgstr "자동 저장됨"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "자동 저장은 세션별로 그룹화되어 90일 동안 보관됩니다. 명명된 버전은 삭제할 때까지 유지됩니다. 복원하면 현재 상태가 먼저 저장됩니다."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr "등록 가능"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "강한 자간 효과를 피한 뒤 다시 내보내세요."
@@ -2567,6 +2575,7 @@ msgid "Check any PDF, no account needed"
 msgstr "PDF를 확인하세요. 계정이 필요하지 않습니다."
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr "DNS 확인"
 
@@ -2784,6 +2793,7 @@ msgstr "클라이언트 ID"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2965,6 +2975,15 @@ msgstr "오늘 {time} 화상 면접을 확정합니다."
 msgid "Connect"
 msgstr "연결"
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr "{0} 연결"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr "{domain} 연결"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "서비스 연결"
@@ -3138,6 +3157,7 @@ msgstr "특정 일자리에 관한 대화는 해당 워크스페이스에 있습
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3145,10 +3165,15 @@ msgstr "복사됨"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
 msgstr "복사"
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
+msgstr "{value} 복사"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
@@ -3298,6 +3323,7 @@ msgstr "대화 기록을 복사할 수 없습니다. 다시 시도해 보세요.
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "클립보드에 복사할 수 없습니다. 다시 시도해 보세요."
 
@@ -5255,7 +5281,7 @@ msgid "For"
 msgstr "을 위한"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com 같은 루트 도메인에는 CNAME 대신 {0}의 주소로 A 및 AAAA 레코드를 사용하세요."
 
@@ -6418,6 +6444,10 @@ msgstr "언어"
 msgid "Last changed in {0}"
 msgstr "{0}에서 마지막으로 변경됨"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "마지막 확인: {lastChecked} 전"
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7054,6 +7084,10 @@ msgstr "이력서와 일치"
 msgid "Matching your facts"
 msgstr "사실과 맞춰 보는 중"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr "등록 가능할 수 있음"
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr "다음에 할게요"
@@ -7310,6 +7344,11 @@ msgstr "제 역할은 고객 지원 업무를 늘리지 않고 원인을 찾는 
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+msgid "Name"
+msgstr "이름"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "이름"
 
@@ -7759,6 +7798,10 @@ msgstr "이력서에 비밀번호가 필요한 동안에는 사용할 수 없습
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "연결되지 않음"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "아직 연결되지 않았습니다. 도메인을 관리하는 곳에 DNS 레코드를 추가한 다음 확인하세요."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -9339,6 +9382,10 @@ msgstr "24시간 전에 브리핑 새로 고침"
 msgid "Refresh the briefing on the morning of"
 msgstr "당일 아침에 브리핑 새로 고침"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr "OlaCV에서 등록"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "소리 내어 리허설"
@@ -10617,6 +10664,10 @@ msgstr "모든 유형 표시"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "쇼 종료됨"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
+msgstr "DNS 레코드 보기"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -12431,6 +12482,11 @@ msgstr "2단계 인증이 켜졌습니다"
 msgid "Type"
 msgstr "유형"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr "유형"
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr "확인하려면 <0>{CONFIRMATION}</0>를 입력하세요."
@@ -12809,6 +12865,10 @@ msgstr "우즈베크어"
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
 msgstr "기업 가치와 희석 불확실"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
+msgstr "값"
 
 #: src/features/career/offers.tsx
 msgid "Value uncertain"
@@ -13653,6 +13713,10 @@ msgstr "이름"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "귀하의 이름과 연락처 정보는 이력서에서 나옵니다."
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
+msgstr "내 이름을 그대로 주소로. .cv 레지스트리인 OlaCV에서 제공합니다. 코드 <0/> 사용 시 첫해 50% 할인됩니다."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."

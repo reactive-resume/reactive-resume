@@ -73,6 +73,7 @@ export function Design() {
 				<Doodle
 					name="curve"
 					wipe="clamp(0, (var(--p) - .03) / .2, 1)"
+					sizes="16vw"
 					className="start-[79vw] top-[62vh] w-[16vw] translate-y-[calc(var(--p)*-50px)] rotate-[8deg] [--doodle-fade:calc(1-var(--z))] max-[900px]:hidden"
 				/>
 

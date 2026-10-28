@@ -487,6 +487,14 @@ msgstr "仅限 {company}"
 msgid "{connection} didn't respond."
 msgstr "{connection} 没有响应。"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr "每年 {cost}"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr "首年 {cost}"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {#条目} other {# 条目}}"
@@ -725,10 +733,6 @@ msgstr "{stars, plural, other {在 GitHub 上为 Reactive Resume 加星，# 颗�
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, other {# 个故事}}"
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} 可能尚未被注册。在这里获取 →"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1419,7 +1423,7 @@ msgstr "在@后面添加域名，例如{name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "添加域名结尾，例如 {domain}.com"
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "请在管理域名的地方添加这些记录，然后进行检查。更改可能需要几个小时才能对所有人生效。"
 
@@ -2144,6 +2148,10 @@ msgstr "自动保存"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "自动保存按会话分组并保留 90 天。命名版本将一直保留，直到您将其删除。恢复首先保存当前状态。"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr "可注册"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "避免使用过大的字距效果，然后重新导出。"
@@ -2567,6 +2575,7 @@ msgid "Check any PDF, no account needed"
 msgstr "查询任意PDF，无需账户"
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr "检查 DNS"
 
@@ -2784,6 +2793,7 @@ msgstr "客户端 ID"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2965,6 +2975,15 @@ msgstr "确认今天 {time} 进行视频面试。"
 msgid "Connect"
 msgstr "连接"
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr "连接 {0}"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr "连接 {domain}"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "连接服务"
@@ -3138,6 +3157,7 @@ msgstr "关于某个职位的对话保存在其工作区中。"
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3145,10 +3165,15 @@ msgstr "已复制"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
 msgstr "复制"
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
+msgstr "复制 {value}"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
@@ -3298,6 +3323,7 @@ msgstr "无法复制文字记录。请重试。"
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "无法复制到剪贴板。请重试。"
 
@@ -5255,7 +5281,7 @@ msgid "For"
 msgstr "为了"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "对于 example.com 这样的根域名，请使用指向 {0} 地址的 A 和 AAAA 记录，而不是 CNAME。"
 
@@ -6418,6 +6444,10 @@ msgstr "语言"
 msgid "Last changed in {0}"
 msgstr "最后更改于 {0}"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "上次检查于 {lastChecked}前"
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7054,6 +7084,10 @@ msgstr "与简历相符"
 msgid "Matching your facts"
 msgstr "正在匹配您的事实"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr "可能可注册"
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr "以后再说"
@@ -7312,6 +7346,11 @@ msgstr "我的任务是找出原因，同时不增加支持工作。"
 #: src/features/settings/ai/providers.tsx
 msgid "Name"
 msgstr "姓名"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Name"
+msgstr "主机记录"
 
 #. placeholder {0}: index + 1
 #: src/features/applications/components/interview-dialog.tsx
@@ -7759,6 +7798,10 @@ msgstr "简历需要密码时不可用。"
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "未连接"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "尚未连接。请在管理域名的地方添加其 DNS 记录，然后进行检查。"
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -9339,6 +9382,10 @@ msgstr "提前 24 小时刷新简报"
 msgid "Refresh the briefing on the morning of"
 msgstr "当天早上刷新简报"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr "在 OlaCV 注册"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "大声排练"
@@ -10617,6 +10664,10 @@ msgstr "显示所有类型"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "显示已关闭"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
+msgstr "显示 DNS 记录"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -12431,6 +12482,11 @@ msgstr "两步验证已开启"
 msgid "Type"
 msgstr "类型"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr "记录类型"
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr "输入 <0>{CONFIRMATION}</0> 进行确认"
@@ -12809,6 +12865,10 @@ msgstr "乌兹别克语"
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
 msgstr "估值和稀释情况不确定"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
+msgstr "记录值"
 
 #: src/features/career/offers.tsx
 msgid "Value uncertain"
@@ -13653,6 +13713,10 @@ msgstr "您的姓名"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "您的姓名和联系方式来自简历。"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
+msgstr "以您的名字作为网址，由 .cv 域名注册局 OlaCV 提供。优惠码 <0/> 可减免首年费用的 50%。"
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."

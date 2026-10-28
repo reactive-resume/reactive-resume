@@ -50,6 +50,7 @@ export function Tailor() {
 				<Doodle
 					name="scissors"
 					wipe="clamp(0, (var(--p) - .08) / .2, 1)"
+					sizes="12vw"
 					className="start-[41vw] top-[74vh] w-[12vw] translate-y-[calc(var(--p)*-40px)] rotate-[12deg] max-[900px]:hidden"
 				/>
 

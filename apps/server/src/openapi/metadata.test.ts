@@ -95,3 +95,27 @@ describe("handleApiCatalog", () => {
 		expect(catalog.linkset[0]["service-desc"][0].href).toBe("https://rxresu.me/openapi.json");
 	});
 });
+
+describe("handleAgentCatalog", () => {
+	it("serves an Agentic Resource Discovery catalog that points agents at the MCP server card", async () => {
+		const { handleAgentCatalog } = await import("./metadata");
+
+		const response = handleAgentCatalog();
+		const catalog = await response.json();
+
+		// The earlier ai-catalog format Lighthouse validates: a closed root, a domain-anchored URN, and exactly one of
+		// `url` or `data`. Two to five representative queries keep the entry free of conformance warnings.
+		expect(Object.keys(catalog).toSorted()).toEqual(["entries", "host", "specVersion"]);
+		expect(catalog.specVersion).toBe("1.0");
+		expect(catalog.entries).toHaveLength(1);
+		const [entry] = catalog.entries;
+		expect(entry).toMatchObject({
+			identifier: "urn:air:rxresu.me:mcp:reactive-resume",
+			type: "application/mcp-server-card+json",
+			url: "https://rxresu.me/.well-known/mcp/server-card.json",
+		});
+		expect(entry).not.toHaveProperty("data");
+		expect(entry.representativeQueries.length).toBeGreaterThanOrEqual(2);
+		expect(entry.representativeQueries.length).toBeLessThanOrEqual(5);
+	});
+});

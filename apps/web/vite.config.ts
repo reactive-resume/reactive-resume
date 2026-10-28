@@ -45,6 +45,35 @@ async function prerenderPages() {
 		})
 		.join("");
 
+	// The page is readable before any script runs, so the app's JavaScript starts after the first contentful paint: the
+	// stylesheet, fonts and images get the bandwidth first, and lab tools stop counting the scripts toward that paint.
+	// The module preloads move into the same moment, so the entry's imports still download in parallel.
+	const entry = /<script type="module"[^>]*\ssrc="([^"]+)"[^>]*><\/script>\s*/.exec(shell);
+	if (!entry?.[1]) throw new Error("Missing the app's entry script in index.html");
+	const modulePreloads = [...shell.matchAll(/<link rel="modulepreload"[^>]*\shref="([^"]+)"[^>]*>\s*/g)];
+	const loadApp = `<script data-cfasync="false">(() => {
+	let started = false;
+	const start = () => {
+		if (started) return;
+		started = true;
+		for (const href of ${JSON.stringify(modulePreloads.map(([, href]) => href))})
+			document.head.append(Object.assign(document.createElement("link"), { rel: "modulepreload", href, crossOrigin: "" }));
+		import(${JSON.stringify(entry[1])});
+	};
+	try {
+		new PerformanceObserver((list) => {
+			if (list.getEntriesByName("first-contentful-paint").length) setTimeout(start);
+		}).observe({ type: "paint", buffered: true });
+	} catch {
+		start();
+	}
+	// A browser that reports no paint, or a tab opened in the background, starts anyway.
+	setTimeout(start, 3000);
+})();</script>`;
+	const pageShell = modulePreloads
+		.reduce((html, [tag]) => html.replace(tag, ""), shell.replace(entry[0], ""))
+		.replace("</body>", () => `${loadApp}</body>`);
+
 	await rm(prerenderOutDir, { recursive: true, force: true });
 
 	for (const name of prerenderedPages) {
@@ -52,7 +81,7 @@ async function prerenderPages() {
 
 		for (const locale of locales) {
 			const page = await renderPage(name, locale);
-			const html = shell
+			const html = pageShell
 				.replace("</head>", `${fontPreloads}</head>`)
 				.replace(/<html lang="[^"]*">/, () => `<html lang="${locale}" dir="${page.dir}">`)
 				.replace(/<title>[^<]*<\/title>/, () => `<title>${escapeHtml(page.title)}</title>`)
@@ -60,10 +89,7 @@ async function prerenderPages() {
 					/<meta\s+name="description"[^>]*>/,
 					() => `<meta name="description" content="${escapeHtml(page.description)}">`,
 				)
-				.replace('<div id="app"></div>', () => `<div id="app">${page.html}</div>`)
-				// The page is readable before any script runs, so the stylesheet, fonts and images go first.
-				.replaceAll('<link rel="modulepreload" ', '<link rel="modulepreload" fetchpriority="low" ')
-				.replace('<script type="module" ', '<script type="module" fetchpriority="low" ');
+				.replace('<div id="app"></div>', () => `<div id="app">${page.html}</div>`);
 			await writeFile(`${prerenderOutDir}/${name}/${locale}.html`, html);
 		}
 	}

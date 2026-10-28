@@ -487,6 +487,14 @@ msgstr "Vetëm {company}"
 msgid "{connection} didn't respond."
 msgstr "{connection} nuk u përgjigj."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr "{cost} në vit"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr "{cost} për vitin e parë"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {Hyrja #} other {# hyrjet}}"
@@ -725,10 +733,6 @@ msgstr "{stars, plural, one {Jepini një yll Reactive Resume në GitHub, # yll} 
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# histori} other {# histori}}"
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} mund të jetë i lirë. Merrni tuajin këtu →"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1419,7 +1423,7 @@ msgstr "Shtoni domenin pas @, si {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Shto mbarimin e domenit, si {domain}.com"
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Shtoni këto regjistrime aty ku menaxhoni domenin, pastaj kontrolloni. Ndryshimet mund të duan disa orë që të arrijnë te të gjithë."
 
@@ -2144,6 +2148,10 @@ msgstr "i ruajtur automatikisht"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "Ruajtjet automatike grupohen sipas sesioneve dhe mbahen për 90 ditë. Versionet me emër mbahen derisa t'i fshini ato. Rivendosja ruan së pari gjendjen aktuale."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr "I lirë"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "Shmangni efektet e rënda të hapësirës mes shkronjave, pastaj eksportoni përsëri."
@@ -2567,6 +2575,7 @@ msgid "Check any PDF, no account needed"
 msgstr "Kontrolloni çdo PDF, nuk nevojitet llogari"
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr "Kontrollo DNS"
 
@@ -2784,6 +2793,7 @@ msgstr "ID-ja e klientit"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2965,6 +2975,15 @@ msgstr "Konfirmon {time} sot, me video."
 msgid "Connect"
 msgstr "Lidhu"
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr "Lidh {0}"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr "Lidh {domain}"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "Lidhni një shërbim"
@@ -3138,6 +3157,7 @@ msgstr "Bisedat për një punë ndodhen në hapësirën e saj të punës."
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3145,10 +3165,15 @@ msgstr "E kopjuar"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
 msgstr "Kopjo"
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
+msgstr "Kopjo {value}"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
@@ -3298,6 +3323,7 @@ msgstr "Transkripti nuk mund të kopjohej. Provoni përsëri."
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "Nuk mund të kopjohej në clipboard. Provoni përsëri."
 
@@ -5255,7 +5281,7 @@ msgid "For"
 msgstr "Për"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "Për një domen rrënjë si example.com, përdorni regjistrimet A dhe AAAA me adresat e {0} në vend të CNAME."
 
@@ -6418,6 +6444,10 @@ msgstr "Gjuhët"
 msgid "Last changed in {0}"
 msgstr "Ndryshimi i fundit në {0}"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "Kontrolluar së fundi {lastChecked} më parë"
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7054,6 +7084,10 @@ msgstr "Përputhja e CV-së"
 msgid "Matching your facts"
 msgstr "Po përputhen faktet tuaja"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr "Mund të jetë i lirë"
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr "Ndoshta më vonë"
@@ -7310,6 +7344,11 @@ msgstr "Detyra ime ishte të zbuloja pse, pa shtuar punë për mbështetjen."
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+msgid "Name"
+msgstr "Emri"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "Emri"
 
@@ -7759,6 +7798,10 @@ msgstr "Nuk ofrohet ndërsa CV-ja kërkon fjalëkalim."
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "I palidhur"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "Nuk është lidhur ende. Shtoni regjistrimet e tij DNS aty ku menaxhoni domenin, pastaj kontrolloni."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -9339,6 +9382,10 @@ msgstr "Rifresko përmbledhjen 24 orë përpara"
 msgid "Refresh the briefing on the morning of"
 msgstr "Rifresko përmbledhjen në mëngjesin e ditës"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr "Regjistro te OlaCV"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "Ushtrohuni me zë"
@@ -10617,6 +10664,10 @@ msgstr "Shfaq të gjitha llojet"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "Shfaq të mbyllura"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
+msgstr "Shfaq regjistrimet DNS"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -12431,6 +12482,11 @@ msgstr "Verifikimi me dy hapa u aktivizua"
 msgid "Type"
 msgstr "Lloji"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr "Lloji"
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr "Shkruani <0>{CONFIRMATION}</0> për të konfirmuar"
@@ -12809,6 +12865,10 @@ msgstr "Uzbeke"
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
 msgstr "Vlerësimi dhe hollimi janë të pasigurt"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
+msgstr "Vlera"
 
 #: src/features/career/offers.tsx
 msgid "Value uncertain"
@@ -13653,6 +13713,10 @@ msgstr "Emri yt"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "Emri juaj dhe detajet e kontaktit vijnë nga një CV."
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
+msgstr "Emri juaj si adresa juaj, nga OlaCV, regjistri i domeneve .cv. Kodi <0/> jep 50% zbritje për vitin e parë."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."

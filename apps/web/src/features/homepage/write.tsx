@@ -62,6 +62,7 @@ export function Write() {
 				<Doodle
 					name="eraser"
 					wipe="clamp(0, (var(--p) - .02) / .2, 1)"
+					sizes="10vw"
 					className="start-[7vw] top-[36vh] w-[10vw] translate-y-[calc(var(--p)*-50px)] rotate-[-10deg] max-[900px]:hidden"
 				/>
 

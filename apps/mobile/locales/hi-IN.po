@@ -460,6 +460,14 @@ msgstr "{company} · {tabName}"
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# दस्तावेज़ अपडेट किया गया} other {# दस्तावेज़ अपडेट किए गए}}"
 
+#: src/features/share/custom-domain.tsx
+msgid "{cost} a year"
+msgstr "{cost} प्रति वर्ष"
+
+#: src/features/share/custom-domain.tsx
+msgid "{cost} the first year"
+msgstr "पहले साल {cost}"
+
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# कॉलम} other {# कॉलम}}"
@@ -613,10 +621,6 @@ msgstr "{skipped, plural, one {# संपादन नहीं किया �
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# कहानी} other {# कहानियाँ}}"
-
-#: src/features/share/web-page.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} उपलब्ध हो सकता है। अपना यहाँ पाएँ →"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1085,7 +1089,7 @@ msgstr "@ के बाद डोमेन जोड़ें, जैसे {nam
 msgid "Add the domain ending, like {domain}.com"
 msgstr "डोमेन का अंत जोड़ें, जैसे {domain}.com"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "ये रिकॉर्ड वहाँ जोड़ें जहाँ आप डोमेन प्रबंधित करते हैं, फिर जाँचें। बदलावों को सभी तक पहुँचने में कुछ घंटे लग सकते हैं।"
 
@@ -1684,6 +1688,10 @@ msgstr "अपने-आप"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "ऑटोसेव को सत्र के अनुसार समूहीकृत किया जाता है और 90 दिनों तक रखा जाता है। नामित संस्करण तब तक रखे जाते हैं जब तक आप उन्हें हटा नहीं देते। पुनर्स्थापित करने से पहले वर्तमान स्थिति सहेजी जाती है."
 
+#: src/features/share/custom-domain.tsx
+msgid "Available"
+msgstr "उपलब्ध"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "भारी लेटर-स्पेसिंग प्रभावों से बचें, फिर दोबारा एक्सपोर्ट करें।"
@@ -2033,7 +2041,7 @@ msgstr "फिर से जाँचें"
 msgid "Check another file"
 msgstr "किसी अन्य फ़ाइल की जाँच करें"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Check DNS"
 msgstr "DNS जाँचें"
 
@@ -2307,6 +2315,10 @@ msgstr "बंद: {closed}"
 msgid "Coach"
 msgstr "कोच"
 
+#: src/features/share/custom-domain.tsx
+msgid "Code copied"
+msgstr "कोड कॉपी किया गया"
+
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx
 msgid "Color"
@@ -2389,9 +2401,18 @@ msgid "Confirm the time with {contact} before adding a new interview."
 msgstr "नया साक्षात्कार जोड़ने से पहले {contact} के साथ समय की पुष्टि करें।"
 
 #: src/features/assistant/provider.tsx
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connect"
 msgstr "कनेक्ट करें"
+
+#. placeholder {0}: domain.hostname
+#: src/features/share/custom-domain.tsx
+msgid "Connect {0}"
+msgstr "{0} कनेक्ट करें"
+
+#: src/features/share/custom-domain.tsx
+msgid "Connect {domain}"
+msgstr "{domain} कनेक्ट करें"
 
 #: src/features/ai/web-access.tsx
 msgid "Connect a service"
@@ -2433,7 +2454,7 @@ msgstr "लेखन, नौकरी खोज और अपने बायो
 msgid "Connected · {milliseconds} ms"
 msgstr "कनेक्टेड · {milliseconds} एमएस"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "जुड़ गया। आपका डोमेन आपका प्राथमिक रेज़्यूमे खोलता है।"
 
@@ -2520,9 +2541,17 @@ msgstr "बातचीत लोड नहीं हो सकी."
 msgid "Cooking"
 msgstr "तैयार कर रहा है"
 
+#: src/features/share/custom-domain.tsx
+msgid "Copied"
+msgstr "कॉपी किया गया"
+
 #: src/features/design/advanced.tsx
 msgid "Copied to clipboard"
 msgstr "क्लिपबोर्ड पर कॉपी किया गया"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copies it"
+msgstr "इसे कॉपी करता है"
 
 #: src/features/share/link.tsx
 msgid "Copy"
@@ -2535,6 +2564,10 @@ msgstr "नौकरी के लिए बायोडाटा कॉपी �
 #: src/features/workspace/tabs/apply.tsx
 msgid "Copy answers"
 msgstr "जवाब कॉपी करें"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copy code"
+msgstr "कोड कॉपी करें"
 
 #: src/features/document-menu/index.tsx
 msgid "Copy created"
@@ -3476,7 +3509,7 @@ msgstr "इस नौकरी के लिए दस्तावेज़"
 msgid "Documents you move here stay for 30 days."
 msgstr "आप यहाँ जो दस्तावेज़ भेजते हैं, वे 30 दिनों तक रहते हैं।"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "डोमेन जुड़ गया"
 
@@ -4126,8 +4159,8 @@ msgstr "फ़ॉन्ट वज़न"
 msgid "For"
 msgstr "के लिए"
 
-#. placeholder {0}: current.target
-#: src/features/share/web-page.tsx
+#. placeholder {0}: domain.target
+#: src/features/share/custom-domain.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com जैसे रूट डोमेन के लिए, CNAME के बजाय {0} के पतों वाले A और AAAA रिकॉर्ड इस्तेमाल करें।"
 
@@ -4939,6 +4972,10 @@ msgstr "भाषाएँ"
 msgid "Larger text"
 msgstr "बड़ा टेक्स्ट"
 
+#: src/features/share/custom-domain.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "पिछली जाँच {lastChecked} पहले"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Last edited"
@@ -5483,6 +5520,10 @@ msgstr "बायोडाटा का मिलान"
 msgid "Matching your facts"
 msgstr "आपके तथ्यों का मिलान कर रहा है"
 
+#: src/features/share/custom-domain.tsx
+msgid "May be available"
+msgstr "शायद उपलब्ध हो"
+
 #: src/features/search/search-screen.tsx
 msgid "MCP"
 msgstr "MCP"
@@ -5712,6 +5753,11 @@ msgstr "आवेदन किया गया चरण में ले जा
 #: src/features/letters/share.tsx
 #: src/features/settings/profile.tsx
 #: src/features/write/fields.ts
+msgid "Name"
+msgstr "नाम"
+
+#: src/features/share/custom-domain.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "नाम"
 
@@ -6111,6 +6157,10 @@ msgstr "अभी तक आवेदन नहीं किया गया ह
 #: src/features/share/web-page.tsx
 msgid "Not available while the resume needs a password."
 msgstr "जब तक रेज़्यूमे के लिए पासवर्ड ज़रूरी है, तब तक उपलब्ध नहीं।"
+
+#: src/features/share/custom-domain.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "अभी जुड़ा नहीं है। इसके DNS रिकॉर्ड वहाँ जोड़ें जहाँ आप डोमेन प्रबंधित करते हैं, फिर जाँचें।"
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -7372,6 +7422,10 @@ msgstr "ब्रीफ़िंग 24 घंटे पहले रीफ़्
 msgid "Refresh the briefing on the morning of"
 msgstr "ब्रीफ़िंग उसी दिन सुबह रीफ़्रेश करें"
 
+#: src/features/share/custom-domain.tsx
+msgid "Register at OlaCV"
+msgstr "OlaCV पर रजिस्टर करें"
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "ज़ोर से रिहर्सल करें"
@@ -7441,7 +7495,7 @@ msgstr "रिमाइंडर यहाँ दिखाई देते ह�
 msgid "Remote"
 msgstr "रिमोट"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "निकालना"
@@ -8509,6 +8563,10 @@ msgstr "अपनी पिछली नौकरी खोजें देख�
 msgid "Show details"
 msgstr "विवरण दिखाएँ"
 
+#: src/features/share/custom-domain.tsx
+msgid "Show DNS records"
+msgstr "DNS रिकॉर्ड दिखाएँ"
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "शीर्षक दिखाएँ"
@@ -9451,7 +9509,7 @@ msgstr "प्रदाता ने उत्तर नहीं दिया. 
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "इसका कारण इनसाइट्स रखा गया है। लिंक किए गए दस्तावेज़ों को छुआ नहीं गया है."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "रिकॉर्ड अभी दिखाई नहीं दे रहे हैं। बाद में फिर से जाँचें।"
 
@@ -10420,6 +10478,10 @@ msgstr "आपके रेज़्यूमे के टेम्पलेट
 msgid "Uzbek"
 msgstr "उज़्बेक"
 
+#: src/features/share/custom-domain.tsx
+msgid "Value"
+msgstr "मान"
+
 #: src/features/ats-checker/messages.ts
 msgid "Vary the openings so the section does not read as boilerplate."
 msgstr "शुरुआत में बदलाव रखें ताकि सेक्शन घिसा-पिटा न लगे।"
@@ -10979,7 +11041,7 @@ msgstr "आपकी तारीखें कई अलग-अलग तरी�
 msgid "Your document was saved. Review it in the editor."
 msgstr "आपका दस्तावेज़ सहेजा गया था. संपादक में इसकी समीक्षा करें."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Your domain"
 msgstr "आपका डोमेन"
 
@@ -11035,6 +11097,10 @@ msgstr "आपका नाम"
 #: src/features/letters/write.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "आपका नाम और संपर्क विवरण एक बायोडाटा से आता है।"
+
+#: src/features/share/custom-domain.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code {CODE} takes 50% off the first year."
+msgstr "आपका नाम ही आपका पता, OlaCV से, जो .cv रजिस्ट्री है। कोड {CODE} से पहले साल पर 50% की छूट मिलती है।"
 
 #: src/features/check/issues.ts
 msgid "Your name is missing"

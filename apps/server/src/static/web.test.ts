@@ -27,6 +27,9 @@ vi.mock("@reactive-resume/env/server", () => ({
 
 const { handleWebApp } = await import("./web");
 
+const searchLink =
+	'<https://context7.com/api/v2/ask?siteKey=ask_b3fd9335a63f1b21b1a814ac>; rel="search"; type="text/plain"; title="Search rxresu.me"';
+
 describe("web app fallback classification", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -47,11 +50,9 @@ describe("web app fallback classification", () => {
 			);
 			expect(html).toContain('</blockquote><div id="app"></div>');
 			expect(html).not.toContain("Add .md");
-			const link =
-				'<https://context7.com/api/v2/ask?siteKey=ask_b3fd9335a63f1b21b1a814ac>; rel="search"; type="text/plain"; title="Search rxresu.me"';
-			expect(response.headers.get("Link")).toBe(link);
+			expect(response.headers.get("Link")).toBe(searchLink);
 			const head = await handleWebApp(new Request(`https://rxresu.me${path}`, { method: "HEAD" }));
-			expect(head.headers.get("Link")).toBe(link);
+			expect(head.headers.get("Link")).toBe(searchLink);
 			expect(await head.text()).toBe("");
 		},
 	);
@@ -158,7 +159,20 @@ describe("web app fallback classification", () => {
 		const scripts = response.headers.get("Content-Security-Policy")?.match(/script-src ([^;]*)/)?.[1];
 
 		expect(scripts).toBe(
-			`'self' 'wasm-unsafe-eval' 'sha256-${createHash("sha256").update("boot()").digest("base64")}'`,
+			`'self' 'wasm-unsafe-eval' https://static.cloudflareinsights.com 'sha256-${createHash("sha256").update("boot()").digest("base64")}'`,
+		);
+	});
+
+	it("tags pages for the release purge and preloads their stylesheet and fonts for Early Hints", async () => {
+		const response = await handleWebApp(
+			new Request("https://example.com/"),
+			async () =>
+				'<html><head><link rel="icon" href="/favicon.ico"><link rel="stylesheet" crossorigin href="/assets/index-a.css"><link rel="preload" as="font" type="font/woff2" href="/assets/figtree-b.woff2" crossorigin></head><body><div id="app"></div></body></html>',
+		);
+
+		expect(response.headers.get("Cache-Tag")).toBe("html");
+		expect(response.headers.get("Link")).toBe(
+			`${searchLink}, </assets/index-a.css>; rel=preload; as=style; crossorigin, </assets/figtree-b.woff2>; rel=preload; as=font; crossorigin`,
 		);
 	});
 

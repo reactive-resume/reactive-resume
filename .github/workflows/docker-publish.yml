@@ -456,11 +456,13 @@ jobs:
         run: |
           set -euo pipefail
 
+          # Only pages and fixed-name public files, which the server tags (apps/server/src/static/web.ts). Hashed
+          # /assets files never change, so they stay cached across releases.
           response=$(curl -fsS --max-time 10 --retry 3 --retry-delay 5 --retry-connrefused -X POST \
             "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
             -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
             -H "Content-Type: application/json" \
-            --data '{"purge_everything":true}')
+            --data '{"tags":["html","public"]}')
 
           if [ "$(jq -r '.success' <<< "$response")" != "true" ]; then
             echo "$response" | jq .

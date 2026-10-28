@@ -487,6 +487,14 @@ msgstr "{company} मात्र"
 msgid "{connection} didn't respond."
 msgstr "{connection} ले जवाफ दिएन।"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr "{cost} प्रति वर्ष"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr "पहिलो वर्ष {cost}"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# प्रविष्टि} other {# प्रविष्टिहरू}}"
@@ -725,10 +733,6 @@ msgstr "{stars, plural, one {GitHub मा Reactive Resume लाई स्ट�
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# कथा} other {# कथाहरू}}"
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} उपलब्ध हुन सक्छ। आफ्नो यहाँ लिनुहोस् →"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1419,7 +1423,7 @@ msgstr "@ पछि डोमेन थप्नुहोस्, जस्तै
 msgid "Add the domain ending, like {domain}.com"
 msgstr "डोमेनको अन्त्य थप्नुहोस्, जस्तै {domain}.com"
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "तपाईंले डोमेन व्यवस्थापन गर्ने ठाउँमा यी रेकर्डहरू थप्नुहोस्, अनि जाँच गर्नुहोस्। परिवर्तनहरू सबैसम्म पुग्न केही घण्टा लाग्न सक्छ।"
 
@@ -2144,6 +2148,10 @@ msgstr "स्वतः सुरक्षित"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "स्वत: बचतहरू सत्रद्वारा समूहबद्ध हुन्छन् र ९० दिनसम्म राखिन्छन्। तपाईंले तिनीहरूलाई नमेटाएसम्म नामित संस्करणहरू राखिन्छन्। पुनर्स्थापनाले पहिले हालको अवस्था बचत गर्छ।"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr "उपलब्ध"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "धेरै अक्षर-स्पेसिङ प्रभावबाट जोगिनुहोस्, त्यसपछि पुनः निर्यात गर्नुहोस्।"
@@ -2567,6 +2575,7 @@ msgid "Check any PDF, no account needed"
 msgstr "कुनै पनि PDF जाँच गर्नुहोस्, कुनै खाता आवश्यक छैन"
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr "DNS जाँच्नुहोस्"
 
@@ -2784,6 +2793,7 @@ msgstr "ग्राहक आईडी"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2965,6 +2975,15 @@ msgstr "आज {time} मा, भिडियोमार्फत पुष्�
 msgid "Connect"
 msgstr "जोड्नुहोस्"
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr "{0} जोड्नुहोस्"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr "{domain} जोड्नुहोस्"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "सेवा जडान गर्नुहोस्"
@@ -3138,6 +3157,7 @@ msgstr "एउटा जागिरबारेका कुराकानी�
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3145,10 +3165,15 @@ msgstr "प्रतिलिपि गरियो"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
 msgstr "प्रतिलिपि गर्नुहोस्"
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
+msgstr "{value} प्रतिलिपि गर्नुहोस्"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
@@ -3298,6 +3323,7 @@ msgstr "ट्रान्सक्रिप्ट प्रतिलिपि �
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "क्लिपबोर्डमा प्रतिलिपि गर्न सकिएन। पुन: प्रयास गर्नुहोस्।"
 
@@ -5255,7 +5281,7 @@ msgid "For"
 msgstr "को लागी"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com जस्तो मूल डोमेनका लागि CNAME को सट्टा {0} का ठेगानाहरूसहित A र AAAA रेकर्डहरू प्रयोग गर्नुहोस्।"
 
@@ -6418,6 +6444,10 @@ msgstr "भाषाहरू"
 msgid "Last changed in {0}"
 msgstr "पछिल्लो पटक {0} मा परिवर्तन भयो"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "अन्तिम पटक {lastChecked} अघि जाँच गरिएको"
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7054,6 +7084,10 @@ msgstr "रिजुमे मिल्दै"
 msgid "Matching your facts"
 msgstr "तपाईंका तथ्यहरू मिलाउँदै"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr "उपलब्ध हुन सक्छ"
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr "सायद पछि"
@@ -7310,6 +7344,11 @@ msgstr "मेरो काम सपोर्टको काम नबढा�
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+msgid "Name"
+msgstr "नाम"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "नाम"
 
@@ -7759,6 +7798,10 @@ msgstr "बायोडाटालाई पासवर्ड चाहिँ�
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "जडान गरिएको छैन"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "अझै जोडिएको छैन। तपाईंले डोमेन व्यवस्थापन गर्ने ठाउँमा यसका DNS रेकर्डहरू थप्नुहोस्, अनि जाँच गर्नुहोस्।"
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -9339,6 +9382,10 @@ msgstr "24 घण्टा अघि ब्रिफिङ रिफ्रेस
 msgid "Refresh the briefing on the morning of"
 msgstr "सोही दिन बिहान ब्रिफिङ रिफ्रेस गर्नुहोस्"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr "OlaCV मा दर्ता गर्नुहोस्"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "ठूलो स्वरमा रिहर्सल गर्नुहोस्"
@@ -10617,6 +10664,10 @@ msgstr "सबै प्रकार देखाउनुहोस्"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "शो बन्द"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
+msgstr "DNS रेकर्डहरू देखाउनुहोस्"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -12431,6 +12482,11 @@ msgstr "दुई-चरण प्रमाणिकरण सक्रिय �
 msgid "Type"
 msgstr "प्रकार"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr "प्रकार"
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr "पुष्टि गर्न <0>{CONFIRMATION}</0> टाइप गर्नुहोस्"
@@ -12809,6 +12865,10 @@ msgstr "उज्बेक"
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
 msgstr "मूल्याङ्कन र डाइलुसन अनिश्चित"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
+msgstr "मान"
 
 #: src/features/career/offers.tsx
 msgid "Value uncertain"
@@ -13653,6 +13713,10 @@ msgstr "तपाईंको नाम"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "तपाईंको नाम र सम्पर्क विवरण बायोडाटाबाट आउँछन्।"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
+msgstr "तपाईंको नाम नै तपाईंको ठेगाना, .cv रजिस्ट्री OlaCV बाट। <0/> कोडले पहिलो वर्ष 50% छुट दिन्छ।"
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."

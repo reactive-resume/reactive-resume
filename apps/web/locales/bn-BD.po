@@ -487,6 +487,14 @@ msgstr "শুধু {company}"
 msgid "{connection} didn't respond."
 msgstr "{connection} সাড়া দেয়নি।"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr "বছরে {cost}"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr "প্রথম বছর {cost}"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# এন্ট্রি} other {# এন্ট্রি}}"
@@ -725,10 +733,6 @@ msgstr "{stars, plural, one {GitHub-এ Reactive Resume-কে স্টার �
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {#টি গল্প} other {#টি গল্প}}"
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} পাওয়া যেতে পারে। আপনারটি এখানে নিন →"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1419,7 +1423,7 @@ msgstr "@ এর পরে ডোমেন যোগ করুন, যেমন 
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com এর মতো ডোমেনের শেষ যুক্ত করুন"
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "যেখানে আপনি ডোমেইন পরিচালনা করেন সেখানে এই রেকর্ডগুলো যোগ করুন, তারপর যাচাই করুন। পরিবর্তনগুলো সবার কাছে পৌঁছাতে কয়েক ঘণ্টা লাগতে পারে।"
 
@@ -2144,6 +2148,10 @@ msgstr "স্বয়ংক্রিয় সংরক্ষিত"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "অটোসেভগুলি সেশন অনুসারে গোষ্ঠীবদ্ধ হয় এবং 90 দিনের জন্য রাখা হয়। নামযুক্ত সংস্করণগুলি রাখা হয় যতক্ষণ না আপনি সেগুলি মুছে ফেলবেন৷ পুনরুদ্ধার করা প্রথমে বর্তমান অবস্থা সংরক্ষণ করে।"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr "উপলব্ধ"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "ভারী লেটার-স্পেসিং এফেক্ট এড়িয়ে চলুন, তারপর পুনরায় এক্সপোর্ট করুন।"
@@ -2567,6 +2575,7 @@ msgid "Check any PDF, no account needed"
 msgstr "যেকোনো PDF চেক করুন, কোনো অ্যাকাউন্টের প্রয়োজন নেই"
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr "DNS যাচাই করুন"
 
@@ -2784,6 +2793,7 @@ msgstr "ক্লায়েন্ট আইডি"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2965,6 +2975,15 @@ msgstr "আজ {time}-এ ভিডিও কলের সময় নিশ্
 msgid "Connect"
 msgstr "কনেক্ট করুন"
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr "{0} কনেক্ট করুন"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr "{domain} কনেক্ট করুন"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "একটি পরিষেবা সংযুক্ত করুন"
@@ -3138,6 +3157,7 @@ msgstr "একটি চাকরি নিয়ে কথোপকথনগু
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3145,10 +3165,15 @@ msgstr "কপি করা হয়েছে"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
 msgstr "কপি করুন"
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
+msgstr "{value} কপি করুন"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
@@ -3298,6 +3323,7 @@ msgstr "ট্রান্সক্রিপ্টটি কপি করা য
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "ক্লিপবোর্ডে কপি করা যায়নি। আবার চেষ্টা করুন।"
 
@@ -5255,7 +5281,7 @@ msgid "For"
 msgstr "জন্য"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com-এর মতো রুট ডোমেইনের জন্য CNAME-এর বদলে {0}-এর ঠিকানাসহ A ও AAAA রেকর্ড ব্যবহার করুন।"
 
@@ -6418,6 +6444,10 @@ msgstr "ভাষা"
 msgid "Last changed in {0}"
 msgstr "{0} এ সর্বশেষ পরিবর্তন করা হয়েছে"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "শেষ যাচাই {lastChecked} আগে"
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7054,6 +7084,10 @@ msgstr "জীবনবৃত্তান্ত ম্যাচিং"
 msgid "Matching your facts"
 msgstr "আপনার তথ্যের সাথে মেলানো হচ্ছে"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr "উপলব্ধ হতে পারে"
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr "হয়তো পরে"
@@ -7310,6 +7344,11 @@ msgstr "আমার কাজ ছিল সাপোর্টের কাজ �
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+msgid "Name"
+msgstr "নাম"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "নাম"
 
@@ -7759,6 +7798,10 @@ msgstr "জীবনবৃত্তান্তে পাসওয়ার্�
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "সংযুক্ত নয়"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "এখনও সংযুক্ত নয়। যেখানে আপনি ডোমেইন পরিচালনা করেন সেখানে এর DNS রেকর্ডগুলো যোগ করুন, তারপর যাচাই করুন।"
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -9339,6 +9382,10 @@ msgstr "24 ঘণ্টা আগে ব্রিফিং রিফ্রেশ
 msgid "Refresh the briefing on the morning of"
 msgstr "সেদিন সকালে ব্রিফিং রিফ্রেশ করুন"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr "OlaCV-তে নিবন্ধন করুন"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "জোরে মহড়া দিন"
@@ -10617,6 +10664,10 @@ msgstr "সব ধরন দেখান"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "শো বন্ধ"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
+msgstr "DNS রেকর্ড দেখান"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -12431,6 +12482,11 @@ msgstr "দ্বি-পদক্ষেপ যাচাইকরণ চালু
 msgid "Type"
 msgstr "টাইপ"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr "ধরন"
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr "নিশ্চিত করতে <0>{CONFIRMATION}</0> টাইপ করুন"
@@ -12809,6 +12865,10 @@ msgstr "উজবেক"
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
 msgstr "মূল্যায়ন ও ডাইলিউশন অনিশ্চিত"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
+msgstr "মান"
 
 #: src/features/career/offers.tsx
 msgid "Value uncertain"
@@ -13653,6 +13713,10 @@ msgstr "আপনার নাম"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "আপনার নাম এবং যোগাযোগের বিবরণ একটি জীবনবৃত্তান্ত থেকে আসে।"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
+msgstr "ঠিকানা হিসেবে আপনার নাম, .cv রেজিস্ট্রি OlaCV থেকে। কোড <0/> প্রথম বছরে 50% ছাড় দেয়।"
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."

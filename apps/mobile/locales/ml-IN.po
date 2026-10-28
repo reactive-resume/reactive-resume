@@ -460,6 +460,14 @@ msgstr "{company} · {tabName}"
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# പ്രമാണം അപ്‌ഡേറ്റ് ചെയ്‌തു} other {# പ്രമാണങ്ങൾ അപ്‌ഡേറ്റ് ചെയ്‌തു}}"
 
+#: src/features/share/custom-domain.tsx
+msgid "{cost} a year"
+msgstr "വർഷം {cost}"
+
+#: src/features/share/custom-domain.tsx
+msgid "{cost} the first year"
+msgstr "ആദ്യ വർഷം {cost}"
+
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# കോളം} other {# കോളങ്ങൾ}}"
@@ -613,10 +621,6 @@ msgstr "{skipped, plural, one {# എഡിറ്റ് സ്ഥാപിക്�
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# കഥ} other {# കഥകൾ}}"
-
-#: src/features/share/web-page.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} ലഭ്യമായേക്കാം. നിങ്ങളുടേത് ഇവിടെ നേടുക →"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1085,7 +1089,7 @@ msgstr "{name}@example.com പോലെ @ എന്നതിന് ശേഷം 
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com പോലെയുള്ള ഡൊമെയ്ൻ അവസാനം ചേർക്കുക"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "നിങ്ങൾ ഡൊമെയ്ൻ നിയന്ത്രിക്കുന്നിടത്ത് ഈ റെക്കോർഡുകൾ ചേർക്കുക, തുടർന്ന് പരിശോധിക്കുക. മാറ്റങ്ങൾ എല്ലാവരിലേക്കും എത്താൻ കുറച്ച് മണിക്കൂറുകൾ എടുത്തേക്കാം."
 
@@ -1684,6 +1688,10 @@ msgstr "സ്വയമേവ"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "ഓട്ടോസേവുകൾ സെഷൻ പ്രകാരം തരംതിരിക്കുകയും 90 ദിവസത്തേക്ക് സൂക്ഷിക്കുകയും ചെയ്യുന്നു. പേരിട്ട പതിപ്പുകൾ നിങ്ങൾ ഇല്ലാതാക്കുന്നത് വരെ സൂക്ഷിക്കും. പുനഃസ്ഥാപിക്കുന്നത് നിലവിലെ അവസ്ഥയെ ആദ്യം സംരക്ഷിക്കുന്നു."
 
+#: src/features/share/custom-domain.tsx
+msgid "Available"
+msgstr "ലഭ്യമാണ്"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "കനത്ത അക്ഷര അകലം ഒഴിവാക്കി, വീണ്ടും എക്സ്പോർട്ട് ചെയ്യുക."
@@ -2033,7 +2041,7 @@ msgstr "വീണ്ടും പരിശോധിക്കുക"
 msgid "Check another file"
 msgstr "മറ്റൊരു ഫയൽ പരിശോധിക്കുക"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Check DNS"
 msgstr "DNS പരിശോധിക്കുക"
 
@@ -2307,6 +2315,10 @@ msgstr "അടച്ചത്: {closed}"
 msgid "Coach"
 msgstr "കോച്ച്"
 
+#: src/features/share/custom-domain.tsx
+msgid "Code copied"
+msgstr "കോഡ് പകർത്തി"
+
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx
 msgid "Color"
@@ -2389,9 +2401,18 @@ msgid "Confirm the time with {contact} before adding a new interview."
 msgstr "പുതിയ അഭിമുഖം ചേർക്കുന്നതിന് മുമ്പ് {contact}-മായി സമയം സ്ഥിരീകരിക്കുക."
 
 #: src/features/assistant/provider.tsx
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connect"
 msgstr "കണക്റ്റ് ചെയ്യുക"
+
+#. placeholder {0}: domain.hostname
+#: src/features/share/custom-domain.tsx
+msgid "Connect {0}"
+msgstr "{0} കണക്റ്റ് ചെയ്യുക"
+
+#: src/features/share/custom-domain.tsx
+msgid "Connect {domain}"
+msgstr "{domain} കണക്റ്റ് ചെയ്യുക"
 
 #: src/features/ai/web-access.tsx
 msgid "Connect a service"
@@ -2433,7 +2454,7 @@ msgstr "എഴുതുന്നതിനും ജോലി തിരയുന�
 msgid "Connected · {milliseconds} ms"
 msgstr "കണക്റ്റുചെയ്തു · {milliseconds} ms"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "കണക്റ്റ് ചെയ്തു. നിങ്ങളുടെ ഡൊമെയ്ൻ നിങ്ങളുടെ പ്രാഥമിക റെസ്യൂമെ തുറക്കുന്നു."
 
@@ -2520,9 +2541,17 @@ msgstr "സംഭാഷണങ്ങൾ ലോഡ് ചെയ്യാനായ�
 msgid "Cooking"
 msgstr "തയ്യാറാക്കുന്നു"
 
+#: src/features/share/custom-domain.tsx
+msgid "Copied"
+msgstr "പകർത്തി"
+
 #: src/features/design/advanced.tsx
 msgid "Copied to clipboard"
 msgstr "ക്ലിപ്പ്ബോർഡിലേക്ക് പകർത്തി"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copies it"
+msgstr "ടെക്സ്റ്റ് പകർത്തുന്നു"
 
 #: src/features/share/link.tsx
 msgid "Copy"
@@ -2535,6 +2564,10 @@ msgstr "ഒരു ജോലിക്കായി ഒരു റെസ്യൂമ
 #: src/features/workspace/tabs/apply.tsx
 msgid "Copy answers"
 msgstr "ഉത്തരങ്ങൾ പകർത്തുക"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copy code"
+msgstr "കോഡ് പകർത്തുക"
 
 #: src/features/document-menu/index.tsx
 msgid "Copy created"
@@ -3476,7 +3509,7 @@ msgstr "ഈ ജോലിക്കുള്ള രേഖകൾ"
 msgid "Documents you move here stay for 30 days."
 msgstr "നിങ്ങൾ ഇവിടേക്ക് നീക്കുന്ന പ്രമാണങ്ങൾ 30 ദിവസം നിലനിൽക്കും."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "ഡൊമെയ്ൻ കണക്റ്റ് ചെയ്തു"
 
@@ -4126,8 +4159,8 @@ msgstr "ഫോണ്ട് വെയ്റ്റുകൾ"
 msgid "For"
 msgstr "വേണ്ടി"
 
-#. placeholder {0}: current.target
-#: src/features/share/web-page.tsx
+#. placeholder {0}: domain.target
+#: src/features/share/custom-domain.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com പോലുള്ള റൂട്ട് ഡൊമെയ്‌നിനായി, CNAME-ന് പകരം {0}-ന്റെ വിലാസങ്ങളുള്ള A, AAAA റെക്കോർഡുകൾ ഉപയോഗിക്കുക."
 
@@ -4939,6 +4972,10 @@ msgstr "ഭാഷകൾ"
 msgid "Larger text"
 msgstr "വലിയ അക്ഷരങ്ങൾ"
 
+#: src/features/share/custom-domain.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "അവസാനം പരിശോധിച്ചത് {lastChecked} മുമ്പ്"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Last edited"
@@ -5483,6 +5520,10 @@ msgstr "റെസ്യൂമെയുമായി പൊരുത്തപ്�
 msgid "Matching your facts"
 msgstr "നിങ്ങളുടെ വസ്തുതകളുമായി പൊരുത്തപ്പെടുത്തുന്നു"
 
+#: src/features/share/custom-domain.tsx
+msgid "May be available"
+msgstr "ലഭ്യമായേക്കാം"
+
 #: src/features/search/search-screen.tsx
 msgid "MCP"
 msgstr "MCP"
@@ -5712,6 +5753,11 @@ msgstr "“അപേക്ഷിച്ചു” എന്ന ഘട്ടത്�
 #: src/features/letters/share.tsx
 #: src/features/settings/profile.tsx
 #: src/features/write/fields.ts
+msgid "Name"
+msgstr "പേര്"
+
+#: src/features/share/custom-domain.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "പേര്"
 
@@ -6111,6 +6157,10 @@ msgstr "ഇതുവരെ അപേക്ഷിച്ചിട്ടില്�
 #: src/features/share/web-page.tsx
 msgid "Not available while the resume needs a password."
 msgstr "റെസ്യൂമെയ്ക്ക് പാസ്‌വേഡ് ആവശ്യമുള്ളപ്പോൾ ലഭ്യമല്ല."
+
+#: src/features/share/custom-domain.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "ഇതുവരെ കണക്റ്റ് ചെയ്തിട്ടില്ല. നിങ്ങൾ ഡൊമെയ്ൻ നിയന്ത്രിക്കുന്നിടത്ത് ഇതിന്റെ DNS റെക്കോർഡുകൾ ചേർക്കുക, തുടർന്ന് പരിശോധിക്കുക."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -7372,6 +7422,10 @@ msgstr "24 മണിക്കൂർ മുമ്പ് ബ്രീഫിംഗ�
 msgid "Refresh the briefing on the morning of"
 msgstr "അന്ന് രാവിലെ ബ്രീഫിംഗ് പുതുക്കുക"
 
+#: src/features/share/custom-domain.tsx
+msgid "Register at OlaCV"
+msgstr "OlaCV-യിൽ രജിസ്റ്റർ ചെയ്യുക"
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "ഉറക്കെ റിഹേഴ്സ് ചെയ്യുക"
@@ -7441,7 +7495,7 @@ msgstr "ഓർമ്മപ്പെടുത്തലുകൾ ഇവിടെ �
 msgid "Remote"
 msgstr "റിമോട്ട്"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "നീക്കം ചെയ്യുക"
@@ -8509,6 +8563,10 @@ msgstr "നിങ്ങളുടെ മുൻ ജോലി തിരയലുക
 msgid "Show details"
 msgstr "വിശദാംശങ്ങൾ കാണിക്കുക"
 
+#: src/features/share/custom-domain.tsx
+msgid "Show DNS records"
+msgstr "DNS റെക്കോർഡുകൾ കാണിക്കുക"
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "തലക്കെട്ട് കാണിക്കുക"
@@ -9451,7 +9509,7 @@ msgstr "ദാതാവ് ഉത്തരം നൽകിയില്ല. ക�
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "കാരണം ഇൻസൈറ്റുകൾക്കായി സൂക്ഷിച്ചിരിക്കുന്നു. ലിങ്ക് ചെയ്‌ത ഡോക്യുമെൻ്റുകൾ സ്പർശിക്കില്ല."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "റെക്കോർഡുകൾ ഇതുവരെ ദൃശ്യമല്ല. പിന്നീട് വീണ്ടും പരിശോധിക്കുക."
 
@@ -10420,6 +10478,10 @@ msgstr "നിങ്ങളുടെ റെസ്യൂമെയുടെ ടെ�
 msgid "Uzbek"
 msgstr "ഉസ്‌ബെക്ക്"
 
+#: src/features/share/custom-domain.tsx
+msgid "Value"
+msgstr "മൂല്യം"
+
 #: src/features/ats-checker/messages.ts
 msgid "Vary the openings so the section does not read as boilerplate."
 msgstr "വിഭാഗം ബോയിലർപ്ലേറ്റ് പോലെ വായിക്കപ്പെടാതിരിക്കാൻ തുടക്കങ്ങൾ വൈവിധ്യമാക്കുക."
@@ -10979,7 +11041,7 @@ msgstr "നിങ്ങളുടെ തീയതികൾ പല വ്യത്
 msgid "Your document was saved. Review it in the editor."
 msgstr "നിങ്ങളുടെ പ്രമാണം സംരക്ഷിച്ചു. എഡിറ്ററിൽ അത് അവലോകനം ചെയ്യുക."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Your domain"
 msgstr "നിങ്ങളുടെ ഡൊമെയ്ൻ"
 
@@ -11035,6 +11097,10 @@ msgstr "നിങ്ങളുടെ പേര്"
 #: src/features/letters/write.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "നിങ്ങളുടെ പേരും ബന്ധപ്പെടാനുള്ള വിശദാംശങ്ങളും ഒരു റെസ്യൂമെയിൽ നിന്നാണ്."
+
+#: src/features/share/custom-domain.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code {CODE} takes 50% off the first year."
+msgstr "നിങ്ങളുടെ പേര് തന്നെ നിങ്ങളുടെ വിലാസം, .cv രജിസ്ട്രിയായ OlaCV-യിൽ നിന്ന്. {CODE} എന്ന കോഡ് ആദ്യ വർഷം 50% കിഴിവ് നൽകുന്നു."
 
 #: src/features/check/issues.ts
 msgid "Your name is missing"

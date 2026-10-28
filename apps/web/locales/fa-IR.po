@@ -487,6 +487,14 @@ msgstr "فقط {company}"
 msgid "{connection} didn't respond."
 msgstr "{connection} پاسخ نداد."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr "سالانه {cost}"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr "{cost} برای سال اول"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {ورودی #} other {ورودی های #}}"
@@ -725,10 +733,6 @@ msgstr "{stars, plural, one {به Reactive Resume در GitHub ستاره بده�
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# داستان} other {# داستان}}"
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "ممکن است {suggestion} در دسترس باشد. مال خودتان را از اینجا بگیرید →"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1419,7 +1423,7 @@ msgstr "دامنه را بعد از @ اضافه کنید، مانند {name}@ex
 msgid "Add the domain ending, like {domain}.com"
 msgstr "پایان دامنه را اضافه کنید، مانند {domain}.com"
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "این رکوردها را جایی که دامنه را مدیریت می‌کنید اضافه کنید، سپس بررسی کنید. ممکن است چند ساعت طول بکشد تا تغییرات به دست همه برسد."
 
@@ -2144,6 +2148,10 @@ msgstr "ذخیره خودکار"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "ذخیره خودکار بر اساس جلسه گروه بندی شده و به مدت 90 روز نگهداری می شود. نسخه‌های نام‌گذاری‌شده تا زمانی که آن‌ها را حذف نکنید، حفظ می‌شوند. بازیابی ابتدا وضعیت فعلی را ذخیره می کند."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr "قابل ثبت"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "از افکت‌های فاصله‌گذاری زیاد بین حروف پرهیز کنید، سپس دوباره خروجی بگیرید."
@@ -2567,6 +2575,7 @@ msgid "Check any PDF, no account needed"
 msgstr "هر PDF را بررسی کنید، بدون نیاز به حساب"
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr "بررسی DNS"
 
@@ -2784,6 +2793,7 @@ msgstr "شناسه مشتری"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2965,6 +2975,15 @@ msgstr "ساعت {time} امروز را به‌صورت تصویری تأیید 
 msgid "Connect"
 msgstr "اتصال"
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr "اتصال {0}"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr "اتصال {domain}"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "یک سرویس را وصل کنید"
@@ -3138,6 +3157,7 @@ msgstr "گفتگوهای مربوط به یک شغل در فضای کاری هم
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3145,10 +3165,15 @@ msgstr "کپی شده است"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
 msgstr "کپی"
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
+msgstr "کپی {value}"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
@@ -3298,6 +3323,7 @@ msgstr "رونوشت کپی نشد. دوباره امتحان کنید."
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "کپی در کلیپ‌بورد ممکن نشد. دوباره امتحان کنید."
 
@@ -5255,7 +5281,7 @@ msgid "For"
 msgstr "برای"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "برای دامنه ریشه مانند example.com، به‌جای CNAME از رکوردهای A و AAAA با نشانی‌های {0} استفاده کنید."
 
@@ -6418,6 +6444,10 @@ msgstr "زبان‌ها"
 msgid "Last changed in {0}"
 msgstr "آخرین تغییر در {0}"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "آخرین بررسی: {lastChecked} پیش"
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7054,6 +7084,10 @@ msgstr "مطابقت با رزومه"
 msgid "Matching your facts"
 msgstr "در حال تطبیق واقعیت‌های شما"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr "احتمالاً قابل ثبت"
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr "شاید بعداً"
@@ -7310,6 +7344,11 @@ msgstr "کار من این بود که علت را پیدا کنم، بدون ا
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+msgid "Name"
+msgstr "نام"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "نام"
 
@@ -7759,6 +7798,10 @@ msgstr "تا زمانی که رزومه به رمز عبور نیاز دارد،
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "متصل نیست"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "هنوز متصل نشده است. رکوردهای DNS آن را جایی که دامنه را مدیریت می‌کنید اضافه کنید، سپس بررسی کنید."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -9339,6 +9382,10 @@ msgstr "به‌روزرسانی گزارش توجیهی ۲۴ ساعت قبل"
 msgid "Refresh the briefing on the morning of"
 msgstr "به‌روزرسانی گزارش توجیهی در صبح همان روز"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr "ثبت در OlaCV"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "تمرین با صدای بلند"
@@ -10617,6 +10664,10 @@ msgstr "نمایش همهٔ انواع"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "نمایش بسته شده"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
+msgstr "نمایش رکوردهای DNS"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -12431,6 +12482,11 @@ msgstr "تایید دو مرحله ای فعال شد"
 msgid "Type"
 msgstr "نوع"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr "نوع"
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr "برای تایید <0>{CONFIRMATION}</0> را تایپ کنید"
@@ -12809,6 +12865,10 @@ msgstr "ازبکی"
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
 msgstr "ارزش‌گذاری و رقیق‌شدن نامعلوم"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
+msgstr "مقدار"
 
 #: src/features/career/offers.tsx
 msgid "Value uncertain"
@@ -13653,6 +13713,10 @@ msgstr "نام شما"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "نام و اطلاعات تماس شما از یک رزومه می آید."
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
+msgstr "نام شما به‌عنوان نشانی‌تان، از OlaCV، اداره‌کننده دامنه‌های ‎.cv. با کد <0/> سال اول ۵۰٪ تخفیف می‌گیرید."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."

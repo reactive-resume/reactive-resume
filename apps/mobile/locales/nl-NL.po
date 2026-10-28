@@ -460,6 +460,14 @@ msgstr "{company} · {tabName}"
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# document bijgewerkt} other {# documenten bijgewerkt}}"
 
+#: src/features/share/custom-domain.tsx
+msgid "{cost} a year"
+msgstr "{cost} per jaar"
+
+#: src/features/share/custom-domain.tsx
+msgid "{cost} the first year"
+msgstr "{cost} het eerste jaar"
+
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# kolom} other {# kolommen}}"
@@ -613,10 +621,6 @@ msgstr "{skipped, plural, one {# wijziging kon niet worden geplaatst: de tekst i
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# verhaal} other {# verhalen}}"
-
-#: src/features/share/web-page.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} is misschien beschikbaar. Haal de jouwe hier →"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1085,7 +1089,7 @@ msgstr "Voeg het domein toe na de @, zoals {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Voeg de domeinextensie toe, zoals {domain}.com"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Voeg deze records toe waar je het domein beheert en controleer daarna. Het kan een paar uur duren voordat wijzigingen overal zichtbaar zijn."
 
@@ -1684,6 +1688,10 @@ msgstr "Automatisch"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "Autosaves worden gegroepeerd per sessie en 90 dagen bewaard. Benoemde versies worden bewaard totdat u ze verwijdert. Bij het herstellen wordt eerst de huidige status opgeslagen."
 
+#: src/features/share/custom-domain.tsx
+msgid "Available"
+msgstr "Beschikbaar"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "Vermijd zware letterspatiëring en exporteer opnieuw."
@@ -2033,7 +2041,7 @@ msgstr "Opnieuw controleren"
 msgid "Check another file"
 msgstr "Controleer een ander bestand"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Check DNS"
 msgstr "DNS controleren"
 
@@ -2307,6 +2315,10 @@ msgstr "Gesloten: {closed}"
 msgid "Coach"
 msgstr "Coach"
 
+#: src/features/share/custom-domain.tsx
+msgid "Code copied"
+msgstr "Code gekopieerd"
+
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx
 msgid "Color"
@@ -2389,9 +2401,18 @@ msgid "Confirm the time with {contact} before adding a new interview."
 msgstr "Bevestig de tijd met {contact} voordat u een nieuw gesprek toevoegt."
 
 #: src/features/assistant/provider.tsx
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connect"
 msgstr "Verbinden"
+
+#. placeholder {0}: domain.hostname
+#: src/features/share/custom-domain.tsx
+msgid "Connect {0}"
+msgstr "{0} verbinden"
+
+#: src/features/share/custom-domain.tsx
+msgid "Connect {domain}"
+msgstr "{domain} verbinden"
 
 #: src/features/ai/web-access.tsx
 msgid "Connect a service"
@@ -2433,7 +2454,7 @@ msgstr "Verbind de tools die u gebruikt voor schrijven, zoeken naar werk en werk
 msgid "Connected · {milliseconds} ms"
 msgstr "Verbonden · {milliseconds} ms"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "Verbonden. Je domein opent je primaire cv."
 
@@ -2520,9 +2541,17 @@ msgstr "Gesprekken kunnen niet worden geladen."
 msgid "Cooking"
 msgstr "Aan het koken"
 
+#: src/features/share/custom-domain.tsx
+msgid "Copied"
+msgstr "Gekopieerd"
+
 #: src/features/design/advanced.tsx
 msgid "Copied to clipboard"
 msgstr "Gekopieerd naar klembord"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copies it"
+msgstr "Kopieert de tekst"
 
 #: src/features/share/link.tsx
 msgid "Copy"
@@ -2535,6 +2564,10 @@ msgstr "Kopieer een CV voor een baan"
 #: src/features/workspace/tabs/apply.tsx
 msgid "Copy answers"
 msgstr "Antwoorden kopiëren"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copy code"
+msgstr "Code kopiëren"
 
 #: src/features/document-menu/index.tsx
 msgid "Copy created"
@@ -3476,7 +3509,7 @@ msgstr "Documenten voor deze taak"
 msgid "Documents you move here stay for 30 days."
 msgstr "Documenten die u hierheen verplaatst, blijven 30 dagen bewaard."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "Domein verbonden"
 
@@ -4126,8 +4159,8 @@ msgstr "Lettertype-gewichten"
 msgid "For"
 msgstr "Voor"
 
-#. placeholder {0}: current.target
-#: src/features/share/web-page.tsx
+#. placeholder {0}: domain.target
+#: src/features/share/custom-domain.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "Gebruik voor een hoofddomein zoals example.com A- en AAAA-records met de adressen van {0} in plaats van de CNAME."
 
@@ -4939,6 +4972,10 @@ msgstr "Talen"
 msgid "Larger text"
 msgstr "Grotere tekst"
 
+#: src/features/share/custom-domain.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "Laatst gecontroleerd {lastChecked} geleden"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Last edited"
@@ -5483,6 +5520,10 @@ msgstr "Passend bij het CV"
 msgid "Matching your facts"
 msgstr "Uw feiten vergelijken"
 
+#: src/features/share/custom-domain.tsx
+msgid "May be available"
+msgstr "Mogelijk beschikbaar"
+
 #: src/features/search/search-screen.tsx
 msgid "MCP"
 msgstr "MCP"
@@ -5712,6 +5753,11 @@ msgstr "Bij verplaatsing naar het stadium gesolliciteerd geef je aan wat je werk
 #: src/features/letters/share.tsx
 #: src/features/settings/profile.tsx
 #: src/features/write/fields.ts
+msgid "Name"
+msgstr "Naam"
+
+#: src/features/share/custom-domain.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "Naam"
 
@@ -6111,6 +6157,10 @@ msgstr "Nog niet gesolliciteerd"
 #: src/features/share/web-page.tsx
 msgid "Not available while the resume needs a password."
 msgstr "Niet beschikbaar zolang het cv een wachtwoord vereist."
+
+#: src/features/share/custom-domain.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "Nog niet verbonden. Voeg de DNS-records toe waar je het domein beheert en controleer daarna."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -7372,6 +7422,10 @@ msgstr "Briefing 24 uur van tevoren verversen"
 msgid "Refresh the briefing on the morning of"
 msgstr "Briefing op de ochtend zelf verversen"
 
+#: src/features/share/custom-domain.tsx
+msgid "Register at OlaCV"
+msgstr "Registreren bij OlaCV"
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "Hardop repeteren"
@@ -7441,7 +7495,7 @@ msgstr "Herinneringen verschijnen hier. Kopieën per e-mail zijn optioneel en ve
 msgid "Remote"
 msgstr "Op afstand"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "Verwijderen"
@@ -8509,6 +8563,10 @@ msgstr "Toon gesloten sollicitaties om je eerdere zoektochten naar werk te zien.
 msgid "Show details"
 msgstr "Details tonen"
 
+#: src/features/share/custom-domain.tsx
+msgid "Show DNS records"
+msgstr "DNS-records tonen"
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Kop weergeven"
@@ -9451,7 +9509,7 @@ msgstr "De aanbieder antwoordde niet. Controleer de sleutel, het model en de bas
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "De reden wordt bewaard voor Insights. Gekoppelde documenten worden niet gewijzigd."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "De records zijn nog niet zichtbaar. Controleer later opnieuw."
 
@@ -10420,6 +10478,10 @@ msgstr "Gebruikt het sjabloon en Ontwerp van je cv en past op elk scherm. Wijzig
 msgid "Uzbek"
 msgstr "Oezbeeks"
 
+#: src/features/share/custom-domain.tsx
+msgid "Value"
+msgstr "Waarde"
+
 #: src/features/ats-checker/messages.ts
 msgid "Vary the openings so the section does not read as boilerplate."
 msgstr "Varieer de openingszinnen, zodat de sectie niet als standaardtekst overkomt."
@@ -10979,7 +11041,7 @@ msgstr "Je data zijn op meerdere verschillende manieren geschreven."
 msgid "Your document was saved. Review it in the editor."
 msgstr "Je document is opgeslagen. Bekijk het in de editor."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Your domain"
 msgstr "Je domein"
 
@@ -11035,6 +11097,10 @@ msgstr "Jouw naam"
 #: src/features/letters/write.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "Uw naam en contactgegevens komen uit een CV."
+
+#: src/features/share/custom-domain.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code {CODE} takes 50% off the first year."
+msgstr "Je naam als je adres, van OlaCV, de beheerder van .cv. Code {CODE} geeft 50% korting op het eerste jaar."
 
 #: src/features/check/issues.ts
 msgid "Your name is missing"

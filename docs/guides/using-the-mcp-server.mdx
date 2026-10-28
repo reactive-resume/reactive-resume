@@ -292,7 +292,7 @@ Prompts are ready-made instructions your client can start from. Each takes a res
 | `resume://_meta/schema` | The resume data JSON Schema, listed in `resources/list` and also served at `/schema.json`. Clients use it to build valid patches; tool schemas point to it instead of repeating it, for resume data and for a cover letter's style. Tool results also summarize application timeline entries, posting sources and the account export; their full shapes are in `/api/openapi/spec.json`. |
 | `resume://{id}`         | One resume's full data as JSON. This is a resource template (`resources/templates/list`); find IDs with `list_resumes`.                                                                                                                                                                                                                                                                  |
 
-Your instance also publishes a server card at `/.well-known/mcp/server-card.json` that summarizes the tools, prompts and resources, for clients that discover servers without connecting.
+Your instance also publishes a server card at `/.well-known/mcp/server-card.json` that summarizes the tools, prompts and resources, for clients that discover servers without connecting. An [Agentic Resource Discovery](https://agenticresourcediscovery.org/spec/) catalog at `/.well-known/ard.json` (also served at the older `/.well-known/ai-catalog.json`) points agent registries to that card.
 
 ## How authentication works
 

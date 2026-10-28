@@ -188,6 +188,9 @@ const spotWashClass =
 const spotLabelClass =
 	"pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 flex -translate-x-1/2 translate-y-1 items-center gap-1.5 rounded-sm bg-ink px-2 py-1 font-ui text-xs font-medium whitespace-nowrap text-bg opacity-0 shadow-e2 transition-[opacity,translate] duration-standard ease-enter group-hover/spot:translate-y-0 group-hover/spot:opacity-100 group-focus-visible/spot:translate-y-0 group-focus-visible/spot:opacity-100";
 
+// Phones crop the 3:1 drawing to a 16:10 box (object-fit: cover), so it renders at 1.875× the viewport width there.
+const deskSizes = "(max-width: 699px) 188vw, (min-width: 1800px) 1800px, 100vw";
+
 /**
  * The desk at the end of the page: a resume, letters, a calendar, glasses and a lamp in front of an open window. Day
  * in the light theme, night in the dark one. Each drawing is blended into the page (white vanishes into the light
@@ -202,6 +205,8 @@ function FooterDesk() {
 			<div aria-hidden="true" className="footer-dawn" />
 			<img
 				src="/illustrations/footer-desk-light.webp"
+				srcSet="/illustrations/footer-desk-light-1600.webp 1600w, /illustrations/footer-desk-light-2400.webp 2400w, /illustrations/footer-desk-light.webp 3200w"
+				sizes={deskSizes}
 				alt=""
 				width={2172}
 				height={724}
@@ -212,6 +217,8 @@ function FooterDesk() {
 			/>
 			<img
 				src="/illustrations/footer-desk-dark.webp"
+				srcSet="/illustrations/footer-desk-dark-1600.webp 1600w, /illustrations/footer-desk-dark-2400.webp 2400w, /illustrations/footer-desk-dark.webp 3200w"
+				sizes={deskSizes}
 				alt=""
 				width={2172}
 				height={724}

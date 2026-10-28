@@ -6,6 +6,7 @@ import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useNavigate } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useId, useRef, useState } from "react";
+import { useIsClient } from "usehooks-ts";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -118,11 +119,17 @@ export function AtsChecker({ signedIn, importPending }: AtsCheckerProps) {
 	});
 
 	useEffect(() => () => abort.current?.abort(), []);
+	// The first state is already on screen (the page is prerendered), so only the states that replace it fade in;
+	// fading it too would hold back the page's largest paint until the app had loaded.
+	const replacing = useIsClient();
 
 	// Each state fades in as it replaces the last. Opacity only: a translate here would make this wrapper the
 	// containing block for the result's fixed mobile bar while it animates.
 	return (
-		<div key={state.name} className="transition-opacity duration-standard ease-enter starting:opacity-0">
+		<div
+			key={state.name}
+			className={cn(replacing && "transition-opacity duration-standard ease-enter starting:opacity-0")}
+		>
 			{state.name === "importing" ? (
 				<p role="status" className="flex items-center justify-center gap-2 py-24 text-ink-2">
 					<Spinner decorative className="size-4" />

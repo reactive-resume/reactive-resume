@@ -97,6 +97,8 @@ export const env = createEnv({
 			.optional(),
 		// Sent by Traefik's HTTP provider to read the custom domains' routers; at least 32 characters.
 		CUSTOM_DOMAIN_PROVIDER_SECRET: z.string().min(32).optional(),
+		// OlaCV API token: with FLAG_OLACV_SUGGESTION, Share checks which .cv names are free before suggesting one.
+		OLACV_API_KEY: z.string().trim().min(1).optional(),
 		SERVER_PORT: z.coerce.number().int().min(1).max(65535).default(3001),
 		TRUSTED_PROXIES: commaList(
 			z.string().refine((range) => {

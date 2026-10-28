@@ -460,6 +460,14 @@ msgstr "{company} · {tabName}"
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# belge güncellendi} other {# belge güncellendi}}"
 
+#: src/features/share/custom-domain.tsx
+msgid "{cost} a year"
+msgstr "Yıllık {cost}"
+
+#: src/features/share/custom-domain.tsx
+msgid "{cost} the first year"
+msgstr "İlk yıl {cost}"
+
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# sütun} other {# sütun}}"
@@ -613,10 +621,6 @@ msgstr "{skipped, plural, one {# düzenleme yerleştirilemedi: metni değişti. 
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# hikaye} other {# hikaye}}"
-
-#: src/features/share/web-page.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} müsait olabilir. Sizinkini buradan alın →"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1085,7 +1089,7 @@ msgstr "{name}@example.com gibi, alanı @ işaretinden sonra ekleyin"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com gibi alan uzantısını ekleyin"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Bu kayıtları alan adını yönettiğiniz yere ekleyin, ardından kontrol edin. Değişikliklerin herkese ulaşması birkaç saat sürebilir."
 
@@ -1684,6 +1688,10 @@ msgstr "Otomatik olarak"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "Otomatik kaydetmeler oturuma göre gruplandırılır ve 90 gün boyunca saklanır. Adlandırılmış sürümler siz silene kadar saklanır. Geri yükleme işlemi öncelikle mevcut durumu kaydeder."
 
+#: src/features/share/custom-domain.tsx
+msgid "Available"
+msgstr "Müsait"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "Yoğun harf aralığı efektlerinden kaçının, ardından yeniden dışa aktarın."
@@ -2033,7 +2041,7 @@ msgstr "Tekrar kontrol et"
 msgid "Check another file"
 msgstr "Başka bir dosyayı kontrol edin"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Check DNS"
 msgstr "DNS'i kontrol et"
 
@@ -2307,6 +2315,10 @@ msgstr "Kapalı: {closed}"
 msgid "Coach"
 msgstr "Koç"
 
+#: src/features/share/custom-domain.tsx
+msgid "Code copied"
+msgstr "Kod kopyalandı"
+
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx
 msgid "Color"
@@ -2389,9 +2401,18 @@ msgid "Confirm the time with {contact} before adding a new interview."
 msgstr "Yeni bir görüşme eklemeden önce saati {contact} ile teyit edin."
 
 #: src/features/assistant/provider.tsx
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connect"
 msgstr "Bağlan"
+
+#. placeholder {0}: domain.hostname
+#: src/features/share/custom-domain.tsx
+msgid "Connect {0}"
+msgstr "{0} alan adını bağla"
+
+#: src/features/share/custom-domain.tsx
+msgid "Connect {domain}"
+msgstr "{domain} alan adını bağla"
 
 #: src/features/ai/web-access.tsx
 msgid "Connect a service"
@@ -2433,7 +2454,7 @@ msgstr "Yazmak, iş aramak ve özgeçmişlerinizle çalışmak için kullandığ
 msgid "Connected · {milliseconds} ms"
 msgstr "Bağlandı · {milliseconds} ms"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "Bağlandı. Alan adınız birincil özgeçmişinizi açar."
 
@@ -2520,9 +2541,17 @@ msgstr "Görüşmeler yüklenemedi."
 msgid "Cooking"
 msgstr "Pişiriliyor"
 
+#: src/features/share/custom-domain.tsx
+msgid "Copied"
+msgstr "Kopyalandı"
+
 #: src/features/design/advanced.tsx
 msgid "Copied to clipboard"
 msgstr "Panoya kopyalandı"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copies it"
+msgstr "Metni kopyalar"
 
 #: src/features/share/link.tsx
 msgid "Copy"
@@ -2535,6 +2564,10 @@ msgstr "Bir iş için özgeçmişi kopyalama"
 #: src/features/workspace/tabs/apply.tsx
 msgid "Copy answers"
 msgstr "Cevapları kopyala"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copy code"
+msgstr "Kodu kopyala"
 
 #: src/features/document-menu/index.tsx
 msgid "Copy created"
@@ -3476,7 +3509,7 @@ msgstr "Bu işe ait belgeler"
 msgid "Documents you move here stay for 30 days."
 msgstr "Buraya taşıdığınız belgeler 30 gün boyunca kalır."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "Alan adı bağlandı"
 
@@ -4126,8 +4159,8 @@ msgstr "Yazı tipi çeşitleri"
 msgid "For"
 msgstr "İçin"
 
-#. placeholder {0}: current.target
-#: src/features/share/web-page.tsx
+#. placeholder {0}: domain.target
+#: src/features/share/custom-domain.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com gibi bir kök alan adı için CNAME yerine {0} adreslerini içeren A ve AAAA kayıtlarını kullanın."
 
@@ -4939,6 +4972,10 @@ msgstr "Diller"
 msgid "Larger text"
 msgstr "Daha büyük metin"
 
+#: src/features/share/custom-domain.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "Son kontrol {lastChecked} önce"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Last edited"
@@ -5483,6 +5520,10 @@ msgstr "Özgeçmişin eşleştirilmesi"
 msgid "Matching your facts"
 msgstr "Bilgileriniz eşleştiriliyor"
 
+#: src/features/share/custom-domain.tsx
+msgid "May be available"
+msgstr "Müsait olabilir"
+
 #: src/features/search/search-screen.tsx
 msgid "MCP"
 msgstr "MCP"
@@ -5714,6 +5755,11 @@ msgstr "Başvuruldu aşamasına taşırken gerçekte ne gönderdiğiniz sorulur.
 #: src/features/write/fields.ts
 msgid "Name"
 msgstr "İsim"
+
+#: src/features/share/custom-domain.tsx
+msgctxt "DNS record"
+msgid "Name"
+msgstr "Ad"
 
 #. placeholder {0}: index + 1
 #: src/features/application-detail/interview-sheet.tsx
@@ -6111,6 +6157,10 @@ msgstr "Henüz başvurulmadı"
 #: src/features/share/web-page.tsx
 msgid "Not available while the resume needs a password."
 msgstr "Özgeçmiş şifre gerektirirken kullanılamaz."
+
+#: src/features/share/custom-domain.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "Henüz bağlanmadı. DNS kayıtlarını alan adını yönettiğiniz yere ekleyin, ardından kontrol edin."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -7372,6 +7422,10 @@ msgstr "Brifingi 24 saat önce yenile"
 msgid "Refresh the briefing on the morning of"
 msgstr "Brifingi görüşme günü sabahı yenile"
 
+#: src/features/share/custom-domain.tsx
+msgid "Register at OlaCV"
+msgstr "OlaCV'de tescil et"
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "Sesli prova yap"
@@ -7441,7 +7495,7 @@ msgstr "Hatırlatıcılar burada görünür. E-posta kopyaları isteğe bağlıd
 msgid "Remote"
 msgstr "Uzaktan"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "Kaldırmak"
@@ -8509,6 +8563,10 @@ msgstr "Geçmiş iş aramalarınızı görmek için kapatılan başvuruları gö
 msgid "Show details"
 msgstr "Ayrıntıları göster"
 
+#: src/features/share/custom-domain.tsx
+msgid "Show DNS records"
+msgstr "DNS kayıtlarını göster"
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Başlığı göster"
@@ -9451,7 +9509,7 @@ msgstr "Sağlayıcı cevap vermedi. Anahtarı, modeli ve URL tabanını kontrol 
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Nedeni Insights için tutulur. Bağlantılı belgelere dokunulmaz."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "Kayıtlar henüz görünmüyor. Daha sonra tekrar kontrol edin."
 
@@ -10420,6 +10478,10 @@ msgstr "Özgeçmişinizin şablonunu ve Tasarımını kullanır, her ekrana uyar
 msgid "Uzbek"
 msgstr "Özbekçe"
 
+#: src/features/share/custom-domain.tsx
+msgid "Value"
+msgstr "Değer"
+
 #: src/features/ats-checker/messages.ts
 msgid "Vary the openings so the section does not read as boilerplate."
 msgstr "Bölümün kalıp metin gibi okunmaması için başlangıçları çeşitlendirin."
@@ -10979,7 +11041,7 @@ msgstr "Tarihleriniz birkaç farklı şekilde yazılmış."
 msgid "Your document was saved. Review it in the editor."
 msgstr "Belgeniz kaydedildi. Editörde inceleyin."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Your domain"
 msgstr "Alan adınız"
 
@@ -11035,6 +11097,10 @@ msgstr "Adınız"
 #: src/features/letters/write.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "Adınız ve iletişim bilgileriniz bir özgeçmişten alınmıştır."
+
+#: src/features/share/custom-domain.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code {CODE} takes 50% off the first year."
+msgstr "Adresiniz olarak adınız, .cv kayıt kuruluşu OlaCV'den. {CODE} kodu ilk yıl için %50 indirim sağlar."
 
 #: src/features/check/issues.ts
 msgid "Your name is missing"

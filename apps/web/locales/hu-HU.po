@@ -487,6 +487,14 @@ msgstr "Csak {company}"
 msgid "{connection} didn't respond."
 msgstr "{connection} nem válaszolt."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr "{cost} évente"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr "{cost} az első évben"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# bejegyzés} other {# bejegyzések}}"
@@ -725,10 +733,6 @@ msgstr "{stars, plural, one {Csillagozd a Reactive Resume-ot a GitHubon, # csill
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# történet} other {# történet}}"
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} elérhető lehet. Szerezd meg a sajátodat itt →"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1419,7 +1423,7 @@ msgstr "Adja hozzá a domaint a @ után, például {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Adja hozzá a tartományvégződést, például {domain}.com"
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Add hozzá ezeket a rekordokat ott, ahol a domaint kezeled, majd ellenőrizd. A változások terjedése néhány órát is igénybe vehet."
 
@@ -2144,6 +2148,10 @@ msgstr "automatikusan mentve"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "Az automatikus mentések munkamenet szerint vannak csoportosítva, és 90 napig megőrződnek. A névvel ellátott verziók mindaddig megmaradnak, amíg Ön nem törli őket. A visszaállítás először az aktuális állapotot menti el."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr "Szabad"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "Kerüld az erős betűköz-effekteket, majd exportáld újra."
@@ -2567,6 +2575,7 @@ msgid "Check any PDF, no account needed"
 msgstr "Ellenőrizze bármelyik PDF-t, nincs szükség fiókra"
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr "DNS ellenőrzése"
 
@@ -2784,6 +2793,7 @@ msgstr "Ügyfél-azonosító"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2965,6 +2975,15 @@ msgstr "Megerősíti: ma {time}, videóhívásban."
 msgid "Connect"
 msgstr "Csatlakozás"
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr "{0} csatlakoztatása"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr "{domain} csatlakoztatása"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "Szolgáltatás csatlakoztatása"
@@ -3138,6 +3157,7 @@ msgstr "Egy adott állásról szóló beszélgetések annak munkaterében vannak
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3145,10 +3165,15 @@ msgstr "Másolva"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
 msgstr "Másolás"
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
+msgstr "{value} másolása"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
@@ -3298,6 +3323,7 @@ msgstr "Nem sikerült kimásolni az átiratot. Próbáld újra."
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "Nem sikerült a vágólapra másolni. Próbáld újra."
 
@@ -5255,7 +5281,7 @@ msgid "For"
 msgstr "Mert"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "Gyökérdomainhez (például example.com) a CNAME helyett A és AAAA rekordokat használj {0} címeivel."
 
@@ -6418,6 +6444,10 @@ msgstr "Nyelvek"
 msgid "Last changed in {0}"
 msgstr "Utolsó módosítás: {0}"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "Utoljára ellenőrizve: {lastChecked} ezelőtt"
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7054,6 +7084,10 @@ msgstr "Az önéletrajzhoz illő"
 msgid "Matching your facts"
 msgstr "Tényeid összevetése"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr "Lehet, hogy szabad"
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr "Talán később"
@@ -7310,6 +7344,11 @@ msgstr "Az volt a feladatom, hogy kiderítsem, miért, anélkül hogy több ügy
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+msgid "Name"
+msgstr "Név"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "Név"
 
@@ -7759,6 +7798,10 @@ msgstr "Nem érhető el, amíg az önéletrajzhoz jelszó szükséges."
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "Nincs csatlakoztatva"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "Még nincs csatlakoztatva. Add hozzá a DNS-rekordjait ott, ahol a domaint kezeled, majd ellenőrizd."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -9339,6 +9382,10 @@ msgstr "Eligazítás frissítése 24 órával előtte"
 msgid "Refresh the briefing on the morning of"
 msgstr "Eligazítás frissítése aznap reggel"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr "Regisztrálás az OlaCV-nél"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "Gyakorlás hangosan"
@@ -10617,6 +10664,10 @@ msgstr "Minden típus megjelenítése"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "A műsor lezárva"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
+msgstr "DNS-rekordok megjelenítése"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -12431,6 +12482,11 @@ msgstr "Kétlépcsős ellenőrzés bekapcsolva"
 msgid "Type"
 msgstr "Típus"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr "Típus"
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr "A megerősítéshez írja be a következőt: <0>{CONFIRMATION}</0>"
@@ -12809,6 +12865,10 @@ msgstr "üzbég"
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
 msgstr "Cégérték és felhígulás bizonytalan"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
+msgstr "Érték"
 
 #: src/features/career/offers.tsx
 msgid "Value uncertain"
@@ -13653,6 +13713,10 @@ msgstr "A neved"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "Az Ön neve és elérhetőségei egy önéletrajzból származnak."
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
+msgstr "A neved mint webcím, az OlaCV-től, a .cv domainek kezelőjétől. Az <0/> kóddal 50% kedvezményt kapsz az első évre."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."

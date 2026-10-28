@@ -20,6 +20,7 @@ const mocks = vi.hoisted(() => ({
 	handleOAuthProtectedResource: vi.fn(),
 	handleOpenIdConfiguration: vi.fn(),
 	handleWellKnownFallback: vi.fn(),
+	handleAgentCatalog: vi.fn(),
 	handleRobots: vi.fn(),
 	handleSitemap: vi.fn(),
 	handleLlms: vi.fn(),
@@ -58,6 +59,7 @@ vi.mock("../openapi/metadata", () => ({
 	handleOAuthProtectedResource: mocks.handleOAuthProtectedResource,
 	handleOpenIdConfiguration: mocks.handleOpenIdConfiguration,
 	handleWellKnownFallback: mocks.handleWellKnownFallback,
+	handleAgentCatalog: mocks.handleAgentCatalog,
 }));
 
 vi.mock("../static/uploads", () => ({
@@ -114,6 +116,7 @@ beforeEach(() => {
 	mocks.handleOAuthProtectedResource.mockReturnValue(new Response("oauth-protected-resource"));
 	mocks.handleOpenIdConfiguration.mockReturnValue(new Response("openid-configuration"));
 	mocks.handleWellKnownFallback.mockReturnValue(new Response("well-known"));
+	mocks.handleAgentCatalog.mockImplementation(() => new Response("agent-catalog"));
 	mocks.handleRobots.mockReturnValue(new Response("robots"));
 	mocks.handleSitemap.mockReturnValue(new Response("sitemap"));
 	mocks.handleLlms.mockReturnValue(new Response("llms"));
@@ -214,6 +217,8 @@ describe("createApp", () => {
 		["/.well-known/integrations.json", "integrations"],
 		["/.well-known/api-catalog", "api-catalog"],
 		["/.well-known/mcp/server-card.json", "server-card"],
+		["/.well-known/ard.json", "agent-catalog"],
+		["/.well-known/ai-catalog.json", "agent-catalog"],
 	])("routes discovery document %s before the well-known fallback", async (path, body) => {
 		const { createApp } = await import("./app");
 

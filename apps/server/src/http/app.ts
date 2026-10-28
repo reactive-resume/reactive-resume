@@ -12,6 +12,7 @@ import { prepareMcpDiscovery } from "@reactive-resume/mcp";
 import { handleMcp } from "../mcp/handler";
 import { handleOpenApi, handleOpenApiDocument } from "../openapi/handler";
 import {
+	handleAgentCatalog,
 	handleApiCatalog,
 	handleIntegrations,
 	handleMcpServerCard,
@@ -148,6 +149,7 @@ export function createApp(options: AppOptions = {}) {
 	app.get("/.well-known/agent-skills/index.json", () => handleAgentSkillsIndex());
 	app.get("/.well-known/agent-skills/:filename", (c) => handleAgentSkillArchive(c.req.param("filename")));
 	app.get("/.well-known/mcp/server-card.json", () => handleMcpServerCard());
+	app.on("GET", ["/.well-known/ard.json", "/.well-known/ai-catalog.json"], () => handleAgentCatalog());
 	app.get("/.well-known/oauth-authorization-server/*", (c) => handleOAuthAuthorizationServer(c.req.raw));
 	app.get("/.well-known/openid-configuration", (c) => handleOpenIdConfiguration(c.req.raw));
 	app.get("/.well-known/oauth-protected-resource/*", () => handleOAuthProtectedResource());

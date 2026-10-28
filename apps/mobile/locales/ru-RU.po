@@ -460,6 +460,14 @@ msgstr "{company} · {tabName}"
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# документ обновлён} other {# документов обновлено} few {# документа обновлено} many {# документов обновлено}}"
 
+#: src/features/share/custom-domain.tsx
+msgid "{cost} a year"
+msgstr "{cost} в год"
+
+#: src/features/share/custom-domain.tsx
+msgid "{cost} the first year"
+msgstr "{cost} за первый год"
+
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# столбец} other {# столбцов} few {# столбца} many {# столбцов}}"
@@ -613,10 +621,6 @@ msgstr "{skipped, plural, one {# правку не удалось вставит
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# история} few {# истории} many {# историй} other {# истории}}"
-
-#: src/features/share/web-page.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "Возможно, {suggestion} свободен. Получите свой здесь →"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1085,7 +1089,7 @@ msgstr "Добавьте домен после @, например {name}@exampl
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Добавьте окончание домена, например {domain}.com."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Добавьте эти записи там, где вы управляете доменом, затем выполните проверку. Распространение изменений может занять несколько часов."
 
@@ -1684,6 +1688,10 @@ msgstr "Автоматически"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "Автосохранения группируются по сеансам и хранятся в течение 90 дней. Именованные версии сохраняются до тех пор, пока вы их не удалите. При восстановлении сначала сохраняется текущее состояние."
 
+#: src/features/share/custom-domain.tsx
+msgid "Available"
+msgstr "Свободен"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "Избегайте сильного межбуквенного интервала, затем экспортируйте заново."
@@ -2033,7 +2041,7 @@ msgstr "Проверить снова"
 msgid "Check another file"
 msgstr "Проверьте другой файл"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Check DNS"
 msgstr "Проверить DNS"
 
@@ -2307,6 +2315,10 @@ msgstr "Закрыто: {closed}"
 msgid "Coach"
 msgstr "Коуч"
 
+#: src/features/share/custom-domain.tsx
+msgid "Code copied"
+msgstr "Код скопирован"
+
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx
 msgid "Color"
@@ -2389,9 +2401,18 @@ msgid "Confirm the time with {contact} before adding a new interview."
 msgstr "Подтвердите время с {contact}, прежде чем добавлять новое собеседование."
 
 #: src/features/assistant/provider.tsx
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connect"
 msgstr "Подключить"
+
+#. placeholder {0}: domain.hostname
+#: src/features/share/custom-domain.tsx
+msgid "Connect {0}"
+msgstr "Подключить {0}"
+
+#: src/features/share/custom-domain.tsx
+msgid "Connect {domain}"
+msgstr "Подключить {domain}"
 
 #: src/features/ai/web-access.tsx
 msgid "Connect a service"
@@ -2433,7 +2454,7 @@ msgstr "Подключите инструменты, которые вы исп�
 msgid "Connected · {milliseconds} ms"
 msgstr "Подключено · {milliseconds} мс"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "Подключено. Ваш домен открывает ваше основное резюме."
 
@@ -2520,9 +2541,17 @@ msgstr "Не удалось загрузить беседы."
 msgid "Cooking"
 msgstr "Готовим"
 
+#: src/features/share/custom-domain.tsx
+msgid "Copied"
+msgstr "Скопировано"
+
 #: src/features/design/advanced.tsx
 msgid "Copied to clipboard"
 msgstr "Скопировано в буфер обмена."
+
+#: src/features/share/custom-domain.tsx
+msgid "Copies it"
+msgstr "Копирует текст"
 
 #: src/features/share/link.tsx
 msgid "Copy"
@@ -2535,6 +2564,10 @@ msgstr "Скопируйте резюме на работу"
 #: src/features/workspace/tabs/apply.tsx
 msgid "Copy answers"
 msgstr "Скопировать ответы"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copy code"
+msgstr "Скопировать код"
 
 #: src/features/document-menu/index.tsx
 msgid "Copy created"
@@ -3476,7 +3509,7 @@ msgstr "Документы на эту должность"
 msgid "Documents you move here stay for 30 days."
 msgstr "Документы, перемещенные сюда, хранятся 30 дней."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "Домен подключен"
 
@@ -4126,8 +4159,8 @@ msgstr "Начертания шрифта"
 msgid "For"
 msgstr "Для"
 
-#. placeholder {0}: current.target
-#: src/features/share/web-page.tsx
+#. placeholder {0}: domain.target
+#: src/features/share/custom-domain.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "Для корневого домена, например example.com, используйте записи A и AAAA с адресами {0} вместо CNAME."
 
@@ -4939,6 +4972,10 @@ msgstr "Языки"
 msgid "Larger text"
 msgstr "Текст крупнее"
 
+#: src/features/share/custom-domain.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "Проверено {lastChecked} назад"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Last edited"
@@ -5483,6 +5520,10 @@ msgstr "Соответствие резюме"
 msgid "Matching your facts"
 msgstr "Сопоставляем ваши факты"
 
+#: src/features/share/custom-domain.tsx
+msgid "May be available"
+msgstr "Возможно, свободен"
+
 #: src/features/search/search-screen.tsx
 msgid "MCP"
 msgstr "MCP"
@@ -5714,6 +5755,11 @@ msgstr "При переходе в «Отклик отправлен» нужн�
 #: src/features/write/fields.ts
 msgid "Name"
 msgstr "Название"
+
+#: src/features/share/custom-domain.tsx
+msgctxt "DNS record"
+msgid "Name"
+msgstr "Имя"
 
 #. placeholder {0}: index + 1
 #: src/features/application-detail/interview-sheet.tsx
@@ -6111,6 +6157,10 @@ msgstr "Отклик еще не отправлен"
 #: src/features/share/web-page.tsx
 msgid "Not available while the resume needs a password."
 msgstr "Недоступно, пока для резюме требуется пароль."
+
+#: src/features/share/custom-domain.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "Еще не подключен. Добавьте его DNS-записи там, где вы управляете доменом, затем выполните проверку."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -7372,6 +7422,10 @@ msgstr "Обновлять брифинг за 24 часа"
 msgid "Refresh the briefing on the morning of"
 msgstr "Обновлять брифинг утром в день собеседования"
 
+#: src/features/share/custom-domain.tsx
+msgid "Register at OlaCV"
+msgstr "Зарегистрировать в OlaCV"
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "Отрепетировать вслух"
@@ -7441,7 +7495,7 @@ msgstr "Напоминания появляются здесь. Копии на 
 msgid "Remote"
 msgstr "Удаленно"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "Удалять"
@@ -8509,6 +8563,10 @@ msgstr "Покажите закрытые заявки, чтобы увидет�
 msgid "Show details"
 msgstr "Показать детали"
 
+#: src/features/share/custom-domain.tsx
+msgid "Show DNS records"
+msgstr "Показать DNS-записи"
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Показать заголовок"
@@ -9451,7 +9509,7 @@ msgstr "Провайдер не ответил. Проверьте ключ, м�
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Причина сохраняется в Insights. Связанные документы не трогаются."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "Записи пока не видны. Проверьте позже."
 
@@ -10420,6 +10478,10 @@ msgstr "Использует шаблон и дизайн вашего резю�
 msgid "Uzbek"
 msgstr "Узбекский"
 
+#: src/features/share/custom-domain.tsx
+msgid "Value"
+msgstr "Значение"
+
 #: src/features/ats-checker/messages.ts
 msgid "Vary the openings so the section does not read as boilerplate."
 msgstr "Разнообразьте начала фраз, чтобы раздел не читался как шаблон."
@@ -10979,7 +11041,7 @@ msgstr "Ваши даты записаны разными способами."
 msgid "Your document was saved. Review it in the editor."
 msgstr "Ваш документ сохранен. Просмотрите его в редакторе."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Your domain"
 msgstr "Ваш домен"
 
@@ -11035,6 +11097,10 @@ msgstr "Ваше имя"
 #: src/features/letters/write.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "Ваше имя и контактные данные взяты из резюме."
+
+#: src/features/share/custom-domain.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code {CODE} takes 50% off the first year."
+msgstr "Ваше имя в качестве адреса — от OlaCV, администратора доменной зоны .cv. Код {CODE} дает скидку 50% на первый год."
 
 #: src/features/check/issues.ts
 msgid "Your name is missing"

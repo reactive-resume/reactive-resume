@@ -46,14 +46,39 @@ export function normalizeHostname(input: string): string | null {
 	return ascii;
 }
 
+const lookup = <T>(query: Promise<T[]>) => query.catch(() => [] as T[]);
+
 const txtValue = (token: string) => `rx-verify=${token}`;
 
-function toStatus(domain: typeof schema.customDomain.$inferSelect) {
+export type DnsRecord = { type: "A" | "AAAA" | "CNAME" | "TXT"; name: string; value: string };
+
+/**
+ * What to add where the domain's DNS is managed: a TXT record proving ownership, and a CNAME to the target. A root
+ * domain can't have a CNAME, so it gets A and AAAA records with the target's addresses instead.
+ */
+async function connectionRecords(hostname: string, token: string): Promise<DnsRecord[]> {
+	const target = env.CUSTOM_DOMAIN_TARGET ?? "";
+	const proof: DnsRecord = { type: "TXT", name: `${TXT_PREFIX}.${hostname}`, value: txtValue(token) };
+	// ponytail: two labels is a root domain; one under a two-part suffix (example.co.uk) gets the CNAME, and the
+	// client's note explains the addresses. A public-suffix list would tell them apart.
+	if (hostname.split(".").length === 2) {
+		const [v4, v6] = await Promise.all([lookup(resolve4(target)), lookup(resolve6(target))]);
+		const addresses = [
+			...v4.map((value): DnsRecord => ({ type: "A", name: hostname, value })),
+			...v6.map((value): DnsRecord => ({ type: "AAAA", name: hostname, value })),
+		];
+		if (addresses.length > 0) return [...addresses, proof];
+	}
+	return [{ type: "CNAME", name: hostname, value: target }, proof];
+}
+
+async function toStatus(domain: typeof schema.customDomain.$inferSelect) {
 	return {
 		hostname: domain.hostname,
 		target: env.CUSTOM_DOMAIN_TARGET ?? "",
 		txtName: `${TXT_PREFIX}.${domain.hostname}`,
 		txtValue: txtValue(domain.verificationToken),
+		records: await connectionRecords(domain.hostname, domain.verificationToken),
 		verified: domain.verifiedAt !== null,
 		lastCheckedAt: domain.lastCheckedAt,
 	};
@@ -66,8 +91,6 @@ const assertEnabled = () => {
 			message: "Custom domains aren't set up on this server.",
 		});
 };
-
-const lookup = <T>(query: Promise<T[]>) => query.catch(() => [] as T[]);
 
 /** Whether DNS proves `token`'s account owns `hostname` and points it at this server. */
 async function dnsPointsHere(hostname: string, token: string): Promise<boolean> {

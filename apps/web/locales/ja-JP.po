@@ -487,6 +487,14 @@ msgstr "{company}のみ"
 msgid "{connection} didn't respond."
 msgstr "{connection}から応答がありませんでした。"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr "年額 {cost}"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr "初年度 {cost}"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# エントリ} other {# エントリ}}"
@@ -725,10 +733,6 @@ msgstr "{stars, plural, one {GitHub で Reactive Resume にスターを付ける
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, other {#件のストーリー}}"
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} を取得できる可能性があります。こちらから取得 →"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1419,7 +1423,7 @@ msgstr "{name}@example.com のように、@ の後にドメインを追加しま
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com のようにドメイン末尾を追加します。"
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "ドメインを管理しているサービスでこれらのレコードを追加してから、確認してください。変更がすべての人に反映されるまで数時間かかることがあります。"
 
@@ -2144,6 +2148,10 @@ msgstr "自動保存された"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "自動保存はセッションごとにグループ化され、90 日間保存されます。名前付きバージョンは、削除するまで保持されます。復元では、まず現在の状態が保存されます。"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr "取得可能"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "文字間隔を大きく広げる効果を避けてから、再エクスポートしてください。"
@@ -2567,6 +2575,7 @@ msgid "Check any PDF, no account needed"
 msgstr "PDF をチェックしてください。アカウントは必要ありません"
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr "DNS を確認"
 
@@ -2784,6 +2793,7 @@ msgstr "クライアント ID"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2965,6 +2975,15 @@ msgstr "本日{time}、ビデオ通話で確定。"
 msgid "Connect"
 msgstr "接続"
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr "{0} を接続"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr "{domain} を接続"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "サービスを接続する"
@@ -3138,6 +3157,7 @@ msgstr "1つの求人に関する会話は、その求人のワークスペー�
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3145,10 +3165,15 @@ msgstr "コピーされました"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
 msgstr "コピー"
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
+msgstr "{value} をコピー"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
@@ -3298,6 +3323,7 @@ msgstr "トランスクリプトをコピーできませんでした。もう一
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "クリップボードにコピーできませんでした。もう一度お試しください。"
 
@@ -5255,7 +5281,7 @@ msgid "For"
 msgstr "のために"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com のようなルートドメインでは、CNAME の代わりに {0} のアドレスを指定した A レコードと AAAA レコードを使用してください。"
 
@@ -6418,6 +6444,10 @@ msgstr "語学"
 msgid "Last changed in {0}"
 msgstr "最終変更日: {0}"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "最終確認: {lastChecked}前"
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7054,6 +7084,10 @@ msgstr "履歴書とのマッチング"
 msgid "Matching your facts"
 msgstr "事実を照合中"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr "取得できる可能性あり"
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr "また今度"
@@ -7310,6 +7344,11 @@ msgstr "私の役割は、サポートの負担を増やさずに原因を突き
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+msgid "Name"
+msgstr "名前"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "名前"
 
@@ -7759,6 +7798,10 @@ msgstr "レジュメにパスワードが必要な間は利用できません。
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "接続されていません"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "まだ接続されていません。ドメインを管理しているサービスで DNS レコードを追加してから、確認してください。"
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -9339,6 +9382,10 @@ msgstr "24時間前にブリーフィングを更新"
 msgid "Refresh the briefing on the morning of"
 msgstr "当日の朝にブリーフィングを更新"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr "OlaCV で登録"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "声に出してリハーサル"
@@ -10617,6 +10664,10 @@ msgstr "すべての種類を表示"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "ショーは終了しました"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
+msgstr "DNS レコードを表示"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -12431,6 +12482,11 @@ msgstr "二段階認証をオンにしました"
 msgid "Type"
 msgstr "種類"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr "タイプ"
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr "<0>{CONFIRMATION}</0> と入力して確認します"
@@ -12809,6 +12865,10 @@ msgstr "ウズベク語"
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
 msgstr "評価額と希薄化は不確実"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
+msgstr "値"
 
 #: src/features/career/offers.tsx
 msgid "Value uncertain"
@@ -13653,6 +13713,10 @@ msgstr "あなたの名前"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "あなたの名前と連絡先の詳細は履歴書に記載されています。"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
+msgstr "名前をそのままアドレスに。.cv のレジストリである OlaCV が提供しています。コード <0/> で初年度が 50% オフになります。"
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."

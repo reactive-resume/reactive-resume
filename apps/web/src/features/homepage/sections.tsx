@@ -124,6 +124,7 @@ export function Languages() {
 			<Doodle
 				name="globe"
 				wipe="clamp(0, (var(--p) - .25) / .2, 1)"
+				sizes="11vw"
 				className="start-[6vw] top-[10vh] w-[11vw] translate-y-[calc(var(--p)*-40px)] rotate-[-6deg] max-[900px]:hidden"
 			/>
 			<h2 id="languages-title" className={cn(labelClass, "text-ink-3")}>
@@ -220,6 +221,7 @@ export function Support() {
 			<Doodle
 				name="jar"
 				wipe="clamp(0, (var(--p) - .3) / .2, 1)"
+				sizes="9vw"
 				className="start-[3vw] bottom-[4vh] w-[9vw] translate-y-[calc(var(--p)*-30px)] rotate-[4deg] max-[900px]:hidden"
 			/>
 

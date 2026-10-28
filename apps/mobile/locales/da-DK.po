@@ -460,6 +460,14 @@ msgstr "{company} · {tabName}"
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# dokument opdateret} other {# dokumenter opdateret}}"
 
+#: src/features/share/custom-domain.tsx
+msgid "{cost} a year"
+msgstr "{cost} om året"
+
+#: src/features/share/custom-domain.tsx
+msgid "{cost} the first year"
+msgstr "{cost} det første år"
+
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {# kolonne} other {# kolonner}}"
@@ -613,10 +621,6 @@ msgstr "{skipped, plural, one {# ændring kunne ikke indsættes: teksten er ænd
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# historie} other {# historier}}"
-
-#: src/features/share/web-page.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} er måske ledigt. Få dit her →"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1085,7 +1089,7 @@ msgstr "Tilføj domænet efter @, som {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Tilføj domæneendelsen, som {domain}.com"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Tilføj disse poster der, hvor du administrerer domænet, og tjek derefter. Det kan tage et par timer, før ændringerne når ud til alle."
 
@@ -1684,6 +1688,10 @@ msgstr "Automatisk"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "Autolagring er grupperet efter session og opbevares i 90 dage. Navngivne versioner gemmes, indtil du sletter dem. Gendannelse gemmer først den aktuelle tilstand."
 
+#: src/features/share/custom-domain.tsx
+msgid "Available"
+msgstr "Ledigt"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "Undgå kraftige bogstavmellemrumseffekter, og eksporter derefter igen."
@@ -2033,7 +2041,7 @@ msgstr "Tjek igen"
 msgid "Check another file"
 msgstr "Tjek en anden fil"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Check DNS"
 msgstr "Tjek DNS"
 
@@ -2307,6 +2315,10 @@ msgstr "Lukket: {closed}"
 msgid "Coach"
 msgstr "Coach"
 
+#: src/features/share/custom-domain.tsx
+msgid "Code copied"
+msgstr "Koden er kopieret"
+
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx
 msgid "Color"
@@ -2389,9 +2401,18 @@ msgid "Confirm the time with {contact} before adding a new interview."
 msgstr "Bekræft tidspunktet med {contact}, før du tilføjer et nyt interview."
 
 #: src/features/assistant/provider.tsx
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connect"
 msgstr "Forbind"
+
+#. placeholder {0}: domain.hostname
+#: src/features/share/custom-domain.tsx
+msgid "Connect {0}"
+msgstr "Forbind {0}"
+
+#: src/features/share/custom-domain.tsx
+msgid "Connect {domain}"
+msgstr "Forbind {domain}"
 
 #: src/features/ai/web-access.tsx
 msgid "Connect a service"
@@ -2433,7 +2454,7 @@ msgstr "Forbind de værktøjer, du bruger til at skrive, jobsøgning og arbejde 
 msgid "Connected · {milliseconds} ms"
 msgstr "Tilsluttet · {milliseconds} ms"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "Forbundet. Dit domæne åbner dit primære CV."
 
@@ -2520,9 +2541,17 @@ msgstr "Samtaler kunne ikke indlæses."
 msgid "Cooking"
 msgstr "Brygger på noget"
 
+#: src/features/share/custom-domain.tsx
+msgid "Copied"
+msgstr "Kopieret"
+
 #: src/features/design/advanced.tsx
 msgid "Copied to clipboard"
 msgstr "Kopieret til udklipsholder"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copies it"
+msgstr "Kopierer teksten"
 
 #: src/features/share/link.tsx
 msgid "Copy"
@@ -2535,6 +2564,10 @@ msgstr "Kopier et CV for et job"
 #: src/features/workspace/tabs/apply.tsx
 msgid "Copy answers"
 msgstr "Kopiér svarene"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copy code"
+msgstr "Kopiér kode"
 
 #: src/features/document-menu/index.tsx
 msgid "Copy created"
@@ -3476,7 +3509,7 @@ msgstr "Dokumenter til dette job"
 msgid "Documents you move here stay for 30 days."
 msgstr "Dokumenter, du flytter hertil, bliver her i 30 dage."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "Domæne forbundet"
 
@@ -4126,8 +4159,8 @@ msgstr "Skriftvægte"
 msgid "For"
 msgstr "For"
 
-#. placeholder {0}: current.target
-#: src/features/share/web-page.tsx
+#. placeholder {0}: domain.target
+#: src/features/share/custom-domain.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "For et roddomæne som example.com skal du bruge A- og AAAA-poster med adresserne for {0} i stedet for CNAME-posten."
 
@@ -4939,6 +4972,10 @@ msgstr "Sprog"
 msgid "Larger text"
 msgstr "Større tekst"
 
+#: src/features/share/custom-domain.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "Sidst tjekket for {lastChecked} siden"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Last edited"
@@ -5483,6 +5520,10 @@ msgstr "Matchende CV"
 msgid "Matching your facts"
 msgstr "Matcher dine fakta"
 
+#: src/features/share/custom-domain.tsx
+msgid "May be available"
+msgstr "Måske ledigt"
+
 #: src/features/search/search-screen.tsx
 msgid "MCP"
 msgstr "MCP"
@@ -5712,6 +5753,11 @@ msgstr "Når du flytter til Ansøgt, bliver du spurgt, hvad du faktisk sendte."
 #: src/features/letters/share.tsx
 #: src/features/settings/profile.tsx
 #: src/features/write/fields.ts
+msgid "Name"
+msgstr "Navn"
+
+#: src/features/share/custom-domain.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "Navn"
 
@@ -6111,6 +6157,10 @@ msgstr "Ikke ansøgt endnu"
 #: src/features/share/web-page.tsx
 msgid "Not available while the resume needs a password."
 msgstr "Ikke tilgængelig, mens CV'et kræver en adgangskode."
+
+#: src/features/share/custom-domain.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "Ikke forbundet endnu. Tilføj DNS-posterne der, hvor du administrerer domænet, og tjek derefter."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -7372,6 +7422,10 @@ msgstr "Opdater briefingen 24 timer før"
 msgid "Refresh the briefing on the morning of"
 msgstr "Opdater briefingen om morgenen samme dag"
 
+#: src/features/share/custom-domain.tsx
+msgid "Register at OlaCV"
+msgstr "Registrér hos OlaCV"
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "Øv højt"
@@ -7441,7 +7495,7 @@ msgstr "Påmindelser vises her. Kopier via e-mail er valgfrie og kræver en bekr
 msgid "Remote"
 msgstr "Fjernarbejde"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "Fjerne"
@@ -8509,6 +8563,10 @@ msgstr "Vis lukkede ansøgninger for at se dine tidligere jobsøgninger."
 msgid "Show details"
 msgstr "Vis detaljer"
 
+#: src/features/share/custom-domain.tsx
+msgid "Show DNS records"
+msgstr "Vis DNS-poster"
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Vis overskrift"
@@ -9451,7 +9509,7 @@ msgstr "Udbyderen svarede ikke. Tjek nøglen, modellen og basen URL."
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Årsagen er gemt til Insights. Linkede dokumenter berøres ikke."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "Posterne er ikke synlige endnu. Tjek igen senere."
 
@@ -10420,6 +10478,10 @@ msgstr "Bruger dit CV's skabelon og design og passer til enhver skærm. Skift de
 msgid "Uzbek"
 msgstr "Usbekisk"
 
+#: src/features/share/custom-domain.tsx
+msgid "Value"
+msgstr "Værdi"
+
 #: src/features/ats-checker/messages.ts
 msgid "Vary the openings so the section does not read as boilerplate."
 msgstr "Varier åbningerne, så afsnittet ikke virker som standardtekst."
@@ -10979,7 +11041,7 @@ msgstr "Dine datoer er skrevet på flere forskellige måder."
 msgid "Your document was saved. Review it in the editor."
 msgstr "Dit dokument blev gemt. Gennemgå det i editoren."
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Your domain"
 msgstr "Dit domæne"
 
@@ -11035,6 +11097,10 @@ msgstr "Dit navn"
 #: src/features/letters/write.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "Dit navn og dine kontaktoplysninger stammer fra et CV."
+
+#: src/features/share/custom-domain.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code {CODE} takes 50% off the first year."
+msgstr "Dit navn som din adresse, fra OlaCV, registret for .cv. Koden {CODE} giver 50 % rabat det første år."
 
 #: src/features/check/issues.ts
 msgid "Your name is missing"

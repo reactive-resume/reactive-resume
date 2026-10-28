@@ -487,6 +487,14 @@ msgstr "Само {company}"
 msgid "{connection} didn't respond."
 msgstr "{connection} не отговори."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr "{cost} на година"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr "{cost} за първата година"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# запис} other {# записи}}"
@@ -725,10 +733,6 @@ msgstr "{stars, plural, one {Отбележете Reactive Resume със зве�
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# история} other {# истории}}"
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "Домейнът {suggestion} може да е свободен. Вземете своя тук →"
 
 #: src/features/career/workspace/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1419,7 +1423,7 @@ msgstr "Добавете домейна след @, като {name}@example.com"
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Добавете края на домейна, като {domain}.com"
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Добавете тези записи там, където управлявате домейна, след което проверете. Може да минат няколко часа, докато промените достигнат до всички."
 
@@ -2144,6 +2148,10 @@ msgstr "автоматично запазени"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "Автоматичните запазвания се групират по сесии и се съхраняват 90 дни. Наименуваните версии се съхраняват, докато не ги изтриете. Възстановяването първо запазва текущото състояние."
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr "Свободен"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "Избягвайте силни ефекти на разредка между буквите, след което експортирайте отново."
@@ -2567,6 +2575,7 @@ msgid "Check any PDF, no account needed"
 msgstr "Проверете всеки PDF, не е необходим акаунт"
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr "Проверка на DNS"
 
@@ -2784,6 +2793,7 @@ msgstr "ID на клиента"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2965,6 +2975,15 @@ msgstr "Потвърждава {time} днес, по видео."
 msgid "Connect"
 msgstr "Свързване"
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr "Свързване на {0}"
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr "Свързване на {domain}"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "Свържете услуга"
@@ -3138,6 +3157,7 @@ msgstr "Разговорите за конкретна работа са в не
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3145,10 +3165,15 @@ msgstr "Копирано"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
 msgstr "Копиране"
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
+msgstr "Копиране на {value}"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
@@ -3298,6 +3323,7 @@ msgstr "Преписът не можа да се копира. Опитайте 
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "Не можа да се копира в клипборда. Опитайте отново."
 
@@ -5255,7 +5281,7 @@ msgid "For"
 msgstr "За"
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "За основен домейн като example.com използвайте записи A и AAAA с адресите на {0} вместо CNAME."
 
@@ -6418,6 +6444,10 @@ msgstr "Езици"
 msgid "Last changed in {0}"
 msgstr "Последна промяна в {0}"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "Последна проверка преди {lastChecked}"
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7054,6 +7084,10 @@ msgstr "Съответствие с резюмето"
 msgid "Matching your facts"
 msgstr "Съпоставяне с фактите ви"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr "Може да е свободен"
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr "Може би по-късно"
@@ -7310,6 +7344,11 @@ msgstr "Моята задача беше да открия причината, �
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+msgid "Name"
+msgstr "Име"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "Име"
 
@@ -7759,6 +7798,10 @@ msgstr "Не е налично, докато автобиографията из
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
 msgstr "Няма връзка"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "Все още не е свързан. Добавете DNS записите му там, където управлявате домейна, след което проверете."
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -9339,6 +9382,10 @@ msgstr "Обновяване на брифинга 24 часа преди тов
 msgid "Refresh the briefing on the morning of"
 msgstr "Обновяване на брифинга сутринта на деня"
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr "Регистриране в OlaCV"
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "Репетирайте на глас"
@@ -10617,6 +10664,10 @@ msgstr "Показване на всички видове"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
 msgstr "Шоуто е затворено"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
+msgstr "Показване на DNS записите"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
@@ -12431,6 +12482,11 @@ msgstr "Проверката в две стъпки е включена"
 msgid "Type"
 msgstr "Тип"
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr "Тип"
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr "Въведете <0>{CONFIRMATION}</0> за потвърждение"
@@ -12809,6 +12865,10 @@ msgstr "Узбекски"
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
 msgstr "Оценката и разводняването са несигурни"
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
+msgstr "Стойност"
 
 #: src/features/career/offers.tsx
 msgid "Value uncertain"
@@ -13653,6 +13713,10 @@ msgstr "Вашето име"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "Вашето име и данни за контакт идват от автобиография."
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
+msgstr "Вашето име като ваш адрес, от OlaCV, регистъра на .cv. Кодът <0/> дава 50% отстъпка за първата година."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your name changed on the resume. The letter updated too."

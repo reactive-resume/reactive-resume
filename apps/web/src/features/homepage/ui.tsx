@@ -73,21 +73,32 @@ type DoodleProps = {
 	className?: string;
 	style?: CSSProperties;
 	eager?: boolean;
+	/** The width it's drawn at, for picking a file (`img` sizes). Below 900px most doodles hide; a hidden eager one says 1px. */
+	sizes?: string;
 };
 
 /** A watercolour doodle. Decorative, so it's hidden from assistive tech and never takes the pointer. */
-export function Doodle({ name, wipe, className, style, eager = false }: DoodleProps) {
+export function Doodle({
+	name,
+	wipe,
+	className,
+	style,
+	eager = false,
+	sizes = "(min-width: 900px) 10vw, 30vw",
+}: DoodleProps) {
 	const [width, height] = doodleSizes[name];
 	return (
 		<img
 			src={`/doodles/${name}.webp`}
-			srcSet={`/doodles/${name}-small.webp ${Math.round(width / 2)}w, /doodles/${name}.webp ${width}w`}
-			sizes="(min-width: 900px) 16vw, 30vw"
+			srcSet={`/doodles/${name}-tiny.webp ${Math.round(width / 4)}w, /doodles/${name}-small.webp ${Math.round(width / 2)}w, /doodles/${name}.webp ${width}w`}
+			sizes={sizes}
 			alt=""
 			aria-hidden="true"
 			width={width}
 			height={height}
 			loading={eager ? "eager" : "lazy"}
+			// Eager doodles sit on the first screen; the pencil is the largest paint on desktop.
+			fetchPriority={eager ? "high" : "auto"}
 			decoding="async"
 			draggable={false}
 			className={cn("doodle", className)}

@@ -460,6 +460,14 @@ msgstr "{company} · {tabName}"
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {書類#件を更新しました} other {書類#件を更新しました}}"
 
+#: src/features/share/custom-domain.tsx
+msgid "{cost} a year"
+msgstr "年額 {cost}"
+
+#: src/features/share/custom-domain.tsx
+msgid "{cost} the first year"
+msgstr "初年度 {cost}"
+
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
 msgstr "{count, plural, one {#列} other {#列}}"
@@ -613,10 +621,6 @@ msgstr "{skipped, plural, one {テキストが変わったため、#件の変更
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, other {#件のストーリー}}"
-
-#: src/features/share/web-page.tsx
-msgid "{suggestion} may be available. Get yours here →"
-msgstr "{suggestion} を取得できる可能性があります。こちらから取得 →"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "{summary}. Opens in Career → Offers."
@@ -1085,7 +1089,7 @@ msgstr "{name}@example.com のように、@ の後にドメインを追加しま
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com のようにドメイン末尾を追加します。"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "ドメインを管理しているサービスでこれらのレコードを追加してから、確認してください。変更がすべての人に反映されるまで数時間かかることがあります。"
 
@@ -1684,6 +1688,10 @@ msgstr "自動"
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr "自動保存はセッションごとにグループ化され、90 日間保存されます。名前付きバージョンは、削除するまで保持されます。復元では、まず現在の状態が保存されます。"
 
+#: src/features/share/custom-domain.tsx
+msgid "Available"
+msgstr "取得可能"
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "文字間隔を大きく広げる効果を避けてから、再エクスポートしてください。"
@@ -2033,7 +2041,7 @@ msgstr "もう一度確認"
 msgid "Check another file"
 msgstr "別のファイルを確認してください"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Check DNS"
 msgstr "DNS を確認"
 
@@ -2307,6 +2315,10 @@ msgstr "閉店: {closed}"
 msgid "Coach"
 msgstr "コーチ"
 
+#: src/features/share/custom-domain.tsx
+msgid "Code copied"
+msgstr "コードをコピーしました"
+
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx
 msgid "Color"
@@ -2389,9 +2401,18 @@ msgid "Confirm the time with {contact} before adding a new interview."
 msgstr "新しい面接を追加する前に、{contact}に時間を確認してください。"
 
 #: src/features/assistant/provider.tsx
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connect"
 msgstr "接続"
+
+#. placeholder {0}: domain.hostname
+#: src/features/share/custom-domain.tsx
+msgid "Connect {0}"
+msgstr "{0} を接続"
+
+#: src/features/share/custom-domain.tsx
+msgid "Connect {domain}"
+msgstr "{domain} を接続"
 
 #: src/features/ai/web-access.tsx
 msgid "Connect a service"
@@ -2433,7 +2454,7 @@ msgstr "履歴書の作成、求職活動、作業に使用するツールを接
 msgid "Connected · {milliseconds} ms"
 msgstr "接続済み · {milliseconds} ミリ秒"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
 msgstr "接続されました。ドメインでプライマリレジュメが開きます。"
 
@@ -2520,9 +2541,17 @@ msgstr "会話を読み込めませんでした。"
 msgid "Cooking"
 msgstr "仕込み中"
 
+#: src/features/share/custom-domain.tsx
+msgid "Copied"
+msgstr "コピーされました"
+
 #: src/features/design/advanced.tsx
 msgid "Copied to clipboard"
 msgstr "クリップボードにコピーされました"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copies it"
+msgstr "テキストをコピーします"
 
 #: src/features/share/link.tsx
 msgid "Copy"
@@ -2535,6 +2564,10 @@ msgstr "仕事の履歴書をコピーする"
 #: src/features/workspace/tabs/apply.tsx
 msgid "Copy answers"
 msgstr "回答をコピー"
+
+#: src/features/share/custom-domain.tsx
+msgid "Copy code"
+msgstr "コードをコピー"
 
 #: src/features/document-menu/index.tsx
 msgid "Copy created"
@@ -3476,7 +3509,7 @@ msgstr "この仕事の書類"
 msgid "Documents you move here stay for 30 days."
 msgstr "ここに移動した書類は 30 日間保持されます。"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "ドメインを接続しました"
 
@@ -4126,8 +4159,8 @@ msgstr "フォントの太さのプリセット"
 msgid "For"
 msgstr "のために"
 
-#. placeholder {0}: current.target
-#: src/features/share/web-page.tsx
+#. placeholder {0}: domain.target
+#: src/features/share/custom-domain.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com のようなルートドメインでは、CNAME の代わりに {0} のアドレスを指定した A レコードと AAAA レコードを使用してください。"
 
@@ -4939,6 +4972,10 @@ msgstr "語学"
 msgid "Larger text"
 msgstr "文字を大きく"
 
+#: src/features/share/custom-domain.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr "最終確認: {lastChecked}前"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/library.tsx
 msgid "Last edited"
@@ -5483,6 +5520,10 @@ msgstr "履歴書とのマッチング"
 msgid "Matching your facts"
 msgstr "事実を照合中"
 
+#: src/features/share/custom-domain.tsx
+msgid "May be available"
+msgstr "取得できる可能性あり"
+
 #: src/features/search/search-screen.tsx
 msgid "MCP"
 msgstr "MCP"
@@ -5712,6 +5753,11 @@ msgstr "「応募済み」に移動すると、実際に送った内容を確認
 #: src/features/letters/share.tsx
 #: src/features/settings/profile.tsx
 #: src/features/write/fields.ts
+msgid "Name"
+msgstr "名前"
+
+#: src/features/share/custom-domain.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr "名前"
 
@@ -6111,6 +6157,10 @@ msgstr "まだ応募していません"
 #: src/features/share/web-page.tsx
 msgid "Not available while the resume needs a password."
 msgstr "レジュメにパスワードが必要な間は利用できません。"
+
+#: src/features/share/custom-domain.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
+msgstr "まだ接続されていません。ドメインを管理しているサービスで DNS レコードを追加してから、確認してください。"
 
 #: src/features/career/today.tsx
 msgid "Not for me"
@@ -7372,6 +7422,10 @@ msgstr "24時間前にブリーフィングを更新"
 msgid "Refresh the briefing on the morning of"
 msgstr "当日の朝にブリーフィングを更新"
 
+#: src/features/share/custom-domain.tsx
+msgid "Register at OlaCV"
+msgstr "OlaCV で登録"
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Rehearse aloud"
 msgstr "声に出してリハーサル"
@@ -7441,7 +7495,7 @@ msgstr "リマインダーはここに表示されます。メールでのコピ
 msgid "Remote"
 msgstr "リモート"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
 msgstr "取り除く"
@@ -8509,6 +8563,10 @@ msgstr "終了した応募を表示すると、過去の求職活動を確認で
 msgid "Show details"
 msgstr "詳細を表示"
 
+#: src/features/share/custom-domain.tsx
+msgid "Show DNS records"
+msgstr "DNS レコードを表示"
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "見出しを表示"
@@ -9451,7 +9509,7 @@ msgstr "プロバイダーは応答しませんでした。キー、モデル、
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "理由はインサイトのために保持されます。リンクされたドキュメントは変更されません。"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "The records aren't visible yet. Check again later."
 msgstr "レコードはまだ確認できません。しばらくしてからもう一度確認してください。"
 
@@ -10420,6 +10478,10 @@ msgstr "レジュメのテンプレートとデザインを使用し、どの画
 msgid "Uzbek"
 msgstr "ウズベク語"
 
+#: src/features/share/custom-domain.tsx
+msgid "Value"
+msgstr "値"
+
 #: src/features/ats-checker/messages.ts
 msgid "Vary the openings so the section does not read as boilerplate."
 msgstr "書き出しにバリエーションを持たせ、定型文のように読まれないようにしてください。"
@@ -10979,7 +11041,7 @@ msgstr "日付がいくつかの異なる形式で書かれています。"
 msgid "Your document was saved. Review it in the editor."
 msgstr "文書が保存されました。エディターで確認してください。"
 
-#: src/features/share/web-page.tsx
+#: src/features/share/custom-domain.tsx
 msgid "Your domain"
 msgstr "あなたのドメイン"
 
@@ -11035,6 +11097,10 @@ msgstr "あなたの名前"
 #: src/features/letters/write.tsx
 msgid "Your name and contact details come from a resume."
 msgstr "あなたの名前と連絡先の詳細は履歴書に記載されています。"
+
+#: src/features/share/custom-domain.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code {CODE} takes 50% off the first year."
+msgstr "名前をそのままアドレスに。.cv のレジストリである OlaCV が提供しています。コード {CODE} で初年度が 50% オフになります。"
 
 #: src/features/check/issues.ts
 msgid "Your name is missing"

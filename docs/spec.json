@@ -55809,6 +55809,36 @@
 													"type": "string",
 													"description": "The TXT record's value."
 												},
+												"records": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"type": {
+																"enum": [
+																	"A",
+																	"AAAA",
+																	"CNAME",
+																	"TXT"
+																],
+																"type": "string"
+															},
+															"name": {
+																"type": "string",
+																"description": "The record's full host name."
+															},
+															"value": {
+																"type": "string"
+															}
+														},
+														"required": [
+															"type",
+															"name",
+															"value"
+														]
+													},
+													"description": "Every record to add: the TXT record, and a CNAME to the target, or for a root domain A and AAAA records with its addresses."
+												},
 												"verified": {
 													"type": "boolean",
 													"description": "Whether DNS proved ownership and the domain opens the primary resume."
@@ -55832,6 +55862,7 @@
 												"target",
 												"txtName",
 												"txtValue",
+												"records",
 												"verified",
 												"lastCheckedAt"
 											]
@@ -56006,6 +56037,36 @@
 											"type": "string",
 											"description": "The TXT record's value."
 										},
+										"records": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"type": {
+														"enum": [
+															"A",
+															"AAAA",
+															"CNAME",
+															"TXT"
+														],
+														"type": "string"
+													},
+													"name": {
+														"type": "string",
+														"description": "The record's full host name."
+													},
+													"value": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"type",
+													"name",
+													"value"
+												]
+											},
+											"description": "Every record to add: the TXT record, and a CNAME to the target, or for a root domain A and AAAA records with its addresses."
+										},
 										"verified": {
 											"type": "boolean",
 											"description": "Whether DNS proved ownership and the domain opens the primary resume."
@@ -56029,6 +56090,7 @@
 										"target",
 										"txtName",
 										"txtValue",
+										"records",
 										"verified",
 										"lastCheckedAt"
 									]
@@ -56382,6 +56444,36 @@
 											"type": "string",
 											"description": "The TXT record's value."
 										},
+										"records": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"type": {
+														"enum": [
+															"A",
+															"AAAA",
+															"CNAME",
+															"TXT"
+														],
+														"type": "string"
+													},
+													"name": {
+														"type": "string",
+														"description": "The record's full host name."
+													},
+													"value": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"type",
+													"name",
+													"value"
+												]
+											},
+											"description": "Every record to add: the TXT record, and a CNAME to the target, or for a root domain A and AAAA records with its addresses."
+										},
 										"verified": {
 											"type": "boolean",
 											"description": "Whether DNS proved ownership and the domain opens the primary resume."
@@ -56405,6 +56497,7 @@
 										"target",
 										"txtName",
 										"txtValue",
+										"records",
 										"verified",
 										"lastCheckedAt"
 									]

@@ -482,6 +482,14 @@ msgstr ""
 msgid "{connection} didn't respond."
 msgstr ""
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} a year"
+msgstr ""
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "{cost} the first year"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr ""
@@ -719,10 +727,6 @@ msgstr ""
 
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
-msgstr ""
-
-#: src/features/resume/share/custom-domain-field.tsx
-msgid "{suggestion} may be available. Get yours here →"
 msgstr ""
 
 #: src/features/career/workspace/messages.tsx
@@ -1414,7 +1418,7 @@ msgstr ""
 msgid "Add the domain ending, like {domain}.com"
 msgstr ""
 
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr ""
 
@@ -2139,6 +2143,10 @@ msgstr ""
 msgid "Autosaves are grouped by session and kept for 90 days. Named versions are kept until you delete them. Restoring saves the current state first."
 msgstr ""
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Available"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr ""
@@ -2562,6 +2570,7 @@ msgid "Check any PDF, no account needed"
 msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "Check DNS"
 msgstr ""
 
@@ -2779,6 +2788,7 @@ msgstr ""
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Close"
@@ -2960,6 +2970,15 @@ msgstr ""
 msgid "Connect"
 msgstr ""
 
+#. placeholder {0}: domain.hostname
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Connect {0}"
+msgstr ""
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Connect {domain}"
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr ""
@@ -3133,6 +3152,7 @@ msgstr ""
 
 #: src/features/homepage/share.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
@@ -3140,9 +3160,14 @@ msgstr ""
 
 #: src/features/career/coach-chat.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/mcp.tsx
 msgid "Copy"
+msgstr ""
+
+#: src/features/resume/share/copy-text.tsx
+msgid "Copy {value}"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -3293,6 +3318,7 @@ msgstr ""
 
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
+#: src/features/resume/share/copy-text.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr ""
 
@@ -5250,7 +5276,7 @@ msgid "For"
 msgstr ""
 
 #. placeholder {0}: domain.target
-#: src/features/resume/share/custom-domain-field.tsx
+#: src/features/resume/share/dns-records-dialog.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr ""
 
@@ -6413,6 +6439,10 @@ msgstr ""
 msgid "Last changed in {0}"
 msgstr ""
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Last checked {lastChecked} ago"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Last edited"
@@ -7049,6 +7079,10 @@ msgstr ""
 msgid "Matching your facts"
 msgstr ""
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "May be available"
+msgstr ""
+
 #: src/components/ui/donation-toast.tsx
 msgid "Maybe later"
 msgstr ""
@@ -7305,6 +7339,11 @@ msgstr ""
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+msgid "Name"
+msgstr ""
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
 msgid "Name"
 msgstr ""
 
@@ -7753,6 +7792,10 @@ msgstr ""
 
 #: src/features/settings/account/security.tsx
 msgid "Not connected"
+msgstr ""
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
 msgstr ""
 
 #: src/features/career/today.tsx
@@ -9334,6 +9377,10 @@ msgstr ""
 msgid "Refresh the briefing on the morning of"
 msgstr ""
 
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Register at OlaCV"
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Rehearse aloud"
 msgstr ""
@@ -10611,6 +10658,10 @@ msgstr ""
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed"
+msgstr ""
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Show DNS records"
 msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
@@ -12426,6 +12477,11 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
+#: src/features/resume/share/dns-records-dialog.tsx
+msgctxt "DNS record"
+msgid "Type"
+msgstr ""
+
 #: src/features/settings/account/data.tsx
 msgid "Type <0>{CONFIRMATION}</0> to confirm"
 msgstr ""
@@ -12803,6 +12859,10 @@ msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Valuation and dilution uncertain"
+msgstr ""
+
+#: src/features/resume/share/dns-records-dialog.tsx
+msgid "Value"
 msgstr ""
 
 #: src/features/career/offers.tsx
@@ -13647,6 +13707,10 @@ msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Your name and contact details come from a resume."
+msgstr ""
+
+#: src/features/resume/share/cv-domain-card.tsx
+msgid "Your name as your address, from OlaCV, the .cv registry. Code <0/> takes 50% off the first year."
 msgstr ""
 
 #: src/routes/builder/letter/-components/letter-shell.tsx

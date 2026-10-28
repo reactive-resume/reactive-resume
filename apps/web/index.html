@@ -19,6 +19,11 @@
 				}
 			})();
 		</script>
+		<!-- The CSP has no 'unsafe-eval', so zod can't compile its parsers. Turning that off before any module loads also
+		     skips zod's `new Function` probe, which the browser reports as a CSP violation even though zod catches it. -->
+		<script>
+			globalThis.__zod_globalConfig = { jitless: true };
+		</script>
 		<meta name="application-name" content="Reactive Resume" />
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
