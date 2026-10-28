@@ -65,8 +65,7 @@ export function useApplication(id: string) {
 
 export function useApplicationDetailPrefetch() {
 	const queryClient = useQueryClient();
-	const prefetchedIds = useRef(new Set<string>());
-	const prefetchInFlight = useRef(0);
+	const prefetchInFlight = useRef(new Set<string>());
 	const prefetchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 	const onViewableItemsChanged = useCallback(
 		({ viewableItems }: { viewableItems: ListViewToken[] }) => {
@@ -77,22 +76,17 @@ export function useApplicationDetailPrefetch() {
 				for (const id of ids) {
 					const options = applicationDetailQueryOptions(id);
 					if (
-						prefetchedIds.current.has(id) ||
+						prefetchInFlight.current.has(id) ||
 						queryClient.getQueryData(options.queryKey) ||
 						queryClient.getQueryState(options.queryKey)?.fetchStatus === "fetching"
 					)
 						continue;
-					if (prefetchedIds.current.size >= 8 || prefetchInFlight.current >= 2) break;
-					prefetchedIds.current.add(id);
-					prefetchInFlight.current += 1;
+					if (prefetchInFlight.current.size >= 2) break;
+					prefetchInFlight.current.add(id);
 					void queryClient
 						.fetchQuery(options)
-						.catch(() => {
-							prefetchedIds.current.delete(id);
-						})
-						.finally(() => {
-							prefetchInFlight.current -= 1;
-						});
+						.catch(() => {})
+						.finally(() => prefetchInFlight.current.delete(id));
 				}
 			}, 120);
 		},

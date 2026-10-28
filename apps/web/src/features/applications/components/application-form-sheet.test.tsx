@@ -19,7 +19,7 @@ vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		resume: { list: { queryOptions: () => ({ queryKey: ["resume", "list"], queryFn: async () => [] }) } },
 		applications: {
-			list: { queryKey: () => ["applications", "list"] },
+			listSummary: { queryKey: () => ["applications", "summary"] },
 			tags: {
 				queryOptions: () => ({ queryKey: ["applications", "tags"], queryFn: async () => [] }),
 				queryKey: () => ["applications", "tags"],

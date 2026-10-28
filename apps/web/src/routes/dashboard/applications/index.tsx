@@ -93,21 +93,22 @@ function RouteComponent() {
 	const { data: fullApplications } = useQuery({ ...applicationsFullListQueryOptions(), enabled: exporting });
 
 	const PREFETCH_LIMIT = 12;
-	const prefetchedIds = useRef(new Set<string>());
+	const prefetchInFlight = useRef(new Set<string>());
 	const prefetch = useCallback(
 		(id: string) => {
 			const options = applicationDetailQueryOptions(id);
 			if (
-				prefetchedIds.current.has(id) ||
-				prefetchedIds.current.size >= PREFETCH_LIMIT ||
+				prefetchInFlight.current.has(id) ||
+				prefetchInFlight.current.size >= PREFETCH_LIMIT ||
 				queryClient.getQueryData(options.queryKey) ||
 				queryClient.getQueryState(options.queryKey)?.fetchStatus === "fetching"
 			)
 				return;
-			prefetchedIds.current.add(id);
-			void queryClient.fetchQuery(options).catch(() => {
-				prefetchedIds.current.delete(id);
-			});
+			prefetchInFlight.current.add(id);
+			void queryClient
+				.fetchQuery(options)
+				.catch(() => {})
+				.finally(() => prefetchInFlight.current.delete(id));
 		},
 		[queryClient],
 	);

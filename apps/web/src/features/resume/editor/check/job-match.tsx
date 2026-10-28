@@ -422,7 +422,13 @@ function NoPosting({ application }: { application: JobMatch["application"] }) {
 	const queryClient = useQueryClient();
 	const { mutate: savePosting, isPending: saving } = useMutation({
 		...orpc.applications.update.mutationOptions(),
-		onSuccess: () => queryClient.invalidateQueries({ queryKey: applicationsListQueryKey() }),
+		onSuccess: (_data, input) =>
+			Promise.all([
+				queryClient.invalidateQueries({ queryKey: applicationsListQueryKey() }),
+				queryClient.invalidateQueries({
+					queryKey: orpc.applications.getById.queryKey({ input: { id: input.id } }),
+				}),
+			]),
 		onError: (error) => toastError(error, t`Couldn't save the posting. Try again.`),
 	});
 

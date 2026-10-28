@@ -1,4 +1,4 @@
-import type { Application } from "./types";
+import type { ApplicationSummary } from "./types";
 import type { ApplicationClosedReason, ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -34,10 +34,10 @@ export function useApplicationActions() {
 		...orpc.applications.update.mutationOptions(),
 		onMutate: async (input) => {
 			await queryClient.cancelQueries({ queryKey: listKey });
-			const previous = queryClient.getQueryData<Application[]>(listKey);
+			const previous = queryClient.getQueryData<ApplicationSummary[]>(listKey);
 			const status = input.status as ApplicationStatus | undefined;
-			queryClient.setQueryData<Application[]>(listKey, (rows) =>
-				rows?.map((row): Application =>
+			queryClient.setQueryData<ApplicationSummary[]>(listKey, (rows) =>
+				rows?.map((row): ApplicationSummary =>
 					row.id === input.id
 						? {
 								...row,
@@ -77,9 +77,9 @@ export function useApplicationActions() {
 	return {
 		update,
 		remove,
-		moveTo: (application: Pick<Application, "id">, status: ApplicationStatus) =>
+		moveTo: (application: Pick<ApplicationSummary, "id">, status: ApplicationStatus) =>
 			update.mutate({ id: application.id, status }),
-		close: (application: Pick<Application, "id">, closedReason: ApplicationClosedReason) =>
+		close: (application: Pick<ApplicationSummary, "id">, closedReason: ApplicationClosedReason) =>
 			update.mutate({ id: application.id, status: "closed", closedReason }),
 	};
 }

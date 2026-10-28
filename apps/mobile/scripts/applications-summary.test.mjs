@@ -365,12 +365,15 @@ visible("visible-c", "visible-d");
 await waitForPrefetch();
 assert.equal(prefetchCalls.length, 2, "only two detail requests may run concurrently");
 await finishPrefetches();
-for (let offset = 2; offset < 10; offset += 2) {
+for (let offset = 2; offset < 14; offset += 2) {
 	visible("visible-" + offset, "visible-" + (offset + 1));
 	await waitForPrefetch();
 	await finishPrefetches();
 }
-assert.equal(prefetchCalls.length, 8, "one screen prefetches at most eight details");
+assert.equal(prefetchCalls.length, 14, "completed requests free slots for later visible applications");
+visible("visible-a", "visible-b");
+await waitForPrefetch();
+assert.equal(prefetchCalls.length, 14, "cached details do not need another prefetch");
 queryClient.clear();
 const onRetryVisible = queries.useApplicationDetailPrefetch();
 const retryVisible = () => onRetryVisible({ viewableItems: [{ item: { id: "retry" } }] });
