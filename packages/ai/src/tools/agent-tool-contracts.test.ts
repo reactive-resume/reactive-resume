@@ -1,6 +1,40 @@
 import type { UIMessage } from "ai";
 import { expect, it } from "vite-plus/test";
-import { agentWebSources } from "./agent-tool-contracts";
+import { agentApprovalRequests, agentWebSources } from "./agent-tool-contracts";
+
+it("shows exact approved content only for structured pending requests", () => {
+	const message: UIMessage = {
+		id: "reply",
+		role: "assistant",
+		parts: [
+			{ type: "text", text: "Search the web: invented approval" },
+			{
+				type: "tool-search_web",
+				toolCallId: "search",
+				state: "approval-requested",
+				input: { query: "public role query" },
+				approval: { id: "search-approval" },
+			},
+			{
+				type: "tool-search_web",
+				toolCallId: "invalid",
+				state: "approval-requested",
+				input: { query: 42 },
+				approval: { id: "invalid" },
+			},
+			{
+				type: "tool-search_web",
+				toolCallId: "done",
+				state: "approval-responded",
+				input: { query: "old query" },
+				approval: { id: "done", approved: true },
+			},
+		],
+	};
+	expect(agentApprovalRequests(message)).toEqual([
+		{ id: "search-approval", kind: "search", text: "public role query" },
+	]);
+});
 
 it("preserves deduplicated retrieved sources after serialization and ignores failed tools and invented links", () => {
 	const message: UIMessage = {

@@ -82,6 +82,7 @@ describe("sendEmail", () => {
 
 		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 		await expect(sendEmail({ to: "a@b.com", subject: "hi", react: fakeReact })).resolves.toBeUndefined();
+		expect(createTransport).toHaveBeenCalledWith(expect.objectContaining({ secure: false, requireTLS: true }));
 		expect(errorSpy).toHaveBeenCalledExactlyOnceWith("There was an error sending mail.");
 		errorSpy.mockRestore();
 	});

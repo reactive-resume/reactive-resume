@@ -1,4 +1,5 @@
 import type { CustomSection, CustomSectionType, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import { assertResumeRenderBudget, assertRichTextComplexity } from "@reactive-resume/schema/resume/limits";
 import { toSafeLink } from "@reactive-resume/utils/link";
 import { isCoverLetterOnlyDocument } from "./export-sections";
 
@@ -17,6 +18,7 @@ export type SectionTitleResolver = (sectionId: string) => string | undefined;
  * the resume or the cover letter.
  */
 export function buildMarkdown(data: ResumeData, resolveTitle?: SectionTitleResolver): string {
+	assertResumeRenderBudget(data);
 	const blocks: string[] = isCoverLetterOnlyDocument(data) ? [] : [...renderHeader(data.basics)];
 
 	for (const page of data.metadata.layout.pages) {
@@ -312,45 +314,57 @@ const ENTITIES: Record<string, string> = {
 };
 
 /**
- * ponytail: regex converter, not a full HTML parser. The rich-text fields only ever hold the
- * constrained tiptap tag set (p, br, strong/b, em/i, u, s, a, ul/ol/li, headings). Nested lists are converted innermost first.
- * If the editor gains tables or arbitrary HTML, swap this for a real parser.
+ * shortcut: converts the supported formatting tags and flattens others; use a parser if full HTML fidelity is needed.
  */
 export function htmlToMarkdown(html: string): string {
 	if (!html) return "";
+	assertRichTextComplexity(html);
+	return convertHtml(html, { remaining: 2_000_000 });
+}
+
+function convertHtml(html: string, budget: { remaining: number }): string {
+	const charge = (text: string) => {
+		budget.remaining -= text.length;
+		if (text.length > 200_000 || budget.remaining < 0) throw new Error("Rich text is too complex to convert.");
+		return text;
+	};
+	charge(html);
 
 	// Convert innermost lists first so nested items retain their own numbering and indentation.
 	const list = /<(ul|ol)\b([^<>]*)>((?:(?!<(?:ul|ol)\b).)*?)<\/\1>/gis;
 	let content = html;
 	while (/<(?:ul|ol)\b/i.test(content)) {
+		charge(content);
 		const next = content.replace(list, (_match, tag: string, attributes: string, inner: string) => {
 			let index = Number(/\bstart=["']?(\d+)/i.exec(attributes)?.[1] ?? 1);
 			const items = inner.replace(/<li\b[^<>]*>((?:(?!<li\b)[\s\S])*?)<\/li>/gi, (_item, body: string) => {
 				const prefix = tag.toLowerCase() === "ol" ? `${index++}. ` : "- ";
-				return `${prefix}${htmlToMarkdown(body).replace(/\n/g, `\n${" ".repeat(prefix.length)}`)}\n`;
+				return charge(`${prefix}${convertHtml(body, budget).replace(/\n/g, `\n${" ".repeat(prefix.length)}`)}\n`);
 			});
 			return `\n${items}\n`;
 		});
 		if (next === content) break;
-		content = next;
+		content = charge(next);
 	}
 	// Each element pattern stops at the next opening of the same tag, so unclosed tags can't make it rescan the rest
 	// of the text (quadratic time on crafted input).
-	return content
-		.replace(/<a\b[^<>]*href="([^"<>]*)"[^<>]*>((?:(?!<a\b)[\s\S])*?)<\/a>/gi, (_m, url: string, inner: string) => {
-			const href = markdownHref(url);
-			return href ? `[${htmlToMarkdown(inner)}](${href})` : htmlToMarkdown(inner);
-		})
-		.replace(/<(strong|b)>((?:(?!<\1>)[\s\S])*?)<\/\1>/gi, "**$2**")
-		.replace(/<(em|i)>((?:(?!<\1>)[\s\S])*?)<\/\1>/gi, "_$2_")
-		.replace(/<(s|strike|del)\b[^<>]*>((?:(?!<\1\b)[\s\S])*?)<\/\1>/gi, "~~$2~~")
-		.replace(/<u\b[^<>]*>((?:(?!<u\b)[\s\S])*?)<\/u>/gi, "<u>$1</u>")
-		.replace(/<li\b[^<>]*>((?:(?!<li\b)[\s\S])*?)<\/li>/gi, (_m, inner) => `- ${htmlToMarkdown(inner).trim()}\n`)
-		.replace(/<br\s*\/?>/gi, "\n")
-		.replace(/<\/(p|div|h[1-6]|ul|ol)>/gi, "\n\n")
-		.replace(/<(?!\/?u>)[^<>]+>/g, "")
-		.replace(/&#39;|&nbsp;|&quot;|&amp;|&lt;|&gt;/g, (m) => ENTITIES[m] ?? m)
-		.replace(/(?<![ \t])[ \t]+\n/g, "\n")
-		.replace(/\n{3,}/g, "\n\n")
-		.trim();
+	return charge(
+		content
+			.replace(/<a\b[^<>]*href="([^"<>]*)"[^<>]*>((?:(?!<a\b)[\s\S])*?)<\/a>/gi, (_m, url: string, inner: string) => {
+				const href = markdownHref(url);
+				return href ? `[${convertHtml(inner, budget)}](${href})` : convertHtml(inner, budget);
+			})
+			.replace(/<(strong|b)>((?:(?!<\1>)[\s\S])*?)<\/\1>/gi, "**$2**")
+			.replace(/<(em|i)>((?:(?!<\1>)[\s\S])*?)<\/\1>/gi, "_$2_")
+			.replace(/<(s|strike|del)\b[^<>]*>((?:(?!<\1\b)[\s\S])*?)<\/\1>/gi, "~~$2~~")
+			.replace(/<u\b[^<>]*>((?:(?!<u\b)[\s\S])*?)<\/u>/gi, "<u>$1</u>")
+			.replace(/<li\b[^<>]*>((?:(?!<li\b)[\s\S])*?)<\/li>/gi, (_m, inner) => `- ${convertHtml(inner, budget).trim()}\n`)
+			.replace(/<br\s*\/?>/gi, "\n")
+			.replace(/<\/(p|div|h[1-6]|ul|ol)>/gi, "\n\n")
+			.replace(/<(?!\/?u>)[^<>]+>/g, "")
+			.replace(/&#39;|&nbsp;|&quot;|&amp;|&lt;|&gt;/g, (m) => ENTITIES[m] ?? m)
+			.replace(/(?<![ \t])[ \t]+\n/g, "\n")
+			.replace(/\n{3,}/g, "\n\n")
+			.trim(),
+	);
 }

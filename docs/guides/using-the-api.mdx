@@ -207,6 +207,8 @@ Account deletion (`DELETE /auth/account`) requires a browser session; API keys a
 
 A private request without valid credentials gets `401` with the code `UNAUTHORIZED`. Public operations are marked with `security: []` in the OpenAPI specification. Public resumes still enforce visibility, trash status and sharing passwords, and redact private data.
 
+Replacing or removing an existing application PDF attachment requires `api:delete` as well as `api:write`. Write-only integrations can attach the first file but cannot delete an earlier one by replacing it.
+
 REST data responses use `Cache-Control: no-store`. Uploaded profile images are public; other uploaded files require the owner's credentials, including conditional download requests. Assistant attachments are not exposed through the uploads URL. Unknown and unauthorized file URLs return `404`.
 
 ## Limits

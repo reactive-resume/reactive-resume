@@ -120,10 +120,13 @@ function readLocation(value: unknown): string {
 function jobPostingsIn(html: string): Record<string, unknown>[] {
 	const postings: Record<string, unknown>[] = [];
 	const lower = html.toLowerCase();
-	for (const match of html.matchAll(/<script[^<>]{0,500}type=["']application\/ld\+json["'][^<>]{0,500}>/gi)) {
+	const opener = /<script[^<>]{0,500}type=["']application\/ld\+json["'][^<>]{0,500}>/gi;
+	let match: RegExpExecArray | null;
+	while ((match = opener.exec(html))) {
 		const start = match.index + match[0].length;
 		const end = lower.indexOf("</script>", start);
 		if (end === -1) break;
+		opener.lastIndex = end + "</script>".length;
 		let json: unknown;
 		try {
 			json = JSON.parse(html.slice(start, end));

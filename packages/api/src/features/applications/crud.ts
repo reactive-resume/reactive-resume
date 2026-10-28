@@ -126,7 +126,13 @@ export const crudRouter = {
 		.input(applicationDto.update.input)
 		.use(resumeMutationRateLimit)
 		.output(applicationDto.update.output)
-		.handler(({ input, context }) => applicationService.update({ userId: context.user.id, ...input })),
+		.handler(({ input, context }) =>
+			applicationService.update({
+				userId: context.user.id,
+				...input,
+				canDeleteAttachments: context.authentication?.permissions.includes("delete") ?? false,
+			}),
+		),
 
 	attachDocument: protectedProcedure
 		.route({
@@ -157,7 +163,13 @@ export const crudRouter = {
 		.input(applicationDto.attachDocument.input)
 		.use(resumeMutationRateLimit)
 		.output(applicationDto.attachDocument.output)
-		.handler(({ input, context }) => applicationService.attachDocument({ userId: context.user.id, ...input })),
+		.handler(({ input, context }) =>
+			applicationService.attachDocument({
+				userId: context.user.id,
+				...input,
+				canDeleteAttachments: context.authentication?.permissions.includes("delete") ?? false,
+			}),
+		),
 
 	removeDocument: protectedProcedure
 		.route({

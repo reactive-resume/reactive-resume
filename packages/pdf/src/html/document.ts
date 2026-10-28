@@ -72,7 +72,7 @@ button{font:inherit;font-weight:600;height:44px;border:0;border-radius:8px;backg
  * The page's one script: Share opens the system share sheet or copies the link. Its text is fixed, so the server's
  * policy can allow it by hash.
  */
-const SCRIPT = `(()=>{const d=document,t=d.querySelector(".rr-toast");const toast=()=>{if(!t)return;t.setAttribute("data-on","");setTimeout(()=>t.removeAttribute("data-on"),1600)};d.querySelector("[data-share]")?.addEventListener("click",async()=>{const url=location.href;if(navigator.share){try{await navigator.share({title:d.title,url})}catch{}return}try{await navigator.clipboard.writeText(url);toast()}catch{}})})();`;
+export const WEB_PAGE_SCRIPT = `(()=>{const d=document,t=d.querySelector(".rr-toast");const toast=()=>{if(!t)return;t.setAttribute("data-on","");setTimeout(()=>t.removeAttribute("data-on"),1600)};d.querySelector("[data-share]")?.addEventListener("click",async()=>{const url=location.href;if(navigator.share){try{await navigator.share({title:d.title,url})}catch{}return}try{await navigator.clipboard.writeText(url);toast()}catch{}})})();`;
 
 /** The Reactive Resume mark, drawn in the credit's colour. */
 const LOGO =
@@ -147,7 +147,7 @@ export function renderWebPageDocument({
 		"</main>",
 		`<div class="rr-actions">${download}<button type="button" data-share>${escapeHtml(messages.share)}</button></div>`,
 		`<div class="rr-toast" role="status" aria-live="polite">${escapeHtml(messages.linkCopied)}</div>`,
-		`<script>${SCRIPT}</script>`,
+		`<script>${WEB_PAGE_SCRIPT}</script>`,
 	].join("");
 	return shell(page.lang, metaTags(head), `${SHELL_CSS}${page.css}`, body);
 }

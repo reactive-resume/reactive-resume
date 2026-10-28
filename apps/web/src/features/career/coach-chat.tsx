@@ -7,7 +7,7 @@ import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
+import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { memo, useEffect, useEffectEvent, useRef, useState } from "react";
 import z from "zod";
 import { agentWebSources } from "@reactive-resume/ai/tools/agent-tool-contracts";
@@ -30,6 +30,7 @@ import { Composer, contentClass, copyToClipboard, usedFor, usedSchema } from "./
 import { Eyebrow, MemoryProposal, Working, workingSteps } from "./shared";
 import { attachmentPart } from "@/features/assistant/chat";
 import { AssistantMarkdown } from "@/features/assistant/markdown";
+import { ToolApprovals } from "@/features/assistant/tool-approvals";
 import { useAssistantChat } from "@/features/assistant/use-assistant-chat";
 import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
@@ -77,13 +78,14 @@ export function ChatView(props: ChatViewProps) {
 		void queryClient.invalidateQueries({ queryKey: orpc.career.facts.key() });
 		void queryClient.invalidateQueries({ queryKey: orpc.career.stories.key() });
 	};
-	const { messages, sendMessage, status, error, clearError, regenerate, stop } = useAssistantChat({
-		threadId,
-		initialMessages: props.initialMessages,
-		resume: props.activeRun,
-		context: props.context,
-		onFinish: refresh,
-	});
+	const { messages, sendMessage, status, error, clearError, regenerate, stop, addToolApprovalResponse } =
+		useAssistantChat({
+			threadId,
+			initialMessages: props.initialMessages,
+			resume: props.activeRun,
+			context: props.context,
+			onFinish: refresh,
+		});
 	const streaming = status === "submitted" || status === "streaming";
 	const last = messages.at(-1);
 	const answering = status === "streaming" && last?.role === "assistant" && textOf(last) !== "";
@@ -123,7 +125,11 @@ export function ChatView(props: ChatViewProps) {
 	// A failed continuation (after an answer) is sent again as it was; regenerating would drop the answer.
 	const retry = () => {
 		clearError();
-		if (lastAssistantMessageIsCompleteWithToolCalls({ messages })) void sendMessage();
+		if (
+			lastAssistantMessageIsCompleteWithToolCalls({ messages }) ||
+			lastAssistantMessageIsCompleteWithApprovalResponses({ messages })
+		)
+			void sendMessage();
 		else void regenerate();
 	};
 
@@ -154,6 +160,13 @@ export function ChatView(props: ChatViewProps) {
 											knowledge={knowledge}
 											company={props.company}
 											scoped={props.applicationId !== null}
+										/>
+										<ToolApprovals
+											message={message}
+											disabled={readOnly || streaming || index !== messages.length - 1}
+											onDecision={(decision) => {
+												void addToolApprovalResponse(decision);
+											}}
 										/>
 									</MessageScrollerItem>
 								))}

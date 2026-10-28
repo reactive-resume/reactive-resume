@@ -1,10 +1,9 @@
 import type { ResumeDocument } from "../../src/draft/types";
 import { useLingui } from "@lingui/react/macro";
-import * as SecureStore from "expo-secure-store";
 import Storage from "expo-sqlite/kv-store";
 import { useEffect, useState } from "react";
 import { Platform } from "react-native";
-import { restoreSession, saveTokens } from "../../src/auth/session";
+import { installDevelopmentSession } from "../../src/auth/session";
 import { resumeFieldFocus, useResumeStore } from "../../src/draft";
 import { Banner, Button, TextField } from "../../src/ui";
 import { runParity } from "./device";
@@ -14,6 +13,7 @@ type DevelopmentToolsProps = { id: string; origin: string; fullParity: boolean }
 let running: Promise<void> | undefined;
 
 async function prepare(id: string, origin: string, fullParity: boolean) {
+	await installDevelopmentSession(origin);
 	if (fullParity) await runParity(origin);
 	const data = await runReviewChecks(origin);
 	data.basics.name = "Draft-backed preview";
@@ -40,10 +40,6 @@ async function prepare(id: string, origin: string, fullParity: boolean) {
 		`reactive-resume:unsaved:${encodeURIComponent(owner)}:resume:${id}`,
 		JSON.stringify({ baseline: document, document, sessionId: "rr-M3T4-preview" }),
 	);
-	// Disposable local fixture session: never contacts a real account/server. Tokens stay in SecureStore.
-	await SecureStore.setItemAsync("server", origin);
-	await restoreSession();
-	await saveTokens({ accessToken: `fixture.${btoa(JSON.stringify({ sub: subject }))}.fixture` });
 	console.info(`[preview-review] ${Platform.OS} SQLite draft prepared for the real Page hook`);
 }
 

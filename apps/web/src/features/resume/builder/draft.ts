@@ -166,7 +166,11 @@ export function readUnsavedResumeData(id: string): ResumeData | undefined {
 	try {
 		const raw = window.localStorage.getItem(`${UNSAVED_STORAGE_PREFIX}${id}`);
 		if (!raw) return undefined;
-		const parsed = JSON.parse(raw) as { data?: ResumeData };
+		const parsed = JSON.parse(raw) as { data?: ResumeData; storedAt?: number };
+		if (!Number.isFinite(parsed.storedAt) || Date.now() - (parsed.storedAt ?? 0) > 7 * 86_400_000) {
+			clearUnsavedResume(id);
+			return undefined;
+		}
 		return parsed.data;
 	} catch {
 		return undefined;
@@ -276,6 +280,7 @@ async function flushResumeSave(id: string) {
 			{ id: submitted.id, data: submittedData, sessionId: runtime.sessionId },
 			{ signal: runtime.abortController.signal },
 		)) as Resume;
+		if (runtime.abortController.signal.aborted) return;
 
 		runtime.queryClient?.setQueryData(getResumeQueryKey(submitted.id), updated);
 
@@ -305,6 +310,7 @@ async function flushResumeSave(id: string) {
 		runtime.saveFailed = false;
 		if (!runtime.pendingResume && !runtime.hasPendingLocalChanges) clearUnsavedResume(submitted.id);
 	} catch (error: unknown) {
+		if (runtime.abortController.signal.aborted) return;
 		if (error instanceof DOMException && error.name === "AbortError") return;
 
 		runtime.pendingResume ??= submitted;
@@ -401,6 +407,16 @@ function cleanupRuntime(id: string) {
 	}
 
 	runtimes.delete(id);
+}
+
+/** Cancel saves before account storage is cleared, including late failures from an old session. */
+export function clearResumeDrafts() {
+	for (const [id, runtime] of runtimes) {
+		runtime.pendingResume = undefined;
+		runtime.syncResume.cancel();
+		cleanupRuntime(id);
+	}
+	useResumeStore.getState().reset();
 }
 
 function syncCurrentResume(id: string) {

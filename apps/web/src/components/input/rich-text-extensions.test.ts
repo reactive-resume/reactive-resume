@@ -3,6 +3,33 @@
 import { expect, it } from "vite-plus/test";
 import { Editor } from "@tiptap/react";
 import { richTextExtensions } from "./rich-text-extensions";
+import { hasUnsupportedTableMarkup, toPreviewHtml } from "./rich-text-markup";
+
+it("bounds inherited table spans before Tiptap allocates columns", () => {
+	const html =
+		'<table><tbody><tr><td colspan="999999999" rowspan="999999999" colwidth="999999999"><p>Keep text</p></td></tr></tbody></table>';
+	expect(hasUnsupportedTableMarkup(html)).toBe(true);
+	const editor = new Editor({ extensions: richTextExtensions, content: html });
+	try {
+		expect(editor.getHTML()).toContain("Keep text");
+		expect(editor.getHTML()).not.toContain("999999999");
+	} finally {
+		editor.destroy();
+	}
+});
+
+it("flattens grids whose spans multiply across too many rows", () => {
+	const html = `<table><tbody><tr><td colspan="100" rowspan="1000"><p>Keep text</p></td></tr>${"<tr></tr>".repeat(999)}</tbody></table>`;
+	expect(hasUnsupportedTableMarkup(html)).toBe(true);
+	expect(toPreviewHtml(html)).toContain("Keep text");
+	expect(toPreviewHtml(html)).not.toContain("<table");
+});
+
+it("strips imported link classes from the read-only preview", () => {
+	expect(toPreviewHtml('<p><a class="fixed inset-0 z-50" href="https://example.test">Link</a></p>')).not.toMatch(
+		/class=|href=/,
+	);
+});
 
 it("keeps supported table formatting and drops other CSS from imported tables", () => {
 	const editor = new Editor({

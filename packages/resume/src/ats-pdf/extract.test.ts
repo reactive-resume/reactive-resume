@@ -4,6 +4,14 @@ import { buildExtractedDocument } from "./extract";
 import { healthyResume, healthyResumeLines, makeRawExtraction } from "./test-fixtures";
 
 describe("buildExtractedDocument", () => {
+	it.each([1e12, Number.POSITIVE_INFINITY, Number.NaN])(
+		"does not allocate a width-sized histogram for invalid geometry %s",
+		(width) => {
+			const raw = healthyResume({ pages: { 1: { width } } });
+			expect(() => buildExtractedDocument(raw)).not.toThrow();
+		},
+	);
+
 	it("clusters spans on the same baseline into one line, in left-to-right order", () => {
 		const raw = makeRawExtraction({
 			lines: [

@@ -8,4 +8,7 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 export function removeContactDetails(data: ResumeData): void {
 	Object.assign(data.basics, { email: "", phone: "", location: "", customFields: [] });
 	for (const item of data.sections.references.items) item.phone = "";
+	for (const section of data.customSections) {
+		if (section.type === "references") for (const item of section.items) item.phone = "";
+	}
 }

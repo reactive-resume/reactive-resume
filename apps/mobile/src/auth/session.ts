@@ -247,21 +247,27 @@ async function readStoredSession(): Promise<void> {
 	}
 }
 
-/** Stores tokens for the current account (a refresh); null deletes them and signs out without revoking. */
-export function saveTokens(next: Tokens | null): Promise<void> {
+/** Development previews may install a local fixture only when no real account is present. */
+export async function installDevelopmentSession(origin: string): Promise<void> {
+	if (!__DEV__ || !["localhost", "127.0.0.1", "[::1]", "10.0.2.2"].includes(new URL(origin).hostname))
+		throw new Error("Preview sessions require a local development server.");
+	if (new URL(origin).origin !== origin) throw new Error("Expected a development server origin.");
+	await restoreSession();
 	return transition(async () => {
-		const { server } = session;
-		if (next) await SecureStore.setItemAsync(tokensKey(server), JSON.stringify(next));
-		else await SecureStore.deleteItemAsync(tokensKey(server));
+		if (
+			session.status !== "signed-out" ||
+			tokens ||
+			accountScope ||
+			(await SecureStore.getItemAsync(tokensKey(origin)))
+		)
+			throw new Error("Sign out before opening a development preview.");
+		const next = { accessToken: `fixture.${btoa(JSON.stringify({ sub: "rr-M3T4-preview" }))}.fixture` };
+		await SecureStore.setItemAsync(tokensKey(origin), JSON.stringify(next));
+		await SecureStore.setItemAsync(serverKey, origin);
 		tokens = next;
-		if (next) {
-			accountScope = scopeOf(server, next.accessToken) ?? accountScope;
-			setSession({ ...session, status: "signed-in" });
-		} else {
-			accountScope = null;
-			changeIdentity();
-			setSession({ ...session, status: "signed-out" });
-		}
+		accountScope = scopeOf(origin, next.accessToken);
+		changeIdentity();
+		setSession({ status: "signed-in", server: origin });
 	});
 }
 

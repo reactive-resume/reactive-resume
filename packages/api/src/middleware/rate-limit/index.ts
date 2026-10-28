@@ -73,18 +73,10 @@ export const accountRateLimit = createRatelimitMiddleware<ContextWithHeaders, un
 	key: ({ context }) => `account:${getUserKey(context)}`,
 });
 
-type ResumePasswordAttempt = { username: string; slug: string; trustedClient?: string | undefined };
+type ResumePasswordAttempt = { resumeId: string; trustedClient?: string | undefined };
 
 const resumePasswordKey = (input: ResumePasswordAttempt) =>
-	`resume-password:${input.username}:${input.slug}:${getClientKey(input.trustedClient)}`;
-
-export const resumePasswordRateLimit = createRatelimitMiddleware<
-	ContextWithHeaders,
-	{ username: string; slug: string }
->({
-	limiter: productionLimiter(resumePasswordLimiter),
-	key: ({ context }, input) => resumePasswordKey({ ...input, trustedClient: context.trustedClient }),
-});
+	`resume-password:${input.resumeId}:${getClientKey(input.trustedClient)}`;
 
 /** Spends a try from the budget the API's verify call uses, so a web page's password form gets no extra guesses. */
 export async function consumeResumePasswordLimit(input: ResumePasswordAttempt): Promise<boolean> {

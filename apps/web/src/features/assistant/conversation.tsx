@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
-import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
+import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { memo, useEffect, useEffectEvent, useId, useMemo, useRef, useState } from "react";
 import { agentWebSources, readPageOutputSchema } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -28,6 +28,7 @@ import { Trace, TraceIcon, TraceLine, TraceTitle } from "@reactive-resume/ui/com
 import { cn } from "@reactive-resume/utils/style";
 import { attachmentPart, fileToBase64, transcriptOf } from "./chat";
 import { AssistantMarkdown } from "./markdown";
+import { ToolApprovals } from "./tool-approvals";
 import { useAssistantChat } from "./use-assistant-chat";
 import { ChangeSet } from "@/features/resume/editor/proposals/proposal-list";
 import { useEditorStore } from "@/features/resume/editor/store";
@@ -76,14 +77,19 @@ export function Conversation(props: ConversationProps) {
 		void queryClient.invalidateQueries({
 			queryKey: orpc.agent.threads.list.key(),
 		});
-	const { messages, sendMessage, status, error, clearError, regenerate, stop, addToolOutput } = useAssistantChat({
-		threadId,
-		initialMessages: props.initialMessages,
-		resume: props.activeRun,
-		context,
-		onFinish: refresh,
-	});
+	const { messages, sendMessage, status, error, clearError, regenerate, stop, addToolOutput, addToolApprovalResponse } =
+		useAssistantChat({
+			threadId,
+			initialMessages: props.initialMessages,
+			resume: props.activeRun,
+			context,
+			onFinish: refresh,
+		});
 	const streaming = status === "submitted" || status === "streaming";
+	const continuationBlocked =
+		(!context.document || !context.posting) &&
+		(messages.at(-1)?.metadata as { contextScope?: string } | undefined)?.contextScope !==
+			JSON.stringify([context.document !== false, context.posting !== false]);
 
 	const send = (text: string, attachments: ChatAttachment[] = []) => {
 		if (streaming || readOnly) return;
@@ -112,8 +118,13 @@ export function Conversation(props: ConversationProps) {
 
 	// A failed continuation (after an answer) is sent again as it was; regenerating would drop the answer.
 	const retry = () => {
+		if (readOnly || continuationBlocked) return;
 		clearError();
-		if (lastAssistantMessageIsCompleteWithToolCalls({ messages })) void sendMessage();
+		if (
+			lastAssistantMessageIsCompleteWithToolCalls({ messages }) ||
+			lastAssistantMessageIsCompleteWithApprovalResponses({ messages })
+		)
+			void sendMessage();
 		else void regenerate();
 	};
 
@@ -193,11 +204,18 @@ export function Conversation(props: ConversationProps) {
 											message={message}
 											streaming={streaming && index === messages.length - 1}
 											enter={!initialIds.has(message.id)}
-											readOnly={readOnly}
+											readOnly={readOnly || continuationBlocked}
 											statuses={statuses}
 											document={document}
 											onAnswer={answer}
 											onRecord={record}
+										/>
+										<ToolApprovals
+											message={message}
+											disabled={readOnly || continuationBlocked || streaming || index !== messages.length - 1}
+											onDecision={(decision) => {
+												void addToolApprovalResponse(decision);
+											}}
 										/>
 									</MessageScrollerItem>
 								))}
@@ -427,6 +445,13 @@ function ToolPartView({
 	onRecord,
 }: ToolPartViewProps) {
 	const working = part.state === "input-streaming" || part.state === "input-available";
+	if (part.state === "approval-requested" || part.state === "approval-responded") return null;
+	if (part.state === "output-denied")
+		return (
+			<Status working={false}>
+				<Trans>Skipped</Trans>
+			</Status>
+		);
 
 	switch (part.type) {
 		case "tool-read_resume":

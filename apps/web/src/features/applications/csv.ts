@@ -157,7 +157,8 @@ export const CSV_FIELDS: readonly CsvField[] = [
 export const autoMapHeaders = (headers: readonly string[]): (CsvField | null)[] =>
 	headers.map((header) => HEADER_ALIASES[header.trim().toLowerCase()] ?? null);
 
-const csvLine = (cells: readonly string[]) => cells.map((cell) => `"${cell.replaceAll('"', '""')}"`).join(",");
+const csvLine = (cells: readonly string[]) =>
+	cells.map((cell) => `"${(isFormulaLike(cell) ? `'${cell}` : cell).replaceAll('"', '""')}"`).join(",");
 
 /** Rows back to CSV text (for downloading the rows an import skipped), header first. */
 export const rowsToCsv = (headers: readonly string[], rows: readonly string[][]) =>
@@ -237,9 +238,9 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 	for (const [index, raw] of dataRows.entries()) {
 		const record: Partial<CsvApplication> = {};
 		const invalid: CsvMapResult["invalidValues"] = [];
-		fieldFor.forEach((field, i) => {
+		raw.forEach((rawValue, i) => {
+			const field = fieldFor[i];
 			if (!field) return;
-			const rawValue = raw[i] ?? "";
 			const value = (isReactiveResumeExport ? stripFormulaGuard(rawValue) : rawValue).trim();
 			if (!value) return;
 			if (field === "tags") record.tags = parseTags(value);

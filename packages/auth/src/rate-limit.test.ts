@@ -13,6 +13,16 @@ beforeEach(() => {
 });
 
 describe("authRateLimitStorage", () => {
+	it("retains active limits when outage traffic fills the fallback map", async () => {
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		const { authRateLimitStorage } = await import("./rate-limit");
+		mocks.eval.mockRejectedValue(new Error("offline"));
+		const rule = { window: 3600, max: 1 };
+		expect((await authRateLimitStorage?.consume("protected-login", rule))?.allowed).toBe(true);
+		for (let i = 0; i < 10_005; i++) await authRateLimitStorage?.consume(`other-${i}`, rule);
+		expect((await authRateLimitStorage?.consume("protected-login", rule))?.allowed).toBe(false);
+		expect((await authRateLimitStorage?.consume("new-key", rule))?.allowed).toBe(false);
+	});
 	it("atomically consumes namespaced limits in milliseconds", async () => {
 		const { authRateLimitStorage } = await import("./rate-limit");
 		mocks.eval.mockResolvedValueOnce([1, 0]).mockResolvedValueOnce([0, 7]);

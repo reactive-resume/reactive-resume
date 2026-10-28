@@ -131,7 +131,7 @@ export function buildCareerTools(input: CareerToolsInput): ToolSet {
 		});
 		tools.save_story = tool({
 			description:
-				"Save a STARR story the user agreed to, grounded in existing fact IDs. Leave Result or Reflection empty rather than inventing them.",
+				"Propose a STARR story for the user to review and approve before saving, grounded in existing fact IDs. Leave Result or Reflection empty rather than inventing them. Nothing is saved until approval.",
 			inputSchema: careerStoryInputSchema
 				.omit({ applicationId: true })
 				.extend({ factIds: z.array(z.string()).min(1).max(30) }),

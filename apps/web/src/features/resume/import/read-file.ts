@@ -5,6 +5,7 @@ import { parseReactiveResumeJSON } from "@reactive-resume/import/reactive-resume
 import { parseReactiveResumeV4JSON } from "@reactive-resume/import/reactive-resume-v4-json";
 import { convertLegacyStylesheet, needsLegacyStyleConversion } from "@reactive-resume/pdf/semantic-legacy";
 import { forEachDatedEntry } from "@reactive-resume/schema/resume/dates";
+import { stripHtml } from "@reactive-resume/utils/string";
 import { client } from "@/libs/orpc/client";
 
 /** What a file holds, read from its bytes and shape rather than its extension or type. */
@@ -200,7 +201,7 @@ export function summarizeImport(data: ResumeData) {
 	});
 
 	return {
-		sections: sections.length + (data.summary.content.replace(/<[^>]*>/g, "").trim() ? 1 : 0),
+		sections: sections.length + (stripHtml(data.summary.content) ? 1 : 0),
 		entries: sections.reduce((total, section) => total + section.items.length, 0),
 		flagged,
 	};

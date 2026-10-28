@@ -23,6 +23,71 @@ async function createApplication(page: Page) {
 	return applicationId;
 }
 
+test("coach stories wait for exact-content approval and respect Skip", async ({ authPage: page }, testInfo) => {
+	test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs FLAG_ALLOW_UNSAFE_AI_BASE_URL=true");
+	test.setTimeout(90_000);
+	await page.setViewportSize({ width: 1280, height: 1100 });
+	const provider = await page.request.post("/api/openapi/ai-providers", {
+		data: {
+			label: "Demo connection",
+			provider: "openai-compatible",
+			model: "stub",
+			baseURL: stub.baseURL,
+			apiKey: "stub-key",
+		},
+	});
+	await expect(provider).toBeOK();
+	await expect(await page.request.post(`/api/openapi/ai-providers/${(await provider.json()).id}/test`)).toBeOK();
+	await expect(
+		await page.request.post("/api/openapi/career/facts", {
+			data: {
+				text: "I wrote a setup checklist and reviewed it with support.",
+				category: "experience",
+				source: {
+					kind: "manual",
+					id: "security-story-fact",
+					quote: "I wrote a setup checklist and reviewed it with support.",
+				},
+			},
+		}),
+	).toBeOK();
+	const stories = async () => {
+		const response = await page.request.get("/api/openapi/career/stories");
+		await expect(response).toBeOK();
+		return response.json();
+	};
+	await page.goto("/dashboard/career/coach");
+	for (const approve of [false, true]) {
+		const composer = page.getByPlaceholder("Ask about your next career step…");
+		await composer.fill("Review a story about my onboarding work.");
+		await composer.press("Enter");
+		await expect(page.getByText("Save this story to Knowledge?", { exact: true })).toBeVisible({ timeout: 20_000 });
+		await expect(page.getByRole("button", { name: "Save story", exact: true })).toBeEnabled();
+		expect(await stories()).toEqual([]);
+		if (approve)
+			await page
+				.getByText("Save this story to Knowledge?", { exact: true })
+				.locator("..")
+				.screenshot({ path: testInfo.outputPath("story-approval.png") });
+		await page.getByRole("button", { name: approve ? "Save story" : "Skip", exact: true }).click();
+		await expect(page.getByText("Save this story to Knowledge?", { exact: true })).toBeHidden();
+		await expect(page.getByText("Story decision received.", { exact: true })).toHaveCount(approve ? 2 : 1, {
+			timeout: 20_000,
+		});
+		if (approve)
+			await expect.poll(stories).toEqual([
+				expect.objectContaining({
+					data: expect.objectContaining({
+						title: "Improving customer onboarding",
+						action: "I wrote a setup checklist and reviewed it with support.",
+						result: "",
+					}),
+				}),
+			]);
+		else expect(await stories()).toEqual([]);
+	}
+});
+
 test("knowledge corrections persist and the workspace opens without an AI provider", async ({ authPage: page }) => {
 	const applicationId = await createApplication(page);
 	const original = "I reduced packing errors by 12 percent.";

@@ -170,7 +170,7 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 	beforeEach(async () => {
 		fixture.generate.mockReset();
 		fixture.storageDelete.mockReset().mockResolvedValue(undefined);
-		await pool.query('TRUNCATE "user" CASCADE');
+		await pool.query('TRUNCATE "user", "released_username" CASCADE');
 		await getDb()
 			.insert(tables.user)
 			.values(

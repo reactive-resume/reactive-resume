@@ -155,6 +155,20 @@ export const customDomainService = {
 		const valid = await dnsPointsHere(domain.hostname, domain.verificationToken);
 		const now = new Date();
 		const updated = await db.transaction(async (tx) => {
+			const [current] = await tx
+				.select()
+				.from(schema.customDomain)
+				.where(
+					and(
+						eq(schema.customDomain.userId, userId),
+						eq(schema.customDomain.hostname, domain.hostname),
+						eq(schema.customDomain.verificationToken, domain.verificationToken),
+					),
+				)
+				.for("update");
+			if (!current)
+				throw new ORPCError("CONFLICT", { message: "The domain changed during verification. Verify it again." });
+			const failingSince = current.failingSince ?? now;
 			if (valid)
 				await tx
 					.update(schema.customDomain)
@@ -164,8 +178,12 @@ export const customDomainService = {
 				.update(schema.customDomain)
 				.set(
 					valid
-						? { verifiedAt: domain.verifiedAt ?? now, lastCheckedAt: now, failingSince: null }
-						: { lastCheckedAt: now, failingSince: domain.failingSince ?? now },
+						? { verifiedAt: current.verifiedAt ?? now, lastCheckedAt: now, failingSince: null }
+						: {
+								lastCheckedAt: now,
+								failingSince,
+								...(now.getTime() - failingSince.getTime() > GRACE_MS ? { verifiedAt: null } : {}),
+							},
 				)
 				.where(eq(schema.customDomain.userId, userId))
 				.returning();
@@ -258,11 +276,16 @@ async function recheckStaleDomains() {
 			.limit(20);
 		for (const domain of stale) {
 			const now = new Date();
+			const unchanged = and(
+				eq(schema.customDomain.userId, domain.userId),
+				eq(schema.customDomain.hostname, domain.hostname),
+				eq(schema.customDomain.verificationToken, domain.verificationToken),
+				domain.lastCheckedAt === null
+					? isNull(schema.customDomain.lastCheckedAt)
+					: eq(schema.customDomain.lastCheckedAt, domain.lastCheckedAt),
+			);
 			if (await dnsPointsHere(domain.hostname, domain.verificationToken)) {
-				await db
-					.update(schema.customDomain)
-					.set({ lastCheckedAt: now, failingSince: null })
-					.where(eq(schema.customDomain.userId, domain.userId));
+				await db.update(schema.customDomain).set({ lastCheckedAt: now, failingSince: null }).where(unchanged);
 				continue;
 			}
 			const failingSince = domain.failingSince ?? now;
@@ -273,7 +296,7 @@ async function recheckStaleDomains() {
 					failingSince,
 					...(now.getTime() - failingSince.getTime() > GRACE_MS ? { verifiedAt: null } : {}),
 				})
-				.where(eq(schema.customDomain.userId, domain.userId));
+				.where(unchanged);
 		}
 	} finally {
 		rechecking = false;

@@ -15,7 +15,7 @@ import { init } from "@formepdf/core/worker";
 import { Pool } from "pg";
 import { configureAgentStreamLifetime } from "@reactive-resume/api/features/agent/streams";
 import { runCareerJobs } from "@reactive-resume/api/features/career/jobs";
-import { configureStorageService, getStorageService } from "@reactive-resume/api/features/storage";
+import { configureStorageService, getStorageService, isPublicUploadOwner } from "@reactive-resume/api/features/storage";
 import { initializeAuth } from "@reactive-resume/auth/config";
 import { withDatabasePool } from "@reactive-resume/db/client";
 import { configureCoordination } from "@reactive-resume/db/coordination";
@@ -43,6 +43,8 @@ configureAgentStreamLifetime((promise) => {
 	store?.ctx.waitUntil(promise);
 });
 configureOwnPictureReader(async (key) => {
+	const owner = /^uploads\/([^/]+)\/pictures\//.exec(key)?.[1];
+	if (!owner || !(await isPublicUploadOwner(owner))) throw new Error("Picture unavailable");
 	const file = await getStorageService().read(key);
 	if (!file || file.size > 12_000_000) throw new Error("Picture unavailable or exceeds 12 MB");
 	return file.data;

@@ -94,7 +94,12 @@ overrides:
   samlify@<2.13.0: ^2.13.0
   uuid@<11.1.1: ^11.1.1
   dompurify@<3.4.17: ^3.4.17
+  node-forge@<1.4.1: ^1.4.2
+  zod@>=4.0.0 <4.6.6: ^4.6.7
+  # Expo's two plugin schemas use APIs shared with v4; dependency-security.test.mjs checks compatibility.
+  "@expo/cli@58.1.15>zod": ^4.6.7
 patchedDependencies:
+  deepmerge@4.3.1: patches/deepmerge@4.3.1.patch
   react-native-enriched-html@1.1.1: apps/mobile/patches/react-native-enriched-html@1.1.1.patch
 skills:
   dirs:

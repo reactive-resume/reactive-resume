@@ -2,8 +2,8 @@ import type { DocumentPickerAsset } from "expo-document-picker";
 import { t } from "@lingui/core/macro";
 import { File } from "expo-file-system";
 import { coverLetterDocumentSchema } from "@reactive-resume/schema/cover-letter/data";
-import { client, rest } from "@/api/client";
-import { getServer } from "@/auth/session";
+import { client, rest, SessionChangedError } from "@/api/client";
+import { getAccountScope } from "@/auth/session";
 
 export type ImportFormat =
 	| "REACTIVE_RESUME"
@@ -43,10 +43,12 @@ export async function importDocument(
 	aiPdf: boolean,
 	signal: AbortSignal,
 ): Promise<ImportedDocument> {
-	const server = getServer();
+	const scope = getAccountScope();
+	if (!scope) throw new SessionChangedError();
+	const options = { signal, context: { scope } };
 	const assertCurrent = () => {
 		if (signal.aborted) throw new ImportError(t`Import canceled.`);
-		if (getServer() !== server) throw new ImportError(t`Server changed. Return to Documents and try again.`);
+		if (getAccountScope() !== scope) throw new SessionChangedError();
 	};
 	const file = new File(asset.uri);
 	if (file.size > 10 * 1024 * 1024 || (asset.size ?? 0) > 10 * 1024 * 1024)
@@ -78,7 +80,8 @@ export async function importDocument(
 		const value = json && typeof json === "object" && "data" in json ? json.data : json;
 		const parsed = coverLetterDocumentSchema.safeParse(value);
 		if (!parsed.success) throw new ImportError(t`This cover letter file isn't valid.`);
-		const letter = await client.coverLetters.import({ document: parsed.data }, { signal });
+		const letter = await client.coverLetters.import({ document: parsed.data }, options);
+		assertCurrent();
 		return { id: letter.id, type: "letter" };
 	}
 	if (format === "DOCX" || (format === "PDF" && aiPdf)) {
@@ -90,11 +93,12 @@ export async function importDocument(
 			format === "DOCX"
 				? await client.ai.parseDocx(
 						{ ...input, mediaType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" },
-						{ signal },
+						options,
 					)
-				: await client.ai.parsePdf(input, { signal });
+				: await client.ai.parsePdf(input, options);
 		assertCurrent();
-		const id = await client.resume.import({ data }, { signal });
+		const id = await client.resume.import({ data }, options);
+		assertCurrent();
 		return { id, type: "resume" };
 	}
 	const body = new FormData();
@@ -102,7 +106,9 @@ export async function importDocument(
 		body.append("file", new Blob([JSON.stringify(json.data)], { type: "application/json" }), asset.name);
 	} else body.append("file", file, asset.name);
 	body.append("format", format);
-	const response = await rest("/resumes/file-imports", { method: "POST", body, signal });
+	assertCurrent();
+	const response = await rest("/resumes/file-imports", { method: "POST", body, signal }, scope);
+	assertCurrent();
 	if (!response.ok) {
 		if (response.status === 401) throw new ImportError(t`Your session expired. Sign in again.`);
 		if (response.status === 413) throw new ImportError(t`File is too large. Choose a file up to 10 MB.`);
@@ -112,6 +118,7 @@ export async function importDocument(
 		);
 	}
 	const id: unknown = await response.json();
+	assertCurrent();
 	if (typeof id !== "string" || !id)
 		throw new ImportError(t`The server returned an invalid import result. Refresh Documents before retrying.`);
 	return { id, type: "resume" };

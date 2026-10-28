@@ -382,11 +382,24 @@ const getAuthConfig = () => {
 					}
 					return;
 				}
-				if (ctx.path === "/passkey/generate-register-options" || ctx.path === "/passkey/verify-registration") {
+				if (ctx.path === "/sign-in/username" && env.FLAG_DISABLE_EMAIL_AUTH)
+					throw new APIError("FORBIDDEN", { message: "Password sign-in is turned off on this server." });
+				// Internal issuance is gated by the application's session-only, recent-sign-in procedure.
+				if (ctx.path === "/api-key/create" && !ctx.request) return;
+				if (
+					["/passkey/generate-register-options", "/passkey/verify-registration", "/api-key/create"].includes(ctx.path)
+				) {
 					// freshAge is 0 so old sessions can unlink providers; adding a passkey still needs a recent sign-in.
-					const current = await auth.api.getSession({ headers: ctx.headers ?? new Headers() });
-					if (current && Date.now() - new Date(current.session.createdAt).getTime() > 24 * 60 * 60 * 1000) {
-						throw new APIError("FORBIDDEN", { message: "For your security, sign in again to add a passkey." });
+					const current = await auth.api.getSession({
+						headers: ctx.headers ?? new Headers(),
+						query: { disableCookieCache: true },
+					});
+					if (!current) throw new APIError("UNAUTHORIZED");
+					if (ctx.path.startsWith("/passkey/") && !current.user.emailVerified)
+						throw new APIError("FORBIDDEN", { message: "Verify your email address before adding a passkey." });
+					const age = Date.now() - new Date(current.session.createdAt).getTime();
+					if (!Number.isFinite(age) || age < 0 || age > 24 * 60 * 60 * 1000) {
+						throw new APIError("FORBIDDEN", { message: "For your security, sign in again to add a credential." });
 					}
 					return;
 				}
@@ -486,9 +499,10 @@ const getAuthConfig = () => {
 					await tx.delete(schema.oauthAccessToken).where(eq(schema.oauthAccessToken.userId, user.id));
 					await tx.delete(schema.oauthRefreshToken).where(eq(schema.oauthRefreshToken.userId, user.id));
 					await tx.delete(schema.oauthConsent).where(eq(schema.oauthConsent.userId, user.id));
+					// Historical passkeys may predate mailbox verification; recovery revokes all of them.
+					await tx.delete(schema.passkey).where(eq(schema.passkey.userId, user.id));
 					// Nobody had proved this address before: whoever signed up with it may have added other ways in.
 					if (!user.emailVerified) {
-						await tx.delete(schema.passkey).where(eq(schema.passkey.userId, user.id));
 						await tx.delete(schema.twoFactor).where(eq(schema.twoFactor.userId, user.id));
 						await tx
 							.delete(schema.account)

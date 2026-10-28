@@ -27,7 +27,7 @@ import { useKeyboardInset } from "@reactive-resume/ui/hooks/use-keyboard-inset";
 import { cn } from "@reactive-resume/utils/style";
 import { ImprovePanel, lineAtCaret } from "./improve";
 import { richTextExtensions } from "@/components/input/rich-text-extensions";
-import { hasUnsupportedTableMarkup } from "@/components/input/rich-text-markup";
+import { hasUnsupportedTableMarkup, toPreviewHtml } from "@/components/input/rich-text-markup";
 import { openAssistantFrom } from "@/features/assistant/open";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
@@ -206,14 +206,16 @@ export function RichTextEditor({
 	const mobile = useBreakpoint() === "mobile";
 	const keyboardInset = useKeyboardInset();
 	const readOnlyTable = useMemo(() => hasUnsupportedTableMarkup(value), [value]);
+	const editorValue = useMemo(() => (readOnlyTable ? toPreviewHtml(value) : value), [readOnlyTable, value]);
 
 	const editor = useEditor({
 		extensions: richTextExtensions,
-		content: value,
+		content: editorValue,
 		editable: !disabled && !readOnlyTable,
 		immediatelyRender: false,
 		shouldRerenderOnTransaction: false,
 		editorProps: {
+			transformPastedHTML: (html) => (hasUnsupportedTableMarkup(html) ? toPreviewHtml(html) : html),
 			attributes: {
 				...(id ? { id } : {}),
 				"aria-label": label,
@@ -246,9 +248,9 @@ export function RichTextEditor({
 
 	// Undo, the page and the assistant change the text from outside; keep the editor in step.
 	useEffect(() => {
-		if (!editor || editor.getHTML() === value) return;
-		editor.commands.setContent(value, { emitUpdate: false });
-	}, [editor, value]);
+		if (!editor || editor.getHTML() === editorValue) return;
+		editor.commands.setContent(editorValue, { emitUpdate: false });
+	}, [editor, editorValue]);
 
 	useEffect(() => {
 		editor?.setEditable(!disabled && !readOnlyTable, false);

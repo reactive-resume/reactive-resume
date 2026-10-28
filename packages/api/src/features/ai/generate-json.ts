@@ -44,8 +44,9 @@ export async function generateJson<T>(
 		messages: [{ role: "user", content: prompt }],
 	});
 
-	const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-	const candidate = fenced?.[1] ?? text;
+	const fenceStart = text.indexOf("```");
+	const fenceEnd = fenceStart === -1 ? -1 : text.indexOf("```", fenceStart + 3);
+	const candidate = fenceEnd === -1 ? text : text.slice(fenceStart + 3, fenceEnd);
 
 	const start = candidate.indexOf("{");
 	const end = candidate.lastIndexOf("}");

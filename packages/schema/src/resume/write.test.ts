@@ -5,6 +5,15 @@ import { sampleResumeData } from "./sample";
 import { parseResumeDataForWrite, writableResumeDataSchema } from "./write";
 
 describe("writableResumeDataSchema", () => {
+	it("rejects deep extension data including objects hidden under a URL key", () => {
+		let extension: unknown = "leaf";
+		for (let index = 0; index < 100; index++) extension = { child: extension };
+		for (const key of ["extension", "url"]) {
+			const result = writableResumeDataSchema.safeParse({ ...defaultResumeData, [key]: extension });
+			expect(result.error?.issues[0]?.message).toBe("Resume content is nested too deeply.");
+		}
+	});
+
 	it.each([defaultResumeData, sampleResumeData])("accepts canonical initial resume data", (data) => {
 		expect(parseResumeDataForWrite(data)).toEqual(resumeDataSchema.parse(data));
 	});

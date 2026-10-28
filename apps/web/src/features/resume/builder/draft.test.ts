@@ -9,6 +9,7 @@ import { ORPCError } from "@orpc/client";
 import { sortSectionItemsByPeriod } from "@reactive-resume/resume/section-sort";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import {
+	clearResumeDrafts,
 	readUnsavedResumeData,
 	savePendingChanges,
 	useBuilderResumeUpdateSubscription,
@@ -376,11 +377,42 @@ describe("builder resume autosave", () => {
 		onLine.mockRestore();
 	});
 
+	it("does not recreate private recovery data after account cleanup during a failed save", async () => {
+		let failSave = (_error: Error): void => {
+			throw new Error("Save did not start");
+		};
+		const pending = new Promise<Resume>((_resolve, reject) => {
+			failSave = reject;
+		});
+		orpcMocks.updateResume.mockReturnValueOnce(pending);
+		useResumeStore.getState().initialize(makeResume("departing"));
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.name = "Private";
+		});
+		vi.advanceTimersByTime(500);
+		await flushMicrotasks();
+		clearResumeDrafts();
+		window.localStorage.clear();
+		failSave(new Error("late network failure"));
+		await flushMicrotasks();
+		expect(readUnsavedResumeData("departing")).toBeUndefined();
+		expect(useResumeStore.getState().resume).toBeNull();
+	});
+
+	it("expires local recovery after seven days", () => {
+		window.localStorage.setItem(
+			"reactive-resume:unsaved:expired",
+			JSON.stringify({ data: defaultResumeData, storedAt: Date.now() - 8 * 86_400_000 }),
+		);
+		expect(readUnsavedResumeData("expired")).toBeUndefined();
+		expect(window.localStorage.getItem("reactive-resume:unsaved:expired")).toBeNull();
+	});
+
 	it("restores changes kept on this device when the editor opens again", async () => {
 		const initial = makeResume("resume-restore");
 		window.localStorage.setItem(
 			"reactive-resume:unsaved:resume-restore",
-			JSON.stringify({ data: withBasicsName(initial, "Kept locally").data, storedAt: 1 }),
+			JSON.stringify({ data: withBasicsName(initial, "Kept locally").data, storedAt: Date.now() }),
 		);
 		orpcMocks.updateResume.mockImplementation((input: { id: string; data: ResumeData }) =>
 			Promise.resolve({ ...makeResume(input.id), data: input.data }),

@@ -43,6 +43,20 @@ export const getRichTextSemanticKind = (
 	return undefined;
 };
 
+// Keys are assigned before projection reorders children. Index each immutable sibling list once.
+const siblingIndexes = new WeakMap<readonly unknown[], WeakMap<RichTextElement, number>>();
+
+function elementIndexIn(parent: RichTextElement, element: RichTextElement): number {
+	let indexes = siblingIndexes.get(parent.childNodes);
+	if (!indexes) {
+		indexes = new WeakMap();
+		let index = 0;
+		for (const child of parent.childNodes) if (isElement(child)) indexes.set(child, index++);
+		siblingIndexes.set(parent.childNodes, indexes);
+	}
+	return indexes.get(element) ?? -1;
+}
+
 export const getRichTextSemanticNodeKey = (
 	rootNodeKey: string,
 	element: RichTextElement,
@@ -59,7 +73,7 @@ export const getRichTextSemanticNodeKey = (
 	let nodeKey = rootNodeKey;
 	for (const [ancestryIndex, ancestor] of ancestry.reverse().entries()) {
 		const parent = ancestor.parentNode;
-		const elementIndex = isElement(parent) ? parent.childNodes.filter(isElement).indexOf(ancestor) : 0;
+		const elementIndex = isElement(parent) ? elementIndexIn(parent, ancestor) : 0;
 		const kind = getRichTextSemanticKind(ancestor, markClassName);
 		nodeKey = semanticNodeKeys.richTextNode(nodeKey, kind ?? `html-${ancestor.rawTagName.toLowerCase()}`, elementIndex);
 

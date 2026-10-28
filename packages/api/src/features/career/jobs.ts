@@ -18,7 +18,13 @@ import { generateCareer } from "./generate";
 import { matchPosting } from "./matching";
 import { noticeText } from "./notices";
 import { isCareerSchedulingEnabled } from "./runner";
-import { canonicalOpportunityUrl, nextCareerRun, parseListingTitle, plainSnippet, prepareRunAt } from "./scheduling";
+import {
+	canonicalOpportunityUrl,
+	nextFutureCareerRun,
+	parseListingTitle,
+	plainSnippet,
+	prepareRunAt,
+} from "./scheduling";
 import { careerService, requireCareerApplication } from "./service";
 
 const CAREER_URL = "/dashboard/career";
@@ -222,6 +228,7 @@ async function discover(userId: string, query: string) {
 }
 
 async function enqueue() {
+	const now = new Date();
 	await db.transaction(async (tx) => {
 		const due = await tx
 			.select()
@@ -229,7 +236,7 @@ async function enqueue() {
 			.where(
 				and(
 					eq(tables.careerSchedule.enabled, true),
-					lte(tables.careerSchedule.nextRunAt, new Date()),
+					lte(tables.careerSchedule.nextRunAt, now),
 					or(
 						isNull(tables.careerSchedule.lastQueuedAt),
 						sql`${tables.careerSchedule.nextRunAt} > ${tables.careerSchedule.lastQueuedAt}`,
@@ -255,10 +262,9 @@ async function enqueue() {
 				.values({ userId: schedule.userId, scheduleId: schedule.id, dueAt: schedule.nextRunAt })
 				.onConflictDoNothing();
 			// Coalesce missed ticks into one job, rather than charging for an outage's backlog, keeping the wall time.
-			let nextRunAt = schedule.nextRunAt;
-			if (schedule.intervalDays)
-				for (let i = 0; i < 400 && nextRunAt <= new Date(); i++)
-					nextRunAt = nextCareerRun(nextRunAt, schedule.intervalDays, schedule.timezone);
+			const nextRunAt = schedule.intervalDays
+				? nextFutureCareerRun(schedule.nextRunAt, schedule.intervalDays, schedule.timezone, now)
+				: schedule.nextRunAt;
 			await tx
 				.update(tables.careerSchedule)
 				.set({ lastQueuedAt: schedule.nextRunAt, nextRunAt })

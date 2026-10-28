@@ -17,6 +17,7 @@ const redis = getRedis();
 
 // Per-instance fallback while Redis is unreachable: login stays available and still rate limited.
 const localCounts = new Map<string, { count: number; expiresAt: number }>();
+let nextSweepAt = 0;
 
 function consumeLocally(key: string, rule: { window: number; max: number }) {
 	const now = Date.now();
@@ -25,8 +26,14 @@ function consumeLocally(key: string, rule: { window: number; max: number }) {
 	if (active && active.count >= rule.max) {
 		return { allowed: false, retryAfter: Math.max(1, Math.ceil((active.expiresAt - now) / 1000)) };
 	}
-	// ponytail: clear-all bound on outage memory; an LRU is unnecessary for a temporary fallback.
-	if (localCounts.size >= 10_000) localCounts.clear();
+	if (!entry && localCounts.size >= 10_000) {
+		if (now >= nextSweepAt) {
+			for (const [candidate, counter] of localCounts) if (counter.expiresAt <= now) localCounts.delete(candidate);
+			nextSweepAt = now + 1_000;
+		}
+		// Saturation must never erase an active login limit.
+		if (localCounts.size >= 10_000) return { allowed: false, retryAfter: 1 };
+	}
 	localCounts.set(key, { count: (active?.count ?? 0) + 1, expiresAt: now + rule.window * 1_000 });
 	return { allowed: true, retryAfter: null };
 }

@@ -26,6 +26,16 @@ beforeEach(() => {
 });
 
 describe("BlobStorageService", () => {
+	it.each([
+		"uploads/user/%2e%2e/other/file",
+		"uploads/user/%252e%252e/file",
+		"uploads/user/file?x",
+		"uploads/user/file#x",
+		"uploads/user/\nfile",
+	])("rejects URL interpretation of storage key %s before requesting bytes", async (key) => {
+		await expect(storage.read(key)).rejects.toThrow("Invalid storage key");
+		expect(mocks.get).not.toHaveBeenCalled();
+	});
 	it("uses namespaced paths and leaves OIDC credential discovery to the SDK", () => {
 		expect(blobPath("uploads/user/file.jpg")).toBe("preview-123/uploads/user/file.jpg");
 		expect(blobOptions()).toEqual({});

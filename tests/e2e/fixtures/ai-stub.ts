@@ -94,6 +94,24 @@ function reply(request: ChatRequest, response: ServerResponse) {
 			Array.from({ length: 60 }, (_, index) => `word${index} `),
 			150,
 		);
+	if (said.includes("review a story") && tools.has("save_story")) {
+		if (lastTool) return streamText(response, ["Story decision received."]);
+		const instructions = messages
+			.filter((message) => message.role === "system")
+			.map((message) => text(message.content))
+			.join("\n");
+		const factId = instructions.match(/"facts":\[\{"id":"([^"]+)"/)?.[1];
+		return streamToolCall(response, "save_story", {
+			title: "Improving customer onboarding",
+			situation: "New customers needed clearer setup guidance.",
+			task: "Make onboarding easier to follow.",
+			action: "I wrote a setup checklist and reviewed it with support.",
+			result: "",
+			reflection: "Involve support early.",
+			tags: ["onboarding"],
+			factIds: factId ? [factId] : [],
+		});
+	}
 	if (!tools.has("propose_edits")) return streamText(response, ["You ", "left ", "the ", "document ", "out."]);
 
 	const asked = sinceUser.some((message) =>

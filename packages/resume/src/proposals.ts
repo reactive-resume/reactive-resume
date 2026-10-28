@@ -166,16 +166,20 @@ export type Block = { html: string; text: string; bullet: boolean };
 /** The leaf paragraphs and list items of rich text, in order, skipping empty ones. */
 export function splitBlocks(html: string): Block[] {
 	const blocks: Block[] = [];
+	let scannedTo = 0;
+	let listDepth = 0;
 
 	for (const match of html.matchAll(LEAF_BLOCK)) {
 		const text = blockText(match[2] ?? "");
 		if (!text) continue;
 
 		// Inside a list when more <li> have opened than closed before this block.
-		const preceding = html.slice(0, match.index);
+		const preceding = html.slice(scannedTo, match.index);
 		const opened = preceding.match(/<li[\s>]/gi)?.length ?? 0;
 		const closed = preceding.match(/<\/li>/gi)?.length ?? 0;
-		blocks.push({ html: match[0], text, bullet: match[1]?.toLowerCase() === "li" || opened > closed });
+		listDepth += opened - closed;
+		scannedTo = match.index;
+		blocks.push({ html: match[0], text, bullet: match[1]?.toLowerCase() === "li" || listDepth > 0 });
 	}
 
 	return blocks;

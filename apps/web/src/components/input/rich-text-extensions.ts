@@ -8,7 +8,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { isDarkColor } from "@reactive-resume/utils/color";
 import { ParagraphIndent } from "./paragraph-indent";
 import { LiteralHeading, LiteralParagraph, LiteralWhitespaceInput } from "./rich-input-whitespace";
-import { cellStyles, keptStyle, rowStyles, tableStyles } from "./rich-text-markup";
+import { cellStyles, keptStyle, MAX_TABLE_COLUMNS, MAX_TABLE_ROWS, rowStyles, tableStyles } from "./rich-text-markup";
 
 // Keeps the table formatting the editor supports and drops every other declaration, including for unsupported markup
 // shown read-only: imported HTML must not apply arbitrary CSS (overlays, external resources) just by being opened.
@@ -24,7 +24,34 @@ const styled = <T extends typeof TableRow | typeof TableHeader | typeof TableCel
 ) =>
 	extension.extend({
 		addAttributes() {
-			return { ...this.parent?.(), style: preservedStyle(styles) };
+			const attributes = this.parent?.() ?? {};
+			for (const [name, max] of [
+				["colspan", MAX_TABLE_COLUMNS],
+				["rowspan", MAX_TABLE_ROWS],
+			] as const) {
+				if (!(name in attributes)) continue;
+				attributes[name] = {
+					...attributes[name],
+					parseHTML: (element: HTMLElement) => {
+						const value = Number(element.getAttribute(name));
+						return Number.isInteger(value) && value >= 1 && value <= max ? value : 1;
+					},
+				};
+			}
+			if ("colwidth" in attributes)
+				attributes.colwidth = {
+					...attributes.colwidth,
+					parseHTML: (element: HTMLElement) => {
+						const raw = element.getAttribute("colwidth");
+						if (!raw || raw.length > MAX_TABLE_COLUMNS * 6) return null;
+						const widths = raw.split(",").map(Number);
+						return widths.length <= MAX_TABLE_COLUMNS &&
+							widths.every((value) => Number.isInteger(value) && value > 0 && value <= 10_000)
+							? widths
+							: null;
+					},
+				};
+			return { ...attributes, style: preservedStyle(styles) };
 		},
 	});
 

@@ -1,7 +1,34 @@
 import { describe, expect, it } from "vite-plus/test";
-import { canonicalOpportunityUrl, nextCareerRun, parseListingTitle, plainSnippet, prepareRunAt } from "./scheduling";
+import {
+	canonicalOpportunityUrl,
+	nextCareerRun,
+	nextFutureCareerRun,
+	parseListingTitle,
+	plainSnippet,
+	prepareRunAt,
+} from "./scheduling";
 
 describe("career schedule recurrence", () => {
+	it.each([1, 7])("advances a decades-old %s-day schedule beyond now", (days) => {
+		const previous = new Date("1970-01-01T08:00:00Z");
+		const now = new Date("2026-10-28T10:00:00Z");
+		const next = nextFutureCareerRun(previous, days, "Europe/Berlin", now);
+		expect(next.getTime()).toBeGreaterThan(now.getTime());
+		expect(next.getTime() - now.getTime()).toBeLessThanOrEqual(days * 86_400_000 + 3_600_000);
+		expect(
+			new Intl.DateTimeFormat("en", { timeZone: "Europe/Berlin", hour: "numeric", hourCycle: "h23" }).format(next),
+		).toBe("09");
+	});
+	it("advances beyond a due occurrence across DST", () => {
+		expect(
+			nextFutureCareerRun(
+				new Date("2026-03-28T08:00:00Z"),
+				1,
+				"Europe/Berlin",
+				new Date("2026-03-29T07:00:00Z"),
+			).toISOString(),
+		).toBe("2026-03-30T07:00:00.000Z");
+	});
 	it.each([
 		{
 			name: "spring clock change",

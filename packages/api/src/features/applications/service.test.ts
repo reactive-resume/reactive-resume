@@ -382,6 +382,7 @@ describe("applicationService.attachDocument", () => {
 	it("rejects non-PDF documents before upload", async () => {
 		await expect(
 			applicationService.attachDocument({
+				canDeleteAttachments: true,
 				id: "app-1",
 				userId: "user-1",
 				kind: "cover-letter",
@@ -411,6 +412,7 @@ describe("applicationService.attachDocument", () => {
 		dbMock.update.mockReturnValue({ set });
 
 		await applicationService.attachDocument({
+			canDeleteAttachments: true,
 			id: "app-1",
 			userId: "user-1",
 			kind: "resume",
@@ -552,6 +554,7 @@ describe("application attachment lifecycle", () => {
 				company: "Stripe",
 				role: "Engineer",
 				resumeFile: pdf("new.pdf"),
+				...(operation === "update" ? { canDeleteAttachments: true } : {}),
 			}),
 		).rejects.toThrow("save failed");
 		expect(uploadFileMock).toHaveBeenCalledOnce();
@@ -588,7 +591,12 @@ describe("application attachment lifecycle", () => {
 				expect(key).toBe("uploads/user-1/pictures/resume.pdf");
 				return true;
 			});
-			await applicationService.update({ id: "app-1", userId: "user-1", resumeFile: pdf("new.pdf") });
+			await applicationService.update({
+				id: "app-1",
+				userId: "user-1",
+				resumeFile: pdf("new.pdf"),
+				canDeleteAttachments: true,
+			});
 			expect(row().resumeFileUrl).toBe(newUrl);
 			expect(row().resumeFileName).toBe("new.pdf");
 			expect(row()).not.toHaveProperty("resumeFile");
@@ -605,11 +613,29 @@ describe("application attachment lifecycle", () => {
 				userId: "user-1",
 				status: "applied",
 				resumeId: "resume-1",
+				canDeleteAttachments: true,
 				resumeFile: pdf("new.pdf"),
 			}),
 		).rejects.toThrow("snapshot failed");
 		expect(row().resumeFileUrl).toBe(newUrl);
 		expect(storageDeleteMock).not.toHaveBeenCalledWith(newKey);
+	});
+
+	it.each([
+		{ resumeFileUrl: null },
+		{ coverLetterUrl: null },
+		{ resumeFile: pdf("replacement.pdf") },
+		{ coverLetterFile: pdf("replacement.pdf") },
+	])("requires delete permission before replacing or clearing an attachment: %s", async (fields) => {
+		const row = storedApplication();
+		await expect(applicationService.update({ id: "app-1", userId: "user-1", ...fields })).rejects.toMatchObject({
+			code: "FORBIDDEN",
+		});
+		expect(row().resumeFileUrl).toBe(existing.resumeFileUrl);
+		expect(row().coverLetterUrl).toBe(existing.coverLetterUrl);
+		expect(uploadFileMock).not.toHaveBeenCalled();
+		expect(storageDeleteMock).not.toHaveBeenCalled();
+		expect(dbMock.update).not.toHaveBeenCalled();
 	});
 
 	it("removal commits before deleting the old file", async () => {

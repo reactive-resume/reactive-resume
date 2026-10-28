@@ -10,6 +10,7 @@ import {
 	renderPasswordDocument,
 	renderUnavailableDocument,
 	renderWebPageDocument,
+	WEB_PAGE_SCRIPT,
 	webPageMessages,
 } from "@reactive-resume/pdf/web-page-document";
 import { publicResumePath } from "@reactive-resume/resume/sharing";
@@ -26,7 +27,7 @@ function html(body: string, status: number, headers: Record<string, string> = {}
 			"Content-Type": "text/html; charset=UTF-8",
 			// Views are counted per request and the page follows every edit, so no cache may keep it.
 			"Cache-Control": "private, no-store",
-			"Content-Security-Policy": contentSecurityPolicy(body),
+			"Content-Security-Policy": contentSecurityPolicy(`<script>${WEB_PAGE_SCRIPT}</script>`),
 			...headers,
 		},
 	});

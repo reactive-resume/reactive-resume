@@ -168,6 +168,12 @@ For an older EAS-built binary, `--build-id <EAS build ID>` remains supported ins
 of the hash. Compare both platforms. Keep API changes backward compatible with older
 binaries and deploy the backend first.
 
+## Security remediation native gate (2026-10-28)
+
+The native bridge now validates page geometry, repeated content, fixed-height expansion and grid placements before entering Forme. These Rust changes require fresh iOS/Android Forme artifacts. The current `packages/forme-native/scripts/prebuilt.json` still identifies the previous source; its hash guard intentionally refuses these changed sources. Run `mobile-forme-build.yml` for the reviewed commit, verify both platform artifacts and checksums, and update the manifest from its real output before building the store binaries. Do not bypass the source hash or reuse the old library. No artifact publication or store rollout was performed as part of the local remediation.
+
+Existing installed binaries retain the old native bridge until a new store build is installed. The accompanying JavaScript limits can ship by OTA, but do not replace the native fix. Recheck exported PDFs on signed devices, including repeating sidebar backgrounds and multi-page documents.
+
 **Fingerprint changed (native change):** build and upload new binaries.
 
 1. Deploy the backend first. Keep the API backward compatible: older binaries and OTA bundles remain in use.

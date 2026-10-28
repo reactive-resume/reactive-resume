@@ -12,13 +12,18 @@ export type ResolveStyleRuleSlotOptions = {
 	sectionType?: CustomSectionType | undefined;
 };
 
-export const getSectionStyleRuleContext = (data: ResumeData, sectionId: string): SectionStyleRuleContext => {
+export const getSectionStyleRuleContext = (
+	data: ResumeData,
+	sectionId: string,
+	sectionTypes?: ReadonlyMap<string, CustomSectionType>,
+): SectionStyleRuleContext => {
 	const type = sectionId as CustomSectionType;
 	if (type !== "cover-letter" && sectionTypeSchema.options.includes(type)) return { sectionId, sectionType: type };
 
-	const customSection = data.customSections.find((section) => section.id === sectionId);
-
-	return { sectionId, sectionType: customSection?.type };
+	const sectionType = sectionTypes
+		? sectionTypes.get(sectionId)
+		: data.customSections.find((section) => section.id === sectionId)?.type;
+	return { sectionId, sectionType };
 };
 
 export const resolveStyleIntentForSlot = (data: ResumeData, options: ResolveStyleRuleSlotOptions): StyleIntent => {

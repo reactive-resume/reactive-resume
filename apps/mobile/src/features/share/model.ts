@@ -3,6 +3,7 @@ export const safeFileName = (name: string) =>
 		.filter((character) => character.charCodeAt(0) >= 32)
 		.join("")
 		.replace(/[<>:"/\\|?*]/g, "")
-		.replace(/^\.+|[. ]+$/g, "")
+		.replace(/^\.+/, "")
 		.trim()
-		.slice(0, 100);
+		.slice(0, 100)
+		.replace(/[. ]+$/, "");

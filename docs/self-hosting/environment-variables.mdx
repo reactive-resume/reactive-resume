@@ -150,14 +150,14 @@ Reactive Resume sends email for account verification, password resets and email 
 `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS` and `SMTP_FROM` are all set. Until then, each email is written to the server log
 instead, so you can still copy verification links from there.
 
-| Variable      | Default | Description                                                                                                                                                 |
-| ------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SMTP_HOST`   | unset   | SMTP server hostname.                                                                                                                                       |
-| `SMTP_PORT`   | `587`   | SMTP server port.                                                                                                                                           |
-| `SMTP_USER`   | unset   | SMTP username.                                                                                                                                              |
-| `SMTP_PASS`   | unset   | SMTP password.                                                                                                                                              |
-| `SMTP_FROM`   | unset   | Sender address, for example `Reactive Resume <noreply@example.com>`.                                                                                        |
-| `SMTP_SECURE` | `false` | `true` connects with TLS from the start (usually port `465`). `false` upgrades the connection with STARTTLS when the server offers it (usually port `587`). |
+| Variable      | Default | Description                                                                                                                                                                    |
+| ------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `SMTP_HOST`   | unset   | SMTP server hostname.                                                                                                                                                          |
+| `SMTP_PORT`   | `587`   | SMTP server port.                                                                                                                                                              |
+| `SMTP_USER`   | unset   | SMTP username.                                                                                                                                                                 |
+| `SMTP_PASS`   | unset   | SMTP password.                                                                                                                                                                 |
+| `SMTP_FROM`   | unset   | Sender address, for example `Reactive Resume <noreply@example.com>`.                                                                                                           |
+| `SMTP_SECURE` | `false` | `true` connects with TLS from the start (usually port `465`). `false` requires a successful STARTTLS upgrade and fails if the server does not support it (usually port `587`). |
 
 ## Storage
 

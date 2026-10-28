@@ -146,7 +146,9 @@ function rowsToRecords(rows: string[][]): Record<string, string>[] {
 	if (rows.length === 0) return [];
 	const header = rows[0] ?? [];
 	const body = rows.slice(1);
-	return body.map((row) => Object.fromEntries(header.map((key, i) => [key.trim(), (row[i] ?? "").trim()])));
+	return body.map((row) =>
+		Object.fromEntries(row.slice(0, header.length).map((cell, i) => [(header[i] ?? "").trim(), cell.trim()])),
+	);
 }
 
 function findCsv(files: Record<string, Uint8Array>, fileName: string): Record<string, string>[] {

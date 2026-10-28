@@ -265,10 +265,22 @@ export const aiProvidersService = {
 				...(runtimeChanged ? { enabled: false, testStatus: "untested", lastTestedAt: null, testError: null } : {}),
 				...encrypted,
 			})
-			.where(and(eq(schema.aiProvider.id, input.id), eq(schema.aiProvider.userId, input.userId)))
+			.where(
+				and(
+					eq(schema.aiProvider.id, input.id),
+					eq(schema.aiProvider.userId, input.userId),
+					eq(schema.aiProvider.provider, existing.provider),
+					eq(schema.aiProvider.model, existing.model),
+					existing.baseUrl === null
+						? isNull(schema.aiProvider.baseUrl)
+						: eq(schema.aiProvider.baseUrl, existing.baseUrl),
+					eq(schema.aiProvider.encryptedApiKey, existing.encryptedApiKey),
+					eq(schema.aiProvider.testStatus, existing.testStatus),
+				),
+			)
 			.returning();
 
-		if (!updated) throw new ORPCError("NOT_FOUND");
+		if (!updated) throw new ORPCError("CONFLICT", { message: "The provider changed. Reload it before saving again." });
 		return toResponse(updated);
 	},
 

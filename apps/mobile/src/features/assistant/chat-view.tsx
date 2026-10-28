@@ -15,7 +15,7 @@ import { LegendList } from "@legendapp/list/react-native";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
+import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import * as Clipboard from "expo-clipboard";
 import * as DocumentPicker from "expo-document-picker";
 import { File } from "expo-file-system";
@@ -26,6 +26,7 @@ import { attachmentPart, refreshThreads, transcriptOf, useAssistantChat } from "
 import { FileChip, MessageView, Status } from "./messages";
 import { isProposeEdits, publishProposals, toProposals } from "./proposals";
 import { createRequestLane, recoverRun } from "./recovery";
+import { ToolApprovals } from "./tool-approvals";
 import { client, orpc, SessionChangedError } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
 import { Button, Icon, Text, showToast, useTheme } from "@/ui";
@@ -259,8 +260,18 @@ function Conversation(props: ConversationProps) {
 		scope: props.scope,
 		beforeSend: props.context.document ? document?.flush : undefined,
 	});
-	const { messages, sendMessage, setMessages, status, error, clearError, regenerate, addToolOutput, resumeStream } =
-		chat;
+	const {
+		messages,
+		sendMessage,
+		setMessages,
+		status,
+		error,
+		clearError,
+		regenerate,
+		addToolOutput,
+		addToolApprovalResponse,
+		resumeStream,
+	} = chat;
 	const streaming = status === "submitted" || status === "streaming";
 	const readOnly = props.readOnly || props.disabled === true;
 
@@ -341,10 +352,12 @@ function Conversation(props: ConversationProps) {
 		});
 	const recover = useEffectEvent(() => void lane.runIfIdle(followRun));
 
-	// Leaving the document or posting out makes every send start fresh (the server takes only a new message then), so an
-	// answer can't continue the reply, nor can Retry send such a continuation again. The coach's chips don't do that.
+	// Continue only the reply generated with the current context choices; the server checks its stored metadata too.
 	const fresh = document !== null && (!props.context.document || !props.context.posting);
-	const continuationBlocked = fresh && lastAssistantMessageIsCompleteWithToolCalls({ messages });
+	const continuationBlocked =
+		fresh &&
+		(messages.at(-1)?.metadata as { contextScope?: string } | undefined)?.contextScope !==
+			JSON.stringify([props.context.document !== false, props.context.posting !== false]);
 
 	// A reply the connection lost may still run on the server, which refuses a second one: Retry follows it as recovery
 	// does. Only with no run left is the message sent again: a failed continuation (after an answer) as it was,
@@ -356,7 +369,9 @@ function Conversation(props: ConversationProps) {
 			const latest = await reloadThread();
 			if (!isCurrent()) return;
 			if (latest?.active) return followRun(isCurrent);
-			const continuation = lastAssistantMessageIsCompleteWithToolCalls({ messages });
+			const continuation =
+				lastAssistantMessageIsCompleteWithToolCalls({ messages }) ||
+				lastAssistantMessageIsCompleteWithApprovalResponses({ messages });
 			await (continuation ? sendMessage() : regenerate());
 		});
 	};
@@ -463,14 +478,14 @@ function Conversation(props: ConversationProps) {
 	);
 	const answer = useMemo(
 		() =>
-			fresh
+			continuationBlocked
 				? null
 				: (toolCallId: string, output: string) =>
 						// The answer's automatic continuation is a request too: it waits for anything open to end.
 						void lane.run(async () => {
 							await addToolOutput({ tool: "ask_user_question", toolCallId, output } as never);
 						}),
-		[fresh, lane, addToolOutput],
+		[continuationBlocked, lane, addToolOutput],
 	);
 	const extraData = useMemo(() => ({ streaming, readOnly, handlers, answer }), [streaming, readOnly, handlers, answer]);
 
@@ -524,13 +539,24 @@ function Conversation(props: ConversationProps) {
 					keyboardShouldPersistTaps="handled"
 					ListEmptyComponent={!streaming ? <Empty render={props.empty} send={(text) => void send(text)} /> : null}
 					renderItem={({ item: message, index }) => (
-						<MessageView
-							message={message}
-							streaming={streaming && index === messages.length - 1}
-							readOnly={readOnly}
-							proposals={handlers}
-							onAnswer={answer}
-						/>
+						<View>
+							<MessageView
+								message={message}
+								streaming={streaming && index === messages.length - 1}
+								readOnly={readOnly}
+								proposals={handlers}
+								onAnswer={answer}
+							/>
+							<ToolApprovals
+								message={message}
+								disabled={readOnly || streaming || index !== messages.length - 1}
+								onDecision={(decision) => {
+									void lane.run(async () => {
+										await addToolApprovalResponse(decision);
+									});
+								}}
+							/>
+						</View>
 					)}
 					ListFooterComponent={
 						<View style={{ gap: space.s4, paddingTop: space.s4 }}>

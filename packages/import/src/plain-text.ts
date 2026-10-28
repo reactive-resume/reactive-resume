@@ -510,7 +510,7 @@ function parseHeader(lines: string[]) {
 		let result = value;
 		if (email) result = result.replace(email, " ");
 		if (phone) result = result.replace(phone, " ");
-		for (const url of urls) result = result.replace(url, " ");
+		result = result.replace(URL_PATTERN, " ");
 		return result.replace(/\s+/g, " ").trim();
 	};
 

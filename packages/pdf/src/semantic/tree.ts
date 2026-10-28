@@ -12,6 +12,7 @@ import type { CustomSectionType, LayoutPage, ResumeData, SectionType } from "@re
 import type { Template } from "@reactive-resume/schema/templates";
 import type { HTMLElement, Node } from "node-html-parser";
 import { NodeType } from "node-html-parser";
+import { assertResumeRenderBudget } from "@reactive-resume/schema/resume/limits";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { getResumeSectionIcon } from "../section-icon";
 import { shouldUseSectionTimeline } from "../templates/shared/columns";
@@ -919,6 +920,10 @@ export function buildSemanticTree({
 	pageNumber,
 	showHeader,
 }: BuildSemanticTreeInput): SemanticNode {
+	assertResumeRenderBudget({
+		...data,
+		metadata: { ...data.metadata, layout: { ...data.metadata.layout, pages: [page] } },
+	});
 	const pageKey = semanticNodeKeys.page(pageNumber);
 	const manifest = getTemplateSemanticManifest(template);
 	const mainSections = filterSections(page.main, data);

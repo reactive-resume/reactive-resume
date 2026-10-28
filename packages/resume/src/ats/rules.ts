@@ -10,6 +10,7 @@ import {
 	parseSingleDate,
 } from "@reactive-resume/schema/resume/period";
 import { templateLayouts } from "@reactive-resume/schema/templates";
+import { stripHtml } from "@reactive-resume/utils/string";
 import { atsRuleSeverity } from "./catalog";
 import { SECTION_TITLE_ALIASES } from "./section-aliases";
 import { isRenderedSection } from "./walk";
@@ -46,8 +47,7 @@ const isCoverLetter = (section: WalkedSection) => section.type === "cover-letter
 
 const hasText = (value: unknown) =>
 	typeof value === "string" &&
-	value
-		.replace(/<[^>]*>/g, "")
+	stripHtml(value)
 		.replace(/&nbsp;/g, " ")
 		.trim().length > 0;
 

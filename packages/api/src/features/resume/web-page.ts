@@ -6,7 +6,6 @@ import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
 import { publicResumePath } from "@reactive-resume/resume/sharing";
-import { consumeResumePasswordLimit } from "../../middleware/rate-limit";
 import { verifiedDomainColumn } from "../custom-domain/service";
 import { createPreviewToken, hasResumeAccess, isValidPreviewToken } from "./access";
 import {
@@ -127,12 +126,12 @@ export async function verifyWebPagePassword(input: {
 			? input.match
 			: await findResume(input.match, { username: schema.user.username, slug: schema.resume.slug });
 	if (!address) return false;
-	if (!(await consumeResumePasswordLimit({ ...address, trustedClient: input.trustedClient }))) return false;
 	return resumeService
 		.verifyPassword({
 			username: address.username,
 			slug: address.slug,
 			password: input.password,
+			trustedClient: input.trustedClient,
 			responseHeaders: input.responseHeaders,
 		})
 		.catch(() => false);

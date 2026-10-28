@@ -71,6 +71,10 @@ type TreeNode = {
 	node: SemanticNode;
 	parent: TreeNode | null;
 	children: TreeNode[];
+	index: number;
+	typeIndex: number;
+	matches: WeakMap<CompiledCompoundSelector, boolean>;
+	siblingMatches: WeakMap<CompiledCompoundSelector, boolean>;
 };
 
 const knownKinds = new Set<string>(SEMANTIC_NODE_KINDS);
@@ -291,15 +295,34 @@ export function compileSelector(source: string | CssNode): CompileSelectorResult
 
 function buildTree(root: SemanticNode): Map<string, TreeNode> {
 	const nodes = new Map<string, TreeNode>();
-	const rootNode: TreeNode = { node: root, parent: null, children: [] };
+	const rootNode: TreeNode = {
+		node: root,
+		parent: null,
+		children: [],
+		index: 0,
+		typeIndex: 0,
+		matches: new WeakMap(),
+		siblingMatches: new WeakMap(),
+	};
 	const stack = [{ source: root, target: rootNode }];
 	nodes.set(root.key, rootNode);
 
 	while (stack.length > 0) {
 		const current = stack.pop();
 		if (!current) break;
-		current.target.children = current.source.children.map((child) => {
-			const target: TreeNode = { node: child, parent: current.target, children: [] };
+		const typeCounts = new Map<SemanticNode["kind"], number>();
+		current.target.children = current.source.children.map((child, index) => {
+			const typeIndex = typeCounts.get(child.kind) ?? 0;
+			typeCounts.set(child.kind, typeIndex + 1);
+			const target: TreeNode = {
+				node: child,
+				parent: current.target,
+				children: [],
+				index,
+				typeIndex,
+				matches: new WeakMap(),
+				siblingMatches: new WeakMap(),
+			};
 			nodes.set(child.key, target);
 			return target;
 		});
@@ -375,12 +398,8 @@ function matchesSimple(selector: CompiledSimpleSelector, target: TreeNode): bool
 					return selector.selectors.every((nested) => !matchesComplex(nested, target));
 				case "nth-child":
 				case "nth-of-type": {
-					let values = siblings(target);
-					if (selector.name === "nth-of-type") {
-						values = values.filter((sibling) => sibling.node.kind === target.node.kind);
-					}
-					const index = values.indexOf(target);
-					return index >= 0 && nthMatches(index + 1, selector.a, selector.b);
+					const index = selector.name === "nth-of-type" ? target.typeIndex : target.index;
+					return target.parent !== null && nthMatches(index + 1, selector.a, selector.b);
 				}
 			}
 	}
@@ -392,9 +411,16 @@ function matchesCompound(compound: CompiledCompoundSelector, target: TreeNode): 
 
 function matchesComplexAt(selector: CompiledComplexSelector, compoundIndex: number, target: TreeNode): boolean {
 	const compound = selector.compounds[compoundIndex];
-	if (!compound || !matchesCompound(compound, target)) return false;
-	if (compoundIndex === 0) return true;
+	if (!compound) return false;
+	const cached = target.matches.get(compound);
+	if (cached !== undefined) return cached;
+	const result =
+		matchesCompound(compound, target) && (compoundIndex === 0 || matchesCombinator(selector, compoundIndex, target));
+	target.matches.set(compound, result);
+	return result;
+}
 
+function matchesCombinator(selector: CompiledComplexSelector, compoundIndex: number, target: TreeNode): boolean {
 	switch (selector.combinators[compoundIndex - 1]) {
 		case ">":
 			return target.parent ? matchesComplexAt(selector, compoundIndex - 1, target.parent) : false;
@@ -408,13 +434,30 @@ function matchesComplexAt(selector: CompiledComplexSelector, compoundIndex: numb
 		}
 		case "+": {
 			const values = siblings(target);
-			const index = values.indexOf(target);
+			const index = target.index;
 			return index > 0 ? matchesComplexAt(selector, compoundIndex - 1, values[index - 1] as TreeNode) : false;
 		}
 		case "~": {
 			const values = siblings(target);
-			const index = values.indexOf(target);
-			return values.slice(0, index).some((sibling) => matchesComplexAt(selector, compoundIndex - 1, sibling));
+			const previous = selector.compounds[compoundIndex - 1];
+			if (!previous) return false;
+			const pending: TreeNode[] = [];
+			let result = false;
+			for (let index = target.index - 1; index >= 0; index--) {
+				const sibling = values[index];
+				if (!sibling) continue;
+				const cached = sibling.siblingMatches.get(previous);
+				if (cached !== undefined) {
+					result = cached;
+					break;
+				}
+				pending.push(sibling);
+			}
+			for (const sibling of pending.reverse()) {
+				result ||= matchesComplexAt(selector, compoundIndex - 1, sibling);
+				sibling.siblingMatches.set(previous, result);
+			}
+			return result;
 		}
 		default:
 			return false;

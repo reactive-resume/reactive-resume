@@ -19,6 +19,7 @@ import { and, asc, count, desc, eq, getColumns, inArray, isNull, sql } from "dri
 import { agentWebSources } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
+import { env } from "@reactive-resume/env/server";
 import { generateId } from "@reactive-resume/utils/string";
 import { aiProvidersService } from "../ai-providers/service";
 import { assertAgentEnvironment } from "../ai/credentials";
@@ -501,7 +502,12 @@ async function persistMessage(input: {
 	return message;
 }
 
-async function updateAssistantToolResultMessage(input: { userId: string; threadId: string; message: UIMessage }) {
+async function updateAssistantToolResultMessage(input: {
+	userId: string;
+	threadId: string;
+	message: UIMessage;
+	contextScope?: string | undefined;
+}) {
 	const existingRows = await listThreadMessages({
 		threadId: input.threadId,
 		userId: input.userId,
@@ -512,6 +518,14 @@ async function updateAssistantToolResultMessage(input: { userId: string; threadI
 			message: "The answered assistant message was not found.",
 		});
 	}
+	const stored = toMessage(existingRow);
+	if (
+		input.contextScope &&
+		(stored.metadata as { contextScope?: string } | undefined)?.contextScope !== input.contextScope
+	)
+		throw new ORPCError("BAD_REQUEST", {
+			message: "Send a new message after removing context. Previous tool approvals cannot be continued.",
+		});
 
 	const {
 		message: mergedMessage,
@@ -519,7 +533,7 @@ async function updateAssistantToolResultMessage(input: { userId: string; threadI
 		alreadyResolvedCount,
 		pendingContinuationCount,
 		conflictingCount,
-	} = mergeClientToolResponses(toMessage(existingRow), input.message);
+	} = mergeClientToolResponses(stored, input.message);
 
 	if (conflictingCount > 0) {
 		throw new ORPCError("BAD_REQUEST", {
@@ -634,13 +648,15 @@ async function cleanupActiveRun(input: {
 }
 
 /**
- * Compares links the way people write them: a fragment, a trailing slash or the punctuation ending a sentence
+ * Compares links the way people write them: a fragment or the punctuation ending a sentence
  * ("read https://example.com/job.") doesn't make it a different page. Host case is normalized by URL.
  */
 function sourceKey(value: string): string | null {
 	try {
+		if (value.length > 2048) return null;
 		const url = new URL(value.trim().replace(/[.,;:!?'"*)\]]+$/, ""));
-		return `${url.protocol}//${url.host}${url.pathname.replace(/\/+$/, "")}${url.search}`;
+		url.hash = "";
+		return url.toString();
 	} catch {
 		return null;
 	}
@@ -789,10 +805,10 @@ function createAgent(input: {
 		};
 
 	const { document } = input;
-	const allowedSources = new Set<string>();
+	const allowedSources = new Map<string, string>();
 	const allow = (url: string | null | undefined) => {
 		const key = url ? sourceKey(url) : null;
-		if (key) allowedSources.add(key);
+		if (key) allowedSources.set(key, key);
 	};
 	for (const url of input.allowedSources) allow(url);
 	if (input.career?.shareApplication) {
@@ -824,9 +840,9 @@ function createAgent(input: {
 				// Text the model reads (pages, attachments, postings) can ask it to put data in a URL; an allowlist keeps
 				// every request to a page the user or a search chose.
 				const key = sourceKey(url);
-				if (!key || !allowedSources.has(key))
-					throw new Error("Read only retrieved URLs or public links supplied by the user.");
-				const { html: _html, ...page } = await readPage(url, {
+				const approvedUrl = key ? allowedSources.get(key) : undefined;
+				if (!approvedUrl) throw new Error("Read only retrieved URLs or public links supplied by the user.");
+				const { html: _html, ...page } = await readPage(approvedUrl, {
 					connection: input.connection,
 					userId: input.userId,
 					signal,
@@ -868,6 +884,8 @@ function createAgent(input: {
 			});
 
 	return new ToolLoopAgent({
+		toolApproval: { search_web: "user-approval", save_story: "user-approval" },
+		experimental_toolApprovalSecret: env.AUTH_SECRET,
 		// Providers without native inputExamples support get them appended to the tool description.
 		model: wrapLanguageModel({
 			model: input.model,
@@ -1159,11 +1177,7 @@ export const agentService = {
 			// and tool results. The career coach's chips only choose what this message adds: earlier messages in the chat
 			// still go, and its privacy line says so.
 			const freshContext = !isCareer && (input.context?.document === false || input.context?.posting === false);
-			if (freshContext && input.message.role !== "user") {
-				throw new ORPCError("BAD_REQUEST", {
-					message: "Send a new message after removing context. Previous tool approvals cannot be continued.",
-				});
-			}
+			const contextScope = JSON.stringify([input.context?.document !== false, input.context?.posting !== false]);
 
 			// Deliberately schema-less: provider-echoed tool parts must pass, and replayed history is never re-validated.
 			const validated = await safeValidateUIMessages({
@@ -1233,6 +1247,7 @@ export const agentService = {
 				id: responseMessageId,
 				role: "assistant",
 				parts: [],
+				metadata: { contextScope, contextMessageId: input.message.id },
 			};
 
 			try {
@@ -1256,6 +1271,7 @@ export const agentService = {
 						userId: input.userId,
 						threadId: input.threadId,
 						message: input.message,
+						contextScope: freshContext ? contextScope : undefined,
 					});
 					draftRowId = continuation.rowId;
 					draftUiMessage = continuation.message;
@@ -1315,8 +1331,15 @@ export const agentService = {
 				);
 				const messages = messageRows.map(toMessage);
 				const memoryCutoff = isCareer ? await careerService.memoryCutoff(input.userId) : null;
+				const contextMessageId = (draftUiMessage.metadata as { contextMessageId?: string } | undefined)
+					?.contextMessageId;
+				const contextMessage = messages.find((message) => message.role === "user" && message.id === contextMessageId);
+				if (freshContext && input.message.role === "assistant" && !contextMessage)
+					throw new ORPCError("BAD_REQUEST", { message: "Send a new message to continue with the selected context." });
 				const replay = freshContext
-					? [withAttachmentUiParts(input.message, attachmentsForModel)]
+					? input.message.role === "assistant" && contextMessage
+						? [contextMessage, draftUiMessage]
+						: [withAttachmentUiParts(input.message, attachmentsForModel)]
 					: memoryCutoff
 						? // History from before a fact changed is left out, but never the message being answered (a retry
 							// keeps its first createdAt).
@@ -1367,10 +1390,10 @@ export const agentService = {
 							}
 						: {}),
 					allowedSources: [
-						...messages.flatMap((message) => agentWebSources(message).map((source) => source.url)),
-						...[...messages.filter((message) => message.role === "user"), input.message].flatMap(
-							(message) => messageText(message).match(/https?:\/\/[^\s<>")]+/g) ?? [],
-						),
+						...replay.flatMap((message) => agentWebSources(message).map((source) => source.url)),
+						...[...replay, input.message]
+							.filter((message) => message.role === "user")
+							.flatMap((message) => messageText(message).match(/https?:\/\/[^\s<>")]+/g) ?? []),
 					],
 					posting,
 					connection,
@@ -1448,6 +1471,8 @@ export const agentService = {
 												usage: part.totalUsage,
 												model: runnableProvider.model,
 												provider: runnableProvider.provider,
+												contextScope,
+												contextMessageId,
 											}
 										: undefined,
 								onFinish: async ({ responseMessage: completedMessage, isAborted }) => {

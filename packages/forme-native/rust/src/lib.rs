@@ -1,4 +1,5 @@
 use harfbuzz_sys as hb;
+mod validation;
 use std::{
     panic::{catch_unwind, AssertUnwindSafe},
     ptr, slice, str,
@@ -73,9 +74,14 @@ unsafe fn input<'a>(data: *const u8, len: usize) -> Result<&'a [u8], String> {
 #[no_mangle]
 pub unsafe extern "C" fn forme_render_with_layout(json: *const u8, len: usize) -> *mut FormeResult {
     guarded(|| {
+        if len > 64 * 1024 * 1024 {
+            return Err("Document is too large".into());
+        }
         let json = str::from_utf8(input(json, len)?).map_err(|e| e.to_string())?;
+        let document: forme::Document = serde_json::from_str(json).map_err(|e| e.to_string())?;
+        validation::validate(&document)?;
         let (pdf, layout, warnings, _) =
-            forme::render_json_with_layout_and_options(json, forme::RenderOptions::default())
+            forme::render_with_layout_and_options(&document, forme::RenderOptions::default())
                 .map_err(|e| e.to_string())?;
         Ok((
             pdf,
@@ -175,4 +181,30 @@ pub unsafe extern "C" fn forme_result_free(result: *mut FormeResult) {
     result.layout.free();
     result.warnings.free();
     result.error.free();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn bridge_rejects_invalid_layout_and_renders_ordinary_text() {
+        for (json, valid) in [
+            (
+                r#"{"children":[{"kind":{"type":"Text","content":"Fictional resume"}}]}"#,
+                true,
+            ),
+            (
+                r#"{"children":[{"kind":{"type":"View"},"style":{"gridTemplateColumns":[{"Fr":1}]},"children":[{"kind":{"type":"View"},"style":{"gridPlacement":{"columnSpan":2}}}]}]}"#,
+                false,
+            ),
+        ] {
+            unsafe {
+                let result = forme_render_with_layout(json.as_ptr(), json.len());
+                assert_eq!((*result).error.len == 0, valid);
+                assert_eq!((*result).pdf.len > 0, valid);
+                forme_result_free(result);
+            }
+        }
+    }
 }

@@ -3,6 +3,7 @@
 // runtime-universal (consumed by both the API tool definitions and the web chat UI).
 import type { UIDataTypes, UIMessage } from "ai";
 import z from "zod";
+import { careerStoryInputSchema } from "@reactive-resume/schema/career";
 
 export const askUserQuestionInputSchema = z.object({
 	question: z.string().trim().min(1),
@@ -35,6 +36,38 @@ export const readPageOutputSchema = z.object({
 });
 export type SearchWebOutput = z.infer<typeof searchWebOutputSchema>;
 export type ReadPageOutput = z.infer<typeof readPageOutputSchema>;
+
+const approvalPartSchema = z.object({
+	type: z.enum(["tool-search_web", "tool-save_story"]),
+	state: z.literal("approval-requested"),
+	approval: z.object({ id: z.string() }),
+	input: z.unknown(),
+});
+
+/** Exact arguments awaiting a user decision; model prose cannot create an approval control. */
+export function agentApprovalRequests(
+	message: UIMessage,
+): Array<{ id: string; kind: "search" | "story"; text: string }> {
+	return message.parts.flatMap<{ id: string; kind: "search" | "story"; text: string }>((part) => {
+		const parsed = approvalPartSchema.safeParse(part);
+		if (!parsed.success) return [];
+		const { type, input, approval } = parsed.data;
+		if (type === "tool-search_web") {
+			const query = searchWebInputSchema.safeParse(input);
+			return query.success ? [{ id: approval.id, kind: "search" as const, text: query.data.query }] : [];
+		}
+		const story = careerStoryInputSchema.omit({ applicationId: true }).safeParse(input);
+		if (!story.success) return [];
+		const { title, situation, task, action, result, reflection, tags } = story.data;
+		return [
+			{
+				id: approval.id,
+				kind: "story" as const,
+				text: [title, situation, task, action, result, reflection, tags.join(", ")].filter(Boolean).join("\n\n"),
+			},
+		];
+	});
+}
 
 export type AgentWebSource = {
 	url: string;

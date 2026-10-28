@@ -3,7 +3,12 @@ import type { AgentUIMessage } from "@reactive-resume/ai/tools/agent-tool-contra
 import type { ChatTransport, UIMessage } from "ai";
 import { useChat } from "@ai-sdk/react";
 import { eventIteratorToUnproxiedDataStream } from "@orpc/client";
-import { lastAssistantMessageIsCompleteWithToolCalls, parseJsonEventStream, uiMessageChunkSchema } from "ai";
+import {
+	lastAssistantMessageIsCompleteWithApprovalResponses,
+	lastAssistantMessageIsCompleteWithToolCalls,
+	parseJsonEventStream,
+	uiMessageChunkSchema,
+} from "ai";
 import { useLayoutEffect, useMemo, useRef } from "react";
 import { agentMessageMetadataSchema } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { streamClient } from "@/libs/orpc/client";
@@ -81,7 +86,8 @@ export function useAssistantChat({ threadId, initialMessages, resume, context, o
 		transport,
 		throttle: 50,
 		messageMetadataSchema: agentMessageMetadataSchema,
-		sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
+		sendAutomaticallyWhen: (input) =>
+			lastAssistantMessageIsCompleteWithToolCalls(input) || lastAssistantMessageIsCompleteWithApprovalResponses(input),
 		onFinish,
 	});
 }

@@ -2,7 +2,7 @@ import type { StyleProp } from "./style-types";
 import type { IconName } from "@reactive-resume/schema/icons";
 import { commonIcons, iconFiles } from "./phosphor-icons";
 import { Svg } from "./primitives";
-import { flattenStyle, toColor } from "./style";
+import { flattenStyle, parseColor } from "./style";
 
 export type { IconName };
 
@@ -92,12 +92,8 @@ export function PhosphorIcon({ name, size = 16, color = "currentColor", opacity,
 
 /** SVG fill attributes for a CSS colour: hex, with rgba's alpha times `opacity` as `fill-opacity`. */
 function svgPaint(color: string, opacity: number) {
-	const parsed = toColor(color) ?? "#000000";
-	const match = /^rgba?\(([^)]*)\)$/i.exec(parsed);
-	const [r = 0, g = 0, b = 0, a = 1] = match?.[1] ? match[1].split(/\s*,\s*/).map(Number) : [];
-	const hex = match
-		? `#${[r, g, b].map((channel) => Math.round(channel).toString(16).padStart(2, "0")).join("")}`
-		: parsed;
-	const alpha = a * opacity;
+	const { rgb, alpha: colorAlpha } = parseColor(color) ?? { rgb: [0, 0, 0], alpha: 1 };
+	const hex = `#${rgb.map((channel) => Math.round(channel).toString(16).padStart(2, "0")).join("")}`;
+	const alpha = Math.max(0, Math.min(1, colorAlpha * opacity));
 	return alpha < 1 ? `fill="${hex}" fill-opacity="${alpha}"` : `fill="${hex}"`;
 }

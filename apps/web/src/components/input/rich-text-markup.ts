@@ -1,6 +1,12 @@
+import { assertRichTextComplexity } from "@reactive-resume/schema/resume/limits";
 // The rich text rules that need no editor: shared by the Tiptap extensions and the read-only preview shown while
 // the editor loads (features/resume/editor/write/rich-text-editor.tsx).
 import { isDarkColor } from "@reactive-resume/utils/color";
+import { escapeHtml, stripHtml } from "@reactive-resume/utils/string";
+
+export const MAX_TABLE_COLUMNS = 100;
+export const MAX_TABLE_ROWS = 1_000;
+const MAX_TABLE_CELLS = 20_000;
 
 export const whitespaceAttribute = "data-resume-whitespace";
 export const whitespacePreserveValue = "preserve";
@@ -203,8 +209,8 @@ const highlightStyles = new Map([
 	["color", supportsColor],
 ]);
 const cellAttributes = new Map<string, ValueValidator>([
-	["colspan", supportsCanonicalInteger(1, 1000)],
-	["rowspan", supportsCanonicalInteger(1, 65_534)],
+	["colspan", supportsCanonicalInteger(1, MAX_TABLE_COLUMNS)],
+	["rowspan", supportsCanonicalInteger(1, MAX_TABLE_ROWS)],
 	["colwidth", (value, element) => value.split(",").every((width) => supportsCanonicalInteger(1)(width, element))],
 	["align", (value) => cellAlignments.has(value.trim().toLowerCase())],
 ]);
@@ -245,7 +251,6 @@ const elementRules = new Map<string, ElementRule>([
 				["href", supportsLinkHref],
 				["target", () => true],
 				["rel", () => true],
-				["class", () => true],
 				["title", () => true],
 			]),
 			validate: (element) => element.hasAttribute("href"),
@@ -308,6 +313,7 @@ const hasOnlyCellBlockContent = (element: Element): boolean =>
 	});
 
 const hasRectangularTableGrid = (rows: readonly Element[]) => {
+	if (rows.length > MAX_TABLE_ROWS) return false;
 	let expectedWidth: number | undefined;
 	const occupiedUntil: number[] = [];
 
@@ -319,6 +325,13 @@ const hasRectangularTableGrid = (rows: readonly Element[]) => {
 			while (coverage[column]) column++;
 			const colspan = Number(cell.getAttribute("colspan") ?? 1);
 			const rowspan = Number(cell.getAttribute("rowspan") ?? 1);
+			if (
+				!Number.isSafeInteger(colspan) ||
+				colspan < 1 ||
+				column + colspan > MAX_TABLE_COLUMNS ||
+				(column + colspan) * rows.length > MAX_TABLE_CELLS
+			)
+				return false;
 			if (rowIndex + rowspan > rows.length) return false;
 			for (let offset = 0; offset < colspan; offset++) {
 				if (coverage[column + offset]) return false;
@@ -358,6 +371,11 @@ const parsedTablesMatchSource = (sourceTables: readonly string[], tables: readon
 };
 
 export const hasUnsupportedTableMarkup = (html: string) => {
+	try {
+		assertRichTextComplexity(html);
+	} catch {
+		return true;
+	}
 	const tableMarkers = tableMarkersFrom(html);
 	if (tableMarkers.length === 0) return false;
 	const document = new DOMParser().parseFromString(html, "text/html");
@@ -407,6 +425,11 @@ const droppedTags = new Set(["script", "style", "template", "noscript", "iframe"
  * editor loads. Links lose their address so a click focuses the field instead of leaving the page.
  */
 export const toPreviewHtml = (html: string) => {
+	try {
+		assertRichTextComplexity(html);
+	} catch {
+		return escapeHtml(stripHtml(html).slice(0, 200_000));
+	}
 	// An inert document: nothing in it runs or loads.
 	const body = new DOMParser().parseFromString(html, "text/html").body;
 	const clean = (element: Element) => {
@@ -424,6 +447,8 @@ export const toPreviewHtml = (html: string) => {
 				element.removeAttribute(name);
 		}
 		if (style) element.setAttribute("style", style);
+		if (tag === "table" && !hasRectangularTableGrid(Array.from(element.querySelectorAll("tr"))))
+			element.replaceWith(element.ownerDocument.createTextNode(element.textContent ?? ""));
 	};
 	for (const child of Array.from(body.children)) clean(child);
 	return body.innerHTML;

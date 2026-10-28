@@ -26,6 +26,17 @@ describe("toFormeStyle", () => {
 });
 
 describe("colours", () => {
+	it.each([
+		'rgb(0,0,0)"><script>test()</script>)',
+		"rgb(a,b,c)",
+		"rgb(1,2,3",
+		"rgb(1,2,Infinity)",
+		`rgb(1,2,3${" ".repeat(10000)}!)`,
+	])("rejects malformed or oversized colour %s", (value) => {
+		expect(toColor(value)).toBeUndefined();
+		expect(parseColor(value)).toBeUndefined();
+	});
+
 	it("normalises the forms Forme reads", () => {
 		expect(toColor("#abcd")).toBe("#aabbccdd");
 		expect(toColor("rgb(10 20 30 / 50%)")).toBe("rgba(10, 20, 30, 0.5)");

@@ -2,6 +2,13 @@ import { describe, expect, it } from "vite-plus/test";
 import { mapCsvToApplications, parseCsv, rowsToCsv } from "./csv";
 
 describe("parseCsv", () => {
+	it("neutralizes formulas in skipped rows and headers, preserving quotes and newlines", () => {
+		const formulas = ["=1+1", "+SUM(1,2)", "-1+1", "@SUM(1)", "\t=1+1"];
+		const exported = parseCsv(rowsToCsv(formulas, [formulas, ['Say "hi"', "Line\nbreak"]]));
+		expect(exported.slice(0, 2)).toEqual([formulas.map((value) => `'${value}`), formulas.map((value) => `'${value}`)]);
+		expect(exported[2]).toEqual(['Say "hi"', "Line\nbreak"]);
+	});
+
 	it("parses quoted fields with commas and newlines", () => {
 		const table = parseCsv('Company,Role\n"Acme, Inc.","Eng, Sr"\nBeta,"Line1\nLine2"');
 		expect(table[1]).toEqual(["Acme, Inc.", "Eng, Sr"]);
@@ -10,6 +17,14 @@ describe("parseCsv", () => {
 });
 
 describe("mapCsvToApplications", () => {
+	it("imports ragged rows without materializing the missing header-width cells", () => {
+		const rows = mapCsvToApplications([
+			["Company", "Role", ...Array.from({ length: 10_000 }, () => "Unused")],
+			["Lumen", "Designer"],
+		]).rows;
+		expect(rows).toEqual([{ company: "Lumen", role: "Designer" }]);
+	});
+
 	it("maps aliased headers and coerces status/tags", () => {
 		const csv =
 			'Company,Job Title,Stage,Stage Date,Salary,Tags,Contact Name,Contact Email,Contact Phone\nStripe,Frontend,Interview,2026-07-01,$180k,"remote;react",Jane Doe,jane@example.com,+1 555 0100';

@@ -1,5 +1,6 @@
 import type { HTMLElement, Node } from "node-html-parser";
 import { NodeType, parse } from "node-html-parser";
+import { assertRichTextComplexity } from "@reactive-resume/schema/resume/limits";
 import { isDarkColor } from "@reactive-resume/utils/color";
 import { getRichTextSemanticKind, getRichTextSemanticNodeKey } from "../../semantic/rich-text-keys";
 
@@ -212,6 +213,7 @@ export const normalizeRichTextHtml = (
 	html: string,
 	{ direction = "ltr", softHyphens = false }: NormalizeRichTextHtmlOptions = {},
 ): string => {
+	assertRichTextComplexity(html);
 	const root = parse(trimHtmlWhitespace(html), { comment: false });
 	const normalized: string[] = [];
 	let inlineNodes: string[] = [];

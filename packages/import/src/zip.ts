@@ -23,7 +23,9 @@ export function unzipEntries(
 	maxEntryBytes: number,
 ): Record<string, Uint8Array> {
 	const entries = new Map<string, Uint8Array[]>();
+	let entryCount = 0;
 	const unzip = new Unzip((file) => {
+		if (++entryCount > 2_000) throw new Error("ZIP contains too many entries.");
 		if (entries.has(file.name) || !select(file.name)) return;
 		const chunks: Uint8Array[] = [];
 		let size = 0;

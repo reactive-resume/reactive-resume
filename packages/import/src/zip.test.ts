@@ -19,6 +19,13 @@ const streamed = (files: Record<string, Uint8Array>) => {
 };
 
 describe("unzipEntries", () => {
+	it("caps headers even when every archive entry is rejected", () => {
+		const files = Object.fromEntries(
+			Array.from({ length: 2_001 }, (_, index) => [`ignored-${index}`, new Uint8Array()]),
+		);
+		expect(() => unzipEntries(zipSync(files), () => false, 1024)).toThrow("ZIP contains too many entries");
+	});
+
 	it.each([
 		["central-directory sizes", zipSync],
 		["data descriptors", streamed],

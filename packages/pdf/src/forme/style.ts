@@ -144,11 +144,11 @@ const NAMED_COLORS: Record<string, string> = {
 };
 
 const HEX = /^#([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
-const RGB = /^rgba?\(/i;
+const RGB = /^rgba?\(([^()]*)\)$/i;
 
 /** A colour Forme can parse (hex or rgb/rgba), or `undefined` when it can't be read. */
 export function toColor(value: unknown): string | undefined {
-	if (typeof value !== "string") return undefined;
+	if (typeof value !== "string" || value.length > 256) return undefined;
 	const trimmed = value.trim();
 	if (HEX.test(trimmed)) {
 		// Forme reads 3, 6 and 8 digits; spell out the 4-digit form.
@@ -158,17 +158,19 @@ export function toColor(value: unknown): string | undefined {
 		}
 		return trimmed;
 	}
-	if (RGB.test(trimmed)) {
+	const rgb = RGB.exec(trimmed);
+	if (rgb) {
 		// Forme's parser wants rgba() to carry four numbers and rgb() three; normalise commas and percentages.
-		const parts = trimmed
-			.replace(/^rgba?\(|\)$/gi, "")
+		const parts = (rgb[1] ?? "")
 			.split(/[\s,/]+/)
 			.filter(Boolean)
 			.map((part, index) => {
-				if (!part.endsWith("%")) return part;
-				const percent = Number(part.slice(0, -1));
-				return String(index < 3 ? (percent * 255) / 100 : percent / 100);
+				if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)%?$/.test(part)) return Number.NaN;
+				const number = Number.parseFloat(part);
+				const channel = part.endsWith("%") ? (number * (index < 3 ? 255 : 1)) / 100 : number;
+				return Math.max(0, Math.min(index < 3 ? 255 : 1, channel));
 			});
+		if (!parts.every(Number.isFinite)) return undefined;
 		if (parts.length === 3) return `rgb(${parts.join(", ")})`;
 		if (parts.length === 4) return `rgba(${parts.join(", ")})`;
 		return undefined;
@@ -182,13 +184,15 @@ export const WHITE: Rgb = [255, 255, 255];
 
 /** Channels and alpha of a colour in a form `toColor` returns. */
 export function parseColor(color: string): { rgb: Rgb; alpha: number } | undefined {
-	if (HEX.test(color)) {
-		const digits = color.slice(1);
+	const normalized = toColor(color);
+	if (!normalized) return undefined;
+	if (HEX.test(normalized)) {
+		const digits = normalized.slice(1);
 		const full = digits.length <= 4 ? [...digits].map((digit) => digit + digit).join("") : digits;
 		const channel = (index: number) => Number.parseInt(full.slice(index * 2, index * 2 + 2), 16);
 		return { rgb: [channel(0), channel(1), channel(2)], alpha: full.length === 8 ? channel(3) / 255 : 1 };
 	}
-	const match = /^rgba?\(([^)]*)\)$/i.exec(color);
+	const match = /^rgba?\(([^)]*)\)$/i.exec(normalized);
 	if (!match?.[1]) return undefined;
 	const [r = 0, g = 0, b = 0, a = 1] = match[1].split(/\s*,\s*/).map(Number);
 	return { rgb: [r, g, b], alpha: a };

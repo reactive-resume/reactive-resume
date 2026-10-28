@@ -35,6 +35,17 @@ export function nextCareerRun(previous: Date, days: number, timezone: string): D
 	return new Date(guess);
 }
 
+/** Coalesce overdue occurrences in constant work, retaining the schedule's local time and interval. */
+export function nextFutureCareerRun(previous: Date, days: number, timezone: string, now: Date): Date {
+	if (!Number.isInteger(days) || days < 1) throw new Error("Invalid schedule interval.");
+	const steps = Math.max(1, Math.floor((now.getTime() - previous.getTime()) / (days * 86_400_000)));
+	let next = nextCareerRun(previous, steps * days, timezone);
+	// Timezone offsets can move the estimate by a day; correct without walking the historical backlog.
+	for (let i = 0; i < 3 && next <= now; i++) next = nextCareerRun(next, days, timezone);
+	if (!Number.isFinite(next.getTime()) || next <= now) throw new Error("Cannot advance schedule into the future.");
+	return next;
+}
+
 export function canonicalOpportunityUrl(value: string): string | null {
 	try {
 		const url = new URL(value);

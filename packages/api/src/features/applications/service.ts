@@ -616,6 +616,7 @@ export const applicationService = {
 			DocumentFiles & {
 				id: string;
 				userId: string;
+				canDeleteAttachments?: boolean;
 				status?: ApplicationStatus | undefined;
 				stageEnteredAt?: string | undefined;
 				closedReason?: ApplicationClosedReason | null | undefined;
@@ -623,7 +624,31 @@ export const applicationService = {
 	) => {
 		const existing = await requireOwned(input.id, input.userId);
 
-		const { id, userId, status, stageEnteredAt, closedReason, resumeFile, coverLetterFile, ...fields } = input;
+		const {
+			id,
+			userId,
+			status,
+			stageEnteredAt,
+			closedReason,
+			resumeFile,
+			coverLetterFile,
+			canDeleteAttachments = false,
+			...fields
+		} = input;
+		const assertAttachmentPermission = (current: typeof existing) => {
+			if (
+				!canDeleteAttachments &&
+				((current.resumeFileUrl &&
+					(resumeFile || (fields.resumeFileUrl !== undefined && fields.resumeFileUrl !== current.resumeFileUrl))) ||
+					(current.coverLetterUrl &&
+						(coverLetterFile ||
+							(fields.coverLetterUrl !== undefined && fields.coverLetterUrl !== current.coverLetterUrl))))
+			)
+				throw new ORPCError("FORBIDDEN", {
+					message: "Replacing or removing an attachment requires api:delete permission.",
+				});
+		};
+		assertAttachmentPermission(existing);
 		if (
 			(existing.sentResumeVersionId && fields.resumeId !== undefined && fields.resumeId !== existing.resumeId) ||
 			(existing.sentCoverLetterVersionId &&
@@ -662,6 +687,7 @@ export const applicationService = {
 					.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)))
 					.for("update");
 				if (!current) throw new ORPCError("NOT_FOUND");
+				assertAttachmentPermission(current);
 				if (
 					(current.sentResumeVersionId && fields.resumeId !== undefined && fields.resumeId !== current.resumeId) ||
 					(current.sentCoverLetterVersionId &&
@@ -695,14 +721,31 @@ export const applicationService = {
 		});
 	},
 
-	attachDocument: (input: { id: string; userId: string; kind: ApplicationDocumentKind; file: File }) => {
+	attachDocument: (input: {
+		id: string;
+		userId: string;
+		kind: ApplicationDocumentKind;
+		file: File;
+		canDeleteAttachments?: boolean;
+	}) => {
 		const fields = documentFields(input.kind);
-		return applicationService.update({ id: input.id, userId: input.userId, [fields.file]: input.file });
+		return applicationService.update({
+			id: input.id,
+			userId: input.userId,
+			[fields.file]: input.file,
+			canDeleteAttachments: input.canDeleteAttachments ?? false,
+		});
 	},
 
 	removeDocument: (input: { id: string; userId: string; kind: ApplicationDocumentKind }) => {
 		const fields = documentFields(input.kind);
-		return applicationService.update({ id: input.id, userId: input.userId, [fields.url]: null, [fields.name]: null });
+		return applicationService.update({
+			id: input.id,
+			userId: input.userId,
+			[fields.url]: null,
+			[fields.name]: null,
+			canDeleteAttachments: true,
+		});
 	},
 
 	// Persist AI-owned enrichment (match score + freeform metadata). Separate from the editable

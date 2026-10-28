@@ -65,7 +65,7 @@ function parseBlocks(source: string): Block[] {
 	return blocks;
 }
 
-const INLINE = /(\*\*[^*]+\*\*|__[^_]+__|`[^`]+`|\[[^\]]+\]\([^)\s]+\)|\*[^*\s][^*]*\*|_[^_\s][^_]*_)/g;
+const INLINE = /(\*\*[^*]+\*\*|__[^_]+__|`[^`]+`|\[[^[\]]+\]\([^)\s]+\)|\*[^*\s][^*]*\*|_[^_\s][^_]*_)/g;
 
 function Inline({ text }: { text: string }) {
 	const { fonts } = useTheme();

@@ -65,6 +65,18 @@ function matches(source: string, nodeKey: string): boolean {
 }
 
 describe("semantic selector compilation", () => {
+	it("bounds repeated general-sibling failures without losing later matches", () => {
+		const children = Array.from({ length: 200 }, (_, index) => node(`item-${index}`, "item"));
+		const match = createSelectorMatcher(node("root", "resume", { children }));
+		for (const prefix of ["section", "item"]) {
+			const selector = compileSelector(`${prefix}${" ~ item".repeat(12)}`).selector;
+			if (!selector) throw new Error("Invalid fixture selector");
+			for (let index = 0; index < children.length; index++) {
+				expect(match(selector, `item-${index}`)).toBe(prefix === "item" && index >= 12);
+			}
+		}
+	});
+
 	it.each([
 		['section[type="experience"] > section-heading', "heading-experience", true],
 		['region[placement="sidebar"] section', "section-skills-sidebar", true],

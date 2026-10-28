@@ -245,6 +245,21 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 				data: input,
 			});
 
+		const oversized = structuredClone(data);
+		oversized.picture.url = `https://example.test/${"x".repeat(100_000)}`;
+		const section = oversized.customSections[0];
+		if (!section) throw new Error("Missing section");
+		section.items = Array.from({ length: 60 }, (_, index) => ({
+			id: `item-${index}`,
+			hidden: false,
+			recipient: "",
+			content: "<p>Letter</p>",
+		}));
+		const original = JSON.stringify(oversized);
+		await expect(adopt(oversized)).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		expect(JSON.stringify(oversized)).toBe(original);
+		expect((await service.list({ userId: "alice", limit: 20, offset: 0 })).items).toHaveLength(0);
+
 		const again = structuredClone(data);
 		await adopt(data);
 		expect(data.customSections).toEqual([]);

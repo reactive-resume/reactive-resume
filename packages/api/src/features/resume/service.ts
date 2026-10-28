@@ -14,6 +14,7 @@ import { applyResumePatches, ResumePatchError } from "@reactive-resume/resume/pa
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { isValidSlug } from "@reactive-resume/schema/resume/slug";
 import { generateId } from "@reactive-resume/utils/string";
+import { consumeResumePasswordLimit } from "../../middleware/rate-limit";
 import { adoptEmbeddedLetters } from "../cover-letters/embedded";
 import { lockUser } from "../documents/ownership";
 import { getStorageService } from "../storage/service";
@@ -800,7 +801,13 @@ export const resumeService = {
 	setPassword: async (input: { id: string; userId: string; password: string }) =>
 		updateResumePassword({ ...input, password: await hash(input.password, 10) }),
 
-	verifyPassword: async (input: { slug: string; username: string; password: string; responseHeaders?: Headers }) => {
+	verifyPassword: async (input: {
+		slug: string;
+		username: string;
+		password: string;
+		responseHeaders?: Headers;
+		trustedClient?: string | undefined;
+	}) => {
 		const resume = await findResume(
 			input,
 			{ id: schema.resume.id, password: schema.resume.password },
@@ -808,6 +815,8 @@ export const resumeService = {
 			eq(schema.resume.isPublic, true),
 		);
 
+		if (!(await consumeResumePasswordLimit({ resumeId: resume?.id ?? "missing", trustedClient: input.trustedClient })))
+			throw new ORPCError("TOO_MANY_REQUESTS");
 		// A miss costs the same bcrypt work as a wrong password, so timing doesn't reveal which addresses exist.
 		const passwordHash = resume?.password ?? (await unusedPasswordHash());
 		const isValid = await compare(input.password, passwordHash);

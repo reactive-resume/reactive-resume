@@ -3,6 +3,7 @@ import { hsvaToHex, rgbaStringToHsva } from "@uiw/color-convert";
 type ParsedColor = { r: number; g: number; b: number; a: number };
 
 export function rgbaStringToHex(rgba: string): string {
+	if (rgba.length > 256) return "#000000";
 	const color = parseColorString(rgba);
 	if (color) return `#${toHexComponent(color.r)}${toHexComponent(color.g)}${toHexComponent(color.b)}`;
 	// Fallback: the local parser is integer-only, so percentage-notation rgb() (e.g. "rgb(100%,0%,0%)")
@@ -16,6 +17,7 @@ function toHexComponent(value: number): string {
 }
 
 export function parseColorString(value: string): ParsedColor | null {
+	if (value.length > 256) return null;
 	const trimmed = value.trim();
 
 	// Parse rgb/rgba colors

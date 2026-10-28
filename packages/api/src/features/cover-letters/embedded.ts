@@ -1,5 +1,6 @@
 import type { DbOrTx } from "@reactive-resume/db/client";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { ORPCError } from "@orpc/client";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import * as schema from "@reactive-resume/db/schema";
 import { copyCoverLetterStyle, detachEmbeddedLetters } from "@reactive-resume/resume/cover-letter";
@@ -20,6 +21,20 @@ export async function adoptEmbeddedLetters(
 	client: DbOrTx,
 	input: { userId: string; resumeId: string; resumeName: string; data: ResumeData },
 ) {
+	const sections = input.data.customSections.filter((section) => section.type === "cover-letter");
+	if (sections.length === 0) return;
+	const styleSize = JSON.stringify(copyCoverLetterStyle(input.data)).length;
+	let expandedSize = 0;
+	for (const section of sections)
+		for (const item of section.items) {
+			// Both the letter and its initial history snapshot retain the complete shared design.
+			expandedSize +=
+				2 * (styleSize + JSON.stringify(item).length + section.title.length + input.resumeName.length + 1024);
+			if (expandedSize > 10_000_000)
+				throw new ORPCError("BAD_REQUEST", {
+					message: "Embedded cover letters are too large. Import fewer letters or reduce their shared design data.",
+				});
+		}
 	const style = (sectionId: string, itemId: string) => copyCoverLetterStyle(input.data, sectionId, itemId);
 	const letters = detachEmbeddedLetters(input.data);
 	if (letters.length === 0) return;
@@ -38,11 +53,16 @@ export async function adoptEmbeddedLetters(
 			),
 		);
 
+	const existingContents = new Map<string, Set<string>>();
+	for (const row of existing) {
+		const contents = existingContents.get(row.itemId) ?? new Set<string>();
+		contents.add(sanitizeCoverLetterHtml(row.content));
+		existingContents.set(row.itemId, contents);
+	}
 	for (const letter of letters) {
 		const content = sanitizeCoverLetterHtml(letter.content);
 		// Letters the migration moved are stored as they were written, so both sides are compared cleaned.
-		if (existing.some((row) => row.itemId === letter.itemId && sanitizeCoverLetterHtml(row.content) === content))
-			continue;
+		if (existingContents.get(letter.itemId)?.has(content)) continue;
 
 		const name = `${input.resumeName.trim() || "Resume"} — ${letter.title.trim() || "Cover letter"}`.slice(0, 100);
 		const [row] = await client

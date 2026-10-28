@@ -15,6 +15,7 @@ import {
 	WidthType,
 } from "docx";
 import { isCoverLetterOnlyDocument } from "@reactive-resume/resume/export-sections";
+import { assertResumeRenderBudget } from "@reactive-resume/schema/resume/limits";
 import { templateLayouts } from "@reactive-resume/schema/templates";
 import { parseColorString } from "@reactive-resume/utils/color";
 import { toSafeLink } from "@reactive-resume/utils/link";
@@ -280,6 +281,7 @@ function buildTwoColumnTable(
  * - Primary, text, and background colors from `metadata.design.colors`
  */
 export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResolver): Document {
+	assertResumeRenderBudget(data);
 	const colorHex = getColorHex(data.metadata.design.colors.primary, "DC2626");
 	const textColorHex = getColorHex(data.metadata.design.colors.text, "000000");
 	const bgColorHex = getColorHex(data.metadata.design.colors.background, "FFFFFF");

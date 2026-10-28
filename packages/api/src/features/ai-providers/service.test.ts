@@ -5,6 +5,8 @@ const { dbMock, queryMock, queryState } = vi.hoisted(() => {
 		rows: [] as unknown[],
 		whereArg: undefined as unknown,
 		orderByArgs: [] as unknown[],
+		updateRows: undefined as unknown[] | undefined,
+		updateWhere: undefined as unknown,
 	};
 	const query = {
 		from: vi.fn(() => query),
@@ -20,8 +22,11 @@ const { dbMock, queryMock, queryState } = vi.hoisted(() => {
 	};
 	const update = {
 		set: vi.fn(() => update),
-		where: vi.fn(() => update),
-		returning: vi.fn(async () => state.rows),
+		where: vi.fn((arg: unknown) => {
+			state.updateWhere = arg;
+			return update;
+		}),
+		returning: vi.fn(async () => state.updateRows ?? state.rows),
 	};
 
 	return {
@@ -59,6 +64,7 @@ vi.mock("drizzle-orm", () => ({
 	asc: (value: unknown) => ({ type: "asc", value }),
 	desc: (value: unknown) => ({ type: "desc", value }),
 	eq: (left: unknown, right: unknown) => ({ type: "eq", left, right }),
+	isNull: (value: unknown) => ({ type: "isNull", value }),
 	ne: (left: unknown, right: unknown) => ({ type: "ne", left, right }),
 	sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({ type: "sql", strings: [...strings], values }),
 }));
@@ -104,6 +110,8 @@ describe("aiProvidersService", () => {
 		queryState.rows = [];
 		queryState.whereArg = undefined;
 		queryState.orderByArgs = [];
+		queryState.updateRows = undefined;
+		queryState.updateWhere = undefined;
 	});
 
 	it("prefers the default enabled and tested provider, then the most recently used, then creation order", async () => {
@@ -153,5 +161,20 @@ describe("aiProvidersService", () => {
 		await expect(
 			aiProvidersService.update({ ...owner, baseURL: "https://other.example/v1", apiKey: "new-key" }),
 		).resolves.toMatchObject({ id: "provider-1" });
+	});
+
+	it("rejects an update if the destination or credential changed after the ownership read", async () => {
+		queryState.rows = [providerRow()];
+		queryState.updateRows = [];
+		await expect(
+			aiProvidersService.update({ id: "provider-1", userId: "user-1", apiKey: "new-key" }),
+		).rejects.toMatchObject({ code: "CONFLICT" });
+		expect(queryState.updateWhere).toMatchObject({
+			conditions: expect.arrayContaining([
+				{ type: "eq", left: "ai_provider.provider", right: "openai" },
+				{ type: "isNull", value: "ai_provider.base_url" },
+				{ type: "eq", left: "ai_provider.encrypted_api_key", right: "encrypted-key" },
+			]),
+		});
 	});
 });

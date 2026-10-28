@@ -9,7 +9,12 @@ export function blobOptions() {
 }
 
 export function blobPath(key: string) {
-	if (key.startsWith("/") || key.includes("\\") || key.split("/").some((part) => part === "." || part === "..")) {
+	if (
+		key.startsWith("/") ||
+		/[%?#\\]/.test(key) ||
+		Array.from(key).some((character) => character.charCodeAt(0) < 32) ||
+		key.split("/").some((part) => part === "." || part === "..")
+	) {
 		throw new Error("Invalid storage key");
 	}
 	return `${env.DEPLOYMENT_NAMESPACE}/${key}`;

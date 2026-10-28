@@ -3,7 +3,7 @@ import { getRedis, redisKey } from "@reactive-resume/db/redis";
 import { getClientKey } from "../../middleware/rate-limit";
 
 const WINDOW_MS = 60 * 60 * 1000; // 1 hour
-const MAX_ENTRIES = 50_000; // bound the Map; prune expired entries before growing past this.
+const MAX_ENTRIES = 50_000;
 
 const seen = new Map<string, number>(); // key -> expiry timestamp
 
@@ -20,10 +20,10 @@ async function shouldCountView(key: string, now: number): Promise<boolean> {
 	const expiry = seen.get(key);
 	if (expiry !== undefined && expiry > now) return false;
 
+	seen.delete(key);
 	if (seen.size >= MAX_ENTRIES) {
-		for (const [k, exp] of seen) {
-			if (exp <= now) seen.delete(k);
-		}
+		const oldest = seen.keys().next().value;
+		if (oldest !== undefined) seen.delete(oldest);
 	}
 
 	seen.set(key, now + WINDOW_MS);

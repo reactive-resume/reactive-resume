@@ -3,6 +3,40 @@ import { expect, test } from "../fixtures/test";
 
 test.use({ launchOptions: { ignoreDefaultArgs: ["--hide-scrollbars"] } });
 
+test("failed settings sign-out retains the session and drafts; successful sign-out clears private browser data", async ({
+	authPage: page,
+}) => {
+	await page.goto("/dashboard/settings/account");
+	const key = "career-story:security-fixture";
+	await page.evaluate((key) => {
+		localStorage.setItem(key, "fictional draft");
+		sessionStorage.setItem(key, "fictional draft");
+	}, key);
+	await page.route("**/api/auth/sign-out", (route) =>
+		route.fulfill({
+			status: 429,
+			contentType: "application/json",
+			body: JSON.stringify({ code: "TOO_MANY_REQUESTS", message: "Try later" }),
+		}),
+	);
+	await page.getByRole("button", { name: "Sign out", exact: true }).last().click();
+	await expect(page.getByText("Couldn't sign out. Try again.", { exact: true })).toBeVisible();
+	await expect(page).toHaveURL(/\/dashboard\/settings\/account/);
+	expect(await page.evaluate((key) => [localStorage.getItem(key), sessionStorage.getItem(key)], key)).toEqual([
+		"fictional draft",
+		"fictional draft",
+	]);
+	const session = await page.request.get("/api/auth/get-session");
+	expect((await session.json()).user).toBeTruthy();
+	await page.unroute("**/api/auth/sign-out");
+	await page.getByRole("button", { name: "Sign out", exact: true }).last().click();
+	await expect(page).toHaveURL(/\/$/);
+	expect(await page.evaluate((key) => [localStorage.getItem(key), sessionStorage.getItem(key)], key)).toEqual([
+		null,
+		null,
+	]);
+});
+
 test("keeps long auth pages reachable without horizontal overflow", async ({ page }) => {
 	for (const width of [320, 1280]) {
 		await page.setViewportSize({ width, height: 400 });

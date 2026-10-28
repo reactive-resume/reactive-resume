@@ -89,6 +89,8 @@ When the assistant needs a fact or a choice from you, it shows a blue question c
 
 Above the message box, chips show what goes with your next message: the document, and the job posting when the document is linked to an application. Select the **×** on a chip to leave it out, including before your first message. Without the document, the assistant can't read or edit it for that message. The line under the box always says what will be sent and to which provider, and nothing is sent until you press send.
 
+Removing either context chip also leaves earlier conversation history out of the next reply. Pending questions or approvals from a different context cannot resume; send a new message with your current choices.
+
 When you select **Prepare** from an application's detail panel, the assistant uses that application's posting, even when several applications share the same resume.
 
 ## Attach files
@@ -110,6 +112,8 @@ Select the paperclip in the message box to attach files, such as a job descripti
 If you connect an optional **Web access** service in Integrations, the assistant uses that selected service for search and enhanced reading. If your installation's administrator set up server search, the assistant searches with it instead, with or without a connection. **Web access** then says **Your server provides search for Applications and the assistant**, and, until you connect a service, **Test search** checks it. Without a connection, the assistant can read supplied public URLs with the built-in reader or work from text you paste. See [Assistant tools](/guides/ai-agent-tools#web-search-support).
 
 You can also supply a public page URL: the assistant uses the selected reader or built-in reading. Page reading does not require a separate search account. Failed reading leads to pasted-text recovery; clipped or incomplete pages are identified before you rely on them.
+
+Before each search, a card shows the exact query. Select **Search the web** to send that query to your search service, or **Skip** to continue without it. Review it for private details before approving. This applies on web and mobile.
 
 The conversation shows search/read progress, failures and retrieved **Sources**. Sources remain visible after reopening the conversation. A failed search keeps your conversation and does not silently switch paid providers.
 

@@ -343,8 +343,12 @@ overrides:
   samlify@<2.13.0: ^2.13.0
   uuid@<11.1.1: ^11.1.1
   dompurify@<3.4.17: ^3.4.17
+  node-forge@<1.4.1: ^1.4.2
+  zod@>=4.0.0 <4.6.6: ^4.6.7
+  '@expo/cli@58.1.15>zod': ^4.6.7
 
 patchedDependencies:
+  deepmerge@4.3.1: d0b09c0c7f6badc39a9816270406c175f63e3402e126a23a748ca35e1a43ace6
   react-native-enriched-html@1.1.1: f031f2a0f7f317ba78b7d2c9de7bbf60383c916c2fcda373df4dc1fe982600c1
 
 importers:
@@ -462,6 +466,9 @@ importers:
       '@react-native-community/datetimepicker':
         specifier: 9.2.2
         version: 9.2.2(expo@58.0.19)(react-native@0.88.0(@babel/core@7.29.7(supports-color@7.2.0))(@react-native/metro-config@0.88.0(@babel/core@7.29.7(supports-color@7.2.0))(supports-color@7.2.0))(@types/react@19.3.0)(react@19.3.1)(supports-color@7.2.0))(react@19.3.1)
+      '@reactive-resume/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@reactive-resume/api':
         specifier: workspace:*
         version: link:../../packages/api
@@ -2106,85 +2113,85 @@ packages:
     resolution: {integrity: sha512-7h/rI3jLCfLbQsjVt37Q5PCEGOHrpVgrO2zl+y///UpUcWfiRDcqk8DL7br//OFxiEhyxgeIoU/5ulsN1llOyg==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@ai-sdk/cerebras@3.0.78':
     resolution: {integrity: sha512-GPPHxCe+CopLFPNddv51ficc5yo1sSOIWvHdDP8YvFftjPoWukulFL0Xvr/fzJAC8QjMQNtN1dkUzXPCJe0A6A==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@ai-sdk/cohere@4.0.69':
     resolution: {integrity: sha512-cpnMPip0uyaC6mBC+NGPT/GVXL85Nstdjem1EbKKTtyD6wvz/JoCU07YpoqNG0NWCVyrT8Zd0mUkp0tveObZoA==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@ai-sdk/deepseek@3.0.73':
     resolution: {integrity: sha512-Ut7tXu4mKWXxY6pQfx/3EQZpvjfql0DEGtPCgCAvT5yz3zfuAuq9jHKELK07Ft15rQGM5gvAlWE7sAIsz8ZvDw==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@ai-sdk/fireworks@3.0.81':
     resolution: {integrity: sha512-AbuRUvGdsiGbUKyOrfLFRCEHLKr8f8BcAUCSzPkknEcVxmrEzMfumU2pFru/sp7llpKp89zwnWxTC9jC7+uHoA==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@ai-sdk/gateway@4.0.126':
     resolution: {integrity: sha512-gOrvnfrWxslTws5puMe+CvEDjZ0rxbpQYLZgdngQl1g/z3mRc5sllcflVAhy2xJSZacrWtsXwua+NJoc/IKZDw==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@ai-sdk/google@4.0.105':
     resolution: {integrity: sha512-CTeWVshKJKilEWQwqrjHG6GYUE0f/BbeDDUtRestAoH9vEf0f1YariQYbu69fPJGa6itc0pMdqvHzTWqAVD1OA==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@ai-sdk/groq@4.0.70':
     resolution: {integrity: sha512-DyqyTddHR8KvxkZeDz/EZRPrcSMadphdZgxAtqUbhWm7Txu3tuOtjTL8ViAgvi86FWvxIAwMXFaXLCPLVAmmrQ==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@ai-sdk/mcp@2.0.84':
     resolution: {integrity: sha512-yVhkdm1cpN1L65Vfg8TjyNMFI+P20NsZ/WcYSI6kyv1MbbHWtOn7lBUSuXJ6H/+wGQaH410q1Um1h4PqoWxocA==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@ai-sdk/mistral@4.0.72':
     resolution: {integrity: sha512-jRbvxwP/zNmIiz/PTeqJqk5nAA7ts/PbvfKohPi6jgh/5xs9+GrVvRlOKlPXHuivfyUfJ3sFjlJrCCU+78wf+Q==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@ai-sdk/openai-compatible@3.0.78':
     resolution: {integrity: sha512-8r+qmbIf2YzPbkzlQibbetOmR4GdA/jAHtSJPhUbp6ZMG3PT6cBKwf/85TDyStyPTKtkFZ1qe1ytml3zu69EZQ==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@ai-sdk/openai@4.0.102':
     resolution: {integrity: sha512-8hvs5UO6OgGSR0HASptyopqoJYgdCccVfksUlBLeJ8/h2KoKYU2ZiFjArOkS6ciJbmnDz3G+Zoo4KiI4rlQSoA==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@ai-sdk/perplexity@5.0.20':
     resolution: {integrity: sha512-VOaXGFo2dy4KSlsjKPTweiJugN4o5YuZN3iCsoUrlDiS7Aq0WjQJrYG5Ld6cz355QgvxGqiiodws7qLApM6xDQ==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@ai-sdk/provider-utils@5.0.68':
     resolution: {integrity: sha512-SASuC1DqSdWoYyYfpxbgPKm9VCnMP1VTahWY7WEYzi2QDmFdbw4runqmH7NKC33iB/INo+XbaN2hH3dXHSNQZw==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@ai-sdk/provider@4.0.34':
     resolution: {integrity: sha512-Ip7ZQBq/FiGpM1mmOVseTtX9PBjnzo0bLC41WTgBSBBRUBz6LhNFGbYaNUzI6hPm6ll1oNSPOAZc/q/z+3QZEQ==}
@@ -2200,13 +2207,13 @@ packages:
     resolution: {integrity: sha512-f748N5LdF1Mr/HEhoowrP3FXnXjJ7McPkSAbOYaeOWQkcvHguPS5BOS/zbg6qFduN2qC72PFtLhAAW1gnRd1pA==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@ai-sdk/xai@5.0.30':
     resolution: {integrity: sha512-BO93IsBpRv0oaPpTvUKYtHKj09DIET2I0/TOYo/+VitFqyEG+SVlY/KVgESyjgUG+hqplt9gAWdutS6vWUJ6FA==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   '@alloc/quick-lru@5.3.0':
     resolution: {integrity: sha512-U4+70Pc5ZS9osnCBCE5Jha/ciHM+Yp+CNMNC/7HvYbNRk1Ldd+f7qO65W5qfhu/TCv+/ozljlXXe9Nj8419DMA==}
@@ -2754,7 +2761,7 @@ packages:
       expo-crypto: '>=13.0.0'
       expo-device: '>=6.0.0'
       react-native: '>=0.74.0'
-      zod: '>=4.1.12'
+      zod: ^4.6.7
     peerDependenciesMeta:
       '@react-native-async-storage/async-storage':
         optional: true
@@ -4142,7 +4149,7 @@ packages:
     engines: {node: '>=18'}
     peerDependencies:
       '@cfworker/json-schema': ^4.1.1
-      zod: ^3.25 || ^4.0
+      zod: ^4.6.7
     peerDependenciesMeta:
       '@cfworker/json-schema':
         optional: true
@@ -4444,7 +4451,7 @@ packages:
     peerDependencies:
       '@orpc/contract': 1.16.1
       '@orpc/server': 1.16.1
-      zod: '>=3.25.0'
+      zod: ^4.6.7
 
   '@oxc-parser/binding-android-arm-eabi@0.120.0':
     resolution: {integrity: sha512-WU3qtINx802wOl8RxAF1v0VvmC2O4D9M8Sv486nLeQ7iPHVmncYZrtBhB4SYyX+XZxj2PNnCcN+PW21jHgiOxg==}
@@ -5927,7 +5934,7 @@ packages:
       arktype: ^2.1.0
       typescript: '>=5.0.0'
       valibot: ^1.0.0-beta.7 || ^1.0.0
-      zod: ^3.24.0 || ^4.0.0
+      zod: ^4.6.7
     peerDependenciesMeta:
       arktype:
         optional: true
@@ -7130,7 +7137,7 @@ packages:
     resolution: {integrity: sha512-Ib8v374jWn9FXsjADXodRaP7fsMutlmPsbTLT5gYBDyadFcF9XxfYX1CSSxgSvE1r06MmOeYVwvQjFb3CcBi1Q==}
     engines: {node: '>=22'}
     peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
+      zod: ^4.6.7
 
   ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
@@ -7382,7 +7389,7 @@ packages:
   better-call@1.4.4:
     resolution: {integrity: sha512-Gq4XdGFy4dmUxFEAX2nj0ycFcFbD9ZWh8YROouZoyXeF1M11TpYbplk0pDByTFF8Wz+MYa6W9052c9m7dD+mfw==}
     peerDependencies:
-      zod: ^4.0.0
+      zod: ^4.6.7
     peerDependenciesMeta:
       zod:
         optional: true
@@ -7992,7 +7999,7 @@ packages:
       sqlite3: '>=5'
       typebox: '>=1.0.0'
       valibot: '>=1.0.0-beta.7'
-      zod: ^3.25.0 || ^4.0.0
+      zod: ^4.6.7
     peerDependenciesMeta:
       '@aws-sdk/client-rds-data':
         optional: true
@@ -8093,7 +8100,7 @@ packages:
     resolution: {integrity: sha512-GW5alHNCDJ4upenko60KU+MLbyP4buc8bIbwxzwu9ML0dJikXg0jodQcXiv1tUP1aeKzUH8n8nkoG8uJVO7w7w==}
     peerDependencies:
       drizzle-orm: '>=1.0.0-beta.2'
-      zod: ^3.25.0 || ^4.0.0
+      zod: ^4.6.7
 
   dts-resolver@3.0.0:
     resolution: {integrity: sha512-1T1f+z+4tl9XD+m+0HBgWoL/nm0bOIffyWaUuUSBlFg/86IWvfx+wjNaO/ybU0AJzG9/Mi5hBUgGV6zCmWEN7Q==}
@@ -9991,8 +9998,8 @@ packages:
       encoding:
         optional: true
 
-  node-forge@1.4.0:
-    resolution: {integrity: sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ==}
+  node-forge@1.4.2:
+    resolution: {integrity: sha512-rRtAR5XLJ8gCKd9du4qrKAsgCG1ObGP4gLeNJMa4vYSeq4bmBMOJk5IHkrviBV0q7uoAJlVd8HEQYQSVUb4FGQ==}
     engines: {node: '>= 6.13.0'}
 
   node-html-parser@9.0.5:
@@ -10072,7 +10079,7 @@ packages:
     engines: {node: '>=22'}
     peerDependencies:
       ai: ^7.0.0
-      zod: ^4.0.16
+      zod: ^4.6.7
 
   on-finished@2.3.0:
     resolution: {integrity: sha512-ikqdkGAAyf/X/gPhXGvfgAytDZtDbr+bkNUJ0N9h5MI/dmdgCs3l6hoHrcUv41sRKew3jIwrp4qQDXiK99Utww==}
@@ -11988,13 +11995,7 @@ packages:
   zod-to-json-schema@3.25.2:
     resolution: {integrity: sha512-O/PgfnpT1xKSDeQYSCfRI5Gy3hPf91mKVDuYLUHZJMiDFptvP41MSnWofm8dnCm0256ZNfZIM7DSzuSMAFnjHA==}
     peerDependencies:
-      zod: ^3.25.28 || ^4
-
-  zod@3.25.76:
-    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
-
-  zod@4.1.11:
-    resolution: {integrity: sha512-WPsqwxITS2tzx1bzhIKsEs19ABD5vmCVa4xBo2tq/SrV4RNZtfws1EnCWQXM6yh8bD08a1idvkB5MZSBiZsjwg==}
+      zod: ^4.6.7
 
   zod@4.6.7:
     resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
@@ -13540,7 +13541,7 @@ snapshots:
       glob: 13.0.6
       lan-network: 0.2.1
       multitars: 1.0.2
-      node-forge: 1.4.0
+      node-forge: 1.4.2
       npm-package-arg: 11.0.3
       ora: 3.4.0
       picomatch: 4.0.7
@@ -13558,7 +13559,7 @@ snapshots:
       toqr: 0.1.1
       wrap-ansi: 7.0.0
       ws: 8.22.0
-      zod: 3.25.76
+      zod: 4.6.7
     optionalDependencies:
       expo-router: 58.0.26(b68a9157ce6a3ccc89b2629cc657a3c6)
       react-native: 0.88.0(@babel/core@7.29.7(supports-color@7.2.0))(@react-native/metro-config@0.88.0(@babel/core@7.29.7(supports-color@7.2.0))(supports-color@7.2.0))(@types/react@19.3.0)(react@19.3.1)(supports-color@7.2.0)
@@ -13577,7 +13578,7 @@ snapshots:
 
   '@expo/code-signing-certificates@0.0.7':
     dependencies:
-      node-forge: 1.4.0
+      node-forge: 1.4.2
 
   '@expo/config-plugins@58.0.10(supports-color@7.2.0)(typescript@7.0.2)':
     dependencies:
@@ -13607,7 +13608,7 @@ snapshots:
       '@expo/json-file': 11.2.1
       '@expo/platforms': 58.0.1
       '@expo/require-utils': 58.0.4(supports-color@7.2.0)(typescript@7.0.2)
-      deepmerge: 4.3.1
+      deepmerge: 4.3.1(patch_hash=d0b09c0c7f6badc39a9816270406c175f63e3402e126a23a748ca35e1a43ace6)
       getenv: 2.0.0
       glob: 13.0.6
       resolve-workspace-root: 2.0.1
@@ -15701,7 +15702,7 @@ snapshots:
       '@dotenvx/dotenvx': 1.75.1
       cn: 0.2.6
       code-block-writer: 13.0.3
-      deepmerge: 4.3.1
+      deepmerge: 4.3.1(patch_hash=d0b09c0c7f6badc39a9816270406c175f63e3402e126a23a748ca35e1a43ace6)
       execa: 9.6.1
       fast-glob: 3.3.3
       fs-extra: 11.4.1
@@ -16752,12 +16753,12 @@ snapshots:
   '@vercel/cli-config@0.3.1':
     dependencies:
       xdg-app-paths: 5.5.1
-      zod: 4.1.11
+      zod: 4.6.7
 
   '@vercel/cli-config@0.3.3':
     dependencies:
       xdg-app-paths: 5.5.1
-      zod: 4.1.11
+      zod: 4.6.7
 
   '@vercel/cli-exec@1.0.1':
     dependencies:
@@ -17669,7 +17670,7 @@ snapshots:
     optionalDependencies:
       babel-plugin-macros: 3.1.0
 
-  deepmerge@4.3.1: {}
+  deepmerge@4.3.1(patch_hash=d0b09c0c7f6badc39a9816270406c175f63e3402e126a23a748ca35e1a43ace6): {}
 
   default-browser-id@5.0.1: {}
 
@@ -18725,7 +18726,7 @@ snapshots:
   html-to-text@9.0.5:
     dependencies:
       '@selderee/plugin-htmlparser2': 0.11.0
-      deepmerge: 4.3.1
+      deepmerge: 4.3.1(patch_hash=d0b09c0c7f6badc39a9816270406c175f63e3402e126a23a748ca35e1a43ace6)
       dom-serializer: 2.0.0
       htmlparser2: 8.0.2
       selderee: 0.11.0
@@ -20065,7 +20066,7 @@ snapshots:
     dependencies:
       whatwg-url: 5.0.0
 
-  node-forge@1.4.0: {}
+  node-forge@1.4.2: {}
 
   node-html-parser@9.0.5:
     dependencies:
@@ -21361,7 +21362,7 @@ snapshots:
       cn: 0.2.6
       commander: 14.0.3
       dedent: 1.7.2(babel-plugin-macros@3.1.0)
-      deepmerge: 4.3.1
+      deepmerge: 4.3.1(patch_hash=d0b09c0c7f6badc39a9816270406c175f63e3402e126a23a748ca35e1a43ace6)
       diff: 8.0.4
       execa: 9.6.1
       fast-glob: 3.3.3
@@ -22357,10 +22358,6 @@ snapshots:
   zod-to-json-schema@3.25.2(zod@4.6.7):
     dependencies:
       zod: 4.6.7
-
-  zod@3.25.76: {}
-
-  zod@4.1.11: {}
 
   zod@4.6.7: {}
 

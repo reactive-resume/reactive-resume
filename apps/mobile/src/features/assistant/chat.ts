@@ -7,7 +7,7 @@ import { Chat, useChat } from "@ai-sdk/react";
 import { t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
+import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { resumeAgentStream, sendAgentMessage } from "./transport";
 import { client, orpc, streamClient } from "@/api/client";
@@ -164,7 +164,9 @@ export function useAssistantChat({
 						messageById: (id) => chat.messages.find((message) => message.id === id),
 					}),
 			},
-			sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
+			sendAutomaticallyWhen: (input) =>
+				lastAssistantMessageIsCompleteWithToolCalls(input) ||
+				lastAssistantMessageIsCompleteWithApprovalResponses(input),
 			onFinish: () => onFinishRef.current(),
 		});
 		return chat;

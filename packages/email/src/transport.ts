@@ -17,6 +17,7 @@ const getTransport = () => {
 		host,
 		port: env.SMTP_PORT,
 		secure: env.SMTP_SECURE,
+		requireTLS: true,
 		auth: { user, pass },
 		connectionTimeout: 10_000,
 		greetingTimeout: 10_000,

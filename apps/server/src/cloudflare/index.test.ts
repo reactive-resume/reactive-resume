@@ -15,6 +15,9 @@ const mocks = vi.hoisted(() => ({
 		throw new Error("Agent lifetime handler was not configured");
 	}) as (promise: Promise<unknown>) => void,
 	coordination: undefined as CoordinationService | undefined,
+	publicOwner: vi.fn(),
+	readPicture: vi.fn(),
+	pictureReader: undefined as ((key: string) => Promise<Uint8Array>) | undefined,
 }));
 
 vi.mock("pg", () => ({
@@ -56,9 +59,14 @@ vi.mock("@reactive-resume/db/coordination", () => ({
 }));
 vi.mock("@reactive-resume/api/features/storage", () => ({
 	configureStorageService: vi.fn(),
-	getStorageService: vi.fn(),
+	getStorageService: () => ({ read: mocks.readPicture }),
+	isPublicUploadOwner: mocks.publicOwner,
 }));
-vi.mock("@reactive-resume/pdf/server", () => ({ configureOwnPictureReader: vi.fn() }));
+vi.mock("@reactive-resume/pdf/server", () => ({
+	configureOwnPictureReader: (reader: typeof mocks.pictureReader) => {
+		mocks.pictureReader = reader;
+	},
+}));
 vi.mock("@reactive-resume/utils/rate-limit", () => ({ TRUSTED_IP_HEADERS: ["x-real-ip", "x-forwarded-for"] }));
 vi.mock("../http/app", () => ({ createApp: () => ({ fetch: mocks.fetch }) }));
 vi.mock("./coordination", () => ({ Coordination: class {} }));
@@ -100,6 +108,12 @@ beforeEach(() => {
 });
 
 describe("Cloudflare invocation lifetime", () => {
+	it("rejects a banned owner's picture before reading storage", async () => {
+		mocks.publicOwner.mockResolvedValue(false);
+		await expect(mocks.pictureReader?.("uploads/banned/pictures/photo.png")).rejects.toThrow("Picture unavailable");
+		expect(mocks.publicOwner).toHaveBeenCalledWith("banned");
+		expect(mocks.readPicture).not.toHaveBeenCalled();
+	});
 	it("runs scheduled work in its request context and drains nested background work before closing its pool", async () => {
 		const fixture = invocation();
 		const job = Promise.withResolvers<void>();

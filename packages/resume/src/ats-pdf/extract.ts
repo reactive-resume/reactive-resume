@@ -223,6 +223,9 @@ function inversionRatioOf(lines: readonly TextLine[]): number {
  */
 function findGutter(spans: readonly TextSpan[], page: RawPage): ColumnGutter | null {
 	if (spans.length < 12 || page.width <= 0 || page.height <= 0) return null;
+	// Geometry beyond the PDF 200-inch page limit is not meaningful to this fixed-resolution analysis.
+	if (!Number.isFinite(page.width) || !Number.isFinite(page.height) || page.width > 14_400 || page.height > 14_400)
+		return null;
 
 	const binCount = Math.max(1, Math.ceil(page.width / HISTOGRAM_BIN_PT));
 	const occupied = new Array<boolean>(binCount).fill(false);

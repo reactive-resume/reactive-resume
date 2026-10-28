@@ -119,8 +119,7 @@ export type RouterOutput = InferRouterOutputs<typeof router>;
  * Sends the bearer token and returns the raw response; callers check `ok` and read `arrayBuffer()`/`json()`.
  * The body is sent again after a token refresh, so pass a repeatable one (string, `FormData`, bytes), never a stream.
  */
-export async function rest(path: `/${string}`, init: RequestInit = {}): Promise<Response> {
-	const scope = getAccountScope();
+export async function rest(path: `/${string}`, init: RequestInit = {}, scope = getAccountScope()): Promise<Response> {
 	if (path === "/career/voice/transcribe") {
 		if (!(init.body instanceof FormData)) throw new Error("Expected a recording form.");
 		await authorizeAiRequest(

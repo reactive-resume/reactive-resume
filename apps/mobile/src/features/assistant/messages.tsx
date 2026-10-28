@@ -201,6 +201,13 @@ type ToolPartViewProps = Omit<MessageViewProps, "message"> & { part: ToolPart; m
 function ToolPartView({ part, message, streaming, readOnly, proposals, onAnswer }: ToolPartViewProps) {
 	const { space } = useTheme();
 	const working = part.state === "input-streaming" || part.state === "input-available";
+	if (part.state === "approval-requested" || part.state === "approval-responded") return null;
+	if (part.state === "output-denied")
+		return (
+			<Status>
+				<Trans>Skipped</Trans>
+			</Status>
+		);
 
 	switch (part.type) {
 		case "tool-read_resume":
