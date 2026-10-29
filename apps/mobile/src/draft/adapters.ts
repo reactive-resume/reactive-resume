@@ -120,6 +120,12 @@ export const letterAdapter: DraftAdapter<LetterDocument, LetterDocument> = {
 	merge: (saved, submitted, current) => ({
 		...saved,
 		...changedFields(letterFields(current), letterFields(submitted)),
+		// Unlinking resolves fresh resume details; retain only fields edited while that request was pending.
+		style: {
+			...saved.style,
+			basics: { ...saved.style.basics, ...changedFields(current.style.basics, submitted.style.basics) },
+			metadata: { ...saved.style.metadata, ...changedFields(current.style.metadata, submitted.style.metadata) },
+		},
 	}),
 	parse: (value) => coverLetterSchema.parse(dates(value)),
 	save: (document, baseline, sessionId, _force, scope) => {
@@ -141,6 +147,15 @@ export const letterAdapter: DraftAdapter<LetterDocument, LetterDocument> = {
 			...("senderLinked" in changes ? { senderLinked: document.senderLinked } : {}),
 			...("designLinked" in changes ? { designLinked: document.designLinked } : {}),
 		};
+		if (!document.senderLinked) {
+			const { name, email, phone, location } = document.style.basics;
+			const previous = baseline.style.basics;
+			const sender = changedFields(
+				{ name, email, phone, location },
+				{ name: previous.name, email: previous.email, phone: previous.phone, location: previous.location },
+			);
+			if (Object.keys(sender).length) input.sender = sender;
+		}
 		const metadata = changedFields(document.style.metadata, baseline.style.metadata);
 		if ("template" in metadata) input.template = document.style.metadata.template;
 		if ("typography" in metadata || "design" in metadata || "page" in metadata)

@@ -24,6 +24,7 @@ import { WallClockField } from "@/features/application-detail/date-field";
 import { useApplicationLanes } from "@/features/applications/lane-queries";
 import { getLaneLabel, resolveLane } from "@/features/applications/lanes";
 import { useApplications } from "@/features/applications/queries";
+import { BoundText, useValidators } from "@/features/write/entry-fields";
 import { routes } from "@/routes";
 import {
 	Banner,
@@ -359,7 +360,16 @@ function ToSection({ letter, application, disabled }: LetterSectionProps) {
 }
 
 /** FROM: the resume the sender's details come from, and whether they stay live or are copied into the letter. */
-function FromSection({ letter, disabled }: { letter: LetterDocument; disabled: boolean }) {
+type FromSectionProps = { letter: LetterDocument; disabled: boolean };
+
+function FromSection({ letter, disabled }: FromSectionProps) {
+	const validate = useValidators();
+	const text = (key: "name" | "email" | "phone" | "location") => ({
+		value: letter.style.basics[key],
+		disabled,
+		focus: letterFieldFocus,
+		onChange: (value: string) => edit(`sender.${key}`, (draft) => void (draft.style.basics[key] = value)),
+	});
 	const { t } = useLingui();
 	const resumes = useResumes();
 	const resume = resumes.data?.find((item) => item.id === letter.sourceResumeId);
@@ -411,15 +421,32 @@ function FromSection({ letter, disabled }: { letter: LetterDocument; disabled: b
 					subtitle={
 						letter.senderLinked
 							? t`Linked. Name, email, phone and city update when the resume does.`
-							: t`Off. The letter keeps its own copy of your details.`
+							: t`Off. Edit this letter’s details below. Turning this on replaces them with the resume’s current details.`
 					}
 					trailing={
 						<Switch label={useDetailsLabel} value={letter.senderLinked} disabled={disabled} onValueChange={setLinked} />
 					}
 				/>
 			) : (
-				<Text variant="caption" color="ink3">{t`Your name and contact details come from a resume.`}</Text>
+				<Text
+					variant="caption"
+					color="ink3"
+				>{t`Enter your details below. Choosing a resume replaces them and links its design.`}</Text>
 			)}
+			{!letter.sourceResumeId || !letter.senderLinked ? (
+				<>
+					<BoundText label={t`Full name`} autoComplete="name" {...text("name")} />
+					<BoundText
+						label={t`Email`}
+						keyboardType="email-address"
+						autoComplete="email"
+						validate={validate.email}
+						{...text("email")}
+					/>
+					<BoundText label={t`Phone`} keyboardType="phone-pad" autoComplete="tel" {...text("phone")} />
+					<BoundText label={t`Location`} {...text("location")} />
+				</>
+			) : null}
 		</Section>
 	);
 }
