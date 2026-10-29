@@ -18,6 +18,7 @@ const api = vi.hoisted(() => ({
 	invalidate: vi.fn(),
 	confirm: vi.fn(),
 }));
+vi.mock("@tanstack/react-router", () => ({ useRouteContext: () => ({ session: { user: { timezone: "UTC" } } }) }));
 vi.mock("@/libs/orpc/client", () => ({
 	client: { applications: { ai: { parsePosting: api.parsePosting } } },
 	orpc: {

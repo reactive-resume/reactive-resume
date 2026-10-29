@@ -2,7 +2,6 @@ import type { ScheduledInterview } from "../interviews";
 import type { ApplicationSummary } from "../types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
-import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useState } from "react";
 import { INTERVIEW_KINDS } from "@reactive-resume/schema/applications/data";
@@ -20,12 +19,18 @@ import {
 	upcomingInterviews,
 } from "../interviews";
 import { InterviewDialog } from "./interview-dialog";
+import { useCareerTime, useNow } from "@/features/career/shared";
 
 const MAX_CHIPS_PER_DAY = 3;
 
 type DialogState =
 	| { open: false }
-	| { open: true; application: ApplicationSummary | null; interview: InterviewTimelineEntry | null; day: Date | null };
+	| {
+			open: true;
+			application: ApplicationSummary | null;
+			interview: InterviewTimelineEntry | null;
+			day: string | null;
+	  };
 
 type ApplicationCalendarProps = {
 	// Applications matching the page filters; their interviews are shown.
@@ -36,50 +41,50 @@ type ApplicationCalendarProps = {
 };
 
 export function ApplicationCalendar({ applications, allApplications, onOpen }: ApplicationCalendarProps) {
-	const { i18n } = useLingui();
-	const locale = i18n.locale;
-	const [month, setMonth] = useState(() => {
-		const now = new Date();
-		return new Date(now.getFullYear(), now.getMonth(), 1);
-	});
+	const { locale, timeZone, time } = useCareerTime();
+	const now = useNow();
+	const todayKey = dayKey(now, timeZone);
+	// Grid dates are civil days carried in UTC; interview start/end remain absolute instants.
+	const today = new Date(`${todayKey}T00:00:00Z`);
+	const [month, setMonth] = useState(() => new Date(`${todayKey.slice(0, 7)}-01T00:00:00Z`));
 	// Which way the last month change went: the new month's days slide in from that side. 0 = no change yet.
 	const [direction, setDirection] = useState<-1 | 0 | 1>(0);
 	const [dialog, setDialog] = useState<DialogState>({ open: false });
 
 	const interviews = collectInterviews(applications);
-	const byDay = groupByDay(interviews);
+	const byDay = groupByDay(interviews, timeZone);
 	const upcoming = upcomingInterviews(interviews);
-	const upcomingByDay = [...groupByDay(upcoming).values()];
+	const upcomingByDay = [...groupByDay(upcoming, timeZone).values()];
 	const days = monthGrid(month);
 
-	// oxlint-disable-next-line react/purity -- Read today on each render so an open calendar updates after midnight when navigated.
-	const today = new Date();
-	const todayKey = dayKey(today);
-	const tomorrowKey = dayKey(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1));
-	const isCurrentMonth = month.getFullYear() === today.getFullYear() && month.getMonth() === today.getMonth();
-	const monthCount = interviews.filter(
-		(item) => item.start.getFullYear() === month.getFullYear() && item.start.getMonth() === month.getMonth(),
-	).length;
+	const tomorrowKey = dayKey(new Date(today.getTime() + 86_400_000), "UTC");
+	const monthKey = dayKey(month, "UTC").slice(0, 7);
+	const isCurrentMonth = todayKey.startsWith(monthKey);
+	const monthCount = interviews.filter((item) => dayKey(item.start, timeZone).startsWith(monthKey)).length;
 
-	const weekdayFormat = new Intl.DateTimeFormat(locale, { weekday: "short" });
-	const monthFormat = new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" });
-	const timeFormat = new Intl.DateTimeFormat(locale, { hour: "numeric", minute: "2-digit" });
-	const dayHeadingFormat = new Intl.DateTimeFormat(locale, { weekday: "long", month: "long", day: "numeric" });
+	const weekdayFormat = new Intl.DateTimeFormat(locale, { timeZone: "UTC", weekday: "short" });
+	const monthFormat = new Intl.DateTimeFormat(locale, { timeZone: "UTC", month: "long", year: "numeric" });
+	const dayHeadingFormat = new Intl.DateTimeFormat(locale, {
+		timeZone: "UTC",
+		weekday: "long",
+		month: "long",
+		day: "numeric",
+	});
 
 	const goToMonth = (next: Date) => {
 		setDirection(next > month ? 1 : -1);
 		setMonth(next);
 	};
-	const shiftMonth = (delta: number) => goToMonth(new Date(month.getFullYear(), month.getMonth() + delta, 1));
-	const schedule = (day: Date | null = null) => setDialog({ open: true, application: null, interview: null, day });
+	const shiftMonth = (delta: number) =>
+		goToMonth(new Date(Date.UTC(month.getUTCFullYear(), month.getUTCMonth() + delta, 1)));
+	const schedule = (day: string | null = null) => setDialog({ open: true, application: null, interview: null, day });
 	const edit = (item: ScheduledInterview) =>
 		setDialog({ open: true, application: item.application, interview: item.interview, day: null });
 
-	const dayHeading = (date: Date) => {
-		const key = dayKey(date);
+	const dayHeading = (key: string) => {
 		if (key === todayKey) return t`Today`;
 		if (key === tomorrowKey) return t`Tomorrow`;
-		return dayHeadingFormat.format(date);
+		return dayHeadingFormat.format(new Date(`${key}T00:00:00Z`));
 	};
 
 	return (
@@ -101,7 +106,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 							size="sm"
 							variant="secondary"
 							disabled={isCurrentMonth}
-							onClick={() => goToMonth(new Date(today.getFullYear(), today.getMonth(), 1))}
+							onClick={() => goToMonth(new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1)))}
 						>
 							<Trans>This month</Trans>
 						</Button>
@@ -119,7 +124,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 					<div className="grid grid-cols-7">
 						{days.slice(0, 7).map((day) => (
 							<div
-								key={`weekday-${day.getDay()}`}
+								key={`weekday-${day.getUTCDay()}`}
 								className="border-b border-line p-2 text-center text-xs font-medium text-ink-3"
 							>
 								{weekdayFormat.format(day)}
@@ -127,7 +132,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 						))}
 					</div>
 					<div
-						key={`${month.getFullYear()}-${month.getMonth()}`}
+						key={monthKey}
 						className={cn(
 							"grid grid-cols-7",
 							direction !== 0 && "transition-[opacity,translate] duration-standard ease-enter starting:opacity-0",
@@ -136,9 +141,9 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 						)}
 					>
 						{days.map((day, i) => {
-							const key = dayKey(day);
+							const key = dayKey(day, "UTC");
 							const items = byDay.get(key) ?? [];
-							const inMonth = day.getMonth() === month.getMonth();
+							const inMonth = day.getUTCMonth() === month.getUTCMonth();
 							const isToday = key === todayKey;
 							const extra = items.length - MAX_CHIPS_PER_DAY;
 							const date = dayHeadingFormat.format(day);
@@ -160,7 +165,7 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 											title={scheduleLabel}
 											aria-label={scheduleLabel}
 											className="flex size-6 items-center justify-center rounded-md text-ink-3 opacity-0 transition-opacity group-hover/day:opacity-100 hover:bg-sunken hover:text-ink focus-visible:opacity-100 max-sm:hidden"
-											onClick={() => schedule(day)}
+											onClick={() => schedule(key)}
 										>
 											<Icon name="plus" size={14} />
 										</button>
@@ -171,14 +176,14 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 												isToday && "bg-accent font-semibold text-on-accent",
 											)}
 										>
-											{day.getDate()}
+											{day.getUTCDate()}
 										</span>
 									</div>
 									{items.slice(0, MAX_CHIPS_PER_DAY).map((item) => (
 										<InterviewChip
 											key={item.interview.id}
 											item={item}
-											time={timeFormat.format(item.start)}
+											time={time(item.start)}
 											onOpen={() => edit(item)}
 										/>
 									))}
@@ -195,12 +200,12 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 												<Trans>+{extra} more</Trans>
 											</PopoverTrigger>
 											<PopoverContent align="start" className="flex w-60 flex-col gap-1 p-2">
-												<p className="px-1 pb-1 text-xs font-medium">{dayHeading(day)}</p>
+												<p className="px-1 pb-1 text-xs font-medium">{dayHeading(key)}</p>
 												{items.map((item) => (
 													<InterviewChip
 														key={item.interview.id}
 														item={item}
-														time={timeFormat.format(item.start)}
+														time={time(item.start)}
 														onOpen={() => edit(item)}
 													/>
 												))}
@@ -251,13 +256,13 @@ export function ApplicationCalendar({ applications, allApplications, onOpen }: A
 						const first = group[0];
 						if (!first) return null;
 						return (
-							<div key={dayKey(first.start)} className="flex flex-col gap-2">
-								<h4 className="text-xs font-medium text-ink-3">{dayHeading(first.start)}</h4>
+							<div key={dayKey(first.start, timeZone)} className="flex flex-col gap-2">
+								<h4 className="text-xs font-medium text-ink-3">{dayHeading(dayKey(first.start, timeZone))}</h4>
 								{group.map((item) => (
 									<UpcomingCard
 										key={item.interview.id}
 										item={item}
-										timeRange={`${timeFormat.format(item.start)} – ${timeFormat.format(item.end)}`}
+										timeRange={`${time(item.start)} – ${time(item.end)}`}
 										locale={locale}
 										onEdit={() => edit(item)}
 										onOpenApplication={() => onOpen(item.application)}

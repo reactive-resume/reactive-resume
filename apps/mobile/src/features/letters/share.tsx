@@ -45,8 +45,8 @@ async function flushLetter(id: string) {
 
 type LetterShareSheetProps = { id: string; open: boolean; onClose: () => void; version?: string | undefined };
 /**
- * Share & export for letters (builder.html L7): Download and History. Letters have no public link. Opened from
- * Share in the letter chrome; the letter layout owns the draft, so this only subscribes. `version` opens History on
+ * Download & history for letters (builder.html L7): Download and History. Letters have no public link. Opened from
+ * Download in the letter chrome; the letter layout owns the draft, so this only subscribes. `version` opens History on
  * that version, read-only.
  */
 export function LetterShareSheet({ id, open, onClose, version }: LetterShareSheetProps) {
@@ -58,10 +58,10 @@ export function LetterShareSheet({ id, open, onClose, version }: LetterShareShee
 	const offline = network.isConnected === false || network.isInternetReachable === false;
 
 	return (
-		<Sheet open={open} onClose={onClose} title={t`Share & export`} detents={[0.9]}>
+		<Sheet open={open} onClose={onClose} title={t`Download & history`} detents={[0.9]}>
 			<View style={{ gap: space.s4 }}>
 				<Segmented
-					label={t`Share sections`}
+					label={t`Download & history`}
 					value={tab}
 					options={[
 						{ value: "download", label: t`Download` },
