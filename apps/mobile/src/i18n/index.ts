@@ -6,9 +6,10 @@ import { i18n } from "@lingui/core";
 import { getLocales } from "expo-localization";
 import Storage from "expo-sqlite/kv-store";
 import { I18nManager, Platform, Settings } from "react-native";
-import { defaultLocale, isLocale, isRTL, localeSchema } from "@reactive-resume/utils/locale";
+import { defaultLocale, isLocale, isRTL, localeSchema, supportedLocales } from "@reactive-resume/utils/locale";
 
 const storageKey = "locale";
+export const selectableLocales = __DEV__ ? localeSchema.options : supportedLocales;
 
 // Static paths, so Metro can bundle each catalog.
 const loaders: Record<Locale, () => Promise<{ messages: Messages }>> = {
@@ -71,9 +72,9 @@ const loaders: Record<Locale, () => Promise<{ messages: Messages }>> = {
 
 /** The supported locale closest to the device's preferred languages. */
 export function getDeviceLocale(): Locale {
-	const supported = localeSchema.options;
+	const supported = supportedLocales;
 	for (const { languageTag, languageCode } of getLocales()) {
-		if (isLocale(languageTag)) return languageTag;
+		if (isLocale(languageTag) && supported.includes(languageTag)) return languageTag;
 		const sameLanguage = supported.find((locale) => locale.split("-")[0] === languageCode);
 		if (sameLanguage) return sameLanguage;
 	}
@@ -83,7 +84,7 @@ export function getDeviceLocale(): Locale {
 /** The user's override, or null to follow the device. */
 export function getLocalePreference(): Locale | null {
 	const stored = Storage.getItemSync(storageKey);
-	return isLocale(stored) ? stored : null;
+	return isLocale(stored) && selectableLocales.includes(stored) ? stored : null;
 }
 
 /**
@@ -91,14 +92,16 @@ export function getLocalePreference(): Locale | null {
  * right-to-left language only flips the layout after the app restarts: React Native reads the direction at launch.
  * Returns true when a restart is needed.
  */
-export function setLocalePreference(locale: Locale | null): Promise<boolean> {
+export function setLocalePreference(value: Locale | null): Promise<boolean> {
+	const locale = value && selectableLocales.includes(value) ? value : null;
 	if (locale) Storage.setItemSync(storageKey, locale);
 	else Storage.removeItemSync(storageKey);
 	return activateLocale(locale ?? getDeviceLocale());
 }
 
 /** Loads and activates a catalog. Returns true when the layout direction changes on the next launch. */
-export async function activateLocale(locale: Locale) {
+export async function activateLocale(value: Locale) {
+	const locale = selectableLocales.includes(value) ? value : defaultLocale;
 	const { messages } = await loaders[locale]().catch(() => loaders[defaultLocale]());
 	i18n.loadAndActivate({ locale, messages });
 

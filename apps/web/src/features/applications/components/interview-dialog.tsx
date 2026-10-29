@@ -86,9 +86,10 @@ type Draft = {
 };
 
 // New interviews default to the given day (or tomorrow) at 09:00 in the timezone, or the next full hour if that's past.
-function emptyDraft(applicationId: string, timezone: string, day?: Date | null): Draft {
+function emptyDraft(applicationId: string, timezone: string, day?: string | null): Draft {
 	const now = new Date();
-	const date = dayKey(day ?? new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1));
+	const today = new Date(`${dayKey(now, timezone)}T00:00:00Z`);
+	const date = day ?? dayKey(new Date(today.getTime() + 86_400_000), "UTC");
 	let at = fromZonedDateTime(date, "09:00", timezone) ?? now;
 	if (at <= now) at = new Date(Math.ceil(now.getTime() / 3_600_000) * 3_600_000);
 	return {
@@ -135,7 +136,7 @@ type InterviewDialogProps = {
 	// Set when editing an existing interview.
 	interview?: InterviewTimelineEntry | null;
 	// Pre-selects this day when scheduling (e.g. a day clicked on the calendar).
-	day?: Date | null;
+	day?: string | null;
 };
 
 const FULL_SCREEN_ON_PHONES =

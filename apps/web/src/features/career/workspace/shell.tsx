@@ -460,7 +460,7 @@ type ContextColumnProps = {
 /** NEXT STEP, WHO YOU'LL MEET, WHAT YOU SENT and NOTES: the job at a glance beside every tab. */
 function ContextColumn({ application, interview, now, onEdit }: ContextColumnProps) {
 	const { i18n } = useLingui();
-	const { day, date, time } = useCareerTime();
+	const { day, date, time, timeZone } = useCareerTime();
 	const documents = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const hasSentVersion = Boolean(application.sentResumeVersionId || application.sentCoverLetterVersionId);
 	const trashed = useQuery({
@@ -468,7 +468,7 @@ function ContextColumn({ application, interview, now, onEdit }: ContextColumnPro
 		enabled: hasSentVersion,
 	});
 	const step = getNextStep(application, now);
-	const text = describeNextStep(step, application, i18n.locale);
+	const text = describeNextStep(step, application, i18n.locale, timeZone);
 	const upcoming = step.kind === "interview" ? step.interview : interview;
 	const soon = upcoming ? minutesUntil(new Date(upcoming.at), now) <= 60 : false;
 	const available = [...(documents.data ?? []), ...(trashed.data ?? [])];

@@ -4,13 +4,12 @@ import { useLingui } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { DevSettings, View, useWindowDimensions } from "react-native";
-import { localeSchema } from "@reactive-resume/utils/locale";
 import { timezoneSchema } from "@reactive-resume/utils/timezone";
 import { client, orpc } from "@/api/client";
 import { SettingsGroup, SettingsPage } from "@/features/settings/layout";
 import { localeMap } from "@/features/settings/locale-names";
 import { useProfile } from "@/features/settings/queries";
-import { getDeviceLocale, getLocalePreference, setLocalePreference } from "@/i18n";
+import { getDeviceLocale, getLocalePreference, selectableLocales, setLocalePreference } from "@/i18n";
 import { timeZones } from "@/lib/timezones";
 import {
 	Banner,
@@ -63,7 +62,7 @@ export default function PreferencesScreen() {
 		onError: () => showToast({ message: t`Couldn't save the timezone. Try again.` }),
 	});
 	const languageName = (value: Locale) => i18n._(localeMap[value]);
-	const languages = localeSchema.options.map((value) => ({ value, label: languageName(value) }));
+	const languages = selectableLocales.map((value) => ({ value, label: languageName(value) }));
 	const matchingLanguages = languages.filter(({ value, label }) =>
 		`${value} ${label}`.toLowerCase().includes(search.trim().toLowerCase()),
 	);
