@@ -15,6 +15,8 @@ Once your AI client is connected to the Reactive Resume MCP server, you can run 
 
 Every application sits in one stage: `saved`, `applied`, `screening`, `interview`, `offer` or `closed`. Closing an application takes a reason: `not-selected`, `withdrew`, `accepted-other` or `no-response`. Each application also has a timeline of stage changes, notes and interviews, optional contacts, tags, a follow-up date, a linked resume and letter, and the resume and cover-letter PDFs you sent.
 
+If you've added your own stages, such as **Take-home assignment** or **Ghosted**, each one has an ID and counts as one of those six. The client reads your stages with `api_applications_lanes_get` and passes a stage's ID as `laneId` to `list_applications`, `create_application`, `update_application` or `bulk_update_applications`. Moving to a Closed stage with a preset outcome, such as **Ghosted**, doesn't need a reason. See [Customizing application stages](/guides/customizing-application-stages).
+
 These are the same applications you see in the app's List, Board, Insights and Calendar views. See [Tracking job applications](/guides/tracking-job-applications).
 
 ## Review your pipeline first

@@ -204,7 +204,7 @@ The server keeps the original 43 tool names and adds API-derived tools for the r
 
 | Tool                                | What it does                                                                                                                               |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `list_applications`                 | Lists your applications with contacts, documents and timeline. Filter by stage (`status`) or `tags`.                                       |
+| `list_applications`                 | Lists your applications with contacts, documents and timeline. Filter by stage (`status`), stage ID (`laneId`) or `tags`.                  |
 | `read_application`                  | Returns one application in full.                                                                                                           |
 | `list_application_tags`             | Lists every tag used across applications.                                                                                                  |
 | `get_application_stats`             | Counts applications by stage and source.                                                                                                   |
@@ -242,6 +242,7 @@ Additional tools use `api_` followed by the API router path in snake case. Input
 | Assistant                  | `api_agent_threads_start`, `api_agent_messages_send`, `api_agent_attachments_create`           | Threads, messages, cancellation, resumable replies, proposed edit status and attachments                                  |
 | Account and instance       | `api_auth_export_data`, `api_auth_delete_account`, `api_flags_get`                             | Account export, browser handoff for account deletion, enabled auth providers and platform statistics                      |
 | Integrations               | `api_ai_providers_list`, `api_web_access_status`                                               | Provider list/test/delete and web connection status/test/delete; credential entry uses browser handoffs                   |
+| Application stages         | `api_applications_lanes_get`, `api_applications_lanes_create`, `api_applications_lanes_retire` | Read, add, rename, recolor, reorder and remove stages; list earlier unanswered applications at a company                  |
 
 Resume and letter exports return authenticated REST URLs. Download with your existing credentials or open in your signed-in browser. Letter localization words are encoded in the URL. No generated file is permanently copied into storage by the export tool.
 
