@@ -1043,11 +1043,11 @@ msgstr "Dodaj język"
 
 #: src/features/career/offer-entry.tsx
 msgid "Add offer"
-msgstr ""
+msgstr "Dodaj ofertę"
 
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr ""
+msgstr "Dodaj warunki oferty pracy ręcznie lub skorzystaj z opcjonalnego wyodrębniania za pomocą AI w Wiadomościach."
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
@@ -2109,10 +2109,6 @@ msgstr "Sprawdź dopasowanie"
 msgid "Check it's accurate."
 msgstr "Sprawdź, czy jest dokładny."
 
-#: src/features/career/offer-entry.tsx
-msgid "Check the application, currency, amounts and deadline before saving."
-msgstr ""
-
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Check the details"
 msgstr "Sprawdź szczegóły"
@@ -2231,6 +2227,10 @@ msgstr "Przed udostępnieniem danych wybierz przetestowanego dostawcę AI."
 msgid "Choose a time"
 msgstr "Wybierz czas"
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
+msgstr "Wybierz prawidłową datę i godzinę w strefie czasowej {timeZone} lub usuń termin."
+
 #: src/features/applications/add-sheet.tsx
 msgid "Choose a valid follow-up date before saving."
 msgstr "Przed zapisaniem wybierz prawidłową datę kolejnej wizyty."
@@ -2246,6 +2246,10 @@ msgstr "Wybierz plik WebM, MP4, MP3, WAV lub Ogg do 2 MB."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Choose an application"
 msgstr "Wybierz podanie o pracę"
+
+#: src/features/career/offer-entry.tsx
+msgid "Choose an application and correct the highlighted fields before saving."
+msgstr "Przed zapisaniem wybierz podanie o pracę i popraw wyróżnione pola."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose an audio file"
@@ -3925,7 +3929,7 @@ msgstr "Ulepszone czytanie niedostępne; korzystał z wbudowanego czytnika."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter a full amount, such as 95000, or leave blank."
-msgstr ""
+msgstr "Wpisz pełną kwotę, na przykład 95000, lub pozostaw puste pole."
 
 #: src/features/career/preferences.tsx
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
@@ -3974,7 +3978,7 @@ msgstr "Wprowadź dowolny identyfikator modelu obsługiwany przez Twój punkt ko
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
-msgstr ""
+msgstr "Wpisz warunki samodzielnie. Żadne żądanie nie jest wysyłane do AI. Nieznane kwoty pozostaw puste."
 
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
@@ -4034,10 +4038,6 @@ msgstr "Każdy termin, na który zwraca się uwagę w ogłoszeniu o pracę, już
 #: src/features/career/schedule-sheet.tsx
 msgid "Every week"
 msgstr "Co tydzień"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Everything the coach wrote for {company}, newest first."
-msgstr "Wszystko, co doradca kariery napisał dla {company}, najpierw najnowsze."
 
 #: src/features/career/facts.tsx
 #: src/features/write/fields.ts
@@ -4190,8 +4190,8 @@ msgid "Fit"
 msgstr "Dopasowanie"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Fit checks, briefings, practice feedback, debriefs, answers and replies land here as the other tabs create them."
-msgstr "Sprawdzenia dopasowania, briefingi, informacje zwrotne z ćwiczeń, omówienia, odpowiedzi i wiadomości trafiają tutaj, gdy tworzą je pozostałe zakładki."
+msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
+msgstr "Sprawdzenia dopasowania do stanowiska, briefingi przygotowawcze, informacje zwrotne z próbnych rozmów, omówienia po rozmowach, odpowiedzi na pytania w formularzach, odpowiedzi na wiadomości i oferty pracy trafiają tutaj, gdy je zapiszesz."
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -6468,11 +6468,11 @@ msgstr "Oferta"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
-msgstr ""
+msgstr "Oferta zapisana"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
-msgstr ""
+msgstr "Typ oferty"
 
 #: app/(tabs)/career/_layout.tsx
 msgid "Offers"
@@ -8267,7 +8267,7 @@ msgstr "Zapisz etap"
 
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
-msgstr ""
+msgstr "Zapisz ofertę"
 
 #: src/features/share/files.ts
 msgid "Save or share file"
@@ -8334,6 +8334,10 @@ msgstr "Zapisano historię: {title}"
 msgid "Saved description"
 msgstr "Zapisano opis"
 
+#: src/features/workspace/tabs/saved.tsx
+msgid "Saved items for {company}, newest first."
+msgstr "Zapisane elementy dla {company}, od najnowszych."
+
 #: src/features/career/today.tsx
 msgid "Saved to Applications with the posting"
 msgstr "Zapisano w Podaniach o pracę razem z ogłoszeniem"
@@ -8354,6 +8358,7 @@ msgstr "Zapisano w zakładce Zapisano · Ćwiczenie"
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "Zapisywanie pracy. Przed dokonaniem kolejnej zmiany poczekaj na potwierdzenie."
 
+#: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/profile.tsx
 #: src/shell/builder-chrome.tsx
@@ -10173,7 +10178,7 @@ msgstr "Skracanie"
 
 #: src/features/career/offer-entry.tsx
 msgid "Time"
-msgstr ""
+msgstr "Godzina"
 
 #. placeholder {0}: draft.timezone
 #: src/features/application-detail/interview-sheet.tsx
@@ -10864,6 +10869,10 @@ msgstr "Ustawienia głosu"
 #: src/features/write/fields.ts
 msgid "Volunteer"
 msgstr "Wolontariat"
+
+#: src/features/career/offer-entry.tsx
+msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
+msgstr "Poczekaj na wczytanie strefy czasowej konta, spróbuj ponownie, jeśli wczytywanie się nie powiodło, lub usuń termin."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

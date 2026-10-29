@@ -1043,11 +1043,11 @@ msgstr "新增語言"
 
 #: src/features/career/offer-entry.tsx
 msgid "Add offer"
-msgstr ""
+msgstr "新增錄取邀約"
 
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr ""
+msgstr "手動新增錄取邀約的條件，或選用「訊息」中的 AI 擷取功能。"
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
@@ -2109,10 +2109,6 @@ msgstr "檢查契合度"
 msgid "Check it's accurate."
 msgstr "檢查一下是否準確。"
 
-#: src/features/career/offer-entry.tsx
-msgid "Check the application, currency, amounts and deadline before saving."
-msgstr ""
-
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Check the details"
 msgstr "核對詳細資料"
@@ -2231,6 +2227,10 @@ msgstr "在共享資料之前選擇經過測試的人工智慧提供者。"
 msgid "Choose a time"
 msgstr "選擇時間"
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
+msgstr "請選擇 {timeZone} 時區內有效的日期和時間，或清除截止期限。"
+
 #: src/features/applications/add-sheet.tsx
 msgid "Choose a valid follow-up date before saving."
 msgstr "保存前選擇有效的後續日期。"
@@ -2246,6 +2246,10 @@ msgstr "選擇不超過 2 MB 的 WebM、MP4、MP3、WAV 或 Ogg 檔案。"
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Choose an application"
 msgstr "選擇應徵紀錄"
+
+#: src/features/career/offer-entry.tsx
+msgid "Choose an application and correct the highlighted fields before saving."
+msgstr "請選擇應徵紀錄並修正標示的欄位，再進行儲存。"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose an audio file"
@@ -3925,7 +3929,7 @@ msgstr "增強閱讀不可用；使用內建閱讀器。"
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter a full amount, such as 95000, or leave blank."
-msgstr ""
+msgstr "輸入完整金額，例如 95000，或留白。"
 
 #: src/features/career/preferences.tsx
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
@@ -3974,7 +3978,7 @@ msgstr "輸入您的終端支援的任何型號 ID。"
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
-msgstr ""
+msgstr "自行輸入條件。系統不會向 AI 發出請求。未知的金額請留白。"
 
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
@@ -4034,10 +4038,6 @@ msgstr "招聘啟事強調的每個術語都已經存在。"
 #: src/features/career/schedule-sheet.tsx
 msgid "Every week"
 msgstr "每週"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Everything the coach wrote for {company}, newest first."
-msgstr "教練為 {company} 撰寫的所有內容，從最新開始。"
 
 #: src/features/career/facts.tsx
 #: src/features/write/fields.ts
@@ -4190,8 +4190,8 @@ msgid "Fit"
 msgstr "契合度"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Fit checks, briefings, practice feedback, debriefs, answers and replies land here as the other tabs create them."
-msgstr "契合度檢查、簡報、練習回饋、回顧、回答和回覆會在其他分頁產生後顯示在這裡。"
+msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
+msgstr "職位契合度檢查、準備簡報、面試練習回饋、面試後回顧、表單回答、訊息回覆和錄取通知，都會在您儲存後顯示在這裡。"
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -6468,11 +6468,11 @@ msgstr "錄取"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
-msgstr ""
+msgstr "已儲存錄取邀約"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
-msgstr ""
+msgstr "錄取邀約類型"
 
 #: app/(tabs)/career/_layout.tsx
 msgid "Offers"
@@ -8267,7 +8267,7 @@ msgstr "儲存階段"
 
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
-msgstr ""
+msgstr "儲存錄取邀約"
 
 #: src/features/share/files.ts
 msgid "Save or share file"
@@ -8334,6 +8334,10 @@ msgstr "已儲存故事：{title}"
 msgid "Saved description"
 msgstr "已儲存的描述"
 
+#: src/features/workspace/tabs/saved.tsx
+msgid "Saved items for {company}, newest first."
+msgstr "{company} 的已儲存項目，依時間由新到舊排列。"
+
 #: src/features/career/today.tsx
 msgid "Saved to Applications with the posting"
 msgstr "已連同職缺公告儲存到「應徵紀錄」"
@@ -8354,6 +8358,7 @@ msgstr "已儲存到「已儲存」 · 練習"
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "拯救工作。等待確認後再進行另一次更改。"
 
+#: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/profile.tsx
 #: src/shell/builder-chrome.tsx
@@ -10173,7 +10178,7 @@ msgstr "正在精簡"
 
 #: src/features/career/offer-entry.tsx
 msgid "Time"
-msgstr ""
+msgstr "時間"
 
 #. placeholder {0}: draft.timezone
 #: src/features/application-detail/interview-sheet.tsx
@@ -10864,6 +10869,10 @@ msgstr "語音設定"
 #: src/features/write/fields.ts
 msgid "Volunteer"
 msgstr "志工服務"
+
+#: src/features/career/offer-entry.tsx
+msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
+msgstr "請等待帳號時區載入；若載入失敗，請重試，或清除截止期限。"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

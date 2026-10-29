@@ -1043,11 +1043,11 @@ msgstr "Lägg till språk"
 
 #: src/features/career/offer-entry.tsx
 msgid "Add offer"
-msgstr ""
+msgstr "Lägg till erbjudande"
 
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr ""
+msgstr "Lägg till villkoren för jobberbjudandet manuellt eller använd valfri AI-extrahering i Meddelanden."
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
@@ -2109,10 +2109,6 @@ msgstr "Kontrollera matchning"
 msgid "Check it's accurate."
 msgstr "Kontrollera att det är korrekt."
 
-#: src/features/career/offer-entry.tsx
-msgid "Check the application, currency, amounts and deadline before saving."
-msgstr ""
-
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Check the details"
 msgstr "Kontrollera detaljerna"
@@ -2231,6 +2227,10 @@ msgstr "Välj en testad AI-leverantör innan du delar data."
 msgid "Choose a time"
 msgstr "Välj en tid"
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
+msgstr "Välj ett giltigt datum och klockslag i tidszonen {timeZone}, eller rensa sista svarsdatumet."
+
 #: src/features/applications/add-sheet.tsx
 msgid "Choose a valid follow-up date before saving."
 msgstr "Välj ett giltigt uppföljningsdatum innan du sparar."
@@ -2246,6 +2246,10 @@ msgstr "Välj en WebM-, MP4-, MP3-, WAV- eller Ogg-fil på upp till 2 MB."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Choose an application"
 msgstr "Välj en jobbansökan"
+
+#: src/features/career/offer-entry.tsx
+msgid "Choose an application and correct the highlighted fields before saving."
+msgstr "Välj en ansökan och rätta till de markerade fälten innan du sparar."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose an audio file"
@@ -3925,7 +3929,7 @@ msgstr "Förbättrad läsning är inte tillgänglig; använde den inbyggda läsa
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter a full amount, such as 95000, or leave blank."
-msgstr ""
+msgstr "Ange hela beloppet, till exempel 95000, eller lämna tomt."
 
 #: src/features/career/preferences.tsx
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
@@ -3942,7 +3946,7 @@ msgstr "Ange ett namn, upp till 64 tecken."
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 msgid "Enter a three-letter currency code."
-msgstr "Ange en valutakod med tre omslagsbokstäver."
+msgstr "Ange en valutakod med tre bokstäver."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Enter a valid date."
@@ -3974,7 +3978,7 @@ msgstr "Ange valfritt modell-ID som stöds av din slutpunkt."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
-msgstr ""
+msgstr "Fyll i villkoren själv. Ingen förfrågan skickas till AI. Lämna okända belopp tomma."
 
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
@@ -4034,10 +4038,6 @@ msgstr "Alla termer som jobbannonsen betonar finns redan där."
 #: src/features/career/schedule-sheet.tsx
 msgid "Every week"
 msgstr "Varje vecka"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Everything the coach wrote for {company}, newest first."
-msgstr "Allt tränaren skrev för {company}, det senaste först."
 
 #: src/features/career/facts.tsx
 #: src/features/write/fields.ts
@@ -4190,8 +4190,8 @@ msgid "Fit"
 msgstr "Matchning"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Fit checks, briefings, practice feedback, debriefs, answers and replies land here as the other tabs create them."
-msgstr "Matchningskontroller, genomgångar, feedback på övningar, utvärderingar, svar och meddelandesvar hamnar här när de andra flikarna skapar dem."
+msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
+msgstr "Matchningskontroller för tjänsten, förberedande genomgångar, feedback på övningsintervjuer, utvärderingar efter intervjuer, formulärsvar, meddelandesvar och jobberbjudanden hamnar här när du sparar dem."
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -6468,11 +6468,11 @@ msgstr "Erbjudande"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
-msgstr ""
+msgstr "Erbjudandet har sparats"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
-msgstr ""
+msgstr "Typ av erbjudande"
 
 #: app/(tabs)/career/_layout.tsx
 msgid "Offers"
@@ -8267,7 +8267,7 @@ msgstr "Spara fas"
 
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
-msgstr ""
+msgstr "Spara erbjudande"
 
 #: src/features/share/files.ts
 msgid "Save or share file"
@@ -8334,6 +8334,10 @@ msgstr "Sparad en berättelse: {title}"
 msgid "Saved description"
 msgstr "Sparad beskrivning"
 
+#: src/features/workspace/tabs/saved.tsx
+msgid "Saved items for {company}, newest first."
+msgstr "Sparade objekt för {company}, nyast först."
+
 #: src/features/career/today.tsx
 msgid "Saved to Applications with the posting"
 msgstr "Sparad i Ansökningar med annonsen"
@@ -8354,6 +8358,7 @@ msgstr "Sparat i fliken Sparad · Övning"
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "Sparar jobbet. Vänta på bekräftelse innan du gör en ny ändring."
 
+#: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/profile.tsx
 #: src/shell/builder-chrome.tsx
@@ -10173,7 +10178,7 @@ msgstr "Stramar upp"
 
 #: src/features/career/offer-entry.tsx
 msgid "Time"
-msgstr ""
+msgstr "Tid"
 
 #. placeholder {0}: draft.timezone
 #: src/features/application-detail/interview-sheet.tsx
@@ -10864,6 +10869,10 @@ msgstr "Röstinställningar"
 #: src/features/write/fields.ts
 msgid "Volunteer"
 msgstr "Volontärarbete"
+
+#: src/features/career/offer-entry.tsx
+msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
+msgstr "Vänta tills kontots tidszon har lästs in, försök igen om inläsningen misslyckades, eller rensa sista svarsdatumet."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

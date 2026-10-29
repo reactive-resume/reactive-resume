@@ -1043,11 +1043,11 @@ msgstr "Pievienojiet valodu"
 
 #: src/features/career/offer-entry.tsx
 msgid "Add offer"
-msgstr ""
+msgstr "Pievienot darba piedāvājumu"
 
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr ""
+msgstr "Pievienojiet darba piedāvājuma nosacījumus manuāli vai pēc izvēles izmantojiet MI datu izgūšanu sadaļā Ziņojumi."
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
@@ -2109,10 +2109,6 @@ msgstr "Pārbaudīt atbilstību"
 msgid "Check it's accurate."
 msgstr "Pārbaudiet, vai tas ir precīzs."
 
-#: src/features/career/offer-entry.tsx
-msgid "Check the application, currency, amounts and deadline before saving."
-msgstr ""
-
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Check the details"
 msgstr "Pārbaudiet informāciju"
@@ -2231,6 +2227,10 @@ msgstr "Pirms datu kopīgošanas izvēlieties pārbaudītu AI nodrošinātāju."
 msgid "Choose a time"
 msgstr "Izvēlieties laiku"
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
+msgstr "Izvēlieties derīgu datumu un laiku laika joslā {timeZone} vai noņemiet termiņu."
+
 #: src/features/applications/add-sheet.tsx
 msgid "Choose a valid follow-up date before saving."
 msgstr "Pirms saglabāšanas izvēlieties derīgu sekošanas datumu."
@@ -2246,6 +2246,10 @@ msgstr "Izvēlieties WebM, MP4, MP3, WAV vai Ogg failu līdz 2 MB."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Choose an application"
 msgstr "Izvēlieties darba pieteikumu"
+
+#: src/features/career/offer-entry.tsx
+msgid "Choose an application and correct the highlighted fields before saving."
+msgstr "Izvēlieties darba pieteikumu un pirms saglabāšanas izlabojiet izceltos laukus."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose an audio file"
@@ -3925,7 +3929,7 @@ msgstr "Uzlabotā lasīšana nav pieejama; izmantoja iebūvēto lasītāju."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter a full amount, such as 95000, or leave blank."
-msgstr ""
+msgstr "Ievadiet pilnu summu, piemēram, 95000, vai atstājiet lauku tukšu."
 
 #: src/features/career/preferences.tsx
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
@@ -3974,7 +3978,7 @@ msgstr "Ievadiet jebkuru modeļa ID, ko atbalsta jūsu galapunkts."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
-msgstr ""
+msgstr "Ievadiet nosacījumus pats. MI pieprasījums netiks nosūtīts. Nezināmās summas atstājiet tukšas."
 
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
@@ -4034,10 +4038,6 @@ msgstr "Katrs termins, ko uzsver darba sludinājums, jau ir tur."
 #: src/features/career/schedule-sheet.tsx
 msgid "Every week"
 msgstr "Katru nedēļu"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Everything the coach wrote for {company}, newest first."
-msgstr "Viss, ko karjeras treneris rakstīja {company}, ar jaunāko vispirms."
 
 #: src/features/career/facts.tsx
 #: src/features/write/fields.ts
@@ -4190,8 +4190,8 @@ msgid "Fit"
 msgstr "Atbilstība"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Fit checks, briefings, practice feedback, debriefs, answers and replies land here as the other tabs create them."
-msgstr "Atbilstības pārbaudes, atgādnes, vingrināšanās atsauksmes, izvērtējumi, atbildes un atbildes uz ziņojumiem nonāk šeit, kad tās izveido citas cilnes."
+msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
+msgstr "Atbilstības pārbaudes, atgādnes, vingrināšanās atsauksmes, izvērtējumi, atbildes uz veidlapu jautājumiem, atbildes uz ziņojumiem un darba piedāvājumi nonāk šeit, kad tos saglabājat."
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -6468,11 +6468,11 @@ msgstr "Piedāvājums"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
-msgstr ""
+msgstr "Darba piedāvājums saglabāts"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
-msgstr ""
+msgstr "Darba piedāvājuma veids"
 
 #: app/(tabs)/career/_layout.tsx
 msgid "Offers"
@@ -8267,7 +8267,7 @@ msgstr "Saglabāt posmu"
 
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
-msgstr ""
+msgstr "Saglabāt darba piedāvājumu"
 
 #: src/features/share/files.ts
 msgid "Save or share file"
@@ -8334,6 +8334,10 @@ msgstr "Saglabāts stāsts: {title}"
 msgid "Saved description"
 msgstr "Saglabāts apraksts"
 
+#: src/features/workspace/tabs/saved.tsx
+msgid "Saved items for {company}, newest first."
+msgstr "Saglabātie vienumi uzņēmumam {company}, jaunākie vispirms."
+
 #: src/features/career/today.tsx
 msgid "Saved to Applications with the posting"
 msgstr "Saglabāts pieteikumos kopā ar sludinājumu"
@@ -8354,6 +8358,7 @@ msgstr "Saglabāts sadaļā “Saglabāts · Vingrināšanās”"
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "Darba saglabāšana. Pirms citu izmaiņu veikšanas sagaidiet apstiprinājumu."
 
+#: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/profile.tsx
 #: src/shell/builder-chrome.tsx
@@ -10173,7 +10178,7 @@ msgstr "Saīsina"
 
 #: src/features/career/offer-entry.tsx
 msgid "Time"
-msgstr ""
+msgstr "Laiks"
 
 #. placeholder {0}: draft.timezone
 #: src/features/application-detail/interview-sheet.tsx
@@ -10864,6 +10869,10 @@ msgstr "Balss iestatījumi"
 #: src/features/write/fields.ts
 msgid "Volunteer"
 msgstr "Brīvprātīgais darbs"
+
+#: src/features/career/offer-entry.tsx
+msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
+msgstr "Uzgaidiet, līdz tiek ielādēta jūsu konta laika josla, mēģiniet vēlreiz, ja ielāde neizdevās, vai noņemiet termiņu."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

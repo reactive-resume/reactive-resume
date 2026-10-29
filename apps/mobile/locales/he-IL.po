@@ -1043,11 +1043,11 @@ msgstr "הוסף שפה"
 
 #: src/features/career/offer-entry.tsx
 msgid "Add offer"
-msgstr ""
+msgstr "הוספת הצעת עבודה"
 
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr ""
+msgstr "אפשר להזין את תנאי הצעת העבודה ידנית, או להשתמש באפשרות לחילוץ באמצעות בינה מלאכותית בהודעות."
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
@@ -2109,10 +2109,6 @@ msgstr "בדוק התאמה"
 msgid "Check it's accurate."
 msgstr "תבדוק שזה מדויק."
 
-#: src/features/career/offer-entry.tsx
-msgid "Check the application, currency, amounts and deadline before saving."
-msgstr ""
-
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Check the details"
 msgstr "בדוק את הפרטים"
@@ -2231,6 +2227,10 @@ msgstr "בחר ספק AI בדוק לפני שיתוף נתונים."
 msgid "Choose a time"
 msgstr "בחר שעה"
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
+msgstr "יש לבחור תאריך ושעה תקינים באזור הזמן {timeZone}, או להסיר את המועד האחרון."
+
 #: src/features/applications/add-sheet.tsx
 msgid "Choose a valid follow-up date before saving."
 msgstr "בחר תאריך מעקב חוקי לפני השמירה."
@@ -2246,6 +2246,10 @@ msgstr "בחר קובץ WebM, MP4, MP3, WAV או Ogg בגודל של עד 2 MB."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Choose an application"
 msgstr "בחר מועמדות"
+
+#: src/features/career/offer-entry.tsx
+msgid "Choose an application and correct the highlighted fields before saving."
+msgstr "יש לבחור מועמדות ולתקן את השדות המסומנים לפני השמירה."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose an audio file"
@@ -3925,7 +3929,7 @@ msgstr "קריאה משופרת אינה זמינה; השתמש בקורא המ�
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter a full amount, such as 95000, or leave blank."
-msgstr ""
+msgstr "יש להזין סכום מלא, למשל 95000, או להשאיר ריק."
 
 #: src/features/career/preferences.tsx
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
@@ -3974,7 +3978,7 @@ msgstr "הזן כל מזהה דגם שנתמך על ידי נקודת הקצה �
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
-msgstr ""
+msgstr "יש להזין את התנאים בעצמך. לא נשלחת בקשה לבינה מלאכותית. יש להשאיר סכומים לא ידועים ריקים."
 
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
@@ -4034,10 +4038,6 @@ msgstr "כל מונח שמדגיש פרסום העבודה כבר שם."
 #: src/features/career/schedule-sheet.tsx
 msgid "Every week"
 msgstr "כל שבוע"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Everything the coach wrote for {company}, newest first."
-msgstr "כל מה שהמאמן כתב עבור {company}, הכי חדש ראשון."
 
 #: src/features/career/facts.tsx
 #: src/features/write/fields.ts
@@ -4190,8 +4190,8 @@ msgid "Fit"
 msgstr "התאמה"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Fit checks, briefings, practice feedback, debriefs, answers and replies land here as the other tabs create them."
-msgstr "בדיקות התאמה, תדריכים, משוב על תרגול, תחקירים, תשובות ומענים יגיעו לכאן כשהלשוניות האחרות ייצרו אותם."
+msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
+msgstr "בדיקות התאמה לתפקיד, תדריכי הכנה, משוב על תרגול ראיונות, תחקירים לאחר ראיונות, תשובות לטפסים, מענים להודעות והצעות עבודה יופיעו כאן לאחר שמירתם."
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -6468,11 +6468,11 @@ msgstr "הצעה"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
-msgstr ""
+msgstr "הצעת העבודה נשמרה"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
-msgstr ""
+msgstr "סוג הצעת העבודה"
 
 #: app/(tabs)/career/_layout.tsx
 msgid "Offers"
@@ -8267,7 +8267,7 @@ msgstr "שמירת שלב"
 
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
-msgstr ""
+msgstr "שמירת הצעת עבודה"
 
 #: src/features/share/files.ts
 msgid "Save or share file"
@@ -8334,6 +8334,10 @@ msgstr "שמר סיפור: {title}"
 msgid "Saved description"
 msgstr "תיאור שמור"
 
+#: src/features/workspace/tabs/saved.tsx
+msgid "Saved items for {company}, newest first."
+msgstr "פריטים שנשמרו עבור {company}, מהחדש לישן."
+
 #: src/features/career/today.tsx
 msgid "Saved to Applications with the posting"
 msgstr "נשמר במועמדויות יחד עם המודעה"
@@ -8354,6 +8358,7 @@ msgstr "נשמר ב\"שמורים\" · תרגול"
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "מציל את העבודה. המתן לאישור לפני ביצוע שינוי נוסף."
 
+#: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/profile.tsx
 #: src/shell/builder-chrome.tsx
@@ -10173,7 +10178,7 @@ msgstr "מצמצם"
 
 #: src/features/career/offer-entry.tsx
 msgid "Time"
-msgstr ""
+msgstr "שעה"
 
 #. placeholder {0}: draft.timezone
 #: src/features/application-detail/interview-sheet.tsx
@@ -10864,6 +10869,10 @@ msgstr "הגדרות קול"
 #: src/features/write/fields.ts
 msgid "Volunteer"
 msgstr "התנדבות"
+
+#: src/features/career/offer-entry.tsx
+msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
+msgstr "יש להמתין לטעינת אזור הזמן של החשבון, לנסות שוב אם הטעינה נכשלה, או להסיר את המועד האחרון."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

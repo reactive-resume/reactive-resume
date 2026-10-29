@@ -1043,11 +1043,11 @@ msgstr "Pridať jazyk"
 
 #: src/features/career/offer-entry.tsx
 msgid "Add offer"
-msgstr ""
+msgstr "Pridať pracovnú ponuku"
 
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr ""
+msgstr "Zadajte podmienky pracovnej ponuky ručne alebo použite voliteľné získanie údajov pomocou AI v časti Správy."
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
@@ -2109,10 +2109,6 @@ msgstr "Overiť zhodu"
 msgid "Check it's accurate."
 msgstr "Skontrolujte, či je to presné."
 
-#: src/features/career/offer-entry.tsx
-msgid "Check the application, currency, amounts and deadline before saving."
-msgstr ""
-
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Check the details"
 msgstr "Skontrolovať podrobnosti"
@@ -2231,6 +2227,10 @@ msgstr "Pred zdieľaním údajov si vyberte testovaného poskytovateľa AI."
 msgid "Choose a time"
 msgstr "Vyberte si čas"
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
+msgstr "Vyberte platný dátum a čas v časovom pásme {timeZone} alebo vymažte pole termínu."
+
 #: src/features/applications/add-sheet.tsx
 msgid "Choose a valid follow-up date before saving."
 msgstr "Pred uložením vyberte platný dátum sledovania."
@@ -2246,6 +2246,10 @@ msgstr "Vyberte súbor WebM, MP4, MP3, WAV alebo Ogg s veľkosťou do 2 MB."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Choose an application"
 msgstr "Vyberte si žiadosť o zamestnanie"
+
+#: src/features/career/offer-entry.tsx
+msgid "Choose an application and correct the highlighted fields before saving."
+msgstr "Pred uložením vyberte žiadosť a opravte zvýraznené polia."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose an audio file"
@@ -3925,7 +3929,7 @@ msgstr "Rozšírené čítanie nie je k dispozícii; používa vstavanú číta�
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter a full amount, such as 95000, or leave blank."
-msgstr ""
+msgstr "Zadajte celú sumu, napríklad 95000, alebo nechajte pole prázdne."
 
 #: src/features/career/preferences.tsx
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
@@ -3974,7 +3978,7 @@ msgstr "Zadajte akékoľvek ID modelu podporované vaším koncovým bodom."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
-msgstr ""
+msgstr "Zadajte podmienky sami. Žiadna požiadavka na AI sa neodošle. Neznáme sumy nechajte prázdne."
 
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
@@ -4034,10 +4038,6 @@ msgstr "Každý výraz, ktorý inzerát zdôrazňuje, tam už je."
 #: src/features/career/schedule-sheet.tsx
 msgid "Every week"
 msgstr "Každý týždeň"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Everything the coach wrote for {company}, newest first."
-msgstr "Všetko, čo tréner napísal pre {company}, najnovšie ako prvé."
 
 #: src/features/career/facts.tsx
 #: src/features/write/fields.ts
@@ -4190,8 +4190,8 @@ msgid "Fit"
 msgstr "Zhoda"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Fit checks, briefings, practice feedback, debriefs, answers and replies land here as the other tabs create them."
-msgstr "Kontroly zhody, brífingy, spätná väzba z nácviku, rozbory, odpovede a návrhy odpovedí sa tu objavia, keď ich vytvoria ostatné karty."
+msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
+msgstr "Kontroly zhody s pracovnou pozíciou, brífingy, spätná väzba z nácviku, rozbory pohovorov, odpovede do formulárov, návrhy odpovedí na správy a pracovné ponuky sa tu objavia, keď ich uložíte."
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -6468,11 +6468,11 @@ msgstr "Ponuka"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
-msgstr ""
+msgstr "Pracovná ponuka uložená"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
-msgstr ""
+msgstr "Typ pracovnej ponuky"
 
 #: app/(tabs)/career/_layout.tsx
 msgid "Offers"
@@ -8267,7 +8267,7 @@ msgstr "Uložiť etapu"
 
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
-msgstr ""
+msgstr "Uložiť pracovnú ponuku"
 
 #: src/features/share/files.ts
 msgid "Save or share file"
@@ -8334,6 +8334,10 @@ msgstr "Príbeh uložený: {title}"
 msgid "Saved description"
 msgstr "Uložený popis"
 
+#: src/features/workspace/tabs/saved.tsx
+msgid "Saved items for {company}, newest first."
+msgstr "Uložené položky pre {company}, najnovšie navrchu."
+
 #: src/features/career/today.tsx
 msgid "Saved to Applications with the posting"
 msgstr "Uložené do Žiadostí aj s inzerátom"
@@ -8354,6 +8358,7 @@ msgstr "Uložené do Uložených · Nácvik"
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "Uloženie úlohy. Pred vykonaním ďalšej zmeny počkajte na potvrdenie."
 
+#: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/profile.tsx
 #: src/shell/builder-chrome.tsx
@@ -10173,7 +10178,7 @@ msgstr "Zhusťujeme"
 
 #: src/features/career/offer-entry.tsx
 msgid "Time"
-msgstr ""
+msgstr "Čas"
 
 #. placeholder {0}: draft.timezone
 #: src/features/application-detail/interview-sheet.tsx
@@ -10864,6 +10869,10 @@ msgstr "Nastavenia hlasu"
 #: src/features/write/fields.ts
 msgid "Volunteer"
 msgstr "Dobrovoľníctvo"
+
+#: src/features/career/offer-entry.tsx
+msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
+msgstr "Počkajte, kým sa načíta časové pásmo vášho účtu, pri zlyhaní načítania to skúste znova alebo vymažte pole termínu."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

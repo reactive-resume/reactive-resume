@@ -1043,11 +1043,11 @@ msgstr "Nyelv hozzáadása"
 
 #: src/features/career/offer-entry.tsx
 msgid "Add offer"
-msgstr ""
+msgstr "Állásajánlat hozzáadása"
 
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr ""
+msgstr "Add meg kézzel az állásajánlat feltételeit, vagy használd az Üzenetek lapon az opcionális MI-alapú adatkinyerést."
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
@@ -2109,10 +2109,6 @@ msgstr "Illeszkedés ellenőrzése"
 msgid "Check it's accurate."
 msgstr "Ellenőrizze, hogy pontos-e."
 
-#: src/features/career/offer-entry.tsx
-msgid "Check the application, currency, amounts and deadline before saving."
-msgstr ""
-
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Check the details"
 msgstr "Ellenőrizd a részleteket"
@@ -2231,6 +2227,10 @@ msgstr "Az adatok megosztása előtt válasszon tesztelt AI-szolgáltatót."
 msgid "Choose a time"
 msgstr "Válasszon időpontot"
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
+msgstr "Válassz érvényes dátumot és időpontot a(z) {timeZone} időzónában, vagy ürítsd ki a határidő mezőjét."
+
 #: src/features/applications/add-sheet.tsx
 msgid "Choose a valid follow-up date before saving."
 msgstr "Mentés előtt válasszon érvényes követési dátumot."
@@ -2246,6 +2246,10 @@ msgstr "Válassz egy legfeljebb 2 MB-os WebM, MP4, MP3, WAV vagy Ogg fájlt."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Choose an application"
 msgstr "Jelentkezés kiválasztása"
+
+#: src/features/career/offer-entry.tsx
+msgid "Choose an application and correct the highlighted fields before saving."
+msgstr "Mentés előtt válassz egy jelentkezést, és javítsd ki a kiemelt mezőket."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose an audio file"
@@ -3925,7 +3929,7 @@ msgstr "A továbbfejlesztett olvasás nem érhető el; a beépített olvasót ha
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter a full amount, such as 95000, or leave blank."
-msgstr ""
+msgstr "Teljes összeget adj meg, például 95000, vagy hagyd üresen a mezőt."
 
 #: src/features/career/preferences.tsx
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
@@ -3942,7 +3946,7 @@ msgstr "Adjon meg egy nevet, legfeljebb 64 karakterből."
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 msgid "Enter a three-letter currency code."
-msgstr "Adjon meg egy három fedőlapból álló pénznemkódot."
+msgstr "Adjon meg egy hárombetűs pénznemkódot."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Enter a valid date."
@@ -3974,7 +3978,7 @@ msgstr "Adja meg a végpontja által támogatott bármely modellazonosítót."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
-msgstr ""
+msgstr "Add meg magad a feltételeket. Nem küldünk MI-kérést. Az ismeretlen összegeket hagyd üresen."
 
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
@@ -4034,10 +4038,6 @@ msgstr "Az álláshirdetés minden kifejezése már ott van."
 #: src/features/career/schedule-sheet.tsx
 msgid "Every week"
 msgstr "Hetente"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Everything the coach wrote for {company}, newest first."
-msgstr "Minden, amit az edző írt a {company} számára, a legújabbak először."
 
 #: src/features/career/facts.tsx
 #: src/features/write/fields.ts
@@ -4190,8 +4190,8 @@ msgid "Fit"
 msgstr "Illeszkedés"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Fit checks, briefings, practice feedback, debriefs, answers and replies land here as the other tabs create them."
-msgstr "Az illeszkedés-ellenőrzések, eligazítások, gyakorlási visszajelzések, kiértékelések, válaszok és válaszüzenetek ide kerülnek, ahogy a többi lap létrehozza őket."
+msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
+msgstr "Az álláshoz való illeszkedés ellenőrzései, eligazítások, gyakorlási visszajelzések, interjú utáni kiértékelések, űrlapválaszok, válaszüzenetek és állásajánlatok mentéskor ide kerülnek."
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -6468,11 +6468,11 @@ msgstr "Ajánlat"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
-msgstr ""
+msgstr "Állásajánlat mentve"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
-msgstr ""
+msgstr "Állásajánlat típusa"
 
 #: app/(tabs)/career/_layout.tsx
 msgid "Offers"
@@ -8267,7 +8267,7 @@ msgstr "Szakasz mentése"
 
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
-msgstr ""
+msgstr "Állásajánlat mentése"
 
 #: src/features/share/files.ts
 msgid "Save or share file"
@@ -8334,6 +8334,10 @@ msgstr "Mentett egy történet: {title}"
 msgid "Saved description"
 msgstr "Leírás mentve"
 
+#: src/features/workspace/tabs/saved.tsx
+msgid "Saved items for {company}, newest first."
+msgstr "A(z) {company} kapcsán mentett elemek, a legújabb elöl."
+
 #: src/features/career/today.tsx
 msgid "Saved to Applications with the posting"
 msgstr "Mentve a Jelentkezésekbe a hirdetéssel együtt"
@@ -8354,6 +8358,7 @@ msgstr "Mentve a Mentett lapra · Gyakorlás"
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "A munka mentése. Mielőtt újabb módosítást hajtana végre, várja meg a megerősítést."
 
+#: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/profile.tsx
 #: src/shell/builder-chrome.tsx
@@ -10173,7 +10178,7 @@ msgstr "Tömörítés"
 
 #: src/features/career/offer-entry.tsx
 msgid "Time"
-msgstr ""
+msgstr "Időpont"
 
 #. placeholder {0}: draft.timezone
 #: src/features/application-detail/interview-sheet.tsx
@@ -10864,6 +10869,10 @@ msgstr "Hangbeállítások"
 #: src/features/write/fields.ts
 msgid "Volunteer"
 msgstr "Önkéntesség"
+
+#: src/features/career/offer-entry.tsx
+msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
+msgstr "Várd meg, amíg betöltődik a fiókod időzónája, sikertelen betöltés esetén próbáld újra, vagy ürítsd ki a határidő mezőjét."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

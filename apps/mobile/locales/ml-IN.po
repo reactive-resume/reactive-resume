@@ -1043,11 +1043,11 @@ msgstr "ഭാഷ ചേർക്കുക"
 
 #: src/features/career/offer-entry.tsx
 msgid "Add offer"
-msgstr ""
+msgstr "ജോലി ഓഫർ ചേർക്കുക"
 
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr ""
+msgstr "ജോലി ഓഫറിന്റെ നിബന്ധനകൾ സ്വയം ചേർക്കുക, അല്ലെങ്കിൽ ആവശ്യമെങ്കിൽ സന്ദേശങ്ങളിൽ AI ഉപയോഗിച്ച് വിവരങ്ങൾ വേർതിരിച്ചെടുക്കാനുള്ള സൗകര്യം ഉപയോഗിക്കുക."
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
@@ -2109,10 +2109,6 @@ msgstr "അനുയോജ്യത പരിശോധിക്കുക"
 msgid "Check it's accurate."
 msgstr "അത് കൃത്യമാണോ എന്ന് പരിശോധിക്കുക."
 
-#: src/features/career/offer-entry.tsx
-msgid "Check the application, currency, amounts and deadline before saving."
-msgstr ""
-
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Check the details"
 msgstr "വിശദാംശങ്ങൾ പരിശോധിക്കുക"
@@ -2231,6 +2227,10 @@ msgstr "ഡാറ്റ പങ്കിടുന്നതിന് മുമ്�
 msgid "Choose a time"
 msgstr "ഒരു സമയം തിരഞ്ഞെടുക്കുക"
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
+msgstr "{timeZone} സമയമേഖലയിൽ സാധുവായ തീയതിയും സമയവും തിരഞ്ഞെടുക്കുക, അല്ലെങ്കിൽ അവസാന തീയതിയുടെ ഫീൽഡ് ശൂന്യമാക്കുക."
+
 #: src/features/applications/add-sheet.tsx
 msgid "Choose a valid follow-up date before saving."
 msgstr "സംരക്ഷിക്കുന്നതിന് മുമ്പ് സാധുവായ ഒരു ഫോളോ-അപ്പ് തീയതി തിരഞ്ഞെടുക്കുക."
@@ -2246,6 +2246,10 @@ msgstr "2 MB വരെയുള്ള WebM, MP4, MP3, WAV അല്ലെങ്�
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Choose an application"
 msgstr "ഒരു അപേക്ഷ തിരഞ്ഞെടുക്കുക"
+
+#: src/features/career/offer-entry.tsx
+msgid "Choose an application and correct the highlighted fields before saving."
+msgstr "സേവ് ചെയ്യുന്നതിന് മുമ്പ് ഒരു അപേക്ഷ തിരഞ്ഞെടുത്ത് എടുത്തുകാണിച്ച ഫീൽഡുകൾ തിരുത്തുക."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose an audio file"
@@ -3925,7 +3929,7 @@ msgstr "മെച്ചപ്പെടുത്തിയ വായന ലഭ്�
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter a full amount, such as 95000, or leave blank."
-msgstr ""
+msgstr "95000 പോലെ പൂർണ്ണമായ തുക നൽകുക, അല്ലെങ്കിൽ ശൂന്യമായി വിടുക."
 
 #: src/features/career/preferences.tsx
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
@@ -3974,7 +3978,7 @@ msgstr "നിങ്ങളുടെ എൻഡ് പോയിൻ്റ് പി
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
-msgstr ""
+msgstr "നിബന്ധനകൾ സ്വയം നൽകുക. AI അഭ്യർത്ഥന അയയ്ക്കില്ല. അറിയാത്ത തുകകൾ ശൂന്യമായി വിടുക."
 
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
@@ -4034,10 +4038,6 @@ msgstr "ജോലി പോസ്റ്റിംഗ് സമ്മർദ്ദ�
 #: src/features/career/schedule-sheet.tsx
 msgid "Every week"
 msgstr "എല്ലാ ആഴ്ചയും"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Everything the coach wrote for {company}, newest first."
-msgstr "കോച്ച് എഴുതിയതെല്ലാം {company}, ഏറ്റവും പുതിയത് ആദ്യം."
 
 #: src/features/career/facts.tsx
 #: src/features/write/fields.ts
@@ -4190,8 +4190,8 @@ msgid "Fit"
 msgstr "അനുയോജ്യത"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Fit checks, briefings, practice feedback, debriefs, answers and replies land here as the other tabs create them."
-msgstr "മറ്റ് ടാബുകൾ സൃഷ്ടിക്കുന്നതനുസരിച്ച് അനുയോജ്യതാ പരിശോധനകൾ, ബ്രീഫിംഗുകൾ, പരിശീലന ഫീഡ്‌ബാക്ക്, അവലോകനങ്ങൾ, ഉത്തരങ്ങൾ, മറുപടികൾ എന്നിവ ഇവിടെ എത്തും."
+msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
+msgstr "ജോലിക്കുള്ള അനുയോജ്യതാ പരിശോധനകൾ, ബ്രീഫിംഗുകൾ, പരിശീലന ഫീഡ്‌ബാക്ക്, അഭിമുഖാനന്തര അവലോകനങ്ങൾ, ഫോം ഉത്തരങ്ങൾ, മറുപടി കരടുകൾ, ജോലി ഓഫറുകൾ എന്നിവ സേവ് ചെയ്യുമ്പോൾ ഇവിടെ കാണാം."
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -6468,11 +6468,11 @@ msgstr "ഓഫർ"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
-msgstr ""
+msgstr "ജോലി ഓഫർ സേവ് ചെയ്തു"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
-msgstr ""
+msgstr "ജോലി ഓഫറിന്റെ തരം"
 
 #: app/(tabs)/career/_layout.tsx
 msgid "Offers"
@@ -8267,7 +8267,7 @@ msgstr "ഘട്ടം സംരക്ഷിക്കുക"
 
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
-msgstr ""
+msgstr "ജോലി ഓഫർ സേവ് ചെയ്യുക"
 
 #: src/features/share/files.ts
 msgid "Save or share file"
@@ -8334,6 +8334,10 @@ msgstr "സംരക്ഷിച്ചു ഒരു സ്റ്റോറി: {t
 msgid "Saved description"
 msgstr "സംരക്ഷിച്ച വിവരണം"
 
+#: src/features/workspace/tabs/saved.tsx
+msgid "Saved items for {company}, newest first."
+msgstr "{company}-ക്കായി സേവ് ചെയ്ത ഇനങ്ങൾ, ഏറ്റവും പുതിയത് ആദ്യം."
+
 #: src/features/career/today.tsx
 msgid "Saved to Applications with the posting"
 msgstr "പോസ്റ്റിംഗിനൊപ്പം അപേക്ഷകളിലേക്ക് സേവ് ചെയ്തു"
@@ -8354,6 +8358,7 @@ msgstr "“സംരക്ഷിച്ചു · പരിശീലനം” എ�
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "ജോലി സംരക്ഷിക്കുന്നു. മറ്റൊരു മാറ്റം വരുത്തുന്നതിന് മുമ്പ് സ്ഥിരീകരണത്തിനായി കാത്തിരിക്കുക."
 
+#: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/profile.tsx
 #: src/shell/builder-chrome.tsx
@@ -10173,7 +10178,7 @@ msgstr "ചുരുക്കുന്നു"
 
 #: src/features/career/offer-entry.tsx
 msgid "Time"
-msgstr ""
+msgstr "സമയം"
 
 #. placeholder {0}: draft.timezone
 #: src/features/application-detail/interview-sheet.tsx
@@ -10864,6 +10869,10 @@ msgstr "ശബ്ദ സെറ്റിംഗ്സ്"
 #: src/features/write/fields.ts
 msgid "Volunteer"
 msgstr "വളന്റിയർ"
+
+#: src/features/career/offer-entry.tsx
+msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
+msgstr "നിങ്ങളുടെ അക്കൗണ്ടിന്റെ സമയമേഖല ലോഡ് ആകുന്നതുവരെ കാത്തിരിക്കുക, ലോഡ് ചെയ്യുന്നത് പരാജയപ്പെട്ടെങ്കിൽ വീണ്ടും ശ്രമിക്കുക, അല്ലെങ്കിൽ അവസാന തീയതിയുടെ ഫീൽഡ് ശൂന്യമാക്കുക."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

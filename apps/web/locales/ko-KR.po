@@ -1375,11 +1375,11 @@ msgstr "언어 추가"
 
 #: src/features/career/offer-entry.tsx
 msgid "Add offer"
-msgstr ""
+msgstr "오퍼 추가"
 
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr ""
+msgstr "오퍼 조건을 직접 입력하거나, 필요하면 메시지에서 AI 추출을 사용하세요."
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
@@ -2357,7 +2357,7 @@ msgstr "보너스"
 
 #: src/features/career/offer-entry.tsx
 msgid "Bonus conditions"
-msgstr ""
+msgstr "보너스 조건"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border color"
@@ -2656,10 +2656,6 @@ msgstr "사용하기 전에 숫자와 이름을 확인하세요"
 msgid "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads."
 msgstr "검토 기능은 채용 소프트웨어와 같은 방식으로 이력서를 읽고 수정 사항을 간단한 단어로 설명합니다. 브라우저에서 실행되므로 파일이 기기에 유지됩니다. 업로드 횟수는 0회입니다."
 
-#: src/features/career/offer-entry.tsx
-msgid "Check the application, currency, amounts and deadline before saving."
-msgstr ""
-
 #: src/features/career/workspace/prepare.tsx
 msgid "Check the details"
 msgstr "세부 정보 확인"
@@ -2772,13 +2768,21 @@ msgstr "디자인에 어울리는 이력서를 Write에서 선택하세요. 그�
 msgid "Choose a stage"
 msgstr "단계 선택"
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
+msgstr "{timeZone} 시간대에서 유효한 날짜와 시간을 선택하거나 마감일 필드를 비우세요."
+
 #: src/features/career/workspace/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
 msgstr "2MB 이하의 WebM, MP4, MP3, WAV 또는 Ogg 파일을 선택하세요."
 
 #: src/features/career/offer-entry.tsx
 msgid "Choose an application"
-msgstr ""
+msgstr "지원 내역 선택"
+
+#: src/features/career/offer-entry.tsx
+msgid "Choose an application and correct the highlighted fields before saving."
+msgstr "저장하기 전에 지원 내역을 선택하고 강조 표시된 필드를 수정하세요."
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Choose an application…"
@@ -3715,7 +3719,7 @@ msgstr "노트를 저장할 수 없습니다. 다시 시도해 보세요."
 
 #: src/features/career/offer-entry.tsx
 msgid "Couldn't save the offer. Your draft is still here. Try again."
-msgstr ""
+msgstr "오퍼를 저장하지 못했습니다. 작성 중인 내용은 그대로 남아 있습니다. 다시 시도하세요."
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Couldn't save the posting. Try again."
@@ -4957,7 +4961,7 @@ msgstr "백업 코드를 입력하세요."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter a full amount, such as 95000, or leave blank."
-msgstr ""
+msgstr "95000처럼 금액을 생략 없이 입력하거나 비워 두세요."
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
@@ -4970,6 +4974,10 @@ msgstr "이름을 최대 64자까지 입력하세요."
 #: src/features/auth/pages/reset-password.tsx
 msgid "Enter a new password for your account."
 msgstr "계정의 새 비밀번호를 입력하세요."
+
+#: src/features/career/offer-entry.tsx
+msgid "Enter a three-letter currency code."
+msgstr "영문 세 글자로 된 통화 코드를 입력하세요."
 
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/auth/pages/forgot-password.tsx
@@ -4992,7 +5000,7 @@ msgstr "저장해 둔 백업 코드 중 하나를 입력하여 계정에 접근�
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
-msgstr ""
+msgstr "조건을 직접 입력하세요. AI 요청은 전송되지 않습니다. 모르는 금액은 비워 두세요."
 
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/auth/pages/verify-2fa.tsx
@@ -5085,11 +5093,6 @@ msgstr "채용 공고에서 강조하는 모든 용어는 이미 존재합니다
 #: src/features/career/schedule-sheet.tsx
 msgid "Every week"
 msgstr "매주"
-
-#. placeholder {0}: application.company
-#: src/features/career/workspace/saved.tsx
-msgid "Everything the coach wrote for {0}, newest first."
-msgstr "코치가 {0} 건으로 작성한 모든 내용, 최신순."
 
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
@@ -5329,8 +5332,8 @@ msgid "Fit"
 msgstr "적합도"
 
 #: src/features/career/workspace/saved.tsx
-msgid "Fit checks, briefings, practice feedback, debriefs, answers and replies land here as the other tabs create them."
-msgstr "적합도 확인, 브리핑, 연습 피드백, 회고, 답변, 답장은 다른 탭에서 만들어지는 대로 여기에 모입니다."
+msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
+msgstr "직무 적합도 확인, 브리핑, 연습 피드백, 면접 회고, 지원서 답변, 답장 초안, 채용 오퍼를 저장하면 여기에 모입니다."
 
 #: src/features/resume/editor/chrome.tsx
 msgid "Fit page to width"
@@ -8212,11 +8215,11 @@ msgstr "오퍼"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
-msgstr ""
+msgstr "오퍼 저장됨"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
-msgstr ""
+msgstr "오퍼 유형"
 
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
@@ -8232,7 +8235,7 @@ msgstr "출근일 명시 안 됨"
 
 #: src/features/career/offer-entry.tsx
 msgid "Office days per week"
-msgstr ""
+msgstr "주당 사무실 근무일 수"
 
 #: src/features/resume/editor/save-status.tsx
 msgid "Offline · saved on this device"
@@ -8758,15 +8761,15 @@ msgstr "그것을 사용하는 사람들"
 
 #: src/features/career/offer-entry.tsx
 msgid "Per hour"
-msgstr ""
+msgstr "시간당"
 
 #: src/features/career/offer-entry.tsx
 msgid "Per month"
-msgstr ""
+msgstr "월별"
 
 #: src/features/career/offer-entry.tsx
 msgid "Per year"
-msgstr ""
+msgstr "연간"
 
 #: src/features/settings/account/data.tsx
 msgid "Permanently removes everything. Export first if you want a copy."
@@ -10310,7 +10313,7 @@ msgstr "이름 저장"
 
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
-msgstr ""
+msgstr "오퍼 저장"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Save schedule"
@@ -10400,6 +10403,10 @@ msgstr "입사지원서로 저장 및 연결"
 msgid "Saved description"
 msgstr "저장된 설명"
 
+#: src/features/career/workspace/saved.tsx
+msgid "Saved items for {company}, newest first."
+msgstr "{company} 관련 저장된 항목, 최신순."
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Saved just now"
 msgstr "방금 저장됨"
@@ -10439,6 +10446,7 @@ msgid "Saving is taking longer than expected. Your changes are still open."
 msgstr "저장이 예상보다 오래 걸리고 있습니다. 변경 사항은 그대로 남아 있습니다."
 
 #: src/features/career/knowledge/preferences.tsx
+#: src/features/career/offer-entry.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Saving…"
@@ -12530,7 +12538,7 @@ msgstr "간결하게 다듬는 중"
 
 #: src/features/career/offer-entry.tsx
 msgid "Time"
-msgstr ""
+msgstr "시간"
 
 #. placeholder {0}: draft.timezone
 #: src/features/applications/components/interview-dialog.tsx

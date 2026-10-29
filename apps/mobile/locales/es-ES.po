@@ -1043,11 +1043,11 @@ msgstr "Agregar idioma"
 
 #: src/features/career/offer-entry.tsx
 msgid "Add offer"
-msgstr ""
+msgstr "Añadir oferta laboral"
 
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr ""
+msgstr "Añade las condiciones de una oferta laboral manualmente o utiliza la extracción opcional con IA en Mensajes."
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
@@ -2109,10 +2109,6 @@ msgstr "Comprobar ajuste"
 msgid "Check it's accurate."
 msgstr "Comprueba que sea exacto."
 
-#: src/features/career/offer-entry.tsx
-msgid "Check the application, currency, amounts and deadline before saving."
-msgstr ""
-
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Check the details"
 msgstr "Revisa los detalles"
@@ -2231,6 +2227,10 @@ msgstr "Elija un proveedor de IA probado antes de compartir datos."
 msgid "Choose a time"
 msgstr "Elige una hora"
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
+msgstr "Elige una fecha y una hora válidas en la zona horaria {timeZone}, o vacía el campo de la fecha límite."
+
 #: src/features/applications/add-sheet.tsx
 msgid "Choose a valid follow-up date before saving."
 msgstr "Elija una fecha de seguimiento válida antes de guardar."
@@ -2246,6 +2246,10 @@ msgstr "Elige un archivo WebM, MP4, MP3, WAV u Ogg de hasta 2 MB."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Choose an application"
 msgstr "Elegir una candidatura"
+
+#: src/features/career/offer-entry.tsx
+msgid "Choose an application and correct the highlighted fields before saving."
+msgstr "Elige una candidatura y corrige los campos resaltados antes de guardar."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose an audio file"
@@ -3925,7 +3929,7 @@ msgstr "Lectura mejorada no disponible; utilizó el lector incorporado."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter a full amount, such as 95000, or leave blank."
-msgstr ""
+msgstr "Introduce un importe completo, como 95000, o deja el campo en blanco."
 
 #: src/features/career/preferences.tsx
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
@@ -3942,7 +3946,7 @@ msgstr "Ingrese un nombre, hasta 64 caracteres."
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 msgid "Enter a three-letter currency code."
-msgstr "Ingrese un código de moneda de tres cartas de presentación."
+msgstr "Introduce un código de moneda de tres letras."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Enter a valid date."
@@ -3974,7 +3978,7 @@ msgstr "Ingrese cualquier ID de modelo admitido por su punto final."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
-msgstr ""
+msgstr "Introduce las condiciones manualmente. No se envía ninguna solicitud a la IA. Deja en blanco los importes desconocidos."
 
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
@@ -4034,10 +4038,6 @@ msgstr "Cada término que destaca la oferta de trabajo ya está ahí."
 #: src/features/career/schedule-sheet.tsx
 msgid "Every week"
 msgstr "Cada semana"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Everything the coach wrote for {company}, newest first."
-msgstr "Todo lo que el orientador ha escrito para {company}, de más reciente a más antiguo."
 
 #: src/features/career/facts.tsx
 #: src/features/write/fields.ts
@@ -4190,8 +4190,8 @@ msgid "Fit"
 msgstr "Ajuste"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Fit checks, briefings, practice feedback, debriefs, answers and replies land here as the other tabs create them."
-msgstr "Las comprobaciones de ajuste, los informes, los comentarios de práctica, los repasos y las respuestas a formularios y mensajes llegan aquí a medida que las demás pestañas los crean."
+msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
+msgstr "Las comprobaciones de ajuste al puesto, los informes de preparación, los comentarios de práctica, los repasos tras las entrevistas, las respuestas a formularios, los borradores de respuesta a mensajes y las ofertas de empleo aparecen aquí a medida que los guardas."
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -6468,11 +6468,11 @@ msgstr "Oferta"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
-msgstr ""
+msgstr "Oferta laboral guardada"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
-msgstr ""
+msgstr "Tipo de oferta laboral"
 
 #: app/(tabs)/career/_layout.tsx
 msgid "Offers"
@@ -8267,7 +8267,7 @@ msgstr "Guardar etapa"
 
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
-msgstr ""
+msgstr "Guardar oferta laboral"
 
 #: src/features/share/files.ts
 msgid "Save or share file"
@@ -8334,6 +8334,10 @@ msgstr "Guardado una historia: {title}"
 msgid "Saved description"
 msgstr "Descripción guardada"
 
+#: src/features/workspace/tabs/saved.tsx
+msgid "Saved items for {company}, newest first."
+msgstr "Elementos guardados para {company}, de lo más reciente a lo más antiguo."
+
 #: src/features/career/today.tsx
 msgid "Saved to Applications with the posting"
 msgstr "Guardado en Candidaturas con el anuncio"
@@ -8354,6 +8358,7 @@ msgstr "Guardado en Guardado · Práctica"
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "Salvando el trabajo. Espere la confirmación antes de realizar otro cambio."
 
+#: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/profile.tsx
 #: src/shell/builder-chrome.tsx
@@ -10173,7 +10178,7 @@ msgstr "Condensando"
 
 #: src/features/career/offer-entry.tsx
 msgid "Time"
-msgstr ""
+msgstr "Hora"
 
 #. placeholder {0}: draft.timezone
 #: src/features/application-detail/interview-sheet.tsx
@@ -10864,6 +10869,10 @@ msgstr "Configuración de voz"
 #: src/features/write/fields.ts
 msgid "Volunteer"
 msgstr "Voluntariado"
+
+#: src/features/career/offer-entry.tsx
+msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
+msgstr "Espera a que se cargue la zona horaria de tu cuenta, vuelve a intentarlo si la carga ha fallado o vacía el campo de la fecha límite."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

@@ -1043,11 +1043,11 @@ msgstr "Til qo'shing"
 
 #: src/features/career/offer-entry.tsx
 msgid "Add offer"
-msgstr ""
+msgstr "Ish taklifini qo‘shish"
 
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr ""
+msgstr "Ish taklifi shartlarini qo‘lda kiriting yoki Xabarlar bo‘limidagi ixtiyoriy AI orqali ma’lumot ajratish imkoniyatidan foydalaning."
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
@@ -2109,10 +2109,6 @@ msgstr "Moslikni tekshirish"
 msgid "Check it's accurate."
 msgstr "To'g'riligini tekshiring."
 
-#: src/features/career/offer-entry.tsx
-msgid "Check the application, currency, amounts and deadline before saving."
-msgstr ""
-
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Check the details"
 msgstr "Tafsilotlarni tekshiring"
@@ -2231,6 +2227,10 @@ msgstr "Ma'lumot almashishdan oldin sinovdan o'tgan AI provayderini tanlang."
 msgid "Choose a time"
 msgstr "Vaqtni tanlang"
 
+#: src/features/career/offer-entry.tsx
+msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
+msgstr "{timeZone} vaqt mintaqasida yaroqli sana va vaqtni tanlang yoki oxirgi muddatni tozalang."
+
 #: src/features/applications/add-sheet.tsx
 msgid "Choose a valid follow-up date before saving."
 msgstr "Saqlashdan oldin amal qilish sanasini tanlang."
@@ -2246,6 +2246,10 @@ msgstr "2 MB gacha WebM, MP4, MP3, WAV yoki Ogg faylini tanlang."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Choose an application"
 msgstr "Ishga arizani tanlang"
+
+#: src/features/career/offer-entry.tsx
+msgid "Choose an application and correct the highlighted fields before saving."
+msgstr "Saqlashdan oldin arizani tanlang va ajratib ko‘rsatilgan maydonlarni tuzating."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose an audio file"
@@ -3925,7 +3929,7 @@ msgstr "Kengaytirilgan o'qish mavjud emas; o'rnatilgan o'quvchidan foydalangan."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter a full amount, such as 95000, or leave blank."
-msgstr ""
+msgstr "95000 kabi to‘liq summani kiriting yoki bo‘sh qoldiring."
 
 #: src/features/career/preferences.tsx
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
@@ -3942,7 +3946,7 @@ msgstr "64 belgigacha bo'lgan nomni kiriting."
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 msgid "Enter a three-letter currency code."
-msgstr "Uch muqova harfli valyuta kodini kiriting."
+msgstr "Uch harfli valyuta kodini kiriting."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Enter a valid date."
@@ -3974,7 +3978,7 @@ msgstr "Oxirgi nuqta tomonidan qo'llab-quvvatlanadigan har qanday model identifi
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
-msgstr ""
+msgstr "Shartlarni o‘zingiz kiriting. AI ga so‘rov yuborilmaydi. Noma’lum summalarni bo‘sh qoldiring."
 
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
@@ -4034,10 +4038,6 @@ msgstr "Ish e'loni urg'u bergan har bir atama allaqachon bor."
 #: src/features/career/schedule-sheet.tsx
 msgid "Every week"
 msgstr "Har hafta"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Everything the coach wrote for {company}, newest first."
-msgstr "Murabbiy {company} uchun yozgan hamma narsa, birinchi navbatda eng yangi."
 
 #: src/features/career/facts.tsx
 #: src/features/write/fields.ts
@@ -4190,8 +4190,8 @@ msgid "Fit"
 msgstr "Moslik"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Fit checks, briefings, practice feedback, debriefs, answers and replies land here as the other tabs create them."
-msgstr "Moslik tekshiruvlari, brifinglar, mashq bo'yicha fikr-mulohazalar, tahlillar, javoblar va xabarlarga javoblar boshqa bo'limlar ularni yaratganda shu yerda paydo bo'ladi."
+msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
+msgstr "Lavozimga moslik tekshiruvlari, tayyorgarlik brifinglari, suhbat mashqlari bo‘yicha fikr-mulohazalar, suhbatdan keyingi tahlillar, shakllardagi savollarga javoblar, xabarlarga javoblar va ish takliflari saqlaganingizda shu yerda paydo bo‘ladi."
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -6468,11 +6468,11 @@ msgstr "Taklif bosqichi"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
-msgstr ""
+msgstr "Ish taklifi saqlandi"
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
-msgstr ""
+msgstr "Ish taklifi turi"
 
 #: app/(tabs)/career/_layout.tsx
 msgid "Offers"
@@ -8267,7 +8267,7 @@ msgstr "Bosqichni saqlash"
 
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
-msgstr ""
+msgstr "Ish taklifini saqlash"
 
 #: src/features/share/files.ts
 msgid "Save or share file"
@@ -8334,6 +8334,10 @@ msgstr "Saqlanganlar hikoya: {title}"
 msgid "Saved description"
 msgstr "Saqlangan tavsif"
 
+#: src/features/workspace/tabs/saved.tsx
+msgid "Saved items for {company}, newest first."
+msgstr "{company} uchun saqlangan elementlar, eng yangilari birinchi."
+
 #: src/features/career/today.tsx
 msgid "Saved to Applications with the posting"
 msgstr "E'lon bilan birga Arizalarga saqlandi"
@@ -8354,6 +8358,7 @@ msgstr "Saqlanganlarga qo'shildi · Mashq"
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "Ishni saqlash. Boshqa o'zgartirish kiritishdan oldin tasdiqlashni kuting."
 
+#: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/profile.tsx
 #: src/shell/builder-chrome.tsx
@@ -10173,7 +10178,7 @@ msgstr "Ixchamlanmoqda"
 
 #: src/features/career/offer-entry.tsx
 msgid "Time"
-msgstr ""
+msgstr "Vaqt"
 
 #. placeholder {0}: draft.timezone
 #: src/features/application-detail/interview-sheet.tsx
@@ -10864,6 +10869,10 @@ msgstr "Ovoz sozlamalari"
 #: src/features/write/fields.ts
 msgid "Volunteer"
 msgstr "Ko‘ngillilar"
+
+#: src/features/career/offer-entry.tsx
+msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
+msgstr "Hisobingizning vaqt mintaqasi yuklanishini kuting, yuklanmasa qayta urinib ko‘ring yoki oxirgi muddatni tozalang."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"
