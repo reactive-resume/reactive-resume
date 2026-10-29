@@ -54,10 +54,6 @@ export function laneMoveInput(lane: ApplicationLane, mode: LaneMode, closedReaso
 	};
 }
 
-/** A lane's preset outcome, or the given one; non-Closed lanes have none. */
-export const laneOutcome = (lane: ApplicationLane, closedReason?: ApplicationClosedReason | null) =>
-	lane.category === "closed" ? (closedReason ?? lane.closedReason ?? null) : null;
-
 /** Hex colors offered when choosing a lane's color. */
 export const LANE_COLORS = [
 	"#8D8C80",

@@ -8,13 +8,13 @@ import { orpc } from "@/libs/orpc/client";
  * True only when the server predates lanes: an unknown procedure comes back as a bare 404 body rather than an oRPC
  * error. A procedure's own NOT_FOUND, auth failures and network errors are not this.
  */
-export function isLanesUnsupported(error: unknown) {
+function isLanesUnsupported(error: unknown) {
 	if (!(error instanceof ORPCError) || error.status !== 404) return false;
 	const data: unknown = error.data;
 	return typeof data === "object" && data !== null && "body" in data;
 }
 
-export const applicationLanesQueryOptions = () =>
+const applicationLanesQueryOptions = () =>
 	orpc.applications.lanes.get.queryOptions({
 		staleTime: 60_000,
 		retry: (count, error) => !isLanesUnsupported(error) && count < 2,

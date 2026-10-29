@@ -157,7 +157,12 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("database migration
 					expect((await pool.query("SELECT * FROM drizzle.__drizzle_migrations ORDER BY id")).rows).toEqual(before);
 					if (upgrade) {
 						expect((await pool.query("SELECT count(*)::integer AS count FROM cover_letter")).rows[0].count).toBe(2);
+						const laneReferences = (await pool.query("SELECT id,lane_id FROM application ORDER BY id")).rows;
 						await pool.query(await readFile(path.join(migrationsFolder, v6Migration, "rollback.sql"), "utf8"));
+						expect((await pool.query("SELECT id,lane_id FROM application ORDER BY id")).rows).toEqual(laneReferences);
+						await pool.query(
+							`INSERT INTO application (id,user_id,company,role,status) VALUES ('v5-writer','owner','Fixture','Role','rejected')`,
+						);
 						expect((await pool.query("SELECT status FROM application WHERE id='rejected'")).rows[0].status).toBe(
 							"rejected",
 						);

@@ -267,7 +267,7 @@ If you must keep data written since the upgrade, you can undo the migrations tha
    psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f migrations/20261001042749_v6_release/rollback.sql
    ```
 
-   The script puts letters back into the resumes they came from (one section per resume per run; run it again for a resume that had several), restores `application.archived` and `resume_version.label`, and turns closed applications back into `rejected` or archived. These steps run in one transaction.
+   The script puts letters back into the resumes they came from (one section per resume per run; run it again for a resume that had several), restores `application.archived` and `resume_version.label`, and turns closed applications back into `rejected` or archived. It removes the custom-stage write trigger so v5 can use its older status values; stage definitions and references remain. These steps run in one transaction.
 
 3. Start v5.
 

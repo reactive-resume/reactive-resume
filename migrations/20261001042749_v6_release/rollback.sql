@@ -1,6 +1,11 @@
 -- Restore v5 compatibility; additive v6 tables and columns remain. The migration ledger is unchanged.
 BEGIN;
 
+-- Custom lanes validate v6 canonical categories. A full v5 downgrade restores older status values, so remove
+-- their write trigger first. Keep the additive lane tables, references and timeline snapshots for recovery.
+DROP TRIGGER IF EXISTS application_assign_lane_trigger ON "application";
+DROP FUNCTION IF EXISTS application_assign_lane();
+
 -- Puts letters back into their resumes, for app versions that still show cover letters inside a resume. Run it by
 -- hand before downgrading. Only letters saved from a resume's own section come back (their style names that
 -- section); library letters stay in the library, where older versions list them too. Each letter returns as a
