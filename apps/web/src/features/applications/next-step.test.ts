@@ -1,6 +1,10 @@
 import type { Application } from "./types";
 import { describe, expect, it } from "vite-plus/test";
-import { daysInLane, getNextStep } from "./next-step";
+import { i18n } from "@lingui/core";
+
+i18n.load("en", {});
+i18n.activate("en");
+import { daysInLane, describeNextStep, getNextStep } from "./next-step";
 
 const NOW = new Date("2026-09-28T12:00:00Z");
 const day = (offset: number) => new Date(NOW.getTime() + offset * 86_400_000);
@@ -61,4 +65,15 @@ describe("getNextStep", () => {
 		expect(getNextStep(moved, NOW)).toEqual({ kind: "no-reply", days: 12 });
 		expect(daysInLane(moved, NOW)).toBe(2);
 	});
+});
+
+it.each([
+	["UTC", "09:00"],
+	["Europe/Berlin", "10:00"],
+])("describes interviews on the %s account clock", (timeZone, time) => {
+	const source = application({ activity: [interview(new Date("2026-10-30T09:00:00Z"))] });
+	const step = getNextStep(source, NOW);
+	const text = describeNextStep(step, { status: "interview", closedReason: null }, "en-GB", timeZone);
+	expect(text.sub).toContain(time);
+	expect(source.activity[0]?.at).toEqual(new Date("2026-10-30T09:00:00Z"));
 });

@@ -77,8 +77,9 @@ export function getNextStep(application: NextStepSource, now = new Date()): Next
 
 export type NextStepText = { icon: IconName; title: string; sub: string; tone: "normal" | "warn" | "muted" };
 
-const formatWhen = (date: Date, locale: string, withTime: boolean) =>
+const formatWhen = (date: Date, locale: string, timeZone: string, withTime: boolean) =>
 	date.toLocaleString(locale, {
+		timeZone,
 		weekday: "short",
 		day: "numeric",
 		month: "short",
@@ -90,6 +91,7 @@ export function describeNextStep(
 	step: NextStep,
 	application: Pick<ApplicationSummary, "status" | "closedReason">,
 	locale: string,
+	timeZone: string,
 ): NextStepText {
 	switch (step.kind) {
 		case "interview": {
@@ -98,7 +100,7 @@ export function describeNextStep(
 			return {
 				icon: "calendar-dot",
 				title: t`${kind} interview`,
-				sub: `${formatWhen(step.at, locale, true)}${where}`,
+				sub: `${formatWhen(step.at, locale, timeZone, true)}${where}`,
 				tone: "normal",
 			};
 		}
@@ -106,7 +108,7 @@ export function describeNextStep(
 			return {
 				icon: step.overdue ? "clock" : "calendar-dot",
 				title: step.note || t`Follow up`,
-				sub: formatWhen(step.at, locale, false),
+				sub: formatWhen(step.at, locale, timeZone, false),
 				tone: step.overdue ? "warn" : "normal",
 			};
 		case "no-reply":
