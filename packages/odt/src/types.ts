@@ -37,6 +37,8 @@ export type OdtBlock =
 /** Resolves a section's (usually empty) stored title from its id; locale-aware, supplied by the caller. */
 export type SectionTitleResolver = (sectionId: string) => string | undefined;
 
+export type OdtRenderOptions = { includeCoverLetterHeader?: boolean };
+
 /** Builds a styled text run. */
 export function text(value: string, style: InlineStyle = {}): OdtInline {
 	return { type: "text", text: value, style };
