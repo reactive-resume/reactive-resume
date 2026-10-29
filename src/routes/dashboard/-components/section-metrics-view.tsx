@@ -296,10 +296,14 @@ export function SectionMetricsView({
 	const hasStudents = dashboard.students.length > 0;
 	const review = reviewRate(filteredStudents, scope);
 	const waiting = review.total - review.reviewed;
-	const evaluationRate = detailedStats.withResumes > 0 ? (detailedStats.evaluated / detailedStats.withResumes) * 100 : 0;
+	const evaluationRate =
+		detailedStats.withResumes > 0 ? (detailedStats.evaluated / detailedStats.withResumes) * 100 : 0;
 	const overviewNote =
 		waiting > 0
-			? plural(waiting, { one: "# resume is waiting for your review.", other: "# resumes are waiting for your review." })
+			? plural(waiting, {
+					one: "# resume is waiting for your review.",
+					other: "# resumes are waiting for your review.",
+				})
 			: review.total > 0
 				? t`You're all caught up.`
 				: t`Nothing has been sent to you for review yet.`;
@@ -580,10 +584,16 @@ export function SectionMetricsView({
 							);
 							const isInPOHands = resumesInPOHands.length > 0;
 
-							// PO: all resumes that are in any active PO-managed state (excluding APPROVED — those are done)
+							// PO: everything a student has handed over and nobody has finished with. Restricting
+							// this to PO-managed stages left the Placement Officer with no section-level action
+							// at all here, because faculty verify but never forward — every card read
+							// "Waiting for Faculty" while hundreds of submissions sat in the section.
 							const poSubmittedResumes = sectionStudents.flatMap((s) =>
 								s.resumes
-									.filter((r) => PO_MANAGED.includes(r.reviewStatus ?? "") && r.reviewStatus !== "APPROVED")
+									.filter((r) => {
+										const stage = r.reviewStatus ?? "DRAFT";
+										return stage !== "DRAFT" && stage !== "APPROVED";
+									})
 									.map((r) => ({ id: r.id, studentId: s.engLabsId })),
 							);
 
@@ -894,11 +904,7 @@ function SectionStudentsPage({ section, students, onBack, onReview, onStudentCli
 			{/* Highlights */}
 			<StatStrip>
 				<Stat label={t`Total students`} value={stats.totalStudents} />
-				<Stat
-					label={t`With resumes`}
-					value={withResumes}
-					tooltip={t`Students who have created at least one resume`}
-				/>
+				<Stat label={t`With resumes`} value={withResumes} tooltip={t`Students who have created at least one resume`} />
 				<Stat label={t`No resume yet`} value={noResumes} />
 				<Stat
 					label={t`Average score`}
@@ -926,7 +932,10 @@ function SectionStudentsPage({ section, students, onBack, onReview, onStudentCli
 					<span className="font-semibold text-2xl text-foreground tabular-nums">{verifiedPct.toFixed(0)}%</span>
 				</div>
 				<div className="h-1.5 overflow-hidden rounded-full bg-muted">
-					<div className="h-full rounded-full bg-emerald-500 transition-[width] duration-500" style={{ width: `${verifiedPct}%` }} />
+					<div
+						className="h-full rounded-full bg-emerald-500 transition-[width] duration-500"
+						style={{ width: `${verifiedPct}%` }}
+					/>
 				</div>
 			</div>
 

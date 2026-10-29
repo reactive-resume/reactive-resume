@@ -59,6 +59,15 @@ export function POSectionCardActions({
 	const poVerifiedResumes = (stats.poVerifiedResumes as number | undefined) ?? 0;
 	const passedFaculty = (stats.passedFaculty as number | undefined) ?? 0;
 
+	// Approve against what students actually handed in. The denominator used to be every resume
+	// in the section, drafts included, so a section with ten students who never submitted could
+	// never be approved however well the rest of the cohort did.
+	const submitted = (stats.submittedResumes as number | undefined) ?? 0;
+	const notSubmitted = Math.max(0, stats.totalResumes - submitted);
+	const decided = poVerifiedResumes + stats.approvedResumes;
+	const allApproved = submitted > 0 && stats.approvedResumes >= submitted;
+	const readyToApprove = submitted > 0 && decided >= submitted && !allApproved;
+
 	return (
 		<div className="space-y-2">
 			{/* Feedback sent badge — shown when PO has previously sent feedback */}
@@ -85,15 +94,17 @@ export function POSectionCardActions({
 				</button>
 			)}
 
+			{notSubmitted > 0 && (
+				<p className="text-center text-[11px] text-muted-foreground">
+					{t`${notSubmitted} of ${stats.totalStudents} students have not submitted yet`}
+				</p>
+			)}
+
 			{/* Approve / status button — hidden when waiting for faculty resubmission after feedback */}
 			{!awaitingResubmission && (
 				<button
 					type="button"
-					disabled={
-						poVerifiedResumes + stats.approvedResumes < stats.totalResumes ||
-						stats.approvedResumes === stats.totalResumes ||
-						isPending
-					}
+					disabled={!readyToApprove || isPending}
 					onClick={() => {
 						const poPendingList = sectionStudents.flatMap((s) =>
 							s.resumes
@@ -113,30 +124,26 @@ export function POSectionCardActions({
 					}}
 					className={cn(
 						"flex w-full items-center justify-center gap-2 rounded-xl py-2.5 font-bold text-sm shadow-sm transition-all active:scale-[0.98]",
-						poVerifiedResumes + stats.approvedResumes >= stats.totalResumes &&
-							stats.approvedResumes < stats.totalResumes &&
-							stats.totalResumes > 0
+						readyToApprove
 							? "bg-primary text-white hover:bg-primary/90"
-							: stats.approvedResumes === stats.totalResumes && stats.totalResumes > 0
+							: allApproved
 								? "cursor-default border border-emerald-100 bg-emerald-50 text-emerald-600"
-								: passedFaculty === stats.totalResumes && stats.totalResumes > 0
+								: passedFaculty === submitted && submitted > 0
 									? "cursor-help border border-amber-200 bg-amber-50 text-amber-600"
 									: "cursor-not-allowed border border-border bg-muted/50 text-muted-foreground",
 					)}
 				>
-					{stats.approvedResumes === stats.totalResumes && stats.totalResumes > 0 ? (
+					{allApproved ? (
 						<>
 							<CheckCircleIcon weight="fill" className="size-4" />
 							{t`Approved for Placement`}
 						</>
-					) : poVerifiedResumes + stats.approvedResumes >= stats.totalResumes ? (
+					) : readyToApprove ? (
 						t`Approve for Placement`
-					) : poVerifiedResumes > 0 ? (
-						t`Verify All (${poVerifiedResumes} / ${stats.totalResumes - stats.approvedResumes}) First`
-					) : passedFaculty === stats.totalResumes && stats.totalResumes > 0 ? (
-						t`Ready for PO Review`
+					) : submitted === 0 ? (
+						t`No submissions yet`
 					) : (
-						t`Waiting for Faculty`
+						t`Verify All (${poVerifiedResumes} / ${submitted}) First`
 					)}
 				</button>
 			)}

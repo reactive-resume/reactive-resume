@@ -72,3 +72,41 @@ export const STAGES_FOR_SCOPE: Record<"faculty" | "po", readonly ReviewStage[]> 
 export function stageOf(resume: { reviewStatus?: string | null }): string {
 	return resume.reviewStatus ?? "DRAFT";
 }
+
+/**
+ * How each stage reads to a given reviewer: in their queue, back with the student, or decided.
+ *
+ * The Placement Officer's queue is every stage a student has handed over and the PO has not yet
+ * ruled on — not just the two "to PO" stages. On this tenant faculty verify but never forward, so
+ * a queue defined as SUBMITTED_TO_PO + RESUBMITTED_TO_PO is empty by arithmetic and the Overview
+ * reported the backlog as fully cleared.
+ */
+export const REVIEWER_STAGE_BUCKETS: Record<
+	"faculty" | "po",
+	{ waiting: readonly string[]; sentBack: readonly string[]; verified: readonly string[] }
+> = {
+	faculty: {
+		waiting: ["SUBMITTED_TO_FACULTY"],
+		sentBack: ["FACULTY_REVISION_REQUESTED"],
+		verified: [
+			"FACULTY_VERIFIED",
+			"FINALIZED_BY_FACULTY",
+			"SUBMITTED_TO_PO",
+			"PO_REVISION_REQUESTED",
+			"RESUBMITTED_TO_PO",
+			"PO_VERIFIED",
+		],
+	},
+	po: {
+		waiting: [
+			"SUBMITTED_TO_FACULTY",
+			"FACULTY_VERIFIED",
+			"FINALIZED_BY_FACULTY",
+			"SUBMITTED_TO_PO",
+			"RESUBMITTED_TO_PO",
+		],
+		// Back with the student, whoever sent it back. Neither is waiting on the PO.
+		sentBack: ["FACULTY_REVISION_REQUESTED", "PO_REVISION_REQUESTED"],
+		verified: ["PO_VERIFIED"],
+	},
+};
