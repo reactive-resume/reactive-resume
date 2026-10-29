@@ -22,7 +22,7 @@ import { HistoryTimeline } from "@/features/resume/share/history-tab";
 import { getOrpcErrorMessage, getReadableErrorMessage } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
-/** Download & history for letters. Letters have no public link, so Share opens Download. */
+/** Download & history for letters. Letters have no public link, so Export opens Download. */
 export function LetterDownloadSheet() {
 	const history = useLetterHistory(useEditorStore((state) => state.sheetTab) === "history");
 

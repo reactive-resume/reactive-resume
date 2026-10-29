@@ -16,8 +16,19 @@ async function dragCard(page: Page, card: Locator, column: Locator) {
 	if (!source || !target) throw new Error("Application card and destination column must be visible.");
 	await page.mouse.move(source.x + source.width / 2, source.y + source.height / 2);
 	await page.mouse.down();
-	await page.mouse.move(target.x + target.width / 2, target.y + 100, { steps: 15 });
-	await page.mouse.up();
+	try {
+		// Dragging can scroll the board, so follow the destination until collision is confirmed.
+		await expect
+			.poll(async () => {
+				const destination = await column.boundingBox();
+				if (!destination) return false;
+				await page.mouse.move(destination.x + destination.width / 2, destination.y + 100, { steps: 15 });
+				return column.evaluate((element) => element.classList.contains("border-accent"));
+			})
+			.toBe(true);
+	} finally {
+		await page.mouse.up();
+	}
 }
 
 test("a guest merge over the stage limit keeps the guest session and applications accessible", async ({
