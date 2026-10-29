@@ -19,6 +19,7 @@ import {
 } from "@reactive-resume/schema/cover-letter/data";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { coverLetterDto } from "../../dto/cover-letter";
 import { lockUser } from "../documents/ownership";
 import { resumeService } from "../resume/service";
 import { sanitizeCoverLetterHtml } from "./html";
@@ -328,6 +329,15 @@ export const coverLetterService = {
 		}
 		changes.senderLinked = senderLinked;
 		changes.designLinked = designLinked;
+
+		if (input.sender !== undefined) {
+			if (senderLinked)
+				throw new ORPCError("BAD_REQUEST", { message: "Turn off the sender link before editing sender details." });
+			const style = changes.style ?? stored.style;
+			const sender = coverLetterDto.update.input.shape.sender.unwrap().parse(input.sender);
+			const fields = Object.fromEntries(Object.entries(sender).filter(([, value]) => value !== undefined));
+			changes.style = { ...style, basics: { ...style.basics, ...fields } };
+		}
 
 		if (input.template) {
 			const style = changes.style ?? stored.style;
