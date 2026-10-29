@@ -54,3 +54,53 @@ test("keeps formatting controls accessible when tabbing from the editor", async 
 	else await expect(summary.locator("strong")).toHaveText("Keyboard formatting");
 	await expect(toolbar).toBeVisible();
 });
+
+test("contains phone entry focus and restores it without changing content", async ({ authPage: page }, testInfo) => {
+	await page.setViewportSize({ width: 375, height: 812 });
+	await createSampleResumeFromDashboard(page, testInfo);
+	await page.locator("#sidebar-experience").getByRole("button", { name: "Open Experience", exact: true }).click();
+	const entry = page.locator("#sidebar-experience [data-entry-id]").first();
+	const trigger = entry.getByRole("button", { name: /entry 1 of/ });
+	await trigger.click();
+
+	const dialog = page.getByRole("dialog");
+	const back = dialog.getByRole("button", { name: "Experience", exact: true });
+	const description = dialog.getByRole("textbox", { name: "Description", exact: true });
+	const content = await description.innerHTML();
+	const position = await dialog.getByRole("textbox", { name: "Position", exact: true }).inputValue();
+	const addRole = dialog.getByRole("button", { name: "Add role", exact: true });
+	await description.focus();
+	await description.press("Tab");
+	await expect(addRole).toBeFocused();
+	await addRole.press("Tab");
+	await expect(back).toBeFocused();
+	await back.press("Shift+Tab");
+	await expect(addRole).toBeFocused();
+
+	const background = page.getByRole("button", { name: "Add experience", exact: true, includeHidden: true });
+	await expect(page.getByRole("button", { name: "Add experience", exact: true })).toHaveCount(0);
+	await page.keyboard.press("Escape");
+	await expect(dialog).toBeHidden();
+	await expect(trigger).toBeFocused();
+	await expect(trigger).toBeInViewport();
+
+	await trigger.press("Enter");
+	await expect(back).toBeFocused();
+	await expect(description).toHaveJSProperty("innerHTML", content);
+	await expect(dialog.getByRole("textbox", { name: "Position", exact: true })).toHaveValue(position);
+	await back.press("Enter");
+	await expect(dialog).toBeHidden();
+	await expect(trigger).toBeFocused();
+	await expect(page.getByRole("status").filter({ hasText: /^Saved$/ })).toBeVisible();
+
+	await background.click();
+	await expect(dialog.getByRole("textbox", { name: "Position", exact: true })).toBeFocused();
+	await page.keyboard.press("Escape");
+	await expect(dialog).toBeHidden();
+	await expect(
+		page
+			.locator("#sidebar-experience [data-entry-id]")
+			.last()
+			.getByRole("button", { name: /Untitled, entry/ }),
+	).toBeFocused();
+});

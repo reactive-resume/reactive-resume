@@ -5,6 +5,7 @@ import type { DateFormat, ResumeDates } from "@reactive-resume/schema/resume/dat
 import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useEffect } from "react";
 import { EMPTY_RESUME_DATES } from "@reactive-resume/schema/resume/dates";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormDescription, FormItem, FormLabel } from "@reactive-resume/ui/components/form";
@@ -12,6 +13,7 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Slider } from "@reactive-resume/ui/components/slider";
 import { generateId } from "@reactive-resume/utils/string";
+import { useEditorStore } from "../store";
 import { DatesField } from "./dates-field";
 import { MoreOptions, TextField, WebsiteField } from "./fields";
 import { RichTextEditor } from "./rich-text-editor";
@@ -310,6 +312,11 @@ export function EntryFields({
 	autoFocus,
 	...props
 }: FieldSetProps & { type: CustomSectionType; autoFocus?: boolean | undefined }) {
+	// Consume the request after fields mount, including when a phone sheet mounts them through its portal.
+	useEffect(() => {
+		if (autoFocus) useEditorStore.setState({ focusEntryId: null });
+	}, [autoFocus]);
+
 	switch (type) {
 		case "experience":
 			return (
