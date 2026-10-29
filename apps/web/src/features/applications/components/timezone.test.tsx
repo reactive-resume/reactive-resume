@@ -8,7 +8,11 @@ import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createDefaultApplicationLanes } from "@reactive-resume/schema/applications/lanes";
 
-const account = vi.hoisted(() => ({ timeZone: "UTC", saveInterview: vi.fn() }));
+const account = vi.hoisted(() => ({ timeZone: "UTC", saveInterview: vi.fn(), download: vi.fn() }));
+vi.mock("@reactive-resume/utils/file", async (importOriginal) => ({
+	...(await importOriginal<typeof import("@reactive-resume/utils/file")>()),
+	downloadWithAnchor: account.download,
+}));
 vi.mock("@tanstack/react-router", () => ({
 	useRouteContext: () => ({ session: { user: { timezone: account.timeZone } } }),
 }));
@@ -79,6 +83,7 @@ function show(children: ReactNode) {
 }
 
 beforeEach(() => {
+	account.download.mockClear();
 	i18n.load("en-GB", {});
 	i18n.activate("en-GB");
 	vi.useFakeTimers();
@@ -87,6 +92,24 @@ beforeEach(() => {
 afterEach(() => {
 	cleanup();
 	vi.useRealTimers();
+});
+
+it.each([
+	["UTC", "2026-10-31"],
+	["Europe/Berlin", "2026-11-01"],
+])("names the interview calendar download on the %s account date", (timeZone, date) => {
+	account.timeZone = timeZone;
+	show(<NextStepCard application={application("2026-10-31T23:30:00Z")} onScheduleInterview={vi.fn()} />);
+	fireEvent.click(screen.getByRole("button", { name: "Add to calendar" }));
+	expect(account.download).toHaveBeenCalledWith(expect.any(Blob), `Northstar-${date}.ics`);
+});
+
+it("keeps follow-up calendar filenames on the date selected by the browser-local editor", () => {
+	account.timeZone = "Pacific/Honolulu";
+	const followUp = { ...application("2026-10-31T23:30:00Z"), activity: [], followUpAt: new Date(2026, 9, 30, 9) };
+	show(<NextStepCard application={followUp} onScheduleInterview={vi.fn()} />);
+	fireEvent.click(screen.getByRole("button", { name: "Add to calendar" }));
+	expect(account.download).toHaveBeenCalledWith(expect.any(Blob), "Northstar-2026-10-30.ics");
 });
 
 it.each([
@@ -163,4 +186,13 @@ it("keeps an edited interview's exact instant during the repeated DST hour", asy
 		}),
 		expect.anything(),
 	);
+});
+
+it("uses the calendar-selected civil day in the real interview editor", async () => {
+	account.timeZone = "UTC";
+	const { InterviewDialog } = await vi.importActual<typeof import("./interview-dialog")>("./interview-dialog");
+	show(
+		<InterviewDialog open application={application("2026-10-30T09:00:00Z")} day="2026-10-31" onOpenChange={vi.fn()} />,
+	);
+	expect((screen.getByLabelText("Date") as HTMLInputElement).value).toBe("2026-10-31");
 });

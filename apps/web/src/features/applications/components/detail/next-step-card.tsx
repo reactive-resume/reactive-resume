@@ -60,7 +60,8 @@ export function NextStepCard({ application, onScheduleInterview }: NextStepCardP
 			...(step.kind === "interview" && step.interview.notes ? { description: step.interview.notes } : {}),
 		});
 		const blob = new Blob([ics], { type: "text/calendar" });
-		downloadWithAnchor(blob, `${application.company}-${dayKey(start)}.ics`.replace(/[^\w.-]+/g, "-"));
+		const date = dayKey(start, step.kind === "interview" ? timeZone : undefined);
+		downloadWithAnchor(blob, `${application.company}-${date}.ics`.replace(/[^\w.-]+/g, "-"));
 	};
 
 	return (
