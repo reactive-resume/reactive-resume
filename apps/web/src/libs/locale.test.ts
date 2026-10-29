@@ -1,36 +1,63 @@
-import { afterEach, describe, expect, it, vi } from "vite-plus/test";
+// @vitest-environment happy-dom
+// @vitest-environment-options {"url":"https://localhost:3000"}
 
-const cookies = vi.hoisted(() => ({ get: vi.fn<() => string | undefined>(), set: vi.fn() }));
-vi.mock("js-cookie", () => ({ default: cookies }));
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
+import Cookies from "js-cookie";
+import { changeLocale, getLocale } from "./locale";
 
-afterEach(() => {
-	vi.unstubAllEnvs();
-	vi.unstubAllGlobals();
-	vi.clearAllMocks();
+beforeEach(() => {
+	Cookies.remove("locale");
+	vi.spyOn(window.location, "reload").mockImplementation(() => {});
 });
 
-describe.each([false, true])("locale choices with development=%s", (development) => {
-	it("recovers stored and requested test locales in production, while preserving development testing", async () => {
-		vi.stubEnv("DEV", development);
-		vi.resetModules();
-		const { getLocale, getLocaleMessages, selectableLocales } = await import("./locale");
-		const { getLocaleOptions } = await import("@/features/locale/locale-options");
-		const { i18n } = await import("@lingui/core");
-		i18n.loadAndActivate(await getLocaleMessages("en-US"));
-		const expected = development ? "zu-ZA" : "en-US";
-		expect(selectableLocales.includes("zu-ZA")).toBe(development);
-		expect(getLocaleOptions().some(({ value }) => value === "zu-ZA")).toBe(development);
+afterEach(() => {
+	Cookies.remove("locale");
+	vi.restoreAllMocks();
+});
 
-		vi.stubGlobal("window", { location: { search: "" } });
-		cookies.get.mockReturnValue("zu-ZA");
-		expect(getLocale()).toBe(expected);
-		expect((await getLocaleMessages(getLocale())).locale).toBe(expected);
+describe("changeLocale", () => {
+	it.each([
+		["en-US", "de-DE", "?filter=modern&locale=de-DE&tag=one&tag=two"],
+		["de-DE", "en-US", "?filter=modern&tag=one&tag=two"],
+	])("replaces %s with %s and persists the choice", (initial, selected, search) => {
+		const state = { key: "current-page" };
+		window.history.replaceState(state, "", `/resume-templates?filter=modern&locale=${initial}&tag=one&tag=two#gallery`);
+		expect(getLocale()).toBe(initial);
 
-		window.location.search = "?locale=zu-ZA";
-		expect(getLocale()).toBe(expected);
-		expect(cookies.set).toHaveBeenLastCalledWith("locale", expected);
+		changeLocale(selected);
 
-		window.location.search = "?locale=de-DE";
-		expect(getLocale()).toBe("de-DE");
+		expect(window.location.pathname).toBe("/resume-templates");
+		expect(window.location.search).toBe(search);
+		expect(window.location.hash).toBe("#gallery");
+		expect(window.history.state).toEqual(state);
+		expect(window.location.reload).toHaveBeenCalledOnce();
+		expect(Cookies.get("locale")).toBe(selected);
+		expect(getLocale()).toBe(selected);
+
+		window.history.pushState(null, "", "/dashboard");
+		expect(getLocale()).toBe(selected);
+	});
+
+	it("reloads even when the selected locale has the same URL", () => {
+		window.history.replaceState(null, "", "/resume-templates#gallery");
+		Cookies.set("locale", "de-DE");
+
+		changeLocale("en-US");
+
+		expect(window.location.href).toBe("https://localhost:3000/resume-templates#gallery");
+		expect(window.location.reload).toHaveBeenCalledOnce();
+		expect(getLocale()).toBe("en-US");
+	});
+
+	it.each([null, "", "invalid"])("ignores invalid selection %s", (value) => {
+		window.history.replaceState(null, "", "/resume-templates?locale=de-DE#gallery");
+		Cookies.set("locale", "de-DE");
+		const href = window.location.href;
+
+		changeLocale(value);
+
+		expect(window.location.href).toBe(href);
+		expect(Cookies.get("locale")).toBe("de-DE");
+		expect(window.location.reload).not.toHaveBeenCalled();
 	});
 });

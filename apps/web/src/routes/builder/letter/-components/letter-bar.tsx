@@ -36,12 +36,12 @@ type LetterBarProps = {
 };
 
 /**
- * The 56px bar: back, the letter's name and save state · Write/Design · History, Share and Download PDF. The mode
+ * The 56px bar: back, the letter's name and save state · Write/Design · History, Export and Download PDF. The mode
  * switch stays centered through a `1fr auto 1fr` grid.
  */
 export function LetterBar({ layout, pinnable }: LetterBarProps) {
 	const setSheetTab = useEditorStore((state) => state.setSheetTab);
-	// Below 1280 the bar is too narrow for Share's label next to everything else.
+	// Below 1280 the bar is too narrow for Export's label next to everything else.
 	const wide = useBreakpoint() === "wide";
 	const download = useDownloadLetter();
 
@@ -66,10 +66,10 @@ export function LetterBar({ layout, pinnable }: LetterBarProps) {
 			{layout === "desktop" && wide ? (
 				<Button variant="secondary" className="gap-1.5" onClick={() => setSheetTab("download")}>
 					<Icon name="export" />
-					<Trans>Share</Trans>
+					<Trans>Export</Trans>
 				</Button>
 			) : (
-				<IconButton icon="export" label={t`Share`} onClick={() => setSheetTab("download")} />
+				<IconButton icon="export" label={t`Export`} onClick={() => setSheetTab("download")} />
 			)}
 			<DownloadButtons
 				busy={download.busy}
