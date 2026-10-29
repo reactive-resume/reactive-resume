@@ -118,7 +118,7 @@ it("keeps an unfinished story after navigating away and remounting, until Cancel
 	let view = mount(<StoriesPage storyId={undefined} edit />);
 	const title = await screen.findByRole("textbox", { name: "Title" });
 	fireEvent.change(title, { target: { value: "My unfinished customer story" } });
-	fireEvent.change(screen.getByRole("textbox", { name: "Situation" }), {
+	fireEvent.change(screen.getByRole("textbox", { name: "Situation (required)" }), {
 		target: { value: "Customers were blocked." },
 	});
 	view.unmount();
@@ -126,13 +126,79 @@ it("keeps an unfinished story after navigating away and remounting, until Cancel
 	expect(((await screen.findByRole("textbox", { name: "Title" })) as HTMLTextAreaElement).value).toBe(
 		"My unfinished customer story",
 	);
-	expect((screen.getByRole("textbox", { name: "Situation" }) as HTMLTextAreaElement).value).toBe(
+	expect((screen.getByRole("textbox", { name: "Situation (required)" }) as HTMLTextAreaElement).value).toBe(
 		"Customers were blocked.",
 	);
 	fireEvent.click(screen.getByRole("button", { name: /^Cancel$/ }));
 	view.unmount();
 	mount(<StoriesPage storyId={undefined} edit />);
 	expect(((await screen.findByRole("textbox", { name: "Title" })) as HTMLTextAreaElement).value).toBe("");
+});
+
+it.each([
+	["all required parts", { situation: "", task: " ", action: "" }, ["Situation", "Task", "Action"]],
+	["Task", { situation: "Customers were blocked.", task: " ", action: "I repaired setup." }, ["Task"]],
+] as const)(
+	"names every missing story part (%s), focuses the first, and preserves the draft",
+	async (_, draft, missing) => {
+		api.saveStory.mockImplementation(async (data) => ({ id: "saved-story", data, updatedAt: new Date() }));
+		mount(<StoriesPage storyId={undefined} edit />);
+		const title = await screen.findByRole("textbox", { name: "Title" });
+		fireEvent.change(title, { target: { value: "Customer setup" } });
+		for (const [key, value] of Object.entries(draft)) {
+			const label = key.charAt(0).toUpperCase() + key.slice(1);
+			const field = screen.getByRole("textbox", { name: `${label} (required)` });
+			expect(field.getAttribute("aria-required")).toBe("true");
+			fireEvent.change(field, { target: { value } });
+		}
+		fireEvent.change(screen.getByRole("textbox", { name: "Reflection (optional)" }), {
+			target: { value: "Check setup sooner next time." },
+		});
+		fireEvent.click(screen.getByRole("button", { name: "Save story" }));
+		expect(api.saveStory).not.toHaveBeenCalled();
+		expect(screen.getAllByRole("alert").map((alert) => alert.textContent)).toEqual(
+			missing.map((label) => `Complete ${label} before saving.`),
+		);
+		await waitFor(() =>
+			expect(document.activeElement).toBe(screen.getByRole("textbox", { name: `${missing[0]} (required)` })),
+		);
+		for (const label of missing) {
+			const field = screen.getByRole("textbox", { name: `${label} (required)` });
+			expect(field.getAttribute("aria-invalid")).toBe("true");
+			expect(document.getElementById(field.getAttribute("aria-describedby") ?? "")?.textContent).toBe(
+				`Complete ${label} before saving.`,
+			);
+		}
+		expect((title as HTMLTextAreaElement).value).toBe("Customer setup");
+		expect((screen.getByRole("textbox", { name: "Reflection (optional)" }) as HTMLTextAreaElement).value).toBe(
+			"Check setup sooner next time.",
+		);
+		for (const label of missing) {
+			fireEvent.change(screen.getByRole("textbox", { name: `${label} (required)` }), {
+				target: { value: `${label} detail` },
+			});
+		}
+		fireEvent.change(screen.getByRole("textbox", { name: "Reflection (optional)" }), { target: { value: "" } });
+		fireEvent.click(screen.getByRole("button", { name: "Save story" }));
+		await waitFor(() =>
+			expect(api.saveStory).toHaveBeenCalledWith(
+				expect.objectContaining({ result: "", reflection: "" }),
+				expect.anything(),
+			),
+		);
+		expect(screen.queryByRole("alert")).toBeNull();
+	},
+);
+
+it("focuses a missing story title before missing parts and associates its error", async () => {
+	mount(<StoriesPage storyId={undefined} edit />);
+	const title = await screen.findByRole("textbox", { name: "Title" });
+	fireEvent.click(screen.getByRole("button", { name: "Save story" }));
+	await waitFor(() => expect(document.activeElement).toBe(title));
+	expect(document.getElementById(title.getAttribute("aria-describedby") ?? "")?.textContent).toBe(
+		"Give the story a title before you can save.",
+	);
+	expect(api.saveStory).not.toHaveBeenCalled();
 });
 
 it("does not show another story for a missing explicit story ID", async () => {

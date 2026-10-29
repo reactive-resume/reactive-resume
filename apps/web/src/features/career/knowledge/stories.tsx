@@ -4,7 +4,7 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence } from "motion/react";
-import { memo, useState } from "react";
+import { memo, useId, useState } from "react";
 import * as z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
@@ -170,7 +170,8 @@ export function StoriesPage({ storyId, edit }: StoriesPageProps) {
 					</h2>
 					<p className="max-w-[300px] text-sm text-ink-2">
 						<Trans>
-							Write one about something you did, in five parts. Leave a part blank until you can support it.
+							Write one about something you did, in five parts. Leave Result and Reflection blank until you can support
+							them.
 						</Trans>
 					</p>
 				</div>
@@ -425,6 +426,7 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 		},
 	);
 	const [tried, setTried] = useState(false);
+	const errorId = useId();
 	// A shared story can only rest on shared facts; switched-off ones are listed but can't be ticked.
 	const shared = facts.filter((fact) => fact.applicationId === null);
 	const usable = new Set(shared.filter((fact) => fact.status === "active").map((fact) => fact.id));
@@ -445,17 +447,15 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 		onError: (error) => toastError(error, t`Couldn't save the story. Try again.`),
 	});
 
-	const missingPart = REQUIRED.some((key) => !draft[key].trim());
+	const missingParts = REQUIRED.filter((key) => !draft[key].trim());
 	const missingTitle = !draft.title.trim();
-	const problem = missingPart
-		? t`Add what happened before you can save.`
-		: missingTitle
-			? t`Give the story a title before you can save.`
-			: null;
 
-	const submit = () => {
+	const submit = (form: HTMLFormElement) => {
 		setTried(true);
-		if (problem) return;
+		if (missingTitle || missingParts.length) {
+			requestAnimationFrame(() => form.querySelector<HTMLTextAreaElement>('[aria-invalid="true"]')?.focus());
+			return;
+		}
 		save.mutate({
 			...(story ? { id: story.id } : {}),
 			applicationId: null,
@@ -481,7 +481,7 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 			className="grid gap-[18px]"
 			onSubmit={(event) => {
 				event.preventDefault();
-				submit();
+				submit(event.currentTarget);
 			}}
 		>
 			<div className="grid gap-2">
@@ -492,6 +492,8 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 					maxLength={200}
 					placeholder={t`Name the story`}
 					aria-label={t`Title`}
+					aria-required
+					aria-describedby={tried && missingTitle ? `${errorId}-title` : undefined}
 					aria-invalid={tried && missingTitle ? true : undefined}
 					onChange={(event) => setDraft({ ...draft, title: event.target.value.replace(/\n/g, " ") })}
 					onKeyDown={(event) => {
@@ -499,6 +501,12 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 					}}
 					className="min-h-0 resize-none py-1 font-display text-[22px] leading-7 font-medium"
 				/>
+				{tried && missingTitle && (
+					<p id={`${errorId}-title`} role="alert" className="flex items-center gap-1.5 text-[13px] text-danger-text">
+						<Icon name="warning-circle" size={16} className="shrink-0" aria-hidden="true" />
+						<Trans>Give the story a title before you can save.</Trans>
+					</p>
+				)}
 				<Input
 					value={draft.tags}
 					placeholder={t`Tags, separated by commas`}
@@ -508,25 +516,47 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 				/>
 			</div>
 
+			<p className="text-sm text-ink-3">
+				<Trans>
+					Situation, Task and Action are required. Leave Result and Reflection blank until you can support them.
+				</Trans>
+			</p>
 			<div className="grid">
 				{parts().map((part) => {
 					const text = draft[part.key];
+					const required = REQUIRED.includes(part.key);
+					const invalid = tried && missingParts.includes(part.key);
 					return (
 						<label key={part.key} className="grid grid-cols-[32px_minmax(0,1fr)] gap-3.5 border-t border-line py-3">
 							<span aria-hidden="true" className={partTile(Boolean(text.trim()))}>
 								{part.letter}
 							</span>
 							<span className="grid min-w-0 gap-1.5">
-								<span className="text-[13px] font-semibold text-ink-2">{part.label}</span>
+								<span id={`${errorId}-label-${part.key}`} className="text-[13px] font-semibold text-ink-2">
+									{part.label} {required ? t`(required)` : t`(optional)`}
+								</span>
 								<Textarea
 									rows={2}
 									value={text}
 									maxLength={part.key === "action" ? 6000 : 4000}
 									placeholder={part.placeholder}
-									aria-invalid={tried && REQUIRED.includes(part.key) && !text.trim() ? true : undefined}
+									aria-labelledby={`${errorId}-label-${part.key}`}
+									aria-required={required}
+									aria-invalid={invalid || undefined}
+									aria-describedby={invalid ? `${errorId}-${part.key}` : undefined}
 									onChange={(event) => setDraft({ ...draft, [part.key]: event.target.value })}
 									className="min-h-[60px] py-[9px] text-sm leading-[21px]"
 								/>
+								{invalid && (
+									<span
+										id={`${errorId}-${part.key}`}
+										role="alert"
+										className="flex items-center gap-1.5 text-[13px] text-danger-text"
+									>
+										<Icon name="warning-circle" size={16} className="shrink-0" aria-hidden="true" />
+										{t`Complete ${part.label} before saving.`}
+									</span>
+								)}
 							</span>
 						</label>
 					);
@@ -574,12 +604,6 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 			</fieldset>
 
 			<div className="grid gap-2 border-t border-line pt-3.5">
-				{tried && problem && (
-					<p role="alert" className="flex items-center gap-1.5 text-[13px] text-danger-text">
-						<Icon name="warning-circle" size={16} />
-						{problem}
-					</p>
-				)}
 				<div className="flex flex-wrap items-center gap-2">
 					{onDelete && (
 						<Button
