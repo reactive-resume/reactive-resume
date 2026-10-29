@@ -56,6 +56,13 @@ function RouteComponent() {
 	const queryClient = useQueryClient();
 	const { data: letter } = useSuspenseQuery(orpc.coverLetters.getById.queryOptions({ input: { id: coverLetterId } }));
 	const loaded = useLetterEditorStore((state) => state.letter?.id === coverLetterId);
+	const name = useLetterEditorStore((state) =>
+		state.letter?.id === coverLetterId ? (state.savedName ?? letter.name) : letter.name,
+	);
+	useEffect(() => {
+		document.title = `${name} - Reactive Resume`;
+	}, [name]);
+
 	useBlocker({
 		shouldBlockFn: async ({ next }) => {
 			if ("coverLetterId" in next.params && next.params.coverLetterId === coverLetterId) return false;
