@@ -100,6 +100,8 @@ function blendWithWhite(hex: string, opacity: number): string {
 /** Resolves a section's (usually empty) stored title from its id — locale-aware, supplied by the caller. */
 export type SectionTitleResolver = (sectionId: string) => string | undefined;
 
+export type DocxRenderOptions = { includeCoverLetterHeader?: boolean };
+
 function renderSection(
 	sectionId: string,
 	data: ResumeData,
@@ -281,7 +283,11 @@ function buildTwoColumnTable(
  * - Page margins and fixed DOCX page format from `metadata.page`; free-form exports as A4
  * - Primary, text, and background colors from `metadata.design.colors`
  */
-export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResolver): Document {
+export function buildDocument(
+	data: ResumeData,
+	resolveTitle?: SectionTitleResolver,
+	options: DocxRenderOptions = {},
+): Document {
 	assertResumeRenderBudget(data);
 	const colorHex = getColorHex(data.metadata.design.colors.primary, "DC2626");
 	const textColorHex = getColorHex(data.metadata.design.colors.text, "000000");
@@ -325,10 +331,12 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 		// Only the row order carries over: header layouts and accents don't apply to DOCX (plain, ATS-first).
 		lead: entryHeaderOf(data.metadata.design).lead,
 	};
-	const showHeader = !isCoverLetterOnlyDocument(data);
+	const showHeader = options.includeCoverLetterHeader || !isCoverLetterOnlyDocument(data);
+	// Standalone letters use full-width pages even when their resume template puts the header in a column.
+	const headerPlacement = options.includeCoverLetterHeader ? "full-width" : layout.headerPlacement;
 
 	// Header placement depends on template
-	if (layout.headerPlacement === "full-width" && showHeader) {
+	if (headerPlacement === "full-width" && showHeader) {
 		setRenderConfig(mainConfig);
 		documentChildren.push(...buildHeader(data, colorHex, textColorHex));
 	}
@@ -347,7 +355,7 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 			setRenderConfig(mainConfig);
 
 			const mainParagraphs: Paragraph[] = [];
-			if (layout.headerPlacement === "main-only" && showHeader) {
+			if (headerPlacement === "main-only" && showHeader) {
 				mainParagraphs.push(...buildHeader(data, colorHex, textColorHex));
 			}
 			for (const sectionId of layoutPage.main) {
@@ -358,7 +366,7 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 			setRenderConfig({ ...mainConfig, textColorHex: sidebarTextColorHex, primaryColorHex: sidebarHeadingColorHex });
 
 			const sidebarParagraphs: Paragraph[] = [];
-			if (layout.headerPlacement === "sidebar-only" && showHeader) {
+			if (headerPlacement === "sidebar-only" && showHeader) {
 				sidebarParagraphs.push(...buildHeader(data, sidebarHeadingColorHex, sidebarTextColorHex));
 			}
 			for (const sectionId of layoutPage.sidebar) {

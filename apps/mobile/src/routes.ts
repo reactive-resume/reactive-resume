@@ -51,7 +51,7 @@ export const routes = {
 	letterAssistant: (id: string) => `/letter/${segment(id)}/assistant` as const,
 
 	// Cover letter editor
-	/** `version` opens Share & export's History on that version, read-only (Applications' "What you sent"). */
+	/** `version` opens Download & history's History on that version, read-only (Applications' "What you sent"). */
 	letter: (id: string, pane: LetterPane = "write", version?: string) =>
 		version
 			? (`/letter/${segment(id)}/${pane}?version=${segment(version)}` as const)

@@ -10,7 +10,6 @@ import { useState } from "react";
 import { Pressable, TextInput, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { entryHeaderLayouts, entryHeaderOf } from "@reactive-resume/schema/resume/data";
-import { localeSchema } from "@reactive-resume/utils/locale";
 import { Field, Slider, SwitchRow } from "./controls";
 import {
 	ACCENTS,
@@ -31,6 +30,7 @@ import {
 	rgbaToHex,
 } from "./presets";
 import { localeMap } from "@/features/settings/locale-names";
+import { selectableLocales } from "@/i18n";
 import { Button, Icon, IconButton, Segmented, Text, haptics, listLayout, useTheme } from "@/ui";
 
 export type GroupProps = {
@@ -530,7 +530,7 @@ export function PageGroup({ data, write, disabled, pick }: GroupProps) {
 						pick({
 							title: t`Language`,
 							value: page.locale,
-							options: localeSchema.options.map((code) => ({ value: code, label: languageName(code), detail: code })),
+							options: selectableLocales.map((code) => ({ value: code, label: languageName(code), detail: code })),
 							onPick: (locale) =>
 								set("locale", (draft) => {
 									draft.locale = locale;
