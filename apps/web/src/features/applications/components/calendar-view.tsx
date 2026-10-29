@@ -336,7 +336,7 @@ function UpcomingCard({ item, timeRange, locale, onEdit, onOpenApplication }: Up
 			<button
 				type="button"
 				data-application-open
-				className="mb-2 text-xs text-accent-text hover:underline"
+				className="mb-2 min-h-11 px-2 text-xs text-accent-text hover:underline"
 				onClick={onOpenApplication}
 			>
 				<Trans>View application</Trans>
