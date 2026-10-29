@@ -181,7 +181,7 @@ function RouteComponent() {
 	const filtered = (applications ?? []).filter((application) => matches(application, text));
 	const selected = applications?.find((application) => application.id === selectedId) ?? null;
 	// The board needs room to drag: phones get the list instead.
-	const shown: View = phone && (view === "board" || view === "calendar") ? "list" : view;
+	const shown: View = phone && view === "board" ? "list" : view;
 	const empty = !!applications && applications.length === 0;
 	// Hoisted so the compiler keeps one function; inline, it changes with every keystroke and re-renders each row.
 	const openApplication = (application: ApplicationSummary) => {
@@ -267,12 +267,10 @@ function RouteComponent() {
 									<Icon name="chart-line-up" size={18} />
 									<Trans>Insights</Trans>
 								</TabsTrigger>
-								{!phone && (
-									<TabsTrigger value="calendar">
-										<Icon name="calendar-dots" size={18} />
-										<Trans>Calendar</Trans>
-									</TabsTrigger>
-								)}
+								<TabsTrigger value="calendar">
+									<Icon name="calendar-dots" size={18} />
+									<Trans>Calendar</Trans>
+								</TabsTrigger>
 							</TabsList>
 						</Tabs>
 
@@ -378,6 +376,7 @@ function RouteComponent() {
 							{shown === "insights" && <ApplicationInsights applications={applications ?? []} />}
 							{shown === "calendar" && (
 								<ApplicationCalendar
+									compact={phone}
 									applications={filtered.filter((application) => closed || application.status !== "closed")}
 									allApplications={applications ?? []}
 									onOpen={openApplication}
