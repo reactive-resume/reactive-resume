@@ -74,28 +74,32 @@ The counter on the right (for example "7 of 18 shown") tells you how many templa
 
 All templates support the same sections and features. They differ only in how they arrange your information. The images below use the same resume in each template.
 
-| Template  | Columns | ATS-safe | Sidebar side |
-| --------- | ------- | -------- | ------------ |
-| Azurill   | Two     | No       | Left         |
-| Bronzor   | One     | Yes      | —            |
-| Chikorita | Two     | No       | Right        |
-| Ditgar    | Two     | No       | Left         |
-| Ditto     | Two     | No       | Left         |
-| Gengar    | Two     | No       | Left         |
-| Glalie    | Two     | No       | Left         |
-| Kakuna    | One     | Yes      | —            |
-| Lapras    | One     | Yes      | —            |
-| Leafish   | Two     | No       | Right        |
-| Meowth    | One     | Yes      | —            |
-| Onyx      | One     | Yes      | —            |
-| Persian   | One     | Yes      | —            |
-| Pikachu   | Two     | No       | Left         |
-| Porygon   | One     | Yes      | —            |
-| Rhyhorn   | One     | Yes      | —            |
-| Scizor    | One     | Yes      | —            |
-| Smeargle  | One     | Yes      | —            |
+| Template  | Columns | ATS-safe | Sidebar side | Photo side |
+| --------- | ------- | -------- | ------------ | ---------- |
+| Azurill   | Two     | No       | Left         | Centred    |
+| Bronzor   | One     | Yes      | —            | Centred    |
+| Chikorita | Two     | No       | Right        | Left       |
+| Ditgar    | Two     | No       | Left         | Centred    |
+| Ditto     | Two     | No       | Left         | Left       |
+| Gengar    | Two     | No       | Left         | Centred    |
+| Glalie    | Two     | No       | Left         | Centred    |
+| Kakuna    | One     | Yes      | —            | Centred    |
+| Lapras    | One     | Yes      | —            | Left       |
+| Leafish   | Two     | No       | Right        | Left       |
+| Meowth    | One     | Yes      | —            | Right      |
+| Onyx      | One     | Yes      | —            | Left       |
+| Persian   | One     | Yes      | —            | —          |
+| Pikachu   | Two     | No       | Left         | Left       |
+| Porygon   | One     | Yes      | —            | Right      |
+| Rhyhorn   | One     | Yes      | —            | Right      |
+| Scizor    | One     | Yes      | —            | Right      |
+| Smeargle  | One     | Yes      | —            | Right      |
+
+The **Photo side** column says where your profile picture sits in the header when you upload one. "—" means the template draws no header picture. On right-to-left resumes the picture and the name swap sides.
 
 In a one-column template, sections you placed in the sidebar print after the main sections instead of beside them. Bronzor prints them as labelled rows. On two-column templates you can move the sidebar to the other side; see [Arranging the layout](/guides/arranging-the-layout).
+
+In a single-column header, Onyx and Lapras are the templates that put the picture on the left, with your name and headline beside it on the right. The others either put it on the right (Meowth, Rhyhorn, Scizor, Smeargle, Porygon), centre it above the header (Bronzor, Kakuna), or show no picture (Persian).
 
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
   <Frame caption="Azurill">
@@ -178,7 +182,7 @@ In a one-column template, sections you placed in the sidebar print after the mai
   <Frame caption="Onyx">
     <img
       src="/images/templates/onyx.webp"
-      alt="First page of a resume in the Onyx template: one column with the photo beside the header"
+      alt="First page of a resume in the Onyx template: one column with the photo on the left of the header and the name beside it"
       style={{ aspectRatio: "210/297" }}
     />
   </Frame>
