@@ -8,7 +8,13 @@ import { env } from "@reactive-resume/env/server";
 import { jsonLdScript, socialMetaTags } from "@reactive-resume/pdf/web-page-document";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { isAppSectionPath, RESERVED_SEGMENTS } from "@reactive-resume/utils/app-paths";
-import { defaultLocale, getLocaleAlternates, isLocale, localizedUrl } from "@reactive-resume/utils/locale";
+import {
+	defaultLocale,
+	getLocaleAlternates,
+	isLocale,
+	localizedUrl,
+	supportedLocales,
+} from "@reactive-resume/utils/locale";
 import { escapeHtml } from "@reactive-resume/utils/string";
 import { CONTEXT7_ASK_DESCRIPTION, CONTEXT7_ASK_URL } from "./seo";
 
@@ -326,10 +332,11 @@ function getFallbackResponseHeaders(pathname: string) {
  */
 function getPageLocale(request: Request) {
 	const requested = new URL(request.url).searchParams.get("locale");
-	if (isLocale(requested)) return { locale: requested, requested: true };
+	if (isLocale(requested))
+		return { locale: supportedLocales.includes(requested) ? requested : defaultLocale, requested: true };
 
 	const saved = request.headers.get("cookie")?.match(/(?:^|;\s*)locale=([^;]*)/)?.[1] ?? "";
-	return { locale: isLocale(saved) ? saved : defaultLocale, requested: false };
+	return { locale: isLocale(saved) && supportedLocales.includes(saved) ? saved : defaultLocale, requested: false };
 }
 
 /** Swaps the page's <title> and description. Function replacers keep `$&`, `$'` etc. in user text literal. */
