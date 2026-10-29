@@ -14,7 +14,7 @@ const linkClass = "text-ink transition-colors hover:text-accent-text";
 
 type FooterLink =
 	| { label: string; href: string }
-	| { label: string; to: "/ats-checker" | "/auth/register" | "/resume-templates" };
+	| { label: string; to: "/ats-checker" | "/auth/login" | "/auth/register" | "/resume-templates" };
 
 const getColumns = (): { id: string; title: string; links: FooterLink[] }[] => [
 	{
@@ -25,6 +25,7 @@ const getColumns = (): { id: string; title: string; links: FooterLink[] }[] => [
 			{ label: t`Features`, href: "#write" },
 			{ label: t`ATS checker`, to: "/ats-checker" },
 			{ label: t`Get started`, to: "/auth/register" },
+			{ label: t`Sign in`, to: "/auth/login" },
 		],
 	},
 	{

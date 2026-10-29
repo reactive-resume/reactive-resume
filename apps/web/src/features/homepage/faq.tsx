@@ -4,7 +4,7 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { Link } from "@tanstack/react-router";
 import { templateSchema } from "@reactive-resume/schema/templates";
-import { localeSchema } from "@reactive-resume/utils/locale";
+import { supportedLocales } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { SCENE } from "./scroll";
 import { Doodle, labelClass } from "./ui";
@@ -21,8 +21,7 @@ type Question = {
 function useQuestions(): Question[] {
 	const { i18n } = useLingui();
 	const templates = i18n.number(templateSchema.options.length);
-	// Every locale but Lingui's pseudo-locale, which only exists to test layouts.
-	const languages = i18n.number(localeSchema.options.length - 1);
+	const languages = i18n.number(supportedLocales.length);
 
 	return [
 		{

@@ -194,7 +194,7 @@ type ProposalCardProps = {
  */
 function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) {
 	const { i18n } = useLingui();
-	const { when, day } = useCareerTime();
+	const { when, day, timeZone } = useCareerTime();
 	const queryClient = useQueryClient();
 	const invalidate = useInvalidateApplications();
 	const apply = useMutation(orpc.career.applyReply.mutationOptions());
@@ -216,7 +216,8 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 
 	const contact = application.contacts[0]?.name.split(" ")[0];
 	const current =
-		application.followUpNote || describeNextStep(getNextStep(application, now), application, i18n.locale).title;
+		application.followUpNote ||
+		describeNextStep(getNextStep(application, now), application, i18n.locale, timeZone).title;
 
 	const describe = (change: (typeof changes)[number]) => {
 		switch (change.type) {
