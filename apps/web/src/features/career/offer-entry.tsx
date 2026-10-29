@@ -17,14 +17,14 @@ import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { orpc } from "@/libs/orpc/client";
 
 type Application = { id: string; company: string; role: string };
-type OfferEntryProps = { application?: Application };
+type OfferEntryProps = { application?: Application; primary?: boolean };
 
-export function OfferEntry({ application }: OfferEntryProps) {
+export function OfferEntry({ application, primary = false }: OfferEntryProps) {
 	const [open, setOpen] = useState(false);
 	return open ? (
 		<OfferForm {...(application ? { application } : {})} onClose={() => setOpen(false)} />
 	) : (
-		<Button variant="secondary" onClick={() => setOpen(true)}>
+		<Button variant={primary ? "primary" : "secondary"} onClick={() => setOpen(true)}>
 			<Trans>Add offer</Trans>
 		</Button>
 	);
@@ -276,7 +276,7 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 			)}
 			<div className="flex gap-2">
 				<Button type="submit" loading={save.isPending}>
-					<Trans>Save offer</Trans>
+					{save.isPending ? <Trans>Saving…</Trans> : <Trans>Save offer</Trans>}
 				</Button>
 				<Button variant="ghost" disabled={save.isPending} onClick={onClose}>
 					<Trans>Cancel</Trans>

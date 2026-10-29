@@ -108,7 +108,7 @@ export function OffersPage({ a, b }: OffersPageProps) {
 				<p className="max-w-[340px] text-sm text-ink-2">
 					<Trans>Add offer terms manually, or use optional AI extraction in Messages.</Trans>
 				</p>
-				<OfferEntry />
+				<OfferEntry primary />
 			</div>
 		);
 

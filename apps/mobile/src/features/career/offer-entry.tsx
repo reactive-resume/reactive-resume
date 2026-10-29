@@ -13,13 +13,13 @@ import { routes } from "@/routes";
 import { Banner, Button, SelectSheet, Text, TextField, showToast, useTheme } from "@/ui";
 
 type Application = { id: string; company: string; role: string };
-type OfferEntryProps = { application?: Application };
-export function OfferEntry({ application }: OfferEntryProps) {
+type OfferEntryProps = { application?: Application; primary?: boolean };
+export function OfferEntry({ application, primary = false }: OfferEntryProps) {
 	const { t } = useLingui();
 	const [open, setOpen] = useState(false);
 	return (
 		<>
-			<Button variant="secondary" label={t`Add offer`} onPress={() => setOpen(true)} />
+			<Button variant={primary ? "primary" : "secondary"} label={t`Add offer`} onPress={() => setOpen(true)} />
 			{open ? <OfferForm {...(application ? { application } : {})} onClose={() => setOpen(false)} /> : null}
 		</>
 	);
@@ -199,7 +199,7 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 				) : null}
 				{action.error ? <Banner tone="danger" message={action.error} /> : null}
 				<Button
-					label={t`Save offer`}
+					label={action.pending ? t`Saving…` : t`Save offer`}
 					loading={action.pending}
 					onPress={() => {
 						setSubmitted(true);

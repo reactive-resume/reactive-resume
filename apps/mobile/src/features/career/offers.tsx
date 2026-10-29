@@ -33,7 +33,7 @@ export function OffersScreen() {
 	return (
 		<Screen onRefresh={() => Promise.allSettled([query.refetch(), profile.refetch()])}>
 			<Text color="ink3">{t`Compared in their original currency and pay period. Comparing doesn't share anything with the coach.`}</Text>
-			<OfferEntry />
+			<OfferEntry primary={!query.isPending && !query.isError && !offers.length} />
 			<LoadState query={query} />
 			<LoadState query={profile} />
 			{!query.isError && !query.isPending && !offers.length ? (
