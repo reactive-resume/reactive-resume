@@ -26,7 +26,7 @@ type ExportableResume = {
 	data: ResumeData;
 };
 
-type DownloadPdfOptions = {
+type ExportOptions = {
 	includeCoverLetterHeader?: boolean;
 };
 
@@ -59,7 +59,7 @@ export async function createExportFile(
 	resume: ExportableResume,
 	format: ExportFormat,
 	target: ResumeExportTarget = "resume",
-	options?: DownloadPdfOptions,
+	options?: ExportOptions,
 ): Promise<Blob> {
 	if (format === "json") {
 		return new Blob([JSON.stringify(resume.data, null, 2)], { type: "application/json" });
@@ -76,8 +76,9 @@ export async function createExportFile(
 	const { getResumeSectionTitle } = await import("@reactive-resume/pdf/section-title");
 	const resolveTitle = (sectionId: string) => getResumeSectionTitle(data, sectionId);
 	if (format === "md") return new Blob([buildMarkdown(data, resolveTitle)], { type: "text/markdown" });
-	if (format === "odt") return (await loadOdt()).buildOdt(data, resolveTitle);
-	return (await loadDocx()).buildDocx(data, resolveTitle);
+	const renderOptions = target === "cover-letter" ? options : undefined;
+	if (format === "odt") return (await loadOdt()).buildOdt(data, resolveTitle, renderOptions);
+	return (await loadDocx()).buildDocx(data, resolveTitle, renderOptions);
 }
 
 /** Prints a PDF blob through a hidden iframe; if the browser blocks that, opens it in a new tab instead. */
