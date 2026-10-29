@@ -8,12 +8,13 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as tables from "@reactive-resume/db/schema";
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
-import { careerProfileDataSchema, savedItemDataSchema } from "@reactive-resume/schema/career";
+import { careerOfferInputSchema, careerProfileDataSchema, savedItemDataSchema } from "@reactive-resume/schema/career";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 
 const fixture = vi.hoisted(() => ({
 	db: undefined as ReturnType<typeof drizzle> | undefined,
 	generate: vi.fn(),
+	provider: vi.fn(async () => ({ id: "fixture", provider: "openai", model: "fixture", apiKey: "synthetic" })),
 	storageDelete: vi.fn().mockResolvedValue(undefined),
 }));
 vi.mock("@reactive-resume/db/client", () => ({
@@ -26,7 +27,7 @@ vi.mock("../applications/ai", () => ({ generateJson: fixture.generate }));
 vi.mock("../ai-providers/service", () => ({
 	aiProvidersService: {
 		getRunnableById: async () => ({ id: "fixture", provider: "openai", model: "fixture", apiKey: "synthetic" }),
-		getDefaultRunnable: async () => ({ id: "fixture", provider: "openai", model: "fixture", apiKey: "synthetic" }),
+		getDefaultRunnable: fixture.provider,
 	},
 }));
 vi.mock("../ai/service", () => ({ getModel: () => ({}) }));
@@ -169,6 +170,7 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 
 	beforeEach(async () => {
 		fixture.generate.mockReset();
+		fixture.provider.mockClear();
 		fixture.storageDelete.mockReset().mockResolvedValue(undefined);
 		await pool.query('TRUNCATE "user", "released_username" CASCADE');
 		await getDb()
@@ -277,6 +279,46 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 					uiMessage: { role: "user", parts: [{ type: "text", text: "Bob private accomplishment." }] },
 				},
 			]);
+	});
+
+	it("saves manual offers without AI, preserves terms and rejects another owner's application", async () => {
+		const input = careerOfferInputSchema.parse({
+			applicationId: "alice-app",
+			currency: "EUR",
+			period: "year",
+			base: 95000,
+			variable: null,
+			equity: "Options; value unknown",
+			officeDays: 0,
+		});
+		const before = await applications.getById({ userId: "alice", id: "alice-app" });
+		const first = await service.createOffer("alice", input);
+		const second = await service.createOffer("alice", {
+			...input,
+			applicationId: "alice-other",
+			currency: "USD",
+			period: "month",
+			base: 8000,
+			variable: 0,
+		});
+		expect(first).toMatchObject({
+			applicationId: "alice-app",
+			userId: "alice",
+			data: { kind: "offer", currency: "EUR", period: "year", base: 95000, variable: null, officeDays: 0 },
+		});
+		expect(second).toMatchObject({
+			applicationId: "alice-other",
+			data: { kind: "offer", currency: "USD", period: "month", variable: 0 },
+		});
+		expect(await service.savedItems({ userId: "alice", kind: "offer" })).toHaveLength(2);
+		expect(await service.savedItems({ userId: "bob", kind: "offer" })).toEqual([]);
+		await expect(service.createOffer("bob", input)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		await expect(service.createOffer("alice", { ...input, applicationId: "missing" })).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+		expect(await applications.getById({ userId: "alice", id: "alice-app" })).toEqual(before);
+		expect(fixture.generate).not.toHaveBeenCalled();
+		expect(fixture.provider).not.toHaveBeenCalled();
 	});
 
 	it("isolates accounts and application-private evidence until its owner explicitly shares it", async () => {

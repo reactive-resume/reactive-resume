@@ -11,6 +11,7 @@ const api = vi.hoisted(() => ({
 	fail: new Set<string>(),
 	read: vi.fn(),
 	saveProfile: vi.fn(),
+	createOffer: vi.fn(),
 	saveStory: vi.fn(),
 	saveFact: vi.fn(),
 	navigate: vi.fn(),
@@ -29,15 +30,30 @@ vi.mock("@/libs/orpc/client", () => {
 			retry: false,
 		}),
 		mutationOptions: () => ({
-			mutationFn: name === "saveStory" ? api.saveStory : name === "saveFact" ? api.saveFact : api.saveProfile,
+			mutationFn:
+				name === "createOffer"
+					? api.createOffer
+					: name === "saveStory"
+						? api.saveStory
+						: name === "saveFact"
+							? api.saveFact
+							: api.saveProfile,
 		}),
 	});
 	return {
 		orpc: {
 			career: Object.fromEntries(
-				["facts", "stories", "profile", "savedItems", "saveStory", "saveProfile", "saveFact", "updateFact"].map(
-					(name) => [name, endpoint(name)],
-				),
+				[
+					"facts",
+					"stories",
+					"profile",
+					"savedItems",
+					"saveStory",
+					"saveProfile",
+					"saveFact",
+					"updateFact",
+					"createOffer",
+				].map((name) => [name, endpoint(name)]),
 			),
 		},
 		client: { career: { saveProfile: api.saveProfile } },
@@ -75,6 +91,7 @@ vi.mock("@/features/applications/queries", () => ({
 }));
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn() } }));
 
+import { OfferEntry } from "../offer-entry";
 import { OffersPage } from "../offers";
 import { FactsPage } from "./facts";
 import { PreferencesPage } from "./preferences";
@@ -314,4 +331,34 @@ it.each([
 			expect.objectContaining({ minBase: { amount, currency: "EUR", period: "year" } }),
 		),
 	);
+});
+
+it("validates manual amounts and retains the draft after a failed save", async () => {
+	api.data.applications = [
+		{ id: "job-a", company: "Acme", role: "Engineer" },
+		{ id: "job-b", company: "Birch", role: "Engineer" },
+	];
+	api.createOffer.mockRejectedValueOnce(new Error("Offline"));
+	const view = mount(<OfferEntry application={{ id: "job-a", company: "Acme", role: "Engineer" }} />);
+	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
+	fireEvent.change(screen.getByLabelText("Currency"), { target: { value: "eur" } });
+	fireEvent.change(screen.getByLabelText("Base salary"), { target: { value: "95k" } });
+	expect((screen.getByRole("button", { name: "Save offer" }) as HTMLButtonElement).disabled).toBe(true);
+	fireEvent.change(screen.getByLabelText("Base salary"), { target: { value: "95,000" } });
+	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
+	await screen.findByText("Couldn't save the offer. Your draft is still here. Try again.");
+	expect((screen.getByLabelText("Base salary") as HTMLInputElement).value).toBe("95,000");
+	api.createOffer.mockResolvedValue(null);
+	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
+	await waitFor(() => expect(screen.queryByRole("button", { name: "Save offer" })).toBeNull());
+	const first = api.createOffer.mock.calls.at(-1)?.[0];
+	expect(first).toMatchObject({
+		applicationId: "job-a",
+		currency: "EUR",
+		period: "year",
+		base: 95000,
+		variable: null,
+		learning: null,
+	});
+	view.unmount();
 });

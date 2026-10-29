@@ -92,6 +92,9 @@ export const offerTermsSchema = z.object({
 });
 export type OfferTerms = z.infer<typeof offerTermsSchema>;
 
+/** Manually entered terms use the same saved offer shape as confirmed message proposals. */
+export const careerOfferInputSchema = offerTermsSchema.extend({ applicationId: z.string().min(1) });
+
 const text = (max = 2000) => z.string().trim().max(max);
 
 /**

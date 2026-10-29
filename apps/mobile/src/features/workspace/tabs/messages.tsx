@@ -24,6 +24,7 @@ import { getLaneLabel, resolveLane } from "@/features/applications/lanes";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
 import { useInvalidateApplications } from "@/features/applications/queries";
 import { formatMoney } from "@/features/career/offer-compare";
+import { OfferEntry } from "@/features/career/offer-entry";
 import { withUndo } from "@/features/career/undo";
 import { Banner, Button, Icon, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
 
@@ -47,6 +48,7 @@ function Messages({ application, version, now }: WorkspaceTabProps) {
 
 	return (
 		<View style={{ gap: space.s4 }}>
+			{!readOnly ? <OfferEntry application={application} /> : null}
 			<PasteBox
 				key={`paste-${version?.id ?? "live"}`}
 				application={application}

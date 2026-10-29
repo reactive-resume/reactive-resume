@@ -133,3 +133,61 @@ test("a fit check's missing evidence is saved to Knowledge from the table", asyn
 	await page.goto("/dashboard/career/knowledge/facts");
 	await expect(page.getByText(evidence, { exact: true })).toBeVisible();
 });
+
+test("manual offers save and compare without an AI provider", async ({ authPage: page }, testInfo) => {
+	await page.setViewportSize({ width: 1440, height: 1150 });
+	const jobs: string[] = [];
+	for (const company of ["Brightpath", "Canopy Systems"]) {
+		const response = await page.request.post("/api/openapi/applications", {
+			data: { company, role: "Product engineer" },
+		});
+		await expect(response).toBeOK();
+		jobs.push(await response.json());
+	}
+	const [firstJob, secondJob] = jobs;
+	if (!firstJob || !secondJob) throw new Error("Expected two applications");
+	const aiRequests: string[] = [];
+	page.on("request", (request) => {
+		if (/career[/.](generate|applyReply)|ai-providers.*test/.test(request.url())) aiRequests.push(request.url());
+	});
+	await page.goto(`/dashboard/applications/${firstJob}/messages`);
+	await page.getByRole("button", { name: "Add offer", exact: true }).click();
+	await page.getByLabel("Currency", { exact: true }).fill("EUR");
+	await page.getByLabel("Base salary", { exact: true }).fill("95000");
+	await page.getByLabel("Where you work", { exact: true }).fill("Berlin");
+	await page.getByLabel("Leave", { exact: true }).fill("30 days");
+	await page.getByRole("button", { name: "Save offer", exact: true }).click();
+	await expect(page.getByRole("button", { name: "Save offer", exact: true })).toBeHidden();
+	await page.goto("/dashboard/career/offers");
+	await page.getByRole("button", { name: "Add offer", exact: true }).click();
+	await page.getByLabel("Application", { exact: true }).selectOption(secondJob);
+	await page.getByLabel("Currency", { exact: true }).fill("USD");
+	await page.getByLabel("Pay period", { exact: true }).selectOption("month");
+	await page.getByLabel("Base salary", { exact: true }).fill("8000");
+	await page.getByLabel("Bonus", { exact: true }).fill("0");
+	await page.getByLabel("Where you work", { exact: true }).fill("Remote");
+	await page.getByRole("button", { name: "Save offer", exact: true }).click();
+	await expect(page.getByRole("button", { name: "Save offer", exact: true })).toBeHidden();
+	await page.reload();
+	await expect(page.getByText("€95,000 a year", { exact: true })).toBeVisible();
+	await expect(page.getByText("$8,000 a month", { exact: true })).toBeVisible();
+	await expect(page.getByText("Different currency, not compared").first()).toBeVisible();
+	const response = await page.request.get("/api/openapi/career/saved?kind=offer");
+	await expect(response).toBeOK();
+	const offers = await response.json();
+	expect(offers).toHaveLength(2);
+	expect(offers).toEqual(
+		expect.arrayContaining([
+			expect.objectContaining({
+				applicationId: firstJob,
+				data: expect.objectContaining({ base: 95000, variable: null, currency: "EUR", period: "year" }),
+			}),
+			expect.objectContaining({
+				applicationId: secondJob,
+				data: expect.objectContaining({ base: 8000, variable: 0, currency: "USD", period: "month" }),
+			}),
+		]),
+	);
+	expect(aiRequests).toEqual([]);
+	await page.getByRole("main").screenshot({ path: testInfo.outputPath("offers.png") });
+});

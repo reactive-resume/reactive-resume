@@ -22,6 +22,7 @@ import {
 	useWorkspace,
 } from "../hooks";
 import { formatMoney } from "../offer-compare";
+import { OfferEntry } from "../offer-entry";
 import { Swap, useCareerTime, withUndo, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
 import { getCategoryLane, getDisplayLane, getLaneLabel } from "@/features/applications/lanes";
@@ -49,6 +50,7 @@ export function MessagesTab({ application, version, now }: WorkspaceTabProps) {
 	return (
 		<div className="grid items-start gap-5 @3xl:grid-cols-[minmax(0,1fr)_280px] @5xl:grid-cols-[minmax(0,1fr)_360px]">
 			<div className="grid gap-4">
+				{!readOnly && <OfferEntry application={application} />}
 				<PasteBox
 					key={`paste-${version?.id ?? "live"}`}
 					application={application}

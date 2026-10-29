@@ -15,6 +15,7 @@ import {
 	type CareerProfileData,
 	type CareerWorkspace,
 	type careerFactInputSchema,
+	type careerOfferInputSchema,
 	type careerStoryInputSchema,
 	type SavedItemData,
 } from "@reactive-resume/schema/career";
@@ -690,6 +691,19 @@ export const careerService = {
 			// Knowledge, the posting or documents changed since it was written.
 			outdated: item.data.kind !== "answers" && context !== null && item.inputVersion !== context.version,
 		}));
+	},
+	createOffer: async (userId: string, { applicationId, ...terms }: z.infer<typeof careerOfferInputSchema>) => {
+		const context = await careerService.context({ userId, applicationId });
+		if (!context.application) throw new ORPCError("NOT_FOUND");
+		return careerService.saveSavedItem({
+			userId,
+			applicationId,
+			interviewId: null,
+			title: `${context.application.company} · ${terms.version === "verbal" ? "Verbal offer" : "Written offer"}`,
+			data: { kind: "offer", ...terms },
+			evidence: { factIds: [], storyIds: [] },
+			inputVersion: context.version,
+		});
 	},
 	saveSavedItem: (input: {
 		userId: string;

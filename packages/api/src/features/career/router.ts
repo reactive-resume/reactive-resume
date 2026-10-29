@@ -1,6 +1,7 @@
 import z from "zod";
 import {
 	careerFactInputSchema,
+	careerOfferInputSchema,
 	careerProfileDataSchema,
 	careerScheduleInputSchema,
 	careerScopeSchema,
@@ -254,6 +255,17 @@ export const careerRouter = {
 		)
 		.output(z.array(savedItemOutput))
 		.handler(({ context, input }) => careerService.savedItems({ userId: context.user.id, ...input })),
+	createOffer: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/career/offers",
+			tags: ["Career"],
+			operationId: "createCareerOffer",
+			summary: "Save manually entered offer terms",
+		})
+		.input(careerOfferInputSchema)
+		.output(savedItemSchema.nullable())
+		.handler(({ context, input }) => careerService.createOffer(context.user.id, input)),
 	deleteSavedItem: protectedProcedure
 		.route({
 			method: "DELETE",

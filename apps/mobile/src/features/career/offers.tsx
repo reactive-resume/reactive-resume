@@ -7,6 +7,7 @@ import { useState } from "react";
 import { View } from "react-native";
 import { useCareerQueries, useCareerTime, useNow, useOffers } from "./hooks";
 import { defaultPair, formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
+import { OfferEntry } from "./offer-entry";
 import { Actions, LoadState } from "./shared";
 import { routes } from "@/routes";
 import { Banner, Button, Card, EmptyState, Screen, SelectSheet, Text, useTheme } from "@/ui";
@@ -32,12 +33,13 @@ export function OffersScreen() {
 	return (
 		<Screen onRefresh={() => Promise.allSettled([query.refetch(), profile.refetch()])}>
 			<Text color="ink3">{t`Compared in their original currency and pay period. Comparing doesn't share anything with the coach.`}</Text>
+			<OfferEntry />
 			<LoadState query={query} />
 			<LoadState query={profile} />
 			{!query.isError && !query.isPending && !offers.length ? (
 				<EmptyState
 					title={t`No offers to compare yet`}
-					message={t`Paste an offer into an application's Messages tab.`}
+					message={t`Add offer terms manually, or use optional AI extraction in Messages.`}
 				/>
 			) : null}
 			{offers.length ? (
@@ -81,7 +83,7 @@ export function OffersScreen() {
 								) : (
 									<EmptyState
 										title={t`Save another offer to compare`}
-										message={t`Paste an offer into an application's Messages tab.`}
+										message={t`Add offer terms manually, or use optional AI extraction in Messages.`}
 									/>
 								)}
 							</View>

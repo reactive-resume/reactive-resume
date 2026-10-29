@@ -23,6 +23,7 @@ import { formatList } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError } from "./load-state";
 import { defaultPair, formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
+import { OfferEntry } from "./offer-entry";
 import { useCareerTime, useNow } from "./shared";
 import { orpc } from "@/libs/orpc/client";
 
@@ -105,8 +106,9 @@ export function OffersPage({ a, b }: OffersPageProps) {
 					<Trans>No offers to compare yet</Trans>
 				</h2>
 				<p className="max-w-[340px] text-sm text-ink-2">
-					<Trans>Paste an offer into an application's Messages tab.</Trans>
+					<Trans>Add offer terms manually, or use optional AI extraction in Messages.</Trans>
 				</p>
+				<OfferEntry />
 			</div>
 		);
 
@@ -116,6 +118,7 @@ export function OffersPage({ a, b }: OffersPageProps) {
 
 	return (
 		<div className="grid gap-5">
+			<OfferEntry />
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<p className="text-sm text-ink-2">
 					<Trans>
@@ -217,7 +220,7 @@ function ComparisonTable({ offers, left, right, onChoose }: ComparisonTableProps
 										<Trans>Save another offer to compare</Trans>
 									</p>
 									<p className="text-[13px] text-ink-3">
-										<Trans>Paste an offer into an application's Messages tab.</Trans>
+										<Trans>Add offer terms manually, or use optional AI extraction in Messages.</Trans>
 									</p>
 									{offers.length > 1 && (
 										<OfferHeader
