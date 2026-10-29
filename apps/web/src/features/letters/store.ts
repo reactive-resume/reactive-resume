@@ -56,6 +56,8 @@ const SAVE_DELAY_MS = 800;
 type LetterEditorStore = {
 	letter: CoverLetter | null;
 	status: LetterSaveStatus;
+	/** Sender editing pauses while a link, restore or template change replaces server state. */
+	changing: boolean;
 	/** Edits not sent yet; they stay on top of whatever the server returns. */
 	pending: LetterEdits;
 	/** One editing visit: its saves share one History version. */
@@ -84,6 +86,7 @@ const hasEdits = (edits: LetterEdits) => Object.keys(edits).length > 0;
 export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 	letter: null,
 	status: "saved",
+	changing: false,
 	pending: {},
 	sessionId: generateId(),
 	draft: idleDraft,
@@ -92,10 +95,14 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 		clearTimeout(timer);
 		drafting?.abort();
 		drafting = null;
-		set({ letter, status: "saved", pending: {}, sessionId: generateId(), draft: idleDraft });
+		set({ letter, status: "saved", changing: false, pending: {}, sessionId: generateId(), draft: idleDraft });
 	},
 
-	edit: (edits) => {
+	edit: (input) => {
+		const { letter, changing } = get();
+		const { sender, ...otherEdits } = input;
+		const edits = sender && (changing || (letter?.sourceResumeId && letter.senderLinked)) ? otherEdits : input;
+		if (!hasEdits(edits)) return;
 		set((state) =>
 			state.letter
 				? {
@@ -159,23 +166,29 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 
 	change: async (action) => {
 		const { sessionId } = get();
-		if (!(await get().flush())) throw new Error(t`Couldn't save your changes. Try again before continuing.`);
-		const { letter } = get();
-		if (!letter || get().sessionId !== sessionId) throw new Error("No letter is open.");
-		const next = await action(letter);
-		set((state) =>
-			state.letter?.id === letter.id && state.sessionId === sessionId
-				? { letter: applyEdits(next, state.pending) }
-				: state,
-		);
-		return next;
+		if (get().changing) throw new Error(t`Couldn't save your changes. Try again before continuing.`);
+		set({ changing: true });
+		try {
+			if (!(await get().flush())) throw new Error(t`Couldn't save your changes. Try again before continuing.`);
+			const { letter } = get();
+			if (!letter || get().sessionId !== sessionId) throw new Error("No letter is open.");
+			const next = await action(letter);
+			set((state) =>
+				state.letter?.id === letter.id && state.sessionId === sessionId
+					? { letter: applyEdits(next, state.pending) }
+					: state,
+			);
+			return next;
+		} finally {
+			if (get().sessionId === sessionId) set({ changing: false });
+		}
 	},
 
 	reset: () => {
 		clearTimeout(timer);
 		drafting?.abort();
 		drafting = null;
-		set({ letter: null, status: "saved", pending: {}, sessionId: generateId(), draft: idleDraft });
+		set({ letter: null, status: "saved", changing: false, pending: {}, sessionId: generateId(), draft: idleDraft });
 	},
 }));
 

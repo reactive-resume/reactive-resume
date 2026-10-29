@@ -287,7 +287,8 @@ function ToSection({ letter, application, disabled }: LetterSectionProps) {
 /** FROM: the resume the sender's details come from, and whether they stay live or are copied into the letter. */
 type FromSectionProps = { letter: CoverLetter; disabled: boolean };
 
-function FromSection({ letter, disabled }: FromSectionProps) {
+function FromSection({ letter, disabled: readOnly }: FromSectionProps) {
+	const disabled = useLetterEditorStore((state) => state.changing) || readOnly;
 	const edit = useLetterEditorStore((state) => state.edit);
 	const id = useId();
 	const { data: resumes } = useQuery(orpc.resume.list.queryOptions({ input: {} }));

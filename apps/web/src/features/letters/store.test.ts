@@ -56,6 +56,30 @@ beforeEach(() => {
 });
 
 describe("saving", () => {
+	it.each(["success", "failure"])("pauses sender edits throughout a relink request on %s", async (result) => {
+		store().load({ ...letter, senderLinked: false });
+		const request = deferred<CoverLetter>();
+		const relink = vi.fn(() => request.promise);
+		const changing = store().change(relink);
+		expect(store().changing).toBe(true);
+		await vi.waitFor(() => expect(relink).toHaveBeenCalled());
+		store().edit({ sender: { name: "Late input" } });
+		expect(store().pending).toEqual({});
+		if (result === "success") {
+			request.resolve({ ...letter, revision: 2 });
+			await changing;
+			expect(store().letter?.style.basics).toEqual(letter.style.basics);
+		} else {
+			const failed = expect(changing).rejects.toThrow("offline");
+			request.reject(new Error("offline"));
+			await failed;
+			store().edit({ sender: { name: "Retry input" } });
+			expect(store().pending).toEqual({ sender: { name: "Retry input" } });
+		}
+		expect(store().changing).toBe(false);
+		expect(mocks.update).not.toHaveBeenCalled();
+	});
+
 	it("merges sender fields through an in-flight save and flushes them before relinking", async () => {
 		store().load({ ...letter, senderLinked: false });
 		const request = deferred<CoverLetter>();
