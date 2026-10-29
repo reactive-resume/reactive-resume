@@ -510,6 +510,8 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		});
 		expect((await client.getById({ id: letter.id })).style).toMatchObject({ basics, picture });
 		expect((await client.export({ id: letter.id })).style).toMatchObject({ basics, picture });
+		await getPool().query("DELETE FROM resume WHERE id='alice-resume'");
+		expect((await client.getById({ id: letter.id })).style).toMatchObject({ basics, picture });
 	});
 
 	it("edits standalone sender details and isolates copies, links and account ownership", async () => {
