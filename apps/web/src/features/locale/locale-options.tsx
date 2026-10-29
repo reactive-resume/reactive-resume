@@ -1,13 +1,13 @@
-import type { Locale } from "@reactive-resume/utils/locale";
 import { i18n } from "@lingui/core";
-import { localeMap } from "@/libs/locale";
+import { localeMap, selectableLocales } from "@/libs/locale";
 
 export const getLocaleOptions = () => {
-	return Object.entries(localeMap).map(([value, label]) => {
+	return selectableLocales.map((value) => {
+		const label = localeMap[value];
 		const name = i18n.t(label);
 
 		return {
-			value: value as Locale,
+			value,
 			label: (
 				<span className="flex items-center gap-x-2">
 					<span className="font-mono text-xs text-ink-3">{value}</span>
