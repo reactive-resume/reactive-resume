@@ -11,16 +11,19 @@ const ENDPOINT = String.raw`(?:${MONTH_WORD}\s*'?\d{2,4}|\d{1,2}[/.\-]\d{2,4}|\d
 const ONGOING = String.raw`(?:present|current|currently|now|ongoing|to\s?date|today)`;
 const SEPARATOR = String.raw`\s*(?:[-–—~]|to|through|until)\s*`;
 
-const RANGE_PATTERN = new RegExp(`${ENDPOINT}${SEPARATOR}(?:${ENDPOINT}|${ONGOING})`, "gi");
+const RANGE_PATTERN = new RegExp(
+	String.raw`\b${ENDPOINT}${SEPARATOR}(?:${ENDPOINT}|${ONGOING})(?![\p{L}\p{N}_])`,
+	"giu",
+);
+const ONGOING_END_PATTERN = new RegExp(`${SEPARATOR}${ONGOING}$`, "i");
 const SINGLE_PATTERN = new RegExp(String.raw`\b(?:${MONTH_WORD}\s+\d{4}|\d{1,2}/\d{4})\b`, "gi");
 
 /** A numeric date whose first two components could each be a month or a day. */
 const AMBIGUOUS_NUMERIC_PATTERN = /\b(0?[1-9]|1[0-2])[/.-](0?[1-9]|[12]\d|3[01])[/.-](\d{2}|\d{4})\b/g;
 
 /**
- * `[A-Za-z]{3,9}` in the range pattern will happily match "Framework 2021 - 2023", which is a
- * product name next to two years, not a period. Every alphabetic run in a candidate therefore has
- * to be a month name or an ongoing marker in this locale before it counts as a date at all.
+ * `[A-Za-z]{3,9}` in the range pattern also matches non-month words such as "Framework".
+ * Every alphabetic run in a candidate must be a month name or an ongoing marker in this locale.
  *
  * The trade-off is deliberate: a misspelled month is dropped rather than reported unparseable.
  * Claiming a date is malformed when it is not a date is the worse error.
@@ -49,7 +52,8 @@ const ONGOING_WORDS = new Set([
 ]);
 
 function shapeOf(raw: string): DateToken["shape"] {
-	if (/[A-Za-z]/.test(raw)) return "mon-year";
+	if (/[A-Za-z]/.test(raw.replace(ONGOING_END_PATTERN, "").replace(/\b(?:to|through|until)\b/gi, "")))
+		return "mon-year";
 	if (/\d{1,2}[/.-]\d/.test(raw)) return "numeric";
 	return "year";
 }
@@ -115,7 +119,12 @@ export function analyzeDates(document: ExtractedDocument, locale: string, now: D
 	const ambiguousNumericDates: string[] = [];
 
 	document.lines.forEach((line, lineIndex) => {
-		const ranges = (line.text.match(RANGE_PATTERN) ?? []).filter((raw) => looksLikeDateWords(raw, locale));
+		const ranges: string[] = [];
+		for (let match = RANGE_PATTERN.exec(line.text); match; match = RANGE_PATTERN.exec(line.text)) {
+			if (looksLikeDateWords(match[0], locale)) ranges.push(match[0]);
+			// Retry inside a rejected candidate: a role word must not swallow the year range beside it.
+			else RANGE_PATTERN.lastIndex = match.index + 1;
+		}
 		for (const raw of ranges) {
 			const token = toToken(raw.trim(), "range", line.page, lineIndex, locale, now);
 			tokens.push(token);
