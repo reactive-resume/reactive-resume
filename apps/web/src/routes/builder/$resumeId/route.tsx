@@ -57,9 +57,16 @@ function RouteComponent() {
 	const isReady = useResumeStore((state) => state.isReady);
 	const initializedResumeId = useResumeStore((state) => state.resumeId);
 	const isInitialized = isReady && initializedResumeId === resumeId;
+	const name = useResumeStore((state) =>
+		state.resume && state.resume.id === resumeId ? state.resume.name : resume.name,
+	);
 
 	useResumeCleanup();
 	useBuilderResumeUpdateSubscription();
+
+	useEffect(() => {
+		document.title = `${name} - Reactive Resume`;
+	}, [name]);
 
 	useEffect(() => {
 		if (isInitialized) return;
