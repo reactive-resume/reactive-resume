@@ -2,7 +2,7 @@ import type { PdfRuleCode } from "./catalog";
 import type { FixtureOptions } from "./test-fixtures";
 import type { PdfAtsReport, RawExtraction } from "./types";
 import { describe, expect, it } from "vite-plus/test";
-import { analyzePdfResume } from "./index";
+import { analyzePdfResume, buildExtractedDocument, buildResumeSemantics } from "./index";
 import { healthyResume, healthyResumeLines, makeRawExtraction, scannedResume, twoColumnResume } from "./test-fixtures";
 
 const NOW = new Date("2024-06-15T00:00:00Z");
@@ -305,6 +305,8 @@ describe("date checks", () => {
 		});
 
 		const result = report(raw);
+		const { dates } = buildResumeSemantics(raw, buildExtractedDocument(raw), { now: NOW });
+		expect(dates.filter((date) => date.kind === "range" && date.parsed)).toHaveLength(4);
 		expect(statusOf(result, "NO_DATES_FOUND")).toBe("pass");
 		expect(statusOf(result, "MIXED_DATE_FORMATS")).toBe("pass");
 	});
@@ -333,6 +335,31 @@ describe("date checks", () => {
 		const codes = codesOf(healthyResume({ lines: [...healthyResumeLines, "Built on Framework 2021 - 2023"] }));
 
 		expect(codes).not.toContain("UNPARSEABLE_DATE_RANGE");
+	});
+
+	it.each(["Presented", "Presenté", "20235", "2023suffix", "2023_suffix"])(
+		"does not accept an endpoint truncated from %s",
+		(endpoint) => {
+			const result = report(
+				withLines(["Research specialist delivering clinical studies.", `Framework 2021 - ${endpoint}`]),
+			);
+			expect(statusOf(result, "NO_DATES_FOUND")).toBe("fail");
+			expect(statusOf(result, "NO_CURRENT_ROLE_MARKER")).toBe("skip");
+		},
+	);
+
+	it.each(["to", "through", "until"])("treats completed and ongoing %s ranges as one year-only format", (separator) => {
+		const raw = withLines([
+			"Research specialist delivering clinical studies with multidisciplinary teams and patient groups.",
+			`Clinical Research 2011 ${separator} 2014`,
+			`Clinical Research 2014 ${separator} 2018`,
+			`Clinical Research 2020 ${separator} Present`,
+			`Clinical Research 2022 ${separator} Present`,
+		]);
+		const { dates } = buildResumeSemantics(raw, buildExtractedDocument(raw), { now: NOW });
+		expect(dates).toHaveLength(4);
+		expect(dates.every((date) => date.parsed && date.shape === "year")).toBe(true);
+		expect(statusOf(report(raw), "MIXED_DATE_FORMATS")).toBe("pass");
 	});
 
 	it.each([

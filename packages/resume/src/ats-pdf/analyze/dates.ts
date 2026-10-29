@@ -11,7 +11,10 @@ const ENDPOINT = String.raw`(?:${MONTH_WORD}\s*'?\d{2,4}|\d{1,2}[/.\-]\d{2,4}|\d
 const ONGOING = String.raw`(?:present|current|currently|now|ongoing|to\s?date|today)`;
 const SEPARATOR = String.raw`\s*(?:[-–—~]|to|through|until)\s*`;
 
-const RANGE_PATTERN = new RegExp(String.raw`\b${ENDPOINT}${SEPARATOR}(?:${ENDPOINT}|${ONGOING})`, "gi");
+const RANGE_PATTERN = new RegExp(
+	String.raw`\b${ENDPOINT}${SEPARATOR}(?:${ENDPOINT}|${ONGOING})(?![\p{L}\p{N}_])`,
+	"giu",
+);
 const ONGOING_END_PATTERN = new RegExp(`${SEPARATOR}${ONGOING}$`, "i");
 const SINGLE_PATTERN = new RegExp(String.raw`\b(?:${MONTH_WORD}\s+\d{4}|\d{1,2}/\d{4})\b`, "gi");
 
@@ -49,7 +52,8 @@ const ONGOING_WORDS = new Set([
 ]);
 
 function shapeOf(raw: string): DateToken["shape"] {
-	if (/[A-Za-z]/.test(raw.replace(ONGOING_END_PATTERN, ""))) return "mon-year";
+	if (/[A-Za-z]/.test(raw.replace(ONGOING_END_PATTERN, "").replace(/\b(?:to|through|until)\b/gi, "")))
+		return "mon-year";
 	if (/\d{1,2}[/.-]\d/.test(raw)) return "numeric";
 	return "year";
 }
