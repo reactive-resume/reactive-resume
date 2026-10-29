@@ -4,6 +4,49 @@ description: "Release notes for Reactive Resume covering new features, resume bu
 rss: true
 ---
 
+<Update label="v6.0.8" description="29th October 2026">
+
+## Highlights
+
+![Entry header settings with five layouts, row order and accent controls](https://raw.githubusercontent.com/reactive-resume/reactive-resume/aef0476fe68fa5da7f3cf89a58d1dead88b89df0/docs/images/guides/changing-how-entries-look/entries-panel.webp)
+
+- **Give your experience a layout of its own.** Choose Stacked, One line, Compact, Date column or Eyebrow headers, put your position before the company, and add an accent rule, bar or band. The new **Entries** settings work across templates on web and mobile; Word and OpenDocument exports follow your row order. [b428e89df](https://github.com/reactive-resume/reactive-resume/commit/b428e89df)
+
+![Application board with custom Take-home assignment and Ghosted statuses](https://raw.githubusercontent.com/reactive-resume/reactive-resume/aef0476fe68fa5da7f3cf89a58d1dead88b89df0/docs/images/changelog/custom-application-stages/custom-stages-board.png)
+
+- **Make application statuses match your job search.** Add stages such as **Take-home assignment** and **Ghosted**, rename and recolor existing stages, and arrange them in your own order. Your stages carry through the board, lists, application details and mobile app while reminders and Insights keep their meaning. [9ac4687fa](https://github.com/reactive-resume/reactive-resume/commit/9ac4687fa)
+
+## Resume Builder & Sharing
+
+- Added an available `.cv` domain suggestion and a clearer DNS-records dialog when connecting your own domain. [a2bd0c5d9](https://github.com/reactive-resume/reactive-resume/commit/a2bd0c5d9)
+- Fixed public pages on the configured alias getting stuck when a browser already has cookies, and made copied share links use the configured public address. [d644b9963](https://github.com/reactive-resume/reactive-resume/commit/d644b9963), [70c231edf](https://github.com/reactive-resume/reactive-resume/commit/70c231edf)
+- Improved touch-input sizing, keyboard handling, foldable layouts and large-text usability. [d644b9963](https://github.com/reactive-resume/reactive-resume/commit/d644b9963), [70c231edf](https://github.com/reactive-resume/reactive-resume/commit/70c231edf)
+
+## Applications & Everyday Use
+
+- Added custom-stage support to bulk moves, imports, exports, REST and MCP integrations, and a warning when a previous application to the same company received no response. Removing a stage preserves its applications and history. [9ac4687fa](https://github.com/reactive-resume/reactive-resume/commit/9ac4687fa)
+- Made application lists quicker to open by loading full job details when needed. Thanks to @GoldenSection0618. [0fd5e4e7e](https://github.com/reactive-resume/reactive-resume/commit/0fd5e4e7e)
+- Fixed application metadata and tag edits recording linked drafts as submitted documents. [d644b9963](https://github.com/reactive-resume/reactive-resume/commit/d644b9963)
+- Fixed sign-in pages clipping content on short screens or overflowing when scrollbars are visible. Thanks to @iwmywn. [9deea1443](https://github.com/reactive-resume/reactive-resume/commit/9deea1443)
+- Improved first-page loading with smaller images, earlier rendering, compressed assets and longer-lived font and image caching. [07f460af3](https://github.com/reactive-resume/reactive-resume/commit/07f460af3), [702e33d5f](https://github.com/reactive-resume/reactive-resume/commit/702e33d5f), [0e28991fe](https://github.com/reactive-resume/reactive-resume/commit/0e28991fe), [1003b1d8a](https://github.com/reactive-resume/reactive-resume/commit/1003b1d8a)
+
+## Security & Self-Hosting
+
+- Hardened sign-in, account cleanup, document access, imports and exports. Assistant searches and saved career stories now require approval of their exact content; older clients need updated approval controls to complete these actions. Passkey enrollment requires a verified email and recent sign-in, and password recovery revokes existing passkeys. [82368dd66](https://github.com/reactive-resume/reactive-resume/commit/82368dd66)
+- **Back up your database before upgrading.** Startup adds application-stage tables and references, and serializes username reservations. Existing applications keep their stages and history, and older integrations can continue using the standard statuses. [9ac4687fa](https://github.com/reactive-resume/reactive-resume/commit/9ac4687fa), [82368dd66](https://github.com/reactive-resume/reactive-resume/commit/82368dd66)
+- Required SMTP connections to use STARTTLS or direct TLS. Plaintext-only mail servers must be reconfigured before upgrading. Added limits for oversized documents and fonts; unusually complex documents may need simplifying before export. [82368dd66](https://github.com/reactive-resume/reactive-resume/commit/82368dd66)
+- Fixed custom-domain proxy discovery when no domains have been verified and published a resource catalog for connected agents. [d456abfca](https://github.com/reactive-resume/reactive-resume/commit/d456abfca), [8bfba4846](https://github.com/reactive-resume/reactive-resume/commit/8bfba4846)
+- Updated dependencies and enabled smaller Android release builds. Native rendering safeguards and Android build optimizations require new compatible store binaries; this web release does not update installed native code. [8ffc6c599](https://github.com/reactive-resume/reactive-resume/commit/8ffc6c599), [660b4b6d6](https://github.com/reactive-resume/reactive-resume/commit/660b4b6d6), [5cc3677a4](https://github.com/reactive-resume/reactive-resume/commit/5cc3677a4), [82368dd66](https://github.com/reactive-resume/reactive-resume/commit/82368dd66)
+
+## Documentation & Translations
+
+- Refreshed product guides for header layouts, custom application stages, sharing, integrations and self-hosting. [aef0476fe](https://github.com/reactive-resume/reactive-resume/commit/aef0476fe), [378365f02](https://github.com/reactive-resume/reactive-resume/commit/378365f02)
+- Updated web and mobile translations for domain settings, header layouts, application stages and assistant approvals. [9657be968](https://github.com/reactive-resume/reactive-resume/commit/9657be968), [b428e89df](https://github.com/reactive-resume/reactive-resume/commit/b428e89df), [9ac4687fa](https://github.com/reactive-resume/reactive-resume/commit/9ac4687fa), [82368dd66](https://github.com/reactive-resume/reactive-resume/commit/82368dd66)
+
+**Full Changelog**: [v6.0.7...v6.0.8](https://github.com/reactive-resume/reactive-resume/compare/v6.0.7...v6.0.8)
+
+</Update>
+
 <Update label="v6.0.7" description="27th October 2026">
 
 ## Highlights
