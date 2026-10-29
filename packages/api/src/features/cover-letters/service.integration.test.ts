@@ -464,6 +464,54 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		).toBe("Still editable");
 	});
 
+	it.each([false, true])("refreshes design while respecting sender linking (%s)", async (senderLinked) => {
+		const { coverLettersRouter } = await import("./router");
+		const client = createRouterClient(coverLettersRouter, { context: { user: { id: "alice" } } as never });
+		const source = structuredClone(defaultResumeData);
+		source.basics.name = "Original sender";
+		source.picture.url = "https://example.test/original.png";
+		await getPool().query("UPDATE resume SET data=$1 WHERE id='alice-resume'", [source]);
+		const created = await client.create({
+			name: "Refresh design",
+			resumeId: "alice-resume",
+			template: "pikachu",
+			content: "<p>Keep this letter</p>",
+		});
+		const letter = senderLinked
+			? created
+			: await client.update({
+					id: created.id,
+					expectedRevision: created.revision,
+					senderLinked: false,
+					sender: {
+						name: "Independent sender",
+						email: "own@example.test",
+						phone: "+49 30 5550100",
+						location: "Berlin",
+					},
+				});
+		source.basics.name = "Current resume sender";
+		source.basics.email = "resume@example.test";
+		source.picture.url = "https://example.test/current.png";
+		source.metadata.page.marginX = 22;
+		await getPool().query("UPDATE resume SET data=$1 WHERE id='alice-resume'", [source]);
+
+		const refreshed = await client.refreshStyle({
+			id: letter.id,
+			expectedRevision: letter.revision,
+			resumeId: "alice-resume",
+		});
+		const basics = senderLinked ? source.basics : letter.style.basics;
+		const picture = senderLinked ? source.picture : letter.style.picture;
+		expect(refreshed).toMatchObject({
+			content: "<p>Keep this letter</p>",
+			senderLinked,
+			style: { basics, picture, metadata: { template: "pikachu", page: { marginX: 22 } } },
+		});
+		expect((await client.getById({ id: letter.id })).style).toMatchObject({ basics, picture });
+		expect((await client.export({ id: letter.id })).style).toMatchObject({ basics, picture });
+	});
+
 	it("edits standalone sender details and isolates copies, links and account ownership", async () => {
 		const { coverLettersRouter } = await import("./router");
 		const client = createRouterClient(coverLettersRouter, { context: { user: { id: "alice" } } as never });

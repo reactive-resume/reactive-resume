@@ -391,6 +391,10 @@ export const coverLetterService = {
 	refreshStyle: async (input: RevisionInput & { resumeId: string }) => {
 		const letter = await getById(input);
 		const style = await getResumeStyle(input.userId, input.resumeId, letter.style.sectionId, letter.style.itemId);
+		if (!letter.senderLinked) {
+			style.basics = letter.style.basics;
+			style.picture = letter.style.picture;
+		}
 		style.metadata.template = letter.style.metadata.template;
 		return resolveLinks(await updateRevision(input, { style, sourceResumeId: input.resumeId }), input.userId);
 	},
