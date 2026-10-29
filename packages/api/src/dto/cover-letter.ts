@@ -91,6 +91,11 @@ export const coverLetterDto = {
 			letterDate: recipientFieldsSchema.shape.letterDate.unwrap().optional(),
 			resumeId: z.string().min(1).nullable().optional().describe("The resume the letter goes with."),
 			applicationId: z.string().min(1).nullable().optional().describe("The job the letter is for."),
+			sender: coverLetterStyleSchema.shape.basics
+				.pick({ name: true, email: true, phone: true, location: true })
+				.partial()
+				.optional()
+				.describe("Edits the letter's own sender details; turn the sender link off first."),
 			senderLinked: z.boolean().optional().describe("Take the sender's details live from the resume."),
 			designLinked: z.boolean().optional().describe("Take the design live from the resume."),
 			sessionId: z

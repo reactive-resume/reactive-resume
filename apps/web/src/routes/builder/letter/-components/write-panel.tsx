@@ -35,6 +35,7 @@ import { countWords, LETTER_LENGTH, letterLength } from "@/features/letters/leng
 import { discardLetterDraft, startLetterDraft, useLetterEditorStore } from "@/features/letters/store";
 import { useLetterMode } from "@/features/letters/use-letter-mode";
 import { ACCENTS, FONT_PAIRINGS, matchFontPairing, rgbaToHex } from "@/features/resume/editor/design/presets";
+import { TextField, validateEmail } from "@/features/resume/editor/write/fields";
 import { RichTextEditor } from "@/features/resume/editor/write/rich-text-editor";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
@@ -284,7 +285,10 @@ function ToSection({ letter, application, disabled }: LetterSectionProps) {
 }
 
 /** FROM: the resume the sender's details come from, and whether they stay live or are copied into the letter. */
-function FromSection({ letter, disabled }: { letter: CoverLetter; disabled: boolean }) {
+type FromSectionProps = { letter: CoverLetter; disabled: boolean };
+
+function FromSection({ letter, disabled }: FromSectionProps) {
+	const edit = useLetterEditorStore((state) => state.edit);
 	const id = useId();
 	const { data: resumes } = useQuery(orpc.resume.list.queryOptions({ input: {} }));
 	const resume = resumes?.find((item) => item.id === letter.sourceResumeId);
@@ -331,7 +335,7 @@ function FromSection({ letter, disabled }: { letter: CoverLetter; disabled: bool
 					description={
 						letter.senderLinked
 							? t`Linked. Name, email, phone and city update when the resume does.`
-							: t`Off. The letter keeps its own copy of your details.`
+							: t`Off. Edit this letter’s details below. Turning this on replaces them with the resume’s current details.`
 					}
 					checked={letter.senderLinked}
 					disabled={disabled}
@@ -339,8 +343,40 @@ function FromSection({ letter, disabled }: { letter: CoverLetter; disabled: bool
 				/>
 			) : (
 				<p className="text-xs text-ink-3">
-					<Trans>Your name and contact details come from a resume.</Trans>
+					<Trans>Enter your details below. Choosing a resume replaces them and links its design.</Trans>
 				</p>
+			)}
+			{(!letter.sourceResumeId || !letter.senderLinked) && (
+				<fieldset disabled={disabled} className="grid min-w-0 grid-cols-2 gap-3">
+					<TextField
+						label={<Trans>Full name</Trans>}
+						wide
+						autoComplete="name"
+						value={letter.style.basics.name}
+						onChange={(name) => edit({ sender: { name } })}
+					/>
+					<TextField
+						label={<Trans>Email</Trans>}
+						type="email"
+						autoComplete="email"
+						validate={validateEmail}
+						value={letter.style.basics.email}
+						onChange={(email) => edit({ sender: { email } })}
+					/>
+					<TextField
+						label={<Trans>Phone</Trans>}
+						type="tel"
+						autoComplete="tel"
+						value={letter.style.basics.phone}
+						onChange={(phone) => edit({ sender: { phone } })}
+					/>
+					<TextField
+						label={<Trans>Location</Trans>}
+						wide
+						value={letter.style.basics.location}
+						onChange={(location) => edit({ sender: { location } })}
+					/>
+				</fieldset>
 			)}
 		</Section>
 	);

@@ -141,6 +141,15 @@ export const letterAdapter: DraftAdapter<LetterDocument, LetterDocument> = {
 			...("senderLinked" in changes ? { senderLinked: document.senderLinked } : {}),
 			...("designLinked" in changes ? { designLinked: document.designLinked } : {}),
 		};
+		if (!document.senderLinked) {
+			const { name, email, phone, location } = document.style.basics;
+			const previous = baseline.style.basics;
+			const sender = changedFields(
+				{ name, email, phone, location },
+				{ name: previous.name, email: previous.email, phone: previous.phone, location: previous.location },
+			);
+			if (Object.keys(sender).length) input.sender = sender;
+		}
 		const metadata = changedFields(document.style.metadata, baseline.style.metadata);
 		if ("template" in metadata) input.template = document.style.metadata.template;
 		if ("typography" in metadata || "design" in metadata || "page" in metadata)

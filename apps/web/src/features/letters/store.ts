@@ -16,22 +16,28 @@ export type LetterEdits = Partial<
 		CoverLetter,
 		"name" | "recipient" | "content" | "greeting" | "signOff" | "recipientName" | "recipientCompany" | "letterDate"
 	>
-> & { metadata?: Partial<Pick<LetterMetadata, "typography" | "design" | "page">> };
+> & {
+	sender?: Partial<Pick<CoverLetter["style"]["basics"], "name" | "email" | "phone" | "location">>;
+	metadata?: Partial<Pick<LetterMetadata, "typography" | "design" | "page">>;
+};
 
-const mergeEdits = (edits: LetterEdits, next: LetterEdits): LetterEdits =>
-	edits.metadata && next.metadata
-		? { ...edits, ...next, metadata: { ...edits.metadata, ...next.metadata } }
-		: { ...edits, ...next };
+const mergeEdits = (edits: LetterEdits, next: LetterEdits): LetterEdits => ({
+	...edits,
+	...next,
+	...(edits.metadata && next.metadata ? { metadata: { ...edits.metadata, ...next.metadata } } : {}),
+	...(edits.sender && next.sender ? { sender: { ...edits.sender, ...next.sender } } : {}),
+});
 
-const applyEdits = (letter: CoverLetter, { metadata, ...fields }: LetterEdits): CoverLetter =>
-	metadata
-		? {
-				...letter,
-				...fields,
-				designLinked: false,
-				style: { ...letter.style, metadata: { ...letter.style.metadata, ...metadata } },
-			}
-		: { ...letter, ...fields };
+const applyEdits = (letter: CoverLetter, { metadata, sender, ...fields }: LetterEdits): CoverLetter => ({
+	...letter,
+	...fields,
+	...(metadata ? { designLinked: false } : {}),
+	style: {
+		...letter.style,
+		...(metadata ? { metadata: { ...letter.style.metadata, ...metadata } } : {}),
+		...(sender ? { basics: { ...letter.style.basics, ...sender } } : {}),
+	},
+});
 
 /** `conflict`: the letter changed somewhere else, so saving stops until it's reloaded. */
 type LetterSaveStatus = "saved" | "saving" | "error" | "conflict";

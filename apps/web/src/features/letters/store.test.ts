@@ -56,6 +56,42 @@ beforeEach(() => {
 });
 
 describe("saving", () => {
+	it("merges sender fields through an in-flight save and flushes them before relinking", async () => {
+		store().load({ ...letter, senderLinked: false });
+		const request = deferred<CoverLetter>();
+		mocks.update
+			.mockReturnValueOnce(request.promise)
+			.mockImplementation(async () => ({ ...store().letter, revision: 3 }));
+		store().edit({ sender: { name: "Jordan" } });
+		store().edit({ sender: { email: "jordan@example.test" } });
+		const saving = store().flush();
+		store().edit({ sender: { location: "Berlin" } });
+		request.resolve({
+			...letter,
+			senderLinked: false,
+			style: { ...letter.style, basics: { ...letter.style.basics, name: "Jordan", email: "jordan@example.test" } },
+			revision: 2,
+		});
+		await saving;
+		expect(store().letter?.style.basics).toMatchObject({
+			name: "Jordan",
+			email: "jordan@example.test",
+			location: "Berlin",
+		});
+		expect(mocks.update).toHaveBeenNthCalledWith(
+			1,
+			expect.objectContaining({ sender: { name: "Jordan", email: "jordan@example.test" } }),
+		);
+		expect(mocks.update).toHaveBeenNthCalledWith(
+			2,
+			expect.objectContaining({ expectedRevision: 2, sender: { location: "Berlin" } }),
+		);
+		store().edit({ sender: { phone: "5550100" } });
+		const relink = vi.fn(async () => ({ ...letter, revision: 5 }));
+		await store().change(relink);
+		expect(mocks.update).toHaveBeenLastCalledWith(expect.objectContaining({ sender: { phone: "5550100" } }));
+		expect(store().letter?.style.basics).toEqual(letter.style.basics);
+	});
 	it.each(["success", "failure"])("ignores an old session's %s while another letter is edited", async (result) => {
 		const request = deferred<CoverLetter>();
 		mocks.update.mockReturnValueOnce(request.promise).mockImplementation(async (input) => ({
