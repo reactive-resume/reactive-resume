@@ -6,7 +6,7 @@ import { useRouter } from "expo-router";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AppState, View } from "react-native";
 import { careerProfileDataSchema } from "@reactive-resume/schema/career";
-import { parseAmount } from "./amount";
+import { parseAmount } from "@reactive-resume/utils/amount";
 import { useCareerTime } from "./hooks";
 import { SearchRegionsField } from "./search-regions-field";
 import { client, orpc } from "@/api/client";

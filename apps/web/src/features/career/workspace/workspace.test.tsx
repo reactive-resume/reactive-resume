@@ -9,7 +9,7 @@ import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { EMPTY_WORKSPACE } from "@reactive-resume/schema/career";
+import { offerTermsSchema, EMPTY_WORKSPACE } from "@reactive-resume/schema/career";
 import { useDebouncedSave } from "../hooks";
 import { ApplyTab } from "./apply";
 import { DebriefTab } from "./debrief";
@@ -440,4 +440,18 @@ it("stops question playback and releases its audio when leaving Practise", async
 	view.unmount();
 	expect(pause).toHaveBeenCalledOnce();
 	expect(revoke).toHaveBeenCalledWith("blob:question");
+});
+
+it("keeps Saved offer provenance neutral for both manual and older offer shapes", async () => {
+	api.data.savedItems = [
+		item("Written offer", {
+			kind: "offer",
+			...offerTermsSchema.parse({ currency: "EUR", period: "year", base: 95000, variable: null }),
+		}),
+	];
+	mount(<SavedTab {...props} />);
+	expect(await screen.findByText("Saved items for Harbor, newest first.")).toBeTruthy();
+	expect(screen.queryByText(/coach wrote/)).toBeNull();
+	expect(screen.queryByText(/used the message/)).toBeNull();
+	expect(screen.getByRole("link", { name: "Open in Offers" })).toBeTruthy();
 });

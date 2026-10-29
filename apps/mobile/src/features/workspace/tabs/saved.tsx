@@ -1,4 +1,4 @@
-// Saved (web workspace/saved.tsx, W18): everything the coach wrote for this job, newest first, each opening read-only
+// Saved (web workspace/saved.tsx, W18): saved records for this job, newest first, each opening read-only
 // in the tab that made it.
 import type { SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "../shell";
@@ -67,7 +67,7 @@ function Saved({ application, go }: WorkspaceTabProps) {
 		return (
 			<EmptyNotice
 				title={t`Nothing saved yet`}
-				message={t`Fit checks, briefings, practice feedback, debriefs, answers and replies land here as the other tabs create them.`}
+				message={t`Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them.`}
 			>
 				<Button variant="secondary" label={t`Check fit`} onPress={() => go("fit")} />
 			</EmptyNotice>
@@ -99,7 +99,7 @@ function Saved({ application, go }: WorkspaceTabProps) {
 				))}
 			</Actions>
 			<Text variant="caption" color="ink3">
-				{t`Everything the coach wrote for ${company}, newest first.`}
+				{t`Saved items for ${company}, newest first.`}
 			</Text>
 			{shown.map((item) => (
 				<SavedRow
@@ -202,7 +202,7 @@ function sourcesOf(item: SavedItem) {
 	const kind = item.data.kind;
 	if (kind === "fit" || kind === "briefing") parts.push(t`posting`);
 	if (kind === "debrief") parts.push(t`your notes`);
-	if (kind === "reply" || kind === "offer") parts.push(t`the message`);
+	if (kind === "reply") parts.push(t`the message`);
 	return parts.join(", ");
 }
 

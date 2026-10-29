@@ -4,13 +4,13 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useId, useState } from "react";
-import { careerOfferInputSchema, offerTermsSchema } from "@reactive-resume/schema/career";
+import { offerTermsSchema } from "@reactive-resume/schema/career";
+import { parseOfferEntry } from "@reactive-resume/schema/career-offer";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
-import { parseAmount } from "./knowledge/amount";
 import { CareerLoadError } from "./load-state";
 import { useCareerTime } from "./shared";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
@@ -46,15 +46,19 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 	const [time, setTime] = useState("17:00");
 	const [submitted, setSubmitted] = useState(false);
 	const change = (patch: Partial<OfferTerms>) => setTerms((current) => ({ ...current, ...patch }));
-	const deadline = date ? fromZonedDateTime(date, time, timeZone) : null;
-	const payload = careerOfferInputSchema.safeParse({
-		...terms,
+	const [touched, setTouched] = useState<Record<string, boolean>>({});
+	const touch = (key: string) => setTouched((current) => ({ ...current, [key]: true }));
+	const { payload, amountErrors, deadlineError } = parseOfferEntry({
 		applicationId,
-		base: parseAmount(amounts.base, locale),
-		variable: parseAmount(amounts.variable, locale),
-		learning: parseAmount(amounts.learning, locale),
-		respondBy: date ? deadline?.toISOString() : null,
+		terms,
+		amounts,
+		date,
+		time,
+		locale,
+		timeZone,
 	});
+	const deadlineMessage = deadlineError ? t`Choose a valid date and time in ${timeZone}, or clear the deadline.` : null;
+	const showDeadlineError = !!deadlineMessage && (submitted || touched.deadline);
 	const save = useMutation({
 		...orpc.career.createOffer.mutationOptions(),
 		onSuccess: () => {
@@ -72,6 +76,7 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 	] as const;
 	return (
 		<form
+			noValidate
 			className="grid w-full gap-4 rounded-xl border border-line bg-surface p-4 text-start"
 			onSubmit={(event) => {
 				event.preventDefault();
@@ -86,7 +91,7 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 				<Trans>Enter terms yourself. No AI request is made. Leave unknown amounts blank.</Trans>
 			</p>
 			<fieldset disabled={save.isPending} className="grid gap-3 sm:grid-cols-2">
-				<div className="grid gap-1 text-sm">
+				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
 					<label htmlFor={`${id}-application`}>
 						<Trans>Application</Trans>
 					</label>
@@ -94,6 +99,8 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 						id={`${id}-application`}
 						value={applicationId}
 						disabled={!!application}
+						onBlur={() => touch("application")}
+						aria-invalid={submitted && !applicationId}
 						onChange={(event) => setApplicationId(event.target.value)}
 						required
 					>
@@ -105,7 +112,7 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 						))}
 					</NativeSelect>
 				</div>
-				<div className="grid gap-1 text-sm">
+				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
 					<label htmlFor={`${id}-version`}>
 						<Trans>Offer type</Trans>
 					</label>
@@ -118,7 +125,7 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 						<option value="verbal">{t`Verbal offer`}</option>
 					</NativeSelect>
 				</div>
-				<div className="grid gap-1 text-sm">
+				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
 					<label htmlFor={`${id}-currency`}>
 						<Trans>Currency</Trans>
 					</label>
@@ -129,10 +136,21 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 						required
 						pattern="[A-Z]{3}"
 						placeholder="EUR"
+						onBlur={() => touch("currency")}
+						aria-invalid={(submitted || touched.currency) && !/^[A-Z]{3}$/.test(terms.currency)}
+						aria-describedby={
+							(submitted || touched.currency) && !/^[A-Z]{3}$/.test(terms.currency) ? `${id}-currency-error` : undefined
+						}
 						onChange={(event) => change({ currency: event.target.value.toUpperCase() })}
 					/>
+					{(submitted || touched.currency) && !/^[A-Z]{3}$/.test(terms.currency) && (
+						<p id={`${id}-currency-error`} className="flex items-start gap-1.5 text-xs text-danger-text">
+							<Icon name="warning-circle" />
+							<span>{t`Enter a three-letter currency code.`}</span>
+						</p>
+					)}
 				</div>
-				<div className="grid gap-1 text-sm">
+				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
 					<label htmlFor={`${id}-period`}>
 						<Trans>Pay period</Trans>
 					</label>
@@ -153,25 +171,26 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 						{ key: "learning", label: t`Learning budget` },
 					] as const
 				).map(({ key, label }) => (
-					<div key={key} className="grid gap-1 text-sm">
+					<div key={key} className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
 						<label htmlFor={`${id}-${key}`}>{label}</label>
 						<Input
 							id={`${id}-${key}`}
 							inputMode="decimal"
 							value={amounts[key]}
-							aria-invalid={parseAmount(amounts[key], locale) === undefined}
-							aria-describedby={parseAmount(amounts[key], locale) === undefined ? `${id}-${key}-error` : undefined}
+							onBlur={() => touch(key)}
+							aria-invalid={(submitted || touched[key]) && amountErrors[key]}
+							aria-describedby={(submitted || touched[key]) && amountErrors[key] ? `${id}-${key}-error` : undefined}
 							onChange={(event) => setAmounts((current) => ({ ...current, [key]: event.target.value }))}
 						/>
-						{parseAmount(amounts[key], locale) === undefined && (
-							<span
-								id={`${id}-${key}-error`}
-								className="text-xs text-danger-text"
-							>{t`Enter a full amount, such as 95000, or leave blank.`}</span>
+						{(submitted || touched[key]) && amountErrors[key] && (
+							<span id={`${id}-${key}-error`} className="flex items-start gap-1.5 text-xs text-danger-text">
+								<Icon name="warning-circle" />
+								<span>{t`Enter a full amount, such as 95000, or leave blank.`}</span>
+							</span>
 						)}
 					</div>
 				))}
-				<div className="grid gap-1 text-sm">
+				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
 					<label htmlFor={`${id}-office`}>
 						<Trans>Office days per week</Trans>
 					</label>
@@ -189,7 +208,7 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 					</NativeSelect>
 				</div>
 				{textFields.map(({ key, label, max }) => (
-					<div key={key} className="grid gap-1 text-sm">
+					<div key={key} className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
 						<label htmlFor={`${id}-${key}`}>{label}</label>
 						<Input
 							id={`${id}-${key}`}
@@ -199,20 +218,31 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 						/>
 					</div>
 				))}
-				<div className="grid gap-1 text-sm">
+				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
 					<label htmlFor={`${id}-date`}>
 						<Trans>Respond by</Trans>
 					</label>
-					<Input id={`${id}-date`} type="date" value={date} onChange={(event) => setDate(event.target.value)} />
+					<Input
+						id={`${id}-date`}
+						type="date"
+						value={date}
+						onBlur={() => touch("deadline")}
+						aria-invalid={showDeadlineError}
+						aria-describedby={showDeadlineError ? `${id}-deadline-error` : undefined}
+						onChange={(event) => setDate(event.target.value)}
+					/>
 				</div>
 				{date && (
-					<div className="grid gap-1 text-sm">
+					<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
 						<label htmlFor={`${id}-time`}>
 							<Trans>Time</Trans>
 						</label>
 						<Input
 							id={`${id}-time`}
 							type="time"
+							onBlur={() => touch("deadline")}
+							aria-invalid={showDeadlineError}
+							aria-describedby={showDeadlineError ? `${id}-deadline-error` : undefined}
 							required
 							value={time}
 							onChange={(event) => setTime(event.target.value)}
@@ -227,18 +257,25 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 					<Trans>Add an application first</Trans>
 				</Link>
 			)}
-			{((submitted && !payload.success) || (date && !deadline)) && (
+			{showDeadlineError && (
+				<p id={`${id}-deadline-error`} role="alert" className="flex items-start gap-1.5 text-sm text-danger-text">
+					<Icon name="warning-circle" />
+					<span>{deadlineMessage}</span>
+				</p>
+			)}
+			{submitted && !payload.success && (
 				<p role="alert" className="text-sm text-danger-text">
-					<Trans>Check the application, currency, amounts and deadline before saving.</Trans>
+					<Icon name="warning-circle" />{" "}
+					<Trans>Choose an application and correct the highlighted fields before saving.</Trans>
 				</p>
 			)}
 			{save.isError && (
 				<p role="alert" className="text-sm text-danger-text">
-					<Trans>Couldn't save the offer. Your draft is still here. Try again.</Trans>
+					<Icon name="warning-circle" /> <Trans>Couldn't save the offer. Your draft is still here. Try again.</Trans>
 				</p>
 			)}
 			<div className="flex gap-2">
-				<Button type="submit" loading={save.isPending} disabled={!payload.success}>
+				<Button type="submit" loading={save.isPending}>
 					<Trans>Save offer</Trans>
 				</Button>
 				<Button variant="ghost" disabled={save.isPending} onClick={onClose}>

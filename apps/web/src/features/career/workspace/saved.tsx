@@ -40,8 +40,9 @@ const kindLabel = (kind: SavedItemKind) =>
 		offer: t`Offer`,
 	})[kind];
 
-/** W18: everything the coach wrote for this job, newest first, each opening read-only in the tab that made it. */
+/** W18: saved records for this job, newest first, each opening read-only in the tab that made it. */
 export function SavedTab({ application, go }: WorkspaceTabProps) {
+	const company = application.company;
 	const queryClient = useQueryClient();
 	const saved = useSavedItems(application.id);
 	const remove = useMutation(orpc.career.deleteSavedItem.mutationOptions());
@@ -69,8 +70,7 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 				</h2>
 				<p className="max-w-[340px] text-sm text-ink-2">
 					<Trans>
-						Fit checks, briefings, practice feedback, debriefs, answers and replies land here as the other tabs create
-						them.
+						Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them.
 					</Trans>
 				</p>
 			</div>
@@ -103,7 +103,7 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 						</FilterChip>
 					))}
 				</div>
-				<p className="text-xs text-ink-3">{t`Everything the coach wrote for ${application.company}, newest first.`}</p>
+				<p className="text-xs text-ink-3">{t`Saved items for ${company}, newest first.`}</p>
 			</div>
 
 			<div role="list" className="overflow-hidden rounded-xl border border-line bg-surface">
@@ -228,7 +228,7 @@ function sourcesOf(item: SavedItem) {
 	const kind = item.data.kind;
 	if (kind === "fit" || kind === "briefing") parts.push(t`posting`);
 	if (kind === "debrief") parts.push(t`your notes`);
-	if (kind === "reply" || kind === "offer") parts.push(t`the message`);
+	if (kind === "reply") parts.push(t`the message`);
 	return parts.join(", ");
 }
 

@@ -3,9 +3,8 @@ import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
-import { careerOfferInputSchema, offerTermsSchema } from "@reactive-resume/schema/career";
-import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
-import { parseAmount } from "./amount";
+import { offerTermsSchema } from "@reactive-resume/schema/career";
+import { parseOfferEntry } from "@reactive-resume/schema/career-offer";
 import { client, useCareerAction, useCareerTime } from "./hooks";
 import { EditorSheet, LoadState } from "./shared";
 import { WallClockField } from "@/features/application-detail/date-field";
@@ -43,14 +42,17 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 	const [date, setDate] = useState("");
 	const [time, setTime] = useState("17:00");
 	const change = (patch: Partial<OfferTerms>) => setTerms((current) => ({ ...current, ...patch }));
-	const deadline = date ? fromZonedDateTime(date, time, timeZone) : null;
-	const payload = careerOfferInputSchema.safeParse({
-		...terms,
+	const [submitted, setSubmitted] = useState(false);
+	const [touched, setTouched] = useState<Record<string, boolean>>({});
+	const touch = (key: string) => setTouched((current) => ({ ...current, [key]: true }));
+	const { payload, amountErrors, deadlineError } = parseOfferEntry({
 		applicationId,
-		base: parseAmount(amounts.base, locale),
-		variable: parseAmount(amounts.variable, locale),
-		learning: parseAmount(amounts.learning, locale),
-		respondBy: date ? (profile.data ? deadline?.toISOString() : undefined) : null,
+		terms,
+		amounts,
+		date,
+		time,
+		locale,
+		timeZone: profile.isSuccess ? timeZone : null,
 	});
 	const dirty = !!(
 		terms.currency ||
@@ -118,12 +120,15 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 				<TextField
 					label={t`Currency`}
 					value={terms.currency}
+					onBlur={() => touch("currency")}
 					autoCapitalize="characters"
 					maxLength={3}
 					placeholder="EUR"
 					onChangeText={(currency) => change({ currency: currency.toUpperCase() })}
 					error={
-						terms.currency && !/^[A-Z]{3}$/.test(terms.currency) ? t`Enter a three-letter currency code.` : undefined
+						(submitted || touched.currency) && !/^[A-Z]{3}$/.test(terms.currency)
+							? t`Enter a three-letter currency code.`
+							: undefined
 					}
 				/>
 				<SelectSheet
@@ -148,9 +153,10 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 						label={label}
 						keyboardType="decimal-pad"
 						value={amounts[key]}
+						onBlur={() => touch(key)}
 						onChangeText={(value) => setAmounts((current) => ({ ...current, [key]: value }))}
 						error={
-							parseAmount(amounts[key], locale) === undefined
+							(submitted || touched[key]) && amountErrors[key]
 								? t`Enter a full amount, such as 95000, or leave blank.`
 								: undefined
 						}
@@ -176,17 +182,27 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 				))}
 				<WallClockField label={t`Respond by`} mode="date" value={date} onChange={setDate} clearable />
 				{date ? <WallClockField label={t`Time`} mode="time" value={time} onChange={setTime} /> : null}
-				<Text color="ink3">{t`Times are shown in ${timeZone}.`}</Text>
+				{profile.isSuccess ? <Text color="ink3">{t`Times are shown in ${timeZone}.`}</Text> : null}
 				{date ? <LoadState query={profile} /> : null}
-				{date && !deadline ? (
-					<Banner tone="danger" message={t`Check the application, currency, amounts and deadline before saving.`} />
+				{submitted && deadlineError ? (
+					<Banner
+						tone="danger"
+						message={
+							deadlineError === "timezone"
+								? t`Wait for your account timezone to load, retry if it failed, or clear the deadline.`
+								: t`Choose a valid date and time in ${timeZone}, or clear the deadline.`
+						}
+					/>
+				) : null}
+				{submitted && !payload.success ? (
+					<Banner tone="danger" message={t`Choose an application and correct the highlighted fields before saving.`} />
 				) : null}
 				{action.error ? <Banner tone="danger" message={action.error} /> : null}
 				<Button
 					label={t`Save offer`}
 					loading={action.pending}
-					disabled={!payload.success}
 					onPress={() => {
+						setSubmitted(true);
 						if (payload.success)
 							void action.run(
 								() => client.career.createOffer(payload.data),

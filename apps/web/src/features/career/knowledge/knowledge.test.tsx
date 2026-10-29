@@ -343,7 +343,11 @@ it("validates manual amounts and retains the draft after a failed save", async (
 	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
 	fireEvent.change(screen.getByLabelText("Currency"), { target: { value: "eur" } });
 	fireEvent.change(screen.getByLabelText("Base salary"), { target: { value: "95k" } });
-	expect((screen.getByRole("button", { name: "Save offer" }) as HTMLButtonElement).disabled).toBe(true);
+	expect(screen.getByLabelText("Base salary").getAttribute("aria-invalid")).not.toBe("true");
+	fireEvent.blur(screen.getByLabelText("Base salary"));
+	expect(screen.getByLabelText("Base salary").getAttribute("aria-invalid")).toBe("true");
+	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
+	expect(api.createOffer).not.toHaveBeenCalled();
 	fireEvent.change(screen.getByLabelText("Base salary"), { target: { value: "95,000" } });
 	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
 	await screen.findByText("Couldn't save the offer. Your draft is still here. Try again.");
@@ -361,4 +365,34 @@ it("validates manual amounts and retains the draft after a failed save", async (
 		learning: null,
 	});
 	view.unmount();
+});
+
+it("blocks invalid optional learning and skipped DST deadlines without losing the draft", async () => {
+	mount(<OfferEntry application={{ id: "job-a", company: "Acme", role: "Engineer" }} />);
+	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
+	fireEvent.change(screen.getByLabelText("Currency"), { target: { value: "EUR" } });
+	const learning = screen.getByLabelText("Learning budget");
+	fireEvent.change(learning, { target: { value: "95k" } });
+	expect(learning.getAttribute("aria-invalid")).not.toBe("true");
+	expect(screen.queryByText("Enter a full amount, such as 95000, or leave blank.")).toBeNull();
+	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
+	expect(learning.getAttribute("aria-invalid")).toBe("true");
+	expect(api.createOffer).not.toHaveBeenCalled();
+	expect((learning as HTMLInputElement).value).toBe("95k");
+	fireEvent.change(learning, { target: { value: "" } });
+	fireEvent.change(screen.getByLabelText("Respond by"), { target: { value: "2027-03-28" } });
+	fireEvent.change(screen.getByLabelText("Time"), { target: { value: "02:30" } });
+	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
+	expect(api.createOffer).not.toHaveBeenCalled();
+	expect(screen.getByText("Choose a valid date and time in Europe/Berlin, or clear the deadline.")).toBeTruthy();
+	expect((screen.getByLabelText("Time") as HTMLInputElement).value).toBe("02:30");
+	fireEvent.change(screen.getByLabelText("Respond by"), { target: { value: "" } });
+	api.createOffer.mockResolvedValue(null);
+	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
+	await waitFor(() =>
+		expect(api.createOffer).toHaveBeenCalledWith(
+			expect.objectContaining({ base: null, variable: null, learning: null, respondBy: null }),
+			expect.anything(),
+		),
+	);
 });

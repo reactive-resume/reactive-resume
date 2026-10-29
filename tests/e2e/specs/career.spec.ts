@@ -151,13 +151,30 @@ test("manual offers save and compare without an AI provider", async ({ authPage:
 		if (/career[/.](generate|applyReply)|ai-providers.*test/.test(request.url())) aiRequests.push(request.url());
 	});
 	await page.goto(`/dashboard/applications/${firstJob}/messages`);
+	await page
+		.getByLabel("Paste a message from Brightpath")
+		.fill(
+			"Hi Alex, we are pleased to offer you the Product engineer role at Brightpath. The written offer is EUR 95,000 per year, with 30 days of leave and a Berlin office. Please review the terms and let us know your questions.",
+		);
+	await page.getByRole("heading", { name: "Product engineer" }).click();
+	await page.getByRole("main").screenshot({ path: testInfo.outputPath("messages.png") });
 	await page.getByRole("button", { name: "Add offer", exact: true }).click();
 	await page.getByLabel("Currency", { exact: true }).fill("EUR");
 	await page.getByLabel("Base salary", { exact: true }).fill("95000");
+	await page.getByLabel("Learning budget", { exact: true }).fill("95k");
+	await expect(page.getByLabel("Learning budget")).not.toHaveAttribute("aria-invalid", "true");
+	await page.getByRole("button", { name: "Save offer", exact: true }).click();
+	await expect(page.getByLabel("Learning budget")).toHaveAttribute("aria-invalid", "true");
+	await expect(page.getByText("Enter a full amount, such as 95000, or leave blank.")).toBeVisible();
+	await page.getByLabel("Learning budget", { exact: true }).fill("");
 	await page.getByLabel("Where you work", { exact: true }).fill("Berlin");
 	await page.getByLabel("Leave", { exact: true }).fill("30 days");
 	await page.getByRole("button", { name: "Save offer", exact: true }).click();
 	await expect(page.getByRole("button", { name: "Save offer", exact: true })).toBeHidden();
+	await page.goto(`/dashboard/applications/${firstJob}/saved`);
+	await expect(page.getByRole("link", { name: "Open in Offers" })).toBeVisible();
+	await expect(page.getByText(/Everything the coach wrote/)).toHaveCount(0);
+	await expect(page.getByText("used the message", { exact: true })).toHaveCount(0);
 	await page.goto("/dashboard/career/offers");
 	await page.getByRole("button", { name: "Add offer", exact: true }).click();
 	await page.getByLabel("Application", { exact: true }).selectOption(secondJob);

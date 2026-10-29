@@ -587,3 +587,79 @@ priorLink().onOpen("previous");
 discardPrior().onConfirm();
 assert.deepEqual(calls, ["close-draft", "/applications/previous"], "explicit discard opens the prior application");
 console.log("PASS native prior-application draft confirmation and save lock");
+
+// Manual offers use the production parser; only native widgets, transport and profile loading are boundaries.
+const amountParser = load("../../../packages/utils/src/amount.ts");
+const timeParser = load("../../../packages/utils/src/timezone.ts", { zod });
+const careerSchema = load("../../../packages/schema/src/career.ts", {
+	zod,
+	"@reactive-resume/utils/region": { searchRegionsSchema: zod.z.array(zod.z.string()) },
+	"@reactive-resume/utils/timezone": timeParser,
+});
+const offerParser = load("../../../packages/schema/src/career-offer.ts", {
+	"./career": careerSchema,
+	"@reactive-resume/utils/amount": amountParser,
+	"@reactive-resume/utils/timezone": timeParser,
+});
+let offerProfile = { isSuccess: false, isPending: true, isError: false };
+const { OfferEntry } = load("features/career/offer-entry.tsx", {
+	"@reactive-resume/schema/career": careerSchema,
+	"@reactive-resume/schema/career-offer": offerParser,
+	"./hooks": {
+		useCareerTime: () => ({ locale: "en-US", timeZone: "Europe/Berlin", profile: offerProfile }),
+		useCareerAction: () => ({
+			pending: false,
+			run: async (work, success) => {
+				await work();
+				success();
+			},
+		}),
+		client: { career: { createOffer: async (input) => calls.push(input) } },
+	},
+	"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState" },
+	"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
+	"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
+});
+reset();
+const entryView = () => render(OfferEntry, { application: { id: "job", company: "Fictional Labs", role: "Engineer" } });
+control(entryView(), "Add offer").onPress();
+const formElement = nodes(entryView()).find((node) => typeof node.type === "function");
+assert.ok(formElement);
+reset();
+const offerView = () => render(formElement.type, { ...formElement.props, onClose() {} });
+control(offerView(), "Currency").onChangeText("EUR");
+control(offerView(), "Learning budget").onChangeText("95k");
+assert.equal(control(offerView(), "Learning budget").error, undefined, "typing shows no premature error");
+control(offerView(), "Learning budget").onBlur();
+assert.match(control(offerView(), "Learning budget").error, /full amount/);
+control(offerView(), "Save offer").onPress();
+assert.deepEqual(calls, [], "invalid optional learning cannot save");
+assert.equal(control(offerView(), "Learning budget").value, "95k", "invalid draft remains editable");
+control(offerView(), "Learning budget").onChangeText("");
+control(offerView(), "Respond by").onChange("2027-03-28");
+for (const state of ["loading", "failure"]) {
+	offerProfile = { isSuccess: false, isPending: state === "loading", isError: state === "failure" };
+	control(offerView(), "Save offer").onPress();
+	assert.deepEqual(calls, [], `profile ${state} cannot silently discard deadline`);
+	assert.ok(nodes(offerView()).some((node) => node.type === "Banner" && /account timezone/.test(node.props.message)));
+	assert.equal(control(offerView(), "Respond by").value, "2027-03-28");
+}
+offerProfile = { isSuccess: true, isPending: false, isError: false };
+control(offerView(), "Time").onChange("02:30");
+control(offerView(), "Save offer").onPress();
+assert.deepEqual(calls, [], "nonexistent local time cannot save");
+control(offerView(), "Time").onChange("03:30");
+control(offerView(), "Save offer").onPress();
+await settle();
+assert.equal(calls[0].respondBy, "2027-03-28T01:30:00.000Z");
+assert.equal(calls[0].learning, null);
+assert.equal(calls[0].base, null);
+assert.equal(calls[0].currency, "EUR");
+assert.equal(calls[0].period, "year");
+calls.length = 0;
+offerProfile = { isSuccess: false, isPending: false, isError: true };
+control(offerView(), "Respond by").onChange("");
+control(offerView(), "Save offer").onPress();
+await settle();
+assert.equal(calls[0].respondBy, null, "a genuinely blank deadline needs no loaded profile");
+console.log("PASS native offer validation, draft preservation, profile loading/failure and blank deadline");
