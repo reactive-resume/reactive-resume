@@ -5,14 +5,16 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { AppleLogoIcon, GooglePlayLogoIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { Label } from "@reactive-resume/ui/components/label";
 import { supportedLocales } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { prefersReducedMotion, SCENE, useLanding } from "./scroll";
 import { CtaLink, Doodle, labelClass } from "./ui";
 import { RollingNumber } from "@/components/ui/rolling-number";
+import { LocaleCombobox } from "@/features/locale/combobox";
 import { orpc } from "@/libs/orpc/client";
 
 const crowdinUrl = "https://crowdin.com/project/reactive-resume";
@@ -101,6 +103,7 @@ const words = [
 /** 09 Languages. The word turns over every 1.9s while the section is near; it can be paused. */
 export function Languages() {
 	const { i18n } = useLingui();
+	const languageId = useId();
 	const languageCount = i18n.number(supportedLocales.length);
 	const near = useLanding((state) => state.activeScene >= SCENE.numbers && state.activeScene <= SCENE.support);
 	const reducedMotion = useLanding((state) => state.reducedMotion);
@@ -173,6 +176,10 @@ export function Languages() {
 					{t`Help translate it into yours.`}
 				</a>
 			</p>
+			<div className="grid w-full max-w-80 gap-1.5 text-start">
+				<Label htmlFor={languageId}>{t`Change language`}</Label>
+				<LocaleCombobox id={languageId} />
+			</div>
 		</section>
 	);
 }
