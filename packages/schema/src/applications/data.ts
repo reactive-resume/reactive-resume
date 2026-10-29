@@ -174,3 +174,18 @@ export type InterviewTimelineEntry = Extract<ApplicationTimelineEntry, { type: "
 export const aiMetadataSchema = z.record(z.string(), z.unknown());
 
 export type AiMetadata = z.infer<typeof aiMetadataSchema>;
+
+/** Active post-submission stages confirm sending; closing a saved job alone does not. */
+export function hasApplicationSubmission(application: {
+	status: ApplicationStatus;
+	activity: readonly ApplicationTimelineEntry[];
+}): boolean {
+	const sent = (status: ApplicationStatus) => status !== "saved" && status !== "closed";
+	return (
+		sent(application.status) ||
+		(application.status === "closed" &&
+			application.activity.some(
+				(entry) => entry.type === "stage" && entry.canonicalTransition !== false && sent(entry.stage),
+			))
+	);
+}
