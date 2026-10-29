@@ -55,6 +55,8 @@ const SAVE_DELAY_MS = 800;
 
 type LetterEditorStore = {
 	letter: CoverLetter | null;
+	/** The server's name, kept apart from optimistic edits for the browser title. */
+	savedName: string | null;
 	status: LetterSaveStatus;
 	/** Sender editing pauses while a link, restore or template change replaces server state. */
 	changing: boolean;
@@ -85,6 +87,7 @@ const hasEdits = (edits: LetterEdits) => Object.keys(edits).length > 0;
 
 export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 	letter: null,
+	savedName: null,
 	status: "saved",
 	changing: false,
 	pending: {},
@@ -95,7 +98,15 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 		clearTimeout(timer);
 		drafting?.abort();
 		drafting = null;
-		set({ letter, status: "saved", changing: false, pending: {}, sessionId: generateId(), draft: idleDraft });
+		set({
+			letter,
+			savedName: letter.name,
+			status: "saved",
+			changing: false,
+			pending: {},
+			sessionId: generateId(),
+			draft: idleDraft,
+		});
 	},
 
 	edit: (input) => {
@@ -141,6 +152,7 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 					current(state)
 						? {
 								letter: applyEdits(saved, mergeEdits(pending, state.pending)),
+								savedName: saved.name,
 								status: hasEdits(state.pending) ? "saving" : "saved",
 							}
 						: state,
@@ -175,7 +187,7 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 			const next = await action(letter);
 			set((state) =>
 				state.letter?.id === letter.id && state.sessionId === sessionId
-					? { letter: applyEdits(next, state.pending) }
+					? { letter: applyEdits(next, state.pending), savedName: next.name }
 					: state,
 			);
 			return next;
@@ -188,7 +200,15 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 		clearTimeout(timer);
 		drafting?.abort();
 		drafting = null;
-		set({ letter: null, status: "saved", changing: false, pending: {}, sessionId: generateId(), draft: idleDraft });
+		set({
+			letter: null,
+			savedName: null,
+			status: "saved",
+			changing: false,
+			pending: {},
+			sessionId: generateId(),
+			draft: idleDraft,
+		});
 	},
 }));
 
