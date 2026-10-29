@@ -593,7 +593,7 @@ const amountParser = load("../../../packages/utils/src/amount.ts");
 const timeParser = load("../../../packages/utils/src/timezone.ts", { zod });
 const careerSchema = load("../../../packages/schema/src/career.ts", {
 	zod,
-	"@reactive-resume/utils/region": { searchRegionsSchema: zod.z.array(zod.z.string()) },
+	"@reactive-resume/utils/region": { searchRegionsSchema: zod.z.array(zod.z.string()).nullable().optional() },
 	"@reactive-resume/utils/timezone": timeParser,
 });
 const offerParser = load("../../../packages/schema/src/career-offer.ts", {
@@ -663,3 +663,44 @@ control(offerView(), "Save offer").onPress();
 await settle();
 assert.equal(calls[0].respondBy, null, "a genuinely blank deadline needs no loaded profile");
 console.log("PASS native offer validation, draft preservation, profile loading/failure and blank deadline");
+
+// Native Save must stay reachable for validation, then focus the actual missing input.
+const { Stories } = load("features/career/stories.tsx", {
+	"@reactive-resume/schema/career": careerSchema,
+	"./hooks": {
+		useCareerQueries: () => ({ stories: { data: [] }, facts: { data: [] } }),
+		useUndoRows: () => ({ hidden: [] }),
+		useCareerAction: () => ({ pending: false, run: (save) => save() }),
+		client: { career: { saveStory: (payload) => calls.push({ story: payload }) } },
+	},
+	"./shared": { Actions: "Actions", EditorSheet: "EditorSheet", LoadState: "LoadState", SwitchRow: "SwitchRow" },
+});
+reset();
+control(render(Stories, {}), "Add a story").onPress();
+const storyEditor = nodes(render(Stories, {})).find(
+	(node) => typeof node.type === "function" && node.props.story === null,
+);
+assert.ok(storyEditor, "Add a story opens the editor");
+reset();
+const storyView = () => render(storyEditor.type, storyEditor.props);
+control(storyView(), "Title").onChangeText("Fictional setup repair");
+control(storyView(), "Situation (required)").onChangeText("Customers could not finish setup.");
+control(storyView(), "Action (required)").onChangeText("I repaired setup.");
+control(storyView(), "Task (required)").onChangeText(" ");
+const originalAnimationFrame = globalThis.requestAnimationFrame;
+try {
+	globalThis.requestAnimationFrame = (callback) => callback();
+	assert.equal(control(storyView(), "Save story").disabled, false, "Missing parts cannot silently disable Save");
+	control(storyView(), "Task (required)").ref({ focus: () => calls.push("focus-task") });
+	control(storyView(), "Save story").onPress();
+	assert.deepEqual(calls, ["focus-task"], "Invalid drafts focus Task without making a request");
+	assert.equal(control(storyView(), "Task (required)").error, "Complete Task before saving.");
+	assert.equal(control(storyView(), "Situation (required)").value, "Customers could not finish setup.");
+	control(storyView(), "Task (required)").onChangeText("Restore setup.");
+	control(storyView(), "Save story").onPress();
+	assert.equal(calls.at(-1).story.result, "");
+	assert.equal(calls.at(-1).story.reflection, "");
+} finally {
+	globalThis.requestAnimationFrame = originalAnimationFrame;
+}
+console.log("PASS native story validation focus, draft preservation and optional outcomes");

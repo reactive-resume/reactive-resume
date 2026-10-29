@@ -1,5 +1,5 @@
 import type { IconName } from "./icon";
-import type { ComponentRef, ReactNode } from "react";
+import type { ComponentRef, ReactNode, Ref } from "react";
 import type { TextInputProps } from "react-native";
 import { useLingui } from "@lingui/react/macro";
 import { useEffect, useRef, useState } from "react";
@@ -17,6 +17,7 @@ const android = Platform.OS === "android";
 
 export type TextFieldProps = Omit<TextInputProps, "style" | "value" | "onChangeText" | "placeholderTextColor"> & {
 	label: string;
+	ref?: Ref<ComponentRef<typeof TextInput> | null> | undefined;
 	value: string;
 	onChangeText: (value: string) => void;
 	/** Helper text under the field. Replaced by `error` when there is one. */
@@ -72,6 +73,7 @@ type InputBoxProps = Omit<TextFieldProps, "label" | "helper"> & {
 /** The bordered box: 1 pt `lineStrong`, 2 pt `accent` while focused, 2 pt `dangerText` with an error. */
 function InputBox({
 	accessibilityLabel,
+	ref: inputRef,
 	hint,
 	error,
 	trailing,
@@ -112,7 +114,11 @@ function InputBox({
 				</Text>
 			) : null}
 			<TextInput
-				ref={ref}
+				ref={(node) => {
+					ref.current = node;
+					if (typeof inputRef === "function") return inputRef(node);
+					if (inputRef) inputRef.current = node;
+				}}
 				accessibilityLabel={accessibilityLabel}
 				accessibilityHint={hint}
 				placeholderTextColor={colors.ink3}

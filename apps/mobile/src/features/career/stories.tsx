@@ -1,9 +1,10 @@
 import type { Fact, Story } from "./hooks";
 import type { CareerStoryData } from "@reactive-resume/schema/career";
+import type { ComponentRef } from "react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
-import { useState } from "react";
-import { View } from "react-native";
+import { useRef, useState } from "react";
+import { type TextInput, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { careerStoryInputSchema } from "@reactive-resume/schema/career";
 import { client, useCareerAction, useCareerQueries, useUndoRows } from "./hooks";
@@ -24,13 +25,18 @@ import {
 } from "@/ui";
 
 const parts = () =>
-	[
-		{ key: "situation", label: t`Situation (required)`, max: 4000 },
-		{ key: "task", label: t`Task (required)`, max: 4000 },
-		{ key: "action", label: t`Action (required)`, max: 6000 },
-		{ key: "result", label: t`Result`, max: 4000 },
-		{ key: "reflection", label: t`Reflection`, max: 4000 },
-	] as const;
+	(
+		[
+			{ key: "situation", label: t`Situation`, max: 4000 },
+			{ key: "task", label: t`Task`, max: 4000 },
+			{ key: "action", label: t`Action`, max: 6000 },
+			{ key: "result", label: t`Result`, max: 4000 },
+			{ key: "reflection", label: t`Reflection`, max: 4000 },
+		] as const
+	).map((part) => ({
+		...part,
+		required: !careerStoryInputSchema.shape[part.key].safeParse("").success,
+	}));
 export function Stories() {
 	const { t } = useLingui();
 	const { space } = useTheme();
@@ -117,12 +123,19 @@ function StoryEditor({ story, facts, onClose }: StoryEditorProps) {
 			},
 	);
 	const action = useCareerAction();
+	const [tried, setTried] = useState(false);
+	const inputs = useRef<
+		Partial<Record<"title" | ReturnType<typeof parts>[number]["key"], ComponentRef<typeof TextInput> | null>>
+	>({});
 	const available = facts.filter(
 		(fact) => fact.status === "active" && (!fact.applicationId || fact.applicationId === draft.applicationId),
 	);
 	const change = (patch: Partial<CareerStoryData>) => setDraft((current) => ({ ...current, ...patch }));
 	const payload = { ...draft, factIds: draft.factIds.filter((id) => available.some((fact) => fact.id === id)) };
 	const valid = careerStoryInputSchema.safeParse(payload).success;
+	const missingTitle = !draft.title.trim();
+	const missingParts = parts().filter((part) => part.required && !draft[part.key].trim());
+	const firstMissing = missingTitle ? "title" : missingParts[0]?.key;
 	const dirty =
 		JSON.stringify(draft) !==
 		JSON.stringify(
@@ -146,12 +159,30 @@ function StoryEditor({ story, facts, onClose }: StoryEditorProps) {
 			title={story ? t`Edit STARR story` : t`New STARR story`}
 		>
 			<View style={{ padding: space.s4, gap: space.s4 }}>
-				<TextField label={t`Title`} value={draft.title} maxLength={200} onChangeText={(title) => change({ title })} />
+				<Text color="ink3">{t`Situation, Task and Action are required. Leave Result and Reflection blank until you can support them.`}</Text>
+				<TextField
+					label={t`Title`}
+					ref={(input) => {
+						inputs.current.title = input;
+					}}
+					value={draft.title}
+					maxLength={200}
+					error={tried && missingTitle ? t`Give the story a title before you can save.` : undefined}
+					onChangeText={(title) => change({ title })}
+				/>
 				<ChipInput label={t`Tags`} values={draft.tags} onChange={(tags) => change({ tags })} />
 				{parts().map((part) => (
 					<TextArea
 						key={part.key}
-						label={part.label}
+						label={`${part.label} ${part.required ? t`(required)` : t`(optional)`}`}
+						ref={(input) => {
+							inputs.current[part.key] = input;
+						}}
+						error={
+							tried && missingParts.some((missing) => missing.key === part.key)
+								? t`Complete ${part.label} before saving.`
+								: undefined
+						}
 						value={draft[part.key]}
 						maxLength={part.max}
 						onChangeText={(value) => change({ [part.key]: value })}
@@ -173,8 +204,15 @@ function StoryEditor({ story, facts, onClose }: StoryEditorProps) {
 				<Button
 					label={t`Save story`}
 					loading={action.pending}
-					disabled={!valid}
+					disabled={!valid && !firstMissing}
 					onPress={() => {
+						setTried(true);
+						if (!valid) {
+							if (firstMissing) {
+								requestAnimationFrame(() => inputs.current[firstMissing]?.focus());
+							}
+							return;
+						}
 						void action.run(() => client.career.saveStory({ ...payload, ...(story ? { id: story.id } : {}) }), onClose);
 					}}
 				/>
