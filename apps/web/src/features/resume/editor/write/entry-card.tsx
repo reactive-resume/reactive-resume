@@ -1,15 +1,13 @@
 import type { PageSettings } from "./entries";
 import type { Entry, WriteSection } from "./model";
 import type { MessageDescriptor } from "@lingui/core";
-import type { KeyboardEvent, ReactNode } from "react";
-import { useDirection } from "@base-ui/react/direction-provider";
+import type { KeyboardEvent, ReactNode, RefObject } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { msg, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { AnimatePresence, m } from "motion/react";
-import { useEffect, useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
 import {
@@ -24,6 +22,7 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
+import { Sheet, SheetClose, SheetContent } from "@reactive-resume/ui/components/sheet";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
@@ -34,7 +33,7 @@ import { createEntry, describeEntry, getEntries, getPrimaryField, isDraftEntry }
 import { entryElementId, keepOpenedEntryInView } from "./reveal";
 import { useSectionTitle } from "./section-row";
 import { useCurrentResume, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { D3, DRAG_SETTLE, EASE, EXIT } from "@/libs/motion";
+import { DRAG_SETTLE } from "@/libs/motion";
 import { getCompatibleMoveTargets, getSourceSectionTitle, moveItem } from "@/libs/resume/move-item";
 
 const DRAFT_HINTS: Record<string, MessageDescriptor> = {
@@ -74,11 +73,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 		transition: DRAG_SETTLE,
 	});
 	const isPhone = useBreakpoint() === "mobile";
-
-	// The first field took focus as it mounted; later openings shouldn't steal focus again.
-	useEffect(() => {
-		if (autoFocus) useEditorStore.setState({ focusEntryId: null });
-	}, [autoFocus]);
+	const triggerRef = useRef<HTMLButtonElement>(null);
 
 	if (!entry) return null;
 
@@ -129,6 +124,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 					</button>
 				)}
 				<button
+					ref={triggerRef}
 					type="button"
 					aria-expanded={open}
 					aria-label={t`${title || t`Untitled`}, entry ${index + 1} of ${count}`}
@@ -182,67 +178,75 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 				</Collapsible>
 			)}
 
-			<AnimatePresence>
-				{open && isPhone && (
-					<PhoneEntryScreen
-						key="entry"
-						section={section}
-						title={title}
-						locked={locked}
-						onDelete={() => deleteEntry(section, entryId)}
-						onBack={() => useEditorStore.setState({ selection: null })}
-					>
-						{fields}
-					</PhoneEntryScreen>
-				)}
-			</AnimatePresence>
+			{isPhone && (
+				<PhoneEntryScreen
+					open={open}
+					section={section}
+					title={title}
+					locked={locked}
+					triggerRef={triggerRef}
+					onDelete={() => deleteEntry(section, entryId)}
+					onBack={() => useEditorStore.setState({ selection: null })}
+				>
+					{fields}
+				</PhoneEntryScreen>
+			)}
 		</div>
 	);
 }
 
 type PhoneEntryScreenProps = {
+	open: boolean;
 	section: WriteSection;
 	title: string;
 	locked: boolean;
+	triggerRef: RefObject<HTMLButtonElement | null>;
 	onBack: () => void;
 	onDelete: () => void;
 	children: ReactNode;
 };
 
 /** Phones: an open entry pushes in full screen, with a back label naming its section and 44px fields. */
-function PhoneEntryScreen({ section, title, locked, onBack, onDelete, children }: PhoneEntryScreenProps) {
+function PhoneEntryScreen({
+	open,
+	section,
+	title,
+	locked,
+	triggerRef,
+	onBack,
+	onDelete,
+	children,
+}: PhoneEntryScreenProps) {
 	const sectionTitle = useSectionTitle(section);
-	// Off-screen at the end edge: the screen pushes in from there and goes back there.
-	const offscreen = useDirection() === "rtl" ? "translateX(-100%)" : "translateX(100%)";
 
 	return (
-		<m.div
-			role="dialog"
-			aria-label={title || t`Untitled`}
-			className="fixed inset-0 z-40 flex flex-col bg-surface pb-[env(safe-area-inset-bottom)]"
-			initial={{ transform: offscreen }}
-			animate={{ transform: "translateX(0%)", transition: { duration: D3, ease: EASE } }}
-			exit={{ transform: offscreen, transition: { duration: D3 * EXIT, ease: EASE } }}
-		>
-			<div className="flex h-14 shrink-0 items-center gap-1 border-b border-line px-1.5">
-				<button
-					type="button"
-					onClick={onBack}
-					className="flex h-11 items-center gap-0.5 rounded-lg px-2 text-[15px] font-medium text-accent-text"
-				>
-					<Icon name="caret-left" size={24} />
-					{sectionTitle}
-				</button>
-				<span className="min-w-0 flex-1" />
-				{!locked && <IconButton icon="trash" label={t`Delete entry`} className="text-danger-text" onClick={onDelete} />}
-			</div>
-			<fieldset
-				disabled={locked}
-				className="m-0 grid min-w-0 flex-1 auto-rows-min gap-y-3 overflow-y-auto border-0 p-4 [&_input]:h-11"
+		<Sheet open={open} onOpenChange={(nextOpen) => !nextOpen && onBack()}>
+			<SheetContent
+				aria-label={title || t`Untitled`}
+				aria-modal="true"
+				showCloseButton={false}
+				initialFocus={true}
+				finalFocus={triggerRef}
+				className="gap-0 bg-surface pb-[env(safe-area-inset-bottom)]"
 			>
-				{children}
-			</fieldset>
-		</m.div>
+				<div className="flex h-14 shrink-0 items-center gap-1 border-b border-line px-1.5">
+					<SheetClose className="flex h-11 items-center gap-0.5 rounded-lg px-2 text-[15px] font-medium text-accent-text">
+						<Icon name="caret-left" size={24} />
+						{sectionTitle}
+					</SheetClose>
+					<span className="min-w-0 flex-1" />
+					{!locked && (
+						<IconButton icon="trash" label={t`Delete entry`} className="text-danger-text" onClick={onDelete} />
+					)}
+				</div>
+				<fieldset
+					disabled={locked}
+					className="m-0 grid min-w-0 flex-1 auto-rows-min gap-y-3 overflow-y-auto border-0 p-4 [&_input]:h-11"
+				>
+					{children}
+				</fieldset>
+			</SheetContent>
+		</Sheet>
 	);
 }
 
