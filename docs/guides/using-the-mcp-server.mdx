@@ -193,7 +193,7 @@ The server keeps the original 43 tool names and adds API-derived tools for the r
 | `list_cover_letters`         | Lists your cover letters. Filter by name (`search`), `resumeId` or `applicationId`.                                   |
 | `read_cover_letter`          | Returns one letter, including its `revision`.                                                                         |
 | `create_cover_letter`        | Creates a letter, optionally linked to a resume (for its sender details and design) or an application.                |
-| `update_cover_letter`        | Changes a letter's text, recipient, template or links. Needs the latest `revision` as `expectedRevision`.             |
+| `update_cover_letter`        | Changes a letter's text, recipient, template, links, or sender details when unlinked. Needs `expectedRevision`.       |
 | `refresh_cover_letter_style` | Copies the sender details and design from a resume, keeping the letter's text and template. Needs `expectedRevision`. |
 | `duplicate_cover_letter`     | Copies a letter.                                                                                                      |
 | `delete_cover_letter`        | Moves a letter to Trash for 30 days. Needs `expectedRevision`.                                                        |
