@@ -56,6 +56,7 @@ export function useValidators() {
 }
 
 type BoundTextProps = {
+	focus?: typeof resumeFieldFocus;
 	label: string;
 	value: string;
 	onChange: (value: string) => void;
@@ -68,7 +69,15 @@ type BoundTextProps = {
 };
 
 /** A text field bound to the draft. Errors appear after the first blur and say how to fix them. */
-export function BoundText({ label, value, onChange, validate, disabled, ...props }: BoundTextProps) {
+export function BoundText({
+	label,
+	value,
+	onChange,
+	validate,
+	disabled,
+	focus = resumeFieldFocus,
+	...props
+}: BoundTextProps) {
 	const [touched, setTouched] = useState(false);
 	return (
 		<TextField
@@ -76,10 +85,10 @@ export function BoundText({ label, value, onChange, validate, disabled, ...props
 			value={value}
 			editable={!disabled}
 			onChangeText={onChange}
-			onFocus={resumeFieldFocus.onFocus}
+			onFocus={focus.onFocus}
 			onBlur={() => {
 				setTouched(true);
-				resumeFieldFocus.onBlur();
+				focus.onBlur();
 			}}
 			error={touched ? validate?.(value) : undefined}
 			autoCapitalize={props.keyboardType ? "none" : "sentences"}
