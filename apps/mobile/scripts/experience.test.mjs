@@ -587,3 +587,49 @@ priorLink().onOpen("previous");
 discardPrior().onConfirm();
 assert.deepEqual(calls, ["close-draft", "/applications/previous"], "explicit discard opens the prior application");
 console.log("PASS native prior-application draft confirmation and save lock");
+
+// Native Save must stay reachable for validation, then focus the actual missing input.
+const careerSchema = load("../../../packages/schema/src/career.ts", {
+	zod,
+	"@reactive-resume/utils/region": { searchRegionsSchema: zod.z.array(zod.z.string()).nullable().optional() },
+	"@reactive-resume/utils/timezone": { timezoneSchema: zod.z.string() },
+});
+const { Stories } = load("features/career/stories.tsx", {
+	"@reactive-resume/schema/career": careerSchema,
+	"./hooks": {
+		useCareerQueries: () => ({ stories: { data: [] }, facts: { data: [] } }),
+		useUndoRows: () => ({ hidden: [] }),
+		useCareerAction: () => ({ pending: false, run: (save) => save() }),
+		client: { career: { saveStory: (payload) => calls.push({ story: payload }) } },
+	},
+	"./shared": { Actions: "Actions", EditorSheet: "EditorSheet", LoadState: "LoadState", SwitchRow: "SwitchRow" },
+});
+reset();
+control(render(Stories, {}), "Add a story").onPress();
+const storyEditor = nodes(render(Stories, {})).find(
+	(node) => typeof node.type === "function" && node.props.story === null,
+);
+assert.ok(storyEditor, "Add a story opens the editor");
+reset();
+const storyView = () => render(storyEditor.type, storyEditor.props);
+control(storyView(), "Title").onChangeText("Fictional setup repair");
+control(storyView(), "Situation (required)").onChangeText("Customers could not finish setup.");
+control(storyView(), "Action (required)").onChangeText("I repaired setup.");
+control(storyView(), "Task (required)").onChangeText(" ");
+const originalAnimationFrame = globalThis.requestAnimationFrame;
+try {
+	globalThis.requestAnimationFrame = (callback) => callback();
+	assert.equal(control(storyView(), "Save story").disabled, false, "Missing parts cannot silently disable Save");
+	control(storyView(), "Task (required)").ref({ focus: () => calls.push("focus-task") });
+	control(storyView(), "Save story").onPress();
+	assert.deepEqual(calls, ["focus-task"], "Invalid drafts focus Task without making a request");
+	assert.equal(control(storyView(), "Task (required)").error, "Complete Task before saving.");
+	assert.equal(control(storyView(), "Situation (required)").value, "Customers could not finish setup.");
+	control(storyView(), "Task (required)").onChangeText("Restore setup.");
+	control(storyView(), "Save story").onPress();
+	assert.equal(calls.at(-1).story.result, "");
+	assert.equal(calls.at(-1).story.reflection, "");
+} finally {
+	globalThis.requestAnimationFrame = originalAnimationFrame;
+}
+console.log("PASS native story validation focus, draft preservation and optional outcomes");
