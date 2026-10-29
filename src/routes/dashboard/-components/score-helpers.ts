@@ -12,6 +12,9 @@ export function getEvaluationBadgeClass(score: number): string {
 
 export function getStatusBadgeClass(status: string): { bg: string; text: string; label: string } {
 	switch (status) {
+		case "not_reviewed":
+		case "DRAFT":
+			return { bg: "bg-muted", text: "text-muted-foreground", label: "Draft" };
 		case "evaluated":
 		case "FACULTY_VERIFIED":
 			return { bg: "bg-emerald-50", text: "text-emerald-700", label: "Verified" };
@@ -29,6 +32,8 @@ export function getStatusBadgeClass(status: string): { bg: string; text: string;
 			return { bg: "bg-amber-50", text: "text-amber-700", label: "PO: Revision Requested" };
 		case "RESUBMITTED_TO_PO":
 			return { bg: "bg-primary/10", text: "text-primary", label: "Resubmitted to PO" };
+		case "PO_VERIFIED":
+			return { bg: "bg-emerald-50", text: "text-emerald-700", label: "PO Verified" };
 		case "APPROVED":
 			return { bg: "bg-emerald-50", text: "text-emerald-700", label: "Approved" };
 		default:

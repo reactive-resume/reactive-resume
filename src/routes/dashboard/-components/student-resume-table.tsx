@@ -63,7 +63,10 @@ export function StudentResumeTable({ students, onReview, onStudentClick }: Stude
 				const filteredResumes =
 					statusFilter === "all" ? student.resumes : student.resumes.filter((r) => stageOf(r) === statusFilter);
 
-				if (filteredResumes.length === 0 && student.resumes.length > 0 && statusFilter !== "all") return null;
+				// A stage chip is a work queue, not a roster: a student with nothing in this stage —
+				// including one with no resumes at all — has nothing to show for it. "All" still
+				// lists everyone, so the students yet to start stay one chip away.
+				if (filteredResumes.length === 0 && statusFilter !== "all") return null;
 
 				return { ...student, resumes: filteredResumes };
 			})
