@@ -77,3 +77,12 @@ it.each([
 	expect(text.sub).toContain(time);
 	expect(source.activity[0]?.at).toEqual(new Date("2026-10-30T09:00:00Z"));
 });
+
+it("keeps a follow-up on the calendar date selected in its browser-local editor", () => {
+	const at = new Date(2026, 9, 30, 9);
+	const step = getNextStep(application({ followUpAt: at }), NOW);
+	const expected = at.toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+	for (const timeZone of ["Pacific/Honolulu", "Pacific/Kiritimati"]) {
+		expect(describeNextStep(step, { status: "applied", closedReason: null }, "en-GB", timeZone).sub).toBe(expected);
+	}
+});

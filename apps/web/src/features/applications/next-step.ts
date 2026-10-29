@@ -79,11 +79,11 @@ export type NextStepText = { icon: IconName; title: string; sub: string; tone: "
 
 const formatWhen = (date: Date, locale: string, timeZone: string, withTime: boolean) =>
 	date.toLocaleString(locale, {
-		timeZone,
 		weekday: "short",
 		day: "numeric",
 		month: "short",
-		...(withTime ? { hour: "2-digit", minute: "2-digit" } : {}),
+		// Follow-ups retain the browser-local calendar date used by their date-only editor.
+		...(withTime ? { timeZone, hour: "2-digit", minute: "2-digit" } : {}),
 	});
 
 /** How a next step reads in the list, on cards and in the detail sheet. */
