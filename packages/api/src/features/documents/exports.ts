@@ -44,8 +44,8 @@ async function fileResponse(
 			else {
 				const blob =
 					format === "odt"
-						? await (await import("@reactive-resume/odt")).buildOdt(data, resolveTitle)
-						: await (await import("@reactive-resume/docx")).buildDocx(data, resolveTitle);
+						? await (await import("@reactive-resume/odt")).buildOdt(data, resolveTitle, { includeCoverLetterHeader })
+						: await (await import("@reactive-resume/docx")).buildDocx(data, resolveTitle, { includeCoverLetterHeader });
 				body = new File([blob], filename, { type: blob.type });
 			}
 		}

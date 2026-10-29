@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ApplicationList } from "./list-view";
 
 const mocks = vi.hoisted(() => ({ breakpoint: "desktop", invalidate: vi.fn() }));
+vi.mock("@tanstack/react-router", () => ({ useRouteContext: () => ({ session: { user: { timezone: "UTC" } } }) }));
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		applications: {

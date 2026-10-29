@@ -1,4 +1,4 @@
-import type { SectionTitleResolver } from "./types";
+import type { OdtRenderOptions, SectionTitleResolver } from "./types";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Zippable } from "fflate";
 import { strToU8, zipSync } from "fflate";
@@ -12,10 +12,14 @@ export type { SectionTitleResolver } from "./types";
  * locale-aware section headings (titles are stored empty and resolved at render time).
  */
 // oxlint-disable-next-line require-await -- keep synchronous renderer errors on the public Promise rejection path.
-export async function buildOdt(data: ResumeData, resolveTitle?: SectionTitleResolver): Promise<Blob> {
+export async function buildOdt(
+	data: ResumeData,
+	resolveTitle?: SectionTitleResolver,
+	options?: OdtRenderOptions,
+): Promise<Blob> {
 	const archive: Zippable = {};
 	// ODF wants `mimetype` as the first entry, stored uncompressed; `buildOdtFiles` lists it first.
-	for (const [path, content] of Object.entries(buildOdtFiles(parseResumeData(data), resolveTitle))) {
+	for (const [path, content] of Object.entries(buildOdtFiles(parseResumeData(data), resolveTitle, options))) {
 		archive[path] = [strToU8(content), { level: path === "mimetype" ? 0 : 6 }];
 	}
 	return new Blob([zipSync(archive)], { type: ODT_MIME_TYPE });

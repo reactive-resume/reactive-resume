@@ -1,7 +1,6 @@
 import type { Application } from "../../types";
 import type { ApplicationTimelineEntry, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
-import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -28,6 +27,7 @@ import { interviewKindOf } from "../../interviews";
 import { getCategoryLane, getLaneLabel, isCurrentLaneEvent } from "../../lanes";
 import { useInvalidateApplications } from "../../use-application-actions";
 import { useApplicationLanes } from "../../use-application-lanes";
+import { useCareerTime } from "@/features/career/shared";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
 import { orpc } from "@/libs/orpc/client";
@@ -50,7 +50,7 @@ type ActivityProps = {
  * date (and a note's text) or deletes it; the entry that anchors the current stage can't be deleted.
  */
 export function Activity({ application, onOpenInterview }: ActivityProps) {
-	const { i18n } = useLingui();
+	const { format } = useCareerTime();
 	const invalidate = useInvalidateApplications();
 	const confirm = useConfirm();
 	const { lanes } = useApplicationLanes();
@@ -82,7 +82,7 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 	const sorted = [...application.activity].sort(byNewest);
 	const anchorId = sorted.find((entry) => isCurrentLaneEvent(entry, application))?.id;
 	const formatDate = (value: Date | string, withTime: boolean) =>
-		new Date(value).toLocaleDateString(i18n.locale, {
+		format(value, {
 			month: "short",
 			day: "numeric",
 			// Stage and note entries are whole days, stored at noon UTC.
