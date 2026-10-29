@@ -47,7 +47,7 @@ const DesignSourceContext = createContext<DesignSource | null>(null);
 /** Points the Type, Color and Page groups at another design than the open resume's (a letter's own). */
 export const DesignSourceProvider = DesignSourceContext.Provider;
 
-function useDesign(): DesignSource {
+export function useDesign(): DesignSource {
 	const source = useContext(DesignSourceContext);
 	const data = useResumeData();
 	const updateResumeData = useUpdateResumeData();

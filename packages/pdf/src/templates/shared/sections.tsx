@@ -22,6 +22,7 @@ import type {
 } from "@reactive-resume/schema/resume/data";
 import type { ReactNode } from "react";
 import { Children, createContext, Fragment, isValidElement, use } from "react";
+import { entryHeaderOf } from "@reactive-resume/schema/resume/data";
 import { View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
 import { HEADING_NODE_PROP } from "../../page-map";
@@ -42,16 +43,19 @@ import {
 } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { ITEM_HEADER_ROW_PART_KEYS } from "../../semantic/shared-parts";
+import { getPrimaryTint } from "./color-helpers";
 import { getSectionItemRows, getSectionItemsLayout, shouldUseSectionTimeline } from "./columns";
 import { getWebsiteDisplayText } from "./contact";
 import {
 	TemplatePlacementProvider,
+	useTemplateColors,
 	useTemplateFeature,
 	useTemplateFeatureStyle,
 	useTemplatePageNodeKey,
 	useTemplatePlacement,
 	useTemplateStyle,
 } from "./context";
+import { entryLayoutOf, leadsWithRole } from "./entry-header";
 import { filterItems, hasVisibleItems, isSectionVisible, isVisibleSummary } from "./filtering";
 import { parseStyleFontSize } from "./icon-size";
 import { LevelDisplay } from "./level-display";
@@ -95,16 +99,21 @@ type SectionItemProps = {
 	itemId: string;
 	children: ReactNode;
 	style?: StyleInput;
+	/** Room added at the item's start on top of its own padding: the date column's dates sit there. */
+	indent?: number | undefined;
 };
 
 type InlineItemHeaderProps = {
 	leading?: ReactNode;
 	middle?: ReactNode;
 	trailing?: ReactNode;
+	/** The role (leading) goes before the organization (middle) when the entry leads with it. */
+	roleFirst?: boolean;
 };
 
 type SectionItemHeaderProps = {
 	children: ReactNode;
+	style?: StyleInput;
 };
 
 type ItemWebsite = {
@@ -115,9 +124,10 @@ type ItemWebsite = {
 
 type ItemTitleProps = {
 	children: ReactNode;
-	website: ItemWebsite;
+	website?: ItemWebsite | undefined;
 	field: string;
-	bold?: boolean;
+	bold?: boolean | undefined;
+	style?: StyleInput;
 };
 
 type ItemWebsiteLinkProps = {
@@ -153,13 +163,19 @@ type SemanticTextRun = {
 	value: string;
 	prefix?: string;
 	suffix?: string;
+	bold?: boolean;
+	/** Draws the run as the entry's inline website link, as the title does. */
+	website?: ItemWebsite | undefined;
 };
 
 type SemanticTextRunsProps = {
 	runs: readonly SemanticTextRun[];
 	separator: string;
-	host: CombinedTextName;
+	/** The combined-text node the stacked and one-line headers draw these runs as; other layouts have none. */
+	host?: CombinedTextName | undefined;
 	style?: StyleInput;
+	/** For every run: a run's text takes the template's text style, so the outer style doesn't reach it. */
+	runStyle?: StyleInput;
 	nodeKey?: string | undefined;
 	fieldOwnerNodeKey?: string | undefined;
 };
@@ -245,16 +261,24 @@ const getSectionHeadingTextStyle = (...styles: StyleInput[]): Style[] => {
 
 const useSectionItemsContext = () => use(SectionItemsContext);
 
-const SemanticTextRuns = ({ runs, separator, host, style, nodeKey, fieldOwnerNodeKey }: SemanticTextRunsProps) => {
+const SemanticTextRuns = ({
+	runs,
+	separator,
+	host,
+	style,
+	runStyle,
+	nodeKey,
+	fieldOwnerNodeKey,
+}: SemanticTextRunsProps) => {
 	const contextualNodeKey = useSemanticNodeKey();
 	const fieldParentNodeKey = fieldOwnerNodeKey ?? contextualNodeKey;
+	const boldStyle = useTemplateStyle("bold");
 	const combinedTextOwnerNodeKey =
 		host === "experience-position-location" || host === "education-area-degree"
 			? semanticTemplatePartNodeKey(fieldParentNodeKey, "inline-item-header-leading")
 			: (nodeKey ?? fieldParentNodeKey);
-	const combinedTextNodeKey = combinedTextOwnerNodeKey
-		? semanticNodeKeys.combinedText(combinedTextOwnerNodeKey, host)
-		: undefined;
+	const combinedTextNodeKey =
+		host && combinedTextOwnerNodeKey ? semanticNodeKeys.combinedText(combinedTextOwnerNodeKey, host) : undefined;
 	const ownerResolved = useResolvedNode(nodeKey);
 	const combinedTextResolved = useResolvedNode(combinedTextNodeKey);
 	const ownerVisible = useSemanticNodeVisible(nodeKey);
@@ -276,16 +300,28 @@ const SemanticTextRuns = ({ runs, separator, host, style, nodeKey, fieldOwnerNod
 				{...resolvedPdfTextProps(combinedTextResolved)}
 				style={composeStyles(style, ownerResolved.style, combinedTextResolved.style)}
 			>
-				{visibleRuns.map(({ field, value, prefix = "", suffix = "" }, index) => (
-					<Fragment key={field}>
-						{index === 0 ? "" : separator}
-						<Text semanticField={field}>
+				{visibleRuns.map(({ field, value, prefix = "", suffix = "", bold, website }, index) => {
+					const run = (
+						<Text semanticField={field} style={composeStyles(runStyle, bold ? boldStyle : undefined)}>
 							{prefix}
 							{value}
 							{suffix}
 						</Text>
-					</Fragment>
-				))}
+					);
+					const url = website && getInlineItemWebsiteUrl(website);
+					return (
+						<Fragment key={field}>
+							{index === 0 ? "" : separator}
+							{url ? (
+								<Link semanticRole="inline-website" src={url}>
+									{run}
+								</Link>
+							) : (
+								run
+							)}
+						</Fragment>
+					);
+				})}
 			</Text>
 		</SemanticNodeKeyProvider>
 	);
@@ -488,7 +524,8 @@ const SectionItems = ({ children, columns = 1 }: SectionItemsProps) => {
 	);
 };
 
-const SectionItem = ({ itemId, children, style }: SectionItemProps) => {
+const SectionItem = ({ itemId, children, style, indent }: SectionItemProps) => {
+	const { rtl } = useRender();
 	const sectionItemsNodeKey = useSemanticNodeKey();
 	const itemNodeKey = sectionItemsNodeKey ? semanticNodeKeys.item(sectionItemsNodeKey, itemId) : undefined;
 	const visible = useSemanticNodeVisible(itemNodeKey);
@@ -502,10 +539,18 @@ const SectionItem = ({ itemId, children, style }: SectionItemProps) => {
 	const timelineContentResolved = useResolvedNode(timelineContentNodeKey);
 	if (!visible) return null;
 
+	const withIndent = (...styles: StyleInput[]) => {
+		if (!indent) return composeStyles(...styles);
+		const side = rtl ? "paddingRight" : "paddingLeft";
+		const merged = mergeStyles(...styles);
+		const start = merged[side] ?? merged.paddingHorizontal ?? merged.padding;
+		return composeStyles(...styles, { [side]: (typeof start === "number" ? start : 0) + indent });
+	};
+
 	if (!useTimeline) {
 		return (
 			<SemanticNodeKeyProvider nodeKey={itemNodeKey}>
-				<Div nodeKey={itemNodeKey} style={composeStyles(itemStyle, sectionItemStyle, style)}>
+				<Div nodeKey={itemNodeKey} style={withIndent(itemStyle, sectionItemStyle, style)}>
 					{children}
 				</Div>
 			</SemanticNodeKeyProvider>
@@ -533,7 +578,7 @@ const SectionItem = ({ itemId, children, style }: SectionItemProps) => {
 				<Div
 					nodeKey={itemNodeKey}
 					{...resolvedPdfFlowProps(timelineContentResolved)}
-					style={composeStyles(itemStyle, timelineContentStyle, style, timelineContentResolved.style)}
+					style={composeStyles(withIndent(itemStyle, timelineContentStyle, style), timelineContentResolved.style)}
 				>
 					{children}
 				</Div>
@@ -547,7 +592,7 @@ const SectionItem = ({ itemId, children, style }: SectionItemProps) => {
  * its resolved style, so this only lays the three slots out and addresses their template parts
  * against the surrounding item-header key.
  */
-const InlineItemHeader = ({ leading, middle, trailing }: InlineItemHeaderProps) => {
+const InlineItemHeader = ({ leading, middle, trailing, roleFirst = false }: InlineItemHeaderProps) => {
 	const inlineItemHeaderStyle = useTemplateStyle("inlineItemHeader");
 	const leadingStyle = useTemplateStyle("inlineItemHeaderLeading");
 	const middleStyle = useTemplateStyle("inlineItemHeaderMiddle");
@@ -555,7 +600,7 @@ const InlineItemHeader = ({ leading, middle, trailing }: InlineItemHeaderProps) 
 
 	const nodeKey = useSemanticNodeKey();
 	const renderedChildKeys = useRenderedChildKeys(nodeKey);
-	const parts = [
+	const [leadingPart, middlePart, trailingPart] = [
 		{
 			nodeKey: semanticTemplatePartNodeKey(nodeKey, "inline-item-header-leading") ?? "inline-item-header-leading",
 			value: (
@@ -595,7 +640,9 @@ const InlineItemHeader = ({ leading, middle, trailing }: InlineItemHeaderProps) 
 				</SemanticTemplatePartView>
 			),
 		},
-	];
+	] as const;
+	// Same order as the Semantic CSS tree, so a stylesheet's `order` and `display` project onto it.
+	const parts = roleFirst ? [leadingPart, middlePart, trailingPart] : [middlePart, leadingPart, trailingPart];
 
 	return <View style={composeStyles(inlineItemHeaderStyle)}>{projectRenderedChildren(renderedChildKeys, parts)}</View>;
 };
@@ -609,7 +656,7 @@ const stackedSidebarSplitRowStyle = {
 const awardTitleDateRowStyle = (rtl: boolean) =>
 	({
 		flexDirection: rtl ? "row-reverse" : "row",
-		alignItems: "flex-start",
+		alignItems: "baseline",
 		justifyContent: "space-between",
 	}) satisfies Style;
 
@@ -622,6 +669,18 @@ const useSectionSplitRowStyle = () => {
 		splitRowStyle,
 		stackSidebarItemHeader && placement === "sidebar" ? stackedSidebarSplitRowStyle : undefined,
 	);
+};
+
+/**
+ * The trailing text of a title row (a date, a location). In a row it takes the rest of its line, so it keeps to the
+ * row's end even when a long title pushes it onto a line of its own (Forme ignores auto margins there); stacked rows
+ * (a sidebar's column) leave it alone.
+ */
+const useRowEndStyle = (rowStyle: StyleInput) => {
+	const alignEndStyle = useTemplateStyle("alignEnd");
+	const { flexDirection } = mergeStyles(rowStyle);
+	const isRow = flexDirection === "row" || flexDirection === "row-reverse";
+	return composeStyles(alignEndStyle, isRow ? { flexGrow: 1 } : undefined);
 };
 
 // A single child in a space-between row otherwise falls back to the leading edge.
@@ -679,7 +738,7 @@ const ItemHeaderRow = ({ children, style }: ItemHeaderRowProps) => {
  * `item-header` style covers every header row of every section on every template. `Div` rather than
  * `View` because the header rows keep the row gap they used to get from the item box around them.
  */
-const SectionItemHeader = ({ children }: SectionItemHeaderProps) => {
+const SectionItemHeader = ({ children, style }: SectionItemHeaderProps) => {
 	const itemNodeKey = useSemanticNodeKey();
 	const itemHeaderNodeKey = itemNodeKey ? semanticNodeKeys.itemHeader(itemNodeKey) : undefined;
 	const sectionItemHeaderStyle = useTemplateStyle("sectionItemHeader");
@@ -688,22 +747,38 @@ const SectionItemHeader = ({ children }: SectionItemHeaderProps) => {
 
 	return (
 		<SemanticNodeKeyProvider nodeKey={itemHeaderNodeKey}>
-			<Div nodeKey={itemHeaderNodeKey} style={composeStyles(sectionItemHeaderStyle)}>
+			<Div nodeKey={itemHeaderNodeKey} style={composeStyles(sectionItemHeaderStyle, style)}>
 				{children}
 			</Div>
 		</SemanticNodeKeyProvider>
 	);
 };
 
-const ItemTitle = ({ children, website, field, bold = true }: ItemTitleProps) => {
-	const inlineWebsiteUrl = getInlineItemWebsiteUrl(website);
-	const style = use(ItemHeaderRowNowrapContext) ? nowrapItemTitleStyle : wrappingItemTitleStyle;
+type RowEndTextProps = {
+	semanticField: string;
+	style: StyleInput;
+	children: ReactNode;
+};
+
+/** An `item-header-row`'s date: when a stylesheet sets the row to `nowrap`, the title takes the room and the date its own width. */
+const RowEndText = ({ semanticField, style, children }: RowEndTextProps) => {
+	const nowrap = use(ItemHeaderRowNowrapContext);
+	return (
+		<Text semanticField={semanticField} style={composeStyles(style, nowrap ? { flexGrow: 0 } : undefined)}>
+			{children}
+		</Text>
+	);
+};
+
+const ItemTitle = ({ children, website, field, bold = true, style }: ItemTitleProps) => {
+	const inlineWebsiteUrl = website && getInlineItemWebsiteUrl(website);
+	const rowStyle = use(ItemHeaderRowNowrapContext) ? nowrapItemTitleStyle : wrappingItemTitleStyle;
 	const title = bold ? (
-		<Bold style={style} semanticField={field}>
+		<Bold style={composeStyles(rowStyle, style)} semanticField={field}>
 			{children}
 		</Bold>
 	) : (
-		<Text style={style} semanticField={field}>
+		<Text style={composeStyles(rowStyle, style)} semanticField={field}>
 			{children}
 		</Text>
 	);
@@ -711,7 +786,7 @@ const ItemTitle = ({ children, website, field, bold = true }: ItemTitleProps) =>
 	if (!inlineWebsiteUrl) return title;
 
 	return (
-		<Link style={style} semanticRole="inline-website" src={inlineWebsiteUrl}>
+		<Link style={rowStyle} semanticRole="inline-website" src={inlineWebsiteUrl}>
 			{title}
 		</Link>
 	);
@@ -724,6 +799,150 @@ const ItemWebsiteLink = ({ website }: ItemWebsiteLinkProps) => {
 		<Link semanticRole="website" src={website.url}>
 			{getWebsiteDisplayText(website)}
 		</Link>
+	);
+};
+
+/** How a section's entry headers are drawn (Design → Entries), and the styles that go with it. */
+const useEntryHeader = (sectionType: string, columns: number) => {
+	const data = useRender();
+	const placement = useTemplatePlacement();
+	const colors = useTemplateColors();
+	const templateHeaderStyle = useTemplateStyle("sectionItemHeader");
+	const entry = entryHeaderOf(data.metadata.design);
+	const layout = entryLayoutOf(entry.layout, sectionType, placement, columns);
+	const metrics = getTemplateMetrics(data.metadata.page);
+	const { rtl, row } = createRtlStyleHelpers(data.rtl);
+	const side = rtl ? "Right" : "Left";
+	const startPadding = (value: number): Style => (rtl ? { paddingRight: value } : { paddingLeft: value });
+	// No accent on an accent background: a coloured sidebar's entries take its text colour.
+	const color =
+		placement === "sidebar" && colors.sidebarBackground
+			? (colors.sidebarForeground ?? colors.foreground)
+			: colors.primary;
+	const accentStyle = {
+		none: undefined,
+		rule: { borderBottomWidth: 1, borderBottomColor: color, paddingBottom: metrics.gapY(0.25) },
+		bar: {
+			...(rtl ? { borderRightWidth: 2, borderRightColor: color } : { borderLeftWidth: 2, borderLeftColor: color }),
+			...startPadding(metrics.gapX(1)),
+		},
+		band: {
+			// Forme flattens the tint over the colour behind it.
+			backgroundColor: getPrimaryTint(color, 0.1),
+			paddingHorizontal: metrics.gapX(1),
+			paddingVertical: metrics.gapY(0.25),
+		},
+	}[entry.accent] satisfies Style | undefined;
+
+	// Date column: the item makes room at its start for the dates, and its header reaches back over that room as a
+	// row of the date and the rest. The header's own start edge (a template's outdent, an accent's bar or band) widens
+	// the room rather than narrowing the date, so the rest still lines up with the item's body.
+	const header = mergeStyles(templateHeaderStyle, accentStyle);
+	const length = (value: unknown) => (typeof value === "number" ? value : 0);
+	const startBorder = (style: Style) => length(style[`border${side}Width`] ?? style.borderWidth);
+	const startInset =
+		startBorder(header) + length(header[`padding${side}`] ?? header.paddingHorizontal ?? header.padding);
+	const startMargin = length(header[`margin${side}`] ?? header.marginHorizontal ?? header.margin);
+	const dateWidth = data.metadata.typography.body.fontSize * 11;
+	const dateGap = metrics.gapX(2);
+	const room = dateWidth + dateGap + startMargin + startInset;
+	const dateColumn = layout === "date-column";
+	const dateRowStyle: Style = {
+		flexDirection: row,
+		columnGap: dateGap,
+		...(rtl ? { marginRight: startMargin - room } : { marginLeft: startMargin - room }),
+	};
+
+	return {
+		layout,
+		lead: entry.lead,
+		color,
+		itemIndent: dateColumn ? room : undefined,
+		headerStyle: composeStyles(accentStyle, dateColumn ? dateRowStyle : undefined),
+		// A nested role's period lines up with its entry's date.
+		roleHeaderStyle: dateColumn
+			? { ...dateRowStyle, ...startPadding(startInset - startBorder(mergeStyles(templateHeaderStyle))) }
+			: undefined,
+		dateCellStyle: { width: dateWidth, flexShrink: 0 } satisfies Style,
+	};
+};
+
+type EntryHeaderStyles = ReturnType<typeof useEntryHeader>;
+
+type EntryHeaderLayoutProps = {
+	entry: EntryHeaderStyles;
+	lead: SemanticTextRun;
+	/** Everything but the lead and the date, drawn as one line of text. */
+	runs: readonly SemanticTextRun[];
+	date: SemanticTextRun;
+};
+
+/** The compact, date-column and eyebrow headers; the stacked and one-line ones stay with their sections. */
+const EntryHeaderLayout = ({ entry, lead, runs, date }: EntryHeaderLayoutProps) => {
+	const data = useRender();
+	const splitRowStyle = useSectionSplitRowStyle();
+	const alignEndStyle = useRowEndStyle(splitRowStyle);
+	const boldStyle = useTemplateStyle("bold");
+	const { fontSize } = data.metadata.typography.body;
+	const title = (
+		<ItemTitle
+			field={lead.field}
+			website={lead.website}
+			bold={lead.bold}
+			style={entry.layout === "eyebrow" ? { fontSize: fontSize * 1.15 } : undefined}
+		>
+			{lead.value}
+		</ItemTitle>
+	);
+	const details = <SemanticTextRuns separator=" · " runs={runs} />;
+
+	if (entry.layout === "date-column") {
+		return (
+			<>
+				{/* The cell stays when the date is empty, so the title keeps to its column. */}
+				<View style={entry.dateCellStyle}>
+					<Text semanticField={date.field}>{date.value}</Text>
+				</View>
+				<Div bindSemanticNode={false} style={{ flex: 1 }}>
+					{title}
+					{details}
+				</Div>
+			</>
+		);
+	}
+
+	const titleRow = (
+		<View style={hasSplitRowText(lead.value) ? splitRowStyle : getTrailingOnlySplitRowStyle(splitRowStyle)}>
+			{title}
+			{hasSplitRowText(date.value) && (
+				<Text semanticField={date.field} style={composeStyles(alignEndStyle)}>
+					{date.value}
+				</Text>
+			)}
+		</View>
+	);
+
+	if (entry.layout === "eyebrow") {
+		const eyebrowStyle = composeStyles(boldStyle, {
+			fontSize: fontSize * 0.8,
+			textTransform: "uppercase",
+			color: entry.color,
+			// Letter-spacing breaks the joins of Arabic script.
+			...(data.rtl ? {} : { letterSpacing: 0.6 }),
+		});
+		return (
+			<>
+				<SemanticTextRuns separator=" · " runs={runs} style={eyebrowStyle} runStyle={eyebrowStyle} />
+				{titleRow}
+			</>
+		);
+	}
+
+	return (
+		<>
+			{titleRow}
+			{details}
+		</>
 	);
 };
 
@@ -794,11 +1013,12 @@ const ProfileSection = ({ sectionId = "profiles", sectionData }: ItemSectionProp
 type ExperienceItemContentProps = {
 	item: ExperienceItem;
 	header: ReactNode;
+	entry: EntryHeaderStyles;
 	splitRowStyle: StyleInput;
 	alignEndStyle: StyleInput;
 };
 
-const ExperienceItemContent = ({ item, header, splitRowStyle, alignEndStyle }: ExperienceItemContentProps) => {
+const ExperienceItemContent = ({ item, header, entry, splitRowStyle, alignEndStyle }: ExperienceItemContentProps) => {
 	const itemNodeKey = useSemanticNodeKey();
 	const renderedChildKeys = useRenderedChildKeys(itemNodeKey);
 	const headerNodeKey = itemNodeKey ? semanticNodeKeys.itemHeader(itemNodeKey) : undefined;
@@ -812,13 +1032,24 @@ const ExperienceItemContent = ({ item, header, splitRowStyle, alignEndStyle }: E
 		value: (
 			<SemanticItemNodeKeyProvider key={role.id} itemId={role.id}>
 				<Div bindCurrentNode>
-					<SectionItemHeader>
-						<View style={composeStyles(splitRowStyle)}>
-							<Text semanticField="position">{role.position}</Text>
-							<Text semanticField="period" style={composeStyles(alignEndStyle)}>
-								{role.period}
-							</Text>
-						</View>
+					<SectionItemHeader style={entry.roleHeaderStyle}>
+						{entry.layout === "date-column" ? (
+							<>
+								<View style={entry.dateCellStyle}>
+									<Text semanticField="period">{role.period}</Text>
+								</View>
+								<Text semanticField="position" style={{ flex: 1 }}>
+									{role.position}
+								</Text>
+							</>
+						) : (
+							<View style={composeStyles(splitRowStyle)}>
+								<Text semanticField="position">{role.position}</Text>
+								<Text semanticField="period" style={composeStyles(alignEndStyle)}>
+									{role.period}
+								</Text>
+							</View>
+						)}
 					</SectionItemHeader>
 					<RichText semanticField="description">{role.description}</RichText>
 				</Div>
@@ -864,8 +1095,8 @@ const ExperienceSection = ({ sectionId = "experience", sectionData }: ItemSectio
 	const experience = sectionData ?? data.sections.experience;
 	const items = getVisibleItems(experience, "experience");
 	const splitRowStyle = useSectionSplitRowStyle();
-	const alignEndStyle = useTemplateStyle("alignEnd");
-	const inlineItemHeader = useTemplateFeature("inlineItemHeader");
+	const alignEndStyle = useRowEndStyle(splitRowStyle);
+	const entry = useEntryHeader("experience", experience.columns);
 
 	if (items.length === 0) return null;
 
@@ -873,28 +1104,29 @@ const ExperienceSection = ({ sectionId = "experience", sectionData }: ItemSectio
 		<SectionShell sectionId={sectionId} title={experience.title}>
 			<SectionItems columns={experience.columns}>
 				{items.map((item) => {
+					const roleFirst = leadsWithRole(entry.lead, "experience", item);
 					const hasPosition = Boolean(item.position.trim());
 					const hasLocation = Boolean(item.location.trim());
-					const headerLocation = hasLocation ? item.location : item.period;
-					const headerLocationField = hasLocation ? "location" : "period";
-					const headerPeriod = hasLocation ? item.period : "";
+					const company = { field: "company", value: item.company, website: item.website };
+					const position = { field: "position", value: item.position };
 
 					const renderInlineHeader = () => (
 						<InlineItemHeader
+							roleFirst={roleFirst}
 							leading={
 								hasPosition || hasLocation ? (
 									<SemanticTextRuns
 										host="experience-position-location"
 										separator=" "
 										runs={[
-											{ field: "position", value: item.position },
+											{ ...position, bold: roleFirst },
 											{ field: "location", value: item.location, prefix: "(", suffix: ")" },
 										]}
 									/>
 								) : null
 							}
 							middle={
-								<ItemTitle field="company" website={item.website}>
+								<ItemTitle field="company" website={item.website} bold={!roleFirst}>
 									{item.company}
 								</ItemTitle>
 							}
@@ -906,45 +1138,74 @@ const ExperienceSection = ({ sectionId = "experience", sectionData }: ItemSectio
 						/>
 					);
 
-					const renderSplitHeader = () => (
-						<>
-							<View style={composeStyles(splitRowStyle)}>
-								<ItemTitle field="company" website={item.website}>
-									{item.company}
-								</ItemTitle>
-								{hasSplitRowText(headerLocation) && (
-									<SemanticTextRuns
-										host={headerLocationField === "location" ? "experience-location" : "experience-period"}
-										separator=""
-										runs={[{ field: headerLocationField, value: headerLocation }]}
-										style={composeStyles(alignEndStyle)}
-									/>
-								)}
-							</View>
+					// Each row's trailing text moves up a row when the first row has none; role-first swaps the rows.
+					const renderSplitHeader = () => {
+						const [firstTrailing, secondTrailing] = roleFirst
+							? (["period", "location"] as const)
+							: (["location", "period"] as const);
+						const hasFirstTrailing = hasSplitRowText(item[firstTrailing]);
+						const headerTrailingField = hasFirstTrailing ? firstTrailing : secondTrailing;
+						const headerTrailing = item[headerTrailingField];
+						const secondRowTrailing = hasFirstTrailing ? item[secondTrailing] : "";
+						const hasSecond = Boolean((roleFirst ? item.company : item.position).trim());
+						const trailingRuns = (field: "location" | "period", value: string) => (
+							<SemanticTextRuns
+								host={field === "location" ? "experience-location" : "experience-period"}
+								separator=""
+								runs={[{ field, value }]}
+								style={composeStyles(alignEndStyle)}
+							/>
+						);
 
-							{(hasPosition || hasSplitRowText(headerPeriod)) && (
-								<View style={hasPosition ? splitRowStyle : getTrailingOnlySplitRowStyle(splitRowStyle)}>
-									{hasPosition && <Text semanticField="position">{item.position}</Text>}
-									{hasSplitRowText(headerPeriod) && (
-										<SemanticTextRuns
-											host="experience-period"
-											separator=""
-											runs={[{ field: "period", value: headerPeriod }]}
-											style={composeStyles(alignEndStyle)}
-										/>
+						return (
+							<>
+								<View style={composeStyles(splitRowStyle)}>
+									{roleFirst ? (
+										<ItemTitle field="position">{item.position}</ItemTitle>
+									) : (
+										<ItemTitle field="company" website={item.website}>
+											{item.company}
+										</ItemTitle>
 									)}
+									{hasSplitRowText(headerTrailing) && trailingRuns(headerTrailingField, headerTrailing)}
 								</View>
-							)}
-						</>
-					);
+
+								{(hasSecond || hasSplitRowText(secondRowTrailing)) && (
+									<View style={hasSecond ? splitRowStyle : getTrailingOnlySplitRowStyle(splitRowStyle)}>
+										{hasSecond &&
+											(roleFirst ? (
+												<ItemTitle field="company" website={item.website} bold={false}>
+													{item.company}
+												</ItemTitle>
+											) : (
+												<Text semanticField="position">{item.position}</Text>
+											))}
+										{hasSplitRowText(secondRowTrailing) && trailingRuns(secondTrailing, secondRowTrailing)}
+									</View>
+								)}
+							</>
+						);
+					};
+
+					const renderHeader = () => {
+						if (entry.layout === "stacked") return renderSplitHeader();
+						if (entry.layout === "inline") return renderInlineHeader();
+						return (
+							<EntryHeaderLayout
+								entry={entry}
+								lead={roleFirst ? position : company}
+								runs={[roleFirst ? company : position, { field: "location", value: item.location }]}
+								date={{ field: "period", value: item.period }}
+							/>
+						);
+					};
 
 					return (
-						<SectionItem key={item.id} itemId={item.id}>
+						<SectionItem key={item.id} itemId={item.id} indent={entry.itemIndent}>
 							<ExperienceItemContent
 								item={item}
-								header={
-									<SectionItemHeader>{inlineItemHeader ? renderInlineHeader() : renderSplitHeader()}</SectionItemHeader>
-								}
+								header={<SectionItemHeader style={entry.headerStyle}>{renderHeader()}</SectionItemHeader>}
+								entry={entry}
 								splitRowStyle={splitRowStyle}
 								alignEndStyle={alignEndStyle}
 							/>
@@ -1031,8 +1292,8 @@ const EducationSection = ({ sectionId = "education", sectionData }: ItemSectionP
 	const education = sectionData ?? data.sections.education;
 	const items = getVisibleItems(education, "education");
 	const splitRowStyle = useSectionSplitRowStyle();
-	const alignEndStyle = useTemplateStyle("alignEnd");
-	const inlineItemHeader = useTemplateFeature("inlineItemHeader");
+	const alignEndStyle = useRowEndStyle(splitRowStyle);
+	const entry = useEntryHeader("education", education.columns);
 
 	if (items.length === 0) return null;
 
@@ -1040,27 +1301,29 @@ const EducationSection = ({ sectionId = "education", sectionData }: ItemSectionP
 		<SectionShell sectionId={sectionId} title={education.title}>
 			<SectionItems columns={education.columns}>
 				{items.map((item) => {
+					const roleFirst = leadsWithRole(entry.lead, "education", item);
 					const hasArea = Boolean(item.area.trim());
 					const hasDegree = Boolean(item.degree.trim());
-					const hasDegreeOrGrade = hasSplitRowText(item.degree) || hasSplitRowText(item.grade);
-					const hasLocationOrPeriod = hasSplitRowText(item.location) || hasSplitRowText(item.period);
+					const school = { field: "school", value: item.school, website: item.website };
+					const area = { field: "area", value: item.area };
 
 					const renderInlineHeader = () => (
 						<InlineItemHeader
+							roleFirst={roleFirst}
 							leading={
 								hasArea || hasDegree ? (
 									<SemanticTextRuns
 										host="education-area-degree"
 										separator=" "
 										runs={[
-											{ field: "area", value: item.area },
+											{ ...area, bold: roleFirst },
 											{ field: "degree", value: item.degree, prefix: "(", suffix: ")" },
 										]}
 									/>
 								) : null
 							}
 							middle={
-								<ItemTitle field="school" website={item.website}>
+								<ItemTitle field="school" website={item.website} bold={!roleFirst}>
 									{item.school}
 								</ItemTitle>
 							}
@@ -1072,58 +1335,82 @@ const EducationSection = ({ sectionId = "education", sectionData }: ItemSectionP
 						/>
 					);
 
-					const renderSplitHeader = () => (
-						<>
-							<View style={composeStyles(splitRowStyle)}>
-								<ItemTitle field="school" website={item.website}>
-									{item.school}
-								</ItemTitle>
-								{(hasDegreeOrGrade || hasLocationOrPeriod) && (
-									<SemanticTextRuns
-										host={hasDegreeOrGrade ? "education-degree-grade" : "education-location-period"}
-										separator=" • "
-										runs={
-											hasDegreeOrGrade
-												? [
-														{ field: "degree", value: item.degree },
-														{ field: "grade", value: item.grade },
-													]
-												: [
-														{ field: "location", value: item.location },
-														{ field: "period", value: item.period },
-													]
-										}
-										style={composeStyles(alignEndStyle)}
-									/>
-								)}
-							</View>
+					// The first row's pair moves up a row when it's empty; role-first swaps the rows.
+					const renderSplitHeader = () => {
+						const pairs = {
+							"education-degree-grade": [
+								{ field: "degree", value: item.degree },
+								{ field: "grade", value: item.grade },
+							],
+							"education-location-period": [
+								{ field: "location", value: item.location },
+								{ field: "period", value: item.period },
+							],
+						} as const;
+						const [firstHost, secondHost] = roleFirst
+							? (["education-location-period", "education-degree-grade"] as const)
+							: (["education-degree-grade", "education-location-period"] as const);
+						const hasPair = (host: keyof typeof pairs) => pairs[host].some(({ value }) => hasSplitRowText(value));
+						const hasFirst = hasPair(firstHost);
+						const hasSecondPair = hasPair(secondHost);
+						const hasSecond = Boolean((roleFirst ? item.school : item.area).trim());
+						const pairRuns = (host: keyof typeof pairs) => (
+							<SemanticTextRuns host={host} separator=" • " runs={pairs[host]} style={composeStyles(alignEndStyle)} />
+						);
 
-							{(hasArea || (hasDegreeOrGrade && hasLocationOrPeriod)) && (
-								<View style={hasArea ? splitRowStyle : getTrailingOnlySplitRowStyle(splitRowStyle)}>
-									{hasArea && <Text semanticField="area">{item.area}</Text>}
-									{hasDegreeOrGrade && hasLocationOrPeriod && (
-										<SemanticTextRuns
-											host="education-location-period"
-											separator=" • "
-											runs={[
-												{ field: "location", value: item.location },
-												{ field: "period", value: item.period },
-											]}
-											style={composeStyles(alignEndStyle)}
-										/>
+						return (
+							<>
+								<View style={composeStyles(splitRowStyle)}>
+									{roleFirst ? (
+										<ItemTitle field="area">{item.area}</ItemTitle>
+									) : (
+										<ItemTitle field="school" website={item.website}>
+											{item.school}
+										</ItemTitle>
 									)}
+									{(hasFirst || hasSecondPair) && pairRuns(hasFirst ? firstHost : secondHost)}
 								</View>
-							)}
-						</>
-					);
+
+								{(hasSecond || (hasFirst && hasSecondPair)) && (
+									<View style={hasSecond ? splitRowStyle : getTrailingOnlySplitRowStyle(splitRowStyle)}>
+										{hasSecond &&
+											(roleFirst ? (
+												<ItemTitle field="school" website={item.website} bold={false}>
+													{item.school}
+												</ItemTitle>
+											) : (
+												<Text semanticField="area">{item.area}</Text>
+											))}
+										{hasFirst && hasSecondPair && pairRuns(secondHost)}
+									</View>
+								)}
+							</>
+						);
+					};
+
+					const renderHeader = () => {
+						if (entry.layout === "stacked") return renderSplitHeader();
+						if (entry.layout === "inline") return renderInlineHeader();
+						return (
+							<EntryHeaderLayout
+								entry={entry}
+								lead={roleFirst ? area : school}
+								runs={[
+									roleFirst ? school : area,
+									{ field: "degree", value: item.degree },
+									{ field: "location", value: item.location },
+									{ field: "grade", value: item.grade },
+								]}
+								date={{ field: "period", value: item.period }}
+							/>
+						);
+					};
 
 					return (
-						<SectionItem key={item.id} itemId={item.id}>
+						<SectionItem key={item.id} itemId={item.id} indent={entry.itemIndent}>
 							<EducationItemContent
 								item={item}
-								header={
-									<SectionItemHeader>{inlineItemHeader ? renderInlineHeader() : renderSplitHeader()}</SectionItemHeader>
-								}
+								header={<SectionItemHeader style={entry.headerStyle}>{renderHeader()}</SectionItemHeader>}
 							/>
 						</SectionItem>
 					);
@@ -1155,7 +1442,8 @@ const DatedItemSection = ({
 	const section = sectionData ?? data.sections[sectionType];
 	const items = getVisibleItems<ProjectItem | CertificationItem | PublicationItem>(section, sectionType);
 	const splitRowStyle = useSectionSplitRowStyle();
-	const alignEndStyle = useTemplateStyle("alignEnd");
+	const alignEndStyle = useRowEndStyle(splitRowStyle);
+	const entry = useEntryHeader(sectionType, section.columns);
 
 	if (items.length === 0) return null;
 
@@ -1165,17 +1453,28 @@ const DatedItemSection = ({
 				{items.map((item) => {
 					const fields = item as unknown as Record<string, string>;
 					return (
-						<SectionItem key={item.id} itemId={item.id}>
-							<SectionItemHeader>
-								<ItemHeaderRow style={composeStyles(splitRowStyle)}>
-									<ItemTitle field={titleField} website={item.website}>
-										{fields[titleField]}
-									</ItemTitle>
-									<Text semanticField={dateField} style={composeStyles(alignEndStyle)}>
-										{fields[dateField]}
-									</Text>
-								</ItemHeaderRow>
-								{subtitleField && <Text semanticField={subtitleField}>{fields[subtitleField]}</Text>}
+						<SectionItem key={item.id} itemId={item.id} indent={entry.itemIndent}>
+							<SectionItemHeader style={entry.headerStyle}>
+								{entry.layout === "date-column" ? (
+									<EntryHeaderLayout
+										entry={entry}
+										lead={{ field: titleField, value: fields[titleField] ?? "", website: item.website }}
+										runs={subtitleField ? [{ field: subtitleField, value: fields[subtitleField] ?? "" }] : []}
+										date={{ field: dateField, value: fields[dateField] ?? "" }}
+									/>
+								) : (
+									<>
+										<ItemHeaderRow style={composeStyles(splitRowStyle)}>
+											<ItemTitle field={titleField} website={item.website}>
+												{fields[titleField]}
+											</ItemTitle>
+											<RowEndText semanticField={dateField} style={composeStyles(alignEndStyle)}>
+												{fields[dateField]}
+											</RowEndText>
+										</ItemHeaderRow>
+										{subtitleField && <Text semanticField={subtitleField}>{fields[subtitleField]}</Text>}
+									</>
+								)}
 							</SectionItemHeader>
 
 							<RichText semanticField="description">{item.description}</RichText>
@@ -1322,7 +1621,8 @@ const AwardsSection = ({ sectionId = "awards", sectionData }: ItemSectionProps<A
 	const awards = sectionData ?? data.sections.awards;
 	const items = getVisibleItems(awards, "awards");
 	const splitRowStyle = useTemplateStyle("splitRow");
-	const alignEndStyle = useTemplateStyle("alignEnd");
+	const alignEndStyle = useRowEndStyle(composeStyles(splitRowStyle, awardTitleDateRowStyle(data.rtl)));
+	const entry = useEntryHeader("awards", awards.columns);
 
 	if (items.length === 0) return null;
 
@@ -1330,17 +1630,28 @@ const AwardsSection = ({ sectionId = "awards", sectionData }: ItemSectionProps<A
 		<SectionShell sectionId={sectionId} title={awards.title}>
 			<SectionItems columns={awards.columns}>
 				{items.map((item) => (
-					<SectionItem key={item.id} itemId={item.id}>
-						<SectionItemHeader>
-							<ItemHeaderRow style={composeStyles(splitRowStyle, awardTitleDateRowStyle(data.rtl))}>
-								<ItemTitle field="title" website={item.website} bold={false}>
-									{item.title}
-								</ItemTitle>
-								<Text semanticField="date" style={composeStyles(alignEndStyle)}>
-									{item.date}
-								</Text>
-							</ItemHeaderRow>
-							<Text semanticField="awarder">{item.awarder}</Text>
+					<SectionItem key={item.id} itemId={item.id} indent={entry.itemIndent}>
+						<SectionItemHeader style={entry.headerStyle}>
+							{entry.layout === "date-column" ? (
+								<EntryHeaderLayout
+									entry={entry}
+									lead={{ field: "title", value: item.title, website: item.website, bold: false }}
+									runs={[{ field: "awarder", value: item.awarder }]}
+									date={{ field: "date", value: item.date }}
+								/>
+							) : (
+								<>
+									<ItemHeaderRow style={composeStyles(splitRowStyle, awardTitleDateRowStyle(data.rtl))}>
+										<ItemTitle field="title" website={item.website} bold={false}>
+											{item.title}
+										</ItemTitle>
+										<RowEndText semanticField="date" style={composeStyles(alignEndStyle)}>
+											{item.date}
+										</RowEndText>
+									</ItemHeaderRow>
+									<Text semanticField="awarder">{item.awarder}</Text>
+								</>
+							)}
 						</SectionItemHeader>
 						<RichText semanticField="description">{item.description}</RichText>
 
@@ -1382,8 +1693,8 @@ const VolunteerSection = ({ sectionId = "volunteer", sectionData }: ItemSectionP
 	const volunteer = sectionData ?? data.sections.volunteer;
 	const items = getVisibleItems(volunteer, "volunteer");
 	const splitRowStyle = useSectionSplitRowStyle();
-	const alignEndStyle = useTemplateStyle("alignEnd");
-	const inlineItemHeader = useTemplateFeature("inlineItemHeader");
+	const alignEndStyle = useRowEndStyle(splitRowStyle);
+	const entry = useEntryHeader("volunteer", volunteer.columns);
 
 	if (items.length === 0) return null;
 
@@ -1392,9 +1703,9 @@ const VolunteerSection = ({ sectionId = "volunteer", sectionData }: ItemSectionP
 			<SectionItems columns={volunteer.columns}>
 				{items.map((item) => {
 					return (
-						<SectionItem key={item.id} itemId={item.id}>
-							<SectionItemHeader>
-								{inlineItemHeader ? (
+						<SectionItem key={item.id} itemId={item.id} indent={entry.itemIndent}>
+							<SectionItemHeader style={entry.headerStyle}>
+								{entry.layout === "inline" ? (
 									<InlineItemHeader
 										leading={
 											hasSplitRowText(item.location) ? <Text semanticField="location">{item.location}</Text> : null
@@ -1409,6 +1720,13 @@ const VolunteerSection = ({ sectionId = "volunteer", sectionData }: ItemSectionP
 												{item.period}
 											</Text>
 										}
+									/>
+								) : entry.layout !== "stacked" ? (
+									<EntryHeaderLayout
+										entry={entry}
+										lead={{ field: "organization", value: item.organization, website: item.website }}
+										runs={[{ field: "location", value: item.location }]}
+										date={{ field: "period", value: item.period }}
 									/>
 								) : (
 									<>

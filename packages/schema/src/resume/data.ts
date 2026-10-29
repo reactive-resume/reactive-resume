@@ -587,9 +587,47 @@ export const colorDesignSchema = z.object({
 		),
 });
 
+export const entryHeaderLayouts = ["stacked", "inline", "compact", "date-column", "eyebrow"] as const;
+export const entryHeaderAccents = ["none", "rule", "bar", "band"] as const;
+
+export const entryHeaderSchema = z.object({
+	layout: z
+		.enum(entryHeaderLayouts)
+		.catch("stacked")
+		.describe(
+			"How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'.",
+		),
+	lead: z
+		.enum(["organization", "role"])
+		.catch("organization")
+		.describe(
+			"Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study).",
+		),
+	accent: z
+		.enum(entryHeaderAccents)
+		.catch("none")
+		.describe(
+			"Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background).",
+		),
+});
+
+export type EntryHeader = z.infer<typeof entryHeaderSchema>;
+
+export const defaultEntryHeader: EntryHeader = { layout: "stacked", lead: "organization", accent: "none" };
+
+/** Resumes saved before entry headers existed have no settings; read them through this. */
+export const entryHeaderOf = (design: { entry?: Partial<EntryHeader> | undefined }): EntryHeader => ({
+	...defaultEntryHeader,
+	...design.entry,
+});
+
 const designSchema = z.object({
 	level: levelDesignSchema,
 	colors: colorDesignSchema,
+	entry: entryHeaderSchema
+		.optional()
+		.catch(undefined)
+		.describe("How entry headers are arranged and decorated. When missing, entries use the stacked layout."),
 });
 
 export const typographySchema = z.object({

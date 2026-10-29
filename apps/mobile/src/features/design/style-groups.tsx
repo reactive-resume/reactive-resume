@@ -2,12 +2,14 @@ import type { DesignWrite } from "./draft";
 import type { PickerSpec } from "./picker";
 import type { DensityId, FontPairingId, MarginId } from "./presets";
 import type { MessageDescriptor } from "@lingui/core";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { EntryHeader, ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Locale } from "@reactive-resume/utils/locale";
 import { msg } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useState } from "react";
 import { Pressable, TextInput, View } from "react-native";
+import Animated from "react-native-reanimated";
+import { entryHeaderLayouts, entryHeaderOf } from "@reactive-resume/schema/resume/data";
 import { localeSchema } from "@reactive-resume/utils/locale";
 import { Field, Slider, SwitchRow } from "./controls";
 import {
@@ -29,7 +31,7 @@ import {
 	rgbaToHex,
 } from "./presets";
 import { localeMap } from "@/features/settings/locale-names";
-import { Button, Icon, Segmented, Text, useTheme } from "@/ui";
+import { Button, Icon, IconButton, Segmented, Text, haptics, listLayout, useTheme } from "@/ui";
 
 export type GroupProps = {
 	data: ResumeData;
@@ -59,6 +61,205 @@ const ACCENT_NAMES: Record<(typeof ACCENTS)[number], MessageDescriptor> = {
 };
 
 const familiesLabel = (heading: string, body: string) => (heading === body ? heading : `${heading} + ${body}`);
+
+type Tone = "lead" | "light" | "accent" | "none";
+
+/** Header layout sketches: rows of [width %, tone] bars, null a flexible gap. Dark is the lead, light the rest. */
+const SKETCHES: Record<EntryHeader["layout"], ([number, Tone] | null)[][]> = {
+	stacked: [
+		[[45, "lead"], null, [20, "light"]],
+		[[35, "light"], null, [25, "light"]],
+	],
+	inline: [[[30, "lead"], [25, "light"], null, [20, "light"]]],
+	compact: [[[45, "lead"], null, [20, "light"]], [[60, "light"]]],
+	"date-column": [
+		[
+			[18, "light"],
+			[45, "lead"],
+		],
+		[
+			[18, "none"],
+			[55, "light"],
+		],
+	],
+	eyebrow: [[[35, "accent"]], [[50, "lead"], null, [20, "light"]]],
+};
+
+/** Entries: the Experience, Education and Volunteer header layout, which of its two rows leads, and an accent. */
+export function EntriesGroup({ data, write, disabled }: GroupProps) {
+	const { t } = useLingui();
+	const { colors, radius, space, size } = useTheme();
+	const entry = entryHeaderOf(data.metadata.design);
+	const set = (key: string, patch: Partial<EntryHeader>) =>
+		write(
+			key,
+			(draft) => {
+				draft.metadata.design.entry = { ...entryHeaderOf(draft.metadata.design), ...patch };
+			},
+			true,
+		);
+	const layoutNames: Record<EntryHeader["layout"], string> = {
+		stacked: t({ message: "Stacked", context: "Entry header layout" }),
+		inline: t({ message: "One line", context: "Entry header layout" }),
+		compact: t({ message: "Compact", context: "Entry header layout" }),
+		"date-column": t({ message: "Date column", context: "Entry header layout" }),
+		eyebrow: t({ message: "Eyebrow", context: "Entry header layout" }),
+	};
+	const tones: Record<Tone, string> = {
+		lead: colors.ink2,
+		light: colors.line2,
+		accent: colors.accent,
+		none: "transparent",
+	};
+	const organization = { id: "organization", name: t`Company`, detail: t`Location` };
+	const role = { id: "role", name: t`Position`, detail: t`Date` };
+	const rows = entry.lead === "role" ? [role, organization] : [organization, role];
+
+	const tile = (layout: EntryHeader["layout"]) => {
+		const selected = entry.layout === layout;
+		return (
+			<Pressable
+				key={layout}
+				accessibilityRole="radio"
+				accessibilityLabel={layoutNames[layout]}
+				accessibilityState={{ checked: selected, disabled }}
+				disabled={disabled}
+				onPress={() => {
+					if (selected) return;
+					haptics.selection();
+					set("entryLayout", { layout });
+				}}
+				style={{
+					flex: 1,
+					minHeight: size.hit,
+					gap: space.s2,
+					padding: space.s2,
+					borderRadius: radius.rLg,
+					borderWidth: 1,
+					borderColor: selected ? colors.accent : colors.line,
+					backgroundColor: selected ? colors.accentSoft : "transparent",
+				}}
+			>
+				<View style={{ height: space.s6, justifyContent: "center", gap: space.s1 }}>
+					{SKETCHES[layout].map((bars, row) => (
+						<View key={row} style={{ flexDirection: "row", gap: space.s1 }}>
+							{bars.map((bar, index) =>
+								bar ? (
+									<View
+										key={index}
+										style={{
+											width: `${bar[0]}%`,
+											height: bar[1] === "accent" ? space.s0 : space.s1,
+											borderRadius: radius.rSm,
+											backgroundColor: tones[bar[1]],
+										}}
+									/>
+								) : (
+									<View key={index} style={{ flex: 1 }} />
+								),
+							)}
+						</View>
+					))}
+				</View>
+				<Text variant="caption" weight={selected ? 600 : 400} color={selected ? "ink" : "ink2"} numberOfLines={1}>
+					{layoutNames[layout]}
+				</Text>
+			</Pressable>
+		);
+	};
+
+	return (
+		<View style={{ gap: space.s4 }}>
+			<Field label={t`Header layout`}>
+				<View
+					accessibilityRole="radiogroup"
+					accessibilityLabel={t`Header layout`}
+					style={{ gap: space.s2, opacity: disabled ? 0.45 : 1 }}
+				>
+					{[entryHeaderLayouts.slice(0, 3), entryHeaderLayouts.slice(3)].map((layouts) => (
+						<View key={layouts.join()} style={{ flexDirection: "row", gap: space.s2 }}>
+							{layouts.map(tile)}
+							{/* Keeps the short last row's tiles a third wide. */}
+							{layouts.length < 3 ? <View style={{ flex: 3 - layouts.length }} /> : null}
+						</View>
+					))}
+				</View>
+			</Field>
+
+			<Field label={t`Row order`} helper={t`Education swaps school and field of study the same way.`}>
+				<View
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+						gap: space.s3,
+						padding: space.s2,
+						borderRadius: radius.rLg,
+						borderWidth: 1,
+						borderColor: colors.line,
+					}}
+				>
+					<View style={{ flex: 1, gap: space.s1 }}>
+						{rows.map((row, index) => (
+							<Animated.View
+								key={row.id}
+								accessible
+								layout={listLayout}
+								style={{
+									minHeight: size.chip,
+									flexDirection: "row",
+									alignItems: "center",
+									justifyContent: "space-between",
+									gap: space.s2,
+									paddingHorizontal: space.s3,
+									borderRadius: radius.rMd,
+									borderWidth: 1,
+									borderColor: colors.line,
+									backgroundColor: colors.raised,
+								}}
+							>
+								<Text variant="callout" weight={index === 0 ? 600 : 400}>
+									{row.name}
+								</Text>
+								<Text variant="caption" color="ink3">
+									{row.detail}
+								</Text>
+							</Animated.View>
+						))}
+					</View>
+					<IconButton
+						icon="arrows-down-up"
+						variant="secondary"
+						label={entry.lead === "role" ? t`Swap rows: lead with company` : t`Swap rows: lead with position`}
+						disabled={disabled}
+						onPress={() => {
+							haptics.selection();
+							set("entryLead", { lead: entry.lead === "role" ? "organization" : "role" });
+						}}
+					/>
+				</View>
+			</Field>
+
+			<Field label={t`Accent`}>
+				<Segmented<EntryHeader["accent"]>
+					label={t`Accent`}
+					value={entry.accent}
+					options={[
+						{ value: "none", label: t({ message: "None", context: "Entry header accent" }) },
+						{ value: "rule", label: t({ message: "Rule", context: "Entry header accent: a line under the header" }) },
+						{ value: "bar", label: t({ message: "Bar", context: "Entry header accent: a bar beside the header" }) },
+						{
+							value: "band",
+							label: t({ message: "Band", context: "Entry header accent: a tinted background behind the header" }),
+						},
+					]}
+					onChange={(accent) => {
+						if (!disabled) set("entryAccent", { accent });
+					}}
+				/>
+			</Field>
+		</View>
+	);
+}
 
 type TypeGroupProps = GroupProps & { onCustomFonts: () => void };
 

@@ -72,9 +72,9 @@ export const templates = {
 	},
 	meowth: {
 		name: "Meowth",
-		description: msg`Single-column with an inline three-column entry header (position · organization · period); compact and ATS-friendly, well-suited for Asian resume conventions (CN/JP/KR).`,
+		description: msg`Single-column with uppercase section headings over a rule and the photo beside the name; compact and ATS-friendly, well-suited for Asian resume conventions (CN/JP/KR).`,
 		imageUrl: "/templates/jpg/meowth.jpg",
-		tags: ["Single-column", "ATS friendly", "Inline header", "Compact", "Asian style", "CN/JP/KR"],
+		tags: ["Single-column", "ATS friendly", "Ruled headings", "Compact", "Asian style", "CN/JP/KR"],
 	},
 	onyx: {
 		name: "Onyx",

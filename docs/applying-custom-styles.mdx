@@ -8,8 +8,8 @@ between skills, or a border under every section heading. You write them in a CSS
 and they apply to the PDF: the page preview, PDF downloads, and your public resume. DOCX and Markdown exports
 don't use them.
 
-Try the regular **Design** controls first (template, type, color, page and layout). They cover most changes and keep
-working when you switch templates. Reach for custom styles when you want something specific.
+Try the regular **Design** controls first (template, entries, type, color, page and layout). They cover most changes and
+keep working when you switch templates. Reach for custom styles when you want something specific.
 
 ## Before you start
 
@@ -404,26 +404,32 @@ resume[template="azurill"] template-part[name="timeline-line"] {
 }
 ```
 
-| Template  | Selectors                                                                                                                                                                                               |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Azurill   | `template-part[name="timeline-content"]`, `template-part[name="timeline-dot"]`, `template-part[name="timeline-line"]`, `template-part[name="timeline-marker"]`                                          |
-| Bronzor   | `section[part~="interleaved-section-row"]`                                                                                                                                                              |
-| Chikorita | `template-part[name="contact-row-primary"]`, `template-part[name="contact-row-secondary"]`                                                                                                              |
-| Ditgar    | `template-part[name="featured-summary"]`, `item-header[part~="item-header-border"]`, `region[part~="sidebar-background"]`                                                                               |
-| Ditto     | `template-part[name="contact-offset"]`, `template-part[name="header-band"]`, `template-part[name="picture-anchor"]`                                                                                     |
-| Gengar    | `template-part[name="featured-summary"]`, `region[part~="sidebar-background"]`                                                                                                                          |
-| Glalie    | `template-part[name="sidebar-background"]`                                                                                                                                                              |
-| Leafish   | `template-part[name="header-body"]`, `template-part[name="header-contact-band"]`, `template-part[name="header-intro"]`                                                                                  |
-| Meowth    | `template-part[name="education-grade-row"]`, `template-part[name="inline-item-header-leading"]`, `template-part[name="inline-item-header-middle"]`, `template-part[name="inline-item-header-trailing"]` |
-| Pikachu   | `template-part[name="header-divider"]`                                                                                                                                                                  |
-| Rhyhorn   | `template-part[name="contact-item-content"]`, `contact-item[part~="contact-item-last"]`                                                                                                                 |
-| Scizor    | `template-part[name="header-name-rule"]`                                                                                                                                                                |
-| Smeargle  | `template-part[name="featured-summary"]`                                                                                                                                                                |
+| Template  | Selectors                                                                                                                                                      |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Azurill   | `template-part[name="timeline-content"]`, `template-part[name="timeline-dot"]`, `template-part[name="timeline-line"]`, `template-part[name="timeline-marker"]` |
+| Bronzor   | `section[part~="interleaved-section-row"]`                                                                                                                     |
+| Chikorita | `template-part[name="contact-row-primary"]`, `template-part[name="contact-row-secondary"]`                                                                     |
+| Ditgar    | `template-part[name="featured-summary"]`, `item-header[part~="item-header-border"]`, `region[part~="sidebar-background"]`                                      |
+| Ditto     | `template-part[name="contact-offset"]`, `template-part[name="header-band"]`, `template-part[name="picture-anchor"]`                                            |
+| Gengar    | `template-part[name="featured-summary"]`, `region[part~="sidebar-background"]`                                                                                 |
+| Glalie    | `template-part[name="sidebar-background"]`                                                                                                                     |
+| Leafish   | `template-part[name="header-body"]`, `template-part[name="header-contact-band"]`, `template-part[name="header-intro"]`                                         |
+| Pikachu   | `template-part[name="header-divider"]`                                                                                                                         |
+| Rhyhorn   | `template-part[name="contact-item-content"]`, `contact-item[part~="contact-item-last"]`                                                                        |
+| Scizor    | `template-part[name="header-name-rule"]`                                                                                                                       |
+| Smeargle  | `template-part[name="featured-summary"]`                                                                                                                       |
 
-Kakuna, Lapras, Onyx and Porygon have no template-specific parts.
+Kakuna, Lapras, Meowth, Onyx and Porygon have no template-specific parts.
 
 Every template also has `template-part[name="item-header-row"]`: the row with the title and date in Awards,
 Certifications, Projects and Publications entries. It doesn't need a template guard.
+
+When **Design → Entries → Header layout** is **One line**, every template also has the parts of that one-line header in
+Experience, Education and Volunteer entries: `template-part[name="inline-item-header-leading"]`,
+`template-part[name="inline-item-header-middle"]` and `template-part[name="inline-item-header-trailing"]`, plus
+`template-part[name="education-grade-row"]` for the grade and location under an Education header. They exist only in
+sections that use the one-line header, not in the sidebar or in sections with more than one column. Custom styles still
+win over the **Entries** settings, so a rule on `item-header` can restyle or remove the accent.
 
 ### Not supported
 

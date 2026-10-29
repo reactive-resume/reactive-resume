@@ -190,14 +190,20 @@ describe("semantic binding host fidelity", () => {
 		["gengar", 1],
 		["glalie", 1],
 		["leafish", 3],
-		["meowth", 3],
 		["pikachu", 1],
 		["rhyhorn", 1],
 		["scizor", 1],
 	] as const)("%s attaches every visible primitive template part to an existing host", async (template, expected) => {
-		const section = template === "meowth" ? "experience" : "summary";
-		const document = await renderFixture(template, buildFixture("template-part { opacity: 0.37; }", section));
+		const document = await renderFixture(template, buildFixture("template-part { opacity: 0.37; }"));
 
 		expect(nodesWithStyle(document, "opacity", 0.37)).toHaveLength(expected);
+	});
+
+	it("attaches the one-line entry header's parts to existing hosts", async () => {
+		const data = buildFixture("template-part { opacity: 0.37; }", "experience");
+		data.metadata.design.entry = { layout: "inline", lead: "organization", accent: "none" };
+		const document = await renderFixture("onyx", data);
+
+		expect(nodesWithStyle(document, "opacity", 0.37)).toHaveLength(3);
 	});
 });

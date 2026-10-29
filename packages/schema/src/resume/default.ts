@@ -86,6 +86,7 @@ export const defaultResumeData: ResumeData = {
 				icon: "star",
 				type: "circle",
 			},
+			entry: { layout: "stacked", lead: "organization", accent: "none" },
 		},
 		typography: {
 			body: {

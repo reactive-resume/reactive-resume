@@ -1,5 +1,6 @@
 import type { OdtBlock, OdtInline, SectionTitleResolver } from "./types";
-import type { ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import type { EntryHeader, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import { entryHeaderOf } from "@reactive-resume/schema/resume/data";
 import { toSafeLink } from "@reactive-resume/utils/link";
 import { htmlToOdtBlocks } from "./html-to-odt";
 import { paragraph, text } from "./types";
@@ -32,20 +33,28 @@ function website({ url, label }: { url: string; label: string }): OdtBlock[] {
 	return href ? [paragraph([{ type: "link", href, children: [text(label || href)] }])] : [];
 }
 
+type Lead = EntryHeader["lead"];
+
+/** Design → Entries → Row order, as the DOCX export reads it: the role first when the resume leads with it. */
+const byLead = (lead: Lead, organization: string, role: string): [string, string] =>
+	lead === "role" && role.trim() ? [role, organization] : [organization, role];
+
 /** Each built-in item type to its blocks, mirroring the DOCX and Markdown exports. */
-const renderItem: { [T in SectionType]: (item: ItemOf<T>, section: Sections[T]) => OdtBlock[] } = {
-	experience: (item) => {
+const renderItem: { [T in SectionType]: (item: ItemOf<T>, section: Sections[T], lead: Lead) => OdtBlock[] } = {
+	experience: (item, _section, lead) => {
 		const roles = item.roles.filter((role) => role.position.trim());
 		return [
-			entryHeading(item.company, roles.length > 0 ? undefined : item.position, item.period),
+			roles.length > 0
+				? entryHeading(item.company, undefined, item.period)
+				: entryHeading(...byLead(lead, item.company, item.position), item.period),
 			...meta(item.location),
 			...roles.flatMap((role) => [entryHeading(role.position, role.period), ...htmlToOdtBlocks(role.description)]),
 			...htmlToOdtBlocks(item.description),
 			...website(item.website),
 		];
 	},
-	education: (item) => [
-		entryHeading(item.school, [item.degree, item.area].filter(Boolean).join(", "), item.period),
+	education: (item, _section, lead) => [
+		entryHeading(...byLead(lead, item.school, [item.degree, item.area].filter(Boolean).join(", ")), item.period),
 		...meta(item.grade ? `Grade: ${item.grade}` : ""),
 		...meta(item.location),
 		...htmlToOdtBlocks(item.description),
@@ -109,16 +118,17 @@ const heading = (section: HeadedSection, title: string): OdtBlock[] =>
 	section.showHeading !== false && title ? [{ type: "heading", level: 1, children: [text(title)] }] : [];
 
 /** A built-in-typed section's heading and visible items; nothing when the section or every item is hidden. */
-function renderItems<T extends SectionType>(type: T, section: Sections[T], title: string): OdtBlock[] {
+function renderItems<T extends SectionType>(type: T, section: Sections[T], title: string, lead: Lead): OdtBlock[] {
 	const items = (section.items as ItemOf<T>[]).filter((item) => !item.hidden);
 	if (section.hidden || items.length === 0) return [];
-	const render = renderItem[type] as (item: ItemOf<T>, section: Sections[T]) => OdtBlock[];
-	return [...heading(section, title), ...items.flatMap((item) => render(item, section))];
+	const render = renderItem[type] as (item: ItemOf<T>, section: Sections[T], lead: Lead) => OdtBlock[];
+	return [...heading(section, title), ...items.flatMap((item) => render(item, section, lead))];
 }
 
 /** Renders any section id (summary, built-in or custom) under its locale-aware title. */
 export function renderSection(sectionId: string, data: ResumeData, resolveTitle?: SectionTitleResolver): OdtBlock[] {
 	const titleOf = (stored: string) => resolveTitle?.(sectionId)?.trim() || stored;
+	const { lead } = entryHeaderOf(data.metadata.design);
 
 	if (sectionId === "summary") {
 		const { summary } = data;
@@ -128,7 +138,7 @@ export function renderSection(sectionId: string, data: ResumeData, resolveTitle?
 
 	if (sectionId in data.sections) {
 		const section = data.sections[sectionId as SectionType];
-		return renderItems(sectionId as SectionType, section, titleOf(section.title));
+		return renderItems(sectionId as SectionType, section, titleOf(section.title), lead);
 	}
 
 	const custom = data.customSections.find((candidate) => candidate.id === sectionId);
@@ -147,5 +157,5 @@ export function renderSection(sectionId: string, data: ResumeData, resolveTitle?
 	}
 
 	// Other custom sections share a built-in type's item shape, so they reuse its renderer.
-	return renderItems(custom.type, custom as unknown as Sections[SectionType], titleOf(custom.title));
+	return renderItems(custom.type, custom as unknown as Sections[SectionType], titleOf(custom.title), lead);
 }

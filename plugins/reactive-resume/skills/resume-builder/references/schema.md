@@ -862,6 +862,10 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `metadata.design.colors.primary` | `string` | yes | — | The primary color of the design, defined as rgba(r, g, b, a). |
 | `metadata.design.colors.text` | `string` | yes | — | The text color of the design, defined as rgba(r, g, b, a). Usually set to black: rgba(0, 0, 0, 1). |
 | `metadata.design.colors.background` | `string` | yes | — | The background color of the design, defined as rgba(r, g, b, a). Usually set to white: rgba(255, 255, 255, 1). |
+| `metadata.design.entry` | `object` | no | — | How entry headers are arranged and decorated. When missing, entries use the stacked layout. |
+| `metadata.design.entry.layout` | `string` | yes | enum: ["stacked","inline","compact","date-column","eyebrow"]; default: "stacked" | How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'. |
+| `metadata.design.entry.lead` | `string` | yes | enum: ["organization","role"]; default: "organization" | Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study). |
+| `metadata.design.entry.accent` | `string` | yes | enum: ["none","rule","bar","band"]; default: "none" | Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background). |
 | `metadata.typography` | `object` | yes | — | The typography settings of the resume. Determines the fonts and sizes of the body and headings of the resume. |
 | `metadata.typography.body` | `object` | yes | — | The typography for the body of the resume. |
 | `metadata.typography.body.fontFamily` | `string` | yes | — | The family of the font to use. Must be a supported resume font. |

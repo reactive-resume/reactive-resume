@@ -12,17 +12,20 @@ import type { CustomSectionType, LayoutPage, ResumeData, SectionType } from "@re
 import type { Template } from "@reactive-resume/schema/templates";
 import type { HTMLElement, Node } from "node-html-parser";
 import { NodeType } from "node-html-parser";
+import { entryHeaderOf } from "@reactive-resume/schema/resume/data";
 import { assertResumeRenderBudget } from "@reactive-resume/schema/resume/limits";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { getResumeSectionIcon } from "../section-icon";
 import { shouldUseSectionTimeline } from "../templates/shared/columns";
 import { getCustomFieldLinkUrl } from "../templates/shared/contact";
+import { entryLayoutOf, leadsWithRole } from "../templates/shared/entry-header";
 import { filterItems, filterSections } from "../templates/shared/filtering";
 import { hasTemplatePicture } from "../templates/shared/picture";
 import { parseNormalizedRichTextHtml, richTextMarkClassName } from "../templates/shared/rich-text-html";
 import { STANDARD_FIELD_REGISTRY } from "./binding-inventory";
 import { semanticNodeKeys } from "./node-keys";
 import { getRichTextSemanticKind } from "./rich-text-keys";
+import { INLINE_LEADING_PART } from "./shared-parts";
 import { getTemplateSemanticManifest } from "./template-manifest";
 
 export type BuildSemanticTreeInput = {
@@ -450,10 +453,17 @@ const buildSection = ({
 							: [],
 				});
 	const itemsKey = semanticNodeKeys.sectionItems(key);
+	const entryLayout = entryLayoutOf(
+		entryHeaderOf(data.metadata.design).layout,
+		descriptor.type,
+		placement,
+		descriptor.section.columns,
+	);
 	const requireItemHeaderPrimitive = manifest.parts.some(
 		(part) =>
 			part.owner.kind === "item-header" &&
-			(part.owner.sectionTypes === undefined || part.owner.sectionTypes.includes(descriptor.type)),
+			(part.owner.sectionTypes === undefined || part.owner.sectionTypes.includes(descriptor.type)) &&
+			(part.owner.entryLayout === undefined || part.owner.entryLayout === entryLayout),
 	);
 	const items = filterItems(descriptor.section.items, descriptor.type).map((item) =>
 		buildItem({
@@ -666,6 +676,15 @@ const getRegionSections = (
 const findSectionAncestor = (ancestors: readonly SemanticNode[]): SemanticNode | undefined =>
 	ancestors.findLast((node) => node.kind === "section");
 
+/** The layout the renderer draws this section's entries in. */
+const sectionEntryLayout = (data: ResumeData, section: SemanticNode | undefined) =>
+	entryLayoutOf(
+		entryHeaderOf(data.metadata.design).layout,
+		section?.attributes.type ?? "",
+		section?.attributes.placement as TemplateSemanticPlacement,
+		section?.id ? resolveSection(data, section.id)?.section.columns : undefined,
+	);
+
 const partMatchesOwner = ({
 	part,
 	node,
@@ -705,6 +724,13 @@ const partMatchesOwner = ({
 	if ("sectionTypes" in part.owner && part.owner.sectionTypes) {
 		if (!section || !part.owner.sectionTypes.includes(section.attributes.type as CustomSectionType)) return false;
 	}
+	if (
+		"entryLayout" in part.owner &&
+		part.owner.entryLayout &&
+		sectionEntryLayout(data, section) !== part.owner.entryLayout
+	) {
+		return false;
+	}
 	if (part.owner.kind === "item" && parent?.kind !== "section-items") return false;
 	if (part.owner.kind === "item-header" && parent?.kind !== "item") return false;
 	if (part.owner.kind === "item-header" && ancestors.at(-2)?.kind !== "section-items") return false;
@@ -743,7 +769,7 @@ const routeTemplateParts = ({
 		(part): part is TemplateSemanticPrimitivePart => isPrimitivePart(part) && part.route.parent === parentPart,
 	);
 	let remaining = [...children];
-	const routed = directParts.map((part) => {
+	const route = (part: TemplateSemanticPrimitivePart) => {
 		const take = part.route.take;
 		const selected =
 			take === "all"
@@ -756,7 +782,7 @@ const routeTemplateParts = ({
 		const key = `${parentKey}/template-part-${part.key}`;
 
 		return {
-			part,
+			at: part.route.at,
 			node: semanticNode({
 				key,
 				kind: "template-part",
@@ -771,30 +797,24 @@ const routeTemplateParts = ({
 				}),
 			}),
 		};
-	});
-	const start = routed.filter(({ part }) => part.route.at === "start").map(({ node }) => node);
-	const end = routed.filter(({ part }) => part.route.at === "end").map(({ node }) => node);
-	const around = remaining.flatMap((child) => [
-		...routed
-			.filter(
-				({ part }) =>
-					typeof part.route.at === "object" &&
-					"before" in part.route.at &&
-					selectorMatches(child, part.route.at.before, sectionType),
-			)
+	};
+	// Parts placed beside a sibling settle first, so a part that takes everything left (Azurill's timeline content)
+	// carries them along with their sibling.
+	const anchored = directParts.filter((part) => typeof part.route.at === "object").map(route);
+	remaining = remaining.flatMap((child) => [
+		...anchored
+			.filter(({ at }) => typeof at === "object" && "before" in at && selectorMatches(child, at.before, sectionType))
 			.map(({ node }) => node),
 		child,
-		...routed
-			.filter(
-				({ part }) =>
-					typeof part.route.at === "object" &&
-					"after" in part.route.at &&
-					selectorMatches(child, part.route.at.after, sectionType),
-			)
+		...anchored
+			.filter(({ at }) => typeof at === "object" && "after" in at && selectorMatches(child, at.after, sectionType))
 			.map(({ node }) => node),
 	]);
+	const edges = directParts.filter((part) => typeof part.route.at !== "object").map(route);
+	const start = edges.filter(({ at }) => at === "start").map(({ node }) => node);
+	const end = edges.filter(({ at }) => at === "end").map(({ node }) => node);
 
-	return [...start, ...around, ...end];
+	return [...start, ...remaining, ...end];
 };
 
 const applyTemplateManifest = (
@@ -817,6 +837,16 @@ const applyTemplateManifest = (
 		aliases.length > 0 ? { ...tree.attributes, part: [...existingParts, ...aliases].join(" ") } : tree.attributes;
 	const section = tree.kind === "section" ? tree : findSectionAncestor(ancestors);
 	const sectionType = section?.attributes.type as CustomSectionType | undefined;
+	// A one-line header starts with the role when the entry leads with it.
+	const leadingParts = ownerParts.filter(({ name }) => name === INLINE_LEADING_PART);
+	const item =
+		leadingParts.length > 0 && section?.id
+			? resolveSection(data, section.id)?.section.items.find(({ id }) => id === parent?.id)
+			: undefined;
+	const routedParts =
+		item && leadsWithRole(entryHeaderOf(data.metadata.design).lead, sectionType ?? "", item)
+			? [...leadingParts, ...ownerParts.filter(({ name }) => name !== INLINE_LEADING_PART)]
+			: ownerParts;
 	for (const part of ownerParts) {
 		if (!isPrimitivePart(part)) continue;
 		const { route } = part;
@@ -843,7 +873,7 @@ const applyTemplateManifest = (
 		attributes,
 		children: routeTemplateParts({
 			children,
-			parts: ownerParts,
+			parts: routedParts,
 			parentPart: "owner",
 			parentKey: tree.key,
 			sectionType,
@@ -880,11 +910,15 @@ const wrapCombinedFields = (
 
 const addCombinedTextHosts = (
 	node: SemanticNode,
-	template: Template,
+	data: ResumeData,
 	sectionType?: CustomSectionType,
+	entryLayout?: ReturnType<typeof entryLayoutOf>,
 ): SemanticNode => {
 	const currentSectionType = node.kind === "section" ? (node.attributes.type as CustomSectionType) : sectionType;
-	let children = node.children.map((child) => addCombinedTextHosts(child, template, currentSectionType));
+	const currentEntryLayout = node.kind === "section" ? sectionEntryLayout(data, node) : entryLayout;
+	let children = node.children.map((child) =>
+		addCombinedTextHosts(child, data, currentSectionType, currentEntryLayout),
+	);
 
 	if (node.kind === "template-part" && node.attributes.name === "inline-item-header-leading") {
 		if (currentSectionType === "experience") {
@@ -899,7 +933,8 @@ const addCombinedTextHosts = (
 		children = [...wrapCombinedFields(node.key, children, ["grade", "location"], "education-grade-location", "parent")];
 	}
 
-	if (node.kind === "item-header" && template !== "meowth") {
+	// The stacked rows host these runs; the other layouts draw the fields on their own.
+	if (node.kind === "item-header" && currentEntryLayout === "stacked") {
 		if (currentSectionType === "experience") {
 			children = [...wrapCombinedFields(node.key, children, ["location"], "experience-location")];
 			children = [...wrapCombinedFields(node.key, children, ["period"], "experience-period")];
@@ -996,7 +1031,7 @@ export function buildSemanticTree({
 		],
 	});
 
-	return addCombinedTextHosts(applyTemplateManifest(tree, manifest, data), template);
+	return addCombinedTextHosts(applyTemplateManifest(tree, manifest, data), data);
 }
 
 export type { TemplateSemanticManifest } from "./template-manifest";

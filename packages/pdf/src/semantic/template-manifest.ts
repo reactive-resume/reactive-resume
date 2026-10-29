@@ -1,6 +1,6 @@
 import type { PrimitiveBinding, SemanticBindingRegistry } from "./binding-inventory";
 import type { SemanticNodeKind } from "@reactive-resume/resume/stylesheet/types";
-import type { CustomSectionType } from "@reactive-resume/schema/resume/data";
+import type { CustomSectionType, EntryHeader } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import { azurillSemanticManifest } from "../templates/azurill/semantic";
 import { bronzorSemanticManifest } from "../templates/bronzor/semantic";
@@ -21,6 +21,7 @@ import { rhyhornSemanticManifest } from "../templates/rhyhorn/semantic";
 import { scizorSemanticManifest } from "../templates/scizor/semantic";
 import { smeargleSemanticManifest } from "../templates/smeargle/semantic";
 import { SHARED_BINDING_REGISTRY } from "./binding-inventory";
+import { entryHeaderParts } from "./shared-parts";
 
 export type TemplateSemanticPlacement = "main" | "sidebar";
 type TemplateSemanticRegionName = "header" | "main" | "sidebar" | "featured";
@@ -58,11 +59,15 @@ type TemplateSemanticPartOwner =
 			key: "item";
 			placement?: TemplateSemanticPlacement;
 			columns?: 1;
+			sectionTypes?: readonly CustomSectionType[];
+			entryLayout?: EntryHeader["layout"];
 	  }
 	| {
 			kind: "item-header";
 			key: "item-header";
 			sectionTypes?: readonly CustomSectionType[];
+			/** Only while the section's entries are drawn in this layout (see `entryLayoutOf`). */
+			entryLayout?: EntryHeader["layout"];
 	  }
 	| { kind: "contact-list"; key: "contact-list" }
 	| { kind: "contact-item"; key: "contact-item"; position?: "last" };
@@ -155,8 +160,16 @@ const TEMPLATE_SEMANTIC_MANIFESTS = {
 	smeargle: smeargleSemanticManifest,
 } as const satisfies Readonly<Record<Template, TemplateSemanticManifest>>;
 
+// Every template's entries can be drawn on one line, so the parts of that header belong to all of them.
+const MANIFESTS = Object.fromEntries(
+	Object.entries(TEMPLATE_SEMANTIC_MANIFESTS).map(([template, manifest]): [string, TemplateSemanticManifest] => [
+		template,
+		{ ...manifest, parts: [...manifest.parts, ...entryHeaderParts] },
+	]),
+) as Readonly<Record<Template, TemplateSemanticManifest>>;
+
 export function getTemplateSemanticManifest(template: Template): TemplateSemanticManifest {
-	return TEMPLATE_SEMANTIC_MANIFESTS[template];
+	return MANIFESTS[template];
 }
 
 export function getTemplateSemanticBindingRegistry(template: Template): SemanticBindingRegistry {

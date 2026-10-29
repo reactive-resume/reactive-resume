@@ -16,7 +16,7 @@ A template decides the layout of your resume: where the header sits, whether the
   </Step>
   <Step title="Find the Template group">
     **Template** is the first group in the Design panel. Use the row of links at the top of the panel (**Template**,
-    **Type**, **Color**, **Page**, **Advanced**) to jump between groups.
+    **Entries**, **Type**, **Color**, **Page**, **Advanced**) to jump between groups.
   </Step>
 </Steps>
 
@@ -171,7 +171,7 @@ In a one-column template, sections you placed in the sidebar print after the mai
   <Frame caption="Meowth">
     <img
       src="/images/templates/meowth.webp"
-      alt="First page of a resume in the Meowth template: one column with position, organization and period on one line"
+      alt="First page of a resume in the Meowth template: compact one column with uppercase section headings over a colored rule, and each entry's company above its position"
       style={{ aspectRatio: "210/297" }}
     />
   </Frame>
@@ -233,11 +233,50 @@ In a one-column template, sections you placed in the sidebar print after the mai
 - **Lots of experience?** Compare how full each thumbnail's first page looks. After you apply a template, the page count in the zoom bar at the bottom of the page tells you the total.
 - **Judge with real content.** Because the gallery draws your own resume, fill in your details first and then pick.
 
+## Change how entries look
+
+The **Entries** group, below **Template**, arranges the header of each entry: the lines with the company or school,
+the position, the location and the dates. These settings work with every template and stay when you switch templates.
+
+### Header layout
+
+| Layout          | What it does                                                                                                                                             |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Stacked**     | Two rows: the company and location, then the position and dates. This is the default.                                                                    |
+| **One line**    | Puts the company, the position and the dates on one line, wrapping onto the next when they don't fit. Education adds a line with the grade and location. |
+| **Compact**     | Puts the company and the dates on the first row, then the position and location together on one line.                                                    |
+| **Date column** | Sets the dates in a narrow column at the start, with the company, position and location beside them.                                                     |
+| **Eyebrow**     | Puts the position and location in a small line in the accent color above a larger company name.                                                          |
+
+**One line** and **Date column** need the full width of the main column. In the sidebar, or in a section split into
+more than one column, entries use **Stacked** instead. **Date column** also moves the dates of Projects, Awards,
+Certifications and Publications into the column.
+
+### Row order
+
+**Row order** shows the two header rows, for example "Company · Location" above "Position · Date". Select the swap
+button (⇅) to put the position first in every layout, and select it again to put the company back. Education
+swaps the school and the field of study the same way. Volunteer entries always start with the organization, and an entry
+with nothing to swap keeps the company or school first.
+
+In the web editor, you can also swap the rows from the page: select an Experience or Education entry, then select
+**Swap rows** on its **Editing** tag.
+
+### Accent
+
+**Accent** adds the accent color to each entry header: **None** (the default), **Rule** (a line under it), **Bar** (a bar
+at its start) or **Band** (a light tint behind it). In a colored sidebar, the accent uses the sidebar's text color
+instead.
+
+The **Entries** group works the same way on a phone and in the Android and iPhone apps, where it is a tab in the design
+sheet. DOCX and ODT downloads follow **Row order** but keep their plain layout, without header layouts or accents. Custom
+styles still apply on top of these settings; see [Applying custom styles](/applying-custom-styles).
+
 ## Reset the design settings
 
-If you have changed a lot of design settings and want a clean slate, open **Advanced** at the bottom of the Design panel and select **Reset design defaults**. This resets fonts, text size, line height, colors, level style, sidebar width, margins, spacing and the icon and underline switches. Your template, paper size, language, date format, section placement and custom CSS stay as they are. A message offers **Undo**.
+If you have changed a lot of design settings and want a clean slate, open **Advanced** at the bottom of the Design panel and select **Reset design defaults**. This resets fonts, text size, line height, colors, level style, the **Entries** settings, sidebar width, margins, spacing and the icon and underline switches. Your template, paper size, language, date format, section placement and custom CSS stay as they are. A message offers **Undo**.
 
-The reset doesn't depend on the template: every template goes back to the same standard settings (IBM Plex Serif at 10 pt, a red accent, circle levels and hidden section icons). Pick a font pairing and accent color again afterwards if you want a different starting point.
+The reset doesn't depend on the template: every template goes back to the same standard settings (IBM Plex Serif at 10 pt, a red accent, circle levels, stacked entry headers and hidden section icons). Pick a font pairing and accent color again afterwards if you want a different starting point.
 
 <Note>
   If Design's controls are greyed out, the resume is locked. Open the document name menu at the top left and select

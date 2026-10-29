@@ -1,5 +1,11 @@
 import type { HtmlStyleConfig } from "./html-to-docx";
-import type { CustomSection, CustomSectionType, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import type {
+	CustomSection,
+	CustomSectionType,
+	EntryHeader,
+	ResumeData,
+	SectionType,
+} from "@reactive-resume/schema/resume/data";
 import { BorderStyle, ExternalHyperlink, HeadingLevel, Paragraph, TabStopPosition, TabStopType, TextRun } from "docx";
 import { toSafeLink } from "@reactive-resume/utils/link";
 import { htmlToParagraphs } from "./html-to-docx";
@@ -13,9 +19,11 @@ type RenderConfig = {
 	bodySizeHalfPt: number;
 	textColorHex: string;
 	primaryColorHex: string;
+	/** Entries → Row order. Missing means organization first. */
+	lead?: EntryHeader["lead"];
 };
 
-/** Module-level typography/color config, set by the builder before rendering. */
+/** Module-level typography/color/row-order config, set by the builder before rendering. */
 let config: RenderConfig = {
 	headingFont: "Calibri",
 	headingSizeHalfPt: 28,
@@ -100,6 +108,10 @@ function titleAndSubtitle(primary: string, secondary: string, rightText?: string
 	});
 }
 
+/** Puts the role before the organization when the resume leads with the role and the item has one. */
+const byLead = (organization: string, role: string): [string, string] =>
+	config.lead === "role" && role.trim() ? [role, organization] : [organization, role];
+
 function locationLine(location: string): Paragraph[] {
 	if (!location) return [];
 
@@ -163,7 +175,7 @@ const renderExperience = (section: Sections["experience"], colorHex: string) =>
 		const roles = item.roles.filter((role) => role.position.trim());
 		if (roles.length === 0)
 			return [
-				titleAndSubtitle(item.company, item.position, item.period),
+				titleAndSubtitle(...byLead(item.company, item.position), item.period),
 				...locationLine(item.location),
 				...itemTrailer(item),
 			];
@@ -187,7 +199,7 @@ const renderExperience = (section: Sections["experience"], colorHex: string) =>
 
 const renderEducation = (section: Sections["education"], colorHex: string) =>
 	renderEntries(section, colorHex, (item, baseRun) => [
-		titleAndSubtitle(item.school, [item.degree, item.area].filter(Boolean).join(", "), item.period),
+		titleAndSubtitle(...byLead(item.school, [item.degree, item.area].filter(Boolean).join(", ")), item.period),
 		...(item.grade
 			? [new Paragraph({ children: [new TextRun({ text: `Grade: ${item.grade}`, italics: true, ...baseRun })] })]
 			: []),

@@ -118,15 +118,37 @@ export function createBaseTemplateStyles({
 			minWidth: 0,
 		} satisfies Style,
 
+		/**
+		 * An entry's title and date row. Texts share a baseline, so a larger title and a smaller date read as one line
+		 * (box bottoms would leave the smaller text low); a title too long for the date wraps it onto a line of its own.
+		 */
 		splitRow: {
 			flexDirection: r.row,
 			flexWrap: "wrap",
-			alignItems: "flex-start",
+			alignItems: "baseline",
 			justifyContent: "space-between",
 			columnGap: metrics.gapX(2 / 3),
 		} satisfies Style,
 
 		alignEnd: { ...r.alignEnd } satisfies Style,
+
+		/**
+		 * The one-line entry header (Design → Entries → One line): organization, role and date share a row at their
+		 * natural widths and wrap onto the next line when they don't fit. The date takes what's left and keeps to the end.
+		 */
+		inlineItemHeader: {
+			flexDirection: r.row,
+			flexWrap: "wrap",
+			alignItems: "baseline",
+			columnGap: metrics.gapX(0.75),
+			rowGap: metrics.gapY(0.125),
+		} satisfies Style,
+
+		inlineItemHeaderLeading: { flexShrink: 1 } satisfies Style,
+
+		inlineItemHeaderMiddle: { flexShrink: 1 } satisfies Style,
+
+		inlineItemHeaderTrailing: { flexGrow: 1, textAlign: r.rtl ? "left" : "right" } satisfies Style,
 
 		/**
 		 * Standard picture style shared by every template but ditto.

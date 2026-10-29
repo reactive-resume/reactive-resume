@@ -131,11 +131,12 @@ describe("semantic sibling ordering reaches final PDF output", () => {
 		expect(values).not.toContain("Hidden role");
 	});
 
-	it("projects hide and order across Meowth's existing inline-header part siblings", async () => {
+	it("projects hide and order across the one-line header's part siblings", async () => {
 		const data = semanticFixture(`
 			template-part[name="inline-item-header-leading"] { display: none; }
 			template-part[name="inline-item-header-trailing"] { order: -1; }
 		`);
+		data.metadata.design.entry = { layout: "inline", lead: "organization", accent: "none" };
 		data.sections.experience.items = [
 			{
 				id: "experience-1",
@@ -151,18 +152,19 @@ describe("semantic sibling ordering reaches final PDF output", () => {
 		];
 		data.metadata.layout.pages = [{ fullWidth: true, main: ["experience"], sidebar: [] }];
 
-		const values = await renderTextValues(data, "meowth");
+		const values = await renderTextValues(data, "onyx");
 
 		expectBefore(values, "1842", "Analytical Engines");
 		expect(values).not.toContain("Engineer");
 		expect(values).not.toContain("London");
 	});
 
-	it("projects Meowth's education grade row at the item boundary and its fields within that row", async () => {
+	it("projects the one-line header's education grade row at the item boundary and its fields within that row", async () => {
 		const data = semanticFixture(`
 			template-part[name="education-grade-row"] { order: -1; }
 			field[name="location"] { order: -1; }
 		`);
+		data.metadata.design.entry = { layout: "inline", lead: "organization", accent: "none" };
 		data.sections.education.items = [
 			{
 				id: "education-1",
@@ -179,17 +181,18 @@ describe("semantic sibling ordering reaches final PDF output", () => {
 		];
 		data.metadata.layout.pages = [{ fullWidth: true, main: ["education"], sidebar: [] }];
 
-		const values = await renderTextValues(data, "meowth");
+		const values = await renderTextValues(data, "onyx");
 
 		expectBefore(values, "London", "First");
 		expectBefore(values, "First", "Mathematics");
 		expectBefore(values, "First", "University of London");
 	});
 
-	it("reorders Meowth inline-header parts without dropping untouched combined fields", async () => {
+	it("reorders role-first one-line header parts without dropping untouched combined fields", async () => {
 		const data = semanticFixture(`
 			template-part[name="inline-item-header-trailing"] { order: -1; }
 		`);
+		data.metadata.design.entry = { layout: "inline", lead: "role", accent: "none" };
 		data.sections.education.items = [
 			{
 				id: "education-1",
@@ -206,7 +209,7 @@ describe("semantic sibling ordering reaches final PDF output", () => {
 		];
 		data.metadata.layout.pages = [{ fullWidth: true, main: ["education"], sidebar: [] }];
 
-		const values = await renderTextValues(data, "meowth");
+		const values = await renderTextValues(data, "onyx");
 
 		expectBefore(values, "1835", "Mathematics");
 		expectBefore(values, "Mathematics", "BSc");

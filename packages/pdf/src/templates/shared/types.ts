@@ -26,7 +26,6 @@ export type TemplateIconSlot =
 
 export type TemplateFeatures = {
 	sectionTimeline?: boolean;
-	inlineItemHeader?: boolean;
 	stackSidebarItemHeader?: boolean;
 	skillLevelAfterName?: boolean;
 };

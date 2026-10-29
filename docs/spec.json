@@ -4460,6 +4460,46 @@
 																"text",
 																"background"
 															]
+														},
+														"entry": {
+															"type": "object",
+															"properties": {
+																"layout": {
+																	"enum": [
+																		"stacked",
+																		"inline",
+																		"compact",
+																		"date-column",
+																		"eyebrow"
+																	],
+																	"type": "string",
+																	"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																},
+																"lead": {
+																	"enum": [
+																		"organization",
+																		"role"
+																	],
+																	"type": "string",
+																	"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																},
+																"accent": {
+																	"enum": [
+																		"none",
+																		"rule",
+																		"bar",
+																		"band"
+																	],
+																	"type": "string",
+																	"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																}
+															},
+															"required": [
+																"layout",
+																"lead",
+																"accent"
+															],
+															"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 														}
 													},
 													"required": [
@@ -8931,6 +8971,46 @@
 																"text",
 																"background"
 															]
+														},
+														"entry": {
+															"type": "object",
+															"properties": {
+																"layout": {
+																	"enum": [
+																		"stacked",
+																		"inline",
+																		"compact",
+																		"date-column",
+																		"eyebrow"
+																	],
+																	"type": "string",
+																	"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																},
+																"lead": {
+																	"enum": [
+																		"organization",
+																		"role"
+																	],
+																	"type": "string",
+																	"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																},
+																"accent": {
+																	"enum": [
+																		"none",
+																		"rule",
+																		"bar",
+																		"band"
+																	],
+																	"type": "string",
+																	"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																}
+															},
+															"required": [
+																"layout",
+																"lead",
+																"accent"
+															],
+															"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 														}
 													},
 													"required": [
@@ -34298,6 +34378,46 @@
 																					"text",
 																					"background"
 																				]
+																			},
+																			"entry": {
+																				"type": "object",
+																				"properties": {
+																					"layout": {
+																						"enum": [
+																							"stacked",
+																							"inline",
+																							"compact",
+																							"date-column",
+																							"eyebrow"
+																						],
+																						"type": "string",
+																						"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																					},
+																					"lead": {
+																						"enum": [
+																							"organization",
+																							"role"
+																						],
+																						"type": "string",
+																						"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																					},
+																					"accent": {
+																						"enum": [
+																							"none",
+																							"rule",
+																							"bar",
+																							"band"
+																						],
+																						"type": "string",
+																						"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																					}
+																				},
+																				"required": [
+																					"layout",
+																					"lead",
+																					"accent"
+																				],
+																				"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																			}
 																		},
 																		"required": [
@@ -34901,6 +35021,46 @@
 																					"text",
 																					"background"
 																				]
+																			},
+																			"entry": {
+																				"type": "object",
+																				"properties": {
+																					"layout": {
+																						"enum": [
+																							"stacked",
+																							"inline",
+																							"compact",
+																							"date-column",
+																							"eyebrow"
+																						],
+																						"type": "string",
+																						"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																					},
+																					"lead": {
+																						"enum": [
+																							"organization",
+																							"role"
+																						],
+																						"type": "string",
+																						"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																					},
+																					"accent": {
+																						"enum": [
+																							"none",
+																							"rule",
+																							"bar",
+																							"band"
+																						],
+																						"type": "string",
+																						"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																					}
+																				},
+																				"required": [
+																					"layout",
+																					"lead",
+																					"accent"
+																				],
+																				"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																			}
 																		},
 																		"required": [
@@ -45640,6 +45800,46 @@
 																					"text",
 																					"background"
 																				]
+																			},
+																			"entry": {
+																				"type": "object",
+																				"properties": {
+																					"layout": {
+																						"enum": [
+																							"stacked",
+																							"inline",
+																							"compact",
+																							"date-column",
+																							"eyebrow"
+																						],
+																						"type": "string",
+																						"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																					},
+																					"lead": {
+																						"enum": [
+																							"organization",
+																							"role"
+																						],
+																						"type": "string",
+																						"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																					},
+																					"accent": {
+																						"enum": [
+																							"none",
+																							"rule",
+																							"bar",
+																							"band"
+																						],
+																						"type": "string",
+																						"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																					}
+																				},
+																				"required": [
+																					"layout",
+																					"lead",
+																					"accent"
+																				],
+																				"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																			}
 																		},
 																		"required": [
@@ -46499,6 +46699,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -47248,6 +47488,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -47865,6 +48145,46 @@
 															"text",
 															"background"
 														]
+													},
+													"entry": {
+														"type": "object",
+														"properties": {
+															"layout": {
+																"enum": [
+																	"stacked",
+																	"inline",
+																	"compact",
+																	"date-column",
+																	"eyebrow"
+																],
+																"type": "string",
+																"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+															},
+															"lead": {
+																"enum": [
+																	"organization",
+																	"role"
+																],
+																"type": "string",
+																"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+															},
+															"accent": {
+																"enum": [
+																	"none",
+																	"rule",
+																	"bar",
+																	"band"
+																],
+																"type": "string",
+																"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+															}
+														},
+														"required": [
+															"layout",
+															"lead",
+															"accent"
+														],
+														"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 													}
 												},
 												"required": [
@@ -48375,6 +48695,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -49085,6 +49445,46 @@
 															"text",
 															"background"
 														]
+													},
+													"entry": {
+														"type": "object",
+														"properties": {
+															"layout": {
+																"enum": [
+																	"stacked",
+																	"inline",
+																	"compact",
+																	"date-column",
+																	"eyebrow"
+																],
+																"type": "string",
+																"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+															},
+															"lead": {
+																"enum": [
+																	"organization",
+																	"role"
+																],
+																"type": "string",
+																"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+															},
+															"accent": {
+																"enum": [
+																	"none",
+																	"rule",
+																	"bar",
+																	"band"
+																],
+																"type": "string",
+																"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+															}
+														},
+														"required": [
+															"layout",
+															"lead",
+															"accent"
+														],
+														"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 													}
 												},
 												"required": [
@@ -49595,6 +49995,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -50369,6 +50809,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -51135,6 +51615,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -51884,6 +52404,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -52573,6 +53133,46 @@
 																			"text",
 																			"background"
 																		]
+																	},
+																	"entry": {
+																		"type": "object",
+																		"properties": {
+																			"layout": {
+																				"enum": [
+																					"stacked",
+																					"inline",
+																					"compact",
+																					"date-column",
+																					"eyebrow"
+																				],
+																				"type": "string",
+																				"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																			},
+																			"lead": {
+																				"enum": [
+																					"organization",
+																					"role"
+																				],
+																				"type": "string",
+																				"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																			},
+																			"accent": {
+																				"enum": [
+																					"none",
+																					"rule",
+																					"bar",
+																					"band"
+																				],
+																				"type": "string",
+																				"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																			}
+																		},
+																		"required": [
+																			"layout",
+																			"lead",
+																			"accent"
+																		],
+																		"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																	}
 																},
 																"required": [
@@ -53208,6 +53808,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -54303,6 +54943,46 @@
 																				"text",
 																				"background"
 																			]
+																		},
+																		"entry": {
+																			"type": "object",
+																			"properties": {
+																				"layout": {
+																					"enum": [
+																						"stacked",
+																						"inline",
+																						"compact",
+																						"date-column",
+																						"eyebrow"
+																					],
+																					"type": "string",
+																					"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																				},
+																				"lead": {
+																					"enum": [
+																						"organization",
+																						"role"
+																					],
+																					"type": "string",
+																					"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																				},
+																				"accent": {
+																					"enum": [
+																						"none",
+																						"rule",
+																						"bar",
+																						"band"
+																					],
+																					"type": "string",
+																					"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																				}
+																			},
+																			"required": [
+																				"layout",
+																				"lead",
+																				"accent"
+																			],
+																			"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																		}
 																	},
 																	"required": [
@@ -55236,6 +55916,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -63047,6 +63767,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -67518,6 +68278,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -72277,6 +73077,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -76992,6 +77832,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -82865,6 +83745,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -87485,6 +88405,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -94788,6 +95748,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -99833,6 +100833,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -100832,6 +101872,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -101572,6 +102652,46 @@
 																			"text",
 																			"background"
 																		]
+																	},
+																	"entry": {
+																		"type": "object",
+																		"properties": {
+																			"layout": {
+																				"enum": [
+																					"stacked",
+																					"inline",
+																					"compact",
+																					"date-column",
+																					"eyebrow"
+																				],
+																				"type": "string",
+																				"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																			},
+																			"lead": {
+																				"enum": [
+																					"organization",
+																					"role"
+																				],
+																				"type": "string",
+																				"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																			},
+																			"accent": {
+																				"enum": [
+																					"none",
+																					"rule",
+																					"bar",
+																					"band"
+																				],
+																				"type": "string",
+																				"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																			}
+																		},
+																		"required": [
+																			"layout",
+																			"lead",
+																			"accent"
+																		],
+																		"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																	}
 																},
 																"required": [
@@ -102207,6 +103327,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -102981,6 +104141,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -103907,6 +105107,46 @@
 																		"text",
 																		"background"
 																	]
+																},
+																"entry": {
+																	"type": "object",
+																	"properties": {
+																		"layout": {
+																			"enum": [
+																				"stacked",
+																				"inline",
+																				"compact",
+																				"date-column",
+																				"eyebrow"
+																			],
+																			"type": "string",
+																			"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																		},
+																		"lead": {
+																			"enum": [
+																				"organization",
+																				"role"
+																			],
+																			"type": "string",
+																			"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																		},
+																		"accent": {
+																			"enum": [
+																				"none",
+																				"rule",
+																				"bar",
+																				"band"
+																			],
+																			"type": "string",
+																			"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																		}
+																	},
+																	"required": [
+																		"layout",
+																		"lead",
+																		"accent"
+																	],
+																	"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 																}
 															},
 															"required": [
@@ -112617,6 +113857,46 @@
 																"text",
 																"background"
 															]
+														},
+														"entry": {
+															"type": "object",
+															"properties": {
+																"layout": {
+																	"enum": [
+																		"stacked",
+																		"inline",
+																		"compact",
+																		"date-column",
+																		"eyebrow"
+																	],
+																	"type": "string",
+																	"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																},
+																"lead": {
+																	"enum": [
+																		"organization",
+																		"role"
+																	],
+																	"type": "string",
+																	"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																},
+																"accent": {
+																	"enum": [
+																		"none",
+																		"rule",
+																		"bar",
+																		"band"
+																	],
+																	"type": "string",
+																	"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																}
+															},
+															"required": [
+																"layout",
+																"lead",
+																"accent"
+															],
+															"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 														}
 													},
 													"required": [
@@ -117088,6 +118368,46 @@
 																"text",
 																"background"
 															]
+														},
+														"entry": {
+															"type": "object",
+															"properties": {
+																"layout": {
+																	"enum": [
+																		"stacked",
+																		"inline",
+																		"compact",
+																		"date-column",
+																		"eyebrow"
+																	],
+																	"type": "string",
+																	"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'."
+																},
+																"lead": {
+																	"enum": [
+																		"organization",
+																		"role"
+																	],
+																	"type": "string",
+																	"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study)."
+																},
+																"accent": {
+																	"enum": [
+																		"none",
+																		"rule",
+																		"bar",
+																		"band"
+																	],
+																	"type": "string",
+																	"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background)."
+																}
+															},
+															"required": [
+																"layout",
+																"lead",
+																"accent"
+															],
+															"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout."
 														}
 													},
 													"required": [
@@ -122824,6 +124144,49 @@
 											"primary",
 											"text",
 											"background"
+										]
+									},
+									"entry": {
+										"description": "How entry headers are arranged and decorated. When missing, entries use the stacked layout.",
+										"type": "object",
+										"properties": {
+											"layout": {
+												"default": "stacked",
+												"description": "How the header of each Experience, Education and Volunteer entry is arranged. 'stacked' is two rows (name and location, then role and date), 'inline' puts everything on one row, 'compact' puts the lead and the date on top with the rest grouped below, 'date-column' sets dates in a column on the left, and 'eyebrow' puts a small line above a larger lead. Dates also move to the left column for Projects, Awards, Certifications and Publications with 'date-column'.",
+												"type": "string",
+												"enum": [
+													"stacked",
+													"inline",
+													"compact",
+													"date-column",
+													"eyebrow"
+												]
+											},
+											"lead": {
+												"default": "organization",
+												"description": "Which comes first in Experience and Education entries: the organization (company, school) or the role (position, field of study).",
+												"type": "string",
+												"enum": [
+													"organization",
+													"role"
+												]
+											},
+											"accent": {
+												"default": "none",
+												"description": "Decoration in the accent color around each entry header: 'none', 'rule' (a line under it), 'bar' (a bar beside it) or 'band' (a tinted background).",
+												"type": "string",
+												"enum": [
+													"none",
+													"rule",
+													"bar",
+													"band"
+												]
+											}
+										},
+										"required": [
+											"layout",
+											"lead",
+											"accent"
 										]
 									}
 								},

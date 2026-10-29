@@ -96,6 +96,8 @@ export const useTemplateFeature = (feature: keyof TemplateFeatures): boolean => 
 
 export const useTemplatePlacement = () => use(TemplatePlacementContext);
 
+export const useTemplateColors = () => useTemplateContext().colors;
+
 export const useTemplatePageNodeKey = () => useTemplateContext().pageNodeKey;
 
 const useTemplateStyleContext = (): TemplateStyleContextValue => {

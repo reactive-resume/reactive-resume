@@ -27,8 +27,13 @@ const findTexts = (node: HostNode, text: string): HostNode[] => [
 	...(node.children ?? []).flatMap((child) => findTexts(child, text)),
 ];
 
-const fixture = (section: "experience" | "education", rule = ""): ResumeData => {
+const fixture = (
+	section: "experience" | "education",
+	rule = "",
+	layout: "stacked" | "inline" = "stacked",
+): ResumeData => {
 	const data = structuredClone(defaultResumeData);
+	data.metadata.design.entry = { layout, lead: "organization", accent: "none" };
 	data.picture.hidden = true;
 	data.basics.name = "Ada Lovelace";
 	data.basics.email = "";
@@ -76,27 +81,21 @@ const expectColor = (document: HostNode, text: string, color: string) => {
 };
 
 describe("combined PDF field bindings", () => {
-	it("binds each Onyx and Meowth combined Text identity once without widening field styles to its host", async () => {
+	it("binds each stacked and one-line combined Text identity once without widening field styles to its host", async () => {
 		const semanticRule = `
 			combined-text { color: #334455; font-size: 14pt; opacity: 0.6; margin-left: 3pt; }
 			field[name="degree"] { opacity: 0.4; }
 		`;
-		const onyxData = fixture("education", semanticRule);
-		const meowthData = fixture("education", semanticRule);
-		const onyxTree = buildSemanticTree({
-			data: onyxData,
-			template: "onyx",
-			page: onyxData.metadata.layout.pages[0] as NonNullable<(typeof onyxData.metadata.layout.pages)[number]>,
-			pageNumber: 1,
-			showHeader: true,
-		});
-		const meowthTree = buildSemanticTree({
-			data: meowthData,
-			template: "meowth",
-			page: meowthData.metadata.layout.pages[0] as NonNullable<(typeof meowthData.metadata.layout.pages)[number]>,
-			pageNumber: 1,
-			showHeader: true,
-		});
+		const stackedData = fixture("education", semanticRule);
+		const inlineData = fixture("education", semanticRule, "inline");
+		const treeOf = (data: ResumeData) =>
+			buildSemanticTree({
+				data,
+				template: "onyx",
+				page: data.metadata.layout.pages[0] as NonNullable<(typeof data.metadata.layout.pages)[number]>,
+				pageNumber: 1,
+				showHeader: true,
+			});
 		const combinedNodes = (root: Parameters<typeof createBindingInventory>[0]) => {
 			const matches: (typeof root)[] = [];
 			const visit = (node: typeof root) => {
@@ -107,21 +106,21 @@ describe("combined PDF field bindings", () => {
 			return matches;
 		};
 
-		for (const [tree, template] of [
-			[onyxTree, "onyx"],
-			[meowthTree, "meowth"],
+		for (const [tree, inline] of [
+			[treeOf(stackedData), false],
+			[treeOf(inlineData), true],
 		] as const) {
-			const inventory = createBindingInventory(tree, getTemplateSemanticBindingRegistry(template));
+			const inventory = createBindingInventory(tree, getTemplateSemanticBindingRegistry("onyx"));
 			const combined = combinedNodes(tree);
 			expect(combined).not.toEqual([]);
 			expect(
 				combined.filter(({ key }) => inventory.bindings[key]?.type === "primitive").map(({ key }) => key),
-			).toHaveLength(new Set(combined.map(({ key }) => key)).size - (template === "meowth" ? 1 : 0));
+			).toHaveLength(new Set(combined.map(({ key }) => key)).size - (inline ? 1 : 0));
 			const aliases = combined.flatMap(({ key }) => {
 				const binding = inventory.bindings[key];
 				return binding?.type === "alias" ? [{ key, binding }] : [];
 			});
-			if (template === "meowth") {
+			if (inline) {
 				expect(aliases).toHaveLength(1);
 				expect(aliases[0]?.binding).toEqual({
 					type: "alias",
@@ -137,11 +136,11 @@ describe("combined PDF field bindings", () => {
 			).toBe(true);
 		}
 
-		for (const [template, data, text] of [
-			["onyx", onyxData, "BSc • First"],
-			["meowth", meowthData, "Mathematics (BSc)"],
+		for (const [data, text] of [
+			[stackedData, "BSc • First"],
+			[inlineData, "Mathematics (BSc)"],
 		] as const) {
-			const document = await renderHost(template, data);
+			const document = await renderHost("onyx", data);
 			const outer = findTexts(document, text).map(mergedStyle);
 			expect(outer).toContainEqual(
 				expect.objectContaining({ color: "#334455", fontSize: 14, opacity: 0.6, marginLeft: 3 }),
@@ -158,8 +157,8 @@ describe("combined PDF field bindings", () => {
 			field[name="grade"] { color: #550000; }
 			field[name="period"] { color: #660000; }
 		`;
-		const experience = await renderHost("meowth", fixture("experience", colors));
-		const inlineEducation = await renderHost("meowth", fixture("education", colors));
+		const experience = await renderHost("onyx", fixture("experience", colors, "inline"));
+		const inlineEducation = await renderHost("onyx", fixture("education", colors, "inline"));
 		const splitEducation = await renderHost("onyx", fixture("education", colors));
 
 		expect(nodeText(experience)).toContain("Engineer (London)");
@@ -206,8 +205,12 @@ describe("combined PDF field bindings", () => {
 
 	it("keeps non-inheritable split-field styles on their final field hosts", async () => {
 		const document = await renderHost(
-			"meowth",
-			fixture("experience", 'field[name="position"] { opacity: 0.6; } field[name="location"] { margin-left: 3pt; }'),
+			"onyx",
+			fixture(
+				"experience",
+				'field[name="position"] { opacity: 0.6; } field[name="location"] { margin-left: 3pt; }',
+				"inline",
+			),
 		);
 		const combined = findTexts(document, "Engineer (London)");
 		const position = findTexts(document, "Engineer");

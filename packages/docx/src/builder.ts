@@ -15,6 +15,7 @@ import {
 	WidthType,
 } from "docx";
 import { isCoverLetterOnlyDocument } from "@reactive-resume/resume/export-sections";
+import { entryHeaderOf } from "@reactive-resume/schema/resume/data";
 import { assertResumeRenderBudget } from "@reactive-resume/schema/resume/limits";
 import { templateLayouts } from "@reactive-resume/schema/templates";
 import { parseColorString } from "@reactive-resume/utils/color";
@@ -321,6 +322,8 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 		bodySizeHalfPt: bodySize,
 		textColorHex,
 		primaryColorHex: colorHex,
+		// Only the row order carries over: header layouts and accents don't apply to DOCX (plain, ATS-first).
+		lead: entryHeaderOf(data.metadata.design).lead,
 	};
 	const showHeader = !isCoverLetterOnlyDocument(data);
 

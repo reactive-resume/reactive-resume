@@ -1,6 +1,6 @@
 import type { TemplatePageProps } from "../../document";
 import type { Style } from "../../forme/style-types";
-import type { TemplateColorRoles, TemplateFeatures, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
+import type { TemplateColorRoles, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
 import { useMemo } from "react";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
@@ -51,10 +51,6 @@ type MeowthHeaderProps = {
 	styles: MeowthStyles;
 };
 
-const meowthFeatures = {
-	inlineItemHeader: true,
-} satisfies TemplateFeatures;
-
 export const MeowthPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pageNumber }: TemplatePageProps) => {
 	const data = useRender();
 	const pageNodeKey = semanticNodeKeys.page(pageNumber);
@@ -71,7 +67,7 @@ export const MeowthPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 			size={semanticPageSize ?? pageSize}
 			style={composeStyles(styles.page, pageMinHeightStyle, semanticPageStyle)}
 		>
-			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors} features={meowthFeatures}>
+			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors}>
 				{showHeader && <Header styles={styles} />}
 
 				<SemanticRegionView region="main" style={composeStyles(styles.sectionGroup, { rowGap: metrics.sectionGap })}>
@@ -136,23 +132,6 @@ const useMeowthTemplate = (): MeowthTemplate => {
 				paddingHorizontal: metrics.page.paddingHorizontal,
 				paddingVertical: metrics.page.paddingVertical,
 				rowGap: metrics.sectionGap,
-			},
-			inlineItemHeader: {
-				flexDirection: r.row,
-				alignItems: "flex-start",
-				columnGap: metrics.gapX(0.75),
-			},
-			inlineItemHeaderLeading: {
-				flex: 1,
-				minWidth: 0,
-			},
-			inlineItemHeaderMiddle: {
-				flex: 1,
-				minWidth: 0,
-			},
-			inlineItemHeaderTrailing: {
-				flexShrink: 0,
-				textAlign: "right",
 			},
 			section: {
 				flexDirection: "column",
