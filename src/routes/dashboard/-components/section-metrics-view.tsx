@@ -436,27 +436,11 @@ export function SectionMetricsView({
 			)}
 
 			{/* ══════════════════ INBOX TAB ══════════════════ */}
+			{/* Every student goes in; the inbox decides which stages to show and lets the reviewer
+			    filter. Pre-filtering to a fixed pair of stages here is what left the Placement
+			    Officer's inbox empty while hundreds of submissions sat waiting. */}
 			{activeTab === "inbox" && (
-				<InboxView
-					scope={scope === "admin" ? "po" : scope}
-					students={filteredStudents
-						.filter((s) =>
-							s.resumes.some((r) =>
-								scope === "faculty"
-									? r.reviewStatus === "SUBMITTED_TO_FACULTY"
-									: r.reviewStatus === "SUBMITTED_TO_PO" || r.reviewStatus === "RESUBMITTED_TO_PO",
-							),
-						)
-						.map((s) => ({
-							...s,
-							resumes: s.resumes.filter((r) =>
-								scope === "faculty"
-									? r.reviewStatus === "SUBMITTED_TO_FACULTY"
-									: r.reviewStatus === "SUBMITTED_TO_PO" || r.reviewStatus === "RESUBMITTED_TO_PO",
-							),
-						}))}
-					onReview={openReview}
-				/>
+				<InboxView scope={scope === "admin" ? "po" : scope} students={filteredStudents} onReview={openReview} />
 			)}
 
 			{/* ══════════════════ SECTION DETAIL (drill-down) ══════════════════ */}

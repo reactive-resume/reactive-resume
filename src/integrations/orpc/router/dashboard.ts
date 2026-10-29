@@ -289,10 +289,21 @@ function computeUnitStatsRow(
 		].includes((r as { reviewStatus?: string }).reviewStatus ?? "DRAFT"),
 	);
 
+	// Everything a student has handed over, whoever holds it now. SUBMITTED_TO_FACULTY belongs here:
+	// leaving it out made the section cards report resumes sitting with faculty as "in Draft", which
+	// on this tenant is most of them, and hid the backlog the cards exist to show.
 	const finalized = unitResumes.filter((r) =>
-		["FINALIZED_BY_FACULTY", "RESUBMITTED_TO_PO", "APPROVED"].includes(
-			(r as { reviewStatus?: string }).reviewStatus ?? "DRAFT",
-		),
+		[
+			"SUBMITTED_TO_FACULTY",
+			"FACULTY_REVISION_REQUESTED",
+			"FACULTY_VERIFIED",
+			"FINALIZED_BY_FACULTY",
+			"SUBMITTED_TO_PO",
+			"PO_REVISION_REQUESTED",
+			"RESUBMITTED_TO_PO",
+			"PO_VERIFIED",
+			"APPROVED",
+		].includes((r as { reviewStatus?: string }).reviewStatus ?? "DRAFT"),
 	);
 
 	const clearedFaculty = unitResumes.filter((r) =>
