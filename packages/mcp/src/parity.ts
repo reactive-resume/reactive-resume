@@ -26,7 +26,7 @@ export const MCP_ROUTER = { ...router, rest: restAliases };
 
 // Explicit allowlist: adding an API procedure never silently grants MCP access.
 // Behavior is explicit: HTTP methods and names miss cleanup, publication and provider calls.
-// Per-tool justifications: .agents/docs/mcp-tool-annotations.md.
+// Per-tool justifications: fixtures/tool-annotations.md.
 const PARITY_PROCEDURES: Record<string, [AnyProcedure, BehaviorAnnotations]> = {
 	"resume.listVersions": [router.resume.listVersions, READ_IDEMPOTENT],
 	"resume.getVersion": [router.resume.getVersion, READ_IDEMPOTENT],

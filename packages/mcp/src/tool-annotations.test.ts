@@ -6,7 +6,7 @@ import { TOOL_META } from "./tool-meta";
 
 describe("tool annotations", () => {
 	it("keeps reviewer justifications aligned with every registered tool", () => {
-		const review = readFileSync(new URL("../../../.agents/docs/mcp-tool-annotations.md", import.meta.url), "utf8");
+		const review = readFileSync(new URL("./fixtures/tool-annotations.md", import.meta.url), "utf8");
 		const rows = new Map(
 			[
 				...review.matchAll(
