@@ -286,6 +286,29 @@ describe("contact checks", () => {
 });
 
 describe("date checks", () => {
+	it.each([false, true])("recognizes Onyx year ranges beside role words (separate runs: %s)", (separateRuns) => {
+		const datedLines = [
+			["Clinical Research Coordinator", "2022 – Present"],
+			["Clinical Research Coordinator", "2019 – 2022"],
+			["Clinical Research", "2013 – 2017"],
+			["Community Skills Network", "2023 – Present"],
+		] as const;
+		const raw = makeRawExtraction({
+			lines: datedLines.flatMap(([text, period], index) =>
+				separateRuns
+					? [
+							{ text, x: 56, y: 60 + index * 30 },
+							{ text: period, x: 440, y: 60 + index * 30 },
+						]
+					: [{ text: `${text} ${period}` }],
+			),
+		});
+
+		const result = report(raw);
+		expect(statusOf(result, "NO_DATES_FOUND")).toBe("pass");
+		expect(statusOf(result, "MIXED_DATE_FORMATS")).toBe("pass");
+	});
+
 	it("caps a resume with no dates at all", () => {
 		const undated = healthyResumeLines.filter((line) => typeof line !== "string" || !/\d{4}/.test(line));
 		const result = report(makeRawExtraction({ lines: undated }));
@@ -306,10 +329,42 @@ describe("date checks", () => {
 		expect(codes).toContain("UNPARSEABLE_DATE_RANGE");
 	});
 
-	it("does not read a product name beside two years as a date range", () => {
-		// "Framework 2021 - 2023" matches the shape of a period and is not one.
+	it("does not report a product name beside years as a malformed date", () => {
 		const codes = codesOf(healthyResume({ lines: [...healthyResumeLines, "Built on Framework 2021 - 2023"] }));
 
 		expect(codes).not.toContain("UNPARSEABLE_DATE_RANGE");
+	});
+
+	it.each([
+		"Framework 20 - Product 22",
+		"Jan 2020 - Framework 2023",
+		"Framework 2021 - Product 2023",
+		"NotMay2020 - Present",
+		"12020 - 2023",
+	])("rejects non-date words inside a range: %s", (text) => {
+		const result = report(
+			withLines([
+				"Research specialist delivering clinical studies with multidisciplinary teams and patient groups.",
+				text,
+			]),
+		);
+		expect(statusOf(result, "UNPARSEABLE_DATE_RANGE")).toBe("pass");
+		expect(statusOf(result, "NO_CURRENT_ROLE_MARKER")).toBe("skip");
+	});
+
+	it("preserves localized months beside role titles", () => {
+		const result = report(
+			withLines(
+				[
+					"Ingenieur Januar 2020 – April 2022",
+					"Verantwortlich für die Entwicklung und den Betrieb interner Systeme in Berlin.",
+				],
+				{ metadata: { language: "de" } },
+			),
+		);
+
+		expect(statusOf(result, "NO_DATES_FOUND")).toBe("pass");
+		expect(statusOf(result, "UNPARSEABLE_DATE_RANGE")).toBe("pass");
+		expect(statusOf(result, "NO_CURRENT_ROLE_MARKER")).toBe("fail");
 	});
 });
