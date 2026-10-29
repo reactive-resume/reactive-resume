@@ -587,3 +587,96 @@ priorLink().onOpen("previous");
 discardPrior().onConfirm();
 assert.deepEqual(calls, ["close-draft", "/applications/previous"], "explicit discard opens the prior application");
 console.log("PASS native prior-application draft confirmation and save lock");
+
+// Default calendar month/day follows the account clock; explicit navigation remains pinned.
+const calendarSchedule = load("features/reminders/schedule.ts", { "@reactive-resume/utils/timezone": {} });
+const nativeCalendar = load("features/applications-board/calendar.ts", {
+	"../reminders/schedule.ts": calendarSchedule,
+});
+const calendarTokens = load("ui/tokens.ts", { "react-native": { Easing: { bezier: () => null } } });
+let calendarNow = new Date("2026-10-31T22:59:30Z");
+const calendarRows = [
+	{
+		id: "calendar-application",
+		company: "Fictional Labs",
+		role: "Engineer",
+		status: "interview",
+		activity: ["2026-10-31T22:30:00Z", "2026-11-01T09:00:00Z", "2026-11-04T14:00:00Z"].map((at, index) => ({
+			id: `calendar-${index}`,
+			type: "interview",
+			at,
+			durationMinutes: 60,
+			kind: "technical",
+			timezone: "UTC",
+		})),
+	},
+];
+const { CalendarScreen } = load("features/applications-board/calendar-screen.tsx", {
+	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView", RefreshControl: "RefreshControl" },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-GB" } }) },
+	"@lingui/core/macro": {
+		plural: (value, forms) => (forms[value] ?? forms[value === 1 ? "one" : "other"]).replace("#", String(value)),
+	},
+	"./calendar": nativeCalendar,
+	"./search": { useApplicationSearch: () => ({ search: "" }) },
+	"./views": { ApplicationsViewFrame: "ApplicationsViewFrame" },
+	"@/features/application-detail/hooks": {
+		useNow: () => calendarNow,
+		useUserTime: () => ({ timeZone: "Europe/Berlin", time: () => "" }),
+		interviewTypeLabel: (kind) => kind,
+	},
+	"@/features/application-detail/interview-sheet": { InterviewSheet: "InterviewSheet" },
+	"@/features/application-detail/sheets": { FollowUpSheet: "FollowUpSheet" },
+	"@/features/applications/error": { applicationError: () => "offline" },
+	"@/features/applications/list": { filterApplications: (rows) => rows },
+	"@/features/applications/queries": {
+		useApplications: () => ({ data: calendarRows, isError: false, isPending: false, refetch() {} }),
+	},
+	"@/shell/use-is-tablet": { useIsTablet: () => false },
+	"@/ui": {
+		...ui,
+		EmptyState: "EmptyState",
+		Sheet: "Sheet",
+		useTheme: () => ({ ...calendarTokens, colors: calendarTokens.colors.light }),
+	},
+});
+const calendarComponent = nodes(CalendarScreen()).find((node) => typeof node.type === "function").type;
+reset();
+const calendarView = () => render(calendarComponent);
+const calendarHeading = () => nodes(calendarView()).find((node) => node.props.variant === "heading").props.children[0];
+const calendarText = () =>
+	nodes(calendarView())
+		.flatMap((node) => node.props.children.flat(Infinity))
+		.filter((child) => typeof child === "string");
+assert.equal(calendarHeading(), "October 2026");
+assert.ok(calendarText().includes("1 interview"));
+calendarNow = new Date("2026-10-31T23:00:30Z");
+assert.equal(calendarHeading(), "November 2026");
+assert.ok(calendarText().includes("2 interviews"));
+assert.ok(calendarText().includes("Today"), "unselected day follows account-local midnight");
+control(calendarView(), "Previous month").onPress();
+calendarNow = new Date("2026-11-30T23:00:30Z");
+assert.equal(calendarHeading(), "October 2026", "explicit month survives account-month rollover");
+control(calendarView(), "This month").onPress();
+assert.equal(calendarHeading(), "December 2026");
+calendarNow = new Date("2026-12-31T23:00:30Z");
+assert.equal(calendarHeading(), "January 2027", "This month restores following the account clock");
+const selectedCalendarDay = new Intl.DateTimeFormat("en-GB", {
+	timeZone: "UTC",
+	weekday: "long",
+	day: "numeric",
+	month: "long",
+}).format(new Date("2027-01-04T00:00:00Z"));
+const dayChoice = nodes(calendarView()).find(
+	(node) => node.type === "Pressable" && node.props.accessibilityLabel === selectedCalendarDay,
+);
+assert.ok(dayChoice);
+dayChoice.props.onPress();
+calendarNow = new Date("2027-01-31T23:00:30Z");
+assert.equal(calendarHeading(), "January 2027", "choosing a day pins its displayed month");
+assert.ok(calendarText().includes(selectedCalendarDay), "chosen day survives account-local rollover");
+assert.equal(control(calendarView(), "This month").disabled, false);
+control(calendarView(), "This month").onPress();
+assert.equal(calendarHeading(), "February 2027");
+assert.ok(calendarText().includes("Today"));
+console.log("PASS native calendar follows account month/day and preserves explicit browsing");

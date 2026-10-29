@@ -60,11 +60,10 @@ function ApplicationCalendar() {
 	const now = useNow();
 	const timeZone = userTime.timeZone;
 	const today = dayKeyOf(now, timeZone);
-	const [month, setMonth] = useState(() => ({
-		year: Number(today.slice(0, 4)),
-		month: Number(today.slice(5, 7)) - 1,
-	}));
-	const [selected, setSelected] = useState(today);
+	const [browsedMonth, setBrowsedMonth] = useState<{ year: number; month: number } | null>(null);
+	const month = browsedMonth ?? { year: Number(today.slice(0, 4)), month: Number(today.slice(5, 7)) - 1 };
+	const [selectedDay, setSelectedDay] = useState<string | null>(null);
+	const selected = selectedDay ?? today;
 	const [picking, setPicking] = useState(false);
 	const [pickedId, setPickedId] = useState<string | null>(null);
 	const [editing, setEditing] = useState<Editing | null>(null);
@@ -80,7 +79,6 @@ function ApplicationCalendar() {
 	const monthInterviews = events.filter(
 		(event) => event.kind === "interview" && event.day.startsWith(monthPrefix),
 	).length;
-	const isThisMonth = today.startsWith(monthPrefix);
 
 	const utc = (options: Intl.DateTimeFormatOptions) =>
 		new Intl.DateTimeFormat(i18n.locale, { timeZone: "UTC", ...options });
@@ -171,12 +169,12 @@ function ApplicationCalendar() {
 				<IconButton
 					icon="caret-left"
 					label={t`Previous month`}
-					onPress={() => setMonth(shiftMonth(month.year, month.month, -1))}
+					onPress={() => setBrowsedMonth(shiftMonth(month.year, month.month, -1))}
 				/>
 				<IconButton
 					icon="caret-right"
 					label={t`Next month`}
-					onPress={() => setMonth(shiftMonth(month.year, month.month, 1))}
+					onPress={() => setBrowsedMonth(shiftMonth(month.year, month.month, 1))}
 				/>
 			</View>
 			<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
@@ -184,10 +182,10 @@ function ApplicationCalendar() {
 					variant="secondary"
 					size="sm"
 					label={t`This month`}
-					disabled={isThisMonth}
+					disabled={browsedMonth === null && selectedDay === null}
 					onPress={() => {
-						setMonth({ year: Number(today.slice(0, 4)), month: Number(today.slice(5, 7)) - 1 });
-						setSelected(today);
+						setBrowsedMonth(null);
+						setSelectedDay(null);
 					}}
 				/>
 				<Button
@@ -233,7 +231,10 @@ function ApplicationCalendar() {
 									accessibilityRole="button"
 									accessibilityState={{ selected: isSelected }}
 									accessibilityLabel={`${fullDay.format(dateOfKey(day.key))}${summary ? `: ${summary}` : ""}`}
-									onPress={() => setSelected(day.key)}
+									onPress={() => {
+										setBrowsedMonth(month);
+										setSelectedDay(day.key);
+									}}
 									style={{
 										flex: 1,
 										minHeight: tablet ? size.hit * 2 : size.hit,

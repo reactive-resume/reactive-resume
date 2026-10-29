@@ -47,10 +47,11 @@ export function ApplicationCalendar({ compact, applications, allApplications, on
 	const todayKey = dayKey(now, timeZone);
 	// Grid dates are civil days carried in UTC; interview start/end remain absolute instants.
 	const today = new Date(`${todayKey}T00:00:00Z`);
-	const [month, setMonth] = useState(() => new Date(`${todayKey.slice(0, 7)}-01T00:00:00Z`));
+	const currentMonth = new Date(`${todayKey.slice(0, 7)}-01T00:00:00Z`);
+	const [browsedMonth, setBrowsedMonth] = useState<Date | null>(null);
+	const month = browsedMonth ?? currentMonth;
 	// Which way the last month change went: the new month's days slide in from that side. 0 = no change yet.
 	const [direction, setDirection] = useState<-1 | 0 | 1>(0);
-	const [browsingMonth, setBrowsingMonth] = useState(false);
 	const [dialog, setDialog] = useState<DialogState>({ open: false });
 
 	const interviews = collectInterviews(applications);
@@ -60,10 +61,9 @@ export function ApplicationCalendar({ compact, applications, allApplications, on
 
 	const tomorrowKey = dayKey(new Date(today.getTime() + 86_400_000), "UTC");
 	const monthKey = dayKey(month, "UTC").slice(0, 7);
-	const isCurrentMonth = todayKey.startsWith(monthKey);
 	const monthInterviews = interviews.filter((item) => dayKey(item.start, timeZone).startsWith(monthKey));
 	const monthCount = monthInterviews.length;
-	const monthAgenda = compact && browsingMonth;
+	const monthAgenda = compact && browsedMonth !== null;
 	const agenda = monthAgenda ? monthInterviews : upcoming;
 	const agendaByDay = [...groupByDay(agenda, timeZone).values()];
 
@@ -76,10 +76,9 @@ export function ApplicationCalendar({ compact, applications, allApplications, on
 		day: "numeric",
 	});
 
-	const goToMonth = (next: Date) => {
-		setDirection(next > month ? 1 : -1);
-		setMonth(next);
-		setBrowsingMonth(true);
+	const goToMonth = (next: Date | null) => {
+		setDirection((next ?? currentMonth) > month ? 1 : -1);
+		setBrowsedMonth(next);
 	};
 	const shiftMonth = (delta: number) =>
 		goToMonth(new Date(Date.UTC(month.getUTCFullYear(), month.getUTCMonth() + delta, 1)));
@@ -111,15 +110,7 @@ export function ApplicationCalendar({ compact, applications, allApplications, on
 						<Button size="icon-sm" variant="ghost" title={t`Previous month`} onClick={() => shiftMonth(-1)}>
 							<Icon name="caret-left" size={16} />
 						</Button>
-						<Button
-							size="sm"
-							variant="secondary"
-							disabled={isCurrentMonth && !monthAgenda}
-							onClick={() => {
-								goToMonth(new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1)));
-								setBrowsingMonth(false);
-							}}
-						>
+						<Button size="sm" variant="secondary" disabled={browsedMonth === null} onClick={() => goToMonth(null)}>
 							<Trans>This month</Trans>
 						</Button>
 						<Button size="icon-sm" variant="ghost" title={t`Next month`} onClick={() => shiftMonth(1)}>
@@ -259,7 +250,7 @@ export function ApplicationCalendar({ compact, applications, allApplications, on
 						</div>
 						<div className="space-y-1">
 							<p className="text-sm font-medium">
-								{monthAgenda ? <Trans>No interviews this month</Trans> : <Trans>Nothing scheduled yet</Trans>}
+								<Trans>Nothing scheduled yet</Trans>
 							</p>
 							<p className="text-xs text-ink-3">
 								<Trans>Add screening calls and technical interviews to see them here and on the calendar.</Trans>

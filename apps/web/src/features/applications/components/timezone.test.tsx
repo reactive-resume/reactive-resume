@@ -257,3 +257,40 @@ it.each([
 		expect(within(agenda).getByText("Northstar 2")).toBeDefined();
 	},
 );
+
+it.each([false, true])("follows account-local month rollover until browsing (compact=%s)", (compact) => {
+	account.timeZone = "Europe/Berlin";
+	vi.setSystemTime(new Date("2026-10-31T22:59:30Z"));
+	const rows = ["2026-10-31T22:30:00Z", "2026-11-01T09:00:00Z", "2026-11-04T14:00:00Z"].map((at, index) => {
+		const row = application(at);
+		row.id = `rollover-${index}`;
+		row.activity = row.activity
+			.filter((entry) => entry.type === "interview")
+			.map((entry) => ({ ...entry, id: row.id }));
+		return row;
+	});
+	show(<ApplicationCalendar compact={compact} applications={rows} allApplications={rows} onOpen={vi.fn()} />);
+	expect(screen.getByRole("heading", { name: "October 2026" })).toBeDefined();
+	expect(screen.getByText("1 interview", { exact: true })).toBeDefined();
+	act(() => vi.advanceTimersByTime(60_000));
+	expect(screen.getByRole("heading", { name: "November 2026" })).toBeDefined();
+	expect(screen.getByText("2 interviews", { exact: true })).toBeDefined();
+	fireEvent.click(screen.getByRole("button", { name: "Previous month" }));
+	vi.setSystemTime(new Date("2026-11-30T22:59:30Z"));
+	act(() => vi.advanceTimersByTime(60_000));
+	expect(screen.getByRole("heading", { name: "October 2026" })).toBeDefined();
+	fireEvent.click(screen.getByRole("button", { name: "This month" }));
+	expect(screen.getByRole("heading", { name: "December 2026" })).toBeDefined();
+	vi.setSystemTime(new Date("2026-12-31T22:59:30Z"));
+	act(() => vi.advanceTimersByTime(60_000));
+	expect(screen.getByRole("heading", { name: "January 2027" })).toBeDefined();
+});
+
+it("uses neutral empty-state wording under the browsed month heading", () => {
+	account.timeZone = "UTC";
+	show(<ApplicationCalendar compact applications={[]} allApplications={[]} onOpen={vi.fn()} />);
+	fireEvent.click(screen.getByRole("button", { name: "Next month" }));
+	expect(screen.getByRole("heading", { name: "November 2026" })).toBeDefined();
+	expect(within(screen.getByTestId("interview-agenda")).getByText("Nothing scheduled yet")).toBeDefined();
+	expect(screen.queryByText("No interviews this month")).toBeNull();
+});

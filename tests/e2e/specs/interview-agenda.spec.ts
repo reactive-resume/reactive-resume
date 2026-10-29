@@ -50,7 +50,7 @@ test("Calendar keeps an editable month agenda on phone widths and direct links",
 	await expect(agenda.getByRole("heading", { name: /November 4/ })).toBeVisible();
 	await expect(agenda).toContainText(/14:00.*15:00/);
 	await page.getByRole("button", { name: "Next month", exact: true }).click();
-	await expect(agenda).toContainText("No interviews this month");
+	await expect(agenda).toContainText("Nothing scheduled yet");
 	await page.getByRole("button", { name: "Previous month", exact: true }).click();
 	await expect(agenda.getByText("Northstar Labs", { exact: true })).toBeVisible();
 	await page.getByRole("button", { name: "This month", exact: true }).click();
