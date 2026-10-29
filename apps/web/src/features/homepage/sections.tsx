@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useId, useState } from "react";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { Label } from "@reactive-resume/ui/components/label";
 import { supportedLocales } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { prefersReducedMotion, SCENE, useLanding } from "./scroll";
@@ -175,10 +176,8 @@ export function Languages() {
 					{t`Help translate it into yours.`}
 				</a>
 			</p>
-			<div className="grid w-full max-w-80 gap-2 text-start">
-				<label htmlFor={languageId} className="text-sm font-medium">
-					{t`Change language`}
-				</label>
+			<div className="grid w-full max-w-80 gap-1.5 text-start">
+				<Label htmlFor={languageId}>{t`Change language`}</Label>
 				<LocaleCombobox id={languageId} />
 			</div>
 		</section>
