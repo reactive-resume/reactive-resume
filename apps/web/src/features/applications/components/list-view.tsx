@@ -27,6 +27,7 @@ import { LIST_ORDER } from "../stages";
 import { useInvalidateApplications } from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
 import { ClosedLaneItems } from "./application-actions-menu";
+import { useCareerTime } from "@/features/career/shared";
 import { useConfirm } from "@/hooks/use-confirm";
 import { formatRelativeTime } from "@/libs/locale";
 import { D2, EASE, EXIT } from "@/libs/motion";
@@ -261,7 +262,8 @@ const ApplicationRow = memo(function ApplicationRow({
 	onOpen,
 }: ApplicationRowProps) {
 	const { i18n } = useLingui();
-	const next = describeNextStep(getNextStep(application), application, i18n.locale);
+	const { timeZone } = useCareerTime();
+	const next = describeNextStep(getNextStep(application), application, i18n.locale, timeZone);
 	const sent = application.status !== "saved";
 	const tone = next.tone === "warn" ? "text-warn-text" : next.tone === "muted" ? "text-ink-3" : "text-ink-2";
 
