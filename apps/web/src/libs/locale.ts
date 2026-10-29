@@ -3,7 +3,7 @@ import type { Locale } from "@reactive-resume/utils/locale";
 import { i18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import Cookies from "js-cookie";
-import { defaultLocale, isLocale } from "@reactive-resume/utils/locale";
+import { defaultLocale, isLocale, localizedUrl } from "@reactive-resume/utils/locale";
 
 const storageKey = "locale";
 const messageLoaders = import.meta.glob<{ messages: Messages }>("../../locales/*.po");
@@ -148,5 +148,6 @@ export const loadLocale = async (locale: string) => {
 export const changeLocale = (value: string | null) => {
 	if (!value || !isLocale(value)) return;
 	Cookies.set(storageKey, value);
+	window.history.replaceState(window.history.state, "", localizedUrl(window.location.href, value));
 	window.location.reload();
 };
