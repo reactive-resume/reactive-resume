@@ -17,9 +17,12 @@ import { Banner, Button, Card, ConfirmDialog, EmptyState, Screen, showToast, Tex
 
 type ApplicationDetailProps = { id: string };
 
+import type { ApplicationLane } from "@/features/applications/lanes";
+
 type Overlay =
 	| { kind: "interview"; interview: InterviewTimelineEntry | null }
-	| { kind: "close" | "applied" | "posting" | "delete" }
+	| { kind: "close" | "applied"; lane?: ApplicationLane }
+	| { kind: "posting" | "delete" }
 	| null;
 
 /** One application: stage stepper, next step, what was sent, facts, contacts, notes, timeline and attachments. */
@@ -116,9 +119,12 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 						/>
 					</View>
 				</Card>
-			) : (
-				<StageStepper application={application} onMarkApplied={() => setOverlay({ kind: "applied" })} />
-			)}
+			) : null}
+			<StageStepper
+				application={application}
+				onMarkApplied={(lane) => setOverlay({ kind: "applied", lane })}
+				onCloseLane={(lane) => setOverlay({ kind: "close", lane })}
+			/>
 
 			<NextStepCard application={application} onOpenInterview={openInterview} />
 			<WhatYouSent application={application} />
@@ -153,8 +159,18 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 				open={overlay?.kind === "interview"}
 				onClose={close}
 			/>
-			<CloseSheet application={application} open={overlay?.kind === "close"} onClose={close} />
-			<MarkAppliedSheet application={application} open={overlay?.kind === "applied"} onClose={close} />
+			<CloseSheet
+				lane={overlay?.kind === "close" ? overlay.lane : undefined}
+				application={application}
+				open={overlay?.kind === "close"}
+				onClose={close}
+			/>
+			<MarkAppliedSheet
+				lane={overlay?.kind === "applied" ? overlay.lane : undefined}
+				application={application}
+				open={overlay?.kind === "applied"}
+				onClose={close}
+			/>
 			<PostingSheet application={application} open={overlay?.kind === "posting"} onClose={close} />
 			<ConfirmDialog
 				open={overlay?.kind === "delete"}

@@ -25,6 +25,24 @@ const emptyCareer = {
 };
 
 describe("buildAccountZip", () => {
+	it("includes application stage definitions so lane references in applications resolve", () => {
+		const pipeline = {
+			revision: 2,
+			lanes: [{ id: "ghosted", category: "closed", label: "Ghosted", closedReason: "no-response", retiredAt: null }],
+		};
+		const base = {
+			user: {},
+			resumes: [],
+			coverLetters: [],
+			applications: [],
+			career: emptyCareer,
+			aiContentReports: [],
+		};
+		const files = unzipSync(buildAccountZip({ ...base, applicationPipeline: pipeline } as never));
+		expect(JSON.parse(strFromU8(files["application-stages.json"] ?? new Uint8Array()))).toEqual(pipeline);
+		expect(unzipSync(buildAccountZip(base as never))).not.toHaveProperty("application-stages.json");
+	});
+
 	it("explains how to restore documents instead of treating an account zip as LinkedIn", async () => {
 		const archive = buildAccountZip({
 			user: {},

@@ -780,6 +780,10 @@ msgstr "{toCheck, plural, one {# तपासण्यासाठी} other {# 
 msgid "{type} · Edited {0}"
 msgstr "{type} · संपादित {0}"
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr ""
+
 #: src/features/career/offers.tsx
 msgid "{value} a month"
 msgstr "{value} दरमहा"
@@ -1167,6 +1171,11 @@ msgstr "ॲड"
 msgid "Add “{0}”"
 msgstr "\"{0}\" जोडा"
 
+#. placeholder {0}: lane.label
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr ""
+
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Add a country"
 msgstr "एक देश जोडा"
@@ -1235,6 +1244,10 @@ msgstr "\"Education\" शीर्षक असलेला विभाग ज�
 #: src/features/ats-checker/messages.ts
 msgid "Add a section headed \"Experience\" or \"Work Experience\". It is the field most systems rank on."
 msgstr "\"Experience\" किंवा \"Work Experience\" शीर्षक असलेला विभाग जोडा. बहुतांश प्रणाली याच फील्डवर रँकिंग करतात."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Add a stage"
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Add a story"
@@ -1339,6 +1352,10 @@ msgstr "फील्ड जोडा"
 msgid "Add figures where you have them: volumes, percentages, timeframes, team sizes."
 msgstr "उपलब्ध असतील तिथे आकडेवारी जोडा: प्रमाण, टक्केवारी, कालावधी, संघाचा आकार."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Add Ghosted (closed, no response)"
+msgstr ""
+
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add interest"
 msgstr "स्वारस्य जोडा"
@@ -1410,6 +1427,10 @@ msgstr "कौशल्य जोडा"
 #: src/features/ats-checker/messages.ts
 msgid "Add some whitespace between sections so a person can skim it."
 msgstr "विभागांमध्ये थोडी रिकामी जागा जोडा जेणेकरून एखाद्याला ते चाळता येईल."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Add stage"
+msgstr ""
 
 #: src/features/applications/components/list-view.tsx
 msgid "Add tag"
@@ -2028,6 +2049,10 @@ msgstr "निर्णय घेण्यापूर्वी विचार�
 msgid "Ask both"
 msgstr "दोघांनाही विचारा"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Ask each time"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "Ask first"
 msgstr "आधी विचारा"
@@ -2440,6 +2465,7 @@ msgstr "सॉफ्टवेअर तुमचा रेझ्युमे व
 #: src/features/applications/components/export-applications-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/schedule-sheet.tsx
@@ -2720,6 +2746,11 @@ msgstr "PDF फाइल निवडा."
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "त्याच्या डिझाइनशी जुळण्यासाठी लिहा मध्ये एक रेझ्युमे निवडा. तोपर्यंत पत्राचे स्वतःचे आहे."
 
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Choose a stage"
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
 msgstr "2 MB पर्यंतची WebM, MP4, MP3, WAV किंवा Ogg फाइल निवडा."
@@ -2739,6 +2770,10 @@ msgstr "दुसरी फाईल निवडा"
 #: src/components/input/color-picker.tsx
 msgid "Choose color"
 msgstr "रंग निवडा"
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr ""
 
 #: src/components/level/combobox.tsx
 msgid "Circle"
@@ -2843,10 +2878,15 @@ msgstr "हा जॉब अर्ज बंद करा"
 msgid "Close…"
 msgstr "बंद करा…"
 
+#: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
 msgid "Closed"
 msgstr "बंद"
+
+#: src/features/applications/use-application-actions.ts
+msgid "Closed as {label}"
+msgstr ""
 
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
@@ -2862,6 +2902,10 @@ msgstr "कोड"
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Color"
 msgstr "रंग"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Color of {label}"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Column {header} goes to"
@@ -3494,6 +3538,14 @@ msgstr "नमुना फाइल लोड करू शकलो नाह�
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "हे लोड करता आले नाही. तुमचा जतन केलेला डेटा बदललेला नाही."
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "Couldn't load your stages, so the standard ones are shown. Try again."
+msgstr ""
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Couldn't load your stages."
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't lock the document. Try again."
 msgstr "दस्तऐवज लॉक करता आला नाही. पुन्हा प्रयत्न करा."
@@ -3681,6 +3733,10 @@ msgstr "तुमचे बदल जतन करता आले नाही�
 msgid "Couldn't save your preferences. Try again."
 msgstr "तुमची प्राधान्ये जतन करता आली नाहीत. पुन्हा प्रयत्न करा."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Couldn't save your stages. Try again."
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't save. Try again."
 msgstr "जतन करू शकलो नाही. पुन्हा प्रयत्न करा."
@@ -3851,6 +3907,10 @@ msgstr "याची मोजणी पार्स स्कोअरपेक
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Countries"
 msgstr "देश"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Counts as"
+msgstr ""
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Counts every application that reached each stage, including ones now closed."
@@ -5547,6 +5607,10 @@ msgstr "सुरुवात करा"
 msgid "Getting long. Try “Shorter”, or cut the least specific paragraph."
 msgstr "लांब होत आहे. \"छोटा\" वापरून पहा किंवा किमान विशिष्ट परिच्छेद कापून पहा."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Ghosted"
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Brand name label for GitHub social sign-in button
 #: src/features/auth/components/social-auth.tsx
@@ -6213,6 +6277,10 @@ msgstr "इटालियन"
 msgid "Italic"
 msgstr "तिरपे (Italic)"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Its applications move to the stage you choose. Their history keeps the name “{label}”."
+msgstr ""
+
 #. placeholder {0}: providers[0]?.label ?? ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Its connection was switched off or removed, so it runs on {0} until you choose another."
@@ -6843,6 +6911,10 @@ msgstr "{0} वर थेट"
 msgid "Live totals, refreshed every 6 hours."
 msgstr "थेट एकूण, दर 6 तासांनी ताजेतवाने."
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr ""
+
 #: src/components/layout/loading-screen.tsx
 msgid "Loading"
 msgstr "लोड करत आहे"
@@ -6913,6 +6985,7 @@ msgid "Loading workspace…"
 msgstr "वर्कस्पेस लोड करत आहे…"
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
 msgid "Loading…"
 msgstr "लोड करत आहे…"
@@ -7041,6 +7114,10 @@ msgstr "मलय"
 #: src/libs/locale.ts
 msgid "Malayalam"
 msgstr "मल्याळम"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Manage stages"
+msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Managed by server"
@@ -7290,6 +7367,14 @@ msgstr "बहुतेक प्रणाली ईमेल पत्त्य
 msgid "Mostly readable"
 msgstr "बहुतेक वाचनीय"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Move {label} down"
+msgstr ""
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Move {label} up"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Move all content inside the page boundaries and re-export."
 msgstr "सर्व सामग्री पानाच्या सीमांच्या आत आणा आणि पुन्हा निर्यात करा."
@@ -7305,6 +7390,10 @@ msgstr "फील्ड वर हलवा"
 #: src/features/resume/editor/check/issues.ts
 msgid "Move it to the main column"
 msgstr "ते मुख्य स्तंभावर हलवा"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Move its applications to"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Move real content into the body of the page; some software discards the margins."
@@ -7326,7 +7415,7 @@ msgstr "विभाग दुसऱ्या स्तंभात किंव
 msgid "Move to"
 msgstr "येथे हलवा"
 
-#. placeholder {0}: getStageLabel(next)
+#. placeholder {0}: getLaneLabel(next)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Move to {0}"
 msgstr "{0} वर हलवा"
@@ -7366,14 +7455,12 @@ msgstr "तुमचा ईमेल आणि फोन नंबर पहि�
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{1} पैकी {0} कचऱ्यात हलवली. कुलूपबंद कागदपत्रे वगळली."
 
-#. placeholder {0}: getStageLabel(entry.stage)
-#. placeholder {0}: getStageLabel(status)
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
-msgid "Moved to {0}"
-msgstr "{0} वर हलवले"
+msgid "Moved to {label}"
+msgstr ""
 
-#. placeholder {0}: getStageLabel(application.status)
+#. placeholder {0}: getLaneLabel(getDisplayLane(lanes, application))
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "अर्ज {0} मधून हलवतो."
@@ -7386,6 +7473,7 @@ msgstr "सपोर्टचे काम न वाढवता त्या�
 #: src/dialogs/resume/index.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
@@ -7403,6 +7491,10 @@ msgstr "नाव"
 msgctxt "DNS record"
 msgid "Name"
 msgstr "नाव"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Name of {label}"
+msgstr ""
 
 #. placeholder {0}: index + 1
 #: src/features/applications/components/interview-dialog.tsx
@@ -7432,6 +7524,10 @@ msgstr "या पासकीला नाव द्या"
 #: src/features/resume/share/history-tab.tsx
 msgid "Name this version"
 msgstr "या आवृत्तीला नाव द्या"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Name, color and order the stages your applications move through. Each one counts as a standard step, so reminders and Insights keep working."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Name, email, phone and location are found, and links are full addresses."
@@ -7542,6 +7638,10 @@ msgstr "नवीन वेळापत्रक"
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "New section"
 msgstr "नवीन विभाग"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "New stage color"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "New teams at Northwind were stalling in setup; most never got through."
@@ -7716,6 +7816,11 @@ msgstr "तुलना करण्यासाठी अद्याप ऑफ
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "No open issues"
 msgstr "कोणतेही खुले मुद्दे नाहीत"
+
+#. placeholder {0}: categoryHint(lane)
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "No other stage counts as {0}. Add one first, so its applications have somewhere to go."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "No phone number"
@@ -8369,6 +8474,10 @@ msgstr "100 पैकी"
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Out of date: the text has changed since."
 msgstr "कालबाह्य: तेव्हापासून मजकूर बदलला आहे."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Outcome"
+msgstr ""
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Outdent"
@@ -9527,6 +9636,10 @@ msgstr "रिमोट, हायब्रिड, शहर…"
 msgid "Remove"
 msgstr "काढा"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Remove “{label}”?"
+msgstr ""
+
 #: src/features/settings/account/security.tsx
 msgid "Remove “{name}”?"
 msgstr "“{name}” काढायचे?"
@@ -9550,6 +9663,10 @@ msgstr "काढा {chip}"
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Remove {country}"
 msgstr "काढा {country}"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Remove {label}…"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Remove {value}"
@@ -9592,6 +9709,10 @@ msgstr "प्रश्न काढा"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Remove role"
 msgstr "भूमिका काढून टाका"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Remove stage"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Remove tag"
@@ -9849,6 +9970,8 @@ msgstr "{1} वापरून {0} पुनर्प्राप्त के�
 msgid "Retrieved {0}. Origin freshness is unknown unless reported."
 msgstr "{0} पुनर्प्राप्त केले. अहवाल दिल्याशिवाय मूळ ताजेपणा अज्ञात आहे."
 
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
@@ -11133,21 +11256,41 @@ msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 msgid "Stage"
 msgstr "स्टेज"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage counts as"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Stage date"
 msgstr "टप्प्याची तारीख"
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage name"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage outcome"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "टप्पा {stage} राहतो"
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Stages"
 msgstr "टप्पे"
 
@@ -11532,6 +11675,10 @@ msgstr "{0} जॉब पोस्टिंगशी जुळवून घ्�
 #: src/features/applications/components/insights-view.tsx
 msgid "Tailored vs. base resume"
 msgstr "रुपांतरित वि. बेस रेझ्युमे"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Take-home assignment"
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Tamil"
@@ -12257,9 +12404,17 @@ msgstr "ही जतन केलेली आवृत्ती लोड क�
 msgid "This saved version is no longer available."
 msgstr "ही जतन केलेली आवृत्ती आता उपलब्ध नाही."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "This server doesn't support custom stages yet. Your applications use the standard ones."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "हा सर्व्हर नवीन खाती स्वीकारत नाही. विद्यमान खात्याने साइन इन करा."
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr ""
 
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
@@ -13256,6 +13411,10 @@ msgstr "ते काय मागते"
 msgid "What it checks"
 msgstr "ते काय तपासते"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "What matters"
 msgstr "काय महत्त्वाचे आहे"
@@ -13590,6 +13749,11 @@ msgstr "तुम्ही हे आधीच “{0}” साठी वाप�
 msgid "You answered: {answer}"
 msgstr "तुम्ही उत्तर दिले: {answer}"
 
+#. placeholder {0}: data[0]?.company
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "You applied to {0} before and didn't hear back."
+msgstr ""
+
 #: src/features/auth/pages/login.tsx
 msgid "You can also sign in with your username."
 msgstr "तुम्ही तुमच्या वापरकर्तानावानेही साइन इन करू शकता."
@@ -13665,6 +13829,10 @@ msgstr "तुम्ही अद्ययावत आहात"
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "तुम्ही अतिथी खाते वापरत आहात"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
@@ -13923,6 +14091,10 @@ msgstr "तुमची शॉर्ट लिंक आणि कस्टम �
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "तुम्ही हा रेझ्युमे पुन्हा प्रकाशित करेपर्यंत तो शेअर केलेला नाही, असे तुमची शॉर्ट लिंक आणि कस्टम डोमेन दाखवतात."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Your stages changed somewhere else. They've been refreshed; try again."
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "your stories"

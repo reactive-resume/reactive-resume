@@ -42,6 +42,7 @@ const applicationSchema = createSelectSchema(schema.application, {
 	role: z.string().trim().min(1).describe("The role / job title."),
 	location: z.string().trim().nullable(),
 	salary: z.string().trim().nullable(),
+	laneId: z.string().nullable().optional().describe("The owner-defined pipeline lane, when supported."),
 	status: applicationStatusSchema.describe("The current pipeline stage. `closed` ends it, with a reason."),
 	closedReason: applicationClosedReasonSchema
 		.nullable()
@@ -94,6 +95,7 @@ const applicationSummarySchema = applicationSchema.pick({
 	location: true,
 	salary: true,
 	status: true,
+	laneId: true,
 	closedReason: true,
 	resumeId: true,
 	coverLetterId: true,
@@ -148,6 +150,7 @@ const createInputSchema = editableSchema.partial().extend({
 	company: applicationSchema.shape.company,
 	role: applicationSchema.shape.role,
 	status: applicationStatusSchema.optional(),
+	laneId: z.string().min(1).optional(),
 	closedReason: applicationClosedReasonSchema.nullable().optional(),
 	stageEnteredAt: timelineDateSchema.optional(),
 });
@@ -158,6 +161,7 @@ export const applicationDto = {
 			.object({
 				...paginationShape,
 				status: applicationStatusSchema.optional(),
+				laneId: z.string().min(1).optional(),
 				tags: z.array(z.string()).optional(),
 			})
 			.optional()
@@ -170,6 +174,7 @@ export const applicationDto = {
 			.object({
 				...paginationShape,
 				status: applicationStatusSchema.optional(),
+				laneId: z.string().min(1).optional(),
 				tags: z.array(z.string()).optional(),
 				includeInitialDetails: z.number().int().min(0).max(6).optional(),
 			})
@@ -199,6 +204,7 @@ export const applicationDto = {
 			...documentFilesShape,
 			id: z.string(),
 			status: applicationStatusSchema.optional(),
+			laneId: z.string().min(1).optional(),
 			stageEnteredAt: timelineDateSchema.optional(),
 			closedReason: applicationClosedReasonSchema
 				.nullable()
@@ -285,6 +291,7 @@ export const applicationDto = {
 		input: z.object({
 			ids: z.array(z.string()).min(1).max(200, "Too many items in a single bulk operation"),
 			status: applicationStatusSchema.optional(),
+			laneId: z.string().min(1).optional(),
 			closedReason: applicationClosedReasonSchema.nullable().optional(),
 			addTags: z.array(z.string()).optional(),
 		}),

@@ -1,4 +1,7 @@
+import type { ApplicationTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
+import { createDefaultOwnedApplicationLanes } from "@reactive-resume/db/application-lanes";
+import * as testSchema from "@reactive-resume/db/schema";
 
 // Mock the DB layer; the logic under test is the activity-timeline bookkeeping, not SQL.
 const dbMock = vi.hoisted(() => ({
@@ -16,6 +19,8 @@ const uploadFileMock = vi.hoisted(() => vi.fn());
 vi.mock("@reactive-resume/db/client", () => ({ db: dbMock }));
 vi.mock("@reactive-resume/db/schema", () => ({
 	user: { id: "owner_id" },
+	applicationPipeline: { userId: "pipeline_user_id" },
+	applicationLane: { userId: "lane_user_id", position: "lane_position", id: "lane_id" },
 	resume: { id: "resume_id", userId: "user_id", trashedAt: "trashed_at" },
 	application: {
 		id: "id",
@@ -71,6 +76,9 @@ const existing = {
 	company: "Stripe",
 	role: "Engineer",
 	status: "saved" as const,
+	laneId: "application-lane:user-1:saved",
+	closedReason: null,
+	tags: [],
 	activity: [{ id: "e0", type: "stage" as const, stage: "saved" as const, at: new Date("2026-07-01T12:00:00.000Z") }],
 	appliedAt: new Date("2026-07-01T12:00:00.000Z"),
 	createdAt: new Date("2026-07-01T12:00:00.000Z"),
@@ -105,7 +113,23 @@ beforeEach(() => {
 	});
 	dbMock.delete.mockReset();
 	dbMock.transaction.mockReset();
-	dbMock.transaction.mockImplementation((callback) => callback(dbMock));
+	dbMock.transaction.mockImplementation((callback) =>
+		callback({
+			...dbMock,
+			insert: (table: unknown) =>
+				table === testSchema.applicationLane || table === testSchema.applicationPipeline
+					? { values: () => ({ onConflictDoNothing: () => Promise.resolve() }) }
+					: dbMock.insert(table),
+			select: (...args: unknown[]) => ({
+				from: (table: unknown) => {
+					if (table === testSchema.applicationPipeline) return { where: () => Promise.resolve([{ revision: 0 }]) };
+					if (table === testSchema.applicationLane)
+						return { where: () => ({ orderBy: () => Promise.resolve(createDefaultOwnedApplicationLanes("user-1")) }) };
+					return dbMock.select(...args).from(table);
+				},
+			}),
+		}),
+	);
 	resumeGetByIdMock.mockReset();
 	writeVersionMock.mockReset();
 	writeVersionMock.mockResolvedValue({ id: "version-1" });
@@ -148,17 +172,12 @@ describe("applicationService.update", () => {
 		return set;
 	};
 
-	const appendedEvent = (activity: { values: unknown[] }) => {
-		const value = activity.values.find((item) => typeof item === "string" && item.includes('"type":"stage"'));
-		return JSON.parse(String(value))[0] as { type: string; stage: string };
-	};
-
 	it("appends a typed stage timeline entry when the status changes", async () => {
 		const set = captureSet();
 		await applicationService.update({ id: "app-1", userId: "user-1", status: "applied" });
 
-		const [[arg]] = set.mock.calls as unknown as [[{ activity: { values: unknown[] } }]];
-		expect(appendedEvent(arg.activity)).toMatchObject({ type: "stage", stage: "applied" });
+		const [[arg]] = set.mock.calls as unknown as [[{ activity: ApplicationTimelineEntry[] }]];
+		expect(arg.activity.at(-1)).toMatchObject({ type: "stage", stage: "applied" });
 	});
 
 	it("checks linked resume ownership before updating", async () => {
@@ -185,7 +204,13 @@ describe("applicationService.update", () => {
 
 describe("applicationService sent resume", () => {
 	beforeEach(() => setSelectResults([existing], [{ id: "user-1" }], [existing]));
-	const sentRow = { ...existing, status: "applied" as const, resumeId: "resume-1", sentResumeVersionId: null };
+	const sentRow = {
+		...existing,
+		status: "applied" as const,
+		laneId: "application-lane:user-1:applied",
+		resumeId: "resume-1",
+		sentResumeVersionId: null,
+	};
 
 	it.each(["resume", "coverLetter"] as const)(
 		"retains recorded submitted %s linkage when preparing another document",
@@ -253,7 +278,7 @@ describe("applicationService sent resume", () => {
 
 	it("does not record linked drafts as submitted when bulk-adding tags", async () => {
 		const data = structuredClone((await import("@reactive-resume/schema/resume/default")).defaultResumeData);
-		setSelectResults([{ id: "user-1" }], [{ id: "resume-1", data }]);
+		setSelectResults([{ id: "user-1" }], [{ ...sentRow, tags: [] }], [{ id: "resume-1", data }]);
 		dbMock.update.mockReturnValue({
 			set: () => ({ where: () => ({ returning: () => Promise.resolve([sentRow]) }) }),
 		});

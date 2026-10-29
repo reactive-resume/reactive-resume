@@ -22,6 +22,13 @@ vi.mock("@/libs/orpc/client", () => ({
 	client: { applications: { ai: { parsePosting: api.parsePosting } } },
 	orpc: {
 		applications: {
+			lanes: {
+				get: {
+					queryOptions: () => ({ queryKey: ["lanes"], queryFn: () => new Promise(() => {}) }),
+					queryKey: () => ["lanes"],
+				},
+			},
+			priorNoResponse: { queryOptions: () => ({ queryKey: ["prior"], queryFn: async () => [] }) },
 			bulkDelete: { mutationOptions: () => ({ mutationFn: api.bulkDelete }) },
 			bulkUpdate: { mutationOptions: () => ({ mutationFn: api.bulkUpdate }) },
 			create: { mutationOptions: () => ({ mutationFn: api.create }) },

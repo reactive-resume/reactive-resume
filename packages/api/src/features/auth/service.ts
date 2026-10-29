@@ -6,6 +6,7 @@ import { auth, isCustomOAuthProviderEnabled } from "@reactive-resume/auth/config
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
+import { applicationLaneService } from "../applications/lanes";
 import { careerService } from "../career/service";
 import { coverLetterService } from "../cover-letters/service";
 import { getStorageService } from "../storage/service";
@@ -96,6 +97,7 @@ export const authService = {
 			coverLetters: await Promise.all(
 				coverLetters.map(({ id }) => coverLetterService.getById({ id, userId: input.userId })),
 			),
+			applicationPipeline: await applicationLaneService.get(input.userId),
 			applications: applications.map(({ userId: _userId, ...application }) => application),
 			aiContentReports: await db
 				.select()

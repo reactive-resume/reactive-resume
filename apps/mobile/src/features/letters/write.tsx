@@ -21,8 +21,9 @@ import { relinkLetter } from "./save";
 import { letterFieldFocus, useLetterStore } from "@/draft";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { WallClockField } from "@/features/application-detail/date-field";
+import { useApplicationLanes } from "@/features/applications/lane-queries";
+import { getLaneLabel, resolveLane } from "@/features/applications/lanes";
 import { useApplications } from "@/features/applications/queries";
-import { getStageColor, getStageLabel } from "@/features/applications/stages";
 import { routes } from "@/routes";
 import {
 	Banner,
@@ -149,6 +150,7 @@ type ForSectionProps = {
 
 /** FOR: the application the letter is for. Linking one fills the recipient; without one, drafting uses the resume. */
 function ForSection({ application, applications, disabled }: ForSectionProps) {
+	const lanes = useApplicationLanes();
 	const { t } = useLingui();
 	const { colors, radius, size, space } = useTheme();
 	const { fontScale } = useWindowDimensions();
@@ -225,11 +227,11 @@ function ForSection({ application, applications, disabled }: ForSectionProps) {
 										width: space.s2 - space.s0,
 										height: space.s2 - space.s0,
 										borderRadius: radius.rLg,
-										backgroundColor: getStageColor(application.status, colors),
+										backgroundColor: resolveLane(lanes.lanes, application).color,
 									}}
 								/>
 								<Text variant="caption" color="ink3">
-									{getStageLabel(application.status)}
+									{getLaneLabel(resolveLane(lanes.lanes, application))}
 								</Text>
 							</View>
 						</View>
@@ -273,7 +275,7 @@ function ForSection({ application, applications, disabled }: ForSectionProps) {
 							<ListRow
 								key={item.id}
 								title={item.role}
-								subtitle={`${item.company} · ${getStageLabel(item.status)}`}
+								subtitle={`${item.company} · ${getLaneLabel(resolveLane(lanes.lanes, item))}`}
 								leading="briefcase"
 								selected={item.id === application?.id}
 								onPress={() => choose(item)}

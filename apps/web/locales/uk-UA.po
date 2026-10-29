@@ -780,6 +780,10 @@ msgstr "{toCheck, plural, one {# перевірити} other {# перевіри
 msgid "{type} · Edited {0}"
 msgstr "{type} · Відредаговано {0}"
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr ""
+
 #: src/features/career/offers.tsx
 msgid "{value} a month"
 msgstr "{value} на місяць"
@@ -1167,6 +1171,11 @@ msgstr "Додати"
 msgid "Add “{0}”"
 msgstr "Додати «{0}»"
 
+#. placeholder {0}: lane.label
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr ""
+
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Add a country"
 msgstr "Додайте країну"
@@ -1235,6 +1244,10 @@ msgstr "Додайте розділ із заголовком \"Education\". У 
 #: src/features/ats-checker/messages.ts
 msgid "Add a section headed \"Experience\" or \"Work Experience\". It is the field most systems rank on."
 msgstr "Додайте розділ із заголовком \"Experience\" або \"Work Experience\". Це поле, за яким більшість систем ранжує кандидатів."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Add a stage"
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Add a story"
@@ -1339,6 +1352,10 @@ msgstr "Додати поле"
 msgid "Add figures where you have them: volumes, percentages, timeframes, team sizes."
 msgstr "Додайте цифри там, де вони є: обсяги, відсотки, часові рамки, розміри команд."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Add Ghosted (closed, no response)"
+msgstr ""
+
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add interest"
 msgstr "Додайте інтерес"
@@ -1410,6 +1427,10 @@ msgstr "Додайте навички"
 #: src/features/ats-checker/messages.ts
 msgid "Add some whitespace between sections so a person can skim it."
 msgstr "Додайте трохи вільного простору між розділами, щоб людина могла швидко переглянути текст."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Add stage"
+msgstr ""
 
 #: src/features/applications/components/list-view.tsx
 msgid "Add tag"
@@ -2028,6 +2049,10 @@ msgstr "Запитайте, перш ніж вирішувати."
 msgid "Ask both"
 msgstr "Запитати в обох"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Ask each time"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "Ask first"
 msgstr "Спершу питати"
@@ -2440,6 +2465,7 @@ msgstr "Чи може програмне забезпечення прочита
 #: src/features/applications/components/export-applications-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/schedule-sheet.tsx
@@ -2720,6 +2746,11 @@ msgstr "Виберіть PDF-файл."
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Виберіть резюме в Write відповідно до його дизайну. До того часу лист має своє."
 
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Choose a stage"
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
 msgstr "Виберіть файл WebM, MP4, MP3, WAV або Ogg розміром до 2 МБ."
@@ -2739,6 +2770,10 @@ msgstr "Виберіть інший файл"
 #: src/components/input/color-picker.tsx
 msgid "Choose color"
 msgstr "Виберіть колір"
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr ""
 
 #: src/components/level/combobox.tsx
 msgid "Circle"
@@ -2843,10 +2878,15 @@ msgstr "Закрийте цю заявку на роботу"
 msgid "Close…"
 msgstr "Закрити…"
 
+#: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
 msgid "Closed"
 msgstr "ЗАЧИНЕНО"
+
+#: src/features/applications/use-application-actions.ts
+msgid "Closed as {label}"
+msgstr ""
 
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
@@ -2862,6 +2902,10 @@ msgstr "Код"
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Color"
 msgstr "Колір"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Color of {label}"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Column {header} goes to"
@@ -3494,6 +3538,14 @@ msgstr "Не вдалося завантажити файл зразка. Спр
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "Не вдалося завантажити. Ваші збережені дані не змінилися."
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "Couldn't load your stages, so the standard ones are shown. Try again."
+msgstr ""
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Couldn't load your stages."
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't lock the document. Try again."
 msgstr "Не вдалося заблокувати документ. Спробуйте ще раз."
@@ -3681,6 +3733,10 @@ msgstr "Не вдалося зберегти зміни. Спробуйте ще
 msgid "Couldn't save your preferences. Try again."
 msgstr "Не вдалося зберегти ваші вподобання. Спробуйте ще раз."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Couldn't save your stages. Try again."
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't save. Try again."
 msgstr "Не вдалося зберегти. Спробуйте знову."
@@ -3851,6 +3907,10 @@ msgstr "Рахується окремо від оцінки розпізнава
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Countries"
 msgstr "Країни"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Counts as"
+msgstr ""
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Counts every application that reached each stage, including ones now closed."
@@ -5547,6 +5607,10 @@ msgstr "Почніть роботу"
 msgid "Getting long. Try “Shorter”, or cut the least specific paragraph."
 msgstr "Отримувати довго. Спробуйте «Коротше» або виріжте найменш конкретний абзац."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Ghosted"
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Brand name label for GitHub social sign-in button
 #: src/features/auth/components/social-auth.tsx
@@ -6213,6 +6277,10 @@ msgstr "Італійська"
 msgid "Italic"
 msgstr "Курсив"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Its applications move to the stage you choose. Their history keeps the name “{label}”."
+msgstr ""
+
 #. placeholder {0}: providers[0]?.label ?? ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Its connection was switched off or removed, so it runs on {0} until you choose another."
@@ -6843,6 +6911,10 @@ msgstr "Наживо за адресою {0}"
 msgid "Live totals, refreshed every 6 hours."
 msgstr "Підсумки в реальному часі, оновлюються кожні 6 годин."
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr ""
+
 #: src/components/layout/loading-screen.tsx
 msgid "Loading"
 msgstr "Завантаження"
@@ -6913,6 +6985,7 @@ msgid "Loading workspace…"
 msgstr "Завантаження робочого простору…"
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
 msgid "Loading…"
 msgstr "Завантаження…"
@@ -7041,6 +7114,10 @@ msgstr "Малайська"
 #: src/libs/locale.ts
 msgid "Malayalam"
 msgstr "Малаялам"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Manage stages"
+msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Managed by server"
@@ -7290,6 +7367,14 @@ msgstr "Більшість систем подають кандидати за �
 msgid "Mostly readable"
 msgstr "Переважно читається"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Move {label} down"
+msgstr ""
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Move {label} up"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Move all content inside the page boundaries and re-export."
 msgstr "Перемістіть весь вміст усередину меж сторінки та експортуйте знову."
@@ -7305,6 +7390,10 @@ msgstr "Перемістити поле вгору"
 #: src/features/resume/editor/check/issues.ts
 msgid "Move it to the main column"
 msgstr "Перемістіть його в головний стовпець"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Move its applications to"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Move real content into the body of the page; some software discards the margins."
@@ -7326,7 +7415,7 @@ msgstr "Перемістити розділ до іншого стовпця а�
 msgid "Move to"
 msgstr "Перемістити до"
 
-#. placeholder {0}: getStageLabel(next)
+#. placeholder {0}: getLaneLabel(next)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Move to {0}"
 msgstr "Перейти до {0}"
@@ -7366,14 +7455,12 @@ msgstr "Перемістіть вашу електронну адресу та �
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "Переміщено в кошик {0} з {1}. Заблоковані документи пропущено."
 
-#. placeholder {0}: getStageLabel(entry.stage)
-#. placeholder {0}: getStageLabel(status)
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
-msgid "Moved to {0}"
-msgstr "Перенесено на {0}"
+msgid "Moved to {label}"
+msgstr ""
 
-#. placeholder {0}: getStageLabel(application.status)
+#. placeholder {0}: getLaneLabel(getDisplayLane(lanes, application))
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "Переміщує заявку з етапу «{0}»."
@@ -7386,6 +7473,7 @@ msgstr "Моїм завданням було з’ясувати причину,
 #: src/dialogs/resume/index.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
@@ -7403,6 +7491,10 @@ msgstr "Назва"
 msgctxt "DNS record"
 msgid "Name"
 msgstr "Ім’я"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Name of {label}"
+msgstr ""
 
 #. placeholder {0}: index + 1
 #: src/features/applications/components/interview-dialog.tsx
@@ -7432,6 +7524,10 @@ msgstr "Назвіть цей ключ доступу"
 #: src/features/resume/share/history-tab.tsx
 msgid "Name this version"
 msgstr "Назвіть цю версію"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Name, color and order the stages your applications move through. Each one counts as a standard step, so reminders and Insights keep working."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Name, email, phone and location are found, and links are full addresses."
@@ -7542,6 +7638,10 @@ msgstr "Новий розклад"
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "New section"
 msgstr "Новий розділ"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "New stage color"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "New teams at Northwind were stalling in setup; most never got through."
@@ -7716,6 +7816,11 @@ msgstr "Поки немає пропозицій для порівняння"
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "No open issues"
 msgstr "Немає відкритих питань"
+
+#. placeholder {0}: categoryHint(lane)
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "No other stage counts as {0}. Add one first, so its applications have somewhere to go."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "No phone number"
@@ -8369,6 +8474,10 @@ msgstr "зі 100"
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Out of date: the text has changed since."
 msgstr "Застарілий: текст змінився з тих пір."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Outcome"
+msgstr ""
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Outdent"
@@ -9527,6 +9636,10 @@ msgstr "Віддалено, гібридно, місто…"
 msgid "Remove"
 msgstr "видалити"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Remove “{label}”?"
+msgstr ""
+
 #: src/features/settings/account/security.tsx
 msgid "Remove “{name}”?"
 msgstr "Видалити «{name}»?"
@@ -9550,6 +9663,10 @@ msgstr "Видаліть {chip}"
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Remove {country}"
 msgstr "Видалити {country}"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Remove {label}…"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Remove {value}"
@@ -9592,6 +9709,10 @@ msgstr "Видалити запитання"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Remove role"
 msgstr "Видалити роль"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Remove stage"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Remove tag"
@@ -9849,6 +9970,8 @@ msgstr "Отримано {0} за допомогою {1}. Час пошуку н
 msgid "Retrieved {0}. Origin freshness is unknown unless reported."
 msgstr "Отримано {0}. Свіжість походження невідома, якщо не повідомляється."
 
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
@@ -11133,21 +11256,41 @@ msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 msgid "Stage"
 msgstr "Етап"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage counts as"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Stage date"
 msgstr "Дата етапу"
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage name"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage outcome"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "Етап залишається «{stage}»"
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Stages"
 msgstr "Етапи"
 
@@ -11532,6 +11675,10 @@ msgstr "адаптуватися до оголошення про роботу {
 #: src/features/applications/components/insights-view.tsx
 msgid "Tailored vs. base resume"
 msgstr "адаптоване проти базового резюме"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Take-home assignment"
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Tamil"
@@ -12257,9 +12404,17 @@ msgstr "Не вдалося завантажити цю збережену ве�
 msgid "This saved version is no longer available."
 msgstr "Ця збережена версія більше недоступна."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "This server doesn't support custom stages yet. Your applications use the standard ones."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "Цей сервер не приймає нові облікові записи. Увійдіть з наявним обліковим записом."
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr ""
 
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
@@ -13256,6 +13411,10 @@ msgstr "Що він вимагає"
 msgid "What it checks"
 msgstr "Що перевіряє"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "What matters"
 msgstr "Що важливо"
@@ -13590,6 +13749,11 @@ msgstr "Ви вже використовуєте це для «{0}»."
 msgid "You answered: {answer}"
 msgstr "Ви відповіли: {answer}"
 
+#. placeholder {0}: data[0]?.company
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "You applied to {0} before and didn't hear back."
+msgstr ""
+
 #: src/features/auth/pages/login.tsx
 msgid "You can also sign in with your username."
 msgstr "Увійти можна також за іменем користувача."
@@ -13665,6 +13829,10 @@ msgstr "Нічого нового"
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "Ви використовуєте гостьовий обліковий запис"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
@@ -13923,6 +14091,10 @@ msgstr "Ваше коротке посилання і власний домен 
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "Ваше коротке посилання і власний домен повідомляють, що це резюме не поширюється, доки ви не опублікуєте його знову."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Your stages changed somewhere else. They've been refreshed; try again."
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "your stories"

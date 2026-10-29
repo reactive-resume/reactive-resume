@@ -780,6 +780,10 @@ msgstr "{toCheck, plural, one {# לבדוק} other {# לבדוק}}"
 msgid "{type} · Edited {0}"
 msgstr "{type} · ערוך {0}"
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr ""
+
 #: src/features/career/offers.tsx
 msgid "{value} a month"
 msgstr "{value} לחודש"
@@ -1167,6 +1171,11 @@ msgstr "הוספה"
 msgid "Add “{0}”"
 msgstr "הוסף \"{0}\""
 
+#. placeholder {0}: lane.label
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr ""
+
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Add a country"
 msgstr "הוסף מדינה"
@@ -1235,6 +1244,10 @@ msgstr "הוסף מקטע בכותרת ״Education״. במערכות רבות י
 #: src/features/ats-checker/messages.ts
 msgid "Add a section headed \"Experience\" or \"Work Experience\". It is the field most systems rank on."
 msgstr "הוסף מקטע בכותרת ״Experience״ או ״Work Experience״. זהו השדה שרוב המערכות מדרגות על פיו."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Add a stage"
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Add a story"
@@ -1339,6 +1352,10 @@ msgstr "הוסף שדה"
 msgid "Add figures where you have them: volumes, percentages, timeframes, team sizes."
 msgstr "הוסף נתונים מספריים היכן שיש לך: היקפים, אחוזים, פרקי זמן, גודל צוותים."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Add Ghosted (closed, no response)"
+msgstr ""
+
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add interest"
 msgstr "הוסף עניין"
@@ -1410,6 +1427,10 @@ msgstr "הוסף מיומנות"
 #: src/features/ats-checker/messages.ts
 msgid "Add some whitespace between sections so a person can skim it."
 msgstr "הוסף מעט רווח לבן בין המקטעים כדי שאדם יוכל לעבור עליהם במהירות."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Add stage"
+msgstr ""
 
 #: src/features/applications/components/list-view.tsx
 msgid "Add tag"
@@ -2028,6 +2049,10 @@ msgstr "שאל לפני שתחליט."
 msgid "Ask both"
 msgstr "שאל את שתיהן"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Ask each time"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "Ask first"
 msgstr "לשאול קודם"
@@ -2440,6 +2465,7 @@ msgstr "האם תוכנה יכולה לקרוא את קורות החיים של�
 #: src/features/applications/components/export-applications-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/schedule-sheet.tsx
@@ -2720,6 +2746,11 @@ msgstr "בחר קובץ PDF."
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "בחרו קורות חיים ב-Write כדי להתאים לעיצוב שלו. עד אז, למכתב יש משלו."
 
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Choose a stage"
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
 msgstr "בחר קובץ WebM, MP4, MP3, WAV או Ogg בגודל של עד 2 MB."
@@ -2739,6 +2770,10 @@ msgstr "בחר קובץ אחר"
 #: src/components/input/color-picker.tsx
 msgid "Choose color"
 msgstr "בחר צבע"
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr ""
 
 #: src/components/level/combobox.tsx
 msgid "Circle"
@@ -2843,10 +2878,15 @@ msgstr "סגור את בקשת העבודה הזו"
 msgid "Close…"
 msgstr "לִסְגוֹר…"
 
+#: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
 msgid "Closed"
 msgstr "סָגוּר"
+
+#: src/features/applications/use-application-actions.ts
+msgid "Closed as {label}"
+msgstr ""
 
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
@@ -2862,6 +2902,10 @@ msgstr "קוד"
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Color"
 msgstr "צבע"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Color of {label}"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Column {header} goes to"
@@ -3494,6 +3538,14 @@ msgstr "לא ניתן היה לטעון את הקובץ לדוגמה. נסה ש�
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "לא ניתן היה לטעון. הנתונים השמורים שלך לא השתנו."
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "Couldn't load your stages, so the standard ones are shown. Try again."
+msgstr ""
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Couldn't load your stages."
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't lock the document. Try again."
 msgstr "לא ניתן היה לנעול את המסמך. נסה שוב."
@@ -3681,6 +3733,10 @@ msgstr "לא ניתן היה לשמור את השינויים. נסה שוב."
 msgid "Couldn't save your preferences. Try again."
 msgstr "לא ניתן היה לשמור את ההעדפות שלך. נסה שוב."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Couldn't save your stages. Try again."
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't save. Try again."
 msgstr "לא ניתן היה לשמור. נסה שוב."
@@ -3851,6 +3907,10 @@ msgstr "נספר בנפרד מציון הפענוח. הכיסוי אינו מנ�
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Countries"
 msgstr "מדינות"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Counts as"
+msgstr ""
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Counts every application that reached each stage, including ones now closed."
@@ -5547,6 +5607,10 @@ msgstr "התחל"
 msgid "Getting long. Try “Shorter”, or cut the least specific paragraph."
 msgstr "מתארך. נסה \"קצר יותר\", או חתוך את הפסקה הפחות ספציפית."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Ghosted"
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Brand name label for GitHub social sign-in button
 #: src/features/auth/components/social-auth.tsx
@@ -6213,6 +6277,10 @@ msgstr "איטלקית"
 msgid "Italic"
 msgstr "נטוי"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Its applications move to the stage you choose. Their history keeps the name “{label}”."
+msgstr ""
+
 #. placeholder {0}: providers[0]?.label ?? ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Its connection was switched off or removed, so it runs on {0} until you choose another."
@@ -6843,6 +6911,10 @@ msgstr "בשידור חי ב-{0}"
 msgid "Live totals, refreshed every 6 hours."
 msgstr "סיכומים חיים, רענון כל 6 שעות."
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr ""
+
 #: src/components/layout/loading-screen.tsx
 msgid "Loading"
 msgstr "טוען"
@@ -6913,6 +6985,7 @@ msgid "Loading workspace…"
 msgstr "טוען את סביבת העבודה…"
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
 msgid "Loading…"
 msgstr "טוען…"
@@ -7041,6 +7114,10 @@ msgstr "מלאית"
 #: src/libs/locale.ts
 msgid "Malayalam"
 msgstr "מליאלאם"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Manage stages"
+msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Managed by server"
@@ -7290,6 +7367,14 @@ msgstr "רוב המערכות מגישות מועמדים באמצעות כתו�
 msgid "Mostly readable"
 msgstr "בעיקר קריא"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Move {label} down"
+msgstr ""
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Move {label} up"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Move all content inside the page boundaries and re-export."
 msgstr "הזז את כל התוכן לתוך גבולות העמוד וייצא מחדש."
@@ -7305,6 +7390,10 @@ msgstr "העבר את השדה למעלה"
 #: src/features/resume/editor/check/issues.ts
 msgid "Move it to the main column"
 msgstr "העבר אותו לעמודה הראשית"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Move its applications to"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Move real content into the body of the page; some software discards the margins."
@@ -7326,7 +7415,7 @@ msgstr "העברת מקטע לעמודה או עמוד אחר"
 msgid "Move to"
 msgstr "העברה אל"
 
-#. placeholder {0}: getStageLabel(next)
+#. placeholder {0}: getLaneLabel(next)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Move to {0}"
 msgstr "עבור אל {0}"
@@ -7366,14 +7455,12 @@ msgstr "הזז את הדוא״ל ומספר הטלפון שלך לראש העמ�
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{0} מתוך {1} הועברו לאשפה. מסמכים נעולים דולגו."
 
-#. placeholder {0}: getStageLabel(entry.stage)
-#. placeholder {0}: getStageLabel(status)
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
-msgid "Moved to {0}"
-msgstr "הועבר ל-{0}"
+msgid "Moved to {label}"
+msgstr ""
 
-#. placeholder {0}: getStageLabel(application.status)
+#. placeholder {0}: getLaneLabel(getDisplayLane(lanes, application))
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "מעביר את המועמדות מ-{0}."
@@ -7386,6 +7473,7 @@ msgstr "התפקיד שלי היה לגלות למה, בלי להוסיף עבו
 #: src/dialogs/resume/index.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
@@ -7403,6 +7491,10 @@ msgstr "שם"
 msgctxt "DNS record"
 msgid "Name"
 msgstr "שם"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Name of {label}"
+msgstr ""
 
 #. placeholder {0}: index + 1
 #: src/features/applications/components/interview-dialog.tsx
@@ -7432,6 +7524,10 @@ msgstr "תן שם למפתח הסיסמה הזה"
 #: src/features/resume/share/history-tab.tsx
 msgid "Name this version"
 msgstr "תן שם לגרסה זו"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Name, color and order the stages your applications move through. Each one counts as a standard step, so reminders and Insights keep working."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Name, email, phone and location are found, and links are full addresses."
@@ -7542,6 +7638,10 @@ msgstr "תזמון חדש"
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "New section"
 msgstr "מדור חדש"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "New stage color"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "New teams at Northwind were stalling in setup; most never got through."
@@ -7716,6 +7816,11 @@ msgstr "אין עדיין הצעות להשוואה"
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "No open issues"
 msgstr "אין בעיות פתוחות"
+
+#. placeholder {0}: categoryHint(lane)
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "No other stage counts as {0}. Add one first, so its applications have somewhere to go."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "No phone number"
@@ -8369,6 +8474,10 @@ msgstr "מתוך 100"
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Out of date: the text has changed since."
 msgstr "לא מעודכן: הטקסט השתנה מאז."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Outcome"
+msgstr ""
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Outdent"
@@ -9527,6 +9636,10 @@ msgstr "מרחוק, היברידי, עיר…"
 msgid "Remove"
 msgstr "לְהַסִיר"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Remove “{label}”?"
+msgstr ""
+
 #: src/features/settings/account/security.tsx
 msgid "Remove “{name}”?"
 msgstr "להסיר את \"{name}\"?"
@@ -9550,6 +9663,10 @@ msgstr "הסר את {chip}"
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Remove {country}"
 msgstr "הסר {country}"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Remove {label}…"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Remove {value}"
@@ -9592,6 +9709,10 @@ msgstr "הסר שאלה"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Remove role"
 msgstr "הסר תפקיד"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Remove stage"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Remove tag"
@@ -9849,6 +9970,8 @@ msgstr "אוחזר {0} באמצעות {1}. זמן השליפה אינו קובע
 msgid "Retrieved {0}. Origin freshness is unknown unless reported."
 msgstr "אוחזר {0}. טריות המקור אינה ידועה אלא אם כן דווח."
 
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
@@ -11133,21 +11256,41 @@ msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 msgid "Stage"
 msgstr "שלב"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage counts as"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Stage date"
 msgstr "תאריך שלב"
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage name"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage outcome"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "השלב נשאר {stage}"
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Stages"
 msgstr "שלבים"
 
@@ -11532,6 +11675,10 @@ msgstr "להתאים את פרסום המשרה {0}"
 #: src/features/applications/components/insights-view.tsx
 msgid "Tailored vs. base resume"
 msgstr "קורות חיים מותאם לעומת בסיס"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Take-home assignment"
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Tamil"
@@ -12257,9 +12404,17 @@ msgstr "לא ניתן היה לטעון את הגרסה השמורה הזו."
 msgid "This saved version is no longer available."
 msgstr "הגרסה השמורה הזו כבר אינה זמינה."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "This server doesn't support custom stages yet. Your applications use the standard ones."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "השרת הזה אינו מקבל חשבונות חדשים. היכנס עם חשבון קיים."
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr ""
 
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
@@ -13256,6 +13411,10 @@ msgstr "מה זה מבקש"
 msgid "What it checks"
 msgstr "מה זה בודק"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "What matters"
 msgstr "מה חשוב"
@@ -13590,6 +13749,11 @@ msgstr "אתה כבר משתמש בזה עבור \"{0}\"."
 msgid "You answered: {answer}"
 msgstr "ענית: {answer}"
 
+#. placeholder {0}: data[0]?.company
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "You applied to {0} before and didn't hear back."
+msgstr ""
+
 #: src/features/auth/pages/login.tsx
 msgid "You can also sign in with your username."
 msgstr "אפשר גם להיכנס עם שם המשתמש שלך."
@@ -13665,6 +13829,10 @@ msgstr "הכול מעודכן"
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "אתם משתמשים בחשבון אורח"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
@@ -13923,6 +14091,10 @@ msgstr "הקישור המקוצר והדומיין המותאם אישית של�
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "הקישור המקוצר והדומיין המותאם אישית שלך מציגים שקורות החיים האלה לא משותפים עד שיפורסמו שוב."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Your stages changed somewhere else. They've been refreshed; try again."
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "your stories"

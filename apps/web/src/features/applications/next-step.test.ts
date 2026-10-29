@@ -1,6 +1,6 @@
 import type { Application } from "./types";
 import { describe, expect, it } from "vite-plus/test";
-import { getNextStep } from "./next-step";
+import { daysInLane, getNextStep } from "./next-step";
 
 const NOW = new Date("2026-09-28T12:00:00Z");
 const day = (offset: number) => new Date(NOW.getTime() + offset * 86_400_000);
@@ -46,5 +46,19 @@ describe("getNextStep", () => {
 		expect(getNextStep(application(), NOW)).toEqual({ kind: "waiting", days: 3 });
 		const quiet = application({ activity: [{ id: "s1", type: "stage", stage: "applied", at: day(-12) }] });
 		expect(getNextStep(quiet, NOW)).toEqual({ kind: "no-reply", days: 12 });
+	});
+
+	it("keeps the no-reply clock running across a move between two Applied lanes, while time in lane restarts", () => {
+		const moved = {
+			...application({
+				activity: [
+					{ id: "s1", type: "stage", stage: "applied", laneId: "applied", at: day(-12) },
+					{ id: "s2", type: "stage", stage: "applied", laneId: "chased", canonicalTransition: false, at: day(-2) },
+				],
+			}),
+			laneId: "chased",
+		};
+		expect(getNextStep(moved, NOW)).toEqual({ kind: "no-reply", days: 12 });
+		expect(daysInLane(moved, NOW)).toBe(2);
 	});
 });

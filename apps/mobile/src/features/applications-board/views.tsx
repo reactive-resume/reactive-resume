@@ -8,6 +8,8 @@ import { SafeAreaInsetsContext, SafeAreaView, useSafeAreaInsets } from "react-na
 import { useApplicationSearch } from "./search";
 import { CollectionHeader } from "@/components/collection-header";
 import { AddApplicationSheet } from "@/features/applications/add-sheet";
+import { LaneNotice } from "@/features/applications/lane-notice";
+import { LaneSettings } from "@/features/applications/lane-settings";
 import { routes } from "@/routes";
 import { Segmented, IconButton, useTheme } from "@/ui";
 
@@ -23,6 +25,7 @@ export function ApplicationsViewFrame({ current, children, search, actions }: Ap
 	const router = useRouter();
 	const shared = useApplicationSearch();
 	const [adding, setAdding] = useState(false);
+	const [managing, setManaging] = useState(false);
 	const { t } = useLingui();
 	const { colors, motion, space } = useTheme();
 	const insets = useSafeAreaInsets();
@@ -38,8 +41,14 @@ export function ApplicationsViewFrame({ current, children, search, actions }: Ap
 					searchLabel={t`Search applications`}
 					placeholder={t`Role, company or contact`}
 					{...(search ?? { value: shared.search, onChangeText: shared.setSearch })}
-					actions={actions ?? <IconButton icon="plus" label={t`Save a job`} onPress={() => setAdding(true)} />}
+					actions={
+						<View style={{ flexDirection: "row" }}>
+							<IconButton icon="sliders-horizontal" label={t`Manage lanes`} onPress={() => setManaging(true)} />
+							{actions ?? <IconButton icon="plus" label={t`Save a job`} onPress={() => setAdding(true)} />}
+						</View>
+					}
 				/>
+				<LaneNotice />
 				<Segmented
 					label={t`Application views`}
 					value={current}
@@ -57,6 +66,7 @@ export function ApplicationsViewFrame({ current, children, search, actions }: Ap
 			<SafeAreaInsetsContext value={{ ...insets, top: 0, left: 0, right: 0 }}>
 				<View style={{ flex: 1 }}>{children}</View>
 			</SafeAreaInsetsContext>
+			<LaneSettings open={managing} onClose={() => setManaging(false)} />
 			{adding && <AddApplicationSheet onClose={() => setAdding(false)} />}
 		</SafeAreaView>
 	);

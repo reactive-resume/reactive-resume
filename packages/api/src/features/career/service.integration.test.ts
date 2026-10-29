@@ -828,6 +828,8 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		["story deleted", "answer"],
 		["profile edited", "fit"],
 		["fact switched off", "answer"],
+		["pipeline renamed", "fit"],
+		["pipeline renamed", "answer"],
 	] as const)("rejects %s during in-flight %s generation", async (change, task) => {
 		const remembered = await fact("alice", "I restored a failed service.");
 		const original = await service.saveStory("alice", { ...story([remembered.id]), result: "Original story outcome" });
@@ -860,7 +862,15 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		else if (change === "story deleted") await service.deleteStory("alice", original.id);
 		else if (change === "profile edited")
 			await service.saveProfile("alice", careerProfileDataSchema.parse({ priorities: "Different priorities" }));
-		else await service.updateFact("alice", { id: remembered.id, status: "excluded" });
+		else if (change === "pipeline renamed") {
+			const { applicationLaneService } = await import("../applications/lanes");
+			const pipeline = await applicationLaneService.get("alice");
+			await applicationLaneService.update("alice", {
+				id: "application-lane:alice:saved",
+				label: "Wishlist",
+				expectedRevision: pipeline.revision,
+			});
+		} else await service.updateFact("alice", { id: remembered.id, status: "excluded" });
 		release.resolve();
 		await expect(pending).rejects.toMatchObject({ code: "CONFLICT" });
 		expect(await getDb().select().from(tables.careerArtifact)).toEqual([]);
@@ -1018,7 +1028,7 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		expect((await applications.getById({ userId: "alice", id: "alice-app" })).status).toBe("offer");
 	});
 
-	it("discards a briefing when its schedule is paused while the provider runs", async () => {
+	it.each(["paused", "closed"] as const)("discards a briefing when %s while the provider runs", async (state) => {
 		const started = Promise.withResolvers<void>();
 		const release = Promise.withResolvers<void>();
 		fixture.generate.mockImplementationOnce(async () => {
@@ -1057,15 +1067,24 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		const running = runCareerJobs();
 		await started.promise;
 		try {
-			const { careerScheduleInputSchema } = await import("@reactive-resume/schema/career");
-			const [schedule] = await careerJobs.list("alice");
-			await careerJobs.save("alice", { ...careerScheduleInputSchema.parse(schedule), id: "pause-me", enabled: false });
+			if (state === "closed") {
+				await applications.update({ userId: "alice", id: "alice-app", status: "closed", closedReason: "no-response" });
+			} else {
+				const { careerScheduleInputSchema } = await import("@reactive-resume/schema/career");
+				const [schedule] = await careerJobs.list("alice");
+				await careerJobs.save("alice", {
+					...careerScheduleInputSchema.parse(schedule),
+					id: "pause-me",
+					enabled: false,
+				});
+			}
 		} finally {
 			release.resolve();
 			await running;
 		}
 		expect(await getDb().select().from(tables.careerArtifact)).toEqual([]);
 		expect(await getDb().select().from(tables.careerNotification)).toEqual([]);
+		expect(await careerJobs.list("alice")).toMatchObject([{ id: "pause-me", enabled: state === "closed" }]);
 	});
 	it("lists complete user history while bounding optional structured AI context", async () => {
 		await getDb()

@@ -20,6 +20,18 @@ import { MCP_TOOL_NAME as T } from "./mcp-tool-names";
 
 // Contracts remain derived from the allowlisted API procedures in parity.ts.
 export const PARITY_TOOL_DESCRIPTIONS: Record<string, string> = {
+	"applications.lanes.get":
+		"Read the account's ordered application stages and settings revision, including retired stages for history. Initializes missing default stages idempotently. Use returned lane IDs to select custom stages when creating or moving applications; category retains canonical workflow meaning.",
+	"applications.lanes.create":
+		"Add an owned application stage with a label, hex color and immutable canonical category. A Closed stage may preset its closure reason, for example no-response for Ghosted. Read stages first and send expectedRevision; stale changes return CONFLICT. Does not move or submit applications.",
+	"applications.lanes.update":
+		"Rename or recolor an owned application stage. Category and closure preset stay fixed; history keeps its semantic meaning. Read stages first and send expectedRevision; stale changes return CONFLICT.",
+	"applications.lanes.reorder":
+		"Replace the display order of all active owned application stages. Supply every active ID exactly once with expectedRevision. Reordering does not change application workflow milestones, submission dates or outcomes.",
+	"applications.lanes.retire":
+		"Retire a custom stage and move its current applications to an explicit active replacement with the same category and closure preset. Default system stages cannot be retired. Preserves applications, submitted documents and historical stage identities. Read stages first and send expectedRevision.",
+	"applications.priorNoResponse":
+		"Read at most ten owned applications with a current or recorded historical no-response outcome at the given company, matched conservatively by case and whitespace. Advisory evidence only: does not block, close or submit an application. Cleared outcomes from before outcome history was recorded cannot be reconstructed.",
 	"documents.list":
 		"List owned resumes and cover letters, optionally from Trash. Listing Trash also permanently purges documents older than 30 days and their owned files.",
 	"aiProviders.list":
@@ -515,7 +527,7 @@ export const TOOL_META = withAnnotationTitles({
 	[T.listApplications]: {
 		title: "List Applications",
 		description:
-			"List job applications for the authenticated account, including contacts, notes, document URLs, and timeline. Use this before reading or updating existing applications.",
+			"List job applications for the authenticated account, including contacts, notes, document URLs, lane IDs, and timeline. Filter by canonical status or laneId. Discover custom stages with api_applications_lanes_get. Use this before reading or updating existing applications.",
 		outputSchema: toWireObjectSchema(
 			z.object({
 				items: applicationDto.list.output,
@@ -527,6 +539,7 @@ export const TOOL_META = withAnnotationTitles({
 		inputSchema: wireInput(
 			z.strictObject({
 				status: applicationStatusSchema.optional(),
+				laneId: z.string().min(1).optional().describe("Owned application lane ID from api_applications_lanes_get."),
 				tags: z.array(z.string()).optional().default([]),
 				...pagination,
 			}),
@@ -556,7 +569,8 @@ export const TOOL_META = withAnnotationTitles({
 	},
 	[T.createApplication]: {
 		title: "Create Application",
-		description: "Create a tracked job application. Company and role are required.",
+		description:
+			"Create a tracked job application. Company and role are required. Set laneId from api_applications_lanes_get to select a custom stage; its category determines canonical status and any closure preset. This does not submit to an employer.",
 		outputSchema: idOutput,
 		inputSchema: wireInput(applicationDto.create.input.extend(applicationDateFields).strict()),
 		annotations: WRITE_NON_IDEMPOTENT,
@@ -564,7 +578,7 @@ export const TOOL_META = withAnnotationTitles({
 	[T.updateApplication]: {
 		title: "Update Application",
 		description:
-			"Update application fields, move stages (closing takes a reason), edit contacts, follow-up, tags, or the linked resume and letter. Provided fields replace existing values, including contact and tag lists. Once an application with a linked resume reaches Applied, the resume is saved as a sent version.",
+			"Update application fields, move stages with laneId from api_applications_lanes_get (or canonical status), edit contacts, follow-up, tags, or the linked resume and letter. A custom Closed lane can preset its outcome; canonical Closed also accepts legacy reasonless writes. Same-category lane moves record lane history without resetting submission dates. Provided fields replace existing values, including contact and tag lists. Once an application with a linked resume reaches Applied, the resume is saved as a sent version.",
 		outputSchema: toWireObjectSchema(applicationDto.update.output),
 		inputSchema: wireInput(applicationDto.update.input.extend(applicationDateFields).strict()),
 		annotations: { ...WRITE_NON_IDEMPOTENT, destructiveHint: true },
@@ -657,7 +671,8 @@ export const TOOL_META = withAnnotationTitles({
 	},
 	[T.bulkUpdateApplications]: {
 		title: "Bulk Update Applications",
-		description: "Move (closing takes a reason) or add tags to multiple applications.",
+		description:
+			"Move multiple applications to laneId from api_applications_lanes_get or a canonical status, or add tags. Lane category and closure presets apply to every application; existing submission snapshots remain intact. An outcome-only closedReason update requires every selected application to be Closed; otherwise include a Closed status/laneId. Contradictions fail atomically.",
 		outputSchema: toWireObjectSchema(applicationDto.bulkUpdate.output),
 		inputSchema: wireInput(applicationDto.bulkUpdate.input.strict()),
 		annotations: { ...WRITE_NON_IDEMPOTENT, destructiveHint: true },

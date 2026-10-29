@@ -203,6 +203,9 @@ export async function generateCareer(input: GenerateInput) {
 			location: application.location,
 			salary: application.salary,
 			stage: application.status,
+			laneId: application.laneId,
+			laneLabel: application.laneLabel,
+			closedReason: application.closedReason,
 			posting: application.jobDescription?.slice(0, 12_000),
 			requirements: take(application.requirements ?? [], 6_000),
 			notes: application.notes?.slice(0, 3_000),
@@ -235,6 +238,7 @@ export async function generateCareer(input: GenerateInput) {
 		await careerService.assertMemoryVersion(input.userId, context.memoryVersion, {
 			applicationId: application.id,
 			version: context.knowledgeVersion,
+			pipelineRevision: context.pipelineRevision,
 		});
 		return { item: null, answer: { text: (output as { text: string }).text, factIds: used.slice(0, 10) } };
 	}
@@ -282,6 +286,7 @@ export async function generateCareer(input: GenerateInput) {
 		inputVersion: context.version,
 		expectedMemoryVersion: context.memoryVersion,
 		expectedKnowledgeVersion: context.knowledgeVersion,
+		expectedPipelineRevision: context.pipelineRevision,
 		...(input.jobLease ? { jobLease: input.jobLease } : {}),
 		...(input.jobId ? { jobId: input.jobId } : {}),
 	});

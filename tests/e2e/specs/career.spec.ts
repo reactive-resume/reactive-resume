@@ -60,6 +60,7 @@ test("coach stories wait for exact-content approval and respect Skip", async ({ 
 	for (const approve of [false, true]) {
 		const composer = page.getByPlaceholder("Ask about your next career step…");
 		await composer.fill("Review a story about my onboarding work.");
+		await expect(page.getByRole("button", { name: "Send", exact: true })).toBeEnabled();
 		await composer.press("Enter");
 		await expect(page.getByText("Save this story to Knowledge?", { exact: true })).toBeVisible({ timeout: 20_000 });
 		await expect(page.getByRole("button", { name: "Save story", exact: true })).toBeEnabled();

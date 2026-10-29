@@ -105,10 +105,10 @@ msgstr "{0, plural, one {Elandakı # termindən {1} əhatə olunub} other {Eland
 
 #. placeholder {0}: applications.length
 #. placeholder {0}: section.total
-#. placeholder {1}: getStageLabel(section.status)
-#. placeholder {1}: getStageLabel(stage)
-#. placeholder {2}: getStageLabel(section.status)
-#. placeholder {2}: getStageLabel(stage)
+#. placeholder {1}: getLaneLabel(section.lane)
+#. placeholder {1}: getLaneLabel(stage)
+#. placeholder {2}: getLaneLabel(section.lane)
+#. placeholder {2}: getLaneLabel(stage)
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {{1}, # application} other {{2}, # applications}}"
@@ -768,6 +768,10 @@ msgstr "Rəqəmli tarix müxtəlif ölkələrdə fərqli oxunur."
 msgid "A page is rotated."
 msgstr "Səhifə döndərilib."
 
+#: src/features/applications/prior-no-response.tsx
+msgid "A previous application to this company was closed with No response. You can still apply."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "A reminder to check in, shown as the next step until you do."
 msgstr "Yoxlama üçün xatırlatma, siz edənə qədər növbəti addım olaraq göstərilir."
@@ -863,6 +867,10 @@ msgstr "Aktiv"
 #: src/features/write/basics-screen.tsx
 msgid "Add"
 msgstr "Əlavə et"
+
+#: src/features/applications/lane-settings.tsx
+msgid "Add a compatible replacement lane first."
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "Add a country"
@@ -1020,6 +1028,10 @@ msgstr "Faiz əlavə edin"
 #: src/features/check/issues.ts
 msgid "Add it to page 1"
 msgstr "1-ci səhifəyə əlavə edin"
+
+#: src/features/applications/lane-settings.tsx
+msgid "Add lane"
+msgstr ""
 
 #: src/features/write/fields.ts
 msgid "Add language"
@@ -1503,6 +1515,10 @@ msgstr "Zaman üzrə müraciətlər"
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "Həftəlik göndərilən müraciətlər (son 8 həftə)"
 
+#: src/features/applications/queries.ts
+msgid "Applications updated, but device reminders couldn't be refreshed. Open application details when you're back online."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/stages.ts
 #: src/features/check/writing.tsx
@@ -1934,6 +1950,7 @@ msgstr "Proqram sizin CV-nizi oxuya bilərmi?"
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
 #: src/features/ats-checker/checker.tsx
@@ -1969,6 +1986,10 @@ msgstr "Karyera"
 msgid "Catalan"
 msgstr "Katalan"
 
+#: src/features/applications/lane-settings.tsx
+msgid "Category"
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Certifications"
 msgstr "Sertifikatlar"
@@ -1986,6 +2007,10 @@ msgstr "Əlaqəni dəyişdirin"
 msgid "Change it in Design."
 msgstr "Dizaynda dəyişdirin."
 
+#: src/features/application-detail/sections.tsx
+msgid "Change lane"
+msgstr ""
+
 #: src/features/search/search-screen.tsx
 msgid "Change language to…"
 msgstr "Dili… olaraq dəyişdirin"
@@ -1993,10 +2018,6 @@ msgstr "Dili… olaraq dəyişdirin"
 #: src/features/settings/profile.tsx
 msgid "Change photo"
 msgstr "Şəkli dəyişdirin"
-
-#: src/features/application-detail/sections.tsx
-msgid "Change stage"
-msgstr "Dəyişiklik mərhələsi"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications-board/calendar-screen.tsx
@@ -2153,6 +2174,10 @@ msgstr "Tarix seçin"
 msgid "Choose a file"
 msgstr "Fayl seçin"
 
+#: src/features/applications/lane-settings.tsx
+msgid "Choose a lane with the same category and outcome. Applications move there; their history stays."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Choose a PDF"
 msgstr "PDF seçin"
@@ -2169,6 +2194,10 @@ msgstr "10 MB-dan kiçik PDF seçin. Seçilmiş fayl yüklənmədi."
 #: src/features/write/picture-screen.tsx
 msgid "Choose a photo smaller than 10 MB."
 msgstr "10 MB-dan kiçik bir şəkil seçin."
+
+#: src/features/applications/lane-settings.tsx
+msgid "Choose a replacement"
+msgstr ""
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
@@ -2213,6 +2242,14 @@ msgstr "Tarixi seçin"
 #: src/features/settings/profile.tsx
 msgid "Choose from library"
 msgstr "Kitabxanadan seçin"
+
+#: src/features/applications-board/board-screen.tsx
+msgid "Choose outcome"
+msgstr ""
+
+#: src/features/applications/lane-settings.tsx
+msgid "Choose outcome when closing"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Choose time"
@@ -2308,7 +2345,6 @@ msgstr "Köməkçini bağlayın"
 msgid "Close this application"
 msgstr "Bu müraciəti bağlayın"
 
-#: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
 msgid "Close…"
 msgstr "Bağlayın..."
@@ -2337,6 +2373,10 @@ msgstr "Kod kopyalandı"
 #: src/features/letters/design.tsx
 msgid "Color"
 msgstr "Rəng"
+
+#: src/features/applications/lane-settings.tsx
+msgid "Color (#RRGGBB)"
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Colors and level"
@@ -2644,6 +2684,10 @@ msgstr "Əlaqədar müşayiət məktubunu yoxlamaq mümkün olmadı."
 #: src/features/share/link.tsx
 msgid "Couldn't check or save this address. Try again."
 msgstr "Bu ünvanı yoxlamaq və ya saxlamaq mümkün olmadı. Yenidən cəhd edin."
+
+#: src/features/applications/prior-no-response.tsx
+msgid "Couldn't check prior applications. You can still save this application."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "Couldn't check your AI providers."
@@ -3151,11 +3195,6 @@ msgstr "Sənəd yaradılır..."
 #: src/features/career/preferences.tsx
 msgid "Currency"
 msgstr "Valyuta"
-
-#. placeholder {0}: getStageLabel(status)
-#: src/features/application-detail/sections.tsx
-msgid "Current stage: {0}"
-msgstr "Cari mərhələ: {0}"
 
 #: src/features/design/advanced.tsx
 #: src/features/design/style-groups.tsx
@@ -4199,6 +4238,10 @@ msgstr "Şrift qalınlıqları"
 msgid "For"
 msgstr "üçün"
 
+#: src/features/applications/lane-settings.tsx
+msgid "For a Ghosted lane, choose No response."
+msgstr ""
+
 #. placeholder {0}: domain.target
 #: src/features/share/custom-domain.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
@@ -5000,6 +5043,19 @@ msgstr "Etiket"
 msgid "Landscape"
 msgstr "Landşaft"
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
+msgid "Lane"
+msgstr ""
+
+#: src/features/applications/lane-settings.tsx
+msgid "Lane name"
+msgstr ""
+
+#: src/features/applications/lane-settings.tsx
+msgid "Lanes organize your board. Their category keeps submission, reminders and Insights consistent."
+msgstr ""
+
 #: app/(tabs)/settings/preferences.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/document-menu/index.tsx
@@ -5469,6 +5525,11 @@ msgstr "Malayalam"
 msgid "Manage contacts"
 msgstr "Əlaqələri idarə edin"
 
+#: src/features/applications-board/views.tsx
+#: src/features/applications/lane-settings.tsx
+msgid "Manage lanes"
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Managed by server"
 msgstr "Server tərəfindən idarə olunur"
@@ -5686,6 +5747,16 @@ msgstr "Əksər sistemlər namizədləri e-poçt ünvanına göndərirlər."
 msgid "Mostly readable"
 msgstr "Əsasən oxunur"
 
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/lane-settings.tsx
+msgid "Move {0} down"
+msgstr ""
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/lane-settings.tsx
+msgid "Move {0} up"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Move {title} to…"
 msgstr "{title} köçürün..."
@@ -5736,6 +5807,11 @@ msgstr "Seçilmiş müraciətləri köçür"
 msgid "Move to"
 msgstr "Keçir"
 
+#. placeholder {0}: getLaneLabel(next)
+#: src/features/application-detail/sections.tsx
+msgid "Move to {0}"
+msgstr "{0}-a keçin"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Move to {stage}"
 msgstr "{stage} mərhələsinə keçir"
@@ -5773,8 +5849,9 @@ msgstr "E-poçt və telefon nömrənizi birinci səhifənin yuxarı hissəsinə 
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped. Refresh and retry any failures."
 msgstr "{1} sənəddən {0} Zibil qutusuna köçürüldü. Kilidli sənədlər buraxıldı. Yeniləyin və uğursuz əməliyyatları təkrarlayın."
 
-#. placeholder {0}: getStageLabel(entry.stage)
-#. placeholder {0}: getStageLabel(stage)
+#. placeholder {0}: getLaneHistoryLabel(lanes.lanes, entry)
+#. placeholder {0}: getLaneLabel(lane)
+#. placeholder {0}: getLaneLabel(target)
 #: src/features/application-detail/sections.tsx
 #: src/features/applications-board/board-screen.tsx
 msgid "Moved to {0}"
@@ -7045,6 +7122,10 @@ msgstr "Fayl hazırlanır..."
 msgid "Present"
 msgstr "Hazırda"
 
+#: src/features/applications/lane-settings.tsx
+msgid "Preset outcome"
+msgstr ""
+
 #: src/ui/overlays.tsx
 msgid "Press and hold"
 msgstr "Basıb saxlayın"
@@ -7397,6 +7478,7 @@ msgid "Ready"
 msgstr "Hazır"
 
 #: src/features/ai/report-content.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 msgid "Reason"
 msgstr "Səbəb"
@@ -7625,6 +7707,10 @@ msgstr "Adını dəyişdirin"
 msgid "Rename {0}"
 msgstr "{0} adını dəyişin"
 
+#: src/features/applications/lane-settings.tsx
+msgid "Rename or change color"
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Rename version"
@@ -7672,6 +7758,10 @@ msgstr "Şəkli dəyişdirin"
 #: src/features/ats-checker/messages.ts
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Cədvəlləri sadə paraqraflar və siyahılarla əvəz edin. Xanalar oxunma ardıcıllığında deyil, saxlanma ardıcıllığında çıxarılır."
+
+#: src/features/applications/lane-settings.tsx
+msgid "Replacement lane"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Replaces “{current}” on the application."
@@ -7809,6 +7899,15 @@ msgstr "CV-lər"
 msgid "Resumes always render on white paper, whatever the theme."
 msgstr "Mövzu nə olursa olsun, rezyumelər həmişə ağ kağızda göstərilir."
 
+#. placeholder {0}: getLaneLabel(retiring)
+#: src/features/applications/lane-settings.tsx
+msgid "Retire {0}?"
+msgstr ""
+
+#: src/features/applications/lane-settings.tsx
+msgid "Retire lane"
+msgstr ""
+
 #. placeholder {0}: source.retrievedAt
 #. placeholder {1}: source.method
 #: src/features/application-detail/sheets.tsx
@@ -7817,6 +7916,8 @@ msgstr "{1} istifadə edərək {0} əldə edildi. Alma vaxtı mənşənin təzə
 
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/applications/lane-settings.tsx
+#: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -7866,6 +7967,10 @@ msgstr "Müraciətləri yenidən yüklə"
 #: src/features/applications/add-sheet.tsx
 msgid "Retry loading documents"
 msgstr "Sənədləri yenidən yüklə"
+
+#: src/features/applications/lane-notice.tsx
+msgid "Retry loading lanes"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Retry provider lookup"
@@ -8111,6 +8216,10 @@ msgstr "Müsahibəni saxla"
 #: src/features/applications/add-sheet.tsx
 msgid "Save job"
 msgstr "İşə qənaət edin"
+
+#: src/features/applications/lane-settings.tsx
+msgid "Save lane"
+msgstr ""
 
 #: src/features/share/files.ts
 msgid "Save or share file"
@@ -9015,10 +9124,6 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr ""
 
-#: src/features/applications/add-sheet.tsx
-msgid "Stage"
-msgstr "Mərhələ"
-
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "Mərhələ dəyişmir: {stage}"
@@ -9732,6 +9837,10 @@ msgstr "Bu müraciəti açmaq mümkün olmadı."
 msgid "This application has no posting yet. Add one in Applications."
 msgstr "Bu müraciətin hələ iş elanı yoxdur. Müraciətlərdə əlavə edin."
 
+#: src/features/applications/error.ts
+msgid "This changed elsewhere. Reload and try again."
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "This changed somewhere else, so it wasn't saved. Your text is kept here; Retry saves it over the other copy."
 msgstr "Bu başqa yerdə dəyişdi, ona görə də yadda saxlanmadı. Mətn burada saxlanılır; Təkrar cəhd edin onu digər nüsxə üzərində saxlayır."
@@ -9860,6 +9969,11 @@ msgstr "Bu adi bir CV səhifə ölçüsü deyil."
 #: src/features/documents/import-file.ts
 msgid "This JSON isn't a supported resume or cover letter."
 msgstr "Bu JSON dəstəklənən CV və ya müşayiət məktubu deyil."
+
+#: src/features/applications/lane-notice.tsx
+#: src/features/applications/list-screen.tsx
+msgid "This lane is no longer available. Choose another lane."
+msgstr ""
 
 #: src/features/letters/share.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
@@ -10341,6 +10455,14 @@ msgstr "Sənəd başına 20 teq, hər teq üçün 40 simvol."
 #: src/features/ats-checker/checker.tsx
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr "25 MB-a qədər · serverdə yoxlanılır və saxlanılmır"
+
+#: src/features/applications/queries.ts
+msgid "Update your server before moving applications to a custom lane."
+msgstr ""
+
+#: src/features/applications/lane-settings.tsx
+msgid "Update your server to manage application lanes. Your existing stages still work."
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Updated"
@@ -11307,6 +11429,10 @@ msgstr "Hekayənizi yükləmək mümkün olmadı."
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"
 msgstr "İki dəqiqəlik təqdimatınız"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Your unsaved job details will be discarded before opening this application."
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Your unsaved job details will be discarded before opening web search settings."

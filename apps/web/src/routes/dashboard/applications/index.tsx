@@ -28,6 +28,7 @@ import { ExportApplicationsSheet } from "@/features/applications/components/expo
 import { ImportApplicationsSheet } from "@/features/applications/components/import-applications-sheet";
 import { ApplicationInsights, InsightsSkeleton } from "@/features/applications/components/insights-view";
 import { ApplicationList } from "@/features/applications/components/list-view";
+import { ManageLanesSheet } from "@/features/applications/components/manage-lanes-sheet";
 import { getNextStep } from "@/features/applications/next-step";
 import {
 	applicationDetailQueryOptions,
@@ -35,6 +36,7 @@ import {
 	applicationsListQueryOptions,
 	hydrateApplicationDetail,
 } from "@/features/applications/queries";
+import { useApplicationLanes } from "@/features/applications/use-application-lanes";
 import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 
@@ -83,6 +85,8 @@ function RouteComponent() {
 	const [importing, setImporting] = useState(false);
 	const [exporting, setExporting] = useState(false);
 	const [exportLoading, setExportLoading] = useState(false);
+	const [managingLanes, setManagingLanes] = useState(false);
+	const lanes = useApplicationLanes();
 	const [editing, setEditing] = useState<Application | null>(null);
 	const [selectedId, setSelectedId] = useState<string | null>(null);
 	// Views animate in only after a switch, never on the page's first render.
@@ -221,6 +225,17 @@ function RouteComponent() {
 								</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>
+						{!lanes.unsupported && (
+							<Button
+								size="icon"
+								variant="secondary"
+								aria-label={t`Manage stages`}
+								title={t`Manage stages`}
+								onClick={() => setManagingLanes(true)}
+							>
+								<Icon name="sliders-horizontal" />
+							</Button>
+						)}
 						<Button onClick={() => setAdding(true)}>
 							<Icon name="plus" />
 							<Trans>Save job</Trans>
@@ -308,6 +323,20 @@ function RouteComponent() {
 				</div>
 			)}
 
+			{lanes.error && (
+				<div
+					role="alert"
+					className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line p-4"
+				>
+					<p className="text-sm text-danger-text">
+						<Trans>Couldn't load your stages, so the standard ones are shown. Try again.</Trans>
+					</p>
+					<Button variant="secondary" onClick={() => void lanes.refetch()}>
+						<Trans>Retry</Trans>
+					</Button>
+				</div>
+			)}
+
 			{isError && !applications ? null : empty ? (
 				<EmptyState onAdd={() => setAdding(true)} onImport={() => setImporting(true)} />
 			) : (
@@ -366,6 +395,7 @@ function RouteComponent() {
 				onOpenChange={(open) => !open && setEditing(null)}
 			/>
 			<ImportApplicationsSheet open={importing} onOpenChange={setImporting} />
+			<ManageLanesSheet open={managingLanes} onOpenChange={setManagingLanes} />
 			<ExportApplicationsSheet
 				open={exporting}
 				onOpenChange={setExporting}

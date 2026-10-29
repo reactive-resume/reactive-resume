@@ -105,10 +105,10 @@ msgstr "{0, plural, one {{1} terme de l’offre sur # couvert} other {{2} termes
 
 #. placeholder {0}: applications.length
 #. placeholder {0}: section.total
-#. placeholder {1}: getStageLabel(section.status)
-#. placeholder {1}: getStageLabel(stage)
-#. placeholder {2}: getStageLabel(section.status)
-#. placeholder {2}: getStageLabel(stage)
+#. placeholder {1}: getLaneLabel(section.lane)
+#. placeholder {1}: getLaneLabel(stage)
+#. placeholder {2}: getLaneLabel(section.lane)
+#. placeholder {2}: getLaneLabel(stage)
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {{1}, # application} other {{2}, # applications}}"
@@ -768,6 +768,10 @@ msgstr "Une date numérique se lit différemment selon les pays."
 msgid "A page is rotated."
 msgstr "Une page est pivotée."
 
+#: src/features/applications/prior-no-response.tsx
+msgid "A previous application to this company was closed with No response. You can still apply."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "A reminder to check in, shown as the next step until you do."
 msgstr "Un rappel pour vous enregistrer, affiché comme étape suivante jusqu'à ce que vous le fassiez."
@@ -863,6 +867,10 @@ msgstr "Actif"
 #: src/features/write/basics-screen.tsx
 msgid "Add"
 msgstr "Ajouter"
+
+#: src/features/applications/lane-settings.tsx
+msgid "Add a compatible replacement lane first."
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "Add a country"
@@ -1020,6 +1028,10 @@ msgstr "Ajouter un intérêt"
 #: src/features/check/issues.ts
 msgid "Add it to page 1"
 msgstr "Ajoutez-le à la page 1"
+
+#: src/features/applications/lane-settings.tsx
+msgid "Add lane"
+msgstr ""
 
 #: src/features/write/fields.ts
 msgid "Add language"
@@ -1503,6 +1515,10 @@ msgstr "Candidatures au fil du temps"
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "Candidatures envoyées par semaine (8 dernières semaines)"
 
+#: src/features/applications/queries.ts
+msgid "Applications updated, but device reminders couldn't be refreshed. Open application details when you're back online."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/stages.ts
 #: src/features/check/writing.tsx
@@ -1934,6 +1950,7 @@ msgstr "Un logiciel peut-il lire votre CV ?"
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
 #: src/features/ats-checker/checker.tsx
@@ -1969,6 +1986,10 @@ msgstr "Carrière"
 msgid "Catalan"
 msgstr "Catalan"
 
+#: src/features/applications/lane-settings.tsx
+msgid "Category"
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Certifications"
 msgstr "Certifications"
@@ -1986,6 +2007,10 @@ msgstr "Changer de connexion"
 msgid "Change it in Design."
 msgstr "Modifiez-le dans Design."
 
+#: src/features/application-detail/sections.tsx
+msgid "Change lane"
+msgstr ""
+
 #: src/features/search/search-screen.tsx
 msgid "Change language to…"
 msgstr "Changer la langue en…"
@@ -1993,10 +2018,6 @@ msgstr "Changer la langue en…"
 #: src/features/settings/profile.tsx
 msgid "Change photo"
 msgstr "Changer de photo"
-
-#: src/features/application-detail/sections.tsx
-msgid "Change stage"
-msgstr "Changer d'étape"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications-board/calendar-screen.tsx
@@ -2153,6 +2174,10 @@ msgstr "Choisissez une date"
 msgid "Choose a file"
 msgstr "Choisissez un fichier"
 
+#: src/features/applications/lane-settings.tsx
+msgid "Choose a lane with the same category and outcome. Applications move there; their history stays."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Choose a PDF"
 msgstr "Choisissez un PDF"
@@ -2169,6 +2194,10 @@ msgstr "Choisissez un PDF de moins de 10 Mo. Le fichier sélectionné n’a pas
 #: src/features/write/picture-screen.tsx
 msgid "Choose a photo smaller than 10 MB."
 msgstr "Choisissez une photo inférieure à 10 Mo."
+
+#: src/features/applications/lane-settings.tsx
+msgid "Choose a replacement"
+msgstr ""
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
@@ -2213,6 +2242,14 @@ msgstr "Choisir une date"
 #: src/features/settings/profile.tsx
 msgid "Choose from library"
 msgstr "Choisissez dans la bibliothèque"
+
+#: src/features/applications-board/board-screen.tsx
+msgid "Choose outcome"
+msgstr ""
+
+#: src/features/applications/lane-settings.tsx
+msgid "Choose outcome when closing"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Choose time"
@@ -2308,7 +2345,6 @@ msgstr "Fermer l'assistant"
 msgid "Close this application"
 msgstr "Fermez cette candidature"
 
-#: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
 msgid "Close…"
 msgstr "Fermer…"
@@ -2337,6 +2373,10 @@ msgstr "Code copié"
 #: src/features/letters/design.tsx
 msgid "Color"
 msgstr "Couleur"
+
+#: src/features/applications/lane-settings.tsx
+msgid "Color (#RRGGBB)"
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Colors and level"
@@ -2644,6 +2684,10 @@ msgstr "Impossible de rechercher une lettre de motivation liée."
 #: src/features/share/link.tsx
 msgid "Couldn't check or save this address. Try again."
 msgstr "Impossible de vérifier ou d'enregistrer cette adresse. Réessayez."
+
+#: src/features/applications/prior-no-response.tsx
+msgid "Couldn't check prior applications. You can still save this application."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "Couldn't check your AI providers."
@@ -3151,11 +3195,6 @@ msgstr "Création d'un document…"
 #: src/features/career/preferences.tsx
 msgid "Currency"
 msgstr "Devise"
-
-#. placeholder {0}: getStageLabel(status)
-#: src/features/application-detail/sections.tsx
-msgid "Current stage: {0}"
-msgstr "Étape actuelle : {0}"
 
 #: src/features/design/advanced.tsx
 #: src/features/design/style-groups.tsx
@@ -4199,6 +4238,10 @@ msgstr "Graisses de police"
 msgid "For"
 msgstr "Pour"
 
+#: src/features/applications/lane-settings.tsx
+msgid "For a Ghosted lane, choose No response."
+msgstr ""
+
 #. placeholder {0}: domain.target
 #: src/features/share/custom-domain.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
@@ -5000,6 +5043,19 @@ msgstr "Libellé"
 msgid "Landscape"
 msgstr "Paysage"
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
+msgid "Lane"
+msgstr ""
+
+#: src/features/applications/lane-settings.tsx
+msgid "Lane name"
+msgstr ""
+
+#: src/features/applications/lane-settings.tsx
+msgid "Lanes organize your board. Their category keeps submission, reminders and Insights consistent."
+msgstr ""
+
 #: app/(tabs)/settings/preferences.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/document-menu/index.tsx
@@ -5469,6 +5525,11 @@ msgstr "Malayalam"
 msgid "Manage contacts"
 msgstr "Gérer les contacts"
 
+#: src/features/applications-board/views.tsx
+#: src/features/applications/lane-settings.tsx
+msgid "Manage lanes"
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Managed by server"
 msgstr "Géré par serveur"
@@ -5686,6 +5747,16 @@ msgstr "La plupart des systèmes déposent les candidats par adresse e-mail."
 msgid "Mostly readable"
 msgstr "Généralement lisible"
 
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/lane-settings.tsx
+msgid "Move {0} down"
+msgstr ""
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/lane-settings.tsx
+msgid "Move {0} up"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Move {title} to…"
 msgstr "Déplacez {title} vers…"
@@ -5736,6 +5807,11 @@ msgstr "Déplacer les candidatures sélectionnées"
 msgid "Move to"
 msgstr "Déplacer vers"
 
+#. placeholder {0}: getLaneLabel(next)
+#: src/features/application-detail/sections.tsx
+msgid "Move to {0}"
+msgstr "Déplacer vers {0}"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Move to {stage}"
 msgstr "Passer à {stage}"
@@ -5773,8 +5849,9 @@ msgstr "Déplacez votre email et votre numéro de téléphone en haut de la prem
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped. Refresh and retry any failures."
 msgstr "{0} documents sur {1} déplacés dans la Corbeille. Les documents verrouillés ont été ignorés. Actualisez et réessayez les opérations en échec."
 
-#. placeholder {0}: getStageLabel(entry.stage)
-#. placeholder {0}: getStageLabel(stage)
+#. placeholder {0}: getLaneHistoryLabel(lanes.lanes, entry)
+#. placeholder {0}: getLaneLabel(lane)
+#. placeholder {0}: getLaneLabel(target)
 #: src/features/application-detail/sections.tsx
 #: src/features/applications-board/board-screen.tsx
 msgid "Moved to {0}"
@@ -7045,6 +7122,10 @@ msgstr "Préparation du fichier…"
 msgid "Present"
 msgstr "Aujourd’hui"
 
+#: src/features/applications/lane-settings.tsx
+msgid "Preset outcome"
+msgstr ""
+
 #: src/ui/overlays.tsx
 msgid "Press and hold"
 msgstr "Appuyez longuement"
@@ -7397,6 +7478,7 @@ msgid "Ready"
 msgstr "Prêt"
 
 #: src/features/ai/report-content.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 msgid "Reason"
 msgstr "Raison"
@@ -7625,6 +7707,10 @@ msgstr "Rebaptiser"
 msgid "Rename {0}"
 msgstr "Renommer {0}"
 
+#: src/features/applications/lane-settings.tsx
+msgid "Rename or change color"
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Rename version"
@@ -7672,6 +7758,10 @@ msgstr "Remplacer la photo"
 #: src/features/ats-checker/messages.ts
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Remplacez les tableaux par des paragraphes et des listes simples. Les cellules s'extraient dans l'ordre de stockage, pas dans l'ordre de lecture."
+
+#: src/features/applications/lane-settings.tsx
+msgid "Replacement lane"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Replaces “{current}” on the application."
@@ -7809,6 +7899,15 @@ msgstr "CVs"
 msgid "Resumes always render on white paper, whatever the theme."
 msgstr "les CV sont toujours rendus sur papier blanc, quel que soit le thème."
 
+#. placeholder {0}: getLaneLabel(retiring)
+#: src/features/applications/lane-settings.tsx
+msgid "Retire {0}?"
+msgstr ""
+
+#: src/features/applications/lane-settings.tsx
+msgid "Retire lane"
+msgstr ""
+
 #. placeholder {0}: source.retrievedAt
 #. placeholder {1}: source.method
 #: src/features/application-detail/sheets.tsx
@@ -7817,6 +7916,8 @@ msgstr "Récupéré {0} en utilisant {1}. Le temps de récupération n’établi
 
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/applications/lane-settings.tsx
+#: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -7866,6 +7967,10 @@ msgstr "Recharger les candidatures"
 #: src/features/applications/add-sheet.tsx
 msgid "Retry loading documents"
 msgstr "Recharger les documents"
+
+#: src/features/applications/lane-notice.tsx
+msgid "Retry loading lanes"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Retry provider lookup"
@@ -8111,6 +8216,10 @@ msgstr "Enregistrer l'entretien"
 #: src/features/applications/add-sheet.tsx
 msgid "Save job"
 msgstr "Enregistrer le travail"
+
+#: src/features/applications/lane-settings.tsx
+msgid "Save lane"
+msgstr ""
 
 #: src/features/share/files.ts
 msgid "Save or share file"
@@ -9015,10 +9124,6 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr ""
 
-#: src/features/applications/add-sheet.tsx
-msgid "Stage"
-msgstr "Étape"
-
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "L'étape reste {stage}"
@@ -9732,6 +9837,10 @@ msgstr "Impossible d'ouvrir cette candidature."
 msgid "This application has no posting yet. Add one in Applications."
 msgstr "Cette candidature n’a pas encore d’offre. Ajoutez-en une dans Candidatures."
 
+#: src/features/applications/error.ts
+msgid "This changed elsewhere. Reload and try again."
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "This changed somewhere else, so it wasn't saved. Your text is kept here; Retry saves it over the other copy."
 msgstr "Cela a changé ailleurs, donc il n'a pas été enregistré. Votre texte est conservé ici ; Réessayer l'enregistre sur l'autre copie."
@@ -9860,6 +9969,11 @@ msgstr "Ce n'est pas un format de page courant pour un CV."
 #: src/features/documents/import-file.ts
 msgid "This JSON isn't a supported resume or cover letter."
 msgstr "Ce JSON n'est pas un CV ou une lettre de motivation pris en charge."
+
+#: src/features/applications/lane-notice.tsx
+#: src/features/applications/list-screen.tsx
+msgid "This lane is no longer available. Choose another lane."
+msgstr ""
 
 #: src/features/letters/share.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
@@ -10341,6 +10455,14 @@ msgstr "Jusqu'à 20 balises par document, 40 caractères par balise."
 #: src/features/ats-checker/checker.tsx
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr "Jusqu'à 25 Mo · vérifié sur le serveur et non stocké"
+
+#: src/features/applications/queries.ts
+msgid "Update your server before moving applications to a custom lane."
+msgstr ""
+
+#: src/features/applications/lane-settings.tsx
+msgid "Update your server to manage application lanes. Your existing stages still work."
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Updated"
@@ -11307,6 +11429,10 @@ msgstr "Impossible de charger votre récit."
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"
 msgstr "Votre présentation de deux minutes"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Your unsaved job details will be discarded before opening this application."
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Your unsaved job details will be discarded before opening web search settings."

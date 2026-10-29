@@ -8,6 +8,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { isCanonicalStageEvent } from "../../lanes";
 import { PIPELINE } from "../../stages";
 import { useInvalidateApplications } from "../../use-application-actions";
 import { FileAttachmentField } from "../file-attachment-field";
@@ -20,7 +21,7 @@ function sentOn(application: Application) {
 	const applied = PIPELINE.indexOf("applied");
 	const entry = [...application.activity]
 		.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime())
-		.find((item) => item.type === "stage" && PIPELINE.indexOf(item.stage) >= applied);
+		.find((item) => item.type === "stage" && isCanonicalStageEvent(item) && PIPELINE.indexOf(item.stage) >= applied);
 	return new Date(entry?.at ?? application.appliedAt);
 }
 

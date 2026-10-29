@@ -16,7 +16,11 @@ export const applicationDetailQueryKey = (id: string) => applicationDetailQueryO
 
 export function getInitialApplicationDetail(summary: ApplicationSummary | null | undefined) {
 	const detail = summary?.initialDetail;
-	return detail && detail.status === summary.status && detail.closedReason === summary.closedReason
+	// Lanes too: a move between two lanes of one stage leaves status and reason alone.
+	return detail &&
+		detail.status === summary.status &&
+		detail.closedReason === summary.closedReason &&
+		(detail.laneId ?? null) === (summary.laneId ?? null)
 		? detail
 		: undefined;
 }

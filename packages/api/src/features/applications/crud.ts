@@ -6,6 +6,17 @@ import { paginate, paginationShape } from "../../pagination";
 import { applicationService } from "./service";
 
 export const crudRouter = {
+	priorNoResponse: protectedProcedure
+		.route({
+			method: "GET",
+			path: "/applications/prior-no-response",
+			tags: ["Applications"],
+			operationId: "getPriorNoResponseApplications",
+			summary: "Find prior no-response applications at a company",
+		})
+		.input(z.object({ company: z.string().trim().min(1).max(500), excludeId: z.string().optional() }))
+		.output(z.array(z.object({ id: z.string(), company: z.string(), role: z.string(), at: z.date() })))
+		.handler(({ input, context }) => applicationService.priorNoResponse({ ...input, userId: context.user.id })),
 	list: protectedProcedure
 		.route({
 			method: "GET",
@@ -23,6 +34,7 @@ export const crudRouter = {
 			const { items, total } = await applicationService.list({
 				userId: context.user.id,
 				...(input.status ? { status: input.status } : {}),
+				...(input.laneId ? { laneId: input.laneId } : {}),
 				...(input.tags ? { tags: input.tags } : {}),
 				...(input.limit !== undefined ? { limit: input.limit } : {}),
 				...(input.offset !== undefined ? { offset: input.offset } : {}),
@@ -52,6 +64,7 @@ export const crudRouter = {
 			const { items, total } = await applicationService.listSummary({
 				userId: context.user.id,
 				...(input.status ? { status: input.status } : {}),
+				...(input.laneId ? { laneId: input.laneId } : {}),
 				...(input.tags ? { tags: input.tags } : {}),
 				...(input.limit !== undefined ? { limit: input.limit } : {}),
 				...(input.offset !== undefined ? { offset: input.offset } : {}),
@@ -298,7 +311,7 @@ export const crudRouter = {
 			operationId: "bulkUpdateApplications",
 			summary: "Bulk update applications",
 			description:
-				"Applies the same change (move stage, archive/unarchive, add tags) to multiple applications at once. Requires authentication.",
+				"Applies the same change (move stage, archive/unarchive, add tags) to multiple applications at once. A closedReason requires every selected application to be Closed already, or status/laneId to move them to Closed. Contradictory selections fail atomically. Requires authentication.",
 			successDescription: "The number of applications updated.",
 		})
 		.input(applicationDto.bulkUpdate.input)

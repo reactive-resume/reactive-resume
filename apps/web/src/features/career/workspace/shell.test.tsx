@@ -27,7 +27,10 @@ vi.mock("@/libs/orpc/client", () => {
 	});
 	return {
 		orpc: {
-			applications: { getById: endpoint("application") },
+			applications: {
+				getById: endpoint("application"),
+				lanes: { get: endpoint("lanes", () => new Promise(() => {})) },
+			},
 			documents: { list: endpoint("documents", api.documents) },
 			career: {
 				workspace: endpoint("workspace", api.workspace),

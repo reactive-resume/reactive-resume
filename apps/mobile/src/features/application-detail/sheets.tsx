@@ -1,3 +1,4 @@
+import type { ApplicationLane } from "@/features/applications/lanes";
 import type { Application, ApplicationSummary } from "@/features/applications/types";
 import type { ReminderTarget } from "@/features/reminders";
 import type {
@@ -14,6 +15,10 @@ import { WallClockField } from "./date-field";
 import { followUpReminder, leadLabel, useDocuments, useUserTime } from "./hooks";
 import { followUpDay } from "@/features/applications-board/calendar";
 import { applicationError } from "@/features/applications/error";
+import { LaneNotice } from "@/features/applications/lane-notice";
+import { useApplicationLanes } from "@/features/applications/lane-queries";
+import { getLaneLabel, laneInput, resolveLane } from "@/features/applications/lanes";
+import { PriorNoResponse } from "@/features/applications/prior-no-response";
 import { useApplication, useApplicationMutations } from "@/features/applications/queries";
 import { CLOSED_REASONS, getClosedReasonLabel } from "@/features/applications/stages";
 import { DEFAULT_LEAD, followUpStart, REMINDER_LEADS, useReminders } from "@/features/reminders";
@@ -35,77 +40,103 @@ import {
 } from "@/ui";
 
 type SheetBaseProps = { open: boolean; onClose: () => void };
-type ApplicationActionSheetProps = SheetBaseProps & { application: ApplicationSummary };
+type ApplicationActionSheetProps = SheetBaseProps & {
+	application: ApplicationSummary;
+	lane?: ApplicationLane | undefined;
+};
 type ApplicationContentSheetProps = SheetBaseProps & { application: Application };
 
 const today = () => new Date().toLocaleDateString("en-CA");
 
-/** "Close this application": one reason, kept for Insights. */
-export function CloseSheet({ application, open, onClose }: ApplicationActionSheetProps) {
+/** Closing preserves the explicit lane/outcome choice; drafts reset each time the sheet opens. */
+export function CloseSheet({ application, lane, open, onClose }: ApplicationActionSheetProps) {
+	const { t } = useLingui();
+	return (
+		<Sheet open={open} onClose={onClose} title={t`Close this application`}>
+			{open ? <CloseForm application={application} lane={lane} onClose={onClose} /> : null}
+		</Sheet>
+	);
+}
+
+function CloseForm({ application, lane: initialLane, onClose }: Omit<ApplicationActionSheetProps, "open">) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const { update } = useApplicationMutations();
+	const lanes = useApplicationLanes();
 	const [reason, setReason] = useState<ApplicationClosedReason>("not-selected");
-
+	const [laneId, setLaneId] = useState(initialLane?.id ?? "");
+	const selectedLane = lanes.active.find((item) => item.id === laneId && item.category === "closed");
+	const lane = selectedLane ?? resolveLane(lanes.lanes, { status: "closed" });
+	const laneAvailable = !laneId || !!selectedLane;
 	return (
-		<Sheet
-			open={open}
-			onClose={onClose}
-			title={t`Close this application`}
-			footer={
-				<View style={{ gap: space.s2 }}>
-					<Button
-						fullWidth
-						size="lg"
-						label={t`Close application`}
-						onPress={() => {
-							onClose();
-							update.mutate(
-								{ id: application.id, status: "closed", closedReason: reason },
-								{
-									onSuccess: () => showToast({ message: t`Application closed` }),
-									onError: (error) => showToast({ message: applicationError(error) }),
-								},
-							);
-						}}
+		<View style={{ gap: space.s3, paddingHorizontal: space.s4 }}>
+			<LaneNotice unavailable={!laneAvailable} />
+			<SelectSheet
+				label={t`Lane`}
+				value={laneId || lane.id}
+				options={lanes.active
+					.filter((item) => item.category === "closed")
+					.map((item) => ({ value: item.id, label: getLaneLabel(item) }))}
+				onChange={setLaneId}
+				disabled={!lanes.ready || update.isPending}
+			/>
+			{!lane.closedReason &&
+				CLOSED_REASONS.map((value) => (
+					<ListRow
+						key={value}
+						title={getClosedReasonLabel(value)}
+						leading={value === reason ? "check-circle" : "circle"}
+						selected={value === reason}
+						onPress={() => setReason(value)}
 					/>
-					<Button fullWidth variant="secondary" label={t`Cancel`} onPress={onClose} />
-				</View>
-			}
-		>
-			{CLOSED_REASONS.map((value) => (
-				<ListRow
-					key={value}
-					title={getClosedReasonLabel(value)}
-					leading={value === reason ? "check-circle" : "circle"}
-					selected={value === reason}
-					onPress={() => setReason(value)}
-				/>
-			))}
-			<Text variant="callout" color="ink3" style={{ paddingHorizontal: space.s4 }}>
-				{t`The reason is kept for Insights. Linked documents aren't touched.`}
-			</Text>
-		</Sheet>
+				))}
+			<Text variant="callout" color="ink3">{t`The reason is kept for Insights. Linked documents aren't touched.`}</Text>
+			<Button
+				fullWidth
+				size="lg"
+				label={t`Close application`}
+				loading={update.isPending}
+				disabled={!lanes.ready || !laneAvailable}
+				onPress={() =>
+					update.mutate(
+						{ id: application.id, ...laneInput(lane, lanes.supported), closedReason: lane.closedReason ?? reason },
+						{
+							onSuccess: () => {
+								onClose();
+								showToast({ message: t`Application closed` });
+							},
+							onError: (error) => showToast({ message: applicationError(error) }),
+						},
+					)
+				}
+			/>
+			<Button fullWidth variant="secondary" label={t`Cancel`} onPress={onClose} />
+		</View>
 	);
 }
 
 /** Saved → Applied: the date and the documents actually sent; their current versions are kept. */
-export function MarkAppliedSheet({ application, open, onClose }: ApplicationActionSheetProps) {
+export function MarkAppliedSheet({ application, lane, open, onClose }: ApplicationActionSheetProps) {
 	const { t } = useLingui();
 	return (
 		<Sheet open={open} onClose={onClose} title={t`Mark as applied`}>
-			{open ? <MarkAppliedForm application={application} onClose={onClose} /> : null}
+			{open ? <MarkAppliedForm application={application} lane={lane} onClose={onClose} /> : null}
 		</Sheet>
 	);
 }
 
-function MarkAppliedForm({ application, onClose }: Omit<ApplicationActionSheetProps, "open">) {
+function MarkAppliedForm({ application, lane: initialLane, onClose }: Omit<ApplicationActionSheetProps, "open">) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const { update } = useApplicationMutations();
 	const detail = useApplication(application.id);
 	const documents = useDocuments();
 	const [date, setDate] = useState(today);
+	const lanes = useApplicationLanes();
+	const [laneId, setLaneId] = useState(initialLane?.id ?? "");
+	const selectedLane = lanes.active.find((item) => item.id === laneId && item.category === "applied");
+	const lane = selectedLane ?? resolveLane(lanes.lanes, { status: "applied" });
+	const laneAvailable = !laneId || !!selectedLane;
 	const [resumeId, setResumeId] = useState(application.resumeId ?? "");
 	const [letterId, setLetterId] = useState(application.coverLetterId ?? "");
 	const [resumeFileSent, setResumeFileSent] = useState(true);
@@ -123,6 +154,17 @@ function MarkAppliedForm({ application, onClose }: Omit<ApplicationActionSheetPr
 			<Text color="ink2">
 				{t`Confirm submission and choose the documents you actually sent. Their current versions will be saved.`}
 			</Text>
+			<LaneNotice unavailable={!laneAvailable} />
+			<PriorNoResponse company={application.company} excludeId={application.id} onOpen={onClose} />
+			<SelectSheet
+				label={t`Lane`}
+				value={laneId || lane.id}
+				options={lanes.active
+					.filter((item) => item.category === "applied")
+					.map((item) => ({ value: item.id, label: getLaneLabel(item) }))}
+				onChange={setLaneId}
+				disabled={!lanes.ready || update.isPending}
+			/>
 			<WallClockField label={t`Application date`} mode="date" value={date} onChange={setDate} />
 			<SelectSheet
 				label={t`Resume submitted (optional)`}
@@ -169,12 +211,12 @@ function MarkAppliedForm({ application, onClose }: Omit<ApplicationActionSheetPr
 				size="lg"
 				label={t`Confirm applied`}
 				loading={update.isPending}
-				disabled={!date || !detail.data}
+				disabled={!date || !detail.data || !lanes.ready || !laneAvailable}
 				onPress={() =>
 					update.mutate(
 						{
 							id: application.id,
-							status: "applied",
+							...laneInput(lane, lanes.supported),
 							stageEnteredAt: date,
 							resumeId: resumeId || null,
 							coverLetterId: letterId || null,

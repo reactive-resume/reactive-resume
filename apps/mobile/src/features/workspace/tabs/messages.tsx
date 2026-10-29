@@ -19,9 +19,10 @@ import { useSession } from "@/auth/session";
 import { getDraftScope } from "@/draft";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { useUserTime } from "@/features/application-detail/hooks";
+import { useApplicationLanes } from "@/features/applications/lane-queries";
+import { getLaneLabel, resolveLane } from "@/features/applications/lanes";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
 import { useInvalidateApplications } from "@/features/applications/queries";
-import { getStageLabel } from "@/features/applications/stages";
 import { formatMoney } from "@/features/career/offer-compare";
 import { withUndo } from "@/features/career/undo";
 import { Banner, Button, Icon, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
@@ -194,15 +195,17 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 		(reply.data.applied ? { changes: reply.data.applied.changes, at: new Date(reply.data.applied.at) } : null);
 	const selected = applied ? applied.changes : ticked;
 	const contact = application.contacts[0]?.name.split(" ")[0];
+	const lanes = useApplicationLanes();
 	const current =
 		application.followUpNote ||
-		describeNextStep(getNextStep(application, now), application, i18n.locale, timeZone).title;
-	const from = getStageLabel(application.status);
+		describeNextStep(getNextStep(application, now, lanes.lanes), application, i18n.locale, timeZone).title;
+	const from = getLaneLabel(resolveLane(lanes.lanes, application));
 
 	const describe = (change: (typeof changes)[number]) => {
 		switch (change.type) {
 			case "stage": {
-				const stage = getStageLabel(change.stage);
+				const stage =
+					change.stage === application.status ? from : getLaneLabel(resolveLane(lanes.lanes, { status: change.stage }));
 				if (change.stage === application.status)
 					return { title: t`Stage stays ${stage}`, detail: t`No change needed. It's already at ${stage}.` };
 				if (application.status === "saved")

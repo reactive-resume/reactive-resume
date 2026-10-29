@@ -58,6 +58,12 @@ const PARITY_PROCEDURES: Record<string, [AnyProcedure, BehaviorAnnotations]> = {
 	"documents.purge": [router.documents.purge, WRITE_DESTRUCTIVE],
 	"documents.purgeExpired": [router.documents.purgeExpired, WRITE_DESTRUCTIVE],
 	"documents.copyForJob": [router.documents.copyForJob, WRITE_DESTRUCTIVE],
+	"applications.lanes.get": [router.applications.lanes.get, WRITE_IDEMPOTENT],
+	"applications.lanes.create": [router.applications.lanes.create, WRITE_NON_IDEMPOTENT],
+	"applications.lanes.update": [router.applications.lanes.update, WRITE_DESTRUCTIVE],
+	"applications.lanes.reorder": [router.applications.lanes.reorder, WRITE_DESTRUCTIVE],
+	"applications.lanes.retire": [router.applications.lanes.retire, WRITE_DESTRUCTIVE],
+	"applications.priorNoResponse": [router.applications.priorNoResponse, READ_IDEMPOTENT],
 	"applications.ai.searchPostings": [router.applications.ai.searchPostings, WRITE_DESTRUCTIVE_EXTERNAL],
 	"applications.ai.parsePosting": [router.applications.ai.parsePosting, WRITE_DESTRUCTIVE_EXTERNAL],
 	"ai.parsePdf": [router.ai.parsePdf, WRITE_DESTRUCTIVE_EXTERNAL],
@@ -196,6 +202,10 @@ const accountExportOutputSchema = z
 		resumes: z.array(z.looseObject({})).describe("Every resume, as returned by read_resume."),
 		coverLetters: z.array(z.looseObject({})).describe("Every cover letter, as returned by read_cover_letter."),
 		applications: z.array(z.looseObject({})).describe("Every application, as returned by read_application."),
+		applicationPipeline: z
+			.looseObject({})
+			.optional()
+			.describe("Application stage revision and definitions, including retired stages referenced by history."),
 		career: z
 			.looseObject({})
 			.describe(

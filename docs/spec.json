@@ -14499,6 +14499,1196 @@
 				]
 			}
 		},
+		"/applications/lanes": {
+			"get": {
+				"operationId": "getApplicationLanes",
+				"summary": "Get application lanes",
+				"tags": [
+					"Applications"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"revision": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 9007199254740991
+										},
+										"lanes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string",
+														"minLength": 1
+													},
+													"category": {
+														"enum": [
+															"saved",
+															"applied",
+															"screening",
+															"interview",
+															"offer",
+															"closed"
+														],
+														"type": "string"
+													},
+													"label": {
+														"anyOf": [
+															{
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 80
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"color": {
+														"type": "string",
+														"pattern": "^#[0-9a-fA-F]{6}$"
+													},
+													"position": {
+														"type": "integer",
+														"minimum": 0,
+														"maximum": 9007199254740991
+													},
+													"systemKey": {
+														"anyOf": [
+															{
+																"enum": [
+																	"saved",
+																	"applied",
+																	"screening",
+																	"interview",
+																	"offer",
+																	"closed"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"closedReason": {
+														"anyOf": [
+															{
+																"enum": [
+																	"accepted",
+																	"not-selected",
+																	"withdrew",
+																	"accepted-other",
+																	"no-response"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"retiredAt": {
+														"anyOf": [
+															{
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															},
+															{
+																"type": "null"
+															}
+														]
+													}
+												},
+												"required": [
+													"id",
+													"category",
+													"label",
+													"color",
+													"position",
+													"systemKey",
+													"closedReason",
+													"retiredAt"
+												]
+											}
+										}
+									},
+									"required": [
+										"revision",
+										"lanes"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/applications/lanes\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			},
+			"post": {
+				"operationId": "createApplicationLane",
+				"summary": "Create application lane",
+				"tags": [
+					"Applications"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"expectedRevision": {
+										"type": "integer",
+										"minimum": 0,
+										"maximum": 9007199254740991
+									},
+									"label": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 80
+									},
+									"category": {
+										"enum": [
+											"saved",
+											"applied",
+											"screening",
+											"interview",
+											"offer",
+											"closed"
+										],
+										"type": "string"
+									},
+									"color": {
+										"type": "string",
+										"pattern": "^#[0-9a-fA-F]{6}$"
+									},
+									"closedReason": {
+										"anyOf": [
+											{
+												"enum": [
+													"accepted",
+													"not-selected",
+													"withdrew",
+													"accepted-other",
+													"no-response"
+												],
+												"type": "string"
+											},
+											{
+												"type": "null"
+											}
+										]
+									}
+								},
+								"required": [
+									"expectedRevision",
+									"label",
+									"category",
+									"color"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"revision": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 9007199254740991
+										},
+										"lanes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string",
+														"minLength": 1
+													},
+													"category": {
+														"enum": [
+															"saved",
+															"applied",
+															"screening",
+															"interview",
+															"offer",
+															"closed"
+														],
+														"type": "string"
+													},
+													"label": {
+														"anyOf": [
+															{
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 80
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"color": {
+														"type": "string",
+														"pattern": "^#[0-9a-fA-F]{6}$"
+													},
+													"position": {
+														"type": "integer",
+														"minimum": 0,
+														"maximum": 9007199254740991
+													},
+													"systemKey": {
+														"anyOf": [
+															{
+																"enum": [
+																	"saved",
+																	"applied",
+																	"screening",
+																	"interview",
+																	"offer",
+																	"closed"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"closedReason": {
+														"anyOf": [
+															{
+																"enum": [
+																	"accepted",
+																	"not-selected",
+																	"withdrew",
+																	"accepted-other",
+																	"no-response"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"retiredAt": {
+														"anyOf": [
+															{
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															},
+															{
+																"type": "null"
+															}
+														]
+													}
+												},
+												"required": [
+													"id",
+													"category",
+													"label",
+													"color",
+													"position",
+													"systemKey",
+													"closedReason",
+													"retiredAt"
+												]
+											}
+										}
+									},
+									"required": [
+										"revision",
+										"lanes"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/lanes\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"expectedRevision\": 123,\n  \"label\": \"<string>\",\n  \"category\": \"saved\",\n  \"color\": \"<string>\"\n}'"
+					}
+				]
+			}
+		},
+		"/applications/lanes/{id}": {
+			"put": {
+				"operationId": "updateApplicationLane",
+				"summary": "Rename or recolor application lane",
+				"tags": [
+					"Applications"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"expectedRevision": {
+										"type": "integer",
+										"minimum": 0,
+										"maximum": 9007199254740991
+									},
+									"label": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 80
+									},
+									"color": {
+										"type": "string",
+										"pattern": "^#[0-9a-fA-F]{6}$"
+									}
+								},
+								"required": [
+									"expectedRevision"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"revision": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 9007199254740991
+										},
+										"lanes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string",
+														"minLength": 1
+													},
+													"category": {
+														"enum": [
+															"saved",
+															"applied",
+															"screening",
+															"interview",
+															"offer",
+															"closed"
+														],
+														"type": "string"
+													},
+													"label": {
+														"anyOf": [
+															{
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 80
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"color": {
+														"type": "string",
+														"pattern": "^#[0-9a-fA-F]{6}$"
+													},
+													"position": {
+														"type": "integer",
+														"minimum": 0,
+														"maximum": 9007199254740991
+													},
+													"systemKey": {
+														"anyOf": [
+															{
+																"enum": [
+																	"saved",
+																	"applied",
+																	"screening",
+																	"interview",
+																	"offer",
+																	"closed"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"closedReason": {
+														"anyOf": [
+															{
+																"enum": [
+																	"accepted",
+																	"not-selected",
+																	"withdrew",
+																	"accepted-other",
+																	"no-response"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"retiredAt": {
+														"anyOf": [
+															{
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															},
+															{
+																"type": "null"
+															}
+														]
+													}
+												},
+												"required": [
+													"id",
+													"category",
+													"label",
+													"color",
+													"position",
+													"systemKey",
+													"closedReason",
+													"retiredAt"
+												]
+											}
+										}
+									},
+									"required": [
+										"revision",
+										"lanes"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PUT \"https://rxresu.me/api/openapi/applications/lanes/<id>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"expectedRevision\": 123\n}'"
+					}
+				]
+			}
+		},
+		"/applications/lanes/reorder": {
+			"post": {
+				"operationId": "reorderApplicationLanes",
+				"summary": "Reorder application lanes",
+				"tags": [
+					"Applications"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"expectedRevision": {
+										"type": "integer",
+										"minimum": 0,
+										"maximum": 9007199254740991
+									},
+									"ids": {
+										"type": "array",
+										"minItems": 6,
+										"maxItems": 40,
+										"items": {
+											"type": "string"
+										}
+									}
+								},
+								"required": [
+									"expectedRevision",
+									"ids"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"revision": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 9007199254740991
+										},
+										"lanes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string",
+														"minLength": 1
+													},
+													"category": {
+														"enum": [
+															"saved",
+															"applied",
+															"screening",
+															"interview",
+															"offer",
+															"closed"
+														],
+														"type": "string"
+													},
+													"label": {
+														"anyOf": [
+															{
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 80
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"color": {
+														"type": "string",
+														"pattern": "^#[0-9a-fA-F]{6}$"
+													},
+													"position": {
+														"type": "integer",
+														"minimum": 0,
+														"maximum": 9007199254740991
+													},
+													"systemKey": {
+														"anyOf": [
+															{
+																"enum": [
+																	"saved",
+																	"applied",
+																	"screening",
+																	"interview",
+																	"offer",
+																	"closed"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"closedReason": {
+														"anyOf": [
+															{
+																"enum": [
+																	"accepted",
+																	"not-selected",
+																	"withdrew",
+																	"accepted-other",
+																	"no-response"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"retiredAt": {
+														"anyOf": [
+															{
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															},
+															{
+																"type": "null"
+															}
+														]
+													}
+												},
+												"required": [
+													"id",
+													"category",
+													"label",
+													"color",
+													"position",
+													"systemKey",
+													"closedReason",
+													"retiredAt"
+												]
+											}
+										}
+									},
+									"required": [
+										"revision",
+										"lanes"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/lanes/reorder\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"expectedRevision\": 123,\n  \"ids\": [\n    \"<string>\"\n  ]\n}'"
+					}
+				]
+			}
+		},
+		"/applications/lanes/{id}/retire": {
+			"post": {
+				"operationId": "retireApplicationLane",
+				"summary": "Retire application lane and move its applications",
+				"tags": [
+					"Applications"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"expectedRevision": {
+										"type": "integer",
+										"minimum": 0,
+										"maximum": 9007199254740991
+									},
+									"replacementId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"expectedRevision",
+									"replacementId"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"revision": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 9007199254740991
+										},
+										"lanes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string",
+														"minLength": 1
+													},
+													"category": {
+														"enum": [
+															"saved",
+															"applied",
+															"screening",
+															"interview",
+															"offer",
+															"closed"
+														],
+														"type": "string"
+													},
+													"label": {
+														"anyOf": [
+															{
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 80
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"color": {
+														"type": "string",
+														"pattern": "^#[0-9a-fA-F]{6}$"
+													},
+													"position": {
+														"type": "integer",
+														"minimum": 0,
+														"maximum": 9007199254740991
+													},
+													"systemKey": {
+														"anyOf": [
+															{
+																"enum": [
+																	"saved",
+																	"applied",
+																	"screening",
+																	"interview",
+																	"offer",
+																	"closed"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"closedReason": {
+														"anyOf": [
+															{
+																"enum": [
+																	"accepted",
+																	"not-selected",
+																	"withdrew",
+																	"accepted-other",
+																	"no-response"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"retiredAt": {
+														"anyOf": [
+															{
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															},
+															{
+																"type": "null"
+															}
+														]
+													}
+												},
+												"required": [
+													"id",
+													"category",
+													"label",
+													"color",
+													"position",
+													"systemKey",
+													"closedReason",
+													"retiredAt"
+												]
+											}
+										}
+									},
+									"required": [
+										"revision",
+										"lanes"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/lanes/<id>/retire\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"expectedRevision\": 123,\n  \"replacementId\": \"<string>\"\n}'"
+					}
+				]
+			}
+		},
+		"/applications/prior-no-response": {
+			"get": {
+				"operationId": "getPriorNoResponseApplications",
+				"summary": "Find prior no-response applications at a company",
+				"tags": [
+					"Applications"
+				],
+				"parameters": [
+					{
+						"name": "company",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 500
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "excludeId",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"id": {
+												"type": "string"
+											},
+											"company": {
+												"type": "string"
+											},
+											"role": {
+												"type": "string"
+											},
+											"at": {
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											}
+										},
+										"required": [
+											"id",
+											"company",
+											"role",
+											"at"
+										]
+									}
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/applications/prior-no-response?company=<company>\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			}
+		},
 		"/applications": {
 			"get": {
 				"operationId": "listApplications",
@@ -14545,6 +15735,16 @@
 								"closed"
 							],
 							"type": "string"
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "laneId",
+						"in": "query",
+						"schema": {
+							"type": "string",
+							"minLength": 1
 						},
 						"allowEmptyValue": true,
 						"allowReserved": true
@@ -14619,6 +15819,17 @@
 												],
 												"type": "string",
 												"description": "The current pipeline stage. `closed` ends it, with a reason."
+											},
+											"laneId": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												],
+												"description": "The owner-defined pipeline lane, when supported."
 											},
 											"closedReason": {
 												"anyOf": [
@@ -14976,6 +16187,40 @@
 																		"closed"
 																	],
 																	"type": "string"
+																},
+																"laneId": {
+																	"type": "string"
+																},
+																"laneLabel": {
+																	"anyOf": [
+																		{
+																			"type": "string",
+																			"maxLength": 80
+																		},
+																		{
+																			"type": "null"
+																		}
+																	]
+																},
+																"closedReason": {
+																	"anyOf": [
+																		{
+																			"enum": [
+																				"accepted",
+																				"not-selected",
+																				"withdrew",
+																				"accepted-other",
+																				"no-response"
+																			],
+																			"type": "string"
+																		},
+																		{
+																			"type": "null"
+																		}
+																	]
+																},
+																"canonicalTransition": {
+																	"type": "boolean"
 																}
 															},
 															"required": [
@@ -15537,6 +16782,10 @@
 										],
 										"type": "string"
 									},
+									"laneId": {
+										"type": "string",
+										"minLength": 1
+									},
 									"closedReason": {
 										"anyOf": [
 											{
@@ -15857,6 +17106,10 @@
 										],
 										"type": "string"
 									},
+									"laneId": {
+										"type": "string",
+										"minLength": 1
+									},
 									"closedReason": {
 										"anyOf": [
 											{
@@ -15961,7 +17214,7 @@
 			"patch": {
 				"operationId": "patchApplications",
 				"summary": "Bulk update applications",
-				"description": "Applies the same change (move stage, archive/unarchive, add tags) to multiple applications at once. Requires authentication.",
+				"description": "Applies the same change (move stage, archive/unarchive, add tags) to multiple applications at once. A closedReason requires every selected application to be Closed already, or status/laneId to move them to Closed. Contradictory selections fail atomically. Requires authentication.",
 				"tags": [
 					"Applications"
 				],
@@ -15990,6 +17243,10 @@
 											"closed"
 										],
 										"type": "string"
+									},
+									"laneId": {
+										"type": "string",
+										"minLength": 1
 									},
 									"closedReason": {
 										"anyOf": [
@@ -16244,6 +17501,16 @@
 						"allowReserved": true
 					},
 					{
+						"name": "laneId",
+						"in": "query",
+						"schema": {
+							"type": "string",
+							"minLength": 1
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
 						"name": "tags",
 						"in": "query",
 						"schema": {
@@ -16324,6 +17591,17 @@
 												],
 												"type": "string",
 												"description": "The current pipeline stage. `closed` ends it, with a reason."
+											},
+											"laneId": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												],
+												"description": "The owner-defined pipeline lane, when supported."
 											},
 											"closedReason": {
 												"anyOf": [
@@ -16486,6 +17764,40 @@
 																		"closed"
 																	],
 																	"type": "string"
+																},
+																"laneId": {
+																	"type": "string"
+																},
+																"laneLabel": {
+																	"anyOf": [
+																		{
+																			"type": "string",
+																			"maxLength": 80
+																		},
+																		{
+																			"type": "null"
+																		}
+																	]
+																},
+																"closedReason": {
+																	"anyOf": [
+																		{
+																			"enum": [
+																				"accepted",
+																				"not-selected",
+																				"withdrew",
+																				"accepted-other",
+																				"no-response"
+																			],
+																			"type": "string"
+																		},
+																		{
+																			"type": "null"
+																		}
+																	]
+																},
+																"canonicalTransition": {
+																	"type": "boolean"
 																}
 															},
 															"required": [
@@ -16682,6 +17994,17 @@
 														],
 														"type": "string",
 														"description": "The current pipeline stage. `closed` ends it, with a reason."
+													},
+													"laneId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														],
+														"description": "The owner-defined pipeline lane, when supported."
 													},
 													"closedReason": {
 														"anyOf": [
@@ -17039,6 +18362,40 @@
 																				"closed"
 																			],
 																			"type": "string"
+																		},
+																		"laneId": {
+																			"type": "string"
+																		},
+																		"laneLabel": {
+																			"anyOf": [
+																				{
+																					"type": "string",
+																					"maxLength": 80
+																				},
+																				{
+																					"type": "null"
+																				}
+																			]
+																		},
+																		"closedReason": {
+																			"anyOf": [
+																				{
+																					"enum": [
+																						"accepted",
+																						"not-selected",
+																						"withdrew",
+																						"accepted-other",
+																						"no-response"
+																					],
+																					"type": "string"
+																				},
+																				{
+																					"type": "null"
+																				}
+																			]
+																		},
+																		"canonicalTransition": {
+																			"type": "boolean"
 																		}
 																	},
 																	"required": [
@@ -17396,6 +18753,17 @@
 											"type": "string",
 											"description": "The current pipeline stage. `closed` ends it, with a reason."
 										},
+										"laneId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											],
+											"description": "The owner-defined pipeline lane, when supported."
+										},
 										"closedReason": {
 											"anyOf": [
 												{
@@ -17752,6 +19120,40 @@
 																	"closed"
 																],
 																"type": "string"
+															},
+															"laneId": {
+																"type": "string"
+															},
+															"laneLabel": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"maxLength": 80
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"closedReason": {
+																"anyOf": [
+																	{
+																		"enum": [
+																			"accepted",
+																			"not-selected",
+																			"withdrew",
+																			"accepted-other",
+																			"no-response"
+																		],
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"canonicalTransition": {
+																"type": "boolean"
 															}
 														},
 														"required": [
@@ -18302,6 +19704,10 @@
 										],
 										"type": "string"
 									},
+									"laneId": {
+										"type": "string",
+										"minLength": 1
+									},
 									"stageEnteredAt": {
 										"type": "string",
 										"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
@@ -18627,6 +20033,10 @@
 										],
 										"type": "string"
 									},
+									"laneId": {
+										"type": "string",
+										"minLength": 1
+									},
 									"stageEnteredAt": {
 										"type": "string",
 										"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
@@ -18707,6 +20117,17 @@
 											],
 											"type": "string",
 											"description": "The current pipeline stage. `closed` ends it, with a reason."
+										},
+										"laneId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											],
+											"description": "The owner-defined pipeline lane, when supported."
 										},
 										"closedReason": {
 											"anyOf": [
@@ -19064,6 +20485,40 @@
 																	"closed"
 																],
 																"type": "string"
+															},
+															"laneId": {
+																"type": "string"
+															},
+															"laneLabel": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"maxLength": 80
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"closedReason": {
+																"anyOf": [
+																	{
+																		"enum": [
+																			"accepted",
+																			"not-selected",
+																			"withdrew",
+																			"accepted-other",
+																			"no-response"
+																		],
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"canonicalTransition": {
+																"type": "boolean"
 															}
 														},
 														"required": [
@@ -19687,6 +21142,10 @@
 										],
 										"type": "string"
 									},
+									"laneId": {
+										"type": "string",
+										"minLength": 1
+									},
 									"stageEnteredAt": {
 										"type": "string",
 										"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
@@ -20012,6 +21471,10 @@
 										],
 										"type": "string"
 									},
+									"laneId": {
+										"type": "string",
+										"minLength": 1
+									},
 									"stageEnteredAt": {
 										"type": "string",
 										"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
@@ -20092,6 +21555,17 @@
 											],
 											"type": "string",
 											"description": "The current pipeline stage. `closed` ends it, with a reason."
+										},
+										"laneId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											],
+											"description": "The owner-defined pipeline lane, when supported."
 										},
 										"closedReason": {
 											"anyOf": [
@@ -20449,6 +21923,40 @@
 																	"closed"
 																],
 																"type": "string"
+															},
+															"laneId": {
+																"type": "string"
+															},
+															"laneLabel": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"maxLength": 80
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"closedReason": {
+																"anyOf": [
+																	{
+																		"enum": [
+																			"accepted",
+																			"not-selected",
+																			"withdrew",
+																			"accepted-other",
+																			"no-response"
+																		],
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"canonicalTransition": {
+																"type": "boolean"
 															}
 														},
 														"required": [
@@ -20998,6 +22506,10 @@
 													],
 													"type": "string"
 												},
+												"laneId": {
+													"type": "string",
+													"minLength": 1
+												},
 												"closedReason": {
 													"anyOf": [
 														{
@@ -21207,6 +22719,17 @@
 											],
 											"type": "string",
 											"description": "The current pipeline stage. `closed` ends it, with a reason."
+										},
+										"laneId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											],
+											"description": "The owner-defined pipeline lane, when supported."
 										},
 										"closedReason": {
 											"anyOf": [
@@ -21564,6 +23087,40 @@
 																	"closed"
 																],
 																"type": "string"
+															},
+															"laneId": {
+																"type": "string"
+															},
+															"laneLabel": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"maxLength": 80
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"closedReason": {
+																"anyOf": [
+																	{
+																		"enum": [
+																			"accepted",
+																			"not-selected",
+																			"withdrew",
+																			"accepted-other",
+																			"no-response"
+																		],
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"canonicalTransition": {
+																"type": "boolean"
 															}
 														},
 														"required": [
@@ -21874,6 +23431,17 @@
 											"type": "string",
 											"description": "The current pipeline stage. `closed` ends it, with a reason."
 										},
+										"laneId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											],
+											"description": "The owner-defined pipeline lane, when supported."
+										},
 										"closedReason": {
 											"anyOf": [
 												{
@@ -22230,6 +23798,40 @@
 																	"closed"
 																],
 																"type": "string"
+															},
+															"laneId": {
+																"type": "string"
+															},
+															"laneLabel": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"maxLength": 80
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"closedReason": {
+																"anyOf": [
+																	{
+																		"enum": [
+																			"accepted",
+																			"not-selected",
+																			"withdrew",
+																			"accepted-other",
+																			"no-response"
+																		],
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"canonicalTransition": {
+																"type": "boolean"
 															}
 														},
 														"required": [
@@ -22564,6 +24166,17 @@
 											"type": "string",
 											"description": "The current pipeline stage. `closed` ends it, with a reason."
 										},
+										"laneId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											],
+											"description": "The owner-defined pipeline lane, when supported."
+										},
 										"closedReason": {
 											"anyOf": [
 												{
@@ -22920,6 +24533,40 @@
 																	"closed"
 																],
 																"type": "string"
+															},
+															"laneId": {
+																"type": "string"
+															},
+															"laneLabel": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"maxLength": 80
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"closedReason": {
+																"anyOf": [
+																	{
+																		"enum": [
+																			"accepted",
+																			"not-selected",
+																			"withdrew",
+																			"accepted-other",
+																			"no-response"
+																		],
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"canonicalTransition": {
+																"type": "boolean"
 															}
 														},
 														"required": [
@@ -23323,6 +24970,17 @@
 											"type": "string",
 											"description": "The current pipeline stage. `closed` ends it, with a reason."
 										},
+										"laneId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											],
+											"description": "The owner-defined pipeline lane, when supported."
+										},
 										"closedReason": {
 											"anyOf": [
 												{
@@ -23679,6 +25337,40 @@
 																	"closed"
 																],
 																"type": "string"
+															},
+															"laneId": {
+																"type": "string"
+															},
+															"laneLabel": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"maxLength": 80
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"closedReason": {
+																"anyOf": [
+																	{
+																		"enum": [
+																			"accepted",
+																			"not-selected",
+																			"withdrew",
+																			"accepted-other",
+																			"no-response"
+																		],
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"canonicalTransition": {
+																"type": "boolean"
 															}
 														},
 														"required": [
@@ -24080,6 +25772,17 @@
 											"type": "string",
 											"description": "The current pipeline stage. `closed` ends it, with a reason."
 										},
+										"laneId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											],
+											"description": "The owner-defined pipeline lane, when supported."
+										},
 										"closedReason": {
 											"anyOf": [
 												{
@@ -24436,6 +26139,40 @@
 																	"closed"
 																],
 																"type": "string"
+															},
+															"laneId": {
+																"type": "string"
+															},
+															"laneLabel": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"maxLength": 80
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"closedReason": {
+																"anyOf": [
+																	{
+																		"enum": [
+																			"accepted",
+																			"not-selected",
+																			"withdrew",
+																			"accepted-other",
+																			"no-response"
+																		],
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"canonicalTransition": {
+																"type": "boolean"
 															}
 														},
 														"required": [
@@ -24835,6 +26572,17 @@
 											"type": "string",
 											"description": "The current pipeline stage. `closed` ends it, with a reason."
 										},
+										"laneId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											],
+											"description": "The owner-defined pipeline lane, when supported."
+										},
 										"closedReason": {
 											"anyOf": [
 												{
@@ -25191,6 +26939,40 @@
 																	"closed"
 																],
 																"type": "string"
+															},
+															"laneId": {
+																"type": "string"
+															},
+															"laneLabel": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"maxLength": 80
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"closedReason": {
+																"anyOf": [
+																	{
+																		"enum": [
+																			"accepted",
+																			"not-selected",
+																			"withdrew",
+																			"accepted-other",
+																			"no-response"
+																		],
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"canonicalTransition": {
+																"type": "boolean"
 															}
 														},
 														"required": [
@@ -25530,6 +27312,17 @@
 											"type": "string",
 											"description": "The current pipeline stage. `closed` ends it, with a reason."
 										},
+										"laneId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											],
+											"description": "The owner-defined pipeline lane, when supported."
+										},
 										"closedReason": {
 											"anyOf": [
 												{
@@ -25886,6 +27679,40 @@
 																	"closed"
 																],
 																"type": "string"
+															},
+															"laneId": {
+																"type": "string"
+															},
+															"laneLabel": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"maxLength": 80
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"closedReason": {
+																"anyOf": [
+																	{
+																		"enum": [
+																			"accepted",
+																			"not-selected",
+																			"withdrew",
+																			"accepted-other",
+																			"no-response"
+																		],
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"canonicalTransition": {
+																"type": "boolean"
 															}
 														},
 														"required": [
@@ -26203,6 +28030,17 @@
 											"type": "string",
 											"description": "The current pipeline stage. `closed` ends it, with a reason."
 										},
+										"laneId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											],
+											"description": "The owner-defined pipeline lane, when supported."
+										},
 										"closedReason": {
 											"anyOf": [
 												{
@@ -26559,6 +28397,40 @@
 																	"closed"
 																],
 																"type": "string"
+															},
+															"laneId": {
+																"type": "string"
+															},
+															"laneLabel": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"maxLength": 80
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"closedReason": {
+																"anyOf": [
+																	{
+																		"enum": [
+																			"accepted",
+																			"not-selected",
+																			"withdrew",
+																			"accepted-other",
+																			"no-response"
+																		],
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"canonicalTransition": {
+																"type": "boolean"
 															}
 														},
 														"required": [
@@ -26896,6 +28768,17 @@
 											"type": "string",
 											"description": "The current pipeline stage. `closed` ends it, with a reason."
 										},
+										"laneId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											],
+											"description": "The owner-defined pipeline lane, when supported."
+										},
 										"closedReason": {
 											"anyOf": [
 												{
@@ -27252,6 +29135,40 @@
 																	"closed"
 																],
 																"type": "string"
+															},
+															"laneId": {
+																"type": "string"
+															},
+															"laneLabel": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"maxLength": 80
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"closedReason": {
+																"anyOf": [
+																	{
+																		"enum": [
+																			"accepted",
+																			"not-selected",
+																			"withdrew",
+																			"accepted-other",
+																			"no-response"
+																		],
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"canonicalTransition": {
+																"type": "boolean"
 															}
 														},
 														"required": [
@@ -27495,7 +29412,7 @@
 			"post": {
 				"operationId": "bulkUpdateApplications",
 				"summary": "Bulk update applications",
-				"description": "Applies the same change (move stage, archive/unarchive, add tags) to multiple applications at once. Requires authentication.",
+				"description": "Applies the same change (move stage, archive/unarchive, add tags) to multiple applications at once. A closedReason requires every selected application to be Closed already, or status/laneId to move them to Closed. Contradictory selections fail atomically. Requires authentication.",
 				"tags": [
 					"Applications"
 				],
@@ -27524,6 +29441,10 @@
 											"closed"
 										],
 										"type": "string"
+									},
+									"laneId": {
+										"type": "string",
+										"minLength": 1
 									},
 									"closedReason": {
 										"anyOf": [
@@ -35428,6 +37349,17 @@
 														"type": "string",
 														"description": "The current pipeline stage. `closed` ends it, with a reason."
 													},
+													"laneId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														],
+														"description": "The owner-defined pipeline lane, when supported."
+													},
 													"closedReason": {
 														"anyOf": [
 															{
@@ -35784,6 +37716,40 @@
 																				"closed"
 																			],
 																			"type": "string"
+																		},
+																		"laneId": {
+																			"type": "string"
+																		},
+																		"laneLabel": {
+																			"anyOf": [
+																				{
+																					"type": "string",
+																					"maxLength": 80
+																				},
+																				{
+																					"type": "null"
+																				}
+																			]
+																		},
+																		"closedReason": {
+																			"anyOf": [
+																				{
+																					"enum": [
+																						"accepted",
+																						"not-selected",
+																						"withdrew",
+																						"accepted-other",
+																						"no-response"
+																					],
+																					"type": "string"
+																				},
+																				{
+																					"type": "null"
+																				}
+																			]
+																		},
+																		"canonicalTransition": {
+																			"type": "boolean"
 																		}
 																	},
 																	"required": [
@@ -35968,6 +37934,121 @@
 													"updatedAt"
 												]
 											}
+										},
+										"applicationPipeline": {
+											"type": "object",
+											"properties": {
+												"revision": {
+													"type": "integer",
+													"minimum": 0,
+													"maximum": 9007199254740991
+												},
+												"lanes": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string",
+																"minLength": 1
+															},
+															"category": {
+																"enum": [
+																	"saved",
+																	"applied",
+																	"screening",
+																	"interview",
+																	"offer",
+																	"closed"
+																],
+																"type": "string"
+															},
+															"label": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"minLength": 1,
+																		"maxLength": 80
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"color": {
+																"type": "string",
+																"pattern": "^#[0-9a-fA-F]{6}$"
+															},
+															"position": {
+																"type": "integer",
+																"minimum": 0,
+																"maximum": 9007199254740991
+															},
+															"systemKey": {
+																"anyOf": [
+																	{
+																		"enum": [
+																			"saved",
+																			"applied",
+																			"screening",
+																			"interview",
+																			"offer",
+																			"closed"
+																		],
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"closedReason": {
+																"anyOf": [
+																	{
+																		"enum": [
+																			"accepted",
+																			"not-selected",
+																			"withdrew",
+																			"accepted-other",
+																			"no-response"
+																		],
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"retiredAt": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"format": "date-time",
+																		"x-native-type": "date"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															}
+														},
+														"required": [
+															"id",
+															"category",
+															"label",
+															"color",
+															"position",
+															"systemKey",
+															"closedReason",
+															"retiredAt"
+														]
+													}
+												}
+											},
+											"required": [
+												"revision",
+												"lanes"
+											]
 										},
 										"aiContentReports": {
 											"type": "array",
@@ -38365,6 +40446,7 @@
 										"resumes",
 										"coverLetters",
 										"applications",
+										"applicationPipeline",
 										"aiContentReports",
 										"career"
 									]
@@ -108285,6 +110367,10 @@
 														"closed"
 													],
 													"type": "string"
+												},
+												"laneId": {
+													"type": "string",
+													"minLength": 1
 												},
 												"closedReason": {
 													"anyOf": [

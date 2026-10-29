@@ -3,6 +3,7 @@
 // without a second query. Weeks are bucketed on the user's clock. Pure: Node runs it in the M5-T3 scenarios.
 import type { ApplicationSummary as Application } from "../applications/types";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
+import { canonicalStageEntries } from "../applications/history";
 import { zonedParts } from "../reminders/schedule.ts";
 
 const DAY_MS = 86_400_000;
@@ -12,8 +13,8 @@ const REPLY_STAGES = new Set<ApplicationStatus>(["screening", "interview", "offe
 type OutcomeSource = Pick<Application, "status" | "closedReason" | "activity" | "appliedAt" | "resumeId">;
 
 const stageEntries = (application: OutcomeSource) =>
-	application.activity
-		.flatMap((entry) => (entry.type === "stage" ? [{ stage: entry.stage, at: new Date(entry.at) }] : []))
+	canonicalStageEntries(application)
+		.map((entry) => ({ stage: entry.stage, at: new Date(entry.at), closedReason: entry.closedReason }))
 		.sort((a, b) => a.at.getTime() - b.at.getTime());
 
 /** How far along the pipeline an application ever got; closed ones keep their furthest stage. */
@@ -34,11 +35,16 @@ function sentAt(application: OutcomeSource) {
 /** The first reply after sending: moving on to screening or beyond, or being turned down. */
 function firstReply(application: OutcomeSource) {
 	const since = sentAt(application).getTime();
-	return stageEntries(application).find(
-		(entry) =>
-			entry.at.getTime() >= since &&
-			(REPLY_STAGES.has(entry.stage) || (entry.stage === "closed" && application.closedReason === "not-selected")),
-	)?.at;
+	return application.activity
+		.flatMap((entry) => (entry.type === "stage" ? [{ ...entry, at: new Date(entry.at) }] : []))
+		.sort((a, b) => a.at.getTime() - b.at.getTime())
+		.find(
+			(entry) =>
+				entry.at.getTime() >= since &&
+				((entry.canonicalTransition !== false && REPLY_STAGES.has(entry.stage)) ||
+					(entry.stage === "closed" &&
+						(entry.closedReason === undefined ? application.closedReason : entry.closedReason) === "not-selected")),
+		)?.at;
 }
 
 function median(values: number[]) {

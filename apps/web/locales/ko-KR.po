@@ -780,6 +780,10 @@ msgstr "{toCheck, plural, one {확인하려면 #} other {확인하려면 #}}"
 msgid "{type} · Edited {0}"
 msgstr "{type} · 수정됨 {0}"
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr ""
+
 #: src/features/career/offers.tsx
 msgid "{value} a month"
 msgstr "월 {value}"
@@ -1167,6 +1171,11 @@ msgstr "추가"
 msgid "Add “{0}”"
 msgstr "\"{0}\" 추가"
 
+#. placeholder {0}: lane.label
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr ""
+
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Add a country"
 msgstr "국가 추가"
@@ -1235,6 +1244,10 @@ msgstr "\"Education\"이라는 제목의 섹션을 추가하세요. 많은 시�
 #: src/features/ats-checker/messages.ts
 msgid "Add a section headed \"Experience\" or \"Work Experience\". It is the field most systems rank on."
 msgstr "\"Experience\" 또는 \"Work Experience\"라는 제목의 섹션을 추가하세요. 대부분의 시스템이 이 필드를 기준으로 순위를 매깁니다."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Add a stage"
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Add a story"
@@ -1339,6 +1352,10 @@ msgstr "필드 추가"
 msgid "Add figures where you have them: volumes, percentages, timeframes, team sizes."
 msgstr "가능하다면 수치를 포함하세요: 규모, 비율, 기간, 팀 인원 등."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Add Ghosted (closed, no response)"
+msgstr ""
+
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add interest"
 msgstr "관심 추가"
@@ -1410,6 +1427,10 @@ msgstr "스킬 추가"
 #: src/features/ats-checker/messages.ts
 msgid "Add some whitespace between sections so a person can skim it."
 msgstr "사람이 훑어볼 수 있도록 섹션 사이에 여백을 추가하세요."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Add stage"
+msgstr ""
 
 #: src/features/applications/components/list-view.tsx
 msgid "Add tag"
@@ -2028,6 +2049,10 @@ msgstr "결정하기 전에 물어보세요."
 msgid "Ask both"
 msgstr "두 곳 모두에 묻기"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Ask each time"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "Ask first"
 msgstr "먼저 확인"
@@ -2440,6 +2465,7 @@ msgstr "소프트웨어가 이력서를 읽을 수 있나요?"
 #: src/features/applications/components/export-applications-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/schedule-sheet.tsx
@@ -2720,6 +2746,11 @@ msgstr "PDF 파일을 선택하세요."
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "디자인에 어울리는 이력서를 Write에서 선택하세요. 그때까지는 편지 자체가 있습니다."
 
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Choose a stage"
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
 msgstr "2MB 이하의 WebM, MP4, MP3, WAV 또는 Ogg 파일을 선택하세요."
@@ -2739,6 +2770,10 @@ msgstr "다른 파일을 선택하세요"
 #: src/components/input/color-picker.tsx
 msgid "Choose color"
 msgstr "색상을 선택하세요"
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr ""
 
 #: src/components/level/combobox.tsx
 msgid "Circle"
@@ -2843,10 +2878,15 @@ msgstr "이 채용 지원서를 닫습니다"
 msgid "Close…"
 msgstr "닫다…"
 
+#: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
 msgid "Closed"
 msgstr "닫은"
+
+#: src/features/applications/use-application-actions.ts
+msgid "Closed as {label}"
+msgstr ""
 
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
@@ -2862,6 +2902,10 @@ msgstr "코드"
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Color"
 msgstr "색상"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Color of {label}"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Column {header} goes to"
@@ -3494,6 +3538,14 @@ msgstr "샘플 파일을 로드할 수 없습니다. 다시 시도해 보세요.
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "불러올 수 없습니다. 저장된 데이터는 변경되지 않았습니다."
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "Couldn't load your stages, so the standard ones are shown. Try again."
+msgstr ""
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Couldn't load your stages."
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't lock the document. Try again."
 msgstr "서류를 잠글 수 없습니다. 다시 시도해 보세요."
@@ -3681,6 +3733,10 @@ msgstr "변경 사항을 저장할 수 없습니다. 다시 시도해 보세요.
 msgid "Couldn't save your preferences. Try again."
 msgstr "환경설정을 저장할 수 없습니다. 다시 시도해 보세요."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Couldn't save your stages. Try again."
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't save. Try again."
 msgstr "저장할 수 없습니다. 다시 시도해 보세요."
@@ -3851,6 +3907,10 @@ msgstr "파싱 점수와는 별도로 계산됩니다. 커버리지는 아무것
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Countries"
 msgstr "국가"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Counts as"
+msgstr ""
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Counts every application that reached each stage, including ones now closed."
@@ -5547,6 +5607,10 @@ msgstr "시작하기"
 msgid "Getting long. Try “Shorter”, or cut the least specific paragraph."
 msgstr "점점 길어진다. \"더 짧게\" 시도하거나 최소한의 구체적인 단락을 잘라보세요."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Ghosted"
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Brand name label for GitHub social sign-in button
 #: src/features/auth/components/social-auth.tsx
@@ -6213,6 +6277,10 @@ msgstr "이탈리아어"
 msgid "Italic"
 msgstr "기울임"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Its applications move to the stage you choose. Their history keeps the name “{label}”."
+msgstr ""
+
 #. placeholder {0}: providers[0]?.label ?? ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Its connection was switched off or removed, so it runs on {0} until you choose another."
@@ -6843,6 +6911,10 @@ msgstr "{0}에서 라이브"
 msgid "Live totals, refreshed every 6 hours."
 msgstr "실시간 합계는 6시간마다 새로 고쳐집니다."
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr ""
+
 #: src/components/layout/loading-screen.tsx
 msgid "Loading"
 msgstr "불러오는 중"
@@ -6913,6 +6985,7 @@ msgid "Loading workspace…"
 msgstr "워크스페이스 불러오는 중…"
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
 msgid "Loading…"
 msgstr "로드 중…"
@@ -7041,6 +7114,10 @@ msgstr "말레이어"
 #: src/libs/locale.ts
 msgid "Malayalam"
 msgstr "말라얄람어"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Manage stages"
+msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Managed by server"
@@ -7290,6 +7367,14 @@ msgstr "대부분의 시스템은 후보자를 이메일 주소로 제출합니�
 msgid "Mostly readable"
 msgstr "대부분 읽을 수 있음"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Move {label} down"
+msgstr ""
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Move {label} up"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Move all content inside the page boundaries and re-export."
 msgstr "모든 내용을 페이지 경계 안으로 옮긴 뒤 다시 내보내세요."
@@ -7305,6 +7390,10 @@ msgstr "필드를 위로 이동"
 #: src/features/resume/editor/check/issues.ts
 msgid "Move it to the main column"
 msgstr "메인 컬럼으로 이동하세요"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Move its applications to"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Move real content into the body of the page; some software discards the margins."
@@ -7326,7 +7415,7 @@ msgstr "해당 섹션을 다른 열이나 페이지로 이동합니다."
 msgid "Move to"
 msgstr "이동"
 
-#. placeholder {0}: getStageLabel(next)
+#. placeholder {0}: getLaneLabel(next)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Move to {0}"
 msgstr "{0}로 이동"
@@ -7366,14 +7455,12 @@ msgstr "이메일과 전화번호를 첫 페이지 상단으로 옮기세요."
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{1}개 중 {0}개를 휴지통으로 이동했습니다. 잠긴 서류는 건너뛰었습니다."
 
-#. placeholder {0}: getStageLabel(entry.stage)
-#. placeholder {0}: getStageLabel(status)
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
-msgid "Moved to {0}"
-msgstr "{0}로 이동했습니다."
+msgid "Moved to {label}"
+msgstr ""
 
-#. placeholder {0}: getStageLabel(application.status)
+#. placeholder {0}: getLaneLabel(getDisplayLane(lanes, application))
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "지원 내역을 {0} 단계에서 이동합니다."
@@ -7386,6 +7473,7 @@ msgstr "제 역할은 고객 지원 업무를 늘리지 않고 원인을 찾는 
 #: src/dialogs/resume/index.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
@@ -7403,6 +7491,10 @@ msgstr "이름"
 msgctxt "DNS record"
 msgid "Name"
 msgstr "이름"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Name of {label}"
+msgstr ""
 
 #. placeholder {0}: index + 1
 #: src/features/applications/components/interview-dialog.tsx
@@ -7432,6 +7524,10 @@ msgstr "이 패스키의 이름을 지정하세요."
 #: src/features/resume/share/history-tab.tsx
 msgid "Name this version"
 msgstr "버전 이름 지정"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Name, color and order the stages your applications move through. Each one counts as a standard step, so reminders and Insights keep working."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Name, email, phone and location are found, and links are full addresses."
@@ -7542,6 +7638,10 @@ msgstr "새 스케줄"
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "New section"
 msgstr "새로운 섹션"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "New stage color"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "New teams at Northwind were stalling in setup; most never got through."
@@ -7716,6 +7816,11 @@ msgstr "아직 비교할 오퍼가 없습니다"
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "No open issues"
 msgstr "미해결 문제 없음"
+
+#. placeholder {0}: categoryHint(lane)
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "No other stage counts as {0}. Add one first, so its applications have somewhere to go."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "No phone number"
@@ -8369,6 +8474,10 @@ msgstr "100점 만점"
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Out of date: the text has changed since."
 msgstr "오래됨: 이후 텍스트가 변경되었습니다."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Outcome"
+msgstr ""
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Outdent"
@@ -9527,6 +9636,10 @@ msgstr "원격, 하이브리드, 도시…"
 msgid "Remove"
 msgstr "제거하다"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Remove “{label}”?"
+msgstr ""
+
 #: src/features/settings/account/security.tsx
 msgid "Remove “{name}”?"
 msgstr "“{name}”을(를) 제거할까요?"
@@ -9550,6 +9663,10 @@ msgstr "{chip} 제거"
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Remove {country}"
 msgstr "{country} 제거"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Remove {label}…"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Remove {value}"
@@ -9592,6 +9709,10 @@ msgstr "질문 제거"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Remove role"
 msgstr "역할 삭제"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Remove stage"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Remove tag"
@@ -9849,6 +9970,8 @@ msgstr "{1}를 사용하여 {0}를 검색했습니다. 검색 시간은 원본 �
 msgid "Retrieved {0}. Origin freshness is unknown unless reported."
 msgstr "{0}를 검색했습니다. 보고되지 않는 한 원산지 신선도는 알 수 없습니다."
 
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
@@ -11133,21 +11256,41 @@ msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 msgid "Stage"
 msgstr "단계"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage counts as"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Stage date"
 msgstr "단계 날짜"
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage name"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage outcome"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "단계 유지: {stage}"
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Stages"
 msgstr "스테이지"
 
@@ -11532,6 +11675,10 @@ msgstr "{0} 채용 공고에 적응하다"
 #: src/features/applications/components/insights-view.tsx
 msgid "Tailored vs. base resume"
 msgstr "적응된 이력서와 기본 이력서"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Take-home assignment"
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Tamil"
@@ -12257,9 +12404,17 @@ msgstr "이 저장된 버전을 불러올 수 없습니다."
 msgid "This saved version is no longer available."
 msgstr "이 저장된 버전은 더 이상 사용할 수 없습니다."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "This server doesn't support custom stages yet. Your applications use the standard ones."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "이 서버는 새 계정을 받지 않습니다. 기존 계정으로 로그인하세요."
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr ""
 
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
@@ -13256,6 +13411,10 @@ msgstr "무엇을 요구하는가"
 msgid "What it checks"
 msgstr "검사 내용"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "What matters"
 msgstr "중요한 것"
@@ -13590,6 +13749,11 @@ msgstr "이미 “{0}”에 이것을 사용하고 있습니다."
 msgid "You answered: {answer}"
 msgstr "당신은 대답했습니다: {answer}"
 
+#. placeholder {0}: data[0]?.company
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "You applied to {0} before and didn't hear back."
+msgstr ""
+
 #: src/features/auth/pages/login.tsx
 msgid "You can also sign in with your username."
 msgstr "사용자 이름으로 로그인할 수도 있습니다."
@@ -13665,6 +13829,10 @@ msgstr "모두 확인했습니다"
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "게스트 계정을 사용 중입니다"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
@@ -13923,6 +14091,10 @@ msgstr "짧은 링크와 사용자 지정 도메인에서 이 이력서가 열�
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "다시 게시할 때까지 짧은 링크와 사용자 지정 도메인에는 이 이력서가 공유되지 않았다고 표시됩니다."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Your stages changed somewhere else. They've been refreshed; try again."
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "your stories"

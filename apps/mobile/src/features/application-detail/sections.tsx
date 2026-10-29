@@ -1,4 +1,5 @@
 import type { AttachmentKind } from "./hooks";
+import type { ApplicationLane } from "@/features/applications/lanes";
 import type { Application } from "@/features/applications/types";
 import type { ApplicationTimelineEntry, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { ReactNode } from "react";
@@ -28,9 +29,19 @@ import { client, orpc } from "@/api/client";
 import { getServer } from "@/auth/session";
 import { getDraftScope } from "@/draft";
 import { applicationError } from "@/features/applications/error";
+import { canonicalStageEntries, currentLaneEntry, laneSince } from "@/features/applications/history";
+import { LaneNotice } from "@/features/applications/lane-notice";
+import { useApplicationLanes } from "@/features/applications/lane-queries";
+import {
+	getLaneHistoryLabel,
+	getLaneLabel,
+	laneInput,
+	nextActiveLane,
+	resolveLane,
+} from "@/features/applications/lanes";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
 import { useApplicationMutations } from "@/features/applications/queries";
-import { getStageColor, getStageLabel, PIPELINE } from "@/features/applications/stages";
+import { PIPELINE } from "@/features/applications/stages";
 import { followUpEvent, icsFileName, interviewEvent, shareIcs, zonedParts } from "@/features/reminders";
 import { routes } from "@/routes";
 import {
@@ -67,85 +78,74 @@ export function Section({ title, children }: SectionBlockProps) {
 	);
 }
 
-type StageStepperProps = SectionProps & { onMarkApplied: () => void };
+type StageStepperProps = SectionProps & {
+	onMarkApplied: (lane: ApplicationLane) => void;
+	onCloseLane: (lane: ApplicationLane) => void;
+};
 
-/** Read-only progress, the time in this stage, and an explicit stage picker. */
-export function StageStepper({ application, onMarkApplied }: StageStepperProps) {
+/** Lane identity is independent of canonical progress; the picker accommodates any lane count and label length. */
+export function StageStepper({ application, onMarkApplied, onCloseLane }: StageStepperProps) {
 	const { t } = useLingui();
-	const { colors, radius, space } = useTheme();
+	const { radius, space } = useTheme();
 	const { update } = useApplicationMutations();
-	// The list updates optimistically; the stepper follows the pending move too, until the refetch lands.
-	const status =
-		update.isPending && update.variables.status
-			? update.variables.status
-			: (application.status as Application["status"]);
-	const closed = status === "closed";
-	const reached = PIPELINE.indexOf(status);
+	const lanes = useApplicationLanes();
+	const current = resolveLane(lanes.lanes, application);
+	const lane =
+		update.isPending && update.variables.laneId
+			? (lanes.lanes.find((item) => item.id === update.variables.laneId) ?? current)
+			: update.isPending && update.variables.status
+				? resolveLane(lanes.lanes, { status: update.variables.status })
+				: current;
 	const now = useNow();
-	const days = Math.max(0, Math.floor((now.getTime() - stageSince(application)) / 86_400_000));
-	const move = (stage: Application["status"]) => {
-		if (stage === status) return;
-		if (status === "saved" && stage === "applied") return onMarkApplied();
+	const days = Math.max(0, Math.floor((now.getTime() - laneSince(application, lanes.lanes).getTime()) / 86_400_000));
+	const next = nextActiveLane(lanes.lanes, application);
+	const move = (id: string) => {
+		const target = lanes.active.find((item) => item.id === id);
+		if (!lanes.ready || !target || id === lane.id) return;
+		if (target.category === "closed" && !target.closedReason) return onCloseLane(target);
+		if (application.status === "saved" && target.category === "applied") return onMarkApplied(target);
 		update.mutate(
-			{ id: application.id, status: stage },
+			{ id: application.id, ...laneInput(target, lanes.supported) },
 			{
-				onSuccess: () => showToast({ message: t`Moved to ${getStageLabel(stage)}` }),
+				onSuccess: () => showToast({ message: t`Moved to ${getLaneLabel(target)}` }),
 				onError: (error) => showToast({ message: applicationError(error) }),
 			},
 		);
 	};
-
 	return (
 		<View style={{ gap: space.s3 }}>
-			<View
-				accessible
-				accessibilityLabel={t`Current stage: ${getStageLabel(status)}`}
-				style={{ flexDirection: "row", gap: space.s1 }}
-			>
-				{PIPELINE.map((stage, index) => (
-					<View key={stage} style={{ flex: 1, gap: space.s1, minHeight: 44, justifyContent: "center" }}>
-						<View
-							style={{
-								height: 6,
-								borderRadius: radius.rLg,
-								backgroundColor: !closed && index <= reached ? getStageColor(stage, colors) : colors.line,
-							}}
-						/>
-						<Text variant="micro" color={stage === status ? "ink" : "ink3"}>
-							{getStageLabel(stage)}
-						</Text>
-					</View>
-				))}
-			</View>
+			<LaneNotice />
 			<View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: space.s2 }}>
-				<View
-					style={{ width: 8, height: 8, borderRadius: radius.rSm, backgroundColor: getStageColor(status, colors) }}
-				/>
-				<Text variant="label">{getStageLabel(status)}</Text>
+				<View style={{ width: 8, height: 8, borderRadius: radius.rSm, backgroundColor: lane.color }} />
+				<Text variant="label" style={{ flexShrink: 1 }}>
+					{getLaneLabel(lane)}
+				</Text>
 				<Text color="ink3">
-					{closed ? "" : plural(days, { 0: "· since today", one: "· for # day", other: "· for # days" })}
+					{application.status === "closed"
+						? ""
+						: plural(days, { 0: "· since today", one: "· for # day", other: "· for # days" })}
 				</Text>
 			</View>
 			<ListGroup>
 				<SelectSheet
 					appearance="row"
-					label={t`Change stage`}
-					value={status}
-					options={PIPELINE.map((stage) => ({ value: stage, label: getStageLabel(stage) }))}
-					disabled={update.isPending || closed}
+					label={t`Change lane`}
+					value={lane.id}
+					options={lanes.active.map((item) => ({ value: item.id, label: getLaneLabel(item) }))}
+					disabled={update.isPending || !lanes.ready}
 					onChange={move}
 				/>
 			</ListGroup>
+			{next && (
+				<Button
+					label={t`Move to ${getLaneLabel(next)}`}
+					variant="secondary"
+					disabled={update.isPending || !lanes.ready}
+					onPress={() => move(next.id)}
+				/>
+			)}
 		</View>
 	);
-}
-
-/** When the application entered its current stage: its latest entry for that stage, else when it was added. */
-function stageSince(application: Application) {
-	const entries = application.activity
-		.filter((entry) => entry.type === "stage" && entry.stage === application.status)
-		.map((entry) => new Date(entry.at).getTime());
-	return entries.length > 0 ? Math.max(...entries) : new Date(application.appliedAt).getTime();
 }
 
 /** NEXT STEP: what the application needs, with reminder, calendar and edit actions for dated steps. */
@@ -156,7 +156,8 @@ export function NextStepCard({ application, onOpenInterview }: SectionProps & In
 	const { locale, timeZone, when, time, day } = useUserTime();
 	const [followUpOpen, setFollowUpOpen] = useState(false);
 	const [reminderOpen, setReminderOpen] = useState(false);
-	const step = getNextStep(application);
+	const lanes = useApplicationLanes();
+	const step = getNextStep(application, undefined, lanes.lanes);
 	const text = describeNextStep(step, application, locale, timeZone);
 	const followUpDue = step.kind === "no-reply" || (step.kind === "follow-up" && step.overdue);
 	const tab = step.kind === "interview" ? "prepare" : followUpDue ? "messages" : workspaceTabFor(application);
@@ -273,7 +274,7 @@ export function NextStepCard({ application, onOpenInterview }: SectionProps & In
 /** When it was sent: its first stage entry at Applied or beyond. */
 function sentOn(application: Application) {
 	const applied = PIPELINE.indexOf("applied");
-	const entry = [...application.activity]
+	const entry = canonicalStageEntries(application)
 		.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime())
 		.find((item) => item.type === "stage" && PIPELINE.indexOf(item.stage) >= applied);
 	return entry?.at ?? application.appliedAt;
@@ -626,11 +627,15 @@ export function Timeline({ application, onOpenInterview }: SectionProps & Interv
 	const [editing, setEditing] = useState<DatedEntry | null>(null);
 	const [deleting, setDeleting] = useState<ApplicationTimelineEntry | null>(null);
 	const sorted = [...application.activity].sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
-	const anchorId = sorted.find((entry) => entry.type === "stage" && entry.stage === application.status)?.id;
+	const lanes = useApplicationLanes();
+	const anchorId = currentLaneEntry(application, lanes.lanes)?.id;
 	const failed = () => showToast({ message: t`Couldn't update the timeline. Try again.` });
 	const describe = (entry: ApplicationTimelineEntry) =>
 		entry.type === "stage"
-			? { dot: getStageColor(entry.stage, colors), text: t`Moved to ${getStageLabel(entry.stage)}` }
+			? {
+					dot: resolveLane(lanes.lanes, { status: entry.stage, laneId: entry.laneId }).color,
+					text: t`Moved to ${getLaneHistoryLabel(lanes.lanes, entry)}`,
+				}
 			: entry.type === "note"
 				? { dot: colors.ink3, text: entry.text }
 				: {

@@ -236,6 +236,7 @@ async function enqueue() {
 			.where(
 				and(
 					eq(tables.careerSchedule.enabled, true),
+					sql`(${tables.careerSchedule.applicationId} is null or exists (select 1 from application a where a.id = ${tables.careerSchedule.applicationId} and a.user_id = ${tables.careerSchedule.userId} and a.status <> 'closed'))`,
 					lte(tables.careerSchedule.nextRunAt, now),
 					or(
 						isNull(tables.careerSchedule.lastQueuedAt),
@@ -369,6 +370,19 @@ async function execute(job: typeof tables.careerJob.$inferSelect) {
 		applicationId: schedule.applicationId,
 		interviewId: schedule.interviewId,
 	});
+	if (application?.status === "closed") {
+		await db
+			.update(tables.careerJob)
+			.set({ status: "canceled", lease: null, leaseUntil: null })
+			.where(
+				and(
+					eq(tables.careerJob.id, job.id),
+					eq(tables.careerJob.lease, job.lease ?? ""),
+					eq(tables.careerJob.status, "running"),
+				),
+			);
+		return;
+	}
 	const results = schedule.kind === "discovery" ? await discover(job.userId, schedule.query) : [];
 	if (schedule.kind === "prepare") {
 		if (!application || !schedule.interviewId) throw new Error("Preparation application unavailable.");
@@ -389,14 +403,27 @@ async function execute(job: typeof tables.careerJob.$inferSelect) {
 			});
 	}
 	await db.transaction(async (tx) => {
+		await lockUser(tx, job.userId);
 		// Interview edits/deletion lock the application before touching its jobs.
 		if (schedule.applicationId) {
 			const [owned] = await tx
-				.select({ id: tables.application.id })
+				.select({ id: tables.application.id, status: tables.application.status })
 				.from(tables.application)
 				.where(and(eq(tables.application.id, schedule.applicationId), eq(tables.application.userId, job.userId)))
 				.for("update");
-			if (!owned) return;
+			if (!owned || owned.status === "closed") {
+				await tx
+					.update(tables.careerJob)
+					.set({ status: "canceled", lease: null, leaseUntil: null })
+					.where(
+						and(
+							eq(tables.careerJob.id, job.id),
+							eq(tables.careerJob.lease, job.lease ?? ""),
+							eq(tables.careerJob.status, "running"),
+						),
+					);
+				return;
+			}
 		}
 		const [current] = await tx
 			.select()
@@ -507,6 +534,7 @@ async function sendPendingEmail() {
 					and(
 						eq(tables.careerJob.status, "completed"),
 						eq(tables.careerSchedule.email, true),
+						sql`(${tables.careerNotification.applicationId} is null or exists (select 1 from application a where a.id = ${tables.careerNotification.applicationId} and a.user_id = ${tables.careerNotification.userId} and a.status <> 'closed'))`,
 						eq(tables.careerSchedule.enabled, true),
 						isNull(tables.careerNotification.emailedAt),
 						or(
@@ -527,41 +555,61 @@ async function sendPendingEmail() {
 			return row.notification;
 		});
 		if (!notification) break;
-		const [owner] = await db
-			.select({
-				email: tables.user.email,
-				verified: tables.user.emailVerified,
-				banned: tables.user.banned,
-				banExpires: tables.user.banExpires,
-			})
-			.from(tables.user)
-			.where(eq(tables.user.id, notification.userId));
-		const banned = owner?.banned && (!owner.banExpires || owner.banExpires > new Date());
-		if (notification && owner?.verified && !banned) {
-			try {
-				const sent = await sendCareerNotification({
-					to: owner.email,
-					subject: noticeText(notification.notice).title,
-					text: "You have a career update in Reactive Resume.",
-					url: new URL(notification.url ?? CAREER_URL, env.APP_URL).toString(),
-					key: notification.key,
-				});
-				if (!sent) throw new Error("SMTP unavailable");
-				await db
-					.update(tables.careerNotification)
-					.set({ emailedAt: new Date() })
-					.where(eq(tables.careerNotification.id, notification.id));
-			} catch {
-				await db
-					.insert(tables.careerNotification)
-					.values({
-						userId: notification.userId,
-						key: `email-failed:${notification.key}`,
-						notice: { type: "email-failed" },
-						url: CAREER_URL,
-					})
-					.onConflictDoNothing();
+		const owner = await db.transaction(async (tx) => {
+			const [owner] = await tx
+				.select({
+					email: tables.user.email,
+					verified: tables.user.emailVerified,
+					banned: tables.user.banned,
+					banExpires: tables.user.banExpires,
+				})
+				.from(tables.user)
+				.where(eq(tables.user.id, notification.userId))
+				.for("no key update");
+			if (!owner) return null;
+			if (notification.applicationId) {
+				const [application] = await tx
+					.select({ status: tables.application.status })
+					.from(tables.application)
+					.where(
+						and(
+							eq(tables.application.id, notification.applicationId),
+							eq(tables.application.userId, notification.userId),
+						),
+					)
+					.for("update");
+				if (!application || application.status === "closed") return null;
 			}
+
+			const banned = owner.banned && (!owner.banExpires || owner.banExpires > new Date());
+			return owner.verified && !banned ? owner : null;
+		});
+		if (!owner) continue;
+		// The short claim/check transactions are committed before external I/O. Closing an application must
+		// never wait for SMTP; a delivery already handed to the mail transport cannot be recalled.
+		try {
+			const sent = await sendCareerNotification({
+				to: owner.email,
+				subject: noticeText(notification.notice).title,
+				text: "You have a career update in Reactive Resume.",
+				url: new URL(notification.url ?? CAREER_URL, env.APP_URL).toString(),
+				key: notification.key,
+			});
+			if (!sent) throw new Error("SMTP unavailable");
+			await db
+				.update(tables.careerNotification)
+				.set({ emailedAt: new Date() })
+				.where(eq(tables.careerNotification.id, notification.id));
+		} catch {
+			await db
+				.insert(tables.careerNotification)
+				.values({
+					userId: notification.userId,
+					key: `email-failed:${notification.key}`,
+					notice: { type: "email-failed" },
+					url: CAREER_URL,
+				})
+				.onConflictDoNothing();
 		}
 	}
 }

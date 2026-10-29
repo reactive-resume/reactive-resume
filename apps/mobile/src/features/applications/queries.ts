@@ -1,19 +1,30 @@
 import type { Application, ApplicationSummary } from "./types";
+import type { RouterInput } from "@/api/client";
 import type { ListViewToken } from "react-native";
+import { t } from "@lingui/core/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef } from "react";
-import { orpc } from "@/api/client";
-import { getServer, useSession } from "@/auth/session";
+import { applicationLanesQueryOptions } from "./lane-queries";
+import { resolveLane } from "./lanes";
+import { client, orpc } from "@/api/client";
+import { getAccountScope, getServer, useSession } from "@/auth/session";
 import { syncReminders } from "@/features/reminders";
+import { showToast } from "@/ui";
 
 /** Same unfiltered list for list, board, calendar and detail; isolated by server. */
-export const applicationsListQueryOptions = (server = getServer()) => {
-	const options = orpc.applications.listSummary.queryOptions({ input: { includeInitialDetails: 3 } });
+export const applicationsListQueryOptions = (server = getServer(), scope = getAccountScope()) => {
+	const options = orpc.applications.listSummary.queryOptions({
+		input: { includeInitialDetails: 3 },
+		context: { scope: scope ?? undefined },
+	});
 	return { ...options, queryKey: [...options.queryKey, server] };
 };
 export const applicationsListQueryKey = (server = getServer()) => applicationsListQueryOptions(server).queryKey;
 export const applicationDetailQueryOptions = (id: string, server = getServer()) => {
-	const options = orpc.applications.getById.queryOptions({ input: { id } });
+	const options = orpc.applications.getById.queryOptions({
+		input: { id },
+		context: { scope: getAccountScope() ?? undefined },
+	});
 	return { ...options, queryKey: [...options.queryKey, server] };
 };
 export const applicationDetailQueryKey = (id: string, server = getServer()) =>
@@ -21,7 +32,10 @@ export const applicationDetailQueryKey = (id: string, server = getServer()) =>
 
 function getInitialApplicationDetail(summary: ApplicationSummary | undefined) {
 	const detail = summary?.initialDetail;
-	return detail && detail.status === summary.status && detail.closedReason === summary.closedReason
+	return detail &&
+		detail.status === summary.status &&
+		detail.closedReason === summary.closedReason &&
+		(detail.laneId ?? null) === (summary.laneId ?? null)
 		? detail
 		: undefined;
 }
@@ -103,6 +117,7 @@ export function useInvalidateApplications() {
 		await Promise.all([
 			queryClient.invalidateQueries({ queryKey: orpc.applications.key() }),
 			queryClient.invalidateQueries({ queryKey: orpc.documents.list.key() }),
+			queryClient.invalidateQueries({ queryKey: ["applications-prior-no-response"] }),
 		]);
 	};
 }
@@ -118,19 +133,49 @@ export function useApplicationMutations() {
 	const cancelReminders = (ids: string[]) => {
 		for (const id of ids) void syncReminders(id, []).catch(() => {});
 	};
-	const create = useMutation({ ...orpc.applications.create.mutationOptions(), onSettled });
+	const scope = getAccountScope();
+	const server = getServer();
+	const ensureLaneWrite = async (input: { laneId?: string | null | undefined }) => {
+		if (!input.laneId) return;
+		const metadata = await queryClient.fetchQuery({ ...applicationLanesQueryOptions(server, scope), staleTime: 0 });
+		if (!metadata.supported) throw new Error(t`Update your server before moving applications to a custom lane.`);
+	};
+	const create = useMutation({
+		...orpc.applications.create.mutationOptions(),
+		mutationFn: async (input: RouterInput["applications"]["create"]) => {
+			await ensureLaneWrite(input);
+			return client.applications.create(input, { context: { scope: scope ?? undefined } });
+		},
+		onSettled,
+	});
 	const update = useMutation({
 		...orpc.applications.update.mutationOptions(),
+		mutationFn: async (input: RouterInput["applications"]["update"]) => {
+			await ensureLaneWrite(input);
+			return client.applications.update(input, { context: { scope: scope ?? undefined } });
+		},
 		onMutate: async (input) => {
-			const listKey = applicationsListQueryKey();
+			const listKey = applicationsListQueryKey(server);
 			await queryClient.cancelQueries({ queryKey: listKey });
 			const previous = queryClient.getQueryData<ApplicationSummary[]>(listKey);
+			const metadata = queryClient.getQueryData(applicationLanesQueryOptions(server, scope).queryKey);
+			const lane = input.laneId ? metadata?.pipeline.lanes.find((item) => item.id === input.laneId) : undefined;
 			queryClient.setQueryData<ApplicationSummary[]>(listKey, (rows) =>
 				rows?.map((row) =>
 					row.id === input.id
 						? {
 								...row,
-								...(input.status ? { status: input.status } : {}),
+								...(input.status
+									? {
+											status: input.status,
+											...(input.status !== row.status
+												? {
+														laneId: metadata ? resolveLane(metadata.pipeline.lanes, { status: input.status }).id : null,
+													}
+												: {}),
+										}
+									: {}),
+								...(lane ? { laneId: lane.id, status: lane.category, closedReason: lane.closedReason } : {}),
 								...(input.closedReason !== undefined ? { closedReason: input.closedReason } : {}),
 							}
 						: row,
@@ -139,28 +184,57 @@ export function useApplicationMutations() {
 			return { previous, listKey };
 		},
 		onError: (_error, _input, context) => {
-			if (context?.previous) queryClient.setQueryData(context.listKey, context.previous);
+			if (scope === getAccountScope() && context?.previous) queryClient.setQueryData(context.listKey, context.previous);
 		},
-		onSuccess: (_data, input) => {
-			if (input.status === "closed") cancelReminders([input.id]);
+		onSuccess: (data) => {
+			if (data.status === "closed") cancelReminders([data.id]);
 		},
 		onSettled,
 	});
 	const remove = useMutation({
 		...orpc.applications.delete.mutationOptions(),
-		onSuccess: (_data, input) => cancelReminders([input.id]),
+		onSuccess: (_data, input) => {
+			cancelReminders([input.id]);
+		},
 		onSettled,
 	});
 	const bulkUpdate = useMutation({
 		...orpc.applications.bulkUpdate.mutationOptions(),
-		onSuccess: (_data, input) => {
-			if (input.status === "closed") cancelReminders(input.ids);
+		mutationFn: async (input: RouterInput["applications"]["bulkUpdate"]) => {
+			await ensureLaneWrite(input);
+			return client.applications.bulkUpdate(input, { context: { scope: scope ?? undefined } });
+		},
+		onSuccess: async (data, input) => {
+			const metadata = queryClient.getQueryData(applicationLanesQueryOptions(server, scope).queryKey);
+			const category = input.status ?? metadata?.pipeline.lanes.find((lane) => lane.id === input.laneId)?.category;
+			// A successful receipt for every requested row plus an immutable target category confirms closure.
+			if (category === "closed" && data.updated === input.ids.length) {
+				cancelReminders(input.ids);
+				return;
+			}
+			if (scope !== getAccountScope()) return;
+			// Bulk's count is not evidence of each row's canonical status. Read the authoritative result.
+			try {
+				await queryClient.cancelQueries({ queryKey: applicationsListQueryKey(server) });
+				const rows = await queryClient.fetchQuery({ ...applicationsListQueryOptions(server, scope), staleTime: 0 });
+				if (scope === getAccountScope())
+					cancelReminders(
+						rows.filter((row) => input.ids.includes(row.id) && row.status === "closed").map((row) => row.id),
+					);
+			} catch {
+				if (scope === getAccountScope())
+					showToast({
+						message: t`Applications updated, but device reminders couldn't be refreshed. Open application details when you're back online.`,
+					});
+			}
 		},
 		onSettled,
 	});
 	const bulkDelete = useMutation({
 		...orpc.applications.bulkDelete.mutationOptions(),
-		onSuccess: (_data, input) => cancelReminders(input.ids),
+		onSuccess: (_data, input) => {
+			cancelReminders(input.ids);
+		},
 		onSettled,
 	});
 	const importCsv = useMutation({ ...orpc.applications.import.mutationOptions(), onSettled });

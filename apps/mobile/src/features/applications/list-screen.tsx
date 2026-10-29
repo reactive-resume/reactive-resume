@@ -1,5 +1,5 @@
 import type { ApplicationSort } from "./list";
-import type { ApplicationClosedReason, ApplicationStatus } from "@reactive-resume/schema/applications/data";
+import type { ApplicationClosedReason } from "@reactive-resume/schema/applications/data";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
@@ -8,12 +8,14 @@ import { RefreshControl, Pressable, SectionList, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { AddApplicationSheet } from "./add-sheet";
 import { applicationError } from "./error";
+import { useApplicationLanes } from "./lane-queries";
+import { getLaneLabel, laneInput, resolveLane } from "./lanes";
 import { filterApplications, groupApplications, visibleSelection } from "./list";
 import { describeNextStep, getNextStep } from "./next-step";
 import { useApplicationDetailPrefetch, useApplicationMutations, useApplications } from "./queries";
-import { CLOSED_REASONS, getClosedReasonLabel, getStageColor, getStageLabel, PIPELINE } from "./stages";
+import { CLOSED_REASONS, getClosedReasonLabel } from "./stages";
 import { useSession } from "@/auth/session";
-import { useUserTime } from "@/features/application-detail/hooks";
+import { useNow, useUserTime } from "@/features/application-detail/hooks";
 import { useApplicationSearch } from "@/features/applications-board/search";
 import { ApplicationsViewFrame } from "@/features/applications-board/views";
 import { routes } from "@/routes";
@@ -59,6 +61,8 @@ function ApplicationsList() {
 	const { t, i18n } = useLingui();
 	const { colors, space, radius, size } = useTheme();
 	const query = useApplications();
+	const now = useNow();
+	const lanes = useApplicationLanes();
 	const pull = usePullRefresh(query.refetch);
 	const firstAppearance = useFirstAppearance(!query.isPending);
 	const { timeZone } = useUserTime();
@@ -68,13 +72,16 @@ function ApplicationsList() {
 	const [showClosed, setShowClosed] = useState(false);
 	const [sort, setSort] = useState<ApplicationSort>("updated");
 	const [direction, setDirection] = useState<"asc" | "desc">("desc");
-	const [collapsed, setCollapsed] = useState<Set<ApplicationStatus>>(new Set());
+	const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [selecting, setSelecting] = useState(false);
 	const [adding, setAdding] = useState(false);
 	const [filters, setFilters] = useState(false);
 	const [bulk, setBulk] = useState<"move" | "tag" | "close" | "delete" | null>(null);
-	const [moveStage, setMoveStage] = useState<ApplicationStatus>("applied");
+	const [moveLaneId, setMoveLaneId] = useState("");
+	const selectedLane = lanes.active.find((lane) => lane.id === moveLaneId);
+	const moveLane = selectedLane ?? resolveLane(lanes.lanes, { status: "applied" });
+	const laneAvailable = !moveLaneId || !!selectedLane;
 	const [reason, setReason] = useState<ApplicationClosedReason>("not-selected");
 	const [newTag, setNewTag] = useState("");
 	const [busy, setBusy] = useState(false);
@@ -84,7 +91,7 @@ function ApplicationsList() {
 	const applications = query.data ?? [];
 	const filtered = filterApplications(applications, { search, tag, showClosed });
 	const filtersActive = Boolean(search.trim() || tag || showClosed);
-	const groups = groupApplications(filtered, sort, direction);
+	const groups = groupApplications(filtered, sort, direction, now, lanes.supported ? lanes.lanes : undefined);
 	const selectedIds = visibleSelection(groups, collapsed, selected);
 	const onViewableItemsChanged = useApplicationDetailPrefetch();
 	const tags = [...new Set(applications.flatMap((item) => item.tags))].sort();
@@ -100,7 +107,15 @@ function ApplicationsList() {
 			return next;
 		});
 	const applyBulk = async () => {
-		if (!bulk || lock.current || !selectedIds.length || selectedIds.length > 200 || (bulk === "tag" && !newTag.trim()))
+		if (
+			!lanes.ready ||
+			(bulk === "move" && !laneAvailable) ||
+			!bulk ||
+			lock.current ||
+			!selectedIds.length ||
+			selectedIds.length > 200 ||
+			(bulk === "tag" && !newTag.trim())
+		)
 			return;
 		lock.current = true;
 		setBusy(true);
@@ -115,8 +130,12 @@ function ApplicationsList() {
 								ids,
 								...(bulk === "tag"
 									? { addTags: [newTag.trim()] }
-									: { status: bulk === "close" ? "closed" : moveStage }),
-								...(bulk === "close" ? { closedReason: reason } : {}),
+									: bulk === "close"
+										? { status: "closed" as const }
+										: laneInput(moveLane, lanes.supported)),
+								...(bulk === "close" || (bulk === "move" && moveLane.category === "closed" && !moveLane.closedReason)
+									? { closedReason: reason }
+									: {}),
 							})
 						).updated;
 			setResult(
@@ -199,7 +218,7 @@ function ApplicationsList() {
 						<Button
 							label={t`Move to…`}
 							variant="secondary"
-							disabled={busy || !selectedIds.length}
+							disabled={busy || !lanes.ready || !selectedIds.length}
 							onPress={() => {
 								setFailure(null);
 								setBulk("move");
@@ -208,7 +227,7 @@ function ApplicationsList() {
 						<Button
 							label={t`Add tag`}
 							variant="secondary"
-							disabled={busy || !selectedIds.length}
+							disabled={busy || !lanes.ready || !selectedIds.length}
 							onPress={() => {
 								setFailure(null);
 								setBulk("tag");
@@ -217,7 +236,7 @@ function ApplicationsList() {
 						<Button
 							label={t`Close…`}
 							variant="secondary"
-							disabled={busy || !selectedIds.length}
+							disabled={busy || !lanes.ready || !selectedIds.length}
 							onPress={() => {
 								setFailure(null);
 								setBulk("close");
@@ -226,7 +245,7 @@ function ApplicationsList() {
 						<Button
 							label={t`Delete…`}
 							variant="danger"
-							disabled={busy || !selectedIds.length}
+							disabled={busy || !lanes.ready || !selectedIds.length}
 							onPress={() => {
 								setFailure(null);
 								setBulk("delete");
@@ -303,8 +322,8 @@ function ApplicationsList() {
 						<Pressable
 							accessibilityRole="button"
 							accessibilityLabel={plural(section.total, {
-								one: `${getStageLabel(section.status)}, # application`,
-								other: `${getStageLabel(section.status)}, # applications`,
+								one: `${getLaneLabel(section.lane)}, # application`,
+								other: `${getLaneLabel(section.lane)}, # applications`,
 							})}
 							accessibilityState={{ expanded: !collapsed.has(section.status) }}
 							disabled={busy}
@@ -330,11 +349,11 @@ function ApplicationsList() {
 									width: space.s2,
 									height: space.s2,
 									borderRadius: radius.rLg,
-									backgroundColor: getStageColor(section.status, colors),
+									backgroundColor: section.lane.color,
 								}}
 							/>
 							<Text variant="title" style={{ flex: 1 }}>
-								{getStageLabel(section.status)}
+								{getLaneLabel(section.lane)}
 							</Text>
 							<Text color="ink3">{section.total}</Text>
 							<Icon
@@ -345,7 +364,7 @@ function ApplicationsList() {
 						</Pressable>
 					)}
 					renderItem={({ item, index }) => {
-						const next = describeNextStep(getNextStep(item), item, i18n.locale, timeZone);
+						const next = describeNextStep(getNextStep(item, now, lanes.lanes), item, i18n.locale, timeZone);
 						return (
 							<Animated.View
 								{...listItemMotion(index, firstAppearance)}
@@ -437,17 +456,20 @@ function ApplicationsList() {
 							<Banner tone="info" message={t`Applying changes. Closing this sheet does not cancel the request.`} />
 						)}
 						{failure && <Banner tone="danger" message={failure} />}
+						{bulk === "move" && !laneAvailable && (
+							<Banner tone="warn" message={t`This lane is no longer available. Choose another lane.`} />
+						)}
 						{bulk === "move" && (
 							<SelectSheet
 								label={t`Move to…`}
-								value={moveStage}
-								options={PIPELINE.map((value) => ({ value, label: getStageLabel(value) }))}
-								onChange={setMoveStage}
+								value={moveLaneId || moveLane.id}
+								options={lanes.active.map((lane) => ({ value: lane.id, label: getLaneLabel(lane) }))}
+								onChange={setMoveLaneId}
 								disabled={busy}
 							/>
 						)}
 						{bulk === "tag" && <TextField label={t`Tag`} value={newTag} onChangeText={setNewTag} editable={!busy} />}
-						{bulk === "close" && (
+						{(bulk === "close" || (bulk === "move" && moveLane.category === "closed" && !moveLane.closedReason)) && (
 							<SelectSheet
 								label={t`Reason`}
 								value={reason}
@@ -474,7 +496,14 @@ function ApplicationsList() {
 							}
 							variant={bulk === "delete" ? "danger" : "primary"}
 							loading={busy}
-							disabled={busy || !selectedIds.length || selectedIds.length > 200 || (bulk === "tag" && !newTag.trim())}
+							disabled={
+								busy ||
+								!lanes.ready ||
+								(bulk === "move" && !laneAvailable) ||
+								!selectedIds.length ||
+								selectedIds.length > 200 ||
+								(bulk === "tag" && !newTag.trim())
+							}
 							onPress={() => void applyBulk()}
 						/>
 						<Button label={t`Cancel`} variant="ghost" disabled={busy} onPress={() => setBulk(null)} />

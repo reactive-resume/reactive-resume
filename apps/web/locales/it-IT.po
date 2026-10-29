@@ -780,6 +780,10 @@ msgstr "{toCheck, plural, one {# da verificare} other {# da verificare}}"
 msgid "{type} · Edited {0}"
 msgstr "{type} · Modificato {0}"
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr ""
+
 #: src/features/career/offers.tsx
 msgid "{value} a month"
 msgstr "{value} al mese"
@@ -1167,6 +1171,11 @@ msgstr "Aggiungi"
 msgid "Add “{0}”"
 msgstr "Aggiungi \"{0}\""
 
+#. placeholder {0}: lane.label
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr ""
+
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Add a country"
 msgstr "Aggiungi un paese"
@@ -1235,6 +1244,10 @@ msgstr "Aggiungi una sezione intitolata \"Istruzione\". Molti sistemi hanno un c
 #: src/features/ats-checker/messages.ts
 msgid "Add a section headed \"Experience\" or \"Work Experience\". It is the field most systems rank on."
 msgstr "Aggiungi una sezione intitolata \"Esperienza\" o \"Esperienza lavorativa\". È il campo su cui la maggior parte dei sistemi si basa per il punteggio."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Add a stage"
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Add a story"
@@ -1339,6 +1352,10 @@ msgstr "Aggiungi campo"
 msgid "Add figures where you have them: volumes, percentages, timeframes, team sizes."
 msgstr "Aggiungi numeri dove li hai: volumi, percentuali, tempistiche, dimensioni del team."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Add Ghosted (closed, no response)"
+msgstr ""
+
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add interest"
 msgstr "Aggiungi interesse"
@@ -1410,6 +1427,10 @@ msgstr "Aggiungi abilità"
 #: src/features/ats-checker/messages.ts
 msgid "Add some whitespace between sections so a person can skim it."
 msgstr "Aggiungi un po' di spazio bianco tra le sezioni così una persona può scorrerlo velocemente."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Add stage"
+msgstr ""
 
 #: src/features/applications/components/list-view.tsx
 msgid "Add tag"
@@ -2028,6 +2049,10 @@ msgstr "Chiedi prima di decidere."
 msgid "Ask both"
 msgstr "Chiedi a entrambe"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Ask each time"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "Ask first"
 msgstr "Chiedi prima"
@@ -2440,6 +2465,7 @@ msgstr "Il software può leggere il tuo curriculum?"
 #: src/features/applications/components/export-applications-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/schedule-sheet.tsx
@@ -2720,6 +2746,11 @@ msgstr "Scegli un file PDF."
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Scegli un curriculum in Write che corrisponda al suo design. Fino ad allora, la lettera ha la sua."
 
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Choose a stage"
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
 msgstr "Scegli un file WebM, MP4, MP3, WAV o Ogg fino a 2 MB."
@@ -2739,6 +2770,10 @@ msgstr "Scegli un altro file"
 #: src/components/input/color-picker.tsx
 msgid "Choose color"
 msgstr "Scegli il colore"
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr ""
 
 #: src/components/level/combobox.tsx
 msgid "Circle"
@@ -2843,10 +2878,15 @@ msgstr "Chiudi questa domanda di lavoro"
 msgid "Close…"
 msgstr "Vicino…"
 
+#: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
 msgid "Closed"
 msgstr "Chiuso"
+
+#: src/features/applications/use-application-actions.ts
+msgid "Closed as {label}"
+msgstr ""
 
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
@@ -2862,6 +2902,10 @@ msgstr "Codice"
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Color"
 msgstr "Colore"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Color of {label}"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Column {header} goes to"
@@ -3494,6 +3538,14 @@ msgstr "Impossibile caricare il file di esempio. Riprova."
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "Impossibile caricare il contenuto. I dati salvati non sono cambiati."
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "Couldn't load your stages, so the standard ones are shown. Try again."
+msgstr ""
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Couldn't load your stages."
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't lock the document. Try again."
 msgstr "Impossibile bloccare il documento. Riprova."
@@ -3681,6 +3733,10 @@ msgstr "Impossibile salvare le modifiche. Riprova."
 msgid "Couldn't save your preferences. Try again."
 msgstr "Impossibile salvare le tue preferenze. Riprova."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Couldn't save your stages. Try again."
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't save. Try again."
 msgstr "Impossibile salvare. Riprova."
@@ -3851,6 +3907,10 @@ msgstr "Conteggiata separatamente dal punteggio di lettura. La copertura non pre
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Countries"
 msgstr "Paesi"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Counts as"
+msgstr ""
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Counts every application that reached each stage, including ones now closed."
@@ -5547,6 +5607,10 @@ msgstr "Inizia"
 msgid "Getting long. Try “Shorter”, or cut the least specific paragraph."
 msgstr "Diventando lungo. Prova \"Più breve\" o taglia il paragrafo meno specifico."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Ghosted"
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Brand name label for GitHub social sign-in button
 #: src/features/auth/components/social-auth.tsx
@@ -6213,6 +6277,10 @@ msgstr "Italiano"
 msgid "Italic"
 msgstr "Corsivo"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Its applications move to the stage you choose. Their history keeps the name “{label}”."
+msgstr ""
+
 #. placeholder {0}: providers[0]?.label ?? ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Its connection was switched off or removed, so it runs on {0} until you choose another."
@@ -6843,6 +6911,10 @@ msgstr "Abito a {0}"
 msgid "Live totals, refreshed every 6 hours."
 msgstr "Totali in tempo reale, aggiornati ogni 6 ore."
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr ""
+
 #: src/components/layout/loading-screen.tsx
 msgid "Loading"
 msgstr "Caricamento in corso"
@@ -6913,6 +6985,7 @@ msgid "Loading workspace…"
 msgstr "Caricamento dello spazio di lavoro…"
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
 msgid "Loading…"
 msgstr "Caricamento in corso…"
@@ -7041,6 +7114,10 @@ msgstr "Malese"
 #: src/libs/locale.ts
 msgid "Malayalam"
 msgstr "Malayalam"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Manage stages"
+msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Managed by server"
@@ -7290,6 +7367,14 @@ msgstr "La maggior parte dei sistemi archivia i candidati tramite indirizzo e-ma
 msgid "Mostly readable"
 msgstr "Per lo più leggibile"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Move {label} down"
+msgstr ""
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Move {label} up"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Move all content inside the page boundaries and re-export."
 msgstr "Sposta tutto il contenuto entro i margini della pagina ed esporta di nuovo."
@@ -7305,6 +7390,10 @@ msgstr "Sposta il campo in alto"
 #: src/features/resume/editor/check/issues.ts
 msgid "Move it to the main column"
 msgstr "Spostalo nella colonna principale"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Move its applications to"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Move real content into the body of the page; some software discards the margins."
@@ -7326,7 +7415,7 @@ msgstr "Spostare la sezione in un'altra colonna o pagina"
 msgid "Move to"
 msgstr "Sposta in"
 
-#. placeholder {0}: getStageLabel(next)
+#. placeholder {0}: getLaneLabel(next)
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Move to {0}"
 msgstr "Passare a {0}"
@@ -7366,14 +7455,12 @@ msgstr "Sposta email e numero di telefono all'inizio della prima pagina."
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "Spostati {0} di {1} nel Cestino. I documenti bloccati sono stati ignorati."
 
-#. placeholder {0}: getStageLabel(entry.stage)
-#. placeholder {0}: getStageLabel(status)
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
-msgid "Moved to {0}"
-msgstr "Spostato in {0}"
+msgid "Moved to {label}"
+msgstr ""
 
-#. placeholder {0}: getStageLabel(application.status)
+#. placeholder {0}: getLaneLabel(getDisplayLane(lanes, application))
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "Sposta la candidatura da {0}."
@@ -7386,6 +7473,7 @@ msgstr "Il mio compito era capire il perché, senza aggiungere lavoro di assiste
 #: src/dialogs/resume/index.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
@@ -7403,6 +7491,10 @@ msgstr "Nome"
 msgctxt "DNS record"
 msgid "Name"
 msgstr "Nome"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Name of {label}"
+msgstr ""
 
 #. placeholder {0}: index + 1
 #: src/features/applications/components/interview-dialog.tsx
@@ -7432,6 +7524,10 @@ msgstr "Assegna un nome a questa passkey"
 #: src/features/resume/share/history-tab.tsx
 msgid "Name this version"
 msgstr "Dai un nome a questa versione"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Name, color and order the stages your applications move through. Each one counts as a standard step, so reminders and Insights keep working."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Name, email, phone and location are found, and links are full addresses."
@@ -7542,6 +7638,10 @@ msgstr "Nuova pianificazione"
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "New section"
 msgstr "Nuova sezione"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "New stage color"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "New teams at Northwind were stalling in setup; most never got through."
@@ -7716,6 +7816,11 @@ msgstr "Ancora nessuna offerta da confrontare"
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "No open issues"
 msgstr "Nessun problema aperto"
+
+#. placeholder {0}: categoryHint(lane)
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "No other stage counts as {0}. Add one first, so its applications have somewhere to go."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "No phone number"
@@ -8369,6 +8474,10 @@ msgstr "su 100"
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Out of date: the text has changed since."
 msgstr "Non aggiornato: il testo è cambiato da allora."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Outcome"
+msgstr ""
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Outdent"
@@ -9527,6 +9636,10 @@ msgstr "Da remoto, ibrido, una città…"
 msgid "Remove"
 msgstr "Rimuovere"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Remove “{label}”?"
+msgstr ""
+
 #: src/features/settings/account/security.tsx
 msgid "Remove “{name}”?"
 msgstr "Rimuovere “{name}”?"
@@ -9550,6 +9663,10 @@ msgstr "Rimuovere {chip}"
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "Remove {country}"
 msgstr "Rimuovi {country}"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Remove {label}…"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Remove {value}"
@@ -9592,6 +9709,10 @@ msgstr "Rimuovi la domanda"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Remove role"
 msgstr "Rimuovi ruolo"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Remove stage"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Remove tag"
@@ -9849,6 +9970,8 @@ msgstr "Recuperato {0} utilizzando {1}. Il tempo di recupero non stabilisce la f
 msgid "Retrieved {0}. Origin freshness is unknown unless reported."
 msgstr "Estratto {0}. La freschezza dell'origine è sconosciuta se non segnalata."
 
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
@@ -11133,21 +11256,41 @@ msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 msgid "Stage"
 msgstr "Fase"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage counts as"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Stage date"
 msgstr "Data fase"
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage name"
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Stage outcome"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "La fase resta {stage}"
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Stages"
 msgstr "Fasi"
 
@@ -11532,6 +11675,10 @@ msgstr "adattarsi all'annuncio di lavoro {0}"
 #: src/features/applications/components/insights-view.tsx
 msgid "Tailored vs. base resume"
 msgstr "curriculum adattato vs. curriculum base"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Take-home assignment"
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Tamil"
@@ -12257,9 +12404,17 @@ msgstr "Impossibile caricare questa versione salvata."
 msgid "This saved version is no longer available."
 msgstr "Questa versione salvata non è più disponibile."
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "This server doesn't support custom stages yet. Your applications use the standard ones."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "This server isn't accepting new accounts. Sign in with an existing account."
 msgstr "Questo server non accetta nuovi account. Accedi con un account esistente."
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr ""
 
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
@@ -13256,6 +13411,10 @@ msgstr "Cosa chiede"
 msgid "What it checks"
 msgstr "Cosa controlla"
 
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "What matters"
 msgstr "Cosa conta"
@@ -13590,6 +13749,11 @@ msgstr "Lo usi già per \"{0}\"."
 msgid "You answered: {answer}"
 msgstr "Hai risposto: {answer}"
 
+#. placeholder {0}: data[0]?.company
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "You applied to {0} before and didn't hear back."
+msgstr ""
+
 #: src/features/auth/pages/login.tsx
 msgid "You can also sign in with your username."
 msgstr "Puoi accedere anche con il tuo nome utente."
@@ -13665,6 +13829,10 @@ msgstr "Sei in pari"
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "Stai usando un account ospite"
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
@@ -13923,6 +14091,10 @@ msgstr "Il tuo collegamento breve e il tuo dominio personalizzato aprono questo 
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "Il tuo collegamento breve e il tuo dominio personalizzato indicano che questo curriculum non è condiviso finché non lo pubblichi di nuovo."
+
+#: src/features/applications/components/manage-lanes-sheet.tsx
+msgid "Your stages changed somewhere else. They've been refreshed; try again."
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "your stories"

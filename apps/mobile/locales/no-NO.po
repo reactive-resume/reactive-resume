@@ -105,10 +105,10 @@ msgstr "{0, plural, one {{1} av # nøkkelord fra annonsen er dekket} other {{2} 
 
 #. placeholder {0}: applications.length
 #. placeholder {0}: section.total
-#. placeholder {1}: getStageLabel(section.status)
-#. placeholder {1}: getStageLabel(stage)
-#. placeholder {2}: getStageLabel(section.status)
-#. placeholder {2}: getStageLabel(stage)
+#. placeholder {1}: getLaneLabel(section.lane)
+#. placeholder {1}: getLaneLabel(stage)
+#. placeholder {2}: getLaneLabel(section.lane)
+#. placeholder {2}: getLaneLabel(stage)
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {{1}, # application} other {{2}, # applications}}"
@@ -768,6 +768,10 @@ msgstr "En numerisk dato leses ulikt i ulike land."
 msgid "A page is rotated."
 msgstr "En side er rotert."
 
+#: src/features/applications/prior-no-response.tsx
+msgid "A previous application to this company was closed with No response. You can still apply."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "A reminder to check in, shown as the next step until you do."
 msgstr "En påminnelse om å sjekke inn, vist som neste trinn til du gjør det."
@@ -863,6 +867,10 @@ msgstr "Aktiv"
 #: src/features/write/basics-screen.tsx
 msgid "Add"
 msgstr "Legg til"
+
+#: src/features/applications/lane-settings.tsx
+msgid "Add a compatible replacement lane first."
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "Add a country"
@@ -1020,6 +1028,10 @@ msgstr "Legg til interesse"
 #: src/features/check/issues.ts
 msgid "Add it to page 1"
 msgstr "Legg den til side 1"
+
+#: src/features/applications/lane-settings.tsx
+msgid "Add lane"
+msgstr ""
 
 #: src/features/write/fields.ts
 msgid "Add language"
@@ -1503,6 +1515,10 @@ msgstr "Søknader over tid"
 msgid "Applications sent per week (last 8 weeks)"
 msgstr "Søknader sendt per uke (siste 8 uker)"
 
+#: src/features/applications/queries.ts
+msgid "Applications updated, but device reminders couldn't be refreshed. Open application details when you're back online."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/stages.ts
 #: src/features/check/writing.tsx
@@ -1934,6 +1950,7 @@ msgstr "Kan programvare lese CV-en din?"
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
 #: src/features/ats-checker/checker.tsx
@@ -1969,6 +1986,10 @@ msgstr "Karriere"
 msgid "Catalan"
 msgstr "Katalansk"
 
+#: src/features/applications/lane-settings.tsx
+msgid "Category"
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Certifications"
 msgstr "Sertifiseringer"
@@ -1986,6 +2007,10 @@ msgstr "Endre tilkobling"
 msgid "Change it in Design."
 msgstr "Endre det i Design."
 
+#: src/features/application-detail/sections.tsx
+msgid "Change lane"
+msgstr ""
+
 #: src/features/search/search-screen.tsx
 msgid "Change language to…"
 msgstr "Endre språk til…"
@@ -1993,10 +2018,6 @@ msgstr "Endre språk til…"
 #: src/features/settings/profile.tsx
 msgid "Change photo"
 msgstr "Bytt bilde"
-
-#: src/features/application-detail/sections.tsx
-msgid "Change stage"
-msgstr "Bytt stadium"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications-board/calendar-screen.tsx
@@ -2153,6 +2174,10 @@ msgstr "Velg en dato"
 msgid "Choose a file"
 msgstr "Velg en fil"
 
+#: src/features/applications/lane-settings.tsx
+msgid "Choose a lane with the same category and outcome. Applications move there; their history stays."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Choose a PDF"
 msgstr "Velg en PDF"
@@ -2169,6 +2194,10 @@ msgstr "Velg en PDF som er mindre enn 10 MB. Den valgte filen ble ikke lastet op
 #: src/features/write/picture-screen.tsx
 msgid "Choose a photo smaller than 10 MB."
 msgstr "Velg et bilde som er mindre enn 10 MB."
+
+#: src/features/applications/lane-settings.tsx
+msgid "Choose a replacement"
+msgstr ""
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
@@ -2213,6 +2242,14 @@ msgstr "Velg dato"
 #: src/features/settings/profile.tsx
 msgid "Choose from library"
 msgstr "Velg fra biblioteket"
+
+#: src/features/applications-board/board-screen.tsx
+msgid "Choose outcome"
+msgstr ""
+
+#: src/features/applications/lane-settings.tsx
+msgid "Choose outcome when closing"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Choose time"
@@ -2308,7 +2345,6 @@ msgstr "Lukk assistenten"
 msgid "Close this application"
 msgstr "Lukk denne jobbsøknaden"
 
-#: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
 msgid "Close…"
 msgstr "Lukke…"
@@ -2337,6 +2373,10 @@ msgstr "Koden er kopiert"
 #: src/features/letters/design.tsx
 msgid "Color"
 msgstr "Farge"
+
+#: src/features/applications/lane-settings.tsx
+msgid "Color (#RRGGBB)"
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Colors and level"
@@ -2644,6 +2684,10 @@ msgstr "Kunne ikke se etter et koblet følgebrev."
 #: src/features/share/link.tsx
 msgid "Couldn't check or save this address. Try again."
 msgstr "Kunne ikke sjekke eller lagre denne adressen. Prøv igjen."
+
+#: src/features/applications/prior-no-response.tsx
+msgid "Couldn't check prior applications. You can still save this application."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "Couldn't check your AI providers."
@@ -3151,11 +3195,6 @@ msgstr "Oppretter dokument…"
 #: src/features/career/preferences.tsx
 msgid "Currency"
 msgstr "Valuta"
-
-#. placeholder {0}: getStageLabel(status)
-#: src/features/application-detail/sections.tsx
-msgid "Current stage: {0}"
-msgstr "Nåværende trinn: {0}"
 
 #: src/features/design/advanced.tsx
 #: src/features/design/style-groups.tsx
@@ -4199,6 +4238,10 @@ msgstr "Skriftvarianter"
 msgid "For"
 msgstr "Til"
 
+#: src/features/applications/lane-settings.tsx
+msgid "For a Ghosted lane, choose No response."
+msgstr ""
+
 #. placeholder {0}: domain.target
 #: src/features/share/custom-domain.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
@@ -5000,6 +5043,19 @@ msgstr "Etikett"
 msgid "Landscape"
 msgstr "Liggende"
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
+msgid "Lane"
+msgstr ""
+
+#: src/features/applications/lane-settings.tsx
+msgid "Lane name"
+msgstr ""
+
+#: src/features/applications/lane-settings.tsx
+msgid "Lanes organize your board. Their category keeps submission, reminders and Insights consistent."
+msgstr ""
+
 #: app/(tabs)/settings/preferences.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/document-menu/index.tsx
@@ -5469,6 +5525,11 @@ msgstr "Malayalam"
 msgid "Manage contacts"
 msgstr "Administrer kontakter"
 
+#: src/features/applications-board/views.tsx
+#: src/features/applications/lane-settings.tsx
+msgid "Manage lanes"
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Managed by server"
 msgstr "Administrert av server"
@@ -5686,6 +5747,16 @@ msgstr "De fleste systemer arkiverer kandidater via e-postadresse."
 msgid "Mostly readable"
 msgstr "Stort sett lesbart"
 
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/lane-settings.tsx
+msgid "Move {0} down"
+msgstr ""
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/lane-settings.tsx
+msgid "Move {0} up"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Move {title} to…"
 msgstr "Flytt {title} til…"
@@ -5736,6 +5807,11 @@ msgstr "Flytt valgte jobbsøknader"
 msgid "Move to"
 msgstr "Flytt til"
 
+#. placeholder {0}: getLaneLabel(next)
+#: src/features/application-detail/sections.tsx
+msgid "Move to {0}"
+msgstr "Flytt til {0}"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Move to {stage}"
 msgstr "Flytt til {stage}"
@@ -5773,8 +5849,9 @@ msgstr "Flytt e-postadressen og telefonnummeret ditt til toppen av side én."
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped. Refresh and retry any failures."
 msgstr "Flyttet {0} av {1} til papirkurven. Låste dokumenter ble hoppet over. Oppdater og prøv igjen eventuelle feil."
 
-#. placeholder {0}: getStageLabel(entry.stage)
-#. placeholder {0}: getStageLabel(stage)
+#. placeholder {0}: getLaneHistoryLabel(lanes.lanes, entry)
+#. placeholder {0}: getLaneLabel(lane)
+#. placeholder {0}: getLaneLabel(target)
 #: src/features/application-detail/sections.tsx
 #: src/features/applications-board/board-screen.tsx
 msgid "Moved to {0}"
@@ -7045,6 +7122,10 @@ msgstr "Klargjør fil…"
 msgid "Present"
 msgstr "Nå"
 
+#: src/features/applications/lane-settings.tsx
+msgid "Preset outcome"
+msgstr ""
+
 #: src/ui/overlays.tsx
 msgid "Press and hold"
 msgstr "Hold inne"
@@ -7397,6 +7478,7 @@ msgid "Ready"
 msgstr "Ferdig"
 
 #: src/features/ai/report-content.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 msgid "Reason"
 msgstr "Grunn"
@@ -7625,6 +7707,10 @@ msgstr "Gi nytt navn"
 msgid "Rename {0}"
 msgstr "Gi nytt navn til {0}"
 
+#: src/features/applications/lane-settings.tsx
+msgid "Rename or change color"
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Rename version"
@@ -7672,6 +7758,10 @@ msgstr "Bytt ut bilde"
 #: src/features/ats-checker/messages.ts
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Erstatt tabeller med vanlige avsnitt og lister. Celler hentes ut i lagringsrekkefølge, ikke leserekkefølge."
+
+#: src/features/applications/lane-settings.tsx
+msgid "Replacement lane"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Replaces “{current}” on the application."
@@ -7809,6 +7899,15 @@ msgstr "CV-er"
 msgid "Resumes always render on white paper, whatever the theme."
 msgstr "CVer gjengis alltid på hvitt papir, uansett tema."
 
+#. placeholder {0}: getLaneLabel(retiring)
+#: src/features/applications/lane-settings.tsx
+msgid "Retire {0}?"
+msgstr ""
+
+#: src/features/applications/lane-settings.tsx
+msgid "Retire lane"
+msgstr ""
+
 #. placeholder {0}: source.retrievedAt
 #. placeholder {1}: source.method
 #: src/features/application-detail/sheets.tsx
@@ -7817,6 +7916,8 @@ msgstr "Hentet {0} ved hjelp av {1}. Hentetiden fastslår ikke opprinnelsesfrisk
 
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/applications/lane-settings.tsx
+#: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -7866,6 +7967,10 @@ msgstr "Prøv å laste inn jobbsøknader på nytt"
 #: src/features/applications/add-sheet.tsx
 msgid "Retry loading documents"
 msgstr "Prøv å laste inn dokumenter på nytt"
+
+#: src/features/applications/lane-notice.tsx
+msgid "Retry loading lanes"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Retry provider lookup"
@@ -8111,6 +8216,10 @@ msgstr "Lagre intervju"
 #: src/features/applications/add-sheet.tsx
 msgid "Save job"
 msgstr "Lagre jobben"
+
+#: src/features/applications/lane-settings.tsx
+msgid "Save lane"
+msgstr ""
 
 #: src/features/share/files.ts
 msgid "Save or share file"
@@ -9015,10 +9124,6 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr ""
 
-#: src/features/applications/add-sheet.tsx
-msgid "Stage"
-msgstr "Fase"
-
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "Fasen forblir {stage}"
@@ -9732,6 +9837,10 @@ msgstr "Denne søknaden kunne ikke åpnes."
 msgid "This application has no posting yet. Add one in Applications."
 msgstr "Denne jobbsøknaden har ingen stillingsannonser ennå. Legg til en i Søknader."
 
+#: src/features/applications/error.ts
+msgid "This changed elsewhere. Reload and try again."
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "This changed somewhere else, so it wasn't saved. Your text is kept here; Retry saves it over the other copy."
 msgstr "Dette endret seg et annet sted, så det ble ikke lagret. Teksten din holdes her; Prøv på nytt lagrer den over den andre kopien."
@@ -9860,6 +9969,11 @@ msgstr "Dette er ikke en vanlig sidestørrelse for en CV."
 #: src/features/documents/import-file.ts
 msgid "This JSON isn't a supported resume or cover letter."
 msgstr "Denne JSON er ikke en støttet CV eller følgebrev."
+
+#: src/features/applications/lane-notice.tsx
+#: src/features/applications/list-screen.tsx
+msgid "This lane is no longer available. Choose another lane."
+msgstr ""
 
 #: src/features/letters/share.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
@@ -10341,6 +10455,14 @@ msgstr "Opptil 20 tagger per dokument, 40 tegn per tag."
 #: src/features/ats-checker/checker.tsx
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr "Opptil 25 MB · sjekket på serveren og ikke lagret"
+
+#: src/features/applications/queries.ts
+msgid "Update your server before moving applications to a custom lane."
+msgstr ""
+
+#: src/features/applications/lane-settings.tsx
+msgid "Update your server to manage application lanes. Your existing stages still work."
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Updated"
@@ -11307,6 +11429,10 @@ msgstr "Historien din kunne ikke lastes inn."
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"
 msgstr "Introduksjonen din på to minutter"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Your unsaved job details will be discarded before opening this application."
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Your unsaved job details will be discarded before opening web search settings."

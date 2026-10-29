@@ -4,6 +4,7 @@ import { createSelectSchema } from "drizzle-zod";
 import z from "zod";
 import { accountAuth, auth } from "@reactive-resume/auth/config";
 import * as schema from "@reactive-resume/db/schema";
+import { applicationPipelineSchema } from "@reactive-resume/schema/applications/lanes";
 import { careerProfileDataSchema, careerWorkspaceSchema } from "@reactive-resume/schema/career";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { timezoneSchema } from "@reactive-resume/utils/timezone";
@@ -236,6 +237,7 @@ export const authRouter = {
 				resumes: z.array(resumeDto.getById.output.omit({ hasPassword: true, applicationId: true })),
 				coverLetters: z.array(coverLetterSchema),
 				applications: z.array(applicationDto.getById.output),
+				applicationPipeline: applicationPipelineSchema,
 				aiContentReports: z.array(createSelectSchema(schema.aiContentReport)),
 				career: z.object({
 					profile: careerProfileDataSchema,

@@ -19,7 +19,10 @@ import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/comp
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { getCategoryLane, getLaneLabel, laneMoveInput } from "../lanes";
 import { useInvalidateApplications } from "../use-application-actions";
+import { useApplicationLanes } from "../use-application-lanes";
+import { PriorNoResponseNotice } from "./prior-no-response-notice";
 import { useDialogStore } from "@/dialogs/store";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
@@ -27,9 +30,8 @@ import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
 type Parsed = RouterOutput["applications"]["ai"]["parsePosting"];
-type Stage = "saved" | "applied" | "interview";
-
-const STAGES: readonly Stage[] = ["saved", "applied", "interview"];
+// Adding offers lanes of these stages: still to apply, or already applied or interviewing.
+const ADD_CATEGORIES = ["saved", "applied", "interview"] as const;
 const MAX_POSTING_CHARS = 20_000;
 
 const isLink = (value: string) => /^https?:\/\/\S+$/i.test(value.trim());
@@ -74,7 +76,11 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 	const [input, setInput] = useState("");
 	const [role, setRole] = useState("");
 	const [company, setCompany] = useState("");
-	const [stage, setStage] = useState<Stage>("saved");
+	const { lanes, active, mode } = useApplicationLanes();
+	const choices = ADD_CATEGORIES.flatMap((category) => active.filter((lane) => lane.category === category));
+	const [laneId, setLaneId] = useState<string | null>(null);
+	const lane = choices.find((item) => item.id === laneId) ?? getCategoryLane(lanes, "saved");
+	const stage = lane.category;
 	const [stageDate, setStageDate] = useState(() => new Date().toLocaleDateString("en-CA"));
 	const [resumeId, setResumeId] = useState("");
 	const [coverLetterId, setCoverLetterId] = useState("");
@@ -144,7 +150,7 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 		const posting = {
 			company: company.trim(),
 			role: role.trim(),
-			status: stage,
+			...laneMoveInput(lane, mode),
 			...(location.trim() ? { location: location.trim() } : {}),
 			...(salary.trim() ? { salary: salary.trim() } : {}),
 			...(parsed?.requirements.length ? { requirements: parsed.requirements } : {}),
@@ -409,6 +415,7 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 					<Input id={`${id}-company`} value={company} onChange={(event) => setCompany(event.target.value)} />
 				</div>
 			</div>
+			<PriorNoResponseNotice company={company} />
 
 			<div className="grid gap-1.5">
 				<span id={`${id}-stage`} className="text-sm font-medium">
@@ -416,22 +423,26 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 				</span>
 				<SegmentedControl
 					aria-labelledby={`${id}-stage`}
-					value={stage}
-					onValueChange={(value) => setStage(value as Stage)}
+					value={lane.id}
+					onValueChange={(value) => setLaneId(value as string)}
 					className="h-auto w-fit max-w-full flex-wrap"
 				>
-					{STAGES.map((value) => (
+					{choices.map((choice) => (
 						<SegmentedControlItem
-							key={value}
-							value={value}
+							key={choice.id}
+							value={choice.id}
 							className="min-h-7 max-w-full flex-auto [overflow-wrap:anywhere] whitespace-normal"
 						>
-							{value === "saved" ? (
-								<Trans>Saved</Trans>
-							) : value === "applied" ? (
-								<Trans>Already applied</Trans>
+							{choice.systemKey && !choice.label ? (
+								choice.category === "saved" ? (
+									<Trans>Saved</Trans>
+								) : choice.category === "applied" ? (
+									<Trans>Already applied</Trans>
+								) : (
+									<Trans>Already interviewing</Trans>
+								)
 							) : (
-								<Trans>Already interviewing</Trans>
+								getLaneLabel(choice)
 							)}
 						</SegmentedControlItem>
 					))}

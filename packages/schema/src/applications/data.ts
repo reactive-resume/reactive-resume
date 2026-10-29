@@ -1,7 +1,7 @@
 import z from "zod";
 import { timezoneSchema } from "@reactive-resume/utils/timezone";
 
-// Pipeline stages are a fixed enum. If per-user custom stages are ever needed, promote this to a table.
+// Canonical workflow categories stay fixed; user-owned lanes map to these categories.
 // `closed` is the terminal stage, with a reason; it replaced the old `rejected` stage and the `archived` flag.
 export const APPLICATION_STATUSES = ["saved", "applied", "screening", "interview", "offer", "closed"] as const;
 
@@ -151,6 +151,10 @@ export const applicationTimelineEntrySchema = z.discriminatedUnion("type", [
 	timelineBaseSchema.extend({
 		type: z.literal("stage"),
 		stage: applicationStatusSchema,
+		laneId: z.string().optional(),
+		laneLabel: z.string().max(80).nullable().optional(),
+		closedReason: applicationClosedReasonSchema.nullable().optional(),
+		canonicalTransition: z.boolean().optional(),
 	}),
 	timelineBaseSchema.extend({
 		type: z.literal("note"),

@@ -295,7 +295,22 @@ assert.equal(
 );
 
 const stages = load("features/applications/stages.ts");
-const nextSteps = load("features/applications/next-step.ts", { "./stages": stages });
+const history = load("features/applications/history.ts");
+const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
+const applicationData = load("../../../packages/schema/src/applications/data.ts", {
+	zod,
+	"@reactive-resume/utils/timezone": { timezoneSchema: zod.z.string() },
+});
+const schemaLanes = load("../../../packages/schema/src/applications/lanes.ts", { zod, "./data": applicationData });
+const lanes = load("features/applications/lanes.ts", {
+	"@reactive-resume/schema/applications/lanes": schemaLanes,
+	"./stages": stages,
+});
+const defaultLanes = schemaLanes.createDefaultApplicationLanes();
+const laneQuery = {
+	useApplicationLanes: () => ({ lanes: defaultLanes, active: defaultLanes, supported: false, ready: true }),
+};
+const nextSteps = load("features/applications/next-step.ts", { "./stages": stages, "./history": history });
 const time = { locale: "en-US", timeZone: "UTC", when: String, time: String, day: String, utcDay: String };
 const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-detail/sections.tsx", {
 	"@tanstack/react-query": {},
@@ -318,6 +333,10 @@ const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-d
 	"@/auth/session": {},
 	"@/draft": {},
 	"@/features/applications/error": {},
+	"@/features/applications/history": history,
+	"@/features/applications/lane-notice": { LaneNotice: "LaneNotice" },
+	"@/features/applications/lane-queries": laneQuery,
+	"@/features/applications/lanes": lanes,
 	"@/features/applications/next-step": nextSteps,
 	"@/features/applications/stages": stages,
 	"@/features/applications/queries": {
@@ -345,9 +364,9 @@ assert.equal(
 	"Progress labels must not mutate records",
 );
 assert.deepEqual(calls, []);
-control(tree, "Change stage").onChange("applied");
+control(tree, "Change lane").onChange("applied");
 assert.deepEqual(calls, ["mark-applied"], "Explicit Saved → Applied still captures submission details");
-control(tree, "Change stage").onChange("interview");
+control(tree, "Change lane").onChange("interview");
 assert.deepEqual(calls.at(-1), { id: "job-a", status: "interview" });
 
 for (const [resumeId, coverLetterId] of [
@@ -409,11 +428,14 @@ let applicationSearch = "";
 const listLogic = load("features/applications/list.ts", {
 	"./next-step": { getNextStep: () => ({ kind: "none" }) },
 	"./stages": { LIST_ORDER: ["saved", "applied", "closed"] },
+	"./lanes": lanes,
 });
 const { ApplicationsListScreen } = load("features/applications/list-screen.tsx", {
 	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en" } }) },
 	"./add-sheet": { AddApplicationSheet: "AddApplicationSheet" },
 	"./error": { applicationError: String },
+	"./lane-queries": laneQuery,
+	"./lanes": lanes,
 	"./list": listLogic,
 	"./next-step": { getNextStep: () => ({}), describeNextStep: () => ({ title: "Saved" }) },
 	"./queries": {
@@ -423,7 +445,7 @@ const { ApplicationsListScreen } = load("features/applications/list-screen.tsx",
 	},
 	"./stages": { PIPELINE: [], CLOSED_REASONS: [], getStageColor: () => "gray", getStageLabel: (value) => value },
 	"@/auth/session": { useSession: () => ({ status: "signed-in", server: "fixture" }) },
-	"@/features/application-detail/hooks": { useUserTime: () => ({ timeZone: "UTC" }) },
+	"@/features/application-detail/hooks": { useNow: () => new Date(), useUserTime: () => ({ timeZone: "UTC" }) },
 	"@/features/applications-board/views": { ApplicationsViewFrame: "ApplicationsViewFrame" },
 	"@/features/applications-board/search": {
 		useApplicationSearch: () => ({
@@ -494,3 +516,74 @@ assert.equal(selectedRow.props.leading, "check-square", "ellipsis keeps explicit
 console.log(
 	"PASS Applications empty/create, closed-only reveal, filter reset, single press and explicit bulk selection entry",
 );
+
+// Opening earlier applications must preserve an unsaved job until explicit discard.
+let finishSave;
+const { AddApplicationSheet } = load("features/applications/add-sheet.tsx", {
+	react: { ...react, useEffect: () => {} },
+	"@orpc/client": { ORPCError: class extends Error {} },
+	"@tanstack/react-query": { useQuery: () => ({ data: [] }) },
+	"./date": { parseDateOnly: () => new Date() },
+	"./error": { applicationError: String },
+	"./lane-notice": { LaneNotice: "LaneNotice" },
+	"./lane-queries": laneQuery,
+	"./lanes": lanes,
+	"./prior-no-response": { PriorNoResponse: "PriorNoResponse" },
+	"./queries": {
+		useApplicationMutations: () => ({
+			create: {
+				mutateAsync: () =>
+					new Promise((resolve) => {
+						finishSave = resolve;
+					}),
+			},
+		}),
+	},
+	"./stages": stages,
+	"@/api/client": {
+		client: {},
+		orpc: {
+			documents: { list: { queryOptions: () => ({ queryKey: ["documents"] }) } },
+			webAccess: { status: { queryOptions: () => ({ queryKey: ["web"] }) } },
+		},
+	},
+	"@/auth/session": { getServer: () => "test", useSession: () => ({ server: "test" }) },
+	"@/features/ai/providers": {
+		AIProviderSetupSheet: "AIProviderSetupSheet",
+		useHasAIProvider: () => ({ hasAIProvider: false }),
+	},
+	"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
+	"@/routes": { routes: { ...routes, applicationDetails: (id) => `/applications/${id}` } },
+	"@/ui": { ...ui, EditorSheet: "EditorSheet" },
+});
+reset();
+const addView = () => render(AddApplicationSheet, { onClose: () => calls.push("close-draft") });
+control(addView(), "Fill details manually").onPress();
+control(addView(), "Company").onChangeText("Fictional Labs");
+control(addView(), "Role / title").onChangeText("Engineer");
+const priorLink = () => nodes(addView()).find((node) => node.type === "PriorNoResponse").props;
+const discardPrior = () =>
+	nodes(addView()).find(
+		(node) => node.type === "ConfirmDialog" && node.props.message.includes("opening this application"),
+	).props;
+assert.equal(priorLink().onOpen("previous"), false);
+assert.deepEqual(calls, [], "opening the warning cannot discard or navigate yet");
+assert.equal(discardPrior().open, true);
+discardPrior().onCancel();
+assert.equal(control(addView(), "Company").value, "Fictional Labs", "Keep editing retains draft");
+// Footer is a separate prop in the host renderer.
+const footer = nodes(addView()).find((node) => node.type === "EditorSheet").props.footer;
+control(footer, "Save job").onPress();
+assert.equal(priorLink().disabled, true, "warning cannot interrupt an in-flight save");
+priorLink().onOpen("previous");
+assert.equal(discardPrior().open, false);
+finishSave("saved");
+await settle();
+assert.deepEqual(calls, ["close-draft", "/applications/saved"]);
+reset();
+control(addView(), "Fill details manually").onPress();
+control(addView(), "Company").onChangeText("Fictional Labs");
+priorLink().onOpen("previous");
+discardPrior().onConfirm();
+assert.deepEqual(calls, ["close-draft", "/applications/previous"], "explicit discard opens the prior application");
+console.log("PASS native prior-application draft confirmation and save lock");

@@ -27,8 +27,9 @@ import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { templates } from "@/dialogs/resume/template/data";
+import { getDisplayLane, getLaneLabel } from "@/features/applications/lanes";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
-import { getStageColor, getStageLabel } from "@/features/applications/stages";
+import { useApplicationLanes } from "@/features/applications/use-application-lanes";
 import { useLetterWords } from "@/features/letters/compose";
 import { countWords, LETTER_LENGTH, letterLength } from "@/features/letters/length";
 import { discardLetterDraft, startLetterDraft, useLetterEditorStore } from "@/features/letters/store";
@@ -119,6 +120,8 @@ type ForSectionProps = {
 
 /** FOR: the application the letter is for. Linking one fills the recipient; without one, drafting uses the resume. */
 function ForSection({ letter, application, applications, disabled }: ForSectionProps) {
+	const { lanes } = useApplicationLanes();
+	const lane = application ? getDisplayLane(lanes, application) : null;
 	const choices = applications.filter((item) => item.status !== "closed" || item.id === application?.id);
 
 	const choose = (next: ApplicationSummary | null) =>
@@ -176,12 +179,8 @@ function ForSection({ letter, application, applications, disabled }: ForSectionP
 						<span className="flex min-w-0 items-center gap-1.5 text-xs text-ink-3">
 							<span className="truncate">{application.company}</span>
 							<span aria-hidden="true">·</span>
-							<span
-								aria-hidden="true"
-								className="size-1.5 shrink-0 rounded-sm"
-								style={{ background: getStageColor(application.status) }}
-							/>
-							{getStageLabel(application.status)}
+							<span aria-hidden="true" className="size-1.5 shrink-0 rounded-sm" style={{ background: lane?.color }} />
+							<span className="truncate">{lane && getLaneLabel(lane)}</span>
 						</span>
 					</span>
 					{menu(

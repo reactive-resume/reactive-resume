@@ -21,6 +21,7 @@ import {
 import { countryForTimeZone } from "@reactive-resume/utils/region";
 import { generateId } from "@reactive-resume/utils/string";
 import { requestRunCancellation } from "../agent/cancellation";
+import { applicationTransitionValues, ensureApplicationPipeline } from "../applications/lanes";
 import { applicationService, recordSentResume } from "../applications/service";
 import { lockUser } from "../documents/ownership";
 import { matchPosting } from "./matching";
@@ -173,6 +174,14 @@ export const modelFact = (fact: typeof tables.careerFact.$inferSelect) => ({
 	source: { kind: fact.source.kind, id: fact.source.id },
 	updatedAt: fact.updatedAt,
 });
+
+async function pipelineRevision(userId: string, reader: DbOrTx) {
+	const [pipeline] = await reader
+		.select({ revision: tables.applicationPipeline.revision })
+		.from(tables.applicationPipeline)
+		.where(eq(tables.applicationPipeline.userId, userId));
+	return pipeline?.revision ?? 0;
+}
 
 async function memoryVersion(userId: string, reader: DbOrTx = db) {
 	// New facts can be remembered within a turn; corrections/exclusions invalidate every in-flight draft.
@@ -505,7 +514,19 @@ export const careerService = {
 	},
 	context: async (input: Owned & { interviewId?: string | null | undefined }) => {
 		const memoryRevision = await memoryVersion(input.userId);
-		const application = await requireCareerApplication(input);
+		const storedApplication = await requireCareerApplication(input);
+		const pipeline = storedApplication
+			? await db.transaction(async (tx) => {
+					await lockUser(tx, input.userId);
+					return ensureApplicationPipeline(tx, input.userId);
+				})
+			: null;
+		const lane = pipeline?.lanes.find(
+			(lane) =>
+				lane.id === storedApplication?.laneId ||
+				(!storedApplication?.laneId && lane.systemKey === storedApplication?.status),
+		);
+		const application = storedApplication ? { ...storedApplication, laneLabel: lane?.label ?? null } : null;
 		const [preferences, facts, stories, [owner]] = await Promise.all([
 			careerService.profile(input.userId),
 			careerService.facts(input),
@@ -626,6 +647,7 @@ export const careerService = {
 			JSON.stringify([
 				memoryRevision,
 				application?.updatedAt,
+				pipeline?.revision,
 				profile,
 				facts.map((fact) => [fact.id, fact.updatedAt]),
 				stories.map((story) => [story.id, story.updatedAt]),
@@ -643,6 +665,7 @@ export const careerService = {
 			letter,
 			version,
 			memoryVersion: memoryRevision,
+			pipelineRevision: pipeline?.revision ?? null,
 			knowledgeVersion: knowledgeRevision,
 		};
 	},
@@ -680,9 +703,10 @@ export const careerService = {
 		jobLease?: string;
 		expectedMemoryVersion?: string;
 		expectedKnowledgeVersion?: string;
+		expectedPipelineRevision?: number | null;
 	}) =>
 		db.transaction(async (tx) => {
-			const { expectedMemoryVersion, expectedKnowledgeVersion, jobLease, ...values } = input;
+			const { expectedMemoryVersion, expectedKnowledgeVersion, expectedPipelineRevision, jobLease, ...values } = input;
 			// User → application → schedule → job. No key update permits unrelated FK inserts for this user.
 			await lockUser(tx, input.userId);
 			const [application] = await tx
@@ -692,6 +716,7 @@ export const careerService = {
 				.for("update");
 			if (!application) throw new ORPCError("NOT_FOUND");
 			if (input.jobId) {
+				if (application.status === "closed") return null;
 				// Match the schedule editor's lock order. Pausing and publishing cannot pass each other.
 				const [job] = await tx
 					.select()
@@ -716,7 +741,9 @@ export const careerService = {
 			}
 			if (
 				(expectedMemoryVersion !== undefined && expectedMemoryVersion !== (await memoryVersion(input.userId, tx))) ||
-				(expectedKnowledgeVersion !== undefined && expectedKnowledgeVersion !== (await knowledgeVersion(input, tx)))
+				(expectedKnowledgeVersion !== undefined && expectedKnowledgeVersion !== (await knowledgeVersion(input, tx))) ||
+				(expectedPipelineRevision !== undefined &&
+					expectedPipelineRevision !== (await pipelineRevision(input.userId, tx)))
 			)
 				throw new ORPCError("CONFLICT", {
 					message: "Career knowledge changed while generating this result. Generate it again.",
@@ -728,13 +755,19 @@ export const careerService = {
 				.returning();
 			return row ?? null;
 		}),
-	assertMemoryVersion: (userId: string, expected: string, knowledge?: { applicationId: string; version: string }) =>
+	assertMemoryVersion: (
+		userId: string,
+		expected: string,
+		knowledge?: { applicationId: string; version: string; pipelineRevision?: number | null },
+	) =>
 		db.transaction(async (tx) => {
 			await lockUser(tx, userId);
 			if (
 				expected !== (await memoryVersion(userId, tx)) ||
 				(knowledge &&
-					knowledge.version !== (await knowledgeVersion({ userId, applicationId: knowledge.applicationId }, tx)))
+					(knowledge.version !== (await knowledgeVersion({ userId, applicationId: knowledge.applicationId }, tx)) ||
+						(knowledge.pipelineRevision !== undefined &&
+							knowledge.pipelineRevision !== (await pipelineRevision(userId, tx)))))
 			)
 				throw new ORPCError("CONFLICT", {
 					message: "Career knowledge changed while generating this result. Generate it again.",
@@ -780,6 +813,7 @@ export const careerService = {
 			if (
 				selected.length &&
 				(item.inputVersion !== context.version ||
+					context.pipelineRevision !== (await pipelineRevision(userId, tx)) ||
 					application.updatedAt.getTime() !== context.application?.updatedAt.getTime() ||
 					context.memoryVersion !== (await memoryVersion(userId, tx)))
 			)
@@ -792,13 +826,11 @@ export const careerService = {
 			let status = application.status;
 			let followUpAt = application.followUpAt;
 			let followUpNote = application.followUpNote;
-			const activity = [...application.activity];
 			for (const change of changes) {
 				if (change.type === "stage" && change.stage !== application.status) {
 					if (application.status === "saved")
 						throw new ORPCError("BAD_REQUEST", { message: "Mark the application as applied first." });
 					status = change.stage;
-					activity.push({ id: generateId(), type: "stage", stage: change.stage, at: now });
 				}
 				// One change owns the next step, so its reminder and its words can't overwrite each other.
 				// The old reminder belonged to the old next step, so a next step with nothing due clears it.
@@ -817,10 +849,13 @@ export const careerService = {
 						inputVersion: item.inputVersion,
 					});
 			}
-			await tx
+			const { values, transition } = await applicationTransitionValues(tx, userId, { status }, application, now);
+			const [updated] = await tx
 				.update(tables.application)
-				.set({ status, activity, followUpAt, followUpNote, ...(status !== "closed" ? { closedReason: null } : {}) })
-				.where(eq(tables.application.id, application.id));
+				.set({ ...values, followUpAt, followUpNote })
+				.where(and(eq(tables.application.id, application.id), eq(tables.application.userId, userId)))
+				.returning();
+			if (updated && transition.canonicalTransition) await recordSentResume(updated, tx);
 			await tx
 				.update(tables.careerArtifact)
 				.set({ data: { ...data, applied: { at: now.toISOString(), changes: selected } } })
@@ -907,7 +942,9 @@ export const careerService = {
 					new ORPCError("CONFLICT", {
 						message: "This application has changed since submission. Reload it before continuing.",
 					});
-				const applied = application.activity.findLast((entry) => entry.type === "stage" && entry.stage === "applied");
+				const applied = application.activity.findLast(
+					(entry) => entry.type === "stage" && entry.stage === "applied" && entry.canonicalTransition !== false,
+				);
 				if (application.status !== "applied" || !applied || !isDeepStrictEqual(current.answers, parsed))
 					throw conflict();
 				const sent = parsed.filter((answer) => answer.answer.trim());
@@ -959,13 +996,11 @@ export const careerService = {
 					message: "Application answers changed elsewhere. Review them before marking as applied.",
 				});
 			const at = new Date();
+			const { values } = await applicationTransitionValues(tx, userId, { status: "applied" }, application, at);
 			const [submitted] = await tx
 				.update(tables.application)
 				.set({
-					status: "applied",
-					closedReason: null,
-					appliedAt: at,
-					activity: [...application.activity, { id: generateId(), type: "stage", stage: "applied", at }],
+					...values,
 				})
 				.where(eq(tables.application.id, applicationId))
 				.returning();
@@ -1035,6 +1070,7 @@ export const careerService = {
 	trackOpportunity: (userId: string, id: string) => {
 		// The opportunity row is the lock: a double click or a second tab returns the same application.
 		return db.transaction(async (tx) => {
+			await lockUser(tx, userId);
 			const [opportunity] = await tx
 				.select()
 				.from(tables.careerOpportunity)
@@ -1045,6 +1081,7 @@ export const careerService = {
 			const [profile] = await tx.select().from(tables.careerProfile).where(eq(tables.careerProfile.userId, userId));
 			const { matches } = matchPosting(opportunity, careerProfileDataSchema.parse(profile?.data ?? {}));
 			const applicationId = generateId();
+			const { values } = await applicationTransitionValues(tx, userId, { status: "saved" });
 			await tx.insert(tables.application).values({
 				id: applicationId,
 				userId,
@@ -1053,8 +1090,7 @@ export const careerService = {
 				location: opportunity.location || null,
 				sourceUrl: opportunity.url,
 				jobDescription: opportunity.description || opportunity.snippet,
-				status: "saved",
-				activity: [{ id: generateId(), type: "stage", stage: "saved", at: new Date() }],
+				...values,
 				...(matches.length ? { notes: `Matched: ${matches.join(" · ")}` } : {}),
 			});
 			await tx

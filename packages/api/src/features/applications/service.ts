@@ -23,6 +23,7 @@ import { lockUser } from "../documents/ownership";
 import { resumeService } from "../resume/service";
 import { writeVersion } from "../resume/version-history";
 import { getStorageService, uploadFile } from "../storage/service";
+import { applicationTransitionValues, ensureApplicationPipeline } from "./lanes";
 
 function timelineDate(value: Date | string): Date {
 	return value instanceof Date ? value : new Date(value);
@@ -50,10 +51,6 @@ function atFromDateString(date: string, existing?: Date | string): Date {
 	return parsed;
 }
 
-function stageEntry(stage: ApplicationStatus, date?: string): ApplicationTimelineEntry {
-	return { id: generateId(), type: "stage", stage, at: date ? atFromDateString(date) : new Date() };
-}
-
 function noteEntry(text: string, date?: string): ApplicationTimelineEntry {
 	return { id: generateId(), type: "note", text, at: date ? atFromDateString(date) : new Date() };
 }
@@ -77,28 +74,32 @@ function sortTimeline(activity: ApplicationTimelineEntry[]): ApplicationTimeline
 	return [...activity].sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
 }
 
+/** Lane-only transitions also anchor the current stage. Retirement preserves the last event's identity. */
 function currentStageAnchor(activity: ApplicationTimelineEntry[], status: ApplicationStatus) {
 	return sortTimeline(activity).find((entry) => entry.type === "stage" && entry.stage === status);
 }
 
-function assertCurrentStageAnchorLatest(activity: ApplicationTimelineEntry[], status: ApplicationStatus) {
-	const anchor = currentStageAnchor(activity, status);
+function assertCurrentStageAnchorLatest(
+	activity: ApplicationTimelineEntry[],
+	status: ApplicationStatus,
+	anchorId?: string,
+) {
+	// Capture identity before editing dates; re-resolving after a date edit could select another lane's event.
+	const anchor = anchorId ? activity.find((entry) => entry.id === anchorId) : currentStageAnchor(activity, status);
 	if (!anchor)
 		throw new ORPCError("BAD_REQUEST", {
 			message: "This application's timeline is missing its current stage. Reload the application and try again.",
 		});
-
 	const anchorDay = timelineDay(anchor.at);
-	const newerStage = activity.some((entry) => entry.type === "stage" && timelineDay(entry.at) > anchorDay);
-	if (newerStage) {
-		throw new ORPCError("BAD_REQUEST", {
-			message: "Choose a current stage date on or after the other stage dates.",
-		});
+	if (activity.some((entry) => entry.type === "stage" && timelineDay(entry.at) > anchorDay)) {
+		throw new ORPCError("BAD_REQUEST", { message: "Choose a current stage date on or after the other stage dates." });
 	}
 }
 
 function appliedAtFromTimeline(activity: ApplicationTimelineEntry[], fallback: Date): Date {
-	const sorted = sortTimeline(activity);
+	const sorted = sortTimeline(activity).filter(
+		(entry) => entry.type !== "stage" || entry.canonicalTransition !== false,
+	);
 	const applied = sorted.find((entry) => entry.type === "stage" && entry.stage === "applied");
 	const fallbackEntry = sorted.at(-1);
 	return applied ? timelineDate(applied.at) : fallbackEntry ? timelineDate(fallbackEntry.at) : fallback;
@@ -207,13 +208,6 @@ export async function recordSentResume(row: ApplicationRow, client: DbOrTx): Pro
 		.where(eq(schema.application.id, row.id))
 		.returning();
 	return updated ?? row;
-}
-
-/** Closing keeps (or takes) a reason; any other stage clears it. */
-function stageFields(status: ApplicationStatus | undefined, closedReason: ApplicationClosedReason | null | undefined) {
-	if (status === undefined) return closedReason !== undefined ? { closedReason } : {};
-	if (status === "closed") return closedReason !== undefined ? { closedReason } : {};
-	return { closedReason: null };
 }
 
 async function assertOwnedResumes(userId: string, resumeIds: (string | null | undefined)[]) {
@@ -426,12 +420,14 @@ const applicationSummarySelect = {
 	appliedAt: schema.application.appliedAt,
 	createdAt: schema.application.createdAt,
 	updatedAt: schema.application.updatedAt,
+	laneId: schema.application.laneId,
 };
 
 export const applicationService = {
 	list: async (input: {
 		userId: string;
 		status?: ApplicationStatus;
+		laneId?: string;
 		tags?: string[];
 		limit?: number;
 		offset?: number;
@@ -439,6 +435,7 @@ export const applicationService = {
 		const where = and(
 			eq(schema.application.userId, input.userId),
 			input.status ? eq(schema.application.status, input.status) : undefined,
+			input.laneId ? eq(schema.application.laneId, input.laneId) : undefined,
 			input.tags && input.tags.length > 0 ? arrayContains(schema.application.tags, input.tags) : undefined,
 		);
 		// Bulk imports share an update timestamp; the ID keeps their pages stable.
@@ -459,6 +456,7 @@ export const applicationService = {
 	listSummary: async (input: {
 		userId: string;
 		status?: ApplicationStatus;
+		laneId?: string;
 		tags?: string[];
 		limit?: number;
 		offset?: number;
@@ -467,6 +465,7 @@ export const applicationService = {
 		const where = and(
 			eq(schema.application.userId, input.userId),
 			input.status ? eq(schema.application.status, input.status) : undefined,
+			input.laneId ? eq(schema.application.laneId, input.laneId) : undefined,
 			input.tags && input.tags.length > 0 ? arrayContains(schema.application.tags, input.tags) : undefined,
 		);
 		const query = db
@@ -525,6 +524,28 @@ export const applicationService = {
 		};
 	},
 
+	priorNoResponse: (input: { userId: string; company: string; excludeId?: string | undefined }) => {
+		const at =
+			sql<Date>`coalesce((select max((entry->>'at')::timestamptz) from jsonb_array_elements(${schema.application.activity}) entry
+   where entry->>'type' = 'stage' and entry->>'closedReason' = 'no-response'), ${schema.application.updatedAt})`.mapWith(
+				schema.application.updatedAt,
+			);
+		return db
+			.select({ id: schema.application.id, company: schema.application.company, role: schema.application.role, at })
+			.from(schema.application)
+			.where(
+				and(
+					eq(schema.application.userId, input.userId),
+					sql`lower(regexp_replace(trim(${schema.application.company}), '\\s+', ' ', 'g')) = lower(regexp_replace(trim(${input.company}), '\\s+', ' ', 'g'))`,
+					input.excludeId ? sql`${schema.application.id} <> ${input.excludeId}` : undefined,
+					sql`((${schema.application.status} = 'closed' and ${schema.application.closedReason} = 'no-response') or exists
+     (select 1 from jsonb_array_elements(${schema.application.activity}) entry where entry->>'type' = 'stage' and entry->>'closedReason' = 'no-response'))`,
+				),
+			)
+			.orderBy(desc(at), schema.application.id)
+			.limit(10);
+	},
+
 	getById: async (input: { id: string; userId: string }) => {
 		return stripUserId(await requireOwned(input.id, input.userId));
 	},
@@ -536,75 +557,67 @@ export const applicationService = {
 				company: string;
 				role: string;
 				status?: ApplicationStatus | undefined;
+				laneId?: string | undefined;
 				closedReason?: ApplicationClosedReason | null | undefined;
 				stageEnteredAt?: string | undefined;
 			},
 	) => {
-		const { userId, status, stageEnteredAt, closedReason, resumeFile, coverLetterFile, ...fields } = input;
+		const { userId, status, laneId, stageEnteredAt, closedReason, resumeFile, coverLetterFile, ...fields } = input;
 		const id = generateId();
-		const initialStatus = status ?? "saved";
-		const activity = [stageEntry(initialStatus, stageEnteredAt)];
-
 		await assertOwnedResume(userId, fields.resumeId);
 		await assertOwnedCoverLetter(userId, fields.coverLetterId);
-
 		return withDocumentFiles(userId, { resumeFile, coverLetterFile }, (uploadedFields) =>
 			db.transaction(async (tx) => {
 				await lockUser(tx, userId);
+				const { values } = await applicationTransitionValues(
+					tx,
+					userId,
+					{ status, laneId, closedReason },
+					undefined,
+					stageEnteredAt ? atFromDateString(stageEnteredAt) : new Date(),
+				);
 				const [row] = await tx
 					.insert(schema.application)
-					.values({
-						id,
-						userId,
-						status: initialStatus,
-						...(initialStatus === "closed" && closedReason ? { closedReason } : {}),
-						activity,
-						appliedAt: appliedAtFromTimeline(activity, new Date()),
-						...fields,
-						...uploadedFields,
-					})
+					.values({ id, userId, ...fields, ...uploadedFields, ...values })
 					.returning();
-
 				if (row) await recordSentResume(row, tx);
 				return id;
 			}),
 		);
 	},
-
 	importMany: async (input: {
 		userId: string;
 		items: (EditableFields & {
 			company: string;
 			role: string;
 			status?: ApplicationStatus | undefined;
+			laneId?: string | undefined;
+			closedReason?: ApplicationClosedReason | null | undefined;
 			stageEnteredAt?: string | undefined;
 		})[];
 	}) => {
-		if (input.items.length === 0) return { imported: 0 };
-
+		if (!input.items.length) return { imported: 0 };
 		await assertOwnedResumes(
 			input.userId,
 			input.items.map((item) => item.resumeId),
 		);
 		const coverLetterIds = new Set(input.items.map((item) => item.coverLetterId).filter((id) => !!id));
 		await Promise.all([...coverLetterIds].map((id) => assertOwnedCoverLetter(input.userId, id)));
-
-		const values = input.items.map(({ status, stageEnteredAt, ...fields }) => {
-			const initialStatus = status ?? ("saved" as ApplicationStatus);
-			const activity = [stageEntry(initialStatus, stageEnteredAt)];
-			return {
-				id: generateId(),
-				userId: input.userId,
-				status: initialStatus,
-				activity,
-				appliedAt: appliedAtFromTimeline(activity, new Date()),
-				...fields,
-			};
-		});
-
-		// Rows imported as already sent keep what went out, as create does.
 		return db.transaction(async (tx) => {
 			await lockUser(tx, input.userId);
+			const pipeline = await ensureApplicationPipeline(tx, input.userId);
+			const values = [];
+			for (const { status, laneId, closedReason, stageEnteredAt, ...fields } of input.items) {
+				const transition = await applicationTransitionValues(
+					tx,
+					input.userId,
+					{ status, laneId, closedReason },
+					undefined,
+					stageEnteredAt ? atFromDateString(stageEnteredAt) : new Date(),
+					pipeline,
+				);
+				values.push({ id: generateId(), userId: input.userId, ...fields, ...transition.values });
+			}
 			const rows = await tx.insert(schema.application).values(values).returning();
 			for (const row of rows) await recordSentResume(row, tx);
 			return { imported: rows.length };
@@ -618,6 +631,7 @@ export const applicationService = {
 				userId: string;
 				canDeleteAttachments?: boolean;
 				status?: ApplicationStatus | undefined;
+				laneId?: string | undefined;
 				stageEnteredAt?: string | undefined;
 				closedReason?: ApplicationClosedReason | null | undefined;
 			},
@@ -628,6 +642,7 @@ export const applicationService = {
 			id,
 			userId,
 			status,
+			laneId,
 			stageEnteredAt,
 			closedReason,
 			resumeFile,
@@ -663,21 +678,6 @@ export const applicationService = {
 		await assertOwnedResume(userId, fields.resumeId);
 		await assertOwnedCoverLetter(userId, fields.coverLetterId);
 
-		const statusEntry = status !== undefined ? stageEntry(status, stageEnteredAt) : undefined;
-		// Append in SQL so concurrent notes/stage events are not overwritten by a stale array.
-		const activityExpr =
-			statusEntry !== undefined
-				? sql`case when ${schema.application.status} <> ${status}
-						then ${schema.application.activity} || ${JSON.stringify([statusEntry])}::jsonb
-						else ${schema.application.activity} end`
-				: undefined;
-		const appliedAtExpr =
-			statusEntry !== undefined && status === "applied"
-				? sql`case when ${schema.application.status} <> ${status}
-						then ${statusEntry.at}
-						else ${schema.application.appliedAt} end`
-				: undefined;
-
 		return withDocumentFiles(userId, { resumeFile, coverLetterFile }, async (uploadedFields) => {
 			const result = await db.transaction(async (tx) => {
 				await lockUser(tx, userId);
@@ -698,15 +698,25 @@ export const applicationService = {
 						message:
 							"Recorded submitted documents cannot be replaced. Prepare a copy to keep the submitted versions intact.",
 					});
+				const { values, transition } = await applicationTransitionValues(
+					tx,
+					userId,
+					{ status, laneId, closedReason },
+					current,
+					stageEnteredAt ? atFromDateString(stageEnteredAt) : new Date(),
+				);
+				if (
+					!transition.changed &&
+					Object.values(fields).every((value) => value === undefined) &&
+					Object.keys(uploadedFields).length === 0
+				)
+					return stripUserId(current);
 				const [updated] = await tx
 					.update(schema.application)
 					.set({
 						...fields,
 						...uploadedFields,
-						...(status !== undefined ? { status } : {}),
-						...(appliedAtExpr ? { appliedAt: appliedAtExpr } : {}),
-						...stageFields(status, closedReason),
-						...(activityExpr ? { activity: activityExpr } : {}),
+						...values,
 					})
 					.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)))
 					.returning();
@@ -714,7 +724,7 @@ export const applicationService = {
 				if (!updated) throw new ORPCError("NOT_FOUND");
 				// Editing metadata must not mark a linked draft as submitted.
 				const result =
-					status !== undefined || fields.resumeId !== undefined || fields.coverLetterId !== undefined
+					transition.canonicalTransition || fields.resumeId !== undefined || fields.coverLetterId !== undefined
 						? await recordSentResume(updated, tx)
 						: updated;
 				return stripUserId(result);
@@ -860,6 +870,7 @@ export const applicationService = {
 				.for("update");
 			if (!existing) throw new ORPCError("NOT_FOUND");
 
+			const anchor = currentStageAnchor(existing.activity, existing.status);
 			const activity = existing.activity.map((entry) => {
 				if (entry.id !== input.entryId) return entry;
 
@@ -882,13 +893,17 @@ export const applicationService = {
 			});
 
 			if (!activity.some((entry) => entry.id === input.entryId)) throw new ORPCError("NOT_FOUND");
-			assertCurrentStageAnchorLatest(activity, existing.status);
+			assertCurrentStageAnchorLatest(activity, existing.status, anchor?.id);
 
 			const [updated] = await tx
 				.update(schema.application)
 				.set({
 					activity,
-					appliedAt: appliedAtFromTimeline(activity, existing.appliedAt),
+					appliedAt: existing.activity.some(
+						(entry) => entry.id === input.entryId && entry.type === "stage" && entry.canonicalTransition === false,
+					)
+						? existing.appliedAt
+						: appliedAtFromTimeline(activity, existing.appliedAt),
 				})
 				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
 				.returning();
@@ -916,13 +931,17 @@ export const applicationService = {
 			}
 
 			const activity = existing.activity.filter((item) => item.id !== input.entryId);
-			assertCurrentStageAnchorLatest(activity, existing.status);
+			assertCurrentStageAnchorLatest(activity, existing.status, anchor?.id);
 
 			const [updated] = await tx
 				.update(schema.application)
 				.set({
 					activity,
-					appliedAt: appliedAtFromTimeline(activity, existing.appliedAt),
+					appliedAt: existing.activity.some(
+						(entry) => entry.id === input.entryId && entry.type === "stage" && entry.canonicalTransition === false,
+					)
+						? existing.appliedAt
+						: appliedAtFromTimeline(activity, existing.appliedAt),
 				})
 				.where(and(eq(schema.application.id, input.id), eq(schema.application.userId, input.userId)))
 				.returning();
@@ -951,58 +970,35 @@ export const applicationService = {
 		userId: string;
 		ids: string[];
 		status?: ApplicationStatus | undefined;
+		laneId?: string | undefined;
 		closedReason?: ApplicationClosedReason | null | undefined;
 		addTags?: string[] | undefined;
-	}) => {
-		const scope = and(inArray(schema.application.id, input.ids), eq(schema.application.userId, input.userId));
-
-		// Tags: union the new tags into the existing array (de-duplicated) in a single statement.
-		// Build an explicit `array[$1, $2]` — drizzle renders a bare JS array as a tuple `($1,$2)`,
-		// which can't be cast to text[].
-		const tagsExpr =
-			input.addTags && input.addTags.length > 0
-				? sql`(select array(select distinct unnest(${schema.application.tags} || array[${sql.join(
-						input.addTags.map((tag) => sql`${tag}`),
-						sql`, `,
-					)}]::text[])))`
-				: undefined;
-
-		// Stage moves must log a timeline event on every row that actually changed — mirror the
-		// single-item update path. Append the event only where the current status differs.
-		const statusEntry = input.status !== undefined ? stageEntry(input.status) : undefined;
-		const activityExpr =
-			statusEntry !== undefined
-				? sql`case when ${schema.application.status} <> ${input.status}
-					then ${schema.application.activity} || ${JSON.stringify([statusEntry])}::jsonb
-					else ${schema.application.activity} end`
-				: undefined;
-		const appliedAtExpr =
-			statusEntry !== undefined && input.status === "applied"
-				? sql`case when ${schema.application.status} <> ${input.status}
-					then ${statusEntry.at}
-					else ${schema.application.appliedAt} end`
-				: undefined;
-
-		return db.transaction(async (tx) => {
+	}) =>
+		db.transaction(async (tx) => {
 			await lockUser(tx, input.userId);
-			const rows = await tx
-				.update(schema.application)
-				.set({
-					...(input.status !== undefined ? { status: input.status } : {}),
-					...(appliedAtExpr ? { appliedAt: appliedAtExpr } : {}),
-					...(activityExpr ? { activity: activityExpr } : {}),
-					...stageFields(input.status, input.closedReason),
-					...(tagsExpr ? { tags: tagsExpr } : {}),
-				})
-				.where(scope)
-				.returning();
-
-			if (input.status !== undefined) {
-				for (const row of rows) await recordSentResume(row, tx);
+			const pipeline = await ensureApplicationPipeline(tx, input.userId);
+			const scope = and(inArray(schema.application.id, input.ids), eq(schema.application.userId, input.userId));
+			const rows = await tx.select().from(schema.application).where(scope).for("update");
+			for (const row of rows) {
+				const { values, transition } = await applicationTransitionValues(
+					tx,
+					input.userId,
+					input,
+					row,
+					new Date(),
+					pipeline,
+				);
+				const tags = [...new Set([...row.tags, ...(input.addTags ?? [])])];
+				if (!transition.changed && tags.length === row.tags.length) continue;
+				const [updated] = await tx
+					.update(schema.application)
+					.set({ ...values, tags })
+					.where(and(eq(schema.application.id, row.id), eq(schema.application.userId, input.userId)))
+					.returning();
+				if (updated && transition.canonicalTransition) await recordSentResume(updated, tx);
 			}
 			return { updated: rows.length };
-		});
-	},
+		}),
 
 	bulkDelete: async (input: { userId: string; ids: string[] }) => {
 		const existing = await db

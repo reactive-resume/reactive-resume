@@ -19,6 +19,13 @@ vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		resume: { list: { queryOptions: () => ({ queryKey: ["resume", "list"], queryFn: async () => [] }) } },
 		applications: {
+			lanes: {
+				get: {
+					queryOptions: () => ({ queryKey: ["lanes"], queryFn: () => new Promise(() => {}) }),
+					queryKey: () => ["lanes"],
+				},
+			},
+			priorNoResponse: { queryOptions: () => ({ queryKey: ["prior"], queryFn: async () => [] }) },
 			listSummary: { queryKey: () => ["applications", "summary"] },
 			tags: {
 				queryOptions: () => ({ queryKey: ["applications", "tags"], queryFn: async () => [] }),

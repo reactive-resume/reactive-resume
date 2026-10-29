@@ -10,9 +10,10 @@ import { client, useCareerAction, useCareerTime, useNow, useTodayQueries, useUnd
 import { ScheduleSheet, scheduleTitle } from "./schedule-sheet";
 import { collectInterviews, rollForward } from "./scheduling";
 import { Actions, LoadState, Section, SwitchRow } from "./shared";
+import { useApplicationLanes } from "@/features/applications/lane-queries";
+import { getLaneLabel, resolveLane } from "@/features/applications/lanes";
 import { getNextStep } from "@/features/applications/next-step";
 import { useApplications } from "@/features/applications/queries";
-import { getStageLabel } from "@/features/applications/stages";
 import { routes } from "@/routes";
 import {
 	Banner,
@@ -31,6 +32,7 @@ import {
 import { usePullRefresh } from "@/ui/use-pull-refresh";
 
 export function TodayScreen() {
+	const lanes = useApplicationLanes();
 	const { t } = useLingui();
 	const { colors, space, size } = useTheme();
 	const [width, setWidth] = useState(0);
@@ -138,7 +140,7 @@ export function TodayScreen() {
 									</Text>
 									<Text>{time.when(next.start)}</Text>
 									<Text color="ink3">
-										{getStageLabel(next.application.status)} ·{" "}
+										{getLaneLabel(resolveLane(lanes.lanes, next.application))} ·{" "}
 										{new Intl.NumberFormat(time.locale, { style: "unit", unit: "minute", unitDisplay: "short" }).format(
 											next.interview.durationMinutes,
 										)}

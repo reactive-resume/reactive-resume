@@ -1,4 +1,5 @@
 import type { RouterOutput } from "@/api/client";
+import type { ApplicationClosedReason } from "@reactive-resume/schema/applications/data";
 import { useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery } from "@tanstack/react-query";
@@ -7,8 +8,12 @@ import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { parseDateOnly } from "./date";
 import { applicationError } from "./error";
+import { LaneNotice } from "./lane-notice";
+import { useApplicationLanes } from "./lane-queries";
+import { getLaneLabel, laneInput, resolveLane } from "./lanes";
+import { PriorNoResponse } from "./prior-no-response";
 import { useApplicationMutations } from "./queries";
-import { getStageLabel } from "./stages";
+import { CLOSED_REASONS, getClosedReasonLabel } from "./stages";
 import { client, orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
@@ -56,6 +61,7 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 	const webOptions = orpc.webAccess.status.queryOptions();
 	const web = useQuery({ ...webOptions, queryKey: [...webOptions.queryKey, session.server] });
 	const { create } = useApplicationMutations();
+	const lanes = useApplicationLanes();
 	const [mode, setMode] = useState<"link" | "text">("link");
 	const [input, setInput] = useState("");
 	const [query, setQuery] = useState("");
@@ -68,7 +74,13 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 	const [source, setSource] = useState("");
 	const [sourceUrl, setSourceUrl] = useState("");
 	const [description, setDescription] = useState("");
-	const [stage, setStage] = useState<"saved" | "applied" | "interview">("saved");
+	const [laneId, setLaneId] = useState("");
+	const selectedLane = lanes.active.find((item) => item.id === laneId);
+	const lane = selectedLane ?? resolveLane(lanes.lanes, { status: "saved" });
+	const laneAvailable = !laneId || !!selectedLane;
+	const stage = lane.category;
+	const [reason, setReason] = useState<ApplicationClosedReason>("not-selected");
+	const [priorToOpen, setPriorToOpen] = useState<string | null>(null);
 	const [initialDate] = useState(today);
 	const [stageDate, setStageDate] = useState(initialDate);
 	const [resumeId, setResumeId] = useState("");
@@ -161,7 +173,8 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 	const validDate = stage === "saved" || !!parseDateOnly(stageDate);
 	const validFollowUp = !followUpDate || !!parseDateOnly(followUpDate);
 	const validUrl = !sourceUrl.trim() || isLink(sourceUrl);
-	const ready = company.trim() && role.trim() && validDate && validFollowUp && validUrl && !busy;
+	const ready =
+		company.trim() && role.trim() && validDate && validFollowUp && validUrl && lanes.ready && laneAvailable && !busy;
 	const save = () =>
 		void run("save", async (signal) => {
 			if (!ready) return;
@@ -170,7 +183,8 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 			const id = await create.mutateAsync({
 				company: company.trim(),
 				role: role.trim(),
-				status: stage,
+				...laneInput(lane, lanes.supported),
+				...(stage === "closed" ? { closedReason: lane.closedReason ?? reason } : {}),
 				location: location.trim() || null,
 				salary: salary.trim() || null,
 				source: source.trim() || null,
@@ -207,7 +221,7 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 		source ||
 		sourceUrl ||
 		description ||
-		stage !== "saved" ||
+		laneId !== "" ||
 		stageDate !== initialDate ||
 		resumeId ||
 		letterId ||
@@ -403,16 +417,31 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 							)}
 							<TextField label={t`Company`} value={company} onChangeText={setCompany} editable={!busy} />
 							<TextField label={t`Role / title`} value={role} onChangeText={setRole} editable={!busy} />
-							<SelectSheet
-								label={t`Stage`}
-								value={stage}
-								options={["saved", "applied", "interview"].map((value) => ({
-									value: value as typeof stage,
-									label: getStageLabel(value as typeof stage),
-								}))}
-								onChange={setStage}
+							<LaneNotice unavailable={!laneAvailable} />
+							<PriorNoResponse
+								company={company}
 								disabled={!!busy}
+								onOpen={(id) => {
+									if (!lock.current && !busy) setPriorToOpen(id);
+									return false;
+								}}
 							/>
+							<SelectSheet
+								label={t`Lane`}
+								value={laneId || lane.id}
+								options={lanes.active.map((item) => ({ value: item.id, label: getLaneLabel(item) }))}
+								onChange={setLaneId}
+								disabled={!!busy || !lanes.ready}
+							/>
+							{stage === "closed" && !lane.closedReason && (
+								<SelectSheet
+									label={t`Reason`}
+									value={reason}
+									options={CLOSED_REASONS.map((value) => ({ value, label: getClosedReasonLabel(value) }))}
+									onChange={setReason}
+									disabled={!!busy}
+								/>
+							)}
 							{stage !== "saved" && (
 								<WallClockField
 									label={t`Application date`}
@@ -530,6 +559,20 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 				onCancel={() => setConfirmSearchExit(false)}
 			/>
 			<AIProviderSetupSheet open={setup} onClose={() => setSetup(false)} />
+			<ConfirmDialog
+				open={priorToOpen !== null && !busy}
+				title={t`Discard changes?`}
+				message={t`Your unsaved job details will be discarded before opening this application.`}
+				confirmLabel={t`Discard changes`}
+				cancelLabel={t`Keep editing`}
+				destructive
+				onConfirm={() => {
+					if (!priorToOpen || lock.current || busy) return;
+					onClose();
+					router.push(routes.applicationDetails(priorToOpen));
+				}}
+				onCancel={() => setPriorToOpen(null)}
+			/>
 		</>
 	);
 }

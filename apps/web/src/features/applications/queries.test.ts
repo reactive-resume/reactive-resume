@@ -61,12 +61,15 @@ describe("application detail cache hydration", () => {
 		expect(client.getQueryState(key)?.dataUpdatedAt).toBe(updatedAt);
 	});
 
-	it("does not hydrate a detail whose stage no longer matches optimistic list state", () => {
+	it.each([
+		["stage", { status: "closed" }],
+		["lane within the same stage", { laneId: "take-home" }],
+	])("does not hydrate a detail whose %s no longer matches optimistic list state", (_name, patch) => {
 		const client = new QueryClient();
-		const old = detail("2026-10-01T00:00:00Z", "old");
-		const closed = { ...summary(old), status: "closed" } as ApplicationSummary;
+		const old = { ...detail("2026-10-01T00:00:00Z", "old"), laneId: "interview" } as Application;
+		const moved = { ...summary(old), laneId: "interview", ...patch } as ApplicationSummary;
 
-		hydrateApplicationDetail(client, closed);
+		hydrateApplicationDetail(client, moved);
 		expect(client.getQueryData<Application>(applicationDetailQueryKey("a"))).toBeUndefined();
 	});
 

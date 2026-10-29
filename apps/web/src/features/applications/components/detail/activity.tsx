@@ -25,8 +25,9 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { interviewKindOf } from "../../interviews";
-import { getStageColor, getStageLabel } from "../../stages";
+import { getCategoryLane, getLaneLabel, isCurrentLaneEvent } from "../../lanes";
 import { useInvalidateApplications } from "../../use-application-actions";
+import { useApplicationLanes } from "../../use-application-lanes";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
 import { orpc } from "@/libs/orpc/client";
@@ -52,6 +53,7 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 	const { i18n } = useLingui();
 	const invalidate = useInvalidateApplications();
 	const confirm = useConfirm();
+	const { lanes } = useApplicationLanes();
 	const [note, setNote] = useState("");
 	const [editing, setEditing] = useState<{ entry: ApplicationTimelineEntry; date: string; text: string } | null>(null);
 	// Closing keeps the entry's title and fields on screen until the dialog has faded out.
@@ -78,7 +80,7 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 	});
 
 	const sorted = [...application.activity].sort(byNewest);
-	const anchorId = sorted.find((entry) => entry.type === "stage" && entry.stage === application.status)?.id;
+	const anchorId = sorted.find((entry) => isCurrentLaneEvent(entry, application))?.id;
 	const formatDate = (value: Date | string, withTime: boolean) =>
 		new Date(value).toLocaleDateString(i18n.locale, {
 			month: "short",
@@ -88,8 +90,13 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 		});
 
 	const describe = (entry: ApplicationTimelineEntry) => {
-		if (entry.type === "stage")
-			return { dot: getStageColor(entry.stage), text: t`Moved to ${getStageLabel(entry.stage)}` };
+		if (entry.type === "stage") {
+			// The lane as it's named now; else its name when the move happened; else the stage's default lane.
+			const lane = lanes.find((item) => item.id === entry.laneId && item.category === entry.stage);
+			const fallback = getCategoryLane(lanes, entry.stage);
+			const label = lane ? getLaneLabel(lane) : (entry.laneLabel ?? getLaneLabel(fallback));
+			return { dot: (lane ?? fallback).color, text: t`Moved to ${label}` };
+		}
 		if (entry.type === "note") return { dot: "var(--ink-3)", text: entry.text };
 		const kind = interviewKindOf(entry.kind);
 		return { dot: kind?.color ?? "var(--ink-3)", text: t`${kind?.label ?? entry.kind} interview` };

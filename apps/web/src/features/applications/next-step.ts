@@ -3,6 +3,7 @@ import type { InterviewTimelineEntry } from "@reactive-resume/schema/application
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import { plural, t } from "@lingui/core/macro";
 import { interviewKindOf, isInterview } from "./interviews";
+import { isCanonicalStageEvent, isCurrentLaneEvent } from "./lanes";
 import { getClosedReasonLabel } from "./stages";
 
 const DAY_MS = 86_400_000;
@@ -11,6 +12,9 @@ const DAY_MS = 86_400_000;
 const FOLLOW_UP_AFTER_DAYS = 10;
 
 type NextStepSource = Pick<ApplicationSummary, "status" | "activity" | "followUpAt" | "followUpNote" | "appliedAt">;
+type StageSource = Pick<ApplicationSummary, "status" | "activity" | "appliedAt"> & {
+	laneId?: string | null | undefined;
+};
 
 /**
  * What an application needs next, derived rather than stored: the earliest interview still to come, else the
@@ -24,21 +28,30 @@ export type NextStep =
 	| { kind: "not-applied" }
 	| { kind: "closed" };
 
-/** When the application entered its current stage (its latest entry for that stage), or when it was added. */
-function stageSince(application: Pick<ApplicationSummary, "status" | "activity" | "appliedAt">): Date {
-	const entries = application.activity
-		.filter((entry) => entry.type === "stage" && entry.stage === application.status)
-		.map((entry) => new Date(entry.at).getTime());
+/** The latest matching stage entry's date, or when the application was added. */
+function since(application: StageSource, matches: (entry: ApplicationSummary["activity"][number]) => boolean): Date {
+	const entries = application.activity.filter(matches).map((entry) => new Date(entry.at).getTime());
 	return new Date(entries.length > 0 ? Math.max(...entries) : new Date(application.appliedAt).getTime());
 }
 
 const daysBetween = (from: Date, to: Date) => Math.max(0, Math.floor((to.getTime() - from.getTime()) / DAY_MS));
 
-/** Whole days the application has spent in its current stage. */
-export const daysInStage = (
-	application: Pick<ApplicationSummary, "status" | "activity" | "appliedAt">,
-	now = new Date(),
-) => daysBetween(stageSince(application), now);
+/** Whole days the application has spent in its current lane. */
+export const daysInLane = (application: StageSource, now = new Date()) =>
+	daysBetween(
+		since(application, (entry) => isCurrentLaneEvent(entry, application)),
+		now,
+	);
+
+/** Whole days since the application entered its current stage; moving between lanes of that stage doesn't count. */
+const daysInStage = (application: StageSource, now: Date) =>
+	daysBetween(
+		since(
+			application,
+			(entry) => entry.type === "stage" && entry.stage === application.status && isCanonicalStageEvent(entry),
+		),
+		now,
+	);
 
 export function getNextStep(application: NextStepSource, now = new Date()): NextStep {
 	if (application.status === "closed") return { kind: "closed" };

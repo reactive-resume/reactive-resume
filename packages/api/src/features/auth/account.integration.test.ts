@@ -29,6 +29,8 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 			"cover_letter",
 			"cover_letter_version",
 			"application",
+			"application_lane",
+			"application_pipeline",
 			"resume_slug_redirect",
 			"released_username",
 		]) {
@@ -38,6 +40,12 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 			connectionString: process.env.OAUTH_TEST_DATABASE_URL,
 			options: `-c search_path=${schemaName}`,
 		});
+		for (const id of ["link-guest", "link-owner", "failed-guest", "race-guest"]) {
+			await pool.query(
+				`INSERT INTO "user" (id,name,email,username,display_username) VALUES ($1,$1,$1 || '@example.test',$1,$1)`,
+				[id],
+			);
+		}
 	});
 
 	afterAll(async () => {

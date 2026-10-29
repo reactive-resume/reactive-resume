@@ -1,5 +1,6 @@
+import type { ApplicationLane } from "./lanes";
 import type { ApplicationSummary as Application } from "./types";
-import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
+import { createDefaultApplicationLanes, resolveLane, visibleLanes } from "./lanes";
 import { getNextStep } from "./next-step";
 import { LIST_ORDER } from "./stages";
 
@@ -26,6 +27,10 @@ export function groupApplications(
 	sort: ApplicationSort,
 	direction: "asc" | "desc",
 	now = new Date(),
+	lanes: ApplicationLane[] = createDefaultApplicationLanes().map((lane) => ({
+		...lane,
+		position: LIST_ORDER.indexOf(lane.category),
+	})),
 ) {
 	const nextTime = (application: Application) => {
 		const step = getNextStep(application, now);
@@ -44,16 +49,20 @@ export function groupApplications(
 						: 1;
 		return (direction === "asc" ? order : -order) || a.id.localeCompare(b.id);
 	};
-	return LIST_ORDER.map((status) => ({
-		status,
-		data: applications.filter((application) => application.status === status).sort(compare),
-	})).filter((group) => group.data.length > 0);
+	return visibleLanes(lanes, applications)
+		.sort((a, b) => LIST_ORDER.indexOf(a.category) - LIST_ORDER.indexOf(b.category) || a.position - b.position)
+		.map((lane) => ({
+			status: lane.id,
+			lane,
+			data: applications.filter((application) => resolveLane(lanes, application).id === lane.id).sort(compare),
+		}))
+		.filter((group) => group.data.length > 0);
 }
 
 /** Hidden/collapsed rows never remain selected for destructive bulk actions. */
 export function visibleSelection(
-	groups: { status: ApplicationStatus; data: Application[] }[],
-	collapsed: ReadonlySet<ApplicationStatus>,
+	groups: { status: string; data: Application[] }[],
+	collapsed: ReadonlySet<string>,
 	selected: ReadonlySet<string>,
 ) {
 	return groups.flatMap((group) =>

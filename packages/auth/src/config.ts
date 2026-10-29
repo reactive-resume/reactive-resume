@@ -10,6 +10,7 @@ import { passkey } from "@better-auth/passkey";
 import { compare, hash } from "bcryptjs";
 import { APIError, betterAuth } from "better-auth";
 import { createAuthMiddleware } from "better-auth/api";
+import { deleteSessionCookie, setSessionCookie } from "better-auth/cookies";
 import { admin, anonymous, jwt, openAPI } from "better-auth/plugins";
 import { genericOAuth } from "better-auth/plugins/generic-oauth";
 import { twoFactor } from "better-auth/plugins/two-factor";
@@ -17,6 +18,7 @@ import { username } from "better-auth/plugins/username";
 import { and, eq, gt, ne, sql } from "drizzle-orm";
 import { createLocalJWKSet, jwtVerify } from "jose";
 import { createElement } from "react";
+import { createDefaultOwnedApplicationLanes, MAX_APPLICATION_LANES } from "@reactive-resume/db/application-lanes";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { ResetPasswordEmail, VerifyEmail, VerifyEmailChange } from "@reactive-resume/email/templates/auth";
@@ -180,6 +182,53 @@ export async function linkAnonymousAccount({
 	if (fromUserId === toUserId) return;
 
 	const cleanup = await db.transaction(async (tx) => {
+		// Match document/application writers' owner-first order; stable order prevents opposing-link deadlocks.
+		for (const userId of [fromUserId, toUserId].sort()) {
+			const [owner] = await tx
+				.select({ id: schema.user.id })
+				.from(schema.user)
+				.where(eq(schema.user.id, userId))
+				.for("no key update");
+			if (!owner) throw new APIError("NOT_FOUND", { message: "The account is unavailable." });
+		}
+		const sourceLanes = await tx
+			.select()
+			.from(schema.applicationLane)
+			.where(eq(schema.applicationLane.userId, fromUserId));
+		const targetLanes = await tx
+			.select()
+			.from(schema.applicationLane)
+			.where(eq(schema.applicationLane.userId, toUserId));
+		const defaultLanes = createDefaultOwnedApplicationLanes(toUserId);
+		const targetActiveCount = targetLanes.length
+			? targetLanes.filter((lane) => !lane.retiredAt).length
+			: defaultLanes.length;
+		if (
+			targetActiveCount + sourceLanes.filter((lane) => !lane.systemKey && !lane.retiredAt).length >
+			MAX_APPLICATION_LANES
+		)
+			throw new APIError("CONFLICT", {
+				message:
+					"Retire unused application lanes before combining these accounts; the combined pipeline exceeds 40 active lanes.",
+			});
+		await tx.insert(schema.applicationPipeline).values({ userId: toUserId }).onConflictDoNothing();
+		await tx.insert(schema.applicationLane).values(defaultLanes).onConflictDoNothing();
+		const laneIds = new Map<string, string>();
+		let position = Math.max(5, ...targetLanes.map((lane) => lane.position)) + 1;
+		for (const lane of sourceLanes) {
+			const id = lane.systemKey
+				? (targetLanes.find((target) => target.systemKey === lane.systemKey)?.id ??
+					`application-lane:${toUserId}:${lane.systemKey}`)
+				: generateId();
+			laneIds.set(lane.id, id);
+			if (!lane.systemKey)
+				await tx.insert(schema.applicationLane).values({ ...lane, id, userId: toUserId, position: position++ });
+		}
+		await tx
+			.update(schema.applicationPipeline)
+			.set({ revision: sql`${schema.applicationPipeline.revision} + 1` })
+			.where(eq(schema.applicationPipeline.userId, toUserId));
+
 		const rewriteUploadsJson = (column: unknown) =>
 			sql`cast(replace(cast(${column} as text), 'uploads/' || ${fromUserId} || '/', 'uploads/' || ${toUserId} || '/') as jsonb)`;
 
@@ -220,14 +269,29 @@ export async function linkAnonymousAccount({
 			})
 			.where(eq(schema.coverLetterVersion.userId, fromUserId));
 
-		await tx
-			.update(schema.application)
-			.set({
-				userId: toUserId,
-				resumeFileUrl: rewriteUploadsUrl(schema.application.resumeFileUrl),
-				coverLetterUrl: rewriteUploadsUrl(schema.application.coverLetterUrl),
-			})
-			.where(eq(schema.application.userId, fromUserId));
+		const applications = await tx
+			.select()
+			.from(schema.application)
+			.where(eq(schema.application.userId, fromUserId))
+			.for("update");
+		for (const application of applications) {
+			await tx
+				.update(schema.application)
+				.set({
+					userId: toUserId,
+					laneId: application.laneId
+						? (laneIds.get(application.laneId) ?? `application-lane:${toUserId}:${application.status}`)
+						: `application-lane:${toUserId}:${application.status}`,
+					activity: application.activity.map((entry) =>
+						entry.type === "stage" && entry.laneId && laneIds.has(entry.laneId)
+							? { ...entry, laneId: laneIds.get(entry.laneId) ?? entry.laneId }
+							: entry,
+					),
+					resumeFileUrl: rewriteUploadsUrl(schema.application.resumeFileUrl),
+					coverLetterUrl: rewriteUploadsUrl(schema.application.coverLetterUrl),
+				})
+				.where(and(eq(schema.application.id, application.id), eq(schema.application.userId, fromUserId)));
+		}
 
 		await tx
 			.delete(schema.resumeSlugRedirect)
@@ -675,11 +739,22 @@ const getAuthConfig = () => {
 				generateName: () => "Guest",
 				// Signing up or in from a guest session moves the guest's documents to that account; the plugin then
 				// deletes the guest account, along with anything not moved here (assistant threads, career data).
-				onLinkAccount: async ({ anonymousUser, newUser }) => {
-					await linkAnonymousAccount({
-						fromUserId: anonymousUser.user.id,
-						toUserId: newUser.user.id,
-					});
+				onLinkAccount: async ({ anonymousUser, newUser, ctx }) => {
+					try {
+						await linkAnonymousAccount({
+							fromUserId: anonymousUser.user.id,
+							toUserId: newUser.user.id,
+						});
+					} catch (error) {
+						// Better Auth sets the new session cookie before this hook. A failed transfer must leave the
+						// guest accessible, and must not expose a usable credential-session cookie on the error reply.
+						deleteSessionCookie(ctx);
+						await setSessionCookie(ctx, anonymousUser, undefined, {
+							maxAge: Math.max(0, Math.floor((anonymousUser.session.expiresAt.getTime() - Date.now()) / 1000)),
+						});
+						await ctx.context.internalAdapter.deleteSession(newUser.session.token).catch(() => {});
+						throw error;
+					}
 				},
 			}),
 			...(env.BETTER_AUTH_API_KEY

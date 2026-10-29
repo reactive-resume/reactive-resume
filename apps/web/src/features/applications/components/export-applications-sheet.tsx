@@ -16,6 +16,7 @@ import {
 } from "@reactive-resume/ui/components/sheet";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { exportApplicationsCsv, selectApplicationsForExport } from "../csv";
+import { useApplicationLanes } from "../use-application-lanes";
 import { Combobox } from "@/components/ui/combobox";
 
 type ExportApplicationsSheetProps = {
@@ -27,6 +28,7 @@ type ExportApplicationsSheetProps = {
 
 export function ExportApplicationsSheet({ open, onOpenChange, applications, filtered }: ExportApplicationsSheetProps) {
 	const id = useId();
+	const { lanes, mode } = useApplicationLanes();
 	const [scope, setScope] = useState<ApplicationExportOptions["scope"]>("filtered");
 	const [from, setFrom] = useState("");
 	const [to, setTo] = useState("");
@@ -49,7 +51,9 @@ export function ExportApplicationsSheet({ open, onOpenChange, applications, filt
 					onSubmit={(event) => {
 						event.preventDefault();
 						if (!validRange || selected.length === 0) return;
-						const blob = new Blob([exportApplicationsCsv(selected)], { type: "text/csv;charset=utf-8" });
+						const blob = new Blob([exportApplicationsCsv(selected, mode === "lanes" ? lanes : [])], {
+							type: "text/csv;charset=utf-8",
+						});
 						downloadWithAnchor(blob, `applications-${new Date().toISOString().slice(0, 10)}.csv`);
 						onOpenChange(false);
 					}}

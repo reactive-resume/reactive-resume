@@ -13,6 +13,40 @@ import { user } from "./auth";
 import { coverLetter, coverLetterVersion } from "./cover-letter";
 import { resume, resumeVersion } from "./resume";
 
+export const applicationPipeline = pg.pgTable("application_pipeline", {
+	userId: pg
+		.text("user_id")
+		.primaryKey()
+		.references(() => user.id, { onDelete: "cascade" }),
+	revision: pg.integer("revision").notNull().default(0),
+});
+
+export const applicationLane = pg.pgTable(
+	"application_lane",
+	{
+		id: pg
+			.text("id")
+			.primaryKey()
+			.$defaultFn(() => generateId()),
+		userId: pg
+			.text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		category: pg.text("category").$type<ApplicationStatus>().notNull(),
+		label: pg.text("label"),
+		color: pg.text("color").notNull(),
+		position: pg.integer("position").notNull(),
+		systemKey: pg.text("system_key").$type<ApplicationStatus>(),
+		closedReason: pg.text("closed_reason").$type<ApplicationClosedReason>(),
+		retiredAt: pg.timestamp("retired_at", { withTimezone: true }),
+	},
+	(t) => [
+		pg.unique("application_lane_owner_id_unique").on(t.userId, t.id),
+		pg.unique("application_lane_owner_system_unique").on(t.userId, t.systemKey),
+		pg.index().on(t.userId),
+	],
+);
+
 // A tracked job application. Points at the live Reactive Resume that was sent (resumeId),
 // which is the reason this lives inside the product rather than a generic tracker.
 export const application = pg.pgTable(
@@ -33,6 +67,7 @@ export const application = pg.pgTable(
 		salary: pg.text("salary"),
 		// Fixed pipeline stage enum (see applicationStatusSchema); stored as text per repo convention.
 		status: pg.text("status").$type<ApplicationStatus>().notNull().default("saved"),
+		laneId: pg.text("lane_id"),
 		// Why a closed application ended (not selected, withdrew, accepted another offer, no response). Insights use it.
 		closedReason: pg.text("closed_reason").$type<ApplicationClosedReason>(),
 		// Live link to one of the user's resumes. Kept on resume delete (set null) so the
@@ -79,5 +114,14 @@ export const application = pg.pgTable(
 			.defaultNow()
 			.$onUpdate(() => /* @__PURE__ */ new Date()),
 	},
-	(t) => [pg.index().on(t.userId), pg.index().on(t.userId, t.updatedAt.desc())],
+	(t) => [
+		pg.index().on(t.userId),
+		pg.index().on(t.userId, t.updatedAt.desc()),
+		pg.foreignKey({
+			name: "application_lane_owner_fk",
+			columns: [t.userId, t.laneId],
+			foreignColumns: [applicationLane.userId, applicationLane.id],
+		}),
+		pg.index().on(t.userId, t.laneId),
+	],
 );

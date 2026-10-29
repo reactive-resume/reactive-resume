@@ -1,7 +1,9 @@
 import type { ApplicationSummary as Application } from "./types";
 import type { IconName } from "@/ui";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
+import type { ApplicationLane } from "@reactive-resume/schema/applications/lanes";
 import { plural, t } from "@lingui/core/macro";
+import { categorySince, laneSince } from "./history";
 import { getClosedReasonLabel } from "./stages";
 
 const isInterview = (entry: Application["activity"][number]): entry is InterviewTimelineEntry =>
@@ -12,7 +14,7 @@ const DAY_MS = 86_400_000;
 /** Days without a reply after applying before a follow-up is suggested. */
 const FOLLOW_UP_AFTER_DAYS = 10;
 
-type NextStepSource = Pick<Application, "status" | "activity" | "followUpAt" | "followUpNote" | "appliedAt">;
+type NextStepSource = Pick<Application, "status" | "activity" | "followUpAt" | "followUpNote" | "appliedAt" | "laneId">;
 
 /**
  * What an application needs next, derived rather than stored: the earliest interview still to come, else the
@@ -26,21 +28,20 @@ export type NextStep =
 	| { kind: "not-applied" }
 	| { kind: "closed" };
 
-/** When the application entered its current stage (its latest entry for that stage), or when it was added. */
-function stageSince(application: Pick<Application, "status" | "activity" | "appliedAt">): Date {
-	const entries = application.activity
-		.filter((entry) => entry.type === "stage" && entry.stage === application.status)
-		.map((entry) => new Date(entry.at).getTime());
-	return new Date(entries.length > 0 ? Math.max(...entries) : new Date(application.appliedAt).getTime());
-}
-
 const daysBetween = (from: Date, to: Date) => Math.max(0, Math.floor((to.getTime() - from.getTime()) / DAY_MS));
 
 /** Whole days the application has spent in its current stage. */
-export const daysInStage = (application: Pick<Application, "status" | "activity" | "appliedAt">, now = new Date()) =>
-	daysBetween(stageSince(application), now);
+export const daysInStage = (
+	application: Pick<Application, "status" | "activity" | "appliedAt" | "laneId">,
+	now = new Date(),
+	lanes: readonly ApplicationLane[] = [],
+) => daysBetween(laneSince(application, lanes), now);
 
-export function getNextStep(application: NextStepSource, now = new Date()): NextStep {
+export function getNextStep(
+	application: NextStepSource,
+	now = new Date(),
+	lanes: readonly ApplicationLane[] = [],
+): NextStep {
 	if (application.status === "closed") return { kind: "closed" };
 
 	const upcoming = application.activity
@@ -57,7 +58,10 @@ export function getNextStep(application: NextStepSource, now = new Date()): Next
 
 	if (application.status === "saved") return { kind: "not-applied" };
 
-	const days = daysInStage(application, now);
+	const days =
+		application.status === "applied"
+			? daysBetween(categorySince(application), now)
+			: daysInStage(application, now, lanes);
 	if (application.status === "applied" && days >= FOLLOW_UP_AFTER_DAYS) return { kind: "no-reply", days };
 	return { kind: "waiting", days };
 }

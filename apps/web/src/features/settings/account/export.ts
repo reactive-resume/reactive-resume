@@ -10,13 +10,15 @@ const json = (value: unknown) => strToU8(`${JSON.stringify(value, null, 2)}\n`);
 const fileName = (name: string, id: string) => `${slugify(name)}-${id}.json`;
 
 /**
- * "Export everything": account, documents, applications and career records, including source metadata and conversations.
+ * "Export everything": account, documents, applications with their stages, and career records, including source metadata and conversations.
  * Extract the archive to import individual resumes and letters; the other files are records. Attachments remain references.
  */
 export function buildAccountZip(data: AccountExport): Uint8Array {
 	const files: Record<string, Uint8Array> = {
 		"account.json": json({ exportedAt: data.exportedAt, user: data.user }),
 		"applications.json": json(data.applications),
+		// Stage definitions, including removed ones that history still names. Servers before custom stages omit them.
+		...(data.applicationPipeline ? { "application-stages.json": json(data.applicationPipeline) } : {}),
 		"career.json": json(data.career),
 		"ai-content-reports.json": json(data.aiContentReports),
 	};

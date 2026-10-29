@@ -13,8 +13,21 @@ const mocks = vi.hoisted(() => {
 	const deleteFn = vi.fn((_table: unknown) => ({
 		where: deleteWhere,
 	}));
-	const transaction = vi.fn(async (cb: (tx: unknown) => Promise<unknown>) => cb({ update, delete: deleteFn }));
-	return { update, updateSet, updateWhere, delete: deleteFn, deleteWhere, transaction };
+	const select = vi.fn(() => ({
+		from: (table: unknown) => {
+			const rows =
+				table === schema.user
+					? [{ id: "fixture-owner" }]
+					: table === schema.application
+						? [{ id: "guest-application", status: "saved", laneId: null, activity: [] }]
+						: [];
+			return { where: () => Object.assign(Promise.resolve(rows), { for: () => Promise.resolve(rows) }) };
+		},
+	}));
+	const insert = vi.fn(() => ({ values: () => ({ onConflictDoNothing: () => Promise.resolve() }) }));
+	const tx = { select, insert, update, delete: deleteFn };
+	const transaction = vi.fn(async (cb: (tx: unknown) => Promise<unknown>) => cb(tx));
+	return { update, updateSet, updateWhere, delete: deleteFn, deleteWhere, transaction, tx };
 });
 
 vi.mock("better-auth", async (importOriginal) => ({
@@ -52,7 +65,7 @@ describe("linkAnonymousAccount", () => {
 			};
 		});
 		mocks.transaction.mockImplementationOnce(async (cb) => {
-			const result = await cb({ update: mocks.update, delete: mocks.delete });
+			const result = await cb(mocks.tx);
 			events.push("commit");
 			return result;
 		});
@@ -97,7 +110,9 @@ describe("linkAnonymousAccount", () => {
 		// Check resume update includes data rewrite
 		const resumeUpdateCall = mocks.update.mock.calls.find((call) => call[0] === schema.resume);
 		expect(resumeUpdateCall).toBeDefined();
-		const resumeSetArg = mocks.updateSet.mock.calls[0]?.[0];
+		const resumeSetArg = mocks.updateSet.mock.calls.find(
+			(_, idx) => mocks.update.mock.calls[idx]?.[0] === schema.resume,
+		)?.[0];
 		expect(resumeSetArg).toMatchObject({ userId: "user-456" });
 		expect(resumeSetArg).toHaveProperty("data");
 

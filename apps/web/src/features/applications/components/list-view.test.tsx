@@ -12,6 +12,13 @@ const mocks = vi.hoisted(() => ({ breakpoint: "desktop", invalidate: vi.fn() }))
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		applications: {
+			lanes: {
+				get: {
+					queryOptions: () => ({ queryKey: ["lanes"], queryFn: () => new Promise(() => {}) }),
+					queryKey: () => ["lanes"],
+				},
+			},
+			priorNoResponse: { queryOptions: () => ({ queryKey: ["prior"], queryFn: async () => [] }) },
 			bulkUpdate: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 			bulkDelete: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 		},

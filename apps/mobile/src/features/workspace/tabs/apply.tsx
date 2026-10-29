@@ -32,6 +32,7 @@ import { orpc } from "@/api/client";
 import { getDraftScope } from "@/draft";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { useUserTime } from "@/features/application-detail/hooks";
+import { PriorNoResponse } from "@/features/applications/prior-no-response";
 import { useInvalidateApplications } from "@/features/applications/queries";
 import { withUndo } from "@/features/career/undo";
 import { Banner, Button, Chip, IconButton, ListRow, Sheet, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
@@ -516,6 +517,7 @@ function Checklist({
 
 	return (
 		<Block title={t`Before you submit`} trailing={<Text variant="mono" color="ink2">{t`${done} of ${total}`}</Text>}>
+			{!submitted && !readOnly ? <PriorNoResponse company={application.company} excludeId={application.id} /> : null}
 			<Progress value={done / total} label={t`Checklist progress`} />
 			<View>
 				{items.map((label, index) =>

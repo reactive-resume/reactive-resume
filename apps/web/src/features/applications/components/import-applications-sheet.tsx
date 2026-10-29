@@ -1,7 +1,7 @@
 import type { CsvField } from "../csv";
 import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -18,9 +18,25 @@ import {
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
-import { autoMapHeaders, CSV_FIELDS, mapCsvToApplications, parseCsv, rowsToCsv } from "../csv";
+import {
+	applyLaneMapping,
+	autoMapHeaders,
+	collectCsvLanes,
+	compatibleLanes,
+	CSV_FIELDS,
+	mapCsvToApplications,
+	parseCsv,
+	rowsToCsv,
+	suggestLane,
+} from "../csv";
+import { getLaneLabel, LANE_COLORS } from "../lanes";
+import { getClosedReasonLabel, getStageLabel } from "../stages";
 import { useInvalidateApplications } from "../use-application-actions";
-import { orpc } from "@/libs/orpc/client";
+import { applicationLanesQueryKey, useApplicationLanes } from "../use-application-lanes";
+import { client } from "@/libs/orpc/client";
+
+/** A CSV lane's choice: one of this account's lanes, or a new one with the CSV's name. */
+const NEW_LANE = "new";
 
 const MAX_IMPORT = 500;
 const SAMPLE =
@@ -46,6 +62,9 @@ const fieldLabel = (field: CsvField) =>
 		contactEmail: t`Contact email`,
 		contactPhone: t`Contact phone`,
 		archived: t`Archived (closes it)`,
+		laneLabel: t`Stage name`,
+		laneCategory: t`Stage counts as`,
+		laneClosedReason: t`Stage outcome`,
 		contacts: t`Contacts`,
 	})[field];
 
@@ -57,8 +76,12 @@ type ImportSheetProps = { open: boolean; onOpenChange: (open: boolean) => void }
  */
 export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps) {
 	const invalidate = useInvalidateApplications();
+	const queryClient = useQueryClient();
+	const { lanes, revision, mode, unsupported, refetch } = useApplicationLanes();
 	const [text, setText] = useState("");
 	const [overrides, setOverrides] = useState<Record<number, CsvField | null>>({});
+	const [laneChoices, setLaneChoices] = useState<Record<string, string>>({});
+	const [needsStageRefresh, setNeedsStageRefresh] = useState(false);
 	const fileRef = useRef<HTMLInputElement>(null);
 
 	const table = text.trim() ? parseCsv(text) : null;
@@ -71,15 +94,62 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 	// The import endpoint takes 500 at a time; the rest is reported rather than refused.
 	const importable = result ? result.rows.slice(0, MAX_IMPORT) : [];
 	const overflow = (result?.rows.length ?? 0) - importable.length;
+	// Every named lane is matched on purpose: a suggestion by name, else the person picks or creates one.
+	const csvLanes = mode === "lanes" ? collectCsvLanes(importable) : [];
+	const choiceFor = (lane: (typeof csvLanes)[number]) => laneChoices[lane.key] ?? suggestLane(lane, lanes) ?? "";
+	const unmatched = csvLanes.filter((lane) => !choiceFor(lane)).length;
+	const hasNamedStages = importable.some((row) => row.lane);
+	const stagesUnresolved = hasNamedStages && ((mode !== "lanes" && !unsupported) || needsStageRefresh);
+	const droppedLaneNames = unsupported && hasNamedStages;
+	const refreshStages = async () => {
+		const result = await refetch();
+		if (result.isSuccess) setNeedsStageRefresh(false);
+	};
 
 	const reset = () => {
 		setText("");
 		setOverrides({});
+		setLaneChoices({});
+		setNeedsStageRefresh(false);
 		if (fileRef.current) fileRef.current.value = "";
 	};
 
 	const importMutation = useMutation({
-		...orpc.applications.import.mutationOptions(),
+		mutationFn: async () => {
+			if (stagesUnresolved) throw new Error("Load application stages before importing named stages.");
+			const laneIds = new Map<string, string>();
+			const before = new Set(lanes.map((item) => item.id));
+			let expectedRevision = revision;
+			for (const [index, lane] of csvLanes.entries()) {
+				const choice = choiceFor(lane);
+				if (choice !== NEW_LANE) {
+					laneIds.set(lane.key, choice);
+					continue;
+				}
+				const pipeline = await client.applications.lanes.create({
+					expectedRevision,
+					label: lane.label,
+					category: lane.category,
+					closedReason: lane.closedReason,
+					color: LANE_COLORS[(index + 6) % LANE_COLORS.length] ?? LANE_COLORS[0],
+				});
+				queryClient.setQueryData(applicationLanesQueryKey(), pipeline);
+				expectedRevision = pipeline.revision;
+				const created = pipeline.lanes.find(
+					(item) =>
+						!before.has(item.id) &&
+						item.label === lane.label &&
+						item.category === lane.category &&
+						item.closedReason === lane.closedReason,
+				);
+				if (!created) throw new Error("The new application stage wasn't returned. Refresh stages and try again.");
+				laneIds.set(lane.key, created.id);
+				before.add(created.id);
+				// Successful stage creation survives a later failure in the same import attempt.
+				setLaneChoices((current) => ({ ...current, [lane.key]: created.id }));
+			}
+			return client.applications.import({ items: applyLaneMapping(importable, laneIds) });
+		},
 		onSuccess: (response) => {
 			invalidate();
 			const skipped = result?.skipped ?? 0;
@@ -91,7 +161,18 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 			});
 			onOpenChange(false);
 		},
-		onError: () => toast.add({ type: "error", description: t`Import failed. Check the CSV and try again.` }),
+		onError: async () => {
+			invalidate();
+			if (csvLanes.length > 0) {
+				setNeedsStageRefresh(true);
+				// A lost create response may have committed. Refresh and require the user to match it before retrying.
+				setLaneChoices((current) =>
+					Object.fromEntries(Object.entries(current).map(([key, value]) => [key, value === NEW_LANE ? "" : value])),
+				);
+				await refreshStages();
+			}
+			toast.add({ type: "error", description: t`Import failed. Check the CSV and try again.` });
+		},
 	});
 
 	const downloadSkipped = () => {
@@ -143,6 +224,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 									?.text()
 									.then((value) => {
 										setOverrides({});
+										setLaneChoices({});
 										setText(value);
 									})
 									.catch(() =>
@@ -167,10 +249,22 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 							className="font-mono text-xs"
 							onChange={(event) => {
 								setOverrides({});
+								setLaneChoices({});
 								setText(event.target.value);
 							}}
 						/>
 					</div>
+
+					{stagesUnresolved && (
+						<div role="alert" className="grid gap-2 rounded-lg border border-line p-3 text-sm">
+							<p>
+								<Trans>Load your stages before importing named stages. Your CSV data is kept.</Trans>
+							</p>
+							<Button size="sm" variant="secondary" onClick={() => void refreshStages()}>
+								<Trans>Retry</Trans>
+							</Button>
+						</div>
+					)}
 
 					{result && headers.length > 0 && (
 						<section aria-labelledby="import-columns" className="grid gap-2">
@@ -205,6 +299,54 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 									</li>
 								))}
 							</ul>
+
+							{csvLanes.length > 0 && (
+								<div className="grid gap-1.5 pt-2">
+									<h3 className="text-sm font-semibold">
+										<Trans>Stages</Trans>
+									</h3>
+									<p className="text-xs text-ink-3">
+										<Trans>Choose where each stage named in the file goes, or add it as a new stage.</Trans>
+									</p>
+									<ul className="grid gap-1.5">
+										{csvLanes.map((lane) => {
+											const hint =
+												lane.category === "closed" && lane.closedReason
+													? `${getStageLabel("closed")} · ${getClosedReasonLabel(lane.closedReason)}`
+													: getStageLabel(lane.category);
+											return (
+												<li
+													key={lane.key}
+													className="grid grid-cols-[minmax(0,1fr)_16px_minmax(0,1fr)] items-center gap-2 text-sm"
+												>
+													<span className="grid min-w-0">
+														<span className="truncate">{lane.label}</span>
+														<span className="truncate text-xs text-ink-3">{hint}</span>
+													</span>
+													<Icon name="arrow-right" size={16} className="text-ink-3" />
+													<NativeSelect
+														aria-label={t`Stage ${lane.label} goes to`}
+														value={choiceFor(lane)}
+														onChange={(event) =>
+															setLaneChoices((current) => ({ ...current, [lane.key]: event.target.value }))
+														}
+													>
+														<option value="" disabled>
+															{t`Choose a stage`}
+														</option>
+														{compatibleLanes(lane, lanes).map((option) => (
+															<option key={option.id} value={option.id}>
+																{getLaneLabel(option)}
+															</option>
+														))}
+														<option value={NEW_LANE}>{t`Add “${lane.label}” as a new stage`}</option>
+													</NativeSelect>
+												</li>
+											);
+										})}
+									</ul>
+								</div>
+							)}
 
 							<div className="grid gap-1 rounded-lg border border-line p-3 text-sm">
 								{result.invalidValues.length > 0 && (
@@ -256,6 +398,20 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 										/>
 									</p>
 								)}
+								{unmatched > 0 && (
+									<p className="text-xs text-warn-text">
+										<Plural
+											value={unmatched}
+											one="Choose where # stage goes before importing."
+											other="Choose where # stages go before importing."
+										/>
+									</p>
+								)}
+								{droppedLaneNames && (
+									<p className="text-xs text-ink-3">
+										<Trans>This server uses the standard stages, so stage names in the file aren't kept.</Trans>
+									</p>
+								)}
 								{overflow > 0 && (
 									<p className="text-xs text-warn-text">
 										<Trans>
@@ -274,9 +430,15 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 						<Trans>Cancel</Trans>
 					</Button>
 					<Button
-						disabled={importable.length === 0 || (result?.invalidValues.length ?? 0) > 0 || importMutation.isPending}
+						disabled={
+							importable.length === 0 ||
+							(result?.invalidValues.length ?? 0) > 0 ||
+							unmatched > 0 ||
+							stagesUnresolved ||
+							importMutation.isPending
+						}
 						onClick={() => {
-							if (!result?.invalidValues.length) importMutation.mutate({ items: importable });
+							if (!result?.invalidValues.length && unmatched === 0 && !stagesUnresolved) importMutation.mutate();
 						}}
 					>
 						<Plural value={importable.length} one="Import # application" other="Import # applications" />

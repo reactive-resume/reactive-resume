@@ -1,3 +1,4 @@
+import type { ApplicationLane } from "../lanes";
 import type { Application, ApplicationSummary } from "../types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
@@ -27,10 +28,12 @@ import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@reactive-res
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
-import { daysInStage } from "../next-step";
+import { getCategoryLane, getDisplayLane, getLaneLabel, getNextLane, laneMoveInput } from "../lanes";
+import { daysInLane } from "../next-step";
 import { applicationDetailQueryOptions, getInitialApplicationDetail } from "../queries";
-import { getClosedReasonLabel, getNextStage, getStageColor, getStageLabel, PIPELINE } from "../stages";
+import { getClosedReasonLabel } from "../stages";
 import { useApplicationActions, useInvalidateApplications } from "../use-application-actions";
+import { useApplicationLanes } from "../use-application-lanes";
 import { ApplicationNotes } from "./application-notes";
 import { Activity } from "./detail/activity";
 import { CloseDialog } from "./detail/close-dialog";
@@ -38,6 +41,7 @@ import { Contacts } from "./detail/contacts";
 import { NextStepCard } from "./detail/next-step-card";
 import { SentDocuments } from "./detail/sent-documents";
 import { InterviewDialog } from "./interview-dialog";
+import { PriorNoResponseNotice } from "./prior-no-response-notice";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getOrpcErrorMessage } from "@/libs/error-message";
@@ -110,18 +114,27 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 	const { i18n } = useLingui();
 	const confirm = useConfirm();
 	const { moveTo, close, remove } = useApplicationActions();
+	const { lanes, active } = useApplicationLanes();
 	const [interview, setInterview] = useState<{ open: boolean; entry: InterviewTimelineEntry | null }>({
 		open: false,
 		entry: null,
 	});
 	const [closing, setClosing] = useState(false);
 	const [postingOpen, setPostingOpen] = useState(false);
-	const [applying, setApplying] = useState(false);
+	const [applying, setApplying] = useState<ApplicationLane | null>(null);
 
-	const next = getNextStage(application.status);
-	const reached = PIPELINE.indexOf(application.status);
-	const since = daysInStage(application);
+	const current = getDisplayLane(lanes, application);
+	const steps = active.filter((lane) => lane.category !== "closed");
+	const next = getNextLane(lanes, current);
+	const reached = steps.findIndex((lane) => lane.id === current.id);
+	const since = daysInLane(application);
 	const closed = application.status === "closed";
+	// Leaving Saved for Applied records the submission first.
+	const goTo = (lane: ApplicationLane) => {
+		if (lane.id === current.id) return;
+		if (application.status === "saved" && lane.category === "applied") setApplying(lane);
+		else moveTo(application, lane);
+	};
 
 	const onDelete = async () => {
 		const confirmed = await confirm(t`Delete this application?`, {
@@ -195,46 +208,44 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 					</div>
 
 					<div className="grid gap-2.5">
-						<ol aria-label={t`Stages`} className="grid grid-cols-5 gap-1.5">
-							{PIPELINE.map((stage, index) => (
-								<li key={stage}>
-									<button
-										type="button"
-										aria-current={stage === application.status ? "step" : undefined}
-										onClick={() => {
-											if (stage === application.status) return;
-											if (application.status === "saved" && stage === "applied") setApplying(true);
-											else moveTo(application, stage);
-										}}
-										className="grid w-full gap-1.5 text-start"
-									>
-										<span
-											className="h-1.5 rounded-sm transition-colors duration-standard"
-											style={{
-												background: !closed && index <= reached ? getStageColor(stage) : "var(--line)",
-											}}
-										/>
-										<span
-											className={cn(
-												"truncate text-[11px]",
-												stage === application.status ? "font-semibold text-ink" : "text-ink-3",
-											)}
+						{/* Equal columns while they fit (five by default); more lanes scroll sideways. */}
+						<ol
+							aria-label={t`Stages`}
+							className="-mx-1 grid auto-cols-[minmax(64px,1fr)] grid-flow-col gap-1.5 overflow-x-auto px-1 pb-1"
+						>
+							{steps.map((lane, index) => {
+								const label = getLaneLabel(lane);
+								return (
+									<li key={lane.id} className="min-w-0">
+										<button
+											type="button"
+											title={label}
+											aria-current={lane.id === current.id ? "step" : undefined}
+											onClick={() => goTo(lane)}
+											className="grid w-full gap-1.5 text-start"
 										>
-											{getStageLabel(stage)}
-										</span>
-									</button>
-								</li>
-							))}
+											<span
+												className="h-1.5 rounded-sm transition-colors duration-standard"
+												style={{ background: !closed && index <= reached ? lane.color : "var(--line)" }}
+											/>
+											<span
+												className={cn(
+													"truncate text-[11px]",
+													lane.id === current.id ? "font-semibold text-ink" : "text-ink-3",
+												)}
+											>
+												{label}
+											</span>
+										</button>
+									</li>
+								);
+							})}
 						</ol>
 						<div className="flex flex-wrap items-center justify-between gap-2">
-							<span className="flex items-center gap-1.5 text-sm">
-								<span
-									aria-hidden="true"
-									className="size-2 rounded-sm"
-									style={{ background: getStageColor(application.status) }}
-								/>
-								<strong className="font-semibold">{getStageLabel(application.status)}</strong>
-								<span className="text-ink-3">
+							<span className="flex min-w-0 items-center gap-1.5 text-sm">
+								<span aria-hidden="true" className="size-2 shrink-0 rounded-sm" style={{ background: current.color }} />
+								<strong className="truncate font-semibold">{getLaneLabel(current)}</strong>
+								<span className="shrink-0 text-ink-3">
 									{closed && application.closedReason ? (
 										<>· {getClosedReasonLabel(application.closedReason)}</>
 									) : (
@@ -245,15 +256,11 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 								</span>
 							</span>
 							{next && !closed && (
-								<Button
-									size="sm"
-									variant="secondary"
-									onClick={() => (application.status === "saved" ? setApplying(true) : moveTo(application, next))}
-								>
-									{application.status === "saved" ? (
+								<Button size="sm" variant="secondary" onClick={() => goTo(next)}>
+									{application.status === "saved" && next.category === "applied" ? (
 										<Trans>Mark as applied</Trans>
 									) : (
-										<Trans>Move to {getStageLabel(next)}</Trans>
+										<Trans>Move to {getLaneLabel(next)}</Trans>
 									)}
 									<Icon name="arrow-right" size={16} />
 								</Button>
@@ -295,13 +302,18 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 						<OpenWorkspaceButton application={application} />
 					</>
 				) : (
-					<Button variant="secondary" onClick={() => moveTo(application, "applied")}>
+					<Button variant="secondary" onClick={() => moveTo(application, getCategoryLane(lanes, "applied"))}>
 						<Trans>Reopen</Trans>
 					</Button>
 				)}
 			</footer>
 
-			<CloseDialog open={closing} onOpenChange={setClosing} onClose={(reason) => close(application, reason)} />
+			<CloseDialog
+				open={closing}
+				onOpenChange={setClosing}
+				lanes={active}
+				onClose={(lane, reason) => (lane ? moveTo(application, lane, reason) : reason && close(application, reason))}
+			/>
 			<InterviewDialog
 				application={application}
 				interview={interview.entry}
@@ -309,7 +321,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 				onOpenChange={(open) => setInterview((currentValue) => ({ ...currentValue, open }))}
 			/>
 			<PostingDialog application={application} open={postingOpen} onOpenChange={setPostingOpen} />
-			{applying && <MarkAppliedDialog application={application} onClose={() => setApplying(false)} />}
+			{applying && <MarkAppliedDialog application={application} lane={applying} onClose={() => setApplying(null)} />}
 		</>
 	);
 }
@@ -467,11 +479,12 @@ function Tags({ application }: { application: Application }) {
 
 type PostingDialogProps = { application: Application; open: boolean; onOpenChange: (open: boolean) => void };
 
-type MarkAppliedDialogProps = { application: Application; onClose: () => void };
+type MarkAppliedDialogProps = { application: Application; lane: ApplicationLane; onClose: () => void };
 
-function MarkAppliedDialog({ application, onClose }: MarkAppliedDialogProps) {
+function MarkAppliedDialog({ application, lane, onClose }: MarkAppliedDialogProps) {
 	const id = useId();
 	const invalidate = useInvalidateApplications();
+	const { mode } = useApplicationLanes();
 	const [date, setDate] = useState(() => new Date().toLocaleDateString("en-CA"));
 	const [resumeId, setResumeId] = useState(application.resumeId ?? "");
 	const [coverLetterId, setCoverLetterId] = useState(application.coverLetterId ?? "");
@@ -499,7 +512,7 @@ function MarkAppliedDialog({ application, onClose }: MarkAppliedDialogProps) {
 						event.preventDefault();
 						update.mutate({
 							id: application.id,
-							status: "applied",
+							...laneMoveInput(lane, mode),
 							stageEnteredAt: date,
 							resumeId: resumeId || null,
 							coverLetterId: coverLetterId || null,
@@ -518,6 +531,7 @@ function MarkAppliedDialog({ application, onClose }: MarkAppliedDialogProps) {
 							</Trans>
 						</DialogDescription>
 					</DialogHeader>
+					<PriorNoResponseNotice company={application.company} excludeId={application.id} />
 					<div className="grid gap-1.5">
 						<label htmlFor={`${id}-date`}>
 							<Trans>Application date</Trans>

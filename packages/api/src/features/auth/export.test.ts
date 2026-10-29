@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
 	predicates: [] as unknown[],
 	getLetter: vi.fn(),
 	exportCareer: vi.fn(),
+	getPipeline: vi.fn(),
 }));
 vi.mock("@reactive-resume/db/client", () => ({ db: { select: mocks.select } }));
 vi.mock("@reactive-resume/db/schema", () => ({
@@ -21,6 +22,7 @@ vi.mock("@reactive-resume/env/server", () => ({ env: {} }));
 vi.mock("@reactive-resume/auth/config", () => ({ isCustomOAuthProviderEnabled: () => false }));
 vi.mock("../storage/service", () => ({ getStorageService: vi.fn() }));
 vi.mock("../cover-letters/service", () => ({ coverLetterService: { getById: mocks.getLetter } }));
+vi.mock("../applications/lanes", () => ({ applicationLaneService: { get: mocks.getPipeline } }));
 vi.mock("../career/service", () => ({ careerService: { exportData: mocks.exportCareer } }));
 const { authService } = await import("./service");
 
@@ -28,6 +30,7 @@ describe("account backup", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mocks.predicates.length = 0;
+		mocks.getPipeline.mockResolvedValue({ revision: 0, lanes: [] });
 	});
 
 	it.each([false, true])(
@@ -100,6 +103,8 @@ describe("account backup", () => {
 			expect(mocks.predicates).toContainEqual({ column: "coverLetter.userId", value: "owner" });
 			expect(mocks.exportCareer).toHaveBeenCalledExactlyOnceWith("owner");
 			expect(exported.career).toEqual(career);
+			expect(exported.applicationPipeline).toEqual({ revision: 0, lanes: [] });
+			expect(mocks.getPipeline).toHaveBeenCalledExactlyOnceWith("owner");
 			expect(exported.aiContentReports).toEqual([{ id: "report", userId: "owner", content: "Reported output" }]);
 			expect(mocks.predicates).toContainEqual({ column: "aiContentReport.userId", value: "owner" });
 		},

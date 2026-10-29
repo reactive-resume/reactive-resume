@@ -4,7 +4,7 @@ import { and, desc, eq } from "drizzle-orm";
 import z from "zod";
 import { careerSystemPromptTemplate } from "@reactive-resume/ai/prompts";
 import { db } from "@reactive-resume/db/client";
-import { application, careerArtifact } from "@reactive-resume/db/schema";
+import { application, applicationLane, careerArtifact } from "@reactive-resume/db/schema";
 import { careerStoryInputSchema, factCategorySchema } from "@reactive-resume/schema/career";
 import { careerService, modelFact } from "./service";
 
@@ -175,11 +175,18 @@ export function buildCareerTools(input: CareerToolsInput): ToolSet {
 						company: application.company,
 						role: application.role,
 						status: application.status,
+						laneId: application.laneId,
+						laneLabel: applicationLane.label,
+						closedReason: application.closedReason,
 						location: application.location,
 						salary: application.salary,
 						requirements: application.requirements,
 					})
 					.from(application)
+					.leftJoin(
+						applicationLane,
+						and(eq(applicationLane.id, application.laneId), eq(applicationLane.userId, input.userId)),
+					)
 					.where(eq(application.userId, input.userId))
 					.orderBy(desc(application.updatedAt))
 					.limit(50),

@@ -1,5 +1,5 @@
+import type { ApplicationLane } from "../lanes";
 import type { ApplicationSummary } from "../types";
-import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
@@ -21,9 +21,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/com
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
+import { getCategoryLane, getDisplayLane, getLaneLabel, laneMoveInput } from "../lanes";
 import { describeNextStep, getNextStep } from "../next-step";
-import { CLOSED_REASONS, getClosedReasonLabel, getStageColor, getStageLabel, LIST_ORDER, PIPELINE } from "../stages";
+import { LIST_ORDER } from "../stages";
 import { useInvalidateApplications } from "../use-application-actions";
+import { useApplicationLanes } from "../use-application-lanes";
+import { ClosedLaneItems } from "./application-actions-menu";
 import { useConfirm } from "@/hooks/use-confirm";
 import { formatRelativeTime } from "@/libs/locale";
 import { D2, EASE, EXIT } from "@/libs/motion";
@@ -55,24 +58,26 @@ type ListViewProps = {
 };
 
 /**
- * The default view: applications grouped by stage in the order that needs you first (Interview, Offer, Screening,
- * Applied, Saved, then Closed when shown). Groups collapse, headers sort within groups, and row checkboxes select
+ * The default view: applications grouped by lane, by the stage that needs you first (Interview, Offer, Screening,
+ * Applied, Saved, then Closed when shown) and in the owner's lane order within a stage. Groups collapse, headers sort within groups, and row checkboxes select
  * for bulk moves, tags, closing and deleting. Phones get two-line rows.
  */
 export function ApplicationList({ applications, showClosed, selectedId, onOpen }: ListViewProps) {
 	const breakpoint = useBreakpoint();
 	const phone = breakpoint === "mobile";
-	const [collapsed, setCollapsed] = useState<ReadonlySet<ApplicationStatus>>(new Set());
+	const { lanes, active } = useApplicationLanes();
+	const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
 	const [sort, setSort] = useState<Sort>({ key: "updated", direction: "desc" });
 	const [checked, setChecked] = useState<ReadonlySet<string>>(new Set());
 
+	const laneOf = (application: ApplicationSummary) => getDisplayLane(lanes, application);
 	// Selections only cover what's on screen.
 	const checkedIds = applications
 		.filter(
 			(application) =>
 				checked.has(application.id) &&
 				(application.status !== "closed" || showClosed) &&
-				!collapsed.has(application.status),
+				!collapsed.has(laneOf(application).id),
 		)
 		.map((application) => application.id);
 	if (checkedIds.length !== checked.size) setChecked(new Set(checkedIds));
@@ -81,21 +86,27 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 		const sign = sort.direction === "asc" ? 1 : -1;
 		const keys = new Map(applications.map((application) => [application.id, sortValue[sort.key](application)]));
 		const key = (application: ApplicationSummary) => keys.get(application.id) ?? 0;
+		const rowsByLane = new Map<string, ApplicationSummary[]>();
+		for (const application of applications) {
+			const id = getDisplayLane(lanes, application).id;
+			const rows = rowsByLane.get(id);
+			if (rows) rows.push(application);
+			else rowsByLane.set(id, [application]);
+		}
 		return LIST_ORDER.filter((status) => status !== "closed" || showClosed)
-			.map((status) => ({
-				status,
-				rows: applications
-					.filter((application) => application.status === status)
-					.sort(
-						(a, b) =>
-							sign * compareValues(key(a), key(b)) ||
-							(sort.key === "role" ? sign * a.company.localeCompare(b.company) : 0),
-					),
+			.flatMap((status) => active.filter((lane) => lane.category === status))
+			.map((lane) => ({
+				lane,
+				rows: (rowsByLane.get(lane.id) ?? []).sort(
+					(a, b) =>
+						sign * compareValues(key(a), key(b)) ||
+						(sort.key === "role" ? sign * a.company.localeCompare(b.company) : 0),
+				),
 			}))
 			.filter((group) => group.rows.length > 0);
-	}, [applications, showClosed, sort]);
+	}, [applications, showClosed, sort, lanes, active]);
 
-	const toggleGroup = (status: ApplicationStatus) =>
+	const toggleGroup = (status: string) =>
 		setCollapsed((current) => {
 			const next = new Set(current);
 			if (next.has(status)) next.delete(status);
@@ -159,11 +170,11 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 					</thead>
 				)}
 
-				{groups.map(({ status, rows }) => {
-					const open = !collapsed.has(status);
-					const groupId = `applications-group-${status}`;
+				{groups.map(({ lane, rows }) => {
+					const open = !collapsed.has(lane.id);
+					const groupId = `applications-group-${lane.id}`;
 					return (
-						<tbody key={status} aria-labelledby={groupId}>
+						<tbody key={lane.id} aria-labelledby={groupId}>
 							<tr>
 								<th
 									scope="colgroup"
@@ -174,8 +185,8 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 										type="button"
 										id={groupId}
 										aria-expanded={open}
-										onClick={() => toggleGroup(status)}
-										className="flex h-9 items-center gap-2 rounded-md px-1.5 text-sm font-semibold transition-colors hover:bg-hover"
+										onClick={() => toggleGroup(lane.id)}
+										className="flex h-9 max-w-full min-w-0 items-center gap-2 rounded-md px-1.5 text-sm font-semibold transition-colors hover:bg-hover"
 									>
 										<Icon
 											name="caret-right"
@@ -184,10 +195,10 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 										/>
 										<span
 											aria-hidden="true"
-											className="size-2 rounded-sm"
-											style={{ background: getStageColor(status) }}
+											className="size-2 shrink-0 rounded-sm"
+											style={{ background: lane.color }}
 										/>
-										{getStageLabel(status)}
+										<span className="truncate">{getLaneLabel(lane)}</span>
 										<span className="font-mono text-xs font-normal text-ink-3">{rows.length}</span>
 									</button>
 								</th>
@@ -197,6 +208,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 									<ApplicationRow
 										key={application.id}
 										application={application}
+										lane={lane}
 										phone={phone}
 										selected={application.id === selectedId}
 										checked={checked.has(application.id)}
@@ -230,6 +242,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 
 type ApplicationRowProps = {
 	application: ApplicationSummary;
+	lane: ApplicationLane;
 	phone: boolean;
 	selected: boolean;
 	checked: boolean;
@@ -240,6 +253,7 @@ type ApplicationRowProps = {
 // Memoized with id-taking callbacks, so one row's change doesn't re-render the other rows.
 const ApplicationRow = memo(function ApplicationRow({
 	application,
+	lane,
 	phone,
 	selected,
 	checked,
@@ -318,13 +332,9 @@ const ApplicationRow = memo(function ApplicationRow({
 				</span>
 			</td>
 			<td className="px-2 max-xl:hidden">
-				<span className="flex items-center gap-1.5 text-ink-2">
-					<span
-						aria-hidden="true"
-						className="size-2 rounded-sm"
-						style={{ background: getStageColor(application.status) }}
-					/>
-					{getStageLabel(application.status)}
+				<span className="flex min-w-0 items-center gap-1.5 text-ink-2">
+					<span aria-hidden="true" className="size-2 shrink-0 rounded-sm" style={{ background: lane.color }} />
+					<span className="truncate">{getLaneLabel(lane)}</span>
 				</span>
 			</td>
 			<td className="px-2">
@@ -352,6 +362,7 @@ type BulkBarProps = { ids: string[]; onDone: () => void };
 function BulkBar({ ids, onDone }: BulkBarProps) {
 	const invalidate = useInvalidateApplications();
 	const confirm = useConfirm();
+	const { lanes, active, mode } = useApplicationLanes();
 	const [tag, setTag] = useState("");
 
 	const bulkUpdate = useMutation({
@@ -393,12 +404,14 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 					<Trans>Move to…</Trans>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="start">
-					{PIPELINE.map((status) => (
-						<DropdownMenuItem key={status} onClick={() => bulkUpdate.mutate({ ids, status })}>
-							<span aria-hidden="true" className="size-2 rounded-sm" style={{ background: getStageColor(status) }} />
-							{getStageLabel(status)}
-						</DropdownMenuItem>
-					))}
+					{active
+						.filter((lane) => lane.category !== "closed")
+						.map((lane) => (
+							<DropdownMenuItem key={lane.id} onClick={() => bulkUpdate.mutate({ ids, ...laneMoveInput(lane, mode) })}>
+								<span aria-hidden="true" className="size-2 shrink-0 rounded-sm" style={{ background: lane.color }} />
+								<span className="truncate">{getLaneLabel(lane)}</span>
+							</DropdownMenuItem>
+						))}
 				</DropdownMenuContent>
 			</DropdownMenu>
 
@@ -430,14 +443,16 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 					<Trans>Close…</Trans>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="start">
-					{CLOSED_REASONS.map((reason) => (
-						<DropdownMenuItem
-							key={reason}
-							onClick={() => bulkUpdate.mutate({ ids, status: "closed", closedReason: reason })}
-						>
-							{getClosedReasonLabel(reason)}
-						</DropdownMenuItem>
-					))}
+					<ClosedLaneItems
+						lanes={active}
+						onPick={(lane, reason) =>
+							bulkUpdate.mutate(
+								lane
+									? { ids, ...laneMoveInput(lane, mode, reason) }
+									: { ids, ...laneMoveInput(getCategoryLane(lanes, "closed"), mode, reason ?? null) },
+							)
+						}
+					/>
 				</DropdownMenuContent>
 			</DropdownMenu>
 

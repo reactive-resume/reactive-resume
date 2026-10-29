@@ -2,7 +2,7 @@ import type { ApplicationClosedReason, ApplicationStatus } from "@reactive-resum
 import { t } from "@lingui/core/macro";
 import { STAGES } from "@reactive-resume/schema/applications/data";
 
-/** The stages an application moves through; closed ends it from any of them. */
+/** The standard stages an application moves through; closed ends it from any of them. Lanes map onto these. */
 export const PIPELINE: readonly ApplicationStatus[] = ["saved", "applied", "screening", "interview", "offer"];
 
 /** The list's group order: what needs you first, closed last. */
@@ -44,9 +44,3 @@ export const getClosedReasonLabel = (reason: ApplicationClosedReason) =>
 		"accepted-other": t`Accepted another offer`,
 		"no-response": t`No response`,
 	})[reason];
-
-/** The stage after this one in the pipeline, or null at Offer and for closed applications. */
-export function getNextStage(status: ApplicationStatus): ApplicationStatus | null {
-	const index = PIPELINE.indexOf(status);
-	return index === -1 ? null : (PIPELINE[index + 1] ?? null);
-}
