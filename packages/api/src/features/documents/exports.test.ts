@@ -1,10 +1,14 @@
 import { beforeEach, expect, it, vi } from "vite-plus/test";
 import { call } from "@orpc/server";
 import { unzipSync, strFromU8 } from "fflate";
+import { copyCoverLetterStyle, createCoverLetterResumeData } from "@reactive-resume/resume/cover-letter";
+import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 
 const getResume = vi.hoisted(() => vi.fn());
+const getLetter = vi.hoisted(() => vi.fn());
 vi.mock("../resume/service", () => ({ resumeService: { getById: getResume } }));
+vi.mock("../cover-letters/service", () => ({ coverLetterService: { getById: getLetter } }));
 vi.mock("@reactive-resume/auth/config", () => ({
 	auth: { api: { getSession: vi.fn().mockResolvedValue({ user: { id: "owner" } }) } },
 	verifyOAuthToken: vi.fn(),
@@ -47,4 +51,106 @@ it("exports an editable OpenDocument Text file", async () => {
 	const xml = strFromU8(content);
 	expect(xml).toContain("Ada Lovelace");
 	expect(xml).toContain("Builds analytical engines.");
+});
+
+function letterFixture(senderLinked = false) {
+	const data = structuredClone(defaultResumeData);
+	Object.assign(data.basics, {
+		name: "Ada Lovelace",
+		headline: "Analytical Engineer",
+		email: "ada@example.com",
+		phone: "+44 1234 567890",
+		location: "London",
+		website: { url: "https://example.com", label: "Portfolio" },
+		customFields: [{ id: "social", icon: "link", text: "Ada on GitHub", link: "https://github.com/example" }],
+	});
+	return coverLetterSchema.parse({
+		id: "letter-1",
+		name: "Engine letter",
+		recipient: "",
+		content: "<p>I build analytical engines.</p>",
+		layout: "structured",
+		recipientName: "Dana Reyes",
+		recipientCompany: "Engine Company",
+		letterDate: "2026-10-29",
+		style: copyCoverLetterStyle(data),
+		senderLinked,
+		designLinked: false,
+		sourceResumeId: senderLinked ? "resume-1" : null,
+		sourceApplicationId: null,
+		isLocked: false,
+		revision: 1,
+		createdAt: new Date(0),
+		updatedAt: new Date(0),
+	});
+}
+
+async function documentText(blob: Blob, format: "docx" | "odt") {
+	const files = unzipSync(new Uint8Array(await blob.arrayBuffer()));
+	const xml = files[format === "docx" ? "word/document.xml" : "content.xml"];
+	if (!xml) throw new Error("Missing document content");
+	return strFromU8(xml).replace(/<[^>]+>/g, "");
+}
+
+it.each(["docx", "odt"] as const)(
+	"preserves standalone sender and letter content in %s for API/native exports",
+	async (format) => {
+		// getById returns resolved style for linked senders and stored style for copied senders.
+		for (const senderLinked of [true, false]) {
+			for (const template of ["onyx", "chikorita", "gengar"] as const) {
+				const letter = letterFixture(senderLinked);
+				letter.style.metadata.template = template;
+				getLetter.mockResolvedValue(letter);
+				const response = await call(documentExports.letter, { id: letter.id, format }, { context });
+				const text = await documentText(response.body, format);
+				for (const value of [
+					"ada@example.com",
+					"Analytical Engineer",
+					"+44 1234 567890",
+					"London",
+					"Portfolio",
+					"Ada on GitHub",
+				]) {
+					expect(text.split(value)).toHaveLength(2);
+				}
+				expect(text.split("Ada Lovelace")).toHaveLength(3); // Header and automatic signature.
+				expect(text).toContain(
+					"Dana ReyesEngine CompanyOctober 29, 2026Dear Dana,I build analytical engines.Kind regards,Ada Lovelace",
+				);
+				expect(text).not.toContain("Engine letter"); // No cover-letter section heading.
+			}
+		}
+		expect(getLetter).toHaveBeenCalledWith({ id: "letter-1", userId: "owner" });
+	},
+);
+
+it.each(["docx", "odt"] as const)("keeps absent sender fields absent in standalone %s", async (format) => {
+	const letter = letterFixture();
+	letter.style.basics = structuredClone(defaultResumeData.basics);
+	letter.style.basics.name = "Ada Lovelace";
+	getLetter.mockResolvedValue(letter);
+	const response = await call(documentExports.letter, { id: letter.id, format }, { context });
+	const text = await documentText(response.body, format);
+	expect(text.startsWith("Ada LovelaceDana Reyes")).toBe(true);
+	expect(text).toContain("I build analytical engines.");
+	for (const value of [
+		"ada@example.com",
+		"Analytical Engineer",
+		"+44 1234 567890",
+		"London",
+		"Portfolio",
+		"Ada on GitHub",
+	]) {
+		expect(text).not.toContain(value);
+	}
+});
+
+it.each(["docx", "odt"] as const)("retains header omission for legacy embedded-only %s exports", async (format) => {
+	const data = createCoverLetterResumeData(letterFixture());
+	const blob =
+		format === "docx"
+			? await (await import("@reactive-resume/docx")).buildDocx(data)
+			: await (await import("@reactive-resume/odt")).buildOdt(data);
+	const text = await documentText(blob, format);
+	expect(text).toBe("I build analytical engines.");
 });

@@ -1,6 +1,7 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 // @vitest-environment happy-dom
+// @vitest-environment-options {"url":"https://localhost:3000"}
 import { afterEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -14,9 +15,11 @@ afterEach(() => {
 	cleanup();
 	Cookies.remove("locale");
 	vi.restoreAllMocks();
+	window.history.replaceState(null, "", "/");
 });
 
 it("lets visitors choose their language with the keyboard and keep it when starting registration", async () => {
+	window.history.replaceState({ key: "homepage" }, "", "/?locale=en-US&campaign=audit#languages");
 	const user = userEvent.setup();
 	const reload = vi.spyOn(window.location, "reload").mockImplementation(() => {});
 	const router = createRouter({
@@ -47,6 +50,9 @@ it("lets visitors choose their language with the keyboard and keep it when start
 	await user.keyboard("{ArrowDown}{Enter}");
 	await waitFor(() => expect(reload).toHaveBeenCalledOnce());
 	expect(getLocale()).toBe("de-DE");
+	expect(window.location.search).toBe("?locale=de-DE&campaign=audit");
+	expect(window.location.hash).toBe("#languages");
+	expect(window.history.state).toEqual({ key: "homepage" });
 
 	unmount();
 	await loadLocale(getLocale());

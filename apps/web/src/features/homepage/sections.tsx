@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useId, useState } from "react";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { localeSchema } from "@reactive-resume/utils/locale";
+import { supportedLocales } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { prefersReducedMotion, SCENE, useLanding } from "./scroll";
 import { CtaLink, Doodle, labelClass } from "./ui";
@@ -103,7 +103,7 @@ const words = [
 export function Languages() {
 	const { i18n } = useLingui();
 	const languageId = useId();
-	const languageCount = i18n.number(localeSchema.options.length - 1);
+	const languageCount = i18n.number(supportedLocales.length);
 	const near = useLanding((state) => state.activeScene >= SCENE.numbers && state.activeScene <= SCENE.support);
 	const reducedMotion = useLanding((state) => state.reducedMotion);
 	const [index, setIndex] = useState(0);
