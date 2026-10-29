@@ -62,7 +62,11 @@ export function SharePanel() {
 					disabled={isPending || resume.isLocked}
 					onCheckedChange={(checked) => void setPublic(checked)}
 					label={<span className="font-semibold">{t`Public link`}</span>}
-					description={t`On. Anyone with the link can see your web page.`}
+					description={
+						resume.hasPassword
+							? t`On. Visitors need the link and password to see your web page.`
+							: t`On. Anyone with the link can see your web page.`
+					}
 					className="items-start rounded-xl border border-line p-3.5 transition-colors duration-standard data-checked:border-accent data-checked:bg-accent-soft"
 				/>
 			) : (
