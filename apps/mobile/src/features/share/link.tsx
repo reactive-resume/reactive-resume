@@ -139,7 +139,11 @@ export function LinkTab({ resume, offline }: LinkProps) {
 				<ListRow
 					title={t`Public link`}
 					subtitle={
-						resume.isPublic ? t`On. Anyone with the link can see your web page.` : t`Off. Only you can see this resume.`
+						resume.isPublic
+							? resume.hasPassword
+								? t`On. Visitors need the link and password to see your web page.`
+								: t`On. Anyone with the link can see your web page.`
+							: t`Off. Only you can see this resume.`
 					}
 					trailing={
 						<Switch
