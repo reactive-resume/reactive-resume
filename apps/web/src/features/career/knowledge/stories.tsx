@@ -502,7 +502,8 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 					className="min-h-0 resize-none py-1 font-display text-[22px] leading-7 font-medium"
 				/>
 				{tried && missingTitle && (
-					<p id={`${errorId}-title`} role="alert" className="text-[13px] text-danger-text">
+					<p id={`${errorId}-title`} role="alert" className="flex items-center gap-1.5 text-[13px] text-danger-text">
+						<Icon name="warning-circle" size={16} className="shrink-0" aria-hidden="true" />
 						<Trans>Give the story a title before you can save.</Trans>
 					</p>
 				)}
@@ -547,7 +548,12 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 									className="min-h-[60px] py-[9px] text-sm leading-[21px]"
 								/>
 								{invalid && (
-									<span id={`${errorId}-${part.key}`} role="alert" className="text-[13px] text-danger-text">
+									<span
+										id={`${errorId}-${part.key}`}
+										role="alert"
+										className="flex items-center gap-1.5 text-[13px] text-danger-text"
+									>
+										<Icon name="warning-circle" size={16} className="shrink-0" aria-hidden="true" />
 										{t`Complete ${part.label} before saving.`}
 									</span>
 								)}
