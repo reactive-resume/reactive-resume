@@ -63,3 +63,28 @@ test("native sender saves patch only changed contact fields and retain server-ow
 	await letterAdapter.save(edited, baseline, "session", false, "fixture");
 	assert.deepEqual(calls.pop(), { id: "letter", expectedRevision: 1, sessionId: "session", senderLinked: true });
 });
+
+test("typing during unlink preserves fresh server sender fields and saves only the concurrent edit", async () => {
+	const submitted = structuredClone(baseline);
+	const current = structuredClone(submitted);
+	current.style.basics.name = "Independent name";
+	const saved = structuredClone(submitted);
+	saved.revision = 2;
+	saved.style.basics.email = "current-resume@example.test";
+	saved.style.basics.location = "Updated city";
+	saved.style.metadata.template = "onyx";
+
+	const merged = letterAdapter.merge(saved, submitted, current);
+
+	assert.equal(merged.style.basics.name, "Independent name");
+	assert.equal(merged.style.basics.email, "current-resume@example.test");
+	assert.equal(merged.style.basics.location, "Updated city");
+	assert.equal(merged.style.metadata.template, "onyx");
+	await letterAdapter.save(merged, saved, "session", false, "fixture");
+	assert.deepEqual(calls.pop(), {
+		id: "letter",
+		expectedRevision: 2,
+		sessionId: "session",
+		sender: { name: "Independent name" },
+	});
+});

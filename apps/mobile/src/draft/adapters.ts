@@ -120,6 +120,12 @@ export const letterAdapter: DraftAdapter<LetterDocument, LetterDocument> = {
 	merge: (saved, submitted, current) => ({
 		...saved,
 		...changedFields(letterFields(current), letterFields(submitted)),
+		// Unlinking resolves fresh resume details; retain only fields edited while that request was pending.
+		style: {
+			...saved.style,
+			basics: { ...saved.style.basics, ...changedFields(current.style.basics, submitted.style.basics) },
+			metadata: { ...saved.style.metadata, ...changedFields(current.style.metadata, submitted.style.metadata) },
+		},
 	}),
 	parse: (value) => coverLetterSchema.parse(dates(value)),
 	save: (document, baseline, sessionId, _force, scope) => {
