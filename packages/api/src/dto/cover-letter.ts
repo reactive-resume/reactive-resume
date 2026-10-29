@@ -93,6 +93,12 @@ export const coverLetterDto = {
 			applicationId: z.string().min(1).nullable().optional().describe("The job the letter is for."),
 			sender: coverLetterStyleSchema.shape.basics
 				.pick({ name: true, email: true, phone: true, location: true })
+				.extend({
+					name: coverLetterStyleSchema.shape.basics.shape.name.describe("The letter sender's full name."),
+					email: coverLetterStyleSchema.shape.basics.shape.email.describe("The letter sender's email address."),
+					phone: coverLetterStyleSchema.shape.basics.shape.phone.describe("The letter sender's phone number."),
+					location: coverLetterStyleSchema.shape.basics.shape.location.describe("The letter sender's location."),
+				})
 				.partial()
 				.optional()
 				.describe("Edits the letter's own sender details; turn the sender link off first."),
