@@ -63,16 +63,19 @@ describe("saving", () => {
 		const changing = store().change(relink);
 		expect(store().changing).toBe(true);
 		await vi.waitFor(() => expect(relink).toHaveBeenCalled());
+		expect(store().savedName).toBe(letter.name);
 		store().edit({ sender: { name: "Late input" } });
 		expect(store().pending).toEqual({});
 		if (result === "success") {
-			request.resolve({ ...letter, revision: 2 });
+			request.resolve({ ...letter, name: "Confirmed letter", revision: 2 });
 			await changing;
+			expect(store().savedName).toBe("Confirmed letter");
 			expect(store().letter?.style.basics).toEqual(letter.style.basics);
 		} else {
 			const failed = expect(changing).rejects.toThrow("offline");
 			request.reject(new Error("offline"));
 			await failed;
+			expect(store().savedName).toBe(letter.name);
 			store().edit({ sender: { name: "Retry input" } });
 			expect(store().pending).toEqual({ sender: { name: "Retry input" } });
 		}
