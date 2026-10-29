@@ -35,7 +35,7 @@ function DraftChrome({ id }: { id: string }) {
 
 /**
  * Cover letter editor. Phone: Write, Page and Design as bottom tabs (builder.html letters; no Check). Tablet: the
- * Write / Design panel with the Page beside it. Share opens Share & export (Download, History) as a sheet.
+ * Write / Design panel with the Page beside it. Download opens Download & history as a sheet.
  */
 export default function LetterLayout() {
 	const { t } = useLingui();

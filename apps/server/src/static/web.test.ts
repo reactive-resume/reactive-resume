@@ -88,6 +88,19 @@ describe("web app fallback classification", () => {
 		expect(await dashboardResponse.text()).not.toContain('rel="canonical"');
 	});
 
+	it.each(["https://example.com/?locale=zu-ZA", "https://example.com/"])(
+		"recovers a pseudo-locale request or cookie to readable public HTML: %s",
+		async (url) => {
+			vi.mocked(fs.readFile).mockImplementation((path) =>
+				Promise.resolve(`<html><head></head><body>${String(path)}</body></html>`),
+			);
+			const response = await handleWebApp(new Request(url, { headers: { cookie: "locale=zu-ZA" } }));
+			const html = await response.text();
+			expect(html).toContain("dist-prerender/home/en-US.html");
+			expect(html).not.toContain("zu-ZA");
+		},
+	);
+
 	it("serves the homepage prerendered in the requested or saved locale, with hreflang alternates", async () => {
 		vi.mocked(fs.readFile).mockImplementation((path) => {
 			const locale = String(path).match(/dist-prerender\/home\/(.+)\.html$/)?.[1];
