@@ -14,7 +14,7 @@ import { IconContext } from "@phosphor-icons/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createMemoryHistory, createRootRoute, createRouter, RouterContextProvider } from "@tanstack/react-router";
 import { renderToString } from "react-dom/server";
-import { isRTL, localeSchema } from "@reactive-resume/utils/locale";
+import { isRTL, supportedLocales } from "@reactive-resume/utils/locale";
 import { Homepage } from "./page";
 import { AtsCheckerPage } from "@/features/ats-checker/page";
 import { TemplateGallery } from "@/features/templates/gallery";
@@ -23,7 +23,7 @@ import { getLocaleMessages } from "@/libs/locale";
 import { getAtsCheckerMeta, getHomepageMeta, getTemplatesMeta } from "@/libs/seo";
 import { Header } from "@/routes/_home/-sections/header";
 
-export const locales = localeSchema.options;
+export const locales = supportedLocales;
 
 // Matches the root route's icon defaults (routes/__root.tsx), which the marketing header's icons inherit.
 const iconContextValue: IconProps = { size: 16, weight: "regular" };

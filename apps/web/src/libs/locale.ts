@@ -3,7 +3,7 @@ import type { Locale } from "@reactive-resume/utils/locale";
 import { i18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import Cookies from "js-cookie";
-import { defaultLocale, isLocale } from "@reactive-resume/utils/locale";
+import { defaultLocale, isLocale, localeSchema, supportedLocales } from "@reactive-resume/utils/locale";
 
 const storageKey = "locale";
 const messageLoaders = import.meta.glob<{ messages: Messages }>("../../locales/*.po");
@@ -74,8 +74,10 @@ export const localeMap = {
 	"zu-ZA": msg`Zulu`,
 } satisfies Record<Locale, MessageDescriptor>;
 
+export const selectableLocales = import.meta.env.DEV ? localeSchema.options : supportedLocales;
+
 export const resolveLocale = (locale: string): Locale => {
-	return isLocale(locale) ? locale : defaultLocale;
+	return isLocale(locale) && selectableLocales.includes(locale) ? locale : defaultLocale;
 };
 
 // Changing the locale reloads the page (`changeLocale`), so one formatter per locale is enough.
@@ -107,13 +109,13 @@ export const getLocale = () => {
 	// A `?locale=` address (the homepage's hreflang alternates) picks the language and keeps it, like the switcher.
 	const requested = new URLSearchParams(window.location.search).get(storageKey);
 	if (isLocale(requested)) {
-		Cookies.set(storageKey, requested);
-		return requested;
+		const locale = resolveLocale(requested);
+		Cookies.set(storageKey, locale);
+		return locale;
 	}
 
 	const locale = Cookies.get(storageKey);
-	if (!locale || !isLocale(locale)) return defaultLocale;
-	return locale;
+	return resolveLocale(locale ?? defaultLocale);
 };
 
 const loadMessages = async (locale: Locale) => {
@@ -147,6 +149,6 @@ export const loadLocale = async (locale: string) => {
 
 export const changeLocale = (value: string | null) => {
 	if (!value || !isLocale(value)) return;
-	Cookies.set(storageKey, value);
+	Cookies.set(storageKey, resolveLocale(value));
 	window.location.reload();
 };
