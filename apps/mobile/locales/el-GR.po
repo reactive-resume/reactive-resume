@@ -2921,11 +2921,6 @@ msgstr "Δεν ήταν δυνατή η πρόταση αυτών των τρο�
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "Δεν ήταν δυνατή η επικοινωνία με τον πάροχο AI. Δοκιμάστε ξανά ή ελέγξτε το κλειδί του στις ρυθμίσεις AI."
 
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "Couldn't read “{0}”. Enter the dates so they sort and print consistently."
-msgstr "Δεν ήταν δυνατή η ανάγνωση του «{0}». Εισαγάγετε τις ημερομηνίες ώστε να ταξινομούνται και να εκτυπώνονται με συνέπεια."
-
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3249,6 +3244,10 @@ msgstr "Προσαρμοσμένο"
 msgid "Custom color (hex)"
 msgstr "Προσαρμοσμένο χρώμα (hex)"
 
+#: src/features/write/date-field.tsx
+msgid "Custom date text"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Custom fields"
 msgstr "Προσαρμοσμένα πεδία"
@@ -3320,6 +3319,7 @@ msgstr "Μορφή ημερομηνίας"
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
+#: src/features/write/date-field.tsx
 #: src/features/write/fields.ts
 msgid "Dates"
 msgstr "Ημερομηνίες"
@@ -3961,6 +3961,10 @@ msgstr "Εισαγάγετε δεκαεξαδικό χρώμα όπως #1a1a1a 
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Εισαγάγετε ένα όνομα, έως 64 χαρακτήρες."
+
+#: src/features/write/date-field.tsx
+msgid "Enter a readable date or clear the text to use date fields."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -8364,6 +8368,10 @@ msgstr "Αποθηκευμένα"
 msgid "Saved a story: {title}"
 msgstr "Αποθηκεύτηκε μια ιστορία: {title}"
 
+#: src/features/write/date-field.tsx
+msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Saved description"
 msgstr "Αποθηκευμένη περιγραφή"
@@ -9946,8 +9954,8 @@ msgid "This cover letter file isn't valid."
 msgstr "Αυτό το αρχείο συνοδευτικής επιστολής δεν είναι έγκυρο."
 
 #: src/features/write/date-field.tsx
-msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date."
-msgstr "Αυτή η ημερομηνία δεν έχει αποθηκευτεί. Χρησιμοποιήστε ένα μήνα και ένα έτος, όπως τον Μάρτιο του 2022, ή μόνο ένα χρόνο. Το βιογραφικό διατηρεί την τελευταία έγκυρη ημερομηνία."
+msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
@@ -10915,11 +10923,6 @@ msgstr "Σας περιμένει"
 #: src/features/applications/next-step.ts
 msgid "Waiting to hear back"
 msgstr "Περιμένοντας να ακούσω πίσω"
-
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "We read “{0}”. Pick a month so it sorts and prints consistently."
-msgstr "Διαβάσαμε «{0}». Επιλέξτε μήνα ώστε να ταξινομείται και να εκτυπώνεται με συνέπεια."
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx

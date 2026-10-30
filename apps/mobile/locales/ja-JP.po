@@ -2921,11 +2921,6 @@ msgstr "これらの編集を提案できませんでした: {0}"
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "AI プロバイダーに接続できませんでした。もう一度試すか、AI 設定でキーを確認してください。"
 
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "Couldn't read “{0}”. Enter the dates so they sort and print consistently."
-msgstr "「{0}」を読み取れませんでした。並べ替えと印刷が一貫するように日付を入力してください。"
-
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3249,6 +3244,10 @@ msgstr "カスタム"
 msgid "Custom color (hex)"
 msgstr "カスタムカラー (16 進数)"
 
+#: src/features/write/date-field.tsx
+msgid "Custom date text"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Custom fields"
 msgstr "カスタムフィールド"
@@ -3320,6 +3319,7 @@ msgstr "日付形式"
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
+#: src/features/write/date-field.tsx
 #: src/features/write/fields.ts
 msgid "Dates"
 msgstr "日付"
@@ -3961,6 +3961,10 @@ msgstr "#1a1a1a または rgba(…) のような 16 進数の色を入力して�
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "名前を 64 文字以内で入力します。"
+
+#: src/features/write/date-field.tsx
+msgid "Enter a readable date or clear the text to use date fields."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -8364,6 +8368,10 @@ msgstr "保存済み"
 msgid "Saved a story: {title}"
 msgstr "保存済み ストーリー: {title}"
 
+#: src/features/write/date-field.tsx
+msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Saved description"
 msgstr "保存された説明"
@@ -9946,8 +9954,8 @@ msgid "This cover letter file isn't valid."
 msgstr "このカバーレターファイルは無効です。"
 
 #: src/features/write/date-field.tsx
-msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date."
-msgstr "この日付は保存されていません。 Mar 2022 のように月と年を使用するか、単に 1 年を使用します。履歴書には最後の有効な日付が保持されます。"
+msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
@@ -10915,11 +10923,6 @@ msgstr "あなたの対応待ち"
 #: src/features/applications/next-step.ts
 msgid "Waiting to hear back"
 msgstr "返事を待っています"
-
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "We read “{0}”. Pick a month so it sorts and prints consistently."
-msgstr "「{0}」と読み取りました。並べ替えと印刷が一貫するように月を選んでください。"
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx

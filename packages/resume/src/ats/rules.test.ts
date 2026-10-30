@@ -1,5 +1,6 @@
 import type { ExperienceItem, ResumeData } from "@reactive-resume/schema/resume/data";
 import { describe, expect, it } from "vite-plus/test";
+import { readLegacyDates } from "@reactive-resume/schema/resume/dates";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { lintResumeForAts } from "./index";
@@ -140,6 +141,22 @@ describe("date rules", () => {
 			key: "UNPARSEABLE_PERIOD:/sections/experience/items/#exp-1/period",
 			params: { value: "a while back" },
 		});
+	});
+
+	it("warns about unreadable custom text without using stale dates for timeline checks", () => {
+		const raw = "During university / bis heute";
+		const data = makeResume((resume) => {
+			resume.sections.experience.items = [
+				experienceItem({
+					period: raw,
+					dates: { ...readLegacyDates(raw, { locale: "en-US", single: false }), raw },
+				}),
+			];
+		});
+		const dates = lint(data).findings.filter((item) =>
+			["UNPARSEABLE_PERIOD", "REVERSED_PERIOD", "FUTURE_DATED_PERIOD"].includes(item.code),
+		);
+		expect(dates.map((item) => item.code)).toEqual(["UNPARSEABLE_PERIOD"]);
 	});
 
 	it("requires a period on experience", () => {

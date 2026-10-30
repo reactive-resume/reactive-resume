@@ -2921,11 +2921,6 @@ msgstr "ഈ എഡിറ്റുകൾ നിർദ്ദേശിക്കാ�
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "നിങ്ങളുടെ AI ദാതാവിനെ ബന്ധപ്പെടാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക അല്ലെങ്കിൽ AI ക്രമീകരണങ്ങളിൽ അതിൻ്റെ കീ പരിശോധിക്കുക."
 
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "Couldn't read “{0}”. Enter the dates so they sort and print consistently."
-msgstr "“{0}” വായിക്കാനായില്ല. തീയതികൾ സ്ഥിരമായി ക്രമീകരിക്കാനും പ്രിന്റ് ചെയ്യാനും അവ നൽകുക."
-
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3249,6 +3244,10 @@ msgstr "ഇഷ്ടാനുസൃതം"
 msgid "Custom color (hex)"
 msgstr "ഇഷ്ടാനുസൃത നിറം (ഹെക്സ്)"
 
+#: src/features/write/date-field.tsx
+msgid "Custom date text"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Custom fields"
 msgstr "ഇഷ്ടാനുസൃത ഫീൽഡുകൾ"
@@ -3320,6 +3319,7 @@ msgstr "തീയതി ഫോർമാറ്റ്"
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
+#: src/features/write/date-field.tsx
 #: src/features/write/fields.ts
 msgid "Dates"
 msgstr "തീയതികൾ"
@@ -3961,6 +3961,10 @@ msgstr "#1a1a1a, അല്ലെങ്കിൽ rgba(…) പോലെയുള�
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "64 പ്രതീകങ്ങൾ വരെ ഒരു പേര് നൽകുക."
+
+#: src/features/write/date-field.tsx
+msgid "Enter a readable date or clear the text to use date fields."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -8364,6 +8368,10 @@ msgstr "സംരക്ഷിച്ചു"
 msgid "Saved a story: {title}"
 msgstr "സംരക്ഷിച്ചു ഒരു സ്റ്റോറി: {title}"
 
+#: src/features/write/date-field.tsx
+msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Saved description"
 msgstr "സംരക്ഷിച്ച വിവരണം"
@@ -9946,8 +9954,8 @@ msgid "This cover letter file isn't valid."
 msgstr "ഈ കവർ ലെറ്റർ ഫയൽ സാധുതയുള്ളതല്ല."
 
 #: src/features/write/date-field.tsx
-msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date."
-msgstr "ഈ തീയതി സംരക്ഷിച്ചിട്ടില്ല. 2022 മാർച്ച് പോലെ ഒരു മാസവും വർഷവും അല്ലെങ്കിൽ ഒരു വർഷവും ഉപയോഗിക്കുക. റെസ്യൂമെ അവസാനത്തെ സാധുവായ തീയതി നിലനിർത്തുന്നു."
+msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
@@ -10915,11 +10923,6 @@ msgstr "നിങ്ങൾക്കായി കാത്തിരിക്ക�
 #: src/features/applications/next-step.ts
 msgid "Waiting to hear back"
 msgstr "തിരിച്ചു കേൾക്കാൻ കാത്തിരിക്കുന്നു"
-
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "We read “{0}”. Pick a month so it sorts and prints consistently."
-msgstr "“{0}” എന്ന് വായിച്ചു. സ്ഥിരമായി ക്രമീകരിക്കാനും പ്രിന്റ് ചെയ്യാനും ഒരു മാസം തിരഞ്ഞെടുക്കുക."
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx

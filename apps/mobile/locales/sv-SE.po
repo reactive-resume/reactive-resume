@@ -2921,11 +2921,6 @@ msgstr "Kunde inte föreslå dessa redigeringar: {0}"
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "Det gick inte att nå din AI-leverantör. Försök igen eller kontrollera dess nyckel i inställningarna för AI."
 
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "Couldn't read “{0}”. Enter the dates so they sort and print consistently."
-msgstr "Det gick inte att läsa ”{0}”. Ange datumen så att de sorteras och skrivs ut konsekvent."
-
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3249,6 +3244,10 @@ msgstr "Anpassad"
 msgid "Custom color (hex)"
 msgstr "Anpassad färg (hex)"
 
+#: src/features/write/date-field.tsx
+msgid "Custom date text"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Custom fields"
 msgstr "Anpassade fält"
@@ -3320,6 +3319,7 @@ msgstr "Datumformat"
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
+#: src/features/write/date-field.tsx
 #: src/features/write/fields.ts
 msgid "Dates"
 msgstr "Datum"
@@ -3961,6 +3961,10 @@ msgstr "Ange en hexfärg som #1a1a1a, eller rgba(…)."
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Ange ett namn, upp till 64 tecken."
+
+#: src/features/write/date-field.tsx
+msgid "Enter a readable date or clear the text to use date fields."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -8364,6 +8368,10 @@ msgstr "Sparad"
 msgid "Saved a story: {title}"
 msgstr "Sparad en berättelse: {title}"
 
+#: src/features/write/date-field.tsx
+msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Saved description"
 msgstr "Sparad beskrivning"
@@ -9946,8 +9954,8 @@ msgid "This cover letter file isn't valid."
 msgstr "Den här följebrevsfilen är inte giltig."
 
 #: src/features/write/date-field.tsx
-msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date."
-msgstr "Detta datum har inte sparats. Använd en månad och ett år, som mars 2022, eller bara ett år. Meritförteckningen behåller det sista giltiga datumet."
+msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
@@ -10915,11 +10923,6 @@ msgstr "Väntar på dig"
 #: src/features/applications/next-step.ts
 msgid "Waiting to hear back"
 msgstr "Väntar på att höra tillbaka"
-
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "We read “{0}”. Pick a month so it sorts and prints consistently."
-msgstr "Vi läste ”{0}”. Välj en månad så att den sorteras och skrivs ut konsekvent."
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx

@@ -2921,11 +2921,6 @@ msgstr "Diese Änderungen konnten nicht vorgeschlagen werden: {0}"
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "Ihr KI-Anbieter konnte nicht erreicht werden. Versuchen Sie es erneut oder überprüfen Sie den Schlüssel in den KI-Einstellungen."
 
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "Couldn't read “{0}”. Enter the dates so they sort and print consistently."
-msgstr "„{0}“ konnte nicht gelesen werden. Geben Sie die Daten ein, damit sie einheitlich sortiert und gedruckt werden."
-
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3249,6 +3244,10 @@ msgstr "Benutzerdefiniert"
 msgid "Custom color (hex)"
 msgstr "Benutzerdefinierte Farbe (hex)"
 
+#: src/features/write/date-field.tsx
+msgid "Custom date text"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Custom fields"
 msgstr "Benutzerdefinierte Felder"
@@ -3320,6 +3319,7 @@ msgstr "Datumsformat"
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
+#: src/features/write/date-field.tsx
 #: src/features/write/fields.ts
 msgid "Dates"
 msgstr "Datumsangaben"
@@ -3961,6 +3961,10 @@ msgstr "Geben Sie eine Hexadezimalfarbe wie #1a1a1a oder rgba(…) ein."
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Geben Sie einen Namen mit bis zu 64 Zeichen ein."
+
+#: src/features/write/date-field.tsx
+msgid "Enter a readable date or clear the text to use date fields."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -8364,6 +8368,10 @@ msgstr "Gespeichert"
 msgid "Saved a story: {title}"
 msgstr "Geschichte gespeichert: {title}"
 
+#: src/features/write/date-field.tsx
+msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Saved description"
 msgstr "Beschreibung gespeichert"
@@ -9946,8 +9954,8 @@ msgid "This cover letter file isn't valid."
 msgstr "Diese Anschreibendatei ist ungültig."
 
 #: src/features/write/date-field.tsx
-msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date."
-msgstr "Dieses Datum wurde nicht gespeichert. Verwenden Sie einen Monat und ein Jahr, z. B. März 2022, oder nur ein Jahr. Der Lebenslauf behält das letzte gültige Datum."
+msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
@@ -10915,11 +10923,6 @@ msgstr "Wartet auf Sie"
 #: src/features/applications/next-step.ts
 msgid "Waiting to hear back"
 msgstr "Ich warte auf eine Antwort"
-
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "We read “{0}”. Pick a month so it sorts and prints consistently."
-msgstr "Wir haben „{0}“ gelesen. Wählen Sie einen Monat, damit es einheitlich sortiert und gedruckt wird."
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx

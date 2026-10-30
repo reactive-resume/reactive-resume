@@ -2921,11 +2921,6 @@ msgstr "無法提出這些編輯：{0}"
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "無法聯絡您的 AI 供應商。請重試或檢查 AI 設定中的金鑰。"
 
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "Couldn't read “{0}”. Enter the dates so they sort and print consistently."
-msgstr "無法讀取「{0}」。請輸入日期，以便一致地排序和列印。"
-
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3249,6 +3244,10 @@ msgstr "自訂"
 msgid "Custom color (hex)"
 msgstr "自訂顏色（十六進位）"
 
+#: src/features/write/date-field.tsx
+msgid "Custom date text"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Custom fields"
 msgstr "自訂欄位"
@@ -3320,6 +3319,7 @@ msgstr "日期格式"
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
+#: src/features/write/date-field.tsx
 #: src/features/write/fields.ts
 msgid "Dates"
 msgstr "日期"
@@ -3961,6 +3961,10 @@ msgstr "輸入十六進位顏色，例如 #1a1a1a 或 rgba(…)。"
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "輸入名稱，最多 64 個字元。"
+
+#: src/features/write/date-field.tsx
+msgid "Enter a readable date or clear the text to use date fields."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -8364,6 +8368,10 @@ msgstr "已儲存"
 msgid "Saved a story: {title}"
 msgstr "已儲存故事：{title}"
 
+#: src/features/write/date-field.tsx
+msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Saved description"
 msgstr "已儲存的描述"
@@ -9946,8 +9954,8 @@ msgid "This cover letter file isn't valid."
 msgstr "此求職信檔案無效。"
 
 #: src/features/write/date-field.tsx
-msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date."
-msgstr "該日期尚未保存。使用月份和年份，例如 Mar 2022，或僅使用一年。履歷保留最後有效日期。"
+msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
@@ -10915,11 +10923,6 @@ msgstr "等待您處理"
 #: src/features/applications/next-step.ts
 msgid "Waiting to hear back"
 msgstr "等待回音"
-
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "We read “{0}”. Pick a month so it sorts and prints consistently."
-msgstr "讀取為「{0}」。請選擇月份，以便一致地排序和列印。"
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx

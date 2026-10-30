@@ -1,9 +1,11 @@
 // @vitest-environment happy-dom
 import type { ResumeDates } from "@reactive-resume/schema/resume/dates";
 import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeAll, describe, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { useState } from "react";
 import { DatesField } from "./dates-field";
 
 beforeAll(() => {
@@ -20,9 +22,8 @@ describe("DatesField", () => {
 		return onChange;
 	};
 
-	it("saves and clears readable dates without committing invalid input or the review note", () => {
-		const onChange = renderField({ start: "2016-06", end: "2018", present: false, raw: "Summer 2016 - 2018" });
-		expect(screen.getByText(/Read as “Summer 2016 - 2018”/)).toBeInTheDocument();
+	it("saves and clears readable dates without committing invalid input", () => {
+		const onChange = renderField({ start: "2016-06", end: "2018", present: false });
 
 		fireEvent.change(screen.getByRole("textbox", { name: "Start" }), { target: { value: "Jul 2016" } });
 
@@ -35,5 +36,55 @@ describe("DatesField", () => {
 		onChange.mockClear();
 		fireEvent.change(screen.getByRole("textbox", { name: "Start" }), { target: { value: "soon" } });
 		expect(onChange).not.toHaveBeenCalled();
+	});
+});
+
+type EditorProps = { initial: ResumeDates; single?: boolean };
+
+function Editor({ initial, single = false }: EditorProps) {
+	const [dates, setDates] = useState(initial);
+	return <DatesField dates={dates} locale="en-US" format="short" single={single} onChange={setDates} />;
+}
+
+describe("custom date text", () => {
+	const mount = (initial: ResumeDates, single = false) =>
+		render(
+			<I18nProvider i18n={i18n}>
+				<Editor initial={initial} single={single} />
+			</I18nProvider>,
+		);
+
+	it("keeps custom wording through blur and reopening, with a non-blocking warning", async () => {
+		const view = mount({ start: "2022-03", end: null, present: true });
+		await userEvent.click(screen.getByRole("switch", { name: "Custom date text" }));
+		const input = screen.getByRole("textbox", { name: "Dates" });
+		expect(input).toHaveValue("Mar 2022 – Present");
+		fireEvent.change(input, { target: { value: "During university / bis heute" } });
+		fireEvent.blur(input);
+		expect(input).toHaveValue("During university / bis heute");
+		expect(screen.getByText(/Saved as written/)).toBeInTheDocument();
+		expect(screen.getByRole("switch", { name: "Custom date text" })).toHaveAttribute("data-disabled");
+		view.unmount();
+		mount({ start: null, end: null, present: false, raw: "During university / bis heute" });
+		expect(screen.getByRole("textbox", { name: "Dates" })).toHaveValue("During university / bis heute");
+	});
+
+	it("preserves readable custom text and supports returning to preset fields", async () => {
+		mount({ start: "2022-03", end: null, present: false, raw: "March 2022" }, true);
+		const input = screen.getByRole("textbox", { name: "Date" });
+		fireEvent.blur(input);
+		expect(input).toHaveValue("March 2022");
+		expect(screen.queryByText(/Saved as written/)).not.toBeInTheDocument();
+		await userEvent.click(screen.getByRole("switch", { name: "Custom date text" }));
+		expect(screen.getByRole("textbox", { name: "Date" })).toHaveValue("Mar 2022");
+	});
+
+	it("clears unreadable custom text before returning to empty preset fields", async () => {
+		mount({ start: null, end: null, present: false, raw: "whenever" });
+		fireEvent.change(screen.getByRole("textbox", { name: "Dates" }), { target: { value: "" } });
+		expect(screen.getByRole("switch", { name: "Custom date text" })).not.toHaveAttribute("data-disabled");
+		await userEvent.click(screen.getByRole("switch", { name: "Custom date text" }));
+		expect(screen.getByRole("textbox", { name: "Start" })).toHaveValue("");
+		expect(screen.getByRole("textbox", { name: "End" })).toHaveValue("");
 	});
 });

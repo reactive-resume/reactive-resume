@@ -2,10 +2,16 @@ import type { DateFormat, ResumeDates, YearMonth } from "@reactive-resume/schema
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useId, useState } from "react";
-import { formatYearMonth, getPresentLabel, toYearMonth } from "@reactive-resume/schema/resume/dates";
+import {
+	formatResumeDates,
+	formatYearMonth,
+	getPresentLabel,
+	readLegacyDates,
+	toYearMonth,
+} from "@reactive-resume/schema/resume/dates";
 import { readSingleDate } from "@reactive-resume/schema/resume/period";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { inputBaseClassName } from "@reactive-resume/ui/components/input";
+import { Input, inputBaseClassName } from "@reactive-resume/ui/components/input";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
 
@@ -89,17 +95,17 @@ type DatesFieldProps = DateSettings & {
 	className?: string;
 };
 
-/**
- * Structured dates: start – end with a Present switch, or a single date. Editing any part clears the
- * "needs a look" note left by text that couldn't be read exactly.
- */
+/** Preset date fields or verbatim custom text, using the existing raw date representation. */
 export function DatesField({ dates, single = false, locale, format, onChange, className }: DatesFieldProps) {
 	const id = useId();
 	const [invalid, setInvalid] = useState<Record<"start" | "end", boolean>>({ start: false, end: false });
-	// Any edit replaces the dates without `raw`, which clears the review note.
 	const current: ResumeDates = { start: dates.start, end: dates.end, present: dates.present };
 	const reversed = !single && !dates.present && dates.start && dates.end && isBefore(dates.end, dates.start);
-	const hasError = invalid.start || invalid.end;
+	const custom = dates.raw !== undefined;
+	const parsed = custom ? readLegacyDates(dates.raw ?? "", { locale, single }) : current;
+	const canUseFields = parsed.raw === undefined;
+	const unreadable = custom && Boolean(dates.raw?.trim()) && !dates.start;
+	const hasError = !custom && (invalid.start || (!dates.present && invalid.end));
 
 	const setInvalidFor = (part: "start" | "end") => (value: boolean) =>
 		setInvalid((state) => (state[part] === value ? state : { ...state, [part]: value }));
@@ -110,36 +116,62 @@ export function DatesField({ dates, single = false, locale, format, onChange, cl
 				{single ? <Trans>Date</Trans> : <Trans>Dates</Trans>}
 			</legend>
 
-			<div className="flex items-center gap-2">
-				<MonthYearInput
-					label={single ? t`Date` : t`Start`}
-					value={dates.start}
-					locale={locale}
-					format={format}
-					onCommit={(start) => onChange({ ...current, start })}
-					onInvalid={setInvalidFor("start")}
+			{/* oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI Switch is the wrapped control. */}
+			<label className="flex w-fit items-center gap-2 p-1 text-sm">
+				<Switch
+					checked={custom}
+					disabled={custom && !canUseFields}
+					aria-describedby={`${id}-note`}
+					onCheckedChange={(checked) => {
+						setInvalid({ start: false, end: false });
+						onChange(checked ? { ...current, raw: formatResumeDates(dates, { locale, format }) } : parsed);
+					}}
 				/>
+				<Trans>Custom date text</Trans>
+			</label>
 
-				{!single && (
-					<>
-						<span aria-hidden="true" className="text-ink-3">
-							–
-						</span>
-						<MonthYearInput
-							label={t`End`}
-							value={dates.end}
-							locale={locale}
-							format={format}
-							disabled={dates.present}
-							placeholderValue={dates.present ? getPresentLabel(locale) : undefined}
-							onCommit={(end) => onChange({ ...current, end })}
-							onInvalid={setInvalidFor("end")}
-						/>
-					</>
-				)}
-			</div>
+			{custom ? (
+				<Input
+					aria-label={single ? t`Date` : t`Dates`}
+					aria-describedby={`${id}-note`}
+					value={dates.raw}
+					onChange={(event) => {
+						const raw = event.target.value;
+						onChange({ ...readLegacyDates(raw, { locale, single }), raw });
+					}}
+				/>
+			) : (
+				<div className="flex items-center gap-2">
+					<MonthYearInput
+						label={single ? t`Date` : t`Start`}
+						value={dates.start}
+						locale={locale}
+						format={format}
+						onCommit={(start) => onChange({ ...current, start })}
+						onInvalid={setInvalidFor("start")}
+					/>
 
-			{!single && (
+					{!single && (
+						<>
+							<span aria-hidden="true" className="text-ink-3">
+								–
+							</span>
+							<MonthYearInput
+								label={t`End`}
+								value={dates.end}
+								locale={locale}
+								format={format}
+								disabled={dates.present}
+								placeholderValue={dates.present ? getPresentLabel(locale) : undefined}
+								onCommit={(end) => onChange({ ...current, end })}
+								onInvalid={setInvalidFor("end")}
+							/>
+						</>
+					)}
+				</div>
+			)}
+
+			{!custom && !single && (
 				<>
 					{/* oxlint-disable-next-line jsx-a11y/label-has-associated-control -- Base UI's Switch is the control; wrapping it in a label is its documented pattern. */}
 					<label className="flex w-fit cursor-pointer items-center gap-2 p-1 text-sm">
@@ -152,23 +184,24 @@ export function DatesField({ dates, single = false, locale, format, onChange, cl
 				</>
 			)}
 
-			<div id={`${id}-note`}>
+			<div id={`${id}-note`} aria-live="polite">
+				{unreadable && (
+					<p className="text-xs leading-4 text-warn-text">
+						<Trans>Saved as written. Automated date checks and sorting are unavailable for this text.</Trans>
+					</p>
+				)}
+				{custom && !canUseFields && (
+					<p className="text-xs leading-4 text-ink-2">
+						<Trans>Enter a readable date or clear the text to use date fields.</Trans>
+					</p>
+				)}
 				{hasError ? (
 					<p className="flex items-start gap-1 text-xs leading-4 text-danger-text">
 						<Icon name="warning-circle" size={16} className="shrink-0" />
 						<Trans>
 							This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the
-							last valid date.
+							last valid date. Turn on Custom date text to save other wording.
 						</Trans>
-					</p>
-				) : dates.raw !== undefined ? (
-					<p className="flex items-start gap-1 text-xs leading-4 text-warn-text">
-						<Icon name="warning" size={16} className="shrink-0" />
-						{dates.start ? (
-							<Trans>Read as “{dates.raw}”. Pick a month so it sorts and prints consistently.</Trans>
-						) : (
-							<Trans>Couldn't read “{dates.raw}”. Enter the dates so they sort and print consistently.</Trans>
-						)}
 					</p>
 				) : reversed ? (
 					<p className="flex items-start gap-1 text-xs leading-4 text-warn-text">

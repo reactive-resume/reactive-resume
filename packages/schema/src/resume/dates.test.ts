@@ -236,6 +236,25 @@ describe("syncResumeDates", () => {
 		);
 	});
 
+	it.each(["During university / bis heute", "March 2022 - Present", "  Frühjahr — heute  "])(
+		"preserves custom text %j through save/reopen and locale/format changes",
+		(raw) => {
+			const data = parseResumeData(resume("2020 - 2022"));
+			const entry = job(data);
+			if (!entry) throw new Error("Missing entry.");
+			entry.dates = { ...readLegacyDates(raw, { locale: "en-US", single: false }), raw };
+			const award = data.sections.awards.items[0];
+			if (!award) throw new Error("Missing award.");
+			award.dates = { start: null, end: null, present: false, raw };
+			data.metadata.page.locale = "de-DE";
+			data.metadata.page.dateFormat = "iso";
+			const reopened = parseResumeData(JSON.parse(JSON.stringify(data)));
+			expect(job(reopened)?.period).toBe(raw);
+			expect(job(reopened)?.dates).toEqual(entry.dates);
+			expect(reopened.sections.awards.items[0]?.date).toBe(raw);
+		},
+	);
+
 	it("leaves text it couldn't read untouched, and is idempotent", () => {
 		const data = resume("Summer 2016 - 2018");
 		syncResumeDates(data);

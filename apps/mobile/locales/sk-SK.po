@@ -2921,11 +2921,6 @@ msgstr "Nepodarilo sa navrhnúť tieto úpravy: {0}"
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "Nepodarilo sa spojiť s vaším poskytovateľom AI. Skúste to znova alebo skontrolujte kľúč v nastaveniach AI."
 
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "Couldn't read “{0}”. Enter the dates so they sort and print consistently."
-msgstr "„{0}“ sa nepodarilo prečítať. Zadajte dátumy, aby sa jednotne zoraďovali a tlačili."
-
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3249,6 +3244,10 @@ msgstr "Vlastné"
 msgid "Custom color (hex)"
 msgstr "Vlastná farba (hex)"
 
+#: src/features/write/date-field.tsx
+msgid "Custom date text"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Custom fields"
 msgstr "Vlastné polia"
@@ -3320,6 +3319,7 @@ msgstr "Formát dátumu"
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
+#: src/features/write/date-field.tsx
 #: src/features/write/fields.ts
 msgid "Dates"
 msgstr "Dátumy"
@@ -3961,6 +3961,10 @@ msgstr "Zadajte hexadecimálnu farbu, napríklad #1a1a1a, alebo rgba(…)."
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Zadajte názov, maximálne 64 znakov."
+
+#: src/features/write/date-field.tsx
+msgid "Enter a readable date or clear the text to use date fields."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -8364,6 +8368,10 @@ msgstr "Uložené"
 msgid "Saved a story: {title}"
 msgstr "Príbeh uložený: {title}"
 
+#: src/features/write/date-field.tsx
+msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Saved description"
 msgstr "Uložený popis"
@@ -9946,8 +9954,8 @@ msgid "This cover letter file isn't valid."
 msgstr "Tento súbor sprievodného listu nie je platný."
 
 #: src/features/write/date-field.tsx
-msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date."
-msgstr "Tento dátum nebol uložený. Použite mesiac a rok, napríklad marec 2022, alebo len rok. V životopise sa uchováva posledný platný dátum."
+msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
@@ -10915,11 +10923,6 @@ msgstr "Čaká na vás"
 #: src/features/applications/next-step.ts
 msgid "Waiting to hear back"
 msgstr "Čakám na spätnú väzbu"
-
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "We read “{0}”. Pick a month so it sorts and prints consistently."
-msgstr "Prečítali sme „{0}“. Vyberte mesiac, aby sa dátum jednotne zoraďoval a tlačil."
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx

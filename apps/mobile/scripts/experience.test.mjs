@@ -797,3 +797,52 @@ try {
 	globalThis.requestAnimationFrame = originalAnimationFrame;
 }
 console.log("PASS native story validation focus, draft preservation and optional outcomes");
+
+// Execute native custom-date controls against the real shared parser.
+const { buildSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+const dateModule = { exports: {} };
+new Function(
+	"require",
+	"module",
+	"exports",
+	buildSync({
+		entryPoints: [new URL("../../../packages/schema/src/resume/dates.ts", import.meta.url).pathname],
+		bundle: true,
+		platform: "node",
+		format: "cjs",
+		write: false,
+	}).outputFiles[0].text,
+)(serverRequire, dateModule, dateModule.exports);
+const schemaDates = dateModule.exports;
+const { DatesField } = load("features/write/date-field.tsx", {
+	"react-native": { View: "View", Platform: { OS: "ios" } },
+	"@react-native-community/datetimepicker": { default: "DateTimePicker" },
+	"@reactive-resume/schema/resume/dates": schemaDates,
+	"./dates": load("features/write/dates.ts", {
+		"@reactive-resume/schema/resume/dates": schemaDates,
+		"@reactive-resume/schema/resume/period": {},
+	}),
+	"@/draft": { resumeFieldFocus: { onFocus() {}, onBlur() {} } },
+});
+reset();
+let dateValue = { start: "2022-03", end: null, present: true };
+const dateView = () =>
+	render(DatesField, {
+		dates: dateValue,
+		locale: "en-US",
+		onChange: (next) => {
+			dateValue = next;
+		},
+	});
+control(dateView(), "Custom date text").onValueChange(true);
+assert.equal(control(dateView(), "Dates").value, "Mar 2022 – Present");
+control(dateView(), "Dates").onChangeText("During university / bis heute");
+assert.deepEqual(dateValue, { start: null, end: null, present: false, raw: "During university / bis heute" });
+assert.equal(control(dateView(), "Custom date text").disabled, true);
+control(dateView(), "Dates").onBlur();
+assert.equal(control(dateView(), "Dates").value, "During university / bis heute");
+control(dateView(), "Dates").onChangeText("");
+assert.equal(control(dateView(), "Custom date text").disabled, false);
+control(dateView(), "Custom date text").onValueChange(false);
+assert.deepEqual(dateValue, { start: null, end: null, present: false });
+console.log("PASS native custom-date editing, saving, blur and safe return to date fields");

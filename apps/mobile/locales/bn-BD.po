@@ -2921,11 +2921,6 @@ msgstr "এই সম্পাদনাগুলির প্রস্তাব 
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "আপনার AI প্রদানকারীর সাথে যোগাযোগ করা যায়নি। আবার চেষ্টা করুন বা AI সেটিংসে এর কী চেক করুন।"
 
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "Couldn't read “{0}”. Enter the dates so they sort and print consistently."
-msgstr "“{0}” পড়া যায়নি। তারিখগুলো লিখুন যাতে সেগুলো একইভাবে সাজানো ও প্রিন্ট হয়।"
-
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3249,6 +3244,10 @@ msgstr "কাস্টম"
 msgid "Custom color (hex)"
 msgstr "কাস্টম রং (hex)"
 
+#: src/features/write/date-field.tsx
+msgid "Custom date text"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Custom fields"
 msgstr "কাস্টম ক্ষেত্র"
@@ -3320,6 +3319,7 @@ msgstr "তারিখ বিন্যাস"
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
+#: src/features/write/date-field.tsx
 #: src/features/write/fields.ts
 msgid "Dates"
 msgstr "তারিখসমূহ"
@@ -3961,6 +3961,10 @@ msgstr "#1a1a1a বা rgba(…)-এর মতো একটি hex রং লি
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "একটি নাম লিখুন, 64টি অক্ষর পর্যন্ত।"
+
+#: src/features/write/date-field.tsx
+msgid "Enter a readable date or clear the text to use date fields."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -8364,6 +8368,10 @@ msgstr "সংরক্ষিত"
 msgid "Saved a story: {title}"
 msgstr "গল্প সংরক্ষিত: {title}"
 
+#: src/features/write/date-field.tsx
+msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Saved description"
 msgstr "সংরক্ষিত বিবরণ"
@@ -9946,8 +9954,8 @@ msgid "This cover letter file isn't valid."
 msgstr "এই কাভার লেটার ফাইলটি বৈধ নয়।"
 
 #: src/features/write/date-field.tsx
-msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date."
-msgstr "এই তারিখ সংরক্ষণ করা হয় নি. একটি মাস এবং বছর ব্যবহার করুন, যেমন মার্চ 2022, বা মাত্র এক বছর। সারসংকলন শেষ বৈধ তারিখ রাখে।"
+msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
@@ -10915,11 +10923,6 @@ msgstr "আপনার অপেক্ষায়"
 #: src/features/applications/next-step.ts
 msgid "Waiting to hear back"
 msgstr "ফিরে শোনার অপেক্ষায়"
-
-#. placeholder {0}: dates.raw
-#: src/features/write/date-field.tsx
-msgid "We read “{0}”. Pick a month so it sorts and prints consistently."
-msgstr "আমরা “{0}” পড়েছি। একটি মাস বেছে নিন যাতে এটি একইভাবে সাজানো ও প্রিন্ট হয়।"
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
