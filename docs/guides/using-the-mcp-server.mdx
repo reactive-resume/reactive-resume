@@ -194,7 +194,7 @@ The server keeps the original 43 tool names and adds API-derived tools for the r
 | `read_cover_letter`          | Returns one letter, including its `revision`.                                                                         |
 | `create_cover_letter`        | Creates a letter, optionally linked to a resume (for its sender details and design) or an application.                |
 | `update_cover_letter`        | Changes a letter's text, recipient, template, links, or sender details when unlinked. Needs `expectedRevision`.       |
-| `refresh_cover_letter_style` | Copies the sender details and design from a resume, keeping the letter's text and template. Needs `expectedRevision`. |
+| `refresh_cover_letter_style` | Copies a resume's design and, if linked, its sender details. Keeps the text and template. Needs `expectedRevision`.   |
 | `duplicate_cover_letter`     | Copies a letter.                                                                                                      |
 | `delete_cover_letter`        | Moves a letter to Trash for 30 days. Needs `expectedRevision`.                                                        |
 | `export_cover_letter`        | Returns a letter as versioned cover-letter JSON.                                                                      |
