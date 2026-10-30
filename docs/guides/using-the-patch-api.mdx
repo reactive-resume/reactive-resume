@@ -152,7 +152,7 @@ Experience (and its roles), education, projects and volunteer entries, and award
 | `start`   | A year (`"2022"`) or a year and month (`"2022-03"`), or `null`. Single-date entries (awards, certifications, publications) use only `start`. |
 | `end`     | A year or year and month, or `null` while the entry is ongoing or for single dates.                                                          |
 | `present` | `true` when the entry is ongoing. It prints as "Present" in the resume's language.                                                           |
-| `raw`     | Optional. Original text that couldn't be read exactly, such as "Summer 2016". It prints as written until the dates are edited.               |
+| `raw`     | Optional. Custom date text, or imported text that couldn't be read exactly. It prints as written, whatever the date format.                  |
 
 **Write `dates`, not the text.** Each entry also has a text field, `period` (ranges) or `date` (single dates). On every save, the server rewrites that text from `dates`, in the resume's language and date format (`/metadata/page/dateFormat`: `short`, `long`, `numeric` or `iso`). A patch that changes only `period` or `date` is overwritten, and the resume keeps its old dates.
 

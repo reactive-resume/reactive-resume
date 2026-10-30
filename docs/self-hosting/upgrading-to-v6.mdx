@@ -169,7 +169,7 @@ From then on, any resume that reaches the server with a cover-letter section, th
 
 ### Structured dates
 
-Dates on entries (experience and its roles, education, projects, volunteering, awards, certifications, and publications) are now stored as structured `dates`: a start and end year or year-month, and whether it's ongoing. No migration changes stored data for this. Instead, every read fills in `dates` from the old text, and every save writes the text (`period` or `date`) from `dates`. Text that couldn't be read exactly, such as "Summer 2016", keeps printing as typed until someone edits the date. The date format is inferred from how the dates were typed. See [Entering dates](/guides/entering-dates).
+Dates on entries (experience and its roles, education, projects, volunteering, awards, certifications, and publications) are now stored as structured `dates`: a start and end year or year-month, and whether it's ongoing. No migration changes stored data for this. Instead, every read fills in `dates` from the old text, and every save writes the text (`period` or `date`) from `dates`. Text that couldn't be read exactly, such as "Summer 2016", is kept as custom date text and keeps printing as typed. The date format is inferred from how the dates were typed. See [Entering dates](/guides/entering-dates).
 
 ### Trash
 
@@ -197,7 +197,7 @@ Base paths, authentication, and API keys are unchanged. These changes can affect
 
 **Resume data**
 
-- Dated items carry `dates` (`start`, `end`, `present`, and `raw` for text that couldn't be read). Write `dates`. The text in `period` or `date` is rewritten from `dates` on every save, so a change to the text alone is overwritten. Items sent without `dates` get them from their text.
+- Dated items carry `dates` (`start`, `end`, `present`, and `raw` for custom date text or text that couldn't be read). Write `dates`. The text in `period` or `date` is rewritten from `dates` on every save, so a change to the text alone is overwritten. Items sent without `dates` get them from their text.
 - `metadata.page.dateFormat` (`short`, `long`, `numeric`, or `iso`) sets how dates print.
 - Resumes no longer hold `cover-letter` custom sections. Any you send are saved as letters and removed from the resume.
 
