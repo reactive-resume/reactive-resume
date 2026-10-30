@@ -49,7 +49,7 @@ for (const entry of ["detail", "workspace", "api"] as const) {
 		} else if (entry === "workspace") {
 			await page.goto(`/dashboard/applications/${id}/apply`);
 			await page.getByRole("button", { name: "Mark as applied", exact: true }).click();
-			await expect(page.getByRole("heading", { name: "Content review", exact: true })).toBeVisible();
+			await expect(page.getByRole("heading", { name: "Review checks", exact: true })).toBeVisible();
 		} else {
 			await expect(
 				await page.request.put(`/api/openapi/applications/${id}`, {
@@ -60,8 +60,8 @@ for (const entry of ["detail", "workspace", "api"] as const) {
 
 		await page.goto(`/dashboard/applications/${id}/apply`);
 		const verify = async () => {
-			await expect(page.getByRole("heading", { name: "Content review", exact: true })).toBeVisible();
-			await expect(page.getByText(/Submitted on/)).toBeVisible();
+			await expect(page.getByRole("heading", { name: "Review checks", exact: true })).toBeVisible();
+			await expect(page.getByText(/Submission recorded .*The sent versions never change/)).toBeVisible();
 			await expect(page.getByText("Before you submit", { exact: true })).toHaveCount(0);
 			await expect(page.getByRole("button", { name: "Mark as applied", exact: true })).toHaveCount(0);
 			await expect(
@@ -96,7 +96,7 @@ for (const entry of ["detail", "workspace", "api"] as const) {
 		expect((await stored.json()).checklist).toEqual(checklist);
 		if (entry === "detail")
 			await page
-				.getByRole("heading", { name: "Content review", exact: true })
+				.getByRole("heading", { name: "Review checks", exact: true })
 				.locator("../../..")
 				.screenshot({ path: testInfo.outputPath("apply-submitted.jpg") });
 	});

@@ -573,13 +573,7 @@ function ContextColumn({ application, interview, now, onEdit }: ContextColumnPro
 
 			{(resume || letter || documentsPending || documentsFailed) && (
 				<section className="grid gap-2">
-					<Eyebrow>
-						{sent ? (
-							<Trans>What you sent · {date(application.appliedAt)}</Trans>
-						) : (
-							<Trans>Documents for this job</Trans>
-						)}
-					</Eyebrow>
+					<Eyebrow>{sent ? <Trans>What you sent</Trans> : <Trans>Documents for this job</Trans>}</Eyebrow>
 					{documentsPending ? (
 						<p role="status" className="text-xs text-ink-3">
 							<Trans>Loading linked documents…</Trans>
@@ -613,7 +607,7 @@ function ContextColumn({ application, interview, now, onEdit }: ContextColumnPro
 								<span className="truncate text-[13px] font-semibold">{resume.name}</span>
 								<span className="text-xs text-ink-3">
 									{application.sentResumeVersionId ? (
-										<Trans>Resume · version sent</Trans>
+										<Trans>Resume · version sent {date(application.appliedAt)}</Trans>
 									) : (
 										<Trans>Resume · not sent yet</Trans>
 									)}
@@ -633,7 +627,7 @@ function ContextColumn({ application, interview, now, onEdit }: ContextColumnPro
 								<span className="truncate text-[13px] font-semibold">{letter.name}</span>
 								<span className="text-xs text-ink-3">
 									{application.sentCoverLetterVersionId ? (
-										<Trans>Letter · version sent</Trans>
+										<Trans>Letter · version sent {date(application.appliedAt)}</Trans>
 									) : (
 										<Trans>Letter · not sent yet</Trans>
 									)}

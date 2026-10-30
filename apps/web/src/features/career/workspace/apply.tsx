@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "motion/react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
+import { nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
 import { careerWorkspaceSchema } from "@reactive-resume/schema/career";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
@@ -25,7 +26,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/com
 import { downloadWithAnchor, generateFilename } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
 import { latest, useDebouncedSave, useDefaultProvider, useGenerate, useSavedItems, useWorkspace } from "../hooks";
-import { CollapseRow, Swap, useCareerTime, withUndo, Working, workingSteps } from "../shared";
+import { CollapseRow, Swap, withUndo, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
 import { Preparation } from "./preparation";
 import { SentDocuments } from "@/features/applications/components/detail/sent-documents";
@@ -44,18 +45,17 @@ const shortLabel = (text: string) => {
 	return words.length > 4 ? `${words.slice(0, 4).join(" ")}…` : text;
 };
 
+/** The review checks, by their persisted checklist index. Submitting yourself (3) is moot once a submission is recorded. */
 const checklistItems = (submitted: boolean) =>
 	[
 		t`Review the selected resume and cover letter in their editors.`,
 		t`Check every claim, date and result against your experience.`,
 		t`Review required form answers and remove unsupported claims.`,
 		t`Submit through the employer's application page yourself.`,
-		t`Mark the application as applied to keep the versions you sent.`,
-	].slice(0, submitted ? 3 : undefined);
+	].slice(0, submitted ? 3 : 4);
 
 /** W4–W5: the written answers for the employer's form, and a checklist before submitting there yourself. */
 export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
-	const { day } = useCareerTime();
 	const saved = useSavedItems(application.id);
 	const workspace = useWorkspace(application.id);
 	const { data: facts } = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: application.id } }));
@@ -113,34 +113,27 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 
 	return (
 		<div className="grid items-start gap-5 @3xl:grid-cols-[minmax(0,1fr)_280px] @5xl:grid-cols-[minmax(0,1fr)_320px]">
-			<div className="grid gap-4">
-				{!version && <Preparation application={application} disabled={submitting} />}
-				{!version && hasApplicationSubmission(application) && (
-					<>
-						<SentDocuments application={application} disabled />
-						{recorded ? (
-							<Button variant="secondary" onClick={() => go("apply", { version: recorded.id })}>
-								<Trans>View recorded answers</Trans>
-							</Button>
-						) : (
-							<p className="text-sm text-ink-2">
-								<Trans>No recorded answers are available.</Trans>
-							</p>
-						)}
-					</>
-				)}
-				{hasApplicationSubmission(application) && (
-					<p className="flex gap-2.5 rounded-xl bg-accent-soft px-4 py-3 text-[13px] leading-[18px] text-accent-text">
-						<Icon name="check-circle" size={18} className="mt-px shrink-0" />
-						<span>
-							<Trans>
-								<strong className="font-semibold">Submission recorded on {day(application.appliedAt)}.</strong> Saved
-								versions stay separate from later drafts. This record does not confirm employer receipt.
-							</Trans>
-						</span>
-					</p>
-				)}
+			{!version && (
+				<div className="grid gap-4 @3xl:col-start-1">
+					{hasApplicationSubmission(application) ? (
+						<SentDocuments application={application} disabled={submitting} variant="workspace" />
+					) : (
+						<Preparation key={application.id} application={application} disabled={submitting} />
+					)}
+				</div>
+			)}
 
+			<Checklist
+				application={application}
+				answers={shown}
+				currentAnswers={currentAnswers}
+				readOnly={!!readOnlyVersion}
+				canSubmit={canSubmit}
+				submitting={submitting}
+				onSubmittingChange={setSubmitting}
+			/>
+
+			<div className="grid gap-4 @3xl:col-start-1">
 				{stored && !readOnlyVersion && (
 					<div className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-sunken px-3.5 py-2.5 text-sm">
 						<span>
@@ -168,9 +161,28 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 					</div>
 				)}
 
-				<h2 id="application-answers" tabIndex={-1} className="text-base font-semibold">
-					<Trans>Form answers</Trans>
-				</h2>
+				<div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+					<h2 id="application-answers" tabIndex={-1} className="text-base font-semibold">
+						<Trans>Form answers</Trans>
+					</h2>
+					{!version &&
+						hasApplicationSubmission(application) &&
+						(recorded ? (
+							<Button
+								size="sm"
+								variant="ghost"
+								className="-me-2.5"
+								onClick={() => go("apply", { version: recorded.id })}
+							>
+								<Icon name="clock-counter-clockwise" size={16} />
+								<Trans>View recorded answers</Trans>
+							</Button>
+						) : (
+							<span className="text-[13px] text-ink-3">
+								<Trans>No recorded answers are available.</Trans>
+							</span>
+						))}
+				</div>
 				{shown.length > 0 && (
 					<div>
 						<AnimatePresence initial={false}>
@@ -224,16 +236,6 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 					</>
 				)}
 			</div>
-
-			<Checklist
-				application={application}
-				answers={shown}
-				currentAnswers={currentAnswers}
-				readOnly={!!readOnlyVersion}
-				canSubmit={canSubmit}
-				submitting={submitting}
-				onSubmittingChange={setSubmitting}
-			/>
 		</div>
 	);
 }
@@ -538,12 +540,26 @@ function Checklist({
 	const queryClient = useQueryClient();
 	const invalidate = useInvalidateApplications();
 	const workspace = useWorkspace(application.id);
+	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const submit = useMutation(orpc.career.submitApplication.mutationOptions());
 	const submitted = hasApplicationSubmission(application);
 	const items = checklistItems(submitted);
 	const ticked = workspace.data.checklist;
 	const done = items.filter((_, index) => ticked.includes(index)).length;
 	const written = answers.filter((answer) => answer.answer.trim());
+	// Recording the submission is the one emphasised action only once preparation has nothing left to guide.
+	const primary = nextPreparationStep(application, workspace.data, documents) === "review";
+	const resumeName =
+		documents?.find((document) => document.type === "resume" && document.id === application.resumeId)?.name ??
+		(application.resumeFileUrl ? application.resumeFileName || t`Resume file` : null);
+	const letterName =
+		documents?.find((document) => document.type === "letter" && document.id === application.coverLetterId)?.name ??
+		(application.coverLetterUrl ? application.coverLetterName || t`Cover letter file` : null);
+	const names = [resumeName, letterName].filter((name): name is string => name !== null);
+	const records = [
+		...(names.length > 0 ? names : [t`no documents`]),
+		plural(written.length, { one: "# answer", other: "# answers" }),
+	];
 
 	const toggle = (index: number, on: boolean) => {
 		const current = workspace.current().checklist;
@@ -605,60 +621,56 @@ function Checklist({
 		<aside
 			id="application-readiness"
 			tabIndex={-1}
-			className="grid gap-3.5 rounded-xl border border-line bg-surface p-4"
+			className="grid gap-3.5 rounded-xl border border-line bg-surface p-4 @3xl:sticky @3xl:top-6 @3xl:col-start-2 @3xl:row-span-2 @3xl:row-start-1 @3xl:self-start"
 		>
 			<div className="flex items-baseline justify-between gap-3">
 				<h2 className="text-sm font-semibold">
-					{submitted ? <Trans>Content review</Trans> : <Trans>Before you submit</Trans>}
+					<Trans>Review checks</Trans>
 				</h2>
-				<span className="font-mono text-xs font-medium text-ink-2">{t`${done} of ${items.length}`}</span>
-			</div>
-			<div
-				role="progressbar"
-				aria-label={t`Checklist progress`}
-				aria-valuemin={0}
-				aria-valuemax={items.length}
-				aria-valuenow={done}
-				className="h-1.5 overflow-hidden rounded-sm bg-line"
-			>
-				<div
-					className="h-full rounded-sm bg-accent transition-[width] duration-standard ease-enter"
-					style={{ width: `${(done / items.length) * 100}%` }}
-				/>
+				<span className="text-xs text-ink-2 tabular-nums">{t`${done} of ${items.length}`}</span>
 			</div>
 			<ul className="grid gap-2.5">
-				{items.map((label, index) =>
-					application.status === "saved" && !readOnly && index === items.length - 1 ? (
-						<li key={label}>
-							<Button className="w-full" disabled={!canSubmit} loading={submitting} onClick={() => void markApplied()}>
-								<Trans>Mark as applied</Trans>
-							</Button>
-						</li>
-					) : (
-						<li key={label}>
-							<label className="flex cursor-pointer gap-2.5 text-[13px] leading-[19px]">
-								<Checkbox
-									className="mt-px"
-									checked={ticked.includes(index)}
-									disabled={readOnly || submitting}
-									onCheckedChange={(checked) => toggle(index, checked)}
-								/>
-								<span
-									className={cn("transition-colors duration-quick", ticked.includes(index) ? "text-ink-2" : "text-ink")}
-								>
-									{label}
-								</span>
-							</label>
-						</li>
-					),
-				)}
+				{items.map((label, index) => (
+					<li key={label}>
+						<label className="flex cursor-pointer gap-2.5 text-[13px] leading-[19px]">
+							<Checkbox
+								className="mt-px"
+								checked={ticked.includes(index)}
+								disabled={readOnly || submitting}
+								onCheckedChange={(checked) => toggle(index, checked)}
+							/>
+							<span
+								className={cn("transition-colors duration-quick", ticked.includes(index) ? "text-ink-2" : "text-ink")}
+							>
+								{label}
+							</span>
+						</label>
+					</li>
+				))}
 			</ul>
-			{!submitted && !canSubmit && !readOnly && (
-				<p role="alert" className="text-xs text-danger-text">
-					<Trans>
-						Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied.
-					</Trans>
-				</p>
+			{application.status === "saved" && !readOnly && (
+				<div className="grid gap-2 border-t border-line pt-3.5">
+					<Button
+						className="w-full"
+						variant={primary ? "primary" : "secondary"}
+						disabled={!canSubmit}
+						loading={submitting}
+						onClick={() => void markApplied()}
+					>
+						<Trans>Mark as applied</Trans>
+					</Button>
+					{canSubmit ? (
+						<p className="text-xs leading-[17px] text-ink-3">
+							<Trans>Records {records.join(" · ")} as sent. You submit on the employer's site yourself.</Trans>
+						</p>
+					) : (
+						<p role="alert" className="text-xs text-danger-text">
+							<Trans>
+								Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied.
+							</Trans>
+						</p>
+					)}
+				</div>
 			)}
 			<div className="flex flex-wrap gap-1.5 border-t border-line pt-3.5">
 				<Button variant="secondary" size="sm" disabled={written.length === 0} onClick={() => void copy()}>
@@ -680,15 +692,11 @@ function Checklist({
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</div>
-			<p className="text-xs leading-[17px] text-ink-3">
-				{submitted ? (
-					<Trans>Submission is recorded. Review checks only reflect what you checked yourself.</Trans>
-				) : (
-					<Trans>
-						You submit on the employer's site yourself. Marking it applied keeps the exact versions you sent.
-					</Trans>
-				)}
-			</p>
+			{submitted && (
+				<p className="text-xs leading-[17px] text-ink-3">
+					<Trans>Review checks only reflect what you checked yourself.</Trans>
+				</p>
+			)}
 		</aside>
 	);
 }

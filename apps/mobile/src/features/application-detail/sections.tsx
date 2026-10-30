@@ -43,6 +43,7 @@ import { describeNextStep, getNextStep } from "@/features/applications/next-step
 import { useApplicationMutations } from "@/features/applications/queries";
 import { PIPELINE } from "@/features/applications/stages";
 import { followUpEvent, icsFileName, interviewEvent, shareIcs, zonedParts } from "@/features/reminders";
+import { shareDocumentPdf } from "@/features/share/files";
 import { routes } from "@/routes";
 import {
 	Button,
@@ -54,6 +55,7 @@ import {
 	ListGroup,
 	ListRow,
 	SelectSheet,
+	Sheet,
 	showToast,
 	Text,
 	TextArea,
@@ -281,13 +283,30 @@ function sentOn(application: Application) {
 }
 
 /** WHAT YOU SENT: the linked resume and letter (linked is not the same as submitted), or ways to prepare them. */
-export function WhatYouSent({ application }: SectionProps) {
+type WhatYouSentProps = SectionProps & {
+	/** Apply tab: a heading, the recorded submission line, and each row's current-draft actions (edit, download PDF). */
+	drafts?: boolean | undefined;
+};
+
+export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 	const { t } = useLingui();
-	const { space } = useTheme();
+	const { colors, size, space } = useTheme();
 	const router = useRouter();
 	const { utcDay } = useUserTime();
 	const documents = useDocuments();
 	const { createLetter } = useDetailMutations(application.id);
+	const [menu, setMenu] = useState<"resume" | "letter" | null>(null);
+	const [downloading, setDownloading] = useState<string | null>(null);
+	const download = async (kind: "resume" | "letter", id: string, name: string) => {
+		setDownloading(id);
+		try {
+			await shareDocumentPdf(kind, id, name);
+		} catch {
+			showToast({ message: t`Couldn't generate the PDF. Try again.` });
+		} finally {
+			setDownloading(null);
+		}
+	};
 	const resume = documents.data?.find((item) => item.type === "resume" && item.id === application.resumeId);
 	const letter = documents.data?.find((item) => item.type === "letter" && item.id === application.coverLetterId);
 	const date = utcDay(sentOn(application));
@@ -306,8 +325,52 @@ export function WhatYouSent({ application }: SectionProps) {
 			},
 		);
 
-	return (
-		<Section title={application.status === "saved" ? t`Documents for this job` : t`What you sent`}>
+	// Current drafts stay editable after submission; the sent versions never change.
+	const draftMenu = (kind: "resume" | "letter", id: string, name: string) =>
+		drafts ? (
+			<>
+				<IconButton
+					icon="dots-three"
+					label={kind === "resume" ? t`Resume options` : t`Cover letter options`}
+					size={20}
+					color="ink2"
+					onPress={() => setMenu(kind)}
+				/>
+				<Sheet
+					open={menu === kind}
+					onClose={() => setMenu(null)}
+					title={kind === "resume" ? t`Resume options` : t`Cover letter options`}
+				>
+					<ListRow
+						leading="pencil-simple"
+						title={t`Edit current draft`}
+						onPress={() => {
+							setMenu(null);
+							router.push(kind === "resume" ? routes.builder(id) : routes.letter(id));
+						}}
+					/>
+					<ListRow
+						leading="download-simple"
+						title={downloading === id ? t`Generating PDF…` : t`Download current PDF`}
+						disabled={downloading !== null}
+						onPress={() => {
+							setMenu(null);
+							void download(kind, id, name);
+						}}
+					/>
+				</Sheet>
+			</>
+		) : undefined;
+	const body = (
+		<>
+			{drafts ? (
+				<View style={{ flexDirection: "row", alignItems: "flex-start", gap: space.s2 }}>
+					<Icon name="check-circle" size={size.icon.meta} color={colors.accentText} />
+					<Text variant="callout" color="ink2" style={{ flex: 1 }}>
+						{t`Submission recorded ${date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt.`}
+					</Text>
+				</View>
+			) : null}
 			{resumeId || coverLetterId ? (
 				<Card style={{ padding: 0 }}>
 					{resumeId ? (
@@ -321,7 +384,9 @@ export function WhatYouSent({ application }: SectionProps) {
 										: t`Version sent ${date}`
 									: t`Linked · not sent yet`
 							}
-							chevron
+							chevron={!drafts}
+							trailing={draftMenu("resume", resumeId, resume?.name ?? "resume")}
+							accessibilityHint={sentResumeVersionId ? t`Opens the version you sent, read-only` : undefined}
 							onPress={() =>
 								router.push(
 									sentResumeVersionId ? routes.history(resumeId, sentResumeVersionId) : routes.builder(resumeId),
@@ -334,7 +399,9 @@ export function WhatYouSent({ application }: SectionProps) {
 							leading="envelope-simple"
 							title={letter?.name ?? t`Cover letter`}
 							subtitle={sentCoverLetterVersionId ? t`Version sent ${date}` : t`Linked · not sent yet`}
-							chevron
+							chevron={!drafts}
+							trailing={draftMenu("letter", coverLetterId, letter?.name ?? "letter")}
+							accessibilityHint={sentCoverLetterVersionId ? t`Opens the version you sent, read-only` : undefined}
 							onPress={() => router.push(routes.letter(coverLetterId, "write", sentCoverLetterVersionId ?? undefined))}
 						/>
 					) : null}
@@ -364,7 +431,17 @@ export function WhatYouSent({ application }: SectionProps) {
 					) : null}
 				</View>
 			) : null}
-		</Section>
+		</>
+	);
+	if (drafts)
+		return (
+			<View style={{ gap: space.s3 }}>
+				<Text variant="heading" accessibilityRole="header">{t`What you sent`}</Text>
+				{body}
+			</View>
+		);
+	return (
+		<Section title={application.status === "saved" ? t`Documents for this job` : t`What you sent`}>{body}</Section>
 	);
 }
 

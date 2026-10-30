@@ -20,7 +20,12 @@ export function useInvalidateApplications() {
 		void queryClient.invalidateQueries({ queryKey: orpc.applications.tags.queryKey() });
 		void queryClient.invalidateQueries({ queryKey: orpc.documents.list.key() });
 		void queryClient.invalidateQueries({ queryKey: applicationLanesQueryKey() });
-		if (id) void queryClient.invalidateQueries({ queryKey: orpc.applications.getById.queryKey({ input: { id } }) });
+		if (id) {
+			void queryClient.invalidateQueries({ queryKey: orpc.applications.getById.queryKey({ input: { id } }) });
+			void queryClient.invalidateQueries({
+				queryKey: orpc.career.workspace.queryKey({ input: { applicationId: id } }),
+			});
+		}
 	};
 }
 

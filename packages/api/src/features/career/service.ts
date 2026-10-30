@@ -1072,6 +1072,7 @@ export const careerService = {
 	/** Copies the workspace's answers into Saved when the application is marked as applied: what was sent. */
 	snapshotAnswers: (userId: string, applicationId: string) =>
 		db.transaction(async (tx) => {
+			await lockUser(tx, userId);
 			const [application] = await tx
 				.select()
 				.from(tables.application)
@@ -1101,6 +1102,13 @@ export const careerService = {
 				.parse({ ...EMPTY_WORKSPACE, ...workspace?.data })
 				.answers.filter((answer) => answer.answer.trim());
 			if (!answers.length) return;
+			const applied = application.activity.findLast(
+				(entry) => entry.type === "stage" && entry.stage === "applied" && entry.canonicalTransition !== false,
+			);
+			if (!applied || !workspace || workspace.updatedAt.getTime() >= new Date(applied.at).getTime())
+				throw new ORPCError("CONFLICT", {
+					message: "These answers changed after submission and cannot be recorded as sent.",
+				});
 			await tx.insert(tables.careerArtifact).values({
 				userId,
 				applicationId,

@@ -128,6 +128,8 @@ msgid "{0, plural, one {{count} of # application changed.} other {{count} of # a
 msgstr "{0, plural, one {ከ# ማመልከቻ {count} ተቀይሯል።} other {ከ# ማመልከቻዎች {count} ተቀይረዋል።}}"
 
 #. placeholder {0}: data.answers.length
+#. placeholder {0}: written.length
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {# መልስ} other {# መልሶች}}"
@@ -1069,6 +1071,10 @@ msgstr "ከሀገር ኮዱ ጋር አንድ ይጨምሩ፤ አንዳንድ የ
 msgid "Add page"
 msgstr "ገጽ ያክሉ"
 
+#: src/features/workspace/preparation.tsx
+msgid "Add posting"
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Add profile"
 msgstr "መገለጫ ያክሉ"
@@ -1222,7 +1228,7 @@ msgid "AI & developer"
 msgstr "AI እና ገንቢ"
 
 #: src/features/workspace/preparation.tsx
-msgid "AI availability couldn't be confirmed. Manual preparation is available."
+msgid "AI availability couldn't be confirmed. Prepare manually; nothing here is sent to the employer or marks the job applied."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -1852,10 +1858,6 @@ msgstr "ከቃለ መጠይቅ በፊት"
 msgid "Before restore"
 msgstr "ከመመለሱ በፊት"
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Before you submit"
-msgstr "ከማስገባትዎ በፊት"
-
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Behavioral"
@@ -1989,6 +1991,7 @@ msgstr "ሶፍትዌር የእርስዎን የስራ ልምድ ማንበብ ይ�
 #: src/features/check/parser.tsx
 #: src/features/check/writing.tsx
 #: src/features/search/search-screen.tsx
+#: src/features/workspace/preparation.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/write/improve.tsx
 #: src/features/write/pickers.tsx
@@ -2182,10 +2185,6 @@ msgstr "ምርጫዎችዎን በማረጋገጥ ላይ"
 msgid "Checking… Copy is available after saving."
 msgstr "በመፈተሽ ላይ… ኮፒ ከተቀመጠ በኋላ ይገኛል።"
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Checklist progress"
-msgstr "የማረጋገጫ ዝርዝር ሂደት"
-
 #: src/features/assistant/assistant-screen.tsx
 msgid "Checks every bullet for action and result"
 msgstr "ለድርጊት እና ለውጤት የእያንዳንዱን ዝርዝር ግቤት ይፈትሻል"
@@ -2326,6 +2325,10 @@ msgstr "ንፁህ ዘይቤ"
 msgid "Clear"
 msgstr "አጽዳ"
 
+#: src/features/workspace/preparation.tsx
+msgid "Clear cover letter"
+msgstr ""
+
 #: src/features/application-detail/date-field.tsx
 msgid "Clear date"
 msgstr "ቀን አጽዳ"
@@ -2335,6 +2338,10 @@ msgstr "ቀን አጽዳ"
 #: src/features/documents/library.tsx
 msgid "Clear filters"
 msgstr "ማጣሪያዎችን አጽዳ"
+
+#: src/features/workspace/preparation.tsx
+msgid "Clear resume"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "Clear section"
@@ -2593,10 +2600,6 @@ msgstr "ሙሉውን አሳይ"
 msgid "Content is laid out in a grid."
 msgstr "ይዘቱ በግሪድ ውስጥ ተቀምጧል።"
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Content review"
-msgstr "የይዘት ግምገማ"
-
 #: src/preview/page.tsx
 msgid "Content still runs over. Hide a section or shorten entries."
 msgstr "ይዘቱ አሁንም ያልፋል። ክፍልን ደብቅ ወይም ግቤቶችን አሳጥር።"
@@ -2797,6 +2800,7 @@ msgstr "ቃለ መጠይቁን መሰረዝ አልተቻለም። እንደገ�
 msgid "Couldn't export. Try again."
 msgstr "ወደ ውጭ መላክ አልተቻለም። እንደገና ይሞክሩ።"
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't generate the PDF. Try again."
 msgstr "PDF መፍጠር አልተቻለም። እንደገና ይሞክሩ።"
@@ -3188,6 +3192,7 @@ msgstr "ሙላ"
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/career/facts.tsx
+#: src/features/workspace/preparation.tsx
 msgid "Cover letter"
 msgstr "የሽፋን ደብዳቤ"
 
@@ -3202,8 +3207,14 @@ msgid "Cover letter — {0}"
 msgstr "የሽፋን ደብዳቤ - {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "የሽፋን ደብዳቤ ፋይል"
+
+#: src/features/application-detail/sections.tsx
+#: src/features/workspace/preparation.tsx
+msgid "Cover letter options"
+msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
@@ -3711,13 +3722,13 @@ msgstr "ማውረድ እና ታሪክ"
 msgid "Download both PDFs"
 msgstr "ሁለቱንም PDF ያውርዱ"
 
+#: src/features/application-detail/sections.tsx
+msgid "Download current PDF"
+msgstr ""
+
 #: src/features/letters/share.tsx
 msgid "Download failed. Try again."
 msgstr "ማውረድ አልተሳካም። እንደገና ይሞክሩ።"
-
-#: src/features/workspace/preparation.tsx
-msgid "Download letter PDF"
-msgstr ""
 
 #: src/features/letters/share.tsx
 msgid "Download opens the system share sheet. Choose a storage provider to save the file."
@@ -3727,13 +3738,13 @@ msgstr "ማውረድ የስርዓቱን የማጋሪያ ምናሌ ይከፍታ�
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "ማውረድ የስርዓት ማጋራትን ይከፍታል። ፋይሉን ለማስቀመጥ የማከማቻ አቅራቢን ይምረጡ። የተገናኘ የሽፋን ደብዳቤ እንደ ሁለተኛ ፋይል ይከፈታል."
 
+#: src/features/workspace/preparation.tsx
+msgid "Download PDF"
+msgstr "PDF አውርድ"
+
 #: src/features/letters/share.tsx
 msgid "Download PDF instead"
 msgstr "በምትኩ PDF አውርድ"
-
-#: src/features/workspace/preparation.tsx
-msgid "Download resume PDF"
-msgstr ""
 
 #: src/features/share/link.tsx
 msgid "Download totals can include repeat clicks."
@@ -3875,11 +3886,11 @@ msgid "Edit {0}: {1}"
 msgstr "አርትዕ {0}፡ {1}"
 
 #: src/features/workspace/preparation.tsx
-msgid "Edit current letter"
+msgid "Edit cover letter"
 msgstr ""
 
-#: src/features/workspace/preparation.tsx
-msgid "Edit current resume"
+#: src/features/application-detail/sections.tsx
+msgid "Edit current draft"
 msgstr ""
 
 #: src/features/application-detail/sheets.tsx
@@ -3905,9 +3916,17 @@ msgstr "አገናኝ አርትዕ"
 msgid "Edit note"
 msgstr "ማስታወሻ አርትዕ"
 
+#: src/features/workspace/preparation.tsx
+msgid "Edit posting"
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Edit question"
 msgstr "ጥያቄውን አርትዕ"
+
+#: src/features/workspace/preparation.tsx
+msgid "Edit resume"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Edit schedule"
@@ -4237,10 +4256,6 @@ msgstr "በአሳሹ ውስጥ መግባትን ጨርስ"
 msgid "Finnish"
 msgstr "ፊኒሽ"
 
-#: src/features/workspace/preparation.tsx
-msgid "First application setup: save the posting, copy or create a resume, then review the documents and any required form answers below. A cover letter and form answers are optional when the employer doesn't ask for them."
-msgstr ""
-
 #: src/features/career/offers.tsx
 msgid "First offer"
 msgstr "የመጀመሪያ ቅናሽ"
@@ -4439,6 +4454,11 @@ msgstr "ሙሉ ስም"
 msgid "Full width"
 msgstr "ሙሉ ስፋት"
 
+#: src/features/application-detail/sections.tsx
+#: src/features/workspace/preparation.tsx
+msgid "Generating PDF…"
+msgstr "PDF በመፍጠር ላይ…"
+
 #: src/features/settings/locale-names.ts
 msgid "German"
 msgstr "ጀርመንኛ"
@@ -4633,6 +4653,10 @@ msgstr "የተነበቡ ነገሮችን ደብቅ"
 #: src/features/check/issues.ts
 msgid "Hide the photo"
 msgstr "ፎቶውን ደብቅ"
+
+#: src/features/workspace/preparation.tsx
+msgid "Hides all steps"
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Hindi"
@@ -5001,10 +5025,6 @@ msgstr "የስራ ግጥሚያ"
 #: src/features/check/job-match.tsx
 msgid "Job match isn't part of the readability score."
 msgstr "የስራ ግጥሚያ የተነባቢነት ነጥብ አካል አይደለም።"
-
-#: src/features/workspace/preparation.tsx
-msgid "Job posting"
-msgstr "የሥራ ማስታወቂያ"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Job posting · optional, adds a keyword match"
@@ -5714,10 +5734,6 @@ msgstr "እንደተነበበ ምልክት አድርግ"
 msgid "Mark it as applied in Apply first."
 msgstr "መጀመሪያ በማመልከት ውስጥ ማመልከቻ እንደቀረበ ምልክት ያድርጉ።"
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Mark the application as applied to keep the versions you sent."
-msgstr "የላኳቸውን ስሪቶች ለማቆየት ማመልከቻው እንደቀረበ ምልክት ያድርጉ።"
-
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
 msgid "Markdown"
@@ -6177,13 +6193,8 @@ msgstr "ቀጣዩ ደረጃ፡ {note}። ወደ ዛሬ አስታዋሽ ያክላ
 msgid "Next workspace tabs"
 msgstr "ቀጣይ የስራ ቦታ ትሮች"
 
-#. placeholder {0}: labels[next]
 #: src/features/workspace/preparation.tsx
-msgid "Next: {0}"
-msgstr ""
-
-#: src/features/workspace/preparation.tsx
-msgid "No AI connection needed. Edit documents and write answers yourself."
+msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
 msgstr ""
 
 #: src/features/ai/provider-list.tsx
@@ -6231,6 +6242,10 @@ msgstr "ቀን የለም"
 #: src/features/ats-checker/messages.ts
 msgid "No dates were found."
 msgstr "ምንም ቀናት አልተገኙም።"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "no documents"
+msgstr ""
 
 #: src/features/assistant/threads.tsx
 msgid "no edits"
@@ -6472,6 +6487,10 @@ msgstr "እስካሁን አልተመዘገበም። መደገፍ እስኪችሉ
 #: src/shell/builder-chrome.tsx
 msgid "Not saved"
 msgstr "አልተቀመጠም።"
+
+#: src/features/workspace/preparation.tsx
+msgid "Not saved yet"
+msgstr ""
 
 #: src/features/applications/stages.ts
 msgid "Not selected"
@@ -6818,6 +6837,10 @@ msgstr "የስራ ልምድ ማስረጃ በመክፈት ላይ…"
 msgid "Opens in Career → Offers."
 msgstr "በሙያ → ቅናሾች ውስጥ ይከፈታል።"
 
+#: src/features/application-detail/sections.tsx
+msgid "Opens the version you sent, read-only"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Opportunity discovery"
 msgstr "የዕድል ፍለጋ"
@@ -6827,7 +6850,11 @@ msgid "Optional"
 msgstr "አማራጭ"
 
 #: src/features/workspace/preparation.tsx
-msgid "Optional AI help is available in the editors. Review proposed edits before accepting them."
+msgid "Optional · none selected"
+msgstr ""
+
+#: src/features/workspace/preparation.tsx
+msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -7197,6 +7224,7 @@ msgstr "አቀማመጥ"
 msgid "posting"
 msgstr "የሥራ ማስታወቂያ"
 
+#: src/features/workspace/preparation.tsx
 #: src/features/workspace/tabs/fit.tsx
 msgid "Posting"
 msgstr "የሥራ ማስታወቂያ"
@@ -7248,10 +7276,6 @@ msgstr "ምርጫ"
 msgid "Preferences"
 msgstr "ምርጫዎች"
 
-#: src/features/workspace/preparation.tsx
-msgid "Preparation never submits to an employer or marks this application as applied."
-msgstr ""
-
 #: src/features/career/schedule-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/shell/workspace-chrome.tsx
@@ -7281,10 +7305,6 @@ msgstr "ለቃለ መጠይቅ ይዘጋጁ"
 #: src/features/assistant/assistant-screen.tsx
 msgid "Prepare me for the interview"
 msgstr "ለቃለ መጠይቁ አዘጋጅልኝ"
-
-#: src/features/workspace/preparation.tsx
-msgid "Prepare this application"
-msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Preparing edits…"
@@ -7692,6 +7712,10 @@ msgstr "መቅዳት በ2 ደቂቃ ገደብ ላይ ቆሟል። ያሉትን �
 msgid "Recording time"
 msgstr "የመቅጃ ጊዜ"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Records {records} as sent. You submit on the employer's site yourself."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "መልማይ"
@@ -8041,6 +8065,7 @@ msgstr "ውጤት"
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
+#: src/features/workspace/preparation.tsx
 msgid "Resume"
 msgstr "የስራ ልምድ ማስረጃ"
 
@@ -8057,8 +8082,14 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "የስራ ልምድ ማስረጃ ግብረ መልስ፣ የምርት እገዛ እና የማኅበረሰብ ሐሳቦች።"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "የሪዙሜ ፋይል"
+
+#: src/features/application-detail/sections.tsx
+#: src/features/workspace/preparation.tsx
+msgid "Resume options"
+msgstr ""
 
 #. placeholder {0}: pageIndex + 1
 #: src/features/check/page.tsx
@@ -8183,6 +8214,14 @@ msgstr "ማመልከቻውን ይገምግሙ"
 msgid "Review Check"
 msgstr "ምርመራን ገምግም"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Review checks"
+msgstr ""
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "Review checks only reflect what you checked yourself."
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Review draft"
 msgstr "ረቂቁን ገምግም"
@@ -8204,7 +8243,7 @@ msgid "Review my answer sends the question, what you said, this posting and your
 msgstr "«መልሴን ገምግም» ጥያቄውን፣ ያሉትን፣ ይህን የሥራ ማስታወቂያ እና እውቀትዎን ወደ {providerName} ይልካል።"
 
 #: src/features/workspace/preparation.tsx
-msgid "Review readiness below"
+msgid "Review readiness and record your submission"
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
@@ -8508,10 +8547,6 @@ msgstr "ወደ እውቀት ተቀምጧል፣ ለዚህ ማመልከቻ ብቻ 
 msgid "Saved to Saved · Practice"
 msgstr "ወደ «ተቀምጧል» ተቀምጧል · ልምምድ"
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Saved versions stay separate from later drafts. This record does not confirm employer receipt."
-msgstr ""
-
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "ስራውን በማስቀመጥ ላይ. ሌላ ለውጥ ከማድረግዎ በፊት ማረጋገጫን ይጠብቁ።"
@@ -8712,17 +8747,9 @@ msgstr "ግቤት ይምረጡ {0}"
 msgid "Select visible"
 msgstr "የሚታይ ይምረጡ"
 
-#: src/features/workspace/preparation.tsx
-msgid "Selected cover letter (optional)"
-msgstr ""
-
 #: src/preview/page.tsx
 msgid "Selected entry"
 msgstr "የተመረጠ ግቤት"
-
-#: src/features/workspace/preparation.tsx
-msgid "Selected resume"
-msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Semantic CSS stylesheet"
@@ -9017,6 +9044,10 @@ msgstr "የተቀመጡ ዝርዝሮችን በማሳየት ላይ። ሊታደ�
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Shown in your timezone."
 msgstr "በእርስዎ የሰዓት ሰቅ ይታያል።"
+
+#: src/features/workspace/preparation.tsx
+msgid "Shows all steps"
+msgstr ""
 
 #: src/features/documents/document-sheets.tsx
 msgid "Shows shared tags. Add or remove tags without changing each document's other tags."
@@ -9413,6 +9444,12 @@ msgstr "አሁን ይጀምራል"
 msgid "Stay in Documents"
 msgstr "በሰነዶች ውስጥ ይቆዩ"
 
+#. placeholder {0}: stepIndex + 1
+#. placeholder {1}: STEPS.length
+#: src/features/workspace/preparation.tsx
+msgid "Step {0} of {1}"
+msgstr ""
+
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 msgid "Stop"
@@ -9463,12 +9500,8 @@ msgstr "በመሃል አስምር"
 msgid "Stronger verb"
 msgstr "የበለጠ ጠንካራ ግስ"
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Submission is recorded. Review checks only reflect what you checked yourself."
-msgstr "ማመልከቻው መላኩ ተመዝግቧል። የግምገማ ምልክቶቹ ራስዎ ያረጋገጡትን ብቻ ያሳያሉ።"
-
-#: src/features/workspace/tabs/apply.tsx
-msgid "Submission recorded on {appliedOn}."
+#: src/features/application-detail/sections.tsx
+msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr ""
 
 #: src/features/workspace/preparation.tsx
@@ -9607,6 +9640,10 @@ msgstr "መለያዎች…"
 
 #: src/features/workspace/preparation.tsx
 msgid "Tailor and review your resume"
+msgstr ""
+
+#: src/features/workspace/preparation.tsx
+msgid "Tailor the resume"
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
@@ -11405,10 +11442,6 @@ msgstr "ያልተቀመጡ ለውጦች አሉዎት።"
 #: src/features/workspace/tabs/messages.tsx
 msgid "You send it from your own email."
 msgstr "ከራስዎ ኢሜል ይልካሉ።"
-
-#: src/features/workspace/tabs/apply.tsx
-msgid "You submit on the employer's site yourself. Marking it applied keeps the exact versions you sent."
-msgstr "በአሠሪው ድረ ገጽ ላይ ራስዎ ያስገባሉ። እንደቀረበ ምልክት ማድረግ የላኳቸውን ትክክለኛ ስሪቶች ይጠብቃል።"
 
 #: src/features/settings/sign-out.tsx
 msgid "You will be signed out of {server}. Any edits not yet synced from this device will be lost."

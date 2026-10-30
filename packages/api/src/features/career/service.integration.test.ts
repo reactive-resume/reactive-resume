@@ -1009,6 +1009,51 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		expect(saved.filter((item) => item.submission)).toMatchObject([{ data: { answers }, submission: true }]);
 	});
 
+	it("clears document reviews when a saved application changes its selected resume", async () => {
+		await getDb()
+			.update(tables.application)
+			.set({ sentResumeVersionId: null })
+			.where(eq(tables.application.id, "alice-app"));
+		await service.saveWorkspace("alice", "alice-app", { checklist: [0, 1, 2, 3] }, { checklist: [] });
+		await applications.update({ userId: "alice", id: "alice-app", resumeId: null });
+		expect((await service.workspace("alice", "alice-app")).checklist).toEqual([2, 3]);
+	});
+
+	it("keeps legacy capture of unchanged pre-submission answers immutable", async () => {
+		const answers = [{ id: "why", question: "Why this role?", answer: "Original answer", factIds: [] }];
+		await service.saveWorkspace("alice", "alice-app", { answers }, { answers: [] });
+		await applications.update({ userId: "alice", id: "alice-app", status: "applied" });
+		await service.snapshotAnswers("alice", "alice-app");
+		await service.saveWorkspace(
+			"alice",
+			"alice-app",
+			{ answers: answers.map((answer) => ({ ...answer, answer: "Later draft" })) },
+			{ answers },
+		);
+		await service.snapshotAnswers("alice", "alice-app");
+		expect(await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "answers" })).toMatchObject([
+			{ data: { answers }, submission: true },
+		]);
+	});
+
+	it("never records answers written after an empty submission as sent", async () => {
+		await service.submitApplication("alice", "alice-app", [], []);
+		await service.saveWorkspace(
+			"alice",
+			"alice-app",
+			{
+				answers: [{ id: "later", question: "Later question", answer: "Later draft", factIds: [] }],
+			},
+			{ answers: [] },
+		);
+		await getDb()
+			.update(tables.careerWorkspace)
+			.set({ updatedAt: new Date(Date.now() + 1000) })
+			.where(eq(tables.careerWorkspace.applicationId, "alice-app"));
+		await expect(service.snapshotAnswers("alice", "alice-app")).rejects.toMatchObject({ code: "CONFLICT" });
+		expect(await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "answers" })).toEqual([]);
+	});
+
 	it("rejects a stale submit after another tab closes a never-submitted application", async () => {
 		await applications.update({ userId: "alice", id: "alice-app", status: "closed", closedReason: "withdrew" });
 		await expect(service.submitApplication("alice", "alice-app", [], [])).rejects.toMatchObject({ code: "CONFLICT" });

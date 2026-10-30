@@ -22,13 +22,16 @@ test("prepares documents and answers manually, then keeps submission separate fr
 
 	await page.goto(`/dashboard/applications/${id}`);
 	await expect(page.getByRole("tab", { name: "Apply", selected: true })).toBeVisible();
-	await expect(page.getByText("Next: Save the job posting", { exact: true })).toBeVisible();
+	await expect(page.getByRole("heading", { name: "Save the job posting", exact: true })).toBeVisible();
+	await expect(page.getByText("Step 1 of 6", { exact: true })).toBeVisible();
 	await page
 		.getByLabel("Job description", { exact: true })
 		.fill("Lead customer onboarding and improve the setup process with the support team.");
 	await page.getByRole("button", { name: "Save posting", exact: true }).click();
-	await expect(page.getByText("Next: Choose a base resume", { exact: true })).toBeVisible();
-	await expect(page.getByText("No AI connection needed. Edit documents and write answers yourself.")).toBeVisible();
+	await expect(page.getByRole("heading", { name: "Choose a base resume", exact: true })).toBeVisible();
+	await expect(
+		page.getByText(/^No AI needed\. Edit documents and write answers yourself; nothing here is sent/),
+	).toBeVisible();
 	await page.getByRole("button", { name: "Copy a base resume for this job" }).click();
 	await expect(page.getByRole("dialog")).toContainText("Harbor Labs");
 	await page.getByRole("button", { name: "Create and open", exact: true }).click();
@@ -37,8 +40,10 @@ test("prepares documents and answers manually, then keeps submission separate fr
 	expect(selected.status).toBe("saved");
 	expect(selected.resumeId).not.toBe(baseId);
 	await page.goto(`/dashboard/applications/${id}/apply`);
-	await expect(page.getByLabel("Selected resume", { exact: true })).toContainText("Harbor Labs");
-	await page.getByRole("button", { name: "Write a letter", exact: true }).click();
+	await expect(page.getByRole("heading", { name: "Tailor and review your resume", exact: true })).toBeVisible();
+	await expect(page.getByRole("combobox", { name: "Resume", exact: true })).toContainText("Harbor Labs");
+	await page.getByRole("button", { name: "Cover letter options", exact: true }).click();
+	await page.getByRole("menuitem", { name: "Write a letter", exact: true }).click();
 	await expect(page).toHaveURL(/\/builder\/letter\//);
 	const withLetter = await application();
 	const letter = await (await page.request.get(`/api/openapi/cover-letters/${withLetter.coverLetterId}`)).json();
@@ -51,9 +56,10 @@ test("prepares documents and answers manually, then keeps submission separate fr
 		}),
 	).toBeOK();
 	await page.goto(`/dashboard/applications/${id}/apply`);
-	for (const label of ["Download resume PDF", "Download letter PDF"]) {
+	for (const menu of ["Resume options", "Cover letter options"]) {
+		await page.getByRole("button", { name: menu, exact: true }).click();
 		const download = page.waitForEvent("download");
-		await page.getByRole("button", { name: label, exact: true }).click();
+		await page.getByRole("menuitem", { name: "Download PDF", exact: true }).click();
 		const file = await download;
 		const path = await file.path();
 		if (!path) throw new Error("PDF download did not produce a file.");
@@ -74,7 +80,10 @@ test("prepares documents and answers manually, then keeps submission separate fr
 		await checkbox.click();
 		await expect(checkbox).toBeChecked();
 	}
-	await expect(page.getByText("Next: Review readiness below", { exact: true })).toBeVisible();
+	await expect(
+		page.getByRole("heading", { name: "Review readiness and record your submission", exact: true }),
+	).toBeVisible();
+	await expect(page.getByText("3 of 4", { exact: true })).toBeVisible();
 	await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
 	await page.getByRole("button", { name: "Copy answers", exact: true }).click();
 	await expect
@@ -85,11 +94,14 @@ test("prepares documents and answers manually, then keeps submission separate fr
 		.getByRole("region", { name: "Application preparation" })
 		.screenshot({ path: testInfo.outputPath("preparation.png") });
 	await page.setViewportSize({ width: 390, height: 844 });
-	await expect(page.getByRole("button", { name: "Download resume PDF" })).toBeVisible();
+	await expect(page.getByRole("button", { name: "Resume options", exact: true })).toBeVisible();
 	expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 	await page.setViewportSize({ width: 1440, height: 1250 });
 	await page.getByRole("button", { name: "Mark as applied", exact: true }).click();
-	await expect(page.getByRole("heading", { name: "Current drafts", exact: true })).toBeVisible();
+	await expect(
+		page.getByRole("tabpanel", { name: "Apply" }).getByRole("heading", { name: "What you sent", exact: true }),
+	).toBeVisible();
+	await expect(page.getByText("3 of 3", { exact: true })).toBeVisible();
 	const submitted = await application();
 	expect(submitted).toMatchObject({ status: "applied", resumeId: selected.resumeId, coverLetterId: letter.id });
 	expect(submitted.sentResumeVersionId).toBeTruthy();

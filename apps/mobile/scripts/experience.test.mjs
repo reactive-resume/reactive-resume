@@ -343,6 +343,7 @@ const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-d
 		useApplicationMutations: () => ({ update: { isPending: false, mutate: (input) => calls.push(input) } }),
 	},
 	"@/features/reminders": {},
+	"@/features/share/files": {},
 });
 const application = {
 	id: "job-a",

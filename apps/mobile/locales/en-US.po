@@ -128,6 +128,8 @@ msgid "{0, plural, one {{count} of # application changed.} other {{count} of # a
 msgstr "{0, plural, one {{count} of # application changed.} other {{count} of # applications changed.}}"
 
 #. placeholder {0}: data.answers.length
+#. placeholder {0}: written.length
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {# answer} other {# answers}}"
@@ -1069,6 +1071,10 @@ msgstr "Add one with its country code; some application forms require it before 
 msgid "Add page"
 msgstr "Add page"
 
+#: src/features/workspace/preparation.tsx
+msgid "Add posting"
+msgstr "Add posting"
+
 #: src/features/write/fields.ts
 msgid "Add profile"
 msgstr "Add profile"
@@ -1222,8 +1228,8 @@ msgid "AI & developer"
 msgstr "AI & developer"
 
 #: src/features/workspace/preparation.tsx
-msgid "AI availability couldn't be confirmed. Manual preparation is available."
-msgstr "AI availability couldn't be confirmed. Manual preparation is available."
+msgid "AI availability couldn't be confirmed. Prepare manually; nothing here is sent to the employer or marks the job applied."
+msgstr "AI availability couldn't be confirmed. Prepare manually; nothing here is sent to the employer or marks the job applied."
 
 #: src/features/career/schedule-sheet.tsx
 msgid "AI connection"
@@ -1852,10 +1858,6 @@ msgstr "Before interview"
 msgid "Before restore"
 msgstr "Before restore"
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Before you submit"
-msgstr "Before you submit"
-
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Behavioral"
@@ -1989,6 +1991,7 @@ msgstr "Can software read your resume?"
 #: src/features/check/parser.tsx
 #: src/features/check/writing.tsx
 #: src/features/search/search-screen.tsx
+#: src/features/workspace/preparation.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/write/improve.tsx
 #: src/features/write/pickers.tsx
@@ -2182,10 +2185,6 @@ msgstr "Checking your preferences"
 msgid "Checking… Copy is available after saving."
 msgstr "Checking… Copy is available after saving."
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Checklist progress"
-msgstr "Checklist progress"
-
 #: src/features/assistant/assistant-screen.tsx
 msgid "Checks every bullet for action and result"
 msgstr "Checks every bullet for action and result"
@@ -2326,6 +2325,10 @@ msgstr "Clean"
 msgid "Clear"
 msgstr "Clear"
 
+#: src/features/workspace/preparation.tsx
+msgid "Clear cover letter"
+msgstr "Clear cover letter"
+
 #: src/features/application-detail/date-field.tsx
 msgid "Clear date"
 msgstr "Clear date"
@@ -2335,6 +2338,10 @@ msgstr "Clear date"
 #: src/features/documents/library.tsx
 msgid "Clear filters"
 msgstr "Clear filters"
+
+#: src/features/workspace/preparation.tsx
+msgid "Clear resume"
+msgstr "Clear resume"
 
 #: src/features/write/section-sheet.tsx
 msgid "Clear section"
@@ -2593,10 +2600,6 @@ msgstr "Contain"
 msgid "Content is laid out in a grid."
 msgstr "Content is laid out in a grid."
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Content review"
-msgstr "Content review"
-
 #: src/preview/page.tsx
 msgid "Content still runs over. Hide a section or shorten entries."
 msgstr "Content still runs over. Hide a section or shorten entries."
@@ -2797,6 +2800,7 @@ msgstr "Couldn't delete the interview. Try again."
 msgid "Couldn't export. Try again."
 msgstr "Couldn't export. Try again."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't generate the PDF. Try again."
 msgstr "Couldn't generate the PDF. Try again."
@@ -3188,6 +3192,7 @@ msgstr "Cover"
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/career/facts.tsx
+#: src/features/workspace/preparation.tsx
 msgid "Cover letter"
 msgstr "Cover letter"
 
@@ -3202,8 +3207,14 @@ msgid "Cover letter — {0}"
 msgstr "Cover letter — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "Cover letter file"
+
+#: src/features/application-detail/sections.tsx
+#: src/features/workspace/preparation.tsx
+msgid "Cover letter options"
+msgstr "Cover letter options"
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
@@ -3711,13 +3722,13 @@ msgstr "Download & history"
 msgid "Download both PDFs"
 msgstr "Download both PDFs"
 
+#: src/features/application-detail/sections.tsx
+msgid "Download current PDF"
+msgstr "Download current PDF"
+
 #: src/features/letters/share.tsx
 msgid "Download failed. Try again."
 msgstr "Download failed. Try again."
-
-#: src/features/workspace/preparation.tsx
-msgid "Download letter PDF"
-msgstr "Download letter PDF"
 
 #: src/features/letters/share.tsx
 msgid "Download opens the system share sheet. Choose a storage provider to save the file."
@@ -3727,13 +3738,13 @@ msgstr "Download opens the system share sheet. Choose a storage provider to save
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 
+#: src/features/workspace/preparation.tsx
+msgid "Download PDF"
+msgstr "Download PDF"
+
 #: src/features/letters/share.tsx
 msgid "Download PDF instead"
 msgstr "Download PDF instead"
-
-#: src/features/workspace/preparation.tsx
-msgid "Download resume PDF"
-msgstr "Download resume PDF"
 
 #: src/features/share/link.tsx
 msgid "Download totals can include repeat clicks."
@@ -3875,12 +3886,12 @@ msgid "Edit {0}: {1}"
 msgstr "Edit {0}: {1}"
 
 #: src/features/workspace/preparation.tsx
-msgid "Edit current letter"
-msgstr "Edit current letter"
+msgid "Edit cover letter"
+msgstr "Edit cover letter"
 
-#: src/features/workspace/preparation.tsx
-msgid "Edit current resume"
-msgstr "Edit current resume"
+#: src/features/application-detail/sections.tsx
+msgid "Edit current draft"
+msgstr "Edit current draft"
 
 #: src/features/application-detail/sheets.tsx
 msgid "Edit date"
@@ -3905,9 +3916,17 @@ msgstr "Edit link"
 msgid "Edit note"
 msgstr "Edit note"
 
+#: src/features/workspace/preparation.tsx
+msgid "Edit posting"
+msgstr "Edit posting"
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Edit question"
 msgstr "Edit question"
+
+#: src/features/workspace/preparation.tsx
+msgid "Edit resume"
+msgstr "Edit resume"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Edit schedule"
@@ -4237,10 +4256,6 @@ msgstr "Finish signing in in the browser"
 msgid "Finnish"
 msgstr "Finnish"
 
-#: src/features/workspace/preparation.tsx
-msgid "First application setup: save the posting, copy or create a resume, then review the documents and any required form answers below. A cover letter and form answers are optional when the employer doesn't ask for them."
-msgstr "First application setup: save the posting, copy or create a resume, then review the documents and any required form answers below. A cover letter and form answers are optional when the employer doesn't ask for them."
-
 #: src/features/career/offers.tsx
 msgid "First offer"
 msgstr "First offer"
@@ -4439,6 +4454,11 @@ msgstr "Full name"
 msgid "Full width"
 msgstr "Full width"
 
+#: src/features/application-detail/sections.tsx
+#: src/features/workspace/preparation.tsx
+msgid "Generating PDF…"
+msgstr "Generating PDF…"
+
 #: src/features/settings/locale-names.ts
 msgid "German"
 msgstr "German"
@@ -4633,6 +4653,10 @@ msgstr "Hide read"
 #: src/features/check/issues.ts
 msgid "Hide the photo"
 msgstr "Hide the photo"
+
+#: src/features/workspace/preparation.tsx
+msgid "Hides all steps"
+msgstr "Hides all steps"
 
 #: src/features/settings/locale-names.ts
 msgid "Hindi"
@@ -5001,10 +5025,6 @@ msgstr "Job match"
 #: src/features/check/job-match.tsx
 msgid "Job match isn't part of the readability score."
 msgstr "Job match isn't part of the readability score."
-
-#: src/features/workspace/preparation.tsx
-msgid "Job posting"
-msgstr "Job posting"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Job posting · optional, adds a keyword match"
@@ -5714,10 +5734,6 @@ msgstr "Mark as read"
 msgid "Mark it as applied in Apply first."
 msgstr "Mark it as applied in Apply first."
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Mark the application as applied to keep the versions you sent."
-msgstr "Mark the application as applied to keep the versions you sent."
-
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
 msgid "Markdown"
@@ -6177,14 +6193,9 @@ msgstr "Next step: {note}. Adds a reminder to Today."
 msgid "Next workspace tabs"
 msgstr "Next workspace tabs"
 
-#. placeholder {0}: labels[next]
 #: src/features/workspace/preparation.tsx
-msgid "Next: {0}"
-msgstr "Next: {0}"
-
-#: src/features/workspace/preparation.tsx
-msgid "No AI connection needed. Edit documents and write answers yourself."
-msgstr "No AI connection needed. Edit documents and write answers yourself."
+msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
+msgstr "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
 
 #: src/features/ai/provider-list.tsx
 msgid "No AI provider yet"
@@ -6231,6 +6242,10 @@ msgstr "No date"
 #: src/features/ats-checker/messages.ts
 msgid "No dates were found."
 msgstr "No dates were found."
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "no documents"
+msgstr "no documents"
 
 #: src/features/assistant/threads.tsx
 msgid "no edits"
@@ -6472,6 +6487,10 @@ msgstr "Not recorded yet. Leave blank until you can support it."
 #: src/shell/builder-chrome.tsx
 msgid "Not saved"
 msgstr "Not saved"
+
+#: src/features/workspace/preparation.tsx
+msgid "Not saved yet"
+msgstr "Not saved yet"
 
 #: src/features/applications/stages.ts
 msgid "Not selected"
@@ -6818,6 +6837,10 @@ msgstr "Opening the resume…"
 msgid "Opens in Career → Offers."
 msgstr "Opens in Career → Offers."
 
+#: src/features/application-detail/sections.tsx
+msgid "Opens the version you sent, read-only"
+msgstr "Opens the version you sent, read-only"
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Opportunity discovery"
 msgstr "Opportunity discovery"
@@ -6827,8 +6850,12 @@ msgid "Optional"
 msgstr "Optional"
 
 #: src/features/workspace/preparation.tsx
-msgid "Optional AI help is available in the editors. Review proposed edits before accepting them."
-msgstr "Optional AI help is available in the editors. Review proposed edits before accepting them."
+msgid "Optional · none selected"
+msgstr "Optional · none selected"
+
+#: src/features/workspace/preparation.tsx
+msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
 
 #: src/features/ai/provider-editor.tsx
 msgid "Optional for local Ollama"
@@ -7197,6 +7224,7 @@ msgstr "Position"
 msgid "posting"
 msgstr "posting"
 
+#: src/features/workspace/preparation.tsx
 #: src/features/workspace/tabs/fit.tsx
 msgid "Posting"
 msgstr "Posting"
@@ -7248,10 +7276,6 @@ msgstr "Preference"
 msgid "Preferences"
 msgstr "Preferences"
 
-#: src/features/workspace/preparation.tsx
-msgid "Preparation never submits to an employer or marks this application as applied."
-msgstr "Preparation never submits to an employer or marks this application as applied."
-
 #: src/features/career/schedule-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/shell/workspace-chrome.tsx
@@ -7281,10 +7305,6 @@ msgstr "Prepare for interview"
 #: src/features/assistant/assistant-screen.tsx
 msgid "Prepare me for the interview"
 msgstr "Prepare me for the interview"
-
-#: src/features/workspace/preparation.tsx
-msgid "Prepare this application"
-msgstr "Prepare this application"
 
 #: src/features/assistant/messages.tsx
 msgid "Preparing edits…"
@@ -7692,6 +7712,10 @@ msgstr "Recording stopped at the 2-minute limit. Transcribing what you said."
 msgid "Recording time"
 msgstr "Recording time"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Records {records} as sent. You submit on the employer's site yourself."
+msgstr "Records {records} as sent. You submit on the employer's site yourself."
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "Recruiter"
@@ -8041,6 +8065,7 @@ msgstr "Result"
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
+#: src/features/workspace/preparation.tsx
 msgid "Resume"
 msgstr "Resume"
 
@@ -8057,8 +8082,14 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "Resume feedback, product help, and community ideas."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "Resume file"
+
+#: src/features/application-detail/sections.tsx
+#: src/features/workspace/preparation.tsx
+msgid "Resume options"
+msgstr "Resume options"
 
 #. placeholder {0}: pageIndex + 1
 #: src/features/check/page.tsx
@@ -8183,6 +8214,14 @@ msgstr "Review application"
 msgid "Review Check"
 msgstr "Review Check"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Review checks"
+msgstr "Review checks"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "Review checks only reflect what you checked yourself."
+msgstr "Review checks only reflect what you checked yourself."
+
 #: src/features/career/today.tsx
 msgid "Review draft"
 msgstr "Review draft"
@@ -8204,8 +8243,8 @@ msgid "Review my answer sends the question, what you said, this posting and your
 msgstr "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 
 #: src/features/workspace/preparation.tsx
-msgid "Review readiness below"
-msgstr "Review readiness below"
+msgid "Review readiness and record your submission"
+msgstr "Review readiness and record your submission"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
@@ -8508,10 +8547,6 @@ msgstr "Saved to Knowledge, private to this application."
 msgid "Saved to Saved · Practice"
 msgstr "Saved to Saved · Practice"
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Saved versions stay separate from later drafts. This record does not confirm employer receipt."
-msgstr "Saved versions stay separate from later drafts. This record does not confirm employer receipt."
-
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "Saving the job. Wait for confirmation before making another change."
@@ -8712,17 +8747,9 @@ msgstr "Select entry {0}"
 msgid "Select visible"
 msgstr "Select visible"
 
-#: src/features/workspace/preparation.tsx
-msgid "Selected cover letter (optional)"
-msgstr "Selected cover letter (optional)"
-
 #: src/preview/page.tsx
 msgid "Selected entry"
 msgstr "Selected entry"
-
-#: src/features/workspace/preparation.tsx
-msgid "Selected resume"
-msgstr "Selected resume"
 
 #: src/features/design/advanced.tsx
 msgid "Semantic CSS stylesheet"
@@ -9017,6 +9044,10 @@ msgstr "Showing saved details. They couldn't be refreshed."
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Shown in your timezone."
 msgstr "Shown in your timezone."
+
+#: src/features/workspace/preparation.tsx
+msgid "Shows all steps"
+msgstr "Shows all steps"
 
 #: src/features/documents/document-sheets.tsx
 msgid "Shows shared tags. Add or remove tags without changing each document's other tags."
@@ -9413,6 +9444,12 @@ msgstr "Starts now"
 msgid "Stay in Documents"
 msgstr "Stay in Documents"
 
+#. placeholder {0}: stepIndex + 1
+#. placeholder {1}: STEPS.length
+#: src/features/workspace/preparation.tsx
+msgid "Step {0} of {1}"
+msgstr "Step {0} of {1}"
+
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 msgid "Stop"
@@ -9463,13 +9500,9 @@ msgstr "Strikethrough"
 msgid "Stronger verb"
 msgstr "Stronger verb"
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Submission is recorded. Review checks only reflect what you checked yourself."
-msgstr "Submission is recorded. Review checks only reflect what you checked yourself."
-
-#: src/features/workspace/tabs/apply.tsx
-msgid "Submission recorded on {appliedOn}."
-msgstr "Submission recorded on {appliedOn}."
+#: src/features/application-detail/sections.tsx
+msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
+msgstr "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 
 #: src/features/workspace/preparation.tsx
 msgid "Submission recorded. Current drafts are separate from what you sent."
@@ -9608,6 +9641,10 @@ msgstr "Tags…"
 #: src/features/workspace/preparation.tsx
 msgid "Tailor and review your resume"
 msgstr "Tailor and review your resume"
+
+#: src/features/workspace/preparation.tsx
+msgid "Tailor the resume"
+msgstr "Tailor the resume"
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "Tailor to the {company} posting"
@@ -11405,10 +11442,6 @@ msgstr "You have unsaved changes."
 #: src/features/workspace/tabs/messages.tsx
 msgid "You send it from your own email."
 msgstr "You send it from your own email."
-
-#: src/features/workspace/tabs/apply.tsx
-msgid "You submit on the employer's site yourself. Marking it applied keeps the exact versions you sent."
-msgstr "You submit on the employer's site yourself. Marking it applied keeps the exact versions you sent."
 
 #: src/features/settings/sign-out.tsx
 msgid "You will be signed out of {server}. Any edits not yet synced from this device will be lost."

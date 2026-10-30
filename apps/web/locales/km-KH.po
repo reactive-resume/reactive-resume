@@ -112,6 +112,8 @@ msgid "{0, plural, one {# active application} other {# active applications}}"
 msgstr "{0, plural, one {ពាក្យសុំសកម្ម #} other {ពាក្យសុំសកម្ម #}}"
 
 #. placeholder {0}: data.answers.length
+#. placeholder {0}: written.length
+#: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, other {ចម្លើយ #}}"
@@ -833,11 +835,6 @@ msgstr "ការធ្វើឱ្យសកម្ម +13 ពិន្ទុ"
 msgid "<0>Nothing to fix.</0> Every check passes."
 msgstr "<0> គ្មានអ្វីដែលត្រូវជួសជុលទេ។</0> រាល់ការត្រួតពិនិត្យឆ្លងកាត់។"
 
-#. placeholder {0}: day(application.appliedAt)
-#: src/features/career/workspace/apply.tsx
-msgid "<0>Submission recorded on {0}.</0> Saved versions stay separate from later drafts. This record does not confirm employer receipt."
-msgstr ""
-
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
 msgstr "<0>យើងមិនបូកចំនួនសរុបដោយចេតនា។</0> ប្រាក់រង្វាន់ និងភាគហ៊ុនអាស្រ័យលើលក្ខខណ្ឌ ហើយតម្លៃភាគហ៊ុនមិនប្រាកដទាំងសងខាង។ សូមអានឯកសារផ្តល់ការងារដើម មុនពេលប្រៀបធៀបចំនួនសរុប។"
@@ -1404,6 +1401,10 @@ msgstr "បន្ថែមទំព័រ"
 msgid "Add passkey"
 msgstr "បន្ថែមលេខសម្ងាត់"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Add posting"
+msgstr ""
+
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add profile"
 msgstr "បន្ថែមប្រវត្តិរូប"
@@ -1597,7 +1598,7 @@ msgid "AI & developer"
 msgstr "AI និងអ្នកអភិវឌ្ឍន៍"
 
 #: src/features/career/workspace/preparation.tsx
-msgid "AI availability couldn't be confirmed. Manual preparation is available."
+msgid "AI availability couldn't be confirmed. Prepare manually; nothing here is sent to the employer or marks the job applied."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -2320,10 +2321,6 @@ msgstr "មូលដ្ឋាន"
 msgid "Before restore"
 msgstr "មុនពេលស្តារឡើងវិញ"
 
-#: src/features/career/workspace/apply.tsx
-msgid "Before you submit"
-msgstr "មុនពេលអ្នកដាក់ស្នើ"
-
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Behavioral"
 msgstr "អាកប្បកិរិយា"
@@ -2502,6 +2499,7 @@ msgstr "តើកម្មវិធីអាចអានប្រវត្តិ
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/preparation.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/builder/password-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -2739,10 +2737,6 @@ msgstr "កំពុងពិនិត្យចំណង់ចំណូលចិ
 msgid "Checking… Copy is available after saving."
 msgstr "កំពុងពិនិត្យ... ច្បាប់ចម្លងគឺអាចប្រើបានបន្ទាប់ពីរក្សាទុក។"
 
-#: src/features/career/workspace/apply.tsx
-msgid "Checklist progress"
-msgstr "វឌ្ឍនភាពបញ្ជីត្រួតពិនិត្យ"
-
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Checks by category"
 msgstr "ពិនិត្យតាមប្រភេទ"
@@ -2845,9 +2839,17 @@ msgstr "Claude Desktop"
 msgid "Clear"
 msgstr "សម្អាត"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Clear cover letter"
+msgstr ""
+
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Clear formatting"
 msgstr "សម្អាតទម្រង់"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Clear resume"
+msgstr ""
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Clear search"
@@ -3221,10 +3223,6 @@ msgstr "មាតិកា"
 msgid "Content is laid out in a grid."
 msgstr "មាតិកាត្រូវបានរៀបចំតាមទម្រង់ក្រឡាចត្រង្គ។"
 
-#: src/features/career/workspace/apply.tsx
-msgid "Content review"
-msgstr "ការពិនិត្យមាតិកា"
-
 #. Button label to continue to dashboard after successful registration
 #. Final action button after saving backup codes
 #. Primary action button to proceed to next step in two-factor setup
@@ -3529,7 +3527,7 @@ msgstr "មិនអាចបំពេញវាលបានទេ។ ព្យ�
 msgid "Couldn't forget that fact. Try again."
 msgstr "មិនអាចបំភ្លេចការពិតនោះបានទេ។ ព្យាយាមម្តងទៀត។"
 
-#: src/features/career/workspace/preparation.tsx
+#: src/features/applications/use-document-download.ts
 #: src/features/resume/export/use-resume-export.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Couldn't generate the PDF. Try again."
@@ -3992,6 +3990,7 @@ msgstr "បំពេញស៊ុម"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Cover letter"
 msgstr "លិខិតអម"
 
@@ -4010,12 +4009,18 @@ msgid "Cover letter · Fieldnote"
 msgstr "លិខិតគម្រប · Fieldnote"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/apply.tsx
 msgid "Cover letter file"
 msgstr "ឯកសារលិខិតគម្រប"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Cover letter imported"
 msgstr "លិខិតគម្របបាននាំចូល"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
+msgid "Cover letter options"
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -4608,15 +4613,16 @@ msgstr "ទាញយកកូដ"
 msgid "Download CSV"
 msgstr "ទាញយក CSV"
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Download current PDF"
+msgstr ""
+
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Download failed. Try again."
 msgstr "ការទាញយកបរាជ័យ។ ព្យាយាមម្តងទៀត។"
 
 #: src/features/career/workspace/preparation.tsx
-msgid "Download letter PDF"
-msgstr ""
-
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
@@ -4625,10 +4631,6 @@ msgstr "ទាញយក PDF"
 #: src/features/resume/share/download-tab.tsx
 msgid "Download PDF instead"
 msgstr "ទាញយក PDF ជំនួសវិញ។"
-
-#: src/features/career/workspace/preparation.tsx
-msgid "Download resume PDF"
-msgstr ""
 
 #: src/features/templates/gallery.tsx
 msgid "Download sample PDF"
@@ -4813,6 +4815,7 @@ msgstr "សារមុនៗក្នុងការជជែកនេះ"
 #: src/components/input/chip-input.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/knowledge/stories.tsx
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/settings/ai/providers.tsx
@@ -4842,11 +4845,11 @@ msgid "Edit color {0}"
 msgstr "កែសម្រួលពណ៌ {0}"
 
 #: src/features/career/workspace/preparation.tsx
-msgid "Edit current letter"
+msgid "Edit cover letter"
 msgstr ""
 
-#: src/features/career/workspace/preparation.tsx
-msgid "Edit current resume"
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Edit current draft"
 msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
@@ -4881,9 +4884,17 @@ msgstr "កែសម្រួលតំណ"
 msgid "Edit note"
 msgstr "កែសម្រួលកំណត់ចំណាំ"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Edit posting"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "Edit question"
 msgstr "កែសម្រួលសំណួរ"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Edit resume"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Edit schedule"
@@ -5378,10 +5389,6 @@ msgstr "កំពុងស្វែងរកអ្វីដែលមានប្
 msgid "Finnish"
 msgstr "Finnish"
 
-#: src/features/career/workspace/preparation.tsx
-msgid "First application setup: save the posting, copy or create a resume, then review the documents and any required form answers below. A cover letter and form answers are optional when the employer doesn't ask for them."
-msgstr ""
-
 #: src/features/career/schedule-sheet.tsx
 msgid "First run"
 msgstr "ដំណើរការលើកដំបូង"
@@ -5675,6 +5682,8 @@ msgstr "ទទឹងពេញ"
 msgid "Generate a random name"
 msgstr "បង្កើត​ឈ្មោះចៃដន្យ"
 
+#: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 #: src/features/resume/export/use-resume-export.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Generating PDF…"
@@ -5761,10 +5770,6 @@ msgstr "ទៅ​កាន់​ផ្ទាំង​គ្រប់គ្រង
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Go to form answers"
-msgstr ""
-
-#: src/features/career/workspace/preparation.tsx
-msgid "Go to readiness review"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -6447,7 +6452,6 @@ msgstr "តំណការងារ ឬអត្ថបទប្រកាសក�
 msgid "Job match"
 msgstr "ការប្រកួតការងារ"
 
-#: src/features/career/workspace/preparation.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Job posting"
 msgstr "ការប្រកាសការងារ"
@@ -6841,9 +6845,10 @@ msgstr "Letter"
 msgid "Letter · not sent yet"
 msgstr "លិខិត · មិនទាន់ផ្ញើ"
 
+#. placeholder {0}: date(application.appliedAt)
 #: src/features/career/workspace/shell.tsx
-msgid "Letter · version sent"
-msgstr "លិខិត · កំណែដែលបានផ្ញើ"
+msgid "Letter · version sent {0}"
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter body"
@@ -7304,10 +7309,6 @@ msgstr "សម្គាល់ថាបានអាន"
 #: src/features/career/workspace/messages.tsx
 msgid "Mark it as applied in Apply first."
 msgstr "សម្គាល់ថាបានដាក់ពាក្យក្នុង “ដាក់ពាក្យ” ជាមុនសិន។"
-
-#: src/features/career/workspace/apply.tsx
-msgid "Mark the application as applied to keep the versions you sent."
-msgstr "សម្គាល់ពាក្យសុំថាបានដាក់ ដើម្បីរក្សាទុកកំណែដែលអ្នកបានផ្ញើ។"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Markdown (.md)"
@@ -7820,17 +7821,12 @@ msgstr "ជំហានបន្ទាប់៖ {0}។ បន្ថែមកា�
 msgid "Next time, I’d agree how to measure success before the first prototype."
 msgstr "លើកក្រោយ ខ្ញុំនឹងព្រមព្រៀងពីរបៀបវាស់ភាពជោគជ័យ មុនគំរូដំបូង។"
 
-#. placeholder {0}: labels[next]
-#: src/features/career/workspace/preparation.tsx
-msgid "Next: {0}"
-msgstr ""
-
 #: src/features/applications/components/interview-dialog.tsx
 msgid "No active applications."
 msgstr "មិនមានពាក្យសុំការងារសកម្មទេ។"
 
 #: src/features/career/workspace/preparation.tsx
-msgid "No AI connection needed. Edit documents and write answers yourself."
+msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -7891,6 +7887,10 @@ msgstr "រកមិនឃើញប្រទេសទេ។"
 #: src/features/ats-checker/messages.ts
 msgid "No dates were found."
 msgstr "រកមិនឃើញកាលបរិច្ឆេទទេ។"
+
+#: src/features/career/workspace/apply.tsx
+msgid "no documents"
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
@@ -8169,6 +8169,10 @@ msgstr "មិនបានរក្សាទុកទេ។"
 #: src/features/career/coach-chat.tsx
 msgid "Not saved — this fact was forgotten before."
 msgstr "មិនបានរក្សាទុក — ការពិតនេះត្រូវបានបំភ្លេចពីមុនរួចហើយ។"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Not saved yet"
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "not scored"
@@ -8506,6 +8510,10 @@ msgstr "បើកក្នុង “ការផ្តល់ការងារ�
 msgid "Open preferences"
 msgstr "បើកចំណង់ចំណូលចិត្ត"
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Open sent version"
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Open story"
 msgstr "បើករឿង"
@@ -8561,7 +8569,11 @@ msgid "Optional"
 msgstr "ស្រេចចិត្ត"
 
 #: src/features/career/workspace/preparation.tsx
-msgid "Optional AI help is available in the editors. Review proposed edits before accepting them."
+msgid "Optional · none selected"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -9026,6 +9038,7 @@ msgstr "ការប្រកាសការងារ"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/preparation.tsx
 #: src/features/homepage/tailor.tsx
 msgid "Posting"
 msgstr "ប្រកាសការងារ"
@@ -9115,10 +9128,6 @@ msgctxt "Career preferences: the roles, places, pay and ways of working you want
 msgid "Preferences"
 msgstr "ចំណង់ចំណូលចិត្ត"
 
-#: src/features/career/workspace/preparation.tsx
-msgid "Preparation never submits to an employer or marks this application as applied."
-msgstr ""
-
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
@@ -9138,10 +9147,6 @@ msgstr "រៀបចំប្រវត្តិរូបសង្ខេប"
 #: src/features/assistant/assistant-panel.tsx
 msgid "Prepare me for the interview"
 msgstr "រៀបចំខ្ញុំសម្រាប់ការសម្ភាសន៍"
-
-#: src/features/career/workspace/preparation.tsx
-msgid "Prepare this application"
-msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Preparing {label} file…"
@@ -9690,6 +9695,11 @@ msgstr "ការថតបានឈប់នៅដែនកំណត់ 2 នា
 msgid "Recording time"
 msgstr "រយៈពេលថត"
 
+#. placeholder {0}: records.join(" · ")
+#: src/features/career/workspace/apply.tsx
+msgid "Records {0} as sent. You submit on the employer's site yourself."
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Recruiter"
 msgstr "អ្នកជ្រើសរើសបុគ្គលិក"
@@ -10088,6 +10098,7 @@ msgstr "ប្រវត្តិរូបសង្ខេប"
 
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
+#: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
@@ -10097,9 +10108,10 @@ msgstr "ប្រវត្តិរូបសង្ខេប"
 msgid "Resume · not sent yet"
 msgstr "ប្រវត្តិរូបសង្ខេប · មិនទាន់ផ្ញើ"
 
+#. placeholder {0}: date(application.appliedAt)
 #: src/features/career/workspace/shell.tsx
-msgid "Resume · version sent"
-msgstr "ប្រវត្តិរូបសង្ខេប · កំណែដែលបានផ្ញើ"
+msgid "Resume · version sent {0}"
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Resume (optional)"
@@ -10131,8 +10143,14 @@ msgid "Resume details"
 msgstr "ប្រវត្តិរូបសង្ខេប"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "ឯកសារប្រវត្តិរូបសង្ខេប"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
+msgid "Resume options"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Resume page"
@@ -10198,6 +10216,14 @@ msgstr "កំពុងព្យាយាមម្តងទៀត..."
 msgid "Review"
 msgstr "ពិនិត្យ"
 
+#: src/features/career/workspace/apply.tsx
+msgid "Review checks"
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
+msgid "Review checks only reflect what you checked yourself."
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Review draft"
 msgstr "ពិនិត្យសេចក្តីព្រាង"
@@ -10215,7 +10241,7 @@ msgid "Review my answer sends the question, what you said, this posting and your
 msgstr "“ពិនិត្យចម្លើយរបស់ខ្ញុំ” ផ្ញើសំណួរ អ្វីដែលអ្នកបាននិយាយ ការប្រកាសការងារនេះ និងចំណេះដឹងរបស់អ្នក ទៅ {providerName}។"
 
 #: src/features/career/workspace/preparation.tsx
-msgid "Review readiness below"
+msgid "Review readiness and record your submission"
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
@@ -10835,17 +10861,9 @@ msgstr "ជ្រើសរើសអ្នកផ្តល់សេវា AI"
 msgid "Select..."
 msgstr "ជ្រើសរើស..."
 
-#: src/features/career/workspace/preparation.tsx
-msgid "Selected cover letter (optional)"
-msgstr ""
-
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
 msgstr "ឯកសារដែលបានជ្រើសរើស"
-
-#: src/features/career/workspace/preparation.tsx
-msgid "Selected resume"
-msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Self-hosting"
@@ -11640,6 +11658,12 @@ msgstr "ស្ថានភាព"
 msgid "Stay here"
 msgstr "ស្នាក់នៅទីនេះ"
 
+#. placeholder {0}: stepIndex + 1
+#. placeholder {1}: STEPS.length
+#: src/features/career/workspace/preparation.tsx
+msgid "Step {0} of {1}"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
 #: src/features/homepage/prepare.tsx
@@ -11722,9 +11746,9 @@ msgstr "កម្មវិធីនិពន្ធសន្លឹករចនា
 msgid "Subject"
 msgstr "ប្រធានបទ"
 
-#: src/features/career/workspace/apply.tsx
-msgid "Submission is recorded. Review checks only reflect what you checked yourself."
-msgstr "ការដាក់ពាក្យត្រូវបានកត់ត្រាហើយ។ សញ្ញាធីកក្នុងបញ្ជីពិនិត្យបង្ហាញតែអ្វីដែលអ្នកបានពិនិត្យដោយខ្លួនឯងប៉ុណ្ណោះ។"
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
+msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Submission recorded. Current drafts are separate from what you sent."
@@ -11912,6 +11936,10 @@ msgstr "សម្របទៅនឹងការពិពណ៌នាការង
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Tailor and review your resume"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Tailor the resume"
 msgstr ""
 
 #. placeholder {0}: document.posting.company
@@ -13740,13 +13768,9 @@ msgid "What you did: {0}"
 msgstr "អ្វីដែលអ្នកបានធ្វើ៖ {0}"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "What you sent"
 msgstr "អ្វីដែលអ្នកបានផ្ញើ"
-
-#. placeholder {0}: date(application.appliedAt)
-#: src/features/career/workspace/shell.tsx
-msgid "What you sent · {0}"
-msgstr "អ្វីដែលអ្នកបានផ្ញើ · {0}"
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "What you're looking for"
@@ -14075,10 +14099,6 @@ msgstr "អ្នកផ្ញើវាពីអ៊ីមែលផ្ទាល់
 #: src/features/settings/account/security.tsx
 msgid "You sign in without one"
 msgstr "អ្នកចូលដោយគ្មានមួយ។"
-
-#: src/features/career/workspace/apply.tsx
-msgid "You submit on the employer's site yourself. Marking it applied keeps the exact versions you sent."
-msgstr "អ្នកដាក់ស្នើនៅលើគេហទំព័ររបស់និយោជកដោយខ្លួនឯង។ ការសម្គាល់ថាបានដាក់ពាក្យ រក្សាទុកកំណែពិតប្រាកដដែលអ្នកបានផ្ញើ។"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "You'll always see it in Today. Email depends on your server's mail setup."

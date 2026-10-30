@@ -128,6 +128,8 @@ msgid "{0, plural, one {{count} of # application changed.} other {{count} of # a
 msgstr "{0, plural, other {# 筆應徵紀錄中已變更 {count} 筆。}}"
 
 #. placeholder {0}: data.answers.length
+#. placeholder {0}: written.length
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, other {# 個回答}}"
@@ -1069,6 +1071,10 @@ msgstr "新增一個帶國碼的號碼；有些申請表單要求先填寫才能
 msgid "Add page"
 msgstr "新增頁面"
 
+#: src/features/workspace/preparation.tsx
+msgid "Add posting"
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Add profile"
 msgstr "新增個人資料"
@@ -1222,7 +1228,7 @@ msgid "AI & developer"
 msgstr "人工智慧與開發人員"
 
 #: src/features/workspace/preparation.tsx
-msgid "AI availability couldn't be confirmed. Manual preparation is available."
+msgid "AI availability couldn't be confirmed. Prepare manually; nothing here is sent to the employer or marks the job applied."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -1852,10 +1858,6 @@ msgstr "面試前"
 msgid "Before restore"
 msgstr "恢復前"
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Before you submit"
-msgstr "送出之前"
-
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Behavioral"
@@ -1989,6 +1991,7 @@ msgstr "軟體可以讀取您的履歷嗎？"
 #: src/features/check/parser.tsx
 #: src/features/check/writing.tsx
 #: src/features/search/search-screen.tsx
+#: src/features/workspace/preparation.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/write/improve.tsx
 #: src/features/write/pickers.tsx
@@ -2182,10 +2185,6 @@ msgstr "正在檢查您的偏好"
 msgid "Checking… Copy is available after saving."
 msgstr "正在檢查...儲存後可以使用副本。"
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Checklist progress"
-msgstr "清單進度"
-
 #: src/features/assistant/assistant-screen.tsx
 msgid "Checks every bullet for action and result"
 msgstr "檢查每個清單條目的操作和結果"
@@ -2326,6 +2325,10 @@ msgstr "清潔"
 msgid "Clear"
 msgstr "清除"
 
+#: src/features/workspace/preparation.tsx
+msgid "Clear cover letter"
+msgstr ""
+
 #: src/features/application-detail/date-field.tsx
 msgid "Clear date"
 msgstr "清除日期"
@@ -2335,6 +2338,10 @@ msgstr "清除日期"
 #: src/features/documents/library.tsx
 msgid "Clear filters"
 msgstr "清除過濾器"
+
+#: src/features/workspace/preparation.tsx
+msgid "Clear resume"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "Clear section"
@@ -2593,10 +2600,6 @@ msgstr "完整顯示"
 msgid "Content is laid out in a grid."
 msgstr "內容以網格形式排列。"
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Content review"
-msgstr "內容檢查"
-
 #: src/preview/page.tsx
 msgid "Content still runs over. Hide a section or shorten entries."
 msgstr "內容仍然溢出。隱藏部分或縮短項目。"
@@ -2797,6 +2800,7 @@ msgstr "無法刪除面試。請再試一次。"
 msgid "Couldn't export. Try again."
 msgstr "無法導出。再試一次。"
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't generate the PDF. Try again."
 msgstr "無法產生 PDF。請再試一次。"
@@ -3188,6 +3192,7 @@ msgstr "裁切填滿"
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/career/facts.tsx
+#: src/features/workspace/preparation.tsx
 msgid "Cover letter"
 msgstr "求職信"
 
@@ -3202,8 +3207,14 @@ msgid "Cover letter — {0}"
 msgstr "求職信 — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "求職信文件"
+
+#: src/features/application-detail/sections.tsx
+#: src/features/workspace/preparation.tsx
+msgid "Cover letter options"
+msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
@@ -3711,13 +3722,13 @@ msgstr "下載與歷史記錄"
 msgid "Download both PDFs"
 msgstr "下載兩份 PDF"
 
+#: src/features/application-detail/sections.tsx
+msgid "Download current PDF"
+msgstr ""
+
 #: src/features/letters/share.tsx
 msgid "Download failed. Try again."
 msgstr "下載失敗。請再試一次。"
-
-#: src/features/workspace/preparation.tsx
-msgid "Download letter PDF"
-msgstr ""
 
 #: src/features/letters/share.tsx
 msgid "Download opens the system share sheet. Choose a storage provider to save the file."
@@ -3727,13 +3738,13 @@ msgstr "下載會開啟系統分享面板。請選擇儲存服務供應商以儲
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "下載會開啟系統分享面板。請選擇儲存服務來儲存檔案。連結的求職信會以第二個檔案開啟。"
 
+#: src/features/workspace/preparation.tsx
+msgid "Download PDF"
+msgstr "下載 PDF"
+
 #: src/features/letters/share.tsx
 msgid "Download PDF instead"
 msgstr "下載 PDF 代替"
-
-#: src/features/workspace/preparation.tsx
-msgid "Download resume PDF"
-msgstr ""
 
 #: src/features/share/link.tsx
 msgid "Download totals can include repeat clicks."
@@ -3875,11 +3886,11 @@ msgid "Edit {0}: {1}"
 msgstr "編輯{0}：{1}"
 
 #: src/features/workspace/preparation.tsx
-msgid "Edit current letter"
+msgid "Edit cover letter"
 msgstr ""
 
-#: src/features/workspace/preparation.tsx
-msgid "Edit current resume"
+#: src/features/application-detail/sections.tsx
+msgid "Edit current draft"
 msgstr ""
 
 #: src/features/application-detail/sheets.tsx
@@ -3905,9 +3916,17 @@ msgstr "編輯連結"
 msgid "Edit note"
 msgstr "編輯備註"
 
+#: src/features/workspace/preparation.tsx
+msgid "Edit posting"
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Edit question"
 msgstr "編輯問題"
+
+#: src/features/workspace/preparation.tsx
+msgid "Edit resume"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Edit schedule"
@@ -4237,10 +4256,6 @@ msgstr "在瀏覽器中完成登錄"
 msgid "Finnish"
 msgstr "芬蘭語"
 
-#: src/features/workspace/preparation.tsx
-msgid "First application setup: save the posting, copy or create a resume, then review the documents and any required form answers below. A cover letter and form answers are optional when the employer doesn't ask for them."
-msgstr ""
-
 #: src/features/career/offers.tsx
 msgid "First offer"
 msgstr "第一報價"
@@ -4439,6 +4454,11 @@ msgstr "姓名"
 msgid "Full width"
 msgstr "全幅寬"
 
+#: src/features/application-detail/sections.tsx
+#: src/features/workspace/preparation.tsx
+msgid "Generating PDF…"
+msgstr "正在產生 PDF…"
+
 #: src/features/settings/locale-names.ts
 msgid "German"
 msgstr "德文"
@@ -4633,6 +4653,10 @@ msgstr "隱藏已讀"
 #: src/features/check/issues.ts
 msgid "Hide the photo"
 msgstr "隱藏照片"
+
+#: src/features/workspace/preparation.tsx
+msgid "Hides all steps"
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Hindi"
@@ -5001,10 +5025,6 @@ msgstr "職位匹配"
 #: src/features/check/job-match.tsx
 msgid "Job match isn't part of the readability score."
 msgstr "職缺匹配不計入可讀性分數。"
-
-#: src/features/workspace/preparation.tsx
-msgid "Job posting"
-msgstr "職缺公告"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Job posting · optional, adds a keyword match"
@@ -5714,10 +5734,6 @@ msgstr "標記為已讀"
 msgid "Mark it as applied in Apply first."
 msgstr "請先在「投遞」中將其標記為已申請。"
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Mark the application as applied to keep the versions you sent."
-msgstr "將應徵標記為已申請，以保留您寄出的版本。"
-
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
 msgid "Markdown"
@@ -6177,13 +6193,8 @@ msgstr "下一步：{note}。新增今日提醒。"
 msgid "Next workspace tabs"
 msgstr "下一個工作區選項卡"
 
-#. placeholder {0}: labels[next]
 #: src/features/workspace/preparation.tsx
-msgid "Next: {0}"
-msgstr ""
-
-#: src/features/workspace/preparation.tsx
-msgid "No AI connection needed. Edit documents and write answers yourself."
+msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
 msgstr ""
 
 #: src/features/ai/provider-list.tsx
@@ -6231,6 +6242,10 @@ msgstr "無日期"
 #: src/features/ats-checker/messages.ts
 msgid "No dates were found."
 msgstr "未找到任何日期。"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "no documents"
+msgstr ""
 
 #: src/features/assistant/threads.tsx
 msgid "no edits"
@@ -6472,6 +6487,10 @@ msgstr "尚未記錄。有證據支持前請留白。"
 #: src/shell/builder-chrome.tsx
 msgid "Not saved"
 msgstr "未保存"
+
+#: src/features/workspace/preparation.tsx
+msgid "Not saved yet"
+msgstr ""
 
 #: src/features/applications/stages.ts
 msgid "Not selected"
@@ -6818,6 +6837,10 @@ msgstr "正在開啟履歷…"
 msgid "Opens in Career → Offers."
 msgstr "在「職涯 → 錄取通知」中開啟。"
 
+#: src/features/application-detail/sections.tsx
+msgid "Opens the version you sent, read-only"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Opportunity discovery"
 msgstr "職缺探索"
@@ -6827,7 +6850,11 @@ msgid "Optional"
 msgstr "選修的"
 
 #: src/features/workspace/preparation.tsx
-msgid "Optional AI help is available in the editors. Review proposed edits before accepting them."
+msgid "Optional · none selected"
+msgstr ""
+
+#: src/features/workspace/preparation.tsx
+msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -7197,6 +7224,7 @@ msgstr "職位"
 msgid "posting"
 msgstr "職缺公告"
 
+#: src/features/workspace/preparation.tsx
 #: src/features/workspace/tabs/fit.tsx
 msgid "Posting"
 msgstr "職缺公告"
@@ -7248,10 +7276,6 @@ msgstr "偏好"
 msgid "Preferences"
 msgstr "偏好設定"
 
-#: src/features/workspace/preparation.tsx
-msgid "Preparation never submits to an employer or marks this application as applied."
-msgstr ""
-
 #: src/features/career/schedule-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/shell/workspace-chrome.tsx
@@ -7281,10 +7305,6 @@ msgstr "準備面試"
 #: src/features/assistant/assistant-screen.tsx
 msgid "Prepare me for the interview"
 msgstr "為我的面試做準備"
-
-#: src/features/workspace/preparation.tsx
-msgid "Prepare this application"
-msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Preparing edits…"
@@ -7692,6 +7712,10 @@ msgstr "已達 2 分鐘上限，錄音已停止。正在轉錄您說的內容。
 msgid "Recording time"
 msgstr "錄音時間"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Records {records} as sent. You submit on the employer's site yourself."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "招募人員"
@@ -8041,6 +8065,7 @@ msgstr "結果"
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
+#: src/features/workspace/preparation.tsx
 msgid "Resume"
 msgstr "履歷"
 
@@ -8057,8 +8082,14 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "履歷回饋、產品協助與社群點子。"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "履歷檔案"
+
+#: src/features/application-detail/sections.tsx
+#: src/features/workspace/preparation.tsx
+msgid "Resume options"
+msgstr ""
 
 #. placeholder {0}: pageIndex + 1
 #: src/features/check/page.tsx
@@ -8183,6 +8214,14 @@ msgstr "查看求職申請"
 msgid "Review Check"
 msgstr "檢視檢查結果"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Review checks"
+msgstr ""
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "Review checks only reflect what you checked yourself."
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Review draft"
 msgstr "查看草稿"
@@ -8204,7 +8243,7 @@ msgid "Review my answer sends the question, what you said, this posting and your
 msgstr "「評論我的回答」會將問題、您說的內容、此職缺公告和您的知識庫傳送給 {providerName}。"
 
 #: src/features/workspace/preparation.tsx
-msgid "Review readiness below"
+msgid "Review readiness and record your submission"
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
@@ -8508,10 +8547,6 @@ msgstr "已儲存到知識庫，僅用於這筆應徵。"
 msgid "Saved to Saved · Practice"
 msgstr "已儲存到「已儲存」 · 練習"
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Saved versions stay separate from later drafts. This record does not confirm employer receipt."
-msgstr ""
-
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "拯救工作。等待確認後再進行另一次更改。"
@@ -8712,17 +8747,9 @@ msgstr "選擇項目 {0}"
 msgid "Select visible"
 msgstr "選取可見項目"
 
-#: src/features/workspace/preparation.tsx
-msgid "Selected cover letter (optional)"
-msgstr ""
-
 #: src/preview/page.tsx
 msgid "Selected entry"
 msgstr "已選取項目"
-
-#: src/features/workspace/preparation.tsx
-msgid "Selected resume"
-msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Semantic CSS stylesheet"
@@ -9017,6 +9044,10 @@ msgstr "顯示已儲存的資料，無法重新整理。"
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Shown in your timezone."
 msgstr "依您的時區顯示。"
+
+#: src/features/workspace/preparation.tsx
+msgid "Shows all steps"
+msgstr ""
 
 #: src/features/documents/document-sheets.tsx
 msgid "Shows shared tags. Add or remove tags without changing each document's other tags."
@@ -9413,6 +9444,12 @@ msgstr "現在開始"
 msgid "Stay in Documents"
 msgstr "留在文件"
 
+#. placeholder {0}: stepIndex + 1
+#. placeholder {1}: STEPS.length
+#: src/features/workspace/preparation.tsx
+msgid "Step {0} of {1}"
+msgstr ""
+
 #: src/features/assistant/chat-view.tsx
 #: src/features/letters/write.tsx
 msgid "Stop"
@@ -9463,12 +9500,8 @@ msgstr "刪除線"
 msgid "Stronger verb"
 msgstr "更強的動詞"
 
-#: src/features/workspace/tabs/apply.tsx
-msgid "Submission is recorded. Review checks only reflect what you checked yourself."
-msgstr "已記錄應徵資料的提交。檢查項目的勾選狀態僅反映你親自檢查過的內容。"
-
-#: src/features/workspace/tabs/apply.tsx
-msgid "Submission recorded on {appliedOn}."
+#: src/features/application-detail/sections.tsx
+msgid "Submission recorded {date}. The sent versions never change; current drafts stay editable. This record does not confirm employer receipt."
 msgstr ""
 
 #: src/features/workspace/preparation.tsx
@@ -9607,6 +9640,10 @@ msgstr "標籤..."
 
 #: src/features/workspace/preparation.tsx
 msgid "Tailor and review your resume"
+msgstr ""
+
+#: src/features/workspace/preparation.tsx
+msgid "Tailor the resume"
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
@@ -11405,10 +11442,6 @@ msgstr "您有尚未儲存的變更。"
 #: src/features/workspace/tabs/messages.tsx
 msgid "You send it from your own email."
 msgstr "由您用自己的電子郵件寄出。"
-
-#: src/features/workspace/tabs/apply.tsx
-msgid "You submit on the employer's site yourself. Marking it applied keeps the exact versions you sent."
-msgstr "您需要自行在雇主網站上送出。標記為已申請會保留您寄出的確切版本。"
 
 #: src/features/settings/sign-out.tsx
 msgid "You will be signed out of {server}. Any edits not yet synced from this device will be lost."

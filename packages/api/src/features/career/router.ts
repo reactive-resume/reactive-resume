@@ -375,7 +375,8 @@ export const careerRouter = {
 			tags: ["Career"],
 			operationId: "snapshotCareerAnswers",
 			summary: "Save the answers sent with an application",
-			description: "Saves the workspace's answers as sent, after the application is marked as applied.",
+			description:
+				"Saves unchanged pre-submission answers as sent. Rejects later workspace edits; use submitCareerApplication to record answers and submission atomically.",
 		})
 		.input(applicationInput)
 		.output(z.void())

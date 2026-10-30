@@ -722,6 +722,23 @@ export const applicationService = {
 					.returning();
 
 				if (!updated) throw new ORPCError("NOT_FOUND");
+				if (current.status === "saved" && updated.resumeId !== current.resumeId) {
+					const [workspace] = await tx
+						.select()
+						.from(schema.careerWorkspace)
+						.where(and(eq(schema.careerWorkspace.applicationId, id), eq(schema.careerWorkspace.userId, userId)));
+					if (workspace)
+						await tx
+							.update(schema.careerWorkspace)
+							.set({
+								data: {
+									...workspace.data,
+									checklist: workspace.data.checklist.filter((index) => index !== 0 && index !== 1),
+								},
+								updatedAt: new Date(),
+							})
+							.where(eq(schema.careerWorkspace.applicationId, id));
+				}
 				// Editing metadata must not mark a linked draft as submitted.
 				const result =
 					transition.canonicalTransition || fields.resumeId !== undefined || fields.coverLetterId !== undefined

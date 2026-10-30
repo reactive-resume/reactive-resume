@@ -117,6 +117,7 @@ export function useInvalidateApplications() {
 		await Promise.all([
 			queryClient.invalidateQueries({ queryKey: orpc.applications.key() }),
 			queryClient.invalidateQueries({ queryKey: orpc.documents.list.key() }),
+			queryClient.invalidateQueries({ queryKey: orpc.career.workspace.key() }),
 			queryClient.invalidateQueries({ queryKey: ["applications-prior-no-response"] }),
 		]);
 	};

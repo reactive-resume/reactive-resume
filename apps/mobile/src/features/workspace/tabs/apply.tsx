@@ -12,6 +12,7 @@ import { randomUUID } from "expo-crypto";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Pressable, View } from "react-native";
 import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
+import { nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
 import { careerWorkspaceSchema } from "@reactive-resume/schema/career";
 import {
 	clearDraft,
@@ -25,7 +26,7 @@ import {
 	workspaceError,
 } from "../hooks";
 import { answersClipboard, answersDocument, countCharacters, countWords, diffWords, shortLabel } from "../logic";
-import { Actions, AiNotice, Block, CheckRow, Progress, SaveError, useWorking, workingSteps } from "../parts";
+import { Actions, AiNotice, Block, CheckRow, SaveError, useWorking, workingSteps } from "../parts";
 import { Preparation } from "../preparation";
 import { shareText } from "../share";
 import { WorkspaceScreen } from "../shell";
@@ -33,11 +34,11 @@ import { dispatchForOrigin } from "../state";
 import { orpc } from "@/api/client";
 import { getDraftScope } from "@/draft";
 import { useHasAIProvider } from "@/features/ai/providers";
-import { useUserTime } from "@/features/application-detail/hooks";
 import { WhatYouSent } from "@/features/application-detail/sections";
 import { PriorNoResponse } from "@/features/applications/prior-no-response";
 import { useInvalidateApplications } from "@/features/applications/queries";
 import { withUndo } from "@/features/career/undo";
+import { useDocuments } from "@/features/documents/queries";
 import { Banner, Button, Chip, IconButton, ListRow, Sheet, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
 
 type Answer = CareerWorkspace["answers"][number];
@@ -50,7 +51,6 @@ export function ApplyTab() {
 function Apply({ application, version, go }: WorkspaceTabProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
-	const { day } = useUserTime();
 	const saved = useSavedItems(application.id);
 	const workspace = useWorkspace(application.id);
 	const facts = useFacts(application.id);
@@ -109,33 +109,27 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 			failed: () => undefined,
 		});
 	};
-	const appliedOn = day(application.appliedAt);
+	const submitted = hasApplicationSubmission(application);
 
 	return (
 		<View style={{ gap: space.s4 }}>
-			{!version ? <Preparation application={application} disabled={submitting} /> : null}
-			{!version && hasApplicationSubmission(application) ? (
-				<>
-					<WhatYouSent application={application} />
-					{recorded ? (
-						<Button
-							variant="secondary"
-							label={t`View recorded answers`}
-							onPress={() => go("apply", { version: recorded.id })}
-						/>
-					) : (
-						<Text color="ink2">{t`No recorded answers are available.`}</Text>
-					)}
-				</>
+			{!version ? (
+				submitted ? (
+					<WhatYouSent application={application} drafts />
+				) : (
+					<Preparation key={application.id} application={application} disabled={submitting} />
+				)
 			) : null}
-			{hasApplicationSubmission(application) ? (
-				<Banner
-					tone="info"
-					icon="check-circle"
-					title={t`Submission recorded on ${appliedOn}.`}
-					message={t`Saved versions stay separate from later drafts. This record does not confirm employer receipt.`}
-				/>
-			) : null}
+
+			<Checklist
+				application={application}
+				answers={shown}
+				currentAnswers={currentAnswers}
+				readOnly={!!readOnlyVersion}
+				canSubmit={canSubmit}
+				submitting={submitting}
+				onSubmittingChange={setSubmitting}
+			/>
 
 			{stored && !readOnlyVersion ? (
 				<Banner
@@ -151,7 +145,22 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 				/>
 			) : null}
 
-			<Text variant="heading" accessibilityRole="header">{t`Form answers`}</Text>
+			<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: space.s3 }}>
+				<Text variant="heading" accessibilityRole="header" style={{ flex: 1 }}>{t`Form answers`}</Text>
+				{!version && submitted ? (
+					recorded ? (
+						<Button
+							variant="link"
+							size="sm"
+							icon="clock-counter-clockwise"
+							label={t`View recorded answers`}
+							onPress={() => go("apply", { version: recorded.id })}
+						/>
+					) : (
+						<Text variant="callout" color="ink3">{t`No recorded answers are available.`}</Text>
+					)
+				) : null}
+			</View>
 			{shown.map((answer) => (
 				<AnswerCard
 					key={stored ? `${version?.id ?? sentItem?.id}:${answer.id}` : answer.id}
@@ -193,16 +202,6 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 					) : null}
 				</View>
 			) : null}
-
-			<Checklist
-				application={application}
-				answers={shown}
-				currentAnswers={currentAnswers}
-				readOnly={!!readOnlyVersion}
-				canSubmit={canSubmit}
-				submitting={submitting}
-				onSubmittingChange={setSubmitting}
-			/>
 		</View>
 	);
 }
@@ -466,20 +465,34 @@ function Checklist({
 	const invalidate = useInvalidateApplications();
 	const workspace = useWorkspace(application.id);
 	const submit = useMutation(orpc.career.submitApplication.mutationOptions());
+	const documents = useDocuments();
 	const [download, setDownload] = useState(false);
 	const submitted = hasApplicationSubmission(application);
+	// The review checks, by their persisted checklist index. Submitting yourself (3) is moot once a submission is recorded.
 	const items = [
 		t`Review the selected resume and cover letter in their editors.`,
 		t`Check every claim, date and result against your experience.`,
 		t`Review required form answers and remove unsupported claims.`,
 		t`Submit through the employer's application page yourself.`,
-		t`Mark the application as applied to keep the versions you sent.`,
-	].slice(0, submitted ? 3 : undefined);
+	].slice(0, submitted ? 3 : 4);
 	const ticked = workspace.data.checklist;
 	const done = items.filter((_, index) => ticked.includes(index)).length;
 	const written = answers.filter((answer) => answer.answer.trim());
 	const total = items.length;
 	const title = `${application.role} · ${application.company}`;
+	// Recording the submission is the one emphasised action only once preparation has nothing left to guide.
+	const primary = nextPreparationStep(application, workspace.data, documents.data) === "review";
+	const resumeName =
+		documents.data?.find((item) => item.type === "resume" && item.id === application.resumeId)?.name ??
+		(application.resumeFileUrl ? application.resumeFileName || t`Resume file` : null);
+	const letterName =
+		documents.data?.find((item) => item.type === "letter" && item.id === application.coverLetterId)?.name ??
+		(application.coverLetterUrl ? application.coverLetterName || t`Cover letter file` : null);
+	const names = [resumeName, letterName].filter((name): name is string => name !== null);
+	const records = [
+		...(names.length > 0 ? names : [t`no documents`]),
+		plural(written.length, { one: "# answer", other: "# answers" }),
+	].join(" · ");
 
 	const toggle = (index: number, on: boolean) => {
 		const current = workspace.current().checklist;
@@ -535,39 +548,39 @@ function Checklist({
 	};
 
 	return (
-		<Block
-			title={submitted ? t`Content review` : t`Before you submit`}
-			trailing={<Text variant="mono" color="ink2">{t`${done} of ${total}`}</Text>}
-		>
+		<Block title={t`Review checks`} trailing={<Text variant="callout" color="ink2">{t`${done} of ${total}`}</Text>}>
 			{!submitted && !readOnly ? <PriorNoResponse company={application.company} excludeId={application.id} /> : null}
-			<Progress value={done / total} label={t`Checklist progress`} />
 			<View>
-				{items.map((label, index) =>
-					application.status === "saved" && !readOnly && index === items.length - 1 ? (
-						<View key={label} style={{ paddingTop: space.s2 }}>
-							<Button
-								fullWidth
-								label={t`Mark as applied`}
-								disabled={!canSubmit}
-								loading={submitting}
-								onPress={() => void markApplied()}
-							/>
-						</View>
-					) : (
-						<CheckRow
-							key={label}
-							label={label}
-							checked={ticked.includes(index)}
-							disabled={readOnly || submitting}
-							onChange={(on) => toggle(index, on)}
-						/>
-					),
-				)}
+				{items.map((label, index) => (
+					<CheckRow
+						key={label}
+						label={label}
+						checked={ticked.includes(index)}
+						disabled={readOnly || submitting}
+						onChange={(on) => toggle(index, on)}
+					/>
+				))}
 			</View>
-			{!submitted && !canSubmit && !readOnly ? (
-				<Text variant="callout" color="dangerText" accessibilityRole="alert">
-					{t`Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied.`}
-				</Text>
+			{application.status === "saved" && !readOnly ? (
+				<View style={{ gap: space.s2, paddingTop: space.s2 }}>
+					<Button
+						fullWidth
+						variant={primary ? "primary" : "secondary"}
+						label={t`Mark as applied`}
+						disabled={!canSubmit}
+						loading={submitting}
+						onPress={() => void markApplied()}
+					/>
+					{canSubmit ? (
+						<Text variant="caption" color="ink3">
+							{t`Records ${records} as sent. You submit on the employer's site yourself.`}
+						</Text>
+					) : (
+						<Text variant="callout" color="dangerText" accessibilityRole="alert">
+							{t`Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied.`}
+						</Text>
+					)}
+				</View>
 			) : null}
 			<Actions>
 				<Button
@@ -587,11 +600,11 @@ function Checklist({
 					onPress={() => setDownload(true)}
 				/>
 			</Actions>
-			<Text variant="caption" color="ink3">
-				{submitted
-					? t`Submission is recorded. Review checks only reflect what you checked yourself.`
-					: t`You submit on the employer's site yourself. Marking it applied keeps the exact versions you sent.`}
-			</Text>
+			{submitted ? (
+				<Text variant="caption" color="ink3">
+					{t`Review checks only reflect what you checked yourself.`}
+				</Text>
+			) : null}
 			<Sheet open={download} onClose={() => setDownload(false)} title={t`Download`}>
 				<ListRow title={t`Markdown (.md)`} leading="file-text" onPress={() => void share("md")} />
 				<ListRow title={t`Plain text (.txt)`} leading="file-text" onPress={() => void share("txt")} />

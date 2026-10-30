@@ -223,6 +223,7 @@ const orpc = {
 		key: () => ["applications"],
 	},
 	documents: { list: { key: () => ["documents"] } },
+	career: { workspace: { key: () => ["career", "workspace"] } },
 };
 let capturedQuery;
 let listRows = [{ ...summary[0], initialDetail: full[0] }];
@@ -351,6 +352,7 @@ assert.equal(queryClient.getQueryData(detailKey).notes, "newer");
 const mutations = queries.useApplicationMutations();
 mutations.update.onSettled(undefined, undefined, { id: "app-a" });
 assert.ok(invalidations.some((key) => key[0] === "applications"));
+assert.ok(invalidations.some((key) => key[0] === "career" && key[1] === "workspace"));
 const observerClient = new QueryClient();
 const cachedDetail = { ...full[0], resumeFileUrl: "/uploads/resume.pdf", resumeFileName: "resume.pdf" };
 const observerKey = ["application-detail", cachedDetail.id];

@@ -111,3 +111,9 @@ export async function printResume(data: ResumeData, name: string) {
 	await file.write(result.pdf);
 	await Print.printAsync({ uri: file.uri });
 }
+
+/** Exports the current draft of a linked resume or letter as a PDF and opens the platform Save/Share sheet. */
+export async function shareDocumentPdf(kind: "resume" | "letter", id: string, name: string) {
+	const file = await exportFile({ directory: exportDirectory(), id, name, format: "pdf", letter: kind === "letter" });
+	await shareExport(file, "pdf");
+}
