@@ -10,10 +10,11 @@ import type {
 	SectionItem,
 	SectionType,
 } from "@reactive-resume/schema/resume/data";
+import type { ResumeDates } from "@reactive-resume/schema/resume/dates";
 import type { WritableDraft } from "immer";
 import { moveItem as moveResumeItem } from "@reactive-resume/resume/move-item";
 import { sectionTypeSchema } from "@reactive-resume/schema/resume/data";
-import { EMPTY_RESUME_DATES } from "@reactive-resume/schema/resume/dates";
+import { EMPTY_RESUME_DATES, hasUnreadableDateText } from "@reactive-resume/schema/resume/dates";
 import { generateId, stripHtml } from "@reactive-resume/utils/string";
 
 type Data = ResumeData | WritableDraft<ResumeData>;
@@ -213,11 +214,11 @@ export function describeEntry(type: CustomSectionType, entry: Entry): { title: s
 	}
 }
 
-/** Entries (and roles) whose dates came from text that couldn't be read exactly. */
+/** Entries (and roles) with nonempty custom date text that could not be read. */
 export function countEntriesToCheck(entries: readonly Entry[]): number {
-	type WithDates = { dates?: { raw?: string }; roles?: readonly { dates?: { raw?: string } }[] };
+	type WithDates = { dates?: ResumeDates; roles?: readonly { dates?: ResumeDates }[] };
 	return (entries as readonly WithDates[]).filter(
-		(entry) => entry.dates?.raw !== undefined || entry.roles?.some((role) => role.dates?.raw !== undefined),
+		(entry) => hasUnreadableDateText(entry.dates) || entry.roles?.some((role) => hasUnreadableDateText(role.dates)),
 	).length;
 }
 

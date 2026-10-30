@@ -9,7 +9,7 @@ import { getNetworkStateAsync } from "expo-network";
 import { useRouter, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
-import { forEachDatedEntry } from "@reactive-resume/schema/resume/dates";
+import { forEachDatedEntry, hasUnreadableDateText } from "@reactive-resume/schema/resume/dates";
 import { importDocument, ImportError } from "./import-file";
 import { useNewDocuments } from "./new-documents";
 import { documentError, useDocumentRefresh, useDocuments } from "./queries";
@@ -185,7 +185,7 @@ export function NewDocument() {
 					);
 					let flagged = 0;
 					forEachDatedEntry(resume.data, (entry) => {
-						if (entry.dates?.raw) flagged++;
+						if (hasUnreadableDateText(entry.dates)) flagged++;
 					});
 					const entries = sections.reduce((total, section) => total + section.items.length, 0);
 					if (current(signal))

@@ -846,3 +846,20 @@ assert.equal(control(dateView(), "Custom date text").disabled, false);
 control(dateView(), "Custom date text").onValueChange(false);
 assert.deepEqual(dateValue, { start: null, end: null, present: false });
 console.log("PASS native custom-date editing, saving, blur and safe return to date fields");
+
+reset();
+dateValue = { start: "2022-03", end: null, present: true };
+const japaneseDateView = () =>
+	render(DatesField, {
+		dates: dateValue,
+		locale: "ja-JP",
+		onChange: (next) => {
+			dateValue = next;
+		},
+	});
+control(japaneseDateView(), "Custom date text").onValueChange(true);
+assert.equal(control(japaneseDateView(), "Dates").value, "2022年3月 – 現在");
+assert.equal(control(japaneseDateView(), "Custom date text").disabled, false);
+control(japaneseDateView(), "Custom date text").onValueChange(false);
+assert.deepEqual(dateValue, { start: "2022-03", end: null, present: true });
+console.log("PASS native Japanese preset dates survive custom-mode round trip");

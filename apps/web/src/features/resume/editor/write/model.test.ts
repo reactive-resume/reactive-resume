@@ -3,7 +3,14 @@ import { describe, expect, it } from "vite-plus/test";
 import { produce } from "immer";
 import { customSectionItemDefinitionByType } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { CUSTOM_SECTION_TYPES, createEntry, getOutlineRows, isSectionHidden, moveSection } from "./model";
+import {
+	CUSTOM_SECTION_TYPES,
+	countEntriesToCheck,
+	createEntry,
+	getOutlineRows,
+	isSectionHidden,
+	moveSection,
+} from "./model";
 
 const resume = (edit?: (data: ResumeData) => void) => {
 	const data = structuredClone(defaultResumeData);
@@ -77,5 +84,21 @@ describe("hidden sections", () => {
 		data.sections.experience.hidden = true;
 		expect(isSectionHidden(data, "summary")).toBe(true);
 		expect(isSectionHidden(data, "experience")).toBe(true);
+	});
+});
+
+describe("date review badges", () => {
+	it("counts unreadable entries and nested roles but not readable or empty custom text", () => {
+		const data = resume();
+		withEntries(data, "experience", "experience", "experience", "experience");
+		const [readable, blank, unreadable, nested] = data.sections.experience.items;
+		if (!readable || !blank || !unreadable || !nested) throw new Error("Missing entries");
+		readable.dates = { start: "2022-03", end: null, present: true, raw: "March 2022 - Present" };
+		blank.dates = { start: null, end: null, present: false, raw: "" };
+		unreadable.dates = { start: null, end: null, present: false, raw: "During university" };
+		nested.roles = [
+			{ id: "role", position: "Lead", description: "", period: "During university", dates: unreadable.dates },
+		];
+		expect(countEntriesToCheck(data.sections.experience.items)).toBe(2);
 	});
 });

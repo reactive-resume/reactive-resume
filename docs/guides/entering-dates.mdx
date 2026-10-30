@@ -42,7 +42,7 @@ Custom text saves as you type and prints as written in the preview, shared resum
 
 If the text cannot be read, a **Saved as written** warning explains that automated date checks and sorting are unavailable for it. You can keep the text and ignore the finding in **Check** mode. The warning does not block saving or exporting.
 
-To return to the date fields, enter a readable month and year, year-only date or range, or clear the custom text, then turn off **Custom date text**. The switch stays disabled while the text cannot be converted exactly, so returning to date fields cannot silently discard it.
+To return to the date fields, enter a readable month and year, year-only date or range, or clear the custom text, then turn off **Custom date text**. Untouched preset text can always return to the date fields. For edited custom text, the switch stays disabled while it cannot be converted exactly, so returning to date fields cannot silently discard it.
 
 ## Year-only dates
 
@@ -105,9 +105,9 @@ The Dates field tells you when something is off.
 
 ### Dates from imports and older resumes
 
-When you import a resume, or open one made before dates were structured, Reactive Resume converts each date from its text. Dates it can't read exactly, such as "Summer 2016", are flagged:
+When you import a resume, or open one made before dates were structured, Reactive Resume converts each date from its text. Dates it cannot read exactly, such as "Summer 2016", stay as custom text:
 
-- The section's row in the list shows a **to check** badge with the number of entries to look at.
+- The section's row shows a **to check** badge only for nonempty date text without a parsed start. Readable custom text and empty dates do not add to the badge.
 - The entry opens with **Custom date text** turned on, showing the original wording for editing.
 - The entry keeps printing that text as written. Unreadable dates show a non-blocking warning.
 
@@ -123,3 +123,8 @@ Keep the custom text, edit it, or enter a readable date and turn off **Custom da
 - [Editing entries](/guides/editing-entries): the other fields in each entry, including job roles.
 - [Managing sections](/guides/managing-sections): sort Experience and Education by date from the section menu.
 - [Importing resumes](/guides/importing-resumes): bring in an existing resume and review what was read.
+
+<Note>
+  Older mobile apps and update bundles can show custom text as an import warning. Editing dates in those versions
+  replaces custom wording with the preset format. Update the app before editing custom dates.
+</Note>

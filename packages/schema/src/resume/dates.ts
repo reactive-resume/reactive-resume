@@ -24,7 +24,7 @@ export const resumeDatesSchema = z
 			.string()
 			.optional()
 			.describe(
-				"The original text when it couldn't be read exactly, such as 'Summer 2016'. It's printed as written until the dates are edited, which removes it.",
+				"Custom date text, also used for imported text that could not be read exactly. Printed verbatim, overriding start/end formatting. Preserve it when editing other fields; remove it only when the user chooses preset date fields.",
 			),
 	})
 	.describe(
@@ -32,6 +32,10 @@ export const resumeDatesSchema = z
 	);
 
 export type ResumeDates = z.infer<typeof resumeDatesSchema>;
+
+/** Nonempty custom text without a parsed start cannot support timeline checks or date sorting. */
+export const hasUnreadableDateText = (dates: ResumeDates | undefined): boolean =>
+	Boolean(dates?.raw?.trim()) && !dates?.start;
 
 /** How dates print: Mar 2022, March 2022, 03/2022 or 2022-03. */
 export const dateFormatSchema = z.enum(["short", "long", "numeric", "iso"]);
@@ -83,8 +87,7 @@ const isExact = (reading: EndpointReading | undefined) =>
 
 /**
  * Reads a legacy date text into structured dates. Exact readings (years, months by name or number, and
- * "Present") drop the text; approximate or unreadable ones keep it in `raw`, which asks for a review and
- * prints as written until then.
+ * "Present") drop the text; approximate or unreadable ones keep it in `raw`, which prints verbatim and remains editable as custom text.
  */
 export function readLegacyDates(text: string, options: { locale: string; single: boolean }): ResumeDates {
 	const value = text.trim();
@@ -216,8 +219,7 @@ export function formatYearMonth(value: YearMonth, { locale, format = DEFAULT_DAT
 }
 
 /**
- * Dates as they print: "Mar 2022 – Present", "2014 – 2018" or one date. Dates that still carry `raw` (text that
- * couldn't be read exactly) print that text as written until someone reviews them.
+ * Dates as they print: "Mar 2022 – Present", "2014 – 2018" or one date. Dates carrying `raw` (custom or imported text) print that text verbatim, regardless of the selected format.
  */
 export function formatResumeDates(dates: ResumeDates, options: DateFormatOptions): string {
 	if (dates.raw !== undefined) return dates.raw;

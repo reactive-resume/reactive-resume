@@ -39,18 +39,18 @@ describe("DatesField", () => {
 	});
 });
 
-type EditorProps = { initial: ResumeDates; single?: boolean };
+type EditorProps = { initial: ResumeDates; single?: boolean; locale?: string };
 
-function Editor({ initial, single = false }: EditorProps) {
+function Editor({ initial, single = false, locale = "en-US" }: EditorProps) {
 	const [dates, setDates] = useState(initial);
-	return <DatesField dates={dates} locale="en-US" format="short" single={single} onChange={setDates} />;
+	return <DatesField dates={dates} locale={locale} format="short" single={single} onChange={setDates} />;
 }
 
 describe("custom date text", () => {
-	const mount = (initial: ResumeDates, single = false) =>
+	const mount = (initial: ResumeDates, single = false, locale = "en-US") =>
 		render(
 			<I18nProvider i18n={i18n}>
-				<Editor initial={initial} single={single} />
+				<Editor initial={initial} single={single} locale={locale} />
 			</I18nProvider>,
 		);
 
@@ -77,6 +77,16 @@ describe("custom date text", () => {
 		expect(screen.queryByText(/Saved as written/)).not.toBeInTheDocument();
 		await userEvent.click(screen.getByRole("switch", { name: "Custom date text" }));
 		expect(screen.getByRole("textbox", { name: "Date" })).toHaveValue("Mar 2022");
+	});
+
+	it("restores untouched Japanese preset dates without reparsing the formatted wording", async () => {
+		mount({ start: "2022-03", end: null, present: true }, false, "ja-JP");
+		await userEvent.click(screen.getByRole("switch", { name: "Custom date text" }));
+		expect(screen.getByRole("textbox", { name: "Dates" })).toHaveValue("2022年3月 – 現在");
+		expect(screen.getByRole("switch", { name: "Custom date text" })).not.toHaveAttribute("data-disabled");
+		await userEvent.click(screen.getByRole("switch", { name: "Custom date text" }));
+		expect(screen.getByRole("textbox", { name: "Start" })).toHaveValue("2022年3月");
+		expect(screen.getByRole("switch", { name: "Present" })).toHaveAttribute("aria-checked", "true");
 	});
 
 	it("clears unreadable custom text before returning to empty preset fields", async () => {

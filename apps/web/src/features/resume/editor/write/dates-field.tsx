@@ -6,6 +6,7 @@ import {
 	formatResumeDates,
 	formatYearMonth,
 	getPresentLabel,
+	hasUnreadableDateText,
 	readLegacyDates,
 	toYearMonth,
 } from "@reactive-resume/schema/resume/dates";
@@ -102,9 +103,10 @@ export function DatesField({ dates, single = false, locale, format, onChange, cl
 	const current: ResumeDates = { start: dates.start, end: dates.end, present: dates.present };
 	const reversed = !single && !dates.present && dates.start && dates.end && isBefore(dates.end, dates.start);
 	const custom = dates.raw !== undefined;
-	const parsed = custom ? readLegacyDates(dates.raw ?? "", { locale, single }) : current;
+	const preset = formatResumeDates(current, { locale, format });
+	const parsed = custom && dates.raw !== preset ? readLegacyDates(dates.raw ?? "", { locale, single }) : current;
 	const canUseFields = parsed.raw === undefined;
-	const unreadable = custom && Boolean(dates.raw?.trim()) && !dates.start;
+	const unreadable = hasUnreadableDateText(dates);
 	const hasError = !custom && (invalid.start || (!dates.present && invalid.end));
 
 	const setInvalidFor = (part: "start" | "end") => (value: boolean) =>
@@ -124,7 +126,7 @@ export function DatesField({ dates, single = false, locale, format, onChange, cl
 					aria-describedby={`${id}-note`}
 					onCheckedChange={(checked) => {
 						setInvalid({ start: false, end: false });
-						onChange(checked ? { ...current, raw: formatResumeDates(dates, { locale, format }) } : parsed);
+						onChange(checked ? { ...current, raw: preset } : parsed);
 					}}
 				/>
 				<Trans>Custom date text</Trans>
@@ -184,7 +186,7 @@ export function DatesField({ dates, single = false, locale, format, onChange, cl
 				</>
 			)}
 
-			<div id={`${id}-note`} aria-live="polite">
+			<div id={`${id}-note`}>
 				{unreadable && (
 					<p className="text-xs leading-4 text-warn-text">
 						<Trans>Saved as written. Automated date checks and sorting are unavailable for this text.</Trans>

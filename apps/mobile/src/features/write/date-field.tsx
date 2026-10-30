@@ -3,7 +3,12 @@ import { useLingui } from "@lingui/react/macro";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { Platform, View } from "react-native";
-import { formatResumeDates, getPresentLabel, readLegacyDates } from "@reactive-resume/schema/resume/dates";
+import {
+	formatResumeDates,
+	getPresentLabel,
+	hasUnreadableDateText,
+	readLegacyDates,
+} from "@reactive-resume/schema/resume/dates";
 import { editDates, fromPickerDate, isReversed, pickerDate, readTypedDate, showYearMonth } from "./dates";
 import { resumeFieldFocus } from "@/draft";
 import { Button, Icon, IconButton, Sheet, Switch, Text, TextField, useTheme } from "@/ui";
@@ -148,10 +153,12 @@ export function DatesField({ dates, locale, format, single = false, disabled, au
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const [invalid, setInvalid] = useState({ start: false, end: false });
+	const current = editDates(dates, {});
 	const custom = dates.raw !== undefined;
-	const parsed = custom ? readLegacyDates(dates.raw ?? "", { locale, single }) : dates;
+	const preset = formatResumeDates(current, { locale, format });
+	const parsed = custom && dates.raw !== preset ? readLegacyDates(dates.raw ?? "", { locale, single }) : current;
 	const canUseFields = parsed.raw === undefined;
-	const unreadable = custom && Boolean(dates.raw?.trim()) && !dates.start;
+	const unreadable = hasUnreadableDateText(dates);
 	const setInvalidFor = (part: "start" | "end") => (value: boolean) =>
 		setInvalid((state) => (state[part] === value ? state : { ...state, [part]: value }));
 
@@ -164,7 +171,7 @@ export function DatesField({ dates, locale, format, single = false, disabled, au
 					disabled={disabled || (custom && !canUseFields)}
 					onValueChange={(checked) => {
 						setInvalid({ start: false, end: false });
-						onChange(checked ? { ...dates, raw: formatResumeDates(dates, { locale, format }) } : parsed);
+						onChange(checked ? { ...current, raw: preset } : parsed);
 					}}
 				/>
 				<Text>{t`Custom date text`}</Text>
@@ -244,7 +251,7 @@ type NoteProps = { icon: "warning" | "warning-circle"; tone: "dangerText" | "war
 function Note({ icon, tone, children }: NoteProps) {
 	const { colors, space } = useTheme();
 	return (
-		<View accessibilityLiveRegion="polite" style={{ flexDirection: "row", gap: space.s1 }}>
+		<View style={{ flexDirection: "row", gap: space.s1 }}>
 			<Icon name={icon} size={16} color={colors[tone]} />
 			<Text variant="caption" color={tone} style={{ flex: 1 }}>
 				{children}
