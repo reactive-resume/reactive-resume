@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { expect, test } from "../fixtures/test";
 
@@ -64,6 +65,11 @@ test("prepares documents and answers manually, then keeps submission separate fr
 		const path = await file.path();
 		if (!path) throw new Error("PDF download did not produce a file.");
 		expect((await readFile(path)).subarray(0, 5).toString()).toBe("%PDF-");
+		const text = execFileSync("pdftotext", [path, "-"], { encoding: "utf8" });
+		expect(text).toContain("Morgan Vale");
+		expect(text).toContain(
+			menu === "Resume options" ? "Operations lead" : "I coordinated customer onboarding with support and engineering.",
+		);
 	}
 	await page.getByRole("button", { name: "Add a question from the form" }).click();
 	await page.getByRole("textbox", { name: "Question from the form", exact: true }).fill("Why this role?");

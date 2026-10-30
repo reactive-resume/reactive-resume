@@ -38,6 +38,7 @@ vi.mock("@reactive-resume/db/schema", () => ({
 		applicationId: "application_id",
 		activeRunId: "active_run_id",
 	},
+	careerWorkspace: { applicationId: "workspace_application_id", userId: "workspace_user_id" },
 	careerSchedule: {
 		id: "schedule_id",
 		userId: "user_id",
@@ -123,6 +124,7 @@ beforeEach(() => {
 			select: (...args: unknown[]) => ({
 				from: (table: unknown) => {
 					if (table === testSchema.applicationPipeline) return { where: () => Promise.resolve([{ revision: 0 }]) };
+					if (table === testSchema.careerWorkspace) return { where: () => Promise.resolve([]) };
 					if (table === testSchema.applicationLane)
 						return { where: () => ({ orderBy: () => Promise.resolve(createDefaultOwnedApplicationLanes("user-1")) }) };
 					return dbMock.select(...args).from(table);

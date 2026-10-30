@@ -1067,6 +1067,12 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		await expect(
 			service.submitApplication("alice", "alice-app", [], [], { resumeId: "old-selection", coverLetterId: null }),
 		).rejects.toMatchObject({ code: "CONFLICT" });
+		await expect(
+			service.submitApplication("alice", "alice-app", [], [], {
+				resumeId: "shared-resume",
+				coverLetterId: "old-letter",
+			}),
+		).rejects.toMatchObject({ code: "CONFLICT" });
 		expect((await applications.getById({ userId: "alice", id: "alice-app" })).status).toBe("saved");
 	});
 

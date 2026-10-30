@@ -169,7 +169,10 @@ test("manual offers save and compare without an AI provider", async ({ authPage:
 	await page.getByLabel("Learning budget", { exact: true }).fill("");
 	await page.getByLabel("Where you work", { exact: true }).fill("Berlin");
 	await page.getByLabel("Leave", { exact: true }).fill("30 days");
-	await page.getByRole("button", { name: "Save offer", exact: true }).click();
+	await Promise.all([
+		page.waitForResponse((response) => response.url().includes("/career/createOffer") && response.ok()),
+		page.getByRole("button", { name: "Save offer", exact: true }).click(),
+	]);
 	await expect(page.getByRole("button", { name: "Save offer", exact: true })).toBeHidden();
 	await page.goto(`/dashboard/applications/${firstJob}/saved`);
 	await expect(page.getByRole("link", { name: "Open in Offers" })).toBeVisible();
@@ -183,7 +186,10 @@ test("manual offers save and compare without an AI provider", async ({ authPage:
 	await page.getByLabel("Base salary", { exact: true }).fill("8000");
 	await page.getByLabel("Bonus", { exact: true }).fill("0");
 	await page.getByLabel("Where you work", { exact: true }).fill("Remote");
-	await page.getByRole("button", { name: "Save offer", exact: true }).click();
+	await Promise.all([
+		page.waitForResponse((response) => response.url().includes("/career/createOffer") && response.ok()),
+		page.getByRole("button", { name: "Save offer", exact: true }).click(),
+	]);
 	await expect(page.getByRole("button", { name: "Save offer", exact: true })).toBeHidden();
 	await page.reload();
 	await expect(page.getByText("€95,000 a year", { exact: true })).toBeVisible();
