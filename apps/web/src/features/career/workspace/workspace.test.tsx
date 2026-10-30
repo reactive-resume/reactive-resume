@@ -38,6 +38,9 @@ vi.mock("@/libs/orpc/client", () => {
 	});
 	return {
 		orpc: {
+			documents: { list: endpoint("documents") },
+			applications: { update: endpoint("updateApplication") },
+			coverLetters: { create: endpoint("createLetter") },
 			career: {
 				workspace: endpoint("workspace"),
 				savedItems: endpoint("savedItems"),
@@ -53,6 +56,7 @@ vi.mock("@/libs/orpc/client", () => {
 	};
 });
 vi.mock("@tanstack/react-router", () => ({
+	useNavigate: () => vi.fn(),
 	useRouteContext: () => ({ session: { user: { id: api.userId, timezone: "UTC" } } }),
 	Link: ({ children }: { children: ReactNode }) => <a href="#test-link">{children}</a>,
 }));
@@ -185,7 +189,7 @@ function mount(children: ReactNode) {
 }
 beforeEach(() => {
 	vi.clearAllMocks();
-	api.data = { workspace: structuredClone(EMPTY_WORKSPACE), savedItems: [], facts: [] };
+	api.data = { workspace: structuredClone(EMPTY_WORKSPACE), savedItems: [], facts: [], documents: [] };
 	api.userId = "workspace-user";
 	api.stories = [];
 	api.knowledgeError = false;
@@ -220,6 +224,7 @@ it("submits the visible draft immediately and pauses autosave until submission f
 		applicationId: application.id,
 		answers: [{ ...answer, answer: "Latest answer typed before clicking" }],
 		expectedAnswers: [answer],
+		expectedDocuments: { resumeId: null, coverLetterId: null },
 	});
 	await act(async () => {
 		await vi.advanceTimersByTimeAsync(3000);

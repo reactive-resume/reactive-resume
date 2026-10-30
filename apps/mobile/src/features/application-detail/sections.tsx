@@ -165,7 +165,7 @@ export function NextStepCard({ application, onOpenInterview }: SectionProps & In
 		? t`Draft a follow-up`
 		: {
 				fit: t`Prepare application`,
-				apply: t`Review application`,
+				apply: application.status === "saved" ? t`Prepare application` : t`Review application`,
 				prepare: t`Prepare for interview`,
 				debrief: t`Debrief interview`,
 				messages: t`Prepare a reply`,
@@ -832,7 +832,7 @@ const DAY_MS = 86_400_000;
 export function workspaceTabFor(application: Application, now = new Date()) {
 	switch (application.status) {
 		case "saved":
-			return "fit";
+			return "apply";
 		case "applied":
 			return "apply";
 		case "screening":

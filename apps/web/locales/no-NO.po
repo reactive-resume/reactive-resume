@@ -834,10 +834,9 @@ msgid "<0>Nothing to fix.</0> Every check passes."
 msgstr "<0>Ingenting å rette.</0> Alle kontrollene er bestått."
 
 #. placeholder {0}: day(application.appliedAt)
-#. placeholder {1}: application.company
 #: src/features/career/workspace/apply.tsx
-msgid "<0>Submitted on {0}.</0> The versions you sent are kept in Saved. Edits here don't change what {1} received."
-msgstr "<0>Sendt inn {0}.</0> Versjonene du sendte, ligger i Lagret. Endringer her endrer ikke det {1} mottok."
+msgid "<0>Submission recorded on {0}.</0> Saved versions stay separate from later drafts. This record does not confirm employer receipt."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
@@ -1597,6 +1596,10 @@ msgstr "Mot kravene dine"
 msgid "AI & developer"
 msgstr "AI og utvikler"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "AI availability couldn't be confirmed. Manual preparation is available."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "AI connection"
 msgstr "AI-tilkobling"
@@ -1906,6 +1909,10 @@ msgstr "Søknadssvar"
 msgid "Application closed"
 msgstr "jobbsøknaden stengt"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Application closed. Current drafts remain available."
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application date"
@@ -1930,6 +1937,10 @@ msgstr "Søknadsdetaljer"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application options"
 msgstr "alternativer for jobbsøknad"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Application preparation"
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "application summaries"
@@ -2748,6 +2759,10 @@ msgstr "Kinesisk (forenklet)"
 msgid "Chinese (Traditional)"
 msgstr "Kinesisk (tradisjonell)"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Choose a base resume"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Choose a file"
 msgstr "Velg en fil"
@@ -3282,6 +3297,10 @@ msgstr "Kopier"
 msgid "Copy {value}"
 msgstr "Kopier {value}"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Copy a base resume for this job"
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
 msgstr "Kopier en CV for en jobb"
@@ -3443,6 +3462,7 @@ msgid "Couldn't create the key. Try again."
 msgstr "Kunne ikke opprette nøkkelen. Prøv igjen."
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Couldn't create the letter. Try again."
 msgstr "Kunne ikke opprette brevet. Prøv igjen."
 
@@ -3509,6 +3529,7 @@ msgstr "Kunne ikke fylle ut feltene. Prøv igjen, eller fyll dem ut selv."
 msgid "Couldn't forget that fact. Try again."
 msgstr "Kunne ikke glemme faktumet. Prøv igjen."
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/resume/export/use-resume-export.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Couldn't generate the PDF. Try again."
@@ -3702,6 +3723,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Kunne ikke lagre endringen. Sjekk tilkoblingen og prøv igjen."
 
 #: src/features/career/knowledge/facts.tsx
+#: src/features/career/workspace/preparation.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Kunne ikke lagre endringen. Prøv igjen."
@@ -3979,6 +4001,7 @@ msgstr "Følgebrev"
 
 #. placeholder {0}: application.company
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Cover letter — {0}"
 msgstr "Følgebrev - {0}"
 
@@ -4081,6 +4104,10 @@ msgstr "CSV-data"
 #: src/features/career/offer-entry.tsx
 msgid "Currency"
 msgstr "Valuta"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Current drafts"
+msgstr ""
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Current filters"
@@ -4586,6 +4613,10 @@ msgstr "Last ned CSV"
 msgid "Download failed. Try again."
 msgstr "Nedlasting mislyktes. Prøv igjen."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Download letter PDF"
+msgstr ""
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
@@ -4594,6 +4625,10 @@ msgstr "Last ned PDF"
 #: src/features/resume/share/download-tab.tsx
 msgid "Download PDF instead"
 msgstr "Last ned PDF i stedet"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Download resume PDF"
+msgstr ""
 
 #: src/features/templates/gallery.tsx
 msgid "Download sample PDF"
@@ -4805,6 +4840,14 @@ msgstr "Redigering utført"
 #: src/features/resume/stylesheet/editor.tsx
 msgid "Edit color {0}"
 msgstr "Rediger farge {0}"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Edit current letter"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Edit current resume"
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Edit date"
@@ -5335,6 +5378,10 @@ msgstr "Finner det som fungerer"
 msgid "Finnish"
 msgstr "Finsk"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "First application setup: save the posting, copy or create a resume, then review the documents and any required form answers below. A cover letter and form answers are optional when the employer doesn't ask for them."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "First run"
 msgstr "Første kjøring"
@@ -5502,6 +5549,10 @@ msgstr "Glemt passord?"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "Glemt passordet ditt?"
+
+#: src/features/career/workspace/apply.tsx
+msgid "Form answers"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Format"
@@ -5707,6 +5758,14 @@ msgstr "Gå hjem"
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Gå til dashbordet"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Go to form answers"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Go to readiness review"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Go to…"
@@ -6375,6 +6434,7 @@ msgstr "Jobb"
 
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Job description"
 msgstr "Stillingsbeskrivelse"
 
@@ -6387,6 +6447,7 @@ msgstr "Stillingslink eller stillingsannonsetekst"
 msgid "Job match"
 msgstr "Jobbmatch"
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Job posting"
 msgstr "Stillingsutlysning"
@@ -6906,6 +6967,15 @@ msgstr "Link oppdatert"
 msgid "Linked · not sent yet"
 msgstr "Linket · ikke sendt ennå"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Linked document unavailable"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Linked document unavailable. Choose another document or restore it from Trash."
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Linked documents couldn't be loaded."
 msgstr "Koblede dokumenter kunne ikke lastes inn."
@@ -7020,6 +7090,7 @@ msgstr "Laster inn intervjuer…"
 msgid "Loading Knowledge before you send…"
 msgstr "Laster inn Kunnskap før du sender…"
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Loading linked documents…"
 msgstr "Laster inn koblede dokumenter…"
@@ -7749,9 +7820,18 @@ msgstr "Neste steg: {0}. Legger til en påminnelse i I dag."
 msgid "Next time, I’d agree how to measure success before the first prototype."
 msgstr "Neste gang ville jeg avtalt hvordan suksess skal måles, før den første prototypen."
 
+#. placeholder {0}: labels[next]
+#: src/features/career/workspace/preparation.tsx
+msgid "Next: {0}"
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "No active applications."
 msgstr "Ingen aktive jobbsøknader."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "No AI connection needed. Edit documents and write answers yourself."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No application"
@@ -7908,6 +7988,10 @@ msgstr "Ingen bilde. De fleste ATS ignorerer bilder; noen regioner forventer en.
 msgid "No postings found. Try different keywords."
 msgstr "Ingen stillingsannonser funnet. Prøv forskjellige søkeord."
 
+#: src/features/career/workspace/apply.tsx
+msgid "No recorded answers are available."
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "No response"
 msgstr "Ingen respons"
@@ -7992,6 +8076,10 @@ msgstr "Ingen"
 msgctxt "Entry header accent"
 msgid "None"
 msgstr "Ingen"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "None selected"
+msgstr ""
 
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
@@ -8471,6 +8559,10 @@ msgstr "Stillingssøk"
 #: src/features/settings/ai/web-access.tsx
 msgid "Optional"
 msgstr "Valgfri"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Optional AI help is available in the editors. Review proposed edits before accepting them."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Optional for local Ollama"
@@ -9023,6 +9115,10 @@ msgctxt "Career preferences: the roles, places, pay and ways of working you want
 msgid "Preferences"
 msgstr "Preferanser"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Preparation never submits to an employer or marks this application as applied."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
@@ -9042,6 +9138,10 @@ msgstr "Lag en CV"
 #: src/features/assistant/assistant-panel.tsx
 msgid "Prepare me for the interview"
 msgstr "Forbered meg på intervjuet"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Prepare this application"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Preparing {label} file…"
@@ -10114,6 +10214,10 @@ msgstr "Vurder svaret mitt"
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "«Vurder svaret mitt» sender spørsmålet, det du sa, denne stillingsannonsen og Kunnskap til {providerName}."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Review readiness below"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Se over obligatoriske skjemasvar og fjern påstander uten belegg."
@@ -10121,6 +10225,10 @@ msgstr "Se over obligatoriske skjemasvar og fjern påstander uten belegg."
 #: src/features/career/workspace/apply.tsx
 msgid "Review the selected resume and cover letter in their editors."
 msgstr "Se over valgt CV og følgebrev i redigeringsverktøyene deres."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Review with assistant"
+msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Review writing"
@@ -10346,6 +10454,10 @@ msgstr "Lagre navn"
 msgid "Save offer"
 msgstr "Lagre jobbtilbud"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Save posting"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Save schedule"
 msgstr "Lagre tidsplan"
@@ -10362,6 +10474,10 @@ msgstr "Lagre tagger"
 #: src/features/ats-checker/messages.ts
 msgid "Save the file with every page upright."
 msgstr "Lagre filen med alle sider stående riktig vei."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Save the job posting"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Save these offer terms to compare"
@@ -10719,9 +10835,17 @@ msgstr "Velg en AI-leverandør"
 msgid "Select..."
 msgstr "Velg..."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Selected cover letter (optional)"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
 msgstr "Valgte dokumenter"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Selected resume"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Self-hosting"
@@ -11602,6 +11726,10 @@ msgstr "Emne"
 msgid "Submission is recorded. Review checks only reflect what you checked yourself."
 msgstr "Innsendingen er registrert. Avkrysningene viser bare det du selv har kontrollert."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Submission recorded. Current drafts are separate from what you sent."
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "Submit through the employer's application page yourself."
 msgstr "Send inn selv via arbeidsgiverens søknadsside."
@@ -11781,6 +11909,10 @@ msgstr "Tagger..."
 #: src/features/homepage/tailor.tsx
 msgid "Tailor"
 msgstr "Tilpass jobbbeskrivelsen"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Tailor and review your resume"
+msgstr ""
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
@@ -12295,6 +12427,10 @@ msgid "There is no summary paragraph."
 msgstr "Det finnes ikke noe sammendragsavsnitt."
 
 #: src/features/career/workspace/apply.tsx
+msgid "These are saved draft answers."
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
 msgid "These are the answers saved when you applied."
 msgstr "Dette er svarene som ble lagret da du søkte."
 
@@ -12728,6 +12864,7 @@ msgstr "Prøv en prøve"
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
 #: src/features/career/workspace/practise.tsx
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/documents/library-error.tsx
 #: src/features/resume/editor/write/improve.tsx
@@ -13355,6 +13492,10 @@ msgstr "Se jobbsøknad"
 msgid "View posting"
 msgstr "Se stillingsannonsen"
 
+#: src/features/career/workspace/apply.tsx
+msgid "View recorded answers"
+msgstr ""
+
 #. placeholder {0}: formatVersionTime(viewing.createdAt, i18n.locale)
 #. placeholder {0}: when(selected)
 #. placeholder {1}: getVersionTitle(selected)
@@ -13752,13 +13893,22 @@ msgstr "Skriv"
 msgid "Write \"Present\" as the end date of your current role."
 msgstr "Skriv \"nå\" som sluttdato for din nåværende rolle."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Write a cover letter if required"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "Skriv et brev"
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."
 msgstr "Skriv en historie én gang, med faktaene bak, så bruker coachen den på 3 steder. Slå av et faktum, så lener ingenting seg på det."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Write and review form answers"
+msgstr ""
 
 #: src/features/homepage/write.tsx
 msgid "Write beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide."

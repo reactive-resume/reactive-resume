@@ -27,6 +27,8 @@ import { cn } from "@reactive-resume/utils/style";
 import { latest, useDebouncedSave, useDefaultProvider, useGenerate, useSavedItems, useWorkspace } from "../hooks";
 import { CollapseRow, Swap, useCareerTime, withUndo, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
+import { Preparation } from "./preparation";
+import { SentDocuments } from "@/features/applications/components/detail/sent-documents";
 import { useInvalidateApplications } from "@/features/applications/use-application-actions";
 import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -52,13 +54,15 @@ const checklistItems = (submitted: boolean) =>
 	].slice(0, submitted ? 3 : undefined);
 
 /** W4–W5: the written answers for the employer's form, and a checklist before submitting there yourself. */
-export function ApplyTab({ application, version }: WorkspaceTabProps) {
+export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 	const { day } = useCareerTime();
 	const saved = useSavedItems(application.id);
 	const workspace = useWorkspace(application.id);
 	const { data: facts } = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: application.id } }));
 	const readOnlyVersion = version?.data.kind === "answers" ? version.data : undefined;
-	const sentItem = latest(saved.data, "answers");
+	const recorded = saved.data?.find((item) => item.submission && item.data.kind === "answers");
+	const candidate = recorded ?? (!hasApplicationSubmission(application) ? latest(saved.data, "answers") : undefined);
+	const sentItem = candidate?.data.kind === "answers" ? { ...candidate, data: candidate.data } : undefined;
 	// Removed questions wait out their Undo here; the workspace drops them when the toast closes.
 	const [removed, setRemoved] = useState<string[]>([]);
 	const [unit, setUnit] = useState<CountUnit>("words");
@@ -110,13 +114,28 @@ export function ApplyTab({ application, version }: WorkspaceTabProps) {
 	return (
 		<div className="grid items-start gap-5 @3xl:grid-cols-[minmax(0,1fr)_280px] @5xl:grid-cols-[minmax(0,1fr)_320px]">
 			<div className="grid gap-4">
+				{!version && <Preparation application={application} disabled={submitting} />}
+				{!version && hasApplicationSubmission(application) && (
+					<>
+						<SentDocuments application={application} disabled />
+						{recorded ? (
+							<Button variant="secondary" onClick={() => go("apply", { version: recorded.id })}>
+								<Trans>View recorded answers</Trans>
+							</Button>
+						) : (
+							<p className="text-sm text-ink-2">
+								<Trans>No recorded answers are available.</Trans>
+							</p>
+						)}
+					</>
+				)}
 				{hasApplicationSubmission(application) && (
 					<p className="flex gap-2.5 rounded-xl bg-accent-soft px-4 py-3 text-[13px] leading-[18px] text-accent-text">
 						<Icon name="check-circle" size={18} className="mt-px shrink-0" />
 						<span>
 							<Trans>
-								<strong className="font-semibold">Submitted on {day(application.appliedAt)}.</strong> The versions you
-								sent are kept in Saved. Edits here don't change what {application.company} received.
+								<strong className="font-semibold">Submission recorded on {day(application.appliedAt)}.</strong> Saved
+								versions stay separate from later drafts. This record does not confirm employer receipt.
 							</Trans>
 						</span>
 					</p>
@@ -125,7 +144,11 @@ export function ApplyTab({ application, version }: WorkspaceTabProps) {
 				{stored && !readOnlyVersion && (
 					<div className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-sunken px-3.5 py-2.5 text-sm">
 						<span>
-							<Trans>These are the answers saved when you applied.</Trans>
+							{recorded ? (
+								<Trans>These are the answers saved when you applied.</Trans>
+							) : (
+								<Trans>These are saved draft answers.</Trans>
+							)}
 						</span>
 						<Button
 							size="sm"
@@ -145,6 +168,9 @@ export function ApplyTab({ application, version }: WorkspaceTabProps) {
 					</div>
 				)}
 
+				<h2 id="application-answers" tabIndex={-1} className="text-base font-semibold">
+					<Trans>Form answers</Trans>
+				</h2>
 				{shown.length > 0 && (
 					<div>
 						<AnimatePresence initial={false}>
@@ -555,7 +581,12 @@ function Checklist({
 		onSubmittingChange(true);
 		try {
 			const currentWorkspace = await workspace.settled();
-			await submit.mutateAsync({ applicationId: application.id, answers, expectedAnswers: currentWorkspace.answers });
+			await submit.mutateAsync({
+				applicationId: application.id,
+				answers,
+				expectedAnswers: currentWorkspace.answers,
+				expectedDocuments: { resumeId: application.resumeId, coverLetterId: application.coverLetterId },
+			});
 			queryClient.setQueryData(orpc.career.workspace.queryKey({ input: { applicationId: application.id } }), {
 				...currentWorkspace,
 				answers,
@@ -571,7 +602,11 @@ function Checklist({
 	};
 
 	return (
-		<aside className="grid gap-3.5 rounded-xl border border-line bg-surface p-4">
+		<aside
+			id="application-readiness"
+			tabIndex={-1}
+			className="grid gap-3.5 rounded-xl border border-line bg-surface p-4"
+		>
 			<div className="flex items-baseline justify-between gap-3">
 				<h2 className="text-sm font-semibold">
 					{submitted ? <Trans>Content review</Trans> : <Trans>Before you submit</Trans>}

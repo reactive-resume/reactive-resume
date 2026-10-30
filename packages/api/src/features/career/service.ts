@@ -674,7 +674,12 @@ export const careerService = {
 	savedItems: async (input: Owned & { kind?: SavedItemData["kind"] | undefined }) => {
 		const context = input.applicationId ? await careerService.context(input) : null;
 		const rows = await db
-			.select({ item: tables.careerArtifact, company: tables.application.company, role: tables.application.role })
+			.select({
+				item: tables.careerArtifact,
+				company: tables.application.company,
+				role: tables.application.role,
+				activity: tables.application.activity,
+			})
 			.from(tables.careerArtifact)
 			.leftJoin(tables.application, eq(tables.application.id, tables.careerArtifact.applicationId))
 			.where(
@@ -685,12 +690,29 @@ export const careerService = {
 				),
 			)
 			.orderBy(desc(tables.careerArtifact.createdAt));
-		return rows.map(({ item, company, role }) => ({
-			...item,
-			application: company === null ? null : { company, role: role ?? "" },
-			// Knowledge, the posting or documents changed since it was written.
-			outdated: item.data.kind !== "answers" && context !== null && item.inputVersion !== context.version,
-		}));
+		return rows.map(({ item, company, role, activity }) => {
+			// Restore schema key order before hashing: JSONB reorders object keys on disk.
+			const parsed =
+				item.data.kind === "answers" ? careerWorkspaceSchema.shape.answers.safeParse(item.data.answers) : null;
+			const answers = parsed?.success ? parsed.data : null;
+			return {
+				...item,
+				// Submission writers hash the answers; generated drafts use the context version.
+				submission:
+					answers !== null &&
+					(item.inputVersion === hash(JSON.stringify(answers)) ||
+						(activity ?? []).some(
+							(entry) =>
+								entry.type === "stage" &&
+								entry.stage === "applied" &&
+								entry.canonicalTransition !== false &&
+								item.inputVersion === hash(JSON.stringify([item.applicationId, entry.at, answers])),
+						)),
+				application: company === null ? null : { company, role: role ?? "" },
+				// Knowledge, the posting or documents changed since it was written.
+				outdated: item.data.kind !== "answers" && context !== null && item.inputVersion !== context.version,
+			};
+		});
 	},
 	createOffer: async (userId: string, { applicationId, ...terms }: z.infer<typeof careerOfferInputSchema>) => {
 		const context = await careerService.context({ userId, applicationId });
@@ -934,6 +956,7 @@ export const careerService = {
 		applicationId: string,
 		answers: CareerWorkspace["answers"],
 		expectedAnswers: CareerWorkspace["answers"],
+		expectedDocuments?: { resumeId: string | null; coverLetterId: string | null },
 	) => {
 		const parsed = careerWorkspaceSchema.shape.answers.parse(answers);
 		await db.transaction(async (tx) => {
@@ -944,6 +967,14 @@ export const careerService = {
 				.where(and(eq(tables.application.id, applicationId), eq(tables.application.userId, userId)))
 				.for("update");
 			if (!application) throw new ORPCError("NOT_FOUND");
+			if (
+				expectedDocuments &&
+				(expectedDocuments.resumeId !== application.resumeId ||
+					expectedDocuments.coverLetterId !== application.coverLetterId)
+			)
+				throw new ORPCError("CONFLICT", {
+					message: "Selected documents changed elsewhere. Review them before marking as applied.",
+				});
 			const [workspace] = await tx
 				.select()
 				.from(tables.careerWorkspace)

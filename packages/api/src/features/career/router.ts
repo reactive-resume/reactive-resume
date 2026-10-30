@@ -30,6 +30,10 @@ const applicationInput = z.object({ applicationId: z.string().min(1) });
 const savedItemOutput = savedItemSchema.extend({
 	application: z.object({ company: z.string(), role: z.string() }).nullable(),
 	outdated: z.boolean(),
+	submission: z
+		.boolean()
+		.optional()
+		.describe("Answers recorded at submission, separate from generated or current drafts."),
 });
 
 export const careerRouter = {
@@ -349,11 +353,20 @@ export const careerRouter = {
 			applicationInput.extend({
 				answers: careerWorkspaceSchema.shape.answers,
 				expectedAnswers: careerWorkspaceSchema.shape.answers,
+				expectedDocuments: z
+					.object({ resumeId: z.string().nullable(), coverLetterId: z.string().nullable() })
+					.optional(),
 			}),
 		)
 		.output(z.void())
 		.handler(({ context, input }) =>
-			careerService.submitApplication(context.user.id, input.applicationId, input.answers, input.expectedAnswers),
+			careerService.submitApplication(
+				context.user.id,
+				input.applicationId,
+				input.answers,
+				input.expectedAnswers,
+				input.expectedDocuments,
+			),
 		),
 	snapshotAnswers: protectedProcedure
 		.route({

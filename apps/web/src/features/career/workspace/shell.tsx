@@ -89,7 +89,7 @@ function defaultTab(application: Application, now: Date): WorkspaceTab {
 	const ended = interview && +new Date(interview.at) + interview.durationMinutes * 60_000 < +now;
 	switch (application.status) {
 		case "saved":
-			return "fit";
+			return "apply";
 		case "applied":
 			return "apply";
 		case "screening":

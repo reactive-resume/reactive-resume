@@ -834,10 +834,9 @@ msgid "<0>Nothing to fix.</0> Every check passes."
 msgstr "<0>修正する必要はありません。</0> すべてのチェックに合格しました。"
 
 #. placeholder {0}: day(application.appliedAt)
-#. placeholder {1}: application.company
 #: src/features/career/workspace/apply.tsx
-msgid "<0>Submitted on {0}.</0> The versions you sent are kept in Saved. Edits here don't change what {1} received."
-msgstr "<0>{0}に送信済み。</0>送信したバージョンは「保存済み」に保管されています。ここで編集しても、{1}が受け取った内容は変わりません。"
+msgid "<0>Submission recorded on {0}.</0> Saved versions stay separate from later drafts. This record does not confirm employer receipt."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
@@ -1597,6 +1596,10 @@ msgstr "あなたの条件との比較"
 msgid "AI & developer"
 msgstr "AIと開発者"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "AI availability couldn't be confirmed. Manual preparation is available."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "AI connection"
 msgstr "AI接続"
@@ -1906,6 +1909,10 @@ msgstr "応募フォームの回答"
 msgid "Application closed"
 msgstr "求人応募は締め切りました"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Application closed. Current drafts remain available."
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application date"
@@ -1930,6 +1937,10 @@ msgstr "応募の詳細"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application options"
 msgstr "求人応募オプション"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Application preparation"
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "application summaries"
@@ -2748,6 +2759,10 @@ msgstr "中国語（簡体字）"
 msgid "Chinese (Traditional)"
 msgstr "中国語（繁体字）"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Choose a base resume"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Choose a file"
 msgstr "ファイルを選択してください"
@@ -3282,6 +3297,10 @@ msgstr "コピー"
 msgid "Copy {value}"
 msgstr "{value} をコピー"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Copy a base resume for this job"
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
 msgstr "仕事の履歴書をコピーする"
@@ -3443,6 +3462,7 @@ msgid "Couldn't create the key. Try again."
 msgstr "キーを作成できませんでした。もう一度やり直してください。"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Couldn't create the letter. Try again."
 msgstr "レターを作成できませんでした。もう一度お試しください。"
 
@@ -3509,6 +3529,7 @@ msgstr "フィールドに入力できませんでした。もう一度お試し
 msgid "Couldn't forget that fact. Try again."
 msgstr "その事実を忘れさせることができませんでした。もう一度お試しください。"
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/resume/export/use-resume-export.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Couldn't generate the PDF. Try again."
@@ -3702,6 +3723,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "その変更を保存できませんでした。接続を確認して、もう一度お試しください。"
 
 #: src/features/career/knowledge/facts.tsx
+#: src/features/career/workspace/preparation.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "その変更を保存できませんでした。もう一度やり直してください。"
@@ -3979,6 +4001,7 @@ msgstr "カバーレター"
 
 #. placeholder {0}: application.company
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Cover letter — {0}"
 msgstr "カバーレター — {0}"
 
@@ -4081,6 +4104,10 @@ msgstr "CSV データ"
 #: src/features/career/offer-entry.tsx
 msgid "Currency"
 msgstr "通貨"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Current drafts"
+msgstr ""
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Current filters"
@@ -4586,6 +4613,10 @@ msgstr "CSV をダウンロード"
 msgid "Download failed. Try again."
 msgstr "ダウンロードに失敗しました。もう一度お試しください。"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Download letter PDF"
+msgstr ""
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
@@ -4594,6 +4625,10 @@ msgstr "PDF をダウンロード"
 #: src/features/resume/share/download-tab.tsx
 msgid "Download PDF instead"
 msgstr "代わりにPDFをダウンロードしてください"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Download resume PDF"
+msgstr ""
 
 #: src/features/templates/gallery.tsx
 msgid "Download sample PDF"
@@ -4805,6 +4840,14 @@ msgstr "編集が適用されました"
 #: src/features/resume/stylesheet/editor.tsx
 msgid "Edit color {0}"
 msgstr "色を編集 {0}"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Edit current letter"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Edit current resume"
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Edit date"
@@ -5335,6 +5378,10 @@ msgstr "うまくいく方法を探しています"
 msgid "Finnish"
 msgstr "フィンランド語"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "First application setup: save the posting, copy or create a resume, then review the documents and any required form answers below. A cover letter and form answers are optional when the employer doesn't ask for them."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "First run"
 msgstr "初回実行"
@@ -5502,6 +5549,10 @@ msgstr "パスワードをお忘れですか？"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "パスワードをお忘れですか？"
+
+#: src/features/career/workspace/apply.tsx
+msgid "Form answers"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Format"
@@ -5707,6 +5758,14 @@ msgstr "家に帰れ"
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "ダッシュボードへ移動"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Go to form answers"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Go to readiness review"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Go to…"
@@ -6375,6 +6434,7 @@ msgstr "仕事"
 
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Job description"
 msgstr "職務内容"
 
@@ -6387,6 +6447,7 @@ msgstr "求人リンクまたは求人テキスト"
 msgid "Job match"
 msgstr "ジョブマッチ"
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Job posting"
 msgstr "求人情報"
@@ -6906,6 +6967,15 @@ msgstr "リンクが更新されました"
 msgid "Linked · not sent yet"
 msgstr "リンク済み・まだ送信されていません"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Linked document unavailable"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Linked document unavailable. Choose another document or restore it from Trash."
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Linked documents couldn't be loaded."
 msgstr "リンクされたドキュメントを読み込めませんでした。"
@@ -7020,6 +7090,7 @@ msgstr "面接を読み込み中…"
 msgid "Loading Knowledge before you send…"
 msgstr "送信前にナレッジを読み込み中…"
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Loading linked documents…"
 msgstr "リンクされたドキュメントを読み込み中…"
@@ -7749,9 +7820,18 @@ msgstr "次のステップ: {0}。「今日」にリマインダーを追加し�
 msgid "Next time, I’d agree how to measure success before the first prototype."
 msgstr "次は、最初の試作の前に成功の測り方を合意しておきます。"
 
+#. placeholder {0}: labels[next]
+#: src/features/career/workspace/preparation.tsx
+msgid "Next: {0}"
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "No active applications."
 msgstr "アクティブな求人応募はありません。"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "No AI connection needed. Edit documents and write answers yourself."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No application"
@@ -7908,6 +7988,10 @@ msgstr "写真はありません。ほとんどの ATS は写真を無視しま�
 msgid "No postings found. Try different keywords."
 msgstr "求人情報は見つかりませんでした。別のキーワードを試してください。"
 
+#: src/features/career/workspace/apply.tsx
+msgid "No recorded answers are available."
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "No response"
 msgstr "応答なし"
@@ -7992,6 +8076,10 @@ msgstr "なし"
 msgctxt "Entry header accent"
 msgid "None"
 msgstr "なし"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "None selected"
+msgstr ""
 
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
@@ -8471,6 +8559,10 @@ msgstr "求人探索"
 #: src/features/settings/ai/web-access.tsx
 msgid "Optional"
 msgstr "オプション"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Optional AI help is available in the editors. Review proposed edits before accepting them."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Optional for local Ollama"
@@ -9023,6 +9115,10 @@ msgctxt "Career preferences: the roles, places, pay and ways of working you want
 msgid "Preferences"
 msgstr "希望条件"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Preparation never submits to an employer or marks this application as applied."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
@@ -9042,6 +9138,10 @@ msgstr "履歴書を準備する"
 #: src/features/assistant/assistant-panel.tsx
 msgid "Prepare me for the interview"
 msgstr "面接の準備をしてください"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Prepare this application"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Preparing {label} file…"
@@ -10114,6 +10214,10 @@ msgstr "回答をレビュー"
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "「回答をレビュー」を押すと、質問、あなたが話した内容、この求人情報、あなたのナレッジが{providerName}に送信されます。"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Review readiness below"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "必須のフォーム回答を見直し、裏付けのない主張を削除してください。"
@@ -10121,6 +10225,10 @@ msgstr "必須のフォーム回答を見直し、裏付けのない主張を削
 #: src/features/career/workspace/apply.tsx
 msgid "Review the selected resume and cover letter in their editors."
 msgstr "選択した履歴書とカバーレターを、それぞれのエディターで確認してください。"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Review with assistant"
+msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Review writing"
@@ -10346,6 +10454,10 @@ msgstr "名前を保存"
 msgid "Save offer"
 msgstr "オファーを保存"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Save posting"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Save schedule"
 msgstr "スケジュールを保存"
@@ -10362,6 +10474,10 @@ msgstr "タグを保存"
 #: src/features/ats-checker/messages.ts
 msgid "Save the file with every page upright."
 msgstr "すべてのページが正しい向きになった状態でファイルを保存してください。"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Save the job posting"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Save these offer terms to compare"
@@ -10719,9 +10835,17 @@ msgstr "AIプロバイダーを選択してください"
 msgid "Select..."
 msgstr "選択..."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Selected cover letter (optional)"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
 msgstr "選択した書類"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Selected resume"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Self-hosting"
@@ -11602,6 +11726,10 @@ msgstr "件名"
 msgid "Submission is recorded. Review checks only reflect what you checked yourself."
 msgstr "応募の送信は記録済みです。チェックリストには、自分で確認した項目のみが反映されます。"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Submission recorded. Current drafts are separate from what you sent."
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "Submit through the employer's application page yourself."
 msgstr "採用企業の応募ページから、ご自身で送信してください。"
@@ -11781,6 +11909,10 @@ msgstr "タグ…"
 #: src/features/homepage/tailor.tsx
 msgid "Tailor"
 msgstr "職務内容に適応する"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Tailor and review your resume"
+msgstr ""
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
@@ -12295,6 +12427,10 @@ msgid "There is no summary paragraph."
 msgstr "概要の段落がありません。"
 
 #: src/features/career/workspace/apply.tsx
+msgid "These are saved draft answers."
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
 msgid "These are the answers saved when you applied."
 msgstr "これは応募時に保存された回答です。"
 
@@ -12728,6 +12864,7 @@ msgstr "サンプルを試してみる"
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
 #: src/features/career/workspace/practise.tsx
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/documents/library-error.tsx
 #: src/features/resume/editor/write/improve.tsx
@@ -13355,6 +13492,10 @@ msgstr "求人応募を見る"
 msgid "View posting"
 msgstr "求人情報を見る"
 
+#: src/features/career/workspace/apply.tsx
+msgid "View recorded answers"
+msgstr ""
+
 #. placeholder {0}: formatVersionTime(viewing.createdAt, i18n.locale)
 #. placeholder {0}: when(selected)
 #. placeholder {1}: getVersionTitle(selected)
@@ -13752,13 +13893,22 @@ msgstr "執筆"
 msgid "Write \"Present\" as the end date of your current role."
 msgstr "現在の職務の終了日には「Present」と記載してください。"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Write a cover letter if required"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "手紙を書く"
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."
 msgstr "事実を添えてストーリーを一度書けば、コーチがそれを3つの場面で使います。事実をオフにすれば、それに頼るものはなくなります。"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Write and review form answers"
+msgstr ""
 
 #: src/features/homepage/write.tsx
 msgid "Write beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide."

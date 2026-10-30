@@ -834,10 +834,9 @@ msgid "<0>Nothing to fix.</0> Every check passes."
 msgstr "<0> אין מה לתקן.</0> כל בדיקה עוברת."
 
 #. placeholder {0}: day(application.appliedAt)
-#. placeholder {1}: application.company
 #: src/features/career/workspace/apply.tsx
-msgid "<0>Submitted on {0}.</0> The versions you sent are kept in Saved. Edits here don't change what {1} received."
-msgstr "<0>הוגש ב-{0}.</0> הגרסאות ששלחת נשמרות ב\"שמורים\". עריכות כאן לא משנות את מה ש-{1} קיבלו."
+msgid "<0>Submission recorded on {0}.</0> Saved versions stay separate from later drafts. This record does not confirm employer receipt."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
@@ -1597,6 +1596,10 @@ msgstr "מול הדרישות שלך"
 msgid "AI & developer"
 msgstr "AI ומפתח"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "AI availability couldn't be confirmed. Manual preparation is available."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "AI connection"
 msgstr "חיבור AI"
@@ -1906,6 +1909,10 @@ msgstr "תשובה במועמדות"
 msgid "Application closed"
 msgstr "בקשה לעבודה נסגרה"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Application closed. Current drafts remain available."
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application date"
@@ -1930,6 +1937,10 @@ msgstr "פרטי המועמדות"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application options"
 msgstr "אפשרויות הגשת מועמדות לעבודה"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Application preparation"
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "application summaries"
@@ -2748,6 +2759,10 @@ msgstr "סינית (מופשטת)"
 msgid "Chinese (Traditional)"
 msgstr "סינית (מסורתית)"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Choose a base resume"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Choose a file"
 msgstr "בחר קובץ"
@@ -3282,6 +3297,10 @@ msgstr "העתקה"
 msgid "Copy {value}"
 msgstr "העתקת {value}"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Copy a base resume for this job"
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
 msgstr "העתק קורות חיים למשרה"
@@ -3443,6 +3462,7 @@ msgid "Couldn't create the key. Try again."
 msgstr "לא ניתן היה ליצור את המפתח. נסה שוב."
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Couldn't create the letter. Try again."
 msgstr "לא ניתן היה ליצור את המכתב. נסה שוב."
 
@@ -3509,6 +3529,7 @@ msgstr "לא ניתן היה למלא את השדות. נסה שוב, או מל�
 msgid "Couldn't forget that fact. Try again."
 msgstr "לא ניתן היה לשכוח את העובדה. נסה שוב."
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/resume/export/use-resume-export.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Couldn't generate the PDF. Try again."
@@ -3702,6 +3723,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "לא ניתן היה לשמור את השינוי. בדוק את החיבור ונסה שוב."
 
 #: src/features/career/knowledge/facts.tsx
+#: src/features/career/workspace/preparation.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "לא ניתן היה לשמור את השינוי הזה. נסה שוב."
@@ -3979,6 +4001,7 @@ msgstr "מכתב מקדים"
 
 #. placeholder {0}: application.company
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Cover letter — {0}"
 msgstr "מכתב נלווה - {0}"
 
@@ -4081,6 +4104,10 @@ msgstr "נתוני CSV"
 #: src/features/career/offer-entry.tsx
 msgid "Currency"
 msgstr "מטבע"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Current drafts"
+msgstr ""
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Current filters"
@@ -4586,6 +4613,10 @@ msgstr "הורד CSV"
 msgid "Download failed. Try again."
 msgstr "ההורדה נכשלה. נסה שוב."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Download letter PDF"
+msgstr ""
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
@@ -4594,6 +4625,10 @@ msgstr "הורדת PDF"
 #: src/features/resume/share/download-tab.tsx
 msgid "Download PDF instead"
 msgstr "הורד את PDF במקום זאת"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Download resume PDF"
+msgstr ""
 
 #: src/features/templates/gallery.tsx
 msgid "Download sample PDF"
@@ -4805,6 +4840,14 @@ msgstr "העריכה הוחלה"
 #: src/features/resume/stylesheet/editor.tsx
 msgid "Edit color {0}"
 msgstr "עריכת צבע {0}"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Edit current letter"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Edit current resume"
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Edit date"
@@ -5335,6 +5378,10 @@ msgstr "מוצא מה עובד"
 msgid "Finnish"
 msgstr "פינית"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "First application setup: save the posting, copy or create a resume, then review the documents and any required form answers below. A cover letter and form answers are optional when the employer doesn't ask for them."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "First run"
 msgstr "הרצה ראשונה"
@@ -5502,6 +5549,10 @@ msgstr "שכחת סיסמה?"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "שכחת את הסיסמה שלך?"
+
+#: src/features/career/workspace/apply.tsx
+msgid "Form answers"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Format"
@@ -5707,6 +5758,14 @@ msgstr "לך הביתה"
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "מעבר ללוח בקרה"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Go to form answers"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Go to readiness review"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Go to…"
@@ -6375,6 +6434,7 @@ msgstr "מִשׂרָה"
 
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Job description"
 msgstr "תיאור משרה"
 
@@ -6387,6 +6447,7 @@ msgstr "קישור לעבודה או טקסט פרסום עבודה"
 msgid "Job match"
 msgstr "התאמה לעבודה"
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Job posting"
 msgstr "מודעת דרושים"
@@ -6906,6 +6967,15 @@ msgstr "הקישור עודכן"
 msgid "Linked · not sent yet"
 msgstr "מקושר · עדיין לא נשלח"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Linked document unavailable"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Linked document unavailable. Choose another document or restore it from Trash."
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Linked documents couldn't be loaded."
 msgstr "לא ניתן היה לטעון את המסמכים המקושרים."
@@ -7020,6 +7090,7 @@ msgstr "טוען ראיונות…"
 msgid "Loading Knowledge before you send…"
 msgstr "טוען את מאגר הידע לפני השליחה…"
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Loading linked documents…"
 msgstr "טוען מסמכים מקושרים…"
@@ -7749,9 +7820,18 @@ msgstr "הצעד הבא: {0}. מוסיף תזכורת ב\"היום\"."
 msgid "Next time, I’d agree how to measure success before the first prototype."
 msgstr "בפעם הבאה הייתי מסכם איך למדוד הצלחה לפני אב-הטיפוס הראשון."
 
+#. placeholder {0}: labels[next]
+#: src/features/career/workspace/preparation.tsx
+msgid "Next: {0}"
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "No active applications."
 msgstr "אין מועמדות פעילה לעבודה."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "No AI connection needed. Edit documents and write answers yourself."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No application"
@@ -7908,6 +7988,10 @@ msgstr "אין תמונה. רוב ATS מתעלמים מתמונות; אזורי�
 msgid "No postings found. Try different keywords."
 msgstr "לא נמצאו מודעות דרושים. נסה מילות מפתח שונות."
 
+#: src/features/career/workspace/apply.tsx
+msgid "No recorded answers are available."
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "No response"
 msgstr "אין תגובה"
@@ -7992,6 +8076,10 @@ msgstr "אַף לֹא אֶחָד"
 msgctxt "Entry header accent"
 msgid "None"
 msgstr "ללא"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "None selected"
+msgstr ""
 
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
@@ -8471,6 +8559,10 @@ msgstr "איתור הזדמנויות"
 #: src/features/settings/ai/web-access.tsx
 msgid "Optional"
 msgstr "אופציונלי"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Optional AI help is available in the editors. Review proposed edits before accepting them."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Optional for local Ollama"
@@ -9023,6 +9115,10 @@ msgctxt "Career preferences: the roles, places, pay and ways of working you want
 msgid "Preferences"
 msgstr "העדפות"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Preparation never submits to an employer or marks this application as applied."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
@@ -9042,6 +9138,10 @@ msgstr "הכינו קורות חיים"
 #: src/features/assistant/assistant-panel.tsx
 msgid "Prepare me for the interview"
 msgstr "הכינו אותי לראיון"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Prepare this application"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Preparing {label} file…"
@@ -10114,6 +10214,10 @@ msgstr "סקור את התשובה שלי"
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "\"סקור את התשובה שלי\" שולח את השאלה, את מה שאמרת, את המודעה הזו ואת מאגר הידע שלך אל {providerName}."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Review readiness below"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "עבור על תשובות החובה בטופס והסר טענות לא מבוססות."
@@ -10121,6 +10225,10 @@ msgstr "עבור על תשובות החובה בטופס והסר טענות ל�
 #: src/features/career/workspace/apply.tsx
 msgid "Review the selected resume and cover letter in their editors."
 msgstr "עבור על קורות החיים והמכתב המקדים שנבחרו בעורכים שלהם."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Review with assistant"
+msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Review writing"
@@ -10346,6 +10454,10 @@ msgstr "שמירת השם"
 msgid "Save offer"
 msgstr "שמירת הצעת עבודה"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Save posting"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Save schedule"
 msgstr "שמור תזמון"
@@ -10362,6 +10474,10 @@ msgstr "שמירת התגים"
 #: src/features/ats-checker/messages.ts
 msgid "Save the file with every page upright."
 msgstr "שמור את הקובץ כשכל עמוד זקוף."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Save the job posting"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Save these offer terms to compare"
@@ -10719,9 +10835,17 @@ msgstr "בחירת ספק בינה מלאכותית"
 msgid "Select..."
 msgstr "בחר..."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Selected cover letter (optional)"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
 msgstr "מסמכים נבחרים"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Selected resume"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Self-hosting"
@@ -11602,6 +11726,10 @@ msgstr "נושא"
 msgid "Submission is recorded. Review checks only reflect what you checked yourself."
 msgstr "ההגשה נרשמה. הסימונים ברשימת הבדיקות משקפים רק את מה שבדקת בעצמך."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Submission recorded. Current drafts are separate from what you sent."
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "Submit through the employer's application page yourself."
 msgstr "הגש בעצמך דרך דף המועמדות של המעסיק."
@@ -11781,6 +11909,10 @@ msgstr "תגים…"
 #: src/features/homepage/tailor.tsx
 msgid "Tailor"
 msgstr "התאימו לתיאור התפקיד"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Tailor and review your resume"
+msgstr ""
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
@@ -12295,6 +12427,10 @@ msgid "There is no summary paragraph."
 msgstr "אין פסקת תקציר."
 
 #: src/features/career/workspace/apply.tsx
+msgid "These are saved draft answers."
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
 msgid "These are the answers saved when you applied."
 msgstr "אלה התשובות שנשמרו כשהגשת מועמדות."
 
@@ -12728,6 +12864,7 @@ msgstr "נסה דוגמה"
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
 #: src/features/career/workspace/practise.tsx
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/documents/library-error.tsx
 #: src/features/resume/editor/write/improve.tsx
@@ -13355,6 +13492,10 @@ msgstr "צפה במועמדות לעבודה"
 msgid "View posting"
 msgstr "צפה בפרסום דרושים"
 
+#: src/features/career/workspace/apply.tsx
+msgid "View recorded answers"
+msgstr ""
+
 #. placeholder {0}: formatVersionTime(viewing.createdAt, i18n.locale)
 #. placeholder {0}: when(selected)
 #. placeholder {1}: getVersionTitle(selected)
@@ -13752,13 +13893,22 @@ msgstr "כתיבה"
 msgid "Write \"Present\" as the end date of your current role."
 msgstr "כתוב ״Present״ כתאריך הסיום של התפקיד הנוכחי שלך."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Write a cover letter if required"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "כתוב מכתב"
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."
 msgstr "כתוב סיפור פעם אחת, עם העובדות שמאחוריו, והמאמן ישתמש בו ב-3 מקומות. כבה עובדה ושום דבר לא יישען עליה."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Write and review form answers"
+msgstr ""
 
 #: src/features/homepage/write.tsx
 msgid "Write beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide."

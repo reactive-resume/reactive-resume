@@ -397,7 +397,7 @@ for (const [resumeId, coverLetterId] of [
 }
 
 for (const [overrides, label, destination] of [
-	[{}, "Prepare application", "fit"],
+	[{}, "Prepare application", "apply"],
 	[{ status: "applied" }, "Review application", "apply"],
 	[{ status: "applied", followUpAt: "2000-01-01T09:00:00Z" }, "Draft a follow-up", "messages"],
 	[

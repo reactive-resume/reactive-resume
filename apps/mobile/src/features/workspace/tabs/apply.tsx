@@ -26,6 +26,7 @@ import {
 } from "../hooks";
 import { answersClipboard, answersDocument, countCharacters, countWords, diffWords, shortLabel } from "../logic";
 import { Actions, AiNotice, Block, CheckRow, Progress, SaveError, useWorking, workingSteps } from "../parts";
+import { Preparation } from "../preparation";
 import { shareText } from "../share";
 import { WorkspaceScreen } from "../shell";
 import { dispatchForOrigin } from "../state";
@@ -33,6 +34,7 @@ import { orpc } from "@/api/client";
 import { getDraftScope } from "@/draft";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { useUserTime } from "@/features/application-detail/hooks";
+import { WhatYouSent } from "@/features/application-detail/sections";
 import { PriorNoResponse } from "@/features/applications/prior-no-response";
 import { useInvalidateApplications } from "@/features/applications/queries";
 import { withUndo } from "@/features/career/undo";
@@ -45,7 +47,7 @@ export function ApplyTab() {
 	return <WorkspaceScreen tab="apply">{(props) => <Apply {...props} />}</WorkspaceScreen>;
 }
 
-function Apply({ application, version }: WorkspaceTabProps) {
+function Apply({ application, version, go }: WorkspaceTabProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const { day } = useUserTime();
@@ -53,7 +55,9 @@ function Apply({ application, version }: WorkspaceTabProps) {
 	const workspace = useWorkspace(application.id);
 	const facts = useFacts(application.id);
 	const readOnlyVersion = version?.data.kind === "answers" ? version.data : undefined;
-	const sentItem = latest(saved.data, "answers");
+	const recorded = saved.data?.find((item) => item.submission && item.data.kind === "answers");
+	const candidate = recorded ?? (!hasApplicationSubmission(application) ? latest(saved.data, "answers") : undefined);
+	const sentItem = candidate?.data.kind === "answers" ? { ...candidate, data: candidate.data } : undefined;
 	// Removed questions wait out their Undo here; the workspace drops them when the toast closes.
 	const [removed, setRemoved] = useState<string[]>([]);
 	const [unit, setUnit] = useState<CountUnit>("words");
@@ -105,24 +109,38 @@ function Apply({ application, version }: WorkspaceTabProps) {
 			failed: () => undefined,
 		});
 	};
-	const company = application.company;
 	const appliedOn = day(application.appliedAt);
 
 	return (
 		<View style={{ gap: space.s4 }}>
+			{!version ? <Preparation application={application} disabled={submitting} /> : null}
+			{!version && hasApplicationSubmission(application) ? (
+				<>
+					<WhatYouSent application={application} />
+					{recorded ? (
+						<Button
+							variant="secondary"
+							label={t`View recorded answers`}
+							onPress={() => go("apply", { version: recorded.id })}
+						/>
+					) : (
+						<Text color="ink2">{t`No recorded answers are available.`}</Text>
+					)}
+				</>
+			) : null}
 			{hasApplicationSubmission(application) ? (
 				<Banner
 					tone="info"
 					icon="check-circle"
-					title={t`Submitted on ${appliedOn}.`}
-					message={t`The versions you sent are kept in Saved. Edits here don't change what ${company} received.`}
+					title={t`Submission recorded on ${appliedOn}.`}
+					message={t`Saved versions stay separate from later drafts. This record does not confirm employer receipt.`}
 				/>
 			) : null}
 
 			{stored && !readOnlyVersion ? (
 				<Banner
 					tone="info"
-					message={t`These are the answers saved when you applied.`}
+					message={recorded ? t`These are the answers saved when you applied.` : t`These are saved draft answers.`}
 					action={{
 						label: t`Use these answers`,
 						onPress: () =>
@@ -133,6 +151,7 @@ function Apply({ application, version }: WorkspaceTabProps) {
 				/>
 			) : null}
 
+			<Text variant="heading" accessibilityRole="header">{t`Form answers`}</Text>
 			{shown.map((answer) => (
 				<AnswerCard
 					key={stored ? `${version?.id ?? sentItem?.id}:${answer.id}` : answer.id}
@@ -497,6 +516,7 @@ function Checklist({
 				applicationId: application.id,
 				answers: answersNow,
 				expectedAnswers: currentWorkspace.answers,
+				expectedDocuments: { resumeId: application.resumeId, coverLetterId: application.coverLetterId },
 			});
 			queryClient.setQueryData(workspace.queryKey, { ...currentWorkspace, answers: answersNow });
 			// The server confirmed these exact texts, so their device drafts can go (newer edits stay).

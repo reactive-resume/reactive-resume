@@ -991,8 +991,22 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			style: { basics: { headline: "LIVE UNSUBMITTED DRAFT" } },
 		});
 		expect(await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "answers" })).toMatchObject([
-			{ data: { answers }, outdated: false },
+			{ data: { answers }, outdated: false, submission: true },
 		]);
+		await getDb()
+			.insert(tables.careerArtifact)
+			.values({
+				userId: "alice",
+				applicationId: "alice-app",
+				title: "Later generated draft",
+				data: { kind: "answers", answers: [{ question: "Why ACME?", answer: "Later draft" }] },
+				evidence: { factIds: [], storyIds: [] },
+				inputVersion: "later-context",
+				createdAt: new Date(Date.now() + 1000),
+			});
+		const saved = await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "answers" });
+		expect(saved[0]).toMatchObject({ submission: false, data: { answers: [{ answer: "Later draft" }] } });
+		expect(saved.filter((item) => item.submission)).toMatchObject([{ data: { answers }, submission: true }]);
 	});
 
 	it("rejects a stale submit after another tab closes a never-submitted application", async () => {
@@ -1002,6 +1016,13 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		expect(application.status).toBe("closed");
 		expect(application.activity.some((entry) => entry.type === "stage" && entry.stage === "applied")).toBe(false);
 		expect(await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "answers" })).toEqual([]);
+	});
+
+	it("rejects submission when the selected documents changed in another client", async () => {
+		await expect(
+			service.submitApplication("alice", "alice-app", [], [], { resumeId: "old-selection", coverLetterId: null }),
+		).rejects.toMatchObject({ code: "CONFLICT" });
+		expect((await applications.getById({ userId: "alice", id: "alice-app" })).status).toBe("saved");
 	});
 
 	it("requires the immutable submission for a retry, while allowing soft-trashed live documents", async () => {

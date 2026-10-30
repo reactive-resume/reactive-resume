@@ -834,10 +834,9 @@ msgid "<0>Nothing to fix.</0> Every check passes."
 msgstr "<0>Không có gì cần sửa.</0> Mọi cuộc kiểm tra đều thành công."
 
 #. placeholder {0}: day(application.appliedAt)
-#. placeholder {1}: application.company
 #: src/features/career/workspace/apply.tsx
-msgid "<0>Submitted on {0}.</0> The versions you sent are kept in Saved. Edits here don't change what {1} received."
-msgstr "<0>Đã nộp ngày {0}.</0> Các phiên bản bạn đã gửi được giữ trong Đã lưu. Chỉnh sửa ở đây không thay đổi những gì {1} đã nhận."
+msgid "<0>Submission recorded on {0}.</0> Saved versions stay separate from later drafts. This record does not confirm employer receipt."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
@@ -1597,6 +1596,10 @@ msgstr "So với yêu cầu của bạn"
 msgid "AI & developer"
 msgstr "AI & nhà phát triển"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "AI availability couldn't be confirmed. Manual preparation is available."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "AI connection"
 msgstr "Kết nối AI"
@@ -1906,6 +1909,10 @@ msgstr "Câu trả lời trong đơn ứng tuyển"
 msgid "Application closed"
 msgstr "đơn xin việc đã đóng"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Application closed. Current drafts remain available."
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application date"
@@ -1930,6 +1937,10 @@ msgstr "Chi tiết hồ sơ ứng tuyển"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application options"
 msgstr "lựa chọn xin việc"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Application preparation"
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "application summaries"
@@ -2748,6 +2759,10 @@ msgstr "Tiếng Trung (Giản thể)"
 msgid "Chinese (Traditional)"
 msgstr "Tiếng Trung (Phồn thể)"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Choose a base resume"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Choose a file"
 msgstr "Chọn một tập tin"
@@ -3282,6 +3297,10 @@ msgstr "Sao chép"
 msgid "Copy {value}"
 msgstr "Sao chép {value}"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Copy a base resume for this job"
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
 msgstr "Sao chép sơ yếu lý lịch cho một công việc"
@@ -3443,6 +3462,7 @@ msgid "Couldn't create the key. Try again."
 msgstr "Không thể tạo khóa. Hãy thử lại."
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Couldn't create the letter. Try again."
 msgstr "Không thể tạo thư. Hãy thử lại."
 
@@ -3509,6 +3529,7 @@ msgstr "Không thể điền các trường. Hãy thử lại hoặc tự điề
 msgid "Couldn't forget that fact. Try again."
 msgstr "Không thể quên dữ kiện đó. Hãy thử lại."
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/resume/export/use-resume-export.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Couldn't generate the PDF. Try again."
@@ -3702,6 +3723,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "Không thể lưu thay đổi đó. Hãy kiểm tra kết nối của bạn và thử lại."
 
 #: src/features/career/knowledge/facts.tsx
+#: src/features/career/workspace/preparation.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Không thể lưu thay đổi đó. Hãy thử lại."
@@ -3979,6 +4001,7 @@ msgstr "Thư xin việc"
 
 #. placeholder {0}: application.company
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Cover letter — {0}"
 msgstr "Thư xin việc — {0}"
 
@@ -4081,6 +4104,10 @@ msgstr "Dữ liệu CSV"
 #: src/features/career/offer-entry.tsx
 msgid "Currency"
 msgstr "Tiền tệ"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Current drafts"
+msgstr ""
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Current filters"
@@ -4586,6 +4613,10 @@ msgstr "Tải xuống CSV"
 msgid "Download failed. Try again."
 msgstr "Tải xuống không thành công. Hãy thử lại."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Download letter PDF"
+msgstr ""
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
@@ -4594,6 +4625,10 @@ msgstr "Tải xuống PDF"
 #: src/features/resume/share/download-tab.tsx
 msgid "Download PDF instead"
 msgstr "Thay vào đó hãy tải xuống PDF"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Download resume PDF"
+msgstr ""
 
 #: src/features/templates/gallery.tsx
 msgid "Download sample PDF"
@@ -4805,6 +4840,14 @@ msgstr "Đã áp dụng chỉnh sửa"
 #: src/features/resume/stylesheet/editor.tsx
 msgid "Edit color {0}"
 msgstr "Chỉnh sửa màu {0}"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Edit current letter"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Edit current resume"
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Edit date"
@@ -5335,6 +5378,10 @@ msgstr "Đang tìm điều hiệu quả"
 msgid "Finnish"
 msgstr "Tiếng Phần Lan"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "First application setup: save the posting, copy or create a resume, then review the documents and any required form answers below. A cover letter and form answers are optional when the employer doesn't ask for them."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "First run"
 msgstr "Lần chạy đầu tiên"
@@ -5502,6 +5549,10 @@ msgstr "Quên mật khẩu?"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "Bạn quên mật khẩu?"
+
+#: src/features/career/workspace/apply.tsx
+msgid "Form answers"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Format"
@@ -5707,6 +5758,14 @@ msgstr "Về nhà"
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Đi đến bảng điều khiển"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Go to form answers"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Go to readiness review"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Go to…"
@@ -6375,6 +6434,7 @@ msgstr "Công việc"
 
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Job description"
 msgstr "Mô tả công việc"
 
@@ -6387,6 +6447,7 @@ msgstr "Liên kết công việc hoặc văn bản đăng việc làm"
 msgid "Job match"
 msgstr "Phù hợp công việc"
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Job posting"
 msgstr "Tin tuyển dụng"
@@ -6906,6 +6967,15 @@ msgstr "Đã cập nhật liên kết"
 msgid "Linked · not sent yet"
 msgstr "Đã liên kết · chưa được gửi"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Linked document unavailable"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Linked document unavailable. Choose another document or restore it from Trash."
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Linked documents couldn't be loaded."
 msgstr "Không thể tải các tài liệu liên kết."
@@ -7020,6 +7090,7 @@ msgstr "Đang tải các buổi phỏng vấn…"
 msgid "Loading Knowledge before you send…"
 msgstr "Đang tải Kiến thức trước khi gửi…"
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Loading linked documents…"
 msgstr "Đang tải các tài liệu liên kết…"
@@ -7749,9 +7820,18 @@ msgstr "Bước tiếp theo: {0}. Thêm lời nhắc vào Hôm nay."
 msgid "Next time, I’d agree how to measure success before the first prototype."
 msgstr "Lần sau, tôi sẽ thống nhất cách đo thành công trước nguyên mẫu đầu tiên."
 
+#. placeholder {0}: labels[next]
+#: src/features/career/workspace/preparation.tsx
+msgid "Next: {0}"
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "No active applications."
 msgstr "Không có đơn xin việc đang hoạt động."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "No AI connection needed. Edit documents and write answers yourself."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No application"
@@ -7908,6 +7988,10 @@ msgstr "Không có ảnh. Hầu hết ATS đều bỏ qua ảnh; một số khu 
 msgid "No postings found. Try different keywords."
 msgstr "Không tìm thấy tin tuyển dụng nào Hãy thử các từ khóa khác nhau."
 
+#: src/features/career/workspace/apply.tsx
+msgid "No recorded answers are available."
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "No response"
 msgstr "Không có phản hồi"
@@ -7992,6 +8076,10 @@ msgstr "Không có"
 msgctxt "Entry header accent"
 msgid "None"
 msgstr "Không"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "None selected"
+msgstr ""
 
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
@@ -8471,6 +8559,10 @@ msgstr "Khám phá cơ hội"
 #: src/features/settings/ai/web-access.tsx
 msgid "Optional"
 msgstr "Không bắt buộc"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Optional AI help is available in the editors. Review proposed edits before accepting them."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Optional for local Ollama"
@@ -9023,6 +9115,10 @@ msgctxt "Career preferences: the roles, places, pay and ways of working you want
 msgid "Preferences"
 msgstr "Mong muốn"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Preparation never submits to an employer or marks this application as applied."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
@@ -9042,6 +9138,10 @@ msgstr "Chuẩn bị một bản lý lịch"
 #: src/features/assistant/assistant-panel.tsx
 msgid "Prepare me for the interview"
 msgstr "Chuẩn bị cho tôi cuộc phỏng vấn"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Prepare this application"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Preparing {label} file…"
@@ -10114,6 +10214,10 @@ msgstr "Đánh giá câu trả lời của tôi"
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "“Đánh giá câu trả lời của tôi” sẽ gửi câu hỏi, những gì bạn đã nói, tin tuyển dụng này và Kiến thức của bạn tới {providerName}."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Review readiness below"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Xem lại các câu trả lời bắt buộc trong biểu mẫu và bỏ những khẳng định không có cơ sở."
@@ -10121,6 +10225,10 @@ msgstr "Xem lại các câu trả lời bắt buộc trong biểu mẫu và bỏ
 #: src/features/career/workspace/apply.tsx
 msgid "Review the selected resume and cover letter in their editors."
 msgstr "Xem lại sơ yếu lý lịch và thư xin việc đã chọn trong trình chỉnh sửa của chúng."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Review with assistant"
+msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Review writing"
@@ -10346,6 +10454,10 @@ msgstr "Lưu tên"
 msgid "Save offer"
 msgstr "Lưu đề nghị tuyển dụng"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Save posting"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Save schedule"
 msgstr "Lưu lịch trình"
@@ -10362,6 +10474,10 @@ msgstr "Lưu thẻ"
 #: src/features/ats-checker/messages.ts
 msgid "Save the file with every page upright."
 msgstr "Lưu tệp với tất cả các trang ở chiều thẳng đứng."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Save the job posting"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Save these offer terms to compare"
@@ -10719,9 +10835,17 @@ msgstr "Chọn nhà cung cấp AI"
 msgid "Select..."
 msgstr "Chọn..."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Selected cover letter (optional)"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
 msgstr "Tài liệu đã chọn"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Selected resume"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Self-hosting"
@@ -11602,6 +11726,10 @@ msgstr "Tiêu đề"
 msgid "Submission is recorded. Review checks only reflect what you checked yourself."
 msgstr "Việc nộp hồ sơ đã được ghi nhận. Dấu kiểm chỉ phản ánh những mục bạn đã tự kiểm tra."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Submission recorded. Current drafts are separate from what you sent."
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "Submit through the employer's application page yourself."
 msgstr "Tự nộp qua trang ứng tuyển của nhà tuyển dụng."
@@ -11781,6 +11909,10 @@ msgstr "Thẻ…"
 #: src/features/homepage/tailor.tsx
 msgid "Tailor"
 msgstr "Thích ứng với mô tả công việc"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Tailor and review your resume"
+msgstr ""
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
@@ -12295,6 +12427,10 @@ msgid "There is no summary paragraph."
 msgstr "Không có đoạn tóm tắt nào."
 
 #: src/features/career/workspace/apply.tsx
+msgid "These are saved draft answers."
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
 msgid "These are the answers saved when you applied."
 msgstr "Đây là các câu trả lời được lưu khi bạn ứng tuyển."
 
@@ -12728,6 +12864,7 @@ msgstr "Hãy thử một mẫu"
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
 #: src/features/career/workspace/practise.tsx
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/documents/library-error.tsx
 #: src/features/resume/editor/write/improve.tsx
@@ -13355,6 +13492,10 @@ msgstr "Xem đơn xin việc"
 msgid "View posting"
 msgstr "Xem tin tuyển dụng"
 
+#: src/features/career/workspace/apply.tsx
+msgid "View recorded answers"
+msgstr ""
+
 #. placeholder {0}: formatVersionTime(viewing.createdAt, i18n.locale)
 #. placeholder {0}: when(selected)
 #. placeholder {1}: getVersionTitle(selected)
@@ -13752,13 +13893,22 @@ msgstr "Viết"
 msgid "Write \"Present\" as the end date of your current role."
 msgstr "Ghi \"Hiện tại\" làm ngày kết thúc cho vai trò hiện tại của bạn."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Write a cover letter if required"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "Viết một lá thư"
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."
 msgstr "Viết một câu chuyện một lần, kèm các dữ kiện đằng sau, và cố vấn sẽ dùng nó ở 3 nơi. Tắt một dữ kiện và không gì còn dựa vào nó."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Write and review form answers"
+msgstr ""
 
 #: src/features/homepage/write.tsx
 msgid "Write beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide."

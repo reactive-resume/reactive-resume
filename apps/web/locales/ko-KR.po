@@ -834,10 +834,9 @@ msgid "<0>Nothing to fix.</0> Every check passes."
 msgstr "<0>고칠 것이 없습니다.</0> 모든 검사가 통과되었습니다."
 
 #. placeholder {0}: day(application.appliedAt)
-#. placeholder {1}: application.company
 #: src/features/career/workspace/apply.tsx
-msgid "<0>Submitted on {0}.</0> The versions you sent are kept in Saved. Edits here don't change what {1} received."
-msgstr "<0>{0}에 제출했습니다.</0> 보낸 버전은 저장됨에 보관됩니다. 여기서 수정해도 {1} 측이 받은 내용은 바뀌지 않습니다."
+msgid "<0>Submission recorded on {0}.</0> Saved versions stay separate from later drafts. This record does not confirm employer receipt."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
@@ -1597,6 +1596,10 @@ msgstr "내 요건과 비교"
 msgid "AI & developer"
 msgstr "AI 및 개발자"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "AI availability couldn't be confirmed. Manual preparation is available."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "AI connection"
 msgstr "AI 연결"
@@ -1906,6 +1909,10 @@ msgstr "지원서 답변"
 msgid "Application closed"
 msgstr "입사 지원이 마감되었습니다"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Application closed. Current drafts remain available."
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application date"
@@ -1930,6 +1937,10 @@ msgstr "지원 세부 정보"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application options"
 msgstr "취업 지원 옵션"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Application preparation"
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "application summaries"
@@ -2748,6 +2759,10 @@ msgstr "중국어(간체)"
 msgid "Chinese (Traditional)"
 msgstr "중국어(번체)"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Choose a base resume"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Choose a file"
 msgstr "파일을 선택하세요"
@@ -3282,6 +3297,10 @@ msgstr "복사"
 msgid "Copy {value}"
 msgstr "{value} 복사"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Copy a base resume for this job"
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Copy a resume for a job"
 msgstr "직업에 대한 이력서 복사"
@@ -3443,6 +3462,7 @@ msgid "Couldn't create the key. Try again."
 msgstr "키를 생성할 수 없습니다. 다시 시도해 보세요."
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Couldn't create the letter. Try again."
 msgstr "레터를 만들 수 없습니다. 다시 시도해 보세요."
 
@@ -3509,6 +3529,7 @@ msgstr "필드를 채울 수 없습니다. 다시 시도하거나 직접 입력�
 msgid "Couldn't forget that fact. Try again."
 msgstr "해당 사실을 잊게 할 수 없습니다. 다시 시도해 보세요."
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/resume/export/use-resume-export.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Couldn't generate the PDF. Try again."
@@ -3702,6 +3723,7 @@ msgid "Couldn't save that change. Check your connection and try again."
 msgstr "해당 변경 사항을 저장할 수 없습니다. 인터넷 연결을 확인하고 다시 시도하세요."
 
 #: src/features/career/knowledge/facts.tsx
+#: src/features/career/workspace/preparation.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "변경사항을 저장할 수 없습니다. 다시 시도해 보세요."
@@ -3979,6 +4001,7 @@ msgstr "자기소개서"
 
 #. placeholder {0}: application.company
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Cover letter — {0}"
 msgstr "자기 소개서 — {0}"
 
@@ -4081,6 +4104,10 @@ msgstr "CSV 데이터"
 #: src/features/career/offer-entry.tsx
 msgid "Currency"
 msgstr "통화"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Current drafts"
+msgstr ""
 
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Current filters"
@@ -4586,6 +4613,10 @@ msgstr "CSV 다운로드"
 msgid "Download failed. Try again."
 msgstr "다운로드에 실패했습니다. 다시 시도해 보세요."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Download letter PDF"
+msgstr ""
+
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
@@ -4594,6 +4625,10 @@ msgstr "PDF 다운로드"
 #: src/features/resume/share/download-tab.tsx
 msgid "Download PDF instead"
 msgstr "대신 PDF를 다운로드하세요."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Download resume PDF"
+msgstr ""
 
 #: src/features/templates/gallery.tsx
 msgid "Download sample PDF"
@@ -4805,6 +4840,14 @@ msgstr "수정사항 적용됨"
 #: src/features/resume/stylesheet/editor.tsx
 msgid "Edit color {0}"
 msgstr "색상 편집 {0}"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Edit current letter"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Edit current resume"
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Edit date"
@@ -5335,6 +5378,10 @@ msgstr "효과적인 부분 찾는 중"
 msgid "Finnish"
 msgstr "핀란드어"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "First application setup: save the posting, copy or create a resume, then review the documents and any required form answers below. A cover letter and form answers are optional when the employer doesn't ask for them."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "First run"
 msgstr "첫 실행"
@@ -5502,6 +5549,10 @@ msgstr "비밀번호를 잊으셨나요?"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Forgot your password?"
 msgstr "비밀번호를 잊으셨나요?"
+
+#: src/features/career/workspace/apply.tsx
+msgid "Form answers"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Format"
@@ -5707,6 +5758,14 @@ msgstr "집에 가세요"
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "대시보드로 이동"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Go to form answers"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Go to readiness review"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Go to…"
@@ -6375,6 +6434,7 @@ msgstr "직업"
 
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Job description"
 msgstr "직무 설명"
 
@@ -6387,6 +6447,7 @@ msgstr "채용 링크 또는 채용 공고 텍스트"
 msgid "Job match"
 msgstr "직업 일치"
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Job posting"
 msgstr "채용 공고"
@@ -6906,6 +6967,15 @@ msgstr "링크가 업데이트되었습니다."
 msgid "Linked · not sent yet"
 msgstr "연결됨 · 아직 전송되지 않음"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Linked document unavailable"
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Linked document unavailable. Choose another document or restore it from Trash."
+msgstr ""
+
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Linked documents couldn't be loaded."
 msgstr "연결된 문서를 불러올 수 없습니다."
@@ -7020,6 +7090,7 @@ msgstr "면접 불러오는 중…"
 msgid "Loading Knowledge before you send…"
 msgstr "보내기 전에 지식 불러오는 중…"
 
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Loading linked documents…"
 msgstr "연결된 문서 불러오는 중…"
@@ -7749,9 +7820,18 @@ msgstr "다음 단계: {0}. 오늘에 알림을 추가합니다."
 msgid "Next time, I’d agree how to measure success before the first prototype."
 msgstr "다음에는 첫 프로토타입 전에 성공 측정 방법부터 합의하겠습니다."
 
+#. placeholder {0}: labels[next]
+#: src/features/career/workspace/preparation.tsx
+msgid "Next: {0}"
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "No active applications."
 msgstr "활성 입사 지원서가 없습니다."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "No AI connection needed. Edit documents and write answers yourself."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No application"
@@ -7908,6 +7988,10 @@ msgstr "사진이 없습니다. 대부분의 ATS는 사진을 무시합니다. �
 msgid "No postings found. Try different keywords."
 msgstr "채용공고를 찾을 수 없습니다. 다른 키워드를 사용해 보세요."
 
+#: src/features/career/workspace/apply.tsx
+msgid "No recorded answers are available."
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "No response"
 msgstr "응답 없음"
@@ -7992,6 +8076,10 @@ msgstr "없음"
 msgctxt "Entry header accent"
 msgid "None"
 msgstr "없음"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "None selected"
+msgstr ""
 
 #: src/features/resume/editor/design/fit.ts
 #: src/features/resume/editor/design/style-groups.tsx
@@ -8471,6 +8559,10 @@ msgstr "기회 탐색"
 #: src/features/settings/ai/web-access.tsx
 msgid "Optional"
 msgstr "선택 과목"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Optional AI help is available in the editors. Review proposed edits before accepting them."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Optional for local Ollama"
@@ -9023,6 +9115,10 @@ msgctxt "Career preferences: the roles, places, pay and ways of working you want
 msgid "Preferences"
 msgstr "선호 사항"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Preparation never submits to an employer or marks this application as applied."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
@@ -9042,6 +9138,10 @@ msgstr "이력서를 준비하세요"
 #: src/features/assistant/assistant-panel.tsx
 msgid "Prepare me for the interview"
 msgstr "면접을 준비해주세요"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Prepare this application"
+msgstr ""
 
 #: src/features/resume/share/download-tab.tsx
 msgid "Preparing {label} file…"
@@ -10114,6 +10214,10 @@ msgstr "내 답변 검토"
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "내 답변 검토를 누르면 질문, 내가 한 말, 이 채용 공고, 지식이 {providerName}에 전송됩니다."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Review readiness below"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "필수 양식 답변을 검토하고 근거 없는 주장을 삭제하세요."
@@ -10121,6 +10225,10 @@ msgstr "필수 양식 답변을 검토하고 근거 없는 주장을 삭제하�
 #: src/features/career/workspace/apply.tsx
 msgid "Review the selected resume and cover letter in their editors."
 msgstr "선택한 이력서와 커버레터를 각 편집기에서 검토하세요."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Review with assistant"
+msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Review writing"
@@ -10346,6 +10454,10 @@ msgstr "이름 저장"
 msgid "Save offer"
 msgstr "오퍼 저장"
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Save posting"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Save schedule"
 msgstr "스케줄 저장"
@@ -10362,6 +10474,10 @@ msgstr "태그 저장"
 #: src/features/ats-checker/messages.ts
 msgid "Save the file with every page upright."
 msgstr "모든 페이지가 똑바로 보이도록 파일을 저장하세요."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Save the job posting"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Save these offer terms to compare"
@@ -10719,9 +10835,17 @@ msgstr "AI 제공업체를 선택하세요"
 msgid "Select..."
 msgstr "선택..."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Selected cover letter (optional)"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
 msgstr "선택한 서류"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Selected resume"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Self-hosting"
@@ -11602,6 +11726,10 @@ msgstr "제목"
 msgid "Submission is recorded. Review checks only reflect what you checked yourself."
 msgstr "지원서 제출이 기록되었습니다. 체크리스트에는 직접 확인한 내용만 반영됩니다."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Submission recorded. Current drafts are separate from what you sent."
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "Submit through the employer's application page yourself."
 msgstr "고용주의 지원 페이지에서 직접 제출하세요."
@@ -11781,6 +11909,10 @@ msgstr "태그…"
 #: src/features/homepage/tailor.tsx
 msgid "Tailor"
 msgstr "직업 설명에 적응"
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Tailor and review your resume"
+msgstr ""
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
@@ -12295,6 +12427,10 @@ msgid "There is no summary paragraph."
 msgstr "요약 문단이 없습니다."
 
 #: src/features/career/workspace/apply.tsx
+msgid "These are saved draft answers."
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
 msgid "These are the answers saved when you applied."
 msgstr "지원할 때 저장된 답변입니다."
 
@@ -12728,6 +12864,7 @@ msgstr "샘플을 사용해 보세요"
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
 #: src/features/career/workspace/practise.tsx
+#: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/documents/library-error.tsx
 #: src/features/resume/editor/write/improve.tsx
@@ -13355,6 +13492,10 @@ msgstr "지원서 보기"
 msgid "View posting"
 msgstr "채용 공고 보기"
 
+#: src/features/career/workspace/apply.tsx
+msgid "View recorded answers"
+msgstr ""
+
 #. placeholder {0}: formatVersionTime(viewing.createdAt, i18n.locale)
 #. placeholder {0}: when(selected)
 #. placeholder {1}: getVersionTitle(selected)
@@ -13752,13 +13893,22 @@ msgstr "작성"
 msgid "Write \"Present\" as the end date of your current role."
 msgstr "현재 재직 중인 직무의 종료일로 \"현재\"라고 작성하세요."
 
+#: src/features/career/workspace/preparation.tsx
+msgid "Write a cover letter if required"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "편지 쓰기"
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."
 msgstr "근거가 되는 사실과 함께 스토리를 한 번만 쓰면 코치가 3곳에서 활용합니다. 사실을 끄면 그 사실에 기대는 내용은 없습니다."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Write and review form answers"
+msgstr ""
 
 #: src/features/homepage/write.tsx
 msgid "Write beside a live page. It saves as you type and keeps every version. Ask the assistant for a sharper line: it suggests, you decide."

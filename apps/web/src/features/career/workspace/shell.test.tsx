@@ -3,7 +3,7 @@ import type { SavedItem } from "../hooks";
 import type { Application } from "@/features/applications/types";
 import type { CareerWorkspace } from "@reactive-resume/schema/career";
 import type { ReactNode } from "react";
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -28,10 +28,12 @@ vi.mock("@/libs/orpc/client", () => {
 	return {
 		orpc: {
 			applications: {
+				update: endpoint("updateApplication"),
 				getById: endpoint("application"),
 				lanes: { get: endpoint("lanes", () => new Promise(() => {})) },
 			},
 			documents: { list: endpoint("documents", api.documents) },
+			coverLetters: { create: endpoint("createLetter") },
 			career: {
 				workspace: endpoint("workspace", api.workspace),
 				savedItems: endpoint("saved", api.saved),
@@ -240,11 +242,14 @@ it("explains a missing linked document during loading and offers retry after fai
 			reject = fail;
 		}),
 	);
+	api.documents.mockRejectedValue(new Error("Offline"));
 	mount(undefined, { resumeId: "linked-resume" });
 	expect(screen.getByText("Loading linked documents…")).toHaveAttribute("role", "status");
 	await act(async () => reject(new Error("Offline")));
-	expect(await screen.findByRole("alert")).toHaveTextContent("Linked documents couldn't be loaded");
+	const details = within(screen.getByRole("complementary", { name: "Application details" }));
+	expect(await details.findByRole("alert")).toHaveTextContent("Linked documents couldn't be loaded");
+	const retry = await details.findByRole("button", { name: "Try again" });
 	api.documents.mockResolvedValue([{ id: "linked-resume", type: "resume", name: "Harbor resume" }]);
-	fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+	fireEvent.click(retry);
 	await waitFor(() => expect(screen.getByRole("link", { name: /Harbor resume/ })).toBeTruthy());
 });
