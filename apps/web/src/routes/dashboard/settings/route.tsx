@@ -7,14 +7,18 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { popTransition } from "@/features/settings/root";
 
 type Page = {
-	to: "/dashboard/settings/account" | "/dashboard/settings/preferences" | "/dashboard/settings/ai";
+	to:
+		| "/dashboard/settings/profile"
+		| "/dashboard/settings/account"
+		| "/dashboard/settings/preferences"
+		| "/dashboard/settings/ai";
 	icon: IconName;
 	label: () => string;
 };
 
-// Six pages became three, each with one job (README §5.9).
 const SETTINGS_PAGES: Page[] = [
 	{ to: "/dashboard/settings/account", icon: "user-circle", label: () => t`Account` },
+	{ to: "/dashboard/settings/profile", icon: "clipboard-text", label: () => t`Profile` },
 	{ to: "/dashboard/settings/preferences", icon: "sliders-horizontal", label: () => t`Preferences` },
 	{ to: "/dashboard/settings/ai", icon: "sparkle", label: () => t`AI & developer` },
 ];

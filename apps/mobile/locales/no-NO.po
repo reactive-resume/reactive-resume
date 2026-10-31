@@ -921,6 +921,10 @@ msgstr "Prestasjon"
 msgid "Account"
 msgstr "Konto"
 
+#: app/(tabs)/settings/account.tsx
+msgid "Account details"
+msgstr ""
+
 #: src/features/career/stories.tsx
 msgid "Action"
 msgstr "Handling"
@@ -1252,6 +1256,7 @@ msgstr "Lagt til Kunnskap."
 msgid "Additional details (optional)"
 msgstr "Ytterligere detaljer (valgfritt)"
 
+#: src/features/settings/application-profile.tsx
 #: src/features/share/link.tsx
 msgid "Address"
 msgstr "Adresse"
@@ -1560,10 +1565,6 @@ msgstr ""
 msgid "Answers"
 msgstr "Svar"
 
-#: src/features/settings/application-profile.tsx
-msgid "Answers apply only to the country shown. A missing country has unknown answers."
-msgstr ""
-
 #: src/features/workspace/tabs/apply.tsx
 msgid "Answers copied"
 msgstr "Svarene er kopiert"
@@ -1673,10 +1674,6 @@ msgstr ""
 msgid "Application phone"
 msgstr ""
 
-#: src/features/settings/application-profile.tsx
-msgid "Application profile deleted."
-msgstr ""
-
 #: src/features/assistant/coach-screen.tsx
 msgid "application summaries"
 msgstr "søknadssammendrag"
@@ -1688,10 +1685,6 @@ msgstr "Søknaden er oppdatert"
 #: src/features/applications-board/views.tsx
 msgid "Application views"
 msgstr "Søknadsvisninger"
-
-#: src/features/settings/application-profile.tsx
-msgid "Application-only details. Never added to public links, document exports or AI context automatically."
-msgstr ""
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
@@ -2041,10 +2034,6 @@ msgstr "Mindre enn minimum grunnlønn."
 msgid "Bengali"
 msgstr "Bengali"
 
-#: src/features/settings/application-profile.tsx
-msgid "Blank fields mean unknown. Nothing is inferred from your resume. Self-identification is not collected here. Enter references yourself and review their details before sharing."
-msgstr ""
-
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Tavle"
@@ -2187,10 +2176,6 @@ msgstr "Avbryt forespørsel"
 #: app/(tabs)/career/_layout.tsx
 msgid "Career"
 msgstr "Karriere"
-
-#: src/features/settings/application-profile.tsx
-msgid "Career preferences"
-msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -2770,12 +2755,9 @@ msgstr "Ser sammenhengene"
 msgid "Connection saved"
 msgstr "Tilkoblingen er lagret"
 
-#: src/features/settings/application-profile.tsx
-msgid "Contact and address"
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
+#: src/features/settings/application-profile.tsx
 msgid "Contact details"
 msgstr "Kontaktinformasjon"
 
@@ -3708,11 +3690,11 @@ msgid "Delete permanently…"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
-msgid "Delete private application profile?"
+msgid "Delete profile"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
-msgid "Delete profile"
+msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -3840,6 +3822,10 @@ msgstr "Design tilbakestilt til standard"
 #: src/features/document-menu/index.tsx
 msgid "Details"
 msgstr "Detaljer"
+
+#: src/features/settings/application-profile.tsx
+msgid "Details for your job application forms."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Didn't land"
@@ -4195,6 +4181,10 @@ msgid "Edit posting"
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
+msgid "Edit profile"
+msgstr ""
+
+#: src/features/workspace/tabs/apply.tsx
 msgid "Edit question"
 msgstr "Rediger spørsmål"
 
@@ -4245,6 +4235,7 @@ msgstr "I Utdanning byttes skole og fagområde på samme måte."
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/letters/write.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Email"
 msgstr "E-post"
@@ -5601,14 +5592,14 @@ msgstr "Sist redigert"
 msgid "Last reviewed"
 msgstr ""
 
-#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
-#: src/features/settings/application-profile.tsx
-msgid "Last reviewed: {0}"
-msgstr ""
-
 #. placeholder {0}: time.when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
+msgstr ""
+
+#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
+#: src/features/settings/application-profile.tsx
+msgid "Last updated: {0}"
 msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
@@ -6111,6 +6102,10 @@ msgstr "Administrer kontakter"
 msgid "Manage lanes"
 msgstr "Administrer trinn"
 
+#: src/features/settings/application-profile.tsx
+msgid "Manage profile"
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Managed by server"
 msgstr "Administrert av server"
@@ -6465,6 +6460,7 @@ msgstr "Når du flytter til Søkt, blir du spurt om hva du faktisk sendte."
 #: src/features/documents/new-document.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/settings/profile.tsx
 #: src/features/write/fields.ts
 msgid "Name"
@@ -6972,15 +6968,12 @@ msgstr "Ikke registrert"
 msgid "Not recorded yet. Leave blank until you can support it."
 msgstr "Ikke registrert ennå. La stå tomt til du har grunnlag for det."
 
-#: src/features/settings/application-profile.tsx
-msgid "Not reviewed yet"
-msgstr ""
-
 #: src/features/career/preferences.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Not saved"
 msgstr "Ikke lagret"
 
+#: src/features/settings/application-profile.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Not saved yet"
 msgstr ""
@@ -7640,6 +7633,7 @@ msgid "Persian"
 msgstr "Persisk"
 
 #: src/features/letters/write.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/basics-screen.tsx
 #: src/features/write/fields.ts
 msgid "Phone"
@@ -7949,11 +7943,6 @@ msgstr "Personvern"
 msgid "Privacy policy"
 msgstr "Personvernerklæring"
 
-#: src/features/settings/application-profile.tsx
-#: src/features/workspace/tabs/apply.tsx
-msgid "Private application profile"
-msgstr ""
-
 #: src/features/document-menu/index.tsx
 msgid "Private. Only you can see it."
 msgstr "Privat. Bare du kan se det."
@@ -7967,10 +7956,15 @@ msgstr "Profesjonell"
 msgid "Proficiency"
 msgstr "Ferdighetsnivå"
 
-#: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/index.tsx
+#: app/(tabs)/settings/profile.tsx
 #: src/features/search/search-screen.tsx
 msgid "Profile"
 msgstr "Profil"
+
+#: src/features/settings/application-profile.tsx
+msgid "Profile deleted."
+msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Profile link (optional)"
@@ -7983,6 +7977,10 @@ msgstr "Profillenker må være offentlige HTTPS-adresser."
 #: src/features/settings/profile.tsx
 msgid "Profile photo"
 msgstr "Profilbilde"
+
+#: src/features/settings/application-profile.tsx
+msgid "Profile saved."
+msgstr ""
 
 #: src/features/write/fields.ts
 msgid "Profiles"
@@ -8316,19 +8314,7 @@ msgstr "Gjør om"
 
 #. placeholder {0}: index + 1
 #: src/features/settings/application-profile.tsx
-msgid "Reference {0}: {label}"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference email"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference name"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference phone"
+msgid "Reference {0}"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
@@ -8385,6 +8371,10 @@ msgstr ""
 #: app/(tabs)/settings/preferences.tsx
 msgid "Reload now"
 msgstr "Last inn på nytt nå"
+
+#: src/features/settings/application-profile.tsx
+msgid "Relocation"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/workspace/tabs/debrief.tsx
@@ -9075,6 +9065,7 @@ msgstr "Eksempel på CV"
 #: src/features/documents/document-sheets.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/pickers.tsx
 msgid "Save"
 msgstr "Lagre"
@@ -9094,10 +9085,6 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
 msgstr "Lagre en ubeskyttet kopi, uten passord og uten tillatelsesbegrensninger."
-
-#: src/features/settings/application-profile.tsx
-msgid "Save and mark reviewed"
-msgstr ""
 
 #: src/features/ai/provider-editor.tsx
 msgid "Save and test"
@@ -9215,10 +9202,6 @@ msgstr "Lagret"
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "Lagret en historie: {title}"
-
-#: src/features/settings/application-profile.tsx
-msgid "Saved and marked reviewed."
-msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
@@ -11560,6 +11543,10 @@ msgstr "Opptil 20 tagger per dokument, 40 tegn per tag."
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr "Opptil 25 MB · sjekket på serveren og ikke lagret"
 
+#: src/features/settings/application-profile.tsx
+msgid "Update"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Update posting details"
 msgstr ""
@@ -11676,10 +11663,6 @@ msgstr "Bruk minst 9pt."
 #: src/features/share/link.tsx
 msgid "Use at most 64 characters."
 msgstr "Bruk maksimalt 64 tegn."
-
-#: src/features/settings/application-profile.tsx
-msgid "Use Career preferences for work locations, office days, notice period and minimum base salary. Requested salary below is separate. Editing answers for one application does not update these global settings."
-msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "Use default"

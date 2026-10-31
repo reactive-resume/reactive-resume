@@ -151,11 +151,7 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 
 			<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: space.s3 }}>
 				<Text variant="heading" accessibilityRole="header" style={{ flex: 1 }}>{t`Form answers`}</Text>
-				<Button
-					variant="link"
-					label={t`Private application profile`}
-					onPress={() => router.push(routes.settings("account"))}
-				/>
+				<Button variant="link" label={t`Edit profile`} onPress={() => router.push(routes.settings("profile"))} />
 				{!version && submitted ? (
 					recorded ? (
 						<Button

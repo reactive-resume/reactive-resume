@@ -7,10 +7,21 @@ test("private application profile supports manual editing, unknowns, export and 
 	test.setTimeout(90_000);
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.goto("/dashboard/settings/account");
-	const section = page
+	await expect(page.getByLabel("Given name", { exact: true })).toHaveCount(0);
+	await expect(page.getByRole("heading", { name: "Account details", exact: true })).toBeVisible();
+	await page.setViewportSize({ width: 1280, height: 1000 });
+	await page
 		.locator("section")
-		.filter({ has: page.getByRole("heading", { name: "Private application profile", exact: true }) });
-	await expect(section.getByText("Not reviewed yet", { exact: true })).toBeVisible();
+		.filter({ has: page.getByRole("heading", { name: "Account details", exact: true }) })
+		.screenshot({ path: testInfo.outputPath("account-details.png") });
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto("/dashboard/settings");
+	await page.getByRole("link", { name: "Profile", exact: true }).click();
+	await expect(page).toHaveURL(/\/dashboard\/settings\/profile$/);
+	await expect(page.getByRole("heading", { name: "Profile", exact: true })).toBeVisible();
+	const section = page.locator("#application-profile");
+	await expect(section.getByText("Not saved yet", { exact: true })).toBeVisible();
+	await expect(section.getByRole("button", { name: "Export saved profile", exact: true })).toBeHidden();
 	await section.getByLabel("Given name", { exact: true }).fill("Casey");
 	await section.getByLabel("Family name", { exact: true }).fill("Example");
 	await section.getByLabel("Application email", { exact: true }).fill("casey.application@example.test");
@@ -29,24 +40,41 @@ test("private application profile supports manual editing, unknowns, export and 
 	await section.getByRole("button", { name: "Remove link 1", exact: true }).click();
 	await section.getByRole("button", { name: "Add reference", exact: true }).click();
 	await section.getByRole("button", { name: "Add reference", exact: true }).click();
-	await expect(section.getByLabel("Reference 2: Reference name", { exact: true })).toBeVisible();
-	await expect(section.getByLabel("Reference 2: Company", { exact: true })).toBeVisible();
+	await expect(
+		section.getByRole("group", { name: "Reference 2", exact: true }).getByLabel("Name", { exact: true }),
+	).toBeVisible();
+	await expect(
+		section.getByRole("group", { name: "Reference 2", exact: true }).getByLabel("Company", { exact: true }),
+	).toBeVisible();
 	await section.getByRole("button", { name: "Remove reference 2", exact: true }).click();
-	await section.getByLabel("Reference 1: Reference name", { exact: true }).fill("Jordan Example");
-	await section.getByLabel("Reference 1: Relationship", { exact: true }).fill("Former manager");
+	await section
+		.getByRole("group", { name: "Reference 1", exact: true })
+		.getByLabel("Name", { exact: true })
+		.fill("Jordan Example");
+	await section
+		.getByRole("group", { name: "Reference 1", exact: true })
+		.getByLabel("Relationship", { exact: true })
+		.fill("Former manager");
 	await section.getByLabel("Requested amount", { exact: true }).fill("95000");
-	await section.getByRole("button", { name: "Save and mark reviewed", exact: true }).click();
+	await section.getByRole("button", { name: "Save", exact: true }).click();
 	await expect(section.getByRole("alert")).toContainText("A salary amount needs currency and pay period.");
 	await section.getByLabel("Currency", { exact: true }).selectOption("EUR");
 	await section.getByLabel("Pay period", { exact: true }).selectOption("year");
-	await section.getByRole("button", { name: "Save and mark reviewed", exact: true }).click();
-	await expect(section.getByRole("status")).toHaveText("Saved and marked reviewed.");
+	await section.getByRole("button", { name: "Save", exact: true }).click();
+	await expect(section.getByRole("status")).toHaveText("Profile saved.");
+	await expect(section.getByRole("button", { name: "Update", exact: true })).toBeVisible();
+	await expect(section.getByText(/^Last updated:/)).toBeVisible();
+	await page.screenshot({ path: testInfo.outputPath("application-profile-narrow.png"), fullPage: true });
 	await page.reload();
 	await expect(section.getByLabel("Application email", { exact: true })).toHaveValue("casey.application@example.test");
 	await expect(section.getByLabel("Needs sponsorship in Germany", { exact: true })).toHaveValue("unknown");
-	await section.getByLabel("Reference 1: Reference name", { exact: true }).fill("Morgan Example");
-	await section.getByRole("button", { name: "Save and mark reviewed", exact: true }).click();
-	await expect(section.getByRole("status")).toHaveText("Saved and marked reviewed.");
+	await section
+		.getByRole("group", { name: "Reference 1", exact: true })
+		.getByLabel("Name", { exact: true })
+		.fill("Morgan Example");
+	await section.getByRole("button", { name: "Update", exact: true }).click();
+	await expect(section.getByRole("status")).toHaveText("Profile saved.");
+	await section.getByText("Manage profile", { exact: true }).click();
 	const downloadPromise = page.waitForEvent("download");
 	await section.getByRole("button", { name: "Export saved profile", exact: true }).click();
 	const download = await downloadPromise;
@@ -63,29 +91,34 @@ test("private application profile supports manual editing, unknowns, export and 
 	const backup = await page.request.get("/api/openapi/auth/account/export");
 	await expect(backup).toBeOK();
 	expect((await backup.json()).applicationProfile).toEqual(data);
+	await section.getByText("Manage profile", { exact: true }).click();
 	const elsewhere = await page.request.put("/api/openapi/application-profile", {
 		data: { expectedRevision: data.revision, data: data.data },
 	});
 	await expect(elsewhere).toBeOK();
 	await section.getByLabel("Given name", { exact: true }).fill("Unsaved correction");
-	await section.getByRole("button", { name: "Save and mark reviewed", exact: true }).focus();
+	await section.getByRole("button", { name: "Update", exact: true }).focus();
 	await page.keyboard.press("Enter");
 	await expect(section.getByRole("alert")).toContainText("Your draft is kept.");
 	await expect(section.getByLabel("Given name", { exact: true })).toHaveValue("Unsaved correction");
+	await expect(section.locator("details")).not.toHaveAttribute("open");
+	await expect(section.getByRole("button", { name: "Reload and discard unsaved changes", exact: true })).toBeVisible();
 	await section.getByRole("button", { name: "Reload and discard unsaved changes", exact: true }).click();
 	await expect(section.getByLabel("Given name", { exact: true })).toHaveValue("Casey");
 	expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-	await page.setViewportSize({ width: 1280, height: 1600 });
-	await section.evaluate((element) => element.scrollIntoView({ block: "start" }));
-	const box = await section.boundingBox();
-	if (!box) throw new Error("Profile section missing");
-	await page.screenshot({
-		path: testInfo.outputPath("application-profile.png"),
-		clip: { x: box.x, y: Math.max(0, box.y), width: box.width, height: Math.min(1240, 1600 - Math.max(0, box.y)) },
-	});
+	await page.reload();
+	await page.setViewportSize({ width: 1280, height: 2100 });
+	await expect(
+		page.getByRole("navigation", { name: "Settings", exact: true }).getByRole("link", { name: "Profile", exact: true }),
+	).toHaveAttribute("aria-current", "page");
+	await page
+		.getByRole("navigation", { name: "Settings", exact: true })
+		.locator("..")
+		.screenshot({ path: testInfo.outputPath("application-profile.png") });
+	await section.getByText("Manage profile", { exact: true }).click();
 	await section.getByRole("button", { name: "Delete profile", exact: true }).click();
 	await page.getByRole("alertdialog").getByRole("button", { name: "Delete profile", exact: true }).click();
-	await expect(section.getByRole("status")).toHaveText("Application profile deleted.");
+	await expect(section.getByRole("status")).toHaveText("Profile deleted.");
 	await page.reload();
 	await expect(section.getByLabel("Application email", { exact: true })).toHaveValue("");
 });

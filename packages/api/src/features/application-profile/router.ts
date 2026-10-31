@@ -24,7 +24,7 @@ export const applicationProfileRouter = {
 			path: "/application-profile",
 			tags: ["Application Profile"],
 			operationId: "saveApplicationProfile",
-			summary: "Save and mark your private application profile reviewed",
+			summary: "Save your application profile",
 		})
 		.input(saveApplicationProfileSchema)
 		.output(applicationProfileRecordSchema)

@@ -67,7 +67,7 @@ test("native private profile sends explicit unknowns with owner scope, retains f
 	const dependencies = {
 		react,
 		"react-native": { View: "View" },
-		"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US", date: () => "reviewed" } }) },
+		"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US", date: () => "Jan 1, 2030" } }) },
 		"@tanstack/react-query": {
 			useQuery: () => ({ data: null, isPending: false }),
 			useQueryClient: () => ({ setQueryData() {} }),
@@ -115,7 +115,7 @@ test("native private profile sends explicit unknowns with owner scope, retains f
 			...Object.fromEntries(
 				["Banner", "Button", "ConfirmDialog", "SelectSheet", "Text", "TextField"].map((name) => [name, name]),
 			),
-			useTheme: () => ({ space: { s2: 8, s3: 12 } }),
+			useTheme: () => ({ space: { s2: 8, s3: 12, s6: 24 } }),
 		},
 	};
 	const { ApplicationProfileSection } = load(
@@ -131,6 +131,10 @@ test("native private profile sends explicit unknowns with owner scope, retains f
 	};
 	let tree = render();
 	const control = (label) => nodes(tree).find((node) => node.props?.label === label)?.props;
+	assert.ok(control("Save"));
+	assert.ok(!control("Update"));
+	assert.ok(!control("Export saved profile"));
+	assert.equal(control("Manage profile").expanded, false);
 	control("Given name").onChangeText("Casey");
 	tree = render();
 	control("Add authorization country").onChange("DE");
@@ -154,16 +158,17 @@ test("native private profile sends explicit unknowns with owner scope, retains f
 	tree = render();
 	control("Add reference").onPress();
 	tree = render();
-	assert.ok(control("Reference 1: Reference name"));
-	assert.ok(control("Reference 2: Reference name"));
-	assert.ok(control("Reference 2: Company"));
+	assert.equal(nodes(tree).filter((node) => node.props?.label === "Name").length, 2);
+	assert.equal(nodes(tree).filter((node) => node.props?.label === "Company").length, 2);
 	control("Remove reference 2").onPress();
 	tree = render();
 	control("Remove reference 1").onPress();
 	tree = render();
-	control("Save and mark reviewed").onPress();
+	control("Save").onPress();
 	await new Promise(setImmediate);
 	tree = render();
+	assert.ok(control("Update"));
+	assert.ok(nodes(tree).some((node) => node.props?.children?.includes("Last updated: Jan 1, 2030")));
 	assert.equal(saves.length, 1);
 	assert.equal(saves[0].input.expectedRevision, null);
 	assert.deepEqual(saves[0].options, { context: { scope: "account-A" } });
@@ -180,13 +185,27 @@ test("native private profile sends explicit unknowns with owner scope, retains f
 	control("Given name").onChangeText("Corrected");
 	tree = render();
 	rejectSave = true;
-	control("Save and mark reviewed").onPress();
+	control("Update").onPress();
 	await new Promise(setImmediate);
 	tree = render();
 	assert.equal(saves[1].input.expectedRevision, "revision-1");
 	assert.deepEqual(saves[1].input.data.requestedSalary, { amount: 95000, currency: "EUR", period: "year" });
 	assert.equal(control("Given name").value, "Corrected");
-	assert.ok(nodes(tree).some((node) => node.type === "Banner" && node.props.message.includes("Your draft is kept")));
+	const conflict = nodes(tree).find(
+		(node) => node.type === "Banner" && node.props.message.includes("Your draft is kept"),
+	);
+	assert.ok(conflict);
+	assert.equal(control("Manage profile").expanded, false);
+	assert.equal(conflict.props.action.label, "Reload and discard unsaved changes");
+	conflict.props.action.onPress();
+	await new Promise(setImmediate);
+	releaseExport({ data: saves[0].input.data, reviewedAt: "2030-01-01T00:00:00Z", revision: "revision-2" });
+	await new Promise(setImmediate);
+	tree = render();
+	assert.equal(control("Given name").value, "Casey");
+	control("Manage profile").onPress();
+	tree = render();
+	assert.equal(control("Manage profile").expanded, true);
 	control("Export saved profile").onPress();
 	await new Promise(setImmediate);
 	scope = "account-B";

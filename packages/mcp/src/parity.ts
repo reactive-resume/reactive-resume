@@ -218,7 +218,7 @@ const accountExportOutputSchema = z
 			),
 	})
 	.describe(
-		"Account backup excluding the private application profile. Export that profile in Settings → Account. Secrets such as password hashes, tokens and API keys are never included.",
+		"Account backup excluding the private application profile. Export that profile in Settings → Profile. Secrets such as password hashes, tokens and API keys are never included.",
 	);
 
 /** The live server and server card share static contracts, never request context or callbacks. */
