@@ -864,3 +864,120 @@ assert.equal(control(japaneseDateView(), "Custom date text").disabled, false);
 control(japaneseDateView(), "Custom date text").onValueChange(false);
 assert.deepEqual(dateValue, { start: "2022-03", end: null, present: true });
 console.log("PASS native Japanese preset dates survive custom-mode round trip");
+
+reset();
+const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
+const { createDraftStore } = load("draft/store.ts", {
+	immer: mobileRequire("immer"),
+	zustand: mobileRequire("zustand"),
+	"@reactive-resume/utils/string": { generateId: () => "photo-session" },
+});
+const photoUrl = "https://resume.example.test/api/uploads/owner/pictures/shared.jpeg";
+const photoBytes = new Map([[photoUrl, "photo bytes"]]);
+const photoData = { picture: { url: photoUrl, fit: "cover", size: 80 }, basics: { name: "Original" } };
+const photoDraft = createDraftStore(
+	{
+		kind: "resume",
+		delay: 500,
+		read: async (id) => ({ id, isLocked: false, data: structuredClone(photoData) }),
+		data: (document) => document.data,
+		withData: (document, data) => ({ ...document, data }),
+		version: () => 1,
+		parse: (value) => value,
+		matches: (left, right) => JSON.stringify(left) === JSON.stringify(right),
+	},
+	{
+		scope: async () => "photo-owner",
+		online: () => false,
+		focused: () => true,
+		storage: { getItemSync: () => null, setItemSync() {}, removeItemSync() {}, getAllKeysSync: () => [] },
+	},
+);
+await photoDraft.store.getState().open("original");
+const photoStore = Object.assign((select) => select(photoDraft.store.getState()), {
+	getState: photoDraft.store.getState,
+});
+const photoHooks = load("features/write/hooks.ts", {
+	"@/draft": { useResumeStore: photoStore },
+	"@reactive-resume/resume/section-sort": {},
+	"./fields": {},
+	"./model": {},
+});
+const { PictureScreen } = load("features/write/picture-screen.tsx", {
+	"@tanstack/react-query": { useMutation: () => ({}) },
+	"expo-file-system": {},
+	"expo-image": { Image: "Image" },
+	"expo-image-picker": {},
+	"./entry-screen": { EditorScreen: "EditorScreen" },
+	"./hooks": { ...photoHooks, useWriteData: (select) => select(photoStore.getState().data) },
+	"./pickers": {},
+	"./upload": {},
+	"@/api/client": { client: { storage: { deleteFile: async () => photoBytes.delete(photoUrl) } } },
+	"@/auth/session": { useSession: () => ({ server: "https://resume.example.test" }) },
+	"@/draft": { useResumeStore: photoStore, useIsResumeLocked: () => photoStore.getState().locked },
+	"@/draft/native": { nativeEnvironment: {} },
+});
+const photoView = () => render(PictureScreen);
+// Undo removal must retain the edit immediately before it.
+photoStore.getState().update((draft) => {
+	draft.picture.size = 123;
+});
+control(photoView(), "Remove photo").onPress();
+const photoConfirm = nodes(photoView()).find((node) => node.type === "ConfirmDialog" && node.props.open);
+if (photoConfirm) photoConfirm.props.onConfirm();
+assert.equal(photoStore.getState().data.picture.url, "");
+assert.equal(photoBytes.get(photoUrl), "photo bytes");
+assert.equal(
+	nodes(photoView()).some((node) => node.type === "ConfirmDialog"),
+	false,
+);
+const photoToast = calls.at(-1);
+assert.equal(photoToast.action.label, "Undo");
+photoStore.getState().update((draft) => {
+	draft.basics.name = "Later edit";
+});
+photoToast.action.onPress();
+assert.deepEqual(photoStore.getState().data.picture, { url: photoUrl, fit: "cover", size: 123 });
+assert.equal(photoStore.getState().data.basics.name, "Later edit");
+photoStore.getState().update((draft) => {
+	draft.basics.name = "After restoration";
+});
+photoToast.action.onPress();
+assert.equal(photoStore.getState().data.basics.name, "After restoration");
+
+control(photoView(), "Remove photo").onPress();
+const replacedPhotoToast = calls.at(-1);
+photoStore.getState().update((draft) => {
+	draft.picture.url = "https://photos.example.test/new.jpeg";
+});
+replacedPhotoToast.action.onPress();
+assert.equal(photoStore.getState().data.picture.url, "https://photos.example.test/new.jpeg");
+
+control(photoView(), "Remove photo").onPress();
+const lockedPhotoToast = calls.at(-1);
+photoDraft.store.setState({ locked: true });
+lockedPhotoToast.action.onPress();
+assert.equal(photoStore.getState().data.picture.url, "");
+photoDraft.store.setState({ locked: false });
+photoStore.getState().update((draft) => {
+	draft.picture.url = photoUrl;
+});
+photoDraft.store.setState({ locked: true });
+const toastCountBeforeLockedRemoval = calls.length;
+control(photoView(), "Remove photo").onPress();
+assert.equal(photoStore.getState().data.picture.url, photoUrl);
+assert.equal(calls.length, toastCountBeforeLockedRemoval);
+
+photoDraft.store.setState({ locked: false });
+control(photoView(), "Remove photo").onPress();
+const originalPhotoToast = calls.at(-1);
+await photoStore.getState().open("other");
+photoStore.getState().update((draft) => {
+	draft.picture.url = "";
+	draft.basics.name = "Other resume edit";
+});
+const otherPhotoData = photoStore.getState().data;
+originalPhotoToast.action.onPress();
+assert.deepEqual(photoStore.getState().data, otherPhotoData);
+photoDraft.suspend();
+console.log("PASS native photo removal preserves shared upload and Undo restores only removal");

@@ -25,9 +25,8 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import "react-easy-crop/react-easy-crop.css";
 import { ColorPicker } from "@/components/input/color-picker";
 import { NumberInput } from "@/components/input/number-input";
-import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { useCurrentBuilderResumeSelector, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useClosingValue } from "@/hooks/use-closing-value";
-import { useConfirm } from "@/hooks/use-confirm";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -675,17 +674,16 @@ function ColorWidthFields(props: ColorWidthFieldsProps) {
 /** Every photo option: upload with crop, address, show or hide, delete, fit, size, rotation, shape, border and shadow. */
 export function PictureSettings() {
 	const fileInputRef = useRef<HTMLInputElement>(null);
-	const confirm = useConfirm();
 	const appOrigin = window.location.origin;
 
 	const [cropState, setCropState] = useState<CropState | null>(null);
 
+	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
 	const picture = useCurrentBuilderResumeSelector((resume) => resume.data.picture);
 	const normalizedPictureUrl = normalizePictureUrl(picture.url, appOrigin);
 	const updateResumeData = useUpdateResumeData();
 
 	const { mutate: uploadFile } = useMutation(orpc.storage.uploadFile.mutationOptions({ meta: { noInvalidate: true } }));
-	const { mutate: deleteFile } = useMutation(orpc.storage.deleteFile.mutationOptions({ meta: { noInvalidate: true } }));
 
 	const persist = (data: PictureValues) => {
 		updateResumeData((draft) => {
@@ -704,23 +702,36 @@ export function PictureSettings() {
 		fileInputRef.current?.click();
 	};
 
-	const onDeletePicture = async () => {
-		if (!picture.url) return;
-		if (!(await confirm(t`Remove this photo?`, { confirmText: t`Remove photo` }))) return;
-
-		const appOrigin = window.location.origin;
-		const pictureUrl = new URL(picture.url, appOrigin);
-		const pictureOrigin = pictureUrl.origin;
-
-		const filename = pictureUrl.pathname.split("/").pop();
-		if (!filename) return;
-
-		// If the picture is from the same origin, attempt to delete it
-		if (pictureOrigin === appOrigin) deleteFile({ filename });
-
-		const removed = { ...picture, url: "" };
-		form.reset(removed);
-		persist(removed);
+	const onDeletePicture = () => {
+		const current = useResumeStore.getState().resume;
+		if (current?.id !== resumeId || current.isLocked || !current.data.picture.url) return;
+		const removedUrl = current.data.picture.url;
+		// Copies and History share the upload; remove only this resume's reference.
+		form.reset({ ...current.data.picture, url: "" });
+		updateResumeData(
+			(draft) => {
+				draft.picture.url = "";
+			},
+			{ newStep: true },
+		);
+		const toastId = toast.add({
+			description: t`Photo removed`,
+			actionProps: {
+				children: t`Undo`,
+				onClick: () => {
+					toast.close(toastId);
+					const state = useResumeStore.getState();
+					const resume = state.resume;
+					if (resume?.id !== resumeId || resume.isLocked || resume.data.picture.url !== "") return;
+					state.updateResumeData(
+						(draft) => {
+							draft.picture.url = removedUrl;
+						},
+						{ newStep: true },
+					);
+				},
+			},
+		});
 	};
 
 	const uploadPictureFile = (file: File) => {
