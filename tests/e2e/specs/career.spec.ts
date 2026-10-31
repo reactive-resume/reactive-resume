@@ -23,6 +23,49 @@ async function createApplication(page: Page) {
 	return applicationId;
 }
 
+for (const scope of ["career", "application"] as const) {
+	test(`coach follow-up questions continue and survive reopening in ${scope}`, async ({ authPage: page }, testInfo) => {
+		test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs FLAG_ALLOW_UNSAFE_AI_BASE_URL=true");
+		test.setTimeout(90_000);
+		await page.setViewportSize({ width: scope === "career" ? 1280 : 390, height: 1000 });
+		const provider = await page.request.post("/api/openapi/ai-providers", {
+			data: {
+				label: "Demo connection",
+				provider: "openai-compatible",
+				model: "stub",
+				baseURL: stub.baseURL,
+				apiKey: "stub-key",
+			},
+		});
+		await expect(provider).toBeOK();
+		await expect(await page.request.post(`/api/openapi/ai-providers/${(await provider.json()).id}/test`)).toBeOK();
+		if (scope === "application") {
+			const applicationId = await createApplication(page);
+			await page.goto(`/dashboard/applications/${applicationId}`);
+			await page.getByRole("button", { name: "Ask the coach", exact: true }).click();
+		} else await page.goto("/dashboard/career/coach");
+		const composer = page.getByPlaceholder(
+			scope === "career" ? "Ask about your next career step…" : "Ask about this application…",
+		);
+		await composer.fill("Ask me a question first");
+		await expect(page.getByRole("button", { name: "Send", exact: true })).toBeEnabled();
+		await composer.press("Enter");
+		const choice = page.getByRole("button", { name: "Yes, I have", exact: true });
+		await expect(choice).toBeEnabled({ timeout: 20_000 });
+		await expect(page.getByLabel("Answer in your own words")).toBeVisible();
+		await page.screenshot({ path: testInfo.outputPath("coach-question.png"), fullPage: true, animations: "disabled" });
+		await choice.click();
+		await expect(page.getByText("You answered: Yes, I have", { exact: true })).toBeVisible();
+		await expect(page.getByText("Thanks. I'll use your answer as we continue.", { exact: true })).toBeVisible({
+			timeout: 20_000,
+		});
+		await page.reload();
+		await expect(page.getByText("You answered: Yes, I have", { exact: true })).toBeVisible();
+		await expect(page.getByText("Thanks. I'll use your answer as we continue.", { exact: true })).toBeVisible();
+		await expect(page.getByRole("button", { name: "Yes, I have", exact: true })).toHaveCount(0);
+	});
+}
+
 test("coach stories wait for exact-content approval and respect Skip", async ({ authPage: page }, testInfo) => {
 	test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs FLAG_ALLOW_UNSAFE_AI_BASE_URL=true");
 	test.setTimeout(90_000);

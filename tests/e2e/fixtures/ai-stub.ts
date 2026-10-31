@@ -112,18 +112,20 @@ function reply(request: ChatRequest, response: ServerResponse) {
 			factIds: factId ? [factId] : [],
 		});
 	}
-	if (!tools.has("propose_edits")) return streamText(response, ["You ", "left ", "the ", "document ", "out."]);
-
 	const asked = sinceUser.some((message) =>
 		(message.tool_calls as Array<{ function?: { name?: string } }> | undefined)?.some(
 			(call) => call.function?.name === "ask_user_question",
 		),
 	);
-	if (said.includes("question") && !asked)
+	if (said.includes("question") && !asked && tools.has("ask_user_question"))
 		return streamToolCall(response, "ask_user_question", {
 			question: "The posting mentions accessibility. Have you done accessibility work?",
 			choices: ["Yes, I have", "No, skip it"],
 		});
+	if (!tools.has("propose_edits"))
+		return streamText(response, [
+			asked ? "Thanks. I'll use your answer as we continue." : "You left the document out.",
+		]);
 
 	// The tool that produced the last result: read first, then propose, then say what changed.
 	const calls = sinceUser.flatMap(

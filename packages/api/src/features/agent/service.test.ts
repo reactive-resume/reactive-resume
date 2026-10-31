@@ -979,6 +979,7 @@ describe("agentService.messages.send", () => {
 		await onFinish({
 			responseMessage: continuedMessage,
 			isAborted: false,
+			outcome: { status: "completed" },
 			isContinuation: true,
 			messages: [],
 		});
@@ -993,6 +994,194 @@ describe("agentService.messages.send", () => {
 			}),
 		);
 	});
+
+	it.each(["setup", "stream"] as const)("recovers an identical question answer after a %s failure", async (failure) => {
+		const activeThread = buildActiveThread({ scope: "career", workingResumeId: null });
+		let row = {
+			id: "message-assistant-1",
+			userId: "user-1",
+			threadId: "thread-1",
+			role: "assistant",
+			status: "completed",
+			sequence: 0,
+			uiMessage: {
+				id: "ui-assistant-1",
+				role: "assistant",
+				parts: [
+					{
+						type: "tool-ask_user_question",
+						toolCallId: "call-1",
+						state: "input-available",
+						input: { question: "Which office?", choices: ["Berlin", "London"] },
+					},
+				],
+			},
+		};
+		const incoming = (output: string) =>
+			({
+				...row.uiMessage,
+				parts: row.uiMessage.parts.map((part) => ({ ...part, state: "output-available", output })),
+			}) as UIMessage;
+
+		const career = (await import("../career/service")).careerService;
+		Object.assign(career, {
+			context: vi.fn(async () => ({ memoryVersion: 0 })),
+			memoryCutoff: vi.fn(async () => null),
+			memoryVersion: vi.fn(async () => 0),
+		});
+		dbMock.select.mockImplementation(() => ({
+			from: () => ({
+				where: () => ({ limit: async () => [activeThread], orderBy: async () => [row] }),
+			}),
+		}));
+		dbMock.update.mockImplementation(() => ({
+			set: (value: Record<string, unknown>) => ({
+				where: async () => {
+					if (value.uiMessage) row = { ...row, ...JSON.parse(JSON.stringify(value)) };
+				},
+			}),
+		}));
+		claimActiveAgentRunMock.mockResolvedValue(true);
+		aiProvidersServiceMock.getRunnableById.mockResolvedValue({
+			id: "provider-1",
+			provider: "openai",
+			model: "gpt-5",
+			apiKey: "secret",
+			baseURL: null,
+		});
+		aiProvidersServiceMock.markUsed.mockResolvedValue(undefined);
+
+		messagesPersistenceMock.upsertAssistantUiMessage.mockImplementation(
+			async (input: { status: string; message: UIMessage }) => {
+				row = { ...row, status: input.status, uiMessage: structuredClone(input.message) as typeof row.uiMessage };
+				return { rowId: row.id };
+			},
+		);
+		const ai = await import("ai");
+		const real = await vi.importActual<typeof import("ai")>("ai");
+		vi.mocked(ai.convertToModelMessages).mockResolvedValue([{ role: "user", content: "Which office?" }]);
+		const model = new MockLanguageModelV4({
+			doStream: async () => {
+				throw new Error("provider unavailable");
+			},
+		});
+		const stream = vi.fn(async (options: Record<string, unknown>) => {
+			if (failure === "setup") throw new Error("provider unavailable");
+			return new real.ToolLoopAgent({ model, tools: {}, maxRetries: 0 }).stream(options as never);
+		});
+		vi.mocked(ai.ToolLoopAgent).mockImplementation(
+			class {
+				stream = stream;
+			} as never,
+		);
+		const chunks: UIMessageChunk[] = [];
+		const { agentStreamLifecycle } = await import("./streams");
+		vi.mocked(agentStreamLifecycle.create).mockImplementation(async (_id, factory) => {
+			const reader = factory().getReader();
+			for (;;) {
+				const next = await reader.read();
+				if (next.done) break;
+				chunks.push(next.value);
+			}
+			return new ReadableStream<string>();
+		});
+		vi.mocked(streamToEventIterator).mockReturnValue("iterator" as never);
+
+		const { agentService } = await import("./service");
+		const send = (message: UIMessage) =>
+			agentService.messages.send({
+				threadId: "thread-1",
+				userId: "user-1",
+				// oxlint-disable-next-line typescript/no-explicit-any -- minimal fixture for unit test
+				message: message as any,
+			});
+
+		const attempt = async () => {
+			if (failure === "setup") await expect(send(incoming("Berlin"))).rejects.toThrow("provider unavailable");
+			else await expect(send(incoming("Berlin"))).resolves.toBe("iterator");
+			expect(row.status).toBe(failure === "setup" ? "streaming" : "canceled");
+		};
+		await attempt();
+		expect(row.uiMessage.parts[0]).toMatchObject({ state: "output-available", output: "Berlin" });
+
+		await attempt();
+		expect(stream).toHaveBeenCalledTimes(2);
+		if (failure === "stream") expect(chunks.filter((chunk) => chunk.type === "error")).toHaveLength(2);
+
+		await expect(send(incoming("London"))).rejects.toThrow("This response was already handled.");
+		expect(stream).toHaveBeenCalledTimes(2);
+
+		row = { ...row, status: "completed" };
+		await expect(send(incoming("Berlin"))).rejects.toThrow("This response was already handled.");
+		expect(stream).toHaveBeenCalledTimes(2);
+
+		await expect(send({ ...incoming("Berlin"), id: "another-assistant" })).rejects.toThrow(
+			"The answered assistant message was not found.",
+		);
+		expect(stream).toHaveBeenCalledTimes(2);
+	});
+
+	it.each(["input-available", "output-available"])(
+		"rejects a historical question in state %s before changing history",
+		async (state) => {
+			const activeThread = buildActiveThread({ scope: "career", workingResumeId: null });
+			const message = {
+				id: "old-question",
+				role: "assistant",
+				parts: [
+					{
+						type: "tool-ask_user_question",
+						toolCallId: "q-1",
+						state,
+						input: { question: "Which office?", choices: ["Berlin", "London"] },
+						...(state === "output-available" ? { output: "Berlin" } : {}),
+					},
+				],
+			} as UIMessage;
+			const rows = [
+				{ id: "old-row", role: "assistant", status: "canceled", uiMessage: message },
+				{
+					id: "new-user",
+					role: "user",
+					status: "completed",
+					uiMessage: { id: "new-user", role: "user", parts: [{ type: "text", text: "Another topic" }] },
+				},
+				{
+					id: "new-assistant",
+					role: "assistant",
+					status: "completed",
+					uiMessage: { id: "new-assistant", role: "assistant", parts: [{ type: "text", text: "Later reply" }] },
+				},
+			];
+			const before = structuredClone(rows);
+			dbMock.select.mockImplementation(() => ({
+				from: () => ({ where: () => ({ limit: async () => [activeThread], orderBy: async () => rows }) }),
+			}));
+			claimActiveAgentRunMock.mockResolvedValue(true);
+			aiProvidersServiceMock.getRunnableById.mockResolvedValue({
+				id: "provider-1",
+				provider: "openai",
+				model: "gpt-5",
+				apiKey: "secret",
+				baseURL: null,
+			});
+			const { agentService } = await import("./service");
+			await expect(
+				agentService.messages.send({
+					threadId: "thread-1",
+					userId: "user-1",
+					message: {
+						...message,
+						parts: message.parts.map((part) => ({ ...part, state: "output-available", output: "Berlin" })),
+					} as never,
+				}),
+			).rejects.toThrow("This question is no longer the latest reply. Send a new message instead.");
+			expect(rows).toEqual(before);
+			expect(dbMock.update).not.toHaveBeenCalled();
+			expect(messagesPersistenceMock.upsertAssistantUiMessage).not.toHaveBeenCalled();
+			expect((await import("ai")).ToolLoopAgent).not.toHaveBeenCalled();
+		},
+	);
 
 	it("repairs legacy user-answer messages that followed an unresolved ask-user-question tool call", async () => {
 		const activeThread = buildActiveThread();
@@ -1372,7 +1561,13 @@ describe("agentService.messages.stop", () => {
 			vi.mocked(convertToModelMessages).mockResolvedValue([{ role: "user", content: [{ type: "text", text: "hi" }] }]);
 
 			let capturedSignal: AbortSignal | undefined;
-			let onFinish: ((event: { responseMessage: UIMessage; isAborted: boolean }) => Promise<void>) | undefined;
+			let onFinish:
+				| ((event: {
+						responseMessage: UIMessage;
+						isAborted: boolean;
+						outcome: { status: "completed" | "aborted" };
+				  }) => Promise<void>)
+				| undefined;
 			let source: ReadableStreamDefaultController<UIMessageChunk> | undefined;
 			let streamDone: Promise<void> | undefined;
 			const chunks: UIMessageChunk[] = [];
@@ -1476,6 +1671,7 @@ describe("agentService.messages.stop", () => {
 					parts: [{ type: "text", text: "Saved answer" }],
 				},
 				isAborted: action !== "complete",
+				outcome: { status: action === "complete" ? "completed" : "aborted" },
 			});
 			expect(messagesPersistenceMock.upsertAssistantUiMessage).toHaveBeenCalledWith(
 				expect.objectContaining({

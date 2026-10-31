@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { plural } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
-import { memo, useState } from "react";
+import { memo, useRef, useState } from "react";
 import { ActivityIndicator, Linking, Pressable, TextInput, View } from "react-native";
 import { blockText } from "@reactive-resume/resume/proposals";
 import { webSources } from "./chat";
@@ -30,6 +30,8 @@ type MessageViewProps = {
 	message: UIMessage;
 	streaming: boolean;
 	readOnly: boolean;
+	/** Only the newest assistant message may answer a question, as with approvals. */
+	answerable: boolean;
 	proposals: ProposalHandlers | null;
 	/** Null while an answer can't continue the reply (context left out): the question asks for a new message instead. */
 	onAnswer: ((toolCallId: string, answer: string) => void) | null;
@@ -40,6 +42,7 @@ export const MessageView = memo(function MessageView({
 	message,
 	streaming,
 	readOnly,
+	answerable,
 	proposals,
 	onAnswer,
 }: MessageViewProps) {
@@ -98,6 +101,7 @@ export const MessageView = memo(function MessageView({
 						message={message}
 						streaming={streaming}
 						readOnly={readOnly}
+						answerable={answerable}
 						proposals={proposals}
 						onAnswer={onAnswer}
 					/>
@@ -198,7 +202,7 @@ export function Status({ status, children }: StatusProps) {
 
 type ToolPartViewProps = Omit<MessageViewProps, "message"> & { part: ToolPart; message: UIMessage };
 
-function ToolPartView({ part, message, streaming, readOnly, proposals, onAnswer }: ToolPartViewProps) {
+function ToolPartView({ part, message, streaming, readOnly, answerable, proposals, onAnswer }: ToolPartViewProps) {
 	const { space } = useTheme();
 	const working = part.state === "input-streaming" || part.state === "input-available";
 	if (part.state === "approval-requested" || part.state === "approval-responded") return null;
@@ -282,7 +286,7 @@ function ToolPartView({ part, message, streaming, readOnly, proposals, onAnswer 
 				</Status>
 			);
 		case "tool-ask_user_question":
-			return <QuestionCard part={part} readOnly={readOnly} onAnswer={onAnswer} />;
+			return <QuestionCard part={part} readOnly={readOnly || !answerable} busy={streaming} onAnswer={onAnswer} />;
 		case "tool-propose_edits": {
 			if (part.state === "output-error")
 				return (
@@ -337,13 +341,17 @@ function ToolPartView({ part, message, streaming, readOnly, proposals, onAnswer 
 	}
 }
 
-type QuestionCardProps = Pick<MessageViewProps, "readOnly" | "onAnswer"> & { part: ToolPart };
+type QuestionCardProps = Pick<MessageViewProps, "readOnly" | "onAnswer"> & {
+	part: ToolPart;
+	busy?: boolean;
+};
 
 /** The assistant asks before writing anything the document doesn't say: an info-soft card with its choices. */
-function QuestionCard({ part, readOnly, onAnswer }: QuestionCardProps) {
+function QuestionCard({ part, readOnly, busy = false, onAnswer }: QuestionCardProps) {
 	const { t } = useLingui();
 	const { colors, radius, size, space, type } = useTheme();
 	const [other, setOther] = useState("");
+	const submitted = useRef(false);
 	const input = (part.input ?? {}) as { question?: unknown; choices?: unknown };
 	const question = typeof input.question === "string" ? input.question : "";
 	const choices = Array.isArray(input.choices)
@@ -351,18 +359,40 @@ function QuestionCard({ part, readOnly, onAnswer }: QuestionCardProps) {
 		: [];
 	const answer = part.state === "output-available" && typeof part.output === "string" ? part.output : null;
 	const toolCallId = part.toolCallId;
-	if (!question) return null;
+	const canAnswer = part.state === "input-available" && !readOnly && toolCallId !== undefined;
+	if (!question && part.state === "input-streaming" && busy) return null;
+	if (!question && part.state !== "input-streaming" && part.state !== "output-error") return null;
+
+	const submit = (value: string) => {
+		const trimmed = value.trim();
+		if (!trimmed || busy || !canAnswer || !toolCallId || !onAnswer || submitted.current) return;
+		// Two activations in one render turn must not let the second answer replace the first.
+		submitted.current = true;
+		onAnswer(toolCallId, trimmed);
+	};
 
 	return (
 		<View style={{ gap: space.s3, padding: space.s3, borderRadius: radius.rLg, backgroundColor: colors.infoSoft }}>
-			<Text variant="label" color="infoText">
-				{question}
-			</Text>
+			{question ? (
+				<Text variant="label" color="infoText">
+					{question}
+				</Text>
+			) : null}
 			{answer !== null ? (
 				<Text variant="callout" color="infoText">
 					<Trans>You answered: {answer}</Trans>
 				</Text>
-			) : readOnly || !toolCallId ? null : !onAnswer ? (
+			) : part.state === "input-streaming" ? (
+				busy ? null : (
+					<Text variant="callout" color="infoText">
+						<Trans>This question didn't finish.</Trans>
+					</Text>
+				)
+			) : part.state === "output-error" ? (
+				<Text variant="callout" color="infoText">
+					<Trans>This question couldn't be asked. Send a new message to continue.</Trans>
+				</Text>
+			) : !canAnswer ? null : !onAnswer ? (
 				<Text variant="callout" color="infoText">
 					<Trans>Context is left out, so reply with a new message instead.</Trans>
 				</Text>
@@ -371,7 +401,13 @@ function QuestionCard({ part, readOnly, onAnswer }: QuestionCardProps) {
 					{choices.length > 0 ? (
 						<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
 							{choices.map((choice) => (
-								<Button key={choice} variant="secondary" label={choice} onPress={() => onAnswer(toolCallId, choice)} />
+								<Button
+									key={choice}
+									variant="secondary"
+									label={choice}
+									disabled={busy}
+									onPress={() => submit(choice)}
+								/>
 							))}
 						</View>
 					) : null}
@@ -379,11 +415,12 @@ function QuestionCard({ part, readOnly, onAnswer }: QuestionCardProps) {
 						<TextInput
 							value={other}
 							onChangeText={setOther}
+							editable={!busy}
 							accessibilityLabel={t`Answer in your own words`}
 							placeholder={t`Or in your own words…`}
 							placeholderTextColor={colors.ink3}
 							returnKeyType="send"
-							onSubmitEditing={() => other.trim() && onAnswer(toolCallId, other.trim())}
+							onSubmitEditing={() => submit(other)}
 							style={{
 								...type.body,
 								flex: 1,
@@ -399,8 +436,8 @@ function QuestionCard({ part, readOnly, onAnswer }: QuestionCardProps) {
 						<Button
 							variant="secondary"
 							label={t`Send`}
-							disabled={!other.trim()}
-							onPress={() => onAnswer(toolCallId, other.trim())}
+							disabled={busy || !other.trim()}
+							onPress={() => submit(other)}
 						/>
 					</View>
 				</>

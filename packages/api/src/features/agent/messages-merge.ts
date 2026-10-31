@@ -26,6 +26,13 @@ export type MergeClientToolResponsesResult = {
 	mergedCount: number;
 	/** Matches on terminal parts (question answered, approval executed or denied). */
 	alreadyResolvedCount: number;
+	/** Incoming responses that match a stored question already in a terminal state. */
+	resolvedQuestionCount: number;
+	/**
+	 * Resolved questions whose answer is identical to the stored answer. A retry may reuse this
+	 * match only while the stored continuation has not completed, and never for a different answer.
+	 */
+	idempotentQuestionCount: number;
 	/**
 	 * Matches on approval parts that are responded but not yet executed — a continuation run was
 	 * claimed (or persisted) earlier but never completed. Callers should proceed with a run so the
@@ -75,6 +82,8 @@ export function mergeClientToolResponses(
 
 	let mergedCount = 0;
 	let alreadyResolvedCount = 0;
+	let resolvedQuestionCount = 0;
+	let idempotentQuestionCount = 0;
 	let pendingContinuationCount = 0;
 	let conflictingCount = 0;
 
@@ -99,6 +108,14 @@ export function mergeClientToolResponses(
 
 				if (existingPart.state === "output-available" || existingPart.state === "output-error") {
 					alreadyResolvedCount += 1;
+					resolvedQuestionCount += 1;
+					if (
+						existingPart.state === "output-available" &&
+						answer.state === "output-available" &&
+						typeof existingPart.output === "string" &&
+						existingPart.output === answer.output
+					)
+						idempotentQuestionCount += 1;
 				}
 
 				return part;
@@ -139,6 +156,8 @@ export function mergeClientToolResponses(
 		message: { ...existingMessage, parts },
 		mergedCount,
 		alreadyResolvedCount,
+		resolvedQuestionCount,
+		idempotentQuestionCount,
 		pendingContinuationCount,
 		conflictingCount,
 	};

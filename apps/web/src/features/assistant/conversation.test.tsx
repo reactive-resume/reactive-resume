@@ -112,6 +112,71 @@ it("preserves first-message context exclusions, selected application and attachm
 	expect(mocks.chat.mock.calls[0]?.[0].context).toEqual(context);
 });
 
+it("keeps old questions inert and shows terminal question states without answer controls", () => {
+	const question = (state: string, extra: Record<string, unknown> = {}) => ({
+		type: "tool-ask_user_question",
+		toolCallId: "question-1",
+		state,
+		input: { question: "Which office?", choices: ["Berlin", "London"] },
+		...extra,
+	});
+	mocks.chat.mockReturnValue({
+		messages: [
+			{ id: "old", role: "assistant", parts: [question("input-available")] },
+			{ id: "user", role: "user", parts: [{ type: "text", text: "Another topic." }] },
+			{ id: "new", role: "assistant", parts: [{ type: "text", text: "New reply.", state: "done" }] },
+		],
+		status: "ready",
+		clearError: vi.fn(),
+	});
+	const view = render(
+		<I18nProvider i18n={i18n}>
+			<Conversation
+				document={document}
+				threadId="thread-1"
+				initialMessages={[]}
+				activeRun={false}
+				readOnly={false}
+				providerLabel="Local"
+				initialContext={{ document: true, posting: true }}
+				prompt={null}
+				promptAttachments={[]}
+				onPromptSent={() => {}}
+				onSwitchModel={() => {}}
+			/>
+		</I18nProvider>,
+	);
+	expect(screen.queryByRole("button", { name: "Berlin" })).toBeNull();
+	view.unmount();
+
+	mocks.chat.mockReturnValue({
+		messages: [
+			{ id: "failed", role: "assistant", parts: [question("output-error", { errorText: "Invalid tool input" })] },
+		],
+		status: "ready",
+		clearError: vi.fn(),
+	});
+	render(
+		<I18nProvider i18n={i18n}>
+			<Conversation
+				document={document}
+				threadId="thread-1"
+				initialMessages={[]}
+				activeRun={false}
+				readOnly={false}
+				providerLabel="Local"
+				initialContext={{ document: true, posting: true }}
+				prompt={null}
+				promptAttachments={[]}
+				onPromptSent={() => {}}
+				onSwitchModel={() => {}}
+			/>
+		</I18nProvider>,
+	);
+	expect(screen.getByText("This question couldn't be asked. Send a new message to continue.")).toBeDefined();
+	expect(screen.queryByRole("button", { name: "Berlin" })).toBeNull();
+});
+
 it("reopens native and custom web results with sources, clipping and failed or unfinished tool status", () => {
 	const messages = [
 		{

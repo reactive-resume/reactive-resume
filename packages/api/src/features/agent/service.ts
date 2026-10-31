@@ -518,6 +518,11 @@ async function updateAssistantToolResultMessage(input: {
 			message: "The answered assistant message was not found.",
 		});
 	}
+	if (existingRows.at(-1)?.id !== existingRow.id) {
+		throw new ORPCError("CONFLICT", {
+			message: "This question is no longer the latest reply. Send a new message instead.",
+		});
+	}
 	const stored = toMessage(existingRow);
 	if (
 		input.contextScope &&
@@ -531,6 +536,8 @@ async function updateAssistantToolResultMessage(input: {
 		message: mergedMessage,
 		mergedCount,
 		alreadyResolvedCount,
+		resolvedQuestionCount,
+		idempotentQuestionCount,
 		pendingContinuationCount,
 		conflictingCount,
 	} = mergeClientToolResponses(stored, input.message);
@@ -541,8 +548,14 @@ async function updateAssistantToolResultMessage(input: {
 		});
 	}
 	// A recorded-but-unexecuted approval (pendingContinuationCount) proceeds: a prior continuation
-	// attempt failed after persisting the decision, and this retry is the recovery path.
-	if (mergedCount === 0 && pendingContinuationCount === 0) {
+	// attempt failed after persisting the decision, and this retry is the recovery path. A question
+	// answer is recoverable the same way only for the exact same answer while its continuation row
+	// has not completed; completed, different or foreign answers stay rejected.
+	const sameAnswerRecovery =
+		existingRow.status !== "completed" &&
+		resolvedQuestionCount > 0 &&
+		idempotentQuestionCount === resolvedQuestionCount;
+	if (mergedCount === 0 && pendingContinuationCount === 0 && !sameAnswerRecovery) {
 		if (alreadyResolvedCount > 0) {
 			throw new ORPCError("CONFLICT", {
 				message: "This response was already handled.",
@@ -556,7 +569,9 @@ async function updateAssistantToolResultMessage(input: {
 	await db
 		.update(schema.agentMessage)
 		.set({
-			status: "completed",
+			// The continuation run streams into this row; keep it non-terminal until onFinish marks it
+			// completed. That state is also what lets an identical-answer retry recover a failed provider.
+			status: "streaming",
 			uiMessage: mergedMessage as unknown as Record<string, unknown>,
 		})
 		.where(
@@ -1475,7 +1490,7 @@ export const agentService = {
 												contextMessageId,
 											}
 										: undefined,
-								onFinish: async ({ responseMessage: completedMessage, isAborted }) => {
+								onFinish: async ({ responseMessage: completedMessage, isAborted, outcome }) => {
 									let responseMessage = completedMessage;
 									let persistError: unknown;
 									try {
@@ -1492,7 +1507,7 @@ export const agentService = {
 											// A continuation reuses the message; the SDK replaces primitive
 											// metadata, so prior-run usage must be summed back in.
 											message: withAccumulatedUsageMetadata(draftUiMessage, responseMessage),
-											status: isAborted ? "canceled" : "completed",
+											status: isAborted || outcome.status !== "completed" ? "canceled" : "completed",
 										});
 									} catch (error) {
 										persistError = error;

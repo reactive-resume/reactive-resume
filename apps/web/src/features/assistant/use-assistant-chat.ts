@@ -9,7 +9,7 @@ import {
 	parseJsonEventStream,
 	uiMessageChunkSchema,
 } from "ai";
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { agentMessageMetadataSchema } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { streamClient } from "@/libs/orpc/client";
 
@@ -53,6 +53,8 @@ type UseAssistantChatInput = {
  */
 export function useAssistantChat({ threadId, initialMessages, resume, context, onFinish }: UseAssistantChatInput) {
 	const contextRef = useRef(context);
+	const [resuming, setResuming] = useState(resume);
+	const resumeRequest = useRef(0);
 	useLayoutEffect(() => {
 		contextRef.current = context;
 	});
@@ -72,22 +74,37 @@ export function useAssistantChat({ threadId, initialMessages, resume, context, o
 					),
 				);
 			},
-			async reconnectToStream() {
-				return parseSse(eventIteratorToUnproxiedDataStream(await streamClient.agent.messages.resume({ threadId })));
+			async reconnectToStream({ abortSignal }) {
+				// The SDK takes over the busy state once this RPC returns; only the latest request can unlock it.
+				const request = ++resumeRequest.current;
+				setResuming(true);
+				try {
+					return parseSse(
+						eventIteratorToUnproxiedDataStream(
+							await streamClient.agent.messages.resume({ threadId }, abortSignal ? { signal: abortSignal } : {}),
+						),
+					);
+				} finally {
+					if (request === resumeRequest.current) setResuming(false);
+				}
 			},
 		}),
 		[threadId],
 	);
 
-	return useChat<AgentUIMessage>({
-		id: threadId,
-		messages: initialMessages as AgentUIMessage[],
-		resume,
-		transport,
-		throttle: 50,
-		messageMetadataSchema: agentMessageMetadataSchema,
-		sendAutomaticallyWhen: (input) =>
-			lastAssistantMessageIsCompleteWithToolCalls(input) || lastAssistantMessageIsCompleteWithApprovalResponses(input),
-		onFinish,
-	});
+	return {
+		...useChat<AgentUIMessage>({
+			id: threadId,
+			messages: initialMessages as AgentUIMessage[],
+			resume,
+			transport,
+			throttle: 50,
+			messageMetadataSchema: agentMessageMetadataSchema,
+			sendAutomaticallyWhen: (input) =>
+				lastAssistantMessageIsCompleteWithToolCalls(input) ||
+				lastAssistantMessageIsCompleteWithApprovalResponses(input),
+			onFinish,
+		}),
+		resuming,
+	};
 }

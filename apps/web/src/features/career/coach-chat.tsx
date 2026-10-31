@@ -8,7 +8,7 @@ import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
-import { memo, useEffect, useEffectEvent, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
 import z from "zod";
 import { agentWebSources } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { careerSourceSchema, factCategorySchema } from "@reactive-resume/schema/career";
@@ -30,6 +30,7 @@ import { Composer, contentClass, copyToClipboard, usedFor, usedSchema } from "./
 import { Eyebrow, MemoryProposal, Working, workingSteps } from "./shared";
 import { attachmentPart } from "@/features/assistant/chat";
 import { AssistantMarkdown } from "@/features/assistant/markdown";
+import { QuestionCard } from "@/features/assistant/question-card";
 import { ToolApprovals } from "@/features/assistant/tool-approvals";
 import { useAssistantChat } from "@/features/assistant/use-assistant-chat";
 import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
@@ -53,7 +54,7 @@ type Remember = z.infer<typeof rememberSchema> & { toolCallId: string };
 const opportunitiesSchema = z.array(z.object({ id: z.string(), company: z.string(), role: z.string() }));
 const storySchema = z.object({ id: z.string(), data: z.object({ title: z.string() }) });
 
-type Part = { type: string; text?: string; toolCallId?: string; state?: string; output?: unknown };
+type Part = { type: string; text?: string; toolCallId?: string; state?: string; input?: unknown; output?: unknown };
 const partsOf = (message: UIMessage) => message.parts as unknown as Part[];
 const textOf = (message: UIMessage) =>
 	partsOf(message)
@@ -78,18 +79,35 @@ export function ChatView(props: ChatViewProps) {
 		void queryClient.invalidateQueries({ queryKey: orpc.career.facts.key() });
 		void queryClient.invalidateQueries({ queryKey: orpc.career.stories.key() });
 	};
-	const { messages, sendMessage, status, error, clearError, regenerate, stop, addToolApprovalResponse } =
-		useAssistantChat({
-			threadId,
-			initialMessages: props.initialMessages,
-			resume: props.activeRun,
-			context: props.context,
-			onFinish: refresh,
-		});
+	const {
+		messages,
+		sendMessage,
+		status,
+		error,
+		clearError,
+		regenerate,
+		stop,
+		resuming,
+		addToolOutput,
+		addToolApprovalResponse,
+	} = useAssistantChat({
+		threadId,
+		initialMessages: props.initialMessages,
+		resume: props.activeRun,
+		context: props.context,
+		onFinish: refresh,
+	});
 	const streaming = status === "submitted" || status === "streaming";
+	// A pending resume keeps the SDK at "ready"; lock the conversation until the replayed run starts or ends.
+	const busy = streaming || resuming;
 	const last = messages.at(-1);
 	const answering = status === "streaming" && last?.role === "assistant" && textOf(last) !== "";
 	const readOnly = props.readOnly || props.disabled === true;
+	// Stable so a streaming reply doesn't re-render every message above it.
+	const answer = useCallback(
+		(toolCallId: string, output: string) => addToolOutput({ tool: "ask_user_question", toolCallId, output }),
+		[addToolOutput],
+	);
 
 	const deliver = ({ text, attachments, used }: Prompt) => {
 		const files = attachments.map(attachmentPart);
@@ -102,7 +120,7 @@ export function ChatView(props: ChatViewProps) {
 	};
 
 	const send = (text: string, attachments: ChatAttachment[] = []) => {
-		if (streaming || readOnly) return false;
+		if (busy || readOnly) return false;
 		clearError();
 		setStopped(false);
 		deliver({ text, attachments, used: usedFor(knowledge, props.context) });
@@ -124,6 +142,7 @@ export function ChatView(props: ChatViewProps) {
 
 	// A failed continuation (after an answer) is sent again as it was; regenerating would drop the answer.
 	const retry = () => {
+		if (busy || readOnly) return;
 		clearError();
 		if (
 			lastAssistantMessageIsCompleteWithToolCalls({ messages }) ||
@@ -148,22 +167,24 @@ export function ChatView(props: ChatViewProps) {
 					<MessageScroller>
 						<MessageScrollerViewport aria-label={t`Conversation`}>
 							{/* Announced when the answer is complete, not token by token. */}
-							<MessageScrollerContent aria-busy={streaming} className={cn(contentClass[variant], "flex")}>
-								{messages.length === 0 && !streaming && <MessageScrollerItem>{props.empty(send)}</MessageScrollerItem>}
+							<MessageScrollerContent aria-busy={busy} className={cn(contentClass[variant], "flex")}>
+								{messages.length === 0 && !busy && <MessageScrollerItem>{props.empty(send)}</MessageScrollerItem>}
 								{messages.map((message, index) => (
 									<MessageScrollerItem key={message.id} messageId={message.id} scrollAnchor={message.role === "user"}>
 										<MessageView
 											message={message}
 											question={questionBefore(messages, index)}
-											streaming={streaming && index === messages.length - 1}
+											streaming={busy && index === messages.length - 1}
 											enter={!initialIds.has(message.id)}
 											knowledge={knowledge}
 											company={props.company}
 											scoped={props.applicationId !== null}
+											readOnly={readOnly || index !== messages.length - 1}
+											onAnswer={answer}
 										/>
 										<ToolApprovals
 											message={message}
-											disabled={readOnly || streaming || index !== messages.length - 1}
+											disabled={readOnly || busy || index !== messages.length - 1}
 											onDecision={(decision) => {
 												void addToolApprovalResponse(decision);
 											}}
@@ -171,7 +192,7 @@ export function ChatView(props: ChatViewProps) {
 									</MessageScrollerItem>
 								))}
 
-								{streaming && (
+								{busy && (
 									<MessageScrollerItem>
 										<TraceLine status="running" className={cn("text-[13px]", ENTER_CLASS)}>
 											<TraceIcon>
@@ -191,7 +212,7 @@ export function ChatView(props: ChatViewProps) {
 									</MessageScrollerItem>
 								)}
 
-								{stopped && !streaming && (
+								{stopped && !busy && (
 									<MessageScrollerItem>
 										<TraceLine>
 											<TraceIcon>
@@ -204,7 +225,7 @@ export function ChatView(props: ChatViewProps) {
 									</MessageScrollerItem>
 								)}
 
-								{error && !streaming && (
+								{error && !busy && (
 									<MessageScrollerItem>
 										<div
 											role="alert"
@@ -243,7 +264,7 @@ export function ChatView(props: ChatViewProps) {
 
 			<Composer
 				{...props}
-				streaming={streaming}
+				streaming={busy}
 				disabled={readOnly}
 				ensureThread={() => Promise.resolve(threadId)}
 				onSend={send}
@@ -269,6 +290,8 @@ type MessageViewProps = {
 	company: string | undefined;
 	/** About one application: its facts are private to it, and the application itself is implied. */
 	scoped: boolean;
+	readOnly: boolean;
+	onAnswer: (toolCallId: string, answer: string) => void;
 };
 
 /** Memoized: while a reply streams, only its own message re-renders; the ones above keep their props. */
@@ -280,6 +303,8 @@ const MessageView = memo(function MessageView({
 	knowledge,
 	company,
 	scoped,
+	readOnly,
+	onAnswer,
 }: MessageViewProps) {
 	const text = textOf(message);
 
@@ -305,6 +330,7 @@ const MessageView = memo(function MessageView({
 	const parsedUsed = usedSchema.safeParse(question?.metadata);
 	const used = parsedUsed.success ? parsedUsed.data.context : null;
 	const sources = agentWebSources(message);
+	const questions = partsOf(message).filter((part) => part.type === "tool-ask_user_question");
 	const stories = outputsOf(message, "save_story").flatMap((part) => {
 		const parsed = storySchema.safeParse(part.output);
 		return parsed.success ? [parsed.data] : [];
@@ -322,6 +348,16 @@ const MessageView = memo(function MessageView({
 					<AssistantMarkdown text={text} />
 				</div>
 			)}
+
+			{questions.map((part, index) => (
+				<QuestionCard
+					key={part.toolCallId ?? index}
+					part={part}
+					readOnly={readOnly}
+					busy={streaming}
+					onAnswer={onAnswer}
+				/>
+			))}
 
 			{sources.length > 0 && (
 				<div className="grid gap-1 text-xs">

@@ -28,6 +28,7 @@ import { Trace, TraceIcon, TraceLine, TraceTitle } from "@reactive-resume/ui/com
 import { cn } from "@reactive-resume/utils/style";
 import { attachmentPart, fileToBase64, transcriptOf } from "./chat";
 import { AssistantMarkdown } from "./markdown";
+import { QuestionCard } from "./question-card";
 import { ToolApprovals } from "./tool-approvals";
 import { useAssistantChat } from "./use-assistant-chat";
 import { ChangeSet } from "@/features/resume/editor/proposals/proposal-list";
@@ -77,22 +78,34 @@ export function Conversation(props: ConversationProps) {
 		void queryClient.invalidateQueries({
 			queryKey: orpc.agent.threads.list.key(),
 		});
-	const { messages, sendMessage, status, error, clearError, regenerate, stop, addToolOutput, addToolApprovalResponse } =
-		useAssistantChat({
-			threadId,
-			initialMessages: props.initialMessages,
-			resume: props.activeRun,
-			context,
-			onFinish: refresh,
-		});
+	const {
+		messages,
+		sendMessage,
+		status,
+		error,
+		clearError,
+		regenerate,
+		stop,
+		resuming,
+		addToolOutput,
+		addToolApprovalResponse,
+	} = useAssistantChat({
+		threadId,
+		initialMessages: props.initialMessages,
+		resume: props.activeRun,
+		context,
+		onFinish: refresh,
+	});
 	const streaming = status === "submitted" || status === "streaming";
+	// A pending resume keeps the SDK at "ready"; lock the conversation until the replayed run starts or ends.
+	const busy = streaming || resuming;
 	const continuationBlocked =
 		(!context.document || !context.posting) &&
 		(messages.at(-1)?.metadata as { contextScope?: string } | undefined)?.contextScope !==
 			JSON.stringify([context.document !== false, context.posting !== false]);
 
 	const send = (text: string, attachments: ChatAttachment[] = []) => {
-		if (streaming || readOnly) return;
+		if (busy || readOnly) return;
 		clearError();
 		setStopped(false);
 		const files = attachments.map(attachmentPart);
@@ -118,7 +131,7 @@ export function Conversation(props: ConversationProps) {
 
 	// A failed continuation (after an answer) is sent again as it was; regenerating would drop the answer.
 	const retry = () => {
-		if (readOnly || continuationBlocked) return;
+		if (busy || readOnly || continuationBlocked) return;
 		clearError();
 		if (
 			lastAssistantMessageIsCompleteWithToolCalls({ messages }) ||
@@ -197,12 +210,14 @@ export function Conversation(props: ConversationProps) {
 					<MessageScroller>
 						<MessageScrollerViewport aria-label={t`Conversation`}>
 							{/* Announced when the answer is complete, not token by token. */}
-							<MessageScrollerContent aria-busy={streaming} className="gap-4 p-4">
+							<MessageScrollerContent aria-busy={busy} className="gap-4 p-4">
 								{messages.map((message, index) => (
 									<MessageScrollerItem key={message.id} messageId={message.id} scrollAnchor={message.role === "user"}>
 										<MessageView
 											message={message}
 											streaming={streaming && index === messages.length - 1}
+											busy={busy && index === messages.length - 1}
+											answerable={index === messages.length - 1}
 											enter={!initialIds.has(message.id)}
 											readOnly={readOnly || continuationBlocked}
 											statuses={statuses}
@@ -212,7 +227,7 @@ export function Conversation(props: ConversationProps) {
 										/>
 										<ToolApprovals
 											message={message}
-											disabled={readOnly || continuationBlocked || streaming || index !== messages.length - 1}
+											disabled={readOnly || continuationBlocked || busy || index !== messages.length - 1}
 											onDecision={(decision) => {
 												void addToolApprovalResponse(decision);
 											}}
@@ -220,7 +235,7 @@ export function Conversation(props: ConversationProps) {
 									</MessageScrollerItem>
 								))}
 
-								{status === "submitted" && (
+								{(status === "submitted" || resuming) && (
 									<MessageScrollerItem>
 										<TraceLine status="running" className={ENTER_CLASS}>
 											<TraceIcon>
@@ -233,7 +248,7 @@ export function Conversation(props: ConversationProps) {
 									</MessageScrollerItem>
 								)}
 
-								{stopped && !streaming && !proposedInLast && (
+								{stopped && !busy && !proposedInLast && (
 									<MessageScrollerItem>
 										<p className="flex items-center gap-2 text-sm text-ink-2 transition-opacity duration-standard ease-enter starting:opacity-0">
 											<Icon name="stop-circle" size={18} className="text-ink-3" />
@@ -249,7 +264,7 @@ export function Conversation(props: ConversationProps) {
 									</MessageScrollerItem>
 								)}
 
-								{error && !streaming && (
+								{error && !busy && (
 									<MessageScrollerItem>
 										<div
 											role="alert"
@@ -278,7 +293,7 @@ export function Conversation(props: ConversationProps) {
 									</MessageScrollerItem>
 								)}
 
-								{!streaming && messages.length > 0 && (
+								{!busy && messages.length > 0 && (
 									<MessageScrollerItem className="flex justify-end transition-opacity duration-standard ease-enter starting:opacity-0">
 										<Button
 											size="sm"
@@ -306,7 +321,7 @@ export function Conversation(props: ConversationProps) {
 				context={context}
 				onContextChange={setContext}
 				providerLabel={props.providerLabel}
-				streaming={streaming}
+				streaming={busy}
 				disabled={readOnly}
 				threadId={threadId}
 				onSend={send}
@@ -345,6 +360,10 @@ function toProposals(
 type MessageViewProps = {
 	message: UIMessage;
 	streaming: boolean;
+	/** A continuation or resume is in flight: questions in this message cannot accept a second answer. */
+	busy: boolean;
+	/** Only the newest assistant message may answer a question, as with approvals. */
+	answerable: boolean;
 	enter: boolean;
 	readOnly: boolean;
 	statuses: ReadonlyMap<string, EditStatus>;
@@ -357,6 +376,8 @@ type MessageViewProps = {
 const MessageView = memo(function MessageView({
 	message,
 	streaming,
+	busy,
+	answerable,
 	enter,
 	readOnly,
 	statuses,
@@ -401,6 +422,8 @@ const MessageView = memo(function MessageView({
 						key={key}
 						part={part as ToolPart}
 						streaming={streaming}
+						busy={busy}
+						answerable={answerable}
 						message={message}
 						readOnly={readOnly}
 						statuses={statuses}
@@ -437,6 +460,8 @@ type ToolPartViewProps = Omit<MessageViewProps, "enter"> & { part: ToolPart };
 function ToolPartView({
 	part,
 	streaming,
+	busy,
+	answerable,
 	message,
 	readOnly,
 	statuses,
@@ -535,7 +560,7 @@ function ToolPartView({
 				</Status>
 			);
 		case "tool-ask_user_question":
-			return <QuestionCard part={part} readOnly={readOnly} onAnswer={onAnswer} />;
+			return <QuestionCard part={part} readOnly={readOnly || !answerable} busy={busy} onAnswer={onAnswer} />;
 		case "tool-propose_edits": {
 			if (part.state === "output-error")
 				return (
@@ -608,70 +633,6 @@ function Status({ working, children }: { working: boolean; children: ReactNode }
 			</TraceIcon>
 			<TraceTitle>{children}</TraceTitle>
 		</TraceLine>
-	);
-}
-
-type QuestionCardProps = {
-	part: ToolPart;
-	readOnly: boolean;
-	onAnswer: (toolCallId: string, answer: string) => void;
-};
-
-/** The assistant asks before writing anything the document doesn't say: an info-soft card with its choices. */
-function QuestionCard({ part, readOnly, onAnswer }: QuestionCardProps) {
-	const id = useId();
-	const [other, setOther] = useState("");
-	const input = (part.input ?? {}) as { question?: unknown; choices?: unknown };
-	const question = typeof input.question === "string" ? input.question : "";
-	const choices = Array.isArray(input.choices)
-		? input.choices.filter((choice): choice is string => typeof choice === "string")
-		: [];
-	const answer = part.state === "output-available" && typeof part.output === "string" ? part.output : null;
-	const toolCallId = part.toolCallId;
-	if (!question) return null;
-
-	return (
-		<div className="grid gap-2.5 rounded-xl bg-info-soft p-3 text-info-text">
-			<p className="text-sm font-medium">{question}</p>
-			{answer !== null ? (
-				<p className="text-[13px] opacity-80">
-					<Trans>You answered: {answer}</Trans>
-				</p>
-			) : readOnly || !toolCallId ? null : (
-				<>
-					{choices.length > 0 && (
-						<div className="flex flex-wrap gap-1.5">
-							{choices.map((choice) => (
-								<Button key={choice} size="sm" variant="secondary" onClick={() => onAnswer(toolCallId, choice)}>
-									{choice}
-								</Button>
-							))}
-						</div>
-					)}
-					<form
-						className="flex gap-1.5"
-						onSubmit={(event) => {
-							event.preventDefault();
-							if (other.trim()) onAnswer(toolCallId, other.trim());
-						}}
-					>
-						<label htmlFor={id} className="sr-only">
-							<Trans>Answer in your own words</Trans>
-						</label>
-						<input
-							id={id}
-							value={other}
-							onChange={(event) => setOther(event.target.value)}
-							placeholder={t`Or in your own words…`}
-							className="h-8 min-w-0 flex-1 rounded-md border border-line-2 bg-raised px-2 text-sm text-ink transition-[border-color,box-shadow] outline-none focus:border-accent"
-						/>
-						<Button type="submit" size="sm" disabled={!other.trim()}>
-							<Trans>Send</Trans>
-						</Button>
-					</form>
-				</>
-			)}
-		</div>
 	);
 }
 

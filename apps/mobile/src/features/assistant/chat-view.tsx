@@ -247,6 +247,7 @@ function Conversation(props: ConversationProps) {
 	const queryClient = useQueryClient();
 	const [statuses, setStatuses] = useState<ReadonlyMap<string, EditStatus>>(new Map());
 	const [stopped, setStopped] = useState(false);
+	const [recovering, setRecovering] = useState(props.activeRun);
 
 	const refresh = () => {
 		refreshThreads(queryClient);
@@ -273,6 +274,8 @@ function Conversation(props: ConversationProps) {
 		resumeStream,
 	} = chat;
 	const streaming = status === "submitted" || status === "streaming";
+	// A resume or recovery in flight keeps the SDK at "ready" until the stream starts; lock every input until it settles.
+	const busy = streaming || recovering;
 	const readOnly = props.readOnly || props.disabled === true;
 
 	// One request at a time: sends, retries, the automatic continuation after an answer and recovery share a lane, so
@@ -300,7 +303,7 @@ function Conversation(props: ConversationProps) {
 	};
 
 	const send = (text: string, attachments: ChatAttachment[] = []) => {
-		if (streaming || readOnly) return false;
+		if (busy || readOnly) return false;
 		clearError();
 		setStopped(false);
 		deliver(text, attachments);
@@ -350,7 +353,9 @@ function Conversation(props: ConversationProps) {
 		}).finally(() => {
 			if (isCurrent()) refreshThreads(queryClient);
 		});
-	const recover = useEffectEvent(() => void lane.runIfIdle(followRun));
+	const recover = useEffectEvent(() => {
+		void lane.runIfIdle(followRun).finally(() => setRecovering(false));
+	});
 
 	// Continue only the reply generated with the current context choices; the server checks its stored metadata too.
 	const fresh = document !== null && (!props.context.document || !props.context.posting);
@@ -363,7 +368,7 @@ function Conversation(props: ConversationProps) {
 	// does. Only with no run left is the message sent again: a failed continuation (after an answer) as it was,
 	// since regenerating would drop the answer.
 	const retry = () => {
-		if (readOnly || continuationBlocked) return;
+		if (busy || readOnly || continuationBlocked) return;
 		clearError();
 		void lane.run(async (isCurrent) => {
 			const latest = await reloadThread();
@@ -487,7 +492,10 @@ function Conversation(props: ConversationProps) {
 						}),
 		[continuationBlocked, lane, addToolOutput],
 	);
-	const extraData = useMemo(() => ({ streaming, readOnly, handlers, answer }), [streaming, readOnly, handlers, answer]);
+	const extraData = useMemo(
+		() => ({ streaming: busy, readOnly, handlers, answer }),
+		[busy, readOnly, handlers, answer],
+	);
 
 	const last = messages.at(-1);
 	const proposedInLast = last?.role === "assistant" && last.parts.some(isProposeEdits);
@@ -537,19 +545,20 @@ function Conversation(props: ConversationProps) {
 					ItemSeparatorComponent={() => <View style={{ height: space.s4 }} />}
 					keyboardDismissMode="interactive"
 					keyboardShouldPersistTaps="handled"
-					ListEmptyComponent={!streaming ? <Empty render={props.empty} send={(text) => void send(text)} /> : null}
+					ListEmptyComponent={!busy ? <Empty render={props.empty} send={(text) => void send(text)} /> : null}
 					renderItem={({ item: message, index }) => (
 						<View>
 							<MessageView
 								message={message}
-								streaming={streaming && index === messages.length - 1}
+								streaming={busy && index === messages.length - 1}
 								readOnly={readOnly}
+								answerable={index === messages.length - 1}
 								proposals={handlers}
 								onAnswer={answer}
 							/>
 							<ToolApprovals
 								message={message}
-								disabled={readOnly || streaming || index !== messages.length - 1}
+								disabled={readOnly || busy || index !== messages.length - 1}
 								onDecision={(decision) => {
 									void lane.run(async () => {
 										await addToolApprovalResponse(decision);
@@ -560,13 +569,13 @@ function Conversation(props: ConversationProps) {
 					)}
 					ListFooterComponent={
 						<View style={{ gap: space.s4, paddingTop: space.s4 }}>
-							{status === "submitted" ? (
+							{status === "submitted" || recovering ? (
 								<Status status="running">
 									<Trans>Thinking…</Trans>
 								</Status>
 							) : null}
 
-							{stopped && !streaming && !proposedInLast ? (
+							{stopped && !busy && !proposedInLast ? (
 								<View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: space.s2 }}>
 									<Icon name="stop-circle" size={18} color={colors.ink3} />
 									<Text variant="callout" color="ink2">
@@ -576,7 +585,7 @@ function Conversation(props: ConversationProps) {
 								</View>
 							) : null}
 
-							{error && !streaming ? (
+							{error && !busy ? (
 								<View
 									accessibilityRole="alert"
 									style={{
@@ -605,7 +614,7 @@ function Conversation(props: ConversationProps) {
 											variant="secondary"
 											icon="arrow-clockwise"
 											label={t`Retry`}
-											disabled={readOnly || continuationBlocked}
+											disabled={busy || readOnly || continuationBlocked}
 											onPress={retry}
 										/>
 										{props.onSwitchModel ? (
@@ -615,7 +624,7 @@ function Conversation(props: ConversationProps) {
 								</View>
 							) : null}
 
-							{!streaming && messages.length > 0 ? (
+							{!busy && messages.length > 0 ? (
 								<Button variant="ghost" size="sm" icon="copy" label={t`Copy transcript`} onPress={copyTranscript} />
 							) : null}
 						</View>
@@ -639,7 +648,7 @@ function Conversation(props: ConversationProps) {
 
 			<Composer
 				{...props}
-				streaming={streaming}
+				streaming={busy}
 				disabled={readOnly}
 				ensureThread={() => Promise.resolve(threadId)}
 				onSend={send}
