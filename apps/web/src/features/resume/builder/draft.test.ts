@@ -20,6 +20,7 @@ import {
 
 const orpcMocks = vi.hoisted(() => ({
 	getResumeById: vi.fn(),
+	importResume: vi.fn(),
 	patchResume: vi.fn(),
 	streamSubscribe: vi.fn(),
 	updateResume: vi.fn(),
@@ -58,6 +59,7 @@ vi.mock("@tanstack/react-router", () => ({
 
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
+		documents: { key: () => ["documents"] },
 		resume: {
 			getById: {
 				call: orpcMocks.getResumeById,
@@ -65,6 +67,7 @@ vi.mock("@/libs/orpc/client", () => ({
 					queryKey: ["resume", "getById", input.id],
 				}),
 			},
+			import: { call: orpcMocks.importResume },
 			patch: {
 				call: orpcMocks.patchResume,
 			},
@@ -226,6 +229,7 @@ describe("builder resume autosave", () => {
 	beforeEach(() => {
 		vi.useFakeTimers();
 		orpcMocks.getResumeById.mockReset();
+		orpcMocks.importResume.mockReset();
 		useBlockerMock.mockReset();
 		orpcMocks.patchResume.mockReset();
 		orpcMocks.streamSubscribe.mockReset();
@@ -236,14 +240,16 @@ describe("builder resume autosave", () => {
 		i18n.loadAndActivate({ locale: "en-US", messages: {} });
 		toastMocks.add.mockClear();
 		toastMocks.close.mockClear();
-		useResumeStore.getState().reset();
+		clearResumeDrafts();
+		window.localStorage.clear();
 	});
 
 	afterEach(() => {
 		vi.clearAllTimers();
 		vi.useRealTimers();
 		vi.unstubAllGlobals();
-		useResumeStore.getState().reset();
+		clearResumeDrafts();
+		window.localStorage.clear();
 	});
 
 	it("keeps a failed draft in the builder and retries on the next navigation", async () => {
@@ -286,7 +292,7 @@ describe("builder resume autosave", () => {
 
 		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(1);
 		expect(orpcMocks.updateResume).toHaveBeenCalledWith(
-			{ id: initial.id, data: updated.data, sessionId: expect.any(String) },
+			{ id: initial.id, data: updated.data, expectedUpdatedAt: initial.updatedAt, sessionId: expect.any(String) },
 			expect.objectContaining({ signal: expect.any(AbortSignal) }),
 		);
 		expect(orpcMocks.patchResume).not.toHaveBeenCalled();
@@ -295,8 +301,8 @@ describe("builder resume autosave", () => {
 
 	it("saves the latest pending snapshot after an in-flight save resolves", async () => {
 		const initial = makeResume("resume-in-flight");
-		const first = withBasicsName(initial, "First Name");
-		const latest = withBasicsName(initial, "Latest Name");
+		const first = { ...withBasicsName(initial, "First Name"), updatedAt: new Date(initial.updatedAt.getTime() + 1) };
+		const latest = { ...withBasicsName(initial, "Latest Name"), updatedAt: new Date(first.updatedAt.getTime() + 1) };
 		let resolveFirst!: (resume: Resume) => void;
 
 		orpcMocks.updateResume
@@ -330,11 +336,13 @@ describe("builder resume autosave", () => {
 		expect(orpcMocks.updateResume.mock.calls[0]?.[0]).toEqual({
 			id: initial.id,
 			data: first.data,
+			expectedUpdatedAt: initial.updatedAt,
 			sessionId: expect.any(String),
 		});
 		expect(orpcMocks.updateResume.mock.calls[1]?.[0]).toEqual({
 			id: initial.id,
 			data: latest.data,
+			expectedUpdatedAt: first.updatedAt,
 			sessionId: expect.any(String),
 		});
 		expect(orpcMocks.patchResume).not.toHaveBeenCalled();
@@ -399,6 +407,141 @@ describe("builder resume autosave", () => {
 		expect(useResumeStore.getState().resume).toBeNull();
 	});
 
+	it("pauses a conflicted draft across typing, retry, reconnect and navigation", async () => {
+		const initial = makeResume("version-conflict");
+		useResumeStore.getState().initialize(initial);
+		orpcMocks.updateResume.mockRejectedValue(new ORPCError("RESUME_VERSION_CONFLICT", { status: 409 }));
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.name = "Mine";
+		});
+		await vi.advanceTimersByTimeAsync(500);
+		expect(useResumeStore.getState().saveStatus).toBe("conflict");
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.name = "Still mine";
+		});
+		await vi.advanceTimersByTimeAsync(500);
+		useResumeStore.getState().retrySave();
+		window.dispatchEvent(new Event("online"));
+		expect(await savePendingChanges(initial.id)).toBe(false);
+		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(1);
+		expect(useResumeStore.getState().saveStatus).toBe("conflict");
+		expect(readUnsavedResumeData(initial.id)?.basics.name).toBe("Still mine");
+	});
+
+	it.each(["stale", "legacy"])("does not send a %s recovered draft over newer server data", async (kind) => {
+		const initial = makeResume(`recovery-${kind}`);
+		window.localStorage.setItem(
+			`reactive-resume:unsaved:${initial.id}`,
+			JSON.stringify({
+				data: withBasicsName(initial, "Recovered typing").data,
+				storedAt: Date.now(),
+				...(kind === "stale" ? { baseUpdatedAt: new Date(initial.updatedAt.getTime() - 1) } : {}),
+			}),
+		);
+		useResumeStore.getState().initialize(initial);
+		await flushMicrotasks();
+		expect(orpcMocks.updateResume).not.toHaveBeenCalled();
+		expect(useResumeStore.getState().saveStatus).toBe("conflict");
+		expect(useResumeStore.getState().resume?.data.basics.name).toBe("Recovered typing");
+	});
+
+	it.each(["success", "failure", "typing"])("keeps local edits safe when reload ends with %s", async (outcome) => {
+		const initial = makeResume(`reload-${outcome}`);
+		const remote = { ...withBasicsName(initial, "Theirs"), updatedAt: new Date(initial.updatedAt.getTime() + 1) };
+		useResumeStore.getState().initialize(initial);
+		orpcMocks.updateResume.mockRejectedValueOnce(new ORPCError("RESUME_VERSION_CONFLICT", { status: 409 }));
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.name = "Mine";
+		});
+		await vi.advanceTimersByTimeAsync(500);
+		let finishCopy!: (id: string) => void;
+		orpcMocks.importResume.mockReturnValueOnce(
+			new Promise<string>((resolve) => {
+				finishCopy = resolve;
+			}),
+		);
+		orpcMocks.updateResume.mockResolvedValue(withBasicsName(initial, "Mine"));
+		orpcMocks.getResumeById.mockImplementation(() =>
+			outcome === "failure" ? Promise.reject(new Error("Network error")) : Promise.resolve(remote),
+		);
+		const reload = useResumeStore.getState().reloadFromServer();
+		if (outcome === "typing")
+			useResumeStore.getState().updateResumeData((draft) => {
+				draft.basics.name = "More typing";
+			});
+		finishCopy("my-copy");
+		if (outcome === "success") {
+			await reload;
+			expect(useResumeStore.getState().resume?.data.basics.name).toBe("Theirs");
+			expect(useResumeStore.getState().saveStatus).toBe("saved");
+			expect(readUnsavedResumeData(initial.id)).toBeUndefined();
+		} else {
+			await expect(reload).rejects.toThrow(outcome === "failure" ? "Network error" : "Your changes are still open");
+			expect(useResumeStore.getState().saveStatus).toBe("conflict");
+			expect(readUnsavedResumeData(initial.id)?.basics.name).toBe(outcome === "typing" ? "More typing" : "Mine");
+			orpcMocks.getResumeById.mockResolvedValue(remote);
+			await useResumeStore.getState().reloadFromServer();
+			expect(orpcMocks.importResume).toHaveBeenCalledTimes(1);
+		}
+		expect(orpcMocks.updateResume.mock.lastCall?.[0]).toMatchObject({
+			id: "my-copy",
+			name: "Resume (mine)",
+			data: { basics: { name: outcome === "typing" ? "More typing" : "Mine" } },
+		});
+	});
+
+	it("recovers queued typing against the version returned by its earlier in-flight save", async () => {
+		const initial = makeResume("queued-recovery");
+		const first = { ...withBasicsName(initial, "First"), updatedAt: new Date(initial.updatedAt.getTime() + 1) };
+		let finishFirst!: (resume: Resume) => void;
+		orpcMocks.updateResume
+			.mockReturnValueOnce(
+				new Promise<Resume>((resolve) => {
+					finishFirst = resolve;
+				}),
+			)
+			.mockRejectedValueOnce(new Error("Connection lost"));
+		useResumeStore.getState().initialize(initial);
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.name = "First";
+		});
+		await vi.advanceTimersByTimeAsync(500);
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.name = "Latest";
+		});
+		await vi.advanceTimersByTimeAsync(500);
+		finishFirst(first);
+		await flushMicrotasks();
+		clearResumeDrafts();
+		orpcMocks.updateResume.mockImplementation((input: { data: ResumeData; expectedUpdatedAt?: Date }) => {
+			if (input.expectedUpdatedAt?.getTime() !== first.updatedAt.getTime())
+				throw new ORPCError("RESUME_VERSION_CONFLICT", { status: 409 });
+			return Promise.resolve({ ...first, data: input.data });
+		});
+		useResumeStore.getState().initialize(first);
+		await flushMicrotasks();
+		expect(useResumeStore.getState().saveStatus).toBe("saved");
+		expect(useResumeStore.getState().resume?.data.basics.name).toBe("Latest");
+	});
+
+	it("leaves another visit's recovery intact after saving", async () => {
+		const initial = makeResume("other-visit");
+		useResumeStore.getState().initialize(initial);
+		const recovery = JSON.stringify({
+			data: withBasicsName(initial, "Other typing").data,
+			baseUpdatedAt: initial.updatedAt,
+			storedAt: Date.now(),
+		});
+		window.localStorage.setItem(`reactive-resume:unsaved:${initial.id}:other`, recovery);
+		orpcMocks.updateResume.mockResolvedValue(withBasicsName(initial, "Mine"));
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.name = "Mine";
+		});
+		await vi.advanceTimersByTimeAsync(500);
+		expect(useResumeStore.getState().saveStatus).toBe("saved");
+		expect(window.localStorage.getItem(`reactive-resume:unsaved:${initial.id}:other`)).toBe(recovery);
+	});
+
 	it("expires local recovery after seven days", () => {
 		window.localStorage.setItem(
 			"reactive-resume:unsaved:expired",
@@ -412,7 +555,11 @@ describe("builder resume autosave", () => {
 		const initial = makeResume("resume-restore");
 		window.localStorage.setItem(
 			"reactive-resume:unsaved:resume-restore",
-			JSON.stringify({ data: withBasicsName(initial, "Kept locally").data, storedAt: Date.now() }),
+			JSON.stringify({
+				data: withBasicsName(initial, "Kept locally").data,
+				storedAt: Date.now(),
+				baseUpdatedAt: initial.updatedAt,
+			}),
 		);
 		orpcMocks.updateResume.mockImplementation((input: { id: string; data: ResumeData }) =>
 			Promise.resolve({ ...makeResume(input.id), data: input.data }),
@@ -442,13 +589,15 @@ describe("builder resume undo/redo", () => {
 		);
 		routerParamsMock.value = {};
 		i18n.loadAndActivate({ locale: "en-US", messages: {} });
-		useResumeStore.getState().reset();
+		clearResumeDrafts();
+		window.localStorage.clear();
 	});
 
 	afterEach(() => {
 		vi.clearAllTimers();
 		vi.useRealTimers();
-		useResumeStore.getState().reset();
+		clearResumeDrafts();
+		window.localStorage.clear();
 	});
 
 	it("coalesces rapid edits into a single undo step and restores the pre-burst state", () => {
@@ -703,18 +852,22 @@ describe("resume update stream subscription", () => {
 	beforeEach(() => {
 		vi.useFakeTimers();
 		orpcMocks.streamSubscribe.mockReset();
+		orpcMocks.updateResume.mockReset();
 		consumeEventIteratorMock.mockReset();
 		orpcMocks.getResumeById.mockReset();
+		orpcMocks.importResume.mockReset();
 		queryClientMock.setQueryData.mockClear();
 		routerParamsMock.value = {};
 		i18n.loadAndActivate({ locale: "en-US", messages: {} });
-		useResumeStore.getState().reset();
+		clearResumeDrafts();
+		window.localStorage.clear();
 	});
 
 	afterEach(() => {
 		vi.clearAllTimers();
 		vi.useRealTimers();
-		useResumeStore.getState().reset();
+		clearResumeDrafts();
+		window.localStorage.clear();
 	});
 
 	it.each([
@@ -740,7 +893,7 @@ describe("resume update stream subscription", () => {
 
 	it("replaces the builder draft from the server when there are no pending local edits", async () => {
 		const initial = makeResume("resume-clean");
-		const remote = withBasicsName(initial, "Remote Name");
+		const remote = { ...withBasicsName(initial, "Remote Name"), updatedAt: new Date(initial.updatedAt.getTime() + 1) };
 		const cancel = vi.fn().mockResolvedValue(undefined);
 		consumeEventIteratorMock.mockReturnValue(cancel);
 		orpcMocks.getResumeById.mockResolvedValue(remote);
@@ -758,9 +911,58 @@ describe("resume update stream subscription", () => {
 		expect(useResumeStore.getState().resume?.data.basics.name).toBe("Remote Name");
 	});
 
+	it.each(["conflict", "saved"])(
+		"does not apply an obsolete deferred snapshot after a local save is %s",
+		async (outcome) => {
+			const initial = makeResume(`focused-${outcome}`);
+			let server = { ...withBasicsName(initial, "Theirs"), updatedAt: new Date(initial.updatedAt.getTime() + 1) };
+			useResumeStore.getState().initialize(initial);
+			routerParamsMock.value = { resumeId: initial.id };
+			const input = document.createElement("input");
+			document.body.append(input);
+			input.focus();
+			orpcMocks.getResumeById.mockResolvedValue(server);
+			consumeEventIteratorMock.mockReturnValue(vi.fn().mockResolvedValue(undefined));
+			const hook = renderHook(() => useBuilderResumeUpdateSubscription());
+			const onEvent = consumeEventIteratorMock.mock.lastCall?.[1].onEvent;
+			await act(async () => {
+				await onEvent({ mutation: "update" });
+			});
+			// Simulate a newer accepted version with the same remote data before typing.
+			if (outcome === "saved")
+				useResumeStore
+					.getState()
+					.replaceResumeFromServer({ ...server, updatedAt: new Date(server.updatedAt.getTime() + 1) });
+			orpcMocks.updateResume.mockImplementation((submitted: { data: ResumeData; expectedUpdatedAt?: Date }) => {
+				if (outcome === "conflict" && submitted.expectedUpdatedAt?.getTime() !== server.updatedAt.getTime())
+					throw new ORPCError("RESUME_VERSION_CONFLICT", { status: 409 });
+				server = { ...server, data: submitted.data, updatedAt: new Date(server.updatedAt.getTime() + 2) };
+				return Promise.resolve(server);
+			});
+			act(() => {
+				useResumeStore.getState().updateResumeData((draft) => {
+					draft.basics.location = "My typing";
+				});
+			});
+			await act(async () => {
+				await vi.advanceTimersByTimeAsync(500);
+			});
+			input.blur();
+			await act(async () => {
+				await vi.advanceTimersByTimeAsync(0);
+			});
+			expect(useResumeStore.getState().resume?.data.basics.location).toBe("My typing");
+			expect(useResumeStore.getState().saveStatus).toBe(outcome);
+			expect(server.data.basics.name).toBe("Theirs");
+			expect(server.data.basics.location).toBe(outcome === "saved" ? "My typing" : initial.data.basics.location);
+			input.remove();
+			hook.unmount();
+		},
+	);
+
 	it("does not overwrite pending local builder edits when a remote update arrives", async () => {
 		const initial = makeResume("resume-pending");
-		const remote = withBasicsName(initial, "Remote Name");
+		const remote = { ...withBasicsName(initial, "Remote Name"), updatedAt: new Date(initial.updatedAt.getTime() + 1) };
 		const cancel = vi.fn().mockResolvedValue(undefined);
 		consumeEventIteratorMock.mockReturnValue(cancel);
 		orpcMocks.getResumeById.mockResolvedValue(remote);
@@ -778,6 +980,16 @@ describe("resume update stream subscription", () => {
 		});
 
 		expect(queryClientMock.setQueryData).toHaveBeenCalledWith(["resume", "getById", initial.id], remote);
+		expect(useResumeStore.getState().resume?.data.basics.name).toBe("Local Name");
+		orpcMocks.updateResume.mockImplementation((input: { expectedUpdatedAt?: Date }) => {
+			if (input.expectedUpdatedAt?.getTime() !== remote.updatedAt.getTime())
+				throw new ORPCError("RESUME_VERSION_CONFLICT", { status: 409 });
+			return Promise.resolve(remote);
+		});
+		await act(async () => {
+			await vi.advanceTimersByTimeAsync(500);
+		});
+		expect(useResumeStore.getState().saveStatus).toBe("conflict");
 		expect(useResumeStore.getState().resume?.data.basics.name).toBe("Local Name");
 	});
 });

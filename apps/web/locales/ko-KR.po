@@ -324,6 +324,11 @@ msgstr "{0} · {providerLabel}. 이 지원 내역과 지식을 전송하며, 제
 msgid "{0} (copy)"
 msgstr "{0}(복사본)"
 
+#. placeholder {0}: current.name
+#: src/features/resume/builder/draft.ts
+msgid "{0} (mine)"
+msgstr ""
+
 #. placeholder {0}: insights.closed
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} closed"
@@ -2590,6 +2595,7 @@ msgstr "시간대 변경"
 msgid "Change your password"
 msgstr "비밀번호 변경"
 
+#: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Changed elsewhere"
 msgstr "다른 곳에서 변경됨"
@@ -3669,6 +3675,10 @@ msgstr "제공자에서 프로필을 읽을 수 없습니다. 다시 시도해 �
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Couldn't record submission. Try again."
 msgstr "제출을 기록할 수 없습니다. 다시 시도해 보세요."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Couldn't reload the resume. Your changes are still open."
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't remember that. Try again."
@@ -6517,6 +6527,10 @@ msgstr "칸나다어"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Keep"
 msgstr "유지하다"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Keep a copy and reload"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
@@ -9783,9 +9797,14 @@ msgstr "거부하다"
 msgid "Rejected"
 msgstr "거부됨"
 
+#: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload"
 msgstr "새로고침"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Reload the saved version?"
+msgstr ""
 
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
@@ -14198,6 +14217,14 @@ msgstr "항목이 특이한 문자로 표시되어 있습니다."
 msgid "Your changes are saved automatically."
 msgstr "변경 사항은 자동으로 저장됩니다."
 
+#: src/features/resume/builder/draft.ts
+msgid "Your changes are still open. Try reloading again when you've finished typing."
+msgstr ""
+
+#: src/features/resume/builder/draft.ts
+msgid "Your changes were kept in “{name}”."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
 msgstr "연락처 정보가 첫 페이지에 없습니다."
@@ -14217,6 +14244,10 @@ msgstr "이력서의 세부정보가 변경되었습니다. 편지도 업데이�
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "내 도메인"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Your edits will be kept as a separate resume in Documents before loading the version saved elsewhere."
+msgstr ""
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your email address changed on the resume. The letter updated too."

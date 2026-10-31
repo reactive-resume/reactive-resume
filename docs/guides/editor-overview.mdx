@@ -108,12 +108,13 @@ Zoom only changes what you see in the editor. It has no effect on the PDF or any
 
 Reactive Resume saves as you type. There is no save button. Changes are sent about half a second after you stop typing, and the status under the document name tells you where things stand:
 
-| Status                             | Meaning                                                                                              |
-| ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| **Saved**                          | Everything you see is saved to your account.                                                         |
-| **Saving…**                        | Your latest change is on its way.                                                                    |
-| **Offline · saved on this device** | You've lost your connection. Your changes are kept in this browser and sent when you're back online. |
-| **Not saved · Retry**              | The server couldn't save your changes. They're kept in this browser. Select **Retry** to try again.  |
+| Status                             | Meaning                                                                                                                                                       |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Saved**                          | Everything you see is saved to your account.                                                                                                                  |
+| **Saving…**                        | Your latest change is on its way.                                                                                                                             |
+| **Offline · saved on this device** | You've lost your connection. Your changes are kept in this browser and sent when you're back online.                                                          |
+| **Changed elsewhere · Reload**     | Saving paused because another tab, device or app saved a newer version. Select **Reload** to keep your edits as a separate resume and load the saved version. |
+| **Not saved · Retry**              | The server couldn't save your changes. They're kept in this browser. Select **Retry** to try again.                                                           |
 
 <Frame caption="The editor while offline">
   <img
@@ -136,7 +137,8 @@ Each visit in which you make changes also leaves an autosave version in History,
 If the same resume changes somewhere else while you have it open (in another browser tab, on another device, or through an AI agent or app connected to your account), the editor picks up the change on its own and shows a short message: "Synced changes made in another tab." or "This resume was updated by an AI agent."
 
 - If you're typing in a field at that moment, the update waits until you leave the field, so your typing isn't interrupted.
-- If you have changes of your own that haven't been saved yet, your changes win.
+- If you have changes of your own that haven't been saved yet, saving pauses and the bar says **Changed elsewhere · Reload**. Your typing stays open. Select **Reload**, then **Keep a copy and reload** to keep it as a separate resume named **(mine)** in Documents before loading the saved version. If you keep typing while the copy is being made, the editor keeps those new edits open too; select **Reload** again when you're ready.
+- A recovered draft from an older version also pauses instead of overwriting newer saved work.
 - After an outside change, <kbd>⌘</kbd> <kbd>Z</kbd> can't undo past it. Use History to go further back.
 
 ## Locking a resume

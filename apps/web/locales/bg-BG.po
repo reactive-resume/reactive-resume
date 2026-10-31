@@ -324,6 +324,11 @@ msgstr "{0} · {providerLabel}. Изпраща тази кандидатура �
 msgid "{0} (copy)"
 msgstr "{0} (копие)"
 
+#. placeholder {0}: current.name
+#: src/features/resume/builder/draft.ts
+msgid "{0} (mine)"
+msgstr ""
+
 #. placeholder {0}: insights.closed
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} closed"
@@ -2590,6 +2595,7 @@ msgstr "Смяна на часовата зона"
 msgid "Change your password"
 msgstr "Сменете паролата си"
 
+#: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Changed elsewhere"
 msgstr "Променен другаде"
@@ -3669,6 +3675,10 @@ msgstr "Профилът ви не можа да бъде прочетен от 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Couldn't record submission. Try again."
 msgstr "Изпращането не можа да се запише. Опитайте отново."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Couldn't reload the resume. Your changes are still open."
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't remember that. Try again."
@@ -6517,6 +6527,10 @@ msgstr "Каннада"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Keep"
 msgstr "Запазете"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Keep a copy and reload"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
@@ -9783,9 +9797,14 @@ msgstr "Отхвърляне"
 msgid "Rejected"
 msgstr "Отхвърлено"
 
+#: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload"
 msgstr "Презареди"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Reload the saved version?"
+msgstr ""
 
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
@@ -14198,6 +14217,14 @@ msgstr "Вашите точки са изписани с необичайни з
 msgid "Your changes are saved automatically."
 msgstr "Промените ви се запазват автоматично."
 
+#: src/features/resume/builder/draft.ts
+msgid "Your changes are still open. Try reloading again when you've finished typing."
+msgstr ""
+
+#: src/features/resume/builder/draft.ts
+msgid "Your changes were kept in “{name}”."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
 msgstr "Данните ви за контакт не са на първата страница."
@@ -14217,6 +14244,10 @@ msgstr "Вашите данни са променени в резюмето. П�
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "Вашият домейн"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Your edits will be kept as a separate resume in Documents before loading the version saved elsewhere."
+msgstr ""
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your email address changed on the resume. The letter updated too."

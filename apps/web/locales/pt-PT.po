@@ -324,6 +324,11 @@ msgstr "{0} · {providerLabel}. Envia esta candidatura e o seu Conhecimento; o s
 msgid "{0} (copy)"
 msgstr "{0} (cópia)"
 
+#. placeholder {0}: current.name
+#: src/features/resume/builder/draft.ts
+msgid "{0} (mine)"
+msgstr ""
+
 #. placeholder {0}: insights.closed
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} closed"
@@ -2590,6 +2595,7 @@ msgstr "Alterar fuso horário"
 msgid "Change your password"
 msgstr "Altere a sua senha"
 
+#: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Changed elsewhere"
 msgstr "Alterado noutro lugar"
@@ -3669,6 +3675,10 @@ msgstr "Não foi possível ler o seu perfil no fornecedor. Tente novamente."
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Couldn't record submission. Try again."
 msgstr "Não foi possível registar o envio. Tente novamente."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Couldn't reload the resume. Your changes are still open."
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't remember that. Try again."
@@ -6517,6 +6527,10 @@ msgstr "Canarim"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Keep"
 msgstr "Manter"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Keep a copy and reload"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
@@ -9783,9 +9797,14 @@ msgstr "Rejeitar"
 msgid "Rejected"
 msgstr "Rejeitado"
 
+#: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload"
 msgstr "Recarregar"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Reload the saved version?"
+msgstr ""
 
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
@@ -14198,6 +14217,14 @@ msgstr "Os seus marcadores usam caracteres invulgares."
 msgid "Your changes are saved automatically."
 msgstr "As suas alterações são guardadas automaticamente."
 
+#: src/features/resume/builder/draft.ts
+msgid "Your changes are still open. Try reloading again when you've finished typing."
+msgstr ""
+
+#: src/features/resume/builder/draft.ts
+msgid "Your changes were kept in “{name}”."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
 msgstr "Os seus dados de contacto não estão na primeira página."
@@ -14217,6 +14244,10 @@ msgstr "Os seus dados foram alterados no currículo. A carta também foi atualiz
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "O seu domínio"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Your edits will be kept as a separate resume in Documents before loading the version saved elsewhere."
+msgstr ""
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your email address changed on the resume. The letter updated too."
