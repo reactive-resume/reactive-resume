@@ -299,9 +299,9 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 	it("persists resume acceptance, Undo and Redo through the real router with the saved document", async () => {
 		const { crudRouter } = await import("../resume/crud");
 		const { resumeService } = await import("../resume/service");
-		const client = createRouterClient(crudRouter, { context: { user: { id: "alice" } } });
+		const client = createRouterClient(crudRouter, { context: { user: { id: "alice" } } as never });
 		await proposalThread("own", "alice", "resume", "alice-resume");
-		let current = await resumeService.getById({ id: "alice-resume", userId: "alice" });
+		let current = { ...(await resumeService.getById({ id: "alice-resume", userId: "alice" })) };
 		for (const [applied, content] of [
 			[true, "<p>Original</p><p>Added</p>"],
 			[false, "<p>Original</p>"],
@@ -309,12 +309,13 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		] as const) {
 			const data = structuredClone(current.data);
 			data.summary.content = content;
-			current = await client.update({
+			const saved = await client.update({
 				id: current.id,
 				data,
 				expectedUpdatedAt: current.updatedAt,
 				proposalApplications: { edit: applied },
 			});
+			current = { ...current, ...saved };
 			expect((await resumeService.getById({ id: current.id, userId: "alice" })).data.summary.content).toBe(content);
 			expect(await outcomes()).toEqual([
 				{ id: "own", accepted: applied ? 1 : 0, status: applied ? "accepted" : "pending" },

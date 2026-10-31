@@ -868,6 +868,7 @@ console.log("PASS native Japanese preset dates survive custom-mode round trip");
 reset();
 const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
 const { createDraftStore } = load("draft/store.ts", {
+	"@reactive-resume/resume/proposals": mobileRequire("@reactive-resume/resume/proposals"),
 	immer: mobileRequire("immer"),
 	zustand: mobileRequire("zustand"),
 	"@reactive-resume/utils/string": { generateId: () => "photo-session" },

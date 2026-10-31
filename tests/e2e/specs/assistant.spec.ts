@@ -81,3 +81,35 @@ test("proposes edits that change nothing until accepted, asks before assuming, a
 	await expect(page.getByText("Stopped. No edits were proposed.")).toBeVisible();
 	await expect(page.getByRole("button", { name: "Continue" })).toBeVisible();
 });
+
+test("Accept all preserves overlapping additions and reports the rewrite it cannot place", async ({
+	authPage: page,
+}, testInfo) => {
+	test.setTimeout(90_000);
+	await createSampleResumeFromDashboard(page, testInfo);
+	const resumeId = resumeIdOf(page);
+	await page.getByRole("button", { name: "Assistant", exact: true }).click();
+	await connectStub(page);
+	await send(page, "Propose overlapping edits");
+	const edits = page.getByRole("list", { name: "Proposed edits" });
+	await expect(edits).toBeVisible({ timeout: 20_000 });
+	await page.getByRole("button", { name: "Accept all", exact: true }).click();
+	await expect(edits.getByText("Applied", { exact: true })).toHaveCount(3);
+	await expect(edits.getByText("Out of date: the text has changed since.", { exact: true })).toHaveCount(1);
+	await expect(page.getByText("3 of 4 applied", { exact: true })).toBeVisible();
+	await expect
+		.poll(() => resumeJson(page, resumeId), { timeout: 15_000 })
+		.toContain("Introduced accessibility reviews.");
+	const saved = await resumeJson(page, resumeId);
+	for (const text of [
+		"Rewritten audit passage.",
+		"Mentored two junior designers.",
+		"Introduced accessibility reviews.",
+	])
+		expect(saved.split(text)).toHaveLength(2);
+	expect(saved).not.toContain("A conflicting rewrite.");
+	await page.reload();
+	await page.getByRole("button", { name: "Assistant", exact: true }).click();
+	await expect(page.getByText("3 of 4 applied", { exact: true })).toBeVisible({ timeout: 20_000 });
+	await expect(page.getByRole("list", { name: "Proposed edits" }).getByText("Applied", { exact: true })).toHaveCount(3);
+});

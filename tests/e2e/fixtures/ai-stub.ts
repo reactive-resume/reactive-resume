@@ -142,6 +142,21 @@ function reply(request: ChatRequest, response: ServerResponse) {
 	}
 	const passage =
 		lastToolName === readTool ? result.data?.passages?.find((item) => item.text && item.text !== "(empty)") : undefined;
+	if (passage && said.includes("overlapping"))
+		return streamToolCall(response, "propose_edits", {
+			title: "Overlapping passage edits",
+			edits: [
+				{ passageId: passage.id, text: "Rewritten audit passage.", why: "Clarify the original." },
+				{ passageId: passage.id, text: "Mentored two junior designers.", why: "Retain the first addition.", add: true },
+				{
+					passageId: passage.id,
+					text: "Introduced accessibility reviews.",
+					why: "Retain the second addition.",
+					add: true,
+				},
+				{ passageId: passage.id, text: "A conflicting rewrite.", why: "Conflicts with the first rewrite." },
+			],
+		});
 	if (passage)
 		return streamToolCall(response, "propose_edits", {
 			title: "Tighten the first passage",

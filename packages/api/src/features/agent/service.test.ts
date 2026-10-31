@@ -228,7 +228,9 @@ beforeEach(() => {
 	claimActiveAgentRunMock.mockReset();
 	for (const mock of Object.values(messagesPersistenceMock)) mock.mockReset();
 	messagesPersistenceMock.lockThreadMessages.mockImplementation(async () =>
-		(await dbMock.select().from().where().orderBy()).toSorted((a: { id: string }, b: { id: string }) => a.id.localeCompare(b.id)),
+		(await dbMock.select().from().where().orderBy()).toSorted((a: { id: string }, b: { id: string }) =>
+			a.id.localeCompare(b.id),
+		),
 	);
 	messagesPersistenceMock.applyStepToUiMessage.mockImplementation((message: unknown) => message);
 	messagesPersistenceMock.insertDraftAssistantMessage.mockResolvedValue({
@@ -574,6 +576,7 @@ describe("agentService.messages.send", () => {
 		const rows = [
 			{
 				id: "old",
+				sequence: 0,
 				role: "user",
 				uiMessage: {
 					id: "old",
@@ -581,8 +584,8 @@ describe("agentService.messages.send", () => {
 					parts: [{ type: "text", text: "private-marker https://old.example/private" }],
 				},
 			},
-			{ id: "user-row", role: "user", uiMessage: user },
-			{ id: "assistant-row", role: "assistant", uiMessage: stored },
+			{ id: "user-row", sequence: 1, role: "user", uiMessage: user },
+			{ id: "assistant-row", sequence: 2, role: "assistant", uiMessage: stored },
 		];
 		dbMock.update.mockReturnValue({ set: vi.fn(() => ({ where: vi.fn(async () => undefined) })) });
 		claimActiveAgentRunMock.mockResolvedValue(true);
