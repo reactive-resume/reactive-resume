@@ -67,7 +67,7 @@ type Context = {
 	warnings: Set<string>;
 	sourceMap: WeakMap<object, SourceLocation>;
 	/** Counts list items in document order and names those that start a page (see `LIST_ROLE`). */
-	lists: { count: number; breakBefore: ReadonlySet<number> };
+	lists: { count: number; breakBefore: ReadonlySet<number>; split: ReadonlySet<number> };
 	/** The list item being converted, and what part of it. */
 	listItem?: { index: number; role: (typeof LIST_ROLE)[keyof typeof LIST_ROLE] } | undefined;
 };
@@ -491,6 +491,9 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
 			);
 			let children = spread.children;
 			const viewStyle = flowStyle(props, spread.style);
+			// A flow constraint stays valid when earlier items move; unlike a forced break it cannot go stale.
+			if (props["data-resume-list-item"] && context.listItem && !context.lists.split.has(context.listItem.index))
+				viewStyle.wrap = false;
 			const nodeKey = props[RESUME_NODE_PROP];
 			if (typeof nodeKey === "string" && context.breakBeforeNodes.has(nodeKey)) viewStyle.breakBefore = true;
 			if (context.listItem?.role === LIST_ROLE.item && context.lists.breakBefore.has(context.listItem.index))
@@ -515,6 +518,7 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
 			if (
 				context.keepNestedRowsWhole &&
 				context.insideRow &&
+				!props["data-resume-list-item"] &&
 				(style.flexDirection === "row" || style.flexDirection === "row-reverse")
 			)
 				viewStyle.wrap = false;
@@ -959,6 +963,8 @@ export type ConvertOptions = {
 	keepNestedRowsWhole?: boolean;
 	/** List items (by index, see `LIST_ROLE`) that start a new page, so their marker stays with their first line. */
 	breakBeforeListItems?: ReadonlySet<number>;
+	/** Large items remain splittable for page fill; brief marker/content rows paginate as a unit. */
+	splitListItems?: ReadonlySet<number>;
 	/** Unplaced sections or items that need an explicit page break on a render retry. */
 	breakBeforeNodes?: ReadonlySet<string>;
 	/** Measured heights of free-form pages, by page index; an unmeasured one is `FREE_FORM_MEASURE_HEIGHT` tall. */
@@ -971,6 +977,7 @@ export function toFormeDocument(
 		images = new Map(),
 		keepNestedRowsWhole = false,
 		breakBeforeListItems = new Set(),
+		splitListItems = new Set(),
 		breakBeforeNodes = new Set(),
 		freeFormHeights = [],
 	}: ConvertOptions = {},
@@ -1000,7 +1007,7 @@ export function toFormeDocument(
 		},
 		warnings: new Set(),
 		sourceMap: new WeakMap(),
-		lists: { count: 0, breakBefore: breakBeforeListItems },
+		lists: { count: 0, breakBefore: breakBeforeListItems, split: splitListItems },
 	};
 
 	const { props } = root;

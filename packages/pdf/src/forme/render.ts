@@ -124,14 +124,30 @@ function unplacedBlocks(layout: RenderWithLayoutResult["layout"]): string[] {
 const isFixed = (element: ElementInfo): boolean =>
 	element.sourceLocation?.file === FIXED_SOURCE || element.children.some(isFixed);
 
-/** List items needing a page break to keep their marker and full row height (see `LIST_ROLE`). */
-function listItemsNeedingBreak(layout: RenderWithLayoutResult["layout"]): number[] {
+/** Flow constraints for large items, and marker/row repairs for items that still split (see `LIST_ROLE`). */
+function listPaginationRepairs(layout: RenderWithLayoutResult["layout"]) {
 	const markerPage = new Map<number, number>();
 	const contentPage = new Map<number, number>();
 	const itemPage = new Map<number, number>();
+	const split = new Set<number>();
+	const oversized = new Set<number>();
+	const contentPages = new Map<number, Set<number>>();
 	layout.pages.forEach((page, pageIndex) => {
-		const visit = (element: ElementInfo) => {
+		const visit = (element: ElementInfo, availableHeight: number, parentSource?: ElementInfo["sourceLocation"]) => {
 			const source = element.sourceLocation;
+			const inheritedSource = source ?? parentSource;
+			if (inheritedSource?.column === LIST_ROLE.content && element.kind === "Text" && !offPage(element.y)) {
+				const pages = contentPages.get(inheritedSource.line) ?? new Set<number>();
+				pages.add(pageIndex);
+				contentPages.set(inheritedSource.line, pages);
+			}
+			const { margin, padding, borderWidth } = element.style;
+			if (source?.column === LIST_ROLE.item) {
+				const height = element.height + margin.top + margin.bottom;
+				// Prefer splitting large rows for page fill; only rows exceeding a fresh page cannot stay whole.
+				if (height > availableHeight / 4) split.add(source.line - 1);
+				if (height > availableHeight) oversized.add(source.line - 1);
+			}
 			const pages =
 				source?.column === LIST_ROLE.marker
 					? markerPage
@@ -142,16 +158,21 @@ function listItemsNeedingBreak(layout: RenderWithLayoutResult["layout"]): number
 							: null;
 			// Forme leaves some fragments of a splitting box at y ±Number.MAX_VALUE; they aren't on this page.
 			if (source && pages && !pages.has(source.line) && !offPage(element.y)) pages.set(source.line, pageIndex);
-			element.children.forEach(visit);
+			const innerHeight = availableHeight - padding.top - padding.bottom - borderWidth.top - borderWidth.bottom;
+			for (const child of element.children) visit(child, innerHeight, inheritedSource);
 		};
-		page.elements.forEach(visit);
+		for (const element of page.elements) visit(element, page.contentHeight);
 	});
-	return [...markerPage].flatMap(([line, page]) => {
-		const content = contentPage.get(line) ?? page;
-		// Forme can move both companions to a new page but drop their row, reserving only the marker's line height.
-		const detached = page > 0 && content === page && itemPage.get(line) !== page;
-		return content > page || detached ? [line - 1] : [];
-	});
+	const breakBefore = [...markerPage]
+		.flatMap(([line, page]) => {
+			const content = contentPage.get(line) ?? page;
+			// Forme can move both companions to a new page but drop their row, reserving only the marker's line height.
+			const detached = page > 0 && content === page && itemPage.get(line) !== page;
+			return content > page || detached ? [line - 1] : [];
+		})
+		.sort((a, b) => a - b);
+	const unsplit = [...contentPages].flatMap(([line, pages]) => (pages.size === 1 ? [line - 1] : []));
+	return { split, oversized, breakBefore, unsplit };
 }
 
 /**
@@ -231,6 +252,7 @@ export async function renderResumeElement(
 	]);
 
 	const breakBeforeListItems = new Set<number>();
+	const splitListItems = new Set<number>();
 	const breakBeforeNodes = new Set<string>();
 	// Every pass draws the same text, so the fonts are prepared once, from the first pass's document.
 	let formeFonts: typeof fonts | undefined;
@@ -240,6 +262,7 @@ export async function renderResumeElement(
 				images,
 				keepNestedRowsWhole,
 				breakBeforeListItems,
+				splitListItems,
 				breakBeforeNodes,
 				freeFormHeights,
 			});
@@ -274,14 +297,44 @@ export async function renderResumeElement(
 		return { result, warnings: converted.warnings };
 	};
 
-	// Explicit breaks keep markers with their first line and restore rows lost when an item moves to a new page.
-	// Breaks move what follows, so a few passes settle it; each item is repaired at most once.
+	// Flow constraints remain valid when earlier rows move: batch repairs of rows that fit a fresh page. Only
+	// oversized rows need positional repairs, whose later break positions must be rechecked after each move.
 	const layOut = async (keepNestedRowsWhole: boolean) => {
-		for (let pass = 0; ; pass++) {
+		breakBeforeListItems.clear();
+		splitListItems.clear();
+		const whole = new Set<number>();
+		let measuredOversized: ReadonlySet<number> | undefined;
+		for (;;) {
 			const laidOut = await layOutOnce(keepNestedRowsWhole);
-			const needsBreak = listItemsNeedingBreak(laidOut.result.layout).filter((item) => !breakBeforeListItems.has(item));
-			if (needsBreak.length === 0 || pass === 3) return laidOut;
-			for (const item of needsBreak) breakBeforeListItems.add(item);
+			const repairs = listPaginationRepairs(laidOut.result.layout);
+			// Capture full intrinsic heights before reopening rows; later fragments do not measure the whole row.
+			const oversized = (measuredOversized ??= repairs.oversized);
+			let changed = false;
+			for (const item of repairs.split) {
+				if (whole.has(item) || splitListItems.has(item)) continue;
+				splitListItems.add(item);
+				changed = true;
+			}
+			if (changed) continue;
+			if (repairs.breakBefore.some((item) => !oversized.has(item))) {
+				// Reserve fitting rows already in one piece too, so later rows do not repeat the same defect after reflow.
+				// Preserve genuine continuations: their content already spans pages without leaving its marker behind.
+				for (const item of [...repairs.breakBefore, ...repairs.unsplit]) {
+					if (oversized.has(item) || whole.has(item) || !splitListItems.has(item)) continue;
+					whole.add(item);
+					splitListItems.delete(item);
+					changed = true;
+				}
+			}
+			if (changed) continue;
+			// shortcut: oversized rows need sequential marker repair until Forme supports atomic first fragments.
+			const first = repairs.breakBefore.find((item) => oversized.has(item) && !breakBeforeListItems.has(item));
+			if (first === undefined) {
+				if (repairs.breakBefore.some((item) => !oversized.has(item)) && !misplacesABox(laidOut.result))
+					throw new Error("The PDF engine could not keep a list marker with its content.");
+				return laidOut;
+			}
+			breakBeforeListItems.add(first);
 		}
 	};
 
