@@ -93,6 +93,31 @@ test("requires explicit OAuth consent before denying or allowing access", async 
 	}
 });
 
+test("names an app callback's scheme, not just its host, before consent", async ({ authPage: page, baseURL }) => {
+	const origin = new URL(baseURL ?? "http://localhost:3000").origin;
+	for (const [callback, destination] of [
+		["evilapp://www.cursor.com/oauth/callback", "evilapp://www.cursor.com"],
+		["com.example.app:/oauth/callback", "com.example.app"],
+	]) {
+		const registration = await page.request.post("/api/auth/oauth2/register", {
+			headers: { origin },
+			data: { client_name: "Cursor", redirect_uris: [callback] },
+		});
+		expect(registration.status(), await registration.text()).toBe(201);
+		const query = new URLSearchParams({
+			client_id: (await registration.json()).client_id,
+			redirect_uri: callback,
+			response_type: "code",
+			scope: "openid api:read",
+			code_challenge: createHash("sha256").update(randomBytes(32)).digest("base64url"),
+			code_challenge_method: "S256",
+			resource: origin,
+		});
+		await page.goto(`/api/auth/oauth2/authorize?${query}`);
+		await expect(page.getByText(destination, { exact: true })).toBeVisible();
+	}
+});
+
 test("confirms a named disconnect and revokes every token without widening read-only access", async ({
 	authPage: page,
 	baseURL,
