@@ -7,11 +7,13 @@ import { afterEach, assert, beforeEach, describe, expect, it, vi } from "vite-pl
 import { i18n } from "@lingui/core";
 import { ORPCError } from "@orpc/client";
 import { sortSectionItemsByPeriod } from "@reactive-resume/resume/section-sort";
+import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import {
 	clearResumeDrafts,
 	readUnsavedResumeData,
 	savePendingChanges,
+	saveResumeMetadata,
 	useBuilderResumeUpdateSubscription,
 	useResumeCleanup,
 	useResumeStore,
@@ -139,6 +141,16 @@ function experienceItem(
 	};
 }
 
+function deferred<T>() {
+	let resolve!: (value: T) => void;
+	let reject!: (reason: unknown) => void;
+	const promise = new Promise<T>((done, fail) => {
+		resolve = done;
+		reject = fail;
+	});
+	return { promise, resolve, reject };
+}
+
 async function flushMicrotasks() {
 	await Promise.resolve();
 	await Promise.resolve();
@@ -250,6 +262,251 @@ describe("builder resume autosave", () => {
 		vi.unstubAllGlobals();
 		clearResumeDrafts();
 		window.localStorage.clear();
+	});
+
+	it("keeps edits during a rename until its revision is acknowledged, preserving Undo", async () => {
+		const store = useResumeStore.getState;
+		const initial = makeResume("metadata-write");
+		store().initialize(initial);
+		const response = deferred<Resume>();
+		const write = vi.fn(() => response.promise);
+		const renaming = saveResumeMetadata(initial.id, write);
+		await flushMicrotasks();
+		expect(write).toHaveBeenCalledTimes(1);
+		store().updateResumeData((draft) => {
+			draft.basics.name = "Later name";
+		});
+		const renamed = { ...initial, name: "Renamed again", updatedAt: new Date(initial.updatedAt.getTime() + 1000) };
+		const saved = { ...withBasicsName(renamed, "Later name"), updatedAt: new Date(renamed.updatedAt.getTime() + 1000) };
+		orpcMocks.updateResume.mockResolvedValueOnce(saved);
+		await vi.advanceTimersByTimeAsync(500);
+		expect(orpcMocks.updateResume).not.toHaveBeenCalled();
+		response.resolve(renamed);
+		await renaming;
+		await flushMicrotasks();
+		expect(orpcMocks.updateResume.mock.lastCall?.[0].expectedUpdatedAt).toEqual(renamed.updatedAt);
+		expect(store().saveStatus).toBe("saved");
+		expect(store().resume).toMatchObject({ name: "Renamed again", data: { basics: { name: "Later name" } } });
+		store().replaceResumeFromServer(saved);
+		expect(store().undoStack).toHaveLength(1);
+	});
+
+	it("finishes an in-flight body save before renaming, then saves from the rename revision", async () => {
+		const initial = makeResume("metadata-inflight");
+		useResumeStore.getState().initialize(initial);
+		const body = deferred<Resume>();
+		const saved = {
+			...withBasicsName(initial, "Before rename"),
+			updatedAt: new Date(initial.updatedAt.getTime() + 1000),
+		};
+		const flushed = { ...saved, updatedAt: new Date(saved.updatedAt.getTime() + 1000) };
+		orpcMocks.updateResume.mockImplementationOnce(() => body.promise).mockResolvedValueOnce(flushed);
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.name = "Before rename";
+		});
+		await vi.advanceTimersByTimeAsync(500);
+		const renamed = { ...flushed, name: "Manual title", updatedAt: new Date(flushed.updatedAt.getTime() + 1000) };
+		const write = vi.fn(async (expectedUpdatedAt?: Date) => {
+			if (expectedUpdatedAt?.getTime() !== flushed.updatedAt.getTime()) throw new ORPCError("RESUME_VERSION_CONFLICT");
+			return renamed;
+		});
+		const renaming = saveResumeMetadata(initial.id, write);
+		await flushMicrotasks();
+		expect(write).not.toHaveBeenCalled();
+		body.resolve(saved);
+		await renaming;
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.headline = "After rename";
+		});
+		orpcMocks.updateResume.mockResolvedValueOnce({ ...renamed, data: useResumeStore.getState().resume?.data });
+		await vi.advanceTimersByTimeAsync(500);
+		expect(orpcMocks.updateResume.mock.lastCall?.[0].expectedUpdatedAt).toEqual(renamed.updatedAt);
+		expect(useResumeStore.getState().resume?.name).toBe("Manual title");
+	});
+
+	it("waits for an own metadata response before applying its early stream echo", async () => {
+		const initial = makeResume("metadata-early-echo");
+		routerParamsMock.value = { resumeId: initial.id };
+		useResumeStore.getState().initialize(initial);
+		const saved = { ...withBasicsName(initial, "Saved name"), updatedAt: new Date(initial.updatedAt.getTime() + 1000) };
+		orpcMocks.updateResume.mockResolvedValueOnce(saved);
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.name = "Saved name";
+		});
+		await vi.advanceTimersByTimeAsync(500);
+		const response = deferred<Resume>();
+		const renamed = { ...saved, name: "Manual title", updatedAt: new Date(saved.updatedAt.getTime() + 1000) };
+		const writing = saveResumeMetadata(initial.id, () => response.promise);
+		await flushMicrotasks();
+		orpcMocks.getResumeById.mockResolvedValueOnce(renamed);
+		consumeEventIteratorMock.mockReturnValueOnce(async () => undefined);
+		const hook = renderHook(() => useBuilderResumeUpdateSubscription());
+		const handler = consumeEventIteratorMock.mock.lastCall?.[1].onEvent;
+		assert(handler);
+		const event = handler({ mutation: "update" });
+		await flushMicrotasks();
+		expect(useResumeStore.getState().undoStack).toHaveLength(1);
+		response.resolve(renamed);
+		await writing;
+		await event;
+		expect(useResumeStore.getState().undoStack).toHaveLength(1);
+		expect(useResumeStore.getState().resume?.name).toBe("Manual title");
+		hook.unmount();
+	});
+
+	it("keeps the draft and does not send metadata if its earlier body save failed", async () => {
+		const initial = makeResume("metadata-flush-error");
+		useResumeStore.getState().initialize(initial);
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.name = "Unsaved name";
+		});
+		orpcMocks.updateResume.mockRejectedValueOnce(new Error("Network failure"));
+		const write = vi.fn(async () => initial);
+		await expect(saveResumeMetadata(initial.id, write)).rejects.toThrow("Couldn't save your changes");
+		expect(write).not.toHaveBeenCalled();
+		expect(useResumeStore.getState().resume?.data.basics.name).toBe("Unsaved name");
+		expect(useResumeStore.getState().saveStatus).toBe("error");
+	});
+
+	it.each([false, true])("serializes separate metadata requests after earlier failure=%s", async (fails) => {
+		const initial = makeResume("metadata-serialized");
+		useResumeStore.getState().initialize(initial);
+		const first = deferred<Resume>();
+		const earlier = saveResumeMetadata(initial.id, () => first.promise).catch((error: unknown) => error);
+		const renamed = { ...initial, name: "Second request", updatedAt: new Date(initial.updatedAt.getTime() + 2000) };
+		const write = vi.fn(async () => renamed);
+		const later = saveResumeMetadata(initial.id, write);
+		await flushMicrotasks();
+		expect(write).not.toHaveBeenCalled();
+		if (fails) first.reject(new Error("Metadata rejected"));
+		else first.resolve({ ...initial, name: "First request", updatedAt: new Date(initial.updatedAt.getTime() + 1000) });
+		await earlier;
+		await later;
+		expect(write).toHaveBeenCalledTimes(1);
+		expect(useResumeStore.getState().resume?.name).toBe("Second request");
+	});
+
+	it("never sends a queued metadata write after its visit is cleared", async () => {
+		const initial = makeResume("metadata-cancelled");
+		useResumeStore.getState().initialize(initial);
+		const first = deferred<Resume>();
+		const earlier = saveResumeMetadata(initial.id, () => first.promise);
+		await flushMicrotasks();
+		const write = vi.fn(async () => initial);
+		const later = saveResumeMetadata(initial.id, write);
+		const rejected = expect(later).rejects.toMatchObject({ name: "AbortError" });
+		clearResumeDrafts();
+		first.resolve(initial);
+		await earlier;
+		await rejected;
+		expect(write).not.toHaveBeenCalled();
+	});
+
+	it("does not send metadata if its visit ends while the pending-save check settles", async () => {
+		const initial = makeResume("metadata-flush-cancelled");
+		useResumeStore.getState().initialize(initial);
+		const write = vi.fn(async () => initial);
+		const saving = saveResumeMetadata(initial.id, write);
+		const rejected = expect(saving).rejects.toMatchObject({ name: "AbortError" });
+		await Promise.resolve();
+		clearResumeDrafts();
+		await rejected;
+		expect(write).not.toHaveBeenCalled();
+	});
+
+	it("recognizes a metadata-only write when stored data still needs read normalization", async () => {
+		const initial = makeResume("metadata-legacy");
+		const raw = cloneResumeData(initial.data);
+		delete raw.summary.showHeading;
+		for (const section of Object.values(raw.sections)) delete section.showHeading;
+		initial.data = parseResumeData(raw);
+		useResumeStore.getState().initialize(initial);
+		const renamed = {
+			...initial,
+			data: raw,
+			name: "Renamed legacy",
+			updatedAt: new Date(initial.updatedAt.getTime() + 1000),
+		};
+		await saveResumeMetadata(initial.id, async () => renamed);
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.headline = "After legacy rename";
+		});
+		orpcMocks.updateResume.mockResolvedValueOnce({ ...renamed, data: useResumeStore.getState().resume?.data });
+		await vi.advanceTimersByTimeAsync(500);
+		expect(orpcMocks.updateResume.mock.lastCall?.[0].expectedUpdatedAt).toEqual(renamed.updatedAt);
+	});
+
+	it("does not certify an unseen receipt-only revision through a metadata write", async () => {
+		const store = useResumeStore.getState;
+		const initial = makeResume("metadata-foreign-receipt");
+		initial.data.summary.content = "<p>Original</p>";
+		store().initialize(initial);
+		let server = initial;
+		orpcMocks.updateResume.mockImplementation(async ({ data }: { data: ResumeData }) => {
+			server = { ...server, data, updatedAt: new Date(server.updatedAt.getTime() + 1000) };
+			return server;
+		});
+		store().updateResumeData(
+			(draft) => {
+				draft.summary.content = "<p>Accepted</p>";
+			},
+			{ newStep: true, applied: [{ id: "edit", after: "<p>Accepted</p>" }] },
+		);
+		expect(await savePendingChanges(initial.id)).toBe(true);
+		store().updateResumeData((draft) => {
+			draft.summary.content = initial.data.summary.content;
+		});
+		expect(await savePendingChanges(initial.id)).toBe(true);
+		const acceptedRevision = server.updatedAt;
+		// Another client undoes only the receipt; body equality cannot prove the revision is ours.
+		server = { ...server, updatedAt: new Date(server.updatedAt.getTime() + 1000) };
+		const write = vi.fn(async (expectedUpdatedAt?: Date) => {
+			if (expectedUpdatedAt && expectedUpdatedAt.getTime() !== server.updatedAt.getTime())
+				throw new ORPCError("RESUME_VERSION_CONFLICT");
+			server = { ...server, name: "Renamed", updatedAt: new Date(server.updatedAt.getTime() + 1000) };
+			return server;
+		});
+		await expect(saveResumeMetadata(initial.id, write)).rejects.toMatchObject({ code: "RESUME_VERSION_CONFLICT" });
+		expect(write).toHaveBeenCalledTimes(1);
+		expect(server.name).toBe(initial.name);
+		expect(store().resume?.updatedAt).toEqual(acceptedRevision);
+		store().replaceResumeFromServer(server);
+		expect(store().proposalApplications).toEqual({});
+		expect(store().undoStack).toEqual([]);
+		const recovery = Object.entries(window.localStorage).filter(([key]) => key.includes(initial.id));
+		expect(recovery).toEqual([]);
+	});
+
+	it.each([
+		[
+			"another write came in between",
+			(resume: Resume) => withBasicsName(resume, "From another tab"),
+			1000,
+			false,
+			"Renamed",
+		],
+		["it answers an earlier visit", (resume: Resume) => resume, 1000, true, "Resume"],
+		["the visit already holds a newer revision", (resume: Resume) => resume, -1000, false, "Resume"],
+	])("keeps the autosave revision when a rename response %s", async (_, server, ms, revisit, name) => {
+		const initial = makeResume("metadata-write-guarded");
+		useResumeStore.getState().initialize(initial);
+		const answer = deferred<Resume>();
+		const writing = saveResumeMetadata(initial.id, () => answer.promise);
+		await flushMicrotasks();
+		if (revisit) {
+			clearResumeDrafts();
+			useResumeStore.getState().initialize(initial);
+		}
+		answer.resolve({ ...server(initial), name: "Renamed", updatedAt: new Date(initial.updatedAt.getTime() + ms) });
+		await writing;
+		expect(useResumeStore.getState().resume?.name).toBe(name);
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.headline = "Later headline";
+		});
+		orpcMocks.updateResume.mockResolvedValueOnce(initial);
+		await vi.advanceTimersByTimeAsync(500);
+
+		expect(orpcMocks.updateResume.mock.lastCall?.[0].expectedUpdatedAt).toEqual(initial.updatedAt);
 	});
 
 	it("keeps a failed draft in the builder and retries on the next navigation", async () => {
