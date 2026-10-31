@@ -33,7 +33,7 @@ msgstr "“{0}”가 휴지통으로 이동되었습니다."
 msgid "“{0}” stops being your primary resume."
 msgstr "“{0}” 이력서가 더 이상 대표 이력서가 아니게 됩니다."
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
 msgstr "“{0}”은(는) 완전히 삭제되며 복원할 수 없습니다."
@@ -169,11 +169,6 @@ msgstr "{0, plural, one {# 데이} other {#일}}"
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {서류 #개를 휴지통으로 이동했습니다} other {서류 #개를 휴지통으로 이동했습니다}}"
 
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {# document will be deleted for good and can't be restored.} other {# documents will be deleted for good and can't be restored.}}"
-msgstr "{0, plural, one {문서 #개가 영구 삭제되며 복원할 수 없습니다.} other {문서 #개가 영구 삭제되며 복원할 수 없습니다.}}"
-
 #. placeholder {0}: counts.data.trash
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
@@ -250,11 +245,6 @@ msgstr "{0, plural, one {지원 #건을 삭제할까요?} other {지원 #건을 
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {지원 #건 삭제} other {지원 #건 삭제}}"
-
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
-msgstr "{0, plural, one {서류 #개를 영구적으로 삭제할까요?} other {서류 #개를 영구적으로 삭제할까요?}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -500,6 +490,10 @@ msgstr "{day} · {length}m"
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· 오늘부터} one {· #일째} other {· #일째}}"
 
+#: src/features/documents/queries.ts
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{count}개 중 {done}개 완료"
@@ -618,8 +612,16 @@ msgstr "{pairing} 유형"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {이 페이지에 수정 제안 #개 · 수락해야 변경됩니다} other {이 페이지에 수정 제안 #개 · 수락해야 변경됩니다}}"
 
+#: src/features/documents/library.tsx
+msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
@@ -1338,6 +1340,10 @@ msgstr "모두"
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "모두({0})"
+
+#: src/features/documents/library.tsx
+msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "All applications"
@@ -3537,7 +3543,7 @@ msgstr "학위"
 msgid "Delete"
 msgstr "삭제"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "Delete “{0}” forever?"
 msgstr "“{0}”을(를) 영구적으로 삭제할까요?"
@@ -3596,6 +3602,10 @@ msgstr "삭제하세요. 숨겨진 키워드는 검색을 조작하려는 고의
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
 msgstr "페이지 삭제"
+
+#: src/features/documents/library.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Delete private application profile?"
@@ -3657,6 +3667,16 @@ msgstr "삭제…"
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
 msgstr "삭제됨"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0}. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -4131,6 +4151,10 @@ msgstr "빈 커버레터"
 #: src/features/documents/library.tsx
 msgid "Empty trash"
 msgstr "휴지통 비우기"
+
+#: src/features/documents/library.tsx
+msgid "Empty Trash?"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -8349,6 +8373,11 @@ msgstr "이 버전을 복원하시겠습니까?"
 msgid "Restore version"
 msgstr "버전 복원"
 
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Restored a version"
@@ -9082,10 +9111,6 @@ msgstr "선택"
 msgid "Select {0}"
 msgstr "{0} 선택"
 
-#: src/features/documents/library.tsx
-msgid "Select all"
-msgstr "모두 선택"
-
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
@@ -9095,6 +9120,10 @@ msgstr "{0} 페이지에서 항목을 선택하세요."
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "항목 {0} 선택"
+
+#: src/features/documents/library.tsx
+msgid "Select this page"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Select visible"
@@ -10259,6 +10288,10 @@ msgstr "연결을 로드하거나 저장할 수 없습니다. 다시 시도해 �
 msgid "The current state will be saved as “Before restore” first."
 msgstr "현재 상태가 먼저 “복원 전”으로 저장됩니다."
 
+#: src/features/documents/library.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "편집기는 검토에서 열리며 가져온 이력서를 다시 검사합니다."
@@ -10367,6 +10400,10 @@ msgstr "점수는 소프트웨어가 이력서를 얼마나 안정적으로 읽�
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "점수는 기회가 아니라 텍스트가 얼마나 안정적으로 추출되는지를 반영합니다."
+
+#: src/features/documents/library.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
@@ -10900,6 +10937,10 @@ msgstr "휴지통"
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "휴지통이 비어 있습니다."
+
+#: src/features/documents/queries.ts
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Trimming words"

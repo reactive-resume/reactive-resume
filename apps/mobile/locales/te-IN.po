@@ -33,7 +33,7 @@ msgstr "“{0}” ట్రాష్‌కి తరలించబడింద�
 msgid "“{0}” stops being your primary resume."
 msgstr "“{0}” ఇకపై మీ ప్రాథమిక రెజ్యూమ్ కాదు."
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
 msgstr "“{0}” శాశ్వతంగా తొలగించబడుతుంది. పునరుద్ధరించలేరు."
@@ -169,11 +169,6 @@ msgstr "{0, plural, one {# రోజు} other {# రోజులు}}"
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# పత్రం ట్రాష్‌కి తరలించబడింది} other {# పత్రాలు ట్రాష్‌కి తరలించబడ్డాయి}}"
 
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {# document will be deleted for good and can't be restored.} other {# documents will be deleted for good and can't be restored.}}"
-msgstr "{0, plural, one {# పత్రం శాశ్వతంగా తొలగించబడుతుంది. పునరుద్ధరించలేరు.} other {# పత్రాలు శాశ్వతంగా తొలగించబడతాయి. పునరుద్ధరించలేరు.}}"
-
 #. placeholder {0}: counts.data.trash
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
@@ -250,11 +245,6 @@ msgstr "{0, plural, one {# దరఖాస్తును తొలగించ�
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {# దరఖాస్తును తొలగించండి} other {# దరఖాస్తులను తొలగించండి}}"
-
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
-msgstr "{0, plural, one {# పత్రాన్ని శాశ్వతంగా తొలగించాలా?} other {# పత్రాలను శాశ్వతంగా తొలగించాలా?}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -500,6 +490,10 @@ msgstr "{day} · {length}ని"
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· నేటి నుండి} one {· # రోజులుగా} other {· # రోజులుగా}}"
 
+#: src/features/documents/queries.ts
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{count}లో {done} పూర్తయ్యాయి"
@@ -618,8 +612,16 @@ msgstr "{pairing} రకం"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {ఈ పేజీలో # ప్రతిపాదిత సవరణ · మీరు అంగీకరించే వరకు ఏమీ మారదు} other {ఈ పేజీలో # ప్రతిపాదిత సవరణలు · మీరు అంగీకరించే వరకు ఏమీ మారదు}}"
 
+#: src/features/documents/library.tsx
+msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
@@ -1338,6 +1340,10 @@ msgstr "అన్నీ"
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "అన్నీ ({0})"
+
+#: src/features/documents/library.tsx
+msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "All applications"
@@ -3537,7 +3543,7 @@ msgstr "డిగ్రీ"
 msgid "Delete"
 msgstr "తొలగించు"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "Delete “{0}” forever?"
 msgstr "“{0}”ని శాశ్వతంగా తొలగించాలా?"
@@ -3596,6 +3602,10 @@ msgstr "దాన్ని తొలగించండి. దాచిన క�
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
 msgstr "పేజీ తొలగించండి"
+
+#: src/features/documents/library.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Delete private application profile?"
@@ -3657,6 +3667,16 @@ msgstr "తొలగించు..."
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
 msgstr "తొలగించబడింది"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0}. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -4131,6 +4151,10 @@ msgstr "ఖాళీ కవర్ లేఖ"
 #: src/features/documents/library.tsx
 msgid "Empty trash"
 msgstr "ట్రాష్‌ను ఖాళీ చేయండి"
+
+#: src/features/documents/library.tsx
+msgid "Empty Trash?"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -8349,6 +8373,11 @@ msgstr "ఈ సంస్కరణను పునరుద్ధరించా�
 msgid "Restore version"
 msgstr "సంస్కరణను పునరుద్ధరించండి"
 
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Restored a version"
@@ -9082,10 +9111,6 @@ msgstr "ఎంచుకోండి"
 msgid "Select {0}"
 msgstr "{0}ని ఎంచుకోండి"
 
-#: src/features/documents/library.tsx
-msgid "Select all"
-msgstr "అన్నీ ఎంచుకోండి"
-
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
@@ -9095,6 +9120,10 @@ msgstr "{0} పేజీలో ఒక ఎంట్రీని ఎంచుక�
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "ఎంట్రీని ఎంచుకోండి {0}"
+
+#: src/features/documents/library.tsx
+msgid "Select this page"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Select visible"
@@ -10259,6 +10288,10 @@ msgstr "కనెక్షన్ లోడ్ చేయడం లేదా స�
 msgid "The current state will be saved as “Before restore” first."
 msgstr "ప్రస్తుత స్థితి ముందుగా “పునరుద్ధరించడానికి ముందు”గా సేవ్ చేయబడుతుంది."
 
+#: src/features/documents/library.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "ఎడిటర్ తనిఖీలో తెరవబడుతుంది, ఇది దిగుమతి చేసుకున్న రెజ్యూమ్‌ని మళ్లీ తనిఖీ చేస్తుంది."
@@ -10367,6 +10400,10 @@ msgstr "సాఫ్ట్‌వేర్ మీ రెజ్యూమ్‌న�
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "వచనం ఎంత విశ్వసనీయంగా సంగ్రహించబడిందో స్కోర్ ప్రతిబింబిస్తుంది, మీ అవకాశాలను కాదు."
+
+#: src/features/documents/library.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
@@ -10900,6 +10937,10 @@ msgstr "ట్రాష్"
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "ట్రాష్ ఖాళీగా ఉంది"
+
+#: src/features/documents/queries.ts
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Trimming words"

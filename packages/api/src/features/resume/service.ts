@@ -5,7 +5,7 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Locale } from "@reactive-resume/utils/locale";
 import { ORPCError } from "@orpc/client";
 import { compare, hash } from "bcryptjs";
-import { and, arrayContains, asc, desc, eq, gte, isNotNull, isNull, lt, ne, sql } from "drizzle-orm";
+import { and, arrayContains, asc, desc, eq, gte, inArray, isNotNull, isNull, lt, ne, sql } from "drizzle-orm";
 import { match } from "ts-pattern";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
@@ -17,7 +17,7 @@ import { generateId } from "@reactive-resume/utils/string";
 import { consumeResumePasswordLimit } from "../../middleware/rate-limit";
 import { adoptEmbeddedLetters } from "../cover-letters/embedded";
 import { lockUser } from "../documents/ownership";
-import { getStorageService } from "../storage/service";
+import { enqueueStorageCleanup, reportStorageCleanupSummary, runStorageCleanup } from "../storage/cleanup";
 import { grantResumeAccess, hasResumeAccess } from "./access";
 import {
 	assertCanView,
@@ -408,6 +408,12 @@ async function updateResumePassword(input: { id: string; userId: string; passwor
 
 let unusedHash: Promise<string> | undefined;
 const unusedPasswordHash = () => (unusedHash ??= hash(generateId(), 10));
+
+/** Every storage prefix owned by one resume. Shared account pictures stay outside them. */
+const resumeStorageKeys = (userId: string, resumeId: string) => [
+	`uploads/${userId}/screenshots/${resumeId}`,
+	`uploads/${userId}/pdfs/${resumeId}`,
+];
 
 export const resumeService = {
 	tags,
@@ -852,16 +858,17 @@ export const resumeService = {
 			if (resume.isLocked && !input.trashedBefore) throw new ORPCError("RESUME_LOCKED", { status: 403 });
 
 			await tx.delete(schema.resume).where(target);
+			await enqueueStorageCleanup(tx, input.userId, resumeStorageKeys(input.userId, input.id));
 			return true;
 		});
 		if (!deleted) return;
 
-		// Clean up storage files after the DB transaction succeeds
-		const storageService = getStorageService();
-		await Promise.allSettled([
-			storageService.delete(`uploads/${input.userId}/screenshots/${input.id}`),
-			storageService.delete(`uploads/${input.userId}/pdfs/${input.id}`),
-		]);
+		await runStorageCleanup({
+			storageKeys: resumeStorageKeys(input.userId, input.id),
+			limit: 2,
+		})
+			.then(reportStorageCleanupSummary)
+			.catch((error: unknown) => console.warn("Failed to run resume storage cleanup now; it will retry.", error));
 
 		await notifyResumeUpdated({
 			type: "resume.updated",
@@ -870,5 +877,53 @@ export const resumeService = {
 			updatedAt: new Date().toISOString(),
 			mutation: "delete",
 		});
+	},
+
+	/**
+	 * Permanently deletes a batch of this account's trashed resumes in one statement. `ids` narrows it to selected
+	 * documents; `trashedBefore` keeps a resume restored by another request. Cleanup jobs are written in the same
+	 * transaction; a bounded immediate pass runs after commit and the scheduler retries anything still pending.
+	 */
+	deleteTrashedMany: async (input: { userId: string; ids?: readonly string[]; trashedBefore?: Date }) => {
+		const target = and(
+			eq(schema.resume.userId, input.userId),
+			isNotNull(schema.resume.trashedAt),
+			input.ids ? inArray(schema.resume.id, [...input.ids]) : undefined,
+			input.trashedBefore ? lt(schema.resume.trashedAt, input.trashedBefore) : undefined,
+		);
+		const ids = await db.transaction(async (tx) => {
+			await lockUser(tx, input.userId);
+			const rows = await tx.delete(schema.resume).where(target).returning({ id: schema.resume.id });
+			const deleted = rows.map((row) => row.id);
+			await enqueueStorageCleanup(
+				tx,
+				input.userId,
+				deleted.flatMap((id) => resumeStorageKeys(input.userId, id)),
+			);
+			return deleted;
+		});
+		if (ids.length === 0) return 0;
+
+		const cleanupKeys = ids.flatMap((id) => resumeStorageKeys(input.userId, id));
+		await runStorageCleanup({ storageKeys: cleanupKeys.slice(0, 200), limit: 200 })
+			.then(reportStorageCleanupSummary)
+			.catch((error: unknown) => console.warn("Failed to run Trash storage cleanup now; it will retry.", error));
+
+		const chunkSize = 100;
+		for (let start = 0; start < ids.length; start += chunkSize) {
+			const chunk = ids.slice(start, start + chunkSize);
+			await Promise.allSettled(
+				chunk.map((id) =>
+					notifyResumeUpdated({
+						type: "resume.updated",
+						resumeId: id,
+						userId: input.userId,
+						updatedAt: new Date().toISOString(),
+						mutation: "delete",
+					}),
+				),
+			);
+		}
+		return ids.length;
 	},
 };

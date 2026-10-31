@@ -153,6 +153,21 @@ export const documentsRouter = {
 		.output(documentsDto.restore.output)
 		.handler(({ context, input }) => documentsService.restore({ ...input, userId: context.user.id })),
 
+	restoreMany: protectedProcedure
+		.route(
+			route(
+				"POST",
+				"/documents/restore/batch",
+				"restoreDocuments",
+				"Restore selected documents",
+				"Brings the selected loaded documents back from Trash. Only this account's documents still in Trash are restored; active, already deleted, or another account's documents are skipped.",
+			),
+		)
+		.input(documentsDto.restoreMany.input)
+		.use(resumeMutationRateLimit)
+		.output(documentsDto.restoreMany.output)
+		.handler(({ context, input }) => documentsService.restoreMany({ ...input, userId: context.user.id })),
+
 	purge: protectedProcedure
 		.route(
 			route(
@@ -167,6 +182,36 @@ export const documentsRouter = {
 		.use(resumeMutationRateLimit)
 		.output(documentsDto.purge.output)
 		.handler(({ context, input }) => documentsService.purge({ ...input, userId: context.user.id })),
+
+	purgeMany: protectedProcedure
+		.route(
+			route(
+				"POST",
+				"/documents/purge/batch",
+				"purgeDocuments",
+				"Delete selected documents now",
+				"Permanently deletes the selected loaded documents that are still in Trash. Active, already deleted, or another account's documents are skipped.",
+			),
+		)
+		.input(documentsDto.purgeMany.input)
+		.use(resumeMutationRateLimit)
+		.output(documentsDto.purgeMany.output)
+		.handler(({ context, input }) => documentsService.purgeMany({ ...input, userId: context.user.id })),
+
+	emptyTrash: protectedProcedure
+		.route(
+			route(
+				"DELETE",
+				"/documents/trash",
+				"emptyDocumentTrash",
+				"Empty Trash",
+				"Permanently deletes every document in this account's Trash, not only the documents the client has loaded. Active documents are untouched.",
+			),
+		)
+		.input(documentsDto.emptyTrash.input)
+		.use(resumeMutationRateLimit)
+		.output(documentsDto.emptyTrash.output)
+		.handler(({ context }) => documentsService.emptyTrash({ userId: context.user.id })),
 
 	copyForJob: protectedProcedure
 		.route(

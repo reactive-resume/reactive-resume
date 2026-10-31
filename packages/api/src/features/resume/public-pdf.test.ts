@@ -3,7 +3,11 @@ import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { createPublicResumePdf } from "./public-pdf";
 
 // The real lookup query, run against a stand-in `pg` client that records the SQL and returns `rows`.
-const pg = vi.hoisted(() => ({ queries: [] as { text: string; params: unknown[] }[], rows: [] as unknown[][] }));
+const pg = vi.hoisted(() => ({
+	queries: [] as { text: string; params: unknown[] }[],
+	rows: [] as unknown[][],
+	liveRows: [] as unknown[][],
+}));
 vi.mock("@reactive-resume/db/client", async () => {
 	const { drizzle } = await import("drizzle-orm/node-postgres");
 	const client = {
@@ -12,7 +16,14 @@ vi.mock("@reactive-resume/db/client", async () => {
 			return Promise.resolve({ rows: pg.rows });
 		},
 	};
-	return { db: drizzle({ client: client as never }) };
+	const db = drizzle({ client: client as never });
+	db.transaction = (async (callback: (tx: never) => Promise<unknown>) =>
+		callback({
+			select: () => ({
+				from: () => ({ where: () => ({ limit: async () => pg.liveRows }) }),
+			}),
+		} as never)) as typeof db.transaction;
+	return { db };
 });
 
 const mocks = vi.hoisted(() => ({
@@ -23,6 +34,7 @@ const mocks = vi.hoisted(() => ({
 	files: new Map<string, Uint8Array>(),
 }));
 vi.mock("./access", () => ({ hasResumeAccess: mocks.hasResumeAccess }));
+vi.mock("../documents/ownership", () => ({ lockUser: vi.fn() }));
 vi.mock("../../context", () => ({ resolveAuthenticationFromRequestHeaders: mocks.resolveAuthentication }));
 vi.mock("./public-render-rate-limit", () => ({ publicRenderRateLimiter: { consume: mocks.consume } }));
 vi.mock("@reactive-resume/pdf/server", () => ({ createResumePdfFile: mocks.renderPdf }));
@@ -59,6 +71,7 @@ const buildResume = (overrides: Partial<{ isPublic: boolean; passwordHash: strin
 const found = (resume: ReturnType<typeof buildResume>) => {
 	// Columns in select order: id, userId, data, isPublic, hideContactDetails, showDownloadButtons, password.
 	pg.rows = [[resume.id, resume.userId, resume.data, resume.isPublic, false, true, resume.passwordHash]];
+	pg.liveRows = [[resume.id]];
 	return resume;
 };
 
@@ -66,6 +79,7 @@ describe("createPublicResumePdf", () => {
 	beforeEach(() => {
 		pg.queries = [];
 		pg.rows = [];
+		pg.liveRows = [];
 		mocks.files.clear();
 		mocks.consume.mockReset();
 		mocks.resolveAuthentication.mockReset().mockResolvedValue(undefined);
@@ -172,6 +186,16 @@ describe("createPublicResumePdf", () => {
 		expect(mocks.renderPdf).toHaveBeenCalledWith(
 			expect.objectContaining({ data: resume.data, filename: "ada-lovelace.pdf" }),
 		);
+	});
+
+	it("does not publish a cache file when deletion wins before cache publication", async () => {
+		found(buildResume());
+		pg.liveRows = [];
+
+		const result = await createPublicResumePdf(input);
+
+		expect(await result.body?.text()).toBe("%PDF");
+		expect(mocks.files.size).toBe(0);
 	});
 
 	it("renders a resume once per version: repeat visits get the stored file without spending the render budget", async () => {

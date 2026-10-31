@@ -33,7 +33,7 @@ msgstr "“{0}” dialihkan ke Sampah"
 msgid "“{0}” stops being your primary resume."
 msgstr "“{0}” tidak lagi menjadi resume utama anda."
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
 msgstr "“{0}” akan dipadamkan selamanya dan tidak boleh dipulihkan."
@@ -169,11 +169,6 @@ msgstr "{0, plural, one {# hari} other {# hari}}"
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# dokumen dialihkan ke Sampah} other {# dokumen dialihkan ke Sampah}}"
 
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {# document will be deleted for good and can't be restored.} other {# documents will be deleted for good and can't be restored.}}"
-msgstr "{0, plural, one {# dokumen akan dipadamkan selamanya dan tidak boleh dipulihkan.} other {# dokumen akan dipadamkan selamanya dan tidak boleh dipulihkan.}}"
-
 #. placeholder {0}: counts.data.trash
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
@@ -250,11 +245,6 @@ msgstr "{0, plural, one {Padam # permohonan?} other {Padam # permohonan?}}"
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {Padam # permohonan} other {Padam # permohonan}}"
-
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
-msgstr "{0, plural, one {Padam # dokumen selama-lamanya?} other {Padam # dokumen selama-lamanya?}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -500,6 +490,10 @@ msgstr "{day} · {length} min"
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· sejak hari ini} one {· selama # hari} other {· selama # hari}}"
 
+#: src/features/documents/queries.ts
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{done} daripada {count} selesai"
@@ -618,8 +612,16 @@ msgstr "Jenis {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# cadangan suntingan pada halaman ini · tiada perubahan sehingga anda menerima} other {# cadangan suntingan pada halaman ini · tiada perubahan sehingga anda menerima}}"
 
+#: src/features/documents/library.tsx
+msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
@@ -1338,6 +1340,10 @@ msgstr "Semua"
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "Semua ({0})"
+
+#: src/features/documents/library.tsx
+msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "All applications"
@@ -3537,7 +3543,7 @@ msgstr "Ijazah"
 msgid "Delete"
 msgstr "Padam"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "Delete “{0}” forever?"
 msgstr "Padam “{0}” selama-lamanya?"
@@ -3596,6 +3602,10 @@ msgstr "Padamkannya. Kata kunci tersembunyi dianggap sebagai percubaan sengaja u
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
 msgstr "Padam halaman"
+
+#: src/features/documents/library.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Delete private application profile?"
@@ -3657,6 +3667,16 @@ msgstr "Padam…"
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
 msgstr "Dipadamkan"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0}. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -4131,6 +4151,10 @@ msgstr "Surat kosong"
 #: src/features/documents/library.tsx
 msgid "Empty trash"
 msgstr "Kosongkan Sampah"
+
+#: src/features/documents/library.tsx
+msgid "Empty Trash?"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -8349,6 +8373,11 @@ msgstr "Pulihkan versi ini?"
 msgid "Restore version"
 msgstr "Pulihkan versi"
 
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Restored a version"
@@ -9082,10 +9111,6 @@ msgstr "Pilih"
 msgid "Select {0}"
 msgstr "Pilih {0}"
 
-#: src/features/documents/library.tsx
-msgid "Select all"
-msgstr "Pilih semua"
-
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
@@ -9095,6 +9120,10 @@ msgstr "Pilih entri pada halaman {0}"
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "Pilih entri {0}"
+
+#: src/features/documents/library.tsx
+msgid "Select this page"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Select visible"
@@ -10259,6 +10288,10 @@ msgstr "Sambungan tidak dapat dimuatkan atau disimpan. Cuba lagi."
 msgid "The current state will be saved as “Before restore” first."
 msgstr "Keadaan semasa akan disimpan sebagai “Sebelum dipulihkan” terlebih dahulu."
 
+#: src/features/documents/library.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "Editor dibuka pada Semakan, yang menyemak semula resume yang diimport."
@@ -10367,6 +10400,10 @@ msgstr "Skor mengira sejauh mana perisian boleh dipercayai membaca resume anda. 
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "Skor menggambarkan betapa boleh dipercayai teks diekstrak, bukan peluang anda."
+
+#: src/features/documents/library.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
@@ -10900,6 +10937,10 @@ msgstr "Sampah"
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "Sampah kosong"
+
+#: src/features/documents/queries.ts
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Trimming words"

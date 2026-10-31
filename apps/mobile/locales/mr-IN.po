@@ -33,7 +33,7 @@ msgstr "“{0}” कचऱ्यात हलवले"
 msgid "“{0}” stops being your primary resume."
 msgstr "“{0}” आता तुमचा प्राथमिक रेझ्युमे राहणार नाही."
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
 msgstr "“{0}” कायमचे हटवले जाईल आणि परत मिळवता येणार नाही."
@@ -169,11 +169,6 @@ msgstr "{0, plural, one {# दिवस} other {# दिवस}}"
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# कागदपत्र कचऱ्यात हलवले} other {# कागदपत्रे कचऱ्यात हलवली}}"
 
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {# document will be deleted for good and can't be restored.} other {# documents will be deleted for good and can't be restored.}}"
-msgstr "{0, plural, one {# दस्तऐवज कायमचा हटवला जाईल आणि परत मिळवता येणार नाही.} other {# दस्तऐवज कायमचे हटवले जातील आणि परत मिळवता येणार नाहीत.}}"
-
 #. placeholder {0}: counts.data.trash
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
@@ -250,11 +245,6 @@ msgstr "{0, plural, one {# अर्ज हटवायचा?} other {# अर�
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {# अर्ज हटवा} other {# अर्ज हटवा}}"
-
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
-msgstr "{0, plural, one {# दस्तऐवज कायमचा हटवायचा?} other {# दस्तऐवज कायमचे हटवायचे?}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -500,6 +490,10 @@ msgstr "{day} · {length} मि."
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· आजपासून} one {· # दिवसापासून} other {· # दिवसांपासून}}"
 
+#: src/features/documents/queries.ts
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{count} पैकी {done} पूर्ण"
@@ -618,8 +612,16 @@ msgstr "{pairing} प्रकार"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {या पानावर # प्रस्तावित बदल · स्वीकारेपर्यंत काहीही बदलत नाही} other {या पानावर # प्रस्तावित बदल · स्वीकारेपर्यंत काहीही बदलत नाही}}"
 
+#: src/features/documents/library.tsx
+msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
@@ -1338,6 +1340,10 @@ msgstr "सर्व"
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "सर्व ({0})"
+
+#: src/features/documents/library.tsx
+msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "All applications"
@@ -3537,7 +3543,7 @@ msgstr "पदवी"
 msgid "Delete"
 msgstr "हटवा"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "Delete “{0}” forever?"
 msgstr "“{0}” कायमचे हटवायचे?"
@@ -3596,6 +3602,10 @@ msgstr "ते हटवा. लपवलेले कीवर्ड्स श�
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
 msgstr "पान हटवा"
+
+#: src/features/documents/library.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Delete private application profile?"
@@ -3657,6 +3667,16 @@ msgstr "हटवा..."
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
 msgstr "हटवले"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0}. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -4131,6 +4151,10 @@ msgstr "रिकामे कव्हर लेटर"
 #: src/features/documents/library.tsx
 msgid "Empty trash"
 msgstr "कचरा रिकामा करा"
+
+#: src/features/documents/library.tsx
+msgid "Empty Trash?"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -8349,6 +8373,11 @@ msgstr "ही आवृत्ती पुनर्संचयित करा
 msgid "Restore version"
 msgstr "आवृत्ती पुनर्संचयित करा"
 
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Restored a version"
@@ -9082,10 +9111,6 @@ msgstr "निवडा"
 msgid "Select {0}"
 msgstr "{0} निवडा"
 
-#: src/features/documents/library.tsx
-msgid "Select all"
-msgstr "सर्व निवडा"
-
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
@@ -9095,6 +9120,10 @@ msgstr "पान {0} वरील नोंद निवडा"
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "नोंद {0} निवडा"
+
+#: src/features/documents/library.tsx
+msgid "Select this page"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Select visible"
@@ -10259,6 +10288,10 @@ msgstr "कनेक्शन लोड किंवा जतन करता �
 msgid "The current state will be saved as “Before restore” first."
 msgstr "सध्याची स्थिती आधी “पुनर्संचयित करण्यापूर्वी” म्हणून जतन होईल."
 
+#: src/features/documents/library.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "संपादक तपासणीमध्ये उघडतो; तिथे आयात केलेला रेझ्युमे पुन्हा तपासला जातो."
@@ -10367,6 +10400,10 @@ msgstr "सॉफ्टवेअर तुमचा रेझ्युमे क
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "स्कोअर मजकूर किती विश्वासार्हपणे काढला जातो हे दर्शवते, तुमच्या शक्यता नाही."
+
+#: src/features/documents/library.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
@@ -10900,6 +10937,10 @@ msgstr "कचरा"
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "कचरा रिकामा आहे"
+
+#: src/features/documents/queries.ts
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Trimming words"

@@ -163,6 +163,11 @@ msgstr "{0, plural, one {# dag igjen} other {# dager igjen}}"
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# dag} other {# dager}}"
 
+#. placeholder {0}: result.deleted
+#: src/features/documents/document-actions.tsx
+msgid "{0, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #. placeholder {0}: done.length
 #: src/features/documents/document-actions.tsx
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
@@ -253,6 +258,11 @@ msgstr "{0, plural, one {Slette # søknad?} other {Slette # søknader?}}"
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {Slett # søknad} other {Slett # søknader}}"
+
+#. placeholder {0}: selection.length
+#: src/features/documents/trash-page.tsx
+msgid "{0, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -533,6 +543,7 @@ msgid "{count} free resume templates. Find your fit."
 msgstr "{count} gratis CV-maler. Velg riktig mal for deg."
 
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 msgid "{count} selected"
 msgstr "{count} valgt"
 
@@ -555,6 +566,10 @@ msgstr "{days, plural, one {# kontordag, under grensen din} other {# kontordager
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day, your limit} other {# office days, your limit}}"
 msgstr "{days, plural, one {# kontordag, akkurat på grensen din} other {# kontordager, akkurat på grensen din}}"
+
+#: src/features/documents/document-actions.tsx
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
@@ -729,6 +744,10 @@ msgstr "{proposed, plural, one {# foreslått} other {# foreslått}}"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
@@ -1705,6 +1724,10 @@ msgstr "Høyrejuster"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "All"
 msgstr "Alle"
+
+#: src/features/documents/trash-page.tsx
+msgid "All {trashCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "All applications"
@@ -2964,6 +2987,7 @@ msgstr "Tøm seksjon"
 #: src/components/ui/combobox.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Clear selection"
 msgstr "Fjern valg"
 
@@ -3602,6 +3626,10 @@ msgstr "Kunne ikke slette intervjuet. Prøv igjen."
 msgid "Couldn't delete the provider. Try again."
 msgstr "Kunne ikke slette leverandøren. Prøv igjen."
 
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't delete the selected documents. Try again."
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Couldn't delete this conversation. Try again."
@@ -3623,6 +3651,10 @@ msgstr "Kunne ikke koble fra {providerName}-kontoen din. Prøv igjen."
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't duplicate the document. Try again."
 msgstr "Kunne ikke duplisere dokumentet. Prøv igjen."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't empty Trash. Try again."
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Couldn't export your data. Try again."
@@ -3819,6 +3851,10 @@ msgstr "Kunne ikke tilbakestille passordet ditt. Prøv igjen."
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't restore the document. Try again."
 msgstr "Kunne ikke gjenopprette dokumentet. Prøv igjen."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't restore the selected documents. Try again."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
@@ -4390,6 +4426,11 @@ msgstr "Grad"
 msgid "Delete"
 msgstr "Slett"
 
+#. placeholder {0}: selection[0]?.name ?? ""
+#: src/features/documents/trash-page.tsx
+msgid "Delete “{0}” forever?"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "Delete “{0}” now?"
@@ -4439,6 +4480,10 @@ msgstr "Slett nå..."
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Delete page"
 msgstr "Slett side"
+
+#: src/features/documents/trash-page.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/account/application-profile.tsx
 msgid "Delete private application profile?"
@@ -4517,6 +4562,11 @@ msgstr "Slettet \"{0}\""
 #: src/features/resume/share/history-tab.tsx
 msgid "Deleted “{title}”"
 msgstr "Slettet \"{title}\""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/document-actions.tsx
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -5136,6 +5186,14 @@ msgstr "Send e-post til rekruttereren"
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "Bygg inn alle skrifter ved eksport, slik at tegnene blir riktig gjengitt."
+
+#: src/features/documents/trash-page.tsx
+msgid "Empty Trash?"
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "Empty trash…"
+msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -6144,6 +6202,7 @@ msgid "History"
 msgstr "Historikk"
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Hold to delete"
 msgstr "Hold inne for å slette"
 
@@ -6719,6 +6778,7 @@ msgid "Keep editing"
 msgstr "Fortsett å redigere"
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Keep in Trash"
 msgstr "Oppbevar i papirkurven"
 
@@ -8239,6 +8299,14 @@ msgstr "Ingen CV"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "Ingen CV ennå."
+
+#: src/features/documents/document-actions.tsx
+msgid "No selected documents were deleted. Refresh to see what remains."
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "No selected documents were restored. Refresh to see what remains."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -10361,6 +10429,7 @@ msgid "Responsible for the design system and helping other teams with their desi
 msgstr "Ansvarlig for designsystemet og hjelpe andre team med deres design."
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Restore"
 msgstr "Restaurere"
 
@@ -10372,6 +10441,11 @@ msgstr "Gjenopprett denne versjonen"
 #: src/features/documents/document-actions.tsx
 msgid "Restored “{0}”"
 msgstr "Gjenopprettet \"{0}\""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/document-actions.tsx
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
 
 #: src/features/resume/share/format.ts
 msgid "Restored a version"
@@ -11213,6 +11287,14 @@ msgstr "Velg alle"
 msgid "Select an AI provider"
 msgstr "Velg en AI-leverandør"
 
+#: src/features/documents/trash-page.tsx
+msgid "Select this page"
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "Select this page in Trash"
+msgstr ""
+
 #: src/components/ui/combobox.tsx
 msgid "Select..."
 msgstr "Velg..."
@@ -11220,6 +11302,10 @@ msgstr "Velg..."
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
 msgstr "Valgte dokumenter"
+
+#: src/features/documents/trash-page.tsx
+msgid "Selected documents in Trash"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Self-hosting"
@@ -12601,6 +12687,10 @@ msgstr "Coachen lagrer fakta du oppgir, og sier fra. Du kan angre."
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "Kopien er knyttet til jobbsøknaden, så Check og assistenten bruker stillingsannonsen."
 
+#: src/features/documents/trash-page.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "The end is before the start."
 msgstr "Slutten er før starten."
@@ -12770,6 +12860,14 @@ msgstr "Scoren er begrenset på grunn av et blokkerende problem: {0}"
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "Poengsummen gjenspeiler hvor pålitelig tekst er trukket ut, ikke sjansene dine."
+
+#: src/features/documents/trash-page.tsx
+msgid "The selected document will be deleted for good and can't be restored."
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
 msgid "The service didn't respond in time. Try again."
@@ -13258,6 +13356,10 @@ msgstr "Papirkurv"
 #: src/features/documents/trash-page.tsx
 msgid "Trash is empty"
 msgstr "Papirkurven er tom"
+
+#: src/features/documents/document-actions.tsx
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/career/shared.tsx
 msgid "Trimming words"

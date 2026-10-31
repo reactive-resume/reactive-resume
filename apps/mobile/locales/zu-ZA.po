@@ -33,7 +33,7 @@ msgstr ""
 msgid "“{0}” stops being your primary resume."
 msgstr ""
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
 msgstr ""
@@ -169,11 +169,6 @@ msgstr ""
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr ""
 
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {# document will be deleted for good and can't be restored.} other {# documents will be deleted for good and can't be restored.}}"
-msgstr ""
-
 #. placeholder {0}: counts.data.trash
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
@@ -249,11 +244,6 @@ msgstr ""
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
-msgstr ""
-
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
 msgstr ""
 
 #. placeholder {0}: row.intervalDays
@@ -500,6 +490,10 @@ msgstr ""
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr ""
 
+#: src/features/documents/queries.ts
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr ""
@@ -618,8 +612,16 @@ msgstr ""
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr ""
 
+#: src/features/documents/library.tsx
+msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
@@ -1337,6 +1339,10 @@ msgstr ""
 #. placeholder {0}: all.length + recoverable.length
 #: src/features/documents/library.tsx
 msgid "All ({0})"
+msgstr ""
+
+#: src/features/documents/library.tsx
+msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
 msgstr ""
 
 #: src/features/career/facts.tsx
@@ -3537,7 +3543,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "Delete “{0}” forever?"
 msgstr ""
@@ -3595,6 +3601,10 @@ msgstr ""
 
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
+msgstr ""
+
+#: src/features/documents/library.tsx
+msgid "Delete permanently…"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
@@ -3656,6 +3666,16 @@ msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0}. Refresh to see what remains."
 msgstr ""
 
 #: src/features/career/offers.tsx
@@ -4130,6 +4150,10 @@ msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Empty trash"
+msgstr ""
+
+#: src/features/documents/library.tsx
+msgid "Empty Trash?"
 msgstr ""
 
 #: src/features/write/date-field.tsx
@@ -8349,6 +8373,11 @@ msgstr ""
 msgid "Restore version"
 msgstr ""
 
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Restored a version"
@@ -9082,10 +9111,6 @@ msgstr ""
 msgid "Select {0}"
 msgstr ""
 
-#: src/features/documents/library.tsx
-msgid "Select all"
-msgstr ""
-
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
@@ -9094,6 +9119,10 @@ msgstr ""
 #. placeholder {0}: entry + 1
 #: src/preview/page.tsx
 msgid "Select entry {0}"
+msgstr ""
+
+#: src/features/documents/library.tsx
+msgid "Select this page"
 msgstr ""
 
 #: src/features/applications/list-screen.tsx
@@ -10259,6 +10288,10 @@ msgstr ""
 msgid "The current state will be saved as “Before restore” first."
 msgstr ""
 
+#: src/features/documents/library.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr ""
@@ -10366,6 +10399,10 @@ msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
+msgstr ""
+
+#: src/features/documents/library.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
 msgstr ""
 
 #: src/features/documents/import-file.ts
@@ -10899,6 +10936,10 @@ msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "Trash was already empty"
 msgstr ""
 
 #: src/features/workspace/parts.tsx

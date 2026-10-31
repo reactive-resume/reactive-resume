@@ -170,6 +170,11 @@ describe("credential authorization", () => {
 		{ permissions: { api: ["write"] }, method: "POST" as const, operationId: "trashDocument", allowed: false },
 		{ permissions: { api: ["write"] }, method: "PUT" as const, operationId: "putDocumentTrash", allowed: false },
 		{ permissions: { api: ["delete"] }, method: "POST" as const, operationId: "trashDocument", allowed: true },
+		{ permissions: { api: ["write"] }, method: "POST" as const, operationId: "restoreDocuments", allowed: true },
+		{ permissions: { api: ["write"] }, method: "POST" as const, operationId: "purgeDocuments", allowed: false },
+		{ permissions: { api: ["delete"] }, method: "POST" as const, operationId: "purgeDocuments", allowed: true },
+		{ permissions: { api: ["write"] }, method: "DELETE" as const, operationId: "emptyDocumentTrash", allowed: false },
+		{ permissions: { api: ["delete"] }, method: "DELETE" as const, operationId: "emptyDocumentTrash", allowed: true },
 	])("enforces API-key permissions at procedure execution: %j", async ({ permissions, method, allowed, ...route }) => {
 		reset();
 		authMock.api.verifyApiKey.mockResolvedValue({ valid: true, key: { referenceId: "owner", permissions } });

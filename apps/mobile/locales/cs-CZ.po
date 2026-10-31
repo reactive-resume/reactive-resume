@@ -33,7 +33,7 @@ msgstr "„{0}“ bylo přesunuto do koše"
 msgid "“{0}” stops being your primary resume."
 msgstr "„{0}“ přestane být vaším primárním životopisem."
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
 msgstr "„{0}“ bude navždy smazáno a nebude možné jej obnovit."
@@ -169,11 +169,6 @@ msgstr "{0, plural, one {# den} other {# dní}}"
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# dokument přesunut do koše} few {# dokumenty přesunuty do koše} many {# dokumentu přesunuto do koše} other {# dokumentů přesunuto do koše}}"
 
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {# document will be deleted for good and can't be restored.} other {# documents will be deleted for good and can't be restored.}}"
-msgstr "{0, plural, one {# dokument bude trvale smazán a nepůjde obnovit.} few {# dokumenty budou trvale smazány a nepůjdou obnovit.} other {# dokumentů bude trvale smazáno a nepůjde obnovit.}}"
-
 #. placeholder {0}: counts.data.trash
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
@@ -250,11 +245,6 @@ msgstr "{0, plural, one {Smazat # žádost?} few {Smazat # žádosti?} other {Sm
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {Smazat # žádost} few {Smazat # žádosti} other {Smazat # žádostí}}"
-
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
-msgstr "{0, plural, one {Smazat # dokument navždy?} few {Smazat # dokumenty navždy?} other {Smazat # dokumentů navždy?}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -500,6 +490,10 @@ msgstr "{day} · {length} min"
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· od dneška} one {· po dobu # dne} other {· po dobu # dní}}"
 
+#: src/features/documents/queries.ts
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "Hotovo {done} z {count}"
@@ -618,8 +612,16 @@ msgstr "Typ {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# navržená úprava na této stránce · nic se nezmění bez vašeho přijetí} few {# navržené úpravy na této stránce · nic se nezmění bez vašeho přijetí} other {# navržených úprav na této stránce · nic se nezmění bez vašeho přijetí}}"
 
+#: src/features/documents/library.tsx
+msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
@@ -1338,6 +1340,10 @@ msgstr "Vše"
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "Vše ({0})"
+
+#: src/features/documents/library.tsx
+msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "All applications"
@@ -3537,7 +3543,7 @@ msgstr "Titul"
 msgid "Delete"
 msgstr "Odstranit"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "Delete “{0}” forever?"
 msgstr "Smazat „{0}“ navždy?"
@@ -3596,6 +3602,10 @@ msgstr "Odstraňte je. Skrytá klíčová slova jsou brána jako úmyslný pokus
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
 msgstr "Smazat stránku"
+
+#: src/features/documents/library.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Delete private application profile?"
@@ -3657,6 +3667,16 @@ msgstr "Vymazat…"
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
 msgstr "Smazáno"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0}. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -4131,6 +4151,10 @@ msgstr "Prázdný motivační dopis"
 #: src/features/documents/library.tsx
 msgid "Empty trash"
 msgstr "Vysypat koš"
+
+#: src/features/documents/library.tsx
+msgid "Empty Trash?"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -8349,6 +8373,11 @@ msgstr "Obnovit tuto verzi?"
 msgid "Restore version"
 msgstr "Obnovit verzi"
 
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Restored a version"
@@ -9082,10 +9111,6 @@ msgstr "Vybrat"
 msgid "Select {0}"
 msgstr "Vybrat {0}"
 
-#: src/features/documents/library.tsx
-msgid "Select all"
-msgstr "Vybrat vše"
-
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
@@ -9095,6 +9120,10 @@ msgstr "Vyberte záznam na stránce {0}"
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "Vyberte položku {0}"
+
+#: src/features/documents/library.tsx
+msgid "Select this page"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Select visible"
@@ -10259,6 +10288,10 @@ msgstr "Připojení se nepodařilo načíst nebo uložit. Zkuste to znovu."
 msgid "The current state will be saved as “Before restore” first."
 msgstr "Aktuální stav bude nejprve uložen jako „Před obnovením“."
 
+#: src/features/documents/library.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "Na Kontrola se otevře editor, který znovu zkontroluje importovaný životopis."
@@ -10367,6 +10400,10 @@ msgstr "Skóre počítá, jak spolehlivě software čte váš životopis. Nepře
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "Skóre odráží, jak spolehlivě je text extrahován, nikoli vaše šance."
+
+#: src/features/documents/library.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
@@ -10900,6 +10937,10 @@ msgstr "Koš na odpad"
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "Koš je prázdný"
+
+#: src/features/documents/queries.ts
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Trimming words"

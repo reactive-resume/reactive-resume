@@ -33,7 +33,7 @@ msgstr "«{0}» переміщено в кошик"
 msgid "“{0}” stops being your primary resume."
 msgstr "«{0}» більше не буде вашим основним резюме."
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
 msgstr "«{0}» буде видалено назавжди та не підлягає відновленню."
@@ -169,11 +169,6 @@ msgstr "{0, plural, one {# день} other {# днів}}"
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# документ переміщено в кошик} few {# документи переміщено в кошик} many {# документів переміщено в кошик} other {# документа переміщено в кошик}}"
 
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {# document will be deleted for good and can't be restored.} other {# documents will be deleted for good and can't be restored.}}"
-msgstr "{0, plural, one {# документ буде видалено назавжди без можливості відновлення.} few {# документи буде видалено назавжди без можливості відновлення.} many {# документів буде видалено назавжди без можливості відновлення.} other {# документа буде видалено назавжди без можливості відновлення.}}"
-
 #. placeholder {0}: counts.data.trash
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
@@ -250,11 +245,6 @@ msgstr "{0, plural, one {Видалити # заявку?} few {Видалити
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {Видалити # заявку} few {Видалити # заявки} many {Видалити # заявок} other {Видалити # заявки}}"
-
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
-msgstr "{0, plural, one {Видалити # документ назавжди?} few {Видалити # документи назавжди?} many {Видалити # документів назавжди?} other {Видалити # документа назавжди?}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -500,6 +490,10 @@ msgstr "{day} · {length} м"
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· від сьогодні} one {· уже # день} few {· уже # дні} many {· уже # днів} other {· уже # дня}}"
 
+#: src/features/documents/queries.ts
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "Виконано {done} з {count}"
@@ -618,8 +612,16 @@ msgstr "Тип {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# запропонована зміна на цій сторінці · нічого не зміниться, доки ви не приймете} few {# запропоновані зміни на цій сторінці · нічого не зміниться, доки ви не приймете} many {# запропонованих змін на цій сторінці · нічого не зміниться, доки ви не приймете} other {# запропонованої зміни на цій сторінці · нічого не зміниться, доки ви не приймете}}"
 
+#: src/features/documents/library.tsx
+msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
@@ -1338,6 +1340,10 @@ msgstr "все"
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "Усі ({0})"
+
+#: src/features/documents/library.tsx
+msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "All applications"
@@ -3537,7 +3543,7 @@ msgstr "Ступінь"
 msgid "Delete"
 msgstr "Видалити"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "Delete “{0}” forever?"
 msgstr "Видалити «{0}» назавжди?"
@@ -3596,6 +3602,10 @@ msgstr "Видаліть це. Приховані ключові слова ро
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
 msgstr "Видалити сторінку"
+
+#: src/features/documents/library.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Delete private application profile?"
@@ -3657,6 +3667,16 @@ msgstr "Видалити…"
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
 msgstr "Видалено"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0}. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -4131,6 +4151,10 @@ msgstr "Порожній супровідний лист"
 #: src/features/documents/library.tsx
 msgid "Empty trash"
 msgstr "Очистити Кошик"
+
+#: src/features/documents/library.tsx
+msgid "Empty Trash?"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -8349,6 +8373,11 @@ msgstr "Відновити цю версію?"
 msgid "Restore version"
 msgstr "Відновити версію"
 
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Restored a version"
@@ -9082,10 +9111,6 @@ msgstr "Виберіть"
 msgid "Select {0}"
 msgstr "Вибрати «{0}»"
 
-#: src/features/documents/library.tsx
-msgid "Select all"
-msgstr "Вибрати все"
-
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
@@ -9095,6 +9120,10 @@ msgstr "Виберіть запис на сторінці {0}"
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "Виберіть запис {0}"
+
+#: src/features/documents/library.tsx
+msgid "Select this page"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Select visible"
@@ -10259,6 +10288,10 @@ msgstr "Не вдалося завантажити чи зберегти з’є
 msgid "The current state will be saved as “Before restore” first."
 msgstr "Спочатку поточний стан буде збережено як «Перед відновленням»."
 
+#: src/features/documents/library.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "Редактор відкривається на вкладці Перевірка, де імпортоване резюме перевіряється знову."
@@ -10367,6 +10400,10 @@ msgstr "Оцінка підраховує, наскільки надійно п�
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "Оцінка відображає, наскільки надійно видобуто текст, а не ваші шанси."
+
+#: src/features/documents/library.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
@@ -10900,6 +10937,10 @@ msgstr "Кошик"
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "Кошик порожній"
+
+#: src/features/documents/queries.ts
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Trimming words"

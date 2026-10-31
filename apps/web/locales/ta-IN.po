@@ -163,6 +163,11 @@ msgstr "{0, plural, one {# நாள் மீதமுள்ளது} other {#
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# நாள்} other {# நாட்கள்}}"
 
+#. placeholder {0}: result.deleted
+#: src/features/documents/document-actions.tsx
+msgid "{0, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #. placeholder {0}: done.length
 #: src/features/documents/document-actions.tsx
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
@@ -253,6 +258,11 @@ msgstr "{0, plural, one {# விண்ணப்பத்தை நீக்க�
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {# விண்ணப்பத்தை நீக்கு} other {# விண்ணப்பங்களை நீக்கு}}"
+
+#. placeholder {0}: selection.length
+#: src/features/documents/trash-page.tsx
+msgid "{0, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -533,6 +543,7 @@ msgid "{count} free resume templates. Find your fit."
 msgstr "{count} இலவச CV டெம்ப்ளேட்டுகள். உங்களுக்கான சரியான டெம்ப்ளேட்டைத் தேர்ந்தெடுக்கவும்."
 
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 msgid "{count} selected"
 msgstr "{count} தேர்ந்தெடுக்கப்பட்டன"
 
@@ -555,6 +566,10 @@ msgstr "{days, plural, one {# அலுவலக நாள், உங்கள�
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day, your limit} other {# office days, your limit}}"
 msgstr "{days, plural, one {# அலுவலக நாள், உங்கள் வரம்பு} other {# அலுவலக நாட்கள், உங்கள் வரம்பு}}"
+
+#: src/features/documents/document-actions.tsx
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
@@ -729,6 +744,10 @@ msgstr "{proposed, plural, one {# முன்மொழியப்பட்ட�
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
@@ -1705,6 +1724,10 @@ msgstr "வலதுபுறம் சீரமை"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "All"
 msgstr "அனைத்து"
+
+#: src/features/documents/trash-page.tsx
+msgid "All {trashCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "All applications"
@@ -2964,6 +2987,7 @@ msgstr "பகுதியை அழி"
 #: src/components/ui/combobox.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Clear selection"
 msgstr "தெளிவான தேர்வு"
 
@@ -3602,6 +3626,10 @@ msgstr "நேர்காணலை நீக்க முடியவில்�
 msgid "Couldn't delete the provider. Try again."
 msgstr "வழங்குநரை நீக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't delete the selected documents. Try again."
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Couldn't delete this conversation. Try again."
@@ -3623,6 +3651,10 @@ msgstr "உங்கள் {providerName} கணக்கின் இணைப�
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't duplicate the document. Try again."
 msgstr "ஆவணத்தை நகலாக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't empty Trash. Try again."
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Couldn't export your data. Try again."
@@ -3819,6 +3851,10 @@ msgstr "உங்கள் கடவுச்சொல்லை மீட்ட�
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't restore the document. Try again."
 msgstr "ஆவணத்தை மீட்டெடுக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't restore the selected documents. Try again."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
@@ -4390,6 +4426,11 @@ msgstr "பட்டம்"
 msgid "Delete"
 msgstr "நீக்கு"
 
+#. placeholder {0}: selection[0]?.name ?? ""
+#: src/features/documents/trash-page.tsx
+msgid "Delete “{0}” forever?"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "Delete “{0}” now?"
@@ -4439,6 +4480,10 @@ msgstr "இப்போது நீக்கு…"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Delete page"
 msgstr "பக்கத்தை நீக்கு"
+
+#: src/features/documents/trash-page.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/account/application-profile.tsx
 msgid "Delete private application profile?"
@@ -4517,6 +4562,11 @@ msgstr "\"{0}\" நீக்கப்பட்டது"
 #: src/features/resume/share/history-tab.tsx
 msgid "Deleted “{title}”"
 msgstr "\"{title}\" நீக்கப்பட்டது"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/document-actions.tsx
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -5136,6 +5186,14 @@ msgstr "ஆட்சேர்ப்பு செய்பவருக்கு �
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "ஏற்றுமதி செய்யும் போது எல்லா எழுத்துருக்களையும் உட்பொதிக்கவும், அதனால் எழுத்துக்கள் நீங்கள் நினைத்த வகையில் காட்டப்படும்."
+
+#: src/features/documents/trash-page.tsx
+msgid "Empty Trash?"
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "Empty trash…"
+msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -6144,6 +6202,7 @@ msgid "History"
 msgstr "வரலாறு"
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Hold to delete"
 msgstr "நீக்க அழுத்திப் பிடிக்கவும்"
 
@@ -6719,6 +6778,7 @@ msgid "Keep editing"
 msgstr "தொடர்ந்து திருத்து"
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Keep in Trash"
 msgstr "குப்பையில் வைக்கவும்"
 
@@ -8239,6 +8299,14 @@ msgstr "ரெஸ்யூம் இல்லை"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "இன்னும் ரெஸ்யூம்கள் இல்லை."
+
+#: src/features/documents/document-actions.tsx
+msgid "No selected documents were deleted. Refresh to see what remains."
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "No selected documents were restored. Refresh to see what remains."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -10361,6 +10429,7 @@ msgid "Responsible for the design system and helping other teams with their desi
 msgstr "வடிவமைப்பு அமைப்புக்கு பொறுப்பு மற்றும் பிற குழுக்களின் வடிவமைப்புகளுக்கு உதவுதல்."
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Restore"
 msgstr "மீட்டெடு"
 
@@ -10372,6 +10441,11 @@ msgstr "இந்தப் பதிப்பை மீட்டெடுக்�
 #: src/features/documents/document-actions.tsx
 msgid "Restored “{0}”"
 msgstr "\"{0}\" மீட்டமைக்கப்பட்டது"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/document-actions.tsx
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
 
 #: src/features/resume/share/format.ts
 msgid "Restored a version"
@@ -11213,6 +11287,14 @@ msgstr "அனைத்தையும் தேர்ந்தெடு"
 msgid "Select an AI provider"
 msgstr "ஒரு AI வழங்குநரைத் தேர்ந்தெடுக்கவும்"
 
+#: src/features/documents/trash-page.tsx
+msgid "Select this page"
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "Select this page in Trash"
+msgstr ""
+
 #: src/components/ui/combobox.tsx
 msgid "Select..."
 msgstr "தேர்ந்தெடு..."
@@ -11220,6 +11302,10 @@ msgstr "தேர்ந்தெடு..."
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
 msgstr "தேர்ந்தெடுத்த ஆவணங்கள்"
+
+#: src/features/documents/trash-page.tsx
+msgid "Selected documents in Trash"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Self-hosting"
@@ -12601,6 +12687,10 @@ msgstr "நீங்கள் கூறும் உண்மைகளை ஆல
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "நகல் வேலை விண்ணப்பத்துடன் இணைக்கப்பட்டுள்ளது, எனவே சரிபார்த்து, உதவியாளர் அதன் வேலை இடுகையைப் பயன்படுத்துகிறார்."
 
+#: src/features/documents/trash-page.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "The end is before the start."
 msgstr "ஆரம்பத்திற்கு முன் முடிவு."
@@ -12770,6 +12860,14 @@ msgstr "தடையான ஒரு பிரச்சனையால் மத
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "மதிப்பெண் எவ்வளவு நம்பகத்தன்மையுடன் உரை பிரித்தெடுக்கப்படுகிறது என்பதை பிரதிபலிக்கிறது, உங்கள் வாய்ப்புகள் அல்ல."
+
+#: src/features/documents/trash-page.tsx
+msgid "The selected document will be deleted for good and can't be restored."
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
 msgid "The service didn't respond in time. Try again."
@@ -13258,6 +13356,10 @@ msgstr "குப்பை"
 #: src/features/documents/trash-page.tsx
 msgid "Trash is empty"
 msgstr "குப்பை காலியாக உள்ளது"
+
+#: src/features/documents/document-actions.tsx
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/career/shared.tsx
 msgid "Trimming words"

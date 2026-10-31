@@ -10,8 +10,10 @@ import {
 } from "@aws-sdk/client-s3";
 import { ORPCError } from "@orpc/server";
 import sharp from "sharp";
+import { db } from "@reactive-resume/db/client";
 import { env } from "@reactive-resume/env/server";
 import { getLocalDataDirectory } from "@reactive-resume/utils/monorepo.node";
+import { lockUser } from "../documents/ownership";
 import { BlobStorageService } from "./blob";
 
 interface StorageWriteInput {
@@ -411,20 +413,35 @@ interface UploadFileResult {
 	key: string;
 }
 
-export async function uploadFile(input: UploadFileInput): Promise<UploadFileResult> {
-	const key = buildFileKey(input.userId, input.contentType);
-	await getStorageService().write({ key, data: input.data, contentType: input.contentType });
-	return { key, url: buildPublicUrl(key) };
+export function uploadFile(input: UploadFileInput): Promise<UploadFileResult> {
+	return db.transaction(async (tx) => {
+		await lockUser(tx, input.userId);
+		const key = buildFileKey(input.userId, input.contentType);
+		await getStorageService().write({ key, data: input.data, contentType: input.contentType });
+		return { key, url: buildPublicUrl(key) };
+	});
 }
 
 /** Copy before linking; caller runs returned cleanup only after ownership commits. */
-export async function migrateUserStorage(fromUserId: string, toUserId: string): Promise<(() => Promise<void>) | void> {
+export async function migrateUserStorage(
+	fromUserId: string,
+	toUserId: string,
+	excludedStoragePrefixes: readonly string[] = [],
+): Promise<(() => Promise<void>) | void> {
 	if (fromUserId === toUserId) return;
 
 	const storageService = getStorageService();
 	const fromPrefix = `uploads/${fromUserId}/`;
 	const toPrefix = `uploads/${toUserId}/`;
-	const keys = (await storageService.list(fromPrefix)).filter((key) => key.startsWith(fromPrefix));
+	const excluded = new Set(excludedStoragePrefixes);
+	const keys = (await storageService.list(fromPrefix)).filter((key) => {
+		if (!key.startsWith(fromPrefix)) return false;
+		// Check ancestor boundaries in linear path depth, even when a large Trash purge left many erasure jobs.
+		for (let end = key.length; end >= fromPrefix.length - 1; end = key.lastIndexOf("/", end - 1)) {
+			if (excluded.has(key.slice(0, end))) return false;
+		}
+		return true;
+	});
 
 	for (const key of keys) {
 		const file = await storageService.read(key);

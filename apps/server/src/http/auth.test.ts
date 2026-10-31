@@ -5,7 +5,9 @@ const mocks = vi.hoisted(() => ({
 	consent: vi.fn(),
 	continueOAuth: vi.fn(),
 	handler: vi.fn(),
-	accountLinkHook: undefined as ((params: { fromUserId: string; toUserId: string }) => Promise<unknown>) | undefined,
+	accountLinkHook: undefined as
+		| ((params: { fromUserId: string; toUserId: string; excludedStoragePrefixes: string[] }) => Promise<unknown>)
+		| undefined,
 	migrateUserStorage: vi.fn(),
 	env: {
 		SERVER_PORT: 3001,
@@ -26,7 +28,6 @@ vi.mock("@reactive-resume/auth/config", () => ({
 	setAccountLinkHook: (hook: typeof mocks.accountLinkHook) => {
 		mocks.accountLinkHook = hook;
 	},
-	setUserDeleteHook: () => {},
 }));
 
 vi.mock("@reactive-resume/api/features/storage", () => ({
@@ -258,8 +259,14 @@ describe("account link storage migration", () => {
 		await import("./auth");
 		const cleanup = vi.fn();
 		mocks.migrateUserStorage.mockResolvedValueOnce(cleanup);
-		expect(await mocks.accountLinkHook?.({ fromUserId: "guest-old", toUserId: "user-new" })).toBe(cleanup);
+		expect(
+			await mocks.accountLinkHook?.({
+				fromUserId: "guest-old",
+				toUserId: "user-new",
+				excludedStoragePrefixes: ["uploads/guest-old/pdfs/erased"],
+			}),
+		).toBe(cleanup);
 		expect(cleanup).not.toHaveBeenCalled();
-		expect(mocks.migrateUserStorage).toHaveBeenCalledWith("guest-old", "user-new");
+		expect(mocks.migrateUserStorage).toHaveBeenCalledWith("guest-old", "user-new", ["uploads/guest-old/pdfs/erased"]);
 	});
 });

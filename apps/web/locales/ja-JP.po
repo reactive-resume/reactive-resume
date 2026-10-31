@@ -163,6 +163,11 @@ msgstr "{0, plural, one {残り # 日} other {残り # 日}}"
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# 日} other {# 日}}"
 
+#. placeholder {0}: result.deleted
+#: src/features/documents/document-actions.tsx
+msgid "{0, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #. placeholder {0}: done.length
 #: src/features/documents/document-actions.tsx
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
@@ -253,6 +258,11 @@ msgstr "{0, plural, one {# 件の応募を削除しますか？} other {# 件の
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {# 件の応募を削除} other {# 件の応募を削除}}"
+
+#. placeholder {0}: selection.length
+#: src/features/documents/trash-page.tsx
+msgid "{0, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -533,6 +543,7 @@ msgid "{count} free resume templates. Find your fit."
 msgstr "{count} 個の無料の履歴書テンプレート。適切なテンプレートを選択してください。"
 
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 msgid "{count} selected"
 msgstr "{count} 件選択中"
 
@@ -555,6 +566,10 @@ msgstr "{days, plural, other {出社#日、上限未満}}"
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day, your limit} other {# office days, your limit}}"
 msgstr "{days, plural, other {出社#日、上限どおり}}"
+
+#: src/features/documents/document-actions.tsx
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
@@ -729,6 +744,10 @@ msgstr "{proposed, plural, one {# が提案されました} other {# が提案�
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
@@ -1705,6 +1724,10 @@ msgstr "右揃え"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "All"
 msgstr "全て"
+
+#: src/features/documents/trash-page.tsx
+msgid "All {trashCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "All applications"
@@ -2964,6 +2987,7 @@ msgstr "クリアセクション"
 #: src/components/ui/combobox.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Clear selection"
 msgstr "選択をクリア"
 
@@ -3602,6 +3626,10 @@ msgstr "面接を削除できませんでした。もう一度お試しくださ
 msgid "Couldn't delete the provider. Try again."
 msgstr "プロバイダーを削除できませんでした。もう一度お試しください。"
 
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't delete the selected documents. Try again."
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Couldn't delete this conversation. Try again."
@@ -3623,6 +3651,10 @@ msgstr "{providerName} アカウントの接続を解除できませんでした
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't duplicate the document. Try again."
 msgstr "書類を複製できませんでした。もう一度お試しください。"
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't empty Trash. Try again."
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Couldn't export your data. Try again."
@@ -3819,6 +3851,10 @@ msgstr "パスワードをリセットできませんでした。もう一度お
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't restore the document. Try again."
 msgstr "書類を復元できませんでした。もう一度お試しください。"
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't restore the selected documents. Try again."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
@@ -4390,6 +4426,11 @@ msgstr "学位"
 msgid "Delete"
 msgstr "削除"
 
+#. placeholder {0}: selection[0]?.name ?? ""
+#: src/features/documents/trash-page.tsx
+msgid "Delete “{0}” forever?"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "Delete “{0}” now?"
@@ -4439,6 +4480,10 @@ msgstr "今すぐ削除してください…"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Delete page"
 msgstr "ページを削除"
+
+#: src/features/documents/trash-page.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/account/application-profile.tsx
 msgid "Delete private application profile?"
@@ -4517,6 +4562,11 @@ msgstr "「{0}」を削除"
 #: src/features/resume/share/history-tab.tsx
 msgid "Deleted “{title}”"
 msgstr "「{title}」を削除"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/document-actions.tsx
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -5136,6 +5186,14 @@ msgstr "採用担当者にメールする"
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "エクスポート時にすべてのフォントを埋め込み、文字が意図通りに表示されるようにしてください。"
+
+#: src/features/documents/trash-page.tsx
+msgid "Empty Trash?"
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "Empty trash…"
+msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -6144,6 +6202,7 @@ msgid "History"
 msgstr "履歴"
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Hold to delete"
 msgstr "長押しして削除"
 
@@ -6719,6 +6778,7 @@ msgid "Keep editing"
 msgstr "編集を続ける"
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Keep in Trash"
 msgstr "ゴミ箱に入れておく"
 
@@ -8239,6 +8299,14 @@ msgstr "履歴書なし"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "まだ履歴書はありません。"
+
+#: src/features/documents/document-actions.tsx
+msgid "No selected documents were deleted. Refresh to see what remains."
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "No selected documents were restored. Refresh to see what remains."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -10361,6 +10429,7 @@ msgid "Responsible for the design system and helping other teams with their desi
 msgstr "デザイン システムを担当し、他のチームのデザインを支援します。"
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Restore"
 msgstr "復元する"
 
@@ -10372,6 +10441,11 @@ msgstr "このバージョンを復元する"
 #: src/features/documents/document-actions.tsx
 msgid "Restored “{0}”"
 msgstr "「{0}」を復元"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/document-actions.tsx
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
 
 #: src/features/resume/share/format.ts
 msgid "Restored a version"
@@ -11213,6 +11287,14 @@ msgstr "すべて選択"
 msgid "Select an AI provider"
 msgstr "AIプロバイダーを選択してください"
 
+#: src/features/documents/trash-page.tsx
+msgid "Select this page"
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "Select this page in Trash"
+msgstr ""
+
 #: src/components/ui/combobox.tsx
 msgid "Select..."
 msgstr "選択..."
@@ -11220,6 +11302,10 @@ msgstr "選択..."
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
 msgstr "選択した書類"
+
+#: src/features/documents/trash-page.tsx
+msgid "Selected documents in Trash"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Self-hosting"
@@ -12601,6 +12687,10 @@ msgstr "コーチはあなたが述べた事実を保存し、そのことを知
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "コピーは求人応募にリンクされているため、Check とアシスタントはその求人掲載を使用します。"
 
+#: src/features/documents/trash-page.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "The end is before the start."
 msgstr "終わりは始まりの前にある。"
@@ -12770,6 +12860,14 @@ msgstr "ブロッカーの問題によりスコアが上限に制限されてい
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "スコアは、可能性ではなく、テキストがどの程度確実に抽出されるかを反映します。"
+
+#: src/features/documents/trash-page.tsx
+msgid "The selected document will be deleted for good and can't be restored."
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
 msgid "The service didn't respond in time. Try again."
@@ -13258,6 +13356,10 @@ msgstr "ゴミ箱"
 #: src/features/documents/trash-page.tsx
 msgid "Trash is empty"
 msgstr "ゴミ箱が空です"
+
+#: src/features/documents/document-actions.tsx
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/career/shared.tsx
 msgid "Trimming words"

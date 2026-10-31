@@ -157,7 +157,18 @@ export function useBatchActions() {
 	const setLocked = useMutation(orpc.documents.setLocked.mutationOptions());
 	const trash = useMutation(orpc.documents.trash.mutationOptions());
 	const restore = useMutation(orpc.documents.restore.mutationOptions());
+	const restoreMany = useMutation(orpc.documents.restoreMany.mutationOptions());
+	const purgeMany = useMutation(orpc.documents.purgeMany.mutationOptions());
+	const emptyTrash = useMutation(orpc.documents.emptyTrash.mutationOptions());
 	const updateResume = useMutation(orpc.resume.update.mutationOptions());
+
+	// The server accepts a large selection, but splitting it keeps one request's body bounded on old clients that
+	// still load the whole library.
+	const batchSize = 500;
+	const chunks = <T,>(items: readonly T[]) =>
+		Array.from({ length: Math.ceil(items.length / batchSize) }, (_, index) =>
+			items.slice(index * batchSize, (index + 1) * batchSize),
+		);
 
 	const run = async (
 		documents: readonly DocumentSummary[],
@@ -222,6 +233,76 @@ export function useBatchActions() {
 						),
 				},
 			});
+		},
+
+		/** Restore selected loaded documents in batches; the server skips any restored or deleted meanwhile. */
+		restore: async (documents: readonly DocumentSummary[]) => {
+			let restored = 0;
+			let failure: unknown;
+			for (const group of chunks(documents)) {
+				try {
+					const result = await restoreMany.mutateAsync({ documents: group.map(ref) });
+					restored += result.restored;
+				} catch (error) {
+					failure = error;
+				}
+			}
+			await refresh();
+			if (restored === documents.length)
+				toast.add({
+					description: plural(restored, { one: "# document restored", other: "# documents restored" }),
+				});
+			else if (restored === 0 && failure) toastError(failure, t`Couldn't restore the selected documents. Try again.`);
+			else if (restored > 0)
+				toast.add({
+					description: t`Restored ${restored} of ${documents.length}. Refresh and retry any that remain in Trash.`,
+				});
+			else toast.add({ description: t`No selected documents were restored. Refresh to see what remains.` });
+			return restored === documents.length && !failure;
+		},
+
+		/** The selected loaded documents, not every document in Trash. The server skips anything no longer in Trash. */
+		purge: async (documents: readonly DocumentSummary[]) => {
+			let deleted = 0;
+			let failure: unknown;
+			for (const group of chunks(documents)) {
+				try {
+					const result = await purgeMany.mutateAsync({ documents: group.map(ref) });
+					deleted += result.deleted;
+				} catch (error) {
+					failure = error;
+				}
+			}
+			await refresh();
+			if (deleted === documents.length)
+				toast.add({
+					description: plural(deleted, { one: "# document deleted forever", other: "# documents deleted forever" }),
+				});
+			else if (deleted === 0 && failure) toastError(failure, t`Couldn't delete the selected documents. Try again.`);
+			else if (deleted > 0)
+				toast.add({
+					description: t`Deleted ${deleted} of ${documents.length} forever. Refresh to see what remains.`,
+				});
+			else toast.add({ description: t`No selected documents were deleted. Refresh to see what remains.` });
+			return deleted === documents.length && !failure;
+		},
+
+		/** Every document in this account's Trash, server-side; selected or loaded IDs don't limit it. */
+		emptyTrash: async () => {
+			try {
+				const result = await emptyTrash.mutateAsync({});
+				await refresh();
+				toast.add({
+					description:
+						result.deleted === 0
+							? t`Trash was already empty`
+							: plural(result.deleted, { one: "# document deleted forever", other: "# documents deleted forever" }),
+				});
+				return true;
+			} catch (error) {
+				toastError(error, t`Couldn't empty Trash. Try again.`);
+				throw error;
+			}
 		},
 	};
 }

@@ -33,7 +33,7 @@ msgstr "“{0}” ട്രാഷിലേക്ക് നീക്കി"
 msgid "“{0}” stops being your primary resume."
 msgstr "“{0}” ഇനി നിങ്ങളുടെ പ്രാഥമിക റെസ്യൂമെ ആയിരിക്കില്ല."
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
 msgstr "“{0}” ശാശ്വതമായി ഇല്ലാതാക്കും. പുനഃസ്ഥാപിക്കാനാവില്ല."
@@ -169,11 +169,6 @@ msgstr "{0, plural, one {# ദിവസം} other {# ദിവസങ്ങൾ}}"
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# പ്രമാണം ട്രാഷിലേക്ക് നീക്കി} other {# പ്രമാണങ്ങൾ ട്രാഷിലേക്ക് നീക്കി}}"
 
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {# document will be deleted for good and can't be restored.} other {# documents will be deleted for good and can't be restored.}}"
-msgstr "{0, plural, one {# പ്രമാണം ശാശ്വതമായി ഇല്ലാതാക്കും. പുനഃസ്ഥാപിക്കാനാവില്ല.} other {# പ്രമാണങ്ങൾ ശാശ്വതമായി ഇല്ലാതാക്കും. പുനഃസ്ഥാപിക്കാനാവില്ല.}}"
-
 #. placeholder {0}: counts.data.trash
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
@@ -250,11 +245,6 @@ msgstr "{0, plural, one {# അപേക്ഷ ഇല്ലാതാക്കണ�
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {# അപേക്ഷ ഇല്ലാതാക്കുക} other {# അപേക്ഷകൾ ഇല്ലാതാക്കുക}}"
-
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
-msgstr "{0, plural, one {# പ്രമാണം ശാശ്വതമായി ഇല്ലാതാക്കണോ?} other {# പ്രമാണങ്ങൾ ശാശ്വതമായി ഇല്ലാതാക്കണോ?}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -500,6 +490,10 @@ msgstr "{day} · {length}മി"
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· ഇന്ന് മുതൽ} one {· # ദിവസമായി} other {· # ദിവസമായി}}"
 
+#: src/features/documents/queries.ts
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{count}-ൽ {done} പൂർത്തിയായി"
@@ -618,8 +612,16 @@ msgstr "{pairing} തരം"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {ഈ പേജിൽ # നിർദ്ദേശിത തിരുത്തൽ · അംഗീകരിക്കുന്നതുവരെ ഒന്നും മാറില്ല} other {ഈ പേജിൽ # നിർദ്ദേശിത തിരുത്തലുകൾ · അംഗീകരിക്കുന്നതുവരെ ഒന്നും മാറില്ല}}"
 
+#: src/features/documents/library.tsx
+msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
@@ -1338,6 +1340,10 @@ msgstr "എല്ലാം"
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "എല്ലാം ({0})"
+
+#: src/features/documents/library.tsx
+msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "All applications"
@@ -3537,7 +3543,7 @@ msgstr "ഡിഗ്രി"
 msgid "Delete"
 msgstr "ഡിലീറ്റ് ചെയ്യുക"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "Delete “{0}” forever?"
 msgstr "“{0}” ശാശ്വതമായി ഇല്ലാതാക്കണോ?"
@@ -3596,6 +3602,10 @@ msgstr "അത് ഡിലീറ്റ് ചെയ്യുക. മറഞ്�
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
 msgstr "പേജ് ഇല്ലാതാക്കുക"
+
+#: src/features/documents/library.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Delete private application profile?"
@@ -3657,6 +3667,16 @@ msgstr "ഇല്ലാതാക്കുക..."
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
 msgstr "ഇല്ലാതാക്കി"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0}. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -4131,6 +4151,10 @@ msgstr "ശൂന്യമായ കവർ ലെറ്റർ"
 #: src/features/documents/library.tsx
 msgid "Empty trash"
 msgstr "ട്രാഷ് ശൂന്യമാക്കുക"
+
+#: src/features/documents/library.tsx
+msgid "Empty Trash?"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -8349,6 +8373,11 @@ msgstr "ഈ പതിപ്പ് പുനഃസ്ഥാപിക്കണോ?
 msgid "Restore version"
 msgstr "പതിപ്പ് പുനഃസ്ഥാപിക്കുക"
 
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Restored a version"
@@ -9082,10 +9111,6 @@ msgstr "തിരഞ്ഞെടുക്കുക"
 msgid "Select {0}"
 msgstr "{0} തിരഞ്ഞെടുക്കുക"
 
-#: src/features/documents/library.tsx
-msgid "Select all"
-msgstr "എല്ലാം തിരഞ്ഞെടുക്കുക"
-
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
@@ -9095,6 +9120,10 @@ msgstr "{0} പേജിൽ ഒരു എൻട്രി തിരഞ്ഞെ�
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "എൻട്രി തിരഞ്ഞെടുക്കുക {0}"
+
+#: src/features/documents/library.tsx
+msgid "Select this page"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Select visible"
@@ -10259,6 +10288,10 @@ msgstr "കണക്ഷൻ ലോഡ് ചെയ്യാനോ സംരക്
 msgid "The current state will be saved as “Before restore” first."
 msgstr "നിലവിലെ അവസ്ഥ ആദ്യം \"പുനഃസ്ഥാപിക്കുന്നതിന് മുമ്പ്\" ആയി സംരക്ഷിക്കപ്പെടും."
 
+#: src/features/documents/library.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "ഇറക്കുമതി ചെയ്ത റെസ്യൂമെ വീണ്ടും പരിശോധിക്കുന്ന പരിശോധന-ൽ എഡിറ്റർ തുറക്കുന്നു."
@@ -10367,6 +10400,10 @@ msgstr "സോഫ്‌റ്റ്‌വെയർ നിങ്ങളുടെ �
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "നിങ്ങളുടെ സാധ്യതകളല്ല, ടെക്‌സ്‌റ്റ് എത്രത്തോളം വിശ്വസനീയമായി എക്‌സ്‌ട്രാക്‌റ്റുചെയ്യപ്പെടുന്നുവെന്ന് സ്‌കോർ പ്രതിഫലിപ്പിക്കുന്നു."
+
+#: src/features/documents/library.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
@@ -10900,6 +10937,10 @@ msgstr "ട്രാഷ്"
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "ട്രാഷ് ശൂന്യമാണ്"
+
+#: src/features/documents/queries.ts
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Trimming words"

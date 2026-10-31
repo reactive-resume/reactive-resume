@@ -33,7 +33,7 @@ msgstr "“{0}” ย้ายไปที่ถังขยะ"
 msgid "“{0}” stops being your primary resume."
 msgstr "“{0}” จะไม่ใช่ประวัติย่อหลักของคุณอีกต่อไป"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
 msgstr "“{0}” จะถูกลบถาวรและไม่สามารถกู้คืนได้"
@@ -169,11 +169,6 @@ msgstr "{0, plural, one {# วัน} other {# วัน}}"
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {ย้ายเอกสาร # รายการไปที่ถังขยะแล้ว} other {ย้ายเอกสาร # รายการไปที่ถังขยะแล้ว}}"
 
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {# document will be deleted for good and can't be restored.} other {# documents will be deleted for good and can't be restored.}}"
-msgstr "{0, plural, one {เอกสาร # ฉบับจะถูกลบถาวรและกู้คืนไม่ได้} other {เอกสาร # ฉบับจะถูกลบถาวรและกู้คืนไม่ได้}}"
-
 #. placeholder {0}: counts.data.trash
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
@@ -250,11 +245,6 @@ msgstr "{0, plural, other {ลบใบสมัคร # รายการไ�
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, other {ลบใบสมัคร # รายการ}}"
-
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
-msgstr "{0, plural, other {ลบเอกสาร # รายการอย่างถาวรไหม}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -500,6 +490,10 @@ msgstr "{day} · {length} นาที"
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· ตั้งแต่วันนี้} one {· มาแล้ว # วัน} other {· มาแล้ว # วัน}}"
 
+#: src/features/documents/queries.ts
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "เสร็จแล้ว {done} จาก {count}"
@@ -618,8 +612,16 @@ msgstr "ประเภท {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {ข้อเสนอแก้ไข # รายการในหน้านี้ · จะไม่เปลี่ยนจนกว่าคุณยอมรับ} other {ข้อเสนอแก้ไข # รายการในหน้านี้ · จะไม่เปลี่ยนจนกว่าคุณยอมรับ}}"
 
+#: src/features/documents/library.tsx
+msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
@@ -1338,6 +1340,10 @@ msgstr "ทั้งหมด"
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "ทั้งหมด ({0})"
+
+#: src/features/documents/library.tsx
+msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "All applications"
@@ -3537,7 +3543,7 @@ msgstr "ปริญญา"
 msgid "Delete"
 msgstr "ลบ"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "Delete “{0}” forever?"
 msgstr "ลบ “{0}” อย่างถาวรไหม"
@@ -3596,6 +3602,10 @@ msgstr "ลบทิ้ง คำสำคัญที่ซ่อนไว้�
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
 msgstr "ลบหน้า"
+
+#: src/features/documents/library.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Delete private application profile?"
@@ -3657,6 +3667,16 @@ msgstr "ลบ…"
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
 msgstr "ลบแล้ว"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0}. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -4131,6 +4151,10 @@ msgstr "จดหมายสมัครงานเปล่า"
 #: src/features/documents/library.tsx
 msgid "Empty trash"
 msgstr "ล้างถังขยะ"
+
+#: src/features/documents/library.tsx
+msgid "Empty Trash?"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -8349,6 +8373,11 @@ msgstr "กู้คืนเวอร์ชันนี้หรือไม่
 msgid "Restore version"
 msgstr "กู้คืนเวอร์ชัน"
 
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Restored a version"
@@ -9082,10 +9111,6 @@ msgstr "เลือก"
 msgid "Select {0}"
 msgstr "เลือก {0}"
 
-#: src/features/documents/library.tsx
-msgid "Select all"
-msgstr "เลือกทั้งหมด"
-
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
@@ -9095,6 +9120,10 @@ msgstr "เลือกรายการบนหน้า {0}"
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "เลือกรายการ {0}"
+
+#: src/features/documents/library.tsx
+msgid "Select this page"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Select visible"
@@ -10259,6 +10288,10 @@ msgstr "ไม่สามารถโหลดหรือบันทึกก
 msgid "The current state will be saved as “Before restore” first."
 msgstr "สถานะปัจจุบันจะถูกบันทึกเป็น \"ก่อนกู้คืน\" ก่อน"
 
+#: src/features/documents/library.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "ตัวแก้ไขจะเปิดที่ตรวจสอบ เพื่อตรวจประวัติย่อที่นำเข้าอีกครั้ง"
@@ -10367,6 +10400,10 @@ msgstr "คะแนนจะนับว่าซอฟต์แวร์อ่
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "คะแนนจะสะท้อนถึงความน่าเชื่อถือในการแยกข้อความ ไม่ใช่โอกาสของคุณ"
+
+#: src/features/documents/library.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
@@ -10900,6 +10937,10 @@ msgstr "ถังขยะ"
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "ถังขยะว่างเปล่า"
+
+#: src/features/documents/queries.ts
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Trimming words"

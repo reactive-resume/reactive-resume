@@ -33,7 +33,7 @@ msgstr "\"{0}\" na asblik geskuif"
 msgid "“{0}” stops being your primary resume."
 msgstr "“{0}” is nie meer jou primêre CV nie."
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
 msgstr "“{0}” sal permanent uitgevee word en kan nie herstel word nie."
@@ -169,11 +169,6 @@ msgstr "{0, plural, one {# dag} other {# dae}}"
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# dokument na asblik geskuif} other {# dokumente na asblik geskuif}}"
 
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {# document will be deleted for good and can't be restored.} other {# documents will be deleted for good and can't be restored.}}"
-msgstr "{0, plural, one {# dokument sal permanent uitgevee word en kan nie herstel word nie.} other {# dokumente sal permanent uitgevee word en kan nie herstel word nie.}}"
-
 #. placeholder {0}: counts.data.trash
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
@@ -250,11 +245,6 @@ msgstr "{0, plural, one {Vee # aansoek uit?} other {Vee # aansoeke uit?}}"
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {Vee # aansoek uit} other {Vee # aansoeke uit}}"
-
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
-msgstr "{0, plural, one {Vee # dokument vir altyd uit?} other {Vee # dokumente vir altyd uit?}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -500,6 +490,10 @@ msgstr "{day} · {length}m"
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· sedert vandag} one {· vir # dag} other {· vir # dae}}"
 
+#: src/features/documents/queries.ts
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{done} van {count} klaar"
@@ -618,8 +612,16 @@ msgstr "{pairing} tipe"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# voorgestelde wysiging op hierdie bladsy · niks verander totdat jy aanvaar nie} other {# voorgestelde wysigings op hierdie bladsy · niks verander totdat jy aanvaar nie}}"
 
+#: src/features/documents/library.tsx
+msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
@@ -1338,6 +1340,10 @@ msgstr "Almal"
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "Almal ({0})"
+
+#: src/features/documents/library.tsx
+msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "All applications"
@@ -3537,7 +3543,7 @@ msgstr "Graad"
 msgid "Delete"
 msgstr "Vee uit"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "Delete “{0}” forever?"
 msgstr "Vee “{0}” permanent uit?"
@@ -3596,6 +3602,10 @@ msgstr "Verwyder dit. Verskuilde sleutelwoorde word beskou as 'n doelbewuste pog
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
 msgstr "Vee bladsy uit"
+
+#: src/features/documents/library.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Delete private application profile?"
@@ -3657,6 +3667,16 @@ msgstr "Vee uit …"
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
 msgstr "Geskrap"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0}. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -4131,6 +4151,10 @@ msgstr "Leë dekbrief"
 #: src/features/documents/library.tsx
 msgid "Empty trash"
 msgstr "Maak asblik leeg"
+
+#: src/features/documents/library.tsx
+msgid "Empty Trash?"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -8349,6 +8373,11 @@ msgstr "Stel hierdie weergawe terug?"
 msgid "Restore version"
 msgstr "Herstel weergawe"
 
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Restored a version"
@@ -9082,10 +9111,6 @@ msgstr "Kies"
 msgid "Select {0}"
 msgstr "Kies {0}"
 
-#: src/features/documents/library.tsx
-msgid "Select all"
-msgstr "Kies alles"
-
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
@@ -9095,6 +9120,10 @@ msgstr "Kies 'n inskrywing op bladsy {0}"
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "Kies inskrywing {0}"
+
+#: src/features/documents/library.tsx
+msgid "Select this page"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Select visible"
@@ -10259,6 +10288,10 @@ msgstr "Die verbinding kon nie gelaai of gestoor word nie. Probeer weer."
 msgid "The current state will be saved as “Before restore” first."
 msgstr "Die huidige toestand word eers as “Voor herstel” gestoor."
 
+#: src/features/documents/library.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "Die redigeerder maak op Kontrole oop, waar die ingevoerde CV weer nagegaan word."
@@ -10367,6 +10400,10 @@ msgstr "Die telling tel hoe betroubaar sagteware jou CV lees. Dit voorspel nie o
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "Die telling weerspieël hoe betroubaar teks onttrek word, nie jou kanse nie."
+
+#: src/features/documents/library.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
@@ -10900,6 +10937,10 @@ msgstr "Asblik"
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "Asblik is leeg"
+
+#: src/features/documents/queries.ts
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Trimming words"

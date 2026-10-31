@@ -37,39 +37,65 @@ You can also open the [command bar](/guides/using-the-command-bar) with <kbd>⌘
 
 The Trash page lists each document with its **Type**, linked **Application**, and how many days are left under **Deleted in**. When it's empty, it says **Trash is empty**.
 
+Select a row's checkbox to act on one document, or select several. **Select this page** chooses the rows currently loaded on the page. The bar at the bottom offers **Restore** and **Delete permanently…** for that selection. **Empty trash…** in the page header is separate: it deletes everything in Trash, not only the rows you selected.
+
+<Frame caption="Selecting documents in Trash">
+  <img
+    src="/images/guides/using-the-trash/trash-page-selection.webp"
+    alt="The Trash page with three documents selected and a bar showing Restore, Delete permanently and Clear selection"
+  />
+</Frame>
+
 ## Restore a document
 
 <Steps>
-  <Step title="Open the row's menu">
-    On the Trash page, select **⋯** at the end of the document's row.
-
-    <Frame caption="The Trash page with a row's menu open">
-      <img src="/images/guides/using-the-trash/trash-page-row-menu.webp" alt="The Trash page listing One-Page Resume (copy) with 30 days left and a menu showing Restore and Delete now" />
-    </Frame>
-
+  <Step title="Select the documents">
+    Tick the checkbox beside each document you want back, or select **Select this page** for the loaded rows.
   </Step>
   <Step title="Choose Restore">
-    Select **Restore**. The document goes back to Documents with its content, tags and links intact.
+    Select **Restore**. Restoring asks for no confirmation. The documents go back to Documents with their content, tags
+    and links intact.
   </Step>
 </Steps>
+
+You can still restore one document from its row menu. On the Trash page, select **⋯** at the end of the document's row, then choose **Restore**.
+
+<Frame caption="The Trash page with a row's menu open">
+  <img
+    src="/images/guides/using-the-trash/trash-page-row-menu.webp"
+    alt="The Trash page listing Product Designer, Frontend Engineer and Cover Letter - Orbital, with the Product Designer row menu showing Restore and Delete now"
+  />
+</Frame>
 
 ## Delete a document for good
 
-Documents are deleted permanently 30 days after you moved them to Trash. To delete one sooner:
+Documents are deleted permanently 30 days after you moved them to Trash. To delete them sooner:
 
 <Steps>
-  <Step title="Choose Delete now…">
-    On the Trash page, open the row's **⋯** menu and choose **Delete now…**.
+  <Step title="Select what to delete">
+    Tick the checkbox beside each document, or use **Select this page** for the loaded rows. To delete everything in Trash instead, choose **Empty trash…** in the page header.
   </Step>
   <Step title="Confirm">
-    Select **Delete now** to confirm, or **Keep in Trash** to change your mind.
+    Select **Delete permanently…** or **Empty trash…**, then hold **Hold to delete** to confirm. Choose **Keep in Trash** to change your mind.
 
     <Frame caption="Confirming a permanent delete">
-      <img src="/images/guides/using-the-trash/delete-now-confirmation.webp" alt="A dialog asking Delete One-Page Resume (copy) now? It will be deleted for good and can't be restored, with Keep in Trash and Delete now buttons" />
+      <img src="/images/guides/using-the-trash/delete-now-confirmation.webp" alt="A dialog asking Delete Product Designer forever? It will be deleted for good and can't be restored, with Keep in Trash and Hold to delete buttons" />
     </Frame>
 
   </Step>
 </Steps>
+
+<Note>
+  The confirmation names the selected rows for a selection, and says **Empty Trash?** with the total count for **Empty
+  trash…**. The distinction matters when only some rows are loaded: Empty trash always covers the whole Trash.
+</Note>
+
+<Frame caption="Empty Trash covers every document in Trash">
+  <img
+    src="/images/guides/using-the-trash/empty-trash-confirmation.webp"
+    alt="A dialog asking Empty Trash? All 3 documents in Trash will be deleted for good and can't be restored, with Keep in Trash and Hold to delete buttons"
+  />
+</Frame>
 
 <Warning>
   A deleted document can't be restored, and neither can its version history. If you might need it again, download a JSON

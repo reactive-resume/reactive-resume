@@ -108,6 +108,23 @@ describe("migrateUserStorage", () => {
 		expect(mocks.delete).not.toHaveBeenCalled();
 	});
 
+	it("excludes exact erased keys and descendant prefixes without excluding sibling names", async () => {
+		const erased = "uploads/guest-1/pdfs/removed";
+		const removedFile = "uploads/guest-1/pictures/old.png";
+		const kept = [`${erased}-next/cache.pdf`, `${removedFile}-next`, "uploads/guest-1/pictures/new.png"];
+		mocks.list.mockResolvedValue([`${erased}/cache.pdf`, removedFile, ...kept]);
+		mocks.read.mockResolvedValue({ data: new Uint8Array([1]), size: 1 });
+		mocks.write.mockResolvedValue(undefined);
+		mocks.delete.mockResolvedValue(true);
+		const cleanup = await migrateUserStorage("guest-1", "user-2", [erased, removedFile]);
+		expect(mocks.read.mock.calls.map(([key]) => key)).toEqual(kept);
+		expect(mocks.write.mock.calls.map(([file]) => file.key)).toEqual(
+			kept.map((key) => key.replace("/guest-1/", "/user-2/")),
+		);
+		await cleanup?.();
+		expect(mocks.delete.mock.calls.map(([key]) => key)).toEqual(kept);
+	});
+
 	it("attempts every copied key cleanup even if one delete fails, without deleting the prefix", async () => {
 		const consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
 		const guestKey1 = "uploads/guest-1/pictures/photo1.png";

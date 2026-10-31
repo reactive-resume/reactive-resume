@@ -81,6 +81,12 @@ vi.mock("./access", () => ({
 vi.mock("../storage/service", () => ({
 	getStorageService: () => ({ delete: vi.fn() }),
 }));
+const cleanupMock = vi.hoisted(() => ({
+	enqueueStorageCleanup: vi.fn(),
+	runStorageCleanup: vi.fn(async () => ({ completed: 0, missing: 0, failed: 0, partial: 0, abandoned: 0 })),
+	reportStorageCleanupSummary: vi.fn(),
+}));
+vi.mock("../storage/cleanup", () => cleanupMock);
 // Version history and slugs have their own tests; here they only need to be called at the right moments.
 const versionHistoryMock = vi.hoisted(() => ({
 	writeVersion: vi.fn(),
@@ -180,6 +186,8 @@ beforeEach(() => {
 	publishResumeUpdatedMock.mockReset();
 	grantResumeAccessMock.mockReset();
 	for (const mock of Object.values(versionHistoryMock)) mock.mockReset();
+	for (const mock of Object.values(cleanupMock)) mock.mockReset();
+	cleanupMock.runStorageCleanup.mockResolvedValue({ completed: 0, missing: 0, failed: 0, partial: 0, abandoned: 0 });
 	versionHistoryMock.writeVersion.mockResolvedValue({ id: "v" });
 	versionHistoryMock.saveSessionVersion.mockResolvedValue(undefined);
 	recordSlugChangeMock.mockReset();
@@ -526,6 +534,14 @@ describe("delete", () => {
 		expect(selectWhere.mock.calls[0]?.[0]).not.toContainEqual(["trashed_at"]);
 		expect(deleteWhere).toHaveBeenCalledTimes(1);
 		expect(deleteWhere.mock.calls[0]?.[0]).not.toContainEqual(["trashed_at"]);
+		expect(cleanupMock.enqueueStorageCleanup).toHaveBeenCalledWith(expect.anything(), "u1", [
+			"uploads/u1/screenshots/r1",
+			"uploads/u1/pdfs/r1",
+		]);
+		expect(cleanupMock.runStorageCleanup).toHaveBeenCalledWith({
+			storageKeys: ["uploads/u1/screenshots/r1", "uploads/u1/pdfs/r1"],
+			limit: 2,
+		});
 	});
 });
 

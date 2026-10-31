@@ -163,6 +163,11 @@ msgstr "{0, plural, one {Liko # diena} few {Liko # dienos} many {Liko # dienos} 
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# diena} other {# dienų}}"
 
+#. placeholder {0}: result.deleted
+#: src/features/documents/document-actions.tsx
+msgid "{0, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #. placeholder {0}: done.length
 #: src/features/documents/document-actions.tsx
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
@@ -253,6 +258,11 @@ msgstr "{0, plural, one {Ištrinti # paraišką?} few {Ištrinti # paraiškas?} 
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {Ištrinti # paraišką} few {Ištrinti # paraiškas} many {Ištrinti # paraiškos} other {Ištrinti # paraiškų}}"
+
+#. placeholder {0}: selection.length
+#: src/features/documents/trash-page.tsx
+msgid "{0, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -533,6 +543,7 @@ msgid "{count} free resume templates. Find your fit."
 msgstr "{count} nemokamų CV šablonų. Pasirinkite sau tinkamą šabloną."
 
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 msgid "{count} selected"
 msgstr "Pasirinkta: {count}"
 
@@ -555,6 +566,10 @@ msgstr "{days, plural, one {# diena biure, mažiau nei jūsų riba} few {# dieno
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day, your limit} other {# office days, your limit}}"
 msgstr "{days, plural, one {# diena biure, jūsų riba} few {# dienos biure, jūsų riba} many {# dienos biure, jūsų riba} other {# dienų biure, jūsų riba}}"
+
+#: src/features/documents/document-actions.tsx
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
@@ -729,6 +744,10 @@ msgstr "{proposed, plural, one {Pasiūlytas #} other {Pasiūlytas #}}"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
@@ -1705,6 +1724,10 @@ msgstr "Lygiuoti dešinėje"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "All"
 msgstr "Visi"
+
+#: src/features/documents/trash-page.tsx
+msgid "All {trashCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "All applications"
@@ -2964,6 +2987,7 @@ msgstr "Išvalyti skyrių"
 #: src/components/ui/combobox.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Clear selection"
 msgstr "Išvalyti pasirinkimą"
 
@@ -3602,6 +3626,10 @@ msgstr "Nepavyko ištrinti pokalbio. Bandykite dar kartą."
 msgid "Couldn't delete the provider. Try again."
 msgstr "Nepavyko ištrinti teikėjo. Bandykite dar kartą."
 
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't delete the selected documents. Try again."
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Couldn't delete this conversation. Try again."
@@ -3623,6 +3651,10 @@ msgstr "Nepavyko atjungti jūsų {providerName} paskyros. Bandykite dar kartą."
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't duplicate the document. Try again."
 msgstr "Nepavyko dubliuoti dokumento. Bandykite dar kartą."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't empty Trash. Try again."
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Couldn't export your data. Try again."
@@ -3819,6 +3851,10 @@ msgstr "Nepavyko iš naujo nustatyti slaptažodžio. Bandykite dar kartą."
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't restore the document. Try again."
 msgstr "Nepavyko atkurti dokumento. Bandykite dar kartą."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't restore the selected documents. Try again."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
@@ -4390,6 +4426,11 @@ msgstr "Laipsnis"
 msgid "Delete"
 msgstr "Ištrinti"
 
+#. placeholder {0}: selection[0]?.name ?? ""
+#: src/features/documents/trash-page.tsx
+msgid "Delete “{0}” forever?"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "Delete “{0}” now?"
@@ -4439,6 +4480,10 @@ msgstr "Ištrinti dabar…"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Delete page"
 msgstr "Ištrinti puslapį"
+
+#: src/features/documents/trash-page.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/account/application-profile.tsx
 msgid "Delete private application profile?"
@@ -4517,6 +4562,11 @@ msgstr "Ištrintas „{0}“"
 #: src/features/resume/share/history-tab.tsx
 msgid "Deleted “{title}”"
 msgstr "Ištrintas „{title}“"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/document-actions.tsx
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -5136,6 +5186,14 @@ msgstr "El. paštu įdarbintojui"
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "Eksportuodami įterpkite visus šriftus, kad simboliai atvaizduotųsi taip, kaip numatėte."
+
+#: src/features/documents/trash-page.tsx
+msgid "Empty Trash?"
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "Empty trash…"
+msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -6144,6 +6202,7 @@ msgid "History"
 msgstr "Istorija"
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Hold to delete"
 msgstr "Laikykite, kad ištrintumėte"
 
@@ -6719,6 +6778,7 @@ msgid "Keep editing"
 msgstr "Toliau redaguoti"
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Keep in Trash"
 msgstr "Laikyti šiukšliadėžėje"
 
@@ -8239,6 +8299,14 @@ msgstr "Nėra gyvenimo aprašymo"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "Gyvenimo aprašymų dar nėra."
+
+#: src/features/documents/document-actions.tsx
+msgid "No selected documents were deleted. Refresh to see what remains."
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "No selected documents were restored. Refresh to see what remains."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -10361,6 +10429,7 @@ msgid "Responsible for the design system and helping other teams with their desi
 msgstr "Atsakingas už projektavimo sistemą ir padeda kitoms komandoms kurti jų dizainą."
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Restore"
 msgstr "Atkurti"
 
@@ -10372,6 +10441,11 @@ msgstr "Atkurti šią versiją"
 #: src/features/documents/document-actions.tsx
 msgid "Restored “{0}”"
 msgstr "Atkurtas „{0}“"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/document-actions.tsx
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
 
 #: src/features/resume/share/format.ts
 msgid "Restored a version"
@@ -11213,6 +11287,14 @@ msgstr "Pasirinkti viską"
 msgid "Select an AI provider"
 msgstr "Pasirinkite dirbtinio intelekto teikėją"
 
+#: src/features/documents/trash-page.tsx
+msgid "Select this page"
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "Select this page in Trash"
+msgstr ""
+
 #: src/components/ui/combobox.tsx
 msgid "Select..."
 msgstr "Pasirinkite..."
@@ -11220,6 +11302,10 @@ msgstr "Pasirinkite..."
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
 msgstr "Pasirinkti dokumentai"
+
+#: src/features/documents/trash-page.tsx
+msgid "Selected documents in Trash"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Self-hosting"
@@ -12601,6 +12687,10 @@ msgstr "Konsultantas išsaugo jūsų nurodytus faktus ir apie tai praneša. Gali
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "Kopija yra susieta su darbo paraiška, todėl „Check“ ir asistentas naudoja jos darbo skelbimą."
 
+#: src/features/documents/trash-page.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "The end is before the start."
 msgstr "Pabaiga yra prieš pradžią."
@@ -12770,6 +12860,14 @@ msgstr "Balas apribotas dėl blokuojančios problemos: {0}"
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "Rezultatas parodo, kaip patikimai išgaunamas tekstas, o ne jūsų galimybes."
+
+#: src/features/documents/trash-page.tsx
+msgid "The selected document will be deleted for good and can't be restored."
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
 msgid "The service didn't respond in time. Try again."
@@ -13258,6 +13356,10 @@ msgstr "Šiukšliadėžė"
 #: src/features/documents/trash-page.tsx
 msgid "Trash is empty"
 msgstr "Šiukšliadėžė tuščia"
+
+#: src/features/documents/document-actions.tsx
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/career/shared.tsx
 msgid "Trimming words"

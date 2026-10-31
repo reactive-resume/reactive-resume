@@ -63846,6 +63846,95 @@
 						"source": "curl --request POST \"https://rxresu.me/api/openapi/documents/trash\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"type\": \"resume\",\n  \"id\": \"<string>\"\n}'"
 					}
 				]
+			},
+			"delete": {
+				"operationId": "emptyDocumentTrash",
+				"summary": "Empty Trash",
+				"description": "Permanently deletes every document in this account's Trash, not only the documents the client has loaded. Active documents are untouched. Requires authentication.",
+				"tags": [
+					"Documents"
+				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"deleted": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 9007199254740991
+										}
+									},
+									"required": [
+										"deleted"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/documents/trash\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
+				]
 			}
 		},
 		"/documents/restore": {
@@ -63941,6 +64030,130 @@
 				]
 			}
 		},
+		"/documents/restore/batch": {
+			"post": {
+				"operationId": "restoreDocuments",
+				"summary": "Restore selected documents",
+				"description": "Brings the selected loaded documents back from Trash. Only this account's documents still in Trash are restored; active, already deleted, or another account's documents are skipped. Requires authentication.",
+				"tags": [
+					"Documents"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"documents": {
+										"type": "array",
+										"minItems": 1,
+										"maxItems": 5000,
+										"items": {
+											"type": "object",
+											"properties": {
+												"type": {
+													"enum": [
+														"resume",
+														"letter"
+													],
+													"type": "string",
+													"description": "resume, or letter (a saved cover letter)."
+												},
+												"id": {
+													"type": "string",
+													"minLength": 1,
+													"description": "The ID of the resume or cover letter."
+												}
+											},
+											"required": [
+												"type",
+												"id"
+											]
+										},
+										"description": "The loaded documents the user selected, not every document in Trash."
+									}
+								},
+								"required": [
+									"documents"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"restored": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 9007199254740991
+										}
+									},
+									"required": [
+										"restored"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/documents/restore/batch\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"documents\": [\n    {\n      \"type\": \"resume\",\n      \"id\": \"<string>\"\n    }\n  ]\n}'"
+					}
+				]
+			}
+		},
 		"/documents/purge": {
 			"post": {
 				"operationId": "purgeDocument",
@@ -64030,6 +64243,137 @@
 						"lang": "bash",
 						"label": "cURL",
 						"source": "curl --request POST \"https://rxresu.me/api/openapi/documents/purge\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"type\": \"resume\",\n  \"id\": \"<string>\"\n}'"
+					}
+				]
+			}
+		},
+		"/documents/purge/batch": {
+			"post": {
+				"operationId": "purgeDocuments",
+				"summary": "Delete selected documents now",
+				"description": "Permanently deletes the selected loaded documents that are still in Trash. Active, already deleted, or another account's documents are skipped. Requires authentication.",
+				"tags": [
+					"Documents"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"documents": {
+										"type": "array",
+										"minItems": 1,
+										"maxItems": 5000,
+										"items": {
+											"type": "object",
+											"properties": {
+												"type": {
+													"enum": [
+														"resume",
+														"letter"
+													],
+													"type": "string",
+													"description": "resume, or letter (a saved cover letter)."
+												},
+												"id": {
+													"type": "string",
+													"minLength": 1,
+													"description": "The ID of the resume or cover letter."
+												}
+											},
+											"required": [
+												"type",
+												"id"
+											]
+										},
+										"description": "The loaded documents the user selected, not every document in Trash."
+									}
+								},
+								"required": [
+									"documents"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"deleted": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 9007199254740991
+										},
+										"skipped": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 9007199254740991,
+											"description": "Active, already deleted, or another account's documents."
+										}
+									},
+									"required": [
+										"deleted",
+										"skipped"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/documents/purge/batch\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"documents\": [\n    {\n      \"type\": \"resume\",\n      \"id\": \"<string>\"\n    }\n  ]\n}'"
 					}
 				]
 			}

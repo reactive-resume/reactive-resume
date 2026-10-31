@@ -7,6 +7,14 @@ const documentRefSchema = z.object({
 	id: z.string().min(1).describe("The ID of the resume or cover letter."),
 });
 
+// One request may act on a large loaded page, but the client sends every operation as one batch rather than one call
+// per document. Empty Trash doesn't use this list; it is a server-side "all" operation.
+const documentBatchSchema = z
+	.array(documentRefSchema)
+	.min(1)
+	.max(5000)
+	.describe("The loaded documents the user selected, not every document in Trash.");
+
 const documentSchema = z.object({
 	type: documentTypeSchema,
 	id: z.string(),
@@ -60,7 +68,22 @@ export const documentsDto = {
 	},
 	trash: { input: documentRefSchema, output: z.void() },
 	restore: { input: documentRefSchema, output: z.void() },
+	restoreMany: {
+		input: z.object({ documents: documentBatchSchema }),
+		output: z.object({ restored: z.number().int().nonnegative() }),
+	},
 	purge: { input: documentRefSchema, output: z.void() },
+	purgeMany: {
+		input: z.object({ documents: documentBatchSchema }),
+		output: z.object({
+			deleted: z.number().int().nonnegative(),
+			skipped: z.number().int().nonnegative().describe("Active, already deleted, or another account's documents."),
+		}),
+	},
+	emptyTrash: {
+		input: z.object({}).optional(),
+		output: z.object({ deleted: z.number().int().nonnegative() }),
+	},
 	copyForJob: {
 		input: z.object({
 			resumeId: z.string().min(1).describe("The resume to copy."),

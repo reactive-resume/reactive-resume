@@ -33,7 +33,7 @@ msgstr "“{0}” đã được chuyển vào Thùng rác"
 msgid "“{0}” stops being your primary resume."
 msgstr "“{0}” sẽ không còn là sơ yếu lý lịch chính của bạn."
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
 msgstr "“{0}” sẽ bị xóa vĩnh viễn và không thể khôi phục được."
@@ -169,11 +169,6 @@ msgstr "{0, plural, one {# ngày} other {# ngày}}"
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {Đã chuyển # tài liệu vào Thùng rác} other {Đã chuyển # tài liệu vào Thùng rác}}"
 
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {# document will be deleted for good and can't be restored.} other {# documents will be deleted for good and can't be restored.}}"
-msgstr "{0, plural, one {# tài liệu sẽ bị xóa vĩnh viễn và không thể khôi phục.} other {# tài liệu sẽ bị xóa vĩnh viễn và không thể khôi phục.}}"
-
 #. placeholder {0}: counts.data.trash
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
@@ -250,11 +245,6 @@ msgstr "{0, plural, other {Xóa # hồ sơ ứng tuyển?}}"
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, other {Xóa # hồ sơ ứng tuyển}}"
-
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
-msgstr "{0, plural, other {Xóa vĩnh viễn # tài liệu?}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -500,6 +490,10 @@ msgstr "{day} · {length} phút"
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· từ hôm nay} one {· trong # ngày} other {· trong # ngày}}"
 
+#: src/features/documents/queries.ts
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "Đã xong {done}/{count}"
@@ -618,8 +612,16 @@ msgstr "Loại {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# chỉnh sửa được đề xuất trên trang này · không thay đổi gì cho đến khi bạn chấp nhận} other {# chỉnh sửa được đề xuất trên trang này · không thay đổi gì cho đến khi bạn chấp nhận}}"
 
+#: src/features/documents/library.tsx
+msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
@@ -1338,6 +1340,10 @@ msgstr "Tất cả"
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "Tất cả ({0})"
+
+#: src/features/documents/library.tsx
+msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "All applications"
@@ -3537,7 +3543,7 @@ msgstr "Bằng cấp"
 msgid "Delete"
 msgstr "Xóa"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "Delete “{0}” forever?"
 msgstr "Xóa vĩnh viễn “{0}”?"
@@ -3596,6 +3602,10 @@ msgstr "Xóa nó đi. Từ khóa ẩn bị coi là hành vi cố ý gian lận t
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
 msgstr "Xóa trang"
+
+#: src/features/documents/library.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Delete private application profile?"
@@ -3657,6 +3667,16 @@ msgstr "Xóa bỏ…"
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
 msgstr "Đã xóa"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0}. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -4131,6 +4151,10 @@ msgstr "Thư xin việc trống"
 #: src/features/documents/library.tsx
 msgid "Empty trash"
 msgstr "Dọn sạch thùng rác"
+
+#: src/features/documents/library.tsx
+msgid "Empty Trash?"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -8349,6 +8373,11 @@ msgstr "Khôi phục phiên bản này?"
 msgid "Restore version"
 msgstr "Khôi phục phiên bản"
 
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Restored a version"
@@ -9082,10 +9111,6 @@ msgstr "Lựa chọn"
 msgid "Select {0}"
 msgstr "Chọn {0}"
 
-#: src/features/documents/library.tsx
-msgid "Select all"
-msgstr "Chọn tất cả"
-
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
@@ -9095,6 +9120,10 @@ msgstr "Chọn một mục trên trang {0}"
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "Chọn mục {0}"
+
+#: src/features/documents/library.tsx
+msgid "Select this page"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Select visible"
@@ -10259,6 +10288,10 @@ msgstr "Không thể tải hoặc lưu kết nối. Hãy thử lại."
 msgid "The current state will be saved as “Before restore” first."
 msgstr "Trạng thái hiện tại sẽ được lưu dưới dạng “Trước khi khôi phục” trước tiên."
 
+#: src/features/documents/library.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "Trình chỉnh sửa mở bảng “Kiểm tra” và kiểm tra lại sơ yếu lý lịch đã nhập."
@@ -10367,6 +10400,10 @@ msgstr "Điểm số sẽ tính mức độ đáng tin cậy của phần mềm 
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "Điểm số phản ánh mức độ tin cậy của văn bản được trích xuất chứ không phải cơ hội của bạn."
+
+#: src/features/documents/library.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
@@ -10900,6 +10937,10 @@ msgstr "Thùng rác"
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "Thùng rác trống rỗng"
+
+#: src/features/documents/queries.ts
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Trimming words"

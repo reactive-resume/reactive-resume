@@ -5,6 +5,7 @@ const resumeServiceMock = vi.hoisted(() => ({
 	getById: vi.fn(),
 	create: vi.fn(),
 	delete: vi.fn(),
+	deleteTrashedMany: vi.fn(),
 	setLocked: vi.fn(),
 }));
 const applicationServiceMock = vi.hoisted(() => ({ update: vi.fn() }));
@@ -60,7 +61,38 @@ describe("Trash", () => {
 
 		dbMock.select.mockReturnValueOnce(rows([{ isLocked: false, trashedAt: new Date() }]));
 		await documentsService.purge({ userId: "u1", type: "resume", id: "r1" });
-		expect(resumeServiceMock.delete).toHaveBeenCalledWith({ id: "r1", userId: "u1" });
+		expect(resumeServiceMock.delete).toHaveBeenCalledWith({
+			id: "r1",
+			userId: "u1",
+			trashedBefore: expect.any(Date),
+		});
+	});
+
+	it("sends only the selected loaded resume IDs to the batch delete and reports skipped ones", async () => {
+		resumeServiceMock.deleteTrashedMany.mockResolvedValueOnce(1);
+
+		await expect(
+			documentsService.purgeMany({
+				userId: "u1",
+				documents: [
+					{ type: "resume", id: "r1" },
+					{ type: "resume", id: "r2" },
+				],
+			}),
+		).resolves.toEqual({ deleted: 1, skipped: 1 });
+		expect(resumeServiceMock.deleteTrashedMany).toHaveBeenCalledWith({
+			userId: "u1",
+			ids: ["r1", "r2"],
+			trashedBefore: expect.any(Date),
+		});
+	});
+
+	it("propagates a failed batch delete so the caller can report it", async () => {
+		resumeServiceMock.deleteTrashedMany.mockRejectedValueOnce(new Error("database unavailable"));
+
+		await expect(
+			documentsService.purgeMany({ userId: "u1", documents: [{ type: "resume", id: "r1" }] }),
+		).rejects.toThrow("database unavailable");
 	});
 });
 

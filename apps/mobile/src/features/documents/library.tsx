@@ -96,11 +96,9 @@ function DocumentItem({
 				accessibilityRole={selecting ? "checkbox" : "button"}
 				accessibilityLabel={selecting ? t`Select ${document.name}` : document.name}
 				accessibilityState={{ checked: selecting ? selected : undefined }}
-				accessibilityHint={
-					unsynced ? t`Unsynced on this device` : !trashed && !selecting ? t`Long press to select` : undefined
-				}
+				accessibilityHint={unsynced ? t`Unsynced on this device` : !selecting ? t`Long press to select` : undefined}
 				onPress={selecting ? onSelect : onOpen}
-				onLongPress={trashed ? onMenu : onSelect}
+				onLongPress={selecting ? undefined : onSelect}
 				style={{ flex: 1, flexDirection: grid ? "column" : "row", gap: space.s3, minHeight: size.hit }}
 			>
 				<Thumbnail document={document} visible={visible} compact={!grid} />
@@ -186,7 +184,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 	const [selecting, setSelecting] = useState(false);
 	const [selection, setSelection] = useState<string[]>([]);
 	const [sheet, setSheet] = useState<DocumentSheet | null>(null);
-	const [purge, setPurge] = useState<DocumentSummary[] | null>(null);
+	const [purge, setPurge] = useState<{ documents: DocumentSummary[]; all: boolean } | null>(null);
 	const [visible, setVisible] = useState<string[]>([]);
 	const onViewableItemsChanged = useCallback<NonNullable<LegendListProps<DocumentSummary>["onViewableItemsChanged"]>>(
 		({ viewableItems }) => {
@@ -197,6 +195,8 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 	const grid = !trashed && (view ?? (width >= 768 ? "grid" : "list")) === "grid";
 	const columns = grid ? (width >= 1000 ? 3 : 2) : 1;
 	const all = session.status === "signed-in" ? (documents.data ?? []) : [];
+	const trashTotal = counts.data?.trash ?? all.length;
+	const purgeCount = purge?.all ? trashTotal : (purge?.documents.length ?? 0);
 	const pendingKeys = new Set(pending.map(documentKey));
 	const recoverable = trashed
 		? []
@@ -226,6 +226,10 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 		setSelection((previous) =>
 			previous.includes(key) ? previous.filter((entry) => entry !== key) : [...previous, key],
 		);
+	};
+	const finishSelection = () => {
+		setSelecting(false);
+		setSelection([]);
 	};
 	const open = (document: DocumentSummary) => {
 		if (trashed) {
@@ -280,21 +284,12 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 						value={q}
 						onChangeText={setQ}
 						actions={
-							!trashed && (
-								<>
-									{selecting && (
-										<Button
-											variant="ghost"
-											label={t`Done`}
-											onPress={() => {
-												setSelecting(false);
-												setSelection([]);
-											}}
-										/>
-									)}
+							<>
+								{selecting && <Button variant="ghost" label={t`Done`} onPress={finishSelection} />}
+								{!trashed && (
 									<IconButton icon="plus" label={t`New document`} onPress={() => router.push(routes.new())} />
-								</>
-							)
+								)}
+							</>
 						}
 					/>
 				</View>
@@ -388,28 +383,61 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 						<View style={{ gap: space.s2 }}>
 							<Text variant="label">{plural(selected.length, { one: "# selected", other: "# selected" })}</Text>
 							<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
-								<Button label={t`Select all`} variant="ghost" onPress={() => setSelection(filtered.map(documentKey))} />
-								{(["tags", "sharing", "lock"] as const).map((kind) => (
-									<Button
-										key={kind}
-										label={{ tags: t`Tags`, sharing: t`Sharing`, lock: t`Lock` }[kind]}
-										variant="secondary"
-										disabled={!selected.length || operations.busy}
-										onPress={() => setSheet({ kind, documents: selected })}
-									/>
-								))}
 								<Button
-									label={t`Move to Trash`}
-									variant="danger"
-									disabled={!selected.length}
-									loading={operations.busy}
-									onPress={() => void operations.trash(selected)}
+									label={t`Select this page`}
+									variant="ghost"
+									onPress={() => setSelection(filtered.map(documentKey))}
 								/>
+								{trashed ? (
+									<>
+										<Button
+											label={t`Restore`}
+											variant="secondary"
+											disabled={!selected.length || operations.busy}
+											loading={operations.busy}
+											onPress={() =>
+												void operations.restoreSelected(selected).then((success) => {
+													if (success) finishSelection();
+												})
+											}
+										/>
+										<Button
+											label={t`Delete permanently…`}
+											variant="danger"
+											disabled={!selected.length || operations.busy}
+											onPress={() => setPurge({ documents: selected, all: false })}
+										/>
+									</>
+								) : (
+									<>
+										{(["tags", "sharing", "lock"] as const).map((kind) => (
+											<Button
+												key={kind}
+												label={{ tags: t`Tags`, sharing: t`Sharing`, lock: t`Lock` }[kind]}
+												variant="secondary"
+												disabled={!selected.length || operations.busy}
+												onPress={() => setSheet({ kind, documents: selected })}
+											/>
+										))}
+										<Button
+											label={t`Move to Trash`}
+											variant="danger"
+											disabled={!selected.length}
+											loading={operations.busy}
+											onPress={() => void operations.trash(selected)}
+										/>
+									</>
+								)}
 							</View>
 						</View>
 					)}
 					{trashed && all.length > 0 && (
-						<Button label={t`Empty trash`} variant="danger" disabled={operations.busy} onPress={() => setPurge(all)} />
+						<Button
+							label={t`Empty trash`}
+							variant="danger"
+							disabled={operations.busy}
+							onPress={() => setPurge({ documents: all, all: true })}
+						/>
 					)}
 				</>
 			)}
@@ -523,7 +551,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 						}
 						onDelete={(document) => {
 							setSheet(null);
-							setPurge([document]);
+							setPurge({ documents: [document], all: false });
 						}}
 					/>
 				) : (
@@ -538,17 +566,23 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 			<ConfirmDialog
 				open={session.status === "signed-in" && purge !== null}
 				title={
-					purge?.length === 1
-						? t`Delete “${purge[0]?.name}” forever?`
-						: plural(purge?.length ?? 0, { one: "Delete # document forever?", other: "Delete # documents forever?" })
+					purge?.all
+						? t`Empty Trash?`
+						: purgeCount === 1
+							? t`Delete “${purge?.documents[0]?.name}” forever?`
+							: plural(purgeCount, {
+									one: "Delete # selected document forever?",
+									other: "Delete # selected documents forever?",
+								})
 				}
 				message={
-					purge?.length === 1
-						? t`“${purge[0]?.name}” will be deleted for good and can't be restored.`
-						: plural(purge?.length ?? 0, {
-								one: "# document will be deleted for good and can't be restored.",
-								other: "# documents will be deleted for good and can't be restored.",
-							})
+					purge?.all
+						? purgeCount === 1
+							? t`The document in Trash will be deleted for good and can't be restored.`
+							: t`All ${purgeCount} documents in Trash will be deleted for good and can't be restored.`
+						: purgeCount === 1
+							? t`“${purge?.documents[0]?.name}” will be deleted for good and can't be restored.`
+							: t`The selected documents will be deleted for good and can't be restored.`
 				}
 				confirmLabel={t`Hold to delete`}
 				destructive
@@ -557,16 +591,13 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 					if (!operations.busy) setPurge(null);
 				}}
 				onConfirm={() => {
-					if (purge)
-						void operations.run(async () => {
-							const done = await operations.batch(purge, (document) => client.documents.purge(documentRef(document)));
-							setPurge((previous) => {
-								const remaining = previous?.filter(
-									(document) => !done.some((entry) => documentKey(entry) === documentKey(document)),
-								);
-								return remaining?.length ? remaining : null;
-							});
-						});
+					if (!purge) return;
+					const action = purge.all ? operations.emptyTrash() : operations.purgeSelected(purge.documents);
+					void action.then((success) => {
+						if (!success) return;
+						setPurge(null);
+						finishSelection();
+					});
 				}}
 			/>
 		</Screen>

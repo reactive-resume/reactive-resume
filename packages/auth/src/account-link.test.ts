@@ -168,6 +168,7 @@ describe("linkAnonymousAccount", () => {
 		expect(hook).toHaveBeenCalledWith({
 			fromUserId: "guest-123",
 			toUserId: "user-456",
+			excludedStoragePrefixes: [],
 		});
 	});
 

@@ -15,6 +15,13 @@ type BatchOptions = {
 	notify?: boolean;
 };
 
+// One request body stays bounded even when an older client has loaded the whole library.
+const BATCH_SIZE = 500;
+const chunks = <T>(items: readonly T[]) =>
+	Array.from({ length: Math.ceil(items.length / BATCH_SIZE) }, (_, index) =>
+		items.slice(index * BATCH_SIZE, (index + 1) * BATCH_SIZE),
+	);
+
 export function documentError(error: unknown) {
 	if (error instanceof ORPCError) {
 		if (error.code === "UNAUTHORIZED") return t`Your session expired. Sign in again.`;
@@ -159,5 +166,87 @@ export function useDocumentOperations() {
 			});
 		return success;
 	};
-	return { run, batch, trash, busy, error };
+	/** Restores the selected loaded documents; the server skips any that changed meanwhile. */
+	const restoreSelected = async (documents: readonly DocumentSummary[]) => {
+		let restored = 0;
+		let attempted = false;
+		const success = await run(async () => {
+			attempted = true;
+			for (const group of chunks(documents)) {
+				if (getServer() !== session.server) break;
+				try {
+					const result = await client.documents.restoreMany({ documents: group.map(documentRef) });
+					restored += result.restored;
+				} catch {
+					/* The remaining groups can still succeed. */
+				}
+			}
+			if (restored !== documents.length) {
+				partial.current = true;
+				setError(t`Restored ${restored} of ${documents.length}. Refresh and retry any that remain in Trash.`);
+			}
+		});
+		if (attempted && restored > 0)
+			showToast({
+				message:
+					restored === documents.length
+						? plural(restored, { one: "# document restored", other: "# documents restored" })
+						: t`Restored ${restored} of ${documents.length}. Refresh and retry any that remain in Trash.`,
+			});
+		return success;
+	};
+	/** Permanently deletes the selected loaded documents; Empty Trash is a separate server-side operation. */
+	const purgeSelected = async (documents: readonly DocumentSummary[]) => {
+		let deleted = 0;
+		let attempted = false;
+		const success = await run(async () => {
+			attempted = true;
+			for (const group of chunks(documents)) {
+				if (getServer() !== session.server) break;
+				try {
+					const result = await client.documents.purgeMany({ documents: group.map(documentRef) });
+					deleted += result.deleted;
+				} catch {
+					/* The remaining groups can still succeed. */
+				}
+			}
+			if (deleted !== documents.length) {
+				partial.current = true;
+				setError(t`Deleted ${deleted} of ${documents.length}. Refresh to see what remains.`);
+			}
+		});
+		if (attempted && deleted > 0)
+			showToast({
+				message:
+					deleted === documents.length
+						? plural(deleted, { one: "# document deleted forever", other: "# documents deleted forever" })
+						: t`Deleted ${deleted} of ${documents.length} forever. Refresh to see what remains.`,
+			});
+		return success;
+	};
+	/** Deletes every document in this account's Trash, not only the IDs this device has loaded. */
+	const emptyTrash = async () => {
+		let deleted = 0;
+		const success = await run(async () => {
+			deleted = (await client.documents.emptyTrash({})).deleted;
+		});
+		if (success)
+			showToast({
+				message:
+					deleted === 0
+						? t`Trash was already empty`
+						: plural(deleted, { one: "# document deleted forever", other: "# documents deleted forever" }),
+			});
+		return success;
+	};
+	return {
+		run,
+		batch,
+		trash,
+		restoreSelected,
+		purgeSelected,
+		emptyTrash,
+		busy,
+		error,
+	};
 }

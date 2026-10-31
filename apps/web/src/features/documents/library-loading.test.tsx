@@ -9,10 +9,15 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DocumentsPage } from "./documents-page";
 import { TrashPage } from "./trash-page";
 
-const { loadDocuments } = vi.hoisted(() => ({ loadDocuments: vi.fn() }));
+const { loadDocuments, loadCounts } = vi.hoisted(() => ({ loadDocuments: vi.fn(), loadCounts: vi.fn() }));
 
 vi.mock("@/libs/orpc/client", () => ({
-	orpc: { documents: { list: { queryOptions: () => ({ queryKey: ["documents"], queryFn: loadDocuments }) } } },
+	orpc: {
+		documents: {
+			list: { queryOptions: () => ({ queryKey: ["documents"], queryFn: loadDocuments }) },
+			counts: { queryOptions: () => ({ queryKey: ["documents", "counts"], queryFn: loadCounts }) },
+		},
+	},
 }));
 vi.mock("@tanstack/react-router", () => ({
 	Link: ({ children }: { children: ReactNode }) => <a href="/dashboard">{children}</a>,
@@ -27,10 +32,12 @@ vi.mock("./document-card", () => ({ DocumentCard: () => null, DocumentRow: () =>
 vi.mock("./use-start-document", () => ({
 	useStartDocument: () => ({ startBlank: vi.fn(), trySample: vi.fn(), creating: false }),
 }));
+vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn(async () => true) }));
 
 it.each(["documents", "trash"])("keeps %s load failures distinct from empty state and retries", async (page) => {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	loadDocuments.mockReset().mockRejectedValueOnce(new Error("Network unavailable")).mockResolvedValue([]);
+	loadCounts.mockReset().mockResolvedValue({ resume: 0, letter: 0, trash: 0 });
 	const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 	const view = render(
 		<I18nProvider i18n={i18n}>

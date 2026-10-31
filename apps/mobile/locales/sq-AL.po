@@ -33,7 +33,7 @@ msgstr "\"{0}\" u zhvendos në Kosh"
 msgid "“{0}” stops being your primary resume."
 msgstr "“{0}” nuk do të jetë më CV-ja juaj kryesore."
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
 msgstr "“{0}” do të fshihet përgjithmonë dhe nuk mund të restaurohet."
@@ -169,11 +169,6 @@ msgstr "{0, plural, one {# ditë} other {# ditë}}"
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# dokument u zhvendos në Kosh} other {# dokumente u zhvendosën në Kosh}}"
 
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {# document will be deleted for good and can't be restored.} other {# documents will be deleted for good and can't be restored.}}"
-msgstr "{0, plural, one {# dokument do të fshihet përgjithmonë dhe nuk mund të restaurohet.} other {# dokumente do të fshihen përgjithmonë dhe nuk mund të restaurohen.}}"
-
 #. placeholder {0}: counts.data.trash
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
@@ -250,11 +245,6 @@ msgstr "{0, plural, one {Të fshihet # aplikim?} other {Të fshihen # aplikime?}
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {Fshi # aplikim} other {Fshi # aplikime}}"
-
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
-msgstr "{0, plural, one {Të fshihet përgjithmonë # dokument?} other {Të fshihen përgjithmonë # dokumente?}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -500,6 +490,10 @@ msgstr "{day} · {length}m"
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· që nga sot} one {· për # ditë} other {· për # ditë}}"
 
+#: src/features/documents/queries.ts
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{done} nga {count} të kryera"
@@ -618,8 +612,16 @@ msgstr "Lloji {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# modifikim i propozuar në këtë faqe · asgjë nuk ndryshon derisa të pranoni} other {# modifikime të propozuara në këtë faqe · asgjë nuk ndryshon derisa të pranoni}}"
 
+#: src/features/documents/library.tsx
+msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
@@ -1338,6 +1340,10 @@ msgstr "Të gjitha"
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "Të gjitha ({0})"
+
+#: src/features/documents/library.tsx
+msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "All applications"
@@ -3537,7 +3543,7 @@ msgstr "Diploma"
 msgid "Delete"
 msgstr "Fshi"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "Delete “{0}” forever?"
 msgstr "Të fshihet përgjithmonë \"{0}\"?"
@@ -3596,6 +3602,10 @@ msgstr "Fshijeni. Fjalët kyçe të fshehura trajtohen si një përpjekje e qël
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
 msgstr "Fshi faqen"
+
+#: src/features/documents/library.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Delete private application profile?"
@@ -3657,6 +3667,16 @@ msgstr "Fshi…"
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
 msgstr "U fshi"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0}. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -4131,6 +4151,10 @@ msgstr "Letër bosh"
 #: src/features/documents/library.tsx
 msgid "Empty trash"
 msgstr "Zbraz koshin"
+
+#: src/features/documents/library.tsx
+msgid "Empty Trash?"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -8349,6 +8373,11 @@ msgstr "Të rivendoset ky version?"
 msgid "Restore version"
 msgstr "Rikthe versionin"
 
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Restored a version"
@@ -9082,10 +9111,6 @@ msgstr "Zgjidhni"
 msgid "Select {0}"
 msgstr "Zgjidh {0}"
 
-#: src/features/documents/library.tsx
-msgid "Select all"
-msgstr "Zgjidh të gjitha"
-
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
@@ -9095,6 +9120,10 @@ msgstr "Zgjidh një hyrje në faqen {0}"
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "Zgjidh hyrjen {0}"
+
+#: src/features/documents/library.tsx
+msgid "Select this page"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Select visible"
@@ -10259,6 +10288,10 @@ msgstr "Lidhja nuk mund të ngarkohej ose të ruhej. Provo sërish."
 msgid "The current state will be saved as “Before restore” first."
 msgstr "Gjendja aktuale do të ruhet fillimisht si “Përpara rivendosjes”."
 
+#: src/features/documents/library.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "Redaktori hapet në Kontroll, i cili kontrollon sërish CV-në e importuar."
@@ -10367,6 +10400,10 @@ msgstr "Rezultati llogarit se sa me besueshmëri softueri e lexon CV-në tuaj. N
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "Rezultati pasqyron sa besueshmërisht është nxjerrë teksti, jo shanset tuaja."
+
+#: src/features/documents/library.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
@@ -10900,6 +10937,10 @@ msgstr "Koshi"
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "Koshi është bosh"
+
+#: src/features/documents/queries.ts
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Trimming words"

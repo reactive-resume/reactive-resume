@@ -158,6 +158,11 @@ msgstr "{0, plural, one {# day left} other {# days left}}"
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# day} other {# days}}"
 
+#. placeholder {0}: result.deleted
+#: src/features/documents/document-actions.tsx
+msgid "{0, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr "{0, plural, one {# document deleted forever} other {# documents deleted forever}}"
+
 #. placeholder {0}: done.length
 #: src/features/documents/document-actions.tsx
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
@@ -248,6 +253,11 @@ msgstr "{0, plural, one {Delete # application?} other {Delete # applications?}}"
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {Delete # application} other {Delete # applications}}"
+
+#. placeholder {0}: selection.length
+#: src/features/documents/trash-page.tsx
+msgid "{0, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr "{0, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -528,6 +538,7 @@ msgid "{count} free resume templates. Find your fit."
 msgstr "{count} free resume templates. Find your fit."
 
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 msgid "{count} selected"
 msgstr "{count} selected"
 
@@ -550,6 +561,10 @@ msgstr "{days, plural, one {# office day, under your limit} other {# office days
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day, your limit} other {# office days, your limit}}"
 msgstr "{days, plural, one {# office day, your limit} other {# office days, your limit}}"
+
+#: src/features/documents/document-actions.tsx
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
@@ -725,6 +740,10 @@ msgstr "{proposed, plural, one {# proposed} other {# proposed}}"
 #: src/features/career/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
 msgstr "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+
+#: src/features/documents/document-actions.tsx
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
+msgstr "{restored, plural, one {# document restored} other {# documents restored}}"
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "{sections, plural, one {# section} other {# sections}}"
@@ -1700,6 +1719,10 @@ msgstr "Align right"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "All"
 msgstr "All"
+
+#: src/features/documents/trash-page.tsx
+msgid "All {trashCount} documents in Trash will be deleted for good and can't be restored."
+msgstr "All {trashCount} documents in Trash will be deleted for good and can't be restored."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "All applications"
@@ -2959,6 +2982,7 @@ msgstr "Clear section"
 #: src/components/ui/combobox.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Clear selection"
 msgstr "Clear selection"
 
@@ -3597,6 +3621,10 @@ msgstr "Couldn't delete the interview. Try again."
 msgid "Couldn't delete the provider. Try again."
 msgstr "Couldn't delete the provider. Try again."
 
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't delete the selected documents. Try again."
+msgstr "Couldn't delete the selected documents. Try again."
+
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Couldn't delete this conversation. Try again."
@@ -3618,6 +3646,10 @@ msgstr "Couldn't disconnect your {providerName} account. Try again."
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't duplicate the document. Try again."
 msgstr "Couldn't duplicate the document. Try again."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't empty Trash. Try again."
+msgstr "Couldn't empty Trash. Try again."
 
 #: src/features/settings/account/data.tsx
 msgid "Couldn't export your data. Try again."
@@ -3814,6 +3846,10 @@ msgstr "Couldn't reset your password. Try again."
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't restore the document. Try again."
 msgstr "Couldn't restore the document. Try again."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't restore the selected documents. Try again."
+msgstr "Couldn't restore the selected documents. Try again."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
@@ -4385,6 +4421,11 @@ msgstr "Degree"
 msgid "Delete"
 msgstr "Delete"
 
+#. placeholder {0}: selection[0]?.name ?? ""
+#: src/features/documents/trash-page.tsx
+msgid "Delete “{0}” forever?"
+msgstr "Delete “{0}” forever?"
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "Delete “{0}” now?"
@@ -4434,6 +4475,10 @@ msgstr "Delete now…"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Delete page"
 msgstr "Delete page"
+
+#: src/features/documents/trash-page.tsx
+msgid "Delete permanently…"
+msgstr "Delete permanently…"
 
 #: src/features/settings/account/application-profile.tsx
 msgid "Delete private application profile?"
@@ -4512,6 +4557,11 @@ msgstr "Deleted “{0}”"
 #: src/features/resume/share/history-tab.tsx
 msgid "Deleted “{title}”"
 msgstr "Deleted “{title}”"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/document-actions.tsx
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr "Deleted {deleted} of {0} forever. Refresh to see what remains."
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -5131,6 +5181,14 @@ msgstr "Email the recruiter"
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "Embed all fonts when exporting, so characters map the way you intended."
+
+#: src/features/documents/trash-page.tsx
+msgid "Empty Trash?"
+msgstr "Empty Trash?"
+
+#: src/features/documents/trash-page.tsx
+msgid "Empty trash…"
+msgstr "Empty trash…"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -6139,6 +6197,7 @@ msgid "History"
 msgstr "History"
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Hold to delete"
 msgstr "Hold to delete"
 
@@ -6714,6 +6773,7 @@ msgid "Keep editing"
 msgstr "Keep editing"
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Keep in Trash"
 msgstr "Keep in Trash"
 
@@ -8234,6 +8294,14 @@ msgstr "No resume"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "No resumes yet."
+
+#: src/features/documents/document-actions.tsx
+msgid "No selected documents were deleted. Refresh to see what remains."
+msgstr "No selected documents were deleted. Refresh to see what remains."
+
+#: src/features/documents/document-actions.tsx
+msgid "No selected documents were restored. Refresh to see what remains."
+msgstr "No selected documents were restored. Refresh to see what remains."
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -10356,6 +10424,7 @@ msgid "Responsible for the design system and helping other teams with their desi
 msgstr "Responsible for the design system and helping other teams with their designs."
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Restore"
 msgstr "Restore"
 
@@ -10367,6 +10436,11 @@ msgstr "Restore this version"
 #: src/features/documents/document-actions.tsx
 msgid "Restored “{0}”"
 msgstr "Restored “{0}”"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/document-actions.tsx
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
 
 #: src/features/resume/share/format.ts
 msgid "Restored a version"
@@ -11208,6 +11282,14 @@ msgstr "Select all"
 msgid "Select an AI provider"
 msgstr "Select an AI provider"
 
+#: src/features/documents/trash-page.tsx
+msgid "Select this page"
+msgstr "Select this page"
+
+#: src/features/documents/trash-page.tsx
+msgid "Select this page in Trash"
+msgstr "Select this page in Trash"
+
 #: src/components/ui/combobox.tsx
 msgid "Select..."
 msgstr "Select..."
@@ -11215,6 +11297,10 @@ msgstr "Select..."
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
 msgstr "Selected documents"
+
+#: src/features/documents/trash-page.tsx
+msgid "Selected documents in Trash"
+msgstr "Selected documents in Trash"
 
 #: src/features/homepage/footer.tsx
 msgid "Self-hosting"
@@ -12596,6 +12682,10 @@ msgstr "The coach saves facts you state, and tells you. You can undo."
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "The copy is linked to the application, so Check and the assistant use its posting."
 
+#: src/features/documents/trash-page.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr "The document in Trash will be deleted for good and can't be restored."
+
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "The end is before the start."
 msgstr "The end is before the start."
@@ -12765,6 +12855,14 @@ msgstr "The score is capped because of a blocking problem: {0}"
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "The score reflects how reliably text is extracted, not your chances."
+
+#: src/features/documents/trash-page.tsx
+msgid "The selected document will be deleted for good and can't be restored."
+msgstr "The selected document will be deleted for good and can't be restored."
+
+#: src/features/documents/trash-page.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr "The selected documents will be deleted for good and can't be restored."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "The service didn't respond in time. Try again."
@@ -13253,6 +13351,10 @@ msgstr "Trash"
 #: src/features/documents/trash-page.tsx
 msgid "Trash is empty"
 msgstr "Trash is empty"
+
+#: src/features/documents/document-actions.tsx
+msgid "Trash was already empty"
+msgstr "Trash was already empty"
 
 #: src/features/career/shared.tsx
 msgid "Trimming words"

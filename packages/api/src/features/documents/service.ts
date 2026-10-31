@@ -1,6 +1,6 @@
 import type { DocumentSummary } from "../../dto/documents";
 import { ORPCError } from "@orpc/client";
-import { and, asc, count, eq, isNotNull, isNull, lt, sql } from "drizzle-orm";
+import { and, asc, count, eq, inArray, isNotNull, isNull, lt, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { applicationService } from "../applications/service";
@@ -10,6 +10,7 @@ import { lockUser } from "./ownership";
 
 type DocumentType = DocumentSummary["type"];
 type DocumentRef = { userId: string; type: DocumentType; id: string };
+type DocumentSelection = Pick<DocumentRef, "type" | "id">;
 
 // Trash keeps documents this long before deleting them for good.
 const TRASH_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
@@ -105,6 +106,28 @@ async function deleteForGood(ref: DocumentRef, trashedBefore?: Date) {
 			.delete(schema.coverLetter)
 			.where(and(owned(ref), trashedBefore ? lt(schema.coverLetter.trashedAt, trashedBefore) : undefined));
 	});
+}
+
+/**
+ * Deletes a batch of the account's trashed letters in one statement. Selected IDs narrow it; `trashedBefore` keeps a
+ * letter restored by another request. Active letters and other accounts' letters are never touched.
+ */
+async function deleteLettersForGood(input: { userId: string; ids?: readonly string[]; trashedBefore?: Date }) {
+	const rows = await db.transaction(async (tx) => {
+		await lockUser(tx, input.userId);
+		return tx
+			.delete(schema.coverLetter)
+			.where(
+				and(
+					eq(schema.coverLetter.userId, input.userId),
+					isNotNull(schema.coverLetter.trashedAt),
+					input.ids ? inArray(schema.coverLetter.id, [...input.ids]) : undefined,
+					input.trashedBefore ? lt(schema.coverLetter.trashedAt, input.trashedBefore) : undefined,
+				),
+			)
+			.returning({ id: schema.coverLetter.id });
+	});
+	return rows.length;
 }
 
 /** One account's documents trashed more than 30 days ago go for good; runs when the account lists its documents. */
@@ -297,11 +320,87 @@ export const documentsService = {
 
 	restore: (input: DocumentRef) => update(input, { trashedAt: null }),
 
+	/**
+	 * Restores the selected loaded documents in one transaction. Only this account's documents that are still in Trash
+	 * are touched; a document restored or deleted by another request is skipped instead of failing the batch.
+	 */
+	restoreMany: async (input: { userId: string; documents: DocumentSelection[] }) => {
+		const resumeIds = [...new Set(input.documents.filter(({ type }) => type === "resume").map(({ id }) => id))];
+		const letterIds = [...new Set(input.documents.filter(({ type }) => type === "letter").map(({ id }) => id))];
+		const restored = await db.transaction(async (tx) => {
+			await lockUser(tx, input.userId);
+			const resumes =
+				resumeIds.length === 0
+					? []
+					: await tx
+							.update(schema.resume)
+							.set({ trashedAt: null })
+							.where(
+								and(
+									eq(schema.resume.userId, input.userId),
+									inArray(schema.resume.id, resumeIds),
+									isNotNull(schema.resume.trashedAt),
+								),
+							)
+							.returning({ id: schema.resume.id });
+			const letters =
+				letterIds.length === 0
+					? []
+					: await tx
+							.update(schema.coverLetter)
+							.set({ trashedAt: null, revision: sql`${schema.coverLetter.revision} + 1` })
+							.where(
+								and(
+									eq(schema.coverLetter.userId, input.userId),
+									inArray(schema.coverLetter.id, letterIds),
+									isNotNull(schema.coverLetter.trashedAt),
+								),
+							)
+							.returning({ id: schema.coverLetter.id });
+			return resumes.length + letters.length;
+		});
+		return { restored };
+	},
+
+	/**
+	 * "Delete permanently" for the selected loaded documents. Only this account's documents still in Trash when the
+	 * request runs are deleted, so a concurrent restore wins. Anything else counts as skipped rather than failing.
+	 */
+	purgeMany: async (input: { userId: string; documents: DocumentSelection[] }) => {
+		const cutoff = new Date();
+		const resumeIds = [...new Set(input.documents.filter(({ type }) => type === "resume").map(({ id }) => id))];
+		const letterIds = [...new Set(input.documents.filter(({ type }) => type === "letter").map(({ id }) => id))];
+		const [resumes, letters] = await Promise.all([
+			resumeIds.length === 0
+				? 0
+				: resumeService.deleteTrashedMany({ userId: input.userId, ids: resumeIds, trashedBefore: cutoff }),
+			letterIds.length === 0
+				? 0
+				: deleteLettersForGood({ userId: input.userId, ids: letterIds, trashedBefore: cutoff }),
+		]);
+		const deleted = resumes + letters;
+		return { deleted, skipped: input.documents.length - deleted };
+	},
+
+	/**
+	 * Empty Trash: deletes every one of this account's trashed documents server-side, not the IDs the client has
+	 * loaded. Active documents and other accounts' Trash are untouched, and a concurrent restore wins.
+	 */
+	emptyTrash: async (input: { userId: string }) => {
+		const cutoff = new Date();
+		const [resumes, letters] = await Promise.all([
+			resumeService.deleteTrashedMany({ userId: input.userId, trashedBefore: cutoff }),
+			deleteLettersForGood({ userId: input.userId, trashedBefore: cutoff }),
+		]);
+		return { deleted: resumes + letters };
+	},
+
 	/** "Delete now…": only for documents already in Trash. */
 	purge: async (input: DocumentRef) => {
 		const state = await readState(input);
 		if (!state.trashedAt) throw new ORPCError("BAD_REQUEST", { message: "Move the document to Trash first." });
-		await deleteForGood(input);
+		// A concurrent restore wins; Trash deletes don't need a lock because deleting is the point of being there.
+		await deleteForGood(input, new Date());
 	},
 
 	/** Duplicates a resume for a job, selecting the working copy while preserving submitted versions. */

@@ -163,6 +163,11 @@ msgstr "{0, plural, one {بقي يوم واحد} two {بقي يومان} few {ب
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {يوم #} other {أيام #}}"
 
+#. placeholder {0}: result.deleted
+#: src/features/documents/document-actions.tsx
+msgid "{0, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #. placeholder {0}: done.length
 #: src/features/documents/document-actions.tsx
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
@@ -253,6 +258,11 @@ msgstr "{0, plural, one {حذف طلب واحد؟} two {حذف طلبين؟} few
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {حذف طلب واحد} two {حذف طلبين} few {حذف # طلبات} many {حذف # طلبًا} other {حذف # طلب}}"
+
+#. placeholder {0}: selection.length
+#: src/features/documents/trash-page.tsx
+msgid "{0, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -533,6 +543,7 @@ msgid "{count} free resume templates. Find your fit."
 msgstr "{count} قوالب سيرة ذاتية مجانية. اختر القالب المناسب لك."
 
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 msgid "{count} selected"
 msgstr "تم تحديد {count}"
 
@@ -555,6 +566,10 @@ msgstr "{days, plural, zero {لا أيام في المكتب، دون حدّك} 
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day, your limit} other {# office days, your limit}}"
 msgstr "{days, plural, zero {لا أيام في المكتب، وهو حدّك} one {يوم واحد في المكتب، وهو حدّك} two {يومان في المكتب، وهو حدّك} few {# أيام في المكتب، وهو حدّك} many {# يومًا في المكتب، وهو حدّك} other {# يوم في المكتب، وهو حدّك}}"
+
+#: src/features/documents/document-actions.tsx
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
@@ -729,6 +744,10 @@ msgstr "{proposed, plural, one {# المقترح} other {# المقترح}}"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
@@ -1705,6 +1724,10 @@ msgstr "محاذاة لليمين"
 #: src/features/resume/editor/design/template-group.tsx
 msgid "All"
 msgstr "الجميع"
+
+#: src/features/documents/trash-page.tsx
+msgid "All {trashCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "All applications"
@@ -2964,6 +2987,7 @@ msgstr "مسح القسم"
 #: src/components/ui/combobox.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Clear selection"
 msgstr "كليرست"
 
@@ -3602,6 +3626,10 @@ msgstr "تعذر حذف المقابلة. حاول مرة أخرى."
 msgid "Couldn't delete the provider. Try again."
 msgstr "تعذر حذف الموفر. حاول مرة أخرى."
 
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't delete the selected documents. Try again."
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Couldn't delete this conversation. Try again."
@@ -3623,6 +3651,10 @@ msgstr "تعذّر إلغاء ربط حسابك على {providerName}. حاول 
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't duplicate the document. Try again."
 msgstr "تعذّر تكرار المستند. حاول مرة أخرى."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't empty Trash. Try again."
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Couldn't export your data. Try again."
@@ -3819,6 +3851,10 @@ msgstr "تعذّرت إعادة تعيين كلمة المرور. حاول مر�
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't restore the document. Try again."
 msgstr "تعذّرت استعادة المستند. حاول مرة أخرى."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't restore the selected documents. Try again."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
@@ -4390,6 +4426,11 @@ msgstr "الدرجة"
 msgid "Delete"
 msgstr "حذف"
 
+#. placeholder {0}: selection[0]?.name ?? ""
+#: src/features/documents/trash-page.tsx
+msgid "Delete “{0}” forever?"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "Delete “{0}” now?"
@@ -4439,6 +4480,10 @@ msgstr "احذف الآن..."
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Delete page"
 msgstr "حذف الصفحة"
+
+#: src/features/documents/trash-page.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/account/application-profile.tsx
 msgid "Delete private application profile?"
@@ -4517,6 +4562,11 @@ msgstr "تم حذف \"{0}\""
 #: src/features/resume/share/history-tab.tsx
 msgid "Deleted “{title}”"
 msgstr "تم حذف \"{title}\""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/document-actions.tsx
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -5136,6 +5186,14 @@ msgstr "أرسل بريدًا إلكترونيًا إلى المجند"
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "ضمّن جميع الخطوط عند التصدير، لتُعرض الأحرف كما تريد."
+
+#: src/features/documents/trash-page.tsx
+msgid "Empty Trash?"
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "Empty trash…"
+msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -6144,6 +6202,7 @@ msgid "History"
 msgstr "السجل"
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Hold to delete"
 msgstr "اضغط مطولًا للحذف"
 
@@ -6719,6 +6778,7 @@ msgid "Keep editing"
 msgstr "تابع التعديل"
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Keep in Trash"
 msgstr "احتفظ بها في سلة المهملات"
 
@@ -8239,6 +8299,14 @@ msgstr "لا السيرة الذاتية"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "لم يتم استلام أي سير ذاتية حتى الآن."
+
+#: src/features/documents/document-actions.tsx
+msgid "No selected documents were deleted. Refresh to see what remains."
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "No selected documents were restored. Refresh to see what remains."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -10361,6 +10429,7 @@ msgid "Responsible for the design system and helping other teams with their desi
 msgstr "مسؤول عن نظام التصميم ومساعدة الفرق الأخرى في تصميماتهم."
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/trash-page.tsx
 msgid "Restore"
 msgstr "يعيد"
 
@@ -10372,6 +10441,11 @@ msgstr "استعادة هذا الإصدار"
 #: src/features/documents/document-actions.tsx
 msgid "Restored “{0}”"
 msgstr "تمت استعادة \"{0}\""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/document-actions.tsx
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
 
 #: src/features/resume/share/format.ts
 msgid "Restored a version"
@@ -11213,6 +11287,14 @@ msgstr "تحديد الكل"
 msgid "Select an AI provider"
 msgstr "اختر مزودًا لخدمات الذكاء الاصطناعي"
 
+#: src/features/documents/trash-page.tsx
+msgid "Select this page"
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "Select this page in Trash"
+msgstr ""
+
 #: src/components/ui/combobox.tsx
 msgid "Select..."
 msgstr "تحديد..."
@@ -11220,6 +11302,10 @@ msgstr "تحديد..."
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
 msgstr "المستندات المحددة"
+
+#: src/features/documents/trash-page.tsx
+msgid "Selected documents in Trash"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Self-hosting"
@@ -12601,6 +12687,10 @@ msgstr "يحفظ المدرّب الحقائق التي تذكرها، ويخب�
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "يتم ربط النسخة بطلب الوظيفة، لذا يستخدم Check والمساعد إعلان الوظيفة الخاص به."
 
+#: src/features/documents/trash-page.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "The end is before the start."
 msgstr "النهاية هي قبل البداية."
@@ -12770,6 +12860,14 @@ msgstr "النتيجة محدودة بحد أقصى بسبب مشكلة معطِ
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "تعكس النتيجة مدى موثوقية استخراج النص، وليس فرصك."
+
+#: src/features/documents/trash-page.tsx
+msgid "The selected document will be deleted for good and can't be restored."
+msgstr ""
+
+#: src/features/documents/trash-page.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
 msgid "The service didn't respond in time. Try again."
@@ -13258,6 +13356,10 @@ msgstr "سلة المهملات"
 #: src/features/documents/trash-page.tsx
 msgid "Trash is empty"
 msgstr "سلة المهملات فارغة"
+
+#: src/features/documents/document-actions.tsx
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/career/shared.tsx
 msgid "Trimming words"

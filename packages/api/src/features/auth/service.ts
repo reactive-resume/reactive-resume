@@ -10,7 +10,7 @@ import { applicationProfileService } from "../application-profile/service";
 import { applicationLaneService } from "../applications/lanes";
 import { careerService } from "../career/service";
 import { coverLetterService } from "../cover-letters/service";
-import { getStorageService } from "../storage/service";
+import { reportStorageCleanupSummary, runStorageCleanup } from "../storage/cleanup";
 import { revokeAppleAuthorization } from "./apple-revocation";
 
 type ProviderList = Partial<Record<AuthProvider, string>>;
@@ -110,7 +110,6 @@ export const authService = {
 	},
 
 	deleteAccount: async (input: { userId: string }): Promise<void> => {
-		const storageService = getStorageService();
 		const appleAccounts = await db
 			.select({ refreshToken: schema.account.refreshToken, accessToken: schema.account.accessToken })
 			.from(schema.account)
@@ -131,21 +130,18 @@ export const authService = {
 			}
 		}
 
-		// Delete all user files in one call (pictures, screenshots, pdfs)
-		// The storage service delete method supports recursive deletion via prefix
 		try {
-			await storageService.delete(`uploads/${input.userId}`);
-		} catch (err) {
-			// Log orphaned-file failures (GDPR erasure signal) but proceed with deleting the user.
-			console.error("Failed to delete storage for user %s:", input.userId, err);
-		}
-
-		try {
+			// A database trigger enqueues one account-prefix cleanup row in this same delete transaction, so storage
+			// failures cannot leave files without a durable retry target. The row has no user FK and survives deletion.
 			await db.delete(schema.user).where(eq(schema.user.id, input.userId));
 		} catch (err) {
 			console.error("Failed to delete user record:", err);
 
 			throw new ORPCError("INTERNAL_SERVER_ERROR");
 		}
+
+		await runStorageCleanup({ ownerId: input.userId, limit: 1 })
+			.then(reportStorageCleanupSummary)
+			.catch((error: unknown) => console.warn("Account storage cleanup will retry from its durable job.", error));
 	},
 };

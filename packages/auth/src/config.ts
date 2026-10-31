@@ -164,6 +164,7 @@ type WithoutEndpointMetadata<TPlugin> = TPlugin extends { endpoints: infer TEndp
 export type AccountLinkHook = (params: {
 	fromUserId: string;
 	toUserId: string;
+	excludedStoragePrefixes: string[];
 }) => Promise<(() => Promise<void>) | void>;
 
 let accountLinkHook: AccountLinkHook | undefined;
@@ -171,16 +172,6 @@ let accountLinkHook: AccountLinkHook | undefined;
 /** Sets the one account-link hook; no argument clears it. */
 export function setAccountLinkHook(hook?: AccountLinkHook): void {
 	accountLinkHook = hook;
-}
-
-/** Cleans up outside the database after Better Auth deletes a user (guest cleanup after linking, admin removal). */
-export type UserDeleteHook = (userId: string) => Promise<void>;
-
-let userDeleteHook: UserDeleteHook | undefined;
-
-/** Sets the one user-delete hook; no argument clears it. */
-export function setUserDeleteHook(hook?: UserDeleteHook): void {
-	userDeleteHook = hook;
 }
 
 export async function linkAnonymousAccount({
@@ -348,7 +339,13 @@ export async function linkAnonymousAccount({
 			.where(eq(schema.resumeSlugRedirect.userId, fromUserId));
 
 		// Ownership updates lock document rows, so guest saves cannot add uncopied references during copying.
-		return accountLinkHook?.({ fromUserId, toUserId });
+		const hook = accountLinkHook;
+		if (!hook) return;
+		const erasures = await tx
+			.select({ storageKey: schema.storageCleanupJob.storageKey })
+			.from(schema.storageCleanupJob)
+			.where(eq(schema.storageCleanupJob.ownerId, fromUserId));
+		return hook({ fromUserId, toUserId, excludedStoragePrefixes: erasures.map(({ storageKey }) => storageKey) });
 	});
 
 	try {
@@ -538,16 +535,6 @@ const getAuthConfig = () => {
 						// Guests sign in without a username. The tail of a UUIDv7 is random; its head is a timestamp.
 						const username = `guest-${generateId().slice(-12)}`;
 						return { data: { ...data, username, displayUsername: username } };
-					},
-				},
-				delete: {
-					// The user row is already gone, so a failed cleanup is logged rather than failing the request.
-					after: async (user) => {
-						try {
-							await userDeleteHook?.(user.id);
-						} catch (error) {
-							console.error("Failed to clean up deleted user %s:", user.id, error);
-						}
 					},
 				},
 			},

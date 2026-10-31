@@ -1,0 +1,98 @@
+---
+title: "Storage cleanup jobs"
+description: "Inspect and recover durable storage erasure work on a self-hosted installation."
+---
+
+This guide is for self-hosting operators and contributors investigating storage erasure.
+
+Permanent document and account deletion writes `storage_cleanup_job` rows in the same database transaction as the row
+delete. A row stays until its storage prefix is verified empty. Jobs are internal erasure work: they are not exposed in
+the product UI.
+
+## What runs
+
+- Node server: `startup/storage-cleanup.ts` every minute.
+- Vercel: the existing `/api/career/run` cron also drains cleanup.
+- Cloudflare: the scheduled handler runs cleanup alongside the career runner and waits for both before closing the pool.
+- Immediate post-delete passes are bounded; they reduce delay but are not the durability guarantee.
+
+Storage cleanup failures never block the document/account delete. The durable job is the retry target.
+
+## Signals
+
+Schedulers log a sanitized aggregate when cleanup remains:
+
+```text
+[storage-cleanup] Cleanup work remains. See docs/contributing/storage-cleanup.mdx for inspection and requeue.
+{ completed, missing, failed, partial, abandoned }
+```
+
+The aggregate above contains no storage key, owner ID or provider error. Inspect the table directly when the signal repeats.
+
+## Inspect
+
+Bounded aggregate, safe to run in production:
+
+```sql
+SELECT status, count(*)
+FROM storage_cleanup_job
+GROUP BY status
+ORDER BY status;
+```
+
+Job details are private: `id` can contain an owner ID, and `last_error` can contain provider paths or identifiers. Inspect
+these locally; do not paste them into an incident channel. Recent failures:
+
+```sql
+SELECT id, attempts, last_error, created_at, updated_at
+FROM storage_cleanup_job
+WHERE status = 'pending'
+ORDER BY next_attempt_at
+LIMIT 50;
+```
+
+Abandoned jobs, which automatic retries no longer pick up:
+
+```sql
+SELECT id, attempts, last_error, created_at, updated_at
+FROM storage_cleanup_job
+WHERE status = 'abandoned'
+ORDER BY updated_at
+LIMIT 50;
+```
+
+The same restriction applies to `owner_id` and `storage_key`, which contain account identifiers and storage paths.
+
+## Recover
+
+After storage is healthy again, requeue abandoned jobs. Reset attempts and the lease token so the scheduler makes a fresh
+bounded run. Keep the owner and key unchanged:
+
+```sql
+UPDATE storage_cleanup_job
+SET status = 'pending',
+    attempts = 0,
+    claim_token = NULL,
+    next_attempt_at = now(),
+    last_error = NULL
+WHERE status = 'abandoned';
+```
+
+Pending jobs retry automatically. To retry one job immediately in a controlled environment, set its `next_attempt_at`
+to `now()` instead of resetting its attempts.
+
+Never delete a cleanup row by hand unless its storage prefix has been verified gone. A row is the only remaining
+erasure target after a successful database delete.
+
+## Account deletion
+
+Deleting a user runs a database trigger that replaces narrower jobs for that owner with one `uploads/<owner-id>` job in
+the same transaction. The table intentionally has no user foreign key, so account deletion cannot cascade away the
+erasure target. Better Auth/admin/guest deletions and the product account-deletion path all use that trigger.
+
+Upload publication holds the same owner lock as deletion. A started upload finishes before deletion can commit; an upload
+whose account is already gone is refused. Guest linking excludes both pending and abandoned erasure prefixes from its
+copy snapshot, so deleted files cannot escape into the destination account.
+
+Older server instances do not take these locks. During an upgrade, drain their active uploads and account-link requests
+before starting the new deletion workers; a mixed-version deployment does not provide this publication guarantee.

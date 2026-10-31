@@ -33,7 +33,7 @@ msgstr "「{0}」をゴミ箱に移動しました"
 msgid "“{0}” stops being your primary resume."
 msgstr "「{0}」はプライマリレジュメではなくなります。"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
 msgstr "「{0}」は完全に削除され、復元できなくなります。"
@@ -169,11 +169,6 @@ msgstr "{0, plural, one {# 日} other {# 日}}"
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# 件の書類をゴミ箱に移動しました} other {# 件の書類をゴミ箱に移動しました}}"
 
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {# document will be deleted for good and can't be restored.} other {# documents will be deleted for good and can't be restored.}}"
-msgstr "{0, plural, one {書類#件を完全に削除します。復元できません。} other {書類#件を完全に削除します。復元できません。}}"
-
 #. placeholder {0}: counts.data.trash
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
@@ -250,11 +245,6 @@ msgstr "{0, plural, one {# 件の応募を削除しますか？} other {# 件の
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {# 件の応募を削除} other {# 件の応募を削除}}"
-
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
-msgstr "{0, plural, one {# 件の書類を完全に削除しますか？} other {# 件の書類を完全に削除しますか？}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -500,6 +490,10 @@ msgstr "{day} · {length}分"
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· 今日から} one {· #日間} other {· #日間}}"
 
+#: src/features/documents/queries.ts
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{done}/{count}件完了"
@@ -618,8 +612,16 @@ msgstr "{pairing}型"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {このページの変更案#件 · 承認するまで変更されません} other {このページの変更案#件 · 承認するまで変更されません}}"
 
+#: src/features/documents/library.tsx
+msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
@@ -1338,6 +1340,10 @@ msgstr "全て"
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "すべて ({0})"
+
+#: src/features/documents/library.tsx
+msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "All applications"
@@ -3537,7 +3543,7 @@ msgstr "学位"
 msgid "Delete"
 msgstr "削除"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "Delete “{0}” forever?"
 msgstr "「{0}」を完全に削除しますか？"
@@ -3596,6 +3602,10 @@ msgstr "削除してください。隠しキーワードは検索を意図的に
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
 msgstr "ページを削除"
+
+#: src/features/documents/library.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Delete private application profile?"
@@ -3657,6 +3667,16 @@ msgstr "消去…"
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
 msgstr "削除されました"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0}. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -4131,6 +4151,10 @@ msgstr "空のカバーレター"
 #: src/features/documents/library.tsx
 msgid "Empty trash"
 msgstr "ゴミ箱を空にする"
+
+#: src/features/documents/library.tsx
+msgid "Empty Trash?"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -8349,6 +8373,11 @@ msgstr "このバージョンを復元しますか?"
 msgid "Restore version"
 msgstr "バージョンを復元"
 
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Restored a version"
@@ -9082,10 +9111,6 @@ msgstr "選択"
 msgid "Select {0}"
 msgstr "{0} を選択"
 
-#: src/features/documents/library.tsx
-msgid "Select all"
-msgstr "すべて選択"
-
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
@@ -9095,6 +9120,10 @@ msgstr "ページ {0} でエントリを選択してください"
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "エントリ {0} を選択してください"
+
+#: src/features/documents/library.tsx
+msgid "Select this page"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Select visible"
@@ -10259,6 +10288,10 @@ msgstr "接続をロードまたは保存できませんでした。もう一度
 msgid "The current state will be saved as “Before restore” first."
 msgstr "最初に現在の状態が「復元前」として保存されます。"
 
+#: src/features/documents/library.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "エディターは「チェック」で開き、取り込んだレジュメを再チェックします。"
@@ -10367,6 +10400,10 @@ msgstr "スコアは、ソフトウェアが履歴書をどれだけ確実に読
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "スコアは、可能性ではなく、テキストがどの程度確実に抽出されるかを反映します。"
+
+#: src/features/documents/library.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
@@ -10900,6 +10937,10 @@ msgstr "ゴミ箱"
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "ゴミ箱が空です"
+
+#: src/features/documents/queries.ts
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Trimming words"

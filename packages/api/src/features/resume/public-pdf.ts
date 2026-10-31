@@ -2,11 +2,14 @@ import type { StorageService } from "../storage";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { createHash } from "node:crypto";
 import { ORPCError } from "@orpc/server";
+import { and, eq, isNull } from "drizzle-orm";
 import { isbot } from "isbot";
+import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
 import { generateFilename } from "@reactive-resume/utils/file";
 import { matchesIfNoneMatch } from "@reactive-resume/utils/http";
+import { lockUser } from "../documents/ownership";
 import {
 	assertCanView,
 	isOwner,
@@ -96,7 +99,14 @@ export async function createPublicResumePdf(input: CreatePublicResumePdfInput): 
 	if (!pending) {
 		// Only a render spends the visitor's budget; a cached file is as cheap as a picture.
 		await publicRenderRateLimiter.consume({ trustedClient: input.trustedClient, resumeId: resume.id });
-		pending = renderAndStore(storage, { data, filename, folder, key });
+		pending = renderAndStore(storage, {
+			data,
+			filename,
+			folder,
+			key,
+			resumeId: resume.id,
+			userId: resume.userId,
+		});
 		rendering.set(key, pending);
 		void pending.finally(() => rendering.delete(key)).catch(() => undefined);
 	}
@@ -107,17 +117,38 @@ const PDF = { type: "application/pdf" };
 
 async function renderAndStore(
 	storage: StorageService | undefined,
-	{ data, filename, folder, key }: { data: ResumeData; filename: string; folder: string; key: string },
+	{
+		data,
+		filename,
+		folder,
+		key,
+		resumeId,
+		userId,
+	}: { data: ResumeData; filename: string; folder: string; key: string; resumeId: string; userId: string },
 ): Promise<Uint8Array> {
 	const { createResumePdfFile } = await import("@reactive-resume/pdf/server");
 	const file = await createResumePdfFile({ data, filename, uploadOrigin: env.APP_URL });
 	const bytes = new Uint8Array(await file.arrayBuffer());
-	await storage
-		?.write({ key, data: bytes, contentType: "application/pdf" })
-		.then(async () => {
+	if (!storage) return bytes;
+
+	try {
+		// Publication is serialized with deletion under the same owner lock. Deletion waits for the write; if it
+		// already committed, revalidation stops this late render from recreating a cleaned prefix.
+		await db.transaction(async (tx) => {
+			await lockUser(tx, userId);
+			const [live] = await tx
+				.select({ id: schema.resume.id })
+				.from(schema.resume)
+				.where(and(eq(schema.resume.id, resumeId), eq(schema.resume.userId, userId), isNull(schema.resume.trashedAt)))
+				.limit(1);
+			if (!live) return;
+			await storage.write({ key, data: bytes, contentType: "application/pdf" });
 			const stale = (await storage.list(folder)).filter((name) => name !== key && name.includes("/public-"));
 			await Promise.all(stale.map((name) => storage.delete(name)));
-		})
-		.catch((error: unknown) => console.warn("Failed to cache public resume PDF", error));
+		});
+	} catch (error) {
+		if ((error as { code?: string } | null)?.code === "NOT_FOUND") return bytes;
+		console.warn("Failed to cache public resume PDF", error);
+	}
 	return bytes;
 }

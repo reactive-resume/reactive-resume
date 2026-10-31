@@ -33,7 +33,7 @@ msgstr "تم نقل \"{0}\" إلى سلة المهملات"
 msgid "“{0}” stops being your primary resume."
 msgstr "لن تعود “{0}” سيرتك الذاتية الأساسية."
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
 msgstr "سيتم حذف «{0}» نهائيًا ولا يمكن استعادته."
@@ -169,11 +169,6 @@ msgstr "{0, plural, one {يوم #} other {أيام #}}"
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, zero {لم يُنقل أي مستند إلى سلة المهملات} one {تم نقل مستند واحد إلى سلة المهملات} two {تم نقل مستندين إلى سلة المهملات} few {تم نقل # مستندات إلى سلة المهملات} many {تم نقل # مستندًا إلى سلة المهملات} other {تم نقل # مستند إلى سلة المهملات}}"
 
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {# document will be deleted for good and can't be restored.} other {# documents will be deleted for good and can't be restored.}}"
-msgstr "{0, plural, one {سيُحذف # مستند نهائيًا ولن يمكن استعادته.} other {سيُحذف # مستند نهائيًا ولن يمكن استعادته.} zero {سيُحذف # مستند نهائيًا ولن يمكن استعادته.} two {سيُحذف مستندان (#) نهائيًا ولن يمكن استعادتهما.} few {ستُحذف # مستندات نهائيًا ولن يمكن استعادتها.} many {سيُحذف # مستند نهائيًا ولن يمكن استعادته.}}"
-
 #. placeholder {0}: counts.data.trash
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
@@ -250,11 +245,6 @@ msgstr "{0, plural, one {حذف طلب واحد؟} two {حذف طلبين؟} few
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {حذف طلب واحد} two {حذف طلبين} few {حذف # طلبات} many {حذف # طلبًا} other {حذف # طلب}}"
-
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
-msgstr "{0, plural, one {حذف وثيقة واحدة نهائيًا؟} two {حذف وثيقتين نهائيًا؟} few {حذف # وثائق نهائيًا؟} many {حذف # وثيقة نهائيًا؟} other {حذف # وثيقة نهائيًا؟}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -500,6 +490,10 @@ msgstr "{day} · {length} د"
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· منذ اليوم} one {· منذ # يوم} other {· منذ # يوم} zero {· منذ # يوم} two {· منذ يومين (#)} few {· منذ # أيام} many {· منذ # يوم}}"
 
+#: src/features/documents/queries.ts
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "أُنجز {done} من {count}"
@@ -618,8 +612,16 @@ msgstr "نوع {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# تعديل مقترح في هذه الصفحة · لا يتغير شيء حتى توافق} other {# تعديل مقترح في هذه الصفحة · لا يتغير شيء حتى توافق} zero {# تعديل مقترح في هذه الصفحة · لا يتغير شيء حتى توافق} two {تعديلان (#) مقترحان في هذه الصفحة · لا يتغير شيء حتى توافق} few {# تعديلات مقترحة في هذه الصفحة · لا يتغير شيء حتى توافق} many {# تعديل مقترح في هذه الصفحة · لا يتغير شيء حتى توافق}}"
 
+#: src/features/documents/library.tsx
+msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
@@ -1338,6 +1340,10 @@ msgstr "الجميع"
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "الكل ({0})"
+
+#: src/features/documents/library.tsx
+msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "All applications"
@@ -3537,7 +3543,7 @@ msgstr "الدرجة"
 msgid "Delete"
 msgstr "حذف"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "Delete “{0}” forever?"
 msgstr "حذف “{0}” نهائيًا؟"
@@ -3596,6 +3602,10 @@ msgstr "احذفه. تُعامَل الكلمات المفتاحية المخف�
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
 msgstr "حذف الصفحة"
+
+#: src/features/documents/library.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Delete private application profile?"
@@ -3657,6 +3667,16 @@ msgstr "يمسح…"
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
 msgstr "تم الحذف"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0}. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -4131,6 +4151,10 @@ msgstr "خطاب تقديم فارغ"
 #: src/features/documents/library.tsx
 msgid "Empty trash"
 msgstr "إفراغ سلة المهملات"
+
+#: src/features/documents/library.tsx
+msgid "Empty Trash?"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -8349,6 +8373,11 @@ msgstr "هل تريد استعادة هذا الإصدار؟"
 msgid "Restore version"
 msgstr "استعادة الإصدار"
 
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Restored a version"
@@ -9082,10 +9111,6 @@ msgstr "تحديد"
 msgid "Select {0}"
 msgstr "تحديد {0}"
 
-#: src/features/documents/library.tsx
-msgid "Select all"
-msgstr "تحديد الكل"
-
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
@@ -9095,6 +9120,10 @@ msgstr "حدد إدخالاً في الصفحة {0}"
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "حدد الإدخال {0}"
+
+#: src/features/documents/library.tsx
+msgid "Select this page"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Select visible"
@@ -10259,6 +10288,10 @@ msgstr "لا يمكن تحميل الاتصال أو حفظه. حاول ثاني
 msgid "The current state will be saved as “Before restore” first."
 msgstr "سيتم حفظ الحالة الحالية كـ «قبل الاستعادة» أولاً."
 
+#: src/features/documents/library.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "يفتح المحرر لوحة «فحص» ويتحقق من السيرة الذاتية المستوردة مرة أخرى."
@@ -10367,6 +10400,10 @@ msgstr "تحسب النتيجة مدى موثوقية البرنامج في قر
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "تعكس النتيجة مدى موثوقية استخراج النص، وليس فرصك."
+
+#: src/features/documents/library.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
@@ -10900,6 +10937,10 @@ msgstr "سلة المهملات"
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "سلة المهملات فارغة"
+
+#: src/features/documents/queries.ts
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Trimming words"

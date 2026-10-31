@@ -33,7 +33,7 @@ msgstr "“{0}” Çöp Kutusu'na taşındı"
 msgid "“{0}” stops being your primary resume."
 msgstr "“{0}” artık birincil özgeçmişiniz olmayacak."
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "“{0}” will be deleted for good and can't be restored."
 msgstr "“{0}” tamamen silinecek ve geri yüklenemeyecektir."
@@ -169,11 +169,6 @@ msgstr "{0, plural, one {# günü} other {# gün sayısı}}"
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {# belge Çöp Kutusu'na taşındı} other {# belge Çöp Kutusu'na taşındı}}"
 
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {# document will be deleted for good and can't be restored.} other {# documents will be deleted for good and can't be restored.}}"
-msgstr "{0, plural, one {# belge kalıcı olarak silinecek ve geri yüklenemeyecek.} other {# belge kalıcı olarak silinecek ve geri yüklenemeyecek.}}"
-
 #. placeholder {0}: counts.data.trash
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {# document} other {# documents}}"
@@ -250,11 +245,6 @@ msgstr "{0, plural, one {# başvuru silinsin mi?} other {# başvuru silinsin mi?
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {Delete # application} other {Delete # applications}}"
 msgstr "{0, plural, one {# başvuruyu sil} other {# başvuruyu sil}}"
-
-#. placeholder {0}: purge?.length ?? 0
-#: src/features/documents/library.tsx
-msgid "{0, plural, one {Delete # document forever?} other {Delete # documents forever?}}"
-msgstr "{0, plural, one {# belge kalıcı olarak silinsin mi?} other {# belge kalıcı olarak silinsin mi?}}"
 
 #. placeholder {0}: row.intervalDays
 #: src/features/career/today.tsx
@@ -500,6 +490,10 @@ msgstr "{day} · {length}m"
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· bugünden beri} one {· # gün boyunca} other {· # gün boyunca}}"
 
+#: src/features/documents/queries.ts
+msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{done} / {count} tamamlandı"
@@ -618,8 +612,16 @@ msgstr "{pairing} tipi"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {Bu sayfada # düzenleme önerildi · siz kabul edene kadar hiçbir şey değişmez} other {Bu sayfada önerilen # düzenleme · siz kabul edene kadar hiçbir şey değişmez}}"
 
+#: src/features/documents/library.tsx
+msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/documents/queries.ts
+msgid "{restored, plural, one {# document restored} other {# documents restored}}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
@@ -1338,6 +1340,10 @@ msgstr "Tüm"
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "Hepsi ({0})"
+
+#: src/features/documents/library.tsx
+msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "All applications"
@@ -3537,7 +3543,7 @@ msgstr "Derece"
 msgid "Delete"
 msgstr "Sil"
 
-#. placeholder {0}: purge[0]?.name
+#. placeholder {0}: purge?.documents[0]?.name
 #: src/features/documents/library.tsx
 msgid "Delete “{0}” forever?"
 msgstr "“{0}” kalıcı olarak silinsin mi?"
@@ -3596,6 +3602,10 @@ msgstr "Silin. Gizli anahtar kelimeler, aramayı kandırma girişimi olarak değ
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
 msgstr "Sayfayı sil"
+
+#: src/features/documents/library.tsx
+msgid "Delete permanently…"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Delete private application profile?"
@@ -3657,6 +3667,16 @@ msgstr "Silmek…"
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
 msgstr "Silindi"
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0} forever. Refresh to see what remains."
+msgstr ""
+
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Deleted {deleted} of {0}. Refresh to see what remains."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Deleted application"
@@ -4131,6 +4151,10 @@ msgstr "Boş mektup"
 #: src/features/documents/library.tsx
 msgid "Empty trash"
 msgstr "Çöp kutusunu boşaltın"
+
+#: src/features/documents/library.tsx
+msgid "Empty Trash?"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "End"
@@ -8349,6 +8373,11 @@ msgstr "Bu sürüm geri yüklensin mi?"
 msgid "Restore version"
 msgstr "Sürümü geri yükle"
 
+#. placeholder {0}: documents.length
+#: src/features/documents/queries.ts
+msgid "Restored {restored} of {0}. Refresh and retry any that remain in Trash."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Restored a version"
@@ -9082,10 +9111,6 @@ msgstr "Seç"
 msgid "Select {0}"
 msgstr "{0} öğesini seç"
 
-#: src/features/documents/library.tsx
-msgid "Select all"
-msgstr "Tümünü seç"
-
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
 msgid "Select an entry on page {0}"
@@ -9095,6 +9120,10 @@ msgstr "{0} sayfasında bir giriş seçin"
 #: src/preview/page.tsx
 msgid "Select entry {0}"
 msgstr "{0} girişini seçin"
+
+#: src/features/documents/library.tsx
+msgid "Select this page"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Select visible"
@@ -10259,6 +10288,10 @@ msgstr "Bağlantı yüklenemedi veya kaydedilemedi. Tekrar deneyin."
 msgid "The current state will be saved as “Before restore” first."
 msgstr "Öncelikle “Geri yüklemeden önce” güncel durumu kaydedilecektir."
 
+#: src/features/documents/library.tsx
+msgid "The document in Trash will be deleted for good and can't be restored."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "Düzenleyici, içe aktarılan özgeçmişleri tekrar kontrol eden Kontrol'de açılır."
@@ -10367,6 +10400,10 @@ msgstr "Puan, yazılımın özgeçmişinizi ne kadar güvenilir bir şekilde oku
 #: src/features/ats-checker/checker.tsx
 msgid "The score reflects how reliably text is extracted, not your chances."
 msgstr "Puan, şansınızı değil, metnin ne kadar güvenilir bir şekilde çıkarıldığını yansıtır."
+
+#: src/features/documents/library.tsx
+msgid "The selected documents will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
@@ -10900,6 +10937,10 @@ msgstr "Çöp Kutusu"
 #: src/features/documents/library.tsx
 msgid "Trash is empty"
 msgstr "Çöp kutusu boş"
+
+#: src/features/documents/queries.ts
+msgid "Trash was already empty"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Trimming words"
