@@ -40,6 +40,29 @@ it("exports saved data as round-trippable JSON, readable Markdown and a Word doc
 	expect(getResume).toHaveBeenCalledWith({ id: "resume-1", userId: "owner" });
 });
 
+it("keeps editor list markers in the Word export used by API and native clients", async () => {
+	const data = structuredClone(defaultResumeData);
+	data.basics.name = "Ada Lovelace";
+	data.summary.content = "<p>Plain paragraph</p><ul><li><p>Editor bullet</p></li><li>Plain bullet</li></ul>";
+	getResume.mockResolvedValue({ id: "resume-1", name: "Ada", data });
+	const docx = await call(documentExports.resume, { id: "resume-1", format: "docx" }, { context });
+	const files = unzipSync(new Uint8Array(await docx.body.arrayBuffer()));
+	const documentXml = files["word/document.xml"];
+	const numberingXml = files["word/numbering.xml"];
+	if (!documentXml || !numberingXml) throw new Error("Missing Word list definitions");
+	const xml = strFromU8(documentXml);
+	const plainParagraph = xml
+		.match(/<w:p[ >][\s\S]*?<\/w:p>/g)
+		?.find((paragraph) => paragraph.includes("Plain paragraph"));
+	expect(plainParagraph).toContain("Plain paragraph");
+	expect(plainParagraph).not.toContain("<w:numPr>");
+	expect(plainParagraph).not.toContain("ListParagraph");
+	expect(xml.match(/<w:numPr>/g)).toHaveLength(2);
+	expect(xml).toContain("Editor bullet");
+	expect(xml).toContain("Plain bullet");
+	expect(strFromU8(numberingXml)).toContain('<w:numFmt w:val="bullet"/>');
+});
+
 it("exports an editable OpenDocument Text file", async () => {
 	const odt = await call(documentExports.resume, { id: "resume-1", format: "odt" }, { context });
 	expect(odt.headers["content-disposition"]).toContain(".odt");
