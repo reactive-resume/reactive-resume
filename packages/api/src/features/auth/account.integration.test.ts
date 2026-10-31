@@ -1,6 +1,7 @@
 import { createHmac, randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vite-plus/test";
 import { createRouterClient } from "@orpc/server";
+import { symmetricDecrypt } from "better-auth/crypto";
 import { eq } from "drizzle-orm";
 import { Pool } from "pg";
 import { auth, linkAnonymousAccount, setAccountLinkHook } from "@reactive-resume/auth/config";
@@ -21,7 +22,11 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 		for (const table of [
 			"user",
 			"session",
+			"account",
+			"verification",
+			"two_factor",
 			"apikey",
+			"oauth_access_token",
 			"oauth_resource",
 			"jwks",
 			"resume",
@@ -33,6 +38,8 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 			"application_pipeline",
 			"application_profile",
 			"career_answer",
+			"career_fact",
+			"career_story",
 			"resume_slug_redirect",
 			"released_username",
 		]) {
@@ -197,6 +204,314 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 			{ user_id: "link-owner", data: { picture: "https://resume.example/api/uploads/link-owner/pictures/a.png" } },
 		]);
 	});
+
+	// Two-step sign-in drives the real auth handler, carrying each browser's cookies in a jar.
+	type Jar = Map<string, string>;
+	const send = async (path: string, body: object, jar: Jar) => {
+		const response = await auth.handler(
+			new Request(`${env.APP_URL}/api/auth/${path}`, {
+				method: "POST",
+				headers: {
+					"content-type": "application/json",
+					origin: env.APP_URL,
+					cookie: [...jar].map(([name, value]) => `${name}=${value}`).join("; "),
+				},
+				body: JSON.stringify(body),
+			}),
+		);
+		for (const header of response.headers.getSetCookie()) {
+			const [pair = ""] = header.split(";", 1);
+			const name = pair.slice(0, pair.indexOf("="));
+			const value = pair.slice(pair.indexOf("=") + 1);
+			if (!value || /max-age=0/i.test(header)) jar.delete(name);
+			else jar.set(name, value);
+		}
+		return response;
+	};
+	const totp = async (userId: string) => {
+		const [row] = await db.select().from(schema.twoFactor).where(eq(schema.twoFactor.userId, userId));
+		const secret = await symmetricDecrypt({ key: (await auth.$context).secretConfig, data: row?.secret ?? "" });
+		return (await auth.api.generateTOTP({ body: { secret } })).code;
+	};
+	const signUp = async (name: string) => {
+		const credentials = { email: `${name}@example.test`, password: `${name}-password` };
+		const jar: Jar = new Map();
+		const signup = await send("sign-up/email", { ...credentials, name, username: name }, jar);
+		expect(signup.status, await signup.clone().text()).toBe(200);
+		return { id: (await signup.json()).user.id as string, credentials, jar };
+	};
+	const signUpWithTwoFactor = async (name: string) => {
+		const account = await signUp(name);
+		const enabled = await send("two-factor/enable", { password: account.credentials.password }, account.jar);
+		expect(enabled.status, await enabled.clone().text()).toBe(200);
+		const { backupCodes } = (await enabled.json()) as { backupCodes: string[] };
+		expect((await send("two-factor/verify-totp", { code: await totp(account.id) }, account.jar)).status).toBe(200);
+		return { ...account, backupCodes };
+	};
+	// A guest with one resume starts the password step from its own browser session.
+	const startGuest = async (id: string, credentials: { email: string; password: string }) => {
+		const authContext = await auth.$context;
+		const guest = await authContext.internalAdapter.createUser(
+			{ email: `${id}@reactive-resume.local`, name: "Guest", emailVerified: false, isAnonymous: true },
+			{ method: "anonymous" },
+		);
+		const session = await authContext.internalAdapter.createSession(guest.id);
+		const signature = createHmac("sha256", env.AUTH_SECRET).update(session.token).digest("base64");
+		await pool.query(`INSERT INTO resume (id, name, slug, data, user_id) VALUES ($1, 'Guest', $1, '{}', $2)`, [
+			id,
+			guest.id,
+		]);
+		const sessionCookie = authContext.authCookies.sessionToken.name;
+		const jar: Jar = new Map([[sessionCookie, encodeURIComponent(`${session.token}.${signature}`)]]);
+		const challenge = await send("sign-in/email", credentials, jar);
+		await expect(challenge.json()).resolves.toMatchObject({ twoFactorRedirect: true });
+		expect(jar.has(sessionCookie)).toBe(false);
+		const signed = jar.get(authContext.createAuthCookie("two_factor").name) ?? "";
+		return { guest, session, jar, sessionCookie, challengeId: decodeURIComponent(signed).split(".")[0] ?? "" };
+	};
+	const resumeOwner = async (id: string) =>
+		(await pool.query("SELECT user_id FROM resume WHERE id = $1", [id])).rows[0]?.user_id;
+	const userExists = async (id: string) =>
+		(await pool.query(`SELECT 1 FROM "user" WHERE id = $1`, [id])).rowCount === 1;
+
+	it("moves guest work once into the account a two-step sign-in verifies, and keeps it on failure", async () => {
+		await withDatabasePool(pool, async () => {
+			const owner = await signUpWithTwoFactor("two-step");
+
+			const viaTotp = await startGuest("totp-guest", owner.credentials);
+			const wrongCode = String((Number(await totp(owner.id)) + 500_000) % 1_000_000).padStart(6, "0");
+			expect((await send("two-factor/verify-totp", { code: wrongCode }, new Map(viaTotp.jar))).status).toBe(401);
+			expect(await resumeOwner("totp-guest")).toBe(viaTotp.guest.id);
+			const replayJar = new Map(viaTotp.jar);
+			const verified = await send("two-factor/verify-totp", { code: await totp(owner.id) }, viaTotp.jar);
+			expect(verified.status, await verified.clone().text()).toBe(200);
+			expect(await resumeOwner("totp-guest")).toBe(owner.id);
+			expect(await userExists(viaTotp.guest.id)).toBe(false);
+			expect((await send("two-factor/verify-totp", { code: await totp(owner.id) }, replayJar)).status).toBe(401);
+
+			const viaBackup = await startGuest("backup-guest", owner.credentials);
+			const backup = await send("two-factor/verify-backup-code", { code: owner.backupCodes[0] }, viaBackup.jar);
+			expect(backup.status, await backup.clone().text()).toBe(200);
+			expect(await resumeOwner("backup-guest")).toBe(owner.id);
+			expect(await userExists(viaBackup.guest.id)).toBe(false);
+
+			// A failed move signs the browser back in as the guest, keeps the guest's work, and ends the new session.
+			const failing = await startGuest("failed-2fa-guest", owner.credentials);
+			const ownerSessions = async () =>
+				(await pool.query("SELECT count(*)::int AS count FROM session WHERE user_id = $1", [owner.id])).rows[0]?.count;
+			const sessionsBefore = await ownerSessions();
+			setAccountLinkHook(async () => {
+				throw new Error("Copy unavailable");
+			});
+			try {
+				const failed = await send("two-factor/verify-backup-code", { code: owner.backupCodes[1] }, failing.jar);
+				expect(failed.ok).toBe(false);
+			} finally {
+				setAccountLinkHook();
+			}
+			expect(failing.jar.get(failing.sessionCookie)?.startsWith(failing.session.token)).toBe(true);
+			expect(await resumeOwner("failed-2fa-guest")).toBe(failing.guest.id);
+			expect(await userExists(failing.guest.id)).toBe(true);
+			expect(await ownerSessions()).toBe(sessionsBefore);
+			expect((await pool.query("SELECT 1 FROM verification WHERE identifier LIKE 'guest-link:%'")).rowCount).toBe(0);
+			await pool.query("DELETE FROM session");
+		});
+	});
+
+	it("hands guest work to the challenge accepted at its deadline, only once, and only for that account", async () => {
+		await withDatabasePool(pool, async () => {
+			const owner = await signUpWithTwoFactor("deadline-owner");
+			const expire = (challengeId: string, at: string) =>
+				pool.query(`UPDATE verification SET expires_at = ${at} WHERE identifier IN ($1, $2)`, [
+					challengeId,
+					`guest-link:${owner.id}:${challengeId}`,
+				]);
+
+			// The deadline passes after the endpoint accepts the challenge, while its session row is being written.
+			await pool.query(
+				"CREATE FUNCTION delay_session() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN PERFORM pg_sleep(0.6); RETURN NEW; END $$",
+			);
+			await pool.query(
+				"CREATE TRIGGER delay_session BEFORE INSERT ON session FOR EACH ROW EXECUTE FUNCTION delay_session()",
+			);
+			try {
+				for (const id of ["deadline-1", "deadline-2", "deadline-3"]) {
+					const pending = await startGuest(id, owner.credentials);
+					const code = await totp(owner.id);
+					await expire(pending.challengeId, "now() + interval '300 milliseconds'");
+					const verified = await send("two-factor/verify-totp", { code }, pending.jar);
+					expect(verified.status, await verified.clone().text()).toBe(200);
+					expect(await resumeOwner(id)).toBe(owner.id);
+					expect(await userExists(pending.guest.id)).toBe(false);
+				}
+			} finally {
+				await pool.query("DROP TRIGGER delay_session ON session");
+				await pool.query("DROP FUNCTION delay_session()");
+			}
+
+			const expired = await startGuest("expired-guest", owner.credentials);
+			await expire(expired.challengeId, "now() - interval '1 second'");
+			expect((await send("two-factor/verify-totp", { code: await totp(owner.id) }, expired.jar)).status).toBe(401);
+			expect(await resumeOwner("expired-guest")).toBe(expired.guest.id);
+
+			// Another account's successful verification, carrying this challenge's cookie, takes nothing.
+			const pending = await startGuest("foreign-guest", owner.credentials);
+			const other = await signUp("deadline-other");
+			expect((await send("two-factor/enable", { password: other.credentials.password }, other.jar)).status).toBe(200);
+			const mixed = new Map([...pending.jar, ...other.jar]);
+			expect((await send("two-factor/verify-totp", { code: await totp(other.id) }, mixed)).status).toBe(200);
+			expect(await resumeOwner("foreign-guest")).toBe(pending.guest.id);
+
+			// Concurrent verifications of one challenge: one succeeds and moves the work once.
+			const moves: string[] = [];
+			setAccountLinkHook(async ({ fromUserId }) => {
+				moves.push(fromUserId);
+			});
+			try {
+				const code = await totp(owner.id);
+				const responses = await Promise.all([
+					send("two-factor/verify-totp", { code }, new Map(pending.jar)),
+					send("two-factor/verify-totp", { code }, new Map(pending.jar)),
+				]);
+				expect(responses.map((response) => response.status).sort()).toEqual([200, 401]);
+			} finally {
+				setAccountLinkHook();
+			}
+			expect(moves).toEqual([pending.guest.id]);
+			expect(await resumeOwner("foreign-guest")).toBe(owner.id);
+			await pool.query("DELETE FROM session");
+		});
+	}, 30_000);
+
+	it("finishes an accepted guest transfer even when expiring handoff cleanup is locked", async () => {
+		await withDatabasePool(pool, async () => {
+			const owner = await signUpWithTwoFactor("cleanup-owner");
+			const pending = await startGuest("cleanup-guest", owner.credentials);
+			const identifier = `guest-link:${owner.id}:${pending.challengeId}`;
+			const replay = new Map(pending.jar);
+			const timedPool = new Pool({
+				connectionString: process.env.OAUTH_TEST_DATABASE_URL,
+				options: `-c search_path=${schemaName} -c lock_timeout=100ms`,
+			});
+			const locker = await pool.connect();
+			await locker.query("BEGIN");
+			await locker.query("SELECT id FROM verification WHERE identifier = $1 FOR UPDATE", [identifier]);
+			try {
+				const code = await totp(owner.id);
+				const response = await withDatabasePool(timedPool, () => send("two-factor/verify-totp", { code }, pending.jar));
+				expect(response.status, await response.clone().text()).toBe(200);
+				expect(response.headers.getSetCookie().length).toBeGreaterThan(0);
+				expect(await resumeOwner("cleanup-guest")).toBe(owner.id);
+				expect(await userExists(pending.guest.id)).toBe(false);
+				const headers = new Headers({
+					cookie: [...pending.jar].map(([key, value]) => `${key}=${value}`).join("; "),
+				});
+				expect((await auth.api.getSession({ headers }))?.user.id).toBe(owner.id);
+				expect((await pool.query("SELECT 1 FROM verification WHERE identifier = $1", [identifier])).rowCount).toBe(1);
+				expect((await send("two-factor/verify-totp", { code: await totp(owner.id) }, replay)).status).toBe(401);
+			} finally {
+				await locker.query("ROLLBACK");
+				locker.release();
+				await timedPool.end();
+				await pool.query("DELETE FROM verification WHERE identifier = $1", [identifier]);
+				await pool.query("DELETE FROM session WHERE user_id IN ($1, $2)", [owner.id, pending.guest.id]);
+			}
+		});
+	});
+
+	it("links private profiles and reviewed answers through two-step verification without losing conflicting work", async () => {
+		await withDatabasePool(pool, async () => {
+			const { applicationProfileService: profiles } = await import("../application-profile/service");
+			const { reviewedAnswers: answers } = await import("../career/answers");
+			const { applicationProfileDataSchema } = await import("@reactive-resume/schema/application-profile");
+			const owner = await signUpWithTwoFactor("private-link-owner");
+			const pending = await startGuest("private-link-guest", owner.credentials);
+			const guestProfile = await profiles.save(pending.guest.id, {
+				data: applicationProfileDataSchema.parse({
+					phone: "PRIVATE GUEST PHONE",
+					workAuthorization: [{ countryCode: "DE", authorized: "unknown", needsSponsorship: "unknown" }],
+				}),
+				expectedRevision: null,
+			});
+			const ownerProfile = await profiles.save(owner.id, {
+				data: applicationProfileDataSchema.parse({ phone: "PRIVATE OWNER PHONE" }),
+				expectedRevision: null,
+			});
+			await db.insert(schema.application).values([
+				{ id: "private-guest-app", userId: pending.guest.id, company: "Harbor", role: "Engineer" },
+				{ id: "private-owner-app", userId: owner.id, company: "Nova", role: "Engineer" },
+			]);
+			const input = {
+				question: "Describe your project",
+				answer: "I reviewed a fictional setup checklist.",
+				source: "manual" as const,
+				scope: "reusable" as const,
+				factIds: [],
+				storyIds: [],
+				expectedEvidence: [],
+				reviewed: true as const,
+				noEmployerWording: true,
+			};
+			const saved = await answers.save(pending.guest.id, { ...input, applicationId: "private-guest-app" });
+			const ownerSessions = async () =>
+				(await pool.query("SELECT count(*)::int AS count FROM session WHERE user_id = $1", [owner.id])).rows[0]?.count;
+			const sessionsBefore = await ownerSessions();
+			const verify = async () => send("two-factor/verify-totp", { code: await totp(owner.id) }, pending.jar);
+			const retry = async () => {
+				const response = await send("sign-in/email", owner.credentials, pending.jar);
+				await expect(response.json()).resolves.toMatchObject({ twoFactorRedirect: true });
+			};
+			const guestIntact = async () => {
+				const headers = new Headers({
+					cookie: [...pending.jar].map(([key, value]) => `${key}=${value}`).join("; "),
+				});
+				expect((await auth.api.getSession({ headers }))?.user.id).toBe(pending.guest.id);
+				expect(await profiles.get(pending.guest.id)).toEqual(guestProfile);
+				expect((await answers.list(pending.guest.id, "private-guest-app"))[0]).toMatchObject({
+					id: saved.id,
+					answer: input.answer,
+				});
+				expect(await ownerSessions()).toBe(sessionsBefore);
+				expect(await resumeOwner("private-link-guest")).toBe(pending.guest.id);
+			};
+			try {
+				expect((await verify()).status).toBe(409);
+				await guestIntact();
+				expect(await profiles.get(owner.id)).toEqual(ownerProfile);
+				await profiles.delete(owner.id, ownerProfile.revision);
+				const duplicate = await answers.save(owner.id, { ...input, applicationId: "private-owner-app" });
+				await retry();
+				expect((await verify()).status).toBe(409);
+				await guestIntact();
+				expect(await profiles.get(owner.id)).toBeNull();
+				await answers.delete(owner.id, duplicate.id, duplicate.revision);
+				setAccountLinkHook(async () => {
+					throw new Error("Synthetic copy failure");
+				});
+				await retry();
+				expect((await verify()).status).toBe(500);
+				await guestIntact();
+				expect(await profiles.get(owner.id)).toBeNull();
+				setAccountLinkHook();
+				await retry();
+				const response = await verify();
+				expect(response.status, await response.clone().text()).toBe(200);
+				expect(await userExists(pending.guest.id)).toBe(false);
+				expect(await resumeOwner("private-link-guest")).toBe(owner.id);
+				expect(await profiles.get(pending.guest.id)).toBeNull();
+				const transferred = await profiles.get(owner.id);
+				expect(transferred?.data).toEqual(guestProfile.data);
+				expect(transferred?.revision).not.toBe(guestProfile.revision);
+				expect((await answers.list(owner.id, "private-guest-app"))[0]).toMatchObject({
+					id: saved.id,
+					answer: input.answer,
+				});
+			} finally {
+				setAccountLinkHook();
+				await pool.query("DELETE FROM session WHERE user_id IN ($1, $2)", [owner.id, pending.guest.id]);
+			}
+		});
+	}, 30_000);
 
 	it("reads only the authenticated profile, ignoring supplied identity and excluding private columns", async () => {
 		await withDatabasePool(pool, async () => {
