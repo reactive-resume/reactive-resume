@@ -234,16 +234,27 @@ describe.skipIf(!databaseURL)("MCP OAuth flow with PostgreSQL", () => {
 		process.env.APP_URL = "http://localhost:33920";
 		process.env.AUTH_SECRET = "oauth-integration-test-secret-only";
 		const { handleAuth } = await import("./auth");
+		const { db } = await import("@reactive-resume/db/client");
+		const schema = await import("@reactive-resume/db/schema");
+		const { eq } = await import("drizzle-orm");
 		const origin = process.env.APP_URL;
 		const redirectURI = "http://127.0.0.1:33921/callback";
-		const registration = await handleAuth(
-			new Request(`${origin}/api/auth/oauth2/register`, {
-				method: "POST",
-				headers: { "content-type": "application/json", origin },
-				body: JSON.stringify({ client_name: "Resource check", redirect_uris: [redirectURI] }),
-			}),
-		);
-		const client = await registration.json();
+		const register = async () =>
+			(
+				await handleAuth(
+					new Request(`${origin}/api/auth/oauth2/register`, {
+						method: "POST",
+						headers: { "content-type": "application/json", origin },
+						body: JSON.stringify({ client_name: "Resource check", redirect_uris: [redirectURI] }),
+					}),
+				)
+			).json();
+		const client = await register();
+		const disabled = await register();
+		await db
+			.update(schema.oauthClient)
+			.set({ disabled: true })
+			.where(eq(schema.oauthClient.clientId, disabled.client_id));
 		const params = (overrides: Record<string, string> = {}) =>
 			new URLSearchParams({
 				client_id: client.client_id,
@@ -283,10 +294,14 @@ describe.skipIf(!databaseURL)("MCP OAuth flow with PostgreSQL", () => {
 		}
 		expect((await authorize(params({ resource: "" }))).headers.get("location")).toContain("error=invalid_target");
 
-		// A callback the client never registered, or an unknown client, must not receive a redirect.
+		// A callback the client never registered, even one extending a registered callback, an unknown client
+		// and a disabled client must not receive a redirect.
 		for (const untrusted of [
 			params({ redirect_uri: "https://attacker.example/callback" }),
+			params({ redirect_uri: `${redirectURI}.attacker.example` }),
+			params({ redirect_uri: `${redirectURI}/../attacker` }),
 			params({ client_id: "unknown-client" }),
+			params({ client_id: disabled.client_id }),
 		]) {
 			const refused = await authorize(untrusted);
 			expect(refused.status).toBe(400);
