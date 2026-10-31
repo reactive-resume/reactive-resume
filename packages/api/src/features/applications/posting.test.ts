@@ -26,6 +26,34 @@ describe("readJobPosting", () => {
 		])}</script>`;
 		expect(readJobPosting(html)).toBeNull();
 	});
+	it("keeps distinct same-title jobs ambiguous but collapses equivalent duplicated SEO records", () => {
+		const one = {
+			"@type": "JobPosting",
+			title: "Engineer",
+			hiringOrganization: { name: "Fictional Co" },
+			url: "https://jobs.example.test/one",
+			description: "Berlin job",
+		};
+		const html = (items: object[]) => `<script type="application/ld+json">${JSON.stringify(items)}</script>`;
+		expect(
+			readJobPosting(html([one, { ...one, url: "https://jobs.example.test/two", description: "Paris job" }])),
+		).toBeNull();
+		expect(
+			readJobPosting(
+				html([
+					one,
+					{
+						description: one.description,
+						url: one.url,
+						hiringOrganization: one.hiringOrganization,
+						title: one.title,
+						"@type": one["@type"],
+					},
+				]),
+			),
+		).toMatchObject({ description: "Berlin job" });
+	});
+
 	it("reads a JobPosting from the page's JSON-LD, including inside a graph", () => {
 		const html = `<script type="application/ld+json">${JSON.stringify({
 			"@graph": [

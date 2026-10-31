@@ -54,8 +54,12 @@ it("requires signing before build, and store credentials only when uploading", (
 		IOS_DISTRIBUTION_P12_BASE64: "fixture",
 		IOS_DISTRIBUTION_P12_PASSWORD: "fixture",
 		IOS_PROVISION_PROFILE_BASE64: "fixture",
+		IOS_SHARE_PROVISION_PROFILE_BASE64: "fixture",
 	};
 	expect(validateRelease(ios)).toBe(100);
+	expect(() => validateRelease({ ...ios, IOS_SHARE_PROVISION_PROFILE_BASE64: "" })).toThrow(
+		"IOS_SHARE_PROVISION_PROFILE_BASE64",
+	);
 	expect(() => validateRelease({ ...ios, UPLOAD: "true" })).toThrow("ASC_KEY_ID, ASC_ISSUER_ID, ASC_PRIVATE_KEY");
 });
 

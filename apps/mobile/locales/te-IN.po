@@ -1459,6 +1459,12 @@ msgstr "ఇప్పటికే కవర్ చేయబడింది · ప
 msgid "Already covered:"
 msgstr "ఇప్పటికే కవర్ చేయబడింది:"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/add-sheet.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/check/screen.tsx
 msgid "Also check the exported PDF"
 msgstr "ఎగుమతి చేయబడిన PDFని కూడా తనిఖీ చేయండి"
@@ -4109,6 +4115,10 @@ msgstr "సర్వనామాలను తొలగించి క్రి�
 #: src/features/write/entry-sheet.tsx
 msgid "Duplicate"
 msgstr "నకిలీ"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
 
 #: src/features/document-menu/index.tsx
 msgid "Duplicate resume"
@@ -7134,6 +7144,10 @@ msgstr "ఆఫ్‌లైన్. సవరణలు ఈ పరికరంల�
 msgid "On"
 msgstr "ప్రారంభించబడింది"
 
+#: src/features/applications/add-sheet.tsx
+msgid "On iOS, choose Keep for review, then reopen app in the Share extension. Reopen Reactive Resume yourself within 15 minutes. Sign in here before sharing."
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "On. Anyone with the link can see your web page."
 msgstr "ఆన్‌లో ఉంది. లింక్ ఉన్న ఎవరైనా మీ వెబ్ పేజీని చూడగలరు."
@@ -7295,6 +7309,10 @@ msgstr "ఫైల్‌ను Wordలో తెరిచి, ముందుగ�
 msgid "Open the schedule"
 msgstr "షెడ్యూల్‌ను తెరువు"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "Open web page"
 msgstr "వెబ్ పేజీని తెరవండి"
@@ -7350,6 +7368,12 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providers.defaultProvider.label
+#. placeholder {1}: providers.defaultProvider.provider
+#: src/features/applications/add-sheet.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -8148,6 +8172,10 @@ msgstr "పేజీని చదవండి"
 msgid "Read the resume"
 msgstr "రెజ్యూమెను చదివింది"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
 msgstr "చదవగలిగే సౌలభ్యం"
@@ -8191,6 +8219,11 @@ msgstr "వచనాన్ని చదవడం"
 #: src/features/documents/import-file.ts
 msgid "Reading this file with AI needs a tested AI provider. Set one up, then retry."
 msgstr "AIతో ఈ ఫైల్‌ని చదవడానికి పరీక్షించిన AI ప్రొవైడర్ అవసరం. ఒకదాన్ని సెటప్ చేసి, ఆపై మళ్లీ ప్రయత్నించండి."
+
+#: src/api/ai-consent.ts
+#: src/features/applications/error.ts
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "AI లేకుండా చదవడం సాధ్యమో నిర్ధారించలేకపోయాము. మళ్లీ ప్రయత్నించండి, సర్వర్‌ను నవీకరించండి లేదా వివరాలను మీరే నమోదు చేయండి."
 
 #: src/features/ai/web-access.tsx
 msgid "Reading works"
@@ -8744,6 +8777,7 @@ msgstr "{1}ని ఉపయోగించి {0} తిరిగి పొం�
 
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -9599,6 +9633,10 @@ msgstr ""
 msgid "Share enabled shared Knowledge"
 msgstr ""
 
+#: src/features/applications/incoming-posting.tsx
+msgid "Share one posting URL or selected text. Files, multiple postings and unsupported URL parameters need explicit URL or pasted-text import in Applications."
+msgstr ""
+
 #: src/features/share/download.tsx
 msgid "Share PDF"
 msgstr "PDFని భాగస్వామ్యం చేయండి"
@@ -9619,11 +9657,20 @@ msgstr "రికార్డింగ్‌ను భాగస్వామ్�
 msgid "Share via…"
 msgstr "దీని ద్వారా భాగస్వామ్యం చేయండి…"
 
+#. placeholder {0}: session.server
+#: src/features/applications/add-sheet.tsx
+msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
 msgid "Sharing"
 msgstr "షేరింగ్"
+
+#: src/features/applications/incoming-posting.tsx
+msgid "Sharing could not be read. Update the app or paste the posting in Applications."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sharpening the opening"
@@ -11513,6 +11560,10 @@ msgstr "ఒక్కో పత్రానికి 20 ట్యాగ్‌ల�
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr "25 MB వరకు · సర్వర్‌లో తనిఖీ చేయబడింది మరియు నిల్వ చేయబడలేదు"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Update posting details"
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "దరఖాస్తులను అనుకూల దశకు తరలించే ముందు మీ సర్వర్‌ను నవీకరించండి."
@@ -11728,6 +11779,10 @@ msgstr "ఈ ప్రొవైడర్‌ని ఉపయోగించండ�
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "ఈ సమయాన్ని ఉపయోగించండి"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."

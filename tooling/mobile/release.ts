@@ -54,7 +54,12 @@ export function validateRelease(env: NodeJS.ProcessEnv) {
 		required.push("ANDROID_KEYSTORE_BASE64", "ANDROID_KEYSTORE_PASSWORD", "ANDROID_KEY_ALIAS", "ANDROID_KEY_PASSWORD");
 	}
 	if (env.PLATFORM !== "android") {
-		required.push("IOS_DISTRIBUTION_P12_BASE64", "IOS_DISTRIBUTION_P12_PASSWORD", "IOS_PROVISION_PROFILE_BASE64");
+		required.push(
+			"IOS_DISTRIBUTION_P12_BASE64",
+			"IOS_DISTRIBUTION_P12_PASSWORD",
+			"IOS_PROVISION_PROFILE_BASE64",
+			"IOS_SHARE_PROVISION_PROFILE_BASE64",
+		);
 	}
 	const missing = required.filter((name) => !env[name]?.trim());
 	if (missing.length) throw new Error(`Missing Actions secrets: ${missing.join(", ")}`);

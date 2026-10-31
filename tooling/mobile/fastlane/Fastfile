@@ -70,27 +70,38 @@ platform :ios do
     begin
       Dir.mktmpdir("ios-signing-", ENV.fetch("RUNNER_TEMP")) do |directory|
         certificate = secret_file(directory, "distribution.p12", ENV.fetch("IOS_DISTRIBUTION_P12_BASE64"), base64: true)
-        profile = secret_file(directory, "app.mobileprovision", ENV.fetch("IOS_PROVISION_PROFILE_BASE64"), base64: true)
         import_certificate(
           certificate_path: certificate, certificate_password: ENV.fetch("IOS_DISTRIBUTION_P12_PASSWORD"),
           keychain_name: keychain, keychain_password: keychain_password
         )
-        installed = install_provisioning_profile(path: profile)
+        installed = []
+        profiles = {}
         begin
-          profile_data = FastlaneCore::ProvisioningProfile.parse(profile)
-          UI.user_error!("Provisioning profile must belong to me.rxresu and team 654ASRW868") unless
-            profile_data["Entitlements"]["application-identifier"] == "654ASRW868.me.rxresu" &&
-            profile_data["TeamIdentifier"].include?("654ASRW868")
-          UI.user_error!("Use an App Store distribution profile") if
-            profile_data["ProvisionedDevices"] || profile_data["ProvisionsAllDevices"] ||
-            profile_data["Entitlements"]["get-task-allow"]
+          {
+            "me.rxresu" => ["ReactiveResume", "IOS_PROVISION_PROFILE_BASE64"],
+            "me.rxresu.expo-sharing-extension" => ["expo-sharing-extension", "IOS_SHARE_PROVISION_PROFILE_BASE64"]
+          }.each do |bundle_id, (target, secret)|
+            profile = secret_file(directory, "#{target}.mobileprovision", ENV.fetch(secret), base64: true)
+            data = FastlaneCore::ProvisioningProfile.parse(profile)
+            entitlements = data.fetch("Entitlements")
+            UI.user_error!("Provisioning profile must belong to #{bundle_id} and team 654ASRW868") unless
+              entitlements["application-identifier"] == "654ASRW868.#{bundle_id}" &&
+              data.fetch("TeamIdentifier").include?("654ASRW868")
+            UI.user_error!("Use an unexpired App Store distribution profile for #{bundle_id}") if
+              data["ProvisionedDevices"] || data["ProvisionsAllDevices"] || entitlements["get-task-allow"] ||
+              !data["ExpirationDate"] || data["ExpirationDate"] <= Time.now
+            UI.user_error!("Provisioning profile for #{bundle_id} must include group.me.rxresu") unless
+              entitlements.fetch("com.apple.security.application-groups", []).include?("group.me.rxresu")
+            installed << install_provisioning_profile(path: profile)
+            profiles[bundle_id] = data.fetch("UUID")
+            update_code_signing_settings(
+              path: File.join(MOBILE, "ios/ReactiveResume.xcodeproj"),
+              use_automatic_signing: false, team_id: "654ASRW868", targets: [target],
+              build_configurations: ["Release"], code_sign_identity: "Apple Distribution",
+              profile_uuid: data.fetch("UUID")
+            )
+          end
           cocoapods(podfile: File.join(MOBILE, "ios/Podfile"))
-          update_code_signing_settings(
-            path: File.join(MOBILE, "ios/ReactiveResume.xcodeproj"),
-            use_automatic_signing: false, team_id: "654ASRW868", targets: ["ReactiveResume"],
-            build_configurations: ["Release"], code_sign_identity: "Apple Distribution",
-            profile_uuid: profile_data.fetch("UUID")
-          )
           ENV["SOURCEMAP_FILE"] = File.join(OUTPUT, "main.jsbundle.map")
           build_app(
             workspace: File.join(MOBILE, "ios/ReactiveResume.xcworkspace"), scheme: "ReactiveResume",
@@ -100,13 +111,13 @@ platform :ios do
             buildlog_path: File.join(ENV.fetch("RUNNER_TEMP"), "mobile-build-logs"), xcodebuild_formatter: "",
             export_options: {
               signingStyle: "manual", teamID: "654ASRW868",
-              provisioningProfiles: { "me.rxresu" => profile_data.fetch("UUID") }
+              provisioningProfiles: profiles
             }
           )
           symbols = File.join(ENV.fetch("RUNNER_TEMP"), "ReactiveResume.xcarchive/dSYMs")
           FileUtils.cp_r(symbols, File.join(OUTPUT, "dSYMs")) if Dir.exist?(symbols)
         ensure
-          FileUtils.rm_f(installed)
+          installed.each { |path| FileUtils.rm_f(path) }
         end
       end
     ensure

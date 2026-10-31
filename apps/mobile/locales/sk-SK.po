@@ -1459,6 +1459,12 @@ msgstr "Už pokryté · vyberte jeden a nájdite ho na stránke"
 msgid "Already covered:"
 msgstr "Už pokryté:"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/add-sheet.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/check/screen.tsx
 msgid "Also check the exported PDF"
 msgstr "Skontrolujte tiež exportovaný PDF"
@@ -4109,6 +4115,10 @@ msgstr "Vynechajte zámená a začnite slovesom. Je to zvyklosť na väčšine t
 #: src/features/write/entry-sheet.tsx
 msgid "Duplicate"
 msgstr "Duplikovať"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
 
 #: src/features/document-menu/index.tsx
 msgid "Duplicate resume"
@@ -7134,6 +7144,10 @@ msgstr "Offline. Úpravy sa uložia do tohto zariadenia a po opätovnom pripojen
 msgid "On"
 msgstr "Povolené"
 
+#: src/features/applications/add-sheet.tsx
+msgid "On iOS, choose Keep for review, then reopen app in the Share extension. Reopen Reactive Resume yourself within 15 minutes. Sign in here before sharing."
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "On. Anyone with the link can see your web page."
 msgstr "Zapnuté. Vašu webovú stránku môže vidieť ktokoľvek s odkazom."
@@ -7295,6 +7309,10 @@ msgstr "Otvorte súbor v Word a najskôr ho uložte ako .docx."
 msgid "Open the schedule"
 msgstr "Otvoriť naplánovanú úlohu"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "Open web page"
 msgstr "Otvoriť webovú stránku"
@@ -7350,6 +7368,12 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providers.defaultProvider.label
+#. placeholder {1}: providers.defaultProvider.provider
+#: src/features/applications/add-sheet.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -8148,6 +8172,10 @@ msgstr "Prečítajte si stránku"
 msgid "Read the resume"
 msgstr "Prečítal životopis"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
 msgstr "Čitateľnosť"
@@ -8191,6 +8219,11 @@ msgstr "Čítanie textu"
 #: src/features/documents/import-file.ts
 msgid "Reading this file with AI needs a tested AI provider. Set one up, then retry."
 msgstr "Čítanie tohto súboru pomocou AI vyžaduje testovaného poskytovateľa AI. Nastavte jeden a potom to skúste znova."
+
+#: src/api/ai-consent.ts
+#: src/features/applications/error.ts
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "Nepodarilo sa overiť čítanie bez AI. Skúste to znova, aktualizujte server alebo zadajte údaje ručne."
 
 #: src/features/ai/web-access.tsx
 msgid "Reading works"
@@ -8744,6 +8777,7 @@ msgstr "Získané {0} pomocou {1}. Čas načítania neurčuje čerstvosť pôvod
 
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -9599,6 +9633,10 @@ msgstr ""
 msgid "Share enabled shared Knowledge"
 msgstr ""
 
+#: src/features/applications/incoming-posting.tsx
+msgid "Share one posting URL or selected text. Files, multiple postings and unsupported URL parameters need explicit URL or pasted-text import in Applications."
+msgstr ""
+
 #: src/features/share/download.tsx
 msgid "Share PDF"
 msgstr "Zdieľať PDF"
@@ -9619,11 +9657,20 @@ msgstr "Zdieľať nahrávku"
 msgid "Share via…"
 msgstr "Zdieľať cez…"
 
+#. placeholder {0}: session.server
+#: src/features/applications/add-sheet.tsx
+msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
 msgid "Sharing"
 msgstr "Zdieľanie"
+
+#: src/features/applications/incoming-posting.tsx
+msgid "Sharing could not be read. Update the app or paste the posting in Applications."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sharpening the opening"
@@ -11513,6 +11560,10 @@ msgstr "Až 20 značiek na dokument, 40 znakov na značku."
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr "Až 25 MB · skontrolované na serveri a neuložené"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Update posting details"
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "Pred presunutím žiadostí do vlastnej etapy aktualizujte server."
@@ -11728,6 +11779,10 @@ msgstr "Použite tohto poskytovateľa"
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "Využite tento čas"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."

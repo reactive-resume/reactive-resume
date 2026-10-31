@@ -240,3 +240,50 @@ dialog.buttons[1].onPress();
 await result;
 assert.deepEqual(sent(), ["/api/rpc/career/suggestTargetRoles"]);
 console.log("PASS native same-ID recipient revision cutoff before and during consent, unchanged approval transmitted");
+
+// Exercise the shipped interceptor, including callers that do not use the posting form.
+let supportError = false;
+let supportWait;
+let releaseSupport;
+const probeInputs = [];
+modules["expo/fetch"].fetch = async (url, init) => {
+	calls.push(new URL(url).pathname);
+	if (url.includes("applications/findPosting")) {
+		probeInputs.push(JSON.parse(new TextDecoder().decode(init.body)).json);
+		if (supportWait) await supportWait;
+		if (supportError) return new Response("NOT_FOUND", { status: 404 });
+		return Response.json({ json: { application: null } });
+	}
+	return Response.json({ json: url.includes("aiProviders/list") ? [] : { id: "parsed" } });
+};
+const readWithoutAi = (options) =>
+	client.applications.ai.parsePosting(
+		{ input: `https://jobs.example.test/role?ref=${"a".repeat(2100)}`, useAI: false },
+		options,
+	);
+reset();
+await readWithoutAi();
+assert.equal(dialog, null, "a confirmed no-AI read must not ask for AI consent");
+assert.deepEqual(probeInputs, [{ sourceUrl: "" }], "support discovery must not reject long posting URLs");
+assert.deepEqual(calls, ["/api/rpc/applications/findPosting", "/api/rpc/applications/ai/parsePosting"]);
+
+reset();
+supportError = true;
+await assert.rejects(readWithoutAi(), /Reading without AI couldn't be confirmed/);
+assert.deepEqual(calls, ["/api/rpc/applications/findPosting"], "an old server must never receive the parse");
+supportError = false;
+
+for (const cancel of [() => (account = "another-account"), (signal) => signal.abort()]) {
+	reset();
+	const pendingController = new AbortController();
+	supportWait = new Promise((resolve) => (releaseSupport = resolve));
+	const pending = readWithoutAi({ signal: pendingController.signal }).catch((error) => error);
+	for (let step = 0; step < 100 && !calls.length; step++) await new Promise((resolve) => setImmediate(resolve));
+	assert.deepEqual(calls, ["/api/rpc/applications/findPosting"]);
+	cancel(pendingController);
+	releaseSupport();
+	assert.ok((await pending) instanceof Error);
+	assert.deepEqual(calls, ["/api/rpc/applications/findPosting"], "a departed operation must never parse");
+	supportWait = undefined;
+}
+console.log("PASS no-AI posting reads through real client: no provider/consent, old server, long URL and cancellation");

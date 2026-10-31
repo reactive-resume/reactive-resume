@@ -1,0 +1,628 @@
+diff --git a/ios/SharingModule.swift b/ios/SharingModule.swift
+index fafe4dacf400561510f8b84b7070bce76486e9c3..953583884eeadbf7260aa738a642297fdd2a96fe 100644
+--- a/ios/SharingModule.swift
++++ b/ios/SharingModule.swift
+@@ -60,6 +60,12 @@ public final class SharingModule: Module {
+ 
+     // MARK: - Share into
+ 
++    Function("setIncomingShareScope") { (scope: String?, server: String?) in
++      if let defaults = UserDefaults(suiteName: try appGroupId) {
++        PendingPostingStore(defaults: defaults).setContext(scope: scope, server: server)
++      }
++    }
++
+     Function("getSharedPayloads") {
+       let rawPayloads = try getSharePayloads(appGroupId: appGroupId)
+       return rawPayloads.map { ExpoSharePayload(from: $0).toDictionary() }
+@@ -119,15 +125,8 @@ public final class SharingModule: Module {
+   }
+ 
+   private func getSharePayloads(appGroupId: String) -> [SharePayload] {
+-    let userDefaults = UserDefaults(suiteName: appGroupId)
+-
+-    guard let data = userDefaults?.data(forKey: SHARE_INTO_DEFAULTS_KEY),
+-    let rawPayloads = try? JSONDecoder().decode([SharePayload].self, from: data)
+-    else {
+-      return []
+-    }
+-
+-    return rawPayloads
++    guard let defaults = UserDefaults(suiteName: appGroupId) else { return [] }
++    return PendingPostingStore(defaults: defaults).consume()
+   }
+ 
+   private func prepareShareUrl(url: URL, options: SharingOptions) throws -> URL {
+diff --git a/ios/shared/PendingPosting.swift b/ios/shared/PendingPosting.swift
+new file mode 100644
+index 0000000000000000000000000000000000000000..356066aca1380e0ea8662279d23d1f19733e6bd5
+--- /dev/null
++++ b/ios/shared/PendingPosting.swift
+@@ -0,0 +1,65 @@
++import Foundation
++import CryptoKit
++
++// Private app-group handoff. No cookies, tokens, URL resolving or application writes.
++struct PostingShareContext: Codable {
++  let scope: String
++  let server: String
++  let updatedAt: TimeInterval
++}
++
++struct PendingPosting: Codable {
++  let context: PostingShareContext
++  let createdAt: TimeInterval
++  let payloads: [SharePayload]
++}
++
++struct PendingPostingStore {
++  let defaults: UserDefaults
++  private let contextKey = "reactive-resume.share-context"
++
++  func context(now: Date = Date()) -> PostingShareContext? {
++    defaults.synchronize()
++    guard let data = defaults.data(forKey: contextKey),
++      let context = try? JSONDecoder().decode(PostingShareContext.self, from: data),
++      (0...86_400).contains(now.timeIntervalSince1970 - context.updatedAt) else { return nil }
++    return context
++  }
++
++  func setContext(scope: String?, server: String?, now: Date = Date()) {
++    guard let scope, let server else {
++      defaults.removeObject(forKey: contextKey)
++      discard()
++      return
++    }
++    let digest = SHA256.hash(data: Data(scope.utf8)).map { String(format: "%02x", $0) }.joined()
++    if context(now: now)?.scope != digest { discard() }
++    let next = PostingShareContext(scope: digest, server: server, updatedAt: now.timeIntervalSince1970)
++    defaults.set(try? JSONEncoder().encode(next), forKey: contextKey)
++    defaults.synchronize()
++  }
++
++  func save(_ payloads: [SharePayload], for selected: PostingShareContext, now: Date = Date()) -> Bool {
++    guard context(now: now)?.scope == selected.scope, (1...2).contains(payloads.count),
++      payloads.allSatisfy({ ($0.type == .text || $0.type == .url) && $0.value.utf16.count <= 100_000 }),
++      let data = try? JSONEncoder().encode(PendingPosting(context: selected, createdAt: now.timeIntervalSince1970, payloads: payloads))
++      else { return false }
++    defaults.set(data, forKey: SHARE_INTO_DEFAULTS_KEY)
++    defaults.synchronize()
++    return true
++  }
++
++  func consume(now: Date = Date()) -> [SharePayload] {
++    let data = defaults.data(forKey: SHARE_INTO_DEFAULTS_KEY)
++    discard()
++    guard let data, let pending = try? JSONDecoder().decode(PendingPosting.self, from: data),
++      (0...900).contains(now.timeIntervalSince1970 - pending.createdAt),
++      context(now: now)?.scope == pending.context.scope else { return [] }
++    return pending.payloads
++  }
++
++  func discard() {
++    defaults.removeObject(forKey: SHARE_INTO_DEFAULTS_KEY)
++    defaults.synchronize()
++  }
++}
+diff --git a/plugin/build/ios/createInfoPlistFile.js b/plugin/build/ios/createInfoPlistFile.js
+index 30db9ef48746876a9fdd0801f2138d760ed92091..efd2768f91c4a04e78218c8da6a5ace9a68f1f16 100644
+--- a/plugin/build/ios/createInfoPlistFile.js
++++ b/plugin/build/ios/createInfoPlistFile.js
+@@ -68,7 +68,7 @@ function createInfoPlistFile(targetDirectory, appGroupId, urlScheme, activationR
+         AppGroupId: appGroupId,
+         MainTargetUrlScheme: urlScheme,
+         CFBundleDevelopmentRegion: '$(DEVELOPMENT_LANGUAGE)',
+-        CFBundleDisplayName: '$(PRODUCT_NAME)',
++        CFBundleDisplayName: 'Reactive Resume',
+         CFBundleExecutable: '$(EXECUTABLE_NAME)',
+         CFBundleIdentifier: '$(PRODUCT_BUNDLE_IDENTIFIER)',
+         CFBundleInfoDictionaryVersion: '6.0',
+diff --git a/plugin/build/ios/xcode/addBuildPhases.js b/plugin/build/ios/xcode/addBuildPhases.js
+index c794498d811dce8e5457882673064146197b3873..a5e102c1d184bcc04d05c15c10fa173b669d934d 100644
+--- a/plugin/build/ios/xcode/addBuildPhases.js
++++ b/plugin/build/ios/xcode/addBuildPhases.js
+@@ -25,7 +25,7 @@ function addBuildPhases(xcodeProject, targetUuid, targetName, groupName, product
+     const buildPath = `""`;
+     const sharedFilesPath = (0, _utils.getSharedFilesPath)();
+     const folderType = 'app_extension';
+-    const { swiftFiles, intentFiles, assetDirectories, sharedFiles } = shareExtensionFiles;
++    const { swiftFiles, intentFiles, assetDirectories, otherFiles, sharedFiles } = shareExtensionFiles;
+     // Gets the location of the shared files relative to the extension directory
+     const sharedSwiftFiles = sharedFiles?.swiftFiles.map((file)=>_path().default.join(sharedFilesPath, file)).map((file)=>{
+         const shareExtensionDirectory = _path().default.join(platformProjectRoot, targetName, 'shared');
+@@ -46,7 +46,8 @@ function addBuildPhases(xcodeProject, targetUuid, targetName, groupName, product
+     xcodeProject.addToPbxBuildFileSection(productFile);
+     xcodeProject.addBuildPhase([], 'PBXFrameworksBuildPhase', groupName, targetUuid, folderType, buildPath);
+     xcodeProject.addBuildPhase([
+-        ...assetDirectories
++        ...assetDirectories,
++            ...otherFiles.filter((file) => file.endsWith('.xcprivacy'))
+     ], 'PBXResourcesBuildPhase', groupName, targetUuid, folderType, buildPath);
+ }
+ 
+diff --git a/plugin/build/ios/xcode/addXCConfigurationList.js b/plugin/build/ios/xcode/addXCConfigurationList.js
+index ee7a0cb988bf274d8f58305ee2f646189a85e479..021a3e1ff7432392dcbf3d1e0120a5755fa7c5e2 100644
+--- a/plugin/build/ios/xcode/addXCConfigurationList.js
++++ b/plugin/build/ios/xcode/addXCConfigurationList.js
+@@ -11,7 +11,8 @@ Object.defineProperty(exports, "addXCConfigurationList", {
+ function addXCConfigurationList(xcodeProject, targetName, bundleIdentifier, deploymentTarget, currentProjectVersion, marketingVersion) {
+     // Based on the default output of Xcode when adding a sharing extension target
+     const commonSettings = {
+-        ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: 'YES',
++        APPLICATION_EXTENSION_API_ONLY: 'YES',
++    ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: 'YES',
+         CLANG_ANALYZER_NONNULL: 'YES',
+         CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION: 'YES_AGGRESSIVE',
+         CODE_SIGN_STYLE: 'Automatic',
+diff --git a/plugin/src/ios/createInfoPlistFile.ts b/plugin/src/ios/createInfoPlistFile.ts
+index 7cd0d027992cefaee765e7afa7df8827bea374b4..d6b95d8c72980593c506406ebe0d4cd448f8e043 100644
+--- a/plugin/src/ios/createInfoPlistFile.ts
++++ b/plugin/src/ios/createInfoPlistFile.ts
+@@ -52,7 +52,7 @@ export default function createInfoPlistFile(
+     AppGroupId: appGroupId,
+     MainTargetUrlScheme: urlScheme,
+     CFBundleDevelopmentRegion: '$(DEVELOPMENT_LANGUAGE)',
+-    CFBundleDisplayName: '$(PRODUCT_NAME)',
++    CFBundleDisplayName: 'Reactive Resume',
+     CFBundleExecutable: '$(EXECUTABLE_NAME)',
+     CFBundleIdentifier: '$(PRODUCT_BUNDLE_IDENTIFIER)',
+     CFBundleInfoDictionaryVersion: '6.0',
+diff --git a/plugin/src/ios/xcode/addBuildPhases.ts b/plugin/src/ios/xcode/addBuildPhases.ts
+index af9471e405c97b84b88d09da3dc6bb8d94238b46..a681e06552a26f15bca50a8346c593675e1cba0e 100644
+--- a/plugin/src/ios/xcode/addBuildPhases.ts
++++ b/plugin/src/ios/xcode/addBuildPhases.ts
+@@ -22,7 +22,7 @@ export function addBuildPhases(
+   const sharedFilesPath = getSharedFilesPath();
+   const folderType = 'app_extension';
+ 
+-  const { swiftFiles, intentFiles, assetDirectories, sharedFiles } = shareExtensionFiles;
++  const { swiftFiles, intentFiles, assetDirectories, otherFiles, sharedFiles } = shareExtensionFiles;
+ 
+   // Gets the location of the shared files relative to the extension directory
+   const sharedSwiftFiles =
+@@ -72,7 +72,7 @@ export function addBuildPhases(
+   );
+ 
+   xcodeProject.addBuildPhase(
+-    [...assetDirectories],
++    [...assetDirectories, ...otherFiles.filter((file) => file.endsWith('.xcprivacy'))],
+     'PBXResourcesBuildPhase',
+     groupName,
+     targetUuid,
+diff --git a/plugin/src/ios/xcode/addXCConfigurationList.ts b/plugin/src/ios/xcode/addXCConfigurationList.ts
+index 977ceb2551e587c4539e2d85a5f8728ffcf59d16..5d5d6fcad5bdc5e9a6f906c733f014c2398ae494 100644
+--- a/plugin/src/ios/xcode/addXCConfigurationList.ts
++++ b/plugin/src/ios/xcode/addXCConfigurationList.ts
+@@ -10,6 +10,7 @@ export function addXCConfigurationList(
+ ) {
+   // Based on the default output of Xcode when adding a sharing extension target
+   const commonSettings = {
++    APPLICATION_EXTENSION_API_ONLY: 'YES',
+     ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: 'YES',
+     CLANG_ANALYZER_NONNULL: 'YES',
+     CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION: 'YES_AGGRESSIVE',
+diff --git a/plugin/template-files/ios/PrivacyInfo.xcprivacy b/plugin/template-files/ios/PrivacyInfo.xcprivacy
+new file mode 100644
+index 0000000000000000000000000000000000000000..4e8a0883a556c78aeea4f364ee4d63881f29bdb5
+--- /dev/null
++++ b/plugin/template-files/ios/PrivacyInfo.xcprivacy
+@@ -0,0 +1,21 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
++<plist version="1.0">
++<dict>
++	<key>NSPrivacyAccessedAPITypes</key>
++	<array>
++		<dict>
++			<key>NSPrivacyAccessedAPIType</key>
++			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
++			<key>NSPrivacyAccessedAPITypeReasons</key>
++			<array>
++				<string>1C8F.1</string>
++			</array>
++		</dict>
++	</array>
++	<key>NSPrivacyCollectedDataTypes</key>
++	<array/>
++	<key>NSPrivacyTracking</key>
++	<false/>
++</dict>
++</plist>
+diff --git a/plugin/template-files/ios/ShareIntoViewController.swift b/plugin/template-files/ios/ShareIntoViewController.swift
+index 06680594c880f5a1d55a359de63561799768d7d2..73501f8ee7d3e17cfd98ce01855c6f63b749beae 100644
+--- a/plugin/template-files/ios/ShareIntoViewController.swift
++++ b/plugin/template-files/ios/ShareIntoViewController.swift
+@@ -1,296 +1,114 @@
+ import UIKit
+-import Social
+-import MobileCoreServices
+ import UniformTypeIdentifiers
+-import AVFoundation
+ 
+-class ShareIntoViewController: SLComposeServiceViewController {
+-  // Only the following two properties cause a hard-crash of the share extension, because the failure originates from
+-  // plugin misconfiguration. Other errors should be handled in the view controller and preferably print a message, because it
+-  // is not possible for our users to handle them at runtime.
+-  private var hostAppScheme: String {
+-    guard let _hostAppScheme = Bundle.main.object(forInfoDictionaryKey: "MainTargetUrlScheme") as? String else {
+-      fatalError("Expo-sharing has failed to load the app scheme from `Info.plist`. Make sure the `expo-sharing` config plugin is configured correctly.")
+-    }
+-    return _hostAppScheme
+-  }
+-
+-  private var appGroupId: String {
+-    guard let _appGroupId = Bundle.main.object(forInfoDictionaryKey: "AppGroupId") as? String else {
+-      fatalError("Expo-sharing has failed to load the app group ID from `Info.plist`. Make sure the `expo-sharing` config plugin is configured correctly.")
+-    }
+-    return _appGroupId
+-  }
+-
+-  // MARK: - Lifecycle
+-
+-  override func didSelectPost() {
+-    // This is called if the standard Apple UI "Post" button is pressed.
+-    // Since we are redirecting immediately in viewWillAppear, should never be reached,
+-    // but good to have.
+-    handleShare()
+-  }
+-
+-  override func viewWillAppear(_ animated: Bool) {
+-    // Immediately start processing when view appears
+-    handleShare()
+-    super.viewWillAppear(animated)
+-  }
+-
+-  // MARK: - Core Logic
+-
+-  private func handleShare() {
+-    guard let items = extensionContext?.inputItems as? [NSExtensionItem] else {
+-      self.extensionContext?.completeRequest(returningItems: nil)
+-      return
+-    }
+-
+-    Task {
+-      let payload = await Task.detached(priority: .userInitiated) {
+-        return await self.processInputItems(items)
+-      }.value
+-
+-      if !payload.isEmpty {
+-        saveToUserDefaults(payload)
+-        openParentApp()
+-      } else {
+-        self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
+-      }
+-    }
+-  }
+-
+-  nonisolated private func processInputItems(_ items: [NSExtensionItem]) async -> [SharePayload] {
+-    var results: [SharePayload] = []
+-
+-    for item in items {
+-      guard let attachments = item.attachments else { continue }
+-
+-      for provider in attachments {
+-        if let payload = await parseProvider(provider) {
+-          results.append(payload)
++// Complete normally; the user explicitly reopens Reactive Resume to review. Never open the containing app here.
++class ShareIntoViewController: UIViewController {
++  private var store: PendingPostingStore?
++  private var selected: PostingShareContext?
++  private var cancelled = false
++  private var processing = false
++  private var completed = false
++  private let message = UILabel()
++  private let keep = UIButton(type: .system)
++
++  override func viewDidLoad() {
++    super.viewDidLoad()
++    view.backgroundColor = .systemBackground
++    if let group = Bundle.main.object(forInfoDictionaryKey: "AppGroupId") as? String,
++      let defaults = UserDefaults(suiteName: group) {
++      store = PendingPostingStore(defaults: defaults)
++      selected = store?.context()
++      store?.discard()
++    }
++    message.numberOfLines = 0
++    message.font = .preferredFont(forTextStyle: .body)
++    message.adjustsFontForContentSizeCategory = true
++    message.text = selected.map {
++      "Keep one posting URL or selected text for \($0.server). Then reopen Reactive Resume yourself to review and save. Nothing is saved to your tracker or sent to AI here. Pending text expires after 15 minutes."
++    } ?? "Open Reactive Resume and sign in to your installation first. Then share the posting again."
++    keep.setTitle("Keep for review, then reopen app", for: .normal)
++    keep.titleLabel?.numberOfLines = 0
++    keep.titleLabel?.font = .preferredFont(forTextStyle: .headline)
++    keep.titleLabel?.adjustsFontForContentSizeCategory = true
++    keep.isEnabled = selected != nil
++    keep.addTarget(self, action: #selector(complete), for: .touchUpInside)
++    let cancel = UIButton(type: .system)
++    cancel.setTitle("Cancel", for: .normal)
++    cancel.addTarget(self, action: #selector(cancelShare), for: .touchUpInside)
++    let stack = UIStackView(arrangedSubviews: [message, keep, cancel])
++    stack.axis = .vertical
++    stack.spacing = 24
++    stack.translatesAutoresizingMaskIntoConstraints = false
++    let scroll = UIScrollView()
++    scroll.translatesAutoresizingMaskIntoConstraints = false
++    view.addSubview(scroll)
++    scroll.addSubview(stack)
++    NSLayoutConstraint.activate([
++      scroll.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
++      scroll.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
++      scroll.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
++      scroll.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
++      stack.leadingAnchor.constraint(equalTo: scroll.contentLayoutGuide.leadingAnchor, constant: 24),
++      stack.trailingAnchor.constraint(equalTo: scroll.contentLayoutGuide.trailingAnchor, constant: -24),
++      stack.topAnchor.constraint(equalTo: scroll.contentLayoutGuide.topAnchor, constant: 32),
++      stack.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor, constant: -24),
++      stack.widthAnchor.constraint(equalTo: scroll.frameLayoutGuide.widthAnchor, constant: -48)
++    ])
++  }
++
++  override func viewDidDisappear(_ animated: Bool) {
++    super.viewDidDisappear(animated)
++    if !completed {
++      cancelled = true
++      store?.discard()
++    }
++  }
++
++  @objc private func cancelShare() {
++    cancelled = true
++    store?.discard()
++    extensionContext?.cancelRequest(withError: NSError(domain: NSCocoaErrorDomain, code: NSUserCancelledError))
++  }
++
++  @objc private func complete() {
++    guard !processing, let selected, let store,
++      let items = extensionContext?.inputItems as? [NSExtensionItem] else { return }
++    processing = true
++    keep.isEnabled = false
++    Task { @MainActor in
++      let providers = items.flatMap { $0.attachments ?? [] }
++      var payloads: [SharePayload] = []
++      if (1...2).contains(providers.count) {
++        for provider in providers {
++          if let payload = await read(provider) { payloads.append(payload) }
+         }
+       }
+-    }
+-
+-    return results
+-  }
+-
+-  private func saveToUserDefaults(_ payload: [SharePayload]) {
+-    guard let userDefaults = UserDefaults(suiteName: appGroupId) else {
+-      print("Error: Expo-sharing could not initialize UserDefaults with group: \(appGroupId)")
+-      return
+-    }
+-
+-    if let encoded = try? JSONEncoder().encode(payload) {
+-      userDefaults.set(encoded, forKey: SHARE_INTO_DEFAULTS_KEY)
+-      userDefaults.synchronize()
+-    } else {
+-      print("Error: Expo-sharing has failed to serialize shared data to JSON")
+-    }
+-  }
+-
+-  // MARK: - Provider Parsing
+-
+-  private func parseProvider(_ provider: NSItemProvider) async -> SharePayload? {
+-    if provider.hasItemConformingToTypeIdentifier(UTType.url.identifier) &&
+-    !provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) {
+-      return await handleWebURL(provider)
+-    }
+-
+-    if provider.hasItemConformingToTypeIdentifier(UTType.audio.identifier) {
+-      return await handleFile(provider, type: .audio, utType: .audio)
+-    }
+-
+-    if provider.hasItemConformingToTypeIdentifier(UTType.movie.identifier) {
+-      return await handleFile(provider, type: .video, utType: .movie)
+-    }
+-
+-    if provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
+-      return await handleFile(provider, type: .image, utType: .image)
+-    }
+-
+-    if provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) ||
+-    provider.hasItemConformingToTypeIdentifier(UTType.pdf.identifier) {
+-      return await handleFile(provider, type: .file, utType: .data)
+-    }
+-
+-    if provider.hasItemConformingToTypeIdentifier(UTType.text.identifier) {
+-      return await handleText(provider)
+-    }
+-
+-    return nil
+-  }
+-
+-  // MARK: - Handlers
+-
+-  private func handleText(_ provider: NSItemProvider) async -> SharePayload? {
+-    return await withCheckedContinuation { continuation in
+-      provider.loadItem(forTypeIdentifier: UTType.text.identifier, options: nil) { item, _ in
+-        guard let text = item as? String else {
+-          continuation.resume(returning: nil)
+-          return
+-        }
+-
+-        let payload = SharePayload(
+-          type: .text,
+-          value: text,
+-          mimeType: "text/plain",
+-          metadata: nil
+-        )
+-        continuation.resume(returning: payload)
++      guard !cancelled else { return }
++      if payloads.count == providers.count && store.save(payloads, for: selected) {
++        completed = true
++        extensionContext?.completeRequest(returningItems: nil)
++      } else {
++        processing = false
++        message.text = "Couldn't keep this share. Share one posting URL or selected text, with no files, and check that Reactive Resume is still signed in to the same installation. You can paste the posting in Applications instead."
+       }
+     }
+   }
+ 
+-  private func handleWebURL(_ provider: NSItemProvider) async -> SharePayload? {
++  private func read(_ provider: NSItemProvider) async -> SharePayload? {
++    guard !provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) else { return nil }
++    let isURL = provider.hasItemConformingToTypeIdentifier(UTType.url.identifier)
++    let type = isURL ? UTType.url : UTType.text
++    guard provider.hasItemConformingToTypeIdentifier(type.identifier) else { return nil }
+     return await withCheckedContinuation { continuation in
+-      provider.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { item, _ in
+-        guard let url = item as? URL else {
++      provider.loadItem(forTypeIdentifier: type.identifier, options: nil) { item, _ in
++        let value = isURL ? (item as? URL)?.absoluteString : item as? String
++        guard let value, value.utf16.count <= 100_000 else {
+           continuation.resume(returning: nil)
+           return
+         }
+-
+-        let payload = SharePayload(
+-          type: .url,
+-          value: url.absoluteString,
+-          mimeType: "text/html",
+-          metadata: nil
+-        )
+-        continuation.resume(returning: payload)
+-      }
+-    }
+-  }
+-
+-  private func handleFile(_ provider: NSItemProvider, type: ShareType, utType: UTType) async -> SharePayload? {
+-    return await withCheckedContinuation { continuation in
+-      let identifier = provider.registeredTypeIdentifiers.first { providerIdentifier in
+-        UTType(providerIdentifier)?.conforms(to: utType) ?? false
+-      } ?? utType.identifier
+-
+-      provider.loadItem(forTypeIdentifier: identifier, options: nil) { item, _ in
+-        if let url = item as? URL {
+-          let result = self.copyAndProcessFile(url: url, type: type)
+-          continuation.resume(returning: result)
+-          return
+-        }
+-
+-        if let data = item as? Data {
+-          let fileName = UUID().randomFilename(forTypeIdentifier: identifier)
+-          let result = self.saveDataToAppGroup(
+-            data: data,
+-            fileName: fileName,
+-            type: type,
+-            mimeType: UTType(identifier)?.preferredMIMEType
+-          )
+-          continuation.resume(returning: result)
+-          return
+-        }
+-
+-        if type == .image, let image = item as? UIImage, let data = image.pngData() {
+-          let fileName = UUID().uuidString + ".png"
+-          let result = self.saveDataToAppGroup(data: data, fileName: fileName, type: .image, mimeType: "image/png")
+-          continuation.resume(returning: result)
+-          return
+-        }
+-
+-        continuation.resume(returning: nil)
+-      }
+-    }
+-  }
+-
+-  // MARK: - File Management
+-
+-  private func copyAndProcessFile(url: URL, type: ShareType) -> SharePayload? {
+-    guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupId) else {
+-      return nil
+-    }
+-
+-    let fileName = url.lastPathComponent.isEmpty ? UUID().uuidString : url.lastPathComponent
+-    let destinationURL = containerURL.appendingPathComponent(fileName)
+-
+-    do {
+-      if FileManager.default.fileExists(atPath: destinationURL.path) {
+-        try FileManager.default.removeItem(at: destinationURL)
++        continuation.resume(returning: SharePayload(type: isURL ? .url : .text, value: value,
++          mimeType: isURL ? "text/html" : "text/plain", metadata: nil))
+       }
+-      try FileManager.default.copyItem(at: url, to: destinationURL)
+-    } catch {
+-      print("Error copying file: \(error)")
+-      return nil
+-    }
+-
+-    let size = try? FileManager.default.attributesOfItem(atPath: destinationURL.path)[.size] as? Int
+-    let fileExt = destinationURL.pathExtension
+-    let mimeType = UTType(filenameExtension: fileExt)?.preferredMIMEType ?? "application/octet-stream"
+-
+-    let metadata = ShareMetadata(
+-      originalName: fileName,
+-      size: size
+-    )
+-
+-    return SharePayload(
+-      type: type,
+-      value: destinationURL.absoluteString,
+-      mimeType: mimeType,
+-      metadata: metadata
+-    )
+-  }
+-
+-  private func saveDataToAppGroup(data: Data, fileName: String, type: ShareType, mimeType: String?) -> SharePayload? {
+-    guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupId) else {
+-      return nil
+-    }
+-    let destinationURL = containerURL.appendingPathComponent(fileName)
+-
+-    do {
+-      try data.write(to: destinationURL)
+-    } catch {
+-      return nil
+-    }
+-
+-    return SharePayload(
+-      type: type,
+-      value: destinationURL.absoluteString,
+-      mimeType: mimeType ?? "application/octet-stream",
+-      metadata: ShareMetadata(originalName: fileName, size: data.count)
+-    )
+-  }
+-
+-  // MARK: - Open main app
+-
+-  @MainActor
+-  func openParentApp() {
+-    guard let url = URL(string: "\(hostAppScheme)://expo-sharing") else {
+-      fatalError("The app scheme \(hostAppScheme) is invalid - it is not possible to create a valid deep link URL with it")
+-    }
+-
+-    openURL(url)
+-    self.close()
+-  }
+-
+-  // This is a hack that allows us to open the main app target from a share-extension target. Technically this is really
+-  // discouraged by apple, but I've found that multiple apps exist that use this method and pass the App Store review.
+-  // We should mention this as a possible future issue in the docs.
+-  private func openURL(_ url: URL) {
+-    var responder: UIResponder? = self
+-    while responder != nil {
+-      if let application = responder as? UIApplication {
+-        application.open(url, options: [:], completionHandler: nil)
+-      }
+-      responder = responder?.next
+-    }
+-  }
+-
+-  private func close() {
+-    self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
+-  }
+-}
+-
+-private extension UUID {
+-  func randomFilename(forTypeIdentifier identifier: String) -> String {
+-    var ext = ""
+-    if let preferredExtension = UTType(identifier)?.preferredFilenameExtension {
+-      ext = ".\(preferredExtension)"
+     }
+-    return UUID().uuidString + ext
+   }
+ }

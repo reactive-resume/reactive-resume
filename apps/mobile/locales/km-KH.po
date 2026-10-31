@@ -1459,6 +1459,12 @@ msgstr "គ្របដណ្តប់រួចហើយ · ជ្រើសរ�
 msgid "Already covered:"
 msgstr "គ្របដណ្តប់រួចហើយ៖"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/add-sheet.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/check/screen.tsx
 msgid "Also check the exported PDF"
 msgstr "សូមពិនិត្យមើលផងដែរ PDF ដែលបាននាំចេញ"
@@ -4109,6 +4115,10 @@ msgstr "លុបសព្វនាមចោល ហើយចាប់ផ្ត�
 #: src/features/write/entry-sheet.tsx
 msgid "Duplicate"
 msgstr "ស្ទួន"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
 
 #: src/features/document-menu/index.tsx
 msgid "Duplicate resume"
@@ -7134,6 +7144,10 @@ msgstr "គ្មានអ៊ីនធឺណិត។ ការកែសម្�
 msgid "On"
 msgstr "បើក"
 
+#: src/features/applications/add-sheet.tsx
+msgid "On iOS, choose Keep for review, then reopen app in the Share extension. Reopen Reactive Resume yourself within 15 minutes. Sign in here before sharing."
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "On. Anyone with the link can see your web page."
 msgstr "បើក។ អ្នកណាដែលមានតំណអាចមើលទំព័រវេបរបស់អ្នកបាន។"
@@ -7295,6 +7309,10 @@ msgstr "បើកឯកសារក្នុង Word ហើយរក្សាទ
 msgid "Open the schedule"
 msgstr "បើកកាលវិភាគ"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "Open web page"
 msgstr "បើកទំព័រវេប"
@@ -7350,6 +7368,12 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providers.defaultProvider.label
+#. placeholder {1}: providers.defaultProvider.provider
+#: src/features/applications/add-sheet.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -8148,6 +8172,10 @@ msgstr "អានទំព័រ"
 msgid "Read the resume"
 msgstr "បានអានប្រវត្តិរូបសង្ខេប"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
 msgstr "ភាពងាយស្រួលអាន"
@@ -8191,6 +8219,11 @@ msgstr "ការអានអត្ថបទ"
 #: src/features/documents/import-file.ts
 msgid "Reading this file with AI needs a tested AI provider. Set one up, then retry."
 msgstr "ការអានឯកសារនេះជាមួយ AI ត្រូវការអ្នកផ្តល់សេវា AI ដែលបានសាកល្បង។ រៀបចំមួយ រួចព្យាយាមម្តងទៀត។"
+
+#: src/api/ai-consent.ts
+#: src/features/applications/error.ts
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "មិនអាចបញ្ជាក់ថាអាចអានដោយមិនប្រើ AI បានទេ។ សូមព្យាយាមម្តងទៀត ធ្វើបច្ចុប្បន្នភាពម៉ាស៊ីនមេ ឬបញ្ចូលព័ត៌មានលម្អិតដោយដៃ។"
 
 #: src/features/ai/web-access.tsx
 msgid "Reading works"
@@ -8744,6 +8777,7 @@ msgstr "បានទាញយក {0} ដោយប្រើ {1} ។ ពេលវ�
 
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -9599,6 +9633,10 @@ msgstr ""
 msgid "Share enabled shared Knowledge"
 msgstr ""
 
+#: src/features/applications/incoming-posting.tsx
+msgid "Share one posting URL or selected text. Files, multiple postings and unsupported URL parameters need explicit URL or pasted-text import in Applications."
+msgstr ""
+
 #: src/features/share/download.tsx
 msgid "Share PDF"
 msgstr "ចែករំលែក PDF"
@@ -9619,11 +9657,20 @@ msgstr "ចែករំលែកការថត"
 msgid "Share via…"
 msgstr "ចែករំលែកតាមរយៈ…"
 
+#. placeholder {0}: session.server
+#: src/features/applications/add-sheet.tsx
+msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
 msgid "Sharing"
 msgstr "ការចែករំលែក"
+
+#: src/features/applications/incoming-posting.tsx
+msgid "Sharing could not be read. Update the app or paste the posting in Applications."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sharpening the opening"
@@ -11513,6 +11560,10 @@ msgstr "រហូតដល់ 20 ស្លាកក្នុងមួយឯក�
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr "រហូតដល់ 25 MB · បានពិនិត្យលើម៉ាស៊ីនមេ ហើយមិនត្រូវបានរក្សាទុកទេ។"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Update posting details"
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "ធ្វើបច្ចុប្បន្នភាពម៉ាស៊ីនមេរបស់អ្នក មុនពេលផ្លាស់ទីពាក្យសុំការងារទៅដំណាក់កាលផ្ទាល់ខ្លួន។"
@@ -11728,6 +11779,10 @@ msgstr "ប្រើអ្នកផ្តល់សេវានេះ។"
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "ប្រើពេលនេះ"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."

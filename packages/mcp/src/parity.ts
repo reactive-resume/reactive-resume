@@ -62,6 +62,7 @@ const PARITY_PROCEDURES: Record<string, [AnyProcedure, BehaviorAnnotations]> = {
 	"documents.purgeExpired": [router.documents.purgeExpired, WRITE_DESTRUCTIVE],
 	"documents.copyForJob": [router.documents.copyForJob, WRITE_DESTRUCTIVE],
 	"applications.lanes.get": [router.applications.lanes.get, WRITE_IDEMPOTENT],
+	"applications.findPosting": [router.applications.findPosting, READ_IDEMPOTENT],
 	"applications.lanes.create": [router.applications.lanes.create, WRITE_NON_IDEMPOTENT],
 	"applications.lanes.update": [router.applications.lanes.update, WRITE_DESTRUCTIVE],
 	"applications.lanes.reorder": [router.applications.lanes.reorder, WRITE_DESTRUCTIVE],

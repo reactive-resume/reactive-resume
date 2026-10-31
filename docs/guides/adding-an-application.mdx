@@ -43,6 +43,33 @@ Saving a job and preparing a resume manually work without an AI connection or an
   />
 </Frame>
 
+## Capture from your browser
+
+In **Save a job**, select **Download browser helper**. Unzip the download, open `chrome://extensions` (or `edge://extensions`), enable **Developer mode**, choose **Load unpacked**, and select the unzipped folder. This helper supports current desktop Chrome and Edge. Other browsers, restricted pages, and embedded frames can use URL or pasted-text import.
+
+Open the helper and **Connect** your installation origin, such as `https://rxresu.me` or `https://resume.example.org`. It stores only that origin. Sign in inside the installation itself; never paste API keys, browser cookies or passwords into the helper. Self-hosted installations need HTTPS; HTTP localhost is allowed for development.
+
+On one posting, open the helper and choose **Capture this posting**. A page's single structured JobPosting supplies role, company, location and description without AI. If unavailable, select only the posting text and capture again. The helper never falls back to sending the whole page. Selected text excludes hidden content and editable notes. Expand any closed job details before selecting their text; a closed disclosure contributes only its visible summary. The helper removes known tracking and session parameters while preserving supported job identifiers. If unknown query parameters could change the job identity or carry credentials, capture stops and asks you to enter the URL or text explicitly. Different jobs with the same title and company are not treated as one structured posting.
+
+Review and correct the URL, **Role**, **Company**, **Location** and **Saved description** in the installation, then choose **Save job**. When already tracked, use **Open tracked job** or **Update posting details**. Updating this way preserves stage, notes and submitted documents. An absent location or description keeps the existing value; use Edit details to clear it intentionally. Capture does not contact the employer, submit an application or mark it applied.
+
+Choose **Disconnect** in the helper to remove its installation setting. Reconnect explicitly to change installations. No posting history or credentials are retained in the helper. Capture opens the review through a URL fragment containing the posting text. The app removes that fragment from its address bar, but the browser may retain it in local or synced browsing history. Use the helper only for text you are comfortable retaining there. Closing or reloading the review before saving discards the capture; sign in first if your sign-in provider needs a full page redirect, then capture again.
+
+<Frame caption="A captured fictional Lumen Workshop posting, corrected before saving">
+  <img
+    src="/images/guides/career/posting-capture.png"
+    alt="Save a job review showing the fictional Lumen Workshop role, editable captured description and location, before saving"
+  />
+</Frame>
+
+## Import a mobile share
+
+In the current native iOS or Android app, connect to your installation using the existing **Another server** sign-in flow. Use the browser's **Share** action and select **Reactive Resume**. Share one URL or the posting text you deliberately selected. On iOS, choose **Keep for review, then reopen app**, return to your Home Screen, and reopen Reactive Resume yourself within 15 minutes. The Share extension finishes normally; it does not launch the app. Open the app and sign in before sharing; after a day without opening it, open it again before sharing. On Android, selecting Reactive Resume opens the review directly. Review the destination installation and imported text; use **Read posting** for a public URL or fill missing fields manually. Save only after correcting the details. Duplicate controls work as above. If the duplicate check is unavailable on an older self-hosted server, saving remains available. Check Applications manually before saving or upgrade the server to enable duplicate detection.
+
+Mobile browsers choose what their share sheet exposes. Many send only a URL, without the page title, description or signed-in page contents. The app receives only the shared payload; it cannot read the browser's session. For a session-only posting, select and share its text, or paste it into **Applications → Save job**. Files and multiple postings are unsupported. A new store build is required for the native receive target; older binaries retain URL/paste import.
+
+Switching server or signing out disconnects the native app through its existing account controls. Captured drafts are account scoped and cleared on identity changes. On iOS, pending raw text stays in the private app group until one-time review, cancellation or account/server change. After 15 minutes it is no longer available for review and is removed on the next app activation. Closing review discards it. A clipped description shows a warning and retains incomplete-source metadata when saved. No capture creates a separate server record: saved posting fields use the existing application, account export and account deletion flows.
+
 ## Find a posting with keyword search
 
 If search is available on your installation, the **Save a job** dialog also shows **Search job postings**. Search needs a configured **Web access** connection or server-provided search; an AI provider alone does not enable it. Check **Settings → AI & developer → Web access**, or ask your administrator if the server provides search. You can always paste a link or posting instead.
@@ -67,15 +94,15 @@ If search is available on your installation, the **Save a job** dialog also show
   </Step>
 </Steps>
 
-Search sends your search terms to the configured web search service. Reading a link retrieves its public page through the selected web reader or the built-in reader. If you have a usable default AI provider, **Read posting** also sends the posting text to it to suggest job details. Saving a job never submits an application or contacts the employer.
+Search sends your search terms to the configured web search service. Reading a link retrieves its public page through the selected web reader or the built-in reader. **Read posting** reads structured page details without AI. **Read with AI** is optional and names the connection receiving the posting before you choose it. Saving a job never submits an application or contacts the employer.
 
 If search fails or finds nothing useful, change your keywords or paste a posting link directly. For searches that run on a schedule, see [Finding roles automatically](/guides/finding-roles-automatically).
 
 ## What gets read from a posting
 
-What **Read posting** can fill depends on what you paste and whether you already have a usable [AI connection](/guides/using-ai):
+**Read posting** uses structured page details without AI. The app first confirms that your server supports reading without AI. If that check fails, it sends no parse request: retry, update your server, or enter the details manually. Optional **Read with AI** remains a separate choice and uses your selected [AI connection](/guides/using-ai), disclosed beside the button:
 
-| You paste    | Without an AI provider                                                                | With an AI provider                                             |
+| You paste    | Without an AI provider                                                                | With optional Read with AI                                      |
 | ------------ | ------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
 | A job link   | Saves the page text; may fill role, company and location from structured job details. | May also fill salary and a short list of what the job asks for. |
 | Posting text | Saves the text. Fill in the role and company yourself.                                | May fill role, company, location, salary and requirements.      |
