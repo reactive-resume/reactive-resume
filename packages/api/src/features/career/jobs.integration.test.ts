@@ -14,6 +14,7 @@ const fixture = vi.hoisted(() => ({
 	read: vi.fn<typeof import("../applications/posting").readOpenPosting>(),
 	email: vi.fn<typeof import("@reactive-resume/email/transport").sendCareerNotification>(),
 	generate: vi.fn<typeof import("./generate").generateCareer>(),
+	smtp: false,
 	env: { CRON_SECRET: undefined as string | undefined },
 }));
 vi.mock("@reactive-resume/db/client", () => ({
@@ -32,10 +33,18 @@ vi.mock("@reactive-resume/env/server", async () => {
 			get CRON_SECRET() {
 				return fixture.env.CRON_SECRET;
 			},
-			SMTP_HOST: undefined,
-			SMTP_USER: undefined,
-			SMTP_PASS: undefined,
-			SMTP_FROM: undefined,
+			get SMTP_HOST() {
+				return fixture.smtp ? "smtp.example.test" : undefined;
+			},
+			get SMTP_USER() {
+				return fixture.smtp ? "rx106-test" : undefined;
+			},
+			get SMTP_PASS() {
+				return fixture.smtp ? "synthetic-only" : undefined;
+			},
+			get SMTP_FROM() {
+				return fixture.smtp ? "rx106@example.test" : undefined;
+			},
 		},
 	};
 });
@@ -118,6 +127,7 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 	beforeEach(async () => {
 		vi.stubEnv("VERCEL", "");
 		fixture.env.CRON_SECRET = undefined;
+		fixture.smtp = false;
 		fixture.search.mockReset().mockResolvedValue(results);
 		fixture.read.mockReset().mockResolvedValue(posting);
 		fixture.email.mockReset().mockResolvedValue(true);
@@ -131,6 +141,380 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 			displayUsername: "alice",
 			emailVerified: true,
 		});
+	});
+
+	it("note-only edits preserve completed follow-up occurrence, email and job history", async () => {
+		fixture.smtp = true;
+		const { applicationService } = await import("../applications/service");
+		const id = await applicationService.create({
+			userId: "alice",
+			company: "Review Repeat",
+			role: "Engineer",
+			status: "applied",
+		});
+		const at = due();
+		await jobs.save(
+			"alice",
+			careerScheduleInputSchema.parse({
+				kind: "follow-up",
+				applicationId: id,
+				nextRunAt: at,
+				timezone: "UTC",
+				query: "Original note",
+			}),
+		);
+		await getDb().update(tables.careerSchedule).set({ email: true }).where(eq(tables.careerSchedule.applicationId, id));
+		await run();
+		const beforeJobs = await getDb().select().from(tables.careerJob);
+		expect(await jobs.notifications("alice")).toHaveLength(1);
+		await applicationService.update({ userId: "alice", id, followUpNote: "Original note" });
+		await run();
+		expect(await jobs.notifications("alice")).toHaveLength(1);
+		await applicationService.update({ userId: "alice", id, followUpNote: "Corrected note" });
+		const [schedule] = await jobs.list("alice");
+		if (!schedule) throw new Error("Missing completed schedule");
+		await jobs.save("alice", {
+			...careerScheduleInputSchema.parse(schedule),
+			id: schedule.id,
+			query: "Today note edit",
+		});
+		await run();
+		const notices = await jobs.notifications("alice");
+		const afterJobs = await getDb().select().from(tables.careerJob);
+		expect(fixture.email).toHaveBeenCalledTimes(1);
+		expect(afterJobs).toEqual(beforeJobs);
+		expect(notices).toHaveLength(1);
+		expect(afterJobs.map((row) => row.id)).toContain(beforeJobs[0]?.id);
+	});
+	it("old-client unchanged exact-midnight echo preserves discriminator", async () => {
+		const { applicationService } = await import("../applications/service");
+		await getDb().update(tables.user).set({ timezone: "Pacific/Honolulu" }).where(eq(tables.user.id, "alice"));
+		const at = new Date("2030-01-03T00:00:00Z");
+		const id = await applicationService.create({
+			userId: "alice",
+			company: "Exact midnight",
+			role: "Engineer",
+			followUpAt: at,
+			followUpDateOnly: false,
+		});
+		await applicationService.update({ userId: "alice", id, followUpAt: at, followUpNote: "Old client note edit" });
+		const application = await applicationService.getById({ userId: "alice", id });
+
+		expect(application.followUpDateOnly).toBe(false);
+		expect((await jobs.list("alice"))[0]?.nextRunAt).toEqual(at);
+	});
+
+	it("logical-day delivery follows account timezone without moving exact times", async () => {
+		const { applicationService } = await import("../applications/service");
+		await getDb().update(tables.user).set({ timezone: "Asia/Tokyo" }).where(eq(tables.user.id, "alice"));
+		const at = new Date("2030-01-03T00:00:00Z");
+		const logical = await applicationService.create({
+			userId: "alice",
+			company: "Logical",
+			role: "Engineer",
+			followUpAt: at,
+			followUpDateOnly: true,
+		});
+		const exact = await applicationService.create({
+			userId: "alice",
+			company: "Exact",
+			role: "Engineer",
+			followUpAt: at,
+			followUpDateOnly: false,
+		});
+		const original = (await jobs.list("alice")).find((row) => row.applicationId === logical);
+		if (!original) throw new Error("Missing logical-day schedule");
+		await getDb()
+			.insert(tables.careerJob)
+			.values({
+				id: "clock-running",
+				userId: "alice",
+				scheduleId: original.id,
+				dueAt: at,
+				status: "running",
+				lease: "clock-lease",
+				leaseUntil: new Date(Date.now() + 60000),
+			});
+		await getDb()
+			.update(tables.careerSchedule)
+			.set({ lastQueuedAt: at })
+			.where(eq(tables.careerSchedule.id, original.id));
+		await getDb().update(tables.user).set({ timezone: "Pacific/Honolulu" }).where(eq(tables.user.id, "alice"));
+		const rows = await jobs.list("alice");
+		expect(rows.find((row) => row.applicationId === logical)).toMatchObject({
+			nextRunAt: new Date("2030-01-03T19:00:00Z"),
+			timezone: "Pacific/Honolulu",
+			lastQueuedAt: null,
+		});
+		expect(rows.find((row) => row.applicationId === exact)).toMatchObject({ nextRunAt: at, timezone: "Asia/Tokyo" });
+		expect(await applicationService.getById({ userId: "alice", id: logical })).toMatchObject({
+			followUpAt: at,
+			followUpDateOnly: true,
+		});
+		expect((await getDb().select().from(tables.careerJob))[0]).toMatchObject({
+			id: "clock-running",
+			status: "canceled",
+			lease: null,
+		});
+	});
+	it("account clock changes retain a completed logical-day occurrence through repeated timezone changes", async () => {
+		const { applicationService } = await import("../applications/service");
+		const raw = new Date();
+		raw.setUTCHours(0, 0, 0, 0);
+		raw.setUTCDate(raw.getUTCDate() - 1);
+		const id = await applicationService.create({
+			userId: "alice",
+			company: "Delivered day",
+			role: "Engineer",
+			status: "applied",
+			followUpAt: raw,
+			followUpDateOnly: true,
+		});
+		await run();
+		const history = await getDb().select().from(tables.careerJob);
+		expect(history).toHaveLength(1);
+		expect(history[0]?.status).toBe("completed");
+		for (const timezone of ["Pacific/Honolulu", "Asia/Tokyo", "UTC"]) {
+			await getDb().update(tables.user).set({ timezone }).where(eq(tables.user.id, "alice"));
+			await applicationService.update({ userId: "alice", id, followUpNote: "Updated metadata" });
+			await run();
+			expect(await jobs.notifications("alice")).toHaveLength(1);
+			expect(await getDb().select().from(tables.careerJob)).toEqual(history);
+		}
+	});
+	it.each(["queued", "running"] as const)(
+		"note-only edits retain %s occurrence and lease, then deliver updated note once",
+		async (status) => {
+			fixture.smtp = true;
+			const { applicationService } = await import("../applications/service");
+			const id = await applicationService.create({
+				userId: "alice",
+				company: "Pending note",
+				role: "Engineer",
+				status: "applied",
+			});
+			const at = due();
+			const saved = await jobs.save(
+				"alice",
+				careerScheduleInputSchema.parse({
+					kind: "follow-up",
+					applicationId: id,
+					nextRunAt: at,
+					timezone: "UTC",
+					query: "Original",
+					email: true,
+				}),
+			);
+			await getDb()
+				.update(tables.careerSchedule)
+				.set({ lastQueuedAt: at })
+				.where(eq(tables.careerSchedule.id, saved.id));
+			await getDb()
+				.insert(tables.careerJob)
+				.values({
+					id: "kept-job",
+					userId: "alice",
+					scheduleId: saved.id,
+					dueAt: at,
+					status,
+					lease: status === "running" ? "kept-lease" : null,
+					leaseUntil: status === "running" ? new Date(Date.now() + 60000) : null,
+				});
+			const before = await getDb().select().from(tables.careerJob);
+			await applicationService.update({ userId: "alice", id, followUpNote: "Latest note" });
+			await jobs.save("alice", { ...careerScheduleInputSchema.parse(saved), id: saved.id, query: "Latest note" });
+			expect(await getDb().select().from(tables.careerJob)).toEqual(before);
+			expect((await jobs.list("alice"))[0]).toMatchObject({ query: "Latest note", lastQueuedAt: at });
+			if (status === "running")
+				await getDb()
+					.update(tables.careerJob)
+					.set({ leaseUntil: expired() })
+					.where(eq(tables.careerJob.id, "kept-job"));
+			await run();
+			await run();
+			expect(await jobs.notifications("alice")).toMatchObject([
+				{ key: "kept-job", notice: { type: "followup", note: "Latest note" } },
+			]);
+			expect(fixture.email).toHaveBeenCalledTimes(1);
+			expect((await getDb().select().from(tables.careerJob))[0]).toMatchObject({ id: "kept-job", status: "completed" });
+		},
+	);
+
+	it("publication reads the note that won under application locks even after an earlier schedule read", async () => {
+		const { applicationService } = await import("../applications/service");
+		const id = await applicationService.create({
+			userId: "alice",
+			company: "In-flight metadata",
+			role: "Engineer",
+			status: "applied",
+		});
+		const at = due();
+		await jobs.save(
+			"alice",
+			careerScheduleInputSchema.parse({
+				kind: "follow-up",
+				applicationId: id,
+				nextRunAt: at,
+				timezone: "UTC",
+				query: "Stale snapshot",
+			}),
+		);
+		let release = () => {};
+		let observed = () => {};
+		const barrier = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		const read = new Promise<void>((resolve) => {
+			observed = resolve;
+		});
+		const original = pool.query;
+		let paused = false;
+		const spy = vi.spyOn(pool, "query").mockImplementation(((...args: unknown[]) => {
+			const result = Reflect.apply(original, pool, args);
+			const query = args[0] as { text?: string } | string;
+			const text = typeof query === "string" ? query : (query.text ?? "");
+			if (!paused && text.includes('from "career_schedule"') && !text.includes("for update")) {
+				paused = true;
+				return Promise.resolve(result).then(async (rows) => {
+					observed();
+					await barrier;
+					return rows;
+				});
+			}
+			return result;
+		}) as typeof pool.query);
+		let running: Promise<unknown> | undefined;
+		try {
+			running = run();
+			await read;
+			expect((await getDb().select().from(tables.careerJob))[0]?.status).toBe("running");
+			await applicationService.update({ userId: "alice", id, followUpNote: "Winning note" });
+			release();
+			await running;
+			expect(await jobs.notifications("alice")).toMatchObject([{ notice: { type: "followup", note: "Winning note" } }]);
+		} finally {
+			release();
+			await running;
+			spy.mockRestore();
+		}
+	});
+	it("timezone writes reject nonexistent logical days atomically", async () => {
+		const { applicationService } = await import("../applications/service");
+		const id = await applicationService.create({
+			userId: "alice",
+			company: "Missing local day",
+			role: "Engineer",
+			followUpAt: new Date("2011-12-30T00:00:00Z"),
+			followUpDateOnly: true,
+		});
+		const original = await jobs.list("alice");
+		await expect(
+			getDb().update(tables.user).set({ timezone: "Pacific/Apia" }).where(eq(tables.user.id, "alice")),
+		).rejects.toThrow();
+		expect((await getDb().select().from(tables.user).where(eq(tables.user.id, "alice")))[0]?.timezone).toBe("UTC");
+		expect(await jobs.list("alice")).toEqual(original);
+		expect((await applicationService.getById({ userId: "alice", id })).followUpDateOnly).toBe(true);
+	});
+
+	it.each(["queued", "running"] as const)(
+		"account clock moves %s logical-day delivery without losing or duplicating occurrence",
+		async (status) => {
+			fixture.smtp = true;
+			const { applicationService } = await import("../applications/service");
+			await getDb().update(tables.user).set({ timezone: "Asia/Tokyo" }).where(eq(tables.user.id, "alice"));
+			const raw = new Date();
+			raw.setUTCHours(0, 0, 0, 0);
+			raw.setUTCDate(raw.getUTCDate() - 1);
+			await applicationService.create({
+				userId: "alice",
+				company: "Moving clock",
+				role: "Engineer",
+				status: "applied",
+				followUpAt: raw,
+				followUpDateOnly: true,
+				followUpNote: "Current note",
+			});
+			const [saved] = await jobs.list("alice");
+			if (!saved) throw new Error("Missing schedule");
+			await getDb()
+				.update(tables.careerSchedule)
+				.set({ email: true, lastQueuedAt: raw })
+				.where(eq(tables.careerSchedule.id, saved.id));
+			await getDb()
+				.insert(tables.careerJob)
+				.values({
+					id: "previous-clock",
+					userId: "alice",
+					scheduleId: saved.id,
+					dueAt: raw,
+					status,
+					lease: status === "running" ? "previous-lease" : null,
+					leaseUntil: status === "running" ? new Date(Date.now() + 60000) : null,
+				});
+			await getDb().update(tables.user).set({ timezone: "Pacific/Honolulu" }).where(eq(tables.user.id, "alice"));
+			await jobs.save("alice", { ...careerScheduleInputSchema.parse(saved), id: saved.id, email: true });
+			expect((await getDb().select().from(tables.application))[0]?.followUpDateOnly).toBe(true);
+			await run();
+			await run();
+			const history = await getDb().select().from(tables.careerJob);
+			expect(history).toHaveLength(2);
+			expect(history.find((row) => row.id === "previous-clock")).toMatchObject({
+				status: "canceled",
+				lease: null,
+				dueAt: raw,
+			});
+			const expected = new Date(raw.getTime() + 19 * 3600000);
+			expect(history.find((row) => row.status === "completed")).toMatchObject({ dueAt: expected });
+			expect(await jobs.notifications("alice")).toMatchObject([{ notice: { type: "followup", note: "Current note" } }]);
+			expect(fixture.email).toHaveBeenCalledTimes(1);
+			await getDb().update(tables.user).set({ timezone: "Asia/Tokyo" }).where(eq(tables.user.id, "alice"));
+			await run();
+			expect(await jobs.notifications("alice")).toHaveLength(1);
+			expect(await getDb().select().from(tables.careerJob)).toEqual(history);
+		},
+	);
+
+	it("Today note-only edits preserve logical-day intent and completed occurrence across account clocks", async () => {
+		const { applicationService } = await import("../applications/service");
+		const raw = new Date();
+		raw.setUTCHours(0, 0, 0, 0);
+		raw.setUTCDate(raw.getUTCDate() - 1);
+		const id = await applicationService.create({
+			userId: "alice",
+			company: "Logical Today note",
+			role: "Engineer",
+			status: "applied",
+			followUpAt: raw,
+			followUpDateOnly: true,
+		});
+		await run();
+		const history = await getDb().select().from(tables.careerJob);
+		const [schedule] = await jobs.list("alice");
+		if (!schedule) throw new Error("Missing logical schedule");
+		await jobs.save("alice", {
+			...careerScheduleInputSchema.parse(schedule),
+			id: schedule.id,
+			query: "Today-only note",
+		});
+		expect(await applicationService.getById({ userId: "alice", id })).toMatchObject({
+			followUpAt: raw,
+			followUpDateOnly: true,
+			followUpNote: "Today-only note",
+		});
+		await getDb().update(tables.user).set({ timezone: "Pacific/Honolulu" }).where(eq(tables.user.id, "alice"));
+		await jobs.save("alice", {
+			...careerScheduleInputSchema.parse(schedule),
+			id: schedule.id,
+			query: "Old-clock note edit",
+		});
+		expect(await applicationService.getById({ userId: "alice", id })).toMatchObject({
+			followUpAt: raw,
+			followUpDateOnly: true,
+			followUpNote: "Old-clock note edit",
+		});
+		await run();
+		expect(await jobs.notifications("alice")).toHaveLength(1);
+		expect(await getDb().select().from(tables.careerJob)).toEqual(history);
 	});
 
 	const due = () => new Date(Date.now() - 60_000);
@@ -150,6 +534,212 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 			}),
 		);
 	}
+
+	it("uses the application's single follow-up for schedule creation, edits, pause, deletion and owner checks", async () => {
+		const { applicationService } = await import("../applications/service");
+		const id = await applicationService.create({ userId: "alice", company: "Fictional Acme", role: "Engineer" });
+		const at = new Date(Date.now() + 86400000);
+		const saved = await jobs.save(
+			"alice",
+			careerScheduleInputSchema.parse({
+				kind: "follow-up",
+				applicationId: id,
+				nextRunAt: at,
+				timezone: "Europe/Berlin",
+				query: "Ask about the timeline",
+			}),
+		);
+		expect(await applicationService.getById({ userId: "alice", id })).toMatchObject({
+			followUpAt: at,
+			followUpNote: "Ask about the timeline",
+		});
+		const later = new Date(at.getTime() + 86400000);
+		await applicationService.update({ userId: "alice", id, followUpAt: later, followUpNote: "Confirm the next round" });
+		expect((await jobs.list("alice")).filter((row) => row.kind === "follow-up")).toMatchObject([
+			{ id: saved.id, nextRunAt: later, query: "Confirm the next round", timezone: "Europe/Berlin" },
+		]);
+		const repeated = await jobs.save(
+			"alice",
+			careerScheduleInputSchema.parse({
+				kind: "follow-up",
+				applicationId: id,
+				nextRunAt: later,
+				timezone: "Europe/Berlin",
+				query: "New note",
+			}),
+		);
+		expect(repeated.id).toBe(saved.id);
+		expect((await jobs.list("alice")).filter((row) => row.kind === "follow-up")).toHaveLength(1);
+		await getDb()
+			.insert(tables.careerJob)
+			.values({
+				id: "old-follow-up-job",
+				userId: "alice",
+				scheduleId: saved.id,
+				dueAt: later,
+				status: "running",
+				lease: "old-lease",
+				leaseUntil: new Date(Date.now() + 60000),
+			});
+		await getDb()
+			.update(tables.careerSchedule)
+			.set({ lastQueuedAt: later })
+			.where(eq(tables.careerSchedule.id, saved.id));
+		const longNote = "Follow-up detail. ".repeat(100);
+		await applicationService.update({ userId: "alice", id, followUpNote: longNote });
+		const [canceled] = await getDb()
+			.select()
+			.from(tables.careerJob)
+			.where(eq(tables.careerJob.id, "old-follow-up-job"));
+		expect(canceled).toMatchObject({ status: "running", lease: "old-lease" });
+		const current = (await jobs.list("alice")).find((row) => row.id === saved.id);
+		expect(current).toMatchObject({ query: longNote, lastQueuedAt: later });
+		await jobs.save("alice", { ...careerScheduleInputSchema.parse(current), id: saved.id });
+		expect(await applicationService.getById({ userId: "alice", id })).toMatchObject({ followUpNote: longNote.trim() });
+
+		await getDb()
+			.insert(tables.user)
+			.values({ id: "bob", name: "Bob Example", email: "bob@example.test", username: "bob", displayUsername: "bob" });
+		await jobs.delete("bob", saved.id);
+		expect(await applicationService.getById({ userId: "alice", id })).toMatchObject({ followUpAt: later });
+		await jobs.delete("alice", saved.id);
+		expect(await applicationService.getById({ userId: "alice", id })).toMatchObject({
+			followUpAt: null,
+			followUpNote: null,
+		});
+	});
+
+	it("adopts legacy follow-ups without deleting duplicate reminder or job history", async () => {
+		const { applicationService } = await import("../applications/service");
+		const id = await applicationService.create({ userId: "alice", company: "Legacy Example", role: "Engineer" });
+		const older = new Date("2030-01-01T09:00:00Z");
+		const newer = new Date("2030-01-02T09:00:00Z");
+		for (const [name, at] of [
+			["legacy-old", older],
+			["legacy-new", newer],
+		] as const) {
+			await getDb().insert(tables.careerSchedule).values({
+				id: name,
+				userId: "alice",
+				applicationId: id,
+				kind: "follow-up",
+				query: name,
+				enabled: true,
+				nextRunAt: at,
+				createdAt: at,
+				updatedAt: at,
+			});
+			await getDb()
+				.insert(tables.careerJob)
+				.values({ id: `job-${name}`, userId: "alice", scheduleId: name, dueAt: at, status: "completed" });
+		}
+		const dateOnly = await applicationService.create({ userId: "alice", company: "Legacy Date", role: "Engineer" });
+		await getDb().update(tables.user).set({ timezone: "Pacific/Honolulu" }).where(eq(tables.user.id, "alice"));
+		await getDb()
+			.update(tables.application)
+			.set({ followUpAt: new Date("2030-01-03T00:00:00Z") })
+			.where(eq(tables.application.id, dateOnly));
+		await pool.query(
+			await readFile(
+				new URL("../../../../../migrations/20261031160926_rx106_follow_up_owner/migration.sql", import.meta.url),
+				"utf8",
+			).then((sql) => sql.slice(sql.indexOf("--> statement-breakpoint") + "--> statement-breakpoint".length)),
+		);
+		expect(await applicationService.getById({ userId: "alice", id })).toMatchObject({
+			followUpAt: newer,
+			followUpNote: "legacy-new",
+		});
+		expect(await getDb().select().from(tables.careerSchedule)).toHaveLength(3);
+		expect(await getDb().select().from(tables.careerJob)).toHaveLength(2);
+		expect((await jobs.list("alice")).find((row) => row.applicationId === id)).toMatchObject({
+			id: "legacy-new",
+			enabled: true,
+			nextRunAt: newer,
+		});
+		expect(await applicationService.getById({ userId: "alice", id: dateOnly })).toMatchObject({
+			followUpAt: new Date("2030-01-03T00:00:00Z"),
+			followUpDateOnly: true,
+		});
+		expect((await jobs.list("alice")).find((row) => row.applicationId === dateOnly)?.nextRunAt).toEqual(
+			new Date("2030-01-03T19:00:00Z"),
+		);
+	});
+
+	it("distinguishes old-client dates from exact midnight reminders and preserves notes-only timestamps", async () => {
+		const { applicationService } = await import("../applications/service");
+		await getDb().update(tables.user).set({ timezone: "Asia/Tokyo" }).where(eq(tables.user.id, "alice"));
+		const at = new Date("2030-01-03T00:00:00Z");
+		const legacy = await applicationService.create({
+			userId: "alice",
+			company: "Legacy",
+			role: "Engineer",
+			followUpAt: at,
+		});
+		const exact = await applicationService.create({
+			userId: "alice",
+			company: "Exact",
+			role: "Engineer",
+			followUpAt: at,
+			followUpDateOnly: false,
+		});
+		await applicationService.update({ userId: "alice", id: exact, followUpNote: "Keep this instant" });
+		expect(await applicationService.getById({ userId: "alice", id: legacy })).toMatchObject({
+			followUpAt: at,
+			followUpDateOnly: true,
+		});
+		expect(await applicationService.getById({ userId: "alice", id: exact })).toMatchObject({
+			followUpAt: at,
+			followUpDateOnly: false,
+		});
+		const schedules = await jobs.list("alice");
+		expect(schedules.find((row) => row.applicationId === legacy)?.nextRunAt).toEqual(at);
+		expect(schedules.find((row) => row.applicationId === exact)?.nextRunAt).toEqual(at);
+		await getDb().update(tables.user).set({ timezone: "Pacific/Honolulu" }).where(eq(tables.user.id, "alice"));
+		await applicationService.update({ userId: "alice", id: legacy, followUpNote: "Keep logical date" });
+		expect((await jobs.list("alice")).find((row) => row.applicationId === legacy)?.nextRunAt).toEqual(
+			new Date("2030-01-03T19:00:00Z"),
+		);
+		await getDb().update(tables.user).set({ timezone: "Pacific/Apia" }).where(eq(tables.user.id, "alice"));
+		await expect(
+			applicationService.create({
+				userId: "alice",
+				company: "Missing day",
+				role: "Engineer",
+				followUpAt: new Date("2011-12-30T00:00:00Z"),
+				followUpDateOnly: true,
+			}),
+		).rejects.toMatchObject({ code: "BAD_REQUEST" });
+	});
+
+	it("delivers the follow-up note once without AI or search", async () => {
+		const { applicationService } = await import("../applications/service");
+		const id = await applicationService.create({
+			userId: "alice",
+			company: "Reminder Example",
+			role: "Engineer",
+			status: "applied",
+		});
+		await jobs.save(
+			"alice",
+			careerScheduleInputSchema.parse({
+				kind: "follow-up",
+				applicationId: id,
+				nextRunAt: due(),
+				timezone: "Europe/Berlin",
+				query: "Ask about the team and timeline",
+			}),
+		);
+		await run();
+		await run();
+		const notices = await jobs.notifications("alice");
+		expect(notices).toHaveLength(1);
+		expect(notices[0]).toMatchObject({
+			notice: { type: "followup", note: "Ask about the team and timeline" },
+			body: "Reminder Example · Engineer\nAsk about the team and timeline",
+		});
+		expect(fixture.generate).not.toHaveBeenCalled();
+		expect(fixture.search).not.toHaveBeenCalled();
+	});
 
 	const interview = (at: Date) => ({
 		id: "interview-round",

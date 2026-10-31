@@ -28,7 +28,6 @@ import { NumberInput } from "@/components/input/number-input";
 import { useCurrentBuilderResumeSelector, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
-import { getReadableErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { useAppForm } from "@/libs/tanstack-form";
 
@@ -501,8 +500,8 @@ function PictureCropDialog({ cropState, aspect, onClose, onUpload }: PictureCrop
 				fileToUpload = new File([blob], cropState.file.name, { type: blob.type });
 			}
 		} catch {
-			// ponytail: canvas crop can fail (tainted image, no context) — fall back to the original file.
-			fileToUpload = cropState.file;
+			toast.add({ type: "error", description: t`Couldn't crop the photo. Try a different photo.` });
+			return;
 		}
 
 		onUpload(fileToUpload);
@@ -576,6 +575,12 @@ function PictureCropDialog({ cropState, aspect, onClose, onUpload }: PictureCrop
 					</div>
 				</div>
 
+				{shownCrop && shownCrop.file.size > 10 * 1024 * 1024 && (
+					<p
+						role="status"
+						className="text-sm text-warn-text"
+					>{t`This photo is larger than 10 MB. Use Crop and upload to shrink it.`}</p>
+				)}
 				<DialogFooter className="flex-row flex-wrap justify-between">
 					<Button variant="secondary" onClick={onClose}>
 						<Trans>Cancel</Trans>
@@ -583,6 +588,7 @@ function PictureCropDialog({ cropState, aspect, onClose, onUpload }: PictureCrop
 					<div className="flex flex-wrap gap-2">
 						<Button
 							variant="secondary"
+							disabled={!cropState || cropState.file.size > 10 * 1024 * 1024}
 							onClick={() => {
 								if (!cropState) return;
 								onUpload(cropState.file);
@@ -592,6 +598,7 @@ function PictureCropDialog({ cropState, aspect, onClose, onUpload }: PictureCrop
 							<Trans>Skip and upload</Trans>
 						</Button>
 						<Button
+							disabled={!croppedAreaPixels}
 							onClick={() => {
 								void onConfirmCrop();
 							}}
@@ -735,6 +742,10 @@ export function PictureSettings() {
 	};
 
 	const uploadPictureFile = (file: File) => {
+		if (file.size > 10 * 1024 * 1024) {
+			toast.add({ type: "error", description: t`This photo is larger than 10 MB. Use Crop and upload to shrink it.` });
+			return;
+		}
 		const toastId = toast.add({ type: "loading", description: t`Uploading photo…` });
 
 		uploadFile(file, {
@@ -743,16 +754,10 @@ export function PictureSettings() {
 				handleAutoSave();
 				toast.close(toastId);
 			},
-			onError: (error) => {
+			onError: () => {
 				toast.add({
 					type: "error",
-					description: getReadableErrorMessage(
-						error,
-						t({
-							comment: "Fallback toast when uploading profile picture for resume fails",
-							message: "Couldn't upload the photo. Try again.",
-						}),
-					),
+					description: t`Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again.`,
 					id: toastId,
 				});
 			},
@@ -762,16 +767,31 @@ export function PictureSettings() {
 		});
 	};
 
-	const onUploadPicture = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const onUploadPicture = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (!file) return;
-		if (form.state.values.fit === "contain") {
+		const imageSrc = URL.createObjectURL(file);
+		const image = new Image();
+		image.src = imageSrc;
+		try {
+			await image.decode();
+		} catch {
+			URL.revokeObjectURL(imageSrc);
+			e.target.value = "";
+			toast.add({
+				type: "error",
+				description: t`This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo.`,
+			});
+			return;
+		}
+		if (form.state.values.fit === "contain" && file.size <= 10 * 1024 * 1024) {
+			URL.revokeObjectURL(imageSrc);
 			uploadPictureFile(file);
 			return;
 		}
 
 		// Open the interactive crop step instead of uploading immediately.
-		setCropState({ file, imageSrc: URL.createObjectURL(file) });
+		setCropState({ file, imageSrc });
 	};
 
 	const closeCropDialog = () => {

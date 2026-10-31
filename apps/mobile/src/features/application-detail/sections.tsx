@@ -12,7 +12,7 @@ import { useRouter } from "expo-router";
 import Storage from "expo-sqlite/kv-store";
 import { openBrowserAsync } from "expo-web-browser";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Pressable, View } from "react-native";
+import { AppState, Pressable, View } from "react-native";
 import { attachmentProblem } from "./attachment";
 import {
 	followUpReminder,
@@ -159,7 +159,7 @@ export function NextStepCard({ application, onOpenInterview }: SectionProps & In
 	const [followUpOpen, setFollowUpOpen] = useState(false);
 	const [reminderOpen, setReminderOpen] = useState(false);
 	const lanes = useApplicationLanes();
-	const step = getNextStep(application, undefined, lanes.lanes);
+	const step = getNextStep(application, undefined, lanes.lanes, timeZone);
 	const text = describeNextStep(step, application, locale, timeZone);
 	const followUpDue = step.kind === "no-reply" || (step.kind === "follow-up" && step.overdue);
 	const tab = step.kind === "interview" ? "prepare" : followUpDue ? "messages" : workspaceTabFor(application);
@@ -175,7 +175,7 @@ export function NextStepCard({ application, onOpenInterview }: SectionProps & In
 			}[tab];
 	const interview = step.kind === "interview" ? step.interview : null;
 	const dated = step.kind === "interview" || step.kind === "follow-up";
-	const target = interview ? interviewReminder(application, interview) : followUpReminder(application);
+	const target = interview ? interviewReminder(application, interview) : followUpReminder(application, timeZone);
 	const zone = interview?.timezone && interview.timezone !== timeZone ? interview.timezone : null;
 	const subtitle = interview
 		? `${when(interview.at)}–${time(new Date(new Date(interview.at).getTime() + interview.durationMinutes * 60_000))} · ${timeZone}`
@@ -622,6 +622,8 @@ export function Notes({ application }: SectionProps) {
 	const [key, setKey] = useState<string | null>(null);
 	const [notes, setNotes] = useState(application.notes ?? "");
 	const [failed, setFailed] = useState(false);
+	const recovered = useRef(false);
+	const [hasRecovered, setHasRecovered] = useState(false);
 	// Typed but not handed to the queue yet.
 	const unsent = useRef<string | null>(null);
 
@@ -632,6 +634,9 @@ export function Notes({ application }: SectionProps) {
 			const kept = notesQueue.kept(resolved);
 			if (kept !== null && unsent.current === null) {
 				unsent.current = kept;
+				recovered.current = kept !== (application.notes ?? "");
+				setFailed(recovered.current);
+				setHasRecovered(recovered.current);
 				setNotes(kept);
 			} else if (unsent.current !== null) notesQueue.keep(resolved, unsent.current);
 			setKey(resolved);
@@ -639,15 +644,16 @@ export function Notes({ application }: SectionProps) {
 		return () => {
 			live = false;
 		};
-	}, [id]);
+	}, [id, application.notes]);
 
 	const flush = useCallback(() => {
 		const value = unsent.current;
-		if (key === null || value === null) return;
+		if (key === null || value === null || recovered.current) return;
 		unsent.current = null;
 		setFailed(false);
 		notesQueue
 			.save(key, value, async (text) => {
+				if ((await notesKey(id)) !== key) throw new Error("Account changed");
 				await client.applications.update({ id, notes: text.trim() ? text : null });
 				void queryClient.invalidateQueries({ queryKey: orpc.applications.key() });
 			})
@@ -663,7 +669,15 @@ export function Notes({ application }: SectionProps) {
 		return () => clearTimeout(timeout);
 	}, [notes, flush]);
 	// Leaving mid-sentence still saves what was typed; the queue outlives this screen.
-	useEffect(() => () => flush(), [flush]);
+	useEffect(() => {
+		const listener = AppState.addEventListener("change", (state) => {
+			if (state !== "active") flush();
+		});
+		return () => {
+			listener.remove();
+			flush();
+		};
+	}, [flush]);
 
 	return (
 		<Section title={t`Notes`}>
@@ -678,15 +692,44 @@ export function Notes({ application }: SectionProps) {
 				}}
 				onBlur={flush}
 			/>
+			{failed && hasRecovered && (
+				<Text color="warnText">{t`Recovered an unsaved draft. Review it before saving over the current version.`}</Text>
+			)}
 			{failed ? (
-				<Button
-					variant="link"
-					label={t`Retry save`}
-					onPress={() => {
-						unsent.current = notes;
-						flush();
-					}}
-				/>
+				<>
+					<Button
+						variant="link"
+						label={t`Retry save`}
+						onPress={() => {
+							recovered.current = false;
+							setHasRecovered(false);
+							unsent.current = notes;
+							flush();
+						}}
+					/>
+					{hasRecovered && (
+						<Button
+							variant="ghost"
+							label={t`Use saved version`}
+							onPress={() => {
+								void client.applications
+									.getById({ id })
+									.then(async (server) => {
+										if (key === null || (await notesKey(id)) !== key) return;
+										notesQueue.discard(key);
+										unsent.current = null;
+										recovered.current = false;
+										setHasRecovered(false);
+										setNotes(server.notes ?? "");
+										setFailed(false);
+									})
+									.catch(() =>
+										showToast({ message: t`The server version couldn't be loaded. Your text is kept; try again.` }),
+									);
+							}}
+						/>
+					)}
+				</>
 			) : null}
 		</Section>
 	);

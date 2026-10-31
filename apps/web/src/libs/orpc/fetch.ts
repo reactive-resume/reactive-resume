@@ -12,6 +12,7 @@ export async function rpcFetch(input: RequestInfo | URL, init?: RequestInit): Pr
 			method: "POST",
 			headers: request.headers,
 			body,
+			keepalive: body.byteLength <= 60 * 1024,
 			credentials: "include",
 			signal: request.signal,
 		});

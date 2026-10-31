@@ -604,6 +604,10 @@ msgstr "{days, plural, one {# день в офисе, ровно ваш лими
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
 msgstr "{done, plural, one {# документ обновлён} few {# документа обновлены} many {# документов обновлены} other {# документа обновлены}}"
@@ -919,8 +923,8 @@ msgid "<0>Posting asks for:</0> {requirement}"
 msgstr ""
 
 #: src/features/career/offers.tsx
-msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
-msgstr "<0>Итоги намеренно не суммируются.</0> Бонус и акции зависят от условий, а стоимость акций не определена в обоих предложениях. Прочитайте исходные документы предложений, прежде чем сравнивать итоги."
+msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
+msgstr ""
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -1177,6 +1181,8 @@ msgstr "Принимать"
 msgid "Accept all"
 msgstr "Принять все"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/homepage/write.tsx
 msgid "Accepted"
 msgstr "Принял"
@@ -1481,8 +1487,8 @@ msgid "Add offer"
 msgstr "Добавить предложение о работе"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Добавьте условия предложения о работе вручную или воспользуйтесь необязательным извлечением с помощью ИИ в разделе «Сообщения»."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add one above."
@@ -2337,12 +2343,12 @@ msgid "ATS-safe"
 msgstr "ATS-безопасный"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Attach a cover letter (PDF)"
-msgstr "Прикрепите сопроводительное письмо (PDF)"
+msgid "Attach a cover letter (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a cover letter file (PDF)"
-msgstr "Прикрепите файл сопроводительного письма (PDF)"
+msgid "Attach a cover letter file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
@@ -2354,8 +2360,8 @@ msgid "Attach a file instead"
 msgstr "Вместо этого прикрепите файл"
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a resume file (PDF)"
-msgstr "Прикрепить файл резюме (PDF)"
+msgid "Attach a resume file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -2558,10 +2564,6 @@ msgstr "Радиус скругления рамки"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "Ширина рамки"
-
-#: src/features/career/offers.tsx
-msgid "Both offers cover everything compared here."
-msgstr "Оба предложения охватывают все, что здесь сравнивается."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -2790,6 +2792,11 @@ msgstr "Изменения"
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "Изменяет только названия разделов и слова даты, но не ваш контент."
+
+#. placeholder {0}: versionLabel(earlier)
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3121,6 +3128,8 @@ msgstr "Закрывать…"
 #: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "Закрыто"
 
@@ -3677,6 +3686,10 @@ msgstr "Не удалось создать письмо. Попробуйте е
 msgid "Couldn't create your account. Try again."
 msgstr "Не удалось создать учетную запись. Попробуйте еще раз."
 
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't crop the photo. Try a different photo."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't delete that story. Try again."
 msgstr "Не удалось удалить историю. Попробуйте еще раз."
@@ -4173,8 +4186,10 @@ msgstr "Не удалось обновить хронологию. Попроб�
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "Не удалось обновить версии этого письма. Попробуйте еще раз."
 
-#. Fallback toast when uploading profile picture for resume fails
 #: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Не удалось загрузить фото. Попробуйте еще раз."
@@ -4248,6 +4263,7 @@ msgid "Cover letter · Fieldnote"
 msgstr "Сопроводительное письмо · Fieldnote"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Cover letter file"
 msgstr "Файл сопроводительного письма"
@@ -5819,6 +5835,7 @@ msgid "Follow-up date"
 msgstr "Дата последующего наблюдения"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Последующая заметка"
 
@@ -6595,6 +6612,11 @@ msgstr "Улучшение…"
 msgid "In good company"
 msgstr "В хорошей компании"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "Увеличьте межстрочный интервал, чтобы две строки не сливались в одну."
@@ -7151,6 +7173,7 @@ msgstr "Последнее использование"
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Последнее"
 
@@ -8512,6 +8535,10 @@ msgstr "Нет фото. Большинство ATS игнорируют фот�
 msgid "No postings found. Try different keywords."
 msgstr "Объявлений о вакансиях не найдено. Попробуйте разные ключевые слова."
 
+#: src/features/career/offers.tsx
+msgid "No questions to ask before deciding."
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "No recorded answers are available."
 msgstr ""
@@ -8702,6 +8729,10 @@ msgstr "Нет в вашем резюме · добавляйте только �
 msgid "Not now"
 msgstr "Не сейчас"
 
+#: src/features/career/offers.tsx
+msgid "Not recorded"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "Пока не записано. Оставьте пустым, пока не сможете подтвердить."
@@ -8880,6 +8911,8 @@ msgid "Off. Let recruiters find you on Google by turning this on."
 msgstr "Выключено. Включите, чтобы рекрутеры могли найти вас в Google."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/sections.tsx
 #: src/features/homepage/tailor.tsx
@@ -9060,6 +9093,10 @@ msgstr "Открыть в «Предложениях»"
 #: src/features/career/coach-chat.tsx
 msgid "Open preferences"
 msgstr "Открыть настройки"
+
+#: src/features/career/offers.tsx
+msgid "Open questions"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
@@ -10319,6 +10356,10 @@ msgstr "Время записи"
 msgid "Records {0} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Recruiter"
 msgstr "Рекрутер"
@@ -10833,6 +10874,7 @@ msgid "Resume details"
 msgstr "подробности резюме"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "Файл резюме"
@@ -11232,6 +11274,10 @@ msgstr "Сохранить предложение о работе"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/career/draft-recovery.tsx
+msgid "Save recovered draft"
 msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
@@ -13342,6 +13388,10 @@ msgstr "Этот браузер не может записывать здесь.
 msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0>Add one in Settings</0>, or type your answer."
 msgstr "Этот браузер не поддерживает диктовку, и ни одно из ваших подключений ИИ не умеет расшифровывать речь (это умеют OpenAI, Google Gemini, Mistral, xAI, Groq и Vercel AI Gateway). <0>Добавьте подключение в настройках</0> или введите ответ текстом."
 
+#: src/features/career/draft-recovery.tsx
+msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
 msgstr "Этот запрос на подключение недействителен или истек. Начните подключение заново в своем клиенте."
@@ -13357,6 +13407,11 @@ msgstr "Не удалось открыть этот разговор. Обнов
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
+
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -13414,6 +13469,10 @@ msgstr "Этот файл велик для резюме."
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "Этот файл больше, чем допускают многие формы подачи заявок."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "This file type can't be imported. Use a PDF, Word, Reactive Resume or JSON Resume file, or a LinkedIn export (.zip)."
@@ -13483,9 +13542,17 @@ msgstr "Этот PDF не имеет текстового слоя, поэтом
 msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
 msgstr "Этот PDF представляет собой отсканированное изображение. Нет текста для чтения. Попробуйте версию Word или начните с пустых разделов и вставьте их."
 
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "This PDF is larger than 10 MB. Compress it or export a smaller PDF, then attach it again."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Этот PDF защищён паролем. Сохраните незащищённую копию и попробуйте снова."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14235,6 +14302,10 @@ msgstr ""
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
 msgstr "Использовать образец"
+
+#: src/features/career/draft-recovery.tsx
+msgid "Use saved version"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use the standard heading"

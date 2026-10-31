@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· ಇಂದಿನಿಂದ} one {· # ದಿನದ�
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{count} ರಲ್ಲಿ {done} ಮುಗಿದಿದೆ"
@@ -902,6 +906,11 @@ msgstr "ಸ್ವೀಕರಿಸಿ"
 msgid "Accept all"
 msgstr "ಎಲ್ಲವನ್ನೂ ಸ್ವೀಕರಿಸಿ"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "ಸ್ವೀಕರಿಸಲಾಗಿದೆ"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "ಮತ್ತೊಂದು ಪ್ರಸ್ತಾಪವನ್ನು ಸ್ವೀಕರಿಸಿದೆ"
@@ -1130,8 +1139,8 @@ msgid "Add offer"
 msgstr "ಉದ್ಯೋಗದ ಆಫರ್ ಸೇರಿಸಿ"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "ಉದ್ಯೋಗದ ಆಫರ್‌ನ ಷರತ್ತುಗಳನ್ನು ಕೈಯಾರೆ ಸೇರಿಸಿ, ಅಥವಾ ಸಂದೇಶಗಳಲ್ಲಿ ಐಚ್ಛಿಕ AI ಹೊರತೆಗೆಯುವಿಕೆಯನ್ನು ಬಳಸಿ."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1842,10 +1851,6 @@ msgstr "ಸಹಾಯಕ"
 msgid "Assistant conversations"
 msgstr "ಸಹಾಯಕ ಸಂಭಾಷಣೆಗಳು"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "ಆ ದಿನ 09:00 ಕ್ಕೆ ({timeZone})."
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2243,6 +2248,11 @@ msgstr "ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಲಾಗಲಿಲ�
 msgid "Changes section titles and date words only, not your content."
 msgstr "ವಿಭಾಗದ ಶೀರ್ಷಿಕೆಗಳು ಮತ್ತು ದಿನಾಂಕದ ಪದಗಳನ್ನು ಮಾತ್ರ ಬದಲಾಯಿಸುತ್ತದೆ, ನಿಮ್ಮ ವಿಷಯವಲ್ಲ."
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "“{name}” ಗೆ ಬದಲಾವಣೆಗಳನ್ನು ಮತ್ತೊಂದು ಸಾಧನದಲ್ಲಿ ಉಳಿಸಲಾಗಿದೆ. ನಿಮ್ಮ ಸಂಪಾದನೆಗಳು ಇನ್ನೂ ಈ ಸಾಧನದಲ್ಲಿವೆ. ಯಾವ ಆವೃತ್ತಿಯನ್ನು ಇರಿಸಬೇಕೆಂದು ಆಯ್ಕೆಮಾಡಿ."
@@ -2571,6 +2581,8 @@ msgstr "ಮುಚ್ಚಿ..."
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "ಮುಚ್ಚಲಾಗಿದೆ"
 
@@ -3359,8 +3371,8 @@ msgid "Couldn't upload the photo."
 msgstr "ಫೋಟೋವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ."
 
 #: src/features/write/picture-screen.tsx
-msgid "Couldn't upload the photo. Try again."
-msgstr "ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -3389,6 +3401,7 @@ msgstr "ಚೌಕಟ್ಟು ತುಂಬಿಸಿ"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3405,6 +3418,7 @@ msgid "Cover letter — {0}"
 msgstr "ಕವರ್ ಲೆಟರ್ - {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "ಕವರ್ ಲೆಟರ್ ಫೈಲ್"
@@ -4631,6 +4645,7 @@ msgid "Follow-up date"
 msgstr "ಫಾಲೋ-ಅಪ್ ದಿನಾಂಕ"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "ಫಾಲೋ-ಅಪ್ ಟಿಪ್ಪಣಿ"
 
@@ -5201,6 +5216,11 @@ msgstr "ಆಯ್ದ ಸಾಲನ್ನು ಸುಧಾರಿಸಿ"
 msgid "Improving…"
 msgstr "ಸುಧಾರಿಸುತ್ತಿದೆ..."
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "ಮುಚ್ಚಿದವುಗಳನ್ನು ಸೇರಿಸಿ"
@@ -5607,6 +5627,7 @@ msgid "Later"
 msgstr "ನಂತರ"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "ಇತ್ತೀಚಿನದು"
 
@@ -7096,6 +7117,8 @@ msgid "Off. Only you can see this resume."
 msgstr "ಆಫ್. ನೀವು ಮಾತ್ರ ಈ ರೆಸ್ಯೂಮೆಯನ್ನು ನೋಡಬಹುದು."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "ಆಫರ್"
@@ -8287,6 +8310,12 @@ msgstr "ರೆಕಾರ್ಡಿಂಗ್ ಸಮಯ"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "ನೇಮಕಾತಿ"
@@ -8696,6 +8725,7 @@ msgstr "ಫಲಿತಾಂಶ"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8716,6 +8746,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "ರೆಸ್ಯೂಮೆ ಪ್ರತಿಕ್ರಿಯೆ, ಉತ್ಪನ್ನ ಸಹಾಯ ಮತ್ತು ಸಮುದಾಯದ ಆಲೋಚನೆಗಳು."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "ರೆಸ್ಯೂಮ್ ಫೈಲ್"
@@ -10764,6 +10795,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "ಸರ್ವರ್ ಅಮಾನ್ಯವಾದ ಆಮದು ಫಲಿತಾಂಶವನ್ನು ಹಿಂತಿರುಗಿಸಿದೆ. ಮರುಪ್ರಯತ್ನಿಸುವ ಮೊದಲು ದಾಖಲೆಗಳು ಅನ್ನು ರಿಫ್ರೆಶ್ ಮಾಡಿ."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "ಸರ್ವರ್ ಆವೃತ್ತಿಯನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ. ನಿಮ್ಮ ಪಠ್ಯವನ್ನು ಇರಿಸಲಾಗಿದೆ; ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
@@ -10895,6 +10927,8 @@ msgstr "ಈ ಕವರ್ ಲೆಟರ್ ಫೈಲ್ ಮಾನ್ಯವಾಗ�
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "ಈ ದಿನಾಂಕ ಅಥವಾ ಸಮಯವು ನಿಮ್ಮ ಸಮಯವಲಯದಲ್ಲಿ ಅಸ್ತಿತ್ವದಲ್ಲಿಲ್ಲ. ಇನ್ನೊಂದು ಸಮಯವನ್ನು ಆರಿಸಿ."
@@ -11714,6 +11748,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

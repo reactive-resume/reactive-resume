@@ -8,7 +8,9 @@ import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const update = vi.hoisted(() => vi.fn().mockResolvedValue({}));
-vi.mock("@tanstack/react-router", () => ({ useRouteContext: () => ({ session: { user: { timezone: "UTC" } } }) }));
+vi.mock("@tanstack/react-router", () => ({
+	useRouteContext: () => ({ session: { user: { timezone: "Europe/Berlin" } } }),
+}));
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: { applications: { update: { mutationOptions: () => ({ mutationFn: update }) } } },
 }));
@@ -24,7 +26,7 @@ it("opens the follow-up with its saved date and note, then saves the edited note
 		company: "Orbital",
 		status: "applied",
 		activity: [],
-		followUpAt: new Date(2026, 9, 15, 9),
+		followUpAt: new Date("2026-10-15T07:15:00Z"),
 		followUpNote: "Ask the recruiter",
 	} as unknown as Application;
 	render(
@@ -45,6 +47,7 @@ it("opens the follow-up with its saved date and note, then saves the edited note
 			{
 				id: application.id,
 				followUpAt: application.followUpAt,
+				followUpDateOnly: false,
 				followUpNote: "Email the recruiter",
 			},
 			expect.anything(),

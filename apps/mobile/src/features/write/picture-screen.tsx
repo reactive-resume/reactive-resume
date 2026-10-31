@@ -92,7 +92,7 @@ export function PictureScreen() {
 				message:
 					error.message === t`Choose a photo smaller than 10 MB.`
 						? error.message
-						: t`Couldn't upload the photo. Try again.`,
+						: t`Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again.`,
 				action: { label: t`Retry`, onPress: () => upload.mutate() },
 			}),
 	});

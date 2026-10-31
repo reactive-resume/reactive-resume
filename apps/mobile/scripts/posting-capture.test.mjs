@@ -189,7 +189,10 @@ let duplicateObserver;
 let hasProvider = false;
 const parseRequests = [];
 const lanes = [{ id: "saved", category: "saved", label: "Saved" }];
+const timezoneHelpers = load(new URL("../../../packages/utils/src/timezone.ts", import.meta.url).pathname, { zod });
 const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx"), {
+	"@reactive-resume/utils/timezone": timezoneHelpers,
+	"@/features/application-detail/hooks": { useUserTime: () => ({ timeZone: "UTC" }) },
 	"@orpc/client": { ORPCError },
 	"@tanstack/react-query": {
 		useQuery: (options) =>

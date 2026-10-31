@@ -604,6 +604,10 @@ msgstr "{days, plural, one {# দিন অফিস, ঠিক আপনার 
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
 msgstr "{done, plural, one {#টি নথি হালনাগাদ হয়েছে} other {#টি নথি হালনাগাদ হয়েছে}}"
@@ -919,8 +923,8 @@ msgid "<0>Posting asks for:</0> {requirement}"
 msgstr ""
 
 #: src/features/career/offers.tsx
-msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
-msgstr "<0>মোট অঙ্ক ইচ্ছা করেই যোগ করা হয়নি।</0> বোনাস ও ইকুইটি শর্তের ওপর নির্ভর করে, আর দুটির ক্ষেত্রেই ইকুইটির মূল্য অনিশ্চিত। মোট অঙ্ক তুলনা করার আগে অফারের মূল নথিগুলো পড়ুন।"
+msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
+msgstr ""
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -1177,6 +1181,8 @@ msgstr "গ্রহণ করুন"
 msgid "Accept all"
 msgstr "সব মেনে নিন"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/homepage/write.tsx
 msgid "Accepted"
 msgstr "গৃহীত"
@@ -1481,8 +1487,8 @@ msgid "Add offer"
 msgstr "চাকরির অফার যোগ করুন"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "চাকরির অফারের শর্ত নিজে যোগ করুন, অথবা বার্তায় ঐচ্ছিক এআই নিষ্কাশন ব্যবহার করুন।"
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add one above."
@@ -2337,12 +2343,12 @@ msgid "ATS-safe"
 msgstr "ATS-নিরাপদ"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Attach a cover letter (PDF)"
-msgstr "একটি কভার লেটার (পিডিএফ) সংযুক্ত করুন।"
+msgid "Attach a cover letter (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a cover letter file (PDF)"
-msgstr "একটি কভার লেটার ফাইল সংযুক্ত করুন (PDF)"
+msgid "Attach a cover letter file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
@@ -2354,8 +2360,8 @@ msgid "Attach a file instead"
 msgstr "পরিবর্তে একটি ফাইল সংযুক্ত করুন"
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a resume file (PDF)"
-msgstr "একটি জীবনবৃত্তান্ত ফাইল সংযুক্ত করুন (PDF)"
+msgid "Attach a resume file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -2558,10 +2564,6 @@ msgstr "বর্ডার রেডিয়াস"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "বর্ডারের প্রস্থ"
-
-#: src/features/career/offers.tsx
-msgid "Both offers cover everything compared here."
-msgstr "এখানে তুলনা করা সবকিছুই দুটি অফারে আছে।"
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -2790,6 +2792,11 @@ msgstr "চেঞ্জলগ"
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "শুধুমাত্র বিভাগের শিরোনাম এবং তারিখের শব্দ পরিবর্তন করে, আপনার বিষয়বস্তু নয়।"
+
+#. placeholder {0}: versionLabel(earlier)
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3121,6 +3128,8 @@ msgstr "বন্ধ..."
 #: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "বন্ধ"
 
@@ -3677,6 +3686,10 @@ msgstr "চিঠিটি তৈরি করা যায়নি। আব�
 msgid "Couldn't create your account. Try again."
 msgstr "আপনার অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।"
 
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't crop the photo. Try a different photo."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't delete that story. Try again."
 msgstr "গল্পটি মুছে ফেলা যায়নি। আবার চেষ্টা করুন।"
@@ -4173,8 +4186,10 @@ msgstr "টাইমলাইন আপডেট করা যায়নি।
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "এই চিঠির সংস্করণগুলো আপডেট করা যায়নি। আবার চেষ্টা করুন।"
 
-#. Fallback toast when uploading profile picture for resume fails
 #: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "ছবিটি আপলোড করা যায়নি। আবার চেষ্টা করুন।"
@@ -4248,6 +4263,7 @@ msgid "Cover letter · Fieldnote"
 msgstr "কভার লেটার · Fieldnote"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Cover letter file"
 msgstr "কভার লেটার ফাইল"
@@ -5819,6 +5835,7 @@ msgid "Follow-up date"
 msgstr "ফলো-আপ তারিখ"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "পরবর্তী নোট"
 
@@ -6595,6 +6612,11 @@ msgstr "উন্নতি হচ্ছে..."
 msgid "In good company"
 msgstr "ভালো কোম্পানিতে"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "লাইন স্পেসিং বাড়ান, যাতে দুটি লাইন একটিতে মিশে না যায়।"
@@ -7151,6 +7173,7 @@ msgstr "সর্বশেষ ব্যবহার করা হয়েছে
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "সর্বশেষ"
 
@@ -8512,6 +8535,10 @@ msgstr "ছবি নেই। বেশিরভাগ ATS ফটোগুল�
 msgid "No postings found. Try different keywords."
 msgstr "কোন কাজের পোস্টিং পাওয়া যায়নি. বিভিন্ন কীওয়ার্ড চেষ্টা করুন।"
 
+#: src/features/career/offers.tsx
+msgid "No questions to ask before deciding."
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "No recorded answers are available."
 msgstr ""
@@ -8702,6 +8729,10 @@ msgstr "আপনার জীবনবৃত্তান্তে নেই · 
 msgid "Not now"
 msgstr "এখন নয়"
 
+#: src/features/career/offers.tsx
+msgid "Not recorded"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "এখনও লেখা হয়নি। সমর্থন করতে না পারা পর্যন্ত ফাঁকা রাখুন।"
@@ -8880,6 +8911,8 @@ msgid "Off. Let recruiters find you on Google by turning this on."
 msgstr "বন্ধ। এটি চালু করে নিয়োগকারীদের Google-এ আপনাকে খুঁজে পেতে দিন।"
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/sections.tsx
 #: src/features/homepage/tailor.tsx
@@ -9060,6 +9093,10 @@ msgstr "অফারসমূহে খুলুন"
 #: src/features/career/coach-chat.tsx
 msgid "Open preferences"
 msgstr "পছন্দসমূহ খুলুন"
+
+#: src/features/career/offers.tsx
+msgid "Open questions"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
@@ -10319,6 +10356,10 @@ msgstr "রেকর্ডিংয়ের সময়"
 msgid "Records {0} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Recruiter"
 msgstr "নিয়োগকারী"
@@ -10833,6 +10874,7 @@ msgid "Resume details"
 msgstr "সারসংকলন বিবরণ"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "জীবনবৃত্তান্ত ফাইল"
@@ -11232,6 +11274,10 @@ msgstr "চাকরির অফার সংরক্ষণ করুন"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/career/draft-recovery.tsx
+msgid "Save recovered draft"
 msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
@@ -13342,6 +13388,10 @@ msgstr "এই ব্রাউজার এখানে রেকর্ড ক�
 msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0>Add one in Settings</0>, or type your answer."
 msgstr "এই ব্রাউজার ডিক্টেশন নিতে পারে না, এবং আপনার কোনো এআই সংযোগ স্পিচ ট্রান্সক্রাইব করতে পারে না (OpenAI, Google Gemini, Mistral, xAI, Groq বা Vercel AI Gateway পারে)। <0>সেটিংসে একটি যোগ করুন</0>, অথবা আপনার উত্তর টাইপ করুন।"
 
+#: src/features/career/draft-recovery.tsx
+msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
 msgstr "এই সংযোগ অনুরোধটি অবৈধ বা মেয়াদোত্তীর্ণ। আপনার ক্লায়েন্ট থেকে আবার সংযোগ শুরু করুন।"
@@ -13357,6 +13407,11 @@ msgstr "এই কথোপকথনটি খোলা যায়নি। �
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
+
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -13414,6 +13469,10 @@ msgstr "একটি জীবনবৃত্তান্তের জন্য 
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "এই ফাইলটি অনেক আবেদন ফর্মের গ্রহণযোগ্য আকারের চেয়ে বড়।"
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "This file type can't be imported. Use a PDF, Word, Reactive Resume or JSON Resume file, or a LinkedIn export (.zip)."
@@ -13483,9 +13542,17 @@ msgstr "এই PDF এর কোন পাঠ্য স্তর নেই, ত�
 msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
 msgstr "এই PDF একটি স্ক্যান করা ছবি। পড়ার মতো কোনো লেখা নেই। Word সংস্করণ চেষ্টা করুন, অথবা ফাঁকা শুরু করুন এবং বিভাগগুলি পেস্ট করুন।"
 
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "This PDF is larger than 10 MB. Compress it or export a smaller PDF, then attach it again."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "এই PDF-টি পাসওয়ার্ড সুরক্ষিত। একটি অসুরক্ষিত কপি সংরক্ষণ করে আবার চেষ্টা করুন।"
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14235,6 +14302,10 @@ msgstr ""
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
 msgstr "নমুনা ব্যবহার করুন"
+
+#: src/features/career/draft-recovery.tsx
+msgid "Use saved version"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use the standard heading"

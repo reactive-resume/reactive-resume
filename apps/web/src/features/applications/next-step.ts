@@ -2,6 +2,7 @@ import type { ApplicationSummary } from "./types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import { plural, t } from "@lingui/core/macro";
+import { followUpInstant } from "@reactive-resume/schema/applications/follow-up";
 import { interviewKindOf, isInterview } from "./interviews";
 import { isCanonicalStageEvent, isCurrentLaneEvent } from "./lanes";
 import { getClosedReasonLabel } from "./stages";
@@ -11,7 +12,10 @@ const DAY_MS = 86_400_000;
 /** Days without a reply after applying before a follow-up is suggested. */
 const FOLLOW_UP_AFTER_DAYS = 10;
 
-type NextStepSource = Pick<ApplicationSummary, "status" | "activity" | "followUpAt" | "followUpNote" | "appliedAt">;
+type NextStepSource = Pick<
+	ApplicationSummary,
+	"status" | "activity" | "followUpAt" | "followUpDateOnly" | "followUpNote" | "appliedAt"
+>;
 type StageSource = Pick<ApplicationSummary, "status" | "activity" | "appliedAt"> & {
 	laneId?: string | null | undefined;
 };
@@ -53,7 +57,7 @@ const daysInStage = (application: StageSource, now: Date) =>
 		now,
 	);
 
-export function getNextStep(application: NextStepSource, now = new Date()): NextStep {
+export function getNextStep(application: NextStepSource, now = new Date(), timeZone = "UTC"): NextStep {
 	if (application.status === "closed") return { kind: "closed" };
 
 	const upcoming = application.activity
@@ -64,7 +68,7 @@ export function getNextStep(application: NextStepSource, now = new Date()): Next
 	if (upcoming) return { kind: "interview", ...upcoming };
 
 	if (application.followUpAt) {
-		const at = new Date(application.followUpAt);
+		const at = followUpInstant(application, timeZone) ?? new Date(application.followUpAt);
 		return { kind: "follow-up", at, note: application.followUpNote ?? "", overdue: at.getTime() < now.getTime() };
 	}
 
@@ -82,8 +86,8 @@ const formatWhen = (date: Date, locale: string, timeZone: string, withTime: bool
 		weekday: "short",
 		day: "numeric",
 		month: "short",
-		// Follow-ups retain the browser-local calendar date used by their date-only editor.
-		...(withTime ? { timeZone, hour: "2-digit", minute: "2-digit" } : {}),
+		timeZone,
+		...(withTime ? { hour: "2-digit", minute: "2-digit" } : {}),
 	});
 
 /** How a next step reads in the list, on cards and in the detail sheet. */

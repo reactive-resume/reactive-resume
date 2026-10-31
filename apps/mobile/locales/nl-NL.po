@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· sinds vandaag} one {· sinds # dag} other {· sind
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{done} van {count} klaar"
@@ -902,6 +906,11 @@ msgstr "Accepteren"
 msgid "Accept all"
 msgstr "Accepteer alles"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "Geaccepteerd"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "Nog een bod geaccepteerd"
@@ -1130,8 +1139,8 @@ msgid "Add offer"
 msgstr "Aanbod toevoegen"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Voeg de voorwaarden van het werkaanbod handmatig toe of gebruik de optionele AI-extractie in Berichten."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1842,10 +1851,6 @@ msgstr "Assistent"
 msgid "Assistant conversations"
 msgstr "Assistent gesprekken"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "Om 09:00 uur die dag ({timeZone})."
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2243,6 +2248,11 @@ msgstr "Wijzigingen kunnen niet worden opgeslagen. Opnieuw proberen voordat je v
 msgid "Changes section titles and date words only, not your content."
 msgstr "Wijzigt alleen sectietitels en datumwoorden, niet uw inhoud."
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "Wijzigingen in “{name}” zijn op een ander apparaat opgeslagen. Je bewerkingen staan ​​nog steeds op dit apparaat. Kies welke versie je wilt behouden."
@@ -2571,6 +2581,8 @@ msgstr "Dichtbij…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "Gesloten"
 
@@ -3359,8 +3371,8 @@ msgid "Couldn't upload the photo."
 msgstr "Kan de foto niet uploaden."
 
 #: src/features/write/picture-screen.tsx
-msgid "Couldn't upload the photo. Try again."
-msgstr "Kan de foto niet uploaden. Probeer het opnieuw."
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -3389,6 +3401,7 @@ msgstr "Vullen"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3405,6 +3418,7 @@ msgid "Cover letter — {0}"
 msgstr "Sollicitatiebrief — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "Sollicitatiebriefbestand"
@@ -4631,6 +4645,7 @@ msgid "Follow-up date"
 msgstr "Vervolgdatum"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Vervolgnotitie"
 
@@ -5201,6 +5216,11 @@ msgstr "Verbeter de geselecteerde lijn"
 msgid "Improving…"
 msgstr "Verbeteren…"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "Inclusief gesloten"
@@ -5607,6 +5627,7 @@ msgid "Later"
 msgstr "Later"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Nieuwste"
 
@@ -7096,6 +7117,8 @@ msgid "Off. Only you can see this resume."
 msgstr "Uit. Alleen jij kunt dit CV zien."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "Aanbod"
@@ -8287,6 +8310,12 @@ msgstr "Opnameduur"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "Recruiter"
@@ -8696,6 +8725,7 @@ msgstr "Resultaat"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8716,6 +8746,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "Feedback op je cv, hulp bij het product en ideeën uit de community."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "Cv-bestand"
@@ -10764,6 +10795,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "De server heeft een ongeldig importresultaat geretourneerd. Vernieuw Documenten voordat je het opnieuw probeert."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "De serverversie kan niet worden geladen. Je tekst wordt bewaard; probeer het opnieuw."
@@ -10895,6 +10927,8 @@ msgstr "Dit sollicitatiebriefbestand is niet geldig."
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "Deze datum of tijd bestaat niet in je tijdzone. Kies een ander tijdstip."
@@ -11714,6 +11748,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

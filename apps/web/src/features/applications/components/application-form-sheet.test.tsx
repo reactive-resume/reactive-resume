@@ -7,6 +7,8 @@ import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+vi.mock("@tanstack/react-router", () => ({ useRouteContext: () => ({ session: { user: { timezone: "UTC" } } }) }));
+
 const mocks = vi.hoisted(() => ({
 	upload: vi.fn(),
 	removeFile: vi.fn(),

@@ -65,6 +65,15 @@ For social profiles you want listed in their own section, such as LinkedIn with 
 
 ## Add a photo
 
+<Frame caption="An unreadable upload receives localized guidance. The existing photo stays unchanged.">
+  <img
+    src="/images/guides/career/photo-upload-error.png"
+    alt="Fictional Morgan Vale resume showing a German unreadable-photo upload error"
+  />
+</Frame>
+
+Unreadable photo files are rejected before cropping. Photos larger than **10 MB** can still be cropped and re-encoded to shrink them; **Skip and upload** is unavailable above the limit. Upload failures give photo-specific guidance without changing the current photo. Native mobile uses its system image picker/crop editor and applies the same upload cap.
+
 Whether to include a photo depends on where you're applying. Many applicant tracking systems ignore photos, while some countries expect one. The photo row at the top of the Basics card reminds you of this.
 
 <Steps>
@@ -80,7 +89,7 @@ Whether to include a photo depends on where you're applying. Many applicant trac
   <Step title="Crop it">
     The **Crop photo** dialog opens. Drag the image to position it and use the **Zoom** slider to frame it, then select **Crop and upload**. Select **Skip and upload** to use the whole image, or **Cancel** to stop.
 
-    The crop frame follows the photo's **Aspect ratio** setting, so set that first if you want a non-square photo. When **Fit** is set to **Contain**, the image uploads without the crop step.
+    The crop frame follows the photo's **Aspect ratio** setting, so set that first if you want a non-square photo. When **Fit** is set to **Contain**, readable images within the size limit upload without the crop step. Larger images still open the crop editor.
 
   </Step>
   <Step title="Adjust how it looks">

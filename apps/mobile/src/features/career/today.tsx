@@ -266,7 +266,7 @@ export function TodayScreen() {
 								onPress={() => setShowRead(!showRead)}
 							/>
 							{(applications.data ?? [])
-								.filter((row) => getNextStep(row, now).kind === "no-reply")
+								.filter((row) => getNextStep(row, now, lanes.lanes, time.timeZone).kind === "no-reply")
 								.map((row) => (
 									<Card key={row.id} style={{ gap: space.s3 }}>
 										<Text>
@@ -428,8 +428,15 @@ export function TodayScreen() {
 								<Card key={row.id} style={{ gap: space.s3 }}>
 									<Text variant="title">{scheduleTitle(row.kind)}</Text>
 									<Text>
-										{row.query ||
-											applications.data?.find((application) => application.id === row.applicationId)?.company}
+										{row.kind === "follow-up"
+											? [
+													applications.data?.find((application) => application.id === row.applicationId)?.company,
+													row.query,
+												]
+													.filter(Boolean)
+													.join(" · ")
+											: row.query ||
+												applications.data?.find((application) => application.id === row.applicationId)?.company}
 									</Text>
 									<Text color="ink3">
 										{!row.intervalDays && row.lastQueuedAt ? t`Done` : row.enabled ? t`On` : t`Paused`} ·{" "}

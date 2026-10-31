@@ -302,6 +302,11 @@ assert.equal(
 const stages = load("features/applications/stages.ts");
 const history = load("features/applications/history.ts");
 const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
+const timeParser = load("../../../packages/utils/src/timezone.ts", { zod });
+const followUpDomain = load("../../../packages/schema/src/applications/follow-up.ts", {
+	"@reactive-resume/utils/timezone": timeParser,
+});
+mocks["@reactive-resume/schema/applications/follow-up"] = followUpDomain;
 const applicationData = load("../../../packages/schema/src/applications/data.ts", {
 	zod,
 	"@reactive-resume/utils/timezone": { timezoneSchema: zod.z.string() },
@@ -612,6 +617,8 @@ console.log("PASS native New preserves Applications views, pushes from a workspa
 // Opening earlier applications must preserve an unsaved job until explicit discard.
 let finishSave;
 const { AddApplicationSheet } = load("features/applications/add-sheet.tsx", {
+	"@reactive-resume/utils/timezone": timeParser,
+	"@/features/application-detail/hooks": { useUserTime: () => ({ timeZone: "UTC" }) },
 	react: { ...react, useEffect: () => {} },
 	"@orpc/client": { ORPCError: class extends Error {} },
 	"@tanstack/react-query": { useQuery: (options) => ({ data: options.queryKey[0] === "posting-match" ? null : [] }) },
@@ -780,7 +787,6 @@ console.log("PASS native calendar follows account month/day and preserves explic
 
 // Manual offers use the production parser; only native widgets, transport and profile loading are boundaries.
 const amountParser = load("../../../packages/utils/src/amount.ts");
-const timeParser = load("../../../packages/utils/src/timezone.ts", { zod });
 const careerSchema = load("../../../packages/schema/src/career.ts", {
 	zod,
 	"@reactive-resume/utils/region": { searchRegionsSchema: zod.z.array(zod.z.string()).nullable().optional() },
@@ -1300,3 +1306,111 @@ for (const kind of ["resume", "letter"]) {
 	assert.equal(calls.at(-1), "use-theirs");
 }
 console.log("PASS native older-draft refusal explains cause and offers only copy or saved-version recovery");
+
+let headerSaved = { data: undefined, isPending: true, isError: false, refetch: () => calls.push("retry-saved") };
+const { WorkspaceScreen } = load("features/workspace/shell.tsx", {
+	"@reactive-resume/schema/career": careerSchema,
+	"./coach-sheet": { CoachSheet: "CoachSheet" },
+	"./hooks": {
+		useSavedItems: () => headerSaved,
+		useWorkspace: () => ({ isPending: false, query: { isError: false, data: {}, refetch: () => {} } }),
+	},
+	"./logic": { currentInterview: () => undefined },
+	"@/features/application-detail/hooks": { useNow: () => new Date(), useUserTime: () => time },
+	"@/features/application-detail/interview-sheet": { InterviewSheet: "InterviewSheet" },
+	"@/features/applications/error": { applicationError: String },
+	"@/features/applications/lane-queries": laneQuery,
+	"@/features/applications/lanes": lanes,
+	"@/features/applications/queries": {
+		useApplication: () => ({
+			data: { ...application, status: "offer", company: "Context job", role: "Engineer" },
+			isPending: false,
+		}),
+	},
+	"@/routes": { routes: { ...routes, career: (tab) => `/career/${tab}` } },
+	"@/shell/workspace-chrome": { useWorkspaceChrome: () => {} },
+	"@/ui/keyboard": { useKeyboardScrollSpace: () => 0 },
+	"react-native-keyboard-controller": { KeyboardAwareScrollView: "KeyboardAwareScrollView" },
+});
+const workspaceHeader = () => {
+	reset();
+	const screen = render(WorkspaceScreen, { tab: "messages", children: () => null });
+	const header = nodes(screen).find((node) => node.type?.name === "Header");
+	assert.ok(header);
+	return { screen, header: render(header.type, header.props) };
+};
+assert.equal(control(workspaceHeader().header, "Compare offers").disabled, true);
+headerSaved = { ...headerSaved, isPending: false, isError: true };
+const failedHeader = workspaceHeader();
+assert.equal(control(failedHeader.header, "Compare offers").disabled, true);
+assert.ok(control(failedHeader.screen, "Try again"));
+headerSaved = { ...headerSaved, isError: false, data: [{ id: "context-latest", data: { kind: "offer" } }] };
+const loadedHeader = control(workspaceHeader().header, "Compare offers");
+assert.equal(loadedHeader.disabled, false);
+loadedHeader.onPress();
+assert.deepEqual(calls.at(-1), { pathname: "/career/offers", params: { a: "context-latest" } });
+console.log("PASS native contextual offers gated cold/error and retain latest offer when loaded");
+
+reset();
+const scheduleWrites = [];
+const scheduleRow = {
+	id: "follow-up-a",
+	kind: "follow-up",
+	applicationId: application.id,
+	nextRunAt: new Date("2030-01-03T09:15:37.123Z"),
+	timezone: "UTC",
+	query: "Original note",
+	intervalDays: null,
+	enabled: true,
+	email: false,
+};
+const ready = (data) => ({ data, isPending: false, isError: false });
+const scheduleTime = { timeZone: "UTC", locale: "en-US", profile: ready({ emailVerified: true }) };
+const scheduleCareer = { profile: ready({ targetRoles: [], locations: [] }) };
+const scheduleApi = { career: { saveSchedule: async (input) => scheduleWrites.push(input) } };
+const scheduling = load("features/career/scheduling.ts", { "@reactive-resume/utils/timezone": timeParser });
+const { ScheduleSheet } = load("features/career/schedule-sheet.tsx", {
+	"@react-native-community/datetimepicker": { default: "DateTimePicker" },
+	"@tanstack/react-query": { useQuery: () => ready({ search: false, provider: null }) },
+	"@reactive-resume/schema/career": careerSchema,
+	"@reactive-resume/utils/timezone": timeParser,
+	"./hooks": {
+		client: scheduleApi,
+		useCareerAction: () => ({
+			pending: false,
+			run: async (operation, done) => {
+				await operation();
+				done();
+			},
+		}),
+		useCareerQueries: () => scheduleCareer,
+		useCareerTime: () => scheduleTime,
+		useNow: () => new Date("2030-01-04T12:00:00Z"),
+	},
+	"./scheduling": scheduling,
+	"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState", SwitchRow: "SwitchRow" },
+	"@/api/client": { orpc: { webAccess: { status: { queryOptions: () => ({}), key: () => [] } } } },
+	"@/api/flags": { useFlags: () => ready({ careerSchedulingEnabled: true, smtpEnabled: false }) },
+	"@/auth/session": { useSession: () => ({ status: "signed-in", server: "https://example.test" }) },
+	"@/features/ai/providers": {
+		AIProviderSetupSheet: "AIProviderSetupSheet",
+		useHasAIProvider: () => ({ usableProviders: [], defaultProvider: null, hasAIProvider: false }),
+	},
+	"@/features/applications/queries": { useApplications: () => ready([{ ...application, status: "applied" }]) },
+});
+const scheduleForm = render(ScheduleSheet, { schedule: scheduleRow, kind: "follow-up", onClose() {}, onDelete() {} });
+let scheduleTree = render(scheduleForm.type, scheduleForm.props);
+control(scheduleTree, "Follow-up note").onChangeText("Updated completed note");
+scheduleTree = render(scheduleForm.type, scheduleForm.props);
+control(scheduleTree, "Save schedule").onPress();
+await settle();
+assert.equal(scheduleWrites.length, 1, "past unchanged occurrence remains editable");
+assert.equal(scheduleWrites[0].query, "Updated completed note");
+assert.equal(scheduleWrites[0].nextRunAt.toISOString(), "2030-01-03T09:15:37.123Z");
+control(scheduleTree, "Time (HH:mm)").onChangeText("09:16");
+scheduleTree = render(scheduleForm.type, scheduleForm.props);
+control(scheduleTree, "Save schedule").onPress();
+await settle();
+assert.equal(scheduleWrites.length, 1, "changed past time must still be rejected");
+assert.match(JSON.stringify(render(scheduleForm.type, scheduleForm.props)), /Pick a time after now/);
+console.log("PASS native Today past note edit preserves exact seconds and changed-past-time guard");

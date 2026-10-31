@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { offerTermsSchema } from "@reactive-resume/schema/career";
-import { parseOfferEntry } from "@reactive-resume/schema/career-offer";
+import { offerApplications, parseOfferEntry } from "@reactive-resume/schema/career-offer";
 import { client, useCareerAction, useCareerTime } from "./hooks";
 import { EditorSheet, LoadState } from "./shared";
 import { WallClockField } from "@/features/application-detail/date-field";
@@ -90,9 +90,9 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 						<SelectSheet
 							label={t`Application`}
 							value={applicationId}
-							options={(applications.data ?? []).map((row) => ({
+							options={offerApplications(applications.data ?? []).map((row) => ({
 								value: row.id,
-								label: `${row.company} · ${row.role}`,
+								label: `${row.company} · ${row.role} · ${row.closedReason === "accepted" ? t`Accepted` : row.status === "offer" ? t`Offer` : row.status === "closed" ? t`Closed` : t`In progress`}`,
 							}))}
 							onChange={setApplicationId}
 						/>
@@ -206,7 +206,8 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 						if (payload.success)
 							void action.run(
 								() => client.career.createOffer(payload.data),
-								() => {
+								(result) => {
+									if (!application && result) router.setParams({ a: result.id });
 									showToast({ message: t`Offer saved` });
 									onClose();
 								},

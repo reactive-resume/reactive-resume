@@ -14,7 +14,10 @@ export function noticeText(notice: CareerNotice): { title: string; body: string 
 		case "briefing":
 			return { title: `Your ${notice.company} briefing is ready`, body: `${notice.company} · ${notice.role}` };
 		case "followup":
-			return { title: `Follow up with ${notice.company}`, body: `${notice.company} · ${notice.role}` };
+			return {
+				title: `Follow up with ${notice.company}`,
+				body: [`${notice.company} · ${notice.role}`, notice.note].filter(Boolean).join("\n"),
+			};
 		case "schedule-failed":
 			return {
 				title: "Career schedule needs attention",

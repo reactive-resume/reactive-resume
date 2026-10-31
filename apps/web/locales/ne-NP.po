@@ -604,6 +604,10 @@ msgstr "{days, plural, one {# दिन अफिस, तपाईंको स�
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
 msgstr "{done, plural, one {# कागजात अद्यावधिक गरियो} other {# कागजातहरू अद्यावधिक गरिए}}"
@@ -919,8 +923,8 @@ msgid "<0>Posting asks for:</0> {requirement}"
 msgstr ""
 
 #: src/features/career/offers.tsx
-msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
-msgstr "<0>जोडहरू जानाजानी जोडिएका छैनन्।</0> बोनस र इक्विटी सर्तहरूमा निर्भर हुन्छन्, र दुवैमा इक्विटीको मूल्य अनिश्चित छ। जोडहरू तुलना गर्नुअघि मूल प्रस्ताव कागजातहरू पढ्नुहोस्।"
+msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
+msgstr ""
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -1177,6 +1181,8 @@ msgstr "स्वीकार गर्नुहोस्"
 msgid "Accept all"
 msgstr "सबै स्वीकार गर्नुहोस्"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/homepage/write.tsx
 msgid "Accepted"
 msgstr "स्वीकार गरियो"
@@ -1481,8 +1487,8 @@ msgid "Add offer"
 msgstr "जागिरको प्रस्ताव थप्नुहोस्"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "जागिरको प्रस्तावका सर्तहरू आफैँ थप्नुहोस् वा चाहनुहुन्छ भने सन्देशहरूमा AI मार्फत विवरण निकाल्ने सुविधा प्रयोग गर्नुहोस्।"
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add one above."
@@ -2337,12 +2343,12 @@ msgid "ATS-safe"
 msgstr "ATS-सुरक्षित"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Attach a cover letter (PDF)"
-msgstr "एउटा आवरण पत्र संलग्न गर्नुहोस् (PDF)"
+msgid "Attach a cover letter (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a cover letter file (PDF)"
-msgstr "कभर लेटर फाइल संलग्न गर्नुहोस् (PDF)"
+msgid "Attach a cover letter file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
@@ -2354,8 +2360,8 @@ msgid "Attach a file instead"
 msgstr "यसको सट्टा फाइल संलग्न गर्नुहोस्"
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a resume file (PDF)"
-msgstr "रेजुमे फाइल संलग्न गर्नुहोस् (PDF)"
+msgid "Attach a resume file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -2558,10 +2564,6 @@ msgstr "बोर्डर (किनारा) घुमाउरोपन (Rad
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "बोर्डर (किनारा) चौडाइ"
-
-#: src/features/career/offers.tsx
-msgid "Both offers cover everything compared here."
-msgstr "यहाँ तुलना गरिएका सबै कुरा दुवै प्रस्तावमा समेटिएका छन्।"
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -2790,6 +2792,11 @@ msgstr "परिवर्तन विवरण"
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "खण्ड शीर्षक र मिति शब्दहरू मात्र परिवर्तन गर्दछ, तपाईंको सामग्री होइन।"
+
+#. placeholder {0}: versionLabel(earlier)
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3121,6 +3128,8 @@ msgstr "बन्द…"
 #: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "बन्द"
 
@@ -3677,6 +3686,10 @@ msgstr "पत्र सिर्जना गर्न सकिएन। प�
 msgid "Couldn't create your account. Try again."
 msgstr "तपाईंको खाता सिर्जना गर्न सकिएन। पुन: प्रयास गर्नुहोस्।"
 
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't crop the photo. Try a different photo."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't delete that story. Try again."
 msgstr "त्यो कथा मेटाउन सकिएन। पुन: प्रयास गर्नुहोस्।"
@@ -4173,8 +4186,10 @@ msgstr "टाइमलाइन अपडेट गर्न सकिएन।
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "यो पत्रका संस्करणहरू अद्यावधिक गर्न सकिएन। पुन: प्रयास गर्नुहोस्।"
 
-#. Fallback toast when uploading profile picture for resume fails
 #: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "फोटो अपलोड गर्न सकिएन। पुन: प्रयास गर्नुहोस्।"
@@ -4248,6 +4263,7 @@ msgid "Cover letter · Fieldnote"
 msgstr "आवरण पत्र · Fieldnote"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Cover letter file"
 msgstr "आवरण पत्र फाइल"
@@ -5819,6 +5835,7 @@ msgid "Follow-up date"
 msgstr "अनुगमन मिति"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "फलो-अप नोट"
 
@@ -6595,6 +6612,11 @@ msgstr "सुधार गर्दै…"
 msgid "In good company"
 msgstr "राम्रो संगत मा"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "दुई लाइन एकआपसमा नमिसियोस् भनेर लाइन स्पेसिङ बढाउनुहोस्।"
@@ -7151,6 +7173,7 @@ msgstr "पछिल्लो पटक प्रयोग गरियो"
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "पछिल्लो"
 
@@ -8512,6 +8535,10 @@ msgstr "फोटो छैन। धेरै जसो ATS फोटोहर�
 msgid "No postings found. Try different keywords."
 msgstr "कुनै जागिर पोस्टिङ भेटिएन। फरक कुञ्जी शब्दहरू प्रयास गर्नुहोस्।"
 
+#: src/features/career/offers.tsx
+msgid "No questions to ask before deciding."
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "No recorded answers are available."
 msgstr ""
@@ -8702,6 +8729,10 @@ msgstr "तपाईको रिजुमेमा छैन · सत्य �
 msgid "Not now"
 msgstr "अहिले होइन"
 
+#: src/features/career/offers.tsx
+msgid "Not recorded"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "अझै रेकर्ड गरिएको छैन। तपाईंले समर्थन गर्न नसकेसम्म खाली छोड्नुहोस्।"
@@ -8880,6 +8911,8 @@ msgid "Off. Let recruiters find you on Google by turning this on."
 msgstr "बन्द। भर्तीकर्ताहरूले तपाईंलाई Google मा भेट्टाउन सकून् भने यो चालु गर्नुहोस्।"
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/sections.tsx
 #: src/features/homepage/tailor.tsx
@@ -9060,6 +9093,10 @@ msgstr "प्रस्तावहरूमा खोल्नुहोस्"
 #: src/features/career/coach-chat.tsx
 msgid "Open preferences"
 msgstr "प्राथमिकताहरू खोल्नुहोस्"
+
+#: src/features/career/offers.tsx
+msgid "Open questions"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
@@ -10319,6 +10356,10 @@ msgstr "रेकर्डिङ समय"
 msgid "Records {0} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Recruiter"
 msgstr "भर्तीकर्ता"
@@ -10833,6 +10874,7 @@ msgid "Resume details"
 msgstr "पुन: सुरु विवरण"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "रेजुमे फाइल"
@@ -11232,6 +11274,10 @@ msgstr "जागिरको प्रस्ताव सेभ गर्नु
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/career/draft-recovery.tsx
+msgid "Save recovered draft"
 msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
@@ -13342,6 +13388,10 @@ msgstr "यो ब्राउजरले यहाँ रेकर्ड ग�
 msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0>Add one in Settings</0>, or type your answer."
 msgstr "यो ब्राउजरले डिक्टेसन लिन सक्दैन, र तपाईंका कुनै पनि AI जडानले बोली ट्रान्सक्राइब गर्न सक्दैनन् (OpenAI, Google Gemini, Mistral, xAI, Groq वा Vercel AI Gateway ले सक्छन्)। <0>सेटिङहरूमा एउटा थप्नुहोस्</0>, वा आफ्नो जवाफ टाइप गर्नुहोस्।"
 
+#: src/features/career/draft-recovery.tsx
+msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
 msgstr "यो जडान अनुरोध अमान्य छ वा म्याद सकिएको छ। आफ्नो क्लाइन्टबाट जडान फेरि सुरु गर्नुहोस्।"
@@ -13357,6 +13407,11 @@ msgstr "यो कुराकानी खोल्न सकिएन। प�
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
+
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -13414,6 +13469,10 @@ msgstr "बायोडाटाका लागि यो फाइल ठू�
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "यो फाइल धेरै आवेदन फारामले स्वीकार गर्नेभन्दा ठूलो छ।"
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "This file type can't be imported. Use a PDF, Word, Reactive Resume or JSON Resume file, or a LinkedIn export (.zip)."
@@ -13483,9 +13542,17 @@ msgstr "यो PDF सँग कुनै पाठ तह छैन, त्य�
 msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
 msgstr "यो PDF स्क्यान गरिएको छवि हो। पढ्नको लागि कुनै पाठ छैन। Word संस्करण प्रयास गर्नुहोस्, वा खाली सुरु गर्नुहोस् र खण्डहरू टाँस्नुहोस्।"
 
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "This PDF is larger than 10 MB. Compress it or export a smaller PDF, then attach it again."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "यो PDF पासवर्डले सुरक्षित छ। असुरक्षित प्रतिलिपि सुरक्षित गरी फेरि प्रयास गर्नुहोस्।"
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14235,6 +14302,10 @@ msgstr ""
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
 msgstr "नमूना प्रयोग गर्नुहोस्"
+
+#: src/features/career/draft-recovery.tsx
+msgid "Use saved version"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use the standard heading"

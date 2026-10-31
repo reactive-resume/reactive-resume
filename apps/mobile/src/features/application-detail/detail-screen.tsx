@@ -33,7 +33,7 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 	const session = useSession();
 	const query = useApplication(id);
 	const { update, remove } = useApplicationMutations();
-	const { date } = useUserTime();
+	const { date, timeZone } = useUserTime();
 	const [overlay, setOverlay] = useState<Overlay>(null);
 	const application = query.data;
 	const close = () => setOverlay(null);
@@ -41,8 +41,8 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 	// Interviews moved or deleted elsewhere (the web, another device) move or cancel this device's reminders.
 	// Query results keep their identity while unchanged, so this runs once per stored version.
 	useEffect(() => {
-		if (application) void syncReminders(application.id, reminderTargets(application)).catch(() => undefined);
-	}, [application]);
+		if (application) void syncReminders(application.id, reminderTargets(application, timeZone)).catch(() => undefined);
+	}, [application, timeZone]);
 
 	if (session.status !== "signed-in") return <EmptyState icon="briefcase" title={t`Sign in to view applications`} />;
 	if (query.isPending)
