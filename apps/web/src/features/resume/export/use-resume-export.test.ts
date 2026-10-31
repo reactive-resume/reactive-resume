@@ -31,3 +31,19 @@ it.each(["docx", "odt"] as const)(
 		}
 	},
 );
+
+it("marks editor list paragraphs in browser Word downloads", async () => {
+	const data = structuredClone(defaultResumeData);
+	data.basics.name = "Ada Lovelace";
+	data.summary.content = "<ul><li><p>Editor bullet</p></li><li>Plain bullet</li></ul>";
+	const blob = await createExportFile({ name: "Ada", slug: "ada", data }, "docx");
+	const files = unzipSync(new Uint8Array(await blob.arrayBuffer()));
+	const documentXml = files["word/document.xml"];
+	const numberingXml = files["word/numbering.xml"];
+	if (!documentXml || !numberingXml) throw new Error("Missing Word list definitions");
+	const xml = strFromU8(documentXml);
+	expect(xml.match(/<w:numPr>/g)).toHaveLength(2);
+	expect(xml).toContain("Editor bullet");
+	expect(xml).toContain("Plain bullet");
+	expect(strFromU8(numberingXml)).toContain('<w:numFmt w:val="bullet"/>');
+});
