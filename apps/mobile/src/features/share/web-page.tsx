@@ -44,6 +44,8 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 	const otherPrimary = list.data?.find((item) => item.isPrimary && item.id !== resume.id);
 	const searchBlocked = !resume.isPublic || resume.hasPassword;
 	const shortLink = username ? publicResumeUrl(origin, { username, slug: resume.slug, isPrimary: true }) : undefined;
+	// The short link opens the primary resume only while it's published; at any other time it would copy a dead link.
+	const shortLinkOpens = resume.isPrimary ? resume.isPublic : (otherPrimary?.isPublic ?? false);
 
 	const preview = () =>
 		operations.run(async () => {
@@ -87,8 +89,12 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 								? t`Your short link and custom domain open this resume.`
 								: t`Your short link and custom domain say this resume isn't shared until you publish it again.`
 							: otherPrimary
-								? t`Your short link and custom domain open “${otherPrimary.name}”.`
-								: t`Publish this resume to open it at your short link and custom domain.`
+								? otherPrimary.isPublic
+									? t`Your short link and custom domain open “${otherPrimary.name}”.`
+									: t`Your short link and custom domain point to “${otherPrimary.name}”, which isn't published.`
+								: resume.isPublic
+									? t`Turn this on to open this resume at your short link and custom domain.`
+									: t`Publish this resume to open it at your short link and custom domain.`
 					}
 					trailing={
 						<Switch
@@ -105,7 +111,7 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 					<ListRow
 						title={shortLink.replace(/^https?:\/\//, "")}
 						leading="link-simple-horizontal"
-						disabled={offline}
+						disabled={offline || !shortLinkOpens}
 						onPress={() =>
 							void operations.run(async () => {
 								await Clipboard.setStringAsync(shortLink);

@@ -70,7 +70,7 @@ export const crudRouter = {
 			operationId: "createResume",
 			summary: "Create a new resume",
 			description:
-				"Creates a new resume with the given name and tags. The slug (its public address) is optional: when omitted it is generated from the name and made unique across the user's resumes; when given it must be unique too. Optionally initializes the resume with sample data by setting withSampleData to true. Returns the ID of the newly created resume. Requires authentication.",
+				"Creates a new resume with the given name and tags. The slug (its public address) is optional: when omitted it is generated from the name (or is \"resume\" when autoName is set) and made unique across the user's resumes, and it follows the resume's name until the resume is published or given a slug; when given it must be unique too. Optionally initializes the resume with sample data by setting withSampleData to true. Returns the ID of the newly created resume. Requires authentication.",
 			successDescription: "The ID of the newly created resume.",
 		})
 		.input(resumeDto.create.input)
@@ -138,7 +138,7 @@ export const crudRouter = {
 			operationId: "updateResume",
 			summary: "Update a resume",
 			description:
-				"Updates one or more fields of a resume identified by its ID. All fields are optional; only provided fields will be updated. When expectedUpdatedAt is provided, a stale version returns RESUME_VERSION_CONFLICT (409) with data.updatedAt. Locked resumes cannot be updated. Requires authentication.",
+				"Updates one or more fields of a resume identified by its ID. All fields are optional; only provided fields will be updated. A generated slug follows a new name while the resume has never been published; publishing it or setting a slug keeps the slug from then on. Publishing a resume (isPublic true) also makes it the primary resume when the account has none, unless isPrimary is given. When expectedUpdatedAt is provided, a stale version returns RESUME_VERSION_CONFLICT (409) with data.updatedAt. Locked resumes cannot be updated. Requires authentication.",
 			successDescription: "The updated resume with its full data.",
 		})
 		.input(resumeDto.update.input)
@@ -240,7 +240,7 @@ export const crudRouter = {
 			operationId: "duplicateResume",
 			summary: "Duplicate a resume",
 			description:
-				"Creates a copy of an existing resume with the same data, and the given name and tags. The slug is optional: when omitted it is generated from the name and made unique across the user's resumes. Returns the ID of the duplicated resume. Requires authentication.",
+				"Creates a copy of an existing resume with the same data, and the given name and tags. The slug is optional: when omitted it is generated from the name, made unique across the user's resumes, and follows the name until the copy is published. Returns the ID of the duplicated resume. Requires authentication.",
 			successDescription: "The ID of the duplicated resume.",
 		})
 		.input(resumeDto.duplicate.input)

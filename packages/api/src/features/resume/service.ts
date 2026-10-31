@@ -6,7 +6,22 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Locale } from "@reactive-resume/utils/locale";
 import { ORPCError } from "@orpc/client";
 import { compare, hash } from "bcryptjs";
-import { and, arrayContains, asc, desc, eq, gte, inArray, isNotNull, isNull, lt, ne, sql } from "drizzle-orm";
+import {
+	and,
+	arrayContains,
+	asc,
+	desc,
+	eq,
+	gte,
+	inArray,
+	isNotNull,
+	isNull,
+	lt,
+	ne,
+	notExists,
+	sql,
+} from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import { match } from "ts-pattern";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
@@ -34,7 +49,7 @@ import {
 } from "./access-policy";
 import { publishResumeUpdated } from "./events";
 import { parseStoredResumeData, parseWritableResumeData } from "./resume-data-validation";
-import { checkSlug, findFreeSlug, findResume, recordSlugChange } from "./slugs";
+import { checkSlug, DEFAULT_SLUG_STEM, findFreeSlug, findResume, followNameWithSlug, recordSlugChange } from "./slugs";
 import {
 	deleteVersion,
 	getVersion,
@@ -92,6 +107,36 @@ function invalidPatchOperation(message: string, index: number, operation: JsonPa
 
 /** The unique constraint a Postgres insert or update broke, if that's why it failed. */
 const uniqueConstraint = (error: unknown) => (error as { cause?: { constraint?: string } } | null)?.cause?.constraint;
+
+const otherPrimary = alias(schema.resume, "other_primary");
+
+/**
+ * Makes a resume the account's primary one when the account has none, in its own savepoint: when another resume
+ * becomes primary at the same moment, that one keeps the role and this save still succeeds.
+ */
+async function claimPrimaryIfNone(tx: DbOrTx, input: { userId: string; resumeId: string }) {
+	try {
+		await tx.transaction((savepoint) =>
+			savepoint
+				.update(schema.resume)
+				.set({ isPrimary: true })
+				.where(
+					and(
+						eq(schema.resume.id, input.resumeId),
+						eq(schema.resume.userId, input.userId),
+						notExists(
+							savepoint
+								.select({ id: otherPrimary.id })
+								.from(otherPrimary)
+								.where(and(eq(otherPrimary.userId, input.userId), eq(otherPrimary.isPrimary, true))),
+						),
+					),
+				),
+		);
+	} catch (error) {
+		if (uniqueConstraint(error) !== "resume_primary_unique") throw error;
+	}
+}
 
 function isValidJsonPointer(pointer: string): boolean {
 	if (pointer === "") return true;
@@ -635,7 +680,10 @@ export const resumeService = {
 		}
 
 		try {
-			const slug = input.slug ?? (await findFreeSlug(db, input.userId, input.name));
+			// An app-made address follows the name until the resume is published (see followNameWithSlug). A default
+			// name ("Untitled resume", in the user's language) gives the neutral "resume" instead of a translation.
+			const slug =
+				input.slug ?? (await findFreeSlug(db, input.userId, input.autoName ? DEFAULT_SLUG_STEM : input.name));
 			await db.transaction(async (tx) => {
 				// The resume row comes first: letters an imported file carried are saved linked to it.
 				const stored = structuredClone(data);
@@ -645,6 +693,7 @@ export const resumeService = {
 					name: input.name,
 					autoName: input.autoName ?? false,
 					slug,
+					autoSlug: input.slug === undefined,
 					tags: input.tags,
 					userId: input.userId,
 					data: stored,
@@ -709,6 +758,7 @@ export const resumeService = {
 						isLocked: schema.resume.isLocked,
 						isPublic: schema.resume.isPublic,
 						autoName: schema.resume.autoName,
+						autoSlug: schema.resume.autoSlug,
 						updatedAt: schema.resume.updatedAt,
 					})
 					.from(schema.resume)
@@ -752,6 +802,12 @@ export const resumeService = {
 					existing.autoName && input.name === undefined && normalizedData
 						? normalizedData.basics.headline.trim().slice(0, 100) || undefined
 						: undefined;
+				const nextName = input.name ?? followedName;
+				if (nextName !== undefined && nextName !== existing.name && input.slug === undefined)
+					await followNameWithSlug(tx, { userId: input.userId, resumeId: input.id, name: nextName });
+				// Publishing the account's first web page makes it the primary one, so the short link opens it.
+				if (input.isPublic === true && !existing.isPublic && input.isPrimary === undefined)
+					await claimPrimaryIfNone(tx, { userId: input.userId, resumeId: input.id });
 				const updateData: Partial<typeof schema.resume.$inferSelect> = {
 					...(input.proposalApplications && Object.keys(input.proposalApplications).length
 						? { updatedAt: new Date() }
@@ -759,6 +815,8 @@ export const resumeService = {
 					...(input.name !== undefined ? { name: input.name, autoName: false } : {}),
 					...(followedName ? { name: followedName } : {}),
 					...(input.slug !== undefined ? { slug: input.slug } : {}),
+					// Once chosen by hand or published, the address stays put.
+					...(input.slug !== undefined || input.isPublic === true ? { autoSlug: false } : {}),
 					...(input.tags !== undefined ? { tags: input.tags } : {}),
 					...(normalizedData ? { data: normalizedData } : {}),
 					...(input.isPublic !== undefined ? { isPublic: input.isPublic } : {}),

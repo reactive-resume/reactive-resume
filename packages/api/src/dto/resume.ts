@@ -33,9 +33,9 @@ const resumeSchema = createSelectSchema(schema.resume, {
 	createdAt: z.date().describe("The date and time the resume was created."),
 	updatedAt: z.date().describe("The date and time the resume was last updated."),
 })
-	// Trash and automatic naming stay internal to the documents API. getById exposes the application link
+	// Trash and automatic naming and addresses stay internal to the documents API. getById exposes the application link
 	// explicitly because the editor uses it to select the application a tailored copy belongs to.
-	.omit({ applicationId: true, trashedAt: true, autoName: true });
+	.omit({ applicationId: true, trashedAt: true, autoName: true, autoSlug: true });
 
 const versionSchema = z.object({
 	id: z.string().describe("The ID of the version."),

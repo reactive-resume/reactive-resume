@@ -54,17 +54,22 @@ Your keys are listed in the **API keys** table with the date each was created, t
 
 Sharing controls belong to resume metadata, outside the resume's `data` object:
 
-| Field                 | Meaning                                                                                                             |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `isPublic`            | Publishes or unpublishes the web page.                                                                              |
-| `showDownloadButtons` | Allows visitors to download the public PDF. The owner keeps download access.                                        |
-| `showInSearchEngines` | Opts a published, non-password-protected resume into search indexing. Defaults to `false`.                          |
-| `hideContactDetails`  | Redacts dedicated contact fields from public representations. Defaults to `false`.                                  |
-| `isPrimary`           | Selects the account's resume for `/<username>` and its verified domain. Only a published resume can become primary. |
+| Field                 | Meaning                                                                                                                                                    |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `isPublic`            | Publishes or unpublishes the web page. Publishing makes the resume primary when the account has no primary resume and the request doesn't set `isPrimary`. |
+| `showDownloadButtons` | Allows visitors to download the public PDF. The owner keeps download access.                                                                               |
+| `showInSearchEngines` | Opts a published, non-password-protected resume into search indexing. Defaults to `false`.                                                                 |
+| `hideContactDetails`  | Redacts dedicated contact fields from public representations. Defaults to `false`.                                                                         |
+| `isPrimary`           | Selects the account's resume for `/<username>` and its verified domain. Only a published resume can become primary.                                        |
 
 New or changed `slug` values must be 1–64 characters: lowercase letters and numbers separated by single dashes.
 An invalid value returns `INVALID_SLUG` (HTTP 400). Reads and updates that retain an unchanged legacy slug remain
 supported. Renames preserve an old address for 30 days.
+
+A slug generated at creation follows the resume's name while the resume has never been published: a rename or a
+blank resume's new headline moves it, with no redirect, since nobody has been sent it. Publishing the resume or
+setting `slug` keeps the slug from then on. Generated slugs skip addresses that another resume's old address still
+redirects from.
 
 Authenticated custom-domain operations live under `/api/openapi`: `GET /custom-domain`, `PUT /custom-domain` with
 `{ "hostname": "resume.example.com" }`, `POST /custom-domain/verify`, and `DELETE /custom-domain`.

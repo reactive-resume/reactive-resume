@@ -2,7 +2,7 @@ import type { DbOrTx } from "@reactive-resume/db/client";
 import type { SQL } from "drizzle-orm";
 import type { SelectedFields } from "drizzle-orm/pg-core";
 import type { SelectResultFields } from "drizzle-orm/query-builders/select.types";
-import { and, desc, eq, gt, inArray, isNull, like, or, sql } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, isNull, like, ne, or, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { isValidSlug, MAX_SLUG_LENGTH } from "@reactive-resume/schema/resume/slug";
@@ -23,18 +23,69 @@ function pickFreeSlug(stem: string, taken: ReadonlySet<string>) {
 // Slugs cannot exceed 64 chars. Keep base stem short enough so numerical suffixes stay within 64.
 const MAX_STEM_LENGTH = 56;
 
-/** A slug made from `name` that none of the user's resumes uses yet. */
-export async function findFreeSlug(client: DbOrTx, userId: string, name: string) {
-	const rawStem = slugify(name) || "resume";
-	const stem = rawStem.slice(0, MAX_STEM_LENGTH).replace(/-+$/, "") || "resume";
-	const rows = await client
-		.select({ slug: schema.resume.slug })
-		.from(schema.resume)
-		.where(
-			and(eq(schema.resume.userId, userId), or(eq(schema.resume.slug, stem), like(schema.resume.slug, `${stem}-%`))),
-		);
+/** The stem an app-made address starts from when the resume still has its default name, in any language. */
+export const DEFAULT_SLUG_STEM = "resume";
 
-	return pickFreeSlug(stem, new Set(rows.map((row) => row.slug)));
+/**
+ * A slug made from `name` that none of the user's resumes uses yet, and that no other resume's old address still
+ * opens (an app-made address never takes over someone's link). `resumeId` is the resume it's for, whose own address
+ * counts as free.
+ */
+export async function findFreeSlug(client: DbOrTx, userId: string, name: string, resumeId?: string) {
+	const rawStem = slugify(name) || DEFAULT_SLUG_STEM;
+	const stem = rawStem.slice(0, MAX_STEM_LENGTH).replace(/-+$/, "") || DEFAULT_SLUG_STEM;
+	const named = (column: typeof schema.resume.slug | typeof schema.resumeSlugRedirect.slug) =>
+		or(eq(column, stem), like(column, `${stem}-%`));
+	const [resumes, redirects] = await Promise.all([
+		client
+			.select({ slug: schema.resume.slug })
+			.from(schema.resume)
+			.where(
+				and(
+					eq(schema.resume.userId, userId),
+					named(schema.resume.slug),
+					resumeId ? ne(schema.resume.id, resumeId) : undefined,
+				),
+			),
+		client
+			.select({ slug: schema.resumeSlugRedirect.slug })
+			.from(schema.resumeSlugRedirect)
+			.where(
+				and(
+					eq(schema.resumeSlugRedirect.userId, userId),
+					named(schema.resumeSlugRedirect.slug),
+					gt(schema.resumeSlugRedirect.expiresAt, sql`now()`),
+					resumeId ? ne(schema.resumeSlugRedirect.resumeId, resumeId) : undefined,
+				),
+			),
+	]);
+
+	return pickFreeSlug(stem, new Set([...resumes, ...redirects].map((row) => row.slug)));
+}
+
+/**
+ * Moves a private resume's app-made address to follow its new name. A published resume, or one whose address was
+ * chosen by hand, keeps its address. Nobody was sent the old address, so no redirect is kept. When another resume
+ * takes the same address at the same moment, this one keeps its current address rather than failing the save.
+ */
+export async function followNameWithSlug(client: DbOrTx, input: { userId: string; resumeId: string; name: string }) {
+	const owned = and(eq(schema.resume.id, input.resumeId), eq(schema.resume.userId, input.userId));
+	const [resume] = await client
+		.select({ slug: schema.resume.slug, autoSlug: schema.resume.autoSlug, isPublic: schema.resume.isPublic })
+		.from(schema.resume)
+		.where(owned)
+		.for("update");
+	if (!resume?.autoSlug || resume.isPublic) return;
+
+	const slug = await findFreeSlug(client, input.userId, input.name, input.resumeId);
+	if (slug === resume.slug) return;
+	try {
+		// Its own savepoint: a lost race leaves the surrounding save intact.
+		await client.transaction((savepoint) => savepoint.update(schema.resume).set({ slug }).where(owned));
+	} catch (error) {
+		if ((error as { cause?: { constraint?: string } } | null)?.cause?.constraint !== "resume_slug_user_id_unique")
+			throw error;
+	}
 }
 
 /** Whether a slug can be this resume's address, and if not, why and what would work instead. */
@@ -59,7 +110,7 @@ export async function checkSlug(input: { userId: string; resumeId: string; slug:
 				.from(schema.resume)
 				.where(and(eq(schema.resume.userId, input.userId), eq(schema.resume.slug, suggestion)));
 			if (candidateHolder && candidateHolder.id !== input.resumeId) {
-				suggestion = await findFreeSlug(db, input.userId, suggestion);
+				suggestion = await findFreeSlug(db, input.userId, suggestion, input.resumeId);
 			}
 		}
 
@@ -71,7 +122,7 @@ export async function checkSlug(input: { userId: string; resumeId: string; slug:
 	return {
 		status: "taken" as const,
 		takenBy: holder.name,
-		suggestion: await findFreeSlug(db, input.userId, input.slug),
+		suggestion: await findFreeSlug(db, input.userId, input.slug, input.resumeId),
 	};
 }
 

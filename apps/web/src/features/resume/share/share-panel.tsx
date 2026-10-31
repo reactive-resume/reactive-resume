@@ -147,9 +147,10 @@ function useShareSetting() {
 
 	const update = async (settings: ShareSettings) => {
 		try {
-			await updateResume({ id: resume.id, ...settings });
-			// Another resume may have handed over its primary role.
-			if (settings.isPrimary) void queryClient.invalidateQueries({ queryKey: orpc.resume.list.key() });
+			const updated = await updateResume({ id: resume.id, ...settings });
+			// Another resume may have handed over its primary role, or publishing made this one primary.
+			if (settings.isPrimary || updated.isPrimary !== resume.isPrimary)
+				void queryClient.invalidateQueries({ queryKey: orpc.resume.list.key() });
 			return true;
 		} catch (error) {
 			toastShareError(error);
@@ -166,7 +167,11 @@ type AddressesSectionProps = { origin: string; username: string; setting: ShareS
 function AddressesSection({ origin, username, setting }: AddressesSectionProps) {
 	const resume = useCurrentResume();
 	const { flags } = useRouteContext({ strict: false });
+	const { data: resumes } = useQuery(orpc.resume.list.queryOptions());
+	const current = resumes?.find((item) => item.isPrimary && item.id !== resume.id);
 	const shortLink = publicResumeUrl(origin, { username, slug: resume.slug, isPrimary: true });
+	// The short link opens the primary resume only while it's published; at any other time it would copy a dead link.
+	const shortLinkOpens = resume.isPrimary ? (resume.isPublic ?? false) : (current?.isPublic ?? false);
 
 	return (
 		<>
@@ -175,12 +180,12 @@ function AddressesSection({ origin, username, setting }: AddressesSectionProps) 
 				<h3 id="share-addresses-title" className="text-sm font-semibold">
 					<Trans>Short link and domain</Trans>
 				</h3>
-				<PrimaryRow setting={setting} />
+				<PrimaryRow setting={setting} current={current} />
 				<div className="flex items-center gap-1.5">
 					<span className="min-w-0 flex-1 truncate font-mono text-[13px] font-medium text-ink-2" dir="ltr">
 						{shortLink.replace(/^https?:\/\//, "")}
 					</span>
-					<CopyLinkButton url={shortLink} className="h-8 gap-1.5" />
+					<CopyLinkButton url={shortLink} disabled={!shortLinkOpens} className="h-8 gap-1.5" />
 				</div>
 				{flags?.customDomains && <CustomDomainField suggest={flags.olacvSuggestion ?? false} />}
 			</section>
@@ -190,12 +195,18 @@ function AddressesSection({ origin, username, setting }: AddressesSectionProps) 
 
 type ShareSettingProps = { setting: ShareSetting };
 
-/** The primary resume opens at the account's short link and custom domain. Only a published resume can be primary. */
-function PrimaryRow({ setting: { update, isPending } }: ShareSettingProps) {
+type PrimaryRowProps = ShareSettingProps & {
+	/** The account's other primary resume, when another one holds the role. */
+	current: { name: string; isPublic: boolean } | undefined;
+};
+
+/**
+ * The primary resume opens at the account's short link and custom domain. Only a published resume can be primary;
+ * publishing the account's first web page makes it primary.
+ */
+function PrimaryRow({ setting: { update, isPending }, current }: PrimaryRowProps) {
 	const resume = useCurrentResume();
 	const confirm = useConfirm();
-	const { data: resumes } = useQuery(orpc.resume.list.queryOptions());
-	const current = resumes?.find((item) => item.isPrimary && item.id !== resume.id);
 	const isPublic = resume.isPublic ?? false;
 
 	const setPrimary = async (checked: boolean) => {
@@ -221,8 +232,12 @@ function PrimaryRow({ setting: { update, isPending } }: ShareSettingProps) {
 						? t`Your short link and custom domain open this resume.`
 						: t`Your short link and custom domain say this resume isn't shared until you publish it again.`
 					: current
-						? t`Your short link and custom domain open “${current.name}”.`
-						: t`Publish this resume to open it at your short link and custom domain.`
+						? current.isPublic
+							? t`Your short link and custom domain open “${current.name}”.`
+							: t`Your short link and custom domain point to “${current.name}”, which isn't published.`
+						: isPublic
+							? t`Turn this on to open this resume at your short link and custom domain.`
+							: t`Publish this resume to open it at your short link and custom domain.`
 			}
 			className="items-start py-0"
 		/>
