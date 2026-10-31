@@ -323,6 +323,186 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		}
 	});
 
+	it("saves structural proposal snapshots and their explicit Undo/Redo through the resume router", async () => {
+		const { crudRouter } = await import("../resume/crud");
+		const { documentView, loadDocument, resolveDocumentEdits } = await import("../agent/document");
+		const { createEntry } = await import("@reactive-resume/resume/entries");
+		const { buildAgentTools } = await import("../agent/tools");
+		const { pruneAgentModelContext } = await import("../agent/context");
+		const { ToolLoopAgent, isStepCount, convertToModelMessages } = await import("ai");
+		const { MockLanguageModelV4 } = await import("ai/test");
+		const seeded = structuredClone(defaultResumeData);
+		seeded.basics.name = "VISIBLE_NAME";
+		seeded.summary = { ...seeded.summary, hidden: true, content: "<p>HIDDEN_SUMMARY</p>" };
+		seeded.sections.projects = { ...seeded.sections.projects, hidden: true, title: "HIDDEN_SECTION" };
+		seeded.sections.skills.items = [
+			{ ...createEntry("skills"), id: "secret-skill", hidden: true, name: "HIDDEN_ITEM" },
+		] as typeof seeded.sections.skills.items;
+		seeded.customSections = [
+			{
+				...seeded.sections.certifications,
+				id: "secret-custom",
+				type: "certifications",
+				hidden: true,
+				title: "HIDDEN_CUSTOM",
+			},
+		];
+		seeded.metadata.notes = "PRIVATE_NOTES";
+		seeded.picture.url = "https://fictional.invalid/PRIVATE_PICTURE";
+		await getPool().query("UPDATE resume SET data=$1 WHERE id='alice-resume'", [seeded]);
+		const { applyResumeProposals } = await import("@reactive-resume/resume/proposals");
+		const document = await loadDocument("alice", { kind: "resume", id: "alice-resume" });
+		if (!document.resume) throw new Error("Missing resume");
+		const original = structuredClone(document.resume);
+		const request = {
+			title: "Review headline",
+			changes: [
+				{
+					kind: "field",
+					target: { sectionId: "basics", field: "headline" },
+					before: "",
+					value: "Design lead",
+					why: "User supplied.",
+				},
+			],
+		};
+		for (const change of [
+			{
+				kind: "entry",
+				sectionId: "certifications",
+				type: "cover-letter",
+				entryJson: JSON.stringify({ ...createEntry("cover-letter"), content: "<p>Fictional letter</p>" }),
+				why: "User supplied.",
+			},
+			{
+				kind: "section",
+				type: "cover-letter",
+				title: "Letter",
+				entriesJson: JSON.stringify([{ ...createEntry("cover-letter"), content: "<p>Fictional letter</p>" }]),
+				why: "User supplied.",
+			},
+		]) {
+			expect(() => resolveDocumentEdits(document, { title: "Letter", changes: [change] } as never)).toThrow(
+				"This suggestion couldn't be prepared",
+			);
+		}
+		let output: ReturnType<typeof resolveDocumentEdits> | undefined;
+		const captures: string[] = [];
+		let step = 0;
+		const tools = buildAgentTools({
+			document: "resume",
+			externalSearch: false,
+			signal: new AbortController().signal,
+			handlers: {
+				readDocument: async () => documentView(document),
+				readAttachment: async () => ({}),
+				proposeEdits: async (input) => (output = resolveDocumentEdits(document, input)),
+				searchWeb: async () => {
+					throw Error("Unexpected search");
+				},
+				readPage: async () => {
+					throw Error("Unexpected page");
+				},
+			},
+		});
+		const agent = new ToolLoopAgent({
+			tools,
+			stopWhen: isStepCount(4),
+			prepareStep: ({ messages }) => ({ messages: pruneAgentModelContext(messages) }),
+			model: new MockLanguageModelV4({
+				doGenerate: async (options) => {
+					captures.push(JSON.stringify(options.prompt));
+					const current = step++;
+					return {
+						content:
+							current === 0
+								? [{ type: "tool-call", toolCallId: "read", toolName: "read_resume", input: "{}" }]
+								: current === 1
+									? [
+											{
+												type: "tool-call",
+												toolCallId: "call",
+												toolName: "propose_edits",
+												input: JSON.stringify(request),
+											},
+										]
+									: [{ type: "text", text: "Review changes." }],
+						finishReason: { unified: "stop", raw: "stop" },
+						usage: {
+							inputTokens: { total: 1, noCache: 1, cacheRead: 0, cacheWrite: 0 },
+							outputTokens: { total: 1, text: 1, reasoning: 0 },
+						},
+						warnings: [],
+					};
+				},
+			}),
+		});
+		await agent.generate({ prompt: "Change my headline." });
+		if (!output) throw Error("Missing proposal output");
+		expect(captures).toHaveLength(3);
+		expect(captures[1]).toContain("VISIBLE_NAME");
+		expect((await getPool().query("SELECT data FROM resume WHERE id='alice-resume'")).rows[0].data).toEqual(seeded);
+
+		const edit = output.edits[0];
+		if (!edit?.snapshot) throw new Error("Missing structural snapshot");
+		await proposalThread("structural", "alice", "resume", "alice-resume");
+		const message = proposing("pending");
+		const part = message.parts[0];
+		if (!part) throw new Error("Missing proposal part");
+		part.output = output;
+		Object.assign(part, { input: request });
+		await getPool().query("UPDATE agent_messages SET ui_message=$1 WHERE id='structural'", [message]);
+		// Reopen the actual JSONB history; the full snapshot must survive storage but never reach the provider.
+		const restored = (await getPool().query("SELECT ui_message FROM agent_messages WHERE id='structural'")).rows[0]
+			.ui_message;
+		await agent.generate({ messages: await convertToModelMessages([restored]) });
+		await agent.generate({
+			messages: await convertToModelMessages([
+				restored,
+				{ id: "answer", role: "user", parts: [{ type: "text", text: "VISIBLE_CONTINUATION" }] },
+			]),
+		});
+		expect(captures.at(-1)).toContain("VISIBLE_CONTINUATION");
+		for (const prompt of captures)
+			for (const marker of [
+				"HIDDEN_SUMMARY",
+				"HIDDEN_SECTION",
+				"HIDDEN_ITEM",
+				"HIDDEN_CUSTOM",
+				"PRIVATE_NOTES",
+				"PRIVATE_PICTURE",
+			])
+				expect(prompt).not.toContain(marker);
+		for (const marker of ["HIDDEN_SUMMARY", "HIDDEN_ITEM"]) expect(JSON.stringify(restored)).toContain(marker);
+		expect((await getPool().query("SELECT count(*)::int AS n FROM cover_letter")).rows[0].n).toBe(0);
+
+		const data = structuredClone(original);
+		expect(applyResumeProposals(data, [{ ...edit, source: "assistant" }]).applied).toHaveLength(1);
+		const client = createRouterClient(crudRouter, { context: { user: { id: "alice" } } as never });
+		let updatedAt = document.updatedAt;
+		for (const [applied, content] of [
+			[true, data],
+			[false, original],
+			[true, data],
+		] as const) {
+			const saved = await client.update({
+				id: "alice-resume",
+				data: content,
+				expectedUpdatedAt: updatedAt,
+				proposalApplications: { [edit.id]: applied },
+			});
+			updatedAt = saved.updatedAt;
+			expect(saved.data.basics.headline).toBe(applied ? "Design lead" : "");
+			expect(await outcomes()).toEqual([
+				{ id: "structural", accepted: applied ? 1 : 0, status: applied ? "accepted" : "pending" },
+			]);
+			const stored = (await getPool().query("SELECT ui_message FROM agent_messages WHERE id='structural'")).rows[0]
+				.ui_message;
+			expect(stored.parts[0].output.edits[0].snapshot).toEqual(edit.snapshot);
+			expect((await getPool().query("SELECT count(*)::int AS n FROM cover_letter")).rows[0].n).toBe(0);
+		}
+	});
+
 	it("synchronizes only the owned resume's threads inside the caller transaction", async () => {
 		const { saveProposalApplications } = await import("../agent/proposal-applications");
 		await proposalThread("own", "alice", "resume", "alice-resume");

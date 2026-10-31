@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 
 const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
+const { buildSync, transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const element = (type, props, ...children) => ({ type, props: { ...props, children } });
 const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
 let hooks = [];
@@ -800,7 +800,6 @@ try {
 console.log("PASS native story validation focus, draft preservation and optional outcomes");
 
 // Execute native custom-date controls against the real shared parser.
-const { buildSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const dateModule = { exports: {} };
 new Function(
 	"require",
@@ -867,8 +866,21 @@ console.log("PASS native Japanese preset dates survive custom-mode round trip");
 
 reset();
 const mobileRequire = createRequire(new URL("../package.json", import.meta.url));
+const sharedProposals = { exports: {} };
+new Function(
+	"require",
+	"module",
+	"exports",
+	buildSync({
+		entryPoints: [mobileRequire.resolve("@reactive-resume/resume/proposals")],
+		bundle: true,
+		platform: "node",
+		format: "cjs",
+		write: false,
+	}).outputFiles[0].text,
+)(mobileRequire, sharedProposals, sharedProposals.exports);
 const { createDraftStore } = load("draft/store.ts", {
-	"@reactive-resume/resume/proposals": mobileRequire("@reactive-resume/resume/proposals"),
+	"@reactive-resume/resume/proposals": sharedProposals.exports,
 	immer: mobileRequire("immer"),
 	zustand: mobileRequire("zustand"),
 	"@reactive-resume/utils/string": { generateId: () => "photo-session" },

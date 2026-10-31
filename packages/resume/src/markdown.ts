@@ -102,6 +102,28 @@ function visibleItems<T extends { hidden: boolean }>(section: { hidden: boolean;
 	return section.items.filter((item) => !item.hidden);
 }
 
+type ResumeStructure = Pick<ResumeData, "basics" | "customSections"> & {
+	summary?: ResumeData["summary"] | undefined;
+	sections: { [K in keyof ResumeData["sections"]]?: ResumeData["sections"][K] | undefined };
+};
+
+/** Structured companion to Markdown: the same hidden-content policy, with no private document metadata. */
+export function getVisibleResumeStructure(data: ResumeStructure) {
+	const sections: Record<string, unknown> = {};
+	for (const [id, section] of Object.entries(data.sections)) {
+		if (section && !section.hidden)
+			sections[id] = { ...section, items: visibleItems<Sections[keyof Sections]["items"][number]>(section) };
+	}
+	return {
+		basics: data.basics,
+		...(data.summary && !data.summary.hidden ? { summary: data.summary } : {}),
+		sections,
+		customSections: data.customSections
+			.filter((section) => !section.hidden && section.type !== "cover-letter")
+			.map((section) => ({ ...section, items: visibleItems(section) })),
+	};
+}
+
 // --- Section renderers ---
 
 function renderSummary(summary: ResumeData["summary"]): string[] {

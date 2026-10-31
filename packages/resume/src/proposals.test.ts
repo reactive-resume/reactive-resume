@@ -323,13 +323,16 @@ it("does not acknowledge a newer Undo/Redo decision with an older save response"
 	expect(acknowledgeProposalApplications({ edit: false, later: true }, { edit: false })).toEqual({ later: true });
 });
 
-
 it("records only real structural writes, retains accepted identity after refinement, and requires explicit Undo", () => {
 	const data = structuredClone(defaultResumeData);
 	const before = resumeStructureSnapshot(data);
 	const after = structuredClone(data);
 	after.basics.headline = "Design lead";
-	const edit: Proposal = { ...proposal("Headline: —", "Headline: Design lead"), target: { sectionId: "resume", field: "data" }, snapshot: { before, after: resumeStructureSnapshot(after) } };
+	const edit: Proposal = {
+		...proposal("Headline: —", "Headline: Design lead"),
+		target: { sectionId: "resume", field: "data" },
+		snapshot: { before, after: resumeStructureSnapshot(after) },
+	};
 	const unchanged: Proposal = { ...edit, id: "no-change", snapshot: { before, after: before } };
 	expect(applyResumeProposals(data, [unchanged])).toEqual({ applied: [], stale: [unchanged] });
 	expect(data.basics.headline).toBe("");

@@ -100,24 +100,50 @@ describe("resume proposal review contract", () => {
 		expect(data.sections.experience.items[0]?.description).not.toBe("<p>Designed clear interfaces.</p>");
 	});
 
-	it.each([false, true])("keeps shared-anchor additions with a rewrite in typed proposals (structural set: %s)", (mixed) => {
-		const { data, anchor, resolve } = fixture();
-		const original = structuredClone(data);
-		const changes: ProposeResumeEditsInput["changes"] = [
-			{ kind: "text", sectionId: "experience", passageId: anchor.id, text: "Rewritten passage.", why: "Rewrite." },
-			{ kind: "text", sectionId: "experience", passageId: anchor.id, text: "First added fact.", add: true, why: "First fact." },
-			{ kind: "text", sectionId: "experience", passageId: anchor.id, text: "Second added fact.", add: true, why: "Second fact." },
-		];
-		if (mixed) changes.push({ kind: "field", target: { sectionId: "basics", field: "headline" }, before: "", value: "Design lead", why: "Headline." });
-		const output = resolve(changes);
-		expect(data).toEqual(original);
-		expect(output.skipped).toEqual([]);
-		expect(output.edits).toHaveLength(mixed ? 1 : 3);
-		const edits = output.edits.map((edit) => ({ ...edit, source: "assistant" as const }));
-		expect(applyResumeProposals(data, edits)).toEqual({ applied: edits, stale: [] });
-		expect(data.sections.experience.items[0]?.description).toBe("<p>Rewritten passage.</p><p>First added fact.</p><p>Second added fact.</p>");
-		if (mixed) expect(data.basics.headline).toBe("Design lead");
-	});
+	it.each([false, true])(
+		"keeps shared-anchor additions with a rewrite in typed proposals (structural set: %s)",
+		(mixed) => {
+			const { data, anchor, resolve } = fixture();
+			const original = structuredClone(data);
+			const changes: ProposeResumeEditsInput["changes"] = [
+				{ kind: "text", sectionId: "experience", passageId: anchor.id, text: "Rewritten passage.", why: "Rewrite." },
+				{
+					kind: "text",
+					sectionId: "experience",
+					passageId: anchor.id,
+					text: "First added fact.",
+					add: true,
+					why: "First fact.",
+				},
+				{
+					kind: "text",
+					sectionId: "experience",
+					passageId: anchor.id,
+					text: "Second added fact.",
+					add: true,
+					why: "Second fact.",
+				},
+			];
+			if (mixed)
+				changes.push({
+					kind: "field",
+					target: { sectionId: "basics", field: "headline" },
+					before: "",
+					value: "Design lead",
+					why: "Headline.",
+				});
+			const output = resolve(changes);
+			expect(data).toEqual(original);
+			expect(output.skipped).toEqual([]);
+			expect(output.edits).toHaveLength(mixed ? 1 : 3);
+			const edits = output.edits.map((edit) => ({ ...edit, source: "assistant" as const }));
+			expect(applyResumeProposals(data, edits)).toEqual({ applied: edits, stale: [] });
+			expect(data.sections.experience.items[0]?.description).toBe(
+				"<p>Rewritten passage.</p><p>First added fact.</p><p>Second added fact.</p>",
+			);
+			if (mixed) expect(data.basics.headline).toBe("Design lead");
+		},
+	);
 
 	it("rejects section headings inside new entry, role and custom-section content while keeping normal rich-text bullets", () => {
 		const { data, resolve } = fixture();

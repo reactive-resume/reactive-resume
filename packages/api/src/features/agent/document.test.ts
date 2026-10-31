@@ -62,6 +62,32 @@ function makeDocument() {
 }
 
 describe("agent documents", () => {
+	it.each(["entry", "section"])(
+		"refuses legacy cover-letter %s proposals before they can create another document",
+		(kind) => {
+			const { data, document } = makeDocument();
+			const before = structuredClone(data);
+			const change =
+				kind === "entry"
+					? {
+							kind,
+							sectionId: "legacy-letter",
+							type: "cover-letter",
+							entryJson: JSON.stringify(createEntry("cover-letter")),
+							why: "Requested letter.",
+						}
+					: {
+							kind,
+							type: "cover-letter",
+							title: "Cover letter",
+							entriesJson: JSON.stringify([createEntry("cover-letter")]),
+							why: "Requested letter.",
+						};
+			expect(proposeResumeEditsInputSchema.safeParse({ title: "Letter", changes: [change] }).success).toBe(false);
+			expect(() => resolveDocumentEdits(document, { title: "Letter", changes: [change] })).toThrow();
+			expect(data).toEqual(before);
+		},
+	);
 	it("reads the explicitly chosen application through an owner-scoped query", async () => {
 		const where = vi.fn((_predicate: SQL) => ({ orderBy: () => ({ limit: () => Promise.resolve([]) }) }));
 		dbMock.select.mockReturnValue({ from: () => ({ where }) });

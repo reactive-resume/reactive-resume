@@ -143,6 +143,11 @@ msgstr "{0, plural, one {지원 #건이 업데이트되었습니다} other {지�
 msgid "{0, plural, one {# application} other {# applications}}"
 msgstr "{0, plural, other {지원 #건}}"
 
+#. placeholder {0}: output.skipped.length
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.} other {# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.}}"
+msgstr ""
+
 #. placeholder {0}: state?.characters ?? 0
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "{0, plural, one {# character} other {# characters}}"
@@ -173,9 +178,7 @@ msgstr ""
 msgid "{0, plural, one {# document moved to Trash} other {# documents moved to Trash}}"
 msgstr "{0, plural, one {서류 #개를 휴지통으로 이동했습니다} other {서류 #개를 휴지통으로 이동했습니다}}"
 
-#. placeholder {0}: output.skipped.length
 #. placeholder {0}: stale.length
-#: src/features/assistant/conversation.tsx
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
 msgstr "{0, plural, one {# 편집을 배치할 수 없습니다. 텍스트가 변경되었습니다. 다시 실행해 달라고 다시 요청하세요.} other {# 편집 내용을 배치할 수 없습니다. 텍스트가 변경되었습니다. 다시 실행하도록 요청하세요.}}"
@@ -6276,14 +6279,18 @@ msgstr "헝가리어"
 msgid "Hyphenation"
 msgstr "단어 분할"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "I can edit your summary, bullets and text fields, and add entries and sections. Review each set before accepting it together. Some fields still need Write. I can't translate a whole resume."
+msgstr ""
+
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
-msgid "I can see this {kind} and the {0} posting. Suggestions come back as edits you can accept one by one."
-msgstr "이 {kind} 및 {0} 채용 공고를 볼 수 있습니다. 제안사항은 하나씩 수락할 수 있는 수정사항으로 다시 표시됩니다."
+msgid "I can see this {kind} and the {0} posting. Suggestions come back as edits you can review before accepting."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
-msgid "I can see this {kind}. Suggestions come back as edits you can accept one by one."
-msgstr "{kind}가 보이네요. 제안사항은 하나씩 수락할 수 있는 수정사항으로 다시 표시됩니다."
+msgid "I can see this {kind}. Suggestions come back as edits you can review before accepting."
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "I interviewed 14 customers, mapped three drop-off points and prototyped a shorter setup with engineering."
@@ -8843,6 +8850,10 @@ msgstr "웹 페이지 열기"
 #: src/features/career/today.tsx
 msgid "Open workspace"
 msgstr "워크스페이스 열기"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Open Write"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Opening"

@@ -185,7 +185,7 @@ const documentMock = {
 	loadDocument: vi.fn(),
 	findPosting: vi.fn(),
 	documentView: vi.fn(),
-	resolveEdits: vi.fn(),
+	resolveDocumentEdits: vi.fn(),
 };
 vi.mock("./document", async (importOriginal) => ({
 	// documentOf stays real: it only reads the thread's columns.

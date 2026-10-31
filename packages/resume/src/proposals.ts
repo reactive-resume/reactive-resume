@@ -9,7 +9,12 @@ import { escapeHtml, fnv1a } from "@reactive-resume/utils/string";
  */
 
 /** A field that holds rich text: the summary's content, an entry's description, or a letter's body. */
-export type ProposalTarget = { sectionId: string; itemId?: string; roleId?: string; field: string };
+export type ProposalTarget = {
+	sectionId: string;
+	itemId?: string | undefined;
+	roleId?: string | undefined;
+	field: string;
+};
 
 type ProposalSource = "check" | "assistant" | "improve";
 

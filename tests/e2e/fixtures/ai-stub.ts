@@ -9,7 +9,11 @@ import { createServer } from "node:http";
  */
 
 type ChatMessage = { role: string; content?: unknown; tool_call_id?: string; tool_calls?: unknown[] };
-type ChatRequest = { messages: ChatMessage[]; tools?: Array<{ function: { name: string } }>; stream?: boolean };
+type ChatRequest = {
+	messages: ChatMessage[];
+	tools?: Array<{ function: { name: string; parameters?: { properties?: Record<string, unknown> } } }>;
+	stream?: boolean;
+};
 
 const text = (content: unknown) =>
 	typeof content === "string"
@@ -134,7 +138,12 @@ function reply(request: ChatRequest, response: ServerResponse) {
 	const lastToolName = calls.find((call) => call.id === lastTool?.tool_call_id)?.function.name;
 	if (!lastTool || lastToolName === "ask_user_question") return streamToolCall(response, readTool, {});
 
-	let result: { data?: { passages?: Array<{ id: string; text: string }> } } = {};
+	let result: {
+		data?: {
+			passages?: Array<{ id: string; sectionId?: string; text: string }>;
+			entryTemplates?: Record<string, Record<string, unknown>>;
+		};
+	} = {};
 	try {
 		result = JSON.parse(text(lastTool.content) || "{}");
 	} catch {
@@ -142,28 +151,57 @@ function reply(request: ChatRequest, response: ServerResponse) {
 	}
 	const passage =
 		lastToolName === readTool ? result.data?.passages?.find((item) => item.text && item.text !== "(empty)") : undefined;
-	if (passage && said.includes("overlapping"))
+	if (passage && said.includes("structural"))
 		return streamToolCall(response, "propose_edits", {
-			title: "Overlapping passage edits",
-			edits: [
-				{ passageId: passage.id, text: "Rewritten audit passage.", why: "Clarify the original." },
-				{ passageId: passage.id, text: "Mentored two junior designers.", why: "Retain the first addition.", add: true },
+			title: "Add reviewed certification section",
+			changes: [
 				{
-					passageId: passage.id,
-					text: "Introduced accessibility reviews.",
-					why: "Retain the second addition.",
-					add: true,
+					kind: "section",
+					type: "certifications",
+					title: "Training",
+					entriesJson: JSON.stringify([
+						{
+							...result.data?.entryTemplates?.certifications,
+							title: "CPACC",
+							issuer: "IAAP",
+							date: "2024",
+						},
+					]),
+					why: "The user supplied this certification.",
 				},
-				{ passageId: passage.id, text: "A conflicting rewrite.", why: "Conflicts with the first rewrite." },
 			],
 		});
-	if (passage)
-		return streamToolCall(response, "propose_edits", {
-			title: "Tighten the first passage",
-			edits: [
-				{ passageId: passage.id, text: `${passage.text} (tightened by the stub)`, why: "Leads with the outcome." },
-			],
-		});
+	if (passage) {
+		const structured = request.tools?.find((tool) => tool.function.name === "propose_edits")?.function.parameters
+			?.properties?.changes;
+		const overlapping = said.includes("overlapping");
+		const edits = overlapping
+			? [
+					{ passageId: passage.id, text: "Rewritten audit passage.", why: "Clarify the original." },
+					{
+						passageId: passage.id,
+						text: "Mentored two junior designers.",
+						why: "Retain the first addition.",
+						add: true,
+					},
+					{
+						passageId: passage.id,
+						text: "Introduced accessibility reviews.",
+						why: "Retain the second addition.",
+						add: true,
+					},
+					{ passageId: passage.id, text: "A conflicting rewrite.", why: "Conflicts with the first rewrite." },
+				]
+			: [{ passageId: passage.id, text: `${passage.text} (tightened by the stub)`, why: "Leads with the outcome." }];
+		const title = overlapping ? "Overlapping passage edits" : "Tighten the first passage";
+		return streamToolCall(
+			response,
+			"propose_edits",
+			structured
+				? { title, changes: edits.map((edit) => ({ ...edit, kind: "text", sectionId: passage.sectionId })) }
+				: { title, edits },
+		);
+	}
 
 	return streamText(response, [
 		"I ",

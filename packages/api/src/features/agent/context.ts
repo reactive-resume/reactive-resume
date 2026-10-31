@@ -1,6 +1,9 @@
 import type { ModelMessage } from "ai";
 import { pruneMessages } from "ai";
 import { estimateTokenCount as estimateTextTokenCount } from "tokenx";
+import { getVisibleResumeStructure } from "@reactive-resume/resume/markdown";
+import { resumeEntryTypeSchema } from "@reactive-resume/resume/structural-proposals";
+import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 
 // Pure model-context pruning, wired into the agent loop via prepareStep so it runs before every
 // step. Tier 0 always runs (a stale resume snapshot is actively harmful — shifted array indexes);
@@ -61,7 +64,94 @@ function wrapToolOutput(original: unknown, value: unknown): unknown {
 	return value;
 }
 
+const resumeStructureSchema = resumeDataSchema
+	.pick({ basics: true, summary: true, sections: true, customSections: true })
+	.extend({
+		summary: resumeDataSchema.shape.summary.optional(),
+		sections: resumeDataSchema.shape.sections.partial(),
+	});
+const recordOf = (value: unknown): Record<string, unknown> =>
+	value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
+const isToolFailure = (output: unknown) =>
+	["error-text", "error-json", "execution-denied"].includes(String(recordOf(output).type));
+
+/** Always before provider calls, including restored UI history: application snapshots never belong in model context. */
+function projectDocumentResults(messages: ModelMessage[]): ModelMessage[] {
+	return messages.map((message) => {
+		const parts = contentParts(message);
+		let changed = false;
+		const content = parts.map((part) => {
+			if (part.type !== "tool-result" || !["read_resume", "propose_edits"].includes(String(part.toolName))) return part;
+			if (isToolFailure(part.output)) return part;
+			let value = unwrapToolOutput(part.output);
+			if (typeof value === "string") {
+				try {
+					value = JSON.parse(value);
+				} catch {
+					value = {};
+				}
+			}
+			const output = recordOf(value);
+			let projected: unknown;
+			if (part.toolName === "propose_edits") {
+				// Acknowledgement only. Full cards/snapshots remain in the owned UI message and save receipt.
+				projected = {
+					edits: Array.isArray(output.edits)
+						? output.edits.map((edit: unknown) => {
+								const record = recordOf(edit);
+								return {
+									id: typeof record.id === "string" ? record.id : undefined,
+									status: typeof record.status === "string" ? record.status : undefined,
+								};
+							})
+						: [],
+					skipped: Array.isArray(output.skipped)
+						? output.skipped.map((edit: unknown) => ({
+								passageId: typeof recordOf(edit).passageId === "string" ? recordOf(edit).passageId : undefined,
+								reason: typeof recordOf(edit).reason === "string" ? recordOf(edit).reason : undefined,
+							}))
+						: [],
+					...(Array.isArray(output.edits) && output.edits.length > 0
+						? {
+								note: "Prepared changes are shown in the review cards. This tool does not apply them. Read the document again for current visible content. Use Write for unsupported fields and Documents for cover letters.",
+							}
+						: {}),
+				};
+			} else {
+				const data = recordOf(output.data);
+				const structure = resumeStructureSchema.safeParse(data.structure);
+				const templates = recordOf(data.entryTemplates);
+				projected = {
+					name: typeof output.name === "string" ? output.name : undefined,
+					updatedAt: typeof output.updatedAt === "string" ? output.updatedAt : undefined,
+					data: {
+						resume: typeof data.resume === "string" ? data.resume : undefined,
+						passages: Array.isArray(data.passages)
+							? data.passages.map((passage: unknown) => {
+									const record = recordOf(passage);
+									return Object.fromEntries(
+										["id", "sectionId", "location", "text"]
+											.filter((key) => typeof record[key] === "string")
+											.map((key) => [key, record[key]]),
+									);
+								})
+							: [],
+						...(structure.success ? { structure: getVisibleResumeStructure(structure.data) } : {}),
+						entryTemplates: Object.fromEntries(
+							resumeEntryTypeSchema.options.filter((type) => type in templates).map((type) => [type, templates[type]]),
+						),
+					},
+				};
+			}
+			changed = true;
+			return { ...part, output: wrapToolOutput(part.output, projected) };
+		});
+		return changed ? ({ ...message, content } as ModelMessage) : message;
+	});
+}
+
 function isSnapshotResultPart(part: LoosePart): boolean {
+	if (isToolFailure(part.output)) return false;
 	if (part.type !== "tool-result" || typeof part.toolName !== "string" || !SNAPSHOT_TOOL_NAMES.has(part.toolName)) {
 		return false;
 	}
@@ -193,7 +283,7 @@ export function pruneAgentModelContext(
 	messages: ModelMessage[],
 	budget: number = AGENT_CONTEXT_TOKEN_BUDGET,
 ): ModelMessage[] {
-	let current = supersedeStaleSnapshots(messages);
+	let current = supersedeStaleSnapshots(projectDocumentResults(messages));
 	if (estimateTokens(current) <= budget) return current;
 
 	// Tier 1: strip reasoning from all but the last assistant message.

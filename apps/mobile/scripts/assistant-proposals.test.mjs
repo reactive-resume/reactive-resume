@@ -30,6 +30,17 @@ const shared = evaluate(
 	}).outputFiles[0].text,
 	{},
 );
+const { defaultResumeData } = evaluate(
+	buildSync({
+		entryPoints: [mobileRequire.resolve("@reactive-resume/schema/resume/default")],
+		bundle: true,
+		platform: "node",
+		format: "cjs",
+		write: false,
+	}).outputFiles[0].text,
+	{},
+);
+
 let scope = "account";
 const toasts = [];
 let suppressed = false;
@@ -57,12 +68,12 @@ function store(kind) {
 		return { ...state, update: suppressed ? () => {} : state.update };
 	};
 	useStore.subscribe = (listener) => runtime.store.subscribe(listener);
-	useStore.load = async (content) => {
+	useStore.load = async (content, initialData) => {
 		let document = {
 			id: kind,
 			name: kind,
 			content,
-			data: { summary: { content } },
+			data: initialData ?? { summary: { content } },
 			isLocked: false,
 			revision: 1,
 			updatedAt: new Date(),
@@ -236,6 +247,41 @@ for (const kind of ["resume", "letter"]) {
 		assert.deepEqual(toasts, []);
 	});
 }
+
+test("native structural acceptance follows actual draft saves, refinements, offscreen Undo and Redo", async () => {
+	const data = structuredClone(defaultResumeData);
+	data.summary.content = "<p>Old</p>";
+	await resumeStore.load(data.summary.content, data);
+	const next = structuredClone(data);
+	next.basics.headline = "Design lead";
+	const proposal = {
+		...edit("structural", "Headline: Design lead"),
+		target: { sectionId: "resume", field: "data" },
+		snapshot: { before: shared.resumeStructureSnapshot(data), after: shared.resumeStructureSnapshot(next) },
+	};
+	const doc = documents.useResumeAssistantDocument("resume");
+	assert.deepEqual(doc.accept([proposal]), { applied: [proposal], stale: [] });
+	await resumeStore.getState().flush();
+	assert.equal(resumeStore.getState().data.basics.headline, "Design lead");
+	assert.deepEqual(documentSaves.at(-1).applications, { structural: true });
+	resumeStore.getState().update(
+		(draft) => {
+			draft.basics.headline = "Refined lead";
+		},
+		{ newStep: true },
+	);
+	assert.equal(documents.useResumeAssistantDocument("resume").stateOf(proposal), "accepted");
+	resumeStore.getState().undo();
+	resumeStore.getState().undo();
+	await resumeStore.getState().flush();
+	assert.equal(resumeStore.getState().data.basics.headline, "");
+	assert.deepEqual(documentSaves.at(-1).applications, { structural: false });
+	assert.equal(documents.useResumeAssistantDocument("resume").stateOf({ ...proposal, status: "accepted" }), "pending");
+	resumeStore.getState().redo();
+	await resumeStore.getState().flush();
+	assert.equal(resumeStore.getState().data.basics.headline, "Design lead");
+	assert.deepEqual(documentSaves.at(-1).applications, { structural: true });
+});
 
 // Drive the public ChatView through its component tree; only platform/network boundaries are replaced.
 test("native chat records real successes and explicit history changes, never refinements, and restores redo", async () => {

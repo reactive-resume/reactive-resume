@@ -10,7 +10,7 @@ import { proposeEditsInputSchema, proposeResumeEditsInputSchema } from "@reactiv
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { createEntry } from "@reactive-resume/resume/entries";
-import { buildMarkdown } from "@reactive-resume/resume/markdown";
+import { buildMarkdown, getVisibleResumeStructure } from "@reactive-resume/resume/markdown";
 import {
 	additionAfter,
 	applyResumeProposals,
@@ -22,8 +22,7 @@ import {
 	replaceBlockText,
 	resumeStructureSnapshot,
 } from "@reactive-resume/resume/proposals";
-import { applyResumeStructureChange } from "@reactive-resume/resume/structural-proposals";
-import { sectionTypeSchema } from "@reactive-resume/schema/resume/data";
+import { applyResumeStructureChange, resumeEntryTypeSchema } from "@reactive-resume/resume/structural-proposals";
 import { syncResumeDates, upgradeResumeDates } from "@reactive-resume/schema/resume/dates";
 import { generateId } from "@reactive-resume/utils/string";
 import { coverLetterService } from "../cover-letters/service";
@@ -116,13 +115,8 @@ export async function loadDocument(userId: string, document: AssistantDocument):
 			read: (target) => readTarget(resume.data, target),
 			view: {
 				resume: buildMarkdown(resume.data),
-				structure: {
-					basics: resume.data.basics,
-					summary: resume.data.summary,
-					sections: resume.data.sections,
-					customSections: resume.data.customSections,
-				},
-				entryTemplates: Object.fromEntries(sectionTypeSchema.options.map((type) => [type, createEntry(type)])),
+				structure: getVisibleResumeStructure(resume.data),
+				entryTemplates: Object.fromEntries(resumeEntryTypeSchema.options.map((type) => [type, createEntry(type)])),
 			},
 		};
 	}
@@ -375,16 +369,20 @@ export function resolveResumeEdits(document: LoadedDocument, input: ProposeResum
 		}
 	}
 	if (textOnly) return { title: input.title, edits: textEdits, skipped };
-	const placed = applyResumeProposals(next, textEdits.map((edit) => ({ ...edit, source: "assistant" })));
+	const placed = applyResumeProposals(
+		next,
+		textEdits.map((edit) => ({ ...edit, source: "assistant" })),
+	);
 	for (const edit of placed.applied) {
 		before.push(`${edit.location}\n${blockText(edit.before)}`);
 		after.push(`${edit.location}\n${blockText(edit.after)}`);
 		reasons.push(edit.why);
 	}
-	for (const edit of placed.stale) skipped.push({
-		passageId: textPassages.get(edit.id) ?? edit.id,
-		reason: "This text changed or overlaps another edit. Ask for a fresh suggestion.",
-	});
+	for (const edit of placed.stale)
+		skipped.push({
+			passageId: textPassages.get(edit.id) ?? edit.id,
+			reason: "This text changed or overlaps another edit. Ask for a fresh suggestion.",
+		});
 	const saved = resumeStructureSnapshot(original);
 	const proposed = resumeStructureSnapshot(next);
 	return {

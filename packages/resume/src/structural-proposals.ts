@@ -13,6 +13,7 @@ export const resumeFieldTargetSchema = z.strictObject({
 	field: z.string(),
 });
 const why = z.string().trim().min(1).max(240);
+export const resumeEntryTypeSchema = sectionTypeSchema.exclude(["cover-letter"]);
 
 /** Typed structural payloads are validated separately from prose, independent of document language. */
 export const resumeChangeSchema = z.discriminatedUnion("kind", [
@@ -41,7 +42,7 @@ export const resumeChangeSchema = z.discriminatedUnion("kind", [
 	z.strictObject({
 		kind: z.literal("entry"),
 		sectionId: z.string(),
-		type: sectionTypeSchema,
+		type: resumeEntryTypeSchema,
 		entryJson: z
 			.string()
 			.max(20_000)
@@ -52,7 +53,7 @@ export const resumeChangeSchema = z.discriminatedUnion("kind", [
 	}),
 	z.strictObject({
 		kind: z.literal("section"),
-		type: sectionTypeSchema,
+		type: resumeEntryTypeSchema,
 		title: z.string().trim().min(1).max(120),
 		entriesJson: z
 			.string()
@@ -69,10 +70,15 @@ const pointer = (value: string) => value.replaceAll("~", "~0").replaceAll("/", "
 
 function sectionAt(data: ResumeData, id: string) {
 	const builtin = Object.hasOwn(data.sections, id) ? data.sections[id as keyof ResumeData["sections"]] : null;
-	if (builtin) return { section: builtin, type: id as CustomSectionType, path: `/sections/${pointer(id)}` };
+	if (builtin) {
+		if (builtin.hidden) throw new Error("This section is hidden. Show it in Write before asking for changes.");
+		return { section: builtin, type: id as CustomSectionType, path: `/sections/${pointer(id)}` };
+	}
 	const index = data.customSections.findIndex((section) => section.id === id);
 	const section = data.customSections[index];
 	if (!section) throw new Error("This section no longer exists. Open Write to choose a section.");
+	if (section.type === "cover-letter") throw new Error("Create or open cover letters in Documents.");
+	if (section.hidden) throw new Error("This section is hidden. Show it in Write before asking for changes.");
 	return { section, type: section.type, path: `/customSections/${index}` };
 }
 
@@ -93,13 +99,16 @@ function fieldPath(data: ResumeData, target: z.infer<typeof resumeFieldTargetSch
 		["name", "headline", "email", "phone", "location"].includes(field)
 	)
 		return { path: `/basics/${field}`, value: data.basics[field as "name"] };
-	if (sectionId === "summary" && !itemId && !roleId && field === "title")
+	if (sectionId === "summary" && !itemId && !roleId && field === "title") {
+		if (data.summary.hidden) throw new Error("The summary is hidden. Show it in Write before asking for changes.");
 		return { path: "/summary/title", value: data.summary.title };
+	}
 	const { section, path, type } = sectionAt(data, sectionId);
 	if (!itemId && !roleId && field === "title") return { path: `${path}/title`, value: section.title };
 	const index = section.items.findIndex((item) => item.id === itemId);
 	let entry = section.items[index] as Record<string, unknown> | undefined;
 	let entryPath = `${path}/items/${index}`;
+	if (entry?.hidden) throw new Error("This entry is hidden. Show it in Write before asking for changes.");
 	if (!Object.hasOwn(customSectionItemDefinitionByType[type].schema.shape, field))
 		throw new Error("This field doesn't belong in this section. Open Write to choose the matching entry.");
 	if (roleId) {
@@ -165,10 +174,9 @@ export function applyResumeStructureChange(data: ResumeData, change: Exclude<Res
 		]);
 	}
 	if (change.kind === "entry") {
-		const { section, type, path } = sectionAt(data, change.sectionId);
+		const { type, path } = sectionAt(data, change.sectionId);
 		if (type !== change.type)
 			throw new Error("This entry belongs in a different section. Choose the matching section in Write.");
-		if (section.hidden) throw new Error("This section is hidden. Show it in Write before adding entries.");
 		const entry = newEntry(type, JSON.parse(change.entryJson), data.metadata.page.locale);
 		const changes = [{ op: "add" as const, path: `${path}/items/-`, value: entry }];
 		if (!data.metadata.layout.pages.some((page) => [...page.main, ...page.sidebar].includes(change.sectionId))) {

@@ -113,3 +113,30 @@ test("Accept all preserves overlapping additions and reports the rewrite it cann
 	await expect(page.getByText("3 of 4 applied", { exact: true })).toBeVisible({ timeout: 20_000 });
 	await expect(page.getByRole("list", { name: "Proposed edits" }).getByText("Applied", { exact: true })).toHaveCount(3);
 });
+
+test("reviews and atomically saves a structural set with offscreen Undo and reacceptance", async ({
+	authPage: page,
+}, testInfo) => {
+	test.setTimeout(90_000);
+	await createSampleResumeFromDashboard(page, testInfo);
+	const resumeId = resumeIdOf(page);
+	await page.getByRole("button", { name: "Assistant", exact: true }).click();
+	await connectStub(page);
+	await send(page, "Create a structural certification");
+	const edits = page.getByRole("list", { name: "Proposed edits" });
+	await expect(edits).toContainText("CPACC", { timeout: 20_000 });
+	await expect(edits).toContainText("IAAP");
+	expect(await resumeJson(page, resumeId)).not.toContain("CPACC");
+	await edits.getByRole("button", { name: "Accept", exact: true }).click();
+	await expect(page.getByText("1 of 1 applied", { exact: true })).toBeVisible();
+	await expect.poll(() => resumeJson(page, resumeId), { timeout: 15_000 }).toContain("CPACC");
+	await page.getByRole("button", { name: "Assistant", exact: true }).click();
+	await page.getByRole("button", { name: "Undo", exact: true }).click();
+	await expect.poll(() => resumeJson(page, resumeId), { timeout: 15_000 }).not.toContain("CPACC");
+	await page.reload();
+	await page.getByRole("button", { name: "Assistant", exact: true }).click();
+	await expect(edits.getByRole("button", { name: "Accept", exact: true })).toBeVisible({ timeout: 20_000 });
+	await edits.getByRole("button", { name: "Accept", exact: true }).click();
+	await expect.poll(() => resumeJson(page, resumeId), { timeout: 15_000 }).toContain("CPACC");
+	expect((await resumeJson(page, resumeId)).split("CPACC")).toHaveLength(2);
+});
