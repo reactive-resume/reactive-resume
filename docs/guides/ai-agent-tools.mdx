@@ -28,7 +28,7 @@ The assistant works through a small, fixed set of tools. You never call them you
 
 Every edit targets one passage by the ID the read tool returned. When you accept, the new text replaces that passage (or is added after it) in your document, as a single step you can undo.
 
-If you or another change edits a passage after the assistant read it, the edit can no longer be placed. The card then says, for example, "1 edit couldn't be placed: its text changed. Ask again to redo it." Edits that were placed but whose passage changed afterwards show **Out of date: the text has changed since.**
+If you or another change edits a passage after the assistant read it, the edit can no longer be placed. The card then says, for example, "1 edit couldn't be placed: its text changed. Ask again to redo it." Accepted edits stay **Applied** when you refine their wording. **Out of date: the text has changed since.** applies to a proposal whose original passage can no longer be placed.
 
 The assistant is instructed to rewrite only what your document already says: it doesn't add employers, titles, dates, numbers, skills or achievements that aren't in the document or the conversation. When a job posting asks for something your document doesn't mention, it uses `ask_user_question` first, and only drafts it from your answer.
 

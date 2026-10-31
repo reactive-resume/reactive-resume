@@ -1,9 +1,9 @@
-import type { Proposal, ProposalState } from "@reactive-resume/resume/proposals";
+import type { Proposal, ProposalApplicationResult, ProposalState } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import { plural, t } from "@lingui/core/macro";
+import { t } from "@lingui/core/macro";
 import { useMemo } from "react";
-import { applyTo, getProposalState, getStateIn } from "@reactive-resume/resume/proposals";
-import { acceptResumeProposals } from "./proposals";
+import { applyProposals, getProposalState, getStateIn } from "@reactive-resume/resume/proposals";
+import { acceptResumeProposals, proposalResultMessage } from "./proposals";
 import { getAccountScope } from "@/auth/session";
 import { useLetterStore, useResumeStore } from "@/draft";
 import { letterAdapter } from "@/draft/adapters";
@@ -15,13 +15,15 @@ export type AssistantDocument = {
 	kind: "resume" | "letter";
 	id: string;
 	name: string;
+	/** Document revision whose authoritative proposal decisions should be read. */
+	proposalRevision?: string;
 	locked: boolean;
 	/** The application it's for, whose posting is shared as context. */
 	posting: { id: string; company: string; role: string } | null;
 	/** A proposal's state against the document as it reads now. */
 	stateOf: (proposal: Proposal) => ProposalState;
 	/** Applies proposals to the draft as one undo step, with Undo in the toast. */
-	accept: (proposals: readonly Proposal[]) => void;
+	accept: (proposals: readonly Proposal[]) => ProposalApplicationResult;
 	/** Confirm the server has this draft before the model reads it. */
 	flush: () => Promise<boolean>;
 };
@@ -36,6 +38,7 @@ export function useResumeAssistantDocument(resumeId: string, applicationId?: str
 	const data = useResumeStore((state) => (state.document?.id === resumeId ? (state.data as ResumeData | null) : null));
 	const scope = getAccountScope();
 	const locked = useResumeStore((state) => state.locked);
+	const applicationsOfProposals = useResumeStore((state) => state.proposalApplications);
 	const { data: applications } = useApplications();
 
 	return useMemo(() => {
@@ -48,12 +51,14 @@ export function useResumeAssistantDocument(resumeId: string, applicationId?: str
 			kind: "resume",
 			id: document.id,
 			name: document.name,
+			proposalRevision: document.updatedAt.toISOString(),
 			locked,
 			posting: application ? { id: application.id, company: application.company, role: application.role } : null,
-			stateOf: (proposal) => getProposalState(data, proposal),
+			stateOf: (proposal) => getProposalState(data, proposal, applicationsOfProposals),
 			accept: (proposals) => {
-				if (getAccountScope() !== scope || useResumeStore.getState().document?.id !== resumeId) return;
-				acceptResumeProposals(proposals);
+				if (getAccountScope() !== scope || useResumeStore.getState().document?.id !== resumeId)
+					return { applied: [], stale: [] };
+				return acceptResumeProposals(proposals);
 			},
 			flush: async () => {
 				if (!scope || getAccountScope() !== scope || useResumeStore.getState().document?.id !== resumeId) return false;
@@ -68,13 +73,14 @@ export function useResumeAssistantDocument(resumeId: string, applicationId?: str
 				);
 			},
 		};
-	}, [document, data, locked, applications, applicationId, resumeId, scope]);
+	}, [document, data, locked, applications, applicationId, resumeId, scope, applicationsOfProposals]);
 }
 
 /** Subscribes to the letter layout's draft; proposals edit the body using the shared letter contract. */
 export function useLetterAssistantDocument(letterId: string, applicationId?: string): AssistantDocument | null {
 	const document = useLetterStore((state) => (state.document?.id === letterId ? state.document : null));
 	const locked = useLetterStore((state) => state.locked);
+	const applicationsOfProposals = useLetterStore((state) => state.proposalApplications);
 	const { data: applications } = useApplications();
 	const scope = getAccountScope();
 
@@ -87,23 +93,36 @@ export function useLetterAssistantDocument(letterId: string, applicationId?: str
 			kind: "letter",
 			id: document.id,
 			name: document.name,
+			proposalRevision: String(document.revision),
 			locked,
 			posting: application ? { id: application.id, company: application.company, role: application.role } : null,
-			stateOf: (proposal) => getStateIn(document.content, proposal),
+			stateOf: (proposal) => getStateIn(document.content, proposal, applicationsOfProposals),
 			accept: (proposals) => {
-				if (!isCurrent() || useLetterStore.getState().locked) return;
-				const before = useLetterStore.getState().data?.content;
+				let result: ProposalApplicationResult = { applied: [], stale: [] };
+				const proposalIds: string[] = [];
+				if (!isCurrent() || useLetterStore.getState().locked) return result;
 				useLetterStore.getState().update(
 					(draft) => {
-						for (const proposal of proposals) draft.content = applyTo(draft.content, proposal) ?? draft.content;
+						result = applyProposals(
+							proposals,
+							() => draft.content,
+							(_, value) => {
+								draft.content = value;
+							},
+							useLetterStore.getState().proposalApplications,
+						);
+						proposalIds.push(...result.applied.map((proposal) => proposal.id));
 					},
-					{ newStep: true },
+					{ newStep: true, proposalIds },
 				);
 				const accepted = useLetterStore.getState().data;
-				if (!accepted || accepted.content === before) return;
+				if (!accepted || result.applied.length === 0) {
+					if (result.stale.length > 0) showToast({ message: proposalResultMessage(result) });
+					return result;
+				}
 				let eligible = true;
 				const toastId = showToast({
-					message: plural(proposals.length, { 1: "Edit applied", other: "# edits applied" }),
+					message: proposalResultMessage(result),
 					action: {
 						label: t`Undo`,
 						onPress: () => {
@@ -132,6 +151,7 @@ export function useLetterAssistantDocument(letterId: string, applicationId?: str
 					eligible = false;
 					unsubscribe();
 				}, 12000);
+				return result;
 			},
 			flush: async () => {
 				if (!isCurrent()) return false;
@@ -145,5 +165,5 @@ export function useLetterAssistantDocument(letterId: string, applicationId?: str
 				);
 			},
 		};
-	}, [document, locked, applications, applicationId, letterId, scope]);
+	}, [document, locked, applications, applicationId, letterId, scope, applicationsOfProposals]);
 }

@@ -245,7 +245,7 @@ function Conversation(props: ConversationProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const queryClient = useQueryClient();
-	const [statuses, setStatuses] = useState<ReadonlyMap<string, EditStatus>>(new Map());
+	const [rejections, setStatuses] = useState<ReadonlyMap<string, EditStatus>>(new Map());
 	const [stopped, setStopped] = useState(false);
 	const [recovering, setRecovering] = useState(props.activeRun);
 
@@ -266,7 +266,7 @@ function Conversation(props: ConversationProps) {
 		sendMessage,
 		setMessages,
 		status,
-		error,
+		error: chatError,
 		clearError,
 		regenerate,
 		addToolOutput,
@@ -369,6 +369,10 @@ function Conversation(props: ConversationProps) {
 	// since regenerating would drop the answer.
 	const retry = () => {
 		if (busy || readOnly || continuationBlocked) return;
+		if (receipts.error) {
+			void receipts.refetch();
+			return;
+		}
 		clearError();
 		void lane.run(async (isCurrent) => {
 			const latest = await reloadThread();
@@ -410,16 +414,42 @@ function Conversation(props: ConversationProps) {
 		return () => subscription.remove();
 	}, []);
 
+	// Refresh receipts on document revisions without replacing a live streamed transcript.
+	const receiptOptions = orpc.agent.threads.get.queryOptions({
+		input: { id: threadId },
+		context: { scope: props.scope },
+	});
+	const receipts = useQuery({
+		...receiptOptions,
+		gcTime: 0,
+		queryKey: [...receiptOptions.queryKey, props.scope, document?.proposalRevision],
+		enabled: !!document?.proposalRevision,
+	});
+	const receiptsReady = !document?.proposalRevision || !!receipts.data;
+	const error = chatError ?? receipts.error;
+	const statuses = useMemo(
+		() =>
+			new Map([
+				...((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
+					message.parts.flatMap((part) =>
+						isProposeEdits(part) ? toProposals(part, new Map()).map((edit) => [edit.id, edit.status] as const) : [],
+					),
+				),
+				...rejections,
+			]),
+		[receipts.data, rejections],
+	);
+
 	// ---- Proposed edits ----
 
 	const proposals = useMemo(
 		() =>
-			document
+			document && receiptsReady
 				? messages.flatMap((message) =>
 						message.parts.flatMap((part) => (isProposeEdits(part) ? toProposals(part, statuses) : [])),
 					)
 				: [],
-		[messages, statuses, document],
+		[messages, statuses, document, receiptsReady],
 	);
 	// Kept after the assistant closes: Page marks them while they're pending.
 	const documentId = document?.id;
@@ -428,8 +458,8 @@ function Conversation(props: ConversationProps) {
 	}, [documentId, document?.kind, proposals]);
 
 	const record = (message: UIMessage, part: ToolPart, changed: readonly Proposal[], next: EditStatus) => {
+		if (!part.toolCallId || next !== "rejected") return;
 		setStatuses((current) => new Map([...current, ...changed.map((proposal) => [proposal.id, next] as const)]));
-		if (!part.toolCallId) return;
 		void client.agent.messages
 			.setEditStatus(
 				{
@@ -449,37 +479,22 @@ function Conversation(props: ConversationProps) {
 		recordRef.current = record;
 	});
 
-	// Undoing an accepted edit (the toast's Undo, or undo in the editor) makes it pending again. Only an undo (the
-	// document) or a status change can cause one, so streamed chunks don't re-check every edit.
-	const recordUndone = useEffectEvent(() => {
-		if (!document) return;
-		for (const message of messages)
-			for (const part of message.parts) {
-				if (!isProposeEdits(part)) continue;
-				const undone = toProposals(part, statuses).filter(
-					(proposal) => proposal.status === "accepted" && document.stateOf(proposal) === "pending",
-				);
-				if (undone.length > 0) record(message, part, undone, "pending");
-			}
-	});
-	// oxlint-disable-next-line react/set-state-in-effect -- an undo happens in the draft store; the new status is also saved to the thread
-	useEffect(() => recordUndone(), [statuses, document]);
-
 	const handlers = useMemo<ProposalHandlers | null>(
 		() =>
 			document
 				? {
 						statuses,
 						stateOf: document.stateOf,
-						locked: document.locked,
+						locked: document.locked || !receiptsReady,
 						onAccept: (message, part, chosen) => {
-							document.accept(chosen);
-							recordRef.current(message, part, chosen, "accepted");
+							if (!receiptsReady) return;
+							const { applied } = document.accept(chosen);
+							if (applied.length > 0) recordRef.current(message, part, applied, "accepted");
 						},
 						onReject: (message, part, chosen) => recordRef.current(message, part, chosen, "rejected"),
 					}
 				: null,
-		[document, statuses],
+		[document, statuses, receiptsReady],
 	);
 	const answer = useMemo(
 		() =>
@@ -598,9 +613,13 @@ function Conversation(props: ConversationProps) {
 									<View style={{ flexDirection: "row", gap: space.s2 }}>
 										<Icon name="warning-circle" size={18} color={colors.dangerText} />
 										<Text variant="callout" color="dangerText" style={{ flex: 1 }}>
-											<Trans>
-												{props.connection} returned “{errorText(error, t`an error`)}”. Your message is kept.
-											</Trans>
+											{receipts.error ? (
+												<Trans>This conversation couldn't be opened.</Trans>
+											) : (
+												<Trans>
+													{props.connection} returned “{errorText(error, t`an error`)}”. Your message is kept.
+												</Trans>
+											)}
 										</Text>
 									</View>
 									{continuationBlocked ? (

@@ -11,7 +11,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { templates } from "@/dialogs/resume/template/data";
-import { useCurrentBuilderResumeSelector, useResumeData } from "@/features/resume/builder/draft";
+import { useCurrentBuilderResumeSelector, useResumeData, useResumeStore } from "@/features/resume/builder/draft";
 import { CheckPageLayer, PageViewToggle } from "@/features/resume/editor/check/page-layer";
 import { ParserView } from "@/features/resume/editor/check/parser-view";
 import { CanvasStatusPill, usePageScale, ZoomBar } from "@/features/resume/editor/chrome";
@@ -73,7 +73,8 @@ function ResumePageCanvas() {
 	// highlighted.
 	const markEdits = mode === "check" && checkTab === "writing" && pageView === "page" && proposals.length > 0;
 	const marked = [...(markEdits ? proposals : []), ...assistantProposals];
-	const pendingOnPage = data ? pendingProposals(data, assistantProposals).length : 0;
+	const applications = useResumeStore((state) => state.proposalApplications);
+	const pendingOnPage = data ? pendingProposals(data, assistantProposals, undefined, applications).length : 0;
 	const parser = mode === "check" && pageView === "parser" && !viewing;
 
 	// Design: a hovered or focused template is drawn on the page until it's applied or the pointer leaves.
@@ -82,7 +83,7 @@ function ResumePageCanvas() {
 		: data && previewTemplate
 			? { ...data, metadata: { ...data.metadata, template: previewTemplate } }
 			: data && marked.length > 0
-				? markProposals(data, marked)
+				? markProposals(data, marked, applications)
 				: undefined;
 	const overflow = data && !previewTemplate && !viewing ? measureOverflow(data, rendered) : null;
 	// Desktop: the page moves 120px aside so it stays visible beside the Download & history sheet.

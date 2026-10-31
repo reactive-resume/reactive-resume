@@ -1,14 +1,13 @@
 // Proposed edits from the assistant: as cards in the chat, applied to the draft through the M3-T3 store, and marked on
 // the Page tab (ported from apps/web/src/features/resume/editor/proposals/proposals.ts).
-import type { Proposal } from "@reactive-resume/resume/proposals";
+import type { Proposal, ProposalApplicationResult, ProposalApplications } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { plural, t } from "@lingui/core/macro";
 import { produce } from "immer";
 import { useMemo } from "react";
 import { create } from "zustand";
 import {
-	applyProposal,
-	applyTo,
+	applyProposals,
 	getProposalState,
 	readTarget,
 	splitBlock,
@@ -54,23 +53,49 @@ export function toProposals(part: ToolPart, statuses: ReadonlyMap<string, Propos
 	}));
 }
 
+/** The toast uses actual writes, with placement failures reported separately from successes. */
+export function proposalResultMessage({ applied, stale }: ProposalApplicationResult) {
+	return [
+		applied.length > 0 ? plural(applied.length, { 1: "Edit applied", other: "# edits applied" }) : "",
+		stale.length > 0
+			? plural(stale.length, {
+					one: "# edit couldn't be placed: its text changed. Ask again to redo it.",
+					other: "# edits couldn't be placed: their text changed. Ask again to redo them.",
+				})
+			: "",
+	]
+		.filter(Boolean)
+		.join(" · ");
+}
+
 /** Applies proposals to the open resume as one undo step; the toast's Undo takes them back. */
-export function acceptResumeProposals(proposals: readonly Proposal[]) {
+export function acceptResumeProposals(proposals: readonly Proposal[]): ProposalApplicationResult {
+	let result: ProposalApplicationResult = { applied: [], stale: [] };
+	const proposalIds: string[] = [];
 	const store = useResumeStore.getState();
 	const scope = getAccountScope();
 	const id = store.document?.id;
-	if (!id || !store.data || store.locked) return;
+	if (!id || !store.data || store.locked) return result;
 	store.update(
 		(draft) => {
-			for (const proposal of proposals) applyProposal(draft as ResumeData, proposal);
+			result = applyProposals(
+				proposals,
+				(target) => readTarget(draft as ResumeData, target),
+				(target, value) => writeTarget(draft as ResumeData, target, value),
+				store.proposalApplications,
+			);
+			proposalIds.push(...result.applied.map((proposal) => proposal.id));
 		},
-		{ newStep: true },
+		{ newStep: true, proposalIds },
 	);
 	const accepted = useResumeStore.getState().data;
-	if (accepted === store.data) return;
+	if (result.applied.length === 0) {
+		if (result.stale.length > 0) showToast({ message: proposalResultMessage(result) });
+		return result;
+	}
 	let eligible = true;
 	const toastId = showToast({
-		message: plural(proposals.length, { 1: "Edit applied", other: "# edits applied" }),
+		message: proposalResultMessage(result),
 		action: {
 			label: t`Undo`,
 			onPress: () => {
@@ -98,6 +123,7 @@ export function acceptResumeProposals(proposals: readonly Proposal[]) {
 		eligible = false;
 		unsubscribe();
 	}, 12000);
+	return result;
 }
 
 // ---- Page markings ----
@@ -105,21 +131,35 @@ export function acceptResumeProposals(proposals: readonly Proposal[]) {
 const NONE: readonly Proposal[] = [];
 
 /** The assistant's proposals for one resume, kept after the assistant closes so Page can mark them. */
-export const useAssistantProposals = create<{ resumeId: string | null; proposals: readonly Proposal[] }>(() => ({
+export const useAssistantProposals = create<{
+	resumeId: string | null;
+	proposals: readonly Proposal[];
+	revision: string | number | null;
+}>(() => ({
 	resumeId: null,
 	proposals: [],
+	revision: null,
 }));
 
 /** Skips an unchanged list: a streaming reply rebuilds it on every chunk, and Page re-marks on each publish. */
 export const publishProposals = (resumeId: string, proposals: readonly Proposal[]) => {
 	const current = useAssistantProposals.getState();
-	if (current.resumeId === resumeId && JSON.stringify(current.proposals) === JSON.stringify(proposals)) return;
-	useAssistantProposals.setState({ resumeId, proposals });
+	const revision = useResumeStore.getState().proposalRevision;
+	if (
+		current.resumeId === resumeId &&
+		current.revision === revision &&
+		JSON.stringify(current.proposals) === JSON.stringify(proposals)
+	)
+		return;
+	useAssistantProposals.setState({ resumeId, proposals, revision });
 };
 
 /** The proposals still waiting on the user (not accepted, rejected or out of date). */
-export const pendingProposals = (data: ResumeData, proposals: readonly Proposal[]) =>
-	proposals.filter((proposal) => getProposalState(data, proposal) === "pending");
+export const pendingProposals = (
+	data: ResumeData,
+	proposals: readonly Proposal[],
+	applications: ProposalApplications = {},
+) => proposals.filter((proposal) => getProposalState(data, proposal, applications) === "pending");
 
 // The PDF needs literal colours for its marks (web README §5.9), the same as web's page canvas.
 const OLD_TEXT_COLOR = "#7d7b73";
@@ -143,15 +183,20 @@ function markChange(before: string, after: string) {
 }
 
 /** The page as it would read with the proposals: old text struck through, new text highlighted. Never saved. */
-export function markProposals(data: ResumeData, proposals: readonly Proposal[]): ResumeData {
-	const pending = pendingProposals(data, proposals);
+export function markProposals(
+	data: ResumeData,
+	proposals: readonly Proposal[],
+	applications: ProposalApplications = {},
+): ResumeData {
+	const pending = pendingProposals(data, proposals, applications);
 	if (pending.length === 0) return data;
 	return produce(data, (draft) => {
-		for (const proposal of pending) {
-			const value = readTarget(draft, proposal.target);
-			const next = applyTo(value, { before: proposal.before, after: markChange(proposal.before, proposal.after) });
-			if (next !== undefined) writeTarget(draft, proposal.target, next);
-		}
+		applyProposals(
+			pending.map((proposal) => ({ ...proposal, after: markChange(proposal.before, proposal.after) })),
+			(target) => readTarget(draft, target),
+			(target, value) => writeTarget(draft, target, value),
+			applications,
+		);
 	});
 }
 
@@ -160,12 +205,19 @@ export function markProposals(data: ResumeData, proposals: readonly Proposal[]):
  * `data` is the draft's data; pass the result to `usePreview` instead.
  */
 export function useMarkedResumeData(resumeId: string, data: ResumeData | null) {
-	const proposals = useAssistantProposals((state) => (state.resumeId === resumeId ? state.proposals : NONE));
+	const applications = useResumeStore((state) => state.proposalApplications);
+	const revision = useResumeStore((state) => state.proposalRevision);
+	const proposals = useAssistantProposals((state) =>
+		state.resumeId === resumeId && state.revision === revision ? state.proposals : NONE,
+	);
 	return useMemo(
 		() =>
 			!data || proposals.length === 0
 				? { data, pending: 0 }
-				: { data: markProposals(data, proposals), pending: pendingProposals(data, proposals).length },
-		[data, proposals],
+				: {
+						data: markProposals(data, proposals, applications),
+						pending: pendingProposals(data, proposals, applications).length,
+					},
+		[data, proposals, applications],
 	);
 }

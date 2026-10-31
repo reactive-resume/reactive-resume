@@ -1,18 +1,32 @@
-// @vitest-environment happy-dom
 import type { AssistantDocument } from "./document";
+// @vitest-environment happy-dom
+import type { Proposal } from "@reactive-resume/resume/proposals";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { applyProposals, getStateIn } from "@reactive-resume/resume/proposals";
 
-const mocks = vi.hoisted(() => ({ chat: vi.fn(), send: vi.fn(), attach: vi.fn(), publish: vi.fn() }));
-vi.mock("@tanstack/react-query", () => ({ useQueryClient: () => ({ invalidateQueries: vi.fn() }) }));
+const mocks = vi.hoisted(() => ({
+	chat: vi.fn(),
+	send: vi.fn(),
+	attach: vi.fn(),
+	publish: vi.fn(),
+	record: vi.fn(),
+	receipts: vi.fn(),
+}));
+vi.mock("@tanstack/react-query", () => ({
+	useQueryClient: () => ({ invalidateQueries: vi.fn() }),
+	useQuery: mocks.receipts,
+}));
 vi.mock("@/features/resume/editor/store", () => ({
 	useEditorStore: { setState: mocks.publish },
 }));
 vi.mock("@/libs/orpc/client", () => ({
-	client: { agent: { attachments: { create: mocks.attach } } },
-	orpc: { agent: { threads: { list: { key: () => ["threads"] } } } },
+	client: { agent: { attachments: { create: mocks.attach }, messages: { setEditStatus: mocks.record } } },
+	orpc: {
+		agent: { threads: { get: { queryOptions: () => ({ queryKey: ["thread"] }) }, list: { key: () => ["threads"] } } },
+	},
 }));
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn() } }));
 vi.mock("./use-assistant-chat", () => ({ useAssistantChat: mocks.chat }));
@@ -36,13 +50,15 @@ const document: AssistantDocument = {
 	locked: false,
 	posting: { id: "application-2", company: "Selected Company", role: "Engineer" },
 	stateOf: () => "pending",
-	accept: () => {},
+	accept: () => ({ applied: [], stale: [] }),
 	locationOf: () => undefined,
 };
 beforeEach(() => {
 	vi.clearAllMocks();
+	mocks.receipts.mockReturnValue({});
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	mocks.chat.mockReturnValue({ messages: [], sendMessage: mocks.send, status: "ready", clearError: vi.fn() });
+	mocks.record.mockResolvedValue(undefined);
 	mocks.attach.mockResolvedValue({ id: "file-1", filename: "posting.txt", mediaType: "text/plain" });
 });
 afterEach(cleanup);
@@ -237,4 +253,172 @@ it("reopens native and custom web results with sources, clipping and failed or u
 	expect(screen.getByRole("link", { name: "https://careers.example/role" }).getAttribute("href")).toBe(
 		"https://careers.example/role",
 	);
+});
+
+it("records only edits actually applied, with failed cards out of date and an accurate applied count", async () => {
+	let content = "<p>Original</p>";
+	const applications: Record<string, boolean> = {};
+	const base: Proposal = {
+		id: "rewrite",
+		target: { sectionId: "summary", field: "content" },
+		location: "Summary",
+		before: content,
+		after: "<p>Rewritten</p>",
+		why: "Clearer",
+		status: "pending",
+		source: "assistant",
+	};
+	const edits = [base, { ...base, id: "addition", after: "<p>Conflicting rewrite</p>" }];
+	const doc: AssistantDocument = {
+		...document,
+		stateOf: (edit) => getStateIn(content, edit, applications),
+		accept: (chosen) => {
+			const result = applyProposals(
+				chosen,
+				() => content,
+				(_, value) => {
+					content = value;
+				},
+			);
+			for (const edit of result.applied) applications[edit.id] = true;
+			return result;
+		},
+	};
+	mocks.chat.mockReturnValue({
+		messages: [
+			{
+				id: "message",
+				role: "assistant",
+				parts: [
+					{ type: "tool-propose_edits", toolCallId: "call", state: "output-available", output: { edits, skipped: [] } },
+				],
+			},
+		],
+		status: "ready",
+		clearError: vi.fn(),
+	});
+	const view = () => (
+		<I18nProvider i18n={i18n}>
+			<Conversation
+				document={doc}
+				threadId="thread-1"
+				initialMessages={[]}
+				activeRun={false}
+				readOnly={false}
+				providerLabel="Local"
+				initialContext={{ document: true, posting: true }}
+				prompt={null}
+				promptAttachments={[]}
+				onPromptSent={() => {}}
+				onSwitchModel={() => {}}
+			/>
+		</I18nProvider>
+	);
+	const { rerender } = render(view());
+	fireEvent.click(screen.getByRole("button", { name: "Accept all" }));
+	rerender(view());
+	expect(mocks.record).not.toHaveBeenCalled();
+	expect(content).toBe("<p>Rewritten</p>");
+	expect(screen.getByText("1 of 2 applied")).toBeDefined();
+	expect(screen.getByText("Out of date: the text has changed since.")).toBeDefined();
+	expect(screen.queryByRole("button", { name: "Accept" })).toBeNull();
+});
+
+it("persists only explicit history changes after acceptance, retaining refinements and restoring redo", async () => {
+	const edit: Proposal = {
+		id: "edit",
+		target: { sectionId: "summary", field: "content" },
+		location: "Summary",
+		before: "<p>Old</p>",
+		after: "<p>Old</p><p>Added</p>",
+		why: "Clearer",
+		status: "pending",
+		source: "assistant",
+	};
+	const part = {
+		type: "tool-propose_edits",
+		toolCallId: "call",
+		state: "output-available",
+		output: { edits: [edit], skipped: [] },
+	};
+	mocks.chat.mockReturnValue({
+		messages: [{ id: "message", role: "assistant", parts: [part] }],
+		status: "ready",
+		clearError: vi.fn(),
+	});
+	let content = edit.before;
+	let proposalRevision = "local";
+	mocks.receipts.mockReturnValue({ data: { messages: [] } });
+	let applied: boolean | undefined;
+	const view = () => {
+		const doc: AssistantDocument = {
+			...document,
+			proposalRevision,
+			stateOf: (proposal) => getStateIn(content, proposal, applied === undefined ? {} : { edit: applied }),
+			accept: (chosen) => {
+				const result = applyProposals(
+					chosen,
+					() => content,
+					(_, value) => {
+						content = value;
+					},
+					applied === undefined ? {} : { edit: applied },
+				);
+				if (result.applied.length) applied = true;
+				return result;
+			},
+		};
+		return (
+			<I18nProvider i18n={i18n}>
+				<Conversation
+					document={doc}
+					threadId="thread-1"
+					initialMessages={[]}
+					activeRun={false}
+					readOnly={false}
+					providerLabel="Local"
+					initialContext={{ document: true, posting: true }}
+					prompt={null}
+					promptAttachments={[]}
+					onPromptSent={() => {}}
+					onSwitchModel={() => {}}
+				/>
+			</I18nProvider>
+		);
+	};
+	const { rerender } = render(view());
+	fireEvent.click(screen.getByRole("button", { name: "Accept" }));
+	rerender(view());
+	await waitFor(() => expect(screen.getByText("1 of 1 applied")).toBeDefined());
+	content = "<p>Refined anchor</p><p>Refined addition</p>";
+	rerender(view());
+	expect(screen.getByText("1 of 1 applied")).toBeDefined();
+	expect(mocks.record).not.toHaveBeenCalled();
+	applied = false;
+	content = edit.before;
+	rerender(view());
+	await waitFor(() => expect(screen.getByRole("button", { name: "Accept" })).toBeDefined());
+	applied = true;
+	content = "<p>Refined anchor</p><p>Refined addition</p>";
+	rerender(view());
+	await waitFor(() => expect(screen.getByText("1 of 1 applied")).toBeDefined());
+	expect(mocks.record).not.toHaveBeenCalled();
+	expect(screen.queryByRole("button", { name: "Accept" })).toBeNull();
+	// A newer remote Undo invalidates both the owner overlay and mounted chat's old receipt.
+	applied = undefined;
+	content = edit.before;
+	proposalRevision = "remote-undo";
+	mocks.receipts.mockReturnValue({ data: { messages: [{ id: "message", role: "assistant", parts: [part] }] } });
+	rerender(view());
+	expect(screen.getByRole("button", { name: "Accept" })).toBeDefined();
+	expect(mocks.receipts).toHaveBeenLastCalledWith(expect.objectContaining({ queryKey: ["thread", "remote-undo"] }));
+	const refetch = vi.fn();
+	proposalRevision = "remote-unread";
+	mocks.receipts.mockReturnValue({ error: new Error("Offline"), refetch });
+	rerender(view());
+	expect(screen.getByRole("button", { name: "Accept" }).hasAttribute("disabled")).toBe(true);
+	expect(screen.getByRole("alert").textContent).toContain("This conversation couldn't be opened.");
+	fireEvent.click(screen.getByRole("button", { name: "Retry" }));
+	expect(refetch).toHaveBeenCalledOnce();
+	expect(mocks.send).not.toHaveBeenCalled();
 });

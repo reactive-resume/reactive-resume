@@ -89,7 +89,7 @@ msgstr "(ស្រេចចិត្ត)"
 msgid "(required)"
 msgstr "(តម្រូវឱ្យបំពេញ)"
 
-#. placeholder {0}: proposals.length
+#. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
 msgstr "{0, plural, =1 {បានអនុវត្តការកែសម្រួល} other {បានអនុវត្តការកែសម្រួល #}}"
@@ -174,7 +174,9 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {ឯកសារចំនួន # ត្រូវបានផ្លាស់ទីទៅធុងសំរាម} other {ឯកសារចំនួន # ត្រូវបានផ្លាស់ទីទៅធុងសំរាម}}"
 
 #. placeholder {0}: output.skipped.length
+#. placeholder {0}: stale.length
 #: src/features/assistant/conversation.tsx
+#: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
 msgstr "{0, plural, one {ការកែសម្រួល # មិនអាចត្រូវបានដាក់៖ អត្ថបទរបស់វាបានផ្លាស់ប្តូរ។ សួរម្តងទៀតដើម្បីធ្វើវាឡើងវិញ។} other {ការកែសម្រួល # មិនអាចត្រូវបានដាក់៖ អត្ថបទរបស់ពួកគេបានផ្លាស់ប្តូរ។ សុំម្តងទៀតដើម្បីធ្វើពួកវាឡើងវិញ។}}"
 
@@ -343,11 +345,6 @@ msgstr ""
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} closed"
 msgstr "{0} បានបិទ"
-
-#. placeholder {0}: proposals.length
-#: src/features/assistant/document.ts
-msgid "{0} edits applied"
-msgstr "ការកែសម្រួល {0} បានអនុវត្ត"
 
 #. placeholder {0}: semantics.dates.length
 #: src/features/resume/editor/check/parser-view.tsx
@@ -5026,10 +5023,6 @@ msgstr "កែសម្រួល {number}៖"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Edit application"
 msgstr "កែសម្រួលពាក្យសុំ"
-
-#: src/features/assistant/document.ts
-msgid "Edit applied"
-msgstr "បានអនុវត្តការកែសម្រួល"
 
 #. placeholder {0}: shownColor.token.value
 #: src/features/resume/stylesheet/editor.tsx
@@ -12972,6 +12965,10 @@ msgstr "កម្មវិធីរុករកនេះមិនអាចទទ
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
 msgstr "សំណើតភ្ជាប់នេះមិនត្រឹមត្រូវ ឬបានផុតកំណត់។ ចាប់ផ្តើមការតភ្ជាប់ម្តងទៀតពីកម្មវិធីអតិថិជនរបស់អ្នក។"
+
+#: src/features/assistant/conversation.tsx
+msgid "This conversation couldn't be opened."
+msgstr "ការសន្ទនានេះមិនអាចបើកបានទេ។"
 
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx

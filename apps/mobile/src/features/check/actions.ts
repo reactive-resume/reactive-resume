@@ -9,10 +9,15 @@ import { routes } from "@/routes";
 import { dismissToast, haptics, showToast } from "@/ui";
 
 /** Shared draft owner retains history; a toast must never undo a later, unrelated edit. */
-export function editWithUndo(id: string, edit: (draft: ResumeData) => void, message: string) {
+export function editWithUndo(
+	id: string,
+	edit: (draft: ResumeData) => void,
+	message: string,
+	proposalIds?: readonly string[],
+) {
 	const store = useResumeStore.getState();
 	if (store.document?.id !== id || !store.data || store.locked) return false;
-	store.update(edit, { newStep: true });
+	store.update(edit, { newStep: true, ...(proposalIds ? { proposalIds } : {}) });
 	const changed = useResumeStore.getState().data;
 	if (changed === store.data) return false;
 	const toastId = showToast({

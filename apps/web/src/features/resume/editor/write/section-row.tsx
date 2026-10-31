@@ -420,5 +420,6 @@ const NONE: readonly never[] = [];
 function useProposedCount(sectionId: string) {
 	const proposals = useEditorStore((state) => (state.assistantOpen ? state.assistantProposals : NONE));
 	const data = useCurrentBuilderResumeSelector((resume) => resume.data);
-	return pendingProposals(data, proposals, sectionId).length;
+	const applications = useResumeStore((state) => state.proposalApplications);
+	return pendingProposals(data, proposals, sectionId, applications).length;
 }

@@ -2,6 +2,7 @@ import type { WritingNote } from "../store";
 import type { PageMapTarget } from "@reactive-resume/pdf/page-map";
 import type { Passage, Proposal } from "@reactive-resume/resume/proposals";
 import { replaceBlockText } from "@reactive-resume/resume/proposals";
+import { generateId } from "@reactive-resume/utils/string";
 
 type ReviewSuggestion = {
 	section: string | null;
@@ -31,7 +32,7 @@ export function mapWritingReview(suggestions: readonly ReviewSuggestion[], passa
 
 		if (passage && rewrite && rewrite !== passage.text) {
 			proposals.push({
-				id: `w${proposals.length + 1}`,
+				id: generateId(),
 				target: passage.target,
 				location: passage.location,
 				before: passage.html,

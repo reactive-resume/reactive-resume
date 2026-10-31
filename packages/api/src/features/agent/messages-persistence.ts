@@ -1,5 +1,6 @@
+import type { DbOrTx } from "@reactive-resume/db/client";
 import type { UIMessage } from "ai";
-import { and, eq, max, sql } from "drizzle-orm";
+import { and, asc, eq, max, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 
@@ -56,28 +57,23 @@ export function withEditStatuses(
 	};
 }
 
-// A run rewrites its message as it goes, always with edits pending; what the user already did with them (they can
-// accept while the reply is still streaming) is kept.
-async function withStoredEditStatuses(
-	input: { userId: string; threadId: string; rowId?: string; message: UIMessage },
-	database: AgentMessagesDb,
+/** Every message writer locks messages in ID order, then their thread, before reading/merging decisions. */
+export async function lockThreadMessages(
+	database: Pick<DbOrTx, "select">,
+	input: { userId: string; threadId: string },
 ) {
-	if (proposeEditsParts(input.message).length === 0) return input.message;
 	const rows = await database
-		.select({ uiMessage: schema.agentMessage.uiMessage })
+		.select()
 		.from(schema.agentMessage)
-		.where(
-			and(
-				eq(schema.agentMessage.threadId, input.threadId),
-				eq(schema.agentMessage.userId, input.userId),
-				input.rowId
-					? eq(schema.agentMessage.id, input.rowId)
-					: sql`${schema.agentMessage.uiMessage}->>'id' = ${input.message.id}`,
-			),
-		);
-	const stored = rows[0]?.uiMessage as unknown as UIMessage | undefined;
-	if (!stored?.parts) return input.message;
-	return withEditStatuses(input.message, null, new Map(proposedEditsOf(stored).map((edit) => [edit.id, edit.status])));
+		.where(and(eq(schema.agentMessage.threadId, input.threadId), eq(schema.agentMessage.userId, input.userId)))
+		.orderBy(asc(schema.agentMessage.id))
+		.for("update");
+	await database
+		.select({ id: schema.agentThread.id })
+		.from(schema.agentThread)
+		.where(and(eq(schema.agentThread.id, input.threadId), eq(schema.agentThread.userId, input.userId)))
+		.for("update");
+	return rows;
 }
 
 function toolPartFromCall(part: StepContentPart): UiMessagePart {
@@ -253,7 +249,7 @@ export async function insertDraftAssistantMessage(
 
 // Upsert by row id first, then by the uiMessage's embedded id (a question/approval continuation
 // streams into the SAME uiMessage id as the stored assistant row), then insert as a last resort.
-export async function upsertAssistantUiMessage(
+export function upsertAssistantUiMessage(
 	input: {
 		userId: string;
 		threadId: string;
@@ -261,72 +257,84 @@ export async function upsertAssistantUiMessage(
 		message: UIMessage;
 		status: "streaming" | "completed" | "canceled";
 	},
-	database: AgentMessagesDb = db,
+	database: Pick<typeof db, "transaction"> = db,
 ) {
-	const message = await withStoredEditStatuses(input, database);
-	const set = {
-		status: input.status,
-		uiMessage: message as unknown as Record<string, unknown>,
-	};
-	const isFinal = input.status !== "streaming";
+	return database.transaction(async (database) => {
+		const rows = await lockThreadMessages(database, input);
+		const stored =
+			rows.find((row) => row.id === input.rowId) ??
+			rows.find((row) => row.role === "assistant" && row.uiMessage.id === input.message.id);
+		const message = stored
+			? withEditStatuses(
+					input.message,
+					null,
+					new Map(proposedEditsOf(stored.uiMessage as unknown as UIMessage).map((edit) => [edit.id, edit.status])),
+				)
+			: input.message;
+		const set = {
+			status: input.status,
+			uiMessage: message as unknown as Record<string, unknown>,
+		};
+		const isFinal = input.status !== "streaming";
 
-	if (input.rowId) {
-		const updated = await database
+		if (input.rowId) {
+			const updated = await database
+				.update(schema.agentMessage)
+				.set(set)
+				.where(
+					and(
+						eq(schema.agentMessage.id, input.rowId),
+						eq(schema.agentMessage.threadId, input.threadId),
+						eq(schema.agentMessage.userId, input.userId),
+					),
+				)
+				.returning({ id: schema.agentMessage.id });
+
+			if (updated.length === 1) {
+				if (isFinal) await touchThread(input, database);
+				// oxlint-disable-next-line typescript/no-non-null-assertion -- length checked above
+				return { rowId: updated[0]!.id };
+			}
+		}
+
+		const updatedById = await database
 			.update(schema.agentMessage)
 			.set(set)
 			.where(
 				and(
-					eq(schema.agentMessage.id, input.rowId),
 					eq(schema.agentMessage.threadId, input.threadId),
 					eq(schema.agentMessage.userId, input.userId),
+					eq(schema.agentMessage.role, "assistant"),
+					sql`${schema.agentMessage.uiMessage}->>'id' = ${input.message.id}`,
 				),
 			)
 			.returning({ id: schema.agentMessage.id });
 
-		if (updated.length === 1) {
+		if (updatedById.length >= 1) {
 			if (isFinal) await touchThread(input, database);
 			// oxlint-disable-next-line typescript/no-non-null-assertion -- length checked above
-			return { rowId: updated[0]!.id };
+			return { rowId: updatedById[0]!.id };
 		}
-	}
 
-	const updatedById = await database
-		.update(schema.agentMessage)
-		.set(set)
-		.where(
-			and(
-				eq(schema.agentMessage.threadId, input.threadId),
-				eq(schema.agentMessage.userId, input.userId),
-				eq(schema.agentMessage.role, "assistant"),
-				sql`${schema.agentMessage.uiMessage}->>'id' = ${input.message.id}`,
-			),
-		)
-		.returning({ id: schema.agentMessage.id });
+		const sequence = await nextMessageSequence(input.threadId, database);
+		const [inserted] = await database
+			.insert(schema.agentMessage)
+			.values({
+				userId: input.userId,
+				threadId: input.threadId,
+				role: message.role,
+				status: input.status,
+				sequence,
+				uiMessage: message as unknown as Record<string, unknown>,
+			})
+			.returning({ id: schema.agentMessage.id });
 
-	if (updatedById.length >= 1) {
-		if (isFinal) await touchThread(input, database);
-		// oxlint-disable-next-line typescript/no-non-null-assertion -- length checked above
-		return { rowId: updatedById[0]!.id };
-	}
+		if (!inserted) throw new Error("AGENT_MESSAGE_CREATE_FAILED");
 
-	const sequence = await nextMessageSequence(input.threadId, database);
-	const [inserted] = await database
-		.insert(schema.agentMessage)
-		.values({
-			userId: input.userId,
-			threadId: input.threadId,
-			role: message.role,
-			status: input.status,
-			sequence,
-			uiMessage: message as unknown as Record<string, unknown>,
-		})
-		.returning({ id: schema.agentMessage.id });
+		await touchThread(input, database);
 
-	if (!inserted) throw new Error("AGENT_MESSAGE_CREATE_FAILED");
-
-	await touchThread(input, database);
-
-	return { rowId: inserted.id };
+		return { rowId: inserted.id };
+	});
 }
 
 // Removes a draft that never received content (sync failure before the stream produced anything).

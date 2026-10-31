@@ -1,3 +1,4 @@
+import type { ProposalApplications, ProposalSnapshot } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { QueryClient, QueryKey } from "@tanstack/react-query";
 import type { WritableDraft } from "immer";
@@ -9,6 +10,12 @@ import { debounce, isEqual } from "es-toolkit";
 import { useCallback, useEffect, useState } from "react";
 import { immer } from "zustand/middleware/immer";
 import { create } from "zustand/react";
+import {
+	acknowledgeProposalApplications,
+	queueProposalApplications,
+	readProposalApplications,
+	restoreProposalApplications,
+} from "@reactive-resume/resume/proposals";
 import { syncResumeDates } from "@reactive-resume/schema/resume/dates";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { generateId } from "@reactive-resume/utils/string";
@@ -46,6 +53,8 @@ type ResumeUpdateEvent = { mutation: ResumeUpdateMutation };
 type SaveStatus = "idle" | "saving" | "saved" | "offline" | "error" | "conflict";
 
 type UpdateResumeDataOptions = {
+	/** Successful proposal IDs, recorded in this undo step alongside the authored data. */
+	proposalIds?: readonly string[];
 	/**
 	 * Identifies the field being edited. Consecutive edits to the same field within a second merge into
 	 * one undo step, so typing a sentence undoes as a whole.
@@ -67,8 +76,9 @@ type ResumeStoreState = {
 	saveStatus: SaveStatus;
 	// Undo/redo stacks of `ResumeData` references. Immer's immutable updates share structure, so a
 	// step costs only the parts that changed.
-	undoStack: ResumeData[];
-	redoStack: ResumeData[];
+	proposalApplications: ProposalApplications;
+	undoStack: ProposalSnapshot<ResumeData>[];
+	redoStack: ProposalSnapshot<ResumeData>[];
 };
 
 type ResumeStoreActions = {
@@ -90,6 +100,8 @@ type ResumeStoreActions = {
 type ResumeStore = ResumeStoreState & ResumeStoreActions;
 
 type Runtime = {
+	proposalApplications: ProposalApplications;
+	pendingProposalApplications: ProposalApplications;
 	abortController: AbortController;
 	queryClient?: QueryClient;
 	hasPendingLocalChanges: boolean;
@@ -160,7 +172,13 @@ function storeUnsavedResume(resume: Resume) {
 	try {
 		window.localStorage.setItem(
 			recoveryKey(resume),
-			JSON.stringify({ data: resume.data, baseUpdatedAt: getRuntime(resume.id).baseUpdatedAt, storedAt: Date.now() }),
+			JSON.stringify({
+				data: resume.data,
+				baseUpdatedAt: getRuntime(resume.id).baseUpdatedAt,
+				storedAt: Date.now(),
+				proposalApplications: getRuntime(resume.id).proposalApplications,
+				pendingProposalApplications: getRuntime(resume.id).pendingProposalApplications,
+			}),
 		);
 	} catch {
 		// Storage can be full or blocked; the in-memory copy still retries.
@@ -169,16 +187,38 @@ function storeUnsavedResume(resume: Resume) {
 
 function clearUnsavedResume(resume: Resume) {
 	try {
-		window.localStorage.removeItem(recoveryKey(resume));
+		const runtime = getRuntime(resume.id);
+		if (Object.keys(runtime.proposalApplications).length > 0) {
+			window.localStorage.setItem(
+				recoveryKey(resume),
+				JSON.stringify({
+					data: resume.data,
+					baseUpdatedAt: runtime.baseUpdatedAt,
+					storedAt: Date.now(),
+					clean: true,
+					proposalApplications: runtime.proposalApplications,
+					pendingProposalApplications: runtime.pendingProposalApplications,
+				}),
+			);
+		} else window.localStorage.removeItem(recoveryKey(resume));
 		const restored = getRuntime(resume.id).restoredDraft;
-		if (restored && window.localStorage.getItem(restored.key) === restored.raw)
+		if (restored && restored.key !== recoveryKey(resume) && window.localStorage.getItem(restored.key) === restored.raw)
 			window.localStorage.removeItem(restored.key);
 	} catch {
 		// Nothing to clear.
 	}
 }
 
-type UnsavedResume = { data: ResumeData; baseUpdatedAt?: string; storedAt: number; key: string; raw: string };
+type UnsavedResume = {
+	data: ResumeData;
+	baseUpdatedAt?: string;
+	storedAt: number;
+	key: string;
+	raw: string;
+	clean?: boolean;
+	proposalApplications?: ProposalApplications;
+	pendingProposalApplications?: ProposalApplications;
+};
 
 function readUnsavedResume(id: string): UnsavedResume | undefined {
 	try {
@@ -190,11 +230,21 @@ function readUnsavedResume(id: string): UnsavedResume | undefined {
 			if (!raw) continue;
 			try {
 				const parsed = JSON.parse(raw) as Omit<UnsavedResume, "key" | "raw">;
-				if (!Number.isFinite(parsed.storedAt) || Date.now() - parsed.storedAt > 7 * 86_400_000) {
+				if (
+					!Number.isFinite(parsed.storedAt) ||
+					(Date.now() - parsed.storedAt > 7 * 86_400_000 &&
+						Object.keys(readProposalApplications(parsed.pendingProposalApplications)).length === 0)
+				) {
 					window.localStorage.removeItem(key);
 					continue;
 				}
-				if (parsed.data && (!newest || parsed.storedAt >= newest.storedAt)) newest = { ...parsed, key, raw };
+				if (
+					parsed.data &&
+					(!newest ||
+						(newest.clean && !parsed.clean) ||
+						(Boolean(newest.clean) === Boolean(parsed.clean) && parsed.storedAt >= newest.storedAt))
+				)
+					newest = { ...parsed, key, raw };
 			} catch {
 				// A damaged entry must not hide other recoverable drafts.
 			}
@@ -206,7 +256,8 @@ function readUnsavedResume(id: string): UnsavedResume | undefined {
 }
 
 export function readUnsavedResumeData(id: string): ResumeData | undefined {
-	return readUnsavedResume(id)?.data;
+	const recovery = readUnsavedResume(id);
+	return recovery?.clean ? undefined : recovery?.data;
 }
 
 function isBrowserOffline() {
@@ -308,22 +359,35 @@ async function flushResumeSave(id: string) {
 
 	const submitted = runtime.pendingResume;
 	const submittedData = structuredClone(submitted.data);
+	const submittedApplications = runtime.pendingProposalApplications;
 	runtime.pendingResume = undefined;
 	runtime.isSaving = true;
 
 	try {
 		const updated = (await orpc.resume.update.call(
-			{ id: submitted.id, data: submittedData, sessionId: runtime.sessionId, expectedUpdatedAt: runtime.baseUpdatedAt },
+			{
+				id: submitted.id,
+				data: submittedData,
+				sessionId: runtime.sessionId,
+				expectedUpdatedAt: runtime.baseUpdatedAt,
+				...(Object.keys(submittedApplications).length ? { proposalApplications: { ...submittedApplications } } : {}),
+			},
 			{ signal: runtime.abortController.signal },
 		)) as Resume;
 		if (runtime.abortController.signal.aborted) return;
 
+		runtime.pendingProposalApplications = acknowledgeProposalApplications(
+			runtime.pendingProposalApplications,
+			submittedApplications,
+		);
 		runtime.baseUpdatedAt = updated.updatedAt;
 		runtime.queryClient?.setQueryData(getResumeQueryKey(submitted.id), updated);
 
 		const currentResume = useResumeStore.getState().resume;
 		const currentDataStillMatchesSubmission =
-			currentResume?.id === submitted.id && isEqual(currentResume.data, submittedData);
+			currentResume?.id === submitted.id &&
+			isEqual(currentResume.data, submittedData) &&
+			Object.keys(runtime.pendingProposalApplications).length === 0;
 
 		if (currentDataStillMatchesSubmission && !runtime.pendingResume) {
 			runtime.hasPendingLocalChanges = false;
@@ -389,6 +453,8 @@ function createRuntime(): Runtime {
 	);
 
 	const runtime: Runtime = {
+		proposalApplications: {},
+		pendingProposalApplications: {},
 		abortController,
 		hasPendingLocalChanges: false,
 		isSaving: false,
@@ -474,6 +540,7 @@ export const useResumeStore = create<ResumeStore>()(
 		resumeId: undefined,
 		isReady: false,
 		saveStatus: "idle",
+		proposalApplications: {},
 		undoStack: [],
 		redoStack: [],
 
@@ -483,13 +550,25 @@ export const useResumeStore = create<ResumeStore>()(
 
 			// Changes that couldn't be saved last time (offline, closed tab) come back and are sent again.
 			const unsaved = resume ? readUnsavedResume(resume.id) : undefined;
+			const pending = readProposalApplications(unsaved?.pendingProposalApplications);
+			const hasPendingDecisions = Object.keys(pending).length > 0;
+			const sameRevision = unsaved?.baseUpdatedAt === resume?.updatedAt.toISOString();
 			const restored =
-				resume && unsaved && !isEqual(unsaved.data, resume.data) ? { ...resume, data: unsaved.data } : null;
-			if (resume && unsaved) getRuntime(resume.id).restoredDraft = { key: unsaved.key, raw: unsaved.raw };
+				resume && unsaved && ((!unsaved.clean && !isEqual(unsaved.data, resume.data)) || hasPendingDecisions)
+					? { ...resume, data: unsaved.data }
+					: null;
+			if (resume) {
+				const runtime = getRuntime(resume.id);
+				runtime.proposalApplications = sameRevision ? readProposalApplications(unsaved?.proposalApplications) : pending;
+				runtime.pendingProposalApplications = pending;
+				if (unsaved) runtime.restoredDraft = { key: unsaved.key, raw: unsaved.raw };
+			}
 			if (resume && unsaved && !restored) clearUnsavedResume(resume);
-			const conflict = !!restored && unsaved?.baseUpdatedAt !== resume?.updatedAt.toISOString();
+			// Matching text cannot acknowledge a queued decision from another document revision.
+			const conflict = !!restored && !sameRevision;
 
 			set((state) => {
+				state.proposalApplications = resume ? getRuntime(resume.id).proposalApplications : {};
 				state.resume = restored ?? resume;
 				state.resumeId = resume?.id;
 				state.isReady = resume !== null;
@@ -497,6 +576,8 @@ export const useResumeStore = create<ResumeStore>()(
 				clearHistory(state);
 			});
 
+			if (resume && !restored && Object.keys(getRuntime(resume.id).pendingProposalApplications).length > 0)
+				queueResumeSave(resume);
 			if (restored) {
 				toast.add({
 					type: "info",
@@ -516,6 +597,7 @@ export const useResumeStore = create<ResumeStore>()(
 			resetHistoryRuntime();
 
 			set((state) => {
+				state.proposalApplications = {};
 				state.resume = null;
 				state.resumeId = undefined;
 				state.isReady = false;
@@ -525,6 +607,16 @@ export const useResumeStore = create<ResumeStore>()(
 		},
 
 		replaceResumeFromServer: (resume) => {
+			const runtime = getRuntime(resume.id);
+			if (runtime.hasPendingLocalChanges) {
+				get().mergeResumeMetadata(resume);
+				return;
+			}
+			const externalRevision = runtime.baseUpdatedAt?.getTime() !== resume.updatedAt.getTime();
+			if (externalRevision) {
+				runtime.proposalApplications = {};
+				runtime.pendingProposalApplications = {};
+			}
 			setRuntimeBaseline(resume);
 
 			// This runs both for the echo of our own autosave (identical data → keep history) and for
@@ -533,10 +625,11 @@ export const useResumeStore = create<ResumeStore>()(
 			// An echo keeps the data object the store already holds: a new but identical one would make everything that
 			// renders from it run again, the preview's PDF render of every page included, after every save.
 			const keptData = current && isEqual(current.data, resume.data) ? current.data : undefined;
-			const isRebase = keptData === undefined;
+			const isRebase = keptData === undefined || externalRevision;
 			if (isRebase) resetHistoryRuntime();
 
 			set((state) => {
+				state.proposalApplications = runtime.proposalApplications;
 				state.resume = keptData ? { ...resume, data: keptData } : resume;
 				state.resumeId = resume.id;
 				state.isReady = true;
@@ -544,6 +637,7 @@ export const useResumeStore = create<ResumeStore>()(
 
 				if (isRebase) clearHistory(state);
 			});
+			if (externalRevision) clearUnsavedResume(resume);
 		},
 
 		patchResume: (fn) => {
@@ -603,13 +697,18 @@ export const useResumeStore = create<ResumeStore>()(
 				if (!state.resume) return;
 
 				if (snapshotBefore) {
-					state.undoStack.push(snapshotBefore);
+					state.undoStack.push({ data: snapshotBefore, applications: state.proposalApplications });
 					if (state.undoStack.length > MAX_HISTORY_ENTRIES) state.undoStack.shift();
 					// A fresh edit invalidates the redo branch.
 					state.redoStack = [];
 				}
 
 				fn(state.resume.data as WritableDraft<ResumeData>);
+				if (options.proposalIds?.length)
+					state.proposalApplications = {
+						...state.proposalApplications,
+						...Object.fromEntries(options.proposalIds.map((id) => [id, true])),
+					};
 				// The server writes the date text from the dates on save; doing the same here keeps its echo
 				// identical to the draft, so an autosave never reads as an outside change.
 				syncResumeDates(state.resume.data as ResumeData);
@@ -617,7 +716,16 @@ export const useResumeStore = create<ResumeStore>()(
 			});
 
 			const edited = get().resume;
-			if (edited) storeUnsavedResume(edited);
+			if (edited) {
+				const runtime = getRuntime(edited.id);
+				runtime.pendingProposalApplications = queueProposalApplications(
+					runtime.proposalApplications,
+					get().proposalApplications,
+					runtime.pendingProposalApplications,
+				);
+				runtime.proposalApplications = get().proposalApplications;
+				storeUnsavedResume(edited);
+			}
 			getRuntime(currentResume.id).hasPendingLocalChanges = true;
 			syncCurrentResume(currentResume.id);
 		},
@@ -646,6 +754,9 @@ export const useResumeStore = create<ResumeStore>()(
 				if (runtime.abortController.signal.aborted) return;
 				if (get().resume?.id !== current.id || !isEqual(get().resume?.data, current.data))
 					throw new Error(t`Your changes are still open. Try reloading again when you've finished typing.`);
+				runtime.proposalApplications = {};
+				runtime.pendingProposalApplications = {};
+				runtime.hasPendingLocalChanges = false;
 				clearUnsavedResume(current);
 				get().replaceResumeFromServer(remote);
 				delete runtime.copyId;
@@ -699,15 +810,25 @@ function applyHistoryStep(get: StoreGet, set: ImmerSet, direction: "undo" | "red
 		const snapshot = from.pop();
 		if (snapshot === undefined) return;
 
-		to.push(current as WritableDraft<ResumeData>);
+		to.push({ data: current as WritableDraft<ResumeData>, applications: draft.proposalApplications });
 		if (to.length > MAX_HISTORY_ENTRIES) to.shift();
 
-		draft.resume.data = snapshot;
+		draft.resume.data = snapshot.data;
+		draft.proposalApplications = restoreProposalApplications(draft.proposalApplications, snapshot.applications);
 		if (!getRuntime(currentResume.id).conflict) draft.saveStatus = "saving";
 	});
 
 	const edited = get().resume;
-	if (edited) storeUnsavedResume(edited);
+	if (edited) {
+		const runtime = getRuntime(edited.id);
+		runtime.pendingProposalApplications = queueProposalApplications(
+			runtime.proposalApplications,
+			get().proposalApplications,
+			runtime.pendingProposalApplications,
+		);
+		runtime.proposalApplications = get().proposalApplications;
+		storeUnsavedResume(edited);
+	}
 	getRuntime(currentResume.id).hasPendingLocalChanges = true;
 	syncCurrentResume(currentResume.id);
 }

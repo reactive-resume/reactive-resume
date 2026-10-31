@@ -2,9 +2,10 @@ import type { UIMessage } from "ai";
 import { and, eq, isNotNull, isNull, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
+import { lockThreadMessages } from "./messages-persistence";
 
 type AgentRunStateDb = Pick<typeof db, "update">;
-type AgentRunReaperDb = Pick<typeof db, "select" | "update">;
+type AgentRunReaperDb = Pick<typeof db, "select" | "update" | "transaction">;
 
 // Deliberately TTL-only (no controller-map heuristic) so reaping stays multi-replica-safe. The TTL
 // exceeds the 4-minute run wall clock, so a live run always dies by its own timeout first.
@@ -169,19 +170,22 @@ export async function reapStaleAgentRun(
 			);
 
 		const message = appendMissingActionParts(draft.uiMessage as unknown as UIMessage, actions);
-		await database
-			.update(schema.agentMessage)
-			.set({ status: "canceled", uiMessage: message as unknown as Record<string, unknown> })
-			.where(
-				and(
-					eq(schema.agentMessage.id, draft.id),
-					// A continuation can claim the thread right after our conditional clear and start
-					// writing into this very row. Flip only the exact state we snapshotted — any
-					// concurrent write changes status or uiMessage and makes this a no-op.
-					eq(schema.agentMessage.status, "streaming"),
-					sql`${schema.agentMessage.uiMessage} = ${JSON.stringify(draft.uiMessage)}::jsonb`,
-				),
-			);
+		await database.transaction(async (tx) => {
+			await lockThreadMessages(tx, input);
+			await tx
+				.update(schema.agentMessage)
+				.set({ status: "canceled", uiMessage: message as unknown as Record<string, unknown> })
+				.where(
+					and(
+						eq(schema.agentMessage.id, draft.id),
+						// A continuation can claim the thread right after our conditional clear and start
+						// writing into this very row. Flip only the exact state we snapshotted — any
+						// concurrent write changes status or uiMessage and makes this a no-op.
+						eq(schema.agentMessage.status, "streaming"),
+						sql`${schema.agentMessage.uiMessage} = ${JSON.stringify(draft.uiMessage)}::jsonb`,
+					),
+				);
+		});
 	}
 }
 

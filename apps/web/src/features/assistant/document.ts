@@ -1,10 +1,10 @@
-import type { Passage, Proposal, ProposalState } from "@reactive-resume/resume/proposals";
+import type { Passage, Proposal, ProposalApplicationResult, ProposalState } from "@reactive-resume/resume/proposals";
 import { t } from "@lingui/core/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useSearch } from "@tanstack/react-router";
 import { useMemo } from "react";
 import {
-	applyTo,
+	applyProposals,
 	collectLetterPassages,
 	collectPassages,
 	getProposalState,
@@ -13,9 +13,9 @@ import {
 import { toast } from "@reactive-resume/ui/components/toast";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useLetterEditorStore } from "@/features/letters/store";
-import { useCurrentResume } from "@/features/resume/builder/draft";
+import { useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
 import { getSectionName } from "@/features/resume/editor/check/issues";
-import { acceptResumeProposals } from "@/features/resume/editor/proposals/proposals";
+import { acceptResumeProposals, proposalResultMessage } from "@/features/resume/editor/proposals/proposals";
 import { describeEntry } from "@/features/resume/editor/write/model";
 
 /** The document the assistant works on, as the panel needs it. Resumes and letters each provide one. */
@@ -23,13 +23,15 @@ export type AssistantDocument = {
 	kind: "resume" | "letter";
 	id: string;
 	name: string;
+	/** Document revision whose authoritative proposal decisions should be read. */
+	proposalRevision?: string;
 	locked: boolean;
 	/** The application it's for, whose posting is shared as context. */
 	posting: { id: string; company: string; role: string } | null;
 	/** A proposal's state against the document as it reads now. */
 	stateOf: (proposal: Proposal) => ProposalState;
 	/** Applies proposals as one undo step, with Undo in the toast. */
-	accept: (proposals: readonly Proposal[]) => void;
+	accept: (proposals: readonly Proposal[]) => ProposalApplicationResult;
 	/** Where a proposal lands, in the app's language, when its passage is still there. */
 	locationOf: (proposal: Pick<Proposal, "before" | "target">) => string | undefined;
 };
@@ -53,6 +55,7 @@ function locate(passages: readonly Passage[], { before, target }: Pick<Proposal,
 
 export function useResumeAssistantDocument(): AssistantDocument {
 	const resume = useCurrentResume();
+	const applicationsOfProposals = useResumeStore((state) => state.proposalApplications);
 	const { applicationId } = useSearch({ strict: false });
 	const { data: applications } = useQuery(applicationsListQueryOptions());
 	// The application it was made for, otherwise the latest one it's linked to (as the server reads it).
@@ -74,17 +77,22 @@ export function useResumeAssistantDocument(): AssistantDocument {
 			kind: "resume",
 			id: resume.id,
 			name: resume.name,
+			proposalRevision: resume.updatedAt.toISOString(),
 			locked: resume.isLocked,
 			posting: application ? { id: application.id, company: application.company, role: application.role } : null,
-			stateOf: (proposal) => getProposalState(resume.data, proposal),
-			accept: acceptResumeProposals,
+			stateOf: (proposal) => getProposalState(resume.data, proposal, applicationsOfProposals),
+			accept: (proposals) =>
+				useResumeStore.getState().resume?.id === resume.id
+					? acceptResumeProposals(proposals)
+					: { applied: [], stale: [] },
 			locationOf: (proposal) => locate(passages, proposal),
 		};
-	}, [resume.id, resume.name, resume.isLocked, resume.data, application]);
+	}, [resume.id, resume.name, resume.updatedAt, resume.isLocked, resume.data, application, applicationsOfProposals]);
 }
 
 export function useLetterAssistantDocument(): AssistantDocument | null {
 	const letter = useLetterEditorStore((state) => state.letter);
+	const applicationsOfProposals = useLetterEditorStore((state) => state.proposalApplications);
 	const { applicationId } = useSearch({ strict: false });
 	const { data: applications } = useQuery(applicationsListQueryOptions());
 	const application = applications?.find((item) => item.id === (applicationId ?? letter?.sourceApplicationId));
@@ -97,21 +105,50 @@ export function useLetterAssistantDocument(): AssistantDocument | null {
 			kind: "letter",
 			id: letter.id,
 			name: letter.name,
+			proposalRevision: String(letter.revision),
 			locked: letter.isLocked,
 			posting: application ? { id: application.id, company: application.company, role: application.role } : null,
-			stateOf: (proposal) => getStateIn(letter.content, proposal),
+			stateOf: (proposal) => getStateIn(letter.content, proposal, applicationsOfProposals),
 			accept: (proposals) => {
-				const { letter: current, edit } = useLetterEditorStore.getState();
-				if (!current) return;
+				const { letter: current, edit, changing, proposalApplications, sessionId } = useLetterEditorStore.getState();
+				if (!current || current.id !== letter.id || current.isLocked || changing) return { applied: [], stale: [] };
 				const before = current.content;
-				const content = proposals.reduce((value, proposal) => applyTo(value, proposal) ?? value, before);
-				edit({ content });
-				toast.add({
-					description: proposals.length === 1 ? t`Edit applied` : t`${proposals.length} edits applied`,
-					actionProps: { children: t`Undo`, onClick: () => edit({ content: before }) },
-				});
+				let content = before;
+				const result = applyProposals(
+					proposals,
+					() => content,
+					(_, value) => {
+						content = value;
+					},
+					proposalApplications,
+				);
+				if (result.applied.length > 0)
+					edit({ content }, { proposalIds: result.applied.map((proposal) => proposal.id) });
+				if (result.applied.length > 0 || result.stale.length > 0)
+					toast.add({
+						description: proposalResultMessage(result),
+						...(result.applied.length > 0
+							? {
+									actionProps: {
+										children: t`Undo`,
+										onClick: () => {
+											const latest = useLetterEditorStore.getState();
+											if (
+												latest.sessionId === sessionId &&
+												latest.letter?.id === current.id &&
+												latest.letter.content === content &&
+												!latest.letter.isLocked &&
+												!latest.changing
+											)
+												latest.edit({ content: before }, { restoreApplications: proposalApplications });
+										},
+									},
+								}
+							: {}),
+					});
+				return result;
 			},
 			locationOf: (proposal) => locate(passages, proposal),
 		};
-	}, [letter, application]);
+	}, [letter, application, applicationsOfProposals]);
 }

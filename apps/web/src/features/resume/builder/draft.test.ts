@@ -829,9 +829,10 @@ describe("builder resume undo/redo", () => {
 		expect(store().resume?.data).toBe(current.data);
 	});
 
-	it("clears the undo stack when the server sends different data (external rebase)", () => {
+	it("clears the undo stack when the server sends different data (external rebase)", async () => {
 		const store = useResumeStore.getState;
 		store().initialize(makeResume("rebase-external"));
+		orpcMocks.updateResume.mockImplementation(async (input) => ({ ...makeResume(input.id), data: input.data }));
 
 		store().updateResumeData((draft) => {
 			draft.basics.name = "Edited";
@@ -840,6 +841,7 @@ describe("builder resume undo/redo", () => {
 
 		const current = store().resume;
 		if (!current) throw new Error("expected a current resume");
+		expect(await savePendingChanges(current.id)).toBe(true);
 		// External / AI rebase: incoming data differs, so the local undo history no longer applies.
 		store().replaceResumeFromServer(withBasicsName(current, "External Name"));
 
@@ -991,5 +993,206 @@ describe("resume update stream subscription", () => {
 		});
 		expect(useResumeStore.getState().saveStatus).toBe("conflict");
 		expect(useResumeStore.getState().resume?.data.basics.name).toBe("Local Name");
+	});
+});
+
+it("restores proposal decisions only at their explicit undo checkpoints, preserving refinements and redo", () => {
+	const store = () => useResumeStore.getState();
+	store().initialize(makeResume("proposal-history"));
+	store().updateResumeData(
+		(draft) => {
+			draft.summary.content = "<p>Accepted</p>";
+		},
+		{ newStep: true, proposalIds: ["edit"] },
+	);
+	store().updateResumeData(
+		(draft) => {
+			draft.summary.content = "<p>Refined</p>";
+		},
+		{ newStep: true },
+	);
+	expect(store().proposalApplications).toEqual({ edit: true });
+	store().undo();
+	expect(store().proposalApplications).toEqual({ edit: true });
+	expect(store().resume?.data.summary.content).toBe("<p>Accepted</p>");
+	store().undo();
+	expect(store().proposalApplications).toEqual({ edit: false });
+	store().redo();
+	expect(store().proposalApplications).toEqual({ edit: true });
+	store().redo();
+	expect(store().resume?.data.summary.content).toBe("<p>Refined</p>");
+	expect(store().proposalApplications).toEqual({ edit: true });
+});
+
+it("retains offscreen resume Undo and pending synchronization through a failed save and builder reload", async () => {
+	vi.useFakeTimers();
+	window.localStorage.clear();
+	const store = () => useResumeStore.getState();
+	const initial = makeResume("closed-assistant-undo");
+	initial.data.summary.content = "<p>Original</p>";
+	try {
+		orpcMocks.updateResume.mockImplementation(async (input: { data: ResumeData }) => ({
+			...initial,
+			data: input.data,
+		}));
+		store().initialize(initial);
+		store().updateResumeData(
+			(draft) => {
+				draft.summary.content = "<p>Rewritten</p>";
+			},
+			{ newStep: true, proposalIds: ["edit"] },
+		);
+		expect(await savePendingChanges(initial.id)).toBe(true);
+		// No Conversation is mounted. Document owner must save the decision with Undo's content.
+		store().undo();
+		orpcMocks.updateResume.mockRejectedValueOnce(new Error("Offline"));
+		expect(await savePendingChanges(initial.id)).toBe(false);
+		expect(orpcMocks.updateResume).toHaveBeenCalledWith(
+			expect.objectContaining({ proposalApplications: { edit: false } }),
+			expect.anything(),
+		);
+		vi.setSystemTime(Date.now() + 8 * 86_400_000);
+		clearResumeDrafts();
+		store().initialize(initial);
+		expect(store().proposalApplications).toEqual({ edit: false });
+		expect(await savePendingChanges(initial.id)).toBe(true);
+		expect(orpcMocks.updateResume).toHaveBeenCalledWith(
+			expect.objectContaining({ proposalApplications: { edit: false } }),
+			expect.anything(),
+		);
+		const saved = store().resume;
+		if (!saved) throw new Error("Missing saved resume");
+		clearResumeDrafts();
+		store().initialize(saved);
+		expect(store().proposalApplications).toEqual({ edit: false });
+	} finally {
+		clearResumeDrafts();
+		window.localStorage.clear();
+		vi.clearAllTimers();
+		vi.useRealTimers();
+	}
+});
+
+describe("concurrent receipt ownership", () => {
+	beforeEach(() => {
+		vi.useFakeTimers();
+		clearResumeDrafts();
+		window.localStorage.clear();
+		orpcMocks.updateResume.mockReset();
+		i18n.loadAndActivate({ locale: "en-US", messages: {} });
+	});
+	afterEach(() => {
+		clearResumeDrafts();
+		vi.clearAllTimers();
+		vi.useRealTimers();
+	});
+	const s = () => useResumeStore.getState();
+	it("newer remote Undo must supersede clean local acceptance, including after restart", async () => {
+		const initial = makeResume("remote-undo");
+		initial.data.summary.content = "<p>Old</p>";
+		const p = {
+			id: "receipt",
+			target: { sectionId: "summary", field: "content" },
+			before: "<p>Old</p>",
+			after: "<p>New</p>",
+			status: "pending" as const,
+			source: "assistant" as const,
+			location: "Summary",
+			why: "Rewrite",
+		};
+		const { getProposalState } = await import("@reactive-resume/resume/proposals");
+		s().initialize(initial);
+		orpcMocks.updateResume.mockImplementation(async (input) => ({
+			...initial,
+			data: input.data,
+			updatedAt: new Date(initial.updatedAt.getTime() + 1),
+		}));
+		s().updateResumeData(
+			(d) => {
+				d.summary.content = p.after;
+			},
+			{ newStep: true, proposalIds: [p.id] },
+		);
+		await vi.advanceTimersByTimeAsync(500);
+		expect(s().saveStatus).toBe("saved");
+		const own = s().resume;
+		assert.exists(own);
+		// A different revision invalidates confirmed decisions even if the authored text matches.
+		s().replaceResumeFromServer({ ...own, updatedAt: new Date(initial.updatedAt.getTime() + 2) });
+		expect(s().proposalApplications).toEqual({});
+		// Another client explicitly undoes this proposal and commits content+pending receipt at newer revision.
+		const remote = { ...initial, updatedAt: new Date(initial.updatedAt.getTime() + 3) };
+		s().replaceResumeFromServer(remote);
+		const afterRebase = getProposalState(s().resume?.data ?? initial.data, p, s().proposalApplications);
+		clearResumeDrafts();
+		s().initialize(remote);
+		const afterRestart = getProposalState(s().resume?.data ?? initial.data, p, s().proposalApplications);
+		expect({ afterRebase, afterRestart }).toEqual({ afterRebase: "pending", afterRestart: "pending" });
+	});
+	it("an old pending decision cannot attach itself to a newer matching server revision", async () => {
+		const initial = makeResume("stale-pending");
+		initial.data.summary.content = "<p>Old</p>";
+		s().initialize(initial);
+		orpcMocks.updateResume.mockRejectedValue(new Error("offline"));
+		s().updateResumeData(
+			(d) => {
+				d.summary.content = "<p>New</p>";
+			},
+			{ newStep: true, proposalIds: ["receipt"] },
+		);
+		s().undo();
+		await vi.advanceTimersByTimeAsync(500);
+		// A different client has a later historical acceptance, then manually restores Old text.
+		// Same content is not proof the failed Undo request committed.
+		const remote = { ...initial, updatedAt: new Date(initial.updatedAt.getTime() + 10) };
+		clearResumeDrafts();
+		orpcMocks.updateResume
+			.mockReset()
+			.mockResolvedValue({ ...remote, updatedAt: new Date(remote.updatedAt.getTime() + 1) });
+		s().initialize(remote);
+		await flushMicrotasks();
+		expect(orpcMocks.updateResume).not.toHaveBeenCalled();
+		expect(s().saveStatus).toBe("conflict");
+	});
+	it("later Undo while acceptance save is in flight is sent after the earlier acknowledgement", async () => {
+		const initial = makeResume("inflight");
+		initial.data.summary.content = "<p>Old</p>";
+		s().initialize(initial);
+		let done: (resume: Resume) => void = () => {
+			throw new Error("Save did not start");
+		};
+		orpcMocks.updateResume
+			.mockImplementationOnce(
+				() =>
+					new Promise((resolve) => {
+						done = resolve;
+					}),
+			)
+			.mockImplementation(async (input) => ({
+				...initial,
+				data: input.data,
+				updatedAt: new Date(initial.updatedAt.getTime() + 2),
+			}));
+		s().updateResumeData(
+			(d) => {
+				d.summary.content = "<p>New</p>";
+			},
+			{ newStep: true, proposalIds: ["receipt"] },
+		);
+		await vi.advanceTimersByTimeAsync(500);
+		s().undo();
+		await vi.advanceTimersByTimeAsync(500);
+		done({
+			...initial,
+			data: { ...initial.data, summary: { ...initial.data.summary, content: "<p>New</p>" } },
+			updatedAt: new Date(initial.updatedAt.getTime() + 1),
+		});
+		await flushMicrotasks();
+		await vi.advanceTimersByTimeAsync(0);
+		expect(orpcMocks.updateResume.mock.calls.map((c) => c[0].proposalApplications)).toEqual([
+			{ receipt: true },
+			{ receipt: false },
+		]);
+		expect(s().resume?.data.summary.content).toBe("<p>Old</p>");
 	});
 });

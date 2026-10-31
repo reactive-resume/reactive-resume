@@ -14,6 +14,7 @@ import { findEntry } from "../write/model";
 import { scrollToIssue, useCheckActions } from "./actions";
 import { useCheck } from "./use-check";
 import { getPdfFindingMessage } from "@/features/ats-checker/messages";
+import { useResumeStore } from "@/features/resume/builder/draft";
 
 const toTarget = (node: PageMapNode): PageMapTarget => {
 	if (node.kind === "item") return { kind: "item", sectionId: node.sectionId, itemId: node.itemId };
@@ -85,6 +86,7 @@ type CheckPageLayerProps = { pageIndex: number; pageMap: PageMap | undefined };
  */
 export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 	const check = useCheck();
+	const applications = useResumeStore((state) => state.proposalApplications);
 	const tab = useEditorStore((state) => state.checkTab);
 	const selected = useEditorStore((state) => state.checkIssue);
 	const highlightTerm = useEditorStore((state) => state.highlightTerm);
@@ -119,7 +121,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 	const markers =
 		tab === "writing"
 			? proposals.flatMap((proposal, index) => {
-					if (getProposalState(check.data, proposal) !== "pending") return [];
+					if (getProposalState(check.data, proposal, applications) !== "pending") return [];
 					const target: PageMapTarget = proposal.target.itemId
 						? { kind: "item", sectionId: proposal.target.sectionId, itemId: proposal.target.itemId }
 						: { kind: "section", sectionId: proposal.target.sectionId };

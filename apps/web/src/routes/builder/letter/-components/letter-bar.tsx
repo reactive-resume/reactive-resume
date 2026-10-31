@@ -211,7 +211,7 @@ function LetterSaveStatus() {
 
 	const reload = async () => {
 		try {
-			useLetterEditorStore.getState().load(await client.coverLetters.getById({ id }));
+			useLetterEditorStore.getState().load(await client.coverLetters.getById({ id }), { recover: false });
 		} catch (error) {
 			failed(error);
 		}

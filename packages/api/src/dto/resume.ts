@@ -6,6 +6,7 @@ import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { slugSchema } from "@reactive-resume/schema/resume/slug";
 import { writableResumeDataSchema } from "@reactive-resume/schema/resume/write";
 import { paginationShape } from "../pagination";
+import { proposalApplicationsSchema } from "./proposals";
 
 const resumeSchema = createSelectSchema(schema.resume, {
 	id: z.string().describe("The ID of the resume."),
@@ -123,6 +124,7 @@ export const resumeDto = {
 					.date()
 					.optional()
 					.describe("If provided, the update only applies when the resume version still matches this timestamp."),
+				proposalApplications: proposalApplicationsSchema,
 				sessionId: z
 					.string()
 					.max(64)

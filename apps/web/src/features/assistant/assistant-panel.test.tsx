@@ -52,7 +52,7 @@ const document: AssistantDocument = {
 	locked: false,
 	posting: null,
 	stateOf: () => "pending",
-	accept: () => {},
+	accept: () => ({ applied: [], stale: [] }),
 	locationOf: () => undefined,
 };
 beforeEach(() => {

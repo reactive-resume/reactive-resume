@@ -160,6 +160,7 @@ export const crudRouter = {
 				...(input.name !== undefined ? { name: input.name } : {}),
 				...(input.sessionId !== undefined ? { sessionId: input.sessionId } : {}),
 				...(input.expectedUpdatedAt !== undefined ? { expectedUpdatedAt: input.expectedUpdatedAt } : {}),
+				...(input.proposalApplications !== undefined ? { proposalApplications: input.proposalApplications } : {}),
 				...(input.slug !== undefined ? { slug: input.slug } : {}),
 				...(input.tags !== undefined ? { tags: input.tags } : {}),
 				...(input.data !== undefined ? { data: input.data } : {}),

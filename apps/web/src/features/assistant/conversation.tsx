@@ -7,9 +7,9 @@ import type { UIMessage } from "ai";
 import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
-import { memo, useEffect, useEffectEvent, useId, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useId, useMemo, useRef, useState } from "react";
 import { agentWebSources, readPageOutputSchema } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -69,7 +69,7 @@ export function Conversation(props: ConversationProps) {
 	const { threadId, document, readOnly } = props;
 	const queryClient = useQueryClient();
 	const [context, setContext] = useState<MessageContext>(props.initialContext);
-	const [statuses, setStatuses] = useState<ReadonlyMap<string, EditStatus>>(new Map());
+	const [rejections, setStatuses] = useState<ReadonlyMap<string, EditStatus>>(new Map());
 	const [stopped, setStopped] = useState(false);
 	// Messages already in the thread when it opens are history; only new ones rise in.
 	const [initialIds] = useState(() => new Set(props.initialMessages.map((message) => message.id)));
@@ -82,7 +82,7 @@ export function Conversation(props: ConversationProps) {
 		messages,
 		sendMessage,
 		status,
-		error,
+		error: chatError,
 		clearError,
 		regenerate,
 		stop,
@@ -132,6 +132,10 @@ export function Conversation(props: ConversationProps) {
 	// A failed continuation (after an answer) is sent again as it was; regenerating would drop the answer.
 	const retry = () => {
 		if (busy || readOnly || continuationBlocked) return;
+		if (receipts.error) {
+			void receipts.refetch();
+			return;
+		}
 		clearError();
 		if (
 			lastAssistantMessageIsCompleteWithToolCalls({ messages }) ||
@@ -147,13 +151,38 @@ export function Conversation(props: ConversationProps) {
 		void stop();
 	};
 
+	// Refresh receipts on document revisions without replacing a live streamed transcript.
+	const receiptOptions = orpc.agent.threads.get.queryOptions({ input: { id: threadId } });
+	const receipts = useQuery({
+		...receiptOptions,
+		gcTime: 0,
+		queryKey: [...receiptOptions.queryKey, document?.proposalRevision],
+		enabled: !!document?.proposalRevision,
+	});
+	const receiptsReady = !document.proposalRevision || !!receipts.data;
+	const error = chatError ?? receipts.error;
+	const statuses = useMemo(
+		() =>
+			new Map([
+				...((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
+					message.parts.flatMap((part) =>
+						isProposeEdits(part)
+							? toProposals(part, new Map(), document).map((edit) => [edit.id, edit.status] as const)
+							: [],
+					),
+				),
+				...rejections,
+			]),
+		[receipts.data, rejections, document],
+	);
+
 	// Every proposed edit in the conversation, with what the user did with it: marked on the page while pending.
 	const proposals = useMemo(
 		() =>
-			messages.flatMap((message) =>
+			(receiptsReady ? messages : []).flatMap((message) =>
 				message.parts.flatMap((part) => (isProposeEdits(part) ? toProposals(part, statuses, document) : [])),
 			),
-		[messages, statuses, document],
+		[messages, statuses, document, receiptsReady],
 	);
 	// Published only when they change: the page canvas and every section row re-render on each publish, and a
 	// streaming reply rebuilds this list on every chunk.
@@ -167,8 +196,8 @@ export function Conversation(props: ConversationProps) {
 	useEffect(() => () => useEditorStore.setState({ assistantProposals: [] }), []);
 
 	const record = (message: UIMessage, part: ToolPart, changed: readonly Proposal[], next: EditStatus) => {
+		if (!part.toolCallId || next !== "rejected") return;
 		setStatuses((current) => new Map([...current, ...changed.map((proposal) => [proposal.id, next] as const)]));
-		if (!part.toolCallId) return;
 		void client.agent.messages
 			.setEditStatus({
 				threadId,
@@ -179,22 +208,6 @@ export function Conversation(props: ConversationProps) {
 			.then(refresh)
 			.catch(() => undefined);
 	};
-
-	// Undoing an accepted edit makes it pending again. Only an undo (the document) or a status change can cause
-	// one, so streamed chunks don't re-check every edit.
-	const recordUndone = useEffectEvent(() => {
-		for (const message of messages) {
-			for (const part of message.parts) {
-				if (!isProposeEdits(part)) continue;
-				const undone = toProposals(part, statuses, document).filter(
-					(proposal) => proposal.status === "accepted" && document.stateOf(proposal) === "pending",
-				);
-				if (undone.length > 0) record(message, part, undone, "pending");
-			}
-		}
-	});
-	// oxlint-disable-next-line react/set-state-in-effect -- an undo happens in the resume store; the new status is also saved to the thread
-	useEffect(() => recordUndone(), [statuses, document]);
 
 	const answer = (toolCallId: string, output: string) =>
 		addToolOutput({ tool: "ask_user_question", toolCallId, output });
@@ -219,7 +232,7 @@ export function Conversation(props: ConversationProps) {
 											busy={busy && index === messages.length - 1}
 											answerable={index === messages.length - 1}
 											enter={!initialIds.has(message.id)}
-											readOnly={readOnly || continuationBlocked}
+											readOnly={readOnly || continuationBlocked || !receiptsReady}
 											statuses={statuses}
 											document={document}
 											onAnswer={answer}
@@ -272,14 +285,18 @@ export function Conversation(props: ConversationProps) {
 										>
 											<span className="flex gap-2">
 												<Icon name="warning-circle" size={18} className="shrink-0" />
-												<Trans>
-													{props.providerLabel} returned “
-													{getOrpcErrorMessage(error, {
-														fallback: t`an error`,
-														allowServerMessage: true,
-													})}
-													”. Your message is kept.
-												</Trans>
+												{receipts.error ? (
+													<Trans>This conversation couldn't be opened.</Trans>
+												) : (
+													<Trans>
+														{props.providerLabel} returned “
+														{getOrpcErrorMessage(error, {
+															fallback: t`an error`,
+															allowServerMessage: true,
+														})}
+														”. Your message is kept.
+													</Trans>
+												)}
 											</span>
 											<span className="flex gap-1.5">
 												<Button size="sm" variant="secondary" onClick={retry}>
@@ -601,8 +618,8 @@ function ToolPartView({
 								)
 							}
 							onAccept={(chosen) => {
-								document.accept(chosen);
-								onRecord(message, part, chosen, "accepted");
+								const { applied } = document.accept(chosen);
+								if (applied.length > 0) onRecord(message, part, applied, "accepted");
 							}}
 							onReject={(chosen) => onRecord(message, part, chosen, "rejected")}
 						/>

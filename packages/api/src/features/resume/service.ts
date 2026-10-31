@@ -1,6 +1,7 @@
 import type { ResumeUpdatedEvent } from "./events";
 import type { DbOrTx } from "@reactive-resume/db/client";
 import type { JsonPatchOperation } from "@reactive-resume/resume/patch";
+import type { ProposalApplications } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Locale } from "@reactive-resume/utils/locale";
 import { ORPCError } from "@orpc/client";
@@ -15,6 +16,7 @@ import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { isValidSlug } from "@reactive-resume/schema/resume/slug";
 import { generateId } from "@reactive-resume/utils/string";
 import { consumeResumePasswordLimit } from "../../middleware/rate-limit";
+import { saveProposalApplications } from "../agent/proposal-applications";
 import { adoptEmbeddedLetters } from "../cover-letters/embedded";
 import { lockUser } from "../documents/ownership";
 import { enqueueStorageCleanup, reportStorageCleanupSummary, runStorageCleanup } from "../storage/cleanup";
@@ -649,6 +651,7 @@ export const resumeService = {
 		skipAutoSnapshot?: boolean;
 		/** The editor visit this save belongs to; its autosaves share one version. */
 		sessionId?: string;
+		proposalApplications?: ProposalApplications;
 	}) => {
 		const resume = await db
 			.transaction(async (tx) => {
@@ -698,6 +701,9 @@ export const resumeService = {
 						? normalizedData.basics.headline.trim().slice(0, 100) || undefined
 						: undefined;
 				const updateData: Partial<typeof schema.resume.$inferSelect> = {
+					...(input.proposalApplications && Object.keys(input.proposalApplications).length
+						? { updatedAt: new Date() }
+						: {}),
 					...(input.name !== undefined ? { name: input.name, autoName: false } : {}),
 					...(followedName ? { name: followedName } : {}),
 					...(input.slug !== undefined ? { slug: input.slug } : {}),
@@ -736,6 +742,11 @@ export const resumeService = {
 					.returning(resumeColumns);
 
 				if (!updated) throw new ORPCError("NOT_FOUND");
+				await saveProposalApplications(tx, {
+					userId: input.userId,
+					document: { kind: "resume", id: input.id },
+					applications: input.proposalApplications,
+				});
 				return updated;
 			})
 			.catch((error: unknown) => {

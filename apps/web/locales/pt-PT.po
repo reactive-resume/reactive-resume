@@ -89,7 +89,7 @@ msgstr "(opcional)"
 msgid "(required)"
 msgstr "(obrigatório)"
 
-#. placeholder {0}: proposals.length
+#. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
 msgstr "{0, plural, =1 {Edição aplicada} other {# edições aplicadas}}"
@@ -174,7 +174,9 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {# documento movido para a Lixeira} other {# documentos movidos para a Lixeira}}"
 
 #. placeholder {0}: output.skipped.length
+#. placeholder {0}: stale.length
 #: src/features/assistant/conversation.tsx
+#: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
 msgstr "{0, plural, one {A edição # não pôde ser colocada: o seu texto foi alterado. Peça novamente para refazer.} other {As edições de # não puderam ser colocadas: o seu texto foi alterado. Peça novamente para os refazer.}}"
 
@@ -343,11 +345,6 @@ msgstr ""
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} closed"
 msgstr "{0} fechado"
-
-#. placeholder {0}: proposals.length
-#: src/features/assistant/document.ts
-msgid "{0} edits applied"
-msgstr "{0} edições aplicadas"
 
 #. placeholder {0}: semantics.dates.length
 #: src/features/resume/editor/check/parser-view.tsx
@@ -5026,10 +5023,6 @@ msgstr "Editar {number}:"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Edit application"
 msgstr "Editar candidatura"
-
-#: src/features/assistant/document.ts
-msgid "Edit applied"
-msgstr "Edição aplicada"
 
 #. placeholder {0}: shownColor.token.value
 #: src/features/resume/stylesheet/editor.tsx
@@ -12972,6 +12965,10 @@ msgstr "Este navegador não suporta ditado e nenhuma das suas ligações de IA c
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
 msgstr "Este pedido de ligação é inválido ou expirou. Inicie a ligação novamente a partir do seu cliente."
+
+#: src/features/assistant/conversation.tsx
+msgid "This conversation couldn't be opened."
+msgstr "Não foi possível abrir esta conversa."
 
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx

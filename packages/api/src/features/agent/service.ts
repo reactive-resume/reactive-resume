@@ -42,6 +42,7 @@ import {
 	findUserMessageRow,
 	insertDraftAssistantMessage,
 	nextMessageSequence,
+	lockThreadMessages,
 	proposedEditsOf,
 	touchThread,
 	upsertAssistantUiMessage,
@@ -502,92 +503,90 @@ async function persistMessage(input: {
 	return message;
 }
 
-async function updateAssistantToolResultMessage(input: {
+function updateAssistantToolResultMessage(input: {
 	userId: string;
 	threadId: string;
 	message: UIMessage;
 	contextScope?: string | undefined;
 }) {
-	const existingRows = await listThreadMessages({
-		threadId: input.threadId,
-		userId: input.userId,
-	});
-	const existingRow = existingRows.find((row) => row.role === "assistant" && toMessage(row).id === input.message.id);
-	if (!existingRow) {
-		throw new ORPCError("BAD_REQUEST", {
-			message: "The answered assistant message was not found.",
-		});
-	}
-	if (existingRows.at(-1)?.id !== existingRow.id) {
-		throw new ORPCError("CONFLICT", {
-			message: "This question is no longer the latest reply. Send a new message instead.",
-		});
-	}
-	const stored = toMessage(existingRow);
-	if (
-		input.contextScope &&
-		(stored.metadata as { contextScope?: string } | undefined)?.contextScope !== input.contextScope
-	)
-		throw new ORPCError("BAD_REQUEST", {
-			message: "Send a new message after removing context. Previous tool approvals cannot be continued.",
-		});
-
-	const {
-		message: mergedMessage,
-		mergedCount,
-		alreadyResolvedCount,
-		resolvedQuestionCount,
-		idempotentQuestionCount,
-		pendingContinuationCount,
-		conflictingCount,
-	} = mergeClientToolResponses(stored, input.message);
-
-	if (conflictingCount > 0) {
-		throw new ORPCError("BAD_REQUEST", {
-			message: "This approval was already answered with a different decision.",
-		});
-	}
-	// A recorded-but-unexecuted approval (pendingContinuationCount) proceeds: a prior continuation
-	// attempt failed after persisting the decision, and this retry is the recovery path. A question
-	// answer is recoverable the same way only for the exact same answer while its continuation row
-	// has not completed; completed, different or foreign answers stay rejected.
-	const sameAnswerRecovery =
-		existingRow.status !== "completed" &&
-		resolvedQuestionCount > 0 &&
-		idempotentQuestionCount === resolvedQuestionCount;
-	if (mergedCount === 0 && pendingContinuationCount === 0 && !sameAnswerRecovery) {
-		if (alreadyResolvedCount > 0) {
-			throw new ORPCError("CONFLICT", {
-				message: "This response was already handled.",
+	return db.transaction(async (tx) => {
+		const existingRows = await lockThreadMessages(tx, input);
+		const existingRow = existingRows.find((row) => row.role === "assistant" && toMessage(row).id === input.message.id);
+		if (!existingRow) {
+			throw new ORPCError("BAD_REQUEST", {
+				message: "The answered assistant message was not found.",
 			});
 		}
-		throw new ORPCError("BAD_REQUEST", {
-			message: "No matching unanswered user question was found.",
-		});
-	}
+		// Lock order is by ID; continuation eligibility follows the conversation's chronological order.
+		const latest = existingRows.toSorted((a, b) => a.sequence - b.sequence).at(-1);
+		if (latest?.id !== existingRow.id) {
+			throw new ORPCError("CONFLICT", {
+				message: "This question is no longer the latest reply. Send a new message instead.",
+			});
+		}
+		const stored = toMessage(existingRow);
+		if (
+			input.contextScope &&
+			(stored.metadata as { contextScope?: string } | undefined)?.contextScope !== input.contextScope
+		)
+			throw new ORPCError("BAD_REQUEST", {
+				message: "Send a new message after removing context. Previous tool approvals cannot be continued.",
+			});
 
-	await db
-		.update(schema.agentMessage)
-		.set({
-			// The continuation run streams into this row; keep it non-terminal until onFinish marks it
-			// completed. That state is also what lets an identical-answer retry recover a failed provider.
-			status: "streaming",
-			uiMessage: mergedMessage as unknown as Record<string, unknown>,
-		})
-		.where(
-			and(
-				eq(schema.agentMessage.id, existingRow.id),
-				eq(schema.agentMessage.threadId, input.threadId),
-				eq(schema.agentMessage.userId, input.userId),
-			),
-		);
+		const {
+			message: mergedMessage,
+			mergedCount,
+			alreadyResolvedCount,
+			resolvedQuestionCount,
+			idempotentQuestionCount,
+			pendingContinuationCount,
+			conflictingCount,
+		} = mergeClientToolResponses(stored, input.message);
 
-	await db
-		.update(schema.agentThread)
-		.set({ lastMessageAt: new Date() })
-		.where(and(eq(schema.agentThread.id, input.threadId), eq(schema.agentThread.userId, input.userId)));
+		if (conflictingCount > 0) {
+			throw new ORPCError("BAD_REQUEST", {
+				message: "This approval was already answered with a different decision.",
+			});
+		}
+		// A recorded-but-unexecuted approval (pendingContinuationCount) proceeds: a prior continuation
+		// attempt failed after persisting the decision, and this retry is the recovery path. Identical
+		// question answers recover only while their continuation row is non-terminal.
+		const sameAnswerRecovery =
+			existingRow.status !== "completed" &&
+			resolvedQuestionCount > 0 &&
+			idempotentQuestionCount === resolvedQuestionCount;
+		if (mergedCount === 0 && pendingContinuationCount === 0 && !sameAnswerRecovery) {
+			if (alreadyResolvedCount > 0) {
+				throw new ORPCError("CONFLICT", {
+					message: "This response was already handled.",
+				});
+			}
+			throw new ORPCError("BAD_REQUEST", {
+				message: "No matching unanswered user question was found.",
+			});
+		}
 
-	return { message: mergedMessage, rowId: existingRow.id };
+		await tx
+			.update(schema.agentMessage)
+			.set({
+				status: "streaming",
+				uiMessage: mergedMessage as unknown as Record<string, unknown>,
+			})
+			.where(
+				and(
+					eq(schema.agentMessage.id, existingRow.id),
+					eq(schema.agentMessage.threadId, input.threadId),
+					eq(schema.agentMessage.userId, input.userId),
+				),
+			);
+
+		await tx
+			.update(schema.agentThread)
+			.set({ lastMessageAt: new Date() })
+			.where(and(eq(schema.agentThread.id, input.threadId), eq(schema.agentThread.userId, input.userId)));
+
+		return { message: mergedMessage, rowId: existingRow.id };
+	});
 }
 
 async function repairLegacyAskUserQuestionAnswers(
@@ -595,43 +594,30 @@ async function repairLegacyAskUserQuestionAnswers(
 	input: { threadId: string; userId: string },
 ) {
 	const nextRows = [...rows];
-	const updates: Promise<unknown>[] = [];
 
 	for (let index = 0; index < nextRows.length - 1; index++) {
 		const assistantRow = nextRows[index];
 		const answerRow = nextRows[index + 1];
-
 		if (!assistantRow || !answerRow || assistantRow.role !== "assistant" || answerRow.role !== "user") continue;
-
-		const assistantMessage = toMessage(assistantRow);
-		const toolCallId = getFirstUnansweredAskUserQuestionToolCallId(assistantMessage);
 		const answer = messageText(toMessage(answerRow));
-		if (!toolCallId || !answer) continue;
-
-		const mergedMessage = answerAskUserQuestionToolCall(assistantMessage, toolCallId, answer);
-		nextRows[index] = {
-			...assistantRow,
-			uiMessage: mergedMessage as unknown as AgentMessageRecord["uiMessage"],
-		};
-
-		updates.push(
-			db
+		if (!answer || !getFirstUnansweredAskUserQuestionToolCallId(toMessage(assistantRow))) continue;
+		await db.transaction(async (tx) => {
+			const locked = await lockThreadMessages(tx, input);
+			const current = locked.find((row) => row.id === assistantRow.id);
+			if (!current) return;
+			const toolCallId = getFirstUnansweredAskUserQuestionToolCallId(toMessage(current));
+			if (!toolCallId) {
+				nextRows[index] = current;
+				return;
+			}
+			const message = answerAskUserQuestionToolCall(toMessage(current), toolCallId, answer);
+			await tx
 				.update(schema.agentMessage)
-				.set({
-					status: "completed",
-					uiMessage: mergedMessage as unknown as Record<string, unknown>,
-				})
-				.where(
-					and(
-						eq(schema.agentMessage.id, assistantRow.id),
-						eq(schema.agentMessage.threadId, input.threadId),
-						eq(schema.agentMessage.userId, input.userId),
-					),
-				),
-		);
+				.set({ status: "completed", uiMessage: message as unknown as Record<string, unknown> })
+				.where(and(eq(schema.agentMessage.id, current.id), eq(schema.agentMessage.userId, input.userId)));
+			nextRows[index] = { ...current, uiMessage: message as unknown as AgentMessageRecord["uiMessage"] };
+		});
 	}
-
-	await Promise.all(updates);
 
 	return nextRows;
 }
@@ -1612,34 +1598,33 @@ export const agentService = {
 			assertAgentEnvironment();
 			await getThread({ id: input.threadId, userId: input.userId });
 
-			const rows = await listThreadMessages({
-				threadId: input.threadId,
-				userId: input.userId,
+			return db.transaction(async (tx) => {
+				const rows = await lockThreadMessages(tx, input);
+				const row = rows.find((candidate) => toMessage(candidate).id === input.messageId);
+				if (!row) throw new ORPCError("NOT_FOUND");
+
+				const statuses = new Map(input.edits.map((edit) => [edit.id, edit.status]));
+				const message = withEditStatuses(toMessage(row), input.toolCallId, statuses);
+				await tx
+					.update(schema.agentMessage)
+					.set({ uiMessage: message as never })
+					.where(and(eq(schema.agentMessage.id, row.id), eq(schema.agentMessage.userId, input.userId)));
+
+				const accepted = rows
+					.map((candidate) => (candidate.id === row.id ? message : toMessage(candidate)))
+					.flatMap(proposedEditsOf)
+					.filter((edit) => edit.status === "accepted").length;
+				const [thread] = await tx
+					.update(schema.agentThread)
+					.set({ editsAccepted: accepted })
+					.where(and(eq(schema.agentThread.id, input.threadId), eq(schema.agentThread.userId, input.userId)))
+					.returning({
+						editsProposed: schema.agentThread.editsProposed,
+						editsAccepted: schema.agentThread.editsAccepted,
+					});
+				if (!thread) throw new ORPCError("NOT_FOUND");
+				return thread;
 			});
-			const row = rows.find((candidate) => toMessage(candidate).id === input.messageId);
-			if (!row) throw new ORPCError("NOT_FOUND");
-
-			const statuses = new Map(input.edits.map((edit) => [edit.id, edit.status]));
-			const message = withEditStatuses(toMessage(row), input.toolCallId, statuses);
-			await db
-				.update(schema.agentMessage)
-				.set({ uiMessage: message as never })
-				.where(and(eq(schema.agentMessage.id, row.id), eq(schema.agentMessage.userId, input.userId)));
-
-			const accepted = rows
-				.map((candidate) => (candidate.id === row.id ? message : toMessage(candidate)))
-				.flatMap(proposedEditsOf)
-				.filter((edit) => edit.status === "accepted").length;
-			const [thread] = await db
-				.update(schema.agentThread)
-				.set({ editsAccepted: accepted })
-				.where(and(eq(schema.agentThread.id, input.threadId), eq(schema.agentThread.userId, input.userId)))
-				.returning({
-					editsProposed: schema.agentThread.editsProposed,
-					editsAccepted: schema.agentThread.editsAccepted,
-				});
-			if (!thread) throw new ORPCError("NOT_FOUND");
-			return thread;
 		},
 	},
 

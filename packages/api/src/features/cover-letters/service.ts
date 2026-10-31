@@ -20,6 +20,7 @@ import {
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { coverLetterDto } from "../../dto/cover-letter";
+import { saveProposalApplications } from "../agent/proposal-applications";
 import { lockUser } from "../documents/ownership";
 import { resumeService } from "../resume/service";
 import { sanitizeCoverLetterHtml } from "./html";
@@ -361,6 +362,11 @@ export const coverLetterService = {
 
 		const persist = async (client: DbOrTx) => {
 			const updated = await updateRevision(input, changes, client);
+			await saveProposalApplications(client, {
+				userId: input.userId,
+				document: { kind: "letter", id: input.id },
+				applications: input.proposalApplications,
+			});
 			if (input.applicationId !== undefined) {
 				await linkLetterApplication(client, {
 					userId: input.userId,
@@ -373,7 +379,7 @@ export const coverLetterService = {
 			return updated;
 		};
 		const updated = await resolveLinks(
-			await (input.applicationId === undefined
+			await (input.applicationId === undefined && !input.proposalApplications
 				? persist(db)
 				: db.transaction(async (tx) => {
 						await lockUser(tx, input.userId);

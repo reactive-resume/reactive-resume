@@ -1,6 +1,7 @@
 import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import { describe, expect, it } from "vite-plus/test";
+import { describe, expect, it, vi } from "vite-plus/test";
+import { i18n } from "@lingui/core";
 import { produce } from "immer";
 import {
 	applyProposal,
@@ -10,7 +11,11 @@ import {
 	replaceBlockText,
 } from "@reactive-resume/resume/proposals";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { markProposals } from "./proposals";
+const mocks = vi.hoisted(() => ({ store: vi.fn(), toast: vi.fn() }));
+vi.mock("@/features/resume/builder/draft", () => ({ useResumeStore: { getState: mocks.store } }));
+vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: mocks.toast } }));
+
+import { acceptResumeProposals, markProposals } from "./proposals";
 
 const OLD_BULLET = "<li><p>Responsible for various design tasks</p></li>";
 
@@ -89,4 +94,38 @@ describe("proposals", () => {
 		expect(readTarget(next, addition.target)).toContain("Introduced monthly accessibility reviews</p></li><li>");
 		expect(getProposalState(next, { ...addition, status: "accepted" })).toBe("accepted");
 	});
+});
+
+it("toasts real applied and failed counts, skips locked writes, and keeps Undo from erasing later edits", () => {
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
+	mocks.toast.mockClear();
+	const state = {
+		resume: { id: "resume", data: makeData(), isLocked: false },
+		updateResumeData: vi.fn((recipe: (draft: ResumeData) => void) => {
+			state.resume.data = produce(state.resume.data, recipe);
+		}),
+		undo: vi.fn(),
+	};
+	mocks.store.mockReturnValue(state);
+	const rewrite = proposal();
+	const addition = proposal({ id: "addition", after: "<p>Conflicting rewrite</p>" });
+	expect(acceptResumeProposals([rewrite, addition])).toEqual({ applied: [rewrite], stale: [addition] });
+	expect(mocks.toast).toHaveBeenLastCalledWith(
+		expect.objectContaining({
+			description: "Edit applied · 1 edit couldn't be placed: its text changed. Ask again to redo it.",
+		}),
+	);
+	const undo = mocks.toast.mock.lastCall?.[0].actionProps.onClick;
+	undo();
+	expect(state.undo).toHaveBeenCalledOnce();
+	state.undo.mockClear();
+	state.resume.data = makeData();
+	undo();
+	expect(state.undo).not.toHaveBeenCalled();
+	state.resume.isLocked = true;
+	mocks.toast.mockClear();
+	state.updateResumeData.mockClear();
+	expect(acceptResumeProposals([rewrite, addition])).toEqual({ applied: [], stale: [] });
+	expect(mocks.toast).not.toHaveBeenCalled();
+	expect(state.updateResumeData).not.toHaveBeenCalled();
 });

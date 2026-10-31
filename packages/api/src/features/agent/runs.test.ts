@@ -14,6 +14,7 @@ vi.mock("@reactive-resume/db/schema", () => ({
 	agentAction: {},
 }));
 vi.mock("drizzle-orm", () => ({
+	asc: (value: unknown) => value,
 	and: (...conditions: unknown[]) => ({ type: "and", conditions }),
 	eq: (left: unknown, right: unknown) => ({ type: "eq", left, right }),
 	isNull: (value: unknown) => ({ type: "isNull", value }),
@@ -108,14 +109,19 @@ function scriptedReaperDatabase(input: { drafts: Array<Record<string, unknown>>;
 	const state: ScriptedReaperDb = { updates: [] };
 	let selectCall = 0;
 
-	return {
+	const database = {
+		transaction: async <T>(callback: (tx: unknown) => Promise<T>): Promise<T> => callback(database),
 		state,
 		select: () => {
 			const call = selectCall;
 			selectCall += 1;
 			return {
 				from: () => ({
-					where: async () => (call === 0 ? input.drafts : []),
+					where: () => {
+						const rows = call === 0 ? input.drafts : [];
+						const query = Object.assign(Promise.resolve(rows), { orderBy: () => query, for: async () => rows });
+						return query;
+					},
 				}),
 			};
 		},
@@ -131,6 +137,7 @@ function scriptedReaperDatabase(input: { drafts: Array<Record<string, unknown>>;
 			},
 		}),
 	};
+	return database;
 }
 
 describe("reapStaleAgentRun", () => {

@@ -10,6 +10,7 @@ it("removes contact snapshots, unsaved resumes, and career drafts from both brow
 	const privateKeys = [
 		"letter-sender:letter",
 		"reactive-resume:unsaved:resume",
+		"reactive-resume:unsaved:letter:letter:session",
 		"career-story:user",
 		"career:debrief:application",
 		"new-documents",

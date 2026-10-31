@@ -89,7 +89,7 @@ msgstr "（选填）"
 msgid "(required)"
 msgstr "（必填）"
 
-#. placeholder {0}: proposals.length
+#. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
 msgstr "{0, plural, =1 {已应用修改} other {已应用 # 处修改}}"
@@ -174,7 +174,9 @@ msgid "{0, plural, one {# document moved to Trash} other {# documents moved to T
 msgstr "{0, plural, one {已将 # 个文件移至垃圾箱} other {已将 # 个文件移至垃圾箱}}"
 
 #. placeholder {0}: output.skipped.length
+#. placeholder {0}: stale.length
 #: src/features/assistant/conversation.tsx
+#: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
 msgstr "{0, plural, one {无法放置 # 编辑：其文本已更改。再次要求重做。} other {无法放置 # 编辑：其文本已更改。再次要求重做。}}"
 
@@ -343,11 +345,6 @@ msgstr ""
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} closed"
 msgstr "{0} 已关闭"
-
-#. placeholder {0}: proposals.length
-#: src/features/assistant/document.ts
-msgid "{0} edits applied"
-msgstr "{0} 编辑已应用"
 
 #. placeholder {0}: semantics.dates.length
 #: src/features/resume/editor/check/parser-view.tsx
@@ -5026,10 +5023,6 @@ msgstr "编辑{number}："
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Edit application"
 msgstr "编辑申请"
-
-#: src/features/assistant/document.ts
-msgid "Edit applied"
-msgstr "编辑已应用"
 
 #. placeholder {0}: shownColor.token.value
 #: src/features/resume/stylesheet/editor.tsx
@@ -12972,6 +12965,10 @@ msgstr "此浏览器不支持听写，且您的 AI 连接都无法转写语音�
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
 msgstr "此连接请求无效或已过期。请从你的客户端重新发起连接。"
+
+#: src/features/assistant/conversation.tsx
+msgid "This conversation couldn't be opened."
+msgstr "该对话无法打开。"
 
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx

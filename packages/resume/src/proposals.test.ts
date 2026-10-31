@@ -1,9 +1,129 @@
+import type { Proposal } from "./proposals";
 import { describe, expect, it } from "vite-plus/test";
 import { experienceItemSchema } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { additionAfter, applyProposal, applyTo, collectLetterPassages, collectPassages, readTarget } from "./proposals";
+import {
+	additionAfter,
+	acknowledgeProposalApplications,
+	applyProposal,
+	applyProposals,
+	applyTo,
+	collectLetterPassages,
+	collectPassages,
+	getProposalState,
+	getStateIn,
+	readTarget,
+	replaceBlockText,
+	writeTarget,
+} from "./proposals";
 
 const labels = { body: "Letter", bullet: (n: number) => `bullet ${n}`, paragraph: (n: number) => `paragraph ${n}` };
+
+const proposal = (before: string, after: string): Proposal => ({
+	id: after,
+	target: { sectionId: "summary", field: "content" },
+	location: "Summary",
+	before,
+	after,
+	why: "Clearer",
+	status: "pending",
+	source: "assistant",
+});
+
+it("keeps accepted identity through refinements and quote normalization without inferring unrelated acceptance", () => {
+	const edit = proposal("<p>Old</p>", "<p>New</p>");
+	const addition = proposal("<p>Old</p>", "<p>Old</p><p>Mentored two designers</p>");
+	for (const accepted of [edit, addition]) {
+		expect(getStateIn("<p>Manually refined</p>", { ...accepted, status: "accepted" })).toBe("accepted");
+		expect(getStateIn("<p>Manually refined</p>", accepted, { [accepted.id]: true })).toBe("accepted");
+		expect(getStateIn("<p>Old</p>", { ...accepted, status: "accepted" }, { [accepted.id]: false })).toBe("pending");
+	}
+	expect(getStateIn("<p>Old</p><p>Elsewhere</p><p>Mentored two designers</p>", addition)).toBe("pending");
+	expect(getStateIn("<p>Changed</p>", addition)).toBe("stale");
+});
+
+it("applies quote-normalized originals safely without equating escaped markup to tags", () => {
+	const edit = proposal("<p>They&#39;ve said &quot;yes&quot;.</p>", "<p>They&#39;ve delivered.</p>");
+	const value = `<p>They've said "yes".</p>`;
+	expect(getStateIn(value, edit)).toBe("pending");
+	expect(applyTo(value, edit)).toBe("<p>They&#39;ve delivered.</p>");
+	const addition = { ...edit, after: `${edit.before}<p>Added</p>` };
+	expect(applyTo(value, addition)).toBe(`${value}<p>Added</p>`);
+	expect(
+		applyTo("<p><b>Claim</b></p>", { before: "<p>&lt;b&gt;Claim&lt;/b&gt;</p>", after: "<p>Wrong</p>" }),
+	).toBeUndefined();
+	expect(applyTo(`${value}${edit.before}`, edit)).toBeUndefined();
+	expect(
+		applyTo(`<p title='a>b&quot;c'>Old</p>`, { before: `<p title='a>b"c'>Old</p>`, after: "<p>Wrong target</p>" }),
+	).toBeUndefined();
+});
+
+it("preserves proposal order, places additions before rewriting their anchor, and cannot accept the same IDs twice", () => {
+	let content = "<ul><li><p>Old</p></li></ul>";
+	const before = "<p>Old</p></li>";
+	const first = proposal(before, `${before}<li><p>First</p></li>`);
+	const second = proposal(before, `${before}<li><p>Second</p></li>`);
+	const rewrite = proposal("<p>Old</p>", "<p>Rewritten</p>");
+	const edits = [rewrite, first, second];
+	const applications: Record<string, boolean> = {};
+	const accept = () => {
+		const result = applyProposals(
+			edits,
+			() => content,
+			(_, value) => {
+				content = value;
+			},
+			applications,
+		);
+		for (const edit of result.applied) applications[edit.id] = true;
+		return result;
+	};
+	expect(accept()).toEqual({ applied: edits, stale: [] });
+	expect(content).toBe("<ul><li><p>Rewritten</p></li><li><p>First</p></li><li><p>Second</p></li></ul>");
+	content = "<ul><li><p>Refined anchor</p></li><li><p>Refined first</p></li><li><p>Second</p></li></ul>";
+	expect(accept()).toEqual({ applied: [], stale: [] });
+	expect(edits.map((edit) => getStateIn(content, edit, applications))).toEqual(["accepted", "accepted", "accepted"]);
+});
+
+it("reports real failures and does not infer application from identical text elsewhere", () => {
+	const data = structuredClone(defaultResumeData);
+	data.summary.content = "<p>Old</p><p>Elsewhere</p><p>Added</p>";
+	const addition = proposal("<p>Old</p>", "<p>Old</p><p>Added</p>");
+	const rewrite = proposal("<p>Old</p>", "<p>Rewritten</p>");
+	const conflict = proposal("<p>Old</p>", "<p>Conflict</p>");
+	const stale = proposal("<p>Gone</p>", "<p>New</p>");
+	expect(
+		applyProposals(
+			[rewrite, addition, conflict, stale],
+			(target) => readTarget(data, target),
+			(target, value) => writeTarget(data, target, value),
+		),
+	).toEqual({ applied: [rewrite, addition], stale: [conflict, stale] });
+	expect(data.summary.content).toBe("<p>Rewritten</p><p>Added</p><p>Elsewhere</p><p>Added</p>");
+});
+
+it("refuses missing or ambiguous targets and no-op proposals without reporting writes", () => {
+	for (const value of [undefined, "<p>Changed</p>", "<p>Old</p><p>Old</p>"]) {
+		const edit = proposal("<p>Old</p>", "<p>New</p>");
+		expect(
+			applyProposals(
+				[edit],
+				() => value,
+				() => {
+					throw new Error("Unexpected write");
+				},
+			),
+		).toEqual({ applied: [], stale: [edit] });
+	}
+	const data = structuredClone(defaultResumeData);
+	const missing = {
+		...proposal("", "<p>New</p>"),
+		target: { sectionId: "experience", itemId: "deleted", field: "description" },
+	};
+	expect(getProposalState(data, missing)).toBe("stale");
+	expect(applyProposal(data, missing)).toBe(false);
+	expect(applyTo("", { before: "", after: "" })).toBeUndefined();
+});
 
 it("rejects ambiguous paragraphs instead of replacing the first occurrence", () => {
 	const value = "<p>Repeated claim.</p><p>Different middle.</p><p>Repeated claim.</p>";
@@ -108,4 +228,34 @@ describe("collectLetterPassages", () => {
 		// Writing into it replaces the empty text.
 		expect(applyTo("", { before: "", after: "<p>Dear team</p>" })).toBe("<p>Dear team</p>");
 	});
+});
+
+it("counts one real write for duplicate serializer-only proposals and marks normalized no-ops out of date", () => {
+	let content = `<p>They've said "yes".</p>`;
+	const before = content;
+	const after = replaceBlockText(before, `They've said "yes".`);
+	const first = { ...proposal(before, after), id: "first" };
+	const second = { ...first, id: "second" };
+	let writes = 0;
+	const result = applyProposals(
+		[first, second],
+		() => content,
+		(_, next) => {
+			if (next !== content) writes++;
+			content = next;
+		},
+	);
+	expect(writes).toBe(1);
+	expect(result.applied).toEqual([first]);
+	expect(result.stale).toEqual([second]);
+	expect(getStateIn(content, second)).toBe("stale");
+	expect(applyTo(content, second)).toBeUndefined();
+});
+
+it("does not acknowledge a newer Undo/Redo decision with an older save response", () => {
+	expect(acknowledgeProposalApplications({ edit: false, later: true }, { edit: true })).toEqual({
+		edit: false,
+		later: true,
+	});
+	expect(acknowledgeProposalApplications({ edit: false, later: true }, { edit: false })).toEqual({ later: true });
 });

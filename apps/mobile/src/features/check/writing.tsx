@@ -36,6 +36,7 @@ export type WritingReview = { summary: string; strengths: string[]; proposals: P
 
 export function Writing({ id, data, issues, offline, locked, review, setReview }: WritingProps) {
 	const { t } = useLingui();
+	const applications = useResumeStore((state) => state.proposalApplications);
 	const { space } = useTheme();
 	const providers = useHasAIProvider();
 	const [setup, setSetup] = useState(false);
@@ -102,6 +103,7 @@ export function Writing({ id, data, issues, offline, locked, review, setReview }
 					applyProposal(draft, proposal);
 				},
 				t`Rewrite accepted`,
+				[proposal.id],
 			)
 		)
 			setReview(
@@ -177,7 +179,7 @@ export function Writing({ id, data, issues, offline, locked, review, setReview }
 					<Text>{review.summary}</Text>
 					<ReportAiContent source="writing" text={JSON.stringify(review, null, 2)} />
 					{review.proposals.map((proposal) => {
-						const state = getProposalState(data, proposal);
+						const state = getProposalState(data, proposal, applications);
 						const stale = state === "stale";
 						return (
 							<Card key={proposal.id} style={{ gap: space.s2 }}>

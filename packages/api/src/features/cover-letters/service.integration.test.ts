@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vite-plus/test";
-import { ORPCError } from "@orpc/client";
 import { createRouterClient } from "@orpc/server";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
@@ -15,20 +14,12 @@ vi.mock("@reactive-resume/db/client", () => ({
 	get db() {
 		return fixture.db;
 	},
+	getPool: () => fixture.pool,
 }));
 vi.mock("../../context", async () => {
 	const { os } = await vi.importActual<typeof import("@orpc/server")>("@orpc/server");
 	return { protectedProcedure: os.$context<{ user: { id: string } }>() };
 });
-vi.mock("../resume/service", () => ({
-	resumeService: {
-		getById: async ({ id, userId }: { id: string; userId: string }) => {
-			const result = await getPool().query("SELECT id, data FROM resume WHERE id=$1 AND user_id=$2", [id, userId]);
-			if (!result.rows[0]) throw new ORPCError("NOT_FOUND");
-			return result.rows[0];
-		},
-	},
-}));
 
 function getPool(): Pool {
 	if (!fixture.pool) throw new Error("Test database is not initialized");
@@ -50,7 +41,14 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		});
 		fixture.db = drizzle({ client: fixture.pool });
 		await fixture.pool.query(
-			`CREATE TABLE "user" (id text PRIMARY KEY); CREATE TABLE resume (id text PRIMARY KEY, user_id text, data jsonb); CREATE TABLE application (id text PRIMARY KEY, user_id text, company text NOT NULL DEFAULT '', contacts jsonb NOT NULL DEFAULT '[]', cover_letter_id text, updated_at timestamptz, resume_id text, status text DEFAULT 'saved', sent_resume_version_id text);`,
+			`CREATE TABLE "user" (id text PRIMARY KEY); CREATE TABLE resume (id text PRIMARY KEY, user_id text, data jsonb,
+			name text NOT NULL DEFAULT 'Resume', slug text NOT NULL DEFAULT 'resume', tags text[] NOT NULL DEFAULT '{}',
+			is_public boolean NOT NULL DEFAULT false, show_download_buttons boolean NOT NULL DEFAULT true,
+			show_in_search_engines boolean NOT NULL DEFAULT false, hide_contact_details boolean NOT NULL DEFAULT false,
+			is_primary boolean NOT NULL DEFAULT false, is_locked boolean NOT NULL DEFAULT false, auto_name boolean NOT NULL DEFAULT false,
+			trashed_at timestamptz, password text, application_id text, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
+			CREATE TABLE resume_version (id text PRIMARY KEY, resume_id text, user_id text, data jsonb, kind text, session_id text, name text, created_at timestamptz NOT NULL DEFAULT now());
+			CREATE UNIQUE INDEX resume_version_session_unique ON resume_version(resume_id,session_id) WHERE kind='auto'; CREATE TABLE application (id text PRIMARY KEY, user_id text, company text NOT NULL DEFAULT '', contacts jsonb NOT NULL DEFAULT '[]', cover_letter_id text, updated_at timestamptz, resume_id text, status text DEFAULT 'saved', sent_resume_version_id text);`,
 		);
 		// The migrations that shape the letter tables, in order.
 		for (const name of [
@@ -75,6 +73,9 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 				}
 			}
 		}
+		await fixture.pool
+			.query(`CREATE TABLE agent_threads (id text PRIMARY KEY, user_id text, working_resume_id text, cover_letter_id text, edits_accepted integer DEFAULT 0, updated_at timestamptz DEFAULT now());
+		CREATE TABLE agent_messages (id text PRIMARY KEY, user_id text, thread_id text, role text DEFAULT 'assistant', status text DEFAULT 'streaming', sequence integer DEFAULT 0, error text, ui_message jsonb, created_at timestamptz DEFAULT now(), updated_at timestamptz DEFAULT now());`);
 		service = (await import("./service")).coverLetterService;
 	});
 	afterAll(async () => {
@@ -83,12 +84,274 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		await admin?.end();
 	});
 	beforeEach(async () => {
-		await getPool().query('TRUNCATE "user",resume,application,cover_letter CASCADE');
+		await getPool().query(
+			'TRUNCATE "user",resume,resume_version,application,cover_letter,agent_threads,agent_messages CASCADE',
+		);
 		await getPool().query("INSERT INTO \"user\" VALUES ('alice'),('bob')");
-		await getPool().query("INSERT INTO resume VALUES ('alice-resume','alice',$1),('bob-resume','bob',$1)", [
-			defaultResumeData,
-		]);
+		await getPool().query(
+			"INSERT INTO resume (id,user_id,data) VALUES ('alice-resume','alice',$1),('bob-resume','bob',$1)",
+			[defaultResumeData],
+		);
 		await getPool().query("INSERT INTO application VALUES ('alice-app','alice'),('bob-app','bob')");
+	});
+
+	const proposing = (status: "accepted" | "pending" | "rejected") => ({
+		id: "message",
+		role: "assistant",
+		parts: [
+			{
+				type: "tool-propose_edits",
+				toolCallId: "call",
+				state: "output-available",
+				output: { edits: [{ id: "edit", status }] },
+			},
+		],
+	});
+	async function proposalThread(
+		id: string,
+		owner: string,
+		kind: "resume" | "letter",
+		documentId: string,
+		status: "accepted" | "pending" | "rejected" = "pending",
+	) {
+		await getPool().query(
+			`INSERT INTO agent_threads (id,user_id,working_resume_id,cover_letter_id) VALUES ($1,$2,$3,$4)`,
+			[id, owner, kind === "resume" ? documentId : null, kind === "letter" ? documentId : null],
+		);
+		await getPool().query(`INSERT INTO agent_messages (id,user_id,thread_id,ui_message) VALUES ($1,$2,$3,$4)`, [
+			id,
+			owner,
+			id,
+			proposing(status),
+		]);
+	}
+	async function outcomes() {
+		return (
+			await getPool().query(
+				`SELECT t.id,t.edits_accepted AS accepted,m.ui_message->'parts'->0->'output'->'edits'->0->>'status' AS status FROM agent_threads t JOIN agent_messages m ON m.thread_id=t.id ORDER BY t.id`,
+			)
+		).rows;
+	}
+
+	it("serializes streamed message rewrites with document receipts at the actual PostgreSQL read barrier", async () => {
+		await getPool().query(
+			"ALTER TABLE agent_messages ADD COLUMN IF NOT EXISTS status text; ALTER TABLE agent_threads ADD COLUMN IF NOT EXISTS last_message_at timestamptz;",
+		);
+		const letter = await service.create({ userId: "alice", name: "Concurrent receipt", content: "<p>Old</p>" });
+		await proposalThread("streaming", "alice", "letter", letter.id);
+		const { upsertAssistantUiMessage } = await import("../agent/messages-persistence");
+		let release!: () => void;
+		const paused = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		let read!: () => void;
+		const captured = new Promise<void>((resolve) => {
+			read = resolve;
+		});
+		// Pause only after the real SELECT executes. The production transaction must still hold its locks.
+		let intercepted = false;
+		const instrument = (target: object): object =>
+			new Proxy(target, {
+				get(target, key, receiver) {
+					const value = Reflect.get(target, key, receiver);
+					if (key === "transaction")
+						return (callback: (tx: object) => Promise<unknown>) =>
+							value.call(target, (tx: object) => callback(instrument(tx)));
+					if (key === "select" || key === "from" || key === "where" || key === "orderBy" || key === "for")
+						return (...args: unknown[]) => instrument(value.apply(target, args));
+					if (key === "then")
+						return (resolve: (rows: unknown) => void, reject: (error: unknown) => void) =>
+							value.call(
+								target,
+								async (rows: unknown) => {
+									if (!intercepted) {
+										intercepted = true;
+										read();
+										await paused;
+									}
+									resolve(rows);
+								},
+								reject,
+							);
+					return typeof value === "function" ? value.bind(target) : value;
+				},
+			});
+		const database = fixture.db;
+		if (!database) throw new Error("Missing database");
+		const writing = upsertAssistantUiMessage(
+			{
+				userId: "alice",
+				threadId: "streaming",
+				rowId: "streaming",
+				message: proposing("pending") as never,
+				status: "completed",
+			},
+			instrument(database) as never,
+		);
+		await captured;
+		let committed = false;
+		const saving = service
+			.update({
+				userId: "alice",
+				id: letter.id,
+				expectedRevision: letter.revision,
+				content: "<p>New</p>",
+				proposalApplications: { edit: true },
+			})
+			.then((result) => {
+				committed = true;
+				return result;
+			});
+		let blocked = false;
+		try {
+			for (let attempt = 0; attempt < 100 && !committed && !blocked; attempt++) {
+				const result = await getPool().query(
+					"SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname = current_database() AND cardinality(pg_blocking_pids(pid)) > 0) AS blocked",
+				);
+				blocked = result.rows[0].blocked;
+			}
+		} finally {
+			release();
+		}
+		await Promise.all([writing, saving]);
+		expect(blocked).toBe(true);
+		expect(await outcomes()).toEqual([{ id: "streaming", accepted: 1, status: "accepted" }]);
+		expect((await service.getById({ userId: "alice", id: letter.id })).content).toBe("<p>New</p>");
+	});
+
+	it("atomically saves letter acceptance/Undo/Redo while isolating users, documents and explicit rejection", async () => {
+		const letter = await service.create({ userId: "alice", name: "Assistant letter", content: "<p>Original</p>" });
+		await proposalThread("own", "alice", "letter", letter.id);
+		await proposalThread("other-document", "alice", "letter", "other");
+		await proposalThread("other-user", "bob", "letter", letter.id);
+		await proposalThread("resume", "alice", "resume", letter.id);
+		await proposalThread("rejected", "alice", "letter", letter.id, "rejected");
+		const accepted = await service.update({
+			userId: "alice",
+			id: letter.id,
+			expectedRevision: letter.revision,
+			content: "<p>Rewritten</p>",
+			proposalApplications: { edit: true },
+		});
+		expect(await outcomes()).toEqual([
+			{ id: "other-document", accepted: 0, status: "pending" },
+			{ id: "other-user", accepted: 0, status: "pending" },
+			{ id: "own", accepted: 1, status: "accepted" },
+			{ id: "rejected", accepted: 0, status: "rejected" },
+			{ id: "resume", accepted: 0, status: "pending" },
+		]);
+		const undone = await service.update({
+			userId: "alice",
+			id: letter.id,
+			expectedRevision: accepted.revision,
+			content: "<p>Original</p>",
+			proposalApplications: { edit: false },
+		});
+		expect((await outcomes()).find((row) => row.id === "own")).toMatchObject({ accepted: 0, status: "pending" });
+		await service.update({
+			userId: "alice",
+			id: letter.id,
+			expectedRevision: undone.revision,
+			content: "<p>Rewritten</p>",
+			proposalApplications: { edit: true },
+		});
+		expect((await outcomes()).find((row) => row.id === "own")).toMatchObject({ accepted: 1, status: "accepted" });
+		await expect(
+			service.update({
+				userId: "alice",
+				id: letter.id,
+				expectedRevision: accepted.revision,
+				content: "<p>Stale</p>",
+				proposalApplications: { edit: false },
+			}),
+		).rejects.toMatchObject({ code: "CONFLICT" });
+		expect((await outcomes()).find((row) => row.id === "own")).toMatchObject({ accepted: 1, status: "accepted" });
+	});
+
+	it("rolls back letter content and revision if proposal synchronization fails", async () => {
+		const letter = await service.create({ userId: "alice", name: "Atomic letter", content: "<p>Original</p>" });
+		await proposalThread("own", "alice", "letter", letter.id);
+		await getPool()
+			.query(`CREATE FUNCTION reject_proposal_update() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'simulated status storage failure'; END $$;
+		CREATE TRIGGER reject_proposal_update BEFORE UPDATE ON agent_messages FOR EACH ROW EXECUTE FUNCTION reject_proposal_update();`);
+		try {
+			await expect(
+				service.update({
+					userId: "alice",
+					id: letter.id,
+					expectedRevision: letter.revision,
+					content: "<p>Rewritten</p>",
+					proposalApplications: { edit: true },
+				}),
+			).rejects.toThrow();
+			expect(await service.getById({ userId: "alice", id: letter.id })).toMatchObject({
+				content: "<p>Original</p>",
+				revision: letter.revision,
+			});
+			expect(await outcomes()).toEqual([{ id: "own", accepted: 0, status: "pending" }]);
+		} finally {
+			await getPool().query(
+				"DROP TRIGGER reject_proposal_update ON agent_messages; DROP FUNCTION reject_proposal_update()",
+			);
+		}
+	});
+
+	it("persists resume acceptance, Undo and Redo through the real router with the saved document", async () => {
+		const { crudRouter } = await import("../resume/crud");
+		const { resumeService } = await import("../resume/service");
+		const client = createRouterClient(crudRouter, { context: { user: { id: "alice" } } });
+		await proposalThread("own", "alice", "resume", "alice-resume");
+		let current = await resumeService.getById({ id: "alice-resume", userId: "alice" });
+		for (const [applied, content] of [
+			[true, "<p>Original</p><p>Added</p>"],
+			[false, "<p>Original</p>"],
+			[true, "<p>Original</p><p>Added</p>"],
+		] as const) {
+			const data = structuredClone(current.data);
+			data.summary.content = content;
+			current = await client.update({
+				id: current.id,
+				data,
+				expectedUpdatedAt: current.updatedAt,
+				proposalApplications: { edit: applied },
+			});
+			expect((await resumeService.getById({ id: current.id, userId: "alice" })).data.summary.content).toBe(content);
+			expect(await outcomes()).toEqual([
+				{ id: "own", accepted: applied ? 1 : 0, status: applied ? "accepted" : "pending" },
+			]);
+		}
+	});
+
+	it("synchronizes only the owned resume's threads inside the caller transaction", async () => {
+		const { saveProposalApplications } = await import("../agent/proposal-applications");
+		await proposalThread("own", "alice", "resume", "alice-resume");
+		await proposalThread("bob", "bob", "resume", "alice-resume");
+		await proposalThread("different", "alice", "resume", "other-resume");
+		await proposalThread("letter", "alice", "letter", "alice-resume");
+		await fixture.db?.transaction(async (tx) => {
+			await saveProposalApplications(tx, {
+				userId: "alice",
+				document: { kind: "resume", id: "alice-resume" },
+				applications: { edit: true },
+			});
+		});
+		expect(await outcomes()).toEqual([
+			{ id: "bob", accepted: 0, status: "pending" },
+			{ id: "different", accepted: 0, status: "pending" },
+			{ id: "letter", accepted: 0, status: "pending" },
+			{ id: "own", accepted: 1, status: "accepted" },
+		]);
+		await expect(
+			fixture.db?.transaction(async (tx) => {
+				await saveProposalApplications(tx, {
+					userId: "alice",
+					document: { kind: "resume", id: "alice-resume" },
+					applications: { edit: false },
+				});
+				throw new Error("rollback");
+			}),
+		).rejects.toThrow("rollback");
+		expect((await outcomes()).find((row) => row.id === "own")).toMatchObject({ accepted: 1, status: "accepted" });
 	});
 
 	it("persists one shared document and atomically rejects stale writers and deletes", async () => {

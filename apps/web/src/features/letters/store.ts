@@ -1,7 +1,16 @@
+import type { ProposalApplications } from "@reactive-resume/resume/proposals";
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
 import { t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
+import { isEqual } from "es-toolkit";
 import { create } from "zustand/react";
+import {
+	acknowledgeProposalApplications,
+	queueProposalApplications,
+	readProposalApplications,
+	restoreProposalApplications,
+} from "@reactive-resume/resume/proposals";
+import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { generateId } from "@reactive-resume/utils/string";
 import { client, streamClient } from "@/libs/orpc/client";
 
@@ -54,6 +63,8 @@ export type LetterDraft =
 const SAVE_DELAY_MS = 800;
 
 type LetterEditorStore = {
+	proposalApplications: ProposalApplications;
+	pendingProposalApplications: ProposalApplications;
 	letter: CoverLetter | null;
 	/** The server's name, kept apart from optimistic edits for the browser title. */
 	savedName: string | null;
@@ -65,8 +76,11 @@ type LetterEditorStore = {
 	/** One editing visit: its saves share one History version. */
 	sessionId: string;
 	draft: LetterDraft;
-	load: (letter: CoverLetter) => void;
-	edit: (edits: LetterEdits) => void;
+	load: (letter: CoverLetter, options?: { recover?: boolean }) => void;
+	edit: (
+		edits: LetterEdits,
+		options?: { proposalIds?: readonly string[]; restoreApplications?: ProposalApplications },
+	) => void;
 	/** Saves everything typed so far. False on failure; edits remain for retry. */
 	flush: () => Promise<boolean>;
 	/**
@@ -83,9 +97,133 @@ let timer: ReturnType<typeof setTimeout> | undefined;
 let inflight: Promise<void> | null = null;
 let drafting: AbortController | null = null;
 
+const recoveryEditsSchema = coverLetterSchema
+	.pick({
+		name: true,
+		recipient: true,
+		content: true,
+		greeting: true,
+		signOff: true,
+		recipientName: true,
+		recipientCompany: true,
+		letterDate: true,
+	})
+	.partial()
+	.extend({
+		sender: coverLetterSchema.shape.style.shape.basics
+			.pick({ name: true, email: true, phone: true, location: true })
+			.partial()
+			.optional(),
+		metadata: coverLetterSchema.shape.style.shape.metadata
+			.pick({ typography: true, design: true, page: true })
+			.partial()
+			.optional(),
+	});
+
+type LetterRecovery = {
+	letter: CoverLetter;
+	pending: LetterEdits;
+	proposalApplications: ProposalApplications;
+	pendingProposalApplications: ProposalApplications;
+	storedAt: number;
+	key: string;
+	raw: string;
+};
+const RECOVERY_PREFIX = "reactive-resume:unsaved:letter:";
+let restoredRecovery: { key: string; raw: string } | undefined;
+let savingEdits: { sessionId: string; pending: LetterEdits } | null = null;
+
+function readRecovery(id: string): LetterRecovery | undefined {
+	try {
+		let latest: LetterRecovery | undefined;
+		for (const key of Object.keys(window.localStorage)) {
+			if (!key.startsWith(`${RECOVERY_PREFIX}${id}:`)) continue;
+			try {
+				const raw = window.localStorage.getItem(key) ?? "null";
+				const value = JSON.parse(raw) as LetterRecovery;
+				if (
+					!Number.isFinite(value?.storedAt) ||
+					(Date.now() - value.storedAt > 7 * 86_400_000 &&
+						Object.keys(readProposalApplications(value.pendingProposalApplications)).length === 0)
+				) {
+					window.localStorage.removeItem(key);
+					continue;
+				}
+				const letter = coverLetterSchema.parse({
+					...value.letter,
+					createdAt: new Date(value.letter.createdAt),
+					updatedAt: new Date(value.letter.updatedAt),
+				});
+				const pending: LetterEdits = Object.fromEntries(
+					Object.entries(recoveryEditsSchema.parse(value.pending)).filter(
+						([key, parsed]) => Object.hasOwn(value.pending, key) && parsed !== undefined,
+					),
+				);
+				const dirty =
+					hasEdits(pending) || Object.keys(readProposalApplications(value.pendingProposalApplications)).length > 0;
+				const latestDirty =
+					latest && (hasEdits(latest.pending) || Object.keys(latest.pendingProposalApplications).length > 0);
+				if (
+					letter.id !== id ||
+					(latest && ((latestDirty && !dirty) || (Boolean(latestDirty) === dirty && latest.storedAt > value.storedAt)))
+				)
+					continue;
+				latest = {
+					...value,
+					key,
+					raw,
+					letter,
+					pending,
+					proposalApplications: readProposalApplications(value.proposalApplications),
+					pendingProposalApplications: readProposalApplications(value.pendingProposalApplications),
+				};
+			} catch {
+				/* Invalid recovery data never replaces a server document. */
+			}
+		}
+		return latest;
+	} catch {
+		return undefined;
+	}
+}
+
+/** The autosave owner retains authored edits and unsynchronized decisions in one recovery record. */
+function persistRecovery() {
+	const state = useLetterEditorStore.getState();
+	if (!state.letter) return;
+	const pending = mergeEdits(savingEdits?.sessionId === state.sessionId ? savingEdits.pending : {}, state.pending);
+	try {
+		const key = `${RECOVERY_PREFIX}${state.letter.id}:${state.sessionId}`;
+		if (!hasEdits(pending) && Object.keys(state.proposalApplications).length === 0) window.localStorage.removeItem(key);
+		else
+			window.localStorage.setItem(
+				key,
+				JSON.stringify({
+					letter: state.letter,
+					pending,
+					proposalApplications: state.proposalApplications,
+					pendingProposalApplications: state.pendingProposalApplications,
+					storedAt: Date.now(),
+				}),
+			);
+		if (
+			!hasEdits(pending) &&
+			Object.keys(state.pendingProposalApplications).length === 0 &&
+			restoredRecovery &&
+			restoredRecovery.key !== key &&
+			window.localStorage.getItem(restoredRecovery.key) === restoredRecovery.raw
+		)
+			window.localStorage.removeItem(restoredRecovery.key);
+	} catch {
+		/* Full or blocked storage never discards the in-memory edits; autosave can still retry. */
+	}
+}
+
 const hasEdits = (edits: LetterEdits) => Object.keys(edits).length > 0;
 
 export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
+	proposalApplications: {},
+	pendingProposalApplications: {},
 	letter: null,
 	savedName: null,
 	status: "saved",
@@ -94,35 +232,93 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 	sessionId: generateId(),
 	draft: idleDraft,
 
-	load: (letter) => {
+	load: (letter, options = {}) => {
+		if (options.recover === false) {
+			// Explicit Reload discards this visit, never another tab's independent recovery entry.
+			const current = get();
+			try {
+				if (current.letter?.id === letter.id)
+					window.localStorage.removeItem(`${RECOVERY_PREFIX}${letter.id}:${current.sessionId}`);
+				if (
+					restoredRecovery?.key.startsWith(`${RECOVERY_PREFIX}${letter.id}:`) &&
+					window.localStorage.getItem(restoredRecovery.key) === restoredRecovery.raw
+				)
+					window.localStorage.removeItem(restoredRecovery.key);
+			} catch {
+				/* Reload still opens the server document when browser storage is unavailable. */
+			}
+		} else persistRecovery();
+		let recovery = options.recover === false ? undefined : readRecovery(letter.id);
+		if (
+			recovery &&
+			Object.keys(recovery.pendingProposalApplications).length === 0 &&
+			isEqual(applyEdits(letter, recovery.pending), letter)
+		)
+			recovery = { ...recovery, pending: {} };
+		if (
+			recovery &&
+			!hasEdits(recovery.pending) &&
+			Object.keys(recovery.pendingProposalApplications).length === 0 &&
+			recovery.letter.revision !== letter.revision
+		)
+			recovery = undefined;
+		restoredRecovery = recovery ? { key: recovery.key, raw: recovery.raw } : undefined;
+		const restore =
+			recovery && (hasEdits(recovery.pending) || Object.keys(recovery.pendingProposalApplications).length > 0)
+				? recovery
+				: undefined;
 		clearTimeout(timer);
 		drafting?.abort();
 		drafting = null;
 		set({
-			letter,
+			proposalApplications: recovery?.proposalApplications ?? {},
+			pendingProposalApplications: recovery?.pendingProposalApplications ?? {},
+			letter: restore ? { ...applyEdits(letter, restore.pending), revision: restore.letter.revision } : letter,
 			savedName: letter.name,
-			status: "saved",
+			status: restore
+				? restore.letter.revision !== letter.revision
+					? "conflict"
+					: "saving"
+				: Object.keys(recovery?.pendingProposalApplications ?? {}).length
+					? "saving"
+					: "saved",
 			changing: false,
-			pending: {},
+			pending: restore?.pending ?? {},
 			sessionId: generateId(),
 			draft: idleDraft,
 		});
+		if (restore || Object.keys(get().pendingProposalApplications).length > 0)
+			timer = setTimeout(() => void get().flush(), SAVE_DELAY_MS);
 	},
 
-	edit: (input) => {
-		const { letter, changing } = get();
+	edit: (input, options = {}) => {
+		const { letter, changing, proposalApplications, pendingProposalApplications } = get();
 		const { sender, ...otherEdits } = input;
 		const edits = sender && (changing || (letter?.sourceResumeId && letter.senderLinked)) ? otherEdits : input;
-		if (!hasEdits(edits)) return;
+		if (!hasEdits(edits) || letter?.isLocked) return;
 		set((state) =>
 			state.letter
 				? {
 						letter: applyEdits(state.letter, edits),
+						proposalApplications: options.restoreApplications
+							? restoreProposalApplications(state.proposalApplications, options.restoreApplications)
+							: {
+									...state.proposalApplications,
+									...Object.fromEntries((options.proposalIds ?? []).map((id) => [id, true])),
+								},
 						pending: mergeEdits(state.pending, edits),
 						status: state.status === "conflict" ? "conflict" : "saving",
 					}
 				: state,
 		);
+		set({
+			pendingProposalApplications: queueProposalApplications(
+				proposalApplications,
+				get().proposalApplications,
+				pendingProposalApplications,
+			),
+		});
+		persistRecovery();
 		clearTimeout(timer);
 		timer = setTimeout(() => void get().flush(), SAVE_DELAY_MS);
 	},
@@ -133,10 +329,18 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 		if (inflight) await inflight;
 		if (get().sessionId !== sessionId) return false;
 
-		const { letter, pending, status } = get();
-		if (!letter || !hasEdits(pending) || status === "conflict") return status === "saved";
+		const { letter, pending, status, pendingProposalApplications } = get();
+		if (
+			!letter ||
+			letter.isLocked ||
+			(!hasEdits(pending) && Object.keys(pendingProposalApplications).length === 0) ||
+			status === "conflict"
+		)
+			return status === "saved";
 		const current = (state: LetterEditorStore) => state.letter?.id === letter.id && state.sessionId === sessionId;
 
+		savingEdits = { sessionId, pending };
+		persistRecovery();
 		set({ pending: {}, status: "saving" });
 		inflight = (async () => {
 			try {
@@ -145,6 +349,9 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 					expectedRevision: letter.revision,
 					sessionId,
 					...pending,
+					...(Object.keys(pendingProposalApplications).length
+						? { proposalApplications: { ...pendingProposalApplications } }
+						: {}),
 				});
 				// What was typed stays as typed (the server trims and cleans what it stores), and so does anything typed
 				// since.
@@ -152,6 +359,10 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 					current(state)
 						? {
 								letter: applyEdits(saved, mergeEdits(pending, state.pending)),
+								pendingProposalApplications: acknowledgeProposalApplications(
+									state.pendingProposalApplications,
+									pendingProposalApplications,
+								),
 								savedName: saved.name,
 								status: hasEdits(state.pending) ? "saving" : "saved",
 							}
@@ -166,13 +377,19 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 				);
 			} finally {
 				inflight = null;
+				if (savingEdits?.sessionId === sessionId) savingEdits = null;
+				if (current(get())) persistRecovery();
 			}
 		})();
 		await inflight;
 
 		// Typed while that save was on its way.
 		if (!current(get())) return false;
-		if (get().status === "saving" && hasEdits(get().pending)) return get().flush();
+		if (
+			get().status === "saving" &&
+			(hasEdits(get().pending) || Object.keys(get().pendingProposalApplications).length > 0)
+		)
+			return get().flush();
 		return get().status === "saved";
 	},
 
@@ -197,10 +414,13 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 	},
 
 	reset: () => {
+		persistRecovery();
 		clearTimeout(timer);
 		drafting?.abort();
 		drafting = null;
 		set({
+			proposalApplications: {},
+			pendingProposalApplications: {},
 			letter: null,
 			savedName: null,
 			status: "saved",

@@ -9,6 +9,8 @@ const dbMock = vi.hoisted(() => ({
 	transaction: vi.fn(),
 	update: vi.fn(),
 }));
+const proposalApplicationsMock = vi.hoisted(() => vi.fn(async () => undefined));
+vi.mock("../agent/proposal-applications", () => ({ saveProposalApplications: proposalApplicationsMock }));
 const compareMock = vi.hoisted(() => vi.fn());
 const publishResumeUpdatedMock = vi.hoisted(() => vi.fn());
 const grantResumeAccessMock = vi.hoisted(() => vi.fn());
@@ -180,6 +182,7 @@ const createRestoreHarness = (currentData: ResumeData, restoredData: ResumeData)
 
 beforeEach(() => {
 	dbMock.select.mockReset();
+	proposalApplicationsMock.mockClear();
 	dbMock.transaction.mockReset();
 	dbMock.update.mockReset();
 	compareMock.mockReset();
@@ -264,6 +267,23 @@ describe("update", () => {
 			}
 		},
 	);
+
+	it("sends metadata-only Undo decisions through the same version-guarded transaction", async () => {
+		const updatedAt = new Date("2026-10-17T10:00:00.123Z");
+		const { tx, update } = updateHarness({ slug: "resume", updatedAt });
+		await resumeService.update({
+			id: "r1",
+			userId: "u1",
+			expectedUpdatedAt: updatedAt,
+			proposalApplications: { edit: false },
+		});
+		expect(update.set).toHaveBeenCalledWith({ updatedAt: expect.any(Date) });
+		expect(proposalApplicationsMock).toHaveBeenCalledWith(tx, {
+			userId: "u1",
+			document: { kind: "resume", id: "r1" },
+			applications: { edit: false },
+		});
+	});
 
 	it("keeps the old address as a redirect when the slug changes", async () => {
 		const { tx, update } = updateHarness({ slug: "old-address" });

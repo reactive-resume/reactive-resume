@@ -1,11 +1,25 @@
 import type { DraftStore, UpdateOptions } from "./types";
+import type { ProposalApplications, ProposalSnapshot } from "@reactive-resume/resume/proposals";
 import type { WritableDraft } from "immer";
 import { produce } from "immer";
 import { create } from "zustand";
+import {
+	acknowledgeProposalApplications,
+	queueProposalApplications,
+	readProposalApplications,
+	restoreProposalApplications,
+} from "@reactive-resume/resume/proposals";
 import { generateId } from "@reactive-resume/utils/string";
 
 type Document = { id: string; isLocked: boolean };
-type Record<D> = { baseline: D; document: D; sessionId: string; copyId?: string };
+type Record<D> = {
+	baseline: D;
+	document: D;
+	sessionId: string;
+	copyId?: string;
+	proposalApplications?: ProposalApplications;
+	pendingProposalApplications?: ProposalApplications;
+};
 
 export type DraftAdapter<D extends Document, T> = {
 	kind: "resume" | "letter";
@@ -18,7 +32,14 @@ export type DraftAdapter<D extends Document, T> = {
 	version: (document: D) => string | number;
 	parse: (value: unknown) => D;
 	/** `scope` binds the write to the account that owns the draft (the API client refuses it after an account switch). */
-	save: (document: D, baseline: D, sessionId: string, force: boolean, scope: string) => Promise<D>;
+	save: (
+		document: D,
+		baseline: D,
+		sessionId: string,
+		force: boolean,
+		scope: string,
+		proposalApplications?: ProposalApplications,
+	) => Promise<D>;
 	copy: (document: D, copyId: string | undefined, remember: (id: string) => void, scope: string) => Promise<void>;
 	isConflict: (error: unknown) => boolean;
 };
@@ -42,6 +63,8 @@ const emptyState = {
 	status: "idle",
 	locked: false,
 	conflict: null,
+	proposalApplications: {},
+	proposalRevision: null,
 	canUndo: false,
 	canRedo: false,
 } as const;
@@ -65,8 +88,8 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 	let replaying: Promise<void> | null = null;
 	let resolving = false;
 	let force = false;
-	let undo: T[] = [];
-	let redo: T[] = [];
+	let undo: ProposalSnapshot<T>[] = [];
+	let redo: ProposalSnapshot<T>[] = [];
 	let last: { at: number; key: string | undefined; coalesce: boolean } | null = null;
 	const prefix = (owner: string) => `reactive-resume:unsaved:${encodeURIComponent(owner)}:${adapter.kind}:`;
 	const key = () => {
@@ -87,8 +110,8 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 	}));
 	const state = store.getState;
 
-	function publish(document: D) {
-		store.setState({ document, data: adapter.data(document), locked: document.isLocked });
+	function publish(document: D, proposalApplications: ProposalApplications = state().proposalApplications) {
+		store.setState({ document, data: adapter.data(document), locked: document.isLocked, proposalApplications });
 	}
 
 	function history() {
@@ -110,6 +133,17 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		env.storage.removeItemSync(storageKey);
 		pending.delete(storageKey);
 		notifyPending();
+	}
+
+	function settleStored() {
+		if (!record) return;
+		pending.set(key(), record);
+		if (Object.keys(record.proposalApplications ?? {}).length > 0) {
+			// A clean recovery record retains decisions; it is not an unsaved document in the outbox.
+			env.storage.setItemSync(key(), JSON.stringify(record));
+			pending.delete(key());
+			notifyPending();
+		} else removeStored(key());
 	}
 
 	function persist() {
@@ -153,6 +187,8 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 				document,
 				sessionId: value.sessionId,
 				...(typeof value.copyId === "string" ? { copyId: value.copyId } : {}),
+				proposalApplications: readProposalApplications(value.proposalApplications),
+				pendingProposalApplications: readProposalApplications(value.pendingProposalApplications),
 			};
 		} catch {
 			// A corrupt record cannot be restored; it must not permanently block the server copy.
@@ -190,32 +226,50 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 			}
 			if (record && record.document.id !== id) throw new Error("Invalid draft identity.");
 			if (record) {
-				dirty = true;
-				publish(record.document);
-				store.setState({ status: !durable ? "error" : env.online() ? "saving" : "offline" });
+				dirty =
+					!adapter.matches(record.baseline, record.document) ||
+					Object.keys(record.pendingProposalApplications ?? {}).length > 0;
+				publish(record.document, record.proposalApplications ?? {});
+				store.setState({ proposalRevision: adapter.version(record.baseline) });
+				store.setState({ status: !dirty ? "saved" : !durable ? "error" : env.online() ? "saving" : "offline" });
 			}
 			if (!env.online() && record) return;
 			const restored = record?.document;
 			const remote = await adapter.read(id);
 			if (inflight) await inflight;
 			if (!(await currentOwner()) || visit !== generation) return;
+			if (record && !dirty && adapter.version(remote) !== adapter.version(record.baseline)) record = null;
 			if (!record) {
 				record = { document: remote, baseline: remote, sessionId: generateId() };
-				publish(remote);
+				publish(remote, {});
+				store.setState({ proposalRevision: adapter.version(remote) });
+				settleStored();
 			} else if (adapter.version(remote) < adapter.version(record.baseline)) {
 				return;
+			} else if (
+				adapter.version(remote) > adapter.version(record.baseline) &&
+				Object.keys(record.pendingProposalApplications ?? {}).length > 0
+			) {
+				// Content equality is not an acknowledgement of the queued decision.
+				store.setState({ conflict: { remote }, locked: remote.isLocked, status: "error" });
 			} else if (adapter.matches(remote, record.document) || (restored && adapter.matches(remote, restored))) {
 				// The write may have succeeded without its response. Keep anything typed during this read.
+				if (adapter.version(remote) !== adapter.version(record.baseline)) {
+					record.proposalApplications = {};
+					publish(record.document, {});
+					store.setState({ proposalRevision: adapter.version(remote) });
+				}
 				record.document = adapter.merge(remote, restored ?? record.document, record.document);
 				record.baseline = remote;
-				dirty = !adapter.matches(remote, record.document);
+				dirty =
+					!adapter.matches(remote, record.document) || Object.keys(record.pendingProposalApplications ?? {}).length > 0;
 				publish(record.document);
 				store.setState({ conflict: null, status: dirty ? "saving" : "saved" });
 				if (dirty) await flush();
 				else {
 					clearTimeout(persistenceTimer);
 					persistenceTimer = undefined;
-					removeStored(key());
+					settleStored();
 				}
 			} else if (adapter.version(remote) > adapter.version(record.baseline)) {
 				store.setState({ conflict: { remote }, locked: remote.isLocked, status: "error" });
@@ -247,12 +301,18 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		store.setState(emptyState);
 	}
 
-	function queue(document: D) {
+	function queue(document: D, applications: ProposalApplications = state().proposalApplications) {
 		if (!record) return;
+		record.pendingProposalApplications = queueProposalApplications(
+			record.proposalApplications ?? {},
+			applications,
+			record.pendingProposalApplications ?? {},
+		);
+		record.proposalApplications = applications;
 		record.document = document;
 		dirty = true;
 		deferred = null;
-		publish(document);
+		publish(document, applications);
 		store.setState({ status: env.online() ? "saving" : "offline" });
 		schedulePersistence();
 		clearTimeout(timer);
@@ -270,11 +330,14 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 			last?.coalesce &&
 			last.key === options.coalesceKey &&
 			((options.sameStep && options.coalesceKey !== undefined) || now - last.at < (options.coalesceKey ? 1000 : 500));
-		if (!coalesce) undo = [...undo.slice(-199), before];
+		if (!coalesce) undo = [...undo.slice(-199), { data: before, applications: state().proposalApplications }];
 		redo = [];
 		last = { at: now, key: options.coalesceKey, coalesce: !options.newStep };
 		history();
-		queue(adapter.withData(record.document, next));
+		queue(adapter.withData(record.document, next), {
+			...state().proposalApplications,
+			...Object.fromEntries((options.proposalIds ?? []).map((id) => [id, true])),
+		});
 	}
 
 	function updateDocument(recipe: (draft: WritableDraft<D>) => void) {
@@ -283,10 +346,10 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		const document = produce(before, recipe);
 		if (document === before) return;
 		const fields = (Object.keys(document) as (keyof D)[]).filter((field) => document[field] !== before[field]);
-		const rebase = (snapshot: T) => {
-			const historical = { ...adapter.withData(before, snapshot) };
+		const rebase = (snapshot: ProposalSnapshot<T>): ProposalSnapshot<T> => {
+			const historical = { ...adapter.withData(before, snapshot.data) };
 			for (const field of fields) historical[field] = document[field];
-			return adapter.data(historical);
+			return { data: adapter.data(historical), applications: snapshot.applications };
 		};
 		// Letter data is the document itself: metadata edits must survive later content undo/redo.
 		undo = undo.map(rebase);
@@ -294,15 +357,18 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		queue(document);
 	}
 
-	function travel(from: T[], to: T[]) {
+	function travel(from: ProposalSnapshot<T>[], to: ProposalSnapshot<T>[]) {
 		if (!record || state().locked || resolving) return;
 		const next = from.pop();
 		if (next === undefined) return;
-		to.push(adapter.data(record.document));
+		to.push({ data: adapter.data(record.document), applications: state().proposalApplications });
 		if (to.length > 200) to.shift();
 		last = null;
 		history();
-		queue(adapter.withData(record.document, next));
+		queue(
+			adapter.withData(record.document, next.data),
+			restoreProposalApplications(state().proposalApplications, next.applications),
+		);
 	}
 
 	async function flush(): Promise<void> {
@@ -325,18 +391,30 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 				store.setState({ status: "saving" });
 				while (dirty && record === active && !state().conflict && !state().locked) {
 					const submitted = active.document;
-					const saved = await adapter.save(submitted, active.baseline, active.sessionId, force, scope ?? "");
+					const submittedApplications = active.pendingProposalApplications ?? {};
+					const saved = await adapter.save(
+						submitted,
+						active.baseline,
+						active.sessionId,
+						force,
+						scope ?? "",
+						submittedApplications,
+					);
 					if (!(await currentOwner()) || visit !== generation) return;
 					force = false;
+					active.pendingProposalApplications = acknowledgeProposalApplications(
+						active.pendingProposalApplications ?? {},
+						submittedApplications,
+					);
 					active.baseline = saved;
-					dirty = active.document !== submitted;
+					dirty = active.document !== submitted || Object.keys(active.pendingProposalApplications).length > 0;
 					// Only local fields changed since submission overlay the server echo. Server-owned
 					// revision/lock metadata always comes from the save, and typing keeps its references.
 					active.document = adapter.merge(saved, submitted, active.document);
 					publish(active.document);
 					if (dirty) persist();
 					else {
-						removeStored(key());
+						settleStored();
 						store.setState({ status: "saved" });
 					}
 					if (!env.online()) break;
@@ -375,7 +453,11 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 					store.setState({ locked: true, conflict: { remote } });
 					return;
 				}
+				resetHistory();
 				active.baseline = remote;
+				active.proposalApplications = active.pendingProposalApplications ?? {};
+				publish(active.document, active.proposalApplications);
+				store.setState({ proposalRevision: adapter.version(remote) });
 				force = true;
 				store.setState({ conflict: null, locked: false });
 				persist();
@@ -397,7 +479,8 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 				dirty = false;
 				deferred = null;
 				resetHistory();
-				publish(remote);
+				publish(remote, {});
+				store.setState({ proposalRevision: adapter.version(remote) });
 				store.setState({ conflict: null, status: "saved" });
 			}
 		} catch (error) {
@@ -428,10 +511,18 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 
 	function applyRemote(remote: D) {
 		if (!record || dirty || adapter.version(remote) <= adapter.version(record.baseline)) return;
-		if (JSON.stringify(adapter.data(remote)) !== JSON.stringify(adapter.data(record.document))) resetHistory();
+		resetHistory();
 		record.baseline = remote;
 		record.document = remote;
-		publish(remote);
+		record.proposalApplications = {};
+		record.pendingProposalApplications = {};
+		publish(remote, {});
+		store.setState({ proposalRevision: adapter.version(remote) });
+		try {
+			settleStored();
+		} catch {
+			store.setState({ status: "error" });
+		}
 	}
 
 	async function blur() {
@@ -452,10 +543,29 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 			try {
 				const queued = readStored(storageKey);
 				if (!queued) continue;
+				if (
+					adapter.matches(queued.baseline, queued.document) &&
+					Object.keys(queued.pendingProposalApplications ?? {}).length === 0
+				)
+					continue;
 				if ((await env.scope()) !== owner || visit !== queueGeneration) return;
-				await adapter.save(queued.document, queued.baseline, queued.sessionId, false, owner);
+				const saved = await adapter.save(
+					queued.document,
+					queued.baseline,
+					queued.sessionId,
+					false,
+					owner,
+					queued.pendingProposalApplications ?? {},
+				);
+				queued.document = adapter.merge(saved, queued.document, queued.document);
 				if (visit !== queueGeneration) return;
-				removeStored(storageKey);
+				queued.baseline = saved;
+				queued.pendingProposalApplications = {};
+				if (Object.keys(queued.proposalApplications ?? {}).length > 0)
+					env.storage.setItemSync(storageKey, JSON.stringify(queued));
+				else removeStored(storageKey);
+				pending.delete(storageKey);
+				notifyPending();
 			} catch {
 				/* Conflicts, locked documents and failures stay queued until opened. */
 			}
@@ -494,7 +604,12 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 			if (!storageKey.startsWith(prefix(owner))) continue;
 			try {
 				const queued = readStored(storageKey);
-				if (queued) documents.push(queued.document);
+				if (
+					queued &&
+					(!adapter.matches(queued.baseline, queued.document) ||
+						Object.keys(queued.pendingProposalApplications ?? {}).length > 0)
+				)
+					documents.push(queued.document);
 			} catch {
 				/* An unreadable entry must not hide other recoverable drafts. */
 			}

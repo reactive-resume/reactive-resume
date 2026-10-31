@@ -9,6 +9,7 @@ import {
 } from "@reactive-resume/schema/cover-letter/data";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { paginationShape } from "../pagination";
+import { proposalApplicationsSchema } from "./proposals";
 
 const idSchema = z.object({ id: z.string().min(1) });
 const revisionSchema = idSchema.extend({ expectedRevision: z.number().int().min(1) });
@@ -104,6 +105,7 @@ export const coverLetterDto = {
 				.describe("Edits the letter's own sender details; turn the sender link off first."),
 			senderLinked: z.boolean().optional().describe("Take the sender's details live from the resume."),
 			designLinked: z.boolean().optional().describe("Take the design live from the resume."),
+			proposalApplications: proposalApplicationsSchema,
 			sessionId: z
 				.string()
 				.min(1)

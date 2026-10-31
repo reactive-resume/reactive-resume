@@ -63,44 +63,154 @@ export function writeTarget(draft: ResumeData, target: ProposalTarget, value: st
 	if (entry) entry[target.field] = value;
 }
 
-/** A pending proposal can be applied only while its passage is still in the text, word for word. */
-export function canApplyTo(value: string | undefined, { before }: Pick<Proposal, "before">) {
-	if (value === undefined) return false;
-	if (!before) return value === "";
-	const index = value.indexOf(before);
-	return index >= 0 && value.indexOf(before, index + 1) < 0;
+/** Acceptance decisions travel with draft history, separately from authored document data. */
+export type ProposalApplications = Readonly<Record<string, boolean>>;
+export type ProposalSnapshot<T> = { data: T; applications: ProposalApplications };
+
+/** Recovery data is untrusted; only own boolean decisions are restored. */
+export function readProposalApplications(value: unknown): ProposalApplications {
+	if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+	return Object.fromEntries(
+		Object.entries(value).filter(([id, applied]) => id.length > 0 && id.length <= 128 && typeof applied === "boolean"),
+	);
 }
 
+/** Keep decisions made while a save was in flight; acknowledge only the submitted values. */
+export const acknowledgeProposalApplications = (
+	pending: ProposalApplications,
+	submitted: ProposalApplications,
+): ProposalApplications =>
+	Object.fromEntries(Object.entries(pending).filter(([id, applied]) => submitted[id] !== applied));
+
+export const queueProposalApplications = (
+	previous: ProposalApplications,
+	next: ProposalApplications,
+	pending: ProposalApplications,
+): ProposalApplications => ({
+	...pending,
+	...Object.fromEntries(Object.entries(next).filter(([id, applied]) => previous[id] !== applied)),
+});
+
+/** IDs absent from an older checkpoint were explicitly undone; normal edits never call this. */
+export const restoreProposalApplications = (
+	current: ProposalApplications,
+	snapshot: ProposalApplications,
+): ProposalApplications => ({
+	...Object.fromEntries(Object.keys(current).map((id) => [id, false])),
+	...snapshot,
+});
+
+export function proposalStatus(proposal: Proposal, applications: ProposalApplications = {}): Proposal["status"] {
+	if (proposal.status === "rejected") return "rejected";
+	const applied = applications[proposal.id];
+	return typeof applied !== "boolean" ? proposal.status : applied ? "accepted" : "pending";
+}
+
+// TipTap serializes text-node quotes literally. Canonicalize only quotes in text, retaining source offsets and
+// keeping escaped markup distinct from real tags. Other structure still has to match exactly.
+function quoteNormalized(html: string) {
+	let text = "";
+	const offsets: number[] = [];
+	let inTag = false;
+	let attributeQuote: string | undefined;
+	for (let index = 0; index < html.length; index++) {
+		const char = html[index] ?? "";
+		if (!inTag && char === "<") inTag = true;
+		else if (inTag) {
+			if (attributeQuote) {
+				if (char === attributeQuote) attributeQuote = undefined;
+			} else if (char === '"' || char === "'") attributeQuote = char;
+			else if (char === ">") inTag = false;
+		}
+		const entity =
+			!inTag && char === "&" ? /^&(?:apos|quot|#0*(?:34|39)|#x0*(?:22|27));/i.exec(html.slice(index))?.[0] : undefined;
+		offsets.push(index);
+		text += entity ? decodeEntities(entity) : char;
+		if (entity) index += entity.length - 1;
+	}
+	offsets.push(html.length);
+	return { text, offsets };
+}
+
+function passageRange(value: string | undefined, before: string): { start: number; end: number } | undefined {
+	if (value === undefined) return undefined;
+	if (!before) return value === "" ? { start: 0, end: 0 } : undefined;
+	const actual = quoteNormalized(value);
+	const expected = quoteNormalized(before).text;
+	const start = actual.text.indexOf(expected);
+	if (start < 0 || actual.text.indexOf(expected, start + 1) >= 0) return undefined;
+	return { start: actual.offsets[start] ?? 0, end: actual.offsets[start + expected.length] ?? value.length };
+}
+
+/** A pending proposal requires one unambiguous original passage; equivalent text-node quotes are allowed. */
+export const canApplyTo = (value: string | undefined, { before }: Pick<Proposal, "before">) =>
+	passageRange(value, before) !== undefined;
 export const canApply = (data: ResumeData, proposal: Proposal) =>
 	canApplyTo(readTarget(data, proposal.target), proposal);
 
-/**
- * What a proposal shows as, given the text it targets. Pending ones whose passage has changed are out of date;
- * accepted ones whose edit was undone (the passage is back, the new text gone) are pending again.
- */
-export function getStateIn(value: string, proposal: Proposal): ProposalState {
-	if (proposal.status === "rejected") return "rejected";
-	if (proposal.status === "accepted")
-		return canApplyTo(value, proposal) && !value.includes(proposal.after) ? "pending" : "accepted";
-	return canApplyTo(value, proposal) ? "pending" : "stale";
+/** Recorded acceptance survives refinements and normalization. Text is placement evidence, never acceptance proof. */
+export function getStateIn(
+	value: string | undefined,
+	proposal: Proposal,
+	applications: ProposalApplications = {},
+): ProposalState {
+	const status = proposalStatus(proposal, applications);
+	if (status !== "pending") return status;
+	return applyTo(value, proposal) !== undefined ? "pending" : "stale";
 }
+export const getProposalState = (
+	data: ResumeData,
+	proposal: Proposal,
+	applications: ProposalApplications = {},
+): ProposalState => getStateIn(readTarget(data, proposal.target), proposal, applications);
 
-export const getProposalState = (data: ResumeData, proposal: Proposal): ProposalState =>
-	getStateIn(readTarget(data, proposal.target) ?? "", proposal);
-
-/** The text with `after` in place of `before`, or `undefined` when the proposal is out of date. */
+/** The text with `after` in place of the unique original passage, or undefined when it cannot be placed. */
 export function applyTo(value: string | undefined, proposal: Pick<Proposal, "before" | "after">) {
-	if (value === undefined || !canApplyTo(value, proposal)) return undefined;
-	// A replacer function, so "$&" or "$1" in the new text stay literal.
-	return value.replace(proposal.before, () => proposal.after);
+	if (value === undefined || proposal.before === proposal.after) return undefined;
+	const range = passageRange(value, proposal.before);
+	if (!range) return undefined;
+	// For additions, preserve the live anchor's serialization instead of putting model-era HTML back.
+	const after = proposal.after.startsWith(proposal.before)
+		? value.slice(range.start, range.end) + proposal.after.slice(proposal.before.length)
+		: proposal.after;
+	const next = value.slice(0, range.start) + after + value.slice(range.end);
+	return next === value ? undefined : next;
 }
 
-/** Puts `after` in place of `before`. Returns false (changing nothing) when the proposal is out of date. */
 export function applyProposal(draft: ResumeData, proposal: Proposal): boolean {
 	const next = applyTo(readTarget(draft, proposal.target), proposal);
 	if (next === undefined) return false;
 	writeTarget(draft, proposal.target, next);
 	return true;
+}
+
+export type ProposalApplicationResult = { applied: Proposal[]; stale: Proposal[] };
+const isAddition = ({ before, after }: Proposal) => after.startsWith(before) && after.length > before.length;
+
+/** Additions first (backwards at a shared anchor, yielding proposal order), then rewrites. Record only real writes. */
+export function applyProposals(
+	proposals: readonly Proposal[],
+	read: (target: ProposalTarget) => string | undefined,
+	write: (target: ProposalTarget, value: string) => void,
+	applications: ProposalApplications = {},
+): ProposalApplicationResult {
+	const unique = [...new Map(proposals.map((proposal) => [proposal.id, proposal])).values()];
+	const applied = new Set<string>();
+	const stale = new Set<string>();
+	const ordered = [...unique.filter(isAddition).reverse(), ...unique.filter((proposal) => !isAddition(proposal))];
+	for (const proposal of ordered) {
+		if (applied.has(proposal.id) || proposalStatus(proposal, applications) !== "pending") continue;
+		const next = applyTo(read(proposal.target), proposal);
+		if (next === undefined) stale.add(proposal.id);
+		else {
+			write(proposal.target, next);
+			applied.add(proposal.id);
+		}
+	}
+	return {
+		applied: unique.filter((proposal) => applied.has(proposal.id)),
+		stale: unique.filter((proposal) => stale.has(proposal.id)),
+	};
 }
 
 const BLOCK = /^(<(p|li)(?:\s[^>]*)?>)([\s\S]*)(<\/\2>)$/i;

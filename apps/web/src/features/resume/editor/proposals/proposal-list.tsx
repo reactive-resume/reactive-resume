@@ -10,7 +10,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
 import { acceptResumeProposals } from "./proposals";
-import { useIsResumeLocked } from "@/features/resume/builder/draft";
+import { useIsResumeLocked, useResumeStore } from "@/features/resume/builder/draft";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 
 /** The visible text of a passage's HTML, for the card. */
@@ -28,16 +28,17 @@ type ProposalListProps = {
 export function ProposalList({ proposals, data, onSuggestAgain }: ProposalListProps) {
 	const setProposalStatus = useEditorStore((state) => state.setProposalStatus);
 	const locked = useIsResumeLocked();
+	const applications = useResumeStore((state) => state.proposalApplications);
 
 	return (
 		<ChangeSet
 			proposals={proposals}
-			states={proposals.map((proposal) => getProposalState(data, proposal))}
+			states={proposals.map((proposal) => getProposalState(data, proposal, applications))}
 			locked={locked}
 			onAccept={(accepted) => {
-				acceptResumeProposals(accepted);
+				const { applied } = acceptResumeProposals(accepted);
 				setProposalStatus(
-					accepted.map((proposal) => proposal.id),
+					applied.map((proposal) => proposal.id),
 					"accepted",
 				);
 			}}

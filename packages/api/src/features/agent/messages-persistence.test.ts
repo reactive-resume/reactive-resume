@@ -125,8 +125,17 @@ describe("proposed edit statuses", () => {
 
 	it("keeps what the user did while a run rewrites its message", async () => {
 		const database = scriptedDatabase([[{ id: "row-1" }]]);
+		database.transaction = async (callback: (tx: unknown) => unknown) => callback(database);
 		database.select = () => ({
-			from: () => ({ where: async () => [{ uiMessage: proposing(["accepted", "rejected"]) }] }),
+			from: () => ({
+				where: () => {
+					const query = {
+						orderBy: () => query,
+						for: async () => [{ id: "row-1", uiMessage: proposing(["accepted", "rejected"]) }],
+					};
+					return query;
+				},
+			}),
 		});
 
 		await upsertAssistantUiMessage(

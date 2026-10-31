@@ -8,7 +8,7 @@ import { useReducedMotion } from "motion/react";
 import { useMemo, useState } from "react";
 import { useDebounceValue } from "usehooks-ts";
 import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
-import { getStateIn } from "@reactive-resume/resume/proposals";
+import { applyProposals } from "@reactive-resume/resume/proposals";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { templates } from "@/dialogs/resume/template/data";
@@ -46,6 +46,7 @@ function useDeepStable<T>(value: T) {
  */
 export function LetterPage() {
 	const letter = useLetterEditorStore((state) => state.letter);
+	const applications = useLetterEditorStore((state) => state.proposalApplications);
 	const draft = useLetterEditorStore((state) => state.draft);
 	const assistantProposals = useEditorStore((state) => (state.assistantOpen ? state.assistantProposals : NONE));
 	const { i18n } = useLingui();
@@ -79,17 +80,19 @@ export function LetterPage() {
 		if (!letter) return undefined;
 		if (viewing) return letterPageData({ ...letter, ...viewing.data }, words);
 		// The assistant's pending edits show in the body: the old text struck through, the new highlighted.
-		const content = shownDraft
-			? coverLetterTextToHtml(shownDraft)
-			: assistantProposals
-					.filter((proposal) => getStateIn(letter.content, proposal) === "pending")
-					.reduce(
-						(html, proposal) => html.replace(proposal.before, () => markChange(proposal.before, proposal.after)),
-						letter.content,
-					);
+		let content = shownDraft ? coverLetterTextToHtml(shownDraft) : letter.content;
+		if (!shownDraft)
+			applyProposals(
+				assistantProposals.map((proposal) => ({ ...proposal, after: markChange(proposal.before, proposal.after) })),
+				() => content,
+				(_, value) => {
+					content = value;
+				},
+				applications,
+			);
 		const page = letterPageData({ ...letter, content }, words);
 		return previewTemplate ? { ...page, metadata: { ...page.metadata, template: previewTemplate } } : page;
-	}, [letter, viewing, shownDraft, previewTemplate, words, assistantProposals]);
+	}, [letter, viewing, shownDraft, previewTemplate, words, assistantProposals, applications]);
 	const data = useDeepStable(pageData);
 
 	if (!letter || !data) return null;
