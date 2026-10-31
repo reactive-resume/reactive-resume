@@ -140,7 +140,9 @@ function useShareSetting() {
 	const { mutateAsync: updateResume, isPending } = useMutation({
 		...options,
 		mutationFn: (value) =>
-			saveResumeMetadata(value.id, (expectedUpdatedAt) => orpc.resume.update.call({ ...value, expectedUpdatedAt })),
+			saveResumeMetadata(value.id, (expectedUpdatedAt, options) =>
+				orpc.resume.update.call({ ...value, expectedUpdatedAt }, options),
+			),
 	});
 
 	const update = async (settings: ShareSettings) => {
