@@ -61,7 +61,7 @@ export function useDocumentRefresh() {
 }
 
 /** Serialize user actions; report partial batches and undo only successful Trash moves. */
-export function useDocumentOperations() {
+export function useDocumentOperations(enabled = true) {
 	const refresh = useDocumentRefresh();
 	const session = useSession();
 	const active = useRef(false);
@@ -75,7 +75,7 @@ export function useDocumentOperations() {
 		return false;
 	};
 	const run = async (task: () => Promise<unknown>) => {
-		if (active.current) return false;
+		if (!enabled || active.current) return false;
 		active.current = true;
 		let finish = () => {};
 		idle.current = new Promise<void>((resolve) => {

@@ -1,6 +1,7 @@
+import type { DocumentItemProps } from "./document-card";
 // @vitest-environment happy-dom
 import type { DocumentsSearch } from "./documents-page";
-import type { RouterInput, RouterOutput } from "@/libs/orpc/client";
+import type { RouterOutput } from "@/libs/orpc/client";
 import { act, fireEvent, render, screen, waitFor, cleanup, within } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
@@ -11,7 +12,7 @@ import { DocumentsPage } from "./documents-page";
 import { TrashPage } from "./trash-page";
 import { orpc } from "@/libs/orpc/client";
 
-const requests = vi.hoisted(() => ({ load: vi.fn() }));
+const requests = vi.hoisted(() => ({ load: vi.fn(), trash: vi.fn(), restore: vi.fn(), purge: vi.fn() }));
 vi.mock("@/libs/orpc/client", async (importOriginal) => {
 	const actual = await importOriginal<typeof import("@/libs/orpc/client")>();
 	return {
@@ -20,9 +21,9 @@ vi.mock("@/libs/orpc/client", async (importOriginal) => {
 			documents: {
 				page: {
 					queryKey: actual.orpc.documents.page.queryKey,
-					queryOptions: (options: { input: RouterInput["documents"]["page"] }) => ({
+					queryOptions: (options: Parameters<typeof actual.orpc.documents.page.queryKey>[0]) => ({
 						queryKey: actual.orpc.documents.page.queryKey(options),
-						queryFn: () => requests.load(options.input),
+						queryFn: () => requests.load(options?.input),
 					}),
 				},
 				counts: {
@@ -44,15 +45,35 @@ vi.mock("./use-start-document", () => ({ useStartDocument: () => ({}) }));
 vi.mock("./document-actions", () => ({
 	TagsDialog: () => null,
 	LinkApplicationDialog: () => null,
-	useBatchActions: () => ({}),
+	useBatchActions: () => ({ trash: requests.trash, restore: requests.restore, purge: requests.purge }),
 }));
 vi.mock("./document-card", () => ({
-	DocumentRow: ({ document }: { document: { name: string } }) => (
+	DocumentRow: ({ document, selected, onSelectedChange, disabled }: DocumentItemProps) => (
 		<tr>
+			<td>
+				<input
+					type="checkbox"
+					aria-label={`Select ${document.name}`}
+					checked={selected}
+					disabled={disabled}
+					onChange={(event) => onSelectedChange?.(event.target.checked)}
+				/>
+			</td>
 			<td>{document.name}</td>
 		</tr>
 	),
-	DocumentCard: ({ document }: { document: { name: string } }) => <article>{document.name}</article>,
+	DocumentCard: ({ document, selected, onSelectedChange, disabled }: DocumentItemProps) => (
+		<article>
+			<input
+				type="checkbox"
+				aria-label={`Select ${document.name}`}
+				checked={selected}
+				disabled={disabled}
+				onChange={(event) => onSelectedChange?.(event.target.checked)}
+			/>
+			{document.name}
+		</article>
+	),
 }));
 vi.mock("@/features/resume/builder/draft", () => ({ isEditableElementFocused: () => false }));
 afterEach(cleanup);
@@ -79,7 +100,7 @@ function page(offset: number, total = 19500): Page {
 		hasPublic: false,
 	};
 }
-function setup(trashed = false, view: "grid" | "list" = "list", cacheNext = true) {
+function setup(trashed = false, view: "grid" | "list" = "list", cacheNext = true, initialQuery = "") {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
 	const input = { trashed, type: "all" as const, q: "", tags: [], sort: "edited" as const, public: false, limit: 100 };
@@ -92,7 +113,7 @@ function setup(trashed = false, view: "grid" | "list" = "list", cacheNext = true
 	function Library() {
 		const [search, setSearch] = useState<DocumentsSearch>({
 			type: "all",
-			q: "",
+			q: initialQuery,
 			tags: [],
 			sort: "edited",
 			view,
@@ -148,9 +169,97 @@ it("search starts at page zero, preserves global filtered counts and clears page
 	expect(screen.queryByText("100 selected")).toBeNull();
 });
 
+it.each([
+	{ trashed: false, view: "list" },
+	{ trashed: false, view: "grid" },
+	{ trashed: true, view: "list" },
+] as const)(
+	"blocks retained-row callbacks while another page loads ($view, trash=$trashed)",
+	async ({ trashed, view }) => {
+		let finish!: (value: Page) => void;
+		requests.load.mockReset().mockReturnValue(
+			new Promise<Page>((resolve) => {
+				finish = resolve;
+			}),
+		);
+		setup(trashed, view, false);
+		fireEvent.click(screen.getByRole("button", { name: "Next" }));
+		await waitFor(() => expect(requests.load).toHaveBeenCalledTimes(1));
+		expect(screen.getByText("Document 0")).toBeVisible();
+		expect(screen.getByRole("checkbox", { name: "Select Document 0" })).toBeDisabled();
+		if (view === "list")
+			fireEvent.click(
+				screen.getByRole("checkbox", { name: trashed ? "Select this page in Trash" : "Select this page" }),
+			);
+		fireEvent.click(screen.getByRole("checkbox", { name: "Select Document 0" }));
+		expect(screen.queryByText("100 selected")).toBeNull();
+		expect(screen.queryByText("1 selected")).toBeNull();
+		await act(async () => {
+			finish(page(100));
+		});
+		const current = await screen.findByRole("checkbox", { name: "Select Document 100" });
+		expect(current).not.toBeDisabled();
+		fireEvent.click(current);
+		expect(screen.getByText("1 selected")).toBeVisible();
+	},
+);
+
+it("blocks raw-search debounce and failed-fetch actions while retaining controls and last-successful metadata", async () => {
+	let fail!: (error: Error) => void;
+	requests.load.mockReset().mockReturnValue(
+		new Promise<Page>((_resolve, reject) => {
+			fail = reject;
+		}),
+	);
+	const { client, input } = setup();
+	act(() =>
+		client.setQueryData(orpc.documents.page.queryKey({ input: { ...input, offset: 0 } }), {
+			...page(0),
+			tags: ["design"],
+		}),
+	);
+	fireEvent.click(screen.getByRole("checkbox", { name: "Select Document 0" }));
+	expect(screen.getByText("1 selected")).toBeVisible();
+	const search = screen.getByRole("searchbox", { name: "Search documents" });
+	fireEvent.change(search, { target: { value: "new query" } });
+	expect(screen.getByRole("checkbox", { name: "Select Document 0" })).toBeDisabled();
+	fireEvent.click(screen.getByRole("checkbox", { name: "Select this page" }));
+	expect(screen.queryByText("100 selected")).toBeNull();
+	await waitFor(() => expect(requests.load).toHaveBeenCalledTimes(1));
+	await act(async () => {
+		fail(new Error("Network unavailable"));
+	});
+	expect(await screen.findByRole("alert")).toBeVisible();
+	expect(search).toBeVisible();
+	expect(search).toHaveValue("new query");
+	expect(screen.getByRole("button", { name: "#design" })).toBeVisible();
+	expect(within(screen.getByRole("tab", { name: /Letters/ })).getByText("19500")).toBeVisible();
+	expect(screen.getByText("Document 0")).toBeVisible();
+	expect(screen.getByRole("checkbox", { name: "Select Document 0" })).toBeDisabled();
+	requests.load.mockResolvedValue(page(0));
+	fireEvent.change(search, { target: { value: "" } });
+	await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
+	expect(screen.getByRole("checkbox", { name: "Select Document 0" })).not.toBeDisabled();
+	expect(screen.queryByText("1 selected")).toBeNull();
+});
+
+it.each(["paste", "url"])("bounds %s searches to the server's 500-character limit", async (source) => {
+	requests.load.mockReset().mockResolvedValue(page(0));
+	setup(false, "list", true, source === "url" ? "x".repeat(501) : "");
+	const search = screen.getByRole("searchbox", { name: "Search documents" });
+	if (source === "paste") fireEvent.change(search, { target: { value: "x".repeat(501) } });
+	expect(search).toHaveAttribute("maxlength", "500");
+	expect(search).toHaveValue("x".repeat(500));
+	await waitFor(() => expect(requests.load).toHaveBeenCalled());
+	expect(requests.load.mock.calls.every(([input]) => input.q.length <= 500)).toBe(true);
+});
+
 it("retains rows, counts, tags and keyboard focus while the next page loads", async () => {
-	const pending = Promise.withResolvers<Page>();
-	requests.load.mockReset().mockReturnValue(pending.promise);
+	let finish: ((value: Page) => void) | undefined;
+	const response = new Promise<Page>((resolve) => {
+		finish = resolve;
+	});
+	requests.load.mockReset().mockReturnValue(response);
 	const { client, input } = setup(false, "list", false);
 	act(() => {
 		client.setQueryData(orpc.documents.page.queryKey({ input: { ...input, offset: 0 } }), {
@@ -169,7 +278,7 @@ it("retains rows, counts, tags and keyboard focus while the next page loads", as
 	fireEvent.click(next);
 	expect(requests.load).toHaveBeenCalledTimes(1);
 	await act(async () => {
-		pending.resolve(page(100));
+		finish?.(page(100));
 	});
 	expect(await screen.findByText("Document 100")).toBeVisible();
 	expect(screen.queryByText("Document 0")).toBeNull();

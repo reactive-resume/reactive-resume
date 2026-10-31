@@ -425,8 +425,11 @@ msgid "{0}-Resume"
 msgstr "{0}-履歷"
 
 #. placeholder {0}: Math.min(offset + 1, documents.data?.total ?? page.total)
+#. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(offset + 100, documents.data?.total ?? page.total)
+#. placeholder {1}: Math.min(recoveryStart + 100, pending.length)
 #. placeholder {2}: documents.data?.total ?? page.total
+#. placeholder {2}: pending.length
 #: src/features/documents/library.tsx
 msgid "{0}–{1} of {2}"
 msgstr ""
@@ -6447,6 +6450,10 @@ msgstr "下一步：{note}"
 msgid "Next step: {note}. Adds a reminder to Today."
 msgstr "下一步：{note}。新增今日提醒。"
 
+#: src/features/documents/library.tsx
+msgid "Next unsynced drafts"
+msgstr ""
+
 #: src/shell/workspace-chrome.tsx
 msgid "Next workspace tabs"
 msgstr "下一個工作區選項卡"
@@ -7646,6 +7653,10 @@ msgstr "上一頁"
 #: src/features/check/parser.tsx
 msgid "Previous PDF result. It may not match your current draft."
 msgstr "上次的 PDF 結果，可能與目前草稿不同。"
+
+#: src/features/documents/library.tsx
+msgid "Previous unsynced drafts"
+msgstr ""
 
 #: src/shell/workspace-chrome.tsx
 msgid "Previous workspace tabs"

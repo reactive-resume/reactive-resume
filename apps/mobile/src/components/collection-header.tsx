@@ -14,6 +14,7 @@ type CollectionHeaderProps = {
 			value?: never;
 			onChangeText?: never;
 			disabled?: never;
+			maxLength?: never;
 	  }
 	| {
 			searchLabel: string;
@@ -21,6 +22,7 @@ type CollectionHeaderProps = {
 			value: string;
 			onChangeText: (value: string) => void;
 			disabled?: boolean;
+			maxLength?: number;
 	  }
 );
 
@@ -33,6 +35,7 @@ export function CollectionHeader({
 	onChangeText,
 	actions,
 	disabled,
+	maxLength,
 }: CollectionHeaderProps) {
 	const { t } = useLingui();
 	const { colors, radius, size, space, type } = useTheme();
@@ -69,6 +72,7 @@ export function CollectionHeader({
 						placeholderTextColor={colors.ink3}
 						selectionColor={colors.accent}
 						value={value}
+						maxLength={maxLength}
 						onChangeText={onChangeText}
 						editable={!disabled}
 						autoFocus={!value}

@@ -29,6 +29,7 @@ export type DocumentItemProps = {
 	onSelectedChange?: ((selected: boolean) => void) | undefined;
 	/** Something is selected, so clicking a card toggles it instead of opening it. */
 	selecting?: boolean | undefined;
+	disabled?: boolean | undefined;
 };
 
 /** "Resume · Edited 2h ago", or the days left for a document in Trash. */
@@ -47,7 +48,8 @@ function OpenLink({
 	children,
 	label,
 	onSelect,
-}: Pick<DocumentItemProps, "document"> & {
+	disabled,
+}: Pick<DocumentItemProps, "document" | "disabled"> & {
 	className?: string;
 	children: React.ReactNode;
 	label?: string;
@@ -55,7 +57,12 @@ function OpenLink({
 	onSelect?: (() => void) | undefined;
 }) {
 	const markOpened = useNewDocumentsStore((state) => state.markOpened);
-	if (document.trashedAt) return <span className={className}>{children}</span>;
+	if (document.trashedAt || disabled)
+		return (
+			<span aria-disabled={disabled} className={className}>
+				{children}
+			</span>
+		);
 	const onClick = (event: React.MouseEvent) => {
 		if (!onSelect) return markOpened(document.id);
 		event.preventDefault();
@@ -141,6 +148,7 @@ export function DocumentCard({
 	selected = false,
 	onSelectedChange,
 	selecting = false,
+	disabled = false,
 }: DocumentItemProps) {
 	const openDocument = useOpenDocument();
 	const [renaming, setRenaming] = useState(false);
@@ -173,6 +181,7 @@ export function DocumentCard({
 				<div className="relative">
 					<OpenLink
 						document={document}
+						disabled={disabled}
 						label={document.name}
 						onSelect={selecting && onSelectedChange ? () => onSelectedChange(!selected) : undefined}
 						className={cn(
@@ -199,6 +208,7 @@ export function DocumentCard({
 					</OpenLink>
 					{onSelectedChange && (
 						<Checkbox
+							disabled={disabled}
 							checked={selected}
 							onCheckedChange={onSelectedChange}
 							aria-label={t`Select ${document.name}`}
@@ -212,7 +222,7 @@ export function DocumentCard({
 
 				<div className="flex items-start gap-1">
 					<div className="grid min-w-0 flex-1 gap-0.5">
-						{renaming ? (
+						{renaming && !disabled ? (
 							<RenameInput document={document} onDone={() => setRenaming(false)} />
 						) : (
 							<h3 className="truncate text-sm leading-5 font-semibold">{document.name}</h3>
@@ -227,6 +237,7 @@ export function DocumentCard({
 					</div>
 					<DropdownMenu>
 						<DropdownMenuTrigger
+							disabled={disabled}
 							render={
 								<IconButton
 									icon="dots-three"
@@ -236,11 +247,11 @@ export function DocumentCard({
 								/>
 							}
 						/>
-						<DocumentMenuContent {...menuProps} />
+						{!disabled && <DocumentMenuContent {...menuProps} />}
 					</DropdownMenu>
 				</div>
 			</ContextMenuTrigger>
-			<DocumentMenuContent {...menuProps} variant="context" />
+			{!disabled && <DocumentMenuContent {...menuProps} variant="context" />}
 		</ContextMenu>
 	);
 }
@@ -253,6 +264,7 @@ export function DocumentRow({
 	introIndex,
 	selected = false,
 	onSelectedChange,
+	disabled = false,
 }: DocumentItemProps) {
 	const { i18n } = useLingui();
 	const openDocument = useOpenDocument();
@@ -271,6 +283,7 @@ export function DocumentRow({
 			<ContextMenuTrigger
 				render={
 					<tr
+						aria-disabled={disabled}
 						style={introIndex === undefined ? undefined : stagger(introIndex)}
 						className={cn(
 							"border-b border-line transition-colors duration-quick hover:bg-hover",
@@ -283,17 +296,23 @@ export function DocumentRow({
 			>
 				{onSelectedChange && (
 					<td className="w-10 ps-3">
-						<Checkbox checked={selected} onCheckedChange={onSelectedChange} aria-label={t`Select ${document.name}`} />
+						<Checkbox
+							disabled={disabled}
+							checked={selected}
+							onCheckedChange={onSelectedChange}
+							aria-label={t`Select ${document.name}`}
+						/>
 					</td>
 				)}
 				<td className="py-3 ps-3 pe-2">
 					<span className="flex min-w-0 items-center gap-2.5">
 						<Icon name={document.type === "resume" ? "file-text" : "envelope-simple"} className="shrink-0 text-ink-2" />
-						{renaming ? (
+						{renaming && !disabled ? (
 							<RenameInput document={document} onDone={() => setRenaming(false)} />
 						) : (
 							<OpenLink
 								document={document}
+								disabled={disabled}
 								className="min-w-0 truncate text-start text-sm font-semibold hover:underline"
 							>
 								{document.name}
@@ -329,6 +348,7 @@ export function DocumentRow({
 				<td className="w-10 pe-2 text-end">
 					<DropdownMenu>
 						<DropdownMenuTrigger
+							disabled={disabled}
 							render={
 								<IconButton
 									icon="dots-three"
@@ -338,11 +358,11 @@ export function DocumentRow({
 								/>
 							}
 						/>
-						<DocumentMenuContent {...menuProps} />
+						{!disabled && <DocumentMenuContent {...menuProps} />}
 					</DropdownMenu>
 				</td>
 			</ContextMenuTrigger>
-			<DocumentMenuContent {...menuProps} variant="context" />
+			{!disabled && <DocumentMenuContent {...menuProps} variant="context" />}
 		</ContextMenu>
 	);
 }

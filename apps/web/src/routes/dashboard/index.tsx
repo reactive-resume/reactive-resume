@@ -8,7 +8,11 @@ const defaults = { type: "all", q: "", tags: [], public: false, sort: "edited" }
 export const Route = createFileRoute("/dashboard/")({
 	validateSearch: z.object({
 		type: z.enum(["all", "resume", "letter"]).default("all").catch("all"),
-		q: z.string().default("").catch(""),
+		q: z
+			.string()
+			.transform((value) => value.slice(0, 500))
+			.default("")
+			.catch(""),
 		tags: z.array(z.string()).default([]).catch([]),
 		public: z.boolean().default(false).catch(false),
 		sort: z.enum(["edited", "name", "created"]).default("edited").catch("edited"),

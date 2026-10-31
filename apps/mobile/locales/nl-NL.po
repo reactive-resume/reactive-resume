@@ -425,8 +425,11 @@ msgid "{0}-Resume"
 msgstr "{0}-Cv"
 
 #. placeholder {0}: Math.min(offset + 1, documents.data?.total ?? page.total)
+#. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(offset + 100, documents.data?.total ?? page.total)
+#. placeholder {1}: Math.min(recoveryStart + 100, pending.length)
 #. placeholder {2}: documents.data?.total ?? page.total
+#. placeholder {2}: pending.length
 #: src/features/documents/library.tsx
 msgid "{0}–{1} of {2}"
 msgstr ""
@@ -6447,6 +6450,10 @@ msgstr "Volgende stap: {note}"
 msgid "Next step: {note}. Adds a reminder to Today."
 msgstr "Volgende stap: {note}. Voegt een herinnering toe aan Vandaag."
 
+#: src/features/documents/library.tsx
+msgid "Next unsynced drafts"
+msgstr ""
+
 #: src/shell/workspace-chrome.tsx
 msgid "Next workspace tabs"
 msgstr "Volgende werkruimtetabbladen"
@@ -7646,6 +7653,10 @@ msgstr "Vorige pagina"
 #: src/features/check/parser.tsx
 msgid "Previous PDF result. It may not match your current draft."
 msgstr "Vorig resultaat PDF. Het komt mogelijk niet overeen met je huidige concept."
+
+#: src/features/documents/library.tsx
+msgid "Previous unsynced drafts"
+msgstr ""
 
 #: src/shell/workspace-chrome.tsx
 msgid "Previous workspace tabs"

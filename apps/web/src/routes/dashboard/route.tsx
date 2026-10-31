@@ -14,8 +14,9 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function RouteComponent() {
+	const { session } = Route.useRouteContext();
 	return (
-		<AppShell>
+		<AppShell key={session.user.id}>
 			<Outlet />
 		</AppShell>
 	);

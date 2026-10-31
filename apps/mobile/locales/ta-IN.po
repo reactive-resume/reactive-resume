@@ -425,8 +425,11 @@ msgid "{0}-Resume"
 msgstr "{0}-ரெஸ்யூம்"
 
 #. placeholder {0}: Math.min(offset + 1, documents.data?.total ?? page.total)
+#. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(offset + 100, documents.data?.total ?? page.total)
+#. placeholder {1}: Math.min(recoveryStart + 100, pending.length)
 #. placeholder {2}: documents.data?.total ?? page.total
+#. placeholder {2}: pending.length
 #: src/features/documents/library.tsx
 msgid "{0}–{1} of {2}"
 msgstr ""
@@ -6447,6 +6450,10 @@ msgstr "அடுத்த படி: {note}"
 msgid "Next step: {note}. Adds a reminder to Today."
 msgstr "அடுத்த படி: {note}. இன்றுக்கு நினைவூட்டலைச் சேர்க்கிறது."
 
+#: src/features/documents/library.tsx
+msgid "Next unsynced drafts"
+msgstr ""
+
 #: src/shell/workspace-chrome.tsx
 msgid "Next workspace tabs"
 msgstr "அடுத்த பணியிட தாவல்கள்"
@@ -7646,6 +7653,10 @@ msgstr "முந்தைய பக்கம்"
 #: src/features/check/parser.tsx
 msgid "Previous PDF result. It may not match your current draft."
 msgstr "முந்தைய PDF முடிவு. இது உங்கள் தற்போதைய வரைவோடு பொருந்தாமல் இருக்கலாம்."
+
+#: src/features/documents/library.tsx
+msgid "Previous unsynced drafts"
+msgstr ""
 
 #: src/shell/workspace-chrome.tsx
 msgid "Previous workspace tabs"

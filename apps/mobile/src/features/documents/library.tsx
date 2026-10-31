@@ -95,7 +95,8 @@ function DocumentItem({
 			<Pressable
 				accessibilityRole={selecting ? "checkbox" : "button"}
 				accessibilityLabel={selecting ? t`Select ${document.name}` : document.name}
-				accessibilityState={{ checked: selecting ? selected : undefined }}
+				accessibilityState={{ checked: selecting ? selected : undefined, disabled: busy }}
+				disabled={busy}
 				accessibilityHint={unsynced ? t`Unsynced on this device` : !selecting ? t`Long press to select` : undefined}
 				onPress={selecting ? onSelect : onOpen}
 				onLongPress={selecting ? undefined : onSelect}
@@ -169,7 +170,6 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 		queryKey: [...countsOptions.queryKey, scope],
 		enabled: session.status === "signed-in",
 	});
-	const operations = useDocumentOperations();
 	const [q, setQ] = useState("");
 	const [query, setQuery] = useState(q);
 	useEffect(() => {
@@ -180,7 +180,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 	const [sort, setSort] = useState<DocumentSort>("edited");
 	const [tags, setTags] = useState<string[]>([]);
 	const [publicOnly, setPublicOnly] = useState(false);
-	const filterKey = JSON.stringify([trashed, query, type, tags, publicOnly, sort, scope]);
+	const filterKey = JSON.stringify([trashed, q, type, tags, publicOnly, sort, scope]);
 	const [page, setPage] = useState({ filterKey, offset: 0, total: 0 });
 	const offset = page.filterKey === filterKey ? page.offset : 0;
 	const pageOptions = orpc.documents.page.queryOptions({
@@ -193,8 +193,25 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 		placeholderData: (previous, previousQuery) => (previousQuery?.queryKey.at(-1) === scope ? previous : undefined),
 		enabled: session.status === "signed-in",
 	});
+	const [lastPage, setLastPage] = useState({ scope, data: documents.data, offset });
+	if (
+		scope !== lastPage.scope ||
+		(documents.data && !documents.isPlaceholderData && (documents.data !== lastPage.data || offset !== lastPage.offset))
+	)
+		setLastPage({ scope, data: documents.data, offset });
+	const displayed = documents.data ?? (lastPage.scope === scope ? lastPage.data : undefined);
+	const displayedOffset = documents.data && !documents.isPlaceholderData ? offset : lastPage.offset;
+	const rowsCurrent =
+		session.status === "signed-in" &&
+		Boolean(documents.data) &&
+		!documents.isPlaceholderData &&
+		!documents.isError &&
+		q === query;
+	const operations = useDocumentOperations(rowsCurrent);
 	const changePage = (next: number) => {
 		setSelection([]);
+		setSheet(null);
+		setPurge(null);
 		setPage({ filterKey, offset: next, total: documents.data?.total ?? page.total });
 	};
 	const { markInteractive } = useObserve();
@@ -205,6 +222,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 	const [view, setView] = useState<"list" | "grid" | null>(null);
 	const [selecting, setSelecting] = useState(false);
 	const [selection, setSelection] = useState<string[]>([]);
+	const [recoveryOffset, setRecoveryOffset] = useState(0);
 	const [sheet, setSheet] = useState<DocumentSheet | null>(null);
 	const [purge, setPurge] = useState<{ documents: DocumentSummary[]; all: boolean } | null>(null);
 	const [visible, setVisible] = useState<string[]>([]);
@@ -227,16 +245,20 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 				page.filterKey !== filterKey ? 0 : Math.max(0, Math.floor(((documents.data?.total ?? 0) - 1) / 100) * 100),
 		});
 		setSelection([]);
+		setSheet(null);
+		setPurge(null);
+		setRecoveryOffset(0);
 	}
-	const all = session.status === "signed-in" ? (documents.data?.items ?? []) : [];
+	const all = session.status === "signed-in" ? (displayed?.items ?? []) : [];
 	const trashTotal = counts.data?.trash ?? documents.data?.total ?? 0;
 	const purgeCount = purge?.all ? trashTotal : (purge?.documents.length ?? 0);
 	const pendingKeys = new Set(pending.map(documentKey));
 	// Device recovery is independent of which server page or filter happens to be open.
-	const recoverable = trashed ? [] : pending;
+	const recoveryStart = Math.min(recoveryOffset, Math.max(0, Math.floor((pending.length - 1) / 100) * 100));
+	const recoverable = trashed ? [] : pending.slice(recoveryStart, recoveryStart + 100);
 	const filtered = all;
 	const firstAppearance = useFirstAppearance(filtered.length > 0);
-	const selected = filtered.filter((document) => selection.includes(documentKey(document)));
+	const selected = rowsCurrent ? filtered.filter((document) => selection.includes(documentKey(document))) : [];
 	const { refetch: refetchDocuments } = documents;
 	const { refetch: refetchCounts } = counts;
 	const pull = usePullRefresh(async () => {
@@ -251,6 +273,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 		}, [session.status, refetchDocuments, refetchCounts]),
 	);
 	const toggle = (document: DocumentSummary) => {
+		if (!rowsCurrent) return;
 		if (!selecting) {
 			setSelecting(true);
 			haptics.light();
@@ -265,6 +288,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 		setSelection([]);
 	};
 	const open = (document: DocumentSummary) => {
+		if (!rowsCurrent) return;
 		if (trashed) {
 			setPurge(null);
 			setSheet({ kind: "menu", documents: [document] });
@@ -316,7 +340,8 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 						searchLabel={t`Search documents`}
 						placeholder={t`Names, tags or applications`}
 						value={q}
-						onChangeText={setQ}
+						maxLength={500}
+						onChangeText={(value) => setQ(value.slice(0, 500))}
 						actions={
 							<>
 								{selecting && <Button variant="ghost" label={t`Done`} onPress={finishSelection} />}
@@ -346,6 +371,25 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 									}
 								/>
 							))}
+							{pending.length > 100 && (
+								<View style={{ gap: space.s2 }}>
+									<Text>{t`${recoveryStart + 1}–${Math.min(recoveryStart + 100, pending.length)} of ${pending.length}`}</Text>
+									<View style={{ flexDirection: "row", gap: space.s2 }}>
+										<Button
+											label={t`Previous unsynced drafts`}
+											variant="secondary"
+											disabled={recoveryStart === 0}
+											onPress={() => setRecoveryOffset(Math.max(0, recoveryStart - 100))}
+										/>
+										<Button
+											label={t`Next unsynced drafts`}
+											variant="secondary"
+											disabled={recoveryStart + 100 >= pending.length}
+											onPress={() => setRecoveryOffset(recoveryStart + 100)}
+										/>
+									</View>
+								</View>
+							)}
 						</View>
 					)}
 					{(documents.isError || counts.isError) && (
@@ -372,18 +416,18 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 								options={[
 									{
 										value: "all",
-										label: t`All (${(documents.data?.counts.resume ?? 0) + (documents.data?.counts.letter ?? 0)})`,
+										label: t`All (${(displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0)})`,
 									},
 									{
 										value: "resume",
-										label: plural(documents.data?.counts.resume ?? 0, {
+										label: plural(displayed?.counts.resume ?? 0, {
 											one: "Resume (#)",
 											other: "Resumes (#)",
 										}),
 									},
 									{
 										value: "letter",
-										label: plural(documents.data?.counts.letter ?? 0, {
+										label: plural(displayed?.counts.letter ?? 0, {
 											one: "Letter (#)",
 											other: "Letters (#)",
 										}),
@@ -399,7 +443,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 							>
 								{fontScale <= 1.3 && sortControl}
 								<Chip label={t`Public`} selected={publicOnly} onPress={() => setPublicOnly(!publicOnly)} />
-								{(documents.data?.tags ?? []).map((tag) => (
+								{(displayed?.tags ?? []).map((tag) => (
 									<Chip
 										key={tag}
 										label={tag}
@@ -423,14 +467,17 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 								<Button
 									label={t`Select this page`}
 									variant="ghost"
-									onPress={() => setSelection(filtered.map(documentKey))}
+									disabled={!rowsCurrent}
+									onPress={() => {
+										if (rowsCurrent) setSelection(filtered.map(documentKey));
+									}}
 								/>
 								{trashed ? (
 									<>
 										<Button
 											label={t`Restore`}
 											variant="secondary"
-											disabled={!selected.length || operations.busy}
+											disabled={!rowsCurrent || !selected.length || operations.busy}
 											loading={operations.busy}
 											onPress={() =>
 												void operations.restoreSelected(selected).then((success) => {
@@ -472,7 +519,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 						<Button
 							label={t`Empty trash`}
 							variant="danger"
-							disabled={operations.busy}
+							disabled={!rowsCurrent || operations.busy}
 							onPress={() => setPurge({ documents: all, all: true })}
 						/>
 					)}
@@ -512,15 +559,21 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 							document={item}
 							visible={visible.includes(documentKey(item))}
 							grid={grid}
-							selected={selection.includes(documentKey(item))}
+							selected={rowsCurrent && selection.includes(documentKey(item))}
 							selecting={selecting}
-							busy={operations.busy}
+							busy={operations.busy || !rowsCurrent}
 							unsynced={!trashed && pendingKeys.has(documentKey(item))}
 							onOpen={() => open(item)}
 							onSelect={() => toggle(item)}
-							onMenu={() => setSheet({ kind: "menu", documents: [item] })}
-							onTrash={() => void operations.trash([item])}
-							onDuplicate={() => void duplicate(item)}
+							onMenu={() => {
+								if (rowsCurrent) setSheet({ kind: "menu", documents: [item] });
+							}}
+							onTrash={() => {
+								if (rowsCurrent) void operations.trash([item]);
+							}}
+							onDuplicate={() => {
+								if (rowsCurrent) void duplicate(item);
+							}}
 						/>
 					</Animated.View>
 				)}
@@ -531,13 +584,13 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 							title={t`Sign in to see your documents`}
 							action={{ label: t`Sign in`, onPress: () => router.push(routes.signIn()) }}
 						/>
-					) : recoverable.length > 0 ? undefined : documents.isPending ? (
+					) : recoverable.length > 0 ? undefined : documents.isPending || (!rowsCurrent && !documents.isError) ? (
 						<View style={{ gap: space.s3 }}>
 							<Skeleton height={size.row * 2} />
 							<Skeleton height={size.row * 2} />
 							<Skeleton height={size.row * 2} />
 						</View>
-					) : documents.isError && !documents.data ? undefined : (
+					) : documents.isError ? undefined : (
 						<EmptyState
 							icon={trashed ? "trash" : "file-text"}
 							title={
@@ -566,21 +619,24 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 				}
 				ListFooterComponent={
 					<View style={{ gap: space.s3 }}>
-						{session.status === "signed-in" && (offset > 0 || (documents.data?.total ?? page.total) > 100) && (
+						{session.status === "signed-in" && (offset > 0 || (displayed?.total ?? page.total) > 100) && (
 							<View style={{ gap: space.s2 }}>
-								<Text accessibilityLiveRegion="polite">{t`${Math.min(offset + 1, documents.data?.total ?? page.total)}–${Math.min(offset + 100, documents.data?.total ?? page.total)} of ${documents.data?.total ?? page.total}`}</Text>
+								<Text accessibilityLiveRegion="polite">{t`${Math.min(displayedOffset + 1, displayed?.total ?? page.total)}–${Math.min(displayedOffset + 100, displayed?.total ?? page.total)} of ${displayed?.total ?? page.total}`}</Text>
 								<View style={{ flexDirection: "row", gap: space.s2 }}>
 									<Button
 										label={t`Previous`}
 										variant="secondary"
-										disabled={documents.isFetching || operations.busy || offset === 0}
+										disabled={!rowsCurrent || documents.isFetching || operations.busy || offset === 0}
 										onPress={() => changePage(Math.max(0, offset - 100))}
 									/>
 									<Button
 										label={t`Next`}
 										variant="secondary"
 										disabled={
-											documents.isFetching || operations.busy || offset + 100 >= (documents.data?.total ?? page.total)
+											!rowsCurrent ||
+											documents.isFetching ||
+											operations.busy ||
+											offset + 100 >= (documents.data?.total ?? page.total)
 										}
 										onPress={() => changePage(offset + 100)}
 									/>
@@ -602,6 +658,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 				}
 			/>
 			{session.status === "signed-in" &&
+				rowsCurrent &&
 				sheet &&
 				(trashed ? (
 					<SheetForTrash
@@ -630,7 +687,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 					/>
 				))}
 			<ConfirmDialog
-				open={session.status === "signed-in" && purge !== null}
+				open={rowsCurrent && purge !== null}
 				title={
 					purge?.all
 						? t`Empty Trash?`
@@ -657,7 +714,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 					if (!operations.busy) setPurge(null);
 				}}
 				onConfirm={() => {
-					if (!purge) return;
+					if (!rowsCurrent || !purge) return;
 					const action = purge.all ? operations.emptyTrash() : operations.purgeSelected(purge.documents);
 					void action.then((success) => {
 						if (!success) return;

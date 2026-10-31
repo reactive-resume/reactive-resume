@@ -511,6 +511,7 @@ native.FlatList = "FlatList";
 const documentQuery = {
 	data: { items: [], total: 19500, counts: { resume: 19500, letter: 0 }, tags: [], hasPublic: false },
 	isError: false,
+	isPlaceholderData: false,
 	refetch() {},
 };
 let documentInput;
@@ -678,6 +679,7 @@ for (const fontScale of [1, 1.95, 3.12]) {
 
 // A large library renders only its server page. Navigation replaces rows and filters restart at zero.
 hooks.length = 0;
+documentQuery.isError = false;
 documentQuery.data.items = Array.from({ length: 100 }, (_, index) => ({
 	id: `doc-${index}`,
 	type: "resume",
@@ -699,6 +701,20 @@ nodes(list.props.ListHeaderComponent)
 	.props.onChangeText("design");
 render(DocumentsLibrary);
 assert.equal(documentInput.q, "");
+list = nodes(render(DocumentsLibrary)).find((node) => node.type === "FlatList");
+let retained = nodes(list.props.renderItem({ item: list.props.data[0], index: 0 })).find(
+	(node) => node.type.name === "DocumentItem",
+);
+assert.equal(retained.props.busy, true, "Raw search disables retained rows before debounce");
+retained.props.onSelect();
+retained.props.onMenu();
+retained.props.onTrash();
+retained.props.onDuplicate();
+list = nodes(render(DocumentsLibrary)).find((node) => node.type === "FlatList");
+retained = nodes(list.props.renderItem({ item: list.props.data[0], index: 0 })).find(
+	(node) => node.type.name === "DocumentItem",
+);
+assert.equal(retained.props.selecting, false, "Disabled selection callback cannot enter selection mode");
 await new Promise((resolve) => setTimeout(resolve, 350));
 render(DocumentsLibrary);
 assert.equal(documentInput.q, "design");
@@ -722,8 +738,54 @@ assert.equal(
 	documentPlaceholder(documentQuery.data, { queryKey: ["document-page", {}, "fixture"] }),
 	documentQuery.data,
 );
+pendingDocuments = Array.from({ length: 201 }, (_, id) => ({ type: "letter", id: String(id), name: `Queued ${id}` }));
+list = nodes(render(DocumentsLibrary)).find((node) => node.type === "FlatList");
+assert.equal(
+	nodes(list.props.ListHeaderComponent).filter(
+		(node) => node.type === "ListRow" && node.props.title?.startsWith("Queued "),
+	).length,
+	100,
+);
+nodes(list.props.ListHeaderComponent)
+	.find((node) => node.props.label === "Next unsynced drafts")
+	.props.onPress();
+list = nodes(render(DocumentsLibrary)).find((node) => node.type === "FlatList");
+assert.ok(nodes(list.props.ListHeaderComponent).some((node) => node.props.title === "Queued 100"));
+assert.ok(!nodes(list.props.ListHeaderComponent).some((node) => node.props.title === "Queued 0"));
 pendingDocuments = [];
 console.log("PASS native large-library page bound, navigation, debounced filter reset and account-scoped recovery");
+
+for (const trashed of [false, true]) {
+	hooks.length = 0;
+	documentQuery.isPlaceholderData = false;
+	documentQuery.isError = false;
+	const previousPage = documentQuery.data;
+	list = nodes(render(DocumentsLibrary, { trashed })).find((node) => node.type === "FlatList");
+	documentQuery.isPlaceholderData = true;
+	list = nodes(render(DocumentsLibrary, { trashed })).find((node) => node.type === "FlatList");
+	retained = nodes(list.props.renderItem({ item: list.props.data[0], index: 0 })).find(
+		(node) => node.type.name === "DocumentItem",
+	);
+	assert.equal(retained.props.busy, true);
+	retained.props.onSelect();
+	retained.props.onTrash();
+	documentQuery.isPlaceholderData = false;
+	documentQuery.isError = true;
+	documentQuery.data = undefined;
+	list = nodes(render(DocumentsLibrary, { trashed })).find((node) => node.type === "FlatList");
+	assert.equal(list.props.data.length, 100, "Failed replacement retains last-successful rows");
+	assert.ok(nodes(list.props.ListHeaderComponent).some((node) => node.type === "CollectionHeader"));
+	retained = nodes(list.props.renderItem({ item: list.props.data[0], index: 0 })).find(
+		(node) => node.type.name === "DocumentItem",
+	);
+	assert.equal(retained.props.busy, true);
+	assert.equal(retained.props.selecting, false);
+	documentQuery.data = previousPage;
+}
+documentQuery.isError = false;
+console.log(
+	"PASS native live/Trash retained rows block callbacks during debounce, placeholders and failed replacement",
+);
 
 // A direct link to a later workspace tab must reveal its selection and offer overflow navigation.
 hooks.length = 0;
