@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -12,6 +12,7 @@ const api = vi.hoisted(() => ({
 	parsePdf: vi.fn(),
 	parseDocx: vi.fn(),
 	extractPdfLines: vi.fn(),
+	createLetter: vi.fn(),
 }));
 vi.mock("@tanstack/react-router", () => ({ useNavigate: () => vi.fn() }));
 vi.mock("@/features/resume/import/pdf-text", () => ({ extractPdfLines: api.extractPdfLines }));
@@ -21,9 +22,9 @@ vi.mock("@/libs/orpc/client", () => ({
 		aiProviders: {
 			list: { queryOptions: () => ({ queryKey: ["providers"], queryFn: api.providers, retry: false }) },
 		},
-		documents: { key: () => ["documents"] },
+		documents: { key: () => ["documents"], list: { queryKey: () => ["documents", "list"] } },
 		resume: { create: { mutationOptions: () => ({ mutationFn: vi.fn() }) } },
-		coverLetters: { create: { mutationOptions: () => ({ mutationFn: vi.fn() }) } },
+		coverLetters: { create: { mutationOptions: () => ({ mutationFn: api.createLetter }) } },
 	},
 }));
 
@@ -48,12 +49,12 @@ afterEach(() => {
 	cleanup();
 	queryClient.clear();
 });
-function mount(file: File) {
+function mount(file?: File) {
 	return render(
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={queryClient}>
 				<Dialog open>
-					<NewDocumentDialog data={{ file }} />
+					<NewDocumentDialog data={file ? { file } : undefined} />
 				</Dialog>
 			</QueryClientProvider>
 		</I18nProvider>,
@@ -82,4 +83,22 @@ it("keeps a recoverable connection error for Word files that require AI", async 
 	expect(api.importResume).not.toHaveBeenCalled();
 	expect(api.parseDocx).not.toHaveBeenCalled();
 	expect(api.extractPdfLines).not.toHaveBeenCalled();
+});
+
+it("creates one cover letter while a create is in flight, even across repeat clicks and a reopened dialog", async () => {
+	let finish = (_letter: { id: string }) => {};
+	api.createLetter.mockReturnValue(new Promise((resolve) => (finish = resolve)));
+	const first = mount();
+	const button = screen.getByRole("button", { name: "New cover letter instead" });
+	fireEvent.click(button);
+	fireEvent.click(button);
+	first.unmount();
+
+	mount();
+	fireEvent.click(screen.getByRole("button", { name: "New cover letter instead" }));
+	await vi.waitFor(() => expect(api.createLetter).toHaveBeenCalledTimes(1));
+
+	await act(async () => finish({ id: "letter-1" }));
+	fireEvent.click(screen.getByRole("button", { name: "New cover letter instead" }));
+	await vi.waitFor(() => expect(api.createLetter).toHaveBeenCalledTimes(2));
 });
