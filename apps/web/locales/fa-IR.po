@@ -2687,6 +2687,10 @@ msgstr "آیا نرم افزار می تواند رزومه شما را بخوا
 msgid "Cancel"
 msgstr "انصراف"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3341,6 +3345,11 @@ msgstr "ارائه‌دهنده هوش مصنوعی خود را متصل کنی�
 #: src/features/settings/ai/providers.tsx
 msgid "Connected"
 msgstr "متصل"
+
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
@@ -4289,8 +4298,17 @@ msgid "Create a resume first, then ask about it."
 msgstr "ابتدا یک رزومه ایجاد کنید، سپس در مورد آن بپرسید."
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "ایجاد حساب کاربری"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4549,6 +4567,10 @@ msgstr "حذف درخواست"
 msgid "Delete conversation"
 msgstr "حذف گفتگو"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4776,8 +4798,26 @@ msgid "Discard unsaved changes?"
 msgstr "تغییرات ذخیره‌نشده دور انداخته شوند؟"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "قطع اتصال"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -6785,6 +6825,10 @@ msgstr "Issues و Job match هنوز بدون هوش مصنوعی کار می ک
 msgid "It has entries but isn't placed on a page."
 msgstr "ورودی دارد اما در صفحه ای قرار نمی گیرد."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "شاید حذف شده باشد. داستان دیگری انتخاب کنید یا داستان جدیدی اضافه کنید."
@@ -6934,6 +6978,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "فقط یک نشانی نگه دارید تا نرم‌افزار مجبور نباشد حدس بزند کدام را استفاده کند."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "هنگامی که از برنامه استفاده نمی‌کنید، دسترسی را حفظ کنید."
 
@@ -8374,8 +8419,8 @@ msgid "No commands match that search."
 msgstr "هیچ دستوری با این جستجو مطابقت ندارد."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
-msgstr "هنوز هیچ برنامهٔ متصلی وجود ندارد. برنامه‌هایی که اجازهٔ دسترسی به حساب خود را به آن‌ها می‌دهید اینجا نمایش داده می‌شوند."
+msgid "No connected applications. Apps you allow appear here."
+msgstr ""
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -10163,16 +10208,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "آدرس ایمیل خود را بخوانید."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "اطلاعات پروفایل خود را بخوانید."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "تمام داده‌های موجود در حساب خود را بخوانید، از جمله صادرات کامل داده: نمایه و آدرس ایمیل، اسناد، درخواست‌های شغلی، داده‌های شغلی و مکالمات مربیگری."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11010,14 +11065,6 @@ msgstr "لغو"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "{0} را لغو کنید"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "لغو دسترسی"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "دسترسی یک برنامه کاربردی به حساب خود را لغو کنید."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12000,6 +12047,7 @@ msgstr "نوارهای کناری اغلب آخرین خوانده می شوند
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"

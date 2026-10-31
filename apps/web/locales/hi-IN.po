@@ -2687,6 +2687,10 @@ msgstr "क्या सॉफ़्टवेयर आपका बायोड
 msgid "Cancel"
 msgstr "रद्द करें"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3341,6 +3345,11 @@ msgstr "भाषा मॉडल द्वारा आपकी सूची �
 #: src/features/settings/ai/providers.tsx
 msgid "Connected"
 msgstr "जुड़े हुए"
+
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
@@ -4289,8 +4298,17 @@ msgid "Create a resume first, then ask about it."
 msgstr "पहले एक बायोडाटा बनाएं, फिर उसके बारे में पूछें।"
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "खाता बनाएँ"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4549,6 +4567,10 @@ msgstr "आवेदन हटाएँ"
 msgid "Delete conversation"
 msgstr "बातचीत हटाएँ"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4776,8 +4798,26 @@ msgid "Discard unsaved changes?"
 msgstr "बिना सहेजे बदलाव छोड़ें?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "डिसकनेक्ट करें"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -6785,6 +6825,10 @@ msgstr "मुद्दे और जॉब मैच अभी भी एआई
 msgid "It has entries but isn't placed on a page."
 msgstr "इसमें प्रविष्टियाँ हैं लेकिन किसी पृष्ठ पर नहीं रखी गई हैं।"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "हो सकता है इसे हटा दिया गया हो। कोई दूसरी कहानी चुनें या नई जोड़ें।"
@@ -6934,6 +6978,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "एक ही पता रखें, ताकि सॉफ़्टवेयर को यह अंदाज़ा न लगाना पड़े कि किसका इस्तेमाल करना है।"
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "जब आप एप्लिकेशन का उपयोग नहीं कर रहे हों तो पहुंच बनाए रखें।"
 
@@ -8374,8 +8419,8 @@ msgid "No commands match that search."
 msgstr "उस खोज से कोई कमांड मेल नहीं खाती।"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
-msgstr "अभी कोई कनेक्ट किया गया ऐप्लिकेशन नहीं है। जिन ऐप्स को आप अपने खाते तक पहुँच देते हैं, वे यहाँ दिखाई देते हैं।"
+msgid "No connected applications. Apps you allow appear here."
+msgstr ""
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -10163,16 +10208,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "अपना ईमेल पता पढ़ें."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "अपनी प्रोफ़ाइल जानकारी पढ़ें."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "संपूर्ण डेटा निर्यात सहित अपने खाते का सारा डेटा पढ़ें: आपका प्रोफ़ाइल और ईमेल पता, दस्तावेज़, नौकरी आवेदन, कैरियर डेटा और कोचिंग वार्तालाप।"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11010,14 +11065,6 @@ msgstr "रद्द करना"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "{0} को निरस्त करें"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "एक्सेस अक्षम करें"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "अपने खाते तक किसी एप्लिकेशन की पहुंच रद्द करें."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12000,6 +12047,7 @@ msgstr "साइडबार को अक्सर सबसे आखिर �
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"

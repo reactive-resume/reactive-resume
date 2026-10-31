@@ -2687,6 +2687,10 @@ msgstr "A mund ta lexojë softueri rezymenë tuaj?"
 msgid "Cancel"
 msgstr "Anulo"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3341,6 +3345,11 @@ msgstr "Lidhni ofruesin tuaj të AI për të pasur një model gjuhe të lexojë 
 #: src/features/settings/ai/providers.tsx
 msgid "Connected"
 msgstr "I lidhur"
+
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
@@ -4289,8 +4298,17 @@ msgid "Create a resume first, then ask about it."
 msgstr "Fillimisht krijoni një CV dhe më pas pyesni për të."
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "Krijo llogari"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4549,6 +4567,10 @@ msgstr "Fshi aplikimin"
 msgid "Delete conversation"
 msgstr "Fshi bisedën"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4776,8 +4798,26 @@ msgid "Discard unsaved changes?"
 msgstr "Të hidhen ndryshimet e paruajtura?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "Shkëput"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -6785,6 +6825,10 @@ msgstr "Problemet dhe përputhja e punës ende funksionojnë pa AI."
 msgid "It has entries but isn't placed on a page."
 msgstr "Ka hyrje, por nuk vendoset në një faqe."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "Mund të jetë fshirë. Zgjidhni një histori tjetër ose shtoni një të re."
@@ -6934,6 +6978,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "Mbani një adresë të vetme, që programet të mos duhet të hamendësojnë cilën të përdorin."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "Mbani aksesin kur nuk jeni duke përdorur aplikacionin."
 
@@ -8374,8 +8419,8 @@ msgid "No commands match that search."
 msgstr "Asnjë komandë nuk përputhet me këtë kërkim."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
-msgstr "Ende nuk ka aplikacione të lidhura. Aplikacionet që lejoni të hyjnë në llogarinë tuaj shfaqen këtu."
+msgid "No connected applications. Apps you allow appear here."
+msgstr ""
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -10163,16 +10208,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "Lexoni adresën tuaj të emailit."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "Lexoni informacionin e profilit tuaj."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "Lexoni të gjitha të dhënat në llogarinë tuaj, duke përfshirë një eksportim të plotë të të dhënave: profilin tuaj dhe adresën e emailit, dokumentet, aplikimet për punë, të dhënat e karrierës dhe bisedat e stërvitjes."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11010,14 +11065,6 @@ msgstr "Revoko"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "Revoko {0}"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "Revoko aksesin"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "Revoko aksesin e një aplikacioni në llogarinë tënde."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12000,6 +12047,7 @@ msgstr "Shiritat anësor shpesh lexohen të fundit, ose të përziera në kolon�
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"

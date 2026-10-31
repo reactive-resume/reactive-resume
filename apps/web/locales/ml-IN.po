@@ -2687,6 +2687,10 @@ msgstr "സോഫ്റ്റ്‌വെയറിന് നിങ്ങളു�
 msgid "Cancel"
 msgstr "റദ്ദാക്കുക"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3341,6 +3345,11 @@ msgstr "നിങ്ങളുടെ ലിസ്റ്റ് എൻട്രി�
 #: src/features/settings/ai/providers.tsx
 msgid "Connected"
 msgstr "ബന്ധിപ്പിച്ചു"
+
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
@@ -4289,8 +4298,17 @@ msgid "Create a resume first, then ask about it."
 msgstr "ആദ്യം ഒരു റെസ്യൂമെ സൃഷ്ടിക്കുക, തുടർന്ന് അതിനെക്കുറിച്ച് ചോദിക്കുക."
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "അക്കൗണ്ട് സൃഷ്ടിക്കുക"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4549,6 +4567,10 @@ msgstr "അപേക്ഷ ഇല്ലാതാക്കുക"
 msgid "Delete conversation"
 msgstr "സംഭാഷണം ഇല്ലാതാക്കുക"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4776,8 +4798,26 @@ msgid "Discard unsaved changes?"
 msgstr "സേവ് ചെയ്യാത്ത മാറ്റങ്ങൾ ഉപേക്ഷിക്കണോ?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "ഡിസ്കണക്റ്റ് ചെയ്യുക"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -6785,6 +6825,10 @@ msgstr "പ്രശ്‌നങ്ങളും ജോബ് പൊരുത്�
 msgid "It has entries but isn't placed on a page."
 msgstr "ഇതിന് എൻട്രികളുണ്ടെങ്കിലും ഒരു പേജിൽ സ്ഥാപിച്ചിട്ടില്ല."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "ഇത് ഡിലീറ്റ് ചെയ്തിട്ടുണ്ടാകാം. മറ്റൊരു കഥ തിരഞ്ഞെടുക്കുക അല്ലെങ്കിൽ പുതിയത് ചേർക്കുക."
@@ -6934,6 +6978,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "ഒരൊറ്റ വിലാസം മാത്രം വയ്ക്കുക; അപ്പോൾ ഏതാണ് ഉപയോഗിക്കേണ്ടതെന്ന് സോഫ്റ്റ്‌വെയറിന് ഊഹിക്കേണ്ടിവരില്ല."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "നിങ്ങൾ ആപ്ലിക്കേഷൻ ഉപയോഗിക്കാത്തപ്പോൾ ആക്സസ് നിലനിർത്തുക."
 
@@ -8374,8 +8419,8 @@ msgid "No commands match that search."
 msgstr "ആ തിരയലിന് ചേരുന്ന കമാൻഡുകളൊന്നുമില്ല."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
-msgstr "ഇതുവരെ ബന്ധിപ്പിച്ച ആപ്ലിക്കേഷനുകളൊന്നുമില്ല. നിങ്ങളുടെ അക്കൗണ്ട് ആക്സസ് ചെയ്യാൻ നിങ്ങൾ അനുവദിക്കുന്ന ആപ്പുകൾ ഇവിടെ ദൃശ്യമാകും."
+msgid "No connected applications. Apps you allow appear here."
+msgstr ""
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -10163,16 +10208,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "നിങ്ങളുടെ ഇമെയിൽ വിലാസം വായിക്കുക."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "നിങ്ങളുടെ പ്രൊഫൈൽ വിവരങ്ങൾ വായിക്കുക."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "ഒരു സമ്പൂർണ്ണ ഡാറ്റ എക്‌സ്‌പോർട്ട് ഉൾപ്പെടെ നിങ്ങളുടെ അക്കൗണ്ടിലെ എല്ലാ ഡാറ്റയും വായിക്കുക: നിങ്ങളുടെ പ്രൊഫൈലും ഇമെയിൽ വിലാസവും ഡോക്യുമെൻ്റുകളും ജോലി അപേക്ഷകളും കരിയർ ഡാറ്റയും കോച്ചിംഗ് സംഭാഷണങ്ങളും."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11010,14 +11065,6 @@ msgstr "അസാധുവാക്കുക"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "{0} അസാധുവാക്കുക"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "ആക്സസ് റദ്ദാക്കുക"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "നിങ്ങളുടെ അക്കൗണ്ടിലേക്കുള്ള ഒരു ആപ്ലിക്കേഷൻ്റെ ആക്‌സസ് റദ്ദാക്കുക."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12000,6 +12047,7 @@ msgstr "സൈഡ്‌ബാറുകൾ പലപ്പോഴും അവസ�
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"

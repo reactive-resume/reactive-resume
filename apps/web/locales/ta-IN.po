@@ -2687,6 +2687,10 @@ msgstr "மென்பொருள் உங்கள் விண்ணப்�
 msgid "Cancel"
 msgstr "ரத்து செய்"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3341,6 +3345,11 @@ msgstr "ஒரு மொழி மாதிரி உங்கள் பட்�
 #: src/features/settings/ai/providers.tsx
 msgid "Connected"
 msgstr "இணைக்கப்பட்டது"
+
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
@@ -4289,8 +4298,17 @@ msgid "Create a resume first, then ask about it."
 msgstr "முதலில் ஒரு ரெஸ்யூமே உருவாக்கவும், பிறகு அதைப் பற்றி கேட்கவும்."
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "கணக்கை உருவாக்கவும்"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4549,6 +4567,10 @@ msgstr "விண்ணப்பத்தை நீக்கு"
 msgid "Delete conversation"
 msgstr "உரையாடலை நீக்கு"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4776,8 +4798,26 @@ msgid "Discard unsaved changes?"
 msgstr "சேமிக்கப்படாத மாற்றங்களை நிராகரிக்கவா?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "துண்டிக்கவும்"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -6785,6 +6825,10 @@ msgstr "சிக்கல்கள் மற்றும் வேலை பொ
 msgid "It has entries but isn't placed on a page."
 msgstr "இதில் உள்ளீடுகள் உள்ளன ஆனால் ஒரு பக்கத்தில் வைக்கப்படவில்லை."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "அது நீக்கப்பட்டிருக்கலாம். வேறு கதையைத் தேர்ந்தெடுக்கவும் அல்லது புதியதைச் சேர்க்கவும்."
@@ -6934,6 +6978,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "ஒரே ஒரு முகவரியை மட்டும் வைத்திருங்கள்; அப்போது எதைப் பயன்படுத்துவது என்று மென்பொருள் யூகிக்க வேண்டியிருக்காது."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "நீங்கள் பயன்பாட்டைப் பயன்படுத்தாத போதும் அணுகலைத் தக்கவைத்துக் கொள்ளுங்கள்."
 
@@ -8374,8 +8419,8 @@ msgid "No commands match that search."
 msgstr "அந்தத் தேடலுக்குப் பொருந்தும் கட்டளைகள் எதுவும் இல்லை."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
-msgstr "இன்னும் இணைக்கப்பட்ட பயன்பாடுகள் இல்லை. உங்கள் கணக்கை அணுக நீங்கள் அனுமதிக்கும் பயன்பாடுகள் இங்கே தோன்றும்."
+msgid "No connected applications. Apps you allow appear here."
+msgstr ""
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -10163,16 +10208,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "உங்கள் மின்னஞ்சல் முகவரியைப் படியுங்கள்."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "உங்கள் சுயவிவரத் தகவலைப் படியுங்கள்."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "முழுமையான தரவு ஏற்றுமதி உட்பட உங்கள் கணக்கில் உள்ள எல்லா தரவையும் படிக்கவும்: உங்கள் சுயவிவரம் மற்றும் மின்னஞ்சல் முகவரி, ஆவணங்கள், வேலை விண்ணப்பங்கள், தொழில் தரவு மற்றும் பயிற்சி உரையாடல்கள்."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11010,14 +11065,6 @@ msgstr "திரும்பப் பெறு"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "{0} ஐ திரும்பப் பெறவும்"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "அணுகலை ரத்துசெய்"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "உங்கள் கணக்கிற்கான பயன்பாட்டின் அணுகலைத் திரும்பப் பெறவும்."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12000,6 +12047,7 @@ msgstr "பக்கப்பட்டிகள் பெரும்பால�
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"

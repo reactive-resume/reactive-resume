@@ -56,16 +56,25 @@ const OAUTH_AUDIENCES = [
 	`${oauthAudienceBase}/mcp`,
 	`${oauthAudienceBase}/mcp/`,
 ];
+const oauthIssuer = `${authBaseUrl}/api/auth`;
+const missingResourceDescription = `Send resource=${oauthAudienceBase}; see /.well-known/oauth-protected-resource.`;
 
 export async function verifyOAuthToken(token: string): Promise<JWTPayload> {
 	// Use the same in-process verification on Docker and Vercel. Access tokens must
 	// identify a live client/grant and cannot use proof binding without a DPoP proof.
 	const { payload } = await jwtVerify(token, createLocalJWKSet(await auth.api.getJwks()), {
-		issuer: `${authBaseUrl}/api/auth`,
+		issuer: oauthIssuer,
 		audience: OAUTH_AUDIENCES,
 		requiredClaims: ["sub", "exp", "iat", "azp"],
 	});
-	if (payload.cnf || typeof payload.sub !== "string" || typeof payload.azp !== "string") {
+	if (payload.cnf) throw new APIError("UNAUTHORIZED", { message: "Invalid bearer token." });
+	await validateOAuthGrant(payload);
+	return payload;
+}
+
+/** The provider already verified signatures; all token consumers must also check the live grant. */
+async function validateOAuthGrant(payload: JWTPayload) {
+	if (typeof payload.sub !== "string" || typeof payload.azp !== "string") {
 		throw new APIError("UNAUTHORIZED", { message: "Invalid bearer token." });
 	}
 	const [client] = await db
@@ -108,7 +117,29 @@ export async function verifyOAuthToken(token: string): Promise<JWTPayload> {
 	) {
 		throw new APIError("UNAUTHORIZED", { message: "OAuth access has been revoked. Reconnect the application." });
 	}
-	return payload;
+}
+
+/**
+ * Without `resource` the provider issues an opaque token that no API accepts, so the request is refused.
+ * As RFC 6749 §4.1.2.1 requires, the error goes to the client's callback only when the client is enabled
+ * and the callback matches its registration exactly. Returns that callback, or null to answer directly.
+ */
+async function missingResourceRedirect(params: Record<string, unknown> | undefined) {
+	const clientId = typeof params?.client_id === "string" ? params.client_id : undefined;
+	const redirectUri = typeof params?.redirect_uri === "string" ? params.redirect_uri : undefined;
+	if (!clientId || !redirectUri) return null;
+	const [client] = await db
+		.select({ redirectUris: schema.oauthClient.redirectUris, disabled: schema.oauthClient.disabled })
+		.from(schema.oauthClient)
+		.where(eq(schema.oauthClient.clientId, clientId))
+		.limit(1);
+	if (!client || client.disabled || !client.redirectUris.includes(redirectUri)) return null;
+	const target = new URL(redirectUri);
+	target.searchParams.append("error", "invalid_target");
+	target.searchParams.append("error_description", missingResourceDescription);
+	if (typeof params?.state === "string") target.searchParams.append("state", params.state);
+	target.searchParams.append("iss", oauthIssuer);
+	return target.toString();
 }
 
 export function isCustomOAuthProviderEnabled() {
@@ -545,6 +576,30 @@ const getAuthConfig = () => {
 
 		hooks: {
 			before: createAuthMiddleware(async (ctx) => {
+				if (ctx.path === "/oauth2/authorize") {
+					// Read the request the way the provider does: a direct POST carries it in the form body, while
+					// continue and consent re-enter this endpoint with the signed query.
+					const isFormPost =
+						ctx.request?.method === "POST" && new URL(ctx.request.url).pathname.endsWith("/oauth2/authorize");
+					const params = (isFormPost ? ctx.body : ctx.query) as Record<string, unknown> | undefined;
+					if (!params?.resource) {
+						const redirect = await missingResourceRedirect(params);
+						if (redirect) throw ctx.redirect(redirect);
+						return ctx.json(
+							{ error: "invalid_target", error_description: missingResourceDescription },
+							{ status: 400 },
+						);
+					}
+				}
+				if (ctx.path === "/oauth2/consent") {
+					const current = await getSessionFromCtx(ctx, { disableCookieCache: true });
+					// Denying grants nothing and returns the guest to the client with access_denied.
+					if (current?.user.isAnonymous && (ctx.body as { accept?: unknown } | undefined)?.accept !== false) {
+						throw new APIError("FORBIDDEN", {
+							message: "Create an account to connect apps. Guest accounts are temporary.",
+						});
+					}
+				}
 				if (ctx.path === "/sign-in/social") {
 					const timezone = timezoneSchema.safeParse(ctx.headers?.get("x-client-timezone"));
 					// Keep the device timezone across the provider redirect in server-only state, so the
@@ -685,6 +740,17 @@ const getAuthConfig = () => {
 							message: "redirect_uri is not allowed for dynamic client registration",
 						});
 					}
+				}
+			}),
+			after: createAuthMiddleware(async (ctx) => {
+				const payload = ctx.context.returned as JWTPayload | undefined;
+				// Run after the provider authenticates the introspecting client and verifies the token.
+				if (ctx.path !== "/oauth2/introspect" || !payload || payload.active !== true || typeof payload.azp !== "string")
+					return;
+				try {
+					await validateOAuthGrant(payload);
+				} catch {
+					return ctx.json({ active: false });
 				}
 			}),
 		},
@@ -859,12 +925,29 @@ const getAuthConfig = () => {
 			oauthProvider({
 				loginPage: "/api/auth/oauth",
 				consentPage: "/auth/consent",
+				signup: {
+					page: "/api/auth/oauth",
+					shouldRedirect: ({ user }) => ("isAnonymous" in user && user.isAnonymous === true ? "/auth/consent" : false),
+				},
 				scopes: ["openid", "profile", "email", "offline_access", "api:read", "api:write", "api:delete"],
 				extensions: [
 					{
 						claims: {
+							userInfo: async ({ jwt }) => {
+								try {
+									await validateOAuthGrant(jwt);
+								} catch {
+									throw new APIError("UNAUTHORIZED", {
+										error: "invalid_token",
+										error_description: "Reconnect the application to restore access.",
+									});
+								}
+								return {};
+							},
 							accessToken: async ({ user, client }) => {
 								if (!user) return {};
+								if (user.isAnonymous)
+									throw new APIError("FORBIDDEN", { message: "Guest accounts cannot connect apps." });
 								const [consent] = await db
 									.select({ id: schema.oauthConsent.id })
 									.from(schema.oauthConsent)
@@ -883,6 +966,9 @@ const getAuthConfig = () => {
 				// Required for MCP client onboarding (RFC 7591). Redirect URI validation
 				// and explicit user consent protect access by dynamically registered clients.
 				allowUnauthenticatedClientRegistration: true,
+				// Desktop MCP clients (Cursor, older Claude Code) omit application_type while registering
+				// loopback or custom-scheme callbacks; register those as native. An explicit type is kept.
+				clientRegistrationDefaultApplicationType: "infer",
 				rateLimit: oauthProviderRateLimit,
 				silenceWarnings: { oauthAuthServerConfig: true },
 			}) as WithoutEndpointMetadata<ReturnType<typeof oauthProvider>>,

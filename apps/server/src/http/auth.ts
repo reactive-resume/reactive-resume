@@ -79,16 +79,6 @@ async function defaultPublicClientRegistration(request: Request): Promise<Reques
 		return request;
 	}
 
-	// MCP native clients often omit OIDC application_type. Infer it only for
-	// exact HTTP loopback callbacks; the provider still validates every URI.
-	if (body.application_type === undefined && Array.isArray(body.redirect_uris) && body.redirect_uris.length > 0) {
-		const allLoopback = body.redirect_uris.every(
-			(uri: unknown) =>
-				typeof uri === "string" && /^http:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::[0-9]+)?(?:[/?]|$)/i.test(uri),
-		);
-		if (allLoopback) body.application_type = "native";
-	}
-
 	// MCP clients that authenticate with PKCE alone omit the method, and Better Auth
 	// would otherwise register them as `client_secret_basic`. Honor an explicit choice:
 	// forcing it to "none" issues no client secret, so the client's own Basic/post
