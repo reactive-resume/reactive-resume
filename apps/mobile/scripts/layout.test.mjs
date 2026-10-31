@@ -677,6 +677,31 @@ for (const fontScale of [1, 1.95, 3.12]) {
 	}
 }
 
+// Tag filters never exceed the server limit, and selected chips stay removable.
+hooks.length = 0;
+documentQuery.isError = false;
+documentQuery.data.tags = Array.from({ length: 21 }, (_, index) => `tag${index}`);
+for (let index = 0; index < 21; index++) {
+	const tree = render(DocumentsLibrary);
+	nodes(nodes(tree).find((node) => node.type === "FlatList").props.ListHeaderComponent)
+		.find((node) => node.type === "Chip" && node.props.label === `tag${index}`)
+		.props.onPress();
+	render(DocumentsLibrary);
+	assert.ok(documentInput.tags.length <= 20, "Tag chip must not generate an invalid request");
+}
+nodes(nodes(render(DocumentsLibrary)).find((node) => node.type === "FlatList").props.ListHeaderComponent)
+	.find((node) => node.type === "Chip" && node.props.label === "tag0")
+	.props.onPress();
+render(DocumentsLibrary);
+assert.equal(documentInput.tags.length, 19);
+nodes(nodes(render(DocumentsLibrary)).find((node) => node.type === "FlatList").props.ListHeaderComponent)
+	.find((node) => node.type === "Chip" && node.props.label === "tag20")
+	.props.onPress();
+render(DocumentsLibrary);
+assert.ok(documentInput.tags.includes("tag20"));
+documentQuery.data.tags = [];
+console.log("PASS native tag filter bound and removal recovery");
+
 // A large library renders only its server page. Navigation replaces rows and filters restart at zero.
 hooks.length = 0;
 documentQuery.isError = false;

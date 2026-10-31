@@ -301,3 +301,27 @@ it.each([false, true])(
 		expect(screen.queryByRole("navigation", { name: "Pagination" })).toBeNull();
 	},
 );
+
+it("bounds tag selection to twenty while allowing selected tags to be removed", async () => {
+	requests.load
+		.mockReset()
+		.mockImplementation(async () => ({ ...page(0), tags: Array.from({ length: 21 }, (_, i) => `tag${i}`) }));
+	const { client, input } = setup();
+	act(() =>
+		client.setQueryData(orpc.documents.page.queryKey({ input: { ...input, offset: 0 } }), {
+			...page(0),
+			tags: Array.from({ length: 21 }, (_, i) => `tag${i}`),
+		}),
+	);
+	for (let i = 0; i < 20; i++) {
+		fireEvent.click(await screen.findByRole("button", { name: `#tag${i}` }));
+		await waitFor(() => expect(requests.load.mock.lastCall?.[0].tags).toHaveLength(i + 1));
+	}
+	fireEvent.click(screen.getByRole("button", { name: "#tag20" }));
+	expect(requests.load.mock.calls.every(([input]) => input.tags.length <= 20)).toBe(true);
+	expect(screen.getByRole("button", { name: "#tag20" })).toHaveAttribute("aria-pressed", "false");
+	fireEvent.click(screen.getByRole("button", { name: "#tag0" }));
+	await waitFor(() => expect(requests.load.mock.lastCall?.[0].tags).toHaveLength(19));
+	fireEvent.click(screen.getByRole("button", { name: "#tag20" }));
+	await waitFor(() => expect(requests.load.mock.lastCall?.[0].tags).toContain("tag20"));
+});

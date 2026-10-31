@@ -265,7 +265,7 @@ msgstr "{0, plural, one {Für # Tag} other {Für # Tage}}"
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
 msgstr "{0, plural, one {Wissen · # Fakt} other {Wissen · # Fakten}}"
 
-#. placeholder {0}: documents.data?.counts.letter ?? 0
+#. placeholder {0}: displayed?.counts.letter ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Letter (#)} other {Letters (#)}}"
 msgstr "{0, plural, one {Anschreiben (#)} other {Anschreiben (#)}}"
@@ -275,7 +275,7 @@ msgstr "{0, plural, one {Anschreiben (#)} other {Anschreiben (#)}}"
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {Keine Antwort am Tag #} other {Keine Antwort in # Tagen}}"
 
-#. placeholder {0}: documents.data?.counts.resume ?? 0
+#. placeholder {0}: displayed?.counts.resume ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Resume (#)} other {Resumes (#)}}"
 msgstr "{0, plural, one {Lebenslauf (#)} other {Lebensläufe (#)}}"
@@ -424,11 +424,11 @@ msgstr ""
 msgid "{0}-Resume"
 msgstr "{0}-Lebenslauf"
 
-#. placeholder {0}: Math.min(offset + 1, documents.data?.total ?? page.total)
+#. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
-#. placeholder {1}: Math.min(offset + 100, documents.data?.total ?? page.total)
+#. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
 #. placeholder {1}: Math.min(recoveryStart + 100, pending.length)
-#. placeholder {2}: documents.data?.total ?? page.total
+#. placeholder {2}: displayed?.total ?? page.total
 #. placeholder {2}: pending.length
 #: src/features/documents/library.tsx
 msgid "{0}–{1} of {2}"
@@ -1350,18 +1350,18 @@ msgstr "Albanisch"
 msgid "All"
 msgstr "Alle"
 
-#. placeholder {0}: (documents.data?.counts.resume ?? 0) + (documents.data?.counts.letter ?? 0)
+#. placeholder {0}: (displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0)
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "Alle ({0})"
 
-#: src/features/documents/library.tsx
-msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
-msgstr ""
-
 #: src/features/career/facts.tsx
 msgid "All applications"
 msgstr "Alle Bewerbungen"
+
+#: src/features/documents/library.tsx
+msgid "All documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/workspace/answer-library.tsx
 msgid "All employers"
@@ -10317,10 +10317,6 @@ msgstr "Die Verbindung konnte nicht geladen oder gespeichert werden. Versuchen S
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
 msgstr "Der aktuelle Status wird zunächst als „Vor der Wiederherstellung“ gespeichert."
-
-#: src/features/documents/library.tsx
-msgid "The document in Trash will be deleted for good and can't be restored."
-msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."

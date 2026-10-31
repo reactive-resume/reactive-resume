@@ -13,7 +13,11 @@ export const Route = createFileRoute("/dashboard/")({
 			.transform((value) => value.slice(0, 500))
 			.default("")
 			.catch(""),
-		tags: z.array(z.string()).default([]).catch([]),
+		tags: z
+			.array(z.string())
+			.transform((tags) => [...new Set(tags.filter(Boolean).map((tag) => tag.slice(0, 40)))].slice(0, 20))
+			.default([])
+			.catch([]),
 		public: z.boolean().default(false).catch(false),
 		sort: z.enum(["edited", "name", "created"]).default("edited").catch("edited"),
 		// Without one, the page uses the last view picked on this device.

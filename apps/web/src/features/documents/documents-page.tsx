@@ -246,7 +246,16 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 				)}
 			</PageHeader>
 
-			{isError && <LibraryError retrying={isFetching} onRetry={() => void refetch()} />}
+			{isError && (
+				<div className="grid justify-items-start gap-2">
+					<LibraryError retrying={isFetching} onRetry={() => void refetch()} />
+					{filtered && (
+						<Button variant="secondary" onClick={() => onSearchChange({ q: "", tags: [], type: "all", public: false })}>
+							<Trans>Clear search and filters</Trans>
+						</Button>
+					)}
+				</div>
+			)}
 
 			{failed ? null : firstRun ? (
 				<FirstRun onChooseFile={() => openDialog("document.new", undefined)} />
@@ -494,7 +503,7 @@ function TagFilter({ tags, active, onChange, showPublic, publicOnly, onPublicCha
 						key={tag}
 						type="button"
 						aria-pressed={isActive}
-						onClick={() => onChange(isActive ? active.filter((known) => known !== tag) : [...active, tag])}
+						onClick={() => onChange(isActive ? active.filter((known) => known !== tag) : [...active, tag].slice(0, 20))}
 						className={chipClassName(isActive)}
 					>
 						#{tag}

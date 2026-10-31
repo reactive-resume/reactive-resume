@@ -265,7 +265,7 @@ msgstr "{0, plural, one {# ଦିନ ପାଇଁ |} other {# ଦିନ ପା�
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
 msgstr "{0, plural, one {ଜ୍ଞାନ · #ଟି ତଥ୍ୟ} other {ଜ୍ଞାନ · #ଟି ତଥ୍ୟ}}"
 
-#. placeholder {0}: documents.data?.counts.letter ?? 0
+#. placeholder {0}: displayed?.counts.letter ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Letter (#)} other {Letters (#)}}"
 msgstr "{0, plural, one {ଚିଠି (#)} other {ଚିଠି (#)}}"
@@ -275,7 +275,7 @@ msgstr "{0, plural, one {ଚିଠି (#)} other {ଚିଠି (#)}}"
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {# ଦିନରେ କ reply ଣସି ଉତ୍ତର ନାହିଁ |} other {# ଦିନରେ କ reply ଣସି ଉତ୍ତର ନାହିଁ |}}"
 
-#. placeholder {0}: documents.data?.counts.resume ?? 0
+#. placeholder {0}: displayed?.counts.resume ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Resume (#)} other {Resumes (#)}}"
 msgstr "{0, plural, one {ରେଜ୍ୟୁମେ (#)} other {ରେଜ୍ୟୁମେ (#)}}"
@@ -424,11 +424,11 @@ msgstr ""
 msgid "{0}-Resume"
 msgstr "{0}-ରେଜ୍ୟୁମେ"
 
-#. placeholder {0}: Math.min(offset + 1, documents.data?.total ?? page.total)
+#. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
-#. placeholder {1}: Math.min(offset + 100, documents.data?.total ?? page.total)
+#. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
 #. placeholder {1}: Math.min(recoveryStart + 100, pending.length)
-#. placeholder {2}: documents.data?.total ?? page.total
+#. placeholder {2}: displayed?.total ?? page.total
 #. placeholder {2}: pending.length
 #: src/features/documents/library.tsx
 msgid "{0}–{1} of {2}"
@@ -1350,18 +1350,18 @@ msgstr "ଆଲବାନିଆନ୍"
 msgid "All"
 msgstr "ସମସ୍ତ"
 
-#. placeholder {0}: (documents.data?.counts.resume ?? 0) + (documents.data?.counts.letter ?? 0)
+#. placeholder {0}: (displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0)
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "ସମସ୍ତ ({0})"
 
-#: src/features/documents/library.tsx
-msgid "All {purgeCount} documents in Trash will be deleted for good and can't be restored."
-msgstr ""
-
 #: src/features/career/facts.tsx
 msgid "All applications"
 msgstr "ସମସ୍ତ ଆବେଦନ"
+
+#: src/features/documents/library.tsx
+msgid "All documents in Trash will be deleted for good and can't be restored."
+msgstr ""
 
 #: src/features/workspace/answer-library.tsx
 msgid "All employers"
@@ -10355,10 +10355,6 @@ msgstr "ସଂଯୋଗ ଲୋଡ୍ ବା ସେଭ୍ ହୋଇପାରି�
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
 msgstr "ବର୍ତ୍ତମାନର ଅବସ୍ଥା ପ୍ରଥମେ “ପୁନଃସ୍ଥାପନ ପୂର୍ବରୁ” ଭାବେ ସେଭ୍ ହେବ।"
-
-#: src/features/documents/library.tsx
-msgid "The document in Trash will be deleted for good and can't be restored."
-msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."

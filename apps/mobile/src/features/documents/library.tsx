@@ -448,7 +448,9 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 										key={tag}
 										label={tag}
 										selected={tags.includes(tag)}
-										onPress={() => setTags(tags.includes(tag) ? tags.filter((entry) => entry !== tag) : [...tags, tag])}
+										onPress={() =>
+											setTags(tags.includes(tag) ? tags.filter((entry) => entry !== tag) : [...tags, tag].slice(0, 20))
+										}
 									/>
 								))}
 								<IconButton
@@ -700,9 +702,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 				}
 				message={
 					purge?.all
-						? purgeCount === 1
-							? t`The document in Trash will be deleted for good and can't be restored.`
-							: t`All ${purgeCount} documents in Trash will be deleted for good and can't be restored.`
+						? t`All documents in Trash will be deleted for good and can't be restored.`
 						: purgeCount === 1
 							? t`“${purge?.documents[0]?.name}” will be deleted for good and can't be restored.`
 							: t`The selected documents will be deleted for good and can't be restored.`

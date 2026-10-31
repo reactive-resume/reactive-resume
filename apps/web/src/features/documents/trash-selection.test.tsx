@@ -180,7 +180,7 @@ it("confirms Empty trash as every document in Trash, not the selected IDs", asyn
 	expect(confirm).toHaveBeenCalledWith(
 		"Empty Trash?",
 		expect.objectContaining({
-			description: "All 999 documents in Trash will be deleted for good and can't be restored.",
+			description: "All documents in Trash will be deleted for good and can't be restored.",
 		}),
 	);
 });

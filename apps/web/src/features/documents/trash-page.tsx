@@ -48,7 +48,6 @@ export function TrashPage() {
 	const displayed = page ?? lastPage.data;
 	const displayedOffset = page && !isPlaceholderData ? offset : lastPage.offset;
 	const rowsCurrent = Boolean(page) && !isPlaceholderData && !isError;
-	const counts = useQuery(orpc.documents.counts.queryOptions());
 	if (page && !isPlaceholderData && offset > 0 && offset >= page.total) {
 		setOffset(Math.max(0, Math.floor((page.total - 1) / 100) * 100));
 		setSelected(new Set());
@@ -58,7 +57,6 @@ export function TrashPage() {
 	const selection = rowsCurrent ? all.filter((document) => selected.has(documentKey(document))) : [];
 	const selecting = selection.length > 0;
 	const allSelected = all.length > 0 && selection.length === all.length;
-	const trashCount = counts.data?.trash ?? page?.total ?? 0;
 
 	const clearSelection = () => setSelected(new Set());
 	const selectAll = (on: boolean) => {
@@ -117,10 +115,7 @@ export function TrashPage() {
 
 	const emptyTrash = async () => {
 		const confirmed = await confirm(t`Empty Trash?`, {
-			description:
-				trashCount === 1
-					? t`The document in Trash will be deleted for good and can't be restored.`
-					: t`All ${trashCount} documents in Trash will be deleted for good and can't be restored.`,
+			description: t`All documents in Trash will be deleted for good and can't be restored.`,
 			confirmText: t`Hold to delete`,
 			cancelText: t`Keep in Trash`,
 			hold: true,

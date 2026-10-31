@@ -65,3 +65,25 @@ it.each(["documents", "trash"])("keeps %s load failures distinct from empty stat
 	view.unmount();
 	queryClient.clear();
 });
+
+it("offers clearing filters after a first-load failure without tag facets", async () => {
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
+	loadDocuments.mockReset().mockRejectedValue(new Error("Unavailable"));
+	const onSearchChange = vi.fn();
+	const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+	const view = render(
+		<I18nProvider i18n={i18n}>
+			<QueryClientProvider client={queryClient}>
+				<DocumentsPage
+					search={{ type: "all", q: "", tags: ["design"], sort: "edited" }}
+					onSearchChange={onSearchChange}
+				/>
+			</QueryClientProvider>
+		</I18nProvider>,
+	);
+	expect(await screen.findByRole("alert")).toBeVisible();
+	fireEvent.click(screen.getByRole("button", { name: "Clear search and filters" }));
+	expect(onSearchChange).toHaveBeenCalledWith({ q: "", tags: [], type: "all", public: false });
+	view.unmount();
+	queryClient.clear();
+});
