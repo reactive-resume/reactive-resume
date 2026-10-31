@@ -291,7 +291,8 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 					<div className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-4 text-[13px]">
 						<button
 							type="button"
-							className="flex items-center gap-1.5 text-ink-2 hover:text-ink"
+							className="flex items-center gap-1.5 text-ink-2 hover:text-ink disabled:opacity-60"
+							disabled={creating}
 							onClick={() => void newLetter()}
 						>
 							<Icon name="envelope-simple" size={18} />
