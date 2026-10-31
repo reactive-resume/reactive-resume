@@ -37,14 +37,17 @@ export async function handlePublicResumePdf(
 			countDownload: download,
 		});
 
-		if (!result.body) return new Response(null, { status: 304, headers: cacheHeaders(result.etag) });
+		const headers = {
+			...cacheHeaders(result.etag),
+			"Content-Disposition": contentDisposition(result.filename, download ? "attachment" : "inline"),
+		};
+		if (!result.body) return new Response(null, { status: 304, headers });
 
 		return new Response(result.body, {
 			headers: {
 				"Content-Type": "application/pdf",
-				"Content-Disposition": contentDisposition(result.filename, download ? "attachment" : "inline"),
 				"X-Content-Type-Options": "nosniff",
-				...cacheHeaders(result.etag),
+				...headers,
 			},
 		});
 	} catch (error) {

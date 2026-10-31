@@ -80,14 +80,14 @@ describe("handlePublicResumePdf", () => {
 		expect(response.headers.get("Content-Type")).toBe("application/pdf");
 		expect(await response.text()).toBe("%PDF");
 		const header = response.headers.get("Content-Disposition") ?? "";
-		expect(header).toMatch(/^attachment; filename="/);
+		expect(header).toBe('attachment; filename="etcpasswdX-Injected yesAda-Lovelace-Resume.pdf"');
 		expect(header).not.toMatch(/[\r\n]/);
 		expect(header).not.toContain("/");
 		expect(response.headers.get("X-Injected")).toBeNull();
 	});
 
 	it("answers a current copy with 304 and keeps refusals uncacheable", async () => {
-		mocks.createPublicResumePdf.mockResolvedValueOnce({ body: null, filename: "Ada_Lovelace.pdf", etag: '"abc"' });
+		mocks.createPublicResumePdf.mockResolvedValueOnce({ body: null, filename: "李明-Resume.pdf", etag: '"abc"' });
 		const current = await handlePublicResumePdf(
 			new Request("https://example.com/api/resumes/jane/resume/pdf", { headers: { "if-none-match": '"abc"' } }),
 			"jane",
@@ -97,6 +97,10 @@ describe("handlePublicResumePdf", () => {
 		expect(current.status).toBe(304);
 		expect(current.headers.get("ETag")).toBe('"abc"');
 		expect(current.headers.get("Cache-Control")).toBe("private, no-cache");
+		expect(current.headers.get("Content-Disposition")).toBe(
+			"inline; filename=\"Resume.pdf\"; filename*=UTF-8''%E6%9D%8E%E6%98%8E-Resume.pdf",
+		);
+		expect(await current.text()).toBe("");
 
 		mocks.createPublicResumePdf.mockRejectedValueOnce({ code: "NEED_PASSWORD" });
 		const locked = await handlePublicResumePdf(

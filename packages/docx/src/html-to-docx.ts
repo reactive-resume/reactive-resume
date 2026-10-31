@@ -174,9 +174,12 @@ function processBlockElement(
 	if (tag === "P" || tag === "DIV") {
 		const inlineChildren = collectInlineChildren(el, mergedStyle);
 		if (inlineChildren.length > 0) {
+			// The editor wraps list item text in <p>; keep the item's marker instead of recursing as a plain paragraph.
+			const bulletLevel = tag === "P" ? listLevel : undefined;
 			paragraphs.push(
 				new Paragraph({
 					children: inlineChildren,
+					...(bulletLevel != null ? { bullet: { level: bulletLevel } } : {}),
 					...(tag === "P" && indent ? { indent } : quoteIndent ? { indent: { start: quoteIndent } } : {}),
 				}),
 			);

@@ -44,3 +44,22 @@ it("cannot inject a header or escape the download folder", () => {
 it("supports an inline preview without changing the file name", () => {
 	expect(contentDisposition("李明-Resume.pdf", "inline")).toMatch(/^inline; filename="Resume.pdf"; filename\*=UTF-8''/);
 });
+
+it.each([
+	{ character: "李", extension: ".pdf", kept: 83 },
+	{ character: "😀", extension: ".json", kept: 62 },
+	{ character: "a", extension: ".docx", kept: 250 },
+])(
+	"bounds long $character names without splitting characters or losing $extension",
+	({ character, extension, kept }) => {
+		const header = contentDisposition(`${character.repeat(2000)}${extension}`);
+		const filename = header.includes("filename*=") ? utf8Name(header) : header.match(/filename="([^"]+)"/)?.[1];
+
+		expect(filename).toBe(`${character.repeat(kept)}${extension}`);
+		expect(new TextEncoder().encode(filename).length).toBeLessThanOrEqual(255);
+		expect(header.length).toBeLessThan(1200);
+		expect(new Response(null, { headers: { "Content-Disposition": header } }).headers.get("Content-Disposition")).toBe(
+			header,
+		);
+	},
+);

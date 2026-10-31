@@ -18,6 +18,12 @@ it("names a cover letter from its sender and keeps the document name as the fall
 	expect(getDefaultFileName({ name: "Long resume", slug: "long", data: { basics: { name: "" } } })).toBe("Long-resume");
 });
 
+it.each(["///", " \t ", "\u202e"])("uses the slug when the document name sanitizes to nothing: %j", (name) => {
+	const source = { name, slug: "jordan-resume", data: { basics: { name: "" } } };
+	expect(getDefaultFileName(source)).toBe("jordan-resume");
+	expect(getDefaultFileName(source, "cover-letter")).toBe("jordan-resume-Cover-Letter");
+});
+
 it("removes traversal, separators, control characters and header punctuation", () => {
 	expect(sanitizeFileName("../../etc/passwd")).toBe("etcpasswd");
 	expect(sanitizeFileName("..\\..\\windows\\evil")).toBe("windowsevil");

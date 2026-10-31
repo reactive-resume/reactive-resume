@@ -39,13 +39,27 @@ function asciiFileName(filename: string) {
 	return `${asciiStem || "document"}${asciiExtension}`;
 }
 
+/** Keep names within the common 255-byte file-system limit and UTF-8 headers below proxy buffer limits. */
+function boundedFileName(filename: string) {
+	const extension = filename.match(/\.[a-z0-9]{1,10}$/i)?.[0] ?? "";
+	const encoder = new TextEncoder();
+	let bytes = extension.length;
+	let stem = "";
+	for (const character of filename.slice(0, filename.length - extension.length)) {
+		bytes += encoder.encode(character).length;
+		if (bytes > 255) break;
+		stem += character;
+	}
+	return `${stem}${extension}`;
+}
+
 /**
  * A `Content-Disposition` value that legacy clients read from `filename` and modern clients read from the
  * RFC 5987 `filename*`. It drops control characters, separators, quotes and backslashes first, so a stored
  * name can never add a header.
  */
 export function contentDisposition(filename: string, disposition: "inline" | "attachment" = "attachment") {
-	const safe = sanitizeFileName(filename) || "document";
+	const safe = boundedFileName(sanitizeFileName(filename) || "document");
 	const fallback = asciiFileName(safe);
 	const value = `${disposition}; filename="${fallback}"`;
 	return fallback === safe ? value : `${value}; filename*=UTF-8''${encodeRfc5987(safe)}`;

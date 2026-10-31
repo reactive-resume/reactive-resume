@@ -31,7 +31,11 @@ export function getDefaultFileName(source: FileNameSource, target: FileNameTarge
 	const person = words(source.data.basics.name);
 	const suffix = target === "cover-letter" ? ["Cover", "Letter"] : ["Resume"];
 	if (person.length > 0) return [...person, ...suffix].join("-");
-	const fallback = [...words(source.name || source.slug || ""), ...(target === "cover-letter" ? suffix : [])];
+	const name = words(source.name);
+	const fallback = [
+		...(name.length > 0 ? name : words(source.slug ?? "")),
+		...(target === "cover-letter" ? suffix : []),
+	];
 	return fallback.join("-") || "Resume";
 }
 
