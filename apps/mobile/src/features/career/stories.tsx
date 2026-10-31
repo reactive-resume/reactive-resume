@@ -52,7 +52,11 @@ export function Stories() {
 			<LoadState query={stories} />
 			<LoadState query={facts} />
 			{!stories.isError && !stories.isPending && !rows.length ? (
-				<EmptyState title={t`No stories yet`} message={t`Write one about something you did, in five parts.`} />
+				<EmptyState
+					variant="card"
+					title={t`No stories yet`}
+					message={t`Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them.`}
+				/>
 			) : null}
 			{rows.map((story, index) => {
 				const changed = story.data.factIds.some((id) => {

@@ -427,11 +427,6 @@ msgstr "Anúncio de emprego {0}"
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr "{0} retornou “{1}”. A sua mensagem é mantida."
 
-#. placeholder {0}: done.length
-#: src/features/career/today.tsx
-msgid "{0} roles updated."
-msgstr ""
-
 #. placeholder {0}: selectedIds.length
 #. placeholder {0}: selection.length
 #: src/features/applications/list-screen.tsx
@@ -961,10 +956,6 @@ msgstr "Adicione um país"
 msgid "Add a fact"
 msgstr "Adicionar facto"
 
-#: src/features/career/facts.tsx
-msgid "Add a fact or try another word or type."
-msgstr "Adicione um facto ou tente outra palavra ou tipo."
-
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
 msgstr "Adicionar um link"
@@ -1138,6 +1129,10 @@ msgstr "Adicionar oferta de emprego"
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
 msgstr "Adiciona manualmente as condições de uma oferta de emprego ou utiliza a extração opcional com IA em Mensagens."
 
+#: src/features/career/facts.tsx
+msgid "Add one above."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
 msgstr "Adicione um link que mostre o seu trabalho."
@@ -1245,13 +1240,13 @@ msgstr "Adicione o seu nome"
 msgid "Added by you"
 msgstr "Adicionado por si"
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Added to Interview prep"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "Added to Knowledge."
 msgstr "Adicionado a Conhecimento."
-
-#: src/features/workspace/tabs/fit.tsx
-msgid "Added to Prepare"
-msgstr "Adicionado a Preparar"
 
 #: src/features/ai/report-content.tsx
 msgid "Additional details (optional)"
@@ -1749,8 +1744,7 @@ msgstr "Aplicado. A candidatura foi atualizada."
 msgid "Applies to this device only."
 msgstr "Aplica-se apenas a este dispositivo."
 
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgid "Apply"
 msgstr "Candidatar"
 
@@ -2563,14 +2557,6 @@ msgstr "Limpa as suas entradas; a secção permanece. Pode desfazer."
 msgid "Close"
 msgstr "Fechar"
 
-#: src/features/application-detail/sheets.tsx
-msgid "Close application"
-msgstr "Feche o formulário de emprego"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Close application…"
-msgstr "Feche o formulário de emprego…"
-
 #: src/features/applications/list-screen.tsx
 msgid "Close applications"
 msgstr "Encerrar candidaturas"
@@ -2586,10 +2572,6 @@ msgstr "Encerrar candidaturas selecionadas"
 #: src/features/assistant/assistant-screen.tsx
 msgid "Close the assistant"
 msgstr "Feche o assistente"
-
-#: src/features/application-detail/sheets.tsx
-msgid "Close this application"
-msgstr "Feche este formulário de emprego"
 
 #: src/features/applications/list-screen.tsx
 msgid "Close…"
@@ -3001,8 +2983,8 @@ msgid "Couldn't create the letter. Try again."
 msgstr "Não foi possível criar a carta. Tente novamente."
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Couldn't delete it. It's back in Saved."
-msgstr "Não foi possível eliminá-lo. Está de volta em Guardados."
+msgid "Couldn't delete it. It's back in Library."
+msgstr ""
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -3571,10 +3553,6 @@ msgid "Dark theme"
 msgstr "Tema escuro"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the AI provider."
-msgstr "Partilha de dados cancelada. Nada foi enviado para o fornecedor de IA."
-
-#: src/api/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the provider."
 msgstr ""
 
@@ -3629,9 +3607,8 @@ msgid "Dear hiring team,"
 msgstr "Estimada equipa de contratação,"
 
 #: src/features/career/facts.tsx
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgid "Debrief"
 msgstr "Balanço"
 
@@ -3800,8 +3777,8 @@ msgid "Deleted application"
 msgstr "Candidatura apagada"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Deleted from Saved"
-msgstr "Removido de Guardados"
+msgid "Deleted from Library"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "Deletes the section and its entries. You can undo."
@@ -4599,9 +4576,8 @@ msgstr "Primeira execução (YYYY-MM-DD)"
 msgid "Fit"
 msgstr "Ajuste"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgctxt "Application workspace tab: how well a job fits your experience"
 msgid "Fit"
 msgstr "Ajuste"
@@ -5285,6 +5261,15 @@ msgid "Interview is in another timezone"
 msgstr "A entrevista é noutro fuso horário"
 
 #: src/features/career/schedule-sheet.tsx
+msgid "Interview prep"
+msgstr "Preparação de entrevistas"
+
+#: src/shell/workspace-tab-label.ts
+msgctxt "Application workspace tab: plan for an interview"
+msgid "Interview prep"
+msgstr "Preparação de entrevistas"
+
+#: src/features/career/schedule-sheet.tsx
 msgid "Interview preparation"
 msgstr "Preparação da entrevista"
 
@@ -5752,6 +5737,15 @@ msgstr "cartas de apresentação não têm ligação pública. Os currículos bl
 msgid "Level"
 msgstr "Nível"
 
+#: src/shell/workspace-tab-label.ts
+msgctxt "Application workspace tab: earlier results kept for this job"
+msgid "Library"
+msgstr ""
+
+#: src/features/workspace/tabs/saved.tsx
+msgid "Library items for {company}, newest first."
+msgstr ""
+
 #: app/(tabs)/settings/licences.tsx
 msgid "Licenses"
 msgstr "Licenças"
@@ -6150,6 +6144,14 @@ msgstr "Margens definidas como {minimum} pt"
 msgid "Mark as applied"
 msgstr "Marcar como candidatura enviada"
 
+#: src/features/application-detail/sheets.tsx
+msgid "Mark as closed"
+msgstr ""
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Mark as closed…"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Mark as read"
 msgstr "Marcar como lido"
@@ -6232,8 +6234,7 @@ msgstr "Mensagem"
 msgid "Message the assistant"
 msgstr "Envie uma mensagem para o assistente"
 
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgid "Messages"
 msgstr "Mensagens"
 
@@ -6534,6 +6535,7 @@ msgstr "Nunca"
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
 #: src/features/documents/library.tsx
+#: src/features/documents/new-document.tsx
 #: src/shell/app-tabs.tsx
 msgid "New"
 msgstr "Novo"
@@ -6562,7 +6564,6 @@ msgid "New cover letter instead"
 msgstr "Em vez disso, nova carta de apresentação"
 
 #: src/features/documents/library.tsx
-#: src/features/documents/new-document.tsx
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "Novo documento"
@@ -6724,6 +6725,10 @@ msgstr "Ainda sem provas"
 msgid "No facts match"
 msgstr "Nenhum facto corresponde"
 
+#: src/features/career/facts.tsx
+msgid "No facts yet"
+msgstr ""
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "Nenhum ícone corresponde."
@@ -6805,6 +6810,10 @@ msgstr "Não há termos reconhecíveis neste anúncio de emprego."
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "No recorded answers are available."
+msgstr ""
+
+#: src/features/applications-board/insights-screen.tsx
+msgid "No replies to chart yet"
 msgstr ""
 
 #: src/features/career/today.tsx
@@ -7000,6 +7009,10 @@ msgstr ""
 msgid "Nothing here should cost you a match."
 msgstr "Nada aqui lhe deve custar um fósforo."
 
+#: src/features/workspace/tabs/saved.tsx
+msgid "Nothing in your library yet"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Nothing is applied for or created until you choose."
 msgstr "Nenhuma candidatura é feita e nada é criado até escolher."
@@ -7011,10 +7024,6 @@ msgstr "Nada assinala um cargo como estando em curso."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing on this day."
 msgstr "Nada neste dia."
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Nothing saved yet"
-msgstr "Ainda nada guardado"
 
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing scheduled yet"
@@ -7108,10 +7117,6 @@ msgstr "Dias no escritório por semana, no máximo"
 msgid "Office days are unknown."
 msgstr "Os dias de expediente são desconhecidos."
 
-#: src/features/career/today.tsx
-msgid "Office days not stated"
-msgstr "Dias no escritório não indicados"
-
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Office days per week"
@@ -7138,8 +7143,8 @@ msgid "On. Visitors need the link and password to see your web page."
 msgstr "Ativado. Os visitantes precisam da ligação e da palavra-passe para ver a tua página web."
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "Once a round is scheduled, Prepare builds a timed plan, your opening and the questions to ask."
-msgstr "Quando uma fase estiver agendada, Preparar cria um plano cronometrado, a sua abertura e as perguntas a fazer."
+msgid "Once a round is scheduled, Interview prep builds a timed plan, your opening and the questions to ask."
+msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Once you've sent a few applications, this shows how far they get and how quickly people reply."
@@ -7285,10 +7290,6 @@ msgstr "Abra o ficheiro exportado e confirme que consegue selecionar e copiar to
 #: src/features/documents/import-file.ts
 msgid "Open the file in Word and save it as .docx first."
 msgstr "Abra o ficheiro em Word e guarde-o primeiro como . docx."
-
-#: src/features/applications-board/board-screen.tsx
-msgid "Open the list"
-msgstr "Abra a lista"
 
 #: src/features/career/today.tsx
 msgid "Open the schedule"
@@ -7506,9 +7507,18 @@ msgstr "As palavras-passe não coincidem."
 msgid "Past conversations"
 msgstr "Conversas anteriores"
 
+#: src/features/documents/new-document.tsx
+msgid "Paste a job link or posting to track it in Applications."
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Paste a job link or posting, then check the role and company. Nothing is saved until you choose Save job."
 msgstr "Cole um link de emprego ou anúncio de emprego e verifique a função e a empresa. Nada será guardado até escolher Guardar trabalho."
+
+#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Paste a job link. We'll save the posting so Check, the assistant and your letter can use it."
+msgstr "Cole um link de trabalho. Guardaremos o anúncio de emprego para que o Check, o assistente e a sua carta o possam utilizar."
 
 #: src/features/check/job-match.tsx
 msgid "Paste a job posting"
@@ -7744,14 +7754,13 @@ msgstr ""
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Practice"
 msgstr "Treino"
 
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "Prática"
@@ -7795,12 +7804,6 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Preferences"
 msgstr "Preferências"
-
-#: src/features/career/schedule-sheet.tsx
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
-msgid "Prepare"
-msgstr "Preparar"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Prepare a briefing"
@@ -9024,10 +9027,6 @@ msgstr "Salário"
 msgid "Salary not detected"
 msgstr ""
 
-#: src/features/career/today.tsx
-msgid "Salary not listed"
-msgstr "Salário não indicado"
-
 #: src/features/applications/add-sheet.tsx
 msgid "Salary range"
 msgstr "Faixa salarial"
@@ -9046,16 +9045,17 @@ msgstr "Exemplo de currículo"
 msgid "Save"
 msgstr "Guardar"
 
+#: src/features/applications-board/board-screen.tsx
 #: src/features/applications-board/views.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
+#: src/features/documents/new-document.tsx
 msgid "Save a job"
 msgstr "Guardar um trabalho"
 
-#: src/features/applications-board/board-screen.tsx
-#: src/features/applications/list-screen.tsx
-msgid "Save a job link, paste a posting, or fill in the details manually."
-msgstr "Guarde um link de emprego, cole um anúncio de emprego ou preencha os dados manualmente."
+#: src/features/documents/new-document.tsx
+msgid "Save a job instead"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
@@ -9097,7 +9097,9 @@ msgstr ""
 msgid "Save interview"
 msgstr "Guardar entrevista"
 
+#: src/features/applications-board/insights-screen.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/search/search-screen.tsx
 msgid "Save job"
 msgstr "Guardar trabalho"
 
@@ -9176,12 +9178,6 @@ msgstr "Guardar a sua versão como novo documento e manter a outra aqui."
 msgid "Saved"
 msgstr "Guardado"
 
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
-msgctxt "Application workspace tab: earlier results kept for this job"
-msgid "Saved"
-msgstr "Guardados"
-
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "Guardados uma história: {title}"
@@ -9197,10 +9193,6 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 msgid "Saved description"
 msgstr "Descrição guardada"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Saved items for {company}, newest first."
-msgstr "Itens guardados para {company}, do mais recente para o mais antigo."
 
 #: src/features/settings/application-profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
@@ -9219,8 +9211,8 @@ msgid "Saved to Knowledge, private to this application."
 msgstr "Guardado no Conhecimento, privado para esta candidatura."
 
 #: src/features/workspace/tabs/practise.tsx
-msgid "Saved to Saved · Practice"
-msgstr "Guardado em Guardados · Treino"
+msgid "Saved to Library · Practice"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -9599,11 +9591,6 @@ msgstr "Partilhar"
 msgid "Share calendar event (.ics)"
 msgstr "Partilhar evento da agenda (. ics)"
 
-#. placeholder {0}: provider.label
-#: src/api/ai-consent.ts
-msgid "Share data with {0}?"
-msgstr "Partilhar dados com {0}?"
-
 #: src/api/ai-consent.ts
 msgid "Share data with {label}?"
 msgstr ""
@@ -9678,6 +9665,10 @@ msgstr "Mostrar {title} na página"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Mostrar tudo"
+
+#: src/features/career/facts.tsx
+msgid "Show all types"
+msgstr "Mostrar todos os tipos"
 
 #: src/features/applications/list-screen.tsx
 msgid "Show closed"
@@ -11092,8 +11083,8 @@ msgid "This saved description is clipped or incomplete. Review before preparing 
 msgstr "Esta descrição guardada está cortada ou incompleta. Reveja antes de preparar documentos."
 
 #: src/features/workspace/shell.tsx
-msgid "This saved version belongs to a different tab. Open it from Saved."
-msgstr "Esta versão guardada pertence a outro separador. Abra-a a partir de Guardados."
+msgid "This saved version belongs to a different tab. Open it from Library."
+msgstr ""
 
 #: src/features/workspace/shell.tsx
 msgid "This saved version couldn't be loaded."
@@ -11257,6 +11248,11 @@ msgstr "Acompanhar em Candidaturas"
 msgid "Track selected"
 msgstr ""
 
+#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Track your first job"
+msgstr "Acompanhe o seu primeiro emprego"
+
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design-presets.ts
 msgid "Traditional"
@@ -11339,6 +11335,10 @@ msgstr "Tente novamente ou reinicie a aplicação."
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Tente outra pesquisa ou limpe os seus filtros."
+
+#: src/features/career/facts.tsx
+msgid "Try another word or type."
+msgstr ""
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -11766,10 +11766,6 @@ msgstr "Utiliza o serviço de pesquisa na Web configurado em Configurações. Os
 msgid "Uses web search set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today; applications and documents are never created for you."
 msgstr ""
 
-#: src/features/career/schedule-sheet.tsx
-msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
-msgstr "Usa a pesquisa web configurada em Configurações. Os resultados ficam em Hoje. As candidaturas e os documentos nunca são criados automaticamente."
-
 #: src/features/share/web-page.tsx
 msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
 msgstr "Usa o modelo e o Design do seu currículo e adapta-se a qualquer ecrã. Altere-os em Design."
@@ -12194,8 +12190,8 @@ msgid "Write numbers as digits"
 msgstr "Escrever números como algarismos"
 
 #: src/features/career/stories.tsx
-msgid "Write one about something you did, in five parts."
-msgstr "Escreve um sobre algo que tenhas feito, em cinco partes."
+msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
+msgstr "Escreve uma história em cinco partes sobre algo que fizeste. Deixa Resultado e Reflexão em branco até os poderes fundamentar."
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12403,11 +12399,6 @@ msgstr "O seu foco"
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "Os seus títulos parecem iguais ao texto do corpo."
-
-#: src/features/applications-board/board-screen.tsx
-#: src/features/applications/list-screen.tsx
-msgid "Your job search starts here"
-msgstr "A sua busca por emprego começa aqui"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "your Knowledge"

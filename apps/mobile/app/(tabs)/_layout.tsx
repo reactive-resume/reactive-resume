@@ -14,6 +14,7 @@ import { AppStrip, BannerAbove } from "@/shell/app-banner";
 import { AppSidebar, PhoneTabBar } from "@/shell/app-tabs";
 import { useKeyCommands } from "@/shell/key-commands";
 import { useIsTablet } from "@/shell/use-is-tablet";
+import { useNewAction } from "@/shell/use-new-action";
 import { useReducedMotion, useTheme } from "@/ui";
 import { KeyboardFrame } from "@/ui/keyboard";
 
@@ -25,6 +26,7 @@ import { KeyboardFrame } from "@/ui/keyboard";
 export default function TabsLayout() {
 	const router = useRouter();
 	const { t } = useLingui();
+	const openNew = useNewAction();
 	const tablet = useIsTablet();
 	const insets = useSafeAreaInsets();
 	const network = useNetworkState();
@@ -34,7 +36,7 @@ export default function TabsLayout() {
 	useKeyCommands(
 		[
 			{ id: "search", input: "k", title: t`Search`, run: () => router.push(routes.search()) },
-			{ id: "new", input: "n", title: t`New`, run: () => router.push(routes.new()) },
+			{ id: "new", input: "n", title: t`New`, run: openNew },
 		],
 		"global",
 	);
@@ -77,7 +79,7 @@ export default function TabsLayout() {
 										listeners={{
 											tabPress: (event) => {
 												event.preventDefault();
-												router.push(routes.new());
+												openNew();
 											},
 										}}
 									/>

@@ -9,6 +9,7 @@ import { WORKSPACE_TABS } from "@reactive-resume/schema/career";
 import { createSlot } from "./slot";
 import { TopBar } from "./top-bar";
 import { useIsTablet } from "./use-is-tablet";
+import { workspaceTabLabel } from "./workspace-tab-label";
 import { routes } from "@/routes";
 import { IconButton, Text, useTheme } from "@/ui";
 import { KeyboardFrame } from "@/ui/keyboard";
@@ -83,16 +84,6 @@ function Frame({ children }: { children: ReactNode }) {
 
 	if (!isWorkspaceTab(tab)) return <View style={{ flex: 1 }}>{children}</View>;
 
-	const labels: Record<ApplicationTab, string> = {
-		fit: t({ message: "Fit", context: "Application workspace tab: how well a job fits your experience" }),
-		apply: t`Apply`,
-		prepare: t`Prepare`,
-		practise: t({ message: "Practice", context: "Application workspace tab: rehearse interview answers" }),
-		debrief: t`Debrief`,
-		messages: t`Messages`,
-		saved: t({ message: "Saved", context: "Application workspace tab: earlier results kept for this job" }),
-	};
-
 	return (
 		<View style={{ flex: 1, backgroundColor: colors.bg }}>
 			<TopBar
@@ -162,7 +153,7 @@ function Frame({ children }: { children: ReactNode }) {
 								})}
 							>
 								<Text variant={active ? "label" : "body"} color={active ? "accentText" : "ink2"}>
-									{labels[name]}
+									{workspaceTabLabel(name)}
 								</Text>
 								{slots.badges?.[name]}
 							</Pressable>

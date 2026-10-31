@@ -27,7 +27,7 @@ type CloseDialogProps = {
 	onClose: (lane: ApplicationLane | null, reason: ApplicationClosedReason | undefined) => void;
 };
 
-/** "Close this application": one reason, kept for Insights, and the Closed lane when there's more than one. */
+/** "Mark as closed": one reason, kept for Insights, and the Closed lane when there's more than one. */
 export function CloseDialog({ open, onOpenChange, lanes, onClose }: CloseDialogProps) {
 	const id = useId();
 	const [reason, setReason] = useState<ApplicationClosedReason>("not-selected");
@@ -40,7 +40,7 @@ export function CloseDialog({ open, onOpenChange, lanes, onClose }: CloseDialogP
 			<DialogContent className="sm:max-w-sm">
 				<DialogHeader>
 					<DialogTitle>
-						<Trans>Close this application</Trans>
+						<Trans>Mark as closed</Trans>
 					</DialogTitle>
 					<DialogDescription>
 						<Trans>The reason is kept for Insights. Linked documents aren't touched.</Trans>
@@ -93,7 +93,7 @@ export function CloseDialog({ open, onOpenChange, lanes, onClose }: CloseDialogP
 							onOpenChange(false);
 						}}
 					>
-						<Trans>Close application</Trans>
+						<Trans>Mark as closed</Trans>
 					</Button>
 				</DialogFooter>
 			</DialogContent>

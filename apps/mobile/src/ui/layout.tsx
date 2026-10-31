@@ -285,13 +285,78 @@ export type EmptyStateProps = {
 	action?: Action | undefined;
 	/** A second, quieter action under the first. */
 	secondaryAction?: Action | undefined;
+	/** Content that needs more than a button, such as the AI notice and its privacy line. */
+	children?: ReactNode;
+	/** `card` is the dashed first-run card; `compact` is a row. Defaults to the original unframed state. */
+	variant?: "default" | "card" | "compact" | undefined;
 };
 
-export function EmptyState({ icon, title, message, action, secondaryAction }: EmptyStateProps) {
+export function EmptyState({
+	icon,
+	title,
+	message,
+	action,
+	secondaryAction,
+	children,
+	variant = "default",
+}: EmptyStateProps) {
 	const { colors, radius, size, space } = useTheme();
+	const compact = variant === "compact";
+	const card = variant === "card";
+
+	if (compact) {
+		return (
+			<View
+				style={{
+					flexDirection: "row",
+					flexWrap: "wrap",
+					alignItems: "center",
+					justifyContent: "space-between",
+					gap: space.s2,
+					paddingVertical: space.s3,
+					paddingHorizontal: space.s4,
+				}}
+			>
+				<View style={{ flexShrink: 1, gap: space.s1 }}>
+					<Text variant="callout" color="ink">
+						{title}
+					</Text>
+					{message ? (
+						<Text variant="callout" color="ink2">
+							{message}
+						</Text>
+					) : null}
+				</View>
+				{action ? <Button size="sm" variant="secondary" label={action.label} onPress={action.onPress} /> : null}
+				{secondaryAction ? (
+					<Button variant="link" label={secondaryAction.label} onPress={secondaryAction.onPress} />
+				) : null}
+			</View>
+		);
+	}
 
 	return (
-		<View style={{ alignItems: "center", gap: space.s3, paddingVertical: space.s10, paddingHorizontal: space.s6 }}>
+		<View
+			style={
+				card
+					? {
+							alignItems: "center",
+							gap: space.s2,
+							paddingVertical: space.s6,
+							paddingHorizontal: space.s6,
+							borderRadius: radius.rLg,
+							borderWidth: 1,
+							borderStyle: "dashed",
+							borderColor: colors.line2,
+						}
+					: {
+							alignItems: "center",
+							gap: space.s3,
+							paddingVertical: space.s10,
+							paddingHorizontal: space.s6,
+						}
+			}
+		>
 			{icon ? (
 				<View
 					style={{
@@ -315,6 +380,7 @@ export function EmptyState({ icon, title, message, action, secondaryAction }: Em
 					{message}
 				</Text>
 			) : null}
+			{children ? <View style={{ alignSelf: "stretch", alignItems: "center", gap: space.s3 }}>{children}</View> : null}
 			{action ? (
 				<View style={{ alignSelf: "center" }}>
 					<Button label={action.label} onPress={action.onPress} />

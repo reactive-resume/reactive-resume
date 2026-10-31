@@ -28,7 +28,7 @@ test("round-trips a JSON backup and splits a legacy embedded letter on import", 
 	// New → Import a resume: picking the file detects the format and imports it in three steps.
 	await page.goto("/dashboard");
 	await page.getByRole("button", { name: "New", exact: true }).click();
-	const dialog = page.getByRole("dialog", { name: "New document" });
+	const dialog = page.getByRole("dialog", { name: "New", exact: true });
 	await dialog.getByLabel("Choose a file to import").setInputFiles(downloadPath);
 	await page.getByRole("button", { name: "Open in editor" }).click();
 
@@ -54,7 +54,10 @@ test("round-trips a JSON backup and splits a legacy embedded letter on import", 
 
 	await page.goto("/dashboard");
 	await page.getByRole("button", { name: "New", exact: true }).click();
-	await page.getByRole("dialog", { name: "New document" }).getByLabel("Choose a file to import").setInputFiles(path);
+	await page
+		.getByRole("dialog", { name: "New", exact: true })
+		.getByLabel("Choose a file to import")
+		.setInputFiles(path);
 	await page.getByRole("button", { name: "Open in editor" }).click();
 	await page.waitForURL(/\/builder\/.+/);
 	await expect(page.getByText("Dear Globex team,")).toHaveCount(0);

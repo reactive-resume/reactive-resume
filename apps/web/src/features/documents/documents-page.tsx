@@ -14,6 +14,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
+import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@reactive-resume/ui/components/input-group";
@@ -422,43 +423,42 @@ function FirstRun({ onChooseFile }: { onChooseFile: () => void }) {
 	const { startBlank, trySample, creating } = useStartDocument();
 
 	return (
-		<section className="grid max-w-xl gap-4 pt-4 transition-[opacity,translate] duration-emphasized ease-enter starting:translate-y-2 starting:opacity-0">
-			<h2 className="font-display text-[26px] leading-8 font-medium">
-				<Trans>Let's start with what you have</Trans>
-			</h2>
-			<p className="leading-6 text-ink-2">
-				<Trans>
-					Import your current resume and we'll lay out every section for you to refine. Or start fresh. Start with your
-					name. Build from there.
-				</Trans>
-			</p>
-			<div className="flex flex-wrap items-center gap-3 rounded-xl border-[1.5px] border-dashed border-line-2 p-5">
-				<Icon name="file-arrow-up" size={24} className="text-ink-2" />
-				<span className="flex-1 text-sm text-ink-2">
-					<Trans>Drop a PDF, Word or JSON file</Trans>
-				</span>
-				<Button onClick={onChooseFile}>
-					<Trans>Choose a file</Trans>
-				</Button>
-			</div>
-			<div className="flex flex-wrap gap-4 text-sm">
-				<Button
-					variant="link"
-					disabled={creating}
-					className="text-ink-2 underline underline-offset-2 hover:text-ink pointer-coarse:min-h-11"
-					onClick={() => void startBlank()}
-				>
-					<Trans>Start blank</Trans>
-				</Button>
-				<Button
-					variant="link"
-					disabled={creating}
-					className="text-ink-2 underline underline-offset-2 hover:text-ink pointer-coarse:min-h-11"
-					onClick={() => void trySample()}
-				>
-					<Trans>Try a sample</Trans>
-				</Button>
-			</div>
+		<section className="max-w-xl pt-4 transition-[opacity,translate] duration-emphasized ease-enter starting:translate-y-2 starting:opacity-0">
+			<EmptyState
+				title={<Trans>Let's start with what you have</Trans>}
+				description={
+					<Trans>
+						Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a PDF,
+						Word or JSON file anywhere here.
+					</Trans>
+				}
+				action={
+					<Button onClick={onChooseFile}>
+						<Icon name="file-arrow-up" size={18} />
+						<Trans>Choose a file</Trans>
+					</Button>
+				}
+				secondary={
+					<>
+						<Button
+							variant="link"
+							disabled={creating}
+							className="text-ink-2 underline underline-offset-2 hover:text-ink pointer-coarse:min-h-11"
+							onClick={() => void startBlank()}
+						>
+							<Trans>Start blank</Trans>
+						</Button>
+						<Button
+							variant="link"
+							disabled={creating}
+							className="text-ink-2 underline underline-offset-2 hover:text-ink pointer-coarse:min-h-11"
+							onClick={() => void trySample()}
+						>
+							<Trans>Try a sample</Trans>
+						</Button>
+					</>
+				}
+			/>
 		</section>
 	);
 }

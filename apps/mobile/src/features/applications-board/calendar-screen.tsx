@@ -134,6 +134,7 @@ function ApplicationCalendar() {
 				</Text>
 				{upcoming.length === 0 ? (
 					<EmptyState
+						variant="card"
 						icon="calendar-blank"
 						title={t`Nothing scheduled yet`}
 						message={t`Add screening calls and technical interviews to see them here and on the calendar.`}

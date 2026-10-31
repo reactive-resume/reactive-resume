@@ -1,26 +1,17 @@
 // Small pieces every workspace tab uses, ported from apps/web/src/features/career/shared.tsx.
 import type { IconName } from "@/ui";
 import type { ColorToken } from "@/ui/tokens";
-import type { GenerateTask, WorkspaceTab } from "@reactive-resume/schema/career";
+import type { GenerateTask } from "@reactive-resume/schema/career";
 import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
-import { Children, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { ReportAiContent } from "@/features/ai/report-content";
 import { Banner, Button, Card, Icon, Text, useTheme } from "@/ui";
 
-export const tabLabel = (tab: WorkspaceTab) =>
-	({
-		fit: t({ message: "Fit", context: "Application workspace tab: how well a job fits your experience" }),
-		apply: t`Apply`,
-		prepare: t`Prepare`,
-		practise: t`Practice`,
-		debrief: t`Debrief`,
-		messages: t`Messages`,
-		saved: t({ message: "Saved", context: "Application workspace tab: earlier results kept for this job" }),
-	})[tab];
+export { workspaceTabLabel as tabLabel } from "@/shell/workspace-tab-label";
 
 /** What each piece of tab work goes through, in order, before the general phrases take over. */
 export const workingSteps = (task: GenerateTask["task"] | "tighten") =>
@@ -220,42 +211,6 @@ export function AiNotice({ sends, centered = false }: AiNoticeProps) {
 			</PrivacyLine>
 			<ReportAiContent source="career" />
 		</>
-	);
-}
-
-type EmptyNoticeProps = { title: string; message?: string | undefined; children?: ReactNode };
-
-/** A dashed first-run card: what the tab does and the one action that starts it. */
-export function EmptyNotice({ title, message, children }: EmptyNoticeProps) {
-	const { colors, radius, space } = useTheme();
-	return (
-		<View
-			style={{
-				alignItems: "center",
-				gap: space.s3,
-				padding: space.s6,
-				borderRadius: radius.rLg,
-				borderWidth: 1,
-				borderStyle: "dashed",
-				borderColor: colors.line2,
-			}}
-		>
-			<Text variant="heading" align="center">
-				{title}
-			</Text>
-			{message ? (
-				<Text color="ink2" align="center">
-					{message}
-				</Text>
-			) : null}
-			{Children.map(children, (child) => (
-				<View
-					style={{ width: "100%", flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: space.s3 }}
-				>
-					{child}
-				</View>
-			))}
-		</View>
 	);
 }
 

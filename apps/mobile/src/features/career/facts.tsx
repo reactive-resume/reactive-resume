@@ -151,7 +151,12 @@ export function Facts({ children, onRefresh }: FactsProps) {
 				<Banner tone="danger" message={t`Couldn't save that change. Check your connection and try again.`} />
 			) : null}
 			{!facts.isPending && !facts.isError && !rows.length ? (
-				<EmptyState title={t`No facts match`} message={t`Add a fact or try another word or type.`} />
+				<EmptyState
+					variant="compact"
+					title={!facts.data?.length ? t`No facts yet` : t`No facts match`}
+					message={!facts.data?.length ? t`Add one above.` : t`Try another word or type.`}
+					action={category !== "all" ? { label: t`Show all types`, onPress: () => setCategory("all") } : undefined}
+				/>
 			) : null}
 		</View>
 	);

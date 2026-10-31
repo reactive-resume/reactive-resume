@@ -10,6 +10,7 @@ import { Link } from "@tanstack/react-router";
 import { AnimatePresence } from "motion/react";
 import { useState } from "react";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
+import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
@@ -64,23 +65,21 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 
 	if (items.length === 0)
 		return (
-			<div className="grid justify-items-center gap-2 rounded-xl border border-dashed border-line-2 p-7 text-center">
-				<h2 className="font-display text-[22px] leading-7 font-medium">
-					<Trans>Nothing saved yet</Trans>
-				</h2>
-				<p className="max-w-[340px] text-sm text-ink-2">
+			<EmptyState
+				title={<Trans>Nothing in your library yet</Trans>}
+				description={
 					<Trans>
 						Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them.
 					</Trans>
-				</p>
-			</div>
+				}
+			/>
 		);
 
 	const onDelete = (item: SavedItem) => {
 		if (filter === item.data.kind && shown.length === 1) setFilter(null);
 		setHidden((ids) => [...ids, item.id]);
 		withUndo({
-			description: t`Deleted from Saved`,
+			description: t`Deleted from Library`,
 			onUndo: () => setHidden((ids) => ids.filter((id) => id !== item.id)),
 			commit: () =>
 				remove
@@ -103,7 +102,7 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 						</FilterChip>
 					))}
 				</div>
-				<p className="text-xs text-ink-3">{t`Saved items for ${company}, newest first.`}</p>
+				<p className="text-xs text-ink-3">{t`Library items for ${company}, newest first.`}</p>
 			</div>
 
 			<div role="list" className="overflow-hidden rounded-xl border border-line bg-surface">

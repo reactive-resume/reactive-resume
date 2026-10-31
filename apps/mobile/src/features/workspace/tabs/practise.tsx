@@ -569,7 +569,7 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 						<Button variant="ghost" size="sm" icon="arrow-right" label={t`Next question`} onPress={nextQuestion} />
 					</Actions>
 					<Text variant="caption" color="ink3">
-						{t`Saved to Saved · Practice`}
+						{t`Saved to Library · Practice`}
 					</Text>
 				</FeedbackCard>
 			) : null}

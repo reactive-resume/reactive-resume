@@ -11,6 +11,7 @@ let hooks = [];
 let cursor = 0;
 const react = {
 	createElement: element,
+	useCallback: (fn) => fn,
 	useState(initial) {
 		const index = cursor++;
 		if (!(index in hooks)) hooks[index] = typeof initial === "function" ? initial() : initial;
@@ -25,13 +26,17 @@ const calls = [];
 const routes = {
 	builder: (id, tab) => `/builder/${id}/${tab}`,
 	application: (id, tab) => `/applications/${id}/${tab}`,
+	applications: (view = "list") => (view === "list" ? "/applications" : `/applications/${view}`),
+	new: (context = "documents") => (context === "documents" ? "/new" : `/new?context=${context}`),
+	newJob: () => "/applications?create=1",
 };
 const router = { push: (href) => calls.push(href), back() {} };
 const theme = {
 	space: { s0: 2, s1: 4, s2: 8, s3: 12, s4: 16, s12: 48 },
 	size: { sheetShare: 440 },
 	radius: { rLg: 4 },
-	colors: { ink: "#111", ink3: "#777", line: "#ddd" },
+	motion: { d2: 200 },
+	colors: { bg: "#fff", ink: "#111", ink3: "#777", line: "#ddd" },
 };
 const ui = Object.fromEntries(
 	[
@@ -61,7 +66,7 @@ ui.useFirstAppearance = () => false;
 const mocks = {
 	react,
 	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView" },
-	"expo-router": { useRouter: () => router, Stack: { Screen: "StackScreen" } },
+	"expo-router": { useRouter: () => router, useLocalSearchParams: () => ({}), Stack: { Screen: "StackScreen" } },
 	"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
 	"@lingui/core/macro": { t: tag, plural: (value, forms) => forms.other.replace("#", String(value)) },
 	"@/routes": { routes },
@@ -517,6 +522,92 @@ assert.equal(selectedRow.props.leading, "check-square", "ellipsis keeps explicit
 console.log(
 	"PASS Applications empty/create, closed-only reveal, filter reset, single press and explicit bulk selection entry",
 );
+
+// ApplicationsViewFrame owns Save job in place on every view; setParams keeps the current route and clears on close.
+let createParam = "1";
+const setParamsCalls = [];
+const frameRouter = { ...router, setParams: (params) => setParamsCalls.push(params) };
+const { ApplicationsViewFrame } = load("features/applications-board/views.tsx", {
+	"expo-router": {
+		useRouter: () => frameRouter,
+		useLocalSearchParams: () => (createParam === "1" ? { create: "1" } : {}),
+		Stack: { Screen: "StackScreen" },
+	},
+	"react-native-safe-area-context": {
+		SafeAreaView: "SafeAreaView",
+		SafeAreaInsetsContext: { Provider: "Provider" },
+		useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+	},
+	"@/components/collection-header": { CollectionHeader: "CollectionHeader" },
+	"./search": { useApplicationSearch: () => ({ search: "", setSearch() {} }) },
+	"@/features/applications/add-sheet": { AddApplicationSheet: "AddApplicationSheet" },
+	"@/features/applications/lane-notice": { LaneNotice: "LaneNotice" },
+	"@/features/applications/lane-settings": { LaneSettings: "LaneSettings" },
+});
+const openFromHeader = (tree) => {
+	const header = nodes(tree).find((node) => node.type === "CollectionHeader");
+	assert.ok(header, "Applications header is present");
+	const save = nodes(header.props.actions).find((node) => node.props.label === "Save a job");
+	assert.ok(save, "Save job is in the Applications header on every view");
+	save.props.onPress();
+};
+for (const view of ["list", "board", "calendar", "insights"]) {
+	reset();
+	createParam = "1";
+	let tree = render(ApplicationsViewFrame, { current: view, children: "View" });
+	let sheet = nodes(tree).find((node) => node.type === "AddApplicationSheet");
+	assert.ok(sheet, `${view}: ?create opens Save job in place`);
+	sheet.props.onClose();
+	assert.deepEqual(setParamsCalls.at(-1), { create: "" }, `${view}: close clears create without leaving the view`);
+	createParam = "";
+	setParamsCalls.length = 0;
+	tree = render(ApplicationsViewFrame, { current: view, children: "View" });
+	assert.ok(!nodes(tree).some((node) => node.type === "AddApplicationSheet"));
+	openFromHeader(tree);
+	tree = render(ApplicationsViewFrame, { current: view, children: "View" });
+	sheet = nodes(tree).find((node) => node.type === "AddApplicationSheet");
+	assert.ok(sheet, `${view}: New opens Save job`);
+	sheet.props.onClose();
+	tree = render(ApplicationsViewFrame, { current: view, children: "View" });
+	openFromHeader(tree);
+	tree = render(ApplicationsViewFrame, { current: view, children: "View" });
+	assert.ok(
+		nodes(tree).some((node) => node.type === "AddApplicationSheet"),
+		`${view}: Save job opens again after cancel`,
+	);
+}
+console.log("PASS Applications views own in-place Save job with repeat/cancel and no back stack");
+
+// New routes in place on every Applications view, but pushes the list from a workspace and the context sheet elsewhere.
+let pathname = "/applications/board";
+const newCalls = [];
+const newRouter = {
+	push: (href) => newCalls.push({ kind: "push", href }),
+	setParams: (params) => newCalls.push({ kind: "setParams", params }),
+};
+const { useNewAction: createNewAction } = load("shell/use-new-action.ts", {
+	"expo-router": { useRouter: () => newRouter, usePathname: () => pathname },
+	"@/routes": { routes },
+});
+for (const view of ["/applications", "/applications/board", "/applications/calendar", "/applications/insights"]) {
+	pathname = view;
+	newCalls.length = 0;
+	createNewAction()();
+	assert.deepEqual(newCalls, [{ kind: "setParams", params: { create: "1" } }], `${view}: stays in place`);
+}
+pathname = "/applications/application-1/apply";
+newCalls.length = 0;
+createNewAction()();
+assert.deepEqual(newCalls, [{ kind: "push", href: "/applications?create=1" }], "workspace pushes the list once");
+pathname = "/career/today";
+newCalls.length = 0;
+createNewAction()();
+assert.deepEqual(newCalls, [{ kind: "push", href: "/new?context=career" }], "Career leads its New sheet");
+pathname = "/documents";
+newCalls.length = 0;
+createNewAction()();
+assert.deepEqual(newCalls, [{ kind: "push", href: "/new" }], "Documents keeps New document");
+console.log("PASS native New preserves Applications views, pushes from a workspace and follows Career/Documents");
 
 // Opening earlier applications must preserve an unsaved job until explicit discard.
 let finishSave;

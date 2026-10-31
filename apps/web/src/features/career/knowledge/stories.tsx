@@ -8,6 +8,7 @@ import { memo, useId, useState } from "react";
 import * as z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
+import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
@@ -164,17 +165,15 @@ export function StoriesPage({ storyId, edit }: StoriesPageProps) {
 					</Swap>
 				</div>
 			) : (
-				<div className="grid justify-items-center gap-2 rounded-xl border border-dashed border-line-2 p-7 text-center">
-					<h2 className="font-display text-[22px] leading-7 font-medium">
-						<Trans>No stories yet</Trans>
-					</h2>
-					<p className="max-w-[300px] text-sm text-ink-2">
+				<EmptyState
+					title={<Trans>No stories yet</Trans>}
+					description={
 						<Trans>
 							Write one about something you did, in five parts. Leave Result and Reflection blank until you can support
 							them.
 						</Trans>
-					</p>
-				</div>
+					}
+				/>
 			)}
 		</div>
 	);

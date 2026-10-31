@@ -9,6 +9,7 @@ import { Link, useRouter } from "@tanstack/react-router";
 import { AnimatePresence } from "motion/react";
 import { useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
+import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
@@ -260,24 +261,22 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 							</AnimatePresence>
 						</div>
 					) : (
-						<div className="flex flex-col items-center gap-1.5 rounded-xl border border-dashed border-line-2 p-7 text-center">
-							<p className="font-display text-[22px] leading-7 font-medium">
-								<Trans>You're up to date</Trans>
-							</p>
-							<p className="max-w-[300px] text-sm text-ink-2">
-								<Trans>New roles, reminders and finished briefings appear here.</Trans>
-							</p>
-							{read.length > 0 && (
-								<Button
-									variant="ghost"
-									size="sm"
-									className="text-ink-2 underline underline-offset-3"
-									onClick={() => setShowRead(true)}
-								>
-									<Trans>Show {read.length} read</Trans>
-								</Button>
-							)}
-						</div>
+						<EmptyState
+							title={<Trans>You're up to date</Trans>}
+							description={<Trans>New roles, reminders and finished briefings appear here.</Trans>}
+							secondary={
+								read.length > 0 ? (
+									<Button
+										variant="ghost"
+										size="sm"
+										className="text-ink-2 underline underline-offset-3"
+										onClick={() => setShowRead(true)}
+									>
+										<Trans>Show {read.length} read</Trans>
+									</Button>
+								) : undefined
+							}
+						/>
 					)}
 				</Swap>
 			)}
@@ -884,9 +883,7 @@ function Schedules({ deleted, onOpenSchedule, className }: SchedulesProps) {
 			) : !rows ? (
 				<Skeleton className="mx-4 mb-3 h-24" />
 			) : rows.length === 0 ? (
-				<p className="border-t border-line px-4 py-3 text-[13px] text-ink-3">
-					<Trans>Nothing scheduled yet.</Trans>
-				</p>
+				<EmptyState variant="compact" title={<Trans>Nothing scheduled yet.</Trans>} className="border-t border-line" />
 			) : (
 				<AnimatePresence initial={false}>
 					{rows.map((row) => {

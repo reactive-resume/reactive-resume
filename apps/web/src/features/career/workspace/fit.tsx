@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
+import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
@@ -75,24 +76,25 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 
 	if (!item)
 		return (
-			<div className="grid justify-items-center gap-3 rounded-xl border border-dashed border-line-2 p-7 text-center">
-				<h2 className="font-display text-[22px] leading-7 font-medium">
-					<Trans>Check this role against your evidence</Trans>
-				</h2>
-				<p className="max-w-[420px] text-sm text-ink-2">
+			<EmptyState
+				title={<Trans>Check this role against your evidence</Trans>}
+				description={
 					<Trans>
 						Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as
 						missing evidence, never missing ability.
 					</Trans>
-				</p>
+				}
+				action={
+					provider ? (
+						<Button loading={generate.isPending} onClick={check}>
+							<Icon name="list-checks" size={18} />
+							{generate.isPending ? <Working steps={workingSteps("fit")} /> : <Trans>Check fit</Trans>}
+						</Button>
+					) : undefined
+				}
+			>
 				<AiNotice className="max-w-[420px] text-start" />
-				{provider && (
-					<Button loading={generate.isPending} onClick={check}>
-						<Icon name="list-checks" size={18} />
-						{generate.isPending ? <Working steps={workingSteps("fit")} /> : <Trans>Check fit</Trans>}
-					</Button>
-				)}
-			</div>
+			</EmptyState>
 		);
 
 	const evidence = readOnly ? {} : workspace.data.evidence;
@@ -363,7 +365,7 @@ function WorthAsking({ ask, applicationId, readOnly }: WorthAskingProps) {
 					}
 				>
 					<Icon name={added ? "check" : "plus"} size={16} />
-					{added ? <Trans>Added to Prepare</Trans> : <Trans>Add to questions</Trans>}
+					{added ? <Trans>Added to Interview prep</Trans> : <Trans>Add to questions</Trans>}
 				</Button>
 			)}
 		</section>

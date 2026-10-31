@@ -1,4 +1,5 @@
 import type { ImportKind } from "@/features/resume/import/read-file";
+import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { CSSProperties, Dispatch, SetStateAction } from "react";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
@@ -26,7 +27,11 @@ import { formatRelativeTime } from "@/libs/locale";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 
+export type NewDocumentContext = "documents" | "letters" | "applications" | "career";
+
 export type NewDocumentDialogData = {
+	/** The section New was opened from, so the dialog leads with its own kind of object. */
+	context?: NewDocumentContext;
 	/** Open on a step other than the three choices. */
 	step?: "copy";
 	/** Copy for a job: the resume to start from. */
@@ -178,6 +183,12 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 		closeDialog();
 		void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId } });
 	};
+	const context = data?.context ?? "documents";
+	// Save job reuses Applications' own Add dialog through its one-shot ?create link.
+	const saveJob = () => {
+		closeDialog();
+		void navigate({ to: "/dashboard/applications", search: { create: true } });
+	};
 
 	const { importFile, cancel, refreshDocuments } = useResumeImport(setStep, openLetter, data?.applicationId);
 
@@ -238,12 +249,30 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 				<div key="choose" className={cn(ENTER_CLASS, "grid gap-4")}>
 					<DialogHeader>
 						<DialogTitle className="font-display text-[22px] font-medium">
-							<Trans>New document</Trans>
+							<Trans>New</Trans>
 						</DialogTitle>
 						<DialogDescription className="sr-only">
-							<Trans>Import a resume, copy one for a job, or start blank.</Trans>
+							<Trans>Import a resume, start a letter, save a job, copy one for a job, or start blank.</Trans>
 						</DialogDescription>
 					</DialogHeader>
+
+					{context === "letters" && (
+						<ChoiceTile
+							icon="envelope-simple"
+							title={t`New cover letter`}
+							description={t`Start a letter for a job, or write one from scratch.`}
+							disabled={creating}
+							onClick={() => void newLetter()}
+						/>
+					)}
+					{(context === "applications" || context === "career") && (
+						<ChoiceTile
+							icon="briefcase"
+							title={t`Save a job`}
+							description={t`Paste a job link or posting to track it in Applications.`}
+							onClick={saveJob}
+						/>
+					)}
 
 					<button
 						type="button"
@@ -289,15 +318,23 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 					</div>
 
 					<div className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-4 text-[13px]">
-						<button
-							type="button"
-							className="flex items-center gap-1.5 text-ink-2 hover:text-ink disabled:opacity-60"
-							disabled={creating}
-							onClick={() => void newLetter()}
-						>
-							<Icon name="envelope-simple" size={18} />
-							<Trans>New cover letter instead</Trans>
-						</button>
+						{context !== "letters" && (
+							<button
+								type="button"
+								className="flex items-center gap-1.5 text-ink-2 hover:text-ink disabled:opacity-60"
+								disabled={creating}
+								onClick={() => void newLetter()}
+							>
+								<Icon name="envelope-simple" size={18} />
+								<Trans>New cover letter instead</Trans>
+							</button>
+						)}
+						{context !== "career" && context !== "applications" && (
+							<button type="button" className="flex items-center gap-1.5 text-ink-2 hover:text-ink" onClick={saveJob}>
+								<Icon name="briefcase" size={18} />
+								<Trans>Save a job instead</Trans>
+							</button>
+						)}
 						<button
 							type="button"
 							className="text-ink-2 underline underline-offset-2 hover:text-ink"
@@ -428,7 +465,7 @@ function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onCl
 }
 
 type ChoiceTileProps = {
-	icon: "copy" | "file-plus";
+	icon: IconName;
 	title: string;
 	description: string;
 	onClick: () => void;

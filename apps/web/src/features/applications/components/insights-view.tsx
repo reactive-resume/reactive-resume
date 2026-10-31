@@ -4,6 +4,7 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useRef } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
+import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -26,7 +27,9 @@ export function InsightsSkeleton() {
 	);
 }
 
-export function ApplicationInsights({ applications }: { applications: ApplicationSummary[] }) {
+type ApplicationInsightsProps = { applications: ApplicationSummary[]; onSaveJob: () => void };
+
+export function ApplicationInsights({ applications, onSaveJob }: ApplicationInsightsProps) {
 	const { data } = useQuery(orpc.applications.stats.queryOptions({}));
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 
@@ -50,9 +53,18 @@ export function ApplicationInsights({ applications }: { applications: Applicatio
 
 	if (outcomes.sent === 0) {
 		return (
-			<p className="py-16 text-center text-sm text-ink-2">
-				<Trans>Once you've sent a few applications, this shows how far they get and how quickly people reply.</Trans>
-			</p>
+			<EmptyState
+				title={<Trans>No replies to chart yet</Trans>}
+				description={
+					<Trans>Once you've sent a few applications, this shows how far they get and how quickly people reply.</Trans>
+				}
+				action={
+					<Button onClick={onSaveJob}>
+						<Icon name="plus" />
+						<Trans>Save job</Trans>
+					</Button>
+				}
+			/>
 		);
 	}
 

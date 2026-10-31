@@ -467,11 +467,6 @@ msgstr "{0} vacature"
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr "{0} heeft “{1}” geretourneerd. Uw bericht wordt bewaard."
 
-#. placeholder {0}: done.length
-#: src/features/career/today.tsx
-msgid "{0} roles updated."
-msgstr ""
-
 #. placeholder {0}: selection.length
 #: src/features/career/today.tsx
 msgid "{0} selected"
@@ -1485,6 +1480,10 @@ msgstr "Aanbod toevoegen"
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
 msgstr "Voeg de voorwaarden van het werkaanbod handmatig toe of gebruik de optionele AI-extractie in Berichten."
 
+#: src/features/career/knowledge/facts.tsx
+msgid "Add one above."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
 msgstr "Voeg één link toe die je werk laat zien."
@@ -1611,6 +1610,10 @@ msgstr "{0} toegevoegd aan {1}"
 msgid "Added by you"
 msgstr "Door u toegevoegd"
 
+#: src/features/career/workspace/fit.tsx
+msgid "Added to Interview prep"
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "Added to Knowledge as a preference."
 msgstr "Als voorkeur aan Kennis toegevoegd."
@@ -1626,10 +1629,6 @@ msgstr "Als prestatie aan Kennis toegevoegd."
 #: src/features/career/coach-chat.tsx
 msgid "Added to Knowledge as an experience."
 msgstr "Als ervaring aan Kennis toegevoegd."
-
-#: src/features/career/workspace/fit.tsx
-msgid "Added to Prepare"
-msgstr "Toegevoegd aan Voorbereiden"
 
 #: src/features/resume/share/address-field.tsx
 msgid "Address"
@@ -2776,11 +2775,6 @@ msgstr "Tijdzone wijzigen"
 msgid "Change your password"
 msgstr "Wijzig uw wachtwoord"
 
-#: src/features/resume/editor/save-status.tsx
-#: src/routes/builder/letter/-components/letter-bar.tsx
-msgid "Changed elsewhere"
-msgstr "Elders gewijzigd"
-
 #: src/features/assistant/conversation.tsx
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "CV direct gewijzigd (een eerder gesprek)"
@@ -3112,15 +3106,6 @@ msgstr "Sluiten"
 msgid "Close {title}"
 msgstr "Sluit de {title}"
 
-#: src/features/applications/components/board.tsx
-#: src/features/applications/components/detail/close-dialog.tsx
-msgid "Close application"
-msgstr "Sluit de sollicitatie"
-
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Close application…"
-msgstr "Sluit de sollicitatie…"
-
 #: src/routes/__root.tsx
 msgid "Close notification"
 msgstr "Melding sluiten"
@@ -3129,11 +3114,6 @@ msgstr "Melding sluiten"
 msgid "Close the assistant"
 msgstr "Sluit de assistent"
 
-#: src/features/applications/components/detail/close-dialog.tsx
-msgid "Close this application"
-msgstr "Sluit deze sollicitatie"
-
-#: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/list-view.tsx
 msgid "Close…"
 msgstr "Dichtbij…"
@@ -4676,8 +4656,8 @@ msgid "Deleted application"
 msgstr "Verwijderde sollicitatie"
 
 #: src/features/career/workspace/saved.tsx
-msgid "Deleted from Saved"
-msgstr "Verwijderd uit Opgeslagen"
+msgid "Deleted from Library"
+msgstr ""
 
 #: src/features/documents/trash-page.tsx
 msgid "Deleted in"
@@ -5057,10 +5037,6 @@ msgstr "Zet hier een bestand neer of blader. PDF, Word, Reactive Resume of JSON 
 #: src/features/ats-checker/checker.tsx
 msgid "Drop a PDF here or choose a file"
 msgstr "Zet hier een PDF neer of kies een bestand"
-
-#: src/features/documents/documents-page.tsx
-msgid "Drop a PDF, Word or JSON file"
-msgstr "Zet een PDF-, Word- of JSON-bestand neer"
 
 #: src/features/ats-checker/messages.ts
 msgid "Drop the pronouns and start from the verb. That is the convention in most markets."
@@ -6528,8 +6504,8 @@ msgid "Import a resume"
 msgstr "Importeer een CV"
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Import a resume, copy one for a job, or start blank."
-msgstr "Importeer een cv, kopieer er een voor een baan of begin blanco."
+msgid "Import a resume, start a letter, save a job, copy one for a job, or start blank."
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Import failed. Check the CSV and try again."
@@ -6565,8 +6541,8 @@ msgid "Import this file into a free Reactive Resume. Every issue is waiting for 
 msgstr "Importeer dit bestand in een gratis Reactive Resume. Elk probleem wacht op u in Check."
 
 #: src/features/documents/documents-page.tsx
-msgid "Import your current resume and we'll lay out every section for you to refine. Or start fresh. Start with your name. Build from there."
-msgstr "Importeer uw huidige CV en wij zullen elke sectie opmaken die u kunt verfijnen. Of begin opnieuw. Begin met je naam. Bouw vanaf daar."
+msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a PDF, Word or JSON file anywhere here."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/share/format.ts
@@ -6682,7 +6658,14 @@ msgstr "Nu gesprek"
 msgid "Interview opening"
 msgstr "Opening van gesprek"
 
+#: src/features/career/schedule-sheet.tsx
 #: src/features/homepage/sections.tsx
+msgid "Interview prep"
+msgstr "Gespreksvoorbereiding"
+
+#: src/features/career/shared.tsx
+#: src/features/homepage/prepare.tsx
+msgctxt "Application workspace tab: plan for an interview"
 msgid "Interview prep"
 msgstr "Gespreksvoorbereiding"
 
@@ -7321,6 +7304,16 @@ msgstr "Niveau"
 msgid "Level {level} of 5"
 msgstr "Niveau {level} van 5"
 
+#: src/features/career/shared.tsx
+#: src/features/homepage/prepare.tsx
+msgctxt "Application workspace tab: earlier results kept for this job"
+msgid "Library"
+msgstr ""
+
+#: src/features/career/workspace/saved.tsx
+msgid "Library items for {company}, newest first."
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "Licensed under <0>MIT</0>"
 msgstr "Gelicentieerd onder <0>MIT</0>"
@@ -7767,6 +7760,16 @@ msgstr "Marges ingesteld op {minimum} pt"
 msgid "Mark as applied"
 msgstr "Markeer als gesolliciteerd"
 
+#: src/features/applications/components/board.tsx
+#: src/features/applications/components/detail/close-dialog.tsx
+msgid "Mark as closed"
+msgstr ""
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Mark as closed…"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Mark as read"
 msgstr "Markeren als gelezen"
@@ -8191,6 +8194,7 @@ msgid "Never"
 msgstr "Nooit"
 
 #: src/features/documents/document-card.tsx
+#: src/features/documents/new-document-dialog.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "New"
 msgstr "Nieuw"
@@ -8200,7 +8204,6 @@ msgid "New API key"
 msgstr "Nieuwe API sleutel"
 
 #: src/features/command-palette/pages/navigation.tsx
-#: src/features/command-palette/pages/resumes.tsx
 msgid "New application"
 msgstr "Nieuwe sollicitatie"
 
@@ -8212,11 +8215,14 @@ msgid "New conversation"
 msgstr "Nieuw gesprek"
 
 #: src/features/documents/new-document-dialog.tsx
+msgid "New cover letter"
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
 msgid "New cover letter instead"
 msgstr "In plaats daarvan een nieuwe sollicitatiebrief"
 
 #: src/features/command-palette/pages/navigation.tsx
-#: src/features/documents/new-document-dialog.tsx
 msgid "New document"
 msgstr "Nieuw document"
 
@@ -8405,16 +8411,16 @@ msgid "No evidence yet"
 msgstr "Nog geen bewijs"
 
 #: src/features/career/knowledge/facts.tsx
-msgid "No facts match. Try another word or type."
-msgstr "Geen feiten gevonden. Probeer een ander woord of soort."
+msgid "No facts match"
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "No facts to link yet. Add them in Facts."
 msgstr "Nog geen feiten om te koppelen. Voeg ze toe in Feiten."
 
 #: src/features/career/knowledge/facts.tsx
-msgid "No facts yet. Add one above."
-msgstr "Nog geen feiten. Voeg er hierboven een toe."
+msgid "No facts yet"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "No job yet"
@@ -8484,6 +8490,10 @@ msgstr "Geen vacatures gevonden. Probeer verschillende zoekwoorden."
 
 #: src/features/career/workspace/apply.tsx
 msgid "No recorded answers are available."
+msgstr ""
+
+#: src/features/applications/components/insights-view.tsx
+msgid "No replies to chart yet"
 msgstr ""
 
 #: src/features/applications/stages.ts
@@ -8755,6 +8765,10 @@ msgstr ""
 msgid "Nothing here should cost you a match."
 msgstr "Niets hier mag je een wedstrijd kosten."
 
+#: src/features/career/workspace/saved.tsx
+msgid "Nothing in your library yet"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Nothing is applied for or created until you choose."
 msgstr "Er wordt nergens op gesolliciteerd en niets aangemaakt totdat u kiest."
@@ -8771,10 +8785,6 @@ msgstr "Niets komt overeen met “{0}”"
 #: src/features/documents/documents-page.tsx
 msgid "Nothing matches these filters"
 msgstr "Niets komt overeen met deze filters"
-
-#: src/features/career/workspace/saved.tsx
-msgid "Nothing saved yet"
-msgstr "Nog niets opgeslagen"
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Nothing scheduled yet"
@@ -8871,10 +8881,6 @@ msgstr "Aanbiedingen"
 msgid "Office days a week, at most"
 msgstr "Kantoordagen per week, maximaal"
 
-#: src/features/career/today.tsx
-msgid "Office days not stated"
-msgstr "Kantoordagen niet vermeld"
-
 #: src/features/career/offer-entry.tsx
 msgid "Office days per week"
 msgstr "Werkdagen op kantoor per week"
@@ -8896,8 +8902,8 @@ msgid "Onboarding story"
 msgstr "Onboardingverhaal"
 
 #: src/features/career/workspace/prepare.tsx
-msgid "Once a round is scheduled, Prepare builds a timed plan, your opening and the questions to ask."
-msgstr "Zodra een ronde gepland is, maakt Voorbereiden een getimed plan, uw opening en de vragen om te stellen."
+msgid "Once a round is scheduled, Interview prep builds a timed plan, your opening and the questions to ask."
+msgstr ""
 
 #: src/features/applications/components/insights-view.tsx
 msgid "Once you've sent a few applications, this shows how far they get and how quickly people reply."
@@ -9330,6 +9336,10 @@ msgstr "Wachtwoord ingesteld"
 msgid "Past conversations"
 msgstr "Gesprekken uit het verleden"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Paste a job link or posting to track it in Applications."
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Paste a job link or posting, then check the role and company."
 msgstr "Plak een vacaturelink of vacature en controleer vervolgens de rol en het bedrijf."
@@ -9606,11 +9616,11 @@ msgstr ""
 
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/saved.tsx
-#: src/features/homepage/prepare.tsx
 msgid "Practice"
 msgstr "Oefening"
 
 #: src/features/career/shared.tsx
+#: src/features/homepage/prepare.tsx
 msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "Oefening"
@@ -9682,8 +9692,6 @@ msgctxt "Career preferences: the roles, places, pay and ways of working you want
 msgid "Preferences"
 msgstr "Voorkeuren"
 
-#: src/features/career/schedule-sheet.tsx
-#: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/prepare.tsx
@@ -11077,10 +11085,6 @@ msgstr "Salaris"
 msgid "Salary not detected"
 msgstr ""
 
-#: src/features/career/today.tsx
-msgid "Salary not listed"
-msgstr "Salaris niet vermeld"
-
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Salary range"
 msgstr "Salarisbereik"
@@ -11108,8 +11112,13 @@ msgid "Save"
 msgstr "Opslaan"
 
 #: src/features/applications/components/add-application-dialog.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Save a job"
 msgstr "Bewaar een baan"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Save a job instead"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
@@ -11165,6 +11174,9 @@ msgid "Save interview"
 msgstr "Gesprek opslaan"
 
 #: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/insights-view.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Save job"
 msgstr "Baan opslaan"
@@ -11244,12 +11256,6 @@ msgstr "opgeslagen"
 msgid "Saved"
 msgstr "Opgeslagen"
 
-#: src/features/career/shared.tsx
-#: src/features/homepage/prepare.tsx
-msgctxt "Application workspace tab: earlier results kept for this job"
-msgid "Saved"
-msgstr "Opgeslagen"
-
 #: src/features/homepage/write.tsx
 msgid "Saved · version {version}"
 msgstr "Opgeslagen · versie {version}"
@@ -11289,10 +11295,6 @@ msgstr ""
 msgid "Saved description"
 msgstr "Beschrijving opgeslagen"
 
-#: src/features/career/workspace/saved.tsx
-msgid "Saved items for {company}, newest first."
-msgstr "Opgeslagen items voor {company}, nieuwste eerst."
-
 #: src/features/career/knowledge/preferences.tsx
 msgid "Saved just now"
 msgstr "Zojuist opgeslagen"
@@ -11323,8 +11325,8 @@ msgid "Saved to Knowledge, private to this application."
 msgstr "Opgeslagen in Kennis, privé voor deze sollicitatie."
 
 #: src/features/career/workspace/practise.tsx
-msgid "Saved to Saved · Practice"
-msgstr "Opgeslagen in Opgeslagen · Oefening"
+msgid "Saved to Library · Practice"
+msgstr ""
 
 #. placeholder {0}: new URL(url).host
 #: src/features/resume/share/address-field.tsx
@@ -12334,6 +12336,10 @@ msgstr "Begin"
 #: src/features/career/workspace/prepare.tsx
 msgid "Start a debrief"
 msgstr "Nabespreking starten"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Start a letter for a job, or write one from scratch."
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
@@ -13497,8 +13503,8 @@ msgid "This saved description is clipped or incomplete. Review before preparing 
 msgstr "Deze opgeslagen beschrijving is afgekapt of onvolledig. Controleer voordat u documenten voorbereidt."
 
 #: src/features/career/workspace/shell.tsx
-msgid "This saved version belongs to a different tab. Open it from Saved."
-msgstr "Deze opgeslagen versie hoort bij een ander tabblad. Open hem vanuit Opgeslagen."
+msgid "This saved version belongs to a different tab. Open it from Library."
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "This saved version couldn't be loaded."
@@ -13741,6 +13747,10 @@ msgstr "Probeer het opnieuw"
 #: src/features/career/workspace/practise.tsx
 msgid "Try again with this"
 msgstr "Probeer het opnieuw hiermee"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Try another word or type."
+msgstr ""
 
 #: src/routes/auth/native-callback.tsx
 msgid "Try opening the app again"
@@ -14249,10 +14259,6 @@ msgstr "Maakt gebruik van de gekoppelde sollicitatie"
 #: src/features/career/schedule-sheet.tsx
 msgid "Uses the web search service set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today for your review; applications and documents are never created for you."
 msgstr ""
-
-#: src/features/career/schedule-sheet.tsx
-msgid "Uses the web search service set up in Settings. Results wait in Today for your review; applications and documents are never created for you."
-msgstr "Gebruikt de webzoekdienst die in Instellingen is ingesteld. Resultaten wachten in Vandaag op uw beoordeling; er worden nooit sollicitaties of documenten voor u aangemaakt."
 
 #. placeholder {0}: templates[template].name
 #: src/features/resume/share/share-panel.tsx
@@ -15119,10 +15125,6 @@ msgstr ""
 
 #: src/features/resume/editor/save-status.tsx
 msgid "Your edits will be kept as a separate resume in Documents before loading the saved version."
-msgstr ""
-
-#: src/features/resume/editor/save-status.tsx
-msgid "Your edits will be kept as a separate resume in Documents before loading the version saved elsewhere."
 msgstr ""
 
 #: src/routes/builder/letter/-components/letter-shell.tsx

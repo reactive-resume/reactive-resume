@@ -139,7 +139,7 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 					<Button
 						variant="secondary"
 						fullWidth
-						label={t`Close application…`}
+						label={t`Mark as closed…`}
 						onPress={() => setOverlay({ kind: "close" })}
 					/>
 				) : null}

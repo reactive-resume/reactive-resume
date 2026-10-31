@@ -427,11 +427,6 @@ msgstr "{0} চাকরির পোস্টিং"
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr "{0} \"{1}\" ফেরত দিয়েছে। আপনার বার্তা রাখা হয়."
 
-#. placeholder {0}: done.length
-#: src/features/career/today.tsx
-msgid "{0} roles updated."
-msgstr ""
-
 #. placeholder {0}: selectedIds.length
 #. placeholder {0}: selection.length
 #: src/features/applications/list-screen.tsx
@@ -961,10 +956,6 @@ msgstr "একটি দেশ যোগ করুন"
 msgid "Add a fact"
 msgstr "তথ্য যোগ করুন"
 
-#: src/features/career/facts.tsx
-msgid "Add a fact or try another word or type."
-msgstr "তথ্য যোগ করুন বা অন্য শব্দ বা ধরন দিয়ে চেষ্টা করুন।"
-
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
 msgstr "একটি লিঙ্ক যোগ করুন"
@@ -1138,6 +1129,10 @@ msgstr "চাকরির অফার যোগ করুন"
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
 msgstr "চাকরির অফারের শর্ত নিজে যোগ করুন, অথবা বার্তায় ঐচ্ছিক এআই নিষ্কাশন ব্যবহার করুন।"
 
+#: src/features/career/facts.tsx
+msgid "Add one above."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
 msgstr "আপনার কাজ দেখায় এমন একটি লিঙ্ক যোগ করুন।"
@@ -1245,13 +1240,13 @@ msgstr "আপনার নাম যোগ করুন"
 msgid "Added by you"
 msgstr "আপনার যোগ করা"
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Added to Interview prep"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "Added to Knowledge."
 msgstr "জ্ঞানভান্ডারে যোগ করা হয়েছে।"
-
-#: src/features/workspace/tabs/fit.tsx
-msgid "Added to Prepare"
-msgstr "প্রস্তুতিতে যোগ করা হয়েছে"
 
 #: src/features/ai/report-content.tsx
 msgid "Additional details (optional)"
@@ -1749,8 +1744,7 @@ msgstr "প্রয়োগ করা হয়েছে। আবেদন �
 msgid "Applies to this device only."
 msgstr "শুধু এই ডিভাইসে প্রযোজ্য।"
 
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgid "Apply"
 msgstr "আবেদন করুন"
 
@@ -2563,14 +2557,6 @@ msgstr "এর এন্ট্রি সাফ করে; বিভাগ থে
 msgid "Close"
 msgstr "বন্ধ"
 
-#: src/features/application-detail/sheets.tsx
-msgid "Close application"
-msgstr "চাকরির আবেদন বন্ধ করুন"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Close application…"
-msgstr "চাকরির আবেদন বন্ধ করুন..."
-
 #: src/features/applications/list-screen.tsx
 msgid "Close applications"
 msgstr "আবেদন বন্ধ করুন"
@@ -2586,10 +2572,6 @@ msgstr "নির্বাচিত আবেদন বন্ধ করুন"
 #: src/features/assistant/assistant-screen.tsx
 msgid "Close the assistant"
 msgstr "সহকারী বন্ধ করুন"
-
-#: src/features/application-detail/sheets.tsx
-msgid "Close this application"
-msgstr "এই চাকরির আবেদনটি বন্ধ করুন"
 
 #: src/features/applications/list-screen.tsx
 msgid "Close…"
@@ -3001,8 +2983,8 @@ msgid "Couldn't create the letter. Try again."
 msgstr "চিঠিটি তৈরি করা যায়নি। আবার চেষ্টা করুন।"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Couldn't delete it. It's back in Saved."
-msgstr "মুছে ফেলা যায়নি। এটি সংরক্ষিত-এ ফিরে এসেছে।"
+msgid "Couldn't delete it. It's back in Library."
+msgstr ""
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -3571,10 +3553,6 @@ msgid "Dark theme"
 msgstr "ডার্ক থিম"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the AI provider."
-msgstr "ডেটা শেয়ারিং বাতিল করা হয়েছে। AI প্রদানকারীকে কিছুই পাঠানো হয়নি।"
-
-#: src/api/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the provider."
 msgstr ""
 
@@ -3629,9 +3607,8 @@ msgid "Dear hiring team,"
 msgstr "প্রিয় নিয়োগকারী দল,"
 
 #: src/features/career/facts.tsx
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgid "Debrief"
 msgstr "ফিরে দেখা"
 
@@ -3800,8 +3777,8 @@ msgid "Deleted application"
 msgstr "মুছে ফেলা আবেদন"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Deleted from Saved"
-msgstr "সংরক্ষিত থেকে মুছে ফেলা হয়েছে"
+msgid "Deleted from Library"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "Deletes the section and its entries. You can undo."
@@ -4599,9 +4576,8 @@ msgstr "প্রথম দৌড় (YYYY-MM-DD)"
 msgid "Fit"
 msgstr "ফিট"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgctxt "Application workspace tab: how well a job fits your experience"
 msgid "Fit"
 msgstr "উপযুক্ততা"
@@ -5285,6 +5261,15 @@ msgid "Interview is in another timezone"
 msgstr "ইন্টারভিউ অন্য টাইমজোনে"
 
 #: src/features/career/schedule-sheet.tsx
+msgid "Interview prep"
+msgstr "ইন্টারভিউ প্রস্তুতি"
+
+#: src/shell/workspace-tab-label.ts
+msgctxt "Application workspace tab: plan for an interview"
+msgid "Interview prep"
+msgstr "ইন্টারভিউ প্রস্তুতি"
+
+#: src/features/career/schedule-sheet.tsx
 msgid "Interview preparation"
 msgstr "ইন্টারভিউয়ের প্রস্তুতি"
 
@@ -5752,6 +5737,15 @@ msgstr "চিঠিপত্রের কোনো পাবলিক লিঙ
 msgid "Level"
 msgstr "লেভেল"
 
+#: src/shell/workspace-tab-label.ts
+msgctxt "Application workspace tab: earlier results kept for this job"
+msgid "Library"
+msgstr ""
+
+#: src/features/workspace/tabs/saved.tsx
+msgid "Library items for {company}, newest first."
+msgstr ""
+
 #: app/(tabs)/settings/licences.tsx
 msgid "Licenses"
 msgstr "লাইসেন্সসমূহ"
@@ -6150,6 +6144,14 @@ msgstr "মার্জিন {minimum} pt এ সেট করা হয়ে�
 msgid "Mark as applied"
 msgstr "আবেদন করা হয়েছে বলে চিহ্নিত করুন"
 
+#: src/features/application-detail/sheets.tsx
+msgid "Mark as closed"
+msgstr ""
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Mark as closed…"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Mark as read"
 msgstr "পড়া হয়েছে বলে চিহ্নিত করুন"
@@ -6232,8 +6234,7 @@ msgstr "বার্তা"
 msgid "Message the assistant"
 msgstr "সহকারীকে মেসেজ করুন"
 
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgid "Messages"
 msgstr "বার্তা"
 
@@ -6534,6 +6535,7 @@ msgstr "কখনই না"
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
 #: src/features/documents/library.tsx
+#: src/features/documents/new-document.tsx
 #: src/shell/app-tabs.tsx
 msgid "New"
 msgstr "নতুন"
@@ -6562,7 +6564,6 @@ msgid "New cover letter instead"
 msgstr "পরিবর্তে নতুন কভার লেটার"
 
 #: src/features/documents/library.tsx
-#: src/features/documents/new-document.tsx
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "নতুন নথি"
@@ -6724,6 +6725,10 @@ msgstr "এখনও কোনো প্রমাণ নেই"
 msgid "No facts match"
 msgstr "কোনো তথ্য মিলছে না"
 
+#: src/features/career/facts.tsx
+msgid "No facts yet"
+msgstr ""
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "কোনো আইকন মেলে না।"
@@ -6805,6 +6810,10 @@ msgstr "এই চাকরির বিজ্ঞপ্তিতে চেনা
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "No recorded answers are available."
+msgstr ""
+
+#: src/features/applications-board/insights-screen.tsx
+msgid "No replies to chart yet"
 msgstr ""
 
 #: src/features/career/today.tsx
@@ -7000,6 +7009,10 @@ msgstr ""
 msgid "Nothing here should cost you a match."
 msgstr "এখানে কোন কিছুর জন্য আপনার একটি ম্যাচ খরচ করা উচিত নয়।"
 
+#: src/features/workspace/tabs/saved.tsx
+msgid "Nothing in your library yet"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Nothing is applied for or created until you choose."
 msgstr "আপনি বেছে না নেওয়া পর্যন্ত কোনো আবেদন করা বা কিছু তৈরি করা হয় না।"
@@ -7011,10 +7024,6 @@ msgstr "কোনো কিছুই একটি ভূমিকাকে চ�
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing on this day."
 msgstr "এই দিনে কিছুই না।"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Nothing saved yet"
-msgstr "এখনও কিছু সংরক্ষিত হয়নি"
 
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing scheduled yet"
@@ -7108,10 +7117,6 @@ msgstr "সপ্তাহে সর্বোচ্চ অফিস দিন"
 msgid "Office days are unknown."
 msgstr "অফিসে যাওয়ার দিন জানা নেই।"
 
-#: src/features/career/today.tsx
-msgid "Office days not stated"
-msgstr "অফিস দিনের উল্লেখ নেই"
-
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Office days per week"
@@ -7138,8 +7143,8 @@ msgid "On. Visitors need the link and password to see your web page."
 msgstr "চালু। আপনার ওয়েব পৃষ্ঠা দেখতে দর্শকদের লিংক ও পাসওয়ার্ড দুটোই লাগবে।"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "Once a round is scheduled, Prepare builds a timed plan, your opening and the questions to ask."
-msgstr "একটি রাউন্ড নির্ধারিত হলে, প্রস্তুতি একটি সময় ধরে পরিকল্পনা, আপনার সূচনা বক্তব্য এবং জিজ্ঞাসা করার প্রশ্নগুলো তৈরি করে।"
+msgid "Once a round is scheduled, Interview prep builds a timed plan, your opening and the questions to ask."
+msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Once you've sent a few applications, this shows how far they get and how quickly people reply."
@@ -7285,10 +7290,6 @@ msgstr "এক্সপোর্ট করা ফাইলটি খুলে �
 #: src/features/documents/import-file.ts
 msgid "Open the file in Word and save it as .docx first."
 msgstr "ফাইলটি Word এ খুলুন এবং প্রথমে এটিকে .docx হিসাবে সংরক্ষণ করুন৷"
-
-#: src/features/applications-board/board-screen.tsx
-msgid "Open the list"
-msgstr "তালিকা খুলুন"
 
 #: src/features/career/today.tsx
 msgid "Open the schedule"
@@ -7506,9 +7507,18 @@ msgstr "পাসওয়ার্ডগুলো মিলছে না।"
 msgid "Past conversations"
 msgstr "অতীত কথোপকথন"
 
+#: src/features/documents/new-document.tsx
+msgid "Paste a job link or posting to track it in Applications."
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Paste a job link or posting, then check the role and company. Nothing is saved until you choose Save job."
 msgstr "একটি কাজের লিঙ্ক বা চাকরির বিজ্ঞাপন পেস্ট করুন, তারপর ভূমিকা এবং কোম্পানি চেক করুন। আপনি চাকরি সংরক্ষণ না করা পর্যন্ত কিছুই সংরক্ষিত হয় না।"
+
+#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Paste a job link. We'll save the posting so Check, the assistant and your letter can use it."
+msgstr "একটি কাজের লিঙ্ক পেস্ট করুন। আমরা চাকরির পোস্টিং সংরক্ষণ করব যাতে চেক, সহকারী এবং আপনার চিঠি এটি ব্যবহার করতে পারে।"
 
 #: src/features/check/job-match.tsx
 msgid "Paste a job posting"
@@ -7744,14 +7754,13 @@ msgstr ""
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Practice"
 msgstr "অনুশীলন"
 
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "অনুশীলন"
@@ -7795,12 +7804,6 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Preferences"
 msgstr "পছন্দসমূহ"
-
-#: src/features/career/schedule-sheet.tsx
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
-msgid "Prepare"
-msgstr "প্রস্তুতি"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Prepare a briefing"
@@ -9024,10 +9027,6 @@ msgstr "বেতন"
 msgid "Salary not detected"
 msgstr ""
 
-#: src/features/career/today.tsx
-msgid "Salary not listed"
-msgstr "বেতনের উল্লেখ নেই"
-
 #: src/features/applications/add-sheet.tsx
 msgid "Salary range"
 msgstr "বেতনের পরিসর"
@@ -9046,16 +9045,17 @@ msgstr "নমুনা জীবনবৃত্তান্ত"
 msgid "Save"
 msgstr "সংরক্ষণ করুন"
 
+#: src/features/applications-board/board-screen.tsx
 #: src/features/applications-board/views.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
+#: src/features/documents/new-document.tsx
 msgid "Save a job"
 msgstr "একটি কাজ সংরক্ষণ করুন"
 
-#: src/features/applications-board/board-screen.tsx
-#: src/features/applications/list-screen.tsx
-msgid "Save a job link, paste a posting, or fill in the details manually."
-msgstr "একটি চাকরির লিঙ্ক সংরক্ষণ করুন, একটি চাকরির বিজ্ঞাপন পেস্ট করুন বা ম্যানুয়ালি বিশদগুলি পূরণ করুন।"
+#: src/features/documents/new-document.tsx
+msgid "Save a job instead"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
@@ -9097,7 +9097,9 @@ msgstr ""
 msgid "Save interview"
 msgstr "ইন্টারভিউ সংরক্ষণ করুন"
 
+#: src/features/applications-board/insights-screen.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/search/search-screen.tsx
 msgid "Save job"
 msgstr "চাকরি বাঁচান"
 
@@ -9176,12 +9178,6 @@ msgstr "আপনারটি নতুন নথি হিসেবে সং�
 msgid "Saved"
 msgstr "সংরক্ষিত"
 
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
-msgctxt "Application workspace tab: earlier results kept for this job"
-msgid "Saved"
-msgstr "সংরক্ষিত"
-
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "গল্প সংরক্ষিত: {title}"
@@ -9197,10 +9193,6 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 msgid "Saved description"
 msgstr "সংরক্ষিত বিবরণ"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Saved items for {company}, newest first."
-msgstr "{company}-এর জন্য সংরক্ষিত আইটেম, নতুনগুলো আগে।"
 
 #: src/features/settings/application-profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
@@ -9219,8 +9211,8 @@ msgid "Saved to Knowledge, private to this application."
 msgstr "জ্ঞানভান্ডারে সংরক্ষিত হয়েছে, শুধু এই আবেদনের জন্য।"
 
 #: src/features/workspace/tabs/practise.tsx
-msgid "Saved to Saved · Practice"
-msgstr "সংরক্ষিত ট্যাবে সংরক্ষিত হয়েছে · অনুশীলন"
+msgid "Saved to Library · Practice"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -9599,11 +9591,6 @@ msgstr "শেয়ার করুন"
 msgid "Share calendar event (.ics)"
 msgstr "ক্যালেন্ডার ইভেন্ট শেয়ার করুন (.ics)"
 
-#. placeholder {0}: provider.label
-#: src/api/ai-consent.ts
-msgid "Share data with {0}?"
-msgstr "{0} এর সাথে ডেটা শেয়ার করবেন?"
-
 #: src/api/ai-consent.ts
 msgid "Share data with {label}?"
 msgstr ""
@@ -9678,6 +9665,10 @@ msgstr "পৃষ্ঠায় {title} দেখান"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "সব দেখান"
+
+#: src/features/career/facts.tsx
+msgid "Show all types"
+msgstr "সব ধরন দেখান"
 
 #: src/features/applications/list-screen.tsx
 msgid "Show closed"
@@ -11092,8 +11083,8 @@ msgid "This saved description is clipped or incomplete. Review before preparing 
 msgstr "এই সংরক্ষিত বিবরণ ক্লিপ বা অসম্পূর্ণ. নথি প্রস্তুত করার আগে পর্যালোচনা করুন।"
 
 #: src/features/workspace/shell.tsx
-msgid "This saved version belongs to a different tab. Open it from Saved."
-msgstr "এই সংরক্ষিত সংস্করণটি অন্য একটি ট্যাবের। সংরক্ষিত ট্যাব থেকে এটি খুলুন।"
+msgid "This saved version belongs to a different tab. Open it from Library."
+msgstr ""
 
 #: src/features/workspace/shell.tsx
 msgid "This saved version couldn't be loaded."
@@ -11257,6 +11248,11 @@ msgstr "আবেদনে ট্র্যাক করুন"
 msgid "Track selected"
 msgstr ""
 
+#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Track your first job"
+msgstr "আপনার প্রথম কাজ ট্র্যাক"
+
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design-presets.ts
 msgid "Traditional"
@@ -11339,6 +11335,10 @@ msgstr "আবার চেষ্টা করুন, অথবা অ্যা�
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "অন্য অনুসন্ধান চেষ্টা করুন বা আপনার ফিল্টার সাফ করুন."
+
+#: src/features/career/facts.tsx
+msgid "Try another word or type."
+msgstr ""
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -11766,10 +11766,6 @@ msgstr "সেটিংস-এ নির্ধারিত ওয়েব অ�
 msgid "Uses web search set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today; applications and documents are never created for you."
 msgstr ""
 
-#: src/features/career/schedule-sheet.tsx
-msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
-msgstr "সেটিংস-এ নির্ধারিত ওয়েব অনুসন্ধান ব্যবহার করে। ফলাফল আজ-এ অপেক্ষা করে। আপনার হয়ে কখনও আবেদন বা নথি তৈরি করা হয় না।"
-
 #: src/features/share/web-page.tsx
 msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
 msgstr "আপনার জীবনবৃত্তান্তের টেমপ্লেট ও ডিজাইন ব্যবহার করে, এবং যেকোনো স্ক্রিনে মানিয়ে যায়। ডিজাইনে এগুলো পরিবর্তন করুন।"
@@ -12194,8 +12190,8 @@ msgid "Write numbers as digits"
 msgstr "সংখ্যাগুলো অঙ্কে লিখুন"
 
 #: src/features/career/stories.tsx
-msgid "Write one about something you did, in five parts."
-msgstr "আপনার করা কোনও কাজ নিয়ে পাঁচ ভাগে একটি গল্প লিখুন।"
+msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
+msgstr "আপনার করা কোনো কাজ নিয়ে পাঁচ ভাগে একটি গল্প লিখুন। সমর্থনে প্রমাণ দিতে না পারা পর্যন্ত ফলাফল ও প্রতিফলন ফাঁকা রাখুন।"
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12403,11 +12399,6 @@ msgstr "আপনার ফোকাস"
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "আপনার শিরোনামগুলো মূল টেক্সটের মতোই দেখাচ্ছে।"
-
-#: src/features/applications-board/board-screen.tsx
-#: src/features/applications/list-screen.tsx
-msgid "Your job search starts here"
-msgstr "আপনার কাজের সন্ধান এখানে শুরু হয়"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "your Knowledge"

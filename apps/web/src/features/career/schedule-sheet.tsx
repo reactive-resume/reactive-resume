@@ -280,7 +280,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 							onChange={(kind) => set({ kind: kind as Kind })}
 							options={[
 								{ value: "discovery", label: t`Find roles` },
-								{ value: "prepare", label: t`Prepare` },
+								{ value: "prepare", label: t`Interview prep` },
 								{ value: "follow-up", label: t`Remind me` },
 							]}
 						/>

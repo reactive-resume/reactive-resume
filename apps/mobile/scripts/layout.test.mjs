@@ -51,6 +51,8 @@ const mocks = {
 	"react-native-keyboard-controller": { KeyboardAwareScrollView: "ScrollView", useKeyboardState: () => false },
 	"react-native-reanimated": { useAnimatedReaction: (prepare, react) => effects.push(() => react(prepare(), null)) },
 	"react-native-worklets": { scheduleOnRN: (run, ...args) => run(...args) },
+	"./use-new-action": { useNewAction: () => () => router.push(routes.new()) },
+	"./workspace-tab-label": { workspaceTabLabel: (tab) => tab },
 	"@/routes": { routes },
 };
 let keyboardHeight = 0;
@@ -860,6 +862,17 @@ assert.equal(
 console.log(
 	"PASS safe areas, measured Screen viewport, Duo rail navigation/targets, tablet sidebar, responsive editor modes, history split, measured PDF pages, large-text chrome/rows/navigation, workspace selection and overflow",
 );
+
+// Loading, errors and signed-out states stay unframed; only real empty states opt into the dashed card.
+const plainEmpty = render(EmptyState, { title: "Loading…" });
+assert.equal(plainEmpty.props.style.borderWidth, undefined, "default EmptyState stays unframed");
+const cardEmpty = render(EmptyState, { title: "Track your first job", variant: "card" });
+assert.equal(cardEmpty.props.style.borderStyle, "dashed", "empty states opt into the dashed card");
+const compactEmpty = render(EmptyState, { title: "No facts yet", message: "Add one above.", variant: "compact" });
+const compactTitle = nodes(compactEmpty).find(
+	(node) => node.type === "Text" && node.props.children[0] === "No facts yet",
+);
+assert.equal(compactTitle.props.color, "ink", "compact title is not lighter than its body");
 
 // Long empty-state headings need bounded width before Android measures wrapped text.
 for (const title of ["All your applications are closed", "Your job search starts here"]) {

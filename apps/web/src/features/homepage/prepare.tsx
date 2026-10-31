@@ -510,26 +510,30 @@ export function Prepare() {
 	const time = useTime(INTERVIEW_AT);
 	const tabsRef = useRef<HTMLDivElement>(null);
 	const prepare = t`Prepare`;
+	const interviewPrep = t({ message: "Interview prep", context: "Application workspace tab: plan for an interview" });
 
-	// The product's tabs in its own order; Apply and Saved aren't part of this day, so they're labels, not buttons.
+	// The product's tabs in its own order; Apply and Library aren't part of this day, so they're labels, not buttons.
 	const tabs: { label: string; step?: number; badge?: ReactNode }[] = [
 		{
 			label: t({ message: "Fit", context: "Application workspace tab: how well a job fits your experience" }),
 			step: STEP.fit,
 		},
 		{ label: t`Apply` },
-		{ label: prepare, step: STEP.plan, badge: step >= STEP.debrief ? null : <Countdown /> },
-		{ label: t`Practice`, step: STEP.practise },
+		{ label: interviewPrep, step: STEP.plan, badge: step >= STEP.debrief ? null : <Countdown /> },
+		{
+			label: t({ message: "Practice", context: "Application workspace tab: rehearse interview answers" }),
+			step: STEP.practise,
+		},
 		{ label: t`Debrief`, step: STEP.debrief },
 		{ label: t`Messages`, step: STEP.messages, badge: step > STEP.messages ? i18n.number(1) : null },
-		{ label: t({ message: "Saved", context: "Application workspace tab: earlier results kept for this job" }) },
+		{ label: t({ message: "Library", context: "Application workspace tab: earlier results kept for this job" }) },
 	];
 	// The interview itself has no tab: Practise stays in front beneath the pause.
 	const frontStep = step === STEP.interview ? STEP.practise : step;
 	const dialLabels: Record<number, string> = {
 		[STEP.fit]: t({ message: "Fit", context: "Application workspace tab: how well a job fits your experience" }),
-		[STEP.plan]: prepare,
-		[STEP.practise]: t`Practice`,
+		[STEP.plan]: interviewPrep,
+		[STEP.practise]: t({ message: "Practice", context: "Application workspace tab: rehearse interview answers" }),
 		[STEP.interview]: t`Interview`,
 		[STEP.debrief]: t`Debrief`,
 	};

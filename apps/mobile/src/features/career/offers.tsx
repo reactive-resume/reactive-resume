@@ -38,6 +38,7 @@ export function OffersScreen() {
 			<LoadState query={profile} />
 			{!query.isError && !query.isPending && !offers.length ? (
 				<EmptyState
+					variant="card"
 					title={t`No offers to compare yet`}
 					message={t`Add offer terms manually, or use optional AI extraction in Messages.`}
 				/>
@@ -82,6 +83,7 @@ export function OffersScreen() {
 									<OfferCard offer={offer} other={side === 0 ? b : a} profile={profile.data} />
 								) : (
 									<EmptyState
+										variant="card"
 										title={t`Save another offer to compare`}
 										message={t`Add offer terms manually, or use optional AI extraction in Messages.`}
 									/>

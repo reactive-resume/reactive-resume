@@ -16,6 +16,7 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
+import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -101,15 +102,11 @@ export function OffersPage({ a, b }: OffersPageProps) {
 
 	if (!offers?.length)
 		return (
-			<div className="grid justify-items-center gap-2 rounded-xl border border-dashed border-line-2 p-7 text-center">
-				<h2 className="font-display text-[22px] leading-7 font-medium">
-					<Trans>No offers to compare yet</Trans>
-				</h2>
-				<p className="max-w-[340px] text-sm text-ink-2">
-					<Trans>Add offer terms manually, or use optional AI extraction in Messages.</Trans>
-				</p>
-				<OfferEntry primary />
-			</div>
+			<EmptyState
+				title={<Trans>No offers to compare yet</Trans>}
+				description={<Trans>Add offer terms manually, or use optional AI extraction in Messages.</Trans>}
+				action={<OfferEntry primary />}
+			/>
 		);
 
 	const left = offers.find((offer) => offer.id === a);

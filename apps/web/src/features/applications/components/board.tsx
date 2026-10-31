@@ -119,7 +119,7 @@ export function ApplicationBoard({ applications, showClosed, onOpen }: BoardProp
 				<DialogContent className="sm:max-w-sm">
 					<DialogHeader>
 						<DialogTitle>
-							<Trans>Close application</Trans>
+							<Trans>Mark as closed</Trans>
 						</DialogTitle>
 						<DialogDescription>
 							{closing?.application.role} · {closing?.application.company}
