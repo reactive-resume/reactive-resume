@@ -167,8 +167,9 @@ type AddressesSectionProps = { origin: string; username: string; setting: ShareS
 function AddressesSection({ origin, username, setting }: AddressesSectionProps) {
 	const resume = useCurrentResume();
 	const { flags } = useRouteContext({ strict: false });
-	const { data: resumes } = useQuery(orpc.resume.list.queryOptions());
+	const { data: resumes, isPending, isError } = useQuery(orpc.resume.list.queryOptions());
 	const current = resumes?.find((item) => item.isPrimary && item.id !== resume.id);
+	const listState = isPending ? "pending" : isError ? "error" : "ready";
 	const shortLink = publicResumeUrl(origin, { username, slug: resume.slug, isPrimary: true });
 	// The short link opens the primary resume only while it's published; at any other time it would copy a dead link.
 	const shortLinkOpens = resume.isPrimary ? (resume.isPublic ?? false) : (current?.isPublic ?? false);
@@ -180,7 +181,7 @@ function AddressesSection({ origin, username, setting }: AddressesSectionProps) 
 				<h3 id="share-addresses-title" className="text-sm font-semibold">
 					<Trans>Short link and domain</Trans>
 				</h3>
-				<PrimaryRow setting={setting} current={current} />
+				<PrimaryRow setting={setting} current={current} listState={listState} />
 				<div className="flex items-center gap-1.5">
 					<span className="min-w-0 flex-1 truncate font-mono text-[13px] font-medium text-ink-2" dir="ltr">
 						{shortLink.replace(/^https?:\/\//, "")}
@@ -198,13 +199,15 @@ type ShareSettingProps = { setting: ShareSetting };
 type PrimaryRowProps = ShareSettingProps & {
 	/** The account's other primary resume, when another one holds the role. */
 	current: { name: string; isPublic: boolean } | undefined;
+	/** Whether the resume list that finds the other primary has loaded. */
+	listState: "pending" | "error" | "ready";
 };
 
 /**
  * The primary resume opens at the account's short link and custom domain. Only a published resume can be primary;
  * publishing the account's first web page makes it primary.
  */
-function PrimaryRow({ setting: { update, isPending }, current }: PrimaryRowProps) {
+function PrimaryRow({ setting: { update, isPending }, current, listState }: PrimaryRowProps) {
 	const resume = useCurrentResume();
 	const confirm = useConfirm();
 	const isPublic = resume.isPublic ?? false;
@@ -231,13 +234,17 @@ function PrimaryRow({ setting: { update, isPending }, current }: PrimaryRowProps
 					? isPublic
 						? t`Your short link and custom domain open this resume.`
 						: t`Your short link and custom domain say this resume isn't shared until you publish it again.`
-					: current
-						? current.isPublic
-							? t`Your short link and custom domain open “${current.name}”.`
-							: t`Your short link and custom domain point to “${current.name}”, which isn't published.`
-						: isPublic
-							? t`Turn this on to open this resume at your short link and custom domain.`
-							: t`Publish this resume to open it at your short link and custom domain.`
+					: listState === "pending"
+						? t`Checking which resume opens your short link…`
+						: listState === "error"
+							? t`Couldn't check which resume opens your short link. Reload the page and try again.`
+							: current
+								? current.isPublic
+									? t`Your short link and custom domain open “${current.name}”.`
+									: t`Your short link and custom domain point to “${current.name}”, which isn't published.`
+								: isPublic
+									? t`Turn this on to open this resume at your short link and custom domain.`
+									: t`Publish this resume to open it at your short link and custom domain. If another resume holds Primary, turn it on for this one instead.`
 			}
 			className="items-start py-0"
 		/>

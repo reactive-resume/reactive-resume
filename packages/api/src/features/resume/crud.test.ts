@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { createRouterClient, ORPCError } from "@orpc/server";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
@@ -60,6 +61,22 @@ describe("resume write route validation", () => {
 		expect(mocks.create).not.toHaveBeenCalled();
 		expect(mocks.update).not.toHaveBeenCalled();
 		expect(mocks.snapshot).not.toHaveBeenCalled();
+	});
+
+	it("declares RESUME_PRIMARY_CONFLICT in the generated update contract", async () => {
+		type CodeSchema = { properties?: { code?: { const?: string } } };
+		const spec = JSON.parse(await readFile(new URL("../../../../../docs/spec.json", import.meta.url), "utf8")) as {
+			paths: {
+				"/resumes/{id}": {
+					put: { responses: { "409": { content: { "application/json": { schema: { oneOf: CodeSchema[] } } } } } };
+				};
+			};
+		};
+		const codes = spec.paths["/resumes/{id}"].put.responses["409"].content["application/json"].schema.oneOf
+			.map((schema) => schema.properties?.code?.const)
+			.filter(Boolean);
+
+		expect(codes).toContain("RESUME_PRIMARY_CONFLICT");
 	});
 
 	it.each([false, true])("puts the account holder's name on a new resume (sample data: %s)", async (withSampleData) => {

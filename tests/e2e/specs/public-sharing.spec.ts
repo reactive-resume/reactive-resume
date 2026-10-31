@@ -60,3 +60,24 @@ test("publishing the first resume enables a working short link", async ({ browse
 		await visitor.close();
 	}
 });
+
+test("a non-primary resume can copy the short link another published primary serves", async ({
+	authPage: page,
+}, testInfo) => {
+	const primaryName = await createSampleResumeFromDashboard(page, testInfo);
+	await openSidebarSection(page, "Sharing");
+	await page.getByRole("button", { name: "Publish", exact: true }).click();
+	await expect(page.getByRole("switch", { name: "Primary resume", exact: true })).toBeChecked();
+
+	const created = await page.request.post("/api/openapi/resumes", {
+		data: { name: "Second private resume", tags: [] },
+	});
+	expect(created.ok()).toBe(true);
+	const secondId = (await created.json()) as string;
+	await page.goto(`/builder/${secondId}`);
+	await openSidebarSection(page, "Sharing");
+
+	const addresses = page.getByRole("region", { name: "Short link and domain" });
+	await expect(addresses.getByRole("button", { name: "Copy", exact: true })).toBeEnabled();
+	await expect(addresses).toContainText(`open “${primaryName}”`);
+});

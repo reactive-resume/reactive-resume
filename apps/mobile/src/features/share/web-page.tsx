@@ -42,6 +42,7 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 	const [confirmation, setConfirmation] = useState("");
 	const disabled = resume.isLocked || offline || operations.busy;
 	const otherPrimary = list.data?.find((item) => item.isPrimary && item.id !== resume.id);
+	const listState = offline ? "offline" : list.isPending ? "pending" : list.isError ? "error" : "ready";
 	const searchBlocked = !resume.isPublic || resume.hasPassword;
 	const shortLink = username ? publicResumeUrl(origin, { username, slug: resume.slug, isPrimary: true }) : undefined;
 	// The short link opens the primary resume only while it's published; at any other time it would copy a dead link.
@@ -88,13 +89,17 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 							? resume.isPublic
 								? t`Your short link and custom domain open this resume.`
 								: t`Your short link and custom domain say this resume isn't shared until you publish it again.`
-							: otherPrimary
-								? otherPrimary.isPublic
-									? t`Your short link and custom domain open “${otherPrimary.name}”.`
-									: t`Your short link and custom domain point to “${otherPrimary.name}”, which isn't published.`
-								: resume.isPublic
-									? t`Turn this on to open this resume at your short link and custom domain.`
-									: t`Publish this resume to open it at your short link and custom domain.`
+							: listState === "pending"
+								? t`Checking which resume opens your short link…`
+								: listState === "error"
+									? t`Couldn't check which resume opens your short link. Reopen Share to try again.`
+									: otherPrimary
+										? otherPrimary.isPublic
+											? t`Your short link and custom domain open “${otherPrimary.name}”.`
+											: t`Your short link and custom domain point to “${otherPrimary.name}”, which isn't published.`
+										: resume.isPublic
+											? t`Turn this on to open this resume at your short link and custom domain.`
+											: t`Publish this resume to open it at your short link and custom domain. If another resume holds Primary, turn it on for this one instead.`
 					}
 					trailing={
 						<Switch

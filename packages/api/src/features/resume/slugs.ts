@@ -6,7 +6,7 @@ import { and, desc, eq, gt, inArray, isNull, like, ne, or, sql } from "drizzle-o
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { isValidSlug, MAX_SLUG_LENGTH } from "@reactive-resume/schema/resume/slug";
-import { slugify } from "@reactive-resume/utils/slug";
+import { slugifyStem } from "@reactive-resume/utils/slug";
 import { ownerIsNotBanned } from "./access-policy";
 
 // After a rename the old address keeps working this long.
@@ -32,7 +32,7 @@ export const DEFAULT_SLUG_STEM = "resume";
  * counts as free.
  */
 export async function findFreeSlug(client: DbOrTx, userId: string, name: string, resumeId?: string) {
-	const rawStem = slugify(name) || DEFAULT_SLUG_STEM;
+	const rawStem = slugifyStem(name) || DEFAULT_SLUG_STEM;
 	const stem = rawStem.slice(0, MAX_STEM_LENGTH).replace(/-+$/, "") || DEFAULT_SLUG_STEM;
 	const named = (column: typeof schema.resume.slug | typeof schema.resumeSlugRedirect.slug) =>
 		or(eq(column, stem), like(column, `${stem}-%`));
@@ -99,7 +99,7 @@ export async function checkSlug(input: { userId: string; resumeId: string; slug:
 	if (holder?.id === input.resumeId) return { status: "current" as const };
 
 	if (!isValidSlug(input.slug)) {
-		const rawSuggestion = slugify(input.slug);
+		const rawSuggestion = slugifyStem(input.slug);
 		const candidate = rawSuggestion
 			? rawSuggestion.slice(0, MAX_SLUG_LENGTH).replace(/-+$/, "") || undefined
 			: undefined;
@@ -110,8 +110,9 @@ export async function checkSlug(input: { userId: string; resumeId: string; slug:
 				.select({ id: schema.resume.id })
 				.from(schema.resume)
 				.where(and(eq(schema.resume.userId, input.userId), eq(schema.resume.slug, suggestion)));
-			if (candidateHolder && candidateHolder.id !== input.resumeId) {
-				suggestion = await findFreeSlug(db, input.userId, suggestion, input.resumeId);
+			if (candidateHolder) {
+				// Suggestions never offer the requesting resume's own address as the alternative.
+				suggestion = await findFreeSlug(db, input.userId, suggestion);
 			}
 		}
 
@@ -123,7 +124,7 @@ export async function checkSlug(input: { userId: string; resumeId: string; slug:
 	return {
 		status: "taken" as const,
 		takenBy: holder.name,
-		suggestion: await findFreeSlug(db, input.userId, input.slug, input.resumeId),
+		suggestion: await findFreeSlug(db, input.userId, input.slug),
 	};
 }
 

@@ -26,8 +26,9 @@ async function publishOwnerPrimary(owner: APIRequestContext) {
 	const id = (await created.json()) as string;
 	const published = await owner.put(`/api/openapi/resumes/${id}`, { data: { isPublic: true } });
 	expect(published.ok()).toBe(true);
-	expect(await published.json()).toMatchObject({ isPrimary: true });
-	return id;
+	const resume = (await published.json()) as { isPrimary: boolean; slug: string };
+	expect(resume).toMatchObject({ isPrimary: true });
+	return { id, slug: resume.slug };
 }
 
 async function signInGuest(browser: Browser, baseURL: string | undefined, origin: string) {
@@ -56,7 +57,7 @@ async function signInToOwnerAndAssertMoved(
 		account: E2EAccount;
 		origin: string;
 		owner: APIRequestContext;
-		ownerPrimaryId: string;
+		ownerPrimary: { id: string; slug: string };
 		guestResumeId: string;
 	},
 ) {
@@ -74,9 +75,11 @@ async function signInToOwnerAndAssertMoved(
 		| { items: { id: string; isPrimary: boolean }[] };
 	const items = Array.isArray(list) ? list : list.items;
 	expect(items.find((resume) => resume.id === input.guestResumeId)).toMatchObject({ isPrimary: false });
-	expect(items.filter((resume) => resume.isPrimary)).toEqual([expect.objectContaining({ id: input.ownerPrimaryId })]);
-	// The short link still opens the owner's primary page.
-	expect((await context.request.get(`/${input.account.username}`)).status()).toBe(200);
+	expect(items.filter((resume) => resume.isPrimary)).toEqual([expect.objectContaining({ id: input.ownerPrimary.id })]);
+	// The short link serves the owner's primary page, not merely a 200 from some other resume.
+	const shortLink = await context.request.get(`/${input.account.username}`);
+	expect(shortLink.status()).toBe(200);
+	expect(await shortLink.text()).toContain(`/${input.account.username}/${input.ownerPrimary.slug}`);
 }
 
 test("a guest who published can sign in to an existing account that already has a primary resume", async ({
@@ -86,7 +89,7 @@ test("a guest who published can sign in to an existing account that already has 
 	baseURL,
 }) => {
 	const origin = String(baseURL);
-	const ownerPrimaryId = await publishOwnerPrimary(authPage.request);
+	const ownerPrimary = await publishOwnerPrimary(authPage.request);
 	const guest = await signInGuest(browser, baseURL, origin);
 	try {
 		const { id, published } = await publishGuestResume(guest);
@@ -96,7 +99,7 @@ test("a guest who published can sign in to an existing account that already has 
 			account,
 			origin,
 			owner: authPage.request,
-			ownerPrimaryId,
+			ownerPrimary,
 			guestResumeId: id,
 		});
 	} finally {
@@ -111,7 +114,7 @@ test("a guest who declined primary can sign in to an existing account that alrea
 	baseURL,
 }) => {
 	const origin = String(baseURL);
-	const ownerPrimaryId = await publishOwnerPrimary(authPage.request);
+	const ownerPrimary = await publishOwnerPrimary(authPage.request);
 	const guest = await signInGuest(browser, baseURL, origin);
 	try {
 		const { id, published } = await publishGuestResume(guest, true);
@@ -120,7 +123,7 @@ test("a guest who declined primary can sign in to an existing account that alrea
 			account,
 			origin,
 			owner: authPage.request,
-			ownerPrimaryId,
+			ownerPrimary,
 			guestResumeId: id,
 		});
 	} finally {

@@ -138,7 +138,7 @@ export const crudRouter = {
 			operationId: "updateResume",
 			summary: "Update a resume",
 			description:
-				"Updates one or more fields of a resume identified by its ID. All fields are optional; only provided fields will be updated. A generated slug follows a new name while the resume has never been published; publishing it or setting a slug keeps the slug from then on. Publishing a resume (isPublic true) also makes it the primary resume when the account has none, unless isPrimary is given. When expectedUpdatedAt is provided, a stale version returns RESUME_VERSION_CONFLICT (409) with data.updatedAt. Locked resumes cannot be updated. Requires authentication.",
+				"Updates one or more fields of a resume identified by its ID. All fields are optional; only provided fields will be updated. A generated slug follows a new name while the resume has never been published; publishing it or setting a slug keeps the slug from then on. Publishing a resume that was not public (isPublic true on a private resume) also makes it the primary resume when the account has none, unless isPrimary is given. When expectedUpdatedAt is provided, a stale version returns RESUME_VERSION_CONFLICT (409) with data.updatedAt. Locked resumes cannot be updated. Requires authentication.",
 			successDescription: "The updated resume with its full data.",
 		})
 		.input(resumeDto.update.input)
@@ -152,6 +152,10 @@ export const crudRouter = {
 			RESUME_LOCKED: { status: 403, message: "Unlock the resume first." },
 			...slugErrors,
 			RESUME_NOT_PUBLIC: { status: 400, message: "Publish the resume before making it primary." },
+			RESUME_PRIMARY_CONFLICT: {
+				status: 409,
+				message: "Another resume became the primary one at the same time. Try again.",
+			},
 		})
 		.handler(({ context, input }) =>
 			resumeService.update({

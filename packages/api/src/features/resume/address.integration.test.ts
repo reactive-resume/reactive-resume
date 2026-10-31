@@ -30,6 +30,7 @@ describe.skipIf(!databaseUrl)("resume addresses and the primary resume", () => {
 	let resumes: typeof import("./service").resumeService;
 	let documents: typeof import("../documents/service").documentsService;
 	let findResume: typeof import("./slugs").findResume;
+	let checkSlug: typeof import("./slugs").checkSlug;
 	let admin: Pool;
 	let pool: Pool;
 	const schemaName = `resume_address_${randomUUID().replaceAll("-", "")}`;
@@ -61,6 +62,7 @@ describe.skipIf(!databaseUrl)("resume addresses and the primary resume", () => {
 		resumes = (await import("./service")).resumeService;
 		documents = (await import("../documents/service")).documentsService;
 		findResume = (await import("./slugs")).findResume;
+		checkSlug = (await import("./slugs")).checkSlug;
 	}, 30_000);
 
 	afterAll(async () => {
@@ -134,6 +136,30 @@ describe.skipIf(!databaseUrl)("resume addresses and the primary resume", () => {
 			const arabic = await create("سيرة ذاتية بدون عنوان", { autoName: true });
 			expect((await read(english)).slug).toBe("resume");
 			expect((await read(arabic)).slug).toBe("resume-2");
+		});
+
+		it("keeps the neutral address when a headline has no writable characters", async () => {
+			const id = await create("Untitled resume", { autoName: true });
+			await expect(withHeadline(id, "计算机科学学生")).resolves.toMatchObject({
+				name: "计算机科学学生",
+				slug: "resume",
+			});
+			await expect(withHeadline(id, "🚀🚀")).resolves.toMatchObject({ name: "🚀🚀", slug: "resume" });
+		});
+
+		it("suggests another free address, never the requesting resume's own current one", async () => {
+			const mine = await create("Mine", { slug: "foo-2" });
+			await create("Holder", { slug: "foo" });
+			await expect(checkSlug({ userId: "priya", resumeId: mine, slug: "foo" })).resolves.toEqual({
+				status: "taken",
+				takenBy: "Holder",
+				suggestion: "foo-3",
+			});
+			// An invalid spelling that normalizes to the requesting resume's own address also moves past it.
+			await expect(checkSlug({ userId: "priya", resumeId: mine, slug: "Foo 2" })).resolves.toMatchObject({
+				status: "invalid",
+				suggestion: "foo-2-2",
+			});
 		});
 
 		it("names the address after the headline, then keeps it once published, and the address opens the page", async () => {
