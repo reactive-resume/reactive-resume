@@ -868,6 +868,15 @@ export const resumeService = {
 					throw new ORPCError("RESUME_SLUG_ALREADY_EXISTS", { status: 400 });
 				}
 
+				// A concurrent first publish or explicit Make primary took the role as this one tried to. Nothing is
+				// written; the owner can act again (the retry then takes the role over from that resume).
+				if (uniqueConstraint(error) === "resume_primary_unique") {
+					throw new ORPCError("RESUME_PRIMARY_CONFLICT", {
+						status: 409,
+						message: "Another resume became the primary one at the same time. Try again.",
+					});
+				}
+
 				console.error("Couldn't update the resume. Try again.:", error);
 				throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Couldn't update the resume. Try again." });
 			});

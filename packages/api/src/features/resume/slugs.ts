@@ -36,29 +36,30 @@ export async function findFreeSlug(client: DbOrTx, userId: string, name: string,
 	const stem = rawStem.slice(0, MAX_STEM_LENGTH).replace(/-+$/, "") || DEFAULT_SLUG_STEM;
 	const named = (column: typeof schema.resume.slug | typeof schema.resumeSlugRedirect.slug) =>
 		or(eq(column, stem), like(column, `${stem}-%`));
-	const [resumes, redirects] = await Promise.all([
-		client
-			.select({ slug: schema.resume.slug })
-			.from(schema.resume)
-			.where(
-				and(
-					eq(schema.resume.userId, userId),
-					named(schema.resume.slug),
-					resumeId ? ne(schema.resume.id, resumeId) : undefined,
-				),
+	// Sequential, resumes before redirects: each statement takes a later snapshot, so a redirect that a concurrent
+	// address change commits between the two reads is seen. Parallel reads on different pool connections can make
+	// the redirect read miss it while the resume read already sees the freed address.
+	const resumes = await client
+		.select({ slug: schema.resume.slug })
+		.from(schema.resume)
+		.where(
+			and(
+				eq(schema.resume.userId, userId),
+				named(schema.resume.slug),
+				resumeId ? ne(schema.resume.id, resumeId) : undefined,
 			),
-		client
-			.select({ slug: schema.resumeSlugRedirect.slug })
-			.from(schema.resumeSlugRedirect)
-			.where(
-				and(
-					eq(schema.resumeSlugRedirect.userId, userId),
-					named(schema.resumeSlugRedirect.slug),
-					gt(schema.resumeSlugRedirect.expiresAt, sql`now()`),
-					resumeId ? ne(schema.resumeSlugRedirect.resumeId, resumeId) : undefined,
-				),
+		);
+	const redirects = await client
+		.select({ slug: schema.resumeSlugRedirect.slug })
+		.from(schema.resumeSlugRedirect)
+		.where(
+			and(
+				eq(schema.resumeSlugRedirect.userId, userId),
+				named(schema.resumeSlugRedirect.slug),
+				gt(schema.resumeSlugRedirect.expiresAt, sql`now()`),
+				resumeId ? ne(schema.resumeSlugRedirect.resumeId, resumeId) : undefined,
 			),
-	]);
+		);
 
 	return pickFreeSlug(stem, new Set([...resumes, ...redirects].map((row) => row.slug)));
 }

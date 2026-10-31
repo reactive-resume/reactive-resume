@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vite-plus/test";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as tables from "@reactive-resume/db/schema";
@@ -110,6 +110,18 @@ describe.skipIf(!databaseUrl)("resume addresses and the primary resume", () => {
 		}
 		throw new Error(`Expected ${count} address writes to wait on the held row.`);
 	};
+	// One statement is running and it is the one blocked by the holder: any concurrent unblocked read has finished.
+	const waitForOnlyBlockedStatement = async () => {
+		for (let attempt = 0; attempt < 400; attempt++) {
+			const { rows } = await admin.query<{ total: number; blocked: number }>(
+				"SELECT count(*)::int AS total, count(*) filter (where wait_event_type = 'Lock')::int AS blocked FROM pg_stat_activity WHERE application_name = $1 AND state = 'active'",
+				[schemaName],
+			);
+			if (rows[0]?.total === 1 && rows[0]?.blocked === 1) return;
+			await new Promise((resolve) => setTimeout(resolve, 10));
+		}
+		throw new Error("Expected only the blocked statement to remain active.");
+	};
 	const settle = <T>(write: Promise<T>) =>
 		write.then(
 			(value) => ({ ok: true as const, value }),
@@ -197,6 +209,37 @@ describe.skipIf(!databaseUrl)("resume addresses and the primary resume", () => {
 			// Another account's addresses don't count.
 			await resumes.create({ userId: "other", name: "Data analyst", tags: [], locale: "en-US" });
 			await expect(withHeadline(id, "Data analyst")).resolves.toMatchObject({ slug: "data-analyst" });
+		});
+
+		it("never takes an address that becomes another resume's old link as both change at once", async () => {
+			const mover = await create("Mover", { slug: "data-analyst" });
+			await publish(mover);
+			const { recordSlugChange } = await import("./slugs");
+			const holderPool = new Pool({ connectionString: databaseUrl, max: 1, options: `-c search_path=${schemaName}` });
+			const holderDb = drizzle({ client: holderPool, relations: tables.authRelations });
+			let created: ReturnType<typeof settle<string>> | undefined;
+			try {
+				await holderDb.transaction(async (tx) => {
+					// Hold the resume table so the generated-address reads run against one fixed point in time.
+					await tx.execute(sql.raw(`LOCK TABLE ${schemaName}.resume IN ACCESS EXCLUSIVE MODE`));
+					created = settle(create("Data analyst"));
+					// The redirect read, if it runs before the resume read, is now finished; the resume read is waiting.
+					await waitForOnlyBlockedStatement();
+					// The owner hand-changes the mover's address while the create is waiting.
+					await tx.update(tables.resume).set({ slug: "moved-on", autoSlug: false }).where(eq(tables.resume.id, mover));
+					await recordSlugChange(tx, { userId: "priya", resumeId: mover, from: "data-analyst", to: "moved-on" });
+				});
+			} finally {
+				await holderPool.end();
+			}
+			if (!created) throw new Error("The generated-address write did not start.");
+			const result = await created;
+			if (!result.ok) throw result.error;
+			// The new address must not shadow the mover's 30-day link.
+			expect((await read(result.value)).slug).toBe("data-analyst-2");
+			await publish(result.value);
+			expect(await opensAt({ slug: "data-analyst" })).toBe(mover);
+			expect(await opensAt({ slug: "data-analyst-2" })).toBe(result.value);
 		});
 
 		it.each(["publish", "choose"] as const)(
@@ -296,6 +339,43 @@ describe.skipIf(!databaseUrl)("resume addresses and the primary resume", () => {
 				.from(tables.resume)
 				.where(and(eq(tables.resume.userId, "priya"), eq(tables.resume.isPrimary, true)));
 			expect(rows).toHaveLength(1);
+		});
+
+		it("answers Make primary with a retryable conflict, not a 500, when a first publish claims at the same moment", async () => {
+			const chosen = await create("Chosen");
+			await publish(chosen, { isPrimary: false });
+			const claimed = await create("Claimed");
+			const holder = await admin.connect();
+			let explicit: ReturnType<typeof settle<unknown>> | undefined;
+			try {
+				await holder.query("BEGIN");
+				// Another first publish's exact conditional claim, not yet committed.
+				await holder.query(
+					`UPDATE ${schemaName}.resume SET is_primary = true, is_public = true WHERE id = $1 AND user_id = 'priya' AND NOT EXISTS (SELECT 1 FROM ${schemaName}.resume o WHERE o.user_id = 'priya' AND o.is_primary)`,
+					[claimed],
+				);
+				explicit = settle(resumes.update({ id: chosen, userId: "priya", isPrimary: true }));
+				await waitForLocks(1);
+				await holder.query("COMMIT");
+			} finally {
+				await holder.query("ROLLBACK").catch(() => {});
+				holder.release();
+			}
+
+			if (!explicit) throw new Error("The explicit primary write did not start.");
+			const result = await explicit;
+			expect(result.ok).toBe(false);
+			if (result.ok) throw new Error("Expected the explicit primary change to lose the unique-index race.");
+			expect(result.error).toMatchObject({ code: "RESUME_PRIMARY_CONFLICT", status: 409 });
+			// Nothing was written, so trying again takes the role from the resume that won.
+			await expect(resumes.update({ id: chosen, userId: "priya", isPrimary: true })).resolves.toMatchObject({
+				isPrimary: true,
+			});
+			const rows = await db()
+				.select({ id: tables.resume.id })
+				.from(tables.resume)
+				.where(and(eq(tables.resume.userId, "priya"), eq(tables.resume.isPrimary, true)));
+			expect(rows).toEqual([{ id: chosen }]);
 		});
 
 		it("doesn't count another account's primary, or touch another account's resume", async () => {
