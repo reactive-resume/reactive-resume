@@ -183,7 +183,7 @@ function ScheduleForm({
 					disabled={!!schedule || action.pending}
 					options={[
 						{ value: "discovery", label: t`Find roles` },
-						{ value: "prepare", label: t`Prepare` },
+						{ value: "prepare", label: t`Interview prep` },
 						{ value: "follow-up", label: t`Remind me` },
 					]}
 				/>

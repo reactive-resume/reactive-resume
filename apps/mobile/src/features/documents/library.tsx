@@ -594,6 +594,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 						</View>
 					) : documents.isError ? undefined : (
 						<EmptyState
+							variant="card"
 							icon={trashed ? "trash" : "file-text"}
 							title={
 								q || type !== "all" || tags.length || publicOnly || offset > 0

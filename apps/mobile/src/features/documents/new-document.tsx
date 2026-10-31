@@ -25,7 +25,14 @@ export function NewDocument() {
 	const router = useRouter();
 	const { t } = useLingui();
 	const { colors, space } = useTheme();
-	const params = useLocalSearchParams<{ step?: string; sourceResumeId?: string; applicationId?: string }>();
+	const params = useLocalSearchParams<{
+		context?: string;
+		step?: string;
+		sourceResumeId?: string;
+		applicationId?: string;
+	}>();
+	const jobFirst = params.context === "career" || params.context === "applications";
+	const openSaveJob = () => router.replace(routes.newJob());
 	const session = useSession();
 	const documents = useDocuments();
 	const refresh = useDocumentRefresh();
@@ -221,7 +228,7 @@ export function NewDocument() {
 		<Screen>
 			<Stack.Screen
 				options={{
-					title: t`New document`,
+					title: t`New`,
 					sheetGrabberVisible: !busy,
 					gestureEnabled: !busy,
 					headerBackVisible: !busy,
@@ -268,7 +275,19 @@ export function NewDocument() {
 						<>
 							{step === "choose" && (
 								<>
-									<Text variant="heading">{t`New document`}</Text>
+									<Text variant="heading">{t`New`}</Text>
+									{jobFirst && (
+										<Card>
+											<ListRow
+												title={t`Save a job`}
+												subtitle={t`Paste a job link or posting to track it in Applications.`}
+												leading="briefcase"
+												chevron
+												disabled={busy}
+												onPress={openSaveJob}
+											/>
+										</Card>
+									)}
 									<Card>
 										<ListRow
 											title={t`Import a resume`}
@@ -312,6 +331,15 @@ export function NewDocument() {
 										disabled={busy}
 										onPress={() => void create("sample")}
 									/>
+									{!jobFirst && (
+										<Button
+											label={t`Save a job instead`}
+											icon="briefcase"
+											variant="ghost"
+											disabled={busy}
+											onPress={openSaveJob}
+										/>
+									)}
 									<Button
 										label={t`Check a PDF with the ATS checker`}
 										icon="list-checks"

@@ -12,6 +12,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
+import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
@@ -336,7 +337,24 @@ function RouteComponent() {
 			)}
 
 			{isError && !applications ? null : empty ? (
-				<EmptyState onAdd={() => setAdding(true)} onImport={() => setImporting(true)} />
+				<EmptyState
+					title={<Trans>Track your first job</Trans>}
+					description={
+						<Trans>Paste a job link. We'll save the posting so Check, the assistant and your letter can use it.</Trans>
+					}
+					action={
+						<Button onClick={() => setAdding(true)}>
+							<Icon name="plus" />
+							<Trans>Save job</Trans>
+						</Button>
+					}
+					secondary={
+						<Button variant="secondary" onClick={() => setImporting(true)}>
+							<Trans>Import from CSV</Trans>
+						</Button>
+					}
+					className="transition-[opacity,translate] duration-emphasized ease-enter starting:translate-y-2 starting:opacity-0"
+				/>
 			) : (
 				<>
 					{isPending ? (
@@ -373,7 +391,9 @@ function RouteComponent() {
 									<ApplicationBoard applications={filtered} showClosed={closed} onOpen={openApplication} />
 								</div>
 							)}
-							{shown === "insights" && <ApplicationInsights applications={applications ?? []} />}
+							{shown === "insights" && (
+								<ApplicationInsights applications={applications ?? []} onSaveJob={() => setAdding(true)} />
+							)}
 							{shown === "calendar" && (
 								<ApplicationCalendar
 									compact={phone}
@@ -479,31 +499,6 @@ function FollowUpNudge({ applications, onOpen }: FollowUpNudgeProps) {
 			<Button size="icon-sm" variant="ghost" aria-label={t`Dismiss`} onClick={dismiss} className="text-warn-text">
 				<Icon name="x" size={18} />
 			</Button>
-		</div>
-	);
-}
-
-function EmptyState({ onAdd, onImport }: { onAdd: () => void; onImport: () => void }) {
-	return (
-		<div className="grid justify-items-center gap-3 py-20 text-center transition-[opacity,translate] duration-emphasized ease-enter starting:translate-y-2 starting:opacity-0">
-			<span className="grid size-12 place-items-center rounded-xl bg-sunken text-ink-2">
-				<Icon name="briefcase" size={26} />
-			</span>
-			<h2 className="text-lg font-semibold">
-				<Trans>Track your first job</Trans>
-			</h2>
-			<p className="max-w-sm text-sm text-ink-2">
-				<Trans>Paste a job link. We'll save the posting so Check, the assistant and your letter can use it.</Trans>
-			</p>
-			<div className="flex gap-2">
-				<Button onClick={onAdd}>
-					<Icon name="plus" />
-					<Trans>Save job</Trans>
-				</Button>
-				<Button variant="secondary" onClick={onImport}>
-					<Trans>Import from CSV</Trans>
-				</Button>
-			</div>
 		</div>
 	);
 }

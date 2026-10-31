@@ -30,7 +30,7 @@ const stop = (event: React.SyntheticEvent) => event.stopPropagation();
 
 type ApplicationActionsMenuProps = { application: ApplicationSummary; className?: string };
 
-/** A card's ⋯ menu, the keyboard alternative to dragging: Move to…, Close…, and Delete after asking. */
+/** A card's ⋯ menu, the keyboard alternative to dragging: Move to…, Mark as closed…, and Delete after asking. */
 export function ApplicationActionsMenu({ application, className }: ApplicationActionsMenuProps) {
 	const { moveTo, close, remove } = useApplicationActions();
 	const { lanes, active } = useApplicationLanes();
@@ -91,7 +91,7 @@ export function ApplicationActionsMenu({ application, className }: ApplicationAc
 					<DropdownMenuSub>
 						<DropdownMenuSubTrigger>
 							<Icon name="check" size={18} />
-							<Trans>Close…</Trans>
+							<Trans>Mark as closed…</Trans>
 						</DropdownMenuSubTrigger>
 						<DropdownMenuSubContent>
 							<ClosedLaneItems

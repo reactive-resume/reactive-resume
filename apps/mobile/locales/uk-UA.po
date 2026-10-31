@@ -427,11 +427,6 @@ msgstr "Оголошення про роботу {0}"
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr "{0} повернув «{1}». Ваше повідомлення зберігається."
 
-#. placeholder {0}: done.length
-#: src/features/career/today.tsx
-msgid "{0} roles updated."
-msgstr ""
-
 #. placeholder {0}: selectedIds.length
 #. placeholder {0}: selection.length
 #: src/features/applications/list-screen.tsx
@@ -961,10 +956,6 @@ msgstr "Додайте країну"
 msgid "Add a fact"
 msgstr "Додати факт"
 
-#: src/features/career/facts.tsx
-msgid "Add a fact or try another word or type."
-msgstr "Додайте факт або спробуйте інше слово чи тип."
-
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
 msgstr "Додайте посилання"
@@ -1138,6 +1129,10 @@ msgstr "Додати пропозицію роботи"
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
 msgstr "Введіть умови пропозиції роботи вручну або скористайтеся необов’язковим видобуванням даних за допомогою ШІ в розділі Повідомлення."
 
+#: src/features/career/facts.tsx
+msgid "Add one above."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
 msgstr "Додайте одне посилання, яке демонструє вашу роботу."
@@ -1245,13 +1240,13 @@ msgstr "Додайте своє ім'я"
 msgid "Added by you"
 msgstr "Додано вами"
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Added to Interview prep"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "Added to Knowledge."
 msgstr "Додано до Знання."
-
-#: src/features/workspace/tabs/fit.tsx
-msgid "Added to Prepare"
-msgstr "Додано до Підготовки"
 
 #: src/features/ai/report-content.tsx
 msgid "Additional details (optional)"
@@ -1749,8 +1744,7 @@ msgstr "Застосовано. Заявку оновлено."
 msgid "Applies to this device only."
 msgstr "Діє лише на цьому пристрої."
 
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgid "Apply"
 msgstr "Подання"
 
@@ -2563,14 +2557,6 @@ msgstr "Очищає свої записи; розділ залишається.
 msgid "Close"
 msgstr "Закрити"
 
-#: src/features/application-detail/sheets.tsx
-msgid "Close application"
-msgstr "Закрийте заявку на роботу"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Close application…"
-msgstr "Закрийте заявку на роботу…"
-
 #: src/features/applications/list-screen.tsx
 msgid "Close applications"
 msgstr "Закрити заявки"
@@ -2586,10 +2572,6 @@ msgstr "Закрити вибрані заявки"
 #: src/features/assistant/assistant-screen.tsx
 msgid "Close the assistant"
 msgstr "Закрийте помічника"
-
-#: src/features/application-detail/sheets.tsx
-msgid "Close this application"
-msgstr "Закрийте цю заявку на роботу"
 
 #: src/features/applications/list-screen.tsx
 msgid "Close…"
@@ -3001,8 +2983,8 @@ msgid "Couldn't create the letter. Try again."
 msgstr "Не вдалося створити лист. Спробуйте ще раз."
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Couldn't delete it. It's back in Saved."
-msgstr "Не вдалося видалити. Це знову в Збережено."
+msgid "Couldn't delete it. It's back in Library."
+msgstr ""
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -3571,10 +3553,6 @@ msgid "Dark theme"
 msgstr "Темна тема"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the AI provider."
-msgstr "Обмін даними скасовано. Нічого не було надіслано постачальнику AI."
-
-#: src/api/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the provider."
 msgstr ""
 
@@ -3629,9 +3607,8 @@ msgid "Dear hiring team,"
 msgstr "Шановна команда найму!"
 
 #: src/features/career/facts.tsx
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgid "Debrief"
 msgstr "Розбір"
 
@@ -3800,8 +3777,8 @@ msgid "Deleted application"
 msgstr "Видалена заявка"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Deleted from Saved"
-msgstr "Видалено зі збереженого"
+msgid "Deleted from Library"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "Deletes the section and its entries. You can undo."
@@ -4599,9 +4576,8 @@ msgstr "Перший запуск (YYYY-MM-DD)"
 msgid "Fit"
 msgstr "Підігнати"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgctxt "Application workspace tab: how well a job fits your experience"
 msgid "Fit"
 msgstr "Відповідність"
@@ -5285,6 +5261,15 @@ msgid "Interview is in another timezone"
 msgstr "Співбесіда в іншому часовому поясі"
 
 #: src/features/career/schedule-sheet.tsx
+msgid "Interview prep"
+msgstr "Підготовка до співбесід"
+
+#: src/shell/workspace-tab-label.ts
+msgctxt "Application workspace tab: plan for an interview"
+msgid "Interview prep"
+msgstr "Підготовка до співбесід"
+
+#: src/features/career/schedule-sheet.tsx
 msgid "Interview preparation"
 msgstr "Підготовка до співбесіди"
 
@@ -5752,6 +5737,15 @@ msgstr "супровідні листи не мають публічного п�
 msgid "Level"
 msgstr "Рівень володіння"
 
+#: src/shell/workspace-tab-label.ts
+msgctxt "Application workspace tab: earlier results kept for this job"
+msgid "Library"
+msgstr ""
+
+#: src/features/workspace/tabs/saved.tsx
+msgid "Library items for {company}, newest first."
+msgstr ""
+
 #: app/(tabs)/settings/licences.tsx
 msgid "Licenses"
 msgstr "Ліцензії"
@@ -6150,6 +6144,14 @@ msgstr "Поля встановлено на {minimum} пт"
 msgid "Mark as applied"
 msgstr "Позначити як подану"
 
+#: src/features/application-detail/sheets.tsx
+msgid "Mark as closed"
+msgstr ""
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Mark as closed…"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Mark as read"
 msgstr "Позначити як прочитане"
@@ -6232,8 +6234,7 @@ msgstr "повідомлення"
 msgid "Message the assistant"
 msgstr "Надішліть повідомлення асистенту"
 
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgid "Messages"
 msgstr "Повідомлення"
 
@@ -6534,6 +6535,7 @@ msgstr "Ніколи"
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
 #: src/features/documents/library.tsx
+#: src/features/documents/new-document.tsx
 #: src/shell/app-tabs.tsx
 msgid "New"
 msgstr "новий"
@@ -6562,7 +6564,6 @@ msgid "New cover letter instead"
 msgstr "Натомість новий супровідний лист"
 
 #: src/features/documents/library.tsx
-#: src/features/documents/new-document.tsx
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "Новий документ"
@@ -6724,6 +6725,10 @@ msgstr "Доказів поки немає"
 msgid "No facts match"
 msgstr "Жоден факт не відповідає"
 
+#: src/features/career/facts.tsx
+msgid "No facts yet"
+msgstr ""
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "Немає відповідних значків."
@@ -6805,6 +6810,10 @@ msgstr "У цьому оголошенні про роботу немає впі
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "No recorded answers are available."
+msgstr ""
+
+#: src/features/applications-board/insights-screen.tsx
+msgid "No replies to chart yet"
 msgstr ""
 
 #: src/features/career/today.tsx
@@ -7000,6 +7009,10 @@ msgstr ""
 msgid "Nothing here should cost you a match."
 msgstr "Ніщо тут не повинно коштувати вам матчу."
 
+#: src/features/workspace/tabs/saved.tsx
+msgid "Nothing in your library yet"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Nothing is applied for or created until you choose."
 msgstr "Нічого не подається й не створюється, доки ви не вирішите."
@@ -7011,10 +7024,6 @@ msgstr "Ніщо не позначає посаду як поточну."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing on this day."
 msgstr "Нічого в цей день."
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Nothing saved yet"
-msgstr "Поки нічого не збережено"
 
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing scheduled yet"
@@ -7108,10 +7117,6 @@ msgstr "Максимум днів в офісі на тиждень"
 msgid "Office days are unknown."
 msgstr "Офісні дні невідомі."
 
-#: src/features/career/today.tsx
-msgid "Office days not stated"
-msgstr "Дні в офісі не вказано"
-
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Office days per week"
@@ -7138,8 +7143,8 @@ msgid "On. Visitors need the link and password to see your web page."
 msgstr "Увімкнено. Щоб переглянути вашу вебсторінку, відвідувачам потрібні посилання та пароль."
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "Once a round is scheduled, Prepare builds a timed plan, your opening and the questions to ask."
-msgstr "Коли етап заплановано, «Підготовка» складає план за часом, ваш вступ і запитання для роботодавця."
+msgid "Once a round is scheduled, Interview prep builds a timed plan, your opening and the questions to ask."
+msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Once you've sent a few applications, this shows how far they get and how quickly people reply."
@@ -7285,10 +7290,6 @@ msgstr "Відкрийте експортований файл і перекон
 #: src/features/documents/import-file.ts
 msgid "Open the file in Word and save it as .docx first."
 msgstr "Відкрийте файл у Word і спершу збережіть його як .docx."
-
-#: src/features/applications-board/board-screen.tsx
-msgid "Open the list"
-msgstr "Відкрийте список"
 
 #: src/features/career/today.tsx
 msgid "Open the schedule"
@@ -7506,9 +7507,18 @@ msgstr "Паролі не збігаються."
 msgid "Past conversations"
 msgstr "Минулі розмови"
 
+#: src/features/documents/new-document.tsx
+msgid "Paste a job link or posting to track it in Applications."
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Paste a job link or posting, then check the role and company. Nothing is saved until you choose Save job."
 msgstr "Вставте посилання на вакансію або оголошення про роботу, потім перевірте роль і компанію. Нічого не буде збережено, доки ви не виберете Зберегти роботу."
+
+#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Paste a job link. We'll save the posting so Check, the assistant and your letter can use it."
+msgstr "Вставте посилання на вакансію. Ми збережемо оголошення про вакансію, щоб Чек, асистент і ваш лист могли ним скористатися."
 
 #: src/features/check/job-match.tsx
 msgid "Paste a job posting"
@@ -7744,14 +7754,13 @@ msgstr ""
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Practice"
 msgstr "Тренування"
 
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "Тренування"
@@ -7795,12 +7804,6 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Preferences"
 msgstr "Параметри"
-
-#: src/features/career/schedule-sheet.tsx
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
-msgid "Prepare"
-msgstr "Підготовка"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Prepare a briefing"
@@ -9024,10 +9027,6 @@ msgstr "Зарплата"
 msgid "Salary not detected"
 msgstr ""
 
-#: src/features/career/today.tsx
-msgid "Salary not listed"
-msgstr "Зарплату не вказано"
-
 #: src/features/applications/add-sheet.tsx
 msgid "Salary range"
 msgstr "Діапазон зарплати"
@@ -9046,16 +9045,17 @@ msgstr "Зразок резюме"
 msgid "Save"
 msgstr "Зберегти"
 
+#: src/features/applications-board/board-screen.tsx
 #: src/features/applications-board/views.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
+#: src/features/documents/new-document.tsx
 msgid "Save a job"
 msgstr "Зберегти роботу"
 
-#: src/features/applications-board/board-screen.tsx
-#: src/features/applications/list-screen.tsx
-msgid "Save a job link, paste a posting, or fill in the details manually."
-msgstr "Збережіть посилання на вакансію, вставте оголошення про вакансію або заповніть деталі вручну."
+#: src/features/documents/new-document.tsx
+msgid "Save a job instead"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
@@ -9097,7 +9097,9 @@ msgstr ""
 msgid "Save interview"
 msgstr "Зберегти співбесіду"
 
+#: src/features/applications-board/insights-screen.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/search/search-screen.tsx
 msgid "Save job"
 msgstr "Зберегти роботу"
 
@@ -9176,12 +9178,6 @@ msgstr "Зберегти свою версію як новий документ,
 msgid "Saved"
 msgstr "Збережено"
 
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
-msgctxt "Application workspace tab: earlier results kept for this job"
-msgid "Saved"
-msgstr "Збережено"
-
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "Збережено історія: {title}"
@@ -9197,10 +9193,6 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 msgid "Saved description"
 msgstr "Збережений опис"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Saved items for {company}, newest first."
-msgstr "Збережені елементи для компанії {company}, від найновішого."
 
 #: src/features/settings/application-profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
@@ -9219,8 +9211,8 @@ msgid "Saved to Knowledge, private to this application."
 msgstr "Збережено в Знаннях, лише для цієї заявки."
 
 #: src/features/workspace/tabs/practise.tsx
-msgid "Saved to Saved · Practice"
-msgstr "Додано до збереженого · Тренування"
+msgid "Saved to Library · Practice"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -9599,11 +9591,6 @@ msgstr "Поділитися"
 msgid "Share calendar event (.ics)"
 msgstr "Поділитися подією календаря (.ics)"
 
-#. placeholder {0}: provider.label
-#: src/api/ai-consent.ts
-msgid "Share data with {0}?"
-msgstr "Поділитися даними з {0}?"
-
 #: src/api/ai-consent.ts
 msgid "Share data with {label}?"
 msgstr ""
@@ -9678,6 +9665,10 @@ msgstr "Показати {title} на сторінці"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Показати все"
+
+#: src/features/career/facts.tsx
+msgid "Show all types"
+msgstr "Показати всі типи"
 
 #: src/features/applications/list-screen.tsx
 msgid "Show closed"
@@ -11092,8 +11083,8 @@ msgid "This saved description is clipped or incomplete. Review before preparing 
 msgstr "Цей збережений опис обрізаний або неповний. Огляд перед підготовкою документів."
 
 #: src/features/workspace/shell.tsx
-msgid "This saved version belongs to a different tab. Open it from Saved."
-msgstr "Ця збережена версія належить до іншої вкладки. Відкрийте її на вкладці «Збережено»."
+msgid "This saved version belongs to a different tab. Open it from Library."
+msgstr ""
 
 #: src/features/workspace/shell.tsx
 msgid "This saved version couldn't be loaded."
@@ -11257,6 +11248,11 @@ msgstr "Відстежувати в Заявках"
 msgid "Track selected"
 msgstr ""
 
+#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Track your first job"
+msgstr "Відстежуйте свою першу роботу"
+
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design-presets.ts
 msgid "Traditional"
@@ -11339,6 +11335,10 @@ msgstr "Спробуйте ще раз або перезапустіть зас�
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Спробуйте інший пошук або очистіть фільтри."
+
+#: src/features/career/facts.tsx
+msgid "Try another word or type."
+msgstr ""
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -11766,10 +11766,6 @@ msgstr "Використовує службу веб-пошуку, налашт�
 msgid "Uses web search set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today; applications and documents are never created for you."
 msgstr ""
 
-#: src/features/career/schedule-sheet.tsx
-msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
-msgstr "Використовує вебпошук із Налаштувань. Результати чекають на сторінці Сьогодні. Заявки й документи ніколи не створюються автоматично."
-
 #: src/features/share/web-page.tsx
 msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
 msgstr "Використовує шаблон і Дизайн вашого резюме та підлаштовується під будь-який екран. Змінити їх можна в Дизайні."
@@ -12194,8 +12190,8 @@ msgid "Write numbers as digits"
 msgstr "Писати числа цифрами"
 
 #: src/features/career/stories.tsx
-msgid "Write one about something you did, in five parts."
-msgstr "Напишіть одну про те, що ви зробили, у п’яти частинах."
+msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
+msgstr "Напишіть історію з п’яти частин про те, що ви зробили. Залиште поля Результат і Рефлексія порожніми, доки не зможете їх обґрунтувати."
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12403,11 +12399,6 @@ msgstr "Ваш фокус"
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "Ваші заголовки виглядають так само, як основний текст."
-
-#: src/features/applications-board/board-screen.tsx
-#: src/features/applications/list-screen.tsx
-msgid "Your job search starts here"
-msgstr "Ваш пошук роботи починається тут"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "your Knowledge"

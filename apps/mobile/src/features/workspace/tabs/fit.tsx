@@ -10,11 +10,11 @@ import { randomUUID } from "expo-crypto";
 import { useState } from "react";
 import { View } from "react-native";
 import { latest, useFacts, useGenerate, useSavedItems, useWorkspace, workspaceError } from "../hooks";
-import { Actions, AiNotice, Block, EmptyNotice, StatusPill, useWorking, workingSteps } from "../parts";
+import { Actions, AiNotice, Block, StatusPill, useWorking, workingSteps } from "../parts";
 import { WorkspaceScreen } from "../shell";
 import { orpc } from "@/api/client";
 import { useHasAIProvider } from "@/features/ai/providers";
-import { Button, Icon, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
+import { Button, EmptyState, Icon, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
 
 type FitItem = SavedItem & { data: SavedData<"fit"> };
 type Requirement = SavedData<"fit">["requirements"][number];
@@ -44,7 +44,8 @@ function Fit({ application, version }: WorkspaceTabProps) {
 
 	if (!item)
 		return (
-			<EmptyNotice
+			<EmptyState
+				variant="card"
 				title={t`Check this role against your evidence`}
 				message={t`Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability.`}
 			>
@@ -52,7 +53,7 @@ function Fit({ application, version }: WorkspaceTabProps) {
 				{provider ? (
 					<Button icon="list-checks" label={checkLabel} loading={generate.isPending} onPress={check} />
 				) : null}
-			</EmptyNotice>
+			</EmptyState>
 		);
 
 	const evidence = readOnly ? {} : workspace.data.evidence;
@@ -263,7 +264,7 @@ function WorthAsking({ ask, applicationId, readOnly }: WorthAskingProps) {
 					variant="secondary"
 					size="sm"
 					icon={added ? "check" : "plus"}
-					label={added ? t`Added to Prepare` : t`Add to questions`}
+					label={added ? t`Added to Interview prep` : t`Add to questions`}
 					disabled={added}
 					onPress={() =>
 						workspace.save({

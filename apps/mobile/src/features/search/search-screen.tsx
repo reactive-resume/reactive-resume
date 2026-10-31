@@ -154,11 +154,11 @@ export function SearchScreen() {
 		{
 			key: "new-application",
 			icon: "briefcase",
-			title: t`New application`,
-			keywords: [t`Add application`, t`Job`],
+			title: t`Save job`,
+			keywords: [t`New application`, t`Add application`, t`Job`],
 			account: true,
 			root: true,
-			onPress: () => go(routes.applications()),
+			onPress: () => go(routes.newJob()),
 		},
 		{
 			key: "settings",
@@ -274,7 +274,7 @@ export function SearchScreen() {
 			key: "applications",
 			heading: t`Applications`,
 			rows: [
-				{ key: "create", icon: "plus", title: t`New application`, onPress: () => go(routes.applications()) },
+				{ key: "create", icon: "plus", title: t`Save job`, onPress: () => go(routes.newJob()) },
 				...rank(query, jobs).map(applicationRow),
 			],
 			loading: loading(applications.isPending, t`Loading applications…`),

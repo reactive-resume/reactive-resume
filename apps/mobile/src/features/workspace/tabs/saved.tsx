@@ -11,7 +11,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { useFacts, useSavedItems } from "../hooks";
-import { Actions, Block, EmptyNotice, tabLabel } from "../parts";
+import { Actions, Block, tabLabel } from "../parts";
 import { WorkspaceScreen } from "../shell";
 import { dispatchForOrigin } from "../state";
 import { client, orpc } from "@/api/client";
@@ -20,7 +20,7 @@ import { useUserTime } from "@/features/application-detail/hooks";
 import { formatMoney } from "@/features/career/offer-compare";
 import { withUndo } from "@/features/career/undo";
 import { routes } from "@/routes";
-import { Button, Chip, Icon, IconButton, Skeleton, Text, showToast, useTheme } from "@/ui";
+import { Button, Chip, EmptyState, Icon, IconButton, Skeleton, Text, showToast, useTheme } from "@/ui";
 
 const KINDS: { kind: SavedItemKind; icon: IconName; tab: WorkspaceTab | null }[] = [
 	{ kind: "fit", icon: "list-checks", tab: "fit" },
@@ -65,12 +65,13 @@ function Saved({ application, go }: WorkspaceTabProps) {
 
 	if (items.length === 0)
 		return (
-			<EmptyNotice
-				title={t`Nothing saved yet`}
+			<EmptyState
+				variant="card"
+				title={t`Nothing in your library yet`}
 				message={t`Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them.`}
 			>
 				<Button variant="secondary" label={t`Check fit`} onPress={() => go("fit")} />
-			</EmptyNotice>
+			</EmptyState>
 		);
 
 	const onDelete = (item: SavedItem) => {
@@ -78,9 +79,9 @@ function Saved({ application, go }: WorkspaceTabProps) {
 		setHidden((ids) => [...ids, item.id]);
 		const origin = getDraftScope();
 		withUndo({
-			message: t`Deleted from Saved`,
+			message: t`Deleted from Library`,
 			restore: () => setHidden((ids) => ids.filter((id) => id !== item.id)),
-			failed: () => showToast({ message: t`Couldn't delete it. It's back in Saved.` }),
+			failed: () => showToast({ message: t`Couldn't delete it. It's back in Library.` }),
 			// Dropped if another account is signed in when the Undo window ends.
 			commit: () =>
 				dispatchForOrigin(origin, getDraftScope, async () => {
@@ -99,7 +100,7 @@ function Saved({ application, go }: WorkspaceTabProps) {
 				))}
 			</Actions>
 			<Text variant="caption" color="ink3">
-				{t`Saved items for ${company}, newest first.`}
+				{t`Library items for ${company}, newest first.`}
 			</Text>
 			{shown.map((item) => (
 				<SavedRow

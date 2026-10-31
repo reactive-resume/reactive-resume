@@ -155,7 +155,7 @@ export function WorkspaceScreen({ tab, children }: WorkspaceScreenProps) {
 											? t`This saved version couldn't be loaded.`
 											: t`This workspace couldn't be loaded.`
 										: version
-											? t`This saved version belongs to a different tab. Open it from Saved.`
+											? t`This saved version belongs to a different tab. Open it from Library.`
 											: t`This saved version is no longer available.`
 								}
 							/>

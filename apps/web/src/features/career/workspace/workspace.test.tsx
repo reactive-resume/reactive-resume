@@ -462,7 +462,7 @@ it("keeps Saved offer provenance neutral for both manual and older offer shapes"
 		}),
 	];
 	mount(<SavedTab {...props} />);
-	expect(await screen.findByText("Saved items for Harbor, newest first.")).toBeTruthy();
+	expect(await screen.findByText("Library items for Harbor, newest first.")).toBeTruthy();
 	expect(screen.queryByText(/coach wrote/)).toBeNull();
 	expect(screen.queryByText(/used the message/)).toBeNull();
 	expect(screen.getByRole("link", { name: "Open in Offers" })).toBeTruthy();

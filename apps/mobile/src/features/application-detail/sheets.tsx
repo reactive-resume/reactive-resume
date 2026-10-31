@@ -52,7 +52,7 @@ const today = () => new Date().toLocaleDateString("en-CA");
 export function CloseSheet({ application, lane, open, onClose }: ApplicationActionSheetProps) {
 	const { t } = useLingui();
 	return (
-		<Sheet open={open} onClose={onClose} title={t`Close this application`}>
+		<Sheet open={open} onClose={onClose} title={t`Mark as closed`}>
 			{open ? <CloseForm application={application} lane={lane} onClose={onClose} /> : null}
 		</Sheet>
 	);
@@ -94,7 +94,7 @@ function CloseForm({ application, lane: initialLane, onClose }: Omit<Application
 			<Button
 				fullWidth
 				size="lg"
-				label={t`Close application`}
+				label={t`Mark as closed`}
 				loading={update.isPending}
 				disabled={!lanes.ready || !laneAvailable}
 				onPress={() =>

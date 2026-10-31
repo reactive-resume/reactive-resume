@@ -272,7 +272,7 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 															<Trans>This workspace couldn't be loaded.</Trans>
 														)
 													) : version ? (
-														<Trans>This saved version belongs to a different tab. Open it from Saved.</Trans>
+														<Trans>This saved version belongs to a different tab. Open it from Library.</Trans>
 													) : (
 														<Trans>This saved version is no longer available.</Trans>
 													)}

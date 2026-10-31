@@ -2,7 +2,6 @@ import type { SavedData, SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "./shell";
 import type { Application } from "@/features/applications/types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
-import type { ReactNode } from "react";
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -11,6 +10,7 @@ import { useId, useRef, useState } from "react";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
+import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { SwitchRow } from "@reactive-resume/ui/components/switch";
@@ -35,15 +35,20 @@ export function PrepareTab({ application, version, interview, now, go }: Workspa
 
 	if (!interview && !isBriefing(version))
 		return (
-			<Notice title={t`Add an interview to plan for it`}>
-				<p className="max-w-[340px] text-sm text-ink-2">
-					<Trans>Once a round is scheduled, Prepare builds a timed plan, your opening and the questions to ask.</Trans>
-				</p>
-				<Button variant="secondary" onClick={() => go("prepare", { edit: "interview" })}>
-					<Icon name="calendar-dot" size={18} />
-					<Trans>Add an interview</Trans>
-				</Button>
-			</Notice>
+			<EmptyState
+				title={t`Add an interview to plan for it`}
+				description={
+					<Trans>
+						Once a round is scheduled, Interview prep builds a timed plan, your opening and the questions to ask.
+					</Trans>
+				}
+				action={
+					<Button variant="secondary" onClick={() => go("prepare", { edit: "interview" })}>
+						<Icon name="calendar-dot" size={18} />
+						<Trans>Add an interview</Trans>
+					</Button>
+				}
+			/>
 		);
 
 	const briefing = isBriefing(version) ? version : latest(saved.data, "briefing", interview?.id ?? null);
@@ -53,16 +58,19 @@ export function PrepareTab({ application, version, interview, now, go }: Workspa
 		const end = start + interview.durationMinutes * 60_000;
 		if (now.getTime() > end)
 			return (
-				<Notice title={t`How did it go?`}>
-					<p className="max-w-[340px] text-sm text-ink-2">
+				<EmptyState
+					title={t`How did it go?`}
+					description={
 						<Trans>
 							Write down what they asked while it's fresh. The coach compares your answers with your stories.
 						</Trans>
-					</p>
-					<Button onClick={() => go("debrief")}>
-						<Trans>Start a debrief</Trans>
-					</Button>
-				</Notice>
+					}
+					action={
+						<Button onClick={() => go("debrief")}>
+							<Trans>Start a debrief</Trans>
+						</Button>
+					}
+				/>
 			);
 		if (now.getTime() >= start - 10 * 60_000)
 			return <Soon application={application} interview={interview} briefing={briefing} now={now} go={go} />;
@@ -76,15 +84,6 @@ export function PrepareTab({ application, version, interview, now, go }: Workspa
 	return <Plan application={application} interview={interview} briefing={briefing} readOnly={!!version} go={go} />;
 }
 
-function Notice({ title, children }: { title: string; children: ReactNode }) {
-	return (
-		<div className="grid justify-items-center gap-3 rounded-xl border border-dashed border-line-2 p-7 text-center">
-			<h2 className="font-display text-[22px] leading-7 font-medium">{title}</h2>
-			{children}
-		</div>
-	);
-}
-
 type PlanEmptyProps = { application: Application; interview: InterviewTimelineEntry };
 
 function PlanEmpty({ application, interview }: PlanEmptyProps) {
@@ -93,17 +92,16 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 	const generate = useGenerate(application.id);
 	const label = provider?.label ?? "";
 	return (
-		<Notice title={t`A focused plan for this round`}>
-			<p className="max-w-[340px] text-sm text-ink-2">
+		<EmptyState
+			title={t`A focused plan for this round`}
+			description={
 				<Trans>
 					A timed plan, your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes
 					before the call.
 				</Trans>
-			</p>
-			{connection.isUnavailable ? (
-				<AiProviderLoadState state={connection} />
-			) : provider ? (
-				<>
+			}
+			action={
+				connection.isUnavailable ? undefined : provider ? (
 					<Button
 						loading={generate.isPending}
 						disabled={!provider}
@@ -111,18 +109,23 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 					>
 						{generate.isPending ? <Working steps={workingSteps("briefing")} /> : <Trans>Plan my preparation</Trans>}
 					</Button>
-					<PrivacyLine className="max-w-[360px] text-start">
-						<Trans>
-							Sends this application (posting, notes, interview details) and Knowledge that's switched on to {label}.
-						</Trans>
-					</PrivacyLine>
-				</>
-			) : (
-				<Link to="/dashboard/settings/ai" className={cn(buttonVariants({ variant: "secondary" }))}>
-					<Trans>Connect an AI provider in Settings</Trans>
-				</Link>
-			)}
-		</Notice>
+				) : (
+					<Link to="/dashboard/settings/ai" className={cn(buttonVariants({ variant: "secondary" }))}>
+						<Trans>Connect an AI provider in Settings</Trans>
+					</Link>
+				)
+			}
+		>
+			{connection.isUnavailable ? (
+				<AiProviderLoadState state={connection} />
+			) : provider ? (
+				<PrivacyLine className="max-w-[360px] text-start">
+					<Trans>
+						Sends this application (posting, notes, interview details) and Knowledge that's switched on to {label}.
+					</Trans>
+				</PrivacyLine>
+			) : null}
+		</EmptyState>
 	);
 }
 

@@ -682,7 +682,7 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 						</Button>
 						<span className="ms-auto flex items-center gap-1 text-xs text-ink-3">
 							<Icon name="check-circle" size={15} />
-							<Trans>Saved to Saved · Practice</Trans>
+							<Trans>Saved to Library · Practice</Trans>
 						</span>
 					</div>
 				</FeedbackCard>

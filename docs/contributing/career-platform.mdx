@@ -18,16 +18,16 @@ The assistant uses the existing saved AI connections. Configure `ENCRYPTION_SECR
 The career platform has two places:
 
 - **Career** (sidebar): **Today** (notifications that need you, new roles from discovery, the next interview and your schedules), **Coach** (conversations across your whole search), **Knowledge** (facts, STARR stories and preferences) and **Offers** (two saved offers side by side).
-- **The application workspace** (open an application, then **Open workspace**): one job in seven tabs, in the order a search happens. **Fit**, **Apply**, **Prepare**, **Practice**, **Debrief**, **Messages** and **Saved**. The workspace opens on the tab for the application's stage, and **Ask the coach** opens the coach beside any tab. A job can have several conversations: start a new one, or reopen or delete an earlier one from the sheet's history.
+- **The application workspace** (open an application, then **Open workspace**): one job in seven tabs, in the order a search happens. **Fit**, **Apply**, **Interview prep**, **Practice**, **Debrief**, **Messages** and **Library**. The workspace opens on the tab for the application's stage, and **Ask the coach** opens the coach beside any tab. A job can have several conversations: start a new one, or reopen or delete an earlier one from the sheet's history.
 
-Each workspace tab is a purpose-built tool. Its AI action (**Check fit**, **Plan my preparation**, **Get feedback**, **Review my answer**, **Read it for me**, **Draft** or **Tighten**) asks the default AI connection for one structured result and saves it to **Saved**. While it works, the button names each step in turn. The result arrives whole rather than streamed, because its actions (apply, tick, add evidence) need the complete, checked result. Checklists, plans, saved briefings and the offer table are stored data, so they open without a working provider; when a provider call fails, the error says what didn't run.
+Each workspace tab is a purpose-built tool. Its AI action (**Check fit**, **Plan my preparation**, **Get feedback**, **Review my answer**, **Read it for me**, **Draft** or **Tighten**) asks the default AI connection for one structured result and saves it to **Library**. While it works, the button names each step in turn. The result arrives whole rather than streamed, because its actions (apply, tick, add evidence) need the complete, checked result. Checklists, plans, saved briefings and the offer table are stored data, so they open without a working provider; when a provider call fails, the error says what didn't run.
 
 ## Prepare for an interview
 
 1. Add the round with **Edit** in the workspace's **Next step** card: type, date and time (in a chosen timezone), length, who you'll meet, and what they asked you to prepare. A linked resume is optional.
-2. On **Prepare**, choose **Plan my preparation**. The briefing is a timed plan, questions to ask, the stories to bring and a 10-minute briefing (your focus, an opening line, two stories and what isn't evidenced yet).
+2. On **Interview prep**, choose **Plan my preparation**. The briefing is a timed plan, questions to ask, the stories to bring and a 10-minute briefing (your focus, an opening line, two stories and what isn't evidenced yet).
 3. Switch on **Refresh the briefing 24 hours before** to run it again automatically. Editing the interview later moves that run with it.
-4. From 15 minutes before the start, **Prepare** becomes a short checklist that needs no AI or research, with **Rehearse one answer aloud**.
+4. From 15 minutes before the start, **Interview prep** becomes a short checklist that needs no AI or research, with **Rehearse one answer aloud**.
 
 The coach prioritizes the resume and letter versions recorded as sent for that application. If no sent version exists, it uses the linked current document, labelled as unsubmitted. Record submissions with **Mark as applied** (on **Apply**) so preparation has the correct snapshot.
 
@@ -45,15 +45,15 @@ Every AI action shows a privacy line naming what is sent and to which connection
 
 ## Use the workspace tabs
 
-| Tab      | What it does                                                                                                                                                                                                                                                        |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Fit      | Each requirement from the posting, stated or inferred, checked against your facts: supported, partly supported or no evidence yet. Missing evidence is not missing ability. **Add evidence** saves a shared fact.                                                   |
-| Apply    | Your answers for the application form with word counts, the facts behind them, **Draft** and **Tighten**, and a checklist before you submit on the employer's site yourself.                                                                                        |
-| Prepare  | The timed plan and briefing for the next round (see above).                                                                                                                                                                                                         |
-| Practice | One question at a time, typed or spoken, with feedback in a fixed shape: what works, what to strengthen and a stronger opening. Practice questions are simulated.                                                                                                   |
-| Debrief  | What they asked, what you said and how it landed, reviewed against your evidence, with a light plan for the week. Recalled questions become available to practice.                                                                                                  |
-| Messages | Paste an employer message to get a summary, an editable reply you send yourself, and proposed changes to the application that only happen when you apply them: a stage, the next step (with a reminder when a reply is due) and offer terms to save for **Offers**. |
-| Saved    | Everything the coach wrote for this job; **Open in** shows a saved version read-only in its tab.                                                                                                                                                                    |
+| Tab            | What it does                                                                                                                                                                                                                                                        |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fit            | Each requirement from the posting, stated or inferred, checked against your facts: supported, partly supported or no evidence yet. Missing evidence is not missing ability. **Add evidence** saves a shared fact.                                                   |
+| Apply          | Your answers for the application form with word counts, the facts behind them, **Draft** and **Tighten**, and a checklist before you submit on the employer's site yourself.                                                                                        |
+| Interview prep | The timed plan and briefing for the next round (see above).                                                                                                                                                                                                         |
+| Practice       | One question at a time, typed or spoken, with feedback in a fixed shape: what works, what to strengthen and a stronger opening. Practice questions are simulated.                                                                                                   |
+| Debrief        | What they asked, what you said and how it landed, reviewed against your evidence, with a light plan for the week. Recalled questions become available to practice.                                                                                                  |
+| Messages       | Paste an employer message to get a summary, an editable reply you send yourself, and proposed changes to the application that only happen when you apply them: a stage, the next step (with a reminder when a reply is due) and offer terms to save for **Offers**. |
+| Library        | Everything the coach wrote for this job; **Open in** shows a saved version read-only in its tab.                                                                                                                                                                    |
 
 **Add offer** in Offers or an application's Messages tab saves structured terms manually without an AI connection. **Offers** compares two saved offers in their own currency and pay period. Differences are marked only when the currency and period match, unknown or conditional values are flagged, and totals aren't added up. **Plan what to ask** opens the coach with both offers as context.
 
@@ -97,7 +97,7 @@ The CLI rejects redirects, and times out after 250 seconds. The HTTP response wa
 In **Career → Today**, **Schedules → Add** (or a schedule's row) opens the schedule sheet:
 
 - **Find roles:** a public search (it starts from Preferences) run every day, every 3 days or every week. Results wait in Today for review; tracking one creates an application at Saved only when the user chooses **Track in Applications**.
-- **Prepare:** an interview, when the briefing runs (24 hours before, 2 hours before, or Morning of: 08:00 on the day, moving earlier to two hours before interviews starting before 10:00) and a tested AI connection. If the interview starts sooner than that, saving runs it now.
+- **Interview prep:** an interview, when the briefing runs (24 hours before, 2 hours before, or Morning of: 08:00 on the day, moving earlier to two hours before interviews starting before 10:00) and a tested AI connection. If the interview starts sooner than that, saving runs it now.
 - **Remind me:** an application and a time; it fires once into Today.
 
 Dates and times are entered in the account's timezone. Recurring discovery preserves its local time across daylight-saving changes; a local time that doesn't exist during a clock change moves forward to a valid time. Missed intervals are coalesced rather than replaying every missed scan.

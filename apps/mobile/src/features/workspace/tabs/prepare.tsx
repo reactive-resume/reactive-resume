@@ -22,14 +22,14 @@ import {
 	workspaceError,
 } from "../hooks";
 import { minutesUntil, preparePhase } from "../logic";
-import { Actions, AiNotice, Block, CheckRow, EmptyNotice, Pill, PrivacyLine, useWorking, workingSteps } from "../parts";
+import { Actions, AiNotice, Block, CheckRow, Pill, PrivacyLine, useWorking, workingSteps } from "../parts";
 import { WorkspaceScreen } from "../shell";
 import { orpc } from "@/api/client";
 import { useFlags } from "@/api/flags";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { interviewTypeLabel, useUserTime } from "@/features/application-detail/hooks";
 import { routes } from "@/routes";
-import { Banner, Button, ListRow, Sheet, Skeleton, Switch, Text, showToast, useTheme } from "@/ui";
+import { Banner, Button, EmptyState, ListRow, Sheet, Skeleton, Switch, Text, showToast, useTheme } from "@/ui";
 
 type Briefing = SavedItem & { data: SavedData<"briefing"> };
 
@@ -46,12 +46,13 @@ function Prepare({ application, version, interview, now, go, addInterview }: Wor
 
 	if (!interview && !isBriefing(version))
 		return (
-			<EmptyNotice
+			<EmptyState
+				variant="card"
 				title={t`Add an interview to plan for it`}
-				message={t`Once a round is scheduled, Prepare builds a timed plan, your opening and the questions to ask.`}
+				message={t`Once a round is scheduled, Interview prep builds a timed plan, your opening and the questions to ask.`}
 			>
 				<Button variant="secondary" icon="calendar-dot" label={t`Add an interview`} onPress={addInterview} />
-			</EmptyNotice>
+			</EmptyState>
 		);
 
 	const briefing = isBriefing(version) ? version : latest(saved.data, "briefing", interview?.id ?? null);
@@ -60,12 +61,13 @@ function Prepare({ application, version, interview, now, go, addInterview }: Wor
 		const phase = preparePhase(interview, now);
 		if (phase === "after")
 			return (
-				<EmptyNotice
+				<EmptyState
+					variant="card"
 					title={t`How did it go?`}
 					message={t`Write down what they asked while it's fresh. The coach compares your answers with your stories.`}
 				>
 					<Button label={t`Start a debrief`} onPress={() => go("debrief")} />
-				</EmptyNotice>
+				</EmptyState>
 			);
 		if (phase === "soon")
 			return <Soon application={application} interview={interview} briefing={briefing} now={now} go={go} />;
@@ -88,7 +90,8 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 	const label = useWorking(generate.isPending, workingSteps("briefing"), t`Plan my preparation`);
 	const name = provider?.label ?? "";
 	return (
-		<EmptyNotice
+		<EmptyState
+			variant="card"
 			title={t`A focused plan for this round`}
 			message={t`A timed plan, your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call.`}
 		>
@@ -106,7 +109,7 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 			) : (
 				<AiNotice centered />
 			)}
-		</EmptyNotice>
+		</EmptyState>
 	);
 }
 

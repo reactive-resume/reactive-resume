@@ -1,10 +1,12 @@
+import type { NewDocumentContext } from "@/features/documents/new-document-dialog";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useMatchRoute } from "@tanstack/react-router";
+import { Link, useMatchRoute, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useCallback } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@reactive-resume/ui/components/avatar";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -71,6 +73,57 @@ function useIsCurrent() {
 	return (to: NavItem["to"]) => Boolean(matchRoute({ to, fuzzy: to !== "/dashboard" }));
 }
 
+type ApplicationsSearch = {
+	q: string;
+	view: "list" | "board" | "insights" | "calendar";
+	closed: boolean;
+	create: boolean;
+	applicationId?: string;
+};
+
+/** New follows the section: Applications saves a job, Letters starts a letter, and the rest offers every object. */
+function useNewAction() {
+	const navigate = useNavigate();
+	const matchRoute = useMatchRoute();
+	const location = useRouterState({ select: (state) => state.location });
+	const openDialog = useDialogStore((state) => state.openDialog);
+
+	const context: NewDocumentContext = matchRoute({ to: "/dashboard/applications", fuzzy: true })
+		? "applications"
+		: matchRoute({ to: "/dashboard/career", fuzzy: true })
+			? "career"
+			: new URLSearchParams(location.searchStr).get("type") === "letter"
+				? "letters"
+				: "documents";
+
+	return useCallback(() => {
+		// The application page owns Save job; its one-shot ?create link opens that dialog.
+		if (context === "applications") {
+			if (location.pathname === "/dashboard/applications") {
+				// Keep the current view, search and closed filter when the page is already open.
+				void navigate({
+					to: "/dashboard/applications",
+					search: (previous: ApplicationsSearch) => ({ ...previous, create: true }),
+				});
+			} else {
+				void navigate({ to: "/dashboard/applications", search: { create: true } });
+			}
+			return;
+		}
+		openDialog("document.new", context === "documents" ? undefined : { context });
+	}, [context, location.pathname, navigate, openDialog]);
+}
+
+/** N stays a page shortcut: never while typing, and never over a dialog, sheet, menu or the palette. */
+function modalOrPaletteOpen() {
+	if (useDialogStore.getState().open || useCommandPaletteStore.getState().open) return true;
+	return Boolean(
+		document.querySelector(
+			'[data-slot="dialog-content"], [data-slot="sheet-content"], [data-slot="alert-dialog-content"], [data-slot="popover-content"], [data-slot="dropdown-menu-content"], [data-slot="context-menu-content"]',
+		),
+	);
+}
+
 /**
  * The app shell for Documents, Trash, Applications and Settings: a 240px sidebar at ≥1024, an icon rail at
  * 640–1023 and a bottom tab bar below 640. An application's workspace is full screen on phones, with its own back
@@ -80,14 +133,14 @@ type AppShellProps = { children: ReactNode };
 
 export function AppShell({ children }: AppShellProps) {
 	const breakpoint = useBreakpoint();
-	const openDialog = useDialogStore((state) => state.openDialog);
+	const openNew = useNewAction();
 	const matchRoute = useMatchRoute();
 	const tabs =
 		breakpoint === "mobile" && !matchRoute({ to: "/dashboard/applications/$applicationId/{-$tab}", fuzzy: true });
 
 	useHotkey("N", () => {
-		if (isEditableElementFocused() || useDialogStore.getState().open) return;
-		openDialog("document.new", undefined);
+		if (isEditableElementFocused() || modalOrPaletteOpen()) return;
+		openNew();
 	});
 
 	return (
@@ -123,7 +176,7 @@ function Sidebar() {
 	const { items, settings, trash } = useNavItems();
 	const isCurrent = useIsCurrent();
 	const openPalette = useCommandPaletteStore((state) => state.setOpen);
-	const openDialog = useDialogStore((state) => state.openDialog);
+	const openNew = useNewAction();
 
 	return (
 		<aside
@@ -160,12 +213,7 @@ function Sidebar() {
 
 			<div className="mt-auto grid gap-2">
 				{trash && <NavLink item={trash} current={isCurrent(trash.to)} />}
-				<Button
-					aria-label={t`New`}
-					aria-keyshortcuts="N"
-					className="h-9 justify-between"
-					onClick={() => openDialog("document.new", undefined)}
-				>
+				<Button aria-label={t`New`} aria-keyshortcuts="N" className="h-9 justify-between" onClick={openNew}>
 					<span className="flex items-center gap-1.5">
 						<Icon name="plus" />
 						<Trans>New</Trans>
@@ -218,7 +266,7 @@ function Rail() {
 	const { items, settings, trash } = useNavItems();
 	const isCurrent = useIsCurrent();
 	const openPalette = useCommandPaletteStore((state) => state.setOpen);
-	const openDialog = useDialogStore((state) => state.openDialog);
+	const openNew = useNewAction();
 
 	return (
 		<aside
@@ -262,7 +310,7 @@ function Rail() {
 					</RailTip>
 				)}
 				<RailTip label={t`New`} icon="plus">
-					<Button size="icon" aria-label={t`New`} onClick={() => openDialog("document.new", undefined)} />
+					<Button size="icon" aria-label={t`New`} onClick={openNew} />
 				</RailTip>
 				<UserDropdownMenu>
 					{({ session }) => (
@@ -304,7 +352,7 @@ function RailTip({
 /** Phones: Documents · Applications · New · Career · Settings, with New as an accent pill in the middle. */
 function MobileTabs() {
 	const isCurrent = useIsCurrent();
-	const openDialog = useDialogStore((state) => state.openDialog);
+	const openNew = useNewAction();
 	const tabs: Pick<NavItem, "to" | "icon" | "label">[] = [
 		{ to: "/dashboard", icon: "file-text", label: t`Documents` },
 		{ to: "/dashboard/applications", icon: "briefcase", label: t`Applications` },
@@ -338,7 +386,7 @@ function MobileTabs() {
 			{tabs.slice(0, 2).map(link)}
 			<button
 				type="button"
-				onClick={() => openDialog("document.new", undefined)}
+				onClick={openNew}
 				className="flex min-h-[52px] flex-col items-center justify-center gap-0.5 transition-[scale] duration-quick ease-enter active:scale-[0.97]"
 			>
 				<span className="grid h-[26px] w-[34px] place-items-center rounded-sm bg-accent text-on-accent">

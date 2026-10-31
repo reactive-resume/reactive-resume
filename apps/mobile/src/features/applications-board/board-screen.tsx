@@ -310,17 +310,18 @@ function Board() {
 	if (applications.length === 0) {
 		return (
 			<EmptyState
+				variant="card"
 				icon="briefcase"
-				title={search.trim() && query.data?.length ? t`No matching applications` : t`Your job search starts here`}
+				title={search.trim() && query.data?.length ? t`No matching applications` : t`Track your first job`}
 				message={
 					search.trim() && query.data?.length
 						? t`Try different words or clear your filters.`
-						: t`Save a job link, paste a posting, or fill in the details manually.`
+						: t`Paste a job link. We'll save the posting so Check, the assistant and your letter can use it.`
 				}
 				action={
 					search.trim() && query.data?.length
 						? { label: t`Clear filters`, onPress: () => useApplicationSearch.getState().setSearch("") }
-						: { label: t`Open the list`, onPress: () => router.replace(routes.applications()) }
+						: { label: t`Save a job`, onPress: () => router.setParams({ create: "1" }) }
 				}
 			/>
 		);

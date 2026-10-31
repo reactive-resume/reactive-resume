@@ -189,6 +189,7 @@ export function TodayScreen() {
 							<LoadState query={queries.notifications} />
 							{!queries.notifications.isPending && !queries.notifications.isError && notes.length === 0 ? (
 								<EmptyState
+									variant="card"
 									title={t`You're up to date`}
 									message={t`New roles, reminders and finished briefings appear here.`}
 								/>
@@ -421,7 +422,7 @@ export function TodayScreen() {
 							/>
 							<LoadState query={queries.schedules} />
 							{!queries.schedules.isError && !queries.schedules.isPending && schedules.length === 0 ? (
-								<Text color="ink3">{t`Nothing scheduled yet.`}</Text>
+								<EmptyState variant="compact" title={t`Nothing scheduled yet.`} />
 							) : null}
 							{schedules.map((row) => (
 								<Card key={row.id} style={{ gap: space.s3 }}>

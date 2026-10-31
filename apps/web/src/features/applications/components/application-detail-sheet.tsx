@@ -286,7 +286,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 				{!closed ? (
 					<>
 						<Button variant="secondary" onClick={() => setClosing(true)}>
-							<Trans>Close application…</Trans>
+							<Trans>Mark as closed…</Trans>
 						</Button>
 						{application.sourceUrl && (
 							<Button

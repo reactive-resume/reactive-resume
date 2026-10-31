@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { File, Paths } from "expo-file-system";
+import { useRouter } from "expo-router";
 import * as Sharing from "expo-sharing";
 import { useRef, useState } from "react";
 import { RefreshControl, I18nManager, ScrollView, View } from "react-native";
@@ -17,7 +18,7 @@ import { filterApplications } from "@/features/applications/list";
 import { useApplications } from "@/features/applications/queries";
 import { getStageColor, getStageLabel } from "@/features/applications/stages";
 import { useIsTablet } from "@/shell/use-is-tablet";
-import { Banner, Button, Card, Skeleton, Text, showToast, useTheme } from "@/ui";
+import { Banner, Button, Card, EmptyState, Skeleton, Text, showToast, useTheme } from "@/ui";
 import { usePullRefresh } from "@/ui/use-pull-refresh";
 
 const BAR_HEIGHT = 18;
@@ -35,6 +36,7 @@ export function InsightsScreen() {
 function ApplicationInsights() {
 	const { t, i18n } = useLingui();
 	const { colors, space } = useTheme();
+	const router = useRouter();
 	const tablet = useIsTablet();
 	const query = useApplications();
 	const pull = usePullRefresh(query.refetch);
@@ -81,9 +83,15 @@ function ApplicationInsights() {
 
 	if (outcomes.sent === 0) {
 		return (
-			<Text color="ink2" align="center" style={{ padding: space.s8 }}>
-				{t`Once you've sent a few applications, this shows how far they get and how quickly people reply.`}
-			</Text>
+			<EmptyState
+				variant="card"
+				title={t`No replies to chart yet`}
+				message={t`Once you've sent a few applications, this shows how far they get and how quickly people reply.`}
+				action={{
+					label: t`Save job`,
+					onPress: () => router.setParams({ create: "1" }),
+				}}
+			/>
 		);
 	}
 

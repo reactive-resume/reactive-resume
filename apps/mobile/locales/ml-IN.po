@@ -427,11 +427,6 @@ msgstr "{0} ജോലി പോസ്റ്റിംഗ്"
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr "{0} \"{1}\" തിരികെ നൽകി. നിങ്ങളുടെ സന്ദേശം സൂക്ഷിച്ചിരിക്കുന്നു."
 
-#. placeholder {0}: done.length
-#: src/features/career/today.tsx
-msgid "{0} roles updated."
-msgstr ""
-
 #. placeholder {0}: selectedIds.length
 #. placeholder {0}: selection.length
 #: src/features/applications/list-screen.tsx
@@ -961,10 +956,6 @@ msgstr "ഒരു രാജ്യം ചേർക്കുക"
 msgid "Add a fact"
 msgstr "ഒരു വസ്തുത ചേർക്കുക"
 
-#: src/features/career/facts.tsx
-msgid "Add a fact or try another word or type."
-msgstr "ഒരു വസ്തുത ചേർക്കുക അല്ലെങ്കിൽ മറ്റൊരു വാക്കോ തരമോ പരീക്ഷിക്കുക."
-
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
 msgstr "ഒരു ലിങ്ക് ചേർക്കുക"
@@ -1138,6 +1129,10 @@ msgstr "ജോലി ഓഫർ ചേർക്കുക"
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
 msgstr "ജോലി ഓഫറിന്റെ നിബന്ധനകൾ സ്വയം ചേർക്കുക, അല്ലെങ്കിൽ ആവശ്യമെങ്കിൽ സന്ദേശങ്ങളിൽ AI ഉപയോഗിച്ച് വിവരങ്ങൾ വേർതിരിച്ചെടുക്കാനുള്ള സൗകര്യം ഉപയോഗിക്കുക."
 
+#: src/features/career/facts.tsx
+msgid "Add one above."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
 msgstr "നിങ്ങളുടെ ജോലി കാണിക്കുന്ന ഒരു ലിങ്ക് ചേർക്കുക."
@@ -1245,13 +1240,13 @@ msgstr "നിങ്ങളുടെ പേര് ചേർക്കുക"
 msgid "Added by you"
 msgstr "നിങ്ങൾ ചേർത്തത്"
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Added to Interview prep"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "Added to Knowledge."
 msgstr "അറിവ്-ലേക്ക് ചേർത്തു."
-
-#: src/features/workspace/tabs/fit.tsx
-msgid "Added to Prepare"
-msgstr "തയ്യാറെടുപ്പിലേക്ക് ചേർത്തു"
 
 #: src/features/ai/report-content.tsx
 msgid "Additional details (optional)"
@@ -1749,8 +1744,7 @@ msgstr "പ്രയോഗിച്ചു. അപേക്ഷ അപ്ഡേറ
 msgid "Applies to this device only."
 msgstr "ഈ ഉപകരണത്തിന് മാത്രം ബാധകം."
 
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgid "Apply"
 msgstr "അപേക്ഷിക്കുക"
 
@@ -2563,14 +2557,6 @@ msgstr "അതിൻ്റെ എൻട്രികൾ മായ്‌ക്ക�
 msgid "Close"
 msgstr "അടയ്ക്കുക"
 
-#: src/features/application-detail/sheets.tsx
-msgid "Close application"
-msgstr "ജോലി അപേക്ഷ അടയ്ക്കുക"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Close application…"
-msgstr "ജോലി അപേക്ഷ അടയ്ക്കുക..."
-
 #: src/features/applications/list-screen.tsx
 msgid "Close applications"
 msgstr "അപേക്ഷകൾ അടയ്ക്കുക"
@@ -2586,10 +2572,6 @@ msgstr "തിരഞ്ഞെടുത്ത അപേക്ഷകൾ അടയ�
 #: src/features/assistant/assistant-screen.tsx
 msgid "Close the assistant"
 msgstr "അസിസ്റ്റൻ്റ് അടയ്ക്കുക"
-
-#: src/features/application-detail/sheets.tsx
-msgid "Close this application"
-msgstr "ഈ ജോലി അപേക്ഷ അടയ്ക്കുക"
 
 #: src/features/applications/list-screen.tsx
 msgid "Close…"
@@ -3001,8 +2983,8 @@ msgid "Couldn't create the letter. Try again."
 msgstr "കത്ത് സൃഷ്ടിക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Couldn't delete it. It's back in Saved."
-msgstr "അത് ഇല്ലാതാക്കാൻ കഴിഞ്ഞില്ല. ഇത് സംരക്ഷിച്ചു-ൽ തിരിച്ചെത്തി."
+msgid "Couldn't delete it. It's back in Library."
+msgstr ""
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -3571,10 +3553,6 @@ msgid "Dark theme"
 msgstr "ഡാർക്ക് തീം"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the AI provider."
-msgstr "ഡാറ്റ പങ്കിടൽ റദ്ദാക്കി. AI ദാതാവിന് ഒന്നും അയച്ചിട്ടില്ല."
-
-#: src/api/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the provider."
 msgstr ""
 
@@ -3629,9 +3607,8 @@ msgid "Dear hiring team,"
 msgstr "പ്രിയ നിയമന ടീം,"
 
 #: src/features/career/facts.tsx
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgid "Debrief"
 msgstr "അവലോകനം"
 
@@ -3800,8 +3777,8 @@ msgid "Deleted application"
 msgstr "ഡിലീറ്റ് ചെയ്ത അപേക്ഷ"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Deleted from Saved"
-msgstr "“സംരക്ഷിച്ചു” എന്നതിൽ നിന്ന് ഡിലീറ്റ് ചെയ്തു"
+msgid "Deleted from Library"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "Deletes the section and its entries. You can undo."
@@ -4599,9 +4576,8 @@ msgstr "ആദ്യ പ്രവർത്തനം (YYYY-MM-DD)"
 msgid "Fit"
 msgstr "അനുയോജ്യം"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgctxt "Application workspace tab: how well a job fits your experience"
 msgid "Fit"
 msgstr "അനുയോജ്യത"
@@ -5285,6 +5261,15 @@ msgid "Interview is in another timezone"
 msgstr "അഭിമുഖം മറ്റൊരു സമയമേഖലയിലാണ്"
 
 #: src/features/career/schedule-sheet.tsx
+msgid "Interview prep"
+msgstr "അഭിമുഖ തയ്യാറെടുപ്പ്"
+
+#: src/shell/workspace-tab-label.ts
+msgctxt "Application workspace tab: plan for an interview"
+msgid "Interview prep"
+msgstr "അഭിമുഖ തയ്യാറെടുപ്പ്"
+
+#: src/features/career/schedule-sheet.tsx
 msgid "Interview preparation"
 msgstr "അഭിമുഖ തയ്യാറെടുപ്പ്"
 
@@ -5752,6 +5737,15 @@ msgstr "കവർ ലെറ്ററുകൾക്ക് പൊതു ലിങ
 msgid "Level"
 msgstr "നില"
 
+#: src/shell/workspace-tab-label.ts
+msgctxt "Application workspace tab: earlier results kept for this job"
+msgid "Library"
+msgstr ""
+
+#: src/features/workspace/tabs/saved.tsx
+msgid "Library items for {company}, newest first."
+msgstr ""
+
 #: app/(tabs)/settings/licences.tsx
 msgid "Licenses"
 msgstr "ലൈസൻസുകൾ"
@@ -6150,6 +6144,14 @@ msgstr "മാർജിനുകൾ {minimum} pt ആയി സജ്ജീകര
 msgid "Mark as applied"
 msgstr "അപേക്ഷിച്ചതായി അടയാളപ്പെടുത്തുക"
 
+#: src/features/application-detail/sheets.tsx
+msgid "Mark as closed"
+msgstr ""
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Mark as closed…"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Mark as read"
 msgstr "വായിച്ചതായി അടയാളപ്പെടുത്തുക"
@@ -6232,8 +6234,7 @@ msgstr "സന്ദേശം"
 msgid "Message the assistant"
 msgstr "അസിസ്റ്റൻ്റിന് സന്ദേശം അയക്കുക"
 
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgid "Messages"
 msgstr "സന്ദേശങ്ങൾ"
 
@@ -6534,6 +6535,7 @@ msgstr "ഒരിക്കലുമില്ല"
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
 #: src/features/documents/library.tsx
+#: src/features/documents/new-document.tsx
 #: src/shell/app-tabs.tsx
 msgid "New"
 msgstr "പുതിയത്"
@@ -6562,7 +6564,6 @@ msgid "New cover letter instead"
 msgstr "പകരം പുതിയ കവർ ലെറ്റർ"
 
 #: src/features/documents/library.tsx
-#: src/features/documents/new-document.tsx
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "പുതിയ പ്രമാണം"
@@ -6724,6 +6725,10 @@ msgstr "ഇതുവരെ തെളിവില്ല"
 msgid "No facts match"
 msgstr "വസ്തുതകളൊന്നും പൊരുത്തപ്പെടുന്നില്ല"
 
+#: src/features/career/facts.tsx
+msgid "No facts yet"
+msgstr ""
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "ഐക്കണുകളൊന്നും പൊരുത്തപ്പെടുന്നില്ല."
@@ -6805,6 +6810,10 @@ msgstr "ഈ പോസ്റ്റിംഗിൽ തിരിച്ചറിയ�
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "No recorded answers are available."
+msgstr ""
+
+#: src/features/applications-board/insights-screen.tsx
+msgid "No replies to chart yet"
 msgstr ""
 
 #: src/features/career/today.tsx
@@ -7000,6 +7009,10 @@ msgstr ""
 msgid "Nothing here should cost you a match."
 msgstr "ഇവിടെയൊന്നും നിങ്ങൾക്ക് ഒരു പൊരുത്തം നൽകേണ്ടതില്ല."
 
+#: src/features/workspace/tabs/saved.tsx
+msgid "Nothing in your library yet"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Nothing is applied for or created until you choose."
 msgstr "നിങ്ങൾ തിരഞ്ഞെടുക്കുന്നത് വരെ ഒന്നിനും അപേക്ഷിക്കുകയോ ഒന്നും സൃഷ്ടിക്കുകയോ ചെയ്യില്ല."
@@ -7011,10 +7024,6 @@ msgstr "ഒരു റോൾ തുടരുന്നതായി ഒന്നു
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing on this day."
 msgstr "ഈ ദിവസം ഒന്നുമില്ല."
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Nothing saved yet"
-msgstr "ഇതുവരെ ഒന്നും സംരക്ഷിച്ചിട്ടില്ല"
 
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing scheduled yet"
@@ -7108,10 +7117,6 @@ msgstr "ആഴ്ചയിൽ പരമാവധി ഓഫീസ് ദിവസ
 msgid "Office days are unknown."
 msgstr "ഓഫീസ് ദിവസങ്ങൾ അറിയില്ല."
 
-#: src/features/career/today.tsx
-msgid "Office days not stated"
-msgstr "ഓഫീസ് ദിവസങ്ങൾ പറഞ്ഞിട്ടില്ല"
-
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Office days per week"
@@ -7138,8 +7143,8 @@ msgid "On. Visitors need the link and password to see your web page."
 msgstr "ഓണാണ്. നിങ്ങളുടെ വെബ് പേജ് കാണാൻ സന്ദർശകർക്ക് ലിങ്കും പാസ്‌വേഡും ആവശ്യമാണ്."
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "Once a round is scheduled, Prepare builds a timed plan, your opening and the questions to ask."
-msgstr "ഒരു റൗണ്ട് ഷെഡ്യൂൾ ചെയ്തുകഴിഞ്ഞാൽ, തയ്യാറെടുപ്പ് ഒരു സമയബന്ധിത പ്ലാനും നിങ്ങളുടെ ആമുഖവും ചോദിക്കേണ്ട ചോദ്യങ്ങളും തയ്യാറാക്കുന്നു."
+msgid "Once a round is scheduled, Interview prep builds a timed plan, your opening and the questions to ask."
+msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Once you've sent a few applications, this shows how far they get and how quickly people reply."
@@ -7285,10 +7290,6 @@ msgstr "എക്സ്പോർട്ട് ചെയ്ത ഫയൽ തുറ
 #: src/features/documents/import-file.ts
 msgid "Open the file in Word and save it as .docx first."
 msgstr "Word എന്നതിൽ ഫയൽ തുറന്ന് ആദ്യം .docx ആയി സംരക്ഷിക്കുക."
-
-#: src/features/applications-board/board-screen.tsx
-msgid "Open the list"
-msgstr "ലിസ്റ്റ് തുറക്കുക"
 
 #: src/features/career/today.tsx
 msgid "Open the schedule"
@@ -7506,9 +7507,18 @@ msgstr "പാസ്‌വേഡുകൾ പൊരുത്തപ്പെട�
 msgid "Past conversations"
 msgstr "കഴിഞ്ഞ സംഭാഷണങ്ങൾ"
 
+#: src/features/documents/new-document.tsx
+msgid "Paste a job link or posting to track it in Applications."
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Paste a job link or posting, then check the role and company. Nothing is saved until you choose Save job."
 msgstr "ഒരു ജോലി ലിങ്കോ ജോലി വിവരണമോ ഒട്ടിക്കുക, തുടർന്ന് ജോലിയുടെ പേരും കമ്പനിയും പരിശോധിക്കുക. നിങ്ങൾ ജോലി സംരക്ഷിക്കുക തിരഞ്ഞെടുക്കുന്നത് വരെ ഒന്നും സംരക്ഷിക്കപ്പെടില്ല."
+
+#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Paste a job link. We'll save the posting so Check, the assistant and your letter can use it."
+msgstr "ജോലി ലിങ്ക് ഒട്ടിക്കുക. ജോലിയുടെ പോസ്‌റ്റിംഗ് ഞങ്ങൾ സംരക്ഷിക്കും, അസിസ്റ്റൻ്റിനും നിങ്ങളുടെ കത്തിനും അത് ഉപയോഗിക്കാനാവും."
 
 #: src/features/check/job-match.tsx
 msgid "Paste a job posting"
@@ -7744,14 +7754,13 @@ msgstr ""
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Practice"
 msgstr "പരിശീലനം"
 
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "പരിശീലിക്കുക"
@@ -7795,12 +7804,6 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Preferences"
 msgstr "പ്രിഫറൻസുകൾ"
-
-#: src/features/career/schedule-sheet.tsx
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
-msgid "Prepare"
-msgstr "തയ്യാറെടുപ്പ്"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Prepare a briefing"
@@ -9024,10 +9027,6 @@ msgstr "ശമ്പളം"
 msgid "Salary not detected"
 msgstr ""
 
-#: src/features/career/today.tsx
-msgid "Salary not listed"
-msgstr "ശമ്പളം പരാമർശിച്ചിട്ടില്ല"
-
 #: src/features/applications/add-sheet.tsx
 msgid "Salary range"
 msgstr "ശമ്പള പരിധി"
@@ -9046,16 +9045,17 @@ msgstr "സാമ്പിൾ റെസ്യൂമെ"
 msgid "Save"
 msgstr "സേവ് ചെയ്യുക"
 
+#: src/features/applications-board/board-screen.tsx
 #: src/features/applications-board/views.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
+#: src/features/documents/new-document.tsx
 msgid "Save a job"
 msgstr "ഒരു ജോലി സംരക്ഷിക്കുക"
 
-#: src/features/applications-board/board-screen.tsx
-#: src/features/applications/list-screen.tsx
-msgid "Save a job link, paste a posting, or fill in the details manually."
-msgstr "ഒരു ജോലി ലിങ്ക് സംരക്ഷിക്കുക, ഒരു ജോലി പോസ്റ്റിംഗ് ഒട്ടിക്കുക അല്ലെങ്കിൽ വിശദാംശങ്ങൾ നേരിട്ട് പൂരിപ്പിക്കുക."
+#: src/features/documents/new-document.tsx
+msgid "Save a job instead"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
@@ -9097,7 +9097,9 @@ msgstr ""
 msgid "Save interview"
 msgstr "അഭിമുഖം സേവ് ചെയ്യുക"
 
+#: src/features/applications-board/insights-screen.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/search/search-screen.tsx
 msgid "Save job"
 msgstr "ജോലി സംരക്ഷിക്കുക"
 
@@ -9176,12 +9178,6 @@ msgstr "നിങ്ങളുടെ പതിപ്പ് ഒരു പുതി
 msgid "Saved"
 msgstr "സംരക്ഷിച്ചു"
 
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
-msgctxt "Application workspace tab: earlier results kept for this job"
-msgid "Saved"
-msgstr "സംരക്ഷിച്ചു"
-
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "സംരക്ഷിച്ചു ഒരു സ്റ്റോറി: {title}"
@@ -9197,10 +9193,6 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 msgid "Saved description"
 msgstr "സംരക്ഷിച്ച വിവരണം"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Saved items for {company}, newest first."
-msgstr "{company}-ക്കായി സേവ് ചെയ്ത ഇനങ്ങൾ, ഏറ്റവും പുതിയത് ആദ്യം."
 
 #: src/features/settings/application-profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
@@ -9219,8 +9211,8 @@ msgid "Saved to Knowledge, private to this application."
 msgstr "ഈ അപേക്ഷയ്ക്ക് മാത്രമായി അറിവിലേക്ക് സേവ് ചെയ്തു."
 
 #: src/features/workspace/tabs/practise.tsx
-msgid "Saved to Saved · Practice"
-msgstr "“സംരക്ഷിച്ചു · പരിശീലനം” എന്നതിലേക്ക് സേവ് ചെയ്തു"
+msgid "Saved to Library · Practice"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -9599,11 +9591,6 @@ msgstr "പങ്കിടുക"
 msgid "Share calendar event (.ics)"
 msgstr "കലണ്ടർ ഇവൻ്റ് പങ്കിടുക (.ics)"
 
-#. placeholder {0}: provider.label
-#: src/api/ai-consent.ts
-msgid "Share data with {0}?"
-msgstr "{0}-മായി ഡാറ്റ പങ്കിടണോ?"
-
 #: src/api/ai-consent.ts
 msgid "Share data with {label}?"
 msgstr ""
@@ -9678,6 +9665,10 @@ msgstr "പേജിൽ {title} കാണിക്കുക"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "എല്ലാം കാണിക്കുക"
+
+#: src/features/career/facts.tsx
+msgid "Show all types"
+msgstr "എല്ലാ തരങ്ങളും കാണിക്കുക"
 
 #: src/features/applications/list-screen.tsx
 msgid "Show closed"
@@ -11092,8 +11083,8 @@ msgid "This saved description is clipped or incomplete. Review before preparing 
 msgstr "ഈ സംരക്ഷിച്ച വിവരണം ക്ലിപ്പ് ചെയ്തതോ അപൂർണ്ണമായതോ ആണ്. രേഖകൾ തയ്യാറാക്കുന്നതിന് മുമ്പ് അവലോകനം ചെയ്യുക."
 
 #: src/features/workspace/shell.tsx
-msgid "This saved version belongs to a different tab. Open it from Saved."
-msgstr "ഈ സംരക്ഷിച്ച പതിപ്പ് മറ്റൊരു ടാബിന്റേതാണ്. “സംരക്ഷിച്ചു” എന്നതിൽ നിന്ന് തുറക്കുക."
+msgid "This saved version belongs to a different tab. Open it from Library."
+msgstr ""
 
 #: src/features/workspace/shell.tsx
 msgid "This saved version couldn't be loaded."
@@ -11257,6 +11248,11 @@ msgstr "അപേക്ഷകളിൽ ട്രാക്ക് ചെയ്യ�
 msgid "Track selected"
 msgstr ""
 
+#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Track your first job"
+msgstr "നിങ്ങളുടെ ആദ്യ ജോലി ട്രാക്ക് ചെയ്യുക"
+
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design-presets.ts
 msgid "Traditional"
@@ -11339,6 +11335,10 @@ msgstr "വീണ്ടും ശ്രമിക്കുക, അല്ലെങ
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "മറ്റൊരു തിരയൽ പരീക്ഷിക്കുക അല്ലെങ്കിൽ നിങ്ങളുടെ ഫിൽട്ടറുകൾ മായ്‌ക്കുക."
+
+#: src/features/career/facts.tsx
+msgid "Try another word or type."
+msgstr ""
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -11766,10 +11766,6 @@ msgstr "സെറ്റിംഗ്സ്-ൽ സജ്ജീകരിച്ച 
 msgid "Uses web search set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today; applications and documents are never created for you."
 msgstr ""
 
-#: src/features/career/schedule-sheet.tsx
-msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
-msgstr "സെറ്റിംഗ്സ്-ൽ സജ്ജീകരിച്ച വെബ് തിരയൽ ഉപയോഗിക്കുന്നു. ഫലങ്ങൾ ഇന്ന്-ൽ കാത്തിരിക്കുന്നു. തൊഴിൽ അപേക്ഷകളും രേഖകളും നിങ്ങൾക്കായി ഒരിക്കലും സൃഷ്‌ടിക്കപ്പെടുന്നതല്ല."
-
 #: src/features/share/web-page.tsx
 msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
 msgstr "നിങ്ങളുടെ റെസ്യൂമെയുടെ ടെംപ്ലേറ്റും ഡിസൈനും ഉപയോഗിക്കുന്നു, ഏത് സ്ക്രീനിനും അനുയോജ്യമാകുന്നു. ഡിസൈനിൽ അവ മാറ്റുക."
@@ -12194,8 +12190,8 @@ msgid "Write numbers as digits"
 msgstr "സംഖ്യകൾ അക്കങ്ങളിൽ എഴുതുക"
 
 #: src/features/career/stories.tsx
-msgid "Write one about something you did, in five parts."
-msgstr "നിങ്ങൾ ചെയ്ത കാര്യങ്ങളെക്കുറിച്ച് അഞ്ച് ഭാഗങ്ങളായി ഒന്ന് എഴുതുക."
+msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
+msgstr "നിങ്ങൾ ചെയ്ത ഒരു കാര്യത്തെക്കുറിച്ച് അഞ്ച് ഭാഗങ്ങളായി ഒരു കഥ എഴുതുക. തെളിവുകൾ നൽകി പിന്തുണയ്ക്കാനാകുന്നതുവരെ ഫലം, പ്രതിഫലനം എന്നിവ ശൂന്യമായി വിടുക."
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12403,11 +12399,6 @@ msgstr "നിങ്ങളുടെ ശ്രദ്ധ"
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "നിങ്ങളുടെ തലക്കെട്ടുകൾ ബോഡി ടെക്സ്റ്റ് പോലെ തന്നെ കാണപ്പെടുന്നു."
-
-#: src/features/applications-board/board-screen.tsx
-#: src/features/applications/list-screen.tsx
-msgid "Your job search starts here"
-msgstr "നിങ്ങളുടെ ജോലി തിരയൽ ഇവിടെ ആരംഭിക്കുന്നു"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "your Knowledge"

@@ -13,6 +13,7 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useNewAction } from "./use-new-action";
 import { routes } from "@/routes";
 import { Button, Icon, IconButton, Text, haptics, useReducedMotion, useTheme } from "@/ui";
 import { useKeyboardVisible } from "@/ui/keyboard";
@@ -374,6 +375,7 @@ function SidebarItem({
 export function AppSidebar(props: BottomTabBarProps) {
 	const router = useRouter();
 	const { t } = useLingui();
+	const openNew = useNewAction();
 	const { state, insets } = props;
 	const pathname = usePathname();
 	const { colors, radius, size, space, type } = useTheme();
@@ -467,16 +469,9 @@ export function AppSidebar(props: BottomTabBarProps) {
 				/>
 				<View style={{ paddingVertical: space.s2 }}>
 					{compact ? (
-						<SidebarItem
-							icon="plus"
-							label={t`New`}
-							active={false}
-							compact
-							role="button"
-							onPress={() => router.push(routes.new())}
-						/>
+						<SidebarItem icon="plus" label={t`New`} active={false} compact role="button" onPress={openNew} />
 					) : (
-						<Button icon="plus" label={t`New`} fullWidth onPress={() => router.push(routes.new())} />
+						<Button icon="plus" label={t`New`} fullWidth onPress={openNew} />
 					)}
 				</View>
 				{compact ? (

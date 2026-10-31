@@ -138,6 +138,8 @@ function IssuesTab({ check }: { check: CheckResult }) {
 	const selected = useEditorStore((state) => state.checkIssue);
 	const { restoreIgnored } = useCheckActions();
 	const locked = useIsResumeLocked();
+	// One obvious next step: the highest-ranked open issue that applies a fix gets the only filled button.
+	const leadingFix = issues.find((issue) => issue.fix.kind === "apply")?.key;
 
 	return (
 		<div className="grid gap-2.5">
@@ -153,7 +155,13 @@ function IssuesTab({ check }: { check: CheckResult }) {
 			) : (
 				<ol aria-label={t`Issues`} className="grid gap-2.5">
 					{issues.map((issue) => (
-						<IssueCard key={issue.key} issue={issue} selected={selected === issue.key} locked={locked} />
+						<IssueCard
+							key={issue.key}
+							issue={issue}
+							selected={selected === issue.key}
+							locked={locked}
+							primary={issue.key === leadingFix}
+						/>
 					))}
 				</ol>
 			)}
@@ -184,10 +192,10 @@ function IssuesTab({ check }: { check: CheckResult }) {
 	);
 }
 
-type IssueCardProps = { issue: CheckIssue; selected: boolean; locked: boolean };
+type IssueCardProps = { issue: CheckIssue; selected: boolean; locked: boolean; primary: boolean };
 
 /** A numbered card: category, title, a plain explanation, the fix, Show on page and Ignore (or Keep). */
-function IssueCard({ issue, selected, locked }: IssueCardProps) {
+function IssueCard({ issue, selected, locked, primary }: IssueCardProps) {
 	const { fix, ignore, showOnPage } = useCheckActions();
 	const titleId = `issue-${issue.number}-title`;
 	const applies = issue.fix.kind === "apply";
@@ -227,7 +235,7 @@ function IssueCard({ issue, selected, locked }: IssueCardProps) {
 			<div className="ms-8 flex flex-wrap gap-1.5 [&_button]:max-sm:h-10 [&_button]:max-sm:px-3.5 [&_button]:max-sm:text-sm">
 				<Button
 					size="sm"
-					variant={applies ? "primary" : "secondary"}
+					variant={primary && applies ? "primary" : "secondary"}
 					disabled={locked && applies}
 					onClick={(event) => {
 						event.stopPropagation();

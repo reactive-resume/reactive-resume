@@ -6,7 +6,6 @@ import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { RefreshControl, Pressable, SectionList, View } from "react-native";
 import Animated from "react-native-reanimated";
-import { AddApplicationSheet } from "./add-sheet";
 import { applicationError } from "./error";
 import { useApplicationLanes } from "./lane-queries";
 import { getLaneLabel, laneInput, resolveLane } from "./lanes";
@@ -75,7 +74,6 @@ function ApplicationsList() {
 	const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [selecting, setSelecting] = useState(false);
-	const [adding, setAdding] = useState(false);
 	const [filters, setFilters] = useState(false);
 	const [bulk, setBulk] = useState<"move" | "tag" | "close" | "delete" | null>(null);
 	const [moveLaneId, setMoveLaneId] = useState("");
@@ -263,7 +261,7 @@ function ApplicationsList() {
 		<ApplicationsViewFrame
 			current="list"
 			search={{ value: search, onChangeText: (value) => changeFilters(() => setSearch(value)), disabled: busy }}
-			actions={<IconButton icon="plus" label={t`Save a job`} disabled={busy} onPress={() => setAdding(true)} />}
+			addDisabled={busy}
 		>
 			<Screen scroll={false} contentStyle={{ padding: 0 }}>
 				<SectionList
@@ -287,10 +285,11 @@ function ApplicationsList() {
 					ListEmptyComponent={
 						!query.isPending && !query.isError ? (
 							<EmptyState
+								variant="card"
 								icon="briefcase"
 								title={
 									!applications.length
-										? t`Your job search starts here`
+										? t`Track your first job`
 										: filtersActive
 											? t`No matching applications`
 											: t`All your applications are closed`
@@ -300,7 +299,7 @@ function ApplicationsList() {
 										? filtersActive
 											? t`Try different words or clear your filters.`
 											: t`Show closed applications to see your past job searches.`
-										: t`Save a job link, paste a posting, or fill in the details manually.`
+										: t`Paste a job link. We'll save the posting so Check, the assistant and your letter can use it.`
 								}
 								action={{
 									label: !applications.length ? t`Save a job` : filtersActive ? t`Clear filters` : t`Show closed`,
@@ -313,7 +312,7 @@ function ApplicationsList() {
 														setTag("");
 														setShowClosed(false);
 													})
-											: setAdding(true),
+											: router.setParams({ create: "1" }),
 								}}
 							/>
 						) : undefined
@@ -509,7 +508,6 @@ function ApplicationsList() {
 						<Button label={t`Cancel`} variant="ghost" disabled={busy} onPress={() => setBulk(null)} />
 					</View>
 				</Sheet>
-				{adding && <AddApplicationSheet onClose={() => setAdding(false)} />}
 			</Screen>
 		</ApplicationsViewFrame>
 	);

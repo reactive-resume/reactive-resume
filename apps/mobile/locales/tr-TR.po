@@ -427,11 +427,6 @@ msgstr "{0} iş ilanı"
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr "{0}, “{1}” değerini döndürdü. Mesajınız saklanmaktadır."
 
-#. placeholder {0}: done.length
-#: src/features/career/today.tsx
-msgid "{0} roles updated."
-msgstr ""
-
 #. placeholder {0}: selectedIds.length
 #. placeholder {0}: selection.length
 #: src/features/applications/list-screen.tsx
@@ -961,10 +956,6 @@ msgstr "Ülke ekle"
 msgid "Add a fact"
 msgstr "Bir bilgi ekleyin"
 
-#: src/features/career/facts.tsx
-msgid "Add a fact or try another word or type."
-msgstr "Bir bilgi ekleyin veya başka bir kelimeyi veya türü deneyin."
-
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
 msgstr "Bağlantı ekle"
@@ -1138,6 +1129,10 @@ msgstr "İş teklifi ekle"
 msgid "Add offer terms manually, or use optional AI extraction in Messages."
 msgstr "İş teklifinin koşullarını elle ekleyin veya Mesajlar bölümündeki isteğe bağlı yapay zekâ ile çıkarma özelliğini kullanın."
 
+#: src/features/career/facts.tsx
+msgid "Add one above."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
 msgstr "Çalışmanızı gösteren bir bağlantı ekleyin."
@@ -1245,13 +1240,13 @@ msgstr "Adınızı ekleyin"
 msgid "Added by you"
 msgstr "Sizin eklediğiniz"
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Added to Interview prep"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "Added to Knowledge."
 msgstr "Bilgi Bankası'na eklendi."
-
-#: src/features/workspace/tabs/fit.tsx
-msgid "Added to Prepare"
-msgstr "Hazırlık sekmesine eklendi"
 
 #: src/features/ai/report-content.tsx
 msgid "Additional details (optional)"
@@ -1749,8 +1744,7 @@ msgstr "Uygulandı. Başvuru güncellendi."
 msgid "Applies to this device only."
 msgstr "Yalnızca bu cihaz için geçerlidir."
 
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgid "Apply"
 msgstr "Başvuru"
 
@@ -2563,14 +2557,6 @@ msgstr "Girişlerini temizler; bölüm kalıyor. Geri alabilirsiniz."
 msgid "Close"
 msgstr "Kapat"
 
-#: src/features/application-detail/sheets.tsx
-msgid "Close application"
-msgstr "İş başvurusunu kapat"
-
-#: src/features/application-detail/detail-screen.tsx
-msgid "Close application…"
-msgstr "İş başvurusunu kapatın…"
-
 #: src/features/applications/list-screen.tsx
 msgid "Close applications"
 msgstr "Başvuruları kapat"
@@ -2586,10 +2572,6 @@ msgstr "Seçilen başvuruları kapat"
 #: src/features/assistant/assistant-screen.tsx
 msgid "Close the assistant"
 msgstr "Asistanı kapat"
-
-#: src/features/application-detail/sheets.tsx
-msgid "Close this application"
-msgstr "Bu iş başvurusunu kapat"
 
 #: src/features/applications/list-screen.tsx
 msgid "Close…"
@@ -3001,8 +2983,8 @@ msgid "Couldn't create the letter. Try again."
 msgstr "Mektup oluşturulamadı. Tekrar deneyin."
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Couldn't delete it. It's back in Saved."
-msgstr "Silinemedi. Kaydedilenler'e geri döndü."
+msgid "Couldn't delete it. It's back in Library."
+msgstr ""
 
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
@@ -3571,10 +3553,6 @@ msgid "Dark theme"
 msgstr "Karanlık tema"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the AI provider."
-msgstr "Veri paylaşımı iptal edildi. AI sağlayıcısına hiçbir şey gönderilmedi."
-
-#: src/api/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the provider."
 msgstr ""
 
@@ -3629,9 +3607,8 @@ msgid "Dear hiring team,"
 msgstr "Sayın işe alım ekibi,"
 
 #: src/features/career/facts.tsx
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgid "Debrief"
 msgstr "Değerlendirme"
 
@@ -3800,8 +3777,8 @@ msgid "Deleted application"
 msgstr "Silinmiş başvuru"
 
 #: src/features/workspace/tabs/saved.tsx
-msgid "Deleted from Saved"
-msgstr "“Kaydedilenler” sekmesinden silindi"
+msgid "Deleted from Library"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "Deletes the section and its entries. You can undo."
@@ -4599,9 +4576,8 @@ msgstr "İlk çalıştırma (YYYY-MM-DD)"
 msgid "Fit"
 msgstr "Sığdır"
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgctxt "Application workspace tab: how well a job fits your experience"
 msgid "Fit"
 msgstr "Uygunluk"
@@ -5285,6 +5261,15 @@ msgid "Interview is in another timezone"
 msgstr "Görüşme başka bir saat diliminde"
 
 #: src/features/career/schedule-sheet.tsx
+msgid "Interview prep"
+msgstr "Görüşme hazırlığı"
+
+#: src/shell/workspace-tab-label.ts
+msgctxt "Application workspace tab: plan for an interview"
+msgid "Interview prep"
+msgstr "Görüşme hazırlığı"
+
+#: src/features/career/schedule-sheet.tsx
 msgid "Interview preparation"
 msgstr "Görüşme hazırlığı"
 
@@ -5752,6 +5737,15 @@ msgstr "Mektupların halka açık bir bağlantısı yoktur. Kilitli özgeçmişl
 msgid "Level"
 msgstr "Düzey"
 
+#: src/shell/workspace-tab-label.ts
+msgctxt "Application workspace tab: earlier results kept for this job"
+msgid "Library"
+msgstr ""
+
+#: src/features/workspace/tabs/saved.tsx
+msgid "Library items for {company}, newest first."
+msgstr ""
+
 #: app/(tabs)/settings/licences.tsx
 msgid "Licenses"
 msgstr "Lisanslar"
@@ -6150,6 +6144,14 @@ msgstr "Kenar boşlukları {minimum} pt olarak ayarlandı"
 msgid "Mark as applied"
 msgstr "Başvuruldu olarak işaretle"
 
+#: src/features/application-detail/sheets.tsx
+msgid "Mark as closed"
+msgstr ""
+
+#: src/features/application-detail/detail-screen.tsx
+msgid "Mark as closed…"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Mark as read"
 msgstr "Okundu olarak işaretle"
@@ -6232,8 +6234,7 @@ msgstr "Mesaj"
 msgid "Message the assistant"
 msgstr "Asistana mesaj gönder"
 
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgid "Messages"
 msgstr "Mesajlar"
 
@@ -6534,6 +6535,7 @@ msgstr "Asla"
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
 #: src/features/documents/library.tsx
+#: src/features/documents/new-document.tsx
 #: src/shell/app-tabs.tsx
 msgid "New"
 msgstr "Yeni"
@@ -6562,7 +6564,6 @@ msgid "New cover letter instead"
 msgstr "Bunun yerine yeni kapak mektubu"
 
 #: src/features/documents/library.tsx
-#: src/features/documents/new-document.tsx
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "Yeni belge"
@@ -6724,6 +6725,10 @@ msgstr "Henüz kanıt yok"
 msgid "No facts match"
 msgstr "Gerçekler eşleşmiyor"
 
+#: src/features/career/facts.tsx
+msgid "No facts yet"
+msgstr ""
+
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "Hiçbir simge eşleşmiyor."
@@ -6805,6 +6810,10 @@ msgstr "Bu iş ilanında tanınabilir bir terim yok."
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "No recorded answers are available."
+msgstr ""
+
+#: src/features/applications-board/insights-screen.tsx
+msgid "No replies to chart yet"
 msgstr ""
 
 #: src/features/career/today.tsx
@@ -7000,6 +7009,10 @@ msgstr ""
 msgid "Nothing here should cost you a match."
 msgstr "Buradaki hiçbir şey sana bir kibrite mal olmamalı."
 
+#: src/features/workspace/tabs/saved.tsx
+msgid "Nothing in your library yet"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Nothing is applied for or created until you choose."
 msgstr "Siz seçene kadar hiçbir yere başvurulmaz ve hiçbir şey oluşturulmaz."
@@ -7011,10 +7024,6 @@ msgstr "Hiçbir şey bir rolü devam ediyor olarak işaretlemiyor."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing on this day."
 msgstr "Bu günde hiçbir şey yok."
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Nothing saved yet"
-msgstr "Henüz kaydedilen bir şey yok"
 
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing scheduled yet"
@@ -7108,10 +7117,6 @@ msgstr "Haftada en fazla ofis günü"
 msgid "Office days are unknown."
 msgstr "Ofise gidilecek gün sayısı bilinmiyor."
 
-#: src/features/career/today.tsx
-msgid "Office days not stated"
-msgstr "Ofis günleri belirtilmemiş"
-
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Office days per week"
@@ -7138,8 +7143,8 @@ msgid "On. Visitors need the link and password to see your web page."
 msgstr "Açık. Ziyaretçilerin web sayfanızı görmek için bağlantıya ve parolaya ihtiyacı var."
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "Once a round is scheduled, Prepare builds a timed plan, your opening and the questions to ask."
-msgstr "Bir tur planlandığında Hazırlık sekmesi zamanlanmış bir plan, açılış konuşmanızı ve sorulacak soruları oluşturur."
+msgid "Once a round is scheduled, Interview prep builds a timed plan, your opening and the questions to ask."
+msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Once you've sent a few applications, this shows how far they get and how quickly people reply."
@@ -7285,10 +7290,6 @@ msgstr "Dışa aktarılan dosyayı açın ve her bölümünü seçip kopyalayabi
 #: src/features/documents/import-file.ts
 msgid "Open the file in Word and save it as .docx first."
 msgstr "Dosyayı Word'da açın ve önce .docx olarak kaydedin."
-
-#: src/features/applications-board/board-screen.tsx
-msgid "Open the list"
-msgstr "Listeyi aç"
 
 #: src/features/career/today.tsx
 msgid "Open the schedule"
@@ -7506,9 +7507,18 @@ msgstr "Şifreler birbiriyle uyuşmuyor."
 msgid "Past conversations"
 msgstr "Geçmiş konuşmalar"
 
+#: src/features/documents/new-document.tsx
+msgid "Paste a job link or posting to track it in Applications."
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Paste a job link or posting, then check the role and company. Nothing is saved until you choose Save job."
 msgstr "Bir iş bağlantısını veya iş ilanını yapıştırın, ardından rolü ve şirketi kontrol edin. Siz İşi kaydet'i seçene kadar hiçbir şey kaydedilmez."
+
+#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Paste a job link. We'll save the posting so Check, the assistant and your letter can use it."
+msgstr "Bir iş bağlantısını yapıştırın. Check'in, asistanın ve mektubunuzun kullanabilmesi için iş ilanını kaydedeceğiz."
 
 #: src/features/check/job-match.tsx
 msgid "Paste a job posting"
@@ -7744,14 +7754,13 @@ msgstr ""
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
 msgstr ""
 
-#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Practice"
 msgstr "Pratik"
 
-#: src/shell/workspace-chrome.tsx
+#: src/shell/workspace-tab-label.ts
 msgctxt "Application workspace tab: rehearse interview answers"
 msgid "Practice"
 msgstr "Pratik"
@@ -7795,12 +7804,6 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "Preferences"
 msgstr "Tercihler"
-
-#: src/features/career/schedule-sheet.tsx
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
-msgid "Prepare"
-msgstr "Hazırlık"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Prepare a briefing"
@@ -9024,10 +9027,6 @@ msgstr "Maaş"
 msgid "Salary not detected"
 msgstr ""
 
-#: src/features/career/today.tsx
-msgid "Salary not listed"
-msgstr "Maaş belirtilmemiş"
-
 #: src/features/applications/add-sheet.tsx
 msgid "Salary range"
 msgstr "Maaş aralığı"
@@ -9046,16 +9045,17 @@ msgstr "Örnek özgeçmiş"
 msgid "Save"
 msgstr "Kaydet"
 
+#: src/features/applications-board/board-screen.tsx
 #: src/features/applications-board/views.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
+#: src/features/documents/new-document.tsx
 msgid "Save a job"
 msgstr "Bir işi kaydetme"
 
-#: src/features/applications-board/board-screen.tsx
-#: src/features/applications/list-screen.tsx
-msgid "Save a job link, paste a posting, or fill in the details manually."
-msgstr "Bir iş bağlantısını kaydedin, bir iş ilanını yapıştırın veya ayrıntıları manuel olarak doldurun."
+#: src/features/documents/new-document.tsx
+msgid "Save a job instead"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
@@ -9097,7 +9097,9 @@ msgstr ""
 msgid "Save interview"
 msgstr "Görüşmeyi kaydet"
 
+#: src/features/applications-board/insights-screen.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/search/search-screen.tsx
 msgid "Save job"
 msgstr "İşi kaydet"
 
@@ -9176,12 +9178,6 @@ msgstr "Kendinizinkini yeni bir belge olarak kaydedin ve onlarınkini burada sak
 msgid "Saved"
 msgstr "Kaydedildi"
 
-#: src/features/workspace/parts.tsx
-#: src/shell/workspace-chrome.tsx
-msgctxt "Application workspace tab: earlier results kept for this job"
-msgid "Saved"
-msgstr "Kaydedilenler"
-
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "Hikâye kaydedildi: {title}"
@@ -9197,10 +9193,6 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 msgid "Saved description"
 msgstr "Kayıtlı açıklama"
-
-#: src/features/workspace/tabs/saved.tsx
-msgid "Saved items for {company}, newest first."
-msgstr "{company} için kaydedilenler, en yenisi önce."
 
 #: src/features/settings/application-profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
@@ -9219,8 +9211,8 @@ msgid "Saved to Knowledge, private to this application."
 msgstr "Bilgi Bankasına kaydedildi, yalnızca bu başvuruya özel."
 
 #: src/features/workspace/tabs/practise.tsx
-msgid "Saved to Saved · Practice"
-msgstr "“Kaydedilenler” · Pratik altına kaydedildi"
+msgid "Saved to Library · Practice"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -9599,11 +9591,6 @@ msgstr "Paylaşmak"
 msgid "Share calendar event (.ics)"
 msgstr "Takvim etkinliğini paylaş (.ics)"
 
-#. placeholder {0}: provider.label
-#: src/api/ai-consent.ts
-msgid "Share data with {0}?"
-msgstr "Veriler {0} ile paylaşılsın mı?"
-
 #: src/api/ai-consent.ts
 msgid "Share data with {label}?"
 msgstr ""
@@ -9678,6 +9665,10 @@ msgstr "{title}'yu sayfada göster"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Tümünü göster"
+
+#: src/features/career/facts.tsx
+msgid "Show all types"
+msgstr "Tüm türleri göster"
 
 #: src/features/applications/list-screen.tsx
 msgid "Show closed"
@@ -11092,8 +11083,8 @@ msgid "This saved description is clipped or incomplete. Review before preparing 
 msgstr "Kaydedilen bu açıklama kırpılmış veya eksik. Belgeleri hazırlamadan önce inceleyin."
 
 #: src/features/workspace/shell.tsx
-msgid "This saved version belongs to a different tab. Open it from Saved."
-msgstr "Bu kayıtlı sürüm başka bir sekmeye ait. “Kaydedilenler” sekmesinden açın."
+msgid "This saved version belongs to a different tab. Open it from Library."
+msgstr ""
 
 #: src/features/workspace/shell.tsx
 msgid "This saved version couldn't be loaded."
@@ -11257,6 +11248,11 @@ msgstr "Başvurularda takip et"
 msgid "Track selected"
 msgstr ""
 
+#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/list-screen.tsx
+msgid "Track your first job"
+msgstr "İlk işinizi takip edin"
+
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design-presets.ts
 msgid "Traditional"
@@ -11339,6 +11335,10 @@ msgstr "Tekrar deneyin veya uygulamayı yeniden başlatın."
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Başka bir arama yapmayı deneyin veya filtrelerinizi temizleyin."
+
+#: src/features/career/facts.tsx
+msgid "Try another word or type."
+msgstr ""
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -11766,10 +11766,6 @@ msgstr "Ayarlar'da kurulan web arama hizmetini kullanır. Arama sonuçları ince
 msgid "Uses web search set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today; applications and documents are never created for you."
 msgstr ""
 
-#: src/features/career/schedule-sheet.tsx
-msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
-msgstr "Ayarlar içindeki web aramasını kullanır. Sonuçlar Bugün içinde bekler. Sizin adınıza başvuru veya belge oluşturulmaz."
-
 #: src/features/share/web-page.tsx
 msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
 msgstr "Özgeçmişinizin şablonunu ve Tasarımını kullanır, her ekrana uyar. Bunları Tasarım'da değiştirin."
@@ -12194,8 +12190,8 @@ msgid "Write numbers as digits"
 msgstr "Sayıları rakamla yaz"
 
 #: src/features/career/stories.tsx
-msgid "Write one about something you did, in five parts."
-msgstr "Yaptığınız bir iş hakkında beş bölümden oluşan bir hikâye yazın."
+msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
+msgstr "Yaptığınız bir şeyi beş bölümden oluşan bir hikâye olarak yazın. Sonuç ve Çıkarım alanlarını, bunları destekleyecek kanıtınız olana kadar boş bırakın."
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12403,11 +12399,6 @@ msgstr "Odağınız"
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "Başlıklarınız gövde metninizle aynı görünüyor."
-
-#: src/features/applications-board/board-screen.tsx
-#: src/features/applications/list-screen.tsx
-msgid "Your job search starts here"
-msgstr "İş aramanız burada başlıyor"
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "your Knowledge"
