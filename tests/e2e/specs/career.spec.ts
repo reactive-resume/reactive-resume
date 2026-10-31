@@ -149,9 +149,9 @@ test("knowledge corrections persist and the workspace opens without an AI provid
 	await page.reload();
 	await expect(page.getByText(corrected, { exact: true })).toBeVisible();
 
-	// Stage Interview opens on Prepare; with no connection it says where to add one instead of failing.
+	// Stage Interview opens on Interview prep; with no connection it says where to add one instead of failing.
 	await page.goto(`/dashboard/applications/${applicationId}`);
-	await expect(page.getByRole("tab", { name: /Prepare/, selected: true })).toBeVisible();
+	await expect(page.getByRole("tab", { name: /Interview prep/, selected: true })).toBeVisible();
 	await expect(page.getByRole("link", { name: "Connect an AI provider in Settings" })).toBeVisible();
 });
 
