@@ -15,6 +15,7 @@ const AI_PROVIDERS = [
 	"fireworks",
 	"cerebras",
 	"perplexity",
+	"runcrate",
 	"ollama",
 	"openai-compatible",
 ] as const;
@@ -42,6 +43,7 @@ export const AI_PROVIDER_DISPLAY_NAMES: Record<AIProvider, string> = {
 	fireworks: "Fireworks AI",
 	cerebras: "Cerebras",
 	perplexity: "Perplexity",
+	runcrate: "Runcrate",
 	ollama: "Ollama",
 	"openai-compatible": "The provider",
 };

@@ -17,6 +17,7 @@ export const AI_PROVIDER_DEFAULT_MODELS: Record<AIProvider, string> = {
 	fireworks: "accounts/fireworks/models/deepseek-v4p1-flash-1017",
 	cerebras: "qwen-3.8-27b",
 	perplexity: "sonar",
+	runcrate: "deepseek-ai/DeepSeek-V4.1-Flash",
 	ollama: "gpt-oss:20b-cloud",
 	"openai-compatible": "",
 };
@@ -36,6 +37,7 @@ export const AI_PROVIDER_DEFAULT_BASE_URLS: Record<AIProvider, string> = {
 	fireworks: "https://api.fireworks.ai/inference/v1",
 	cerebras: "https://api.cerebras.ai/v1",
 	perplexity: "https://api.perplexity.ai",
+	runcrate: "https://api.runcrate.ai/v1",
 	ollama: "https://ollama.com/api",
 	"openai-compatible": "",
 };

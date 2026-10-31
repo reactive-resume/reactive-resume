@@ -20,6 +20,7 @@ export const modelsDevProviderIds: Record<AIProvider, string | null> = {
 	fireworks: "fireworks-ai",
 	cerebras: "cerebras",
 	perplexity: "perplexity",
+	runcrate: null,
 	ollama: "ollama-cloud",
 	"openai-compatible": null,
 };
@@ -130,6 +131,13 @@ export const providerOptions: {
 		keywords: ["perplexity", "sonar"],
 		defaultBaseURL: AI_PROVIDER_DEFAULT_BASE_URLS.perplexity,
 		defaultModel: AI_PROVIDER_DEFAULT_MODELS.perplexity,
+	},
+	{
+		value: "runcrate",
+		label: "Runcrate",
+		keywords: ["runcrate", "deepseek", "qwen", "open"],
+		defaultBaseURL: AI_PROVIDER_DEFAULT_BASE_URLS.runcrate,
+		defaultModel: AI_PROVIDER_DEFAULT_MODELS.runcrate,
 	},
 	{
 		value: "ollama",

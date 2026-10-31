@@ -111,6 +111,7 @@ export function getModel(input: GetModelInput) {
 		.with("fireworks", () => createFireworks(settings).languageModel(model))
 		.with("cerebras", () => createCerebras(settings).languageModel(model))
 		.with("perplexity", () => createPerplexity(settings).languageModel(model))
+		.with("runcrate", () => createOpenAICompatible({ name: "runcrate", ...settings }).languageModel(model))
 		.with("openai-compatible", () =>
 			createOpenAICompatible({ name: "openai-compatible", ...settings }).languageModel(model),
 		)
