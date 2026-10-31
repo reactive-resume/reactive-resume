@@ -1164,3 +1164,43 @@ assert.equal(
 );
 assert.match(JSON.stringify(triageTree), /1 updated; 1 failed/);
 console.log("PASS native discovery serial bulk triage, partial-failure selection and success suppression");
+
+const { DraftConflictSheet } = load("draft/conflict-sheet.tsx", {
+	"./runtime": {},
+	"react-native": { ...mocks["react-native"], Modal: "Modal" },
+	"react-native-safe-area-context": { useSafeAreaInsets: () => ({ bottom: 0 }) },
+});
+for (const kind of ["resume", "letter"]) {
+	reset();
+	const props = {
+		open: true,
+		kind,
+		name: "Fictional document",
+		locked: false,
+		onResolve: async (choice) => calls.push(choice),
+	};
+	const ordinary = render(DraftConflictSheet, props);
+	assert.ok(control(ordinary, "Keep mine"));
+	const refused = render(DraftConflictSheet, { ...props, reason: "CURRENT_CLIENT_REQUIRED" });
+	assert.equal(
+		nodes(refused).some((node) => node.props.label === "Keep mine"),
+		false,
+	);
+	assert.match(JSON.stringify(refused), /An older app kept these edits/);
+	assert.doesNotMatch(JSON.stringify(refused), /saved on another device/);
+	const locked = render(DraftConflictSheet, { ...props, locked: true });
+	assert.match(JSON.stringify(locked), /Unlock it before keeping your edits here/);
+	const lockedRefusal = render(DraftConflictSheet, { ...props, locked: true, reason: "CURRENT_CLIENT_REQUIRED" });
+	assert.doesNotMatch(JSON.stringify(lockedRefusal), /Unlock it before keeping your edits here/);
+	control(refused, "Keep both").onPress();
+	await settle();
+	assert.equal(calls.at(-1), "keep-both");
+	control(refused, "Use saved version").onPress();
+	const confirmed = render(DraftConflictSheet, { ...props, reason: "CURRENT_CLIENT_REQUIRED" });
+	const dialog = nodes(confirmed).find((node) => node.type === "ConfirmDialog");
+	assert.equal(dialog.props.open, true);
+	dialog.props.onConfirm();
+	await settle();
+	assert.equal(calls.at(-1), "use-theirs");
+}
+console.log("PASS native older-draft refusal explains cause and offers only copy or saved-version recovery");

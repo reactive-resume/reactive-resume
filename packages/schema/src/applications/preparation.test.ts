@@ -1,6 +1,6 @@
 import { expect, it } from "vite-plus/test";
 import { EMPTY_WORKSPACE } from "../career";
-import { nextPreparationStep } from "./preparation";
+import { isJobCopy, nextPreparationStep } from "./preparation";
 
 const application = {
 	status: "saved" as const,
@@ -40,4 +40,12 @@ it("keeps submitted and closed applications out of pre-submission guidance", () 
 			EMPTY_WORKSPACE,
 		),
 	).toBe("submitted");
+});
+
+it("tailors only a resume copied for this job, and offers the copy until documents load", () => {
+	const job = { id: "job", resumeId: "resume" };
+	expect(isJobCopy(job, [{ id: "resume", type: "resume", application: { id: "job" } }])).toBe(true);
+	expect(isJobCopy(job, [{ id: "resume", type: "resume", application: null }])).toBe(false);
+	expect(isJobCopy(job, [{ id: "resume", type: "resume", application: { id: "other-job" } }])).toBe(false);
+	expect(isJobCopy(job)).toBe(false);
 });

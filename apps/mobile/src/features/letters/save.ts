@@ -104,7 +104,7 @@ export async function relinkLetter(recipe: (letter: WritableDraft<LetterDocument
 export async function restoreLetterVersion(id: string, versionId: string, unsaved: () => Error) {
 	const started = await startVisit(id);
 	if (!(await saveLetter(id))) throw unsaved();
-	await client.coverLetters.restoreVersion({ id, versionId });
+	await client.coverLetters.restoreVersion({ id, versionId, proposalSafety: "v1" });
 	if (!(await isCurrent(started))) return false;
 	await useLetterStore.getState().open(id);
 	return true;

@@ -1,5 +1,11 @@
-import type { ToolPart } from "./proposals";
-import type { Proposal, ProposalState } from "@reactive-resume/resume/proposals";
+import type { Receipt, ToolPart } from "./proposals";
+import type {
+	Proposal,
+	ProposalEvidence,
+	ProposalState,
+	RequirementCoverage,
+	UnsupportedClaim,
+} from "@reactive-resume/resume/proposals";
 import type { UIMessage } from "ai";
 import type { ReactNode } from "react";
 import { plural } from "@lingui/core/macro";
@@ -7,10 +13,10 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { memo, useRef, useState } from "react";
 import { ActivityIndicator, Linking, Pressable, TextInput, View } from "react-native";
-import { proposalText } from "@reactive-resume/resume/proposals";
+import { blockText, proposalText } from "@reactive-resume/resume/proposals";
 import { webSources } from "./chat";
 import { AssistantMarkdown } from "./markdown";
-import { isProposeEdits, skippedCount, toProposals } from "./proposals";
+import { isProposeEdits, requirementsOf, skippedCount, toProposals } from "./proposals";
 import { client, orpc } from "@/api/client";
 import { ReportAiContent } from "@/features/ai/report-content";
 import { Button, Icon, Text, showToast, useTheme } from "@/ui";
@@ -19,12 +25,20 @@ export type EditStatus = Proposal["status"];
 
 /** What the chat can do with proposed edits: present only when it's about a document. */
 export type ProposalHandlers = {
-	statuses: ReadonlyMap<string, EditStatus>;
+	statuses: ReadonlyMap<string, Receipt>;
 	stateOf: (proposal: Proposal) => ProposalState;
 	locked: boolean;
 	onAccept: (message: UIMessage, part: ToolPart, proposals: readonly Proposal[]) => void;
 	onReject: (message: UIMessage, part: ToolPart, proposals: readonly Proposal[]) => void;
+	/** Saves a pending edit's new wording; the card shows it only after this resolves. */
+	onEdit: (message: UIMessage, part: ToolPart, proposal: Proposal, text: string) => Promise<void>;
+	/** True when these edits tailor to a job and this resume isn't that job's copy (or that isn't known yet). */
+	forJobCopy: (message: UIMessage, part: ToolPart) => boolean;
+	/** A cited Knowledge fact's text while it's still switched on; null once it's gone. */
+	factText: FactText;
 };
+
+type FactText = (id: string) => string | null;
 
 type MessageViewProps = {
 	message: UIMessage;
@@ -203,7 +217,8 @@ export function Status({ status, children }: StatusProps) {
 type ToolPartViewProps = Omit<MessageViewProps, "message"> & { part: ToolPart; message: UIMessage };
 
 function ToolPartView({ part, message, streaming, readOnly, answerable, proposals, onAnswer }: ToolPartViewProps) {
-	const { space } = useTheme();
+	const { t } = useLingui();
+	const { colors, radius, space } = useTheme();
 	const working = part.state === "input-streaming" || part.state === "input-available";
 	if (part.state === "approval-requested" || part.state === "approval-responded") return null;
 	if (part.state === "output-denied")
@@ -303,16 +318,33 @@ function ToolPartView({ part, message, streaming, readOnly, answerable, proposal
 			if (!proposals) return null;
 			const list = toProposals(part, proposals.statuses);
 			const skipped = skippedCount(part);
+			const requirements = requirementsOf(part);
+			const forJobCopy = proposals.forJobCopy(message, part);
+			const states = list.map(proposals.stateOf);
 			return (
 				<View style={{ gap: space.s2 }}>
 					{list.length > 0 ? (
 						<ChangeSet
 							proposals={list}
-							states={list.map(proposals.stateOf)}
-							locked={readOnly || proposals.locked}
+							states={states}
+							locked={readOnly || proposals.locked || forJobCopy}
 							onAccept={(chosen) => proposals.onAccept(message, part, chosen)}
 							onReject={(chosen) => proposals.onReject(message, part, chosen)}
+							onEdit={(proposal, text) => proposals.onEdit(message, part, proposal, text)}
+							requirements={requirements}
+							factText={proposals.factText}
 						/>
+					) : requirements.length > 0 ? (
+						<View style={{ borderWidth: 1, borderColor: colors.line, borderRadius: radius.rLg, overflow: "hidden" }}>
+							<Coverage requirements={requirements} factText={proposals.factText} />
+						</View>
+					) : null}
+					{forJobCopy && list.some((proposal) => proposal.status === "pending") ? (
+						<Text variant="caption" color="ink2">
+							{part.output && typeof part.output === "object" && "tailoredFor" in part.output
+								? t`These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged.`
+								: t`These edits are from before the assistant recorded which job posting they use, so they can't be applied. Ask again on the resume you want to change.`}
+						</Text>
 					) : null}
 					{skipped > 0 ? (
 						<Text variant="caption" color="ink3">
@@ -326,6 +358,12 @@ function ToolPartView({ part, message, streaming, readOnly, answerable, proposal
 				</View>
 			);
 		}
+		case "data-knowledge-withdrawn":
+			return (
+				<Status>
+					<Trans>This reply used Knowledge that has since changed, so it's hidden.</Trans>
+				</Status>
+			);
 		case "tool-save_story": {
 			const story = part.output as { data?: { title?: unknown } } | undefined;
 			const title = typeof story?.data?.title === "string" ? story.data.title : null;
@@ -453,13 +491,24 @@ type ChangeSetProps = {
 	locked: boolean;
 	onAccept: (proposals: readonly Proposal[]) => void;
 	onReject: (proposals: readonly Proposal[]) => void;
+	onEdit: (proposal: Proposal, text: string) => Promise<void>;
+	requirements: readonly RequirementCoverage[];
+	factText: FactText;
 };
 
 /** "n proposed edits" with Accept all, then each edit numbered: where it lands, old text struck, new text, why. */
-function ChangeSet({ proposals, states, locked, onAccept, onReject }: ChangeSetProps) {
+function ChangeSet({ proposals, states, locked, onAccept, onReject, onEdit, requirements, factText }: ChangeSetProps) {
 	const { t } = useLingui();
 	const { colors, radius, size, space } = useTheme();
-	const pending = proposals.filter((_, index) => states[index] === "pending");
+	// Edits whose wording is open, saving or failed to save can't be accepted from here, by any path (web proposal-list).
+	const [drafting, setDrafting] = useState<ReadonlySet<string>>(new Set());
+	const acceptable = (proposal: Proposal, index: number) =>
+		!locked && states[index] === "pending" && !drafting.has(proposal.id);
+	const accept = (chosen: readonly Proposal[]) => {
+		const allowed = chosen.filter((proposal) => acceptable(proposal, proposals.indexOf(proposal)));
+		if (allowed.length > 0) onAccept(allowed);
+	};
+	const pending = proposals.filter((proposal, index) => acceptable(proposal, index));
 	const accepted = states.filter((state) => state === "accepted").length;
 
 	return (
@@ -483,9 +532,10 @@ function ChangeSet({ proposals, states, locked, onAccept, onReject }: ChangeSetP
 						: t`${accepted} of ${proposals.length} applied`}
 				</Text>
 				{pending.length > 1 ? (
-					<Button size="sm" label={t`Accept all`} disabled={locked} onPress={() => onAccept(pending)} />
+					<Button size="sm" label={t`Accept all`} disabled={locked} onPress={() => accept(pending)} />
 				) : null}
 			</View>
+			{requirements.length > 0 ? <Coverage requirements={requirements} factText={factText} /> : null}
 			{proposals.map((proposal, index) => (
 				<View
 					key={proposal.id}
@@ -526,27 +576,23 @@ function ChangeSet({ proposals, states, locked, onAccept, onReject }: ChangeSetP
 							{proposalText(proposal, "before")}
 						</Text>
 					) : null}
-					<Text
-						variant="callout"
-						style={{
-							alignSelf: "flex-start",
-							paddingHorizontal: space.s1,
-							borderRadius: radius.rMd,
-							backgroundColor: colors.accentSoft,
-						}}
-					>
-						{proposalText(proposal, "after")}
-					</Text>
-					{proposal.why ? (
-						<Text variant="caption" color="ink2">
-							{proposal.why}
-						</Text>
-					) : null}
-					<ProposalOutcome
+					<ProposalBody
+						proposal={proposal}
 						state={states[index] ?? "pending"}
 						locked={locked}
-						onAccept={() => onAccept([proposal])}
+						factText={factText}
+						onAccept={() => accept([proposal])}
 						onReject={() => onReject([proposal])}
+						// A structural change is reviewed as a whole: its wording can't be rewritten here.
+						onEdit={proposal.snapshot ? undefined : (text) => onEdit(proposal, text)}
+						onDrafting={(open) =>
+							setDrafting((current) => {
+								const next = new Set(current);
+								if (open) next.add(proposal.id);
+								else next.delete(proposal.id);
+								return next;
+							})
+						}
 					/>
 				</View>
 			))}
@@ -554,15 +600,323 @@ function ChangeSet({ proposals, states, locked, onAccept, onReject }: ChangeSetP
 	);
 }
 
-type ProposalOutcomeProps = { state: ProposalState; locked: boolean; onAccept: () => void; onReject: () => void };
+const addedText = ({ before, after }: Pick<Proposal, "before" | "after">) =>
+	blockText(before && after.startsWith(before) ? after.slice(before.length) : after);
 
-function ProposalOutcome({ state, locked, onAccept, onReject }: ProposalOutcomeProps) {
+type ProposalBodyProps = {
+	proposal: Proposal;
+	state: ProposalState;
+	locked: boolean;
+	factText: FactText;
+	onAccept: () => void;
+	onReject: () => void;
+	onEdit: ((text: string) => Promise<void>) | undefined;
+	/** The wording opened for editing (true) or closed: saved or cancelled (false). */
+	onDrafting: (open: boolean) => void;
+};
+
+/** The new text (or the user's rewrite of it), why, what's cited and flagged, and the decision (web proposal-list). */
+function ProposalBody({
+	proposal,
+	state,
+	locked,
+	factText,
+	onAccept,
+	onReject,
+	onEdit,
+	onDrafting,
+}: ProposalBodyProps) {
+	const { t } = useLingui();
+	const { colors, radius, space } = useTheme();
+	const [draft, setDraftText] = useState<string | null>(null);
+	const setDraft = (text: string | null) => {
+		if ((text === null) !== (draft === null)) onDrafting(text !== null);
+		setDraftText(text);
+	};
+	const [saving, setSaving] = useState<"saving" | "failed" | null>(null);
+	const save = async (text: string) => {
+		setSaving("saving");
+		try {
+			await onEdit?.(text);
+			setDraft(null);
+			setSaving(null);
+		} catch {
+			// The draft stays open with the user's words, so nothing is lost and Accept can't use unsaved wording.
+			setSaving("failed");
+		}
+	};
+
+	return (
+		<>
+			{draft === null ? (
+				<Text
+					variant="callout"
+					style={{
+						alignSelf: "flex-start",
+						paddingHorizontal: space.s1,
+						borderRadius: radius.rMd,
+						backgroundColor: colors.accentSoft,
+					}}
+				>
+					{proposalText(proposal, "after")}
+				</Text>
+			) : (
+				<TextInput
+					accessibilityLabel={t`Your wording`}
+					value={draft}
+					onChangeText={setDraft}
+					multiline
+					maxLength={2000}
+					style={{
+						minHeight: 72,
+						padding: space.s2,
+						borderWidth: 1,
+						borderColor: colors.line2,
+						borderRadius: radius.rMd,
+						color: colors.ink,
+						backgroundColor: colors.raised,
+						textAlignVertical: "top",
+					}}
+				/>
+			)}
+			{proposal.edited && draft === null ? (
+				<Text variant="caption" color="ink3">
+					<Trans>Edited by you</Trans>
+				</Text>
+			) : null}
+			{proposal.why ? (
+				<Text variant="caption" color="ink2">
+					{proposal.why}
+				</Text>
+			) : null}
+			<ProposalReview proposal={proposal} factText={factText} />
+			{state === "pending" && draft !== null ? (
+				<View style={{ gap: space.s1 }}>
+					{saving === "failed" ? (
+						<Text variant="caption" color="dangerText" accessibilityRole="alert">
+							{t`Couldn't save your wording. Your text is still here; try again.`}
+						</Text>
+					) : null}
+					<View style={{ flexDirection: "row", gap: space.s2 }}>
+						<Button
+							label={saving === "saving" ? t`Saving…` : saving === "failed" ? t`Try again` : t`Save wording`}
+							disabled={locked || !draft.trim() || saving === "saving"}
+							onPress={() => void save(draft)}
+						/>
+						<Button
+							variant="secondary"
+							label={t`Cancel`}
+							disabled={saving === "saving"}
+							onPress={() => {
+								setDraft(null);
+								setSaving(null);
+							}}
+						/>
+					</View>
+				</View>
+			) : (
+				<ProposalOutcome
+					state={state}
+					locked={locked}
+					onAccept={onAccept}
+					onReject={onReject}
+					onEdit={onEdit ? () => setDraft(addedText(proposal)) : undefined}
+				/>
+			)}
+		</>
+	);
+}
+
+function useReviewLabels() {
+	const { t } = useLingui();
+	return {
+		claim: (kind: UnsupportedClaim["kind"]) =>
+			({
+				employer: t`Employer`,
+				title: t`Job title`,
+				date: t`Date`,
+				figure: t({ message: "Figure", context: "A number or metric stated in a resume" }),
+				skill: t`Skill`,
+				responsibility: t`Responsibility`,
+				term: t`Not in your resume`,
+			})[kind],
+		coverage: (status: RequirementCoverage["status"]) =>
+			({
+				edited: t`An edit addresses it`,
+				cited: t`Cited as already shown · check it`,
+				missing: t`No evidence found · left as a gap`,
+				unassessed: t`Not assessed`,
+			})[status],
+	};
+}
+
+/** Citations as the assistant made them: pointers to check, never proof. */
+function Evidence({ evidence, factText }: { evidence: readonly ProposalEvidence[]; factText: FactText }) {
+	const { t } = useLingui();
+	return (
+		<>
+			{evidence.map((item) => (
+				<Text
+					key={item.kind === "fact" ? `fact:${item.id}` : `passage:${item.location}:${item.text}`}
+					variant="caption"
+					color="ink2"
+				>
+					<Text variant="caption" color="ink3">
+						{item.kind === "fact" ? t`Knowledge` : item.location}
+					</Text>{" "}
+					{item.kind === "fact" ? (factText(item.id) ?? t`A fact that's no longer in Knowledge`) : item.text}
+				</Text>
+			))}
+		</>
+	);
+}
+
+/** What the edit answers in the posting, what the assistant cites, and what nothing checked backs (web proposal-list). */
+function ProposalReview({ proposal, factText }: { proposal: Proposal; factText: FactText }) {
+	const { t } = useLingui();
+	const { colors, radius, space } = useTheme();
+	const labels = useReviewLabels();
+	const [showEvidence, setShowEvidence] = useState(false);
+	const { requirement, evidence = [], unresolved = 0, unsupported = [] } = proposal;
+	if (!requirement && evidence.length === 0 && unresolved === 0 && unsupported.length === 0) return null;
+
+	return (
+		<View style={{ gap: space.s1 }}>
+			{requirement ? (
+				<Text variant="caption" color="ink2">
+					{t`Posting asks for: ${requirement}`}
+				</Text>
+			) : null}
+			{evidence.length > 0 ? (
+				<>
+					<Pressable
+						accessibilityRole="button"
+						accessibilityState={{ expanded: showEvidence }}
+						onPress={() => setShowEvidence((shown) => !shown)}
+						hitSlop={8}
+					>
+						<Text variant="caption" color="ink2" style={{ textDecorationLine: "underline" }}>
+							{plural(evidence.length, {
+								one: "The assistant cites # source · check it says this",
+								other: "The assistant cites # sources · check they say this",
+							})}
+						</Text>
+					</Pressable>
+					{showEvidence ? <Evidence evidence={evidence} factText={factText} /> : null}
+				</>
+			) : requirement ? (
+				<Text variant="caption" color="ink2">
+					{t`Nothing cited for this edit.`}
+				</Text>
+			) : null}
+			{unresolved > 0 ? (
+				<Text variant="caption" color="ink2">
+					{plural(unresolved, {
+						one: "# citation didn't match anything the assistant could read.",
+						other: "# citations didn't match anything the assistant could read.",
+					})}
+				</Text>
+			) : null}
+			{unsupported.length > 0 ? (
+				<View
+					accessible
+					style={{ gap: space.s1, padding: space.s2, borderRadius: radius.rMd, backgroundColor: colors.warnSoft }}
+				>
+					<View style={{ flexDirection: "row", alignItems: "center", gap: space.s1 }}>
+						<Icon name="warning-circle" size={14} color={colors.warnText} />
+						<Text variant="caption" color="warnText" style={{ flex: 1, fontWeight: "600" }}>
+							{t`Nothing checked backs these. Confirm each before accepting:`}
+						</Text>
+					</View>
+					{unsupported.map((claim) => (
+						<Text key={`${claim.kind}:${claim.text}`} variant="caption" color="warnText">
+							{`• ${labels.claim(claim.kind)}: ${claim.text}`}
+						</Text>
+					))}
+				</View>
+			) : null}
+		</View>
+	);
+}
+
+/** Every posting requirement as the assistant read it, gaps included (web proposal-list). */
+function Coverage({ requirements, factText }: { requirements: readonly RequirementCoverage[]; factText: FactText }) {
+	const { t } = useLingui();
+	const { colors, space } = useTheme();
+	const labels = useReviewLabels();
+	const gaps = requirements.filter((item) => item.status === "missing" || item.status === "unassessed").length;
+	const [open, setOpen] = useState(gaps > 0);
+
+	return (
+		<View
+			style={{
+				gap: space.s2,
+				paddingHorizontal: space.s3,
+				paddingVertical: space.s2,
+				borderBottomWidth: 1,
+				borderColor: colors.line,
+			}}
+		>
+			<Pressable
+				accessibilityRole="button"
+				accessibilityState={{ expanded: open }}
+				onPress={() => setOpen(!open)}
+				hitSlop={8}
+			>
+				<Text variant="caption" color="ink2" style={{ textDecorationLine: "underline" }}>
+					{`${plural(requirements.length, {
+						one: "The assistant's reading of # posting requirement",
+						other: "The assistant's reading of # posting requirements",
+					})}${gaps > 0 ? ` ${plural(gaps, { one: "· # gap", other: "· # gaps" })}` : ""}`}
+				</Text>
+			</Pressable>
+			{open ? (
+				<>
+					{requirements.map((item) => (
+						<View key={item.text} style={{ gap: 2 }}>
+							<Text variant="caption">{item.text}</Text>
+							<Text
+								variant="caption"
+								color={item.status === "missing" || item.status === "unassessed" ? "warnText" : "ink2"}
+							>
+								{labels.coverage(item.status)}
+							</Text>
+							<Evidence evidence={item.evidence} factText={factText} />
+							{(item.unresolved ?? 0) > 0 ? (
+								<Text variant="caption" color="ink2">
+									{plural(item.unresolved ?? 0, {
+										one: "# citation didn't match anything the assistant could read.",
+										other: "# citations didn't match anything the assistant could read.",
+									})}
+								</Text>
+							) : null}
+						</View>
+					))}
+					<Text variant="caption" color="ink3">
+						{t`An AI reading to help you edit, not a prediction of how an employer or screening system will respond.`}
+					</Text>
+				</>
+			) : null}
+		</View>
+	);
+}
+
+type ProposalOutcomeProps = {
+	state: ProposalState;
+	locked: boolean;
+	onAccept: () => void;
+	onReject: () => void;
+	onEdit: (() => void) | undefined;
+};
+
+function ProposalOutcome({ state, locked, onAccept, onReject, onEdit }: ProposalOutcomeProps) {
 	const { t } = useLingui();
 	const { colors, space } = useTheme();
 	if (state === "pending")
 		return (
-			<View style={{ flexDirection: "row", gap: space.s2 }}>
+			<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
 				<Button label={t`Accept`} disabled={locked} onPress={onAccept} />
+				{onEdit ? <Button variant="secondary" label={t`Edit`} disabled={locked} onPress={onEdit} /> : null}
 				<Button variant="secondary" label={t`Reject`} onPress={onReject} />
 			</View>
 		);

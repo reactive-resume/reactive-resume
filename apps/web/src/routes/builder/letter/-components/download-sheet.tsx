@@ -159,7 +159,9 @@ function useLetterHistory(open: boolean): HistorySource {
 			void refresh();
 		},
 		restore: async (versionId) => {
-			await useLetterEditorStore.getState().change(() => client.coverLetters.restoreVersion({ id, versionId }));
+			await useLetterEditorStore
+				.getState()
+				.change(() => client.coverLetters.restoreVersion({ id, versionId, proposalSafety: "v1" }));
 			void refresh();
 		},
 		rename: async (versionId, name) => {

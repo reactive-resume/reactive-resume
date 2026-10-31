@@ -34,7 +34,12 @@ export const messagesRouter = {
 							.boolean()
 							.optional()
 							.describe("Career coach: share the application (or summaries of all of them) and the documents sent."),
-						memory: z.boolean().optional().describe("Career coach: share switched-on facts, stories and preferences."),
+						memory: z
+							.boolean()
+							.optional()
+							.describe(
+								"Career coach: share switched-on facts, stories and preferences (on by default). Document assistant: let it look up switched-on Knowledge facts as evidence (off unless true).",
+							),
 						web: z
 							.boolean()
 							.optional()
@@ -114,7 +119,7 @@ export const messagesRouter = {
 			operationId: "setAgentEditStatus",
 			summary: "Record what happened to proposed edits",
 			description:
-				"Records that proposed edits were accepted, rejected, or are pending again (after an undo), so past conversations show their outcome.",
+				"Records that proposed edits were accepted, rejected, rewritten by the user, or are pending again (after an undo), so past conversations show their outcome.",
 		})
 		.input(
 			z.object({
@@ -122,7 +127,26 @@ export const messagesRouter = {
 				messageId: z.string(),
 				toolCallId: z.string(),
 				edits: z
-					.array(z.object({ id: z.string(), status: z.enum(["pending", "accepted", "rejected"]) }))
+					.array(
+						z.object({
+							id: z.string(),
+							status: z.enum(["pending", "accepted", "rejected"]),
+							text: z
+								.string()
+								.trim()
+								.min(1)
+								.max(2_000)
+								.optional()
+								.describe("The user's own wording for the edit's new text, in plain text, when they rewrote it."),
+							after: z
+								.string()
+								.max(50_000)
+								.optional()
+								.describe(
+									"The edit's new text (after) as the client showed it. When given, the decision is refused if the edit has since been reworded elsewhere; apply it to the document only after this succeeds.",
+								),
+						}),
+					)
 					.min(1)
 					.max(50),
 			}),

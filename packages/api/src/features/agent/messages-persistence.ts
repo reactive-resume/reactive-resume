@@ -1,8 +1,10 @@
+import type { ProposedEdit } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import type { DbOrTx } from "@reactive-resume/db/client";
 import type { UIMessage } from "ai";
 import { and, asc, eq, max, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
+import { withEditedText } from "@reactive-resume/resume/proposals";
 
 // Crash-safe incremental persistence for the assistant message of an agent run.
 // A draft row is inserted before the stream starts, folded step-by-step in onStepEnd,
@@ -19,10 +21,15 @@ type StepContentPart = Record<string, unknown> & { type: string };
 type AgentStepLike = { content: ReadonlyArray<unknown> };
 
 type EditStatus = "pending" | "accepted" | "rejected";
+/**
+ * What a client records about an edit: its status, the user's own wording (pending edits only), and the new text
+ * (`after`) the client reviewed, so a decision made on wording another tab or device has since changed is refused.
+ */
+export type EditUpdate = { status: EditStatus; text?: string | undefined; after?: string | undefined };
 type ProposeEditsPart = UiMessagePart & {
 	toolCallId?: string;
 	state?: string;
-	output?: { edits?: Array<{ id: string; status: EditStatus }> };
+	output?: { edits?: ProposedEdit[] };
 };
 
 const proposeEditsParts = (message: UIMessage) =>
@@ -35,6 +42,22 @@ const proposeEditsParts = (message: UIMessage) =>
 export const proposedEditsOf = (message: UIMessage) =>
 	proposeEditsParts(message).flatMap((part) => part.output?.edits ?? []);
 
+function mapEdits(
+	message: UIMessage,
+	toolCallId: string | null,
+	update: (edit: ProposedEdit) => ProposedEdit,
+): UIMessage {
+	return {
+		...message,
+		parts: message.parts.map((part) => {
+			const output = (part as ProposeEditsPart).output;
+			if (part.type !== "tool-propose_edits" || !output?.edits) return part;
+			if (toolCallId && (part as ProposeEditsPart).toolCallId !== toolCallId) return part;
+			return { ...part, output: { ...output, edits: output.edits.map(update) } } as UiMessagePart;
+		}),
+	};
+}
+
 /** The message with edit statuses set, in one propose_edits result (by tool call) or in all of them. */
 export function withEditStatuses(
 	message: UIMessage,
@@ -42,19 +65,26 @@ export function withEditStatuses(
 	statuses: ReadonlyMap<string, EditStatus>,
 ): UIMessage {
 	if (statuses.size === 0) return message;
-	return {
-		...message,
-		parts: message.parts.map((part) => {
-			const edits = (part as ProposeEditsPart).output?.edits;
-			if (part.type !== "tool-propose_edits" || !edits) return part;
-			if (toolCallId && (part as ProposeEditsPart).toolCallId !== toolCallId) return part;
-			const output = (part as ProposeEditsPart).output;
-			return {
-				...part,
-				output: { ...output, edits: edits.map((edit) => ({ ...edit, status: statuses.get(edit.id) ?? edit.status })) },
-			} as UiMessagePart;
-		}),
-	};
+	return mapEdits(message, toolCallId, (edit) => ({ ...edit, status: statuses.get(edit.id) ?? edit.status }));
+}
+
+/**
+ * The user's own wording in place of an edit's new text. The server rebuilds the block from plain text, so a rewrite
+ * can't carry markup into the document; flags whose words the user removed go.
+ */
+export function withEditWording(message: UIMessage, toolCallId: string, id: string, text: string): UIMessage {
+	return mapEdits(message, toolCallId, (edit) => (edit.id === id ? withEditedText(edit, text) : edit));
+}
+
+/** A run's rewrite of its message keeps what the user already decided and wrote (they can act while it streams). */
+function withStoredDecisions(message: UIMessage, stored: UIMessage): UIMessage {
+	const kept = new Map(proposedEditsOf(stored).map((edit) => [edit.id, edit]));
+	return mapEdits(message, null, (edit) => {
+		const decided = kept.get(edit.id);
+		if (!decided) return edit;
+		const { after, unsupported, edited } = decided;
+		return { ...edit, status: decided.status, ...(edited ? { after, unsupported, edited } : {}) };
+	});
 }
 
 /** Every message writer locks messages in ID order, then their thread, before reading/merging decisions. */
@@ -265,11 +295,7 @@ export function upsertAssistantUiMessage(
 			rows.find((row) => row.id === input.rowId) ??
 			rows.find((row) => row.role === "assistant" && row.uiMessage.id === input.message.id);
 		const message = stored
-			? withEditStatuses(
-					input.message,
-					null,
-					new Map(proposedEditsOf(stored.uiMessage as unknown as UIMessage).map((edit) => [edit.id, edit.status])),
-				)
+			? withStoredDecisions(input.message, stored.uiMessage as unknown as UIMessage)
 			: input.message;
 		const set = {
 			status: input.status,

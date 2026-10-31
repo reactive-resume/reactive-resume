@@ -5,7 +5,7 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useId, useState } from "react";
-import { nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
+import { isJobCopy, nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
@@ -101,14 +101,21 @@ export function Preparation({ application, disabled }: PreparationProps) {
 			<Trans>Copy a base resume for this job</Trans>
 		</Button>
 	) : next === "tailor" && application.resumeId ? (
-		<Link
-			to="/builder/$resumeId"
-			params={{ resumeId: application.resumeId }}
-			search={{ applicationId: application.id }}
-			className={buttonVariants()}
-		>
-			<Trans>Tailor the resume</Trans>
-		</Link>
+		!isJobCopy(application, documents.data) ? (
+			<Button disabled={busy || !documents.data} onClick={copyResume}>
+				<Trans>Copy this resume for the job</Trans>
+			</Button>
+		) : (
+			// The assistant opens ready to propose reviewable edits for this posting.
+			<Link
+				to="/builder/$resumeId"
+				params={{ resumeId: application.resumeId }}
+				search={{ applicationId: application.id, ...(connection.provider ? { assistant: "new" } : {}) }}
+				className={buttonVariants()}
+			>
+				<Trans>Tailor the resume</Trans>
+			</Link>
+		)
 	) : next === "letter" ? (
 		<Button disabled={busy} onClick={() => void writeLetter()}>
 			<Trans>Write a letter</Trans>

@@ -3,10 +3,16 @@ import type {
 	ProposeEditsOutput,
 	ProposeResumeEditsInput,
 } from "@reactive-resume/ai/tools/agent-tool-contracts";
-import type { Passage, ProposalTarget } from "@reactive-resume/resume/proposals";
+import type { Passage, ProposalEvidence, ProposalTarget, RequirementCoverage } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { UIMessage } from "ai";
 import { and, desc, eq } from "drizzle-orm";
-import { proposeEditsInputSchema, proposeResumeEditsInputSchema } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import {
+	proposeEditsInputSchema,
+	proposeResumeEditsInputSchema,
+	REVOKED_PASSAGE,
+	tailoringAllows,
+} from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { createEntry } from "@reactive-resume/resume/entries";
@@ -18,9 +24,11 @@ import {
 	canApplyTo,
 	collectLetterPassages,
 	collectPassages,
+	entryText,
 	readTarget,
 	replaceBlockText,
 	resumeStructureSnapshot,
+	unverifiedClaims,
 } from "@reactive-resume/resume/proposals";
 import { applyResumeStructureChange, resumeEntryTypeSchema } from "@reactive-resume/resume/structural-proposals";
 import { syncResumeDates, upgradeResumeDates } from "@reactive-resume/schema/resume/dates";
@@ -90,6 +98,8 @@ type LoadedDocument = {
 	passages: Passage[];
 	/** The field a proposal targets, as it reads now. */
 	read: (target: ProposalTarget) => string | undefined;
+	/** Everything the targeted entry says (a letter has none beyond the passage): what new figures are checked against. */
+	entry: (target: ProposalTarget) => string;
 	/** What read_resume / read_letter returns to the model. */
 	view: Record<string, unknown>;
 	resume?: ResumeData;
@@ -113,6 +123,7 @@ export async function loadDocument(userId: string, document: AssistantDocument):
 			applicationId: resume.applicationId,
 			passages,
 			read: (target) => readTarget(resume.data, target),
+			entry: (target) => entryText(resume.data, target),
 			view: {
 				resume: buildMarkdown(resume.data),
 				structure: getVisibleResumeStructure(resume.data),
@@ -136,6 +147,7 @@ export async function loadDocument(userId: string, document: AssistantDocument):
 		applicationId: letter.sourceApplicationId,
 		passages,
 		read: (target) => (target.field === "content" ? letter.content : undefined),
+		entry: () => "",
 		view: {
 			sender: letter.style.basics.name,
 			recipient:
@@ -179,6 +191,7 @@ export async function findPosting(
 	const table = schema.application;
 	const [application] = await db
 		.select({
+			id: table.id,
 			role: table.role,
 			company: table.company,
 			jobDescription: table.jobDescription,
@@ -194,15 +207,109 @@ export async function findPosting(
 	const text =
 		application.jobDescription?.trim() ||
 		(application.requirements.length > 0 ? application.requirements.map((item) => `- ${item}`).join("\n") : "");
-	return { role: application.role, company: application.company, text, notes: application.notes?.trim() ?? "" };
+	return {
+		applicationId: application.id,
+		role: application.role,
+		company: application.company,
+		text,
+		notes: application.notes?.trim() ?? "",
+		requirements: application.requirements,
+	};
+}
+
+export const NOT_JOB_COPY_MESSAGE =
+	"Edits that use the posting go to a copy of this resume made for the job, so the original stays unchanged. Copy it for this job first, or leave the posting out to edit this resume.";
+
+/**
+ * What a set of edits is reviewed against beyond the document: Knowledge facts shared this turn (id to text), and the
+ * posting shared with the message, if any.
+ */
+export type ReviewContext = {
+	facts: ReadonlyMap<string, string>;
+	posting: { applicationId: string; requirements: readonly string[] } | null;
+};
+
+const NO_REVIEW_CONTEXT: ReviewContext = { facts: new Map(), posting: null };
+
+type ReviewFields = Pick<ProposeEditsInput["edits"][number], "requirement" | "evidence" | "factIds" | "unsupported">;
+type Cite = (
+	passageIds?: readonly string[],
+	factIds?: readonly string[],
+) => { evidence: ProposalEvidence[]; unresolved: number };
+/** What a reviewed change shows the user: the requirement it addresses, what's cited, what nothing backs. */
+type Review = Partial<
+	Pick<ProposeEditsOutput["edits"][number], "requirement" | "evidence" | "unresolved" | "unsupported">
+>;
+
+/**
+ * Reviews proposed text against this document and the facts shared this turn. Citations are the model's pointers: they
+ * resolve only to this document's passages and those facts, and never count as proof. Claims nothing cited backs are
+ * flagged: the model's own list first, then what the server finds that it left out.
+ */
+function reviewer(document: LoadedDocument, review: ReviewContext) {
+	const byId = new Map(document.passages.map((passage) => [passage.id, passage]));
+	const documentText = `${document.passages.map((passage) => passage.text).join("\n")}\n${JSON.stringify(document.view)}`;
+	const cite: Cite = (passageIds = [], factIds = []) => {
+		const evidence: ProposalEvidence[] = [];
+		let unresolved = 0;
+		for (const id of new Set(passageIds)) {
+			const passage = byId.get(id);
+			if (passage?.text) evidence.push({ kind: "passage", location: passage.location, text: passage.text });
+			else unresolved++;
+		}
+		for (const id of new Set(factIds)) {
+			if (review.facts.has(id)) evidence.push({ kind: "fact", id });
+			else unresolved++;
+		}
+		return { evidence, unresolved };
+	};
+	/** `text`: what the change says; `entry`: what the entry it changes already says. */
+	const reviewOf = (fields: ReviewFields, text: string, entry: string): Review => {
+		const { evidence, unresolved } = cite(fields.evidence, fields.factIds);
+		const citedFacts = (fields.factIds ?? []).flatMap((id) => review.facts.get(id) ?? []);
+		const declared = fields.unsupported ?? [];
+		const flagged = declared.map((claim) => claim.text.toLowerCase()).join("\n");
+		const found = unverifiedClaims(text, { entry, document: [documentText, ...citedFacts].join("\n") }).filter(
+			(claim) => !flagged.includes(claim.text.toLowerCase()),
+		);
+		const unsupported = [...declared, ...found];
+		return {
+			...(fields.requirement ? { requirement: fields.requirement } : {}),
+			...(evidence.length > 0 ? { evidence } : {}),
+			...(unresolved > 0 ? { unresolved } : {}),
+			...(unsupported.length > 0 ? { unsupported } : {}),
+		};
+	};
+	return { byId, cite, reviewOf };
+}
+
+/**
+ * What every set of resume edits carries: which job's copy it's for (accepting it anywhere else would tailor a resume
+ * other jobs share), and the posting's requirements as the assistant read them.
+ */
+function reviewedSet(
+	document: LoadedDocument,
+	review: ReviewContext,
+	requirements: ProposeEditsInput["requirements"],
+	addressed: readonly (string | undefined)[],
+	cite: Cite,
+) {
+	return {
+		...(document.kind === "resume" ? { tailoredFor: review.posting?.applicationId ?? null } : {}),
+		...coverage(requirements, review, addressed, cite),
+	};
 }
 
 /**
  * Places the model's edits on the document as it is now. An edit whose passage id no longer exists (the words
  * changed since the document was read) is skipped, with a reason the model can act on.
  */
-export function resolveEdits(document: LoadedDocument, input: ProposeEditsInput): ProposeEditsOutput {
-	const byId = new Map(document.passages.map((passage) => [passage.id, passage]));
+export function resolveEdits(
+	document: LoadedDocument,
+	input: ProposeEditsInput,
+	review: ReviewContext = NO_REVIEW_CONTEXT,
+): ProposeEditsOutput {
+	const { byId, cite, reviewOf } = reviewer(document, review);
 	const edits: ProposeEditsOutput["edits"] = [];
 	const skipped: ProposeEditsOutput["skipped"] = [];
 
@@ -239,19 +346,108 @@ export function resolveEdits(document: LoadedDocument, input: ProposeEditsInput)
 			after: placed.after,
 			why: edit.why,
 			status: "pending",
+			...reviewOf(edit, edit.text, `${passage.text}\n${document.entry(passage.target)}`),
 		});
 	}
 
-	return { title: input.title, edits, skipped };
+	return {
+		title: input.title,
+		edits,
+		skipped,
+		...reviewedSet(
+			document,
+			review,
+			input.requirements,
+			edits.map((edit) => edit.requirement),
+			cite,
+		),
+	};
+}
+
+/**
+ * The posting's requirements as the assistant read them. "Edited" holds only when an edit that was actually placed
+ * names the requirement; otherwise it falls back to what the citations show. Listed requirements it didn't mention
+ * are added as not assessed, so a gap can't disappear by being left out.
+ */
+function coverage(
+	requirements: ProposeEditsInput["requirements"],
+	review: ReviewContext,
+	placed: readonly (string | undefined)[],
+	cite: Cite,
+): { requirements?: RequirementCoverage[] } {
+	const key = (text: string) => text.trim().toLowerCase();
+	const addressed = new Set(placed.flatMap((requirement) => (requirement ? [key(requirement)] : [])));
+	const read = (requirements ?? []).map(({ text, status, passageIds, factIds }) => {
+		const { evidence, unresolved } = cite(passageIds, factIds);
+		const shown: RequirementCoverage["status"] =
+			status === "edited" && addressed.has(key(text))
+				? "edited"
+				: status === "missing"
+					? "missing"
+					: // A claimed edit that wasn't placed, or "cited" with nothing that resolves, isn't coverage.
+						evidence.length > 0
+						? "cited"
+						: status === "cited"
+							? "missing"
+							: "unassessed";
+		return { text, status: shown, evidence, ...(unresolved ? { unresolved } : {}) };
+	});
+	const mentioned = new Set(read.map((item) => key(item.text)));
+	const unassessed = (review.posting?.requirements ?? [])
+		.filter((text) => text.trim() && !mentioned.has(key(text)))
+		.map((text) => ({ text, status: "unassessed" as const, evidence: [] }));
+	const all = [...read, ...unassessed];
+	return all.length > 0 ? { requirements: all } : {};
+}
+
+/**
+ * A restored message with resume edits that can't be accepted on this resume withheld (see tailoringAllows): a pending
+ * edit's passage (a structural change's snapshot) becomes one no document contains, so every app, older ones included, shows it out of date instead of
+ * offering to apply it. Decided edits keep what happened to them. Stored messages are unchanged.
+ */
+export function withUsableTailoring(message: UIMessage, madeFor: string | null): UIMessage {
+	if (!message.parts.some((part) => part.type === "tool-propose_edits")) return message;
+	return {
+		...message,
+		parts: message.parts.map((part) => {
+			const output = (part as { output?: ProposeEditsOutput }).output;
+			if (part.type !== "tool-propose_edits" || !output?.edits || tailoringAllows(message, output, madeFor))
+				return part;
+			return {
+				...part,
+				output: {
+					...output,
+					revoked: true,
+					// A structural change keeps its readable summary; its snapshot can't match any resume.
+					edits: output.edits.map((edit) =>
+						edit.status !== "pending"
+							? edit
+							: edit.snapshot
+								? { ...edit, snapshot: { ...edit.snapshot, before: REVOKED_PASSAGE } }
+								: { ...edit, before: REVOKED_PASSAGE },
+					),
+				},
+			} as typeof part;
+		}),
+	};
 }
 
 /** Revalidate here too: repaired/provider calls must not revive legacy prose-only resume edits. */
-export function resolveDocumentEdits(document: LoadedDocument, input: unknown): ProposeEditsOutput {
+export function resolveDocumentEdits(
+	document: LoadedDocument,
+	input: unknown,
+	review: ReviewContext = NO_REVIEW_CONTEXT,
+): ProposeEditsOutput {
+	// Tailoring never edits a resume other jobs share: only the copy made for the posting's application.
+	if (document.kind === "resume" && review.posting && document.applicationId !== review.posting.applicationId)
+		throw new Error(NOT_JOB_COPY_MESSAGE);
 	const schema = document.kind === "resume" ? proposeResumeEditsInputSchema : proposeEditsInputSchema;
 	const parsed = schema.safeParse(input);
 	if (!parsed.success)
 		throw new Error("This suggestion couldn't be prepared. Read the document again, or edit it in Write.");
-	return "changes" in parsed.data ? resolveResumeEdits(document, parsed.data) : resolveEdits(document, parsed.data);
+	return "changes" in parsed.data
+		? resolveResumeEdits(document, parsed.data, review)
+		: resolveEdits(document, parsed.data, review);
 }
 
 const ENTRY_IDENTITY_FIELDS: Record<string, string[]> = {
@@ -301,14 +497,47 @@ function fieldLocation(
 	return [...labels, target.field].join(" · ");
 }
 
+/** One structural set is one card: its review is every change's, without repeats. */
+function combinedReview(reviews: readonly Review[]): Review {
+	const unique = <T>(items: T[], key: (item: T) => string) => [
+		...new Map(items.map((item) => [key(item), item])).values(),
+	];
+	const requirements = unique(
+		reviews.flatMap((review) => (review.requirement ? [review.requirement] : [])),
+		(text) => text.trim().toLowerCase(),
+	);
+	const evidence = unique(
+		reviews.flatMap((review) => review.evidence ?? []),
+		(item) => JSON.stringify(item),
+	);
+	const unresolved = reviews.reduce((total, review) => total + (review.unresolved ?? 0), 0);
+	const unsupported = unique(
+		reviews.flatMap((review) => review.unsupported ?? []),
+		(claim) => claim.text.toLowerCase(),
+	);
+	return {
+		...(requirements.length > 0 ? { requirement: requirements.join("; ") } : {}),
+		...(evidence.length > 0 ? { evidence } : {}),
+		...(unresolved > 0 ? { unresolved } : {}),
+		...(unsupported.length > 0 ? { unsupported } : {}),
+	};
+}
+
 /** Structure and text in one snapshot: accepting cannot split a section from its entries or overwrite later edits. */
-function resolveResumeEdits(document: LoadedDocument, input: ProposeResumeEditsInput): ProposeEditsOutput {
+function resolveResumeEdits(
+	document: LoadedDocument,
+	input: ProposeResumeEditsInput,
+	review: ReviewContext,
+): ProposeEditsOutput {
 	const original = document.resume;
 	if (!original) throw new Error("Open a resume to propose these changes.");
+	const { cite, reviewOf } = reviewer(document, review);
 	let next = structuredClone(original);
 	const before: string[] = [];
 	const after: string[] = [];
 	const reasons: string[] = [];
+	const reviews: Review[] = [];
+	const addressed: string[] = [];
 	const skipped: ProposeEditsOutput["skipped"] = [];
 	const textEdits: ProposeEditsOutput["edits"] = [];
 	const textPassages = new Map<string, string>();
@@ -323,52 +552,66 @@ function resolveResumeEdits(document: LoadedDocument, input: ProposeResumeEditsI
 					throw new Error(
 						"This text belongs to a different section, or changed. Read the resume again and choose the matching section.",
 					);
-				const output = resolveEdits(document, {
-					title: input.title,
-					edits: [
-						{
-							passageId: change.passageId,
-							text: change.text,
-							why: change.why,
-							...(change.add === undefined ? {} : { add: change.add }),
-						},
-					],
-				});
-				const edit = output.edits[0];
-				if (!edit) throw new Error(output.skipped[0]?.reason ?? "This text changed. Ask for a fresh suggestion.");
-				textEdits.push(edit);
-				textPassages.set(edit.id, change.passageId);
+				const { kind: _kind, sectionId: _sectionId, ...edit } = change;
+				const output = resolveEdits(document, { title: input.title, edits: [edit] }, review);
+				const placed = output.edits[0];
+				if (!placed) throw new Error(output.skipped[0]?.reason ?? "This text changed. Ask for a fresh suggestion.");
+				textEdits.push(placed);
+				textPassages.set(placed.id, change.passageId);
 				continue;
-			} else {
-				const changed = applyResumeStructureChange(next, change);
-				upgradeResumeDates(changed);
-				syncResumeDates(changed);
-				if (change.kind === "field") {
-					const location = fieldLocation(original, change);
-					before.push(`${location}\n${change.before}`);
-					after.push(`${location}\n${change.value}`);
-				} else if (change.kind === "entry") {
-					const section = Object.hasOwn(changed.sections, change.sectionId)
-						? changed.sections[change.sectionId as keyof ResumeData["sections"]]
-						: changed.customSections.find((item) => item.id === change.sectionId);
-					const entry = section?.items.at(-1);
-					if (!entry) throw new Error("This entry could not be prepared. Add it in Write instead.");
-					after.push(`${sectionLocation(changed, change.sectionId)}\n${entryReview(entry)}`);
-				} else {
-					const section = changed.customSections.at(-1);
-					if (!section) throw new Error("The new section could not be prepared. Add it in Write instead.");
-					after.push(
-						`${section.title} · ${section.type}\n${section.items.map((entry) => entryReview(entry)).join("\n\n")}`,
-					);
-				}
-				next = changed;
 			}
+			const changed = applyResumeStructureChange(next, change);
+			upgradeResumeDates(changed);
+			syncResumeDates(changed);
+			// What the change says, reviewed against what the entry it changes already says (new entries: nothing).
+			let says: string;
+			let entry = "";
+			if (change.kind === "field") {
+				const location = fieldLocation(original, change);
+				before.push(`${location}\n${change.before}`);
+				after.push(`${location}\n${change.value}`);
+				says = change.value;
+				entry = change.target.itemId ? document.entry({ ...change.target, field: "" }) : change.before;
+			} else if (change.kind === "entry") {
+				const section = Object.hasOwn(changed.sections, change.sectionId)
+					? changed.sections[change.sectionId as keyof ResumeData["sections"]]
+					: changed.customSections.find((item) => item.id === change.sectionId);
+				const added = section?.items.at(-1);
+				if (!added) throw new Error("This entry could not be prepared. Add it in Write instead.");
+				after.push(`${sectionLocation(changed, change.sectionId)}\n${entryReview(added)}`);
+				says = entryText(changed, { sectionId: change.sectionId, itemId: added.id, field: "" });
+			} else {
+				const section = changed.customSections.at(-1);
+				if (!section) throw new Error("The new section could not be prepared. Add it in Write instead.");
+				after.push(
+					`${section.title} · ${section.type}\n${section.items.map((item) => entryReview(item)).join("\n\n")}`,
+				);
+				says = [
+					section.title,
+					...section.items.map((item) => entryText(changed, { sectionId: section.id, itemId: item.id, field: "" })),
+				].join("\n");
+			}
+			next = changed;
 			reasons.push(change.why);
+			reviews.push(reviewOf(change, says, entry));
+			if (change.requirement) addressed.push(change.requirement);
 		} catch (error) {
 			skipped.push({ passageId: id, reason: error instanceof Error ? error.message : "These changes need Write." });
 		}
 	}
-	if (textOnly) return { title: input.title, edits: textEdits, skipped };
+	if (textOnly)
+		return {
+			title: input.title,
+			edits: textEdits,
+			skipped,
+			...reviewedSet(
+				document,
+				review,
+				input.requirements,
+				textEdits.map((edit) => edit.requirement),
+				cite,
+			),
+		};
 	const placed = applyResumeProposals(
 		next,
 		textEdits.map((edit) => ({ ...edit, source: "assistant" })),
@@ -377,6 +620,9 @@ function resolveResumeEdits(document: LoadedDocument, input: ProposeResumeEditsI
 		before.push(`${edit.location}\n${blockText(edit.before)}`);
 		after.push(`${edit.location}\n${blockText(edit.after)}`);
 		reasons.push(edit.why);
+		const { requirement, evidence, unresolved, unsupported } = edit;
+		reviews.push({ requirement, evidence, unresolved, unsupported });
+		if (edit.requirement) addressed.push(edit.requirement);
 	}
 	for (const edit of placed.stale)
 		skipped.push({
@@ -385,23 +631,25 @@ function resolveResumeEdits(document: LoadedDocument, input: ProposeResumeEditsI
 		});
 	const saved = resumeStructureSnapshot(original);
 	const proposed = resumeStructureSnapshot(next);
+	const changed = saved !== proposed;
 	return {
 		title: input.title,
-		edits:
-			saved === proposed
-				? []
-				: [
-						{
-							id: generateId(),
-							target: { sectionId: "resume", field: "data" },
-							location: "Resume",
-							before: before.join("\n\n") || "—",
-							after: after.join("\n\n"),
-							snapshot: { before: saved, after: proposed },
-							why: reasons.join("\n"),
-							status: "pending",
-						},
-					],
+		edits: changed
+			? [
+					{
+						id: generateId(),
+						target: { sectionId: "resume", field: "data" },
+						location: "Resume",
+						before: before.join("\n\n") || "—",
+						after: after.join("\n\n"),
+						snapshot: { before: saved, after: proposed },
+						why: reasons.join("\n"),
+						status: "pending",
+						...combinedReview(reviews),
+					},
+				]
+			: [],
 		skipped,
+		...reviewedSet(document, review, input.requirements, changed ? addressed : [], cite),
 	};
 }

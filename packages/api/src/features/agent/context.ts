@@ -1,4 +1,4 @@
-import type { ModelMessage } from "ai";
+import type { ModelMessage, UIMessage } from "ai";
 import { pruneMessages } from "ai";
 import { estimateTokenCount as estimateTextTokenCount } from "tokenx";
 import { getVisibleResumeStructure } from "@reactive-resume/resume/markdown";
@@ -295,4 +295,45 @@ export function pruneAgentModelContext(
 	if (estimateTokens(current) <= budget) return current;
 
 	return dropOldestTurns(current, budget);
+}
+
+/** A reply that looked up Knowledge: anything it said after the lookup may repeat those facts. */
+export const readsKnowledge = (message: UIMessage) => message.parts.some((part) => part.type === "tool-read_knowledge");
+
+/**
+ * The replies to withdraw. Once a reply looks up Knowledge, any later reply may repeat those facts from history,
+ * directly or through another reply (a question it asked, a proposal it made). So every reply from the first lookup on
+ * depends on Knowledge: a conservative history boundary, not a guess at which words came from a fact. They're
+ * withdrawn once a fact changed, was switched off or was forgotten after they began (the career memory cutoff), and
+ * from the model's history whenever a message leaves Knowledge out (`shared` false).
+ */
+export function knowledgeWithdrawals(
+	history: ReadonlyArray<{ message: UIMessage; createdAt: Date }>,
+	cutoff: Date | null,
+	shared = true,
+): ReadonlySet<string> {
+	const first = history.findIndex(({ message }) => readsKnowledge(message));
+	if (first < 0) return new Set();
+	return new Set(
+		history
+			.slice(first)
+			.filter(
+				({ message, createdAt }) =>
+					message.role === "assistant" && (!shared || (cutoff !== null && createdAt <= cutoff)),
+			)
+			.map(({ message }) => message.id),
+	);
+}
+
+/** A withdrawn Knowledge reply: none of its words, facts or proposals, only that it was there. */
+export function withdrawKnowledgeReply(message: UIMessage, forModel = false): UIMessage {
+	return {
+		id: message.id,
+		role: message.role,
+		...(message.metadata === undefined ? {} : { metadata: message.metadata }),
+		// The model needs a turn with content; the apps render a notice for the data part.
+		parts: forModel
+			? [{ type: "text", text: "An earlier reply used Knowledge that isn't shared now, so it's left out." }]
+			: [{ type: "data-knowledge-withdrawn", data: {} }],
+	};
 }

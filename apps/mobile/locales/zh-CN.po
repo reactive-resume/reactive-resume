@@ -148,6 +148,11 @@ msgstr "{0, plural, one {#角色} other {#角色}}"
 msgid "{0, plural, one {# check could not run.} other {# checks could not run.}}"
 msgstr "{0, plural, one {#项检查未能运行。} other {#项检查未能运行。}}"
 
+#. placeholder {0}: item.unresolved ?? 0
+#: src/features/assistant/messages.tsx
+msgid "{0, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
+msgstr ""
+
 #. placeholder {0}: Number(columns)
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
@@ -294,6 +299,16 @@ msgstr "{0, plural, one {重新显示#个已忽略的问题} other {重新显示
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, other {# 分钟前已开始}}"
+
+#. placeholder {0}: evidence.length
+#: src/features/assistant/messages.tsx
+msgid "{0, plural, one {The assistant cites # source · check it says this} other {The assistant cites # sources · check they say this}}"
+msgstr ""
+
+#. placeholder {0}: requirements.length
+#: src/features/assistant/messages.tsx
+msgid "{0, plural, one {The assistant's reading of # posting requirement} other {The assistant's reading of # posting requirements}}"
+msgstr ""
 
 #. placeholder {0}: fact.usedBy.savedItems
 #: src/features/career/facts.tsx
@@ -558,6 +573,10 @@ msgstr "{facts, plural, other {# 个事实}}"
 msgid "{followUps, plural, one {# follow-up} other {# follow-ups}}"
 msgstr "{followUps, plural, one {#次跟进} other {#次跟进}}"
 
+#: src/features/assistant/messages.tsx
+msgid "{gaps, plural, one {· # gap} other {· # gaps}}"
+msgstr ""
+
 #: src/features/workspace/shell.tsx
 msgid "{hours} h"
 msgstr "{hours}小时"
@@ -708,6 +727,10 @@ msgstr "{toCheck, plural, one {# 字段需要查看。} other {# 字段需要查
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {#检查} other {#检查}}"
 
+#: src/features/assistant/messages.tsx
+msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "{words, plural, one {# word} other {# words}}"
@@ -785,6 +808,10 @@ msgstr "不会读取日期"
 #: src/features/career/stories.tsx
 msgid "A fact changed. Review this story."
 msgstr "某个事实已更改。请检查这个故事。"
+
+#: src/features/assistant/messages.tsx
+msgid "A fact that's no longer in Knowledge"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "A focused plan for this round"
@@ -1466,6 +1493,14 @@ msgstr "始终显示在“今天”中。电子邮件需要已验证的地址及
 msgid "Amharic"
 msgstr "阿姆哈拉语"
 
+#: src/features/assistant/messages.tsx
+msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "An edit addresses it"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "An embedded font could not be read."
 msgstr "有一款嵌入的字体无法读取。"
@@ -1477,6 +1512,10 @@ msgstr "条目没有日期"
 #: src/features/assistant/chat-view.tsx
 msgid "an error"
 msgstr "一个错误"
+
+#: src/draft/conflict-sheet.tsx
+msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
+msgstr ""
 
 #. placeholder {0}: others.length
 #: src/features/application-detail/sections.tsx
@@ -2118,6 +2157,7 @@ msgstr "软件可以读取您的简历吗？"
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/check/parser.tsx
 #: src/features/check/writing.tsx
@@ -2452,6 +2492,10 @@ msgstr "每个批量操作最多选择 200 个申请。"
 #: src/features/design/advanced.tsx
 msgid "Circle"
 msgstr "圆形"
+
+#: src/features/assistant/messages.tsx
+msgid "Cited as already shown · check it"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "City"
@@ -2858,6 +2902,10 @@ msgstr "已创建副本"
 msgid "Copy for a job…"
 msgstr "复印一份工作..."
 
+#: src/features/assistant/assistant-screen.tsx
+msgid "Copy for this job"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Copy reply"
 msgstr "复制回复"
@@ -2869,6 +2917,10 @@ msgstr "复制样式表"
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
 msgstr "把导出文件中的文字复制出来通读一遍；修正任何位置错乱的内容。"
+
+#: src/features/workspace/preparation.tsx
+msgid "Copy this resume for the job"
+msgstr ""
 
 #: src/features/assistant/chat-view.tsx
 msgid "Copy transcript"
@@ -3227,6 +3279,10 @@ msgstr "无法保存您的更改。您所做的编辑仍然在此设备上。再
 msgid "Couldn't save your preferences. Your draft is still here."
 msgstr "无法保存您的偏好设置。您的草稿还在这里。"
 
+#: src/features/assistant/messages.tsx
+msgid "Couldn't save your wording. Your text is still here; try again."
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Couldn't save. Try again."
 msgstr "无法保存。再试一次。"
@@ -3515,11 +3571,16 @@ msgid "Dark theme"
 msgstr "深色主题"
 
 #: src/api/ai-consent.ts
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr "数据共享已取消。没有向 AI 提供商发送任何内容。"
+
+#: src/api/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the provider."
 msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/date-field.tsx
@@ -4098,6 +4159,7 @@ msgstr "此聊天中的早前消息"
 
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/career/stories.tsx
 #: src/features/career/today.tsx
 #: src/features/write/basics-screen.tsx
@@ -4173,6 +4235,10 @@ msgstr "编辑电子邮件"
 msgid "Edit the link"
 msgstr "编辑链接"
 
+#: src/features/assistant/messages.tsx
+msgid "Edited by you"
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Editing session"
@@ -4211,6 +4277,10 @@ msgstr "给招聘人员发电子邮件"
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "导出时嵌入所有字体，确保字符按你的预期显示。"
+
+#: src/features/assistant/messages.tsx
+msgid "Employer"
+msgstr ""
 
 #: src/features/documents/thumbnail.tsx
 msgid "Empty letter"
@@ -4452,6 +4522,11 @@ msgstr "字段 {0}"
 #: src/features/write/basics-screen.tsx
 msgid "Field removed"
 msgstr "字段已删除"
+
+#: src/features/assistant/messages.tsx
+msgctxt "A number or metric stated in a resume"
+msgid "Figure"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "File attached"
@@ -5340,6 +5415,10 @@ msgstr "此服务器未配置职位搜索。请改为粘贴职位发布链接。
 msgid "Job search pipeline"
 msgstr "求职流程"
 
+#: src/features/assistant/messages.tsx
+msgid "Job title"
+msgstr ""
+
 #: src/features/search/search-screen.tsx
 msgid "Jobs"
 msgstr "工作机会"
@@ -5459,6 +5538,7 @@ msgid "Kind regards,"
 msgstr "亲切的问候，"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
 msgid "Knowledge"
 msgstr "知识库"
@@ -6632,6 +6712,10 @@ msgstr "没有电子邮件地址"
 msgid "No email address was found."
 msgstr "未找到电子邮件地址。"
 
+#: src/features/assistant/messages.tsx
+msgid "No evidence found · left as a gap"
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "No evidence yet"
 msgstr "暂无证据"
@@ -6828,6 +6912,10 @@ msgstr "未应用"
 msgid "Not applied yet"
 msgstr "尚未申请"
 
+#: src/features/assistant/messages.tsx
+msgid "Not assessed"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Not available while the resume needs a password."
 msgstr "简历需要密码时不可用。"
@@ -6843,6 +6931,10 @@ msgstr "不适合我"
 #: src/features/ats-checker/checker.tsx
 msgid "Not found:"
 msgstr "未找到："
+
+#: src/features/assistant/messages.tsx
+msgid "Not in your resume"
+msgstr "不在你的简历中"
 
 #: src/features/check/job-match.tsx
 msgid "Not in your resume · add only if true"
@@ -6895,6 +6987,14 @@ msgstr "信息"
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "备注"
+
+#: src/features/assistant/messages.tsx
+msgid "Nothing checked backs these. Confirm each before accepting:"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "Nothing cited for this edit."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Nothing here should cost you a match."
@@ -7007,6 +7107,10 @@ msgstr "每周到办公室天数上限"
 #: src/features/career/offers.tsx
 msgid "Office days are unknown."
 msgstr "到岗天数未知。"
+
+#: src/features/career/today.tsx
+msgid "Office days not stated"
+msgstr "未注明到办公室天数"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -7631,6 +7735,10 @@ msgstr "职位公告"
 #: src/features/workspace/tabs/fit.tsx
 msgid "Posting"
 msgstr "职位公告"
+
+#: src/features/assistant/messages.tsx
+msgid "Posting asks for: {requirement}"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -8514,6 +8622,10 @@ msgstr "答复截止"
 msgid "Response deadline has passed."
 msgstr "回复截止日期已过。"
 
+#: src/features/assistant/messages.tsx
+msgid "Responsibility"
+msgstr ""
+
 #: app/(tabs)/settings/preferences.tsx
 msgid "Restart to change text direction"
 msgstr "重新启动以更改文本方向"
@@ -8912,6 +9024,10 @@ msgstr "薪资"
 msgid "Salary not detected"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Salary not listed"
+msgstr "未列出薪资"
+
 #: src/features/applications/add-sheet.tsx
 msgid "Salary range"
 msgstr "薪资范围"
@@ -9042,6 +9158,10 @@ msgstr "将此经历保存到知识库？"
 msgid "Save to Knowledge"
 msgstr "保存到知识库"
 
+#: src/features/assistant/messages.tsx
+msgid "Save wording"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Save your version over theirs."
 msgstr "用您的版本覆盖对方的版本。"
@@ -9106,6 +9226,7 @@ msgstr "已保存到“已保存” · 练习"
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "拯救工作。等待确认后再进行另一次更改。"
 
+#: src/features/assistant/messages.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/profile.tsx
@@ -9478,6 +9599,11 @@ msgstr "分享"
 msgid "Share calendar event (.ics)"
 msgstr "共享日历事件 (.ics)"
 
+#. placeholder {0}: provider.label
+#: src/api/ai-consent.ts
+msgid "Share data with {0}?"
+msgstr "与{0}共享数据？"
+
 #: src/api/ai-consent.ts
 msgid "Share data with {label}?"
 msgstr ""
@@ -9786,6 +9912,7 @@ msgstr "情境、任务、行动、结果、反思。将每个故事关联到您
 msgid "Size"
 msgstr "大小"
 
+#: src/features/assistant/messages.tsx
 #: src/features/career/facts.tsx
 msgid "Skill"
 msgstr "技能"
@@ -10681,6 +10808,14 @@ msgstr ""
 msgid "These are the answers saved when you applied."
 msgstr "这些是您申请时保存的回答。"
 
+#: src/features/assistant/messages.tsx
+msgid "These edits are from before the assistant recorded which job posting they use, so they can't be applied. Ask again on the resume you want to change."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged."
+msgstr ""
+
 #: app/(tabs)/settings/account.tsx
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "这些将在应用程序内的浏览器选项卡中打开服务器的帐户设置。您可能需要在那里登录。"
@@ -10888,6 +11023,10 @@ msgstr "这衡量软件提取该文件文本的准确程度。它无法预测申
 msgid "This month"
 msgstr "本月"
 
+#: src/draft/conflict-sheet.tsx
+msgid "This older draft needs review"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "This page is clipped or incomplete. Check the original before using it."
 msgstr "此页已被剪裁或不完整。使用前请检查原件。"
@@ -10922,6 +11061,10 @@ msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
@@ -11169,6 +11312,7 @@ msgstr "尝试{suggestion}"
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/workspace/parts.tsx
@@ -11502,6 +11646,10 @@ msgstr "使用简历中的信息"
 msgid "Use for all applications"
 msgstr "用于所有申请"
 
+#: src/features/assistant/assistant-screen.tsx
+msgid "Use Knowledge"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
 msgid "Use lowercase letters, numbers and single dashes."
@@ -11529,6 +11677,10 @@ msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
+msgstr ""
+
+#: src/draft/conflict-sheet.tsx
+msgid "Use saved version"
 msgstr ""
 
 #: src/features/workspace/parts.tsx
@@ -11613,6 +11765,10 @@ msgstr "使用在设置中设置的网络搜索服务。搜索结果等待您的
 #: src/features/career/schedule-sheet.tsx
 msgid "Uses web search set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today; applications and documents are never created for you."
 msgstr ""
+
+#: src/features/career/schedule-sheet.tsx
+msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
+msgstr "使用 设置 中设置的网络搜索。结果在今天等待。申请和文件永远不会为您创建。"
 
 #: src/features/share/web-page.tsx
 msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
@@ -12404,6 +12560,10 @@ msgstr "在打开网络搜索设置之前，您未保存的职位详细信息将
 
 #: src/api/ai-consent.ts
 msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "Your wording"
 msgstr ""
 
 #: src/features/letters/page.tsx

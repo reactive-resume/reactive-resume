@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
-import { nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
+import { isJobCopy, nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
 import { useWorkspace, workspaceError } from "./hooks";
 import { Actions, Block } from "./parts";
 import { orpc } from "@/api/client";
@@ -113,7 +113,21 @@ export function Preparation({ application, disabled }: PreparationProps) {
 	const action = !editing ? null : next === "resume" ? (
 		<Button fullWidth label={t`Copy a base resume for this job`} disabled={busy} onPress={copyResume} />
 	) : next === "tailor" && resumeId ? (
-		<Button fullWidth label={t`Tailor the resume`} onPress={() => router.push(routes.builder(resumeId))} />
+		!isJobCopy(application, documents.data) ? (
+			<Button
+				fullWidth
+				label={t`Copy this resume for the job`}
+				disabled={busy || !documents.data}
+				onPress={copyResume}
+			/>
+		) : (
+			// The assistant opens ready to propose reviewable edits for this posting.
+			<Button
+				fullWidth
+				label={t`Tailor the resume`}
+				onPress={() => router.push(connection.hasAIProvider ? routes.assistant(resumeId) : routes.builder(resumeId))}
+			/>
+		)
 	) : next === "letter" ? (
 		<Button fullWidth label={t`Write a letter`} disabled={busy} onPress={() => void writeLetter()} />
 	) : null;

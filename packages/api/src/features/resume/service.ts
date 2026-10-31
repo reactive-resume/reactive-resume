@@ -16,7 +16,11 @@ import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { isValidSlug } from "@reactive-resume/schema/resume/slug";
 import { generateId } from "@reactive-resume/utils/string";
 import { consumeResumePasswordLimit } from "../../middleware/rate-limit";
-import { saveProposalApplications } from "../agent/proposal-applications";
+import {
+	assertCurrentClientWrite,
+	CurrentClientRequired,
+	saveProposalApplications,
+} from "../agent/proposal-applications";
 import { adoptEmbeddedLetters } from "../cover-letters/embedded";
 import { lockUser } from "../documents/ownership";
 import { enqueueStorageCleanup, reportStorageCleanupSummary, runStorageCleanup } from "../storage/cleanup";
@@ -46,6 +50,33 @@ function resumeVersionConflict(updatedAt: Date) {
 		status: 409,
 		message: "The resume changed after this patch was generated. Read the resume again and regenerate the patch.",
 		data: { updatedAt: updatedAt.toISOString() },
+	});
+}
+
+/**
+ * An older app tried to change a resume holding assistant edits it could apply wrongly (see assertCurrentClientWrite).
+ * Nothing it sent is written. The resume's version moves on, so a draft it kept to resend later conflicts too, and the
+ * app answers with its usual version-conflict path: keep the draft as a copy, reload this resume.
+ */
+async function refuseOlderClient(input: { id: string; userId: string }) {
+	const [touched] = await db
+		.update(schema.resume)
+		.set({ updatedAt: new Date() })
+		.where(activeResumeWhere(input.id, input.userId))
+		.returning({ updatedAt: schema.resume.updatedAt });
+	if (!touched) return new ORPCError("NOT_FOUND");
+	await notifyResumeUpdated({
+		type: "resume.updated",
+		resumeId: input.id,
+		userId: input.userId,
+		updatedAt: touched.updatedAt.toISOString(),
+		mutation: "update",
+	});
+	return new ORPCError("RESUME_VERSION_CONFLICT", {
+		status: 409,
+		message:
+			"This resume has assistant edits this version of the app can't check. Refresh or update the app, then make the change again.",
+		data: { updatedAt: touched.updatedAt.toISOString(), reason: "CURRENT_CLIENT_REQUIRED" },
 	});
 }
 
@@ -129,6 +160,8 @@ async function applyResumePatchTx(
 		userId: string;
 		operations: JsonPatchOperation[];
 		expectedUpdatedAt?: Date;
+		proposalApplications?: ProposalApplications;
+		proposalSafety?: "v1";
 	},
 ) {
 	const [existing] = await client
@@ -145,6 +178,11 @@ async function applyResumePatchTx(
 	if (!existing) throw new ORPCError("NOT_FOUND");
 	if (existing.isLocked) throw new ORPCError("RESUME_LOCKED", { status: 403 });
 	assertResumeVersion(existing.updatedAt, input.expectedUpdatedAt);
+	await assertCurrentClientWrite(client, {
+		userId: input.userId,
+		document: { kind: "resume", id: input.id },
+		proposalSafety: input.proposalSafety,
+	});
 
 	input.operations.forEach(assertValidPatchPointers);
 
@@ -189,6 +227,12 @@ async function applyResumePatchTx(
 		if (input.expectedUpdatedAt) throw resumeVersionConflict(existing.updatedAt);
 		throw new ORPCError("NOT_FOUND");
 	}
+	await saveProposalApplications(client, {
+		userId: input.userId,
+		document: { kind: "resume", id: input.id },
+		applications: input.proposalApplications,
+		conflict: () => resumeVersionConflict(existing.updatedAt),
+	});
 
 	// Checkpoint every patch (AI/API edit) atomically within the same transaction as the edit.
 	// ponytail: a multi-patch agent turn writes one row per patch; 90-day retention bounds it.
@@ -443,7 +487,7 @@ export const resumeService = {
 
 		// Non-destructive restore: writes the snapshot's data back through the normal update path, so
 		// prior versions remain and the restore is itself just another (snapshot-able, undoable) change.
-		restore: async (input: { resumeId: string; versionId: string; userId: string }) => {
+		restore: async (input: { resumeId: string; versionId: string; userId: string; proposalSafety?: "v1" }) => {
 			// Check lock state before loading or validating historical data so locked resumes fail without expensive work.
 			const current = await resumeService.getById({ id: input.resumeId, userId: input.userId });
 			if (current.isLocked) throw new ORPCError("RESUME_LOCKED", { status: 403 });
@@ -463,6 +507,7 @@ export const resumeService = {
 				userId: input.userId,
 				data: version.data,
 				skipAutoSnapshot: true,
+				...(input.proposalSafety ? { proposalSafety: input.proposalSafety } : {}),
 			});
 
 			await writeVersion(db, {
@@ -652,6 +697,7 @@ export const resumeService = {
 		/** The editor visit this save belongs to; its autosaves share one version. */
 		sessionId?: string;
 		proposalApplications?: ProposalApplications;
+		proposalSafety?: "v1";
 	}) => {
 		const resume = await db
 			.transaction(async (tx) => {
@@ -672,6 +718,12 @@ export const resumeService = {
 				if (!existing) throw new ORPCError("NOT_FOUND");
 				if (existing.isLocked) throw new ORPCError("RESUME_LOCKED", { status: 403 });
 				assertResumeVersion(existing.updatedAt, input.expectedUpdatedAt);
+				if (input.data !== undefined)
+					await assertCurrentClientWrite(tx, {
+						userId: input.userId,
+						document: { kind: "resume", id: input.id },
+						proposalSafety: input.proposalSafety,
+					});
 
 				// A new address must follow the pattern; existing ones that don't keep working until changed.
 				const renamed = input.slug !== undefined && input.slug !== existing.slug;
@@ -746,10 +798,12 @@ export const resumeService = {
 					userId: input.userId,
 					document: { kind: "resume", id: input.id },
 					applications: input.proposalApplications,
+					conflict: () => resumeVersionConflict(existing.updatedAt),
 				});
 				return updated;
 			})
-			.catch((error: unknown) => {
+			.catch(async (error: unknown) => {
+				if (error instanceof CurrentClientRequired) throw await refuseOlderClient(input);
 				if (error instanceof ORPCError) throw error;
 
 				if (uniqueConstraint(error) === "resume_slug_user_id_unique") {
@@ -781,8 +835,19 @@ export const resumeService = {
 		return resume;
 	},
 
-	patch: async (input: { id: string; userId: string; operations: JsonPatchOperation[]; expectedUpdatedAt?: Date }) => {
-		const resume = await db.transaction((tx) => applyResumePatchTx(tx, input));
+	patch: async (input: {
+		id: string;
+		userId: string;
+		operations: JsonPatchOperation[];
+		expectedUpdatedAt?: Date;
+		proposalApplications?: ProposalApplications;
+		proposalSafety?: "v1";
+	}) => {
+		const resume = await db
+			.transaction((tx) => applyResumePatchTx(tx, input))
+			.catch(async (error: unknown) => {
+				throw error instanceof CurrentClientRequired ? await refuseOlderClient(input) : error;
+			});
 
 		await notifyResumeUpdated({
 			type: "resume.updated",

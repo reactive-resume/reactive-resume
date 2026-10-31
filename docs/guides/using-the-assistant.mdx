@@ -67,17 +67,17 @@ A request involving fields, entries or sections appears as one card for the enti
   />
 </Frame>
 
-<Frame caption="A proposed edit, shown on the page and in the assistant">
+<Frame caption="A tailored edit on a fictional job copy, shown on the page and in the assistant. The posting chip and the disclosure under the message box show the posting is shared.">
   <img
     src="/images/guides/using-the-assistant/proposed-edit-on-page.webp"
-    alt="Resume editor where the summary on the page shows the old text struck through and the new text below it, with a banner reading 1 proposed edit on this page · nothing changes until you accept, and the matching card in the Assistant panel"
+    alt="Resume editor for Game Developer Resume — Lumen Games, where the summary on the page shows the old text struck through and the new text below it, with a banner reading 1 proposed edit on this page · nothing changes until you accept. The Assistant panel shows the matching card with a cited passage, flagged details and Accept, Edit and Reject buttons, and chips for the resume, the Lumen Games posting and Use Knowledge above the message box"
   />
 </Frame>
 
-<Frame caption="The proposed edit card">
+<Frame caption="The proposed edit card when tailoring: the assistant's reading of the posting's requirements, with two gaps left open, then the edit, its citation to check, and details nothing checked backs">
   <img
     src="/images/guides/using-the-assistant/proposed-edit-card.webp"
-    alt="Card titled 1 proposed edit, with the location Summary · paragraph 1, the old summary struck through, the shorter new summary highlighted in green, the reason, and Accept and Reject buttons"
+    alt="Card titled 1 proposed edit. The assistant's reading of 3 posting requirements · 2 gaps lists Gameplay programming in Unity or Unreal as An edit addresses it, and Shipped at least one console title and Online multiplayer networking as No evidence found · left as a gap. Below, Summary · paragraph 1 with the old summary struck through, the new summary highlighted in green, the reason, Posting asks for: Gameplay programming in Unity or Unreal, The assistant cites 1 source · check it says this with an experience bullet, a warning listing Figure: 5+, Figure: 2 console and words not in the resume, and Accept, Edit and Reject buttons"
   />
 </Frame>
 
@@ -95,6 +95,36 @@ Accepted edits show **Applied** and the set's title changes to, for example, **1
 </Frame>
 
 The assistant only rewrites what your document already says. When a posting asks for something your document doesn't mention, it asks you first instead of inventing it.
+
+Select **Edit** to change a text edit's new text in your own words before deciding, then **Save wording**. A structural set has no **Edit**: accept it and adjust the result in Write, or reject it and ask again. Once it's saved and the app has read it back, the card shows **Edited by you**, and **Accept** applies your wording. If saving or reading it back fails, your text stays in the box with **Try again**, which picks up wording that was already saved. While its wording is open, saving or unsaved, the edit can't be accepted by any route, including **Accept all** and the <kbd>A</kbd> key, until it's saved or you cancel. An accepted edit is recorded with the document save itself, and only when it was applied in that edit's current wording. It stays recorded when other edits land in the same place, when you refine it, and through Undo and Redo. The same holds for a structural set you refine after accepting. If another tab or device changed the wording first, the save is refused and nothing is written: the editor shows a version conflict, where you can keep your draft as a copy and reload. Undo works the same way as for any accepted edit.
+
+### Tailoring to a posting
+
+Tailoring changes a copy of your resume made for that job, never the resume your other applications use. If the open resume isn't that copy, the assistant shows **Copy for this job** above the message box and won't propose edits that use the posting until you copy it, or leave the posting out. Edits it proposed with a posting can't be accepted on a resume that isn't that job's copy: copy the resume for the job and ask again there. Edits from older conversations that may have used a posting show as out of date and can't be applied anywhere; ask again on the resume you want to change.
+
+<Note>
+  An older version of the app can't check these edits. A resume or letter with tailored edits it can't accept, or with
+  wording you changed, refuses changes from an older version of the app, even ones typed by hand: that app shows a
+  version conflict and keeps its draft as a copy. Refresh the page, or update the mobile app, to keep editing that
+  document. Changes an older version kept on your device while offline are still treated as that version's after you
+  update: such a document refuses them the same way. On mobile, **This older draft needs review** offers **Keep both**
+  to save them as a separate document, or **Use saved version** to discard them and start from the server's copy. **Keep
+  mine** isn't available for that refusal. On the web, **Review saved version** leads to the existing recovery choices.
+  Documents without such edits work as before.
+</Note>
+
+When you tailor, the card can also show:
+
+- **The assistant's reading of n posting requirements:** the requirements it found in the posting (and any the application lists), marked **An edit addresses it**, **Cited as already shown · check it**, **No evidence found · left as a gap** or **Not assessed**. Gaps stay open, even when no edit could be placed; the assistant doesn't fill them with experience you don't have. It can miss requirements in a posting's text, so read the posting too.
+- **Posting asks for:** the requirement an edit addresses.
+- **The assistant cites n sources · check they say this:** the passages, or Knowledge facts, the assistant pointed to. A citation is the assistant's pointer, not proof; read it before you accept. **Nothing cited for this edit** means it pointed to nothing.
+- **Nothing checked backs these. Confirm each before accepting:** what the model flagged, plus numbers and years unless one statement in the entry (or role) being edited says all of them with the same subject words (longer words, and short names such as AWS), and words that aren't anywhere in your resume. A reworded claim can be flagged too. These checks find likely problems; they can't confirm an edit is true.
+
+Accepting changes the document only. It never saves anything to Knowledge as a confirmed fact. This reading helps you edit; it's separate from the term list in Check, and it isn't a prediction of how an employer or screening system will respond.
+
+### Use Knowledge
+
+Turn on **Use Knowledge** above the message box to let the assistant look up your switched-on [Knowledge](/guides/building-career-knowledge) facts and cite them. It's off for each new conversation. When it's on, facts the assistant looks up are sent to your AI provider with that message. Once a reply looks up Knowledge, that reply and every later one in the conversation are treated as using it, because they can repeat it. They aren't sent again with a message that leaves Knowledge off. If you later correct, switch off or forget a fact, those replies are hidden from the conversation and never sent again, and a reply waiting on your answer has to start over.
 
 ## Undo an accepted edit
 

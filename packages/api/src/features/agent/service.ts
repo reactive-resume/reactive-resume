@@ -1,6 +1,7 @@
 import type { getModel } from "../ai/service";
 import type { WebAccessConnection } from "../web-access/contracts";
 import type { AssistantDocument } from "./document";
+import type { EditUpdate } from "./messages-persistence";
 import type {
 	ProposeEditsInput,
 	ProposeEditsOutput,
@@ -24,6 +25,7 @@ import { agentWebSources } from "@reactive-resume/ai/tools/agent-tool-contracts"
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
+import { withEditedText } from "@reactive-resume/resume/proposals";
 import { generateId } from "@reactive-resume/utils/string";
 import { aiProvidersService } from "../ai-providers/service";
 import { assertAgentEnvironment } from "../ai/credentials";
@@ -37,8 +39,15 @@ import { webAccessService } from "../web-access/credentials";
 import { searchScope } from "../web-access/regions";
 import { readPage, searchWeb } from "../web-access/service";
 import { isRunAlive, monitorRunCancellation, requestRunCancellation } from "./cancellation";
-import { pruneAgentModelContext } from "./context";
-import { documentOf, documentView, findPosting, loadDocument, resolveDocumentEdits } from "./document";
+import { knowledgeWithdrawals, pruneAgentModelContext, readsKnowledge, withdrawKnowledgeReply } from "./context";
+import {
+	documentOf,
+	documentView,
+	findPosting,
+	loadDocument,
+	resolveDocumentEdits,
+	withUsableTailoring,
+} from "./document";
 import { mergeClientToolResponses } from "./messages-merge";
 import {
 	applyStepToUiMessage,
@@ -47,12 +56,14 @@ import {
 	insertDraftAssistantMessage,
 	nextMessageSequence,
 	lockThreadMessages,
+	withEditWording,
 	proposedEditsOf,
 	touchThread,
 	upsertAssistantUiMessage,
 	withAccumulatedUsageMetadata,
 	withEditStatuses,
 } from "./messages-persistence";
+import { acceptedEditAllowed, documentReader } from "./proposal-applications";
 import { repairAgentToolCall } from "./repair";
 import { claimActiveAgentRun, clearActiveAgentRunIfCurrent, isStaleAgentRun, reapStaleAgentRun } from "./runs";
 import { agentStreamLifecycle } from "./streams";
@@ -730,15 +741,38 @@ async function readAttachment(input: { id: string; threadId: string; userId: str
 	};
 }
 
+type AgentPosting = NonNullable<Awaited<ReturnType<typeof findPosting>>>;
+
+/** The application a resume was made for: null for a base resume other jobs can share. */
+async function resumeMadeFor(userId: string, resumeId: string) {
+	const [row] = await db
+		.select({ applicationId: schema.resume.applicationId })
+		.from(schema.resume)
+		.where(and(eq(schema.resume.id, resumeId), eq(schema.resume.userId, userId)));
+	return row?.applicationId ?? null;
+}
+
+/** Switched-on Knowledge facts visible to the job (or shared ones without one): never another application's. */
+async function knowledgeFacts(userId: string, applicationId: string | null, query?: string) {
+	const facts = await careerService.facts({ userId, applicationId, query });
+	return facts.filter((fact) => fact.status === "active");
+}
+
 /** Places the model's edits on the document and counts them toward the conversation's outcome. */
 async function proposeEdits(input: {
 	userId: string;
 	threadId: string;
 	document: AssistantDocument;
 	edits: ProposeEditsInput | ProposeResumeEditsInput;
+	posting: AgentPosting | null;
+	knowledge: boolean;
 }): Promise<ProposeEditsOutput> {
 	const loaded = await loadDocument(input.userId, input.document);
-	const output = resolveDocumentEdits(loaded, input.edits);
+	const facts = input.knowledge ? await knowledgeFacts(input.userId, input.posting?.applicationId ?? null) : [];
+	const output = resolveDocumentEdits(loaded, input.edits, {
+		facts: new Map(facts.map((fact) => [fact.id, fact.text])),
+		posting: input.posting,
+	});
 	if (output.edits.length > 0) {
 		await db
 			.update(schema.agentThread)
@@ -767,12 +801,11 @@ function createAgent(input: {
 	threadId: string;
 	/** Null when the message leaves the document out. */
 	document: (AssistantDocument & { name: string }) | null;
-	posting: {
-		role: string;
-		company: string;
-		text: string;
-		notes?: string;
-	} | null;
+	posting: AgentPosting | null;
+	/** The open resume is the copy made for the posting's application, so tailoring can edit it. */
+	jobCopy: boolean;
+	/** The user shared their switched-on Knowledge facts with this message. */
+	knowledge: boolean;
 	provider: {
 		provider: Parameters<typeof getModel>[0]["provider"];
 		model: string;
@@ -873,8 +906,20 @@ function createAgent(input: {
 					threadId: input.threadId,
 					document,
 					edits,
+					posting: input.posting,
+					knowledge: input.knowledge,
 				});
 			}),
+			readKnowledge: input.knowledge
+				? timedToolHandler("read_knowledge", async (query: string) => {
+						const facts = await knowledgeFacts(input.userId, input.posting?.applicationId ?? null, query);
+						// Text and category only: sources and scopes stay private.
+						return {
+							facts: facts.slice(0, 30).map(({ id, text, category }) => ({ id, text, category })),
+							truncated: facts.length > 30,
+						};
+					})
+				: undefined,
 		},
 	});
 
@@ -883,7 +928,8 @@ function createAgent(input: {
 		? buildCareerInstructions(input.career)
 		: buildAgentInstructions({
 				document: document ? { kind: document.kind, name: document.name } : null,
-				posting: input.posting,
+				posting: input.posting ? { ...input.posting, jobCopy: input.jobCopy } : null,
+				knowledge: input.knowledge,
 				searchTool: "search_web" in tools ? "search_web" : null,
 				canReadPage: "read_page" in tools,
 			});
@@ -1058,9 +1104,27 @@ export const agentService = {
 				describeDocument(input.userId, documentOf(thread)),
 			]);
 
+			// A reply that read Knowledge is hidden once a fact it may repeat changed, was switched off or was forgotten.
+			const cutoff =
+				thread.scope === "document" && messages.some((row) => readsKnowledge(toMessage(row)))
+					? await careerService.memoryCutoff(input.userId)
+					: null;
+			const withdrawn = knowledgeWithdrawals(
+				messages.map((row) => ({ message: toMessage(row), createdAt: row.createdAt })),
+				cutoff,
+			);
+			// Edits this resume can't accept reach no app as something to apply, older apps included.
+			const madeFor =
+				thread.workingResumeId && !thread.coverLetterId
+					? await resumeMadeFor(input.userId, thread.workingResumeId)
+					: undefined;
 			return {
 				thread: toThreadSummary(thread),
-				messages: messages.map(toMessage),
+				messages: messages.map((row) => {
+					const message = toMessage(row);
+					if (withdrawn.has(message.id)) return withdrawKnowledgeReply(message);
+					return madeFor === undefined ? message : withUsableTailoring(message, madeFor);
+				}),
 				attachments: attachments.map(toAttachment),
 				document,
 				isReadOnly: !thread.aiProviderId || (thread.scope === "document" ? !document || document.locked : false),
@@ -1350,10 +1414,35 @@ export const agentService = {
 							// keeps its first createdAt).
 							messageRows.filter((row) => row.createdAt > memoryCutoff || row.id === sourceMessageId).map(toMessage)
 						: messages;
+				// Opt-in for document conversations: older clients never send it, and their disclosure doesn't mention it.
+				const knowledge = !isCareer && Boolean(document) && input.context?.memory === true;
+				// Document conversations reuse the career memory cutoff. Every reply from the first Knowledge lookup on is never
+				// sent again once a fact changed after it began, nor when this message leaves Knowledge out: its words, questions
+				// and proposals may repeat those facts. A paused reply in that range can only continue under the same conditions.
+				const knowledgeCutoff =
+					!isCareer && messages.some(readsKnowledge) ? await careerService.memoryCutoff(input.userId) : null;
+				const withdrawals = isCareer
+					? new Set<string>()
+					: knowledgeWithdrawals(
+							messageRows.map((row) => ({ message: toMessage(row), createdAt: row.createdAt })),
+							knowledgeCutoff,
+							knowledge,
+						);
+				const withdrawn = (message: UIMessage) => withdrawals.has(message.id);
+				if (input.message.role === "assistant" && withdrawn(draftUiMessage))
+					throw new ORPCError("BAD_REQUEST", {
+						message: "Knowledge changed or isn't shared with this message. Send a new message to continue.",
+					});
 				const connection = await webAccessService.resolve(input.userId);
 				const search = webAccessService.canSearch(connection !== null);
 				const modelMessages = await convertToModelMessages(
-					replay.map((message) => toModelInputMessage(message, runnableProvider, search)),
+					replay.map((message) =>
+						toModelInputMessage(
+							withdrawn(message) ? withdrawKnowledgeReply(message, true) : message,
+							runnableProvider,
+							search,
+						),
+					),
 				);
 				const attachmentModelParts = buildAttachmentModelParts(await readAttachmentModelInputs(attachmentsForModel));
 
@@ -1401,6 +1490,8 @@ export const agentService = {
 							.flatMap((message) => messageText(message).match(/https?:\/\/[^\s<>")]+/g) ?? []),
 					],
 					posting,
+					jobCopy: loaded?.kind !== "resume" || !posting || loaded.applicationId === posting.applicationId,
+					knowledge,
 					connection,
 					search,
 					signal: controller.signal,
@@ -1597,18 +1688,71 @@ export const agentService = {
 			threadId: string;
 			messageId: string;
 			toolCallId: string;
-			edits: Array<{ id: string; status: "pending" | "accepted" | "rejected" }>;
+			edits: Array<EditUpdate & { id: string }>;
 		}) => {
 			assertAgentEnvironment();
-			await getThread({ id: input.threadId, userId: input.userId });
+			const owner = await getThread({ id: input.threadId, userId: input.userId });
+			const updates = new Map(input.edits.map(({ id, ...update }) => [id, update]));
 
+			// Messages lock in ID order, then the thread (the order every message writer uses), so a wording save, a
+			// status and a document save recording decisions serialize instead of overwriting each other.
 			return db.transaction(async (tx) => {
 				const rows = await lockThreadMessages(tx, input);
 				const row = rows.find((candidate) => toMessage(candidate).id === input.messageId);
 				if (!row) throw new ORPCError("NOT_FOUND");
 
-				const statuses = new Map(input.edits.map((edit) => [edit.id, edit.status]));
-				const message = withEditStatuses(toMessage(row), input.toolCallId, statuses);
+				const current = toMessage(row);
+				const document = documentOf(owner);
+				const reader = document ? await documentReader(tx, input.userId, document) : null;
+				let message = current;
+				const statuses = new Map<string, "pending" | "accepted" | "rejected">();
+				for (const part of current.parts) {
+					const output = (part as { toolCallId?: string; output?: ProposeEditsOutput }).output;
+					if (part.type !== "tool-propose_edits" || (part as { toolCallId?: string }).toolCallId !== input.toolCallId)
+						continue;
+					for (const edit of output?.edits ?? []) {
+						const update = updates.get(edit.id);
+						if (!update) continue;
+						// A structural change applies its stored snapshot: new wording would describe something else.
+						if (update.text !== undefined && edit.snapshot)
+							throw new ORPCError("CONFLICT", {
+								message: "This change can't be reworded. Accept it and adjust it in Write, or reject it.",
+							});
+						// The client names the new text it reviewed; another tab or device may have reworded it since. A retry of
+						// wording whose earlier save went through (only the read back failed) finds it already there.
+						if (update.after !== undefined && update.after !== edit.after) {
+							const saved =
+								!!update.text &&
+								update.status === "pending" &&
+								edit.status === "pending" &&
+								withEditedText({ ...edit, after: update.after }, update.text).after === edit.after;
+							if (saved) continue;
+							throw new ORPCError("CONFLICT", {
+								message: "This edit changed in another tab or device. Reopen the conversation to see it.",
+							});
+						}
+						if (update.text) {
+							// New wording replaces an edit only while it's undecided; a decided edit keeps what was applied.
+							if (edit.status !== "pending" || update.status !== "pending")
+								throw new ORPCError("CONFLICT", {
+									message: "This edit was already decided. Undo it to change its wording.",
+								});
+							message = withEditWording(message, input.toolCallId, edit.id, update.text);
+							continue;
+						}
+						// "Accepted" is a receipt for a document write that already happened: the edit's current wording has to
+						// be in the document, and tailoring has to be allowed there. Apps record it with the save itself.
+						if (update.status === "accepted" && edit.status !== "accepted") {
+							if (!reader || !acceptedEditAllowed(current, output, edit, reader, true))
+								throw new ORPCError("CONFLICT", {
+									message:
+										"This edit isn't in the document as it reads now, or can't be applied to it. Apply it, then record it.",
+								});
+						}
+						statuses.set(edit.id, update.status);
+					}
+				}
+				message = withEditStatuses(message, input.toolCallId, statuses);
 				await tx
 					.update(schema.agentMessage)
 					.set({ uiMessage: message as never })

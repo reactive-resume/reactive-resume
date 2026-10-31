@@ -139,4 +139,36 @@ describe("assistant web tools", () => {
 		expect(instructions).toContain("route to Write");
 		expect(instructions).not.toContain("{{EDIT_SCOPE}}");
 	});
+
+	it("offers Knowledge only when shared, and tells the model not to tailor a shared base resume", () => {
+		const signal = new AbortController().signal;
+		const handlers = {
+			readDocument: vi.fn(),
+			readAttachment: vi.fn(),
+			proposeEdits: vi.fn(),
+			searchWeb: vi.fn(),
+			readPage: vi.fn(),
+		};
+		expect(buildAgentTools({ document: "resume", externalSearch: false, signal, handlers })).not.toHaveProperty(
+			"read_knowledge",
+		);
+		expect(
+			buildAgentTools({
+				document: "resume",
+				externalSearch: false,
+				signal,
+				handlers: { ...handlers, readKnowledge: vi.fn() },
+			}),
+		).toHaveProperty("read_knowledge");
+
+		const posting = { role: "Designer", company: "Lumen", text: "Design systems", jobCopy: false };
+		const instructions = buildAgentInstructions({
+			document: { kind: "resume", name: "Base" },
+			posting,
+			searchTool: null,
+			canReadPage: false,
+		});
+		expect(instructions).toContain("isn't the copy made for this job");
+		expect(instructions).toContain("Knowledge isn't shared");
+	});
 });

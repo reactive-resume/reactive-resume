@@ -22,7 +22,7 @@ export function SaveStatus() {
 	const reload = async () => {
 		if (
 			!(await confirm(t`Reload the saved version?`, {
-				description: t`Your edits will be kept as a separate resume in Documents before loading the version saved elsewhere.`,
+				description: t`Your edits will be kept as a separate resume in Documents before loading the saved version.`,
 				confirmText: t`Keep a copy and reload`,
 			}))
 		)
@@ -81,7 +81,7 @@ export function SaveStatus() {
 				<span className={cn(ENTER_CLASS, "flex min-w-0 items-center gap-1.5 text-warn-text")}>
 					<Icon name="cloud-warning" size={16} />
 					<span className="truncate">
-						<Trans>Changed elsewhere</Trans>
+						<Trans>Review saved version</Trans>
 					</span>
 					<span aria-hidden="true">·</span>
 					<button

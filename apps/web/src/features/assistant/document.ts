@@ -28,6 +28,13 @@ export type AssistantDocument = {
 	locked: boolean;
 	/** The application it's for, whose posting is shared as context. */
 	posting: { id: string; company: string; role: string } | null;
+	/**
+	 * Edits that use the posting can land here: a letter, or a resume copied for that application. A base resume
+	 * other jobs share is copied first (the server refuses tailoring edits to it).
+	 */
+	jobCopy: boolean;
+	/** The application this resume was made for (null for a base resume or a letter). */
+	madeFor: string | null;
 	/** A proposal's state against the document as it reads now. */
 	stateOf: (proposal: Proposal) => ProposalState;
 	/** Applies proposals as one undo step, with Undo in the toast. */
@@ -80,14 +87,28 @@ export function useResumeAssistantDocument(): AssistantDocument {
 			proposalRevision: resume.updatedAt.toISOString(),
 			locked: resume.isLocked,
 			posting: application ? { id: application.id, company: application.company, role: application.role } : null,
+			// Unknown while applications load: tailoring can't be confirmed for this resume yet.
+			jobCopy: applications !== undefined && (!application || application.id === resume.applicationId),
+			madeFor: resume.applicationId ?? null,
 			stateOf: (proposal) => getProposalState(resume.data, proposal, applicationsOfProposals),
+			// Synchronous with the click: the document is checked and changed in the same turn, never after a wait.
 			accept: (proposals) =>
 				useResumeStore.getState().resume?.id === resume.id
 					? acceptResumeProposals(proposals)
 					: { applied: [], stale: [] },
 			locationOf: (proposal) => locate(passages, proposal),
 		};
-	}, [resume.id, resume.name, resume.updatedAt, resume.isLocked, resume.data, application, applicationsOfProposals]);
+	}, [
+		resume.id,
+		resume.name,
+		resume.updatedAt,
+		resume.isLocked,
+		resume.data,
+		resume.applicationId,
+		applications,
+		application,
+		applicationsOfProposals,
+	]);
 }
 
 export function useLetterAssistantDocument(): AssistantDocument | null {
@@ -108,6 +129,8 @@ export function useLetterAssistantDocument(): AssistantDocument | null {
 			proposalRevision: String(letter.revision),
 			locked: letter.isLocked,
 			posting: application ? { id: application.id, company: application.company, role: application.role } : null,
+			jobCopy: true,
+			madeFor: null,
 			stateOf: (proposal) => getStateIn(letter.content, proposal, applicationsOfProposals),
 			accept: (proposals) => {
 				const { letter: current, edit, changing, proposalApplications, sessionId } = useLetterEditorStore.getState();
@@ -122,8 +145,7 @@ export function useLetterAssistantDocument(): AssistantDocument | null {
 					},
 					proposalApplications,
 				);
-				if (result.applied.length > 0)
-					edit({ content }, { proposalIds: result.applied.map((proposal) => proposal.id) });
+				if (result.applied.length > 0) edit({ content }, { applied: result.applied });
 				if (result.applied.length > 0 || result.stale.length > 0)
 					toast.add({
 						description: proposalResultMessage(result),

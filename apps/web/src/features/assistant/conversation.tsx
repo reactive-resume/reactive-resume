@@ -10,7 +10,13 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { memo, useEffect, useId, useMemo, useRef, useState } from "react";
-import { agentWebSources, readPageOutputSchema } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import {
+	agentWebSources,
+	citesKnowledge,
+	readPageOutputSchema,
+	tailoringAllows,
+} from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { withEditedText } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
@@ -31,7 +37,8 @@ import { AssistantMarkdown } from "./markdown";
 import { QuestionCard } from "./question-card";
 import { ToolApprovals } from "./tool-approvals";
 import { useAssistantChat } from "./use-assistant-chat";
-import { ChangeSet } from "@/features/resume/editor/proposals/proposal-list";
+import { useDialogStore } from "@/dialogs/store";
+import { ChangeSet, Coverage } from "@/features/resume/editor/proposals/proposal-list";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
 import { isImeComposing } from "@/libs/keyboard";
@@ -39,6 +46,10 @@ import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 
 type EditStatus = Proposal["status"];
+/** What the user did with an edit in this session: its status, and their wording when they rewrote it. */
+/** What the server's receipts say about an edit: its decision, and the user's saved wording when they changed it. */
+type Receipt = { status: EditStatus } & Partial<Pick<Proposal, "after" | "unsupported" | "edited">>;
+type FactText = (id: string) => string | null;
 type Part = UIMessage["parts"][number];
 type ToolPart = Part & {
 	toolCallId?: string;
@@ -151,6 +162,14 @@ export function Conversation(props: ConversationProps) {
 		void stop();
 	};
 
+	// Cited Knowledge facts are stored by id; their text shows only while they're still switched on.
+	const citesFacts = messages.some((message) =>
+		message.parts.some((part) => isProposeEdits(part) && citesKnowledge(part.output)),
+	);
+	const facts = useQuery({ ...orpc.career.facts.queryOptions({ input: { all: true } }), enabled: citesFacts });
+	const factText: FactText = (id) =>
+		facts.data?.find((fact) => fact.id === id && fact.status === "active")?.text ?? null;
+
 	// Refresh receipts on document revisions without replacing a live streamed transcript.
 	const receiptOptions = orpc.agent.threads.get.queryOptions({ input: { id: threadId } });
 	const receipts = useQuery({
@@ -163,15 +182,18 @@ export function Conversation(props: ConversationProps) {
 	const error = chatError ?? receipts.error;
 	const statuses = useMemo(
 		() =>
-			new Map([
+			new Map<string, Receipt>([
 				...((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
 					message.parts.flatMap((part) =>
 						isProposeEdits(part)
-							? toProposals(part, new Map(), document).map((edit) => [edit.id, edit.status] as const)
+							? toProposals(part, new Map(), document).map(
+									({ id, status, after, unsupported, edited }) =>
+										[id, edited ? { status, after, unsupported, edited } : { status }] as const,
+								)
 							: [],
 					),
 				),
-				...rejections,
+				...[...rejections].map(([id, status]) => [id, { status }] as const),
 			]),
 		[receipts.data, rejections, document],
 	);
@@ -209,6 +231,33 @@ export function Conversation(props: ConversationProps) {
 			.catch(() => undefined);
 	};
 
+	// The user's wording shows (and Accept uses it) only once the server has it and a fresh read of the receipts shows
+	// it; until then their draft stays open and out of Accept. A failed read keeps showing the old receipts, so it can't
+	// confirm anything. The reviewed text binds the save, so another device's newer wording wins; a retry after a save
+	// that went through finds its wording already there.
+	const saveWording = async (message: UIMessage, part: ToolPart, proposal: Proposal, text: string) => {
+		if (!part.toolCallId) throw new Error("This edit can't be saved.");
+		await client.agent.messages.setEditStatus({
+			threadId,
+			messageId: message.id,
+			toolCallId: part.toolCallId,
+			edits: [{ id: proposal.id, status: "pending", text, after: proposal.after }],
+		});
+		const read = await receipts.refetch();
+		const wording = withEditedText(proposal, text).after;
+		const saved = ((read.data?.messages ?? []) as UIMessage[]).some((stored) =>
+			stored.parts.some(
+				(candidate) =>
+					isProposeEdits(candidate) &&
+					(candidate.output as ProposeEditsOutput | undefined)?.edits.some(
+						(edit) => edit.id === proposal.id && edit.after === wording,
+					),
+			),
+		);
+		if (read.isError || !saved) throw new Error("The saved wording couldn't be read back.");
+		refresh();
+	};
+
 	const answer = (toolCallId: string, output: string) =>
 		addToolOutput({ tool: "ask_user_question", toolCallId, output });
 
@@ -235,8 +284,10 @@ export function Conversation(props: ConversationProps) {
 											readOnly={readOnly || continuationBlocked || !receiptsReady}
 											statuses={statuses}
 											document={document}
+											factText={factText}
 											onAnswer={answer}
 											onRecord={record}
+											onSaveWording={saveWording}
 										/>
 										<ToolApprovals
 											message={message}
@@ -351,13 +402,12 @@ export function Conversation(props: ConversationProps) {
 const isProposeEdits = (part: Part): part is ToolPart =>
 	part.type === "tool-propose_edits" && (part as ToolPart).state === "output-available";
 
-function toProposals(
-	part: ToolPart,
-	statuses: ReadonlyMap<string, EditStatus>,
-	document: AssistantDocument,
-): Proposal[] {
+/** The edits in a result, with what the server's receipts say since: decisions, and the user's saved wording. */
+function toProposals(part: ToolPart, receipts: ReadonlyMap<string, Receipt>, document: AssistantDocument): Proposal[] {
 	const output = part.output as ProposeEditsOutput | undefined;
-	return (output?.edits ?? []).map((edit) => {
+	return (output?.edits ?? []).map((streamed) => {
+		const receipt = receipts.get(streamed.id);
+		const edit = receipt?.edited ? { ...streamed, ...receipt } : streamed;
 		const target = {
 			sectionId: edit.target.sectionId,
 			field: edit.target.field,
@@ -368,7 +418,7 @@ function toProposals(
 			...edit,
 			target,
 			location: document.locationOf({ ...edit, target }) ?? edit.location,
-			status: statuses.get(edit.id) ?? edit.status,
+			status: receipt?.status ?? edit.status,
 			source: "assistant",
 		};
 	});
@@ -383,10 +433,12 @@ type MessageViewProps = {
 	answerable: boolean;
 	enter: boolean;
 	readOnly: boolean;
-	statuses: ReadonlyMap<string, EditStatus>;
+	statuses: ReadonlyMap<string, Receipt>;
 	document: AssistantDocument;
+	factText: FactText;
 	onAnswer: (toolCallId: string, answer: string) => void;
 	onRecord: (message: UIMessage, part: ToolPart, proposals: readonly Proposal[], status: EditStatus) => void;
+	onSaveWording: (message: UIMessage, part: ToolPart, proposal: Proposal, text: string) => Promise<void>;
 };
 
 /** Memoized: while a reply streams, only its own message re-renders; the ones above keep their props. */
@@ -399,8 +451,10 @@ const MessageView = memo(function MessageView({
 	readOnly,
 	statuses,
 	document,
+	factText,
 	onAnswer,
 	onRecord,
+	onSaveWording,
 }: MessageViewProps) {
 	if (message.role === "user") {
 		const text = message.parts.flatMap((part) => (part.type === "text" ? [part.text] : [])).join("\n");
@@ -445,8 +499,10 @@ const MessageView = memo(function MessageView({
 						readOnly={readOnly}
 						statuses={statuses}
 						document={document}
+						factText={factText}
 						onAnswer={onAnswer}
 						onRecord={onRecord}
+						onSaveWording={onSaveWording}
 					/>
 				);
 			})}
@@ -483,8 +539,10 @@ function ToolPartView({
 	readOnly,
 	statuses,
 	document,
+	factText,
 	onAnswer,
 	onRecord,
+	onSaveWording,
 }: ToolPartViewProps) {
 	const working = part.state === "input-streaming" || part.state === "input-available";
 	if (part.state === "approval-requested" || part.state === "approval-responded") return null;
@@ -601,13 +659,17 @@ function ToolPartView({
 			const states = proposals.map(document.stateOf);
 			const pending = states.filter((state) => state === "pending").length;
 			const accepted = states.filter((state) => state === "accepted").length;
+			// Tailored edits land only on the copy made for their job; older sets that may have used a posting are asked again.
+			const forJobCopy = document.kind === "resume" && !tailoringAllows(message, part.output, document.madeFor);
+			const undecided = proposals.some((proposal) => proposal.status === "pending");
+			const requirements = output.requirements ?? [];
 			return (
 				<div className="grid gap-1.5">
-					{proposals.length > 0 && (
+					{proposals.length > 0 ? (
 						<ChangeSet
 							proposals={proposals}
 							states={states}
-							locked={readOnly}
+							locked={readOnly || forJobCopy}
 							title={
 								pending > 0 ? (
 									<Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />
@@ -618,11 +680,36 @@ function ToolPartView({
 								)
 							}
 							onAccept={(chosen) => {
+								if (forJobCopy) return;
 								const { applied } = document.accept(chosen);
 								if (applied.length > 0) onRecord(message, part, applied, "accepted");
 							}}
 							onReject={(chosen) => onRecord(message, part, chosen, "rejected")}
+							onEdit={(proposal, text) => onSaveWording(message, part, proposal, text)}
+							requirements={requirements}
+							factText={factText}
 						/>
+					) : (
+						requirements.length > 0 && (
+							<div className="overflow-hidden rounded-xl border border-line">
+								<Coverage requirements={requirements} factText={factText} />
+							</div>
+						)
+					)}
+					{forJobCopy && undecided && (
+						<p className="text-xs text-ink-2">
+							{"tailoredFor" in output ? (
+								<Trans>
+									These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the
+									job and ask again there; this resume stays unchanged.
+								</Trans>
+							) : (
+								<Trans>
+									These edits are from before the assistant recorded which job posting they use, so they can't be
+									applied. Ask again on the resume you want to change.
+								</Trans>
+							)}
+						</p>
 					)}
 					{output.skipped.length > 0 && (
 						<p className="text-xs text-ink-3">
@@ -636,6 +723,12 @@ function ToolPartView({
 				</div>
 			);
 		}
+		case "data-knowledge-withdrawn":
+			return (
+				<Status working={false}>
+					<Trans>This reply used Knowledge that has since changed, so it's hidden.</Trans>
+				</Status>
+			);
 		default:
 			return null;
 	}
@@ -676,6 +769,7 @@ type ComposerProps = {
  */
 export function Composer(props: ComposerProps) {
 	const { document, context, onContextChange, streaming, disabled } = props;
+	const openDialog = useDialogStore((state) => state.openDialog);
 	const id = useId();
 	const [text, setText] = useState(props.initialText ?? "");
 	const [attachments, setAttachments] = useState<ChatAttachment[]>([]);
@@ -751,32 +845,66 @@ export function Composer(props: ComposerProps) {
 			? t`Sends your message and the posting to ${provider} with your key, only when you press send.`
 			: t`Sends your message to ${provider} with your key, only when you press send.`;
 
+	// Tailoring needs the job's own copy: the server refuses edits that use the posting on a resume other jobs share.
+	const posting = sharesPosting ? document.posting : null;
+	const needsCopy = document.kind === "resume" && !document.jobCopy;
+
 	return (
 		<div className="grid gap-2 border-t border-line bg-surface px-3 pt-2.5 pb-3">
-			{(chips.length > 0 || attachments.length > 0) && (
-				<div className="flex flex-wrap gap-1.5">
-					{chips.map((chip) => (
-						<RemovableChip
-							key={chip.key}
-							icon={chip.icon}
-							label={chip.label}
-							maxWidth="max-w-[160px]"
-							removeLabel={t`Don't send ${chip.label}`}
-							onRemove={() => onContextChange({ ...context, [chip.key]: false })}
-						/>
-					))}
-					{attachments.map((attachment) => (
-						<RemovableChip
-							key={attachment.id}
-							icon="paperclip"
-							label={attachment.filename}
-							maxWidth="max-w-[140px]"
-							removeLabel={t`Remove ${attachment.filename}`}
-							onRemove={() => setAttachments((current) => current.filter((item) => item.id !== attachment.id))}
-						/>
-					))}
-				</div>
+			{needsCopy && posting && (
+				<p className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg bg-sunken px-3 py-2 text-xs text-ink-2">
+					<span className="flex-1">
+						<Trans>
+							Edits that use the {posting.company} posting go to a copy made for that job, so this resume stays
+							unchanged.
+						</Trans>
+					</span>
+					<Button
+						size="sm"
+						variant="secondary"
+						onClick={() =>
+							openDialog("document.new", { step: "copy", sourceResumeId: document.id, applicationId: posting.id })
+						}
+					>
+						<Trans>Copy for this job</Trans>
+					</Button>
+				</p>
 			)}
+			{/* The Knowledge switch is always here, so the row is too. */}
+			<div className="flex flex-wrap gap-1.5">
+				{chips.map((chip) => (
+					<RemovableChip
+						key={chip.key}
+						icon={chip.icon}
+						label={chip.label}
+						maxWidth="max-w-[160px]"
+						removeLabel={t`Don't send ${chip.label}`}
+						onRemove={() => onContextChange({ ...context, [chip.key]: false })}
+					/>
+				))}
+				<button
+					type="button"
+					aria-pressed={context.memory === true}
+					onClick={() => onContextChange({ ...context, memory: context.memory !== true })}
+					className={cn(
+						"flex h-[26px] items-center gap-1 rounded-md px-2 text-xs transition-colors",
+						context.memory === true ? "bg-accent-soft text-accent-text" : "bg-sunken text-ink-3 hover:text-ink",
+					)}
+				>
+					<Icon name="brain" size={15} />
+					<Trans>Use Knowledge</Trans>
+				</button>
+				{attachments.map((attachment) => (
+					<RemovableChip
+						key={attachment.id}
+						icon="paperclip"
+						label={attachment.filename}
+						maxWidth="max-w-[140px]"
+						removeLabel={t`Remove ${attachment.filename}`}
+						onRemove={() => setAttachments((current) => current.filter((item) => item.id !== attachment.id))}
+					/>
+				))}
+			</div>
 
 			<div className="flex items-end gap-1.5 rounded-xl border border-line-2 bg-raised p-1.5 transition-[border-color,box-shadow] focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft">
 				<label htmlFor={id} className="sr-only">
@@ -835,7 +963,7 @@ export function Composer(props: ComposerProps) {
 			</div>
 
 			<p className="text-xs leading-4 text-ink-3">
-				{disclosure}{" "}
+				{disclosure} {context.memory === true && <Trans>Knowledge facts the assistant looks up are sent too.</Trans>}{" "}
 				{!context.document || !context.posting ? (
 					<Trans>
 						Each send starts fresh with this message and selected files. Previous conversation history stays here.

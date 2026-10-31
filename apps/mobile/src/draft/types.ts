@@ -1,5 +1,5 @@
 import type { RouterOutput } from "@/api/client";
-import type { ProposalApplications } from "@reactive-resume/resume/proposals";
+import type { Proposal, ProposalApplications } from "@reactive-resume/resume/proposals";
 // The draft store contract (M3-T3 implements it), for resumes and cover letters. It ports
 // apps/web/src/features/resume/builder/draft.ts: a debounced save (500 ms resumes, 800 ms letters), undo/redo,
 // kv-store persistence with an offline queue, and a conflict check on reconnect.
@@ -25,11 +25,13 @@ export type ConflictChoice = "keep-mine" | "use-theirs" | "keep-both";
 export type DraftConflict<TDocument> = {
 	/** The server copy at the time of the conflict. */
 	remote: TDocument;
+	/** An older app's draft cannot overwrite this document, even with Keep mine. */
+	reason?: "CURRENT_CLIENT_REQUIRED";
 };
 
 export type UpdateOptions = {
 	/** Filled by the synchronous proposal recipe; travels with this undo step. */
-	proposalIds?: readonly string[];
+	applied?: readonly Pick<Proposal, "id" | "after" | "snapshot">[];
 	/** The field being edited. Consecutive edits with the same key within 1 s merge into one undo step. */
 	coalesceKey?: string | undefined;
 	/** Always a step of its own (adding, moving or deleting). */

@@ -35,3 +35,15 @@ export function nextPreparationStep(
 		return "answers";
 	return "review";
 }
+
+/**
+ * Tailoring edits the copy made for this job, never a base resume other jobs share. True only once the documents are
+ * loaded and the selected resume was made for this application; until then the step offers the copy instead.
+ */
+export function isJobCopy(
+	application: { id: string; resumeId: string | null },
+	documents?: readonly { id: string; type: "resume" | "letter"; application: { id: string } | null }[],
+) {
+	const resume = documents?.find((document) => document.type === "resume" && document.id === application.resumeId);
+	return resume?.application?.id === application.id;
+}

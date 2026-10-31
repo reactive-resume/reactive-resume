@@ -11,11 +11,12 @@ type DraftConflictSheetProps = {
 	kind: "resume" | "letter";
 	name: string;
 	locked: boolean;
+	reason?: "CURRENT_CLIENT_REQUIRED" | undefined;
 	onResolve: (choice: ConflictChoice) => Promise<void>;
 };
 
 /** A required choice: native back, backdrop taps and swipe cannot discard an unsaved draft. */
-export function DraftConflictSheet({ open, kind, name, locked, onResolve }: DraftConflictSheetProps) {
+export function DraftConflictSheet({ open, kind, name, locked, reason, onResolve }: DraftConflictSheetProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const insets = useSafeAreaInsets();
@@ -55,23 +56,35 @@ export function DraftConflictSheet({ open, kind, name, locked, onResolve }: Draf
 							accessibilityRole="header"
 							accessibilityHint={t`Choose a version to continue. Back will not close this sheet.`}
 						>
-							{kind === "resume" ? t`This resume changed elsewhere` : t`This letter changed elsewhere`}
+							{reason
+								? t`This older draft needs review`
+								: kind === "resume"
+									? t`This resume changed elsewhere`
+									: t`This letter changed elsewhere`}
 						</Text>
-						<Text color="ink2">{t`Changes to “${name}” were saved on another device. Your edits are still on this device. Choose which version to keep.`}</Text>
-						{locked ? (
+						<Text color="ink2">
+							{reason
+								? t`An older app kept these edits. They can't safely replace “${name}”. Keep them as a separate document, or load the saved version and edit it here.`
+								: t`Changes to “${name}” were saved on another device. Your edits are still on this device. Choose which version to keep.`}
+						</Text>
+						{locked && !reason ? (
 							<Text color="warnText">{t`This document is locked. Unlock it before keeping your edits here, or keep both.`}</Text>
 						) : null}
-						<Button
-							fullWidth
-							label={t`Keep mine`}
-							disabled={locked || busy}
-							onPress={() => void resolve("keep-mine")}
-						/>
-						<Text variant="callout" color="ink2">{t`Save your version over theirs.`}</Text>
+						{!reason && (
+							<>
+								<Button
+									fullWidth
+									label={t`Keep mine`}
+									disabled={locked || busy}
+									onPress={() => void resolve("keep-mine")}
+								/>
+								<Text variant="callout" color="ink2">{t`Save your version over theirs.`}</Text>
+							</>
+						)}
 						<Button
 							fullWidth
 							variant="secondary"
-							label={t`Use theirs`}
+							label={reason ? t`Use saved version` : t`Use theirs`}
 							disabled={busy}
 							onPress={() => setConfirm(true)}
 						/>
@@ -97,7 +110,7 @@ export function DraftConflictSheet({ open, kind, name, locked, onResolve }: Draf
 				open={open && confirm}
 				title={t`Discard your offline edits?`}
 				message={t`Your changes on this device will be replaced by the saved version.`}
-				confirmLabel={t`Use theirs`}
+				confirmLabel={reason ? t`Use saved version` : t`Use theirs`}
 				destructive
 				onConfirm={() => void resolve("use-theirs")}
 				onCancel={() => setConfirm(false)}
@@ -114,6 +127,7 @@ export function ResumeConflictSheet() {
 			kind="resume"
 			name={draft.document?.name ?? ""}
 			locked={draft.locked}
+			reason={draft.conflict?.reason}
 			onResolve={draft.resolveConflict}
 		/>
 	);
@@ -127,6 +141,7 @@ export function LetterConflictSheet() {
 			kind="letter"
 			name={draft.document?.name ?? ""}
 			locked={draft.locked}
+			reason={draft.conflict?.reason}
 			onResolve={draft.resolveConflict}
 		/>
 	);

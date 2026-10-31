@@ -148,6 +148,11 @@ msgstr "{0, plural, one {#-Zeichen} other {#-Zeichen}}"
 msgid "{0, plural, one {# check could not run.} other {# checks could not run.}}"
 msgstr "{0, plural, one {# Prüfung konnte nicht ausgeführt werden.} other {# Prüfungen konnten nicht ausgeführt werden.}}"
 
+#. placeholder {0}: item.unresolved ?? 0
+#: src/features/assistant/messages.tsx
+msgid "{0, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
+msgstr ""
+
 #. placeholder {0}: Number(columns)
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
@@ -294,6 +299,16 @@ msgstr "{0, plural, one {# ignoriertes Problem erneut anzeigen} other {# ignorie
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, one {Vor # Minute begonnen} other {Vor # Minuten begonnen}}"
+
+#. placeholder {0}: evidence.length
+#: src/features/assistant/messages.tsx
+msgid "{0, plural, one {The assistant cites # source · check it says this} other {The assistant cites # sources · check they say this}}"
+msgstr ""
+
+#. placeholder {0}: requirements.length
+#: src/features/assistant/messages.tsx
+msgid "{0, plural, one {The assistant's reading of # posting requirement} other {The assistant's reading of # posting requirements}}"
+msgstr ""
 
 #. placeholder {0}: fact.usedBy.savedItems
 #: src/features/career/facts.tsx
@@ -558,6 +573,10 @@ msgstr "{facts, plural, one {# Fakt} other {# Fakten}}"
 msgid "{followUps, plural, one {# follow-up} other {# follow-ups}}"
 msgstr "{followUps, plural, one {# Follow-up} other {# Follow-ups}}"
 
+#: src/features/assistant/messages.tsx
+msgid "{gaps, plural, one {· # gap} other {· # gaps}}"
+msgstr ""
+
 #: src/features/workspace/shell.tsx
 msgid "{hours} h"
 msgstr "{hours} h"
@@ -708,6 +727,10 @@ msgstr "{toCheck, plural, one {Das Feld # muss überprüft werden.} other {#-Fel
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# zur Überprüfung} other {# zur Überprüfung}}"
 
+#: src/features/assistant/messages.tsx
+msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "{words, plural, one {# word} other {# words}}"
@@ -785,6 +808,10 @@ msgstr "Ein Datum wird nicht gelesen"
 #: src/features/career/stories.tsx
 msgid "A fact changed. Review this story."
 msgstr "Ein Fakt hat sich geändert. Prüfen Sie diese Geschichte."
+
+#: src/features/assistant/messages.tsx
+msgid "A fact that's no longer in Knowledge"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "A focused plan for this round"
@@ -1466,6 +1493,14 @@ msgstr "Erscheint immer in Heute. E-Mail erfordert eine verifizierte Adresse und
 msgid "Amharic"
 msgstr "Amharisch"
 
+#: src/features/assistant/messages.tsx
+msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "An edit addresses it"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "An embedded font could not be read."
 msgstr "Eine eingebettete Schriftart konnte nicht gelesen werden."
@@ -1477,6 +1512,10 @@ msgstr "Ein Eintrag hat kein Datum"
 #: src/features/assistant/chat-view.tsx
 msgid "an error"
 msgstr "ein Fehler"
+
+#: src/draft/conflict-sheet.tsx
+msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
+msgstr ""
 
 #. placeholder {0}: others.length
 #: src/features/application-detail/sections.tsx
@@ -2118,6 +2157,7 @@ msgstr "Kann Software Ihren Lebenslauf lesen?"
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/check/parser.tsx
 #: src/features/check/writing.tsx
@@ -2452,6 +2492,10 @@ msgstr "Wählen Sie bis zu 200 Bewerbungen pro Massenaktion aus."
 #: src/features/design/advanced.tsx
 msgid "Circle"
 msgstr "Kreis"
+
+#: src/features/assistant/messages.tsx
+msgid "Cited as already shown · check it"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "City"
@@ -2858,6 +2902,10 @@ msgstr "Kopie erstellt"
 msgid "Copy for a job…"
 msgstr "Für einen Job kopieren…"
 
+#: src/features/assistant/assistant-screen.tsx
+msgid "Copy for this job"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Copy reply"
 msgstr "Antwort kopieren"
@@ -2869,6 +2917,10 @@ msgstr "Stylesheet kopieren"
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
 msgstr "Kopieren Sie den Text aus der exportierten Datei und lesen Sie ihn durch; korrigieren Sie alles, was an der falschen Stelle landet."
+
+#: src/features/workspace/preparation.tsx
+msgid "Copy this resume for the job"
+msgstr ""
 
 #: src/features/assistant/chat-view.tsx
 msgid "Copy transcript"
@@ -3227,6 +3279,10 @@ msgstr "Ihre Änderungen konnten nicht gespeichert werden. Ihre Änderungen befi
 msgid "Couldn't save your preferences. Your draft is still here."
 msgstr "Ihre Einstellungen konnten nicht gespeichert werden. Ihr Entwurf ist noch hier."
 
+#: src/features/assistant/messages.tsx
+msgid "Couldn't save your wording. Your text is still here; try again."
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Couldn't save. Try again."
 msgstr "Konnte nicht gespeichert werden. Versuchen Sie es erneut."
@@ -3515,11 +3571,16 @@ msgid "Dark theme"
 msgstr "Dunkles Design"
 
 #: src/api/ai-consent.ts
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr "Datenfreigabe abgebrochen. Es wurde nichts an den KI-Anbieter gesendet."
+
+#: src/api/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the provider."
 msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/date-field.tsx
@@ -4098,6 +4159,7 @@ msgstr "frühere Nachrichten in diesem Chat"
 
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/career/stories.tsx
 #: src/features/career/today.tsx
 #: src/features/write/basics-screen.tsx
@@ -4173,6 +4235,10 @@ msgstr "Bearbeiten Sie die E-Mail"
 msgid "Edit the link"
 msgstr "Bearbeiten Sie den Link"
 
+#: src/features/assistant/messages.tsx
+msgid "Edited by you"
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Editing session"
@@ -4211,6 +4277,10 @@ msgstr "Senden Sie eine E-Mail an den Personalvermittler"
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "Betten Sie beim Export alle Schriftarten ein, damit Zeichen wie beabsichtigt dargestellt werden."
+
+#: src/features/assistant/messages.tsx
+msgid "Employer"
+msgstr ""
 
 #: src/features/documents/thumbnail.tsx
 msgid "Empty letter"
@@ -4452,6 +4522,11 @@ msgstr "Feld {0}"
 #: src/features/write/basics-screen.tsx
 msgid "Field removed"
 msgstr "Feld entfernt"
+
+#: src/features/assistant/messages.tsx
+msgctxt "A number or metric stated in a resume"
+msgid "Figure"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "File attached"
@@ -5340,6 +5415,10 @@ msgstr "Die Jobsuche ist auf diesem Server nicht konfiguriert. Fügen Sie stattd
 msgid "Job search pipeline"
 msgstr "Bewerbungspipeline"
 
+#: src/features/assistant/messages.tsx
+msgid "Job title"
+msgstr ""
+
 #: src/features/search/search-screen.tsx
 msgid "Jobs"
 msgstr "Jobs"
@@ -5459,6 +5538,7 @@ msgid "Kind regards,"
 msgstr "Mit freundlichen Grüßen"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
 msgid "Knowledge"
 msgstr "Wissen"
@@ -6632,6 +6712,10 @@ msgstr "Keine E-Mail-Adresse"
 msgid "No email address was found."
 msgstr "Es wurde keine E-Mail-Adresse gefunden."
 
+#: src/features/assistant/messages.tsx
+msgid "No evidence found · left as a gap"
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "No evidence yet"
 msgstr "Noch keine Belege"
@@ -6828,6 +6912,10 @@ msgstr "Nicht übernommen"
 msgid "Not applied yet"
 msgstr "Noch nicht beworben"
 
+#: src/features/assistant/messages.tsx
+msgid "Not assessed"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Not available while the resume needs a password."
 msgstr "Nicht verfügbar, solange der Lebenslauf ein Passwort erfordert."
@@ -6843,6 +6931,10 @@ msgstr "Nichts für mich"
 #: src/features/ats-checker/checker.tsx
 msgid "Not found:"
 msgstr "Nicht gefunden:"
+
+#: src/features/assistant/messages.tsx
+msgid "Not in your resume"
+msgstr "Nicht in Ihrem Lebenslauf"
 
 #: src/features/check/job-match.tsx
 msgid "Not in your resume · add only if true"
@@ -6895,6 +6987,14 @@ msgstr "Information"
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "Notizen"
+
+#: src/features/assistant/messages.tsx
+msgid "Nothing checked backs these. Confirm each before accepting:"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "Nothing cited for this edit."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Nothing here should cost you a match."
@@ -7007,6 +7107,10 @@ msgstr "Bürotage pro Woche, höchstens"
 #: src/features/career/offers.tsx
 msgid "Office days are unknown."
 msgstr "Bürotage sind unbekannt."
+
+#: src/features/career/today.tsx
+msgid "Office days not stated"
+msgstr "Bürotage nicht angegeben"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -7631,6 +7735,10 @@ msgstr "Stellenanzeige"
 #: src/features/workspace/tabs/fit.tsx
 msgid "Posting"
 msgstr "Stellenanzeige"
+
+#: src/features/assistant/messages.tsx
+msgid "Posting asks for: {requirement}"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -8514,6 +8622,10 @@ msgstr "Antwort bis"
 msgid "Response deadline has passed."
 msgstr "Die Antwortfrist ist abgelaufen."
 
+#: src/features/assistant/messages.tsx
+msgid "Responsibility"
+msgstr ""
+
 #: app/(tabs)/settings/preferences.tsx
 msgid "Restart to change text direction"
 msgstr "Starten Sie neu, um die Textrichtung zu ändern"
@@ -8912,6 +9024,10 @@ msgstr "Gehalt"
 msgid "Salary not detected"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Salary not listed"
+msgstr "Gehalt nicht angegeben"
+
 #: src/features/applications/add-sheet.tsx
 msgid "Salary range"
 msgstr "Gehaltsspanne"
@@ -9042,6 +9158,10 @@ msgstr "Diese Geschichte unter Wissen speichern?"
 msgid "Save to Knowledge"
 msgstr "In Ihrem Wissen speichern"
 
+#: src/features/assistant/messages.tsx
+msgid "Save wording"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Save your version over theirs."
 msgstr "Ihre Version über die andere speichern."
@@ -9106,6 +9226,7 @@ msgstr "Unter „Gespeichert“ abgelegt · Übung"
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "Den Job speichern. Warten Sie auf die Bestätigung, bevor Sie eine weitere Änderung vornehmen."
 
+#: src/features/assistant/messages.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/profile.tsx
@@ -9478,6 +9599,11 @@ msgstr "Aktie"
 msgid "Share calendar event (.ics)"
 msgstr "Kalenderereignis teilen (.ics)"
 
+#. placeholder {0}: provider.label
+#: src/api/ai-consent.ts
+msgid "Share data with {0}?"
+msgstr "Daten mit {0} teilen?"
+
 #: src/api/ai-consent.ts
 msgid "Share data with {label}?"
 msgstr ""
@@ -9786,6 +9912,7 @@ msgstr "Situation, Aufgabe, Handlung, Ergebnis, Reflexion. Verknüpfen Sie jede 
 msgid "Size"
 msgstr "Größe"
 
+#: src/features/assistant/messages.tsx
 #: src/features/career/facts.tsx
 msgid "Skill"
 msgstr "Fähigkeit"
@@ -10681,6 +10808,14 @@ msgstr ""
 msgid "These are the answers saved when you applied."
 msgstr "Das sind die Antworten, die beim Bewerben gespeichert wurden."
 
+#: src/features/assistant/messages.tsx
+msgid "These edits are from before the assistant recorded which job posting they use, so they can't be applied. Ask again on the resume you want to change."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged."
+msgstr ""
+
 #: app/(tabs)/settings/account.tsx
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "Diese öffnen die Kontoeinstellungen Ihres Servers in einem Browser-Tab innerhalb der App. Möglicherweise müssen Sie sich dort anmelden."
@@ -10888,6 +11023,10 @@ msgstr "Dies misst, wie zuverlässig die Software den Text dieser Datei extrahie
 msgid "This month"
 msgstr "Diesen Monat"
 
+#: src/draft/conflict-sheet.tsx
+msgid "This older draft needs review"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "This page is clipped or incomplete. Check the original before using it."
 msgstr "Diese Seite ist beschnitten oder unvollständig. Überprüfen Sie das Original, bevor Sie es verwenden."
@@ -10922,6 +11061,10 @@ msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
@@ -11169,6 +11312,7 @@ msgstr "Versuchen Sie es mit {suggestion}"
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/workspace/parts.tsx
@@ -11502,6 +11646,10 @@ msgstr "Angaben aus dem Lebenslauf verwenden"
 msgid "Use for all applications"
 msgstr "Für alle Bewerbungen verwenden"
 
+#: src/features/assistant/assistant-screen.tsx
+msgid "Use Knowledge"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
 msgid "Use lowercase letters, numbers and single dashes."
@@ -11529,6 +11677,10 @@ msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
+msgstr ""
+
+#: src/draft/conflict-sheet.tsx
+msgid "Use saved version"
 msgstr ""
 
 #: src/features/workspace/parts.tsx
@@ -11613,6 +11765,10 @@ msgstr "Verwendet den in Einstellungen eingerichteten Websuchdienst. Die Sucherg
 #: src/features/career/schedule-sheet.tsx
 msgid "Uses web search set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today; applications and documents are never created for you."
 msgstr ""
+
+#: src/features/career/schedule-sheet.tsx
+msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
+msgstr "Verwendet die in Einstellungen eingerichtete Websuche. Ergebnisse warten in Heute. Bewerbungen und Bewerbungsunterlagen werden niemals für Sie erstellt."
 
 #: src/features/share/web-page.tsx
 msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
@@ -12404,6 +12560,10 @@ msgstr "Ihre nicht gespeicherten Jobdetails werden verworfen, bevor die Websuche
 
 #: src/api/ai-consent.ts
 msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "Your wording"
 msgstr ""
 
 #: src/features/letters/page.tsx

@@ -241,6 +241,25 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 								onRemove={() => setContext({ ...context, posting: false })}
 							/>
 						) : null}
+						<ContextChip
+							icon="brain"
+							label={t`Use Knowledge`}
+							pressed={context.memory === true}
+							onPress={() => setContext({ ...context, memory: context.memory !== true })}
+						/>
+						{needsJobCopy(document, context) && document.posting ? (
+							<Button
+								size="sm"
+								variant="secondary"
+								label={t`Copy for this job`}
+								onPress={() =>
+									router.push({
+										pathname: routes.new(),
+										params: { step: "copy", applicationId: document.posting?.id, sourceResumeId: document.id },
+									})
+								}
+							/>
+						) : null}
 					</>
 				}
 				empty={(send) => <Suggestions document={document} prepare={prepare} onPick={send} />}
@@ -350,8 +369,17 @@ function disclosure(t: Translate, document: AssistantDocument, context: MessageC
 		!context.document || !context.posting
 			? t`Each send starts fresh with this message and selected files. Previous conversation history stays here.`
 			: t`Previous messages, including document details, are also sent.`;
-	return `${sends} ${history}`;
+	const knowledge = context.memory === true ? ` ${t`Knowledge facts the assistant looks up are sent too.`}` : "";
+	const copy =
+		needsJobCopy(document, context) && document.posting
+			? ` ${t`Edits that use the ${document.posting.company} posting go to a copy made for that job, so this resume stays unchanged.`}`
+			: "";
+	return `${sends}${knowledge} ${history}${copy}`;
 }
+
+/** Tailoring needs the job's own copy: the server refuses edits that use the posting on a resume other jobs share. */
+const needsJobCopy = (document: AssistantDocument, context: MessageContext) =>
+	document.kind === "resume" && Boolean(context.posting && document.posting) && !document.jobCopy;
 
 type Suggestion = { icon: IconName; label: string; hint: string };
 

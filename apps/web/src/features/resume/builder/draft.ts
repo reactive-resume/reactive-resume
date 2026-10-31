@@ -1,4 +1,4 @@
-import type { ProposalApplications, ProposalSnapshot } from "@reactive-resume/resume/proposals";
+import type { Proposal, ProposalApplications, ProposalSnapshot } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { QueryClient, QueryKey } from "@tanstack/react-query";
 import type { WritableDraft } from "immer";
@@ -12,6 +12,7 @@ import { immer } from "zustand/middleware/immer";
 import { create } from "zustand/react";
 import {
 	acknowledgeProposalApplications,
+	appliedApplications,
 	queueProposalApplications,
 	readProposalApplications,
 	restoreProposalApplications,
@@ -53,8 +54,8 @@ type ResumeUpdateEvent = { mutation: ResumeUpdateMutation };
 type SaveStatus = "idle" | "saving" | "saved" | "offline" | "error" | "conflict";
 
 type UpdateResumeDataOptions = {
-	/** Successful proposal IDs, recorded in this undo step alongside the authored data. */
-	proposalIds?: readonly string[];
+	/** Proposals this edit applied, recorded with their wording in this undo step alongside the authored data. */
+	applied?: readonly Pick<Proposal, "id" | "after" | "snapshot">[];
 	/**
 	 * Identifies the field being edited. Consecutive edits to the same field within a second merge into
 	 * one undo step, so typing a sentence undoes as a whole.
@@ -123,6 +124,12 @@ type Runtime = {
 	deferredFocusHandler?: (() => void) | undefined;
 	/** This visit's saves share one autosave version in History. */
 	sessionId: string;
+	/**
+	 * Set while the draft is this app's own: it applies assistant edits only through checked decisions. Changes
+	 * restored from an older app's recovery lack it and are sent without proposalSafety until the server takes them or
+	 * the draft is replaced, so updating the app never vouches for what the older one queued.
+	 */
+	proposalSafety?: "v1" | undefined;
 };
 
 type ResumeUpdateSubscriptionOptions = {
@@ -178,6 +185,7 @@ function storeUnsavedResume(resume: Resume) {
 				storedAt: Date.now(),
 				proposalApplications: getRuntime(resume.id).proposalApplications,
 				pendingProposalApplications: getRuntime(resume.id).pendingProposalApplications,
+				proposalSafety: getRuntime(resume.id).proposalSafety,
 			}),
 		);
 	} catch {
@@ -198,6 +206,7 @@ function clearUnsavedResume(resume: Resume) {
 					clean: true,
 					proposalApplications: runtime.proposalApplications,
 					pendingProposalApplications: runtime.pendingProposalApplications,
+					proposalSafety: runtime.proposalSafety,
 				}),
 			);
 		} else window.localStorage.removeItem(recoveryKey(resume));
@@ -218,6 +227,7 @@ type UnsavedResume = {
 	clean?: boolean;
 	proposalApplications?: ProposalApplications;
 	pendingProposalApplications?: ProposalApplications;
+	proposalSafety?: unknown;
 };
 
 function readUnsavedResume(id: string): UnsavedResume | undefined {
@@ -348,6 +358,7 @@ function setRuntimeBaseline(resume: Resume) {
 	runtime.hasPendingLocalChanges = false;
 	runtime.pendingResume = undefined;
 	runtime.baseUpdatedAt = resume.updatedAt;
+	runtime.proposalSafety = "v1";
 	runtime.conflict = false;
 	runtime.saveFailed = false;
 	runtime.syncResume.cancel();
@@ -370,12 +381,15 @@ async function flushResumeSave(id: string) {
 				data: submittedData,
 				sessionId: runtime.sessionId,
 				expectedUpdatedAt: runtime.baseUpdatedAt,
+				...(runtime.proposalSafety ? { proposalSafety: runtime.proposalSafety } : {}),
 				...(Object.keys(submittedApplications).length ? { proposalApplications: { ...submittedApplications } } : {}),
 			},
 			{ signal: runtime.abortController.signal },
 		)) as Resume;
 		if (runtime.abortController.signal.aborted) return;
 
+		// The server took what this draft held; what's typed from here on is this app's own.
+		runtime.proposalSafety = "v1";
 		runtime.pendingProposalApplications = acknowledgeProposalApplications(
 			runtime.pendingProposalApplications,
 			submittedApplications,
@@ -463,6 +477,7 @@ function createRuntime(): Runtime {
 		saveFailed: false,
 		syncResume,
 		sessionId: generateId(),
+		proposalSafety: "v1",
 	};
 
 	runtime.beforeUnloadHandler = () => runtime.syncResume.flush();
@@ -562,6 +577,8 @@ export const useResumeStore = create<ResumeStore>()(
 				runtime.proposalApplications = sameRevision ? readProposalApplications(unsaved?.proposalApplications) : pending;
 				runtime.pendingProposalApplications = pending;
 				if (unsaved) runtime.restoredDraft = { key: unsaved.key, raw: unsaved.raw };
+				// What an older app's recovery holds is sent on its terms (see Runtime.proposalSafety).
+				if (restored) runtime.proposalSafety = unsaved?.proposalSafety === "v1" ? "v1" : undefined;
 			}
 			if (resume && unsaved && !restored) clearUnsavedResume(resume);
 			// Matching text cannot acknowledge a queued decision from another document revision.
@@ -704,11 +721,8 @@ export const useResumeStore = create<ResumeStore>()(
 				}
 
 				fn(state.resume.data as WritableDraft<ResumeData>);
-				if (options.proposalIds?.length)
-					state.proposalApplications = {
-						...state.proposalApplications,
-						...Object.fromEntries(options.proposalIds.map((id) => [id, true])),
-					};
+				if (options.applied?.length)
+					state.proposalApplications = { ...state.proposalApplications, ...appliedApplications(options.applied) };
 				// The server writes the date text from the dates on save; doing the same here keeps its echo
 				// identical to the draft, so an autosave never reads as an outside change.
 				syncResumeDates(state.resume.data as ResumeData);

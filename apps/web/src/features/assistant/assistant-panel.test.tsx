@@ -55,6 +55,8 @@ const document: AssistantDocument = {
 	id: "resume-1",
 	name: "Resume",
 	locked: false,
+	jobCopy: true,
+	madeFor: null,
 	posting: null,
 	stateOf: () => "pending",
 	accept: () => ({ applied: [], stale: [] }),

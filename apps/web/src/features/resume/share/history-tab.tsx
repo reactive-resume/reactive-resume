@@ -74,7 +74,7 @@ function useResumeHistory(): HistorySource {
 		restore: async (versionId) => {
 			if (!(await savePendingChanges(resume.id)))
 				throw new Error(t`Couldn't save your changes. Try again before continuing.`);
-			const restored = await orpc.resume.restoreVersion.call({ resumeId: resume.id, versionId });
+			const restored = await orpc.resume.restoreVersion.call({ resumeId: resume.id, versionId, proposalSafety: "v1" });
 			useResumeStore.getState().replaceResumeFromServer(restored as Resume);
 			queryClient.setQueryData(orpc.resume.getById.queryKey({ input: { id: resume.id } }), {
 				...restored,

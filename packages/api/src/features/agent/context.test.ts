@@ -1,6 +1,6 @@
-import type { ModelMessage } from "ai";
+import type { ModelMessage, UIMessage } from "ai";
 import { describe, expect, it } from "vite-plus/test";
-import { estimateTokens, pruneAgentModelContext } from "./context";
+import { estimateTokens, knowledgeWithdrawals, pruneAgentModelContext, withdrawKnowledgeReply } from "./context";
 
 const BIG_RESUME = { basics: { name: "Alice" }, sections: { summary: { content: "x".repeat(2_000) } } };
 
@@ -127,4 +127,33 @@ describe("estimateTokens", () => {
 		expect(estimate).toBeGreaterThan(200_000);
 		expect(estimate).toBeLessThan(300_000);
 	});
+});
+
+it("withdraws every reply from the first Knowledge lookup on, words and proposals included", () => {
+	const at = (hour: number) => new Date(Date.UTC(2030, 0, 1, hour));
+	const reply = (id: string, parts: unknown[]) => ({ id, role: "assistant", parts }) as unknown as UIMessage;
+	const user = (id: string) => ({ id, role: "user", parts: [{ type: "text", text: "Go on" }] }) as unknown as UIMessage;
+	const history = [
+		{ message: reply("before", [{ type: "text", text: "Hello" }]), createdAt: at(1) },
+		{
+			message: reply("lookup", [{ type: "tool-read_knowledge", state: "output-available", output: { facts: [] } }]),
+			createdAt: at(2),
+		},
+		{ message: user("u1"), createdAt: at(3) },
+		// Repeats the fact from history without another lookup, or asks about it.
+		{ message: reply("derived", [{ type: "text", text: "Private fact" }]), createdAt: at(4) },
+		{
+			message: reply("question", [{ type: "tool-ask_user_question", input: { question: "Private fact?" } }]),
+			createdAt: at(5),
+		},
+	];
+
+	expect([...knowledgeWithdrawals(history, null)]).toEqual([]);
+	expect([...knowledgeWithdrawals(history, null, false)]).toEqual(["lookup", "derived", "question"]);
+	expect([...knowledgeWithdrawals(history, at(6))]).toEqual(["lookup", "derived", "question"]);
+	// A fact changed after the first replies began: later ones were written without them.
+	expect([...knowledgeWithdrawals(history, at(4))]).toEqual(["lookup", "derived"]);
+	const derived = history[3]?.message as UIMessage;
+	expect(JSON.stringify(withdrawKnowledgeReply(derived))).not.toContain("Private fact");
+	expect(JSON.stringify(withdrawKnowledgeReply(derived, true))).not.toContain("Private fact");
 });

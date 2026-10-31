@@ -20,6 +20,10 @@ export type AssistantDocument = {
 	locked: boolean;
 	/** The application it's for, whose posting is shared as context. */
 	posting: { id: string; company: string; role: string } | null;
+	/** Edits that use the posting can land here: a letter, or a resume copied for that application (web document.ts). */
+	jobCopy: boolean;
+	/** The application this resume was made for (null for a base resume or a letter). */
+	madeFor: string | null;
 	/** A proposal's state against the document as it reads now. */
 	stateOf: (proposal: Proposal) => ProposalState;
 	/** Applies proposals to the draft as one undo step, with Undo in the toast. */
@@ -54,6 +58,9 @@ export function useResumeAssistantDocument(resumeId: string, applicationId?: str
 			proposalRevision: document.updatedAt.toISOString(),
 			locked,
 			posting: application ? { id: application.id, company: application.company, role: application.role } : null,
+			// Unknown while applications load: tailoring can't be confirmed for this resume yet.
+			jobCopy: applications !== undefined && (!application || application.id === document.applicationId),
+			madeFor: document.applicationId ?? null,
 			stateOf: (proposal) => getProposalState(data, proposal, applicationsOfProposals),
 			accept: (proposals) => {
 				if (getAccountScope() !== scope || useResumeStore.getState().document?.id !== resumeId)
@@ -96,10 +103,12 @@ export function useLetterAssistantDocument(letterId: string, applicationId?: str
 			proposalRevision: String(document.revision),
 			locked,
 			posting: application ? { id: application.id, company: application.company, role: application.role } : null,
+			jobCopy: true,
+			madeFor: null,
 			stateOf: (proposal) => getStateIn(document.content, proposal, applicationsOfProposals),
 			accept: (proposals) => {
 				let result: ProposalApplicationResult = { applied: [], stale: [] };
-				const proposalIds: string[] = [];
+				const applied: Proposal[] = [];
 				if (!isCurrent() || useLetterStore.getState().locked) return result;
 				useLetterStore.getState().update(
 					(draft) => {
@@ -111,9 +120,9 @@ export function useLetterAssistantDocument(letterId: string, applicationId?: str
 							},
 							useLetterStore.getState().proposalApplications,
 						);
-						proposalIds.push(...result.applied.map((proposal) => proposal.id));
+						applied.push(...result.applied);
 					},
-					{ newStep: true, proposalIds },
+					{ newStep: true, applied },
 				);
 				const accepted = useLetterStore.getState().data;
 				if (!accepted || result.applied.length === 0) {

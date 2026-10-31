@@ -24,7 +24,7 @@ import { useLetterEditorStore } from "@/features/letters/store";
 import { DocumentMenuTrigger } from "@/features/resume/editor/chrome";
 import { DownloadButtons, EditorBarFrame } from "@/features/resume/editor/chrome/bar";
 import { useEditorStore } from "@/features/resume/editor/store";
-import { usePrompt } from "@/hooks/use-confirm";
+import { useConfirm, usePrompt } from "@/hooks/use-confirm";
 import { getOrpcErrorMessage, getReadableErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
@@ -204,16 +204,33 @@ function LetterMenu() {
 	);
 }
 
-/** Saved, Saving…, Not saved · Retry, or Changed elsewhere · Reload (after which the letter reads as saved). */
+/** Saved, Saving…, Not saved · Retry, or Review saved version · Reload. */
 function LetterSaveStatus() {
 	const status = useLetterEditorStore((state) => state.status);
-	const id = useLetterEditorStore((state) => state.letter?.id ?? "");
+	const confirm = useConfirm();
+	const queryClient = useQueryClient();
+	const [reloading, setReloading] = useState(false);
 
 	const reload = async () => {
+		if (reloading) return;
+		const { sessionId } = useLetterEditorStore.getState();
+		setReloading(true);
 		try {
-			useLetterEditorStore.getState().load(await client.coverLetters.getById({ id }), { recover: false });
+			if (
+				!(await confirm(t`Reload the saved version?`, {
+					description: t`Your edits will be kept as a separate letter in Documents before loading the saved version.`,
+					confirmText: t`Keep a copy and reload`,
+				}))
+			)
+				return;
+			if (useLetterEditorStore.getState().sessionId !== sessionId) return;
+			const copy = await useLetterEditorStore.getState().reloadFromServer();
+			if (copy) toast.add({ type: "success", description: t`Your edits were kept as “${copy.name}”.` });
 		} catch (error) {
 			failed(error);
+		} finally {
+			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
+			setReloading(false);
 		}
 	};
 
@@ -250,13 +267,14 @@ function LetterSaveStatus() {
 				<span className={cn(ENTER_CLASS, "flex min-w-0 items-center gap-1.5 text-warn-text")}>
 					<Icon name="cloud-warning" size={16} />
 					<span className="truncate">
-						<Trans>Changed elsewhere</Trans>
+						<Trans>Review saved version</Trans>
 					</span>
 					<span aria-hidden="true">·</span>
 					<button
 						type="button"
+						disabled={reloading}
 						onClick={() => void reload()}
-						className="rounded-sm font-semibold underline underline-offset-2 hover:opacity-80"
+						className="rounded-sm font-semibold underline underline-offset-2 hover:opacity-80 disabled:opacity-50"
 					>
 						<Trans>Reload</Trans>
 					</button>

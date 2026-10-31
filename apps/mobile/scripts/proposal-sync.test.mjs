@@ -41,6 +41,8 @@ let fail = false;
 let blocked = false;
 let scope = "https://review.invalid:alice";
 let responseGate = null;
+// The server's answer to an unchecked content save on a document an older app could edit wrongly.
+let refuseUnchecked = false;
 const { ORPCError } = await import("@orpc/client");
 function network(kind) {
 	return {
@@ -49,6 +51,10 @@ function network(kind) {
 			requests.push(structuredClone({ kind, input }));
 			if (responseGate) await responseGate;
 			if (fail) throw new Error("offline");
+			if (refuseUnchecked && !input.proposalSafety)
+				throw new ORPCError(kind === "resume" ? "RESUME_VERSION_CONFLICT" : "CONFLICT", {
+					data: { reason: "CURRENT_CLIENT_REQUIRED" },
+				});
 			const old = documents[kind];
 			if (kind === "resume" && input.expectedUpdatedAt && input.expectedUpdatedAt.getTime() !== old.updatedAt.getTime())
 				throw new ORPCError("RESUME_VERSION_CONFLICT");
@@ -85,6 +91,7 @@ function setup(kind) {
 	online = true;
 	fail = false;
 	blocked = false;
+	refuseUnchecked = false;
 	scope = "https://review.invalid:alice";
 	responseGate = null;
 	const now = new Date("2026-10-31T00:00:00Z");
@@ -146,7 +153,7 @@ function setup(kind) {
 	return { owner, storage, environment };
 }
 function accept(s, kind) {
-	const ids = [];
+	const applied = [];
 	s().update(
 		(d) => {
 			const r = shared.applyProposals(
@@ -158,9 +165,9 @@ function accept(s, kind) {
 				},
 				s().proposalApplications,
 			);
-			ids.push(...r.applied.map((p) => p.id));
+			applied.push(...r.applied);
 		},
-		{ newStep: true, proposalIds: ids },
+		{ newStep: true, applied },
 	);
 }
 for (const kind of ["resume", "letter"]) {
@@ -207,7 +214,7 @@ for (const kind of ["resume", "letter"]) {
 		await writing;
 		assert.deepEqual(
 			requests.map((r) => r.input.proposalApplications),
-			[{ receipt: true }, { receipt: false }],
+			[{ receipt: proposal.after }, { receipt: false }],
 		);
 		assert.equal(kind === "resume" ? documents[kind].data.summary.content : documents[kind].content, proposal.before);
 		assert.equal(s().status, "saved");
@@ -231,7 +238,7 @@ for (const kind of ["resume", "letter"]) {
 		o.suspend();
 		const fresh = owner();
 		await fresh.store.getState().open(kind);
-		assert.equal(fresh.store.getState().proposalApplications.receipt, true);
+		assert.equal(fresh.store.getState().proposalApplications.receipt, proposal.after);
 	});
 }
 
@@ -366,6 +373,89 @@ for (const kind of ["resume", "letter"])
 			state().undo();
 			await state().flush();
 			assert.equal(kind === "resume" ? documents[kind].data.summary.content : documents[kind].content, expectedContent);
-			assert.notEqual(requests.at(-1).input.proposalApplications?.receipt, true);
+			assert.notEqual(requests.at(-1).input.proposalApplications?.receipt, proposal.after);
 			draft.suspend();
 		});
+
+for (const kind of ["resume", "letter"]) {
+	test(`${kind} never vouches for a draft an older app kept: it goes out unchecked until the server takes it`, async () => {
+		const { owner, storage } = setup(kind);
+		const baseline = structuredClone(documents[kind]);
+		const document =
+			kind === "resume"
+				? { ...baseline, data: { ...baseline.data, summary: { ...baseline.data.summary, content: proposal.after } } }
+				: { ...baseline, content: proposal.after };
+		// What an older app's store left on disk while offline: no proposalSafety.
+		const older = (extra = {}) =>
+			storage.set(
+				`reactive-resume:unsaved:${encodeURIComponent(scope)}:${kind}:${kind}`,
+				JSON.stringify({
+					baseline,
+					document,
+					sessionId: "older-visit",
+					proposalApplications: { receipt: true },
+					pendingProposalApplications: { receipt: true },
+					...extra,
+				}),
+			);
+
+		// On a document that refuses unchecked saves, opening sends it unchecked, is refused and keeps the draft aside.
+		older();
+		refuseUnchecked = true;
+		let o = owner();
+		await o.store.getState().open(kind);
+		assert.equal(requests.length, 1);
+		assert.equal("proposalSafety" in requests[0].input, false);
+		assert.deepEqual(requests[0].input.proposalApplications, { receipt: true });
+		assert.ok(o.store.getState().conflict, "The refusal leaves the draft for Keep both or Use theirs");
+		assert.equal(o.store.getState().conflict.reason, "CURRENT_CLIENT_REQUIRED");
+		requests.length = 0;
+		await o.store.getState().resolveConflict("keep-mine");
+		assert.equal(requests.length, 0, "Keep mine cannot resolve a current-client refusal");
+		const kept = JSON.parse([...storage.values()][0]);
+		assert.equal(kept.proposalSafety, undefined, "A refused draft stays the older app's");
+		assert.equal(kept.conflictReason, "CURRENT_CLIENT_REQUIRED");
+		assert.equal(kind === "resume" ? documents[kind].data.summary.content : documents[kind].content, proposal.before);
+		await o.store.getState().close();
+		o = owner();
+		await o.store.getState().open(kind);
+		assert.equal(o.store.getState().conflict.reason, "CURRENT_CLIENT_REQUIRED", "Refusal survives restart");
+		assert.equal(requests.length, 0, "Known refusal does not retry on reopen");
+		await o.store.getState().resolveConflict("use-theirs");
+		assert.equal(o.store.getState().conflict, null);
+		assert.equal(
+			kind === "resume" ? o.store.getState().data.summary.content : o.store.getState().data.content,
+			proposal.before,
+		);
+		assert.equal(storage.size, 0);
+		await o.store.getState().close();
+
+		// Where the server takes it, what's typed next is this app's own.
+		setup(kind);
+		storage.clear();
+		older();
+		o = owner();
+		const s = o.store.getState;
+		await s().open(kind);
+		assert.equal("proposalSafety" in requests[0].input, false);
+		s().update(
+			(draft) => {
+				if (kind === "resume") draft.summary.content = "<p>Typed after updating</p>";
+				else draft.content = "<p>Typed after updating</p>";
+			},
+			{ newStep: true },
+		);
+		await s().flush();
+		assert.equal(requests.at(-1).input.proposalSafety, "v1");
+		await s().close();
+
+		// This app's own draft keeps its mark across a restart.
+		setup(kind);
+		storage.clear();
+		older({ proposalSafety: "v1" });
+		o = owner();
+		await o.store.getState().open(kind);
+		assert.equal(requests[0].input.proposalSafety, "v1");
+		await o.store.getState().close();
+	});
+}

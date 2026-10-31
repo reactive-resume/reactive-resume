@@ -148,6 +148,11 @@ msgstr "{0, plural, one {# merkki} other {# merkkiä}}"
 msgid "{0, plural, one {# check could not run.} other {# checks could not run.}}"
 msgstr "{0, plural, one {# tarkistusta ei voitu suorittaa.} other {# tarkistusta ei voitu suorittaa.}}"
 
+#. placeholder {0}: item.unresolved ?? 0
+#: src/features/assistant/messages.tsx
+msgid "{0, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
+msgstr ""
+
 #. placeholder {0}: Number(columns)
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
@@ -294,6 +299,16 @@ msgstr "{0, plural, one {Näytä # ohitettu ongelma uudelleen} other {Näytä # 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, one {Alkoi # minuutti sitten} other {Alkoi # minuuttia sitten}}"
+
+#. placeholder {0}: evidence.length
+#: src/features/assistant/messages.tsx
+msgid "{0, plural, one {The assistant cites # source · check it says this} other {The assistant cites # sources · check they say this}}"
+msgstr ""
+
+#. placeholder {0}: requirements.length
+#: src/features/assistant/messages.tsx
+msgid "{0, plural, one {The assistant's reading of # posting requirement} other {The assistant's reading of # posting requirements}}"
+msgstr ""
 
 #. placeholder {0}: fact.usedBy.savedItems
 #: src/features/career/facts.tsx
@@ -558,6 +573,10 @@ msgstr "{facts, plural, one {# fakta} other {# faktaa}}"
 msgid "{followUps, plural, one {# follow-up} other {# follow-ups}}"
 msgstr "{followUps, plural, one {# seurantatoimi} other {# seurantatoimea}}"
 
+#: src/features/assistant/messages.tsx
+msgid "{gaps, plural, one {· # gap} other {· # gaps}}"
+msgstr ""
+
 #: src/features/workspace/shell.tsx
 msgid "{hours} h"
 msgstr "{hours} h"
@@ -708,6 +727,10 @@ msgstr "{toCheck, plural, one {#-kenttä tarvitsee tarkastelua.} other {# kentä
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# tarkistettavaksi} other {# tarkistettavaksi}}"
 
+#: src/features/assistant/messages.tsx
+msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "{words, plural, one {# word} other {# words}}"
@@ -785,6 +808,10 @@ msgstr "Päivämäärää ei lueta"
 #: src/features/career/stories.tsx
 msgid "A fact changed. Review this story."
 msgstr "Fakta muuttui. Tarkista tämä tarina."
+
+#: src/features/assistant/messages.tsx
+msgid "A fact that's no longer in Knowledge"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "A focused plan for this round"
@@ -1466,6 +1493,14 @@ msgstr "Näkyy aina Tänään-osiossa. Sähköposti vaatii vahvistetun osoitteen
 msgid "Amharic"
 msgstr "amhara"
 
+#: src/features/assistant/messages.tsx
+msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "An edit addresses it"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "An embedded font could not be read."
 msgstr "Upotettua fonttia ei voitu lukea."
@@ -1477,6 +1512,10 @@ msgstr "Merkinnällä ei ole päivämääriä"
 #: src/features/assistant/chat-view.tsx
 msgid "an error"
 msgstr "virhe"
+
+#: src/draft/conflict-sheet.tsx
+msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
+msgstr ""
 
 #. placeholder {0}: others.length
 #: src/features/application-detail/sections.tsx
@@ -2118,6 +2157,7 @@ msgstr "Voiko ohjelmisto lukea ansioluettelosi?"
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/check/parser.tsx
 #: src/features/check/writing.tsx
@@ -2452,6 +2492,10 @@ msgstr "Voit valita jopa 200 työhakemusta massatoimintoa kohden."
 #: src/features/design/advanced.tsx
 msgid "Circle"
 msgstr "Ympyrä"
+
+#: src/features/assistant/messages.tsx
+msgid "Cited as already shown · check it"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "City"
@@ -2858,6 +2902,10 @@ msgstr "Kopio luotu"
 msgid "Copy for a job…"
 msgstr "Kopioi työhön…"
 
+#: src/features/assistant/assistant-screen.tsx
+msgid "Copy for this job"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Copy reply"
 msgstr "Kopioi vastaus"
@@ -2869,6 +2917,10 @@ msgstr "Kopioi tyylitiedosto"
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
 msgstr "Kopioi teksti viedystä tiedostosta ja lue se läpi; korjaa kaikki, mikä päätyy väärään paikkaan."
+
+#: src/features/workspace/preparation.tsx
+msgid "Copy this resume for the job"
+msgstr ""
 
 #: src/features/assistant/chat-view.tsx
 msgid "Copy transcript"
@@ -3227,6 +3279,10 @@ msgstr "Muutoksiasi ei voitu tallentaa. Muokkauksesi ovat edelleen tällä laitt
 msgid "Couldn't save your preferences. Your draft is still here."
 msgstr "Asetuksiasi ei voitu tallentaa. Luonnoksesi on edelleen täällä."
 
+#: src/features/assistant/messages.tsx
+msgid "Couldn't save your wording. Your text is still here; try again."
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Couldn't save. Try again."
 msgstr "Ei voitu tallentaa. Yritä uudelleen."
@@ -3515,11 +3571,16 @@ msgid "Dark theme"
 msgstr "Tumma teema"
 
 #: src/api/ai-consent.ts
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr "Tietojen jakaminen peruttu. Tekoälypalveluntarjoajalle ei lähetetty mitään."
+
+#: src/api/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the provider."
 msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/date-field.tsx
@@ -4098,6 +4159,7 @@ msgstr "aiemmat viestit tässä keskustelussa"
 
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/career/stories.tsx
 #: src/features/career/today.tsx
 #: src/features/write/basics-screen.tsx
@@ -4173,6 +4235,10 @@ msgstr "Muokkaa sähköpostia"
 msgid "Edit the link"
 msgstr "Muokkaa linkkiä"
 
+#: src/features/assistant/messages.tsx
+msgid "Edited by you"
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Editing session"
@@ -4211,6 +4277,10 @@ msgstr "Lähetä sähköpostia rekrytoijalle"
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "Upota kaikki fontit vietäessä, jotta merkit vastaavat tarkoitustasi."
+
+#: src/features/assistant/messages.tsx
+msgid "Employer"
+msgstr ""
 
 #: src/features/documents/thumbnail.tsx
 msgid "Empty letter"
@@ -4452,6 +4522,11 @@ msgstr "Kenttä {0}"
 #: src/features/write/basics-screen.tsx
 msgid "Field removed"
 msgstr "Kenttä poistettu"
+
+#: src/features/assistant/messages.tsx
+msgctxt "A number or metric stated in a resume"
+msgid "Figure"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "File attached"
@@ -5340,6 +5415,10 @@ msgstr "Työnhakua ei ole määritetty tällä palvelimella. Liitä sen sijaan t
 msgid "Job search pipeline"
 msgstr "Työnhaun eteneminen"
 
+#: src/features/assistant/messages.tsx
+msgid "Job title"
+msgstr ""
+
 #: src/features/search/search-screen.tsx
 msgid "Jobs"
 msgstr "Työpaikat"
@@ -5459,6 +5538,7 @@ msgid "Kind regards,"
 msgstr "Ystävällisin terveisin"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
 msgid "Knowledge"
 msgstr "Tietopankki"
@@ -6632,6 +6712,10 @@ msgstr "Ei sähköpostiosoitetta"
 msgid "No email address was found."
 msgstr "Sähköpostiosoitetta ei löytynyt."
 
+#: src/features/assistant/messages.tsx
+msgid "No evidence found · left as a gap"
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "No evidence yet"
 msgstr "Ei vielä näyttöä"
@@ -6828,6 +6912,10 @@ msgstr "Ei tehty"
 msgid "Not applied yet"
 msgstr "Ei vielä haettu"
 
+#: src/features/assistant/messages.tsx
+msgid "Not assessed"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Not available while the resume needs a password."
 msgstr "Ei käytettävissä, kun ansioluettelo vaatii salasanan."
@@ -6843,6 +6931,10 @@ msgstr "Ei minulle"
 #: src/features/ats-checker/checker.tsx
 msgid "Not found:"
 msgstr "Ei löytynyt:"
+
+#: src/features/assistant/messages.tsx
+msgid "Not in your resume"
+msgstr "Ei ansioluettelossasi"
 
 #: src/features/check/job-match.tsx
 msgid "Not in your resume · add only if true"
@@ -6895,6 +6987,14 @@ msgstr "Tiedot"
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "Muistiinpanot"
+
+#: src/features/assistant/messages.tsx
+msgid "Nothing checked backs these. Confirm each before accepting:"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "Nothing cited for this edit."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Nothing here should cost you a match."
@@ -7007,6 +7107,10 @@ msgstr "Toimistopäiviä viikossa enintään"
 #: src/features/career/offers.tsx
 msgid "Office days are unknown."
 msgstr "Toimistopäivien määrä ei ole tiedossa."
+
+#: src/features/career/today.tsx
+msgid "Office days not stated"
+msgstr "Toimistopäiviä ei mainittu"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -7631,6 +7735,10 @@ msgstr "ilmoitus"
 #: src/features/workspace/tabs/fit.tsx
 msgid "Posting"
 msgstr "Työpaikkailmoitus"
+
+#: src/features/assistant/messages.tsx
+msgid "Posting asks for: {requirement}"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -8514,6 +8622,10 @@ msgstr "Vastattava viimeistään"
 msgid "Response deadline has passed."
 msgstr "Vastauksen määräaika on umpeutunut."
 
+#: src/features/assistant/messages.tsx
+msgid "Responsibility"
+msgstr ""
+
 #: app/(tabs)/settings/preferences.tsx
 msgid "Restart to change text direction"
 msgstr "Käynnistä uudelleen muuttaaksesi tekstin suuntaa"
@@ -8912,6 +9024,10 @@ msgstr "Palkka"
 msgid "Salary not detected"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Salary not listed"
+msgstr "Palkkaa ei ilmoitettu"
+
 #: src/features/applications/add-sheet.tsx
 msgid "Salary range"
 msgstr "Palkkahaarukka"
@@ -9042,6 +9158,10 @@ msgstr "Tallennetaanko tämä tarina Tietopankkiin?"
 msgid "Save to Knowledge"
 msgstr "Tallenna tietopankkiin"
 
+#: src/features/assistant/messages.tsx
+msgid "Save wording"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Save your version over theirs."
 msgstr "Korvaa heidän tallennettu versiosi omalla versiollasi."
@@ -9106,6 +9226,7 @@ msgstr "Tallennettu kohteeseen Tallennettu · Harjoitus"
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "Työn tallentaminen. Odota vahvistusta ennen uuden muutoksen tekemistä."
 
+#: src/features/assistant/messages.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/profile.tsx
@@ -9478,6 +9599,11 @@ msgstr "Jakaa"
 msgid "Share calendar event (.ics)"
 msgstr "Jaa kalenteritapahtuma (.ics)"
 
+#. placeholder {0}: provider.label
+#: src/api/ai-consent.ts
+msgid "Share data with {0}?"
+msgstr "Jaa tiedot {0}:n kanssa?"
+
 #: src/api/ai-consent.ts
 msgid "Share data with {label}?"
 msgstr ""
@@ -9786,6 +9912,7 @@ msgstr "Tilanne, tehtävä, toiminta, tulos, pohdinta. Linkitä jokainen tarina 
 msgid "Size"
 msgstr "Koko"
 
+#: src/features/assistant/messages.tsx
 #: src/features/career/facts.tsx
 msgid "Skill"
 msgstr "Taito"
@@ -10681,6 +10808,14 @@ msgstr ""
 msgid "These are the answers saved when you applied."
 msgstr "Nämä ovat hakiessasi tallennetut vastaukset."
 
+#: src/features/assistant/messages.tsx
+msgid "These edits are from before the assistant recorded which job posting they use, so they can't be applied. Ask again on the resume you want to change."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged."
+msgstr ""
+
 #: app/(tabs)/settings/account.tsx
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "Nämä avaavat palvelimesi tiliasetukset sovelluksen selainvälilehdellä. Sinun on ehkä kirjauduttava sisään sinne."
@@ -10888,6 +11023,10 @@ msgstr "Tämä mittaa, kuinka tarkasti ohjelmisto voi purkaa tämän tiedoston t
 msgid "This month"
 msgstr "Tämä kuukausi"
 
+#: src/draft/conflict-sheet.tsx
+msgid "This older draft needs review"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "This page is clipped or incomplete. Check the original before using it."
 msgstr "Tämä sivu on leikattu tai epätäydellinen. Tarkista alkuperäinen ennen sen käyttöä."
@@ -10922,6 +11061,10 @@ msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
@@ -11169,6 +11312,7 @@ msgstr "Kokeile {suggestion}"
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/workspace/parts.tsx
@@ -11502,6 +11646,10 @@ msgstr "Käytä ansioluettelon tietoja"
 msgid "Use for all applications"
 msgstr "Käytä kaikissa hakemuksissa"
 
+#: src/features/assistant/assistant-screen.tsx
+msgid "Use Knowledge"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
 msgid "Use lowercase letters, numbers and single dashes."
@@ -11529,6 +11677,10 @@ msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
+msgstr ""
+
+#: src/draft/conflict-sheet.tsx
+msgid "Use saved version"
 msgstr ""
 
 #: src/features/workspace/parts.tsx
@@ -11613,6 +11765,10 @@ msgstr "Käyttää asetuksissa määritettyä verkkohakupalvelua. Hakutulokset o
 #: src/features/career/schedule-sheet.tsx
 msgid "Uses web search set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today; applications and documents are never created for you."
 msgstr ""
+
+#: src/features/career/schedule-sheet.tsx
+msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
+msgstr "Käyttää asetuksissa määritettyä verkkohakua. Tulokset odottavat Tänään-osiossa. Hakemuksia tai asiakirjoja ei luoda puolestasi."
 
 #: src/features/share/web-page.tsx
 msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
@@ -12404,6 +12560,10 @@ msgstr "Tallentamattomat työtietosi hylätään ennen verkkohakuasetusten avaam
 
 #: src/api/ai-consent.ts
 msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "Your wording"
 msgstr ""
 
 #: src/features/letters/page.tsx

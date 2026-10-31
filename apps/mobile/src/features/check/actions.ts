@@ -1,4 +1,5 @@
 import type { CheckIssue } from "./issues";
+import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { ImperativeRouter } from "expo-router";
 import { t } from "@lingui/core/macro";
@@ -13,11 +14,11 @@ export function editWithUndo(
 	id: string,
 	edit: (draft: ResumeData) => void,
 	message: string,
-	proposalIds?: readonly string[],
+	applied?: readonly Proposal[],
 ) {
 	const store = useResumeStore.getState();
 	if (store.document?.id !== id || !store.data || store.locked) return false;
-	store.update(edit, { newStep: true, ...(proposalIds ? { proposalIds } : {}) });
+	store.update(edit, { newStep: true, ...(applied ? { applied } : {}) });
 	const changed = useResumeStore.getState().data;
 	if (changed === store.data) return false;
 	const toastId = showToast({

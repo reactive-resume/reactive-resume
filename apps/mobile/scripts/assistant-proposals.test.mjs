@@ -255,7 +255,7 @@ test("native structural acceptance follows actual draft saves, refinements, offs
 	const next = structuredClone(data);
 	next.basics.headline = "Design lead";
 	const proposal = {
-		...edit("structural", "Headline: Design lead"),
+		...edit("structural", "Headline: Design lead\n".repeat(1100)),
 		target: { sectionId: "resume", field: "data" },
 		snapshot: { before: shared.resumeStructureSnapshot(data), after: shared.resumeStructureSnapshot(next) },
 	};
@@ -263,7 +263,7 @@ test("native structural acceptance follows actual draft saves, refinements, offs
 	assert.deepEqual(doc.accept([proposal]), { applied: [proposal], stale: [] });
 	await resumeStore.getState().flush();
 	assert.equal(resumeStore.getState().data.basics.headline, "Design lead");
-	assert.deepEqual(documentSaves.at(-1).applications, { structural: true });
+	assert.deepEqual(documentSaves.at(-1).applications, { structural: "snapshot:structural" });
 	resumeStore.getState().update(
 		(draft) => {
 			draft.basics.headline = "Refined lead";
@@ -280,7 +280,10 @@ test("native structural acceptance follows actual draft saves, refinements, offs
 	resumeStore.getState().redo();
 	await resumeStore.getState().flush();
 	assert.equal(resumeStore.getState().data.basics.headline, "Design lead");
-	assert.deepEqual(documentSaves.at(-1).applications, { structural: true });
+	assert.deepEqual(documentSaves.at(-1).applications, { structural: "snapshot:structural" });
+	await resumeStore.restart();
+	assert.equal(documents.useResumeAssistantDocument("resume").stateOf(proposal), "accepted");
+	assert.deepEqual(resumeStore.getState().proposalApplications, { structural: "snapshot:structural" });
 });
 
 // Drive the public ChatView through its component tree; only platform/network boundaries are replaced.
@@ -289,10 +292,16 @@ test("native chat records real successes and explicit history changes, never ref
 		type: "tool-propose_edits",
 		toolCallId: "call",
 		state: "output-available",
-		output: { edits: [edit("rewrite", "<p>Rewritten</p>"), edit("conflict", "<p>Conflict</p>")], skipped: [] },
+		output: {
+			edits: [edit("rewrite", "<p>Rewritten</p>"), edit("conflict", "<p>Conflict</p>")],
+			skipped: [],
+			tailoredFor: null,
+		},
 	};
 	const message = { id: "message", role: "assistant", parts: [part] };
 	const records = [];
+	// What the receipts read back returns; TanStack Query resolves a failed refetch with the error and old data.
+	let receiptRead = async () => ({ data: { messages: [message] }, isError: false });
 	const componentHooks = new Map();
 	let active;
 	let cursor;
@@ -335,6 +344,7 @@ test("native chat records real successes and explicit history changes, never ref
 			state[index] = deps;
 		},
 		useEffectEvent: (fn) => fn,
+		useCallback: (fn) => fn,
 	};
 	hooks.useLayoutEffect = hooks.useEffect;
 	const theme = { colors: {}, radius: {}, space: {} };
@@ -352,10 +362,24 @@ test("native chat records real successes and explicit history changes, never ref
 			"@lingui/react/macro": { Trans: "Trans", useLingui: () => ({ t: (parts) => parts.join("") }) },
 			"@orpc/client": { ORPCError: class extends Error {} },
 			"@tanstack/react-query": {
-				useQuery: () => ({ data: { messages: [message], thread: {}, isReadOnly: false }, isFetchedAfterMount: true }),
+				useQuery: () => ({
+					data: { messages: [message], thread: {}, isReadOnly: false },
+					isFetchedAfterMount: true,
+					refetch: () => receiptRead(),
+				}),
 				useQueryClient: () => ({}),
 			},
 			ai: {},
+			"@reactive-resume/ai/tools/agent-tool-contracts": evaluate(
+				buildSync({
+					entryPoints: [new URL("../../../packages/ai/src/tools/agent-tool-contracts.ts", import.meta.url).pathname],
+					bundle: true,
+					platform: "node",
+					format: "cjs",
+					write: false,
+				}).outputFiles[0].text,
+				{},
+			),
 			"expo-clipboard": {},
 			"expo-document-picker": {},
 			"expo-file-system": {},
@@ -383,7 +407,10 @@ test("native chat records real successes and explicit history changes, never ref
 						},
 					},
 				},
-				orpc: { agent: { threads: { get: { queryOptions: () => ({ queryKey: ["thread"] }) } } } },
+				orpc: {
+					agent: { threads: { get: { queryOptions: () => ({ queryKey: ["thread"] }) } } },
+					career: { facts: { queryOptions: () => ({ queryKey: ["facts"] }), key: () => ["facts"] } },
+				},
 			},
 			"@/auth/session": { ...dependencies["@/auth/session"], useSession: () => ({ status: "signed-in" }) },
 			"@/ui": { ...dependencies["@/ui"], useTheme: () => theme },
@@ -436,7 +463,7 @@ test("native chat records real successes and explicit history changes, never ref
 	handlers.onAccept(message, part, part.output.edits);
 	handlers = render();
 	await resumeStore.getState().flush();
-	assert.deepEqual(documentSaves.at(-1).applications, { rewrite: true });
+	assert.deepEqual(documentSaves.at(-1).applications, { rewrite: "<p>Rewritten</p>" });
 	assert.deepEqual(records, []);
 	resumeStore.getState().update(
 		(draft) => {
@@ -457,7 +484,7 @@ test("native chat records real successes and explicit history changes, never ref
 	resumeStore.getState().redo();
 	render();
 	await resumeStore.getState().flush();
-	assert.deepEqual(documentSaves.at(-1).applications, { rewrite: true });
+	assert.deepEqual(documentSaves.at(-1).applications, { rewrite: "<p>Rewritten</p>" });
 	resumeStore.getState().redo();
 	handlers = render();
 	handlers.onAccept(message, part, [part.output.edits[0]]);
@@ -467,7 +494,32 @@ test("native chat records real successes and explicit history changes, never ref
 	handlers = render();
 	const pending = proposals.toProposals(part, handlers.statuses)[0];
 	assert.equal(handlers.stateOf(pending), "pending", "Mounted chat must honor the newer remote Undo");
-	await Promise.resolve();
+
+	// New wording counts only once a fresh read of the receipts shows it; a failed read keeps the draft open.
+	const reworded = part.output.edits[1];
+	const wording = shared.withEditedText(reworded, "My wording").after;
+	const withWording = {
+		...message,
+		parts: [
+			{
+				...part,
+				output: { ...part.output, edits: [part.output.edits[0], { ...reworded, after: wording, edited: true }] },
+			},
+		],
+	};
+	receiptRead = async () => ({ data: { messages: [message] }, isError: true });
+	await assert.rejects(handlers.onEdit(message, part, reworded, "My wording"), /couldn't be read back/);
+	receiptRead = async () => ({ data: { messages: [message] }, isError: false });
+	await assert.rejects(handlers.onEdit(message, part, reworded, "My wording"), /couldn't be read back/);
+	receiptRead = async () => ({ data: { messages: [withWording] }, isError: false });
+	await handlers.onEdit(message, part, reworded, "My wording");
+	assert.deepEqual(
+		records.slice(-3),
+		Array(3).fill([{ id: "conflict", status: "pending", text: "My wording", after: reworded.after }]),
+	);
+	// A failed read never confirms, even when the receipts it kept already show that wording.
+	receiptRead = async () => ({ data: { messages: [withWording] }, isError: true });
+	await assert.rejects(handlers.onEdit(message, part, reworded, "My wording"), /couldn't be read back/);
 });
 
 for (const kind of ["resume", "letter"]) {
@@ -478,7 +530,7 @@ for (const kind of ["resume", "letter"]) {
 		const pending = edit("durable", "<p>Rewritten</p>");
 		assert.equal(open().accept([pending]).applied.length, 1);
 		await owner.getState().flush();
-		assert.deepEqual(documentSaves.at(-1).applications, { durable: true });
+		assert.deepEqual(documentSaves.at(-1).applications, { durable: "<p>Rewritten</p>" });
 		owner.getState().undo();
 		failedSave = true;
 		await owner.getState().flush();

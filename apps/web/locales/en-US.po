@@ -148,6 +148,11 @@ msgstr "{0, plural, one {# change couldn't be prepared. Save your latest changes
 msgid "{0, plural, one {# character} other {# characters}}"
 msgstr "{0, plural, one {# character} other {# characters}}"
 
+#. placeholder {0}: item.unresolved ?? 0
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "{0, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
+msgstr "{0, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
+
 #. placeholder {0}: result.contactsSkipped
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
@@ -319,6 +324,16 @@ msgstr "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgid "{0, plural, one {Tags for # document} other {Tags for # documents}}"
 msgstr "{0, plural, one {Tags for # document} other {Tags for # documents}}"
 
+#. placeholder {0}: evidence.length
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "{0, plural, one {The assistant cites # source · check it says this} other {The assistant cites # sources · check they say this}}"
+msgstr "{0, plural, one {The assistant cites # source · check it says this} other {The assistant cites # sources · check they say this}}"
+
+#. placeholder {0}: requirements.length
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "{0, plural, one {The assistant's reading of # posting requirement} other {The assistant's reading of # posting requirements}}"
+msgstr "{0, plural, one {The assistant's reading of # posting requirement} other {The assistant's reading of # posting requirements}}"
+
 #. placeholder {0}: fact.usedBy.savedItems
 #: src/features/career/knowledge/facts.tsx
 msgid "{0, plural, one {used in # saved item} other {used in # saved items}}"
@@ -340,6 +355,8 @@ msgid "{0} (copy)"
 msgstr "{0} (copy)"
 
 #. placeholder {0}: current.name
+#. placeholder {0}: letter.name
+#: src/features/letters/store.ts
 #: src/features/resume/builder/draft.ts
 msgid "{0} (mine)"
 msgstr "{0} (mine)"
@@ -636,6 +653,10 @@ msgstr "{failing, plural, one {# to review} other {# to review}}"
 msgid "{filled} of 5 parts"
 msgstr "{filled} of 5 parts"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "{gaps, plural, one {· # gap} other {· # gaps}}"
+msgstr "{gaps, plural, one {· # gap} other {· # gaps}}"
+
 #: src/features/ats-checker/checker.tsx
 msgid "{issues, plural, one {# issue could cost you a match.} other {# issues could cost you a match.}}"
 msgstr "{issues, plural, one {# issue could cost you a match.} other {# issues could cost you a match.}}"
@@ -848,6 +869,10 @@ msgstr "{type} · Edited {0}"
 msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
 msgstr "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
+msgstr "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
+
 #: src/features/career/offers.tsx
 msgid "{value} a month"
 msgstr "{value} a month"
@@ -888,6 +913,10 @@ msgstr "+13 pts activation"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "<0>Nothing to fix.</0> Every check passes."
 msgstr "<0>Nothing to fix.</0> Every check passes."
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "<0>Posting asks for:</0> {requirement}"
+msgstr "<0>Posting asks for:</0> {requirement}"
 
 #: src/features/career/offers.tsx
 msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
@@ -1008,6 +1037,10 @@ msgstr "A date won't be read"
 #: src/features/career/knowledge/stories.tsx
 msgid "A fact changed. Review this story."
 msgstr "A fact changed. Review this story."
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "A fact that's no longer in Knowledge"
+msgstr "A fact that's no longer in Knowledge"
 
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
@@ -1835,6 +1868,14 @@ msgstr "Also shows the icons on skills, profiles and interests."
 msgid "Amharic"
 msgstr "Amharic"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
+msgstr "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "An edit addresses it"
+msgstr "An edit addresses it"
+
 #: src/features/ats-checker/messages.ts
 msgid "An embedded font could not be read."
 msgstr "An embedded font could not be read."
@@ -2638,6 +2679,7 @@ msgstr "Can software read your resume?"
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/builder/password-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
+#: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/settings/account/application-profile.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -2974,6 +3016,10 @@ msgstr "Choose where each stage named in the file goes, or add it as a new stage
 #: src/components/level/combobox.tsx
 msgid "Circle"
 msgstr "Circle"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Cited as already shown · check it"
+msgstr "Cited as already shown · check it"
 
 #: src/features/settings/account/application-profile.tsx
 msgid "City"
@@ -3489,6 +3535,10 @@ msgstr "Copy conversation"
 msgid "Copy for a job…"
 msgstr "Copy for a job…"
 
+#: src/features/assistant/conversation.tsx
+msgid "Copy for this job"
+msgstr "Copy for this job"
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Copy it now. For your security, it won't be shown again."
 msgstr "Copy it now. For your security, it won't be shown again."
@@ -3525,6 +3575,10 @@ msgstr "Copy the entire job description from the posting and paste it below. We'
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
 msgstr "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
+
+#: src/features/career/workspace/preparation.tsx
+msgid "Copy this resume for the job"
+msgstr "Copy this resume for the job"
 
 #: src/features/assistant/conversation.tsx
 msgid "Copy transcript"
@@ -3992,6 +4046,10 @@ msgstr "Couldn't save your preferences. Try again."
 msgid "Couldn't save your stages. Try again."
 msgstr "Couldn't save your stages. Try again."
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Couldn't save your wording. Your text is still here; try again."
+msgstr "Couldn't save your wording. Your text is still here; try again."
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't save. Try again."
 msgstr "Couldn't save. Try again."
@@ -4392,6 +4450,7 @@ msgstr "Dark theme"
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/resume/editor/design/entries-group.tsx
+#: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/dates-field.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Date"
@@ -5065,6 +5124,7 @@ msgstr "earlier messages in this chat"
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
+#: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Edit"
@@ -5168,6 +5228,10 @@ msgstr "Edit…"
 msgid "Edited"
 msgstr "Edited"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Edited by you"
+msgstr "Edited by you"
+
 #: src/features/resume/editor/page-overlay.tsx
 msgid "Editing"
 msgstr "Editing"
@@ -5192,6 +5256,11 @@ msgstr "Editor views"
 #: src/features/homepage/sheet.tsx
 msgid "Editorial"
 msgstr "Editorial"
+
+#. placeholder {0}: posting.company
+#: src/features/assistant/conversation.tsx
+msgid "Edits that use the {0} posting go to a copy made for that job, so this resume stays unchanged."
+msgstr "Edits that use the {0} posting go to a copy made for that job, so this resume stays unchanged."
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -5242,6 +5311,10 @@ msgstr "Email the recruiter"
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "Embed all fonts when exporting, so characters map the way you intended."
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Employer"
+msgstr "Employer"
 
 #: src/features/documents/trash-page.tsx
 msgid "Empty Trash?"
@@ -5607,6 +5680,11 @@ msgstr "Figma"
 #: src/features/homepage/sheet.tsx
 msgid "Figma, HTML and CSS"
 msgstr "Figma, HTML and CSS"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "A number or metric stated in a resume"
+msgid "Figure"
+msgstr "Figure"
 
 #: src/features/resume/share/download-tab.tsx
 msgid "File name"
@@ -6792,6 +6870,10 @@ msgstr "Job search failed. Try again or paste a posting link."
 msgid "Job search pipeline"
 msgstr "Job search pipeline"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Job title"
+msgstr "Job title"
+
 #: src/features/homepage/sections.tsx
 msgid "Job tracker"
 msgstr "Job tracker"
@@ -6836,6 +6918,7 @@ msgid "Keep"
 msgstr "Keep"
 
 #: src/features/resume/editor/save-status.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Keep a copy and reload"
 msgstr "Keep a copy and reload"
 
@@ -6970,6 +7053,7 @@ msgid "Kind regards,"
 msgstr "Kind regards,"
 
 #: src/features/homepage/remember.tsx
+#: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Knowledge"
@@ -6982,6 +7066,10 @@ msgstr "Knowledge couldn't load. Try again or switch Knowledge off before sendin
 #: src/features/homepage/prepare.tsx
 msgid "Knowledge doesn’t mention mentoring."
 msgstr "Knowledge doesn’t mention mentoring."
+
+#: src/features/assistant/conversation.tsx
+msgid "Knowledge facts the assistant looks up are sent too."
+msgstr "Knowledge facts the assistant looks up are sent too."
 
 #: src/features/career/role-suggestions.tsx
 msgid "Knowledge:"
@@ -8301,6 +8389,10 @@ msgstr "No email address"
 msgid "No email address was found."
 msgstr "No email address was found."
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "No evidence found · left as a gap"
+msgstr "No evidence found · left as a gap"
+
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
 #: src/features/homepage/remember.tsx
@@ -8521,6 +8613,10 @@ msgstr "Not applied"
 msgid "Not applied yet"
 msgstr "Not applied yet"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Not assessed"
+msgstr "Not assessed"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Not available while the resume needs a password."
 msgstr "Not available while the resume needs a password."
@@ -8555,6 +8651,7 @@ msgid "Not in the offer · ask {company}"
 msgstr "Not in the offer · ask {company}"
 
 #: src/features/ats-checker/report/jd-coverage.tsx
+#: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Not in your resume"
 msgstr "Not in your resume"
 
@@ -8640,6 +8737,14 @@ msgstr "Note"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Notes"
 msgstr "Notes"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Nothing checked backs these. Confirm each before accepting:"
+msgstr "Nothing checked backs these. Confirm each before accepting:"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Nothing cited for this edit."
+msgstr "Nothing cited for this edit."
 
 #: src/features/ats-checker/checker.tsx
 msgid "Nothing here should cost you a match."
@@ -8760,6 +8865,10 @@ msgstr "Offers"
 #: src/features/career/knowledge/preferences.tsx
 msgid "Office days a week, at most"
 msgstr "Office days a week, at most"
+
+#: src/features/career/today.tsx
+msgid "Office days not stated"
+msgstr "Office days not stated"
 
 #: src/features/career/offer-entry.tsx
 msgid "Office days per week"
@@ -10265,6 +10374,7 @@ msgid "Reload and discard unsaved changes"
 msgstr "Reload and discard unsaved changes"
 
 #: src/features/resume/editor/save-status.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
 msgstr "Reload the saved version?"
 
@@ -10563,6 +10673,10 @@ msgstr "Resources"
 msgid "Respond by"
 msgstr "Respond by"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Responsibility"
+msgstr "Responsibility"
+
 #: src/features/homepage/write.tsx
 msgid "Responsible for the design system and helping other teams with their designs."
 msgstr "Responsible for the design system and helping other teams with their designs."
@@ -10793,6 +10907,11 @@ msgstr "Review readiness and record your submission"
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Review required form answers and remove unsupported claims."
 
+#: src/features/resume/editor/save-status.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Review saved version"
+msgstr "Review saved version"
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Review target roles in Knowledge"
 msgstr "Review target roles in Knowledge"
@@ -10953,6 +11072,10 @@ msgstr "Salary"
 msgid "Salary not detected"
 msgstr "Salary not detected"
 
+#: src/features/career/today.tsx
+msgid "Salary not listed"
+msgstr "Salary not listed"
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Salary range"
 msgstr "Salary range"
@@ -11094,6 +11217,10 @@ msgstr "Save to Knowledge"
 msgid "Save to the application"
 msgstr "Save to the application"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Save wording"
+msgstr "Save wording"
+
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Save your backup codes"
 msgstr "Save your backup codes"
@@ -11205,6 +11332,7 @@ msgstr "Saving is taking longer than expected. Your changes are still open."
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
+#: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Saving…"
@@ -11955,6 +12083,7 @@ msgid "Size"
 msgstr "Size"
 
 #: src/features/career/knowledge/facts.tsx
+#: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Skill"
 msgstr "Skill"
 
@@ -13112,6 +13241,14 @@ msgstr "These are saved draft answers."
 msgid "These are the answers saved when you applied."
 msgstr "These are the answers saved when you applied."
 
+#: src/features/assistant/conversation.tsx
+msgid "These edits are from before the assistant recorded which job posting they use, so they can't be applied. Ask again on the resume you want to change."
+msgstr "These edits are from before the assistant recorded which job posting they use, so they can't be applied. Ask again on the resume you want to change."
+
+#: src/features/assistant/conversation.tsx
+msgid "These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged."
+msgstr "These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged."
+
 #: src/features/applications/components/list-view.tsx
 msgid "They and their timelines are deleted permanently. This can't be undone."
 msgstr "They and their timelines are deleted permanently. This can't be undone."
@@ -13308,6 +13445,10 @@ msgstr "This question didn't finish."
 #: src/features/settings/account/application-profile.tsx
 msgid "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
 msgstr "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
+
+#: src/features/assistant/conversation.tsx
+msgid "This reply used Knowledge that has since changed, so it's hidden."
+msgstr "This reply used Knowledge that has since changed, so it's hidden."
 
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked. Unlock it from its menu to edit."
@@ -13577,6 +13718,7 @@ msgstr "Try a sample"
 #: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/documents/library-error.tsx
+#: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/improve.tsx
 #: src/features/resume/preview/preview.browser.tsx
 #: src/features/resume/share/download-tab.tsx
@@ -13993,6 +14135,10 @@ msgstr "Use for all applications"
 msgid "Use in coaching: {excerpt}"
 msgstr "Use in coaching: {excerpt}"
 
+#: src/features/assistant/conversation.tsx
+msgid "Use Knowledge"
+msgstr "Use Knowledge"
+
 #: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
 msgstr "Use lowercase letters, numbers and single dashes."
@@ -14093,6 +14239,10 @@ msgstr "Uses the linked application"
 #: src/features/career/schedule-sheet.tsx
 msgid "Uses the web search service set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today for your review; applications and documents are never created for you."
 msgstr "Uses the web search service set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today for your review; applications and documents are never created for you."
+
+#: src/features/career/schedule-sheet.tsx
+msgid "Uses the web search service set up in Settings. Results wait in Today for your review; applications and documents are never created for you."
+msgstr "Uses the web search service set up in Settings. Results wait in Today for your review; applications and documents are never created for you."
 
 #. placeholder {0}: templates[template].name
 #: src/features/resume/share/share-panel.tsx
@@ -14948,6 +15098,19 @@ msgstr "Your details changed on the resume. The letter updated too."
 msgid "Your domain"
 msgstr "Your domain"
 
+#. placeholder {0}: copy.name
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Your edits were kept as “{0}”."
+msgstr "Your edits were kept as “{0}”."
+
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Your edits will be kept as a separate letter in Documents before loading the saved version."
+msgstr "Your edits will be kept as a separate letter in Documents before loading the saved version."
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Your edits will be kept as a separate resume in Documents before loading the saved version."
+msgstr "Your edits will be kept as a separate resume in Documents before loading the saved version."
+
 #: src/features/resume/editor/save-status.tsx
 msgid "Your edits will be kept as a separate resume in Documents before loading the version saved elsewhere."
 msgstr "Your edits will be kept as a separate resume in Documents before loading the version saved elsewhere."
@@ -14995,6 +15158,10 @@ msgstr "Your headline changed on the resume. The letter updated too."
 #: src/features/career/workspace/debrief.tsx
 msgid "your Knowledge"
 msgstr "your Knowledge"
+
+#: src/features/letters/store.ts
+msgid "Your letter changed while reloading. Your edits are still open. Reload again to keep a new copy."
+msgstr "Your letter changed while reloading. Your edits are still open. Reload again to keep a new copy."
 
 #: src/features/ats-checker/messages.ts
 msgid "Your lines are packed very tightly."
@@ -15141,6 +15308,10 @@ msgstr "Your two-minute introduction"
 #: src/features/resume/share/share-panel.tsx
 msgid "Your web page is live"
 msgstr "Your web page is live"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Your wording"
+msgstr "Your wording"
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your work is lost when you sign out or the session ends. Create an account or sign in to keep your resumes, cover letters and applications."

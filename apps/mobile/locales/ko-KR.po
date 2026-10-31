@@ -148,6 +148,11 @@ msgstr "{0, plural, one {# 문자} other {# 문자}}"
 msgid "{0, plural, one {# check could not run.} other {# checks could not run.}}"
 msgstr "{0, plural, one {검사 #개를 실행하지 못했습니다.} other {검사 #개를 실행하지 못했습니다.}}"
 
+#. placeholder {0}: item.unresolved ?? 0
+#: src/features/assistant/messages.tsx
+msgid "{0, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
+msgstr ""
+
 #. placeholder {0}: Number(columns)
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
@@ -294,6 +299,16 @@ msgstr "{0, plural, one {무시한 문제 #개 다시 표시} other {무시한 �
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, other {#분 전에 시작됨}}"
+
+#. placeholder {0}: evidence.length
+#: src/features/assistant/messages.tsx
+msgid "{0, plural, one {The assistant cites # source · check it says this} other {The assistant cites # sources · check they say this}}"
+msgstr ""
+
+#. placeholder {0}: requirements.length
+#: src/features/assistant/messages.tsx
+msgid "{0, plural, one {The assistant's reading of # posting requirement} other {The assistant's reading of # posting requirements}}"
+msgstr ""
 
 #. placeholder {0}: fact.usedBy.savedItems
 #: src/features/career/facts.tsx
@@ -558,6 +573,10 @@ msgstr "{facts, plural, other {사실 #개}}"
 msgid "{followUps, plural, one {# follow-up} other {# follow-ups}}"
 msgstr "{followUps, plural, one {후속 연락 #건} other {후속 연락 #건}}"
 
+#: src/features/assistant/messages.tsx
+msgid "{gaps, plural, one {· # gap} other {· # gaps}}"
+msgstr ""
+
 #: src/features/workspace/shell.tsx
 msgid "{hours} h"
 msgstr "{hours}시간"
@@ -708,6 +727,10 @@ msgstr "{toCheck, plural, one {# 필드를 살펴봐야 합니다.} other {# 필
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {확인하려면 #} other {확인하려면 #}}"
 
+#: src/features/assistant/messages.tsx
+msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "{words, plural, one {# word} other {# words}}"
@@ -785,6 +808,10 @@ msgstr "날짜를 읽을 수 없습니다."
 #: src/features/career/stories.tsx
 msgid "A fact changed. Review this story."
 msgstr "사실이 변경되었습니다. 이 스토리를 검토하세요."
+
+#: src/features/assistant/messages.tsx
+msgid "A fact that's no longer in Knowledge"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "A focused plan for this round"
@@ -1466,6 +1493,14 @@ msgstr "항상 오늘에 나타납니다. 이메일을 이용하려면 확인된
 msgid "Amharic"
 msgstr "암하라어"
 
+#: src/features/assistant/messages.tsx
+msgid "An AI reading to help you edit, not a prediction of how an employer or screening system will respond."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "An edit addresses it"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "An embedded font could not be read."
 msgstr "임베드된 폰트를 읽을 수 없습니다."
@@ -1477,6 +1512,10 @@ msgstr "항목에 날짜가 없습니다."
 #: src/features/assistant/chat-view.tsx
 msgid "an error"
 msgstr "오류"
+
+#: src/draft/conflict-sheet.tsx
+msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
+msgstr ""
 
 #. placeholder {0}: others.length
 #: src/features/application-detail/sections.tsx
@@ -2118,6 +2157,7 @@ msgstr "소프트웨어가 이력서를 읽을 수 있나요?"
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/check/parser.tsx
 #: src/features/check/writing.tsx
@@ -2452,6 +2492,10 @@ msgstr "일괄 작업당 최대 200개의 지원 내역를 선택하세요."
 #: src/features/design/advanced.tsx
 msgid "Circle"
 msgstr "원"
+
+#: src/features/assistant/messages.tsx
+msgid "Cited as already shown · check it"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "City"
@@ -2858,6 +2902,10 @@ msgstr "사본이 생성되었습니다."
 msgid "Copy for a job…"
 msgstr "작업용 복사…"
 
+#: src/features/assistant/assistant-screen.tsx
+msgid "Copy for this job"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Copy reply"
 msgstr "답장 복사"
@@ -2869,6 +2917,10 @@ msgstr "스타일시트 복사"
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
 msgstr "내보낸 파일에서 텍스트를 복사해 읽어 보고, 잘못된 위치에 놓인 부분을 수정하세요."
+
+#: src/features/workspace/preparation.tsx
+msgid "Copy this resume for the job"
+msgstr ""
 
 #: src/features/assistant/chat-view.tsx
 msgid "Copy transcript"
@@ -3227,6 +3279,10 @@ msgstr "변경사항을 저장할 수 없습니다. 수정사항이 아직 이 �
 msgid "Couldn't save your preferences. Your draft is still here."
 msgstr "환경설정을 저장할 수 없습니다. 초안이 아직 여기에 있습니다."
 
+#: src/features/assistant/messages.tsx
+msgid "Couldn't save your wording. Your text is still here; try again."
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Couldn't save. Try again."
 msgstr "저장할 수 없습니다. 다시 시도해 보세요."
@@ -3515,11 +3571,16 @@ msgid "Dark theme"
 msgstr "다크 테마"
 
 #: src/api/ai-consent.ts
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr "데이터 공유가 취소되었습니다. AI 제공자에게 아무것도 전송되지 않았습니다."
+
+#: src/api/ai-consent.ts
 msgid "Data sharing canceled. Nothing was sent to the provider."
 msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/date-field.tsx
@@ -4098,6 +4159,7 @@ msgstr "이 채팅의 이전 메시지"
 
 #: src/features/ai/provider-list.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/career/stories.tsx
 #: src/features/career/today.tsx
 #: src/features/write/basics-screen.tsx
@@ -4173,6 +4235,10 @@ msgstr "이메일 편집"
 msgid "Edit the link"
 msgstr "링크 편집"
 
+#: src/features/assistant/messages.tsx
+msgid "Edited by you"
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Editing session"
@@ -4211,6 +4277,10 @@ msgstr "채용 담당자에게 이메일을 보내세요."
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "내보낼 때 모든 폰트를 임베드하여 문자가 의도한 대로 표시되게 하세요."
+
+#: src/features/assistant/messages.tsx
+msgid "Employer"
+msgstr ""
 
 #: src/features/documents/thumbnail.tsx
 msgid "Empty letter"
@@ -4452,6 +4522,11 @@ msgstr "필드 {0}"
 #: src/features/write/basics-screen.tsx
 msgid "Field removed"
 msgstr "필드가 삭제되었습니다."
+
+#: src/features/assistant/messages.tsx
+msgctxt "A number or metric stated in a resume"
+msgid "Figure"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "File attached"
@@ -5340,6 +5415,10 @@ msgstr "이 서버에는 채용 검색이 설정되어 있지 않습니다. 대�
 msgid "Job search pipeline"
 msgstr "구직 파이프라인"
 
+#: src/features/assistant/messages.tsx
+msgid "Job title"
+msgstr ""
+
 #: src/features/search/search-screen.tsx
 msgid "Jobs"
 msgstr "일자리"
@@ -5459,6 +5538,7 @@ msgid "Kind regards,"
 msgstr "감사합니다."
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
 msgid "Knowledge"
 msgstr "지식"
@@ -6632,6 +6712,10 @@ msgstr "이메일 주소 없음"
 msgid "No email address was found."
 msgstr "이메일 주소를 찾을 수 없습니다."
 
+#: src/features/assistant/messages.tsx
+msgid "No evidence found · left as a gap"
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "No evidence yet"
 msgstr "아직 근거 없음"
@@ -6828,6 +6912,10 @@ msgstr "적용 안 됨"
 msgid "Not applied yet"
 msgstr "아직 지원하지 않음"
 
+#: src/features/assistant/messages.tsx
+msgid "Not assessed"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Not available while the resume needs a password."
 msgstr "이력서에 비밀번호가 필요한 동안에는 사용할 수 없습니다."
@@ -6843,6 +6931,10 @@ msgstr "나와 맞지 않음"
 #: src/features/ats-checker/checker.tsx
 msgid "Not found:"
 msgstr "찾을 수 없음:"
+
+#: src/features/assistant/messages.tsx
+msgid "Not in your resume"
+msgstr "이력서에 없음"
 
 #: src/features/check/job-match.tsx
 msgid "Not in your resume · add only if true"
@@ -6895,6 +6987,14 @@ msgstr "정보"
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "노트"
+
+#: src/features/assistant/messages.tsx
+msgid "Nothing checked backs these. Confirm each before accepting:"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "Nothing cited for this edit."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Nothing here should cost you a match."
@@ -7007,6 +7107,10 @@ msgstr "주당 최대 출근일"
 #: src/features/career/offers.tsx
 msgid "Office days are unknown."
 msgstr "근무일은 알려져 있지 않습니다."
+
+#: src/features/career/today.tsx
+msgid "Office days not stated"
+msgstr "출근일 명시 안 됨"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -7631,6 +7735,10 @@ msgstr "채용 공고"
 #: src/features/workspace/tabs/fit.tsx
 msgid "Posting"
 msgstr "채용 공고"
+
+#: src/features/assistant/messages.tsx
+msgid "Posting asks for: {requirement}"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -8514,6 +8622,10 @@ msgstr "회신 기한"
 msgid "Response deadline has passed."
 msgstr "응답 기한이 지났습니다."
 
+#: src/features/assistant/messages.tsx
+msgid "Responsibility"
+msgstr ""
+
 #: app/(tabs)/settings/preferences.tsx
 msgid "Restart to change text direction"
 msgstr "텍스트 방향을 변경하려면 다시 시작하세요."
@@ -8912,6 +9024,10 @@ msgstr "급여"
 msgid "Salary not detected"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Salary not listed"
+msgstr "급여 미기재"
+
 #: src/features/applications/add-sheet.tsx
 msgid "Salary range"
 msgstr "급여 범위"
@@ -9042,6 +9158,10 @@ msgstr "이 이야기를 지식에 저장할까요?"
 msgid "Save to Knowledge"
 msgstr "지식에 저장"
 
+#: src/features/assistant/messages.tsx
+msgid "Save wording"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Save your version over theirs."
 msgstr "내 버전으로 상대 버전 덮어쓰기."
@@ -9106,6 +9226,7 @@ msgstr "저장됨 · 연습에 저장됨"
 msgid "Saving the job. Wait for confirmation before making another change."
 msgstr "작업을 저장합니다. 다른 변경을 하기 전에 확인을 기다리십시오."
 
+#: src/features/assistant/messages.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/profile.tsx
@@ -9478,6 +9599,11 @@ msgstr "공유하다"
 msgid "Share calendar event (.ics)"
 msgstr "캘린더 이벤트 공유(.ics)"
 
+#. placeholder {0}: provider.label
+#: src/api/ai-consent.ts
+msgid "Share data with {0}?"
+msgstr "{0}와 데이터를 공유하시겠습니까?"
+
 #: src/api/ai-consent.ts
 msgid "Share data with {label}?"
 msgstr ""
@@ -9786,6 +9912,7 @@ msgstr "상황, 과제, 행동, 결과, 성찰. 각 스토리를 뒷받침할 �
 msgid "Size"
 msgstr "크기"
 
+#: src/features/assistant/messages.tsx
 #: src/features/career/facts.tsx
 msgid "Skill"
 msgstr "기술"
@@ -10681,6 +10808,14 @@ msgstr ""
 msgid "These are the answers saved when you applied."
 msgstr "지원할 때 저장된 답변입니다."
 
+#: src/features/assistant/messages.tsx
+msgid "These edits are from before the assistant recorded which job posting they use, so they can't be applied. Ask again on the resume you want to change."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged."
+msgstr ""
+
 #: app/(tabs)/settings/account.tsx
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "그러면 앱 내부의 브라우저 탭에서 서버의 계정 설정이 열립니다. 거기에 로그인해야 할 수도 있습니다."
@@ -10888,6 +11023,10 @@ msgstr "이는 소프트웨어가 이 파일의 텍스트를 얼마나 충실하
 msgid "This month"
 msgstr "이번 달"
 
+#: src/draft/conflict-sheet.tsx
+msgid "This older draft needs review"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "This page is clipped or incomplete. Check the original before using it."
 msgstr "이 페이지는 잘렸거나 불완전합니다. 사용하기 전에 원본을 확인하세요."
@@ -10922,6 +11061,10 @@ msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "This reply used Knowledge that has since changed, so it's hidden."
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
@@ -11169,6 +11312,7 @@ msgstr "{suggestion}를 사용해 보세요"
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/workspace/parts.tsx
@@ -11502,6 +11646,10 @@ msgstr "이력서의 세부 정보 사용"
 msgid "Use for all applications"
 msgstr "모든 지원에 사용"
 
+#: src/features/assistant/assistant-screen.tsx
+msgid "Use Knowledge"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
 msgid "Use lowercase letters, numbers and single dashes."
@@ -11529,6 +11677,10 @@ msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
+msgstr ""
+
+#: src/draft/conflict-sheet.tsx
+msgid "Use saved version"
 msgstr ""
 
 #: src/features/workspace/parts.tsx
@@ -11613,6 +11765,10 @@ msgstr "설정에 설정된 웹 검색 서비스를 사용합니다. 검색결�
 #: src/features/career/schedule-sheet.tsx
 msgid "Uses web search set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today; applications and documents are never created for you."
 msgstr ""
+
+#: src/features/career/schedule-sheet.tsx
+msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
+msgstr "설정에 구성된 웹 검색을 사용합니다. 결과는 오늘에서 확인할 수 있습니다. 지원 내역과 문서는 자동으로 생성되지 않습니다."
 
 #: src/features/share/web-page.tsx
 msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
@@ -12404,6 +12560,10 @@ msgstr "저장되지 않은 채용 정보는 웹 검색 설정을 열기 전에 
 
 #: src/api/ai-consent.ts
 msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
+msgstr ""
+
+#: src/features/assistant/messages.tsx
+msgid "Your wording"
 msgstr ""
 
 #: src/features/letters/page.tsx

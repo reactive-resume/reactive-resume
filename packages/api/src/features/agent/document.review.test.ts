@@ -10,6 +10,23 @@ vi.mock("../resume/service", () => ({ resumeService: {} }));
 vi.mock("../cover-letters/service", () => ({ coverLetterService: {} }));
 const { resolveDocumentEdits } = await import("./document");
 
+it.each([
+	{ sectionId: "basics", field: "headline" },
+	{ sectionId: "summary", field: "title" },
+])("reviews $sectionId fields against existing wording, retaining figures but warning on new ones", (target) => {
+	const { data, resolve } = fixture();
+	data.basics.headline = "Senior designer with 5+ years";
+	data.summary.title = data.basics.headline;
+	for (const [value, figures] of [
+		["Designer with 5+ years", []],
+		["Designer with 8+ years", [{ kind: "figure", text: "8+" }]],
+	] as const) {
+		const output = resolve([{ kind: "field", target, before: data.basics.headline, value, why: "Shorter title." }]);
+		expect(output.edits).toHaveLength(1);
+		expect(output.edits[0]?.unsupported?.filter((claim) => claim.kind === "figure")).toEqual(figures);
+	}
+});
+
 function fixture() {
 	const data = structuredClone(defaultResumeData);
 	data.sections.experience.items = resumeDataSchema.parse({
@@ -56,6 +73,7 @@ function fixture() {
 		applicationId: null,
 		passages,
 		read: (target: Parameters<typeof readTarget>[1]) => readTarget(data, target),
+		entry: () => "",
 		view: {},
 	};
 	const resolve = (changes: ProposeResumeEditsInput["changes"]) =>

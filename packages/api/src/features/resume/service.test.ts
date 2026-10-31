@@ -10,7 +10,11 @@ const dbMock = vi.hoisted(() => ({
 	update: vi.fn(),
 }));
 const proposalApplicationsMock = vi.hoisted(() => vi.fn(async () => undefined));
-vi.mock("../agent/proposal-applications", () => ({ saveProposalApplications: proposalApplicationsMock }));
+vi.mock("../agent/proposal-applications", () => ({
+	saveProposalApplications: proposalApplicationsMock,
+	assertCurrentClientWrite: vi.fn(async () => undefined),
+	CurrentClientRequired: class extends Error {},
+}));
 const compareMock = vi.hoisted(() => vi.fn());
 const publishResumeUpdatedMock = vi.hoisted(() => vi.fn());
 const grantResumeAccessMock = vi.hoisted(() => vi.fn());
@@ -282,6 +286,7 @@ describe("update", () => {
 			userId: "u1",
 			document: { kind: "resume", id: "r1" },
 			applications: { edit: false },
+			conflict: expect.any(Function),
 		});
 	});
 

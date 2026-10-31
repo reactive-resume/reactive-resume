@@ -107,6 +107,7 @@ export const versionsRouter = {
 				resumeId: input.resumeId,
 				versionId: input.versionId,
 				userId: context.user.id,
+				...(input.proposalSafety ? { proposalSafety: input.proposalSafety } : {}),
 			}),
 		),
 };

@@ -343,6 +343,8 @@ export const TOOL_META = withAnnotationTitles({
 					.describe(
 						"updatedAt from the latest read_resume. Rejects changes when document has changed since that read.",
 					),
+				proposalApplications: resumeDto.patch.input.shape.proposalApplications,
+				proposalSafety: resumeDto.patch.input.shape.proposalSafety,
 			}),
 		),
 		annotations: { ...WRITE_NON_IDEMPOTENT, destructiveHint: true, openWorldHint: true },
@@ -745,7 +747,7 @@ export const TOOL_META = withAnnotationTitles({
 	[T.scoreApplicationMatch]: {
 		title: "Score Application Match",
 		description:
-			"Send the full linked resume and job description to your configured AI provider to score their match. Requires an enabled, tested default AI provider, a linked resume, and a job description. Overwrites the application's saved match score and AI metadata.",
+			"Send the full linked resume and job description to your configured AI provider to score their match. The score is an AI editing aid for finding gaps, not a hiring probability or a guarantee that an applicant tracking system accepts the resume. Requires an enabled, tested default AI provider, a linked resume, and a job description. Overwrites the application's saved match score and AI metadata.",
 		outputSchema: z.object({
 			score: z.number().int().min(0).max(100),
 			gaps: z.array(z.string()).max(8),
@@ -757,7 +759,7 @@ export const TOOL_META = withAnnotationTitles({
 	[T.tailorResumeForApplication]: {
 		title: "Tailor Resume For Application",
 		description:
-			"Send the full linked resume and job description to your configured AI provider to rewrite the summary in a new private resume copy. Requires an enabled, tested default AI provider, a linked resume, and a job description. Replaces the application's resume link with the new copy and adds a timeline note; the original resume is unchanged.",
+			"Send the full linked resume and job description to your configured AI provider to rewrite the summary in a new private resume copy. Requires an enabled, tested default AI provider, a linked resume, and a job description. Replaces the application's resume link with the new copy and adds a timeline note; the original resume is unchanged. Summary only, applied without review. For reviewable edits across the whole resume, copy it for the job with api_documents_copy_for_job, start an assistant conversation on the copy with api_agent_threads_start, and ask it to tailor with api_agent_messages_send; its propose_edits result lists each pending edit with the posting requirement it addresses, unverified citations, flagged claims and the requirements it found, gaps included, and names the application whose copy it's for (tailoredFor; null when no posting was shared). Nothing changes until the user accepts: apply an accepted edit with apply_resume_patch on that copy, passing proposalApplications { editId: true } and proposalSafety v1, so the edit is recorded in the same write and nothing is written if its current wording isn't what the patch puts there or tailoring doesn't allow it. An edit with a snapshot (target resume/data) is a structural set: the patch has to make the resume's content match snapshot.after as a whole. Record rejections with api_agent_messages_set_edit_status.",
 		outputSchema: z.object({ resumeId: z.string(), name: z.string() }),
 		inputSchema: wireInput(z.strictObject({ id: applicationIdSchema })),
 		annotations: { ...WRITE_NON_IDEMPOTENT, destructiveHint: true, openWorldHint: true },

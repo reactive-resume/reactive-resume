@@ -95,7 +95,9 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		await getPool().query("INSERT INTO application VALUES ('alice-app','alice'),('bob-app','bob')");
 	});
 
-	const proposing = (status: "accepted" | "pending" | "rejected") => ({
+	// A real proposal: an accepted receipt needs its current wording in the saved document, and a resume set records
+	// the job it tailors to (none here).
+	const proposing = (status: "accepted" | "pending" | "rejected", kind: "resume" | "letter", after: string) => ({
 		id: "message",
 		role: "assistant",
 		parts: [
@@ -103,7 +105,20 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 				type: "tool-propose_edits",
 				toolCallId: "call",
 				state: "output-available",
-				output: { edits: [{ id: "edit", status }] },
+				output: {
+					...(kind === "resume" ? { tailoredFor: null } : {}),
+					edits: [
+						{
+							id: "edit",
+							status,
+							target: { sectionId: kind === "letter" ? "letter" : "summary", field: "content" },
+							location: "",
+							before: "<p>Original</p>",
+							after,
+							why: "",
+						},
+					],
+				},
 			},
 		],
 	});
@@ -113,6 +128,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		kind: "resume" | "letter",
 		documentId: string,
 		status: "accepted" | "pending" | "rejected" = "pending",
+		after = kind === "letter" ? "<p>Rewritten</p>" : "<p>Original</p><p>Added</p>",
 	) {
 		await getPool().query(
 			`INSERT INTO agent_threads (id,user_id,working_resume_id,cover_letter_id) VALUES ($1,$2,$3,$4)`,
@@ -122,7 +138,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 			id,
 			owner,
 			id,
-			proposing(status),
+			proposing(status, kind, after),
 		]);
 	}
 	async function outcomes() {
@@ -138,7 +154,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 			"ALTER TABLE agent_messages ADD COLUMN IF NOT EXISTS status text; ALTER TABLE agent_threads ADD COLUMN IF NOT EXISTS last_message_at timestamptz;",
 		);
 		const letter = await service.create({ userId: "alice", name: "Concurrent receipt", content: "<p>Old</p>" });
-		await proposalThread("streaming", "alice", "letter", letter.id);
+		await proposalThread("streaming", "alice", "letter", letter.id, "pending", "<p>New</p>");
 		const { upsertAssistantUiMessage } = await import("../agent/messages-persistence");
 		let release!: () => void;
 		const paused = new Promise<void>((resolve) => {
@@ -183,7 +199,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 				userId: "alice",
 				threadId: "streaming",
 				rowId: "streaming",
-				message: proposing("pending") as never,
+				message: proposing("pending", "letter", "<p>New</p>") as never,
 				status: "completed",
 			},
 			instrument(database) as never,
@@ -446,10 +462,10 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		const edit = output.edits[0];
 		if (!edit?.snapshot) throw new Error("Missing structural snapshot");
 		await proposalThread("structural", "alice", "resume", "alice-resume");
-		const message = proposing("pending");
+		const message = proposing("pending", "resume", edit.after);
 		const part = message.parts[0];
 		if (!part) throw new Error("Missing proposal part");
-		part.output = output;
+		part.output = output as never;
 		Object.assign(part, { input: request });
 		await getPool().query("UPDATE agent_messages SET ui_message=$1 WHERE id='structural'", [message]);
 		// Reopen the actual JSONB history; the full snapshot must survive storage but never reach the provider.
@@ -509,11 +525,16 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		await proposalThread("bob", "bob", "resume", "alice-resume");
 		await proposalThread("different", "alice", "resume", "other-resume");
 		await proposalThread("letter", "alice", "letter", "alice-resume");
+		const data = structuredClone(defaultResumeData);
+		data.summary.content = "<p>Original</p><p>Added</p>";
+		await getPool().query("UPDATE resume SET data=$1 WHERE id='alice-resume'", [data]);
+		const conflict = () => new Error("not placed");
 		await fixture.db?.transaction(async (tx) => {
 			await saveProposalApplications(tx, {
 				userId: "alice",
 				document: { kind: "resume", id: "alice-resume" },
 				applications: { edit: true },
+				conflict,
 			});
 		});
 		expect(await outcomes()).toEqual([
@@ -528,6 +549,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 					userId: "alice",
 					document: { kind: "resume", id: "alice-resume" },
 					applications: { edit: false },
+					conflict,
 				});
 				throw new Error("rollback");
 			}),

@@ -97,7 +97,7 @@ export function acceptResumeProposals(proposals: readonly Proposal[]): ProposalA
 			(draft) => {
 				Object.assign(draft, next);
 			},
-			{ newStep: true, proposalIds: result.applied.map((proposal) => proposal.id) },
+			{ newStep: true, applied: result.applied },
 		);
 	const accepted = useResumeStore.getState().resume?.data;
 	if (result.applied.length > 0 || result.stale.length > 0)

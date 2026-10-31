@@ -49,19 +49,26 @@ test("native sender saves patch only changed contact fields and retain server-ow
 	const edited = structuredClone(baseline);
 	edited.style.basics.email = "letter@example.test";
 	edited.style.basics.phone = "5550100";
-	await letterAdapter.save(edited, baseline, "session", false, "fixture");
+	await letterAdapter.save(edited, baseline, "session", false, "fixture", undefined, "v1");
 	assert.deepEqual(calls.pop(), {
 		id: "letter",
 		expectedRevision: 1,
 		sessionId: "session",
+		proposalSafety: "v1",
 		sender: { email: "letter@example.test", phone: "5550100" },
 	});
-	await letterAdapter.save(baseline, baseline, "session", false, "fixture");
+	await letterAdapter.save(baseline, baseline, "session", false, "fixture", undefined, "v1");
 	assert.equal("sender" in calls.pop(), false);
 	// Relinking and history rebasing must not send the previous independent details back to the API.
 	edited.senderLinked = true;
-	await letterAdapter.save(edited, baseline, "session", false, "fixture");
-	assert.deepEqual(calls.pop(), { id: "letter", expectedRevision: 1, sessionId: "session", senderLinked: true });
+	await letterAdapter.save(edited, baseline, "session", false, "fixture", undefined, "v1");
+	assert.deepEqual(calls.pop(), {
+		id: "letter",
+		expectedRevision: 1,
+		sessionId: "session",
+		proposalSafety: "v1",
+		senderLinked: true,
+	});
 });
 
 test("typing during unlink preserves fresh server sender fields and saves only the concurrent edit", async () => {
@@ -80,11 +87,12 @@ test("typing during unlink preserves fresh server sender fields and saves only t
 	assert.equal(merged.style.basics.email, "current-resume@example.test");
 	assert.equal(merged.style.basics.location, "Updated city");
 	assert.equal(merged.style.metadata.template, "onyx");
-	await letterAdapter.save(merged, saved, "session", false, "fixture");
+	await letterAdapter.save(merged, saved, "session", false, "fixture", undefined, "v1");
 	assert.deepEqual(calls.pop(), {
 		id: "letter",
 		expectedRevision: 2,
 		sessionId: "session",
+		proposalSafety: "v1",
 		sender: { name: "Independent name" },
 	});
 });

@@ -20,7 +20,11 @@ import {
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { coverLetterDto } from "../../dto/cover-letter";
-import { saveProposalApplications } from "../agent/proposal-applications";
+import {
+	assertCurrentClientWrite,
+	CurrentClientRequired,
+	saveProposalApplications,
+} from "../agent/proposal-applications";
 import { lockUser } from "../documents/ownership";
 import { resumeService } from "../resume/service";
 import { sanitizeCoverLetterHtml } from "./html";
@@ -202,15 +206,29 @@ async function insert(
 	return letter;
 }
 
+const letterConflict = () =>
+	new ORPCError("CONFLICT", { message: "This cover letter changed elsewhere. Reload it before saving again." });
+
+/**
+ * `guard`: a client's content change, refused before anything is written when the letter holds assistant edits an
+ * older app could apply wrongly (see assertCurrentClientWrite).
+ */
 async function updateRevision(
 	input: RevisionInput,
 	changes: Partial<typeof schema.coverLetter.$inferInsert>,
 	client: DbOrTx = db,
+	guard?: { proposalSafety: "v1" | undefined },
 ): Promise<CoverLetter> {
 	if (client === db)
 		return db.transaction(async (tx) => {
 			await lockUser(tx, input.userId);
-			return updateRevision(input, changes, tx);
+			return updateRevision(input, changes, tx, guard);
+		});
+	if (guard && changes.content !== undefined)
+		await assertCurrentClientWrite(client, {
+			userId: input.userId,
+			document: { kind: "letter", id: input.id },
+			proposalSafety: guard.proposalSafety,
 		});
 	const [row] = await client
 		.update(schema.coverLetter)
@@ -226,7 +244,23 @@ async function updateRevision(
 		.returning();
 	if (row) return toLetter(row);
 	await assertUnlocked(input, client);
-	throw new ORPCError("CONFLICT", { message: "This cover letter changed elsewhere. Reload it before saving again." });
+	throw letterConflict();
+}
+
+/**
+ * An older app tried to change a letter holding assistant edits it could apply wrongly. Nothing it sent is written;
+ * the revision moves on so a draft it kept conflicts too, and it reloads the letter as for any other conflict.
+ */
+async function refuseOlderClient(input: OwnedId) {
+	await db
+		.update(schema.coverLetter)
+		.set({ revision: sql`${schema.coverLetter.revision} + 1` })
+		.where(and(eq(schema.coverLetter.id, input.id), eq(schema.coverLetter.userId, input.userId)));
+	return new ORPCError("CONFLICT", {
+		message:
+			"This cover letter has assistant edits this version of the app can't check. Refresh or update the app, then make the change again.",
+		data: { reason: "CURRENT_CLIENT_REQUIRED" },
+	});
 }
 
 /** Locked letters, like locked resumes, can't be edited or moved to Trash. */
@@ -361,11 +395,12 @@ export const coverLetterService = {
 		if (input.letterDate !== undefined) changes.letterDate = input.letterDate;
 
 		const persist = async (client: DbOrTx) => {
-			const updated = await updateRevision(input, changes, client);
+			const updated = await updateRevision(input, changes, client, { proposalSafety: input.proposalSafety });
 			await saveProposalApplications(client, {
 				userId: input.userId,
 				document: { kind: "letter", id: input.id },
 				applications: input.proposalApplications,
+				conflict: letterConflict,
 			});
 			if (input.applicationId !== undefined) {
 				await linkLetterApplication(client, {
@@ -379,12 +414,16 @@ export const coverLetterService = {
 			return updated;
 		};
 		const updated = await resolveLinks(
-			await (input.applicationId === undefined && !input.proposalApplications
-				? persist(db)
-				: db.transaction(async (tx) => {
-						await lockUser(tx, input.userId);
-						return persist(tx);
-					})),
+			await (
+				input.applicationId === undefined && !input.proposalApplications
+					? persist(db)
+					: db.transaction(async (tx) => {
+							await lockUser(tx, input.userId);
+							return persist(tx);
+						})
+			).catch(async (error: unknown) => {
+				throw error instanceof CurrentClientRequired ? await refuseOlderClient(input) : error;
+			}),
 			input.userId,
 		);
 		await saveLetterSessionVersion({
@@ -444,7 +483,7 @@ export const coverLetterService = {
 	 * Restores a version: the current state is kept as "Before restore" first, then the letter reads as it did. Its
 	 * links stay as they are, so linked details and design keep coming from the resume.
 	 */
-	restoreVersion: async (input: OwnedId & { versionId: string }) => {
+	restoreVersion: async (input: OwnedId & { versionId: string; proposalSafety?: "v1" | undefined }) => {
 		const version = await getLetterVersion({
 			coverLetterId: input.id,
 			userId: input.userId,
@@ -468,7 +507,11 @@ export const coverLetterService = {
 				recipientCompany: data.recipientCompany,
 				letterDate: data.letterDate,
 			},
-		);
+			db,
+			{ proposalSafety: input.proposalSafety },
+		).catch(async (error: unknown) => {
+			throw error instanceof CurrentClientRequired ? await refuseOlderClient(input) : error;
+		});
 		const resolved = await resolveLinks(restored, input.userId);
 		await writeLetterVersion(db, { letter: resolved, userId: input.userId, kind: "restored" });
 		return resolved;

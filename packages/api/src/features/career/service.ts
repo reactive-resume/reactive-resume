@@ -292,7 +292,7 @@ async function invalidateMemory(userId: string, id: string, tx: DbOrTx, forgotte
 		.where(
 			and(
 				eq(tables.agentThread.userId, userId),
-				sql`${tables.agentThread.scope} <> 'document'`,
+				// Document conversations too: one may be reading Knowledge right now.
 				sql`${tables.agentThread.activeRunId} is not null`,
 			),
 		);

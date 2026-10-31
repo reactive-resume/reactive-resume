@@ -10,10 +10,13 @@ import {
 	applyTo,
 	collectLetterPassages,
 	collectPassages,
+	entryText,
 	getProposalState,
 	getStateIn,
 	readTarget,
 	replaceBlockText,
+	unverifiedClaims,
+	withEditedText,
 	writeTarget,
 	resumeStructureSnapshot,
 	applyResumeProposals,
@@ -344,4 +347,131 @@ it("records only real structural writes, retains accepted identity after refinem
 	const undone = structuredClone(defaultResumeData);
 	expect(getProposalState(undone, { ...edit, status: "accepted" })).toBe("accepted");
 	expect(getProposalState(undone, { ...edit, status: "accepted" }, { [edit.id]: false })).toBe("pending");
+});
+
+describe("review checks", () => {
+	it.each([
+		["AWS", "GCP"],
+		["aws", "gcp"],
+		["Aws", "Gcp"],
+		["SQL", "QA"],
+		["sql", "qa"],
+		["iOS", "S3"],
+		["ios", "s3"],
+		["äx", "öy"],
+	])("keeps short subjects case-independent when checking %s versus %s figures", (first, second) => {
+		const entry = `Cut ${first} costs 40% in 2020. Cut ${second} costs 10% in 2023.`;
+		expect(unverifiedClaims(`Cut ${second} costs 40% in 2020.`, { entry, document: entry })).toEqual(
+			expect.arrayContaining([
+				{ kind: "figure", text: "40%" },
+				{ kind: "date", text: "2020" },
+			]),
+		);
+		for (const original of [`Cut ${first} costs 40% in 2020.`, `Cut ${second} costs 10% in 2023.`])
+			expect(unverifiedClaims(original, { entry, document: entry })).toEqual([]);
+	});
+	it("flags a reused number or a year that isn't this entry's, and words the document never uses", () => {
+		const claims = unverifiedClaims("Cut costs by 40 dollars every month since 2023 using Kubernetes", {
+			entry: "Studio Kettle. Managed 40 people. 2019 to 2021.",
+			document: "Studio Kettle. Managed 40 people. 2019 to 2021. Other job: 2019 to 2023. Cut costs every month since",
+		});
+		expect(claims).toEqual([
+			{ kind: "figure", text: "40 dollars" },
+			{ kind: "date", text: "2023" },
+			{ kind: "term", text: "by" },
+			{ kind: "term", text: "dollars" },
+			{ kind: "term", text: "using" },
+			{ kind: "term", text: "Kubernetes" },
+		]);
+		// The entry's own claim, with its unit and year in one clause, passes.
+		expect(
+			unverifiedClaims("Managed 40 people from 2019", {
+				entry: "Managed 40 people from 2019 to 2021",
+				document: "Managed 40 people from 2019 to 2021",
+			}),
+		).toEqual([]);
+	});
+
+	it("flags a figure moved onto another dated claim in the same entry instead of treating it as backed", () => {
+		const entry = "Reduced costs 40% in 2020. Improved delivery 10% in 2023.";
+		expect(unverifiedClaims("Improved delivery 40% in 2023.", { entry, document: entry })).toEqual([
+			{ kind: "figure", text: "40%" },
+			{ kind: "date", text: "2023" },
+		]);
+		// Same numbers and year, different responsibility.
+		expect(unverifiedClaims("Improved delivery 40% in 2020.", { entry, document: entry })).toEqual([
+			{ kind: "figure", text: "40%" },
+			{ kind: "date", text: "2020" },
+		]);
+		expect(unverifiedClaims("Cut costs 40% in 2020.", { entry, document: `${entry} Cut` })).toEqual([]);
+		// A short name is the subject too: AWS's figure and year aren't GCP's.
+		const clouds = "Cut AWS costs 40% in 2020; Cut GCP costs 10% in 2023";
+		expect(unverifiedClaims("Cut GCP costs 40% in 2020", { entry: clouds, document: clouds })).toEqual([
+			{ kind: "figure", text: "40%" },
+			{ kind: "date", text: "2020" },
+		]);
+		expect(unverifiedClaims("Cut AWS costs 40% in 2020", { entry: clouds, document: clouds })).toEqual([]);
+		expect(unverifiedClaims("Cut GCP costs 10% in 2023", { entry: clouds, document: clouds })).toEqual([]);
+		// A verb two claims share doesn't make one claim's figure and year the other's.
+		const shared = "Reduced costs 40% in 2020. Reduced delivery delays 10% in 2023.";
+		expect(unverifiedClaims("Reduced delivery delays 40% in 2020.", { entry: shared, document: shared })).toEqual([
+			{ kind: "figure", text: "40%" },
+			{ kind: "date", text: "2020" },
+		]);
+	});
+
+	it("checks a role's figures against that role only, one line per bullet", () => {
+		const data = structuredClone(defaultResumeData);
+		data.sections.experience.items = [
+			experienceItemSchema.parse({
+				id: "studio",
+				hidden: false,
+				company: "Studio Kettle",
+				position: "",
+				location: "",
+				period: "",
+				description: "",
+				website: { url: "", label: "" },
+				roles: [
+					{
+						id: "lead",
+						position: "Lead",
+						period: "2022",
+						description: "<ul><li><p>Grew revenue 30%</p></li><li><p>Hired 4 people</p></li></ul>",
+					},
+					{ id: "junior", position: "Junior", period: "2019", description: "<p>Cut costs 50%</p>" },
+				],
+			}),
+		];
+		const lead = entryText(data, { sectionId: "experience", itemId: "studio", roleId: "lead", field: "description" });
+		expect(lead).toContain("Grew revenue 30%\nHired 4 people");
+		expect(lead).not.toContain("50%");
+		expect(unverifiedClaims("Cut costs 50%", { entry: lead, document: lead })).toContainEqual({
+			kind: "figure",
+			text: "50%",
+		});
+	});
+
+	it("rebuilds a rewrite from plain text and keeps only the flags still in it", () => {
+		const replaced = withEditedText(
+			{
+				before: "<p>Old</p>",
+				after: "<p>Led Kubernetes at Invented Corp</p>",
+				unsupported: [
+					{ kind: "skill", text: "Kubernetes" },
+					{ kind: "employer", text: "Invented Corp" },
+				],
+			},
+			"Led <b>platform</b> work at Invented Corp",
+		);
+		expect(replaced.after).toBe("<p>Led &lt;b&gt;platform&lt;/b&gt; work at Invented Corp</p>");
+		expect(replaced.unsupported).toEqual([{ kind: "employer", text: "Invented Corp" }]);
+		expect(replaced.edited).toBe(true);
+
+		const added = withEditedText(
+			{ before: "<p>Ran sessions</p></li>", after: "<p>Ran sessions</p></li><li><p>Added</p></li>", unsupported: [] },
+			"Mine",
+		);
+		expect(added.after).toBe("<p>Ran sessions</p></li><li><p>Mine</p></li>");
+	});
 });

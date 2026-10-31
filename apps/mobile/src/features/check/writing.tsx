@@ -103,7 +103,7 @@ export function Writing({ id, data, issues, offline, locked, review, setReview }
 					applyProposal(draft, proposal);
 				},
 				t`Rewrite accepted`,
-				[proposal.id],
+				[proposal],
 			)
 		)
 			setReview(

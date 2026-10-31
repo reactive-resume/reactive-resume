@@ -1,4 +1,4 @@
-import type { ProposalApplications } from "@reactive-resume/resume/proposals";
+import type { Proposal, ProposalApplications } from "@reactive-resume/resume/proposals";
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
 import { t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
@@ -6,11 +6,12 @@ import { isEqual } from "es-toolkit";
 import { create } from "zustand/react";
 import {
 	acknowledgeProposalApplications,
+	appliedApplications,
 	queueProposalApplications,
 	readProposalApplications,
 	restoreProposalApplications,
 } from "@reactive-resume/resume/proposals";
-import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
+import { coverLetterDocumentSchema, coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { generateId } from "@reactive-resume/utils/string";
 import { client, streamClient } from "@/libs/orpc/client";
 
@@ -65,11 +66,17 @@ const SAVE_DELAY_MS = 800;
 type LetterEditorStore = {
 	proposalApplications: ProposalApplications;
 	pendingProposalApplications: ProposalApplications;
+	/**
+	 * Set while the edits are this app's own: it applies assistant edits only through checked decisions. Edits restored
+	 * from an older app's recovery lack it and are sent without proposalSafety until the server takes them or the letter
+	 * is reloaded, so updating the app never vouches for what the older one queued.
+	 */
+	proposalSafety?: "v1" | undefined;
 	letter: CoverLetter | null;
 	/** The server's name, kept apart from optimistic edits for the browser title. */
 	savedName: string | null;
 	status: LetterSaveStatus;
-	/** Sender editing pauses while a link, restore or template change replaces server state. */
+	/** Sender editing pauses while a link, restore, template change or recovery replaces server state. */
 	changing: boolean;
 	/** Edits not sent yet; they stay on top of whatever the server returns. */
 	pending: LetterEdits;
@@ -79,7 +86,10 @@ type LetterEditorStore = {
 	load: (letter: CoverLetter, options?: { recover?: boolean }) => void;
 	edit: (
 		edits: LetterEdits,
-		options?: { proposalIds?: readonly string[]; restoreApplications?: ProposalApplications },
+		options?: {
+			applied?: readonly Pick<Proposal, "id" | "after" | "snapshot">[];
+			restoreApplications?: ProposalApplications;
+		},
 	) => void;
 	/** Saves everything typed so far. False on failure; edits remain for retry. */
 	flush: () => Promise<boolean>;
@@ -88,6 +98,8 @@ type LetterEditorStore = {
 	 * the change throws, so the caller can say what went wrong.
 	 */
 	change: (action: (letter: CoverLetter) => Promise<CoverLetter>) => Promise<CoverLetter>;
+	/** Keeps conflicting edits as a standalone letter before replacing this visit with the saved version. */
+	reloadFromServer: () => Promise<CoverLetter | null>;
 	reset: () => void;
 };
 
@@ -125,6 +137,7 @@ type LetterRecovery = {
 	pending: LetterEdits;
 	proposalApplications: ProposalApplications;
 	pendingProposalApplications: ProposalApplications;
+	proposalSafety?: unknown;
 	storedAt: number;
 	key: string;
 	raw: string;
@@ -132,6 +145,7 @@ type LetterRecovery = {
 const RECOVERY_PREFIX = "reactive-resume:unsaved:letter:";
 let restoredRecovery: { key: string; raw: string } | undefined;
 let savingEdits: { sessionId: string; pending: LetterEdits } | null = null;
+let recoveryCopy: { sessionId: string; letter: CoverLetter; copy: CoverLetter } | undefined;
 
 function readRecovery(id: string): LetterRecovery | undefined {
 	try {
@@ -203,6 +217,7 @@ function persistRecovery() {
 					pending,
 					proposalApplications: state.proposalApplications,
 					pendingProposalApplications: state.pendingProposalApplications,
+					proposalSafety: state.proposalSafety,
 					storedAt: Date.now(),
 				}),
 			);
@@ -224,6 +239,7 @@ const hasEdits = (edits: LetterEdits) => Object.keys(edits).length > 0;
 export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 	proposalApplications: {},
 	pendingProposalApplications: {},
+	proposalSafety: "v1",
 	letter: null,
 	savedName: null,
 	status: "saved",
@@ -233,6 +249,7 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 	draft: idleDraft,
 
 	load: (letter, options = {}) => {
+		recoveryCopy = undefined;
 		if (options.recover === false) {
 			// Explicit Reload discards this visit, never another tab's independent recovery entry.
 			const current = get();
@@ -273,6 +290,8 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 		set({
 			proposalApplications: recovery?.proposalApplications ?? {},
 			pendingProposalApplications: recovery?.pendingProposalApplications ?? {},
+			// What an older app's recovery holds is sent on its terms (see proposalSafety).
+			proposalSafety: !restore || restore.proposalSafety === "v1" ? "v1" : undefined,
 			letter: restore ? { ...applyEdits(letter, restore.pending), revision: restore.letter.revision } : letter,
 			savedName: letter.name,
 			status: restore
@@ -302,10 +321,7 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 						letter: applyEdits(state.letter, edits),
 						proposalApplications: options.restoreApplications
 							? restoreProposalApplications(state.proposalApplications, options.restoreApplications)
-							: {
-									...state.proposalApplications,
-									...Object.fromEntries((options.proposalIds ?? []).map((id) => [id, true])),
-								},
+							: { ...state.proposalApplications, ...appliedApplications(options.applied ?? []) },
 						pending: mergeEdits(state.pending, edits),
 						status: state.status === "conflict" ? "conflict" : "saving",
 					}
@@ -329,7 +345,7 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 		if (inflight) await inflight;
 		if (get().sessionId !== sessionId) return false;
 
-		const { letter, pending, status, pendingProposalApplications } = get();
+		const { letter, pending, status, pendingProposalApplications, proposalSafety } = get();
 		if (
 			!letter ||
 			letter.isLocked ||
@@ -348,6 +364,7 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 					id: letter.id,
 					expectedRevision: letter.revision,
 					sessionId,
+					...(proposalSafety ? { proposalSafety } : {}),
 					...pending,
 					...(Object.keys(pendingProposalApplications).length
 						? { proposalApplications: { ...pendingProposalApplications } }
@@ -359,6 +376,8 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 					current(state)
 						? {
 								letter: applyEdits(saved, mergeEdits(pending, state.pending)),
+								// The server took what this letter held; what's typed from here on is this app's own.
+								proposalSafety: "v1",
 								pendingProposalApplications: acknowledgeProposalApplications(
 									state.pendingProposalApplications,
 									pendingProposalApplications,
@@ -413,7 +432,47 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 		}
 	},
 
+	reloadFromServer: async () => {
+		const { letter, sessionId, changing, status } = get();
+		if (!letter || changing || status !== "conflict") return null;
+		set({ changing: true });
+		persistRecovery();
+		const current = () => get().sessionId === sessionId;
+		const unchanged = () => {
+			if (!current()) return false;
+			if (get().letter !== letter)
+				throw new Error(
+					t`Your letter changed while reloading. Your edits are still open. Reload again to keep a new copy.`,
+				);
+			return true;
+		};
+		try {
+			// A failed read can retry without making another copy of the same draft.
+			let copy =
+				recoveryCopy?.sessionId === sessionId && recoveryCopy.letter === letter ? recoveryCopy.copy : undefined;
+			if (!copy) {
+				copy = await client.coverLetters.import({
+					document: coverLetterDocumentSchema.parse({
+						...letter,
+						format: "reactive-resume-cover-letter",
+						version: 1,
+						name: t`${letter.name} (mine)`.slice(0, 100),
+					}),
+				});
+				if (current()) recoveryCopy = { sessionId, letter, copy };
+			}
+			if (!unchanged()) return null;
+			const saved = await client.coverLetters.getById({ id: letter.id });
+			if (!unchanged()) return null;
+			get().load(saved, { recover: false });
+			return copy;
+		} finally {
+			if (current()) set({ changing: false });
+		}
+	},
+
 	reset: () => {
+		recoveryCopy = undefined;
 		persistRecovery();
 		clearTimeout(timer);
 		drafting?.abort();
@@ -421,6 +480,7 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 		set({
 			proposalApplications: {},
 			pendingProposalApplications: {},
+			proposalSafety: "v1",
 			letter: null,
 			savedName: null,
 			status: "saved",

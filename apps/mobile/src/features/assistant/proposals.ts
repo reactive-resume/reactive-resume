@@ -1,6 +1,11 @@
 // Proposed edits from the assistant: as cards in the chat, applied to the draft through the M3-T3 store, and marked on
 // the Page tab (ported from apps/web/src/features/resume/editor/proposals/proposals.ts).
-import type { Proposal, ProposalApplicationResult, ProposalApplications } from "@reactive-resume/resume/proposals";
+import type {
+	Proposal,
+	ProposalApplicationResult,
+	ProposalApplications,
+	RequirementCoverage,
+} from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { plural, t } from "@lingui/core/macro";
 import { produce } from "immer";
@@ -14,7 +19,12 @@ import { dismissToast, showToast } from "@/ui";
 type ProposeEditsOutput = {
 	edits?: Array<Omit<Proposal, "source" | "target"> & { target: Record<string, string | undefined> }>;
 	skipped?: unknown[];
+	requirements?: RequirementCoverage[];
 };
+
+/** What the user did with an edit in this session: its status, and their wording when they rewrote it. */
+/** What the server's receipts say about an edit: its decision, and the user's saved wording when they changed it. */
+export type Receipt = { status: Proposal["status"] } & Partial<Pick<Proposal, "after" | "unsupported" | "edited">>;
 
 export type ToolPart = {
 	type: string;
@@ -30,20 +40,27 @@ export const isProposeEdits = (part: { type: string }): part is ToolPart =>
 
 export const skippedCount = (part: ToolPart) => (part.output as ProposeEditsOutput | undefined)?.skipped?.length ?? 0;
 
+/** The posting's requirements as the assistant read them for this set, gaps included. */
+export const requirementsOf = (part: ToolPart) => (part.output as ProposeEditsOutput | undefined)?.requirements ?? [];
+
 /** The edits in a `propose_edits` result, with what the user has done with each since. */
-export function toProposals(part: ToolPart, statuses: ReadonlyMap<string, Proposal["status"]>): Proposal[] {
+export function toProposals(part: ToolPart, receipts: ReadonlyMap<string, Receipt>): Proposal[] {
 	const output = part.output as ProposeEditsOutput | undefined;
-	return (output?.edits ?? []).map((edit) => ({
-		...edit,
-		target: {
-			sectionId: edit.target.sectionId ?? "",
-			field: edit.target.field ?? "",
-			...(edit.target.itemId === undefined ? {} : { itemId: edit.target.itemId }),
-			...(edit.target.roleId === undefined ? {} : { roleId: edit.target.roleId }),
-		},
-		status: statuses.get(edit.id) ?? edit.status,
-		source: "assistant",
-	}));
+	return (output?.edits ?? []).map((streamed) => {
+		const receipt = receipts.get(streamed.id);
+		const edit = receipt?.edited ? { ...streamed, ...receipt } : streamed;
+		return {
+			...edit,
+			target: {
+				sectionId: edit.target.sectionId ?? "",
+				field: edit.target.field ?? "",
+				...(edit.target.itemId === undefined ? {} : { itemId: edit.target.itemId }),
+				...(edit.target.roleId === undefined ? {} : { roleId: edit.target.roleId }),
+			},
+			status: receipt?.status ?? edit.status,
+			source: "assistant",
+		};
+	});
 }
 
 /** The toast uses actual writes, with placement failures reported separately from successes. */
@@ -64,7 +81,7 @@ export function proposalResultMessage({ applied, stale }: ProposalApplicationRes
 /** Applies proposals to the open resume as one undo step; the toast's Undo takes them back. */
 export function acceptResumeProposals(proposals: readonly Proposal[]): ProposalApplicationResult {
 	let result: ProposalApplicationResult = { applied: [], stale: [] };
-	const proposalIds: string[] = [];
+	const applied: Proposal[] = [];
 	const store = useResumeStore.getState();
 	const scope = getAccountScope();
 	const id = store.document?.id;
@@ -72,9 +89,9 @@ export function acceptResumeProposals(proposals: readonly Proposal[]): ProposalA
 	store.update(
 		(draft) => {
 			result = applyResumeProposals(draft as ResumeData, proposals, store.proposalApplications);
-			proposalIds.push(...result.applied.map((proposal) => proposal.id));
+			applied.push(...result.applied);
 		},
-		{ newStep: true, proposalIds },
+		{ newStep: true, applied },
 	);
 	const accepted = useResumeStore.getState().data;
 	if (result.applied.length === 0) {

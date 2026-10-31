@@ -9,7 +9,7 @@ import {
 } from "@reactive-resume/schema/cover-letter/data";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { paginationShape } from "../pagination";
-import { proposalApplicationsSchema } from "./proposals";
+import { proposalApplicationsSchema, proposalSafetySchema } from "./proposals";
 
 const idSchema = z.object({ id: z.string().min(1) });
 const revisionSchema = idSchema.extend({ expectedRevision: z.number().int().min(1) });
@@ -106,6 +106,7 @@ export const coverLetterDto = {
 			senderLinked: z.boolean().optional().describe("Take the sender's details live from the resume."),
 			designLinked: z.boolean().optional().describe("Take the design live from the resume."),
 			proposalApplications: proposalApplicationsSchema,
+			proposalSafety: proposalSafetySchema,
 			sessionId: z
 				.string()
 				.min(1)
@@ -120,7 +121,10 @@ export const coverLetterDto = {
 	createVersion: { input: idSchema.extend({ name: versionNameSchema }), output: letterVersionSummarySchema },
 	renameVersion: { input: versionRefSchema.extend({ name: versionNameSchema }), output: letterVersionSummarySchema },
 	deleteVersion: { input: versionRefSchema, output: z.void() },
-	restoreVersion: { input: versionRefSchema, output: coverLetterSchema },
+	restoreVersion: {
+		input: versionRefSchema.extend({ proposalSafety: proposalSafetySchema }),
+		output: coverLetterSchema,
+	},
 	draft: {
 		input: idSchema.extend({
 			variant: z

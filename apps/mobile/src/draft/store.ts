@@ -5,6 +5,7 @@ import { produce } from "immer";
 import { create } from "zustand";
 import {
 	acknowledgeProposalApplications,
+	appliedApplications,
 	queueProposalApplications,
 	readProposalApplications,
 	restoreProposalApplications,
@@ -19,6 +20,13 @@ type Record<D> = {
 	copyId?: string;
 	proposalApplications?: ProposalApplications;
 	pendingProposalApplications?: ProposalApplications;
+	/**
+	 * Set on drafts this app keeps, which apply assistant edits only through checked decisions. A draft kept by an
+	 * older app lacks it: it's sent without proposalSafety until the server takes it or it's replaced, so updating the
+	 * app never vouches for what the older one queued.
+	 */
+	proposalSafety?: "v1";
+	conflictReason?: "CURRENT_CLIENT_REQUIRED";
 };
 
 export type DraftAdapter<D extends Document, T> = {
@@ -39,6 +47,7 @@ export type DraftAdapter<D extends Document, T> = {
 		force: boolean,
 		scope: string,
 		proposalApplications?: ProposalApplications,
+		proposalSafety?: "v1",
 	) => Promise<D>;
 	copy: (document: D, copyId: string | undefined, remember: (id: string) => void, scope: string) => Promise<void>;
 	isConflict: (error: unknown) => boolean;
@@ -189,6 +198,10 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 				...(typeof value.copyId === "string" ? { copyId: value.copyId } : {}),
 				proposalApplications: readProposalApplications(value.proposalApplications),
 				pendingProposalApplications: readProposalApplications(value.pendingProposalApplications),
+				...(value.proposalSafety === "v1" ? { proposalSafety: "v1" as const } : {}),
+				...(value.conflictReason === "CURRENT_CLIENT_REQUIRED"
+					? { conflictReason: "CURRENT_CLIENT_REQUIRED" as const }
+					: {}),
 			};
 		} catch {
 			// A corrupt record cannot be restored; it must not permanently block the server copy.
@@ -238,9 +251,17 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 			const remote = await adapter.read(id);
 			if (inflight) await inflight;
 			if (!(await currentOwner()) || visit !== generation) return;
+			if (record?.conflictReason && dirty) {
+				store.setState({
+					conflict: { remote, reason: record.conflictReason },
+					locked: remote.isLocked,
+					status: "error",
+				});
+				return;
+			}
 			if (record && !dirty && adapter.version(remote) !== adapter.version(record.baseline)) record = null;
 			if (!record) {
-				record = { document: remote, baseline: remote, sessionId: generateId() };
+				record = { document: remote, baseline: remote, sessionId: generateId(), proposalSafety: "v1" };
 				publish(remote, {});
 				store.setState({ proposalRevision: adapter.version(remote) });
 				settleStored();
@@ -261,6 +282,13 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 				}
 				record.document = adapter.merge(remote, restored ?? record.document, record.document);
 				record.baseline = remote;
+				// Nothing the draft held is left to send; anything else was typed here.
+				if (
+					restored &&
+					adapter.matches(remote, restored) &&
+					!Object.keys(record.pendingProposalApplications ?? {}).length
+				)
+					record.proposalSafety = "v1";
 				dirty =
 					!adapter.matches(remote, record.document) || Object.keys(record.pendingProposalApplications ?? {}).length > 0;
 				publish(record.document);
@@ -336,7 +364,7 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		history();
 		queue(adapter.withData(record.document, next), {
 			...state().proposalApplications,
-			...Object.fromEntries((options.proposalIds ?? []).map((id) => [id, true])),
+			...appliedApplications(options.applied ?? []),
 		});
 	}
 
@@ -399,9 +427,12 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 						force,
 						scope ?? "",
 						submittedApplications,
+						active.proposalSafety,
 					);
 					if (!(await currentOwner()) || visit !== generation) return;
 					force = false;
+					// The server took what this draft held; what's typed from here on is this app's own.
+					active.proposalSafety = "v1";
 					active.pendingProposalApplications = acknowledgeProposalApplications(
 						active.pendingProposalApplications ?? {},
 						submittedApplications,
@@ -423,10 +454,15 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 				if (record !== active || visit !== generation) return;
 				store.setState({ status: env.online() ? "error" : "offline" });
 				if (adapter.isConflict(error)) {
+					if ((error as { data?: { reason?: unknown } }).data?.reason === "CURRENT_CLIENT_REQUIRED")
+						active.conflictReason = "CURRENT_CLIENT_REQUIRED";
 					try {
 						const remote = await adapter.read(active.document.id);
 						if ((await currentOwner()) && record === active && visit === generation)
-							store.setState({ conflict: { remote }, locked: remote.isLocked });
+							store.setState({
+								conflict: { remote, ...(active.conflictReason ? { reason: active.conflictReason } : {}) },
+								locked: remote.isLocked,
+							});
 					} catch {
 						/* Retry fetches the conflict again; the local draft stays intact. */
 					}
@@ -441,6 +477,7 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 
 	async function resolveConflict(choice: "keep-mine" | "use-theirs" | "keep-both") {
 		if (!record || !state().conflict || resolving) return;
+		if (choice === "keep-mine" && record.conflictReason) return;
 		resolving = true;
 		const active = record;
 		const visit = generation;
@@ -475,7 +512,7 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 					);
 				if (!(await currentOwner()) || record !== active) return;
 				removeStored(key());
-				record = { baseline: remote, document: remote, sessionId: active.sessionId };
+				record = { baseline: remote, document: remote, sessionId: active.sessionId, proposalSafety: "v1" };
 				dirty = false;
 				deferred = null;
 				resetHistory();
@@ -516,6 +553,7 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		record.document = remote;
 		record.proposalApplications = {};
 		record.pendingProposalApplications = {};
+		record.proposalSafety = "v1";
 		publish(remote, {});
 		store.setState({ proposalRevision: adapter.version(remote) });
 		try {
@@ -556,6 +594,7 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 					false,
 					owner,
 					queued.pendingProposalApplications ?? {},
+					queued.proposalSafety,
 				);
 				queued.document = adapter.merge(saved, queued.document, queued.document);
 				if (visit !== queueGeneration) return;

@@ -1,6 +1,11 @@
 import type { UIMessage } from "ai";
 import { describe, expect, it } from "vite-plus/test";
-import { applyStepToUiMessage, proposedEditsOf, upsertAssistantUiMessage } from "./messages-persistence";
+import {
+	applyStepToUiMessage,
+	proposedEditsOf,
+	upsertAssistantUiMessage,
+	withEditWording,
+} from "./messages-persistence";
 
 function emptyMessage(): UIMessage {
 	return { id: "ui-1", role: "assistant", parts: [] };
@@ -83,8 +88,9 @@ function scriptedDatabase(updateResults: Array<Array<{ id: string }>>): Scripted
 	const state: ScriptedDb = { updates: [] };
 	let updateCall = 0;
 
-	return {
+	const database: ScriptedDb & Record<string, unknown> = {
 		updates: state.updates,
+		transaction: (run: (tx: unknown) => unknown) => run(database),
 		update: () => ({
 			set: (value: unknown) => {
 				state.updates.push(value);
@@ -100,6 +106,7 @@ function scriptedDatabase(updateResults: Array<Array<{ id: string }>>): Scripted
 			},
 		}),
 	};
+	return database;
 }
 
 describe("proposed edit statuses", () => {
@@ -151,5 +158,40 @@ describe("proposed edit statuses", () => {
 
 		const written = database.updates[0] as { uiMessage: UIMessage };
 		expect(proposedEditsOf(written.uiMessage).map((edit) => edit.status)).toEqual(["accepted", "rejected"]);
+	});
+
+	it("stores the user's wording as escaped text and keeps it while a run rewrites its message", async () => {
+		const original = proposing(["pending"]);
+		const edit = proposedEditsOf(original)[0] as Record<string, unknown>;
+		Object.assign(edit, {
+			before: "<p>Old</p>",
+			after: "<p>Led Kubernetes</p>",
+			unsupported: [{ kind: "skill", text: "Kubernetes" }],
+		});
+
+		const rewritten = withEditWording(original, "call-1", "e0", "Led <i>design</i>");
+		expect(proposedEditsOf(rewritten)[0]).toMatchObject({
+			after: "<p>Led &lt;i&gt;design&lt;/i&gt;</p>",
+			unsupported: [],
+			edited: true,
+			status: "pending",
+		});
+
+		const database = scriptedDatabase([[{ id: "row-1" }]]);
+		database.transaction = async (callback: (tx: unknown) => unknown) => callback(database);
+		database.select = () => ({
+			from: () => ({
+				where: () => {
+					const query = { orderBy: () => query, for: async () => [{ id: "row-1", uiMessage: rewritten }] };
+					return query;
+				},
+			}),
+		});
+		await upsertAssistantUiMessage(
+			{ userId: "user-1", threadId: "thread-1", rowId: "row-1", message: original, status: "completed" },
+			database as never,
+		);
+		const written = database.updates[0] as { uiMessage: UIMessage };
+		expect(proposedEditsOf(written.uiMessage)[0]?.after).toBe("<p>Led &lt;i&gt;design&lt;/i&gt;</p>");
 	});
 });

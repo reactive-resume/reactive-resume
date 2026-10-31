@@ -88,13 +88,15 @@ export const resumeAdapter: DraftAdapter<ResumeDocument, ResumeDocument["data"]>
 			throw new Error("Invalid stored resume.");
 		return { ...document, data: resumeDataSchema.parse(document.data) };
 	},
-	save: async (document, baseline, sessionId, force, scope, proposalApplications) => ({
+	save: async (document, baseline, sessionId, force, scope, proposalApplications, proposalSafety) => ({
 		...document,
 		...(await client.resume.update(
 			{
 				id: document.id,
 				...changedFields(resumeFields(document), resumeFields(baseline)),
 				sessionId,
+				// Only for drafts this app kept (see the draft store's proposalSafety).
+				...(proposalSafety ? { proposalSafety } : {}),
 				...(proposalApplications && Object.keys(proposalApplications).length
 					? { proposalApplications: { ...proposalApplications } }
 					: {}),
@@ -131,12 +133,13 @@ export const letterAdapter: DraftAdapter<LetterDocument, LetterDocument> = {
 		},
 	}),
 	parse: (value) => coverLetterSchema.parse(dates(value)),
-	save: (document, baseline, sessionId, _force, scope, proposalApplications) => {
+	save: (document, baseline, sessionId, _force, scope, proposalApplications, proposalSafety) => {
 		const changes = changedFields(letterFields(document), letterFields(baseline));
 		const input: RouterInput["coverLetters"]["update"] = {
 			id: document.id,
 			expectedRevision: baseline.revision,
 			sessionId,
+			...(proposalSafety ? { proposalSafety } : {}),
 			...(proposalApplications && Object.keys(proposalApplications).length
 				? { proposalApplications: { ...proposalApplications } }
 				: {}),

@@ -14811,7 +14811,7 @@
 											},
 											"memory": {
 												"type": "boolean",
-												"description": "Career coach: share switched-on facts, stories and preferences."
+												"description": "Career coach: share switched-on facts, stories and preferences (on by default). Document assistant: let it look up switched-on Knowledge facts as evidence (off unless true)."
 											},
 											"web": {
 												"type": "boolean",
@@ -15238,7 +15238,7 @@
 			"post": {
 				"operationId": "setAgentEditStatus",
 				"summary": "Record what happened to proposed edits",
-				"description": "Records that proposed edits were accepted, rejected, or are pending again (after an undo), so past conversations show their outcome.",
+				"description": "Records that proposed edits were accepted, rejected, rewritten by the user, or are pending again (after an undo), so past conversations show their outcome.",
 				"tags": [
 					"Agent"
 				],
@@ -15275,6 +15275,17 @@
 														"rejected"
 													],
 													"type": "string"
+												},
+												"text": {
+													"type": "string",
+													"minLength": 1,
+													"maxLength": 2000,
+													"description": "The user's own wording for the edit's new text, in plain text, when they rewrote it."
+												},
+												"after": {
+													"type": "string",
+													"maxLength": 50000,
+													"description": "The edit's new text (after) as the client showed it. When given, the decision is refused if the edit has since been reworded elsewhere; apply it to the document only after this succeeds."
 												}
 											},
 											"required": [
@@ -54174,8 +54185,21 @@
 											"maxLength": 128
 										},
 										"additionalProperties": {
-											"type": "boolean"
-										}
+											"anyOf": [
+												{
+													"type": "boolean"
+												},
+												{
+													"type": "string",
+													"maxLength": 20000
+												}
+											]
+										},
+										"description": "Assistant edit decisions saved with this change, by edit id: false takes an edit back; the edit's current after (the wording you applied), or snapshot:<id> for an immutable structural proposal, records it as accepted, refined or not. Structural summaries from prior clients remain accepted within the 20000-character receipt limit. true records acceptance only when the saved document holds the edit exactly as proposed (a structural change: its whole snapshot.after). Tailoring the document can't take is refused either way."
+									},
+									"proposalSafety": {
+										"const": "v1",
+										"description": "Send \"v1\" when your client applies assistant edits only through proposalApplications or after checking tailoredFor and the edit's current after. Documents with tailored or reworded assistant edits refuse content changes without it (RESUME_VERSION_CONFLICT, or CONFLICT for letters)."
 									},
 									"sessionId": {
 										"type": "string",
@@ -55507,8 +55531,21 @@
 											"maxLength": 128
 										},
 										"additionalProperties": {
-											"type": "boolean"
-										}
+											"anyOf": [
+												{
+													"type": "boolean"
+												},
+												{
+													"type": "string",
+													"maxLength": 20000
+												}
+											]
+										},
+										"description": "Assistant edit decisions saved with this change, by edit id: false takes an edit back; the edit's current after (the wording you applied), or snapshot:<id> for an immutable structural proposal, records it as accepted, refined or not. Structural summaries from prior clients remain accepted within the 20000-character receipt limit. true records acceptance only when the saved document holds the edit exactly as proposed (a structural change: its whole snapshot.after). Tailoring the document can't take is refused either way."
+									},
+									"proposalSafety": {
+										"const": "v1",
+										"description": "Send \"v1\" when your client applies assistant edits only through proposalApplications or after checking tailoredFor and the edit's current after. Documents with tailored or reworded assistant edits refuse content changes without it (RESUME_VERSION_CONFLICT, or CONFLICT for letters)."
 									},
 									"sessionId": {
 										"type": "string",
@@ -61445,6 +61482,22 @@
 						}
 					}
 				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"proposalSafety": {
+										"const": "v1",
+										"description": "Send \"v1\" when your client applies assistant edits only through proposalApplications or after checking tailoredFor and the edit's current after. Documents with tailored or reworded assistant edits refuse content changes without it (RESUME_VERSION_CONFLICT, or CONFLICT for letters)."
+									}
+								}
+							}
+						}
+					}
+				},
 				"responses": {
 					"200": {
 						"description": "The restored letter.",
@@ -62210,7 +62263,7 @@
 					{
 						"lang": "bash",
 						"label": "cURL",
-						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/<id>/versions/<versionId>/restore\" --header \"x-api-key: <api-key>\""
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/<id>/versions/<versionId>/restore\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}
@@ -70821,8 +70874,21 @@
 											"maxLength": 128
 										},
 										"additionalProperties": {
-											"type": "boolean"
-										}
+											"anyOf": [
+												{
+													"type": "boolean"
+												},
+												{
+													"type": "string",
+													"maxLength": 20000
+												}
+											]
+										},
+										"description": "Assistant edit decisions saved with this change, by edit id: false takes an edit back; the edit's current after (the wording you applied), or snapshot:<id> for an immutable structural proposal, records it as accepted, refined or not. Structural summaries from prior clients remain accepted within the 20000-character receipt limit. true records acceptance only when the saved document holds the edit exactly as proposed (a structural change: its whole snapshot.after). Tailoring the document can't take is refused either way."
+									},
+									"proposalSafety": {
+										"const": "v1",
+										"description": "Send \"v1\" when your client applies assistant edits only through proposalApplications or after checking tailoredFor and the edit's current after. Documents with tailored or reworded assistant edits refuse content changes without it (RESUME_VERSION_CONFLICT, or CONFLICT for letters)."
 									},
 									"sessionId": {
 										"type": "string",
@@ -75624,6 +75690,30 @@
 											]
 										},
 										"description": "An array of JSON Patch (RFC 6902) operations to apply to the resume data."
+									},
+									"proposalApplications": {
+										"type": "object",
+										"propertyNames": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 128
+										},
+										"additionalProperties": {
+											"anyOf": [
+												{
+													"type": "boolean"
+												},
+												{
+													"type": "string",
+													"maxLength": 20000
+												}
+											]
+										},
+										"description": "Assistant edits this patch applies (edit ID: true) or undoes (false). Recorded in the same transaction only when each applied edit's current wording is in the patched resume and tailoring allows it; otherwise nothing is written."
+									},
+									"proposalSafety": {
+										"const": "v1",
+										"description": "Send \"v1\" when your client applies assistant edits only through proposalApplications or after checking tailoredFor and the edit's current after. Documents with tailored or reworded assistant edits refuse content changes without it (RESUME_VERSION_CONFLICT, or CONFLICT for letters)."
 									}
 								},
 								"required": [
@@ -90961,6 +91051,22 @@
 						}
 					}
 				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"proposalSafety": {
+										"const": "v1",
+										"description": "Send \"v1\" when your client applies assistant edits only through proposalApplications or after checking tailoredFor and the edit's current after. Documents with tailored or reworded assistant edits refuse content changes without it (RESUME_VERSION_CONFLICT, or CONFLICT for letters)."
+									}
+								}
+							}
+						}
+					}
+				},
 				"responses": {
 					"200": {
 						"description": "The restored resume with its full data.",
@@ -95377,7 +95483,7 @@
 					{
 						"lang": "bash",
 						"label": "cURL",
-						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/<resumeId>/versions/<versionId>/restore\" --header \"x-api-key: <api-key>\""
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/<resumeId>/versions/<versionId>/restore\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}
@@ -98302,8 +98408,21 @@
 											"maxLength": 128
 										},
 										"additionalProperties": {
-											"type": "boolean"
-										}
+											"anyOf": [
+												{
+													"type": "boolean"
+												},
+												{
+													"type": "string",
+													"maxLength": 20000
+												}
+											]
+										},
+										"description": "Assistant edit decisions saved with this change, by edit id: false takes an edit back; the edit's current after (the wording you applied), or snapshot:<id> for an immutable structural proposal, records it as accepted, refined or not. Structural summaries from prior clients remain accepted within the 20000-character receipt limit. true records acceptance only when the saved document holds the edit exactly as proposed (a structural change: its whole snapshot.after). Tailoring the document can't take is refused either way."
+									},
+									"proposalSafety": {
+										"const": "v1",
+										"description": "Send \"v1\" when your client applies assistant edits only through proposalApplications or after checking tailoredFor and the edit's current after. Documents with tailored or reworded assistant edits refuse content changes without it (RESUME_VERSION_CONFLICT, or CONFLICT for letters)."
 									},
 									"sessionId": {
 										"type": "string",
@@ -103400,6 +103519,22 @@
 						}
 					}
 				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"proposalSafety": {
+										"const": "v1",
+										"description": "Send \"v1\" when your client applies assistant edits only through proposalApplications or after checking tailoredFor and the edit's current after. Documents with tailored or reworded assistant edits refuse content changes without it (RESUME_VERSION_CONFLICT, or CONFLICT for letters)."
+									}
+								}
+							}
+						}
+					}
+				},
 				"responses": {
 					"200": {
 						"description": "The restored resume with its full data.",
@@ -107816,7 +107951,7 @@
 					{
 						"lang": "bash",
 						"label": "cURL",
-						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/<resumeId>/versions/<versionId>/restorations\" --header \"x-api-key: <api-key>\""
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/resumes/<resumeId>/versions/<versionId>/restorations\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}
@@ -111391,6 +111526,22 @@
 						}
 					}
 				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"proposalSafety": {
+										"const": "v1",
+										"description": "Send \"v1\" when your client applies assistant edits only through proposalApplications or after checking tailoredFor and the edit's current after. Documents with tailored or reworded assistant edits refuse content changes without it (RESUME_VERSION_CONFLICT, or CONFLICT for letters)."
+									}
+								}
+							}
+						}
+					}
+				},
 				"responses": {
 					"200": {
 						"description": "The restored letter.",
@@ -112156,7 +112307,7 @@
 					{
 						"lang": "bash",
 						"label": "cURL",
-						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/<id>/versions/<versionId>/restorations\" --header \"x-api-key: <api-key>\""
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/cover-letters/<id>/versions/<versionId>/restorations\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{}'"
 					}
 				]
 			}
@@ -115869,7 +116020,7 @@
 											},
 											"memory": {
 												"type": "boolean",
-												"description": "Career coach: share switched-on facts, stories and preferences."
+												"description": "Career coach: share switched-on facts, stories and preferences (on by default). Document assistant: let it look up switched-on Knowledge facts as evidence (off unless true)."
 											},
 											"web": {
 												"type": "boolean",
@@ -116297,7 +116448,7 @@
 			"patch": {
 				"operationId": "patchAgentMessageEdits",
 				"summary": "Record what happened to proposed edits",
-				"description": "Records that proposed edits were accepted, rejected, or are pending again (after an undo), so past conversations show their outcome.",
+				"description": "Records that proposed edits were accepted, rejected, rewritten by the user, or are pending again (after an undo), so past conversations show their outcome.",
 				"tags": [
 					"Agent"
 				],
@@ -116346,6 +116497,17 @@
 														"rejected"
 													],
 													"type": "string"
+												},
+												"text": {
+													"type": "string",
+													"minLength": 1,
+													"maxLength": 2000,
+													"description": "The user's own wording for the edit's new text, in plain text, when they rewrote it."
+												},
+												"after": {
+													"type": "string",
+													"maxLength": 50000,
+													"description": "The edit's new text (after) as the client showed it. When given, the decision is refused if the edit has since been reworded elsewhere; apply it to the document only after this succeeds."
 												}
 											},
 											"required": [

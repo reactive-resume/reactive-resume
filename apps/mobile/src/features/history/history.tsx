@@ -89,7 +89,7 @@ export function HistoryPanel({ resume, offline }: HistoryProps) {
 				await flushResume(resume.id);
 				// The server writes "Before restore" before changing data. Reopen resets the draft baseline and undo,
 				// but only if the user is still on this resume in the same account; otherwise their open draft stays.
-				await client.resume.restoreVersion({ resumeId: resume.id, versionId: selected.id });
+				await client.resume.restoreVersion({ resumeId: resume.id, versionId: selected.id, proposalSafety: "v1" });
 				const sameScope = (await getDraftScope()) === scope;
 				if (sameScope && useResumeStore.getState().document?.id === resume.id)
 					await useResumeStore.getState().open(resume.id);

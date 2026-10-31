@@ -161,6 +161,7 @@ export const crudRouter = {
 				...(input.sessionId !== undefined ? { sessionId: input.sessionId } : {}),
 				...(input.expectedUpdatedAt !== undefined ? { expectedUpdatedAt: input.expectedUpdatedAt } : {}),
 				...(input.proposalApplications !== undefined ? { proposalApplications: input.proposalApplications } : {}),
+				...(input.proposalSafety !== undefined ? { proposalSafety: input.proposalSafety } : {}),
 				...(input.slug !== undefined ? { slug: input.slug } : {}),
 				...(input.tags !== undefined ? { tags: input.tags } : {}),
 				...(input.data !== undefined ? { data: input.data } : {}),
@@ -204,6 +205,8 @@ export const crudRouter = {
 				userId: context.user.id,
 				operations: input.operations,
 				...(input.expectedUpdatedAt ? { expectedUpdatedAt: input.expectedUpdatedAt } : {}),
+				...(input.proposalApplications ? { proposalApplications: input.proposalApplications } : {}),
+				...(input.proposalSafety ? { proposalSafety: input.proposalSafety } : {}),
 			}),
 		),
 

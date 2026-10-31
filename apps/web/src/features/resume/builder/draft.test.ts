@@ -292,7 +292,13 @@ describe("builder resume autosave", () => {
 
 		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(1);
 		expect(orpcMocks.updateResume).toHaveBeenCalledWith(
-			{ id: initial.id, data: updated.data, expectedUpdatedAt: initial.updatedAt, sessionId: expect.any(String) },
+			{
+				id: initial.id,
+				data: updated.data,
+				expectedUpdatedAt: initial.updatedAt,
+				sessionId: expect.any(String),
+				proposalSafety: "v1",
+			},
 			expect.objectContaining({ signal: expect.any(AbortSignal) }),
 		);
 		expect(orpcMocks.patchResume).not.toHaveBeenCalled();
@@ -338,12 +344,14 @@ describe("builder resume autosave", () => {
 			data: first.data,
 			expectedUpdatedAt: initial.updatedAt,
 			sessionId: expect.any(String),
+			proposalSafety: "v1",
 		});
 		expect(orpcMocks.updateResume.mock.calls[1]?.[0]).toEqual({
 			id: initial.id,
 			data: latest.data,
 			expectedUpdatedAt: first.updatedAt,
 			sessionId: expect.any(String),
+			proposalSafety: "v1",
 		});
 		expect(orpcMocks.patchResume).not.toHaveBeenCalled();
 	});
@@ -576,6 +584,73 @@ describe("builder resume autosave", () => {
 		expect(toastMocks.add).toHaveBeenCalledWith(
 			expect.objectContaining({ description: "Restored changes that hadn't been saved yet." }),
 		);
+	});
+
+	it("never vouches for what an older app kept: it goes out unchecked until the server takes it", async () => {
+		const initial = makeResume("resume-older-recovery");
+		// An older app's recovery record: no proposalSafety, and a decision it never sent.
+		window.localStorage.setItem(
+			`reactive-resume:unsaved:${initial.id}`,
+			JSON.stringify({
+				data: withBasicsName(initial, "Older app").data,
+				storedAt: Date.now(),
+				baseUpdatedAt: initial.updatedAt,
+				pendingProposalApplications: { held: true },
+			}),
+		);
+		orpcMocks.updateResume.mockRejectedValueOnce(new ORPCError("RESUME_VERSION_CONFLICT", { status: 409 }));
+		useResumeStore.getState().initialize(initial);
+		await flushMicrotasks();
+		expect(orpcMocks.updateResume.mock.calls[0]?.[0]).not.toHaveProperty("proposalSafety");
+		expect(orpcMocks.updateResume.mock.calls[0]?.[0]).toMatchObject({ proposalApplications: { held: true } });
+		// Refused: the draft stays, still marked as the older app's, for Keep as a copy.
+		expect(useResumeStore.getState().saveStatus).toBe("conflict");
+		expect(useResumeStore.getState().resume?.data.basics.name).toBe("Older app");
+		const kept = Object.entries(window.localStorage).find(([key]) =>
+			key.startsWith(`reactive-resume:unsaved:${initial.id}`),
+		);
+		expect(JSON.parse(kept?.[1] ?? "{}")).not.toHaveProperty("proposalSafety");
+
+		// Where the server takes it, what's typed next is this app's own.
+		clearResumeDrafts();
+		window.localStorage.clear();
+		orpcMocks.updateResume.mockReset();
+		orpcMocks.updateResume.mockImplementation((input: { id: string; data: ResumeData }) =>
+			Promise.resolve({ ...initial, data: input.data }),
+		);
+		window.localStorage.setItem(
+			`reactive-resume:unsaved:${initial.id}`,
+			JSON.stringify({
+				data: withBasicsName(initial, "Older app").data,
+				storedAt: Date.now(),
+				baseUpdatedAt: initial.updatedAt,
+			}),
+		);
+		useResumeStore.getState().initialize(initial);
+		await flushMicrotasks();
+		expect(orpcMocks.updateResume.mock.calls[0]?.[0]).not.toHaveProperty("proposalSafety");
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.name = "Typed after updating";
+		});
+		await vi.advanceTimersByTimeAsync(500);
+		expect(orpcMocks.updateResume.mock.calls[1]?.[0]).toMatchObject({ proposalSafety: "v1" });
+
+		// This app's own recovery keeps its mark.
+		clearResumeDrafts();
+		window.localStorage.clear();
+		orpcMocks.updateResume.mockClear();
+		window.localStorage.setItem(
+			`reactive-resume:unsaved:${initial.id}`,
+			JSON.stringify({
+				data: withBasicsName(initial, "This app").data,
+				storedAt: Date.now(),
+				baseUpdatedAt: initial.updatedAt,
+				proposalSafety: "v1",
+			}),
+		);
+		useResumeStore.getState().initialize(initial);
+		await flushMicrotasks();
+		expect(orpcMocks.updateResume.mock.calls[0]?.[0]).toMatchObject({ proposalSafety: "v1" });
 	});
 });
 
@@ -1003,7 +1078,7 @@ it("restores proposal decisions only at their explicit undo checkpoints, preserv
 		(draft) => {
 			draft.summary.content = "<p>Accepted</p>";
 		},
-		{ newStep: true, proposalIds: ["edit"] },
+		{ newStep: true, applied: [{ id: "edit", after: "<p>Accepted</p>" }] },
 	);
 	store().updateResumeData(
 		(draft) => {
@@ -1011,17 +1086,17 @@ it("restores proposal decisions only at their explicit undo checkpoints, preserv
 		},
 		{ newStep: true },
 	);
-	expect(store().proposalApplications).toEqual({ edit: true });
+	expect(store().proposalApplications).toEqual({ edit: "<p>Accepted</p>" });
 	store().undo();
-	expect(store().proposalApplications).toEqual({ edit: true });
+	expect(store().proposalApplications).toEqual({ edit: "<p>Accepted</p>" });
 	expect(store().resume?.data.summary.content).toBe("<p>Accepted</p>");
 	store().undo();
 	expect(store().proposalApplications).toEqual({ edit: false });
 	store().redo();
-	expect(store().proposalApplications).toEqual({ edit: true });
+	expect(store().proposalApplications).toEqual({ edit: "<p>Accepted</p>" });
 	store().redo();
 	expect(store().resume?.data.summary.content).toBe("<p>Refined</p>");
-	expect(store().proposalApplications).toEqual({ edit: true });
+	expect(store().proposalApplications).toEqual({ edit: "<p>Accepted</p>" });
 });
 
 it("retains offscreen resume Undo and pending synchronization through a failed save and builder reload", async () => {
@@ -1040,7 +1115,7 @@ it("retains offscreen resume Undo and pending synchronization through a failed s
 			(draft) => {
 				draft.summary.content = "<p>Rewritten</p>";
 			},
-			{ newStep: true, proposalIds: ["edit"] },
+			{ newStep: true, applied: [{ id: "edit", after: "<p>Rewritten</p>" }] },
 		);
 		expect(await savePendingChanges(initial.id)).toBe(true);
 		// No Conversation is mounted. Document owner must save the decision with Undo's content.
@@ -1111,7 +1186,7 @@ describe("concurrent receipt ownership", () => {
 			(d) => {
 				d.summary.content = p.after;
 			},
-			{ newStep: true, proposalIds: [p.id] },
+			{ newStep: true, applied: [p] },
 		);
 		await vi.advanceTimersByTimeAsync(500);
 		expect(s().saveStatus).toBe("saved");
@@ -1138,7 +1213,7 @@ describe("concurrent receipt ownership", () => {
 			(d) => {
 				d.summary.content = "<p>New</p>";
 			},
-			{ newStep: true, proposalIds: ["receipt"] },
+			{ newStep: true, applied: [{ id: "receipt", after: "<p>New</p>" }] },
 		);
 		s().undo();
 		await vi.advanceTimersByTimeAsync(500);
@@ -1177,7 +1252,7 @@ describe("concurrent receipt ownership", () => {
 			(d) => {
 				d.summary.content = "<p>New</p>";
 			},
-			{ newStep: true, proposalIds: ["receipt"] },
+			{ newStep: true, applied: [{ id: "receipt", after: "<p>New</p>" }] },
 		);
 		await vi.advanceTimersByTimeAsync(500);
 		s().undo();
@@ -1190,7 +1265,7 @@ describe("concurrent receipt ownership", () => {
 		await flushMicrotasks();
 		await vi.advanceTimersByTimeAsync(0);
 		expect(orpcMocks.updateResume.mock.calls.map((c) => c[0].proposalApplications)).toEqual([
-			{ receipt: true },
+			{ receipt: "<p>New</p>" },
 			{ receipt: false },
 		]);
 		expect(s().resume?.data.summary.content).toBe("<p>Old</p>");

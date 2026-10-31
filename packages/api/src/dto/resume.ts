@@ -6,7 +6,7 @@ import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { slugSchema } from "@reactive-resume/schema/resume/slug";
 import { writableResumeDataSchema } from "@reactive-resume/schema/resume/write";
 import { paginationShape } from "../pagination";
-import { proposalApplicationsSchema } from "./proposals";
+import { proposalApplicationsSchema, proposalSafetySchema } from "./proposals";
 
 const resumeSchema = createSelectSchema(schema.resume, {
 	id: z.string().describe("The ID of the resume."),
@@ -125,6 +125,7 @@ export const resumeDto = {
 					.optional()
 					.describe("If provided, the update only applies when the resume version still matches this timestamp."),
 				proposalApplications: proposalApplicationsSchema,
+				proposalSafety: proposalSafetySchema,
 				sessionId: z
 					.string()
 					.max(64)
@@ -178,6 +179,10 @@ export const resumeDto = {
 				.array(jsonPatchOperationSchema)
 				.min(1)
 				.describe("An array of JSON Patch (RFC 6902) operations to apply to the resume data."),
+			proposalApplications: proposalApplicationsSchema.describe(
+				"Assistant edits this patch applies (edit ID: true) or undoes (false). Recorded in the same transaction only when each applied edit's current wording is in the patched resume and tailoring allows it; otherwise nothing is written.",
+			),
+			proposalSafety: proposalSafetySchema,
 		}),
 		output: resumeSchema.omit({ password: true, userId: true }).extend({ hasPassword: z.boolean() }),
 	},
@@ -243,6 +248,7 @@ export const resumeDto = {
 		input: z.object({
 			resumeId: z.string().describe("The ID of the resume to restore."),
 			versionId: z.string().describe("The ID of the version snapshot to restore."),
+			proposalSafety: proposalSafetySchema,
 		}),
 		output: resumeSchema.omit({ password: true, userId: true }).extend({ hasPassword: z.boolean() }),
 	},

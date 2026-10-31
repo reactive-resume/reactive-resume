@@ -4,7 +4,7 @@
 import type { ChatAttachment, MessageContext } from "./chat";
 import type { AssistantDocument } from "./document";
 import type { EditStatus, ProposalHandlers } from "./messages";
-import type { ToolPart } from "./proposals";
+import type { Receipt, ToolPart } from "./proposals";
 import type { SavedThread } from "./recovery";
 import type { IconName } from "@/ui";
 import type { LegendListRef } from "@legendapp/list/react-native";
@@ -19,9 +19,11 @@ import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessa
 import * as Clipboard from "expo-clipboard";
 import * as DocumentPicker from "expo-document-picker";
 import { File } from "expo-file-system";
-import { useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { RefreshControl, ActivityIndicator, AppState, Pressable, ScrollView, TextInput, View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import { citesKnowledge, tailoringAllows } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { withEditedText } from "@reactive-resume/resume/proposals";
 import { attachmentPart, refreshThreads, transcriptOf, useAssistantChat } from "./chat";
 import { FileChip, MessageView, Status } from "./messages";
 import { isProposeEdits, publishProposals, toProposals } from "./proposals";
@@ -429,13 +431,18 @@ function Conversation(props: ConversationProps) {
 	const error = chatError ?? receipts.error;
 	const statuses = useMemo(
 		() =>
-			new Map([
+			new Map<string, Receipt>([
 				...((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
 					message.parts.flatMap((part) =>
-						isProposeEdits(part) ? toProposals(part, new Map()).map((edit) => [edit.id, edit.status] as const) : [],
+						isProposeEdits(part)
+							? toProposals(part, new Map()).map(
+									({ id, status, after, unsupported, edited }) =>
+										[id, edited ? { status, after, unsupported, edited } : { status }] as const,
+								)
+							: [],
 					),
 				),
-				...rejections,
+				...[...rejections].map(([id, status]) => [id, { status }] as const),
 			]),
 		[receipts.data, rejections],
 	);
@@ -473,11 +480,55 @@ function Conversation(props: ConversationProps) {
 			.then(() => refreshThreads(queryClient))
 			.catch(() => undefined);
 	};
+	// The user's wording shows (and Accept uses it) only once the server has it and a fresh read of the receipts shows
+	// it (web conversation.tsx); until then their draft stays open and out of Accept. The reviewed text binds the save.
+	const saveWording = async (message: UIMessage, part: ToolPart, proposal: Proposal, text: string) => {
+		if (!part.toolCallId) throw new Error("This edit can't be saved.");
+		await client.agent.messages.setEditStatus(
+			{
+				threadId,
+				messageId: message.id,
+				toolCallId: part.toolCallId,
+				edits: [{ id: proposal.id, status: "pending", text, after: proposal.after }],
+			},
+			{ context: { scope: props.scope } },
+		);
+		const read = await receipts.refetch();
+		const wording = withEditedText(proposal, text).after;
+		const saved = ((read.data?.messages ?? []) as UIMessage[]).some((stored) =>
+			stored.parts.some(
+				(candidate) =>
+					isProposeEdits(candidate) &&
+					toProposals(candidate, new Map()).some((edit) => edit.id === proposal.id && edit.after === wording),
+			),
+		);
+		if (read.isError || !saved) throw new Error("The saved wording couldn't be read back.");
+		void refreshThreads(queryClient);
+	};
+	const saveWordingRef = useRef(saveWording);
+	useLayoutEffect(() => {
+		saveWordingRef.current = saveWording;
+	});
 	// Kept current for the memoized handlers below, so the message rows keep their props while a reply streams.
 	const recordRef = useRef(record);
 	useLayoutEffect(() => {
 		recordRef.current = record;
 	});
+
+	// Cited Knowledge facts are stored by id; their text shows only while they're still switched on (web conversation.tsx).
+	const citesFacts = messages.some((message) =>
+		message.parts.some((part) => isProposeEdits(part) && citesKnowledge(part.output)),
+	);
+	const session = useSession();
+	const facts = useQuery({
+		...orpc.career.facts.queryOptions({ input: { applicationId: null, all: true } }),
+		queryKey: [...orpc.career.facts.key(), session.server, "all"],
+		enabled: citesFacts && session.status === "signed-in",
+	});
+	const factText = useCallback(
+		(id: string) => facts.data?.find((fact) => fact.id === id && fact.status === "active")?.text ?? null,
+		[facts.data],
+	);
 
 	const handlers = useMemo<ProposalHandlers | null>(
 		() =>
@@ -486,15 +537,20 @@ function Conversation(props: ConversationProps) {
 						statuses,
 						stateOf: document.stateOf,
 						locked: document.locked || !receiptsReady,
+						// Synchronous with the tap: the draft is checked and changed in the same turn (document.ts), and the
+						// decision travels with the document save.
 						onAccept: (message, part, chosen) => {
-							if (!receiptsReady) return;
+							if (!receiptsReady || forJobCopy(document, message, part)) return;
 							const { applied } = document.accept(chosen);
 							if (applied.length > 0) recordRef.current(message, part, applied, "accepted");
 						},
+						forJobCopy: (message, part) => forJobCopy(document, message, part),
 						onReject: (message, part, chosen) => recordRef.current(message, part, chosen, "rejected"),
+						onEdit: (message, part, proposal, text) => saveWordingRef.current(message, part, proposal, text),
+						factText,
 					}
 				: null,
-		[document, statuses, receiptsReady],
+		[document, statuses, receiptsReady, factText],
 	);
 	const answer = useMemo(
 		() =>
@@ -947,4 +1003,12 @@ export function ContextChip({ icon, label, onRemove, removeLabel, pressed, onPre
 			) : null}
 		</Pressable>
 	);
+}
+
+/**
+ * Tailored edits land only on the copy made for their job (web conversation.tsx); older sets that may have used a
+ * posting are asked again.
+ */
+function forJobCopy(document: AssistantDocument, message: UIMessage, part: ToolPart) {
+	return document.kind === "resume" && !tailoringAllows(message, part.output, document.madeFor);
 }
