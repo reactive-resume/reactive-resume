@@ -302,7 +302,7 @@ function fieldLocation(
 }
 
 /** Structure and text in one snapshot: accepting cannot split a section from its entries or overwrite later edits. */
-export function resolveResumeEdits(document: LoadedDocument, input: ProposeResumeEditsInput): ProposeEditsOutput {
+function resolveResumeEdits(document: LoadedDocument, input: ProposeResumeEditsInput): ProposeEditsOutput {
 	const original = document.resume;
 	if (!original) throw new Error("Open a resume to propose these changes.");
 	let next = structuredClone(original);
