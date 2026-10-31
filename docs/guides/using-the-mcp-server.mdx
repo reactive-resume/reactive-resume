@@ -250,6 +250,8 @@ Lists default to 20 results and accept `limit` (up to 100) and `offset`; continu
 
 Document listing never deletes expired Trash. Run `api_documents_purge_expired` explicitly to permanently remove documents trashed more than 30 days ago. Individual permanent deletion requires moving the document to Trash first.
 
+To act on several trashed documents in one call, use `api_documents_restore_many` or `api_documents_purge_many` with up to 5,000 documents. Both skip documents that are active, already deleted or owned by another account. `api_documents_empty_trash` permanently deletes every document in your Trash, not only the ones you listed.
+
 ### File limits and references
 
 The Streamable HTTP JSON request limit is 4 MiB. Inline base64 is limited to 3 MiB of encoded text (approximately 2.25 MiB of file bytes), leaving space for JSON metadata. Larger files use an owned `storagePath` returned by the REST file upload or assistant attachment endpoint:
