@@ -1219,6 +1219,10 @@ msgstr "ସଫଳତା"
 msgid "Account"
 msgstr "ଆକାଉଣ୍ଟ"
 
+#: src/features/settings/account/profile.tsx
+msgid "Account details"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Action"
@@ -1399,7 +1403,7 @@ msgstr "ଯୋଜନା କରିବାକୁ ଏକ ସାକ୍ଷାତକା
 msgid "Add application"
 msgstr "ଆବେଦନ ଯୋଡନ୍ତୁ |"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add authorization country"
 msgstr ""
 
@@ -1468,7 +1472,7 @@ msgstr "କୀୱାର୍ଡ ଯୋଡନ୍ତୁ"
 msgid "Add language"
 msgstr "ଭାଷା ଯୋଡନ୍ତୁ |"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr ""
 
@@ -1521,7 +1525,7 @@ msgid "Add publication"
 msgstr "ପ୍ରକାଶନ ଯୋଡନ୍ତୁ |"
 
 #: src/features/resume/editor/write/outline.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add reference"
 msgstr "ରେଫରେନ୍ସ ଯୋଡନ୍ତୁ |"
 
@@ -1631,18 +1635,19 @@ msgid "Added to Knowledge as an experience."
 msgstr "ଅନୁଭବ ଭାବେ ଜ୍ଞାନରେ ଯୋଡ଼ାଗଲା।"
 
 #: src/features/resume/share/address-field.tsx
+#: src/features/settings/profile.tsx
 msgid "Address"
 msgstr "ଠିକଣା"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address country"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address line 1"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address line 2"
 msgstr ""
 
@@ -1846,6 +1851,12 @@ msgstr "ପୂର୍ବରୁ ଖାତା ଅଛି? <0/>"
 msgid "Already interviewing"
 msgstr "ପୂର୍ବରୁ ସାକ୍ଷାତକାର |"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Also check the exported PDF"
 msgstr "ରପ୍ତାନି ହୋଇଥିବା PDF କୁ ମଧ୍ୟ ଯାଞ୍ଚ କରନ୍ତୁ |"
@@ -1945,10 +1956,6 @@ msgstr ""
 #: src/features/career/workspace/saved.tsx
 msgid "Answers"
 msgstr "ଉତ୍ତରଗୁଡ଼ିକ"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Answers apply only to the country shown. A missing country has unknown answers."
-msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "Answers copied"
@@ -2090,7 +2097,8 @@ msgstr "ଚାକିରି ଆବେଦନ ବିଲୋପ ହେଲା |"
 msgid "Application details"
 msgstr "ଆବେଦନ ବିବରଣୀ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 msgid "Application email"
 msgstr ""
 
@@ -2098,16 +2106,12 @@ msgstr ""
 msgid "Application options"
 msgstr "ଚାକିରି ଆବେଦନ ବିକଳ୍ପଗୁଡ଼ିକ |"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Application phone"
 msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Application preparation"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Application profile deleted."
 msgstr ""
 
 #: src/features/career/coach.tsx
@@ -2122,10 +2126,6 @@ msgstr "ଆବେଦନ ଟ୍ୟାବ୍"
 #: src/features/career/workspace/messages.tsx
 msgid "Application updated"
 msgstr "ଆବେଦନ ଅପଡେଟ୍ ହେଲା"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Application-only details. Never added to public links, document exports or AI context automatically."
-msgstr ""
 
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
@@ -2363,7 +2363,7 @@ msgid "Attachment"
 msgstr "ଆଟାଚମେଣ୍ଟ୍"
 
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
 msgstr ""
 
@@ -2508,10 +2508,6 @@ msgstr "ବଙ୍ଗାଳୀ"
 #: src/features/resume/share/download-tab.tsx
 msgid "Best for applying"
 msgstr "ଆବେଦନ ପାଇଁ ସର୍ବୋତ୍ତମ |"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Blank fields mean unknown. Nothing is inferred from your resume. Self-identification is not collected here. Enter references yourself and review their details before sharing."
-msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
@@ -2684,12 +2680,20 @@ msgstr "ସଫ୍ଟୱେର୍ ତୁମର ରେଜୁମ୍ ପ read ି �
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/settings/account/application-profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
+#: src/features/settings/profile.tsx
 #: src/hooks/use-confirm.tsx
 msgid "Cancel"
 msgstr "ବାତିଲ୍ କରନ୍ତୁ"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Capture does not use AI. Review every field before saving."
+msgstr ""
 
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -2704,10 +2708,6 @@ msgstr "କ୍ୟାରିଅର୍ କୋଚ୍ (ଆପଣଙ୍କ କି)"
 #: src/features/homepage/hero.tsx
 msgid "career manager."
 msgstr "କ୍ୟାରିୟର ପରିଚାଳନା ଉପକରଣ।"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Career preferences"
-msgstr ""
 
 #: src/libs/locale.ts
 msgid "Catalan"
@@ -2831,7 +2831,7 @@ msgstr "କ any ଣସି PDF ଯାଞ୍ଚ କରନ୍ତୁ, କ account �
 msgid "Check DNS"
 msgstr "DNS ଯାଞ୍ଚ କରନ୍ତୁ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
 
@@ -2946,7 +2946,7 @@ msgstr ""
 msgid "Choose a connection"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Choose a country"
 msgstr ""
 
@@ -3019,7 +3019,7 @@ msgstr "ବୃତ୍ତ"
 msgid "Cited as already shown · check it"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "City"
 msgstr ""
 
@@ -3200,7 +3200,7 @@ msgstr "ସଂକ୍ଷିପ୍ତ"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/design/entries-group.tsx
 #: src/features/resume/editor/write/entries.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Company"
 msgstr "କମ୍ପାନୀ"
@@ -3371,12 +3371,9 @@ msgstr "ସଂଯୋଗଗୁଡ଼ିକ ସ୍ପିଚ୍ ପାଇଁ ଅଲ
 msgid "Contact"
 msgstr "ଯୋଗାଯୋଗ କରନ୍ତୁ |"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Contact and address"
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
+#: src/features/settings/profile.tsx
 msgid "Contact details"
 msgstr "ଯୋଗାଯୋଗ ବିବରଣୀ"
 
@@ -3623,7 +3620,7 @@ msgstr "ଏହି ସମୟସୂଚୀ ବଦଳାଇହେଲା ନାହି
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "ଆପଣଙ୍କ ପାସୱାର୍ଡ ବଦଳାଇହେଲା ନାହିଁ। ଆପଣଙ୍କ ବର୍ତ୍ତମାନର ପାସୱାର୍ଡ ଯାଞ୍ଚ କରି ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
 
@@ -3827,7 +3824,7 @@ msgstr "ଆପଣଙ୍କ ପର୍ଯ୍ୟାୟଗୁଡ଼ିକ ଲୋଡ�
 msgid "Couldn't load your stages."
 msgstr "ଆପଣଙ୍କ ପର୍ଯ୍ୟାୟଗୁଡ଼ିକ ଲୋଡ୍ କରିହେଲା ନାହିଁ।"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr ""
 
@@ -4011,6 +4008,7 @@ msgid "Couldn't save this schedule. Try again."
 msgstr "ଏହି ସମୟସୂଚୀ ସେଭ୍ କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
 #: src/features/letters/store.ts
+#: src/features/resume/builder/draft.ts
 #: src/features/resume/share/history-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -4159,6 +4157,10 @@ msgstr "ସାକ୍ଷାତକାର ଅଦ୍ୟତନ କରିହେଲା 
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Couldn't update the letter. Try again."
 msgstr "ଚିଠି ଅଦ୍ୟତନ କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Couldn't update the posting. Try again."
+msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't update the preview. The last working version is still shown. Edit anything to try again."
@@ -4341,7 +4343,7 @@ msgstr "CSV ତଥ୍ୟ |"
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Currency"
 msgstr "ମୁଦ୍ରା"
 
@@ -4568,12 +4570,12 @@ msgstr "ପେଜ୍ ବିଲୋପ କରନ୍ତୁ"
 msgid "Delete permanently…"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Delete private application profile?"
+#: src/features/settings/profile.tsx
+msgid "Delete profile"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Delete profile"
+#: src/features/settings/profile.tsx
+msgid "Delete profile?"
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -4722,6 +4724,10 @@ msgstr "ଡିଜାଇନ୍ ସିଷ୍ଟମ୍"
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Details"
 msgstr "ବିବରଣୀଗୁଡିକ"
+
+#: src/features/settings/profile.tsx
+msgid "Details for your job application forms."
+msgstr ""
 
 #. Label above the raw error text forwarded by the identity provider
 #: src/features/auth/pages/error.tsx
@@ -4886,6 +4892,10 @@ msgstr "ଡାଉନଲୋଡ୍ ଓ ଇତିହାସ"
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download application details, contacts, notes, and timeline history as CSV."
 msgstr "ଆବେଦନ ବିବରଣୀ, ଯୋଗାଯୋଗ, ଟିପ୍ପଣୀ ଓ ଟାଇମଲାଇନ୍ ଇତିହାସ CSV ଭାବରେ ଡାଉନଲୋଡ୍ କରନ୍ତୁ।"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Download browser helper"
+msgstr ""
 
 #. Action button to download two-factor backup codes as a text file
 #: src/dialogs/auth/enable-two-factor.tsx
@@ -5054,6 +5064,10 @@ msgstr "ଆମଦାନି ପାଇଁ ଡ୍ରପ୍ କରନ୍ତୁ |"
 msgid "Duplicate"
 msgstr "ନକଲ କରନ୍ତୁ"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
+
 #: src/dialogs/resume/index.tsx
 msgid "Duplicate resume"
 msgstr "ରେଜ୍ୟୁମେ ନକଲ କରନ୍ତୁ"
@@ -5169,6 +5183,10 @@ msgid "Edit posting"
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
+msgid "Edit profile"
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
 msgid "Edit question"
 msgstr "ପ୍ରଶ୍ନ ସମ୍ପାଦନ କରନ୍ତୁ"
 
@@ -5251,6 +5269,7 @@ msgstr "ଶିକ୍ଷା ବିଭାଗରେ ମଧ୍ୟ ସେହିପର
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/settings/account/profile.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Email"
 msgstr "ଇମେଲ୍"
@@ -5546,7 +5565,7 @@ msgstr "PNG ରପ୍ତାନି କରନ୍ତୁ |"
 msgid "Export saved answers"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Export saved profile"
 msgstr ""
 
@@ -5613,7 +5632,7 @@ msgstr "ଜ୍ଞାନରେ ଚାଲୁ ଥିବା ତଥ୍ୟ, କାହ�
 msgid "Failed"
 msgstr "ବିଫଳ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
 
@@ -6111,7 +6130,7 @@ msgstr "ପ୍ରତ୍ୟେକ ଭୂମିକା ଏବଂ ଯୋଗ୍ୟତ
 msgid "Give the story a title before you can save."
 msgstr "ସେଭ୍ କରିବା ପୂର୍ବରୁ କାହାଣୀକୁ ଏକ ଶୀର୍ଷକ ଦିଅନ୍ତୁ।"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Given name"
 msgstr ""
 
@@ -6360,7 +6379,7 @@ msgstr "ଭୂସମାନ୍ତର ବ୍ୟବଧାନ"
 msgid "Hosting and development are paid for by people like you. Optional tip:"
 msgstr "ହୋଷ୍ଟିଂ ଏବଂ ଡେଭଲପମେଣ୍ଟ ତୁମ ପରି ଲୋକମାନଙ୍କ ପାଇଁ ଦିଆଯାଏ | ବ tion କଳ୍ପିକ ଟିପ୍ପଣୀ:"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Hour"
 msgstr ""
 
@@ -7118,14 +7137,14 @@ msgstr "ଶେଷ ସମ୍ପାଦିତ |"
 msgid "Last reviewed"
 msgstr ""
 
-#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
-#: src/features/settings/account/application-profile.tsx
-msgid "Last reviewed: {0}"
-msgstr ""
-
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
+msgstr ""
+
+#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
+#: src/features/settings/profile.tsx
+msgid "Last updated: {0}"
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -7360,12 +7379,12 @@ msgid "Link"
 msgstr "ଲିଙ୍କ୍ |"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Link {0} URL"
 msgstr ""
 
@@ -7462,7 +7481,7 @@ msgid "Linking…"
 msgstr "ଲିଙ୍କ୍…"
 
 #: src/features/resume/editor/check/parser-view.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Links"
 msgstr "ଲିଙ୍କ୍"
 
@@ -7586,7 +7605,7 @@ msgstr "ୱାର୍କସ୍ପେସ୍ ଲୋଡ୍ ହେଉଛି…"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Loading…"
 msgstr "ଲୋଡିଂ…"
 
@@ -7715,6 +7734,10 @@ msgstr "ମାଲୟ"
 #: src/libs/locale.ts
 msgid "Malayalam"
 msgstr "ମଲୟାଳମ"
+
+#: src/features/settings/profile.tsx
+msgid "Manage profile"
+msgstr ""
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Manage stages"
@@ -7919,7 +7942,7 @@ msgstr "ମଡେଲ୍: {label} |"
 msgid "Mono"
 msgstr "ମୋନୋ |"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
 
@@ -8090,6 +8113,7 @@ msgstr "ମୋ କାମ ଥିଲା ସପୋର୍ଟ କାମ ନ ବଢ଼
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/auth/pages/register.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
@@ -8099,6 +8123,7 @@ msgstr "ମୋ କାମ ଥିଲା ସପୋର୍ଟ କାମ ନ ବଢ଼
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "ନାମ"
 
@@ -8173,7 +8198,7 @@ msgid "Needs attention"
 msgstr "ଧ୍ୟାନର ଆବଶ୍ୟକତା |"
 
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Needs sponsorship in {0}"
 msgstr ""
 
@@ -8306,7 +8331,7 @@ msgstr "ପରବର୍ତ୍ତୀ ପଦକ୍ଷେପ: {0}। “ଆଜି�
 msgid "Next time, I’d agree how to measure success before the first prototype."
 msgstr "ପରବର୍ତ୍ତୀ ଥର, ମୁଁ ପ୍ରଥମ ପ୍ରୋଟୋଟାଇପ୍ ପୂର୍ବରୁ ସଫଳତା କିପରି ମାପିବା ସେଥିରେ ସହମତି କରିବି।"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "No"
 msgstr ""
 
@@ -8683,10 +8708,6 @@ msgstr "ଏବେ ନୁହେଁ"
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "ଏପର୍ଯ୍ୟନ୍ତ ରେକର୍ଡ ହୋଇନାହିଁ। ଆପଣ ସମର୍ଥନ କରିପାରିବା ପର୍ଯ୍ୟନ୍ତ ଏହାକୁ ଖାଲି ରଖନ୍ତୁ।"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Not reviewed yet"
-msgstr ""
-
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -8698,6 +8719,7 @@ msgid "Not saved — this fact was forgotten before."
 msgstr "ସେଭ୍ ହୋଇନାହିଁ — ଏହି ତଥ୍ୟକୁ ପୂର୍ବରୁ ଭୁଲାଯାଇଥିଲା।"
 
 #: src/features/career/workspace/preparation.tsx
+#: src/features/settings/profile.tsx
 msgid "Not saved yet"
 msgstr ""
 
@@ -9062,6 +9084,10 @@ msgstr "|\n"
 msgid "Open the schedule"
 msgstr "ସମୟସୂଚୀ ଖୋଲନ୍ତୁ"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Open web page"
 msgstr "ୱେବ୍ ପୃଷ୍ଠା ଖୋଲନ୍ତୁ"
@@ -9110,6 +9136,12 @@ msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providerState.usableProviders[0].label
+#. placeholder {1}: providerState.usableProviders[0].provider
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -9418,7 +9450,7 @@ msgstr "ବିରତ ସମୟସୂଚୀ ସେମାନଙ୍କ ସେଟି
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Pay period"
 msgstr "ଦେୟ ଅବଧି"
 
@@ -9462,6 +9494,7 @@ msgstr "ପର୍ସିଆନ୍"
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/resume/share/web-page-preview.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Phone"
 msgstr "ଫୋନ୍"
@@ -9469,6 +9502,10 @@ msgstr "ଫୋନ୍"
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Phone (optional)"
 msgstr "ଫୋନ୍ (ବ al କଳ୍ପିକ)"
+
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Photo"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Photo hidden"
@@ -9585,7 +9622,7 @@ msgstr "ପୋର୍ତୁଗିଜ୍ (ପୋର୍ତୁଗାଲ୍)"
 msgid "Position"
 msgstr "ପଦବୀ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Postal code"
 msgstr ""
 
@@ -9807,11 +9844,6 @@ msgstr "ଗୋପନୀୟତା ନୀତି"
 msgid "Private"
 msgstr "ବ୍ୟକ୍ତିଗତ"
 
-#: src/features/career/workspace/apply.tsx
-#: src/features/settings/account/application-profile.tsx
-msgid "Private application profile"
-msgstr ""
-
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Private. Only you can see it."
 msgstr "ବ୍ୟକ୍ତିଗତ କେବଳ ଆପଣ ଏହାକୁ ଦେଖିପାରିବେ |"
@@ -9837,9 +9869,15 @@ msgstr "ପ୍ରବୀଣତା"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/features/settings/account/profile.tsx
+#: src/features/settings/profile.tsx
+#: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "ପ୍ରୋଫାଇଲ୍"
+
+#: src/features/settings/profile.tsx
+msgid "Profile deleted."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile link (optional)"
@@ -9853,6 +9891,10 @@ msgstr "ବ୍ୟକ୍ତି {0}ଙ୍କ ପ୍ରୋଫାଇଲ୍ ଲିଙ
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile links must be public HTTPS addresses."
 msgstr "ପ୍ରୋଫାଇଲ୍ ଲିଙ୍କ୍ ସାର୍ବଜନୀନ HTTPS ଠିକଣା ହେବା ଆବଶ୍ୟକ।"
+
+#: src/features/settings/profile.tsx
+msgid "Profile saved."
+msgstr ""
 
 #: src/libs/resume/section.tsx
 msgid "Profiles"
@@ -10118,6 +10160,10 @@ msgstr "ରେଜ୍ୟୁମେ ପଢ଼ାଗଲା"
 msgid "Read the self-hosting guide"
 msgstr "ସ୍ୱୟଂ ହୋଷ୍ଟିଂ ଗାଇଡ୍ ପ Read ନ୍ତୁ |"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
 msgstr "ଆପଣଙ୍କର ଇମେଲ୍ ଠିକଣା ପ Read ନ୍ତୁ |"
@@ -10192,6 +10238,10 @@ msgstr "ପାଠ ପ Reading ଼ିବା"
 #: src/features/career/shared.tsx
 msgid "Reading what you shared"
 msgstr "ଆପଣ ସେୟାର୍ କରିଥିବା ଜିନିଷ ପଢ଼ୁଛି"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "AI ବିନା ପଢ଼ିବା ସମ୍ଭବ କି ନାହିଁ ନିଶ୍ଚିତ ହୋଇପାରିଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ, ସର୍ଭର ଅପଡେଟ୍ କରନ୍ତୁ କିମ୍ବା ବିବରଣୀ ନିଜେ ଭରନ୍ତୁ।"
 
 #: src/features/resume/import/read-file.ts
 msgid "Reading Word files needs an AI provider. Set one up in Settings, or import a PDF or JSON file instead."
@@ -10305,23 +10355,12 @@ msgid "Redo resume change"
 msgstr "ରେଜୁ ରିମେମ୍ ପରିବର୍ତ୍ତନ |"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference {0}: {label}"
+#: src/features/settings/profile.tsx
+msgid "Reference {0}"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference email"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference name"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference phone"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 #: src/libs/resume/section.tsx
 msgid "References"
 msgstr "ସନ୍ଦର୍ଭଗୁଡିକ"
@@ -10375,7 +10414,7 @@ msgstr "ପ୍ରତ୍ୟାଖ୍ୟାନ କରନ୍ତୁ |"
 msgid "Rejected"
 msgstr "ପ୍ରତ୍ୟାଖ୍ୟାନ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Relationship"
 msgstr ""
 
@@ -10384,13 +10423,17 @@ msgstr ""
 msgid "Reload"
 msgstr "ପୁନ elo ଲୋଡ୍ କରନ୍ତୁ |"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Reload and discard unsaved changes"
 msgstr ""
 
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
+msgstr ""
+
+#: src/features/settings/profile.tsx
+msgid "Relocation"
 msgstr ""
 
 #: src/features/career/shared.tsx
@@ -10461,8 +10504,8 @@ msgstr "“{name}” ହଟାଇବେ?"
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
-#: src/features/settings/account/application-profile.tsx
 #: src/features/settings/account/security.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove {0}"
 msgstr "{0} ଅପସାରଣ କରନ୍ତୁ |"
 
@@ -10497,7 +10540,7 @@ msgid "Remove file"
 msgstr "ଫାଇଲ୍ ହଟାନ୍ତୁ"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove link {0}"
 msgstr ""
 
@@ -10524,7 +10567,7 @@ msgid "Remove question"
 msgstr "ପ୍ରଶ୍ନ ହଟାନ୍ତୁ"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
 
@@ -10634,11 +10677,12 @@ msgstr "ଉତ୍ତର କପି ହେଲା"
 msgid "Report a bug"
 msgstr "ଗୋଟିଏ ବଗ୍ ରିପୋର୍ଟ କରନ୍ତୁ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Requested amount"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 msgid "Requested salary"
 msgstr ""
 
@@ -10839,6 +10883,7 @@ msgstr "{1} ବ୍ୟବହାର କରି {0} ଉଦ୍ଧାର କରାଯ�
 msgid "Retrieved {0}. Origin freshness is unknown unless reported."
 msgstr "{0} ପ୍ରାପ୍ତ ହେଲା | ରିପୋର୍ଟ ନହେବା ପର୍ଯ୍ୟନ୍ତ ମୂଳ ସତେଜତା ଜଣା ନାହିଁ |"
 
+#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
@@ -11110,6 +11155,7 @@ msgstr "ନମୁନା ରେଜୁମ୍ ଯୋଗ କରାଯାଇଛି | 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/share/history-tab.tsx
+#: src/features/settings/profile.tsx
 msgid "Save"
 msgstr "ସଞ୍ଚୟ କରନ୍ତୁ"
 
@@ -11129,10 +11175,6 @@ msgstr "କୌଣସି ପାସୱାର୍ଡ କିମ୍ବା ଅନୁମ
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save and link"
 msgstr "ସେଭ୍ କରନ୍ତୁ ଏବଂ ଲିଙ୍କ୍ କରନ୍ତୁ |"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Save and mark reviewed"
-msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Save and prepare resume"
@@ -11281,10 +11323,6 @@ msgstr "{0}କୁ ଆବେଦନଗୁଡ଼ିକରେ ସେଭ୍ କରା
 msgid "Saved a story: {0}"
 msgstr "ଏକ କାହାଣୀ ସେଭ୍ ହେଲା: {0}"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Saved and marked reviewed."
-msgstr ""
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Saved as an application and linked"
 msgstr "ଚାକିରି ଆବେଦନ ଭାବରେ ସେଭ୍ ଓ ଲିଙ୍କ୍ ହେଲା"
@@ -11305,7 +11343,7 @@ msgstr "ଏହିମାତ୍ର ସେଭ୍ ହେଲା"
 msgid "Saved offers"
 msgstr "ସେଭ୍ ହୋଇଥିବା ଅଫର୍"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
 msgstr ""
 
@@ -12423,7 +12461,7 @@ msgstr "{0} ଘଣ୍ଟାରୁ କମ୍ ସମୟରେ ଆରମ୍ଭ ହ�
 msgid "Starts now"
 msgstr "ଏବେ ଆରମ୍ଭ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr ""
 
@@ -13460,7 +13498,7 @@ msgstr ""
 msgid "This question didn't finish."
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
 msgstr ""
 
@@ -13951,7 +13989,7 @@ msgstr "University of Porto"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Unknown"
 msgstr "ଅଜଣା"
 
@@ -14016,6 +14054,14 @@ msgstr "25 MB ପର୍ଯ୍ୟନ୍ତ your ଆପଣଙ୍କର ବ୍ର�
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming interviews"
 msgstr "ଆଗାମୀ ସାକ୍ଷାତକାର |"
+
+#: src/features/settings/profile.tsx
+msgid "Update"
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Update posting details"
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Update resume"
@@ -14133,10 +14179,6 @@ msgstr "ସର୍ବାଧିକ 64 ଅକ୍ଷର ବ୍ୟବହାର କର
 msgid "Use between 6 and 64 characters."
 msgstr "6 ରୁ 64 ଅକ୍ଷର ମଧ୍ୟରେ ବ୍ୟବହାର କରନ୍ତୁ |"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Use Career preferences for work locations, office days, notice period and minimum base salary. Requested salary below is separate. Editing answers for one application does not update these global settings."
-msgstr ""
-
 #: src/components/input/color-picker.tsx
 msgid "Use color {color}"
 msgstr "{color} ରଙ୍ଗ ବ୍ୟବହାର କରନ୍ତୁ"
@@ -14246,6 +14288,7 @@ msgstr "ଉପଯୋଗକର୍ତ୍ତା ଗବେଷଣା"
 
 #. Label for username input on registration form
 #: src/features/auth/pages/register.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 msgid "Username"
@@ -14747,7 +14790,7 @@ msgstr "ମୋଟେଇ"
 msgid "Will my resume get past applicant tracking systems?"
 msgstr "ମୋର ରେଜୁମ୍ ଅତୀତର ଆବେଦନକାରୀ ଟ୍ରାକିଂ ସିଷ୍ଟମ୍ ପାଇବ କି?"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Willing to relocate"
 msgstr ""
 
@@ -14763,7 +14806,7 @@ msgstr "ଗୋଟିଏ ବିନା, ଆପଣ ନିଜେ ପ୍ରାପ୍�
 msgid "Words run together when the text is extracted."
 msgstr "ଟେକ୍ସଟ୍ ବାହାର କରାଗଲେ ଶବ୍ଦଗୁଡ଼ିକ ଏକାଠି ମିଶିଯାʼନ୍ତି।"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Work authorization and sponsorship"
 msgstr ""
 
@@ -14894,11 +14937,11 @@ msgstr ""
 msgid "Written offer"
 msgstr "ଲିଖିତ ଅଫର୍"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Year"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Yes"
 msgstr ""
 

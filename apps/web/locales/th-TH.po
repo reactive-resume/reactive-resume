@@ -1219,6 +1219,10 @@ msgstr "ความสำเร็จ"
 msgid "Account"
 msgstr "บัญชี"
 
+#: src/features/settings/account/profile.tsx
+msgid "Account details"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Action"
@@ -1399,7 +1403,7 @@ msgstr "เพิ่มการสัมภาษณ์เพื่อวาง
 msgid "Add application"
 msgstr "เพิ่มใบสมัคร"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add authorization country"
 msgstr ""
 
@@ -1468,7 +1472,7 @@ msgstr "เพิ่มคำค้นหา"
 msgid "Add language"
 msgstr "เพิ่มภาษา"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr ""
 
@@ -1521,7 +1525,7 @@ msgid "Add publication"
 msgstr "เพิ่มสิ่งพิมพ์"
 
 #: src/features/resume/editor/write/outline.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add reference"
 msgstr "เพิ่มข้อมูลอ้างอิง"
 
@@ -1631,18 +1635,19 @@ msgid "Added to Knowledge as an experience."
 msgstr "เพิ่มในคลังความรู้เป็นประสบการณ์แล้ว"
 
 #: src/features/resume/share/address-field.tsx
+#: src/features/settings/profile.tsx
 msgid "Address"
 msgstr "ที่อยู่"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address country"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address line 1"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address line 2"
 msgstr ""
 
@@ -1846,6 +1851,12 @@ msgstr "มีบัญชีอยู่แล้ว? <0/>"
 msgid "Already interviewing"
 msgstr "กำลังสัมภาษณ์อยู่ครับ"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Also check the exported PDF"
 msgstr "ตรวจสอบ PDF ที่ส่งออกด้วย"
@@ -1945,10 +1956,6 @@ msgstr ""
 #: src/features/career/workspace/saved.tsx
 msgid "Answers"
 msgstr "คำตอบ"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Answers apply only to the country shown. A missing country has unknown answers."
-msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "Answers copied"
@@ -2090,7 +2097,8 @@ msgstr "ลบการสมัครงานแล้ว"
 msgid "Application details"
 msgstr "รายละเอียดใบสมัคร"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 msgid "Application email"
 msgstr ""
 
@@ -2098,16 +2106,12 @@ msgstr ""
 msgid "Application options"
 msgstr "ตัวเลือกการสมัครงาน"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Application phone"
 msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Application preparation"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Application profile deleted."
 msgstr ""
 
 #: src/features/career/coach.tsx
@@ -2122,10 +2126,6 @@ msgstr "แท็บใบสมัคร"
 #: src/features/career/workspace/messages.tsx
 msgid "Application updated"
 msgstr "อัปเดตใบสมัครแล้ว"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Application-only details. Never added to public links, document exports or AI context automatically."
-msgstr ""
 
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
@@ -2363,7 +2363,7 @@ msgid "Attachment"
 msgstr "เอกสารแนบ"
 
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
 msgstr ""
 
@@ -2508,10 +2508,6 @@ msgstr "เบงกาลี"
 #: src/features/resume/share/download-tab.tsx
 msgid "Best for applying"
 msgstr "ดีที่สุดสำหรับการสมัคร"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Blank fields mean unknown. Nothing is inferred from your resume. Self-identification is not collected here. Enter references yourself and review their details before sharing."
-msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
@@ -2684,12 +2680,20 @@ msgstr "ซอฟต์แวร์สามารถอ่านเรซูเ
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/settings/account/application-profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
+#: src/features/settings/profile.tsx
 #: src/hooks/use-confirm.tsx
 msgid "Cancel"
 msgstr "ยกเลิก"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Capture does not use AI. Review every field before saving."
+msgstr ""
 
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -2704,10 +2708,6 @@ msgstr "โค้ชอาชีพ (คีย์ของคุณ)"
 #: src/features/homepage/hero.tsx
 msgid "career manager."
 msgstr "สำหรับจัดการเส้นทางอาชีพของคุณ"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Career preferences"
-msgstr ""
 
 #: src/libs/locale.ts
 msgid "Catalan"
@@ -2831,7 +2831,7 @@ msgstr "ตรวจสอบ PDF ใด ๆ โดยไม่ต้องใ�
 msgid "Check DNS"
 msgstr "ตรวจสอบ DNS"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
 
@@ -2946,7 +2946,7 @@ msgstr ""
 msgid "Choose a connection"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Choose a country"
 msgstr ""
 
@@ -3019,7 +3019,7 @@ msgstr "วงกลม"
 msgid "Cited as already shown · check it"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "City"
 msgstr ""
 
@@ -3200,7 +3200,7 @@ msgstr "กะทัดรัด"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/design/entries-group.tsx
 #: src/features/resume/editor/write/entries.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Company"
 msgstr "บริษัท"
@@ -3371,12 +3371,9 @@ msgstr "การเชื่อมต่อจะคิดค่าบริก
 msgid "Contact"
 msgstr "ติดต่อ"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Contact and address"
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
+#: src/features/settings/profile.tsx
 msgid "Contact details"
 msgstr "ข้อมูลการติดต่อ"
 
@@ -3623,7 +3620,7 @@ msgstr "เปลี่ยนกำหนดการนี้ไม่ได้
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "เปลี่ยนรหัสผ่านไม่ได้ ตรวจสอบรหัสผ่านปัจจุบันแล้วลองอีกครั้ง"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
 
@@ -3827,7 +3824,7 @@ msgstr "โหลดขั้นตอนของคุณไม่ได้ �
 msgid "Couldn't load your stages."
 msgstr "โหลดขั้นตอนของคุณไม่ได้"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr ""
 
@@ -4011,6 +4008,7 @@ msgid "Couldn't save this schedule. Try again."
 msgstr "บันทึกกำหนดการนี้ไม่ได้ ลองอีกครั้ง"
 
 #: src/features/letters/store.ts
+#: src/features/resume/builder/draft.ts
 #: src/features/resume/share/history-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -4159,6 +4157,10 @@ msgstr "อัปเดตการสัมภาษณ์ไม่ได้ �
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Couldn't update the letter. Try again."
 msgstr "อัปเดตจดหมายไม่ได้ ลองอีกครั้ง"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Couldn't update the posting. Try again."
+msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't update the preview. The last working version is still shown. Edit anything to try again."
@@ -4341,7 +4343,7 @@ msgstr "ข้อมูล CSV"
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Currency"
 msgstr "สกุลเงิน"
 
@@ -4568,12 +4570,12 @@ msgstr "ลบหน้า"
 msgid "Delete permanently…"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Delete private application profile?"
+#: src/features/settings/profile.tsx
+msgid "Delete profile"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Delete profile"
+#: src/features/settings/profile.tsx
+msgid "Delete profile?"
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -4722,6 +4724,10 @@ msgstr "ระบบการออกแบบ"
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Details"
 msgstr "รายละเอียด"
+
+#: src/features/settings/profile.tsx
+msgid "Details for your job application forms."
+msgstr ""
 
 #. Label above the raw error text forwarded by the identity provider
 #: src/features/auth/pages/error.tsx
@@ -4886,6 +4892,10 @@ msgstr "ดาวน์โหลดและประวัติ"
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download application details, contacts, notes, and timeline history as CSV."
 msgstr "ดาวน์โหลดรายละเอียดการสมัคร รายชื่อติดต่อ บันทึกย่อ และประวัติไทม์ไลน์ในรูปแบบ CSV"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Download browser helper"
+msgstr ""
 
 #. Action button to download two-factor backup codes as a text file
 #: src/dialogs/auth/enable-two-factor.tsx
@@ -5054,6 +5064,10 @@ msgstr "วางเพื่อนำเข้า"
 msgid "Duplicate"
 msgstr "คัดลอก"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
+
 #: src/dialogs/resume/index.tsx
 msgid "Duplicate resume"
 msgstr "คัดลอกเรซูเม่"
@@ -5169,6 +5183,10 @@ msgid "Edit posting"
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
+msgid "Edit profile"
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
 msgid "Edit question"
 msgstr "แก้ไขคำถาม"
 
@@ -5251,6 +5269,7 @@ msgstr "ในส่วนการศึกษา สถานศึกษา�
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/settings/account/profile.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Email"
 msgstr "อีเมล"
@@ -5546,7 +5565,7 @@ msgstr "ส่งออก PNG"
 msgid "Export saved answers"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Export saved profile"
 msgstr ""
 
@@ -5613,7 +5632,7 @@ msgstr "ข้อเท็จจริง เรื่องราว และ�
 msgid "Failed"
 msgstr "ล้มเหลว"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
 
@@ -6111,7 +6130,7 @@ msgstr "ใส่ช่วงวันที่ให้ทุกตำแหน
 msgid "Give the story a title before you can save."
 msgstr "ตั้งชื่อเรื่องราวก่อนจึงจะบันทึกได้"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Given name"
 msgstr ""
 
@@ -6360,7 +6379,7 @@ msgstr "ระยะห่างแนวนอน"
 msgid "Hosting and development are paid for by people like you. Optional tip:"
 msgstr "โฮสติ้งและการพัฒนาได้รับค่าตอบแทนจากคนเช่นคุณ เคล็ดลับเพิ่มเติม:"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Hour"
 msgstr ""
 
@@ -7117,14 +7136,14 @@ msgstr "แก้ไขครั้งล่าสุด"
 msgid "Last reviewed"
 msgstr ""
 
-#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
-#: src/features/settings/account/application-profile.tsx
-msgid "Last reviewed: {0}"
-msgstr ""
-
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
+msgstr ""
+
+#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
+#: src/features/settings/profile.tsx
+msgid "Last updated: {0}"
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -7359,12 +7378,12 @@ msgid "Link"
 msgstr "ลิงค์"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Link {0} URL"
 msgstr ""
 
@@ -7461,7 +7480,7 @@ msgid "Linking…"
 msgstr "กำลังลิงก์..."
 
 #: src/features/resume/editor/check/parser-view.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Links"
 msgstr "ลิงค์"
 
@@ -7585,7 +7604,7 @@ msgstr "กำลังโหลดพื้นที่ทำงาน…"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Loading…"
 msgstr "กำลังโหลด…"
 
@@ -7714,6 +7733,10 @@ msgstr "มาเลย์"
 #: src/libs/locale.ts
 msgid "Malayalam"
 msgstr "มาลายาลัม"
+
+#: src/features/settings/profile.tsx
+msgid "Manage profile"
+msgstr ""
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Manage stages"
@@ -7918,7 +7941,7 @@ msgstr "รุ่น: {label}"
 msgid "Mono"
 msgstr "โมโน"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
 
@@ -8089,6 +8112,7 @@ msgstr "หน้าที่ของฉันคือหาสาเหตุ
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/auth/pages/register.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
@@ -8098,6 +8122,7 @@ msgstr "หน้าที่ของฉันคือหาสาเหตุ
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "ชื่อ"
 
@@ -8172,7 +8197,7 @@ msgid "Needs attention"
 msgstr "ต้องการความสนใจ"
 
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Needs sponsorship in {0}"
 msgstr ""
 
@@ -8305,7 +8330,7 @@ msgstr "ขั้นตอนถัดไป: {0} เพิ่มการแจ
 msgid "Next time, I’d agree how to measure success before the first prototype."
 msgstr "ครั้งหน้า ฉันจะตกลงวิธีวัดความสำเร็จก่อนทำต้นแบบแรก"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "No"
 msgstr ""
 
@@ -8682,10 +8707,6 @@ msgstr "ไม่ใช่ตอนนี้"
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "ยังไม่ได้บันทึก เว้นว่างไว้จนกว่าคุณจะมีหลักฐาน"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Not reviewed yet"
-msgstr ""
-
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -8697,6 +8718,7 @@ msgid "Not saved — this fact was forgotten before."
 msgstr "ไม่ได้บันทึก — ข้อเท็จจริงนี้เคยถูกลืมไปแล้ว"
 
 #: src/features/career/workspace/preparation.tsx
+#: src/features/settings/profile.tsx
 msgid "Not saved yet"
 msgstr ""
 
@@ -9060,6 +9082,10 @@ msgstr "เปิดแอป Reactive Resume"
 msgid "Open the schedule"
 msgstr "เปิดกำหนดการ"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Open web page"
 msgstr "เปิดหน้าเว็บ"
@@ -9108,6 +9134,12 @@ msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providerState.usableProviders[0].label
+#. placeholder {1}: providerState.usableProviders[0].provider
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -9416,7 +9448,7 @@ msgstr "กำหนดการที่หยุดชั่วคราวจ
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Pay period"
 msgstr "รอบการจ่าย"
 
@@ -9460,6 +9492,7 @@ msgstr "เปอร์เซีย"
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/resume/share/web-page-preview.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Phone"
 msgstr "เบอร์โทรศัพท์"
@@ -9467,6 +9500,10 @@ msgstr "เบอร์โทรศัพท์"
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Phone (optional)"
 msgstr "โทรศัพท์ (ไม่จำเป็น)"
+
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Photo"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Photo hidden"
@@ -9583,7 +9620,7 @@ msgstr "โปรตุเกส (โปรตุเกส)"
 msgid "Position"
 msgstr "ตำแหน่ง"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Postal code"
 msgstr ""
 
@@ -9805,11 +9842,6 @@ msgstr "นโยบายความเป็นส่วนตัว"
 msgid "Private"
 msgstr "ส่วนตัว"
 
-#: src/features/career/workspace/apply.tsx
-#: src/features/settings/account/application-profile.tsx
-msgid "Private application profile"
-msgstr ""
-
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Private. Only you can see it."
 msgstr "ส่วนตัว. มีเพียงคุณเท่านั้นที่สามารถเห็นได้"
@@ -9835,9 +9867,15 @@ msgstr "ความชำนาญ"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/features/settings/account/profile.tsx
+#: src/features/settings/profile.tsx
+#: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "โปรไฟล์"
+
+#: src/features/settings/profile.tsx
+msgid "Profile deleted."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile link (optional)"
@@ -9851,6 +9889,10 @@ msgstr "ลิงก์โปรไฟล์ของบุคคลที่ {0
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile links must be public HTTPS addresses."
 msgstr "ลิงก์โปรไฟล์ต้องเป็นที่อยู่ HTTPS สาธารณะ"
+
+#: src/features/settings/profile.tsx
+msgid "Profile saved."
+msgstr ""
 
 #: src/libs/resume/section.tsx
 msgid "Profiles"
@@ -10116,6 +10158,10 @@ msgstr "อ่านเรซูเม่แล้ว"
 msgid "Read the self-hosting guide"
 msgstr "อ่านคู่มือการโฮสต์ด้วยตนเอง"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
 msgstr "อ่านที่อยู่อีเมลของคุณ"
@@ -10190,6 +10236,10 @@ msgstr "การอ่านข้อความ"
 #: src/features/career/shared.tsx
 msgid "Reading what you shared"
 msgstr "กำลังอ่านสิ่งที่คุณแชร์"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "ไม่สามารถยืนยันว่าอ่านได้โดยไม่ใช้ AI ลองอีกครั้ง อัปเดตเซิร์ฟเวอร์ หรือกรอกรายละเอียดด้วยตนเอง"
 
 #: src/features/resume/import/read-file.ts
 msgid "Reading Word files needs an AI provider. Set one up in Settings, or import a PDF or JSON file instead."
@@ -10303,23 +10353,12 @@ msgid "Redo resume change"
 msgstr "ทำซ้ำการเปลี่ยนแปลงประวัติย่อ"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference {0}: {label}"
+#: src/features/settings/profile.tsx
+msgid "Reference {0}"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference email"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference name"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference phone"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 #: src/libs/resume/section.tsx
 msgid "References"
 msgstr "บุคคลอ้างอิง"
@@ -10373,7 +10412,7 @@ msgstr "ปฏิเสธ"
 msgid "Rejected"
 msgstr "ถูกปฏิเสธ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Relationship"
 msgstr ""
 
@@ -10382,13 +10421,17 @@ msgstr ""
 msgid "Reload"
 msgstr "โหลดซ้ำ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Reload and discard unsaved changes"
 msgstr ""
 
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
+msgstr ""
+
+#: src/features/settings/profile.tsx
+msgid "Relocation"
 msgstr ""
 
 #: src/features/career/shared.tsx
@@ -10459,8 +10502,8 @@ msgstr "นำ “{name}” ออกไหม"
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
-#: src/features/settings/account/application-profile.tsx
 #: src/features/settings/account/security.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove {0}"
 msgstr "ลบ {0}"
 
@@ -10495,7 +10538,7 @@ msgid "Remove file"
 msgstr "ลบไฟล์"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove link {0}"
 msgstr ""
 
@@ -10522,7 +10565,7 @@ msgid "Remove question"
 msgstr "นำคำถามออก"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
 
@@ -10632,11 +10675,12 @@ msgstr "คัดลอกคำตอบกลับแล้ว"
 msgid "Report a bug"
 msgstr "รายงานข้อผิดพลาด"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Requested amount"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 msgid "Requested salary"
 msgstr ""
 
@@ -10837,6 +10881,7 @@ msgstr "ดึงข้อมูล {0} โดยใช้ {1} เวลาใ�
 msgid "Retrieved {0}. Origin freshness is unknown unless reported."
 msgstr "ดึงข้อมูล {0} แล้ว ไม่ทราบความสดใหม่ของแหล่งกำเนิดเว้นแต่จะรายงาน"
 
+#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
@@ -11108,6 +11153,7 @@ msgstr "เพิ่มตัวอย่างประวัติย่อแ
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/share/history-tab.tsx
+#: src/features/settings/profile.tsx
 msgid "Save"
 msgstr "บันทึก"
 
@@ -11127,10 +11173,6 @@ msgstr "บันทึกสำเนาที่ไม่มีการป้
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save and link"
 msgstr "บันทึกและลิงก์"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Save and mark reviewed"
-msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Save and prepare resume"
@@ -11279,10 +11321,6 @@ msgstr "บันทึก {0} ลงในใบสมัครแล้ว"
 msgid "Saved a story: {0}"
 msgstr "บันทึกเรื่องราวแล้ว: {0}"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Saved and marked reviewed."
-msgstr ""
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Saved as an application and linked"
 msgstr "บันทึกเป็นใบสมัครงานและเชื่อมโยง"
@@ -11303,7 +11341,7 @@ msgstr "บันทึกเมื่อสักครู่"
 msgid "Saved offers"
 msgstr "ข้อเสนอที่บันทึกไว้"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
 msgstr ""
 
@@ -12421,7 +12459,7 @@ msgstr "จะเริ่มในอีกไม่ถึง {0} ชั่ว�
 msgid "Starts now"
 msgstr "เริ่มตอนนี้"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr ""
 
@@ -13458,7 +13496,7 @@ msgstr ""
 msgid "This question didn't finish."
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
 msgstr ""
 
@@ -13948,7 +13986,7 @@ msgstr "University of Porto"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Unknown"
 msgstr "ไม่ทราบ"
 
@@ -14013,6 +14051,14 @@ msgstr "มากถึง 25 MB · ตรวจสอบในเบราว�
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming interviews"
 msgstr "การสัมภาษณ์ที่จะเกิดขึ้น"
+
+#: src/features/settings/profile.tsx
+msgid "Update"
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Update posting details"
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Update resume"
@@ -14130,10 +14176,6 @@ msgstr "ใช้ไม่เกิน 64 อักขระ"
 msgid "Use between 6 and 64 characters."
 msgstr "ใช้ตัวอักษรระหว่าง 6 ถึง 64 ตัว"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Use Career preferences for work locations, office days, notice period and minimum base salary. Requested salary below is separate. Editing answers for one application does not update these global settings."
-msgstr ""
-
 #: src/components/input/color-picker.tsx
 msgid "Use color {color}"
 msgstr "ใช้สี {color}"
@@ -14243,6 +14285,7 @@ msgstr "การวิจัยผู้ใช้"
 
 #. Label for username input on registration form
 #: src/features/auth/pages/register.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 msgid "Username"
@@ -14744,7 +14787,7 @@ msgstr "ความกว้าง"
 msgid "Will my resume get past applicant tracking systems?"
 msgstr "ประวัติย่อของฉันจะผ่านระบบติดตามผู้สมัครหรือไม่"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Willing to relocate"
 msgstr ""
 
@@ -14760,7 +14803,7 @@ msgstr "หากไม่มี คุณจะกรอกชื่อผู�
 msgid "Words run together when the text is extracted."
 msgstr "คำต่าง ๆ ติดกันเมื่อแยกข้อความออกมา"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Work authorization and sponsorship"
 msgstr ""
 
@@ -14891,11 +14934,11 @@ msgstr ""
 msgid "Written offer"
 msgstr "ข้อเสนอเป็นลายลักษณ์อักษร"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Year"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Yes"
 msgstr ""
 

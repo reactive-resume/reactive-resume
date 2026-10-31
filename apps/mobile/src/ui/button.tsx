@@ -21,6 +21,7 @@ export type ButtonProps = {
 	/** Shows a spinner and blocks presses while an action runs. */
 	loading?: boolean | undefined;
 	fullWidth?: boolean | undefined;
+	expanded?: boolean | undefined;
 	accessibilityHint?: string | undefined;
 	testID?: string | undefined;
 };
@@ -45,6 +46,7 @@ export function Button({
 	disabled,
 	loading,
 	fullWidth,
+	expanded,
 	accessibilityHint,
 	testID,
 }: ButtonProps) {
@@ -76,7 +78,7 @@ export function Button({
 			accessibilityRole="button"
 			accessibilityLabel={label}
 			accessibilityHint={accessibilityHint}
-			accessibilityState={{ disabled: !!inactive, busy: !!loading }}
+			accessibilityState={{ disabled: !!inactive, busy: !!loading, expanded }}
 			disabled={inactive}
 			onPress={onPress}
 			testID={testID}

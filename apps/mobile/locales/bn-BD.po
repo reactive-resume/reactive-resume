@@ -921,6 +921,10 @@ msgstr "অর্জন"
 msgid "Account"
 msgstr "অ্যাকাউন্ট"
 
+#: app/(tabs)/settings/account.tsx
+msgid "Account details"
+msgstr ""
+
 #: src/features/career/stories.tsx
 msgid "Action"
 msgstr "পদক্ষেপ"
@@ -1252,6 +1256,7 @@ msgstr "জ্ঞানভান্ডারে যোগ করা হয়ে
 msgid "Additional details (optional)"
 msgstr "অতিরিক্ত বিবরণ (ঐচ্ছিক)"
 
+#: src/features/settings/application-profile.tsx
 #: src/features/share/link.tsx
 msgid "Address"
 msgstr "ঠিকানা"
@@ -1459,6 +1464,12 @@ msgstr "ইতিমধ্যেই আচ্ছাদিত · পৃষ্ঠ�
 msgid "Already covered:"
 msgstr "ইতিমধ্যেই অন্তর্ভুক্ত:"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/add-sheet.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/check/screen.tsx
 msgid "Also check the exported PDF"
 msgstr "এছাড়াও এক্সপোর্ট করা PDF চেক করুন"
@@ -1553,10 +1564,6 @@ msgstr ""
 #: src/features/workspace/tabs/saved.tsx
 msgid "Answers"
 msgstr "উত্তর"
-
-#: src/features/settings/application-profile.tsx
-msgid "Answers apply only to the country shown. A missing country has unknown answers."
-msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Answers copied"
@@ -1667,10 +1674,6 @@ msgstr ""
 msgid "Application phone"
 msgstr ""
 
-#: src/features/settings/application-profile.tsx
-msgid "Application profile deleted."
-msgstr ""
-
 #: src/features/assistant/coach-screen.tsx
 msgid "application summaries"
 msgstr "আবেদনের সারাংশ"
@@ -1682,10 +1685,6 @@ msgstr "আবেদন হালনাগাদ হয়েছে"
 #: src/features/applications-board/views.tsx
 msgid "Application views"
 msgstr "আবেদনের ভিউ"
-
-#: src/features/settings/application-profile.tsx
-msgid "Application-only details. Never added to public links, document exports or AI context automatically."
-msgstr ""
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
@@ -2035,10 +2034,6 @@ msgstr "আপনার ন্যূনতম বেস বেতনের ন�
 msgid "Bengali"
 msgstr "বাংলা"
 
-#: src/features/settings/application-profile.tsx
-msgid "Blank fields mean unknown. Nothing is inferred from your resume. Self-identification is not collected here. Enter references yourself and review their details before sharing."
-msgstr ""
-
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "বোর্ড"
@@ -2181,10 +2176,6 @@ msgstr "অনুরোধ বাতিল করুন"
 #: app/(tabs)/career/_layout.tsx
 msgid "Career"
 msgstr "ক্যারিয়ার"
-
-#: src/features/settings/application-profile.tsx
-msgid "Career preferences"
-msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -2764,12 +2755,9 @@ msgstr "সূত্রগুলো মেলানো হচ্ছে"
 msgid "Connection saved"
 msgstr "সংযোগ সংরক্ষিত"
 
-#: src/features/settings/application-profile.tsx
-msgid "Contact and address"
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
+#: src/features/settings/application-profile.tsx
 msgid "Contact details"
 msgstr "যোগাযোগের বিবরণ"
 
@@ -3702,11 +3690,11 @@ msgid "Delete permanently…"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
-msgid "Delete private application profile?"
+msgid "Delete profile"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
-msgid "Delete profile"
+msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -3834,6 +3822,10 @@ msgstr "ডিফল্টে ডিজাইন রিসেট"
 #: src/features/document-menu/index.tsx
 msgid "Details"
 msgstr "বিস্তারিত"
+
+#: src/features/settings/application-profile.tsx
+msgid "Details for your job application forms."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Didn't land"
@@ -4110,6 +4102,10 @@ msgstr "সর্বনাম বাদ দিয়ে ক্রিয়াপ
 msgid "Duplicate"
 msgstr "ডুপ্লিকেট"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 msgid "Duplicate resume"
 msgstr "জীবনবৃত্তান্ত ডুপ্লিকেট করুন"
@@ -4185,6 +4181,10 @@ msgid "Edit posting"
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
+msgid "Edit profile"
+msgstr ""
+
+#: src/features/workspace/tabs/apply.tsx
 msgid "Edit question"
 msgstr "প্রশ্ন সম্পাদনা করুন"
 
@@ -4235,6 +4235,7 @@ msgstr "শিক্ষা বিভাগেও প্রতিষ্ঠান 
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/letters/write.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Email"
 msgstr "ইমেইল"
@@ -5591,14 +5592,14 @@ msgstr "শেষ সম্পাদিত"
 msgid "Last reviewed"
 msgstr ""
 
-#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
-#: src/features/settings/application-profile.tsx
-msgid "Last reviewed: {0}"
-msgstr ""
-
 #. placeholder {0}: time.when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
+msgstr ""
+
+#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
+#: src/features/settings/application-profile.tsx
+msgid "Last updated: {0}"
 msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
@@ -6101,6 +6102,10 @@ msgstr "পরিচিতি পরিচালনা করুন"
 msgid "Manage lanes"
 msgstr "পর্যায় পরিচালনা করুন"
 
+#: src/features/settings/application-profile.tsx
+msgid "Manage profile"
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Managed by server"
 msgstr "সার্ভার দ্বারা পরিচালিত"
@@ -6455,6 +6460,7 @@ msgstr "আবেদন করা হয়েছে ধাপে সরাল�
 #: src/features/documents/new-document.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/settings/profile.tsx
 #: src/features/write/fields.ts
 msgid "Name"
@@ -6962,15 +6968,12 @@ msgstr "রেকর্ড করা হয়নি"
 msgid "Not recorded yet. Leave blank until you can support it."
 msgstr "এখনও রেকর্ড করা হয়নি. যতক্ষণ না আপনি এটি সমর্থন করতে পারেন ফাঁকা ছেড়ে দিন।"
 
-#: src/features/settings/application-profile.tsx
-msgid "Not reviewed yet"
-msgstr ""
-
 #: src/features/career/preferences.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Not saved"
 msgstr "সংরক্ষিত হয়নি"
 
+#: src/features/settings/application-profile.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Not saved yet"
 msgstr ""
@@ -7134,6 +7137,10 @@ msgstr "অফলাইন। সম্পাদনাগুলি এই ডি
 msgid "On"
 msgstr "চালু"
 
+#: src/features/applications/add-sheet.tsx
+msgid "On iOS, choose Keep for review, then reopen app in the Share extension. Reopen Reactive Resume yourself within 15 minutes. Sign in here before sharing."
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "On. Anyone with the link can see your web page."
 msgstr "চালু। লিঙ্ক আছে এমন যে কেউ আপনার ওয়েব পেজ দেখতে পারবে।"
@@ -7295,6 +7302,10 @@ msgstr "ফাইলটি Word এ খুলুন এবং প্রথমে
 msgid "Open the schedule"
 msgstr "সময়সূচি খুলুন"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "Open web page"
 msgstr "ওয়েব পেজ খুলুন"
@@ -7350,6 +7361,12 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providers.defaultProvider.label
+#. placeholder {1}: providers.defaultProvider.provider
+#: src/features/applications/add-sheet.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -7616,6 +7633,7 @@ msgid "Persian"
 msgstr "ফার্সি"
 
 #: src/features/letters/write.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/basics-screen.tsx
 #: src/features/write/fields.ts
 msgid "Phone"
@@ -7925,11 +7943,6 @@ msgstr "গোপনীয়তা"
 msgid "Privacy policy"
 msgstr "গোপনীয়তা নীতি"
 
-#: src/features/settings/application-profile.tsx
-#: src/features/workspace/tabs/apply.tsx
-msgid "Private application profile"
-msgstr ""
-
 #: src/features/document-menu/index.tsx
 msgid "Private. Only you can see it."
 msgstr "ব্যক্তিগত। শুধুমাত্র আপনি এটি দেখতে পারেন."
@@ -7943,10 +7956,15 @@ msgstr "প্রফেশনাল"
 msgid "Proficiency"
 msgstr "দক্ষতা (Proficiency)"
 
-#: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/index.tsx
+#: app/(tabs)/settings/profile.tsx
 #: src/features/search/search-screen.tsx
 msgid "Profile"
 msgstr "প্রোফাইল"
+
+#: src/features/settings/application-profile.tsx
+msgid "Profile deleted."
+msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Profile link (optional)"
@@ -7959,6 +7977,10 @@ msgstr "প্রোফাইল লিংক অবশ্যই পাবলি
 #: src/features/settings/profile.tsx
 msgid "Profile photo"
 msgstr "প্রোফাইল ফটো"
+
+#: src/features/settings/application-profile.tsx
+msgid "Profile saved."
+msgstr ""
 
 #: src/features/write/fields.ts
 msgid "Profiles"
@@ -8148,6 +8170,10 @@ msgstr "পৃষ্ঠাটি পড়ুন"
 msgid "Read the resume"
 msgstr "জীবনবৃত্তান্ত পড়া হয়েছে"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
 msgstr "পঠনযোগ্যতা"
@@ -8191,6 +8217,11 @@ msgstr "লেখা পড়া"
 #: src/features/documents/import-file.ts
 msgid "Reading this file with AI needs a tested AI provider. Set one up, then retry."
 msgstr "AI এর সাথে এই ফাইলটি পড়ার জন্য একজন পরীক্ষিত AI প্রদানকারীর প্রয়োজন৷ একটি সেট আপ, তারপর আবার চেষ্টা করুন."
+
+#: src/api/ai-consent.ts
+#: src/features/applications/error.ts
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "AI ছাড়া পড়া সম্ভব কি না নিশ্চিত করা যায়নি। আবার চেষ্টা করুন, সার্ভার আপডেট করুন অথবা তথ্য হাতে লিখুন।"
 
 #: src/features/ai/web-access.tsx
 msgid "Reading works"
@@ -8283,19 +8314,7 @@ msgstr "পুনরায় করুন"
 
 #. placeholder {0}: index + 1
 #: src/features/settings/application-profile.tsx
-msgid "Reference {0}: {label}"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference email"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference name"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference phone"
+msgid "Reference {0}"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
@@ -8352,6 +8371,10 @@ msgstr ""
 #: app/(tabs)/settings/preferences.tsx
 msgid "Reload now"
 msgstr "এখন রিলোড করুন"
+
+#: src/features/settings/application-profile.tsx
+msgid "Relocation"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/workspace/tabs/debrief.tsx
@@ -8744,6 +8767,7 @@ msgstr "{1} ব্যবহার করে {0} পুনরুদ্ধার �
 
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -9041,6 +9065,7 @@ msgstr "নমুনা জীবনবৃত্তান্ত"
 #: src/features/documents/document-sheets.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/pickers.tsx
 msgid "Save"
 msgstr "সংরক্ষণ করুন"
@@ -9060,10 +9085,6 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
 msgstr "কোনো পাসওয়ার্ড বা অনুমতি সীমাবদ্ধতা ছাড়াই একটি অসুরক্ষিত কপি সংরক্ষণ করুন।"
-
-#: src/features/settings/application-profile.tsx
-msgid "Save and mark reviewed"
-msgstr ""
 
 #: src/features/ai/provider-editor.tsx
 msgid "Save and test"
@@ -9181,10 +9202,6 @@ msgstr "সংরক্ষিত"
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "গল্প সংরক্ষিত: {title}"
-
-#: src/features/settings/application-profile.tsx
-msgid "Saved and marked reviewed."
-msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
@@ -9599,6 +9616,10 @@ msgstr ""
 msgid "Share enabled shared Knowledge"
 msgstr ""
 
+#: src/features/applications/incoming-posting.tsx
+msgid "Share one posting URL or selected text. Files, multiple postings and unsupported URL parameters need explicit URL or pasted-text import in Applications."
+msgstr ""
+
 #: src/features/share/download.tsx
 msgid "Share PDF"
 msgstr "পিডিএফ শেয়ার করুন"
@@ -9619,11 +9640,20 @@ msgstr "শেয়ার রেকর্ডিং"
 msgid "Share via…"
 msgstr "এর মাধ্যমে শেয়ার করুন..."
 
+#. placeholder {0}: session.server
+#: src/features/applications/add-sheet.tsx
+msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
 msgid "Sharing"
 msgstr "শেয়ারিং"
+
+#: src/features/applications/incoming-posting.tsx
+msgid "Sharing could not be read. Update the app or paste the posting in Applications."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sharpening the opening"
@@ -11513,6 +11543,14 @@ msgstr "ডকুমেন্ট প্রতি 20টি ট্যাগ পর
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr "25 MB পর্যন্ত · সার্ভারে চেক করা হয়েছে এবং সংরক্ষণ করা হয়নি"
 
+#: src/features/settings/application-profile.tsx
+msgid "Update"
+msgstr ""
+
+#: src/features/applications/add-sheet.tsx
+msgid "Update posting details"
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "আবেদনগুলো নিজস্ব পর্যায়ে সরানোর আগে আপনার সার্ভার হালনাগাদ করুন।"
@@ -11626,10 +11664,6 @@ msgstr "কমপক্ষে 9pt ব্যবহার করুন।"
 msgid "Use at most 64 characters."
 msgstr "সর্বোচ্চ 64টি অক্ষর ব্যবহার করুন।"
 
-#: src/features/settings/application-profile.tsx
-msgid "Use Career preferences for work locations, office days, notice period and minimum base salary. Requested salary below is separate. Editing answers for one application does not update these global settings."
-msgstr ""
-
 #: src/features/letters/write.tsx
 msgid "Use default"
 msgstr "ডিফল্ট ব্যবহার করুন"
@@ -11728,6 +11762,10 @@ msgstr "এই প্রদানকারী ব্যবহার করুন
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "এই সময় ব্যবহার করুন"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."

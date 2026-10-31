@@ -1214,6 +1214,10 @@ msgstr "Accomplishment"
 msgid "Account"
 msgstr "Account"
 
+#: src/features/settings/account/profile.tsx
+msgid "Account details"
+msgstr "Account details"
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Action"
@@ -1394,7 +1398,7 @@ msgstr "Add an interview to plan for it"
 msgid "Add application"
 msgstr "Add application"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add authorization country"
 msgstr "Add authorization country"
 
@@ -1463,7 +1467,7 @@ msgstr "Add keyword"
 msgid "Add language"
 msgstr "Add language"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr "Add link"
 
@@ -1516,7 +1520,7 @@ msgid "Add publication"
 msgstr "Add publication"
 
 #: src/features/resume/editor/write/outline.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add reference"
 msgstr "Add reference"
 
@@ -1626,18 +1630,19 @@ msgid "Added to Knowledge as an experience."
 msgstr "Added to Knowledge as an experience."
 
 #: src/features/resume/share/address-field.tsx
+#: src/features/settings/profile.tsx
 msgid "Address"
 msgstr "Address"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address country"
 msgstr "Address country"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address line 1"
 msgstr "Address line 1"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address line 2"
 msgstr "Address line 2"
 
@@ -1841,6 +1846,12 @@ msgstr "Already have an account? <0/>"
 msgid "Already interviewing"
 msgstr "Already interviewing"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr "Already tracked: {0} at {1}. Open it or update only its posting details."
+
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Also check the exported PDF"
 msgstr "Also check the exported PDF"
@@ -1940,10 +1951,6 @@ msgstr "Answer source"
 #: src/features/career/workspace/saved.tsx
 msgid "Answers"
 msgstr "Answers"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Answers apply only to the country shown. A missing country has unknown answers."
-msgstr "Answers apply only to the country shown. A missing country has unknown answers."
 
 #: src/features/career/workspace/apply.tsx
 msgid "Answers copied"
@@ -2085,7 +2092,8 @@ msgstr "Application deleted"
 msgid "Application details"
 msgstr "Application details"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 msgid "Application email"
 msgstr "Application email"
 
@@ -2093,17 +2101,13 @@ msgstr "Application email"
 msgid "Application options"
 msgstr "Application options"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Application phone"
 msgstr "Application phone"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Application preparation"
 msgstr "Application preparation"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Application profile deleted."
-msgstr "Application profile deleted."
 
 #: src/features/career/coach.tsx
 msgid "application summaries"
@@ -2117,10 +2121,6 @@ msgstr "Application tabs"
 #: src/features/career/workspace/messages.tsx
 msgid "Application updated"
 msgstr "Application updated"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Application-only details. Never added to public links, document exports or AI context automatically."
-msgstr "Application-only details. Never added to public links, document exports or AI context automatically."
 
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
@@ -2358,7 +2358,7 @@ msgid "Attachment"
 msgstr "Attachment"
 
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
 msgstr "Authorized to work in {0}"
 
@@ -2503,10 +2503,6 @@ msgstr "Bengali"
 #: src/features/resume/share/download-tab.tsx
 msgid "Best for applying"
 msgstr "Best for applying"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Blank fields mean unknown. Nothing is inferred from your resume. Self-identification is not collected here. Enter references yourself and review their details before sharing."
-msgstr "Blank fields mean unknown. Nothing is inferred from your resume. Self-identification is not collected here. Enter references yourself and review their details before sharing."
 
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
@@ -2679,12 +2675,20 @@ msgstr "Can software read your resume?"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/settings/account/application-profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
+#: src/features/settings/profile.tsx
 #: src/hooks/use-confirm.tsx
 msgid "Cancel"
 msgstr "Cancel"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
+msgstr "Capture a posting from your browser with the helper, or paste its URL/text below."
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Capture does not use AI. Review every field before saving."
+msgstr "Capture does not use AI. Review every field before saving."
 
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -2699,10 +2703,6 @@ msgstr "Career coach (your key)"
 #: src/features/homepage/hero.tsx
 msgid "career manager."
 msgstr "career manager."
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Career preferences"
-msgstr "Career preferences"
 
 #: src/libs/locale.ts
 msgid "Catalan"
@@ -2826,7 +2826,7 @@ msgstr "Check any PDF, no account needed"
 msgid "Check DNS"
 msgstr "Check DNS"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 
@@ -2941,7 +2941,7 @@ msgstr "Choose a base resume"
 msgid "Choose a connection"
 msgstr "Choose a connection"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Choose a country"
 msgstr "Choose a country"
 
@@ -3014,7 +3014,7 @@ msgstr "Circle"
 msgid "Cited as already shown · check it"
 msgstr "Cited as already shown · check it"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "City"
 msgstr "City"
 
@@ -3195,7 +3195,7 @@ msgstr "Compact"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/design/entries-group.tsx
 #: src/features/resume/editor/write/entries.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Company"
 msgstr "Company"
@@ -3366,12 +3366,9 @@ msgstr "Connections bill speech separately and may use tokens on your account. Y
 msgid "Contact"
 msgstr "Contact"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Contact and address"
-msgstr "Contact and address"
-
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
+#: src/features/settings/profile.tsx
 msgid "Contact details"
 msgstr "Contact details"
 
@@ -3618,7 +3615,7 @@ msgstr "Couldn't change this schedule. Try again."
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "Couldn't change your password. Check your current password and try again."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 
@@ -3822,7 +3819,7 @@ msgstr "Couldn't load your stages, so the standard ones are shown. Try again."
 msgid "Couldn't load your stages."
 msgstr "Couldn't load your stages."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr "Couldn't load. Try again."
 
@@ -4006,6 +4003,7 @@ msgid "Couldn't save this schedule. Try again."
 msgstr "Couldn't save this schedule. Try again."
 
 #: src/features/letters/store.ts
+#: src/features/resume/builder/draft.ts
 #: src/features/resume/share/history-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -4154,6 +4152,10 @@ msgstr "Couldn't update the interview. Try again."
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Couldn't update the letter. Try again."
 msgstr "Couldn't update the letter. Try again."
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Couldn't update the posting. Try again."
+msgstr "Couldn't update the posting. Try again."
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't update the preview. The last working version is still shown. Edit anything to try again."
@@ -4336,7 +4338,7 @@ msgstr "CSV data"
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Currency"
 msgstr "Currency"
 
@@ -4563,13 +4565,13 @@ msgstr "Delete page"
 msgid "Delete permanently…"
 msgstr "Delete permanently…"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Delete private application profile?"
-msgstr "Delete private application profile?"
-
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Delete profile"
 msgstr "Delete profile"
+
+#: src/features/settings/profile.tsx
+msgid "Delete profile?"
+msgstr "Delete profile?"
 
 #: src/features/settings/ai/providers.tsx
 msgid "Delete provider"
@@ -4717,6 +4719,10 @@ msgstr "Design systems"
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Details"
 msgstr "Details"
+
+#: src/features/settings/profile.tsx
+msgid "Details for your job application forms."
+msgstr "Details for your job application forms."
 
 #. Label above the raw error text forwarded by the identity provider
 #: src/features/auth/pages/error.tsx
@@ -4881,6 +4887,10 @@ msgstr "Download & history"
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download application details, contacts, notes, and timeline history as CSV."
 msgstr "Download application details, contacts, notes, and timeline history as CSV."
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Download browser helper"
+msgstr "Download browser helper"
 
 #. Action button to download two-factor backup codes as a text file
 #: src/dialogs/auth/enable-two-factor.tsx
@@ -5049,6 +5059,10 @@ msgstr "Drop to import"
 msgid "Duplicate"
 msgstr "Duplicate"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr "Duplicate check unavailable. Retry before saving; your server may need updating."
+
 #: src/dialogs/resume/index.tsx
 msgid "Duplicate resume"
 msgstr "Duplicate resume"
@@ -5164,6 +5178,10 @@ msgid "Edit posting"
 msgstr "Edit posting"
 
 #: src/features/career/workspace/apply.tsx
+msgid "Edit profile"
+msgstr "Edit profile"
+
+#: src/features/career/workspace/apply.tsx
 msgid "Edit question"
 msgstr "Edit question"
 
@@ -5246,6 +5264,7 @@ msgstr "Education swaps school and field of study the same way."
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/settings/account/profile.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Email"
 msgstr "Email"
@@ -5541,7 +5560,7 @@ msgstr "Export PNG"
 msgid "Export saved answers"
 msgstr "Export saved answers"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Export saved profile"
 msgstr "Export saved profile"
 
@@ -5608,7 +5627,7 @@ msgstr "Facts, stories and preferences that are switched on in Knowledge"
 msgid "Failed"
 msgstr "Failed"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr "Family name"
 
@@ -6106,7 +6125,7 @@ msgstr "Give every role and qualification a date range."
 msgid "Give the story a title before you can save."
 msgstr "Give the story a title before you can save."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Given name"
 msgstr "Given name"
 
@@ -6355,7 +6374,7 @@ msgstr "Horizontal spacing"
 msgid "Hosting and development are paid for by people like you. Optional tip:"
 msgstr "Hosting and development are paid for by people like you. Optional tip:"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Hour"
 msgstr "Hour"
 
@@ -7112,15 +7131,15 @@ msgstr "Last edited"
 msgid "Last reviewed"
 msgstr "Last reviewed"
 
-#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
-#: src/features/settings/account/application-profile.tsx
-msgid "Last reviewed: {0}"
-msgstr "Last reviewed: {0}"
-
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
 msgstr "Last seen in search: {0}"
+
+#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
+#: src/features/settings/profile.tsx
+msgid "Last updated: {0}"
+msgstr "Last updated: {0}"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
@@ -7354,12 +7373,12 @@ msgid "Link"
 msgstr "Link"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Link {0} label"
 msgstr "Link {0} label"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Link {0} URL"
 msgstr "Link {0} URL"
 
@@ -7456,7 +7475,7 @@ msgid "Linking…"
 msgstr "Linking…"
 
 #: src/features/resume/editor/check/parser-view.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Links"
 msgstr "Links"
 
@@ -7580,7 +7599,7 @@ msgstr "Loading workspace…"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Loading…"
 msgstr "Loading…"
 
@@ -7709,6 +7728,10 @@ msgstr "Malay"
 #: src/libs/locale.ts
 msgid "Malayalam"
 msgstr "Malayalam"
+
+#: src/features/settings/profile.tsx
+msgid "Manage profile"
+msgstr "Manage profile"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Manage stages"
@@ -7913,7 +7936,7 @@ msgstr "Model: {label}"
 msgid "Mono"
 msgstr "Mono"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Month"
 msgstr "Month"
 
@@ -8084,6 +8107,7 @@ msgstr "My job was to find out why, without adding support work."
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/auth/pages/register.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
@@ -8093,6 +8117,7 @@ msgstr "My job was to find out why, without adding support work."
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Name"
 
@@ -8167,7 +8192,7 @@ msgid "Needs attention"
 msgstr "Needs attention"
 
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Needs sponsorship in {0}"
 msgstr "Needs sponsorship in {0}"
 
@@ -8300,7 +8325,7 @@ msgstr "Next step: {0}. Adds a reminder to Today."
 msgid "Next time, I’d agree how to measure success before the first prototype."
 msgstr "Next time, I’d agree how to measure success before the first prototype."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "No"
 msgstr "No"
 
@@ -8677,10 +8702,6 @@ msgstr "Not now"
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "Not recorded yet. Leave it blank until you can support it."
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Not reviewed yet"
-msgstr "Not reviewed yet"
-
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -8692,6 +8713,7 @@ msgid "Not saved — this fact was forgotten before."
 msgstr "Not saved — this fact was forgotten before."
 
 #: src/features/career/workspace/preparation.tsx
+#: src/features/settings/profile.tsx
 msgid "Not saved yet"
 msgstr "Not saved yet"
 
@@ -9055,6 +9077,10 @@ msgstr "Open the Reactive Resume app"
 msgid "Open the schedule"
 msgstr "Open the schedule"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Open tracked job"
+msgstr "Open tracked job"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Open web page"
 msgstr "Open web page"
@@ -9104,6 +9130,12 @@ msgstr "Optional · none selected"
 #: src/features/career/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
 msgstr "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+
+#. placeholder {0}: providerState.usableProviders[0].label
+#. placeholder {1}: providerState.usableProviders[0].provider
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
+msgstr "Optional AI sends only this posting to {0} ({1})."
 
 #: src/features/settings/ai/providers.tsx
 msgid "Optional for local Ollama"
@@ -9411,7 +9443,7 @@ msgstr "Paused schedules keep their settings."
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Pay period"
 msgstr "Pay period"
 
@@ -9455,6 +9487,7 @@ msgstr "Persian"
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/resume/share/web-page-preview.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Phone"
 msgstr "Phone"
@@ -9462,6 +9495,10 @@ msgstr "Phone"
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Phone (optional)"
 msgstr "Phone (optional)"
+
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Photo"
+msgstr "Photo"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Photo hidden"
@@ -9578,7 +9615,7 @@ msgstr "Portuguese (Portugal)"
 msgid "Position"
 msgstr "Position"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Postal code"
 msgstr "Postal code"
 
@@ -9800,11 +9837,6 @@ msgstr "Privacy policy"
 msgid "Private"
 msgstr "Private"
 
-#: src/features/career/workspace/apply.tsx
-#: src/features/settings/account/application-profile.tsx
-msgid "Private application profile"
-msgstr "Private application profile"
-
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Private. Only you can see it."
 msgstr "Private. Only you can see it."
@@ -9830,9 +9862,15 @@ msgstr "Proficiency"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/features/settings/account/profile.tsx
+#: src/features/settings/profile.tsx
+#: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "Profile"
+
+#: src/features/settings/profile.tsx
+msgid "Profile deleted."
+msgstr "Profile deleted."
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile link (optional)"
@@ -9846,6 +9884,10 @@ msgstr "Profile link of person {0}"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile links must be public HTTPS addresses."
 msgstr "Profile links must be public HTTPS addresses."
+
+#: src/features/settings/profile.tsx
+msgid "Profile saved."
+msgstr "Profile saved."
 
 #: src/libs/resume/section.tsx
 msgid "Profiles"
@@ -10111,6 +10153,10 @@ msgstr "Read the resume"
 msgid "Read the self-hosting guide"
 msgstr "Read the self-hosting guide"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Read with AI"
+msgstr "Read with AI"
+
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
 msgstr "Read your email address."
@@ -10185,6 +10231,10 @@ msgstr "Reading the text"
 #: src/features/career/shared.tsx
 msgid "Reading what you shared"
 msgstr "Reading what you shared"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
 
 #: src/features/resume/import/read-file.ts
 msgid "Reading Word files needs an AI provider. Set one up in Settings, or import a PDF or JSON file instead."
@@ -10298,23 +10348,12 @@ msgid "Redo resume change"
 msgstr "Redo resume change"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference {0}: {label}"
-msgstr "Reference {0}: {label}"
+#: src/features/settings/profile.tsx
+msgid "Reference {0}"
+msgstr "Reference {0}"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference email"
-msgstr "Reference email"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference name"
-msgstr "Reference name"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference phone"
-msgstr "Reference phone"
-
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 #: src/libs/resume/section.tsx
 msgid "References"
 msgstr "References"
@@ -10368,7 +10407,7 @@ msgstr "Reject"
 msgid "Rejected"
 msgstr "Rejected"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Relationship"
 msgstr "Relationship"
 
@@ -10377,7 +10416,7 @@ msgstr "Relationship"
 msgid "Reload"
 msgstr "Reload"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Reload and discard unsaved changes"
 msgstr "Reload and discard unsaved changes"
 
@@ -10385,6 +10424,10 @@ msgstr "Reload and discard unsaved changes"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
 msgstr "Reload the saved version?"
+
+#: src/features/settings/profile.tsx
+msgid "Relocation"
+msgstr "Relocation"
 
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
@@ -10454,8 +10497,8 @@ msgstr "Remove “{name}”?"
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
-#: src/features/settings/account/application-profile.tsx
 #: src/features/settings/account/security.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove {0}"
 msgstr "Remove {0}"
 
@@ -10490,7 +10533,7 @@ msgid "Remove file"
 msgstr "Remove file"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove link {0}"
 msgstr "Remove link {0}"
 
@@ -10517,7 +10560,7 @@ msgid "Remove question"
 msgstr "Remove question"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove reference {0}"
 msgstr "Remove reference {0}"
 
@@ -10627,11 +10670,12 @@ msgstr "Reply copied"
 msgid "Report a bug"
 msgstr "Report a bug"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Requested amount"
 msgstr "Requested amount"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 msgid "Requested salary"
 msgstr "Requested salary"
 
@@ -10832,6 +10876,7 @@ msgstr "Retrieved {0} using {1}. Retrieval time does not establish origin freshn
 msgid "Retrieved {0}. Origin freshness is unknown unless reported."
 msgstr "Retrieved {0}. Origin freshness is unknown unless reported."
 
+#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
@@ -11103,6 +11148,7 @@ msgstr "Sample resume added. Delete it anytime."
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/share/history-tab.tsx
+#: src/features/settings/profile.tsx
 msgid "Save"
 msgstr "Save"
 
@@ -11122,10 +11168,6 @@ msgstr "Save an unprotected copy, with no password and no permissions restrictio
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save and link"
 msgstr "Save and link"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Save and mark reviewed"
-msgstr "Save and mark reviewed"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Save and prepare resume"
@@ -11274,10 +11316,6 @@ msgstr "Saved {0} to Applications"
 msgid "Saved a story: {0}"
 msgstr "Saved a story: {0}"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Saved and marked reviewed."
-msgstr "Saved and marked reviewed."
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Saved as an application and linked"
 msgstr "Saved as an application and linked"
@@ -11298,7 +11336,7 @@ msgstr "Saved just now"
 msgid "Saved offers"
 msgstr "Saved offers"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
 msgstr "Saved profile reloaded. Unsaved changes discarded."
 
@@ -12416,7 +12454,7 @@ msgstr "Starts in under {0} hours, so the briefing runs now."
 msgid "Starts now"
 msgstr "Starts now"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr "State or region"
 
@@ -13453,7 +13491,7 @@ msgstr "This question couldn't be asked. Send a new message to continue."
 msgid "This question didn't finish."
 msgstr "This question didn't finish."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
 msgstr "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
 
@@ -13943,7 +13981,7 @@ msgstr "University of Porto"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Unknown"
 msgstr "Unknown"
 
@@ -14008,6 +14046,14 @@ msgstr "Up to 25 MB · checked in your browser, never uploaded"
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming interviews"
 msgstr "Upcoming interviews"
+
+#: src/features/settings/profile.tsx
+msgid "Update"
+msgstr "Update"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Update posting details"
+msgstr "Update posting details"
 
 #: src/dialogs/resume/index.tsx
 msgid "Update resume"
@@ -14125,10 +14171,6 @@ msgstr "Use at most 64 characters."
 msgid "Use between 6 and 64 characters."
 msgstr "Use between 6 and 64 characters."
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Use Career preferences for work locations, office days, notice period and minimum base salary. Requested salary below is separate. Editing answers for one application does not update these global settings."
-msgstr "Use Career preferences for work locations, office days, notice period and minimum base salary. Requested salary below is separate. Editing answers for one application does not update these global settings."
-
 #: src/components/input/color-picker.tsx
 msgid "Use color {color}"
 msgstr "Use color {color}"
@@ -14238,6 +14280,7 @@ msgstr "User research"
 
 #. Label for username input on registration form
 #: src/features/auth/pages/register.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 msgid "Username"
@@ -14739,7 +14782,7 @@ msgstr "Width"
 msgid "Will my resume get past applicant tracking systems?"
 msgstr "Will my resume get past applicant tracking systems?"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Willing to relocate"
 msgstr "Willing to relocate"
 
@@ -14755,7 +14798,7 @@ msgstr "Without one, you fill in the recipient yourself and drafting uses only y
 msgid "Words run together when the text is extracted."
 msgstr "Words run together when the text is extracted."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Work authorization and sponsorship"
 msgstr "Work authorization and sponsorship"
 
@@ -14886,11 +14929,11 @@ msgstr "Written manually"
 msgid "Written offer"
 msgstr "Written offer"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Year"
 msgstr "Year"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Yes"
 msgstr "Yes"
 

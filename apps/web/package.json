@@ -4,7 +4,7 @@
 	"type": "module",
 	"private": true,
 	"scripts": {
-		"build": "vp build",
+		"build": "pnpm --filter @reactive-resume/tooling capture:build && vp build",
 		"dev": "vp dev",
 		"serve": "vp preview",
 		"start": "vp preview",

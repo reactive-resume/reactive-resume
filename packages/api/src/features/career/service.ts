@@ -23,6 +23,7 @@ import { countryForTimeZone } from "@reactive-resume/utils/region";
 import { generateId } from "@reactive-resume/utils/string";
 import { requestRunCancellation } from "../agent/cancellation";
 import { aiProvidersService } from "../ai-providers/service";
+import { findTrackedPosting } from "../applications/duplicates";
 import { applicationTransitionValues, ensureApplicationPipeline } from "../applications/lanes";
 import { applicationService, recordSentResume } from "../applications/service";
 import { lockUser } from "../documents/ownership";
@@ -1156,19 +1157,21 @@ export const careerService = {
 				throw new ORPCError("CONFLICT", { message: "This role was dismissed. Refresh the review queue." });
 			const [profile] = await tx.select().from(tables.careerProfile).where(eq(tables.careerProfile.userId, userId));
 			const { matches } = matchPosting(opportunity, careerProfileDataSchema.parse(profile?.data ?? {}));
-			const applicationId = generateId();
+			const duplicate = await findTrackedPosting(tx, userId, opportunity.url);
+			const applicationId = duplicate?.id ?? generateId();
 			const { values } = await applicationTransitionValues(tx, userId, { status: "saved" });
-			await tx.insert(tables.application).values({
-				id: applicationId,
-				userId,
-				company: opportunity.company || new URL(opportunity.url).hostname.replace(/^www\./, ""),
-				role: opportunity.role,
-				location: opportunity.location || null,
-				sourceUrl: opportunity.url,
-				jobDescription: opportunity.description || opportunity.snippet,
-				...values,
-				...(matches.length ? { notes: `Matched: ${matches.join(" · ")}` } : {}),
-			});
+			if (!duplicate)
+				await tx.insert(tables.application).values({
+					id: applicationId,
+					userId,
+					company: opportunity.company || new URL(opportunity.url).hostname.replace(/^www\./, ""),
+					role: opportunity.role,
+					location: opportunity.location || null,
+					sourceUrl: opportunity.url,
+					jobDescription: opportunity.description || opportunity.snippet,
+					...values,
+					...(matches.length ? { notes: `Matched: ${matches.join(" · ")}` } : {}),
+				});
 			await tx
 				.update(tables.careerOpportunity)
 				.set({ trackedApplicationId: applicationId })

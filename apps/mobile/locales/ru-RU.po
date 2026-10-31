@@ -921,6 +921,10 @@ msgstr "Достижение"
 msgid "Account"
 msgstr "Аккаунт"
 
+#: app/(tabs)/settings/account.tsx
+msgid "Account details"
+msgstr ""
+
 #: src/features/career/stories.tsx
 msgid "Action"
 msgstr "Действие"
@@ -1252,6 +1256,7 @@ msgstr "Добавлен в Знания."
 msgid "Additional details (optional)"
 msgstr "Дополнительные сведения (необязательно)"
 
+#: src/features/settings/application-profile.tsx
 #: src/features/share/link.tsx
 msgid "Address"
 msgstr "Адрес"
@@ -1459,6 +1464,12 @@ msgstr "Уже рассмотрено · выберите один, чтобы �
 msgid "Already covered:"
 msgstr "Уже охвачено:"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/add-sheet.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/check/screen.tsx
 msgid "Also check the exported PDF"
 msgstr "Также проверьте экспортированный PDF."
@@ -1553,10 +1564,6 @@ msgstr ""
 #: src/features/workspace/tabs/saved.tsx
 msgid "Answers"
 msgstr "Ответы"
-
-#: src/features/settings/application-profile.tsx
-msgid "Answers apply only to the country shown. A missing country has unknown answers."
-msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Answers copied"
@@ -1667,10 +1674,6 @@ msgstr ""
 msgid "Application phone"
 msgstr ""
 
-#: src/features/settings/application-profile.tsx
-msgid "Application profile deleted."
-msgstr ""
-
 #: src/features/assistant/coach-screen.tsx
 msgid "application summaries"
 msgstr "сводки по заявкам"
@@ -1682,10 +1685,6 @@ msgstr "Заявка обновлена"
 #: src/features/applications-board/views.tsx
 msgid "Application views"
 msgstr "Виды заявок"
-
-#: src/features/settings/application-profile.tsx
-msgid "Application-only details. Never added to public links, document exports or AI context automatically."
-msgstr ""
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
@@ -2035,10 +2034,6 @@ msgstr "Меньше вашей минимальной базовой зарпл
 msgid "Bengali"
 msgstr "Бенгальский"
 
-#: src/features/settings/application-profile.tsx
-msgid "Blank fields mean unknown. Nothing is inferred from your resume. Self-identification is not collected here. Enter references yourself and review their details before sharing."
-msgstr ""
-
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Доска"
@@ -2181,10 +2176,6 @@ msgstr "Отменить запрос"
 #: app/(tabs)/career/_layout.tsx
 msgid "Career"
 msgstr "Карьера"
-
-#: src/features/settings/application-profile.tsx
-msgid "Career preferences"
-msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -2764,12 +2755,9 @@ msgstr "Соединяем точки"
 msgid "Connection saved"
 msgstr "Соединение сохранено"
 
-#: src/features/settings/application-profile.tsx
-msgid "Contact and address"
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
+#: src/features/settings/application-profile.tsx
 msgid "Contact details"
 msgstr "Контактные данные"
 
@@ -3702,11 +3690,11 @@ msgid "Delete permanently…"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
-msgid "Delete private application profile?"
+msgid "Delete profile"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
-msgid "Delete profile"
+msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -3834,6 +3822,10 @@ msgstr "Сброс дизайна до настроек по умолчанию"
 #: src/features/document-menu/index.tsx
 msgid "Details"
 msgstr "Подробности"
+
+#: src/features/settings/application-profile.tsx
+msgid "Details for your job application forms."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Didn't land"
@@ -4110,6 +4102,10 @@ msgstr "Уберите местоимения и начинайте с глаг�
 msgid "Duplicate"
 msgstr "Дублировать"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 msgid "Duplicate resume"
 msgstr "Дублировать резюме"
@@ -4185,6 +4181,10 @@ msgid "Edit posting"
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
+msgid "Edit profile"
+msgstr ""
+
+#: src/features/workspace/tabs/apply.tsx
 msgid "Edit question"
 msgstr "Редактировать вопрос"
 
@@ -4235,6 +4235,7 @@ msgstr "В разделе «Образование» учебное заведе
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/letters/write.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Email"
 msgstr "Эл. почта"
@@ -5591,14 +5592,14 @@ msgstr "Последнее редактирование"
 msgid "Last reviewed"
 msgstr ""
 
-#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
-#: src/features/settings/application-profile.tsx
-msgid "Last reviewed: {0}"
-msgstr ""
-
 #. placeholder {0}: time.when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
+msgstr ""
+
+#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
+#: src/features/settings/application-profile.tsx
+msgid "Last updated: {0}"
 msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
@@ -6101,6 +6102,10 @@ msgstr "Управление контактами"
 msgid "Manage lanes"
 msgstr "Управление этапами"
 
+#: src/features/settings/application-profile.tsx
+msgid "Manage profile"
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Managed by server"
 msgstr "Управляется сервером"
@@ -6455,6 +6460,7 @@ msgstr "При переходе в «Отклик отправлен» нужн�
 #: src/features/documents/new-document.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/settings/profile.tsx
 #: src/features/write/fields.ts
 msgid "Name"
@@ -6962,15 +6968,12 @@ msgstr "Не записано"
 msgid "Not recorded yet. Leave blank until you can support it."
 msgstr "Еще не записано. Оставьте поле пустым, пока не получите доказательства."
 
-#: src/features/settings/application-profile.tsx
-msgid "Not reviewed yet"
-msgstr ""
-
 #: src/features/career/preferences.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Not saved"
 msgstr "Не сохранено"
 
+#: src/features/settings/application-profile.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Not saved yet"
 msgstr ""
@@ -7134,6 +7137,10 @@ msgstr "не в сети. Изменения сохраняются на это�
 msgid "On"
 msgstr "Вкл."
 
+#: src/features/applications/add-sheet.tsx
+msgid "On iOS, choose Keep for review, then reopen app in the Share extension. Reopen Reactive Resume yourself within 15 minutes. Sign in here before sharing."
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "On. Anyone with the link can see your web page."
 msgstr "Включено. Вашу веб-страницу может открыть любой, у кого есть ссылка."
@@ -7295,6 +7302,10 @@ msgstr "Откройте файл в Word и сначала сохраните �
 msgid "Open the schedule"
 msgstr "Открыть расписание"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "Open web page"
 msgstr "Открыть веб-страницу"
@@ -7350,6 +7361,12 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providers.defaultProvider.label
+#. placeholder {1}: providers.defaultProvider.provider
+#: src/features/applications/add-sheet.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -7616,6 +7633,7 @@ msgid "Persian"
 msgstr "Персидский"
 
 #: src/features/letters/write.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/basics-screen.tsx
 #: src/features/write/fields.ts
 msgid "Phone"
@@ -7925,11 +7943,6 @@ msgstr "Конфиденциальность"
 msgid "Privacy policy"
 msgstr "Политика конфиденциальности"
 
-#: src/features/settings/application-profile.tsx
-#: src/features/workspace/tabs/apply.tsx
-msgid "Private application profile"
-msgstr ""
-
 #: src/features/document-menu/index.tsx
 msgid "Private. Only you can see it."
 msgstr "Частный. Только вы можете это увидеть."
@@ -7943,10 +7956,15 @@ msgstr "Профессиональный"
 msgid "Proficiency"
 msgstr "Компетентность"
 
-#: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/index.tsx
+#: app/(tabs)/settings/profile.tsx
 #: src/features/search/search-screen.tsx
 msgid "Profile"
 msgstr "Профиль"
+
+#: src/features/settings/application-profile.tsx
+msgid "Profile deleted."
+msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Profile link (optional)"
@@ -7959,6 +7977,10 @@ msgstr "Ссылки на профили должны быть публичны�
 #: src/features/settings/profile.tsx
 msgid "Profile photo"
 msgstr "Фото профиля"
+
+#: src/features/settings/application-profile.tsx
+msgid "Profile saved."
+msgstr ""
 
 #: src/features/write/fields.ts
 msgid "Profiles"
@@ -8148,6 +8170,10 @@ msgstr "Прочитать страницу"
 msgid "Read the resume"
 msgstr "Прочитал резюме"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
 msgstr "Читаемость"
@@ -8191,6 +8217,11 @@ msgstr "Чтение текста"
 #: src/features/documents/import-file.ts
 msgid "Reading this file with AI needs a tested AI provider. Set one up, then retry."
 msgstr "Для чтения этого файла с помощью AI необходим проверенный провайдер AI. Настройте его и повторите попытку."
+
+#: src/api/ai-consent.ts
+#: src/features/applications/error.ts
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "Не удалось подтвердить чтение без ИИ. Повторите попытку, обновите сервер или введите данные вручную."
 
 #: src/features/ai/web-access.tsx
 msgid "Reading works"
@@ -8283,19 +8314,7 @@ msgstr "Повторить"
 
 #. placeholder {0}: index + 1
 #: src/features/settings/application-profile.tsx
-msgid "Reference {0}: {label}"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference email"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference name"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference phone"
+msgid "Reference {0}"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
@@ -8352,6 +8371,10 @@ msgstr ""
 #: app/(tabs)/settings/preferences.tsx
 msgid "Reload now"
 msgstr "Перезагрузить сейчас"
+
+#: src/features/settings/application-profile.tsx
+msgid "Relocation"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/workspace/tabs/debrief.tsx
@@ -8744,6 +8767,7 @@ msgstr "Получен {0} с помощью {1}. Время поиска не �
 
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -9041,6 +9065,7 @@ msgstr "Образец резюме"
 #: src/features/documents/document-sheets.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/pickers.tsx
 msgid "Save"
 msgstr "Сохранить"
@@ -9060,10 +9085,6 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
 msgstr "Сохраните незащищённую копию — без пароля и ограничений доступа."
-
-#: src/features/settings/application-profile.tsx
-msgid "Save and mark reviewed"
-msgstr ""
 
 #: src/features/ai/provider-editor.tsx
 msgid "Save and test"
@@ -9181,10 +9202,6 @@ msgstr "Сохранено"
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "Сохранено история: {title}"
-
-#: src/features/settings/application-profile.tsx
-msgid "Saved and marked reviewed."
-msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
@@ -9599,6 +9616,10 @@ msgstr ""
 msgid "Share enabled shared Knowledge"
 msgstr ""
 
+#: src/features/applications/incoming-posting.tsx
+msgid "Share one posting URL or selected text. Files, multiple postings and unsupported URL parameters need explicit URL or pasted-text import in Applications."
+msgstr ""
+
 #: src/features/share/download.tsx
 msgid "Share PDF"
 msgstr "Поделиться PDF-файлом"
@@ -9619,11 +9640,20 @@ msgstr "Поделиться записью"
 msgid "Share via…"
 msgstr "Поделиться через…"
 
+#. placeholder {0}: session.server
+#: src/features/applications/add-sheet.tsx
+msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
 msgid "Sharing"
 msgstr "Общий доступ"
+
+#: src/features/applications/incoming-posting.tsx
+msgid "Sharing could not be read. Update the app or paste the posting in Applications."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sharpening the opening"
@@ -11513,6 +11543,14 @@ msgstr "До 20 тегов на документ, 40 символов на те�
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr "До 25 МБ · проверяется на сервере и не сохраняется"
 
+#: src/features/settings/application-profile.tsx
+msgid "Update"
+msgstr ""
+
+#: src/features/applications/add-sheet.tsx
+msgid "Update posting details"
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "Обновите сервер, прежде чем перемещать отклики на собственный этап."
@@ -11626,10 +11664,6 @@ msgstr "Используйте кегль не менее 9 пунктов."
 msgid "Use at most 64 characters."
 msgstr "Используйте не более 64 символов."
 
-#: src/features/settings/application-profile.tsx
-msgid "Use Career preferences for work locations, office days, notice period and minimum base salary. Requested salary below is separate. Editing answers for one application does not update these global settings."
-msgstr ""
-
 #: src/features/letters/write.tsx
 msgid "Use default"
 msgstr "Использовать по умолчанию"
@@ -11728,6 +11762,10 @@ msgstr "Используйте этого провайдера"
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "Используйте это время"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."

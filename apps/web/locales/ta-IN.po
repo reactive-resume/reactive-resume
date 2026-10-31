@@ -1219,6 +1219,10 @@ msgstr "சாதனை"
 msgid "Account"
 msgstr "கணக்கு"
 
+#: src/features/settings/account/profile.tsx
+msgid "Account details"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Action"
@@ -1399,7 +1403,7 @@ msgstr "திட்டமிட ஒரு நேர்காணலைச் ச
 msgid "Add application"
 msgstr "விண்ணப்பத்தைச் சேர்க்கவும்"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add authorization country"
 msgstr ""
 
@@ -1468,7 +1472,7 @@ msgstr "முக்கியச்சொல்லைச் சேர்க்�
 msgid "Add language"
 msgstr "மொழியைச் சேர்க்கவும்"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr ""
 
@@ -1521,7 +1525,7 @@ msgid "Add publication"
 msgstr "வெளியீட்டைச் சேர்க்கவும்"
 
 #: src/features/resume/editor/write/outline.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add reference"
 msgstr "குறிப்பைச் சேர்க்கவும்"
 
@@ -1631,18 +1635,19 @@ msgid "Added to Knowledge as an experience."
 msgstr "அறிவுத் தளத்தில் அனுபவமாகச் சேர்க்கப்பட்டது."
 
 #: src/features/resume/share/address-field.tsx
+#: src/features/settings/profile.tsx
 msgid "Address"
 msgstr "முகவரி"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address country"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address line 1"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address line 2"
 msgstr ""
 
@@ -1846,6 +1851,12 @@ msgstr "ஏற்கனவே கணக்கு உள்ளதா? <0/>"
 msgid "Already interviewing"
 msgstr "ஏற்கனவே நேர்காணல்"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Also check the exported PDF"
 msgstr "ஏற்றுமதி செய்யப்பட்ட PDF ஐயும் சரிபார்க்கவும்"
@@ -1945,10 +1956,6 @@ msgstr ""
 #: src/features/career/workspace/saved.tsx
 msgid "Answers"
 msgstr "பதில்கள்"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Answers apply only to the country shown. A missing country has unknown answers."
-msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "Answers copied"
@@ -2090,7 +2097,8 @@ msgstr "வேலை விண்ணப்பம் நீக்கப்பட�
 msgid "Application details"
 msgstr "விண்ணப்ப விவரங்கள்"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 msgid "Application email"
 msgstr ""
 
@@ -2098,16 +2106,12 @@ msgstr ""
 msgid "Application options"
 msgstr "வேலை விண்ணப்ப விருப்பங்கள்"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Application phone"
 msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Application preparation"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Application profile deleted."
 msgstr ""
 
 #: src/features/career/coach.tsx
@@ -2122,10 +2126,6 @@ msgstr "விண்ணப்பத் தாவல்கள்"
 #: src/features/career/workspace/messages.tsx
 msgid "Application updated"
 msgstr "விண்ணப்பம் புதுப்பிக்கப்பட்டது"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Application-only details. Never added to public links, document exports or AI context automatically."
-msgstr ""
 
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
@@ -2363,7 +2363,7 @@ msgid "Attachment"
 msgstr "இணைப்பு"
 
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
 msgstr ""
 
@@ -2508,10 +2508,6 @@ msgstr "பெங்காலி"
 #: src/features/resume/share/download-tab.tsx
 msgid "Best for applying"
 msgstr "விண்ணப்பிக்க சிறந்தது"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Blank fields mean unknown. Nothing is inferred from your resume. Self-identification is not collected here. Enter references yourself and review their details before sharing."
-msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
@@ -2684,12 +2680,20 @@ msgstr "மென்பொருள் உங்கள் விண்ணப்�
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/settings/account/application-profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
+#: src/features/settings/profile.tsx
 #: src/hooks/use-confirm.tsx
 msgid "Cancel"
 msgstr "ரத்து செய்"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Capture does not use AI. Review every field before saving."
+msgstr ""
 
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -2704,10 +2708,6 @@ msgstr "தொழில் ஆலோசகர் (உங்கள் விச�
 #: src/features/homepage/hero.tsx
 msgid "career manager."
 msgstr "தொழில் வாழ்க்கையை நிர்வகிக்கும் கருவி."
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Career preferences"
-msgstr ""
 
 #: src/libs/locale.ts
 msgid "Catalan"
@@ -2831,7 +2831,7 @@ msgstr "எந்த PDF கோப்பையும் சரிபார்க
 msgid "Check DNS"
 msgstr "DNS-ஐச் சரிபார்"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
 
@@ -2946,7 +2946,7 @@ msgstr ""
 msgid "Choose a connection"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Choose a country"
 msgstr ""
 
@@ -3019,7 +3019,7 @@ msgstr "வட்டம்"
 msgid "Cited as already shown · check it"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "City"
 msgstr ""
 
@@ -3200,7 +3200,7 @@ msgstr "கச்சிதம்"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/design/entries-group.tsx
 #: src/features/resume/editor/write/entries.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Company"
 msgstr "நிறுவனம்"
@@ -3371,12 +3371,9 @@ msgstr "இணைப்புகள் பேச்சுக்குத் த�
 msgid "Contact"
 msgstr "தொடர்பு கொள்ளவும்"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Contact and address"
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
+#: src/features/settings/profile.tsx
 msgid "Contact details"
 msgstr "தொடர்பு விவரங்கள்"
 
@@ -3623,7 +3620,7 @@ msgstr "இந்த அட்டவணையை மாற்ற முடிய
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "உங்கள் கடவுச்சொல்லை மாற்ற முடியவில்லை. தற்போதைய கடவுச்சொல்லைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
 
@@ -3827,7 +3824,7 @@ msgstr "உங்கள் நிலைகளை ஏற்ற முடியவ
 msgid "Couldn't load your stages."
 msgstr "உங்கள் நிலைகளை ஏற்ற முடியவில்லை."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr ""
 
@@ -4011,6 +4008,7 @@ msgid "Couldn't save this schedule. Try again."
 msgstr "இந்த அட்டவணையைச் சேமிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
 #: src/features/letters/store.ts
+#: src/features/resume/builder/draft.ts
 #: src/features/resume/share/history-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -4159,6 +4157,10 @@ msgstr "நேர்காணலைப் புதுப்பிக்க ம�
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Couldn't update the letter. Try again."
 msgstr "கடிதத்தைப் புதுப்பிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Couldn't update the posting. Try again."
+msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't update the preview. The last working version is still shown. Edit anything to try again."
@@ -4341,7 +4343,7 @@ msgstr "CSV தரவு"
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Currency"
 msgstr "நாணயம்"
 
@@ -4568,12 +4570,12 @@ msgstr "பக்கத்தை நீக்கு"
 msgid "Delete permanently…"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Delete private application profile?"
+#: src/features/settings/profile.tsx
+msgid "Delete profile"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Delete profile"
+#: src/features/settings/profile.tsx
+msgid "Delete profile?"
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -4722,6 +4724,10 @@ msgstr "வடிவமைப்பு அமைப்புகள்"
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Details"
 msgstr "விவரங்கள்"
+
+#: src/features/settings/profile.tsx
+msgid "Details for your job application forms."
+msgstr ""
 
 #. Label above the raw error text forwarded by the identity provider
 #: src/features/auth/pages/error.tsx
@@ -4886,6 +4892,10 @@ msgstr "பதிவிறக்கம் & வரலாறு"
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download application details, contacts, notes, and timeline history as CSV."
 msgstr "விண்ணப்ப விவரங்கள், தொடர்புகள், குறிப்புகள் மற்றும் காலவரிசை வரலாறு ஆகியவற்றை CSV ஆகப் பதிவிறக்கவும்."
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Download browser helper"
+msgstr ""
 
 #. Action button to download two-factor backup codes as a text file
 #: src/dialogs/auth/enable-two-factor.tsx
@@ -5054,6 +5064,10 @@ msgstr "இறக்குமதி செய்ய கைவிடவும்"
 msgid "Duplicate"
 msgstr "நகல் உருவாக்கு"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
+
 #: src/dialogs/resume/index.tsx
 msgid "Duplicate resume"
 msgstr "ரெஸ்யூமை நகலாக்கு"
@@ -5169,6 +5183,10 @@ msgid "Edit posting"
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
+msgid "Edit profile"
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
 msgid "Edit question"
 msgstr "கேள்வியைத் திருத்து"
 
@@ -5251,6 +5269,7 @@ msgstr "கல்விப் பகுதியிலும் கல்வி 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/settings/account/profile.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Email"
 msgstr "மின்னஞ்சல்"
@@ -5546,7 +5565,7 @@ msgstr "ஏற்றுமதி PNG"
 msgid "Export saved answers"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Export saved profile"
 msgstr ""
 
@@ -5613,7 +5632,7 @@ msgstr "அறிவுத் தளத்தில் இயக்கப்ப�
 msgid "Failed"
 msgstr "தோல்வியடைந்தது"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
 
@@ -6111,7 +6130,7 @@ msgstr "ஒவ்வொரு பணிக்கும் தகுதிக்�
 msgid "Give the story a title before you can save."
 msgstr "சேமிப்பதற்கு முன் கதைக்கு ஒரு தலைப்பு கொடுக்கவும்."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Given name"
 msgstr ""
 
@@ -6360,7 +6379,7 @@ msgstr "கிடைமட்ட இடைவெளி"
 msgid "Hosting and development are paid for by people like you. Optional tip:"
 msgstr "ஹோஸ்டிங் மற்றும் மேம்பாடு உங்களைப் போன்றவர்களால் செலுத்தப்படுகிறது. விருப்ப உதவிக்குறிப்பு:"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Hour"
 msgstr ""
 
@@ -7117,14 +7136,14 @@ msgstr "கடைசியாக திருத்தப்பட்டது"
 msgid "Last reviewed"
 msgstr ""
 
-#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
-#: src/features/settings/account/application-profile.tsx
-msgid "Last reviewed: {0}"
-msgstr ""
-
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
+msgstr ""
+
+#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
+#: src/features/settings/profile.tsx
+msgid "Last updated: {0}"
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -7359,12 +7378,12 @@ msgid "Link"
 msgstr "இணைப்பு"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Link {0} URL"
 msgstr ""
 
@@ -7461,7 +7480,7 @@ msgid "Linking…"
 msgstr "இணைக்கிறது…"
 
 #: src/features/resume/editor/check/parser-view.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Links"
 msgstr "இணைப்புகள்"
 
@@ -7585,7 +7604,7 @@ msgstr "பணியிடத்தை ஏற்றுகிறது…"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Loading…"
 msgstr "ஏற்றுகிறது…"
 
@@ -7714,6 +7733,10 @@ msgstr "மலாய்"
 #: src/libs/locale.ts
 msgid "Malayalam"
 msgstr "மலையாளம்"
+
+#: src/features/settings/profile.tsx
+msgid "Manage profile"
+msgstr ""
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Manage stages"
@@ -7918,7 +7941,7 @@ msgstr "மாடல்: {label}"
 msgid "Mono"
 msgstr "மோனோ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
 
@@ -8089,6 +8112,7 @@ msgstr "ஆதரவுப் பணியைக் கூட்டாமல்,
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/auth/pages/register.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
@@ -8098,6 +8122,7 @@ msgstr "ஆதரவுப் பணியைக் கூட்டாமல்,
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "பெயர்"
 
@@ -8172,7 +8197,7 @@ msgid "Needs attention"
 msgstr "கவனம் தேவை"
 
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Needs sponsorship in {0}"
 msgstr ""
 
@@ -8305,7 +8330,7 @@ msgstr "அடுத்த படி: {0}. ‘இன்று’ பக்கத
 msgid "Next time, I’d agree how to measure success before the first prototype."
 msgstr "அடுத்த முறை, முதல் முன்மாதிரிக்கு முன்பே வெற்றியை எப்படி அளவிடுவது என்பதில் ஒப்புக்கொள்வேன்."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "No"
 msgstr ""
 
@@ -8682,10 +8707,6 @@ msgstr "இப்போது வேண்டாம்"
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "இன்னும் பதிவு செய்யப்படவில்லை. ஆதாரம் தர முடியும் வரை காலியாக விடுங்கள்."
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Not reviewed yet"
-msgstr ""
-
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -8697,6 +8718,7 @@ msgid "Not saved — this fact was forgotten before."
 msgstr "சேமிக்கப்படவில்லை — இந்த உண்மை முன்பே மறக்கப்பட்டது."
 
 #: src/features/career/workspace/preparation.tsx
+#: src/features/settings/profile.tsx
 msgid "Not saved yet"
 msgstr ""
 
@@ -9060,6 +9082,10 @@ msgstr "Reactive Resume பயன்பாட்டைத் திறக்க�
 msgid "Open the schedule"
 msgstr "அட்டவணையைத் திற"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Open web page"
 msgstr "வலைப்பக்கத்தைத் திற"
@@ -9108,6 +9134,12 @@ msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providerState.usableProviders[0].label
+#. placeholder {1}: providerState.usableProviders[0].provider
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -9416,7 +9448,7 @@ msgstr "இடைநிறுத்தப்பட்ட அட்டவணை�
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Pay period"
 msgstr "ஊதியக் காலம்"
 
@@ -9460,6 +9492,7 @@ msgstr "பேர்ஷியன்"
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/resume/share/web-page-preview.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Phone"
 msgstr "தொலைபேசி"
@@ -9467,6 +9500,10 @@ msgstr "தொலைபேசி"
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Phone (optional)"
 msgstr "தொலைபேசி (விருப்பத்திற்குரியது)"
+
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Photo"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Photo hidden"
@@ -9583,7 +9620,7 @@ msgstr "போர்ச்சுகீஸ் (போர்ச்சுகல்)
 msgid "Position"
 msgstr "பதவி"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Postal code"
 msgstr ""
 
@@ -9805,11 +9842,6 @@ msgstr "தனியுரிமைக் கொள்கை"
 msgid "Private"
 msgstr "தனிப்பட்டது"
 
-#: src/features/career/workspace/apply.tsx
-#: src/features/settings/account/application-profile.tsx
-msgid "Private application profile"
-msgstr ""
-
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Private. Only you can see it."
 msgstr "தனியார். உங்களால் மட்டுமே பார்க்க முடியும்."
@@ -9835,9 +9867,15 @@ msgstr "திறமைத் தரம்"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/features/settings/account/profile.tsx
+#: src/features/settings/profile.tsx
+#: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "சுயவிவரம்"
+
+#: src/features/settings/profile.tsx
+msgid "Profile deleted."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile link (optional)"
@@ -9851,6 +9889,10 @@ msgstr "நபர் {0}-இன் சுயவிவர இணைப்பு"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile links must be public HTTPS addresses."
 msgstr "சுயவிவர இணைப்புகள் பொது HTTPS முகவரிகளாக இருக்க வேண்டும்."
+
+#: src/features/settings/profile.tsx
+msgid "Profile saved."
+msgstr ""
 
 #: src/libs/resume/section.tsx
 msgid "Profiles"
@@ -10116,6 +10158,10 @@ msgstr "ரெஸ்யூமைப் படித்தது"
 msgid "Read the self-hosting guide"
 msgstr "சுய ஹோஸ்டிங் வழிகாட்டியைப் படிக்கவும்"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
 msgstr "உங்கள் மின்னஞ்சல் முகவரியைப் படியுங்கள்."
@@ -10190,6 +10236,10 @@ msgstr "உரையைப் படித்தல்"
 #: src/features/career/shared.tsx
 msgid "Reading what you shared"
 msgstr "நீங்கள் பகிர்ந்ததைப் படிக்கிறது"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "AI இல்லாமல் படிக்க முடியுமா என்பதை உறுதிப்படுத்த முடியவில்லை. மீண்டும் முயலவும், சேவையகத்தைப் புதுப்பிக்கவும் அல்லது விவரங்களை நீங்களே உள்ளிடவும்."
 
 #: src/features/resume/import/read-file.ts
 msgid "Reading Word files needs an AI provider. Set one up in Settings, or import a PDF or JSON file instead."
@@ -10303,23 +10353,12 @@ msgid "Redo resume change"
 msgstr "ரெஸ்யூம் மாற்றத்தை மீண்டும் செய்"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference {0}: {label}"
+#: src/features/settings/profile.tsx
+msgid "Reference {0}"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference email"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference name"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference phone"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 #: src/libs/resume/section.tsx
 msgid "References"
 msgstr "பரிந்துரைகள்"
@@ -10373,7 +10412,7 @@ msgstr "நிராகரிக்கவும்"
 msgid "Rejected"
 msgstr "நிராகரிக்கப்பட்டது"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Relationship"
 msgstr ""
 
@@ -10382,13 +10421,17 @@ msgstr ""
 msgid "Reload"
 msgstr "மீண்டும் ஏற்றவும்"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Reload and discard unsaved changes"
 msgstr ""
 
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
+msgstr ""
+
+#: src/features/settings/profile.tsx
+msgid "Relocation"
 msgstr ""
 
 #: src/features/career/shared.tsx
@@ -10459,8 +10502,8 @@ msgstr "“{name}”-ஐ அகற்றவா?"
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
-#: src/features/settings/account/application-profile.tsx
 #: src/features/settings/account/security.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove {0}"
 msgstr "{0} ஐ அகற்று"
 
@@ -10495,7 +10538,7 @@ msgid "Remove file"
 msgstr "கோப்பை அகற்று"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove link {0}"
 msgstr ""
 
@@ -10522,7 +10565,7 @@ msgid "Remove question"
 msgstr "கேள்வியை அகற்று"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
 
@@ -10632,11 +10675,12 @@ msgstr "மறுமொழி நகலெடுக்கப்பட்டத�
 msgid "Report a bug"
 msgstr "பிழையைப் புகாரளி"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Requested amount"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 msgid "Requested salary"
 msgstr ""
 
@@ -10837,6 +10881,7 @@ msgstr "{1} ஐப் பயன்படுத்தி {0} மீட்டெ�
 msgid "Retrieved {0}. Origin freshness is unknown unless reported."
 msgstr "{0} மீட்டெடுக்கப்பட்டது. புகாரளிக்காத வரை, புத்துணர்ச்சியின் தோற்றம் தெரியவில்லை."
 
+#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
@@ -11108,6 +11153,7 @@ msgstr "மாதிரி ரெஸ்யூம் சேர்க்கப்�
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/share/history-tab.tsx
+#: src/features/settings/profile.tsx
 msgid "Save"
 msgstr "சேமி"
 
@@ -11127,10 +11173,6 @@ msgstr "கடவுச்சொல் இல்லாமல், அனுமத
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save and link"
 msgstr "சேமித்து இணைக்கவும்"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Save and mark reviewed"
-msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Save and prepare resume"
@@ -11279,10 +11321,6 @@ msgstr "{0} விண்ணப்பங்களில் சேமிக்க�
 msgid "Saved a story: {0}"
 msgstr "ஒரு கதை சேமிக்கப்பட்டது: {0}"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Saved and marked reviewed."
-msgstr ""
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Saved as an application and linked"
 msgstr "வேலை விண்ணப்பமாகச் சேமிக்கப்பட்டு இணைக்கப்பட்டது"
@@ -11303,7 +11341,7 @@ msgstr "இப்போதுதான் சேமிக்கப்பட்�
 msgid "Saved offers"
 msgstr "சேமித்த சலுகைகள்"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
 msgstr ""
 
@@ -12421,7 +12459,7 @@ msgstr "{0} மணி நேரத்திற்குள் தொடங்க
 msgid "Starts now"
 msgstr "இப்போது தொடங்குகிறது"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr ""
 
@@ -13458,7 +13496,7 @@ msgstr ""
 msgid "This question didn't finish."
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
 msgstr ""
 
@@ -13948,7 +13986,7 @@ msgstr "University of Porto"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Unknown"
 msgstr "தெரியவில்லை"
 
@@ -14013,6 +14051,14 @@ msgstr "25 MB · உங்கள் உலாவியில் சரிபா�
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming interviews"
 msgstr "வரவிருக்கும் நேர்காணல்கள்"
+
+#: src/features/settings/profile.tsx
+msgid "Update"
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Update posting details"
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Update resume"
@@ -14130,10 +14176,6 @@ msgstr "அதிகபட்சமாக 64 எழுத்துக்கள�
 msgid "Use between 6 and 64 characters."
 msgstr "6 முதல் 64 எழுத்துக்கள் வரை பயன்படுத்தவும்."
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Use Career preferences for work locations, office days, notice period and minimum base salary. Requested salary below is separate. Editing answers for one application does not update these global settings."
-msgstr ""
-
 #: src/components/input/color-picker.tsx
 msgid "Use color {color}"
 msgstr "வண்ணத்தைப் பயன்படுத்துங்கள் {color}"
@@ -14243,6 +14285,7 @@ msgstr "பயனர் ஆய்வு"
 
 #. Label for username input on registration form
 #: src/features/auth/pages/register.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 msgid "Username"
@@ -14744,7 +14787,7 @@ msgstr "அகலம்"
 msgid "Will my resume get past applicant tracking systems?"
 msgstr "எனது ரெஸ்யூமே கடந்த விண்ணப்பதாரர் கண்காணிப்பு அமைப்புகளைப் பெறுமா?"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Willing to relocate"
 msgstr ""
 
@@ -14760,7 +14803,7 @@ msgstr "ஒன்று இல்லாமல், பெறுநரை நீ�
 msgid "Words run together when the text is extracted."
 msgstr "உரை பிரித்தெடுக்கப்படும்போது சொற்கள் ஒன்றாக இணைந்துவிடுகின்றன."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Work authorization and sponsorship"
 msgstr ""
 
@@ -14891,11 +14934,11 @@ msgstr ""
 msgid "Written offer"
 msgstr "எழுத்துப்பூர்வச் சலுகை"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Year"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Yes"
 msgstr ""
 

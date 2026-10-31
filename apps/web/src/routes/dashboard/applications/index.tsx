@@ -20,6 +20,7 @@ import { Tabs, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { PageHeader } from "@/components/layout/page-header";
+import { takePostingCapture } from "@/features/applications/capture";
 import { AddApplicationDialog } from "@/features/applications/components/add-application-dialog";
 import { ApplicationDetailSheet } from "@/features/applications/components/application-detail-sheet";
 import { ApplicationFormSheet } from "@/features/applications/components/application-form-sheet";
@@ -82,7 +83,8 @@ function RouteComponent() {
 	const phone = useBreakpoint() === "mobile";
 	// Typing filters at once; the URL only seeds the search.
 	const [query, setQuery] = useState(q);
-	const [adding, setAdding] = useState(false);
+	const [capture, setCapture] = useState(takePostingCapture);
+	const [adding, setAdding] = useState(!!capture);
 	const [importing, setImporting] = useState(false);
 	const [exporting, setExporting] = useState(false);
 	const [exportLoading, setExportLoading] = useState(false);
@@ -407,7 +409,15 @@ function RouteComponent() {
 				</>
 			)}
 
-			<AddApplicationDialog open={adding} onOpenChange={setAdding} onAdded={setSelectedId} />
+			<AddApplicationDialog
+				open={adding}
+				initialCapture={capture}
+				onOpenChange={(open) => {
+					setAdding(open);
+					if (!open) setCapture(null);
+				}}
+				onAdded={setSelectedId}
+			/>
 			<ApplicationFormSheet
 				open={Boolean(editing)}
 				application={editing}

@@ -21,7 +21,7 @@ import { MCP_TOOL_NAME as T } from "./mcp-tool-names";
 // Contracts remain derived from the allowlisted API procedures in parity.ts.
 export const PARITY_TOOL_DESCRIPTIONS: Record<string, string> = {
 	"auth.exportData":
-		"Export account documents and Career data. Private application profile is excluded from MCP results; export it in Settings → Account.",
+		"Export account documents and Career data. Private application profile is excluded from MCP results; export it in Settings → Profile.",
 	"applications.lanes.get":
 		"Read the account's ordered application stages and settings revision, including retired stages for history. Initializes missing default stages idempotently. Use returned lane IDs to select custom stages when creating or moving applications; category retains canonical workflow meaning.",
 	"applications.lanes.create":

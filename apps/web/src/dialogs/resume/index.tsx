@@ -2,7 +2,7 @@ import type { DialogProps } from "../store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate, useParams } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -19,7 +19,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { generateRandomName } from "@reactive-resume/utils/slug";
 import { useDialogStore } from "../store";
 import { ChipInput } from "@/components/input/chip-input";
-import { usePatchResume } from "@/features/resume/builder/draft";
+import { saveResumeMetadata } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -40,10 +40,13 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 	const isUpdate = mode === "update";
 	const navigate = useNavigate();
 	const closeDialog = useDialogStore((state) => state.closeDialog);
-	const patchResume = usePatchResume();
-	const params = useParams({ strict: false }) as { resumeId?: string };
 
-	const update = useMutation(orpc.resume.update.mutationOptions());
+	const updateOptions = orpc.resume.update.mutationOptions();
+	const update = useMutation({
+		...updateOptions,
+		mutationFn: (value) =>
+			saveResumeMetadata(value.id, (expectedUpdatedAt) => orpc.resume.update.call({ ...value, expectedUpdatedAt })),
+	});
 	const duplicate = useMutation(orpc.resume.duplicate.mutationOptions());
 
 	const form = useAppForm({
@@ -64,18 +67,7 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 
 			if (isUpdate) {
 				update.mutate(value, {
-					onSuccess: (updated) => {
-						if (params.resumeId === updated.id) {
-							patchResume((draft) => {
-								draft.name = updated.name;
-								draft.slug = updated.slug;
-								draft.tags = updated.tags;
-								draft.isLocked = updated.isLocked;
-								draft.isPublic = updated.isPublic;
-								draft.hasPassword = updated.hasPassword;
-							});
-						}
-
+					onSuccess: () => {
 						toast.add({ type: "success", description: t`Your resume has been updated.`, id: toastId });
 						closeDialog();
 					},

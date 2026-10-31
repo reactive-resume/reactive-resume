@@ -921,6 +921,10 @@ msgstr "విజయం"
 msgid "Account"
 msgstr "ఖాతా"
 
+#: app/(tabs)/settings/account.tsx
+msgid "Account details"
+msgstr ""
+
 #: src/features/career/stories.tsx
 msgid "Action"
 msgstr "చర్య"
@@ -1252,6 +1256,7 @@ msgstr "నాలెడ్జ్కి జోడించబడింది."
 msgid "Additional details (optional)"
 msgstr "అదనపు వివరాలు (ఐచ్ఛికం)"
 
+#: src/features/settings/application-profile.tsx
 #: src/features/share/link.tsx
 msgid "Address"
 msgstr "చిరునామా"
@@ -1459,6 +1464,12 @@ msgstr "ఇప్పటికే కవర్ చేయబడింది · ప
 msgid "Already covered:"
 msgstr "ఇప్పటికే కవర్ చేయబడింది:"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/add-sheet.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/check/screen.tsx
 msgid "Also check the exported PDF"
 msgstr "ఎగుమతి చేయబడిన PDFని కూడా తనిఖీ చేయండి"
@@ -1553,10 +1564,6 @@ msgstr ""
 #: src/features/workspace/tabs/saved.tsx
 msgid "Answers"
 msgstr "సమాధానాలు"
-
-#: src/features/settings/application-profile.tsx
-msgid "Answers apply only to the country shown. A missing country has unknown answers."
-msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Answers copied"
@@ -1667,10 +1674,6 @@ msgstr ""
 msgid "Application phone"
 msgstr ""
 
-#: src/features/settings/application-profile.tsx
-msgid "Application profile deleted."
-msgstr ""
-
 #: src/features/assistant/coach-screen.tsx
 msgid "application summaries"
 msgstr "దరఖాస్తు సారాంశాలు"
@@ -1682,10 +1685,6 @@ msgstr "దరఖాస్తు నవీకరించబడింది"
 #: src/features/applications-board/views.tsx
 msgid "Application views"
 msgstr "ఉద్యోగ దరఖాస్తు వీక్షణలు"
-
-#: src/features/settings/application-profile.tsx
-msgid "Application-only details. Never added to public links, document exports or AI context automatically."
-msgstr ""
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
@@ -2035,10 +2034,6 @@ msgstr "మీ కనీస మూల వేతనం క్రింద."
 msgid "Bengali"
 msgstr "బెంగాలీ"
 
-#: src/features/settings/application-profile.tsx
-msgid "Blank fields mean unknown. Nothing is inferred from your resume. Self-identification is not collected here. Enter references yourself and review their details before sharing."
-msgstr ""
-
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "బోర్డ్"
@@ -2181,10 +2176,6 @@ msgstr "అభ్యర్థనను రద్దు చేయండి"
 #: app/(tabs)/career/_layout.tsx
 msgid "Career"
 msgstr "కెరీర్"
-
-#: src/features/settings/application-profile.tsx
-msgid "Career preferences"
-msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -2764,12 +2755,9 @@ msgstr "సంబంధాలను జోడిస్తోంది"
 msgid "Connection saved"
 msgstr "కనెక్షన్ సేవ్ చేయబడింది"
 
-#: src/features/settings/application-profile.tsx
-msgid "Contact and address"
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
+#: src/features/settings/application-profile.tsx
 msgid "Contact details"
 msgstr "సంప్రదింపు వివరాలు"
 
@@ -3702,11 +3690,11 @@ msgid "Delete permanently…"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
-msgid "Delete private application profile?"
+msgid "Delete profile"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
-msgid "Delete profile"
+msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -3834,6 +3822,10 @@ msgstr "డిజైన్ డిఫాల్ట్‌లకు రీసెట�
 #: src/features/document-menu/index.tsx
 msgid "Details"
 msgstr "వివరాలు"
+
+#: src/features/settings/application-profile.tsx
+msgid "Details for your job application forms."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Didn't land"
@@ -4110,6 +4102,10 @@ msgstr "సర్వనామాలను తొలగించి క్రి�
 msgid "Duplicate"
 msgstr "నకిలీ"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 msgid "Duplicate resume"
 msgstr "రిజ్యూమ్ నకిలీ చేయండి"
@@ -4185,6 +4181,10 @@ msgid "Edit posting"
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
+msgid "Edit profile"
+msgstr ""
+
+#: src/features/workspace/tabs/apply.tsx
 msgid "Edit question"
 msgstr "ప్రశ్నను సవరించు"
 
@@ -4235,6 +4235,7 @@ msgstr "విద్య విభాగంలో విద్యాసంస్�
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/letters/write.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Email"
 msgstr "ఇమెయిల్"
@@ -5591,14 +5592,14 @@ msgstr "చివరిగా సవరించబడింది"
 msgid "Last reviewed"
 msgstr ""
 
-#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
-#: src/features/settings/application-profile.tsx
-msgid "Last reviewed: {0}"
-msgstr ""
-
 #. placeholder {0}: time.when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
+msgstr ""
+
+#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
+#: src/features/settings/application-profile.tsx
+msgid "Last updated: {0}"
 msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
@@ -6101,6 +6102,10 @@ msgstr "పరిచయాలను నిర్వహించండి"
 msgid "Manage lanes"
 msgstr "దశలను నిర్వహించండి"
 
+#: src/features/settings/application-profile.tsx
+msgid "Manage profile"
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Managed by server"
 msgstr "సర్వర్ ద్వారా నిర్వహించబడుతుంది"
@@ -6455,6 +6460,7 @@ msgstr "“దరఖాస్తు చేశారు” దశకు మార
 #: src/features/documents/new-document.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/settings/profile.tsx
 #: src/features/write/fields.ts
 msgid "Name"
@@ -6962,15 +6968,12 @@ msgstr "నమోదు కాలేదు"
 msgid "Not recorded yet. Leave blank until you can support it."
 msgstr "ఇంకా నమోదు కాలేదు. మీరు మద్దతు ఇచ్చే వరకు ఖాళీగా ఉంచండి."
 
-#: src/features/settings/application-profile.tsx
-msgid "Not reviewed yet"
-msgstr ""
-
 #: src/features/career/preferences.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Not saved"
 msgstr "సేవ్ కాలేదు"
 
+#: src/features/settings/application-profile.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Not saved yet"
 msgstr ""
@@ -7134,6 +7137,10 @@ msgstr "ఆఫ్‌లైన్. సవరణలు ఈ పరికరంల�
 msgid "On"
 msgstr "ప్రారంభించబడింది"
 
+#: src/features/applications/add-sheet.tsx
+msgid "On iOS, choose Keep for review, then reopen app in the Share extension. Reopen Reactive Resume yourself within 15 minutes. Sign in here before sharing."
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "On. Anyone with the link can see your web page."
 msgstr "ఆన్‌లో ఉంది. లింక్ ఉన్న ఎవరైనా మీ వెబ్ పేజీని చూడగలరు."
@@ -7295,6 +7302,10 @@ msgstr "ఫైల్‌ను Wordలో తెరిచి, ముందుగ�
 msgid "Open the schedule"
 msgstr "షెడ్యూల్‌ను తెరువు"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "Open web page"
 msgstr "వెబ్ పేజీని తెరవండి"
@@ -7350,6 +7361,12 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providers.defaultProvider.label
+#. placeholder {1}: providers.defaultProvider.provider
+#: src/features/applications/add-sheet.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -7616,6 +7633,7 @@ msgid "Persian"
 msgstr "పర్షియన్"
 
 #: src/features/letters/write.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/basics-screen.tsx
 #: src/features/write/fields.ts
 msgid "Phone"
@@ -7925,11 +7943,6 @@ msgstr "గోప్యత"
 msgid "Privacy policy"
 msgstr "గోప్యతా విధానం"
 
-#: src/features/settings/application-profile.tsx
-#: src/features/workspace/tabs/apply.tsx
-msgid "Private application profile"
-msgstr ""
-
 #: src/features/document-menu/index.tsx
 msgid "Private. Only you can see it."
 msgstr "ప్రైవేట్. మీరు మాత్రమే చూడగలరు."
@@ -7943,10 +7956,15 @@ msgstr "వృత్తిపరం"
 msgid "Proficiency"
 msgstr "నైపుణ్యం స్థాయి"
 
-#: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/index.tsx
+#: app/(tabs)/settings/profile.tsx
 #: src/features/search/search-screen.tsx
 msgid "Profile"
 msgstr "ప్రొఫైల్"
+
+#: src/features/settings/application-profile.tsx
+msgid "Profile deleted."
+msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Profile link (optional)"
@@ -7959,6 +7977,10 @@ msgstr "ప్రొఫైల్ లింక్‌లు పబ్లిక్ 
 #: src/features/settings/profile.tsx
 msgid "Profile photo"
 msgstr "ప్రొఫైల్ ఫోటో"
+
+#: src/features/settings/application-profile.tsx
+msgid "Profile saved."
+msgstr ""
 
 #: src/features/write/fields.ts
 msgid "Profiles"
@@ -8148,6 +8170,10 @@ msgstr "పేజీని చదవండి"
 msgid "Read the resume"
 msgstr "రెజ్యూమెను చదివింది"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
 msgstr "చదవగలిగే సౌలభ్యం"
@@ -8191,6 +8217,11 @@ msgstr "వచనాన్ని చదవడం"
 #: src/features/documents/import-file.ts
 msgid "Reading this file with AI needs a tested AI provider. Set one up, then retry."
 msgstr "AIతో ఈ ఫైల్‌ని చదవడానికి పరీక్షించిన AI ప్రొవైడర్ అవసరం. ఒకదాన్ని సెటప్ చేసి, ఆపై మళ్లీ ప్రయత్నించండి."
+
+#: src/api/ai-consent.ts
+#: src/features/applications/error.ts
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "AI లేకుండా చదవడం సాధ్యమో నిర్ధారించలేకపోయాము. మళ్లీ ప్రయత్నించండి, సర్వర్‌ను నవీకరించండి లేదా వివరాలను మీరే నమోదు చేయండి."
 
 #: src/features/ai/web-access.tsx
 msgid "Reading works"
@@ -8283,19 +8314,7 @@ msgstr "మళ్లీ చేయండి"
 
 #. placeholder {0}: index + 1
 #: src/features/settings/application-profile.tsx
-msgid "Reference {0}: {label}"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference email"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference name"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference phone"
+msgid "Reference {0}"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
@@ -8352,6 +8371,10 @@ msgstr ""
 #: app/(tabs)/settings/preferences.tsx
 msgid "Reload now"
 msgstr "ఇప్పుడే రీలోడ్ చేయండి"
+
+#: src/features/settings/application-profile.tsx
+msgid "Relocation"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/workspace/tabs/debrief.tsx
@@ -8744,6 +8767,7 @@ msgstr "{1}ని ఉపయోగించి {0} తిరిగి పొం�
 
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -9041,6 +9065,7 @@ msgstr "నమూనా రెజ్యూమ్"
 #: src/features/documents/document-sheets.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/pickers.tsx
 msgid "Save"
 msgstr "సేవ్ చేయండి"
@@ -9060,10 +9085,6 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
 msgstr "పాస్‌వర్డ్ లేకుండా, అనుమతుల పరిమితులు లేకుండా రక్షణ లేని కాపీని సేవ్ చేయండి."
-
-#: src/features/settings/application-profile.tsx
-msgid "Save and mark reviewed"
-msgstr ""
 
 #: src/features/ai/provider-editor.tsx
 msgid "Save and test"
@@ -9181,10 +9202,6 @@ msgstr "సేవ్ చేయబడింది"
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "సేవ్ చేయబడింది ఒక కథనం: {title}"
-
-#: src/features/settings/application-profile.tsx
-msgid "Saved and marked reviewed."
-msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
@@ -9599,6 +9616,10 @@ msgstr ""
 msgid "Share enabled shared Knowledge"
 msgstr ""
 
+#: src/features/applications/incoming-posting.tsx
+msgid "Share one posting URL or selected text. Files, multiple postings and unsupported URL parameters need explicit URL or pasted-text import in Applications."
+msgstr ""
+
 #: src/features/share/download.tsx
 msgid "Share PDF"
 msgstr "PDFని భాగస్వామ్యం చేయండి"
@@ -9619,11 +9640,20 @@ msgstr "రికార్డింగ్‌ను భాగస్వామ్�
 msgid "Share via…"
 msgstr "దీని ద్వారా భాగస్వామ్యం చేయండి…"
 
+#. placeholder {0}: session.server
+#: src/features/applications/add-sheet.tsx
+msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
 msgid "Sharing"
 msgstr "షేరింగ్"
+
+#: src/features/applications/incoming-posting.tsx
+msgid "Sharing could not be read. Update the app or paste the posting in Applications."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sharpening the opening"
@@ -11513,6 +11543,14 @@ msgstr "ఒక్కో పత్రానికి 20 ట్యాగ్‌ల�
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr "25 MB వరకు · సర్వర్‌లో తనిఖీ చేయబడింది మరియు నిల్వ చేయబడలేదు"
 
+#: src/features/settings/application-profile.tsx
+msgid "Update"
+msgstr ""
+
+#: src/features/applications/add-sheet.tsx
+msgid "Update posting details"
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "దరఖాస్తులను అనుకూల దశకు తరలించే ముందు మీ సర్వర్‌ను నవీకరించండి."
@@ -11626,10 +11664,6 @@ msgstr "కనీసం 9pt ఉపయోగించండి."
 msgid "Use at most 64 characters."
 msgstr "గరిష్టంగా 64 అక్షరాలను ఉపయోగించండి."
 
-#: src/features/settings/application-profile.tsx
-msgid "Use Career preferences for work locations, office days, notice period and minimum base salary. Requested salary below is separate. Editing answers for one application does not update these global settings."
-msgstr ""
-
 #: src/features/letters/write.tsx
 msgid "Use default"
 msgstr "డిఫాల్ట్‌ను ఉపయోగించండి"
@@ -11728,6 +11762,10 @@ msgstr "ఈ ప్రొవైడర్‌ని ఉపయోగించండ�
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "ఈ సమయాన్ని ఉపయోగించండి"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."

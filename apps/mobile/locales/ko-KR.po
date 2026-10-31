@@ -921,6 +921,10 @@ msgstr "성과"
 msgid "Account"
 msgstr "계정"
 
+#: app/(tabs)/settings/account.tsx
+msgid "Account details"
+msgstr ""
+
 #: src/features/career/stories.tsx
 msgid "Action"
 msgstr "행동"
@@ -1252,6 +1256,7 @@ msgstr "지식에 추가되었습니다."
 msgid "Additional details (optional)"
 msgstr "추가 세부정보(선택사항)"
 
+#: src/features/settings/application-profile.tsx
 #: src/features/share/link.tsx
 msgid "Address"
 msgstr "주소"
@@ -1459,6 +1464,12 @@ msgstr "이미 다뤘습니다. 페이지에서 찾으려면 하나를 선택하
 msgid "Already covered:"
 msgstr "이미 다룬 내용:"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/add-sheet.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/check/screen.tsx
 msgid "Also check the exported PDF"
 msgstr "내보낸 PDF도 확인하세요."
@@ -1553,10 +1564,6 @@ msgstr ""
 #: src/features/workspace/tabs/saved.tsx
 msgid "Answers"
 msgstr "답변"
-
-#: src/features/settings/application-profile.tsx
-msgid "Answers apply only to the country shown. A missing country has unknown answers."
-msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Answers copied"
@@ -1667,10 +1674,6 @@ msgstr ""
 msgid "Application phone"
 msgstr ""
 
-#: src/features/settings/application-profile.tsx
-msgid "Application profile deleted."
-msgstr ""
-
 #: src/features/assistant/coach-screen.tsx
 msgid "application summaries"
 msgstr "지원 요약"
@@ -1682,10 +1685,6 @@ msgstr "지원 내역이 업데이트되었습니다"
 #: src/features/applications-board/views.tsx
 msgid "Application views"
 msgstr "지원 목록 보기"
-
-#: src/features/settings/application-profile.tsx
-msgid "Application-only details. Never added to public links, document exports or AI context automatically."
-msgstr ""
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
@@ -2035,10 +2034,6 @@ msgstr "최저 기본급보다 낮습니다."
 msgid "Bengali"
 msgstr "벵골어"
 
-#: src/features/settings/application-profile.tsx
-msgid "Blank fields mean unknown. Nothing is inferred from your resume. Self-identification is not collected here. Enter references yourself and review their details before sharing."
-msgstr ""
-
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "보드"
@@ -2181,10 +2176,6 @@ msgstr "요청 취소"
 #: app/(tabs)/career/_layout.tsx
 msgid "Career"
 msgstr "커리어"
-
-#: src/features/settings/application-profile.tsx
-msgid "Career preferences"
-msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
@@ -2764,12 +2755,9 @@ msgstr "연결 고리 찾는 중"
 msgid "Connection saved"
 msgstr "연결이 저장되었습니다."
 
-#: src/features/settings/application-profile.tsx
-msgid "Contact and address"
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
+#: src/features/settings/application-profile.tsx
 msgid "Contact details"
 msgstr "연락처 정보"
 
@@ -3702,11 +3690,11 @@ msgid "Delete permanently…"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
-msgid "Delete private application profile?"
+msgid "Delete profile"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
-msgid "Delete profile"
+msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -3834,6 +3822,10 @@ msgstr "디자인을 기본값으로 재설정"
 #: src/features/document-menu/index.tsx
 msgid "Details"
 msgstr "세부"
+
+#: src/features/settings/application-profile.tsx
+msgid "Details for your job application forms."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Didn't land"
@@ -4110,6 +4102,10 @@ msgstr "대명사를 빼고 동사로 시작하세요. 대부분의 시장에서
 msgid "Duplicate"
 msgstr "복제"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 msgid "Duplicate resume"
 msgstr "이력서 복제"
@@ -4185,6 +4181,10 @@ msgid "Edit posting"
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
+msgid "Edit profile"
+msgstr ""
+
+#: src/features/workspace/tabs/apply.tsx
 msgid "Edit question"
 msgstr "질문 편집"
 
@@ -4235,6 +4235,7 @@ msgstr "학력에서도 같은 방식으로 학교와 전공의 순서를 바꿉
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/letters/write.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Email"
 msgstr "이메일"
@@ -5591,14 +5592,14 @@ msgstr "마지막으로 수정됨"
 msgid "Last reviewed"
 msgstr ""
 
-#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
-#: src/features/settings/application-profile.tsx
-msgid "Last reviewed: {0}"
-msgstr ""
-
 #. placeholder {0}: time.when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
+msgstr ""
+
+#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
+#: src/features/settings/application-profile.tsx
+msgid "Last updated: {0}"
 msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
@@ -6101,6 +6102,10 @@ msgstr "연락처 관리"
 msgid "Manage lanes"
 msgstr "단계 관리"
 
+#: src/features/settings/application-profile.tsx
+msgid "Manage profile"
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Managed by server"
 msgstr "서버에서 관리"
@@ -6455,6 +6460,7 @@ msgstr "지원 완료 단계로 이동하면 실제로 보낸 내용을 묻습�
 #: src/features/documents/new-document.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/settings/profile.tsx
 #: src/features/write/fields.ts
 msgid "Name"
@@ -6962,15 +6968,12 @@ msgstr "녹음되지 않음"
 msgid "Not recorded yet. Leave blank until you can support it."
 msgstr "아직 녹음되지 않았습니다. 지원할 수 있을 때까지 비워 두세요."
 
-#: src/features/settings/application-profile.tsx
-msgid "Not reviewed yet"
-msgstr ""
-
 #: src/features/career/preferences.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Not saved"
 msgstr "저장되지 않음"
 
+#: src/features/settings/application-profile.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Not saved yet"
 msgstr ""
@@ -7134,6 +7137,10 @@ msgstr "오프라인. 수정사항은 이 기기에 저장되며 다시 연결�
 msgid "On"
 msgstr "켜짐"
 
+#: src/features/applications/add-sheet.tsx
+msgid "On iOS, choose Keep for review, then reopen app in the Share extension. Reopen Reactive Resume yourself within 15 minutes. Sign in here before sharing."
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "On. Anyone with the link can see your web page."
 msgstr "켜짐. 링크가 있는 사람은 누구나 웹 페이지를 볼 수 있습니다."
@@ -7295,6 +7302,10 @@ msgstr "먼저 Word에서 파일을 열고 .docx로 저장하세요."
 msgid "Open the schedule"
 msgstr "스케줄 열기"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "Open web page"
 msgstr "웹 페이지 열기"
@@ -7350,6 +7361,12 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providers.defaultProvider.label
+#. placeholder {1}: providers.defaultProvider.provider
+#: src/features/applications/add-sheet.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -7616,6 +7633,7 @@ msgid "Persian"
 msgstr "페르시아어"
 
 #: src/features/letters/write.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/basics-screen.tsx
 #: src/features/write/fields.ts
 msgid "Phone"
@@ -7925,11 +7943,6 @@ msgstr "개인정보 보호"
 msgid "Privacy policy"
 msgstr "개인 정보 보호 정책"
 
-#: src/features/settings/application-profile.tsx
-#: src/features/workspace/tabs/apply.tsx
-msgid "Private application profile"
-msgstr ""
-
 #: src/features/document-menu/index.tsx
 msgid "Private. Only you can see it."
 msgstr "사적인. 오직 당신만이 그것을 볼 수 있습니다."
@@ -7943,10 +7956,15 @@ msgstr "전문적인 스타일"
 msgid "Proficiency"
 msgstr "숙련도"
 
-#: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/index.tsx
+#: app/(tabs)/settings/profile.tsx
 #: src/features/search/search-screen.tsx
 msgid "Profile"
 msgstr "프로필"
+
+#: src/features/settings/application-profile.tsx
+msgid "Profile deleted."
+msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Profile link (optional)"
@@ -7959,6 +7977,10 @@ msgstr "프로필 링크는 공개 HTTPS 주소여야 합니다."
 #: src/features/settings/profile.tsx
 msgid "Profile photo"
 msgstr "프로필 사진"
+
+#: src/features/settings/application-profile.tsx
+msgid "Profile saved."
+msgstr ""
 
 #: src/features/write/fields.ts
 msgid "Profiles"
@@ -8148,6 +8170,10 @@ msgstr "페이지 읽기"
 msgid "Read the resume"
 msgstr "이력서를 읽음"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
 msgstr "가독성"
@@ -8191,6 +8217,11 @@ msgstr "텍스트 읽기"
 #: src/features/documents/import-file.ts
 msgid "Reading this file with AI needs a tested AI provider. Set one up, then retry."
 msgstr "AI로 이 파일을 읽으려면 테스트된 AI 공급자가 필요합니다. 하나를 설정한 후 다시 시도하세요."
+
+#: src/api/ai-consent.ts
+#: src/features/applications/error.ts
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "AI 없이 읽을 수 있는지 확인하지 못했습니다. 다시 시도하거나 서버를 업데이트하거나 세부 정보를 직접 입력하세요."
 
 #: src/features/ai/web-access.tsx
 msgid "Reading works"
@@ -8283,19 +8314,7 @@ msgstr "다시 실행"
 
 #. placeholder {0}: index + 1
 #: src/features/settings/application-profile.tsx
-msgid "Reference {0}: {label}"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference email"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference name"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference phone"
+msgid "Reference {0}"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
@@ -8352,6 +8371,10 @@ msgstr ""
 #: app/(tabs)/settings/preferences.tsx
 msgid "Reload now"
 msgstr "지금 새로고침"
+
+#: src/features/settings/application-profile.tsx
+msgid "Relocation"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/workspace/tabs/debrief.tsx
@@ -8744,6 +8767,7 @@ msgstr "{1}를 사용하여 {0}를 검색했습니다. 검색 시간은 원본 �
 
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -9041,6 +9065,7 @@ msgstr "샘플 이력서"
 #: src/features/documents/document-sheets.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/pickers.tsx
 msgid "Save"
 msgstr "저장"
@@ -9060,10 +9085,6 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
 msgstr "비밀번호와 권한 제한이 없는 보호되지 않은 사본으로 저장하세요."
-
-#: src/features/settings/application-profile.tsx
-msgid "Save and mark reviewed"
-msgstr ""
 
 #: src/features/ai/provider-editor.tsx
 msgid "Save and test"
@@ -9181,10 +9202,6 @@ msgstr "저장됨"
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "저장됨 스토리: {title}"
-
-#: src/features/settings/application-profile.tsx
-msgid "Saved and marked reviewed."
-msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
@@ -9599,6 +9616,10 @@ msgstr ""
 msgid "Share enabled shared Knowledge"
 msgstr ""
 
+#: src/features/applications/incoming-posting.tsx
+msgid "Share one posting URL or selected text. Files, multiple postings and unsupported URL parameters need explicit URL or pasted-text import in Applications."
+msgstr ""
+
 #: src/features/share/download.tsx
 msgid "Share PDF"
 msgstr "PDF 공유"
@@ -9619,11 +9640,20 @@ msgstr "녹음 공유"
 msgid "Share via…"
 msgstr "다음을 통해 공유…"
 
+#. placeholder {0}: session.server
+#: src/features/applications/add-sheet.tsx
+msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
 msgid "Sharing"
 msgstr "공유"
+
+#: src/features/applications/incoming-posting.tsx
+msgid "Sharing could not be read. Update the app or paste the posting in Applications."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sharpening the opening"
@@ -11513,6 +11543,14 @@ msgstr "문서당 최대 20개의 태그, 태그당 40자."
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr "최대 25MB · 서버에서 확인되었으나 저장되지 않음"
 
+#: src/features/settings/application-profile.tsx
+msgid "Update"
+msgstr ""
+
+#: src/features/applications/add-sheet.tsx
+msgid "Update posting details"
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "지원서를 사용자 지정 단계로 이동하기 전에 서버를 업데이트하세요."
@@ -11626,10 +11664,6 @@ msgstr "최소 9pt 이상을 사용하세요."
 msgid "Use at most 64 characters."
 msgstr "최대 64자까지 사용할 수 있습니다."
 
-#: src/features/settings/application-profile.tsx
-msgid "Use Career preferences for work locations, office days, notice period and minimum base salary. Requested salary below is separate. Editing answers for one application does not update these global settings."
-msgstr ""
-
 #: src/features/letters/write.tsx
 msgid "Use default"
 msgstr "기본값 사용"
@@ -11728,6 +11762,10 @@ msgstr "이 제공업체를 이용하세요"
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "이 시간을 활용하세요"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."

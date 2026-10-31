@@ -615,7 +615,7 @@
 			},
 			"put": {
 				"operationId": "saveApplicationProfile",
-				"summary": "Save and mark your private application profile reviewed",
+				"summary": "Save your application profile",
 				"tags": [
 					"Application Profile"
 				],
@@ -16675,6 +16675,131 @@
 				]
 			}
 		},
+		"/applications/by-posting": {
+			"get": {
+				"operationId": "findTrackedPosting",
+				"summary": "Find an owned application by canonical posting URL",
+				"tags": [
+					"Applications"
+				],
+				"parameters": [
+					{
+						"name": "sourceUrl",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"maxLength": 2048
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"application": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"id": {
+															"type": "string"
+														},
+														"role": {
+															"type": "string"
+														},
+														"company": {
+															"type": "string"
+														},
+														"sourceUrl": {
+															"anyOf": [
+																{
+																	"type": "string"
+																},
+																{
+																	"type": "null"
+																}
+															]
+														}
+													},
+													"required": [
+														"id",
+														"role",
+														"company",
+														"sourceUrl"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										}
+									},
+									"required": [
+										"application"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/applications/by-posting?sourceUrl=<sourceUrl>\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			}
+		},
 		"/applications/prior-no-response": {
 			"get": {
 				"operationId": "getPriorNoResponseApplications",
@@ -31298,7 +31423,7 @@
 			"post": {
 				"operationId": "aiParseApplicationPosting",
 				"summary": "Read a job posting",
-				"description": "Reads a job link or pasted posting text into role, company, location, salary and requirements, and returns the posting text to save with the application. Links must be public https pages. Without an AI provider, only a page's own job data (JSON-LD) fills the fields. Requires authentication.",
+				"description": "Reads a job link or pasted posting text into role, company, location, salary and requirements, and returns the posting text to save with the application. Links must be public https pages. Set useAI:false to read without AI, or true to allow AI enrichment. If omitted, AI is attempted only when the page lacks a role, company or description. Without an AI provider, only a page's own job data (JSON-LD) fills the fields. Requires authentication.",
 				"tags": [
 					"Applications",
 					"AI"
@@ -31314,6 +31439,10 @@
 										"type": "string",
 										"minLength": 1,
 										"maxLength": 100000
+									},
+									"useAI": {
+										"type": "boolean",
+										"description": "False never uses AI; true allows AI enrichment. Omit to use AI only when structured page data is incomplete."
 									}
 								},
 								"required": [
@@ -113422,7 +113551,7 @@
 			"post": {
 				"operationId": "createPostingParse",
 				"summary": "Read a job posting",
-				"description": "Reads a job link or pasted posting text into role, company, location, salary and requirements, and returns the posting text to save with the application. Links must be public https pages. Without an AI provider, only a page's own job data (JSON-LD) fills the fields. Requires authentication.",
+				"description": "Reads a job link or pasted posting text into role, company, location, salary and requirements, and returns the posting text to save with the application. Links must be public https pages. Set useAI:false to read without AI, or true to allow AI enrichment. If omitted, AI is attempted only when the page lacks a role, company or description. Without an AI provider, only a page's own job data (JSON-LD) fills the fields. Requires authentication.",
 				"tags": [
 					"Applications",
 					"AI"
@@ -113438,6 +113567,10 @@
 										"type": "string",
 										"minLength": 1,
 										"maxLength": 100000
+									},
+									"useAI": {
+										"type": "boolean",
+										"description": "False never uses AI; true allows AI enrichment. Omit to use AI only when structured page data is incomplete."
 									}
 								},
 								"required": [

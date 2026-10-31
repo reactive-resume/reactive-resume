@@ -62,6 +62,7 @@ const PARITY_PROCEDURES: Record<string, [AnyProcedure, BehaviorAnnotations]> = {
 	"documents.purgeExpired": [router.documents.purgeExpired, WRITE_DESTRUCTIVE],
 	"documents.copyForJob": [router.documents.copyForJob, WRITE_DESTRUCTIVE],
 	"applications.lanes.get": [router.applications.lanes.get, WRITE_IDEMPOTENT],
+	"applications.findPosting": [router.applications.findPosting, READ_IDEMPOTENT],
 	"applications.lanes.create": [router.applications.lanes.create, WRITE_NON_IDEMPOTENT],
 	"applications.lanes.update": [router.applications.lanes.update, WRITE_DESTRUCTIVE],
 	"applications.lanes.reorder": [router.applications.lanes.reorder, WRITE_DESTRUCTIVE],
@@ -217,7 +218,7 @@ const accountExportOutputSchema = z
 			),
 	})
 	.describe(
-		"Account backup excluding the private application profile. Export that profile in Settings → Account. Secrets such as password hashes, tokens and API keys are never included.",
+		"Account backup excluding the private application profile. Export that profile in Settings → Profile. Secrets such as password hashes, tokens and API keys are never included.",
 	);
 
 /** The live server and server card share static contracts, never request context or callbacks. */

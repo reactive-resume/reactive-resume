@@ -13,6 +13,7 @@ import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { lintResumeForAts } from "@reactive-resume/resume/ats";
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
+import { canonicalOpportunityUrl } from "@reactive-resume/schema/applications/posting-url";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { generateId } from "@reactive-resume/utils/string";
 import { requestRunCancellation } from "../agent/cancellation";
@@ -23,6 +24,7 @@ import { lockUser } from "../documents/ownership";
 import { resumeService } from "../resume/service";
 import { writeVersion } from "../resume/version-history";
 import { getStorageService, uploadFile } from "../storage/service";
+import { assertUntrackedPosting, findTrackedPosting } from "./duplicates";
 import { applicationTransitionValues, ensureApplicationPipeline } from "./lanes";
 
 function timelineDate(value: Date | string): Date {
@@ -424,6 +426,7 @@ const applicationSummarySelect = {
 };
 
 export const applicationService = {
+	findPosting: (input: { userId: string; sourceUrl: string }) => findTrackedPosting(db, input.userId, input.sourceUrl),
 	list: async (input: {
 		userId: string;
 		status?: ApplicationStatus;
@@ -569,6 +572,7 @@ export const applicationService = {
 		return withDocumentFiles(userId, { resumeFile, coverLetterFile }, (uploadedFields) =>
 			db.transaction(async (tx) => {
 				await lockUser(tx, userId);
+				await assertUntrackedPosting(tx, userId, fields.sourceUrl);
 				const { values } = await applicationTransitionValues(
 					tx,
 					userId,
@@ -607,7 +611,13 @@ export const applicationService = {
 			await lockUser(tx, input.userId);
 			const pipeline = await ensureApplicationPipeline(tx, input.userId);
 			const values = [];
+			const urls = new Set<string>();
 			for (const { status, laneId, closedReason, stageEnteredAt, ...fields } of input.items) {
+				await assertUntrackedPosting(tx, input.userId, fields.sourceUrl);
+				const url = fields.sourceUrl && canonicalOpportunityUrl(fields.sourceUrl);
+				if (url && urls.has(url))
+					throw new ORPCError("CONFLICT", { message: "Import contains the same posting twice." });
+				if (url) urls.add(url);
 				const transition = await applicationTransitionValues(
 					tx,
 					input.userId,
@@ -687,6 +697,7 @@ export const applicationService = {
 					.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)))
 					.for("update");
 				if (!current) throw new ORPCError("NOT_FOUND");
+				await assertUntrackedPosting(tx, userId, fields.sourceUrl, id);
 				assertAttachmentPermission(current);
 				if (
 					(current.sentResumeVersionId && fields.resumeId !== undefined && fields.resumeId !== current.resumeId) ||

@@ -39,7 +39,7 @@ const config: ExpoConfig = {
 			NSPrivacyAccessedAPITypes: [
 				{
 					NSPrivacyAccessedAPIType: "NSPrivacyAccessedAPICategoryUserDefaults",
-					NSPrivacyAccessedAPITypeReasons: ["CA92.1"],
+					NSPrivacyAccessedAPITypeReasons: ["CA92.1", "1C8F.1"],
 				},
 				{
 					NSPrivacyAccessedAPIType: "NSPrivacyAccessedAPICategoryFileTimestamp",
@@ -122,7 +122,13 @@ const config: ExpoConfig = {
 		"expo-localization",
 		"expo-document-picker",
 		"expo-file-system",
-		"expo-sharing",
+		[
+			"expo-sharing",
+			{
+				ios: { enabled: true, activationRule: { supportsText: true, supportsWebUrlWithMaxCount: 1 } },
+				android: { enabled: true, singleShareMimeTypes: ["text/plain"], multipleShareMimeTypes: [] },
+			},
+		],
 		"expo-system-ui",
 		"expo-status-bar",
 		[

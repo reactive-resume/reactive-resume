@@ -921,6 +921,10 @@ msgstr ""
 msgid "Account"
 msgstr ""
 
+#: app/(tabs)/settings/account.tsx
+msgid "Account details"
+msgstr ""
+
 #: src/features/career/stories.tsx
 msgid "Action"
 msgstr ""
@@ -1252,6 +1256,7 @@ msgstr ""
 msgid "Additional details (optional)"
 msgstr ""
 
+#: src/features/settings/application-profile.tsx
 #: src/features/share/link.tsx
 msgid "Address"
 msgstr ""
@@ -1459,6 +1464,12 @@ msgstr ""
 msgid "Already covered:"
 msgstr ""
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/add-sheet.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/check/screen.tsx
 msgid "Also check the exported PDF"
 msgstr ""
@@ -1552,10 +1563,6 @@ msgstr ""
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "Answers"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Answers apply only to the country shown. A missing country has unknown answers."
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
@@ -1667,10 +1674,6 @@ msgstr ""
 msgid "Application phone"
 msgstr ""
 
-#: src/features/settings/application-profile.tsx
-msgid "Application profile deleted."
-msgstr ""
-
 #: src/features/assistant/coach-screen.tsx
 msgid "application summaries"
 msgstr ""
@@ -1681,10 +1684,6 @@ msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "Application views"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Application-only details. Never added to public links, document exports or AI context automatically."
 msgstr ""
 
 #: app/(tabs)/_layout.tsx
@@ -2035,10 +2034,6 @@ msgstr ""
 msgid "Bengali"
 msgstr ""
 
-#: src/features/settings/application-profile.tsx
-msgid "Blank fields mean unknown. Nothing is inferred from your resume. Self-identification is not collected here. Enter references yourself and review their details before sharing."
-msgstr ""
-
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr ""
@@ -2180,10 +2175,6 @@ msgstr ""
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
 msgid "Career"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Career preferences"
 msgstr ""
 
 #: src/features/settings/locale-names.ts
@@ -2764,12 +2755,9 @@ msgstr ""
 msgid "Connection saved"
 msgstr ""
 
-#: src/features/settings/application-profile.tsx
-msgid "Contact and address"
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
+#: src/features/settings/application-profile.tsx
 msgid "Contact details"
 msgstr ""
 
@@ -3702,11 +3690,11 @@ msgid "Delete permanently…"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
-msgid "Delete private application profile?"
+msgid "Delete profile"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
-msgid "Delete profile"
+msgid "Delete profile?"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -3833,6 +3821,10 @@ msgstr ""
 #: app/applications/[id]/[tab].tsx
 #: src/features/document-menu/index.tsx
 msgid "Details"
+msgstr ""
+
+#: src/features/settings/application-profile.tsx
+msgid "Details for your job application forms."
 msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
@@ -4110,6 +4102,10 @@ msgstr ""
 msgid "Duplicate"
 msgstr ""
 
+#: src/features/applications/add-sheet.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 msgid "Duplicate resume"
 msgstr ""
@@ -4185,6 +4181,10 @@ msgid "Edit posting"
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
+msgid "Edit profile"
+msgstr ""
+
+#: src/features/workspace/tabs/apply.tsx
 msgid "Edit question"
 msgstr ""
 
@@ -4235,6 +4235,7 @@ msgstr ""
 
 #: app/(tabs)/settings/account.tsx
 #: src/features/letters/write.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Email"
 msgstr ""
@@ -5591,14 +5592,14 @@ msgstr ""
 msgid "Last reviewed"
 msgstr ""
 
-#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
-#: src/features/settings/application-profile.tsx
-msgid "Last reviewed: {0}"
-msgstr ""
-
 #. placeholder {0}: time.when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
+msgstr ""
+
+#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
+#: src/features/settings/application-profile.tsx
+msgid "Last updated: {0}"
 msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
@@ -6101,6 +6102,10 @@ msgstr ""
 msgid "Manage lanes"
 msgstr ""
 
+#: src/features/settings/application-profile.tsx
+msgid "Manage profile"
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Managed by server"
 msgstr ""
@@ -6455,6 +6460,7 @@ msgstr ""
 #: src/features/documents/new-document.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/settings/profile.tsx
 #: src/features/write/fields.ts
 msgid "Name"
@@ -6962,15 +6968,12 @@ msgstr ""
 msgid "Not recorded yet. Leave blank until you can support it."
 msgstr ""
 
-#: src/features/settings/application-profile.tsx
-msgid "Not reviewed yet"
-msgstr ""
-
 #: src/features/career/preferences.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Not saved"
 msgstr ""
 
+#: src/features/settings/application-profile.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Not saved yet"
 msgstr ""
@@ -7134,6 +7137,10 @@ msgstr ""
 msgid "On"
 msgstr ""
 
+#: src/features/applications/add-sheet.tsx
+msgid "On iOS, choose Keep for review, then reopen app in the Share extension. Reopen Reactive Resume yourself within 15 minutes. Sign in here before sharing."
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "On. Anyone with the link can see your web page."
 msgstr ""
@@ -7295,6 +7302,10 @@ msgstr ""
 msgid "Open the schedule"
 msgstr ""
 
+#: src/features/applications/add-sheet.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "Open web page"
 msgstr ""
@@ -7350,6 +7361,12 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providers.defaultProvider.label
+#. placeholder {1}: providers.defaultProvider.provider
+#: src/features/applications/add-sheet.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -7616,6 +7633,7 @@ msgid "Persian"
 msgstr ""
 
 #: src/features/letters/write.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/basics-screen.tsx
 #: src/features/write/fields.ts
 msgid "Phone"
@@ -7925,11 +7943,6 @@ msgstr ""
 msgid "Privacy policy"
 msgstr ""
 
-#: src/features/settings/application-profile.tsx
-#: src/features/workspace/tabs/apply.tsx
-msgid "Private application profile"
-msgstr ""
-
 #: src/features/document-menu/index.tsx
 msgid "Private. Only you can see it."
 msgstr ""
@@ -7943,9 +7956,14 @@ msgstr ""
 msgid "Proficiency"
 msgstr ""
 
-#: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/index.tsx
+#: app/(tabs)/settings/profile.tsx
 #: src/features/search/search-screen.tsx
 msgid "Profile"
+msgstr ""
+
+#: src/features/settings/application-profile.tsx
+msgid "Profile deleted."
 msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
@@ -7958,6 +7976,10 @@ msgstr ""
 
 #: src/features/settings/profile.tsx
 msgid "Profile photo"
+msgstr ""
+
+#: src/features/settings/application-profile.tsx
+msgid "Profile saved."
 msgstr ""
 
 #: src/features/write/fields.ts
@@ -8148,6 +8170,10 @@ msgstr ""
 msgid "Read the resume"
 msgstr ""
 
+#: src/features/applications/add-sheet.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
 msgstr ""
@@ -8190,6 +8216,11 @@ msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "Reading this file with AI needs a tested AI provider. Set one up, then retry."
+msgstr ""
+
+#: src/api/ai-consent.ts
+#: src/features/applications/error.ts
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
 msgstr ""
 
 #: src/features/ai/web-access.tsx
@@ -8283,19 +8314,7 @@ msgstr ""
 
 #. placeholder {0}: index + 1
 #: src/features/settings/application-profile.tsx
-msgid "Reference {0}: {label}"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference email"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference name"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Reference phone"
+msgid "Reference {0}"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
@@ -8351,6 +8370,10 @@ msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
 msgid "Reload now"
+msgstr ""
+
+#: src/features/settings/application-profile.tsx
+msgid "Relocation"
 msgstr ""
 
 #: src/features/assistant/messages.tsx
@@ -8744,6 +8767,7 @@ msgstr ""
 
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -9041,6 +9065,7 @@ msgstr ""
 #: src/features/documents/document-sheets.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
+#: src/features/settings/application-profile.tsx
 #: src/features/write/pickers.tsx
 msgid "Save"
 msgstr ""
@@ -9059,10 +9084,6 @@ msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Save and mark reviewed"
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -9180,10 +9201,6 @@ msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
-msgstr ""
-
-#: src/features/settings/application-profile.tsx
-msgid "Saved and marked reviewed."
 msgstr ""
 
 #: src/features/write/date-field.tsx
@@ -9599,6 +9616,10 @@ msgstr ""
 msgid "Share enabled shared Knowledge"
 msgstr ""
 
+#: src/features/applications/incoming-posting.tsx
+msgid "Share one posting URL or selected text. Files, multiple postings and unsupported URL parameters need explicit URL or pasted-text import in Applications."
+msgstr ""
+
 #: src/features/share/download.tsx
 msgid "Share PDF"
 msgstr ""
@@ -9619,10 +9640,19 @@ msgstr ""
 msgid "Share via…"
 msgstr ""
 
+#. placeholder {0}: session.server
+#: src/features/applications/add-sheet.tsx
+msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
 msgid "Sharing"
+msgstr ""
+
+#: src/features/applications/incoming-posting.tsx
+msgid "Sharing could not be read. Update the app or paste the posting in Applications."
 msgstr ""
 
 #: src/features/workspace/parts.tsx
@@ -11513,6 +11543,14 @@ msgstr ""
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr ""
 
+#: src/features/settings/application-profile.tsx
+msgid "Update"
+msgstr ""
+
+#: src/features/applications/add-sheet.tsx
+msgid "Update posting details"
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr ""
@@ -11626,10 +11664,6 @@ msgstr ""
 msgid "Use at most 64 characters."
 msgstr ""
 
-#: src/features/settings/application-profile.tsx
-msgid "Use Career preferences for work locations, office days, notice period and minimum base salary. Requested salary below is separate. Editing answers for one application does not update these global settings."
-msgstr ""
-
 #: src/features/letters/write.tsx
 msgid "Use default"
 msgstr ""
@@ -11727,6 +11761,10 @@ msgstr ""
 
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
+msgstr ""
+
+#: src/features/applications/add-sheet.tsx
+msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts

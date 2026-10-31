@@ -156,3 +156,4 @@ R, D, I and O are `readOnlyHint`, `destructiveHint`, `idempotentHint` and `openW
 | `open_account_settings`                 | true  | false | true  | false | Returns the selected account settings URL only; authentication/security actions require later browser interaction. Repeating only returns a URL; no external request is made.                                                                                                                            |
 
 | `api_career_suggest_target_roles` | true | false | false | true | Sends explicitly selected owned resume and enabled shared Knowledge to a tested AI provider; returns unsaved suggestions without searching or applying. |
+| `api_applications_find_posting` | true | false | true | false | Reads only the authenticated account's canonical posting match; no writes, external requests or credentials leave the installation. |

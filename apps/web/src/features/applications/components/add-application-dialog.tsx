@@ -1,6 +1,8 @@
 import type { RouterOutput } from "@/libs/orpc/client";
+import type { PostingCapture } from "@reactive-resume/schema/applications/capture";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
+import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useId, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -40,6 +42,7 @@ type AddApplicationDialogProps = {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	onAdded: (id: string) => void;
+	initialCapture?: PostingCapture | null | undefined;
 };
 
 /**
@@ -47,7 +50,7 @@ type AddApplicationDialogProps = {
  * provider when one is set up) into role and company, which stay editable; the posting itself is saved with the
  * application for Check, the assistant and letters. Add, or Add and tailor a resume.
  */
-export function AddApplicationDialog({ open, onOpenChange, onAdded }: AddApplicationDialogProps) {
+export function AddApplicationDialog({ open, onOpenChange, onAdded, initialCapture }: AddApplicationDialogProps) {
 	// A fresh form for every open, kept in place while the dialog animates closed.
 	const [instance, setInstance] = useState(0);
 	const [wasOpen, setWasOpen] = useState(open);
@@ -59,23 +62,32 @@ export function AddApplicationDialog({ open, onOpenChange, onAdded }: AddApplica
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-[560px]">
-				<AddApplicationForm key={instance} onClose={() => onOpenChange(false)} onAdded={onAdded} />
+				<AddApplicationForm
+					initialCapture={initialCapture}
+					key={instance}
+					onClose={() => onOpenChange(false)}
+					onAdded={onAdded}
+				/>
 			</DialogContent>
 		</Dialog>
 	);
 }
 
-type AddApplicationFormProps = { onClose: () => void; onAdded: (id: string) => void };
+type AddApplicationFormProps = {
+	onClose: () => void;
+	onAdded: (id: string) => void;
+	initialCapture?: PostingCapture | null | undefined;
+};
 
-function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
+function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplicationFormProps) {
 	const id = useId();
 	const { data: webAccess } = useQuery(orpc.webAccess.status.queryOptions());
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const [query, setQuery] = useState("");
 	const search = useMutation(orpc.applications.ai.searchPostings.mutationOptions());
-	const [input, setInput] = useState("");
-	const [role, setRole] = useState("");
-	const [company, setCompany] = useState("");
+	const [input, setInput] = useState(initialCapture?.url ?? "");
+	const [role, setRole] = useState(initialCapture?.role ?? "");
+	const [company, setCompany] = useState(initialCapture?.company ?? "");
 	const { lanes, active, mode } = useApplicationLanes();
 	const choices = ADD_CATEGORIES.flatMap((category) => active.filter((lane) => lane.category === category));
 	const [laneId, setLaneId] = useState<string | null>(null);
@@ -84,11 +96,11 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 	const [stageDate, setStageDate] = useState(() => new Date().toLocaleDateString("en-CA"));
 	const [resumeId, setResumeId] = useState("");
 	const [coverLetterId, setCoverLetterId] = useState("");
-	const [location, setLocation] = useState("");
+	const [location, setLocation] = useState(initialCapture?.location ?? "");
 	const [salary, setSalary] = useState("");
-	const [pasteOpen, setPasteOpen] = useState(false);
-	const [pastedText, setPastedText] = useState("");
-	const [description, setDescription] = useState<string | null>(null);
+	const [pasteOpen, setPasteOpen] = useState(!!initialCapture?.description);
+	const [pastedText, setPastedText] = useState(initialCapture?.description ?? "");
+	const [description, setDescription] = useState<string | null>(initialCapture?.description || null);
 	const [reading, setReading] = useState<{ text: string; result: Parsed } | null>(null);
 	const providerState = useHasUsableAiProvider();
 	const { hasUsableProvider } = providerState;
@@ -99,8 +111,22 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 	useEffect(() => () => controller.current?.abort(), []);
 	const read = useMutation({
 		...orpc.applications.ai.parsePosting.mutationOptions(),
-		mutationFn: (value) =>
-			client.applications.ai.parsePosting(value, controller.current ? { signal: controller.current.signal } : {}),
+		mutationFn: async (value) => {
+			const options = controller.current ? { signal: controller.current.signal } : {};
+			if (!value.useAI) {
+				// Older servers strip useAI. This route was introduced with the explicit no-AI contract.
+				try {
+					await client.applications.findPosting({ sourceUrl: "" }, options);
+				} catch (error) {
+					if (options.signal?.aborted) throw error;
+					throw new Error(
+						t`Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually.`,
+					);
+				}
+			}
+			options.signal?.throwIfAborted();
+			return client.applications.ai.parsePosting(value, options);
+		},
 	});
 	const resetRead = () => {
 		controller.current?.abort();
@@ -108,19 +134,40 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 		setReading(null);
 	};
 	const create = useMutation(orpc.applications.create.mutationOptions());
+	const update = useMutation(orpc.applications.update.mutationOptions());
+	const duplicate = useQuery({
+		...orpc.applications.findPosting.queryOptions({ input: { sourceUrl: isLink(input) ? input.trim() : "" } }),
+		enabled: isLink(input),
+		select: (data) => data.application,
+		retry: false,
+	});
 
-	const text = (pasteOpen ? pastedText : input).trim();
+	const text = (initialCapture?.description ? (description ?? "") : pasteOpen ? pastedText : input).trim();
 	const sourceLink = isLink(input.trim()) ? input.trim() : null;
 	const link = !pasteOpen && Boolean(sourceLink);
+	const postingDescription = (description ?? (!link ? text : "")).slice(0, MAX_POSTING_CHARS);
 	const readable = text.length > 8 && (link || hasUsableProvider);
 	const parsed = reading?.text === text ? reading.result : null;
-	const clipped = Boolean(parsed?.postingSource.truncated || (!link && text.length > MAX_POSTING_CHARS));
-	const readPosting = () => {
+	const clipped = Boolean(
+		initialCapture?.truncated || parsed?.postingSource.truncated || (!link && text.length > MAX_POSTING_CHARS),
+	);
+	const postingSource = postingDescription
+		? {
+				...(parsed?.postingSource ?? {
+					method: "paste" as const,
+					format: "text" as const,
+					completeness: "unknown" as const,
+				}),
+				truncated: clipped,
+				...(clipped ? { completeness: "incomplete" as const } : {}),
+			}
+		: null;
+	const readPosting = (useAI = false) => {
 		if (!readable || read.isPending) return;
 		const request = new AbortController();
 		controller.current = request;
 		read.mutate(
-			{ input: text },
+			{ input: text, useAI },
 			{
 				onSuccess: (result) => {
 					if (request.signal.aborted) return;
@@ -131,8 +178,9 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 					setSalary((current) => current || result.salary);
 					setDescription(result.jobDescription);
 				},
-				onError: () => {
-					if (link && !request.signal.aborted) setPasteOpen(true);
+				onError: (error) => {
+					if (link && !request.signal.aborted && error instanceof ORPCError && error.code === "POSTING_UNREADABLE")
+						setPasteOpen(true);
 				},
 			},
 		);
@@ -143,10 +191,12 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 		company.trim().length > 0 &&
 		(stage === "saved" || Boolean(stageDate)) &&
 		!read.isPending &&
-		!create.isPending;
+		!create.isPending &&
+		!update.isPending &&
+		(!sourceLink || !duplicate.isPending);
 
 	const add = async (tailor: boolean) => {
-		if (!ready) return;
+		if (!ready || duplicate.data) return;
 		const posting = {
 			company: company.trim(),
 			role: role.trim(),
@@ -158,17 +208,8 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 			...(stage !== "saved" && stageDate ? { stageEnteredAt: stageDate } : {}),
 			...(resumeId ? { resumeId } : {}),
 			...(stage !== "saved" && coverLetterId ? { coverLetterId } : {}),
-			jobDescription: (description ?? (!link ? text : "")).slice(0, MAX_POSTING_CHARS) || null,
-			postingSource:
-				parsed?.postingSource ??
-				(!link && text
-					? {
-							method: "paste" as const,
-							format: "text" as const,
-							truncated: clipped,
-							completeness: clipped ? ("incomplete" as const) : ("unknown" as const),
-						}
-					: null),
+			jobDescription: postingDescription || null,
+			postingSource,
 		};
 		try {
 			const applicationId = await create.mutateAsync(posting);
@@ -179,6 +220,7 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 				openDialog("document.new", { step: "copy", applicationId, ...(resumeId ? { sourceResumeId: resumeId } : {}) });
 			else onAdded(applicationId);
 		} catch (error) {
+			if (sourceLink) void duplicate.refetch();
 			toastError(error, t`Couldn't add the application. Try again.`);
 		}
 	};
@@ -199,6 +241,12 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 					<Trans>Paste a job link or posting, then check the role and company.</Trans>
 				</DialogDescription>
 			</DialogHeader>
+			<p className="text-xs text-ink-3">
+				<Trans>Capture a posting from your browser with the helper, or paste its URL/text below.</Trans>{" "}
+				<a href="/capture-helper.zip" download className="text-accent-text underline">
+					<Trans>Download browser helper</Trans>
+				</a>
+			</p>
 
 			{webAccess?.search && (
 				<section className="grid gap-2" aria-labelledby={`${id}-search-label`}>
@@ -302,13 +350,15 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 					placeholder="https://…"
 					onChange={(event) => {
 						setInput(event.target.value);
-						setDescription(null);
-						setPasteOpen(false);
+						if (!initialCapture) {
+							setDescription(null);
+							setPasteOpen(false);
+						}
 						resetRead();
 					}}
 					autoFocus
 				/>
-				{sourceLink && (
+				{sourceLink && !initialCapture && (
 					<Button
 						type="button"
 						variant="ghost"
@@ -322,7 +372,7 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 						<Trans>Paste description instead</Trans>
 					</Button>
 				)}
-				{pasteOpen && (
+				{pasteOpen && !initialCapture && (
 					<div className="grid gap-1.5">
 						<Label htmlFor={`${id}-recovery`}>
 							<Trans>Pasted description</Trans>
@@ -343,8 +393,14 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 						</p>
 					</div>
 				)}
-				{readable && (
-					<Button type="button" variant="secondary" size="sm" disabled={read.isPending} onClick={readPosting}>
+				{readable && link && (
+					<Button
+						type="button"
+						variant="secondary"
+						size="sm"
+						disabled={read.isPending}
+						onClick={() => readPosting(false)}
+					>
 						<Trans>Read posting</Trans>
 					</Button>
 				)}
@@ -365,7 +421,7 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 						<Trans>Enhanced reading was unavailable. The built-in reader retrieved this posting.</Trans>
 					</p>
 				)}
-				{parsed && description !== null && (
+				{description !== null && (
 					<div className="grid gap-1.5">
 						<Label htmlFor={`${id}-description`}>
 							<Trans>Saved description</Trans>
@@ -377,7 +433,7 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 							value={description}
 							onChange={(event) => setDescription(event.target.value)}
 						/>
-						{parsed.postingSource.retrievedAt && (
+						{parsed?.postingSource.retrievedAt && (
 							<p className="text-xs text-ink-3">
 								<Trans>
 									Retrieved {parsed.postingSource.retrievedAt}. Origin freshness is unknown unless reported.
@@ -386,7 +442,7 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 						)}
 					</div>
 				)}
-				{providerState.isUnavailable && !link ? (
+				{initialCapture?.description && !read.error && !read.isPending ? null : providerState.isUnavailable && !link ? (
 					<AiProviderLoadState state={providerState} />
 				) : (
 					<ReadStatus
@@ -400,6 +456,84 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 					/>
 				)}
 			</div>
+
+			{initialCapture && (
+				<p className="text-xs text-ink-2">
+					<Trans>Capture does not use AI. Review every field before saving.</Trans>
+				</p>
+			)}
+			{sourceLink && duplicate.isError && (
+				<p role="alert">
+					<Trans>Duplicate check unavailable. Retry before saving; your server may need updating.</Trans>
+					<Button type="button" onClick={() => void duplicate.refetch()}>
+						<Trans>Retry</Trans>
+					</Button>
+				</p>
+			)}
+			{duplicate.data && (
+				<div role="status" className="grid gap-2 rounded-lg border border-line p-3">
+					<p>
+						<Trans>
+							Already tracked: {duplicate.data.role} at {duplicate.data.company}. Open it or update only its posting
+							details.
+						</Trans>
+					</p>
+					<Button
+						type="button"
+						variant="secondary"
+						onClick={() => {
+							if (duplicate.data) {
+								onClose();
+								onAdded(duplicate.data.id);
+							}
+						}}
+					>
+						<Trans>Open tracked job</Trans>
+					</Button>
+					<Button
+						type="button"
+						disabled={!ready}
+						onClick={async () => {
+							if (!duplicate.data || !ready) return;
+							try {
+								await update.mutateAsync({
+									id: duplicate.data.id,
+									role: role.trim(),
+									company: company.trim(),
+									...(location.trim() ? { location: location.trim() } : {}),
+									sourceUrl: sourceLink,
+									...(postingDescription.trim() ? { jobDescription: postingDescription, postingSource } : {}),
+								});
+								invalidate();
+								onClose();
+								onAdded(duplicate.data.id);
+							} catch (error) {
+								toastError(error, t`Couldn't update the posting. Try again.`);
+							}
+						}}
+					>
+						<Trans>Update posting details</Trans>
+					</Button>
+				</div>
+			)}
+			{providerState.usableProviders[0] && (
+				<div className="grid gap-1.5">
+					<p className="text-xs text-ink-3">
+						<Trans>
+							Optional AI sends only this posting to {providerState.usableProviders[0].label} (
+							{providerState.usableProviders[0].provider}).
+						</Trans>
+					</p>
+					<Button
+						type="button"
+						variant="secondary"
+						disabled={!text || read.isPending}
+						onClick={() => readPosting(true)}
+					>
+						<Trans>Read with AI</Trans>
+					</Button>
+				</div>
+			)}
 
 			<div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
 				<div className="grid gap-1.5">
@@ -520,10 +654,10 @@ function AddApplicationForm({ onClose, onAdded }: AddApplicationFormProps) {
 				</div>
 			)}
 			<DialogFooter>
-				<Button type="button" variant="secondary" disabled={!ready} onClick={() => void add(false)}>
+				<Button type="button" variant="secondary" disabled={!ready || !!duplicate.data} onClick={() => void add(false)}>
 					{stage === "saved" ? <Trans>Save job</Trans> : <Trans>Record application</Trans>}
 				</Button>
-				<Button type="button" disabled={!ready} onClick={() => void add(true)}>
+				<Button type="button" disabled={!ready || !!duplicate.data} onClick={() => void add(true)}>
 					<Trans>Save and prepare resume</Trans>
 				</Button>
 			</DialogFooter>

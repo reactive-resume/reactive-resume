@@ -65,7 +65,7 @@ ui.listLayout = {};
 ui.useFirstAppearance = () => false;
 const mocks = {
 	react,
-	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView" },
+	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView", Platform: { OS: "android" } },
 	"expo-router": { useRouter: () => router, useLocalSearchParams: () => ({}), Stack: { Screen: "StackScreen" } },
 	"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
 	"@lingui/core/macro": { t: tag, plural: (value, forms) => forms.other.replace("#", String(value)) },
@@ -614,7 +614,7 @@ let finishSave;
 const { AddApplicationSheet } = load("features/applications/add-sheet.tsx", {
 	react: { ...react, useEffect: () => {} },
 	"@orpc/client": { ORPCError: class extends Error {} },
-	"@tanstack/react-query": { useQuery: () => ({ data: [] }) },
+	"@tanstack/react-query": { useQuery: (options) => ({ data: options.queryKey[0] === "posting-match" ? null : [] }) },
 	"./date": { parseDateOnly: () => new Date() },
 	"./error": { applicationError: String },
 	"./lane-notice": { LaneNotice: "LaneNotice" },
@@ -635,11 +635,16 @@ const { AddApplicationSheet } = load("features/applications/add-sheet.tsx", {
 	"@/api/client": {
 		client: {},
 		orpc: {
+			applications: { findPosting: { queryOptions: () => ({ queryKey: ["posting-match"] }) } },
 			documents: { list: { queryOptions: () => ({ queryKey: ["documents"] }) } },
 			webAccess: { status: { queryOptions: () => ({ queryKey: ["web"] }) } },
 		},
 	},
-	"@/auth/session": { getServer: () => "test", useSession: () => ({ server: "test" }) },
+	"@/auth/session": {
+		getServer: () => "test",
+		getAccountScope: () => "test:alice",
+		useSession: () => ({ server: "test" }),
+	},
 	"@/features/ai/providers": {
 		AIProviderSetupSheet: "AIProviderSetupSheet",
 		useHasAIProvider: () => ({ hasAIProvider: false }),

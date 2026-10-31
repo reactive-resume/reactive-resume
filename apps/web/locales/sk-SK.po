@@ -1219,6 +1219,10 @@ msgstr "Úspech"
 msgid "Account"
 msgstr "Účet"
 
+#: src/features/settings/account/profile.tsx
+msgid "Account details"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Action"
@@ -1399,7 +1403,7 @@ msgstr "Pridajte pohovor, aby ste ho mohli naplánovať"
 msgid "Add application"
 msgstr "Pridať žiadosť"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add authorization country"
 msgstr ""
 
@@ -1468,7 +1472,7 @@ msgstr "Pridať kľúčové slovo"
 msgid "Add language"
 msgstr "Pridať jazyk"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr ""
 
@@ -1521,7 +1525,7 @@ msgid "Add publication"
 msgstr "Pridať publikáciu"
 
 #: src/features/resume/editor/write/outline.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add reference"
 msgstr "Pridajte referenciu"
 
@@ -1631,18 +1635,19 @@ msgid "Added to Knowledge as an experience."
 msgstr "Pridané do Znalostí ako skúsenosť."
 
 #: src/features/resume/share/address-field.tsx
+#: src/features/settings/profile.tsx
 msgid "Address"
 msgstr "Adresa"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address country"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address line 1"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address line 2"
 msgstr ""
 
@@ -1846,6 +1851,12 @@ msgstr "Máte už účet? <0/>"
 msgid "Already interviewing"
 msgstr "Už pohovor"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Also check the exported PDF"
 msgstr "Skontrolujte tiež exportovaný PDF"
@@ -1945,10 +1956,6 @@ msgstr ""
 #: src/features/career/workspace/saved.tsx
 msgid "Answers"
 msgstr "Odpovede"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Answers apply only to the country shown. A missing country has unknown answers."
-msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "Answers copied"
@@ -2090,7 +2097,8 @@ msgstr "žiadosť o zamestnanie vymazaná"
 msgid "Application details"
 msgstr "Podrobnosti žiadosti"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 msgid "Application email"
 msgstr ""
 
@@ -2098,16 +2106,12 @@ msgstr ""
 msgid "Application options"
 msgstr "možnosti žiadosti o zamestnanie"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Application phone"
 msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Application preparation"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Application profile deleted."
 msgstr ""
 
 #: src/features/career/coach.tsx
@@ -2122,10 +2126,6 @@ msgstr "Karty žiadosti"
 #: src/features/career/workspace/messages.tsx
 msgid "Application updated"
 msgstr "Žiadosť aktualizovaná"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Application-only details. Never added to public links, document exports or AI context automatically."
-msgstr ""
 
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
@@ -2363,7 +2363,7 @@ msgid "Attachment"
 msgstr "Príloha"
 
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
 msgstr ""
 
@@ -2508,10 +2508,6 @@ msgstr "Bengálčina"
 #: src/features/resume/share/download-tab.tsx
 msgid "Best for applying"
 msgstr "Najlepšie na žiadosti o prácu"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Blank fields mean unknown. Nothing is inferred from your resume. Self-identification is not collected here. Enter references yourself and review their details before sharing."
-msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
@@ -2684,12 +2680,20 @@ msgstr "Dokáže softvér prečítať váš životopis?"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/settings/account/application-profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
+#: src/features/settings/profile.tsx
 #: src/hooks/use-confirm.tsx
 msgid "Cancel"
 msgstr "Zrušiť"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Capture does not use AI. Review every field before saving."
+msgstr ""
 
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -2704,10 +2708,6 @@ msgstr "Kariérny kouč (váš kľúč)"
 #: src/features/homepage/hero.tsx
 msgid "career manager."
 msgstr "na správu kariéry."
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Career preferences"
-msgstr ""
 
 #: src/libs/locale.ts
 msgid "Catalan"
@@ -2831,7 +2831,7 @@ msgstr "Skontrolujte akékoľvek PDF, nie je potrebný žiadny účet"
 msgid "Check DNS"
 msgstr "Skontrolovať DNS"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
 
@@ -2946,7 +2946,7 @@ msgstr ""
 msgid "Choose a connection"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Choose a country"
 msgstr ""
 
@@ -3019,7 +3019,7 @@ msgstr "Kruh"
 msgid "Cited as already shown · check it"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "City"
 msgstr ""
 
@@ -3200,7 +3200,7 @@ msgstr "Kompaktné"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/design/entries-group.tsx
 #: src/features/resume/editor/write/entries.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Company"
 msgstr "Spoločnosť"
@@ -3371,12 +3371,9 @@ msgstr "Pripojenia účtujú reč osobitne a môžu čerpať tokeny z vášho ú
 msgid "Contact"
 msgstr "Kontaktovať"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Contact and address"
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
+#: src/features/settings/profile.tsx
 msgid "Contact details"
 msgstr "Kontaktné údaje"
 
@@ -3623,7 +3620,7 @@ msgstr "Túto naplánovanú úlohu sa nepodarilo zmeniť. Skúste to znova."
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "Heslo sa nepodarilo zmeniť. Skontrolujte aktuálne heslo a skúste to znova."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
 
@@ -3827,7 +3824,7 @@ msgstr "Vaše etapy sa nepodarilo načítať, preto sa zobrazujú štandardné. 
 msgid "Couldn't load your stages."
 msgstr "Vaše etapy sa nepodarilo načítať."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr ""
 
@@ -4011,6 +4008,7 @@ msgid "Couldn't save this schedule. Try again."
 msgstr "Túto naplánovanú úlohu sa nepodarilo uložiť. Skúste to znova."
 
 #: src/features/letters/store.ts
+#: src/features/resume/builder/draft.ts
 #: src/features/resume/share/history-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -4159,6 +4157,10 @@ msgstr "Pohovor sa nepodarilo aktualizovať. Skúste to znova."
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Couldn't update the letter. Try again."
 msgstr "List sa nepodarilo aktualizovať. Skúste to znova."
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Couldn't update the posting. Try again."
+msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't update the preview. The last working version is still shown. Edit anything to try again."
@@ -4341,7 +4343,7 @@ msgstr "údaje CSV"
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Currency"
 msgstr "Mena"
 
@@ -4568,12 +4570,12 @@ msgstr "Odstrániť stranu"
 msgid "Delete permanently…"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Delete private application profile?"
+#: src/features/settings/profile.tsx
+msgid "Delete profile"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Delete profile"
+#: src/features/settings/profile.tsx
+msgid "Delete profile?"
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -4722,6 +4724,10 @@ msgstr "Dizajnové systémy"
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Details"
 msgstr "Podrobnosti"
+
+#: src/features/settings/profile.tsx
+msgid "Details for your job application forms."
+msgstr ""
 
 #. Label above the raw error text forwarded by the identity provider
 #: src/features/auth/pages/error.tsx
@@ -4886,6 +4892,10 @@ msgstr "Stiahnutie a história"
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Download application details, contacts, notes, and timeline history as CSV."
 msgstr "Stiahnite si podrobnosti žiadostí, kontakty, poznámky a históriu časovej osi ako CSV."
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Download browser helper"
+msgstr ""
 
 #. Action button to download two-factor backup codes as a text file
 #: src/dialogs/auth/enable-two-factor.tsx
@@ -5054,6 +5064,10 @@ msgstr "Presuňte na import"
 msgid "Duplicate"
 msgstr "Duplikovať"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
+
 #: src/dialogs/resume/index.tsx
 msgid "Duplicate resume"
 msgstr "Duplikovať životopis"
@@ -5169,6 +5183,10 @@ msgid "Edit posting"
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
+msgid "Edit profile"
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
 msgid "Edit question"
 msgstr "Upraviť otázku"
 
@@ -5251,6 +5269,7 @@ msgstr "Vzdelanie rovnakým spôsobom vymení školu a študijný odbor."
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/settings/account/profile.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Email"
 msgstr "E‑mail"
@@ -5546,7 +5565,7 @@ msgstr "Exportovať PNG"
 msgid "Export saved answers"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Export saved profile"
 msgstr ""
 
@@ -5613,7 +5632,7 @@ msgstr "Fakty, príbehy a preferencie zapnuté v Znalostiach"
 msgid "Failed"
 msgstr "Nepodarilo sa"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
 
@@ -6111,7 +6130,7 @@ msgstr "Uveďte pri každej pozícii a kvalifikácii rozsah dátumov."
 msgid "Give the story a title before you can save."
 msgstr "Pred uložením dajte príbehu názov."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Given name"
 msgstr ""
 
@@ -6360,7 +6379,7 @@ msgstr "Vodorovný rozostup"
 msgid "Hosting and development are paid for by people like you. Optional tip:"
 msgstr "Hosting a vývoj platia ľudia ako vy. Voliteľný tip:"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Hour"
 msgstr ""
 
@@ -7117,14 +7136,14 @@ msgstr "Naposledy upravené"
 msgid "Last reviewed"
 msgstr ""
 
-#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
-#: src/features/settings/account/application-profile.tsx
-msgid "Last reviewed: {0}"
-msgstr ""
-
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
+msgstr ""
+
+#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
+#: src/features/settings/profile.tsx
+msgid "Last updated: {0}"
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -7359,12 +7378,12 @@ msgid "Link"
 msgstr "Odkaz"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Link {0} URL"
 msgstr ""
 
@@ -7461,7 +7480,7 @@ msgid "Linking…"
 msgstr "Prepája sa…"
 
 #: src/features/resume/editor/check/parser-view.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Links"
 msgstr "Odkazy"
 
@@ -7585,7 +7604,7 @@ msgstr "Načítava sa pracovný priestor…"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Loading…"
 msgstr "Načítava sa..."
 
@@ -7714,6 +7733,10 @@ msgstr "Malajčina"
 #: src/libs/locale.ts
 msgid "Malayalam"
 msgstr "Malajálamčina"
+
+#: src/features/settings/profile.tsx
+msgid "Manage profile"
+msgstr ""
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Manage stages"
@@ -7918,7 +7941,7 @@ msgstr "Model: {label}"
 msgid "Mono"
 msgstr "Mono"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
 
@@ -8089,6 +8112,7 @@ msgstr "Mojou úlohou bolo zistiť prečo, bez pridania práce podpore."
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/auth/pages/register.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
@@ -8098,6 +8122,7 @@ msgstr "Mojou úlohou bolo zistiť prečo, bez pridania práce podpore."
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Názov"
 
@@ -8172,7 +8197,7 @@ msgid "Needs attention"
 msgstr "Vyžaduje pozornosť"
 
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Needs sponsorship in {0}"
 msgstr ""
 
@@ -8305,7 +8330,7 @@ msgstr "Ďalší krok: {0}. Pridá pripomienku do sekcie Dnes."
 msgid "Next time, I’d agree how to measure success before the first prototype."
 msgstr "Nabudúce: ešte pred prvým prototypom sa dohodnúť, ako merať úspech."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "No"
 msgstr ""
 
@@ -8682,10 +8707,6 @@ msgstr "Teraz nie"
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "Zatiaľ nezaznamenané. Nechajte prázdne, kým to nebudete vedieť podložiť."
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Not reviewed yet"
-msgstr ""
-
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -8697,6 +8718,7 @@ msgid "Not saved — this fact was forgotten before."
 msgstr "Neuložené — tento fakt bol už predtým zabudnutý."
 
 #: src/features/career/workspace/preparation.tsx
+#: src/features/settings/profile.tsx
 msgid "Not saved yet"
 msgstr ""
 
@@ -9060,6 +9082,10 @@ msgstr "Otvorte aplikáciu Reactive Resume"
 msgid "Open the schedule"
 msgstr "Otvoriť naplánovanú úlohu"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Open web page"
 msgstr "Otvoriť webovú stránku"
@@ -9108,6 +9134,12 @@ msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providerState.usableProviders[0].label
+#. placeholder {1}: providerState.usableProviders[0].provider
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -9416,7 +9448,7 @@ msgstr "Pozastavené naplánované úlohy si ponechajú nastavenia."
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Pay period"
 msgstr "Výplatné obdobie"
 
@@ -9460,6 +9492,7 @@ msgstr "Perzština"
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/resume/share/web-page-preview.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Phone"
 msgstr "Telefón"
@@ -9467,6 +9500,10 @@ msgstr "Telefón"
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Phone (optional)"
 msgstr "Telefón (voliteľné)"
+
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Photo"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Photo hidden"
@@ -9583,7 +9620,7 @@ msgstr "Portugalčina (Portugalsko)"
 msgid "Position"
 msgstr "Pozícia"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Postal code"
 msgstr ""
 
@@ -9805,11 +9842,6 @@ msgstr "Zásady ochrany osobných údajov"
 msgid "Private"
 msgstr "Súkromný"
 
-#: src/features/career/workspace/apply.tsx
-#: src/features/settings/account/application-profile.tsx
-msgid "Private application profile"
-msgstr ""
-
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Private. Only you can see it."
 msgstr "Súkromné. Vidíte to len vy."
@@ -9835,9 +9867,15 @@ msgstr "Úroveň znalosti"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/features/settings/account/profile.tsx
+#: src/features/settings/profile.tsx
+#: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "Profil"
+
+#: src/features/settings/profile.tsx
+msgid "Profile deleted."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile link (optional)"
@@ -9851,6 +9889,10 @@ msgstr "Odkaz na profil osoby {0}"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile links must be public HTTPS addresses."
 msgstr "Odkazy na profily musia byť verejné adresy HTTPS."
+
+#: src/features/settings/profile.tsx
+msgid "Profile saved."
+msgstr ""
 
 #: src/libs/resume/section.tsx
 msgid "Profiles"
@@ -10116,6 +10158,10 @@ msgstr "Prečítal životopis"
 msgid "Read the self-hosting guide"
 msgstr "Prečítajte si sprievodcu vlastným hosťovaním"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
 msgstr "Prečítajte si svoju e-mailovú adresu."
@@ -10190,6 +10236,10 @@ msgstr "Čítanie textu"
 #: src/features/career/shared.tsx
 msgid "Reading what you shared"
 msgstr "Čítame, čo ste zdieľali"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "Nepodarilo sa overiť čítanie bez AI. Skúste to znova, aktualizujte server alebo zadajte údaje ručne."
 
 #: src/features/resume/import/read-file.ts
 msgid "Reading Word files needs an AI provider. Set one up in Settings, or import a PDF or JSON file instead."
@@ -10303,23 +10353,12 @@ msgid "Redo resume change"
 msgstr "Zopakovať zmenu životopisu"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference {0}: {label}"
+#: src/features/settings/profile.tsx
+msgid "Reference {0}"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference email"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference name"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference phone"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 #: src/libs/resume/section.tsx
 msgid "References"
 msgstr "Referencie"
@@ -10373,7 +10412,7 @@ msgstr "Odmietnuť"
 msgid "Rejected"
 msgstr "Odmietnuté"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Relationship"
 msgstr ""
 
@@ -10382,13 +10421,17 @@ msgstr ""
 msgid "Reload"
 msgstr "Znovu načítať"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Reload and discard unsaved changes"
 msgstr ""
 
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
+msgstr ""
+
+#: src/features/settings/profile.tsx
+msgid "Relocation"
 msgstr ""
 
 #: src/features/career/shared.tsx
@@ -10459,8 +10502,8 @@ msgstr "Odstrániť „{name}“?"
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
-#: src/features/settings/account/application-profile.tsx
 #: src/features/settings/account/security.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove {0}"
 msgstr "Odstráňte {0}"
 
@@ -10495,7 +10538,7 @@ msgid "Remove file"
 msgstr "Odstrániť súbor"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove link {0}"
 msgstr ""
 
@@ -10522,7 +10565,7 @@ msgid "Remove question"
 msgstr "Odstrániť otázku"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
 
@@ -10632,11 +10675,12 @@ msgstr "Odpoveď skopírovaná"
 msgid "Report a bug"
 msgstr "Nahlásiť chybu"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Requested amount"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 msgid "Requested salary"
 msgstr ""
 
@@ -10837,6 +10881,7 @@ msgstr "Získané {0} pomocou {1}. Čas načítania neurčuje čerstvosť pôvod
 msgid "Retrieved {0}. Origin freshness is unknown unless reported."
 msgstr "Získané {0}. Čerstvosť pôvodu nie je známa, pokiaľ nie je uvedené."
 
+#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
@@ -11108,6 +11153,7 @@ msgstr "Bol pridaný vzorový životopis. Zmazať ho môžete kedykoľvek."
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/share/history-tab.tsx
+#: src/features/settings/profile.tsx
 msgid "Save"
 msgstr "Uložiť"
 
@@ -11127,10 +11173,6 @@ msgstr "Uložte nechránenú kópiu bez hesla a bez obmedzení oprávnení."
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save and link"
 msgstr "Uložiť a prepojiť"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Save and mark reviewed"
-msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Save and prepare resume"
@@ -11279,10 +11321,6 @@ msgstr "Uložené do Žiadostí: {0}"
 msgid "Saved a story: {0}"
 msgstr "Príbeh uložený: {0}"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Saved and marked reviewed."
-msgstr ""
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Saved as an application and linked"
 msgstr "Uložené ako žiadosť o zamestnanie a prepojené"
@@ -11303,7 +11341,7 @@ msgstr "Uložené práve teraz"
 msgid "Saved offers"
 msgstr "Uložené ponuky"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
 msgstr ""
 
@@ -12421,7 +12459,7 @@ msgstr "Začína o menej ako {0} h, takže brífing sa spustí hneď."
 msgid "Starts now"
 msgstr "Začína teraz"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr ""
 
@@ -13458,7 +13496,7 @@ msgstr ""
 msgid "This question didn't finish."
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
 msgstr ""
 
@@ -13948,7 +13986,7 @@ msgstr "University of Porto"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Unknown"
 msgstr "Neznáme"
 
@@ -14013,6 +14051,14 @@ msgstr "Až 25 MB · skontrolovaných vo vašom prehliadači, nikdy sa neodovzda
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming interviews"
 msgstr "Nadchádzajúce rozhovory"
+
+#: src/features/settings/profile.tsx
+msgid "Update"
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Update posting details"
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Update resume"
@@ -14130,10 +14176,6 @@ msgstr "Použite najviac 64 znakov."
 msgid "Use between 6 and 64 characters."
 msgstr "Použite 6 až 64 znakov."
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Use Career preferences for work locations, office days, notice period and minimum base salary. Requested salary below is separate. Editing answers for one application does not update these global settings."
-msgstr ""
-
 #: src/components/input/color-picker.tsx
 msgid "Use color {color}"
 msgstr "Používanie farieb {color}"
@@ -14243,6 +14285,7 @@ msgstr "Výskum používateľov"
 
 #. Label for username input on registration form
 #: src/features/auth/pages/register.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 msgid "Username"
@@ -14744,7 +14787,7 @@ msgstr "šírka"
 msgid "Will my resume get past applicant tracking systems?"
 msgstr "Prekoná môj životopis systémy sledovania žiadateľov?"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Willing to relocate"
 msgstr ""
 
@@ -14760,7 +14803,7 @@ msgstr "Bez neho vyplníte príjemcu sami a na vypracovanie sa použije iba vá�
 msgid "Words run together when the text is extracted."
 msgstr "Pri extrahovaní textu sa slová spájajú dokopy."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Work authorization and sponsorship"
 msgstr ""
 
@@ -14891,11 +14934,11 @@ msgstr ""
 msgid "Written offer"
 msgstr "Písomná ponuka"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Year"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Yes"
 msgstr ""
 

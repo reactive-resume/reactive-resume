@@ -3,6 +3,8 @@ import { ORPCError } from "@orpc/client";
 
 export function applicationError(error: unknown) {
 	if (error instanceof ORPCError) {
+		if (error.code === "POSTING_SUPPORT_UNAVAILABLE")
+			return t`Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually.`;
 		if (error.code === "CONFLICT") return t`This changed elsewhere. Reload and try again.`;
 		if (error.code === "POSTING_UNREADABLE") return t`That link couldn't be read. Paste the posting text instead.`;
 		if (error.code === "SEARCH_FAILED") return t`Job search couldn't be reached. Try again or paste a posting link.`;
