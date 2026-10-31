@@ -1459,6 +1459,12 @@ msgstr "Deja acoperit · alege unul pentru a-l găsi pe pagină"
 msgid "Already covered:"
 msgstr "Deja acoperit:"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/add-sheet.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/check/screen.tsx
 msgid "Also check the exported PDF"
 msgstr "Verificați, de asemenea, PDF exportat"
@@ -4109,6 +4115,10 @@ msgstr "Renunțați la pronume și începeți cu verbul. Aceasta este convenția
 #: src/features/write/entry-sheet.tsx
 msgid "Duplicate"
 msgstr "Duplică"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
 
 #: src/features/document-menu/index.tsx
 msgid "Duplicate resume"
@@ -7134,6 +7144,10 @@ msgstr "Offline. Editările sunt salvate pe acest dispozitiv și se sincronizeaz
 msgid "On"
 msgstr "Activat"
 
+#: src/features/applications/add-sheet.tsx
+msgid "On iOS, choose Keep for review, then reopen app in the Share extension. Reopen Reactive Resume yourself within 15 minutes. Sign in here before sharing."
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "On. Anyone with the link can see your web page."
 msgstr "Activat. Oricine are linkul îți poate vedea pagina web."
@@ -7295,6 +7309,10 @@ msgstr "Deschideți fișierul în Word și salvați-l mai întâi ca .docx."
 msgid "Open the schedule"
 msgstr "Deschideți programarea"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "Open web page"
 msgstr "Deschide pagina web"
@@ -7350,6 +7368,12 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providers.defaultProvider.label
+#. placeholder {1}: providers.defaultProvider.provider
+#: src/features/applications/add-sheet.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -8148,6 +8172,10 @@ msgstr "Citiți pagina"
 msgid "Read the resume"
 msgstr "A citit CV-ul"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
 msgstr "Lizibilitate"
@@ -8191,6 +8219,11 @@ msgstr "Citirea textului"
 #: src/features/documents/import-file.ts
 msgid "Reading this file with AI needs a tested AI provider. Set one up, then retry."
 msgstr "Citirea acestui fișier cu AI necesită un furnizor testat AI. Configurați unul, apoi reîncercați."
+
+#: src/api/ai-consent.ts
+#: src/features/applications/error.ts
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "Citirea fără IA nu a putut fi confirmată. Încercați din nou, actualizați serverul sau introduceți detaliile manual."
 
 #: src/features/ai/web-access.tsx
 msgid "Reading works"
@@ -8744,6 +8777,7 @@ msgstr "{0} a fost preluat folosind {1}. Timpul de recuperare nu stabilește pro
 
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -9599,6 +9633,10 @@ msgstr ""
 msgid "Share enabled shared Knowledge"
 msgstr ""
 
+#: src/features/applications/incoming-posting.tsx
+msgid "Share one posting URL or selected text. Files, multiple postings and unsupported URL parameters need explicit URL or pasted-text import in Applications."
+msgstr ""
+
 #: src/features/share/download.tsx
 msgid "Share PDF"
 msgstr "Partajați PDF"
@@ -9619,11 +9657,20 @@ msgstr "Partajați înregistrarea"
 msgid "Share via…"
 msgstr "Distribuie prin..."
 
+#. placeholder {0}: session.server
+#: src/features/applications/add-sheet.tsx
+msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
 msgid "Sharing"
 msgstr "Partajarea"
+
+#: src/features/applications/incoming-posting.tsx
+msgid "Sharing could not be read. Update the app or paste the posting in Applications."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sharpening the opening"
@@ -11513,6 +11560,10 @@ msgstr "Până la 20 de etichete per document, 40 de caractere per etichetă."
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr "Până la 25 MB · verificat pe server și nu stocat"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Update posting details"
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "Actualizați serverul înainte de a muta candidaturile într-o etapă personalizată."
@@ -11728,6 +11779,10 @@ msgstr "Utilizați acest furnizor"
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "Folosește acest timp"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."

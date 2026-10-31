@@ -6,6 +6,26 @@ import { paginate, paginationShape } from "../../pagination";
 import { applicationService } from "./service";
 
 export const crudRouter = {
+	findPosting: protectedProcedure
+		.route({
+			method: "GET",
+			path: "/applications/by-posting",
+			tags: ["Applications"],
+			operationId: "findTrackedPosting",
+			summary: "Find an owned application by canonical posting URL",
+		})
+		.input(z.object({ sourceUrl: z.string().max(2048) }))
+		.output(
+			z.object({
+				application: z
+					.object({ id: z.string(), role: z.string(), company: z.string(), sourceUrl: z.string().nullable() })
+					.nullable(),
+			}),
+		)
+		.handler(async ({ input, context }) => ({
+			application: await applicationService.findPosting({ ...input, userId: context.user.id }),
+		})),
+
 	priorNoResponse: protectedProcedure
 		.route({
 			method: "GET",

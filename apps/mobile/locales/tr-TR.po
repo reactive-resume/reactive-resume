@@ -1459,6 +1459,12 @@ msgstr "Zaten ele alındı ​​· sayfada bulmak için birini seçin"
 msgid "Already covered:"
 msgstr "Zaten dahil:"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/add-sheet.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/check/screen.tsx
 msgid "Also check the exported PDF"
 msgstr "Ayrıca dışa aktarılan PDF'yu da kontrol edin"
@@ -4109,6 +4115,10 @@ msgstr "Zamirleri bırakıp fiille başlayın. Çoğu pazarda geçerli kural bud
 #: src/features/write/entry-sheet.tsx
 msgid "Duplicate"
 msgstr "Çoğalt"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
 
 #: src/features/document-menu/index.tsx
 msgid "Duplicate resume"
@@ -7134,6 +7144,10 @@ msgstr "Çevrimdışı. Düzenlemeler bu cihaza kaydedilir ve yeniden bağlandı
 msgid "On"
 msgstr "Açık"
 
+#: src/features/applications/add-sheet.tsx
+msgid "On iOS, choose Keep for review, then reopen app in the Share extension. Reopen Reactive Resume yourself within 15 minutes. Sign in here before sharing."
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "On. Anyone with the link can see your web page."
 msgstr "Açık. Bağlantıya sahip herkes web sayfanızı görebilir."
@@ -7295,6 +7309,10 @@ msgstr "Dosyayı Word'da açın ve önce .docx olarak kaydedin."
 msgid "Open the schedule"
 msgstr "Zamanlamayı aç"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "Open web page"
 msgstr "Web sayfasını aç"
@@ -7350,6 +7368,12 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providers.defaultProvider.label
+#. placeholder {1}: providers.defaultProvider.provider
+#: src/features/applications/add-sheet.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -8148,6 +8172,10 @@ msgstr "Sayfayı okuyun"
 msgid "Read the resume"
 msgstr "Özgeçmişi okudu"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
 msgstr "Okunabilirlik"
@@ -8191,6 +8219,11 @@ msgstr "Metni okumak"
 #: src/features/documents/import-file.ts
 msgid "Reading this file with AI needs a tested AI provider. Set one up, then retry."
 msgstr "Bu dosyayı AI ile okumak için test edilmiş bir AI sağlayıcısı gerekir. Bir tane kurun ve tekrar deneyin."
+
+#: src/api/ai-consent.ts
+#: src/features/applications/error.ts
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "Yapay zekâ olmadan okuma doğrulanamadı. Yeniden deneyin, sunucunuzu güncelleyin veya ayrıntıları elle girin."
 
 #: src/features/ai/web-access.tsx
 msgid "Reading works"
@@ -8744,6 +8777,7 @@ msgstr "{1} kullanılarak {0} alındı. Geri alma süresi menşe tazeliğini sa�
 
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -9599,6 +9633,10 @@ msgstr ""
 msgid "Share enabled shared Knowledge"
 msgstr ""
 
+#: src/features/applications/incoming-posting.tsx
+msgid "Share one posting URL or selected text. Files, multiple postings and unsupported URL parameters need explicit URL or pasted-text import in Applications."
+msgstr ""
+
 #: src/features/share/download.tsx
 msgid "Share PDF"
 msgstr "PDF'yi paylaş"
@@ -9619,11 +9657,20 @@ msgstr "Kaydı paylaş"
 msgid "Share via…"
 msgstr "Şununla paylaş:"
 
+#. placeholder {0}: session.server
+#: src/features/applications/add-sheet.tsx
+msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
 msgid "Sharing"
 msgstr "Paylaşım"
+
+#: src/features/applications/incoming-posting.tsx
+msgid "Sharing could not be read. Update the app or paste the posting in Applications."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sharpening the opening"
@@ -11513,6 +11560,10 @@ msgstr "Belge başına en fazla 20 etiket, etiket başına 40 karakter."
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr "25 MB'a kadar · sunucuda kontrol edildi ve saklanmadı"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Update posting details"
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "Başvuruları özel bir aşamaya taşımadan önce sunucunuzu güncelleyin."
@@ -11728,6 +11779,10 @@ msgstr "Bu sağlayıcıyı kullan"
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "Bu zamanı kullan"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."

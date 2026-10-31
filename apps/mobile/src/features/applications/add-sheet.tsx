@@ -1,11 +1,12 @@
 import type { RouterOutput } from "@/api/client";
+import type { PostingCapture } from "@reactive-resume/schema/applications/capture";
 import type { ApplicationClosedReason } from "@reactive-resume/schema/applications/data";
 import { useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { parseDateOnly } from "./date";
 import { applicationError } from "./error";
 import { LaneNotice } from "./lane-notice";
@@ -15,7 +16,7 @@ import { PriorNoResponse } from "./prior-no-response";
 import { useApplicationMutations } from "./queries";
 import { CLOSED_REASONS, getClosedReasonLabel } from "./stages";
 import { client, orpc } from "@/api/client";
-import { getServer, useSession } from "@/auth/session";
+import { getAccountScope, getServer, useSession } from "@/auth/session";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { WallClockField } from "@/features/application-detail/date-field";
 import { routes } from "@/routes";
@@ -35,7 +36,7 @@ import {
 } from "@/ui";
 
 type ParsedPosting = RouterOutput["applications"]["ai"]["parsePosting"];
-type AddApplicationSheetProps = { onClose: () => void };
+type AddApplicationSheetProps = { onClose: () => void; initialCapture?: PostingCapture | undefined };
 const isLink = (value: string) => {
 	try {
 		const url = new URL(value.trim());
@@ -50,30 +51,31 @@ const today = () => {
 };
 
 /** Mounted until an explicit close/discard; unmounting cancels transient posting requests. */
-export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
+export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationSheetProps) {
 	const router = useRouter();
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const session = useSession();
+	const accountScope = getAccountScope();
 	const providers = useHasAIProvider();
 	const documentsOptions = orpc.documents.list.queryOptions({ input: { trashed: false } });
 	const documents = useQuery({ ...documentsOptions, queryKey: [...documentsOptions.queryKey, session.server] });
 	const webOptions = orpc.webAccess.status.queryOptions();
 	const web = useQuery({ ...webOptions, queryKey: [...webOptions.queryKey, session.server] });
-	const { create } = useApplicationMutations();
+	const { create, update } = useApplicationMutations();
 	const lanes = useApplicationLanes();
-	const [mode, setMode] = useState<"link" | "text">("link");
-	const [input, setInput] = useState("");
+	const [mode, setMode] = useState<"link" | "text">(initialCapture?.description ? "text" : "link");
+	const [input, setInput] = useState(initialCapture?.description || initialCapture?.url || "");
 	const [query, setQuery] = useState("");
 	const [results, setResults] = useState<RouterOutput["applications"]["ai"]["searchPostings"] | null>(null);
 	const [parsed, setParsed] = useState<ParsedPosting | null>(null);
-	const [company, setCompany] = useState("");
-	const [role, setRole] = useState("");
-	const [location, setLocation] = useState("");
+	const [company, setCompany] = useState(initialCapture?.company ?? "");
+	const [role, setRole] = useState(initialCapture?.role ?? "");
+	const [location, setLocation] = useState(initialCapture?.location ?? "");
 	const [salary, setSalary] = useState("");
 	const [source, setSource] = useState("");
-	const [sourceUrl, setSourceUrl] = useState("");
-	const [description, setDescription] = useState("");
+	const [sourceUrl, setSourceUrl] = useState(initialCapture?.url ?? "");
+	const [description, setDescription] = useState(initialCapture?.description ?? "");
 	const [laneId, setLaneId] = useState("");
 	const selectedLane = lanes.active.find((item) => item.id === laneId);
 	const lane = selectedLane ?? resolveLane(lanes.lanes, { status: "saved" });
@@ -90,7 +92,7 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 	const [followUpNote, setFollowUpNote] = useState("");
 	const [notes, setNotes] = useState("");
 	const [setup, setSetup] = useState(false);
-	const [review, setReview] = useState(false);
+	const [review, setReview] = useState(!!initialCapture?.description);
 	const [detailsOpen, setDetailsOpen] = useState(false);
 	const [confirmSearchExit, setConfirmSearchExit] = useState(false);
 	const [busy, setBusy] = useState<"read" | "fill" | "search" | "save" | null>(null);
@@ -135,10 +137,15 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 			if (active.current) setBusy(null);
 		}
 	};
-	const current = (signal: AbortSignal) => active.current && !signal.aborted && getServer() === session.server;
-	const read = () =>
+	const current = (signal: AbortSignal) =>
+		active.current && !signal.aborted && getServer() === session.server && getAccountScope() === accountScope;
+	const read = (useAI = false) =>
 		void run("read", async (signal) => {
-			const result = await client.applications.ai.parsePosting({ input: input.trim() }, { signal });
+			if (!current(signal)) return;
+			const result = await client.applications.ai.parsePosting(
+				{ input: input.trim(), useAI },
+				{ signal, context: { scope: accountScope ?? undefined } },
+			);
 			if (!current(signal)) return;
 			setParsed(result);
 			setCompany((value) => value || result.company);
@@ -170,16 +177,39 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 		setError(null);
 		setDescription(mode === "text" ? value : "");
 	};
+	const duplicateOptions = orpc.applications.findPosting.queryOptions({ input: { sourceUrl: sourceUrl.trim() } });
+	const duplicate = useQuery({
+		...duplicateOptions,
+		select: (data) => data.application,
+		queryKey: [...duplicateOptions.queryKey, session.server],
+		enabled: !!sourceUrl.trim(),
+		retry: false,
+	});
 	const validDate = stage === "saved" || !!parseDateOnly(stageDate);
 	const validFollowUp = !followUpDate || !!parseDateOnly(followUpDate);
 	const validUrl = !sourceUrl.trim() || isLink(sourceUrl);
 	const ready =
-		company.trim() && role.trim() && validDate && validFollowUp && validUrl && lanes.ready && laneAvailable && !busy;
+		company.trim() &&
+		role.trim() &&
+		validDate &&
+		validFollowUp &&
+		validUrl &&
+		lanes.ready &&
+		laneAvailable &&
+		!busy &&
+		(!sourceUrl.trim() || !duplicate.isPending);
+	const clipped = !!initialCapture?.truncated || !!parsed?.postingSource.truncated || description.length > 20_000;
+	const postingSource: ParsedPosting["postingSource"] | null = description
+		? {
+				...(parsed?.postingSource ?? { method: "paste", format: "text", completeness: "unknown" }),
+				truncated: clipped,
+				...(clipped ? { completeness: "incomplete" } : {}),
+			}
+		: null;
 	const save = () =>
 		void run("save", async (signal) => {
-			if (!ready) return;
+			if (!ready || duplicate.data) return;
 			const text = description.slice(0, 20_000);
-			const clipped = description.length > 20_000;
 			const id = await create.mutateAsync({
 				company: company.trim(),
 				role: role.trim(),
@@ -191,13 +221,7 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 				sourceUrl: sourceUrl.trim() || null,
 				jobDescription: text || null,
 				requirements: parsed?.requirements ?? [],
-				postingSource:
-					(parsed
-						? { ...parsed.postingSource, ...(clipped ? { truncated: true, completeness: "incomplete" as const } : {}) }
-						: null) ??
-					(text
-						? { method: "paste", format: "text", truncated: clipped, completeness: clipped ? "incomplete" : "unknown" }
-						: null),
+				postingSource,
 				...(stage !== "saved" ? { stageEnteredAt: stageDate } : {}),
 				resumeId: resumeId || null,
 				coverLetterId: stage !== "saved" ? letterId || null : null,
@@ -246,7 +270,13 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 				footer={
 					<>
 						{review ? (
-							<Button label={t`Save job`} fullWidth loading={busy === "save"} disabled={!ready} onPress={save} />
+							<Button
+								label={t`Save job`}
+								fullWidth
+								loading={busy === "save"}
+								disabled={!ready || !!duplicate.data}
+								onPress={save}
+							/>
 						) : null}
 						{busy === "read" || busy === "search" || busy === "fill" ? (
 							<Button label={t`Cancel request`} variant="ghost" onPress={() => controller.current?.abort()} />
@@ -256,11 +286,67 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 			>
 				<View style={{ gap: space.s4 }}>
 					{error && <Banner tone="danger" message={error} />}
+					{initialCapture && (
+						<Banner
+							tone="info"
+							message={t`Shared posting for ${session.server}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here.`}
+						/>
+					)}
+					{sourceUrl && duplicate.isError && (
+						<>
+							<Banner
+								tone="warn"
+								message={t`Duplicate check unavailable. Retry before saving; your server may need updating.`}
+							/>
+							<Button label={t`Retry`} onPress={() => void duplicate.refetch()} />
+						</>
+					)}
+					{duplicate.data && (
+						<>
+							<Banner
+								tone="info"
+								message={t`Already tracked: ${duplicate.data.role} at ${duplicate.data.company}. Open it or update only its posting details.`}
+							/>
+							<Button
+								label={t`Open tracked job`}
+								onPress={() => {
+									if (duplicate.data) {
+										onClose();
+										router.push(routes.applicationDetails(duplicate.data.id));
+									}
+								}}
+							/>
+							<Button
+								label={t`Update posting details`}
+								disabled={!ready}
+								onPress={() =>
+									void run("save", async () => {
+										if (!duplicate.data || !ready) return;
+										await update.mutateAsync({
+											id: duplicate.data.id,
+											role: role.trim(),
+											company: company.trim(),
+											...(location.trim() ? { location: location.trim() } : {}),
+											sourceUrl: sourceUrl.trim() || null,
+											...(description.trim() ? { jobDescription: description.slice(0, 20_000), postingSource } : {}),
+										});
+										onClose();
+										router.push(routes.applicationDetails(duplicate.data.id));
+									})
+								}
+							/>
+						</>
+					)}
 					{busy === "save" && (
 						<Banner tone="info" message={t`Saving the job. Wait for confirmation before making another change.`} />
 					)}
 					{!review ? (
 						<>
+							<Text color="ink2">{t`Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available.`}</Text>
+							{Platform.OS === "ios" && (
+								<Text color="ink2">{t`On iOS, choose Keep for review, then reopen app in the Share extension. Reopen Reactive Resume yourself within 15 minutes. Sign in here before sharing.`}</Text>
+							)}
+
 							<Text color="ink2">{t`Paste a job link or posting, then check the role and company. Nothing is saved until you choose Save job.`}</Text>
 							<Segmented
 								value={mode}
@@ -317,16 +403,24 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 									)}
 								</>
 							)}
+							{providers.defaultProvider && (
+								<Text color="ink3">{t`Optional AI sends only this posting to ${providers.defaultProvider.label} (${providers.defaultProvider.provider}).`}</Text>
+							)}
+							{providers.hasAIProvider && (
+								<Button label={t`Read with AI`} disabled={!!busy || !input.trim()} onPress={() => read(true)} />
+							)}
 							<Text
 								variant="callout"
 								color="ink3"
 							>{t`AI reads pasted text only when you ask. Links can use the page’s own job data without AI.`}</Text>
-							<Button
-								label={t`Read posting`}
-								loading={busy === "read"}
-								disabled={!!busy || !input.trim() || (mode === "link" ? !isLink(input) : !providers.hasAIProvider)}
-								onPress={read}
-							/>
+							{mode === "link" && (
+								<Button
+									label={t`Read posting`}
+									loading={busy === "read"}
+									disabled={!!busy || !isLink(input)}
+									onPress={() => read(false)}
+								/>
+							)}
 							<Button
 								label={t`Fill details manually`}
 								variant="secondary"
@@ -408,7 +502,7 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 									action={{ label: t`Show details`, onPress: () => setDetailsOpen(true) }}
 								/>
 							) : null}
-							{(parsed?.postingSource.truncated || description.length > 20_000) && (
+							{clipped && (
 								<Banner
 									tone="warn"
 									message={t`Description is clipped to 20,000 characters. Review it before preparing.`}
@@ -522,6 +616,9 @@ export function AddApplicationSheet({ onClose }: AddApplicationSheetProps) {
 										onChangeText={setFollowUpNote}
 										editable={!busy}
 									/>
+									{providers.defaultProvider && (
+										<Text color="ink3">{t`Optional AI sends only this posting to ${providers.defaultProvider.label} (${providers.defaultProvider.provider}).`}</Text>
+									)}
 									<TextArea label={t`Notes`} value={notes} onChangeText={setNotes} editable={!busy} />
 									<TextArea
 										label={t`Saved description`}

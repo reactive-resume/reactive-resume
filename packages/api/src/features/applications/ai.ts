@@ -213,7 +213,7 @@ export const aiRouter = {
 		}),
 
 	// Reads a pasted link or posting into an application's fields. A link is fetched on the server (public https
-	// pages only); the page's own job data fills what it can, and an AI provider, when one is set up, reads the rest.
+	// pages only). Explicit useAI:false never resolves a provider; omitted uses structured-first behavior.
 	parsePosting: protectedProcedure
 		.route({
 			method: "POST",
@@ -221,10 +221,20 @@ export const aiRouter = {
 			operationId: "aiParseApplicationPosting",
 			summary: "Read a job posting",
 			description:
-				"Reads a job link or pasted posting text into role, company, location, salary and requirements, and returns the posting text to save with the application. Links must be public https pages. Without an AI provider, only a page's own job data (JSON-LD) fills the fields. Requires authentication.",
+				"Reads a job link or pasted posting text into role, company, location, salary and requirements, and returns the posting text to save with the application. Links must be public https pages. Set useAI:false to read without AI, or true to allow AI enrichment. If omitted, AI is attempted only when the page lacks a role, company or description. Without an AI provider, only a page's own job data (JSON-LD) fills the fields. Requires authentication.",
 			...reserved,
 		})
-		.input(z.object({ input: z.string().trim().min(1).max(100_000) }))
+		.input(
+			z.object({
+				input: z.string().trim().min(1).max(100_000),
+				useAI: z
+					.boolean()
+					.optional()
+					.describe(
+						"False never uses AI; true allows AI enrichment. Omit to use AI only when structured page data is incomplete.",
+					),
+			}),
+		)
 		.use(aiRequestRateLimit)
 		.output(parsePostingOutput)
 		.errors({
@@ -275,6 +285,8 @@ export const aiRouter = {
 			};
 
 			const fallback = { ...fromPage, filledBy: page ? ("page" as const) : ("none" as const) };
+			if (input.useAI === false || (input.useAI !== true && page?.role && page.company && page.description))
+				return fallback;
 			try {
 				const provider = await aiProvidersService.getDefaultRunnable({ userId: context.user.id });
 				if (!provider) return fallback;
@@ -328,7 +340,7 @@ export const aiRouter = {
 			return generateJson(
 				model,
 				{
-					prompt: `Extract the following fields from this job posting. Return ONLY JSON with keys company, role, location, salary. Use an empty string for anything not stated.\n\nJOB POSTING:\n${input.jobDescription}`,
+					prompt: `Extract the following fields from this job posting. Return ONLY JSON with keys company, role, location, salary. Use an empty string for anything not stated.\n\nJOB POSTING:\n${dataBlock("POSTING", input.jobDescription)}`,
 				},
 				autofillOutput,
 			);
@@ -362,7 +374,7 @@ export const aiRouter = {
 			const result = await generateJson(
 				model,
 				{
-					prompt: `Compare this resume against the job description. Return ONLY JSON with keys score (integer 0-100 fit), gaps (array of short missing-qualification strings), strengths (array of short matching-strength strings).\n\nRESUME:\n${JSON.stringify(resume.data)}\n\nJOB DESCRIPTION:\n${application.jobDescription}`,
+					prompt: `Compare this resume against the job description. Return ONLY JSON with keys score (integer 0-100 fit), gaps (array of short missing-qualification strings), strengths (array of short matching-strength strings).\n\nRESUME:\n${JSON.stringify(resume.data)}\n\nJOB DESCRIPTION:\n${dataBlock("POSTING", application.jobDescription)}`,
 				},
 				matchScoreOutput,
 			);
@@ -396,7 +408,7 @@ export const aiRouter = {
 				? await resumeService.getById({ id: application.resumeId, userId: context.user.id }).catch(() => null)
 				: null;
 
-			const context_ = `ROLE: ${application.role} at ${application.company}${application.location ? ` (${application.location})` : ""}\n${application.jobDescription ? `JOB DESCRIPTION:\n${application.jobDescription}\n` : ""}${resume ? `CANDIDATE RESUME:\n${JSON.stringify(resume.data)}` : ""}`;
+			const context_ = `${dataBlock("POSTING", JSON.stringify({ role: application.role, company: application.company, location: application.location, description: application.jobDescription }))}${resume ? `\nCANDIDATE RESUME:\n${JSON.stringify(resume.data)}` : ""}`;
 
 			const prompt =
 				input.kind === "cover-letter"
@@ -443,7 +455,7 @@ export const aiRouter = {
 			const { summary } = await generateJson(
 				model,
 				{
-					prompt: `Rewrite this candidate's professional summary to target the job below. Return ONLY JSON { "summary": "<one to two sentence HTML paragraph, e.g. <p>…</p>>" }. Keep it truthful to the resume.\n\nRESUME:\n${JSON.stringify(resume.data)}\n\nJOB:\n${application.role} at ${application.company}\n${application.jobDescription}`,
+					prompt: `Rewrite this candidate's professional summary to target the job below. Return ONLY JSON { "summary": "<one to two sentence HTML paragraph, e.g. <p>…</p>>" }. Keep it truthful to the resume.\n\nRESUME:\n${JSON.stringify(resume.data)}\n\nJOB:\n${dataBlock("POSTING", JSON.stringify({ role: application.role, company: application.company, description: application.jobDescription }))}`,
 				},
 				z.object({ summary: z.string() }),
 			);

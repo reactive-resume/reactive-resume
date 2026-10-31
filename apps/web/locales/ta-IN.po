@@ -1846,6 +1846,12 @@ msgstr "ஏற்கனவே கணக்கு உள்ளதா? <0/>"
 msgid "Already interviewing"
 msgstr "ஏற்கனவே நேர்காணல்"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Also check the exported PDF"
 msgstr "ஏற்றுமதி செய்யப்பட்ட PDF ஐயும் சரிபார்க்கவும்"
@@ -2690,6 +2696,14 @@ msgstr "மென்பொருள் உங்கள் விண்ணப்�
 #: src/hooks/use-confirm.tsx
 msgid "Cancel"
 msgstr "ரத்து செய்"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Capture does not use AI. Review every field before saving."
+msgstr ""
 
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -4160,6 +4174,10 @@ msgstr "நேர்காணலைப் புதுப்பிக்க ம�
 msgid "Couldn't update the letter. Try again."
 msgstr "கடிதத்தைப் புதுப்பிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Couldn't update the posting. Try again."
+msgstr ""
+
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't update the preview. The last working version is still shown. Edit anything to try again."
 msgstr "முன்னோட்டத்தைப் புதுப்பிக்க முடியவில்லை. கடைசியாகச் செயல்பட்ட பதிப்பு இன்னும் காட்டப்படுகிறது. மீண்டும் முயற்சிக்க எதையாவது திருத்தவும்."
@@ -4887,6 +4905,10 @@ msgstr "பதிவிறக்கம் & வரலாறு"
 msgid "Download application details, contacts, notes, and timeline history as CSV."
 msgstr "விண்ணப்ப விவரங்கள், தொடர்புகள், குறிப்புகள் மற்றும் காலவரிசை வரலாறு ஆகியவற்றை CSV ஆகப் பதிவிறக்கவும்."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Download browser helper"
+msgstr ""
+
 #. Action button to download two-factor backup codes as a text file
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Download codes"
@@ -5053,6 +5075,10 @@ msgstr "இறக்குமதி செய்ய கைவிடவும்"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Duplicate"
 msgstr "நகல் உருவாக்கு"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Duplicate resume"
@@ -9060,6 +9086,10 @@ msgstr "Reactive Resume பயன்பாட்டைத் திறக்க�
 msgid "Open the schedule"
 msgstr "அட்டவணையைத் திற"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Open web page"
 msgstr "வலைப்பக்கத்தைத் திற"
@@ -9108,6 +9138,12 @@ msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providerState.usableProviders[0].label
+#. placeholder {1}: providerState.usableProviders[0].provider
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -10116,6 +10152,10 @@ msgstr "ரெஸ்யூமைப் படித்தது"
 msgid "Read the self-hosting guide"
 msgstr "சுய ஹோஸ்டிங் வழிகாட்டியைப் படிக்கவும்"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
 msgstr "உங்கள் மின்னஞ்சல் முகவரியைப் படியுங்கள்."
@@ -10190,6 +10230,10 @@ msgstr "உரையைப் படித்தல்"
 #: src/features/career/shared.tsx
 msgid "Reading what you shared"
 msgstr "நீங்கள் பகிர்ந்ததைப் படிக்கிறது"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "AI இல்லாமல் படிக்க முடியுமா என்பதை உறுதிப்படுத்த முடியவில்லை. மீண்டும் முயலவும், சேவையகத்தைப் புதுப்பிக்கவும் அல்லது விவரங்களை நீங்களே உள்ளிடவும்."
 
 #: src/features/resume/import/read-file.ts
 msgid "Reading Word files needs an AI provider. Set one up in Settings, or import a PDF or JSON file instead."
@@ -10837,6 +10881,7 @@ msgstr "{1} ஐப் பயன்படுத்தி {0} மீட்டெ�
 msgid "Retrieved {0}. Origin freshness is unknown unless reported."
 msgstr "{0} மீட்டெடுக்கப்பட்டது. புகாரளிக்காத வரை, புத்துணர்ச்சியின் தோற்றம் தெரியவில்லை."
 
+#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
@@ -14013,6 +14058,10 @@ msgstr "25 MB · உங்கள் உலாவியில் சரிபா�
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming interviews"
 msgstr "வரவிருக்கும் நேர்காணல்கள்"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Update posting details"
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Update resume"

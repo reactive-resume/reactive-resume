@@ -1,9 +1,10 @@
 import type { client } from "./client";
 import { t } from "@lingui/core/macro";
+import { ORPCError } from "@orpc/client";
 import { Alert } from "react-native";
 import { getAccountScope, getServer } from "@/auth/session";
 
-type ConsentApi = Pick<typeof client, "aiProviders" | "agent" | "webAccess">;
+type ConsentApi = Pick<typeof client, "aiProviders" | "agent" | "webAccess" | "applications">;
 
 let dialogs: Promise<unknown> = Promise.resolve();
 
@@ -43,6 +44,21 @@ export async function authorizeAiRequest(
 	};
 	current();
 	const options = { context: { scope: scope ?? undefined }, ...(signal ? { signal } : {}) };
+	if (operation === "applications.ai.parsePosting" && fields.useAI === false) {
+		// Older servers strip useAI. This route was introduced with explicit no-AI parsing.
+		try {
+			await api.applications.findPosting({ sourceUrl: "" }, options);
+		} catch (error) {
+			current();
+			throw new ORPCError("POSTING_SUPPORT_UNAVAILABLE", {
+				status: 502,
+				message: t`Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually.`,
+				cause: error,
+			});
+		}
+		current();
+		return;
+	}
 	// The provider the server will use: the one named, the thread's, or the default (same order as the server).
 	const resolveProvider = async () => {
 		const providers = await api.aiProviders.list({}, options);

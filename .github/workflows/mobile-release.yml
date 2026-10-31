@@ -103,6 +103,9 @@ jobs:
         run: |
           bundle exec ruby tooling/mobile/signing_test.rb
           ruby tooling/mobile/build_test.rb
+      - name: Test iOS multi-target signing configuration
+        if: matrix.platform == 'ios'
+        run: ruby tooling/mobile/ios_build_test.rb
       - name: Test store distribution configuration
         run: ruby tooling/mobile/distribution_test.rb
       - name: Set up Java
@@ -122,6 +125,14 @@ jobs:
         run: |
           pnpm --filter mobile typecheck
           pnpm --filter mobile test
+      - name: Test iOS pending-share lifecycle without signing
+        if: matrix.platform == 'ios'
+        run: |
+          swiftc apps/mobile/node_modules/expo-sharing/ios/shared/Constants.swift \
+            apps/mobile/node_modules/expo-sharing/ios/shared/ShareProtocol.swift \
+            apps/mobile/node_modules/expo-sharing/ios/shared/PendingPosting.swift \
+            tooling/mobile/incoming_share_test.swift -o "$RUNNER_TEMP/incoming-share-test"
+          "$RUNNER_TEMP/incoming-share-test"
       - name: Set up EAS CLI
         uses: expo/expo-github-action@v9
         with:
@@ -139,6 +150,7 @@ jobs:
           IOS_DISTRIBUTION_P12_BASE64: ${{ matrix.platform == 'ios' && secrets.IOS_DISTRIBUTION_P12_BASE64 || '' }}
           IOS_DISTRIBUTION_P12_PASSWORD: ${{ matrix.platform == 'ios' && secrets.IOS_DISTRIBUTION_P12_PASSWORD || '' }}
           IOS_PROVISION_PROFILE_BASE64: ${{ matrix.platform == 'ios' && secrets.IOS_PROVISION_PROFILE_BASE64 || '' }}
+          IOS_SHARE_PROVISION_PROFILE_BASE64: ${{ matrix.platform == 'ios' && secrets.IOS_SHARE_PROVISION_PROFILE_BASE64 || '' }}
         run: node tooling/mobile/release.ts
       - name: Fetch reviewed Forme binaries
         run: node packages/forme-native/scripts/fetch-prebuilt.mjs --platform "$PLATFORM"
@@ -152,6 +164,7 @@ jobs:
           IOS_DISTRIBUTION_P12_BASE64: ${{ matrix.platform == 'ios' && secrets.IOS_DISTRIBUTION_P12_BASE64 || '' }}
           IOS_DISTRIBUTION_P12_PASSWORD: ${{ matrix.platform == 'ios' && secrets.IOS_DISTRIBUTION_P12_PASSWORD || '' }}
           IOS_PROVISION_PROFILE_BASE64: ${{ matrix.platform == 'ios' && secrets.IOS_PROVISION_PROFILE_BASE64 || '' }}
+          IOS_SHARE_PROVISION_PROFILE_BASE64: ${{ matrix.platform == 'ios' && secrets.IOS_SHARE_PROVISION_PROFILE_BASE64 || '' }}
         run: |
           eas env:exec "$MOBILE_UPDATE_CHANNEL" --non-interactive \
             'pnpm exec expo prebuild --platform "$PLATFORM" --clean --no-install && cd ../../tooling/mobile && if [ "$FORMAT" = apk ]; then bundle exec fastlane android build abi:"$ABI"; else bundle exec fastlane "$PLATFORM" build; fi'

@@ -14,6 +14,7 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { restoreSession } from "@/auth/session";
 import { SessionGate } from "@/auth/session-gate";
+import { IncomingPosting } from "@/features/applications/incoming-posting";
 import { useOpenReminder } from "@/features/reminders/open";
 import { useReviewPrompt } from "@/features/reviews/use-review-prompt";
 import { i18n, initI18n } from "@/i18n";
@@ -127,6 +128,7 @@ function RootLayout() {
 									<ObserveErrorBoundary fallback={({ resetError }) => <CrashScreen onRetry={resetError} />}>
 										<RootStack />
 										<SessionGate />
+										<IncomingPosting />
 									</ObserveErrorBoundary>
 									<Toaster />
 								</TrueSheetProvider>

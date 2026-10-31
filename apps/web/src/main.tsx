@@ -1,5 +1,6 @@
 import { RouterProvider } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
+import { receivePostingCapture } from "./features/applications/capture";
 import { followReducedMotion } from "./libs/motion";
 import { getRouter } from "./router";
 import "./index.css";
@@ -9,6 +10,7 @@ if (!rootElement) throw new Error("Root element not found");
 
 followReducedMotion();
 
+receivePostingCapture();
 const router = await getRouter();
 
 // The router owns the title, description and robots tags from here on (see libs/seo.ts), so the copies in the served

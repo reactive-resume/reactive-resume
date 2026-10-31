@@ -1459,6 +1459,12 @@ msgstr "ஏற்கனவே உள்ளது · பக்கத்தில�
 msgid "Already covered:"
 msgstr "ஏற்கனவே உள்ளவை:"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/add-sheet.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/check/screen.tsx
 msgid "Also check the exported PDF"
 msgstr "ஏற்றுமதி செய்யப்பட்ட PDF ஐயும் சரிபார்க்கவும்"
@@ -4109,6 +4115,10 @@ msgstr "பிரதிப்பெயர்களை நீக்கி வி�
 #: src/features/write/entry-sheet.tsx
 msgid "Duplicate"
 msgstr "நகல் உருவாக்கு"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
 
 #: src/features/document-menu/index.tsx
 msgid "Duplicate resume"
@@ -7134,6 +7144,10 @@ msgstr "ஆஃப்லைன். இந்தச் சாதனத்தில
 msgid "On"
 msgstr "இயக்கத்தில்"
 
+#: src/features/applications/add-sheet.tsx
+msgid "On iOS, choose Keep for review, then reopen app in the Share extension. Reopen Reactive Resume yourself within 15 minutes. Sign in here before sharing."
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "On. Anyone with the link can see your web page."
 msgstr "இயக்கப்பட்டுள்ளது. இணைப்பு உள்ள எவரும் உங்கள் வலைப்பக்கத்தைப் பார்க்கலாம்."
@@ -7295,6 +7309,10 @@ msgstr "கோப்பை Word இல் திறந்து முதலி�
 msgid "Open the schedule"
 msgstr "அட்டவணையைத் திற"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "Open web page"
 msgstr "வலைப்பக்கத்தைத் திற"
@@ -7350,6 +7368,12 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providers.defaultProvider.label
+#. placeholder {1}: providers.defaultProvider.provider
+#: src/features/applications/add-sheet.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -8148,6 +8172,10 @@ msgstr "பக்கத்தைப் படியுங்கள்"
 msgid "Read the resume"
 msgstr "ரெஸ்யூமைப் படித்தது"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
 msgstr "படிக்கக்கூடிய தன்மை"
@@ -8191,6 +8219,11 @@ msgstr "உரையைப் படித்தல்"
 #: src/features/documents/import-file.ts
 msgid "Reading this file with AI needs a tested AI provider. Set one up, then retry."
 msgstr "AI உடன் இந்தக் கோப்பைப் படிக்க, சோதிக்கப்பட்ட AI வழங்குநர் தேவை. ஒன்றை அமைத்து, மீண்டும் முயற்சிக்கவும்."
+
+#: src/api/ai-consent.ts
+#: src/features/applications/error.ts
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "AI இல்லாமல் படிக்க முடியுமா என்பதை உறுதிப்படுத்த முடியவில்லை. மீண்டும் முயலவும், சேவையகத்தைப் புதுப்பிக்கவும் அல்லது விவரங்களை நீங்களே உள்ளிடவும்."
 
 #: src/features/ai/web-access.tsx
 msgid "Reading works"
@@ -8744,6 +8777,7 @@ msgstr "{1} ஐப் பயன்படுத்தி {0} மீட்டெ�
 
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -9599,6 +9633,10 @@ msgstr ""
 msgid "Share enabled shared Knowledge"
 msgstr ""
 
+#: src/features/applications/incoming-posting.tsx
+msgid "Share one posting URL or selected text. Files, multiple postings and unsupported URL parameters need explicit URL or pasted-text import in Applications."
+msgstr ""
+
 #: src/features/share/download.tsx
 msgid "Share PDF"
 msgstr "PDF ஐப் பகிரவும்"
@@ -9619,11 +9657,20 @@ msgstr "பகிர்வு பதிவு"
 msgid "Share via…"
 msgstr "இதன் மூலம் பகிரவும்…"
 
+#. placeholder {0}: session.server
+#: src/features/applications/add-sheet.tsx
+msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
 msgid "Sharing"
 msgstr "பகிர்வு"
+
+#: src/features/applications/incoming-posting.tsx
+msgid "Sharing could not be read. Update the app or paste the posting in Applications."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sharpening the opening"
@@ -11513,6 +11560,10 @@ msgstr "ஒரு ஆவணத்திற்கு 20 குறிச்சொ�
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr "25 MB வரை · சர்வரில் சரிபார்க்கப்பட்டது மற்றும் சேமிக்கப்படவில்லை"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Update posting details"
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "விண்ணப்பங்களைத் தனிப்பயன் நிலைக்கு நகர்த்தும் முன் உங்கள் சேவையகத்தைப் புதுப்பிக்கவும்."
@@ -11728,6 +11779,10 @@ msgstr "இந்த வழங்குநரைப் பயன்படுத�
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "இந்த நேரத்தை பயன்படுத்தவும்"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."

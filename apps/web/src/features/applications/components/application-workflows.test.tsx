@@ -11,7 +11,9 @@ const api = vi.hoisted(() => ({
 	bulkDelete: vi.fn(),
 	bulkUpdate: vi.fn(),
 	parsePosting: vi.fn(),
+	findPosting: vi.fn(),
 	create: vi.fn(),
+	update: vi.fn(),
 	moveTo: vi.fn(),
 	close: vi.fn(),
 	remove: vi.fn(),
@@ -20,7 +22,7 @@ const api = vi.hoisted(() => ({
 }));
 vi.mock("@tanstack/react-router", () => ({ useRouteContext: () => ({ session: { user: { timezone: "UTC" } } }) }));
 vi.mock("@/libs/orpc/client", () => ({
-	client: { applications: { ai: { parsePosting: api.parsePosting } } },
+	client: { applications: { findPosting: api.findPosting, ai: { parsePosting: api.parsePosting } } },
 	orpc: {
 		applications: {
 			lanes: {
@@ -33,6 +35,10 @@ vi.mock("@/libs/orpc/client", () => ({
 			bulkDelete: { mutationOptions: () => ({ mutationFn: api.bulkDelete }) },
 			bulkUpdate: { mutationOptions: () => ({ mutationFn: api.bulkUpdate }) },
 			create: { mutationOptions: () => ({ mutationFn: api.create }) },
+			update: { mutationOptions: () => ({ mutationFn: api.update }) },
+			findPosting: {
+				queryOptions: () => ({ queryKey: ["posting"], queryFn: api.findPosting }),
+			},
 			ai: {
 				parsePosting: { mutationOptions: () => ({ mutationFn: api.parsePosting }) },
 				searchPostings: { mutationOptions: () => ({ mutationFn: async () => [] }) },
@@ -51,7 +57,10 @@ vi.mock("../use-application-actions", () => ({
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => api.confirm }));
 vi.mock("@reactive-resume/ui/hooks/use-breakpoint", () => ({ useBreakpoint: () => "desktop" }));
 vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () => ({
-	useHasUsableAiProvider: () => ({ hasUsableProvider: true }),
+	useHasUsableAiProvider: () => ({
+		hasUsableProvider: true,
+		usableProviders: [{ label: "Fictional provider", provider: "openai" }],
+	}),
 }));
 vi.mock("@/dialogs/store", () => ({ useDialogStore: () => vi.fn() }));
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn() } }));
@@ -109,6 +118,7 @@ beforeEach(() => {
 	vi.clearAllMocks();
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	api.confirm.mockResolvedValue(true);
+	api.findPosting.mockResolvedValue({ application: null });
 	api.bulkDelete.mockResolvedValue({ deleted: 1 });
 });
 afterEach(() => {
@@ -175,3 +185,67 @@ it.each(["ai", "page"])(
 		expect((screen.getByRole("button", { name: "Save job" }) as HTMLButtonElement).disabled).toBe(false);
 	},
 );
+
+it("keeps saving available when duplicate lookup fails, with an explicit warning", async () => {
+	api.findPosting.mockRejectedValue(new Error("NOT_FOUND"));
+	api.create.mockResolvedValue("saved");
+	const onAdded = vi.fn();
+	mount(
+		<AddApplicationDialog
+			open
+			onOpenChange={vi.fn()}
+			onAdded={onAdded}
+			initialCapture={{
+				url: "https://jobs.example.test/role",
+				role: "Engineer",
+				company: "Fictional",
+				location: "",
+				description: "Visible posting",
+				truncated: false,
+			}}
+		/>,
+	);
+	await screen.findByText(/Duplicate check unavailable/);
+	const save = screen.getByRole("button", { name: "Save job" }) as HTMLButtonElement;
+	expect(save.disabled).toBe(false);
+	fireEvent.click(save);
+	await waitFor(() => expect(onAdded).toHaveBeenCalledWith("saved"));
+});
+
+it("offers only the explicit AI read for pasted text", async () => {
+	mount(<AddApplicationDialog open onOpenChange={vi.fn()} onAdded={vi.fn()} />);
+	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
+		target: { value: "Build tools for a fictional company." },
+	});
+	expect(screen.queryByRole("button", { name: "Read posting" })).toBeNull();
+	expect(screen.getByRole("button", { name: "Read with AI" })).toBeTruthy();
+	expect(api.parsePosting).not.toHaveBeenCalled();
+});
+
+it("never dispatches a no-AI parse to a server that cannot confirm support, while explicit AI still works", async () => {
+	api.findPosting.mockRejectedValue(new Error("NOT_FOUND"));
+	api.parsePosting.mockResolvedValue({
+		role: "Engineer",
+		company: "Fictional",
+		location: "",
+		salary: "",
+		requirements: [],
+		jobDescription: "Visible posting",
+		filledBy: "ai",
+		postingSource: { method: "fetch", format: "text", truncated: false, completeness: "unknown" },
+	});
+	mount(<AddApplicationDialog open onOpenChange={vi.fn()} onAdded={vi.fn()} />);
+	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
+		target: { value: "https://example.test/role" },
+	});
+	fireEvent.click(screen.getByRole("button", { name: "Read posting" }));
+	await screen.findByText(/Reading without AI couldn't be confirmed/);
+	expect(api.parsePosting).not.toHaveBeenCalled();
+	fireEvent.click(screen.getByRole("button", { name: "Read with AI" }));
+	await waitFor(() =>
+		expect(api.parsePosting).toHaveBeenCalledWith(
+			{ input: "https://example.test/role", useAI: true },
+			expect.anything(),
+		),
+	);
+});

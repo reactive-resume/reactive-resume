@@ -1,3 +1,4 @@
+export { canonicalOpportunityUrl } from "@reactive-resume/schema/applications/posting-url";
 /** Preserve local wall time across daily schedules, advancing nonexistent DST times forward. */
 export function nextCareerRun(previous: Date, days: number, timezone: string): Date {
 	const formatter = new Intl.DateTimeFormat("en-CA", {
@@ -44,34 +45,6 @@ export function nextFutureCareerRun(previous: Date, days: number, timezone: stri
 	for (let i = 0; i < 3 && next <= now; i++) next = nextCareerRun(next, days, timezone);
 	if (!Number.isFinite(next.getTime()) || next <= now) throw new Error("Cannot advance schedule into the future.");
 	return next;
-}
-
-export function canonicalOpportunityUrl(value: string): string | null {
-	try {
-		const url = new URL(value);
-		const host = url.hostname.toLowerCase().replace(/\.$/, "");
-		if (
-			!["http:", "https:"].includes(url.protocol) ||
-			url.username ||
-			url.password ||
-			!host.includes(".") ||
-			/^[\d.]+$/.test(host) ||
-			/(?:^|\.)(localhost|local|internal|lan)$/.test(host) ||
-			host.endsWith(".home.arpa")
-		)
-			return null;
-		url.hash = "";
-		// A LinkedIn posting's query only tracks the click (refId, trackingId, position, pageNum, trk).
-		if (/(?:^|\.)linkedin\.com$/.test(host) && url.pathname.startsWith("/jobs/view/")) url.search = "";
-		const trackingKeys = Array.from(url.searchParams.keys()).filter((key) =>
-			/^(?:utm_|fbclid$|gclid$|msclkid$|gh_src$|trk$|refid$|trackingid$)/i.test(key),
-		);
-		for (const key of trackingKeys) url.searchParams.delete(key);
-		url.searchParams.sort();
-		return url.toString();
-	} catch {
-		return null;
-	}
 }
 
 const JOB_BOARDS =

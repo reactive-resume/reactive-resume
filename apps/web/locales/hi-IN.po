@@ -1846,6 +1846,12 @@ msgstr "पहले से खाता है? <0/>"
 msgid "Already interviewing"
 msgstr "पहले से ही साक्षात्कार कर रहा हूँ"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Also check the exported PDF"
 msgstr "निर्यातित PDF की भी जाँच करें"
@@ -2690,6 +2696,14 @@ msgstr "क्या सॉफ़्टवेयर आपका बायोड
 #: src/hooks/use-confirm.tsx
 msgid "Cancel"
 msgstr "रद्द करें"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
+msgstr ""
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Capture does not use AI. Review every field before saving."
+msgstr ""
 
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -4160,6 +4174,10 @@ msgstr "साक्षात्कार अपडेट नहीं किय
 msgid "Couldn't update the letter. Try again."
 msgstr "पत्र अपडेट नहीं किया जा सका। पुनः प्रयास करें।"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Couldn't update the posting. Try again."
+msgstr ""
+
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't update the preview. The last working version is still shown. Edit anything to try again."
 msgstr "पूर्वावलोकन अपडेट नहीं हो सका। अंतिम काम करने वाला संस्करण अभी भी दिखाया जा रहा है। पुनः प्रयास करने के लिए कुछ भी संपादित करें।"
@@ -4887,6 +4905,10 @@ msgstr "डाउनलोड और इतिहास"
 msgid "Download application details, contacts, notes, and timeline history as CSV."
 msgstr "आवेदन विवरण, संपर्क, नोट्स और टाइमलाइन इतिहास को CSV के रूप में डाउनलोड करें।"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Download browser helper"
+msgstr ""
+
 #. Action button to download two-factor backup codes as a text file
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Download codes"
@@ -5053,6 +5075,10 @@ msgstr "आयात करने के लिए छोड़ें"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Duplicate"
 msgstr "प्रतिरूप"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Duplicate resume"
@@ -9060,6 +9086,10 @@ msgstr "Reactive Resume ऐप खोलें"
 msgid "Open the schedule"
 msgstr "शेड्यूल खोलें"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Open web page"
 msgstr "वेब पेज खोलें"
@@ -9108,6 +9138,12 @@ msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providerState.usableProviders[0].label
+#. placeholder {1}: providerState.usableProviders[0].provider
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -10116,6 +10152,10 @@ msgstr "रेज़्यूमे पढ़ा"
 msgid "Read the self-hosting guide"
 msgstr "स्व-होस्टिंग मार्गदर्शिका पढ़ें"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Read your email address."
 msgstr "अपना ईमेल पता पढ़ें."
@@ -10190,6 +10230,10 @@ msgstr "पाठ पढ़ना"
 #: src/features/career/shared.tsx
 msgid "Reading what you shared"
 msgstr "आपने जो साझा किया, उसे पढ़ रहा है"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "AI के बिना पढ़ने की पुष्टि नहीं हो सकी। फिर कोशिश करें, सर्वर अपडेट करें या विवरण स्वयं दर्ज करें।"
 
 #: src/features/resume/import/read-file.ts
 msgid "Reading Word files needs an AI provider. Set one up in Settings, or import a PDF or JSON file instead."
@@ -10837,6 +10881,7 @@ msgstr "{1} का उपयोग करके {0} को पुनः प्�
 msgid "Retrieved {0}. Origin freshness is unknown unless reported."
 msgstr "{0} को पुनः प्राप्त किया गया। जब तक रिपोर्ट न की जाए, मूल ताजगी अज्ञात है।"
 
+#: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
@@ -14013,6 +14058,10 @@ msgstr "आपके ब्राउज़र में 25 MB · तक चे�
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming interviews"
 msgstr "आगामी साक्षात्कार"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Update posting details"
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Update resume"

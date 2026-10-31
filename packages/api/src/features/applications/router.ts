@@ -4,6 +4,7 @@ import { applicationLanesRouter } from "./lane-router";
 
 export const applicationsRouter = {
 	lanes: applicationLanesRouter,
+	findPosting: crudRouter.findPosting,
 	priorNoResponse: crudRouter.priorNoResponse,
 	list: crudRouter.list,
 	listSummary: crudRouter.listSummary,

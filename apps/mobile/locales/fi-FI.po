@@ -1459,6 +1459,12 @@ msgstr "Jo katettu · Valitse yksi löytääksesi sen sivulta"
 msgid "Already covered:"
 msgstr "Jo katettu:"
 
+#. placeholder {0}: duplicate.data.role
+#. placeholder {1}: duplicate.data.company
+#: src/features/applications/add-sheet.tsx
+msgid "Already tracked: {0} at {1}. Open it or update only its posting details."
+msgstr ""
+
 #: src/features/check/screen.tsx
 msgid "Also check the exported PDF"
 msgstr "Tarkista myös viety PDF"
@@ -4109,6 +4115,10 @@ msgstr "Jätä pronominit pois ja aloita verbistä. Se on käytäntö useimmilla
 #: src/features/write/entry-sheet.tsx
 msgid "Duplicate"
 msgstr "Monista"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Duplicate check unavailable. Retry before saving; your server may need updating."
+msgstr ""
 
 #: src/features/document-menu/index.tsx
 msgid "Duplicate resume"
@@ -7134,6 +7144,10 @@ msgstr "Offline-tilassa. Muokkaukset tallennetaan tälle laitteelle ja synkronoi
 msgid "On"
 msgstr "Päällä"
 
+#: src/features/applications/add-sheet.tsx
+msgid "On iOS, choose Keep for review, then reopen app in the Share extension. Reopen Reactive Resume yourself within 15 minutes. Sign in here before sharing."
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "On. Anyone with the link can see your web page."
 msgstr "Päällä. Kuka tahansa, jolla on linkki, voi nähdä verkkosivusi."
@@ -7295,6 +7309,10 @@ msgstr "Avaa tiedosto Word:ssä ja tallenna se ensin .docx-muodossa."
 msgid "Open the schedule"
 msgstr "Avaa ajastus"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Open tracked job"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "Open web page"
 msgstr "Avaa verkkosivu"
@@ -7350,6 +7368,12 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Optional AI help in the editors; review edits before accepting. Nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#. placeholder {0}: providers.defaultProvider.label
+#. placeholder {1}: providers.defaultProvider.provider
+#: src/features/applications/add-sheet.tsx
+msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
 #: src/features/ai/provider-editor.tsx
@@ -8148,6 +8172,10 @@ msgstr "Lue sivu"
 msgid "Read the resume"
 msgstr "Luki ansioluettelon"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Read with AI"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Readability"
 msgstr "Luettavuus"
@@ -8191,6 +8219,11 @@ msgstr "Tekstin lukeminen"
 #: src/features/documents/import-file.ts
 msgid "Reading this file with AI needs a tested AI provider. Set one up, then retry."
 msgstr "Tämän tiedoston lukeminen AI:n kanssa vaatii testatun tekoälypalveluntarjoajan. Määritä se ja yritä sitten uudelleen."
+
+#: src/api/ai-consent.ts
+#: src/features/applications/error.ts
+msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
+msgstr "Lukemista ilman tekoälyä ei voitu vahvistaa. Yritä uudelleen, päivitä palvelin tai syötä tiedot käsin."
 
 #: src/features/ai/web-access.tsx
 msgid "Reading works"
@@ -8744,6 +8777,7 @@ msgstr "Haettu {0} käyttämällä {1}:ta. Hakuaika ei vahvista alkuperän tuore
 
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -9599,6 +9633,10 @@ msgstr ""
 msgid "Share enabled shared Knowledge"
 msgstr ""
 
+#: src/features/applications/incoming-posting.tsx
+msgid "Share one posting URL or selected text. Files, multiple postings and unsupported URL parameters need explicit URL or pasted-text import in Applications."
+msgstr ""
+
 #: src/features/share/download.tsx
 msgid "Share PDF"
 msgstr "Jaa PDF"
@@ -9619,11 +9657,20 @@ msgstr "Jaa tallennus"
 msgid "Share via…"
 msgstr "Jaa…"
 
+#. placeholder {0}: session.server
+#: src/features/applications/add-sheet.tsx
+msgid "Shared posting for {0}. Review before saving. Only shared text or URL was received; browser cookies and login sessions stay in the browser. If this browser shares only a URL, select and share the posting text or paste it here."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
 msgid "Sharing"
 msgstr "Jakaminen"
+
+#: src/features/applications/incoming-posting.tsx
+msgid "Sharing could not be read. Update the app or paste the posting in Applications."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sharpening the opening"
@@ -11513,6 +11560,10 @@ msgstr "Jopa 20 tunnistetta asiakirjaa kohti, 40 merkkiä per tunniste."
 msgid "Up to 25 MB · checked on the server and not stored"
 msgstr "Enintään 25 Mt · Tarkistettu palvelimella eikä tallennettu"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Update posting details"
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "Päivitä palvelimesi ennen hakemusten siirtämistä mukautettuun vaiheeseen."
@@ -11728,6 +11779,10 @@ msgstr "Käytä tätä palveluntarjoajaa"
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "Käytä tätä aikaa"
+
+#: src/features/applications/add-sheet.tsx
+msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."

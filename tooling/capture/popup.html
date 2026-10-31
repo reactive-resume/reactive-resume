@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+	<meta charset="utf-8" /><title>Save job</title>
+	<style>
+		body {
+			width: 320px;
+			padding: 16px;
+			font: 15px system-ui;
+			color: #202820;
+			background: #f8f7f3;
+		}
+		label,
+		input,
+		button {
+			display: block;
+			margin: 12px 0;
+		}
+		input {
+			box-sizing: border-box;
+			width: 100%;
+			padding: 8px;
+		}
+		button {
+			padding: 9px 16px;
+		}
+		p {
+			line-height: 1.5;
+		}
+		#status {
+			white-space: pre-wrap;
+		}
+	</style>
+	<h1>Save job</h1>
+	<p id="connection"></p>
+	<form id="connect">
+		<label for="server">Reactive Resume installation</label
+		><input id="server" type="url" placeholder="https://rxresu.me" required /><button>Connect</button>
+	</form>
+	<button id="capture" hidden>Capture this posting</button
+	><button id="fallback" hidden>Import URL or paste text</button
+	><button id="disconnect" hidden>Disconnect</button>
+	<p>
+		Only this posting's fields or selected text are captured. Review and correct before saving. No AI request is made.
+		Unsupported page? Select the posting text, or paste its URL/text in Applications.
+	</p>
+	<p id="status" role="status"></p>
+	<script type="module" src="popup.js"></script>
+</html>
