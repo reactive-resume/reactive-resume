@@ -167,8 +167,8 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 					<h2 id="application-answers" tabIndex={-1} className="text-base font-semibold">
 						<Trans>Form answers</Trans>
 					</h2>
-					<Link to="/dashboard/settings/account" className="text-sm underline">
-						<Trans>Private application profile</Trans>
+					<Link to="/dashboard/settings/profile" className="text-sm underline">
+						<Trans>Edit profile</Trans>
 					</Link>
 					{!version &&
 						hasApplicationSubmission(application) &&

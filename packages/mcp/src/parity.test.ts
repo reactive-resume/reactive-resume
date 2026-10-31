@@ -232,6 +232,7 @@ it("embeds actual resume JSON in prompts and propagates inaccessible-document er
 it("keeps private application profiles out of MCP tools and account export results", async () => {
 	const { tools } = await client.listTools();
 	expect(tools.some((tool) => /application_profile/.test(tool.name))).toBe(false);
+	expect(tools.find((tool) => tool.name === "api_auth_export_data")?.description).toContain("Settings → Profile");
 	calls.auth.exportData.mockResolvedValueOnce({
 		exportedAt: "2030-01-01T00:00:00Z",
 		user: {},

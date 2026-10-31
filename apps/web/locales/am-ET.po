@@ -1219,6 +1219,10 @@ msgstr "ስኬት"
 msgid "Account"
 msgstr "መለያ"
 
+#: src/features/settings/account/profile.tsx
+msgid "Account details"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Action"
@@ -1399,7 +1403,7 @@ msgstr "ለማቀድ ቃለ መጠይቅ ያክሉ"
 msgid "Add application"
 msgstr "ማመልከቻ ያክሉ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add authorization country"
 msgstr ""
 
@@ -1468,7 +1472,7 @@ msgstr "ቁልፍ ቃል ያክሉ"
 msgid "Add language"
 msgstr "ቋንቋ ጨምር"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr ""
 
@@ -1521,7 +1525,7 @@ msgid "Add publication"
 msgstr "ህትመቶችን ያክሉ"
 
 #: src/features/resume/editor/write/outline.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add reference"
 msgstr "ማጣቀሻ ያክሉ"
 
@@ -1631,18 +1635,19 @@ msgid "Added to Knowledge as an experience."
 msgstr "እንደ ልምድ ወደ እውቀት ታክሏል።"
 
 #: src/features/resume/share/address-field.tsx
+#: src/features/settings/profile.tsx
 msgid "Address"
 msgstr "አድራሻ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address country"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address line 1"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address line 2"
 msgstr ""
 
@@ -1952,10 +1957,6 @@ msgstr ""
 msgid "Answers"
 msgstr "መልሶች"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Answers apply only to the country shown. A missing country has unknown answers."
-msgstr ""
-
 #: src/features/career/workspace/apply.tsx
 msgid "Answers copied"
 msgstr "መልሶቹ ተቀድተዋል"
@@ -2096,7 +2097,8 @@ msgstr "የሥራ ማመልከቻ ተሰርዟል"
 msgid "Application details"
 msgstr "የማመልከቻ ዝርዝሮች"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 msgid "Application email"
 msgstr ""
 
@@ -2104,16 +2106,12 @@ msgstr ""
 msgid "Application options"
 msgstr "የሥራ ማመልከቻ አማራጮች"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Application phone"
 msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Application preparation"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Application profile deleted."
 msgstr ""
 
 #: src/features/career/coach.tsx
@@ -2128,10 +2126,6 @@ msgstr "የማመልከቻ ትሮች"
 #: src/features/career/workspace/messages.tsx
 msgid "Application updated"
 msgstr "ማመልከቻው ተዘምኗል"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Application-only details. Never added to public links, document exports or AI context automatically."
-msgstr ""
 
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
@@ -2369,7 +2363,7 @@ msgid "Attachment"
 msgstr "አባሪ"
 
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
 msgstr ""
 
@@ -2514,10 +2508,6 @@ msgstr "ቤንጋሊኛ"
 #: src/features/resume/share/download-tab.tsx
 msgid "Best for applying"
 msgstr "ለማመልከት ምርጥ"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Blank fields mean unknown. Nothing is inferred from your resume. Self-identification is not collected here. Enter references yourself and review their details before sharing."
-msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
@@ -2690,9 +2680,9 @@ msgstr "ሶፍትዌር የእርስዎን የስራ ልምድ ማንበብ ይ�
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/settings/account/application-profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
+#: src/features/settings/profile.tsx
 #: src/hooks/use-confirm.tsx
 msgid "Cancel"
 msgstr "ሰርዝ"
@@ -2718,10 +2708,6 @@ msgstr "የሙያ አሰልጣኝ (የእርስዎ ቁልፍ)"
 #: src/features/homepage/hero.tsx
 msgid "career manager."
 msgstr "የሙያ ማስተዳደሪያ።"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Career preferences"
-msgstr ""
 
 #: src/libs/locale.ts
 msgid "Catalan"
@@ -2845,7 +2831,7 @@ msgstr "ማንኛውንም PDF ያረጋግጡ፣ ምንም መለያ አያስ�
 msgid "Check DNS"
 msgstr "DNS አረጋግጥ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
 
@@ -2960,7 +2946,7 @@ msgstr ""
 msgid "Choose a connection"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Choose a country"
 msgstr ""
 
@@ -3033,7 +3019,7 @@ msgstr "ክብ"
 msgid "Cited as already shown · check it"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "City"
 msgstr ""
 
@@ -3214,7 +3200,7 @@ msgstr "የታመቀ"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/design/entries-group.tsx
 #: src/features/resume/editor/write/entries.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Company"
 msgstr "ኩባንያ"
@@ -3385,12 +3371,9 @@ msgstr "ግንኙነቶች ለንግግር ለየብቻ ያስከፍላሉ፣ �
 msgid "Contact"
 msgstr "ተገናኝ"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Contact and address"
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
+#: src/features/settings/profile.tsx
 msgid "Contact details"
 msgstr "የመገኛ ዝርዝሮች"
 
@@ -3637,7 +3620,7 @@ msgstr "ይህን መርሐ ግብር መቀየር አልተቻለም። እን�
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "የይለፍ ቃልዎን መቀየር አልተቻለም። የአሁኑን የይለፍ ቃልዎን ይፈትሹ እና እንደገና ይሞክሩ።"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
 
@@ -3841,7 +3824,7 @@ msgstr "ደረጃዎችዎን መጫን አልተቻለም፣ ስለዚህ መ�
 msgid "Couldn't load your stages."
 msgstr "ደረጃዎችዎን መጫን አልተቻለም።"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr ""
 
@@ -4359,7 +4342,7 @@ msgstr "የCSV ውሂብ"
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Currency"
 msgstr "ምንዛሪ"
 
@@ -4586,12 +4569,12 @@ msgstr "ገጽን ሰርዝ"
 msgid "Delete permanently…"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Delete private application profile?"
+#: src/features/settings/profile.tsx
+msgid "Delete profile"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Delete profile"
+#: src/features/settings/profile.tsx
+msgid "Delete profile?"
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -4740,6 +4723,10 @@ msgstr "የንድፍ ሥርዓቶች"
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Details"
 msgstr "ዝርዝሮች"
+
+#: src/features/settings/profile.tsx
+msgid "Details for your job application forms."
+msgstr ""
 
 #. Label above the raw error text forwarded by the identity provider
 #: src/features/auth/pages/error.tsx
@@ -5195,6 +5182,10 @@ msgid "Edit posting"
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
+msgid "Edit profile"
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
 msgid "Edit question"
 msgstr "ጥያቄውን አርትዕ"
 
@@ -5277,6 +5268,7 @@ msgstr "ትምህርትም ትምህርት ቤቱን እና የትምህርት �
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/settings/account/profile.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Email"
 msgstr "ኢሜል"
@@ -5572,7 +5564,7 @@ msgstr "PNG ላክ"
 msgid "Export saved answers"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Export saved profile"
 msgstr ""
 
@@ -5639,7 +5631,7 @@ msgstr "በእውቀት ውስጥ የበሩ እውነታዎች፣ ታሪኮች �
 msgid "Failed"
 msgstr "አልተሳካም።"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
 
@@ -6137,7 +6129,7 @@ msgstr "ለእያንዳንዱ ሚና እና ብቃት የቀን ክልል ይስ
 msgid "Give the story a title before you can save."
 msgstr "ከማስቀመጥዎ በፊት ለታሪኩ ርዕስ ይስጡት።"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Given name"
 msgstr ""
 
@@ -6386,7 +6378,7 @@ msgstr "አግድም ክፍተት"
 msgid "Hosting and development are paid for by people like you. Optional tip:"
 msgstr "ማስተናገድ እና ልማት የሚከፈሉት እንደ እርስዎ ባሉ ሰዎች ነው። አማራጭ ጠቃሚ ምክር፡"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Hour"
 msgstr ""
 
@@ -7143,14 +7135,14 @@ msgstr "መጨረሻ የተስተካከለው"
 msgid "Last reviewed"
 msgstr ""
 
-#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
-#: src/features/settings/account/application-profile.tsx
-msgid "Last reviewed: {0}"
-msgstr ""
-
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
+msgstr ""
+
+#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
+#: src/features/settings/profile.tsx
+msgid "Last updated: {0}"
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -7385,12 +7377,12 @@ msgid "Link"
 msgstr "አገናኝ"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Link {0} URL"
 msgstr ""
 
@@ -7487,7 +7479,7 @@ msgid "Linking…"
 msgstr "በማገናኘት ላይ…"
 
 #: src/features/resume/editor/check/parser-view.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Links"
 msgstr "አገናኞች"
 
@@ -7611,7 +7603,7 @@ msgstr "የሥራ ቦታውን በመጫን ላይ…"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Loading…"
 msgstr "በመጫን ላይ…"
 
@@ -7740,6 +7732,10 @@ msgstr "ማላይኛ"
 #: src/libs/locale.ts
 msgid "Malayalam"
 msgstr "ማላያላምኛ"
+
+#: src/features/settings/profile.tsx
+msgid "Manage profile"
+msgstr ""
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Manage stages"
@@ -7944,7 +7940,7 @@ msgstr "ሞዴል: {label}"
 msgid "Mono"
 msgstr "ሞኖ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
 
@@ -8115,6 +8111,7 @@ msgstr "የእኔ ኃላፊነት የድጋፍ ሥራ ሳልጨምር ምክን�
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/auth/pages/register.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
@@ -8124,6 +8121,7 @@ msgstr "የእኔ ኃላፊነት የድጋፍ ሥራ ሳልጨምር ምክን�
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "ስም"
 
@@ -8198,7 +8196,7 @@ msgid "Needs attention"
 msgstr "ትኩረት ያስፈልገዋል"
 
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Needs sponsorship in {0}"
 msgstr ""
 
@@ -8331,7 +8329,7 @@ msgstr "ቀጣይ እርምጃ፦ {0}። በዛሬ ውስጥ አስታዋሽ ያ
 msgid "Next time, I’d agree how to measure success before the first prototype."
 msgstr "በሚቀጥለው ጊዜ፣ ከመጀመሪያው ፕሮቶታይፕ በፊት ስኬትን እንዴት እንደምንለካ እስማማለሁ።"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "No"
 msgstr ""
 
@@ -8708,10 +8706,6 @@ msgstr "አሁን አይደለም"
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "እስካሁን አልተመዘገበም። መደገፍ እስኪችሉ ድረስ ባዶ ይተዉት።"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Not reviewed yet"
-msgstr ""
-
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -8723,6 +8717,7 @@ msgid "Not saved — this fact was forgotten before."
 msgstr "አልተቀመጠም — ይህ እውነታ ከዚህ በፊት ተረስቷል።"
 
 #: src/features/career/workspace/preparation.tsx
+#: src/features/settings/profile.tsx
 msgid "Not saved yet"
 msgstr ""
 
@@ -9452,7 +9447,7 @@ msgstr "የቆሙ መርሐ ግብሮች ቅንብሮቻቸውን ይይዛሉ�
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Pay period"
 msgstr "የክፍያ ጊዜ"
 
@@ -9496,6 +9491,7 @@ msgstr "ፐርሲያንኛ"
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/resume/share/web-page-preview.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Phone"
 msgstr "ስልክ"
@@ -9503,6 +9499,10 @@ msgstr "ስልክ"
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Phone (optional)"
 msgstr "ስልክ (አማራጭ)"
+
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Photo"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Photo hidden"
@@ -9619,7 +9619,7 @@ msgstr "ፖርቹጋልኛ (ፖርቱጋል)"
 msgid "Position"
 msgstr "አቀማመጥ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Postal code"
 msgstr ""
 
@@ -9841,11 +9841,6 @@ msgstr "የግላዊነት ፖሊሲ"
 msgid "Private"
 msgstr "የግል"
 
-#: src/features/career/workspace/apply.tsx
-#: src/features/settings/account/application-profile.tsx
-msgid "Private application profile"
-msgstr ""
-
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Private. Only you can see it."
 msgstr "የግል። እርስዎ ብቻ ነው ማየት የሚችሉት።"
@@ -9871,9 +9866,15 @@ msgstr "ችሎታ"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/features/settings/account/profile.tsx
+#: src/features/settings/profile.tsx
+#: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "መገለጫ"
+
+#: src/features/settings/profile.tsx
+msgid "Profile deleted."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile link (optional)"
@@ -9887,6 +9888,10 @@ msgstr "የሰው {0} የመገለጫ አገናኝ"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile links must be public HTTPS addresses."
 msgstr "የመገለጫ አገናኞች ይፋዊ HTTPS አድራሻዎች መሆን አለባቸው።"
+
+#: src/features/settings/profile.tsx
+msgid "Profile saved."
+msgstr ""
 
 #: src/libs/resume/section.tsx
 msgid "Profiles"
@@ -10347,23 +10352,12 @@ msgid "Redo resume change"
 msgstr "የሥራ ልምድ ለውጥን ድገም።"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference {0}: {label}"
+#: src/features/settings/profile.tsx
+msgid "Reference {0}"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference email"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference name"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference phone"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 #: src/libs/resume/section.tsx
 msgid "References"
 msgstr "ማመልከቻዎች"
@@ -10417,7 +10411,7 @@ msgstr "እምቢ"
 msgid "Rejected"
 msgstr "ውድቅ ተደርጓል"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Relationship"
 msgstr ""
 
@@ -10426,13 +10420,17 @@ msgstr ""
 msgid "Reload"
 msgstr "ዳግም ጫን"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Reload and discard unsaved changes"
 msgstr ""
 
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
+msgstr ""
+
+#: src/features/settings/profile.tsx
+msgid "Relocation"
 msgstr ""
 
 #: src/features/career/shared.tsx
@@ -10503,8 +10501,8 @@ msgstr "“{name}” ይወገድ?"
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
-#: src/features/settings/account/application-profile.tsx
 #: src/features/settings/account/security.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove {0}"
 msgstr "{0} አስወግድ"
 
@@ -10539,7 +10537,7 @@ msgid "Remove file"
 msgstr "ፋይል አስወግድ"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove link {0}"
 msgstr ""
 
@@ -10566,7 +10564,7 @@ msgid "Remove question"
 msgstr "ጥያቄውን አስወግድ"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
 
@@ -10676,11 +10674,12 @@ msgstr "ምላሹ ተቀድቷል"
 msgid "Report a bug"
 msgstr "ስህተት ያሳውቁ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Requested amount"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 msgid "Requested salary"
 msgstr ""
 
@@ -11153,6 +11152,7 @@ msgstr "የናሙና ጥናት ታክሏል። በማንኛውም ጊዜ ይሰ�
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/share/history-tab.tsx
+#: src/features/settings/profile.tsx
 msgid "Save"
 msgstr "አስቀምጥ"
 
@@ -11172,10 +11172,6 @@ msgstr "ያለ የይለፍ ቃል እና ያለ ፈቃድ ገደቦች ያል�
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save and link"
 msgstr "ያስቀምጡ እና ያገናኙ"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Save and mark reviewed"
-msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Save and prepare resume"
@@ -11324,10 +11320,6 @@ msgstr "{0} ወደ ማመልከቻዎች ተቀምጧል"
 msgid "Saved a story: {0}"
 msgstr "ታሪክ ተቀምጧል፦ {0}"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Saved and marked reviewed."
-msgstr ""
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Saved as an application and linked"
 msgstr "እንደ የሥራ ማመልከቻ ተቀምጧል እና የተገናኘ"
@@ -11348,7 +11340,7 @@ msgstr "አሁን ተቀምጧል"
 msgid "Saved offers"
 msgstr "የተቀመጡ ቅናሾች"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
 msgstr ""
 
@@ -12466,7 +12458,7 @@ msgstr "ከ{0} ሰዓት ባነሰ ጊዜ ውስጥ ይጀምራል፣ ስለዚ
 msgid "Starts now"
 msgstr "አሁን ይጀምራል"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr ""
 
@@ -13503,7 +13495,7 @@ msgstr ""
 msgid "This question didn't finish."
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
 msgstr ""
 
@@ -13993,7 +13985,7 @@ msgstr "University of Porto"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Unknown"
 msgstr "ያልታወቀ"
 
@@ -14058,6 +14050,10 @@ msgstr "እስከ 25 MB · በአሳሽዎ ውስጥ ተመዝግቧል፣ በ�
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming interviews"
 msgstr "መጪ ቃለ ምልልሶች"
+
+#: src/features/settings/profile.tsx
+msgid "Update"
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Update posting details"
@@ -14179,10 +14175,6 @@ msgstr "ቢበዛ 64 ቁምፊዎችን ይጠቀሙ።"
 msgid "Use between 6 and 64 characters."
 msgstr "ከ6 እስከ 64 ቁምፊዎችን ይጠቀሙ።"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Use Career preferences for work locations, office days, notice period and minimum base salary. Requested salary below is separate. Editing answers for one application does not update these global settings."
-msgstr ""
-
 #: src/components/input/color-picker.tsx
 msgid "Use color {color}"
 msgstr "{color} ቀለም ተጠቀም"
@@ -14292,6 +14284,7 @@ msgstr "የተጠቃሚ ምርምር"
 
 #. Label for username input on registration form
 #: src/features/auth/pages/register.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 msgid "Username"
@@ -14793,7 +14786,7 @@ msgstr "ስፋት"
 msgid "Will my resume get past applicant tracking systems?"
 msgstr "የሥራ ዘመኔ የአመልካች መከታተያ ሥርዓቶችን ያልፋል?"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Willing to relocate"
 msgstr ""
 
@@ -14809,7 +14802,7 @@ msgstr "ያለ አንድ፣ ተቀባዩን እራስዎ ይሞሉ እና ማር
 msgid "Words run together when the text is extracted."
 msgstr "ጽሁፉ ሲወጣ ቃላት አብረው ይጣበቃሉ።"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Work authorization and sponsorship"
 msgstr ""
 
@@ -14940,11 +14933,11 @@ msgstr ""
 msgid "Written offer"
 msgstr "የጽሑፍ ቅናሽ"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Year"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Yes"
 msgstr ""
 

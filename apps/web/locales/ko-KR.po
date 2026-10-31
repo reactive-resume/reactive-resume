@@ -1219,6 +1219,10 @@ msgstr "성과"
 msgid "Account"
 msgstr "계정"
 
+#: src/features/settings/account/profile.tsx
+msgid "Account details"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Action"
@@ -1399,7 +1403,7 @@ msgstr "면접을 추가하면 준비 계획을 세울 수 있습니다"
 msgid "Add application"
 msgstr "지원 추가"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add authorization country"
 msgstr ""
 
@@ -1468,7 +1472,7 @@ msgstr "키워드 추가"
 msgid "Add language"
 msgstr "언어 추가"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr ""
 
@@ -1521,7 +1525,7 @@ msgid "Add publication"
 msgstr "출판물 추가"
 
 #: src/features/resume/editor/write/outline.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Add reference"
 msgstr "참조 추가"
 
@@ -1631,18 +1635,19 @@ msgid "Added to Knowledge as an experience."
 msgstr "경력으로 지식에 추가했습니다."
 
 #: src/features/resume/share/address-field.tsx
+#: src/features/settings/profile.tsx
 msgid "Address"
 msgstr "주소"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address country"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address line 1"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Address line 2"
 msgstr ""
 
@@ -1952,10 +1957,6 @@ msgstr ""
 msgid "Answers"
 msgstr "답변"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Answers apply only to the country shown. A missing country has unknown answers."
-msgstr ""
-
 #: src/features/career/workspace/apply.tsx
 msgid "Answers copied"
 msgstr "답변이 복사되었습니다"
@@ -2096,7 +2097,8 @@ msgstr "채용 지원서가 삭제되었습니다."
 msgid "Application details"
 msgstr "지원 세부 정보"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 msgid "Application email"
 msgstr ""
 
@@ -2104,16 +2106,12 @@ msgstr ""
 msgid "Application options"
 msgstr "취업 지원 옵션"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Application phone"
 msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Application preparation"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Application profile deleted."
 msgstr ""
 
 #: src/features/career/coach.tsx
@@ -2128,10 +2126,6 @@ msgstr "지원 탭"
 #: src/features/career/workspace/messages.tsx
 msgid "Application updated"
 msgstr "지원 내역이 업데이트되었습니다"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Application-only details. Never added to public links, document exports or AI context automatically."
-msgstr ""
 
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/coach-chat.tsx
@@ -2369,7 +2363,7 @@ msgid "Attachment"
 msgstr "부착"
 
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
 msgstr ""
 
@@ -2514,10 +2508,6 @@ msgstr "벵골어"
 #: src/features/resume/share/download-tab.tsx
 msgid "Best for applying"
 msgstr "지원에 가장 적합"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Blank fields mean unknown. Nothing is inferred from your resume. Self-identification is not collected here. Enter references yourself and review their details before sharing."
-msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
@@ -2690,9 +2680,9 @@ msgstr "소프트웨어가 이력서를 읽을 수 있나요?"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/settings/account/application-profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
+#: src/features/settings/profile.tsx
 #: src/hooks/use-confirm.tsx
 msgid "Cancel"
 msgstr "취소"
@@ -2718,10 +2708,6 @@ msgstr "커리어 코치(내 키 사용)"
 #: src/features/homepage/hero.tsx
 msgid "career manager."
 msgstr "경력 관리 도구."
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Career preferences"
-msgstr ""
 
 #: src/libs/locale.ts
 msgid "Catalan"
@@ -2845,7 +2831,7 @@ msgstr "PDF를 확인하세요. 계정이 필요하지 않습니다."
 msgid "Check DNS"
 msgstr "DNS 확인"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
 
@@ -2960,7 +2946,7 @@ msgstr ""
 msgid "Choose a connection"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Choose a country"
 msgstr ""
 
@@ -3033,7 +3019,7 @@ msgstr "원"
 msgid "Cited as already shown · check it"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "City"
 msgstr ""
 
@@ -3214,7 +3200,7 @@ msgstr "간결하게"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/design/entries-group.tsx
 #: src/features/resume/editor/write/entries.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Company"
 msgstr "회사"
@@ -3385,12 +3371,9 @@ msgstr "연결된 서비스는 음성 기능 요금을 별도로 청구하며 �
 msgid "Contact"
 msgstr "연락하다"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Contact and address"
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
+#: src/features/settings/profile.tsx
 msgid "Contact details"
 msgstr "연락처 정보"
 
@@ -3637,7 +3620,7 @@ msgstr "이 일정을 변경할 수 없습니다. 다시 시도해 보세요."
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "비밀번호를 변경할 수 없습니다. 현재 비밀번호를 확인하고 다시 시도해 보세요."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
 
@@ -3841,7 +3824,7 @@ msgstr "단계를 불러오지 못해 기본 단계를 표시합니다. 다시 �
 msgid "Couldn't load your stages."
 msgstr "단계를 불러오지 못했습니다."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Couldn't load. Try again."
 msgstr ""
 
@@ -4359,7 +4342,7 @@ msgstr "CSV 데이터"
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Currency"
 msgstr "통화"
 
@@ -4586,12 +4569,12 @@ msgstr "페이지 삭제"
 msgid "Delete permanently…"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Delete private application profile?"
+#: src/features/settings/profile.tsx
+msgid "Delete profile"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Delete profile"
+#: src/features/settings/profile.tsx
+msgid "Delete profile?"
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -4740,6 +4723,10 @@ msgstr "디자인 시스템"
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Details"
 msgstr "세부"
+
+#: src/features/settings/profile.tsx
+msgid "Details for your job application forms."
+msgstr ""
 
 #. Label above the raw error text forwarded by the identity provider
 #: src/features/auth/pages/error.tsx
@@ -5195,6 +5182,10 @@ msgid "Edit posting"
 msgstr ""
 
 #: src/features/career/workspace/apply.tsx
+msgid "Edit profile"
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
 msgid "Edit question"
 msgstr "질문 편집"
 
@@ -5277,6 +5268,7 @@ msgstr "학력에서도 같은 방식으로 학교와 전공의 순서를 바꿉
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/settings/account/profile.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Email"
 msgstr "이메일"
@@ -5572,7 +5564,7 @@ msgstr "PNG 내보내기"
 msgid "Export saved answers"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Export saved profile"
 msgstr ""
 
@@ -5639,7 +5631,7 @@ msgstr "지식에서 켜 둔 사실, 스토리, 선호 사항"
 msgid "Failed"
 msgstr "실패한"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
 
@@ -6137,7 +6129,7 @@ msgstr "모든 직무와 자격 사항에 날짜 범위를 추가하세요."
 msgid "Give the story a title before you can save."
 msgstr "저장하려면 스토리 제목을 입력하세요."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Given name"
 msgstr ""
 
@@ -6386,7 +6378,7 @@ msgstr "가로 간격"
 msgid "Hosting and development are paid for by people like you. Optional tip:"
 msgstr "호스팅과 개발 비용은 귀하와 같은 사람들이 지불합니다. 선택적 팁:"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Hour"
 msgstr ""
 
@@ -7143,14 +7135,14 @@ msgstr "마지막으로 수정됨"
 msgid "Last reviewed"
 msgstr ""
 
-#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
-#: src/features/settings/account/application-profile.tsx
-msgid "Last reviewed: {0}"
-msgstr ""
-
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
+msgstr ""
+
+#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
+#: src/features/settings/profile.tsx
+msgid "Last updated: {0}"
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -7385,12 +7377,12 @@ msgid "Link"
 msgstr "링크"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Link {0} label"
 msgstr ""
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Link {0} URL"
 msgstr ""
 
@@ -7487,7 +7479,7 @@ msgid "Linking…"
 msgstr "연결 중…"
 
 #: src/features/resume/editor/check/parser-view.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Links"
 msgstr "모래밭"
 
@@ -7611,7 +7603,7 @@ msgstr "워크스페이스 불러오는 중…"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Loading…"
 msgstr "로드 중…"
 
@@ -7740,6 +7732,10 @@ msgstr "말레이어"
 #: src/libs/locale.ts
 msgid "Malayalam"
 msgstr "말라얄람어"
+
+#: src/features/settings/profile.tsx
+msgid "Manage profile"
+msgstr ""
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Manage stages"
@@ -7944,7 +7940,7 @@ msgstr "모델: {label}"
 msgid "Mono"
 msgstr "단핵증"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
 
@@ -8115,6 +8111,7 @@ msgstr "제 역할은 고객 지원 업무를 늘리지 않고 원인을 찾는 
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/auth/pages/register.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
@@ -8124,6 +8121,7 @@ msgstr "제 역할은 고객 지원 업무를 늘리지 않고 원인을 찾는 
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "이름"
 
@@ -8198,7 +8196,7 @@ msgid "Needs attention"
 msgstr "주의가 필요함"
 
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Needs sponsorship in {0}"
 msgstr ""
 
@@ -8331,7 +8329,7 @@ msgstr "다음 단계: {0}. 오늘에 알림을 추가합니다."
 msgid "Next time, I’d agree how to measure success before the first prototype."
 msgstr "다음에는 첫 프로토타입 전에 성공 측정 방법부터 합의하겠습니다."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "No"
 msgstr ""
 
@@ -8708,10 +8706,6 @@ msgstr "나중에"
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "아직 기록되지 않았습니다. 뒷받침할 수 있을 때까지 비워 두세요."
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Not reviewed yet"
-msgstr ""
-
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -8723,6 +8717,7 @@ msgid "Not saved — this fact was forgotten before."
 msgstr "저장하지 않음 — 이전에 잊은 사실입니다."
 
 #: src/features/career/workspace/preparation.tsx
+#: src/features/settings/profile.tsx
 msgid "Not saved yet"
 msgstr ""
 
@@ -9452,7 +9447,7 @@ msgstr "일시 중지된 스케줄도 설정은 유지됩니다."
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Pay period"
 msgstr "지급 주기"
 
@@ -9496,6 +9491,7 @@ msgstr "페르시아어"
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/resume/share/web-page-preview.tsx
+#: src/features/settings/profile.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Phone"
 msgstr "전화"
@@ -9503,6 +9499,10 @@ msgstr "전화"
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Phone (optional)"
 msgstr "전화번호(선택)"
+
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Photo"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Photo hidden"
@@ -9619,7 +9619,7 @@ msgstr "포르투갈어(포르투갈)"
 msgid "Position"
 msgstr "직책"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Postal code"
 msgstr ""
 
@@ -9841,11 +9841,6 @@ msgstr "개인 정보 보호 정책"
 msgid "Private"
 msgstr "비공개"
 
-#: src/features/career/workspace/apply.tsx
-#: src/features/settings/account/application-profile.tsx
-msgid "Private application profile"
-msgstr ""
-
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Private. Only you can see it."
 msgstr "사적인. 오직 당신만이 그것을 볼 수 있습니다."
@@ -9871,9 +9866,15 @@ msgstr "숙련도"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
-#: src/features/settings/account/profile.tsx
+#: src/features/settings/profile.tsx
+#: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "프로필"
+
+#: src/features/settings/profile.tsx
+msgid "Profile deleted."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile link (optional)"
@@ -9887,6 +9888,10 @@ msgstr "{0}번째 사람 프로필 링크"
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Profile links must be public HTTPS addresses."
 msgstr "프로필 링크는 공개 HTTPS 주소여야 합니다."
+
+#: src/features/settings/profile.tsx
+msgid "Profile saved."
+msgstr ""
 
 #: src/libs/resume/section.tsx
 msgid "Profiles"
@@ -10347,23 +10352,12 @@ msgid "Redo resume change"
 msgstr "이력서 변경 다시 실행"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference {0}: {label}"
+#: src/features/settings/profile.tsx
+msgid "Reference {0}"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference email"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference name"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Reference phone"
-msgstr ""
-
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 #: src/libs/resume/section.tsx
 msgid "References"
 msgstr "추천인"
@@ -10417,7 +10411,7 @@ msgstr "거부하다"
 msgid "Rejected"
 msgstr "거부됨"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Relationship"
 msgstr ""
 
@@ -10426,13 +10420,17 @@ msgstr ""
 msgid "Reload"
 msgstr "새로고침"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Reload and discard unsaved changes"
 msgstr ""
 
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
+msgstr ""
+
+#: src/features/settings/profile.tsx
+msgid "Relocation"
 msgstr ""
 
 #: src/features/career/shared.tsx
@@ -10503,8 +10501,8 @@ msgstr "“{name}”을(를) 제거할까요?"
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
-#: src/features/settings/account/application-profile.tsx
 #: src/features/settings/account/security.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove {0}"
 msgstr "{0} 제거"
 
@@ -10539,7 +10537,7 @@ msgid "Remove file"
 msgstr "파일 제거"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove link {0}"
 msgstr ""
 
@@ -10566,7 +10564,7 @@ msgid "Remove question"
 msgstr "질문 제거"
 
 #. placeholder {0}: index + 1
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Remove reference {0}"
 msgstr ""
 
@@ -10676,11 +10674,12 @@ msgstr "답장이 복사되었습니다"
 msgid "Report a bug"
 msgstr "버그 신고하기"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Requested amount"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/profile.tsx
 msgid "Requested salary"
 msgstr ""
 
@@ -11153,6 +11152,7 @@ msgstr "샘플 이력서가 추가되었습니다. 언제든지 삭제하세요.
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/share/history-tab.tsx
+#: src/features/settings/profile.tsx
 msgid "Save"
 msgstr "저장"
 
@@ -11172,10 +11172,6 @@ msgstr "비밀번호와 권한 제한이 없는 보호되지 않은 사본으로
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Save and link"
 msgstr "저장 및 연결"
-
-#: src/features/settings/account/application-profile.tsx
-msgid "Save and mark reviewed"
-msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Save and prepare resume"
@@ -11324,10 +11320,6 @@ msgstr "지원 목록에 {0} 저장됨"
 msgid "Saved a story: {0}"
 msgstr "스토리 저장함: {0}"
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Saved and marked reviewed."
-msgstr ""
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Saved as an application and linked"
 msgstr "입사지원서로 저장 및 연결"
@@ -11348,7 +11340,7 @@ msgstr "방금 저장됨"
 msgid "Saved offers"
 msgstr "저장된 오퍼"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
 msgstr ""
 
@@ -12466,7 +12458,7 @@ msgstr "{0}시간 안에 시작하므로 브리핑을 지금 실행합니다."
 msgid "Starts now"
 msgstr "지금 시작"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "State or region"
 msgstr ""
 
@@ -13503,7 +13495,7 @@ msgstr ""
 msgid "This question didn't finish."
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
 msgstr ""
 
@@ -13993,7 +13985,7 @@ msgstr "University of Porto"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Unknown"
 msgstr "알 수 없음"
 
@@ -14058,6 +14050,10 @@ msgstr "최대 25개 MB · 브라우저에서 확인했지만 업로드되지 �
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming interviews"
 msgstr "다가오는 인터뷰"
+
+#: src/features/settings/profile.tsx
+msgid "Update"
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Update posting details"
@@ -14179,10 +14175,6 @@ msgstr "최대 64자까지 사용할 수 있습니다."
 msgid "Use between 6 and 64 characters."
 msgstr "6자에서 64자 사이로 입력하십시오."
 
-#: src/features/settings/account/application-profile.tsx
-msgid "Use Career preferences for work locations, office days, notice period and minimum base salary. Requested salary below is separate. Editing answers for one application does not update these global settings."
-msgstr ""
-
 #: src/components/input/color-picker.tsx
 msgid "Use color {color}"
 msgstr "색상 사용 {color}"
@@ -14292,6 +14284,7 @@ msgstr "사용자 리서치"
 
 #. Label for username input on registration form
 #: src/features/auth/pages/register.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 msgid "Username"
@@ -14793,7 +14786,7 @@ msgstr "너비"
 msgid "Will my resume get past applicant tracking systems?"
 msgstr "내 이력서가 지원자 추적 시스템을 통과합니까?"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Willing to relocate"
 msgstr ""
 
@@ -14809,7 +14802,7 @@ msgstr "하나도 없으면 수신자를 직접 입력하고 초안 작성 시 �
 msgid "Words run together when the text is extracted."
 msgstr "텍스트를 추출하면 단어들이 서로 붙어버립니다."
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Work authorization and sponsorship"
 msgstr ""
 
@@ -14940,11 +14933,11 @@ msgstr ""
 msgid "Written offer"
 msgstr "서면 오퍼"
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Year"
 msgstr ""
 
-#: src/features/settings/account/application-profile.tsx
+#: src/features/settings/profile.tsx
 msgid "Yes"
 msgstr ""
 

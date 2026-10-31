@@ -32,6 +32,12 @@ export default function SettingsScreen() {
 			</SettingsGroup>
 			<SettingsGroup>
 				<ListRow
+					title={t`Profile`}
+					leading="clipboard-text"
+					chevron
+					onPress={() => router.push(routes.settings("profile"))}
+				/>
+				<ListRow
 					title={t`Preferences`}
 					leading="circle-half"
 					value={appearance}

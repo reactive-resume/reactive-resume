@@ -29,7 +29,7 @@ You can download a copy of everything you have stored in Reactive Resume in one 
 | File                       | Contents                                                                                                                                                  |
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `account.json`             | Your name, email, username, photo address, timezone, whether your email is verified, and when the account was created and last updated.                   |
-| `application-profile.json` | Your saved private application profile, explicit unknown answers, references, last review date and revision, when a profile exists.                       |
+| `application-profile.json` | Your saved private application profile, explicit unknown answers, references, last-updated date and revision, when a profile exists.                      |
 | `applications.json`        | Every job application with its status, job details, notes, contacts, follow-ups and activity.                                                             |
 | `application-stages.json`  | Your application stages: names, colors, order, what each counts as, and removed stages that earlier history still names.                                  |
 | `resumes/`                 | One JSON file per resume, including those in the trash. Each holds the resume's name, public address, tags, sharing settings and the full resume content. |
@@ -48,7 +48,7 @@ The archive doesn't include your password, passkeys, two-step verification codes
   as **JSON** from **Download & history** → **Download**. See [Importing resumes](/guides/importing-resumes).
 </Tip>
 
-On native mobile, **Export everything** shares one JSON file containing the same account data, including `applicationProfile`. **Export saved profile** under **Private application profile** shares only that record. Private profile exports do not import into a resume. These files contain personal information; choose their destination deliberately. Temporary mobile export files are removed on the next export, profile deletion, app startup, sign-out or session expiry. Signing into another account also clears them. Copies saved by a share recipient remain outside the app. MCP account export excludes the private application profile; use Account settings to export it.
+On native mobile, **Export everything** shares one JSON file containing the same account data, including `applicationProfile`. **Export saved profile** under **Profile → Manage profile** shares only that record. Private profile exports do not import into a resume. These files contain personal information; choose their destination deliberately. Temporary mobile export files are removed on the next export, profile deletion, app startup, sign-out or session expiry. Signing into another account also clears them. Copies saved by a share recipient remain outside the app. MCP account export excludes the private application profile; use Settings → Profile to export it.
 
 ## Related guides
 
