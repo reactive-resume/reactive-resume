@@ -222,7 +222,7 @@ const orpc = {
 		tags: { queryKey: () => ["applications", "tags"] },
 		key: () => ["applications"],
 	},
-	documents: { list: { key: () => ["documents"] } },
+	documents: { key: () => ["documents"] },
 	career: { workspace: { key: () => ["career", "workspace"] } },
 };
 let capturedQuery;

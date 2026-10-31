@@ -12,6 +12,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { useBatchActions } from "./document-actions";
 import { DocumentRow } from "./document-card";
 import { LibraryError } from "./library-error";
+import { PageNavigation } from "./page-navigation";
 import { PageHeader } from "@/components/layout/page-header";
 import { useConfirm } from "@/hooks/use-confirm";
 import { orpc } from "@/libs/orpc/client";
@@ -24,23 +25,34 @@ const documentKey = (document: { type: string; id: string }) => `${document.type
  * trash is a separate server-side operation that covers every document in Trash, not only the loaded or selected IDs.
  */
 export function TrashPage() {
+	const [offset, setOffset] = useState(0);
 	const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set());
 	const [busy, setBusy] = useState(false);
 	const confirm = useConfirm();
 	const batch = useBatchActions();
 	const {
-		data: documents,
+		data: page,
 		isPending,
 		isError,
 		isFetching,
+		isPlaceholderData,
 		refetch,
-	} = useQuery(orpc.documents.list.queryOptions({ input: { trashed: true } }));
+	} = useQuery({
+		...orpc.documents.page.queryOptions({ input: { trashed: true, limit: 100, offset } }),
+		gcTime: 0,
+		placeholderData: (previous) => previous,
+	});
 	const counts = useQuery(orpc.documents.counts.queryOptions());
+	if (page && !isPlaceholderData && offset > 0 && offset >= page.total) {
+		setOffset(Math.max(0, Math.floor((page.total - 1) / 100) * 100));
+		setSelected(new Set());
+	}
+	const documents = page?.items;
 	const all = documents ?? [];
 	const selection = all.filter((document) => selected.has(documentKey(document)));
 	const selecting = selection.length > 0;
 	const allSelected = all.length > 0 && selection.length === all.length;
-	const trashCount = counts.data?.trash ?? all.length;
+	const trashCount = counts.data?.trash ?? page?.total ?? 0;
 
 	const clearSelection = () => setSelected(new Set());
 	const selectAll = (on: boolean) => setSelected(new Set(on ? all.map(documentKey) : []));
@@ -195,6 +207,15 @@ export function TrashPage() {
 				</table>
 			)}
 
+			<PageNavigation
+				offset={offset}
+				total={page?.total ?? 0}
+				busy={isFetching || busy}
+				onChange={(next) => {
+					clearSelection();
+					setOffset(next);
+				}}
+			/>
 			<TrashSelectionBar
 				selection={selection}
 				allSelected={allSelected}

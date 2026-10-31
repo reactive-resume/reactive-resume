@@ -508,19 +508,45 @@ const { KnowledgeScreen } = load("features/career/knowledge.tsx", {
 	"@/ui": { ...ui, Screen: "Screen", Segmented: "Segmented" },
 });
 native.FlatList = "FlatList";
-const documentQuery = { data: [], isError: false, refetch() {} };
+const documentQuery = {
+	data: { items: [], total: 19500, counts: { resume: 19500, letter: 0 }, tags: [], hasPublic: false },
+	isError: false,
+	refetch() {},
+};
+let documentInput;
+let documentPlaceholder;
+let pendingDocuments = [];
+const documentPage = (input) => ({ queryKey: ["document-page", input] });
 const { DocumentsLibrary } = load("features/documents/library.tsx", {
 	"@legendapp/list/reanimated": { AnimatedLegendList: "FlatList" },
 	"./document-sheets": { DocumentSheets: "DocumentSheets" },
 	"./filter": load("features/documents/filter.ts"),
 	"./new-documents": {},
-	"./pending": { usePendingDocuments: () => [] },
-	"./queries": { useDocuments: () => documentQuery, useDocumentOperations: () => ({ busy: false }) },
+	"./pending": { usePendingDocuments: () => pendingDocuments },
+	"./queries": { useDocumentOperations: () => ({ busy: false }) },
 	"./thumbnail": { Thumbnail: "Thumbnail" },
-	"@/api/client": { client: {}, orpc: { documents: { counts: { queryOptions: () => ({ queryKey: [] }) } } } },
-	"@/auth/session": { useSession: () => ({ status: "signed-in", server: "fixture" }) },
+	"@/api/client": {
+		client: {},
+		orpc: {
+			documents: {
+				page: { queryOptions: ({ input }) => documentPage(input) },
+				counts: { queryOptions: () => ({ queryKey: ["counts"] }) },
+			},
+		},
+	},
+	"@/auth/session": {
+		useSession: () => ({ status: "signed-in", server: "fixture" }),
+		getAccountScope: () => "fixture",
+	},
 	"@/components/collection-header": { CollectionHeader: "CollectionHeader" },
-	"@tanstack/react-query": { useQuery: () => ({ data: { trash: 0 }, refetch() {} }) },
+	"@tanstack/react-query": {
+		useQuery: ({ queryKey, placeholderData }) => {
+			if (queryKey[0] !== "document-page") return { data: { trash: 0 }, refetch() {} };
+			documentInput = queryKey[1];
+			documentPlaceholder = placeholderData;
+			return documentQuery;
+		},
+	},
 	"expo-haptics": {},
 	"expo-router": { ...mocks["expo-router"], useFocusEffect() {} },
 	"@lingui/core/macro": { plural: (count, options) => options[count === 1 ? "one" : "other"].replace("#", count) },
@@ -649,6 +675,55 @@ for (const fontScale of [1, 1.95, 3.12]) {
 		}
 	}
 }
+
+// A large library renders only its server page. Navigation replaces rows and filters restart at zero.
+hooks.length = 0;
+documentQuery.data.items = Array.from({ length: 100 }, (_, index) => ({
+	id: `doc-${index}`,
+	type: "resume",
+	tags: [],
+}));
+let library = render(DocumentsLibrary);
+let list = nodes(library).find((node) => node.type === "FlatList");
+assert.equal(list.props.data.length, 100);
+assert.equal(documentInput.limit, 100);
+assert.equal(documentInput.offset, 0);
+nodes(list.props.ListFooterComponent)
+	.find((node) => node.props.label === "Next")
+	.props.onPress();
+library = render(DocumentsLibrary);
+assert.equal(documentInput.offset, 100);
+list = nodes(library).find((node) => node.type === "FlatList");
+nodes(list.props.ListHeaderComponent)
+	.find((node) => node.type === "CollectionHeader")
+	.props.onChangeText("design");
+render(DocumentsLibrary);
+assert.equal(documentInput.q, "");
+await new Promise((resolve) => setTimeout(resolve, 350));
+render(DocumentsLibrary);
+assert.equal(documentInput.q, "design");
+assert.equal(documentInput.offset, 0);
+render(DocumentsLibrary);
+assert.equal(documentInput.offset, 0);
+pendingDocuments = [
+	{ type: "resume", id: "doc-0", name: "Visible queued work" },
+	{ type: "letter", id: "off-page", name: "Other queued work" },
+];
+list = nodes(render(DocumentsLibrary)).find((node) => node.type === "FlatList");
+for (const document of pendingDocuments)
+	assert.ok(
+		nodes(list.props.ListHeaderComponent).some((node) => node.type === "ListRow" && node.props.title === document.name),
+	);
+assert.equal(
+	documentPlaceholder(documentQuery.data, { queryKey: ["document-page", {}, "another-account"] }),
+	undefined,
+);
+assert.equal(
+	documentPlaceholder(documentQuery.data, { queryKey: ["document-page", {}, "fixture"] }),
+	documentQuery.data,
+);
+pendingDocuments = [];
+console.log("PASS native large-library page bound, navigation, debounced filter reset and account-scoped recovery");
 
 // A direct link to a later workspace tab must reveal its selection and offer overflow navigation.
 hooks.length = 0;

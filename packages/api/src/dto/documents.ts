@@ -34,15 +34,35 @@ const documentSchema = z.object({
 
 export type DocumentSummary = z.infer<typeof documentSchema>;
 
+export const documentFiltersSchema = z.object({
+	trashed: z.boolean().default(false),
+	type: z.enum(["all", "resume", "letter"]).default("all"),
+	q: z.string().max(500).default(""),
+	tags: z.array(z.string().min(1).max(40)).max(20).default([]),
+	public: z.boolean().default(false),
+	sort: z.enum(["edited", "name", "created"]).default("edited"),
+});
+export type DocumentFilters = z.infer<typeof documentFiltersSchema>;
+
 export const documentsDto = {
 	list: {
-		input: z
-			.object({
-				...paginationShape,
-				trashed: z.boolean().default(false).describe("List the documents in Trash instead."),
-			})
-			.default({ trashed: false }),
+		input: documentFiltersSchema.extend(paginationShape).prefault({}),
 		output: z.array(documentSchema),
+	},
+	page: {
+		input: documentFiltersSchema
+			.extend({
+				limit: z.number().int().min(1).max(100).default(100),
+				offset: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER).default(0),
+			})
+			.prefault({}),
+		output: z.object({
+			items: z.array(documentSchema),
+			total: z.number(),
+			counts: z.object({ resume: z.number(), letter: z.number() }),
+			tags: z.array(z.string()),
+			hasPublic: z.boolean(),
+		}),
 	},
 	counts: {
 		input: z.void(),

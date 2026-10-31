@@ -4,6 +4,7 @@ import { Trans } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
+import { useDebounceValue } from "usehooks-ts";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import {
@@ -24,8 +25,8 @@ import { Tabs, TabsCount, TabsList, TabsTrigger } from "@reactive-resume/ui/comp
 import { cn } from "@reactive-resume/utils/style";
 import { LinkApplicationDialog, TagsDialog, useBatchActions } from "./document-actions";
 import { DocumentCard, DocumentRow } from "./document-card";
-import { collectTags, filterDocuments } from "./filter";
 import { LibraryError } from "./library-error";
+import { PageNavigation } from "./page-navigation";
 import { useStartDocument } from "./use-start-document";
 import { PageHeader } from "@/components/layout/page-header";
 import { useDialogStore } from "@/dialogs/store";
@@ -59,13 +60,37 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const [linkFor, setLinkFor] = useState<DocumentSummary | null>(null);
 	// Grid and list animate in only after a switch, never on the page's first render.
 	const [viewSwitched, setViewSwitched] = useState(false);
+	const [query] = useDebounceValue(search.q, 300);
+	const filterKey = JSON.stringify([search.type, query, search.tags, search.public, search.sort]);
+	const [page, setPage] = useState({ filterKey, offset: 0, total: 0 });
+	const offset = page.filterKey === filterKey ? page.offset : 0;
+	const changePage = (next: number) => {
+		setSelected(new Set());
+		setPage({ filterKey, offset: next, total: pageData?.total ?? page.total });
+	};
 	const {
-		data: documents,
+		data: pageData,
 		isPending,
 		isError,
 		isFetching,
+		isPlaceholderData,
 		refetch,
-	} = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
+	} = useQuery({
+		gcTime: 0,
+		placeholderData: (previous) => previous,
+		...orpc.documents.page.queryOptions({
+			input: {
+				type: search.type,
+				q: query,
+				tags: search.tags,
+				sort: search.sort,
+				public: search.public ?? false,
+				trashed: false,
+				limit: 100,
+				offset,
+			},
+		}),
+	});
 	// The library staggers in on its first appearance only; cards that appear later (filters, a new document) don't.
 	const [intro, setIntro] = useState(true);
 	useEffect(() => {
@@ -89,18 +114,26 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		searchRef.current?.focus();
 	});
 
-	const all = documents ?? [];
-	const failed = isError && !documents;
-	const firstRun = !isPending && all.length === 0;
-	const shown = filterDocuments(all, search);
-	const tags = collectTags(all);
-	const counts = {
-		all: all.length,
-		resume: all.filter((document) => document.type === "resume").length,
-		letter: all.filter((document) => document.type === "letter").length,
-	};
-	const hasPublic = all.some((document) => document.isPublic);
+	if (page.filterKey !== filterKey || (pageData && !isPlaceholderData && offset > 0 && offset >= pageData.total)) {
+		setPage({
+			filterKey,
+			total: pageData?.total ?? 0,
+			offset: page.filterKey !== filterKey ? 0 : Math.max(0, Math.floor(((pageData?.total ?? 0) - 1) / 100) * 100),
+		});
+		setSelected(new Set());
+	}
+
+	const shown = pageData?.items ?? [];
+	const failed = isError && !pageData;
 	const filtered = search.type !== "all" || search.q.trim() !== "" || search.tags.length > 0 || search.public === true;
+	const firstRun = !isPending && !filtered && offset === 0 && pageData?.total === 0;
+	const tags = pageData?.tags ?? [];
+	const counts = {
+		all: (pageData?.counts.resume ?? 0) + (pageData?.counts.letter ?? 0),
+		resume: pageData?.counts.resume ?? 0,
+		letter: pageData?.counts.letter ?? 0,
+	};
+	const hasPublic = pageData?.hasPublic ?? false;
 	// Actions apply to the selected documents the filters show.
 	const selection = shown.filter((document) => selected.has(documentKey(document)));
 	const selecting = selection.length > 0;
@@ -247,7 +280,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 											checked={allSelected}
 											indeterminate={selecting && !allSelected}
 											onCheckedChange={(on) => selectAll(on)}
-											aria-label={t`Select all`}
+											aria-label={t`Select this page`}
 										/>
 									</th>
 									<th className="h-10 ps-3 text-start font-medium">
@@ -300,6 +333,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 				</>
 			)}
 
+			<PageNavigation offset={offset} total={pageData?.total ?? page.total} busy={isFetching} onChange={changePage} />
 			<SelectionBar
 				selection={selection}
 				allSelected={allSelected}
@@ -473,7 +507,7 @@ function SelectionBar({ selection, allSelected, onSelectAll, onClear, onTags }: 
 			</span>
 			{!allSelected && (
 				<Button variant="ghost" size="sm" onClick={onSelectAll} className="max-sm:hidden">
-					<Trans>Select all</Trans>
+					<Trans>Select this page</Trans>
 				</Button>
 			)}
 			<Button variant="ghost" size="sm" disabled={busy} onClick={onTags}>

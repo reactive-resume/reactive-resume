@@ -265,7 +265,7 @@ msgstr "{0, plural, one {# రోజు కోసం} other {# రోజుల�
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
 msgstr "{0, plural, one {నాలెడ్జ్ · # వాస్తవం} other {నాలెడ్జ్ · # వాస్తవాలు}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "letter").length
+#. placeholder {0}: documents.data?.counts.letter ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Letter (#)} other {Letters (#)}}"
 msgstr "{0, plural, one {కవర్ లెటర్ (#)} other {కవర్ లెటర్‌లు (#)}}"
@@ -275,7 +275,7 @@ msgstr "{0, plural, one {కవర్ లెటర్ (#)} other {కవర్ �
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {# రోజులో ప్రత్యుత్తరం లేదు} other {# రోజులలో ప్రత్యుత్తరం లేదు}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "resume").length
+#. placeholder {0}: documents.data?.counts.resume ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Resume (#)} other {Resumes (#)}}"
 msgstr "{0, plural, one {రెజ్యూమ్ (#)} other {రెజ్యూమ్‌లు (#)}}"
@@ -423,6 +423,13 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "{0}-Resume"
 msgstr "{0}-రెజ్యూమ్"
+
+#. placeholder {0}: Math.min(offset + 1, documents.data?.total ?? page.total)
+#. placeholder {1}: Math.min(offset + 100, documents.data?.total ?? page.total)
+#. placeholder {2}: documents.data?.total ?? page.total
+#: src/features/documents/library.tsx
+msgid "{0}–{1} of {2}"
+msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
 #. placeholder {1}: row.index + 1
@@ -1340,7 +1347,7 @@ msgstr "అల్బేనియన్"
 msgid "All"
 msgstr "అన్నీ"
 
-#. placeholder {0}: all.length + recoverable.length
+#. placeholder {0}: (documents.data?.counts.resume ?? 0) + (documents.data?.counts.letter ?? 0)
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "అన్నీ ({0})"
@@ -6407,6 +6414,10 @@ msgstr "కొత్త విభాగం"
 msgid "New STARR story"
 msgstr "కొత్త STARR కథనం"
 
+#: src/features/documents/library.tsx
+msgid "Next"
+msgstr ""
+
 #: src/features/check/page.tsx
 msgid "Next issue"
 msgstr "తదుపరి సంచిక"
@@ -7615,6 +7626,10 @@ msgstr "వెబ్ పేజీని ప్రివ్యూ చేయండ
 #: src/features/design/preview-caption.tsx
 msgid "Previewing {0} · tap to apply"
 msgstr "{0} ప్రివ్యూ చేస్తోంది · దరఖాస్తు చేయడానికి నొక్కండి"
+
+#: src/features/documents/library.tsx
+msgid "Previous"
+msgstr ""
 
 #: src/features/check/page.tsx
 msgid "Previous issue"

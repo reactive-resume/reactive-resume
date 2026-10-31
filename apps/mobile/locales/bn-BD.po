@@ -265,7 +265,7 @@ msgstr "{0, plural, one {# দিনের জন্য} other {# দিনে�
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
 msgstr "{0, plural, one {জ্ঞানভান্ডার · #টি তথ্য} other {জ্ঞানভান্ডার · #টি তথ্য}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "letter").length
+#. placeholder {0}: documents.data?.counts.letter ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Letter (#)} other {Letters (#)}}"
 msgstr "{0, plural, one {চিঠি (#)} other {চিঠিপত্র (#)}}"
@@ -275,7 +275,7 @@ msgstr "{0, plural, one {চিঠি (#)} other {চিঠিপত্র (#)}}
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {# দিনে কোন উত্তর নেই} other {# দিনের মধ্যে কোন উত্তর নেই}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "resume").length
+#. placeholder {0}: documents.data?.counts.resume ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Resume (#)} other {Resumes (#)}}"
 msgstr "{0, plural, one {জীবনবৃত্তান্ত (#)} other {জীবনবৃত্তান্তসমূহ (#)}}"
@@ -423,6 +423,13 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "{0}-Resume"
 msgstr "{0}-জীবনবৃত্তান্ত"
+
+#. placeholder {0}: Math.min(offset + 1, documents.data?.total ?? page.total)
+#. placeholder {1}: Math.min(offset + 100, documents.data?.total ?? page.total)
+#. placeholder {2}: documents.data?.total ?? page.total
+#: src/features/documents/library.tsx
+msgid "{0}–{1} of {2}"
+msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
 #. placeholder {1}: row.index + 1
@@ -1340,7 +1347,7 @@ msgstr "আলবেনিয়ান"
 msgid "All"
 msgstr "সব"
 
-#. placeholder {0}: all.length + recoverable.length
+#. placeholder {0}: (documents.data?.counts.resume ?? 0) + (documents.data?.counts.letter ?? 0)
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "সমস্ত ({0})"
@@ -6407,6 +6414,10 @@ msgstr "নতুন বিভাগ"
 msgid "New STARR story"
 msgstr "নতুন STARR গল্প"
 
+#: src/features/documents/library.tsx
+msgid "Next"
+msgstr ""
+
 #: src/features/check/page.tsx
 msgid "Next issue"
 msgstr "পরবর্তী সংখ্যা"
@@ -7615,6 +7626,10 @@ msgstr "ওয়েব পেজ প্রিভিউ করুন"
 #: src/features/design/preview-caption.tsx
 msgid "Previewing {0} · tap to apply"
 msgstr "প্রিভিউ করা হচ্ছে {0} · প্রয়োগ করতে ট্যাপ করুন"
+
+#: src/features/documents/library.tsx
+msgid "Previous"
+msgstr ""
 
 #: src/features/check/page.tsx
 msgid "Previous issue"

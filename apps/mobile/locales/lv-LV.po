@@ -265,7 +265,7 @@ msgstr "{0, plural, one {# dienai} other {# dienām}}"
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
 msgstr "{0, plural, zero {Zināšanas · # fakti} one {Zināšanas · # fakts} other {Zināšanas · # fakti}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "letter").length
+#. placeholder {0}: documents.data?.counts.letter ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Letter (#)} other {Letters (#)}}"
 msgstr "{0, plural, one {Motivācijas vēstule (#)} other {Motivācijas vēstules (#)} zero {Motivācijas vēstules (#)}}"
@@ -275,7 +275,7 @@ msgstr "{0, plural, one {Motivācijas vēstule (#)} other {Motivācijas vēstule
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {# dienā nav atbildes} other {Nav atbildes # dienu laikā}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "resume").length
+#. placeholder {0}: documents.data?.counts.resume ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Resume (#)} other {Resumes (#)}}"
 msgstr "{0, plural, one {CV (#)} other {CV (#)} zero {CV (#)}}"
@@ -423,6 +423,13 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "{0}-Resume"
 msgstr "{0}-CV"
+
+#. placeholder {0}: Math.min(offset + 1, documents.data?.total ?? page.total)
+#. placeholder {1}: Math.min(offset + 100, documents.data?.total ?? page.total)
+#. placeholder {2}: documents.data?.total ?? page.total
+#: src/features/documents/library.tsx
+msgid "{0}–{1} of {2}"
+msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
 #. placeholder {1}: row.index + 1
@@ -1340,7 +1347,7 @@ msgstr "Albāņu"
 msgid "All"
 msgstr "Visi"
 
-#. placeholder {0}: all.length + recoverable.length
+#. placeholder {0}: (documents.data?.counts.resume ?? 0) + (documents.data?.counts.letter ?? 0)
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "Visi ({0})"
@@ -6407,6 +6414,10 @@ msgstr "Jauna sadaļa"
 msgid "New STARR story"
 msgstr "Jauns STARR stāsts"
 
+#: src/features/documents/library.tsx
+msgid "Next"
+msgstr ""
+
 #: src/features/check/page.tsx
 msgid "Next issue"
 msgstr "Nākamais numurs"
@@ -7615,6 +7626,10 @@ msgstr "Priekšskatīt tīmekļa lapu"
 #: src/features/design/preview-caption.tsx
 msgid "Previewing {0} · tap to apply"
 msgstr "Priekšskatījums {0} · pieskarieties, lai lietotu"
+
+#: src/features/documents/library.tsx
+msgid "Previous"
+msgstr ""
 
 #: src/features/check/page.tsx
 msgid "Previous issue"

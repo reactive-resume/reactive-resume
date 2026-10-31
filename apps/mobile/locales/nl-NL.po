@@ -265,7 +265,7 @@ msgstr "{0, plural, one {Voor #-dag} other {Voor #-dagen}}"
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
 msgstr "{0, plural, one {Kennis · # feit} other {Kennis · # feiten}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "letter").length
+#. placeholder {0}: documents.data?.counts.letter ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Letter (#)} other {Letters (#)}}"
 msgstr "{0, plural, one {Sollicitatiebrief (#)} other {Sollicitatiebrieven (#)}}"
@@ -275,7 +275,7 @@ msgstr "{0, plural, one {Sollicitatiebrief (#)} other {Sollicitatiebrieven (#)}}
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {Geen antwoord op de dag #} other {Geen antwoord binnen # dagen}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "resume").length
+#. placeholder {0}: documents.data?.counts.resume ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Resume (#)} other {Resumes (#)}}"
 msgstr "{0, plural, one {Cv (#)} other {Cv’s (#)}}"
@@ -423,6 +423,13 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "{0}-Resume"
 msgstr "{0}-Cv"
+
+#. placeholder {0}: Math.min(offset + 1, documents.data?.total ?? page.total)
+#. placeholder {1}: Math.min(offset + 100, documents.data?.total ?? page.total)
+#. placeholder {2}: documents.data?.total ?? page.total
+#: src/features/documents/library.tsx
+msgid "{0}–{1} of {2}"
+msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
 #. placeholder {1}: row.index + 1
@@ -1340,7 +1347,7 @@ msgstr "Albanees"
 msgid "All"
 msgstr "Alle"
 
-#. placeholder {0}: all.length + recoverable.length
+#. placeholder {0}: (documents.data?.counts.resume ?? 0) + (documents.data?.counts.letter ?? 0)
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "Alles ({0})"
@@ -6407,6 +6414,10 @@ msgstr "Nieuwe sectie"
 msgid "New STARR story"
 msgstr "Nieuw STARR-verhaal"
 
+#: src/features/documents/library.tsx
+msgid "Next"
+msgstr ""
+
 #: src/features/check/page.tsx
 msgid "Next issue"
 msgstr "Volgende nummer"
@@ -7615,6 +7626,10 @@ msgstr "Voorbeeld van webpagina bekijken"
 #: src/features/design/preview-caption.tsx
 msgid "Previewing {0} · tap to apply"
 msgstr "Voorbeeld van {0} · tik om toe te passen"
+
+#: src/features/documents/library.tsx
+msgid "Previous"
+msgstr ""
 
 #: src/features/check/page.tsx
 msgid "Previous issue"

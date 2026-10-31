@@ -2,7 +2,6 @@ import z from "zod";
 import { protectedProcedure } from "../../context";
 import { documentsDto } from "../../dto/documents";
 import { resumeMutationRateLimit } from "../../middleware/rate-limit";
-import { paginate } from "../../pagination";
 import { documentsService } from "./service";
 
 const route = (
@@ -44,18 +43,34 @@ export const documentsRouter = {
 				"/documents",
 				"listDocuments",
 				"List documents",
-				"Returns the user's resumes and saved cover letters (or those in Trash), newest edit first, with the job application each was made for.",
+				"Returns the user's resumes and saved cover letters (or those in Trash), with server-side type/search/tags/public filtering and edited/name/created ordering. Limit/offset opt into SQL pagination; omit both for the complete legacy array. X-Total-Count reports all filtered matches.",
 			),
 		)
 		.input(documentsDto.list.input)
 		.output(documentsDto.list.output)
-		.handler(async ({ context, input }) =>
-			paginate(
-				await documentsService.list({ userId: context.user.id, trashed: input.trashed }),
-				input,
-				context.resHeaders,
+		.handler(async ({ context, input }) => {
+			const { items, total } = await documentsService.list({ ...input, userId: context.user.id });
+			context.resHeaders?.set("X-Total-Count", String(total));
+			if (input.limit !== undefined || input.offset !== undefined) {
+				context.resHeaders?.set("X-Limit", String(input.limit ?? 20));
+				context.resHeaders?.set("X-Offset", String(input.offset ?? 0));
+			}
+			return items;
+		}),
+
+	page: protectedProcedure
+		.route(
+			route(
+				"GET",
+				"/documents/page",
+				"listDocumentPage",
+				"List a document page",
+				"Returns at most 100 documents with filtered totals and tag filters. Counts ignore the type tab. Tags show the first 100 alphabetically; search discovers further tags. Name order uses database case-insensitive ordering; dates use newest first. Type and ID break ties. Offset pages reflect current data; restart after edits.",
 			),
-		),
+		)
+		.input(documentsDto.page.input)
+		.output(documentsDto.page.output)
+		.handler(({ context, input }) => documentsService.page({ ...input, userId: context.user.id })),
 
 	counts: protectedProcedure
 		.route(

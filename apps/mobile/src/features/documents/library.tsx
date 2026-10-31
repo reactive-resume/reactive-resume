@@ -12,13 +12,13 @@ import { RefreshControl, I18nManager, Platform, Pressable, ScrollView, View, use
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import Animated from "react-native-reanimated";
 import { DocumentSheets } from "./document-sheets";
-import { collectTags, daysLeftInTrash, documentKey, documentRef, filterDocuments } from "./filter";
+import { daysLeftInTrash, documentKey, documentRef } from "./filter";
 import { isNewDocument, useNewDocuments } from "./new-documents";
 import { usePendingDocuments } from "./pending";
-import { useDocumentOperations, useDocuments } from "./queries";
+import { useDocumentOperations } from "./queries";
 import { Thumbnail } from "./thumbnail";
 import { client, orpc } from "@/api/client";
-import { useSession } from "@/auth/session";
+import { getAccountScope, useSession } from "@/auth/session";
 import { CollectionHeader } from "@/components/collection-header";
 import { routes } from "@/routes";
 import {
@@ -161,25 +161,47 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 	const { fontScale } = useWindowDimensions();
 	const [width, setWidth] = useState(0);
 	const session = useSession();
-	const documents = useDocuments(trashed);
+	const scope = getAccountScope();
+	const pending = usePendingDocuments();
+	const countsOptions = orpc.documents.counts.queryOptions();
+	const counts = useQuery({
+		...countsOptions,
+		queryKey: [...countsOptions.queryKey, scope],
+		enabled: session.status === "signed-in",
+	});
+	const operations = useDocumentOperations();
+	const [q, setQ] = useState("");
+	const [query, setQuery] = useState(q);
+	useEffect(() => {
+		const timer = setTimeout(() => setQuery(q), 300);
+		return () => clearTimeout(timer);
+	}, [q]);
+	const [type, setType] = useState<DocumentTypeFilter>("all");
+	const [sort, setSort] = useState<DocumentSort>("edited");
+	const [tags, setTags] = useState<string[]>([]);
+	const [publicOnly, setPublicOnly] = useState(false);
+	const filterKey = JSON.stringify([trashed, query, type, tags, publicOnly, sort, scope]);
+	const [page, setPage] = useState({ filterKey, offset: 0, total: 0 });
+	const offset = page.filterKey === filterKey ? page.offset : 0;
+	const pageOptions = orpc.documents.page.queryOptions({
+		input: { trashed, q: query, type, tags, public: publicOnly, sort, limit: 100, offset },
+	});
+	const documents = useQuery({
+		...pageOptions,
+		gcTime: 0,
+		queryKey: [...pageOptions.queryKey, scope],
+		placeholderData: (previous, previousQuery) => (previousQuery?.queryKey.at(-1) === scope ? previous : undefined),
+		enabled: session.status === "signed-in",
+	});
+	const changePage = (next: number) => {
+		setSelection([]);
+		setPage({ filterKey, offset: next, total: documents.data?.total ?? page.total });
+	};
 	const { markInteractive } = useObserve();
 	// Documents is the signed-in launch screen; only the first call per session is recorded.
 	useEffect(() => {
 		if (!trashed && !documents.isPending) markInteractive();
 	}, [trashed, documents.isPending, markInteractive]);
-	const pending = usePendingDocuments();
-	const countsOptions = orpc.documents.counts.queryOptions();
-	const counts = useQuery({
-		...countsOptions,
-		queryKey: [...countsOptions.queryKey, session.server],
-		enabled: session.status === "signed-in",
-	});
-	const operations = useDocumentOperations();
-	const [q, setQ] = useState("");
-	const [type, setType] = useState<DocumentTypeFilter>("all");
-	const [sort, setSort] = useState<DocumentSort>("edited");
-	const [tags, setTags] = useState<string[]>([]);
-	const [publicOnly, setPublicOnly] = useState(false);
 	const [view, setView] = useState<"list" | "grid" | null>(null);
 	const [selecting, setSelecting] = useState(false);
 	const [selection, setSelection] = useState<string[]>([]);
@@ -194,14 +216,25 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 	);
 	const grid = !trashed && (view ?? (width >= 768 ? "grid" : "list")) === "grid";
 	const columns = grid ? (width >= 1000 ? 3 : 2) : 1;
-	const all = session.status === "signed-in" ? (documents.data ?? []) : [];
-	const trashTotal = counts.data?.trash ?? all.length;
+	if (
+		page.filterKey !== filterKey ||
+		(documents.data && !documents.isPlaceholderData && offset > 0 && offset >= documents.data.total)
+	) {
+		setPage({
+			filterKey,
+			total: documents.data?.total ?? 0,
+			offset:
+				page.filterKey !== filterKey ? 0 : Math.max(0, Math.floor(((documents.data?.total ?? 0) - 1) / 100) * 100),
+		});
+		setSelection([]);
+	}
+	const all = session.status === "signed-in" ? (documents.data?.items ?? []) : [];
+	const trashTotal = counts.data?.trash ?? documents.data?.total ?? 0;
 	const purgeCount = purge?.all ? trashTotal : (purge?.documents.length ?? 0);
 	const pendingKeys = new Set(pending.map(documentKey));
-	const recoverable = trashed
-		? []
-		: pending.filter((document) => !all.some((saved) => documentKey(saved) === documentKey(document)));
-	const filtered = filterDocuments(all, { q, type, tags, sort, public: publicOnly });
+	// Device recovery is independent of which server page or filter happens to be open.
+	const recoverable = trashed ? [] : pending;
+	const filtered = all;
 	const firstAppearance = useFirstAppearance(filtered.length > 0);
 	const selected = filtered.filter((document) => selection.includes(documentKey(document)));
 	const { refetch: refetchDocuments } = documents;
@@ -253,6 +286,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 			useNewDocuments.getState().markNew({ type: document.type, id });
 		});
 	const clearFilters = () => {
+		changePage(0);
 		setQ("");
 		setType("all");
 		setTags([]);
@@ -336,17 +370,20 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 								label={t`Document type`}
 								onChange={setType}
 								options={[
-									{ value: "all", label: t`All (${all.length + recoverable.length})` },
+									{
+										value: "all",
+										label: t`All (${(documents.data?.counts.resume ?? 0) + (documents.data?.counts.letter ?? 0)})`,
+									},
 									{
 										value: "resume",
-										label: plural([...all, ...recoverable].filter((document) => document.type === "resume").length, {
+										label: plural(documents.data?.counts.resume ?? 0, {
 											one: "Resume (#)",
 											other: "Resumes (#)",
 										}),
 									},
 									{
 										value: "letter",
-										label: plural([...all, ...recoverable].filter((document) => document.type === "letter").length, {
+										label: plural(documents.data?.counts.letter ?? 0, {
 											one: "Letter (#)",
 											other: "Letters (#)",
 										}),
@@ -362,7 +399,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 							>
 								{fontScale <= 1.3 && sortControl}
 								<Chip label={t`Public`} selected={publicOnly} onPress={() => setPublicOnly(!publicOnly)} />
-								{collectTags(all).map((tag) => (
+								{(documents.data?.tags ?? []).map((tag) => (
 									<Chip
 										key={tag}
 										label={tag}
@@ -503,16 +540,22 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 					) : documents.isError && !documents.data ? undefined : (
 						<EmptyState
 							icon={trashed ? "trash" : "file-text"}
-							title={all.length ? t`No matches` : trashed ? t`Trash is empty` : t`Let's start with what you have`}
+							title={
+								q || type !== "all" || tags.length || publicOnly || offset > 0
+									? t`No matches`
+									: trashed
+										? t`Trash is empty`
+										: t`Let's start with what you have`
+							}
 							message={
-								all.length
+								q || type !== "all" || tags.length || publicOnly || offset > 0
 									? t`Try another search or clear your filters.`
 									: trashed
 										? t`Documents you move here stay for 30 days.`
 										: t`Import your current resume, or start fresh with your name.`
 							}
 							action={
-								all.length
+								q || type !== "all" || tags.length || publicOnly || offset > 0
 									? { label: t`Clear filters`, onPress: clearFilters }
 									: trashed
 										? undefined
@@ -522,17 +565,40 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 					)
 				}
 				ListFooterComponent={
-					session.status === "signed-in" && !trashed && counts.data?.trash ? (
-						<Card style={{ paddingVertical: space.s3 / 2 }}>
-							<ListRow
-								title={t`Trash`}
-								subtitle={plural(counts.data.trash, { one: "# document", other: "# documents" })}
-								leading="trash"
-								chevron
-								onPress={() => router.push(routes.trash())}
-							/>
-						</Card>
-					) : undefined
+					<View style={{ gap: space.s3 }}>
+						{session.status === "signed-in" && (offset > 0 || (documents.data?.total ?? page.total) > 100) && (
+							<View style={{ gap: space.s2 }}>
+								<Text accessibilityLiveRegion="polite">{t`${Math.min(offset + 1, documents.data?.total ?? page.total)}–${Math.min(offset + 100, documents.data?.total ?? page.total)} of ${documents.data?.total ?? page.total}`}</Text>
+								<View style={{ flexDirection: "row", gap: space.s2 }}>
+									<Button
+										label={t`Previous`}
+										variant="secondary"
+										disabled={documents.isFetching || operations.busy || offset === 0}
+										onPress={() => changePage(Math.max(0, offset - 100))}
+									/>
+									<Button
+										label={t`Next`}
+										variant="secondary"
+										disabled={
+											documents.isFetching || operations.busy || offset + 100 >= (documents.data?.total ?? page.total)
+										}
+										onPress={() => changePage(offset + 100)}
+									/>
+								</View>
+							</View>
+						)}
+						{session.status === "signed-in" && !trashed && counts.data?.trash ? (
+							<Card style={{ paddingVertical: space.s3 / 2 }}>
+								<ListRow
+									title={t`Trash`}
+									subtitle={plural(counts.data.trash, { one: "# document", other: "# documents" })}
+									leading="trash"
+									chevron
+									onPress={() => router.push(routes.trash())}
+								/>
+							</Card>
+						) : undefined}
+					</View>
 				}
 			/>
 			{session.status === "signed-in" &&

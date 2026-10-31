@@ -13,11 +13,16 @@ const api = vi.hoisted(() => ({
 	parseDocx: vi.fn(),
 	extractPdfLines: vi.fn(),
 	createLetter: vi.fn(),
+	listDocuments: vi.fn(),
 }));
 vi.mock("@tanstack/react-router", () => ({ useNavigate: () => vi.fn() }));
 vi.mock("@/features/resume/import/pdf-text", () => ({ extractPdfLines: api.extractPdfLines }));
 vi.mock("@/libs/orpc/client", () => ({
-	client: { resume: { import: api.importResume }, ai: { parsePdf: api.parsePdf, parseDocx: api.parseDocx } },
+	client: {
+		documents: { list: api.listDocuments },
+		resume: { import: api.importResume },
+		ai: { parsePdf: api.parsePdf, parseDocx: api.parseDocx },
+	},
 	orpc: {
 		aiProviders: {
 			list: { queryOptions: () => ({ queryKey: ["providers"], queryFn: api.providers, retry: false }) },
@@ -35,6 +40,7 @@ beforeEach(() => {
 	vi.clearAllMocks();
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+	api.listDocuments.mockResolvedValue([]);
 	api.providers.mockRejectedValue(new Error("Provider lookup offline"));
 	api.importResume.mockResolvedValue("imported-resume");
 	api.extractPdfLines.mockResolvedValue([

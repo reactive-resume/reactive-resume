@@ -1,11 +1,12 @@
-import type { DocumentSummary } from "../../dto/documents";
+import type { DocumentFilters, DocumentSummary } from "../../dto/documents";
 import { ORPCError } from "@orpc/client";
-import { and, asc, count, eq, inArray, isNotNull, isNull, lt, sql } from "drizzle-orm";
+import { and, asc, count, eq, gte, inArray, isNotNull, isNull, lt, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { applicationService } from "../applications/service";
 import { coverLetterService } from "../cover-letters/service";
 import { resumeService } from "../resume/service";
+import { listDocumentPage, listDocuments } from "./listing";
 import { lockUser } from "./ownership";
 
 type DocumentType = DocumentSummary["type"];
@@ -181,74 +182,17 @@ export const documentsService = {
 	purgeExpired,
 	purgeExpiredTrash,
 
-	/** Every live resume and letter (or everything in Trash), newest edit first. The app filters and sorts them. */
-	list: async (input: { userId: string; trashed: boolean }): Promise<DocumentSummary[]> => {
-		// Trash never shows a document past its 30 days, whether or not the scheduler has reached it yet.
-		if (input.trashed)
+	list: async (
+		input: DocumentFilters & { userId: string; limit?: number | undefined; offset?: number | undefined },
+	) => {
+		// Legacy complete Trash reads retain their cleanup side effect. Bounded reads leave cleanup to the scheduler.
+		if (input.trashed && input.limit === undefined && input.offset === undefined)
 			await purgeExpired(input.userId).catch((error: unknown) =>
 				console.error("[documents] Trash purge failed", error),
 			);
-		const [resumes, letters] = await Promise.all([
-			db
-				.select({
-					id: schema.resume.id,
-					name: schema.resume.name,
-					tags: schema.resume.tags,
-					isLocked: schema.resume.isLocked,
-					isPublic: schema.resume.isPublic,
-					slug: schema.resume.slug,
-					trashedAt: schema.resume.trashedAt,
-					createdAt: schema.resume.createdAt,
-					updatedAt: schema.resume.updatedAt,
-					applicationId: schema.application.id,
-					company: schema.application.company,
-					role: schema.application.role,
-				})
-				.from(schema.resume)
-				.leftJoin(schema.application, eq(schema.resume.applicationId, schema.application.id))
-				.where(
-					and(
-						eq(schema.resume.userId, input.userId),
-						input.trashed ? isNotNull(schema.resume.trashedAt) : isNull(schema.resume.trashedAt),
-					),
-				),
-			db
-				.select({
-					id: schema.coverLetter.id,
-					name: schema.coverLetter.name,
-					tags: schema.coverLetter.tags,
-					isLocked: schema.coverLetter.isLocked,
-					isPublic: sql<boolean>`false`,
-					slug: sql<string | null>`null`,
-					trashedAt: schema.coverLetter.trashedAt,
-					createdAt: schema.coverLetter.createdAt,
-					updatedAt: schema.coverLetter.updatedAt,
-					applicationId: schema.application.id,
-					company: schema.application.company,
-					role: schema.application.role,
-				})
-				.from(schema.coverLetter)
-				.leftJoin(schema.application, eq(schema.coverLetter.sourceApplicationId, schema.application.id))
-				.where(
-					and(
-						eq(schema.coverLetter.userId, input.userId),
-						input.trashed ? isNotNull(schema.coverLetter.trashedAt) : isNull(schema.coverLetter.trashedAt),
-					),
-				),
-		]);
-
-		const toSummary =
-			(type: DocumentType) =>
-			({ applicationId, company, role, ...row }: (typeof resumes | typeof letters)[number]): DocumentSummary => ({
-				type,
-				...row,
-				application: applicationId ? { id: applicationId, company: company ?? "", role: role ?? "" } : null,
-			});
-
-		return [...resumes.map(toSummary("resume")), ...letters.map(toSummary("letter"))].sort(
-			(a, b) => b.updatedAt.getTime() - a.updatedAt.getTime(),
-		);
+		return listDocuments(input);
 	},
+	page: (input: DocumentFilters & { userId: string; limit: number; offset: number }) => listDocumentPage(input),
 
 	counts: async (input: { userId: string }) => {
 		const [[resumes], [letters], [trashedResumes], [trashedLetters]] = await Promise.all([
@@ -263,11 +207,21 @@ export const documentsService = {
 			db
 				.select({ total: count() })
 				.from(schema.resume)
-				.where(and(eq(schema.resume.userId, input.userId), isNotNull(schema.resume.trashedAt))),
+				.where(
+					and(
+						eq(schema.resume.userId, input.userId),
+						gte(schema.resume.trashedAt, new Date(Date.now() - TRASH_RETENTION_MS)),
+					),
+				),
 			db
 				.select({ total: count() })
 				.from(schema.coverLetter)
-				.where(and(eq(schema.coverLetter.userId, input.userId), isNotNull(schema.coverLetter.trashedAt))),
+				.where(
+					and(
+						eq(schema.coverLetter.userId, input.userId),
+						gte(schema.coverLetter.trashedAt, new Date(Date.now() - TRASH_RETENTION_MS)),
+					),
+				),
 		]);
 
 		return {

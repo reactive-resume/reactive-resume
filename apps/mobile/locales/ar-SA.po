@@ -265,7 +265,7 @@ msgstr "{0, plural, one {ليوم #} other {لأيام #}}"
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
 msgstr "{0, plural, zero {المعرفة · لا حقائق} one {المعرفة · حقيقة واحدة} two {المعرفة · حقيقتان} few {المعرفة · # حقائق} many {المعرفة · # حقيقة} other {المعرفة · # حقيقة}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "letter").length
+#. placeholder {0}: documents.data?.counts.letter ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Letter (#)} other {Letters (#)}}"
 msgstr "{0, plural, one {خطاب (#)} other {خطابات (#)} zero {خطابات (#)} two {خطابات (#)} few {خطابات (#)} many {خطابات (#)}}"
@@ -275,7 +275,7 @@ msgstr "{0, plural, one {خطاب (#)} other {خطابات (#)} zero {خطابا
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {لا يوجد رد في يوم #} other {لا يوجد رد خلال أيام #}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "resume").length
+#. placeholder {0}: documents.data?.counts.resume ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Resume (#)} other {Resumes (#)}}"
 msgstr "{0, plural, one {سيرة ذاتية (#)} other {سير ذاتية (#)} zero {سير ذاتية (#)} two {سير ذاتية (#)} few {سير ذاتية (#)} many {سير ذاتية (#)}}"
@@ -423,6 +423,13 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "{0}-Resume"
 msgstr "{0}-سيرة-ذاتية"
+
+#. placeholder {0}: Math.min(offset + 1, documents.data?.total ?? page.total)
+#. placeholder {1}: Math.min(offset + 100, documents.data?.total ?? page.total)
+#. placeholder {2}: documents.data?.total ?? page.total
+#: src/features/documents/library.tsx
+msgid "{0}–{1} of {2}"
+msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
 #. placeholder {1}: row.index + 1
@@ -1340,7 +1347,7 @@ msgstr "الألبانية"
 msgid "All"
 msgstr "الجميع"
 
-#. placeholder {0}: all.length + recoverable.length
+#. placeholder {0}: (documents.data?.counts.resume ?? 0) + (documents.data?.counts.letter ?? 0)
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "الكل ({0})"
@@ -6407,6 +6414,10 @@ msgstr "قسم جديد"
 msgid "New STARR story"
 msgstr "قصة STARR الجديدة"
 
+#: src/features/documents/library.tsx
+msgid "Next"
+msgstr ""
+
 #: src/features/check/page.tsx
 msgid "Next issue"
 msgstr "العدد القادم"
@@ -7615,6 +7626,10 @@ msgstr "معاينة صفحة الويب"
 #: src/features/design/preview-caption.tsx
 msgid "Previewing {0} · tap to apply"
 msgstr "معاينة {0} · انقر للتقديم"
+
+#: src/features/documents/library.tsx
+msgid "Previous"
+msgstr ""
 
 #: src/features/check/page.tsx
 msgid "Previous issue"

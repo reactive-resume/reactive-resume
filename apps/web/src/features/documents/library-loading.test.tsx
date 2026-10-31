@@ -14,7 +14,7 @@ const { loadDocuments, loadCounts } = vi.hoisted(() => ({ loadDocuments: vi.fn()
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		documents: {
-			list: { queryOptions: () => ({ queryKey: ["documents"], queryFn: loadDocuments }) },
+			page: { queryOptions: () => ({ queryKey: ["documents"], queryFn: loadDocuments }) },
 			counts: { queryOptions: () => ({ queryKey: ["documents", "counts"], queryFn: loadCounts }) },
 		},
 	},
@@ -36,7 +36,10 @@ vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn(async () => true
 
 it.each(["documents", "trash"])("keeps %s load failures distinct from empty state and retries", async (page) => {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
-	loadDocuments.mockReset().mockRejectedValueOnce(new Error("Network unavailable")).mockResolvedValue([]);
+	loadDocuments
+		.mockReset()
+		.mockRejectedValueOnce(new Error("Network unavailable"))
+		.mockResolvedValue({ items: [], total: 0, counts: { resume: 0, letter: 0 }, tags: [], hasPublic: false });
 	loadCounts.mockReset().mockResolvedValue({ resume: 0, letter: 0, trash: 0 });
 	const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 	const view = render(

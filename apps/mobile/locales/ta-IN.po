@@ -265,7 +265,7 @@ msgstr "{0, plural, one {# நாளுக்கு} other {# நாட்கள
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
 msgstr "{0, plural, one {அறிவுத் தளம் · # உண்மை} other {அறிவுத் தளம் · # உண்மைகள்}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "letter").length
+#. placeholder {0}: documents.data?.counts.letter ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Letter (#)} other {Letters (#)}}"
 msgstr "{0, plural, one {கவர் கடிதம் (#)} other {கவர் கடிதங்கள் (#)}}"
@@ -275,7 +275,7 @@ msgstr "{0, plural, one {கவர் கடிதம் (#)} other {கவர�
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {# நாளில் பதில் இல்லை} other {# நாட்களில் பதில் இல்லை}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "resume").length
+#. placeholder {0}: documents.data?.counts.resume ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Resume (#)} other {Resumes (#)}}"
 msgstr "{0, plural, one {ரெஸ்யூம் (#)} other {ரெஸ்யூம்கள் (#)}}"
@@ -423,6 +423,13 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "{0}-Resume"
 msgstr "{0}-ரெஸ்யூம்"
+
+#. placeholder {0}: Math.min(offset + 1, documents.data?.total ?? page.total)
+#. placeholder {1}: Math.min(offset + 100, documents.data?.total ?? page.total)
+#. placeholder {2}: documents.data?.total ?? page.total
+#: src/features/documents/library.tsx
+msgid "{0}–{1} of {2}"
+msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
 #. placeholder {1}: row.index + 1
@@ -1340,7 +1347,7 @@ msgstr "அல்பேனியன்"
 msgid "All"
 msgstr "அனைத்து"
 
-#. placeholder {0}: all.length + recoverable.length
+#. placeholder {0}: (documents.data?.counts.resume ?? 0) + (documents.data?.counts.letter ?? 0)
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "அனைத்தும் ({0})"
@@ -6407,6 +6414,10 @@ msgstr "புதிய பிரிவு"
 msgid "New STARR story"
 msgstr "புதிய STARR கதை"
 
+#: src/features/documents/library.tsx
+msgid "Next"
+msgstr ""
+
 #: src/features/check/page.tsx
 msgid "Next issue"
 msgstr "அடுத்த இதழ்"
@@ -7615,6 +7626,10 @@ msgstr "வலைப்பக்கத்தை முன்னோட்டம�
 #: src/features/design/preview-caption.tsx
 msgid "Previewing {0} · tap to apply"
 msgstr "மாதிரிக்காட்சி {0} · விண்ணப்பிக்க தட்டவும்"
+
+#: src/features/documents/library.tsx
+msgid "Previous"
+msgstr ""
 
 #: src/features/check/page.tsx
 msgid "Previous issue"

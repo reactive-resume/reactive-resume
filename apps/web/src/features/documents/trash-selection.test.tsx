@@ -47,7 +47,18 @@ const { documents, confirm, batch, server } = vi.hoisted(() => ({
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		documents: {
-			list: { queryOptions: () => ({ queryKey: ["documents"], queryFn: async () => documents }) },
+			page: {
+				queryOptions: () => ({
+					queryKey: ["documents"],
+					queryFn: async () => ({
+						items: documents,
+						total: server.trashCount,
+						counts: { resume: 1, letter: 1 },
+						tags: [],
+						hasPublic: false,
+					}),
+				}),
+			},
 			counts: {
 				queryOptions: () => ({
 					queryKey: ["documents", "counts"],

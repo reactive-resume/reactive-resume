@@ -113,7 +113,7 @@ export function useCareerAction() {
 		Promise.all([
 			queryClient.invalidateQueries({ queryKey: orpc.career.key() }),
 			queryClient.invalidateQueries({ queryKey: orpc.applications.key() }),
-			queryClient.invalidateQueries({ queryKey: orpc.documents.list.key() }),
+			queryClient.invalidateQueries({ queryKey: orpc.documents.key() }),
 		]);
 	const run = async <T>(operation: () => Promise<T>, success?: (result: T) => void) => {
 		if (busy.current || session.status !== "signed-in" || getServer() !== session.server) return;

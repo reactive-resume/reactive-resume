@@ -63054,11 +63054,90 @@
 			"get": {
 				"operationId": "listDocuments",
 				"summary": "List documents",
-				"description": "Returns the user's resumes and saved cover letters (or those in Trash), newest edit first, with the job application each was made for. Requires authentication.",
+				"description": "Returns the user's resumes and saved cover letters (or those in Trash), with server-side type/search/tags/public filtering and edited/name/created ordering. Limit/offset opt into SQL pagination; omit both for the complete legacy array. X-Total-Count reports all filtered matches. Requires authentication.",
 				"tags": [
 					"Documents"
 				],
 				"parameters": [
+					{
+						"name": "trashed",
+						"in": "query",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "type",
+						"in": "query",
+						"schema": {
+							"enum": [
+								"all",
+								"resume",
+								"letter"
+							],
+							"type": "string",
+							"default": "all"
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "q",
+						"in": "query",
+						"schema": {
+							"type": "string",
+							"maxLength": 500,
+							"default": ""
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "tags",
+						"in": "query",
+						"schema": {
+							"type": "array",
+							"maxItems": 20,
+							"items": {
+								"type": "string",
+								"minLength": 1,
+								"maxLength": 40
+							},
+							"default": []
+						},
+						"style": "deepObject",
+						"explode": true,
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "public",
+						"in": "query",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "sort",
+						"in": "query",
+						"schema": {
+							"enum": [
+								"edited",
+								"name",
+								"created"
+							],
+							"type": "string",
+							"default": "edited"
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
 					{
 						"name": "limit",
 						"in": "query",
@@ -63079,17 +63158,6 @@
 							"minimum": 0,
 							"maximum": 9007199254740991,
 							"description": "Zero-based offset. Defaults to 0; limit defaults to 20 when only offset is given."
-						},
-						"allowEmptyValue": true,
-						"allowReserved": true
-					},
-					{
-						"name": "trashed",
-						"in": "query",
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "List the documents in Trash instead."
 						},
 						"allowEmptyValue": true,
 						"allowReserved": true
@@ -63280,6 +63348,327 @@
 						"lang": "bash",
 						"label": "cURL",
 						"source": "curl \"https://rxresu.me/api/openapi/documents\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			}
+		},
+		"/documents/page": {
+			"get": {
+				"operationId": "listDocumentPage",
+				"summary": "List a document page",
+				"description": "Returns at most 100 documents with filtered totals and tag filters. Counts ignore the type tab. Tags show the first 100 alphabetically; search discovers further tags. Name order uses database case-insensitive ordering; dates use newest first. Type and ID break ties. Offset pages reflect current data; restart after edits. Requires authentication.",
+				"tags": [
+					"Documents"
+				],
+				"parameters": [
+					{
+						"name": "trashed",
+						"in": "query",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "type",
+						"in": "query",
+						"schema": {
+							"enum": [
+								"all",
+								"resume",
+								"letter"
+							],
+							"type": "string",
+							"default": "all"
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "q",
+						"in": "query",
+						"schema": {
+							"type": "string",
+							"maxLength": 500,
+							"default": ""
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "tags",
+						"in": "query",
+						"schema": {
+							"type": "array",
+							"maxItems": 20,
+							"items": {
+								"type": "string",
+								"minLength": 1,
+								"maxLength": 40
+							},
+							"default": []
+						},
+						"style": "deepObject",
+						"explode": true,
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "public",
+						"in": "query",
+						"schema": {
+							"type": "boolean",
+							"default": false
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "sort",
+						"in": "query",
+						"schema": {
+							"enum": [
+								"edited",
+								"name",
+								"created"
+							],
+							"type": "string",
+							"default": "edited"
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"maximum": 100,
+							"default": 100
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 9007199254740991,
+							"default": 0
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"items": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"type": {
+														"enum": [
+															"resume",
+															"letter"
+														],
+														"type": "string",
+														"description": "resume, or letter (a saved cover letter)."
+													},
+													"id": {
+														"type": "string"
+													},
+													"name": {
+														"type": "string"
+													},
+													"tags": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														}
+													},
+													"isLocked": {
+														"type": "boolean"
+													},
+													"isPublic": {
+														"type": "boolean",
+														"description": "Whether a resume's public link is on; always false for letters."
+													},
+													"slug": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														],
+														"description": "A resume's public address, /{username}/{slug}; null for letters."
+													},
+													"trashedAt": {
+														"anyOf": [
+															{
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															},
+															{
+																"type": "null"
+															}
+														],
+														"description": "When the document moved to Trash; null while it's live."
+													},
+													"createdAt": {
+														"type": "string",
+														"format": "date-time",
+														"x-native-type": "date"
+													},
+													"updatedAt": {
+														"type": "string",
+														"format": "date-time",
+														"x-native-type": "date"
+													},
+													"application": {
+														"anyOf": [
+															{
+																"type": "object",
+																"properties": {
+																	"id": {
+																		"type": "string"
+																	},
+																	"company": {
+																		"type": "string"
+																	},
+																	"role": {
+																		"type": "string"
+																	}
+																},
+																"required": [
+																	"id",
+																	"company",
+																	"role"
+																]
+															},
+															{
+																"type": "null"
+															}
+														],
+														"description": "The job application this document was made for, if any."
+													}
+												},
+												"required": [
+													"type",
+													"id",
+													"name",
+													"tags",
+													"isLocked",
+													"isPublic",
+													"slug",
+													"trashedAt",
+													"createdAt",
+													"updatedAt",
+													"application"
+												]
+											}
+										},
+										"total": {
+											"type": "number"
+										},
+										"counts": {
+											"type": "object",
+											"properties": {
+												"resume": {
+													"type": "number"
+												},
+												"letter": {
+													"type": "number"
+												}
+											},
+											"required": [
+												"resume",
+												"letter"
+											]
+										},
+										"tags": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											}
+										},
+										"hasPublic": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"items",
+										"total",
+										"counts",
+										"tags",
+										"hasPublic"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/documents/page\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}

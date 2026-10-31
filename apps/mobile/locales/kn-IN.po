@@ -265,7 +265,7 @@ msgstr "{0, plural, one {# ದಿನಕ್ಕೆ} other {# ದಿನಗಳವರ
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
 msgstr "{0, plural, one {ಜ್ಞಾನ · # ಸಂಗತಿ} other {ಜ್ಞಾನ · # ಸಂಗತಿಗಳು}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "letter").length
+#. placeholder {0}: documents.data?.counts.letter ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Letter (#)} other {Letters (#)}}"
 msgstr "{0, plural, one {ಪತ್ರ (#)} other {ಪತ್ರಗಳು (#)}}"
@@ -275,7 +275,7 @@ msgstr "{0, plural, one {ಪತ್ರ (#)} other {ಪತ್ರಗಳು (#)}}"
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {# ದಿನದಲ್ಲಿ ಯಾವುದೇ ಪ್ರತ್ಯುತ್ತರವಿಲ್ಲ} other {# ದಿನಗಳಲ್ಲಿ ಯಾವುದೇ ಪ್ರತ್ಯುತ್ತರವಿಲ್ಲ}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "resume").length
+#. placeholder {0}: documents.data?.counts.resume ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Resume (#)} other {Resumes (#)}}"
 msgstr "{0, plural, one {ರೆಸ್ಯೂಮ್ (#)} other {ರೆಸ್ಯೂಮ್‌ಗಳು (#)}}"
@@ -423,6 +423,13 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "{0}-Resume"
 msgstr "{0}-ರೆಸ್ಯೂಮ್"
+
+#. placeholder {0}: Math.min(offset + 1, documents.data?.total ?? page.total)
+#. placeholder {1}: Math.min(offset + 100, documents.data?.total ?? page.total)
+#. placeholder {2}: documents.data?.total ?? page.total
+#: src/features/documents/library.tsx
+msgid "{0}–{1} of {2}"
+msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
 #. placeholder {1}: row.index + 1
@@ -1340,7 +1347,7 @@ msgstr "ಅಲ್ಬೇನಿಯನ್"
 msgid "All"
 msgstr "ಎಲ್ಲಾ"
 
-#. placeholder {0}: all.length + recoverable.length
+#. placeholder {0}: (documents.data?.counts.resume ?? 0) + (documents.data?.counts.letter ?? 0)
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "ಎಲ್ಲಾ ({0})"
@@ -6407,6 +6414,10 @@ msgstr "ಹೊಸ ವಿಭಾಗ"
 msgid "New STARR story"
 msgstr "ಹೊಸ STARR ಕಥೆ"
 
+#: src/features/documents/library.tsx
+msgid "Next"
+msgstr ""
+
 #: src/features/check/page.tsx
 msgid "Next issue"
 msgstr "ಮುಂದಿನ ಸಂಚಿಕೆ"
@@ -7615,6 +7626,10 @@ msgstr "ವೆಬ್ ಪುಟವನ್ನು ಪೂರ್ವವೀಕ್ಷಿ�
 #: src/features/design/preview-caption.tsx
 msgid "Previewing {0} · tap to apply"
 msgstr "ಪೂರ್ವವೀಕ್ಷಣೆ {0} · ಅನ್ವಯಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ"
+
+#: src/features/documents/library.tsx
+msgid "Previous"
+msgstr ""
 
 #: src/features/check/page.tsx
 msgid "Previous issue"

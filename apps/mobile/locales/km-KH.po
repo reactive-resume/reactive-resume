@@ -265,7 +265,7 @@ msgstr "{0, plural, one {សម្រាប់ថ្ងៃ #} other {សម្�
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
 msgstr "{0, plural, other {ចំណេះដឹង · ការពិត #}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "letter").length
+#. placeholder {0}: documents.data?.counts.letter ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Letter (#)} other {Letters (#)}}"
 msgstr "{0, plural, one {លិខិត (#)} other {លិខិត (#)}}"
@@ -275,7 +275,7 @@ msgstr "{0, plural, one {លិខិត (#)} other {លិខិត (#)}}"
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {គ្មានការឆ្លើយតបក្នុងថ្ងៃ #} other {គ្មានការឆ្លើយតបក្នុងរយៈពេល # ថ្ងៃ។}}"
 
-#. placeholder {0}: [...all, ...recoverable].filter((document) => document.type === "resume").length
+#. placeholder {0}: documents.data?.counts.resume ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Resume (#)} other {Resumes (#)}}"
 msgstr "{0, plural, one {ប្រវត្តិរូបសង្ខេប (#)} other {ប្រវត្តិរូបសង្ខេប (#)}}"
@@ -423,6 +423,13 @@ msgstr ""
 #: src/features/share/download.tsx
 msgid "{0}-Resume"
 msgstr "{0}-ប្រវត្តិរូបសង្ខេប"
+
+#. placeholder {0}: Math.min(offset + 1, documents.data?.total ?? page.total)
+#. placeholder {1}: Math.min(offset + 100, documents.data?.total ?? page.total)
+#. placeholder {2}: documents.data?.total ?? page.total
+#: src/features/documents/library.tsx
+msgid "{0}–{1} of {2}"
+msgstr ""
 
 #. placeholder {0}: title || t`Untitled`
 #. placeholder {1}: row.index + 1
@@ -1340,7 +1347,7 @@ msgstr "Albanian"
 msgid "All"
 msgstr "ទាំងអស់។"
 
-#. placeholder {0}: all.length + recoverable.length
+#. placeholder {0}: (documents.data?.counts.resume ?? 0) + (documents.data?.counts.letter ?? 0)
 #: src/features/documents/library.tsx
 msgid "All ({0})"
 msgstr "ទាំងអស់ ({0})"
@@ -6407,6 +6414,10 @@ msgstr "ផ្នែកថ្មី។"
 msgid "New STARR story"
 msgstr "រឿង STARR ថ្មី។"
 
+#: src/features/documents/library.tsx
+msgid "Next"
+msgstr ""
+
 #: src/features/check/page.tsx
 msgid "Next issue"
 msgstr "បញ្ហាបន្ទាប់"
@@ -7615,6 +7626,10 @@ msgstr "មើលទំព័រវេបជាមុន"
 #: src/features/design/preview-caption.tsx
 msgid "Previewing {0} · tap to apply"
 msgstr "ការមើល {0} · ប៉ះដើម្បីអនុវត្ត"
+
+#: src/features/documents/library.tsx
+msgid "Previous"
+msgstr ""
 
 #: src/features/check/page.tsx
 msgid "Previous issue"
