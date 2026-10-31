@@ -9,7 +9,7 @@ import { oauthProvider } from "@better-auth/oauth-provider";
 import { passkey } from "@better-auth/passkey";
 import { compare, hash } from "bcryptjs";
 import { APIError, betterAuth } from "better-auth";
-import { createAuthMiddleware } from "better-auth/api";
+import { addOAuthServerContext, createAuthMiddleware, getOAuthState } from "better-auth/api";
 import { deleteSessionCookie, setSessionCookie } from "better-auth/cookies";
 import { admin, anonymous, jwt, openAPI } from "better-auth/plugins";
 import { genericOAuth } from "better-auth/plugins/generic-oauth";
@@ -367,11 +367,21 @@ const getAuthConfig = () => {
 		databaseHooks: {
 			user: {
 				create: {
-					// Guests sign in without a username. The tail of a UUIDv7 is random; its head is a timestamp.
-					before: (user) => {
-						if (!user.isAnonymous) return Promise.resolve(undefined);
+					before: async (user, context) => {
+						// New accounts inherit the device timezone from the auth request, so interview times,
+						// reminders and schedules are right from the first use. Social callbacks don't carry the
+						// header; the sign-in hook stores the validated zone in the signed OAuth state.
+						const fromHeader = timezoneSchema.safeParse(context?.headers?.get("x-client-timezone"));
+						// Direct calls outside an auth request have no OAuth state to read.
+						const oauthState = context ? await getOAuthState().catch(() => null) : null;
+						const fromOAuth = timezoneSchema.safeParse(oauthState?.serverContext?.timezone);
+						const timezone = fromHeader.success ? fromHeader.data : fromOAuth.success ? fromOAuth.data : undefined;
+						const data = timezone ? { ...user, timezone } : user;
+						if (!user.isAnonymous) return timezone ? { data } : undefined;
+
+						// Guests sign in without a username. The tail of a UUIDv7 is random; its head is a timestamp.
 						const username = `guest-${generateId().slice(-12)}`;
-						return Promise.resolve({ data: { ...user, username, displayUsername: username } });
+						return { data: { ...data, username, displayUsername: username } };
 					},
 				},
 				delete: {
@@ -392,6 +402,13 @@ const getAuthConfig = () => {
 
 		hooks: {
 			before: createAuthMiddleware(async (ctx) => {
+				if (ctx.path === "/sign-in/social") {
+					const timezone = timezoneSchema.safeParse(ctx.headers?.get("x-client-timezone"));
+					// Keep the device timezone across the provider redirect in server-only state, so the
+					// callback can start a new account there without trusting redirect parameters.
+					if (timezone.success) await addOAuthServerContext({ timezone: timezone.data });
+				}
+
 				const user = accountUser.getStore();
 				// Sign-up copies displayUsername into username when username is missing, so either one claims the name.
 				const requestedUsername: unknown = ctx.body?.username ?? ctx.body?.displayUsername;

@@ -22,6 +22,48 @@ describe("session freshness", () => {
 	});
 });
 
+describe("new account timezone", () => {
+	const createBefore = auth.options.databaseHooks?.user?.create?.before;
+
+	if (!createBefore) throw new Error("Missing user create hook");
+
+	const now = new Date();
+	const newUser = {
+		id: "new-user",
+		email: "new-user@example.test",
+		emailVerified: false,
+		name: "New user",
+		createdAt: now,
+		updatedAt: now,
+	};
+	const contextWith = (headers: Record<string, string>) => ({ headers: new Headers(headers) }) as never;
+
+	it("starts a new account in the device timezone sent by the client", async () => {
+		await expect(createBefore(newUser, contextWith({ "x-client-timezone": "Europe/Berlin" }))).resolves.toEqual({
+			data: expect.objectContaining({ timezone: "Europe/Berlin" }),
+		});
+	});
+
+	it.each([{}, { "x-client-timezone": "Not/A_Timezone" }])(
+		"keeps the database default when the header is missing or invalid",
+		async (headers) => {
+			await expect(createBefore(newUser, contextWith(headers))).resolves.toBeUndefined();
+		},
+	);
+
+	it("gives a guest both a username and the device timezone", async () => {
+		await expect(
+			createBefore({ ...newUser, isAnonymous: true }, contextWith({ "x-client-timezone": "Asia/Kolkata" })),
+		).resolves.toEqual({
+			data: expect.objectContaining({
+				timezone: "Asia/Kolkata",
+				username: expect.stringMatching(/^guest-/),
+				displayUsername: expect.stringMatching(/^guest-/),
+			}),
+		});
+	});
+});
+
 it.each([
 	["GET", "/reference"],
 	["GET", "/token"],
