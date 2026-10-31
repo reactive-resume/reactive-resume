@@ -3,7 +3,7 @@ import { Trans } from "@lingui/react/macro";
 import { useId, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 
-export type QuestionPart = {
+type QuestionPart = {
 	toolCallId?: string;
 	state?: string;
 	input?: unknown;
