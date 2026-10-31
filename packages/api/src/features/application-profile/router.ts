@@ -15,6 +15,7 @@ export const applicationProfileRouter = {
 			operationId: "getApplicationProfile",
 			summary: "Read your private application profile",
 		})
+		.input(z.object({}).optional())
 		.output(applicationProfileRecordSchema.nullable())
 		.handler(({ context }) => applicationProfileService.get(context.user.id)),
 	save: protectedProcedure
