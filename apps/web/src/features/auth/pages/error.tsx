@@ -60,7 +60,7 @@ export function AuthErrorPage({ code, description }: AuthErrorPageProps) {
 	return (
 		<>
 			<div className="space-y-1 text-center">
-				<h1 className="text-2xl font-semibold tracking-tight">
+				<h1 className="text-[30px] leading-9">
 					<Trans comment="Title on the page shown after a failed or cancelled OAuth sign-in">
 						Sign-in didn't complete
 					</Trans>

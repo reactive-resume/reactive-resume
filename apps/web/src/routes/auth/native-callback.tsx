@@ -23,7 +23,7 @@ function NativeCallbackPage() {
 
 	return (
 		<div className="space-y-4 text-center">
-			<h1 className="text-xl font-semibold">
+			<h1 className="text-[30px] leading-9">
 				<Trans>Open the Reactive Resume app</Trans>
 			</h1>
 			<p className="text-muted-foreground text-sm">
