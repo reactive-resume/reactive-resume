@@ -125,7 +125,8 @@ function buildIntegrations() {
 				label: "Reactive Resume OAuth",
 				setup: [
 					`OAuth authorization-code flow with dynamic client registration (RFC 7591). Clients discover the authorization server from \`${baseUrl}/.well-known/oauth-protected-resource\` (issuer \`${authorizationServer()}\`).`,
-					"The user signs in to Reactive Resume and approves the client on the consent screen; the resulting access token is sent as `Authorization: Bearer <token>`.",
+					`Send \`resource=${baseUrl}\` on authorization, token exchange and refresh requests (RFC 8707). Authorization without a resource is refused with invalid_target.`,
+					"The user signs in to a permanent Reactive Resume account and approves the client on the consent screen; guest accounts cannot connect apps. Send the resulting access token as `Authorization: Bearer <token>`.",
 				].join("\n\n"),
 			},
 		},

@@ -116,12 +116,12 @@ describe("cover letter editor WebMCP tools", () => {
 
 	it("refuses an empty change, unknown fields and locked letters", async () => {
 		const tool = mountTools(letter);
-		await expect(tool("update_cover_letter").execute({})).rejects.toThrow("Give at least one field to change.");
-		await expect(tool("update_cover_letter").execute({ style: {} })).rejects.toThrow(/Invalid input/);
-		await expect(tool("update_cover_letter").execute({ letterDate: "next week" })).rejects.toThrow(/YYYY-MM-DD/);
+		await expect(tool("update_cover_letter").execute({})).resolves.toMatch("Give at least one field to change.");
+		await expect(tool("update_cover_letter").execute({ style: {} })).resolves.toMatch(/Invalid input/);
+		await expect(tool("update_cover_letter").execute({ letterDate: "next week" })).resolves.toMatch(/YYYY-MM-DD/);
 
 		const locked = mountTools({ ...letter, isLocked: true });
-		await expect(locked("update_cover_letter").execute({ content: "<p>x</p>" })).rejects.toThrow(/locked/);
+		await expect(locked("update_cover_letter").execute({ content: "<p>x</p>" })).resolves.toMatch(/locked/);
 		expect(mocks.update).not.toHaveBeenCalled();
 	});
 });

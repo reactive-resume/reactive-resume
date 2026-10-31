@@ -209,6 +209,8 @@ The API accepts three kinds of credentials:
 2. `Authorization: Bearer <token>`: an OAuth access token, which MCP clients get when you connect them with OAuth. See [Using the MCP server](/guides/using-the-mcp-server).
 3. The session cookie of a signed-in browser.
 
+OAuth clients must send `resource=<instance origin>` (for example `resource=https://rxresu.me`) on authorization, token exchange and refresh requests. Discover the exact resource at `/.well-known/oauth-protected-resource`. Authorization without `resource` is refused with `invalid_target` before sign-in, delivered to the client's registered redirect address. Guest accounts must create an account before connecting.
+
 Send one credential. When several are present, the server tries API key, bearer token, then session cookie, using the first valid credential. Cookie-authenticated requests with a foreign `Origin` or cross-site fetch metadata are rejected; explicit API keys and bearer tokens do not rely on browser cookies.
 
 Account deletion (`DELETE /auth/account`) requires a browser session; API keys and OAuth tokens receive `403 FORBIDDEN`. Delete your account in **Settings → Account**.

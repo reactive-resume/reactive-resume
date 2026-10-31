@@ -2726,6 +2726,10 @@ msgstr "តើកម្មវិធីអាចអានប្រវត្តិ
 msgid "Cancel"
 msgstr "បោះបង់"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3406,6 +3410,11 @@ msgstr "ភ្ជាប់អ្នកផ្តល់សេវា AI ផ្ទ�
 #: src/features/settings/ai/providers.tsx
 msgid "Connected"
 msgstr "បានភ្ជាប់"
+
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
@@ -4375,8 +4384,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "បង្កើតគណនី"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4639,6 +4657,10 @@ msgstr "លុបពាក្យសុំ"
 msgid "Delete conversation"
 msgstr "លុបការសន្ទនា"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4866,8 +4888,26 @@ msgid "Discard unsaved changes?"
 msgstr "បោះបង់ការផ្លាស់ប្តូរដែលមិនទាន់រក្សាទុក?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "ផ្ដាច់"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -6900,6 +6940,10 @@ msgstr "បញ្ហា និងការផ្គូផ្គងការង�
 msgid "It has entries but isn't placed on a page."
 msgstr "វាមានធាតុប៉ុន្តែមិនត្រូវបានដាក់នៅលើទំព័រមួយ។"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "វាប្រហែលជាត្រូវបានលុប។ សូមជ្រើសរើសរឿងផ្សេង ឬបន្ថែមរឿងថ្មី។"
@@ -7048,6 +7092,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "រក្សាទុកអាសយដ្ឋានតែមួយ ដើម្បីកុំឱ្យកម្មវិធីត្រូវទាយថាតើត្រូវប្រើមួយណា។"
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "រក្សាការចូលប្រើនៅពេលដែលអ្នកមិនប្រើកម្មវិធី។"
 
@@ -8493,8 +8538,8 @@ msgid "No commands match that search."
 msgstr "គ្មានពាក្យបញ្ជាណាដែលត្រូវនឹងការស្វែងរកនោះទេ។"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
-msgstr "មិនទាន់មានកម្មវិធីដែលបានភ្ជាប់នៅឡើយទេ។ កម្មវិធីដែលអ្នកអនុញ្ញាតឱ្យចូលប្រើគណនីរបស់អ្នកនឹងបង្ហាញនៅទីនេះ។"
+msgid "No connected applications. Apps you allow appear here."
+msgstr ""
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -10306,16 +10351,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "អានអាសយដ្ឋានអ៊ីមែលរបស់អ្នក។"
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "អានព័ត៌មានប្រវត្តិរូបរបស់អ្នក។"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "អានទិន្នន័យទាំងអស់នៅក្នុងគណនីរបស់អ្នក រួមទាំងការនាំចេញទិន្នន័យពេញលេញ៖ ប្រវត្តិរូប និងអាសយដ្ឋានអ៊ីមែល ឯកសារ កម្មវិធីការងារ ទិន្នន័យអាជីព និងការសន្ទនាគ្រូបង្វឹក។"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11173,14 +11228,6 @@ msgstr "ដកហូត"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "ដកហូត {0}"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "ដកហូតសិទ្ធិចូលប្រើ"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "ដកហូតសិទ្ធិចូលប្រើកម្មវិធីទៅគណនីរបស់អ្នក។"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12197,6 +12244,7 @@ msgstr "របារចំហៀងត្រូវបានអានជាញឹ
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"
